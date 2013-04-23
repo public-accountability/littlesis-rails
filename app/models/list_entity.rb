@@ -3,6 +3,8 @@ require 'active_record'
 class ListEntity < ActiveRecord::Base
   self.table_name = "ls_list_entity"
 
-  belongs_to :list, -> { where is_deleted: 0 }
-  belongs_to :entity, -> { where is_deleted: 0 }
+  include SoftDelete
+
+  belongs_to :list, inverse_of: :list_entities
+  belongs_to :entity, inverse_of: :list_entities
 end

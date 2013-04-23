@@ -17,3 +17,9 @@
 
 # Ignore database configuration
 /config/database.yml
+
+# Ignore secret configuration
+/config/lilsis.yml
+
+# Ignore dumb OS X files
+*.DS_Store

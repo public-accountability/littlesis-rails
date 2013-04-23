@@ -4,6 +4,10 @@ class Relationship < ActiveRecord::Base
   include SingularTable
   include SoftDelete
 
+  has_many :links, inverse_of: :relationship, dependent: :destroy
+  belongs_to :entity, foreign_key: "entity1_id"
+  belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
+
   def self.all_categories
     [
       "",
@@ -29,6 +33,14 @@ class Relationship < ActiveRecord::Base
       "Transaction",
       "Ownership"
     ]
+  end
+
+  def link
+    links.find { |link| link.entity1_id = entity1_id }
+  end
+  
+  def reverse_link
+    links.find { |link| linl.entity2_id = entity1_id }
   end
 
   def category_name

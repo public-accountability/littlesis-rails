@@ -37,5 +37,9 @@ gem 'jbuilder', '~> 1.0.1'
 # To use debugger
 # gem 'debugger'
 
-gem 'aws-s3'
 gem 'pry'
+gem 'aws-sdk'
+gem 'dimensions'
+gem 'fastimage'
+gem 'acts_as_paranoid', :git => "git://github.com/freddy/rails3_acts_as_paranoid.git", 
+  :branch => "rails4.0"
