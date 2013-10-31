@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131031182500) do
+ActiveRecord::Schema.define(version: 20131031203445) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -373,6 +373,25 @@ ActiveRecord::Schema.define(version: 20131031182500) do
 
   add_index "government_body", ["entity_id"], name: "entity_id_idx", using: :btree
   add_index "government_body", ["state_id"], name: "state_id_idx", using: :btree
+
+  create_table "group_users", force: true do |t|
+    t.integer  "group_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "groups", force: true do |t|
+    t.string   "name"
+    t.string   "tagline"
+    t.string   "description"
+    t.boolean  "is_private"
+    t.string   "slug"
+    t.integer  "default_network_id"
+    t.integer  "campaign_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "image", force: true do |t|
     t.integer  "entity_id",    limit: 8,                          null: false
@@ -1190,5 +1209,24 @@ ActiveRecord::Schema.define(version: 20131031182500) do
   add_index "transaction", ["contact1_id"], name: "contact1_id_idx", using: :btree
   add_index "transaction", ["contact2_id"], name: "contact2_id_idx", using: :btree
   add_index "transaction", ["relationship_id"], name: "relationship_id_idx", using: :btree
+
+  create_table "users", force: true do |t|
+    t.string   "email",                              default: "", null: false
+    t.string   "encrypted_password",     limit: 128, default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",                      default: 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "default_network_id"
+  end
+
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
 end

@@ -7,6 +7,7 @@ defaults: &defaults
   imagemagick_binary_path: "/usr/local/bin/convert"
   google_custom_search_engine_id: GOOGLE_CUSTOM_SEARCH_ENGINE_ID
   google_custom_search_key: GOOGLE_CUSTOM_SEARCH_KEY
+  default_from_email: DEFAULT_FROM_EMAIL
 
 test:
   <<: *defaults

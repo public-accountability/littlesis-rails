@@ -1,9 +1,16 @@
 source 'https://rubygems.org'
 
 gem 'rails'
-
 gem 'mysql2'
+
+# users and authentication
+gem 'devise'
+
+
+# image uploading with amazon s3 storage
 gem 'carrierwave'
+gem 'mini_magick'
+gem "fog", "~> 1.3.1"
 
 # Gems used only for assets and not required
 # in production environments by default.
