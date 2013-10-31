@@ -23,3 +23,6 @@
 
 # Ignore dumb OS X files
 *.DS_Store
+
+# Ignore tests, for now
+/test

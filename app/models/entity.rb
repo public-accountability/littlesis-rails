@@ -10,6 +10,7 @@ class Entity < ActiveRecord::Base
   has_many :relationships, through: :links
   has_many :relateds, through: :links
   has_many :interlocks, through: :related, source: :related
+  has_many :groups, through: :lists, inverse_of: :entities
 
   def person?
     primary_ext == "Person"

@@ -12,6 +12,8 @@ class List < ActiveRecord::Base
   has_many :users, inverse_of: :default_network
   has_many :groups, inverse_of: :default_network
 
+  has_and_belongs_to_many :groups
+
   def network?
   	@is_network
   end

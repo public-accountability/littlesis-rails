@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131031203445) do
+ActiveRecord::Schema.define(version: 20131031205616) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -374,11 +374,17 @@ ActiveRecord::Schema.define(version: 20131031203445) do
   add_index "government_body", ["entity_id"], name: "entity_id_idx", using: :btree
   add_index "government_body", ["state_id"], name: "state_id_idx", using: :btree
 
+  create_table "group_lists", force: true do |t|
+    t.integer "group_id"
+    t.integer "list_id"
+  end
+
   create_table "group_users", force: true do |t|
     t.integer  "group_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "is_admin",   default: false, null: false
   end
 
   create_table "groups", force: true do |t|
