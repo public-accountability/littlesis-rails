@@ -27,7 +27,7 @@ end
 gem 'jquery-rails'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-gem 'turbolinks'
+# gem 'turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.0.1'
@@ -50,3 +50,10 @@ gem 'dimensions'
 gem 'fastimage'
 gem 'acts_as_paranoid', :git => "git://github.com/freddy/rails3_acts_as_paranoid.git", 
   :branch => "rails4.0"
+
+gem 'nilify_blanks'
+
+group :test, :development do
+  gem 'better_errors', '0.7.0'
+  gem 'binding_of_caller', '0.7.0'
+end  
