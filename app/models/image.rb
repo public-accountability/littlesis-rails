@@ -39,7 +39,7 @@ class Image < ActiveRecord::Base
       type = file_type
     end
       
-    return "#{SecureRandom.hex(16)}.${type}"  
+    return "#{SecureRandom.hex(16)}.#{type}" 
   end
   
   def tmp_path
