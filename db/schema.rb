@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131101162116) do
+ActiveRecord::Schema.define(version: 20131103163139) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -160,14 +160,14 @@ ActiveRecord::Schema.define(version: 20131101162116) do
   create_table "campaigns", force: true do |t|
     t.string   "name",        null: false
     t.string   "tagline"
-    t.string   "description"
+    t.text     "description"
     t.string   "logo"
     t.string   "cover"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "slug"
-    t.string   "findings"
-    t.string   "howto"
+    t.text     "findings"
+    t.text     "howto"
   end
 
   create_table "candidate_district", force: true do |t|

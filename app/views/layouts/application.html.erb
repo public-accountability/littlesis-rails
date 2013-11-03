@@ -5,10 +5,35 @@
   <%= stylesheet_link_tag    "application", media: "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
+
+	<link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
-<%= yield %>
+<div id="top">
+	<div id="top_content">
+		<div id="logo"><%= image_tag("littlesis-logo-200.png") %></div>
+		<div id="menu"></div>
+	</div>
+</div>
+
+<% if content_for? :title %>
+<div id="header">
+	<div id="header_content">
+		<div id="title">
+			<%= yield :title %>
+		</div>
+	</div>
+</div>
+<% end %>
+
+<% if content_for? :body %>
+	<%= yield :body %>
+<% end %>
+
+<div id="container">
+	<%= yield %>
+</div>
 
 </body>
 </html>
