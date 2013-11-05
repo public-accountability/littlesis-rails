@@ -3,6 +3,11 @@ Lilsis::Application.routes.draw do
   root to: 'campaigns#index'
   resources :campaigns
   resources :groups
+  resources :entity do
+    member do
+      get 'interlocks'
+    end
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -29,7 +29,13 @@ class Image < ActiveRecord::Base
   end
         
   def image_path(type)
-    ActionController::Base.helpers.asset_path("images/#{type}/#{filename}")  
+    ActionController::Base.helpers.asset_path("images/#{type}/#{filename(type)}")  
+  end
+
+  def filename(type=nil)
+    return read_attribute(:filename) unless type == "square"
+    fn = read_attribute(:filename) 
+    fn.chomp(File.extname(fn)) + '.jpg'
   end
   
   def self.random_filename(file_type=nil)
@@ -45,4 +51,5 @@ class Image < ActiveRecord::Base
   def tmp_path
     Rails.root.join("tmp", filename).to_s
   end
+
 end

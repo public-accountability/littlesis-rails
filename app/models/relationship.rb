@@ -1,5 +1,3 @@
-require 'active_record'
-
 class Relationship < ActiveRecord::Base
   include SingularTable
   include SoftDelete

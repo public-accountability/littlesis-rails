@@ -11,6 +11,7 @@ class List < ActiveRecord::Base
 
   has_many :users, inverse_of: :default_network
   has_many :groups, inverse_of: :default_network
+  has_many :featured_in_groups, class_name: "Group", inverse_of: :featured_list
 
   has_and_belongs_to_many :groups
 

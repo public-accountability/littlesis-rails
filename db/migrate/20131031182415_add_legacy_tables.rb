@@ -1,6 +1,8 @@
 class AddLegacyTables < ActiveRecord::Migration
   def up
 
+=begin
+
 	  create_table "address", force: true do |t|
 	    t.integer  "entity_id",    limit: 8,                   null: false
 	    t.string   "street1",      limit: 100,                 null: false
@@ -1169,7 +1171,7 @@ class AddLegacyTables < ActiveRecord::Migration
 	  add_index "transaction", ["contact2_id"], name: "contact2_id_idx", using: :btree
 	  add_index "transaction", ["relationship_id"], name: "relationship_id_idx", using: :btree
 
-  
+=end
 
   end
 end

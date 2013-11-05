@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131103172251) do
+ActiveRecord::Schema.define(version: 20131104173751) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -335,19 +335,6 @@ ActiveRecord::Schema.define(version: 20131103172251) do
 
   add_index "fec_filing", ["relationship_id"], name: "relationship_id_idx", using: :btree
 
-  create_table "fec_filing_backup_040713", force: true do |t|
-    t.integer "relationship_id", limit: 8
-    t.integer "amount",          limit: 8
-    t.string  "fec_filing_id",   limit: 30
-    t.integer "crp_cycle",       limit: 8
-    t.string  "crp_id",          limit: 30, null: false
-    t.string  "start_date",      limit: 10
-    t.string  "end_date",        limit: 10
-    t.boolean "is_current"
-  end
-
-  add_index "fec_filing_backup_040713", ["relationship_id"], name: "relationship_id_idx", using: :btree
-
   create_table "fedspending_filing", force: true do |t|
     t.integer "relationship_id", limit: 8
     t.integer "amount",          limit: 8
@@ -403,6 +390,7 @@ ActiveRecord::Schema.define(version: 20131103172251) do
     t.string   "logo"
     t.text     "findings"
     t.text     "howto"
+    t.integer  "featured_list_id"
   end
 
   create_table "image", force: true do |t|
@@ -690,26 +678,6 @@ ActiveRecord::Schema.define(version: 20131103172251) do
   add_index "os_entity_preprocess", ["entity_id", "cycle"], name: "entity_cycle_idx", unique: true, using: :btree
   add_index "os_entity_preprocess", ["entity_id"], name: "entity_id_idx", using: :btree
 
-  create_table "os_entity_preprocess_backup_032312", force: true do |t|
-    t.integer  "entity_id",    limit: 8, null: false
-    t.string   "cycle",        limit: 4, null: false
-    t.datetime "processed_at",           null: false
-    t.datetime "updated_at"
-  end
-
-  add_index "os_entity_preprocess_backup_032312", ["entity_id", "cycle"], name: "entity_cycle_idx", unique: true, using: :btree
-  add_index "os_entity_preprocess_backup_032312", ["entity_id"], name: "entity_id_idx", using: :btree
-
-  create_table "os_entity_preprocess_backup_040713", force: true do |t|
-    t.integer  "entity_id",    limit: 8, null: false
-    t.string   "cycle",        limit: 4, null: false
-    t.datetime "processed_at",           null: false
-    t.datetime "updated_at"
-  end
-
-  add_index "os_entity_preprocess_backup_040713", ["entity_id", "cycle"], name: "entity_cycle_idx", unique: true, using: :btree
-  add_index "os_entity_preprocess_backup_040713", ["entity_id"], name: "entity_id_idx", using: :btree
-
   create_table "os_entity_transaction", force: true do |t|
     t.integer  "entity_id",                                      null: false
     t.string   "cycle",               limit: 4,                  null: false
@@ -728,67 +696,6 @@ ActiveRecord::Schema.define(version: 20131103172251) do
   add_index "os_entity_transaction", ["is_synced"], name: "is_synced_idx", using: :btree
   add_index "os_entity_transaction", ["locked_at"], name: "locked_at_idx", using: :btree
   add_index "os_entity_transaction", ["reviewed_at"], name: "reviewed_at_idx", using: :btree
-
-  create_table "os_entity_transaction_backup_031612", force: true do |t|
-    t.integer  "entity_id",                                     null: false
-    t.string   "cycle",               limit: 4,                 null: false
-    t.string   "transaction_id",      limit: 7,                 null: false
-    t.integer  "match_code",          limit: 8
-    t.boolean  "is_verified",                   default: false, null: false
-    t.boolean  "is_processed",                  default: false, null: false
-    t.boolean  "is_synced",                     default: true,  null: false
-    t.integer  "reviewed_by_user_id", limit: 8
-    t.datetime "reviewed_at"
-    t.integer  "locked_by_user_id",   limit: 8
-    t.datetime "locked_at"
-  end
-
-  create_table "os_entity_transaction_backup_032312", force: true do |t|
-    t.integer  "entity_id",                                     null: false
-    t.string   "cycle",               limit: 4,                 null: false
-    t.string   "transaction_id",      limit: 7,                 null: false
-    t.integer  "match_code",          limit: 8
-    t.boolean  "is_verified",                   default: false, null: false
-    t.boolean  "is_processed",                  default: false, null: false
-    t.boolean  "is_synced",                     default: true,  null: false
-    t.integer  "reviewed_by_user_id", limit: 8
-    t.datetime "reviewed_at"
-    t.integer  "locked_by_user_id",   limit: 8
-    t.datetime "locked_at"
-  end
-
-  create_table "os_entity_transaction_backup_032312_unique", force: true do |t|
-    t.integer  "entity_id",                                     null: false
-    t.string   "cycle",               limit: 4,                 null: false
-    t.string   "transaction_id",      limit: 7,                 null: false
-    t.integer  "match_code",          limit: 8
-    t.boolean  "is_verified",                   default: false, null: false
-    t.boolean  "is_processed",                  default: false, null: false
-    t.boolean  "is_synced",                     default: true,  null: false
-    t.integer  "reviewed_by_user_id", limit: 8
-    t.datetime "reviewed_at"
-    t.integer  "locked_by_user_id",   limit: 8
-    t.datetime "locked_at"
-  end
-
-  create_table "os_entity_transaction_backup_040713", force: true do |t|
-    t.integer  "entity_id",                                      null: false
-    t.string   "cycle",               limit: 4,                  null: false
-    t.string   "transaction_id",      limit: 30,                 null: false
-    t.integer  "match_code",          limit: 8
-    t.boolean  "is_verified",                    default: false, null: false
-    t.boolean  "is_processed",                   default: false, null: false
-    t.boolean  "is_synced",                      default: true,  null: false
-    t.integer  "reviewed_by_user_id", limit: 8
-    t.datetime "reviewed_at"
-    t.integer  "locked_by_user_id",   limit: 8
-    t.datetime "locked_at"
-  end
-
-  add_index "os_entity_transaction_backup_040713", ["entity_id", "cycle", "transaction_id"], name: "entity_cycle_transaction_idx", unique: true, using: :btree
-  add_index "os_entity_transaction_backup_040713", ["is_synced"], name: "is_synced_idx", using: :btree
-  add_index "os_entity_transaction_backup_040713", ["locked_at"], name: "locked_at_idx", using: :btree
-  add_index "os_entity_transaction_backup_040713", ["reviewed_at"], name: "reviewed_at_idx", using: :btree
 
   create_table "ownership", force: true do |t|
     t.integer "percent_stake",   limit: 8
@@ -955,32 +862,6 @@ ActiveRecord::Schema.define(version: 20131103172251) do
   add_index "relationship", ["entity2_id"], name: "entity2_id_idx", using: :btree
   add_index "relationship", ["last_user_id"], name: "last_user_id_idx", using: :btree
 
-  create_table "relationship_backup_040713", force: true do |t|
-    t.integer  "entity1_id",   limit: 8,                          null: false
-    t.integer  "entity2_id",   limit: 8,                          null: false
-    t.integer  "category_id",  limit: 8,                          null: false
-    t.string   "description1", limit: 100
-    t.string   "description2", limit: 100
-    t.integer  "amount",       limit: 8
-    t.text     "goods",        limit: 2147483647
-    t.integer  "filings",      limit: 8
-    t.text     "notes",        limit: 2147483647
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "start_date",   limit: 10
-    t.string   "end_date",     limit: 10
-    t.boolean  "is_current"
-    t.boolean  "is_deleted",                      default: false, null: false
-    t.integer  "last_user_id"
-  end
-
-  add_index "relationship_backup_040713", ["category_id"], name: "category_id_idx", using: :btree
-  add_index "relationship_backup_040713", ["entity1_id", "category_id"], name: "entity1_category_idx", using: :btree
-  add_index "relationship_backup_040713", ["entity1_id", "entity2_id"], name: "entity_idx", using: :btree
-  add_index "relationship_backup_040713", ["entity1_id"], name: "entity1_id_idx", using: :btree
-  add_index "relationship_backup_040713", ["entity2_id"], name: "entity2_id_idx", using: :btree
-  add_index "relationship_backup_040713", ["last_user_id"], name: "last_user_id_idx", using: :btree
-
   create_table "relationship_category", force: true do |t|
     t.string   "name",                 limit: 30,                 null: false
     t.string   "display_name",         limit: 30,                 null: false
@@ -1045,7 +926,7 @@ ActiveRecord::Schema.define(version: 20131103172251) do
     t.datetime "updated_at"
   end
 
-  add_index "scraper_meta", ["scraper", "namespace", "predicate"], name: "uniqueness_idx", unique: true, using: :btree
+  add_index "scraper_meta", ["scraper", "namespace", "predicate", "value"], name: "uniqueness_idx", unique: true, using: :btree
 
   create_table "sf_guard_group", force: true do |t|
     t.string   "name"
