@@ -63,3 +63,8 @@ a {
 		font-weight: bold;
 	}
 }
+
+.centered_content {
+	width: $page_width;
+	margin: 0 auto;
+}

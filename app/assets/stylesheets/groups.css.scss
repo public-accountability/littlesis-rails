@@ -1,5 +1,37 @@
 $logo_size: 50px;
 
+#group_campaign {
+	background-color: #fff;
+	border-top: 0px solid #aaa;
+
+	a { color: black; }
+}
+
+#group_campaign_content {
+	padding-top: 0.8em;
+	padding-bottom: 0.8em;
+	border-bottom: 1px solid #eee;	
+}
+
+#group_campaign_logo img {
+	width: $logo_size - 10;
+	height: $logo_size - 10;
+	float: left;
+}
+
+#group_campaign_name {
+	margin-left: $logo_size;
+	font-size: 1.4em;
+	line-height: 1.3em;
+	font-weight: bold;
+}
+
+#group_campaign_tagline {
+	margin-left: $logo_size;	
+	font-size: 0.8em;
+	font-style: italic;
+}
+
 #group_header {
 	margin-top: 1em;
 

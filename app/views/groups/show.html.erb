@@ -1,3 +1,15 @@
+<% content_for :body do %>
+
+<% if @group.campaign.present? %>
+<%= centered_content :group_campaign do %>
+<div id="group_campaign_logo"><%= link_to(image_tag(@group.campaign.logo.thumb.url), @group.campaign) %></div>
+<div id="group_campaign_name"><%= campaign_link(@group.campaign) %></div>
+<div id="group_campaign_tagline"><%= @group.campaign.tagline %></div>
+<% end %>
+<% end %>
+
+<%= centered_content do %>
+
 <div id="group_header">
 	<div id="group_header_left">
 		<div id="group_name"><%= @group.name %></div>
@@ -29,6 +41,10 @@
 	<div id="group_header_clear"> </div>
 </div>
 
+<% end %>
+
+<%= centered_content do %>
+
 <% if @group.featured_lists.count > 0 %>
 <div id="group_carousel_header">Who We're Watching</div>
 <div id="group_carousel">
@@ -46,3 +62,7 @@
 </div>
 
 <div id="group_clear"></div>
+
+<% end %>
+
+<% end %>
