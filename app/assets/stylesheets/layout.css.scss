@@ -1,0 +1,65 @@
+@import "globals";
+
+body {
+	margin: 0;
+	font-family: Lato, Helvetica, Arial, sans-serif;
+}
+
+a {
+	text-decoration: none;
+	color: #008;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+#top {
+	color: white;
+	background-color: #1C4767;
+	height: 55px;
+	padding-top: 10px;
+}
+
+#top_content {
+	width: $page_width;
+	margin: 0 auto;
+}
+
+#header {
+	background-color: #eee;
+}
+
+#header_content {
+	width: $page_width;
+	margin: 0 auto;
+}
+
+#title {
+	font-size: 2em;
+	font-weight: bold;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+}
+
+#container {
+	width: $page_width;
+	margin: 0 auto;
+}
+
+.field label {
+	display: block;
+	margin-top: 0.5em;
+	font-weight: bold;
+}
+
+.helper {
+	font-size: 0.9em;
+	padding: 1em;
+	background-color: #eee;
+	border: 1px solid #aaa;
+
+	a {
+		font-weight: bold;
+	}
+}

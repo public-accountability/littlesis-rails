@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails'
+gem 'rails', '4.0.0'
 gem 'mysql2'
 
 # users and authentication
@@ -14,8 +14,9 @@ gem "fog", "~> 1.3.1"
 
 # Gems used only for assets and not required
 # in production environments by default.
+gem 'sass-rails'
+
 group :assets do
-  gem 'sass-rails'
   gem 'coffee-rails'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
@@ -52,6 +53,8 @@ gem 'acts_as_paranoid', :git => "git://github.com/freddy/rails3_acts_as_paranoid
   :branch => "rails4.0"
 
 gem 'nilify_blanks'
+
+gem 'bootsy'
 
 group :test, :development do
   gem 'better_errors', '0.7.0'

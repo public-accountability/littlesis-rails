@@ -1,0 +1,100 @@
+$logo_size: 50px;
+
+#group_header {
+	margin-top: 1em;
+
+	#group_header_left {
+		width: 550px;
+		float: left;
+	}
+
+	#group_header_right {
+		margin-left: 550px;
+		width: 400px;
+	}
+
+	#group_header_clear {
+		clear: both;
+	}
+
+	#group_name {
+		font-size: 2.5em;
+		font-weight: bold;
+	}
+
+	#group_tagline {
+		margin-top: 0.5em;
+		font-size: 1.3em;
+		font-style: italic;
+	}
+
+	#group_stats {
+		font-size: 0.8em;
+		color: #888;
+		margin-top: 0.5em;
+	}
+
+	#group_description {
+		margin-top: 1em;
+	}
+
+	#group_helper {
+		margin-top: 1em;
+	}
+
+	#group_logo {
+		img {
+			width: 300px;
+		}
+	}
+}
+
+#group_carousel_header, #group_findings_header, #group_updates_header {
+	margin-top: 2em;
+	margin-bottom: 1em;
+	font-size: 1.5em;
+	border-bottom: 1px solid #eee;	
+}
+
+#group_findings_column {
+	float: left;
+	width: 600px;
+}
+
+#group_updates_column {
+	margin-left: 660px;
+	width: 300px;
+}
+
+#group_clear {
+	clear: both;
+}
+
+.group_mini {
+	padding: 0.7em;
+
+	.group_mini_logo {
+		float: left;
+
+		img {
+			width: $logo_size;
+			border-radius: $logo_size/2;
+		}
+	}
+
+	.group_mini_name {
+		margin-left: $logo_size + 10px;
+		font-size: 1.3em;
+
+		a {
+			color: white;
+		}
+	}
+
+	.group_mini_tagline {
+		margin-top: 5px;
+		margin-left: $logo_size + 10px;
+		font-size: 0.7em;
+		font-style: italic;
+	}
+}

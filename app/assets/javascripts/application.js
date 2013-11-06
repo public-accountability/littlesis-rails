@@ -12,4 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require bootstrap
+//= require bootsy
+//= require editor_options
 //= require_tree .

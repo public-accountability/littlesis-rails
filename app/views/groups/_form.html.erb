@@ -1,0 +1,61 @@
+<%= form_for(@group) do |f| %>
+  <% if @group.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@group.errors.count, "error") %> prohibited this group from being saved:</h2>
+
+      <ul>
+      <% @group.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_area :name %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :slug %>
+    <%= f.text_field :slug %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :is_private %>
+    <%= f.check_box :is_private %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :tagline %>
+    <%= f.text_area :tagline %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :description %>
+    <%= f.text_area :description %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :logo %>
+    <% unless @group.logo_url.nil? %>
+      <%= image_tag(@group.logo.thumb.url) %><br />
+    <% end %>
+    <%= f.file_field :logo %>
+    <%= f.hidden_field :logo_cache %>
+  </div>
+
+  <div class="field">
+    <%= f.label :findings %>
+    <%= f.bootsy_area :findings, :style => "width: 800px; height: 500px;" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :howto %>
+    <%= f.bootsy_area :howto, style: "width: 800px; height: 500px;", editor_options: { html: true } %>  
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,49 @@
+<div class="entity_carousel">
+  <div class="entity_carousel_image" style="background-image: url(<%= image_path(entity.featured_image_url) %>);">
+  </div>
+
+  <div class="entity_carousel_text">
+    <div class="entity_carousel_name"><%= entity_link(entity) %></div>
+
+    <% if entity.blurb.present? %>  
+      <span class="entity_carousel_description"><%= entity.blurb %><br /></span>
+    <% end %>
+
+    <br />
+  
+    <% if entity.person? %>
+      <span class="entity_carousel_count">Key affiliations: </span>&nbsp;
+    <% else %>
+      <span class="entity_carousel_count">Key people: </span>&nbsp;    
+    <% end %>
+
+    <% connection_links = [] %>
+    <% entity.relateds_by_count(5, entity.other_ext).each do |related| %>
+      <% connection_links << entity_link(related) %>
+    <% end %>
+    <% connection_links << "<nobr><strong>" + link_to(raw("More &raquo;"), entity) + "</nobr></strong>" %>
+
+    <%= raw(connection_links.join(" &nbsp;&bull;&nbsp; ")) %>
+    
+    <br />
+    <br />
+  
+    <span class="entity_carousel_count">Related <%= entity.person? ? 'people' : 'orgs' %>: </span>&nbsp;
+   
+    <% related_links = [] %>
+    <% options = {
+      num: 5,
+      order1: entity.person? ? 1 : 2,
+      order2: entity.person? ? 2 : 1,
+      cat1_ids: [1,3],
+      cat2_ids: [1,3]
+    } %>
+    <% entity.interlocks_by_count(options).each do |ary| %>
+      <% related_links << entity_link(ary[:entity]) %>
+    <% end %>
+    <% related_links << "<nobr><strong>" + link_to(raw("More &raquo;"), interlocks_entity_path) + "</nobr></strong>" %>
+
+    <%= raw(related_links.join(" &nbsp;&bull;&nbsp; ")) %>
+    
+  </div>
+</div>

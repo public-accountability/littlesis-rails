@@ -1,0 +1,48 @@
+<div id="group_header">
+	<div id="group_header_left">
+		<div id="group_name"><%= @group.name %></div>
+
+		<% if @group.tagline.present? %>
+			<div id="group_tagline"><%= @group.tagline %></div>
+		<% end %>
+
+		<div id="group_stats">
+			<%= pluralize(@group.users.count, "analysts") %> &bull; watching <%= pluralize(@group.entities.people.count, "person") %> & <%= pluralize(@group.entities.orgs.count, "org") %> on <%= pluralize(@group.lists.count, "list") %> &bull; <%= 0 %> notes
+		</div>
+
+
+		<% if @group.description.present? %>
+			<div id="group_description"><%= @group.description %></div>
+		<% end %>
+
+		<% if user_signed_in? %>
+		<% else %>
+			<div id="group_helper" class="helper">
+				This is a LittleSis research group. To particupate in this group, <%= link_to 'join', new_user_registration_path %> LittleSis or <%= link_to 'log in', new_user_session_path %>.
+			</div>
+		<% end %>
+
+	</div>
+	<div id="group_header_right">
+		<div id="group_logo"><%= image_tag(@group.logo_url) %></div>
+	</div>
+	<div id="group_header_clear"> </div>
+</div>
+
+<% if @group.featured_lists.count > 0 %>
+<div id="group_carousel_header">Who We're Watching</div>
+<div id="group_carousel">
+	<%= render partial: "shared/carousel", locals: { entities: @group.featured_entities } %>
+</div>
+<% end %>
+
+<div id="group_findings_column">
+	<div id="group_findings_header">Findings & Highlights</div>
+	<div id="group_findings"><%= simple_format(@group.findings) %></div>
+</div>
+
+<div id="group_updates_column">
+	<div id="group_updates_header">Recent Updates</div>
+</div>
+
+<div id="group_clear"></div>

@@ -1,0 +1,32 @@
+<% content_for :body do %>
+
+<div id="campaign_cover" style="background-image: url(<%= @campaign.cover_url %>);">
+	<div id="campaign_cover_content">
+		<div id="campaign_cover_left">
+			<div id="campaign_logo"><%= image_tag(@campaign.logo.thumb.url) %></div>
+			<div id="campaign_name">
+				<div id="campaign_name_content"><%= simple_format(@campaign.name, {}, { wrapper_tag: "div" }) %></div>
+			</div>
+			<% if @campaign.tagline.present? %>
+				<div id="campaign_tagline"><%= @campaign.tagline %></div>
+			<% end %>
+			<% if @campaign.description.present? %>
+				<div id="campaign_description"><%= simple_format(@campaign.description, {}, wrapper_tag: "div") %></div>
+			<% end %>
+		</div>
+		<div id="campaign_cover_right">
+			<div id="campaign_groups">Research Groups</div>
+			<div id="campaign_groups_list">
+				<% ([@campaign.groups.first] * 3).each do |g| %>
+					<%= render partial: "groups/mini", locals: { group: g } %>
+				<% end %>
+			</div>
+			<div id="campaign_groups_search">
+				<input type="text" value="Find a group..." />
+			</div>
+		</div>
+		<div id="campaign_cover_clear"> </div>
+	</div>
+</div>
+
+<% end %>

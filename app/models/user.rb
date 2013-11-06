@@ -8,5 +8,6 @@ class User < ActiveRecord::Base
   # attr_accessible :email, :password, :password_confirmation, :remember_me
 
   belongs_to :default_network, class_name: "List"
+  has_many :group_users, inverse_of: :user
   has_many :groups, through: :group_users, inverse_of: :users
 end

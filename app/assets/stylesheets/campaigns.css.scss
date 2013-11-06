@@ -1,0 +1,102 @@
+@import "globals";
+
+$logo_size: 150px;
+
+div#campaign_cover {
+	background-size: cover;
+	background-color: #444;
+
+	#campaign_cover_content {
+		color: white;
+		margin: 0 auto;	
+		width: $page_width;
+		padding: 1em;
+		padding-top: 2em;
+	}
+
+	#campaign_cover_left {
+		float: left;
+		width: 500px;
+	}
+
+	#campaign_cover_right {
+		margin-top: 20px;
+		margin-left: 550px;
+		width: 400px;
+	}
+
+	#campaign_logo {
+		float: left;
+		height: $logo_size;
+
+		img {
+			width: $logo_size;
+			border-radius: $logo_size/2;
+		}
+	}
+
+	#campaign_name {
+		margin-left: $logo_size + 20px;
+		width: 350px;
+		font-size: 3.5em;
+		font-weight: bold;
+		height: $logo_size;
+		position: relative;
+
+		#campaign_name_content {
+			position: absolute;
+			bottom: 5px;
+		}
+	}
+
+	#campaign_tagline {
+		clear: both;
+		margin-top: 1em;
+		font-size: 1.5em;
+		font-style: italic;
+	}
+
+	#campaign_description {
+		margin-top: 1em;
+
+		div { 
+			margin-top: 0;
+			margin-bottom: 0.8em; 
+			line-height: 1.4em;
+		}
+	}
+
+	#campaign_groups {
+		font-size: 1.5em;
+		font-variant: small-caps;
+		border-bottom: 1px solid #eee;
+	}
+
+	#campaign_groups_list {
+		margin-top: 0.5em;
+	}
+
+	#campaign_groups_search {
+		margin-top: 1em;
+		margin-left: 0.5em;
+
+		input {
+			font-size: 1.2em;
+			width: 300px;
+
+		  border: 0px solid #bbb;
+		  font-size: 14px;
+		  padding: 6px;
+		  padding-top: 5px;
+		  padding-bottom: 5px;
+		  padding-left: 26px;
+		  background-repeat: no-repeat; 
+		  background-position: 4px 6px; 
+		  background-image: image-url("search-16.png");
+		}
+	}
+
+	#campaign_cover_clear {
+		clear: both;
+	}
+}

@@ -11,6 +11,9 @@ class Entity < ActiveRecord::Base
   has_many :relateds, through: :links
   has_many :groups, through: :lists, inverse_of: :entities
 
+  scope :people, -> { where(primary_ext: 'Person') }
+  scope :orgs, -> { where(primary_ext: 'Org') }
+
   def person?
     primary_ext == "Person"
   end  
@@ -149,8 +152,8 @@ class Entity < ActiveRecord::Base
 
   def featured_image_url(type=nil)
     image = featured_image
-    type = "square" if type.nil? and image.has_square
     return nil if image.nil?
+    type = "square" if type.nil? and image.has_square
     image.s3_url(type)
   end
 

@@ -1,9 +1,12 @@
 class Group < ActiveRecord::Base
+	include Bootsy::Container
+
 	belongs_to :campaign, inverse_of: :groups
 	belongs_to :default_network, class_name: "List", inverse_of: :groups
+	has_many :group_users, inverse_of: :group
 	has_many :users, through: :group_users, inverse_of: :groups
-	has_and_belongs_to_many :lists, join_table: "group_lists"
-	belongs_to :featured_list, class_name: "List", inverse_of: :featured_in_groups
+	has_many :group_lists, inverse_of: :group
+	has_many :lists, through: :group_lists, inverse_of: :groups
 	has_many :entities, through: :lists, inverse_of: :groups
 
 	mount_uploader :logo, GroupLogoUploader
@@ -12,5 +15,13 @@ class Group < ActiveRecord::Base
 
 	def to_param
 		slug
+	end
+
+	def featured_lists
+		lists.where("group_lists.is_featured = ?", true)
+	end
+
+	def featured_entities
+		entities.where("group_lists.is_featured = ?", true)
 	end
 end

@@ -1,0 +1,25 @@
+<div class="littlesis_carousel">
+  <a class="buttons prev" href="#"><%= image_tag("carousel_left_semi.png"); %></a>
+  <div class="viewport">
+      <ul class="overview">
+      <% entities.each do |entity| %>
+        <li><%= render partial: "entities/carousel", locals: { entity: entity } %></li>
+      <% end %>
+      </ul>
+  </div>
+  <a class="buttons next" href="#"><%= image_tag("carousel_right_semi.png") %></a>
+</div>
+
+<script type="text/javascript">         
+    $(document).ready(function(){               
+        $(".littlesis_carousel li").shuffle();              
+        $(".littlesis_carousel").tinycarousel({ 
+          pager: true, 
+          start: 1, 
+          interval: true, 
+          intervaltime: 5000, 
+          rewind: true, 
+          animation: true 
+        });       
+    });
+</script> 
