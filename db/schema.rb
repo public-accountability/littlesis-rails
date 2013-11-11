@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131105230559) do
+ActiveRecord::Schema.define(version: 20131107004713) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -406,6 +406,7 @@ ActiveRecord::Schema.define(version: 20131105230559) do
     t.text     "findings"
     t.text     "howto"
     t.integer  "featured_list_id"
+    t.string   "cover"
   end
 
   create_table "image", force: true do |t|

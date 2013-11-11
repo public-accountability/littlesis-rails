@@ -223,4 +223,8 @@ class Entity < ActiveRecord::Base
     entities
   end
 
+  def rubin
+    find(1164)
+  end
+
 end

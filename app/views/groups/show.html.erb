@@ -1,14 +1,16 @@
 <% content_for :body do %>
 
-<% if @group.campaign.present? %>
-<%= centered_content :group_campaign do %>
+
+<div id="group_header_cover" style="background-image: url(<%= @group.cover_url %>);">
+<div id="group_header_cover_content">
+
+
+<div id="group_campaign">
 <div id="group_campaign_logo"><%= link_to(image_tag(@group.campaign.logo.thumb.url), @group.campaign) %></div>
 <div id="group_campaign_name"><%= campaign_link(@group.campaign) %></div>
 <div id="group_campaign_tagline"><%= @group.campaign.tagline %></div>
-<% end %>
-<% end %>
+</div>
 
-<%= centered_content do %>
 
 <div id="group_header">
 	<div id="group_header_left">
@@ -29,9 +31,10 @@
 
 		<% if user_signed_in? %>
 		<% else %>
-			<div id="group_helper" class="helper">
-				This is a LittleSis research group. To particupate in this group, <%= link_to 'join', new_user_registration_path %> LittleSis or <%= link_to 'log in', new_user_session_path %>.
-			</div>
+			<br />
+			<span id="group_helper" class="helper">
+				This is a LittleSis research group. To participate in this group, <%= link_to 'join', new_user_registration_path %> LittleSis or <%= link_to 'log in', new_user_session_path %>.
+			</span>
 		<% end %>
 
 	</div>
@@ -40,8 +43,8 @@
 	</div>
 	<div id="group_header_clear"> </div>
 </div>
-
-<% end %>
+</div>
+</div>
 
 <%= centered_content do %>
 

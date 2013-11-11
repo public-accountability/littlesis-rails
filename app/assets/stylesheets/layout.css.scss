@@ -2,7 +2,7 @@
 
 body {
 	margin: 0;
-	font-family: Lato, Helvetica, Arial, sans-serif;
+	font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
 }
 
 a {
@@ -16,9 +16,13 @@ a {
 
 #top {
 	color: white;
-	background-color: #1C4767;
-	height: 55px;
-	padding-top: 10px;
+	height: 33px;
+	padding-top: 5px;
+	background-color: rgb(28, 71, 103);
+
+	img {
+		height: 30px;
+	}
 }
 
 #top_content {
@@ -58,6 +62,7 @@ a {
 	padding: 1em;
 	background-color: #eee;
 	border: 1px solid #aaa;
+	border-radius: 1em;
 
 	a {
 		font-weight: bold;

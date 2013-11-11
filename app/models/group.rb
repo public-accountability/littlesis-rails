@@ -10,6 +10,7 @@ class Group < ActiveRecord::Base
 	has_many :entities, through: :lists, inverse_of: :groups
 
 	mount_uploader :logo, GroupLogoUploader
+	mount_uploader :cover, GroupCoverUploader
 
 	validates_presence_of :name, :slug
 
