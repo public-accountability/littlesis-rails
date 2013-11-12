@@ -32,4 +32,8 @@ class Group < ActiveRecord::Base
 	def featured_entities
 		entities.where("group_lists.is_featured = ?", true)
 	end
+
+	def guard_user_ids
+		SfGuardUser.joins(user: :groups).where("groups.id" => id).pluck(:id)
+	end
 end

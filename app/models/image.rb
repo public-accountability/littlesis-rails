@@ -4,6 +4,8 @@ class Image < ActiveRecord::Base
 
   belongs_to :entity, inverse_of: :images
   
+  scope :featured, -> { where(is_featured: true) }
+
   def download_large_to_tmp
     download_to_tmp(s3_url("large"))
   end

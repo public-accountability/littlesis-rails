@@ -13,6 +13,7 @@ class Entity < ActiveRecord::Base
   has_many :groups, through: :lists, inverse_of: :entities
   has_many :note_entities, inverse_of: :entity
   has_many :notes, through: :note_entities, inverse_of: :entities
+  belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", inverse_of: :edited_entities
 
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
@@ -149,8 +150,12 @@ class Entity < ActiveRecord::Base
     end.reject(&:nil?)
   end
 
+  def has_featured_image
+    images.featured.count > 0
+  end
+
   def featured_image
-    images.where(is_featured: true).first
+    images.featured.first
   end
 
   def featured_image_url(type=nil)
@@ -226,8 +231,12 @@ class Entity < ActiveRecord::Base
     entities
   end
 
-  def rubin
+  def self.rubin
     find(1164)
+  end
+
+  def last_user
+    User.find(last_user_id)
   end
 
 end

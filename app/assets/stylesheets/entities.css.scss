@@ -1,0 +1,29 @@
+.entity_update {
+	padding-top: 1em;
+	padding-bottom: 1em;
+	border-bottom: 1px dotted #eee;
+}
+
+.entity_update_image {
+	float: left;
+	margin-right: 0.5em;
+
+	img {
+		height: 35px; 
+		border: 0px solid #fff;
+	}
+}
+
+.entity_update_name {
+	margin-top: -4px;
+	font-size: 1.2em;
+	font-weight: 500;
+}
+
+.entity_update_user {
+	font-size: 0.8em;
+
+	a {
+		font-weight: 500;
+	}
+}

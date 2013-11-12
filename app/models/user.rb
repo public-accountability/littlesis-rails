@@ -8,6 +8,8 @@ class User < ActiveRecord::Base
   # attr_accessible :email, :password, :password_confirmation, :remember_me
 
   belongs_to :sf_guard_user, inverse_of: :user
+  delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
+  delegate :name, to: :sf_guard_user_profile, allow_nil: true
 
   belongs_to :default_network, class_name: "List"
   belongs_to :sf_guard_user_profile, inverse_of: :user
