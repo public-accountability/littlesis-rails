@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131112003439) do
+ActiveRecord::Schema.define(version: 20131112170621) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -183,6 +183,8 @@ ActiveRecord::Schema.define(version: 20131112003439) do
     t.text     "findings"
     t.text     "howto"
   end
+
+  add_index "campaigns", ["slug"], name: "index_campaigns_on_slug", unique: true, using: :btree
 
   create_table "candidate_district", force: true do |t|
     t.integer  "candidate_id", limit: 8, null: false
@@ -409,6 +411,8 @@ ActiveRecord::Schema.define(version: 20131112003439) do
     t.string   "cover"
   end
 
+  add_index "groups", ["slug"], name: "index_groups_on_slug", unique: true, using: :btree
+
   create_table "image", force: true do |t|
     t.integer  "entity_id",    limit: 8,                          null: false
     t.string   "filename",     limit: 100,                        null: false
@@ -620,6 +624,11 @@ ActiveRecord::Schema.define(version: 20131112003439) do
   create_table "note_entities", force: true do |t|
     t.integer "note_id"
     t.integer "entity_id"
+  end
+
+  create_table "note_groups", force: true do |t|
+    t.integer "note_id"
+    t.integer "group_id"
   end
 
   create_table "note_lists", force: true do |t|
@@ -1158,5 +1167,6 @@ ActiveRecord::Schema.define(version: 20131112003439) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["sf_guard_user_id"], name: "index_users_on_sf_guard_user_id", unique: true, using: :btree
 
 end

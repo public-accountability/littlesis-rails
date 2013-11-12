@@ -1,5 +1,3 @@
-require 'active_record'
-
 class ListEntity < ActiveRecord::Base
   self.table_name = "ls_list_entity"
 
