@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131107004713) do
+ActiveRecord::Schema.define(version: 20131112003439) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -617,6 +617,26 @@ ActiveRecord::Schema.define(version: 20131107004713) do
   add_index "note", ["updated_at"], name: "updated_at_idx", using: :btree
   add_index "note", ["user_id"], name: "user_id_idx", using: :btree
 
+  create_table "note_entities", force: true do |t|
+    t.integer "note_id"
+    t.integer "entity_id"
+  end
+
+  create_table "note_lists", force: true do |t|
+    t.integer "note_id"
+    t.integer "list_id"
+  end
+
+  create_table "note_relationships", force: true do |t|
+    t.integer "note_id"
+    t.integer "relationship_id"
+  end
+
+  create_table "note_users", force: true do |t|
+    t.integer "note_id"
+    t.integer "user_id"
+  end
+
   create_table "object_tag", force: true do |t|
     t.integer  "tag_id",       limit: 8,  null: false
     t.datetime "created_at"
@@ -1133,6 +1153,7 @@ ActiveRecord::Schema.define(version: 20131107004713) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "default_network_id"
+    t.integer  "sf_guard_user_id",                                null: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

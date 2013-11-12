@@ -8,6 +8,7 @@ class Group < ActiveRecord::Base
 	has_many :group_lists, inverse_of: :group
 	has_many :lists, through: :group_lists, inverse_of: :groups
 	has_many :entities, through: :lists, inverse_of: :groups
+	has_many :notes, through: :note_groups, inverse_of: :groups
 
 	mount_uploader :logo, GroupLogoUploader
 	mount_uploader :cover, GroupCoverUploader

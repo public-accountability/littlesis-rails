@@ -5,6 +5,8 @@ class Relationship < ActiveRecord::Base
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
+  has_many :note_relationships, inverse_of: :relationship
+  has_many :notes, through: :note_relationships, inverse_of: :relationships
 
   def self.all_categories
     [

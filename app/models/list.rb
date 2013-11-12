@@ -1,5 +1,3 @@
-require 'active_record'
-
 class List < ActiveRecord::Base
   self.table_name = "ls_list"
 
@@ -15,6 +13,9 @@ class List < ActiveRecord::Base
 
   has_many :group_lists, inverse_of: :list
   has_many :groups, through: :group_lists, inverse_of: :lists
+
+  has_many :note_lists, inverse_of: :list
+  has_many :notes, through: :note_lists, inverse_of: :lists
 
   def network?
   	@is_network
