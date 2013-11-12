@@ -1,0 +1,41 @@
+@import "globals";
+
+.bettertabs {
+	margin-top: 1em;
+	margin-bottom: 1em;
+
+	ul.tabs {
+		margin: 0;
+		padding: 0;
+
+		li {
+			display: inline-block;
+
+			a { 
+				display: block;
+				font-size: 1.2em;
+				padding: 0.5em;
+				padding-left: 1em;
+				padding-right: 1em;
+				border: 0;
+				margin-right: 0.5em;
+				color: white;
+				background-color: $logo_blue_lighter;
+				border-top-left-radius: 1em;
+				border-top-right-radius: 1em;
+
+				&:hover {
+					text-decoration: none;
+				}
+			}
+
+			&.active a {
+				background-color: $logo_blue_light;
+			}
+
+			&:hover a {
+				background-color: $logo_blue_light;
+			}
+		}
+	}
+}

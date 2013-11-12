@@ -44,6 +44,9 @@ GEM
     better_errors (0.7.0)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
+    bettertabs (1.4.1)
+      jquery-rails
+      rails (>= 3.1.0)
     binding_of_caller (0.7)
       debug_inspector (>= 0.0.1)
     bootsy (2.0.1)
@@ -179,6 +182,7 @@ DEPENDENCIES
   acts_as_paranoid!
   aws-sdk
   better_errors (= 0.7.0)
+  bettertabs
   binding_of_caller (= 0.7.0)
   bootsy
   carrierwave

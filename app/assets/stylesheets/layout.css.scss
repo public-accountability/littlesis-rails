@@ -18,7 +18,7 @@ a {
 	color: white;
 	height: 33px;
 	padding-top: 5px;
-	background-color: rgb(28, 71, 103);
+	background-color: $logo_blue;
 
 	img {
 		height: 30px;
@@ -72,4 +72,9 @@ a {
 .centered_content {
 	width: $page_width;
 	margin: 0 auto;
+}
+
+.more_link {
+	font-size: 1em;
+	font-weight: 600;
 }

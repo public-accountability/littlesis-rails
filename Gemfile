@@ -55,6 +55,7 @@ gem 'acts_as_paranoid', :git => "git://github.com/freddy/rails3_acts_as_paranoid
 gem 'nilify_blanks'
 
 gem 'bootsy'
+gem 'bettertabs'
 
 group :test, :development do
   gem 'better_errors', '0.7.0'

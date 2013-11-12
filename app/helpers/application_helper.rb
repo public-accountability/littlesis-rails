@@ -13,4 +13,21 @@ module ApplicationHelper
 		)			
 		raw str
 	end
+
+  def more_link(content, max=200, id=nil)
+  	splitter = "<!-- more -->"
+  	if content.include? splitter
+	  	id = SecureRandom.hex(8) if id.blank?
+  		preview, remainder = content.split(splitter)
+  		str = "<div id='#{id}_preview'>"
+  		str << preview
+  		str << "</div><div style='display: none;' id='#{id}_remainder'>"
+  		str << remainder
+  		str << "</div>"
+  		str << "<a class='more_link' data-target='#{id}' href='javascript:void(0);'>more &raquo;</a>"
+  		raw str
+  	else
+  	 content
+  	end
+  end
 end

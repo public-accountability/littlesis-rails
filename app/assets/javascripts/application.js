@@ -12,7 +12,9 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.bettertabs
 //= require bootstrap
 //= require bootsy
 //= require editor_options
+//= reuqire more_link
 //= require_tree .

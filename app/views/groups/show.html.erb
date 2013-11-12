@@ -4,13 +4,13 @@
 <div id="group_header_cover" style="background-image: url(<%= @group.cover_url %>);">
 <div id="group_header_cover_content">
 
-
+<% if @group.campaign.present? %>
 <div id="group_campaign">
 <div id="group_campaign_logo"><%= link_to(image_tag(@group.campaign.logo.thumb.url), @group.campaign) %></div>
 <div id="group_campaign_name"><%= campaign_link(@group.campaign) %></div>
 <div id="group_campaign_tagline"><%= @group.campaign.tagline %></div>
 </div>
-
+<% end %>
 
 <div id="group_header">
 	<div id="group_header_left">
@@ -26,7 +26,10 @@
 
 
 		<% if @group.description.present? %>
-			<div id="group_description"><%= @group.description %></div>
+			<div id="group_description">
+				<%= more_link(raw(@group.description), 300) %>
+			</div>
+
 		<% end %>
 
 		<% if user_signed_in? %>
@@ -48,7 +51,29 @@
 
 <%= centered_content do %>
 
-<% if user_signed_in? %>
+<% if true or user_signed_in? %>
+
+<%= bettertabs :group_tabs, { selected_tab: :notes, class: "group_tabs" } do |tab| %>
+	<%= tab.static :notes do %>
+		<% @notes.each do |note| %>
+			<%= render partial: "notes/note", locals: { note: note } %>
+		<% end %>
+	<% end %>
+	<%= tab.static :findings do %>
+		some findings here
+	<% end %>
+	<%= tab.static :howto, "How-To" do %>
+		some how-to here
+	<% end %>
+	<%= tab.static :lists, "Lists" do %>
+		some lists here
+	<% end %>
+
+<% end %>
+
+<script>
+$('.group_tabs').bettertabs();
+</script>
 
 <% else %>
 
@@ -59,12 +84,12 @@
 </div>
 <% end %>
 
-<div id="group_findings_column">
+<div id="group_left_column">
 	<div id="group_findings_header">Findings & Highlights</div>
 	<div id="group_findings"><%= simple_format(@group.findings) %></div>
 </div>
 
-<div id="group_updates_column">
+<div id="group_right_column">
 	<div id="group_updates_header">Recent Updates</div>
 	<% @recent_updates.each do |entity| %>
 		<%= render partial: "entities/recent_update", locals: { entity: entity } %>
