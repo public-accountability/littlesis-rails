@@ -56,6 +56,7 @@ gem 'nilify_blanks'
 
 gem 'bootsy'
 gem 'bettertabs'
+gem 'kaminari'
 
 group :test, :development do
   gem 'better_errors', '0.7.0'

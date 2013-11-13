@@ -1,5 +1,5 @@
 <div class="entity_small">
-  <div class="entity_small_image" style="background-image: url('<%= image_path(entity.featured_image_url) %>');">
+  <div class="entity_small_image" style="background-image: url('<%= image_path(entity.featured_image_url("profile")) %>');">
   </div>
 
   <div class="entity_small_text">
@@ -10,9 +10,9 @@
     <% end %>
   
     <% if entity.person? %>
-      <span class="entity_small_count">Key affiliations: </span>&nbsp;
+      <span class="entity_small_count">Key affiliations:</span>
     <% else %>
-      <span class="entity_small_count">Key people: </span>&nbsp;    
+      <span class="entity_small_count">Key people: </span>
     <% end %>
 
     <% connection_links = [] %>

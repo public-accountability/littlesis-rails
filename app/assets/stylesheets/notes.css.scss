@@ -2,8 +2,9 @@
 $image_size: 48px;
 
 .note {
-	padding: 1em;	
+	padding: 14px;	
 	border-bottom: 1px dashed #ddd;
+	min-height: $image_size + 28px;
 }
 
 .note_image {

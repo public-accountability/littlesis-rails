@@ -3,7 +3,18 @@ Lilsis::Application.routes.draw do
   devise_for :users
   root to: 'campaigns#index'
   resources :campaigns
-  resources :groups
+  resources :groups do
+    member do
+      get 'notes'
+      get 'edits'
+      get 'lists'
+      post 'remove_list'
+      post 'feature_list'
+      post 'unfeature_list'
+      get 'new_list'
+      post 'add_list'
+    end
+  end
   resources :users
   resources :lists
   resources :entity do

@@ -94,3 +94,36 @@ a {
 		height: 200px;
 	}
 }
+
+.header_action {
+	margin-left: 5px;
+	font-size: 12px;
+}
+
+nav.pagination {
+	margin: 0;
+
+	.page.current {
+		font-weight: bold;
+	}
+}
+
+table.list_table {
+	border-collapse: collapse;
+
+	tr:hover td {
+		background-color: #f8f8f8;
+	}
+
+	th {
+		text-transform: uppercase;
+		font-weight: bold;
+		font-size: 1.1em;
+	}
+
+	td, th {
+		vertical-align: top;
+		padding-left: 14px;
+		padding-right: 14px;
+	}
+}

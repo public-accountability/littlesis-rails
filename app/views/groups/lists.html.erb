@@ -1,0 +1,32 @@
+<% content_for :body do %>
+
+
+<%= render partial: "groups/header_small", locals: { group: @group } %>
+
+
+<%= centered_content do %>
+
+<div id="group_lists_header">
+	Research Lists
+  <span class="header_action">
+    <%= link_to('add', new_list_group_path(@group)) %>
+  </span>
+</div>
+
+<% @group_lists.each do |gl| %>
+  <div class="group_list_name"><%= list_link(gl.list) %> (<%= gl.list.entities.count %>)</div>
+  <div class="group_list_description"><%= gl.list.description %></div>
+  <div class="group_list_actions">
+    <%= link_to('remove', remove_list_group_path(list_id: gl.list_id,), method: :post) %>
+    <% if gl.is_featured %>
+      <%= link_to('unfeature', unfeature_list_group_path(list_id: gl.list_id), method: :post) %>
+    <% else %>
+      <%= link_to('feature', feature_list_group_path(list_id: gl.list_id), method: :post) %>
+    <% end %>
+  </div>
+<% end %>
+
+<% end %>
+
+
+<% end %>

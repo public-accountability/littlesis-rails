@@ -1,0 +1,20 @@
+<% content_for :body do %>
+
+
+<%= render partial: "groups/header_small", locals: { group: @group } %>
+
+
+<%= centered_content do %>
+
+<div id="group_notes_header">
+	Analyst Notes
+</div>
+<div id="group_notes_pages"><%= paginate @notes %></div>
+<% @notes.each do |note| %>
+	<%= render partial: "notes/note", locals: { note: note } %>
+<% end %>
+
+<% end %>
+
+
+<% end %>

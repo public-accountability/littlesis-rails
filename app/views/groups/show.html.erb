@@ -1,6 +1,5 @@
 <% content_for :body do %>
 
-
 <div id="group_header_cover" style="background-image: url(<%= @group.cover_url %>);">
 <div id="group_header_cover_content">
 
@@ -14,7 +13,7 @@
 
 <div id="group_header">
 	<div id="group_header_left">
-		<div id="group_name"><%= @group.name %></div>
+		<div id="group_name"><%= group_link(@group) %></div>
 
 		<% if @group.tagline.present? %>
 			<div id="group_tagline"><%= @group.tagline %></div>
@@ -56,7 +55,10 @@
 <div id="group_left_column">
 <%= bettertabs :group_tabs, { selected_tab: :updates, class: "group_tabs" } do |tab| %>
 	<%= tab.static :updates do %>
-		<div id="group_notes_header">Analyst Notes</div>
+		<div id="group_notes_header">
+			Analyst Notes
+			<span class="header_action"><%= link_to "see all", notes_group_path(@group) %></span>
+		</div>
 		<% @notes.each do |note| %>
 			<%= render partial: "notes/note", locals: { note: note } %>
 		<% end %>
