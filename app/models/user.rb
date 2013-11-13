@@ -9,15 +9,14 @@ class User < ActiveRecord::Base
 
   belongs_to :sf_guard_user, inverse_of: :user
   delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
-  delegate :name, to: :sf_guard_user_profile, allow_nil: true
+  delegate :public_name, to: :sf_guard_user_profile, allow_nil: true
+  delegate :s3_url, to: :sf_guard_user_profile, allow_nil: true
 
   belongs_to :default_network, class_name: "List"
   belongs_to :sf_guard_user_profile, inverse_of: :user
 
   has_many :group_users, inverse_of: :user, dependent: :destroy
   has_many :groups, through: :group_users, inverse_of: :users
-
-  has_many :notes, inverse_of: :author, dependent: :destroy
 
   has_many :note_users, inverse_of: :user, dependent: :destroy
   has_many :received_notes, class_name: "Note", through: :note_users, inverse_of: :recipients

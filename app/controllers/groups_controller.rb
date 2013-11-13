@@ -9,9 +9,8 @@ class GroupsController < ApplicationController
   # GET /groups/1
   def show
     @recent_updates = Entity.includes(last_user: { sf_guard_user: :sf_guard_user_profile })
-                            .where(last_user_id: @group.guard_user_ids)
+                            .where(last_user_id: @group.sf_guard_user_ids)
                             .order("updated_at DESC").limit(10)
-
     if true or user_signed_in?
       @notes = @group.notes.order("updated_at DESC").limit(10)
     end

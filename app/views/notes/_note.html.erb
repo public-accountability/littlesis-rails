@@ -1,0 +1,11 @@
+<div class="note">
+	<a href="<%= user_path(note.user) %>">
+		<div class="note_image" style="background-image: url('<%= note.user.s3_url("profile") %>');"></div>
+	</a>
+	<div class="note_user">
+		<%= user_link(note.user) %>
+	</div>
+	<div class="note_body">
+		<%= raw(note.body) %>
+	</div>
+</div>

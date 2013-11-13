@@ -1,3 +1,5 @@
+$update_image_size: 35px;
+
 .entity_update {
 	padding-top: 1em;
 	padding-bottom: 1em;
@@ -7,11 +9,10 @@
 .entity_update_image {
 	float: left;
 	margin-right: 0.5em;
-
-	img {
-		height: 35px; 
-		border: 0px solid #fff;
-	}
+	height: $update_image_size;
+	width: $update_image_size;
+	background-size: cover;
+	background-position: center center;
 }
 
 .entity_update_name {
@@ -26,4 +27,59 @@
 	a {
 		font-weight: 500;
 	}
+}
+
+
+/* entity/small */
+
+$small_image_size: 50px;
+
+.entity_small
+{
+  border-bottom: 1px solid #eee;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.entity_small_image
+{
+  float: left;
+  height: 50px;
+  width: 50px;
+  background-size: cover;
+  background-position: center center;
+  border-radius: 0.5em;
+}
+
+.entity_small_text
+{
+	margin-left: 60px;
+  width: 240px;
+}
+
+.entity_small_name
+{
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: bold;
+}
+
+.entity_small_description
+{
+  font-style: italic;
+  color: #666;
+  margin-bottom: 0.5em;
+}
+
+.entity_small_count
+{
+  clear: both;
+  font-weight: bold;
+}
+
+.entity_small ul
+{
+  margin: 0;
 }

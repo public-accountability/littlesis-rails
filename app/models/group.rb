@@ -25,6 +25,10 @@ class Group < ActiveRecord::Base
 		slug
 	end
 
+	def sf_guard_group
+		SfGuardGroup.find_by(name: slug)
+	end
+
 	def featured_lists
 		lists.where("group_lists.is_featured = ?", true)
 	end
@@ -33,7 +37,9 @@ class Group < ActiveRecord::Base
 		entities.where("group_lists.is_featured = ?", true)
 	end
 
-	def guard_user_ids
-		SfGuardUser.joins(user: :groups).where("groups.id" => id).pluck(:id)
+	def sf_guard_user_ids
+		gg = sf_guard_group
+		return nil if gg.nil?
+		SfGuardUser.joins(:sf_guard_user_groups).where("sf_guard_user_group.group_id" => gg.id).pluck(:id)
 	end
 end

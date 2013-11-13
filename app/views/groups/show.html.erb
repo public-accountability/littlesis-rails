@@ -53,23 +53,45 @@
 
 <% if true or user_signed_in? %>
 
-<%= bettertabs :group_tabs, { selected_tab: :notes, class: "group_tabs" } do |tab| %>
-	<%= tab.static :notes do %>
+<div id="group_left_column">
+<%= bettertabs :group_tabs, { selected_tab: :updates, class: "group_tabs" } do |tab| %>
+	<%= tab.static :updates do %>
+		<div id="group_notes_header">Analyst Notes</div>
 		<% @notes.each do |note| %>
 			<%= render partial: "notes/note", locals: { note: note } %>
 		<% end %>
 	<% end %>
 	<%= tab.static :findings do %>
-		some findings here
+		<div id="group_findings_header">Findings & Highlights</div>
+		<div id="group_findings"><%= simple_format(@group.findings) %></div>		
 	<% end %>
 	<%= tab.static :howto, "How-To" do %>
-		some how-to here
+		<div id="group_howto_header">How-To</div>
+		<div id="group_howto"><%= simple_format(@group.howto) %></div>		
 	<% end %>
 	<%= tab.static :lists, "Lists" do %>
-		some lists here
+		<div id="group_lists_header">Research Lists</div>
+		<div id="group_howto">
+			<% @group.lists.each do |list| %>
+				<div class="group_list_name"><%= list_link(list) %> (<%= list.entities.count %>)</div>
+				<div class="group_list_description"><%= list.description %></div>
+			<% end %>
+		</div>		
+	<% end %>
+<% end %>
+</div>
+
+<div id="group_right_column">
+	<div id="group_watching_header">Who We're Watching</div>
+	<% @group.featured_entities.limit(5).each do |entity| %>
+		<%= render partial: "entities/small", locals: { entity: entity } %>
 	<% end %>
 
-<% end %>
+	<div id="group_updates_header">Recent Edits</div>
+	<% @recent_updates.each do |entity| %>
+		<%= render partial: "entities/recent_update", locals: { entity: entity } %>
+	<% end %>
+</div>
 
 <script>
 $('.group_tabs').bettertabs();

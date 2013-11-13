@@ -5,6 +5,7 @@ Lilsis::Application.routes.draw do
   resources :campaigns
   resources :groups
   resources :users
+  resources :lists
   resources :entity do
     member do
       get 'interlocks'

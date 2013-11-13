@@ -78,3 +78,19 @@ a {
 	font-size: 1em;
 	font-weight: 600;
 }
+
+.field { 
+	input[type=text] {
+		width: 500px;
+	}
+
+	textarea {
+		width: 500px;
+		height: 50px;
+	}
+
+	textarea.textarea_medium {
+		width: 500px;
+		height: 200px;
+	}
+}

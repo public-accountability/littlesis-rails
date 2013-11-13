@@ -15,4 +15,19 @@ class SfGuardUserProfile < ActiveRecord::Base
 	def name
 		(name_first + " " + name_last).chomp
 	end
+
+  def s3_url(type)
+  	return S3.url(ActionController::Base.helpers.asset_path("images/system/user.png")) if filename.nil?
+    S3.url(image_path(type))
+  end
+        
+  def image_path(type)
+    ActionController::Base.helpers.asset_path("images/#{type}/#{filename(type)}")  
+  end
+
+  def filename(type=nil)
+    return read_attribute(:filename) unless type == "square"
+    fn = read_attribute(:filename) 
+    fn.chomp(File.extname(fn)) + '.jpg'
+  end
 end

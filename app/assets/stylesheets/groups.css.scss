@@ -53,7 +53,7 @@ $logo_size: 50px;
 
 #group_header {
 	margin-top: 1em;
-	margin-bottom: 1em;
+	margin-bottom: 3em;
 
 	#group_header_left {
 		width: 550px;
@@ -87,13 +87,14 @@ $logo_size: 50px;
 
 	#group_description {
 		margin-top: 1em;
-		line-height: 1.6em;
+		line-height: 1.4em;
 	}
 
 	#group_helper {
-		background-color: rgba(220, 220, 255, 0.5);
-		border-radius: 1em;
-		border: 0px;
+		/* background-color: rgba(220, 220, 255, 0.5); */
+		background-color: rgba(240, 240, 255, 0.8);
+		border-radius: 0.5em;
+		border: 0px solid #eee;
 	}
 
 	#group_logo {
@@ -107,15 +108,19 @@ $logo_size: 50px;
 	}
 }
 
-#group_carousel_header, #group_findings_header, #group_updates_header {
-	margin-top: 2em;
-	margin-bottom: 1em;
+#group_carousel_header {
+	margin-bottom: 1em;	
+}
+
+#group_carousel_header, #group_findings_header, #group_updates_header, #group_howto_header, #group_lists_header, #group_notes_header, #group_watching_header {
+	margin-top: 1em;
+	margin-bottom: 0.5em;
 	font-size: 1.5em;
 	border-bottom: 1px solid #eee;	
 }
 
-#group_updates_header {
-	margin-bottom: 0.5em;
+#group_watching_header {
+	margin-bottom: 0;
 }
 
 #group_left_column {
@@ -159,4 +164,18 @@ $logo_size: 50px;
 		font-size: 0.7em;
 		font-style: italic;
 	}
+}
+
+.group_tabs {
+	margin-top: -4.5em;
+}
+
+.group_list_name {
+	font-size: 1em;
+	font-weight: bold;
+	margin-top: 0.5em;
+}
+
+.group_list_description {
+	font-style: italic;
 }

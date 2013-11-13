@@ -1,14 +1,14 @@
 <div class="entity_update">
-  <% if entity.person? && entity.has_featured_image %>
-  <div class="entity_update_image">
-    <%= link_to(image_tag(entity.featured_image_url("small")), entity) %>
-  </div>
+	<% if entity.person? and entity.has_featured_image %>
+  <a href="<%= entity_path(entity) %>">
+  	<div class="entity_update_image" style="background-image: url('<%= entity.featured_image_url("small") %>');"></div>
+  </a>
   <% end %>
 
   <div class="entity_update_name"><%= entity_link(entity) %></div>
 
   <div class="entity_update_user">
-	  &nbsp; &nbsp; updated by <%= user_link(entity.last_user) %>
+	  &nbsp; &nbsp; edited by <%= user_link(entity.last_user) %>
 	  <%= time_ago_in_words(entity.updated_at) %> ago
 	 </div>
 </div>

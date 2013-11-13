@@ -150,6 +150,11 @@ class Entity < ActiveRecord::Base
     end.reject(&:nil?)
   end
 
+  def default_image_url
+    return S3.url("/images/system/anon.png") if person?
+    S3.url("/images/system/anons.png")
+  end
+
   def has_featured_image
     images.featured.count > 0
   end
@@ -160,7 +165,7 @@ class Entity < ActiveRecord::Base
 
   def featured_image_url(type=nil)
     image = featured_image
-    return nil if image.nil?
+    return default_image_url if image.nil?
     type = "square" if type.nil? and image.has_square
     image.s3_url(type)
   end

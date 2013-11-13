@@ -2,7 +2,8 @@
 class Note < ActiveRecord::Base
   include SingularTable
 
-	belongs_to :user, inverse_of: :notes
+	belongs_to :sf_guard_user, foreign_key: "user_id", inverse_of: :notes
+	delegate :user, to: :sf_guard_user, allow_nil: true
 
 	has_many :note_recipients, class_name: "NoteUser", inverse_of: :note, dependent: :destroy
 	has_many :recipients, through: :note_recipients, source: :user, inverse_of: :received_notes
@@ -25,7 +26,7 @@ class Note < ActiveRecord::Base
 		self.entities = Entity.unscoped.find(self.class.commas_to_array(read_attribute(:entity_ids)))
 		self.relationships = Relationship.unscoped.find(self.class.commas_to_array(read_attribute(:relationship_ids)))
 		self.lists = List.unscoped.find(self.class.commas_to_array(lslist_ids))
-		self.group_ids = Group.joins("LEFT JOIN sf_guard_group gg ON groups.slug = gg.display_name")
+		self.group_ids = Group.joins("LEFT JOIN sf_guard_group gg ON groups.slug = gg.name")
 										 .where("gg.id" => self.class.commas_to_array(sfguardgroup_ids)).pluck(:id)
 		self.networks = List.unscoped.find(self.class.commas_to_array(read_attribute(:network_ids)))
 	end
