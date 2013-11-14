@@ -12,4 +12,11 @@ namespace :groups do
   		gl.create_group_list
   	end
   end
+
+  desc "creates a GroupUser for each SfGuardUserGroup"
+  task create_all_group_users_from_guard_user_groups: :environment do
+  	SfGuardUserGroup.all.each do |ug|
+  		ug.create_group_user
+  	end
+  end
 end

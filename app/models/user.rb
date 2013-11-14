@@ -28,4 +28,20 @@ class User < ActiveRecord::Base
   		p.create_user_with_email_password
   	end
   end
+
+  def legacy_permissions
+  	sf_gaurd_user.permissions
+  end
+
+  def has_legacy_permission(name)
+  	sf_guard_user.has_permission(name)
+  end
+
+  def in_group?(group)
+  	GroupUser.where(group_id: group, user_id: id).count > 0
+  end
+
+  def admin_in_group?(group)
+  	GroupUser.where(group_id: group, user_id: id, is_admin: true).count > 0
+  end
 end

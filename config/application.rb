@@ -22,5 +22,7 @@ module Lilsis
     # config.i18n.default_locale = :de
 
     APP_CONFIG.each_pair { |k,v| config.send :"#{k}=", v }
+
+    config.autoload_paths += %W(#{config.root}/lib)
   end
 end
