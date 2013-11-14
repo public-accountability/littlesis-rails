@@ -3,24 +3,35 @@ require 'php_serialize'
 
 class LegacyAuthenticatable < Warden::Strategies::Base
   def authenticate!
-    fail if cookies[:LittleSis].nil?
+    user = user_from_legacy_cookie
 
+    if user.nil?
+      fail
+    else
+      success!(user)
+    end
+  end
+
+  def user_from_legacy_cookie
+    # must have legacy cookie named LittleSis
+    return nil if cookies[:LittleSis].nil?
+
+    # LittleSis cookie value must be an existing session_id in the database
     sql = ActiveRecord::Base.send(:sanitize_sql_array, ["SELECT data FROM sessions WHERE session_id = ?", cookies[:LittleSis]])
     data = ActiveRecord::Base.connection.select_value(sql)
+    return nil if data.nil?
 
-    fail if data.nil?
-
+    # cookie must include "authenticated" boolean and a "user_id"
+    return nil if data.match(/authenticated\|b:1/).nil?
     match = data.match(/s:7:"user_id";s:\d+:"(\d+)"/)
+    return nil if match.nil? or match.length < 2
 
-    fail if match.length < 2
-
+    # user_id must belong to an SfGuardUser, which must have an associated User
     id = match[1]
     gu = SfGuardUser.find(id)
+    return nil if gu.nil?    
 
-    fail if gu.nil?
-    fail if gu.user.nil?
-
-    success!(gu.user)
+    gu.user
   end
 end 
 

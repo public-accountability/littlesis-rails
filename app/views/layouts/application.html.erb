@@ -13,7 +13,9 @@
 		<div id="logo"><%= link_to(image_tag("littlesis-logo-trans-200.png"), root_path) %></div>
 		<div id="menu"></div>
 		<div id="session_info">
-			<%= render "shared/session_info" %>
+			<% if user_signed_in? %>
+	  		Logged in as <strong><%= current_user.email %></strong>.
+	  	<% end %>
 		</div>
 	</div>
 </div>
