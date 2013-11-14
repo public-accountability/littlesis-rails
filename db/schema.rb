@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131112170621) do
+ActiveRecord::Schema.define(version: 20131113230739) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -972,6 +972,16 @@ ActiveRecord::Schema.define(version: 20131112170621) do
   end
 
   add_index "scraper_meta", ["scraper", "namespace", "predicate", "value"], name: "uniqueness_idx", unique: true, using: :btree
+
+  create_table "sessions", force: true do |t|
+    t.string   "session_id", null: false
+    t.text     "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true, using: :btree
+  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
   create_table "sf_guard_group", force: true do |t|
     t.string   "name"

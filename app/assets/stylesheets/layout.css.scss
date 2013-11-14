@@ -30,6 +30,17 @@ a {
 	margin: 0 auto;
 }
 
+#logo {
+	float: left;
+}
+
+#session_info {
+	padding-top: 4px;
+	font-size: 0.8em;
+	float: right;
+	a { color: rgb(192, 192, 255); }
+}
+
 #header {
 	background-color: #eee;
 }

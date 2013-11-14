@@ -57,6 +57,8 @@ gem 'nilify_blanks'
 gem 'bootsy'
 gem 'bettertabs'
 gem 'kaminari'
+gem 'activerecord-session_store'
+gem 'php-serialize'
 
 group :test, :development do
   gem 'better_errors', '0.7.0'

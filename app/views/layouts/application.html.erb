@@ -12,8 +12,12 @@
 	<div id="top_content">
 		<div id="logo"><%= link_to(image_tag("littlesis-logo-trans-200.png"), root_path) %></div>
 		<div id="menu"></div>
+		<div id="session_info">
+			<%= render "shared/session_info" %>
+		</div>
 	</div>
 </div>
+
 
 <% if content_for? :title %>
 <div id="header">
