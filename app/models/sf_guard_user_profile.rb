@@ -5,6 +5,7 @@ class SfGuardUserProfile < ActiveRecord::Base
 
   def create_user_with_email_password
   	User.where(sf_guard_user_id: user_id).first_or_create do |user|
+			user.username = public_name
 			user.email = email
 			user.password = email
 			user.password_confirmation = email

@@ -13,6 +13,13 @@ Lilsis::Application.routes.draw do
       post 'unfeature_list'
       get 'new_list'
       post 'add_list'
+      post 'join'
+      post 'leave'
+      get 'users'
+      post 'promote_user'
+      post 'demote_user'
+      post 'remove_user'
+      get 'admin'
     end
   end
   resources :users

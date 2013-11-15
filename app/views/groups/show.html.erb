@@ -20,7 +20,7 @@
 		<% end %>
 
 		<div id="group_stats">
-			<%= pluralize(@group.users.count, "analysts") %> &bull; watching <%= pluralize(@group.entities.people.count, "person") %> & <%= pluralize(@group.entities.orgs.count, "org") %> on <%= pluralize(@group.lists.count, "list") %> &bull; <%= 0 %> notes
+			<%= pluralize(@group.users.count, "analysts") %> &bull; watching <%= pluralize(@group.entities.people.count, "person") %> & <%= pluralize(@group.entities.orgs.count, "org") %> on <%= pluralize(@group.lists.count, "list") %> &bull; <%= @group.notes.count %> notes
 		</div>
 
 
@@ -32,11 +32,20 @@
 		<% end %>
 
 		<% if user_signed_in? %>
+			<% if current_user.in_group?(@group) %>
+				<div id="group_helper" class="helper">
+					You're part of this research group. Read the <a href="javascript:void(0);" onclick="jQuery.Bettertabs.select_tab('group_tabs', 'howto');">How-to</a> for help getting started. If you don't like it you're free to <%= link_to("leave", leave_group_path(@group), method: :post) %>.
+				</div>
+			<% else %>
+				<div id="group_helper" class="helper">
+					<%= link_to("Join", join_group_path(@group), method: :post) %> this research group to participate.
+				</div>
+			<% end %>
 		<% else %>
 			<br />
-			<span id="group_helper" class="helper">
+			<div id="group_helper" class="helper">
 				This is a LittleSis research group. To participate in this group, <%= link_to 'join', "/join" %> LittleSis or <%= link_to 'log in', "/login" %>.
-			</span>
+			</div>
 		<% end %>
 
 	</div>
@@ -50,7 +59,7 @@
 
 <%= centered_content do %>
 
-<% if true or user_signed_in? %>
+<% if user_signed_in? and current_user.in_group?(@group) %>
 
 <div id="group_left_column">
 <%= bettertabs :group_tabs, { selected_tab: :updates, class: "group_tabs" } do |tab| %>
@@ -72,7 +81,12 @@
 		<div id="group_howto"><%= simple_format(@group.howto) %></div>		
 	<% end %>
 	<%= tab.static :lists, "Lists" do %>
-		<div id="group_lists_header">Research Lists</div>
+		<div id="group_lists_header">
+			Research Lists
+		  <span class="header_action">
+		    <%= link_to('add', new_list_group_path(@group)) %>
+		  </span>
+		</div>
 		<div id="group_howto">
 			<% @group.lists.each do |list| %>
 				<div class="group_list_name"><%= list_link(list) %> (<%= list.entities.count %>)</div>
@@ -88,6 +102,8 @@
 	<% @group.featured_entities.limit(5).each do |entity| %>
 		<%= render partial: "entities/small", locals: { entity: entity } %>
 	<% end %>
+
+	<div class="spacer"> </div>
 
 	<div id="group_updates_header">Recent Edits</div>
 	<% @recent_updates.each do |entity| %>

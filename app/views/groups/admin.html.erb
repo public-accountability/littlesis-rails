@@ -6,12 +6,10 @@
 
 <%= centered_content do %>
 
-<h1>Editing group</h1>
+<h3>Admin Links</h3>
 
-<%= render 'form' %>
-
-<%= link_to 'Show', @group %> |
-<%= link_to 'Back', groups_path %>
+<%= link_to "edit this group", edit_group_path(@group) %><br />
+<%= link_to "manage users", users_group_path(@group) %><br />
 
 <% end %>
 

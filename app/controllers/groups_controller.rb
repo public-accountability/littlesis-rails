@@ -1,7 +1,7 @@
 class GroupsController < ApplicationController
   before_action :set_group, only: [
     :show, :edit, :update, :destroy, :notes, :edits, :lists, :feature_list, :remove_list, :unfeature_list, 
-    :new_list, :add_list
+    :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin
   ]
   before_filter :auth, except: [:show]
 
@@ -16,7 +16,7 @@ class GroupsController < ApplicationController
   # GET /groups
   def index
     check_permission "admin"
-    @groups = Group.all
+    @groups = Group.working.all
   end
 
   # GET /groups/1
@@ -121,10 +121,51 @@ class GroupsController < ApplicationController
     redirect_to lists_group_path(@group)    
   end
 
+  def join
+    @group.users << current_user
+    redirect_to @group
+  end
+
+  def leave
+    @group.users.destroy(current_user)
+    redirect_to @group
+  end
+
+  def users
+    check_permission "admin"
+    @group_users = @group.group_users.joins(:user).order("users.username ASC").page(params[:page]).per(50)
+  end
+
+  def promote_user
+    gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
+    throw "user isn't in the group" if gu.nil?
+    gu.is_admin = true
+    gu.save
+    redirect_to users_group_path(@group)
+  end
+
+  def demote_user
+    gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
+    throw "user isn't in the group" if gu.nil?
+    gu.is_admin = false
+    gu.save
+    redirect_to users_group_path(@group)
+  end
+
+  def remove_user
+    gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
+    throw "user isn't in the group" if gu.nil?
+    gu.destroy
+    redirect_to users_group_path(@group)
+  end
+
+  def admin
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_group
-      @group = Group.find_by_slug(params[:id])
+      @group = Group.working.find_by_slug(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

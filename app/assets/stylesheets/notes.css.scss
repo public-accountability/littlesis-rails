@@ -1,30 +1,24 @@
 @import "globals";
-$image_size: 48px;
 
 .note {
 	padding: 14px;	
 	border-bottom: 1px dashed #ddd;
-	min-height: $image_size + 28px;
+	min-height: $user_image_size + 28px;
 }
 
 .note_image {
 	float: left;
-	height: $image_size;
-	width: $image_size;
-  background-size: cover;
-  background-position: center center;
-  border-radius: 0.5em;
 }
 
 .note_user {
 	margin-top: -4px;
-	margin-left: $image_size + 10px;
+	margin-left: $user_image_size + 10px;
 	font-size: 1em;
 	font-weight: 600;
 }
 
 .note_body {
-	margin-left: $image_size + 10px;
+	margin-left: $user_image_size + 10px;
 	line-height: 18px;
 
 	a {

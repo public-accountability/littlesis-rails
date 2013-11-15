@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :legacy_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+         :recoverable, :rememberable, :trackable
 
   # Setup accessible (or protected) attributes for your model
   # attr_accessible :email, :password, :password_confirmation, :remember_me
@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
   delegate :public_name, to: :sf_guard_user_profile, allow_nil: true
   delegate :s3_url, to: :sf_guard_user_profile, allow_nil: true
+  alias :image_url :s3_url
 
   belongs_to :default_network, class_name: "List"
   belongs_to :sf_guard_user_profile, inverse_of: :user
@@ -23,10 +24,8 @@ class User < ActiveRecord::Base
 
   validates_uniqueness_of :sf_guard_user_id
 
-  def self.create_all_from_profiles
-  	SfGuardUserProfile.all.each do |p| 
-  		p.create_user_with_email_password
-  	end
+  def password_required?
+  	false
   end
 
   def legacy_permissions
@@ -43,5 +42,10 @@ class User < ActiveRecord::Base
 
   def admin_in_group?(group)
   	GroupUser.where(group_id: group, user_id: id, is_admin: true).count > 0
+  end
+
+  def legacy_created_at
+  	return created_at if sf_guard_user.nil?
+  	sf_guard_user.created_at
   end
 end

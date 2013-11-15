@@ -19,6 +19,8 @@ class Group < ActiveRecord::Base
 	mount_uploader :logo, GroupLogoUploader
 	mount_uploader :cover, GroupCoverUploader
 
+	scope :working, -> { joins("LEFT JOIN sf_guard_group ON sf_guard_group.name = groups.slug").where("sf_guard_group.is_working" => true) }
+
 	validates_presence_of :name, :slug
 
 	def to_param

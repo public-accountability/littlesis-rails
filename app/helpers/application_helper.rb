@@ -30,4 +30,12 @@ module ApplicationHelper
   	 content
   	end
   end
+
+  def yes_or_no(value)
+  	value ? "yes" : "no"
+  end
+
+  def check_mark(value=true)
+		value ? raw("&#x2713;") : nil
+  end
 end

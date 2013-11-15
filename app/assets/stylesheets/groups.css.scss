@@ -2,12 +2,13 @@
 $logo_size: 50px;
 
 #group_header_cover {
-	background-color: #444;
+	background-color: #eee;
 	background-size: cover;
 	background-position: left top;
 	background-repeat: no-repeat;
 	padding-top: 1em;
 	padding-bottom: 2em;
+	margin-bottom: 1em;
 }
 
 #group_header_cover_content {
@@ -71,6 +72,7 @@ $logo_size: 50px;
 
 	#group_name {
 		font-size: 3em;
+		line-height: 1em;
 		font-weight: bold;
 		a { 
 			color: black; 
@@ -78,6 +80,7 @@ $logo_size: 50px;
 	}
 
 	#group_tagline {
+		margin-top: 0.5em;
 		font-size: 1.3em;
 		font-style: italic;
 	}
@@ -94,6 +97,8 @@ $logo_size: 50px;
 	}
 
 	#group_helper {
+		display: inline-block;
+		margin-top: 1em;
 		/* background-color: rgba(220, 220, 255, 0.5); */
 		background-color: rgba(240, 240, 255, 0.8);
 		border-radius: 0.5em;
@@ -125,8 +130,7 @@ $logo_size: 50px;
 	margin-bottom: 1em;	
 }
 
-#group_carousel_header, #group_findings_header, #group_updates_header, #group_howto_header, #group_lists_header, #group_notes_header, #group_watching_header {
-	margin-top: 1em;
+.group_header, #group_carousel_header, #group_findings_header, #group_updates_header, #group_howto_header, #group_lists_header, #group_notes_header, #group_watching_header {
 	margin-bottom: 0.5em;
 	font-size: 1.5em;
 	border-bottom: 1px solid #eee;	
@@ -134,6 +138,10 @@ $logo_size: 50px;
 
 #group_watching_header {
 	margin-bottom: 0;
+}
+
+#group_carousel {
+	margin-bottom: 1em;
 }
 
 #group_left_column {
@@ -212,4 +220,19 @@ $logo_size: 50px;
 .group_list_actions {
 	margin-bottom: 1em;
 	font-size: 0.9em;
+}
+
+.group_users_name {
+	font-weight: bold;
+}
+
+.group_users_image .user_image {
+	width: 30px;
+	height: 30px;
+}
+
+tr.group_users_row td {
+	padding-top: 0.4em;
+	padding-bottom: 0.4em;
+	vertical-align: middle !important;
 }

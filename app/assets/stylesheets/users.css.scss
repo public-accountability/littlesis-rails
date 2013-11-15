@@ -1,0 +1,9 @@
+@import "globals";
+
+.user_image {
+	height: $user_image_size;
+	width: $user_image_size;
+  background-size: cover;
+  background-position: center center;
+  border-radius: 0.5em;
+}

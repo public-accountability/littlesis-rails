@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131113230739) do
+ActiveRecord::Schema.define(version: 20131115201434) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1173,6 +1173,7 @@ ActiveRecord::Schema.define(version: 20131113230739) do
     t.datetime "updated_at"
     t.integer  "default_network_id"
     t.integer  "sf_guard_user_id",                                null: false
+    t.string   "username",                                        null: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

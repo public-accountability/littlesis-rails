@@ -14,7 +14,7 @@
 		<div id="menu"></div>
 		<div id="session_info">
 			<% if user_signed_in? %>
-	  		Logged in as <strong><%= current_user.email %></strong>.
+	  		Logged in as <strong><%= current_user.username %></strong>
 	  	<% end %>
 		</div>
 	</div>
@@ -37,6 +37,13 @@
 
 <div id="container">
 	<%= yield %>
+</div>
+
+<div id="footer_clear"></div>
+<div id="footer">
+  A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>. 
+  More <%= link_to('about LittleSis', '/about') %>.
+  Read the <%= link_to('disclaimer', '/disclaimer') %>.
 </div>
 
 </body>
