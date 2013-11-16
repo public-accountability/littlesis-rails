@@ -35,7 +35,7 @@ class Note < ActiveRecord::Base
 		self.entities = Entity.unscoped.find(self.class.commas_to_array(read_attribute(:entity_ids)))
 		self.relationships = Relationship.unscoped.find(self.class.commas_to_array(read_attribute(:relationship_ids)))
 		self.lists = List.unscoped.find(self.class.commas_to_array(lslist_ids))
-		self.groups = Group.joins(:sf_guard_group).where(id: self.class.commas_to_array(sfguardgroup_ids))
+		self.groups = Group.joins(:sf_guard_group).where("sf_guard_group.id" => self.class.commas_to_array(sfguardgroup_ids))
 		self.networks = List.unscoped.find(self.class.commas_to_array(read_attribute(:network_ids)))
 		self
 	end
