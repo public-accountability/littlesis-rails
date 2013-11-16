@@ -26,4 +26,13 @@ class List < ActiveRecord::Base
   def network?
   	@is_network
   end
+
+  def name_to_legacy_slug
+    name.gsub(" ", "_").gsub("/", "~")
+
+  end
+
+  def legacy_url
+    "/list/" + id.to_s + "/" + name_to_legacy_slug
+  end
 end

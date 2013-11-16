@@ -66,4 +66,8 @@ class Relationship < ActiveRecord::Base
     hash.delete("relationship_id")
     hash
   end
+
+  def legacy_url
+    "/relationship/view/id/" + id
+  end
 end

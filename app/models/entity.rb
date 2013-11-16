@@ -19,15 +19,15 @@ class Entity < ActiveRecord::Base
   scope :orgs, -> { where(primary_ext: 'Org') }
 
   def person?
-    primary_ext == "Person"
+    primary_ext == 'Person'
   end  
 
   def org?
-    primary_ext == "Org"
+    primary_ext == 'Org'
   end  
 
   def other_ext
-    person? ? "Org" : "Person"
+    person? ? 'Org' : 'Person'
   end
 
   def all_attributes
@@ -236,7 +236,7 @@ class Entity < ActiveRecord::Base
     entities
   end
 
-  def self.rubin
+  def self.rubin # :)
     find(1164)
   end
 
@@ -244,4 +244,11 @@ class Entity < ActiveRecord::Base
     User.find(last_user_id)
   end
 
+  def name_to_legacy_slug
+    name.gsub(" ", "_").gsub("/", "~")
+  end
+
+  def legacy_url
+    "/" + primary_ext.downcase + "/" + id.to_s + "/" + name_to_legacy_slug
+  end
 end
