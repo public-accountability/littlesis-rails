@@ -10,6 +10,8 @@ class SfGuardGroup < ActiveRecord::Base
 	has_many :sf_guard_group_permissions, foreign_key: "group_id", inverse_of: :sf_guard_group, dependent: :destroy
 	has_many :sf_guard_permissions, through: :sf_guard_group_permissions, inverse_of: :sf_guard_groups
 
+	scope :working, -> { where(is_working: true) }
+
 	def create_group
 		Group.where(slug: name).first_or_create do |group|
 			group.slug = name

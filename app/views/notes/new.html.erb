@@ -1,0 +1,27 @@
+<div class="spacer"> </div>
+<div class="spacer"> </div>
+
+<div class="note_form">
+
+<%= form_for(@note) do |f| %>
+
+  <div class="note_form_top">
+    Write a Note
+  </div>
+
+  <div class="note_form_body">
+    <%= f.text_area :body %>  
+  </div>
+
+  <div class="note_form_bottom">
+    <div class="note_form_button">
+      <%= f.submit "Post" %>
+    </div>
+
+    <div class="note_form_checkbox">
+      <%= f.check_box :is_private %> private
+    </div>  
+  </div>
+<% end %>
+
+</div>

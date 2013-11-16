@@ -24,8 +24,8 @@ class User < ActiveRecord::Base
 
   validates_uniqueness_of :sf_guard_user_id
 
-  def password_required?
-  	false
+  def to_param
+  	username
   end
 
   def legacy_permissions

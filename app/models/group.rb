@@ -2,8 +2,8 @@ class Group < ActiveRecord::Base
 	include Bootsy::Container
 
 	belongs_to :campaign, inverse_of: :groups
-	
 	belongs_to :default_network, class_name: "List", inverse_of: :groups
+	belongs_to :sf_guard_group, foreign_key: "slug", primary_key: "name"
 	
 	has_many :group_users, inverse_of: :group, dependent: :destroy
 	has_many :users, through: :group_users, inverse_of: :groups
@@ -19,16 +19,12 @@ class Group < ActiveRecord::Base
 	mount_uploader :logo, GroupLogoUploader
 	mount_uploader :cover, GroupCoverUploader
 
-	scope :working, -> { joins("LEFT JOIN sf_guard_group ON sf_guard_group.name = groups.slug").where("sf_guard_group.is_working" => true) }
+	scope :working, -> { joins(:sf_guard_group).where("sf_guard_group.is_working" => true) }
 
 	validates_presence_of :name, :slug
 
 	def to_param
 		slug
-	end
-
-	def sf_guard_group
-		SfGuardGroup.find_by(name: slug)
 	end
 
 	def featured_lists
@@ -40,8 +36,6 @@ class Group < ActiveRecord::Base
 	end
 
 	def sf_guard_user_ids
-		gg = sf_guard_group
-		return nil if gg.nil?
-		SfGuardUser.joins(:sf_guard_user_groups).where("sf_guard_user_group.group_id" => gg.id).pluck(:id)
+		sf_guard_group.sf_guard_users.pluck(:id)
 	end
 end

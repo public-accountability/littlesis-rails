@@ -1,6 +1,7 @@
 module UsersHelper
-	def user_link(user)
-		link_to user.public_name, user
+	def user_link(user, name=nil)
+		name ||= user.username
+		link_to name, user
 	end
 
 	def user_image(user)

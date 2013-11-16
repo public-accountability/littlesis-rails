@@ -17,6 +17,9 @@ class List < ActiveRecord::Base
   has_many :note_lists, inverse_of: :list
   has_many :notes, through: :note_lists, inverse_of: :lists
 
+  has_many :note_networks, inverse_of: :network
+  has_many :network_notes, through: :note_networks, inverse_of: :networks
+
   has_many :sf_guard_group_lists, inverse_of: :list, dependent: :destroy
   has_many :sf_guard_groups, through: :sf_guard_group_lists, inverse_of: :lists
 

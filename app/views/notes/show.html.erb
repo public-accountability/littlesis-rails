@@ -1,0 +1,25 @@
+<div class="spacer"> </div>
+<div class="spacer"> </div>
+<div class="spacer"> </div>
+
+<div class="big_note">
+
+	<div class="big_note_user_image">
+		<%= user_image(@note.user) %>
+	</div>
+
+	<div class="big_note_user_name">
+		<div class="big_note_user_name_content">
+			<%= user_link(@note.user) %>
+		</div>
+
+		<div class="big_note_timestamp">
+			<%= note_timestamp_link(@note) %>
+		</div>
+	</div>
+
+	<div class="big_note_body">
+		<%= render_note(@note) %>
+	</div>
+
+</div>

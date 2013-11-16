@@ -16,7 +16,7 @@ class GroupsController < ApplicationController
   # GET /groups
   def index
     check_permission "admin"
-    @groups = Group.working.all
+    @groups = Group.all
   end
 
   # GET /groups/1
@@ -165,7 +165,7 @@ class GroupsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_group
-      @group = Group.working.find_by_slug(params[:id])
+      @group = Group.find_by_slug(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

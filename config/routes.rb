@@ -29,6 +29,12 @@ Lilsis::Application.routes.draw do
       get 'interlocks'
     end
   end
+  resources :notes, only: [:new, :create, :destroy]
+  get "/notes/:username/:id",
+    controller: 'notes',
+    action: 'show',
+    constraints: { username: /\w+/, id: /\d+/ },
+    as: "note_with_user"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -25,3 +25,75 @@
 		color: $logo_blue_lighter;
 	}
 }
+
+.note_timestamp {
+	margin-left: $user_image_size + 10px;
+	margin-top: 0.3em;
+	font-size: 0.8em;
+	font-style: italic;
+
+	a {
+		color: #888;		
+	}
+}
+
+.big_note_user_image {
+	display: inline-block;
+	margin-right: 0.5em;
+}
+
+.big_note_user_name {
+	display: inline-block;
+	height: $user_image_size;
+	font-size: 2em;
+	font-weight: bold;
+}
+
+.big_note_body {
+	clear: both;
+	margin-top: 1em;
+	padding: 2em;
+	font-size: 1.4em;
+	line-height: 1.4em;
+	width: 600px;
+	background-color: #eee;
+	border-radius: 0.5em;
+	border: 1px solid #ddd;
+}
+
+.big_note_timestamp {
+	font-style: italic;
+	font-size: 0.4em !important;
+	font-weight: normal !important;
+	margin-top: -0.5em;
+
+	a {
+		color: #888;		
+	}	
+}
+
+.note_form_top {
+	font-size: 2em;
+	margin-bottom: 0.5em;
+}
+
+.note_form_body textarea {
+	width: 600px;
+	height: 300px;
+	font-size: 1.4em;
+	border: 1px solid #ccc;
+}
+
+.note_form_bottom {
+	margin-top: 1em;
+}
+
+.note_form_button {
+	display: inline-block;
+	font-size: 1.1em;
+}
+
+.note_form_checkbox {
+	margin-left: 1em;
+	display: inline-block;
+}

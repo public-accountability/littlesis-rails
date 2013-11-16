@@ -58,6 +58,7 @@ a {
 }
 
 #container {
+	clear: both;
 	width: $page_width;
 	margin: 0 auto;
 	min-height: 500px;
@@ -141,7 +142,7 @@ table.list_table {
 }
 
 div.spacer {
-	margin-bottom: 1em;
+	height: 1em;
 }
 
 #footer_clear {
