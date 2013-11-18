@@ -30,10 +30,16 @@ Lilsis::Application.routes.draw do
     end
   end
   resources :notes, only: [:new, :create, :destroy]
+  get "/notes/:username",
+    controller: 'notes',
+    action: 'user',
+    constraints: { username: /[\w.]+/ },
+    as: "user_notes"
+
   get "/notes/:username/:id",
     controller: 'notes',
     action: 'show',
-    constraints: { username: /\w+/, id: /\d+/ },
+    constraints: { username: /[\w.]+/, id: /\d+/ },
     as: "note_with_user"
 
   # The priority is based upon order of creation: first created -> highest priority.

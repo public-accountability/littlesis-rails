@@ -1,0 +1,20 @@
+<div class="spacer"> </div>
+<div class="spacer"> </div>
+<div class="spacer"> </div>
+
+<div class="user_notes">
+
+<div class="section_header">
+	Notes by <%= user_link(@user) %>
+	<span class="header_action"><%= link_to 'write note', new_note_path(user: @user.username) %></span>
+</div>
+
+<%= paginate @notes %>
+
+<% @notes.each do |note| %>
+	<% if note.visible_to?(current_user) %>
+		<%= render partial: "notes/note", locals: { note: note } %>
+	<% end %>
+<% end %>
+
+</div>

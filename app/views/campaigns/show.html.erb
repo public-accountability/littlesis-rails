@@ -15,7 +15,7 @@
 			<% end %>
 		</div>
 		<div id="campaign_cover_right">
-			<div id="campaign_groups">Research Groups</div>
+			<div class="section_header">Research Groups</div>
 			<div id="campaign_groups_list">
 				<% ([@campaign.groups.first] * 3).each do |g| %>
 					<%= render partial: "groups/mini", locals: { group: g } %>

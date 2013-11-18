@@ -36,6 +36,9 @@ class Group < ActiveRecord::Base
 	end
 
 	def sf_guard_user_ids
-		sf_guard_group.sf_guard_users.pluck(:id)
+		users.pluck(:sf_guard_user_id)
+		
+		# sf_guard_group.sf_guard_users.pluck(:id)
+		# ^ but Group might not have an SfGuardGroup!
 	end
 end

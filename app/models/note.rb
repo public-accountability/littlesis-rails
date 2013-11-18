@@ -2,6 +2,9 @@
 class Note < ActiveRecord::Base
   include SingularTable
 
+  belongs_to :user, inverse_of: :notes
+  belongs_to :sf_guard_user, inverse_of: :notes
+
 	has_many :note_recipients, class_name: "NoteUser", inverse_of: :note, dependent: :destroy
 	has_many :recipients, through: :note_recipients, source: :user, inverse_of: :received_notes
 
@@ -20,14 +23,16 @@ class Note < ActiveRecord::Base
 	has_many :note_groups, inverse_of: :note, dependent: :destroy
 	has_many :groups, through: :note_groups, inverse_of: :notes
 
+	scope :public, -> { where(is_private: false) }
+	scope :private, -> { where(is_private: true) }
+
 	# before_save :parse
 
-	def sf_guard_user
-		SfGuardUser.find(user_id)
-	end
-
-	def user
-		legacy? ? sf_guard_user.user : User.find(user_id)
+	def update_legacy_user_id
+		if legacy? and sf_guard_user_id.blank?
+			self.sf_guard_user_id = user_id
+			self.user_id = User.find_by(sf_guard_user_id: sf_guard_user_id).id
+		end
 	end
 
 	def normalize
@@ -77,5 +82,24 @@ class Note < ActiveRecord::Base
 
 	def legacy?
 		is_legacy
+	end
+
+	def private?
+		is_private
+	end
+
+	def all_users
+		[user] + recipients
+	end
+
+	def all_user_ids
+		[user_id] + recipient_ids
+	end
+
+	def visible_to?(user)
+		return false if user.nil?
+		return true unless private?
+		return true if all_user_ids.include?(user.id)
+		return false
 	end
 end

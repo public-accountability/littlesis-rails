@@ -25,3 +25,10 @@
 <% end %>
 
 </div>
+
+<% if @reply_to_note.present? %>
+<div class="spacer"> </div>
+<h3>In reply to:</h3>
+<div class="spacer"> </div>
+<%= render partial: "notes/big", locals: { note: @reply_to_note } %>
+<% end %>

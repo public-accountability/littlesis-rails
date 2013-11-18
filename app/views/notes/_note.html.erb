@@ -1,7 +1,11 @@
 <div class="note">
+	<div class="note_reply">
+		<%= link_to(image_tag("reply.gif"), new_note_path(reply_to: note.id)) %>
+	</div>
 	<div class="note_image"><%= user_image(note.user) %></div>
 	<div class="note_user">
 		<%= user_link(note.user) %>
+		<%= image_tag("lock.png") if note.is_private %>
 	</div>
 	<div class="note_body">
 		<%= raw(note.body) %>

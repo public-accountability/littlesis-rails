@@ -19,6 +19,8 @@ class User < ActiveRecord::Base
   has_many :group_users, inverse_of: :user, dependent: :destroy
   has_many :groups, through: :group_users, inverse_of: :users
 
+  has_many :notes, inverse_of: :user
+
   has_many :note_users, inverse_of: :user, dependent: :destroy
   has_many :received_notes, class_name: "Note", through: :note_users, inverse_of: :recipients
 

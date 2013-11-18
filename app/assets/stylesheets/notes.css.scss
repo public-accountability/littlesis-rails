@@ -4,6 +4,17 @@
 	padding: 14px;	
 	border-bottom: 1px dashed #ddd;
 	min-height: $user_image_size + 28px;
+	position: relative;
+}
+
+.note_reply {
+	display: none;
+	position: absolute;
+	right: 0;
+}
+
+.note:hover .note_reply {
+	display: block;
 }
 
 .note_image {
@@ -15,6 +26,10 @@
 	margin-left: $user_image_size + 10px;
 	font-size: 1em;
 	font-weight: 600;
+
+	img {
+		margin-top: -5px;
+	}
 }
 
 .note_body {
@@ -47,6 +62,19 @@
 	height: $user_image_size;
 	font-size: 2em;
 	font-weight: bold;
+	margin-right: 0.5em;
+}
+
+.big_note_private {
+	color: #888;
+	font-weight: bold;
+	margin-top: 0.5em;
+}
+
+.big_note_reply {
+	position: absolute;
+	right: 1em;
+	top: 1em;
 }
 
 .big_note_body {
@@ -59,6 +87,7 @@
 	background-color: #eee;
 	border-radius: 0.5em;
 	border: 1px solid #ddd;
+	position: relative;
 }
 
 .big_note_timestamp {
@@ -96,4 +125,8 @@
 .note_form_checkbox {
 	margin-left: 1em;
 	display: inline-block;
+}
+
+.user_notes {
+	width: 600px;
 }

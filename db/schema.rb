@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131116213612) do
+ActiveRecord::Schema.define(version: 20131118204508) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -612,6 +612,7 @@ ActiveRecord::Schema.define(version: 20131116213612) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "is_legacy",                      default: false, null: false
+    t.integer  "sf_guard_user_id"
   end
 
   add_index "note", ["alerted_user_ids"], name: "alerted_user_ids_idx", length: {"alerted_user_ids"=>255}, using: :btree
