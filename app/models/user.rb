@@ -50,4 +50,10 @@ class User < ActiveRecord::Base
   	return created_at if sf_guard_user.nil?
   	sf_guard_user.created_at
   end
+
+  def notes_with_replies
+		Note.joins(:user, :recipients)
+		      .where("users.id = ? OR recipients_note.id = ?", id, id)
+		      .order("created_at DESC")
+  end
 end

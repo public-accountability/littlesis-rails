@@ -35,12 +35,13 @@ Lilsis::Application.routes.draw do
     action: 'user',
     constraints: { username: /[\w.]+/ },
     as: "user_notes"
-
   get "/notes/:username/:id",
     controller: 'notes',
     action: 'show',
     constraints: { username: /[\w.]+/, id: /\d+/ },
     as: "note_with_user"
+
+  get "/home/notes" => "home#notes"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

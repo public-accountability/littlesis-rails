@@ -1,16 +1,21 @@
-<div class="note">
-	<div class="note_reply">
-		<%= link_to(image_tag("reply.gif"), new_note_path(reply_to: note.id)) %>
-	</div>
+<div class="note<%= (defined? user and user.present? and user.id != note.user_id) ? ' reply' : '' %>">
 	<div class="note_image"><%= user_image(note.user) %></div>
 	<div class="note_user">
 		<%= user_link(note.user) %>
 		<%= image_tag("lock.png") if note.is_private %>
 	</div>
 	<div class="note_body">
-		<%= raw(note.body) %>
+		<%= render_note(note) %>
 	</div>
 	<div class="note_timestamp">
 		<%= note_timestamp_link(note) %>
+		&nbsp;
+		<div class="note_reply">
+			<% if defined? show_delete and show_delete.present? and note.user == current_user %>
+				<%= link_to(image_tag("trash.gif"), note, method: :delete, confirm: "Are you sure?") %>
+			<% else %>
+				<%= link_to(image_tag("reply.gif"), new_note_path(reply_to: note.id)) %>
+			<% end %>
+		</div>
 	</div>
 </div>

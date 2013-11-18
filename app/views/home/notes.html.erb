@@ -1,0 +1,25 @@
+<div class="spacer"> </div>
+<div class="spacer"> </div>
+<div class="spacer"> </div>
+
+<div class="user_notes">
+
+<div class="section_header">
+	My Notes
+
+	<% if params[:show_replies].present? and params[:show_replies] == "1" %>
+		<span class="header_action"><%= link_to("hide replies", home_notes_path) %></span>
+	<% else %>
+		<span class="header_action"><%= link_to("show replies", home_notes_path(show_replies: 1)) %></span>
+	<% end %>
+</div>
+
+<%= paginate @notes %>
+
+<% @notes.each do |note| %>
+	<% if note.visible_to?(current_user) %>
+		<%= render partial: "notes/note", locals: { note: note, user: current_user, show_delete: true } %>
+	<% end %>
+<% end %>
+
+</div>

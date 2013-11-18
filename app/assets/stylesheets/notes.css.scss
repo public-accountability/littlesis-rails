@@ -7,14 +7,16 @@
 	position: relative;
 }
 
+.note.reply {
+	border-left: 10px solid #f8f8f8;
+}
+
 .note_reply {
 	display: none;
-	position: absolute;
-	right: 0;
 }
 
 .note:hover .note_reply {
-	display: block;
+	display: inline-block;
 }
 
 .note_image {
@@ -46,6 +48,7 @@
 	margin-top: 0.3em;
 	font-size: 0.8em;
 	font-style: italic;
+	height: 16px;
 
 	a {
 		color: #888;		

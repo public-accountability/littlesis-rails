@@ -63,12 +63,14 @@ class NotesController < ApplicationController
   # DELETE /notes/1
   def destroy
     @note.destroy
-    redirect_to notes_url, notice: 'Note was successfully destroyed.'
+    redirect_to home_notes_path, notice: 'Note was successfully destroyed.'
   end
 
   def user
-    @user = User.includes(:notes, notes: :recipients).find_by_username(params[:username])
-    @notes = @user.notes.order("created_at DESC").page(params[:page]).per(20)
+    @user = User.includes(:notes, notes: [:user, :recipients]).find_by_username(params[:username])
+    @notes = @user.notes_with_replies.page(params[:page]).per(20)
+
+    # @user.notes.order("created_at DESC").page(params[:page]).per(20)
   end
 
   private
