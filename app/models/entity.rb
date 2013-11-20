@@ -2,10 +2,11 @@ class Entity < ActiveRecord::Base
   include SingularTable
   include SoftDelete
 
+  has_many :aliases, inverse_of: :entity, dependent: :destroy
   has_many :images, inverse_of: :entity, dependent: :destroy
   has_many :list_entities, inverse_of: :entity, dependent: :destroy
   has_many :lists, -> { where(is_network: false) }, through: :list_entities
-  has_many :networks, -> { where(is_network: true) }, class_name: "List", through: :list_entities
+  has_many :networks, -> { where(is_network: true) }, class_name: "List", through: :list_entities, source: :list
   has_many :links, foreign_key: "entity1_id", inverse_of: :entity, dependent: :destroy
   has_many :reverse_links, class_name: "Link", foreign_key: "entity2_id", inverse_of: :related, dependent: :destroy
   has_many :relationships, through: :links

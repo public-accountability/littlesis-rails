@@ -1,0 +1,22 @@
+.tt-dropdown-menu {
+	background: white;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 6px;
+	box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 10px 0px;
+}
+
+.tt-suggestion {
+	padding: 0.3em;
+	padding-left: 0.8em;
+	padding-right: 0.8em;
+
+	p { margin: 0; }
+
+	&:hover {
+		background: #f8f8f8;
+	}
+}
+
+.tt-hint {
+	display: none;
+}

@@ -1,5 +1,4 @@
 require 'devise/strategies/authenticatable'
-require 'php_serialize' 
 
 class LegacyAuthenticatable < Warden::Strategies::Base
   def authenticate!

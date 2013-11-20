@@ -58,7 +58,11 @@ gem 'bootsy'
 gem 'bettertabs'
 gem 'kaminari'
 gem 'activerecord-session_store'
-gem 'php-serialize'
+gem 'thinking-sphinx', '~> 3.0.2'
+gem 'delayed_job_active_record'
+gem 'ts-delayed-delta', '2.0.0', :require => 'thinking_sphinx/deltas/delayed_delta'
+gem 'daemons'
+gem 'twitter-typeahead-rails'
 
 group :test, :development do
   gem 'better_errors', '0.7.0'

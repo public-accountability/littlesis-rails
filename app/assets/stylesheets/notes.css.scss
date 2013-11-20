@@ -111,7 +111,7 @@
 
 .note_form_body textarea {
 	width: 600px;
-	height: 300px;
+	height: 250px;
 	font-size: 1.4em;
 	border: 1px solid #ccc;
 }
@@ -133,3 +133,36 @@
 .user_notes {
 	width: 600px;
 }
+
+#entity_search {
+	font-size: 1em;
+	margin-bottom: 1em;
+
+	#entity_text {
+		font-weight: bold;		
+		width: 300px;
+		background-color: #f8f8f8;
+		cursor: text;
+	}
+
+	#entity_text_group {
+		display: none;
+		position: relative;
+		top: -1px;
+	}
+
+	#entity_text_link {
+		width: 110px;
+	}
+
+	#entity_text_link_wrapper {
+		display: inline-block;
+		width: 110px;
+	}
+
+	input {
+		font-size: 1em;
+		line-height: 1.2em;
+	}
+}
+

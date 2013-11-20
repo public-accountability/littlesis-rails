@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131118204508) do
+ActiveRecord::Schema.define(version: 20131119165745) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -225,6 +225,22 @@ ActiveRecord::Schema.define(version: 20131118204508) do
     t.string "abbreviation", limit: 10
   end
 
+  create_table "delayed_jobs", force: true do |t|
+    t.integer  "priority",   default: 0, null: false
+    t.integer  "attempts",   default: 0, null: false
+    t.text     "handler",                null: false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
   create_table "domain", force: true do |t|
     t.string "name", limit: 40,  null: false
     t.string "url",  limit: 200, null: false
@@ -288,10 +304,12 @@ ActiveRecord::Schema.define(version: 20131118204508) do
     t.boolean  "is_deleted",                      default: false, null: false
     t.integer  "last_user_id"
     t.integer  "merged_id"
+    t.boolean  "delta",                           default: true,  null: false
   end
 
   add_index "entity", ["blurb"], name: "blurb_idx", using: :btree
   add_index "entity", ["created_at"], name: "created_at_idx", using: :btree
+  add_index "entity", ["delta"], name: "index_entity_on_delta", using: :btree
   add_index "entity", ["last_user_id"], name: "last_user_id_idx", using: :btree
   add_index "entity", ["name", "blurb", "website"], name: "search_idx", using: :btree
   add_index "entity", ["name"], name: "name_idx", using: :btree

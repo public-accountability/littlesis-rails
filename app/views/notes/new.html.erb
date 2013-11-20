@@ -3,22 +3,30 @@
 
 <div class="note_form">
 
+<div class="note_form_top">
+  Write a Note
+</div>
+
+<div id="entity_search">
+  Find entity: &nbsp;<%= text_field_tag :entity, nil, id: "note_entity_search", class: "form-control" %>
+  &nbsp;
+  <span class="input-group" id="entity_text_group">
+    <input id="entity_text" class="form-control" disabled /><span class="input-group-btn" id="entity_text_link_wrapper"><button class="btn btn-default" id="entity_text_link">copy to note</button></span>
+  </span>
+</div>
+
 <%= form_for(@note) do |f| %>
 
-  <div class="note_form_top">
-    Write a Note
-  </div>
-
   <div class="note_form_body">
-    <%= f.text_area :body %>  
+    <%= f.text_area :body, class: "form-control" %>  
   </div>
 
   <div class="note_form_bottom">
     <div class="note_form_button">
-      <%= f.submit "Post" %>
+      <%= f.submit "Post", class: "btn btn-primary" %>
     </div>
 
-    <div class="note_form_checkbox">
+    <div class="note_form_checkbox checkbox-inline">
       <%= f.check_box :is_private %> private
     </div>  
   </div>
@@ -32,3 +40,26 @@
 <div class="spacer"> </div>
 <%= render partial: "notes/big", locals: { note: @reply_to_note } %>
 <% end %>
+
+<script>
+$(window).load(function() {
+  $('#entity_text_link').on('click', function() {
+    $('#note_body').append($('#entity_text').val());
+  })
+
+  var selected_callback = function(obj, datum) {
+    str = '@entity:' + datum.id + '[' + datum.name + ']';
+    $('#entity_text').val(str);
+    $('#entity_text_group').css('display', 'inline');
+  };
+
+  $('#note_entity_search')
+    .typeahead({ 
+      name: 'entities',
+      remote: '<%= entity_name_search_url + "?q=%QUERY" %>',
+      limit: 8
+    })
+    .on("typeahead:selected", selected_callback);
+
+});
+</script>
