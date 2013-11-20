@@ -1,5 +1,5 @@
 class NotesController < ApplicationController
-  before_filter :auth
+  before_filter :auth, except: [:show, :user]
   before_action :set_note, only: [:show, :edit, :update, :destroy]
 
   # GET /notes
