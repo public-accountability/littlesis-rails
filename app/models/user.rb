@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
   has_many :notes, foreign_key: "new_user_id", inverse_of: :user
 
   has_many :note_users, inverse_of: :user, dependent: :destroy
-  has_many :received_notes, class_name: "Note", through: :note_users, inverse_of: :recipients
+  has_many :received_notes, class_name: "Note", through: :note_users, source: :note, inverse_of: :recipients
 
   validates_uniqueness_of :sf_guard_user_id
 
@@ -52,8 +52,32 @@ class User < ActiveRecord::Base
   end
 
   def notes_with_replies
-		Note.joins(:user, :recipients)
-		      .where("users.id = ? OR recipients_note.id = ?", id, id)
-		      .order("created_at DESC")
+		Note
+			.joins("LEFT JOIN note_users ON note_users.note_id = note.id")
+			.joins("LEFT JOIN users ON users.id = note_users.user_id")
+	    .where("note.new_user_id = ? OR users.id = ?", id, id)
+	    .order("note.created_at DESC")
+	    .group("note.id")
+  end
+
+  def notes_with_replies_visible_to_user(user)
+  	return notes_with_replies.public if user.nil?
+  	notes_with_replies.where("note.is_private = ? OR users.id = ?", false, user.id)
+  end
+
+  def notes_visible_to_user(user)
+  	return notes.public.order("note.created_at DESC") if user.nil?
+  	notes.joins(:recipients)
+  		.where("note.is_private = ? OR users.id = ?", false, user.id)
+  		.group("note.id")
+  		.order("note.created_at DESC")
+  end
+
+  def received_notes_visible_to_user(user)
+  	return received_notes.public.order("note.created_at DESC") if user.nil?
+  	received_notes.joins(:recipients)
+  		.where("note.is_private = ? OR users.id = ?", false, user.id)
+  		.group("note.id")
+  		.order("note.created_at DESC")
   end
 end

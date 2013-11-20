@@ -75,8 +75,14 @@ class NotesController < ApplicationController
   end
 
   def user
-    @user = User.includes(:notes, notes: [:user, :recipients]).find_by_username(params[:username])
-    @notes = @user.notes_with_replies.page(params[:page]).per(20)
+    @user = User.find_by_username(params[:username])
+    redirect_to home_notes_path if current_user.present? and current_user.id == @user.id
+
+    if params[:show_replies].present? and params[:show_replies] == "1"
+      @notes = @user.notes_with_replies_visible_to_user(current_user).page(params[:page]).per(20)
+    else
+      @notes = @user.notes_visible_to_user(current_user).page(params[:page]).per(20)
+    end
   end
 
   private
@@ -87,6 +93,6 @@ class NotesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def note_params
-      params.require(:note).permit(:body_raw, :is_private, :reply_to, :group, :page)
+      params.require(:note).permit(:body_raw, :is_private)
     end
 end
