@@ -45,15 +45,20 @@ class Note < ActiveRecord::Base
 		write_attribute(:user_id, user.sf_guard_user_id)
 
 		if recipients.present?
-			alerted_user_names = recipients.map(&:username)
-			alerted_user_ids = recipients.map(&:sf_guard_user_id)
+			self.alerted_user_names = legacy_denormalize_ary(recipients.map(&:username))
+			self.alerted_user_ids = legacy_denormalize_ary(recipients.map(&:sf_guard_user_id))
 		end
 
-		write_attribute(:entity_ids, entities.map(&:id)) if entities.present?
-		write_attribute(:relationship_ids, relationships.map(&:id)) if relationships.present?
-		write_attribute(:lslist_ids, lists.map(&:id)) if entities.present?
-		write_attribute(:sfguardgroup_ids, groups.collect { |g| g.sf_guard_group.id }) if groups.present?
-		write_attribute(:network_ids, network_ids)
+		write_attribute(:entity_ids, legacy_denormalize_ary(entities.map(&:id))) if entities.present?
+		write_attribute(:relationship_ids, legacy_denormalize_ary(relationships.map(&:id))) if relationships.present?
+		write_attribute(:lslist_ids, legacy_denormalize_ary(lists.map(&:id))) if entities.present?
+		write_attribute(:sfguardgroup_ids, legacy_denormalize_ary(groups.collect { |g| g.sf_guard_group.id })) if groups.present?
+		write_attribute(:network_ids, legacy_denormalize_ary(network_ids))
+		self
+	end
+
+	def legacy_denormalize_ary(ids)
+		"," + ids.join(",") + ","
 	end
 
 	def self.commas_to_array(str)
