@@ -67,7 +67,7 @@
 		<div class="section_header">
 			Analyst Notes
 			<span class="header_action"><%= link_to "see all", notes_group_path(@group) %></span>
-			<span class="header_action"><%= link_to "write note", new_note_path(group_id: @group.id) %></span>
+			<span class="header_action"><%= link_to "write note", new_note_path(group: @group.slug) %></span>
 		</div>
 		<% @notes.each do |note| %>
 			<%= render partial: "notes/note", locals: { note: note } %>

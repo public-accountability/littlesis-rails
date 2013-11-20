@@ -45,6 +45,21 @@ class Note < ActiveRecord::Base
 		self
 	end
 
+	def legacy_denormalize
+		if recipients.present?
+			alerted_user_names = recipients.map(&:username)
+			alerted_user_ids = recipients.map(&:sf_guard_user_id)
+		end
+
+		write_attribute(:entity_ids, entities.map(&:id)) if entities.present?
+		write_attribute(:relationship_ids, relationships.map(&:id)) if relationships.present?
+		write_attribute(:lslist_ids, lists.map(&:id)) if entities.present?
+		write_attribute(:sfguardgroup_ids, groups.collect { |g| g.sf_guard_group.id }) if groups.present?
+		write_attribute(:network_ids, network_ids)
+	end
+
+	end
+
 	def self.commas_to_array(str)
 		return [] if str.blank?
 		str.chomp(",").reverse.chomp(",").reverse.split(",")

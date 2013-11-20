@@ -2,7 +2,9 @@ Lilsis::Application.routes.draw do
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'
   devise_for :users
   root to: 'campaigns#index'
+
   resources :campaigns
+
   resources :groups do
     member do
       get 'notes'
@@ -22,13 +24,16 @@ Lilsis::Application.routes.draw do
       get 'admin'
     end
   end
+
   resources :users
   resources :lists
+
   resources :entity do
     member do
       get 'interlocks'
     end
   end
+  
   resources :notes, only: [:new, :create, :destroy]
   get "/notes/:username",
     controller: 'notes',
@@ -40,8 +45,12 @@ Lilsis::Application.routes.draw do
     action: 'show',
     constraints: { username: /[\w.]+/, id: /\d+/ },
     as: "note_with_user"
-
   get "/home/notes" => "home#notes"
+
+  get "/entities/search_by_name",
+    controller: 'entities',
+    action: 'search_by_name',
+    as: 'entity_name_search'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

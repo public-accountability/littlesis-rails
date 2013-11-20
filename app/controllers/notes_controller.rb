@@ -1,4 +1,5 @@
 class NotesController < ApplicationController
+  include NoteHelper
   before_action :set_note, only: [:show, :edit, :update, :destroy]
 
   # GET /notes
@@ -42,6 +43,13 @@ class NotesController < ApplicationController
   # POST /notes
   def create
     @note = Note.new(note_params)
+    @note.user = current_user
+    @note.network_ids = [@note.user.default_network_id]
+    @note.is_private = params[:is_private]
+    @note.body_raw = @note.body
+    @note.body = render_note(@note)
+    @note.parse
+    exit
 
     if @note.save
       redirect_to @note, notice: 'Note was successfully created.'

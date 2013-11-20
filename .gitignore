@@ -26,3 +26,9 @@
 
 # Ignore tests, for now
 /test
+
+# Ignore sphinx indexes
+/db/sphinx
+
+# Ignore sphinx thingy
+/log/production.sphinx.pid

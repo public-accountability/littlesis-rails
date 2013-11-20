@@ -17,4 +17,5 @@
 //= require bootsy
 //= require editor_options
 //= reuqire more_link
+//= require twitter/typeahead
 //= require_tree .
