@@ -1,5 +1,5 @@
 class NotesController < ApplicationController
-  include NoteHelper
+  before_filter :auth
   before_action :set_note, only: [:show, :edit, :update, :destroy]
 
   # GET /notes
@@ -16,10 +16,11 @@ class NotesController < ApplicationController
   def new
     @note = Note.new
     default_body = []
+
     if params[:reply_to].present?
       if (@reply_to_note = Note.find(params[:reply_to])).present?
         default_body += @reply_to_note.all_users.collect { |u| "@" + u.username }
-        default_body += @reply_to_note.groups.collect { |g| "@" + g.slug }
+        default_body += @reply_to_note.groups.collect { |g| "@group:" + g.slug }
         @note.is_private if @reply_to_note.is_private
       end
     end
@@ -29,10 +30,10 @@ class NotesController < ApplicationController
     end
 
     if params[:group].present?
-      default_body += ["@" + params[:group]]
+      default_body += ["@group:" + params[:group]]
     end
 
-    @note.body = default_body.uniq.join(" ") unless default_body.blank?
+    @note.body_raw = default_body.uniq.join(" ") unless default_body.blank?
   end
 
   # GET /notes/1/edit
@@ -43,16 +44,15 @@ class NotesController < ApplicationController
   # POST /notes
   def create
     @note = Note.new(note_params)
+    @note.body = "" # placeholder until set during view render
+    @note.is_legacy = false
     @note.user = current_user
     @note.network_ids = [@note.user.default_network_id]
-    @note.is_private = params[:is_private]
-    @note.body_raw = @note.body
-    @note.body = render_note(@note)
     @note.parse
-    exit
+    @note.legacy_denormalize
 
     if @note.save
-      redirect_to @note, notice: 'Note was successfully created.'
+      redirect_to home_notes_path, notice: 'Note was successfully created.'
     else
       render action: 'new'
     end
@@ -77,8 +77,6 @@ class NotesController < ApplicationController
   def user
     @user = User.includes(:notes, notes: [:user, :recipients]).find_by_username(params[:username])
     @notes = @user.notes_with_replies.page(params[:page]).per(20)
-
-    # @user.notes.order("created_at DESC").page(params[:page]).per(20)
   end
 
   private
@@ -89,6 +87,6 @@ class NotesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def note_params
-      params.require(:note).permit(:body, :is_private, :reply_to, :group, :page)
+      params.require(:note).permit(:body_raw, :is_private, :reply_to, :group, :page)
     end
 end
