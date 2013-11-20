@@ -68,6 +68,10 @@ class Relationship < ActiveRecord::Base
   end
 
   def legacy_url
-    "/relationship/view/id/" + id
+    "/relationship/view/id/" + id.to_s
+  end
+
+  def name
+    "#{category_name}: #{entity.name}, #{related.name}"
   end
 end

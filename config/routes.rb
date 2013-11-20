@@ -33,8 +33,9 @@ Lilsis::Application.routes.draw do
       get 'interlocks'
     end
   end
-  
+
   resources :notes, only: [:new, :create, :destroy]
+
   get "/notes/:username",
     controller: 'notes',
     action: 'user',
@@ -45,6 +46,7 @@ Lilsis::Application.routes.draw do
     action: 'show',
     constraints: { username: /[\w.]+/, id: /\d+/ },
     as: "note_with_user"
+
   get "/home/notes" => "home#notes"
 
   get "/entities/search_by_name",

@@ -1,9 +1,8 @@
-
 class Note < ActiveRecord::Base
   include SingularTable
 
-  belongs_to :user, inverse_of: :notes
-  belongs_to :sf_guard_user, inverse_of: :notes
+  belongs_to :user, foreign_key: "new_user_id", inverse_of: :notes
+  belongs_to :sf_guard_user, foreign_key: "user_id", inverse_of: :notes
 
 	has_many :note_recipients, class_name: "NoteUser", inverse_of: :note, dependent: :destroy
 	has_many :recipients, through: :note_recipients, source: :user, inverse_of: :received_notes
@@ -28,11 +27,8 @@ class Note < ActiveRecord::Base
 
 	# before_save :parse
 
-	def update_legacy_user_id
-		if legacy? and sf_guard_user_id.blank?
-			self.sf_guard_user_id = user_id
-			self.user_id = User.find_by(sf_guard_user_id: sf_guard_user_id).id
-		end
+	def set_new_user_id
+		self.new_user_id = User.where(sf_guard_user_id: user_id).pluck(:id).first
 	end
 
 	def normalize
@@ -46,6 +42,8 @@ class Note < ActiveRecord::Base
 	end
 
 	def legacy_denormalize
+		write_attribute(:user_id, user.sf_guard_user_id)
+
 		if recipients.present?
 			alerted_user_names = recipients.map(&:username)
 			alerted_user_ids = recipients.map(&:sf_guard_user_id)
@@ -56,8 +54,6 @@ class Note < ActiveRecord::Base
 		write_attribute(:lslist_ids, lists.map(&:id)) if entities.present?
 		write_attribute(:sfguardgroup_ids, groups.collect { |g| g.sf_guard_group.id }) if groups.present?
 		write_attribute(:network_ids, network_ids)
-	end
-
 	end
 
 	def self.commas_to_array(str)
@@ -108,7 +104,7 @@ class Note < ActiveRecord::Base
 	end
 
 	def all_user_ids
-		[user_id] + recipient_ids
+		[new_user_id] + recipient_ids
 	end
 
 	def visible_to?(user)
