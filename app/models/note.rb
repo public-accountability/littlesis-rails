@@ -104,6 +104,10 @@ class Note < ActiveRecord::Base
 		is_private
 	end
 
+	def public?
+		!is_private
+	end
+
 	def all_users
 		[user] + recipients
 	end
@@ -113,6 +117,7 @@ class Note < ActiveRecord::Base
 	end
 
 	def visible_to?(user)
+		return public? if user.nil?
 		return false if user.nil?
 		return true unless private?
 		return true if all_user_ids.include?(user.id)

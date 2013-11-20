@@ -7,6 +7,12 @@
 <div class="section_header">
 	Notes by <%= user_link(@user) %>
 	<span class="header_action"><%= link_to 'write note', new_note_path(user: @user.username) %></span>
+
+	<% if params[:show_replies].present? and params[:show_replies] == "1" %>
+		<span class="header_action"><%= link_to("hide replies", { show_replies: 0 }) %></span>
+	<% else %>
+		<span class="header_action"><%= link_to("show replies", { show_replies: 1 }) %></span>
+	<% end %>
 </div>
 
 <%= paginate @notes %>
