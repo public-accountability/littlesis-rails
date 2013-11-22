@@ -1,8 +1,8 @@
-<div class="section_header">
-	Analyst Notes
-</div>
+<div class="left_column">
 
-<%= paginate @notes %>
+<h1>Analyst Notes</h1>
+
+<%= render partial: "notes/search_with_pagination", locals: { notes: @notes } %>
 
 <% @notes.each do |note| %>
 	<% if note.visible_to?(current_user) %>
@@ -12,3 +12,5 @@
 
 <div class="spacer"> </div>
 <%= paginate @notes %>
+
+</div>

@@ -3,7 +3,7 @@ class GroupsController < ApplicationController
     :show, :edit, :update, :destroy, :notes, :edits, :lists, :feature_list, :remove_list, :unfeature_list, 
     :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin
   ]
-  before_filter :auth, except: [:show]
+  before_filter :auth, except: [:show, :index]
 
   def current_user_must_belong_to_group
     raise Exceptions::PermissionError unless current_user.in_group?(@group)
@@ -78,7 +78,16 @@ class GroupsController < ApplicationController
 
   def notes
     current_user_must_belong_to_group
-    @notes = @group.notes.order("updated_at DESC").page(params[:page]).per(20)
+
+    if params[:q].present?
+      @notes = Note.search(
+        Riddle::Query.escape(params[:q]), 
+        order: "created_at DESC", 
+        with: { group_ids: [@group.id] }
+      ).page(params[:page]).per(20)
+    else
+      @notes = @group.notes.order("updated_at DESC").page(params[:page]).per(20)
+    end
   end
 
   def edits

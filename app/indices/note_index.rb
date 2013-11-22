@@ -1,6 +1,9 @@
 ThinkingSphinx::Index.define :note, :with => :active_record, :delta => ThinkingSphinx::Deltas::DelayedDelta do
 	indexes user.username, as: :username
 	indexes recipients.username, as: :recipient_names
+	indexes groups.name, as: :group_names
+	indexes entities.name, as: :entity_names
+	indexes lists.name, as: :list_names
 	indexes body_raw
 
 	has [is_private, user.id, recipients.id], as: :visible_to_user_ids, multi: true, type: :integer
