@@ -33,6 +33,8 @@ class GroupsController < ApplicationController
                             .order("updated_at DESC").limit(10)
     if user_signed_in? and current_user.in_group?(@group)
       @notes = @group.notes.public.order("created_at DESC").limit(10)
+    else
+      @carousel_entities = @group.featured_entities.limit(20)
     end
   end
 

@@ -121,7 +121,7 @@ $('.group_tabs').bettertabs();
 <% if @group.featured_lists.count > 0 %>
 <div class="section_header">Who We're Watching</div>
 <div id="group_carousel">
-	<%= render partial: "shared/carousel", locals: { entities: @group.featured_entities } %>
+	<%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
 </div>
 <% end %>
 

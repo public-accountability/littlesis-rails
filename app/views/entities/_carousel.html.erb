@@ -1,5 +1,5 @@
 <div class="entity_carousel">
-  <div class="entity_carousel_image" <%= raw(*entity.featured_image_url.present? ? 'style="background-image: url(' + image_path(entity.featured_image_url) + ');"' : '') %>>
+  <div class="entity_carousel_image" <%= raw(entity.featured_image_url.present? ? 'style="background-image: url(' + image_path(entity.featured_image_url) + ');"' : '') %>>
   </div>
 
   <div class="entity_carousel_text">

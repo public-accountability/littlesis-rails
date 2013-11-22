@@ -6,7 +6,10 @@
 
 <%= centered_content do %>
 
-<h1>Analyst Notes</h1>
+<h1>
+	Analyst Notes
+	<span class="btn btn-link btn-sm"><%= link_to "write note", new_note_path(group: @group.slug) %></span>
+</h1>
 
 <%= render partial: "notes/search_with_pagination", locals: { notes: @notes } %>
 

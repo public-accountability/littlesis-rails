@@ -167,7 +167,7 @@ class Entity < ActiveRecord::Base
   def featured_image_url(type=nil)
     image = featured_image
     return default_image_url if image.nil?
-    type = "square" if type.nil? and image.has_square
+    type = (image.has_square ? "square" : "profile") if type.nil?
     image.s3_url(type)
   end
 
