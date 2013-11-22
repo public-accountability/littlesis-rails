@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131120153555) do
+ActiveRecord::Schema.define(version: 20131122004427) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -631,9 +631,12 @@ ActiveRecord::Schema.define(version: 20131120153555) do
     t.datetime "updated_at"
     t.boolean  "is_legacy",                      default: false, null: false
     t.integer  "sf_guard_user_id"
+    t.integer  "new_user_id"
+    t.boolean  "delta",                          default: true,  null: false
   end
 
   add_index "note", ["alerted_user_ids"], name: "alerted_user_ids_idx", length: {"alerted_user_ids"=>255}, using: :btree
+  add_index "note", ["delta"], name: "index_note_on_delta", using: :btree
   add_index "note", ["entity_ids"], name: "entity_ids_idx", using: :btree
   add_index "note", ["is_private"], name: "is_private_idx", using: :btree
   add_index "note", ["lslist_ids"], name: "lslist_ids_idx", using: :btree
@@ -646,30 +649,48 @@ ActiveRecord::Schema.define(version: 20131120153555) do
     t.integer "entity_id"
   end
 
+  add_index "note_entities", ["entity_id"], name: "index_note_entities_on_entity_id", using: :btree
+  add_index "note_entities", ["note_id"], name: "index_note_entities_on_note_id", using: :btree
+
   create_table "note_groups", force: true do |t|
     t.integer "note_id"
     t.integer "group_id"
   end
+
+  add_index "note_groups", ["group_id"], name: "index_note_groups_on_group_id", using: :btree
+  add_index "note_groups", ["note_id"], name: "index_note_groups_on_note_id", using: :btree
 
   create_table "note_lists", force: true do |t|
     t.integer "note_id"
     t.integer "list_id"
   end
 
+  add_index "note_lists", ["list_id"], name: "index_note_lists_on_list_id", using: :btree
+  add_index "note_lists", ["note_id"], name: "index_note_lists_on_note_id", using: :btree
+
   create_table "note_networks", force: true do |t|
     t.integer "note_id"
     t.integer "network_id"
   end
+
+  add_index "note_networks", ["network_id"], name: "index_note_networks_on_network_id", using: :btree
+  add_index "note_networks", ["note_id"], name: "index_note_networks_on_note_id", using: :btree
 
   create_table "note_relationships", force: true do |t|
     t.integer "note_id"
     t.integer "relationship_id"
   end
 
+  add_index "note_relationships", ["note_id"], name: "index_note_relationships_on_note_id", using: :btree
+  add_index "note_relationships", ["relationship_id"], name: "index_note_relationships_on_relationship_id", using: :btree
+
   create_table "note_users", force: true do |t|
     t.integer "note_id"
     t.integer "user_id"
   end
+
+  add_index "note_users", ["note_id"], name: "index_note_users_on_note_id", using: :btree
+  add_index "note_users", ["user_id"], name: "index_note_users_on_user_id", using: :btree
 
   create_table "object_tag", force: true do |t|
     t.integer  "tag_id",       limit: 8,  null: false

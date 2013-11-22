@@ -1,0 +1,25 @@
+<h1>Lists</h1>
+
+<%= paginate @lists %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Entities</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @lists.each do |list| %>
+      <tr>
+        <td class="lists_table_name"><%= list_link(list) %></td>
+        <td><%= list.entity_count %></td>
+        <td><%= list.description %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @lists %>

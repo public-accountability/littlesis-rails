@@ -35,4 +35,8 @@ class List < ActiveRecord::Base
   def legacy_url
     "/list/" + id.to_s + "/" + name_to_legacy_slug
   end
+
+  def legacy_network_url
+    "/#{display_name}"
+  end
 end

@@ -24,6 +24,12 @@ class Note < ActiveRecord::Base
 
 	scope :public, -> { where(is_private: false) }
 	scope :private, -> { where(is_private: true) }
+	scope :with_joins, -> { 
+		joins("LEFT JOIN note_users ON note_users.note_id = note.id")
+		.joins("LEFT JOIN users ON users.id = note_users.user_id")		
+		.group("note.id")
+		.order("note.created_at DESC")
+	}
 
 	# before_save :parse
 
@@ -122,5 +128,18 @@ class Note < ActiveRecord::Base
 		return true unless private?
 		return true if all_user_ids.include?(user.id)
 		return false
+	end
+
+	def self.visible_to_user(user)
+		if user.nil?
+			return Note.with_joins.private
+		end
+
+  	Note.with_joins
+  		.where("note.is_private = ? OR note.new_user_id = ? OR users.id = ?", false, user.id, user.id)
+	end
+
+	def set_visible_to_user_ids
+		self.visible_to_user_ids = recipient_ids + [new_user_id] + (public? ? [0] : nil)
 	end
 end

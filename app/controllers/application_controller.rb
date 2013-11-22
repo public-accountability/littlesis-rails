@@ -14,4 +14,8 @@ class ApplicationController < ActionController::Base
   def check_permission(name)
     raise Exceptions::PermissionError unless current_user.has_legacy_permission(name)
   end
+
+  def not_found
+    raise ActionController::RoutingError.new('Not Found')
+  end
 end

@@ -52,12 +52,8 @@ class User < ActiveRecord::Base
   end
 
   def notes_with_replies
-		Note
-			.joins("LEFT JOIN note_users ON note_users.note_id = note.id")
-			.joins("LEFT JOIN users ON users.id = note_users.user_id")
+		Note.with_joins
 	    .where("note.new_user_id = ? OR users.id = ?", id, id)
-	    .order("note.created_at DESC")
-	    .group("note.id")
   end
 
   def notes_with_replies_visible_to_user(user)
@@ -67,17 +63,13 @@ class User < ActiveRecord::Base
 
   def notes_visible_to_user(user)
   	return notes.public.order("note.created_at DESC") if user.nil?
-  	notes.joins(:recipients)
+  	notes.with_joins
   		.where("note.is_private = ? OR users.id = ?", false, user.id)
-  		.group("note.id")
-  		.order("note.created_at DESC")
   end
 
   def received_notes_visible_to_user(user)
   	return received_notes.public.order("note.created_at DESC") if user.nil?
-  	received_notes.joins(:recipients)
+  	received_notes.with_joins
   		.where("note.is_private = ? OR users.id = ?", false, user.id)
-  		.group("note.id")
-  		.order("note.created_at DESC")
   end
 end
