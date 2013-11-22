@@ -9,7 +9,53 @@
 <body>
 
 <div id="top">
-	<div id="top_content">
+
+		<nav class="navbar navbar-default">
+
+		<div id="top_content">
+
+
+			<div class="navbar-header">
+		    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+		      <span class="sr-only">Toggle navigation</span>
+		      <span class="icon-bar"></span>
+		      <span class="icon-bar"></span>
+		      <span class="icon-bar"></span>
+		    </button>
+
+		   	<div id="brand">
+					<%= link_to(image_tag("lilsis-logo-trans-200.png"), root_path) %>
+				</div>
+			</div>
+
+		  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+		  	<%= render "shared/bootstrap_nav_menu" %>	  
+
+		    <form action="/search" method="get" class="navbar-form navbar-right" role="search">
+					<div id="top_search" class="input-group">
+						<input type="text" name="q" class="form-control" placeholder="Search LittleSis" />
+						<span class="input-group-btn">
+							<button type="submit" class="btn btn-default">
+								<span class="glyphicon glyphicon-search"></span>
+							</button>
+						</span>
+					</div>
+		    </form>
+
+				<div id="top_social_icons" class="navbar-right">
+					<%= link_to(image_tag('facebook-icon.jpg'), 'https://www.facebook.com/LittleSis.org') %>
+					<%= link_to(image_tag('twitter-icon.jpg'), 'https://twitter.com/twittlesis') %>
+					<%= link_to(image_tag('rss-icon.jpg'), 'http://feeds2.feedburner.com/EyesOnTheTies') %>
+				</div>		
+
+		  </div>
+
+		</div>
+
+		</nav>
+
+<!--
 		<div id="logo"><%= link_to(image_tag("littlesis-logo-trans-200.png"), root_path) %></div>
 		<div id="menu">
 			<%= render "shared/nav_menu" %>
@@ -31,7 +77,8 @@
 			<%= link_to(image_tag('twitter-icon.jpg'), 'https://twitter.com/twittlesis') %>
 			<%= link_to(image_tag('rss-icon.jpg'), 'http://feeds2.feedburner.com/EyesOnTheTies') %>
 		</div>
-	</div>
+-->
+
 </div>
 
 <% if content_for? :title %>
