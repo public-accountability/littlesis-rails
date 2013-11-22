@@ -2,6 +2,8 @@
 
 <h1>
 	My Notes
+	<span class="btn btn-link btn-sm"><%= link_to "write note", new_note_path %></span>
+
 	<% if params[:show_replies].present? and params[:show_replies] == "1" %>
 		<span class="btn btn-link btn-sm"><%= link_to("hide replies", home_notes_path) %></span>
 	<% else %>
