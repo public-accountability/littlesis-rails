@@ -131,6 +131,7 @@ GEM
       activesupport (>= 3.0.0)
     nokogiri (1.5.10)
     orm_adapter (0.5.0)
+    php-serialize (1.1.0)
     polyglot (0.3.3)
     pry (0.9.12.3)
       coderay (~> 1.0)
@@ -225,6 +226,7 @@ DEPENDENCIES
   mini_magick
   mysql2
   nilify_blanks
+  php-serialize
   pry
   rails (= 4.0.0)
   sass-rails

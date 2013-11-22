@@ -38,4 +38,28 @@ module ApplicationHelper
   def check_mark(value=true)
 		value ? raw("&#x2713;") : nil
   end
+
+  def legacy_login_path
+    "/login"
+  end
+
+  def legacy_logout_path
+    "/logout"
+  end
+
+  def legacy_signup_path
+    "/join"
+  end
+
+  def home_groups_path
+    "/home/groups"
+  end
+
+  def home_edits_path
+    "/home/edits"
+  end
+
+  def home_settings_path
+    "/home/settings"
+  end
 end

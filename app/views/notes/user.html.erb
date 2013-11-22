@@ -1,7 +1,3 @@
-<div class="spacer"> </div>
-<div class="spacer"> </div>
-<div class="spacer"> </div>
-
 <div class="user_notes">
 
 <div class="section_header">
@@ -9,7 +5,7 @@
 	<span class="header_action"><%= link_to 'write note', new_note_path(user: @user.username) %></span>
 
 	<% if params[:show_replies].present? and params[:show_replies] == "1" %>
-		<span class="header_action"><%= link_to("hide replies", { show_replies: 0 }) %></span>
+		<span class="header_action"><%= link_to("hide replies", user_notes_path(@user)) %></span>
 	<% else %>
 		<span class="header_action"><%= link_to("show replies", { show_replies: 1 }) %></span>
 	<% end %>
@@ -22,5 +18,8 @@
 		<%= render partial: "notes/note", locals: { note: note, user: @user } %>
 	<% end %>
 <% end %>
+
+<div class="spacer"> </div>
+<%= paginate @notes %>
 
 </div>

@@ -15,8 +15,15 @@ class GroupsController < ApplicationController
 
   # GET /groups
   def index
-    check_permission "admin"
-    @groups = Group.all
+    @groups = Group
+      .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
+      .joins(:group_users)
+      .joins(:sf_guard_group)
+      .group("groups.id")
+      .where(is_private: false, sf_guard_group: { is_working: true })
+      .having("user_count > 0")
+      .order("user_count DESC")
+      .page(params[:page]).per(20)
   end
 
   # GET /groups/1

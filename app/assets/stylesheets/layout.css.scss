@@ -7,7 +7,7 @@ body {
 
 a {
 	text-decoration: none;
-	color: #008;
+	color: $link_blue;
 
 	&:hover {
 		text-decoration: underline;
@@ -32,6 +32,32 @@ a {
 
 #logo {
 	float: left;
+}
+
+#menu {
+	float: left;
+	padding-top: 0.2em;
+
+	.dropdown {
+		display: inline-block;
+	}
+
+	.menu_dropdown_name { 
+		color: white;
+		cursor: pointer;
+		padding-left: 1em;
+		margin-left: 0.2em;
+
+		&:hover { text-decoration: none; }
+
+		&.highlighted {
+			color: #ffc;
+		}
+	}
+
+	li a { 
+		color: $link_blue; 
+	}
 }
 
 #session_info {
@@ -62,6 +88,7 @@ a {
 	width: $page_width;
 	margin: 0 auto;
 	min-height: 500px;
+	margin-top: 2em;
 }
 
 .field label {
@@ -164,4 +191,8 @@ div.spacer {
 	margin-bottom: 0.5em;
 	font-size: 1.5em;
 	border-bottom: 1px solid #eee;	
+}
+
+.pagination {
+	margin: 0;
 }

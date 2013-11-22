@@ -1,0 +1,23 @@
+<%= paginate @groups %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Analysts</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @groups.each do |group| %>
+      <tr>
+        <td class="groups_table_name"><%= group_link(group) %></td>
+        <td><%= group.user_count %></td>
+        <td><%= group.tagline %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @groups %>

@@ -1,15 +1,23 @@
 class NotesController < ApplicationController
-  before_filter :auth, except: [:show, :user]
+  before_filter :auth, except: [:show, :user, :index]
   before_action :set_note, only: [:show, :edit, :update, :destroy]
 
   # GET /notes
   def index
-    check_permission "admin"
-    @notes = Note.all
+    if params[:q].present?
+      if user_signed_in?
+        @notes = Note.search(params[:q], order: "created_at DESC", with: { visible_to_user_ids: [0, current_user.id] }).page(params[:page]).per(20)
+      else
+        @notes = Note.search(params[:q], order: "created_at DESC", with: { is_private: false }).page(params[:page]).per(20)
+      end
+    else
+      @notes = Note.visible_to_user(current_user).page(params[:page]).per(20)
+    end
   end
 
   # GET /notes/1
   def show
+    raise Exceptions::PermissionError unless @note.visible_to?(current_user)
   end
 
   # GET /notes/new
@@ -76,7 +84,7 @@ class NotesController < ApplicationController
 
   def user
     @user = User.find_by_username(params[:username])
-    redirect_to home_notes_path if current_user.present? and current_user.id == @user.id
+    redirect_to home_notes_path if user_signed_in? and current_user.id == @user.id
 
     if params[:show_replies].present? and params[:show_replies] == "1"
       @notes = @user.notes_with_replies_visible_to_user(current_user).page(params[:page]).per(20)
@@ -89,6 +97,7 @@ class NotesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_note
       @note = Note.includes(:recipients, :entities, :relationships, :lists, :groups, :networks).find(params[:id])
+      not_found unless @note.user.username == params[:username]
     end
 
     # Only allow a trusted parameter "white list" through.

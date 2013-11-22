@@ -26,7 +26,7 @@ Lilsis::Application.routes.draw do
   end
 
   resources :users
-  resources :lists
+  resources :lists, only: [:index]
 
   resources :entity do
     member do
@@ -34,7 +34,7 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :notes, only: [:new, :create, :destroy]
+  resources :notes, only: [:new, :create, :destroy, :index]
 
   get "/notes/:username",
     controller: 'notes',
@@ -48,6 +48,7 @@ Lilsis::Application.routes.draw do
     as: "note_with_user"
 
   get "/home/notes" => "home#notes"
+  get "/home/groups" => "home#groups"
 
   get "/entities/search_by_name",
     controller: 'entities',
