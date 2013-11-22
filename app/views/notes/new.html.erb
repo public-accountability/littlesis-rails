@@ -49,7 +49,7 @@ $(window).load(function() {
   })
 
   var selected_callback = function(obj, datum) {
-    str = '@entity:' + datum.id + '[' + datum.body + ']';
+    str = '@entity:' + datum.id + '[' + datum.name + ']';
     $('#entity_text').val(str);
     $('#entity_text_group').css('display', 'inline');
   };

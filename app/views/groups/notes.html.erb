@@ -6,13 +6,16 @@
 
 <%= centered_content do %>
 
-<div id="group_notes_header">
-	Analyst Notes
-</div>
-<div id="group_notes_pages"><%= paginate @notes %></div>
+<h1>Analyst Notes</h1>
+
+<%= render partial: "notes/search_with_pagination", locals: { notes: @notes } %>
+
 <% @notes.each do |note| %>
 	<%= render partial: "notes/note", locals: { note: note } %>
 <% end %>
+
+<div class="spacer"> </div>
+<%= paginate @notes %>
 
 <% end %>
 

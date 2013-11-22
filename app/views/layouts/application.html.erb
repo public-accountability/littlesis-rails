@@ -14,10 +14,22 @@
 		<div id="menu">
 			<%= render "shared/nav_menu" %>
 		</div>
-		<div id="session_info">
-			<% if user_signed_in? %>
-	  		Logged in as <strong><%= current_user.username %></strong>
-	  	<% end %>
+		<div id="top_search">
+			<form action="/search" method="get">
+				<div class="input-group">
+					<input type="text" name="q" class="form-control" placeholder="Search LittleSis" />
+					<span class="input-group-btn">
+						<button type="submit" class="btn btn-default">
+							<span class="glyphicon glyphicon-search"></span>
+						</button>
+					</span>
+				</div>
+			</form>
+		</div>
+		<div id="social_media_icons">
+			<%= link_to(image_tag('facebook-icon.jpg'), 'https://www.facebook.com/LittleSis.org') %>
+			<%= link_to(image_tag('twitter-icon.jpg'), 'https://twitter.com/twittlesis') %>
+			<%= link_to(image_tag('rss-icon.jpg'), 'http://feeds2.feedburner.com/EyesOnTheTies') %>
 		</div>
 	</div>
 </div>

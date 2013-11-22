@@ -1,14 +1,13 @@
 <div class="user_notes">
 
-<div class="section_header">
+<h1>
 	My Notes
-
 	<% if params[:show_replies].present? and params[:show_replies] == "1" %>
-		<span class="header_action"><%= link_to("hide replies", home_notes_path) %></span>
+		<span class="btn btn-link btn-sm"><%= link_to("hide replies", home_notes_path) %></span>
 	<% else %>
-		<span class="header_action"><%= link_to("show replies", home_notes_path(show_replies: 1)) %></span>
+		<span class="btn btn-link btn-sm"><%= link_to("show replies", home_notes_path(show_replies: 1)) %></span>
 	<% end %>
-</div>
+</h1>
 
 <%= paginate @notes %>
 

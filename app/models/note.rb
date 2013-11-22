@@ -132,7 +132,7 @@ class Note < ActiveRecord::Base
 
 	def self.visible_to_user(user)
 		if user.nil?
-			return Note.with_joins.private
+			return Note.with_joins.public
 		end
 
   	Note.with_joins
