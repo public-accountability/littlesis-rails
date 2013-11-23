@@ -3,7 +3,14 @@ Lilsis::Application.routes.draw do
   devise_for :users
   root to: 'campaigns#index'
 
-  resources :campaigns
+  resources :campaigns do
+    member do
+      get 'search_groups'
+      get 'new_group'
+      get 'groups'
+      get 'admin'
+    end
+  end
 
   resources :groups do
     member do

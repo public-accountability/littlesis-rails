@@ -1,0 +1,39 @@
+@import "globals";
+
+.cover_left {
+	width: $left_column_width;
+	float: left;	
+}
+
+.cover_right {
+	margin-left: $left_column_width;
+	width: $right_column_width;
+}
+
+.cover_name {
+	font-size: 3em;
+	line-height: 1em;
+	font-weight: bold;
+	a { color: black; }
+}
+
+.cover_tagline {
+	margin-top: 0.5em;
+	font-size: 1.3em;
+	font-style: italic;
+}
+
+.cover_description {
+	margin-top: 1em;
+	line-height: 1.4em;
+}
+
+.cover_clear {
+	clear: both;
+}
+
+.cover {
+	h1, h2, h3 {
+		margin-top: 0;
+	}
+}

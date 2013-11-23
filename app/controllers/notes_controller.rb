@@ -87,7 +87,7 @@ class NotesController < ApplicationController
   # DELETE /notes/1
   def destroy
     @note.destroy
-    redirect_to home_notes_path, notice: 'Note was successfully destroyed.'
+    redirect_to home_notes_path, notice: 'Note was successfully deleted.'
   end
 
   def user
@@ -123,7 +123,10 @@ class NotesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_note
       @note = Note.includes(:recipients, :entities, :relationships, :lists, :groups, :networks).find(params[:id])
-      not_found unless @note.user.username == params[:username]
+
+      if params[:username].present?
+        not_found unless @note.user.username == params[:username]
+      end
     end
 
     # Only allow a trusted parameter "white list" through.

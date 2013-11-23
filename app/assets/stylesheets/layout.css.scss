@@ -240,5 +240,23 @@ div.spacer {
 }
 
 .left_column {	
-	width: 600px;
+	float: left;
+	width: $left_column_width;
+
+	h1, h2, h3 { margin-top: 0; }
+}
+
+.right_column {
+	margin-left: $left_column_width;
+	width: $right_column_width;
+
+	h1, h2, h3 { margin-top: 0; }
+}
+
+.clear_columns {
+	clear: both;
+}
+
+form .alert {
+	width: 500px;
 }

@@ -20,9 +20,9 @@ $logo_size: 50px;
 #group_campaign {
 	border-top: 0px solid #ccc;
 	color: #444;
-	padding-top: 1em;
+	padding-top: 0;
 	padding-bottom: 1em;
-	border-bottom: 1px solid #444;
+	border-bottom: 0px solid #ccc;
 
 	a { color: #444; }
 }
@@ -36,7 +36,7 @@ $logo_size: 50px;
 #group_campaign_logo img {
 	width: $logo_size - 10;
 	height: $logo_size - 10;
-	border-radius: ($logo_size - 10)/2;
+	border-radius: 5px;
 	float: left;
 	opacity: 1;
 }
@@ -45,6 +45,7 @@ $logo_size: 50px;
 	margin-left: $logo_size;
 	font-size: 1.4em;
 	line-height: 1.3em;
+	font-weight: 500;
 }
 
 #group_campaign_tagline {
@@ -56,44 +57,10 @@ $logo_size: 50px;
 #group_header {
 	margin-top: 1em;
 
-	#group_header_left {
-		width: 600px;
-		float: left;
-	}
-
-	#group_header_right {
-		margin-left: 600px;
-		width: 350px;
-	}
-
-	#group_header_clear {
-		clear: both;
-	}
-
-	#group_name {
-		font-size: 3em;
-		line-height: 1em;
-		font-weight: bold;
-		a { 
-			color: black; 
-		}
-	}
-
-	#group_tagline {
-		margin-top: 0.5em;
-		font-size: 1.3em;
-		font-style: italic;
-	}
-
 	#group_stats {
 		font-size: 0.9em;
 		color: #444;
 		margin-top: 1em;
-	}
-
-	#group_description {
-		margin-top: 1em;
-		line-height: 1.4em;
 	}
 
 	#group_helper {
@@ -111,17 +78,17 @@ $logo_size: 50px;
 
 		img {
 			width: 300px;
-			border-radius: 150px;
+			border-radius: 10px;
 		}
 	}
 
 	#group_logo_small {
 		float: left;
-		margin-right: 10px;
+		margin-right: 15px;
 
 		img {
 			width: 80px;
-			border-radius: 40px;
+			border-radius: 8px;
 		}
 	}
 }
@@ -138,45 +105,28 @@ $logo_size: 50px;
 	margin-bottom: 1em;
 }
 
-#group_left_column {
-	float: left;
-	width: 600px;
-}
-
-#group_right_column {
-	margin-left: 660px;
-	width: 300px;
-}
-
-#group_clear {
-	clear: both;
-}
-
 .group_mini {
-	padding: 0.7em;
+	padding-top: 0.7em;
+	padding-bottom: 0.7em;
 
 	.group_mini_logo {
 		float: left;
 
 		img {
 			width: $logo_size;
-			border-radius: $logo_size/2;
+			border-radius: 5px;
 		}
 	}
 
 	.group_mini_name {
 		margin-left: $logo_size + 10px;
-		font-size: 1.3em;
-
-		a {
-			color: white;
-		}
+		font-size: 1.4em;
+		font-weight: 500;
 	}
 
 	.group_mini_tagline {
-		margin-top: 5px;
 		margin-left: $logo_size + 10px;
-		font-size: 0.7em;
+		font-size: 0.8em;
 		font-style: italic;
 	}
 }
@@ -235,3 +185,9 @@ tr.group_users_row td {
 	font-weight: bold;
 	min-width: 300px;
 }
+
+.field textarea.wysiwyg {
+	width: 800px; 
+	height: 500px;
+}
+

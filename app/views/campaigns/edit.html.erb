@@ -1,6 +1,19 @@
+<% content_for :body do %>
+
+
+<%= render partial: "campaigns/header_small", locals: { campaign: @campaign } %>
+
+
+<%= centered_content do %>
+
 <h1>Editing campaign</h1>
 
 <%= render 'form' %>
 
-<%= link_to 'Show', @campaign %> |
-<%= link_to 'Back', campaigns_path %>
+<% end %>
+
+
+<% end %>
+
+
+

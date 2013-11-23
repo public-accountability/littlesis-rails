@@ -1,7 +1,7 @@
 <%= form_for(@campaign) do |f| %>
   <% if @campaign.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this campaign from being saved:</h2>
+    <div id="error_explanation" class="alert alert-warning">
+      <%= pluralize(@campaign.errors.count, "error") %> prohibited this campaign from being saved:
 
       <ul>
       <% @campaign.errors.full_messages.each do |msg| %>
@@ -13,22 +13,22 @@
 
   <div class="field">
     <%= f.label :name %>
-    <%= f.text_area :name %>  
+    <%= f.text_field :name, class: "form-control" %>  
   </div>
 
   <div class="field">
     <%= f.label :slug %>
-    <%= f.text_field :slug %>  
+    <%= f.text_field :slug, class: "form-control" %>  
   </div>
 
   <div class="field">
     <%= f.label :tagline %>
-    <%= f.text_area :tagline %>  
+    <%= f.text_area :tagline, class: "form-control" %>  
   </div>
 
   <div class="field">
     <%= f.label :description %>
-    <%= f.text_area :description %>  
+    <%= f.text_area :description, class: "textarea_medium form-control" %>  
   </div>
 
   <div class="field">
@@ -51,15 +51,18 @@
 
   <div class="field">
     <%= f.label :findings %>
-    <%= f.text_area :findings %>  
+    <%= f.text_area :findings, class: "wysiwyg form-control" %>  
   </div>
 
   <div class="field">
     <%= f.label :howto %>
-    <%= f.text_area :howto %>  
+    <%= f.text_area :howto, class: "wysiwyg form-control" %>  
   </div>
 
+  <br />
+
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit nil, class: "btn btn-primary" %>
+    <button type="button" class="btn btn-link"><%= link_to "Cancel", @campaign %></button>
   </div>
 <% end %>

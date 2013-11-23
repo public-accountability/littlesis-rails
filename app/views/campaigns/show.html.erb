@@ -1,32 +1,82 @@
 <% content_for :body do %>
 
-<div id="campaign_cover" style="background-image: url(<%= @campaign.cover_url %>);">
+<div id="campaign_cover" class="cover" style="background-image: url(<%= @campaign.cover_url %>);">
 	<div id="campaign_cover_content">
-		<div id="campaign_cover_left">
-			<div id="campaign_logo"><%= image_tag(@campaign.logo.thumb.url) %></div>
-			<div id="campaign_name">
-				<div id="campaign_name_content"><%= simple_format(@campaign.name, {}, { wrapper_tag: "div" }) %></div>
-			</div>
+		<div class="cover_left">
+			<div id="campaign_logo_small"><%= image_tag(@campaign.logo_url) %></div>
+
+			<div class="cover_name"><%= campaign_link(@campaign) %></div>
 			<% if @campaign.tagline.present? %>
-				<div id="campaign_tagline"><%= @campaign.tagline %></div>
+				<div class="cover_tagline"><%= @campaign.tagline %></div>
 			<% end %>
 			<% if @campaign.description.present? %>
-				<div id="campaign_description"><%= simple_format(@campaign.description, {}, wrapper_tag: "div") %></div>
+				<div class="cover_description">
+					<%= more_link(raw(@campaign.description), 300) %>
+				</div>
 			<% end %>
 		</div>
-		<div id="campaign_cover_right">
-			<div class="section_header">Research Groups</div>
+		<div class="cover_right">
+			<h3 id="campaign_groups_header">
+				Research Groups
+				<span class="btn btn-link btn-sm"><%= link_to 'see all', groups_campaign_path(@campaign) %></span>
+			</h3>
 			<div id="campaign_groups_list">
-				<% ([@campaign.groups.first] * 3).each do |g| %>
+				<% @campaign.groups.take(3).each do |g| %>
 					<%= render partial: "groups/mini", locals: { group: g } %>
 				<% end %>
 			</div>
-			<div id="campaign_groups_search">
-				<input type="text" value="Find a group..." />
-			</div>
+			<%= text_field_tag :group, nil, id: "campaign_groups_search", class: "form-control", placeholder: "Find a group" %>
+			<div id="campaign_start_group">Can't find a group? <%= link_to 'Start a new one', new_group_campaign_path(@campaign) %>.</div>
 		</div>
-		<div id="campaign_cover_clear"> </div>
+		<div class="cover_clear"> </div>
 	</div>
 </div>
 
+<%= centered_content do %>
+	<% if @carousel_entities.count > 0 %>
+	<h3>Who We're Watching</h3>
+	<div id="group_carousel">
+		<%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
+	</div>
+	<% end %>
+
+	<div class="spacer"> </div>
+
+	<div class="left_column">
+		<h3>Findings & Highlights</h3>
+		<% if @campaign.findings.present? %>
+			<%= simple_format(@campaign.findings) %>
+		<% else %>
+			No findings yet!
+		<% end %>		
+	</div>
+
+	<div class="right_column">
+		<h3>Recent Edits</h3>
+		<% @recent_updates.each do |entity| %>
+			<%= render partial: "entities/recent_update", locals: { entity: entity } %>
+		<% end %>
+	</div>
+
 <% end %>
+
+<% end %>
+
+<script>
+$(window).load(function() {
+  $('#campaign_groups_search')
+    .typeahead({ 
+      name: 'groups',
+      remote: '<%= search_groups_campaign_url + "?q=%QUERY" %>',
+      limit: 5
+    })
+    .on("typeahead:selected", function(e, datum) {
+    	e.preventDefault();
+    	window.location = "/groups/" + datum.slug;
+    	e.preventDefault();
+    	return false;
+});
+
+	$('.tt-query').css('background-color','#fff');
+});
+</script>

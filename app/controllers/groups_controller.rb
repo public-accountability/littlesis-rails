@@ -3,7 +3,7 @@ class GroupsController < ApplicationController
     :show, :edit, :update, :destroy, :notes, :edits, :lists, :feature_list, :remove_list, :unfeature_list, 
     :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin
   ]
-  before_filter :auth, except: [:show, :index]
+  before_filter :auth, except: [:show, :index, :search]
 
   def current_user_must_belong_to_group
     raise Exceptions::PermissionError unless current_user.in_group?(@group)
@@ -190,7 +190,7 @@ class GroupsController < ApplicationController
     def group_params
       params.require(:group).permit(
         :name, :slug, :tagline, :description, :logo, :cover, :is_private, :findings, :howto, :bootsy_image_gallery_id,
-        :page, :list_id, :q
+        :campaign_id
       )
     end
 end
