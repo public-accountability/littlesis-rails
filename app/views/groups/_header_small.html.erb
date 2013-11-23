@@ -12,10 +12,10 @@
 <div id="group_header">
 		<div id="group_logo_small"><%= image_tag(@group.logo_url) %></div>
 
-		<div id="group_name"><%= group_link(@group) %></div>
+		<div class="cover_name"><%= group_link(@group) %></div>
 
 		<% if @group.tagline.present? %>
-			<div id="group_tagline"><%= @group.tagline %></div>
+			<div class="cover_tagline"><%= @group.tagline %></div>
 		<% end %>
 
 </div>

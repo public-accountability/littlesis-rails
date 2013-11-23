@@ -46,9 +46,9 @@ $(window).load(function() {
   })
 
   var selected_callback = function(obj, datum) {
-    str = '@entity:' + datum.id + '[' + datum.name + ']';
-    $('#entity_text').val(str);
-    $('#entity_text_group').css('display', 'inline');
+    var str = '@entity:' + datum.id + '[' + datum.name + ']';
+    var note = $('#note_body_raw');
+    note.val(note.val() + str);
   };
 
   $('#note_entity_search')

@@ -1,7 +1,7 @@
 <%= form_for(@group) do |f| %>
   <% if @group.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@group.errors.count, "error") %> prohibited this group from being saved:</h2>
+    <div id="error_explanation" class="alert alert-warning">
+      <%= pluralize(@group.errors.count, "error") %> prohibited this group from being saved:
 
       <ul>
       <% @group.errors.full_messages.each do |msg| %>
@@ -11,29 +11,34 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_area :name %>  
-  </div>
-
-  <div class="field">
-    <%= f.label :slug %>
-    <%= f.text_field :slug %>  
-  </div>
-
-  <div class="field">
-    <%= f.label :is_private %>
+  <div class="checkbox">
+    <%= f.label "Private Group" %>
     <%= f.check_box :is_private %>  
   </div>
 
   <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: "form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :slug %>
+    <%= f.text_field :slug, class: "form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :campaign %>
+    <%= f.collection_select :campaign_id, Campaign.order(:name), :id, :name, include_blank: true, class: "form-control" %>
+  </div>
+
+  <div class="field">
     <%= f.label :tagline %>
-    <%= f.text_area :tagline %>  
+    <%= f.text_area :tagline, class: "form-control" %>  
   </div>
 
   <div class="field">
     <%= f.label :description %>
-    <%= f.text_area :description, class: "textarea_medium" %>  
+    <%= f.text_area :description, class: "textarea_medium form-control" %>  
   </div>
 
   <div class="field">
@@ -54,15 +59,18 @@
 
   <div class="field">
     <%= f.label :findings %>
-    <%= f.bootsy_area :findings, :style => "width: 800px; height: 500px;" %>  
+    <%= f.bootsy_area :findings, class: "wysiwyg form-control" %>  
   </div>
 
   <div class="field">
     <%= f.label :howto %>
-    <%= f.bootsy_area :howto, style: "width: 800px; height: 500px;", editor_options: { html: true } %>  
+    <%= f.bootsy_area :howto, class: "wysiwyg form-control", editor_options: { html: true } %>  
   </div>
 
+  <br />
+
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit nil, class: "btn btn-primary" %>
+    <button type="button" class="btn btn-link"><%= link_to "Cancel", @group %></button>
   </div>
 <% end %>

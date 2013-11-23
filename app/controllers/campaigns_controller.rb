@@ -1,22 +1,30 @@
 class CampaignsController < ApplicationController
-  before_action :set_campaign, only: [:show, :edit, :update, :destroy]
+  before_action :set_campaign, only: [:show, :edit, :update, :destroy, :groups, :admin]
 
   # GET /campaigns
   def index
+    check_permission "admin"
     @campaigns = Campaign.all
   end
 
   # GET /campaigns/1
   def show
+    @recent_updates = Entity.includes(last_user: { sf_guard_user: :sf_guard_user_profile })
+                            .where(last_user_id: @campaign.sf_guard_user_ids)
+                            .order("updated_at DESC").limit(10)
+
+    @carousel_entities = @campaign.featured_entities.limit(20)
   end
 
   # GET /campaigns/new
   def new
+    check_permission "admin"
     @campaign = Campaign.new
   end
 
   # GET /campaigns/1/edit
   def edit
+    check_permission "admin"
   end
 
   # POST /campaigns
@@ -49,6 +57,31 @@ class CampaignsController < ApplicationController
   def destroy
     @campaign.destroy
     redirect_to campaigns_url, notice: 'Campaign was successfully destroyed.'
+  end
+
+  def search_groups
+    data = []
+    groups = Group.search Riddle::Query.escape(params[:q]), per_page: 10, match_mode: :extended
+    data = groups.collect { |g| { value: g.name, name: g.name, id: g.id, slug: g.slug } }
+    render json: data    
+  end
+
+  def groups
+    # @groups = @campaign.groups.working.order(:name).page(params[:page]).per(20)
+
+    @groups = @campaign.groups
+      .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
+      .joins(:group_users)
+      .joins(:sf_guard_group)
+      .group("groups.id")
+      .where(is_private: false, sf_guard_group: { is_working: true })
+      .having("user_count > 0")
+      .order("groups.name")
+      .page(params[:page]).per(20)
+  end
+
+  def admin
+    check_permission "admin"
   end
 
   private

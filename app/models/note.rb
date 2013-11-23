@@ -58,12 +58,15 @@ class Note < ActiveRecord::Base
 		write_attribute(:entity_ids, legacy_denormalize_ary(entities.map(&:id))) if entities.present?
 		write_attribute(:relationship_ids, legacy_denormalize_ary(relationships.map(&:id))) if relationships.present?
 		write_attribute(:lslist_ids, legacy_denormalize_ary(lists.map(&:id))) if entities.present?
-		write_attribute(:sfguardgroup_ids, legacy_denormalize_ary(groups.collect { |g| g.sf_guard_group.id })) if groups.present?
+		write_attribute(:sfguardgroup_ids, legacy_denormalize_ary(groups.collect do |g| 
+			g.sf_guard_group.id if g.sf_guard_group.present? 
+		end)) if groups.present?
 		write_attribute(:network_ids, legacy_denormalize_ary(network_ids))
 		self
 	end
 
 	def legacy_denormalize_ary(ids)
+		return nil if ids.blank?
 		"," + ids.join(",") + ","
 	end
 

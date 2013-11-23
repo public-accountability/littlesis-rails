@@ -23,6 +23,7 @@ class LegacyAuthenticatable < Warden::Strategies::Base
 
   def user_from_legacy_cookie
     data = self.class.legacy_cookie_data(cookies)
+    return nil if data.nil?
 
     # cookie must include "authenticated" boolean and a "user_id"
     return nil if data.match(/authenticated\|b:1/).nil?

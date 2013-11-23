@@ -1,6 +1,6 @@
 <% content_for :body do %>
 
-<div id="group_header_cover" style="background-image: url(<%= @group.cover_url %>);">
+<div id="group_header_cover" class="cover" style="background-image: url(<%= @group.cover_url %>);">
 <div id="group_header_cover_content">
 
 <% if @group.campaign.present? %>
@@ -12,11 +12,11 @@
 <% end %>
 
 <div id="group_header">
-	<div id="group_header_left">
-		<div id="group_name"><%= group_link(@group) %></div>
+	<div class="cover_left">
+		<div class="cover_name"><%= group_link(@group) %></div>
 
 		<% if @group.tagline.present? %>
-			<div id="group_tagline"><%= @group.tagline %></div>
+			<div class="cover_tagline"><%= @group.tagline %></div>
 		<% end %>
 
 		<div id="group_stats">
@@ -25,7 +25,7 @@
 
 
 		<% if @group.description.present? %>
-			<div id="group_description">
+			<div class="cover_description">
 				<%= more_link(raw(@group.description), 300) %>
 			</div>
 
@@ -34,7 +34,7 @@
 		<% if user_signed_in? %>
 			<% if current_user.in_group?(@group) %>
 				<div id="group_helper" class="helper">
-					You're part of this research group. Read the <a href="javascript:void(0);" onclick="jQuery.Bettertabs.select_tab('group_tabs', 'howto');">How-to</a> for help getting started. If you don't like it you're free to <%= link_to("leave", leave_group_path(@group), method: :post) %>.
+					You're a member of this group. Read the <a href="javascript:void(0);" onclick="jQuery.Bettertabs.select_tab('group_tabs', 'howto');">How-to</a> to get started. You can <%= link_to("leave", leave_group_path(@group), method: :post) %> anytime.
 				</div>
 			<% else %>
 				<div id="group_helper" class="helper">
@@ -49,10 +49,10 @@
 		<% end %>
 
 	</div>
-	<div id="group_header_right">
+	<div class="cover_right">
 		<div id="group_logo"><%= image_tag(@group.logo_url) %></div>
 	</div>
-	<div id="group_header_clear"> </div>
+	<div class="cover_clear"> </div>
 </div>
 </div>
 </div>
@@ -118,26 +118,34 @@ $('.group_tabs').bettertabs();
 
 <% else %>
 
-<% if @group.featured_lists.count > 0 %>
-<div class="section_header">Who We're Watching</div>
+<% if @carousel_entities.count > 0 %>
+<h3>Who We're Watching</h3>
 <div id="group_carousel">
 	<%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
 </div>
 <% end %>
 
-<div id="group_left_column">
-	<div class="section_header">Findings & Highlights</div>
-	<div id="group_findings"><%= simple_format(@group.findings) %></div>
+<div class="spacer"> </div>
+
+<div class="left_column">
+	<h3>Findings & Highlights</h3>
+	<div id="group_findings">
+		<% if @group.findings.present? %>
+			<%= simple_format(@group.findings) %>
+		<% else %>
+			No findings yet!
+		<% end %>
+	</div>
 </div>
 
-<div id="group_right_column">
-	<div class="section_header">Recent Updates</div>
+<div class="right_column">
+	<h3>Recent Edits</h3>
 	<% @recent_updates.each do |entity| %>
 		<%= render partial: "entities/recent_update", locals: { entity: entity } %>
 	<% end %>
 </div>
 
-<div id="group_clear"></div>
+<div class="clear_columns"></div>
 
 <% end %>
 
