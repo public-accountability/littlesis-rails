@@ -10,7 +10,7 @@ c = Campaign.create({
 	name: "Wall Street Off Campus",
 	slug: "studentdebt",
 	tagline: "A tagline for this awesome campaign",
-	description: "This campaign invites students and teachers to investigate the conflict-ridden relationships between schools, education officials, and the financial industry.\n\nThis campaign invites students and teachers to investigate the conflict-ridden relationships between schools, education officials, and the financial industry."
+	description: "This campaign invites students and teachers to investigate the conflict-ridden relationships between schools, education officials, and the financial industry. This campaign invites students and teachers to investigate the conflict-ridden relationships between schools, education officials, and the financial industry.\n\nThis campaign invites students and teachers to investigate the conflict-ridden relationships between schools, education officials, and the financial industry. This campaign invites students and teachers to investigate the conflict-ridden relationships between schools, education officials, and the financial industry."
 })
 
 g = Group.create({
@@ -21,5 +21,15 @@ g = Group.create({
 	is_private: 0
 })
 
+g2 = Group.find_by(slug: "occupy")
+l = List.find(404) # homepage carousel profiles
+g2.lists << l
+g2.save!
+
+gl = g2.group_lists.find_by(list_id: 404)
+gl.is_featured = true
+gl.save!
+
 c.groups << g
+c.groups << g2
 c.save!
