@@ -4,5 +4,6 @@ namespace :users do
   	SfGuardUserProfile.all.each do |p| 
   		p.create_user_with_email_password
   	end
+  	print "created Users base on legacy SfGuardUsers\n"
   end
 end
