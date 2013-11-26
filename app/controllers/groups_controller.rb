@@ -1,7 +1,7 @@
 class GroupsController < ApplicationController
   before_action :set_group, only: [
     :show, :edit, :update, :destroy, :notes, :edits, :lists, :feature_list, :remove_list, :unfeature_list, 
-    :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin
+    :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin, :entities
   ]
   before_filter :auth, except: [:show, :index, :search]
 
@@ -22,9 +22,7 @@ class GroupsController < ApplicationController
     @groups = Group.public
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
-      .joins(:sf_guard_group)
       .group("groups.id")
-      .where(sf_guard_group: { is_working: true })
       .having("user_count > 0")
       .order("user_count DESC")
       .page(params[:page]).per(20)
@@ -38,6 +36,7 @@ class GroupsController < ApplicationController
                             .order("updated_at DESC").limit(10)
     if user_signed_in? and current_user.in_group?(@group)
       @notes = @group.notes.public.order("created_at DESC").limit(10)
+      @watched_entities = @group.featured_entities.order("ls_list_entity.created_at DESC").limit(5)
     else
       @carousel_entities = @group.featured_entities.limit(20)
     end
@@ -187,6 +186,11 @@ class GroupsController < ApplicationController
 
   def admin
     check_permission "admin"
+  end
+
+  def entities
+    current_user_must_belong_to_group    
+    @entities = @group.featured_entities.order("ls_list_entity.created_at DESC").page(params[:page]).per(50)
   end
 
   private

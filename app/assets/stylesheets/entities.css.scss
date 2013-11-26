@@ -1,4 +1,4 @@
-$update_image_size: 35px;
+$tiny_image_size: 35px;
 
 .entity_update {
 	padding-top: 1em;
@@ -9,8 +9,9 @@ $update_image_size: 35px;
 .entity_update_image {
 	float: left;
 	margin-right: 0.5em;
-	height: $update_image_size;
-	width: $update_image_size;
+	height: $tiny_image_size;
+	width: $tiny_image_size;
+  border-radius: $tiny_image_size/10;
 	background-size: cover;
 	background-position: center center;
 }
@@ -82,4 +83,16 @@ $small_image_size: 50px;
 .entity_small ul
 {
   margin: 0;
+}
+
+.entities_table_name {
+  width: 250px;
+}
+
+.entity_tiny_image {
+  height: $tiny_image_size;
+  width: $tiny_image_size;
+  border-radius: $tiny_image_size/10;
+  background-size: cover;
+  background-position: center center;  
 }

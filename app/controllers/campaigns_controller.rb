@@ -9,6 +9,8 @@ class CampaignsController < ApplicationController
 
   # GET /campaigns/1
   def show
+    @groups = @campaign.groups.public.limit(3)
+
     @recent_updates = Entity.includes(last_user: { sf_guard_user: :sf_guard_user_profile })
                             .where(last_user_id: @campaign.sf_guard_user_ids)
                             .order("updated_at DESC").limit(10)
@@ -69,12 +71,10 @@ class CampaignsController < ApplicationController
   def groups
     # @groups = @campaign.groups.working.order(:name).page(params[:page]).per(20)
 
-    @groups = @campaign.groups
+    @groups = @campaign.groups.public
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
-      .joins(:sf_guard_group)
       .group("groups.id")
-      .where(is_private: false, sf_guard_group: { is_working: true })
       .having("user_count > 0")
       .order("groups.name")
       .page(params[:page]).per(20)

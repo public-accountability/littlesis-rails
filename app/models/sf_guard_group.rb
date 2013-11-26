@@ -17,8 +17,9 @@ class SfGuardGroup < ActiveRecord::Base
 			group.slug = name
 			group.name = display_name
 			group.tagline = blurb
-			group.description = description
+			group.description = HTMLEntities.new.decode(description)
 			group.is_private = is_private
+			group.is_working = is_working
 			group.default_network_id = home_network_id
 			group.created_at = created_at
 			group.updated_at = updated_at

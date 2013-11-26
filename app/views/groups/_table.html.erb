@@ -3,6 +3,7 @@
 <table class="table">
   <thead>
     <tr>
+      <th> </th>
       <th>Name</th>
       <th>Analysts</th>
       <th>Description</th>
@@ -12,6 +13,11 @@
   <tbody>
     <% @groups.each do |group| %>
       <tr>
+        <td class="groups_table_logo">
+          <% if group.logo.present? %>
+            <%= link_to(image_tag(group.logo.thumb.url), group) %>
+          <% end %>
+        </td>
         <td class="groups_table_name"><%= group_link(group) %></td>
         <td><%= group.user_count %></td>
         <td><%= group.tagline %></td>
