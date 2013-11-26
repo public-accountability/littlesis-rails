@@ -61,7 +61,7 @@
 
 <% if user_signed_in? and current_user.in_group?(@group) %>
 
-<div id="group_left_column">
+<div class="left_column">
 <%= bettertabs :group_tabs, { selected_tab: :updates, class: "group_tabs" } do |tab| %>
 	<%= tab.static :updates do %>
 		<div class="section_header">
@@ -98,7 +98,7 @@
 <% end %>
 </div>
 
-<div id="group_right_column">
+<div class="right_column">
 	<div class="section_header">Who We're Watching</div>
 	<% @group.featured_entities.limit(5).each do |entity| %>
 		<%= render partial: "entities/small", locals: { entity: entity } %>

@@ -241,7 +241,7 @@ div.spacer {
 
 .left_column {	
 	float: left;
-	width: $left_column_width;
+	width: $left_column_width - 30px;
 
 	h1, h2, h3 { margin-top: 0; }
 }

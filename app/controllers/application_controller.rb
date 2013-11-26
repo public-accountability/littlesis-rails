@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_permission(name)
-    raise Exceptions::PermissionError unless current_user.has_legacy_permission(name)
+    raise Exceptions::PermissionError unless current_user.present? and current_user.has_legacy_permission(name)
   end
 
   def not_found
