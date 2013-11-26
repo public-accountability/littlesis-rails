@@ -26,7 +26,7 @@
 
 		<% if @group.description.present? %>
 			<div class="cover_description">
-				<%= more_link(raw(@group.description), 300) %>
+				<%= raw(more_link(@group.description, 300)) %>
 			</div>
 
 		<% end %>
@@ -64,30 +64,30 @@
 <div class="left_column">
 <%= bettertabs :group_tabs, { selected_tab: :updates, class: "group_tabs" } do |tab| %>
 	<%= tab.static :updates do %>
-		<div class="section_header">
+		<h3>
 			Analyst Notes
-			<span class="header_action"><%= link_to "see all", notes_group_path(@group) %></span>
-			<span class="header_action"><%= link_to "write note", new_note_path(group: @group.slug) %></span>
-		</div>
+			<span class="btn btn-link btn-sm"><%= link_to "see all", notes_group_path(@group) %></span>
+			<span class="btn btn-link btn-sm"><%= link_to "write note", new_note_path(group: @group.slug) %></span>
+		</h3>
 		<% @notes.each do |note| %>
 			<%= render partial: "notes/note", locals: { note: note } %>
 		<% end %>
 	<% end %>
 	<%= tab.static :findings do %>
-		<div class="section_header">Findings & Highlights</div>
+		<h3>Findings & Highlights</h3>
 		<div id="group_findings"><%= simple_format(@group.findings) %></div>		
 	<% end %>
 	<%= tab.static :howto, "How-To" do %>
-		<div class="section_header">How-To</div>
+		<h3>How-To</h3>
 		<div id="group_howto"><%= simple_format(@group.howto) %></div>		
 	<% end %>
 	<%= tab.static :lists, "Lists" do %>
-		<div class="section_header">
+		<h3>
 			Research Lists
-		  <span class="header_action">
+		  <span class="btn btn-link btn-sm">
 		    <%= link_to('add', new_list_group_path(@group)) %>
 		  </span>
-		</div>
+		</h3>
 		<div id="group_howto">
 			<% @group.lists.each do |list| %>
 				<div class="group_list_name"><%= list_link(list) %> (<%= list.entities.count %>)</div>
@@ -99,14 +99,19 @@
 </div>
 
 <div class="right_column">
-	<div class="section_header">Who We're Watching</div>
-	<% @group.featured_entities.limit(5).each do |entity| %>
-		<%= render partial: "entities/small", locals: { entity: entity } %>
+	<% if @watched_entities.present? %>
+		<h3>
+			Who We're Watching
+			<span class="btn btn-link btn-sm"><%= link_to 'see all', entities_group_path(@group) %></span>
+		</h3>
+		<% @watched_entities.each do |entity| %>
+			<%= render partial: "entities/small", locals: { entity: entity } %>
+		<% end %>
+		<div class="spacer"> </div>
+		<div class="spacer"> </div>
 	<% end %>
 
-	<div class="spacer"> </div>
-
-	<div class="section_header">Recent Edits</div>
+	<h3>Recent Edits</h3>
 	<% @recent_updates.each do |entity| %>
 		<%= render partial: "entities/recent_update", locals: { entity: entity } %>
 	<% end %>

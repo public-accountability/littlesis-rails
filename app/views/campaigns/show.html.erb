@@ -16,12 +16,12 @@
 			<% end %>
 		</div>
 		<div class="cover_right">
-			<h3 id="campaign_groups_header">
+			<h2 id="campaign_groups_header">
 				Research Groups
 				<span class="btn btn-link btn-sm"><%= link_to 'see all', groups_campaign_path(@campaign) %></span>
-			</h3>
+			</h2>
 			<div id="campaign_groups_list">
-				<% @campaign.groups.take(3).each do |g| %>
+				<% @groups.each do |g| %>
 					<%= render partial: "groups/mini", locals: { group: g } %>
 				<% end %>
 			</div>

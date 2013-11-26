@@ -4,11 +4,11 @@ $(window).ready(function() {
     var remainder = $("#" + id + "_remainder");
 
     if (remainder.hasClass("expanded")) {
-	  	remainder.hide("blind");
+	  	remainder.hide();
 	  	remainder.toggleClass("expanded")
 	  	$(this).html("more &raquo;");
 	  } else {
-	    remainder.show("blind");
+	    remainder.show();
 	  	remainder.toggleClass("expanded")
 	    $(this).html("&laquo; less");
 	  }

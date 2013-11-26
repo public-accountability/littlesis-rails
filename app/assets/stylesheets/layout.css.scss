@@ -3,6 +3,8 @@
 body {
 	margin: 0;
 	font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+	/* needed for bootstrap's fixed navbar */
+	padding-top: $navbar_height;
 }
 
 a {
@@ -31,6 +33,7 @@ a {
 	nav.navbar { 
 		margin-bottom: 0;
 		border-radius: 0;
+		height: $navbar_height;
 		
 		li a { 
 			cursor: pointer;

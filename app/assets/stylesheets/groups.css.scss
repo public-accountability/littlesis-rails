@@ -21,7 +21,7 @@ $logo_size: 50px;
 	border-top: 0px solid #ccc;
 	color: #444;
 	padding-top: 0;
-	padding-bottom: 1em;
+	padding-bottom: 0em;
 	border-bottom: 0px solid #ccc;
 
 	a { color: #444; }
@@ -109,15 +109,6 @@ $logo_size: 50px;
 	padding-top: 0.7em;
 	padding-bottom: 0.7em;
 
-	.group_mini_logo {
-		float: left;
-
-		img {
-			width: $logo_size;
-			border-radius: 5px;
-		}
-	}
-
 	.group_mini_name {
 		margin-left: $logo_size + 10px;
 		font-size: 1.4em;
@@ -128,6 +119,15 @@ $logo_size: 50px;
 		margin-left: $logo_size + 10px;
 		font-size: 0.8em;
 		font-style: italic;
+	}
+}
+
+.group_mini_logo {
+	float: left;
+
+	img {
+		width: $logo_size;
+		border-radius: 5px;
 	}
 }
 
@@ -179,6 +179,11 @@ tr.group_users_row td {
 	padding-top: 0.4em;
 	padding-bottom: 0.4em;
 	vertical-align: middle !important;
+}
+
+.groups_table_logo img {
+	width: 30px;
+	border-radius: 3px;
 }
 
 .groups_table_name {

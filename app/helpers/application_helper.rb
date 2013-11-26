@@ -14,21 +14,30 @@ module ApplicationHelper
 		raw str
 	end
 
-  def more_link(content, max=200, id=nil)
+  def more_link(content, max=nil, id=nil, make_raw=true)
   	splitter = "<!-- more -->"
-  	if content.include? splitter
+  	if content.include? splitter or max.present?
 	  	id = SecureRandom.hex(8) if id.blank?
-  		preview, remainder = content.split(splitter)
-  		str = "<div id='#{id}_preview'>"
+
+      if content.include? splitter
+    		preview, remainder = content.split(splitter)
+      else
+        full = strip_tags(content)
+        preview = truncate(full, length: max, separator: ' ', escape: false, omission: '')
+        remainder = full.gsub(preview, "")
+      end
+
+  		str = "<span id='#{id}_preview'>"
   		str << preview
-  		str << "</div><div style='display: none;' id='#{id}_remainder'>"
+  		str << "</span><span style='display: none;' id='#{id}_remainder'>"
   		str << remainder
-  		str << "</div>"
-  		str << "<a class='more_link' data-target='#{id}' href='javascript:void(0);'>more &raquo;</a>"
-  		raw str
-  	else
-  	 content
+  		str << "</span>"
+  		str << " <a class='more_link' data-target='#{id}' href='javascript:void(0);'>more &raquo;</a>"
+    else
+      str = content
   	end
+
+    make_raw ? raw(str) : str
   end
 
   def yes_or_no(value)

@@ -43,4 +43,8 @@ class Group < ActiveRecord::Base
 	def private?
 		is_private
 	end
+
+	def convert_legacy_description		
+		self.description =  HTMLEntities.new.decode(description)
+	end
 end

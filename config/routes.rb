@@ -29,6 +29,7 @@ Lilsis::Application.routes.draw do
       post 'demote_user'
       post 'remove_user'
       get 'admin'
+      get 'entities'
     end
   end
 

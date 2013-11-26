@@ -64,6 +64,7 @@ gem 'ts-delayed-delta', '2.0.0', :require => 'thinking_sphinx/deltas/delayed_del
 gem 'daemons'
 gem 'twitter-typeahead-rails'
 gem 'php-serialize'
+gem 'htmlentities'
 
 group :test, :development do
   gem 'better_errors', '0.7.0'
