@@ -20,6 +20,7 @@ class Group < ActiveRecord::Base
 	mount_uploader :cover, GroupCoverUploader
 
 	scope :working, -> { joins(:sf_guard_group).where("sf_guard_group.is_working" => true) }
+	scope :public, -> { where(is_private: false) }
 
 	validates_presence_of :name, :slug
 
@@ -36,9 +37,10 @@ class Group < ActiveRecord::Base
 	end
 
 	def sf_guard_user_ids
-		users.pluck(:sf_guard_user_id)
-		
-		# sf_guard_group.sf_guard_users.pluck(:id)
-		# ^ but Group might not have an SfGuardGroup!
+		users.pluck(:sf_guard_user_id)		
+	end
+
+	def private?
+		is_private
 	end
 end

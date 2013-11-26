@@ -5,22 +5,26 @@ class GroupsController < ApplicationController
   ]
   before_filter :auth, except: [:show, :index, :search]
 
+  def must_belong_to_private_group
+    current_user_must_belong_to_group if @group.private?
+  end
+
   def current_user_must_belong_to_group
-    raise Exceptions::PermissionError unless current_user.in_group?(@group)
+    raise Exceptions::PermissionError unless current_user.present? and current_user.in_group?(@group)
   end
 
   def current_user_must_be_group_admin
-    raise Exceptions::PermissionError unless current_user.admin_in_group?(@group)
+    raise Exceptions::PermissionError unless current_user.present? and current_user.admin_in_group?(@group)
   end
 
   # GET /groups
   def index
-    @groups = Group
+    @groups = Group.public
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
       .joins(:sf_guard_group)
       .group("groups.id")
-      .where(is_private: false, sf_guard_group: { is_working: true })
+      .where(sf_guard_group: { is_working: true })
       .having("user_count > 0")
       .order("user_count DESC")
       .page(params[:page]).per(20)
@@ -28,6 +32,7 @@ class GroupsController < ApplicationController
 
   # GET /groups/1
   def show
+    must_belong_to_private_group
     @recent_updates = Entity.includes(last_user: { sf_guard_user: :sf_guard_user_profile })
                             .where(last_user_id: @group.sf_guard_user_ids)
                             .order("updated_at DESC").limit(10)
@@ -146,7 +151,7 @@ class GroupsController < ApplicationController
 
   def leave
     @group.users.destroy(current_user)
-    redirect_to @group
+    redirect_to @group.private? ? root_path : @group
   end
 
   def users
@@ -155,6 +160,7 @@ class GroupsController < ApplicationController
   end
 
   def promote_user
+    check_permission "admin"
     gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
     throw "user isn't in the group" if gu.nil?
     gu.is_admin = true
@@ -163,6 +169,7 @@ class GroupsController < ApplicationController
   end
 
   def demote_user
+    check_permission "admin"
     gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
     throw "user isn't in the group" if gu.nil?
     gu.is_admin = false
@@ -171,6 +178,7 @@ class GroupsController < ApplicationController
   end
 
   def remove_user
+    check_permission "admin"
     gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
     throw "user isn't in the group" if gu.nil?
     gu.destroy
@@ -178,6 +186,7 @@ class GroupsController < ApplicationController
   end
 
   def admin
+    check_permission "admin"
   end
 
   private
