@@ -1,7 +1,7 @@
 @import "globals";
 
 .cover_left {
-	width: $left_column_width;
+	width: $left_column_width - 40px;;
 	float: left;	
 }
 
@@ -11,7 +11,7 @@
 }
 
 .cover_name {
-	font-size: 3em;
+	font-size: 2.8em;
 	line-height: 1em;
 	font-weight: bold;
 	a { color: black; }

@@ -14,7 +14,7 @@ class SfGuardUserProfile < ActiveRecord::Base
 		end
 	end
 
-	def name
+	def full_name
 		(name_first + " " + name_last).chomp
 	end
 

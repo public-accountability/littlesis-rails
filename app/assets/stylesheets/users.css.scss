@@ -7,3 +7,23 @@
   background-position: center center;
   border-radius: 0.5em;
 }
+
+.users_image {
+	width: 75px;
+}
+
+.users_username {
+	font-weight: bold;
+	width: 150px;
+	word-wrap: break-word;
+	overflow: auto;
+}
+
+.users_name_bio {
+  width: 250px;
+}
+
+.users_groups {
+  width: 250px;
+  font-weight: 500;
+}
