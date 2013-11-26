@@ -9,7 +9,6 @@ class User < ActiveRecord::Base
 
   belongs_to :sf_guard_user, inverse_of: :user
   delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
-  delegate :public_name, to: :sf_guard_user_profile, allow_nil: true
   delegate :s3_url, to: :sf_guard_user_profile, allow_nil: true
   alias :image_url :s3_url
 
@@ -71,5 +70,18 @@ class User < ActiveRecord::Base
   	return received_notes.public.order("note.created_at DESC") if user.nil?
   	received_notes.with_joins
   		.where("note.is_private = ? OR users.id = ?", false, user.id)
+  end
+
+  def show_full_name?
+    sf_guard_user_profile.show_full_name
+  end
+
+  def full_name
+    return nil unless show_full_name?
+    sf_guard_user_profile.full_name
+  end
+
+  def bio
+    sf_guard_user_profile.bio
   end
 end

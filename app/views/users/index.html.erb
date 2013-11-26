@@ -1,0 +1,42 @@
+<h1>Analysts</h1>
+
+<div><%= paginate @users %></div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th></th>
+      <th>User</th>
+      <th>Name/Bio</th>
+      <th>Groups</th>
+      <th>Member Since</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td class="users_image"><%= user_image(user) %></div>
+        <td class="users_username"><%= user_link(user) %></td>
+        <td class="users_name_bio">
+          <% if user.full_name.present? %>
+            <strong><%= user.full_name %></strong><br />
+          <% end %>
+          <%= user.bio %>
+        </td>
+        <td class="users_groups">
+          <% user.groups.each do |group| %>
+            <%= group_link(group) %><br />
+          <% end %>
+        </td>
+        <td><%= user.legacy_created_at.strftime("%F") %></td>
+        <td>
+          <%= link_to 'write note', new_note_path(user: user.username) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div><%= paginate @users %></div>

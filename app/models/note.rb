@@ -72,7 +72,7 @@ class Note < ActiveRecord::Base
 
 	def self.commas_to_array(str)
 		return [] if str.blank?
-		str.chomp(",").reverse.chomp(",").reverse.split(",")
+		str.chomp(",").reverse.chomp(",").reverse.split(",").uniq
 	end
 
 	def self.username_chars
@@ -144,5 +144,23 @@ class Note < ActiveRecord::Base
 
 	def set_visible_to_user_ids
 		self.visible_to_user_ids = recipient_ids + [new_user_id] + (public? ? [0] : nil)
+	end
+
+	# for cleaning up duplicate note_entities created before the table had a unique index
+	def destroy_duplicate_note_entities
+		entity_ids = note_entities.select("entity_id, COUNT(*) AS num").group(:entity_id).having("num > 1").map(&:entity_id)
+		entity_ids.each do |entity_id|
+			note_entities.where(entity_id: entity_id).destroy_all
+			entities << Entity.unscoped.find(entity_id)
+		end
+	end
+
+	# for cleaning up duplicate note_relationships created before the table had a unique index
+	def destroy_duplicate_note_relationships
+		relationship_ids = note_relationships.select("relationship_id, COUNT(*) AS num").group(:relationship_id).having("num > 1").map(&:relationship_id)
+		relationship_ids.each do |relationship_id|
+			note_relationships.where(relationship_id: relationship_id).destroy_all
+			relationships << Relationship.unscoped.find(relationship_id)
+		end
 	end
 end

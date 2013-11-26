@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131123204352) do
+ActiveRecord::Schema.define(version: 20131126184236) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -404,6 +404,9 @@ ActiveRecord::Schema.define(version: 20131123204352) do
     t.boolean "is_featured", default: false, null: false
   end
 
+  add_index "group_lists", ["group_id", "list_id"], name: "index_group_lists_on_group_id_and_list_id", unique: true, using: :btree
+  add_index "group_lists", ["list_id"], name: "index_group_lists_on_list_id", using: :btree
+
   create_table "group_users", force: true do |t|
     t.integer  "group_id"
     t.integer  "user_id"
@@ -411,6 +414,9 @@ ActiveRecord::Schema.define(version: 20131123204352) do
     t.datetime "updated_at"
     t.boolean  "is_admin",   default: false, null: false
   end
+
+  add_index "group_users", ["group_id", "user_id"], name: "index_group_users_on_group_id_and_user_id", unique: true, using: :btree
+  add_index "group_users", ["user_id"], name: "index_group_users_on_user_id", using: :btree
 
   create_table "groups", force: true do |t|
     t.string   "name"
@@ -430,6 +436,7 @@ ActiveRecord::Schema.define(version: 20131123204352) do
     t.boolean  "delta",              default: true, null: false
   end
 
+  add_index "groups", ["campaign_id"], name: "index_groups_on_campaign_id", using: :btree
   add_index "groups", ["delta"], name: "index_groups_on_delta", using: :btree
   add_index "groups", ["slug"], name: "index_groups_on_slug", unique: true, using: :btree
 
@@ -642,7 +649,9 @@ ActiveRecord::Schema.define(version: 20131123204352) do
   add_index "note", ["entity_ids"], name: "entity_ids_idx", using: :btree
   add_index "note", ["is_private"], name: "is_private_idx", using: :btree
   add_index "note", ["lslist_ids"], name: "lslist_ids_idx", using: :btree
+  add_index "note", ["new_user_id"], name: "index_note_on_new_user_id", using: :btree
   add_index "note", ["relationship_ids"], name: "relationship_ids_idx", using: :btree
+  add_index "note", ["sf_guard_user_id"], name: "index_note_on_sf_guard_user_id", using: :btree
   add_index "note", ["updated_at"], name: "updated_at_idx", using: :btree
   add_index "note", ["user_id"], name: "user_id_idx", using: :btree
 
@@ -652,7 +661,7 @@ ActiveRecord::Schema.define(version: 20131123204352) do
   end
 
   add_index "note_entities", ["entity_id"], name: "index_note_entities_on_entity_id", using: :btree
-  add_index "note_entities", ["note_id"], name: "index_note_entities_on_note_id", using: :btree
+  add_index "note_entities", ["note_id", "entity_id"], name: "index_note_entities_on_note_id_and_entity_id", unique: true, using: :btree
 
   create_table "note_groups", force: true do |t|
     t.integer "note_id"
@@ -660,7 +669,7 @@ ActiveRecord::Schema.define(version: 20131123204352) do
   end
 
   add_index "note_groups", ["group_id"], name: "index_note_groups_on_group_id", using: :btree
-  add_index "note_groups", ["note_id"], name: "index_note_groups_on_note_id", using: :btree
+  add_index "note_groups", ["note_id", "group_id"], name: "index_note_groups_on_note_id_and_group_id", unique: true, using: :btree
 
   create_table "note_lists", force: true do |t|
     t.integer "note_id"
@@ -668,7 +677,7 @@ ActiveRecord::Schema.define(version: 20131123204352) do
   end
 
   add_index "note_lists", ["list_id"], name: "index_note_lists_on_list_id", using: :btree
-  add_index "note_lists", ["note_id"], name: "index_note_lists_on_note_id", using: :btree
+  add_index "note_lists", ["note_id", "list_id"], name: "index_note_lists_on_note_id_and_list_id", unique: true, using: :btree
 
   create_table "note_networks", force: true do |t|
     t.integer "note_id"
@@ -676,14 +685,14 @@ ActiveRecord::Schema.define(version: 20131123204352) do
   end
 
   add_index "note_networks", ["network_id"], name: "index_note_networks_on_network_id", using: :btree
-  add_index "note_networks", ["note_id"], name: "index_note_networks_on_note_id", using: :btree
+  add_index "note_networks", ["note_id", "network_id"], name: "index_note_networks_on_note_id_and_network_id", unique: true, using: :btree
 
   create_table "note_relationships", force: true do |t|
     t.integer "note_id"
     t.integer "relationship_id"
   end
 
-  add_index "note_relationships", ["note_id"], name: "index_note_relationships_on_note_id", using: :btree
+  add_index "note_relationships", ["note_id", "relationship_id"], name: "index_note_relationships_on_note_id_and_relationship_id", unique: true, using: :btree
   add_index "note_relationships", ["relationship_id"], name: "index_note_relationships_on_relationship_id", using: :btree
 
   create_table "note_users", force: true do |t|
@@ -691,7 +700,7 @@ ActiveRecord::Schema.define(version: 20131123204352) do
     t.integer "user_id"
   end
 
-  add_index "note_users", ["note_id"], name: "index_note_users_on_note_id", using: :btree
+  add_index "note_users", ["note_id", "user_id"], name: "index_note_users_on_note_id_and_user_id", unique: true, using: :btree
   add_index "note_users", ["user_id"], name: "index_note_users_on_user_id", using: :btree
 
   create_table "object_tag", force: true do |t|
@@ -1044,6 +1053,7 @@ ActiveRecord::Schema.define(version: 20131123204352) do
     t.datetime "updated_at"
   end
 
+  add_index "sf_guard_group", ["display_name"], name: "index_sf_guard_group_on_display_name", using: :btree
   add_index "sf_guard_group", ["name"], name: "name", unique: true, using: :btree
 
   create_table "sf_guard_group_list", id: false, force: true do |t|
@@ -1227,5 +1237,6 @@ ActiveRecord::Schema.define(version: 20131123204352) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["sf_guard_user_id"], name: "index_users_on_sf_guard_user_id", unique: true, using: :btree
+  add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
 end
