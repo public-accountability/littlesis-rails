@@ -1,7 +1,7 @@
 module UsersHelper
 	def user_link(user, name=nil)
 		name ||= user.username
-		link_to name, user_notes_path(user)
+		link_to name, user.legacy_url
 	end
 
 	def user_image(user)

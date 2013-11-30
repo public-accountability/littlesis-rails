@@ -1,7 +1,7 @@
 Lilsis::Application.routes.draw do
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'
   devise_for :users
-  root to: 'campaigns#index'
+  root to: 'groups#index'
 
   resources :campaigns do
     member do
@@ -57,6 +57,7 @@ Lilsis::Application.routes.draw do
 
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
+  get "/home/dashboard" => "home#dashboard"
 
   get "/entities/search_by_name",
     controller: 'entities',

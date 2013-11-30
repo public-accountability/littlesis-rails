@@ -21,7 +21,7 @@
 
 <% @notes.each do |note| %>
 	<% if note.visible_to?(current_user) %>
-		<%= render partial: "notes/note", locals: { note: note, user: current_user, show_delete: true } %>
+		<%= render partial: "notes/note", locals: { note: note, show_delete: true } %>
 	<% end %>
 <% end %>
 

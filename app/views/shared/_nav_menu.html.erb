@@ -7,8 +7,10 @@ if user_signed_in?
     items: {
       Notes: home_notes_path,
       Groups: home_groups_path,
-      Network: current_user.default_network.legacy_network_url,
       Edits: "home/modifications",
+      'divider1' => nil,
+      current_user.default_network.name => current_user.default_network.legacy_network_url,
+      'divider2' => nil,
       Settings: "home/settings",
       Logout: legacy_logout_path
     }

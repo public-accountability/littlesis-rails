@@ -48,6 +48,10 @@ module ApplicationHelper
 		value ? raw("&#x2713;") : nil
   end
 
+  def header_action(text, path)
+    raw "<span class='btn btn-link btn-sm'>#{link_to text, path}</span>"
+  end
+
   def legacy_login_path
     "/login"
   end
