@@ -6,7 +6,6 @@ gem 'mysql2'
 # users and authentication
 gem 'devise'
 
-
 # image uploading with amazon s3 storage
 gem 'carrierwave'
 gem 'mini_magick'
@@ -51,20 +50,27 @@ gem 'dimensions'
 gem 'fastimage'
 gem 'acts_as_paranoid', :git => "git://github.com/freddy/rails3_acts_as_paranoid.git", 
   :branch => "rails4.0"
-
 gem 'nilify_blanks'
-
 gem 'bootsy'
 gem 'bettertabs'
 gem 'kaminari'
 gem 'activerecord-session_store'
+
+# For search and indexing
 gem 'thinking-sphinx', '~> 3.0.2'
 gem 'delayed_job_active_record'
 gem 'ts-delayed-delta', '2.0.0', :require => 'thinking_sphinx/deltas/delayed_delta'
+
 gem 'daemons'
 gem 'twitter-typeahead-rails'
 gem 'php-serialize'
 gem 'htmlentities'
+
+# For memcached integration
+# gem 'dalli'
+
+# For redis integration
+gem 'redis-rails'
 
 group :test, :development do
   gem 'better_errors', '0.7.0'

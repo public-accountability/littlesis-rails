@@ -1,0 +1,56 @@
+<div id="group_header_cover" class="cover" style="background-image: url(<% group.cover_url %>);">
+<div id="group_header_cover_content">
+
+<% if group.campaign.present? %>
+<div id="group_campaign">
+<div id="group_campaign_logo"><%= link_to(image_tag(group.campaign.logo.thumb.url), group.campaign) %></div>
+<div id="group_campaign_name"><%= campaign_link(group.campaign) %></div>
+<div id="group_campaign_tagline"><%= group.campaign.tagline %></div>
+</div>
+<% end %>
+
+<div id="group_header">
+	<div class="cover_left">
+		<div class="cover_name"><%= group_link(group) %></div>
+
+		<% if group.tagline.present? %>
+			<div class="cover_tagline"><%= group.tagline %></div>
+		<% end %>
+
+		<div id="group_stats">
+			<%= pluralize(group.users.count, "analysts") %> &bull; watching <%= pluralize(group.entities.people.count, "person") %> & <%= pluralize(group.entities.orgs.count, "org") %> on <%= pluralize(group.lists.count, "list") %> &bull; <%= group.notes.count %> notes
+		</div>
+
+
+		<% if group.description.present? %>
+			<div class="cover_description">
+				<%= raw(more_link(group.description, 300)) %>
+			</div>
+
+		<% end %>
+
+		<% if user_signed_in? %>
+			<% if current_user.in_group?(group) %>
+				<div id="group_helper" class="helper">
+					You're a member of this group. Read the <a href="javascript:void(0);" onclick="jQuery.Bettertabs.select_tab('group_tabs', 'howto');">How-to</a> to get started. You can <%= link_to("leave", leave_group_path(group), method: :post) %> anytime.
+				</div>
+			<% else %>
+				<div id="group_helper" class="helper">
+					<%= link_to("Join", join_group_path(group), method: :post) %> this research group to participate.
+				</div>
+			<% end %>
+		<% else %>
+			<br />
+			<div id="group_helper" class="helper">
+				This is a LittleSis research group. To participate in this group, <%= link_to 'join', "/join" %> LittleSis or <%= link_to 'log in', "/login" %>.
+			</div>
+		<% end %>
+
+	</div>
+	<div class="cover_right">
+		<div id="group_logo"><%= image_tag(group.logo_url) %></div>
+	</div>
+	<div class="cover_clear"> </div>
+</div>
+</div>
+</div>

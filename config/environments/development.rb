@@ -24,4 +24,7 @@ Lilsis::Application.configure do
 
   # Debug mode disables concatenation and preprocessing of assets.
   config.assets.debug = true
+
+  # Enable caching
+  config.action_controller.perform_caching = true
 end

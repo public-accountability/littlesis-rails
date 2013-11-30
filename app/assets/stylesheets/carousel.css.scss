@@ -1,21 +1,21 @@
-.littlesis_carousel { height: 300px; x-overflow:hidden; }
+.littlesis_carousel { height: 300px; x-overflow:hidden; position: relative; left: -26px; width: 1012px; }
 
 .littlesis_carousel .viewport { 
   float: left; 
-  width: 908px; 
+  width: 960px; 
   height: 300px; 
   overflow: hidden; 
   position: relative; 
-  background-color: #fafafa;
-  border-radius: 50px;
-  box-shadow: inset 3px 3px 5px 2px #ccc;
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  /* box-shadow: inset 3px 3px 5px 2px #ccc; */
 }
 
 .littlesis_carousel .buttons { display: block; margin: 125px 0px 0 0; float: left; }
 .littlesis_carousel .next { margin: 125px 0 0 0px; }
 .littlesis_carousel .disable { /* visibility: hidden; */ }
 .littlesis_carousel .overview { list-style: none; padding: 0; margin: 0;  position: absolute; left: 0; top: 0; }
-.littlesis_carousel .overview li{ float: left; margin: 0 20px 0 0; padding: 0px; height: 295px; width: 904px;}
+.littlesis_carousel .overview li{ float: left; margin: 0 20px 0 0; padding: 0px; height: 295px; width: 956px;}
 
 .littlesis_carousel .pager { overflow:hidden; list-style: none; clear: both; margin: 0 0 0 45px; }
 .littlesis_carousel .pager li { float: left; }
@@ -63,7 +63,7 @@
 .entity_carousel_text
 {
   float: right;
-  width: 600px;
+  width: 652px;
   font-size: 17px;
   line-height: 22px;
   padding: 1.5em;

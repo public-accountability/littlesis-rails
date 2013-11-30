@@ -33,7 +33,7 @@ class HomeController < ApplicationController
       @show_helper = count < 500
     end
 
-    @notes = Note.visible_to_user(current_user).limit(20)
+    @notes = Note.visible_to_user(current_user).limit(20).readonly(false)
     @groups = current_user.groups.order(:name)
     @recent_updates = Entity
       .includes(last_user: { sf_guard_user: :sf_guard_user_profile })

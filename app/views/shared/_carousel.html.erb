@@ -3,7 +3,11 @@
   <div class="viewport">
       <ul class="overview">
       <% entities.each do |entity| %>
-        <li><%= render partial: "entities/carousel", locals: { entity: entity } %></li>
+        <li>
+          <% cache(entity.cache_key('partial/carousel')) do %>
+            <%= render partial: "entities/carousel", locals: { entity: entity } %>
+          <% end %>
+        </li>
       <% end %>
       </ul>
   </div>

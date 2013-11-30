@@ -244,7 +244,7 @@ div.spacer {
 
 .left_column {	
 	float: left;
-	width: $left_column_width - 30px;
+	width: $left_column_width - 50px;
 
 	h1, h2, h3 { margin-top: 0; }
 }
@@ -262,4 +262,11 @@ div.spacer {
 
 form .alert {
 	width: 500px;
+}
+
+.small_caps {
+	font-size: 12px;
+	text-transform: uppercase;
+	font-weight: bold;
+	color: #bbb;
 }

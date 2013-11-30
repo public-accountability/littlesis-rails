@@ -1,6 +1,7 @@
 class Entity < ActiveRecord::Base
   include SingularTable
   include SoftDelete
+  include Cacheable
 
   has_many :aliases, inverse_of: :entity, dependent: :destroy
   has_many :images, inverse_of: :entity, dependent: :destroy

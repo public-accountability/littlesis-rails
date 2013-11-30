@@ -1,5 +1,5 @@
-<div id="campaign_header_cover" style="background-image: url(<%= @campaign.cover_url %>);">
-<div id="campaign_header_cover_content">
+<div id="campaign_header_cover" style="background-image: url(<% @campaign.cover_url %>);" class="cover">
+<div id="campaign_header_cover_content" class="cover_content">
 
 <div id="campaign_header">
 		<div id="campaign_logo_small"><%= image_tag(@campaign.logo_url) %></div>
@@ -10,6 +10,7 @@
 			<div class="cover_tagline"><%= @campaign.tagline %></div>
 		<% end %>
 
+		<div class="clearfix"></div>
 </div>
 </div>
 </div>
