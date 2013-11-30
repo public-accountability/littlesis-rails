@@ -1,5 +1,9 @@
 <div class="left_column">
 
+<% if notice %>
+	<div class="alert alert-success"><%= notice %></div>
+<% end %>
+
 <% if @show_helper %>
 <div id="home_helper">Need help using LittleSis? Get help for <%= link_to 'beginner', "/beginnerHep" %> or <%= link_to 'advanced', "/advancedHelp" %> users.
 </div>
@@ -11,7 +15,7 @@
 	<div class="input-group">
 		<input type="text" name="q" class="form-control" placeholder="search for a name" />
 		<span class="input-group-btn">
-			<button type="submit" class="btn btn-default">
+			<button type="submit" class="btn btn-primary">
 				<span class="glyphicon glyphicon-search"></span>
 			</button>
 		</span>
@@ -25,6 +29,10 @@
 	Recent Notes
 	<span class="btn btn-link btn-sm"><%= link_to 'see all', notes_path %></span>
 </h3>
+
+<%= render partial: "notes/new", locals: { redirect: home_dashboard_path } %>
+
+<div class="spacer"></div>
 
 <% @notes.each do |note| %>
 	<% if note.visible_to?(current_user) %>

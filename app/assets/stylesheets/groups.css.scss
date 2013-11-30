@@ -2,10 +2,6 @@
 $logo_size: 50px;
 
 #group_header_cover {
-	background-color: #eee;
-	background-size: cover;
-	background-position: left top;
-	background-repeat: no-repeat;
 	padding-top: 1em;
 	padding-bottom: 2em;
 	margin-bottom: 1em;
@@ -19,12 +15,12 @@ $logo_size: 50px;
 
 #group_campaign {
 	border-top: 0px solid #ccc;
-	color: #444;
+	color: #999;
 	padding-top: 0;
 	padding-bottom: 0em;
 	border-bottom: 0px solid #ccc;
 
-	a { color: #444; }
+	a { color: #999; }
 }
 
 #group_campaign_content {
@@ -43,14 +39,15 @@ $logo_size: 50px;
 
 #group_campaign_name {
 	margin-left: $logo_size;
-	font-size: 1.4em;
+	font-size: 23px;
 	line-height: 1.3em;
-	font-weight: 500;
+	font-weight: 400;
 }
 
 #group_campaign_tagline {
 	margin-left: $logo_size;	
 	font-size: 0.8em;
+	font-weight: 300;
 	font-style: italic;
 }
 
@@ -73,8 +70,8 @@ $logo_size: 50px;
 	}
 
 	#group_logo {
-		padding-top: 1em;
-		margin-left: 3em;
+		padding-top: 0;
+		margin-left: 0;
 
 		img {
 			width: 300px;
@@ -102,6 +99,7 @@ $logo_size: 50px;
 }
 
 #group_carousel {
+	margin-top: 1em;
 	margin-bottom: 1em;
 }
 
@@ -111,13 +109,14 @@ $logo_size: 50px;
 
 	.group_mini_name {
 		margin-left: $logo_size + 10px;
-		font-size: 1.4em;
+		font-size: 1.2em;
 		font-weight: 500;
 	}
 
 	.group_mini_tagline {
 		margin-left: $logo_size + 10px;
 		font-size: 0.8em;
+		font-weight: 300;
 		font-style: italic;
 	}
 }
@@ -149,7 +148,6 @@ $logo_size: 50px;
 }
 
 .group_edits_user {
-	font-size: 0.8em;
 	a { font-weight: bold; }
 }
 

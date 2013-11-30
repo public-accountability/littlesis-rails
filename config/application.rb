@@ -24,5 +24,7 @@ module Lilsis
     APP_CONFIG.each_pair { |k,v| config.send :"#{k}=", v }
 
     config.autoload_paths += %W(#{config.root}/lib)
+
+    config.cache_store = :redis_store
   end
 end

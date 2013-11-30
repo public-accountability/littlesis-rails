@@ -1,7 +1,7 @@
 Lilsis::Application.routes.draw do
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'
   devise_for :users
-  root to: 'groups#index'
+  root to: 'campaigns#index'
 
   resources :campaigns do
     member do

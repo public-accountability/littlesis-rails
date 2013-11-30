@@ -23,7 +23,6 @@ class GroupsController < ApplicationController
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
       .group("groups.id")
-      .having("user_count > 0")
       .order("user_count DESC")
       .page(params[:page]).per(20)
   end
@@ -40,6 +39,8 @@ class GroupsController < ApplicationController
     else
       @carousel_entities = @group.featured_entities.limit(20)
     end
+
+    @note = Note.new(body_raw: "@group:#{@group.slug}")
   end
 
   # GET /groups/new
@@ -84,6 +85,8 @@ class GroupsController < ApplicationController
 
   def notes
     current_user_must_belong_to_group
+
+    @new_note = Note.new(body_raw: "@group:#{@group.slug}")
 
     if params[:q].present?
       @notes = Note.search(

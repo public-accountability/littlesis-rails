@@ -6,30 +6,35 @@
 
 <%= centered_content do %>
 
-<div class="section_header">
+<h3>
 	Recent Edits
-</div>
-<div><%= paginate @recent_updates %></div>
+</h3>
 
-<table class="list_table group_edits_table">
-  <thead>
-    <tr>
-      <th>Edited By</th>
-      <th>Name</th>
-      <th>Details</th>
-    </tr>
-  </thead>
+<% cache(@group.cache_key('edits/edits', nil, params.slice(:page)), expires_in: 10.minutes) do %>
+  <%= paginate @recent_updates %>
 
-  <tbody>
-    <% @recent_updates.each do |entity| %>
+  <table class="table">
+    <thead>
       <tr>
-        <td class="group_edits_user"><%= user_link(entity.last_user) %> <%= time_ago_in_words(entity.updated_at) %> ago</td>
-        <td class="group_edits_name"><%= entity_link(entity) %></td>
-        <td class="group_edits_details"><em><%= entity.blurb %></em></td>
+        <th>Edited By</th>
+        <th>Entity</th>
+        <th>Details</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+
+    <tbody>
+      <% @recent_updates.each do |entity| %>
+        <tr>
+          <td class="group_edits_user"><%= user_link(entity.last_user) %> <%= time_ago_in_words(entity.updated_at) %> ago</td>
+          <td class="group_edits_name"><%= entity_link(entity) %></td>
+          <td class="group_edits_details"><em><%= entity.blurb %></em></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= paginate @recent_updates %>
+<% end %>
 
 <% end %>
 

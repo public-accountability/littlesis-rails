@@ -10,32 +10,31 @@
 <h3>Entities</h3>
 
 <div class="alert alert-info">
-	These are all the entities belonging to one of this group's featured lists.
+	These are all the entities belonging to one of this group's <%= link_to 'featured lists', lists_group_path(@group) %>.
 </div>
 
-<%= paginate @entities %>
-
-<table class="table">
-	<thead>
-		<tr>
-			<th></th>
-			<th>Name</th>
-			<th>Details</th>
-		</tr>
-	</thead>
-	<tbody>
-		<% @entities.each do |entity| %>
+<% cache(@group.cache_key('entities/entities', nil, params.slice(:page))) do %>
+	<%= paginate @entities %>
+	<table class="table">
+		<thead>
 			<tr>
-				<td><%= tiny_entity_image(entity) %></td>
-				<td class="entities_table_name"><h4><%= entity_link(entity) %></h4></td>
-				<td><h4><small><%= entity.blurb %></small></h4></td>
+				<th></th>
+				<th>Name</th>
+				<th>Details</th>
 			</tr>
-		<% end %>
-	</tbody>
-</table>
-
-<%= paginate @entities %>
-
+		</thead>
+		<tbody>
+			<% @entities.each do |entity| %>
+				<tr>
+					<td><%= tiny_entity_image(entity) %></td>
+					<td class="entities_table_name"><h4><%= entity_link(entity) %></h4></td>
+					<td><h4><small><%= entity.blurb %></small></h4></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+	<%= paginate @entities %>
+<% end %>
 
 <% end %>
 

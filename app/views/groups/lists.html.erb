@@ -14,14 +14,22 @@
 </div>
 
 <% @group_lists.each do |gl| %>
-  <div class="group_list_name"><%= list_link(gl.list) %> (<%= gl.list.entities.count %>)</div>
+  <div class="group_list_name">
+    <%= list_link(gl.list) %> (<%= gl.list.entities.count %>)
+    <% if gl.is_featured %>
+      <span class="small_caps">Featured</span>
+    <% end %>
+  </div>
   <div class="group_list_description"><%= gl.list.description %></div>
   <div class="group_list_actions">
-    <%= link_to('remove', remove_list_group_path(list_id: gl.list_id,), method: :post) %>
-    <% if gl.is_featured %>
-      <%= link_to('unfeature', unfeature_list_group_path(list_id: gl.list_id), method: :post) %>
-    <% else %>
-      <%= link_to('feature', feature_list_group_path(list_id: gl.list_id), method: :post) %>
+
+    <% if current_user.admin_in_group?(@group) %>
+      <%= link_to('remove', remove_list_group_path(list_id: gl.list_id,), method: :post) %>
+      <% if gl.is_featured %>
+        <%= link_to('unfeature', unfeature_list_group_path(list_id: gl.list_id), method: :post) %>
+      <% else %>
+        <%= link_to('feature', feature_list_group_path(list_id: gl.list_id), method: :post) %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

@@ -1,61 +1,6 @@
 <% content_for :body do %>
 
-<div id="group_header_cover" class="cover" style="background-image: url(<%= @group.cover_url %>);">
-<div id="group_header_cover_content">
-
-<% if @group.campaign.present? %>
-<div id="group_campaign">
-<div id="group_campaign_logo"><%= link_to(image_tag(@group.campaign.logo.thumb.url), @group.campaign) %></div>
-<div id="group_campaign_name"><%= campaign_link(@group.campaign) %></div>
-<div id="group_campaign_tagline"><%= @group.campaign.tagline %></div>
-</div>
-<% end %>
-
-<div id="group_header">
-	<div class="cover_left">
-		<div class="cover_name"><%= group_link(@group) %></div>
-
-		<% if @group.tagline.present? %>
-			<div class="cover_tagline"><%= @group.tagline %></div>
-		<% end %>
-
-		<div id="group_stats">
-			<%= pluralize(@group.users.count, "analysts") %> &bull; watching <%= pluralize(@group.entities.people.count, "person") %> & <%= pluralize(@group.entities.orgs.count, "org") %> on <%= pluralize(@group.lists.count, "list") %> &bull; <%= @group.notes.count %> notes
-		</div>
-
-
-		<% if @group.description.present? %>
-			<div class="cover_description">
-				<%= raw(more_link(@group.description, 300)) %>
-			</div>
-
-		<% end %>
-
-		<% if user_signed_in? %>
-			<% if current_user.in_group?(@group) %>
-				<div id="group_helper" class="helper">
-					You're a member of this group. Read the <a href="javascript:void(0);" onclick="jQuery.Bettertabs.select_tab('group_tabs', 'howto');">How-to</a> to get started. You can <%= link_to("leave", leave_group_path(@group), method: :post) %> anytime.
-				</div>
-			<% else %>
-				<div id="group_helper" class="helper">
-					<%= link_to("Join", join_group_path(@group), method: :post) %> this research group to participate.
-				</div>
-			<% end %>
-		<% else %>
-			<br />
-			<div id="group_helper" class="helper">
-				This is a LittleSis research group. To participate in this group, <%= link_to 'join', "/join" %> LittleSis or <%= link_to 'log in', "/login" %>.
-			</div>
-		<% end %>
-
-	</div>
-	<div class="cover_right">
-		<div id="group_logo"><%= image_tag(@group.logo_url) %></div>
-	</div>
-	<div class="cover_clear"> </div>
-</div>
-</div>
-</div>
+<%= render partial: "groups/header", locals: { group: @group } %>
 
 <%= centered_content do %>
 
@@ -67,8 +12,12 @@
 		<h3>
 			Analyst Notes
 			<span class="btn btn-link btn-sm"><%= link_to "see all", notes_group_path(@group) %></span>
-			<span class="btn btn-link btn-sm"><%= link_to "write note", new_note_path(group: @group.slug) %></span>
 		</h3>
+
+		<%= render partial: "notes/new", locals: { note: @note } %>
+
+		<div class="spacer"></div>
+
 		<% @notes.each do |note| %>
 			<%= render partial: "notes/note", locals: { note: note } %>
 		<% end %>
@@ -104,15 +53,23 @@
 			Who We're Watching
 			<span class="btn btn-link btn-sm"><%= link_to 'see all', entities_group_path(@group) %></span>
 		</h3>
-		<% @watched_entities.each do |entity| %>
-			<%= render partial: "entities/small", locals: { entity: entity } %>
+
+		<% cache(@group.cache_key('show/watched'), expires_in: 10.minutes) do %>
+			<% @watched_entities.each do |entity| %>
+				<%= render partial: "entities/small", locals: { entity: entity } %>
+			<% end %>
 		<% end %>
 		<div class="spacer"> </div>
 		<div class="spacer"> </div>
 	<% end %>
 
-	<h3>Recent Edits</h3>
-	<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
+	<h3>
+		Recent Edits
+		<%= header_action('see all', edits_group_path(@group)) %>
+	</h3>
+	<% cache(@group.cache_key('show/recent_edits/inside'), expires_in: 10.minutes) do %>
+		<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
+	<% end %>
 </div>
 
 <script>
@@ -124,7 +81,9 @@ $('.group_tabs').bettertabs();
 <% if @carousel_entities.count > 0 %>
 <h3>Who We're Watching</h3>
 <div id="group_carousel">
-	<%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
+	<% cache(@group.cache_key('show/carousel'), expires_in: 1.day) do %>
+		<%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
+	<% end %>
 </div>
 <% end %>
 
@@ -143,8 +102,10 @@ $('.group_tabs').bettertabs();
 
 <div class="right_column">
 	<h3>Recent Edits</h3>
-	<% @recent_updates.each do |entity| %>
-		<%= render partial: "entities/recent_update", locals: { entity: entity } %>
+	<% cache(@group.cache_key('show/recent_edits/outside'), expires_in: 1.hour) do %>
+		<% @recent_updates.each do |entity| %>
+			<%= render partial: "entities/recent_update", locals: { entity: entity } %>
+		<% end %>
 	<% end %>
 </div>
 

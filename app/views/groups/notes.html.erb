@@ -8,10 +8,11 @@
 
 <div class="left_column">
 
-<h1>
-	Analyst Notes
-	<span class="btn btn-link btn-sm"><%= link_to "write note", new_note_path(group: @group.slug) %></span>
-</h1>
+<h1>Notes</h1>
+
+<%= render partial: "notes/new", locals: { note: @new_note } %>
+
+<hr />
 
 <%= render partial: "notes/search_with_pagination", locals: { notes: @notes } %>
 

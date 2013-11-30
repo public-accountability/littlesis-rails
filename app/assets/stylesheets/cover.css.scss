@@ -1,7 +1,7 @@
 @import "globals";
 
 .cover_left {
-	width: $left_column_width - 40px;;
+	width: $left_column_width - 50px;;
 	float: left;	
 }
 
@@ -13,7 +13,7 @@
 .cover_name {
 	font-size: 3em;
 	line-height: 1.2em;
-	font-weight: bold;
+	font-weight: 500;
 	a { color: black; }
 }
 
@@ -21,11 +21,13 @@
 	margin-top: 0;
 	font-size: 1.3em;
 	font-style: italic;
+	font-weight: 300;
 }
 
 .cover_description {
 	margin-top: 1em;
 	line-height: 1.4em;
+	font-size: 14px;
 }
 
 .cover_clear {
@@ -33,7 +35,14 @@
 }
 
 .cover {
+	background-color: #fff;
+	background-size: cover;
+	background-position: left top;
+	background-repeat: no-repeat;
+
 	h1, h2, h3 {
 		margin-top: 0;
 	}
+
+	border-bottom: 1px solid #eee;
 }
