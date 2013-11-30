@@ -1,0 +1,71 @@
+<div class="left_column">
+
+<% if @show_helper %>
+<div id="home_helper">Need help using LittleSis? Get help for <%= link_to 'beginner', "/beginnerHep" %> or <%= link_to 'advanced', "/advancedHelp" %> users.
+</div>
+<div class="spacer"></div>
+<div class="spacer"></div>
+<% end %>
+
+<form action="/search" method="get">
+	<div class="input-group">
+		<input type="text" name="q" class="form-control" placeholder="search for a name" />
+		<span class="input-group-btn">
+			<button type="submit" class="btn btn-default">
+				<span class="glyphicon glyphicon-search"></span>
+			</button>
+		</span>
+	</div>
+</form>
+
+<div class="spacer"></div>
+<div class="spacer"></div>
+
+<h3>
+	Recent Notes
+	<span class="btn btn-link btn-sm"><%= link_to 'see all', notes_path %></span>
+</h3>
+
+<% @notes.each do |note| %>
+	<% if note.visible_to?(current_user) %>
+		<%= render partial: "notes/note", locals: { note: note, user: current_user } %>
+	<% end %>
+<% end %>
+
+</div>
+
+<div class="right_column">
+
+<div id="dashboard_user_image"><%= user_image(current_user) %></div>
+<div id="dashboard_user_name">
+	<%= user_link(current_user) %><br >
+	<span id="dashboard_user_network"><%= link_to current_user.default_network.name, current_user.default_network.legacy_network_url %></span>
+</div>
+
+<div class="spacer"></div>
+<div class="spacer"></div>
+
+<h3>
+	Research Groups
+	<%= header_action('details', home_groups_path) %>
+</h3>
+
+<% if @groups.present? %>
+	<% @groups.each do |group| %>
+		<%= group_link(group) %><br />
+	<% end %>
+<% else %>
+	<%= link_to 'Join a group', groups_path %>
+<% end %>
+
+<div class="spacer"></div>
+<div class="spacer"></div>
+
+<h3>
+	Recent Edits
+	<%= header_action('see all', 'home/modifications') %>
+</h3>
+
+<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
+
+</div>

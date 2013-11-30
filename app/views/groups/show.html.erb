@@ -112,9 +112,7 @@
 	<% end %>
 
 	<h3>Recent Edits</h3>
-	<% @recent_updates.each do |entity| %>
-		<%= render partial: "entities/recent_update", locals: { entity: entity } %>
-	<% end %>
+	<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
 </div>
 
 <script>

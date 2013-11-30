@@ -84,4 +84,8 @@ class User < ActiveRecord::Base
   def bio
     sf_guard_user_profile.bio
   end
+
+  def legacy_url
+    "/user/#{username}"
+  end
 end
