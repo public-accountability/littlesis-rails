@@ -11,10 +11,11 @@
 
     <br />
   
+    <div class="entity_carousel_connections">
     <% if entity.person? %>
-      <span class="entity_carousel_count">Key affiliations: </span>&nbsp;
+      <span class="entity_carousel_count">Key affiliations: </span>
     <% else %>
-      <span class="entity_carousel_count">Key people: </span>&nbsp;    
+      <span class="entity_carousel_count">Key people: </span>    
     <% end %>
 
     <% connection_links = [] %>
@@ -23,12 +24,12 @@
     <% end %>
     <% connection_links << "<nobr><strong>" + link_to(raw("More &raquo;"), entity) + "</nobr></strong>" %>
 
-    <%= raw(connection_links.join(" &nbsp;&bull;&nbsp; ")) %>
+    <%= raw(connection_links.join(" &bull; ")) %>
     
     <br />
     <br />
   
-    <span class="entity_carousel_count">Related <%= entity.person? ? 'people' : 'orgs' %>: </span>&nbsp;
+    <span class="entity_carousel_count">Related <%= entity.person? ? 'people' : 'orgs' %>: </span>
    
     <% related_links = [] %>
     <% options = {
@@ -43,7 +44,8 @@
     <% end %>
     <% related_links << "<nobr><strong>" + link_to(raw("More &raquo;"), interlocks_entity_path) + "</nobr></strong>" %>
 
-    <%= raw(related_links.join(" &nbsp;&bull;&nbsp; ")) %>
-    
+    <%= raw(related_links.join(" &bull; ")) %>
+    </div>
+
   </div>
 </div>

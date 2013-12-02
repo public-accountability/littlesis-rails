@@ -7,20 +7,26 @@
 <% if user_signed_in? and current_user.in_group?(@group) %>
 
 <div class="left_column">
-<%= bettertabs :group_tabs, { selected_tab: :updates, class: "group_tabs" } do |tab| %>
-	<%= tab.static :updates do %>
+
+<%= bettertabs :group_tabs, { selected_tab: :notes, class: "group_tabs" } do |tab| %>
+	<%= tab.static :notes do %>
 		<h3>
-			Analyst Notes
+			Notes
 			<span class="btn btn-link btn-sm"><%= link_to "see all", notes_group_path(@group) %></span>
 		</h3>
 
-		<%= render partial: "notes/new", locals: { note: @note } %>
+		<%= render partial: "notes/new", locals: { note: @note, redirect: group_path(@group) } %>
 
 		<div class="spacer"></div>
 
-		<% @notes.each do |note| %>
-			<%= render partial: "notes/note", locals: { note: note } %>
-		<% end %>
+		<div class="notes_list">
+			<% cache(@group.cache_key('show/notes')) do %>
+				<% @notes.each do |note| %>
+					<%= render partial: "notes/note", locals: { note: note } %>
+				<% end %>
+			<% end %>
+		</div>
+
 	<% end %>
 	<%= tab.static :findings do %>
 		<h3>Findings & Highlights</h3>
@@ -87,6 +93,7 @@ $('.group_tabs').bettertabs();
 </div>
 <% end %>
 
+<div class="spacer"> </div>
 <div class="spacer"> </div>
 
 <div class="left_column">

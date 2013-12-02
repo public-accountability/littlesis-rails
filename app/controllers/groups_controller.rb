@@ -1,7 +1,8 @@
 class GroupsController < ApplicationController
   before_action :set_group, only: [
     :show, :edit, :update, :destroy, :notes, :edits, :lists, :feature_list, :remove_list, :unfeature_list, 
-    :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin, :entities
+    :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin, :entities,
+    :clear_cache
   ]
   before_filter :auth, except: [:show, :index, :search]
 
@@ -196,6 +197,12 @@ class GroupsController < ApplicationController
     @entities = @group.featured_entities.order("ls_list_entity.created_at DESC").page(params[:page]).per(50)
   end
 
+  def clear_cache
+    check_permission "admin"
+    @group.clear_cache
+    redirect_to admin_group_path, notice: "Cache was successfully cleared."
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_group
@@ -205,8 +212,8 @@ class GroupsController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def group_params
       params.require(:group).permit(
-        :name, :slug, :tagline, :description, :logo, :cover, :is_private, :findings, :howto, :bootsy_image_gallery_id,
-        :campaign_id
+        :name, :slug, :tagline, :description, :logo, :remove_logo, :logo_cache, :cover, :remove_cover, :cover_cache, 
+        :is_private, :findings, :howto, :bootsy_image_gallery_id, :campaign_id
       )
     end
 end

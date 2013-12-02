@@ -1,16 +1,19 @@
-<div id="campaign_header_cover" style="background-image: url(<% @campaign.cover_url %>);" class="cover">
+<%= content_tag("div", { id: "campaign_header_cover", class: "cover", style: campaign.cover.present? ? "background-image: url('#{campaign.cover_url}');" : "" }) do %>
+
 <div id="campaign_header_cover_content" class="cover_content">
-
 <div id="campaign_header">
-		<div id="campaign_logo_small"><%= image_tag(@campaign.logo_url) %></div>
+		<% if campaign.logo.present? %>
+			<div id="campaign_logo_small"><%= image_tag(campaign.logo_url) %></div>
+		<% end %>
 
-		<div class="cover_name"><%= campaign_link(@campaign) %></div>
+		<div class="cover_name"><%= campaign_link(campaign) %></div>
 
 		<% if @campaign.tagline.present? %>
-			<div class="cover_tagline"><%= @campaign.tagline %></div>
+			<div class="cover_tagline"><%= campaign.tagline %></div>
 		<% end %>
 
 		<div class="clearfix"></div>
 </div>
 </div>
-</div>
+
+<% end %>

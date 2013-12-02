@@ -27,12 +27,16 @@ module ApplicationHelper
         remainder = full.gsub(preview, "")
       end
 
-  		str = "<span id='#{id}_preview'>"
-  		str << preview
-  		str << "</span><span style='display: none;' id='#{id}_remainder'>"
-  		str << remainder
-  		str << "</span>"
-  		str << " <a class='more_link' data-target='#{id}' href='javascript:void(0);'>more &raquo;</a>"
+      if remainder.present?
+    		str = "<span id='#{id}_preview'>"
+    		str << preview
+    		str << "</span><span style='display: none;' id='#{id}_remainder'>"
+    		str << remainder
+    		str << "</span>"
+    		str << " <a class='more_link' data-target='#{id}' href='javascript:void(0);'>more &raquo;</a>"
+      else
+        str = preview
+      end
     else
       str = content
   	end
@@ -50,6 +54,10 @@ module ApplicationHelper
 
   def header_action(text, path)
     raw "<span class='btn btn-link btn-sm'>#{link_to text, path}</span>"
+  end
+
+  def notice_if_notice
+    raw "<div class='alert alert-success'>#{notice}</div>" if notice
   end
 
   def legacy_login_path

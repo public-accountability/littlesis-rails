@@ -2,13 +2,13 @@
 
 .note {
 	padding: 14px;	
-	border-bottom: 1px dotted #ddd;
+	border-bottom: 1px solid #e7e7e7;
 	min-height: $user_image_size + 28px;
 	position: relative;
 }
 
 .note.reply {
-	border-left: 10px solid #f8f8f8;
+	border-left: 5px solid #e7e7e7;
 }
 
 .note_reply {
@@ -83,13 +83,13 @@
 .big_note_body {
 	clear: both;
 	margin-top: 1em;
-	padding: 2em;
+	padding: 1.5em;
 	font-size: 1.4em;
 	line-height: 1.4em;
 	width: 600px;
-	background-color: #eee;
-	border-radius: 0.5em;
-	border: 1px solid #ddd;
+	background-color: #fff;
+	border-radius: 5px;
+	border: 1px solid #e7e7e7;
 	position: relative;
 }
 
@@ -141,7 +141,6 @@
 
 #entity_search {
 	font-size: 1em;
-	margin-bottom: 1em;
 
 	#entity_text {
 		font-weight: bold;		
@@ -172,5 +171,11 @@
 }
 
 .input-group.notes_search {
-	width: 300px;
+	max-width: 300px;
+}
+
+.notes_list {
+	border: 1px solid #e7e7e7;
+	border-bottom: 0;
+	border-radius: 5px;
 }

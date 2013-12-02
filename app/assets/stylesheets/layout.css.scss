@@ -256,6 +256,21 @@ div.spacer {
 	h1, h2, h3 { margin-top: 0; }
 }
 
+.small_left_column {
+	float: left;
+	width: $small_column_width;
+
+	h1, h2, h3 { margin-top: 0; }	
+}
+
+.big_right_column {
+	margin-left: $small_column_width + 50px;
+	width: $big_column_width;
+
+	h1, h2, h3 { margin-top: 0; }
+}
+
+
 .clear_columns {
 	clear: both;
 }
@@ -269,4 +284,14 @@ form .alert {
 	text-transform: uppercase;
 	font-weight: bold;
 	color: #bbb;
+}
+
+.pagination {
+	height: 34px;
+}
+
+.input-group  { margin-bottom: 5px; }
+
+body.bootsy_text_area.form-control {
+	padding: 0;
 }

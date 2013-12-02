@@ -9,6 +9,7 @@ Lilsis::Application.routes.draw do
       get 'new_group'
       get 'groups'
       get 'admin'
+      post 'clear_cache'
     end
   end
 
@@ -30,6 +31,7 @@ Lilsis::Application.routes.draw do
       post 'remove_user'
       get 'admin'
       get 'entities'
+      post 'clear_cache'
     end
   end
 

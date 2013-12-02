@@ -1,5 +1,5 @@
 class CampaignsController < ApplicationController
-  before_action :set_campaign, only: [:show, :edit, :update, :destroy, :groups, :admin]
+  before_action :set_campaign, only: [:show, :edit, :update, :destroy, :groups, :admin, :clear_cache]
 
   # GET /campaigns
   def index
@@ -9,7 +9,12 @@ class CampaignsController < ApplicationController
 
   # GET /campaigns/1
   def show
-    @groups = @campaign.groups.public.limit(3)
+    @groups = @campaign.groups.public
+      .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
+      .joins(:group_users)
+      .group("groups.id")
+      .order("user_count DESC")
+      .limit(3)
 
     @recent_updates = Entity.includes(last_user: { sf_guard_user: :sf_guard_user_profile })
                             .where(last_user_id: @campaign.sf_guard_user_ids)
@@ -75,13 +80,18 @@ class CampaignsController < ApplicationController
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
       .group("groups.id")
-      .having("user_count > 0")
       .order("groups.name")
       .page(params[:page]).per(20)
   end
 
   def admin
     check_permission "admin"
+  end
+
+  def clear_cache
+    check_permission "admin"
+    @campaign.clear_cache
+    redirect_to admin_campaign_path(@campaign), notice: "Cache was successfully cleared."
   end
 
   private
@@ -100,6 +110,9 @@ class CampaignsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def campaign_params
-      params.require(:campaign).permit(:name, :slug, :tagline, :description, :logo, :cover, :findings, :howto)
+      params.require(:campaign).permit(
+        :name, :slug, :tagline, :description, :logo, :remove_logo, :logo_cache, 
+        :cover, :remove_cover, :cover_cache, :findings, :howto
+      )
     end
 end

@@ -34,11 +34,18 @@
   <div class="field">
     <%= f.label :logo %>
     <% unless @campaign.logo_url.nil? %>
-      <%= image_tag(@campaign.logo.thumb.url) %><br />
+      <%= image_tag(@campaign.logo.thumb.url, class: "img-thumbnail campaign_logo_thumb") %><br />
     <% end %>
     <%= f.file_field :logo %>
     <%= f.hidden_field :logo_cache %>
   </div>
+
+  <% if @campaign.logo.present? %>
+    <div class="field">
+      <%= f.check_box :remove_logo %>
+      Remove logo
+    </div>
+  <% end %>
 
   <div class="field">
     <%= f.label :cover %>
@@ -49,14 +56,21 @@
     <%= f.hidden_field :cover_cache %>
   </div>
 
+  <% if @campaign.cover.present? %>
+    <div class="field">
+      <%= f.check_box :remove_cover %>
+      Remove cover
+    </div>
+  <% end %>
+
   <div class="field">
     <%= f.label :findings %>
-    <%= f.text_area :findings, class: "wysiwyg form-control" %>  
+    <%= f.bootsy_area :findings, class: "wysiwyg form-control" %>  
   </div>
 
   <div class="field">
     <%= f.label :howto %>
-    <%= f.text_area :howto, class: "wysiwyg form-control" %>  
+    <%= f.bootsy_area :howto, class: "wysiwyg form-control" %>  
   </div>
 
   <br />
