@@ -2,6 +2,6 @@
 
 <div class="alert alert-info">Research groups allow LittleSis analysts to work together on research projects. If you want to create a group to help you organize a project on LittleSis, please contact us.</div>
 
-<% cache(Group.key_with_params('groups/index', params.slice(:page))) do %>
+<% cache(Cache.key_with_params('groups/index', params.slice(:page))) do %>
 	<%= render partial: "groups/table", locals: { groups: @groups } %>
 <% end %>
