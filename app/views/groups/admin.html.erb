@@ -6,10 +6,13 @@
 
 <%= centered_content do %>
 
+<%= notice_if_notice %>
+
 <h1>Admin Links</h1>
 
 <%= link_to "edit this group", edit_group_path(@group) %><br />
 <%= link_to "manage users", users_group_path(@group) %><br />
+<%= link_to "clear cache", clear_cache_group_path(@group), method: :post %><br />
 <%= link_to "create a new group", new_group_path %><br />
 
 <% end %>

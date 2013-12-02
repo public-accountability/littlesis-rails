@@ -1,9 +1,11 @@
 <% content_for :body do %>
 
-<div id="campaign_cover" class="cover" style="background-image: url(<% @campaign.cover_url %>);">
+<%= content_tag("div", { id: "campaign_cover", class: "cover", style: @campaign.cover.present? ? "background-image: url('#{@campaign.cover_url}');" : "" }) do %>
 	<div id="campaign_cover_content">
 		<div class="cover_left">
-			<div id="campaign_logo_small"><%= image_tag(@campaign.logo_url) %></div>
+			<% if @campaign.logo.present? %>
+				<div id="campaign_logo_small"><%= image_tag(@campaign.logo_url) %></div>
+			<% end %>
 
 			<div id="campaign_name" class="cover_name"><%= campaign_link(@campaign) %></div>
 			<% if @campaign.tagline.present? %>
@@ -21,23 +23,36 @@
 				Research Groups
 				<span class="btn btn-link btn-sm"><%= link_to 'see all', groups_campaign_path(@campaign) %></span>
 			</h3>
-			<div id="campaign_groups_list">
-				<% @groups.each do |g| %>
-					<%= render partial: "groups/mini", locals: { group: g } %>
+			<div class="spacer"></div>
+			<table class="table" id="campaign_groups_table">
+				<% cache(@campaign.cache_key('show/groups'), expire_in: 10.minutes) do %>
+					<% @groups.each do |group| %>
+					<tr>
+		        <td class="campaign_groups_logo">
+		          <% if group.logo.present? %>
+		            <%= link_to(image_tag(group.logo.thumb.url), group) %>
+		          <% end %>
+		        </td>
+		        <td class="campaign_groups_name"><%= group_link(group) %></td>
+		        <td><%= group.user_count %></td>
+					</tr>
+					<% end %>
 				<% end %>
-			</div>
+			</table>
 			<%= text_field_tag :group, nil, id: "campaign_groups_search", class: "form-control", placeholder: "Find a group" %>
 			<div id="campaign_start_group">Can't find a group? <%= link_to 'Start a new one', new_group_campaign_path(@campaign) %>.</div>
 		</div>
 		<div class="clearfix"> </div>
 	</div>
-</div>
+<% end %>
 
 <%= centered_content do %>
 	<% if @carousel_entities.count > 0 %>
 	<h3>Who We're Watching</h3>
 	<div id="campaign_carousel">
-		<%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
+		<% cache(@campaign.cache_key('show/carousel'), expires_in: 1.day) do %>
+			<%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
+		<% end %>
 	</div>
 	<% end %>
 
@@ -54,8 +69,10 @@
 
 	<div class="right_column">
 		<h3>Recent Edits</h3>
-		<% @recent_updates.each do |entity| %>
-			<%= render partial: "entities/recent_update", locals: { entity: entity } %>
+		<% cache(@campaign.cache_key('show/recent_edits'), expires_in: 1.hour) do %>
+			<% @recent_updates.each do |entity| %>
+				<%= render partial: "entities/recent_update", locals: { entity: entity } %>
+			<% end %>
 		<% end %>
 	</div>
 

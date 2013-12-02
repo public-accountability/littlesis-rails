@@ -1,14 +1,20 @@
-<div class="left_column">
-
-<h1>Analyst Notes</h1>
+<h1>User Notes</h1>
 
 <%= render partial: "notes/search_with_pagination", locals: { notes: @notes } %>
 
+<div class="spacer"> </div>
+
+<div class="left_column">
+
+<div class="notes_list">
+<% cache(Note.cache_key_with_params('notes/index', params.slice(:q, :page))) do %>
 <% @notes.each do |note| %>
 	<% if note.visible_to?(current_user) %>
 		<%= render partial: "notes/note", locals: { note: note } %>
 	<% end %>
 <% end %>
+<% end %>
+</div>
 
 <div class="spacer"> </div>
 <%= paginate @notes %>

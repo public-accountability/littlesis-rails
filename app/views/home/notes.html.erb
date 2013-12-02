@@ -20,13 +20,24 @@
 
 <hr />
 
-<%= paginate @notes %>
+<%= render partial: "notes/search_with_pagination", locals: { notes: @notes } %>
 
-<% @notes.each do |note| %>
-	<% if note.visible_to?(current_user) %>
-		<%= render partial: "notes/note", locals: { note: note, show_delete: true } %>
+<div class="spacer"> </div>
+
+<div class="notes_list">
+	
+	<% cache(current_user.cache_key('home/notes', nil, params.slice(:q, :page))) do %>
+		<% if flash[:new_note_id] and @note = Note.find(flash[:new_note_id]) and (@notes.first.blank? or @note.id != @notes.first.id) %>
+			<%= render partial: "notes/note", locals: { note: @note, show_delete: true } %>	
+		<% end %>
+
+		<% @notes.each do |note| %>
+			<% if note.visible_to?(current_user) %>
+				<%= render partial: "notes/note", locals: { note: note, show_delete: true } %>
+			<% end %>
+		<% end %>
 	<% end %>
-<% end %>
+</div>
 
 <div class="spacer"> </div>
 <%= paginate @notes %>

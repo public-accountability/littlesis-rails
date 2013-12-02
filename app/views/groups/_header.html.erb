@@ -1,30 +1,38 @@
-<div id="group_header_cover" class="cover" style="background-image: url(<% group.cover_url %>);">
+<%= content_tag("div", { id: "group_header_cover", class: "cover", style: group.cover.present? ? "background-image: url('#{group.cover_url}');" : "" }) do %>
+
 <div id="group_header_cover_content">
 
-<% if group.campaign.present? %>
-<div id="group_campaign">
-<div id="group_campaign_logo"><%= link_to(image_tag(group.campaign.logo.thumb.url), group.campaign) %></div>
-<div id="group_campaign_name"><%= campaign_link(group.campaign) %></div>
-<div id="group_campaign_tagline"><%= group.campaign.tagline %></div>
-</div>
-<% end %>
-
 <div id="group_header">
-	<div class="cover_left">
+	<div class="small_left_column">
+		<div id="group_logo">
+			<% if group.logo.present? %>
+				<%= image_tag(group.logo_url) %>
+			<% end %>
+		</div>
+	</div>
+
+	<div class="big_right_column">
+		<% if group.campaign.present? %>
+			<div id="group_campaign_small">
+				Part of <%= campaign_link(group.campaign) %>
+			</div>
+		<% end %>	
+
 		<div class="cover_name"><%= group_link(group) %></div>
 
 		<% if group.tagline.present? %>
 			<div class="cover_tagline"><%= group.tagline %></div>
 		<% end %>
 
+		<!--
 		<div id="group_stats">
-			<%= pluralize(group.users.count, "analysts") %> &bull; watching <%= pluralize(group.entities.people.count, "person") %> & <%= pluralize(group.entities.orgs.count, "org") %> on <%= pluralize(group.lists.count, "list") %> &bull; <%= group.notes.count %> notes
+			<%= pluralize(group.users.count, "users") %> &bull; watching <%= pluralize(group.entities.people.count, "person") %> & <%= pluralize(group.entities.orgs.count, "org") %> on <%= pluralize(group.lists.count, "list") %> &bull; <%= group.notes.count %> notes
 		</div>
-
+		-->
 
 		<% if group.description.present? %>
 			<div class="cover_description">
-				<%= raw(more_link(group.description, 300)) %>
+				<%= raw(more_link(group.description, 600)) %>
 			</div>
 
 		<% end %>
@@ -45,12 +53,9 @@
 				This is a LittleSis research group. To participate in this group, <%= link_to 'join', "/join" %> LittleSis or <%= link_to 'log in', "/login" %>.
 			</div>
 		<% end %>
-
-	</div>
-	<div class="cover_right">
-		<div id="group_logo"><%= image_tag(group.logo_url) %></div>
 	</div>
 	<div class="cover_clear"> </div>
 </div>
 </div>
-</div>
+
+<% end %>

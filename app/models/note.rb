@@ -1,5 +1,6 @@
 class Note < ActiveRecord::Base
   include SingularTable
+  include Cacheable
 
   belongs_to :user, foreign_key: "new_user_id", inverse_of: :notes
   belongs_to :sf_guard_user, foreign_key: "user_id", inverse_of: :notes
@@ -161,6 +162,20 @@ class Note < ActiveRecord::Base
 		relationship_ids.each do |relationship_id|
 			note_relationships.where(relationship_id: relationship_id).destroy_all
 			relationships << Relationship.unscoped.find(relationship_id)
+		end
+	end
+
+	def clear_related_cache
+		Rails.cache.delete_matched("views/notes/index/*")
+
+		all_users.each do |user|
+			user.clear_cache('home/notes')
+			user.clear_cache('notes/notes')
+		end
+
+		groups.each do |group|
+			group.clear_cache('show/notes')
+			group.clear_cache('notes/notes')
 		end
 	end
 end

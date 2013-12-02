@@ -4,13 +4,20 @@ $logo_size: 50px;
 #group_header_cover {
 	padding-top: 1em;
 	padding-bottom: 2em;
-	margin-bottom: 1em;
+	margin-bottom: 2em;
 }
 
 #group_header_cover_content {
 	width: $page_width;
 	margin: 0 auto;
 	color: black;
+}
+
+#group_campaign_small {
+	font-weight: 300;
+	font-size: 1em;
+
+	a { font-weight: 400; }
 }
 
 #group_campaign {
@@ -55,7 +62,7 @@ $logo_size: 50px;
 	margin-top: 1em;
 
 	#group_stats {
-		font-size: 0.9em;
+		font-size: 1em;
 		color: #444;
 		margin-top: 1em;
 	}
@@ -72,10 +79,14 @@ $logo_size: 50px;
 	#group_logo {
 		padding-top: 0;
 		margin-left: 0;
+		background-color: #f8f8f8;
+		border-radius: 10px;
+		width: $small_column_width;
+		height: $small_column_width;
+		overflow: hidden;
 
 		img {
-			width: 300px;
-			border-radius: 10px;
+			width: $small_column_width;
 		}
 	}
 
@@ -194,3 +205,7 @@ tr.group_users_row td {
 	height: 500px;
 }
 
+.group_logo_thumb {
+	width: 100px;
+	height: 100px;
+}

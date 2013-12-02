@@ -68,10 +68,12 @@ class NotesController < ApplicationController
     @note.legacy_denormalize
 
     if @note.save
+      @note.clear_related_cache
+
       if params[:redirect_to]
-        redirect_to params[:redirect_to], notice: 'Note was successfully created'
+        redirect_to params[:redirect_to], notice: 'Note was successfully created', flash: { new_note_id: @note.id }
       else
-        redirect_to home_notes_path, notice: 'Note was successfully created.'
+        redirect_to home_notes_path, notice: 'Note was successfully created.', flash: { new_note_id: @note.id }
       end
     else
       render action: 'new'

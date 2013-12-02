@@ -1,9 +1,11 @@
+@import 'globals';
+
 .littlesis_carousel { height: 300px; x-overflow:hidden; position: relative; left: -26px; width: 1012px; }
 
 .littlesis_carousel .viewport { 
   float: left; 
   width: 960px; 
-  height: 300px; 
+  height: $small_column_width; 
   overflow: hidden; 
   position: relative; 
   background-color: #f8f8f8;
@@ -42,14 +44,14 @@
   border-bottom: 0px solid #ddd;
   margin-top: 0em;
   margin-bottom: 0em;
-  height: 300px;
+  height: $small_column_width;
 }
 
 .entity_carousel_image
 {
   float: left;
-  height: 300px;
-  width: 300px;
+  height: $small_column_width;
+  width: $small_column_width;
   background-size: cover;
   background-position: center center;
 }
@@ -63,25 +65,29 @@
 .entity_carousel_text
 {
   float: right;
-  width: 652px;
-  font-size: 17px;
-  line-height: 22px;
+  width: 952px - $small_column_width;
   padding: 1.5em;
+  padding-left: 50px;
+  padding-top: 2em;
   padding-bottom: 0.5em;
 }
 
 .entity_carousel_name
 {
-  font-size: 34px;
-  line-height: 38px;
-  font-weight: bold;
+  font-size: 3em;
+  line-height: 1.2em;
+  font-weight: 500;
 }
 
 .entity_carousel_description
 {
-  font-style: italic;
+  font-size: 1.5em;
+  font-weight: 300;
+}
+
+.entity_carousel_connections {
   font-size: 17px;
-  color: #666;
+  line-height: 22px;
 }
 
 .entity_carousel_count

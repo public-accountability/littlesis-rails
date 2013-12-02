@@ -1,18 +1,15 @@
-<div id="group_header_cover" style="background-image: url(<% @group.cover_url %>);" class="cover">
+<%= content_tag("div", { id: "group_header_cover", class: "cover", style: group.cover.present? ? "background-image: url('#{group.cover_url}');" : "" }) do %>
+
 <div id="group_header_cover_content" class="cover_content">
 
-<% if @group.campaign.present? %>
-<div id="group_campaign">
-<% if @group.campaign.logo.present? %>
-	<div id="group_campaign_logo"><%= link_to(image_tag(@group.campaign.logo.thumb.url), @group.campaign) %></div>
-<% end %>
-<div id="group_campaign_name"><%= campaign_link(@group.campaign) %></div>
-<div id="group_campaign_tagline" class="cover_tagline"><%= @group.campaign.tagline %></div>
-</div>
-<% end %>
+<% if group.campaign.present? %>
+	<div id="group_campaign_small">
+		Part of <%= campaign_link(group.campaign) %>
+	</div>
+<% end %>	
 
 <div id="group_header">
-	<% if @group.logo_url.present? %>
+	<% if @group.logo.present? %>
 		<div id="group_logo_small"><%= image_tag(@group.logo_url) %></div>
 	<% end %>
 
@@ -25,4 +22,5 @@
 	<div class="clearfix"></div>
 </div>
 </div>
-</div>
+
+<% end %>

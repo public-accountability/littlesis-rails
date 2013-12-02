@@ -18,26 +18,34 @@ module Cacheable
 			key = "#{self.class.model_name.cache_key}/#{id}/#{subkey}"
 	  end
 
-	  key += "/#{params_to_key(params)}" if params.present?
+	  key += "/#{self.class.params_to_key(params)}" if params.present?
 	  key
 	end
 
-	def expire_cache(subkey=nil, use_timestamp=false)
-		Rails.cache.delete(cache_key(subkey, use_timestamp))
+	def delete_cache(subkey=nil, use_timestamp=false, params=nil)
+		Rails.cache.delete(cache_key(subkey, use_timestamp, params))
 	end
 
-	def clear_cache
+	def clear_cache(subkey=nil)
 		if new_record?
 			pattern = "*#{self.class.model_name.cache_key}/new[\\/\\-]*"
 		else
-			pattern = "*#{self.class.model_name.cache_key}/#{self.id}[\\/\\-]*"
+			sub = subkey.present? ? subkey + "*" : nil
+			pattern = "*#{self.class.model_name.cache_key}/#{self.id}[\\/\\-]*#{sub}"
 		end
-
+		p pattern
 		Rails.cache.delete_matched(pattern)
 	end
 
-	def params_to_key(params)
-		params = Hash[params.sort]
-		params.to_a.flatten.join("/")
+	module ClassMethods
+		def cache_key_with_params(key, params)
+			return key if params.blank?
+			key + "/" + params_to_key(params)
+		end
+
+		def params_to_key(params)
+			params = Hash[params.sort]
+			params.to_a.flatten.join("/")
+		end
 	end
 end

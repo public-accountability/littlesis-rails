@@ -4,11 +4,15 @@ class HomeController < ApplicationController
 	def notes
     @user = User.includes(:notes, notes: :recipients).find_by_username(current_user.username)
 
+    q = Riddle::Query.escape(params[:q]) if params[:q].present?
+
     if params[:show_replies].present? and params[:show_replies] == "1"
-    	@notes = @user.notes_with_replies.order("created_at DESC").page(params[:page]).per(20)
+    	query = Note.search(q, order: "created_at DESC", conditions: { visible_to_user_ids: [0, current_user.id] })
     else
-    	@notes = @user.notes.order("created_at DESC").page(params[:page]).per(20)
+    	query = Note.search(q, order: "created_at DESC", with: { user_id: current_user.id })
     end
+
+    @notes = query.page(params[:page]).per(20)
 	end
 
 	def groups
