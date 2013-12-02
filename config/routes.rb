@@ -66,6 +66,8 @@ Lilsis::Application.routes.draw do
     action: 'search_by_name',
     as: 'entity_name_search'
 
+  get "/edits" => "edits#index"
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

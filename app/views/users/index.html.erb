@@ -1,6 +1,9 @@
 <h1>Analysts</h1>
 
-<div><%= paginate @users %></div>
+<% cache(Cache.key_with_params('edits/index', params.slice(:page)), expires_in: 1.day) do %>
+<%= paginate @users %>
+
+<div class="spacer"></div>
 
 <table class="table">
   <thead>
@@ -39,4 +42,5 @@
   </tbody>
 </table>
 
-<div><%= paginate @users %></div>
+<%= paginate @users %>
+<% end %>
