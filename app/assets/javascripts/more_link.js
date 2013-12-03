@@ -1,4 +1,4 @@
-$(window).ready(function() {
+$(document).ready(function() {
   $(".more_link").on("click", function () {
   	var id = $(this).data("target");
     var remainder = $("#" + id + "_remainder");

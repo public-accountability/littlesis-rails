@@ -9,43 +9,42 @@
       <span class="entity_carousel_description"><%= entity.blurb %><br /></span>
     <% end %>
 
-    <br />
-  
-    <div class="entity_carousel_connections">
-    <% if entity.person? %>
-      <span class="entity_carousel_count">Key affiliations: </span>
-    <% else %>
-      <span class="entity_carousel_count">Key people: </span>    
-    <% end %>
+    <table class="entity_carousel_connections">
+    <tr>
+    <td>
+      <h4>
+        <%= entity.person? ? "Key affiliations" : "Key people" %>
+      </h4>
 
-    <% connection_links = [] %>
-    <% entity.relateds_by_count(5, entity.other_ext).each do |related| %>
-      <% connection_links << entity_link(related) %>
-    <% end %>
-    <% connection_links << "<nobr><strong>" + link_to(raw("More &raquo;"), entity) + "</nobr></strong>" %>
+      <% entity.relateds_by_count(5, entity.other_ext).each do |related| %>
+        <%= entity_link(related, truncate(related.name, length: 55)) %>
+        <br />
+      <% end %>
 
-    <%= raw(connection_links.join(" &bull; ")) %>
-    
-    <br />
-    <br />
-  
-    <span class="entity_carousel_count">Related <%= entity.person? ? 'people' : 'orgs' %>: </span>
-   
-    <% related_links = [] %>
-    <% options = {
-      num: 5,
-      order1: entity.person? ? 1 : 2,
-      order2: entity.person? ? 2 : 1,
-      cat1_ids: [1,3],
-      cat2_ids: [1,3]
-    } %>
-    <% entity.interlocks_by_count(options).each do |ary| %>
-      <% related_links << entity_link(ary[:entity]) %>
-    <% end %>
-    <% related_links << "<nobr><strong>" + link_to(raw("More &raquo;"), interlocks_entity_path) + "</nobr></strong>" %>
+      <strong><%= link_to(raw("More &raquo;")) %></strong>
+    </td>
 
-    <%= raw(related_links.join(" &bull; ")) %>
-    </div>
+    <td>
+      <h4>
+        Related <%= entity.person? ? 'people' : 'orgs' %>
+      </h4>
 
+      <% options = {
+        num: 5,
+        order1: entity.person? ? 1 : 2,
+        order2: entity.person? ? 2 : 1,
+        cat1_ids: [1,3],
+        cat2_ids: [1,3]
+      } %>
+
+      <% entity.interlocks_by_count(options).each do |ary| %>
+        <%= entity_link(ary[:entity], truncate(ary[:entity].name, length: 55)) %>
+        <br />
+      <% end %>
+
+      <strong><%= link_to(raw("More &raquo;")) %></strong>
+    </td>
+    </tr>
+    </table>
   </div>
 </div>

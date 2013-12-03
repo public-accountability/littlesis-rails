@@ -8,7 +8,7 @@
 
 <h1>Research Groups</h1>
 
-<div class="alert alert-info">Research groups allow users to work together on research projects. If you can't find the group you're looking for and want to create a new one, come <%= link_to 'right this way', new_group_campaign_path(@campaign) %>.</div>
+<%= groups_alert %>
 
 <% cache(@campaign.cache_key('groups/groups'), expires_in: 10.minutes) do %>
 	<%= render partial: "groups/table", locals: { groups: @groups } %>	

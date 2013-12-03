@@ -39,7 +39,7 @@
 
 		<% if user_signed_in? %>
 			<% if current_user.in_group?(group) %>
-				<div id="group_helper" class="helper">
+				<div id="group_helper">
 					You're a member of this group. Read the <a href="javascript:void(0);" onclick="jQuery.Bettertabs.select_tab('group_tabs', 'howto');">How-to</a> to get started. You can <%= link_to("leave", leave_group_path(group), method: :post) %> anytime.
 				</div>
 			<% else %>

@@ -67,8 +67,8 @@
   float: right;
   width: 952px - $small_column_width;
   padding: 1.5em;
-  padding-left: 50px;
-  padding-top: 2em;
+  padding-left: 30px;
+  padding-top: 1.2em;
   padding-bottom: 0.5em;
 }
 
@@ -86,14 +86,19 @@
 }
 
 .entity_carousel_connections {
-  font-size: 17px;
-  line-height: 22px;
-}
+  width: 100%;
+  margin-top: 0.3em;
 
-.entity_carousel_count
-{
-  clear: both;
-  font-weight: bold;
+  td { 
+    vertical-align: top;
+    padding-right: 2em; 
+    max-width: 400px;
+    min-width: 200px;
+  }
+
+  h4 {
+    margin-bottom: 0.3em;
+  }
 }
 
 .entity_carousel ul

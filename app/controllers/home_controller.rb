@@ -28,20 +28,17 @@ class HomeController < ApplicationController
 	end
 
   def dashboard
-    @show_helper = false
-
-    unless [1, 2, 201, 21, 1399, 188, 191, 1606, 2129, 1842].include? current_user.sf_guard_user_id
-      # this is really hacky but works for now
-      sql = "SELECT COUNT(*) FROM modification WHERE user_id = #{current_user.sf_guard_user_id}"
-      count = ActiveRecord::Base.connection.select_value(sql)      
-      @show_helper = count < 500
-    end
-
+    clear_dismissed_alerts
     @notes = Note.visible_to_user(current_user).limit(20).readonly(false)
     @groups = current_user.groups.order(:name)
     @recent_updates = Entity
       .includes(last_user: { sf_guard_user: :sf_guard_user_profile })
       .where(last_user_id: current_user.sf_guard_user_id)
       .order("updated_at DESC").limit(10)
+  end
+
+  def dismiss
+    dismiss_alert(params[:id])
+    render json: { id: params[:id] }
   end
 end
