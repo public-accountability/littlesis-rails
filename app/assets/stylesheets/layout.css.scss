@@ -143,15 +143,12 @@ a {
 }
 
 .helper {
-	font-size: 0.9em;
-	padding: 1em;
+	padding: 1.3em;
 	background-color: #eee;
-	border: 1px solid #aaa;
-	border-radius: 1em;
-
-	a {
-		font-weight: bold;
-	}
+	font-size: 1em;
+	border-radius: 8px;
+	a { font-weight: 500; }
+	margin-bottom: 2em;
 }
 
 .centered_content {
@@ -244,7 +241,7 @@ div.spacer {
 
 .left_column {	
 	float: left;
-	width: $left_column_width - 50px;
+	width: $left_column_width - 30px;
 
 	h1, h2, h3 { margin-top: 0; }
 }
@@ -264,7 +261,7 @@ div.spacer {
 }
 
 .big_right_column {
-	margin-left: $small_column_width + 50px;
+	margin-left: $small_column_width + 30px;
 	width: $big_column_width;
 
 	h1, h2, h3 { margin-top: 0; }
@@ -294,4 +291,15 @@ form .alert {
 
 body.bootsy_text_area.form-control {
 	padding: 0;
+}
+
+.alert { 
+	img {
+		margin-right: 0.8em;
+		height: 16px;
+	}
+
+	a { font-weight: 500; }
+
+	button.close { margin-top: -1px; }
 }

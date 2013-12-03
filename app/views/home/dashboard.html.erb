@@ -4,11 +4,8 @@
 	<div class="alert alert-success"><%= notice %></div>
 <% end %>
 
-<% if @show_helper %>
-<div id="home_helper">Need help using LittleSis? Get help for <%= link_to 'beginner', "/beginnerHep" %> or <%= link_to 'advanced', "/advancedHelp" %> users.
-</div>
-<div class="spacer"></div>
-<div class="spacer"></div>
+<%= dismissable_alert('dashboard_alert') do %>
+	Need help using LittleSis? Get help for <%= link_to 'beginner', "/beginnerHep" %> or <%= link_to 'advanced', "/advancedHelp" %> users.
 <% end %>
 
 <form action="/search" method="get">
@@ -34,10 +31,12 @@
 
 <div class="spacer"></div>
 
+<% cache(current_user.cache_key('dashboard/notes')) do %>
 <% @notes.each do |note| %>
 	<% if note.visible_to?(current_user) %>
 		<%= render partial: "notes/note", locals: { note: note, user: current_user } %>
 	<% end %>
+<% end %>
 <% end %>
 
 </div>
@@ -71,9 +70,11 @@
 
 <h3>
 	Recent Edits
-	<%= header_action('see all', 'home/modifications') %>
+	<%= header_action('see all', edits_path) %>
 </h3>
 
-<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
+<% cache(current_user.cache_key('dashboard/edits')) do %>
+	<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
+<% end %>
 
 </div>

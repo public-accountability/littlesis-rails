@@ -60,6 +60,18 @@ module ApplicationHelper
     raw "<div class='alert alert-success'>#{notice}</div>" if notice
   end
 
+  def dismissable_alert(id, &block)
+    unless session[:dismissed_alerts].kind_of?(Array)
+      session[:dismissed_alerts] = []
+    end
+
+    unless session[:dismissed_alerts].include? id
+      content_tag("div", id: id, class: "alert alert-info alert-dismissable") do
+        content_tag("button", raw("&times;"), class: "close", 'data-dismiss-id' => id) + capture(&block)
+      end
+    end
+  end
+
   def legacy_login_path
     "/login"
   end

@@ -33,6 +33,10 @@ Lilsis::Application.routes.draw do
       get 'entities'
       post 'clear_cache'
     end
+
+    collection do
+      get 'request'
+    end
   end
 
   resources :users, only: [:index, :show]
@@ -60,6 +64,10 @@ Lilsis::Application.routes.draw do
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
   get "/home/dashboard" => "home#dashboard"
+  post "/home/dismiss",
+    controller: 'home',
+    action: 'dismiss',
+    as: 'dismiss_helper'
 
   get "/entities/search_by_name",
     controller: 'entities',

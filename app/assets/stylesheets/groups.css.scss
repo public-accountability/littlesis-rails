@@ -70,10 +70,15 @@ $logo_size: 50px;
 	#group_helper {
 		display: inline-block;
 		margin-top: 1em;
-		/* background-color: rgba(220, 220, 255, 0.5); */
 		background-color: rgba(240, 240, 255, 0.8);
 		border-radius: 0.5em;
-		border: 0px solid #eee;
+		font-size: 0.9em;
+		padding: 1em;
+		margin-bottom: 0;
+
+		a {
+			font-weight: bold;
+		}
 	}
 
 	#group_logo {

@@ -26,5 +26,5 @@ Lilsis::Application.configure do
   config.assets.debug = true
 
   # Enable caching
-  config.action_controller.perform_caching = true
+  config.action_controller.perform_caching = false
 end

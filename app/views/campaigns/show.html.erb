@@ -23,7 +23,6 @@
 				Research Groups
 				<span class="btn btn-link btn-sm"><%= link_to 'see all', groups_campaign_path(@campaign) %></span>
 			</h3>
-			<div class="spacer"></div>
 			<table class="table" id="campaign_groups_table">
 				<% cache(@campaign.cache_key('show/groups'), expire_in: 10.minutes) do %>
 					<% @groups.each do |group| %>

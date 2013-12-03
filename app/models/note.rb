@@ -171,6 +171,7 @@ class Note < ActiveRecord::Base
 		all_users.each do |user|
 			user.clear_cache('home/notes')
 			user.clear_cache('notes/notes')
+			user.clear_cache('dashboard/notes')
 		end
 
 		groups.each do |group|

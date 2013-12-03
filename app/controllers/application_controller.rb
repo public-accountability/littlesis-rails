@@ -18,4 +18,13 @@ class ApplicationController < ActionController::Base
   def not_found
     raise ActionController::RoutingError.new('Not Found')
   end
+
+  def dismiss_alert(id)
+    session[:dismissed_alerts] ||= []
+    session[:dismissed_alerts] << id
+  end
+
+  def clear_dismissed_alerts
+    session[:dismissed_alerts] = []
+  end
 end

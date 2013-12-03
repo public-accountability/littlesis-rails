@@ -19,3 +19,16 @@
 //= reuqire more_link
 //= require twitter/typeahead
 //= require_tree .
+
+$(document).ready(function() {
+	$('button[data-dismiss-id]').on("click", function() {
+		var id = $(this).attr('data-dismiss-id');
+		$.ajax("/home/dismiss", {
+			data: { id: id },
+			type: 'POST',
+			success: function(data) {
+				$('#' + data.id).hide('blind');
+			}
+		});
+	});
+});
