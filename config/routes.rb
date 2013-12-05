@@ -1,4 +1,12 @@
 Lilsis::Application.routes.draw do
+
+  # EXTREMELY TEMPORARY AND SHOULD BE REMOVED
+  get "/sign_in_as/:username",
+    controller: 'home',
+    action: 'sign_in_as',
+    constraints: { username: /[\w.]+/, id: /\d+/ }
+  ###########################################
+
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'
   devise_for :users
   root to: 'campaigns#index'

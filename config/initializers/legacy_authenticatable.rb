@@ -40,6 +40,7 @@ class LegacyAuthenticatable < Warden::Strategies::Base
 
   def self.recent_views_from_legacy_cookie(cookies)
     data = legacy_cookie_data(cookies)
+    return nil if data.nil?
     match = data.match(/"viewed_entity_ids";([^}]+\})/)
     return nil if match.nil? or match.length < 2
 

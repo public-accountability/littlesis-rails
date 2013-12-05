@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-	before_filter :auth
+	before_filter :auth, except: [:sign_in_as]
 
 	def notes
     @user = User.includes(:notes, notes: :recipients).find_by_username(current_user.username)
@@ -40,5 +40,13 @@ class HomeController < ApplicationController
   def dismiss
     dismiss_alert(params[:id])
     render json: { id: params[:id] }
+  end
+
+  # EXTREMELY TEMPORARY AND SHOULD BE REMOVED
+  def sign_in_as
+    user = User.find_by(username: params[:username])
+    redirect_to :status => 404 unless user.present?
+    sign_in user
+    redirect_to home_dashboard_path
   end
 end
