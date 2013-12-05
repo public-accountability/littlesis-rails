@@ -7,8 +7,9 @@ class SfGuardUserProfile < ActiveRecord::Base
   	User.where(sf_guard_user_id: user_id).first_or_create do |user|
 			user.username = public_name
 			user.email = email
-			user.password = email
-			user.password_confirmation = email
+      # disabled until devise :database_authenticatable is used
+			# user.password = email
+			# user.password_confirmation = email
 			user.sf_guard_user_id = user_id
 			user.default_network_id = home_network_id
 		end
