@@ -5,7 +5,7 @@ namespace :legacy do
   	:'users:create_all_from_profiles', 
   	:'groups:create_all_from_guard_groups',
   	:'groups:create_all_group_lists_from_guard_group_lists',
-  	:'groups:create_all_group_users_from_guard_group_users',
+  	:'groups:create_all_group_users_from_guard_user_groups',
   	:'notes:set_all_new_users',
   	:'notes:normalize_all',
   	:'notes:make_all_legacy'
