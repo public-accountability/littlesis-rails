@@ -1,13 +1,13 @@
 defaults: &defaults
-  aws_key: AWS_KEY
-  aws_secret: AWS_SECRET_KEY
+  aws_key: 
+  aws_secret:
   aws_s3_base: "http://s3.amazonaws.com"
-  aws_s3_bucket: littlesis
+  aws_s3_bucket: lilsis
   square_image_file_type: jpg
   imagemagick_binary_path: "/usr/local/bin/convert"
-  google_custom_search_engine_id: GOOGLE_CUSTOM_SEARCH_ENGINE_ID
-  google_custom_search_key: GOOGLE_CUSTOM_SEARCH_KEY
-  default_from_email: DEFAULT_FROM_EMAIL
+  google_custom_search_engine_id: 
+  google_custom_search_key: 
+  default_from_email: 
 
 test:
   <<: *defaults
