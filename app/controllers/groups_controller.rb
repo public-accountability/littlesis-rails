@@ -31,9 +31,9 @@ class GroupsController < ApplicationController
   # GET /groups/1
   def show
     must_belong_to_private_group
-    @recent_updates = Entity.includes(last_user: { sf_guard_user: :sf_guard_user_profile })
-                            .where(last_user_id: @group.sf_guard_user_ids)
-                            .order("updated_at DESC").limit(10)
+
+    @recent_updates = @group.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
+
     if user_signed_in? and current_user.in_group?(@group)
       @notes = @group.notes.public.order("created_at DESC").limit(10)
       @watched_entities = @group.featured_entities.order("ls_list_entity.created_at DESC").limit(5)
@@ -102,10 +102,7 @@ class GroupsController < ApplicationController
 
   def edits
     current_user_must_belong_to_group
-    @recent_updates = Entity
-      .includes(last_user: { sf_guard_user: :sf_guard_user_profile })
-      .where(last_user_id: @group.sf_guard_user_ids)
-      .order("updated_at DESC").page(params[:page]).per(20)
+    @recent_updates = @group.edited_entities.includes(last_user: :user).order("updated_at DESC").page(params[:page]).per(20)
   end
 
   def lists

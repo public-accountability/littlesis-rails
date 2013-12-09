@@ -25,7 +25,7 @@
     <tbody>
       <% @recent_updates.each do |entity| %>
         <tr>
-          <td class="group_edits_user"><%= user_link(entity.last_user) %> <%= time_ago_in_words(entity.updated_at) %> ago</td>
+          <td class="group_edits_user"><%= user_link(entity.last_user.user) %> <%= time_ago_in_words(entity.updated_at) %> ago</td>
           <td class="group_edits_name"><%= entity_link(entity) %></td>
           <td class="group_edits_details"><em><%= entity.blurb %></em></td>
         </tr>

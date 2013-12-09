@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-	before_filter :auth, except: [:sign_in_as]
+	before_filter :auth, except: [:dismiss, :sign_in_as]
 
 	def notes
     @user = User.includes(:notes, notes: :recipients).find_by_username(current_user.username)
@@ -31,10 +31,7 @@ class HomeController < ApplicationController
     clear_dismissed_alerts
     @notes = Note.visible_to_user(current_user).limit(20).readonly(false)
     @groups = current_user.groups.order(:name)
-    @recent_updates = Entity
-      .includes(last_user: { sf_guard_user: :sf_guard_user_profile })
-      .where(last_user_id: current_user.sf_guard_user_id)
-      .order("updated_at DESC").limit(10)
+    @recent_updates = current_user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
   end
 
   def dismiss

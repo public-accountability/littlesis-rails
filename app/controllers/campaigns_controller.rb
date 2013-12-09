@@ -16,10 +16,7 @@ class CampaignsController < ApplicationController
       .order("user_count DESC")
       .limit(3)
 
-    @recent_updates = Entity.includes(last_user: { sf_guard_user: :sf_guard_user_profile })
-                            .where(last_user_id: @campaign.sf_guard_user_ids)
-                            .order("updated_at DESC").limit(10)
-
+    @recent_updates = @campaign.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
     @carousel_entities = @campaign.featured_entities.limit(20)
   end
 
