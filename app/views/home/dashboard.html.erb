@@ -31,6 +31,7 @@
 
 <div class="spacer"></div>
 
+<div class="notes_list">
 <% cache(current_user.cache_key('dashboard/notes')) do %>
 <% @notes.each do |note| %>
 	<% if note.visible_to?(current_user) %>
@@ -38,6 +39,7 @@
 	<% end %>
 <% end %>
 <% end %>
+</div>
 
 </div>
 

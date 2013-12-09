@@ -242,15 +242,15 @@ class Entity < ActiveRecord::Base
     find(1164)
   end
 
-  def last_user
-    User.find(last_user_id)
-  end
-
   def name_to_legacy_slug
     name.gsub(" ", "_").gsub("/", "~")
   end
 
   def legacy_url
     "/" + primary_ext.downcase + "/" + id.to_s + "/" + name_to_legacy_slug
+  end
+
+  def last_new_user
+    last_user.user
   end
 end

@@ -1,9 +1,11 @@
+@import "globals";
+
 $tiny_image_size: 35px;
 
 .entity_update {
 	padding-top: 1em;
 	padding-bottom: 1em;
-	border-bottom: 1px dotted #eee;
+	border-bottom: 1px solid $grey_border;
 }
 
 .entity_update_image {

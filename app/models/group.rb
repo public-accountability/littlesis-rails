@@ -8,6 +8,7 @@ class Group < ActiveRecord::Base
 	
 	has_many :group_users, inverse_of: :group, dependent: :destroy
 	has_many :users, through: :group_users, inverse_of: :groups
+	has_many :edited_entities, class_name: "Entity", through: :users
 	
 	has_many :group_lists, inverse_of: :group, dependent: :destroy
 	has_many :lists, through: :group_lists, inverse_of: :groups

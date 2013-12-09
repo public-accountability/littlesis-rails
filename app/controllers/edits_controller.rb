@@ -3,7 +3,7 @@ class EditsController < ApplicationController
 
 	def index
 		@edits = Entity
-      .includes(last_user: { sf_guard_user: :sf_guard_user_profile })
+      .includes(last_user: :user)
       .order("updated_at DESC").page(params[:page]).per(20)
 	end
 end

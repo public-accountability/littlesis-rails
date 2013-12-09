@@ -45,6 +45,7 @@ gem 'jbuilder', '~> 1.0.1'
 # gem 'debugger'
 
 gem 'pry'
+gem 'pry-rails'
 gem 'aws-sdk'
 gem 'dimensions'
 gem 'fastimage'

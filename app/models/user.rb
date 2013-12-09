@@ -12,6 +12,9 @@ class User < ActiveRecord::Base
   belongs_to :sf_guard_user, inverse_of: :user
   delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
   delegate :s3_url, to: :sf_guard_user_profile, allow_nil: true
+
+  has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", primary_key: "sf_guard_user_id"
+
   alias :image_url :s3_url
 
   belongs_to :default_network, class_name: "List"
@@ -19,6 +22,7 @@ class User < ActiveRecord::Base
 
   has_many :group_users, inverse_of: :user, dependent: :destroy
   has_many :groups, through: :group_users, inverse_of: :users
+  has_many :campaigns, through: :groups, inverse_of: :users
 
   has_many :notes, foreign_key: "new_user_id", inverse_of: :user
 
