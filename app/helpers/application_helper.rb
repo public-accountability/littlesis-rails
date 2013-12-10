@@ -95,4 +95,8 @@ module ApplicationHelper
   def home_settings_path
     "/home/settings"
   end
+
+  def contact_path
+    "/contact"
+  end
 end
