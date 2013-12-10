@@ -25,8 +25,7 @@ namespace :notes do
   desc "re-renders HTML body based on body_raw for each Note"
   task rerender_all: :environment do
     Note.all.each do |note|
-      note.render_body(true)
-      note.save
+      note.render_body(true) # overrides existing note bodies
     end
     print "re-rendered all Note bodies\n"
   end
