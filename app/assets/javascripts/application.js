@@ -13,6 +13,8 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.bettertabs
+//= require jquery.shuffle
+//= require jquery.tinycarousel
 //= require bootstrap
 //= require bootsy
 //= require editor_options
