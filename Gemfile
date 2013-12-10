@@ -73,6 +73,9 @@ gem 'htmlentities'
 # For redis integration
 gem 'redis-rails'
 
+# For easy cron scheduling
+gem 'whenever', :require => false
+
 group :test, :development do
   gem 'better_errors', '0.7.0'
   gem 'binding_of_caller', '0.7.0'

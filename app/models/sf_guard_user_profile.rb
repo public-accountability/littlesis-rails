@@ -2,6 +2,7 @@ class SfGuardUserProfile < ActiveRecord::Base
   include SingularTable	
 
   belongs_to :sf_guard_user, inverse_of: :sf_guard_user_profile, foreign_key: "user_id"
+  belongs_to :user, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :sf_guard_user_profile
 
   def create_user_with_email_password
   	User.where(sf_guard_user_id: user_id).first_or_create do |user|
@@ -32,5 +33,9 @@ class SfGuardUserProfile < ActiveRecord::Base
     return read_attribute(:filename) unless type == "square"
     fn = read_attribute(:filename) 
     fn.chomp(File.extname(fn)) + '.jpg'
+  end
+
+  def self.without_user
+    joins("LEFT JOIN users ON users.sf_guard_user_id = sf_guard_user_profile.user_id").where("users.id IS NULL")
   end
 end

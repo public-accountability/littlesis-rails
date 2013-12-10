@@ -10,7 +10,8 @@ class User < ActiveRecord::Base
   # attr_accessible :email, :password, :password_confirmation, :remember_me
 
   belongs_to :sf_guard_user, inverse_of: :user
-  delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
+  has_one :sf_guard_user_profile, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :user
+  # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
   delegate :s3_url, to: :sf_guard_user_profile, allow_nil: true
 
   has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", primary_key: "sf_guard_user_id"
@@ -18,7 +19,6 @@ class User < ActiveRecord::Base
   alias :image_url :s3_url
 
   belongs_to :default_network, class_name: "List"
-  belongs_to :sf_guard_user_profile, inverse_of: :user
 
   has_many :group_users, inverse_of: :user, dependent: :destroy
   has_many :groups, through: :group_users, inverse_of: :users
