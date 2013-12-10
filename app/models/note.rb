@@ -186,7 +186,7 @@ class Note < ActiveRecord::Base
 		end
 	end
 
-	def render_body(override=false, save_record=false)
+	def render_body(override=false)
 		return self.body unless self.body.blank? or override
 
 		extend ActionView::Helpers
@@ -236,7 +236,7 @@ class Note < ActiveRecord::Base
 		end
 
 		self.body = auto_link(simple_format(body, {}, sanitize: false), sanitize: true) { |text| truncate(text, length: 60) }
-		save if save_record
+		save
 		self.body
 	end
 end
