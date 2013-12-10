@@ -1,10 +1,6 @@
 <h1>Request New Group</h1>
 
-<div class="spacer"></div>
-
-After making sure it doesn't <%= link_to 'already exist', groups_path %>, describe the group you want to create, what it will be used for, and who will participate.
-
-<div class="spacer"></div>
+<div class="alert alert-info">After making sure it doesn't <%= link_to 'already exist', groups_path %>, describe the group you want to create, what it will be used for, and who will participate.</div>
 
 <%= form_tag(send_request_groups_path, method: :post) do %>
 
@@ -26,7 +22,6 @@ After making sure it doesn't <%= link_to 'already exist', groups_path %>, descri
 			<%= campaign_link(@campaign) %>
 			<%= hidden_field_tag :campaign_id, @campaign.id %>
 		</div>
-		<br />
 	<% end %>
 
   <div class="field">

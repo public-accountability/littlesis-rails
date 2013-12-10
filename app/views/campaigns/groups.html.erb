@@ -8,7 +8,7 @@
 
 <h1>Research Groups</h1>
 
-<%= groups_alert %>
+<%= groups_alert(@campaign.id) %>
 
 <% cache(@campaign.cache_key('groups/groups'), expires_in: 10.minutes) do %>
 	<%= render partial: "groups/table", locals: { groups: @groups } %>	

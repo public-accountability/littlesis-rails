@@ -21,4 +21,13 @@ namespace :notes do
   	Note.update_all(is_legacy: true)
 	  print "marked all Notes as legacy\n"
   end
+
+  desc "re-renders HTML body based on body_raw for each Note"
+  task rerender_all: :environment do
+    Note.all.each do |note|
+      note.render_body(true)
+      note.save
+    end
+    print "re-rendered all Note bodies\n"
+  end
 end
