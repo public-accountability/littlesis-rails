@@ -19,7 +19,7 @@
     <% entity.relateds_by_count(5, entity.other_ext).each do |related| %>
       <% connection_links << entity_link(related) %>
     <% end %>
-    <% connection_links << "<nobr><strong>" + link_to(raw("More &raquo;"), entity) + "</nobr></strong>" %>
+    <% connection_links << "<nobr><strong>" + link_to(raw("More &raquo;"), entity.legacy_url) + "</nobr></strong>" %>
 
     <%= raw(connection_links.join(", ")) %>
   </div>
