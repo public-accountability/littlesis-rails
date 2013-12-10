@@ -6,7 +6,6 @@ div#campaign_cover {
 	background-size: cover;
 	background-color: #fff;
 	padding-bottom: 2em;
-	margin-bottom: 2em;
 	padding-top: 2em;
 
 	#campaign_cover_content {
@@ -119,4 +118,8 @@ div#campaign_cover {
 #campaign_carousel {
 	margin-top: 1em;
 	margin-bottom: 2em;	
+}
+
+#campaign_custom_html {
+	border-bottom: 1px solid $border_grey;
 }

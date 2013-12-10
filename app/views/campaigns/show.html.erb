@@ -39,10 +39,19 @@
 				<% end %>
 			</table>
 			<%= text_field_tag :group, nil, id: "campaign_groups_search", class: "form-control", placeholder: "Find a group" %>
-			<div id="campaign_start_group">Can't find a group? <%= link_to 'Start a new one', new_group_campaign_path(@campaign) %>.</div>
+			<div id="campaign_start_group">Can't find a group? <%= link_to 'Start a new one', request_new_groups_path(campaign_id: @campaign.id) %>.</div>
 		</div>
 		<div class="clearfix"> </div>
 	</div>
+<% end %>
+
+<% if @campaign.custom_html.present? %>
+	<div id="campaign_custom_html">
+		<%= raw @campaign.custom_html %>
+	</div>
+	<div class="spacer"></div>
+<% else %>
+	<div class="spacer"></div>
 <% end %>
 
 <%= centered_content do %>

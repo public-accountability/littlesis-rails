@@ -200,6 +200,23 @@ class GroupsController < ApplicationController
     redirect_to admin_group_path, notice: "Cache was successfully cleared."
   end
 
+  def request_new
+    @campaign = Campaign.find(params[:campaign_id]) if params[:campaign_id].present?
+  end
+
+  def send_request
+    @campaign = Campaign.find_by(id: params[:campaign_id])
+    gr = GroupRequest.new(params[:name], params[:description], @campaign)
+
+    if gr.valid?
+      GroupRequestMailer.notify_admin(gr, current_user).deliver
+      redirect_to request_sent_groups_path
+    else
+      @errors = gr.errors
+      render "request_new"
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_group
