@@ -14,7 +14,6 @@ Lilsis::Application.routes.draw do
   resources :campaigns do
     member do
       get 'search_groups'
-      get 'new_group'
       get 'groups'
       get 'admin'
       post 'clear_cache'
@@ -43,7 +42,9 @@ Lilsis::Application.routes.draw do
     end
 
     collection do
-      get 'request'
+      get 'request_new'
+      post 'send_request'
+      get 'request_sent'
     end
   end
 

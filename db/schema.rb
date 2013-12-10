@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131126184236) do
+ActiveRecord::Schema.define(version: 20131210165138) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -182,6 +182,7 @@ ActiveRecord::Schema.define(version: 20131126184236) do
     t.string   "slug"
     t.text     "findings"
     t.text     "howto"
+    t.text     "custom_html"
   end
 
   add_index "campaigns", ["slug"], name: "index_campaigns_on_slug", unique: true, using: :btree

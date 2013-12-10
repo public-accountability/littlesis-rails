@@ -1,0 +1,9 @@
+NEW GROUP REQUEST
+
+User: <%= @user.username %>
+Date: <%= Time.now.to_s %>
+
+Name: <%= @name %>
+Description: <%= @description %>
+<%= "Campaign: #{@campaign.name}" if @campaign.present? %>
+
