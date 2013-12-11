@@ -5,7 +5,7 @@ namespace :notes do
 			note.set_new_user_id
 			note.save
 		end
-		print "set new_user_id based on legacy use_id for each Note\n"
+		print "set new_user_id based on legacy user_id for each Note\n"
 	end
 
   desc "normalizes legacy relational fields for each Note"
