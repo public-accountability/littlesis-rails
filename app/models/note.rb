@@ -239,4 +239,13 @@ class Note < ActiveRecord::Base
 		save
 		self.body
 	end
+
+	def self.convert_all_new_legacy
+		where("new_user_id is null").each do |note|
+      note.set_new_user_id
+      note.normalize
+      note.is_legacy = true
+      note.save
+    end
+	end
 end
