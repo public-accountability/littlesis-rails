@@ -187,8 +187,6 @@ class Note < ActiveRecord::Base
 	end
 
 	def render_body(override=false)
-		convert_new_legacy if Lilsis::Application.config.convert_new_legacy_notes and new_user_id.nil?
-
 		return self.body unless self.body.blank? or override
 
 		extend ActionView::Helpers
