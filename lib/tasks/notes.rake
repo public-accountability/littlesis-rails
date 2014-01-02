@@ -32,12 +32,7 @@ namespace :notes do
 
   desc "converts new legacy notes"
   task convert_all_new_legacy: :environment do
-    Note.where("new_user_id is null").each do |note|
-      note.set_new_user_id
-      note.normalize
-      note.is_legacy = true
-      note.save
-    end
+    Note.convert_all_new_legacy
+    print "converted all new legacy Notes to Rails format\n"
   end
-  print "converted all new legacy Notes to Rails format\n"
 end
