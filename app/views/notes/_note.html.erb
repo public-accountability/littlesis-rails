@@ -1,3 +1,5 @@
+<% convert_new_legacy_note(note) %>
+
 <div class="note<%= (defined?(user) and user.present? and note.recipient_ids.include? user.id) ? ' reply' : '' %>">
 	<div class="note_image"><%= user_image(note.user) %></div>
 	<div class="note_user">
