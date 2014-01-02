@@ -21,4 +21,5 @@
 
 every 1.minute do
 	rake "users:create_from_new_profiles", output: nil
+	rake "notes:convert_all_new_legacy", output: nil
 end
