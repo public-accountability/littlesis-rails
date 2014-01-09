@@ -65,7 +65,8 @@ window.Bootsy.options = {
           rel:    "nofollow"
         },
         check_attributes: {
-          href:   "url" // important to avoid XSS
+          name:   "alt",
+          href:   "alt" // important to avoid XSS
         }
       },
       "span": { check_attributes: { style: "style" } },

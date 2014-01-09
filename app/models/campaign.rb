@@ -4,6 +4,7 @@ class Campaign < ActiveRecord::Base
 	has_many :groups, inverse_of: :campaign
 	has_many :users, through: :groups, inverse_of: :campaigns
 	has_many :edited_entities, class_name: "Entity", through: :users
+	has_many :entities, through: :groups, inverse_of: :campaigns
 
 	mount_uploader :logo, CampaignLogoUploader
 	mount_uploader :cover, CampaignCoverUploader

@@ -2,7 +2,7 @@ class GroupsController < ApplicationController
   before_action :set_group, only: [
     :show, :edit, :update, :destroy, :notes, :edits, :lists, :feature_list, :remove_list, :unfeature_list, 
     :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin, :entities,
-    :clear_cache
+    :clear_cache, :edit_advanced
   ]
   before_filter :auth, except: [:show, :index, :search]
 
@@ -32,7 +32,7 @@ class GroupsController < ApplicationController
   def show
     must_belong_to_private_group
 
-    @recent_updates = @group.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
+    @recent_updates = @group.entities.includes(last_user: :user).order("updated_at DESC").limit(10)
 
     if user_signed_in? and current_user.in_group?(@group)
       @notes = @group.notes.public.order("created_at DESC").limit(10)
@@ -53,6 +53,10 @@ class GroupsController < ApplicationController
 
   # GET /groups/1/edit
   def edit
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
+  end
+
+  def edit_advanced
     check_permission "admin"    
   end
 
@@ -103,7 +107,7 @@ class GroupsController < ApplicationController
 
   def edits
     current_user_must_belong_to_group
-    @recent_updates = @group.edited_entities.includes(last_user: :user).order("updated_at DESC").page(params[:page]).per(20)
+    @recent_updates = @group.entities.includes(last_user: :user).order("updated_at DESC").page(params[:page]).per(20)
   end
 
   def lists
