@@ -30,7 +30,7 @@
 	<% end %>
 	<%= tab.static :findings do %>
 		<h3>Findings & Highlights</h3>
-		<div id="group_findings"><%= simple_format(@group.findings) %></div>		
+		<div id="group_findings" class="bootsy_html"><%= raw @group.findings %></div>		
 	<% end %>
 	<%= tab.static :howto, "How-To" do %>
 		<h3>How-To</h3>

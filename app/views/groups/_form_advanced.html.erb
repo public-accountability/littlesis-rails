@@ -1,0 +1,92 @@
+<%= form_for(@group) do |f| %>
+  <% if @group.errors.any? %>
+    <div id="error_explanation" class="alert alert-warning">
+      <%= pluralize(@group.errors.count, "error") %> prohibited this group from being saved:
+
+      <ul>
+      <% @group.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="checkbox">
+    <%= f.label "Private Group" %>
+    <%= f.check_box :is_private %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: "form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :slug %>
+    <%= f.text_field :slug, class: "form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :campaign %>
+    <%= f.collection_select :campaign_id, Campaign.order(:name), :id, :name, include_blank: true, class: "form-control" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :tagline %>
+    <%= f.text_area :tagline, class: "form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :description %>
+    <%= f.text_area :description, class: "textarea_medium form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :logo %>
+    <% unless @group.logo_url.nil? %>
+      <%= image_tag(@group.logo.thumb.url, class: "img-thumbnail group_logo_thumb") %><br />
+    <% end %>
+    <%= f.file_field :logo %>
+    <%= f.hidden_field :logo_cache %>
+  </div>
+
+  <% if @group.logo.present? %>
+    <div class="field">
+      <%= f.check_box :remove_logo %>
+      Remove logo
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :cover %>
+    <% unless @group.cover_url.nil? %>
+      <%= image_tag(@group.cover_url, { width: 500 }) %><br />
+    <% end %>
+    <%= f.file_field :cover %>
+    <%= f.hidden_field :cover_cache %>
+  </div>
+
+  <% if @group.cover.present? %>
+    <div class="field">
+      <%= f.check_box :remove_cover %>
+      Remove cover
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :findings %>
+    <%= f.text_area :findings, class: "wysiwyg form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :howto %>
+    <%= f.text_area :howto, class: "wysiwyg form-control" %>  
+  </div>
+
+  <br />
+
+  <div class="actions">
+    <%= f.submit nil, class: "btn btn-primary" %>
+    <button type="button" class="btn btn-link"><%= link_to "Cancel", @group %></button>
+  </div>
+<% end %>

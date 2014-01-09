@@ -13,6 +13,7 @@ class Entity < ActiveRecord::Base
   has_many :relationships, through: :links
   has_many :relateds, through: :links
   has_many :groups, through: :lists, inverse_of: :entities
+  has_many :campaigns, through: :groups, inverse_of: :entities
   has_many :note_entities, inverse_of: :entity
   has_many :notes, through: :note_entities, inverse_of: :entities
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", inverse_of: :edited_entities

@@ -1,0 +1,16 @@
+<% content_for :body do %>
+
+
+<%= render partial: "groups/header_small", locals: { group: @group } %>
+
+
+<%= centered_content do %>
+
+<h1>Editing group (advanced)</h1>
+
+<%= render 'form_advanced' %>
+
+<% end %>
+
+
+<% end %>
