@@ -33,13 +33,4 @@ $(document).ready(function() {
 			}
 		});
 	});
-
-	$('.bootsy_html a').each(function(index, elem) {
-		var href = $(elem).attr("href");
-		console.log(href);
-		if (href !== undefined && href.match(/^--/) !== null) {
-		  href = href.replace(/^--/, "#")
-			$(elem).attr("href", href)
-		}
-	});
 });

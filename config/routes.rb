@@ -39,7 +39,6 @@ Lilsis::Application.routes.draw do
       get 'admin'
       get 'entities'
       post 'clear_cache'
-      get 'edit_advanced'
     end
 
     collection do
