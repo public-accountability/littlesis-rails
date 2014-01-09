@@ -29,12 +29,12 @@
         <td><%= time_ago_in_words(gu.user.legacy_created_at) %> ago</td>
         <td>
           <% if gu.is_admin %>
-            <%= link_to 'demote', demote_user_group_path(user_id: gu.user.id), method: :post, confirm: "Are you sure?" %>
+            <%= link_to 'revoke admin', demote_user_group_path(user_id: gu.user.id), method: :post, confirm: "Are you sure?" %>
           <% else %>
-            <%= link_to 'promote', promote_user_group_path(user_id: gu.user.id), method: :post, confirm: "Are you sure?" %>
+            <%= link_to 'make admin', promote_user_group_path(user_id: gu.user.id), method: :post, confirm: "Are you sure?" %>
           <% end %>
           /
-          <%= link_to 'remove', remove_user_group_path(user_id: gu.user.id), method: :post, confirm: "Are you sure?" %>
+          <%= link_to 'remove from group', remove_user_group_path(user_id: gu.user.id), method: :post, confirm: "Are you sure?" %>
         </td>
       </tr>
     <% end %>

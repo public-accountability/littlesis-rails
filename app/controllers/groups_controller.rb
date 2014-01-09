@@ -37,6 +37,7 @@ class GroupsController < ApplicationController
     if user_signed_in? and current_user.in_group?(@group)
       @notes = @group.notes.public.order("created_at DESC").limit(10)
       @watched_entities = @group.featured_entities.order("ls_list_entity.created_at DESC").limit(5)
+      @group_lists = @group.group_lists.order("is_featured DESC").joins(:list).where("ls_list.is_deleted" => false)
     else
       @carousel_entities = @group.featured_entities.limit(20)
     end
@@ -133,13 +134,13 @@ class GroupsController < ApplicationController
   end
 
   def new_list
-    current_user_must_be_group_admin
+    current_user_must_belong_to_group
     @lists = nil
     @lists = List.where(List.arel_table[:name].matches("%#{params[:list_search]}%")) if params[:list_search].present?
   end
 
   def add_list
-    current_user_must_be_group_admin
+    current_user_must_belong_to_group
     @group.lists << List.find(params[:list_id])
     redirect_to lists_group_path(@group)    
   end

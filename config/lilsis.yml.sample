@@ -8,7 +8,9 @@ defaults: &defaults
   google_custom_search_engine_id: 
   google_custom_search_key: 
   default_from_email: 
+  default_to_email:
   admins_only: false
+  convert_new_legacy_notes: false
 
 test:
   <<: *defaults

@@ -43,10 +43,16 @@
 		    <%= link_to('add', new_list_group_path(@group)) %>
 		  </span>
 		</h3>
-		<div id="group_howto">
-			<% @group.lists.each do |list| %>
-				<div class="group_list_name"><%= list_link(list) %> (<%= list.entities.count %>)</div>
-				<div class="group_list_description"><%= list.description %></div>
+
+		<div id="group_lists">
+			<% @group_lists.each do |gl| %>
+				<div class="group_list_name">
+					<%= list_link(gl.list) %> (<%= gl.list.entities.count %>)
+		    	<% if gl.is_featured %>
+		      	<span class="small_caps">Featured</span>
+		    	<% end %>
+		    </div>
+				<div class="group_list_description"><%= gl.list.description %></div>
 			<% end %>
 		</div>		
 	<% end %>
