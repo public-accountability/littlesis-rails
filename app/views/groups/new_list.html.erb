@@ -11,9 +11,11 @@
 </div>
 
 <h4>Search</h4>
-<%= form_tag(nil, method: :get) do %>
-  <%= text_field_tag :list_search, params[:list_search], id: 'group_list_search' %>
-  <%= submit_tag 'Go' %>
+<%= form_tag(nil, method: :get, class: 'form-inline') do %>
+	<div class="form-group">
+  	<%= text_field_tag :list_search, params[:list_search], id: 'group_list_search', class: 'form-control ' %>
+  </div>
+	<button type="submit" class="btn btn-default">Go</button>
 <% end %>
 
 <% if @lists.present? %>

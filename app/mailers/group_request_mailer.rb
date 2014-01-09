@@ -1,7 +1,7 @@
 class GroupRequestMailer < ActionMailer::Base
   default( 
   	from: Lilsis::Application.config.default_from_email, 
-  	to: Lilsis::Application.config.default_from_email,
+  	to: Lilsis::Application.config.default_to_email,
   	content_type: "text/plain"
   )
 
