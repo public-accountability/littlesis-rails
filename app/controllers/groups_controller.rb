@@ -2,7 +2,7 @@ class GroupsController < ApplicationController
   before_action :set_group, only: [
     :show, :edit, :update, :destroy, :notes, :edits, :lists, :feature_list, :remove_list, :unfeature_list, 
     :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin, :entities,
-    :clear_cache, :edit_advanced
+    :clear_cache, :edit_advanced, :edit_findings, :edit_howto
   ]
   before_filter :auth, except: [:show, :index, :search]
 
@@ -58,6 +58,14 @@ class GroupsController < ApplicationController
 
   def edit_advanced
     check_permission "admin"    
+  end
+
+  def edit_findings
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
+  end
+
+  def edit_howto
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
   end
 
   # POST /groups
