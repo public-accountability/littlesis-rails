@@ -288,3 +288,20 @@ body.bootsy_text_area.form-control {
 .strong600 {
 	font-weight: 600;
 }
+
+.bootsy_html a[id] {
+	padding-top: 70px;
+	margin-top: -70px;
+}
+
+blockquote {
+	color: #888;
+	font-size: 1em;
+	font-weight: normal;
+
+	p {
+		font-size: 1em;
+		font-weight: normal;
+		margin-top: 0.5em;
+	}
+}
