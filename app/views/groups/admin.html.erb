@@ -13,6 +13,7 @@
 <%= link_to "edit this group", edit_group_path(@group) %><br />
 <%= link_to "edit this group's findings", edit_findings_group_path(@group) %><br />
 <%= link_to "edit this group's howto", edit_howto_group_path(@group) %><br />
+<%= link_to "edit this group's findings and howto using raw HTML)", edit_advanced_group_path(@group) %>
 <%= link_to "manage users", users_group_path(@group) %><br />
 <%= link_to "manage lists", lists_group_path(@group) %><br />
 <%= link_to "clear cache", clear_cache_group_path(@group), method: :post %><br />
