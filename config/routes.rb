@@ -41,6 +41,7 @@ Lilsis::Application.routes.draw do
       post 'clear_cache'
       get 'edit_findings'
       get 'edit_howto'
+      get 'edit_advanced'
     end
 
     collection do
