@@ -19,9 +19,7 @@ class HomeController < ApplicationController
     @groups = Group
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
-      .joins(:sf_guard_group)
       .group("groups.id")
-      .where(sf_guard_group: { is_working: true })
       .where(id: current_user.group_ids)
       .order("user_count DESC")
       .page(params[:page]).per(20)
