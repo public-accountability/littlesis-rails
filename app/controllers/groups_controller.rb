@@ -240,7 +240,7 @@ class GroupsController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def group_params
       params.require(:group).permit(
-        :name, :slug, :tagline, :description, :logo, :remove_logo, :logo_cache, :cover, :remove_cover, :cover_cache, 
+        :name, :slug, :tagline, :description, :logo, :remove_logo, :logo_cache, :logo_credit, 
         :is_private, :findings, :howto, :bootsy_image_gallery_id, :campaign_id
       )
     end
