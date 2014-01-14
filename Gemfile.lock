@@ -39,6 +39,9 @@ GEM
       tzinfo (~> 0.3.37)
     addressable (2.3.5)
     arel (4.0.1)
+    asset_sync (0.5.4)
+      activemodel
+      fog
     atomic (1.1.14)
     aws-sdk (1.32.0)
       json (~> 1.4)
@@ -233,6 +236,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-session_store
   acts_as_paranoid!
+  asset_sync
   aws-sdk
   better_errors (= 0.7.0)
   bettertabs

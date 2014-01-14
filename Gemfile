@@ -11,10 +11,11 @@ gem 'carrierwave'
 gem 'mini_magick'
 gem "fog", "~> 1.3.1"
 
+gem 'sass-rails'
+gem 'asset_sync'
+
 # Gems used only for assets and not required
 # in production environments by default.
-gem 'sass-rails'
-
 group :assets do
   gem 'coffee-rails'
 

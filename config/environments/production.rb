@@ -28,7 +28,7 @@ Lilsis::Application.configure do
 
   # Whether to fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
-  config.assets.precompile << %w(*.png *.jpg *.jpeg *.gif)
+  config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif *.svg *.eot *.woff *.ttf)
 
   # Generate digests for assets URLs.
   config.assets.digest = true
@@ -55,8 +55,14 @@ Lilsis::Application.configure do
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
 
+  # possibly needed to ensure that FOG_DIRECTORY is initialized
+  config.assets.initialize_on_precompile = true
+
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.action_controller.asset_host = "http://assets.example.com"
+  config.action_controller.asset_host = "//s3.amazonaws.com/#{config.aws_s3_bucket}"
+
+  # store assets in a 'folder' instead of bucket root
+  config.assets.prefix = "/assets"
 
   # Precompile additional assets.
   # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
