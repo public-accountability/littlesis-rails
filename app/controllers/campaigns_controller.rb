@@ -110,7 +110,7 @@ class CampaignsController < ApplicationController
     def campaign_params
       params.require(:campaign).permit(
         :name, :slug, :tagline, :description, :logo, :remove_logo, :logo_cache, 
-        :cover, :remove_cover, :cover_cache, :findings, :howto, :custom_html
+        :logo_credit, :findings, :howto, :custom_html
       )
     end
 end

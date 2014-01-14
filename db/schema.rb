@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140109181536) do
+ActiveRecord::Schema.define(version: 20140114220845) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -183,6 +183,7 @@ ActiveRecord::Schema.define(version: 20140109181536) do
     t.text     "findings"
     t.text     "howto"
     t.text     "custom_html"
+    t.string   "logo_credit"
   end
 
   add_index "campaigns", ["slug"], name: "index_campaigns_on_slug", unique: true, using: :btree
@@ -435,6 +436,7 @@ ActiveRecord::Schema.define(version: 20140109181536) do
     t.integer  "featured_list_id"
     t.string   "cover"
     t.boolean  "delta",              default: true, null: false
+    t.string   "logo_credit"
   end
 
   add_index "groups", ["campaign_id"], name: "index_groups_on_campaign_id", using: :btree

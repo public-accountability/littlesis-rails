@@ -9,6 +9,10 @@
 				<%= image_tag(group.logo_url) %>
 			<% end %>
 		</div>
+
+		<% if group.logo_credit.present? %>
+			<div id="group_logo_credit"><%= group.logo_credit %></div>
+		<% end %>
 	</div>
 
 	<div class="big_right_column">
