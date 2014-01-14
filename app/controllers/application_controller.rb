@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
   	render "errors/permission", status: 403
   end
 
+  rescue_from 'Exceptions::NotFoundError' do |exception|
+    render "errors/not_found", status: 404
+  end
+
   def admins_only
     check_permission("admin")
   end
@@ -22,7 +26,7 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    raise ActionController::RoutingError.new('Not Found')
+    raise Exceptions::NotFoundError
   end
 
   def dismiss_alert(id)
