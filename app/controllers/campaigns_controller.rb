@@ -9,6 +9,7 @@ class CampaignsController < ApplicationController
 
   # GET /campaigns/1
   def show
+    not_found if @campaign.blank?
     @groups = @campaign.groups.public
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
