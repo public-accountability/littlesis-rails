@@ -25,6 +25,7 @@ class NotesController < ApplicationController
 
   # GET /notes/1
   def show
+    not_found if @note.blank?
     raise Exceptions::PermissionError unless @note.visible_to?(current_user)
   end
 
@@ -98,6 +99,7 @@ class NotesController < ApplicationController
 
   def user
     @user = User.find_by_username(params[:username])
+    not_found if @user.blank?
     redirect_to home_notes_path if user_signed_in? and current_user.id == @user.id
 
     @show_replies = (params[:show_replies].present? and params[:show_replies] == "1")
