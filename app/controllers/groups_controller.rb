@@ -30,6 +30,7 @@ class GroupsController < ApplicationController
 
   # GET /groups/1
   def show
+    not_found if @group.blank?
     must_belong_to_private_group
 
     @recent_updates = @group.entities.includes(last_user: :user).order("updated_at DESC").limit(10)
