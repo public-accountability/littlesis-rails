@@ -1,5 +1,11 @@
 module ApplicationHelper
 
+  def page_title
+    title = "LittleSis"
+    title += " - " + content_for(:page_title) if content_for?(:page_title)
+    title
+  end
+
 	def centered_content(id=nil, &block)
 		content_id = (id.nil? ? nil : id.to_s + "_content")
 		str = content_tag("div", 

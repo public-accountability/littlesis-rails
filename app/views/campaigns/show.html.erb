@@ -1,3 +1,5 @@
+<% content_for(:page_title, @campaign.name) %>
+
 <% content_for :body do %>
 
 <%= content_tag("div", { id: "campaign_cover", class: "cover", style: @campaign.cover.present? ? "background-image: url('#{@campaign.cover_url}');" : "" }) do %>
