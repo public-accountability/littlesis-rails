@@ -1,6 +1,8 @@
-<h1>Request New Group</h1>
+<% content_for(:page_title, "Request New Research Group") %>
 
-<div class="alert alert-info">After making sure it doesn't <%= link_to 'already exist', groups_path %>, describe the group you want to create, what it will be used for, and who will participate.</div>
+<h1>Request New Research Group</h1>
+
+<div class="alert alert-info">After making sure it doesn't <%= link_to 'already exist', groups_path %>, describe the research group you want to create, what it will be used for, and who will participate.</div>
 
 <%= form_tag(send_request_groups_path, method: :post) do %>
 
