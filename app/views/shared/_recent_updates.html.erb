@@ -2,6 +2,6 @@
   <% entities.each do |entity| %>
   	<%= render partial: "entities/recent_update", locals: { entity: entity } %>
   <% end %>
-<% elsif no_edits_message.present? %>
+<% elsif local_assigns[:no_edits_message].present? %>
   <%= raw no_edits_message %>
 <% end %>
