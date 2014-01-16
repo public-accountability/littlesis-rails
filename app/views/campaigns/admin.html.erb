@@ -13,6 +13,8 @@
 <h1>Admin Links</h1>
 
 <%= link_to "edit this campaign", edit_campaign_path(@campaign) %><br />
+<%= link_to "edit this campaign's findings", edit_findings_campaign_path(@campaign) %><br />
+<%= link_to "edit this campaign's research guide", edit_guide_campaign_path(@campaign) %><br />
 <%= link_to "clear cache", clear_cache_campaign_path(@campaign), method: :post %><br />
 <%= link_to "create a new campaign", new_campaign_path %><br />
 

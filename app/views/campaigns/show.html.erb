@@ -57,31 +57,41 @@
 <% end %>
 
 <%= centered_content do %>
-	<% if @carousel_entities.count > 0 %>
-	<h3>Who We're Watching</h3>
-	<div id="campaign_carousel">
-		<% cache(@campaign.cache_key('show/carousel'), expires_in: 1.day) do %>
-			<%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
-		<% end %>
-	</div>
-	<% end %>
-
-	<div class="spacer"> </div>
-
 	<div class="left_column">
-		<h3>Findings & Highlights</h3>
-		<% if @campaign.findings.present? %>
-			<%= simple_format(@campaign.findings) %>
+		<% if current_user.in_campaign?(@campaign) %>
+			<%= bettertabs :campaign_tabs, { selected_tab: :findings, class: "campaign_tabs" } do |tab| %>
+				<%= tab.static :findings do %>
+					<h3>Findings & Highlights</h3>
+					<% if @campaign.findings.present? %>
+						<%= raw @campaign.findings %>
+					<% else %>
+						No findings yet!
+					<% end %>
+
+					<%= tab.static :guide, "Research Guide" do %>
+						<h3>Research Guide</h3>
+						<div id="campaign_howto"><%= raw @campaign.howto %></div>		
+					<% end %>
+				<% end %>
+			<% end %>
 		<% else %>
-			No findings yet!
-		<% end %>		
+			<h3>Findings & Highlights</h3>
+			<% if @campaign.findings.present? %>
+				<%= raw @campaign.findings %>
+			<% else %>
+				No findings yet!
+			<% end %>
+		<% end %>
 	</div>
 
 	<div class="right_column">
-		<h3>Recent Edits</h3>
-		<% cache(@campaign.cache_key('show/recent_edits'), expires_in: 1.hour) do %>
-			<% @recent_updates.each do |entity| %>
-				<%= render partial: "entities/recent_update", locals: { entity: entity } %>
+		<h3>
+			Who We're Watching
+			<span class="btn btn-link btn-sm"><%= link_to 'see all', entities_campaign_path(@campaign) %></span>
+		</h3>
+		<% cache(@campaign.cache_key('show/watched'), expires_in: 1.day) do %>
+			<% @watched_entities.each do |entity| %>
+				<%= render partial: "entities/small", locals: { entity: entity } %>
 			<% end %>
 		<% end %>
 	</div>
@@ -89,6 +99,10 @@
 <% end %>
 
 <% end %>
+
+<script>
+$('.campaign_tabs').bettertabs();
+</script>
 
 <script>
 $(window).load(function() {

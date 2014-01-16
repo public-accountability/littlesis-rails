@@ -1,5 +1,6 @@
 class CampaignsController < ApplicationController
-  before_action :set_campaign, only: [:show, :edit, :update, :destroy, :groups, :admin, :clear_cache]
+  before_action :set_campaign, only: [:show, :edit, :edit_findings, :edit_guide, :update, :destroy, :groups, 
+    :admin, :clear_cache, :entities]
 
   # GET /campaigns
   def index
@@ -18,7 +19,7 @@ class CampaignsController < ApplicationController
       .limit(3)
 
     @recent_updates = @campaign.entities.includes(last_user: :user).order("updated_at DESC").limit(10)
-    @carousel_entities = @campaign.featured_entities.limit(20)
+    @watched_entities = @campaign.featured_entities.limit(10)
   end
 
   # GET /campaigns/new
@@ -29,6 +30,14 @@ class CampaignsController < ApplicationController
 
   # GET /campaigns/1/edit
   def edit
+    check_permission "admin"
+  end
+
+  def edit_findings
+    check_permission "admin"
+  end
+
+  def edit_guide
     check_permission "admin"
   end
 
@@ -80,6 +89,10 @@ class CampaignsController < ApplicationController
       .group("groups.id")
       .order("groups.name")
       .page(params[:page]).per(20)
+  end
+
+  def entities
+    @entities = @campaign.featured_entities.order("ls_list_entity.created_at DESC").page(params[:page]).per(50)
   end
 
   def admin

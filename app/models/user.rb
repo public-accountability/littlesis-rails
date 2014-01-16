@@ -44,11 +44,15 @@ class User < ActiveRecord::Base
   end
 
   def in_group?(group)
-  	GroupUser.where(group_id: group, user_id: id).count > 0
+  	GroupUser.where(group_id: group.id, user_id: id).count > 0
   end
 
   def admin_in_group?(group)
-  	GroupUser.where(group_id: group, user_id: id, is_admin: true).count > 0
+  	GroupUser.where(group_id: group.id, user_id: id, is_admin: true).count > 0
+  end
+
+  def in_campaign?(campaign)
+    GroupUser.joins(:group).where("groups.campaign_id" => campaign.id, user_id: id).count > 0
   end
 
   def legacy_created_at

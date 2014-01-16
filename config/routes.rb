@@ -17,6 +17,9 @@ Lilsis::Application.routes.draw do
       get 'groups'
       get 'admin'
       post 'clear_cache'
+      get 'entities'
+      get 'edit_findings'
+      get 'edit_guide'
     end
   end
 
