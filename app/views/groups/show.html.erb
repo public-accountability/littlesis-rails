@@ -96,7 +96,7 @@
 		<div class="spacer"> </div>
 	<% end %>
 
-	<%= if @recent_updates.count > 0 %>
+	<% if @recent_updates.count > 0 %>
 		<h3>
 			Recent Edits
 			<%= header_action('see all', edits_group_path(@group)) %>
