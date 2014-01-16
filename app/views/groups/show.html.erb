@@ -58,6 +58,25 @@
 			<% end %>
 		</div>		
 	<% end %>
+	<%= tab.static :users, "Users" do %>
+		<h3>
+			Users
+		</h3>
+
+		<% cache(@group.cache_key('show/users'), expires_in: 1.hour) do %>
+			<table class="list_table">
+			  <tbody>
+			    <% @group_users.each do |gu| %>
+			      <tr class="group_users_row">
+			        <td class="group_users_image"><%= user_image(gu.user) %></td>
+			        <td class="group_users_name"><%= user_link(gu.user) %></td>
+			        <td><%= "(admin)" if gu.is_admin %></td>
+			      </tr>
+			    <% end %>
+			  </tbody>
+			</table>
+		<% end %>
+	<% end %>
 <% end %>
 </div>
 

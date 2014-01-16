@@ -39,6 +39,7 @@ class GroupsController < ApplicationController
       @notes = @group.notes.public.order("created_at DESC").limit(10)
       @watched_entities = @group.featured_entities.order("ls_list_entity.created_at DESC").limit(5)
       @group_lists = @group.group_lists.order("is_featured DESC").joins(:list).where("ls_list.is_deleted" => false)
+      @group_users = @group.group_users.joins(:user).order("users.username ASC")
     else
       @carousel_entities = @group.featured_entities.limit(20)
     end

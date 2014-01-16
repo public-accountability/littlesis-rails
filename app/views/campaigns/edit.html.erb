@@ -10,6 +10,9 @@
 
 <h1>Editing campaign</h1>
 
+<%= link_to 'edit findings', edit_findings_campaign_path(@campaign) %><br />
+<%= link_to 'edit research guide', edit_guide_campaign_path(@campaign) %>
+
 <%= render 'form' %>
 
 <% end %>
