@@ -66,7 +66,7 @@ window.Bootsy.options = {
         },
         check_attributes: {
           id:   "alt",
-          href: "alt" // important to avoid XSS
+          href: "url" // important to avoid XSS
         }
       },
       "span": { check_attributes: { style: "style" } },
