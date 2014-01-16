@@ -58,7 +58,7 @@
 
 <%= centered_content do %>
 	<div class="left_column">
-		<% if current_user.in_campaign?(@campaign) %>
+		<% if user_signed_in? and current_user.in_campaign?(@campaign) %>
 			<%= bettertabs :campaign_tabs, { selected_tab: :findings, class: "campaign_tabs" } do |tab| %>
 				<%= tab.static :findings do %>
 					<h3>Findings & Highlights</h3>

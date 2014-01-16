@@ -96,12 +96,14 @@
 		<div class="spacer"> </div>
 	<% end %>
 
-	<h3>
-		Recent Edits
-		<%= header_action('see all', edits_group_path(@group)) %>
-	</h3>
-	<% cache(@group.cache_key('show/recent_edits/inside'), expires_in: 10.minutes) do %>
-		<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
+	<%= if @recent_updates.count > 0 %>
+		<h3>
+			Recent Edits
+			<%= header_action('see all', edits_group_path(@group)) %>
+		</h3>
+		<% cache(@group.cache_key('show/recent_edits/inside'), expires_in: 10.minutes) do %>
+			<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
+		<% end %>
 	<% end %>
 </div>
 
