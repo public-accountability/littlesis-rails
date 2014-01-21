@@ -61,6 +61,13 @@ $(window).ready(function() {
     })
     .on("typeahead:selected", selected_callback);
 
+  $('#note_entity_search')
+    .keydown(function(event){
+      if(event.keyCode == 13) {
+        event.preventDefault();
+        return false;
+      }
+    });
 });
 
 var confirmOnPageExit = function (e) 
