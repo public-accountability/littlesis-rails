@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140120183345) do
+ActiveRecord::Schema.define(version: 20140121183412) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -424,7 +424,7 @@ ActiveRecord::Schema.define(version: 20140120183345) do
     t.string   "name"
     t.string   "tagline"
     t.text     "description"
-    t.boolean  "is_private",         default: true, null: false
+    t.boolean  "is_private",         default: false, null: false
     t.string   "slug"
     t.integer  "default_network_id"
     t.integer  "campaign_id"
@@ -435,7 +435,7 @@ ActiveRecord::Schema.define(version: 20140120183345) do
     t.text     "howto"
     t.integer  "featured_list_id"
     t.string   "cover"
-    t.boolean  "delta",              default: true, null: false
+    t.boolean  "delta",              default: true,  null: false
     t.string   "logo_credit"
   end
 
