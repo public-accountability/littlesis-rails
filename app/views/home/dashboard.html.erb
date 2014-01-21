@@ -77,8 +77,8 @@
 	<%= header_action('see all', edits_path) %>
 </h3>
 
-<% cache(current_user.cache_key('dashboard/edits')) do %>
-	<%= render partial: "shared/recent_updates", locals: { entities: [], no_edits_message: "You haven't made any edits yet. View the #{link_to('help pages', '/beginnerhelp')} to learn how." } %>
+<% cache(current_user.cache_key('dashboard/edits'), expires_in: 10.minutes) do %>
+	<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates, no_edits_message: "You haven't made any edits yet. View the #{link_to('help pages', '/beginnerhelp')} to learn how." } %>
 <% end %>
 
 </div>
