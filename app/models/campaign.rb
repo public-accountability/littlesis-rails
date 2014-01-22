@@ -10,6 +10,7 @@ class Campaign < ActiveRecord::Base
 	mount_uploader :cover, CampaignCoverUploader
 
 	validates_presence_of :name, :slug
+	validates_uniqueness_of :name, :slug
 
 	def to_param
 		slug

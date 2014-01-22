@@ -25,6 +25,7 @@ class Group < ActiveRecord::Base
 	scope :public, -> { where(is_private: false) }
 
 	validates_presence_of :name, :slug
+	validates_uniqueness_of :name, :slug
 
 	def to_param
 		slug
