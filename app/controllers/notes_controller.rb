@@ -94,6 +94,7 @@ class NotesController < ApplicationController
   # DELETE /notes/1
   def destroy
     @note.destroy
+    @note.clear_related_cache
     redirect_to home_notes_path, notice: 'Note was successfully deleted.'
   end
 
