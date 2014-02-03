@@ -1,15 +1,11 @@
 Lilsis::Application.routes.draw do
 
-  # EXTREMELY TEMPORARY AND SHOULD BE REMOVED
-  get "/sign_in_as/:username",
-    controller: 'home',
-    action: 'sign_in_as',
-    constraints: { username: /[\w.]+/, id: /\d+/ }
-  ###########################################
-
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'
   devise_for :users
   root to: 'campaigns#index'
+
+  get "/admin" => "admin#home"
+  post "/admin/clear_cache" => "admin#clear_cache"
 
   resources :campaigns do
     member do
@@ -90,6 +86,8 @@ Lilsis::Application.routes.draw do
     as: 'entity_name_search'
 
   get "/edits" => "edits#index"
+
+  match "*path", to: "errors#not_found", via: :all
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
