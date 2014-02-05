@@ -13,6 +13,8 @@ class HomeController < ApplicationController
     end
 
     @notes = query.page(params[:page]).per(20)
+
+    prepopulate_note_from_params
 	end
 
 	def groups

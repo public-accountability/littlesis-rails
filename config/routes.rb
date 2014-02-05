@@ -2,12 +2,12 @@ Lilsis::Application.routes.draw do
 
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'
   devise_for :users
-  root to: 'campaigns#index'
+  root to: 'home#dashboard'
 
   get "/admin" => "admin#home"
   post "/admin/clear_cache" => "admin#clear_cache"
 
-  resources :campaigns do
+  resources :hubs, controller: 'campaigns', as: 'campaigns' do
     member do
       get 'search_groups'
       get 'groups'

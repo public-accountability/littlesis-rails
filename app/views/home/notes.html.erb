@@ -18,7 +18,7 @@
 	<% end %>
 </h1>
 
-<%= render partial: "notes/new" %>
+<%= render partial: "notes/new", locals: { note: @note, expand: (params[:compose] == "1") } %>
 
 <hr />
 

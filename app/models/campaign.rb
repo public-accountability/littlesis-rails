@@ -23,4 +23,8 @@ class Campaign < ActiveRecord::Base
 	def sf_guard_user_ids
 		User.joins(:groups).where("groups.campaign_id = ?", id).pluck(:sf_guard_user_id)
 	end
+
+	def student_debt?
+		slug == "studentdebt"
+	end
 end

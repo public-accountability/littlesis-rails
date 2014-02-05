@@ -2,50 +2,7 @@
 
 <% content_for :body do %>
 
-<%= content_tag("div", { id: "campaign_cover", class: "cover", style: @campaign.cover.present? ? "background-image: url('#{@campaign.cover_url}');" : "" }) do %>
-	<div id="campaign_cover_content">
-		<div class="cover_left">
-			<% if @campaign.logo.present? %>
-				<div id="campaign_logo_small"><%= image_tag(@campaign.logo_url) %></div>
-			<% end %>
-
-			<div id="campaign_name" class="cover_name"><%= campaign_link(@campaign) %></div>
-			<% if @campaign.tagline.present? %>
-				<div class="cover_tagline"><%= @campaign.tagline %></div>
-			<% end %>
-			<div class="clearfix"> </div>
-			<% if @campaign.description.present? %>
-				<div class="cover_description">
-					<%= more_link(raw(@campaign.description), 300) %>
-				</div>
-			<% end %>
-		</div>
-		<div class="cover_right">
-			<h3 id="campaign_groups_header">
-				Research Groups
-				<span class="btn btn-link btn-sm"><%= link_to 'see all', groups_campaign_path(@campaign) %></span>
-			</h3>
-			<table class="table" id="campaign_groups_table">
-				<% cache(@campaign.cache_key('show/groups'), expire_in: 10.minutes) do %>
-					<% @groups.each do |group| %>
-					<tr>
-		        <td class="campaign_groups_logo">
-		          <% if group.logo.present? %>
-		            <%= link_to(image_tag(group.logo.thumb.url), group) %>
-		          <% end %>
-		        </td>
-		        <td class="campaign_groups_name"><%= group_link(group) %></td>
-		        <td><%= group.user_count %></td>
-					</tr>
-					<% end %>
-				<% end %>
-			</table>
-			<%= text_field_tag :group, nil, id: "campaign_groups_search", class: "form-control", placeholder: "Find a group" %>
-			<div id="campaign_start_group">Can't find a group? <%= link_to 'Request a new one', request_new_groups_path(campaign_id: @campaign.id) %>.</div>
-		</div>
-		<div class="clearfix"> </div>
-	</div>
-<% end %>
+<%= render partial: 'campaigns/header', locals: { campaign: @campaign } %>
 
 <% if @campaign.custom_html.present? %>
 	<div id="campaign_custom_html">
@@ -58,42 +15,73 @@
 
 <%= centered_content do %>
 	<div class="left_column">
-		<% if user_signed_in? and current_user.in_campaign?(@campaign) %>
-			<%= bettertabs :campaign_tabs, { selected_tab: :findings, class: "campaign_tabs" } do |tab| %>
-				<%= tab.static :findings do %>
-					<h3>Findings & Highlights</h3>
-					<% if @campaign.findings.present? %>
-						<%= raw @campaign.findings %>
-					<% else %>
-						No findings yet!
-					<% end %>
+    <% if false && @campaign.student_debt? %>
+      <div id="wall_street_skimming">
+        <div id="wall_street_skimming_header">How much does Wall Street skim from your school?</div>
+        <div id="wall_street_skimming_text">
+          Wall Street skims <strong>$5 billion</strong> from <strong>higher ed</strong> in the US each year. Check to see how much it is skimming from <strong>your school</strong>.
+        </div>
+        <form class="form-inline">
+          <div class="form-group">
+            <%= text_field_tag :skimming_search, nil, id: "wall_street_skimming_input", class: "form-control", placeholder: "Enter the name of your school, eg University of California" %>
+          </div>
+          <%= submit_tag 'Find your school', class: "btn btn-primary" %>
+        </form>
+      </div>
+    <% end %>
 
-					<%= tab.static :guide, "Research Guide" do %>
-						<h3>Research Guide</h3>
-						<div id="campaign_howto"><%= raw @campaign.howto %></div>		
-					<% end %>
+    <br />
+
+		<%= bettertabs :campaign_tabs, { selected_tab: :about, class: "campaign_tabs" } do |tab| %>
+			<%= tab.static :about do %>
+				<%= raw @campaign.description %>
+			<% end %>				
+
+			<%= tab.static :findings do %>
+				<% if @campaign.findings.present? %>
+					<%= raw @campaign.findings %>
+				<% else %>
+					No findings yet!
 				<% end %>
 			<% end %>
-		<% else %>
-			<h3>Findings & Highlights</h3>
-			<% if @campaign.findings.present? %>
-				<%= raw @campaign.findings %>
-			<% else %>
-				No findings yet!
+
+			<% if user_signed_in? and current_user.in_campaign?(@campaign) %>
+				<%= tab.static :guide, "Research Guide" do %>
+					<div id="campaign_howto"><%= raw @campaign.howto %></div>		
+				<% end %>
 			<% end %>
 		<% end %>
 	</div>
 
 	<div class="right_column">
-		<h3>
-			Who We're Watching
-			<span class="btn btn-link btn-sm"><%= link_to 'see all', entities_campaign_path(@campaign) %></span>
+		<h3 id="campaign_groups_header">
+			Research Groups
+			<span class="btn btn-link btn-sm"><%= link_to 'see all', groups_campaign_path(@campaign) %></span>
 		</h3>
-		<% cache(@campaign.cache_key('show/watched'), expires_in: 1.day) do %>
-			<% @watched_entities.each do |entity| %>
-				<%= render partial: "entities/small", locals: { entity: entity } %>
+
+		<table class="table" id="campaign_groups_table">
+			<% cache(@campaign.cache_key('show/groups'), expire_in: 10.minutes) do %>
+				<% @groups.each do |group| %>
+				<tr>
+	        <td class="campaign_groups_logo">
+          <% if group.logo.present? %>
+            <%= link_to(image_tag(group.logo.thumb.url), group) %>
+          <% end %>
+	        </td>
+	        <td>
+	        	<div class="campaign_groups_name"><%= group_link(group) %></div>
+	        	<div class="campaign_groups_tagline"><%= group.tagline %></div>
+	        </td>
+				</tr>
+				<% end %>
 			<% end %>
-		<% end %>
+		</table>
+
+		<%= text_field_tag :group, nil, id: "campaign_groups_search", class: "form-control", placeholder: "Find a group" %>
+
+		<div id="campaign_start_group">
+			Can't find a group? <%= link_to 'Request a new one', request_new_groups_path(campaign_id: @campaign.id) %>.
+		</div>
 	</div>
 
 <% end %>
