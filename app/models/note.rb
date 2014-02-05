@@ -253,4 +253,12 @@ class Note < ActiveRecord::Base
       note.convert_new_legacy
     end
 	end
+
+  def self.entity_markup(entity)
+    "@entity:#{entity.id}[#{entity.name}]"
+  end
+
+  def self.list_markup(list)
+  	"@list:#{list.id}[#{list.name}]"
+  end
 end

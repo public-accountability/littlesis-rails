@@ -3,19 +3,19 @@
 <div id="group_header_cover_content">
 
 <div id="group_header">
-	<div class="small_left_column">
-		<div id="group_logo">
+	<div class="cover_left">
+		<div class="cover_logo">
 			<% if group.logo.present? %>
 				<%= image_tag(group.logo_url) %>
 			<% end %>
 		</div>
 
 		<% if group.logo_credit.present? %>
-			<div id="group_logo_credit"><%= group.logo_credit %></div>
+			<div class="cover_logo_credit"><%= group.logo_credit %></div>
 		<% end %>
 	</div>
 
-	<div class="big_right_column">
+	<div class="cover_right">
 		<% if group.campaign.present? %>
 			<div id="group_campaign_small">
 				Part of <%= campaign_link(group.campaign) %>
@@ -38,7 +38,6 @@
 			<div class="cover_description">
 				<%= raw(more_link(group.description, 600)) %>
 			</div>
-
 		<% end %>
 
 		<% if user_signed_in? %>

@@ -1,0 +1,43 @@
+<%= content_tag("div", { id: "campaign_header_cover", class: "cover", style: campaign.cover.present? ? "background-image: url('#{campaign.cover_url}');" : "" }) do %>
+
+<div id="campaign_header_cover_content">
+  <div id="campaign_header">
+    <div class="cover_left_medium">
+      <div class="cover_logo_medium">
+        <% if campaign.logo.present? %>
+          <%= image_tag(campaign.logo_url) %>
+        <% end %>
+      </div>
+
+      <% if campaign.logo_credit.present? %>
+        <div class="cover_logo_credit"><%= campaign.logo_credit %></div>
+      <% end %>
+    </div>
+
+    <div class="cover_right_medium">
+      <div id="campaign_research_hub">
+        Research Hub
+      </div>      
+
+      <div class="cover_name"><%= campaign_link(campaign) %></div>
+
+      <% if campaign.tagline.present? %>
+        <div class="cover_tagline"><%= campaign.tagline %></div>
+      <% end %>
+
+      <% if campaign.student_debt? %>
+        <br />
+
+        <form class="form-inline" method="post" action="http://oi.vresp.com?fid=64ca940848" target="vr_optin_popup" onsubmit="window.open( 'http://www.verticalresponse.com', 'vr_optin_popup', 'scrollbars=yes,width=600,height=450' ); return true;" >
+          <%= text_field_tag :email_address, nil, class: "form-control", style: "width: 400px", placeholder: "sign up for email updates" %>
+          &nbsp;
+          <%= submit_tag 'Sign Up', class: "btn btn-primary" %>
+        </form>
+      <% end %>
+    </div>
+
+    <div class="cover_clear"> </div>
+  </div>
+</div>
+
+<% end %>

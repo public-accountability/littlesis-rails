@@ -1,18 +1,19 @@
 <div class="note_form">
 
 <% note = note.present? ? note : Note.new %>
+<% expand = (defined?(expand) and expand) %>
 
 <%= form_for(note) do |f| %>
 
   <div class="note_form_body">
-    <%= f.text_area :body_raw, class: "form-control", style: (defined? expand) ? nil : 'height: 50px;', placeholder: "write a new note" %>  
+    <%= f.text_area :body_raw, class: "form-control", style: (expand ? nil : 'height: 50px;'), placeholder: "write a new note" %>  
   </div>
 
   <% if defined? redirect %>
     <%= hidden_field_tag :redirect_to, redirect %>
   <% end %>
 
-  <div id="entity_search" style="<%= (defined? expand) ? '' : 'display: none;' %>">
+  <div id="entity_search" style="<%= expand ? '' : 'display: none;' %>">
     <%= text_field_tag :entity, nil, id: "note_entity_search", class: "form-control", placeholder: "mention a person or org" %>
     &nbsp;
     <span class="input-group" id="entity_text_group">
@@ -20,7 +21,7 @@
     </span>
   </div>
 
-  <div class="note_form_bottom" style="<%= (defined? expand) ? '' : 'display: none;' %>">
+  <div class="note_form_bottom" style="<%= expand ? '' : 'display: none;' %>">
     <div class="note_form_checkbox checkbox-inline">
       <%= f.check_box :is_private %> make private
     </div>  
@@ -38,13 +39,11 @@
 <script>
 $(window).ready(function() {
 
-  <% if defined? expand ? '' : 'display: none;' %>
-    $("#note_body_raw").focus(function() {
-      $('#note_body_raw').animate({ height: '250px'});
-      $('#entity_search').show('blind');
-      $('.note_form_bottom').show('blind');
-    });
-  <% end %>
+  $("#note_body_raw").focus(function() {
+    $('#note_body_raw').animate({ height: '250px'});
+    $('#entity_search').show('blind');
+    $('.note_form_bottom').show('blind');
+  });
 
   var selected_callback = function(obj, datum) {
     var str = '@entity:' + datum.id + '[' + datum.name + ']';

@@ -31,26 +31,7 @@ class NotesController < ApplicationController
 
   # GET /notes/new
   def new
-    @note = Note.new
-    default_body = []
-
-    if params[:reply_to].present?
-      if (@reply_to_note = Note.find(params[:reply_to])).present?
-        default_body += @reply_to_note.all_users.collect { |u| "@" + u.username }
-        default_body += @reply_to_note.groups.collect { |g| "@group:" + g.slug }
-        @note.is_private if @reply_to_note.is_private
-      end
-    end
-
-    if params[:user].present?
-      default_body += ["@" + params[:user]]
-    end
-
-    if params[:group].present?
-      default_body += ["@group:" + params[:group]]
-    end
-
-    @note.body_raw = default_body.uniq.join(" ") unless default_body.blank?
+    prepopulate_note_from_params
   end
 
   # GET /notes/1/edit

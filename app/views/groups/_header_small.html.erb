@@ -2,25 +2,29 @@
 
 <div id="group_header_cover_content" class="cover_content">
 
-<% if group.campaign.present? %>
-	<div id="group_campaign_small">
-		Part of <%= campaign_link(group.campaign) %>
+	<% if group.campaign.present? %>
+		<div id="group_campaign_small">
+			Part of <%= campaign_link(group.campaign) %>
+		</div>
+	<% end %>	
+
+	<div id="group_header">
+		<div class="cover_small_left">
+			<% if @group.logo.present? %>
+				<div class="cover_small_logo"><%= image_tag(@group.logo_url) %></div>
+			<% end %>
+		</div>
+
+		<div class="cover_small_right">
+			<div class="cover_name"><%= group_link(@group) %></div>
+
+			<% if @group.tagline.present? %>
+				<div class="cover_tagline"><%= @group.tagline %></div>
+			<% end %>
+		</div>
+
+		<div class="clearfix"></div>
 	</div>
-<% end %>	
-
-<div id="group_header">
-	<% if @group.logo.present? %>
-		<div id="group_logo_small"><%= image_tag(@group.logo_url) %></div>
-	<% end %>
-
-	<div class="cover_name"><%= group_link(@group) %></div>
-
-	<% if @group.tagline.present? %>
-		<div class="cover_tagline"><%= @group.tagline %></div>
-	<% end %>
-
-	<div class="clearfix"></div>
-</div>
 </div>
 
 <% end %>
