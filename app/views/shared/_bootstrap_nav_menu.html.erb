@@ -20,7 +20,7 @@ if user_signed_in?
     entity_ids = LegacyAuthenticatable.recent_views_from_legacy_cookie(cookies)
     
     if entity_ids.present?
-      entities = Entity.find(entity_ids)
+      entities = Entity.where(id: entity_ids)
       hash = {}
       entities.each { |e| hash[e.name] = e.legacy_url }
 
