@@ -105,4 +105,19 @@ module ApplicationHelper
   def contact_path
     "/contact"
   end
+
+  def tinymce_on_document_ready
+    str = '<script type="text/javascript">'
+    str += '$(document).ready(function() {'
+    # str += "tinyMCE.init({ mode: 'textareas', theme: 'advanced' });"
+    str += tinymce.gsub("<script>", "").gsub('</script>', '')
+    str += '});'
+    str += '</script>'
+    raw(str)
+  end
+
+  def current_username
+    return nil if current_user.nil?
+    current_user.username
+  end
 end

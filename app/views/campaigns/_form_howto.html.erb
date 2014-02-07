@@ -13,7 +13,7 @@
 
   <div class="field">
     <%= f.label :research_guide %>
-    <%= f.bootsy_area :howto, class: "wysiwyg form-control" %>  
+    <%= f.text_area :howto, class: "tinymce form-control" %>  
   </div>
 
   <br />
@@ -23,3 +23,6 @@
     <button type="button" class="btn btn-link"><%= link_to "Cancel", @campaign %></button>
   </div>
 <% end %>
+
+<%= tinymce_assets %>
+<%= tinymce_on_document_ready %>

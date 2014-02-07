@@ -53,7 +53,10 @@ gem 'fastimage'
 gem 'acts_as_paranoid', :git => "git://github.com/freddy/rails3_acts_as_paranoid.git", 
   :branch => "rails4.0"
 gem 'nilify_blanks'
+
 gem 'bootsy'
+gem 'tinymce-rails', '< 4.0'
+
 gem 'bettertabs'
 gem 'kaminari'
 gem 'activerecord-session_store'
