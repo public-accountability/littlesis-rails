@@ -50,7 +50,7 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  # resources :users, only: [:index, :show]
+  resources :users, only: [:index]
   resources :lists, only: [:index]
 
   resources :entity do
