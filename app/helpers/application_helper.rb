@@ -50,6 +50,14 @@ module ApplicationHelper
     make_raw ? raw(str) : str
   end
 
+  def show_link(content, id=nil)
+    str = "<span id='#{id}_preview'>"
+    str << "</span><span style='display: none;' id='#{id}_remainder'>"
+    str << content
+    str << "</span>"
+    str << " <a class='more_link' data-target='#{id}' href='javascript:void(0);'>more &raquo;</a>"
+  end
+
   def yes_or_no(value)
   	value ? "yes" : "no"
   end
