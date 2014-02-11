@@ -13,6 +13,10 @@ class ApplicationController < ActionController::Base
     render "errors/not_found", status: 404
   end
 
+  rescue_from 'ActiveRecord::RecordNotFound' do |exception|
+    render "errors/not_found", status: 404
+  end
+
   def admins_only
     check_permission("admin")
   end
