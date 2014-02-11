@@ -202,7 +202,7 @@ class Note < ActiveRecord::Base
 		#users
 		body.gsub!(/@([#{Note.username_chars}]+)(?!([a-zA-Z0-9]|:\d))/i) do |match|
 			user = User.find_by(username: $1)
-			user.present? ? user_link(user) : match
+			user.present? ? user_at_link(user) : match
 		end
 
 		#entities
