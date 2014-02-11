@@ -1,4 +1,8 @@
-body, td, pre {color:#000; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:14px; margin:8px;}
+body, td, pre {
+  color: #000; 
+  font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif; 
+}
+body#tinymce { font-size: 14px; }
 body {background:#FFF;}
 body.mceForceColors {background:#FFF; color:#000;}
 body.mceBrowserDefaults {background:transparent; color:inherit; font-size:inherit; font-family:inherit;}
