@@ -10,6 +10,6 @@ module UsersHelper
   end
 
 	def user_image(user)
-		link_to(content_tag(:div, " ", class: "user_image", style: "background-image: url('#{user.image_url('profile')}');"), user_path(user))
+		link_to(content_tag(:div, " ", class: "user_image", style: "background-image: url('#{user.image_url('profile')}');"), user.legacy_url)
 	end
 end
