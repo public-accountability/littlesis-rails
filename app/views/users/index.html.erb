@@ -1,4 +1,4 @@
-<h1>Analysts</h1>
+<h1>Users</h1>
 
 <% cache(Cache.key_with_params('edits/index', params.slice(:page)), expires_in: 1.day) do %>
 <%= paginate @users %>
