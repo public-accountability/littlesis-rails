@@ -2,7 +2,11 @@
 
 <% content_for :body do %>
 
-<%= render partial: "groups/header", locals: { group: @group } %>
+<% if user_signed_in? and current_user.in_group?(@group) %>
+	<%= render partial: "groups/header_small", locals: { group: @group, with_description: true } %>
+<% else %>
+	<%= render partial: "groups/header", locals: { group: @group } %>
+<% end %>
 
 <%= centered_content do %>
 
