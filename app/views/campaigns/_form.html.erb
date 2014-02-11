@@ -28,7 +28,7 @@
 
   <div class="field">
     <%= f.label :description %>
-    <%= f.text_area :description, class: "textarea_medium form-control" %>  
+    <%= f.text_area :description, class: "tinymce form-control" %>  
   </div>
 
   <div class="field">
@@ -54,7 +54,7 @@
 
   <div class="field">
     <%= f.label :custom_html %>
-    <%= f.text_area :custom_html, class: "wysiwyg form-control" %>  
+    <%= f.text_area :custom_html, class: "tinymce form-control" %>  
   </div>
 
   <br />
@@ -64,3 +64,6 @@
     <button type="button" class="btn btn-link"><%= link_to "Cancel", @campaign %></button>
   </div>
 <% end %>
+
+<%= tinymce_assets %>
+<%= tinymce_on_document_ready %>
