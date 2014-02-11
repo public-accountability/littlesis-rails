@@ -4,6 +4,11 @@ module UsersHelper
 		link_to name, user.legacy_url
 	end
 
+  def user_at_link(user, name=nil)
+    name ||= '@' + user.username
+    link_to name, user.legacy_url
+  end
+
 	def user_image(user)
 		link_to(content_tag(:div, " ", class: "user_image", style: "background-image: url('#{user.image_url('profile')}');"), user_path(user))
 	end
