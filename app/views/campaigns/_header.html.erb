@@ -25,7 +25,7 @@
         <div class="cover_tagline"><%= campaign.tagline %></div>
       <% end %>
 
-      <% if campaign.student_debt? %>
+      <% if campaign.student_debt? and !local_assigns[:hide_signup] %>
         <br />
 
         <form class="form-inline" method="post" action="http://oi.vresp.com?fid=64ca940848" target="vr_optin_popup" onsubmit="window.open( 'http://www.verticalresponse.com', 'vr_optin_popup', 'scrollbars=yes,width=600,height=450' ); return true;" >
@@ -33,6 +33,8 @@
           &nbsp;
           <%= submit_tag 'Sign Up', class: "btn btn-primary" %>
         </form>
+
+        <div class="campaign_signup_link">Or <%= link_to 'sign up here', signup_campaign_path(@campaign) %> to help out with the research.</div>
       <% end %>
     </div>
 

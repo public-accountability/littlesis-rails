@@ -82,6 +82,8 @@ gem 'whenever', :require => false
 
 gem 'rails_autolink'
 
+gem 'soap4r-ruby1.9'
+
 group :test, :development do
   gem 'better_errors', '0.7.0'
   gem 'binding_of_caller', '0.7.0'
