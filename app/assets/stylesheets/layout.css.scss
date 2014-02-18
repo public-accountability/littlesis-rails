@@ -237,6 +237,10 @@ div.spacer {
 	h1, h2, h3 { margin-top: 0; }	
 }
 
+.medium_left_column {
+
+}
+
 .big_right_column {
 	margin-left: $small_column_width + 30px;
 	width: $big_column_width;
@@ -304,4 +308,8 @@ blockquote {
 		font-weight: normal;
 		margin-top: 0.5em;
 	}
+}
+
+.bigger_text {
+	font-size: 1.3em;
 }

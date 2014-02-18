@@ -16,6 +16,9 @@ Lilsis::Application.routes.draw do
       get 'entities'
       get 'edit_findings'
       get 'edit_guide'
+      get 'signup'
+      post 'subscribe'
+      get 'thankyou'
     end
   end
 

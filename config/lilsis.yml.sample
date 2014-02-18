@@ -11,6 +11,8 @@ defaults: &defaults
   default_to_email:
   admins_only: false
   convert_new_legacy_notes: false
+  verticalresponse_username:
+  verticalresponse_password:
 
 test:
   <<: *defaults

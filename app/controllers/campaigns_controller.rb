@@ -1,6 +1,6 @@
 class CampaignsController < ApplicationController
   before_action :set_campaign, only: [:show, :edit, :edit_findings, :edit_guide, :update, :destroy, :groups, 
-    :admin, :clear_cache, :entities]
+    :admin, :clear_cache, :entities, :signup, :subscribe, :thankyou]
 
   # GET /campaigns
   def index
@@ -10,7 +10,6 @@ class CampaignsController < ApplicationController
 
   # GET /campaigns/1
   def show
-    not_found if @campaign.blank?
     @groups = @campaign.groups.public
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
@@ -105,6 +104,40 @@ class CampaignsController < ApplicationController
     redirect_to admin_campaign_path(@campaign), notice: "Cache was successfully cleared."
   end
 
+  def signup
+    not_found unless @campaign.student_debt?
+  end
+
+  def subscribe
+    not_found unless @campaign.student_debt?
+
+    list_id = 1504112429
+
+    signup = StudentDebtCampaignSignup.from_params(params)
+
+    if signup.valid?
+      member_data = [
+        {'name' => 'email_address', 'value' => signup.email},
+        {'name' => 'first_name', 'value' => signup.first_name},
+        {'name' => 'last_name', 'value' => signup.last_name},
+        {'name' => 'school', 'value' => signup.school},
+        {'name' => 'source', 'value' => 'littlesis_hub_signup'}
+      ]
+
+      vr = VerticalResponse.new
+      member = vr.add_list_member(list_id, member_data)
+
+      redirect_to thankyou_campaign_path(@campaign)
+    else
+      @errors = signup.errors
+      render 'signup'
+    end
+  end
+
+  def thankyou
+
+  end
+
   private
     def add_logo
       @campaign.logo = params[:campaign][:logo] unless params[:campaign][:logo].nil?
@@ -116,7 +149,7 @@ class CampaignsController < ApplicationController
 
     # Use callbacks to share common setup or constraints between actions.
     def set_campaign
-      @campaign = Campaign.find_by_slug(params[:id])
+      @campaign = Campaign.find_by_slug!(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

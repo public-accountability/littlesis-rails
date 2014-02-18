@@ -189,6 +189,7 @@ GEM
       sass (>= 3.1.10)
       sprockets-rails (~> 2.0.0)
     slop (3.4.7)
+    soap4r-ruby1.9 (2.0.5)
     sprockets (2.10.1)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -266,6 +267,7 @@ DEPENDENCIES
   rails_autolink
   redis-rails
   sass-rails
+  soap4r-ruby1.9
   thinking-sphinx (~> 3.0.2)
   tinymce-rails (< 4.0)
   ts-delayed-delta (= 2.0.0)
