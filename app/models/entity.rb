@@ -3,6 +3,9 @@ class Entity < ActiveRecord::Base
   include SoftDelete
   include Cacheable
 
+  self.default_timezone = :local
+  self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
+
   has_many :aliases, inverse_of: :entity, dependent: :destroy
   has_many :images, inverse_of: :entity, dependent: :destroy
   has_many :list_entities, inverse_of: :entity, dependent: :destroy
