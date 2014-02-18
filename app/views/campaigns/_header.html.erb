@@ -27,16 +27,7 @@
 
       <% if campaign.student_debt? and !local_assigns[:hide_signup] %>
         <br />
-
-        <form class="form-inline" method="post" action="http://oi.vresp.com?fid=64ca940848" target="vr_optin_popup" onsubmit="window.open( 'http://www.verticalresponse.com', 'vr_optin_popup', 'scrollbars=yes,width=600,height=450' ); return true;" >
-          <%= text_field_tag :email_address, nil, class: "form-control", style: "width: 300px", placeholder: "sign up for email updates" %>
-          &nbsp;
-          <%= submit_tag 'Sign Up', class: "btn btn-primary" %>
-          &nbsp;
-          <span class="campaign_signup_link">
-            or <%= link_to 'click here', signup_campaign_path(@campaign), id: "signup_link" %> to help out with the research
-          </span>
-        </form>
+        <%= link_to 'Sign Up', signup_campaign_path(@campaign), class: "btn btn-lg btn-primary" %>
       <% end %>
     </div>
 
