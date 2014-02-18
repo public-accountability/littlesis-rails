@@ -114,6 +114,7 @@ class CampaignsController < ApplicationController
     list_id = 1504112429
 
     signup = StudentDebtCampaignSignup.from_params(params)
+    share_contact_info = params[:share_contact_info] == "1" ? 1 : 0
 
     if signup.valid?
       member_data = [
@@ -121,7 +122,7 @@ class CampaignsController < ApplicationController
         {'name' => 'first_name', 'value' => signup.first_name},
         {'name' => 'last_name', 'value' => signup.last_name},
         {'name' => 'school', 'value' => signup.school},
-        {'name' => 'source', 'value' => 'littlesis_hub_signup'}
+        {'name' => 'share_contact_info', 'value' => share_contact_info}
       ]
 
       vr = VerticalResponse.new
