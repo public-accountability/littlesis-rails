@@ -97,16 +97,32 @@ div#campaign_cover {
 	border-bottom: 1px solid $border_grey;
 }
 
-	#campaign_groups_header {
-		padding-top: 0.7em;
-		margin-bottom: 0.3em;
+#campaign_partners_header {
+	padding-top: 0.7em;
+	margin-bottom: 0.3em;
+}
+
+#campaign_partners_table {
+	font-size: 1.3em;
+
+	a { 
+		font-weight: 400; 
+		color: #666;
 	}
 
-	#campaign_groups_table {
-		font-size: 1.3em;
-		a { font-weight: 500; }
-		width: $small_column_width;
-	}
+	width: $small_column_width;
+}
+
+#campaign_groups_header {
+	padding-top: 0.7em;
+	margin-bottom: 0.3em;
+}
+
+#campaign_groups_table {
+	font-size: 1.3em;
+	a { font-weight: 500; }
+	width: $small_column_width;
+}
 
 .campaign_groups_logo { 
 	width: 35px;
