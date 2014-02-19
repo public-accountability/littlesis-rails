@@ -54,7 +54,32 @@
 	</div>
 
 	<div class="right_column">
-		<h3 id="campaign_groups_header">
+    <% if @campaign.student_debt? %>
+      <h3 id="campaign_partners_header">
+        Partners
+      </h3>
+
+      <table class="table" id="campaign_partners_table">
+        <tr>
+          <td class="campaign_groups_logo">
+            <%= link_to(image_tag('higherednotdebt-logo-50.jpg'), "http://higherednotdebt.org") %>
+          </td>
+          <td>
+            <div class="campaign_groups_name"><%= link_to "Higher Ed Not Debt", "http://higherednotdebt.org", target: "_blank" %></div>
+          </td>
+        </tr>
+        <tr>
+          <td class="campaign_groups_logo">
+            <%= link_to(image_tag('aft-logo-50.jpg'), "http://aft.org") %>
+          </td>
+          <td>
+            <div class="campaign_groups_name"><%= link_to "American Federation of Teachers", "http://aft.org", target: "_blank" %></div>
+          </td>
+        </tr>        
+      </table>
+    <% end %>
+
+		<h3 id="campaign_partners_header">
 			Research Groups
 			<span class="btn btn-link btn-sm"><%= link_to 'see all', groups_campaign_path(@campaign) %></span>
 		</h3>
