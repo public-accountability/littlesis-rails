@@ -26,3 +26,7 @@ end
 every 1.day do
   rake "sessions:clear_expired", output: nil
 end
+
+every 3.days, at: '5:00 am' do
+  reake "ts:rebuild", output: nil
+end
