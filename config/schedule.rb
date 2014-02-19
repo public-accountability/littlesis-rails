@@ -28,5 +28,5 @@ every 1.day do
 end
 
 every 3.days, at: '5:00 am' do
-  reake "ts:rebuild", output: nil
+  rake "ts:rebuild", output: nil
 end
