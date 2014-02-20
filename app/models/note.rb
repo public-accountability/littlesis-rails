@@ -93,19 +93,19 @@ class Note < ActiveRecord::Base
 
 		matches = body_raw.scan /@entity:(\d+)/i
 		entity_ids = matches.map(&:first)
-		self.entities = Entity.find(entity_ids)
+		self.entities = Entity.where(id: entity_ids)
 
 		matches = body_raw.scan /@rel:(\d+)/i
 		rel_ids = matches.map(&:first)
-		self.relationships = Relationship.find(rel_ids)
+		self.relationships = Relationship.where(id: rel_ids)
 
 		matches = body_raw.scan /@list:(\d+)/i
 		list_ids = matches.map(&:first)
-		self.lists = List.find(list_ids)
+		self.lists = List.where(id: list_ids)
 
 		matches = body_raw.scan /@group:(\d+)/i
 		group_ids = matches.map(&:first)
-		groups = legacy? ? Group.joins(:sf_guard_group).where("sf_guard_group.id" => group_ids) : Group.find(group_ids)
+		groups = legacy? ? Group.joins(:sf_guard_group).where("sf_guard_group.id" => group_ids) : Group.where(group_ids)
 
 		matches = body_raw.scan /@group:([#{self.class.username_chars}]+)/i
 		group_slugs = matches.map(&:first)
