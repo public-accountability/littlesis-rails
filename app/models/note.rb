@@ -62,12 +62,10 @@ class Note < ActiveRecord::Base
 			self.alerted_user_ids = legacy_denormalize_ary(recipients.map(&:sf_guard_user_id))
 		end
 
-		write_attribute(:entity_ids, legacy_denormalize_ary(entities.map(&:id))) if entities.present?
-		write_attribute(:relationship_ids, legacy_denormalize_ary(relationships.map(&:id))) if relationships.present?
-		write_attribute(:lslist_ids, legacy_denormalize_ary(lists.map(&:id))) if entities.present?
-		write_attribute(:sfguardgroup_ids, legacy_denormalize_ary(groups.collect do |g| 
-			g.sf_guard_group.id if g.sf_guard_group.present? 
-		end)) if groups.present?
+		write_attribute(:entity_ids, entities.present? ? legacy_denormalize_ary(entities.map(&:id)) : [])
+		write_attribute(:relationship_ids, relationships.present? ? legacy_denormalize_ary(relationships.map(&:id)) : [])
+		write_attribute(:lslist_ids, entities.present? ? legacy_denormalize_ary(lists.map(&:id)) : [])
+		write_attribute(:sfguardgroup_ids, groups.present? ? legacy_denormalize_ary(groups.collect { |g| g.sf_guard_group.id if g.sf_guard_group.present? }) : [])
 		write_attribute(:network_ids, legacy_denormalize_ary(network_ids))
 		self
 	end
@@ -105,11 +103,13 @@ class Note < ActiveRecord::Base
 
 		matches = body_raw.scan /@group:(\d+)/i
 		group_ids = matches.map(&:first)
-		groups = legacy? ? Group.joins(:sf_guard_group).where("sf_guard_group.id" => group_ids) : Group.where(group_ids)
+		groups = legacy? ? Group.joins(:sf_guard_group).where("sf_guard_group.id" => group_ids) : Group.where(id: group_ids)
 
 		matches = body_raw.scan /@group:([#{self.class.username_chars}]+)/i
 		group_slugs = matches.map(&:first)
 		self.groups = groups + Group.where(slug: group_slugs)
+
+		self
 	end
 
 	def legacy?
