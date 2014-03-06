@@ -45,10 +45,8 @@
 				<% end %>
 			<% end %>
 
-			<% if user_signed_in? and current_user.in_campaign?(@campaign) %>
-				<%= tab.static :guide, "Research Guide" do %>
-					<div id="campaign_howto"><%= raw @campaign.howto %></div>		
-				<% end %>
+			<%= tab.static :guide, "Research Guide" do %>
+				<div id="campaign_howto"><%= raw @campaign.howto %></div>		
 			<% end %>
 		<% end %>
 	</div>
