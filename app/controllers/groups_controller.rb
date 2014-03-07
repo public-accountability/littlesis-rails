@@ -23,6 +23,7 @@ class GroupsController < ApplicationController
     @groups = Group.public
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
+      .includes(:campaign)
       .group("groups.id")
       .order("user_count DESC")
       .page(params[:page]).per(20)

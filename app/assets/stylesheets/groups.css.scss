@@ -13,7 +13,7 @@ $logo_size: 50px;
 	color: black;
 }
 
-#group_campaign_small {
+.group_campaign_small {
 	font-weight: 300;
 	font-size: 1em;
 
@@ -209,6 +209,10 @@ tr.group_users_row td {
 .groups_table_name {
 	font-weight: bold;
 	min-width: 300px;
+
+	.group_campaign_small {
+		font-size: 0.9em;
+	}
 }
 
 .field textarea.wysiwyg {
