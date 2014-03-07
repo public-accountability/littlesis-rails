@@ -30,7 +30,8 @@ class HomeController < ApplicationController
   def dashboard
     Note.convert_all_new_legacy
     @notes = Note.visible_to_user(current_user).limit(20).readonly(false)
-    @groups = current_user.groups.order(:name)
+    @groups = current_user.groups.includes(:campaign).order(:name)
+    @campaigns = @groups.collect(&:campaign).compact.uniq.sort_by { |campaign| campaign.name  }
     @recent_updates = current_user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
   end
 
