@@ -27,4 +27,9 @@ Lilsis::Application.configure do
 
   # Enable caching
   config.action_controller.perform_caching = false
+
+  # In development, links in emails should point local
+  config.action_mailer.default_url_options = { host: 'lilsis.local' }
 end
+
+

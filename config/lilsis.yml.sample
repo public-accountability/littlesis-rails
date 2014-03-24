@@ -13,6 +13,7 @@ defaults: &defaults
   convert_new_legacy_notes: false
   verticalresponse_username:
   verticalresponse_password:
+  research_from_email: research@littlesis.org
 
 test:
   <<: *defaults
