@@ -22,6 +22,8 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  get '/hubs/:id(/:campaign_tabs_selected_tab)' => 'campaigns#show'
+
   resources :groups do
     member do
       get 'notes'
@@ -52,6 +54,8 @@ Lilsis::Application.routes.draw do
       get 'request_sent'
     end
   end
+
+  get '/groups/:id(/:group_tabs_selected_tab)' => 'groups#show'
 
   resources :users, only: [:index]
   resources :lists, only: [:index]

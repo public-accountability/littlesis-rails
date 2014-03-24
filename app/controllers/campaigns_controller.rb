@@ -128,6 +128,8 @@ class CampaignsController < ApplicationController
       vr = VerticalResponse.new
       member = vr.add_list_member(list_id, member_data)
 
+      StudentDebtMailer.welcome(signup).deliver
+
       redirect_to thankyou_campaign_path(@campaign)
     else
       @errors = signup.errors
