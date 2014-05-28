@@ -1,0 +1,94 @@
+/* D3 stuff */
+
+#netmap {
+  border: 1px solid #ddd;
+}
+
+svg {
+  border: 0px solid #ddd;
+}
+
+svg .line {
+  stroke: black;
+}
+
+svg .rel.selected .line {
+  /* stroke: #f91409; */
+}
+
+svg .rel .line.highlight {
+  stroke: #ffff80;
+  opacity: 0;
+}
+
+svg .rel.selected .line.highlight {
+  stroke: #ffff80;
+  opacity: 0.6;
+}
+
+svg .rel .label {
+  display: none;
+}
+
+svg .rel:hover .label {
+  display: block;
+}
+
+svg .rel.selected .label {
+  display: block;
+}
+
+svg .rel.hovered .label {
+  display: block;
+}
+
+svg .entity .image-bg {
+}
+
+svg .entity.selected .image-bg {
+  stroke: #ffff80;
+  stroke-width: 5;
+  opacity: 0.5;
+}
+
+svg .entity.selected .text_rect {
+  /* fill: #ffff80; */
+}
+
+svg .entity .add_button text {
+  fill: #000;
+}
+
+svg .entity .add_button, svg .entity .add_button_rect {
+  display: none;
+}
+
+svg .entity:hover .add_button, svg .entity:hover .add_button_rect {
+  display: block;
+}
+
+svg .entity .add_button:hover {
+  text-decoration: none;
+}
+
+svg text {
+  fill: black;
+}
+
+svg .entity text {
+  font: 12px sans-serif;
+}
+
+svg .rel text {
+  font: 9px sans-serif;
+  fill: #888;
+}
+
+svg image {
+  fill: white;
+}
+
+svg .image {
+  fill: white;
+  background-color: white;
+}

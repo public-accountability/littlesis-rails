@@ -26,12 +26,20 @@ class Image < ActiveRecord::Base
     true
   end
   
+  def self.s3_url(filename, type)
+    S3.url(image_path(filename, type))
+  end
+
   def s3_url(type)
     S3.url(image_path(type))
   end
-        
+
+  def self.image_path(filename, type)
+    ActionController::Base.helpers.asset_path("images/#{type}/#{filename}")  
+  end
+
   def image_path(type)
-    ActionController::Base.helpers.asset_path("images/#{type}/#{filename(type)}")  
+    self.class.image_path(filename(type))
   end
 
   def filename(type=nil)
@@ -39,7 +47,7 @@ class Image < ActiveRecord::Base
     fn = read_attribute(:filename) 
     fn.chomp(File.extname(fn)) + '.jpg'
   end
-  
+
   def self.random_filename(file_type=nil)
     if file_type.nil?
       type = Lilsis::Application.config.deafult_image_file_type

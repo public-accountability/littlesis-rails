@@ -246,12 +246,22 @@ class Entity < ActiveRecord::Base
     find(1164)
   end
 
-  def name_to_legacy_slug
+  def self.name_to_legacy_slug(name)
     name.gsub(" ", "_").gsub("/", "~")
   end
 
+  def name_to_legacy_slug
+    self.class.name_to_legacy_slug(name)
+  end
+
   def legacy_url
-    "/" + primary_ext.downcase + "/" + id.to_s + "/" + name_to_legacy_slug
+    self.class.legacy_url(primary_ext, id, name)
+  end
+
+  def self.legacy_url(primary_ext, id, name, action = nil)
+    url = "/" + primary_ext.downcase + "/" + id.to_s + "/" + name_to_legacy_slug(name)
+    url += "/" + action if action.present?
+    url
   end
 
   def last_new_user

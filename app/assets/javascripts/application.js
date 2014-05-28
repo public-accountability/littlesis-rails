@@ -20,6 +20,8 @@
 //= require editor_options
 //= reuqire more_link
 //= require twitter/typeahead
+//= require d3.v3.min
+//= require netmap
 //= require_tree .
 
 $(document).ready(function() {
