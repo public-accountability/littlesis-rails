@@ -68,6 +68,10 @@ class Relationship < ActiveRecord::Base
   end
 
   def legacy_url
+    self.class.legacy_url(id)
+  end
+
+  def self.legacy_url(id)
     "/relationship/view/id/" + id.to_s
   end
 
