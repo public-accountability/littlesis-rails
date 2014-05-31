@@ -1,7 +1,17 @@
 /* D3 stuff */
 
 #netmap {
+  position: relative;
   border: 1px solid #ddd;
+
+  &.raw {
+    height: 100%;
+    width: 100%;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
 }
 
 svg {
@@ -26,8 +36,16 @@ svg .rel.selected .line.highlight {
   opacity: 0.6;
 }
 
-svg .rel .label {
-  display: none;
+// svg .rel .label {
+//   display: none;
+// }
+
+svg .label { 
+  display: block; 
+}
+
+#netmap:hover .label { 
+  display: none; 
 }
 
 svg .rel:hover .label {
@@ -91,4 +109,75 @@ svg image {
 svg .image {
   fill: white;
   background-color: white;
+}
+
+.map-top-row {
+  margin-top: 10px;
+
+  strong a { font-weight: bold; }
+  a { font-weight: 400; }
+}
+
+.map-author {
+}
+
+.map-date {
+  color: #888;  
+}
+
+.map-littlesis {
+  color: #888;  
+  text-align: right;
+}
+
+.map-header {
+  margin-bottom: 20px;  
+}
+
+h1.map-title {
+  font-size: 50px;
+  font-weight: 300;
+  margin-bottom: 0;
+  margin-top: 10px;
+}
+
+.map-description {
+  font-size: 20px;
+  color: #888;
+  font-weight: 300;
+}
+
+#fullscreen-link {
+  text-align: right;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.zoom-button {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  height: 20px;
+  width: 20px;
+  line-height: 16px;
+  font-size: 10px;
+  padding: 0;
+}
+
+#zoom-in {
+  position: absolute; 
+  top: 10px; 
+  left: 10px;  
+}
+
+#zoom-out {
+  position: absolute; 
+  top: 35px; 
+  left: 10px;  
+}
+
+#netmap-logo {
+  position: absolute;
+  bottom: 0px;
+  left: 10px;
+  width: 100px;
 }

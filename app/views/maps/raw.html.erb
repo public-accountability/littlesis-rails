@@ -1,20 +1,15 @@
 <% content_for(:page_title, @map.name) %>
 
-<%= centered_content do %>
-
-<%= render partial: 'header', locals: { map: @map } %>
-
-<div id="netmap">
+<div id="netmap" class="fullscreen">
   <%= render partial: 'controls' %>
 </div>
-<div id="fullscreen-link"><%= link_to('fullscreen', raw_map_path(@map)) %></div>
 
 <script>
 var data = <%= raw @map.prepared_data %>;
 var width = <%= Lilsis::Application.config.netmap_default_width %>;
 var height = <%= Lilsis::Application.config.netmap_default_height %>;
 var key = '<%= Lilsis::Application.config.netmap_api_key %>';
-var netmap = new Netmap(width, height, "#netmap", key, true);
+var netmap = new Netmap(null, null, "#netmap", key, true);
 netmap.set_network_map_id(<%= @map.id %>);
 netmap.set_user_id(<%= @map.user_id %>);
 netmap.set_data(data);
@@ -22,4 +17,3 @@ netmap.auto_center();
 netmap.build();
 </script>
 
-<% end %>

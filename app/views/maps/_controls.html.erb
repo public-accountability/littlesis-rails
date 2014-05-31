@@ -1,0 +1,15 @@
+  <button id="zoom-in" class="zoom-button">+</button>
+  <button id="zoom-out" class="zoom-button">&ndash;</button>
+  <%= link_to(image_tag('lilsis-logo-trans-200.png', id: 'netmap-logo'), root_path) %>
+  <script>
+  $(document).ready(function(){
+    $('#zoom-in').on('click', function() { netmap.zoom_by(1.2); });
+    $('#zoom-out').on('click', function() { netmap.zoom_by(0.83333333); });
+
+    var anchors = $("a");
+
+    for (var i in anchors) {
+      anchors[i].setAttribute("target", "_blank");
+    }
+  });
+  </script>
