@@ -6,10 +6,10 @@
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
-<body>
+<body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
 
 <div id="top">
-	<nav class="navbar navbar-default navbar-fixed-top">
+	<nav class="navbar navbar-default navbar-<%= yield(:static_navbar).present? ? 'static' : 'fixed' %>-top">
 		<div id="top_content">
 			<div class="navbar-header">
 		    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -58,9 +58,11 @@
 	<%= yield :body %>
 <% end %>
 
+<% if yield.strip.present?  %>
 <div id="container">
 	<%= yield %>
 </div>
+<% end %>
 
 <div id="footer_clear"></div>
 <div id="footer">

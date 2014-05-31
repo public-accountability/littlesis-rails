@@ -79,7 +79,11 @@ Lilsis::Application.routes.draw do
     constraints: { username: /[\w.]+/, id: /\d+/ },
     as: "note_with_user"
 
-  resources :maps, only: [:index, :show]
+  resources :maps, only: [:index, :show] do
+    member do
+      get 'raw'
+    end
+  end
 
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"

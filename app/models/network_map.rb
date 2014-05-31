@@ -25,7 +25,7 @@ class NetworkMap < ActiveRecord::Base
       image_path = (primary_ext == 'Person' ? ActionController::Base.helpers.image_path('netmap-person.png') : ActionController::Base.helpers.image_path('netmap-org.png'))
     end
 
-    url = ActionController::Base.helpers.url_for(Entity.legacy_url(entity['primary_ext'], entity['id'], entity['name'], 'map'))
+    url = ActionController::Base.helpers.url_for(Entity.legacy_url(entity['primary_ext'], entity['id'], entity['name']))
 
     {
       id: self.class.integerize(entity['id']),
@@ -65,5 +65,14 @@ class NetworkMap < ActiveRecord::Base
     return integerize(value.split(',')) if value.instance_of?(String) and value.include?(',')
     return nil if value.to_i == 0 and value != "0"
     value.to_i
+  end
+
+  def name
+    return "Map #{id}" if title.nil?
+    title
+  end
+
+  def to_param
+    title.nil? ? id : "#{id}-#{title.parameterize}"
   end
 end

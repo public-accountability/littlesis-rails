@@ -1,2 +1,17 @@
-<h1><%= link_to(map.title, map_path(map)) %></h1>
-<div><%= map.description %></div>
+<div class="row map-top-row">
+  <div class="col col-xs-8 map-author">
+    <strong><%= link_to('LittleSis', signed_in? ? home_dashboard_path : root_path) %></strong>
+    map by <%= user_link(map.user) %> <span class="map-date"><%= map.updated_at.strftime("%B %-d, %Y") %></span>
+    <%= link_to('#', map_path(map)) %>
+  </div>
+  <div class="col col-xs-4 map-littlesis">
+  </div>
+</div>
+
+<div class="map-header">
+  <h1 class="map-title"><%= map.name %></h1>
+  
+  <% if map.description.present? %>
+    <div class="map-description"><%= map.description %></div>
+  <% end %>
+</div>

@@ -39,7 +39,7 @@ class Image < ActiveRecord::Base
   end
 
   def image_path(type)
-    self.class.image_path(filename(type))
+    self.class.image_path(filename(type), type)
   end
 
   def filename(type=nil)

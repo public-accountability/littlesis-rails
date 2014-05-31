@@ -1,0 +1,9 @@
+<% content_for(:page_title, 'Network Maps') %>
+
+<%= centered_content do %>
+
+<h1>Network Maps</h1>
+
+<%= render partial: 'table', locals: { maps: @maps } %>
+
+<% end %>

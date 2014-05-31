@@ -1,0 +1,27 @@
+<%= paginate maps %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Updated</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% maps.each do |map| %>
+      <tr>
+        <td>
+          <%= link_to(map.name, map_path(map)) %>
+        </td>
+        <td>
+          <%= user_link(map.user) %>
+        </td>
+        <td><%= time_ago_in_words(map.updated_at) %> ago</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate maps %>

@@ -1,13 +1,19 @@
 class MapsController < ApplicationController
-  before_action :set_map
+  before_action :set_map, except: [:index]
   
   # GET /maps
   def index
-    @maps = NetworkMap.page(params[:page]).per(20)
+    @maps = NetworkMap.order("updated_at DESC").page(params[:page]).per(20)
   end
 
   # GET /maps/1
   def show
+    render layout: "fullscreen"
+  end
+
+  def raw
+    response.headers.delete('X-Frame-Options')
+    render layout: "fullscreen"
   end
 
   private
