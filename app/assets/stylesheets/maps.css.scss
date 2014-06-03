@@ -1,5 +1,3 @@
-/* D3 stuff */
-
 #netmap {
   position: relative;
   border: 1px solid #ddd;
@@ -36,10 +34,6 @@ svg .rel.selected .line.highlight {
   opacity: 0.6;
 }
 
-// svg .rel .label {
-//   display: none;
-// }
-
 svg .label { 
   display: block; 
 }
@@ -48,7 +42,7 @@ svg .label {
   display: none; 
 }
 
-svg .rel:hover .label {
+#netmap svg .rel:hover .label {
   display: block;
 }
 
@@ -56,7 +50,7 @@ svg .rel.selected .label {
   display: block;
 }
 
-svg .rel.hovered .label {
+#netmap svg .rel.hovered .label {
   display: block;
 }
 
