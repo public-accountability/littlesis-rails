@@ -7,9 +7,8 @@
     $('#zoom-out').on('click', function() { netmap.zoom_by(0.83333333); });
 
     var anchors = $("a");
-
-    for (var i in anchors) {
-      anchors[i].setAttribute("target", "_blank");
-    }
+    anchors.each(function(i, a) {
+      a.setAttribute("target", "_blank");
+    });
   });
   </script>
