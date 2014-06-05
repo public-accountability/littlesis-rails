@@ -8,6 +8,10 @@
   <%= render partial: 'controls' %>
 </div>
 <div id="fullscreen-link"><%= link_to('fullscreen', raw_map_path(@map)) %></div>
+<div id="embed-link"><a href="javascript:void(0);" onclick="$('#embed-code').toggle(); $('#embed-code textarea').focus();">embed</a></div>
+<div id="embed-code">
+  <textarea><iframe height="600" width="900" scrolling="no" style="border: 0px; overflow: hidden;" src="<%= raw_map_url(@map) %>"></iframe></textarea>
+</div>
 
 <script>
 var data = <%= raw @map.prepared_data %>;
@@ -20,6 +24,19 @@ netmap.set_user_id(<%= @map.user_id %>);
 netmap.set_data(data);
 netmap.auto_center();
 netmap.build();
+
+$("#embed-code textarea").focus(function() {
+    var $this = $(this);
+    $this.select();
+
+    // Work around Chrome's little problem
+    $this.mouseup(function() {
+        // Prevent further mouseup intervention
+        $this.unbind("mouseup");
+        return false;
+    });
+});
+
 </script>
 
 <% end %>

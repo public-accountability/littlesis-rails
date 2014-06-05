@@ -73,6 +73,6 @@ class NetworkMap < ActiveRecord::Base
   end
 
   def to_param
-    title.nil? ? id : "#{id}-#{title.parameterize}"
+    title.nil? ? id.to_s : "#{id}-#{title.parameterize}"
   end
 end

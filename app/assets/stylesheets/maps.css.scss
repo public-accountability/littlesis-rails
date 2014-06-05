@@ -1,6 +1,7 @@
 #netmap {
   position: relative;
   border: 1px solid #ddd;
+  overflow: hidden;
 
   &.raw {
     height: 100%;
@@ -148,9 +149,30 @@ h1.map-title {
 }
 
 #fullscreen-link {
+  float: right;
   text-align: right;
   margin-top: 5px;
   font-size: 12px;
+  margin-left: 10px;
+}
+
+#embed-link {
+  float: right;
+  text-align: right;
+  margin-top: 5px;
+  font-size: 12px;  
+  margin-left: 10px;
+}
+
+#embed-code {
+  display: none;
+  text-align: right;
+  margin-top: 5px;
+
+  textarea {
+    width: 500px;
+    height: 50px;
+  }
 }
 
 .zoom-button {
