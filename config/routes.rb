@@ -82,6 +82,7 @@ Lilsis::Application.routes.draw do
   resources :maps, only: [:index, :show] do
     member do
       get 'raw'
+      get 'capture'
     end
   end
 
