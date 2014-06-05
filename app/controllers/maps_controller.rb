@@ -1,6 +1,8 @@
 class MapsController < ApplicationController
   before_action :set_map, except: [:index]
+  before_filter :auth, only: [:capture]
   
+
   # GET /maps
   def index
     @maps = NetworkMap.order("updated_at DESC").page(params[:page]).per(20)

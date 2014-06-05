@@ -1,8 +1,12 @@
 <% content_for(:page_title, @map.name) %>
 
 <div id="netmap" class="fullscreen">
-  <%= render partial: 'controls' %>
+  <%= render partial: 'controls', locals: { show_download_button: true } %>
+  <img id="img" style="display: none;"></img>
+  <canvas id="canvas" style="display: none;"></canvas>
 </div>
+
+
 
 <script>
 var data = <%= raw @map.prepared_data %>;
@@ -16,4 +20,3 @@ netmap.set_data(data);
 netmap.auto_center();
 netmap.build();
 </script>
-

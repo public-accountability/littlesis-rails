@@ -14,10 +14,15 @@
 
 svg {
   border: 0px solid #ddd;
+  background-color: white;
 }
 
 svg .line {
   stroke: black;
+}
+
+svg .entity a text, svg .rel a text { 
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 svg .rel.selected .line {
@@ -55,6 +60,7 @@ svg .rel.selected .label {
 }
 
 svg .entity .image-bg {
+  fill: #fff;
 }
 
 svg .entity.selected .image-bg {
@@ -153,8 +159,12 @@ h1.map-title {
   height: 20px;
   width: 20px;
   line-height: 16px;
-  font-size: 10px;
+  font-size: 12px;
   padding: 0;
+
+  &:focus {
+    outline: none;
+  }
 }
 
 #zoom-in {
@@ -167,6 +177,12 @@ h1.map-title {
   position: absolute; 
   top: 35px; 
   left: 10px;  
+}
+
+#save {
+  position: absolute;
+  top: 60px;
+  left: 10px;
 }
 
 #netmap-logo {
