@@ -25,8 +25,8 @@ class Note < ActiveRecord::Base
 	has_many :note_groups, inverse_of: :note, dependent: :destroy
 	has_many :groups, through: :note_groups, inverse_of: :notes
 
-	scope :public, -> { where(is_private: false) }
-	scope :private, -> { where(is_private: true) }
+	scope :public_scope, -> { where(is_private: false) }
+	scope :private_scope, -> { where(is_private: true) }
 	scope :with_joins, -> { 
 		joins("LEFT JOIN note_users ON note_users.note_id = note.id")
 		.joins("LEFT JOIN users ON users.id = note_users.user_id")		
@@ -142,7 +142,7 @@ class Note < ActiveRecord::Base
 
 	def self.visible_to_user(user)
 		if user.nil?
-			return Note.with_joins.public
+			return Note.with_joins.public_scope
 		end
 
   	Note.with_joins

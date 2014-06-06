@@ -10,7 +10,7 @@ class MapsController < ApplicationController
 
   # GET /maps/1
   def show
-    render layout: "fullscreen"
+    # render layout: "fullscreen"
   end
 
   def raw

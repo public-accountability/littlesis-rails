@@ -20,7 +20,7 @@ class GroupsController < ApplicationController
 
   # GET /groups
   def index
-    @groups = Group.public
+    @groups = Group.public_scope
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
       .includes(:campaign)
@@ -37,7 +37,7 @@ class GroupsController < ApplicationController
     @recent_updates = @group.entities.includes(last_user: :user).order("updated_at DESC").limit(10)
 
     if user_signed_in? and current_user.in_group?(@group)
-      @notes = @group.notes.public.order("created_at DESC").limit(10)
+      @notes = @group.notes.public_scope.order("created_at DESC").limit(10)
       @watched_entities = @group.featured_entities.order("ls_list_entity.created_at DESC").limit(5)
       @group_lists = @group.group_lists.order("is_featured DESC").joins(:list).where("ls_list.is_deleted" => false)
       @group_users = @group.group_users.joins(:user).order("users.username ASC")

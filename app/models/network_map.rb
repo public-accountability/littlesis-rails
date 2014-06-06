@@ -75,4 +75,8 @@ class NetworkMap < ActiveRecord::Base
   def to_param
     title.nil? ? id.to_s : "#{id}-#{title.parameterize}"
   end
+
+  def share_text
+    title.nil? ? "Network map #{id}" : "Map of #{title}"
+  end
 end
