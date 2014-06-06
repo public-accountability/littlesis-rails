@@ -15,8 +15,8 @@ defaults: &defaults
   verticalresponse_password:
   research_from_email: research@littlesis.org
   netmap_api_key:
-  netmap_default_width:
-  netmap_default_height:
+  netmap_default_width: 960
+  netmap_default_height: 550
 
 test:
   <<: *defaults
