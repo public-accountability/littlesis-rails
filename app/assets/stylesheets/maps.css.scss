@@ -48,6 +48,10 @@ svg .label {
   display: none; 
 }
 
+#netmap svg .rel .label {
+  cursor: pointer;
+}
+
 #netmap svg .rel:hover .label {
   display: block;
 }
@@ -126,11 +130,6 @@ svg .image {
   color: #888;  
 }
 
-.map-littlesis {
-  color: #888;  
-  text-align: right;
-}
-
 .map-header {
   margin-bottom: 20px;  
 }
@@ -142,6 +141,20 @@ h1.map-title {
   margin-top: 10px;
 }
 
+#container {
+  .map-header {
+    margin-bottom: 0px;
+  }
+
+  .map-top-row {
+    margin-bottom: 5px;
+  }
+
+  h1.map-title {
+    margin-top: 0;
+  }
+}
+
 .map-description {
   font-size: 20px;
   color: #888;
@@ -149,23 +162,21 @@ h1.map-title {
 }
 
 #fullscreen-link {
-  float: right;
-  text-align: right;
-  margin-top: 5px;
+  display: inline-block;
   font-size: 12px;
   margin-left: 10px;
 }
 
 #embed-link {
-  float: right;
-  text-align: right;
-  margin-top: 5px;
+  display: inline-block;
   font-size: 12px;  
   margin-left: 10px;
 }
 
 #embed-code {
   display: none;
+  position: absolute;
+  z-index: 100;
   text-align: right;
   margin-top: 5px;
 
@@ -205,6 +216,7 @@ h1.map-title {
   position: absolute;
   top: 60px;
   left: 10px;
+  display: none;
 }
 
 #netmap-logo {
@@ -212,4 +224,24 @@ h1.map-title {
   bottom: 0px;
   left: 10px;
   width: 100px;
+
+  &:hover { cursor: pointer; }
+}
+
+.map-share-buttons {
+  text-align: right;
+
+  .fb-share-button {
+    position: relative;
+    top: -5px;
+
+    iframe {
+      margin-left: 3px;
+    }
+  }
+
+  .google-share-button {
+    display: inline-block;
+    margin-left: 5px;
+  }
 }

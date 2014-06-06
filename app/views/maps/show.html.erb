@@ -1,4 +1,7 @@
+<% content_for(:static_navbar, true) %>
 <% content_for(:page_title, @map.name) %>
+
+<%= render 'shared/facebook_sdk' %>
 
 <%= centered_content do %>
 
@@ -6,11 +9,6 @@
 
 <div id="netmap">
   <%= render partial: 'controls' %>
-</div>
-<div id="fullscreen-link"><%= link_to('fullscreen', raw_map_path(@map)) %></div>
-<div id="embed-link"><a href="javascript:void(0);" onclick="$('#embed-code').toggle(); $('#embed-code textarea').focus();">embed</a></div>
-<div id="embed-code">
-  <textarea><iframe height="600" width="900" scrolling="no" style="border: 0px; overflow: hidden;" src="<%= raw_map_url(@map) %>"></iframe></textarea>
 </div>
 
 <script>
@@ -24,6 +22,11 @@ netmap.set_user_id(<%= @map.user_id %>);
 netmap.set_data(data);
 netmap.auto_center();
 netmap.build();
+
+$('#embed-link a').click(function(e) {
+  $('#embed-code').toggle(); 
+  $('#embed-code textarea').focus();
+});
 
 $("#embed-code textarea").focus(function() {
     var $this = $(this);
