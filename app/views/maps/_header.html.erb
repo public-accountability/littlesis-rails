@@ -10,7 +10,7 @@
     <div id="fullscreen-link"><%= link_to('fullscreen', raw_map_path(@map)) %></div>
     <div id="embed-link"><a href="#">embed</a></div>
     <div id="embed-code">
-      <textarea><iframe height="600" width="900" scrolling="no" style="border: 0px; overflow: hidden;" src="<%= raw_map_url(@map) %>"></iframe></textarea>
+      <textarea><iframe height="400" width="550" scrolling="no" style="border: 0px; overflow: hidden;" src="<%= raw_map_url(@map) %>"></iframe><div style="padding: 5px;"><%= link_to('view this map on LittleSis', map_url(map)) %></div></textarea>
     </div>
   </div>
   <div class="col col-xs-6 map-share-buttons">
