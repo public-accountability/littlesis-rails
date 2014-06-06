@@ -5,7 +5,11 @@
 
 <%= centered_content do %>
 
-<h1>Editing map</h1>
+<h1>Editing map meta</h1>
+
+<%= link_to 'edit map', edit_map_path(@map) %>
+<br />
+<br />
 
 <%= render 'form' %>
 

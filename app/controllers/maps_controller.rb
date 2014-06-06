@@ -1,7 +1,8 @@
 class MapsController < ApplicationController
   before_action :set_map, except: [:index, :featured]
   before_filter :auth, only: [:all, :edit, :update]
-  
+  before_filter :enforce_slug, only: [:show]
+
   def index
     @maps = NetworkMap.order("updated_at DESC").page(params[:page]).per(20)
     @header = 'Network Maps'
@@ -22,6 +23,10 @@ class MapsController < ApplicationController
   end
 
   def edit
+    redirect_to "/maps/#{@map.id}/edit"
+  end
+
+  def edit_meta
     check_permission "admin"
   end
 
@@ -35,6 +40,12 @@ class MapsController < ApplicationController
   end
 
   private
+
+  def enforce_slug
+    if @map.title.present? and !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
+      redirect_to map_path(@map)
+    end
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_map
