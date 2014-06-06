@@ -147,7 +147,7 @@ h1.map-title {
   }
 
   .map-top-row {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
   }
 
   h1.map-title {
@@ -155,10 +155,14 @@ h1.map-title {
   }
 }
 
-.map-description {
-  font-size: 20px;
-  color: #888;
-  font-weight: 300;
+#map-description {
+  margin-top: 20px;
+  padding: 10px;
+  font-size: 18px;
+
+  p {
+    margin-bottom: 20px;
+  }
 }
 
 #fullscreen-link {

@@ -1,9 +1,14 @@
 class NetworkMap < ActiveRecord::Base
   include SingularTable
   include SoftDelete
+  include Bootsy::Container
 
   belongs_to :sf_guard_user, foreign_key: "user_id", inverse_of: :network_maps
   delegate :user, to: :sf_guard_user
+
+  scope :featured, -> { where(is_featured: true) }
+
+  validates_presence_of :title
 
   def prepared_data
     hash = JSON.parse(data)
