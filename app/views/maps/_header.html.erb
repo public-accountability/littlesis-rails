@@ -9,7 +9,7 @@
 <div class="row map-top-row">
   <div class="col col-xs-6 map-author">
     by <%= user_link(map.user) %> <span class="map-date"><%= map.updated_at.strftime("%B %-d, %Y") %></span>
-    <%= link_to('#', map_path(map)) %>
+    &nbsp; <%= link_to('#', map_path(map)) %>
 
     <div id="fullscreen-link"><%= link_to('fullscreen', raw_map_path(@map)) %></div>
     <div id="embed-link"><a href="#">embed</a></div>
