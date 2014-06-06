@@ -11,6 +11,12 @@
   <%= render partial: 'controls' %>
 </div>
 
+<% if @map.description.present? %>
+  <div id="map-description">
+    <%= raw(@map.description) %>
+  </div>
+<% end %>
+
 <script>
 var data = <%= raw @map.prepared_data %>;
 var width = <%= Lilsis::Application.config.netmap_default_width %>;

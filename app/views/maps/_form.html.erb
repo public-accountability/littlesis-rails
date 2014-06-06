@@ -1,0 +1,35 @@
+<%= form_for(@map, as: :map, url: map_path(@map)) do |f| %>
+  <% if @map.errors.any? %>
+    <div id="error_explanation" class="alert alert-warning">
+      <%= pluralize(@map.errors.count, "error") %> prohibited this map from being saved:
+
+      <ul>
+      <% @map.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="checkbox">
+    <%= f.label "Featured Map" %>
+    <%= f.check_box :is_featured %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :title %>
+    <%= f.text_field :title, class: "form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :description %>
+    <%= f.bootsy_area :description, class: "wysiwyg form-control" %>  
+  </div>
+
+  <br />
+
+  <div class="actions">
+    <%= f.submit 'Update Map', class: "btn btn-primary" %>
+    <%= link_to "Cancel", map_path(@map), class: "btn btn-link" %>
+  </div>
+<% end %>
