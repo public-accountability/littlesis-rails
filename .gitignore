@@ -32,3 +32,6 @@
 
 # Ignore sphinx thingy
 /log/production.sphinx.pid
+
+# Ignore sphinx config
+/config/production.sphinx.conf
