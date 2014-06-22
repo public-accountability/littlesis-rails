@@ -21,8 +21,13 @@ class SfGuardUserProfile < ActiveRecord::Base
 	end
 
   def s3_url(type)
-  	return S3.url(ActionController::Base.helpers.asset_path("images/system/user.png")) if filename.nil?
-    S3.url(image_path(type))
+    if ENV['RAILS_ENV'] == 'production'
+      return ActionController::Base.helpers.asset_path("images/system/user.png") if filename.nil?
+      image_path(type)
+    else
+    	return S3.url(ActionController::Base.helpers.asset_path("images/system/user.png")) if filename.nil?
+      S3.url(image_path(type))
+    end
   end
         
   def image_path(type)
