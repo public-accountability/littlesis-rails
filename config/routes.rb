@@ -92,7 +92,7 @@ Lilsis::Application.routes.draw do
     constraints: { username: /[\w.]+/, id: /\d+/ },
     as: "note_with_user"
 
-  resources :maps, only: [:index, :show, :update, :edit] do
+  resources :maps do
     member do
       get 'raw'
       get 'capture'

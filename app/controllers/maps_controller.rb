@@ -1,7 +1,9 @@
 class MapsController < ApplicationController
-  before_action :set_map, except: [:index, :featured]
-  before_filter :auth, only: [:all, :edit, :edit_meta, :update, :update_meta]
+  before_action :set_map, except: [:index, :featured, :create]
+  before_filter :auth, except: [:index, :featured, :raw]
   before_filter :enforce_slug, only: [:show]
+
+  protect_from_forgery except: :create
 
   def index
     maps = NetworkMap.order("updated_at DESC")
@@ -25,6 +27,20 @@ class MapsController < ApplicationController
   def raw
     response.headers.delete('X-Frame-Options')
     render layout: "fullscreen"
+  end
+
+  def create
+    check_permission 'importer'
+
+    @map = NetworkMap.create(map_params)
+
+    if @map.save
+      respond_to do |format|
+        format.json { render json: @map }
+      end
+    else
+      not_found
+    end
   end
 
   def edit
@@ -63,6 +79,12 @@ class MapsController < ApplicationController
     end
   end
 
+  def destroy
+    check_owner
+    @map.destroy
+    redirect_to maps_path
+  end
+
   private
 
   def enforce_slug
@@ -78,7 +100,8 @@ class MapsController < ApplicationController
 
   def map_params
     params.require(:map).permit(
-      :is_featured, :is_private, :title, :description, :bootsy_image_gallery_id
+      :is_featured, :is_private, :title, :description, :bootsy_image_gallery_id, :data,
+       :height, :width, :user_id, :zoom
     )
   end
 

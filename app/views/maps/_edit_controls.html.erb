@@ -21,22 +21,21 @@ Categories:
   <option value="10">Ownership</option>
 </select>
 
-<br />
-
-Current:
-<input id="netmap_current_only" type="checkbox" /><br />
-
-<br />
+<div class="checkbox">
+  <label>
+    <input id="netmap_current_only" type="checkbox" /> Current
+  </label>
+</div>
 
 <div id="netmap_control_key">
 D: delete<br />
 A: add<br />
 </div>
 
-<% if current_user.has_legacy_permission('admin') or current_user.has_legacy_permission('importer') %>
 <br />
 <input id="netmap_save" type="button" value="save" class="btn btn-primary btn-sm" /><br />
-<% end %>
+<br />
+<%= button_to 'delete', map_path(map), method: :delete, data: { confirm: "Are you sure you want to delete this map?" }, class: 'btn btn-danger btn-sm' %><br />
 
 <div id="netmap_add_entity">
 <div id="netmap_add_entity_hide"><a id="netmap_add_entity_hide_link" onclick="$('#netmap_add_entity').css('display', 'none'); return false;">hide</a></div>

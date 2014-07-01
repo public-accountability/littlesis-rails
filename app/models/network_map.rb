@@ -1,7 +1,13 @@
+# require "capybara/dsl"
+# require "capybara/poltergeist"
+
 class NetworkMap < ActiveRecord::Base
   include SingularTable
   include SoftDelete
   include Bootsy::Container
+  # include Capybara::DSL    
+
+  delegate :url_helpers, to: 'Rails.application.routes'
 
   belongs_to :sf_guard_user, foreign_key: "user_id", inverse_of: :network_maps
   belongs_to :user, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :network_maps
@@ -87,4 +93,32 @@ class NetworkMap < ActiveRecord::Base
   def share_text
     title.nil? ? "Network map #{id}" : "Map of #{title}"
   end
+
+  # def generate_thumbnail
+  #   Capybara.run_server = false
+  #   Capybara.register_driver :poltergeist do |app|
+  #     Capybara::Poltergeist::Driver.new(app, {
+  #       # Raise JavaScript errors to Ruby
+  #       js_errors: false,
+  #       # Additional command line options for PhantomJS
+  #       phantomjs_options: ['--ignore-ssl-errors=yes'],
+  #     })
+  #   end
+  #   Capybara.current_driver = :selenium
+  #   Capybara.javascript_driver = :poltergeist    
+  #   Capybara.app_host = 'http://lilsis.local'
+
+  #   url = url_helpers.map_path(id: id)
+  #   path = "app/assets/images/captures/map-#{id}.png"
+
+  #   binding.pry
+
+  #   visit url
+
+  #   if page.driver.status_code == 200
+  #     page.driver.save_screenshot(path, selector: '#netmap')
+  #   else
+  #     binding.pry
+  #   end
+  # end
 end
