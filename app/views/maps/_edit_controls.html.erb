@@ -1,0 +1,185 @@
+<div id="netmap_controls">
+
+<input id="netmap_prune" type="button" value="prune" class="btn btn-default btn-sm" /><br />
+<input id="netmap_wheel" type="button" value="wheel" class="btn btn-default btn-sm" /><br />
+<input id="netmap_short_force" type="button" value="force" class="btn btn-default btn-sm" /><br />
+<input id="netmap_rezoom" type="button" value="rezoom" class="btn btn-default btn-sm" /><br />
+
+<br />
+
+Categories:
+<select multiple id="netmap_cat_ids" class="form-control" size="10">
+  <option value="1">Position</option>
+  <option value="2">Education</option>
+  <option value="3">Membership</option>
+  <option value="4">Family</option>
+  <option value="5">Donation</option>
+  <option value="6">Transaction</option>
+  <option value="7">Lobbying</option>
+  <option value="8">Social</option>
+  <option value="9">Professional</option>
+  <option value="10">Ownership</option>
+</select>
+
+<br />
+
+Current:
+<input id="netmap_current_only" type="checkbox" /><br />
+
+<br />
+
+<div id="netmap_control_key">
+D: delete<br />
+A: add<br />
+</div>
+
+<% if current_user.has_legacy_permission('admin') or current_user.has_legacy_permission('importer') %>
+<br />
+<input id="netmap_save" type="button" value="save" class="btn btn-primary btn-sm" /><br />
+<% end %>
+
+<div id="netmap_add_entity">
+<div id="netmap_add_entity_hide"><a id="netmap_add_entity_hide_link" onclick="$('#netmap_add_entity').css('display', 'none'); return false;">hide</a></div>
+<h3>Add Entity</h3>
+<form id="netmap_add_entity_form">
+  <input id="netmap_add_entity_search" type="text" />
+  <input id="netmap_add_entity_button" type="submit" value="search" />
+</form>
+<div id="netmap_add_entity_results"></div>
+</div>
+
+<div id="netmap_add_related_entities">
+<div id="netmap_add_related_entities_hide"><a id="netmap_add_related_entities_hide_link" onclick="$('#netmap_add_related_entities').css('display', 'none'); return false;">hide</a></div>
+<input id="netmap_add_related_entities_entity_id" type="hidden" />
+<h3>Add Related</h3>
+Num: <input id="netmap_add_related_entities_num" type="text" value="10" size="2" /><br />
+Cats:<br />
+<select multiple id="netmap_add_related_entities_cat_ids" size="10">
+  <option value="1">Pos</option>
+  <option value="2">Edu</option>
+  <option value="3">Mem</option>
+  <option value="4">Fam</option>
+  <option value="5">Don</option>
+  <option value="6">Trn</option>
+  <option value="7">Lob</option>
+  <option value="8">Soc</option>
+  <option value="9">Pro</option>
+  <option value="10">Own</option>
+</select>
+<input id="netmap_add_related_entities_button" type="button" value="add" />
+</div>
+
+<script>
+$("#netmap_current_only").on("change", function() {
+  if ($(this).is(':checked')) {
+    netmap.limit_to_current();
+  } else {
+    netmap.show_all_rels();
+  }
+});
+
+$("#netmap_cat_ids").on("change", function() {
+  var cat_ids = $(this).val() == null ? 
+    [] : $(this).val().map(function(i) { return Number(i); });
+  if (cat_ids.length == 0) {
+    netmap.show_all_rels();
+  } else {
+    netmap.limit_to_cats(cat_ids);
+  }
+});
+
+<% if current_user.has_legacy_permission('admin') %>
+$("#netmap_save").on("click", function() {
+  netmap.remove_hidden_rels();
+
+  var id = netmap.get_network_map_id();
+  if (id) {
+    var url = '<%= map_path(id: 999999) %>'.replace("999999", id);
+  } else {
+    var url = '<%= maps_path %>';
+  }
+
+  $.ajax({
+    url: url,
+    type: "PATCH",
+    data: netmap.data_for_save(),
+    success: function(data) { 
+      window.location.href = '<%= map_path(id: 999999) %>'.replace("999999", data.id);
+    },
+    error: function() { 
+      alert("There was an error saving the map"); 
+    },
+    dataType: "json"
+  })  
+});
+<% end %>
+
+$("#netmap_reload").on("click", function() {
+  netmap.reload_map();
+});
+
+$("#netmap_rezoom").on("click", function() {
+  netmap.reset_zoom();
+});
+
+$("#netmap_prune").on("click", function() {
+  netmap.prune();
+});
+
+$("#netmap_wheel").on("click", function() {
+  netmap.wheel();
+});
+
+$("#netmap_grid").on("click", function() {
+  netmap.grid();
+});
+
+$("#netmap_shuffle").on("click", function() {
+  netmap.shuffle();
+});
+
+$("#netmap_short_force").on("click", function() {
+  netmap.one_time_force();
+});
+
+$("#netmap_add_entity_form").on("submit", function() {
+  var q = $("#netmap_add_entity_search").val();
+  netmap.search_entities(q, function(entities) {
+    var results = $("#netmap_add_entity_results");
+    results.text("");
+
+    if (entities.length == 0)
+    {
+      results.html("<strong>No results found.</strong>");
+    }
+
+    $(entities).each(function(i, e) {
+      var result = $('<div class="netmap_add_entity_result" /></div>');
+      add = $('<a>add</a>');
+      add.data("entity_id", e.id)
+      add.on("click", function(e) {
+        position = [e.pageX - $("#svg").offset().left, e.pageY - $("#svg").offset().top]
+        netmap.add_entity($(this).data("entity_id"), position);
+        $("#netmap_add_entity").css("display", "none");
+      })
+      result.append(add);
+      result.append("&nbsp;&nbsp;");
+      var name = $('<a>' + e.name + '</a>');
+      name.attr("href", e.url);
+      name.attr("target", "_blank");
+      result.append(name);
+      results.append(result);
+    });
+  });  
+  return false;
+});
+
+$("#netmap_add_related_entities_button").on("click", function() {
+  var entity_id = $("#netmap_add_related_entities_entity_id").val();
+  var cat_ids = $("#netmap_add_related_entities_cat_ids").val();    
+  var num = $("#netmap_add_related_entities_num").val();    
+  netmap.add_related_entities(entity_id, num, cat_ids);
+  $("#netmap_add_related_entities").css("display", "none");
+});
+</script>
+</div>

@@ -55,7 +55,7 @@ $(window).ready(function() {
   $('#note_entity_search')
     .typeahead({ 
       name: 'entities',
-      remote: '<%= entity_name_search_url + "?q=%QUERY" %>',
+      remote: '<%= name_search_entities_url + "?q=%QUERY" %>',
       limit: 8
     })
     .on("typeahead:selected", selected_callback);

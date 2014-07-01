@@ -1,4 +1,4 @@
-<%= form_for(@map, as: :map, url: map_path(@map)) do |f| %>
+<%= form_for(@map, as: :map, url: update_meta_map_path(@map), method: :post) do |f| %>
   <% if @map.errors.any? %>
     <div id="error_explanation" class="alert alert-warning">
       <%= pluralize(@map.errors.count, "error") %> prohibited this map from being saved:
@@ -14,6 +14,11 @@
   <div class="checkbox">
     <%= f.label "Featured Map" %>
     <%= f.check_box :is_featured %>  
+  </div>
+
+  <div class="checkbox">
+    <%= f.label "Private Map" %>
+    <%= f.check_box :is_private %>  
   </div>
 
   <div class="field">

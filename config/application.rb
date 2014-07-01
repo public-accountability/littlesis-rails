@@ -30,5 +30,16 @@ module Lilsis
     config.action_mailer.delivery_method = :sendmail
     config.action_mailer.raise_delivery_errors = true
     config.action_mailer.perform_deliveries = true
+
+    @twitter = Twitter::REST::Client.new do |cnf|
+      cnf.consumer_key        = config.twitter_consumer_key
+      cnf.consumer_secret     = config.twitter_consumer_secret
+      cnf.access_token        = config.twitter_access_token
+      cnf.access_token_secret = config.twitter_access_token_secret
+    end
+
+    def self.twitter
+      @twitter
+    end
   end
 end

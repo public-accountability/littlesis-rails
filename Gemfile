@@ -90,3 +90,4 @@ group :test, :development do
 end  
 
 gem 'sprockets', '2.11.0'
+gem 'twitter'

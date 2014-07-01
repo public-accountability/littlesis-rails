@@ -1,0 +1,51 @@
+<% content_for(:page_title, @map.name + " - Edit") %>
+
+<% content_for :body do %>
+
+
+<%= centered_content do %>
+
+<div class="map-header">
+  <h1 class="map-title"><%= @map.name %></h1>  
+</div>
+
+<%= render partial: 'byline', locals: { map: @map } %>
+
+&nbsp;<%= link_to 'edit meta', edit_meta_map_path(@map) %>
+
+<br />
+<br />
+
+<div id="netmap" class="netmap-editing">
+  <%= render partial: 'controls' %>
+</div>
+
+<%= render partial: 'edit_controls', locals: { map: @map } %>
+
+<% if @map.description.present? %>
+  <div id="map-description">
+    <br />
+    <%= raw(@map.description) %>
+  </div>
+<% end %>
+
+<% end %>
+
+
+<% end %>
+
+<script>
+var data = <%= raw @map.prepared_data %>;
+var width = $('#netmap').width();
+var height = <%= Lilsis::Application.config.netmap_default_height %>;
+var key = '<%= Lilsis::Application.config.netmap_api_key %>';
+var netmap = new Netmap(width, height, "#netmap", key, true);
+netmap.set_network_map_id(<%= @map.id %>);
+netmap.set_user_id(<%= @map.user_id %>);
+netmap.set_data(data);
+netmap.auto_center();
+<% if @map.zoom.present? %>
+netmap.zoom_by(<%= @map.zoom %>);
+<% end %>
+netmap.build();
+</script>

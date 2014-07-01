@@ -40,11 +40,9 @@ class HomeController < ApplicationController
     render json: { id: params[:id] }
   end
 
-  # EXTREMELY TEMPORARY AND SHOULD BE REMOVED
-  def sign_in_as
-    user = User.find_by(username: params[:username])
-    redirect_to :status => 404 unless user.present?
-    sign_in user
-    redirect_to home_dashboard_path
+  def maps
+    @maps = current_user.network_maps.order("updated_at DESC").page(params[:page]).per(20)
+    @header = 'My Network Maps'
+    render 'maps/index'
   end
 end

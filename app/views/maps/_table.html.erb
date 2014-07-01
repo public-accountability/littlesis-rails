@@ -14,6 +14,9 @@
       <tr>
         <td>
           <%= link_to(map.name, map_path(map)) %>
+          <% if map.is_private %>
+            &nbsp;<span class="glyphicon glyphicon-lock"></span>
+          <% end %>
         </td>
         <td>
           <%= user_link(map.user) %>

@@ -30,6 +30,15 @@ Lilsis::Application.configure do
 
   # In development, links in emails should point local
   config.action_mailer.default_url_options = { host: 'lilsis.local' }
+
+  # Enable serving of images from asset server.
+  config.action_controller.asset_host = Proc.new do |source|
+    if source =~ /images/
+      "//#{config.aws_s3_bucket}.s3.amazonaws.com"
+    else
+      nil
+    end
+  end
 end
 
 

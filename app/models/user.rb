@@ -12,11 +12,11 @@ class User < ActiveRecord::Base
   belongs_to :sf_guard_user, inverse_of: :user
   has_one :sf_guard_user_profile, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :user
   # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
-  delegate :s3_url, to: :sf_guard_user_profile, allow_nil: true
+  delegate :image_path, to: :sf_guard_user_profile, allow_nil: true
 
   has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", primary_key: "sf_guard_user_id"
 
-  alias :image_url :s3_url
+  alias :image_url :image_path
 
   belongs_to :default_network, class_name: "List"
 

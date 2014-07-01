@@ -249,3 +249,53 @@ h1.map-title {
     margin-left: 5px;
   }
 }
+
+
+// EDIT CONTROLS //
+
+#netmap.netmap-editing {
+  width: 880px;
+  float: left;
+}
+
+#netmap_controls {
+  width: 60px;
+  float: right;
+
+  input[type=button] {
+    margin-top: 5px;
+  }
+}
+
+#map-description {
+  clear: both;
+}
+
+#netmap_cat_ids {
+  padding-left: 3px;
+  padding-right: 3px;
+  width: 100px;
+}
+
+#netmap_add_entity, #netmap_add_related_entities {
+  display: none;
+  position: absolute;
+  padding: 1em;
+  background-color: white;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px #888;
+}
+
+#netmap_add_entity_hide, #netmap_add_related_entities_hide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: 5px;
+  margin-right: 10px;  
+  font-size: 12px;
+}
+
+#netmap_add_entity_results a {
+  text-decoration: underline;
+}

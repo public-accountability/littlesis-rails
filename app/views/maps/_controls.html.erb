@@ -1,6 +1,6 @@
   <button id="zoom-in" class="zoom-button">+</button>
   <button id="zoom-out" class="zoom-button">&ndash;</button>
-  <% if local_assigns[:show_download_button].present? %>
+  <% if false and !params[:embed] and local_assigns[:show_download_button].present? %>
     <button id="save" class="zoom-button"><span class="glyphicon glyphicon-picture"></span></button>
   <% end %>
 

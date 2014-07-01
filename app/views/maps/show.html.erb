@@ -27,10 +27,17 @@ netmap.set_network_map_id(<%= @map.id %>);
 netmap.set_user_id(<%= @map.user_id %>);
 netmap.set_data(data);
 netmap.auto_center();
+<% if @map.zoom.present? %>
+netmap.zoom_by(<%= @map.zoom %>);
+<% end %>
 netmap.build();
 
 $('#embed-link a').click(function(e) {
-  $('#embed-code').toggle(); 
+  var text = $('#embed-code textarea').val();
+  var current_zoom = netmap.get_scale();
+  text = text.replace(/zoom=[^"]+/, "zoom=" + current_zoom);
+  $('#embed-code textarea').val(text);
+  $('#embed-code').toggle();
   $('#embed-code textarea').focus();
 });
 

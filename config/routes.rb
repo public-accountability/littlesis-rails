@@ -66,6 +66,19 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  resources :entities do
+    member do
+      get 'edit_twitter'
+      post 'add_twitter'  
+      post 'remove_twitter'
+    end
+
+    collection do
+      get 'search_by_name', as: 'name_search'
+      get 'next_twitter'
+    end
+  end
+
   resources :notes, only: [:new, :create, :destroy, :index]
 
   get "/notes/:username",
@@ -84,6 +97,7 @@ Lilsis::Application.routes.draw do
       get 'raw'
       get 'capture'
       get 'edit_meta'
+      post 'update_meta'
     end
 
     collection do
@@ -93,16 +107,17 @@ Lilsis::Application.routes.draw do
 
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
+  get "/home/maps" => "home#maps"
   get "/home/dashboard" => "home#dashboard"
   post "/home/dismiss",
     controller: 'home',
     action: 'dismiss',
     as: 'dismiss_helper'
 
-  get "/entities/search_by_name",
-    controller: 'entities',
-    action: 'search_by_name',
-    as: 'entity_name_search'
+  # get "/entities/search_by_name",
+  #   controller: 'entities',
+  #   action: 'search_by_name',
+  #   as: 'entity_name_search'
 
   get "/edits" => "edits#index"
 

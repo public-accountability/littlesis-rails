@@ -20,6 +20,7 @@ class Entity < ActiveRecord::Base
   has_many :note_entities, inverse_of: :entity
   has_many :notes, through: :note_entities, inverse_of: :entities
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", inverse_of: :edited_entities
+  has_many :external_keys, inverse_of: :entity, dependent: :destroy
 
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
@@ -157,8 +158,8 @@ class Entity < ActiveRecord::Base
   end
 
   def default_image_url
-    return S3.url("/images/system/anon.png") if person?
-    S3.url("/images/system/anons.png")
+    return "/images/system/anon.png" if person?
+    "/images/system/anons.png"
   end
 
   def has_featured_image
@@ -173,7 +174,7 @@ class Entity < ActiveRecord::Base
     image = featured_image
     return default_image_url if image.nil?
     type = (image.has_square ? "square" : "profile") if type.nil?
-    image.s3_url(type)
+    image.image_path(type)
   end
 
   def relateds_by_count(num=5, primary_ext=nil)
@@ -266,5 +267,19 @@ class Entity < ActiveRecord::Base
 
   def last_new_user
     last_user.user
+  end
+
+  def name_without_initials
+    name.gsub('.', '').split(' ').select { |part| part.length > 1 }.join(' ')
+  end
+
+  def affiliations
+    relateds.where('link.category_id IN (1, 3)')
+  end
+
+  def twitter_ids
+    keys = external_keys.where(domain_id: Domain::TWITTER_ID)
+    return nil unless keys.present?
+    keys.collect(&:external_id)
   end
 end
