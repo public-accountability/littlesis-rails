@@ -5,7 +5,7 @@ class MapsController < ApplicationController
 
   def index
     maps = NetworkMap.order("updated_at DESC")
-    maps = maps.public_scope unless current_user.has_legacy_permission('admin')
+    maps = maps.public_scope unless current_user.present? and current_user.has_legacy_permission('admin')
     @maps = maps.page(params[:page]).per(20)
     @header = 'Network Maps'
   end
@@ -83,7 +83,7 @@ class MapsController < ApplicationController
   end
 
   def check_owner
-    unless current_user.has_legacy_permission('admin') or @map.user_id == current_user.sf_guard_user_id
+    unless (current_user and current_user.has_legacy_permission('admin')) or @map.user_id == current_user.sf_guard_user_id
       raise Exceptions::PermissionError
     end
   end
