@@ -47,7 +47,6 @@ class MapsController < ApplicationController
     @map.data = data
     @map.entity_ids = decoded['entities'].map { |e| e['id'] }.join(',')
     @map.rel_ids = decoded['rels'].map { |e| e['id'] }.join(',')
-    binding.pry
     @map.save
 
     # NEED CACHE CLEAR HERE
