@@ -39,7 +39,7 @@ var data = <%= raw @map.prepared_data %>;
 var width = $('#netmap').width();
 var height = <%= Lilsis::Application.config.netmap_default_height %>;
 var key = '<%= Lilsis::Application.config.netmap_api_key %>';
-var netmap = new Netmap(width, height, "#netmap", key, true);
+var netmap = new Netmap(width, height, "#netmap", key, false);
 netmap.set_network_map_id(<%= @map.id %>);
 netmap.set_user_id(<%= @map.user_id %>);
 netmap.set_data(data);
