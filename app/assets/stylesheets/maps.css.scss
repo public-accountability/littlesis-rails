@@ -88,6 +88,8 @@ svg .entity .add_button, svg .entity .add_button_rect {
 
 svg .entity:hover .add_button, svg .entity:hover .add_button_rect {
   display: block;
+  width: 20px;
+  height: 20px;
 }
 
 svg .entity .add_button:hover {
@@ -271,7 +273,7 @@ h1.map-title {
   clear: both;
 }
 
-#netmap_cat_ids {
+.netmap-cat-ids {
   padding-left: 3px;
   padding-right: 3px;
   width: 100px;
@@ -285,6 +287,8 @@ h1.map-title {
   border: 1px solid #eee;
   border-radius: 5px;
   box-shadow: 2px 2px 5px #888;
+
+  h3 { font-size: 18px; }
 }
 
 #netmap_add_entity_hide, #netmap_add_related_entities_hide {
@@ -298,4 +302,23 @@ h1.map-title {
 
 #netmap_add_entity_results a {
   text-decoration: underline;
+}
+
+#netmap_add_related_entities_num {
+  display: inline-block;
+  width: 30px;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+#netmap_add_related_entities_cat_ids {
+  display: inline-block;
+}
+
+#netmap_entity_search {
+  width: 100px;
+}
+
+#netmap_controls .tt-dropdown-menu {
+  width: 150px;
 }
