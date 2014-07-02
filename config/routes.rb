@@ -98,6 +98,7 @@ Lilsis::Application.routes.draw do
       get 'capture'
       get 'edit_meta'
       post 'update_meta'
+      post 'clone'
     end
 
     collection do

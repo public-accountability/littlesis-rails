@@ -1,4 +1,4 @@
-<%= form_for(@map, as: :map, url: update_meta_map_path(@map), method: :post) do |f| %>
+<%= form_for(@map, as: :map, url: @map.id.present? ? update_meta_map_path(@map) : maps_path, method: :post) do |f| %>
   <% if @map.errors.any? %>
     <div id="error_explanation" class="alert alert-warning">
       <%= pluralize(@map.errors.count, "error") %> prohibited this map from being saved:
@@ -34,7 +34,9 @@
   <br />
 
   <div class="actions">
-    <%= f.submit 'Update Map', class: "btn btn-primary" %>
-    <%= link_to "Cancel", map_path(@map), class: "btn btn-link" %>
+    <%= f.submit 'Save', class: "btn btn-primary" %>
+    <% if @map.id.present? %>
+      <%= link_to "Cancel", map_path(@map), class: "btn btn-link" %>
+    <% end %>
   </div>
 <% end %>

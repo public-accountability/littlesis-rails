@@ -13,6 +13,10 @@
     <div id="embed-code">
       <textarea><iframe id="littlesis-map-#{@map.id}" height="400" width="550" scrolling="no" style="border: 0px; overflow: hidden;" src="<%= raw_map_url(@map, embed: true, zoom: 1) %>"></iframe><div style="padding: 5px;"><%= link_to('view this map on LittleSis', map_url(map)) %></div></textarea>
     </div>
+
+    <div id="clone-link">
+      <%= link_to 'clone', clone_map_path(@map), method: :post %>
+    </div>
   </div>
   <div class="col col-xs-6 map-share-buttons">
     <a href="https://twitter.com/share" class="twitter-share-button" data-via="twittlesis" data-count="none" data-dnt="true" data-text="<%= @map.share_text %>">Tweet</a>

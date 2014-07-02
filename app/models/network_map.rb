@@ -82,7 +82,7 @@ class NetworkMap < ActiveRecord::Base
   end
 
   def name
-    return "Map #{id}" if title.nil?
+    return "Map #{id}" if title.blank?
     title
   end
 
@@ -92,6 +92,24 @@ class NetworkMap < ActiveRecord::Base
 
   def share_text
     title.nil? ? "Network map #{id}" : "Map of #{title}"
+  end
+
+  def generate_s3_thumb(s3 = nil)
+    s3 = S3.s3 if s3.nil?
+    bucket = s3.buckets[Lilsis::Application.config.aws_s3_bucket]
+
+    url = Rails.application.routes.url_helpers.raw_map_url(self)
+    local_path = "tmp/map-#{id}.png"
+    s3_path = "images/maps/#{to_param}.png"
+
+    system("phantomjs vendor/assets/javascripts/makemaps.js #{url} #{local_path}")
+
+    obj = bucket.objects[s3_path]
+    obj.write(Pathname.new(local_path), { acl: :public_read })
+
+    File.delete(local_path)
+    self.thumbnail = S3.url("/" + s3_path) if obj.exists?
+    save
   end
 
   # def generate_thumbnail

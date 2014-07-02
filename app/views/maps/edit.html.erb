@@ -1,7 +1,5 @@
+<% content_for(:static_navbar, true) %>
 <% content_for(:page_title, @map.name + " - Edit") %>
-
-<% content_for :body do %>
-
 
 <%= centered_content do %>
 
@@ -9,12 +7,12 @@
   <h1 class="map-title"><%= @map.name %></h1>  
 </div>
 
-<%= render partial: 'byline', locals: { map: @map } %>
-
-&nbsp;<%= link_to 'edit meta', edit_meta_map_path(@map) %>
-
-<br />
-<br />
+<div class="row map-top-row">
+  <div class="col col-xs-6 map-author">
+    <%= render partial: 'byline', locals: { map: @map } %>
+    &nbsp;<%= link_to 'edit meta', edit_meta_map_path(@map) %>
+  </div>
+</div>
 
 <div id="netmap" class="netmap-editing">
   <%= render partial: 'controls' %>
@@ -28,9 +26,6 @@
     <%= raw(@map.description) %>
   </div>
 <% end %>
-
-<% end %>
-
 
 <% end %>
 

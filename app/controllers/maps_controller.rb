@@ -1,6 +1,6 @@
 class MapsController < ApplicationController
-  before_action :set_map, except: [:index, :featured, :create]
-  before_filter :auth, except: [:index, :featured, :raw]
+  before_action :set_map, except: [:index, :featured, :new, :create]
+  before_filter :auth, except: [:index, :featured, :show, :raw]
   before_filter :enforce_slug, only: [:show]
 
   protect_from_forgery except: :create
@@ -29,14 +29,27 @@ class MapsController < ApplicationController
     render layout: "fullscreen"
   end
 
+  def new
+    check_permission 'importer'
+    @map = NetworkMap.new
+  end
+
   def create
     check_permission 'importer'
 
-    @map = NetworkMap.create(map_params)
+    params = map_params
+    params[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
+    params[:data] = JSON.dump({ entities: [], rels: [] }) if params[:data].blank?
+    params[:width] = Lilsis::Application.config.netmap_default_width if params[:width].blank?
+    params[:height] = Lilsis::Application.config.netmap_default_width if params[:height].blank?
+    params[:zoom] = '1' if params[:zoom].blank?
+
+    @map = NetworkMap.create(params)
 
     if @map.save
       respond_to do |format|
         format.json { render json: @map }
+        format.html { redirect_to edit_map_path(@map) }
       end
     else
       not_found
@@ -45,14 +58,17 @@ class MapsController < ApplicationController
 
   def edit
     check_owner
+    check_permission 'importer'
   end
 
   def edit_meta
     check_owner
+    check_permission 'importer'
   end
 
   def update
     check_owner
+    check_permission 'importer'
 
     data = params[:data]
     decoded = JSON.parse(data)
@@ -71,18 +87,32 @@ class MapsController < ApplicationController
   end
 
   def update_meta
-    check_permission "admin"    
+    check_owner
+    check_permission 'importer'
+
     if @map.update(map_params)
       redirect_to map_path(@map), notice: 'Map was successfully updated.'
     else
-      render action: 'edit'
+      render action: 'edit_meta'
     end
   end
 
   def destroy
     check_owner
+    check_permission 'importer'
+
     @map.destroy
     redirect_to maps_path
+  end
+
+  def clone
+    check_permission 'importer'
+
+    map = @map.dup
+    map.user_id = current_user.sf_guard_user_id
+    map.save
+
+    redirect_to edit_map_path(map)
   end
 
   private

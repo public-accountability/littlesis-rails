@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140701011639) do
+ActiveRecord::Schema.define(version: 20140702190320) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -625,6 +625,7 @@ ActiveRecord::Schema.define(version: 20140701011639) do
     t.boolean  "is_featured",                    default: false, null: false
     t.string   "zoom",                           default: "1",   null: false
     t.boolean  "is_private",                     default: false, null: false
+    t.string   "thumbnail"
   end
 
   add_index "network_map", ["user_id"], name: "user_id_idx", using: :btree
