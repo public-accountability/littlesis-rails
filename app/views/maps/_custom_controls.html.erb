@@ -9,7 +9,12 @@
     <button id="netmap_rel_apply" class="btn btn-default">Apply</button>
   </div>
   <div id="netmap_edit_entity">
-    <input id="netmap_entity_label" type="text" class="form-control" />
+    <div class="checkbox">
+      <label>
+        <input id="netmap_entity_image" type="checkbox" /> Image
+      </label>
+    </div>
+    &nbsp;<input id="netmap_entity_label" type="text" class="form-control" />
     <button id="netmap_entity_apply" class="btn btn-default">Apply</button>
   </div>
   <div id="netmap_edit_text">
@@ -28,6 +33,7 @@ $(window).ready(function() {
 
     var entity_div = $('#netmap_edit_entity')[0];
     var entity_label = $('#netmap_entity_label')[0];
+    var entity_image = $('#netmap_entity_image')[0];
 
     var text_div = $('#netmap_edit_text')[0];
     var text_content = $('#netmap_text_content')[0];
@@ -39,12 +45,14 @@ $(window).ready(function() {
         rel_div.style.display = 'block';
   
         entity_label.value = '';
+        entity_image.checked = true;
         entity_div.style.display = 'none';
 
         text_content.value = '';
         text_div.style.display = 'none';
       } else if (Array.prototype.slice.call(elem.classList).indexOf('entity') != -1) {
         entity_label.value = netmap.get_selected_entity_label();
+        entity_image.checked = !netmap.get_selected_entity().hide_image;
         entity_div.style.display = 'block';
   
         rel_label.value = '';
@@ -58,6 +66,7 @@ $(window).ready(function() {
         text_div.style.display = 'block';
 
         entity_label.value = '';
+        entity_image.checked = true;
         entity_div.style.display = 'none';
 
         rel_label.value = '';
@@ -70,6 +79,7 @@ $(window).ready(function() {
       rel_div.style.display = 'none';
 
       entity_label.value = '';
+      entity_image.checked = true;
       entity_div.style.display = 'none';
 
       text_content.value = '';
@@ -106,10 +116,13 @@ $(window).ready(function() {
 
   $('#netmap_entity_apply').on('click', function() {
     var input = $('#netmap_entity_label')[0];
+    var image = $('#netmap_entity_image')[0];
 
     if (input.value) {
       netmap.set_selected_entity_label(input.value);
     }
+
+    netmap.set_selected_entity_hide_image(!(+ image.checked));
   });
 
   $('#netmap_text_content').on('focus', function() {

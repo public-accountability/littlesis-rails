@@ -50,7 +50,9 @@ class NetworkMap < ActiveRecord::Base
       description: (entity['blurb'] || entity['description']),
       x: entity['x'],
       y: entity['y'],
-      fixed: true
+      fixed: true,
+      primary_ext: primary_ext,
+      hide_image: entity['hide_image'].present? ? entity['hide_image'] : false
     }
   end
 
