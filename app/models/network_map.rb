@@ -23,7 +23,8 @@ class NetworkMap < ActiveRecord::Base
     hash = JSON.parse(data)
     JSON.dump({ 
       entities: hash['entities'].map { |entity| self.prepare_entity(entity) },
-      rels: hash['rels'].map { |rel| self.prepare_rel(rel) }
+      rels: hash['rels'].map { |rel| self.prepare_rel(rel) },
+      texts: hash['texts'].present? ? hash['texts'].map { |text| self.prepare_text(text) } : []
     })
   end
 
@@ -71,6 +72,10 @@ class NetworkMap < ActiveRecord::Base
       y1: rel['y1'],
       fixed: true
     }
+  end
+
+  def prepare_text(text)
+    text
   end
 
   def self.integerize(value)

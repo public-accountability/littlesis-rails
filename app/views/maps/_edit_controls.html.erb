@@ -65,6 +65,15 @@ Categories:
 <input id="netmap_add_related_entities_button" type="button" class="btn btn-default" value="add" />
 </div>
 
+<div id="netmap_add_text">
+<div id="netmap_add_text_hide"><a id="netmap_add_text_hide_link" onclick="$('#netmap_add_text').css('display', 'none'); return false;">hide</a></div>
+<h3>Add Text</h3>
+<form id="netmap_add_text_form" class="form-inline">
+  <div class="form-group"><input id="netmap_add_text_content" type="text" class="form-control" /></div>
+  <button id="netmap_add_text_button" type="submit" class="btn btn-default">Add</button>
+</form>
+</div>
+
 <script>
 $(window).ready(function(){
 
@@ -140,6 +149,15 @@ $(window).ready(function(){
     netmap.one_time_force();
   });
 
+  $(window).on('toggle_add_entity_form', function(){
+    var form = $("#netmap_add_entity");
+    var parent = $(netmap.parent_selector);
+    parent.append(form);
+    form.css("left", netmap.mouse_x - parent.offset().left - 30 + "px")
+    form.css("top", netmap.mouse_y - parent.offset().top - 60 + "px")
+    form.css("display", form.css("display") == "none" ? "block" : "none")
+  });
+
   $("#netmap_add_entity_form").on("submit", function() {
     var q = $("#netmap_add_entity_search").val();
     netmap.search_entities(q, function(entities) {
@@ -169,6 +187,24 @@ $(window).ready(function(){
         results.append(result);
       });
     });  
+    return false;
+  });
+
+  $(window).on('toggle_add_text_form', function(){
+    var form = $("#netmap_add_text");
+    var parent = $(netmap.parent_selector);
+    parent.append(form);
+    $('#netmap_add_text_content').val('');
+    form.css("left", netmap.mouse_x - parent.offset().left - 30 + "px");
+    form.css("top", netmap.mouse_y - parent.offset().top - 60 + "px");
+    form.css("display", form.css("display") == "none" ? "block" : "none");
+  });
+
+  $("#netmap_add_text_form").on("submit", function(e) {
+    var content = $("#netmap_add_text_content").val();
+    position = [$("#netmap_add_text").offset().left - netmap.width/2, $("#netmap_add_text").offset().top - netmap.height/2 - 100];
+    netmap.add_text(content, position[0], position[1]);
+    $('#netmap_add_text').css('display', 'none');
     return false;
   });
 

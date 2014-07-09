@@ -22,7 +22,7 @@ svg .line {
   stroke: black;
 }
 
-svg .entity a text, svg .rel a text { 
+svg .entity a text, svg .rel a text, svg .text text { 
   font-family: Helvetica, Arial, sans-serif;
 }
 
@@ -285,7 +285,7 @@ h1.map-title {
   width: 100px;
 }
 
-#netmap_add_entity, #netmap_add_related_entities {
+#netmap_add_entity, #netmap_add_related_entities, #netmap_add_text {
   display: none;
   position: absolute;
   padding: 1em;
@@ -297,7 +297,7 @@ h1.map-title {
   h3 { font-size: 18px; }
 }
 
-#netmap_add_entity_hide, #netmap_add_related_entities_hide {
+#netmap_add_entity_hide, #netmap_add_related_entities_hide, #netmap_add_text_hide {
   position: absolute;
   top: 0;
   right: 0;
@@ -322,9 +322,70 @@ h1.map-title {
 }
 
 #netmap_entity_search {
-  width: 100px;
+  width: 150px;
 }
 
 #netmap_controls .tt-dropdown-menu {
   width: 150px;
+}
+
+#netmap_custom_controls {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+
+  .checkbox {
+    display: inline-block;
+    margin-top: 7px;
+    margin-bottom: 7px;
+  }
+}
+
+#netmap_edit_rel {
+  display: none;
+
+  #netmap_rel_label { 
+    width: 200px;
+    display: inline-block;
+  }
+}
+
+#netmap_edit_entity {
+  display: none;
+
+  #netmap_entity_label { 
+    width: 300px;
+    display: inline-block;
+  }
+}
+
+#netmap_edit_text {
+  display: none;
+
+  #netmap_text_content { 
+    width: 300px;
+    display: inline-block;
+  }
+}
+
+svg .text {
+  text {
+    font-size: 16px;
+    font-weight: 200;
+    fill: black;
+  }
+
+  &:hover {
+    cursor: default;
+  }
+
+  &.selected {
+    stroke-width: 0;
+    opacity: 1;
+
+    text {
+      stroke-width: 0.3;
+      stroke: #ffff80;
+    }
+  }
 }

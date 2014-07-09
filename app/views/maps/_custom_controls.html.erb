@@ -1,0 +1,131 @@
+<div id="netmap_custom_controls">
+  <div id="netmap_edit_rel">
+    <div class="checkbox">
+      <label>
+        <input id="netmap_rel_current" type="checkbox" /> Current
+      </label>
+    </div>
+    &nbsp;<input id="netmap_rel_label" type="text" class="form-control" />
+    <button id="netmap_rel_apply" class="btn btn-default">Apply</button>
+  </div>
+  <div id="netmap_edit_entity">
+    <input id="netmap_entity_label" type="text" class="form-control" />
+    <button id="netmap_entity_apply" class="btn btn-default">Apply</button>
+  </div>
+  <div id="netmap_edit_text">
+    <input id="netmap_text_content" type="text" class="form-control" />
+    <button id="netmap_text_apply" class="btn btn-default">Apply</button>
+  </div>
+</div>
+
+<script>
+$(window).ready(function() {
+
+  $(window).on('selection', function(e, elem) {
+    var rel_div = $('#netmap_edit_rel')[0];
+    var rel_label = $('#netmap_rel_label')[0];
+    var rel_current = $('#netmap_rel_current')[0];
+
+    var entity_div = $('#netmap_edit_entity')[0];
+    var entity_label = $('#netmap_entity_label')[0];
+
+    var text_div = $('#netmap_edit_text')[0];
+    var text_content = $('#netmap_text_content')[0];
+
+    if (elem && elem.classList && Array.prototype.slice.call(elem.classList).indexOf('selected') != -1) {
+      if (Array.prototype.slice.call(elem.classList).indexOf('rel') != -1) {
+        rel_label.value = netmap.get_selected_rel_label();
+        rel_current.checked = netmap.selected_rel_is_current();
+        rel_div.style.display = 'block';
+  
+        entity_label.value = '';
+        entity_div.style.display = 'none';
+
+        text_content.value = '';
+        text_div.style.display = 'none';
+      } else if (Array.prototype.slice.call(elem.classList).indexOf('entity') != -1) {
+        entity_label.value = netmap.get_selected_entity_label();
+        entity_div.style.display = 'block';
+  
+        rel_label.value = '';
+        rel_current.checked = false;
+        rel_div.style.display = 'none';
+
+        text_content.value = '';
+        text_div.style.display = 'none';
+      } else {
+        text_content.value = netmap.get_selected_text_content();
+        text_div.style.display = 'block';
+
+        entity_label.value = '';
+        entity_div.style.display = 'none';
+
+        rel_label.value = '';
+        rel_current.checked = false;
+        rel_div.style.display = 'none';        
+      }
+    } else {
+      rel_label.value = '';
+      rel_current.checked = false;
+      rel_div.style.display = 'none';
+
+      entity_label.value = '';
+      entity_div.style.display = 'none';
+
+      text_content.value = '';
+      text_div.style.display = 'none';
+    }
+  });
+
+  $('#netmap_rel_label').on('focus', function() {
+    netmap.editing_rel = true
+  });
+
+  $('#netmap_rel_label').on('blur', function() {
+    netmap.editing_rel = false
+  });
+
+  $('#netmap_rel_apply').on('click', function() {
+    var input = $('#netmap_rel_label')[0];
+    var current = $('#netmap_rel_current')[0];
+
+    if (input.value) {
+      netmap.set_selected_rel_label(input.value);
+    }
+
+    netmap.set_selected_rel_is_current(+ current.checked);
+  });
+
+  $('#netmap_entity_label').on('focus', function() {
+    netmap.editing_entity = true
+  });
+
+  $('#netmap_entity_label').on('blur', function() {
+    netmap.editing_entity = false
+  });
+
+  $('#netmap_entity_apply').on('click', function() {
+    var input = $('#netmap_entity_label')[0];
+
+    if (input.value) {
+      netmap.set_selected_entity_label(input.value);
+    }
+  });
+
+  $('#netmap_text_content').on('focus', function() {
+    netmap.editing_text = true
+  });
+
+  $('#netmap_text_content').on('blur', function() {
+    netmap.editing_text = false
+  });
+
+  $('#netmap_text_apply').on('click', function() {
+    var input = $('#netmap_text_content')[0];
+
+    if (input.value) {
+      netmap.set_selected_text_content(input.value);
+    }
+  });
+});
+</script>
