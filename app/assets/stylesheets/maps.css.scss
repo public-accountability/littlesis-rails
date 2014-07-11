@@ -66,12 +66,16 @@ svg .rel.selected .label {
 
 svg .entity .image-bg {
   fill: #fff;
+
+  &.custom {
+    fill: #8bc8f0;
+  }
 }
 
 svg .entity.selected .image-bg {
   stroke: #ffff80;
   stroke-width: 5;
-  opacity: 0.5;
+  stroke-opacity: 0.5;
 }
 
 svg .entity.selected .text_rect {
@@ -101,7 +105,7 @@ svg text {
 }
 
 svg .entity text {
-  font: 12px sans-serif;
+  //font: 12px sans-serif;
 }
 
 svg .rel text {
@@ -285,7 +289,8 @@ h1.map-title {
   width: 100px;
 }
 
-#netmap_add_entity, #netmap_add_related_entities, #netmap_add_text {
+#netmap_add_entity, #netmap_add_related_entities, 
+#netmap_add_text, #netmap_add_node, #netmap_add_edge {
   display: none;
   position: absolute;
   padding: 1em;
@@ -294,10 +299,14 @@ h1.map-title {
   border-radius: 5px;
   box-shadow: 2px 2px 5px #888;
 
-  h3 { font-size: 18px; }
+  h3 { 
+    font-size: 18px; 
+    margin-top: 0;
+  }
 }
 
-#netmap_add_entity_hide, #netmap_add_related_entities_hide, #netmap_add_text_hide {
+#netmap_add_entity_hide, #netmap_add_related_entities_hide, 
+#netmap_add_text_hide, #netmap_add_node_hide, #netmap_add_edge_hide {
   position: absolute;
   top: 0;
   right: 0;
@@ -319,6 +328,11 @@ h1.map-title {
 
 #netmap_add_related_entities_cat_ids {
   display: inline-block;
+}
+
+#netmap_add_edge_table {
+  border-collapse: separate;
+  border-spacing: 5px;
 }
 
 #netmap_entity_search {
@@ -355,6 +369,11 @@ h1.map-title {
 
   #netmap_entity_label { 
     width: 300px;
+    display: inline-block;
+  }
+
+  #netmap_entity_scale { 
+    width: 50px;
     display: inline-block;
   }
 }

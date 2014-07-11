@@ -28,22 +28,55 @@ class NetworkMap < ActiveRecord::Base
     })
   end
 
+  def entity_type(entity)
+    return entity['type'] if entity['type'].present?
+    
+    if entity['primary_ext'].present?
+      return entity['primary_ext']
+    else
+      if entity['url'].present? and entity['url'].match(/person\/\d+\//)
+        return 'Person'
+      elsif entity['url'].present? and entity['url'].match(/org\/\d+\//)
+        return 'Org'
+      else
+        return nil
+      end
+    end
+  end
+
+  def is_custom_entity?(entity)
+    if entity['custom'].present?
+      entity['custom']
+    else
+      entity['id'].to_s[0] == "x"
+    end
+  end
+
   def prepare_entity(entity)
-    primary_ext = entity['primary_ext'].present? ? entity['primary_ext'] : (entity['url'].include?('person') ? 'Person' : 'Org')
-    entity['primary_ext'] = primary_ext
+    type = entity_type(entity)
 
     if entity['image'] and !entity['image'].include?('netmap') and !entity['image'].include?('anon')
       image_path = entity['image']
     elsif entity['filename']
       image_path = Image.image_path(entity['filename'], 'profile')
     else
-      image_path = (primary_ext == 'Person' ? ActionController::Base.helpers.image_path('netmap-person.png') : ActionController::Base.helpers.image_path('netmap-org.png'))
+      if type == 'Person'
+        image_path = ActionController::Base.helpers.image_path('netmap-person.png')
+      elsif type == 'Org'
+        image_path = ActionController::Base.helpers.image_path('netmap-org.png')
+      else
+        image_path = nil
+      end
     end
 
-    url = ActionController::Base.helpers.url_for(Entity.legacy_url(entity['primary_ext'], entity['id'], entity['name']))
+    if is_custom_entity?(entity)
+      url = entity['url']
+    else
+      url = ActionController::Base.helpers.url_for(Entity.legacy_url(type, entity['id'], entity['name']))
+    end
 
     {
-      id: self.class.integerize(entity['id']),
+      id: is_custom_entity?(entity) ? entity['id'] : self.class.integerize(entity['id']),
       name: entity['name'],
       image: image_path,
       url: url,
@@ -51,28 +84,44 @@ class NetworkMap < ActiveRecord::Base
       x: entity['x'],
       y: entity['y'],
       fixed: true,
-      primary_ext: primary_ext,
-      hide_image: entity['hide_image'].present? ? entity['hide_image'] : false
+      type: type,
+      hide_image: entity['hide_image'].present? ? entity['hide_image'] : false,
+      custom: is_custom_entity?(entity),
+      scale: entity['scale']
     }
   end
 
+  def is_custom_rel?(rel)
+    if rel['custom'].present?
+      rel['custom']
+    else
+      rel['id'].to_s[0] == "x"
+    end
+  end
+
   def prepare_rel(rel)
-    url = ActionController::Base.helpers.url_for(Relationship.legacy_url(rel['id']))
+    if is_custom_rel?(rel)
+      url = rel['url']
+    else
+      url = ActionController::Base.helpers.url_for(Relationship.legacy_url(rel['id']))
+    end
 
     {
-      id: self.class.integerize(rel['id']),
-      entity1_id: self.class.integerize(rel['entity1_id']),
-      entity2_id: self.class.integerize(rel['entity2_id']),
+      id: is_custom_rel?(rel) ? rel['id'] : self.class.integerize(rel['id']),
+      entity1_id: rel['entity1_id'].to_s[0] == "x" ? rel['entity1_id'].to_s : self.class.integerize(rel['entity1_id']),
+      entity2_id: rel['entity2_id'].to_s[0] == "x" ? rel['entity2_id'].to_s : self.class.integerize(rel['entity2_id']),
       category_id: self.class.integerize(rel['category_id']),
       category_ids: Array(self.class.integerize(rel['category_ids'])),
       is_current: self.class.integerize(rel['is_current']),
+      is_directional: rel['is_directional'],
       end_date: rel['end_date'],
       value: 1,
       label: rel['label'],
       url: url,
       x1: rel['x1'],
       y1: rel['y1'],
-      fixed: true
+      fixed: true,
+      custom: is_custom_rel?(rel)
     }
   end
 

@@ -2,6 +2,11 @@
   <div id="netmap_edit_rel">
     <div class="checkbox">
       <label>
+        <input id="netmap_rel_arrow" type="checkbox" /> Arrow
+      </label>
+    </div>
+    &nbsp;<div class="checkbox">
+      <label>
         <input id="netmap_rel_current" type="checkbox" /> Current
       </label>
     </div>
@@ -14,6 +19,12 @@
         <input id="netmap_entity_image" type="checkbox" /> Image
       </label>
     </div>
+    &nbsp;<select id="netmap_entity_scale" class="form-control">
+      <option value="1">1x</option>
+      <option value="1.5">1.5x</option>
+      <option value="2">2x</option>
+      <option value="3">3x</option>
+    </select>
     &nbsp;<input id="netmap_entity_label" type="text" class="form-control" />
     <button id="netmap_entity_apply" class="btn btn-default">Apply</button>
   </div>
@@ -30,9 +41,11 @@ $(window).ready(function() {
     var rel_div = $('#netmap_edit_rel')[0];
     var rel_label = $('#netmap_rel_label')[0];
     var rel_current = $('#netmap_rel_current')[0];
+    var rel_directional = $('#netmap_rel_arrow')[0];
 
     var entity_div = $('#netmap_edit_entity')[0];
     var entity_label = $('#netmap_entity_label')[0];
+    var entity_scale = $('#netmap_entity_scale')[0];
     var entity_image = $('#netmap_entity_image')[0];
 
     var text_div = $('#netmap_edit_text')[0];
@@ -42,9 +55,11 @@ $(window).ready(function() {
       if (Array.prototype.slice.call(elem.classList).indexOf('rel') != -1) {
         rel_label.value = netmap.get_selected_rel_label();
         rel_current.checked = netmap.selected_rel_is_current();
+        rel_directional.checked = netmap.selected_rel_is_directional();
         rel_div.style.display = 'block';
   
         entity_label.value = '';
+        entity_scale.value = '';
         entity_image.checked = true;
         entity_div.style.display = 'none';
 
@@ -52,11 +67,13 @@ $(window).ready(function() {
         text_div.style.display = 'none';
       } else if (Array.prototype.slice.call(elem.classList).indexOf('entity') != -1) {
         entity_label.value = netmap.get_selected_entity_label();
+        entity_scale.value = netmap.get_selected_entity_scale();
         entity_image.checked = !netmap.get_selected_entity().hide_image;
         entity_div.style.display = 'block';
   
         rel_label.value = '';
         rel_current.checked = false;
+        rel_directional.checked = false;
         rel_div.style.display = 'none';
 
         text_content.value = '';
@@ -66,19 +83,23 @@ $(window).ready(function() {
         text_div.style.display = 'block';
 
         entity_label.value = '';
+        entity_scale.value = '';
         entity_image.checked = true;
         entity_div.style.display = 'none';
 
         rel_label.value = '';
         rel_current.checked = false;
+        rel_directional.checked = false;
         rel_div.style.display = 'none';        
       }
     } else {
       rel_label.value = '';
       rel_current.checked = false;
+      rel_directional.checked = false;
       rel_div.style.display = 'none';
 
       entity_label.value = '';
+      entity_scale.value = '';
       entity_image.checked = true;
       entity_div.style.display = 'none';
 
@@ -98,12 +119,14 @@ $(window).ready(function() {
   $('#netmap_rel_apply').on('click', function() {
     var input = $('#netmap_rel_label')[0];
     var current = $('#netmap_rel_current')[0];
+    var directional = $('#netmap_rel_arrow')[0];
 
     if (input.value) {
       netmap.set_selected_rel_label(input.value);
     }
 
     netmap.set_selected_rel_is_current(+ current.checked);
+    netmap.set_selected_rel_is_directional(directional.checked);
   });
 
   $('#netmap_entity_label').on('focus', function() {
@@ -115,14 +138,19 @@ $(window).ready(function() {
   });
 
   $('#netmap_entity_apply').on('click', function() {
-    var input = $('#netmap_entity_label')[0];
-    var image = $('#netmap_entity_image')[0];
+    var label = $('#netmap_entity_label')[0].value;
+    var scale = +$('#netmap_entity_scale')[0].value;
+    var hide_image = !$('#netmap_entity_image')[0].checked;
 
-    if (input.value) {
-      netmap.set_selected_entity_label(input.value);
+    if (label) {
+      netmap.set_selected_entity_label(label);
     }
 
-    netmap.set_selected_entity_hide_image(!(+ image.checked));
+    if (scale) {
+      netmap.set_selected_entity_scale(scale);
+    }
+
+    netmap.set_selected_entity_hide_image(hide_image);
   });
 
   $('#netmap_text_content').on('focus', function() {

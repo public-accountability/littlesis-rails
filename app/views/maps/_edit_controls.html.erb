@@ -7,7 +7,7 @@
 <input id="netmap_prune" type="button" value="prune" class="btn btn-default btn-sm" /><br />
 <input id="netmap_wheel" type="button" value="wheel" class="btn btn-default btn-sm" /><br />
 <input id="netmap_short_force" type="button" value="force" class="btn btn-default btn-sm" /><br />
-<input id="netmap_rezoom" type="button" value="rezoom" class="btn btn-default btn-sm" /><br />
+<input id="netmap_recenter" type="button" value="recenter" class="btn btn-default btn-sm" /><br />
 
 <br />
 
@@ -43,6 +43,64 @@ Categories:
   <button id="netmap_add_entity_button" type="submit" class="btn btn-default">search</button>
 </form>
 <div id="netmap_add_entity_results"></div>
+</div>
+
+<div id="netmap_add_node">
+<div id="netmap_add_node_hide"><a id="netmap_add_node_hide_link" onclick="$('#netmap_add_node').css('display', 'none'); return false;">hide</a></div>
+<h3>Add Node</h3>
+<form id="netmap_add_node_form" class="form-inline">
+  <div class="form-group"><input id="netmap_add_node_name" type="text" class="form-control" placeholder="name"/></div>
+  <button id="netmap_add_node_button" type="submit" class="btn btn-default">Add</button>
+</form>
+</div>
+
+<div id="netmap_add_edge">
+<div id="netmap_add_edge_hide"><a id="netmap_add_edge_hide_link" onclick="$('#netmap_add_edge').css('display', 'none'); return false;">hide</a></div>
+<h3>Add Edge</h3>
+<div class="form-inline">
+  <table id="netmap_add_edge_table">
+    <tr>
+      <td>Node 1</td>
+      <td><span id="netmap_add_edge_entity1"></span></td>
+    </tr>
+    <tr>
+      <td>Node 2</td>
+      <td><select id="netmap_add_edge_entity2_id" class="form-control"></select></td>
+    </tr>
+    <tr>
+      <td>Label</td>
+      <td><input id="netmap_add_edge_label" type="text" class="form-control" /></td>
+    </tr>
+    <tr>
+      <td>Category</td>
+      <td><select id="netmap_add_edge_category_id" class="form-control">
+        <option value=""></opton>
+        <option value="1">Position</option>
+        <option value="2">Education</option>
+        <option value="3">Membership</option>
+        <option value="4">Family</option>
+        <option value="5">Donation</option>
+        <option value="6">Transaction</option>
+        <option value="7">Lobbying</option>
+        <option value="8">Social</option>
+        <option value="9">Professional</option>
+        <option value="10">Ownership</option>
+      </select></td>
+    </tr>
+    <tr>
+      <td>Current</td>
+      <td><input id="netmap_add_edge_current" type="checkbox" /></td>
+    </tr>
+    <tr>
+      <td>Directional</td>
+      <td><input id="netmap_add_edge_directional" type="checkbox" /></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><button id="netmap_add_edge_button" class="btn btn-default">Add</button></td>
+    </tr>
+  </table>
+</div>
 </div>
 
 <div id="netmap_add_related_entities">
@@ -125,8 +183,8 @@ $(window).ready(function(){
     netmap.reload_map();
   });
 
-  $("#netmap_rezoom").on("click", function() {
-    netmap.reset_zoom();
+  $("#netmap_recenter").on("click", function() {
+    netmap.recenter();
   });
 
   $("#netmap_prune").on("click", function() {
@@ -149,13 +207,17 @@ $(window).ready(function(){
     netmap.one_time_force();
   });
 
-  $(window).on('toggle_add_entity_form', function(){
-    var form = $("#netmap_add_entity");
+  var toggle_form = function(selector) {
+    var form = $(selector);
     var parent = $(netmap.parent_selector);
     parent.append(form);
     form.css("left", netmap.mouse_x - parent.offset().left - 30 + "px")
     form.css("top", netmap.mouse_y - parent.offset().top - 60 + "px")
-    form.css("display", form.css("display") == "none" ? "block" : "none")
+    form.css("display", form.css("display") == "none" ? "block" : "none")    
+  }
+
+  $(window).on('toggle_add_entity_form', function(){
+    toggle_form("#netmap_add_entity");
   });
 
   $("#netmap_add_entity_form").on("submit", function() {
@@ -190,14 +252,48 @@ $(window).ready(function(){
     return false;
   });
 
-  $(window).on('toggle_add_text_form', function(){
-    var form = $("#netmap_add_text");
-    var parent = $(netmap.parent_selector);
-    parent.append(form);
+  $(window).on('toggle_add_node_form', function() {
+    toggle_form("#netmap_add_node");
+  });
+
+  $('#netmap_add_node_form').on('submit', function() {
+    var name = $('#netmap_add_node_name').val();
+    position = [$('#netmap_add_node').offset().left - netmap.width/2, $('#netmap_add_node').offset().top - netmap.height/2 - 100];
+    if (name) {
+      netmap.add_node(name, position[0], position[1]);
+      $('#netmap_add_node').css('display', 'none');
+      return false;
+    }
+  });
+
+  $(window).on('toggle_add_edge_form', function() {
+    $('#netmap_add_edge_entity1').html(netmap.get_selected_entity().name);
+    $('#netmap_add_edge_entity2_id').html('<option value=""></option>');
+    netmap.entity_options_for_select().forEach(function(o) {
+      if (o[0] == netmap.selected_entity_id()) {
+        return;
+      }
+      $('#netmap_add_edge_entity2_id').append('<option value=' + o[0] + '>' + o[1] + '</option>');
+    });
+    toggle_form("#netmap_add_edge");
+  });
+
+  $('#netmap_add_edge_button').on('click', function() {
+    var entity2_id = $('#netmap_add_edge_entity2_id').val();
+    var label = $('#netmap_add_edge_label').val();
+    var category_id = $('#netmap_add_edge_category_id').val();
+    var current = +$('#netmap_add_edge_current')[0].checked;
+    var directional = +$('#netmap_add_edge_directional')[0].checked;
+
+    if (netmap.selected_entity_id() && entity2_id && label) {
+      netmap.add_edge(netmap.selected_entity_id(), entity2_id, label, category_id, current, directional);
+      $('#netmap_add_edge').css('display', 'none');
+    }
+  });
+
+  $(window).on('toggle_add_text_form', function() {
     $('#netmap_add_text_content').val('');
-    form.css("left", netmap.mouse_x - parent.offset().left - 30 + "px");
-    form.css("top", netmap.mouse_y - parent.offset().top - 60 + "px");
-    form.css("display", form.css("display") == "none" ? "block" : "none");
+    toggle_form("#netmap_add_text");
   });
 
   $("#netmap_add_text_form").on("submit", function(e) {
