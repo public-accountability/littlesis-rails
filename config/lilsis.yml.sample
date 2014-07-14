@@ -23,6 +23,7 @@ defaults: &defaults
   twitter_access_token_secret:
   twitter_list_id:
   google_site_verification:
+  google_analytics_id:
 
 test:
   <<: *defaults
