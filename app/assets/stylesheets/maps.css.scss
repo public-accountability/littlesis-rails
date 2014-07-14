@@ -74,7 +74,6 @@ svg .entity .image-bg {
 
 svg .entity.selected .image-bg {
   stroke: #ffff80;
-  stroke-width: 5;
   stroke-opacity: 0.5;
 }
 
@@ -109,7 +108,8 @@ svg .entity text {
 }
 
 svg .rel text {
-  font: 9px sans-serif;
+  font-family: sans-serif;
+  font-weight: normal;
   fill: #888;
 }
 
@@ -360,6 +360,11 @@ h1.map-title {
 
   #netmap_rel_label { 
     width: 200px;
+    display: inline-block;
+  }
+
+  #netmap_rel_scale { 
+    width: 50px;
     display: inline-block;
   }
 }

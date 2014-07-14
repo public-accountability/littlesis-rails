@@ -115,7 +115,7 @@ class NetworkMap < ActiveRecord::Base
       is_current: self.class.integerize(rel['is_current']),
       is_directional: rel['is_directional'],
       end_date: rel['end_date'],
-      value: 1,
+      scale: rel['scale'],
       label: rel['label'],
       url: url,
       x1: rel['x1'],
