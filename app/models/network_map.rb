@@ -1,6 +1,3 @@
-# require "capybara/dsl"
-# require "capybara/poltergeist"
-
 class NetworkMap < ActiveRecord::Base
   include SingularTable
   include SoftDelete
@@ -167,32 +164,4 @@ class NetworkMap < ActiveRecord::Base
     self.thumbnail = S3.url("/" + s3_path) if obj.exists?
     save
   end
-
-  # def generate_thumbnail
-  #   Capybara.run_server = false
-  #   Capybara.register_driver :poltergeist do |app|
-  #     Capybara::Poltergeist::Driver.new(app, {
-  #       # Raise JavaScript errors to Ruby
-  #       js_errors: false,
-  #       # Additional command line options for PhantomJS
-  #       phantomjs_options: ['--ignore-ssl-errors=yes'],
-  #     })
-  #   end
-  #   Capybara.current_driver = :selenium
-  #   Capybara.javascript_driver = :poltergeist    
-  #   Capybara.app_host = 'http://lilsis.local'
-
-  #   url = url_helpers.map_path(id: id)
-  #   path = "app/assets/images/captures/map-#{id}.png"
-
-  #   binding.pry
-
-  #   visit url
-
-  #   if page.driver.status_code == 200
-  #     page.driver.save_screenshot(path, selector: '#netmap')
-  #   else
-  #     binding.pry
-  #   end
-  # end
 end
