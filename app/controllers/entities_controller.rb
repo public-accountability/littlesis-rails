@@ -5,7 +5,7 @@ class EntitiesController < ApplicationController
 	def search_by_name
 		data = []
 		q = params[:q]
-		entities = Entity.search "@(name,aliases) #{q}", per_page: 10, match_mode: :extended
+		entities = Entity.search "@(name,aliases) #{q}", per_page: 10, match_mode: :extended, with: { is_deleted: false }
 		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id } }
 		render json: data
 	end	
