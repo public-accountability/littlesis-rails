@@ -152,7 +152,6 @@ $(window).ready(function(){
     }
   });
 
-  <% if current_user.has_legacy_permission('admin') %>
   $("#netmap_save").on("click", function() {
     netmap.remove_hidden_rels();
 
@@ -176,7 +175,6 @@ $(window).ready(function(){
       dataType: "json"
     })  
   });
-  <% end %>
 
   $("#netmap_reload").on("click", function() {
     netmap.reload_map();
