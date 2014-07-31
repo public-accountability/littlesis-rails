@@ -102,6 +102,7 @@ Lilsis::Application.routes.draw do
     end
 
     collection do
+      get 'search'
       get 'featured'
     end
   end

@@ -64,7 +64,7 @@ gem 'activerecord-session_store'
 # For search and indexing
 gem 'thinking-sphinx', '~> 3.1.1'
 gem 'delayed_job_active_record'
-gem 'ts-delayed-delta', '2.0.0', :require => 'thinking_sphinx/deltas/delayed_delta'
+gem 'ts-delayed-delta', '2.0.2', :require => 'thinking_sphinx/deltas/delayed_delta'
 
 gem 'daemons'
 gem 'twitter-typeahead-rails', '~> 0.9.3'

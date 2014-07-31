@@ -8,6 +8,7 @@ class NetworkMap < ActiveRecord::Base
 
   belongs_to :sf_guard_user, foreign_key: "user_id", inverse_of: :network_maps
   belongs_to :user, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :network_maps
+
   delegate :user, to: :sf_guard_user
 
   scope :featured, -> { where(is_featured: true) }
@@ -15,6 +16,15 @@ class NetworkMap < ActiveRecord::Base
   scope :private_scope, -> { where(is_private: true) }
 
   validates_presence_of :title
+
+  before_save :generate_index_data
+
+  def generate_index_data
+    hash = JSON.parse(data)
+    nodes = hash['entities'].map { |e| [ e['name'], e['description'] ] }.flatten.compact.join(', ')
+    texts = hash['texts'].present? ? hash['texts'].map { |t| t['text'] }.join(', ') : ''
+    self.index_data = nodes + ', ' + texts
+  end
 
   def prepared_data
     hash = JSON.parse(data)

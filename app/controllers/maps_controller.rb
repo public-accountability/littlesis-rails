@@ -1,5 +1,5 @@
 class MapsController < ApplicationController
-  before_action :set_map, except: [:index, :featured, :new, :create]
+  before_action :set_map, except: [:index, :featured, :new, :create, :search]
   before_filter :auth, except: [:index, :featured, :show, :raw]
   before_filter :enforce_slug, only: [:show]
 
@@ -7,8 +7,41 @@ class MapsController < ApplicationController
 
   def index
     maps = NetworkMap.order("updated_at DESC")
-    maps = maps.public_scope unless current_user.present? and current_user.has_legacy_permission('admin')
+
+    unless current_user.present? and current_user.has_legacy_permission('admin')
+      if current_user.present?
+        maps = maps.where("network_map.is_private = ? OR network_map.user_id = ?", false, current_user.sf_guard_user_id)
+      else
+        maps = maps.public_scope
+      end
+    end
+
     @maps = maps.page(params[:page]).per(20)
+    @header = 'Network Maps'
+  end
+
+  def search
+    if user_signed_in?
+      if current_user.has_legacy_permission('admin')
+        @maps = NetworkMap.search(
+          Riddle::Query.escape(params.fetch(:q, '')), 
+          order: "updated_at DESC"
+        ).page(params[:page]).per(20)
+      else
+        @maps = NetworkMap.search(
+          Riddle::Query.escape(params.fetch(:q, '')), 
+          order: "updated_at DESC",
+          with: { visible_to_user_ids: [0, current_user.sf_guard_user_id] }
+        ).page(params[:page]).per(20)
+      end
+    else
+      @maps = NetworkMap.search(
+        Riddle::Query.escape(params.fetch(:q, '')), 
+        order: "updated_at DESC",
+        with: { visible_to_user_ids: [0] }
+      ).page(params[:page]).per(20)      
+    end
+
     @header = 'Network Maps'
   end
 
@@ -19,7 +52,7 @@ class MapsController < ApplicationController
   end
 
   def show
-    if @map.is_private and (current_user.nil? or @map.user_id != current_user.sf_guard_user_id)
+    if @map.is_private and !current_user.has_legacy_permission('admin') and (current_user.nil? or @map.user_id != current_user.sf_guard_user_id)
       raise Exceptions::PermissionError
     end
   end
@@ -39,7 +72,7 @@ class MapsController < ApplicationController
 
     params = map_params
     params[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
-    params[:data] = JSON.dump({ entities: [], rels: [] }) if params[:data].blank?
+    params[:data] = JSON.dump({ entities: [], rels: [], texts: [] }) if params[:data].blank?
     params[:width] = Lilsis::Application.config.netmap_default_width if params[:width].blank?
     params[:height] = Lilsis::Application.config.netmap_default_width if params[:height].blank?
     params[:zoom] = '1' if params[:zoom].blank?
@@ -109,6 +142,7 @@ class MapsController < ApplicationController
     check_permission 'importer'
 
     map = @map.dup
+    map.is_featured = false
     map.user_id = current_user.sf_guard_user_id
     map.save
 

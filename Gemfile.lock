@@ -245,9 +245,9 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    ts-delayed-delta (2.0.0)
+    ts-delayed-delta (2.0.2)
       delayed_job
-      thinking-sphinx
+      thinking-sphinx (>= 1.5.0)
     twitter (5.11.0)
       addressable (~> 2.3)
       buftok (~> 0.2.0)
@@ -316,7 +316,7 @@ DEPENDENCIES
   sprockets (= 2.11.0)
   thinking-sphinx (~> 3.1.1)
   tinymce-rails (< 4.0)
-  ts-delayed-delta (= 2.0.0)
+  ts-delayed-delta (= 2.0.2)
   twitter
   twitter-typeahead-rails (~> 0.9.3)
   uglifier (>= 1.0.3)

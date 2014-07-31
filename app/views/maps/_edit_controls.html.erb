@@ -34,6 +34,19 @@ Categories:
 <br />
 <%= button_to 'delete', map_path(map), method: :delete, data: { confirm: "Are you sure you want to delete this map?" }, class: 'btn btn-danger btn-sm' %><br />
 
+
+<div id="netmap_modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <div class="modal-body-text"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div id="netmap_add_entity">
 <div id="netmap_add_entity_hide"><a id="netmap_add_entity_hide_link" onclick="$('#netmap_add_entity').css('display', 'none'); return false;">hide</a></div>
 <h3>Add Entity</h3>
@@ -167,7 +180,8 @@ $(window).ready(function(){
       type: "PATCH",
       data: netmap.data_for_save(),
       success: function(data) { 
-        window.location.href = '<%= map_path(id: 999999) %>'.replace("999999", data.id);
+        $('#netmap_modal .modal-body-text').text("Map successfully saved");
+        $('#netmap_modal').modal();
       },
       error: function() { 
         alert("There was an error saving the map"); 
