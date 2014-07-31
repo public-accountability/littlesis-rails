@@ -17,7 +17,7 @@ class MapsController < ApplicationController
     end
 
     @maps = maps.page(params[:page]).per(20)
-    @header = 'Network Maps'
+    @featured = false
   end
 
   def search
@@ -41,13 +41,11 @@ class MapsController < ApplicationController
         with: { visible_to_user_ids: [0] }
       ).page(params[:page]).per(20)      
     end
-
-    @header = 'Network Maps'
   end
 
   def featured
     @maps = NetworkMap.featured.order("updated_at DESC").page(params[:page]).per(20)
-    @header = 'Featured Maps'
+    @featured = true
     render 'index'
   end
 

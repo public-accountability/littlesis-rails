@@ -2,7 +2,13 @@
 
 <%= centered_content do %>
 
-<h1><%= @header %></h1>
+<h1>
+  Network Maps
+  <%= link_to 'featured maps', featured_maps_path, class: 'btn btn-link btn-sm' %>
+  <% if params[:q].present? %>
+    <%= link_to 'all maps', maps_path, class: 'btn btn-link btn-sm' %>
+  <% end %>
+</h1>
 
 <%= form_tag nil, method: :get do %>
   <div class="input-group col-xs-4 maps_search">
@@ -13,11 +19,6 @@
       </input>
     </span>
   </div>
-<% end %>
-
-<% if params[:q].present? %>
-  &nbsp; &nbsp;<%= link_to 'view all', maps_path %>
-  <br>
 <% end %>
 
 <br>
