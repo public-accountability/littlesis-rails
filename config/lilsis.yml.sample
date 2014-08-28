@@ -24,6 +24,7 @@ defaults: &defaults
   twitter_list_id:
   google_site_verification:
   google_analytics_id:
+  delayed_job_web_password:
 
 test:
   <<: *defaults

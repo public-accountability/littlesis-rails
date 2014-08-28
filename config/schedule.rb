@@ -21,12 +21,13 @@
 
 every 1.minute do
 	rake "users:create_from_new_profiles", output: nil
+  rake "search:update_entity_delta_index", output: nil
 end
 
 every 1.day do
   rake "sessions:clear_expired", output: nil
 end
 
-every 3.days, at: '5:00 am' do
+every 1.day, at: '5:00 am' do
   rake "ts:rebuild", output: nil
 end
