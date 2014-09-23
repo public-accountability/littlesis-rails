@@ -1,0 +1,8 @@
+<% content_for(:page_title, @map.name + " - Edit") %>
+
+<div class="netmap-editor-fullscreen">
+  <%= render partial: 'editor', locals: { map: @map, fullscreen: true } %>
+  <div class="netmap-editor-fullscreen-header">
+    <%= render partial: 'edit_header', locals: { map: @map, fullscreen: true } %>
+  </div>
+</div>

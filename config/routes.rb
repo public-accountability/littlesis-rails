@@ -99,6 +99,7 @@ Lilsis::Application.routes.draw do
       get 'edit_meta'
       post 'update_meta'
       post 'clone'
+      get 'edit_fullscreen'
     end
 
     collection do

@@ -97,6 +97,13 @@ class MapsController < ApplicationController
     check_permission 'importer'
   end
 
+  def edit_fullscreen
+    check_owner
+    check_permission 'importer'
+    response.headers.delete('X-Frame-Options')
+    render layout: "fullscreen"
+  end
+
   def update
     check_owner
     check_permission 'importer'

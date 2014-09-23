@@ -6,8 +6,6 @@
   <div class="col col-xs-6 map-author">
     <%= render partial: 'byline', locals: { map: map } %>
 
-    &nbsp; <%= link_to('#', map_path(map)) %>
-
     <div id="fullscreen-link"><%= link_to('fullscreen', raw_map_path(@map)) %></div>
     <div id="embed-link"><a href="#">embed</a></div>
     <div id="embed-code">
