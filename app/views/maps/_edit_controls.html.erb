@@ -331,8 +331,9 @@ $(window).ready(function(){
   $('#netmap_entity_search')
     .typeahead({ 
       name: 'entities',
-      remote: '<%= raw(name_search_entities_url + "?num=12&desc=true&q=%QUERY") %>',
-      limit: 20
+      remote: '<%= raw(name_search_entities_url + "?num=12&desc=true&with_ids=true&q=%QUERY") %>',
+      limit: 20,
+      dupDetector: false,
     })
     .on("typeahead:selected", selected_callback);
 

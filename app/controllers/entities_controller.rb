@@ -8,7 +8,24 @@ class EntitiesController < ApplicationController
     num = params.fetch(:num, 10)
     fields = params[:desc] ? 'name,aliases,blurb' : 'name,aliases'
 		entities = Entity.search "@(#{fields}) #{q}", per_page: num, match_mode: :extended, with: { is_deleted: false }
-		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id } }
+		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb } }
+
+    if params[:with_ids]
+      names = entities.map(&:name)
+      dups = names.select do |name|
+        names.select{ |n| n == name }.count > 1
+      end
+
+      data.each_with_index do |entity, i|
+        if dups.include? entity[:name]
+          entity[:name]
+          info = entity[:blurb].present? ? entity[:blurb] : entity[:id].to_s
+          # info = info.slice(0..20)
+          data[i][:value] = entity[:name] + " (#{info})"
+        end
+      end      
+    end
+
 		render json: data
 	end	
 
