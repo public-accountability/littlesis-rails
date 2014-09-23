@@ -183,8 +183,8 @@ $(window).ready(function(){
         $('#netmap_modal .modal-body-text').text("Map successfully saved");
         $('#netmap_modal').modal();
       },
-      error: function() { 
-        alert("There was an error saving the map"); 
+      error: function(req, str) { 
+        alert("There was an error saving the map: " + str); 
       },
       dataType: "json"
     })  
