@@ -182,12 +182,19 @@ h1.map-title {
   display: none;
   position: absolute;
   z-index: 100;
-  text-align: right;
-  margin-top: 5px;
+  text-align: left;
+  margin-top: 10px;
+  background-color: #eee;
+  padding: 10px;
+
+  input {
+    width: 50px;
+    margin-bottom: 10px;
+  }
 
   textarea {
     width: 500px;
-    height: 80px;
+    height: 120px;
   }
 }
 
@@ -455,4 +462,8 @@ svg .text {
 #netmap-edit-guide {
   clear: both;
   padding-top: 20px;
+}
+
+#map-sources {
+  font-size: 12px;
 }

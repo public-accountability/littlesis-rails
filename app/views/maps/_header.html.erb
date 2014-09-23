@@ -9,7 +9,10 @@
     <div id="fullscreen-link"><%= link_to('fullscreen', raw_map_path(@map)) %></div>
     <div id="embed-link"><a href="#">embed</a></div>
     <div id="embed-code">
-      <textarea><iframe id="littlesis-map-#{@map.id}" height="400" width="550" scrolling="no" style="border: 0px; overflow: hidden;" src="<%= raw_map_url(@map, embed: true, zoom: 1) %>"></iframe><div style="padding: 5px;"><%= link_to('view this map on LittleSis', map_url(map)) %></div></textarea>
+      Width <input type="text" id="embed-width" value="550">&nbsp;&nbsp;
+      Height <input type="text" id="embed-height" value="400">&nbsp;&nbsp;
+      Zoom <input type="text" id="embed-zoom" value="1.0">
+      <textarea><iframe height="400" width="550" scrolling="no" style="border: 0px; overflow: hidden;" src="<%= raw_map_url(@map, embed: true, zoom: 1) %>"></iframe><div style="padding: 5px;"><%= link_to('view this map on LittleSis', map_url(map)) %></div></textarea>
     </div>
 
     <div id="clone-link">
@@ -34,3 +37,48 @@
     </div>
   </div>
 </div>
+
+<script>
+  $('#embed-link a').click(function(e) {
+    var text = $('#embed-code textarea').val();
+    var current_zoom = netmap.get_scale();
+    text = text.replace(/zoom=[^"]+/, "zoom=" + current_zoom);
+    $('#embed-zoom').val(current_zoom);
+    var left = this.getBoundingClientRect().left - $('#netmap')[0].getBoundingClientRect().left;
+    $('#embed-code').css('left', left);
+    $('#embed-code textarea').val(text);
+    $('#embed-code').toggle();
+    $('#embed-code textarea').focus();
+  });
+
+  $("#embed-code textarea").focus(function() {
+      var $this = $(this);
+      $this.select();
+
+      // Work around Chrome's little problem
+      $this.mouseup(function() {
+          // Prevent further mouseup intervention
+          $this.unbind("mouseup");
+          return false;
+      });
+  });
+
+  $('#embed-width').on('input', function(){
+    var text = $('#embed-code textarea').val();
+    text = text.replace(/width="\d*"/, 'width="' + this.value + '"');
+    $('#embed-code textarea').val(text);
+  });
+
+  $('#embed-height').on('input', function(){
+    var text = $('#embed-code textarea').val();
+    text = text.replace(/height="\d*"/, 'height="' + this.value + '"');
+    $('#embed-code textarea').val(text);
+  });
+
+  $('#embed-zoom').on('input', function(){
+    var text = $('#embed-code textarea').val();
+    text = text.replace(/zoom=[^"]*/, "zoom=" + this.value);
+    $('#embed-code textarea').val(text);
+  });
+
+</script>

@@ -17,6 +17,23 @@
   </div>
 <% end %>
 
+<% if @map.references.present? %>
+  <br>
+  <div id="map-sources-header">
+    <h3>Sources
+      <span class="btn btn-link btn-sm">
+        <a id="show-sources-link" href="javascript:void(0);">show</a>
+        <a id="hide-sources-link" href="javascript:void(0);" style="display: none;">hide</a>
+      </span>
+    </h3>
+  </div>
+  <div id="map-sources" style="display: none;">
+    <% @map.references.each do |source| %>
+      <a href="<%= source.source %>" target="_blank"><%= source.name %></a><br>
+    <% end %>
+  </div>
+<% end %>
+
 <script>
 var data = <%= raw @map.prepared_data %>;
 var width = <%= Lilsis::Application.config.netmap_default_width %>;
@@ -32,27 +49,17 @@ netmap.zoom_by(<%= @map.zoom %>);
 <% end %>
 netmap.build();
 
-$('#embed-link a').click(function(e) {
-  var text = $('#embed-code textarea').val();
-  var current_zoom = netmap.get_scale();
-  text = text.replace(/zoom=[^"]+/, "zoom=" + current_zoom);
-  $('#embed-code textarea').val(text);
-  $('#embed-code').toggle();
-  $('#embed-code textarea').focus();
+$('#show-sources-link').on('click', function() {
+  $('#map-sources').slideDown();
+  $('#hide-sources-link').show();
+  $(this).hide();
 });
 
-$("#embed-code textarea").focus(function() {
-    var $this = $(this);
-    $this.select();
-
-    // Work around Chrome's little problem
-    $this.mouseup(function() {
-        // Prevent further mouseup intervention
-        $this.unbind("mouseup");
-        return false;
-    });
+$('#hide-sources-link').on('click', function() {
+  $('#map-sources').slideUp();
+  $('#show-sources-link').show();
+  $(this).hide();
 });
-
 </script>
 
 <% end %>

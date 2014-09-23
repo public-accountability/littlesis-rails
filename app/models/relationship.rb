@@ -1,6 +1,7 @@
 class Relationship < ActiveRecord::Base
   include SingularTable
   include SoftDelete
+  include Referenceable
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"

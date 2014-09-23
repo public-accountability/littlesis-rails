@@ -35,6 +35,16 @@ class NetworkMap < ActiveRecord::Base
     })
   end
 
+  def rels
+    hash = JSON.parse(data)
+    rel_ids = hash['rels'].map { |m| m['id'] }
+    Relationship.find(rel_ids)
+  end
+
+  def references
+    rels.collect{ |r| r.references }.flatten.uniq(&:source).reject{ |ref| ref.name.blank? }.sort_by{ |ref| ref.updated_at }.reverse
+  end
+
   def entity_type(entity)
     return entity['type'] if entity['type'].present?
     
