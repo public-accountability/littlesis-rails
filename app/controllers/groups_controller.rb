@@ -85,7 +85,7 @@ class GroupsController < ApplicationController
 
   # PATCH/PUT /groups/1
   def update
-    check_permission "admin"    
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
     if @group.update(group_params)
       redirect_to @group, notice: 'Group was successfully updated.'
     else
@@ -171,12 +171,13 @@ class GroupsController < ApplicationController
   end
 
   def users
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
     check_permission "admin"
     @group_users = @group.group_users.joins(:user).order("users.username ASC").page(params[:page]).per(50)
   end
 
   def promote_user
-    check_permission "admin"
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
     gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
     throw "user isn't in the group" if gu.nil?
     gu.is_admin = true
@@ -185,7 +186,7 @@ class GroupsController < ApplicationController
   end
 
   def demote_user
-    check_permission "admin"
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
     gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
     throw "user isn't in the group" if gu.nil?
     gu.is_admin = false
@@ -194,7 +195,7 @@ class GroupsController < ApplicationController
   end
 
   def remove_user
-    check_permission "admin"
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
     gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
     throw "user isn't in the group" if gu.nil?
     gu.destroy
