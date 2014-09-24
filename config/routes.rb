@@ -57,7 +57,7 @@ Lilsis::Application.routes.draw do
 
   get '/groups/:id(/:group_tabs_selected_tab)' => 'groups#show'
 
-  resources :users, only: [:index] do
+  resources :users, only: [:index], id: /[\w.]+/ do
     member do
       post 'confirm'
     end

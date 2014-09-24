@@ -17,6 +17,10 @@ class ApplicationController < ActionController::Base
     render "errors/not_found", status: 404
   end
 
+  rescue_from ActionController::RoutingError do |exception|
+    exit
+  end
+
   def admins_only
     check_permission("admin")
   end
