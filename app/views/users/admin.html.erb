@@ -1,0 +1,64 @@
+<h1>Users Admin</h1>
+
+<%= notice_if_notice %>
+
+<%= form_tag admin_users_path, method: :get do %>
+  <div class="input-group col-xs-4 maps_search">
+    <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search users" %>
+    <span class="input-group-btn">
+      <button type="submit" class="btn btn-default">
+        <span class="glyphicon glyphicon-search"></span>
+      </input>
+    </span>
+  </div>
+<% end %>
+
+<br>
+
+<%= paginate @users %>
+
+<div class="spacer"></div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th></th>
+      <th>User</th>
+      <th>Name/Bio</th>
+      <th>Groups</th>
+      <th>Joined</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td class="users_image"><%= user_image(user) %></div>
+        <td class="users_username">
+          <%= user_link(user) %><br>
+          <span style="font-weight: normal;"><%= user.email %></span>
+        </td>
+        <td class="users_name_bio">
+          <% if user.full_name.present? %>
+            <strong><%= user.full_name %></strong><br />
+          <% end %>
+          <%= user.bio %>
+        </td>
+        <td class="users_groups">
+          <% user.groups.each do |group| %>
+            <%= group_link(group) %><br />
+          <% end %>
+        </td>
+        <td><%= user.legacy_created_at.strftime("%F") %></td>
+        <td>
+          <% unless user.sf_guard_user_profile.is_confirmed %>
+            <%= link_to 'confirm email', confirm_user_path(user), method: :post, confirm: "Are you sure?" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @users %>
