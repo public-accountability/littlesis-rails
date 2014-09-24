@@ -37,7 +37,7 @@ class NetworkMap < ActiveRecord::Base
 
   def rels
     hash = JSON.parse(data)
-    rel_ids = hash['rels'].map { |m| m['id'] }.select{ |id| id.match(/^\d+$/) }
+    rel_ids = hash['rels'].map { |m| m['id'] }.select{ |id| id.to_i != 0 }
     return [] if rel_ids.empty?
     Relationship.where(id: rel_ids)
   end
