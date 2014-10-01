@@ -281,6 +281,10 @@ h1.map-title {
     top: 120px;
     width: 200px;
   }
+
+  #netmap_custom_controls {
+    z-index: 1000;
+  }
 }
 
 .map-share-buttons {
