@@ -270,9 +270,10 @@ h1.map-title {
 
   .netmap-editor-fullscreen-header {
     position: absolute;
+    display: inline-block;
     top: 20px;
     left: 80px;
-    width: 100%;
+    width: auto;
   }
 
   #netmap_controls {

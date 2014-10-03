@@ -3,7 +3,7 @@
 </div>
 
 <div class="row map-top-row">
-  <div class="col col-xs-6 map-author">
+  <div class="col col-xs-12 map-author">
     <%= render partial: 'byline', locals: { map: map } %>
     &nbsp;<%= link_to 'edit meta', edit_meta_map_path(map) %>
     &nbsp;<%= link_to 'view', map_path(map), data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
