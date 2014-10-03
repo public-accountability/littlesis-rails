@@ -23,7 +23,7 @@ namespace :maintenance do
     id = ENV['LILSIS_ENTITY_ID']
     e = Entity.find(id)
 
-    rels = Relationship.where(category_id: 10, entity1_id: id)
+    rels = Relationship.where(category_id: 10, entity2_id: id)
 
     rels.each do |r|
       r.entity = r.related
