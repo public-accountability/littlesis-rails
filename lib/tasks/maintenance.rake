@@ -6,9 +6,6 @@ namespace :maintenance do
 
     rels = Relationship.where(category_id: 5, entity1_id: id)
 
-    binding.pry
-    exit
-
     rels.each do |r|
       r.entity = r.related
       r.related = e
