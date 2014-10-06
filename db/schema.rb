@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140729180230) do
+ActiveRecord::Schema.define(version: 20141006212617) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -613,8 +613,8 @@ ActiveRecord::Schema.define(version: 20140729180230) do
   create_table "network_map", force: true do |t|
     t.integer  "user_id",     limit: 8,                          null: false
     t.text     "data",        limit: 2147483647,                 null: false
-    t.string   "entity_ids",  limit: 1000
-    t.string   "rel_ids",     limit: 1000
+    t.string   "entity_ids",  limit: 5000
+    t.string   "rel_ids",     limit: 5000
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "is_deleted",                     default: false, null: false

@@ -26,8 +26,8 @@ namespace :maintenance do
     rels = Relationship.where(category_id: 10, entity2_id: id)
 
     rels.each do |r|
-      r.entity = r.related
-      r.related = e
+      r.related = r.entity
+      r.entity = e
       r.save
 
       r.links.each do |l|
