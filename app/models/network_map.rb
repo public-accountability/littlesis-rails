@@ -28,11 +28,12 @@ class NetworkMap < ActiveRecord::Base
 
   def prepared_data
     hash = JSON.parse(data)
-    JSON.dump({ 
+    json = JSON.dump({ 
       entities: hash['entities'].map { |entity| self.prepare_entity(entity) },
       rels: hash['rels'].map { |rel| self.prepare_rel(rel) },
       texts: hash['texts'].present? ? hash['texts'].map { |text| self.prepare_text(text) } : []
     })
+    ERB::Util.json_escape(json)
   end
 
   def rels
