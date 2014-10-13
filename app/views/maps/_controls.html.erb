@@ -1,8 +1,5 @@
   <button id="zoom-in" class="zoom-button">+</button>
   <button id="zoom-out" class="zoom-button">&ndash;</button>
-  <% if false and !params[:embed] and local_assigns[:show_download_button].present? %>
-    <button id="save" class="zoom-button"><span class="glyphicon glyphicon-picture"></span></button>
-  <% end %>
 
   <%= link_to(image_tag('lilsis-logo-trans-200.png', id: 'netmap-logo'), root_path) %>
 
@@ -14,20 +11,16 @@
   $(document).ready(function(){
     $('#zoom-in').on('click', function() { netmap.zoom_by(1.2); });
     $('#zoom-out').on('click', function() { netmap.zoom_by(0.83333333); });
-    $('#save').on('click', function() { return exportMap(); });
 
-    var anchors = $("svg a");
-    anchors.each(function(i, a) {
+    $("svg a").each(function(i, a) {
       a.setAttribute("target", "_blank");
     });
-
-    if (window.navigator.userAgent.indexOf('Chrome') !== -1 || window.navigator.userAgent.indexOf('Firefox') !== -1) {
-      $('#save').show();
-    }
   });
   
-  var exportMap = function() {
+  var exportMap = function(width, height, zoom) {
     var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
+
+    var zoom = document.getElementById('zoom');
 
     inlineImages(function() {
       var svg = document.getElementById('svg');
@@ -36,6 +29,18 @@
       svg.setAttribute("width", Math.floor(nm.clientWidth));
 
       var clonedSVG = svg.cloneNode(true);
+
+      if (height) {
+        clonedSVG.setAttribute("height", height);
+      }
+
+      if (width)
+        clonedSVG.setAttribute("width", width);
+      }
+      
+      clonedZoom = clonedSVG.querySelector("#zoom");
+      clonedZoom.setAttribute('transform', 'translate(' + (0 + width/2) + ',' + (0 + height/2) + ') scale(' + (1 + zoom) + ')');
+
       var style = document.createElement('style');
       
       style.textContent = "";
@@ -61,8 +66,8 @@
       var img = document.getElementById('img');
       img.src = "";
       img.style.display = 'inline-block';
-      img.height = (svg.clientHeight || svg.height.baseVal.value);
-      img.width = (svg.clientWidth || svg.width.baseVal.value);
+      img.height = (height || svg.clientHeight || svg.height.baseVal.value);
+      img.width = (width || svg.clientWidth || svg.width.baseVal.value);
 
       img.onload = function(e) {
         canvas.height = img.height;

@@ -11,32 +11,58 @@
 svg {
   border: 0px solid #ddd;
   background-color: white;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
-svg .line {
-  stroke: black;
+svg.circle, svg.axis {
+  .line {
+    //stroke: #888;
+  }
+
+  .rel.selected .line:not(.highlight) {
+    //stroke: #000;
+  }
 }
 
 svg .entity a text, svg .rel a text, svg .text text { 
   font-family: Helvetica, Arial, sans-serif;
 }
 
+svg.circle, svg.axis {
+  .entity text, svg .rel text, svg .text text { 
+    fill: black;
+  }
+}
+
+
 svg .rel.selected .line {
   /* stroke: #f91409; */
 }
 
 svg .rel .line.highlight {
-  stroke: #ffff80;
+  //stroke: #ffff80;
+  //stroke-linecap: round;
   opacity: 0;
 }
 
 svg .rel.selected .line.highlight {
-  stroke: #ffff80;
+  //stroke: #ffff80;
   opacity: 0.6;
 }
 
 svg .label { 
   display: block; 
+}
+
+svg.circle, svg.axis {
+  .label {
+    display: none;
+  }
+}
+
+svg.axis {
+  // background-color: rgb(35, 31, 32);
+  background-color: white;
 }
 
 #netmap:hover .label { 
@@ -51,12 +77,32 @@ svg .label {
   display: block;
 }
 
+#netmap svg.circle, #netmap svg.axis {
+  .rel:hover .label {
+    display: none;
+  }
+
+  .rel.selected .label {
+    display: none;
+  }
+}
+
 svg .rel.selected .label {
   display: block;
 }
 
 #netmap svg .rel.hovered .label {
   display: block;
+}
+
+#netmap svg.circle, #netmap svg.axis {
+  .rel.hovered .label {
+    display: none;
+  }
+
+  .rel.hovered.selected .label {
+    display: block;
+  }
 }
 
 svg .entity .image-bg {
@@ -67,9 +113,21 @@ svg .entity .image-bg {
   }
 }
 
+svg.circle, svg.axis {
+  .entity .image-bg.custom {
+    fill: #ddd;
+  }
+}
+
 svg .entity.selected .image-bg {
   stroke: #ffff80;
   stroke-opacity: 0.5;
+}
+
+svg.circle, svg.axis {
+  .entity.selected .image-bg {
+    stroke-opacity: 0;
+  }
 }
 
 svg .entity.selected .text_rect {

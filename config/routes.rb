@@ -131,6 +131,7 @@ Lilsis::Application.routes.draw do
   #   as: 'entity_name_search'
 
   get "/edits" => "edits#index"
+  get "/partypolitics" => "pages#partypolitics"
 
   match "*path", to: "errors#not_found", via: :all
 

@@ -1,6 +1,8 @@
 <div id="netmap" class="netmap-editing <%= local_assigns[:fullscreen] ? 'fullscreen' : '' %>">
   <%= render partial: 'controls' %>
   <%= render partial: 'custom_controls' %>
+  <img id="img" style="display: none;"></img>
+  <canvas id="canvas" style="display: none;"></canvas>
 </div>
 
 <%= render partial: 'edit_controls', locals: { map: map } %>
