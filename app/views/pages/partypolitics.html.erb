@@ -249,7 +249,7 @@ data.rels.forEach(function(r) {
 var width = 1100;
 var height = 800;
 var key = '<%= Lilsis::Application.config.netmap_api_key %>';
-var netmap = new Netmap(width, height, "#netmap", key, true);
+var netmap = new Netmap(width, height, "#netmap", key, true, false);
 netmap.set_data(data);
 netmap.auto_center();
 netmap.zoom_by(0.2);
