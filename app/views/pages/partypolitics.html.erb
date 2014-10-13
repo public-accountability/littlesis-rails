@@ -1,7 +1,12 @@
 <% content_for(:page_title, 'Party Politics') %>
 
 <style>
-a { 
+body {
+  background-color: black;
+  color: white;
+}
+
+a {
   color: #f0f;
 }
 
@@ -42,6 +47,13 @@ a {
   cursor: pointer;
 }
 
+.partypolitics svg.axis {
+  background-color: black;
+}
+
+.partypolitics svg.axis .entity text {
+  fill: white;
+}
 </style>
 
 <div class="center">
@@ -53,7 +65,7 @@ A map of interlocks and money flows between some organizations affiliated with i
 </div>
 </div>
 
-<div id="netmap" class="fullscreen">
+<div id="netmap" class="fullscreen partypolitics">
 </div>
 
 <div id="credits">
