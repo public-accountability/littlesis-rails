@@ -17,7 +17,7 @@
     });
   });
   
-  var exportMap = function(width, height, zoom) {
+  var exportMap = function(width, height, scale) {
     var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
 
     var zoom = document.getElementById('zoom');
@@ -34,12 +34,12 @@
         clonedSVG.setAttribute("height", height);
       }
 
-      if (width)
+      if (width) {
         clonedSVG.setAttribute("width", width);
       }
       
       clonedZoom = clonedSVG.querySelector("#zoom");
-      clonedZoom.setAttribute('transform', 'translate(' + (0 + width/2) + ',' + (0 + height/2) + ') scale(' + (1 + zoom) + ')');
+      clonedZoom.setAttribute('transform', 'translate(' + (0 + width/2) + ',' + (0 + height/2) + ') scale(' + (1 + scale) + ')');
 
       var style = document.createElement('style');
       
