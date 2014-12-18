@@ -34,7 +34,7 @@
 <div class="spacer"></div>
 
 <div class="notes_list">
-<% cache(current_user.cache_key('dashboard/notes')) do %>
+<% cache(current_user.cache_key('dashboard/notes'), expires_in: 10.minutes) do %>
 <% @notes.each do |note| %>
 	<% if note.visible_to?(current_user) %>
 		<%= render partial: "notes/note", locals: { note: note, user: current_user } %>

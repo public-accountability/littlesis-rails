@@ -9,7 +9,7 @@
 <div class="left_column">
 
 <div class="notes_list">
-<% cache(Cache.key_with_params("notes/index/#{current_username}", params.slice(:q, :page))) do %>
+<% cache(Cache.key_with_params("notes/index/#{current_username}", params.slice(:q, :page)), expires_in: 10.minutes) do %>
 <% @notes.each do |note| %>
 	<% if note.visible_to?(current_user) %>
 		<%= render partial: "notes/note", locals: { note: note } %>
