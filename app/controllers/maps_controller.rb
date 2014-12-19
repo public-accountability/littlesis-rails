@@ -51,7 +51,7 @@ class MapsController < ApplicationController
   end
 
   def splash
-    @maps = NetworkMap.featured.order("updated_at DESC, id DESC").page(params[:page]).per(20)
+    @maps = NetworkMap.featured.order("updated_at DESC, id DESC").page(params[:page]).per(50)
     @fcc_map = NetworkMap.find(101)
     @ferguson_map = NetworkMap.find(259)
   end
