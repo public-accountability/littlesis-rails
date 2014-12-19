@@ -132,6 +132,7 @@ Lilsis::Application.routes.draw do
 
   get "/edits" => "edits#index"
   get "/partypolitics" => "pages#partypolitics"
+  get "/oligrapher" => "maps#splash"
 
   match "*path", to: "errors#not_found", via: :all
 

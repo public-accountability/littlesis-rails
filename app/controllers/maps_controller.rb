@@ -1,6 +1,6 @@
 class MapsController < ApplicationController
-  before_action :set_map, except: [:index, :featured, :new, :create, :search]
-  before_filter :auth, except: [:index, :featured, :show, :raw]
+  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash]
+  before_filter :auth, except: [:index, :featured, :show, :raw, :splash]
   before_filter :enforce_slug, only: [:show]
 
   protect_from_forgery except: :create
@@ -48,6 +48,12 @@ class MapsController < ApplicationController
     @maps = NetworkMap.featured.order("updated_at DESC, id DESC").page(params[:page]).per(20)
     @featured = true
     render 'index'
+  end
+
+  def splash
+    @maps = NetworkMap.featured.order("updated_at DESC, id DESC").page(params[:page]).per(20)
+    @fcc_map = NetworkMap.find(101)
+    @ferguson_map = NetworkMap.find(259)
   end
 
   def show

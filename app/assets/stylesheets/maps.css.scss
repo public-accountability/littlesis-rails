@@ -530,3 +530,68 @@ svg .text {
 #map-sources {
   font-size: 12px;
 }
+
+#splash-images {
+  margin-top: 50px; 
+
+  .splash-image {
+    height: 250px;
+    text-align: center;
+  }
+
+  img {
+    width: 300px;
+    height: 225px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+  }
+}
+
+#splash-intro {
+  margin-top: 40px;
+}
+
+#splash-header {
+  h1 {
+    font-size: 50px;
+  }
+
+  font-size: 20px;
+  text-align: center;
+
+  input[type=submit] {
+    background-color: #A04040;
+    color: #fff;    
+    border: 0;
+    font-weight: 200;
+  }
+}
+
+#splash-contact {
+  font-size: 20px;
+}
+
+#splash-feature-list {
+  margin: 40px auto;
+  text-align: left;
+  width: 350px;
+  font-size: 18px;
+  line-height: 28px;
+
+  ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  li {
+    padding-left: 1em;
+    text-indent: 0em;
+  }
+
+  li:before {
+    content: '\02606';
+    padding-right: 10px;
+    font-size: 0.8em;
+  }  
+}
