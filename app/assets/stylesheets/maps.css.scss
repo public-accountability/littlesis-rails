@@ -398,7 +398,8 @@ h1.map-title {
 }
 
 #netmap_add_entity, #netmap_add_related_entities, 
-#netmap_add_text, #netmap_add_node, #netmap_add_edge {
+#netmap_add_text, #netmap_add_node, #netmap_add_edge, 
+#netmap_add_interlocks {
   display: none;
   position: absolute;
   padding: 1em;
@@ -414,7 +415,8 @@ h1.map-title {
 }
 
 #netmap_add_entity_hide, #netmap_add_related_entities_hide, 
-#netmap_add_text_hide, #netmap_add_node_hide, #netmap_add_edge_hide {
+#netmap_add_text_hide, #netmap_add_node_hide, #netmap_add_edge_hide,
+#netmap_add_interlocks_hide {
   position: absolute;
   top: 0;
   right: 0;
@@ -438,7 +440,7 @@ h1.map-title {
   display: inline-block;
 }
 
-#netmap_add_edge_table {
+#netmap_add_edge_table, #netmap_add_interlocks_table {
   border-collapse: separate;
   border-spacing: 5px;
 }

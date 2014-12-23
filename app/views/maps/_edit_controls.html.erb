@@ -115,6 +115,35 @@ Categories:
 </div>
 </div>
 
+<div id="netmap_add_interlocks">
+<div id="netmap_add_interlocks_hide"><a id="netmap_add_interlocks_hide_link" onclick="$('#netmap_add_interlocks').css('display', 'none'); return false;">hide</a></div>
+<h3>Add Interlocks</h3>
+<div class="form-inline">
+  <table id="netmap_add_interlocks_table">
+    <tr>
+      <td>Entity 1</td>
+      <td><span id="netmap_add_interlocks_entity1"></span></td>
+    </tr>
+    <tr>
+      <td>Entity 2</td>
+      <td><select id="netmap_add_interlocks_entity2_id" class="form-control"></select></td>
+    </tr>
+    <!--
+    <tr>
+      <td>Limit to<br>Categories</td>
+      <td>
+        <%= select_tag 'netmap_add_interlocks_category_ids', options_from_collection_for_select(RelationshipCategory.all, 'id', 'name'), multiple: true, class: 'form-control' %>
+      </td>
+    </tr>
+    -->
+    <tr>
+      <td></td>
+      <td><button id="netmap_add_interlocks_button" class="btn btn-default">Add</button></td>
+    </tr>
+  </table>
+</div>
+</div>
+
 <div id="netmap_add_related_entities">
 <div id="netmap_add_related_entities_hide"><a id="netmap_add_related_entities_hide_link" onclick="$('#netmap_add_related_entities').css('display', 'none'); return false;">hide</a></div>
 <input id="netmap_add_related_entities_entity_id" type="hidden" />
@@ -298,6 +327,28 @@ $(window).ready(function(){
 
     if (netmap.selected_entity_id() && entity2_id && label) {
       netmap.add_edge(netmap.selected_entity_id(), entity2_id, label, category_id, current, directional);
+      $('#netmap_add_edge').css('display', 'none');
+    }
+  });
+
+  $(window).on('toggle_add_interlocks_form', function() {
+    $('#netmap_add_interlocks_entity1').html(netmap.get_selected_entity().name);
+    $('#netmap_add_interlocks_entity2_id').html('<option value=""></option>');
+    netmap.littlesis_entity_options_for_select().forEach(function(o) {
+      if (o[0] == netmap.selected_entity_id()) {
+        return;
+      }
+      $('#netmap_add_interlocks_entity2_id').append('<option value=' + o[0] + '>' + o[1] + '</option>');    
+    });
+    toggle_form("#netmap_add_interlocks");
+  });
+
+  $('#netmap_add_interlocks_button').on('click', function() {
+    var entity2_id = $('#netmap_add_interlocks_entity2_id').val();
+    var category_ids = $('#netmap_add_interlocks_category_ids').val();
+
+    if (netmap.selected_entity_id() && entity2_id) {
+      netmap.add_interlocks(netmap.selected_entity_id(), entity2_id, category_ids);
       $('#netmap_add_edge').css('display', 'none');
     }
   });
