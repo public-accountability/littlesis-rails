@@ -20,7 +20,7 @@ class GroupsController < ApplicationController
 
   # GET /groups
   def index
-    @groups = Group.public
+    @groups = Group.public_scope
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
       .includes(:campaign)
@@ -37,7 +37,7 @@ class GroupsController < ApplicationController
     @recent_updates = @group.entities.includes(last_user: :user).order("updated_at DESC").limit(10)
 
     if user_signed_in? and current_user.in_group?(@group)
-      @notes = @group.notes.public.order("created_at DESC").limit(10)
+      @notes = @group.notes.public_scope.order("created_at DESC").limit(10)
       @watched_entities = @group.featured_entities.order("ls_list_entity.created_at DESC").limit(5)
       @group_lists = @group.group_lists.order("is_featured DESC").joins(:list).where("ls_list.is_deleted" => false)
       @group_users = @group.group_users.joins(:user).order("users.username ASC")
@@ -85,7 +85,7 @@ class GroupsController < ApplicationController
 
   # PATCH/PUT /groups/1
   def update
-    check_permission "admin"    
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
     if @group.update(group_params)
       redirect_to @group, notice: 'Group was successfully updated.'
     else
@@ -171,12 +171,13 @@ class GroupsController < ApplicationController
   end
 
   def users
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
     check_permission "admin"
     @group_users = @group.group_users.joins(:user).order("users.username ASC").page(params[:page]).per(50)
   end
 
   def promote_user
-    check_permission "admin"
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
     gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
     throw "user isn't in the group" if gu.nil?
     gu.is_admin = true
@@ -185,7 +186,7 @@ class GroupsController < ApplicationController
   end
 
   def demote_user
-    check_permission "admin"
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
     gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
     throw "user isn't in the group" if gu.nil?
     gu.is_admin = false
@@ -194,7 +195,7 @@ class GroupsController < ApplicationController
   end
 
   def remove_user
-    check_permission "admin"
+    current_user_must_be_group_admin unless current_user.has_legacy_permission("admin")
     gu = GroupUser.where(group_id: @group.id, user_id: params[:user_id]).first
     throw "user isn't in the group" if gu.nil?
     gu.destroy

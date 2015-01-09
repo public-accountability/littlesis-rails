@@ -22,7 +22,7 @@ class Group < ActiveRecord::Base
 	mount_uploader :cover, GroupCoverUploader
 
 	scope :working, -> { joins(:sf_guard_group).where("sf_guard_group.is_working" => true) }
-	scope :public, -> { where(is_private: false) }
+	scope :public_scope, -> { where(is_private: false) }
 
 	validates_presence_of :name, :slug
 	validates_uniqueness_of :name, :slug

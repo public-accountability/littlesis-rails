@@ -10,7 +10,7 @@ class CampaignsController < ApplicationController
 
   # GET /campaigns/1
   def show
-    @groups = @campaign.groups.public
+    @groups = @campaign.groups.public_scope
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
       .group("groups.id")

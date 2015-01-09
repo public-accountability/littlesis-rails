@@ -16,6 +16,8 @@ class SfGuardUser < ActiveRecord::Base
 	has_many :sf_guard_permissions, through: :sf_guard_user_permissions, inverse_of: :sf_guard_users
 	has_many :sf_guard_groups_permissions, class_name: "SfGuardPermission", through: :sf_guard_groups, source: :sf_guard_permissions
 
+  has_many :network_maps, foreign_key: "user_id", inverse_of: :sf_guard_user
+
 	def permissions
 		(direct_permissions + group_permissions).uniq
 	end

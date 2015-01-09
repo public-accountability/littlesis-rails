@@ -1,0 +1,17 @@
+<div class="map-header">
+  <h1 class="map-title"><%= map.name %></h1>  
+</div>
+
+<div class="row map-top-row">
+  <div class="col col-xs-12 map-author">
+    <%= render partial: 'byline', locals: { map: map } %>
+    &nbsp;<%= link_to 'edit meta', edit_meta_map_path(map) %>
+    &nbsp;<%= link_to 'view', map_path(map), data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
+
+    <% if local_assigns[:fullscreen].present? %>
+      &nbsp;<%= link_to 'default editor', edit_map_path(map), data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
+    <% else %>
+      &nbsp;<%= link_to 'fullscreen editor', edit_fullscreen_map_path(map), data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
+    <% end %>
+  </div>
+</div>

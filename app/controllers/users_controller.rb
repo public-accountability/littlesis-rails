@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :confirm]
 
   # GET /users
   def index
@@ -52,10 +52,37 @@ class UsersController < ApplicationController
     redirect_to users_url, notice: 'User was successfully destroyed.'
   end
 
+  def admin
+    check_permission "admin"
+
+    @users = User
+      .includes(:groups)
+      .joins("INNER JOIN sf_guard_user ON sf_guard_user.id = users.sf_guard_user_id")
+      .joins("INNER JOIN sf_guard_user_profile ON sf_guard_user_profile.user_id = sf_guard_user.id")
+      .where(sf_guard_user: { is_super_admin: false })
+      .order("created_at DESC")
+      .page(params[:page]).per(100)
+
+    if params[:q]
+      q = '%' + params[:q] + '%'
+      @users = @users.where("sf_guard_user_profile.name_last LIKE ? OR sf_guard_user_profile.name_first LIKE ? OR users.username LIKE ? OR users.email LIKE ?", q, q, q, q)
+    end
+  end
+
+  def confirm
+    check_permission "admin"
+
+    @user.sf_guard_user_profile.is_confirmed = true
+    @user.sf_guard_user_profile.confirmation_code = nil
+    @user.sf_guard_user_profile.save
+
+    redirect_to admin_users_url, notice: 'User was successfully confirmed.'
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find(params[:id])
+      @user = User.find_by_username(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

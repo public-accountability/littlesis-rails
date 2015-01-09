@@ -1,0 +1,50 @@
+<% content_for(:page_title, 'Map the Power with Oligrapher') %>
+
+<div id="splash-images" class="row hidden-xs">
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('fcc-map.jpg'), map_path(@fcc_map)) %><br>
+    <%= link_to('FCC Tight with Telecoms', map_path(@fcc_map)) %>
+  </div>
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('data-society-map.jpg'), 'http://littlesis.org/partypolitics') %><br>
+    <%= link_to('Big Data, Small World', 'http://littlesis.org/partypolitics') %>
+  </div>
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('ferguson-map.jpg'), map_path(@ferguson_map)) %><br>
+    <%= link_to('Profiting from Ferguson', map_path(@ferguson_map)) %>
+  </div>
+</div>
+
+<div id="splash-intro" class="row">
+  <div id="splash-header" class="col-sm-12">
+    <h1>Map the power with <strong>Oligrapher</strong></h1>
+    Oligrapher is new tool for visualizing networks of influence using LittleSis data.
+
+    <div id="splash-feature-list">
+      <ul>
+        <li>easily import data from LittleSis</li>
+        <li>fullscreen and embedded maps</li>
+        <li>customizable nodes, edges, and text</li>
+        <li>force-directed and preset layouts</li>
+        <li><%= link_to('open-source code', 'http://github.com/skomputer/oligrapher') %> using D3.js</li>
+        <li>read more on the <%= link_to(raw('LittleSis blog'), 'http://blog.littlesis.org/2014/07/22/introducing-oligrapher-power-mapping-on-littlesis/') %></li>
+      </ul>
+    </div>
+
+    <!--<%= button_to('Sign up to start making maps!', '/join', method: :get, class: 'btn-lg') %>-->
+    <%= button_to('Get in touch to become a beta tester!', '/contact', method: :get, class: 'btn-lg', id: "splash-contact") %>
+  </div>
+</div>
+
+<br>
+
+<%= centered_content do %>
+
+<h3>
+  Featured Maps
+  <%= link_to 'all maps', maps_path, class: 'btn btn-link btn-sm' %>
+</h3>
+
+<%= render partial: 'maps/table', locals: { maps: @maps } %>
+
+<% end %>

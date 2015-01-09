@@ -57,12 +57,33 @@ Lilsis::Application.routes.draw do
 
   get '/groups/:id(/:group_tabs_selected_tab)' => 'groups#show'
 
-  resources :users, only: [:index]
+  resources :users, only: [:index], id: /[\w.]+/ do
+    member do
+      post 'confirm'
+    end
+    collection do
+      get 'admin'
+    end
+  end
+
   resources :lists, only: [:index]
 
   resources :entity do
     member do
       get 'interlocks'
+    end
+  end
+
+  resources :entities do
+    member do
+      get 'edit_twitter'
+      post 'add_twitter'  
+      post 'remove_twitter'
+    end
+
+    collection do
+      get 'search_by_name', as: 'name_search'
+      get 'next_twitter'
     end
   end
 
@@ -79,20 +100,39 @@ Lilsis::Application.routes.draw do
     constraints: { username: /[\w.]+/, id: /\d+/ },
     as: "note_with_user"
 
+  resources :maps do
+    member do
+      get 'raw'
+      get 'capture'
+      get 'edit_meta'
+      post 'update_meta'
+      post 'clone'
+      get 'edit_fullscreen'
+    end
+
+    collection do
+      get 'search'
+      get 'featured'
+    end
+  end
+
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
+  get "/home/maps" => "home#maps"
   get "/home/dashboard" => "home#dashboard"
   post "/home/dismiss",
     controller: 'home',
     action: 'dismiss',
     as: 'dismiss_helper'
 
-  get "/entities/search_by_name",
-    controller: 'entities',
-    action: 'search_by_name',
-    as: 'entity_name_search'
+  # get "/entities/search_by_name",
+  #   controller: 'entities',
+  #   action: 'search_by_name',
+  #   as: 'entity_name_search'
 
   get "/edits" => "edits#index"
+  get "/partypolitics" => "pages#partypolitics"
+  get "/oligrapher" => "maps#splash"
 
   match "*path", to: "errors#not_found", via: :all
 

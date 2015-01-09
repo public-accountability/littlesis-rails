@@ -8,6 +8,7 @@ if user_signed_in?
       Notes: home_notes_path,
       Groups: home_groups_path,
       Edits: "/home/modifications",
+      Maps: home_maps_path,
       'divider1' => 'divider',
       current_user.default_network.name => current_user.default_network.legacy_network_url,
       'divider2' => 'divider',
@@ -36,6 +37,7 @@ end
 
 items['Explore'] = {
   items: {
+    Maps: "/maps",
     Lists: "/lists",
     Groups: "/groups",
     Notes: "/notes",

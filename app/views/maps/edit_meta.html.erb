@@ -1,0 +1,19 @@
+<% content_for(:page_title, @map.name + " - Edit") %>
+
+<% content_for :body do %>
+
+
+<%= centered_content do %>
+
+<h1>Editing map meta</h1>
+
+<%= link_to 'edit map', edit_map_path(@map) %>
+<br />
+<br />
+
+<%= render 'form' %>
+
+<% end %>
+
+
+<% end %>

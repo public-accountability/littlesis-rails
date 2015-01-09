@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.0.0'
+gem 'rails', '4.1.0'
 gem 'mysql2'
 
 # users and authentication
@@ -62,12 +62,12 @@ gem 'kaminari'
 gem 'activerecord-session_store'
 
 # For search and indexing
-gem 'thinking-sphinx', '~> 3.0.2'
+gem 'thinking-sphinx', '~> 3.1.1'
 gem 'delayed_job_active_record'
-gem 'ts-delayed-delta', '2.0.0', :require => 'thinking_sphinx/deltas/delayed_delta'
+gem 'ts-delayed-delta', '2.0.2', :require => 'thinking_sphinx/deltas/delayed_delta'
 
 gem 'daemons'
-gem 'twitter-typeahead-rails'
+gem 'twitter-typeahead-rails', '~> 0.9.3'
 gem 'php-serialize'
 gem 'htmlentities'
 
@@ -88,3 +88,8 @@ group :test, :development do
   gem 'better_errors', '0.7.0'
   gem 'binding_of_caller', '0.7.0'
 end  
+
+gem 'sprockets', '2.11.0'
+gem 'twitter'
+gem 'poltergeist'
+gem 'mechanize'

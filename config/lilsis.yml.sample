@@ -14,6 +14,16 @@ defaults: &defaults
   verticalresponse_username:
   verticalresponse_password:
   research_from_email: research@littlesis.org
+  netmap_api_key:
+  netmap_default_width: 960
+  netmap_default_height: 550
+  twitter_consumer_key:
+  twitter_consumer_secret:
+  twitter_access_token:
+  twitter_access_token_secret:
+  twitter_list_id:
+  google_site_verification:
+  google_analytics_id:
 
 test:
   <<: *defaults

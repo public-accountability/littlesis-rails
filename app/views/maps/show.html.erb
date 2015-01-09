@@ -1,0 +1,65 @@
+<% content_for(:static_navbar, true) %>
+<% content_for(:page_title, @map.name) %>
+
+<%= render 'shared/facebook_sdk' %>
+
+<%= centered_content do %>
+
+<%= render partial: 'header', locals: { map: @map } %>
+
+<div id="netmap">
+  <%= render partial: 'controls' %>
+</div>
+
+<% if @map.description.present? %>
+  <div id="map-description">
+    <%= raw(@map.description) %>
+  </div>
+<% end %>
+
+<% if @map.references.present? %>
+  <br>
+  <div id="map-sources-header">
+    <h3>Sources
+      <span class="btn btn-link btn-sm">
+        <a id="show-sources-link" href="javascript:void(0);">show</a>
+        <a id="hide-sources-link" href="javascript:void(0);" style="display: none;">hide</a>
+      </span>
+    </h3>
+  </div>
+  <div id="map-sources" style="display: none;">
+    <% @map.references.each do |source| %>
+      <a href="<%= source.source %>" target="_blank"><%= source.name %></a><br>
+    <% end %>
+  </div>
+<% end %>
+
+<script>
+var data = <%= raw @map.prepared_data %>;
+var width = <%= Lilsis::Application.config.netmap_default_width %>;
+var height = <%= Lilsis::Application.config.netmap_default_height %>;
+var key = '<%= Lilsis::Application.config.netmap_api_key %>';
+var netmap = new Netmap(width, height, "#netmap", key, true);
+netmap.set_network_map_id(<%= @map.id %>);
+netmap.set_user_id(<%= @map.user_id %>);
+netmap.set_data(data);
+netmap.auto_center();
+<% if @map.zoom.present? %>
+netmap.zoom_by(<%= @map.zoom %>);
+<% end %>
+netmap.build();
+
+$('#show-sources-link').on('click', function() {
+  $('#map-sources').slideDown();
+  $('#hide-sources-link').show();
+  $(this).hide();
+});
+
+$('#hide-sources-link').on('click', function() {
+  $('#map-sources').slideUp();
+  $('#show-sources-link').show();
+  $(this).hide();
+});
+</script>
+
+<% end %>

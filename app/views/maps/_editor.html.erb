@@ -1,0 +1,31 @@
+<div id="netmap" class="netmap-editing <%= local_assigns[:fullscreen] ? 'fullscreen' : '' %>">
+  <%= render partial: 'controls' %>
+  <%= render partial: 'custom_controls' %>
+  <img id="img" style="display: none;"></img>
+  <canvas id="canvas" style="display: none;"></canvas>
+</div>
+
+<%= render partial: 'edit_controls', locals: { map: map } %>
+
+<% if map.description.present? %>
+  <div id="map-description">
+    <br />
+    <%= raw(map.description) %>
+  </div>
+<% end %>
+
+<script>
+var data = <%= raw map.prepared_data %>;
+var width = <%= local_assigns[:fullscreen].present? ? "null" : raw("$('#netmap').width()") %>;
+var height = <%= local_assigns[:fullscreen].present? ? "null" : Lilsis::Application.config.netmap_default_height %>;
+var key = '<%= Lilsis::Application.config.netmap_api_key %>';
+var netmap = new Netmap(width, height, "#netmap", key, false);
+netmap.set_network_map_id(<%= map.id %>);
+netmap.set_user_id(<%= map.user_id %>);
+netmap.set_data(data);
+netmap.auto_center();
+<% if map.zoom.present? %>
+netmap.zoom_by(<%= map.zoom %>);
+<% end %>
+netmap.build();
+</script>

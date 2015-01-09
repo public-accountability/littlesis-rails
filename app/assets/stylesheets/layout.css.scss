@@ -1,10 +1,19 @@
 @import "globals";
 
+.fullscreen {
+	height: 100%;
+	width: 100%;
+}
+
 body {
 	margin: 0;
 	font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
 	/* needed for bootstrap's fixed navbar */
 	padding-top: $navbar_height;
+
+	&.static {
+		padding-top: 0;
+	}
 }
 
 a {

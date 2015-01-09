@@ -20,12 +20,13 @@ class SfGuardUserProfile < ActiveRecord::Base
 		(name_first + " " + name_last).chomp
 	end
 
-  def s3_url(type)
-  	return S3.url(ActionController::Base.helpers.asset_path("images/system/user.png")) if filename.nil?
-    S3.url(image_path(type))
-  end
+  # def image_url(type)
+  #   return ActionController::Base.helpers.asset_path("images/system/user.png") if filename.nil?
+  #   image_path(type)
+  # end
         
   def image_path(type)
+    return ActionController::Base.helpers.asset_path("images/system/user.png") if filename.nil?
     ActionController::Base.helpers.asset_path("images/#{type}/#{filename(type)}")  
   end
 

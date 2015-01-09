@@ -6,9 +6,9 @@ indexer
 searchd
 {
   listen = 127.0.0.1:9306:mysql41
-  log = /Users/matthew/Sites/lilsis/log/production.searchd.log
-  query_log = /Users/matthew/Sites/lilsis/log/production.searchd.query.log
-  pid_file = /Users/matthew/Sites/lilsis/log/production.sphinx.pid
+  log = [PATH_TO_RAILS_ROOT]/log/production.searchd.log
+  query_log = [PATH_TO_RAILS_ROOT]/log/production.searchd.query.log
+  pid_file = [PATH_TO_RAILS_ROOT]/log/production.sphinx.pid
   workers = threads
   binlog_path = /Users/matthew/Sites/lilsis/tmp/binlog/production
 }
@@ -18,7 +18,7 @@ source entity_core_0
   type = mysql
   sql_host = localhost
   sql_user = littlesis
-  sql_pass = midm681_beet
+  sql_pass = [MYSQL_PASSWORD]
   sql_db = littlesis
   sql_sock = /tmp/mysql.sock
   sql_query_pre = SET TIME_ZONE = '+0:00'
@@ -58,7 +58,7 @@ source entity_delta_0
   type = mysql
   sql_host = localhost
   sql_user = littlesis
-  sql_pass = midm681_beet
+  sql_pass = [MYSQL_PASSWORD]
   sql_db = littlesis
   sql_sock = /tmp/mysql.sock
   sql_query_pre = SET TIME_ZONE = '+0:00'
@@ -97,7 +97,7 @@ source group_core_0
   type = mysql
   sql_host = localhost
   sql_user = littlesis
-  sql_pass = midm681_beet
+  sql_pass = [MYSQL_PASSWORD]
   sql_db = littlesis
   sql_sock = /tmp/mysql.sock
   sql_query_pre = SET TIME_ZONE = '+0:00'
@@ -134,7 +134,7 @@ source group_delta_0
   type = mysql
   sql_host = localhost
   sql_user = littlesis
-  sql_pass = midm681_beet
+  sql_pass = [MYSQL_PASSWORD]
   sql_db = littlesis
   sql_sock = /tmp/mysql.sock
   sql_query_pre = SET TIME_ZONE = '+0:00'
@@ -251,7 +251,7 @@ source note_core_0
   type = mysql
   sql_host = localhost
   sql_user = littlesis
-  sql_pass = midm681_beet
+  sql_pass = [MYSQL_PASSWORD]
   sql_db = littlesis
   sql_sock = /tmp/mysql.sock
   sql_query_pre = SET TIME_ZONE = '+0:00'
@@ -295,7 +295,7 @@ source note_delta_0
   type = mysql
   sql_host = localhost
   sql_user = littlesis
-  sql_pass = midm681_beet
+  sql_pass = [MYSQL_PASSWORD]
   sql_db = littlesis
   sql_sock = /tmp/mysql.sock
   sql_query_pre = SET TIME_ZONE = '+0:00'

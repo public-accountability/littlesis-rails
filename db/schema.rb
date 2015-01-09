@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140121183412) do
+ActiveRecord::Schema.define(version: 20141006212617) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -101,11 +101,11 @@ ActiveRecord::Schema.define(version: 20140121183412) do
   add_index "api_user", ["email"], name: "email_unique_idx", unique: true, using: :btree
 
   create_table "article", force: true do |t|
-    t.text     "url",                                                    null: false
+    t.text     "url",                 limit: 16777215,                   null: false
     t.string   "title",               limit: 200,                        null: false
     t.string   "authors",             limit: 200
     t.text     "body",                limit: 2147483647,                 null: false
-    t.text     "description"
+    t.text     "description",         limit: 16777215
     t.integer  "source_id"
     t.datetime "published_at"
     t.boolean  "is_indexed",                             default: false, null: false
@@ -172,17 +172,17 @@ ActiveRecord::Schema.define(version: 20140121183412) do
   add_index "business_person", ["entity_id"], name: "entity_id_idx", using: :btree
 
   create_table "campaigns", force: true do |t|
-    t.string   "name",        null: false
+    t.string   "name",                         null: false
     t.string   "tagline"
-    t.text     "description"
+    t.text     "description", limit: 16777215
     t.string   "logo"
     t.string   "cover"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "slug"
-    t.text     "findings"
-    t.text     "howto"
-    t.text     "custom_html"
+    t.text     "findings",    limit: 16777215
+    t.text     "howto",       limit: 16777215
+    t.text     "custom_html", limit: 16777215
     t.string   "logo_credit"
   end
 
@@ -228,10 +228,10 @@ ActiveRecord::Schema.define(version: 20140121183412) do
   end
 
   create_table "delayed_jobs", force: true do |t|
-    t.integer  "priority",   default: 0, null: false
-    t.integer  "attempts",   default: 0, null: false
-    t.text     "handler",                null: false
-    t.text     "last_error"
+    t.integer  "priority",                    default: 0, null: false
+    t.integer  "attempts",                    default: 0, null: false
+    t.text     "handler",    limit: 16777215,             null: false
+    t.text     "last_error", limit: 16777215
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
@@ -423,19 +423,19 @@ ActiveRecord::Schema.define(version: 20140121183412) do
   create_table "groups", force: true do |t|
     t.string   "name"
     t.string   "tagline"
-    t.text     "description"
-    t.boolean  "is_private",         default: false, null: false
+    t.text     "description",        limit: 16777215
+    t.boolean  "is_private",                          default: false, null: false
     t.string   "slug"
     t.integer  "default_network_id"
     t.integer  "campaign_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "logo"
-    t.text     "findings"
-    t.text     "howto"
+    t.text     "findings",           limit: 16777215
+    t.text     "howto",              limit: 16777215
     t.integer  "featured_list_id"
     t.string   "cover"
-    t.boolean  "delta",              default: true,  null: false
+    t.boolean  "delta",                               default: true,  null: false
     t.string   "logo_credit"
   end
 
@@ -613,8 +613,8 @@ ActiveRecord::Schema.define(version: 20140121183412) do
   create_table "network_map", force: true do |t|
     t.integer  "user_id",     limit: 8,                          null: false
     t.text     "data",        limit: 2147483647,                 null: false
-    t.string   "entity_ids",  limit: 200
-    t.string   "rel_ids",     limit: 200
+    t.string   "entity_ids",  limit: 5000
+    t.string   "rel_ids",     limit: 5000
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "is_deleted",                     default: false, null: false
@@ -622,8 +622,15 @@ ActiveRecord::Schema.define(version: 20140121183412) do
     t.text     "description", limit: 2147483647
     t.integer  "width",                                          null: false
     t.integer  "height",                                         null: false
+    t.boolean  "is_featured",                    default: false, null: false
+    t.string   "zoom",                           default: "1",   null: false
+    t.boolean  "is_private",                     default: false, null: false
+    t.string   "thumbnail"
+    t.boolean  "delta",                          default: true,  null: false
+    t.text     "index_data",  limit: 2147483647
   end
 
+  add_index "network_map", ["delta"], name: "index_network_map_on_delta", using: :btree
   add_index "network_map", ["user_id"], name: "user_id_idx", using: :btree
 
   create_table "note", force: true do |t|
@@ -1034,8 +1041,8 @@ ActiveRecord::Schema.define(version: 20140121183412) do
   add_index "scraper_meta", ["scraper", "namespace", "predicate", "value"], name: "uniqueness_idx", unique: true, using: :btree
 
   create_table "sessions", force: true do |t|
-    t.string   "session_id",                  null: false
-    t.text     "data",       limit: 16777215
+    t.string   "session_id",                    null: false
+    t.text     "data",       limit: 2147483647
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1220,12 +1227,12 @@ ActiveRecord::Schema.define(version: 20140121183412) do
   add_index "transaction", ["relationship_id"], name: "relationship_id_idx", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "email",                              default: "", null: false
-    t.string   "encrypted_password",     limit: 128, default: "", null: false
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                      default: 0
+    t.integer  "sign_in_count",          default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -1233,8 +1240,8 @@ ActiveRecord::Schema.define(version: 20140121183412) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "default_network_id"
-    t.integer  "sf_guard_user_id",                                null: false
-    t.string   "username",                                        null: false
+    t.integer  "sf_guard_user_id",                    null: false
+    t.string   "username",                            null: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

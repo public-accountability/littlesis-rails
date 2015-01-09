@@ -12,11 +12,11 @@ class User < ActiveRecord::Base
   belongs_to :sf_guard_user, inverse_of: :user
   has_one :sf_guard_user_profile, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :user
   # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
-  delegate :s3_url, to: :sf_guard_user_profile, allow_nil: true
+  delegate :image_path, to: :sf_guard_user_profile, allow_nil: true
 
   has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", primary_key: "sf_guard_user_id"
 
-  alias :image_url :s3_url
+  alias :image_url :image_path
 
   belongs_to :default_network, class_name: "List"
 
@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
 
   has_many :note_users, inverse_of: :user, dependent: :destroy
   has_many :received_notes, class_name: "Note", through: :note_users, source: :note, inverse_of: :recipients
+  has_many :network_maps, primary_key: "sf_guard_user_id"
 
   validates_uniqueness_of :sf_guard_user_id
 

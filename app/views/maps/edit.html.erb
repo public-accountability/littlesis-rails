@@ -1,0 +1,10 @@
+<% content_for(:static_navbar, true) %>
+<% content_for(:page_title, @map.name + " - Edit") %>
+
+<%= centered_content do %>
+
+<%= render partial: 'edit_header', locals: { map: @map } %>
+<%= render partial: 'editor', locals: { map: @map } %>
+<%= render partial: 'edit_guide' %>
+
+<% end %>
