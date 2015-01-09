@@ -21,6 +21,7 @@ class Entity < ActiveRecord::Base
   has_many :notes, through: :note_entities, inverse_of: :entities
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", inverse_of: :edited_entities
   has_many :external_keys, inverse_of: :entity, dependent: :destroy
+  has_one :public_company, inverse_of: :entity, dependent: :destroy
 
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }

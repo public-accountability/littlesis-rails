@@ -92,3 +92,4 @@ end
 gem 'sprockets', '2.11.0'
 gem 'twitter'
 gem 'poltergeist'
+gem 'mechanize'
