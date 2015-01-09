@@ -40,8 +40,8 @@
           <span style="font-weight: normal;"><%= user.email %></span>
         </td>
         <td class="users_name_bio">
-          <% if user.full_name.present? %>
-            <strong><%= user.full_name %></strong><br />
+          <% if user.full_name(true).present? %>
+            <strong><%= user.full_name(true) %></strong><br />
           <% end %>
           <%= user.bio %>
         </td>

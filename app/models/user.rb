@@ -87,8 +87,8 @@ class User < ActiveRecord::Base
     sf_guard_user_profile.show_full_name
   end
 
-  def full_name
-    return nil unless show_full_name?
+  def full_name(override=false)
+    return nil unless override or show_full_name?
     sf_guard_user_profile.full_name
   end
 
