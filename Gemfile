@@ -93,3 +93,6 @@ gem 'sprockets', '2.11.0'
 gem 'twitter'
 gem 'poltergeist'
 gem 'mechanize'
+gem 'StreetAddress', :require => "street_address"
+gem 'sequel'
+gem 'rmagick'

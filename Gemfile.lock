@@ -9,6 +9,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    StreetAddress (1.0.6)
     actionmailer (4.1.0)
       actionpack (= 4.1.0)
       actionview (= 4.1.0)
@@ -226,6 +227,7 @@ GEM
       redis (>= 2.2)
     remotipart (1.2.1)
     riddle (1.5.11)
+    rmagick (2.13.3)
     ruby-hmac (0.4.0)
     sass (3.2.19)
     sass-rails (4.0.3)
@@ -233,6 +235,7 @@ GEM
       sass (~> 3.2.0)
       sprockets (~> 2.8, <= 2.11.0)
       sprockets-rails (~> 2.0)
+    sequel (4.13.0)
     simple_oauth (0.2.0)
     slop (3.5.0)
     soap4r-ruby1.9 (2.0.5)
@@ -301,6 +304,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  StreetAddress
   activerecord-session_store
   acts_as_paranoid!
   asset_sync
@@ -332,7 +336,9 @@ DEPENDENCIES
   rails (= 4.1.0)
   rails_autolink
   redis-rails
+  rmagick
   sass-rails
+  sequel
   soap4r-ruby1.9
   sprockets (= 2.11.0)
   thinking-sphinx (~> 3.1.1)

@@ -24,7 +24,12 @@ class S3
       return true
     end
 
-    object.write(Pathname.new(local_path), { acl: :public_read })
-    true  
+    begin
+      object.write(Pathname.new(local_path), { acl: :public_read })
+    rescue
+      return false
+    end
+
+    true
   end
 end
