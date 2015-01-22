@@ -1,5 +1,7 @@
 Lilsis::Application.routes.draw do
 
+  # match "*path", to: "errors#maintenance", via: :all
+
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'
   devise_for :users
   root to: 'home#dashboard'
