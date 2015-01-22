@@ -15,7 +15,7 @@ class EntitiesController < ApplicationController
         url: rel.legacy_url,
         related_entity_name: related.name,
         related_entity_blurb: related.blurb,
-        related_entity_url: related.legacy_url,
+        related_entity_url: relationships_entity_path(related),
         related_entity_types: related.types.join(","),
         category: rel.category_name,
         description: rel.description_related_to(@entity),

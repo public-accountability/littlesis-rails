@@ -31,6 +31,10 @@ class Entity < ActiveRecord::Base
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
 
+  def to_param
+    "#{id}-#{name.parameterize}"
+  end
+
   def person?
     primary_ext == 'Person'
   end  
@@ -64,7 +68,7 @@ class Entity < ActiveRecord::Base
   end
 
   def extension_ids
-    ExtensionRecord.select(:definition_id).where(:entity_id => id).collect { |er| er.definition_id }
+    extension_records.pluck(:definition_id)
   end
   
   def extension_names
