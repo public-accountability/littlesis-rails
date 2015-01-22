@@ -1,5 +1,5 @@
 class EntitiesController < ApplicationController
-	before_filter :auth
+	before_filter :auth, except: [:relationships]
   before_action :set_entity, only: [:relationships, :edit_twitter, :add_twitter, :remove_twitter]
   include RelationshipsHelper
 
