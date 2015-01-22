@@ -68,14 +68,9 @@ Lilsis::Application.routes.draw do
 
   resources :lists, only: [:index]
 
-  resources :entity do
-    member do
-      get 'interlocks'
-    end
-  end
-
   resources :entities do
     member do
+      get 'relationships'
       get 'edit_twitter'
       post 'add_twitter'  
       post 'remove_twitter'

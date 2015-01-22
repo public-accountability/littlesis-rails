@@ -25,6 +25,8 @@ class Entity < ActiveRecord::Base
   has_one :public_company, inverse_of: :entity, dependent: :destroy
   has_many :addresses, inverse_of: :entity, dependent: :destroy
   has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
+  has_many :extension_records, inverse_of: :entity, dependent: :destroy
+  has_many :extension_definitions, through: :extension_records, inverse_of: :entities
 
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
@@ -285,5 +287,9 @@ class Entity < ActiveRecord::Base
     keys = external_keys.where(domain_id: Domain::TWITTER_ID)
     return nil unless keys.present?
     keys.collect(&:external_id)
+  end
+
+  def types
+    extension_definitions.map(&:display_name)
   end
 end

@@ -8,6 +8,7 @@ class Relationship < ActiveRecord::Base
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
   has_many :note_relationships, inverse_of: :relationship
   has_many :notes, through: :note_relationships, inverse_of: :relationships
+  has_one :position, inverse_of: :relationship
 
   def self.all_categories
     [
@@ -21,7 +22,8 @@ class Relationship < ActiveRecord::Base
       "Lobbying",
       "Social",
       "Professional",
-      "Ownership"  
+      "Ownership",
+      "Hierarchy"
     ]
   end
 
@@ -78,5 +80,38 @@ class Relationship < ActiveRecord::Base
 
   def name
     "#{category_name}: #{entity.name}, #{related.name}"
+  end
+
+  def entity_related_to(e)
+    entity.id == e.id ? related : entity
+  end
+
+  def default_description(order = 1)
+    case category_id
+    when 5 # donation
+      order == 1 ? 'donor' : 'donation recipient'
+    when 10 # ownership
+      order == 1 ? 'owner' : 'holding/investment'
+    when 11 # hierarchy
+      order == 1 ? 'child org' : 'parent org'
+    else
+      category_name
+    end
+  end
+
+  def description_related_to(e)
+    order = entity.id == e.id ? 2 : 1
+    desc = order == 1 ? description2 : description1
+    desc += (order == 1 ? " (donor)" : " (recipient)") if (desc.present? and category_id == 5)
+    return default_description(order) if desc.blank?
+    desc
+  end
+
+  def is_board
+    position.nil? ? nil : position.is_board
+  end
+
+  def is_executive
+    position.nil? ? nil : position.is_executive
   end
 end

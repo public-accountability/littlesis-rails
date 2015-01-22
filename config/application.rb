@@ -31,6 +31,8 @@ module Lilsis
     config.action_mailer.raise_delivery_errors = true
     config.action_mailer.perform_deliveries = true
 
+    config.assets.paths << "#{Rails.root}/vendor/assets/images"
+
     @twitter = Twitter::REST::Client.new do |cnf|
       cnf.consumer_key        = config.twitter_consumer_key
       cnf.consumer_secret     = config.twitter_consumer_secret

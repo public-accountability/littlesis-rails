@@ -15,7 +15,9 @@
 //= require jquery.bettertabs
 //= require jquery.shuffle
 //= require jquery.tinycarousel
+//= require jquery.dataTables
 //= require bootstrap
+//= require datatables-bootstrap
 //= require bootsy
 //= require editor_options
 //= reuqire more_link

@@ -1,6 +1,36 @@
 class EntitiesController < ApplicationController
 	before_filter :auth
-  before_action :set_entity, only: [:edit_twitter, :add_twitter, :remove_twitter]
+  before_action :set_entity, only: [:relationships, :edit_twitter, :add_twitter, :remove_twitter]
+  include RelationshipsHelper
+
+  def relationships
+    categories = { 0 => ["Category", ""] }
+    types = []
+    @relationships = @entity.relationships.includes(:entity).includes(:related).includes(:position).includes(entity: :extension_definitions).includes(related: :extension_definitions).map do |rel|
+      categories[rel.category_id] = [rel.category_name, rel.category_name]
+      related = rel.entity_related_to(@entity)
+      types = types.concat(related.types)
+      { 
+        id: rel.id,
+        url: rel.legacy_url,
+        related_entity_name: related.name,
+        related_entity_blurb: related.blurb,
+        related_entity_url: related.legacy_url,
+        related_entity_types: related.types.join(","),
+        category: rel.category_name,
+        description: rel.description_related_to(@entity),
+        date: relationship_date(rel),
+        is_current: rel.is_current,
+        amount: rel.amount,
+        updated_at: rel.updated_at,
+        is_board: rel.is_board,
+        is_executive: rel.is_executive
+       }
+    end
+    @categories = (0..11).map { |n| categories[n] }.select { |a| a.present? }
+    types.uniq! 
+    @types = [["Entity Type", ""]].concat(ExtensionDefinition.order(:tier).pluck(:display_name).select { |t| types.include?(t) }.map { |t| [t, t] })
+  end
 
 	def search_by_name
 		data = []

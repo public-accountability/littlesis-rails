@@ -10,7 +10,9 @@
  *
  *= require_self
  *= require bootstrap
+//= require datatables-bootstrap
  *= require bootsy
  *= require typeahead
+ += require jquery.dataTables
  *= require_tree .
  */

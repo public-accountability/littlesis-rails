@@ -1,0 +1,214 @@
+<div id="entity-header">
+  <div id="entity-name"><%= entity_link(@entity) %></div>
+  <div id="entity-blurb"><%= @entity.blurb %></div>
+</div>
+
+<h3 class="section">Relationships</h3>
+
+<div id="relationships-filters">
+<div class="form-inline">
+  Filters: &nbsp;
+  <select id="relationships-category" class="form-control">
+    <%= options_for_select(@categories) %>
+  </select>
+  &nbsp;
+  <select id="relationships-type" class="form-control">
+    <%= options_for_select(@types) %>
+  </select>
+  &nbsp;&nbsp;<input id="relationships-current" type="checkbox"> Current
+  &nbsp;&nbsp;<input id="relationships-board" type="checkbox"> Board Members
+  &nbsp;&nbsp;<input id="relationships-executive" type="checkbox"> Executives
+  &nbsp;&nbsp;<input id="relationships-amount" class="form-control" type="text" placeholder="amount" style="width: 150px;">
+</div>
+</div>
+
+<br>
+
+<table id="relationships-table" class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Entity</th>
+      <th>Category</th>
+      <th>Details</th>
+      <th>Date(s)</th>
+      <th></th>
+    </tr>
+  </thead>
+</table>
+
+<script>
+var data = <%= raw(@relationships.to_json); %>
+
+var ternary = function(data, type, row) {
+  if (data == null) {
+    return "null";
+  } else if (data == true) {
+    return "true";
+  } else {
+    return "false";
+  }
+}
+
+$(document).ready(function() {
+  $('#relationships-table').DataTable({
+    data: data,
+    columns: [
+      { 
+        data: 'related_entity_name', 
+        name: 'related_entity_name', 
+        width: "40%",
+        render: function(data, type, row) {
+          var a = document.createElement('a');
+          a.href = row.related_entity_url;
+          a.setAttribute('class', 'entity-link');
+          a.innerHTML = row.related_entity_name;
+          return a.outerHTML;
+        }
+      },
+      { 
+        data: 'category',
+        name: 'category',
+        width: "10%" 
+      },
+      { 
+        data: 'description',
+        render: function(data, type, row) {
+          if (row.amount) {
+            return data + " &bull; $" + row.amount
+          } else {
+            return data;
+          }
+        }
+      },
+      { 
+        data: 'date',
+        name: 'date',
+        width: "10%",
+        render: function(data, type, row) {
+          if (data == "") {
+            if (row.is_current == "") {
+              return null;
+            } else if (row.is_current == true) {
+              return "(current)";
+            } else {
+              return "(past)";
+            }
+          } else {
+            return data;
+          }
+        }
+      },
+      {
+        data: 'more',
+        name: 'more',
+        sortable: false,
+        render: function(data, type, row) {
+          var a = document.createElement('a');
+          a.href = row.url;
+          a.innerHTML = 'more';
+          return a.outerHTML;
+        }
+      },
+      {
+        data: 'related_entity_types',
+        name: 'related_entity_types',
+        visible: false, 
+        searchable: true
+      },
+      {
+        data: 'is_current',
+        name: 'is_current',
+        render: ternary,
+        visible: false,
+        searchable: true
+      },
+      {
+        data: 'is_board',
+        name: 'is_board',
+        render: ternary,
+        visible: false,
+        searchable: true
+      },
+      {
+        data: 'is_executive',
+        name: 'is_executive',
+        render: ternary,
+        visible: false,
+        searchable: true
+      },
+      {
+        data: 'amount',
+        name: 'amount',
+        visible: false,
+        searchable: true
+      }   
+    ],
+    pageLength: 100
+  });
+
+  var table = $('#relationships-table').DataTable();
+
+  var category = $('#relationships-category');
+  category.on('change', function() {
+    table.columns('category:name').search($(this).val()).draw();
+  });
+
+  var type = $('#relationships-type');
+  type.on('change', function() {
+    table.columns('related_entity_types:name').search("\\b" + $(this).val() + "\\b", true).draw();
+  });
+
+  var current = $('#relationships-current');
+  current.on('change', function() {
+    if (this.checked) {
+      table.column('is_current:name').search("true").draw();
+    } else {
+      table.columns('is_current:name').search("").draw();
+    }
+  });
+
+  var board = $('#relationships-board');
+  board.on('change', function() {
+    if (this.checked) {
+      table.column('is_board:name').search("true").draw();
+    } else {
+      table.columns('is_board:name').search("").draw();
+    }
+  });
+
+  var executive = $('#relationships-executive');
+  executive.on('change', function() {
+    if (this.checked) {
+      table.column('is_executive:name').search("true").draw();
+    } else {
+      table.columns('is_executive:name').search("").draw();
+    }
+  });
+
+  $.fn.dataTable.ext.search.push(
+    function(settings, data, dataIndex) {
+      var val = $('#relationships-amount').val();
+      var min = parseInt(val);
+      var amount = parseFloat( data[data.length-1] ) || 0;
+
+      if (isNaN(min)) {
+        return true;
+      }
+
+      if (isNaN(amount)) {
+        return false;
+      }
+
+      if (amount >= min) {
+        return true;
+      }
+
+      return false;
+    }
+  );
+
+  $('#relationships-amount').keyup(function() {
+    table.draw();
+  });
+});
+</script>
