@@ -6,17 +6,21 @@ class EntitiesController < ApplicationController
   def relationships
     categories = { 0 => ["Category", ""] }
     types = []
-    @relationships = @entity.relationships.includes(:entity).includes(:related).includes(:position).includes(entity: :extension_definitions).includes(related: :extension_definitions).map do |rel|
+    industries = []
+    @relationships = @entity.relationships.includes(:entity).includes(:related).includes(:position).includes(entity: :extension_definitions).includes(related: :extension_definitions).includes(related: :os_entity_categories).includes(related: :os_categories).map do |rel|
       categories[rel.category_id] = [rel.category_name, rel.category_name]
       related = rel.entity_related_to(@entity)
       types = types.concat(related.types)
+      industries = industries.concat(related.industries)
       { 
         id: rel.id,
         url: rel.legacy_url,
-        related_entity_name: related.name,
-        related_entity_blurb: related.blurb,
-        related_entity_url: relationships_entity_path(related),
-        related_entity_types: related.types.join(","),
+        entity_id: related.id,
+        entity_name: related.name,
+        entity_blurb: related.blurb,
+        entity_url: relationships_entity_path(related),
+        entity_types: related.types.join(","),
+        entity_industries: related.industries.join(','),    
         category: rel.category_name,
         description: rel.description_related_to(@entity),
         date: relationship_date(rel),
@@ -24,12 +28,18 @@ class EntitiesController < ApplicationController
         amount: rel.amount,
         updated_at: rel.updated_at,
         is_board: rel.is_board,
-        is_executive: rel.is_executive
+        is_executive: rel.is_executive,
+        start_date: rel.start_date,
+        end_date: rel.end_date
        }
     end
     @categories = (0..11).map { |n| categories[n] }.select { |a| a.present? }
     types.uniq! 
     @types = [["Entity Type", ""]].concat(ExtensionDefinition.order(:tier).pluck(:display_name).select { |t| types.include?(t) }.map { |t| [t, t] })
+    industries -= ["Other", "Unknown", "Non-contribution"]
+    industries.uniq!
+    industries.sort!
+    @industries = [["Industry", ""]].concat(industries)
   end
 
 	def search_by_name

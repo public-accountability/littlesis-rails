@@ -7,18 +7,23 @@
 
 <div id="relationships-filters">
 <div class="form-inline">
-  Filters: &nbsp;
+  <input id="relationships-search" class="form-control" style="width: 250px;" type="text" placeholder="search">
   <select id="relationships-category" class="form-control">
     <%= options_for_select(@categories) %>
   </select>
-  &nbsp;
   <select id="relationships-type" class="form-control">
     <%= options_for_select(@types) %>
   </select>
-  &nbsp;&nbsp;<input id="relationships-current" type="checkbox"> Current
-  &nbsp;&nbsp;<input id="relationships-board" type="checkbox"> Board Members
-  &nbsp;&nbsp;<input id="relationships-executive" type="checkbox"> Executives
-  &nbsp;&nbsp;<input id="relationships-amount" class="form-control" type="text" placeholder="amount" style="width: 150px;">
+  <select id="relationships-industry" class="form-control">
+    <%= options_for_select(@industries) %>
+  </select>  
+  <input id="relationships-amount" class="form-control" type="text" placeholder="amount" style="width: 100px;">
+  <div id="relationships-filters-line2">
+    <input id="relationships-current" type="checkbox"> Current
+    &nbsp;&nbsp;<input id="relationships-board" type="checkbox"> Board Members
+    &nbsp;&nbsp;<input id="relationships-executive" type="checkbox"> Executives
+    &nbsp;&nbsp;<button id="relationships-export" class="btn btn-default">Export CSV</button>
+  </div>
 </div>
 </div>
 
@@ -52,16 +57,18 @@ var ternary = function(data, type, row) {
 $(document).ready(function() {
   $('#relationships-table').DataTable({
     data: data,
+    dom: "iprt<'export'>p",
+    pageLength: 100,
     columns: [
       { 
-        data: 'related_entity_name', 
-        name: 'related_entity_name', 
+        data: 'entity_name', 
+        name: 'entity_name', 
         width: "40%",
         render: function(data, type, row) {
           var a = document.createElement('a');
-          a.href = row.related_entity_url;
+          a.href = row.entity_url;
           a.setAttribute('class', 'entity-link');
-          a.innerHTML = row.related_entity_name;
+          a.innerHTML = row.entity_name;
           return a.outerHTML;
         }
       },
@@ -72,6 +79,7 @@ $(document).ready(function() {
       },
       { 
         data: 'description',
+        name: 'description',
         render: function(data, type, row) {
           if (row.amount) {
             return data + " &bull; $" + row.amount
@@ -102,6 +110,7 @@ $(document).ready(function() {
         data: 'more',
         name: 'more',
         sortable: false,
+        searchable: false,
         render: function(data, type, row) {
           var a = document.createElement('a');
           a.href = row.url;
@@ -110,8 +119,8 @@ $(document).ready(function() {
         }
       },
       {
-        data: 'related_entity_types',
-        name: 'related_entity_types',
+        data: 'entity_types',
+        name: 'entity_types',
         visible: false, 
         searchable: true
       },
@@ -141,9 +150,29 @@ $(document).ready(function() {
         name: 'amount',
         visible: false,
         searchable: true
-      }   
-    ],
-    pageLength: 100
+      },
+      {
+        data: 'entity_blurb',
+        name: 'entity_blurb',
+        visible: false,
+        searchable: true
+      },
+      {
+        data: 'entity_industries',
+        name: 'entity_industries',
+        visible: false,
+        searchable: true
+      },
+      {
+        data: 'master_search',
+        name: 'master_search',
+        visible: false,
+        searchable: true,
+        render: function(data, type, row) {
+          return Object.keys(row).map(function(key) { return row[key] }).join('  ');
+        }
+      }
+    ]
   });
 
   var table = $('#relationships-table').DataTable();
@@ -155,7 +184,12 @@ $(document).ready(function() {
 
   var type = $('#relationships-type');
   type.on('change', function() {
-    table.columns('related_entity_types:name').search("\\b" + $(this).val() + "\\b", true).draw();
+    table.columns('entity_types:name').search("\\b" + $(this).val() + "\\b", true).draw();
+  });
+
+  var type = $('#relationships-industry');
+  type.on('change', function() {
+    table.columns('entity_industries:name').search("\\b" + $(this).val() + "\\b", true).draw();
   });
 
   var current = $('#relationships-current');
@@ -189,7 +223,7 @@ $(document).ready(function() {
     function(settings, data, dataIndex) {
       var val = $('#relationships-amount').val();
       var min = parseInt(val);
-      var amount = parseFloat( data[data.length-1] ) || 0;
+      var amount = parseFloat(data[9]) || 0;
 
       if (isNaN(min)) {
         return true;
@@ -207,8 +241,49 @@ $(document).ready(function() {
     }
   );
 
+  var search = $('#relationships-search');
+  search.keyup(function() {
+    table.columns('master_search:name').search($(this).val()).draw();
+  });
+
   $('#relationships-amount').keyup(function() {
     table.draw();
   });
+
+  var array_to_csv_data = function(ary) {
+    var str = "data:text/csv;charset=utf-8,";
+    var lines = ary.map(function(data){
+      return data.join(",");
+    });
+    str += lines.join("\n");    
+    return encodeURI(str);
+  }
+
+  var escape_csv_value = function(value) {
+    var value = value === null ? '' : value.toString();
+    value = value.replace(/"/g, '""');
+    if (value.search(/("|,|\n)/g) >= 0) {
+      value = '"' + value + '"';      
+    }
+    return value;  
+  }
+
+  // var link = document.createElement('a');
+  // link.href = "javascript:void(0);"
+  // link.setAttribute('class', 'btn btn-default');
+  // link.text = 'Export CSV';
+  // $(link).css('float', 'left');
+  $('#relationships-export').on('click', function() {
+    var fields = ['entity_id', 'entity_name', 'entity_blurb', 'entity_types', 'category', 'description', 'is_current', 'start_date', 'end_date', 'is_board', 'is_executive']
+    var data = [fields]
+    data = data.concat(Array.prototype.slice.apply(table.data()).map(function(d) {
+      return fields.map(function(field) {
+        return escape_csv_value(d[field]);
+      });
+    }));
+    window.open(array_to_csv_data(data));
+  });
+  // var e = $('.export')[0];
+  // e.appendChild(link);
 });
 </script>

@@ -27,6 +27,8 @@ class Entity < ActiveRecord::Base
   has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
   has_many :extension_records, inverse_of: :entity, dependent: :destroy
   has_many :extension_definitions, through: :extension_records, inverse_of: :entities
+  has_many :os_entity_categories, inverse_of: :entity
+  has_many :os_categories, through: :os_entity_categories, inverse_of: :entities
 
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
@@ -295,5 +297,9 @@ class Entity < ActiveRecord::Base
 
   def types
     extension_definitions.map(&:display_name)
+  end
+
+  def industries
+    os_categories.pluck(:industry_name).uniq
   end
 end
