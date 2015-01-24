@@ -52,7 +52,6 @@ class ListsController < ApplicationController
   end
 
   def relationships
-    @table = RelationshipsDatatable.new(@list.entities)
   end
 
   private
