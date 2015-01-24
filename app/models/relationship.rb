@@ -100,7 +100,7 @@ class Relationship < ActiveRecord::Base
   end
 
   def description_related_to(e)
-    order = entity.id == e.id ? 2 : 1
+    order = entity1_id == e.id ? 2 : 1
     desc = order == 1 ? description2 : description1
     desc += (order == 1 ? " (donor)" : " (recipient)") if (desc.present? and category_id == 5)
     return default_description(order) if desc.blank?

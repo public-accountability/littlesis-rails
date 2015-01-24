@@ -6,5 +6,5 @@
 <h3 class="section">Relationships</h3>
 
 <% cache(@list.cache_key('relationships'), expires_in: 1.day) do %>
-  <%= render partial: 'relationships/datatable', locals: { table: @table } %>
+  <%= render partial: 'relationships/datatable', locals: { table: RelationshipsDatatable.new(@list.entities) } %>
 <% end %>

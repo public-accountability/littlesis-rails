@@ -300,6 +300,6 @@ class Entity < ActiveRecord::Base
   end
 
   def industries
-    os_categories.pluck(:industry_name).uniq
+    os_categories.map(&:industry_name).uniq
   end
 end

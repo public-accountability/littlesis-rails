@@ -3,7 +3,6 @@ class EntitiesController < ApplicationController
   before_action :set_entity, only: [:relationships, :edit_twitter, :add_twitter, :remove_twitter]
 
   def relationships
-    @table = RelationshipsDatatable.new(@entity)
   end
 
 	def search_by_name

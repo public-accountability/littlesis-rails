@@ -5,23 +5,26 @@ class RelationshipsDatatable
 
   attr_reader :data, :links, :categories, :types, :industries, :entities, :interlocks
 
-  def initialize(entities)
+  def initialize(entities, force_interlocks=false)
+    @force_interlocks = force_interlocks
     categories = { 0 => ["Category", ""] }
     types = []
     industries = []
 
     @entities = Array(entities)
     entity_ids = @entities.map(&:id)
-    @links = Link.includes({ relationship: :position }, { entity: :extension_definitions }, { related: [:extension_definitions, :os_entity_categories, :os_categories] }).where(entity1_id: entity_ids).where.not(entity2_id: entity_ids).limit(10000)
+    @links = Link.includes({ relationship: :position }, :entity, { related: [:extension_definitions, :os_categories] }).where(entity1_id: entity_ids).where.not(entity2_id: entity_ids).limit(10000)
 
-    degree2_links = Link.where(entity1_id: @links.select { |l| [1,3].include?(l.category_id) }.map(&:entity2_id), category_id: [1, 3]).where.not(entity2_id: entity_ids).pluck(:entity1_id, :entity2_id).uniq
-    interlocks = degree2_links.reduce({}) do |hash, link| 
-      hash[link[1]] = hash.fetch(link[1], []).push(link[0])
-      hash
+    if interlocks?
+      degree2_links = Link.select(:entity1_id, :entity2_id).where(entity1_id: @links.select { |l| [1,3].include?(l.category_id) }.map(&:entity2_id), category_id: [1, 3]).where.not(entity2_id: entity_ids).map { |l| [l.entity1_id, l.entity2_id] }.uniq
+      interlocks = degree2_links.reduce({}) do |hash, link| 
+        hash[link[1]] = hash.fetch(link[1], []).push(link[0])
+        hash
+      end
+      top_interlocks = interlocks.select { |k, v| v.count > 1 }.sort { |a, b| a[1].count <=> b[1].count }.reverse.take(10)
+      entities = Entity.find(top_interlocks.map { |a| a[0] }).group_by(&:id)
+      @interlocks = [["Interlocks", ""]].concat(top_interlocks.map { |a| e = entities[a[0]].first; [e.name + " (#{interlocks[e.id].count})", e.id] })
     end
-    top_interlocks = interlocks.select { |k, v| v.count > 1 }.sort { |a, b| a[1].count <=> b[1].count }.reverse.take(10)
-    entities = Entity.find(top_interlocks.map { |a| a[0] }).group_by(&:id)
-    @interlocks = [["Interlocks", ""]].concat(top_interlocks.map { |a| e = entities[a[0]].first; [e.name + " (#{interlocks[e.id].count})", e.id] })
 
     @data = @links.map do |link|
       rel = link.relationship
@@ -30,7 +33,7 @@ class RelationshipsDatatable
       related = link.related
       types = types.concat(related.types)
       industries = industries.concat(related.industries)
-      interlock_ids = degree2_links.select { |l| l[0] == related.id }.map { |l| l[1] }.uniq
+      interlock_ids = degree2_links.select { |l| l[0] == related.id }.map { |l| l[1] }.uniq if interlocks?
       { 
         id: link.relationship_id,
         url: rel.legacy_url,
@@ -54,7 +57,7 @@ class RelationshipsDatatable
         is_executive: rel.is_executive,
         start_date: rel.start_date,
         end_date: rel.end_date,
-        interlock_ids: interlock_ids.join(',')
+        interlock_ids: interlocks? ? interlock_ids.join(',') : nil
        }
     end
 
@@ -73,5 +76,10 @@ class RelationshipsDatatable
 
   def list?
     @entities.count > 1
+  end
+
+  def interlocks?
+    @num_links ||= @links.count
+    @force_interlocks or @num_links < 1000
   end
 end
