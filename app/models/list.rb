@@ -2,6 +2,7 @@ class List < ActiveRecord::Base
   self.table_name = "ls_list"
 
   include SoftDelete
+  include Cacheable
 
   has_many :list_entities, inverse_of: :list, dependent: :destroy
   has_many :entities, through: :list_entities
@@ -22,6 +23,10 @@ class List < ActiveRecord::Base
 
   has_many :sf_guard_group_lists, inverse_of: :list, dependent: :destroy
   has_many :sf_guard_groups, through: :sf_guard_group_lists, inverse_of: :lists
+
+  def to_param
+    "#{id}-#{name.parameterize}"
+  end
 
   def network?
   	@is_network

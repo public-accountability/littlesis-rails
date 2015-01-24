@@ -151,8 +151,15 @@ h3.section {
 }
 
 #relationships-filters-line2 {
-  margin-left: 5px;
-  margin-top: 10px;
+  margin-top: 5px;
+}
+
+#relationships-search {
+  width: 200px;
+}
+
+#relationships-amount {
+  width: 75px;
 }
 
 /* DataTables sorting */
@@ -181,22 +188,22 @@ html .dataTables_filter label {
 
 html table.dataTable thead {
   .sorting_asc {
-      background: asset-url('sort_asc.png') no-repeat center left;
+    background: asset-url('sort_asc.png') no-repeat center left;
   }
    
   .sorting_desc {
-      background: asset-url('sort_desc.png') no-repeat center left;
+    background: asset-url('sort_desc.png') no-repeat center left;
   }
    
   .sorting {
-      background: asset-url('sort_both.png') no-repeat center left;
+    background: asset-url('sort_both.png') no-repeat center left;
   }
    
   .sorting_asc_disabled {
-      background: asset-url('sort_asc_disabled.png') no-repeat center left;
+    background: asset-url('sort_asc_disabled.png') no-repeat center left;
   }
    
   .sorting_desc_disabled {
-      background: asset-url('sort_desc_disabled.png') no-repeat center left;
+    background: asset-url('sort_desc_disabled.png') no-repeat center left;
   }
 }

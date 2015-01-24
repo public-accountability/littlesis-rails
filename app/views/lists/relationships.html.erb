@@ -1,0 +1,10 @@
+<div id="list-header">
+  <div id="list-name"><%= list_link(@list) %></div>
+  <div id="list-description"><%= @list.description %></div>
+</div>
+
+<h3 class="section">Relationships</h3>
+
+<% cache(@list.cache_key('relationships'), expires_in: 1.day) do %>
+  <%= render partial: 'relationships/datatable', locals: { table: @table } %>
+<% end %>

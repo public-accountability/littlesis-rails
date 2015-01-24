@@ -1,5 +1,5 @@
 class ListsController < ApplicationController
-  before_action :set_list, only: [:show, :edit, :update, :destroy]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships]
 
   # GET /lists
   def index
@@ -49,6 +49,10 @@ class ListsController < ApplicationController
   def destroy
     @list.destroy
     redirect_to lists_url, notice: 'List was successfully destroyed.'
+  end
+
+  def relationships
+    @table = RelationshipsDatatable.new(@list.entities)
   end
 
   private

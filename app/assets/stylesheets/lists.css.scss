@@ -2,3 +2,24 @@ td.lists_table_name {
 	min-width: 350px;
 	font-weight: bold;
 }
+
+#list-header {
+  margin-top: -14px;
+  margin-bottom: 20px;
+}
+
+#list-name {
+  font-size: 42px; 
+  line-height: 60px;
+  font-weight: 500;
+
+  a:hover {
+    text-decoration: none;
+  }
+}
+
+#list-description {
+  font-size: 21px;
+  line-height: 30px;
+  font-weight: 300;
+}

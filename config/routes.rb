@@ -68,7 +68,11 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :lists, only: [:index]
+  resources :lists, only: [:index] do
+    member do
+      get 'relationships'
+    end
+  end
 
   resources :entities do
     member do
