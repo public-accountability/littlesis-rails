@@ -20,10 +20,10 @@ module RelationshipsHelper
     span = ""
 
     if s
-      span = s + "&rarr;"
+      span = s + " &rarr; "
       span += e if e
     elsif e
-      span = "?&rarr;" + e
+      span = "? &rarr; " + e
     end
   
     span

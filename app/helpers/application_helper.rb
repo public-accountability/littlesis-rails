@@ -20,6 +20,14 @@ module ApplicationHelper
 		raw str
 	end
 
+  def excerpt(text, length=30)
+    if text
+      break_point = text.index(/[\s.,:;!?-]/, length-5)
+      break_point = break_point ? break_point : length + 1
+      text[0..break_point-1] + (text.length > break_point - 1 ? "..." : "")
+    end
+  end
+
   def more_link(content, max=nil, id=nil, make_raw=true)
   	splitter = "<!-- more -->"
   	if content.include? splitter or max.present?

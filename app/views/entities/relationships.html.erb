@@ -27,8 +27,6 @@
 </div>
 </div>
 
-<br>
-
 <table id="relationships-table" class="table table-striped table-bordered">
   <thead>
     <tr>
@@ -69,7 +67,10 @@ $(document).ready(function() {
           a.href = row.entity_url;
           a.setAttribute('class', 'entity-link');
           a.innerHTML = row.entity_name;
-          return a.outerHTML;
+          var blurb = document.createElement('span');
+          blurb.setAttribute('class', 'entity-blurb');
+          blurb.innerHTML = row.entity_blurb_excerpt;
+          return a.outerHTML + " &nbsp; " + blurb.outerHTML;
         }
       },
       { 
@@ -119,6 +120,12 @@ $(document).ready(function() {
         }
       },
       {
+        data: 'id',
+        name: 'id',
+        visible: false,
+        searchable: false
+      },
+      {
         data: 'entity_types',
         name: 'entity_types',
         visible: false, 
@@ -156,6 +163,12 @@ $(document).ready(function() {
         name: 'entity_blurb',
         visible: false,
         searchable: true
+      },
+      {
+        data: 'entity_blurb_excerpt',
+        name: 'entity_blurb_excerpt',
+        visible: false,
+        searchable: false
       },
       {
         data: 'entity_industries',
@@ -268,13 +281,8 @@ $(document).ready(function() {
     return value;  
   }
 
-  // var link = document.createElement('a');
-  // link.href = "javascript:void(0);"
-  // link.setAttribute('class', 'btn btn-default');
-  // link.text = 'Export CSV';
-  // $(link).css('float', 'left');
   $('#relationships-export').on('click', function() {
-    var fields = ['entity_id', 'entity_name', 'entity_blurb', 'entity_types', 'category', 'description', 'is_current', 'start_date', 'end_date', 'is_board', 'is_executive']
+    var fields = ['id', 'entity_id', 'entity_name', 'entity_blurb', 'entity_types', 'category', 'description', 'is_current', 'start_date', 'end_date', 'is_board', 'is_executive']
     var data = [fields]
     data = data.concat(Array.prototype.slice.apply(table.data()).map(function(d) {
       return fields.map(function(field) {
@@ -283,7 +291,5 @@ $(document).ready(function() {
     }));
     window.open(array_to_csv_data(data));
   });
-  // var e = $('.export')[0];
-  // e.appendChild(link);
 });
 </script>

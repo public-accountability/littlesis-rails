@@ -2,6 +2,7 @@ class EntitiesController < ApplicationController
 	before_filter :auth, except: [:relationships]
   before_action :set_entity, only: [:relationships, :edit_twitter, :add_twitter, :remove_twitter]
   include RelationshipsHelper
+  include ApplicationHelper
 
   def relationships
     categories = { 0 => ["Category", ""] }
@@ -18,6 +19,7 @@ class EntitiesController < ApplicationController
         entity_id: related.id,
         entity_name: related.name,
         entity_blurb: related.blurb,
+        entity_blurb_excerpt: excerpt(related.blurb, 50 - related.name.length),
         entity_url: relationships_entity_path(related),
         entity_types: related.types.join(","),
         entity_industries: related.industries.join(','),    
