@@ -1,5 +1,3 @@
-require 'rmagick'
-
 class Image < ActiveRecord::Base
   include SingularTable
   include SoftDelete

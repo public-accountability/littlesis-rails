@@ -162,6 +162,22 @@ h3.section {
   width: 75px;
 }
 
+.buttons {
+  float: left;
+  margin-right: 10px;
+  margin-top: 7px;
+  display: inline-block;
+
+  a {
+    margin-right: 5px;
+  }
+}
+
+html #relationships-table_info {
+  clear: none;
+  margin-top: 3px;
+}
+
 /* DataTables sorting */
 html .dataTables_wrapper .dataTables_paginate .paginate_button {
   padding: 0;

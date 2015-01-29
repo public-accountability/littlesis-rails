@@ -1,9 +1,9 @@
 <div id="entity-header">
-  <div id="entity-name"><%= entity_link(@entity) %></div>
+  <div id="entity-name"><%= entity_link(@entity) %> <%= link_to('View Profile', @entity.legacy_url, class: 'btn btn-sm btn-default') %></div>
   <div id="entity-blurb"><%= @entity.blurb %></div>
 </div>
 
-<h3 class="section">Relationships</h3>
+<h3 class="section">Relationship Data</h3>
 
 <% cache(@entity.cache_key('relationships'), expires_in: 1.day) do %>
   <%= render partial: 'relationships/datatable', locals: { table: RelationshipsDatatable.new(@entity) } %>
