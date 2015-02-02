@@ -76,6 +76,11 @@ class Entity < ActiveRecord::Base
   def extension_names
     extension_ids.collect { |id| self.class.all_extension_names[id] }
   end
+
+  def self.with_ext(ext)
+    ext_id = all_extension_names.index(ext)
+    joins(:extension_records).where(extension_record: { definition_id: ext_id })
+  end
   
   def self.all_extension_names    
     [
