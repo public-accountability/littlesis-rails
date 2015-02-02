@@ -365,7 +365,8 @@ $(document).ready(function() {
   });
 
   var init_search = "";
-  window.location.hash.slice(1).split('&').forEach(function(pair) {
+  var hash = (window.location.href.split('#').length > 1) ? window.location.href.split('#')[1] : "";
+  hash.split('&').forEach(function(pair) {
     pair = pair.split('=');
     var key = pair[0];
     var val = decodeURIComponent(pair[1]);

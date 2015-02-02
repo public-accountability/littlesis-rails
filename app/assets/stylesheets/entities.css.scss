@@ -100,7 +100,7 @@ $small_image_size: 50px;
 }
 
 
-/* relationships */
+/* entity datatable */
 
 #entity-header {
   margin-top: -14px;
@@ -171,6 +171,10 @@ h3.section {
   a {
     margin-right: 5px;
   }
+}
+
+#relationships-filters select {
+  max-width: 280px;
 }
 
 html #relationships-table_info {
