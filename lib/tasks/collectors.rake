@@ -53,14 +53,14 @@ namespace :collectors do
 
     images = 0
     count = 0
-    previous_count = list_count = address_count = arts_count = postal_count = match_count = common_count = 0
+    total_count = previous_count = list_count = address_count = arts_count = postal_count = match_count = common_count = 0
     already_imported_ids = ListEntity.where(list_id: list.id).pluck(:entity_id)
     collector_list_ids = ListEntity.where(list_id: 330).pluck(:entity_id)
     cultural_org_ids = Entity.with_ext('Cultural').pluck(:id)
     arts_related_ids = Link.where(entity1_id: cultural_org_ids, category_id: [1, 3, 5]).pluck(:entity2_id).uniq
 
-    begin
-      CSV.foreach(args[:filename], encoding: 'windows-1251:utf-8') do |row|
+    CSV.foreach(args[:filename], encoding: 'windows-1251:utf-8') do |row|
+      begin
         # skip label row
         if count == 0
           count = 1
@@ -69,29 +69,25 @@ namespace :collectors do
 
         count += 1
 
-        begin
-          row.map! { |cell| cell.present? ? cell.gsub(/[\n\r]/, " ").gsub(/\s{2,}/, " ") : nil }
-          importer = EntityNameAddressCsvImporter.new(row)
-          importer.already_imported_ids(already_imported_ids)
-          importer.collector_list_ids(collector_list_ids)
-          importer.arts_related_ids(arts_related_ids)
+        row.map! { |cell| cell.present? ? cell.gsub(/[\n\r]/, " ").gsub(/\s{2,}/, " ") : nil }
+        importer = EntityNameAddressCsvImporter.new(row)
+        importer.already_imported_ids(already_imported_ids)
+        importer.collector_list_ids(collector_list_ids)
+        importer.arts_related_ids(arts_related_ids)
 
-          if entity = importer.import
-            match_ids << entity.id if entity.id? and !importer.previous_import?
-            # entity.association(:lists).add_to_target(list)            
-            entity.lists << list unless entity.list_ids.include?(list.id)
-            entity.last_user_id = 2
-            entity.save!
+        if entity = importer.import
+          match_ids << entity.id if entity.id? and !importer.previous_import?
+          # entity.association(:lists).add_to_target(list)            
+          entity.lists << list unless entity.list_ids.include?(list.id)
+          entity.last_user_id = 2
+          entity.save!
 
-            duplicates << entity if importer.matches?
-            output_csv << [entity.id].concat(row)
-            output_ary << [entity.id].concat(row)
-          else
-            output_csv << [""].concat(row)
-            output_ary << [""].concat(row)
-          end
-        rescue => e
-          binding.pry
+          duplicates << entity if importer.matches?
+          output_csv << [entity.id].concat(row)
+          output_ary << [entity.id].concat(row)
+        else
+          output_csv << [""].concat(row)
+          output_ary << [""].concat(row)
         end
 
         match_type = importer.match_type
@@ -145,8 +141,13 @@ namespace :collectors do
         print "#{count} [#{importer.status}] :: #{importer.row}\n"
         total_count = list_count + address_count + arts_count + postal_count + match_count + common_count
         print "#{list_count} list -- #{address_count} address -- #{arts_count} arts -- #{postal_count} postal -- #{match_count} name -- #{common_count} common -- #{total_count} total\n"
-      end
 
+      rescue Exception => e
+        binding.pry
+      end
+    end
+
+    begin
       output_csv.close
 
       open(Rails.root.join("data", "collectors-match-ids.txt"), 'wb') do |file|
@@ -172,7 +173,7 @@ namespace :collectors do
       print "\n"
     rescue Exception => e
       binding.pry
-    end
+    end    
 
     binding.pry
   end
