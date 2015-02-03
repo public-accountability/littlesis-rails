@@ -7,7 +7,8 @@ class OpensecretsAddressImporter
 
   def initialize(entity)
     @entity = entity
-    @db = Sequel.connect('mysql2://littlesis:midm681_beet@localhost/littlesis_raw')
+    config = Rails.configuration.database_configuration[Rails.env]
+    @db = Sequel.connect("mysql2://littlesis:#{config['password']}@localhost/littlesis_raw")
     @addresses = []
     @incoming = []
     import
