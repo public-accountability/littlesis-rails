@@ -24,6 +24,8 @@ defaults: &defaults
   twitter_list_id:
   google_site_verification:
   google_analytics_id:
+  default_image_file_type: 'jpg'
+  system_user_id: 1
 
 test:
   <<: *defaults

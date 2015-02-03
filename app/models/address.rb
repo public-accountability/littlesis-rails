@@ -2,6 +2,7 @@ require 'street_address'
 
 class Address < ActiveRecord::Base
   include SingularTable
+  include SoftDelete
 
   belongs_to :entity, inverse_of: :addresses
   belongs_to :state, class_name: "AddressState", inverse_of: :addresses
@@ -76,15 +77,17 @@ class Address < ActiveRecord::Base
   def street1_hash
     #street hash is concatenation of first 2-3 street1 parts, depending on whether there's a street prefix
     num = street_prefix? ? 2 : 1
-    street1.split(" ")[0..num].join.downcase
+    street1.gsub('.', '').split(" ")[0..num].join.downcase
   end
 
   def street_prefix?
+    parse unless parsed
+
     if parsed.nil?
-      parts = street1.split(" ")
+      parts = street1.gsub('.', '').split(" ")
       return false if parts.count < 3
       # if second part of street1 is a direction and third part is not a street type
-      %w(w n e s west north east west).include?(parts[1].downcase) and !StreetAddress::US::STREET_TYPES_LIST.keys.include?(parts[2].downcase)
+      %w(w n e s west north east west nw ne sw se).include?(parts[1].downcase) and !StreetAddress::US::STREET_TYPES_LIST.keys.include?(parts[2].downcase)
     else
       !parsed.prefix.nil?
     end
@@ -92,7 +95,7 @@ class Address < ActiveRecord::Base
 
   def same_as?(address)
     return false unless postal and address.postal
-    comparison_hash == address.comparison_hash
+    (to_s == address.to_s) or (comparison_hash == address.comparison_hash)
   end
 
   def street2_from(address)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141006212617) do
+ActiveRecord::Schema.define(version: 20150203171448) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -443,6 +443,12 @@ ActiveRecord::Schema.define(version: 20141006212617) do
   add_index "groups", ["delta"], name: "index_groups_on_delta", using: :btree
   add_index "groups", ["slug"], name: "index_groups_on_slug", unique: true, using: :btree
 
+  create_table "hierarchy", force: true do |t|
+    t.integer "relationship_id", limit: 8, null: false
+  end
+
+  add_index "hierarchy", ["relationship_id"], name: "relationship_id_idx", using: :btree
+
   create_table "image", force: true do |t|
     t.integer  "entity_id",    limit: 8,                          null: false
     t.string   "filename",     limit: 100,                        null: false
@@ -450,7 +456,7 @@ ActiveRecord::Schema.define(version: 20141006212617) do
     t.text     "caption",      limit: 2147483647
     t.boolean  "is_featured",                     default: false, null: false
     t.boolean  "is_free"
-    t.string   "url",          limit: 200
+    t.string   "url",          limit: 400
     t.integer  "width",        limit: 8
     t.integer  "height",       limit: 8
     t.datetime "created_at"
@@ -830,6 +836,7 @@ ActiveRecord::Schema.define(version: 20141006212617) do
     t.boolean "is_independent"
     t.integer "net_worth",      limit: 8
     t.integer "entity_id",      limit: 8,  null: false
+    t.string  "name_maiden",    limit: 50
   end
 
   add_index "person", ["entity_id"], name: "entity_id_idx", using: :btree

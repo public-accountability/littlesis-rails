@@ -71,21 +71,26 @@ class Image < ActiveRecord::Base
     filename = random_filename
 
     begin
-      original = Magick::Image.read(url)
+      # RMagick can't seem to open remote files?
+      original = MiniMagick::Image.open(url)
     rescue
       return false
     end
 
-    large = create_asset(filename, 'large', url, 1024, 1024)
-    profile = create_asset(filename, 'profile', url, 200, 200)
-    small = create_asset(fiilename, 'small', url, 50, 50)
+    if ENV['SKIP_S3_UPLOAD']
+      large = profile = small = true
+    else
+      large = create_asset(filename, 'large', url, 1024, 1024)
+      profile = create_asset(filename, 'profile', url, 200, 200)
+      small = create_asset(filename, 'small', url, 50, 50)
+    end
 
     if large and profile and small
       return new({
         filename: filename,
         url: url,
-        width: original.columns,
-        height: original.rows
+        width: original[:width],
+        height: original[:height]
       })
     else
       return false
@@ -94,27 +99,20 @@ class Image < ActiveRecord::Base
 
   def self.create_asset(filename, type, read_path, max_width = nil, max_height = nil)
     begin
-      img = Magick::Image.read(read_path)[0]
+      # RMagick can't seem to open remote files?
+      img = MiniMagick::Image.open(read_path)
     rescue
       return false
     end
 
-    width = img.columns
-    height = img.rows
+    width = img[:width]
+    height = img[:height]
 
-    ratio = if max_width > width and max_height > height
-      width_ratio = max_width/width.to_f
-      height_ratio = max_height/height.to_f
-      [width_ratio, height_ratio].min
-    elsif max_width > width
-      max_width/width.to_f
-    elsif max_height > height
-      max_height/height.to_f
-    else
-      1
+    if (max_width and width > max_width) or (max_height and height > max_height)
+      w = max_width ? max_width : img[:width]
+      h = max_height ? max_height : img[:height]
+      img.resize([w, h].join("x"))
     end
-
-    img.resize!(ratio)
 
     tmp_path = Rails.root.join("tmp", "#{type}_#{filename}").to_s
     img.write(tmp_path)

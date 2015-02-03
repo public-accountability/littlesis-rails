@@ -33,6 +33,17 @@ class Entity < ActiveRecord::Base
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
 
+  before_create :set_last_user_id
+  after_create :create_primary_alias
+
+  def set_last_user_id
+    self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
+  end
+
+  def create_primary_alias
+    Alias.create(entity: self, name: name, is_primary: true, last_user_id: Lilsis::Application.config.system_user_id) unless aliases.where(is_primary: true).count > 0
+  end
+
   def to_param
     "#{id}-#{name.parameterize}"
   end
