@@ -22,7 +22,7 @@ class EntityNameAddressCsvImporter
     }
     @address_type = nil
     @common_name_type = nil
-    @last_user_id = 2
+    @last_user_id = Lilsis::Application.config.system_user_id
   end
 
   def already_imported_ids(ids)
