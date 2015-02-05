@@ -22,6 +22,7 @@ class Entity < ActiveRecord::Base
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", inverse_of: :edited_entities
   has_many :external_keys, inverse_of: :entity, dependent: :destroy
   has_one :person, inverse_of: :entity, dependent: :destroy
+  has_one :org, inverse_of: :entity, dependent: :destroy
   has_one :public_company, inverse_of: :entity, dependent: :destroy
   has_many :addresses, inverse_of: :entity, dependent: :destroy
   has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
