@@ -279,14 +279,6 @@ class EntityNameAddressCsvImporter
 
     if entities.present?
       @matches = { address: entities } 
-    # elsif @postal # and !COMMON_POSTAL_CODES.include?(@postal)
-    #   entities = all_matches.select do |match|
-    #     match.addresses.find { |a| a.postal == @postal }
-    #   end
-
-    #   if entities.present?
-    #     @matches = { postal: entities } 
-    #   end
     end
   end
 
@@ -367,6 +359,4 @@ class EntityNameAddressCsvImporter
   COMMON_FIRST_NAMES = ["john", "david", "robert", "michael", "james", "william", "richard", "thomas", "mark", "paul", "charles", "peter", "joseph", "stephen", "george", "daniel", "steven", "andrew", "jeffrey", "edward", "scott", "mary", "christopher", "brian", "kevin", "susan", "gary", "donald", "j", "frank", "kenneth", "timothy", "alan", "steve", "patrick", "tom", "jim", "eric", "ronald", "elizabeth", "bill", "bruce", "mike", "matthew", "jonathan", "douglas", "anthony", "jack", "nancy", "philip", "lawrence", "gregory", "barbara", "chris", "larry", "karen", "martin", "dennis", "patricia", "linda", "henry", "joe", "lisa", "roger", "dan", "anne", "jeff", "howard", "arthur", "jennifer", "w", "ann", "bob", "r", "walter", "jay", "craig", "carl", "carol", "tim", "barry", "jerry", "keith", "jane", "samuel", "amy", "margaret", "marc", "greg", "gerald", "laura", "sarah", "deborah", "fred", "jon", "jason", "harry", "kathleen", "adam", "raymond"]
   
   COMMON_LAST_NAMES = ["smith", "johnson", "brown", "miller", "williams", "davis", "jones", "wilson", "anderson", "taylor", "white", "thompson", "lee", "martin", "harris", "moore", "clark", "cohen", "lewis", "thomas", "murphy", "walker", "kelly", "king", "baker", "allen", "young", "roberts", "hall", "campbell", "wright", "sullivan", "jackson", "robinson", "green", "adams", "mitchell", "fisher", "morgan", "rogers", "collins", "stewart", "nelson", "ryan", "scott", "hill", "kennedy", "evans", "phillips", "bell", "morris", "cooper", "schwartz", "edwards", "ross", "rose", "parker", "carter", "murray", "marshall", "ford", "cook", "jacobs", "levy", "turner", "gordon", "friedman", "reed", "wood", "hughes", "walsh", "alexander", "shapiro", "stone", "hunt", "howard", "bennett", "cole", "peterson", "foster", "gray", "fox", "bailey", "meyer", "lynch", "klein", "watson", "cox", "james", "brooks", "perry", "coleman", "ward", "o'brien", "price", "kaplan", "graham", "mccarthy", "burke", "wallace"]
-
-  COMMON_POSTAL_CODES = ["10022", "10019", "10017", "10036", "20005", "20004", "77002", "77056", "60606", "45202", "20036", "20006", "20001", "60601", "75201", "60015", "10005", "75039", "60045", "08540", "06830", "44114", "20817", "06905", "19103", "10004", "30339", "90245", "60610", "80112", "63105", "28202", "89109", "20016", "60563", "94104", "75024", "22042", "10021", "20002", "63101", "30309", "22102", "19087", "80202", "95054", "76102", "11747", "20190", "94105", "92121", "10018", "75240"]  
 end

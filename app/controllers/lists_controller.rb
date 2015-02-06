@@ -1,5 +1,5 @@
 class ListsController < ApplicationController
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :search_data]
 
   # GET /lists
   def index
@@ -52,6 +52,14 @@ class ListsController < ApplicationController
   end
 
   def relationships
+  end
+
+  def search_data
+    respond_to do |format|
+      format.json {
+        render json: @list.entities.includes(:aliases).map { |e| { id: e.id, name: e.name, oneliner: e.blurb, aliases: e.aliases.map { |a| a.name } } }
+      }
+    end
   end
 
   private

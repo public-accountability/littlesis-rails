@@ -71,6 +71,7 @@ Lilsis::Application.routes.draw do
   resources :lists, only: [:index] do
     member do
       get 'relationships'
+      get 'search_data'
     end
   end
 
