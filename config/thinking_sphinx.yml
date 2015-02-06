@@ -87,7 +87,7 @@ defaults: &defaults
 	  U+1EE4->u, U+1EE5->u, U+1EE6->u, U+1EE7->u, U+1EE8->u, U+1EE9->u,
 	  U+1EEA->u, U+1EEB->u, U+1EEC->u, U+1EED->u, U+1EEE->u, U+1EEF->u,
 	  U+1EF0->u, U+1EF1->u, U+1EF2->y, U+1EF3->y, U+1EF4->y, U+1EF5->y,
-	  U+1EF6->y, U+1EF7->y, U+1EF8->y, U+1EF9->y"
+	  U+1EF6->y, U+1EF7->y, U+1EF8->y, U+1EF9->y, &"
   
 test:
   <<: *defaults
