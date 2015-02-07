@@ -96,3 +96,8 @@ gem 'mechanize'
 gem 'StreetAddress', :require => "street_address"
 gem 'sequel'
 gem 'rmagick'
+
+gem 'capybara'
+gem 'capybara-webkit'
+gem 'htmlentities'
+gem 'google-search'

@@ -29,7 +29,22 @@ class NameParser
     parse(str)
   end
 
+  def self.parse_to_person(str)
+    parser = new(str)
+    return false unless parser.first and parser.last
+    Person.new(
+      name_prefix: parser.prefix,
+      name_first: parser.first,
+      name_middle: parser.middle,
+      name_last: parser.last,
+      name_suffix: parser.suffix,
+      name_nick: parser.nick
+    )
+  end
+
   def parse(str)
+    return nil unless str.split(/\s+/mu).count > 1
+
     @raw = str
 
     prefix = first = middle = last = suffice = nick = nil

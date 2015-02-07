@@ -319,4 +319,12 @@ class Entity < ActiveRecord::Base
   def industries
     os_categories.map(&:industry_name).uniq
   end
+
+  def name_regexes(require_first = true)
+    if person?
+      [person.name_regex(require_first)].concat(aliases.map { |a| a.name_regex(require_first) }).uniq.compact
+    else
+      []
+    end
+  end
 end
