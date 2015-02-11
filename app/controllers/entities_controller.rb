@@ -1,8 +1,19 @@
 class EntitiesController < ApplicationController
 	before_filter :auth, except: [:relationships]
-  before_action :set_entity, only: [:relationships, :edit_twitter, :add_twitter, :remove_twitter]
+  before_action :set_entity, only: [:relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter]
 
   def relationships
+  end
+
+  def fields
+    @fields = JSON.dump(Field.all.map { |f| { value: f.name, tokens: f.display_name.split(/\s+/) } });
+  end
+
+  def update_fields
+    fields = Hash[params[:names].zip(params[:values])]
+    @entity.update_fields(fields)
+    Field.delete_unused
+    redirect_to fields_entity_path(@entity)
   end
 
 	def search_by_name
@@ -30,7 +41,14 @@ class EntitiesController < ApplicationController
     end
 
 		render json: data
-	end	
+	end
+
+  def search_field_names
+    q = params[:q]
+    num = params.fetch(:num, 10)
+    fields = Field.search(q, per_page: num, match_mode: :extended)
+    render json: fields.map { |f| f.name }.sort
+  end
 
   def edit_twitter
     check_permission 'bulker'

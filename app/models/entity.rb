@@ -30,6 +30,8 @@ class Entity < ActiveRecord::Base
   has_many :extension_definitions, through: :extension_records, inverse_of: :entities
   has_many :os_entity_categories, inverse_of: :entity
   has_many :os_categories, through: :os_entity_categories, inverse_of: :entities
+  has_many :entity_fields, inverse_of: :entity, dependent: :destroy
+  has_many :fields, through: :entity_fields, inverse_of: :entities
 
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
@@ -326,5 +328,101 @@ class Entity < ActiveRecord::Base
     else
       []
     end
+  end
+
+  def all_field_details
+    entity_fields.includes(:field)
+  end
+
+  def field_value(name)
+    return nil unless details = field_details(name)
+    details.value
+  end
+
+  def field_details(name)
+    entity_fields.joins(:field).where(fields: { name: name }).first
+  end
+
+  def set_field(name, value, display_name = nil, type = "text")
+    return false unless name.present? and value.present?
+
+    EntityField.transaction do
+      field = Field.find_or_create_by!(name: name) do |f|
+        f.display_name = display_name.present? ? display_name : name.titleize
+        f.type = type
+      end
+
+      ef = EntityField.find_or_initialize_by(entity: self, field: field)
+      ef.update_attributes(value: value)
+      ef
+    end
+  end
+
+  def update_fields(hash)
+    # underscore keys
+    hash = Hash[hash.map { |k, v| [k.downcase.underscore.gsub(/\s+/, '_'), v] }]
+
+    EntityField.transaction do
+      # delete fields
+      entity_fields.includes(:field).each do |ef|
+        ef.delete unless hash.keys.include?(ef.field.name)
+      end
+
+      # update or create fields
+      hash.each do |name, value|
+        set_field(name, value)
+      end
+    end
+  end
+
+  def delete_field(name)
+    ef.destroy if ef = field_details(name)
+  end
+
+  def map_field_values(field, value)
+    if field == 'gender_id'
+      v = {
+        '1' => 'Female',
+        '2' => 'Male',
+        '3' => 'Other'
+      }[value]
+      k = 'gender'
+    elsif field == 'party_id'
+      v = Entity.where(id: value).pluck(:name).first
+      k = 'party_affiliation'
+    else
+      k = field
+      v = value
+    end
+
+    [k, v]
+  end
+
+  def update_fields_from_extensions
+    return false unless id
+    skip_cols = %w(id entity_id updated_at created_at name name_prefix name_first name_middle name_last name_suffix name_nick name_maiden)
+    conn = ActiveRecord::Base.connection
+    hash = {}
+    self.class.all_extension_names_with_fields.each do |ext|
+      sql = "SELECT * FROM #{ext.underscore} WHERE entity_id = #{id}"
+      result = conn.execute(sql)
+      if row = result.first
+        row.each_with_index do |value, i|
+          next unless value.present?
+          col = result.fields[i]
+          col, value = map_field_values(col, value)
+          next if skip_cols.include?(col)
+          hash[col] = value.to_s
+        end
+      end
+    end
+    hash
+    update_fields(hash)
+  end
+
+  def update_fields_from_external_keys
+    return false unless id
+    hash = Hash[external_keys.joins(:domain).map { |k| [k.domain.name.downcase + "_id", k.external_id] }]
+    update_fields(hash)
   end
 end

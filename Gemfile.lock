@@ -179,6 +179,9 @@ GEM
     nokogiri (1.5.11)
     ntlm-http (0.1.1)
     orm_adapter (0.5.0)
+    paper_trail (4.0.0.beta2)
+      activerecord (>= 3.0, < 6.0)
+      activesupport (>= 3.0, < 6.0)
     php-serialize (1.1.0)
     poltergeist (1.5.1)
       capybara (~> 2.1)
@@ -337,6 +340,7 @@ DEPENDENCIES
   mini_magick
   mysql2
   nilify_blanks
+  paper_trail (~> 4.0.0.beta2)
   php-serialize
   poltergeist
   pry

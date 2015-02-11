@@ -81,10 +81,13 @@ Lilsis::Application.routes.draw do
       get 'edit_twitter'
       post 'add_twitter'  
       post 'remove_twitter'
+      get 'fields'
+      post 'update_fields'
     end
 
     collection do
       get 'search_by_name', as: 'name_search'
+      get 'search_field_names', as: 'field_name_search'
       get 'next_twitter'
     end
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150203171448) do
+ActiveRecord::Schema.define(version: 20150209190253) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -319,6 +319,15 @@ ActiveRecord::Schema.define(version: 20150203171448) do
   add_index "entity", ["updated_at"], name: "updated_at_idx", using: :btree
   add_index "entity", ["website"], name: "website_idx", using: :btree
 
+  create_table "entity_fields", force: true do |t|
+    t.integer "entity_id"
+    t.integer "field_id"
+    t.string  "value",                     null: false
+    t.boolean "is_admin",  default: false
+  end
+
+  add_index "entity_fields", ["entity_id", "field_id"], name: "index_entity_fields_on_entity_id_and_field_id", unique: true, using: :btree
+
   create_table "extension_definition", force: true do |t|
     t.string  "name",         limit: 30,                 null: false
     t.string  "display_name", limit: 50,                 null: false
@@ -384,6 +393,14 @@ ActiveRecord::Schema.define(version: 20150203171448) do
 
   add_index "fedspending_filing", ["district_id"], name: "district_id_idx", using: :btree
   add_index "fedspending_filing", ["relationship_id"], name: "relationship_id_idx", using: :btree
+
+  create_table "fields", force: true do |t|
+    t.string "name",                            null: false
+    t.string "display_name",                    null: false
+    t.string "type",         default: "string", null: false
+  end
+
+  add_index "fields", ["name"], name: "index_fields_on_name", unique: true, using: :btree
 
   create_table "gender", force: true do |t|
     t.string "name", limit: 10, null: false
@@ -1255,5 +1272,16 @@ ActiveRecord::Schema.define(version: 20150203171448) do
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["sf_guard_user_id"], name: "index_users_on_sf_guard_user_id", unique: true, using: :btree
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
+
+  create_table "versions", force: true do |t|
+    t.string   "item_type",  null: false
+    t.integer  "item_id",    null: false
+    t.string   "event",      null: false
+    t.string   "whodunnit"
+    t.text     "object"
+    t.datetime "created_at"
+  end
+
+  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
 end
