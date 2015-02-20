@@ -1,0 +1,28 @@
+<%= render partial: 'header', locals: { list: @list } %>
+
+<h3 class="section">Match Donations</h3>
+
+<%= paginate @entities %>
+
+<table class="table">
+  <thead>
+    <th>Name</th>
+    <th>Possible Matches</th>
+    <th>Relationships</th>
+    <th>Addresses</th>
+    <th>Last Reviewed</th>
+    <th></th>
+  </thead>
+<% @entities.each do |entity| %>
+  <tr>
+    <td><%= entity_link(entity) %></td>
+    <td><%= entity.num_matches %></td>
+    <td><%= entity.links.count %></td>
+    <td><%= entity.addresses.count %></td>
+    <td><%= entity.last_reviewed ? time_ago_in_words(entity.last_reviewed) + ' ago' : '' %></td>
+    <td><%= entity_link(entity, 'match', 'matchDonations') %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= paginate @entities %>

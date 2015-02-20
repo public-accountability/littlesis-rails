@@ -1,5 +1,5 @@
 class ListsController < ApplicationController
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :search_data]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data]
 
   # GET /lists
   def index
@@ -52,6 +52,17 @@ class ListsController < ApplicationController
   end
 
   def relationships
+  end
+
+  def match_donations
+    page = params.fetch(:page, 1)
+    num = params.fetch(:num, 100)
+    @entities = @list.entities.people
+                .joins(:os_entity_transactions)
+                .includes(:links, :addresses)
+                .joins("LEFT JOIN address ON (address.entity_id = entity.id)")
+                .select("entity.*, COUNT(os_entity_transaction.id) AS num_matches, MAX(os_entity_transaction.reviewed_at) AS last_reviewed")
+                .group("entity.id").having('COUNT(os_entity_transaction.id) > 0').order("last_reviewed ASC, num_matches DESC").page(page).per(num)
   end
 
   def search_data

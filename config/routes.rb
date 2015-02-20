@@ -72,6 +72,7 @@ Lilsis::Application.routes.draw do
     member do
       get 'relationships'
       get 'search_data'
+      get 'match_donations'
     end
   end
 

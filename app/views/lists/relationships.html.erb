@@ -1,7 +1,4 @@
-<div id="list-header">
-  <div id="list-name"><%= list_link(@list) %></div>
-  <div id="list-description"><%= @list.description %></div>
-</div>
+<%= render :header locals: { list: @list } %>
 
 <h3 class="section">Relationship Data</h3>
 

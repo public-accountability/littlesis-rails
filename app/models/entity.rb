@@ -286,8 +286,8 @@ class Entity < ActiveRecord::Base
     self.class.name_to_legacy_slug(name)
   end
 
-  def legacy_url
-    self.class.legacy_url(primary_ext, id, name)
+  def legacy_url(action = nil)
+    self.class.legacy_url(primary_ext, id, name, action)
   end
 
   def self.legacy_url(primary_ext, id, name, action = nil)
