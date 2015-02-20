@@ -10,7 +10,7 @@
     <th>Possible Matches</th>
     <th>Relationships</th>
     <th>Addresses</th>
-    <th>Last Reviewed</th>
+    <th>Last Matched</th>
     <th></th>
   </thead>
 <% @entities.each do |entity| %>
@@ -19,7 +19,7 @@
     <td><%= entity.num_matches %></td>
     <td><%= entity.links.count %></td>
     <td><%= entity.addresses.count %></td>
-    <td><%= entity.last_reviewed ? time_ago_in_words(entity.last_reviewed) + ' ago' : '' %></td>
+    <td><%= entity.last_reviewed ? time_ago_in_words(entity.last_reviewed) + ' ago' : 'never' %></td>
     <td><%= entity_link(entity, 'match', 'matchDonations') %></td>
   </tr>
 <% end %>
