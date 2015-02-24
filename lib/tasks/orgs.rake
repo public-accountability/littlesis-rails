@@ -9,7 +9,7 @@ namespace :orgs do
       print "updating boards of #{orgs.count.count} orgs...\n"
     end
 
-    CSV.open("data/org-board-updates.csv", 'wb') do |csv|
+    CSV.open("data/org-board-updates.csv", 'a') do |csv|
       orgs.each_with_index do |org, i|
         print "#{i+1} of #{orgs.count.count}\n"
         print "---------- #{org.name} ----------\n\n"

@@ -44,7 +44,7 @@ class OrgBoardUpdater
 
     unless @board_pages.count > 0 or page > 1
       # try one more page
-      match = find_board_page(page + 1)
+      match = find_board_pages(page + 1)
     end
 
     @board_pages
@@ -57,16 +57,20 @@ class OrgBoardUpdater
   end
 
   def check_board_page(url, rels)
-    @session = Capybara::Session.new(:webkit)
-    @session.visit(url)
-    return [] unless body = HTMLEntities.new.decode(@session.body).gsub(/[[:space:]]+/, ' ')
-    return [] unless text = @session.text.gsub(/[[:space:]]+/, ' ')
-    return [] unless text.match(/board/i) or text.match(/trustees/i)
+    begin
+      @session = Capybara::Session.new(:webkit)
+      @session.visit(url)
+      return [] unless body = HTMLEntities.new.decode(@session.body).gsub(/[[:space:]]+/, ' ')
+      return [] unless text = @session.text.gsub(/[[:space:]]+/, ' ')
+      return [] unless text.match(/board/i) or text.match(/trustees/i)
+    rescue => e
+      return []
+    end
 
     found = rels.select do |rel|
       begin
         rel.entity.name_regexes(false).find do |regex|
-          (matches = body.scan(regex)) and matches.find { |m| text.match(/#{m[0]}/mui) }
+          (matches = body.scan(regex)) and matches.find { |m| text.match(/#{Regexp.quote(m[0])}/mui) }
         end
       rescue => e
         binding.pry
