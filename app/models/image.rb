@@ -31,11 +31,11 @@ class Image < ActiveRecord::Base
   end
 
   def s3_url(type)
-    S3.url(image_path(type))
+    image_path(type)
   end
 
   def self.image_path(filename, type)
-    ActionController::Base.helpers.asset_path("images/#{type}/#{filename}")  
+    "https:" + ActionController::Base.helpers.asset_path("images/#{type}/#{filename}")  
   end
 
   def image_path(type)
@@ -97,7 +97,7 @@ class Image < ActiveRecord::Base
     end
   end
 
-  def self.create_asset(filename, type, read_path, max_width = nil, max_height = nil)
+  def self.create_asset(filename, type, read_path, max_width = nil, max_height = nil, check_first = true)
     begin
       # RMagick can't seem to open remote files?
       img = MiniMagick::Image.open(read_path)
@@ -116,8 +116,22 @@ class Image < ActiveRecord::Base
 
     tmp_path = Rails.root.join("tmp", "#{type}_#{filename}").to_s
     img.write(tmp_path)
-    result = S3.upload_file(Lilsis::Application.config.aws_s3_bucket, "images/#{type}/#{filename}", tmp_path)
+    result = S3.upload_file(Lilsis::Application.config.aws_s3_bucket, "images/#{type}/#{filename}", tmp_path, check_first)
     File.delete(tmp_path)
     result
+  end
+
+  def crop(x, y, w, h, type='large')
+    download_large_to_tmp
+    img = MiniMagick::Image.open(tmp_path)
+    img.crop("#{w}x#{h}+#{x}+#{y}")
+    img.write(tmp_path)
+
+    { small: 50, profile: 200, large: 1024 }.each do |type, size|
+      Image.create_asset(filename, type, tmp_path, size, size, false)
+    end
+
+    File.delete(tmp_path)
+    true
   end
 end

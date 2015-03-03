@@ -16,6 +16,7 @@
 //= require jquery.shuffle
 //= require jquery.tinycarousel
 //= require jquery.dataTables
+//= require jquery.Jcrop
 //= require bootstrap
 //= require datatables-bootstrap
 //= require bootsy

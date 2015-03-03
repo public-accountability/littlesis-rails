@@ -4,13 +4,21 @@ class EntityNameAddressCsvImporter
 
   attr_accessor :first, :middle, :last, :prefix, :suffix, :raw_name, :maiden,
                 :street, :unit, :city, :state, :postal, :postal_ext, :country, :raw_address, :address,
-                :image, :news, :profession, :row, :status, :common_name_type, :address_type
+                :image, :news, :profession, :row, :status, :common_name_type, :address_type, :is_couple
 
   def initialize(row)
     @first, @last, @street, @city, @state, @postal, @country, @image, @news, @profession = @row = row.map { |d| d.nil? ? nil : d.gsub(/[\r\n\s]+/, " ").strip }
     @raw_name = (@first.to_s + " " + @last.to_s).strip
     @entity = nil
     @address = nil
+    @address_type = nil
+    @common_name_type = nil
+    @last_user_id = Lilsis::Application.config.system_user_id
+    @is_couple = false
+    clear_matches
+  end
+
+  def clear_matches
     @matches = { 
       name: [],
       alias: [],
@@ -20,9 +28,6 @@ class EntityNameAddressCsvImporter
       list: [],
       previous: []
     }
-    @address_type = nil
-    @common_name_type = nil
-    @last_user_id = Lilsis::Application.config.system_user_id
   end
 
   def already_imported_ids(ids)
@@ -41,7 +46,7 @@ class EntityNameAddressCsvImporter
     return false if skip_data
     clean_data
     match_or_create_entity
-    create_image
+    create_image unless @is_couple
     create_address
     entity
   end
@@ -75,10 +80,23 @@ class EntityNameAddressCsvImporter
   def parse_first_name
     @first.gsub!(".", "")
 
+    # get nick
     nick_regex = /".+"|'.+'|\(.+\)/
     if nick = @first.match(nick_regex)
       @nick = nick[0][1..-2]
       @first.gsub!(nick_regex, "").strip!.gsub!(/\s+/, " ")
+    end
+
+    # get prefixes
+    NameParser::PREFIXES.each do |pre|
+      new = @first.gsub(/^#{pre}\s+/i, '')
+      unless @first == new
+        unless NameParser::COMMON_PREFIXES.map(&:downcase).include?(@first.downcase)
+          @prefix = (@prefix.to_s + ' ' + pre + ' ').strip
+        end
+
+        @first = new.strip
+      end
     end
 
     parts = @first.split(/\s/)
@@ -225,13 +243,13 @@ class EntityNameAddressCsvImporter
   end
 
   def match_name
-    entities = EntityMatcher.by_person_name(@first, @last, @middle, @suffix, @nick, @maiden)
+    entities = EntityMatcher.by_person_name(@first, @last, @middle, @suffix, @nick, @maiden).matches
     add_matches(entities, :name)
   end
 
   def match_parsed_raw_name
     name = NameParser.new(@raw_name)
-    entities = EntityMatcher.by_person_name(name.first, name.last, name.middle, name.suffix, name.nick)
+    entities = EntityMatcher.by_person_name(name.first, name.last, name.middle, name.suffix, name.nick).matches
     add_matches(entities, :name)
   end
 
@@ -283,13 +301,13 @@ class EntityNameAddressCsvImporter
   end
 
   def create_entity
-    @entity = Entity.new(
+    @entity = Entity.create(
       name: [@first, @middle, @last, @suffix].join(" ").strip.gsub(/\s+/, " "),
       primary_ext: "Person",
       last_user_id: @last_user_id
     )
 
-    @entity.person = Person.new(
+    @entity.person.update(
       name_prefix: @prefix,
       name_first: @first,
       name_middle: @middle,
@@ -309,13 +327,7 @@ class EntityNameAddressCsvImporter
   def create_image(force_featured = false)
     return unless e = entity
     return unless @image
-    return if e.images.find { |i| i.url == @image }
-    image = Image.new_from_url(@image)
-    return unless image
-    image.title = e.name
-    image.is_featured = (force_featured or !e.has_featured_image)
-    # e.association(:images).add_to_target(image)
-    e.images << image
+    e.add_image_from_url(@image, force_featured)
   end
 
   def create_address
@@ -335,12 +347,15 @@ class EntityNameAddressCsvImporter
     if match.person.name_first.length == 1 and common_last_name?(match)
       @status = :common_name
       @common_name_type = :init_last
+      clear_matches
     elsif common_first_name?(match) and common_last_name?(match)
       @status = :common_name
       @common_name_type = :first_last
+      clear_matches
     elsif common_first_name?(match) and multiple_last_names?(match)
       @status = :common_name
       @common_name_type = :first_multiple
+      clear_matches
     end
   end
 
@@ -353,7 +368,7 @@ class EntityNameAddressCsvImporter
   end
 
   def multiple_last_names?(entity)
-    Person.where("LOWER(name_last) = LOWER(?)", entity.person.name_last).count > 1
+    Person.where("LOWER(name_last) = LOWER(?)", entity.person.name_last).count > 2
   end
 
   COMMON_FIRST_NAMES = ["john", "david", "robert", "michael", "james", "william", "richard", "thomas", "mark", "paul", "charles", "peter", "joseph", "stephen", "george", "daniel", "steven", "andrew", "jeffrey", "edward", "scott", "mary", "christopher", "brian", "kevin", "susan", "gary", "donald", "j", "frank", "kenneth", "timothy", "alan", "steve", "patrick", "tom", "jim", "eric", "ronald", "elizabeth", "bill", "bruce", "mike", "matthew", "jonathan", "douglas", "anthony", "jack", "nancy", "philip", "lawrence", "gregory", "barbara", "chris", "larry", "karen", "martin", "dennis", "patricia", "linda", "henry", "joe", "lisa", "roger", "dan", "anne", "jeff", "howard", "arthur", "jennifer", "w", "ann", "bob", "r", "walter", "jay", "craig", "carl", "carol", "tim", "barry", "jerry", "keith", "jane", "samuel", "amy", "margaret", "marc", "greg", "gerald", "laura", "sarah", "deborah", "fred", "jon", "jason", "harry", "kathleen", "adam", "raymond"]

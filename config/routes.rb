@@ -76,6 +76,13 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  resources :images do
+    member do
+      get 'crop'
+      post 'crop_remote'
+    end
+  end
+
   resources :entities do
     member do
       get 'relationships'

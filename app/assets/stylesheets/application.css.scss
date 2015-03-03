@@ -13,6 +13,7 @@
 //= require datatables-bootstrap
  *= require bootsy
  *= require typeahead
- += require jquery.dataTables
+ *= require jquery.dataTables
+ *= require jquery.Jcrop
  *= require_tree .
  */

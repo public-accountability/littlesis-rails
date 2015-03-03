@@ -23,6 +23,9 @@ class Entity < ActiveRecord::Base
   has_many :external_keys, inverse_of: :entity, dependent: :destroy
   has_one :person, inverse_of: :entity, dependent: :destroy
   has_one :org, inverse_of: :entity, dependent: :destroy
+  has_one :couple, inverse_of: :entity, dependent: :destroy
+  has_one :couple1, class_name: "Couple", inverse_of: :partner1, dependent: :destroy
+  has_one :couple2, class_name: "Couple", inverse_of: :partner2, dependent: :destroy
   has_one :public_company, inverse_of: :entity, dependent: :destroy
   has_many :addresses, inverse_of: :entity, dependent: :destroy
   has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
@@ -37,7 +40,7 @@ class Entity < ActiveRecord::Base
   scope :orgs, -> { where(primary_ext: 'Org') }
 
   before_create :set_last_user_id
-  after_create :create_primary_alias
+  after_create :create_primary_alias, :create_primary_ext
 
   def set_last_user_id
     self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
@@ -45,6 +48,11 @@ class Entity < ActiveRecord::Base
 
   def create_primary_alias
     Alias.create(entity: self, name: name, is_primary: true, last_user_id: Lilsis::Application.config.system_user_id) unless aliases.where(is_primary: true).count > 0
+  end
+
+  def create_primary_ext
+    fields = person? ? NameParser.parse_to_hash(name) : {}
+    add_extension(primary_ext, fields)
   end
 
   def to_param
@@ -57,7 +65,11 @@ class Entity < ActiveRecord::Base
 
   def org?
     primary_ext == 'Org'
-  end  
+  end
+
+  def couple?
+    primary_ext == 'Couple'
+  end
 
   def other_ext
     person? ? 'Org' : 'Person'
@@ -91,9 +103,16 @@ class Entity < ActiveRecord::Base
     extension_ids.collect { |id| self.class.all_extension_names[id] }
   end
 
-  def self.with_ext(ext)
-    ext_id = all_extension_names.index(ext)
-    joins(:extension_records).where(extension_record: { definition_id: ext_id })
+  def add_extension(name, fields={})
+    fields.merge!(entity: self)
+    ext = name.constantize.create(fields) if self.class.all_extension_names_with_fields.include?(name) and name.constantize.where(entity_id: id).count == 0
+    def_id = ExtensionDefinition.find_by_name(name).id
+    ExtensionRecord.find_or_create_by(entity_id: id, definition_id: def_id)
+  end
+
+  def self.with_exts(exts)
+    ext_ids = exts.map { |ext| all_extension_names.index(ext) }.compact
+    joins(:extension_records).where(extension_record: { definition_id: ext_ids })
   end
   
   def self.all_extension_names    
@@ -134,7 +153,8 @@ class Entity < ActiveRecord::Base
       'ConsultingFirm',
       'PublicIntellectual',
       'PublicOfficial',
-      'Lawyer'
+      'Lawyer',
+      'Couple'
     ]
   end
   
@@ -150,7 +170,8 @@ class Entity < ActiveRecord::Base
       'GovernmentBody',
       'BusinessPerson',
       'Lobbyist',
-      'PoliticalFundraising'
+      'PoliticalFundraising',
+      'Couple'
     ]
   end
 
@@ -424,5 +445,34 @@ class Entity < ActiveRecord::Base
     return false unless id
     hash = Hash[external_keys.joins(:domain).map { |k| [k.domain.name.downcase + "_id", k.external_id] }]
     update_fields(hash)
+  end
+
+  def self.create_couple(name, partner1, partner2)
+    blurb = [partner1.blurb, partner2.blurb].compact.join('; ')
+    blurb = nil unless blurb.present?
+
+    e = create(
+      name: name,
+      blurb: blurb,
+      primary_ext: 'Couple',
+      last_user_id: Lilsis::Application.config.system_user_id
+    )
+    e.couple.partner1_id = partner1.id
+    e.couple.partner2_id = partner2.id
+    e.couple.save
+    e
+  end
+
+  def self.find_couple(partner1_id, partner2_id)
+    joins(:couple).where("(couple.partner1_id = ? AND couple.partner2_id = ?) OR (couple.partner1_id = ? AND couple.partner2_id = ?)", partner1_id, partner2_id, partner2_id, partner1_id).first
+  end
+
+  def add_image_from_url(url, force_featured = false)
+    return if images.find { |i| i.url == url }
+    image = Image.new_from_url(url)
+    return false unless image
+    image.title = name
+    image.is_featured = (force_featured or !has_featured_image)
+    images << image
   end
 end

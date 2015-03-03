@@ -1,0 +1,25 @@
+<h1><%= entity_link(@image.entity) %></h1>
+
+<h3>Crop Image</h3>
+
+<img id="jcrop_image" src="<%= @image.s3_url('large') %>"><br>
+
+<%= form_tag(crop_remote_image_url(@image), id: 'crop_image', method: :post) do %>
+  <input type="hidden" id="coords" name="coords">
+  <input type="submit" value="Crop" class="btn btn-primary">
+<% end %>
+
+<script type="text/javascript">
+$(function(){
+  var updateCoords = function(coords) {
+    $('#coords').val(JSON.stringify(coords));
+    console.log(JSON.stringify(coords));
+  };
+
+  $('#jcrop_image').Jcrop({
+    onChange: updateCoords,
+    aspectRatio: 1
+  });
+
+});
+</script>

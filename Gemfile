@@ -99,5 +99,5 @@ gem 'rmagick'
 
 gem 'capybara'
 gem 'capybara-webkit'
-gem 'google-search'
 gem 'paper_trail', '~> 4.0.0.beta2'
+gem 'foreigner'

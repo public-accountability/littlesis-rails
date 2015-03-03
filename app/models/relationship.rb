@@ -8,7 +8,26 @@ class Relationship < ActiveRecord::Base
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
   has_many :note_relationships, inverse_of: :relationship
   has_many :notes, through: :note_relationships, inverse_of: :relationships
-  has_one :position, inverse_of: :relationship
+  has_one :position, inverse_of: :relationship, dependent: :destroy
+  has_one :education, inverse_of: :relationship, dependent: :destroy
+  has_one :membership, inverse_of: :relationship, dependent: :destroy
+  has_one :family, inverse_of: :relationship, dependent: :destroy
+  has_one :donation, inverse_of: :relationship, dependent: :destroy
+  has_one :trans, class_name: "Transaction", inverse_of: :relationship, dependent: :destroy
+  has_one :ownership, inverse_of: :relationship, dependent: :destroy
+
+  validates_presence_of :entity1_id, :entity2_id, :category_id
+
+  after_create :create_category, :create_links
+
+  def create_category
+    self.class.all_categories[category_id].constantize.create(relationship: self) if self.class.all_category_ids_with_fields.include?(category_id)
+  end
+
+  def create_links
+    Link.create(entity1_id: entity1_id, entity2_id: entity2_id, category_id: category_id, is_reverse: false, relationship: self)
+    Link.create(entity1_id: entity2_id, entity2_id: entity1_id, category_id: category_id, is_reverse: true, relationship: self)
+  end
 
   def self.all_categories
     [
@@ -32,10 +51,15 @@ class Relationship < ActiveRecord::Base
       "Position",
       "Education",
       "Membership",
+      "Family",
       "Donation",
       "Transaction",
       "Ownership"
     ]
+  end
+
+  def self.all_category_ids_with_fields
+    [1, 2, 3, 4, 5, 6, 10]
   end
 
   def link

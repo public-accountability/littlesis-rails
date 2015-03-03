@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150209190253) do
+ActiveRecord::Schema.define(version: 20150224183355) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -207,6 +207,16 @@ ActiveRecord::Schema.define(version: 20150209190253) do
   add_index "chat_user", ["room", "updated_at", "user_id"], name: "room_updated_at_user_id_idx", using: :btree
   add_index "chat_user", ["room", "user_id"], name: "room_user_id_idx", unique: true, using: :btree
   add_index "chat_user", ["user_id"], name: "user_id_idx", using: :btree
+
+  create_table "couple", force: true do |t|
+    t.integer "entity_id",   null: false
+    t.integer "partner1_id"
+    t.integer "partner2_id"
+  end
+
+  add_index "couple", ["entity_id"], name: "index_couple_on_entity_id", using: :btree
+  add_index "couple", ["partner1_id"], name: "index_couple_on_partner1_id", using: :btree
+  add_index "couple", ["partner2_id"], name: "index_couple_on_partner2_id", using: :btree
 
   create_table "custom_key", force: true do |t|
     t.string   "name",         limit: 50,         null: false
@@ -989,6 +999,7 @@ ActiveRecord::Schema.define(version: 20150209190253) do
     t.boolean  "is_current"
     t.boolean  "is_deleted",                      default: false, null: false
     t.integer  "last_user_id"
+    t.integer  "amount2",      limit: 8
   end
 
   add_index "relationship", ["category_id"], name: "category_id_idx", using: :btree
@@ -1283,5 +1294,165 @@ ActiveRecord::Schema.define(version: 20150209190253) do
   end
 
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
+
+  add_foreign_key "address", "address_category", name: "address_ibfk_4", column: "category_id", dependent: :nullify, options: "ON UPDATE CASCADE"
+  add_foreign_key "address", "address_country", name: "address_ibfk_3", column: "country_id", options: "ON UPDATE CASCADE"
+  add_foreign_key "address", "address_state", name: "address_ibfk_1", column: "state_id", options: "ON UPDATE CASCADE"
+  add_foreign_key "address", "entity", name: "address_ibfk_2", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "address", "sf_guard_user", name: "address_ibfk_5", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "address_state", "address_country", name: "address_state_ibfk_1", column: "country_id", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "alias", "entity", name: "alias_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "alias", "sf_guard_user", name: "alias_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "api_request", "api_user", name: "api_request_ibfk_1", column: "api_key", primary_key: "api_key", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "article", "article_source", name: "article_ibfk_1", column: "source_id", dependent: :nullify, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "business", "entity", name: "business_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "business_industry", "entity", name: "business_industry_ibfk_2", column: "business_id", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "business_industry", "industry", name: "business_industry_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "business_person", "entity", name: "business_person_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "candidate_district", "political_district", name: "candidate_district_ibfk_1", column: "district_id"
+
+  add_foreign_key "donation", "entity", name: "donation_ibfk_2", column: "bundler_id", dependent: :nullify, options: "ON UPDATE CASCADE"
+  add_foreign_key "donation", "relationship", name: "donation_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "education", "degree", name: "education_ibfk_2", dependent: :nullify, options: "ON UPDATE CASCADE"
+  add_foreign_key "education", "relationship", name: "education_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "elected_representative", "entity", name: "elected_representative_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "email", "entity", name: "email_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "email", "sf_guard_user", name: "email_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "entity", "entity", name: "entity_ibfk_1", column: "parent_id", dependent: :nullify, options: "ON UPDATE CASCADE"
+  add_foreign_key "entity", "sf_guard_user", name: "entity_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "extension_definition", "extension_definition", name: "extension_definition_ibfk_1", column: "parent_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "extension_record", "entity", name: "extension_record_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "extension_record", "extension_definition", name: "extension_record_ibfk_2", column: "definition_id", options: "ON UPDATE CASCADE"
+  add_foreign_key "extension_record", "sf_guard_user", name: "extension_record_ibfk_3", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "family", "relationship", name: "family_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "fec_filing", "relationship", name: "fec_filing_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "fedspending_filing", "political_district", name: "fedspending_filing_ibfk_2", column: "district_id", dependent: :nullify, options: "ON UPDATE CASCADE"
+  add_foreign_key "fedspending_filing", "relationship", name: "fedspending_filing_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "government_body", "address_state", name: "government_body_ibfk_1", column: "state_id", options: "ON UPDATE CASCADE"
+  add_foreign_key "government_body", "entity", name: "government_body_ibfk_2", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "image", "entity", name: "image_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "image", "sf_guard_user", name: "image_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "link", "entity", name: "link_ibfk_2", column: "entity2_id"
+  add_foreign_key "link", "entity", name: "link_ibfk_3", column: "entity1_id"
+  add_foreign_key "link", "relationship", name: "link_ibfk_1"
+  add_foreign_key "link", "relationship_category", name: "link_ibfk_4", column: "category_id"
+
+  add_foreign_key "lobby_filing_lobby_issue", "lobby_filing", name: "lobby_filing_lobby_issue_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "lobby_filing_lobby_issue", "lobby_issue", name: "lobby_filing_lobby_issue_ibfk_2", column: "issue_id", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "lobby_filing_lobbyist", "entity", name: "lobby_filing_lobbyist_ibfk_1", column: "lobbyist_id", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "lobby_filing_lobbyist", "lobby_filing", name: "lobby_filing_lobbyist_ibfk_2", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "lobby_filing_relationship", "lobby_filing", name: "lobby_filing_relationship_ibfk_2"
+  add_foreign_key "lobby_filing_relationship", "relationship", name: "lobby_filing_relationship_ibfk_1"
+
+  add_foreign_key "lobbying", "relationship", name: "lobbying_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "lobbyist", "entity", name: "lobbyist_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "ls_list", "ls_list", name: "ls_list_ibfk_2", column: "featured_list_id", dependent: :nullify, options: "ON UPDATE CASCADE"
+  add_foreign_key "ls_list", "sf_guard_user", name: "ls_list_ibfk_1", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "ls_list_entity", "entity", name: "ls_list_entity_ibfk_2", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "ls_list_entity", "ls_list", name: "ls_list_entity_ibfk_1", column: "list_id", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "ls_list_entity", "sf_guard_user", name: "ls_list_entity_ibfk_3", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "membership", "relationship", name: "membership_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "modification", "sf_guard_user", name: "modification_ibfk_1", column: "user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "modification_field", "modification", name: "modification_field_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "note", "sf_guard_user", name: "note_ibfk_1", column: "user_id", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "object_tag", "sf_guard_user", name: "object_tag_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
+  add_foreign_key "object_tag", "tag", name: "object_tag_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "org", "entity", name: "org_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "os_entity_category", "entity", name: "os_entity_category_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "ownership", "relationship", name: "ownership_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "person", "entity", name: "person_ibfk_1", column: "party_id", dependent: :nullify, options: "ON UPDATE CASCADE"
+  add_foreign_key "person", "entity", name: "person_ibfk_3", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "person", "gender", name: "person_ibfk_2"
+
+  add_foreign_key "phone", "entity", name: "phone_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "phone", "sf_guard_user", name: "phone_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "political_candidate", "entity", name: "political_candidate_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "political_district", "address_state", name: "political_district_ibfk_1", column: "state_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "political_fundraising", "address_state", name: "political_fundraising_ibfk_2", column: "state_id", options: "ON UPDATE CASCADE"
+  add_foreign_key "political_fundraising", "entity", name: "political_fundraising_ibfk_3", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "political_fundraising", "political_fundraising_type", name: "political_fundraising_ibfk_1", column: "type_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "position", "entity", name: "position_ibfk_2", column: "boss_id", dependent: :nullify, options: "ON UPDATE CASCADE"
+  add_foreign_key "position", "relationship", name: "position_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "professional", "relationship", name: "professional_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "public_company", "entity", name: "public_company_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "reference", "sf_guard_user", name: "reference_ibfk_1", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "reference_excerpt", "reference", name: "reference_excerpt_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "reference_excerpt", "sf_guard_user", name: "reference_excerpt_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "relationship", "entity", name: "relationship_ibfk_1", column: "entity2_id", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "relationship", "entity", name: "relationship_ibfk_2", column: "entity1_id", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "relationship", "relationship_category", name: "relationship_ibfk_3", column: "category_id", options: "ON UPDATE CASCADE"
+  add_foreign_key "relationship", "sf_guard_user", name: "relationship_ibfk_4", column: "last_user_id", options: "ON UPDATE CASCADE"
+
+  add_foreign_key "representative", "entity", name: "representative_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "representative_district", "elected_representative", name: "representative_district_ibfk_3", column: "representative_id", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "representative_district", "political_district", name: "representative_district_ibfk_4", column: "district_id", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "school", "entity", name: "school_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "sf_guard_group_list", "ls_list", name: "sf_guard_group_list_ibfk_1", column: "list_id", dependent: :delete, options: "ON UPDATE CASCADE"
+  add_foreign_key "sf_guard_group_list", "sf_guard_group", name: "sf_guard_group_list_ibfk_2", column: "group_id", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "sf_guard_group_permission", "sf_guard_group", name: "sf_guard_group_permission_ibfk_2", column: "group_id", dependent: :delete
+  add_foreign_key "sf_guard_group_permission", "sf_guard_permission", name: "sf_guard_group_permission_ibfk_1", column: "permission_id", dependent: :delete
+
+  add_foreign_key "sf_guard_remember_key", "sf_guard_user", name: "sf_guard_remember_key_ibfk_1", column: "user_id", dependent: :delete
+
+  add_foreign_key "sf_guard_user_group", "sf_guard_group", name: "sf_guard_user_group_ibfk_2", column: "group_id", dependent: :delete
+  add_foreign_key "sf_guard_user_group", "sf_guard_user", name: "sf_guard_user_group_ibfk_1", column: "user_id", dependent: :delete
+
+  add_foreign_key "sf_guard_user_permission", "sf_guard_permission", name: "sf_guard_user_permission_ibfk_2", column: "permission_id", dependent: :delete
+  add_foreign_key "sf_guard_user_permission", "sf_guard_user", name: "sf_guard_user_permission_ibfk_1", column: "user_id", dependent: :delete
+
+  add_foreign_key "sf_guard_user_profile", "sf_guard_user", name: "sf_guard_user_profile_ibfk_1", column: "user_id", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "social", "relationship", name: "social_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
+
+  add_foreign_key "transaction", "entity", name: "transaction_ibfk_2", column: "contact2_id", dependent: :nullify, options: "ON UPDATE CASCADE"
+  add_foreign_key "transaction", "entity", name: "transaction_ibfk_3", column: "contact1_id", dependent: :nullify, options: "ON UPDATE CASCADE"
+  add_foreign_key "transaction", "relationship", name: "transaction_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
 
 end

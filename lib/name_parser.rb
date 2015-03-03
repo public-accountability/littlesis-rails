@@ -29,6 +29,19 @@ class NameParser
     parse(str)
   end
 
+  def self.parse_to_hash(str)
+    parser = new(str)
+    return false unless parser.first and parser.last
+    {
+      name_prefix: parser.prefix,
+      name_first: parser.first,
+      name_middle: parser.middle,
+      name_last: parser.last,
+      name_suffix: parser.suffix,
+      name_nick: parser.nick      
+    }
+  end
+
   def self.parse_to_person(str)
     parser = new(str)
     return false unless parser.first and parser.last
@@ -56,12 +69,11 @@ class NameParser
              .gsub(/ \([^\)]+\)/, '')   # remove anything in parentheses at the end
     
     # get prefixes
-    prefixes = NameParser::PREFIXES
-    prefixes.each do |pre|
+    NameParser::PREFIXES.each do |pre|
       new = str.gsub(/^#{pre} /i, '')
       unless str == new
-        unless NameParser::COMMON_PREFIXES.map(&:downcase).include?(str.downcase)
-          prefix = prefix.to_s + pre + ' '
+        unless NameParser::COMMON_PREFIXES.map(&:downcase).include?(pre.downcase)
+          prefix = prefix.to_s + ' ' + pre + ' '
         end
 
         str = new.strip
