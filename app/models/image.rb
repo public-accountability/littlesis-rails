@@ -6,6 +6,8 @@ class Image < ActiveRecord::Base
   
   scope :featured, -> { where(is_featured: true) }
 
+  IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }
+
   def download_large_to_tmp
     download_to_tmp(s3_url("large"))
   end
@@ -25,6 +27,14 @@ class Image < ActiveRecord::Base
     end
     true
   end
+
+  def original_exists?
+    uri = URI(url)
+
+    request = Net::HTTP.new(uri.host)
+    response = request.request_head(uri.path)
+    response.code.to_i == 200
+  end
   
   def self.s3_url(filename, type)
     S3.url(image_path(filename, type))
@@ -32,6 +42,10 @@ class Image < ActiveRecord::Base
 
   def s3_url(type)
     image_path(type)
+  end
+
+  def s3_exists?(type)
+    S3.s3.buckets[Lilsis::Application.config.aws_s3_bucket].objects["images/#{type}/#{filename}"].exists?
   end
 
   def self.image_path(filename, type)
@@ -121,17 +135,30 @@ class Image < ActiveRecord::Base
     result
   end
 
-  def crop(x, y, w, h, type='large')
+  def crop(x, y, w, h)
     download_large_to_tmp
     img = MiniMagick::Image.open(tmp_path)
     img.crop("#{w}x#{h}+#{x}+#{y}")
     img.write(tmp_path)
 
-    { small: 50, profile: 200, large: 1024 }.each do |type, size|
-      Image.create_asset(filename, type, tmp_path, size, size, false)
+    IMAGE_SIZES.each do |type, size|
+      self.class.create_asset(filename, type, tmp_path, size, size, false)
     end
 
     File.delete(tmp_path)
     true
+  end
+
+  def ensure_large_s3
+    if s3_exists?('large')
+      return :exists
+    else
+      if (original_exists? rescue false)
+        Image.create_asset(filename, 'large', url, Image::IMAGE_SIZES[:large], Image::IMAGE_SIZES[:large], false)
+        return :created
+      else
+        return false
+      end
+    end
   end
 end

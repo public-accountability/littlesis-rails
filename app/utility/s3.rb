@@ -9,8 +9,7 @@ class S3
   end
   
   def self.s3
-    return @s3 unless @s3.nil?
-    @s3 = AWS::S3.new(
+    @s3 ||= AWS::S3.new(
       access_key_id: Lilsis::Application.config.aws_key,
       secret_access_key: Lilsis::Application.config.aws_secret
     )

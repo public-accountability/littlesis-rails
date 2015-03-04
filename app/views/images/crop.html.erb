@@ -2,7 +2,7 @@
 
 <h3>Crop Image</h3>
 
-<img id="jcrop_image" src="<%= @image.s3_url('large') %>"><br>
+<img id="jcrop_image" src="<%= @image.s3_url(@type) %>"><br>
 
 <%= form_tag(crop_remote_image_url(@image), id: 'crop_image', method: :post) do %>
   <input type="hidden" id="coords" name="coords">
