@@ -73,6 +73,8 @@ Lilsis::Application.routes.draw do
       get 'relationships'
       get 'search_data'
       get 'match_donations'
+      get 'admin'
+      get 'find_articles'
     end
   end
 

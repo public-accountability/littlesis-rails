@@ -122,6 +122,7 @@ class EntitiesController < ApplicationController
     @results = GoogleSearch.new(Lilsis::Application.config.google_custom_news_search_engine_id).search(@q, page)
     @results.select! { |r| !selected_urls.include?(r['link']) }
     @pages = Kaminari.paginate_array([], total_count: 50).page(page).per(10)
+    @queue_count = entity_queue_count(:find_articles)
   end
 
   def import_articles
@@ -144,7 +145,11 @@ class EntitiesController < ApplicationController
       }, featured = true)
     end
 
-    redirect_to articles_entity_path(@entity)
+    if @queue_count = entity_queue_count(:find_articles)
+      redirect_to find_articles_entity_path(next_entity_in_queue(:find_articles))
+    else
+      redirect_to articles_entity_path(@entity)
+    end
   end
 
   def remove_article

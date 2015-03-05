@@ -1,5 +1,5 @@
 class ListsController < ApplicationController
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles]
 
   # GET /lists
   def index
@@ -71,6 +71,16 @@ class ListsController < ApplicationController
         render json: @list.entities.includes(:aliases).map { |e| { id: e.id, name: e.name, oneliner: e.blurb, aliases: e.aliases.map { |a| a.name } } }
       }
     end
+  end
+
+  def admin
+  end
+
+  def find_articles
+    entity_ids = @list.entities.joins("LEFT JOIN article_entities ON (article_entities.entity_id = entity.id)").where(article_entities: { id: nil }).pluck(:id)
+    set_entity_queue(:find_articles, entity_ids, @list.id)
+    next_entity_id = next_entity_in_queue(:find_articles)
+    redirect_to find_articles_entity_path(id: next_entity_id)
   end
 
   private

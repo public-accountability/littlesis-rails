@@ -39,4 +39,7 @@
 </table>
 
 <input type="submit" class="btn btn-primary" value="Import Selected">
+  <% if @queue_count > 0 %>
+    &nbsp;(<%= @queue_count %> remaining in queue)
+  <% end %>
 <% end %>

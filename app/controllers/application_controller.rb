@@ -84,4 +84,26 @@ class ApplicationController < ActionController::Base
 
     @note.body_raw = default_body.uniq.join(" ") unless default_body.blank?
   end
+
+  def ensure_entity_queue(key)
+    session[:entity_queues] = {} unless session[:entity_queues].present?
+    session[:entity_queues][key] = { entity_ids: [] } unless session[:entity_queues][key].present?
+  end
+
+  def set_entity_queue(key, entity_ids, list_id=nil)
+    ensure_entity_queue(key)
+    session[:entity_queues][key][:entity_ids] = entity_ids
+    session[:entity_queues][key][:list_id] = list_id if list_id
+    entity_ids
+  end
+
+  def next_entity_in_queue(key)
+    ensure_entity_queue(key)
+    session[:entity_queues][key][:entity_ids].shift
+  end
+
+  def entity_queue_count(key)
+    ensure_entity_queue(key)
+    session[:entity_queues][key][:entity_ids].count
+  end
 end
