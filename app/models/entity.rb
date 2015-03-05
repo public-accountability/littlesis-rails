@@ -35,6 +35,8 @@ class Entity < ActiveRecord::Base
   has_many :os_categories, through: :os_entity_categories, inverse_of: :entities
   has_many :entity_fields, inverse_of: :entity, dependent: :destroy
   has_many :fields, through: :entity_fields, inverse_of: :entities
+  has_many :article_entities, inverse_of: :entity, dependent: :destroy
+  has_many :articles, through: :article_entities, inverse_of: :entities
 
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
@@ -386,7 +388,7 @@ class Entity < ActiveRecord::Base
     EntityField.transaction do
       # delete fields
       entity_fields.includes(:field).each do |ef|
-        ef.delete unless hash.keys.include?(ef.field.name)
+        ef.delete if hash[ef.field.name].blank? or !hash.keys.include?(ef.field.name)
       end
 
       # update or create fields
@@ -474,5 +476,24 @@ class Entity < ActiveRecord::Base
     image.title = name
     image.is_featured = (force_featured or !has_featured_image)
     images << image
+  end
+
+  def featured_articles
+    articles.where(article_entities: { is_featured: true} )
+  end
+
+  def add_article(hash, featured=true)
+    article_entity = nil
+
+    ActiveRecord::Base.transaction do
+      article = Article.create(hash)
+      article_entity = ArticleEntity.create(
+        article_id: article.id,
+        entity_id: id,
+        is_featured: featured
+      )
+    end
+
+    article_entity
   end
 end

@@ -1,0 +1,42 @@
+<%= render partial: 'header', locals: { entity: @entity } %>
+
+<% if @articles.count > 0 %>
+<h3>Existing Articles</h3>
+  <% @articles.each do |article| %>
+    <%= link_to(article['title'], article['url']) %><br>
+  <% end %>
+<% end %>
+
+<h3>Find Articles</h3>
+
+<%= form_tag(nil, method: :get, class: 'form-inline') do %>
+  <input type="text" name="q" class="form-control" style="width: 500px;" value="<%= @q %>" placeholder="news search query">
+  <input type="submit" value="Search" class="btn btn-default">
+<% end %>
+
+<br>
+
+<%= paginate @pages %>
+
+<br><br>
+
+<%= form_tag('import_articles') do %>
+<table class="table">
+<% @results.each_with_index do |result, i| %>
+  <tr>
+    <td>
+      <input type="checkbox" name="selected-<%= i %>" class="news-article-checkbox">
+      <input type="hidden" name="title[]" value="<%= CGI.escapeHTML(result['title']) %>">
+      <input type="hidden" name="url[]" value="<%= CGI.escapeHTML(result['link']) %>">
+      <input type="hidden" name="snippet[]" value="<%= CGI.escapeHTML(result['snippet']) %>">
+    </td>
+    <td>
+      <div class="news-article-title"><%= link_to(result['title'], result['link'], target: '_blank') %></div>
+      <%= result['snippet'] %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<input type="submit" class="btn btn-primary" value="Import">
+<% end %>

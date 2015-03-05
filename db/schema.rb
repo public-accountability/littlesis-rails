@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150224183355) do
+ActiveRecord::Schema.define(version: 20150304212842) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -118,6 +118,17 @@ ActiveRecord::Schema.define(version: 20150224183355) do
 
   add_index "article", ["source_id"], name: "source_id_idx", using: :btree
 
+  create_table "article_entities", force: true do |t|
+    t.integer  "article_id",                  null: false
+    t.integer  "entity_id",                   null: false
+    t.boolean  "is_featured", default: false, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "article_entities", ["entity_id", "article_id"], name: "index_article_entities_on_entity_id_and_article_id", unique: true, using: :btree
+  add_index "article_entities", ["is_featured"], name: "index_article_entities_on_is_featured", using: :btree
+
   create_table "article_entity", force: true do |t|
     t.integer  "article_id",                                      null: false
     t.integer  "entity_id",                                       null: false
@@ -133,6 +144,16 @@ ActiveRecord::Schema.define(version: 20150224183355) do
   create_table "article_source", force: true do |t|
     t.string "name",         limit: 100, null: false
     t.string "abbreviation", limit: 10,  null: false
+  end
+
+  create_table "articles", force: true do |t|
+    t.string   "title",              null: false
+    t.string   "url",                null: false
+    t.string   "snippet"
+    t.datetime "published_at"
+    t.string   "created_by_user_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "bootsy_image_galleries", force: true do |t|

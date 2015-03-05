@@ -21,7 +21,7 @@ class OrgBoardUpdater
     @board_pages = find_board_pages
     @attempted_board_urls = []
 
-    @board_pages.map {|p| p['url'] }.each do |url|
+    @board_pages.map {|p| p['link'] }.each do |url|
       @found_board_rels = check_board_page(url, @board_rels)
       @attempted_board_urls << url
 
@@ -52,7 +52,7 @@ class OrgBoardUpdater
 
   def select_board_pages(possible_pages)
     possible_pages.select do |r|
-      r['title'].match(/board|governance/i) and !r['url'].match(/\.pdf$/) and !URLS_TO_SKIP.find { |str| r['url'].downcase.index(str) }
+      r['title'].match(/board|governance/i) and !r['link'].match(/\.pdf$/) and !URLS_TO_SKIP.find { |str| r['link'].downcase.index(str) }
     end
   end
 

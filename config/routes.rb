@@ -91,6 +91,10 @@ Lilsis::Application.routes.draw do
       post 'remove_twitter'
       get 'fields'
       post 'update_fields'
+      get 'articles'
+      get 'find_articles'
+      post 'import_articles'
+      post 'remove_article'
     end
 
     collection do
