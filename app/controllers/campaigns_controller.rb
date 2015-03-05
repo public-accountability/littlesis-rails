@@ -82,7 +82,7 @@ class CampaignsController < ApplicationController
   def groups
     # @groups = @campaign.groups.working.order(:name).page(params[:page]).per(20)
 
-    @groups = @campaign.groups.public
+    @groups = @campaign.groups.public_scope
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
       .group("groups.id")
