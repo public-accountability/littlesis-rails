@@ -119,14 +119,14 @@ class EntitiesController < ApplicationController
     page = (params[:page] or 1).to_i
     @articles = @entity.articles
     selected_urls = @articles.map(&:url)
-    @results = GoogleSearch.new(Lilsis::Application.config.google_custom_news_search_engine_id).search(@q, page)
+    engine = GoogleSearch.new(Lilsis::Application.config.google_custom_news_search_engine_id)
+    @results = engine.search(@q, page) + engine.search(@q, page + 1)
     @results.select! { |r| !selected_urls.include?(r['link']) }
-    @pages = Kaminari.paginate_array([], total_count: 50).page(page).per(10)
     @queue_count = entity_queue_count(:find_articles)
   end
 
   def import_articles
-    selected_ids = params.keys.map(&:to_s).select { |k| k.match(/^selected-/) }.map { |k| k[-1] }.map(&:to_i)
+    selected_ids = params.keys.map(&:to_s).select { |k| k.match(/^selected-/) }.map { |k| k.split('-').last }.map(&:to_i)
     selected_ids.each do |i|
       snippet = CGI.unescapeHTML(params[:snippet][i])
       published_at = nil
@@ -145,8 +145,13 @@ class EntitiesController < ApplicationController
       }, featured = true)
     end
 
-    if @queue_count = entity_queue_count(:find_articles)
-      redirect_to find_articles_entity_path(next_entity_in_queue(:find_articles))
+    @queue_count = entity_queue_count(:find_articles)
+    if @queue_count > 0
+      if params[:submit_stay]
+        redirect_to find_articles_entity_path(@entity.id)
+      else
+        redirect_to find_articles_entity_path(next_entity_in_queue(:find_articles))
+      end
     else
       redirect_to articles_entity_path(@entity)
     end

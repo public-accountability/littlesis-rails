@@ -16,10 +16,6 @@
 
 <br>
 
-<%= paginate @pages %>
-
-<br><br>
-
 <%= form_tag('import_articles') do %>
 <table class="table">
 <% @results.each_with_index do |result, i| %>
@@ -32,14 +28,23 @@
     </td>
     <td>
       <div class="news-article-title"><%= link_to(result['title'], result['link'], target: '_blank') %></div>
-      <%= result['snippet'] %>
+      <%= raw(result['htmlSnippet']) %>
     </td>
   </tr>
+  <% if i % 10 == 9 or i == @results.count - 1 %>
+  <tr>
+    <td></td>
+    <td colspan="2" class="form-inline">
+      <br>
+      <input type="submit" class="btn btn-primary" name="submit" value="Import<%= @queue_count > 0 ? ' and Continue' : '' %>">
+      <% if @queue_count > 0 %>
+        <input type="submit" class="btn btn-primary" name="submit_stay" value="Import and Stay on Page">
+        &nbsp;(<%= @queue_count %> remaining in queue)
+      <% end %>
+      <br><br>
+    </td>
+  </tr>
+  <% end %>
 <% end %>
 </table>
-
-<input type="submit" class="btn btn-primary" value="Import Selected">
-  <% if @queue_count > 0 %>
-    &nbsp;(<%= @queue_count %> remaining in queue)
-  <% end %>
 <% end %>
