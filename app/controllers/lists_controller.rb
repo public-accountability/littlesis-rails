@@ -57,7 +57,7 @@ class ListsController < ApplicationController
   def match_donations
     page = params.fetch(:page, 1)
     num = params.fetch(:num, 100)
-    @entities = @list.entities.people
+    @entities = @list.entities_with_couples.people
                 .joins(:os_entity_transactions)
                 .includes(:links, :addresses)
                 .joins("LEFT JOIN address ON (address.entity_id = entity.id)")
@@ -77,7 +77,7 @@ class ListsController < ApplicationController
   end
 
   def find_articles
-    entity_ids = @list.entities.joins("LEFT JOIN article_entities ON (article_entities.entity_id = entity.id)").where(article_entities: { id: nil }).pluck(:id)
+    entity_ids = @list.entities_with_couples.joins("LEFT JOIN article_entities ON (article_entities.entity_id = entity.id)").where(article_entities: { id: nil }).pluck(:id)
     set_entity_queue(:find_articles, entity_ids, @list.id)
     next_entity_id = next_entity_in_queue(:find_articles)
     redirect_to find_articles_entity_path(id: next_entity_id)
