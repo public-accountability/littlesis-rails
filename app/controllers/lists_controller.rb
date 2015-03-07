@@ -1,5 +1,5 @@
 class ListsController < ApplicationController
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images]
 
   # GET /lists
   def index
@@ -81,6 +81,14 @@ class ListsController < ApplicationController
     set_entity_queue(:find_articles, entity_ids, @list.id)
     next_entity_id = next_entity_in_queue(:find_articles)
     redirect_to find_articles_entity_path(id: next_entity_id)
+  end
+
+  def crop_images
+    entity_ids = @list.entities.joins(:images).where(image: { is_featured: true }).group("entity.id").order("image.updated_at ASC").pluck(:id)
+    set_entity_queue(:crop_images, entity_ids, @list.id)
+    next_entity_id = next_entity_in_queue(:crop_images)
+    image_id = Image.where(entity_id: next_entity_id, is_featured: true).first
+    redirect_to crop_image_path(id: image_id)    
   end
 
   private

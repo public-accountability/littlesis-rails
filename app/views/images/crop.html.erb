@@ -3,23 +3,67 @@
 <h3>Crop Image</h3>
 
 <img id="jcrop_image" src="<%= @image.s3_url(@type) %>"><br>
+<% if @image.caption %>
+  <%= @image.caption %>
+  <br><br>
+<% end %>
 
 <%= form_tag(crop_remote_image_url(@image), id: 'crop_image', method: :post) do %>
   <input type="hidden" id="coords" name="coords">
   <input type="submit" value="Crop" class="btn btn-primary">
+  <% if @queue_count > 0 %>
+    <input type="submit" value="Skip" class="btn btn-default" name="skip">
+    &nbsp;(<%= @queue_count %> remaining in queue)
+  <% end %>
 <% end %>
 
 <script type="text/javascript">
-$(function(){
+$(document).ready(function() {
   var updateCoords = function(coords) {
     $('#coords').val(JSON.stringify(coords));
-    console.log(JSON.stringify(coords));
+  };
+
+  var centeredSquare = function() {
+    var img = $('#jcrop_image');
+    var width = img.width(); 
+    var height = img.height();
+    var min = Math.min(width, height);
+
+    if (width > min) {
+      var x = (width-min)/2;
+      var x2 = (width-min)/2 + min;
+    } else {
+      var x = 0;
+      var x2 = min;
+    }
+
+    if (height > min) {
+      var y = (height-min)/2;
+      var y2 = (height-min)/2 + min;
+    } else {
+      var y = 0;
+      var y2 = min;
+    }
+
+    return [x, y, x2, y2];
+  };
+
+  var onEnter = function() { 
+    $("#crop_image").submit(); 
   };
 
   $('#jcrop_image').Jcrop({
+    setSelect: centeredSquare(),
     onChange: updateCoords,
-    aspectRatio: 1
+    onEnter: onEnter,
+    aspectRatio: 1,
+    bgOpacity: .4
   });
 
+  $(document).keypress(function(e) {
+    if (e.keyCode == 13) {
+      onEnter();
+    }
+  });
 });
 </script>

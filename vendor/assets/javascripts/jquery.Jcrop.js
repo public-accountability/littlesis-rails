@@ -1278,6 +1278,10 @@
         case 27:
           if (options.allowSelect) Selection.release();
           break;
+        // enter key runs callback
+        case 13:
+          if (options.onEnter) options.onEnter();
+          break;
         case 9:
           return true;
         }

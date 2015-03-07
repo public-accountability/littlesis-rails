@@ -75,6 +75,7 @@ Lilsis::Application.routes.draw do
       get 'match_donations'
       get 'admin'
       get 'find_articles'
+      get 'crop_images'
     end
   end
 

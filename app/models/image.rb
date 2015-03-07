@@ -11,7 +11,11 @@ class Image < ActiveRecord::Base
   def download_large_to_tmp
     download_to_tmp(s3_url("large"))
   end
-  
+
+  def download_profile_to_tmp
+    download_to_tmp(s3_url("profile"))
+  end
+
   def download_original_to_tmp
     download_to_tmp(url)
   end
@@ -136,7 +140,7 @@ class Image < ActiveRecord::Base
   end
 
   def crop(x, y, w, h)
-    download_large_to_tmp
+    download_large_to_tmp or download_profile_to_tmp
     img = MiniMagick::Image.open(tmp_path)
     img.crop("#{w}x#{h}+#{x}+#{y}")
     img.write(tmp_path)
