@@ -47,4 +47,13 @@
   <% end %>
 <% end %>
 </table>
+<% if @results.count == 0 %>
+  <strong>No results.</strong>
+  <br>
+  <br>
+  <input type="submit" class="btn btn-primary" name="submit" value="Continue">
+  <% if @queue_count > 0 %>
+    &nbsp;(<%= @queue_count %> remaining in queue)
+  <% end %>
+<% end %>
 <% end %>

@@ -120,7 +120,7 @@ class EntitiesController < ApplicationController
     @articles = @entity.articles
     selected_urls = @articles.map(&:url)
     engine = GoogleSearch.new(Lilsis::Application.config.google_custom_news_search_engine_id)
-    @results = engine.search(@q, page) + engine.search(@q, page + 1)
+    @results = engine.search(@q, page).to_a + engine.search(@q, page + 1).to_a
     @results.select! { |r| !selected_urls.include?(r['link']) }
     @queue_count = entity_queue_count(:find_articles)
   end
