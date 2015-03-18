@@ -7,7 +7,7 @@ class EntityNameAddressCsvImporter
                 :image, :news, :profession, :row, :status, :common_name_type, :address_type, :is_couple
 
   def initialize(row)
-    @first, @last, @street, @city, @state, @postal, @country, @image, @news, @profession = @row = row.map { |d| d.nil? ? nil : d.gsub(/[\r\n\s]+/, " ").strip }
+    @first, @last, @street, @city, @state, @postal, @country, @image, @news, @profession, @image_caption = @row = row.map { |d| d.nil? ? nil : d.gsub(/[\r\n\s]+/, " ").strip }
     @raw_name = (@first.to_s + " " + @last.to_s).strip
     @entity = nil
     @address = nil
@@ -46,7 +46,7 @@ class EntityNameAddressCsvImporter
     return false if skip_data
     clean_data
     match_or_create_entity
-    create_image unless @is_couple
+    create_image
     create_address
     entity
   end
@@ -116,15 +116,25 @@ class EntityNameAddressCsvImporter
   end
 
   def parse_address
-    return unless @street and @city and @state and @postal
-    return unless !@country.nil? and ["united states", "us", "u.s.", "usa", "u.s.a."].include?(@country.downcase)
-    @raw_address = "#{@street}, #{@city}, #{@state} #{@postal}, #{@country}"
-    oneliner = "#{@street}, #{@city}, #{@state} #{@postal}"
-    @address = Address.parse(oneliner, { 
-      street1: @street,
-      city: @city,
-      state: AddressState.find_by(abbreviation: @state.upcase)
-    })
+    return if @city.to_s.match(/^\d+-?\d+$/) # skip if postal is mistakenly entered as city
+    if @street and @city and @state and @postal and ["", "united states", "us", "u.s.", "usa", "u.s.a."].include?(@country.to_s.downcase)
+      @postal = @postal.rjust(5, "0")
+      @raw_address = "#{@street}, #{@city}, #{@state} #{@postal}, #{@country}"
+      oneliner = "#{@street}, #{@city}, #{@state} #{@postal}"
+      @address = Address.parse(oneliner, { 
+        street1: @street,
+        city: @city,
+        state: AddressState.find_by(abbreviation: @state.upcase)
+      })
+    elsif @city and @country
+      @address = Address.new(
+        street1: @street,
+        city: @city,
+        postal: @postal,
+        state_name: @state,
+        country_name: @country
+      )      
+    end
   end
 
   def add_matches(entities, type)
@@ -133,6 +143,10 @@ class EntityNameAddressCsvImporter
     @matches[type].concat(entities.select { |e| !ids.include?(e.id) })
     @status = :matched
     true
+  end
+
+  def entity=(entity)
+    @entity = entity
   end
 
   def entity
@@ -243,13 +257,13 @@ class EntityNameAddressCsvImporter
   end
 
   def match_name
-    entities = EntityMatcher.by_person_name(@first, @last, @middle, @suffix, @nick, @maiden).matches
+    entities = EntityMatcher.by_person_name(@first, @last, @middle, @suffix, @nick, @maiden)
     add_matches(entities, :name)
   end
 
   def match_parsed_raw_name
     name = NameParser.new(@raw_name)
-    entities = EntityMatcher.by_person_name(name.first, name.last, name.middle, name.suffix, name.nick).matches
+    entities = EntityMatcher.by_person_name(name.first, name.last, name.middle, name.suffix, name.nick)
     add_matches(entities, :name)
   end
 
@@ -326,8 +340,13 @@ class EntityNameAddressCsvImporter
 
   def create_image(force_featured = false)
     return unless e = entity
-    return unless @image
-    e.add_image_from_url(@image, force_featured)
+    return unless @image.present?
+    return if e.images.find { |i| i.url == @image }
+    if image = e.add_image_from_url(@image, force_featured) and @image_caption.present?
+      image.caption = @image_caption
+      image.save
+    end
+    image
   end
 
   def create_address

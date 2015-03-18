@@ -29,18 +29,13 @@ class EntitiesController < ApplicationController
 		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb } }
 
     if params[:with_ids]
-      names = entities.map(&:name)
-      dups = names.select do |name|
-        names.select{ |n| n == name }.count > 1
-      end
-
-      data.each_with_index do |entity, i|
-        if dups.include? entity[:name]
-          entity[:name]
-          info = entity[:blurb].present? ? entity[:blurb] : entity[:id].to_s
-          # info = info.slice(0..20)
-          data[i][:value] = entity[:name] + " (#{info})"
+      dups = entities.group_by(&:name).select { |name, ary| ary.count > 1 }.keys
+      data.map! do |hash|
+        if dups.include?(hash[:name])
+          info = hash[:blurb].present? ? hash[:blurb] : hash[:id].to_s
+          hash[:value] = hash[:name] + " (#{info})"
         end
+        hash
       end      
     end
 

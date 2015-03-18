@@ -231,6 +231,11 @@ class Entity < ActiveRecord::Base
     image.image_path(type)
   end
 
+  def featured_image_source_url
+    return nil unless image = featured_image
+    image.url
+  end
+
   def relateds_by_count(num=5, primary_ext=nil)
     r = relateds.select("entity.*, COUNT(link.id) AS num").group("link.entity2_id").order("num DESC").limit(num)
     r.where("entity.primary_ext = ?", primary_ext) unless primary_ext.nil?
@@ -476,6 +481,7 @@ class Entity < ActiveRecord::Base
     image.title = name
     image.is_featured = (force_featured or !has_featured_image)
     images << image
+    image
   end
 
   def featured_articles

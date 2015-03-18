@@ -11,18 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150304212842) do
+ActiveRecord::Schema.define(version: 20150307210703) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
-    t.string   "street1",      limit: 100,                 null: false
+    t.string   "street1",      limit: 100
     t.string   "street2",      limit: 100
     t.string   "street3",      limit: 100
     t.string   "city",         limit: 50,                  null: false
     t.string   "county",       limit: 50
-    t.integer  "state_id",     limit: 8,                   null: false
-    t.integer  "country_id",   limit: 8,   default: 1,     null: false
-    t.string   "postal",       limit: 5
+    t.integer  "state_id"
+    t.integer  "country_id"
+    t.string   "postal",       limit: 20
     t.string   "latitude",     limit: 20
     t.string   "longitude",    limit: 20
     t.integer  "category_id",  limit: 8
@@ -31,6 +31,8 @@ ActiveRecord::Schema.define(version: 20150304212842) do
     t.boolean  "is_deleted",               default: false, null: false
     t.integer  "last_user_id"
     t.string   "accuracy",     limit: 30
+    t.string   "country_name", limit: 50,                  null: false
+    t.string   "state_name",   limit: 50
   end
 
   add_index "address", ["category_id"], name: "category_id_idx", using: :btree
@@ -1317,8 +1319,6 @@ ActiveRecord::Schema.define(version: 20150304212842) do
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
   add_foreign_key "address", "address_category", name: "address_ibfk_4", column: "category_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "address", "address_country", name: "address_ibfk_3", column: "country_id", options: "ON UPDATE CASCADE"
-  add_foreign_key "address", "address_state", name: "address_ibfk_1", column: "state_id", options: "ON UPDATE CASCADE"
   add_foreign_key "address", "entity", name: "address_ibfk_2", dependent: :delete, options: "ON UPDATE CASCADE"
   add_foreign_key "address", "sf_guard_user", name: "address_ibfk_5", column: "last_user_id", options: "ON UPDATE CASCADE"
 

@@ -7,10 +7,10 @@ class Address < ActiveRecord::Base
   belongs_to :entity, inverse_of: :addresses
   belongs_to :state, class_name: "AddressState", inverse_of: :addresses
 
-  validates_presence_of :street1, :city, :state, :postal
+  validates_presence_of :city, :country_name
 
   def to_s
-    "#{street1}, #{street2}, #{street3}, #{city}, #{state.abbreviation} #{postal}".strip.gsub(/ ,/, " ").gsub(/\s+/, " ")
+    "#{street1}, #{street2}, #{street3}, #{city}, #{state.present? ? state.abbreviation: ''} #{postal}, #{country_name}".strip.gsub(/\s+,/, " ").gsub(/\s+/, " ")
   end
 
   def self.parse(str, data = {})
@@ -31,7 +31,7 @@ class Address < ActiveRecord::Base
       self.city = @parsed.city
       self.state = AddressState.find_by(abbreviation: @parsed.state.upcase)
       self.postal = @parsed.postal_code
-      @parsed
+      self.country_name = "United States"
     end
 
     titleize
@@ -71,13 +71,21 @@ class Address < ActiveRecord::Base
   end
 
   def comparison_hash
-    street1_hash + ":" + postal[0..4]
+    return nil unless area_hash.present?
+    return street1_hash + ":" + area_hash if street1_hash.present?
+    return area_hash
   end
 
   def street1_hash
+    return nil unless street1.present?
     #street hash is concatenation of first 2-3 street1 parts, depending on whether there's a street prefix
     num = street_prefix? ? 2 : 1
     street1.gsub('.', '').split(" ")[0..num].join.downcase
+  end
+
+  def area_hash
+    return postal[0..4] if postal.present?
+    city.downcase + ":" + country_name.downcase
   end
 
   def street_prefix?
@@ -94,7 +102,7 @@ class Address < ActiveRecord::Base
   end
 
   def same_as?(address)
-    return false unless postal and address.postal
+    return false unless comparison_hash and address.comparison_hash
     (to_s == address.to_s) or (comparison_hash == address.comparison_hash)
   end
 

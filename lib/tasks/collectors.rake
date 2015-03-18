@@ -7,6 +7,7 @@ namespace :collectors do
     create_csv = args.to_hash.fetch(:create_csv, "true") == "true"
     detailed_logs = args.to_hash.fetch(:detailed_logs, "false") == "true"
     couples_only = args.to_hash.fetch(:couples_only, "false") == "true"
+    offset = (ENV['OFFSET'] or 0).to_i
 
     output_ary = [] # just in case file write fails?
     output_ary << "ID,First Name,Last Name,Address,City,State,Zip,Country,Pictures,News,Profession".split(",")
@@ -71,16 +72,18 @@ namespace :collectors do
 
     CSV.foreach(args[:filename], encoding: 'windows-1251:utf-8') do |input_row|
       begin
-        # skip label row
-        if count == 0
-          count = 1
+        # default offset is to skip label row
+        if count <= offset
+          count += 1
           next
         end
 
         count += 1
 
         # skip if already has id
-        next if input_row.first.present?
+        # next if input_row.first.present?
+        entity_id = input_row.first
+
         input_row = input_row.drop(1)
 
         input_row.map! { |cell| cell.present? ? cell.gsub(/[\n\r]/, " ").gsub(/\s{2,}/, " ") : nil }
@@ -121,14 +124,60 @@ namespace :collectors do
             rows << [parts.take(last_num).join(" ")].concat([parts.drop(last_num).join(" ")]).concat(input_row.drop(2))
           end
 
+          # split image cell into two or discard
+          couple_image = nil
+          images = input_row[7].to_s.split(/\s+/)
+          if images.count == rows.count
+            # if two image urls, assign each to corresponding row
+            rows.each_with_index do |row, i|
+              rows[i][7] = images[i]
+            end
+          else
+            # if not two image urls, set row images to nil
+            rows.each_with_index do |row, i|
+              rows[i][7] = nil
+            end
+
+            if images.count == 1
+              couple_image = images.first
+            end
+          end
+
+          # split entity_id if present
+          if entity_id.present?
+            c = Entity.find(entity_id).couple
+            entity_ids = [c.partner1_id, c.partner2_id]
+          else
+            entity_ids = [nil, nil]
+          end
+
           couple = []
         else
           next if couples_only
           rows = [input_row]
         end
 
-        rows.each do |row|
+        rows.each_with_index do |row, i|
           importer = EntityNameAddressCsvImporter.new(row)
+
+          if is_couple
+            id = entity_ids[i]
+          else
+            id = entity_id
+          end
+
+          # entity already imported, so we import image and address if they don't already exist
+          if id.present?
+            entity = Entity.where(id: id).first
+            next unless entity
+            importer.entity = entity
+            couple << entity if is_couple
+            importer.parse_address
+            print "#{count} + imported address for #{entity.name}\n" if importer.create_address
+            print "#{count} + imported image for #{entity.name}\n" if importer.create_image
+            next
+          end
+
           importer.is_couple = is_couple
           importer.already_imported_ids(already_imported_ids)
           importer.collector_list_ids(collector_list_ids)
@@ -207,7 +256,13 @@ namespace :collectors do
             entity = Entity.create_couple(full_name, couple[0], couple[1])
           end
 
-          entity.add_image_from_url(input_row[7]) if input_row[7].present?
+          if couple_image.present?
+            if image = entity.add_image_from_url(couple_image) and couple_image.present? and input_row[10].present?
+              image.caption = input_row[10]
+              image.save
+            end
+          end
+
           entity.lists << list unless entity.list_ids.include?(list.id)
           entity.save!
 

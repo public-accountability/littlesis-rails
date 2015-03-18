@@ -52,4 +52,20 @@ namespace :images do
     binding.pry
     print "\n"
   end
+
+  desc "removes s3 images that don't belond to any entity"
+  task remove_s3_orphans: :environment do
+    offset = (ENV['OFFSET'] or 0).to_i
+    bucket = S3.s3.buckets[Lilsis::Application.config.aws_s3_bucket]
+
+    s3_filenames = `AWS_ACCESS_KEY_ID=#{Lilsis::Application.config.aws_key} AWS_SECRET_ACCESS_KEY=#{Lilsis::Application.config.aws_secret} aws s3 ls s3://#{Lilsis::Application.config.aws_s3_bucket}/images/profile/ | tr -s ' ' | cut -d ' ' -f 4`.split("\n").drop(1)
+    print "found #{s3_urls.count} existing s3 profile images...\n"
+    local_filenames = Image.all.pluck(:filename)
+
+    s3_filenames.each_with_index do |filename, i|
+      unless local_filenames.include?(filename)
+        bucket.objects["images/profile/#{filename}"].delete
+      end
+    end
+  end
 end
