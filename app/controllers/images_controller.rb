@@ -14,6 +14,11 @@ class ImagesController < ApplicationController
       @image.crop(coords['x'], coords['y'], coords['w'], coords['h'])
     end
 
+    # permanently remove entity from queue
+    if params[:skip]
+      skip_queue_entity(:crop_images, @entity.id)
+    end
+
     if @queue_count > 0
       next_entity_id = next_entity_in_queue(:crop_images)
       image_id = Image.where(entity_id: next_entity_id, is_featured: true).first

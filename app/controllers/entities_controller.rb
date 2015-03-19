@@ -140,6 +140,11 @@ class EntitiesController < ApplicationController
       }, featured = true)
     end
 
+    # permanently remove entity from queue
+    if selected_ids.count == 0
+      skip_queue_entity(:find_articles, @entity.id)
+    end
+
     @queue_count = entity_queue_count(:find_articles)
     if @queue_count > 0
       if params[:submit_stay]

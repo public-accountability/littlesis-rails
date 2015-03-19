@@ -37,6 +37,7 @@ class Entity < ActiveRecord::Base
   has_many :fields, through: :entity_fields, inverse_of: :entities
   has_many :article_entities, inverse_of: :entity, dependent: :destroy
   has_many :articles, through: :article_entities, inverse_of: :entities
+  has_many :queue_entities, inverse_of: :entity, dependent: :destroy
 
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }

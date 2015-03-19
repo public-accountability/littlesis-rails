@@ -99,11 +99,20 @@ class ApplicationController < ActionController::Base
 
   def next_entity_in_queue(key)
     ensure_entity_queue(key)
+    remove_skipped_from_queue(key)
     session[:entity_queues][key][:entity_ids].shift
   end
 
   def entity_queue_count(key)
     ensure_entity_queue(key)
     session[:entity_queues][key][:entity_ids].count
+  end
+
+  def remove_skipped_from_queue(key)
+    session[:entity_queues][key][:entity_ids] = QueueEntity.filter_skipped(key, session[:entity_queues][key][:entity_ids])
+  end
+
+  def skip_queue_entity(key, entity_id)
+    QueueEntity.skip_entity(key, entity_id, current_user.id)
   end
 end

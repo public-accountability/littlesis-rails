@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150307210703) do
+ActiveRecord::Schema.define(version: 20150318234636) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -974,6 +974,17 @@ ActiveRecord::Schema.define(version: 20150307210703) do
   end
 
   add_index "public_company", ["entity_id"], name: "entity_id_idx", using: :btree
+
+  create_table "queue_entities", force: true do |t|
+    t.string   "queue",                      null: false
+    t.integer  "entity_id"
+    t.integer  "user_id"
+    t.boolean  "is_skipped", default: false, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "queue_entities", ["queue", "entity_id"], name: "index_queue_entities_on_queue_and_entity_id", unique: true, using: :btree
 
   create_table "reference", force: true do |t|
     t.string   "fields",           limit: 200
