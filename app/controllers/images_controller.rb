@@ -16,7 +16,7 @@ class ImagesController < ApplicationController
 
     # permanently remove entity from queue
     if params[:skip]
-      skip_queue_entity(:crop_images, @entity.id)
+      skip_queue_entity(:crop_images, @image.entity_id)
     end
 
     if @queue_count > 0
