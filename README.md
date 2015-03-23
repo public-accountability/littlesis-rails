@@ -10,9 +10,7 @@ Installation
 FIRST GET RVM, RUBY 2, RAILS 4:
 http://blog.coolaj86.com/articles/installing-ruby-on-ubuntu-12-04.html
 
-Install redis and run:
-    redis-server
-or change cache store or disable cache
+Install redis and run "redis-server" or change cache store or disable cache.
 
 git clone git@github.com:skomputer/lilsis.git
 edit database.yml.sample
