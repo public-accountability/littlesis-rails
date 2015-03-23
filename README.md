@@ -12,19 +12,19 @@ http://blog.coolaj86.com/articles/installing-ruby-on-ubuntu-12-04.html
 
 Install redis and run "redis-server" or change cache store or disable cache.
 
-git clone git@github.com:skomputer/lilsis.git
-edit database.yml.sample
-edit lilsis.yml.sample
-bundle update
-rake db:migrate
-rake legacy:convert_data
-rake db:seed
-rake ts:rebuild
-whenever --update-cron lilsis
-RAILS_ENV=production bin/delayed_job start
-RAILS_ENV=production rake assets:precompile
-RAILS_ENV=production rails s
-http://localhost:3000
+- git clone git@github.com:skomputer/lilsis.git
+- edit database.yml.sample
+- edit lilsis.yml.sample
+- bundle update
+- rake db:migrate
+- rake legacy:convert_data
+- rake db:seed
+- rake ts:rebuild
+- whenever --update-cron lilsis
+- RAILS_ENV=production bin/delayed_job start
+- RAILS_ENV=production rake assets:precompile
+- RAILS_ENV=production rails s
+- go to http://localhost:3000
 
 You will also need to configure your web server to direct requests to the PHP or Rails app depending on the url, along the lines of this:
 
