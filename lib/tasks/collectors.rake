@@ -89,7 +89,7 @@ namespace :collectors do
         input_row.map! { |cell| cell.present? ? cell.gsub(/[\n\r]/, " ").gsub(/\s{2,}/, " ") : nil }
 
         full_name = (input_row[0].to_s + " " + input_row[1].to_s).strip
-        is_couple = (full_name.match(/&|\band\b/) and full_name.split(/&|\band\b/).last.strip.split(/\s/).count > 1)
+        is_couple = NameParser.couple_name?(full_name)
 
         if is_couple
           first = input_row[0].to_s
@@ -334,7 +334,10 @@ namespace :collectors do
       next if count == 1
 
       # skip if missing donor name
-      next if row[3].blank? 
+      if row[3].blank? 
+        binding.pry
+        next
+      end
 
       importer = NozaDonationImporter.new(row)
       importer.collector_list_id = args[:list_id]
@@ -346,11 +349,10 @@ namespace :collectors do
         importer.recipient_name,
         importer.recipient ? importer.recipient.name : nil,
         importer.recipient_match_type,
-        importer.donation.amount
+        importer.donation ? importer.donation.amount : nil
       ]
       results << ary
       print "#{count} #{ary}\n"
-      binding.pry
     end
 
     CSV.open(Rails.root.join("data", "collectors-noza-results.csv"), 'wb') do |csv|

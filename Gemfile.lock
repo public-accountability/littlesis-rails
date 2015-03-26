@@ -237,6 +237,7 @@ GEM
     riddle (1.5.11)
     rmagick (2.13.3)
     ruby-hmac (0.4.0)
+    ruby-opencv (0.0.14)
     sass (3.2.19)
     sass-rails (4.0.3)
       railties (>= 4.0.0, < 5.0)
@@ -298,6 +299,9 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.6)
+    validate_url (1.0.0)
+      activemodel (>= 3.0.0)
+      addressable
     warden (1.2.3)
       rack (>= 1.0)
     webrobots (0.1.1)
@@ -349,6 +353,7 @@ DEPENDENCIES
   rails_autolink
   redis-rails
   rmagick
+  ruby-opencv
   sass-rails
   sequel
   soap4r-ruby1.9
@@ -359,4 +364,5 @@ DEPENDENCIES
   twitter
   twitter-typeahead-rails (~> 0.9.3)
   uglifier (>= 1.0.3)
+  validate_url
   whenever

@@ -2,10 +2,11 @@ class EntityMatcher
   def self.by_person_name(first, last, middle = nil, suffix = nil, nick = nil, maiden = nil)
     first = [first, nick] if nick
     last = [last, maiden] if maiden
+    firsts = [first].concat(Person.same_first_names(first))
 
     matches = Entity.joins(:person).where(
       person: {
-        name_first: first,
+        name_first: firsts,
         name_last: last
       }
     ).where("entity.is_deleted = 0")
@@ -21,5 +22,9 @@ class EntityMatcher
     end
 
     matches
+  end
+
+  def self.by_full_name(name)
+    Entity.joins(:aliases).where("LOWER(entity.name) = ? OR LOWER(alias.name) = ?", name.downcase, name.downcase)
   end
 end

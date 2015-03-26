@@ -165,4 +165,43 @@ class Image < ActiveRecord::Base
       end
     end
   end
+
+  def feature
+    ActiveRecord::Base.transaction do
+      Image.where(entity_id: entity_id).where.not(id: id).update_all(is_featured: false)
+      self.is_featured = true
+      save
+    end
+  end
+
+  def find_face(face_size = 50, shrink_by = 0.333)
+    download_large_to_tmp or download_profile_to_tmp
+    finder = EyesFinder.new(tmp_path, face_size)
+    return false unless finder.is_loaded
+    eyes = finder.find_eyes
+    return false unless rect = finder.face_rect
+    x = rect.x
+    y = rect.y
+    w = rect.width
+    h = rect.height
+    if w > h
+      x += (w-h)/2
+      w = h
+    else
+      y += (h-w)/2
+      h = w
+    end
+    sub = [w, h].min * shrink_by
+    x += sub/2
+    y += sub/2
+    w -= sub
+    h -= sub
+    img = MiniMagick::Image.open(tmp_path)
+    img.crop("#{w}x#{h}+#{x}+#{y}")
+    img.resize("100x100")
+    name = File.basename(tmp_path).split('.')[0]
+    face_path = Rails.root.join("tmp", "faces", "face-" + name + ".jpg").to_s
+    img.write(face_path)
+    face_path
+  end
 end

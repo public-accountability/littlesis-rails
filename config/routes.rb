@@ -98,6 +98,8 @@ Lilsis::Application.routes.draw do
       get 'find_articles'
       post 'import_articles'
       post 'remove_article'
+      get 'new_article'
+      post 'create_article'
     end
 
     collection do

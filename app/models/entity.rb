@@ -24,9 +24,8 @@ class Entity < ActiveRecord::Base
   has_one :person, inverse_of: :entity, dependent: :destroy
   has_one :org, inverse_of: :entity, dependent: :destroy
   has_one :couple, inverse_of: :entity, dependent: :destroy
-  has_one :couple1, class_name: "Couple", inverse_of: :partner1, dependent: :destroy
-  has_one :couple2, class_name: "Couple", inverse_of: :partner2, dependent: :destroy
   has_one :public_company, inverse_of: :entity, dependent: :destroy
+  has_one :school, inverse_of: :entity, dependent: :destroy
   has_many :addresses, inverse_of: :entity, dependent: :destroy
   has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
   has_many :extension_records, inverse_of: :entity, dependent: :destroy
@@ -475,13 +474,21 @@ class Entity < ActiveRecord::Base
     joins(:couple).where("(couple.partner1_id = ? AND couple.partner2_id = ?) OR (couple.partner1_id = ? AND couple.partner2_id = ?)", partner1_id, partner2_id, partner2_id, partner1_id).first
   end
 
+  def couples
+    Couple.where("couple.partner1_id = ? OR couple.partner2_id = ?", id, id)
+  end
+
+  def partners
+    couples.map { |c| c.partner1_id == id ? c.partner2 : c.partner1 }
+  end
+
   def add_image_from_url(url, force_featured = false)
     return if images.find { |i| i.url == url }
     image = Image.new_from_url(url)
     return false unless image
     image.title = name
-    image.is_featured = (force_featured or !has_featured_image)
     images << image
+    image.feature if force_featured or !has_featured_image
     image
   end
 

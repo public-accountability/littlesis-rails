@@ -1,6 +1,6 @@
 class EntitiesController < ApplicationController
 	before_filter :auth, except: [:relationships]
-  before_action :set_entity, only: [:relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article]
+  before_action :set_entity, only: [:relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article]
 
   def relationships
   end
@@ -163,9 +163,32 @@ class EntitiesController < ApplicationController
     redirect_to articles_entity_path(@entity)
   end
 
+  def new_article
+    @article = Article.new
+  end
+
+  def create_article
+    @article = Article.new(article_params)
+    @article.created_by_user_id = current_user.id
+    @article.article_entities.build(entity_id: @entity.id, is_featured: true)
+
+    if @article.save
+      redirect_to articles_entity_path(@entity), notice: 'Article was successfully created.'
+    else
+      render action: 'new_article'
+    end
+
+  end
+
   private
 
   def set_entity
     @entity = Entity.find(params[:id])
   end
+
+  def article_params
+    params.require(:article).permit(
+      :title, :url, :snippet, :published_at
+    )
+  end  
 end

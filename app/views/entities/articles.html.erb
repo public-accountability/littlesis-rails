@@ -1,6 +1,10 @@
 <%= render partial: 'header', locals: { entity: @entity } %>
 
-<h3>Articles <%= link_to('find more', find_articles_entity_path(@entity), class: "btn btn-link btn-sm") %></h3>
+<h3>
+  Articles 
+  <%= link_to('find more', find_articles_entity_path(@entity), class: "btn btn-link btn-sm") %>
+  <%= link_to('add', new_article_entity_path(@entity), class: "btn btn-link btn-sm") %>
+</h3>
 
 <table class="table">
 <% @entity.featured_articles.each do |article| %>

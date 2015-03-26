@@ -53,7 +53,7 @@ namespace :images do
     print "\n"
   end
 
-  desc "removes s3 images that don't belond to any entity"
+  desc "removes s3 images that don't belong to any entity"
   task remove_s3_orphans: :environment do
     offset = (ENV['OFFSET'] or 0).to_i
     bucket = S3.s3.buckets[Lilsis::Application.config.aws_s3_bucket]
@@ -67,5 +67,77 @@ namespace :images do
         bucket.objects["images/profile/#{filename}"].delete
       end
     end
+  end
+
+  desc "creates face grid from list of entities"
+  task create_face_grid: :environment do
+    require '/Users/matthew/code/image-processing/composite/eyes_finder.rb'
+
+    ids_file = ENV['IDS_FILE']
+    list_id = ENV['LIST_ID']
+    limit = (ENV['LIMIT'] or 100).to_i
+    face_size = (ENV['FACE_SIZE'] or 50).to_i
+    dimensions = ENV['DIMENSIONS'] or "20x20"
+
+    if ids_file
+      ids = File.readlines(ids_file).map(&:to_i)
+      entities = Entity.find(ids).sort_by { |e| ids.index(e.id) }
+      list_id = Time.now.to_i
+    else
+      list = List.find(list_id.to_i)
+      entities = list.entities
+    end
+
+    count = 0
+    completed = []
+
+    face_paths = entities.map do |entity|
+      next if count >= limit
+      next unless image = entity.featured_image
+      image.download_large_to_tmp or image.download_profile_to_tmp
+      finder = EyesFinder.new(image.tmp_path, face_size)
+      unless finder.is_loaded
+        File.delete(image.tmp_path)
+        next
+      end
+      eyes = finder.find_eyes
+      unless rect = finder.face_rect
+        File.delete(image.tmp_path)
+        next
+      end
+      x = rect.x
+      y = rect.y
+      w = rect.width
+      h = rect.height
+      if w > h
+        x += (w-h)/2
+        w = h
+      else
+        y += (h-w)/2
+        h = w
+      end
+      sub = [w, h].min/3
+      x += sub/2
+      y += sub/2
+      w -= sub
+      h -= sub
+      img = MiniMagick::Image.open(image.tmp_path)
+      img.crop("#{w}x#{h}+#{x}+#{y}")
+      img.resize("100x100")
+      name = File.basename(image.tmp_path).split('.')[0]
+      face_path = Rails.root.join("tmp", "faces", "face-" + name + ".jpg").to_s
+      img.write(face_path)
+      File.delete(image.tmp_path)
+      count += 1
+      print "[#{count}/#{limit}] found face of #{entity.name}\n"
+      completed << entity.id
+      face_path
+    end
+
+    outfile = Rails.root.join("data", "list-#{list_id}-face-grid.jpg")
+    command = "montage #{Rails.root.join("tmp", "faces", "face-*.jpg")} -geometry 100x100+0+0 -tile #{dimensions} #{outfile}"
+    print "#{command}\n"
+    `#{command}`
+    binding.pry
   end
 end

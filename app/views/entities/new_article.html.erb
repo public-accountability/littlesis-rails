@@ -1,0 +1,43 @@
+<%= render partial: 'header', locals: { entity: @entity } %>
+
+<h3>New Article</h3>
+
+<%= form_for @article, url: create_article_entity_path(@entity) do |f| %>
+  <% if @article.errors.any? %>
+    <div id="error_explanation" class="alert alert-warning">
+      <%= pluralize(@article.errors.count, "error") %> prohibited this article from being saved:
+
+      <ul>
+      <% @article.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :title %>
+    <%= f.text_field :title, class: "form-control" %>  
+  </div>
+
+  <div class="field">
+    <label for="url">URL</label>
+    <%= f.text_field :url, class: "form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :excerpt %>
+    <%= f.text_area :snippet, class: "form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :publication_date %>
+    <%= f.text_field :published_at, class: "form-control" %> <em>(YYYY-MM-DD)</em>
+  </div>
+
+  <br>
+
+  <div class="actions">
+    <%= f.submit nil, class: "btn btn-primary" %>
+  </div>
+<% end %>

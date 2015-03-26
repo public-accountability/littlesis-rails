@@ -144,4 +144,8 @@ class NameParser
 
     return self
   end
+
+  def self.couple_name?(name)
+    name.match(/&|\band\b/) and name.split(/&|\band\b/).last.strip.split(/\s/).count > 1
+  end
 end
