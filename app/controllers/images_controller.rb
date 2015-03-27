@@ -1,4 +1,5 @@
 class ImagesController < ApplicationController
+  before_filter :auth
   before_action :set_image, only: [:crop, :crop_remote]
 
   def crop
