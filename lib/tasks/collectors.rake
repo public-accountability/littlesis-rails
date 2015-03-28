@@ -330,7 +330,7 @@ namespace :collectors do
     CSV.foreach(args[:filename], encoding: 'windows-1251:utf-8') do |row|
       count += 1
 
-      #skip header row
+      # skip header row
       next if count == 1
 
       # skip if missing donor name
@@ -343,13 +343,16 @@ namespace :collectors do
       importer.collector_list_id = args[:list_id]
       importer.import
       ary = [
+        count - 1,
+        importer.donation ? importer.donation.id : nil,
         importer.raw_name, 
         importer.donor_first + " " + importer.donor_last, 
         importer.donor ? importer.donor.name : nil,
         importer.recipient_name,
         importer.recipient ? importer.recipient.name : nil,
         importer.recipient_match_type,
-        importer.donation ? importer.donation.amount : nil
+        importer.donation ? importer.donation.amount : nil,
+        importer.donation ? importer.donation.amount2 : nil
       ]
       results << ary
       print "#{count} #{ary}\n"

@@ -136,6 +136,11 @@ class NozaDonationImporter
   end
 
   def create_recipient
+    # make extra sure recipient entity doesn't already exist
+    if @recipient = Entity.where(name: @recipient_name, primary_ext: 'Org').first
+      return @recipient
+    end
+
     @recipient = Entity.create(
       name: @recipient_name,
       primary_ext: 'Org',
@@ -149,13 +154,41 @@ class NozaDonationImporter
     @recipient
   end
 
-  def parse_date(str)
+  def month_abbr_to_num(str)
+    {
+      Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+      Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12'
+    }[str.to_sym]
+  end
+
+  def parse_date_old(str)
     parts = str.split("/")
     return nil unless parts.count == 3
     parts[2] + "-" + parts[0].rjust(2, "0") + "-" + parts[1].rjust(2, "0")
   end
 
+  def parse_bad_date(str)
+    if str.match(/^\D+-\d+$/)
+      month, year = str.split('-')
+      month = month_abbr_to_num(month)
+      year = (year.to_i < 30 ? "20" : "19") + year
+      return "#{year}-#{month}-00"
+    end
+
+    parts = str.split("/")
+    return nil unless parts.count == 3
+    "20" + parts[1].rjust(2, "0") + "-" + parts[0].rjust(2, "0") + "-00"
+  end
+
   def parse_amounts(amount1, amount2)
+    amt1 = amount1.to_i
+    amt2 = (amount2 == "And Up" or amount2.blank?) ? nil : amount2.to_i
+    return [nil, nil] if amt1.to_i == 0 and amt2.to_i == 0
+    return [nil, nil] if amt1 == 1 and amt2.to_i == 0
+    [amt1, amt2]
+  end
+
+  def parse_amounts_old(amount1, amount2)
     amt1 = amount1.to_i
     amt2 = amt2 == "And Up" or amt2.blank? ? nil : amount2.to_i
     return [nil, nil] if amt1.blank? and amt2.blank?
@@ -164,15 +197,18 @@ class NozaDonationImporter
   end
 
   def create_donation
-    # skip if already exists
+    # update bad fields if already exists
     if @donation = Relationship.where(
       entity1_id: @donor.id,
       entity2_id: @recipient.id,
       category_id: 5,
       description1: @donation_cat,
-      amount: parse_amounts(@amount, @amount2).first,
-      start_date: parse_date(@date)
+      amount: [parse_amounts(@amount, @amount2).first, parse_amounts_old(@amount, @amount2).first],
+      start_date: [parse_date_old(@date), parse_bad_date(@date)]
     ).first
+      date = parse_bad_date(@date)
+      amount2 = parse_amounts(@amount, @amount2).last
+      @donation.update(start_date: date, end_date: date, amount2: amount2)
       return @donation
     end
 
@@ -183,8 +219,8 @@ class NozaDonationImporter
       description1: @donation_cat,
       amount: parse_amounts(@amount, @amount2).first,
       amount2: parse_amounts(@amount, @amount2).last,
-      start_date: parse_date(@date),
-      end_date: parse_date(@date),
+      start_date: parse_bad_date(@date),
+      end_date: parse_bad_date(@date),
       is_current: false,
       is_gte: @amount2 == 'And Up',
       last_user_id: Lilsis::Application.config.system_user_id
