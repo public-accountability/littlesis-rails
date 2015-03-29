@@ -208,7 +208,7 @@ class NozaDonationImporter
     ).first
       date = parse_bad_date(@date)
       amount2 = parse_amounts(@amount, @amount2).last
-      @donation.update(start_date: date, end_date: date, amount2: amount2)
+      @donation.update(start_date: date, end_date: date, amount: amount, amount2: amount2)
       return @donation
     end
 
