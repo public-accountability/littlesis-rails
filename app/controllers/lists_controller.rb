@@ -65,14 +65,6 @@ class ListsController < ApplicationController
                 .group("entity.id").having('COUNT(os_entity_transaction.id) > 0').order("last_reviewed ASC, num_matches DESC").page(page).per(num)
   end
 
-  def search_data
-    respond_to do |format|
-      format.json {
-        render json: @list.entities.includes(:aliases).map { |e| { id: e.id, name: e.name, oneliner: e.blurb, aliases: e.aliases.map { |a| a.name } } }
-      }
-    end
-  end
-
   def admin
   end
 
