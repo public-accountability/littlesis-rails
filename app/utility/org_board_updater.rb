@@ -60,12 +60,13 @@ class OrgBoardUpdater
 
   def check_board_page(url, rels)
     begin
-      @session = Capybara::Session.new(:webkit)
+      @session = Capybara::Session.new(:selenium)
       @session.visit(url)
       return [] unless body = HTMLEntities.new.decode(@session.body).gsub(/[[:space:]]+/, ' ')
       return [] unless text = @session.text.gsub(/[[:space:]]+/, ' ')
       return [] unless text.match(/board/i) or text.match(/trustees/i)
     rescue => e
+      binding.pry
       return []
     end
 
