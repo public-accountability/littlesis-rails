@@ -1,5 +1,5 @@
 class OrgBoardUpdater
-  attr_accessor :org, :board_rels, :board_url, :attempted_board_urls, :found_board_rels, :session, :board_pages, :possible_board_pages
+  attr_accessor :org, :board_rels, :board_url, :board_title, :attempted_board_urls, :found_board_rels, :session, :board_pages, :possible_board_pages
 
   URLS_TO_SKIP = ["yahoo.com"]
 
@@ -21,12 +21,14 @@ class OrgBoardUpdater
     @board_pages = find_board_pages
     @attempted_board_urls = []
 
-    @board_pages.map {|p| p['link'] }.each do |url|
+    @board_pages.each do |p|
+      url = p['link']
       @found_board_rels = check_board_page(url, @board_rels)
       @attempted_board_urls << url
 
       if found_enough
         @board_url = url
+        @board_title = p['title']
         break
       end
     end
@@ -96,6 +98,13 @@ class OrgBoardUpdater
     end
   end
 
+  def save_changed
+    changed.each do |rel|
+      rel.save
+      rel.add_reference(@board_url, @board_title)
+    end
+  end
+
   def sort_board_rels
     @board_rels.sort! { |a, b| a.entity.person.name_last <=> b.entity.person.name_last }
   end
@@ -124,6 +133,10 @@ class OrgBoardUpdater
 
   def made_current
     @board_rels.select { |r| r.is_current == true and r.is_current_changed? }
+  end
+
+  def changed
+    @board_rels.select { |r| r.changed? }
   end
 
   def unchanged

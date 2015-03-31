@@ -35,7 +35,7 @@ namespace :orgs do
             print "unchanged current:\n" + updater.unchanged_current.map { |r| "* " + r.entity.name }.join("\n") + "\n"
             print "\n"
 
-            # updater.board_rels.each(&:save)
+            updater.save_changed
           else
             print "only found #{updater.found_board_rels.count} board members!\n"
             print updater.found_board_rels.map { |r| "* " + r.entity.name }.join("\n") + "\n"
@@ -46,7 +46,7 @@ namespace :orgs do
 
         task_meta = TaskMeta.find_or_initialize_by(task_meta_query)
         task_meta.value = Time.now
-        # task_meta.save
+        task_meta.save
 
         unless org_id
           csv << [
