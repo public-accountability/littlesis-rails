@@ -3,10 +3,11 @@ class OrgBoardUpdater
 
   URLS_TO_SKIP = ["yahoo.com"]
 
-  def initialize(org, search_engine)
+  def initialize(org, search_engine, session)
     @org = org
     @search_engine = search_engine
     get_board_rels
+    @session = session
   end
 
   def get_board_rels
@@ -60,13 +61,13 @@ class OrgBoardUpdater
 
   def check_board_page(url, rels)
     begin
-      @session = Capybara::Session.new(:selenium)
       @session.visit(url)
       return [] unless body = HTMLEntities.new.decode(@session.body).gsub(/[[:space:]]+/, ' ')
       return [] unless text = @session.text.gsub(/[[:space:]]+/, ' ')
       return [] unless text.match(/board/i) or text.match(/trustees/i)
     rescue => e
-      binding.pry
+      print e.backtrace
+      print "\n"
       return []
     end
 
