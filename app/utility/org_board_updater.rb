@@ -103,7 +103,7 @@ class OrgBoardUpdater
   def save_changed
     changed.each do |rel|
       rel.save
-      rel.add_reference(@board_url, @board_title)
+      rel.add_reference(@board_url, @board_title) rescue nil # in case source url is too long for db
     end
   end
 
