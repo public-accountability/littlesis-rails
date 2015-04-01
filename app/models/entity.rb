@@ -381,7 +381,8 @@ class Entity < ActiveRecord::Base
 
   def name_regexes(require_first = true)
     if person?
-      [person.name_regex(require_first)].concat(aliases.map { |a| a.name_regex(require_first) rescue nil }).uniq.compact
+      regex = person.name_regex(require_first) rescue nil
+      [regex].concat(aliases.map { |a| a.name_regex(require_first) rescue nil }).uniq.compact
     else
       []
     end

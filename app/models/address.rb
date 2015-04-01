@@ -117,7 +117,7 @@ class Address < ActiveRecord::Base
     size = "#{width}x#{height}"
     url = "https://maps.googleapis.com/maps/api/streetview?size=#{size}&location=#{URI::encode(location)}"
     image = entity.add_image_from_url(url, force_featured = false, caption)
-    image.crop(0, 0, width-20, height-20) if image.present? and crop # in order to remove google branding
+    image.crop(0, 0, width-40, height-40) if image.present? and crop # in order to remove google branding
     image
   end
 
