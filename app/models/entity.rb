@@ -2,6 +2,7 @@ class Entity < ActiveRecord::Base
   include SingularTable
   include SoftDelete
   include Cacheable
+  include Referenceable
 
   self.default_timezone = :local
   self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
@@ -21,13 +22,8 @@ class Entity < ActiveRecord::Base
   has_many :notes, through: :note_entities, inverse_of: :entities
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", inverse_of: :edited_entities
   has_many :external_keys, inverse_of: :entity, dependent: :destroy
-  has_one :person, inverse_of: :entity, dependent: :destroy
-  has_one :org, inverse_of: :entity, dependent: :destroy
-  has_one :couple, inverse_of: :entity, dependent: :destroy
-  has_one :public_company, inverse_of: :entity, dependent: :destroy
-  has_one :school, inverse_of: :entity, dependent: :destroy
-  has_many :addresses, inverse_of: :entity, dependent: :destroy
   has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
+  has_many :os_entity_preprocesses, inverse_of: :entity, dependent: :destroy
   has_many :extension_records, inverse_of: :entity, dependent: :destroy
   has_many :extension_definitions, through: :extension_records, inverse_of: :entities
   has_many :os_entity_categories, inverse_of: :entity
@@ -37,6 +33,25 @@ class Entity < ActiveRecord::Base
   has_many :article_entities, inverse_of: :entity, dependent: :destroy
   has_many :articles, through: :article_entities, inverse_of: :entities
   has_many :queue_entities, inverse_of: :entity, dependent: :destroy
+
+  # extensions
+  has_one :person, inverse_of: :entity, dependent: :destroy
+  has_one :org, inverse_of: :entity, dependent: :destroy
+  has_one :couple, inverse_of: :entity, dependent: :destroy
+  has_one :public_company, inverse_of: :entity, dependent: :destroy
+  has_one :school, inverse_of: :entity, dependent: :destroy
+  has_one :business_person, inverse_of: :entity, dependent: :destroy
+  has_one :lobbyist, inverse_of: :entity, dependent: :destroy
+  has_one :political_candidate, inverse_of: :entity, dependent: :destroy
+  has_one :elected_representative, inverse_of: :entity, dependent: :destroy
+  has_one :business, inverse_of: :entity, dependent: :destroy
+  has_one :government_body, inverse_of: :entity, dependent: :destroy
+  has_one :political_fundraising, inverse_of: :entity, dependent: :destroy
+
+  # contact
+  has_many :addresses, inverse_of: :entity, dependent: :destroy
+  has_many :phones, inverse_of: :entity, dependent: :destroy
+  has_many :emails, inverse_of: :entity, dependent: :destroy
 
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
@@ -94,6 +109,20 @@ class Entity < ActiveRecord::Base
     hash.delete(:id)
     hash.delete("entity_id")
     hash.delete(:entity_id)
+    hash
+  end
+
+  def extensions_with_attributes
+    hash = {}
+    (extension_names & self.class.all_extension_names_with_fields).each do |name|
+      ext = Kernel.const_get(name).where(:entity_id => id).first
+      ext_hash = ext.attributes
+      ext_hash.delete("id")
+      ext_hash.delete(:id)
+      ext_hash.delete("entity_id")
+      ext_hash.delete(:entity_id)
+      hash[name] = ext_hash
+    end
     hash
   end
 
@@ -352,7 +381,7 @@ class Entity < ActiveRecord::Base
 
   def name_regexes(require_first = true)
     if person?
-      [person.name_regex(require_first)].concat(aliases.map { |a| a.name_regex(require_first) }).uniq.compact
+      [person.name_regex(require_first)].concat(aliases.map { |a| a.name_regex(require_first) rescue nil }).uniq.compact
     else
       []
     end
@@ -482,11 +511,12 @@ class Entity < ActiveRecord::Base
     couples.map { |c| c.partner1_id == id ? c.partner2 : c.partner1 }
   end
 
-  def add_image_from_url(url, force_featured = false)
+  def add_image_from_url(url, force_featured = false, caption = nil)
     return if images.find { |i| i.url == url }
     image = Image.new_from_url(url)
     return false unless image
     image.title = name
+    image.caption = caption
     images << image
     image.feature if force_featured or !has_featured_image
     image
@@ -509,5 +539,26 @@ class Entity < ActiveRecord::Base
     end
 
     article_entity
+  end
+
+  def children
+    Entity.where(parent_id: id)
+  end
+
+  def party_members
+    Entity.joins(:person).where(person: { party_id: id})
+  end
+
+  def set_attribute(key, value)
+    if has_attribute?(key)
+      update_attribute(key.to_sym, value)
+    else
+      extensions_with_attributes.each do |ext, hash|
+        if hash.has_key?(key)
+          ext.constantize.find_by(entity_id: id).update_attribute(key, value)
+          break
+        end
+      end
+    end
   end
 end

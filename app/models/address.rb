@@ -109,4 +109,82 @@ class Address < ActiveRecord::Base
   def street2_from(address)
     street2 = address.street2 if same_as?(address) and street2.blank? and address.street2.present?
   end
+
+  def add_street_view_image_to_entity(width = 640, height=640, crop = true)
+    return nil unless street1 and city
+    location = to_s
+    caption = 'street view: ' + obfuscated
+    size = "#{width}x#{height}"
+    url = "https://maps.googleapis.com/maps/api/streetview?size=#{size}&location=#{URI::encode(location)}"
+    image = entity.add_image_from_url(url, force_featured = false, caption)
+    image.crop(0, 0, width-20, height-20) if image.present? and crop # in order to remove google branding
+    image
+  end
+
+  def obfuscated
+    str = city
+    str += ", " + state_abbr(state_name) if state_name
+    str += " " + postal if postal
+    str += ", " + country_name unless ['United States', 'U.S.', 'US', 'USA'].include?(country_name)
+    str  
+  end
+
+  def state_abbr(name)
+    abbr = STATE_ABBR.key(name)
+    return abbr unless abbr.nil?
+    name
+  end
+
+  STATE_ABBR = {
+    'AL' => 'Alabama',
+    'AK' => 'Alaska',
+    'AZ' => 'Arizona',
+    'AR' => 'Arkansas',
+    'CA' => 'California',
+    'CO' => 'Colorado',
+    'CT' => 'Connecticut',
+    'DE' => 'Delaware',
+    'FL' => 'Florida',
+    'GA' => 'Georgia',
+    'HI' => 'Hawaii',
+    'ID' => 'Idaho',
+    'IL' => 'Illinois',
+    'IN' => 'Indiana',
+    'IA' => 'Iowa',
+    'KS' => 'Kansas',
+    'KY' => 'Kentucky',
+    'LA' => 'Louisiana',
+    'ME' => 'Maine',
+    'MD' => 'Maryland',
+    'MA' => 'Massachusetts',
+    'MI' => 'Michigan',
+    'MN' => 'Minnesota',
+    'MS' => 'Mississippi',
+    'MO' => 'Missouri',
+    'MT' => 'Montana',
+    'NE' => 'Nebraska',
+    'NV' => 'Nevada',
+    'NH' => 'New Hampshire',
+    'NJ' => 'New Jersey',
+    'NM' => 'New Mexico',
+    'NY' => 'New York',
+    'NC' => 'North Carolina',
+    'ND' => 'North Dakota',
+    'OH' => 'Ohio',
+    'OK' => 'Oklahoma',
+    'OR' => 'Oregon',
+    'PA' => 'Pennsylvania',
+    'RI' => 'Rhode Island',
+    'SC' => 'South Carolina',
+    'SD' => 'South Dakota',
+    'TN' => 'Tennessee',
+    'TX' => 'Texas',
+    'UT' => 'Utah',
+    'VT' => 'Vermont',
+    'VA' => 'Virginia',
+    'WA' => 'Washington',
+    'WV' => 'West Virginia',
+    'WI' => 'Wisconsin',
+    'WY' => 'Wyoming'
+  }  
 end

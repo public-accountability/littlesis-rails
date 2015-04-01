@@ -77,6 +77,8 @@ GEM
       activesupport (>= 3.2.0)
       json (>= 1.7)
       mime-types (>= 1.16)
+    childprocess (0.5.5)
+      ffi (~> 1.0, >= 1.0.11)
     chronic (0.10.2)
     cliver (0.3.2)
     coderay (1.1.0)
@@ -88,6 +90,7 @@ GEM
       execjs
     coffee-script-source (1.7.0)
     daemons (1.1.9)
+    dalli (2.7.2)
     debug_inspector (0.0.2)
     delayed_job (4.0.1)
       activesupport (>= 3.0, < 4.2)
@@ -111,6 +114,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     fastimage (1.6.2)
       addressable (~> 2.3, >= 2.3.5)
+    ffi (1.9.8)
     fog (1.3.1)
       builder
       excon (~> 0.13.0)
@@ -238,12 +242,18 @@ GEM
     rmagick (2.13.3)
     ruby-hmac (0.4.0)
     ruby-opencv (0.0.14)
+    rubyzip (1.1.7)
     sass (3.2.19)
     sass-rails (4.0.3)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.2.0)
       sprockets (~> 2.8, <= 2.11.0)
       sprockets-rails (~> 2.0)
+    selenium-webdriver (2.45.0)
+      childprocess (~> 0.5)
+      multi_json (~> 1.0)
+      rubyzip (~> 1.0)
+      websocket (~> 1.0)
     sequel (4.13.0)
     simple_oauth (0.2.0)
     slop (3.5.0)
@@ -305,6 +315,7 @@ GEM
     warden (1.2.3)
       rack (>= 1.0)
     webrobots (0.1.1)
+    websocket (1.2.1)
     websocket-driver (0.3.3)
     whenever (0.9.2)
       activesupport (>= 2.3.4)
@@ -330,6 +341,7 @@ DEPENDENCIES
   carrierwave
   coffee-rails
   daemons
+  dalli
   delayed_job_active_record
   devise
   dimensions
@@ -355,6 +367,7 @@ DEPENDENCIES
   rmagick
   ruby-opencv
   sass-rails
+  selenium-webdriver
   sequel
   soap4r-ruby1.9
   sprockets (= 2.11.0)

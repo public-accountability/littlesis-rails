@@ -27,4 +27,11 @@ class EntityMatcher
   def self.by_full_name(name)
     Entity.joins(:aliases).where("LOWER(entity.name) = ? OR LOWER(alias.name) = ?", name.downcase, name.downcase)
   end
+
+  def self.by_org_name(name)
+    matches = by_full_name(name)
+    stripped = Org.strip_name(name, strip_geo = false)
+    results = Entity.search "@(name,aliases) #{Riddle::Query.escape(stripped)} @primary_ext Org", per_page: 20, match_mode: :extended, with: { is_deleted: 0 }
+    matches.concat(results).uniq(&:id)
+  end
 end

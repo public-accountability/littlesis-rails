@@ -72,7 +72,7 @@ gem 'php-serialize'
 gem 'htmlentities'
 
 # For memcached integration
-# gem 'dalli'
+gem 'dalli'
 
 # For redis integration
 gem 'redis-rails'

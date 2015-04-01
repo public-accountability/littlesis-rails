@@ -27,6 +27,7 @@ defaults: &defaults
   google_analytics_id:
   default_image_file_type: 'jpg'
   system_user_id: 1
+  symfony_frontend_dir:
 
 test:
   <<: *defaults

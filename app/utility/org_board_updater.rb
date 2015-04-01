@@ -72,12 +72,8 @@ class OrgBoardUpdater
     end
 
     found = rels.select do |rel|
-      begin
-        rel.entity.name_regexes(false).find do |regex|
-          (matches = body.scan(regex)) and matches.find { |m| text.match(/#{Regexp.quote(m[0])}/mui) }
-        end
-      rescue => e
-        binding.pry
+      rel.entity.name_regexes(false).find do |regex|
+        (matches = body.scan(regex)) and matches.find { |m| text.match(/#{Regexp.quote(m[0])}/mui) }
       end
     end
 

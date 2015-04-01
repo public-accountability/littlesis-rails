@@ -18,4 +18,8 @@ module SoftDelete
       where(is_deleted: true)
     end    
   end
+
+  def soft_delete
+    update(is_deleted: true)
+  end
 end

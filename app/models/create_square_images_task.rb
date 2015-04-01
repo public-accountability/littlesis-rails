@@ -1,5 +1,3 @@
-require 'aws/s3'
-
 class CreateSquareImagesTask
   include DebuggableTask
 

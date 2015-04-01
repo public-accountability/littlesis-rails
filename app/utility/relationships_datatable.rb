@@ -13,7 +13,7 @@ class RelationshipsDatatable
 
     @entities = Array(entities)
     entity_ids = @entities.map(&:id)
-    @links = Link.includes({ relationship: :position }, :entity, { related: [:extension_definitions, :os_categories] }).where(entity1_id: entity_ids).where.not(entity2_id: entity_ids).limit(10000)
+    @links = Link.includes({ relationship: :position }, :entity, { related: [:extension_definitions, :os_categories] }).where(entity1_id: entity_ids, relationship: { is_deleted: 0 }).where.not(entity2_id: entity_ids).limit(10000)
 
     if interlocks?
       degree2_links = Link.select(:entity1_id, :entity2_id).where(entity1_id: @links.select { |l| [1,3].include?(l.category_id) }.map(&:entity2_id), category_id: [1, 3]).where.not(entity2_id: entity_ids).map { |l| [l.entity1_id, l.entity2_id] }.uniq

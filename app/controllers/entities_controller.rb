@@ -1,6 +1,6 @@
 class EntitiesController < ApplicationController
 	before_filter :auth, except: [:relationships]
-  before_action :set_entity, only: [:relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article]
+  before_action :set_entity, only: [:relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge]
 
   def relationships
   end
@@ -177,7 +177,35 @@ class EntitiesController < ApplicationController
     else
       render action: 'new_article'
     end
+  end
 
+  def find_merges
+    check_permission 'merger'
+    
+    if @entity.person?
+      person = @entity.person
+      @matches = Entity.search("@(name,aliases) #{person.name_last} #{person.name_first}", per_page: 5, match_mode: :extended, with: { is_deleted: false }).select { |e| e.id != @entity.id }
+    elsif @entity.org?
+      @matches = EntityMatcher.by_org_name(@entity.name).select { |e| e.id != @entity.id }
+    end
+
+    if (@q = params[:q]).present?
+      page = params[:page]
+      num = params[:num]
+      @results = Entity.search("@(name,aliases) #{@q}", per_page: num, page: page, match_mode: :extended, with: { is_deleted: false })
+      @results.select! { |e| e.id != @entity.id }
+    end
+  end
+
+  def merge
+    check_permission 'merger'
+
+    @keep = Entity.find(params[:keep_id])
+    EntityMerger.merge_all(@keep, @entity)
+    @entity.soft_delete
+    LegacyCache.new.clear_entity_cache(@keep.id)
+
+    redirect_to @keep.legacy_url, notice: 'Entities were successfully merged.'
   end
 
   private
