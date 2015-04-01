@@ -42,7 +42,7 @@ class OrgBoardUpdater
 
   def find_board_pages(page = 1)
     q = @org.name + ' board of directors'
-    @possible_board_pages = @search_engine.search(q, page)
+    @possible_board_pages = @search_engine.search(q, page).to_a
     @board_pages = select_board_pages(@possible_board_pages)
 
     unless @board_pages.count > 0 or page > 1
