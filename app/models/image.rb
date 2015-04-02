@@ -204,4 +204,21 @@ class Image < ActiveRecord::Base
     img.write(face_path)
     face_path
   end
+
+  def self.new_from_street_view(location, size, pitch)
+    url = "https://maps.googleapis.com/maps/api/streetview?size=#{size}&location=#{URI::encode(location)}&pitch=#{pitch}&key=#{Lilsis::Application.config.google_street_view_key}"
+    
+    # make sure image isn't blank
+    tmp_path = Rails.root.join("tmp", "google-street-view-#{rand * 1000000}.jpg")
+    open(tmp_path, 'wb') { |file| file << open(url).read }
+    img = Magick::ImageList.new(tmp_path).first
+    pixels = [img.get_pixels(0, 0, 1, 1).first, img.get_pixels(100, 100, 1, 1).first]
+    if pixels.count { |pixel| ((pixel.red-58596).abs < 10) and ((pixel.green-58339).abs < 10) and ((pixel.blue-57311).abs < 10) } == pixels.count
+      File.delete(tmp_path)
+      return
+    end
+    File.delete(tmp_path)
+
+    new_from_url(url)
+  end
 end

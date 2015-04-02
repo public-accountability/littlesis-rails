@@ -110,27 +110,42 @@ class Address < ActiveRecord::Base
     street2 = address.street2 if same_as?(address) and street2.blank? and address.street2.present?
   end
 
-  def add_street_view_image_to_entity(width = 640, height=640, crop = true)
-    return nil unless street1.present? and city.present?
-    location = to_s
-    caption = 'street view: ' + obfuscated
-    size = "#{width}x#{height}"
-    pitch = ['new york', 'nyc', 'manhattan'].include?(city.downcase) ? '15' : '0'
-    url = "https://maps.googleapis.com/maps/api/streetview?size=#{size}&location=#{URI::encode(location)}&pitch=#{pitch}&key=#{Lilsis::Application.config.google_street_view_key}"
-    
-    # make sure image isn't blank
-    tmp_path = Rails.root.join("tmp", "google-street-view-#{rand * 1000000}.jpg")
-    open(tmp_path, 'wb') { |file| file << open(url).read }
-    img = Magick::ImageList.new(tmp_path).first
-    pixels = [img.get_pixels(0, 0, 1, 1).first, img.get_pixels(100, 100, 1, 1).first]
-    if pixels.count { |pixel| ((pixel.red-58596).abs < 10) and ((pixel.green-58339).abs < 10) and ((pixel.blue-57311).abs < 10) } == pixels.count
-      File.delete(tmp_path)
-      return
+  def add_street_view_image_to_entity(width = 640, height=640, crop = true, try_region = false)
+    if try_region
+      locations = [
+        street1.present? ? to_s : nil, 
+        postal, 
+        (city.present? and country_name.present?) ? "#{city}, #{country_name}" : nil
+      ].compact
+    else
+      return nil unless street1.present?
+      locations = [to_s]
     end
-    File.delete(tmp_path)
-    return unless image = entity.add_image_from_url(url, force_featured = false, caption)
-    image.update(url: image.s3_url('large')) # overwrite url with street address
-    image.crop(0, 0, width-40, height-40) if image.present? and crop # in order to remove google branding
+
+    size = "#{width}x#{height}"
+    image = nil
+
+    locations.each_with_index do |location, i|
+      pitch = (i == 0 and ['new york', 'nyc', 'manhattan'].include?(city.downcase)) ? '15' : '0'
+      
+      if i == 0
+        caption = 'street view: ' + obfuscated
+      elsif i == 1
+        caption = 'street view: ' + location
+      else i == 2
+        caption = 'street view: city: ' + location
+      end
+      
+      next unless image = Image.new_from_street_view(location, size, pitch)
+      image.entity = entity
+      image.title = entity.name
+      image.caption = caption
+      image.url = image.s3_url('large') # overwrite url with street address
+      image.save
+      image.crop(0, 0, width-40, height-40) if image.present? and crop # in order to remove google branding
+      break
+    end
+
     image
   end
 
