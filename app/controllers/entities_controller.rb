@@ -110,6 +110,7 @@ class EntitiesController < ApplicationController
   end
 
   def find_articles
+    check_permission 'importer'
     @q = (params[:q] or @entity.name)
     page = (params[:page] or 1).to_i
     @articles = @entity.articles
@@ -121,6 +122,7 @@ class EntitiesController < ApplicationController
   end
 
   def import_articles
+    check_permission 'importer'
     selected_ids = params.keys.map(&:to_s).select { |k| k.match(/^selected-/) }.map { |k| k.split('-').last }.map(&:to_i)
     selected_ids.each do |i|
       snippet = CGI.unescapeHTML(params[:snippet][i])

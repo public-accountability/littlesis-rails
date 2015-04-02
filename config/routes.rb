@@ -75,6 +75,7 @@ Lilsis::Application.routes.draw do
       get 'admin'
       get 'find_articles'
       get 'crop_images'
+      get 'street_views'
     end
   end
 

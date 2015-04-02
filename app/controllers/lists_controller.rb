@@ -1,5 +1,6 @@
 class ListsController < ApplicationController
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images]
+  before_filter :auth, except: [:relationships]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views]
 
   # GET /lists
   def index
@@ -55,6 +56,7 @@ class ListsController < ApplicationController
   end
 
   def match_donations
+    check_permission 'bulker'
     page = params.fetch(:page, 1)
     num = params.fetch(:num, 100)
     @entities = @list.entities_with_couples.people
@@ -69,6 +71,7 @@ class ListsController < ApplicationController
   end
 
   def find_articles
+    check_permission 'importer'    
     entity_ids = @list.entities_with_couples.joins("LEFT JOIN article_entities ON (article_entities.entity_id = entity.id)").where(article_entities: { id: nil }).pluck(:id)
     set_entity_queue(:find_articles, entity_ids, @list.id)
     next_entity_id = next_entity_in_queue(:find_articles)
@@ -76,11 +79,19 @@ class ListsController < ApplicationController
   end
 
   def crop_images
+    check_permission 'importer'
     entity_ids = @list.entities.joins(:images).where(image: { is_featured: true }).group("entity.id").order("image.updated_at ASC").pluck(:id)
     set_entity_queue(:crop_images, entity_ids, @list.id)
     next_entity_id = next_entity_in_queue(:crop_images)
     image_id = Image.where(entity_id: next_entity_id, is_featured: true).first
     redirect_to crop_image_path(id: image_id)    
+  end
+
+  def street_views
+    check_permission 'editor'
+    entity_ids = @list.entities_with_couples.pluck(:id).uniq
+    @images = Image.joins(entity: :addresses).where(entity_id: entity_ids).where("image.caption LIKE 'street view:%'").order(:created_at)
+    render layout: false
   end
 
   private
