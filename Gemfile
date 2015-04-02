@@ -47,7 +47,7 @@ gem 'jbuilder', '~> 1.0.1'
 
 gem 'pry'
 gem 'pry-rails'
-gem 'aws-sdk'
+gem 'aws-sdk', '< 2.0'
 gem 'dimensions'
 gem 'fastimage'
 gem 'acts_as_paranoid', :git => "git://github.com/freddy/rails3_acts_as_paranoid.git", 
