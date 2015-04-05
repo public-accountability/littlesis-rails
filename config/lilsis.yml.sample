@@ -28,6 +28,7 @@ defaults: &defaults
   default_image_file_type: 'jpg'
   system_user_id: 1
   symfony_frontend_dir:
+  bing_maps_key:
 
 test:
   <<: *defaults

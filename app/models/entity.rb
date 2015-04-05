@@ -562,4 +562,18 @@ class Entity < ActiveRecord::Base
       end
     end
   end
+
+  def unique_addresses
+    # returns addresses without geocoding and the most recent address per unique lonlat
+    index = {}
+    adrs = addresses.order("created_at DESC")
+    nils = adrs.select { |a| a.latitude.nil? or a.longitude.nil? }
+    adrs.select { |a| a.latitude.present? and a.longitude.present? }.each do |a|
+      hash = a.latitude.to_s[0..5] + "," + a.longitude.to_s[0..5]
+      next if index[hash].present?
+      index[hash] = a
+    end
+
+    index.values.concat(nils)
+  end
 end

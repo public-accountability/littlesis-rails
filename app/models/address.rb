@@ -9,8 +9,11 @@ class Address < ActiveRecord::Base
 
   validates_presence_of :city, :country_name
 
+  geocoded_by :to_s
+  reverse_geocoded_by :latitude, :longitude
+
   def to_s
-    "#{street1}, #{street2}, #{street3}, #{city}, #{state.present? ? state.abbreviation: ''} #{postal}, #{country_name}".strip.gsub(/\s+,/, " ").gsub(/\s+/, " ")
+    "#{street1}, #{street2}, #{street3}, #{city}, #{state_name} #{postal}, #{country_name}".strip.gsub(/\s+,/, " ").gsub(/\s+/, " ")
   end
 
   def self.parse(str, data = {})
