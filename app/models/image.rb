@@ -3,6 +3,7 @@ class Image < ActiveRecord::Base
   include SoftDelete
 
   belongs_to :entity, inverse_of: :images
+  belongs_to :address, inverse_of: :images
   
   scope :featured, -> { where(is_featured: true) }
 
@@ -220,5 +221,9 @@ class Image < ActiveRecord::Base
     File.delete(tmp_path)
 
     new_from_url(url)
+  end
+
+  def street_view?
+    address_id.present?
   end
 end

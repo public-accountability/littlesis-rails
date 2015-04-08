@@ -6,6 +6,7 @@ class Address < ActiveRecord::Base
 
   belongs_to :entity, inverse_of: :addresses
   belongs_to :state, class_name: "AddressState", inverse_of: :addresses
+  has_many :images, inverse_of: :address, dependent: :destroy
 
   validates_presence_of :city, :country_name
 
@@ -132,17 +133,19 @@ class Address < ActiveRecord::Base
       pitch = (i == 0 and ['new york', 'nyc', 'manhattan'].include?(city.downcase)) ? '15' : '0'
       
       if i == 0
-        caption = 'street view: ' + obfuscated
+        caption = obfuscated
       elsif i == 1
-        caption = 'street view: ' + location
+        caption = location
       else i == 2
-        caption = 'street view: city: ' + location
+        caption = location
       end
       
       next unless image = Image.new_from_street_view(location, size, pitch)
       image.entity = entity
-      image.title = entity.name
+      image.title = 'Address Street View'
       image.caption = caption
+      image.address = self
+      image.raw_address = to_s
       image.url = image.s3_url('large') # overwrite url with street address
       image.save
       image.crop(0, 0, width-40, height-40) if image.present? and crop # in order to remove google branding

@@ -4,4 +4,17 @@ class Article < ActiveRecord::Base
 
   validates_presence_of :title
   validates :url, url: true
+
+  def save_screenshot(width = 1280, height = 1280, session = nil)
+    session = Capybara::Session.new(:selenium) if session.nil?
+    path = Rails.root.join("data", "articles").to_s + "/screenshot-#{id}.jpg"
+    begin
+      session.driver.browser.manage.window.resize_to(width, height)
+      session.visit(url)
+      session.save_screenshot(path)
+    rescue => e
+      binding.pry
+      return false
+    end
+  end
 end

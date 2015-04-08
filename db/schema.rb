@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150325183612) do
+ActiveRecord::Schema.define(version: 20150406160627) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -514,8 +514,11 @@ ActiveRecord::Schema.define(version: 20150325183612) do
     t.boolean  "is_deleted",                      default: false, null: false
     t.integer  "last_user_id"
     t.boolean  "has_square",                      default: false, null: false
+    t.integer  "address_id"
+    t.string   "raw_address",  limit: 200
   end
 
+  add_index "image", ["address_id"], name: "index_image_on_address_id", using: :btree
   add_index "image", ["entity_id"], name: "entity_id_idx", using: :btree
   add_index "image", ["last_user_id"], name: "last_user_id_idx", using: :btree
 

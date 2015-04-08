@@ -144,22 +144,17 @@ namespace :images do
   desc "creates street view images for list of entities"
   task create_street_views: :environment do
     list_id = ENV['LIST_ID'].to_i
-    List.find(list_id).entities_with_couples.each_with_index do |e, i|
+    List.find(list_id).entities_with_couples.take(10).each_with_index do |e, i|
       next unless e.addresses.count > 0
       print "#{i+1} finding street view image for #{e.name}\n"
+      addresses = e.unique_addresses
 
-      if e.addresses.count > 1
-        e.addresses.each do |a|
-          if image = a.add_street_view_image_to_entity(640, 640, true, true)
-            print "+ #{a.to_s}\n"
-            print "+ #{image.url}\n"
-          end        
+      addresses.each do |a|
+        if a.images.count > 0
+          print "- street view image already exists for #{a.to_s}\n"
+          next
         end
-      elsif e.addresses.count == 1
-        a = e.addresses.first
-        next unless a.street1 
-        next if e.images.find { |i| i.caption and i.caption.match(/street view:/) }
-        if image = a.add_street_view_image_to_entity
+        if image = a.add_street_view_image_to_entity(640, 640, true, true)
           print "+ #{a.to_s}\n"
           print "+ #{image.url}\n"
         end
