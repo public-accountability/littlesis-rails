@@ -12,9 +12,6 @@ namespace :articles do
     profile.add_extension('data/selenium/adblock_plus-2.6.9-an+sm+tb+fx.xpi')
     driver = Selenium::WebDriver.for(:firefox, profile: profile)
 
-    # session = Capybara::Session.new(:selenium)
-    # binding.pry
-
     articles.each_with_index do |a, i|
       next if File.exist?(a.screenshot_path)
       if a.save_screenshot(driver, 768, 768)
