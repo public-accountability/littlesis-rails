@@ -9,14 +9,11 @@ class Article < ActiveRecord::Base
     Rails.root.join("data", "articles").to_s + "/screenshot-#{id}.jpg"
   end
 
-  def save_screenshot(width = 1024, height = 1024, session = nil)
-    session = Capybara::Session.new(:selenium) if session.nil?
-
+  def save_screenshot(driver, width = 1024, height = 1024)
     begin
-      session.driver.browser.manage.window.resize_to(width, height)
-      session.visit(url)
-      session.save_screenshot(screenshot_path)
-      session.driver.browser.quit
+      driver.manage.window.resize_to(width, height)
+      driver.navigate.to(url)
+      driver.save_screenshot(screenshot_path)
     rescue => e
       binding.pry
       return false
