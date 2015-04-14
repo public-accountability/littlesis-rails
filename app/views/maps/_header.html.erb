@@ -18,6 +18,11 @@
     <div id="clone-link">
       <%= link_to 'clone', clone_map_path(@map), method: :post %>
     </div>
+    <% if current_user.present? and (current_user.id == @map.user.id) %>
+      <div id="edit-link">
+        <%= link_to 'edit', edit_map_path(@map) %>
+      </div>
+    <% end %>
   </div>
   <div class="col col-xs-6 map-share-buttons">
     <a href="https://twitter.com/share" class="twitter-share-button" data-via="twittlesis" data-count="none" data-dnt="true" data-text="<%= @map.share_text %>">Tweet</a>

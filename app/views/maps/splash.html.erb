@@ -20,6 +20,11 @@
     <h1>Map the power with <strong>Oligrapher</strong></h1>
     Oligrapher is new tool for visualizing networks of influence using LittleSis data.
 
+    <br><br>
+
+    <%= button_to('Get started on a new map', new_map_path, method: :get, class: 'btn-lg') %>
+    <div id="splash-join">or <%= link_to('sign up', '/join') %> for a LittleSis account</div>
+
     <div id="splash-feature-list">
       <ul>
         <li>easily import data from LittleSis</li>
@@ -30,9 +35,6 @@
         <li>read more on the <%= link_to(raw('LittleSis blog'), 'http://blog.littlesis.org/2014/07/22/introducing-oligrapher-power-mapping-on-littlesis/') %></li>
       </ul>
     </div>
-
-    <!--<%= button_to('Sign up to start making maps!', '/join', method: :get, class: 'btn-lg') %>-->
-    <%= button_to('Get in touch to become a beta tester!', '/contact', method: :get, class: 'btn-lg', id: "splash-contact") %>
   </div>
 </div>
 

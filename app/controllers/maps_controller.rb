@@ -57,7 +57,7 @@ class MapsController < ApplicationController
   end
 
   def show
-    if @map.is_private and !current_user.has_legacy_permission('admin') and (current_user.nil? or @map.user_id != current_user.sf_guard_user_id)
+    if @map.is_private and (!current_user or !current_user.has_legacy_permission('admin')) and (current_user.nil? or @map.user_id != current_user.sf_guard_user_id)
       raise Exceptions::PermissionError
     end
   end
@@ -68,12 +68,12 @@ class MapsController < ApplicationController
   end
 
   def new
-    check_permission 'importer'
+    check_permission 'editor'
     @map = NetworkMap.new
   end
 
   def create
-    check_permission 'importer'
+    check_permission 'editor'
 
     params = map_params
     params[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
@@ -96,24 +96,24 @@ class MapsController < ApplicationController
 
   def edit
     check_owner
-    check_permission 'importer'
+    check_permission 'editor'
   end
 
   def edit_meta
     check_owner
-    check_permission 'importer'
+    check_permission 'editor'
   end
 
   def edit_fullscreen
     check_owner
-    check_permission 'importer'
+    check_permission 'editor'
     response.headers.delete('X-Frame-Options')
     render layout: "fullscreen"
   end
 
   def update
     check_owner
-    check_permission 'importer'
+    check_permission 'editor'
 
     data = params[:data]
     decoded = JSON.parse(data)
@@ -133,7 +133,7 @@ class MapsController < ApplicationController
 
   def update_meta
     check_owner
-    check_permission 'importer'
+    check_permission 'editor'
 
     if @map.update(map_params)
       redirect_to map_path(@map), notice: 'Map was successfully updated.'
@@ -144,14 +144,14 @@ class MapsController < ApplicationController
 
   def destroy
     check_owner
-    check_permission 'importer'
+    check_permission 'editor'
 
     @map.destroy
     redirect_to maps_path
   end
 
   def clone
-    check_permission 'importer'
+    check_permission 'editor'
 
     map = @map.dup
     map.is_featured = false

@@ -262,6 +262,12 @@ h1.map-title {
   margin-left: 10px;
 }
 
+#edit-link {
+  display: inline-block;
+  font-size: 12px;    
+  margin-left: 10px;
+}
+
 .zoom-button {
   background-color: #eee;
   border: 1px solid #ddd;
@@ -570,6 +576,11 @@ svg .text {
   }
 }
 
+#splash-join {
+  margin-top: 5px;
+  font-size: 12px;
+}
+
 #splash-contact {
   font-size: 20px;
 }
@@ -577,7 +588,7 @@ svg .text {
 #splash-feature-list {
   margin: 40px auto;
   text-align: left;
-  width: 350px;
+  width: 340px;
   font-size: 18px;
   line-height: 28px;
 
@@ -593,7 +604,7 @@ svg .text {
   }
 
   li:before {
-    content: '\02606';
+    content: '\02605';
     padding-right: 10px;
     font-size: 0.8em;
   }  

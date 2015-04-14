@@ -5,11 +5,12 @@
 <h1>
   <% if @featured %>
     Featured Maps
-    <%= link_to 'all maps', maps_path, class: 'btn btn-link btn-sm' %>
+    <%= link_to 'All', maps_path, class: 'btn btn-default btn-sm' %>
   <% else %>
     Network Maps
-    <%= link_to 'featured maps', featured_maps_path, class: 'btn btn-link btn-sm' %>
+    <%= link_to 'Featured', featured_maps_path, class: 'btn btn-default btn-sm' %>
   <% end %>
+  <%= link_to 'Create', new_map_path, class: 'btn btn-default btn-sm' %>
 </h1>
 
 <% unless @featured %>

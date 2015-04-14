@@ -2,7 +2,6 @@ class NetworkMap < ActiveRecord::Base
   include SingularTable
   include SoftDelete
   include Bootsy::Container
-  # include Capybara::DSL    
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
