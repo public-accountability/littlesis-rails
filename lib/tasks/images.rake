@@ -63,8 +63,11 @@ namespace :images do
     local_filenames = Image.all.pluck(:filename)
 
     s3_filenames.each_with_index do |filename, i|
-      unless local_filenames.include?(filename)
+      if local_filenames.include?(filename)
+        print "kept #{filename}\n"
+      else
         bucket.objects["images/profile/#{filename}"].delete
+        print "removed #{filename}\n"
       end
     end
   end
