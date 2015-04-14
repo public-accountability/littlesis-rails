@@ -22,9 +22,9 @@
   <tr>
     <td>
       <input type="checkbox" name="selected-<%= i %>" class="news-article-checkbox">
-      <input type="hidden" name="title[]" value="<%= CGI.escapeHTML(result['title']) %>">
+      <input type="hidden" name="title[]" value="<%= CGI.escapeHTML(result['title'].to_s) %>">
       <input type="hidden" name="url[]" value="<%= CGI.escapeHTML(result['link']) %>">
-      <input type="hidden" name="snippet[]" value="<%= CGI.escapeHTML(result['snippet']) %>">
+      <input type="hidden" name="snippet[]" value="<%= CGI.escapeHTML(result['snippet'].to_s) %>">
     </td>
     <td>
       <div class="news-article-title"><%= link_to(result['title'], result['link'], target: '_blank') %></div>
