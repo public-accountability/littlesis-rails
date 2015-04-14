@@ -1,6 +1,6 @@
 <% content_for(:page_title, 'Map the Power with Oligrapher') %>
 
-<div id="splash-images" class="row hidden-xs">
+<div class="row hidden-xs splash-images">
   <div class="col-sm-4 splash-image">
     <%= link_to(image_tag('fcc-map.jpg'), map_path(@fcc_map)) %><br>
     <%= link_to('FCC Tight with Telecoms', map_path(@fcc_map)) %>
@@ -18,7 +18,7 @@
 <div id="splash-intro" class="row">
   <div id="splash-header" class="col-sm-12">
     <h1>Map the power with <strong>Oligrapher</strong></h1>
-    Oligrapher is new tool for visualizing networks of influence using LittleSis data.
+    Oligrapher is a new tool for visualizing networks of influence using LittleSis data.
 
     <br><br>
 
@@ -38,15 +38,51 @@
   </div>
 </div>
 
-<br>
+<div class="row hidden-xs splash-images">
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('shale-map.jpg'), map_path(@shale_map)) %><br>
+    <%= link_to('Center for Sustainable Shale Development', map_path(@shale_map)) %>
+  </div>
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('hadley-map.jpg'), map_path(@hadley_map)) %><br>
+    <%= link_to('Hadley and the Ministry of Peace', map_path(@hadley_map)) %>
+  </div>
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('moma-map.jpg'), map_path(@moma_map)) %><br>
+    <%= link_to('Museum of Modern Finance', map_path(@moma_map)) %>
+  </div>
+</div>
 
-<%= centered_content do %>
+<div class="row hidden-xs splash-images">
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('lawmaking-map.jpg'), map_path(@lawmaking_map)) %><br>
+    <%= link_to('Lawmaking after Citizens United', map_path(@lawmaking_map)) %>
+  </div>
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('uc-map.jpg'), map_path(@uc_map)) %><br>
+    <%= link_to('University of California and Wall Street', map_path(@uc_map)) %>
+  </div>
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('goldwyn-map.jpg'), map_path(@goldwyn_map)) %><br>
+    <%= link_to('How Hillary Clinton and David Goldwyn Sold Fracking', map_path(@goldwyn_map)) %>
+  </div>
+</div>
 
-<h3>
-  Featured Maps
-  <%= link_to 'all maps', maps_path, class: 'btn btn-link btn-sm' %>
-</h3>
+<div class="row hidden-xs splash-images">
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('mugabe-map.jpg'), map_path(@mugabe_map)) %><br>
+    <%= link_to("Mugabe's Bailout Consortium", map_path(@mugabe_map)) %>
+  </div>
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('goldman-map.jpg'), map_path(@goldman_map)) %><br>
+    <%= link_to('Mapping the Vampire Squid', map_path(@goldman_map)) %>
+  </div>
+  <div class="col-sm-4 splash-image">
+    <%= link_to(image_tag('berman-map.jpg'), map_path(@berman_map)) %><br>
+    <%= link_to("Richard Berman's Front Groups", map_path(@berman_map)) %>
+  </div>
+</div>
 
-<%= render partial: 'maps/table', locals: { maps: @maps } %>
-
-<% end %>
+<div id="splash-more-maps">
+<%= button_to 'View More Maps', featured_maps_path, method: :get, class: 'btn btn-default btn-lg' %>
+</div>
