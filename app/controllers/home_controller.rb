@@ -6,7 +6,7 @@ class HomeController < ApplicationController
 
     q = Riddle::Query.escape(params[:q]) if params[:q].present?
 
-    if params[:show_replies].present? and params[:show_replies] == "1"
+    if params[:show_replies] == "1"
     	query = Note.search(q, order: "created_at DESC", with: { visible_to_user_ids: [current_user.id] })
     else
     	query = Note.search(q, order: "created_at DESC", with: { user_id: current_user.id })

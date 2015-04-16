@@ -81,7 +81,7 @@ class Note < ActiveRecord::Base
 	end
 
 	def self.username_chars
-		"a-zA-Z0-9."
+		"a-zA-Z0-9._"
 	end
 
 	def parse
