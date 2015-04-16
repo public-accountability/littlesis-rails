@@ -1,7 +1,4 @@
-<div id="entity-header">
-  <div id="entity-name"><%= entity_link(@entity) %> <%= link_to('View Profile', @entity.legacy_url, class: 'btn btn-sm btn-default') %></div>
-  <div id="entity-blurb"><%= @entity.blurb %></div>
-</div>
+<%= render partial: 'header', locals: { entity: @entity } %>
 
 <h3 class="section">Relationship Data</h3>
 

@@ -1,7 +1,7 @@
 require 'open-uri'
 
 namespace :forbes do
-  desc "creates square versions of images"
+  desc "imports forbes 400 members to a list given file with HTML from forbes.com's full list"
   task import_400_list: :environment do
     list_id = ENV['LIST_ID'].to_i
     infile = ENV['INFILE']

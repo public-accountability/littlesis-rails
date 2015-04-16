@@ -220,5 +220,5 @@ class EntitiesController < ApplicationController
     params.require(:article).permit(
       :title, :url, :snippet, :published_at
     )
-  end  
+  end
 end

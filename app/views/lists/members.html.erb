@@ -1,0 +1,5 @@
+<%= render partial: 'header', locals: { list: @list } %>
+
+<% cache(@list.cache_key('members'), expires_in: 1.day) do %>
+  <%= render partial: 'datatable', locals: { table: ListDatatable.new(@list) } %>
+<% end %>

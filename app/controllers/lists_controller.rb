@@ -1,6 +1,6 @@
 class ListsController < ApplicationController
   before_filter :auth, except: [:relationships]
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members]
 
   # GET /lists
   def index
@@ -92,6 +92,9 @@ class ListsController < ApplicationController
     entity_ids = @list.entities_with_couples.pluck(:id).uniq
     @images = Image.joins(entity: :addresses).where(entity_id: entity_ids).where("image.caption LIKE 'street view:%'").order(:created_at)
     render layout: false
+  end
+
+  def members
   end
 
   private
