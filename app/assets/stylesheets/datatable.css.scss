@@ -1,0 +1,123 @@
+/* entity datatable */
+
+#datatable-table {
+  border-bottom-color: rgb(221, 221, 221);
+
+  tbody, thead th {
+    border-bottom-color: rgb(221, 221, 221);
+  }
+
+  .entity-link {
+    font-weight: 500;
+  }
+
+  #entity-header {
+    margin-top: -14px;
+    margin-bottom: 20px;
+  }
+
+  #entity-name {
+    font-size: 42px; 
+    line-height: 60px;
+    font-weight: 500;
+
+    a:hover {
+      text-decoration: none;
+    }
+  }
+
+  #entity-blurb {
+    font-size: 21px;
+    line-height: 30px;
+    font-weight: 300;
+  }
+
+  .entity-blurb {
+    font-size: 12px;
+    color: #888;
+  }
+}
+
+#datatable-filters {
+  background-color: #eee;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+#datatable-filters-line2 {
+  margin-top: 5px;
+}
+
+#datatable-search {
+  width: 200px;
+}
+
+#datatable-amount {
+  width: 75px;
+}
+
+.buttons {
+  float: left;
+  margin-right: 10px;
+  margin-top: 7px;
+  display: inline-block;
+
+  a {
+    margin-right: 5px;
+  }
+}
+
+#datatable-filters select {
+  max-width: 280px;
+}
+
+html #datatable-table_info {
+  clear: none;
+  margin-top: 3px;
+}
+
+/* DataTables sorting */
+html .dataTables_wrapper .dataTables_paginate .paginate_button {
+  padding: 0;
+  margin: 0;
+  border: 0;
+
+  &:hover {
+    border: 0;
+    background: none;
+  }
+
+  &:active {
+    background-color: white;
+  }
+}
+
+html .dataTables_filter label {
+  width: 300px;
+
+  input[type="search"] {
+    width: 247px;
+  }
+}
+
+html table.dataTable thead {
+  .sorting_asc {
+    background: asset-url('sort_asc.png') no-repeat center left;
+  }
+   
+  .sorting_desc {
+    background: asset-url('sort_desc.png') no-repeat center left;
+  }
+   
+  .sorting {
+    background: asset-url('sort_both.png') no-repeat center left;
+  }
+   
+  .sorting_asc_disabled {
+    background: asset-url('sort_asc_disabled.png') no-repeat center left;
+  }
+   
+  .sorting_desc_disabled {
+    background: asset-url('sort_desc_disabled.png') no-repeat center left;
+  }
+}
