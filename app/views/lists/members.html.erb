@@ -1,3 +1,5 @@
+<% content_for(:page_title, @list.name) %>
+
 <%= render partial: 'header', locals: { list: @list } %>
 
 <% cache(@list.cache_key('members'), expires_in: 1.day) do %>

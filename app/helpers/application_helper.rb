@@ -1,8 +1,9 @@
 module ApplicationHelper
 
   def page_title
-    title = "LittleSis"
-    title += " - " + content_for(:page_title) if content_for?(:page_title)
+    title = ""
+    title += content_for(:page_title) + " - " if content_for?(:page_title)
+    title += "LittleSis"
     title
   end
 
