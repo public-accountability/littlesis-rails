@@ -90,12 +90,7 @@ class MapsController < ApplicationController
 
     params = map_params
     params[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
-    params[:data] = JSON.dump({ entities: [], rels: [], texts: [] }) if params[:data].blank?
-    params[:width] = Lilsis::Application.config.netmap_default_width if params[:width].blank?
-    params[:height] = Lilsis::Application.config.netmap_default_width if params[:height].blank?
-    params[:zoom] = '1' if params[:zoom].blank?
-
-    @map = NetworkMap.create(params)
+    @map = NetworkMap.new(params)
 
     if @map.save
       respond_to do |format|

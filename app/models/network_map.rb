@@ -16,7 +16,7 @@ class NetworkMap < ActiveRecord::Base
 
   validates_presence_of :title
 
-  before_save :generate_index_data
+  before_save :set_defaults, :generate_index_data
 
   def generate_index_data
     hash = JSON.parse(data)
@@ -25,12 +25,19 @@ class NetworkMap < ActiveRecord::Base
     self.index_data = nodes + ', ' + texts
   end
 
+  def set_defaults
+    self.data = JSON.dump({ entities: [], rels: [], texts: [] }) if data.blank?
+    self.width = Lilsis::Application.config.netmap_default_width if width.blank?
+    self.height = Lilsis::Application.config.netmap_default_width if height.blank?
+    self.zoom = '1' if zoom.blank?
+  end
+
   def prepared_data
     hash = JSON.parse(data)
     json = JSON.dump({ 
-      entities: hash['entities'].map { |entity| self.prepare_entity(entity) },
-      rels: hash['rels'].map { |rel| self.prepare_rel(rel) },
-      texts: hash['texts'].present? ? hash['texts'].map { |text| self.prepare_text(text) } : []
+      entities: hash['entities'].map { |entity| self.class.prepare_entity(entity) },
+      rels: hash['rels'].map { |rel| self.class.prepare_rel(rel) },
+      texts: hash['texts'].present? ? hash['texts'].map { |text| self.class.prepare_text(text) } : []
     })
     ERB::Util.json_escape(json)
   end
@@ -46,7 +53,7 @@ class NetworkMap < ActiveRecord::Base
     rels.collect{ |r| r.references }.flatten.uniq(&:source).reject{ |ref| ref.name.blank? }.sort_by{ |ref| ref.updated_at }.reverse
   end
 
-  def entity_type(entity)
+  def self.entity_type(entity)
     return entity['type'] if entity['type'].present?
     
     if entity['primary_ext'].present?
@@ -62,7 +69,7 @@ class NetworkMap < ActiveRecord::Base
     end
   end
 
-  def is_custom_entity?(entity)
+  def self.is_custom_entity?(entity)
     if entity['custom'].present?
       entity['custom']
     else
@@ -70,7 +77,7 @@ class NetworkMap < ActiveRecord::Base
     end
   end
 
-  def prepare_entity(entity)
+  def self.prepare_entity(entity)
     type = entity_type(entity)
 
     if entity['image'] and !entity['image'].include?('netmap') and !entity['image'].include?('anon')
@@ -94,7 +101,7 @@ class NetworkMap < ActiveRecord::Base
     end
 
     {
-      id: is_custom_entity?(entity) ? entity['id'] : self.class.integerize(entity['id']),
+      id: is_custom_entity?(entity) ? entity['id'] : self.integerize(entity['id']),
       name: entity['name'],
       image: image_path,
       url: url,
@@ -109,7 +116,7 @@ class NetworkMap < ActiveRecord::Base
     }
   end
 
-  def is_custom_rel?(rel)
+  def self.is_custom_rel?(rel)
     if rel['custom'].present?
       rel['custom']
     else
@@ -117,20 +124,23 @@ class NetworkMap < ActiveRecord::Base
     end
   end
 
-  def prepare_rel(rel)
+  def self.prepare_rel(rel)
     if is_custom_rel?(rel)
       url = rel['url']
     else
       url = ActionController::Base.helpers.url_for(Relationship.legacy_url(rel['id']))
     end
 
+    # backward compatibility for maps created before rels could have multiple categories
+    cat_ids = rel['category_ids'].present? ? rel['category_ids'] : [rel['category_id']].compact
+
     {
-      id: is_custom_rel?(rel) ? rel['id'] : self.class.integerize(rel['id']),
-      entity1_id: rel['entity1_id'].to_s[0] == "x" ? rel['entity1_id'].to_s : self.class.integerize(rel['entity1_id']),
-      entity2_id: rel['entity2_id'].to_s[0] == "x" ? rel['entity2_id'].to_s : self.class.integerize(rel['entity2_id']),
-      category_id: self.class.integerize(rel['category_id']),
-      category_ids: Array(self.class.integerize(rel['category_ids'])),
-      is_current: self.class.integerize(rel['is_current']),
+      id: is_custom_rel?(rel) ? rel['id'] : self.integerize(rel['id']),
+      entity1_id: rel['entity1_id'].to_s[0] == "x" ? rel['entity1_id'].to_s : self.integerize(rel['entity1_id']),
+      entity2_id: rel['entity2_id'].to_s[0] == "x" ? rel['entity2_id'].to_s : self.integerize(rel['entity2_id']),
+      category_id: self.integerize(rel['category_id']),
+      category_ids: Array(self.integerize(cat_ids)),
+      is_current: self.integerize(rel['is_current']),
       is_directional: rel['is_directional'],
       end_date: rel['end_date'],
       scale: rel['scale'],
@@ -143,7 +153,7 @@ class NetworkMap < ActiveRecord::Base
     }
   end
 
-  def prepare_text(text)
+  def self.prepare_text(text)
     text
   end
 
@@ -184,5 +194,45 @@ class NetworkMap < ActiveRecord::Base
     File.delete(local_path)
     self.thumbnail = S3.url("/" + s3_path) if obj.exists?
     save
+  end
+
+  def self.entities_for_map(entity_ids)
+    interlocks = Link.interlock_hash_from_entities(entity_ids).select { |k, v| v.count > 1 }.sort { |a, b| a[1].count <=> b[1].count }
+    ids = []
+    interlocks.each do |id, ary|
+      break if ids.count + ary.count > 30
+      ids = entity_ids.concat([id]).concat(ary).uniq
+    end
+    ids
+  end
+
+  def self.create_from_entities(title, user_id, entity_ids)
+    entity_ids = entities_for_map(entity_ids)
+    entities = Entity.joins("LEFT JOIN image ON (image.entity_id = entity.id AND image.is_featured = 1)").where(id: entity_ids).select("entity.*, image.filename")
+    rels = rels_from_entities(entities.map(&:id))
+    data = ERB::Util.json_escape(JSON.dump({ 
+      entities: entities.map { |entity| prepare_entity(entity) },
+      rels: rels.map { |rel| prepare_rel(rel) },
+      texts: []
+    }))
+    sf_guard_user_id = User.find(user_id).sf_guard_user_id
+    create(title: title, user_id: sf_guard_user_id, data: data)
+  end
+
+  def self.rels_from_entities(entity_ids)
+    sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.end_date, r.is_deleted, " + 
+          "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " + 
+          "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " + 
+          "COUNT(r.id) AS num " +
+          "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " +
+          "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " +
+          "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " +
+          "WHERE r.entity1_id IN (" + entity_ids.join(',') + ") " +
+          "AND r.entity2_id IN (" + entity_ids.join(',') + ") " +
+          "AND r.is_deleted = 0 " +
+          "AND r.entity1_id <> r.entity2_id " +
+          "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " +
+          "GROUP BY LEAST(r.entity1_id, r.entity2_id), GREATEST(r.entity1_id, r.entity2_id), r.category_id"
+    rels = ActiveRecord::Base.connection.exec_query(sql)
   end
 end

@@ -1,6 +1,6 @@
 class ListsController < ApplicationController
-  before_filter :auth, except: [:relationships]
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members]
+  before_filter :auth, except: [:relationships, :members]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map]
 
   # GET /lists
   def index
@@ -95,6 +95,11 @@ class ListsController < ApplicationController
   end
 
   def members
+  end
+
+  def create_map
+    map = NetworkMap.create_from_entities(@list.name, current_user.id, @list.entities_with_couples.pluck(:id))
+    redirect_to edit_map_url(map, wheel: true)
   end
 
   private

@@ -16,6 +16,7 @@ class Relationship < ActiveRecord::Base
   has_one :trans, class_name: "Transaction", inverse_of: :relationship, dependent: :destroy
   has_one :ownership, inverse_of: :relationship, dependent: :destroy
   has_many :fec_filings, inverse_of: :relationship, dependent: :destroy
+  belongs_to :category, class_name: "RelationshipCategory", inverse_of: :relationships
 
   validates_presence_of :entity1_id, :entity2_id, :category_id
 

@@ -77,6 +77,7 @@ Lilsis::Application.routes.draw do
       get 'crop_images'
       get 'street_views'
       get 'members'
+      post 'create_map'
     end
   end
 

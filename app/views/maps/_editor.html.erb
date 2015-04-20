@@ -28,4 +28,7 @@ netmap.auto_center();
 netmap.zoom_by(<%= map.zoom %>);
 <% end %>
 netmap.build();
+<% if params[:wheel] %>
+netmap.wheel();
+<% end %>
 </script>
