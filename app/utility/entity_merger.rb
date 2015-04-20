@@ -178,7 +178,7 @@ class EntityMerger
 
       # ARTICLES
       e2.article_entities.each do |ae2|
-        ae2.update(entity_id: e1.id) unless e1.aticle_entities.where(article_id: ae2.article_id).exists?
+        ae2.update(entity_id: e1.id) unless e1.article_entities.where(article_id: ae2.article_id).exists?
       end
 
       # QUEUES
