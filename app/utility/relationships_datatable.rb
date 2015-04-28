@@ -61,7 +61,7 @@ class RelationshipsDatatable
        }
     end
 
-    @categories = (0..11).map { |n| categories[n] }.select { |a| a.present? }
+    @categories = (0..Relationship.all_categories.count-1).map { |n| categories[n] }.select { |a| a.present? }
     types.uniq! 
     @types = [["Entity Type", ""]].concat(ExtensionDefinition.order(:tier).pluck(:display_name).select { |t| types.include?(t) }.map { |t| [t, t] })
     industries -= ["Other", "Unknown", "Non-contribution"]

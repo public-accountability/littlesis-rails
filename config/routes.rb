@@ -104,6 +104,7 @@ Lilsis::Application.routes.draw do
       post 'create_article'
       get 'find_merges'
       post 'merge'
+      get 'refresh'
     end
 
     collection do

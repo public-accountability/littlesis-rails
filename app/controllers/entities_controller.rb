@@ -1,6 +1,6 @@
 class EntitiesController < ApplicationController
 	before_filter :auth, except: [:relationships]
-  before_action :set_entity, only: [:relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge]
+  before_action :set_entity, only: [:relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge, :refresh]
 
   def relationships
   end
@@ -208,6 +208,12 @@ class EntitiesController < ApplicationController
     LegacyCache.new.clear_entity_cache(@keep.id)
 
     redirect_to @keep.legacy_url, notice: 'Entities were successfully merged.'
+  end
+
+  def refresh
+    check_permission 'admin'
+    LegacyCache.new(request.host).clear_entity_cache(@entity.id)
+    redirect_to @entity.legacy_url
   end
 
   private

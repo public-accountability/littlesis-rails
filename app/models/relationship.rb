@@ -44,8 +44,13 @@ class Relationship < ActiveRecord::Base
       "Social",
       "Professional",
       "Ownership",
-      "Hierarchy"
+      "Hierarchy",
+      "Generic"
     ]
+  end
+
+  def self.category_hash
+    Hash[[*all_categories.map.with_index]].invert.select { |k, v| v.present? }
   end
 
   def self.all_categories_with_fields
@@ -120,6 +125,8 @@ class Relationship < ActiveRecord::Base
       order == 1 ? 'owner' : 'holding/investment'
     when 11 # hierarchy
       order == 1 ? 'child org' : 'parent org'
+    when 12 # generic
+      'affiliation'
     else
       category_name
     end

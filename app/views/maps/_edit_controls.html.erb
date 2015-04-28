@@ -13,17 +13,7 @@
 
 Categories:
 <select multiple id="netmap_cat_ids" class="form-control netmap-cat-ids" size="10">
-  <option value="1">Position</option>
-  <option value="2">Education</option>
-  <option value="3">Membership</option>
-  <option value="4">Family</option>
-  <option value="5">Donation</option>
-  <option value="6">Transaction</option>
-  <option value="7">Lobbying</option>
-  <option value="8">Social</option>
-  <option value="9">Professional</option>
-  <option value="10">Ownership</option>
-  <option value="11">Hierarchy</option>
+  <%= options_for_select(Relationship.category_hash.invert) %>
 </select>
 
 <div class="checkbox">

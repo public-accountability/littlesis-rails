@@ -1,8 +1,11 @@
-class LegacyCache
-  attr_accessor :client
+require 'socket'
 
-  def initialize
+class LegacyCache
+  attr_accessor :client, :host
+
+  def initialize(host = nil)
     @client ||= Dalli::Client.new('localhost:11211', compress: false, serializer: PhpSerializer)
+    @host = (host or Socket.gethostname).gsub('.', '_')
   end
 
   def prefix
@@ -47,7 +50,21 @@ class LegacyCache
   end
 
   def clear_entity_cache(id)
-    clear_key_pattern(/all\/entity\/.*\/id\/#{id}\//i)
+    entity = Entity.find(id)
+    actions = %w(view relationships leadership board family friends government business otherPositions education fundraising politicalDonors people memberships owners holdings transactions donors recipients lobbying lobbiedBy lobbyingTargets office officeOf image images address network interlocks schools giving funding political references modifications imageModifications imagesModifications relationshipModifications childOrgs lobbyingArmy networkSearch view notes map interlocksMap addRelationship)
+    partials = ['_page', '_action', 'leftcol_profileimage', 'leftcol_references', 'leftcol_stats', 'leftcol_lists', 'relationship_tabs_content', 'similarEntities', 'watchers']
+
+    keys = actions.map { |action| partials.map { |partial| "/#{@host}/all/entity/#{action}/_sf_cache_key/#{partial}/id/#{id}/slug/#{entity.name_to_legacy_slug}" } }.flatten.uniq
+
+    clear_keys(keys)
+  end
+
+  def clear_keys(keys)
+    keys.each do |key|
+      key = prefix + key unless key.match(prefix)
+      Logger.new(STDOUT).debug(key)
+      @client.delete(key)
+    end
   end
 end
 

@@ -336,7 +336,7 @@ class Entity < ActiveRecord::Base
   end
 
   def self.name_to_legacy_slug(name)
-    name.gsub(" ", "_").gsub("/", "~")
+    name.gsub(" ", "_").gsub("/", "~").gsub('+', '_')
   end
 
   def name_to_legacy_slug
