@@ -246,7 +246,6 @@ GEM
     riddle (1.5.11)
     rmagick (2.14.0)
     ruby-hmac (0.4.0)
-    ruby-opencv (0.0.14)
     rubyzip (1.1.7)
     sass (3.4.13)
     sass-rails (5.0.3)
@@ -372,7 +371,6 @@ DEPENDENCIES
   rails_autolink
   redis-rails
   rmagick
-  ruby-opencv
   sass-rails
   selenium-webdriver
   sequel
