@@ -7,12 +7,15 @@ A littlesis rails app. Must run in parallel to the PHP app (https://github.com/l
 Installation
 ------------
 
-FIRST GET RVM, RUBY 2, RAILS 4:
-http://blog.coolaj86.com/articles/installing-ruby-on-ubuntu-12-04.html
+FIRST GET RVM, RUBY 2.1.2, RAILS 4.1:
+- http://blog.coolaj86.com/articles/installing-ruby-on-ubuntu-12-04.html
+- https://gorails.com/setup/ubuntu/14.04
 
-Install redis and run "redis-server" or change cache store or disable cache.
+
+Install [qt](http://www.qt.io/developers/). Install redis and run "redis-server" or change cache store or disable cache.
 
 - git clone git@github.com:skomputer/lilsis.git
+- git submodule update
 - edit database.yml.sample
 - edit lilsis.yml.sample
 - bundle update
