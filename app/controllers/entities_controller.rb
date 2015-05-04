@@ -205,14 +205,14 @@ class EntitiesController < ApplicationController
     @keep = Entity.find(params[:keep_id])
     EntityMerger.merge_all(@keep, @entity)
     @entity.soft_delete
-    LegacyCache.new.clear_entity_cache(@keep.id)
+    @keep.clear_cache(request.host)
 
     redirect_to @keep.legacy_url, notice: 'Entities were successfully merged.'
   end
 
   def refresh
     check_permission 'admin'
-    LegacyCache.new(request.host).clear_entity_cache(@entity.id)
+    @entity.clear_cache(request.host)
     redirect_to @entity.legacy_url
   end
 

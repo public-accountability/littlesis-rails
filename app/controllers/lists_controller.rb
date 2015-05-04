@@ -115,7 +115,7 @@ class ListsController < ApplicationController
         list_entity.custom_field = (data[:context].present? ? data[:context] : nil)
       end
       list_entity.save
-      list_entity.list.clear_cache
+      list_entity.list.clear_cache(request.host)
       table = ListDatatable.new(@list)
       render json: { row: table.list_entity_data(list_entity, data[:interlock_ids], data[:list_interlock_ids]) }
     else
@@ -126,12 +126,12 @@ class ListsController < ApplicationController
   def remove_entity
     check_permission 'admin'
     ListEntity.find(params[:list_entity_id]).destroy
-    @list.clear_cache
+    @list.clear_cache(request.host)
     redirect_to members_list_path(@list)        
   end
 
   def clear_cache
-    @list.clear_cache
+    @list.clear_cache(request.host)
     render json: { status: 'success' }
   end
 

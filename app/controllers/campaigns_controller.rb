@@ -100,7 +100,7 @@ class CampaignsController < ApplicationController
 
   def clear_cache
     check_permission "admin"
-    @campaign.clear_cache
+    @campaign.clear_cache(request.host)
     redirect_to admin_campaign_path(@campaign), notice: "Cache was successfully cleared."
   end
 

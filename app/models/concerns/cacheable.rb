@@ -23,7 +23,7 @@ module Cacheable
 		Rails.cache.delete(cache_key(subkey, use_timestamp, params))
 	end
 
-	def clear_cache(subkey=nil)
+	def clear_cache(host, subkey=nil)
 		if new_record?
 			pattern = "*#{self.class.model_name.cache_key}/new[\\/\\-]*"
 		else
@@ -32,13 +32,13 @@ module Cacheable
 		end
 		Rails.cache.delete_matched(pattern)
 
-		clear_legacy_cache unless subkey.present?
+		clear_legacy_cache(host) unless subkey.present?
 	end
 
-	def clear_legacy_cache
+	def clear_legacy_cache(host)
 		method = "clear_#{self.class.name.underscore}_cache".to_sym
-		return unless self.class.method_defined?(method)
-		cache = LegacyCache.new
+		return unless LegacyCache.method_defined?(method)
+		cache = LegacyCache.new(host)
 		cache.send(method, id)
 	end
 

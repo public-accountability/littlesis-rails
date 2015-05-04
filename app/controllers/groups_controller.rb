@@ -213,7 +213,7 @@ class GroupsController < ApplicationController
 
   def clear_cache
     check_permission "admin"
-    @group.clear_cache
+    @group.clear_cache(request.host)
     redirect_to admin_group_path, notice: "Cache was successfully cleared."
   end
 
