@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150406160627) do
+ActiveRecord::Schema.define(version: 20150429230431) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -439,6 +439,12 @@ ActiveRecord::Schema.define(version: 20150406160627) do
     t.string "name", limit: 10, null: false
   end
 
+  create_table "generic", force: true do |t|
+    t.integer "relationship_id", limit: 8, null: false
+  end
+
+  add_index "generic", ["relationship_id"], name: "relationship_id_idx", using: :btree
+
   create_table "government_body", force: true do |t|
     t.boolean "is_federal"
     t.integer "state_id",   limit: 8
@@ -597,18 +603,19 @@ ActiveRecord::Schema.define(version: 20150406160627) do
   add_index "lobbyist", ["entity_id"], name: "entity_id_idx", using: :btree
 
   create_table "ls_list", force: true do |t|
-    t.string   "name",             limit: 100,                        null: false
-    t.text     "description",      limit: 2147483647
-    t.boolean  "is_ranked",                           default: false, null: false
-    t.boolean  "is_admin",                            default: false, null: false
-    t.boolean  "is_featured",                         default: false, null: false
-    t.boolean  "is_network",                          default: false, null: false
-    t.string   "display_name",     limit: 50
-    t.integer  "featured_list_id", limit: 8
+    t.string   "name",              limit: 100,                        null: false
+    t.text     "description",       limit: 2147483647
+    t.boolean  "is_ranked",                            default: false, null: false
+    t.boolean  "is_admin",                             default: false, null: false
+    t.boolean  "is_featured",                          default: false, null: false
+    t.boolean  "is_network",                           default: false, null: false
+    t.string   "display_name",      limit: 50
+    t.integer  "featured_list_id",  limit: 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "last_user_id"
-    t.boolean  "is_deleted",                          default: false, null: false
+    t.boolean  "is_deleted",                           default: false, null: false
+    t.string   "custom_field_name", limit: 100
   end
 
   add_index "ls_list", ["featured_list_id"], name: "featured_list_id", using: :btree
@@ -623,6 +630,7 @@ ActiveRecord::Schema.define(version: 20150406160627) do
     t.datetime "updated_at"
     t.integer  "last_user_id"
     t.boolean  "is_deleted",             default: false, null: false
+    t.text     "custom_field"
   end
 
   add_index "ls_list_entity", ["created_at"], name: "created_at_idx", using: :btree

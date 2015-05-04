@@ -1,4 +1,4 @@
-<% content_for(:page_title, @entity.name + ' - relationships') %>
+<% content_for(:page_title, raw(@entity.name + ' - relationships')) %>
 <%= render partial: 'header', locals: { entity: @entity } %>
 
 <h3 class="section">Relationship Data</h3>

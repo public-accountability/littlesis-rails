@@ -33,12 +33,13 @@ class List < ActiveRecord::Base
   end
 
   def name_to_legacy_slug
-    name.gsub(" ", "_").gsub("/", "~")
-
+    name.gsub(" ", "_").gsub("/", "~").gsub('+', '_')
   end
 
-  def legacy_url
-    "/list/" + id.to_s + "/" + name_to_legacy_slug
+  def legacy_url(action = nil)
+    url = "/list/" + id.to_s + "/" + name_to_legacy_slug
+    url += "/" + action if action.present?
+    url
   end
 
   def legacy_network_url

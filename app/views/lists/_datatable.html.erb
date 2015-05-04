@@ -29,7 +29,10 @@
         <th>Rank</th>
       <% end %>
       <th>Entity</th>
-      <th>Details</th>
+      <th><%= table.context_field_name %></th>
+      <% if admin %>
+        <th></th>
+      <% end %>
     </tr>
   </thead>
 </table>
@@ -47,7 +50,72 @@ var ternary = function(data, type, row) {
   }
 }
 
+var post = function(path) {
+  var form = document.createElement("form");
+  form.setAttribute("method", "post");
+  form.setAttribute("action", path);
+  var input = document.createElement("input");
+  input.setAttribute("type", "hidden");
+  input.setAttribute("name", "authenticity_token");
+  input.setAttribute("value", "<%= form_authenticity_token %>");
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+}
+
 $(document).ready(function() {
+  <% if editable %>
+    var editor = new $.fn.dataTable.Editor( {
+      ajax: '<%= update_entity_list_path(table.list) %>',
+      table: "#datatable-table",
+      fields: [ 
+        { 
+          label: "List Entity ID:",
+          name: 'list_entity_id'
+        },
+        {
+          label: "Rank:",
+          name: "rank"
+        }, 
+        {
+          label: "<%= table.context_field_name %>:",
+          name: "context",
+          type: "textarea",
+          className: "datatable-textarea"
+        },
+        {
+          label: 'Interlock Ids:',
+          name: 'interlock_ids'
+        },
+        {
+          label: 'List Interlock Ids:',
+          name: 'list_interlock_ids'
+        }
+      ]
+    });
+
+    // var openVals;
+    // editor.on('open', function(e, type) {
+    //   openVals = JSON.stringify(editor.get());
+    // })
+
+    // editor.on('preSubmit', function(e, data, action) {
+    //   if (openVals == JSON.stringify(editor.get())) {
+    //     return false;
+    //   }
+    // });
+
+    <% if table.list.custom_field_name.present? %>
+      var selector = 'tbody td.rank, tbody td.context';
+    <% else %>
+      var selector = 'tbody td.rank';
+    <% end %>
+
+    $('#datatable-table').on('click', selector, function(e) {
+      editor.inline(this, { submitOnBlur: true });
+    });
+  <% end %>
+
   $('#datatable-table').DataTable({
     data: data,
     dom: "<'buttons'>iprtp",
@@ -57,7 +125,8 @@ $(document).ready(function() {
       {
         data: 'rank',
         name: 'rank',
-        width: "5%"
+        width: "5%",
+        className: 'rank'
       },
       <% end %>
       { 
@@ -74,10 +143,22 @@ $(document).ready(function() {
         }
       },
       {
-        data: 'blurb',
-        name: 'blurb',
-        sortable: false
+        data: 'context',
+        name: 'context',
+        sortable: false,
+        className: 'context'
       },
+      <% if admin %>
+      {
+        data: 'actions',
+        name: 'actions',
+        width: '1%',
+        sortable: false,
+        render: function(data, type, row) {
+          return '<%= link_to(raw("<i class=\"glyphicon glyphicon-remove\"></i>"), remove_entity_list_path(table.list, list_entity_id: "XYZ"), method: :post, data: { confirm: "Are you sure you want to remove this entity from this list?" }) %>'.replace(/XYZ/, row.list_entity_id);
+        }
+      },
+      <% end %>
       {
         data: 'id',
         name: 'id',

@@ -1,6 +1,6 @@
 class ListsController < ApplicationController
-  before_filter :auth, except: [:relationships, :members]
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map]
+  before_filter :auth, except: [:relationships, :members, :clear_cache]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache]
 
   # GET /lists
   def index
@@ -84,7 +84,7 @@ class ListsController < ApplicationController
     set_entity_queue(:crop_images, entity_ids, @list.id)
     next_entity_id = next_entity_in_queue(:crop_images)
     image_id = Image.where(entity_id: next_entity_id, is_featured: true).first
-    redirect_to crop_image_path(id: image_id)    
+    redirect_to crop_image_path(id: image_id)
   end
 
   def street_views
@@ -95,11 +95,44 @@ class ListsController < ApplicationController
   end
 
   def members
+    @table = ListDatatable.new(@list)
+    @table.generate_data
+    @editable = (current_user and current_user.has_legacy_permission('lister'))
+    @admin = (current_user and current_user.has_legacy_permission('admin'))
   end
 
   def create_map
     map = NetworkMap.create_from_entities(@list.name, current_user.id, @list.entities_with_couples.pluck(:id))
     redirect_to edit_map_url(map, wheel: true)
+  end
+
+  def update_entity
+    check_permission 'lister'
+    if data = params[:data]
+      list_entity = ListEntity.find(data[:list_entity_id])
+      list_entity.rank = data[:rank]
+      if list_entity.list.custom_field_name.present?
+        list_entity.custom_field = (data[:context].present? ? data[:context] : nil)
+      end
+      list_entity.save
+      list_entity.list.clear_cache
+      table = ListDatatable.new(@list)
+      render json: { row: table.list_entity_data(list_entity, data[:interlock_ids], data[:list_interlock_ids]) }
+    else
+      render json: {}, status: 404
+    end
+  end
+
+  def remove_entity
+    check_permission 'admin'
+    ListEntity.find(params[:list_entity_id]).destroy
+    @list.clear_cache
+    redirect_to members_list_path(@list)        
+  end
+
+  def clear_cache
+    @list.clear_cache
+    render json: { status: 'success' }
   end
 
   private

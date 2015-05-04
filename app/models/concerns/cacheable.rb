@@ -1,9 +1,6 @@
 module Cacheable
 	extend ActiveSupport::Concern
 
-	included do 
-	end
-
 	def cache_key(subkey=nil, use_timestamp=false, params=nil)
 	  if new_record?
 	    key = "#{self.class.model_name.cache_key}/new#{subkey}"
@@ -33,8 +30,16 @@ module Cacheable
 			sub = subkey.present? ? subkey + "*" : nil
 			pattern = "*#{self.class.model_name.cache_key}/#{self.id}[\\/\\-]*#{sub}"
 		end
-		p pattern
 		Rails.cache.delete_matched(pattern)
+
+		clear_legacy_cache unless subkey.present?
+	end
+
+	def clear_legacy_cache
+		method = "clear_#{self.class.name.underscore}_cache".to_sym
+		return unless self.class.method_defined?(method)
+		cache = LegacyCache.new
+		cache.send(method, id)
 	end
 
 	module ClassMethods

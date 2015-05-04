@@ -78,6 +78,9 @@ Lilsis::Application.routes.draw do
       get 'street_views'
       get 'members'
       post 'create_map'
+      post 'update_entity'
+      post 'remove_entity'
+      get 'clear_cache'
     end
   end
 

@@ -3,7 +3,7 @@ class ListDatatable
   include ApplicationHelper
   include Rails.application.routes.url_helpers
 
-  attr_reader :list, :data, :links, :types, :industries, :entities, :interlocks, :list_interlocks
+  attr_reader :list, :links, :types, :industries, :entities, :interlocks, :list_interlocks
 
   def initialize(list, force_interlocks=false)
     @list = list
@@ -13,11 +13,18 @@ class ListDatatable
     @types = []
     @industries = []
     @lists = []
+  end
 
+  def generate_data
     get_interlocks
     get_lists
     get_data
     prepare_options
+  end
+
+  def data
+    generate_data unless @data.present?
+    @data
   end
 
   def get_interlocks
@@ -47,21 +54,28 @@ class ListDatatable
       entity = le.entity
       @types = @types.concat(entity.types)
       @industries = @industries.concat(entity.industries)
-      interlock_ids = @top_interlocks.select { |l| l[1].include?(entity.id) }.map { |l| l[0] }.uniq if interlocks?
-      list_interlock_ids = @top_list_interlocks.select { |l| l[1].include?(entity.id) }.map { |l| l[0] }.uniq if lists?
-      {
-        rank: le.rank,
-        id: entity.id,
-        url: entity.legacy_url,
-        name: entity.name,
-        rels_url: relationships_entity_path(entity),
-        blurb: entity.blurb,
-        types: entity.types.join(","),
-        industries: entity.industries.join(','),    
-        interlock_ids: interlocks? ? interlock_ids.join(',') : nil,
-        list_interlock_ids: lists? ? list_interlock_ids.join(',') : nil
-       }
+      interlock_ids = interlocks? ? @top_interlocks.select { |l| l[1].include?(entity.id) }.map { |l| l[0] }.uniq.join(',') : nil
+      list_interlock_ids = lists? ? @top_list_interlocks.select { |l| l[1].include?(entity.id) }.map { |l| l[0] }.uniq.join(',') : nil
+      list_entity_data(le, interlock_ids, list_interlock_ids)
     end
+  end
+
+  def list_entity_data(list_entity, interlock_ids = nil, list_interlock_ids = nil)
+    {
+      rank: list_entity.rank,
+      id: list_entity.entity.id,
+      list_entity_id: list_entity.id,
+      url: list_entity.entity.legacy_url,
+      name: list_entity.entity.name,
+      rels_url: relationships_entity_path(list_entity.entity),
+      remove_url: remove_entity_list_path(list_entity.list, list_entity_id: list_entity.id),
+      blurb: list_entity.entity.blurb,
+      types: list_entity.entity.types.join(","),
+      industries: list_entity.entity.industries.join(','),    
+      context: list_entity.list.custom_field_name.present? ? list_entity.custom_field : list_entity.entity.blurb,
+      interlock_ids: interlock_ids,
+      list_interlock_ids: list_interlock_ids
+     }
   end
 
   def prepare_options
@@ -83,5 +97,9 @@ class ListDatatable
 
   def lists?
     @entity_ids.count < 500
+  end
+
+  def context_field_name
+    @list.custom_field_name.present? ? @list.custom_field_name : 'Details'
   end
 end

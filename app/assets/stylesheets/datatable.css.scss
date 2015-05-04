@@ -36,6 +36,25 @@
     font-size: 12px;
     color: #888;
   }
+
+  tr.active td {
+    background-color: #ff8;
+  }
+
+  .glyphicon-remove {
+    color: #aaa;
+  }
+
+  .DTE_Field_Input input {
+    padding: 4px;
+  }
+
+  .datatable-textarea {
+    textarea {
+      height: 50px;
+      resize: vertical;
+    }
+  }
 }
 
 #datatable-filters {

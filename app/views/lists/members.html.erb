@@ -1,7 +1,18 @@
-<% content_for(:page_title, @list.name) %>
+<% content_for(:page_title, raw(@list.name)) %>
 
 <%= render partial: 'header', locals: { list: @list } %>
 
-<% cache(@list.cache_key('members'), expires_in: 1.day) do %>
-  <%= render partial: 'datatable', locals: { table: ListDatatable.new(@list) } %>
+<% if current_user and current_user.has_legacy_permission('lister') %>
+<div class="list-actions">
+  <%= link_to('add member', @list.legacy_url('addEntity'), class: 'btn btn-default') %>
+  <%= link_to('edit', @list.legacy_url('edit'), class: 'btn btn-default') %>
+  <%= link_to('remove', @list.legacy_url('remove'), class: 'btn btn-default', method: :post, data: { confirm: 'Are you sure?' }) %>
+  <%= link_to('add bulk', @list.legacy_url('addBulk'), class: 'btn btn-default') %>
+  <%= link_to('interlocks', @list.legacy_url + '#interlocks', class: 'btn btn-default') %>
+</div>
+<br>
+<% end %>
+
+<% cache(@list.cache_key('members', nil, { editable: @editable, admin: @admin }), expires_in: 1.day) do %>
+  <%= render partial: 'datatable', locals: { table: @table, editable: @editable, admin: @admin } %>
 <% end %>

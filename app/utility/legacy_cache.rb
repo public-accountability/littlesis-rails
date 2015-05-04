@@ -59,6 +59,16 @@ class LegacyCache
     clear_keys(keys)
   end
 
+  def clear_list_cache(id)
+    list = List.find(id)
+    actions = %w(modifications entityModifications members interlocks business government otherOrgs giving funding images pictures view references notes list map addEntiy list)
+    partials = ['_page', '_action']
+
+    keys = actions.map { |action| partials.map { |partial| "/#{@host}/all/list/#{action}/_sf_cache_key/#{partial}/id/#{id}/slug/#{list.name_to_legacy_slug}" } }.flatten.uniq
+
+    clear_keys(keys)
+  end
+
   def clear_keys(keys)
     keys.each do |key|
       key = prefix + key unless key.match(prefix)
