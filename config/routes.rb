@@ -1,5 +1,37 @@
 Lilsis::Application.routes.draw do
 
+  get 'topics/show'
+
+  get 'topics/create'
+
+  get 'topics/edit'
+
+  get 'topics/delete'
+
+  get 'topics/admin'
+
+  get 'topics/entities'
+
+  get 'topics/add_topic_element'
+
+  get 'topics/remove_topic_element'
+
+  get 'topics/add_list'
+
+  get 'topics/remove_list'
+
+  get 'topics/add_map'
+
+  get 'topics/remove_map'
+
+  get 'topics/add_industry'
+
+  get 'topics/remove_industry'
+
+  get 'topics/add_article'
+
+  get 'topics/remove_article'
+
   # match "*path", to: "errors#maintenance", via: :all
 
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'

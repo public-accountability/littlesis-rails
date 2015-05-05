@@ -1,0 +1,81 @@
+<%= form_for(@topic) do |f| %>
+  <% if @topic.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@topic.errors.count, "error") %> prohibited this topic from being saved:</h2>
+
+      <ul>
+      <% @topic.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :show %><br>
+    <%= f.text_field :show %>
+  </div>
+  <div class="field">
+    <%= f.label :create %><br>
+    <%= f.text_field :create %>
+  </div>
+  <div class="field">
+    <%= f.label :edit %><br>
+    <%= f.text_field :edit %>
+  </div>
+  <div class="field">
+    <%= f.label :delete %><br>
+    <%= f.text_field :delete %>
+  </div>
+  <div class="field">
+    <%= f.label :admin %><br>
+    <%= f.text_field :admin %>
+  </div>
+  <div class="field">
+    <%= f.label :entities %><br>
+    <%= f.text_field :entities %>
+  </div>
+  <div class="field">
+    <%= f.label :add_topic_element %><br>
+    <%= f.text_field :add_topic_element %>
+  </div>
+  <div class="field">
+    <%= f.label :remove_topic_element %><br>
+    <%= f.text_field :remove_topic_element %>
+  </div>
+  <div class="field">
+    <%= f.label :add_list %><br>
+    <%= f.text_field :add_list %>
+  </div>
+  <div class="field">
+    <%= f.label :remove_list %><br>
+    <%= f.text_field :remove_list %>
+  </div>
+  <div class="field">
+    <%= f.label :add_map %><br>
+    <%= f.text_field :add_map %>
+  </div>
+  <div class="field">
+    <%= f.label :remove_map %><br>
+    <%= f.text_field :remove_map %>
+  </div>
+  <div class="field">
+    <%= f.label :add_industry %><br>
+    <%= f.text_field :add_industry %>
+  </div>
+  <div class="field">
+    <%= f.label :remove_industry %><br>
+    <%= f.text_field :remove_industry %>
+  </div>
+  <div class="field">
+    <%= f.label :add_article %><br>
+    <%= f.text_field :add_article %>
+  </div>
+  <div class="field">
+    <%= f.label :remove_article %><br>
+    <%= f.text_field :remove_article %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

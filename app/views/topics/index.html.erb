@@ -1,0 +1,55 @@
+<h1>Listing topics</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Show</th>
+      <th>Create</th>
+      <th>Edit</th>
+      <th>Delete</th>
+      <th>Admin</th>
+      <th>Entities</th>
+      <th>Add topic element</th>
+      <th>Remove topic element</th>
+      <th>Add list</th>
+      <th>Remove list</th>
+      <th>Add map</th>
+      <th>Remove map</th>
+      <th>Add industry</th>
+      <th>Remove industry</th>
+      <th>Add article</th>
+      <th>Remove article</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @topics.each do |topic| %>
+      <tr>
+        <td><%= topic.show %></td>
+        <td><%= topic.create %></td>
+        <td><%= topic.edit %></td>
+        <td><%= topic.delete %></td>
+        <td><%= topic.admin %></td>
+        <td><%= topic.entities %></td>
+        <td><%= topic.add_topic_element %></td>
+        <td><%= topic.remove_topic_element %></td>
+        <td><%= topic.add_list %></td>
+        <td><%= topic.remove_list %></td>
+        <td><%= topic.add_map %></td>
+        <td><%= topic.remove_map %></td>
+        <td><%= topic.add_industry %></td>
+        <td><%= topic.remove_industry %></td>
+        <td><%= topic.add_article %></td>
+        <td><%= topic.remove_article %></td>
+        <td><%= link_to 'Show', topic %></td>
+        <td><%= link_to 'Edit', edit_topic_path(topic) %></td>
+        <td><%= link_to 'Destroy', topic, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Topic', new_topic_path %>
