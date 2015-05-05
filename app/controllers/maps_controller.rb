@@ -1,6 +1,6 @@
 class MapsController < ApplicationController
   before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash]
-  before_filter :auth, except: [:index, :featured, :show, :raw, :splash]
+  before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search]
   before_filter :enforce_slug, only: [:show]
 
   protect_from_forgery except: :create
