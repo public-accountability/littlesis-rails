@@ -3,8 +3,8 @@
 <h3>New Element</h3>
 
 <%= form_tag(new_element_topic_path(@topic), method: :get) do %>
-  <% @types.each do |name, klass| %>
-    <%= radio_button_tag('type', klass.underscore, @type == klass.underscore) %> <%= name %>
+  <% @types.each do |key, type| %>
+    <%= radio_button_tag('type', key, @type.param == type.param) %> <%= type.display_name %>
   <% end %>
 
   <br><br>
@@ -19,7 +19,7 @@
 
 <% if @q.present? %>
   <%= form_tag(add_element_topic_path(@topic), method: :post) do %>
-    <input type="hidden" name="type" value="<%= @type %>">
+    <input type="hidden" name="type" value="<%= @type.param %>">
 
     <% if @results.count > 0 %>
       <table class="table">

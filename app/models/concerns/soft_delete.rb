@@ -20,9 +20,12 @@ module SoftDelete
   end
 
   def soft_delete
-    update(is_deleted: true)
-    if respond_to?(:after_soft_delete)
+    self.class.transaction do  
+      update(is_deleted: true)
       after_soft_delete
     end
+  end
+
+  def after_soft_delete
   end
 end

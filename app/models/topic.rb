@@ -10,6 +10,8 @@ class Topic < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
   validates :slug, presence: true, uniqueness: true
 
+  SOFT_DELETE_DEPENDENTS = [ :lists, :network_maps ]
+
   def to_param
     slug
   end

@@ -3,9 +3,20 @@ class TopicsController < ApplicationController
   before_action :require_admin, except: [:show]
   before_action :set_topic, only: [:show, :edit, :update, :destroy, :new_element, :add_element]
 
+  class ElementType
+    attr_accessor :param, :display_name, :klass
+
+    def initialize(param, display_name, klass)
+      @param = param
+      @display_name = display_name
+      @klass = klass
+    end
+  end
+
   ELEMENT_TYPES = {
-    'List' => 'List', 
-    'Map' => 'NetworkMap'
+    list: ElementType.new('list', 'List', List),
+    map: ElementType.new('map', 'Map', NetworkMap),
+    article: ElementType.new('article', 'Article', Article)
   }
 
   def require_admin
@@ -65,11 +76,11 @@ class TopicsController < ApplicationController
   def new_element
     @types = ELEMENT_TYPES
 
-    @type = params[:type] || nil
+    @type = ELEMENT_TYPES[params.fetch(:type, 'list').to_sym]
     @q = params[:q] || nil
 
     if @q.present? and @type.present?
-      send(:"find_#{@type.underscore}")
+      send(:"find_#{@type.param}")
     end
   end
 
@@ -83,13 +94,13 @@ class TopicsController < ApplicationController
 
   # POST /topics/fracking/add_element
   def add_element
-    type = params[:type]
+    type = ELEMENT_TYPES[params[:type].to_sym]
     element_ids = params[:element_ids]
 
     Topic.transaction do
       element_ids.each do |eid|
-        element = type.capitalize.constantize.find(eid)
-        @topic.send(:"#{type.pluralize.underscore}") << element
+        element = type.klass.find(eid)
+        @topic.send(:"#{type.param.pluralize}") << element
       end
     end
 
