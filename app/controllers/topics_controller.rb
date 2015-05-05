@@ -1,13 +1,29 @@
 class TopicsController < ApplicationController
-  before_action :set_topic, only: [:show, :edit, :update, :destroy]
+  before_action :auth, except: [:show]
+  before_action :require_admin, except: [:show]
+  before_action :set_topic, only: [:show, :edit, :update, :destroy, :new_element, :add_element]
+
+  ELEMENT_TYPES = {
+    'List' => 'List', 
+    'Map' => 'NetworkMap'
+  }
+
+  def require_admin
+    check_permission('admin')
+  end
+
+  def include_all
+    @topic
+  end
 
   # GET /topics
   def index
     @topics = Topic.all
   end
 
-  # GET /topics/1
+  # GET /topics/fracking
   def show
+    @topic.lists.includes(:list_entities)
   end
 
   # GET /topics/new
@@ -15,7 +31,7 @@ class TopicsController < ApplicationController
     @topic = Topic.new
   end
 
-  # GET /topics/1/edit
+  # GET /topics/fracking/edit
   def edit
   end
 
@@ -30,7 +46,7 @@ class TopicsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /topics/1
+  # PATCH/PUT /topics/fracking
   def update
     if @topic.update(topic_params)
       redirect_to @topic, notice: 'Topic was successfully updated.'
@@ -39,20 +55,55 @@ class TopicsController < ApplicationController
     end
   end
 
-  # DELETE /topics/1
+  # DELETE /topics/fracking
   def destroy
     @topic.destroy
     redirect_to topics_url, notice: 'Topic was successfully destroyed.'
   end
 
+  # GET /topics/fracking/new_element
+  def new_element
+    @types = ELEMENT_TYPES
+
+    @type = params[:type] || nil
+    @q = params[:q] || nil
+
+    if @q.present? and @type.present?
+      send(:"find_#{@type.underscore}")
+    end
+  end
+
+  def find_list
+    @results = List.search(@q).select { |l| !@topic.list_ids.include?(l.id) }
+  end
+
+  def find_network_map
+    @results = NetworkMap.search(@q)
+  end
+
+  # POST /topics/fracking/add_element
+  def add_element
+    type = params[:type]
+    element_ids = params[:element_ids]
+
+    Topic.transaction do
+      element_ids.each do |eid|
+        element = type.capitalize.constantize.find(eid)
+        @topic.send(:"#{type.pluralize.underscore}") << element
+      end
+    end
+
+    redirect_to topic_path(@topic)
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_topic
-      @topic = Topic.find(params[:id])
+      @topic = Topic.find_by_slug(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
     def topic_params
-      params.require(:topic).permit(:show, :create, :edit, :delete, :admin, :entities, :add_topic_element, :remove_topic_element, :add_list, :remove_list, :add_map, :remove_map, :add_industry, :remove_industry, :add_article, :remove_article)
+      params.require(:topic).permit(:name, :slug, :description)
     end
 end

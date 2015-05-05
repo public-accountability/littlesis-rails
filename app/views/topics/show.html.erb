@@ -1,84 +1,18 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Show:</strong>
-  <%= @topic.show %>
-</p>
+<%= render partial: 'header', locals: { topic: @topic } %>
 
-<p>
-  <strong>Create:</strong>
-  <%= @topic.create %>
-</p>
+<p><%= @topic.description %></p>
 
-<p>
-  <strong>Edit:</strong>
-  <%= @topic.edit %>
-</p>
+<br>
 
-<p>
-  <strong>Delete:</strong>
-  <%= @topic.delete %>
-</p>
+<h3>Lists <%= link_to('add', new_element_topic_path(@topic, type: 'list'), class: 'btn btn-sm btn-link') %></h3>
 
-<p>
-  <strong>Admin:</strong>
-  <%= @topic.admin %>
-</p>
+<% @topic.lists.each do |list| %>
+  <%= list_link(list) %> (<%= list.list_entities.count %>) &nbsp; <em><%= list.description %></em><br>
+<% end %>
 
-<p>
-  <strong>Entities:</strong>
-  <%= @topic.entities %>
-</p>
+<br>
+<br>
 
-<p>
-  <strong>Add topic element:</strong>
-  <%= @topic.add_topic_element %>
-</p>
-
-<p>
-  <strong>Remove topic element:</strong>
-  <%= @topic.remove_topic_element %>
-</p>
-
-<p>
-  <strong>Add list:</strong>
-  <%= @topic.add_list %>
-</p>
-
-<p>
-  <strong>Remove list:</strong>
-  <%= @topic.remove_list %>
-</p>
-
-<p>
-  <strong>Add map:</strong>
-  <%= @topic.add_map %>
-</p>
-
-<p>
-  <strong>Remove map:</strong>
-  <%= @topic.remove_map %>
-</p>
-
-<p>
-  <strong>Add industry:</strong>
-  <%= @topic.add_industry %>
-</p>
-
-<p>
-  <strong>Remove industry:</strong>
-  <%= @topic.remove_industry %>
-</p>
-
-<p>
-  <strong>Add article:</strong>
-  <%= @topic.add_article %>
-</p>
-
-<p>
-  <strong>Remove article:</strong>
-  <%= @topic.remove_article %>
-</p>
-
-<%= link_to 'Edit', edit_topic_path(@topic) %> |
-<%= link_to 'Back', topics_path %>
+<%= link_to 'Edit', edit_topic_path(@topic) %>

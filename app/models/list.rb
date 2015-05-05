@@ -24,6 +24,9 @@ class List < ActiveRecord::Base
   has_many :sf_guard_group_lists, inverse_of: :list, dependent: :destroy
   has_many :sf_guard_groups, through: :sf_guard_group_lists, inverse_of: :lists
 
+  has_many :topic_lists, inverse_of: :list
+  has_many :topics, through: :topic_lists, inverse_of: :lists
+
   def to_param
     "#{id}-#{name.parameterize}"
   end

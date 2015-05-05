@@ -180,6 +180,13 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  resources :topics do
+    member do
+      get 'new_element'      
+      post 'add_element'
+    end
+  end
+
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
   get "/home/maps" => "home#maps"
