@@ -26,7 +26,12 @@ class EntitiesController < ApplicationController
     num = params.fetch(:num, 10)
     fields = params[:desc] ? 'name,aliases,blurb' : 'name,aliases'
 		entities = Entity.search "@(#{fields}) #{q}", per_page: num, match_mode: :extended, with: { is_deleted: false }
-		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb } }
+		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb, url: relationships_entity_path(e) } }
+
+    if list_id = params[:exclude_list]
+      entity_ids = ListEntity.where(list_id: list_id).pluck(:entity_id)
+      data.delete_if { |e| entity_ids.include?(e[:id]) }
+    end
 
     if params[:with_ids]
       dups = entities.group_by(&:name).select { |name, ary| ary.count > 1 }.keys

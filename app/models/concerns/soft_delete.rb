@@ -21,5 +21,8 @@ module SoftDelete
 
   def soft_delete
     update(is_deleted: true)
+    if respond_to?(:after_soft_delete)
+      after_soft_delete
+    end
   end
 end

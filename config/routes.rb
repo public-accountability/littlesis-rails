@@ -81,6 +81,8 @@ Lilsis::Application.routes.draw do
       post 'update_entity'
       post 'remove_entity'
       get 'clear_cache'
+      post 'add_entity'
+      post 'delete'
     end
   end
 

@@ -137,4 +137,8 @@ module ApplicationHelper
     return nil if current_user.nil?
     current_user.username
   end
+
+  def has_legacy_permission(permission)
+    current_user and current_user.has_legacy_permission(permission)
+  end
 end

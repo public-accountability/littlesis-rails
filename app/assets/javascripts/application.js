@@ -24,6 +24,7 @@
 //= require editor_options
 //= reuqire more_link
 //= require twitter/typeahead
+//= require hogan-3.0.1.js
 //= require d3.v3.min
 //= require oligrapher/netmap
 //= require_tree .

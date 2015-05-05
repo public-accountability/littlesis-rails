@@ -35,7 +35,7 @@ class ListDatatable
       interlocks = Link.interlock_hash(@links)
       @top_interlocks = interlocks.select { |k, v| v.count > 1 }.sort { |a, b| a[1].count <=> b[1].count }.reverse.take(@num_interlocks)
       entities = Entity.where(id: @top_interlocks.map { |a| a[0] }).group_by(&:id)
-      @interlocks = [["Interlocks", ""]].concat(@top_interlocks.map { |a| e = entities[a[0]].first; [e.name + " (#{interlocks[e.id].count})", e.id] })
+      @interlocks = [["Connected To", ""]].concat(@top_interlocks.map { |a| e = entities[a[0]].first; [e.name + " (#{interlocks[e.id].count})", e.id] })
     end
   end
 
@@ -44,7 +44,7 @@ class ListDatatable
       interlocks = @list.interlocks_hash
       @top_list_interlocks = interlocks.select { |k, v| v.count > 1 }.sort { |a, b| a[1].count <=> b[1].count }.reverse.take(@num_lists)
       lists = List.where(id: @top_list_interlocks.map { |a| a[0] }).group_by(&:id)
-      @list_interlocks = [["Lists", ""]].concat(@top_list_interlocks.map { |a| l = lists[a[0]].first; [l.name + " (#{interlocks[l.id].count})", l.id] })
+      @list_interlocks = [["Other Lists", ""]].concat(@top_list_interlocks.map { |a| l = lists[a[0]].first; [l.name + " (#{interlocks[l.id].count})", l.id] })
     end
   end
 
@@ -80,7 +80,7 @@ class ListDatatable
 
   def prepare_options
     @types.uniq!
-    @types = [["Entity Type", ""]].concat(ExtensionDefinition.order(:tier).pluck(:display_name).select { |t| @types.include?(t) }.map { |t| [t, t] })
+    @types = [["Type", ""]].concat(ExtensionDefinition.order(:tier).pluck(:display_name).select { |t| @types.include?(t) }.map { |t| [t, t] })
     @industries -= ["Other", "Unknown", "Non-contribution"]
     @industries.uniq!
     @industries.sort!

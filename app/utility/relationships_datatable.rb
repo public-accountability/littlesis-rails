@@ -23,7 +23,7 @@ class RelationshipsDatatable
       end
       top_interlocks = interlocks.select { |k, v| v.count > 1 }.sort { |a, b| a[1].count <=> b[1].count }.reverse.take(10)
       entities = Entity.find(top_interlocks.map { |a| a[0] }).group_by(&:id)
-      @interlocks = [["Interlocks", ""]].concat(top_interlocks.map { |a| e = entities[a[0]].first; [e.name + " (#{interlocks[e.id].count})", e.id] })
+      @interlocks = [["Connected To", ""]].concat(top_interlocks.map { |a| e = entities[a[0]].first; [e.name + " (#{interlocks[e.id].count})", e.id] })
     end
 
     @data = @links.map do |link|
@@ -67,7 +67,7 @@ class RelationshipsDatatable
     industries -= ["Other", "Unknown", "Non-contribution"]
     industries.uniq!
     industries.sort!
-    @industries = [["Industry", ""]].concat(industries)
+    @industries = [["Entity Industry", ""]].concat(industries)
   end
 
   def relationships

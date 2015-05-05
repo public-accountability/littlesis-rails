@@ -1,6 +1,6 @@
 class ListsController < ApplicationController
   before_filter :auth, except: [:relationships, :members, :clear_cache]
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete]
 
   # GET /lists
   def index
@@ -133,6 +133,20 @@ class ListsController < ApplicationController
   def clear_cache
     @list.clear_cache(request.host)
     render json: { status: 'success' }
+  end
+
+  def add_entity
+    check_permission 'lister'
+    le = ListEntity.find_or_create_by(list_id: @list.id, entity_id: params[:entity_id])
+    @list.clear_cache(request.host)
+    le.entity.clear_cache(request.host)
+    redirect_to members_list_path(@list)
+  end
+
+  def delete
+    check_permission 'admin'
+    @list.soft_delete
+    redirect_to lists_path
   end
 
   private

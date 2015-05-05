@@ -3,12 +3,20 @@
 <%= render partial: 'header', locals: { list: @list } %>
 
 <% if current_user and current_user.has_legacy_permission('lister') %>
-<div class="list-actions">
-  <%= link_to('add member', @list.legacy_url('addEntity'), class: 'btn btn-default') %>
-  <%= link_to('edit', @list.legacy_url('edit'), class: 'btn btn-default') %>
-  <%= link_to('remove', @list.legacy_url('remove'), class: 'btn btn-default', method: :post, data: { confirm: 'Are you sure?' }) %>
-  <%= link_to('add bulk', @list.legacy_url('addBulk'), class: 'btn btn-default') %>
+<div class="list-actions form-inline">
+  <% if has_legacy_permission('editor') %>
+    <%= link_to('edit', @list.legacy_url('edit'), class: 'btn btn-default') %>
+  <% end %>
+  <% if has_legacy_permission('admin') %>
+    <%= link_to('delete', delete_list_path(@list), class: 'btn btn-default', method: :post, data: { confirm: 'Are you sure yu want to delete this list?' }) %>
+  <% end %>
+  <% if has_legacy_permission('bulker') %>
+    <%= link_to('add bulk', @list.legacy_url('addBulk'), class: 'btn btn-default') %>
+  <% end %>
   <%= link_to('interlocks', @list.legacy_url + '#interlocks', class: 'btn btn-default') %>
+  <% if has_legacy_permission('lister') %>
+    <input id="add-entity-input" type="text" class="form-control" placeholder="add entity">
+  <% end %>
 </div>
 <br>
 <% end %>
@@ -16,3 +24,44 @@
 <% cache(@list.cache_key('members', nil, { editable: @editable, admin: @admin }), expires_in: 1.day) do %>
   <%= render partial: 'datatable', locals: { table: @table, editable: @editable, admin: @admin } %>
 <% end %>
+
+<script>
+$(window).ready(function() {
+
+var post = function(path) {
+  var form = document.createElement("form");
+  form.setAttribute("method", "post");
+  form.setAttribute("action", path);
+  var input = document.createElement("input");
+  input.setAttribute("type", "hidden");
+  input.setAttribute("name", "authenticity_token");
+  input.setAttribute("value", "<%= form_authenticity_token %>");
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+}
+
+var selected_callback = function(obj, datum) {
+  post('<%= add_entity_list_path(@list, entity_id: "XXX") %>'.replace(/XXX/, datum.id));
+};
+
+var compiledTemplate = Hogan.compile("<div class='add-entity-name'>{{name}}</div><div class='add-entity-blurb'>{{blurb}}</div>");
+
+ $('#add-entity-input')
+    .typeahead({ 
+      name: 'entities',
+      remote: '<%= raw(name_search_entities_url + "?q=%QUERY&exclude_list=#{@list.id}") %>',
+      limit: 8,
+      template: compiledTemplate.render.bind(compiledTemplate)
+    })
+    .on("typeahead:selected", selected_callback);
+
+  $('#add-entity-input')
+    .keydown(function(event){
+      if(event.keyCode == 13) {
+        event.preventDefault();
+        return false;
+      }
+    });
+});
+</script>
