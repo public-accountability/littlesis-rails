@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150429230431) do
+ActiveRecord::Schema.define(version: 20150505164306) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1294,6 +1294,25 @@ ActiveRecord::Schema.define(version: 20150429230431) do
     t.boolean  "is_done",   default: false, null: false
     t.datetime "locked_at"
   end
+
+  create_table "topic_lists", force: true do |t|
+    t.integer "topic_id"
+    t.integer "list_id"
+  end
+
+  add_index "topic_lists", ["topic_id", "list_id"], name: "index_topic_lists_on_topic_id_and_list_id", unique: true, using: :btree
+
+  create_table "topics", force: true do |t|
+    t.string   "name",                        null: false
+    t.string   "slug",                        null: false
+    t.text     "description"
+    t.boolean  "is_deleted",  default: false, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "topics", ["name"], name: "index_topics_on_name", unique: true, using: :btree
+  add_index "topics", ["slug"], name: "index_topics_on_slug", unique: true, using: :btree
 
   create_table "transaction", force: true do |t|
     t.integer "contact1_id",     limit: 8
