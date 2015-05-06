@@ -27,15 +27,17 @@ class TopicDatatable
   def get_data
     entities = Entity.includes(:extension_definitions, :os_categories).where(id: @entity_ids, is_deleted: false)
 
-    @data = entities.map do |entity|
-      @types = @types.concat(entity.types)
-      @industries = @industries.concat(entity.industries)
-      entity_data(entity)
+    Rack::MiniProfiler.step('my lists') do
+      @data = entities.map do |entity|
+        @types = @types.concat(entity.types)
+        @industries = @industries.concat(entity.industries)
+        entity_data(entity)
+      end
     end
   end
 
   def entity_data(entity)
-    lists = @list_hash.select { |list_id, list| list.entity_ids.include?(entity.id) }.values
+    lists = @list_hash.select { |list_id, list| list.entities.map(&:id).include?(entity.id) }.values
     {
       id: entity.id,
       list_ids: lists.map(&:id).join(','),

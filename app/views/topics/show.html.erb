@@ -12,7 +12,9 @@
 
 <h3>Entities</h3>
 
-<%= render partial: 'datatable', locals: { table: @table } %>
+<% cache(@topic.cache_key('datatable')) do %>
+  <%= render partial: 'datatable', locals: { table: @table } %>
+<% end %>
 
 <br>
 
@@ -23,6 +25,7 @@
   <% end %>
 </h3>
 
+<% cache(@topic.cache_key('lists')) do %>
 <table class="table">
 <% @topic.lists.each do |list| %>
   <tr>
@@ -40,6 +43,7 @@
   </tr>
 <% end %>
 </table>
+<% end %>
 
 <br>
 

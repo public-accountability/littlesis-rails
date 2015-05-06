@@ -2,4 +2,6 @@
 
 <br>
 
-<%= render partial: 'datatable', locals: { table: @table } %>
+<% cache(@industry.cache_key('datatable')) do %>
+  <%= render partial: 'datatable', locals: { table: @table } %>
+<% end %>

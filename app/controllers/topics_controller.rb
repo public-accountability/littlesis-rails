@@ -22,6 +22,10 @@ class TopicsController < ApplicationController
     # article: ElementType.new('article', 'Article', Article, TopicArticle, 'article_od')
   }
 
+  def clear_cache
+    @topic.clear_cache(request.host)
+  end
+
   # GET /topics
   def index
     @topics = Topic.all
@@ -29,7 +33,7 @@ class TopicsController < ApplicationController
 
   # GET /topics/fracking
   def show
-    @topic.lists.includes(:list_entities)
+    @topic = Topic.where(id: @topic.id).includes(lists: :entities).first
     @table = TopicDatatable.new(@topic)
   end
 
@@ -56,6 +60,7 @@ class TopicsController < ApplicationController
   # PATCH/PUT /topics/fracking
   def update
     if @topic.update(topic_params)
+      clear_cache
       redirect_to @topic, notice: 'Topic was successfully updated.'
     else
       render :edit
@@ -112,6 +117,8 @@ class TopicsController < ApplicationController
       end
     end
 
+    clear_cache
+
     display_name = element_ids.count > 0 ? type.display_name.pluralize : type.display_name
     redirect_to topic_path(@topic), notice: type.display_name + ' successfully added to this topic.'
   end
@@ -119,6 +126,8 @@ class TopicsController < ApplicationController
   def remove_element
     type = ELEMENT_TYPES[params[:type].to_sym]
     element_id = params[:element_id]
+
+    clear_cache
 
     type.join_klass.find_by(topic_id: @topic.id, type.join_field => element_id).destroy
     redirect_to topic_path(@topic), notice: type.display_name + ' was successfully removed from this topic.'

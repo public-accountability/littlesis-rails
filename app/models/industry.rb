@@ -1,4 +1,6 @@
 class Industry < ActiveRecord::Base
+  include Cacheable
+
   has_many :topic_industries, inverse_of: :industries
   has_many :topics, through: :topic_industries, inverse_of: :industries
 
