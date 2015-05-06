@@ -1,10 +1,6 @@
 class TopicsController < ApplicationController
   before_action :auth, except: [:show]
-<<<<<<< HEAD
-  before_action :require_admin, except: [:show]
-=======
   before_action :admins_only, except: [:show]
->>>>>>> master
   before_action :set_topic, only: [:show, :edit, :update, :destroy, :new_element, :add_element]
 
   class ElementType
@@ -22,17 +18,6 @@ class TopicsController < ApplicationController
     map: ElementType.new('map', 'Map', NetworkMap),
     article: ElementType.new('article', 'Article', Article)
   }
-
-<<<<<<< HEAD
-  def require_admin
-    check_permission('admin')
-  end
-
-=======
->>>>>>> master
-  def include_all
-    @topic
-  end
 
   # GET /topics
   def index
