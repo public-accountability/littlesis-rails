@@ -1,4 +1,8 @@
-<p id="notice"><%= notice %></p>
+<% if notice %>
+<div class="alert alert-success">
+  <%= notice %>
+</div>
+<% end %>
 
 <%= render partial: 'header', locals: { topic: @topic } %>
 
@@ -15,15 +19,55 @@
 <h3>
   Lists 
   <% if has_legacy_permission('admin') %>
-    <%= link_to('add', new_element_topic_path(@topic, type: 'list'), class: 'btn btn-sm btn-link') %>
+    <%= link_to('add', new_elements_topic_path(@topic, type: 'list'), class: 'btn btn-sm btn-link') %>
   <% end %>
 </h3>
 
+<table class="table">
 <% @topic.lists.each do |list| %>
-  <%= list_link(list) %> (<%= list.list_entities.count %>) &nbsp; <em><%= list.description %></em><br>
+  <tr>
+    <td class="fracking-element-name">
+      <%= list_link(list) %> (<%= list.list_entities.count %>)
+    </td>
+    <td>
+      <%= list.description %>
+    </td>
+    <% if has_legacy_permission('admin') %>
+      <td>
+        <%= link_to(raw("<i class='glyphicon glyphicon-remove'></i>"), remove_element_topic_path(@topic, type: 'list', element_id: list.id), method: :post, data: { confirm: 'Are you sure?' }) %>
+      </td>
+    <% end %>
+  </tr>
 <% end %>
+</table>
 
 <br>
+
+<h3>
+  Maps
+  <% if has_legacy_permission('admin') %>
+    <%= link_to('add', new_elements_topic_path(@topic, type: 'map'), class: 'btn btn-sm btn-link') %>
+  <% end %>
+</h3>
+
+<table class="table">
+<% @topic.maps.each do |map| %>
+  <tr>
+    <td class="fracking-element-name">
+      <%= network_map_link(map) %>
+    </td>
+    <td>
+      <%= excerpt(CGI.unescapeHTML(strip_tags(raw(map.description))), 80) %>
+    </td>
+    <% if has_legacy_permission('admin') %>
+      <td>
+        <%= link_to(raw("<i class='glyphicon glyphicon-remove'></i>"), remove_element_topic_path(@topic, type: 'map', element_id: map.id), method: :post, data: { confirm: 'Are you sure?' }) %>
+      </td>
+    <% end %>
+  </tr>
+<% end %>
+</table>
+
 <br>
 
 <% if has_legacy_permission('admin') %>

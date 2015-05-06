@@ -182,8 +182,9 @@ Lilsis::Application.routes.draw do
 
   resources :topics do
     member do
-      get 'new_element'      
-      post 'add_element'
+      get 'new_elements'      
+      post 'add_elements'
+      post 'remove_element'
     end
   end
 

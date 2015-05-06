@@ -1,22 +1,24 @@
 class TopicsController < ApplicationController
   before_action :auth, except: [:show]
   before_action :admins_only, except: [:show]
-  before_action :set_topic, only: [:show, :edit, :update, :destroy, :new_element, :add_element]
+  before_action :set_topic, only: [:show, :edit, :update, :destroy, :new_elements, :add_elements, :remove_element]
 
   class ElementType
-    attr_accessor :param, :display_name, :klass
+    attr_accessor :param, :display_name, :klass, :join_klass, :join_field
 
-    def initialize(param, display_name, klass)
+    def initialize(param, display_name, klass, join_klass, join_field)
       @param = param
       @display_name = display_name
       @klass = klass
+      @join_klass = join_klass
+      @join_field = join_field
     end
   end
 
   ELEMENT_TYPES = {
-    list: ElementType.new('list', 'List', List),
-    map: ElementType.new('map', 'Map', NetworkMap),
-    article: ElementType.new('article', 'Article', Article)
+    list: ElementType.new('list', 'List', List, TopicList, :list_id),
+    map: ElementType.new('map', 'Map', NetworkMap, TopicMap, :map_id),
+    # article: ElementType.new('article', 'Article', Article, TopicArticle, 'article_od')
   }
 
   # GET /topics
@@ -66,7 +68,7 @@ class TopicsController < ApplicationController
   end
 
   # GET /topics/fracking/new_element
-  def new_element
+  def new_elements
     @types = ELEMENT_TYPES
 
     @type = ELEMENT_TYPES[params.fetch(:type, 'list').to_sym]
@@ -84,15 +86,15 @@ class TopicsController < ApplicationController
     ).select { |l| !@topic.list_ids.include?(l.id) }
   end
 
-  def find_network_map
+  def find_map
     @results = NetworkMap.search(
       Riddle::Query.escape(@q),
       with: { visible_to_user_ids: [0] }
-    )
+    ).select { |l| !@topic.map_ids.include?(l.id) }
   end
 
   # POST /topics/fracking/add_element
-  def add_element
+  def add_elements
     type = ELEMENT_TYPES[params[:type].to_sym]
     element_ids = params[:element_ids]
 
@@ -103,7 +105,16 @@ class TopicsController < ApplicationController
       end
     end
 
-    redirect_to topic_path(@topic)
+    display_name = element_ids.count > 0 ? type.display_name.pluralize : type.display_name
+    redirect_to topic_path(@topic), notice: type.display_name + ' successfully added to this topic.'
+  end
+
+  def remove_element
+    type = ELEMENT_TYPES[params[:type].to_sym]
+    element_id = params[:element_id]
+
+    type.join_klass.find_by(topic_id: @topic.id, type.join_field => element_id).destroy
+    redirect_to topic_path(@topic), notice: type.display_name + ' was successfully removed from this topic.'
   end
 
   private

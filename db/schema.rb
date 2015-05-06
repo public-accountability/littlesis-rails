@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150505223711) do
+ActiveRecord::Schema.define(version: 20150506185713) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1303,6 +1303,13 @@ ActiveRecord::Schema.define(version: 20150505223711) do
   end
 
   add_index "topic_lists", ["topic_id", "list_id"], name: "index_topic_lists_on_topic_id_and_list_id", unique: true, using: :btree
+
+  create_table "topic_maps", force: true do |t|
+    t.integer "topic_id"
+    t.integer "map_id"
+  end
+
+  add_index "topic_maps", ["topic_id", "map_id"], name: "index_topic_maps_on_topic_id_and_map_id", unique: true, using: :btree
 
   create_table "topics", force: true do |t|
     t.string   "name",                        null: false

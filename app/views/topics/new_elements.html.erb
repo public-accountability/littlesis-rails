@@ -1,8 +1,8 @@
 <%= render partial: 'header', locals: { topic: @topic } %>
 
-<h3>New Element</h3>
+<h3>Add Elements</h3>
 
-<%= form_tag(new_element_topic_path(@topic), method: :get) do %>
+<%= form_tag(new_elements_topic_path(@topic), method: :get) do %>
   <% @types.each do |key, type| %>
     <%= radio_button_tag('type', key, @type.param == type.param) %> <%= type.display_name %> &nbsp;
   <% end %>
@@ -18,7 +18,7 @@
 <br>
 
 <% if @q.present? %>
-  <%= form_tag(add_element_topic_path(@topic), method: :post) do %>
+  <%= form_tag(add_elements_topic_path(@topic), method: :post) do %>
     <input type="hidden" name="type" value="<%= @type.param %>">
 
     <% if @results.count > 0 %>
