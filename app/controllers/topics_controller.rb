@@ -77,11 +77,17 @@ class TopicsController < ApplicationController
   end
 
   def find_list
-    @results = List.search(@q).select { |l| !@topic.list_ids.include?(l.id) }
+    @results = List.search(
+      Riddle::Query.escape(@q),
+      with: { is_deleted: 0, is_admin: 0, is_network: 0 }
+    ).select { |l| !@topic.list_ids.include?(l.id) }
   end
 
   def find_network_map
-    @results = NetworkMap.search(@q)
+    @results = NetworkMap.search(
+      Riddle::Query.escape(@q),
+      with: { visible_to_user_ids: [0] }
+    )
   end
 
   # POST /topics/fracking/add_element

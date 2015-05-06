@@ -4,7 +4,7 @@
 
 <%= form_tag(new_element_topic_path(@topic), method: :get) do %>
   <% @types.each do |key, type| %>
-    <%= radio_button_tag('type', key, @type.param == type.param) %> <%= type.display_name %>
+    <%= radio_button_tag('type', key, @type.param == type.param) %> <%= type.display_name %> &nbsp;
   <% end %>
 
   <br><br>
@@ -42,8 +42,6 @@
       <strong>No results found.</strong>
     <% end %>
 
-    <br>
-
-    <input type="submit" value="Add">
+    <input type="submit" value="Add" class="btn btn-primary">
   <% end %>
 <% end %>
