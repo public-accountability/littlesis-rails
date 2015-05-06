@@ -10,6 +10,9 @@
     Network Maps
     <%= link_to 'Featured', featured_maps_path, class: 'btn btn-default btn-sm' %>
   <% end %>
+  <% if current_user and controller_name != 'home' %>
+    <%= link_to 'Your Maps', home_maps_path, class: 'btn btn-default btn-sm' %>
+  <% end %>
   <%= link_to 'Create', new_map_path, class: 'btn btn-default btn-sm' %>
 </h1>
 
