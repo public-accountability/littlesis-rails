@@ -27,6 +27,7 @@ class TopicsController < ApplicationController
   # GET /topics/fracking
   def show
     @topic.lists.includes(:list_entities)
+    @table = TopicDatatable.new(@topic)
   end
 
   # GET /topics/new

@@ -6,7 +6,18 @@
 
 <br>
 
-<h3>Lists <%= link_to('add', new_element_topic_path(@topic, type: 'list'), class: 'btn btn-sm btn-link') %></h3>
+<h3>Entities</h3>
+
+<%= render partial: 'datatable', locals: { table: @table } %>
+
+<br>
+
+<h3>
+  Lists 
+  <% if has_legacy_permission('admin') %>
+    <%= link_to('add', new_element_topic_path(@topic, type: 'list'), class: 'btn btn-sm btn-link') %>
+  <% end %>
+</h3>
 
 <% @topic.lists.each do |list| %>
   <%= list_link(list) %> (<%= list.list_entities.count %>) &nbsp; <em><%= list.description %></em><br>
@@ -15,4 +26,6 @@
 <br>
 <br>
 
-<%= link_to 'Edit', edit_topic_path(@topic) %>
+<% if has_legacy_permission('admin') %>
+  <%= link_to 'Edit', edit_topic_path(@topic) %>
+<% end %>
