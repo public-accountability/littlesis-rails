@@ -1,5 +1,5 @@
 class ListsController < ApplicationController
-  before_filter :auth, except: [:relationships, :members, :clear_cache]
+  before_filter :auth, except: [:index, :relationships, :members, :clear_cache]
   before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete]
 
   # GET /lists
@@ -11,6 +11,15 @@ class ListsController < ApplicationController
       .group("ls_list.id")
       .order("entity_count DESC")
       .page(params[:page]).per(20)
+
+    if params[:q].present?
+      is_admin = (current_user and current_user.has_legacy_permission('admin')) ? [0, 1] : 0
+      list_ids = List.search(
+        Riddle::Query.escape(params[:q]),
+        with: { is_deleted: 0, is_admin: is_admin, is_network: 0 }
+      ).map(&:id)
+      @lists = @lists.where(id: list_ids).reorder('')
+    end
   end
 
   # GET /lists/1
