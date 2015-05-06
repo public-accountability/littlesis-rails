@@ -6,22 +6,17 @@
   <select id="datatable-industry" class="form-control">
     <%= options_for_select(table.industries) %>
   </select>
-  <select id="datatable-list-select" class="form-control">
-    <%= options_for_select(table.list_options) %>
-  </select>
-  <div id="datatable-filters-line2">
-    <input id="datatable-search" class="form-control" type="text" placeholder="search">
-    <input id="datatable-clear" type="button" value="Clear All" class="btn btn-default">
-  </div>
+  <input id="datatable-search" class="form-control" type="text" placeholder="search">
+  <input id="datatable-clear" type="button" value="Clear All" class="btn btn-default">
 </div>
 </div>
 
-<div id="datatable-total-wrapper" style="display: none;">
+<div id="datatable-total-wrapper">
   <table id="datatable-table" class="table table-striped table-bordered">
     <thead>
       <tr>
         <th>Entity</th>
-        <th>Belongs to Lists</th>
+        <th>Details</th>
       </tr>
     </thead>
   </table>
@@ -44,7 +39,7 @@ $(document).ready(function() {
   $('#datatable-table').DataTable({
     data: data,
     dom: "<'buttons'>iprtp",
-    pageLength: 20,
+    pageLength: 100,
     columns: [
       { 
         data: 'name', 
@@ -60,17 +55,12 @@ $(document).ready(function() {
         }
       },
       {
-        data: 'list_names', 
-        name: 'list_names',
-        visible: true,
-        searchable: true,
-        sortable: false
-      },
-      {
-        data: 'id',
-        name: 'id',
-        visible: false,
-        searchable: false
+        data: 'blurb',
+        name: 'blurb',
+        width: '50%',
+        visible: true, 
+        sortable: false,
+        searchable: true
       },
       {
         data: 'types',
@@ -83,23 +73,6 @@ $(document).ready(function() {
         name: 'industries',
         visible: false,
         searchable: true
-      },
-      {
-        data: 'list_ids',
-        name: 'list_ids',
-        visible: false,
-        searchable: true
-      },
-      // NEED 'master search' THIS IN ORDER TO NOT TEXT SEARCH THE SELECT COLUMNS, WHICH MUST BE "searchable: true" IN ORDER FOR FILTERS TO WORK
-      {
-        data: 'master_search',
-        name: 'master_search',
-        visible: false,
-        searchable: true,
-        render: function(data, type, row) {
-          var keys = ['name', 'blurb', 'types', 'industries']
-          return keys.map(function(key) { return row[key] }).join('  ');
-        }
       }
     ]
   });
@@ -118,15 +91,9 @@ $(document).ready(function() {
     tbl.columns('industries:name').search(val, true).draw();
   });
 
-  var list_select = $('#datatable-list-select');
-  list_select.on('change', function() {
-    var val = $(this).val() ? "\\b" + $(this).val() + "\\b" : "";
-    tbl.columns('list_ids:name').search(val, true).draw();
-  });
-
   var search = $('#datatable-search');
   search.keyup(function() {
-    tbl.columns('master_search:name').search($(this).val()).draw();
+    tbl.search($(this).val()).draw();
   });
 
   var array_to_csv_data = function(ary) {
@@ -153,7 +120,7 @@ $(document).ready(function() {
   a.href="#";
   $('.buttons')[0].appendChild(a);
   $(a).on('click', function() {
-    var fields = ['id', 'name', 'blurb', 'types', 'list_names']
+    var fields = ['id', 'name', 'blurb', 'types']
     var data = [fields]
     var rows = $('#datatable-table').dataTable()._('tr', { filter: "applied" });
     data = data.concat(Array.prototype.slice.apply(rows).map(function(d) {
@@ -164,7 +131,7 @@ $(document).ready(function() {
     window.open(array_to_csv_data(data));
   });
 
-  var str_fields = ['type', 'industry', 'list-select', 'search'];
+  var str_fields = ['type', 'industry', 'search'];
   
   var compute_hash = function() {
     var fields = {};
@@ -212,7 +179,7 @@ $(document).ready(function() {
     }
   });
 
-  var filter_selectors = ['#datatable-type', '#datatable-industry', '#datatable-list-select', '#datatable-search'];
+  var filter_selectors = ['#datatable-type', '#datatable-industry', '#datatable-search'];
 
   $('#datatable-clear').on('click', function() {
     filter_selectors.forEach(function(selector) {
@@ -224,27 +191,6 @@ $(document).ready(function() {
     window.location.hash = '';
   });
 
-  var toggle_visibility = function() {
-    var hash = compute_hash();
-    if (hash) {
-      $('#datatable-total-wrapper').show();
-    } else {
-      $('#datatable-total-wrapper').hide();
-    }
-  };
-
-  filter_selectors.forEach(function(selector) {
-    $(selector).on('change', function() {
-      toggle_visibility();
-    });
-
-    $(selector).on('keyup', function() {
-      toggle_visibility();
-    });
-  });
-
-  toggle_visibility();
-
-  tbl.columns('master_search:name').search(init_search).draw();
+  tbl.search(init_search).draw();
 });
 </script>

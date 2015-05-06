@@ -33,7 +33,7 @@
       <%= list.description %>
     </td>
     <% if has_legacy_permission('admin') %>
-      <td>
+      <td class="fracking-element-remove">
         <%= link_to(raw("<i class='glyphicon glyphicon-remove'></i>"), remove_element_topic_path(@topic, type: 'list', element_id: list.id), method: :post, data: { confirm: 'Are you sure?' }) %>
       </td>
     <% end %>
@@ -57,11 +57,38 @@
       <%= network_map_link(map) %>
     </td>
     <td>
-      <%= excerpt(CGI.unescapeHTML(strip_tags(raw(map.description))), 80) %>
+      <%= excerpt(HTMLEntities.new.decode(strip_tags(map.description)), 80) %>
     </td>
     <% if has_legacy_permission('admin') %>
-      <td>
+      <td class="fracking-element-remove">
         <%= link_to(raw("<i class='glyphicon glyphicon-remove'></i>"), remove_element_topic_path(@topic, type: 'map', element_id: map.id), method: :post, data: { confirm: 'Are you sure?' }) %>
+      </td>
+    <% end %>
+  </tr>
+<% end %>
+</table>
+
+<br>
+
+<h3>
+  Industries
+  <% if has_legacy_permission('admin') %>
+    <%= link_to('add', new_elements_topic_path(@topic, type: 'industry'), class: 'btn btn-sm btn-link') %>
+  <% end %>
+</h3>
+
+<table class="table">
+<% @topic.industries.each do |industry| %>
+  <tr>
+    <td class="fracking-element-name">
+      <%= industry_link(industry) %>
+    </td>
+    <td>
+      <%= industry.sector_name %>
+    </td>
+    <% if has_legacy_permission('admin') %>
+      <td class="fracking-element-remove">
+        <%= link_to(raw("<i class='glyphicon glyphicon-remove'></i>"), remove_element_topic_path(@topic, type: 'industry', element_id: industry.id), method: :post, data: { confirm: 'Are you sure?' }) %>
       </td>
     <% end %>
   </tr>

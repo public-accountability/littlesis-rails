@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150506185713) do
+ActiveRecord::Schema.define(version: 20150506195141) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -527,6 +527,14 @@ ActiveRecord::Schema.define(version: 20150506185713) do
   add_index "image", ["address_id"], name: "index_image_on_address_id", using: :btree
   add_index "image", ["entity_id"], name: "entity_id_idx", using: :btree
   add_index "image", ["last_user_id"], name: "last_user_id_idx", using: :btree
+
+  create_table "industries", force: true do |t|
+    t.string "name",        null: false
+    t.string "industry_id", null: false
+    t.string "sector_name", null: false
+  end
+
+  add_index "industries", ["industry_id"], name: "index_industries_on_industry_id", unique: true, using: :btree
 
   create_table "industry", force: true do |t|
     t.string   "name",       limit: 100, null: false
@@ -1296,6 +1304,13 @@ ActiveRecord::Schema.define(version: 20150506185713) do
     t.boolean  "is_done",   default: false, null: false
     t.datetime "locked_at"
   end
+
+  create_table "topic_industries", force: true do |t|
+    t.integer "topic_id"
+    t.integer "industry_id"
+  end
+
+  add_index "topic_industries", ["topic_id", "industry_id"], name: "index_topic_industries_on_topic_id_and_industry_id", unique: true, using: :btree
 
   create_table "topic_lists", force: true do |t|
     t.integer "topic_id"

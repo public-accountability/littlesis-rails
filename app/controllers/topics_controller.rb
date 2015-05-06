@@ -18,6 +18,7 @@ class TopicsController < ApplicationController
   ELEMENT_TYPES = {
     list: ElementType.new('list', 'List', List, TopicList, :list_id),
     map: ElementType.new('map', 'Map', NetworkMap, TopicMap, :map_id),
+    industry: ElementType.new('industry', 'Industry', Industry, TopicIndustry, :industry_id),
     # article: ElementType.new('article', 'Article', Article, TopicArticle, 'article_od')
   }
 
@@ -90,7 +91,13 @@ class TopicsController < ApplicationController
     @results = NetworkMap.search(
       Riddle::Query.escape(@q),
       with: { visible_to_user_ids: [0] }
-    ).select { |l| !@topic.map_ids.include?(l.id) }
+    ).select { |m| !@topic.map_ids.include?(m.id) }
+  end
+
+  def find_industry
+    @results = Industry.search(
+      Riddle::Query.escape(@q)
+    ).select { |i| !@topic.industry_ids.include?(i.id) }
   end
 
   # POST /topics/fracking/add_element

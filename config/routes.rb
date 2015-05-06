@@ -188,6 +188,8 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  resources :industries, only: [:show]
+
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
   get "/home/maps" => "home#maps"
