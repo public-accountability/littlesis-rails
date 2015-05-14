@@ -15,7 +15,8 @@ development:
   pool: 5
   username: littlesis
   password: 
-  socket: /tmp/mysql.sock
+  socket: /var/run/mysqld/mysqld.sock
+  reconnect: true
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -27,7 +28,8 @@ test:
   pool: 5
   username: littlesis
   password: 
-  socket: /tmp/mysql.sock
+  socket: /var/run/mysqld/mysqld.sock
+  reconnect: true
 
 production:
   adapter: mysql2
@@ -36,4 +38,5 @@ production:
   pool: 5
   username: littlesis
   password: 
-  socket: /tmp/mysql.sock
+  socket: /var/run/mysqld/mysqld.sock
+  reconnect: true
