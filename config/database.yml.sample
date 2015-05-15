@@ -14,7 +14,7 @@ development:
   database: littlesis
   pool: 5
   username: littlesis
-  password: 
+  password: themanbehindthemanbehindthethrone
   socket: /var/run/mysqld/mysqld.sock
   reconnect: true
 
@@ -27,7 +27,7 @@ test:
   database: littlesis
   pool: 5
   username: littlesis
-  password: 
+  password: themanbehindthemanbehindthethrone
   socket: /var/run/mysqld/mysqld.sock
   reconnect: true
 
@@ -37,6 +37,6 @@ production:
   database: littlesis
   pool: 5
   username: littlesis
-  password: 
+  password: themanbehindthemanbehindthethrone
   socket: /var/run/mysqld/mysqld.sock
   reconnect: true
