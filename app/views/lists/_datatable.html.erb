@@ -64,7 +64,7 @@ var post = function(path) {
 }
 
 $(document).ready(function() {
-  <% if editable %>
+  <% if false and editable %>
     var editor = new $.fn.dataTable.Editor( {
       ajax: '<%= update_entity_list_path(table.list) %>',
       table: "#datatable-table",
