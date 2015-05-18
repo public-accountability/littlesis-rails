@@ -9,7 +9,7 @@ class LegacyCache
   end
 
   def prefix
-    Lilsis::Application.config.symfony_frontend_dir + ":"
+    Lilsis::Application.config.symfony_path + "/apps/frontend:"
   end
 
   def meta_keys

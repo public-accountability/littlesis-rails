@@ -1,21 +1,22 @@
 defaults: &defaults
   aws_key: 
   aws_secret:
+  aws_region:
   aws_s3_base: "http://s3.amazonaws.com"
-  aws_s3_bucket: lilsis
+  aws_s3_bucket: "pai-littlesis"
   square_image_file_type: jpg
-  imagemagick_binary_path: "/usr/local/bin/convert"
+  imagemagick_binary_path: "/usr/bin/convert"
   google_custom_search_engine_id:
   google_custom_news_search_engine_id:
   google_custom_search_key: 
-  default_from_email: 
-  default_to_email:
+  default_from_email: dev@littlesis.org
+  default_to_email: dev@littlesis.org
   admins_only: false
-  convert_new_legacy_notes: false
+  convert_new_legacy_notes: true
   verticalresponse_username:
   verticalresponse_password:
   research_from_email: research@littlesis.org
-  netmap_api_key:
+  netmap_api_key: freeapiforlittlesisdevs
   netmap_default_width: 960
   netmap_default_height: 550
   twitter_consumer_key:
@@ -25,9 +26,9 @@ defaults: &defaults
   twitter_list_id:
   google_site_verification:
   google_analytics_id:
-  default_image_file_type: 'jpg'
+  default_image_file_type: jpg
   system_user_id: 1
-  symfony_frontend_dir:
+  symfony_path: /var/www/littleis/symfony
   bing_maps_key:
 
 test:
