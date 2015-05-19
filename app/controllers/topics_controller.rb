@@ -19,7 +19,7 @@ class TopicsController < ApplicationController
     list: ElementType.new('list', 'List', List, TopicList, :list_id),
     map: ElementType.new('map', 'Map', NetworkMap, TopicMap, :map_id),
     industry: ElementType.new('industry', 'Industry', Industry, TopicIndustry, :industry_id),
-    # article: ElementType.new('article', 'Article', Article, TopicArticle, 'article_od')
+    # article: ElementType.new('article', 'Article', Article, TopicArticle, :article_id)
   }
 
   def clear_cache

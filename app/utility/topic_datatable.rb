@@ -1,4 +1,5 @@
 class TopicDatatable
+  include ApplicationHelper
   include Rails.application.routes.url_helpers
 
   attr_reader :topic, :lists, :links, :types, :industries, :list_options

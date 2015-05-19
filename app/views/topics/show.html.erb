@@ -10,7 +10,17 @@
 
 <br>
 
-<h3>Entities</h3>
+<div class="topic-shortcuts">
+  <a href="#entities">People and Orgs</a><br>
+  <a href="#lists">Lists</a><br>
+  <a href="#maps">Maps</a><br>
+  <a href="#industries">Industries</a>
+</div>
+
+<br>
+
+<a name="entities" class="anchor"></a>
+<h3>People and Orgs</h3>
 
 <% cache(@topic.cache_key('datatable')) do %>
   <%= render partial: 'datatable', locals: { table: @table } %>
@@ -18,6 +28,7 @@
 
 <br>
 
+<a name="lists" class="anchor"></a>
 <h3>
   Lists 
   <% if has_legacy_permission('admin') %>
@@ -47,6 +58,7 @@
 
 <br>
 
+<a name="maps" class="anchor"></a>
 <h3>
   Maps
   <% if has_legacy_permission('admin') %>
@@ -74,6 +86,7 @@
 
 <br>
 
+<a name="industries" class="anchor"></a>
 <h3>
   Industries
   <% if has_legacy_permission('admin') %>

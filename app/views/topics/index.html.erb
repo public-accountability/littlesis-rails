@@ -1,29 +1,32 @@
-<h1>Listing topics</h1>
+<h1>Topics</h1>
 
-<table>
+<table class="table">
   <thead>
     <tr>
       <th>Name</th>
-      <th>Slug</th>
       <th>Description</th>
-      <th colspan="3"></th>
+      <% if has_legacy_permission('admin') %>
+      <th></th>
+      <% end %>
     </tr>
   </thead>
 
   <tbody>
     <% @topics.each do |topic| %>
       <tr>
-        <td><%= topic.name %></td>
-        <td><%= topic.slug %></td>
+        <td class="topics-list-name"><%= link_to(topic.name, topic_path(topic)) %></td>
         <td><%= topic.description %></td>
-        <td><%= link_to 'Show', topic %></td>
-        <td><%= link_to 'Edit', edit_topic_path(topic) %></td>
-        <td><%= link_to 'Destroy', topic, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% if has_legacy_permission('admin') %>
+        <td>
+          <%= link_to 'Edit', edit_topic_path(topic) %>
+        </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
 </table>
 
+<% if has_legacy_permission('admin') %>
 <br>
-
-<%= link_to 'New Topic', new_topic_path %>
+<%= link_to 'New Topic', new_topic_path, class: 'btn btn-primary' %>
+<% end %>

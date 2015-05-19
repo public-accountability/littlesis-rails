@@ -1,3 +1,11 @@
+.topics-list-name {
+  width: 200px;
+
+  a {
+    font-weight: bold;
+  }
+}
+
 #add-element-search {
   width: 200px;
 }
@@ -12,4 +20,27 @@ td.fracking-element-remove {
   a {
     color: #aaa;
   }
+}
+
+#datatable-table {
+  table-layout: fixed;
+}
+
+.topics-datatable-name {
+  width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topics-datatable-blurb {
+  color: #aaa;
+}
+
+.anchor::before { 
+  display: block; 
+  content: " "; 
+  margin-top: -75px; 
+  height: 75px; 
+  visibility: hidden; 
 }

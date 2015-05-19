@@ -48,14 +48,18 @@ $(document).ready(function() {
     columns: [
       { 
         data: 'name', 
-        name: 'name', 
-        width: "30%",
+        name: 'name',
+        className: 'topics-datatable-name',
         render: function(data, type, row) {
           var a = document.createElement('a');
           a.href = row.rels_url;
           a.setAttribute('class', 'entity-link');
           a.innerHTML = row.name;
           var str = a.outerHTML;
+          var blurb = document.createElement('span');
+          blurb.setAttribute('class', 'topics-datatable-blurb');
+          blurb.innerHTML = row.blurb;
+          str += " &nbsp; " + blurb.outerHTML;
           return str;
         }
       },
@@ -65,6 +69,12 @@ $(document).ready(function() {
         visible: true,
         searchable: true,
         sortable: false
+      },
+      {
+        data: 'blurb',
+        name: 'blurb',
+        visible: false,
+        searchable: true
       },
       {
         data: 'id',
