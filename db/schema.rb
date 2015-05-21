@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150506195141) do
+ActiveRecord::Schema.define(version: 20150520172037) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1327,14 +1327,16 @@ ActiveRecord::Schema.define(version: 20150506195141) do
   add_index "topic_maps", ["topic_id", "map_id"], name: "index_topic_maps_on_topic_id_and_map_id", unique: true, using: :btree
 
   create_table "topics", force: true do |t|
-    t.string   "name",                        null: false
-    t.string   "slug",                        null: false
+    t.string   "name",                            null: false
+    t.string   "slug",                            null: false
     t.text     "description"
-    t.boolean  "is_deleted",  default: false, null: false
+    t.boolean  "is_deleted",      default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "default_list_id"
   end
 
+  add_index "topics", ["default_list_id"], name: "index_topics_on_default_list_id", using: :btree
   add_index "topics", ["name"], name: "index_topics_on_name", unique: true, using: :btree
   add_index "topics", ["slug"], name: "index_topics_on_slug", unique: true, using: :btree
 

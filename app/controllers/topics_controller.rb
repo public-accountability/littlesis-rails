@@ -133,6 +133,18 @@ class TopicsController < ApplicationController
     redirect_to topic_path(@topic), notice: type.display_name + ' was successfully removed from this topic.'
   end
 
+  # def entities
+  #   @topic = Topic.where(id: @topic.id).includes(default_list: :entities).first
+  #   @table = TopicDatatable.new(@topic, default_list = true)
+  # end
+
+  # def add_entity
+  #   entity = Entity.find(params[:entity_id])
+  #   list = @topic.default_list
+  #   list.entities << entity unless list.entity_ids.include?(entity.id)
+  #   redirect_to entities_topic_path(@topic)
+  # end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_topic

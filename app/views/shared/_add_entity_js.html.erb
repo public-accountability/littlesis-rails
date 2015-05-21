@@ -1,0 +1,40 @@
+<script>
+$(window).ready(function() {
+
+var post = function(path) {
+  var form = document.createElement("form");
+  form.setAttribute("method", "post");
+  form.setAttribute("action", path);
+  var input = document.createElement("input");
+  input.setAttribute("type", "hidden");
+  input.setAttribute("name", "authenticity_token");
+  input.setAttribute("value", "<%= form_authenticity_token %>");
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+}
+
+var selected_callback = function(obj, datum) {
+  post('<%= post_path %>'.replace(/XXX/, datum.id));
+};
+
+var compiledTemplate = Hogan.compile("<div class='add-entity-name'>{{name}}</div><div class='add-entity-blurb'>{{blurb}}</div>");
+
+ $('#<%= input_id %>')
+    .typeahead({ 
+      name: 'entities',
+      remote: '<%= query_path %>',
+      limit: 8,
+      template: compiledTemplate.render.bind(compiledTemplate)
+    })
+    .on("typeahead:selected", selected_callback);
+
+  $('#<%= input_id %>')
+    .keydown(function(event){
+      if(event.keyCode == 13) {
+        event.preventDefault();
+        return false;
+      }
+    });
+});
+</script>

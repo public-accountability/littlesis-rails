@@ -26,6 +26,7 @@ class List < ActiveRecord::Base
 
   has_many :topic_lists, inverse_of: :list
   has_many :topics, through: :topic_lists, inverse_of: :lists
+  has_one :default_topic, class_name: 'Topic', inverse_of: :default_list, foreign_key: 'default_list_id'
 
   def to_param
     "#{id}-#{name.parameterize}"

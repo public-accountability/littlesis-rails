@@ -4,11 +4,11 @@ class TopicDatatable
 
   attr_reader :topic, :lists, :links, :types, :industries, :list_options
 
-  def initialize(topic, force_interlocks=false)
+  def initialize(topic, default_list = false)
     @topic = topic
-    @lists = topic.lists
-    @list_hash = Hash[@lists.group_by(&:id).map { |list_id, ary| [list_id, ary.first] }]
-    @entity_ids = topic.lists.map(&:entity_ids).flatten.uniq
+    @lists = default_list ? [topic.default_list] : topic.lists + [topic.default_list]
+    @list_hash = Hash[@lists.group_by(&:id).select { |list_id, ary| list_id != topic.default_list_id }.map { |list_id, ary| [list_id, ary.first] }]
+    @entity_ids = @lists.map(&:entity_ids).flatten.uniq
     @types = []
     @industries = []
     @list_options = []
@@ -28,12 +28,10 @@ class TopicDatatable
   def get_data
     entities = Entity.includes(:extension_definitions, :os_categories).where(id: @entity_ids, is_deleted: false)
 
-    Rack::MiniProfiler.step('my lists') do
-      @data = entities.map do |entity|
-        @types = @types.concat(entity.types)
-        @industries = @industries.concat(entity.industries)
-        entity_data(entity)
-      end
+    @data = entities.map do |entity|
+      @types = @types.concat(entity.types)
+      @industries = @industries.concat(entity.industries)
+      entity_data(entity)
     end
   end
 

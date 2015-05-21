@@ -16,7 +16,7 @@
 </div>
 </div>
 
-<div id="datatable-total-wrapper" style="display: none;">
+<div id="datatable-total-wrapper" <%= local_assigns.has_key? :toggle_visibility ? 'style="display: none;"' : '' %>>
   <table id="datatable-table" class="table table-striped table-bordered">
     <thead>
       <tr>
@@ -234,6 +234,8 @@ $(document).ready(function() {
     window.location.hash = '';
   });
 
+  <% if local_assigns.has_key? :toggle_visibility %>
+
   var toggle_visibility = function() {
     var hash = compute_hash();
     if (hash) {
@@ -254,6 +256,8 @@ $(document).ready(function() {
   });
 
   toggle_visibility();
+
+  <% end %>
 
   tbl.columns('master_search:name').search(init_search).draw();
 });
