@@ -17,7 +17,7 @@ namespace :graph do
       }
     end
 
-    hash = Link.includes(:relationship).limit(1000).reduce({}) do |hash, link|
+    hash = Link.includes(:relationship).reduce({}) do |hash, link|
       hash[link.entity1_id] = hash.fetch(link.entity1_id, []).concat([link])
       hash
     end
