@@ -7,7 +7,7 @@ div.DTE div.DTE_Processing_Indicator {
   right: 13px;
   height: 32px;
   width: 32px;
-  background: url("../images/ajax-loader.gif") no-repeat top left;
+  background: url("../assets/ajax-loader.gif") no-repeat top left;
   display: none;
   z-index: 20;
 }
@@ -468,7 +468,7 @@ div.DTE_Bubble.DTE_Processing div.DTE_Bubble_Liner:after {
   right: 18px;
   height: 12px;
   width: 17px;
-  background: url("../images/ajax-loader-small.gif") no-repeat top left;
+  background: url("../assets/ajax-loader-small.gif") no-repeat top left;
 }
 
 div.DTE_Bubble_Background {
@@ -553,7 +553,7 @@ div.DTE_Inline.DTE_Processing:after {
   right: 10px;
   height: 12px;
   width: 17px;
-  background: url("../images/ajax-loader-small.gif") no-repeat top left;
+  background: url("../assets/ajax-loader-small.gif") no-repeat top left;
 }
 
 span.dtr-data div.DTE_Inline {

@@ -7,7 +7,7 @@ class RelationshipsDatatable
 
   def initialize(entities, force_interlocks=false)
     @force_interlocks = force_interlocks
-    categories = { 0 => ["Category", ""] }
+    categories = { 0 => ["Relationship", ""] }
     types = []
     industries = []
 
