@@ -28,9 +28,6 @@ td.fracking-element-remove {
 
 .topics-datatable-name {
   width: 500px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .topics-datatable-blurb {
@@ -43,4 +40,9 @@ td.fracking-element-remove {
   margin-top: -75px; 
   height: 75px; 
   visibility: hidden; 
+}
+
+#topic-description-textarea {
+  width: 700px;
+  height: 200px;
 }

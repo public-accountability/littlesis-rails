@@ -1,6 +1,5 @@
-<h1>Editing topic</h1>
+<h1><%= link_to("Topic: #{@topic.name}", topic_path(@topic)) %></h1>
+
+<br>
 
 <%= render 'form' %>
-
-<%= link_to 'Show', @topic %> |
-<%= link_to 'Back', topics_path %>
