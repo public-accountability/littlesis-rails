@@ -59,16 +59,17 @@ window.Bootsy.options = {
         }
       },
 
-      "a":  {
-        set_attributes: {
-          target: "_blank",
-          rel:    "nofollow"
-        },
-        check_attributes: {
-          id:   "alt",
-          href: "url" // important to avoid XSS
-        }
-      },
+      // "a":  {
+      //   set_attributes: {
+      //     target: "_blank",
+      //     rel:    "nofollow"
+      //   },
+      //   check_attributes: {
+      //     id:   "alt",
+      //     href: "url" // important to avoid XSS
+      //   }
+      // },
+      "a": { check_attributes: { href: "href" } },
       "span": { check_attributes: { style: "style" } },
       "div": { check_attributes: { style: "style" } },
       // to allow save and edit files with code tag hacks
