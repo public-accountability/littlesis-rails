@@ -15,7 +15,7 @@
     <% @topics.each do |topic| %>
       <tr>
         <td class="topics-list-name"><%= link_to(topic.name, topic_path(topic)) %></td>
-        <td><%= topic.description %></td>
+        <td><%= strip_links(topic.description) %></td>
         <% if has_legacy_permission('admin') %>
         <td>
           <%= link_to 'Edit', edit_topic_path(topic) %>

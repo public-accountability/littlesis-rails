@@ -42,7 +42,11 @@ td.fracking-element-remove {
   visibility: hidden; 
 }
 
-#topic-description-textarea {
+textarea.topic-rich-textarea {
   width: 700px;
   height: 200px;
+}
+
+.topic-description {
+  font-size: 16px;
 }

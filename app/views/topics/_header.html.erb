@@ -1,4 +1,4 @@
-<h1>
+<h1 class="cover_name">
   <%= link_to("Topic: #{topic.name}", topic_path(topic)) %>
   <% if has_legacy_permission('admin') %>
     <%= link_to 'edit', edit_topic_path(@topic), class: 'btn btn-sm btn-default' %>

@@ -8,7 +8,14 @@
 
 <br>
 
-<p><%= raw(@topic.description) %></p>
+<% if @topic.description.present? %>
+  <p><%= raw(@topic.description) %></p>
+<% end %>
+
+<% if @topic.shortcuts.present? %>
+  <br>
+  <p><%= raw(@topic.shortcuts) %></p>
+<% end %>
 
 <a name="entities" class="anchor"></a>
 <h3>
