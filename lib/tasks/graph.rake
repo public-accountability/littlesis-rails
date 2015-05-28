@@ -4,7 +4,7 @@ namespace :graph do
   include Graph
 
   task :build_all => [:environment] do |task|
-    build Link.all.limit(340000)
+    build Link.includes(:relationship)
   end
 
 end
