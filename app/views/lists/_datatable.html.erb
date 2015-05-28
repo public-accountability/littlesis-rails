@@ -3,9 +3,11 @@
   <select id="datatable-type" class="form-control">
     <%= options_for_select(table.types) %>
   </select>
+  <% if table.industries.count > 1 %>
   <select id="datatable-industry" class="form-control">
     <%= options_for_select(table.industries) %>
   </select>
+  <% end %>
   <% if table.interlocks? %>
   <select id="datatable-interlock" class="form-control">
     <%= options_for_select(table.interlocks) %>
@@ -28,8 +30,10 @@
       <% if table.ranked? %>
         <th>Rank</th>
       <% end %>
-      <th>Entity</th>
-      <th><%= table.context_field_name %></th>
+      <th>Name</th>
+      <% if table.list.custom_field_name.present? %>
+        <th><%= table.context_field_name %></th>
+      <% end %>
       <% if admin %>
         <th></th>
       <% end %>
@@ -64,7 +68,7 @@ var post = function(path) {
 }
 
 $(document).ready(function() {
-  <% if false and editable %>
+  <% if editable %>
     var editor = new $.fn.dataTable.Editor( {
       ajax: '<%= update_entity_list_path(table.list) %>',
       table: "#datatable-table",
@@ -139,15 +143,22 @@ $(document).ready(function() {
           a.setAttribute('class', 'entity-link');
           a.innerHTML = row.name;
           var str = a.outerHTML;
-          return str;
+          var blurb = document.createElement('span');
+          blurb.setAttribute('class', 'entity-blurb');
+          blurb.innerHTML = row.blurb;
+          str += " &nbsp; " + blurb.outerHTML;
+          return  str;
         }
       },
+      <% if table.list.custom_field_name.present? %>
       {
         data: 'context',
         name: 'context',
+        width: '30%',
         sortable: false,
         className: 'context'
       },
+      <% end %>
       <% if admin %>
       {
         data: 'actions',

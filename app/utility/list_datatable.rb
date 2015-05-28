@@ -70,6 +70,7 @@ class ListDatatable
       rels_url: relationships_entity_path(list_entity.entity),
       remove_url: remove_entity_list_path(list_entity.list, list_entity_id: list_entity.id),
       blurb: list_entity.entity.blurb,
+      blurb_excerpt: excerpt(list_entity.entity.blurb, 70 - list_entity.entity.name.length),
       types: list_entity.entity.types.join(","),
       industries: list_entity.entity.industries.join(','),    
       context: list_entity.list.custom_field_name.present? ? list_entity.custom_field : list_entity.entity.blurb,
@@ -80,7 +81,7 @@ class ListDatatable
 
   def prepare_options
     @types.uniq!
-    @types = [["Type", ""]].concat(ExtensionDefinition.order(:tier).pluck(:display_name).select { |t| @types.include?(t) }.map { |t| [t, t] })
+    @types = [["Entity Type", ""]].concat(ExtensionDefinition.order(:tier).pluck(:display_name).select { |t| @types.include?(t) }.map { |t| [t, t] })
     @industries -= ["Other", "Unknown", "Non-contribution"]
     @industries.uniq!
     @industries.sort!

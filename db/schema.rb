@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150520172037) do
+ActiveRecord::Schema.define(version: 20150527164245) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1328,6 +1328,7 @@ ActiveRecord::Schema.define(version: 20150520172037) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "default_list_id"
+    t.text     "shortcuts"
   end
 
   add_index "topics", ["default_list_id"], name: "index_topics_on_default_list_id", using: :btree

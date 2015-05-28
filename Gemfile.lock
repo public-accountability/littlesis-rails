@@ -6,6 +6,15 @@ GIT
     acts_as_paranoid (0.4.1)
       activerecord (>= 3.2)
 
+GIT
+  remote: git://github.com/littlesis-org/bootsy.git
+  revision: aec845958b132ca987edabaa37ae1ceb818c8987
+  specs:
+    bootsy (2.1.0)
+      carrierwave (~> 0.10)
+      mini_magick (~> 4.0)
+      remotipart (~> 1.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -59,10 +68,6 @@ GEM
       rails (>= 3.1.0)
     binding_of_caller (0.7)
       debug_inspector (>= 0.0.1)
-    bootsy (2.1.0)
-      carrierwave (~> 0.10)
-      mini_magick (~> 4.0)
-      remotipart (~> 1.2)
     buftok (0.2.0)
     builder (3.2.2)
     capybara (2.4.4)
@@ -344,7 +349,7 @@ DEPENDENCIES
   better_errors (= 0.7.0)
   bettertabs
   binding_of_caller (= 0.7.0)
-  bootsy
+  bootsy!
   capybara
   capybara-webkit
   carrierwave

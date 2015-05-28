@@ -54,7 +54,7 @@ gem 'acts_as_paranoid', :git => "git://github.com/freddy/rails3_acts_as_paranoid
   :branch => "rails4.0"
 gem 'nilify_blanks'
 
-gem 'bootsy'
+gem 'bootsy', :git => "git://github.com/littlesis-org/bootsy.git"
 gem 'tinymce-rails', '< 4.0'
 
 gem 'bettertabs'

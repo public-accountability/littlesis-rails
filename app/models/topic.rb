@@ -1,4 +1,5 @@
 class Topic < ActiveRecord::Base
+  include Bootsy::Container
   include SoftDelete
   include Cacheable
 
@@ -13,7 +14,7 @@ class Topic < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
   validates :slug, presence: true, uniqueness: true
 
-  after_create :create_default_list
+  after_create :create_default_list, :set_default_shortcuts
 
   def create_default_list
     list = List.create(
@@ -22,6 +23,17 @@ class Topic < ActiveRecord::Base
       is_admin: true
     )
     update(default_list_id: list.id)
+  end
+
+  def set_default_shortcuts
+    unless shortcuts.present?
+      update(shortcuts: 
+        '<a href="#entities">People and Orgs</a><br>' + "\n" +
+        '<a href="#lists">Lists</a><br>' + "\n" +
+        '<a href="#maps">Maps</a><br>' + "\n" +
+        '<a href="#industries">Industries</a>'
+      )
+    end
   end
 
   def to_param

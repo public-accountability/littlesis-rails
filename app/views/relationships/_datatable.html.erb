@@ -31,10 +31,9 @@
       <th>List Entity</th>
       <% end %>
       <th>Related Entity</th>
-      <th>Category</th>
+      <th>Relationship</th>
       <th>Details</th>
       <th>Date(s)</th>
-      <th></th>
     </tr>
   </thead>
 </table>
@@ -94,7 +93,15 @@ $(document).ready(function() {
       { 
         data: 'category',
         name: 'category',
-        width: "10%" 
+        width: "10%",
+        render: function(data, type, row) {
+          var a = document.createElement('a');
+          a.href = row.url;
+          a.innerHTML = row.category;
+          var str = a.outerHTML;
+          return  str;
+        }
+
       },
       { 
         data: 'description',
@@ -123,18 +130,6 @@ $(document).ready(function() {
           } else {
             return data;
           }
-        }
-      },
-      {
-        data: 'more',
-        name: 'more',
-        sortable: false,
-        searchable: false,
-        render: function(data, type, row) {
-          var a = document.createElement('a');
-          a.href = row.url;
-          a.innerHTML = 'more';
-          return a.outerHTML;
         }
       },
       {
