@@ -439,12 +439,6 @@ ActiveRecord::Schema.define(version: 20150520172037) do
     t.string "name", limit: 10, null: false
   end
 
-  create_table "generic", force: true do |t|
-    t.integer "relationship_id", limit: 8, null: false
-  end
-
-  add_index "generic", ["relationship_id"], name: "relationship_id_idx", using: :btree
-
   create_table "government_body", force: true do |t|
     t.boolean "is_federal"
     t.integer "state_id",   limit: 8
