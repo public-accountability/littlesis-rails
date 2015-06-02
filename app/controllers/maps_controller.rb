@@ -73,6 +73,13 @@ class MapsController < ApplicationController
     if @map.is_private and (!current_user or !current_user.has_legacy_permission('admin')) and (current_user.nil? or @map.user_id != current_user.sf_guard_user_id)
       raise Exceptions::PermissionError
     end
+
+    respond_to do |format|
+      format.html
+      format.json {
+        render json: { data: JSON.parse(@map.prepared_data) }
+      }
+    end
   end
 
   def raw
@@ -172,7 +179,9 @@ class MapsController < ApplicationController
   private
 
   def enforce_slug
-    if @map.title.present? and !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
+    is_json = request.path_info.match(/\.json$/)
+
+    if !is_json and @map.title.present? and !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
       redirect_to map_path(@map)
     end
   end
