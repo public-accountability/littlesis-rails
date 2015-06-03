@@ -4,6 +4,8 @@ class Note < ActiveRecord::Base
   include SingularTable
   include Cacheable
 
+  include Rails.application.routes.url_helpers
+
   belongs_to :user, foreign_key: "new_user_id", inverse_of: :notes
   belongs_to :sf_guard_user, foreign_key: "user_id", inverse_of: :notes
 
