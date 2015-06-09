@@ -77,7 +77,16 @@ class MapsController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        render json: { map: JSON.parse(@map.prepared_data) }
+        data = JSON.parse(@map.prepared_data)
+        map = {
+          id: @map.id,
+          title: @map.title,
+          description: @map.description,
+          entities: data['entities'],
+          rels: data['rels'],
+          texts: data['rexts']
+        }
+        render json: { map: map }
       }
     end
   end
