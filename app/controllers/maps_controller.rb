@@ -84,7 +84,7 @@ class MapsController < ApplicationController
           description: @map.description,
           entities: data['entities'],
           rels: data['rels'],
-          texts: data['rexts']
+          texts: data['texts']
         }
         render json: { map: map }
       }
