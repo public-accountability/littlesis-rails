@@ -139,6 +139,11 @@ Lilsis::Application.routes.draw do
       post 'update_meta'
       post 'clone'
       get 'edit_fullscreen'
+      get 'annotations'
+      get 'new_annotation'
+      post 'create_annotation'
+      post 'update_annotation'
+      get 'edit_annotation'
     end
 
     collection do
@@ -152,6 +157,7 @@ Lilsis::Application.routes.draw do
       get 'new_elements'      
       post 'add_elements'
       post 'remove_element'
+      get 'map_collections'
     end
   end
 

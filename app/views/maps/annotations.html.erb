@@ -1,0 +1,21 @@
+<div class="map-header">
+  <h1 class="map-title"><%= link_to(@map.name, map_path(@map)) %></h1>  
+</div>
+
+<h3>Annotations <%= link_to "new", new_annotation_map_path(@map), class: "btn btn-sm btn-default" %></h3>
+
+<table class="table">
+  <thead>
+    <th>Order</th>
+    <th>Title</th>
+    <th></th>
+  </thead>
+<% @map.annotations.each do |a| %>
+  <tr>
+    <td><%= a.order %></td>
+    <td><%= link_to a.title, edit_annotation_map_path(@map, annotation_id: a.id) %></td>
+    <td>
+    </td>
+  </tr>
+<% end %>
+</table>

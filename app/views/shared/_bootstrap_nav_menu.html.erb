@@ -18,7 +18,8 @@ if user_signed_in?
   }
 
   if current_user.sf_guard_user_profile.enable_recent_views
-    entity_ids = LegacyAuthenticatable.recent_views_from_legacy_cookie(cookies)
+    results = LegacyAuthenticatable.recent_views_from_legacy_cookie(cookies)
+    entity_ids = results[:entity_ids]
     
     if entity_ids.present?
       entities = Entity.where(id: entity_ids)

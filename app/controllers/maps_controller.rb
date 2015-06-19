@@ -1,9 +1,11 @@
 class MapsController < ApplicationController
-  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash]
+  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :create_annotation]
   before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search]
   before_filter :enforce_slug, only: [:show]
 
-  protect_from_forgery except: :create
+  # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
+
+  protect_from_forgery except: [:create, :create_annotation, :update_annotation]
 
   def index
     maps = NetworkMap.order("updated_at DESC, id DESC")
@@ -77,16 +79,7 @@ class MapsController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        data = JSON.parse(@map.prepared_data)
-        map = {
-          id: @map.id,
-          title: @map.title,
-          description: @map.description,
-          entities: data['entities'],
-          rels: data['rels'],
-          texts: data['texts']
-        }
-        render json: { map: map }
+        render json: { map: map.to_json }
       }
     end
   end
@@ -185,6 +178,37 @@ class MapsController < ApplicationController
     redirect_to edit_map_path(map)
   end
 
+  def annotations
+  end
+
+  def new_annotation
+    @annotation = MapAnnotation.new(map: @map)
+  end
+
+  def create_annotation
+    @annotation = MapAnnotation.new(annotation_params)
+
+    if @annotation.save
+      redirect_to annotations_map_path(NetworkMap.find(@annotation.map_id)), notice: 'Annotation was successfully created.'
+    else
+      render :new_annotation
+    end
+  end
+
+  def edit_annotation
+    @annotation = MapAnnotation.find(params[:annotation_id])
+  end
+
+  def update_annotation
+    @annotation = MapAnnotation.find(annotation_params[:id])
+
+    if @annotation.update(annotation_params)
+      redirect_to annotations_map_path(@annotation.map), notice: 'Annotation was successfully updated.'
+    else
+      render :edit_annotation
+    end
+  end
+
   private
 
   def enforce_slug
@@ -204,6 +228,12 @@ class MapsController < ApplicationController
     params.require(:map).permit(
       :is_featured, :is_private, :title, :description, :bootsy_image_gallery_id, :data,
        :height, :width, :user_id, :zoom
+    )
+  end
+
+  def annotation_params
+    params.require(:annotation).permit(
+      :id, :map_id, :title, :description, :highlighted_entity_ids, :highlighted_rel_ids, :highlighted_text_ids
     )
   end
 

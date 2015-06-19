@@ -13,5 +13,7 @@
     <% else %>
       &nbsp;<%= link_to 'fullscreen editor', edit_fullscreen_map_path(map), data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
     <% end %>
+
+    &nbsp;<%= link_to 'annotations', annotations_map_path(map), data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
   </div>
 </div>

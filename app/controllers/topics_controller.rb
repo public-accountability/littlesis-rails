@@ -1,7 +1,7 @@
 class TopicsController < ApplicationController
   before_action :auth, except: [:show]
   before_action :admins_only, except: [:show]
-  before_action :set_topic, only: [:show, :edit, :update, :destroy, :new_elements, :add_elements, :remove_element]
+  before_action :set_topic, only: [:show, :edit, :update, :destroy, :new_elements, :add_elements, :remove_element, :map_collections]
 
   class ElementType
     attr_accessor :param, :display_name, :klass, :join_klass, :join_field
@@ -131,6 +131,22 @@ class TopicsController < ApplicationController
 
     type.join_klass.find_by(topic_id: @topic.id, type.join_field => element_id).destroy
     redirect_to topic_path(@topic), notice: type.display_name + ' was successfully removed from this topic.'
+  end
+
+  def map_collections
+    respond_to do |format|
+      format.json {
+        collections = @topic.maps.map { |map| 
+          ary = [map.to_json].concat(map.annotations.map(&:to_map_data))
+          { 
+            title: map.title,
+            maps: ary
+          }
+        }
+
+        render json: { collections: collections }
+      }
+    end
   end
 
   # def entities

@@ -39,12 +39,22 @@ class LegacyAuthenticatable < Warden::Strategies::Base
   end
 
   def self.recent_views_from_legacy_cookie(cookies)
-    data = legacy_cookie_data(cookies)
-    return nil if data.nil?
-    match = data.match(/"viewed_entity_ids";([^}]+\})/)
-    return nil if match.nil? or match.length < 2
+    results = { entity_ids: [], list_ids: [] }
 
-    PHP.unserialize(match[1])
+    data = legacy_cookie_data(cookies)
+    return results if data.nil?
+
+    match = data.match(/"viewed_entity_ids";([^}]+\})/)
+    unless match.nil? or match.length < 2
+      results[:entity_ids] = PHP.unserialize(match[1])
+    end
+
+    match = data.match(/"viewed_list_ids";([^}]+\})/)
+    unless match.nil? or match.length < 2
+      results[:list_ids] = PHP.unserialize(match[1])
+    end
+
+    results
   end
 end 
 

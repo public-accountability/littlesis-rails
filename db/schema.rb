@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150527164245) do
+ActiveRecord::Schema.define(version: 20150618205223) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -439,6 +439,12 @@ ActiveRecord::Schema.define(version: 20150527164245) do
     t.string "name", limit: 10, null: false
   end
 
+  create_table "generic", force: true do |t|
+    t.integer "relationship_id", limit: 8, null: false
+  end
+
+  add_index "generic", ["relationship_id"], name: "relationship_id_idx", using: :btree
+
   create_table "government_body", force: true do |t|
     t.boolean "is_federal"
     t.integer "state_id",   limit: 8
@@ -643,6 +649,18 @@ ActiveRecord::Schema.define(version: 20150527164245) do
   add_index "ls_list_entity", ["last_user_id"], name: "last_user_id_idx", using: :btree
   add_index "ls_list_entity", ["list_id", "is_deleted", "entity_id"], name: "list_deleted_entity_idx", using: :btree
   add_index "ls_list_entity", ["list_id"], name: "list_id_idx", using: :btree
+
+  create_table "map_annotations", force: true do |t|
+    t.integer "map_id",                 null: false
+    t.integer "order",                  null: false
+    t.string  "title"
+    t.text    "description"
+    t.string  "highlighted_entity_ids"
+    t.string  "highlighted_rel_ids"
+    t.string  "highlighted_text_ids"
+  end
+
+  add_index "map_annotations", ["map_id"], name: "index_map_annotations_on_map_id", using: :btree
 
   create_table "membership", force: true do |t|
     t.integer "dues",            limit: 8
