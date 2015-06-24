@@ -1,5 +1,5 @@
 class TopicsController < ApplicationController
-  before_action :auth, except: [:show]
+  before_action :auth, except: [:show, :map_collections]
   before_action :admins_only, except: [:show]
   before_action :set_topic, only: [:show, :edit, :update, :destroy, :new_elements, :add_elements, :remove_element, :map_collections]
 
