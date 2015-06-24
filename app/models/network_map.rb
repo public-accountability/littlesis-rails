@@ -241,7 +241,7 @@ class NetworkMap < ActiveRecord::Base
     rels = ActiveRecord::Base.connection.exec_query(sql)
   end
 
-  def to_json
+  def to_clean_hash
     data = JSON.parse(prepared_data)
     map = {
       id: id,

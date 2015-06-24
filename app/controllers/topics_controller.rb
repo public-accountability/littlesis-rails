@@ -137,7 +137,7 @@ class TopicsController < ApplicationController
     respond_to do |format|
       format.json {
         collections = @topic.maps.map { |map| 
-          ary = map.annotations.present? ? map.annotations.map(&:to_map_data) : [map.to_json]
+          ary = map.annotations.present? ? map.annotations.map(&:to_map_data) : [map.to_clean_hash]
           { 
             id: map.id,
             title: map.title,
