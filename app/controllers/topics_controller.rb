@@ -137,14 +137,15 @@ class TopicsController < ApplicationController
     respond_to do |format|
       format.json {
         collections = @topic.maps.map { |map| 
-          ary = [map.to_json].concat(map.annotations.map(&:to_map_data))
+          ary = map.annotations.present? ? map.annotations.map(&:to_map_data) : [map.to_json]
           { 
+            id: map.id,
             title: map.title,
             maps: ary
           }
         }
 
-        render json: { collections: collections }
+        render json: { map_collections: collections }
       }
     end
   end

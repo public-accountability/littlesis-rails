@@ -175,14 +175,20 @@ class Image < ActiveRecord::Base
     end
   end
 
-  def find_face(face_size = 50, shrink_by = 0.333)
+  def find_face(source_face_size = 50, scale = 0.333, output_size=200)
     download_large_to_tmp or download_profile_to_tmp
-    finder = EyesFinder.new(tmp_path, face_size)
-    return false unless finder.is_loaded
+    finder = EyesFinder.new(tmp_path, source_face_size)
+    unless finder.is_loaded
+      File.delete(tmp_path)
+      return false
+    end
     eyes = finder.find_eyes
-    return false unless rect = finder.face_rect
+    unless rect = finder.face_rect
+      File.delete(tmp_path)
+      return false
+    end
     x = rect.x
-    y = rect.y
+    y = rect.y + source_face_size/10
     w = rect.width
     h = rect.height
     if w > h
@@ -192,19 +198,21 @@ class Image < ActiveRecord::Base
       y += (h-w)/2
       h = w
     end
-    sub = [w, h].min * shrink_by
+    sub = [w, h].min * scale
     x += sub/2
     y += sub/2
     w -= sub
     h -= sub
     img = MiniMagick::Image.open(tmp_path)
     img.crop("#{w}x#{h}+#{x}+#{y}")
-    img.resize("100x100")
-    name = File.basename(tmp_path).split('.')[0]
-    face_path = Rails.root.join("tmp", "faces", "face-" + name + ".jpg").to_s
+    img.resize("#{output_size}x #{output_size}")
+    face_path = Rails.root.join("tmp", "faces", filename).to_s
     img.write(face_path)
+    File.delete(tmp_path)
     face_path
   end
+
+  alias :face_to_tmp :find_face
 
   def self.new_from_street_view(location, size, pitch)
     url = "https://maps.googleapis.com/maps/api/streetview?size=#{size}&location=#{URI::encode(location)}&pitch=#{pitch}&key=#{Lilsis::Application.config.google_street_view_key}"
@@ -225,5 +233,23 @@ class Image < ActiveRecord::Base
 
   def street_view?
     address_id.present?
+  end
+
+  def upload_face_outline(path = nil, source_face_size=50, scale=0.333, output_size=200)
+    return false unless face_path = path || face_to_tmp(source_face_size, scale, output_size)
+    # `convert #{face_path} -colorspace Gray -blur 0x10 -edge 2 -normalize -negate -blur 0x2 -charcoal 10 #{face_path}`
+    # `convert #{face_path} -colorspace Gray -blur 0x3 -sigmoidal-contrast 2x20% -charcoal 10 -negate -median 10 #{face_path}`
+    # `convert #{face_path} -colorspace Gray -despeckle -blur 0x3 -normalize -sigmoidal-contrast 2x10% -charcoal 10 -negate -median 5 #{face_path}`
+    # `convert #{face_path} -blur 0x2 -charcoal 10 -negate #{face_path}`
+    # `convert #{face_path} -colorspace Gray -blur 2 -brightness-contrast 0x50 -edge 3 -negate #{face_path}`
+    `convert #{face_path} -colorspace Gray -blur 0x3 -brightness-contrast 0x20 -negate -edge 3 -negate -median 10 -brightness-contrast -30x50 #{face_path}`
+    return face_path
+  end
+
+  def upload_face(path = nil, source_face_size=50, scale=0.333, output_size=200)
+    return false unless face_path = path || face_to_tmp(source_face_size, scale, output_size)
+    result = self.class.create_asset(filename, 'face', face_path, output_size, output_size)
+    File.delete(face_path)
+    return result
   end
 end

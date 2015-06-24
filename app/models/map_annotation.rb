@@ -24,8 +24,12 @@ class MapAnnotation < ActiveRecord::Base
   def to_map_data
     data = JSON.parse(map.prepared_data)
 
-    entity_ids.each do |id|
-      data['entities'].find { |e| e['id'] == id }['highlighted'] = true
+    if entity_ids.count > 0
+      data['entities'].each { |e| e['status'] = (entity_ids.include?(e['id']) ? 'highlighted' : 'faded') }
+    end
+
+    if rel_ids.count > 0
+      data['rels'].each { |r| r['status'] = (rel_ids.include?(r['id']) ? 'highlighted' : 'faded') }
     end
 
     {

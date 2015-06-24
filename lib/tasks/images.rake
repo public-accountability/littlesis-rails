@@ -75,7 +75,7 @@ namespace :images do
 
   desc "creates face grid from list of entities"
   task create_face_grid: :environment do
-    require '/Users/matthew/code/image-processing/composite/eyes_finder.rb'
+    require 'eyes_finder.rb'
 
     ids_file = ENV['IDS_FILE']
     list_id = ENV['LIST_ID']
