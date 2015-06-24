@@ -143,7 +143,7 @@ class TopicsController < ApplicationController
             title: map.title,
             maps: ary
           }
-        }
+        }.sort_by { |collection| collection[:maps].count }.reverse
 
         render json: { map_collections: collections }
       }
