@@ -10,15 +10,15 @@ class MapAnnotation < ActiveRecord::Base
   end
 
   def entity_ids
-    highlighted_entity_ids.to_s.split(',').map(&:to_i)
+    highlighted_entity_ids.to_s.split(',')
   end
 
   def rel_ids
-    highlighted_rel_ids.to_s.split(',').map(&:to_i)
+    highlighted_rel_ids.to_s.split(',')
   end
 
   def text_ids
-    highlighted_text_ids.to_s.split(',').map(&:to_i)
+    highlighted_text_ids.to_s.split(',')
   end
 
   def to_map_data

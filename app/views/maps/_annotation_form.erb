@@ -62,13 +62,13 @@ $(document).ready(function() {
   netmap.build();
 
   <% annotation.entity_ids.each do |id| %>
-    netmap.toggle_selected_entity(<%= id %>);
+    netmap.toggle_selected_entity('<%= id %>');
   <% end %>
   <% annotation.rel_ids.each do |id| %>
-    netmap.toggle_selected_rel(<%= id %>);
+    netmap.toggle_selected_rel('<%= id %>');
   <% end %>
   <% annotation.text_ids.each do |id| %>
-    netmap.toggle_selected_text(<%= id %>);
+    netmap.toggle_selected_text('<%= id %>');
   <% end %>
   <% if @map.zoom.present? %>
   netmap.zoom_by(<%= @map.zoom %>);
