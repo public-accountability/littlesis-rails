@@ -179,13 +179,16 @@ class MapsController < ApplicationController
   end
 
   def annotations
+    check_owner
   end
 
   def new_annotation
+    check_owner
     @annotation = MapAnnotation.new(map: @map)
   end
 
   def create_annotation
+    check_owner
     @annotation = MapAnnotation.new(annotation_params)
 
     if @annotation.save
@@ -196,10 +199,12 @@ class MapsController < ApplicationController
   end
 
   def edit_annotation
+    check_owner
     @annotation = MapAnnotation.find(params[:annotation_id])
   end
 
   def update_annotation
+    check_owner
     @annotation = MapAnnotation.find(annotation_params[:id])
 
     if @annotation.update(annotation_params)
@@ -238,7 +243,7 @@ class MapsController < ApplicationController
   end
 
   def check_owner
-    unless (current_user and current_user.has_legacy_permission('admin')) or @map.user_id == current_user.sf_guard_user_id
+    unless current_user and (current_user.has_legacy_permission('admin') or @map.user_id == current_user.sf_guard_user_id)
       raise Exceptions::PermissionError
     end
   end
