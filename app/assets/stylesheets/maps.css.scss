@@ -47,7 +47,7 @@ svg .rel .line.highlight {
 
 svg .rel.selected .line.highlight {
   //stroke: #ffff80;
-  opacity: 0.6;
+  opacity: 1;
 }
 
 svg .label { 
@@ -121,7 +121,27 @@ svg.circle, svg.axis {
 
 svg .entity.selected .image-bg {
   stroke: #ffff80;
-  stroke-opacity: 0.5;
+  stroke-opacity: 0.8;
+}
+
+svg.annotation {
+  .entity:not(.selected) {
+    image {
+      opacity: 0.2;
+    }
+    .entity_link text {
+      fill: #ccc;
+    }
+  }
+
+  .rel:not(.selected) {
+    .line {
+      stroke: #ccc;
+    }
+    a text {
+      fill: #ddd;
+    }
+  }
 }
 
 svg.circle, svg.axis {

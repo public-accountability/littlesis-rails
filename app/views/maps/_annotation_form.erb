@@ -71,7 +71,7 @@ $(document).ready(function() {
     netmap.toggle_selected_text('<%= id %>');
   <% end %>
   <% if @map.zoom.present? %>
-  netmap.zoom_by(<%= @map.zoom %>);
+    netmap.zoom_by(<%= @map.zoom %>);
   <% end %>
 
   $('#annotation-form').on("submit", function() {
