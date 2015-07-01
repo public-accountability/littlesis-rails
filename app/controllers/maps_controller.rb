@@ -214,6 +214,23 @@ class MapsController < ApplicationController
     end
   end
 
+  def reorder_annotations
+    check_owner
+    annotation_ids = params[:annotation_ids].split(',')
+    annotation_ids.each_with_index do |id, index|
+      MapAnnotation.find(id).update(order: index + 1)
+    end
+
+    render json: { success: { id: @map.id, annotation_ids: annotation_ids } }
+  end
+
+  def destroy_annotation
+    check_owner
+    annotation = MapAnnotation.find(params[:annotation_id])
+    annotation.destroy
+    redirect_to annotations_map_path(@map), notice: 'Annotation was successfully deleted.'
+  end
+
   private
 
   def enforce_slug
