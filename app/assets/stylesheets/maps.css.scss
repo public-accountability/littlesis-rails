@@ -217,7 +217,7 @@ h1.map-title {
   font-size: 50px;
   font-weight: 300;
   margin-bottom: 0;
-  margin-top: 10px;
+  margin-top: 0px;
 }
 
 #container, .netmap-editor-fullscreen {
@@ -644,4 +644,23 @@ textarea.map-annotation-rich-textarea {
 
 .map-annotation-destroy {
   color: #ccc;
+}
+
+#map-title {
+  margin-top: 0px;
+}
+
+#map-title-input {
+  font-size: 30px;
+  height: 50px;
+  width: 880px;
+}
+
+#edit-meta {
+  clear: both;
+  padding-top: 20px;
+}
+
+.map-top-row form {
+  display: inline-block;
 }

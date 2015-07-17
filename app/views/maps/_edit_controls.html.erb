@@ -22,7 +22,7 @@ Categories:
   </label>
 </div>
 
-<input id="netmap_save" type="button" value="save" class="btn btn-primary btn-sm" /><br />
+<input type="button" value="save" class="netmap_save btn btn-primary btn-sm" /><br />
 <br />
 <%= button_to 'delete', map_path(map), method: :delete, data: { confirm: "Are you sure you want to delete this map?" }, class: 'btn btn-danger btn-sm' %>
 
@@ -186,7 +186,7 @@ $(window).ready(function(){
     }
   });
 
-  $("#netmap_save").on("click", function() {
+  $(".netmap_save").on("click", function() {
     netmap.remove_hidden_rels();
 
     var id = netmap.get_network_map_id();
@@ -196,13 +196,29 @@ $(window).ready(function(){
       var url = '<%= maps_path %>';
     }
 
+    var data = netmap.data_for_save();
+    data['title'] = $('#map-title-input').val();
+    data['description'] = $('#map-description').val();
+    data['is_featured'] = $('#map-is-featured').is(':checked');
+    data['is_private'] = $('#map-is-private').is(':checked');
+
+    if (!data['title'] || data['title'] == 'Untitled Map') {
+      $('#netmap_modal .modal-body-text').text('You must enter a title before saving this map!');
+      $('#netmap_modal').modal();
+      return false;
+    }
+
     $.ajax({
       url: url,
-      type: "PATCH",
-      data: netmap.data_for_save(),
+      type: id ? "PATCH" : "POST",
+      data: { map: data },
       success: function(data) { 
-        $('#netmap_modal .modal-body-text').text("Map successfully saved");
-        $('#netmap_modal').modal();
+        if (id) {
+          $('#netmap_modal .modal-body-text').text("Map successfully saved");
+          $('#netmap_modal').modal();
+        } else {
+          window.location = '<%= map_path(id: 999999) %>'.replace("999999", data.id);
+        }
       },
       error: function(req, str) { 
         alert("There was an error saving the map: " + str); 

@@ -7,13 +7,6 @@
 
 <%= render partial: 'edit_controls', locals: { map: map } %>
 
-<% if map.description.present? %>
-  <div id="map-description">
-    <br />
-    <%= raw(map.description) %>
-  </div>
-<% end %>
-
 <script>
 var data = <%= raw map.prepared_data %>;
 var width = <%= local_assigns[:fullscreen].present? ? "null" : raw("$('#netmap').width()") %>;

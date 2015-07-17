@@ -31,14 +31,19 @@ class NetworkMap < ActiveRecord::Base
   end
 
   def set_defaults
-    self.data = JSON.dump({ entities: [], rels: [], texts: [] }) if data.blank?
+    self.data = default_data if data.blank?
     self.width = Lilsis::Application.config.netmap_default_width if width.blank?
     self.height = Lilsis::Application.config.netmap_default_width if height.blank?
     self.zoom = '1' if zoom.blank?
   end
 
+  def default_data
+    JSON.dump({ entities: [], rels: [], texts: [] })
+  end
+
   def prepared_data
-    hash = JSON.parse(data)
+    d = (data or default_data)
+    hash = JSON.parse(d)
     json = JSON.dump({ 
       entities: hash['entities'].map { |entity| self.class.prepare_entity(entity) },
       rels: hash['rels'].map { |rel| self.class.prepare_rel(rel) },

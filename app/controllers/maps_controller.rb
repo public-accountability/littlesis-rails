@@ -92,6 +92,7 @@ class MapsController < ApplicationController
   def new
     check_permission 'editor'
     @map = NetworkMap.new
+    @map.title = 'Untitled Map'
   end
 
   def create
@@ -132,9 +133,14 @@ class MapsController < ApplicationController
     check_owner
     check_permission 'editor'
 
+    params = map_params
     data = params[:data]
     decoded = JSON.parse(data)
 
+    @map.title = params[:title] if params[:title].present?
+    @map.description = params[:description] if params[:title].present?
+    @map.is_featured = params[:is_featured] if params[:is_featured].present?
+    @map.is_private = params[:is_private] if params[:is_private].present?
     @map.width = params[:width] if params[:width].present?
     @map.height = params[:height] if params[:height].present?
     @map.zoom = params[:zoom] if params[:zoom].present?
