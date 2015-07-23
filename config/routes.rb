@@ -146,6 +146,7 @@ Lilsis::Application.routes.draw do
       get 'edit_annotation'
       post 'reorder_annotations'
       post 'destroy_annotation'
+      get 'collection'
     end
 
     collection do

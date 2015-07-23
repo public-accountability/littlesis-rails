@@ -237,6 +237,21 @@ class MapsController < ApplicationController
     redirect_to annotations_map_path(@map), notice: 'Annotation was successfully deleted.'
   end
 
+  def collection
+    respond_to do |format|
+      format.json {
+        ary = @map.annotations.present? ? @map.annotations.sort_by(&:order).map(&:to_map_data) : [@map.to_clean_hash]
+        collection = { 
+          id: @map.id,
+          title: @map.title,
+          maps: ary
+        }
+
+        render json: { collection: collection }
+      }
+    end
+  end
+
   private
 
   def enforce_slug
