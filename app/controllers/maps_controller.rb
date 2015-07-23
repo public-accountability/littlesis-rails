@@ -247,7 +247,7 @@ class MapsController < ApplicationController
           maps: ary
         }
 
-        render json: { collection: collection }
+        render json: { map_collection: collection }
       }
     end
   end
