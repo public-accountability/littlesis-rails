@@ -244,6 +244,8 @@ class MapsController < ApplicationController
         collection = { 
           id: @map.id,
           title: @map.title,
+          user: { name: @map.user.username, url: @map.user.legacy_url },
+          date: @map.updated_at.strftime("%B %-d, %Y"),
           maps: ary
         }
 
