@@ -5,7 +5,7 @@
 
 <div class="row map-top-row">
   <div class="col col-xs-12 map-author">
-    <%= link_to 'view', map_path(map), class: 'btn btn-sm btn-default', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
+    <%= link_to 'view', smart_map_path(map), class: 'btn btn-sm btn-default', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
 
     <% if local_assigns[:fullscreen].present? %>
       &nbsp;<%= link_to 'default editor', edit_map_path(map), class: 'btn btn-sm btn-default', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>

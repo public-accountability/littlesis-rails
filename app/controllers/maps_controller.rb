@@ -117,11 +117,6 @@ class MapsController < ApplicationController
     check_permission 'editor'
   end
 
-  def edit_meta
-    check_owner
-    check_permission 'editor'
-  end
-
   def edit_fullscreen
     check_owner
     check_permission 'editor'
@@ -152,17 +147,6 @@ class MapsController < ApplicationController
     # NEED CACHE CLEAR HERE
 
     render json: @map
-  end
-
-  def update_meta
-    check_owner
-    check_permission 'editor'
-
-    if @map.update(map_params)
-      redirect_to map_path(@map), notice: 'Map was successfully updated.'
-    else
-      render action: 'edit_meta'
-    end
   end
 
   def destroy
@@ -260,7 +244,7 @@ class MapsController < ApplicationController
     is_json = request.path_info.match(/\.json$/)
 
     if !is_json and @map.title.present? and !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
-      redirect_to map_path(@map)
+      redirect_to smart_map_path(@map)
     end
   end
 

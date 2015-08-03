@@ -13,7 +13,7 @@
     <% maps.each do |map| %>
       <tr>
         <td>
-          <%= link_to(map.name, map_path(map)) %>
+          <%= network_map_link(map) %>
           <% if map.is_private %>
             &nbsp;<span class="glyphicon glyphicon-lock"></span>
           <% end %>

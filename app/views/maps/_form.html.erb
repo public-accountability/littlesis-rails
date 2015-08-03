@@ -36,7 +36,7 @@
   <div class="actions">
     <%= f.submit 'Save', class: "btn btn-primary" %>
     <% if @map.id.present? %>
-      <%= link_to "Cancel", map_path(@map), class: "btn btn-link" %>
+      <%= link_to "Cancel", smart_map_path(@map), class: "btn btn-link" %>
     <% end %>
   </div>
 <% end %>
