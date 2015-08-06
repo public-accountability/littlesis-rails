@@ -1,4 +1,6 @@
 class MapsController < ApplicationController
+  include NetworkMapsHelper
+
   before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :create_annotation]
   before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search, :collection]
   before_filter :enforce_slug, only: [:show]
