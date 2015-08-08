@@ -227,6 +227,7 @@ class MapsController < ApplicationController
     respond_to do |format|
       format.json {
         ary = @map.annotations.present? ? @map.annotations.sort_by(&:order).map(&:to_map_data) : [@map.to_clean_hash]
+        ary << @map.references_to_map_data
         collection = { 
           id: @map.id,
           title: @map.title,

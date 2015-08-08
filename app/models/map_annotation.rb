@@ -22,23 +22,23 @@ class MapAnnotation < ActiveRecord::Base
   end
 
   def to_map_data
-    data = JSON.parse(map.prepared_data)
+    data = map.prepared_objects
 
     if entity_ids.count > 0
-      data['entities'].each { |e| e['status'] = (entity_ids.include?(e['id'].to_s) ? 'highlighted' : 'faded') }
+      data[:entities].each { |e| e[:status] = (entity_ids.include?(e[:id].to_s) ? 'highlighted' : 'faded') }
     end
 
     if rel_ids.count > 0
-      data['rels'].each { |r| r['status'] = (rel_ids.include?(r['id'].to_s) ? 'highlighted' : 'faded') }
+      data[:rels].each { |r| r[:status] = (rel_ids.include?(r[:id].to_s) ? 'highlighted' : 'faded') }
     end
 
     {
       id: "#{map.id}-#{id}",
       title: title,
       description: description,
-      entities: data['entities'],
-      rels: data['rels'],
-      texts: data['texts']
+      entities: data[:entities],
+      rels: data[:rels],
+      texts: data[:texts]
     }
   end
 end

@@ -41,14 +41,18 @@ class NetworkMap < ActiveRecord::Base
     JSON.dump({ entities: [], rels: [], texts: [] })
   end
 
-  def prepared_data
+  def prepared_objects
     d = (data or default_data)
     hash = JSON.parse(d)
-    json = JSON.dump({ 
+    { 
       entities: hash['entities'].map { |entity| self.class.prepare_entity(entity) },
       rels: hash['rels'].map { |rel| self.class.prepare_rel(rel) },
       texts: hash['texts'].present? ? hash['texts'].map { |text| self.class.prepare_text(text) } : []
-    })
+    }
+  end
+
+  def prepared_data
+    json = JSON.dump(prepared_objects)
     ERB::Util.json_escape(json)
   end
 
@@ -247,18 +251,30 @@ class NetworkMap < ActiveRecord::Base
   end
 
   def to_clean_hash
-    data = JSON.parse(prepared_data)
+    data = prepared_objects
     map = {
       id: id,
       title: title,
       description: description,
-      entities: data['entities'],
-      rels: data['rels'],
-      texts: data['texts']
+      entities: data[:entities],
+      rels: data[:rels],
+      texts: data[:texts]
     }
   end
 
   def has_annotations
     annotations.count > 0
+  end
+
+  def references_to_html
+    references.map { |r| "<div><a href=\"#{r.source}\">#{r.name}</a></div>" }.join("\n")
+  end
+
+  def references_to_map_data
+    hash = to_clean_hash
+    hash[:id] = "#{id}-sources"
+    hash[:title] = "Source Links"
+    hash[:description] = references_to_html
+    hash
   end
 end
