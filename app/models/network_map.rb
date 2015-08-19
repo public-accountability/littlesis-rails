@@ -99,13 +99,7 @@ class NetworkMap < ActiveRecord::Base
     elsif entity['filename']
       image_path = Image.image_path(entity['filename'], 'profile')
     else
-      if type == 'Person'
-        image_path = ActionController::Base.helpers.image_path('netmap-person.png')
-      elsif type == 'Org'
-        image_path = ActionController::Base.helpers.image_path('netmap-org.png')
-      else
-        image_path = nil
-      end
+      image_path = nil
     end
 
     if is_custom_entity?(entity)

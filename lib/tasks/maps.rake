@@ -55,4 +55,34 @@ namespace :maps do
 
     print "fixed map image urls\n"
   end
+
+  desc "remove default images"
+  task remove_default_images: :environment do
+    NetworkMap.all.each do |map|
+      print "cleaning #{map.name} (#{map.id})...\n"
+
+      hash = JSON.parse(map.data)
+
+      entities = hash['entities'].map do |entity|
+        if entity['image'].present? and (entity['image'].match(/netmap-(org|person)/) or entity['image'].match(/anon(s)\.png/))
+          entity['image'] = nil
+          print "removed default image from #{entity['name']}\n"
+        end
+
+        entity
+      end
+
+      json = JSON.dump({
+        entities: entities,
+        rels: hash['rels'],
+        texts: hash['texts'].present? ? hash['texts'] : []
+      })
+
+      map.data = ERB::Util.json_escape(json)
+      map.title = map.name if map.title.blank?
+      map.save!
+    end
+
+    print "fixed map image urls\n"
+  end  
 end
