@@ -1,5 +1,7 @@
 <% content_for(:static_navbar, true) %>
 <% content_for(:page_title, raw(@map.name)) %>
+<% content_for(:facebook_title, @map.name) %>
+<% content_for(:facebook_image, @map.thumbnail) %>
 
 <%= render 'shared/facebook_sdk' %>
 

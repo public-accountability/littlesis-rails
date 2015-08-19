@@ -5,7 +5,7 @@ namespace :maps do
     Rails.application.routes.default_url_options[:host] = hostname
     s3 = S3.s3
 
-    NetworkMap.public_scope.where("updated_at > '#{24.hours.ago.to_s}'").each do |map|
+    NetworkMap.public_scope.where(thumbnail: nil).each do |map|
       map.generate_s3_thumb(s3)
       print "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}\n"
     end

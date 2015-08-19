@@ -192,7 +192,7 @@ class NetworkMap < ActiveRecord::Base
 
     url = Rails.application.routes.url_helpers.raw_map_url(self)
     local_path = "tmp/map-#{id}.png"
-    s3_path = "images/maps/#{to_param}.png"
+    s3_path = "images/maps/#{id}.png"
 
     system("phantomjs vendor/assets/javascripts/makemaps.js #{url} #{local_path}")
 

@@ -141,4 +141,14 @@ module ApplicationHelper
   def has_legacy_permission(permission)
     current_user and current_user.has_legacy_permission(permission)
   end
+
+  def facebook_meta
+    str = ""
+    %w(url type title description image).each do |key|
+      if value = content_for(:"facebook_#{key.to_s}")
+        str += "<meta property=\"og:#{key}\" content=\"#{value}\" />"
+      end
+    end
+    raw(str)
+  end
 end
