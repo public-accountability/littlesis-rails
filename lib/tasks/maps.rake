@@ -36,6 +36,7 @@ namespace :maps do
 
           entity['image'].gsub!(/(s3\.amazonaws\.com\/)[^\/]+/i, '\1' + bucket_name) 
           entity['image'].gsub!(/\/\/[^\.]+(\.s3\.amazonaws\.com)/i, bucket_name + '\1')
+          entity['image'].gsub!(/^https?:\/\//i, "//")
 
           print "replaced #{image} with #{entity['image']}\n" unless image == entity['image']
         end
@@ -84,5 +85,10 @@ namespace :maps do
     end
 
     print "fixed map image urls\n"
-  end  
+  end
+
+  desc "support https in image urls"
+  task remove_default_images: :environment do
+
+  end
 end
