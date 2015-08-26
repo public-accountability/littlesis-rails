@@ -1,0 +1,326 @@
+#!/bin/bash
+#
+# Developed by Fred Weinhaus 12/12/2012 .......... revised 5/29/2015
+#
+# ------------------------------------------------------------------------------
+# 
+# Licensing:
+# 
+# Copyright © Fred Weinhaus
+# 
+# My scripts are available free of charge for non-commercial use, ONLY.
+# 
+# For use of my scripts in commercial (for-profit) environments or 
+# non-free applications, please contact me (Fred Weinhaus) for 
+# licensing arrangements. My email address is fmw at alink dot net.
+# 
+# If you: 1) redistribute, 2) incorporate any of these scripts into other 
+# free applications or 3) reprogram them in another scripting language, 
+# then you must contact me for permission, especially if the result might 
+# be used in a commercial or for-profit environment.
+# 
+# My scripts are also subject, in a subordinate manner, to the ImageMagick 
+# license, which can be found at: http://www.imagemagick.org/script/license.php
+# 
+# ------------------------------------------------------------------------------
+# 
+####
+#
+# USAGE: posteredges [-w width ] [-a amount] [-m method] [-n number] [-b blur] 
+# [-s sat] infile outfile
+#
+# USAGE: posteredges [-help]
+#
+# OPTIONS:
+#
+# -w     width       width of edges; float>0; default=3
+# -a     amount      amount (strenght) of edges; float>0; default=5
+# -m     method      method of reducing colors; choices are: posterize (p) or
+#                    colors (c); default=posterize
+# -n     number      number of colors; integer>=2; default is no color reduction
+# -b     blur        blurring (smoothing) of result; float>=0; default=0.5
+# -s     sat         saturation amount; integer>0; default=100 (no change)
+#
+###
+#
+# NAME: POSTEREDGES 
+# 
+# PURPOSE: To apply posterized edges to an image.
+# 
+# DESCRIPTION: POSTEREDGES applies posterized edges to an image. The width and 
+# amount of edges may be varied. Color reduction is optional. This script 
+# attempts to duplicate some of the features of Photoshop's Posterized Edges.
+# 
+# OPTIONS: 
+# 
+# -w width ... WIDTH of the edges. Values are floats>0. The default=3.
+# 
+# -a amount ... AMOUNT or strength of the edges. Values are floats>0. 
+# The default=5.
+# 
+# -m method ... METHOD of reducing colors. The choices are: posterize (p) or
+# colors (c). The default=posterize
+#
+# -n number ... NUMBER of reduced colors. Values are integers>=2. The default 
+# is no color reduction.
+# 
+# -b blur ... BLUR is the blurring (smoothing) of the result. Values are 
+# floats>=0. The default=0.5.
+# 
+# -s sat ... SAT is the saturation of the result. Values are integers>=0. 
+# The default=100 for no change.
+# 
+# REQUIREMENTS: IM 6.5.9.3 is required due to the use of -morphology edgeout.
+#  
+# CAVEAT: No guarantee that this script will work on all platforms, 
+# nor that trapping of inconsistent parameters is complete and 
+# foolproof. Use At Your Own Risk. 
+# 
+######
+#
+
+# set default values
+width=2					# edge width; float>0
+amount=5				# edge amount (strength); float>0
+method="posterize"		# -posterize or -colors; integer>=2
+number=0				# number of colors or posterization; integer>=2
+blur=0.5				# edge blur; float>=0
+sat=100					# saturation amount; integer>=0
+
+# set directory for temporary files
+dir="."    # suggestions are dir="." or dir="/tmp"
+
+# set up functions to report Usage and Usage with Description
+PROGNAME=`type $0 | awk '{print $3}'`  # search for executable on path
+PROGDIR=`dirname $PROGNAME`            # extract directory of program
+PROGNAME=`basename $PROGNAME`          # base name of program
+usage1() 
+	{
+	echo >&2 ""
+	echo >&2 "$PROGNAME:" "$@"
+	sed >&2 -e '1,/^####/d;  /^###/g;  /^#/!q;  s/^#//;  s/^ //;  4,$p' "$PROGDIR/$PROGNAME"
+	}
+usage2() 
+	{
+	echo >&2 ""
+	echo >&2 "$PROGNAME:" "$@"
+	sed >&2 -e '1,/^####/d;  /^######/g;  /^#/!q;  s/^#*//;  s/^ //;  4,$p' "$PROGDIR/$PROGNAME"
+	}
+
+
+# function to report error messages
+errMsg()
+	{
+	echo ""
+	echo $1
+	echo ""
+	usage1
+	exit 1
+	}
+
+
+# function to test for minus at start of value of second part of option 1 or 2
+checkMinus()
+	{
+	test=`echo "$1" | grep -c '^-.*$'`   # returns 1 if match; 0 otherwise
+    [ $test -eq 1 ] && errMsg "$errorMsg"
+	}
+
+# test for correct number of arguments and get values
+if [ $# -eq 0 ]
+	then
+	# help information
+   echo ""
+   usage2
+   exit 0
+elif [ $# -gt 12 ]
+	then
+	errMsg "--- TOO MANY ARGUMENTS WERE PROVIDED ---"
+else
+	while [ $# -gt 0 ]
+		do
+			# get parameter values
+			case "$1" in
+		  -h|-help)    # help information
+					   echo ""
+					   usage2
+					   exit 0
+					   ;;
+				-w)    # get width
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID WIDTH SPECIFICATION ---"
+					   checkMinus "$1"
+					   width=`expr "$1" : '\([0-9]*\)'`
+					   [ "$width" = "" ] && errMsg "--- WIDTH=$width MUST BE A NON-NEGATIVE INTEGER ---"
+					   test=`echo "$width < 1" | bc`
+					   [ $test -eq 1 ] && errMsg "--- WIDTH=$width MUST BE A POSITIVE INTEGER ---"
+					   ;;
+				-a)    # get amount
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID AMOUNT SPECIFICATION ---"
+					   checkMinus "$1"
+					   amount=`expr "$1" : '\([.0-9]*\)'`
+					   [ "$amount" = "" ] && errMsg "--- AMOUNT=$amount MUST BE A NON-NEGATIVE FLOAT ---"
+					   ;;
+		 		-p)    # polarity
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID POLARITY SPECIFICATION ---"
+					   checkMinus "$1"
+					   # test gravity values
+					   polarity="$1"
+					   polarity=`echo "$1" | tr '[A-Z]' '[a-z]'`
+					   case "$polarity" in 
+					   		black) ;;
+					   		white) ;;
+					   		*) errMsg "--- POLARITY=$polarity IS AN INVALID VALUE ---" 
+					   	esac
+					   ;;
+				-b)    # get blur
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID BLUR SPECIFICATION ---"
+					   checkMinus "$1"
+					   blur=`expr "$1" : '\([.0-9]*\)'`
+					   [ "$blur" = "" ] && errMsg "--- BLUR=$blur MUST BE A NON-NEGATIVE FLOAT ---"
+					   ;;
+		 		-m)    # method
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID METHOD SPECIFICATION ---"
+					   checkMinus "$1"
+					   # test gravity values
+					   method="$1"
+					   method=`echo "$1" | tr '[A-Z]' '[a-z]'`
+					   case "$method" in 
+					   		posterize|p) method="posterize" ;;
+					   		colors|c) method="colors" ;;
+					   		*) errMsg "--- METHOD=$method IS AN INVALID VALUE ---" 
+					   	esac
+					   ;;
+				-n)    # get number colors
+                       shift  # to get the next parameter
+                       # test if parameter starts with minus sign
+                       errorMsg="--- INVALID NUMBER OF COLORS SPECIFICATION ---"
+                       checkMinus "$1"
+                       number=`expr "$1" : '\([0-9]*\)'`
+                       [ "$number" = "" ] && errMsg "--- NUMBER OF COLORS=$number MUST BE A NON-NEGATIVE INTEGER ---"
+                       test=`echo "$number <= 1" | bc`
+                       [ $test -eq 1 ] && errMsg "--- NUMBER OF COLORS=$number MUST BE A POSITIVE INTEGER GREATER THAN 1 ---"
+                       ;;
+				 -)    # STDIN and end of arguments
+					   break
+					   ;;
+				-*)    # any other - argument
+					   errMsg "--- UNKNOWN OPTION ---"
+					   ;;
+		     	 *)    # end of arguments
+					   break
+					   ;;
+			esac
+			shift   # next option
+	done
+	#
+	# get infile and outfile
+	infile="$1"
+	outfile="$2"
+fi
+
+# test that infile provided
+[ "$infile" = "" ] && errMsg "NO INPUT FILE SPECIFIED"
+
+# test that outfile provided
+[ "$outfile" = "" ] && errMsg "NO OUTPUT FILE SPECIFIED"
+
+
+# set up temp files
+tmpA1="$dir/posteredges_A_$$.mpc"
+tmpA2="$dir/posteredges_A_$$.cache"
+trap "rm -f $tmpA1 $tmpA2;" 0
+trap "rm -f $tmpA1 $tmpA2; exit 1" 1 2 3 15
+trap "rm -f $tmpA1 $tmpA2; exit 1" ERR
+
+
+# get im version
+im_version=`convert -list configure | \
+	sed '/^LIB_VERSION_NUMBER /!d; s//,/;  s/,/,0/g;  s/,0*\([0-9][0-9]\)/\1/g' | head -n 1`
+
+# colorspace RGB and sRGB swapped between 6.7.5.5 and 6.7.6.7 
+# though probably not resolved until the latter
+# then -colorspace gray changed to linear between 6.7.6.7 and 6.7.8.2 
+# then -separate converted to linear gray channels between 6.7.6.7 and 6.7.8.2,
+# though probably not resolved until the latter
+# so -colorspace HSL/HSB -separate and -colorspace gray became linear
+# but we need to use -set colorspace RGB before using them at appropriate times
+# so that results stay as in original script
+# The following was determined from various version tests using posteredges.
+# with IM 6.7.4.10, 6.7.6.10, 6.8.0.8
+if [ "$im_version" -lt "06070606" -o "$im_version" -gt "06070707" ]; then
+	cspace="RGB"
+else
+	cspace="sRGB"
+fi
+if [ "$im_version" -lt "06070607" -o "$im_version" -gt "06070707" ]; then
+	setcspace="-set colorspace RGB"
+else
+	setcspace=""
+fi
+# no need for setcspace for grayscale or channels after 6.8.5.4
+if [ "$im_version" -gt "06080504" ]; then
+	setcspace=""
+	cspace="sRGB"
+fi
+
+
+# read input image
+convert -quiet "$infile" $setcspace +repage $tmpA1 ||
+	echo  "--- FILE $infile DOES NOT EXIST OR IS NOT AN ORDINARY FILE, NOT READABLE OR HAS ZERO SIZE  ---"
+
+# set up colormode
+if [ "$im_version" -lt "06070900" ]; then
+	colormode=HSL
+else
+	colormode=HCL
+fi
+
+# set up blur
+if [ "$blur" = "0" ]; then
+	blurring=""
+else
+	blurring="-blur 0x$blur"
+fi
+
+# set up posterize or colors
+if [ "$number" = "0" ]; then
+	reducecolors=""
+else
+	reducecolors="+dither -$method $number"
+fi
+
+# process image
+# 1) open input image
+# 2) convert to hcl and separate channels
+# 3) clone L channel and reduce colors
+# 4) recombine with new L channel
+# 5) delete unnecessary images
+# 6) clone original image and convert to grayscale
+# 7) clone grayscale and apply unsharp masking
+# 8) subtract unsharp grayscale image from original grayscale image to get edge image, amplify and negate
+# 9) compose multiply the edge image over the reduced color image and save as output image
+convert $tmpA1 \
+	\( -clone 0 -colorspace $colormode -separate +channel \) \
+	\( -clone 3 $reducecolors \) \
+	\( -clone 1 -clone 2 -clone 4 -set colorspace $colormode -combine -colorspace $cspace \
+		-define modulate:colorspace=$colormode -modulate 100,$sat,100 \) \
+	-delete 1-4 \
+	\( -clone 0 $setcspace -colorspace gray \) \
+	\( -clone 2 -unsharp 0x$width  \) \
+	\( -clone 2 -clone 3 +swap -compose minus -composite -evaluate multiply $amount -negate \) \
+	-delete 0,2,3 -compose multiply -composite $blurring "$outfile"
+
+
+exit 0
+
+

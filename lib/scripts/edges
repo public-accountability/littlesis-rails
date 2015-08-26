@@ -1,0 +1,259 @@
+#!/bin/bash
+#
+# Developed by Fred Weinhaus 9/10/2012 .......... revised 4/25/2015
+#
+# ------------------------------------------------------------------------------
+# 
+# Licensing:
+# 
+# Copyright © Fred Weinhaus
+# 
+# My scripts are available free of charge for non-commercial use, ONLY.
+# 
+# For use of my scripts in commercial (for-profit) environments or 
+# non-free applications, please contact me (Fred Weinhaus) for 
+# licensing arrangements. My email address is fmw at alink dot net.
+# 
+# If you: 1) redistribute, 2) incorporate any of these scripts into other 
+# free applications or 3) reprogram them in another scripting language, 
+# then you must contact me for permission, especially if the result might 
+# be used in a commercial or for-profit environment.
+# 
+# My scripts are also subject, in a subordinate manner, to the ImageMagick 
+# license, which can be found at: http://www.imagemagick.org/script/license.php
+# 
+# ------------------------------------------------------------------------------
+# 
+####
+#
+# USAGE: edges [-w width ] [-b brightness] [-s smoothing] [-g] infile outfile
+# USAGE: edges [-h or -help]
+#
+# OPTIONS:
+#
+# -w      width            width of edges; integer>0; default=2
+# -b      brightness       brightening of edges; float>=0; default=5
+# -s      smoothing        pre-smoothing of the image to filter small edges; 
+#                          float>=0; default=1
+# -g                       convert image to grayscale before getting edges
+# 
+###
+#
+# NAME: EDGES 
+# 
+# PURPOSE: To apply edge extraction to image.
+# 
+# DESCRIPTION: EdGES applies edge extraction to image. The user may control 
+# any or all of the width, brightness and/or smoothing arguments. This script 
+# is similar to the Photoshop Glowing Edges filter.
+# 
+# OPTIONS: 
+#
+# -w width ... WIDTh width of extracted edges. Values are integers>0. The
+# default=2.
+# 
+# -b brightness ... BRIGHTNESS of edges. Values are floats>=0. The default=5.
+# 
+# -s smoothing ... SMOOTHING of the input image to filter out small edges.  
+# Values are floast>=0. The default=1.
+# 
+# -g ... converts the input image to GRAYSCALE before extracting edges.
+# 
+# REQUIREMENTS: IM 6.5.9.3 is required due to the use of -morphology edge.
+# 
+# CAVEAT: No guarantee that this script will work on all platforms, 
+# nor that trapping of inconsistent parameters is complete and 
+# foolproof. Use At Your Own Risk. 
+# 
+######
+#
+
+# set default values
+width=2			# width of edges
+bri=5			# brightness of edges
+smooth=1		# image smoothing
+gray="no"		# convert to grayscale
+
+# set directory for temporary files
+dir="."    # suggestions are dir="." or dir="/tmp"
+
+# set up functions to report Usage and Usage with Description
+PROGNAME=`type $0 | awk '{print $3}'`  # search for executable on path
+PROGDIR=`dirname $PROGNAME`            # extract directory of program
+PROGNAME=`basename $PROGNAME`          # base name of program
+usage1() 
+	{
+	echo >&2 ""
+	echo >&2 "$PROGNAME:" "$@"
+	sed >&2 -e '1,/^####/d;  /^###/g;  /^#/!q;  s/^#//;  s/^ //;  4,$p' "$PROGDIR/$PROGNAME"
+	}
+usage2() 
+	{
+	echo >&2 ""
+	echo >&2 "$PROGNAME:" "$@"
+	sed >&2 -e '1,/^####/d;  /^######/g;  /^#/!q;  s/^#*//;  s/^ //;  4,$p' "$PROGDIR/$PROGNAME"
+	}
+
+
+# function to report error messages
+errMsg()
+	{
+	echo ""
+	echo $1
+	echo ""
+	usage1
+	exit 1
+	}
+
+
+# function to test for minus at start of value of second part of option 1 or 2
+checkMinus()
+	{
+	test=`echo "$1" | grep -c '^-.*$'`   # returns 1 if match; 0 otherwise
+    [ $test -eq 1 ] && errMsg "$errorMsg"
+	}
+
+# test for correct number of arguments and get values
+if [ $# -eq 0 ]
+	then
+	# help information
+   echo ""
+   usage2
+   exit 0
+elif [ $# -gt 9 ]
+	then
+	errMsg "--- TOO MANY ARGUMENTS WERE PROVIDED ---"
+else
+	while [ $# -gt 0 ]
+		do
+			# get parameter values
+			case "$1" in
+		  -h|-help)    # help information
+					   echo ""
+					   usage2
+					   exit 0
+					   ;;
+				-w)    # get  width
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID WIDTH SPECIFICATION ---"
+					   checkMinus "$1"
+					   width=`expr "$1" : '\([0-9]*\)'`
+					   [ "$width" = "" ] && errMsg "--- WIDTH=$width MUST BE A NON-NEGATIVE INTEGER VALUE (with no sign) ---"
+		   			   test=`echo "$width < 1" | bc`
+					   [ $test -eq 1 ] && errMsg "--- WIDTH=$width MUST BE A POSITIVE INTEGER ---"
+					   ;;
+				-b)    # get bri
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID BRIGHTNESS SPECIFICATION ---"
+					   checkMinus "$1"
+					   bri=`expr "$1" : '\([.0-9]*\)'`
+					   [ "$bri" = "" ] && errMsg "BRIGHTNESS=$bri MUST BE A NON-NEGATIVE FLOAT"
+					   ;;
+				-s)    # get smooth
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID SMOOTHING SPECIFICATION ---"
+					   checkMinus "$1"
+					   smooth=`expr "$1" : '\([.0-9]*\)'`
+					   [ "$smooth" = "" ] && errMsg "SMOOTHING=$smooth MUST BE A NON-NEGATIVE FLOAT"
+					   ;;
+				-g)    # set gray
+					   gray="yes"
+					   ;;
+				 -)    # STDIN and end of arguments
+					   break
+					   ;;
+				-*)    # any other - argument
+					   errMsg "--- UNKNOWN OPTION ---"
+					   ;;
+		     	 *)    # end of arguments
+					   break
+					   ;;
+			esac
+			shift   # next option
+	done
+	#
+	# get infile and outfile
+	infile="$1"
+	outfile="$2"
+fi
+
+# test that infile provided
+[ "$infile" = "" ] && errMsg "NO INPUT FILE SPECIFIED"
+
+# test that outfile provided
+[ "$outfile" = "" ] && errMsg "NO OUTPUT FILE SPECIFIED"
+
+
+# setup temporary files
+tmpA1="$dir/edges_A_$$.mpc"
+tmpA2="$dir/edges_A_$$.cache"
+tmpA1="$dir/edges_A_$$.mpc"
+tmpA2="$dir/edges_A_$$.cache"
+tmpB1="$dir/edges_B_$$.mpc"
+tmpB2="$dir/edges_B_$$.cache"
+trap "rm -f $tmpA1 $tmpA2 $tmpB1 $tmpB2;" 0
+trap "rm -f $tmpA1 $tmpA2 $tmpB1 $tmpB2; exit 1" 1 2 3 15
+trap "rm -f $tmpA1 $tmpA2 $tmpB1 $tmpB2; exit 1" ERR
+
+
+if [ "$gray" = "yes" ]; then
+	grayscaling="-colorspace gray"
+else
+	grayscaling=""
+fi
+
+# test input image
+convert -quiet "$infile" $grayscaling +repage "$tmpA1" ||
+	errMsg "--- FILE $infile DOES NOT EXIST OR IS NOT AN ORDINARY FILE, NOT READABLE OR HAS ZERO SIZE  ---"
+
+
+# set up filter
+if [ "$smooth" = "0" ]; then 
+	smoothing=""
+else
+	filt=`convert xc: -format "%[fx:$smooth/2]" info:`
+	smoothing="-blur 0x$filt"
+fi
+
+# set up brightening
+if [ "$bri" = "0" ]; then
+	brightening=""
+else
+	brightening="-evaluate multiply $bri"
+fi
+
+# set up edges
+widthm1=$((width-1))
+if [ $widthm1 -eq 0 ]; then
+	widthm1=1
+	edgemode="edgeout"
+else
+	edgemode="edge"
+fi
+
+# test for non-opaque alpha channel
+convert $tmpA1 -alpha on -alpha extract $tmpB1
+test_opaque=`convert $tmpB1 -format "%[fx:mean==1?1:0]" info:`
+
+
+# process edges
+convert $tmpA1 -alpha off $smoothing \
+	-morphology $edgemode diamond:$widthm1 $brightening \
+	$tmpA1
+
+
+# add alpha channel back if needed
+if [ $test_opaque -eq 0 ]; then
+	convert $tmpA1 $tmpB1 -alpha off -compose copy_opacity -composite "$outfile"
+else
+	convert $tmpA1 "$outfile"
+fi
+
+exit 0
+
+
+
+

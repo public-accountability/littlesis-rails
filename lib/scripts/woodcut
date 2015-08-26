@@ -1,0 +1,443 @@
+#!/bin/bash
+#
+# Developed by Fred Weinhaus 9/25/2012 .......... revised 6/2/2015
+#
+# ------------------------------------------------------------------------------
+# 
+# Licensing:
+# 
+# Copyright © Fred Weinhaus
+# 
+# My scripts are available free of charge for non-commercial use, ONLY.
+# 
+# For use of my scripts in commercial (for-profit) environments or 
+# non-free applications, please contact me (Fred Weinhaus) for 
+# licensing arrangements. My email address is fmw at alink dot net.
+# 
+# If you: 1) redistribute, 2) incorporate any of these scripts into other 
+# free applications or 3) reprogram them in another scripting language, 
+# then you must contact me for permission, especially if the result might 
+# be used in a commercial or for-profit environment.
+# 
+# My scripts are also subject, in a subordinate manner, to the ImageMagick 
+# license, which can be found at: http://www.imagemagick.org/script/license.php
+# 
+# ------------------------------------------------------------------------------
+# 
+####
+#
+# USAGE: woodcut [-k king] [-p presharp] [-e edge] [-d dither] [-P postsharp] 
+# [-a azimuth] [-i intensity] [-m mix] [-c colors] [-S sat] [-H hue] 
+# infile woodfile outfile
+# 
+# USAGE: woodcut [-h or -help]
+# 
+# OPTIONS:
+# 
+# -k     kind          kind of woodcut; choices are: burn (b) or carve (c); 
+#                      default=burn
+# -p     presharp      pre-sharpening amount; float>=0; default=12
+# -e     edge          amount of edge enhancement; float>=0; default=3
+# -d     dither        dither percent strength; 0<=integer<=100; default=50
+# -P     postsharp     post-sharpening amount; float>=0; default=0
+# -a     azimuth       carve azimuth angle for shading; 0<=integer<=360; 
+#                      counterclockwise from positive x axis (East);
+#                      default=135 (NorthWest)
+# -i     intensity     intensity of carve effect; float>=0; default=1 
+# -m     mix           mix percent between processed foreground image and  
+#                      background woodfile; default=40
+# -c     colors        additional colorizing of processed image; comma
+#                      separated pair of colors for foreground and background; 
+#                      default="black,white"
+# -S     sat           saturation change for background woodfile; integer>=0; 
+#                      default=125; (100 is no change)
+# -H     hue           hue change for background woodfile; integer>=0; 
+#                      default=100 (no change) 
+# 
+# The woodfile is any woodgrain texture image that is as large or larger than 
+# the image to be processed. The center region of the woodgrain texture image 
+# will then be cropped out and used for the background image. You may create 
+# the woodgrain texture image using my script, woodgrain, for example.
+# 
+###
+# 
+# NAME: WOODCUT 
+# 
+# PURPOSE: To apply woodcut effect to an image.
+# 
+# DESCRIPTION: WOODCUT applies a woodcut effect to an image. The effect is placed 
+# over a user supplied background wood texture image. Two kinds of effects are 
+# possible: a burn-in like effect and a carved-like effect.
+# 
+# 
+# ARGUMENTS: 
+# 
+# -k kind ... KIND of woodcut. Choices are: burn (b) or carve (c). 
+# The default=burn.
+# 
+# -p presharp ... PRESHARP is the pre-sharpening amount. Values are floats>=0.
+# The default=12.
+#
+# -e edge ... EDGE is the amount of edge enhancement. Values are floats>=0. 
+# The default=3.
+# 
+# -d dither ... DITHER percent strength. Values are integers betwee 0 and 100. 
+# The default=50.
+# 
+# -P postsharp ... POSTSHARP is the post-sharpening amount. Values are 
+# floats>=0. The default=0.
+#
+# -a azimuth ... AZIMUTH is the angle in degrees in the x-y plane measured 
+# counterclockwise from EAST to the light source used for the carve effect. 
+# Values are integers in the range 0 to 360. The default=135 (NorthWest).
+# 
+# -i intensity ... INTENSITY of the carve effect. Values are floats>=0. 
+# The default=1.
+#  
+# -m mix ... MIX percent between processed image and woodfile. The default=40.
+# 
+# -c colors ... COLORS are the colors used for additional colorizing of the 
+# processed image. Values are a comma separated pair of colors for foreground 
+# and background. The default="black,white".
+# 
+# -S sat ... SAT is the saturation gain to apply to the woodfile. Values are
+# integers>=0. The default=125; (100 is no change).
+# 
+# -H hue ... HUE adjustment vallue for background woodfile. Values are 
+# integers>=0. The default=100 (no change) 
+# 
+# REQUIREMENTS: IM 6.4.8-8 in order to support -function polynomial in the 
+# carve method when intensity is other than one.
+# 
+# CAVEAT: No guarantee that this script will work on all platforms, 
+# nor that trapping of inconsistent parameters is complete and 
+# foolproof. Use At Your Own Risk. 
+# 
+######
+# 
+
+# set default values
+kind="burn"			# burn or carve
+presharp=12				# pre-sharpening
+blur=3					# blurring for edge enhancement
+dither=50				# amount of dithering
+postsharp=0				# amount of post-sharpening
+azimuth=135				# carve shading azimuth; default=135
+intensity=1				# intensity factor for carve
+mix=40					# mix of image with backround image or white; 100 is no background
+colors="black,white"	# foreground,background additional colorizing
+sat=125					# saturation
+hue=100					# hue
+
+# set directory for temporary files
+dir="."    # suggestions are dir="." or dir="/tmp"
+
+# set up functions to report Usage and Usage with Description
+PROGNAME=`type $0 | awk '{print $3}'`  # search for executable on path
+PROGDIR=`dirname $PROGNAME`            # extract directory of program
+PROGNAME=`basename $PROGNAME`          # base name of program
+usage1() 
+	{
+	echo >&2 ""
+	echo >&2 "$PROGNAME:" "$@"
+	sed >&2 -e '1,/^####/d;  /^###/g;  /^#/!q;  s/^#//;  s/^ //;  4,$p' "$PROGDIR/$PROGNAME"
+	}
+usage2() 
+	{
+	echo >&2 ""
+	echo >&2 "$PROGNAME:" "$@"
+	sed >&2 -e '1,/^####/d;  /^######/g;  /^#/!q;  s/^#*//;  s/^ //;  4,$p' "$PROGDIR/$PROGNAME"
+	}
+
+
+# function to report error messages
+errMsg()
+	{
+	echo ""
+	echo $1
+	echo ""
+	usage1
+	exit 1
+	}
+
+
+# function to test for minus at start of value of second part of option 1 or 2
+checkMinus()
+	{
+	test=`echo "$1" | grep -c '^-.*$'`   # returns 1 if match; 0 otherwise
+    [ $test -eq 1 ] && errMsg "$errorMsg"
+	}
+
+# test for correct number of arguments and get values
+if [ $# -eq 0 ]
+	then
+	# help information
+   echo ""
+   usage2
+   exit 0
+elif [ $# -gt 25 ]
+	then
+	errMsg "--- TOO MANY ARGUMENTS WERE PROVIDED ---"
+else
+	while [ $# -gt 0 ]
+		do
+			# get parameter values
+			case "$1" in
+		  -h|-help)    # help information
+					   echo ""
+					   usage2
+					   exit 0
+					   ;;
+				-k)    # get  kind
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID KIND SPECIFICATION ---"
+					   checkMinus "$1"
+					   kind=`echo "$1" | tr '[A-Z]' '[a-z]'`
+					   case "$kind" in 
+					   		burn|b) kind=burn ;;
+					   		carve|c) kind=carve;;
+					   		*) errMsg "--- KIND=$kind IS AN INVALID VALUE ---"  ;;
+					   esac
+					   ;;
+				-p)    # get presharp
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID PRESHARP SPECIFICATION ---"
+					   checkMinus "$1"
+					   presharp=`expr "$1" : '\([.0-9]*\)'`
+					   [ "$presharp" = "" ] && errMsg "--- PRESHARP=$presharp MUST BE A NON-NEGATIVE FLOAT VALUE (with no sign) ---"
+					   ;;
+				-e)    # get edge
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID EDGE SPECIFICATION ---"
+					   checkMinus "$1"
+					   edge=`expr "$1" : '\([.0-9]*\)'`
+					   [ "$edge" = "" ] && errMsg "--- EDGE=$edge MUST BE A NON-NEGATIVE FLOAT VALUE (with no sign) ---"
+					   ;;
+				-d)    # get dither
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID DITHER SPECIFICATION ---"
+					   checkMinus "$1"
+					   dither=`expr "$1" : '\([0-9]*\)'`
+					   [ "$dither" = "" ] && errMsg "--- DITHER=$dither MUST BE A NON-NEGATIVE INTEGER VALUE (with no sign) ---"
+					   test1=`echo "$dither < 0" | bc`
+					   test2=`echo "$dither > 100" | bc`
+					   [ $test1 -eq 1 -o $test2 -eq 1 ] && errMsg "--- DITHER=$dither MUST BE AN INTEGER BETWEEN 0 AND 100 ---"
+					   ;;
+				-P)    # get postsharp
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID POSTSHARP SPECIFICATION ---"
+					   checkMinus "$1"
+					   postsharp=`expr "$1" : '\([.0-9]*\)'`
+					   [ "$postsharp" = "" ] && errMsg "--- POSTSHARP=$postsharp MUST BE A NON-NEGATIVE FLOAT VALUE (with no sign) ---"
+					   ;;
+				-a)    # get azimuth
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID AZUMUTH SPECIFICATION ---"
+					   checkMinus "$1"
+					   azimuth=`expr "$1" : '\([0-9]*\)'`
+					   [ "$azimuth" = "" ] && errMsg "--- AZUMUTH=$azimuth MUST BE A NON-NEGATIVE INTEGER VALUE (with no sign) ---"
+					   test1=`echo "$azimuth < 0" | bc`
+					   test2=`echo "$azimuth > 360" | bc`
+					   [ $test1 -eq 1 -o $test2 -eq 1 ] && errMsg "--- AZUMUTH=$azimuth MUST BE AN INTEGER BETWEEN 0 AND 360 ---"
+					   ;;
+				-i)    # get intensity
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID INTENSITY SPECIFICATION ---"
+					   checkMinus "$1"
+					   intensity=`expr "$1" : '\([.0-9]*\)'`
+					   [ "$intensity" = "" ] && errMsg "--- INTENSITY=$intensity MUST BE A NON-NEGATIVE FLOAT VALUE (with no sign) ---"
+					   ;;
+				-m)    # get mix
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID MIX SPECIFICATION ---"
+					   checkMinus "$1"
+					   mix=`expr "$1" : '\([0-9]*\)'`
+					   [ "$mix" = "" ] && errMsg "--- MIX=$mix MUST BE A NON-NEGATIVE INTEGER VALUE (with no sign) ---"
+					   test1=`echo "$mix < 0" | bc`
+					   test2=`echo "$mix > 100" | bc`
+					   [ $test1 -eq 1 -o $test2 -eq 1 ] && errMsg "--- MIX=$mix MUST BE AN INTEGER BETWEEN 0 AND 100 ---"
+					   ;;
+				-c)    # get colors
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID COLORS SPECIFICATION ---"
+					   checkMinus "$1"
+					   colors="$1"
+					   ;;
+				-S)    # get sat
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID SAT SPECIFICATION ---"
+					   checkMinus "$1"
+					   sat=`expr "$1" : '\([0-9]*\)'`
+					   [ "$sat" = "" ] && errMsg "--- SAT=$sat MUST BE A NON-NEGATIVE INTEGER VALUE (with no sign) --- ---"
+					   ;;
+				-H)    # get hue
+					   shift  # to get the next parameter
+					   # test if parameter starts with minus sign 
+					   errorMsg="--- INVALID HUE SPECIFICATION ---"
+					   checkMinus "$1"
+					   hue=`expr "$1" : '\([0-9]*\)'`
+					   [ "$hue" = "" ] && errMsg "--- HUE=$hue MUST BE A NON-NEGATIVE INTEGER VALUE (with no sign) --- ---"
+					   ;;
+				 -)    # STDIN and end of arguments
+					   break
+					   ;;
+				-*)    # any other - argument
+					   errMsg "--- UNKNOWN OPTION ---"
+					   ;;
+		     	 *)    # end of arguments
+					   break
+					   ;;
+			esac
+			shift   # next option
+	done
+	#
+	# get infile and outfile
+	infile="$1"
+	woodfile="$2"
+	outfile="$3"
+fi
+
+# test that infile provided
+[ "$infile" = "" ] && errMsg "NO INPUT FILE SPECIFIED"
+
+# test that woodfile provided
+[ "$woodfile" = "" ] && errMsg "NO WOOD FILE SPECIFIED"
+
+# test that outfile provided
+[ "$outfile" = "" ] && errMsg "NO OUTPUT FILE SPECIFIED"
+
+
+# setup temp files
+tmpA1="$dir/woodcut_A_$$.mpc"
+tmpA2="$dir/woodcut_A_$$.cache"
+tmpB1="$dir/woodcut_B_$$.mpc"
+tmpB2="$dir/woodcut_B_$$.cache"
+trap "rm -f $tmpA1 $tmpA2 $tmpB1 $tmpB2;" 0
+trap "rm -f $tmpA1 $tmpA2 $tmpB1 $tmpB2; exit 1" 1 2 3 15
+trap "rm -f $tmpA1 $tmpA2 $tmpB1 $tmpB2; exit 1" ERR
+
+
+# get im_version
+im_version=`convert -list configure | \
+	sed '/^LIB_VERSION_NUMBER /!d; s//,/;  s/,/,0/g;  s/,0*\([0-9][0-9]\)/\1/g' | head -n 1`
+
+# colorspace RGB and sRGB swapped between 6.7.5.5 and 6.7.6.7 
+# though probably not resolved until the latter
+# then -colorspace gray changed to linear between 6.7.6.7 and 6.7.8.2 
+# then -separate converted to linear gray channels between 6.7.6.7 and 6.7.8.2,
+# though probably not resolved until the latter
+# so -colorspace HSL/HSB -separate and -colorspace gray became linear
+# but we need to use -set colorspace RGB before using them at appropriate times
+# so that results stay as in original script
+# The following was determined from various version tests using woodcut.
+# with IM 6.7.4.10, 6.7.6.10, 6.7.9.10
+if [ "$im_version" -lt "06070607" -o "$im_version" -gt "06070707" ]; then
+	setcspace="-set colorspace RGB"
+else
+	setcspace=""
+fi
+# no need for setcspace for grayscale or channels after 6.8.5.4
+if [ "$im_version" -gt "06080504" ]; then
+	setcspace=""
+fi
+
+
+# test input image
+convert -quiet "$infile" +repage  "$tmpA1" ||
+	errMsg "--- FILE $infile DOES NOT EXIST OR IS NOT AN ORDINARY FILE, NOT READABLE OR HAS ZERO SIZE  ---"
+
+# test wood image
+convert -quiet "$woodfile" +repage  "$tmpB1" ||
+	errMsg "--- FILE $woodfile DOES NOT EXIST OR IS NOT AN ORDINARY FILE, NOT READABLE OR HAS ZERO SIZE  ---"
+
+# get IM version
+im_version=`convert -list configure | \
+	sed '/^LIB_VERSION_NUMBER /!d; s//,/;  s/,/,0/g;  s/,0*\([0-9][0-9]\)/\1/g' | head -n 1`
+
+# test im version for compatibility to -function polynomial
+[ "$intensity" != "1" -a "$im_version" -lt "06040808" ] && errMsg "--- IM VERSION IS NOT COMPATIBLE WITH CARVE INTENSITY ---"
+
+# get image dimensions
+dim=`convert $tmpA1 -format "%wx%h" info:`
+
+if [ "$presharp" != "0" ]; then
+# use faster unsharp equivalent
+#	presharpening="-sharpen 0x$presharp"
+	presharpening="-unsharp 0x${presharp}+1+0 -clamp"
+else
+	presharpening=""
+fi
+
+if [ "$postsharp" != "0" ]; then
+# use faster unsharp equivalent
+#	postsharpening="-sharpen 0x$postsharp"
+	postsharpening="-unsharp 0x${postsharp}+1+0 -clamp"
+else
+	postsharpening=""
+fi
+
+if [ "$colors" != "black,white" ]; then
+	colorizing="+level-colors $colors"
+else
+	colorizing=""
+fi
+
+if [ "$sat" = "100" -a "$hue" = "100" ]; then
+	modulating=""
+else
+	modulating="-modulate 100,$sat,$hue"
+fi
+
+
+# convert to grayscale and sharpen
+# copy and blur
+# subtract blurred image
+# add difference to sharpened grayscale
+convert $tmpA1 $setcspace -colorspace gray $presharpening \
+	\( -clone 0 -blur 0x$edge \) \
+	\( -clone 0 -clone 1 +swap -compose minus -composite -auto-level \) \
+	\( -clone 0 -clone 2 -compose plus -composite \) -delete 0-2 \
+	$tmpA1
+	
+# clone and dither
+# blend image and dithered clone
+# sharpen
+convert $tmpA1 \
+	\( -clone 0 \
+		\( -size 20x640 gradient: -rotate 90 -colors 2 $setcspace -colorspace gray -auto-level -write mpr:dither +delete \) \
+	-dither Riemersma -remap mpr:dither \) \
+	-define compose:args=$dither -compose blend -composite $postsharpening \
+	$tmpA1
+
+if [ "$kind" = "carve" ]; then
+	#shade
+	convert $tmpA1 -shade ${azimuth}x45 $tmpA1
+	if [ "$intensity" != "1" ]; then	
+		#intensify
+		mean=`convert $tmpA1 -format "%[fx:mean]" info:`
+		aa=$intensity
+		bb=`convert xc: -format "%[fx:$mean*(1-$intensity)]" info:`
+		convert $tmpA1 -function polynomial "$aa,$bb" -clamp \
+		$tmpA1
+	fi
+fi	
+	
+# colorize and add mix amount of transparency
+# crop center of woodfile and modulate sat and hue
+# put transparent image over woodfile
+convert \( $tmpA1 $colorizing -alpha set -channel A -evaluate set $mix% -channel RGBA \) \
+	\( $tmpB1 -gravity center -crop ${dim}+0+0 +repage $modulating \) \
+	+swap -compose over -composite "$outfile"
+
+
+exit 0
