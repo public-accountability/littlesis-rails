@@ -109,6 +109,11 @@ Lilsis::Application.routes.draw do
       get 'find_merges'
       post 'merge'
       get 'refresh'
+      get 'images'
+      get 'new_image'
+      post 'upload_image'
+      post 'remove_image'
+      post 'feature_image'
     end
 
     collection do

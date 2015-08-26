@@ -1,0 +1,35 @@
+<% content_for(:page_title, raw(@entity.name + ' - images')) %>
+<%= render partial: 'header', locals: { entity: @entity } %>
+
+<h3>
+  Images 
+  &nbsp;<%= link_to('add', new_image_entity_path(@entity), class: "btn btn-default btn-sm") %>
+</h3>
+
+<table class="table">
+<% @entity.images.each do |image| %>
+  <tr>
+    <td>
+      <%= link_to(image_tag("profile/#{image.filename}"), image.image_path("large")) %>
+    </td>
+    <td>
+      <p><strong><%= image.title %></strong></p>
+      <p><%= image.caption %></p>
+      <p><em>Posted <%= image.created_at.strftime("%F") %></em></p>
+    </td>
+    <td>
+      <%= link_to("crop", crop_image_path(image)) %><br>
+      <% unless image.is_featured %>
+        <%= link_to("feature", feature_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %><br>
+      <% end %>
+      <% if current_user.has_legacy_permission('admin') and image.url %>
+        <%= link_to("view original", image.url) %><br>
+      <% end %>
+      <% if current_user.has_legacy_permission('deleter') %>
+        <%= link_to("remove", remove_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
+      <% end %>
+
+    </td>
+  </tr>
+<% end %>
+</table>

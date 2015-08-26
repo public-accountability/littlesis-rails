@@ -1,0 +1,62 @@
+<% content_for(:page_title, raw(@entity.name + ' - upload image')) %>
+<%= render partial: 'header', locals: { entity: @entity } %>
+
+<h3>
+  Add Image
+</h3>
+
+<%= form_for(@image, url: upload_image_entity_path(@entity), method: :post) do |f| %>
+  <% if @image.errors.any? %>
+    <div id="error_explanation" class="alert alert-warning">
+      <%= pluralize(@image.errors.count, "error") %> prohibited this image from being saved:
+
+      <ul>
+      <% @image.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div style="background-color: #eee; padding: 1em;">
+    You must either upload an image from your computer or enter a valid URL:
+
+    <div class="field">
+      <%= f.label :file %>
+      <%= f.file_field :file %>
+    </div>
+
+    <div class="field">
+      <%= f.label :remote_url %>
+      <%= f.text_field :url, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= f.label "Title*" %>
+    <%= f.text_field :title, class: "form-control" %>  
+  </div>
+
+  <div class="field">
+    <%= f.label :caption %>
+    <%= f.text_area :caption, class: "form-control" %> (a short description and/or image credit)
+  </div>
+
+  <div class="checkbox">
+    <%= f.label "Is free" %>
+    <%= f.check_box :is_free %>  
+  </div>
+
+  <div class="checkbox">
+    <%= f.label "Featured" %>
+    <%= f.check_box :is_featured %> (put this image on the profile page)
+  </div>
+
+  <p>By submitting this form, I am ensuring that this content does not violate any copyrights. Please see our policy regarding copyright violations and repeat infringers. </p>
+
+  <br />
+
+  <div class="actions">
+    <%= f.submit 'Upload', class: "btn btn-primary" %>
+  </div>
+<% end %>

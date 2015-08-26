@@ -10,6 +10,11 @@ class Image < ActiveRecord::Base
 
   IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }
 
+  after_save :disguise_face, if: :is_featured, unless: :has_face
+  before_destroy :unfeature, if: :is_featured
+
+  validates_presence_of :entity_id, :filename, :title
+
   def download_large_to_tmp
     download_to_tmp(s3_url("large"))
   end
@@ -108,7 +113,7 @@ class Image < ActiveRecord::Base
     if large and profile and small
       return new({
         filename: filename,
-        url: url,
+        url: url.match(/^https?:/) ? url : nil,
         width: original[:width],
         height: original[:height]
       })
@@ -291,5 +296,13 @@ class Image < ActiveRecord::Base
     `mogrify -colorspace Gray -normalize -despeckle #{tmp_path}`
     `#{Rails.root.join("lib", "scripts", method.to_s)} #{options[method]} #{tmp_path} #{tmp_path}`
     `mogrify -despeckle -normalize #{tmp_path}`
+  end
+
+  def unfeature
+    self.is_featured = false
+
+    if new_featured = Image.where(entity_id: entity_id).where.not(id: id).first
+      new_featured.update(is_featured: true)
+    end
   end
 end

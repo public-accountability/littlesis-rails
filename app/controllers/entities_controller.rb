@@ -1,6 +1,6 @@
 class EntitiesController < ApplicationController
 	before_filter :auth, except: [:show, :relationships]
-  before_action :set_entity, only: [:show, :relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge, :refresh]
+  before_action :set_entity, only: [:show, :relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge, :refresh, :images, :feature_image, :remove_image, :new_image, :upload_image]
 
   def show
     respond_to do |format|
@@ -238,6 +238,52 @@ class EntitiesController < ApplicationController
     redirect_to @entity.legacy_url
   end
 
+  def images
+    check_permission 'contributor'
+  end
+
+  def feature_image
+    image = Image.find(params[:image_id])
+    image.feature
+    redirect_to images_entity_path(@entity)
+  end
+
+  def remove_image
+    image = Image.find(params[:image_id])
+    image.destroy
+    redirect_to images_entity_path(@entity)
+  end
+
+  def new_image
+    @image = Image.new
+    @image.entity = @entity
+  end
+
+  def upload_image
+    if uploaded = image_params[:file]
+      filename = Image.random_filename(File.extname(uploaded.original_filename))      
+      src_path = Rails.root.join('tmp', filename).to_s
+      open(src_path, 'wb') do |file|
+        file.write(uploaded.read)
+      end
+    else
+      src_path = image_params[:url]
+    end
+
+    @image = Image.new_from_url(src_path)
+    @image.entity = @entity
+    @image.is_free = image_params[:is_free]
+    @image.title = image_params[:title]
+    @image.caption = image_params[:caption]
+
+    if @image.save
+      @image.feature if image_params[:is_featured]
+      redirect_to images_entity_path(@entity), notice: 'Image was successfully created.'
+    else
+      render action: 'new_image'
+    end
+  end
+
   private
 
   def set_entity
@@ -247,6 +293,12 @@ class EntitiesController < ApplicationController
   def article_params
     params.require(:article).permit(
       :title, :url, :snippet, :published_at
+    )
+  end
+
+  def image_params
+    params.require(:image).permit(
+      :file, :title, :caption, :url, :is_free, :is_featured
     )
   end
 end
