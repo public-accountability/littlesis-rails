@@ -6,6 +6,7 @@ class Image < ActiveRecord::Base
   belongs_to :address, inverse_of: :images
   
   scope :featured, -> { where(is_featured: true) }
+  scope :persons, -> { joins(:entity).where(entity: { primary_ext: 'Person' }) }
 
   IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }
 
@@ -206,10 +207,10 @@ class Image < ActiveRecord::Base
     img = MiniMagick::Image.open(tmp_path)
     img.crop("#{w}x#{h}+#{x}+#{y}")
     img.resize("#{output_size}x #{output_size}")
-    face_path = Rails.root.join("tmp", "faces", filename).to_s
-    img.write(face_path)
-    File.delete(tmp_path)
-    face_path
+    # face_path = Rails.root.join("tmp", "faces", filename).to_s
+    img.write(tmp_path)
+    # File.delete(tmp_path)
+    tmp_path
   end
 
   alias :face_to_tmp :find_face
@@ -242,6 +243,9 @@ class Image < ActiveRecord::Base
     # `convert #{face_path} -colorspace Gray -despeckle -blur 0x3 -normalize -sigmoidal-contrast 2x10% -charcoal 10 -negate -median 5 #{face_path}`
     # `convert #{face_path} -blur 0x2 -charcoal 10 -negate #{face_path}`
     # `convert #{face_path} -colorspace Gray -blur 2 -brightness-contrast 0x50 -edge 3 -negate #{face_path}`
+    # `mogrify -colorspace Gray -blur 0x1 -charcoal 20 -negate #{face_path}`
+    # `mogrify -colorspace Gray -normalize -brightness-contrast -20x30 -charcoal 5 -negate #{face_path}
+    # `mogrify -colorspace Gray -normalize -despeckle -brightness-contrast -20x10 -blur 0x2 -edge 10 -fx G #{tmp_path}`
     `convert #{face_path} -colorspace Gray -blur 0x3 -brightness-contrast 0x20 -negate -edge 3 -negate -median 10 -brightness-contrast -30x50 #{face_path}`
     return face_path
   end
@@ -251,5 +255,41 @@ class Image < ActiveRecord::Base
     result = self.class.create_asset(filename, 'face', face_path, output_size, output_size)
     File.delete(face_path)
     return result
+  end
+
+  def disguise_face(method = :sketch)
+    found_face = false
+
+    [50, 100, 20].each do |face_size|
+      if face_to_tmp(face_size, -0.2)
+        found_face = true
+        break
+      end
+    end
+
+    return false unless (found_face or download_profile_to_tmp)
+    disguise_tmp(method)
+    S3.upload_file(Lilsis::Application.config.aws_s3_bucket, "images/face/#{filename}", tmp_path, check_first = false)
+    File.delete(tmp_path)
+    true
+  end
+
+  def disguise_tmp(method = :sketch)
+    # `mogrify -colorspace Gray -normalize -despeckle -blur 0x2 -edge 5 -fx G -paint 5 -blur 0x1 #{tmp_path}`
+
+    options = {
+      posteredges: '-w 10 -a 5',
+      lichtenstein: '',
+      woodcut: '-d 0',
+      retinex: '-m RGB -f 50',
+      sketch: '-k gray -c 175 -g',
+      vintage3: '-S 0 -s none',
+      stutter: '-s 20 -d xy',
+      edges: '-w 1 -s 2'
+    }
+
+    `mogrify -colorspace Gray -normalize -despeckle #{tmp_path}`
+    `#{Rails.root.join("lib", "scripts", method.to_s)} #{options[method]} #{tmp_path} #{tmp_path}`
+    `mogrify -despeckle -normalize #{tmp_path}`
   end
 end

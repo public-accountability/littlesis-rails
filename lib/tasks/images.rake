@@ -165,4 +165,21 @@ namespace :images do
       end
     end
   end
+
+  desc "generate disguised faces for featured person images"
+  task generate_featured_faces: :environment do
+    limit = ENV['LIMIT'].to_i or 1000
+    images = Image.joins(:entity).featured.persons.where(has_face: false).limit(limit)
+    num = images.count
+    print "found #{num} featured person images...\n"
+
+    images.each_with_index do |image, i|
+      if result = image.disguise_face
+        image.update(has_face: true)
+        print "[#{i+1}/#{num}] + uploaded disguised face for image #{image.id} (#{image.entity.name})\n"
+      else
+        print "[#{i+1}/#{num}] - FAILED to upload disguised face for image #{image.id} (#{image.entity.name})\n"
+      end
+    end
+  end
 end

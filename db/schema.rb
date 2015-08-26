@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150618205223) do
+ActiveRecord::Schema.define(version: 20150826164457) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -522,6 +522,7 @@ ActiveRecord::Schema.define(version: 20150618205223) do
     t.boolean  "has_square",                      default: false, null: false
     t.integer  "address_id"
     t.string   "raw_address",  limit: 200
+    t.boolean  "has_face",                        default: false, null: false
   end
 
   add_index "image", ["address_id"], name: "index_image_on_address_id", using: :btree
