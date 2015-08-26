@@ -168,7 +168,7 @@ namespace :images do
 
   desc "generate disguised faces for featured person images"
   task generate_featured_faces: :environment do
-    limit = ENV['LIMIT'].to_i or 1000
+    limit = (ENV['LIMIT'] or '1000').to_i
     images = Image.joins(:entity).featured.persons.where(has_face: false).limit(limit)
     num = images.count
     print "found #{num} featured person images...\n"
