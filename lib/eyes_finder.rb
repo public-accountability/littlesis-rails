@@ -7,8 +7,8 @@ class EyesFinder
   def initialize(path, face_size = 100)
     @path = path
     @face_size = face_size
-    @face_detector = CvHaarClassifierCascade::load("haar-cascades/haarcascade_frontalface_default.xml")
-    @eye_detector = CvHaarClassifierCascade::load("haar-cascades/haarcascade_eye.xml")
+    @face_detector = CvHaarClassifierCascade::load(Rails.root.join("data", "haar-cascades", "haarcascade_frontalface_default.xml").to_s)
+    @eye_detector = CvHaarClassifierCascade::load(Rails.root.join("data", "haar-cascades", "haarcascade_eye.xml").to_s)
     @is_loaded = true
     begin
       @image = IplImage.load(path)
