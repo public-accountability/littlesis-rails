@@ -194,7 +194,9 @@ class NetworkMap < ActiveRecord::Base
     local_path = "tmp/map-#{id}.png"
     s3_path = "images/maps/#{id}.png"
 
-    system("phantomjs vendor/assets/javascripts/makemaps.js #{url} #{local_path}")
+    command = "phantomjs vendor/assets/javascripts/makemaps.js #{url} #{local_path}"
+    print command + "\n"
+    `#{command}`
 
     obj = bucket.objects[s3_path]
     obj.write(Pathname.new(local_path), { acl: :public_read })

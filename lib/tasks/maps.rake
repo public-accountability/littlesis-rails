@@ -27,16 +27,27 @@ namespace :maps do
   task fix_image_urls: :environment do
     bucket_name = Lilsis::Application.config.aws_s3_bucket
 
+    def entity_type(entity)
+      return entity['type'] if entity['type']
+      if entity = Entity.where(id: entity['id']).first
+        return entity.primary_ext
+      end
+      nil
+    end
+
     NetworkMap.all.each do |map|
       hash = JSON.parse(map.data)
 
+      print "fixing urls in map #{map.id}...\n"
+
       entities = hash['entities'].map do |entity|
         if entity['image'].present?
-          image = entity['image']
+          image = entity['image'].dup
 
           entity['image'].gsub!(/(s3\.amazonaws\.com\/)[^\/]+/i, '\1' + bucket_name) 
           entity['image'].gsub!(/\/\/[^\.]+(\.s3\.amazonaws\.com)/i, bucket_name + '\1')
           entity['image'].gsub!(/^https?:\/\//i, "//")
+          entity['image'].gsub!(/\/profile\//, "/face/") if entity_type(entity) == 'Person'
 
           print "replaced #{image} with #{entity['image']}\n" unless image == entity['image']
         end
