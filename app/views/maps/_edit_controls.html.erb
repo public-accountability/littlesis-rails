@@ -259,8 +259,8 @@ $(window).ready(function(){
     var form = $(selector);
     var parent = $(netmap.parent_selector);
     parent.append(form);
-    form.css("left", netmap.mouse_x - parent.offset().left - 30 + "px")
-    form.css("top", netmap.mouse_y - parent.offset().top - 60 + "px")
+    form.css("right", "5px")
+    form.css("bottom", "5px")
     form.css("display", form.css("display") == "none" ? "block" : "none")    
   }
 
@@ -306,7 +306,7 @@ $(window).ready(function(){
 
   $('#netmap_add_node_form').on('submit', function() {
     var name = $('#netmap_add_node_name').val();
-    position = [$('#netmap_add_node').offset().left - netmap.width/2, $('#netmap_add_node').offset().top - netmap.height/2 - 100];
+    position = [0, 0];
     if (name) {
       netmap.add_node(name, position[0], position[1]);
       $('#netmap_add_node').css('display', 'none');
@@ -368,7 +368,7 @@ $(window).ready(function(){
 
   $("#netmap_add_text_form").on("submit", function(e) {
     var content = $("#netmap_add_text_content").val();
-    position = [$("#netmap_add_text").offset().left - netmap.width/2, $("#netmap_add_text").offset().top - netmap.height/2 - 100];
+    position = [0, 0];
     netmap.add_text(content, position[0], position[1]);
     $('#netmap_add_text').css('display', 'none');
     return false;
