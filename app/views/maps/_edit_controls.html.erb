@@ -79,16 +79,7 @@ Categories:
       <td>Category</td>
       <td><select id="netmap_add_edge_category_id" class="form-control">
         <option value=""></opton>
-        <option value="1">Position</option>
-        <option value="2">Education</option>
-        <option value="3">Membership</option>
-        <option value="4">Family</option>
-        <option value="5">Donation</option>
-        <option value="6">Transaction</option>
-        <option value="7">Lobbying</option>
-        <option value="8">Social</option>
-        <option value="9">Professional</option>
-        <option value="10">Ownership</option>
+        <%= options_for_select(Relationship.category_hash.invert) %>
       </select></td>
     </tr>
     <tr>
@@ -142,16 +133,7 @@ Categories:
 <h3>Add Related Entities</h3>
 <input id="netmap_add_related_entities_num" type="text" class="form-control" value="10" size="2" />
 <select id="netmap_add_related_entities_cat_ids" class="form-control netmap-cat-ids">
-  <option value="1">Position</option>
-  <option value="2">Education</option>
-  <option value="3">Membership</option>
-  <option value="4">Family</option>
-  <option value="5">Donation</option>
-  <option value="6">Transaction</option>
-  <option value="7">Lobbying</option>
-  <option value="8">Social</option>
-  <option value="9">Professional</option>
-  <option value="10">Ownership</option>
+  <%= options_for_select(Relationship.category_hash.invert) %>
 </select>
 <input id="netmap_add_related_entities_button" type="button" class="btn btn-default" value="add" />
 </div>
