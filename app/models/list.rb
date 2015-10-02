@@ -3,6 +3,7 @@ class List < ActiveRecord::Base
 
   include SoftDelete
   include Cacheable
+  include Referenceable
 
   has_many :list_entities, inverse_of: :list, dependent: :destroy
   has_many :entities, through: :list_entities

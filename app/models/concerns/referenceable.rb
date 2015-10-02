@@ -10,7 +10,7 @@ module Referenceable
   end
   
   def references
-    Reference.where(object_model: self.class.name, object_id: id)
+    Reference.where(object_model: self.class.table_name.classify, object_id: id)
   end
 
   def add_reference(source, name = nil)

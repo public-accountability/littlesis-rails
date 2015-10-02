@@ -1,3 +1,5 @@
+@import "globals";
+
 td.lists_table_name {
 	min-width: 350px;
 	font-weight: bold;
@@ -40,4 +42,22 @@ td.lists_table_name {
 
 #list-search {
   width: 400px;
+}
+
+.list_tabs ul.tabs {
+  li a {
+    background-color: $red_light;
+  }
+
+  li:hover a {
+    background-color: $red;
+  }
+
+  li.active a {
+    background-color: $red;
+  }
+}
+
+#list-sources {
+  font-size: 16px;
 }

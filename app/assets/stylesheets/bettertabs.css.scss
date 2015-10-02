@@ -14,16 +14,16 @@
 
 			a { 
 				display: block;
-				font-size: 1.2em;
-				padding: 0.5em;
-				padding-left: 1em;
-				padding-right: 1em;
+				font-size: 17px;
+				padding: 0.4em;
+				padding-left: 0.8em;
+				padding-right: 0.8em;
 				border: 0;
 				margin-right: 0.5em;
 				color: white;
 				background-color: $logo_blue_lighter;
-				border-top-left-radius: 1em;
-				border-top-right-radius: 1em;
+				border-top-left-radius: 10px;
+				border-top-right-radius: 10px;
 
 				&:hover {
 					text-decoration: none;
