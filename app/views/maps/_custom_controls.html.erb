@@ -26,13 +26,14 @@
         <input id="netmap_entity_image" type="checkbox" /> Image
       </label>
     </div>
+    &nbsp;<input id="netmap_entity_image_url" type="text" class="form-control" placeholder="image URL" />
     &nbsp;<select id="netmap_entity_scale" class="form-control">
       <option value="1">1x</option>
       <option value="1.5">1.5x</option>
       <option value="2">2x</option>
       <option value="3">3x</option>
     </select>
-    &nbsp;<input id="netmap_entity_label" type="text" class="form-control" />
+    &nbsp;<input id="netmap_entity_label" type="text" class="form-control" placeholder="label" />
     <button id="netmap_entity_apply" class="btn btn-default">Apply</button>
   </div>
   <div id="netmap_edit_text">
@@ -55,6 +56,7 @@ $(window).ready(function() {
     var entity_label = $('#netmap_entity_label')[0];
     var entity_scale = $('#netmap_entity_scale')[0];
     var entity_image = $('#netmap_entity_image')[0];
+    var entity_image_url = $('#netmap_entity_image_url')[0];
 
     var text_div = $('#netmap_edit_text')[0];
     var text_content = $('#netmap_text_content')[0];
@@ -70,6 +72,7 @@ $(window).ready(function() {
         entity_label.value = '';
         entity_scale.value = '';
         entity_image.checked = true;
+        entity_image_url.value = '';
         entity_div.style.display = 'none';
 
         text_content.value = '';
@@ -78,6 +81,12 @@ $(window).ready(function() {
         entity_label.value = netmap.get_selected_entity_label();
         entity_scale.value = netmap.get_selected_entity_scale();
         entity_image.checked = !netmap.get_selected_entity().hide_image;
+        entity_image_url.disabled = !entity_image.checked;
+        image = netmap.get_selected_entity().image;
+        if (image && !image.match(/^https?:/)) {
+          image = "http:" + image;          
+        }
+        entity_image_url.value = image;
         entity_div.style.display = 'block';
   
         rel_label.value = '';
@@ -95,6 +104,7 @@ $(window).ready(function() {
         entity_label.value = '';
         entity_scale.value = '';
         entity_image.checked = true;
+        entity_image_url.value = '';
         entity_div.style.display = 'none';
 
         rel_label.value = '';
@@ -112,6 +122,7 @@ $(window).ready(function() {
       entity_label.value = '';
       entity_scale.value = '';
       entity_image.checked = true;
+      entity_image_url.value = '';
       entity_div.style.display = 'none';
 
       text_content.value = '';
@@ -150,10 +161,15 @@ $(window).ready(function() {
     netmap.editing_entity = false
   });
 
+  $('#netmap_entity_image').on('change', function() { 
+    $('#netmap_entity_image_url').prop('disabled', !this.checked);
+  });
+
   $('#netmap_entity_apply').on('click', function() {
     var label = $('#netmap_entity_label')[0].value;
     var scale = +$('#netmap_entity_scale')[0].value;
     var hide_image = !$('#netmap_entity_image')[0].checked;
+    var image = $('#netmap_entity_image_url')[0].value;
 
     if (label) {
       netmap.set_selected_entity_label(label);
@@ -164,6 +180,13 @@ $(window).ready(function() {
     }
 
     netmap.set_selected_entity_hide_image(hide_image);
+
+    if (!hide_image) {
+      if (image.match(/pai-littlesis/)) {
+        image = image.replace(/https?:/, "");
+      }
+      netmap.set_selected_entity_image(image);
+    }
   });
 
   $('#netmap_text_content').on('focus', function() {

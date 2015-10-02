@@ -191,8 +191,8 @@ svg image {
 }
 
 svg .image {
-  fill: white;
-  background-color: white;
+  fill: #8bc8f0;
+  background-color: #8bc8f0;
 }
 
 .map-top-row {
@@ -515,6 +515,11 @@ h1.map-title {
 
   #netmap_entity_scale { 
     width: 50px;
+    display: inline-block;
+  }
+
+  #netmap_entity_image_url {
+    width: 200px;
     display: inline-block;
   }
 }
