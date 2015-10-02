@@ -1,0 +1,23 @@
+// Place all the styles related to the Search controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.search-result-link {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.entity-search-result {
+  margin-bottom: 0.9em;
+  line-height: 16px;
+}
+
+.entity-search-result-summary {
+  font-size: 11px;
+  line-height: 11px;
+}
+
+.search-results mark {
+  font-weight: 800;
+  background-color: white;
+}

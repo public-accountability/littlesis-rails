@@ -176,6 +176,8 @@ Lilsis::Application.routes.draw do
 
   resources :industries, only: [:show]
 
+  get "/search" => "search#basic"
+
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
   get "/home/maps" => "home#maps"
