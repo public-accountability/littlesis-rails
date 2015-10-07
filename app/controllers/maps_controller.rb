@@ -10,7 +10,7 @@ class MapsController < ApplicationController
   protect_from_forgery except: [:create, :create_annotation, :update_annotation]
 
   def index
-    maps = NetworkMap.order("updated_at DESC, id DESC")
+    maps = NetworkMap.order("created_at DESC, id DESC")
 
     unless current_user.present? and current_user.has_legacy_permission('admin')
       if current_user.present?
