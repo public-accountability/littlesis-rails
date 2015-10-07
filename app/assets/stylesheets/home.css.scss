@@ -21,3 +21,38 @@
 	font-weight: normal;
 	a { color: #888; }
 }
+
+.dashboard-entity {
+  margin-bottom: 0.2em;
+  line-height: 17px;
+}
+
+.dashboard-entity-link {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.dashboard-map {
+	display: inline-block;
+	width: 280px;
+	text-align: center;
+	margin-right: 30px;
+	margin-bottom: 30px;
+}
+
+.dashboard-map-thumbnail {
+	width: 280px;
+	height: 161px;
+	margin-bottom: 10px;
+	border: 1px solid #ddd;
+}
+
+.dashboard-private-map-thumbnail {
+	width: 280px;
+	height: 161px;
+	background-image: asset-url('lock-128.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	margin-bottom: 10px;
+	border: 1px solid #ddd;
+}

@@ -1,6 +1,11 @@
 <% content_for(:page_title, "Dashboard") %>
 
-<div class="left_column">
+<h1>Dashboard</h1>
+
+<div class="spacer"></div>
+
+<div class="row">
+<div class="col-md-6">
 
 <% if notice %>
 	<div class="alert alert-success"><%= notice %></div>
@@ -21,52 +26,49 @@
 	</div>
 </form>
 
+</div>
+</div>
+
+<h3>Explore</h3>
+
+<%= link_to("Maps", maps_path, class: "btn btn-default") %>
+<%= link_to("Lists", lists_path, class: "btn btn-default") %>
+<%= link_to("Groups", groups_path, class: "btn btn-default") %>
+<%= link_to("Notes", notes_path, class: "btn btn-default") %>
+<%= link_to("Edits", edits_path, class: "btn btn-default") %>
+
 <div class="spacer"></div>
+
+<h3>Your Edits</h3>
+
+<% @recent_updates.each do |entity| %>
+  <div class="dashboard-entity">
+    <span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
+  </div>
+<% end %>
+
 <div class="spacer"></div>
 
 <h3>
-	Recent Notes
-	<span class="btn btn-link btn-sm"><%= link_to 'see all', notes_path %></span>
+	Your Maps
+	<%= header_action('details', home_maps_path) %>
 </h3>
 
-<%= render partial: "notes/new", locals: { redirect: home_dashboard_path } %>
-
-<div class="spacer"></div>
-
-<div class="notes_list">
-<% cache(current_user.cache_key('dashboard/notes'), expires_in: 10.minutes) do %>
-<% @notes.each do |note| %>
-	<% if note.visible_to?(current_user) %>
-		<%= render partial: "notes/note", locals: { note: note, user: current_user } %>
-	<% end %>
+<% @maps.each do |map| %>
+	<div class="dashboard-map">
+		<a href="<%= map_path(map) %>">
+			<% if map.is_private %>
+				<div class="dashboard-private-map-thumbnail"></div>
+			<% else %>
+				<%= image_tag(map.thumbnail, class: "dashboard-map-thumbnail") %><br>
+			<% end %>
+			<%= map.title %>
+		</a>
+	</div>
 <% end %>
-<% end %>
-</div>
-
-</div>
-
-<div class="right_column">
-
-<div id="dashboard_user_image"><%= user_image(current_user) %></div>
-<div id="dashboard_user_name">
-	<%= user_link(current_user) %><br >
-	<span id="dashboard_user_network"><%= link_to current_user.default_network.name, current_user.default_network.legacy_network_url %></span>
-</div>
-
-<div class="spacer"></div>
-<div class="spacer"></div>
-
-<% if @campaigns.present? %>
-	<% @campaigns.each do |campaign| %>
-		<strong><%= campaign_link(campaign) %></strong><br />
-	<% end %>
-<% end %>
-
-<div class="spacer"></div>
-<div class="spacer"></div>
 
 <h3>
-	Research Groups
+	Your Groups
 	<%= header_action('details', home_groups_path) %>
 </h3>
 
@@ -77,17 +79,3 @@
 <% else %>
 	<%= link_to 'Join a group', groups_path %>
 <% end %>
-
-<div class="spacer"></div>
-<div class="spacer"></div>
-
-<h3>
-	Recent Edits
-	<%= header_action('see all', edits_path) %>
-</h3>
-
-<% cache(current_user.cache_key('dashboard/edits'), expires_in: 10.minutes) do %>
-	<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates, no_edits_message: "You haven't made any edits yet. View the #{link_to('help pages', '/beginnerhelp')} to learn how." } %>
-<% end %>
-
-</div>

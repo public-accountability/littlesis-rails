@@ -29,5 +29,13 @@ every 1.day do
 end
 
 every 1.day, at: '5:00 am' do
-  rake "ts:rebuild", output: nil
+  rake "ts:index", output: nil
+end
+
+every 1.day, at: '5:30 am' do
+  rake "maps:generate_recent_thumbs", output: nil
+end
+
+every :sunday, at: "6:00 am" do
+  rake "maps:generate_all_thumbs", output: nil
 end
