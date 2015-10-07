@@ -36,6 +36,7 @@
 
   <% if @entities.count > 0 %>
     <h3>Entities</h3>
+    <%= paginate @entities %>
     <% @entities.each do |entity| %>
       <div class="entity-search-result">
         <span class="search-result-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em><br>
