@@ -42,7 +42,14 @@ class EntitiesController < ApplicationController
 		q = params[:q]
     num = params.fetch(:num, 10)
     fields = params[:desc] ? 'name,aliases,blurb' : 'name,aliases'
-		entities = Entity.search "@(#{fields}) #{q}", per_page: num, match_mode: :extended, with: { is_deleted: false }
+		entities = Entity.search(
+      "@(#{fields}) #{q}", 
+      per_page: num, 
+      match_mode: :extended, 
+      with: { is_deleted: false },
+      select: "*, weight() * (link_count + 1) AS link_weight",
+      order: "link_weight DESC"
+    )
 		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb, url: relationships_entity_path(e) } }
 
     if list_id = params[:exclude_list]

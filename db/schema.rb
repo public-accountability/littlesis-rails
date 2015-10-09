@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150826164457) do
+ActiveRecord::Schema.define(version: 20151009211944) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -340,6 +340,7 @@ ActiveRecord::Schema.define(version: 20150826164457) do
     t.integer  "last_user_id"
     t.integer  "merged_id"
     t.boolean  "delta",                           default: true,  null: false
+    t.integer  "link_count",   limit: 8,          default: 0,     null: false
   end
 
   add_index "entity", ["blurb"], name: "blurb_idx", using: :btree

@@ -8,7 +8,14 @@ class SearchController < ApplicationController
       q = Riddle::Query.escape(@q)
       page = (params[:page] or 1).to_i
 
-      @entities = Entity.search("@(name,aliases) #{q}", page: page, match_mode: :extended, with: { is_deleted: false })
+      @entities = Entity.search(
+        "@(name,aliases) #{q}", 
+        page: page, 
+        match_mode: :extended,
+        with: { is_deleted: false },
+        select: "*, weight() * (link_count + 1) AS link_weight",
+        order: "link_weight DESC"
+      )
 
       if page > 1
         @groups = []

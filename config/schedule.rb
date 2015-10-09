@@ -28,6 +28,10 @@ every 1.day do
   rake "sessions:clear_expired", output: nil
 end
 
+every 1.day, at: '4:30 am' do
+  rake "entities:update_link_counts", output: nil
+end
+
 every 1.day, at: '5:00 am' do
   rake "ts:index", output: nil
 end
