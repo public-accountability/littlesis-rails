@@ -1,6 +1,6 @@
 class ListsController < ApplicationController
-  before_filter :auth, except: [:index, :relationships, :members, :clear_cache]
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete]
+  before_filter :auth, except: [:index, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
 
   # GET /lists
   def index
@@ -158,6 +158,72 @@ class ListsController < ApplicationController
     redirect_to lists_path
   end
 
+  def interlocks
+    # get people in the list
+    entity_ids = @list.entities.people.map(&:id)
+
+    # get entities related by position or membership
+    select = "e.*, COUNT(DISTINCT r.entity1_id) num, GROUP_CONCAT(DISTINCT r.entity1_id) degree1_ids, GROUP_CONCAT(DISTINCT ed.name) types"
+    from = "relationship r LEFT JOIN entity e ON (e.id = r.entity2_id) LEFT JOIN extension_record er ON (er.entity_id = e.id) LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)"
+    where = "r.entity1_id IN (#{entity_ids.join(',')}) AND r.category_id IN (#{Relationship::POSITION_CATEGORY}, #{Relationship::MEMBERSHIP_CATEGORY}) AND r.is_deleted = 0"
+    sql = "SELECT #{select} FROM #{from} WHERE #{where} GROUP BY r.entity2_id ORDER BY num DESC"
+    db = ActiveRecord::Base.connection
+    orgs = db.select_all(sql).to_hash
+
+    # filter entities by type
+    @companies = orgs.select { |org| org['types'].split(',').include?('Business') }
+    @govt_bodies = orgs.select { |org| org['types'].split(',').include?('GovernmentBody') }
+    @others = orgs.select { |org| (org['types'].split(',') & ['Business', 'GovernmentBody']).empty? }
+  end
+
+  def companies
+    @companies = interlocks_results(
+      category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
+      order: 2, 
+      degree1_ext: 'Person',
+      degree2_type: 'Business'      
+    )
+  end
+
+  def government
+    @govt_bodies = interlocks_results(
+      category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
+      order: 2, 
+      degree1_ext: 'Person',
+      degree2_type: 'GovernmentBody'
+    )
+  end
+
+  def other_orgs
+    @others = interlocks_results(
+      category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
+      order: 2, 
+      degree1_ext: 'Person',
+      exclude_degree2_types: ['Business', 'GovernmentBody']
+    )
+  end
+
+  def references
+  end
+
+  def giving
+    @recipients = interlocks_results(
+      category_ids: [Relationship::DONATION_CATEGORY],
+      order: 2,
+      degree1_ext: 'Person',
+      sort: :amount
+    )
+  end
+
+  def funding
+    @donors = interlocks_results(
+      category_ids: [Relationship::DONATION_CATEGORY],
+      order: 1,
+      degree1_ext: 'Person',
+      sort: :amount
+    )  
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_list
@@ -167,5 +233,13 @@ class ListsController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def list_params
       params[:list]
+    end
+
+    def interlocks_results(options)
+      @page = params.fetch(:page, 1)
+      num = params.fetch(:num, 20)
+      results = @list.interlocks(options).page(@page).per(num)
+      count = @list.interlocks_count(options)
+      Kaminari.paginate_array(results.to_a, total_count: count).page(@page).per(num)
     end
 end

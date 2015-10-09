@@ -1,0 +1,36 @@
+<% content_for(:page_title, raw(@list.name + ' - Interlocks')) %>
+
+<%= render partial: 'header', locals: { list: @list } %>
+<%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :funding } %>
+
+<%= render partial: "lists/interlocks_alert" %>
+
+<% cache(@list.cache_key('funding', nil, { page: @page }), expires_in: 1.day) do %>
+
+  <% if @donors.count > 0 %>
+  <h3>Common Donors</h3>
+  <% if local_assigns[:preview] %>
+    <%= paginate_preview(@donors, 5, funding_list_path) %>
+  <% else %>
+    <%= paginate(@donors) %>
+  <% end %>
+  <table class="table interlocks-table">
+    <thead>
+      <th>Donor</th>
+      <th>Total</th>
+      <th>People</th>
+    </thead>
+    <tbody>
+      <% (local_assigns[:preview] ? @donors.take(5) : @donors).each do |org| %>
+        <tr>
+          <td><strong><%= entity_hash_link(org) %></strong></td>
+          <td><%= number_to_currency(org['total_amount'].to_i, precision: 0) %></td>
+          <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br>
+  <% end %>
+
+<% end %>

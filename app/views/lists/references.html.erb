@@ -1,0 +1,11 @@
+<% content_for(:page_title, raw(@list.name)) %>
+
+<%= render partial: 'header', locals: { list: @list } %>
+
+<%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :members } %>
+
+<div id="list-sources">
+  <% @list.references.each do |ref| %>
+    <%= link_to(ref.name, ref.source) %><br>
+  <% end %>
+</div>

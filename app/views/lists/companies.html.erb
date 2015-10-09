@@ -1,0 +1,10 @@
+<% content_for(:page_title, raw(@list.name + ' - Interlocks')) %>
+
+<%= render partial: 'header', locals: { list: @list } %>
+<%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :interlocks } %>
+
+<%= render partial: "lists/interlocks_alert" %>
+
+<% cache(@list.cache_key('companies', nil, { page: @page }), expires_in: 1.day) do %>
+  <%= render partial: "lists/companies", locals: { companies: @companies } %>
+<% end %>

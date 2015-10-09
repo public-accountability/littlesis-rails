@@ -1,0 +1,36 @@
+<% content_for(:page_title, raw(@list.name + ' - Interlocks')) %>
+
+<%= render partial: 'header', locals: { list: @list } %>
+<%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :giving } %>
+
+<%= render partial: "lists/interlocks_alert" %>
+
+<% cache(@list.cache_key('giving', nil, { page: @page }), expires_in: 1.day) do %>
+
+  <% if @recipients.count > 0 %>
+  <h3>Common Recipients</h3>
+  <% if local_assigns[:preview] %>
+    <%= paginate_preview(@recipients, 5, giving_list_path) %>
+  <% else %>
+    <%= paginate(@recipients) %>
+  <% end %>
+  <table class="table interlocks-table">
+    <thead>
+      <th>Recipient</th>
+      <th>Total</th>
+      <th>People</th>
+    </thead>
+    <tbody>
+      <% (local_assigns[:preview] ? @recipients.take(5) : @recipients).each do |org| %>
+        <tr>
+          <td><strong><%= entity_hash_link(org) %></strong></td>
+          <td><%= number_to_currency(org['total_amount'].to_i, precision: 0) %></td>
+          <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br>
+  <% end %>
+
+<% end %>

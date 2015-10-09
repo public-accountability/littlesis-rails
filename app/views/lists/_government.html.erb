@@ -1,0 +1,23 @@
+<% if govt_bodies.count > 0 %>
+<h3>Government Bodies</h3>
+<% if local_assigns[:preview] %>
+  <%= paginate_preview(govt_bodies, 5, government_list_path) %>
+<% else %>
+  <%= paginate(govt_bodies) %>
+<% end %>
+<table class="table interlocks-table">
+  <thead>
+    <th>Govt Body</th>
+    <th>People</th>
+  </thead>
+  <tbody>
+    <% (local_assigns[:preview] ? govt_bodies.take(5) : govt_bodies).each do |org| %>
+      <tr>
+        <td><strong><%= entity_hash_link(org) %></strong></td>
+        <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br>
+<% end %>

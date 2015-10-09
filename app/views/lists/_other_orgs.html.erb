@@ -1,0 +1,22 @@
+<% if others.count > 0 %>
+<h3>Other Organizations</h3>
+<% if local_assigns[:preview] %>
+  <%= paginate_preview(others, 5, other_orgs_list_path) %>
+<% else %>
+  <%= paginate(others) %>
+<% end %>
+<table class="table interlocks-table">
+  <thead>
+    <th>Org</th>
+    <th>People</th>
+  </thead>
+  <tbody>
+    <% (local_assigns[:preview] ? others.take(5) : others).each do |org| %>
+      <tr>
+        <td><strong><%= entity_hash_link(org) %></strong></td>
+        <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %>

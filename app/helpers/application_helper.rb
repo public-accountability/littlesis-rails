@@ -151,4 +151,8 @@ module ApplicationHelper
     end
     raw(str)
   end
+
+  def paginate_preview(ary, num, path)
+    raw("1-#{num} of #{ary.count} :: " + link_to("see all", path))
+  end
 end

@@ -82,6 +82,13 @@ Lilsis::Application.routes.draw do
       get 'clear_cache'
       post 'add_entity'
       post 'delete'
+      get 'interlocks'
+      get 'companies'
+      get 'government'
+      get 'other_orgs'
+      get 'references'
+      get 'giving'
+      get 'funding'
     end
   end
 

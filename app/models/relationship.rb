@@ -3,6 +3,12 @@ class Relationship < ActiveRecord::Base
   include SoftDelete
   include Referenceable
 
+  POSITION_CATEGORY = 1
+  EDUCATION_CATEGORY = 2
+  MEMBERSHIP_CATEGORY = 3
+  FAMILY_CATEGORY = 4
+  DONATION_CATEGORY = 5
+
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
