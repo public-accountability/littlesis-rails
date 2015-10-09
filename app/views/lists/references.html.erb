@@ -2,7 +2,7 @@
 
 <%= render partial: 'header', locals: { list: @list } %>
 
-<%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :members } %>
+<%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :sources } %>
 
 <div id="list-sources">
   <% @list.references.each do |ref| %>
