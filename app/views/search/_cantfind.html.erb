@@ -1,0 +1,15 @@
+<br>
+<h3>Can't find something that should be on LittleSis?</h3>
+
+<% pointer_text = '' %>
+
+<% if user_signed_in? %>
+  <% pointer_text += 'Add it now: ' %>
+  <% pointer_text += '&nbsp;<strong>' + link_to('New Person', 'entity/addPerson', class: "btn btn-primary") + '</strong> &nbsp;<strong>' + link_to('New Organization', 'entity/addOrg', class: "btn btn-primary") + '</strong>' %>
+<% else %>
+  <% query_str = params.to_query %>
+  <% referer = request.fullpath[0] + (query_str ? '?' + query_str : '') %>
+  <% pointer_text += '<strong>' + link_to('Login', legacy_login_path) + '</strong> or <strong>' + link_to('sign up', legacy_signup_path) + '</strong> to add it yourself!' %>
+<% end %>            
+
+<div class="pointer_box padded"><span class ="text_big"><%= raw(pointer_text) %></span></div>
