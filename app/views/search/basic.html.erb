@@ -1,3 +1,5 @@
+<% content_for(:page_title, "Search" + (params[:q].present? ? " - " + params[:q] : "")) %>
+
 <h1>Search</h1>
 
 <%= form_tag search_path, method: :get do %>
