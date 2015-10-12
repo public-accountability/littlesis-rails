@@ -64,6 +64,6 @@
 
 </div>
 
-<% if params[:q] %>
+<% if params[:q].present? %>
   <%= render partial: "cantfind" %>
 <% end %>
