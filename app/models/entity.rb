@@ -57,7 +57,7 @@ class Entity < ActiveRecord::Base
   scope :orgs, -> { where(primary_ext: 'Org') }
 
   before_create :set_last_user_id
-  after_create :create_primary_alias, :create_primary_ext
+  after_create :create_primary_alias, :create_primary_ext, :add_to_default_network
 
   def set_last_user_id
     self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
@@ -70,6 +70,10 @@ class Entity < ActiveRecord::Base
   def create_primary_ext
     fields = person? ? NameParser.parse_to_hash(name) : {}
     add_extension(primary_ext, fields)
+  end
+
+  def add_to_default_network
+    self.lists << List.default_network unless lists.count > 0
   end
 
   def to_param

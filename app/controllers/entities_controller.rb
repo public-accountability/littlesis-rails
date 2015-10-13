@@ -19,6 +19,24 @@ class EntitiesController < ApplicationController
     end
   end
 
+  def new
+    @entity = Entity.new
+    @person_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::PERSON_ID)
+    @org_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::ORG_ID)
+  end
+
+  def create
+    @entity = Entity.new(entity_params)
+
+    if @entity.save
+      params[:types].each { |type| @entity.add_extension(type) }
+      redirect_to @entity.legacy_url("edit")
+    else
+      render action: 'new'
+    end
+
+  end
+
   def relationships
   end
 
@@ -307,5 +325,9 @@ class EntitiesController < ApplicationController
     params.require(:image).permit(
       :file, :title, :caption, :url, :is_free, :is_featured
     )
+  end
+
+  def entity_params
+    params.require(:entity).permit(:name, :blurb, :primary_ext)
   end
 end

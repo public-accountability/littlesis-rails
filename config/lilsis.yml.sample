@@ -30,6 +30,7 @@ defaults: &defaults
   system_user_id: 1
   symfony_path: /var/www/littleis/symfony
   bing_maps_key:
+  default_network_id: 79
 
 test:
   <<: *defaults

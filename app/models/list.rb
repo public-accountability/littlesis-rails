@@ -93,4 +93,8 @@ class List < ActiveRecord::Base
 
     query
   end
+
+  def self.default_network
+    find(Lilsis::Application.config.default_network_id)
+  end
 end
