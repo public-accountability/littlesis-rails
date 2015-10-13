@@ -3,7 +3,7 @@ class RelationshipsDatatable
   include ApplicationHelper
   include Rails.application.routes.url_helpers
 
-  attr_reader :data, :links, :categories, :types, :industries, :entities, :interlocks
+  attr_reader :data, :links, :categories, :types, :industries, :entities, :interlocks, :lists
 
   def initialize(entities, force_interlocks=false)
     @force_interlocks = force_interlocks
@@ -14,6 +14,7 @@ class RelationshipsDatatable
     @entities = Array(entities)
     entity_ids = @entities.map(&:id)
     @links = Link.includes({ relationship: :position }, :entity, { related: [:extension_definitions, :os_categories] }).where(entity1_id: entity_ids, relationship: { is_deleted: 0 }).where.not(entity2_id: entity_ids).limit(10000)
+    @related_ids = @links.map(&:entity2_id).uniq
 
     if interlocks?
       degree2_links = Link.select(:entity1_id, :entity2_id).where(entity1_id: @links.select { |l| [1,3].include?(l.category_id) }.map(&:entity2_id), category_id: [1, 3]).where.not(entity2_id: entity_ids).map { |l| [l.entity1_id, l.entity2_id] }.uniq
@@ -22,8 +23,19 @@ class RelationshipsDatatable
         hash
       end
       top_interlocks = interlocks.select { |k, v| v.count > 1 }.sort { |a, b| a[1].count <=> b[1].count }.reverse.take(10)
-      entities = Entity.find(top_interlocks.map { |a| a[0] }).group_by(&:id)
+      entities = Entity.find(top_interlocks.map(&:first)).group_by(&:id)
       @interlocks = [["Connected To", ""]].concat(top_interlocks.map { |a| e = entities[a[0]].first; [e.name + " (#{interlocks[e.id].count})", e.id] })
+    end
+
+    if lists?
+      list_entities = ListEntity.select(:list_id, :entity_id).includes(:list).where(entity_id: @related_ids).where(ls_list: { is_network: false, is_admin: false }).map { |le| [le.list_id, le.entity_id] }.uniq
+      list_hash = list_entities.reduce({}) do |hash, item|
+        hash[item[0]] = hash.fetch(item[0], []).push(item[1])
+        hash
+      end
+      top_lists = list_hash.select { |k, v| v.count > 1 }.sort { |a, b| a[1].count <=> b[1].count }.reverse.take(10)
+      lists = List.find(top_lists.map(&:first)).group_by(&:id)
+      @lists = [["On List", ""]].concat(top_lists.map { |a| l = lists[a[0]].first; [l.name + " (#{list_hash[l.id].count})", l.id] })
     end
 
     @data = @links.map do |link|
@@ -34,6 +46,7 @@ class RelationshipsDatatable
       types = types.concat(related.types)
       industries = industries.concat(related.industries)
       interlock_ids = degree2_links.select { |l| l[0] == related.id }.map { |l| l[1] }.uniq if interlocks?
+      list_ids = list_hash.to_a.select { |l| l[1].include?(related.id) }.map { |l| l[0] }.uniq if lists?
       { 
         id: link.relationship_id,
         url: rel.legacy_url,
@@ -57,7 +70,8 @@ class RelationshipsDatatable
         is_executive: rel.is_executive,
         start_date: rel.start_date,
         end_date: rel.end_date,
-        interlock_ids: interlocks? ? interlock_ids.join(',') : nil
+        interlock_ids: interlocks? ? interlock_ids.join(',') : nil,
+        list_ids: lists? ? list_ids.join(',') : nil
        }
     end
 
@@ -76,6 +90,10 @@ class RelationshipsDatatable
 
   def list?
     @entities.count > 1
+  end
+
+  def lists?
+    @related_ids.count < 500
   end
 
   def interlocks?

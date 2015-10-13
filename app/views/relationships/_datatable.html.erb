@@ -14,6 +14,11 @@
     <%= options_for_select(table.interlocks) %>
   </select>  
   <% end %>
+  <% if table.lists? %>
+  <select id="relationships-list" class="form-control">
+    <%= options_for_select(table.lists) %>
+  </select>  
+  <% end %>
   <div id="relationships-filters-line2">
     <input id="relationships-search" class="form-control" type="text" placeholder="search">
     <input id="relationships-amount" class="form-control" type="text" placeholder="amount">
@@ -204,6 +209,12 @@ $(document).ready(function() {
         name: 'interlock_ids',
         visible: false,
         searchable: true
+      },
+      {
+        data: 'list_ids',
+        name: 'list_ids',
+        visible: false,
+        searchable: true
       }
     ]
   });
@@ -231,6 +242,12 @@ $(document).ready(function() {
   interlock.on('change', function() {
     var val = $(this).val() ? "\\b" + $(this).val() + "\\b" : "";
     tbl.columns('interlock_ids:name').search(val, true).draw();
+  });
+
+  var list = $('#relationships-list');
+  list.on('change', function() {
+    var val = $(this).val() ? "\\b" + $(this).val() + "\\b" : "";
+    tbl.columns('list_ids:name').search(val, true).draw();
   });
 
   var current = $('#relationships-current');
@@ -326,7 +343,7 @@ $(document).ready(function() {
     window.open(array_to_csv_data(data));
   });
 
-  var str_fields = ['category', 'type', 'industry', 'interlock', 'search', 'amount'];
+  var str_fields = ['category', 'type', 'industry', 'interlock', 'list', 'search', 'amount'];
   var bool_fields = ['current', 'board', 'executive'];
 
   var a = document.createElement('a');
