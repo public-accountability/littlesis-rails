@@ -29,6 +29,7 @@ class EntitiesController < ApplicationController
     @entity = Entity.new(entity_params)
 
     if @entity.save
+      @entity.update(last_user_id: current_user.sf_guard_user.id)
       params[:types].each { |type| @entity.add_extension(type) }
       redirect_to @entity.legacy_url("edit")
     else
