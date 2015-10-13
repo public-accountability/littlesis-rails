@@ -93,7 +93,7 @@ class RelationshipsDatatable
   end
 
   def lists?
-    @related_ids.count < 500
+    @related_ids.count < 1000
   end
 
   def interlocks?
