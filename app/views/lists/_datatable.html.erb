@@ -139,7 +139,7 @@ $(document).ready(function() {
         width: "30%",
         render: function(data, type, row) {
           var a = document.createElement('a');
-          a.href = row.rels_url;
+          a.href = row.url;
           a.setAttribute('class', 'entity-link');
           a.innerHTML = row.name;
           var str = a.outerHTML;
