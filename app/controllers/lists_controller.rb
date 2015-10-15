@@ -50,6 +50,7 @@ class ListsController < ApplicationController
   # PATCH/PUT /lists/1
   def update
     if @list.update(list_params)
+      @list.clear_cache(request.host)
       redirect_to members_list_path(@list), notice: 'List was successfully updated.'
     else
       render action: 'edit'
