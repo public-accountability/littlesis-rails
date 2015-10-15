@@ -11,7 +11,42 @@
     </div>
   <% end %>
 
+  <div class="field">
+    <%= f.label "Name*" %>
+    <%= f.text_field :name, class: "form-control", placeholder: "5-100 characters, no colons" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :description %>
+    <%= f.text_area :description, class: "textarea_medium form-control" %>  
+  </div>
+
+
+  <div class="checkbox">
+    <%= f.label :ranked %>
+    <%= f.check_box :is_ranked %>  
+  </div>
+
+  <% if current_user.has_legacy_permission("admin") %>
+    <div class="checkbox">
+      <%= f.label "Admin only" %>
+      <%= f.check_box :is_admin %>  
+    </div>
+
+    <div class="checkbox">
+      <%= f.label :featured %>
+      <%= f.check_box :is_featured %>  
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label "Custom field name" %>
+    <%= f.text_field :custom_field_name, class: "form-control", placeholder: "name of editable field providing context for each entity" %>
+  </div>
+
+  <br />
+
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit "Save", class: "btn btn-primary" %>
   </div>
 <% end %>

@@ -33,6 +33,7 @@ class ListsController < ApplicationController
 
   # GET /lists/1/edit
   def edit
+    check_permission "admin" if @list.is_admin or @list.is_network
   end
 
   # POST /lists
@@ -49,7 +50,7 @@ class ListsController < ApplicationController
   # PATCH/PUT /lists/1
   def update
     if @list.update(list_params)
-      redirect_to @list, notice: 'List was successfully updated.'
+      redirect_to members_list_path(@list), notice: 'List was successfully updated.'
     else
       render action: 'edit'
     end
@@ -232,7 +233,7 @@ class ListsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def list_params
-      params[:list]
+      params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :custom_field_name)
     end
 
     def interlocks_results(options)

@@ -7,7 +7,7 @@
   <% if current_user and current_user.has_legacy_permission('lister') %>
   <div class="list-actions form-inline">
     <% if has_legacy_permission('editor') %>
-      <%= link_to('edit', @list.legacy_url('edit'), class: 'btn btn-default') %>
+      <%= link_to('edit', edit_list_path(@list), class: 'btn btn-default') %>
     <% end %>
     <% if has_legacy_permission('admin') %>
       <%= link_to('delete', delete_list_path(@list), class: 'btn btn-default', method: :post, data: { confirm: 'Are you sure yu want to delete this list?' }) %>
