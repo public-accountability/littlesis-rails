@@ -33,9 +33,10 @@ class EntitiesController < ApplicationController
       params[:types].each { |type| @entity.add_extension(type) }
       redirect_to @entity.legacy_url("edit")
     else
+      @person_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::PERSON_ID)
+      @org_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::ORG_ID)
       render action: 'new'
     end
-
   end
 
   def relationships

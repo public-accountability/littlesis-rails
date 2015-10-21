@@ -8,8 +8,8 @@
       <%= pluralize(@entity.errors.count, "error") %> prohibited this entity from being saved:
 
       <ul>
-      <% @entity.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
+      <% @entity.errors.each do |attr, msg| %>
+        <li><%= (attr == :primary_ext ? :type : attr).to_s.capitalize %> <%= msg %></li>
       <% end %>
       </ul>
     </div>

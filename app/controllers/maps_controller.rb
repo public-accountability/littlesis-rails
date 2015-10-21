@@ -81,7 +81,7 @@ class MapsController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        render json: { map: map.to_clean_hash }
+        render json: { map: @map.to_clean_hash }
       }
     end
   end
