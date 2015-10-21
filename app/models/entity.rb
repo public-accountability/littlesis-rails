@@ -4,8 +4,8 @@ class Entity < ActiveRecord::Base
   include Cacheable
   include Referenceable
 
-  self.default_timezone = :local
-  self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
+  # self.default_timezone = :local
+  # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
   has_many :aliases, inverse_of: :entity, dependent: :destroy
   has_many :images, inverse_of: :entity, dependent: :destroy
@@ -56,7 +56,8 @@ class Entity < ActiveRecord::Base
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
 
-  validates_presence_of :name, :primary_ext
+  validates_presence_of :name
+  validates_presence_of :primary_ext
 
   before_create :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext, :add_to_default_network
