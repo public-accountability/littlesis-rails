@@ -30,7 +30,7 @@ class EntitiesController < ApplicationController
 
     if @entity.save
       @entity.update(last_user_id: current_user.sf_guard_user.id)
-      params[:types].each { |type| @entity.add_extension(type) }
+      params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
       redirect_to @entity.legacy_url("edit")
     else
       @person_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::PERSON_ID)
