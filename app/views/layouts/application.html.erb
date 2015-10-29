@@ -12,6 +12,7 @@
 </head>
 <body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
 
+<% unless content_for? :hide_top %>
 <div id="top">
 	<nav class="navbar navbar-default navbar-<%= yield(:static_navbar).present? ? 'static' : 'fixed' %>-top">
 		<div id="top_content">
@@ -47,6 +48,7 @@
 		</div>
 	</nav>
 </div>
+<% end %>
 
 <% if content_for? :title %>
 <div id="header">

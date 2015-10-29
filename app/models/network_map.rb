@@ -258,6 +258,20 @@ class NetworkMap < ActiveRecord::Base
     }
   end
 
+  def to_collection_data
+    ary = annotations.present? ? annotations.sort_by(&:order).map(&:to_map_data) : [to_clean_hash]
+    ary << references_to_map_data
+    { 
+      id: id,
+      title: title,
+      description: description,
+      user: { name: user.username, url: user.legacy_url },
+      date: updated_at.strftime("%B %-d, %Y"),
+      maps: ary,
+      sources: references.map { |r| { title: r.name, url: r.source } }
+    }
+  end
+
   def has_annotations
     annotations.count > 0
   end

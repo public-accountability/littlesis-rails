@@ -172,6 +172,12 @@ Lilsis::Application.routes.draw do
     end
   end
 
+
+  get "/maps/:id/:slide",
+    controller: 'maps',
+    action: 'show',
+    as: 'map_slide'
+
   resources :topics do
     member do
       get 'new_elements'      

@@ -669,3 +669,78 @@ textarea.map-annotation-rich-textarea {
 .map-top-row form {
   display: inline-block;
 }
+
+#graph {
+  height: 100%;
+  width: 100%;
+}
+
+#deck-title-fullscreen {
+  display: inline-block;
+  position: absolute;
+  top: 0px;
+  left: 60px;
+  font-size: 50px;
+  line-height: 50px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 1);
+  border: 0px solid #ddd;
+  border-radius: 10px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  box-shadow: 0px 0px 5px #eee;
+}
+
+#deck-nav-buttons {
+  position: absolute;
+  top: 20px;
+  right: 0px;
+  width: 400px;
+  padding: 10px;
+}
+
+#deck-annotation-fullscreen {
+  position: absolute;
+  top: 90px;
+  right: 0px;
+  width: 400px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 1);
+  border: 0px solid #ddd;
+  border-radius: 5px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  box-shadow: 0px 0px 5px #eee;
+}
+
+#deck-annotation-hide {
+  position: absolute;
+  top: 8px;
+  right: 15px;
+  font-size: 30px;
+  cursor: default;
+}
+
+#deck-annotation-show {
+  display: none;
+  position: absolute;
+  top: 98px;
+  right: 20px;
+  font-size: 30px;
+  cursor: default;
+}
+
+#deck-annotation-title {
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+#deck-annotation-text {
+}
+
+#deck-logo-fullscreen {
+  position: absolute;
+  bottom: 0px;
+  left: 20px;
+}

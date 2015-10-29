@@ -1,0 +1,133 @@
+<% content_for(:hide_top, true) %>
+<% content_for(:static_navbar, true) %>
+<% content_for(:page_title, raw(@map.name)) %>
+<% content_for(:facebook_title, @map.name) %>
+<% content_for(:facebook_image, @map.thumbnail) %>
+
+<%= render 'shared/facebook_sdk' %>
+
+<% content_for :body do %>
+
+<%= javascript_include_tag 'oli2/app.js' %>
+<%= javascript_include_tag 'oli2/LsDataConverter.js' %>
+
+<div id="deck-title-fullscreen"><%= @map.title %></div>
+<div id="deck-nav-buttons">
+  <button id="prev-button" class="btn btn-lg btn-default">Prev</button>
+  <button id="next-button" class="btn btn-lg btn-default">Next</button>
+</div>
+<div id="deck-annotation-show" title="show annotations">&laquo; <span class="glyphicon glyphicon-font"></span></div>
+<div id="deck-annotation-fullscreen">
+  <div id="deck-annotation-hide" title="hide annotations">&raquo;</div>
+  <div id="deck-annotation-title"></div>
+  <div id="deck-annotation-text"></div>
+</div>
+<div id="graph"></div>
+<div id="deck-logo-fullscreen">
+  <%= link_to(image_tag("lilsis-logo-trans-200.png"), signed_in? ? home_dashboard_path : root_path) %>
+</div>
+
+<script>
+$(document).ready(function() {
+  var data = LsDataConverter.convertMapCollectionData(<%= raw(JSON.dump(@map.to_collection_data)) %>);
+  var currentIndex = <%= params.fetch(:slide, 1).to_i - 1 %>;
+
+  function loadMap(index, pushState) {
+    if (typeof(pushState) === 'undefined') pushState = true;
+    var graph = data.graphs[index];
+
+    // load annotation title
+    $('#deck-annotation-title').html(graph.title);
+
+    // load annotation body
+    $('#deck-annotation-text').html(graph.description);
+
+    // load graph
+    Oligrapher.load(graph);
+
+    updateButtons(index);
+
+    if (pushState) {
+      updateUrl(index, pushState);
+    }
+
+    currentIndex = index;
+  }
+
+  function prevIndex(index) {
+    return (data.graphs[index - 1]) ? index - 1 : false;
+  }
+
+  function nextIndex(index) {
+    return (data.graphs[index + 1]) ? index + 1 : false;
+  }
+
+  function updateButtons(index) {
+    $('#deck-nav-buttons').toggle(data.graphs.length > 0);
+    $('#prev-button').prop("disabled", prevIndex(index) === false);
+    $('#next-button').prop("disabled", nextIndex(index) === false);
+  }
+
+  function updateUrl(index) {
+    var num = (index + 1).toString();
+    var currentUrl = window.location.toString();
+    var url = currentUrl.replace(/\/maps\/([^\/]+).*$/, '/maps/$1/' + num);
+
+    if (typeof (history.pushState) != "undefined") {
+      var obj = { title: document.title, url: url, index: index };
+      history.pushState(obj, obj.title, obj.url);
+    }
+  }
+
+  window.onpopstate = function(event) {
+    if (event.state && typeof(event.state.index) !== 'undefined') {
+      // don't push state again
+      loadMap(event.state.index, pushState = false);      
+    } else {
+      // window.location.href = window.location.toString();
+    }
+  };
+
+  $('#prev-button').on('click', function() {
+    var index = prevIndex(currentIndex);
+
+    if (index !== false) {
+      loadMap(index);
+    }
+  });
+
+  $('#next-button').on('click', function() {
+    var index = nextIndex(currentIndex);
+
+    if (index !== false) {
+      loadMap(index);
+    }
+  });
+
+  $('#deck-annotation-hide').on('click', function() {
+    $('#deck-annotation-fullscreen').hide("slide", { direction: "right" }, 500, function() {
+      $('#deck-annotation-show').show("slide", { direction: "right" }, 500);
+    });
+    $('#deck-nav-buttons').animate({ width: '175px' }, 500);
+  });
+
+  $('#deck-annotation-show').on('click', function() {
+    $('#deck-annotation-show').hide("slide", { direction: "right" }, function() {
+      $('#deck-annotation-fullscreen').show("slide", { direction: "right" }, 500);
+    });
+    $('#deck-nav-buttons').animate({ width: '400px' }, 500);
+  });
+
+  Oligrapher.run("graph");
+  loadMap(currentIndex, false); // don't push state at beginning
+
+  if (typeof (history.replaceState) !== "undefined") {
+    var obj = { title: document.title, url: window.location.toString(), index: currentIndex };
+    history.replaceState(obj, obj.title, obj.url);
+  }
+});
+
+
+</script>
+
+<% end %>

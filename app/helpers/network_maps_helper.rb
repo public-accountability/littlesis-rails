@@ -1,6 +1,7 @@
 module NetworkMapsHelper
   def smart_map_path(map)
-    map.annotations.count == 0 ? map_path(map) : story_map_path(map)
+    # map.annotations.empty? ? map_path(map) : story_map_path(map)
+    map_path(map)
   end
 
   def network_map_link(map)

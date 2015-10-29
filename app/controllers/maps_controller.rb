@@ -79,7 +79,13 @@ class MapsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html
+      format.html {
+        if @map.annotations.empty?
+          render "show"
+        else
+          render "show_story_map"
+        end
+      }
       format.json {
         render json: { map: @map.to_clean_hash }
       }
@@ -226,19 +232,7 @@ class MapsController < ApplicationController
   def collection
     respond_to do |format|
       format.json {
-        ary = @map.annotations.present? ? @map.annotations.sort_by(&:order).map(&:to_map_data) : [@map.to_clean_hash]
-        ary << @map.references_to_map_data
-        collection = { 
-          id: @map.id,
-          title: @map.title,
-          description: @map.description,
-          user: { name: @map.user.username, url: @map.user.legacy_url },
-          date: @map.updated_at.strftime("%B %-d, %Y"),
-          maps: ary,
-          sources: @map.references.map { |r| { title: r.name, url: r.source } }
-        }
-
-        render json: { map_collection: collection }
+        render json: { map_collection: @map.to_collection_data }
       }
     end
   end
