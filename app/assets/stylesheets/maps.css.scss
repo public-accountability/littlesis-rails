@@ -695,7 +695,7 @@ textarea.map-annotation-rich-textarea {
   position: absolute;
   top: 20px;
   right: 0px;
-  width: 400px;
+  width: 300px;
   padding: 10px;
 }
 
@@ -703,7 +703,7 @@ textarea.map-annotation-rich-textarea {
   position: absolute;
   top: 90px;
   right: 0px;
-  width: 400px;
+  width: 300px;
   padding: 10px;
   background-color: rgba(255, 255, 255, 1);
   border: 0px solid #ddd;
@@ -715,7 +715,7 @@ textarea.map-annotation-rich-textarea {
 
 #deck-annotation-hide {
   position: absolute;
-  top: 8px;
+  top: 3px;
   right: 15px;
   font-size: 30px;
   cursor: default;
@@ -724,7 +724,7 @@ textarea.map-annotation-rich-textarea {
 #deck-annotation-show {
   display: none;
   position: absolute;
-  top: 98px;
+  top: 93px;
   right: 20px;
   font-size: 30px;
   cursor: default;
@@ -732,6 +732,7 @@ textarea.map-annotation-rich-textarea {
 
 #deck-annotation-title {
   font-size: 25px;
+  line-height: 27px;
   font-weight: bold;
   margin-bottom: 10px;
 }
@@ -743,4 +744,42 @@ textarea.map-annotation-rich-textarea {
   position: absolute;
   bottom: 0px;
   left: 20px;
+
+  img {
+    width: 100px;
+  }
+}
+
+#zoomButtons {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  padding: 5px;
+  box-shadow: 0 0 5px #f8f8f8;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+#zoomIn {
+}
+
+#zoomOut {
+  margin-top: 5px;
+}
+
+.zoomButton {
+  display: block;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0);
+  border: 0px solid #ddd;
+  cursor: pointer;
+  padding: 0px;
+  color: #666;
+}
+
+.zoomButton:focus {
+  outline: none;
 }

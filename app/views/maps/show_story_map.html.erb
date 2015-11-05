@@ -8,7 +8,7 @@
 
 <% content_for :body do %>
 
-<%= javascript_include_tag 'oli2/app.js' %>
+<%= javascript_include_tag 'oli2/oligrapher.min.js' %>
 <%= javascript_include_tag 'oli2/LsDataConverter.js' %>
 
 <div id="deck-title-fullscreen"><%= @map.title %></div>
@@ -23,12 +23,23 @@
   <div id="deck-annotation-text"></div>
 </div>
 <div id="graph"></div>
+<div id="zoomButtons">
+  <button id="zoomIn" class="zoomButton">
+    <span class="glyphicon glyphicon-plus"></span>
+  </button>
+  <button id="zoomOut" class="zoomButton">
+    <span class="glyphicon glyphicon-minus"></span>
+  </button>
+</div>
 <div id="deck-logo-fullscreen">
   <%= link_to(image_tag("lilsis-logo-trans-200.png"), signed_in? ? home_dashboard_path : root_path) %>
 </div>
 
 <script>
 $(document).ready(function() {
+  $('body').css("height", window.innerHeight + "px");
+  $('#graph').css("height", window.innerHeight + "px");
+
   var data = LsDataConverter.convertMapCollectionData(<%= raw(JSON.dump(@map.to_collection_data)) %>);
   var currentIndex = <%= params.fetch(:slide, 1).to_i - 1 %>;
 
@@ -43,7 +54,7 @@ $(document).ready(function() {
     $('#deck-annotation-text').html(graph.description);
 
     // load graph
-    Oligrapher.load(graph);
+    Oligrapher.show(graph.id);
 
     updateButtons(index);
 
@@ -88,6 +99,14 @@ $(document).ready(function() {
     }
   };
 
+  $('#zoomIn').on('click', function() {
+    Oligrapher.zoomIn();
+  });
+
+  $('#zoomOut').on('click', function() {
+    Oligrapher.zoomOut();
+  });
+
   $('#prev-button').on('click', function() {
     var index = prevIndex(currentIndex);
 
@@ -115,10 +134,15 @@ $(document).ready(function() {
     $('#deck-annotation-show').hide("slide", { direction: "right" }, function() {
       $('#deck-annotation-fullscreen').show("slide", { direction: "right" }, 500);
     });
-    $('#deck-nav-buttons').animate({ width: '400px' }, 500);
+    $('#deck-nav-buttons').animate({ width: '300px' }, 500);
   });
 
-  Oligrapher.run("graph");
+
+  Oligrapher.run(document.getElementById('graph'));
+ 
+  // preload graphs
+  data.graphs.forEach(function(graph) { Oligrapher.import(graph); });
+
   loadMap(currentIndex, false); // don't push state at beginning
 
   if (typeof (history.replaceState) !== "undefined") {
