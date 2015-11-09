@@ -54,7 +54,7 @@ $(document).ready(function() {
     $('#deck-annotation-text').html(graph.description);
 
     // load graph
-    Oligrapher.show(graph.id);
+    oli.show(graph.id);
 
     updateButtons(index);
 
@@ -100,11 +100,11 @@ $(document).ready(function() {
   };
 
   $('#zoomIn').on('click', function() {
-    Oligrapher.zoomIn();
+    oli.zoomIn();
   });
 
   $('#zoomOut').on('click', function() {
-    Oligrapher.zoomOut();
+    oli.zoomOut();
   });
 
   $('#prev-button').on('click', function() {
@@ -138,10 +138,10 @@ $(document).ready(function() {
   });
 
 
-  Oligrapher.run(document.getElementById('graph'));
+  var oli = Oligrapher.run(document.getElementById('graph'));
  
   // preload graphs
-  data.graphs.forEach(function(graph) { Oligrapher.import(graph); });
+  data.graphs.forEach(function(graph) { oli.import(graph); });
 
   loadMap(currentIndex, false); // don't push state at beginning
 

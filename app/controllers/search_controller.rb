@@ -29,5 +29,25 @@ class SearchController < ApplicationController
         @maps = NetworkMap.search("@(title,description,index_data) #{q}", per: 100, match_mode: :extended, with: { is_deleted: false, is_private: false })
       end
     end
+
+    respond_to do |format|
+      format.html {    
+        render "basic"
+      }
+
+      format.json {
+        entities = @entities.map do |e|
+          {
+            id: e.id,
+            name: e.name,
+            description: e.blurb,
+            summary: e.summary,
+            primary_type: e.primary_ext,
+            url: e.legacy_url
+          }
+        end
+        render json: entities
+      }
+    end
   end
 end
