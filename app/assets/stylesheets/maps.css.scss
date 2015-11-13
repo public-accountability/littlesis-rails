@@ -670,6 +670,96 @@ textarea.map-annotation-rich-textarea {
   display: inline-block;
 }
 
+
+// OLIGRAPHER 2 STORY MAP PAGE
+
+#storyMapContainer {
+  padding: 20px;
+}
+
+#storyMapTitle h1 {
+  font-size: 50px;
+  font-weight: 300;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+#storyMapDate {
+  color: #888;
+}
+
+#storyMapGraphContainer {
+  margin-top: 15px;
+  position: relative;
+}
+
+#storyMapGraph {
+  border: 1px solid #f8f8f8;
+}
+
+#storyMapNavButtons {
+  margin-top: 5px;
+  margin-bottom: 25px;
+}
+
+#storyMapNavButtons button {
+  margin-left: 10px;
+  font-size: 24px;
+  font-weight: 200;
+  border: 0 solid #eee;
+  background-color: #eee;
+
+  &:disabled {
+    color: #ccc;
+    background-color: #f8f8f8;
+    opacity: 1;
+  }
+}
+
+#storyMapAnnotation {
+  padding: 10px;
+}
+
+h2#storyMapAnnotationTitle {
+  color: #444;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 2em;  
+}
+
+#storyMapZoomButtons {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  padding: 5px;
+  box-shadow: 0 0 5px #f8f8f8;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+#storyMapZoomOut {
+  margin-top: 5px;
+}
+
+.storyMapZoomButton {
+  display: block;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0);
+  border: 0px solid #ddd;
+  cursor: pointer;
+  padding: 0px;
+  color: #666;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+// EXPERIMENTAL STORY MAP PAGE
+
 #graph {
   height: 100%;
   width: 100%;

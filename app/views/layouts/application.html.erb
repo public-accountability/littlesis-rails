@@ -15,7 +15,11 @@
 <% unless content_for? :hide_top %>
 <div id="top">
 	<nav class="navbar navbar-default navbar-<%= yield(:static_navbar).present? ? 'static' : 'fixed' %>-top">
+	<% if content_for? :full_width_top %>
+		<div id="top_content_full">
+	<% else %>
 		<div id="top_content">
+	<% end %>
 			<div class="navbar-header">
 		    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 		      <span class="sr-only">Toggle navigation</span>
@@ -70,12 +74,14 @@
 </div>
 <% end %>
 
+<% unless content_for? :hide_footer %>
 <div id="footer_clear"></div>
 <div id="footer">
   A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>. 
   More <%= link_to('about LittleSis', '/about') %>.
   Read the <%= link_to('disclaimer', '/disclaimer') %>.
 </div>
+<% end %>
 
 <%= render 'shared/analytics' %>
 
