@@ -354,6 +354,10 @@ class Entity < ActiveRecord::Base
     self.class.legacy_url(primary_ext, id, name, action)
   end
 
+  def full_legacy_url(action = nil)
+    "//littlesis.org" + legacy_url(action)
+  end
+
   def self.legacy_url(primary_ext, id, name, action = nil)
     url = "/" + primary_ext.downcase + "/" + id.to_s + "/" + name_to_legacy_slug(name)
     url += "/" + action if action.present?

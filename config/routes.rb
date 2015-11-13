@@ -169,9 +169,10 @@ Lilsis::Application.routes.draw do
     collection do
       get 'search'
       get 'featured'
+      get 'find_nodes'
+      get 'node_with_edges'
     end
   end
-
 
   get "/maps/:id/:slide",
     controller: 'maps',

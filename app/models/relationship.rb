@@ -8,6 +8,7 @@ class Relationship < ActiveRecord::Base
   MEMBERSHIP_CATEGORY = 3
   FAMILY_CATEGORY = 4
   DONATION_CATEGORY = 5
+  OWNERSHIP_CATEGORY = 10
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"

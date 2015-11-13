@@ -1,8 +1,8 @@
 class MapsController < ApplicationController
   include NetworkMapsHelper
 
-  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :create_annotation]
-  before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search, :collection]
+  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :create_annotation, :find_nodes, :node_with_edges]
+  before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search, :collection, :find_nodes, :node_with_edges]
   before_filter :enforce_slug, only: [:show]
 
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
@@ -236,6 +236,35 @@ class MapsController < ApplicationController
       }
     end
   end
+
+  # OLIRAPHER 2 SEARCH API
+
+  def find_nodes
+    q = params[:q]
+    num = params.fetch(:num, 10)
+    fields = params[:desc] ? 'name,aliases,blurb' : 'name,aliases'
+    entities = Entity.search(
+      "@(#{fields}) #{q}", 
+      per_page: num, 
+      match_mode: :extended, 
+      with: { is_deleted: false },
+      select: "*, weight() * (link_count + 1) AS link_weight",
+      order: "link_weight DESC"
+    )
+    data = entities.map { |e| Oligrapher.entity_to_node(e) }
+    render json: data
+  end
+
+  def node_with_edges
+    entity_id = params[:node_id]
+    entity_ids = params[:node_ids]
+    node = Oligrapher.entity_to_node(Entity.find(entity_id))
+    rel_ids = Link.where(entity1_id: entity_id, entity2_id: entity_ids).pluck(:relationship_id).uniq
+    rels = Relationship.find(rel_ids)
+    edges = rels.map { |r| Oligrapher.rel_to_edge(r) }
+    render json: { node: node, edges: edges }
+  end
+
 
   private
 

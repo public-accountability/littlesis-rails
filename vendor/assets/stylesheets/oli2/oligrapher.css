@@ -1,0 +1,28 @@
+#oligrapherContainer:focus, #oligrapherContainer :focus {
+  outline: none;
+}
+
+.nodeLabel {
+  cursor: pointer;
+}
+
+.nodeLabel:hover {
+  text-decoration: none;
+}
+
+.nodeLabel text tspan {
+  font-family: Helvetica, Arial, sans-serif;  
+}
+
+.edge text {
+  display: none;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.edge:hover text {
+  display: inline;
+}
+
+.edge:hover text.link {
+  cursor: pointer;
+}
