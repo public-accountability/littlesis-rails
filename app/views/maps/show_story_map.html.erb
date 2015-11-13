@@ -37,7 +37,7 @@
     <div id="infoCol" class="col-md-4">
       <div id="storyMapNavButtons">
         <button id="storyMapPrevButton" class="btn btn-lg btn-default">Prev</button>
-        <button id="storyMapNextButton" class="btn btn-lg btn-default">Next</button>
+        <button id="storyMapNextButton" class="clickplz btn btn-lg btn-default">Next</button>
       </div>
       <div id="storyMapAnnotation">
         <h2 id="storyMapAnnotationTitle"></h2>
@@ -114,8 +114,6 @@ $(document).ready(function() {
     if (event.state && typeof(event.state.index) !== 'undefined') {
       // don't push state again
       loadMap(event.state.index, pushState = false);      
-    } else {
-      // window.location.href = window.location.toString();
     }
   };
 
@@ -132,6 +130,7 @@ $(document).ready(function() {
 
     if (index !== false) {
       loadMap(index);
+      this.blur();
     }
   });
 
@@ -140,15 +139,19 @@ $(document).ready(function() {
 
     if (index !== false) {
       loadMap(index);
+      this.blur();
     }
   });
 
-  window.oli = Oligrapher.run(document.getElementById('storyMapGraph'));
+  // start oligrapher with first graph
+  var oli = Oligrapher.run(document.getElementById('storyMapGraph'), { 
+    data: data.graphs[currentIndex]
+  });
  
-  // preload graphs
+  // preload remaining graphs
   data.graphs.forEach(function(graph) { oli.import(graph); });
 
-  loadMap(currentIndex, false); // don't push state at beginning
+  loadMap(currentIndex, false); // displays annotation for fist graph
 
   if (typeof (history.replaceState) !== "undefined") {
     var obj = { title: document.title, url: window.location.toString(), index: currentIndex };

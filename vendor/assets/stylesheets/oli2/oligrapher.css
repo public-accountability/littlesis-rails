@@ -2,15 +2,15 @@
   outline: none;
 }
 
-.nodeLabel {
+a.nodeLabel {
   cursor: pointer;
 }
 
-.nodeLabel:hover {
+a.nodeLabel:hover {
   text-decoration: none;
 }
 
-.nodeLabel text tspan {
+a.nodeLabel text tspan {
   font-family: Helvetica, Arial, sans-serif;  
 }
 
@@ -19,10 +19,15 @@
   font-family: Helvetica, Arial, sans-serif;
 }
 
-.edge:hover text {
+.edge:hover text, .edge.selected text, .edge.highlighted text {
   display: inline;
 }
 
 .edge:hover text.link {
   cursor: pointer;
+}
+
+.caption {
+  font-family: Helvetica, Arial, sans-serif;
+  cursor: default;
 }

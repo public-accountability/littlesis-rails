@@ -716,6 +716,25 @@ textarea.map-annotation-rich-textarea {
   }
 }
 
+.clickplz:enabled:not(:focus) {
+  animation: clickplz 3s;
+  -webkit-animation: clickplz 3s;
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@keyframes clickplz {
+  0%   { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
+  50%  { color: #666; background-color:#ffd; text-shadow: 0 0 9px rgba(255,255,128,0.75); }
+  100% { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
+}
+
+@-webkit-keyframes clickplz {
+  0%   { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
+  50%  { color: #666; background-color:#ffd; text-shadow: 0 0 9px rgba(255,255,128,0.75); }
+  100% { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
+}
+
 #storyMapAnnotation {
   padding: 10px;
 }
