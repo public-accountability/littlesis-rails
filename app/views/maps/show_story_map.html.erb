@@ -17,6 +17,11 @@
         <div id="storyMapByLine">
           by <%= user_link(@map.user) %>
           <span id="storyMapDate"><%= @map.created_at.strftime("%B %-d, %Y") %></span>
+          <% if current_user.present? and (current_user.id == @map.user.id) %>
+            <div id="edit-link">
+              <%= link_to 'edit', edit_map_path(@map) %>
+            </div>
+          <% end %>
         </div>
       </div>
       <div id="storyMapGraphContainer">
@@ -142,7 +147,8 @@ $(document).ready(function() {
 
   // start oligrapher with first graph
   var oli = Oligrapher.run(document.getElementById('storyMapGraph'), { 
-    data: data.graphs[currentIndex]
+    data: data.graphs[currentIndex],
+    highlighting: false
   });
  
   // preload remaining graphs

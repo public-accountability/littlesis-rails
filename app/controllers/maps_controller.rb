@@ -1,7 +1,7 @@
 class MapsController < ApplicationController
   include NetworkMapsHelper
 
-  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :create_annotation, :find_nodes, :node_with_edges]
+  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :find_nodes, :node_with_edges]
   before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search, :collection, :find_nodes, :node_with_edges]
   before_filter :enforce_slug, only: [:show]
 
@@ -295,7 +295,7 @@ class MapsController < ApplicationController
   end
 
   def check_owner
-    unless current_user and (current_user.has_legacy_permission('admin') or @map.user_id == current_user.sf_guard_user_id)
+    unless (current_user and (current_user.has_legacy_permission('admin')) or @map.user_id == current_user.sf_guard_user_id)
       raise Exceptions::PermissionError
     end
   end

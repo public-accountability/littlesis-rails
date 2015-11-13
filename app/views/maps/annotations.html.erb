@@ -39,7 +39,6 @@ $(function() {
     helper: fixHelper,
     update: function(event, ui) {
       var ids = $('tr.sortable').toArray().map(function(r) { return r.id.split('-')[1]; }).join(",");
-      console.log(ids);
       $.ajax({
         method: "POST",
         url: '<%= reorder_annotations_map_path(@map) %>', 

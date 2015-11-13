@@ -15,9 +15,7 @@
           &nbsp;<%= link_to 'fullscreen editor', edit_fullscreen_map_path(map), class: 'btn btn-sm btn-default', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
         <% end %>
 
-        <% if current_user.has_legacy_permission('admin') %>
         &nbsp;<%= link_to 'edit annotations', annotations_map_path(map), class: 'btn btn-sm btn-default', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
-        <% end %>
     </div>
   </div>
 <% end %>
