@@ -46,7 +46,8 @@ class SearchController < ApplicationController
             url: e.legacy_url
           }
         end
-        render json: entities
+
+        render json: { entities: entities }
       }
     end
   end
