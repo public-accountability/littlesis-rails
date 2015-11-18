@@ -3,7 +3,7 @@
 </div>
 
 <div class="row map-top-row">
-  <div class="col col-xs-6 map-author">
+  <div class="col col-xs-7 map-author">
     <%= render partial: 'byline', locals: { map: map } %>
 
     <div id="fullscreen-link"><%= link_to('fullscreen', raw_map_path(map)) %></div>
@@ -29,7 +29,7 @@
       </div>
     <% end %>
   </div>
-  <div class="col col-xs-6 map-share-buttons">
+  <div class="col col-xs-5 map-share-buttons">
     <a href="https://twitter.com/share" class="twitter-share-button" data-via="twittlesis" data-count="none" data-dnt="true" data-text="<%= map.share_text %>">Tweet</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
