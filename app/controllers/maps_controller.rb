@@ -2,7 +2,7 @@ class MapsController < ApplicationController
   include NetworkMapsHelper
 
   before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :find_nodes, :node_with_edges]
-  before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search, :collection, :find_nodes, :node_with_edges]
+  before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search, :collection, :find_nodes, :node_with_edges, :share]
   before_filter :enforce_slug, only: [:show]
 
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
@@ -75,7 +75,9 @@ class MapsController < ApplicationController
 
   def show
     if @map.is_private and (!current_user or !current_user.has_legacy_permission('admin')) and (current_user.nil? or @map.user_id != current_user.sf_guard_user_id)
-      raise Exceptions::PermissionError
+      unless params[:secret] and params[:secret] == @map.secret
+        raise Exceptions::PermissionError
+      end
     end
 
     respond_to do |format|
