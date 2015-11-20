@@ -45,4 +45,14 @@ class Oligrapher
       Relationship::DONATION_CATEGORY,
       Relationship::OWNERSHIP_CATEGORY ].include?(rel.category_id)
   end
+
+  def self.annotation_data(annotation)
+    {
+      header: annotation.title,
+      text: HTMLEntities.new.decode(annotation.description).strip,
+      nodeIds: annotation.highlighted_entity_ids.split(","),
+      edgeIds: annotation.highlighted_rel_ids.split(","),
+      captionIds: annotation.highlighted_text_ids.split(",")
+    }
+  end
 end

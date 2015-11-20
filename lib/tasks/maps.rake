@@ -100,6 +100,13 @@ namespace :maps do
 
   desc "support https in image urls"
   task remove_default_images: :environment do
+  end
 
+  desc "generate secret hash for all network maps"
+  task generate_secrets: :environment do
+    NetworkMap.where(secret: nil).each do |map|
+      map.generate_secret
+      map.save
+    end
   end
 end

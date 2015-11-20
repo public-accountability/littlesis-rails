@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151009211944) do
+ActiveRecord::Schema.define(version: 20151118171301) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -719,6 +719,7 @@ ActiveRecord::Schema.define(version: 20151009211944) do
     t.string   "thumbnail"
     t.boolean  "delta",                          default: true,  null: false
     t.text     "index_data",  limit: 2147483647
+    t.string   "secret"
   end
 
   add_index "network_map", ["delta"], name: "index_network_map_on_delta", using: :btree

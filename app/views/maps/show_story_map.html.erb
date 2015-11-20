@@ -17,9 +17,14 @@
         <div id="storyMapByLine">
           by <%= user_link(@map.user) %>
           <span id="storyMapDate"><%= @map.created_at.strftime("%B %-d, %Y") %></span>
-          <% if current_user.present? and (current_user.id == @map.user.id) %>
+          <% if current_user.present? and ((current_user.id == @map.user.id) or current_user.has_legacy_permission("admin")) %>
             <div id="edit-link">
               <%= link_to 'edit', edit_map_path(@map) %>
+            </div>
+          <% end %>
+          <% if @map.is_private and current_user.present? and ((current_user.id == @map.user.id) or current_user.has_legacy_permission("admin")) %>
+            <div id="share-link">
+              <%= link_to 'share link', share_map_path(@map, secret: @map.secret) %>
             </div>
           <% end %>
         </div>
