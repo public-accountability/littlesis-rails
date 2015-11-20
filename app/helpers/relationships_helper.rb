@@ -35,9 +35,6 @@ module RelationshipsHelper
     abbreviate = false if year.to_i < 1930
     return Time.parse(str).strftime("%b %-d '%y") if year.to_i > 0 and month.to_i > 0 and day.to_i > 0
     if year.to_i > 0 and month.to_i > 0
-      # the month needs to be incremented because strtotime interprets '2008-12-00' as '2008-11-31'
-      year = month.to_i > 10 ? year.to_i + 1 : year.to_i
-      month = (month.to_i % 12) + 1
       return Time.parse([year, month, 1].join("-")).strftime("%b '%y")
     end
     return (abbreviate ? "'" + year[2..4] : year) if year.to_i > 0
