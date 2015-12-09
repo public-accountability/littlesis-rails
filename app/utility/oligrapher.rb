@@ -1,6 +1,6 @@
 class Oligrapher
   def self.entity_to_node(entity)
-    return {
+    {
       id: entity.id,
       display: {
         name: entity.name,
@@ -19,7 +19,7 @@ class Oligrapher
   end
 
   def self.rel_to_edge(rel)
-    return {
+    {
       id: rel.id,
       node1_id: rel.entity1_id,
       node2_id: rel.entity2_id,

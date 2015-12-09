@@ -1,13 +1,13 @@
 class MapsController < ApplicationController
   include NetworkMapsHelper
 
-  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :create_annotation, :find_nodes, :node_with_edges]
-  before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search, :collection, :find_nodes, :node_with_edges]
+  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :find_nodes, :node_with_edges, :edges_with_nodes]
+  before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded]
   before_filter :enforce_slug, only: [:show]
 
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
 
-  protect_from_forgery except: [:create, :create_annotation, :update_annotation]
+  protect_from_forgery except: [:create, :create_annotation, :update_annotation, :clone]
 
   def index
     maps = NetworkMap.order("created_at DESC, id DESC")
@@ -73,18 +73,31 @@ class MapsController < ApplicationController
     @berman_map = NetworkMap.find(137)
   end
 
+  def embedded
+    response.headers.delete('X-Frame-Options')
+    render layout: "fullscreen"
+  end
+
   def show
-    if @map.is_private and (!current_user or !current_user.has_legacy_permission('admin')) and (current_user.nil? or @map.user_id != current_user.sf_guard_user_id)
-      raise Exceptions::PermissionError
+    if @map.is_private and !is_owner
+      unless params[:secret] and params[:secret] == @map.secret
+        raise Exceptions::PermissionError
+      end
     end
 
     respond_to do |format|
       format.html {
-        if @map.annotations.empty?
-          render "show"
-        else
-          render "show_story_map"
-        end
+        @editable = false
+
+        links = [
+          { text: "embed", url: "#", id: "oligrapherEmbedLink", target: "_self" },
+          { text: "clone", url: clone_map_url(@map), method: "POST" }
+        ]
+        links.push({ text: "edit", url: edit_map_url(@map) }) if is_owner
+        links.push({ text: "share link", url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
+        @links = JSON.dump(links);
+
+        render "story_map"
       }
       format.json {
         render json: { map: @map.to_clean_hash }
@@ -123,6 +136,9 @@ class MapsController < ApplicationController
   def edit
     check_owner
     check_permission 'editor'
+
+    @editable = true
+    render "story_map"
   end
 
   def edit_fullscreen
@@ -136,25 +152,31 @@ class MapsController < ApplicationController
     check_owner
     check_permission 'editor'
 
-    params = map_params
-    data = params[:data]
-    decoded = JSON.parse(data)
+    if oligrapher_params.present?
+      @map.update(oligrapher_params)
+      render json: { data: @map.attributes }
+      # render json: { data: hash }
+    else
+      params = map_params
+      data = params[:data]
+      decoded = JSON.parse(data)
 
-    @map.title = params[:title] if params[:title].present?
-    @map.description = params[:description] if params[:title].present?
-    @map.is_featured = params[:is_featured] if params[:is_featured].present?
-    @map.is_private = params[:is_private] if params[:is_private].present?
-    @map.width = params[:width] if params[:width].present?
-    @map.height = params[:height] if params[:height].present?
-    @map.zoom = params[:zoom] if params[:zoom].present?
-    @map.data = data
-    @map.entity_ids = decoded['entities'].map { |e| e['id'] }.join(',')
-    @map.rel_ids = decoded['rels'].map { |e| e['id'] }.join(',')
-    @map.save
+      @map.title = params[:title] if params[:title].present?
+      @map.description = params[:description] if params[:title].present?
+      @map.is_featured = params[:is_featured] if params[:is_featured].present?
+      @map.is_private = params[:is_private] if params[:is_private].present?
+      @map.width = params[:width] if params[:width].present?
+      @map.height = params[:height] if params[:height].present?
+      @map.zoom = params[:zoom] if params[:zoom].present?
+      @map.data = data
+      @map.entity_ids = decoded['entities'].map { |e| e['id'] }.join(',')
+      @map.rel_ids = decoded['rels'].map { |e| e['id'] }.join(',')
+      @map.save
 
-    # NEED CACHE CLEAR HERE
+      # NEED CACHE CLEAR HERE
 
-    render json: @map
+      render json: @map
+    end
   end
 
   def destroy
@@ -265,6 +287,20 @@ class MapsController < ApplicationController
     render json: { node: node, edges: edges }
   end
 
+  def edges_with_nodes
+    entity = Entity.find(params[:node_id])
+    entity_ids = params[:node_ids]
+    relateds = entity.relateds
+      .where("link.category_id = #{params[:category_id]}")
+      .where.not(link: { entity2_id: entity_ids })
+      .limit(params[:num].to_i)
+    nodes = relateds.map { |related| Oligrapher.entity_to_node(related) }
+    all_ids = entity_ids.concat(relateds.map(&:id))
+    rel_ids = Link.where(entity1_id: all_ids, entity2_id: relateds.map(&:id)).pluck(:relationship_id).uniq
+    rels = Relationship.find(rel_ids)
+    edges = rels.map { |r| Oligrapher.rel_to_edge(r) }
+    render json: { nodes: nodes, edges: edges }
+  end
 
   private
 
@@ -294,8 +330,16 @@ class MapsController < ApplicationController
     )
   end
 
+  def oligrapher_params
+    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_featured)
+  end
+
+  def is_owner
+    current_user and (current_user.has_legacy_permission('admin') or @map.user_id == current_user.sf_guard_user_id)
+  end
+
   def check_owner
-    unless current_user and (current_user.has_legacy_permission('admin') or @map.user_id == current_user.sf_guard_user_id)
+    unless is_owner
       raise Exceptions::PermissionError
     end
   end
