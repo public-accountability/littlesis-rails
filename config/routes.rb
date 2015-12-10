@@ -181,6 +181,11 @@ Lilsis::Application.routes.draw do
     action: 'show',
     as: 'map_slide'
 
+  get "/maps/:id/share/:secret",
+    controller: 'maps',
+    action: 'show',
+    as: 'share_map'
+    
   resources :topics do
     member do
       get 'new_elements'      

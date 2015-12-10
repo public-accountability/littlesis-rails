@@ -305,6 +305,8 @@ class MapsController < ApplicationController
   private
 
   def enforce_slug
+    return if params[:secret]
+
     is_json = request.path_info.match(/\.json$/)
 
     if !is_json and @map.title.present? and !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
