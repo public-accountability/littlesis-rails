@@ -801,11 +801,23 @@ h2#storyMapAnnotationTitle {
   outline: none;
 }
 
+#oligrapherTitle, #oligrapherTitle input {
+  font-weight: 200;
+}
+
 #oligrapherLogo {
-    position: absolute;
-    bottom: calc(30% - 30px);
-    right: 5px;
-    width: 100px;
+  position: absolute;
+  bottom: calc(30% - 30px);
+  right: 5px;
+  width: 100px;
+}
+
+#oligrapherShowAnnotations {
+  right: 10px;
+}
+
+.nodeCircle circle.handle {
+  fill: #8bc8f0;
 }
 
 #oligrapher-annotations.embedded {

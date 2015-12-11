@@ -89,13 +89,12 @@ class MapsController < ApplicationController
       format.html {
         @editable = false
 
-        links = [
-          { text: "embed", url: "#", id: "oligrapherEmbedLink", target: "_self" },
+        @links = [
+          { text: "embed", url: "#", id: "oligrapherEmbedLink" },
           { text: "clone", url: clone_map_url(@map), method: "POST" }
         ]
-        links.push({ text: "edit", url: edit_map_url(@map) }) if is_owner
-        links.push({ text: "share link", url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
-        @links = JSON.dump(links);
+        @links.push({ text: "edit", url: edit_map_url(@map) }) if is_owner
+        @links.push({ text: "share link", url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
 
         render "story_map"
       }
@@ -136,6 +135,10 @@ class MapsController < ApplicationController
   def edit
     check_owner
     check_permission 'editor'
+
+    @links = [
+      { text: "view", url: map_url(@map), target: "_blank" }
+    ]
 
     @editable = true
     render "story_map"

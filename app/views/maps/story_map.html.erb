@@ -1,0 +1,171 @@
+<% content_for(:static_navbar, true) %>
+<% content_for(:full_width_top, true) %>
+<% content_for(:page_title, raw(@map.name)) %>
+<% content_for(:facebook_title, @map.name) %>
+<% content_for(:facebook_image, @map.thumbnail) %>
+<% content_for(:hide_footer, true) %>
+
+<%= content_for(:body) do %>
+
+<%= render 'shared/facebook_sdk' %>
+
+<div id="oligrapher-annotations"></div>
+
+<div id="oligrapherModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <div class="modal-body-text"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="embed-code">
+  Width <input type="text" id="embed-width" value="550">&nbsp;&nbsp;
+  Height <input type="text" id="embed-height" value="400">&nbsp;&nbsp;
+  <textarea><iframe height="400" width="550" scrolling="no" style="border: 0px; overflow: hidden;" src="<%= embedded_map_url(@map) %>"></iframe><div style="padding: 5px;"><%= link_to('view this map on LittleSis', map_url(@map)) %></div></textarea>
+</div>
+
+<script>
+  var graph = <%= raw(@map.graph_data) %>;
+  graph.id = <%= @map.id %>;
+  
+  var annotations = <%= raw(@map.annotations_data) %>;
+  var startIndex = <%= params.fetch(:slide, 1).to_i - 1 %>;
+  var currentIndex = startIndex;
+
+  var root = document.getElementById('oligrapher-annotations');
+  root.style.height = window.innerHeight - 130 + "px";
+
+  var saveData = function(data) {
+    if (!data.title) {
+      $('#oligrapherModal .modal-body-text').text("You must give the map a title!");
+      $('#oligrapherModal').modal();
+      return;
+    }
+
+    $.ajax({
+      url: "<%= map_path(@map) %>",
+      type: "PATCH",
+      data: { 
+        graph_data: JSON.stringify(data.graph), 
+        annotations_data: JSON.stringify(data.annotations), 
+        annotations_count: data.annotations.length,
+        title: data.title,
+        is_private: data.settings.is_private,
+        is_featured: data.settings.is_featured
+      },
+      success: function(data) { 
+        $('#oligrapherModal .modal-body-text').text("Map successfully saved");
+        $('#oligrapherModal').modal();
+      },
+      error: function(req, str) { 
+        alert("There was an error saving the map: " + str); 
+      },
+      dataType: "json"
+    })
+  };
+
+  var oliAnnotations = new OligrapherAnnotations({
+    domRoot: root,
+    oligrapher: Oligrapher,
+    title: '<%= @map.title %>',
+    graphData: graph, 
+    annotationsData: annotations,
+    user: { name: "<%= @map.user.username %>", url: "<%= @map.user.full_legacy_url %>" },
+    date: '<%= @map.created_at.strftime("%B %-d, %Y") %>',
+    startIndex: startIndex,
+    isEditor: <%= @editable.to_s %>,
+    isLocked: <%= (!@editable).to_s %>,
+    editor: OligrapherEditor,
+    dataSource: LsDataSource,
+    links: <%= raw(JSON.dump(@links || "[]")) %>,
+    settings: {
+      is_private: <%= @map.is_private.to_s %>,
+      is_featured: <%= @map.is_featured.to_s %>
+    },
+    onSave: saveData,
+    onNav: updateUrl
+  });
+
+  $('#oligrapherEmbedLink').click(function(e) {
+    var text = $('#embed-code textarea').val();
+    var left = this.offsetLeft + "px";
+    var top = ($(this).offset().top + 10) + "px";
+    $('#embed-code').css('left', left);
+    $('#embed-code').css('top', top);
+    $('#embed-code textarea').val(text);
+    $('#embed-code').toggle();
+    $('#embed-code textarea').focus();
+  });
+
+  $("#embed-code textarea").focus(function() {
+      var $this = $(this);
+      $this.select();
+
+      // Work around Chrome's little problem
+      $this.mouseup(function() {
+          // Prevent further mouseup intervention
+          $this.unbind("mouseup");
+          return false;
+      });
+  });
+
+  $('#embed-width').on('input', function(){
+    var text = $('#embed-code textarea').val();
+    text = text.replace(/width="\d*"/, 'width="' + this.value + '"');
+    $('#embed-code textarea').val(text);
+  });
+
+  $('#embed-height').on('input', function(){
+    var text = $('#embed-code textarea').val();
+    text = text.replace(/height="\d*"/, 'height="' + this.value + '"');
+    $('#embed-code textarea').val(text);
+  });
+
+  $('#embed-zoom').on('input', function(){
+    var text = $('#embed-code textarea').val();
+    text = text.replace(/zoom=[^"]*/, "zoom=" + this.value);
+    $('#embed-code textarea').val(text);
+  });
+
+  function showAnnotation(index) {
+    currentIndex = event.state.index;
+    oliAnnotations.showAnnotation(index);
+  }
+
+  function updateUrl(index) {
+    // do nothing if update is triggered by showAnnotation,
+    // in which case index will be the same as before
+    if (index == currentIndex) {
+      return;
+    }
+
+    var num = (index + 1).toString();
+    var currentUrl = window.location.toString();
+    var url = currentUrl.replace(/\/maps\/([^\/]+).*$/, '/maps/$1/' + (num == 1 ? '' : num));
+
+    if (typeof (history.pushState) != "undefined") {
+      var obj = { title: document.title, url: url, index: index };
+      history.pushState(obj, obj.title, obj.url);
+    }
+  }
+
+  window.onpopstate = function(event) {
+    if (event.state && typeof(event.state.index) !== 'undefined') {
+      // don't push state again
+      showAnnotation(event.state.index);      
+    } else {
+      // window.location.href = window.location.toString();
+    }
+  };
+
+  if (typeof (history.replaceState) !== "undefined") {
+    var obj = { title: document.title, url: window.location.toString(), index: currentIndex };
+    history.replaceState(obj, obj.title, obj.url);
+  }
+</script>
+
+<% end %>

@@ -1,0 +1,42 @@
+<% content_for(:page_title, raw(@map.name)) %>
+<% content_for(:facebook_title, @map.name) %>
+<% content_for(:facebook_image, @map.thumbnail) %>
+<% content_for(:hide_footer, true) %>
+
+<%= render 'shared/facebook_sdk' %>
+
+<div id="oligrapher-annotations" class="embedded"></div>
+<a href="//littlesis.org" target="_blank">
+  <%= image_tag("lilsis-logo-trans-200.png", id: "oligrapherLogo") %>
+</a>
+
+<script>
+  var graph = <%= raw(@map.graph_data) %>;
+  graph.id = <%= @map.id %>;
+  
+  var annotations = <%= raw(@map.annotations_data) %>;
+  var startIndex = <%= params.fetch(:slide, 1).to_i - 1 %>;
+
+  var root = document.getElementById('oligrapher-annotations');
+  root.style.height = window.innerHeight + "px";
+
+  var oliAnnotations = new OligrapherAnnotations({
+    domRoot: root,
+    title: "<%= @map.title %>",
+    url: "<%= map_url(@map) %>",
+    graphData: graph, 
+    annotationsData: annotations,
+    startIndex: startIndex,
+    isEditor: false,
+    isLocked: true,
+    oligrapher: Oligrapher,
+    editor: OligrapherEditor
+  });
+
+  var windowHeight = window.innerHeight;
+  var annotationsHeight = $('#oligrapherGraphAnnotations')[0].offsetHeight;
+  var headerHeight = $('#oligrapherHeader')[0].offsetHeight;
+  var graphHeight = windowHeight - annotationsHeight - headerHeight + 25;
+  $('#oligrapherContainer svg')[0].setAttribute("height", graphHeight);
+
+</script>
