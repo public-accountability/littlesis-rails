@@ -113,12 +113,15 @@ class MapsController < ApplicationController
     check_permission 'editor'
     @map = NetworkMap.new
     @map.title = 'Untitled Map'
+    @map.user = current_user
+    @editable = true
+    render "story_map"
   end
 
   def create
     check_permission 'editor'
 
-    params = map_params
+    params = oligrapher_params
     params[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
     @map = NetworkMap.new(params)
 
