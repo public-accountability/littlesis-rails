@@ -1,0 +1,149 @@
+#oligrapherEditorContainer:focus, 
+#oligrapherEditorContainer div:focus, 
+#oligrapherEditorContainer button:not(#zoomIn, #zoomOut):focus,
+#oligrapherEditorContainer input[type="checkbox"]:focus {
+  outline: none;
+  background-color: #f8f8f8;
+}
+
+#oligrapherEditorContainer button {
+  background-color: #f8f8f8;
+}
+
+#zoomButtons {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+#zoomOut {
+  margin-top: 5px;
+}
+
+#zoomButtons button {
+  display: block;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0);
+  border: 0px solid #ddd;
+  cursor: pointer;
+  padding: 0px;
+  color: #666;
+  font-size: 16px;
+}
+
+#zoomButtons button:focus {
+  outline: none;
+}
+
+button#toggleEditTools {
+  position: absolute;
+  top: 85px;
+  left: 15px;
+  border: 1px solid #ccc;
+  background-color: #fff;  
+  padding-top: 7px;
+  width: 32px;
+  outline: none;
+}
+
+#buttons {
+  position: absolute;
+  top: 15px;
+  left: 60px;
+}
+
+#buttons .buttonGroup {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+#addNodeInput {
+  position: relative;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.addNodeResults {
+  display: block;
+}
+
+.editForm {
+  position: absolute;
+  display: inline-block;
+  z-index: 20;
+  top: 15px;
+  right: 15px;
+  margin: 0 auto;
+}
+
+.editForm h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.editForm input:not([type='checkbox']), .editForm select {
+  width: 150px;
+}
+
+#addEdgeForm input, #addEdgeForm select {
+  margin-bottom: 10px;
+}
+
+#addConnectedNodes {
+  margin-top: 40px;
+}
+
+#addConnectedNodesNum {
+  width: 40px;
+}
+
+#addConnectedNodes select {
+  margin-left: 5px;
+}
+
+.addNodeInput {
+  margin-bottom: 5px;
+}
+
+.addNodeResult {
+  margin-top: 3px;
+}
+
+.addNodeResult {
+  color: #008;
+  cursor: pointer;
+}
+
+#addEdgeForm {
+  position: absolute;
+  top: 50px;
+  left: 430px;
+  right: auto;
+}
+
+#addEdgeForm input, #addEdgeForm select {
+  margin-bottom: 5px;
+}
+
+#helpScreen {
+  background: white;
+  width: 400px;
+  padding: 20px;
+  border-radius: 5px;
+  position: absolute;
+  z-index: 20;
+  top: 20px;
+  right: 20px;
+  margin: 0 auto;
+  box-shadow: 0px 0px 20px #888;
+}
+
+#helpScreen h3 {
+  margin-top: 0;
+}

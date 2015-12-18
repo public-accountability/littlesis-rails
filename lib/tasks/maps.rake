@@ -104,9 +104,30 @@ namespace :maps do
 
   desc "generate secret hash for all network maps"
   task generate_secrets: :environment do
-    NetworkMap.where(secret: nil).each do |map|
+    maps = NetworkMap.where(secret: nil)
+    print "generating secret hash for #{maps.count} maps...\n\n"
+    maps.each do |map|
       map.generate_secret
       map.save
+      print (i + 1).to_s + "\r"
     end
+    print "\n"
+  end
+
+  desc "convert map JSON to graph JSON"
+  task generate_oligrapher_data: :environment do
+    maps = NetworkMap.where(graph_data: nil)
+    print "generating oligrapher data for #{maps.count} maps...\n\n"
+    maps.each_with_index do |map, i|
+      path = Rails.root.to_s + "/tmp/mapData.json"
+      open(path, "w") { |f| f << map.data }
+      oligrapher_data = `node #{Rails.root}/bin/convertMap.js #{path}`
+      annotations_data = JSON.dump(map.annotations.map { |a| Oligrapher.annotation_data(a) })
+      map.update(graph_data: oligrapher_data)
+      map.update(annotations_data: annotations_data)
+      map.update(annotations_count: map.annotations.count)
+      print (i + 1).to_s + "\r"
+    end
+    print "\n"
   end
 end

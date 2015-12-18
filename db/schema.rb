@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151118171301) do
+ActiveRecord::Schema.define(version: 20151121152809) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -702,24 +702,27 @@ ActiveRecord::Schema.define(version: 20151118171301) do
   add_index "modification_field", ["modification_id"], name: "modification_id_idx", using: :btree
 
   create_table "network_map", force: true do |t|
-    t.integer  "user_id",     limit: 8,                          null: false
-    t.text     "data",        limit: 2147483647,                 null: false
-    t.string   "entity_ids",  limit: 5000
-    t.string   "rel_ids",     limit: 5000
+    t.integer  "user_id",           limit: 8,                          null: false
+    t.text     "data",              limit: 2147483647,                 null: false
+    t.string   "entity_ids",        limit: 5000
+    t.string   "rel_ids",           limit: 5000
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "is_deleted",                     default: false, null: false
-    t.string   "title",       limit: 100
-    t.text     "description", limit: 2147483647
-    t.integer  "width",                                          null: false
-    t.integer  "height",                                         null: false
-    t.boolean  "is_featured",                    default: false, null: false
-    t.string   "zoom",                           default: "1",   null: false
-    t.boolean  "is_private",                     default: false, null: false
+    t.boolean  "is_deleted",                           default: false, null: false
+    t.string   "title",             limit: 100
+    t.text     "description",       limit: 2147483647
+    t.integer  "width",                                                null: false
+    t.integer  "height",                                               null: false
+    t.boolean  "is_featured",                          default: false, null: false
+    t.string   "zoom",                                 default: "1",   null: false
+    t.boolean  "is_private",                           default: false, null: false
     t.string   "thumbnail"
-    t.boolean  "delta",                          default: true,  null: false
-    t.text     "index_data",  limit: 2147483647
+    t.boolean  "delta",                                default: true,  null: false
+    t.text     "index_data",        limit: 2147483647
     t.string   "secret"
+    t.text     "graph_data",        limit: 16777215
+    t.text     "annotations_data"
+    t.integer  "annotations_count",                    default: 0,     null: false
   end
 
   add_index "network_map", ["delta"], name: "index_network_map_on_delta", using: :btree

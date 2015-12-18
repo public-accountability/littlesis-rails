@@ -9,164 +9,28 @@
 
 <%= render 'shared/facebook_sdk' %>
 
-<div id="storyMapContainer" class="container-fluid">
-  <div id="storyMapMainRow" class="row">
-    <div id="graphCol" class="col-md-8">
-      <div id="storyMapTitle">
-        <h1><%= @map.title %></h1>
-        <div id="storyMapByLine">
-          by <%= user_link(@map.user) %>
-          <span id="storyMapDate"><%= @map.created_at.strftime("%B %-d, %Y") %></span>
-          <% if current_user.present? and ((current_user.id == @map.user.id) or current_user.has_legacy_permission("admin")) %>
-            <div id="edit-link">
-              <%= link_to 'edit', edit_map_path(@map) %>
-            </div>
-          <% end %>
-          <% if @map.is_private and current_user.present? and ((current_user.id == @map.user.id) or current_user.has_legacy_permission("admin")) %>
-            <div id="share-link">
-              <%= link_to 'share link', share_map_path(@map, secret: @map.secret) %>
-            </div>
-          <% end %>
-        </div>
-      </div>
-      <div id="storyMapGraphContainer">
-        <div id="storyMapGraph"></div>
-        <div id="storyMapZoomButtons">
-          <button id="storyMapZoomIn" class="storyMapZoomButton">
-            <span class="glyphicon glyphicon-plus"></span>
-          </button>
-          <button id="storyMapZoomOut" class="storyMapZoomButton">
-            <span class="glyphicon glyphicon-minus"></span>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div id="infoCol" class="col-md-4">
-      <div id="storyMapNavButtons">
-        <button id="storyMapPrevButton" class="btn btn-lg btn-default">Prev</button>
-        <button id="storyMapNextButton" class="clickplz btn btn-lg btn-default">Next</button>
-      </div>
-      <div id="storyMapAnnotation">
-        <h2 id="storyMapAnnotationTitle"></h2>
-        <div id="storyMapAnnotationText"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="deck-logo-fullscreen">
-  <%= link_to(image_tag("lilsis-logo-trans-200.png"), signed_in? ? home_dashboard_path : root_path) %>
-</div>
+<div id="oligrapher-annotations"></div>
 
 <script>
-$(document).ready(function() {
-  var topHeight = $('#top')[0].offsetHeight;
-  var titleHeight = $('#storyMapTitle')[0].offsetHeight;
-  $('body').css("height", window.innerHeight + "px");
-  $('#storyMapContainer').css("height", (window.innerHeight - topHeight) + "px");
-  $('#storyMapMainRow').css("height", (window.innerHeight - topHeight - 20) + "px");
-  $('#storyMapGraphContainer, #storyMapGraph').css("height", (window.innerHeight - topHeight - titleHeight - 50) + "px")
+  var graph = LsDataConverter.convertMapData(<%= raw(JSON.dump(@map.to_clean_hash)) %>);
+  var startIndex = <%= params.fetch(:slide, 1).to_i - 1 %>;
+  var annotations = <%= raw(JSON.dump(@map.annotations_data)) %>;
 
-  var data = LsDataConverter.convertMapCollectionData(<%= raw(JSON.dump(@map.to_collection_data)) %>);
-  var currentIndex = <%= params.fetch(:slide, 1).to_i - 1 %>;
+  var root = document.getElementById('oligrapher-annotations');
+  root.style.height = window.innerHeight - 70 + "px";
 
-  function loadMap(index, pushState) {
-    if (typeof(pushState) === 'undefined') pushState = true;
-    var graph = data.graphs[index];
-
-    // load annotation title
-    $('#storyMapAnnotationTitle').html(graph.title);
-
-    // load annotation body
-    $('#storyMapAnnotationText').html(graph.description);
-
-    // load graph
-    oli.show(graph.id);
-
-    updateButtons(index);
-
-    if (pushState) {
-      updateUrl(index, pushState);
-    }
-
-    currentIndex = index;
-  }
-
-  function prevIndex(index) {
-    return (data.graphs[index - 1]) ? index - 1 : false;
-  }
-
-  function nextIndex(index) {
-    return (data.graphs[index + 1]) ? index + 1 : false;
-  }
-
-  function updateButtons(index) {
-    $('#storyMapNavButtons').toggle(data.graphs.length > 0);
-    $('#storyMapPrevButton').prop("disabled", prevIndex(index) === false);
-    $('#storyMapNextButton').prop("disabled", nextIndex(index) === false);
-  }
-
-  function updateUrl(index) {
-    var num = (index + 1).toString();
-    var currentUrl = window.location.toString();
-    var url = currentUrl.replace(/\/maps\/([^\/]+).*$/, '/maps/$1/' + num);
-
-    if (typeof (history.pushState) != "undefined") {
-      var obj = { title: document.title, url: url, index: index };
-      history.pushState(obj, obj.title, obj.url);
-    }
-  }
-
-  window.onpopstate = function(event) {
-    if (event.state && typeof(event.state.index) !== 'undefined') {
-      // don't push state again
-      loadMap(event.state.index, pushState = false);      
-    }
-  };
-
-  $('#storyMapZoomIn').on('click', function() {
-    oli.zoomIn();
+  var oliAnnotations = new OligrapherAnnotations({
+    root: root,
+    oligrapher: Oligrapher,
+    data: graph, 
+    annotations: annotations,
+    user: { name: "<%= @map.user.username %>", url: "<%= @map.user.full_legacy_url %>" },
+    date: '<%= @map.created_at.strftime("%B %-d, %Y") %>',
+    startIndex: startIndex,
+    isEditor: <%= @editable.to_s %>,
+    editor: OligrapherEditor,
+    dataSource: LsDataSource
   });
-
-  $('#storyMapZoomOut').on('click', function() {
-    oli.zoomOut();
-  });
-
-  $('#storyMapPrevButton').on('click', function() {
-    var index = prevIndex(currentIndex);
-
-    if (index !== false) {
-      loadMap(index);
-      this.blur();
-    }
-  });
-
-  $('#storyMapNextButton').on('click', function() {
-    var index = nextIndex(currentIndex);
-
-    if (index !== false) {
-      loadMap(index);
-      this.blur();
-    }
-  });
-
-  // start oligrapher with first graph
-  var oli = Oligrapher.run(document.getElementById('storyMapGraph'), { 
-    data: data.graphs[currentIndex],
-    highlighting: false
-  });
- 
-  // preload remaining graphs
-  data.graphs.forEach(function(graph) { oli.import(graph); });
-
-  loadMap(currentIndex, false); // displays annotation for fist graph
-
-  if (typeof (history.replaceState) !== "undefined") {
-    var obj = { title: document.title, url: window.location.toString(), index: currentIndex };
-    history.replaceState(obj, obj.title, obj.url);
-  }
-});
-
 </script>
 
 <% end %>

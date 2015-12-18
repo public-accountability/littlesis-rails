@@ -164,6 +164,7 @@ Lilsis::Application.routes.draw do
       post 'reorder_annotations'
       post 'destroy_annotation'
       get 'collection'
+      get 'embedded'
     end
 
     collection do
@@ -171,6 +172,7 @@ Lilsis::Application.routes.draw do
       get 'featured'
       get 'find_nodes'
       get 'node_with_edges'
+      get 'edges_with_nodes'
     end
   end
 

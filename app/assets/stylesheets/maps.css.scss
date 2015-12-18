@@ -252,6 +252,8 @@ h1.map-title {
   margin-top: 10px;
   background-color: #eee;
   padding: 10px;
+  width: 500px;
+  box-sizing: content-box;
 
   input {
     width: 50px;
@@ -759,118 +761,108 @@ h2#storyMapAnnotationTitle {
   }
 }
 
-// EXPERIMENTAL STORY MAP PAGE
+// STORY MAP PAGE
 
-#graph {
-  height: 100%;
-  width: 100%;
+.fullscreen #oligrapher-annotations {
+  padding: 0;
 }
 
-#deck-title-fullscreen {
-  display: inline-block;
-  position: absolute;
-  top: 0px;
-  left: 60px;
-  font-size: 50px;
-  line-height: 50px;
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 1);
-  border: 0px solid #ddd;
-  border-radius: 10px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-  box-shadow: 0px 0px 5px #eee;
+.fullscreen #oligrapher-annotations .row {
+  margin: 0;
 }
 
-#deck-nav-buttons {
-  position: absolute;
-  top: 20px;
-  right: 0px;
-  width: 300px;
-  padding: 10px;
+.fullscreen #oligrapher-annotations .row > div {
+  padding: 0;
 }
 
-#deck-annotation-fullscreen {
-  position: absolute;
-  top: 90px;
-  right: 0px;
-  width: 300px;
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 1);
-  border: 0px solid #ddd;
-  border-radius: 5px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-  box-shadow: 0px 0px 5px #eee;
+#oligrapher-annotations {
+  padding: 20px;
 }
 
-#deck-annotation-hide {
-  position: absolute;
-  top: 3px;
-  right: 15px;
-  font-size: 30px;
-  cursor: default;
-}
-
-#deck-annotation-show {
-  display: none;
-  position: absolute;
-  top: 93px;
-  right: 20px;
-  font-size: 30px;
-  cursor: default;
-}
-
-#deck-annotation-title {
-  font-size: 25px;
-  line-height: 27px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-#deck-annotation-text {
-}
-
-#deck-logo-fullscreen {
-  position: absolute;
-  bottom: 0px;
-  left: 20px;
-
-  img {
-    width: 100px;
-  }
-}
-
-#zoomButtons {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  border: 1px solid #eee;
-  border-radius: 5px;
-  padding: 5px;
-  box-shadow: 0 0 5px #f8f8f8;
-  background-color: rgba(255, 255, 255, 0.8);
-}
-
-#zoomIn {
-}
-
-#zoomOut {
-  margin-top: 5px;
-}
-
-.zoomButton {
-  display: block;
-  width: 20px;
-  height: 20px;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0);
-  border: 0px solid #ddd;
-  cursor: pointer;
-  padding: 0px;
-  color: #666;
-}
-
-.zoomButton:focus {
+#oligrapher-annotations div:focus {
   outline: none;
+}
+
+#oligrapherTitle, #oligrapherTitle input {
+  font-weight: 200;
+}
+
+#oligrapherLogo {
+  position: absolute;
+  bottom: calc(30% - 30px);
+  right: 5px;
+  width: 100px;
+}
+
+#oligrapherShowAnnotations {
+  right: 10px;
+}
+
+.nodeCircle circle.handle {
+  fill: #8bc8f0;
+}
+
+#oligrapher-annotations.embedded {
+
+  #oligrapherHeader {
+    margin-bottom: 0;
+    margin-top: 3px;
+    padding-left: 13px;
+    z-index: 1000;
+  }
+
+  #oligrapherTitle {
+    font-size: 30px;
+    margin-bottom: 2px;
+
+    a {
+      color: black;
+    }
+  }
+
+  #oligrapherGraph {
+    border: 0;
+  }
+
+  #oligrapherHideAnnotationsButton {
+    display: none;
+  }
+
+  #oligrapherGraphAnnotations {
+    position: absolute;
+    height: 30%;
+    width: 100%;
+    bottom: 0px;
+  }
+
+  #oligrapherNavButtons {
+    margin: 0;
+    margin-bottom: 5px;
+
+    button {
+      font-size: 12px;
+      padding: 6px;
+      border: 1px solid #ddd;
+      margin-right: 0px;
+      margin-left: 5px;
+      opacity: 1;
+    }    
+  }
+
+  #oligrapherGraphAnnotation {
+    background-color: #fdfdfd;
+    border-top: 1px dotted #ccc;
+    padding: 10px;
+    height: calc(100% - 30px);
+    overflow: auto;
+    font-size: 12px;
+    line-height: 14px;
+
+    h2 {
+      font-size: 20px;
+      font-weight: normal;
+      margin-top: 5px;
+      margin-bottom: 15px;
+    }
+  }
 }

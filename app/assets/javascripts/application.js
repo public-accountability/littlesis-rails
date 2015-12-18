@@ -29,7 +29,10 @@
 //= require d3.v3.min
 //= require oligrapher/netmap
 //= require oli2/oligrapher.min
+//= require oli2/oligrapher.editor.min
+//= require oli2/oligrapher.annotations.min
 //= require oli2/LsDataConverter
+//= require oli2/LsDataSource
 //= require_tree .
 
 $(document).ready(function() {

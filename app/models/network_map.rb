@@ -276,6 +276,10 @@ class NetworkMap < ActiveRecord::Base
     }
   end
 
+  # def annotations_data 
+  #   annotations.map { |a| Oligrapher.annotation_data(a) }
+  # end
+
   def has_annotations
     annotations.count > 0
   end

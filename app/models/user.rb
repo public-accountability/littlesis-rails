@@ -99,4 +99,8 @@ class User < ActiveRecord::Base
   def legacy_url
     "/user/#{username}"
   end
+
+  def full_legacy_url
+    "//littlesis.org" + legacy_url
+  end
 end

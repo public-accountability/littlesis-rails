@@ -1,0 +1,232 @@
+#oligrapherAnnotationsContainer {
+  position: relative;
+}
+
+#oligrapherGraphContainer {
+  position: relative;
+}
+
+#oligrapherHeader {
+  margin-bottom: 10px;  
+}
+
+#oligrapherTitle {
+  font-size: 50px;
+  font-weight: 300;
+  margin-top: 3px;
+  margin-bottom: 5px;
+}
+
+#oligrapherTitle.oligrapherTitleInput {
+  margin-top: 0;
+  margin-bottom: 1px;
+}
+
+#oligrapherTitle a {
+  text-decoration: none;
+}
+
+#oligrapherTitleInput {
+  border: 1px solid #ccc;
+  padding: 0;
+  width: 100%;
+}
+
+#oligrapherByLine {
+  margin-right: 18px;
+}
+
+#oligrapherDate {
+  color: #888;
+}
+
+#oligrapherGraphLinks {
+  margin-left: 2px;
+}
+
+#oligrapherGraphLinks a {
+  display: inline-block;
+  margin-right: 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#oligrapherGraphLinks form {
+  display: inline-block;
+}
+
+#oligrapherMetaButtons {
+  position: absolute;
+  top: 85px;
+  left: 15px;
+}
+
+#oligrapherMetaButtons {
+  position: absolute;
+  top: 85px;
+  left: 15px;
+}
+
+#oligrapherMetaButtons button {
+  display: block;
+  border: 1px solid #ccc;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 32px;
+  padding-top: 7px;
+  margin-bottom: 10px;
+}
+
+#oligrapherEditButton.editContentMode {
+  background-color: rgba(0, 255, 0, 0.5);
+}
+
+#oligrapherEditButton.editAnnotationsMode {
+  background-color: rgba(255, 255, 0, 0.5);
+}
+
+#oligrapherSaveButton {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #f8f8f8;
+}
+
+#oligrapherShowAnnotations {
+  position: absolute;
+  top: 5px;
+  right: 25px;
+}
+
+#oligrapherShowAnnotations button {
+  font-size: 24px;
+  font-weight: 200;  
+}
+
+#oligrapherGraph {
+  border: 1px solid #f8f8f8;
+}
+
+#oligrapherNavButtons {
+  margin-top: 5px;
+  margin-bottom: 25px;
+}
+
+#oligrapherNavButtons button {
+  margin-right: 10px;
+  font-size: 24px;
+  font-weight: 200;
+  border: 0 solid #eee;
+  background-color: #eee;
+
+  &:disabled {
+    color: #ccc;
+    background-color: #f8f8f8;
+    opacity: 1;
+  }
+}
+
+#oligrapherNavButtons button#oligrapherNavListButton, 
+#oligrapherNavButtons button#oligrapherHideAnnotationsButton,
+#oligrapherShowAnnotations button {
+  border: 1px solid #eee;
+  background-color: #fff;
+}
+
+.clickplz:enabled:not(:focus) {
+  animation: clickplz 3s;
+  -webkit-animation: clickplz 3s;
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@keyframes clickplz {
+  0%   { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
+  50%  { color: #666; background-color:#ffd; text-shadow: 0 0 9px rgba(255,255,128,0.75); }
+  100% { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
+}
+
+@-webkit-keyframes clickplz {
+  0%   { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
+  50%  { color: #666; background-color:#ffd; text-shadow: 0 0 9px rgba(255,255,128,0.75); }
+  100% { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
+}
+
+#oligrapherAnnotationListItems {
+  padding: 0;
+  list-style-type: none;
+}
+
+#oligrapherAnnotationListItems li.placeholder {
+  background: rgb(255, 240, 120);
+}
+
+#oligrapherAnnotationListItems li.placeholder:before {
+  color: rgb(225, 210, 90);
+}
+
+#oligrapherAnnotationListItems li {
+  font-size: 18px;
+  line-height: 34px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: -10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 3px;
+}
+
+#oligrapherAnnotationListItems li.active {
+  background-color: #eee;
+}
+
+#oligrapherAnnotationList button {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+#oligrapherGraphAnnotationEditButton {
+  margin-top: 10px;
+}
+
+#oligrapherGraphAnnotationForm {
+  margin-top: 10px;
+}
+
+#oligrapherGraphAnnotationForm textarea {
+  margin-bottom: 10px;
+}
+
+#oligrapherGraphAnnotationFormText {
+  height: 400px;
+}
+
+#oligrapherSettingsForm {
+  position: absolute;
+  display: inline-block;
+  z-index: 20;
+  top: 15px;
+  right: 15px;
+  margin: 0 auto;
+  text-align: right;
+}
+
+#oligrapherHelpScreen {
+  background: white;
+  width: 800px;
+  padding: 20px;
+  border-radius: 5px;
+  position: absolute;
+  z-index: 20;
+  top: 20px;
+  right: 20px;
+  margin: 0 auto;
+  box-shadow: 0px 0px 20px #888;
+}
+
+#oligrapherHelpScreen h3 {
+  margin-top: 0;
+}
