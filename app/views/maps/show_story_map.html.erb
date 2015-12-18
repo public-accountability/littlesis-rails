@@ -10,6 +10,7 @@
 <%= render 'shared/facebook_sdk' %>
 
 <div id="oligrapher-annotations"></div>
+
 <script>
   var graph = LsDataConverter.convertMapData(<%= raw(JSON.dump(@map.to_clean_hash)) %>);
   var startIndex = <%= params.fetch(:slide, 1).to_i - 1 %>;

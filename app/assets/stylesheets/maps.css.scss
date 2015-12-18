@@ -244,18 +244,6 @@ h1.map-title {
   }
 }
 
-#fullscreen-link {
-  display: inline-block;
-  font-size: 12px;
-  margin-left: 10px;
-}
-
-#embed-link {
-  display: inline-block;
-  font-size: 12px;  
-  margin-left: 10px;
-}
-
 #embed-code {
   display: none;
   position: absolute;
@@ -278,13 +266,7 @@ h1.map-title {
   }
 }
 
-#clone-link {
-  display: inline-block;
-  font-size: 12px;    
-  margin-left: 10px;
-}
-
-#edit-link {
+#fullscreen-link, #embed-link, #clone-link, #edit-link, #share-link {
   display: inline-block;
   font-size: 12px;    
   margin-left: 10px;

@@ -21,7 +21,7 @@ class NetworkMap < ActiveRecord::Base
 
   validates_presence_of :title
 
-  before_save :set_defaults, :generate_index_data
+  before_save :set_defaults, :generate_index_data, :generate_secret
 
   def generate_index_data
     hash = JSON.parse(data)
@@ -35,6 +35,10 @@ class NetworkMap < ActiveRecord::Base
     self.width = Lilsis::Application.config.netmap_default_width if width.blank?
     self.height = Lilsis::Application.config.netmap_default_width if height.blank?
     self.zoom = '1' if zoom.blank?
+  end
+
+  def generate_secret
+    self.secret = SecureRandom.hex(10)
   end
 
   def default_data

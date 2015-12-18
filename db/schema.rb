@@ -717,17 +717,12 @@ ActiveRecord::Schema.define(version: 20151121152809) do
     t.string   "zoom",                                 default: "1",   null: false
     t.boolean  "is_private",                           default: false, null: false
     t.string   "thumbnail"
-<<<<<<< Updated upstream
-    t.boolean  "delta",                          default: true,  null: false
-    t.text     "index_data",  limit: 2147483647
-=======
     t.boolean  "delta",                                default: true,  null: false
     t.text     "index_data",        limit: 2147483647
     t.string   "secret"
     t.text     "graph_data",        limit: 16777215
     t.text     "annotations_data"
     t.integer  "annotations_count",                    default: 0,     null: false
->>>>>>> Stashed changes
   end
 
   add_index "network_map", ["delta"], name: "index_network_map_on_delta", using: :btree

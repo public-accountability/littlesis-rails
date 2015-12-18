@@ -185,7 +185,7 @@ Lilsis::Application.routes.draw do
     controller: 'maps',
     action: 'show',
     as: 'share_map'
-    
+
   resources :topics do
     member do
       get 'new_elements'      
