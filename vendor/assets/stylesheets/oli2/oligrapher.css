@@ -14,12 +14,12 @@ a.nodeLabel text tspan {
   font-family: Helvetica, Arial, sans-serif;  
 }
 
-.edge text {
+#oligrapherContainer:hover .edge text {
   display: none;
   font-family: Helvetica, Arial, sans-serif;
 }
 
-.edge:hover text, .edge.selected text, .edge.highlighted text {
+#oligrapherContainer:hover .edge:hover text, .edge.selected text, .edge.highlighted text {
   display: inline;
 }
 
