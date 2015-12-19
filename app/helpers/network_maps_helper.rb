@@ -5,6 +5,6 @@ module NetworkMapsHelper
   end
 
   def network_map_link(map)
-    link_to(map.name, smart_map_path(map))
+    link_to(raw(map.name), smart_map_path(map))
   end
 end

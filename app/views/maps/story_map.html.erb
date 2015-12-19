@@ -84,7 +84,7 @@
   var oliAnnotations = new OligrapherAnnotations({
     domRoot: root,
     oligrapher: Oligrapher,
-    title: '<%= @map.title %>',
+    title: "<%= raw(@map.title.gsub('"', '\"')) %>",
     graphData: graph, 
     annotationsData: annotations,
     user: { name: "<%= @map.user.username %>", url: "<%= @map.user.full_legacy_url %>" },
