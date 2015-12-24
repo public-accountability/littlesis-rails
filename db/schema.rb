@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151121152809) do
+ActiveRecord::Schema.define(version: 20151224175054) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -723,6 +723,7 @@ ActiveRecord::Schema.define(version: 20151121152809) do
     t.text     "graph_data",        limit: 16777215
     t.text     "annotations_data"
     t.integer  "annotations_count",                    default: 0,     null: false
+    t.boolean  "list_sources",                         default: false, null: false
   end
 
   add_index "network_map", ["delta"], name: "index_network_map_on_delta", using: :btree

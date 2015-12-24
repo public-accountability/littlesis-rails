@@ -37,7 +37,11 @@
   <% end %>
   
   <% if @map.annotations_data %>
-    var annotations = <%= raw(@map.annotations_data) %>;
+    <% if @editable %>
+      var annotations = <%= raw(@map.annotations_data) %>;
+    <% else %>
+      var annotations = <%= raw(@map.annotations_data_with_sources) %>;
+    <% end %>
   <% else %>
     var annotations = [];
   <% end %>
@@ -55,16 +59,21 @@
       return;
     }
 
+    var annotations = data.annotations.filter(function(annotation) { 
+      return annotation.id != 'sources';
+    });
+
     $.ajax({
       url: "<%= @map.id ? map_url(@map) : maps_path %>",
       type: "<%= @map.id ? 'PATCH' : 'POST' %>",
       data: { 
         graph_data: JSON.stringify(data.graph), 
-        annotations_data: JSON.stringify(data.annotations), 
-        annotations_count: data.annotations.length,
+        annotations_data: JSON.stringify(annotations), 
+        annotations_count: annotations.length,
         title: data.title,
         is_private: data.settings.is_private,
-        is_featured: data.settings.is_featured
+        is_featured: data.settings.is_featured,
+        list_sources: data.settings.list_sources
       },
       success: function(data) { 
         $('#oligrapherModal .modal-body-text').text("Map successfully saved");
@@ -85,7 +94,7 @@
     domRoot: root,
     oligrapher: Oligrapher,
     title: "<%= raw(@map.title.gsub('"', '\"')) %>",
-    graphData: graph, 
+    graphData: graph,
     annotationsData: annotations,
     user: { name: "<%= @map.user.username %>", url: "<%= @map.user.full_legacy_url %>" },
     date: '<%= @map.created_at ? @map.created_at.strftime("%B %-d, %Y") : nil %>',
@@ -97,7 +106,8 @@
     links: <%= raw(JSON.dump(@links || [])) %>,
     settings: {
       is_private: <%= @map.is_private.to_s %>,
-      is_featured: <%= @map.is_featured.to_s %>
+      is_featured: <%= @map.is_featured.to_s %>,
+      list_sources: <%= @map.list_sources.to_s %>
     },
     onSave: saveData,
     onNav: updateUrl
@@ -159,6 +169,7 @@
     var num = (index + 1).toString();
     var currentUrl = window.location.toString();
     var url = currentUrl.replace(/\/maps\/([^\/]+).*$/, '/maps/$1/' + (num == 1 ? '' : num));
+    currentIndex = index;
 
     if (typeof (history.pushState) != "undefined") {
       var obj = { title: document.title, url: url, index: index };

@@ -24,10 +24,9 @@ class NetworkMap < ActiveRecord::Base
   before_save :set_defaults, :generate_index_data, :generate_secret
 
   def generate_index_data
-    hash = JSON.parse(data)
-    nodes = hash['entities'].map { |e| [ e['name'], e['description'] ] }.flatten.compact.join(', ')
-    texts = hash['texts'].present? ? hash['texts'].map { |t| t['text'] }.join(', ') : ''
-    self.index_data = nodes + ', ' + texts
+    entities_text = entities.map { |e| [ e.name, e.blurb ] }.flatten.compact.join(', ')
+    captions_text = captions.present? ? captions.join(', ') : ''
+    self.index_data = entities_text + ', ' + captions_text
   end
 
   def set_defaults
@@ -58,13 +57,6 @@ class NetworkMap < ActiveRecord::Base
   def prepared_data
     json = JSON.dump(prepared_objects)
     ERB::Util.json_escape(json)
-  end
-
-  def rels
-    hash = JSON.parse(data)
-    rel_ids = hash['rels'].map { |m| m['id'] }.select{ |id| id.to_i != 0 }
-    return [] if rel_ids.empty?
-    Relationship.where(id: rel_ids)
   end
 
   def references
@@ -294,5 +286,50 @@ class NetworkMap < ActiveRecord::Base
     hash[:title] = "Source Links"
     hash[:description] = references_to_html
     hash
+  end
+
+  def edge_ids
+    hash = JSON.parse(graph_data)
+    return hash['edges'].keys
+  end
+
+  def rels
+    numeric_ids = edge_ids.select { |id| id.to_s.match(/^\d+$/) }
+    return [] if numeric_ids.empty?
+    Relationship.where(id: numeric_ids)
+  end
+
+  def node_ids
+    hash = JSON.parse(graph_data)
+    hash['nodes'].keys
+  end
+
+  def entities
+    numeric_ids = node_ids.select { |id| id.to_s.match(/^\d+$/) }
+    return [] if numeric_ids.empty?
+    Entity.where(id: numeric_ids)
+  end
+
+  def captions
+    hash = JSON.parse(graph_data)
+    hash['captions'].values
+  end
+
+  def annotations_data_with_sources
+    annotations = JSON.parse(annotations_data)
+
+    if list_sources and references.count > 0
+      sources_html = references_to_html
+      annotations.concat([{
+        id: "sources",
+        nodeIds: [],
+        edgeIds: [],
+        captionIds: [],
+        header: "Sources",
+        text: sources_html
+      }])
+    end
+
+    JSON.dump(annotations)
   end
 end

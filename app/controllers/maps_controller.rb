@@ -339,7 +339,7 @@ class MapsController < ApplicationController
   end
 
   def oligrapher_params
-    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_featured)
+    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_featured, :list_sources)
   end
 
   def is_owner
