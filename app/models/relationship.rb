@@ -116,6 +116,10 @@ class Relationship < ActiveRecord::Base
     "/relationship/view/id/" + id.to_s
   end
 
+  def full_legacy_url
+    "//littlesis.org" + legacy_url
+  end
+
   def name
     "#{category_name}: #{entity.name}, #{related.name}"
   end

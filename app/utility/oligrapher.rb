@@ -26,7 +26,8 @@ class Oligrapher
       display: {
         label: edge_label(rel),
         arrow: edge_arrow(rel),
-        dash: rel.is_current != true
+        dash: rel.is_current != true,
+        url: rel.full_legacy_url
       }
     }
   end

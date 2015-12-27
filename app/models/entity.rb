@@ -15,7 +15,7 @@ class Entity < ActiveRecord::Base
   has_many :links, foreign_key: "entity1_id", inverse_of: :entity, dependent: :destroy
   has_many :reverse_links, class_name: "Link", foreign_key: "entity2_id", inverse_of: :related, dependent: :destroy
   has_many :relationships, through: :links
-  has_many :relateds, through: :links
+  has_many :relateds, -> { distinct }, through: :links
   has_many :groups, through: :lists, inverse_of: :entities
   has_many :campaigns, through: :groups, inverse_of: :entities
   has_many :note_entities, inverse_of: :entity
