@@ -802,6 +802,12 @@ h2#storyMapAnnotationTitle {
   fill: #8bc8f0;
 }
 
+#oligrapherDeleteButton, #oligrapherCancelButton {
+  position: absolute;
+  bottom: 26px;
+  left: 105px;
+}
+
 #oligrapher-annotations.embedded {
 
   #oligrapherHeader {
