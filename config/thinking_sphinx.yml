@@ -6,7 +6,7 @@ defaults: &defaults
   html_strip: true
   mem_limit: 128M
   charset_type: utf-8
-  charset_table: "0..9, a..z, _, A..Z->a..z, U+00C0->a, U+00C1->a,
+  charset_table: "0..9, a..z, _, -, A..Z->a..z, U+00C0->a, U+00C1->a,
 	  U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e,
 	  U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i,
 	  U+00CF->i, U+00D1->n, U+00D2->o, U+00D3->o, U+00D4->o, U+00D5->o,
