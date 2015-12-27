@@ -33,8 +33,8 @@ class Oligrapher
   end
 
   def self.edge_label(rel)
-    return rel.description1 unless rel.description2.present?
-    return rel.description2 unless rel.description1.present?
+    return rel.description1 if rel.description1.present? and !rel.description2.present?
+    return rel.description2 if rel.description2.present? and !rel.description1.present?
     return rel.description1 if rel.description1 == rel.description2 and rel.description1.present?
     rel.category_name
   end
