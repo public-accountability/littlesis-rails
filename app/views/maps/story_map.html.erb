@@ -100,7 +100,6 @@
 
   var oliAnnotations = new OligrapherAnnotations({
     domRoot: root,
-    oligrapher: Oligrapher,
     title: "<%= raw(@map.title.gsub('"', '\"')) %>",
     graphData: graph,
     annotationsData: annotations,
@@ -109,7 +108,6 @@
     startIndex: startIndex,
     isEditor: <%= @editable.to_s %>,
     isLocked: <%= (!@editable).to_s %>,
-    editor: OligrapherEditor,
     dataSource: LsDataSource,
     links: <%= raw(JSON.dump(@links || [])) %>,
     settings: {
