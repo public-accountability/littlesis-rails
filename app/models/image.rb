@@ -60,7 +60,7 @@ class Image < ActiveRecord::Base
   end
 
   def self.image_path(filename, type)
-    "https:" + ActionController::Base.helpers.asset_path("images/#{type}/#{filename}")  
+    ActionController::Base.helpers.asset_path("images/#{type}/#{filename}")  
   end
 
   def image_path(type)
