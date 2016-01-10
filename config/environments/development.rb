@@ -34,7 +34,7 @@ Lilsis::Application.configure do
   # Enable serving of images from asset server.
   config.action_controller.asset_host = Proc.new do |source|
     if source =~ /images/
-      "//#{config.aws_s3_bucket}.s3.amazonaws.com"
+      "//#{config.asset_host}"
     else
       nil
     end

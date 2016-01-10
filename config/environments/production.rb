@@ -59,7 +59,7 @@ Lilsis::Application.configure do
   config.assets.initialize_on_precompile = true
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  config.action_controller.asset_host = "//#{config.aws_s3_bucket}.s3.amazonaws.com"
+  config.action_controller.asset_host = "//#{config.asset_host}"
 
   # store assets in a 'folder' instead of bucket root
   config.assets.prefix = "/assets"
