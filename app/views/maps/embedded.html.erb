@@ -32,9 +32,10 @@
   });
 
   var windowHeight = window.innerHeight;
-  var annotationsHeight = $('#oligrapherGraphAnnotations')[0].offsetHeight;
+
+  var annotations = $('#oligrapherGraphAnnotations')[0];
+  var annotationsHeight = annotations ? annotations.offsetHeight : 0;
   var headerHeight = $('#oligrapherHeader')[0].offsetHeight;
   var graphHeight = windowHeight - annotationsHeight - headerHeight + 25;
   $('#oligrapherContainer svg')[0].setAttribute("height", graphHeight);
-
 </script>
