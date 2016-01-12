@@ -22,7 +22,7 @@
 
   var oliAnnotations = new OligrapherAnnotations({
     domRoot: root,
-    title: "<%= @map.title %>",
+    title: "<%= raw(@map.title) %>",
     url: "<%= map_url(@map) %>",
     graphData: graph, 
     annotationsData: annotations,
