@@ -5,7 +5,7 @@
 
 <%= render 'shared/facebook_sdk' %>
 
-<div id="oligrapher-annotations" class="embedded"></div>
+<div id="oligrapher" class="embedded"></div>
 <a href="//littlesis.org" target="_blank">
   <%= image_tag("lilsis-logo-trans-200.png", id: "oligrapherLogo") %>
 </a>
@@ -17,11 +17,11 @@
   var annotations = <%= raw(@map.annotations_data) %>;
   var startIndex = <%= params.fetch(:slide, 1).to_i - 1 %>;
 
-  var root = document.getElementById('oligrapher-annotations');
+  var root = document.getElementById('oligrapher');
   root.style.height = window.innerHeight + "px";
 
-  var oliAnnotations = new OligrapherAnnotations({
-    domRoot: root,
+  var oli = new Oligrapher({
+    root: root,
     title: "<%= raw(@map.title) %>",
     url: "<%= map_url(@map) %>",
     graphData: graph, 

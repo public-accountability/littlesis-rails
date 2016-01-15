@@ -9,7 +9,7 @@
 
 <%= render 'shared/facebook_sdk' %>
 
-<div id="oligrapher-annotations"></div>
+<div id="oligrapher"></div>
 
 <div id="oligrapherModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-sm">
@@ -57,8 +57,8 @@
   var startIndex = <%= params.fetch(:slide, 1).to_i - 1 %>;
   var currentIndex = startIndex;
 
-  var root = document.getElementById('oligrapher-annotations');
-  root.style.height = window.innerHeight - 130 + "px";
+  var root = document.getElementById('oligrapher');
+  root.style.height = window.innerHeight - 170 + "px";
 
   var saveData = function(data) {
     if (!data.title) {
@@ -98,8 +98,8 @@
     })
   };
 
-  var oliAnnotations = new OligrapherAnnotations({
-    domRoot: root,
+  var oli = new Oligrapher({
+    root: root,
     title: "<%= raw(@map.title.gsub('"', '\"')) %>",
     graphData: graph,
     annotationsData: annotations,
@@ -109,6 +109,7 @@
     isEditor: <%= @editable.to_s %>,
     isLocked: <%= (!@editable).to_s %>,
     dataSource: LsDataSource,
+    showSaveButton: true,
     links: <%= raw(JSON.dump(@links || [])) %>,
     settings: {
       is_private: <%= @map.is_private.to_s %>,
@@ -162,7 +163,7 @@
 
   function showAnnotation(index) {
     currentIndex = event.state.index;
-    oliAnnotations.showAnnotation(index);
+    oli.showAnnotation(index);
   }
 
   function updateUrl(index) {
