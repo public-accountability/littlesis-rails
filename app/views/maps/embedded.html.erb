@@ -22,10 +22,12 @@
 
   var oli = new Oligrapher({
     root: root,
-    title: "<%= raw(@map.title) %>",
     url: "<%= map_url(@map) %>",
-    graphData: graph, 
-    annotationsData: annotations,
+    data: {
+      title: "<%= raw(@map.title.gsub('"', '\"')) %>",
+      graph: graph,
+      annotations: annotations
+    },
     startIndex: startIndex,
     isEditor: false,
     isLocked: true

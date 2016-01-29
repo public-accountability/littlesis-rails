@@ -100,9 +100,11 @@
 
   var oli = new Oligrapher({
     root: root,
-    title: "<%= raw(@map.title.gsub('"', '\"')) %>",
-    graphData: graph,
-    annotationsData: annotations,
+    data: {
+      title: "<%= raw(@map.title.gsub('"', '\"')) %>",
+      graph: graph,
+      annotations: annotations
+    },
     user: { name: "<%= @map.user.username %>", url: "<%= @map.user.full_legacy_url %>" },
     date: '<%= @map.created_at ? @map.created_at.strftime("%B %-d, %Y") : nil %>',
     startIndex: startIndex,
@@ -117,7 +119,8 @@
       list_sources: <%= @map.list_sources.to_s %>
     },
     onSave: saveData,
-    onNav: updateUrl
+    onNav: updateUrl,
+    viewOnlyHighlighted: <%= (!@editable).to_s %>
   });
 
   $('#oligrapherEmbedLink').click(function(e) {
