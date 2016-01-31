@@ -105,8 +105,7 @@ class MapsController < ApplicationController
   end
 
   def raw
-    response.headers.delete('X-Frame-Options')
-    render layout: "fullscreen"
+    redirect_to embedded_map_path(@map)
   end
 
   def new
