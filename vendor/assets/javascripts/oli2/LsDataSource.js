@@ -50,7 +50,7 @@
 
   var LsDataSource = {
     name: 'LittleSis',
-    baseUrl: 'https://littlesis.org',
+    baseUrl: 'http://littlesis.org',
 
     findNodes: function(text, callback) {
       get(
@@ -86,11 +86,25 @@
     },
 
     getConnectedNodes: function(nodeId, nodeIds, options, callback) {
+      options = options || {};
       options.node_id = nodeId;
       options.node_ids = nodeIds;
       
       get(
         this.baseUrl + '/maps/edges_with_nodes',
+        options,
+        callback
+      );
+    },
+
+    getInterlocks: function(node1Id, node2Id, nodeIds, options, callback) {
+      options = options || {};
+      options.node1_id = node1Id;
+      options.node2_id = node2Id;
+      options.node_ids = nodeIds;
+
+      get(
+        this.baseUrl + '/maps/interlocks',
         options,
         callback
       );
