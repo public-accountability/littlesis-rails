@@ -1,8 +1,8 @@
 class MapsController < ApplicationController
   include NetworkMapsHelper
 
-  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :find_nodes, :node_with_edges, :edges_with_nodes]
-  before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded]
+  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
+  before_filter :auth, except: [:index, :featured, :show, :raw, :splash, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :interlocks]
   before_filter :enforce_slug, only: [:show]
 
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
@@ -306,6 +306,24 @@ class MapsController < ApplicationController
     rels = Relationship.find(rel_ids)
     edges = rels.map { |r| Oligrapher.rel_to_edge(r) }
     render json: { nodes: nodes, edges: edges }
+  end
+
+  def interlocks
+    num = params.fetch(:num, 10)
+    interlock_ids = Entity.interlock_ids(params[:node1_id], params[:node2_id])
+    interlock_ids = (interlock_ids - params[:node_ids].map(&:to_i)).take(num)
+
+    if interlock_ids.count > 0
+      entities = Entity.where(id: interlock_ids)
+      nodes = entities.map { |entity| Oligrapher.entity_to_node(entity) }
+      all_ids = interlock_ids.concat([params[:node1_id], params[:node2_id]]).concat(params[:node_ids])
+      rel_ids = Link.where(entity1_id: all_ids, entity2_id: interlock_ids).pluck(:relationship_id).uniq
+      rels = Relationship.where(id: rel_ids)
+      edges = rels.map { |r| Oligrapher.rel_to_edge(r) }
+      render json: { nodes: nodes, edges: edges }
+    else
+      render json: { nodes: [], edges: [] }
+    end
   end
 
   private

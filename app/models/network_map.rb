@@ -18,6 +18,9 @@ class NetworkMap < ActiveRecord::Base
   scope :featured, -> { where(is_featured: true) }
   scope :public_scope, -> { where(is_private: false) }
   scope :private_scope, -> { where(is_private: true) }
+  scope :with_description, -> { where.not(description: [nil, ""]) }
+  scope :with_annotations, -> { where.not(annotations_data: "[]") }
+  scope :without_annotations, -> { where(annotations_data: "[]") }
 
   validates_presence_of :title
 
@@ -331,5 +334,22 @@ class NetworkMap < ActiveRecord::Base
     end
 
     JSON.dump(annotations)
+  end
+
+  def legacy_description_as_annotation
+    {
+      id: "description",
+      nodeIds: [],
+      edgeIds: [],
+      captionIds: [],
+      header: "",
+      text: description
+    }
+  end
+
+  def annotatons_data_with_description
+    JSON.dump(
+      JSON.parse(annotations_data).concat([legacy_description_as_annotation])
+    )
   end
 end

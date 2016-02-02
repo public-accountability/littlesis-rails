@@ -593,4 +593,9 @@ class Entity < ActiveRecord::Base
     count = results.first.first
     update(link_count: count)
   end
+
+  def self.interlock_ids(entity1_id, entity2_id)
+    related_ids = Link.where(entity1_id: entity1_id).pluck(:entity2_id).uniq
+    Link.where(entity1_id: entity2_id, entity2_id: related_ids).pluck(:entity2_id).uniq - [entity1_id, entity2_id].map(&:to_i)
+  end
 end

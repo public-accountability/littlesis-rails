@@ -173,6 +173,7 @@ Lilsis::Application.routes.draw do
       get 'find_nodes'
       get 'node_with_edges'
       get 'edges_with_nodes'
+      get 'interlocks'
     end
   end
 

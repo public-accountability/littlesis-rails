@@ -7,7 +7,7 @@ namespace :maps do
 
     NetworkMap.public_scope.where(thumbnail: nil).each do |map|
       map.generate_s3_thumb(s3)
-      print "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}\n"
+      puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
     end
   end
 
@@ -19,7 +19,7 @@ namespace :maps do
 
     NetworkMap.public_scope.each do |map|
       map.generate_s3_thumb(s3)
-      print "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}\n"
+      puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
     end
   end
 
@@ -38,7 +38,7 @@ namespace :maps do
     NetworkMap.all.each do |map|
       hash = JSON.parse(map.data)
 
-      print "fixing urls in map #{map.id}...\n"
+      puts "fixing urls in map #{map.id}..."
 
       entities = hash['entities'].map do |entity|
         if entity['image'].present?
@@ -49,7 +49,7 @@ namespace :maps do
           entity['image'].gsub!(/^https?:\/\//i, "//")
           entity['image'].gsub!(/\/profile\//, "/face/") if entity_type(entity) == 'Person'
 
-          print "replaced #{image} with #{entity['image']}\n" unless image == entity['image']
+          puts "replaced #{image} with #{entity['image']}" unless image == entity['image']
         end
 
         entity
@@ -65,20 +65,20 @@ namespace :maps do
       map.save
     end
 
-    print "fixed map image urls\n"
+    puts "fixed map image urls"
   end
 
   desc "remove default images"
   task remove_default_images: :environment do
     NetworkMap.all.each do |map|
-      print "cleaning #{map.name} (#{map.id})...\n"
+      puts "cleaning #{map.name} (#{map.id})..."
 
       hash = JSON.parse(map.data)
 
       entities = hash['entities'].map do |entity|
         if entity['image'].present? and (entity['image'].match(/netmap-(org|person)/) or entity['image'].match(/anon(s)\.png/))
           entity['image'] = nil
-          print "removed default image from #{entity['name']}\n"
+          puts "removed default image from #{entity['name']}"
         end
 
         entity
@@ -95,7 +95,7 @@ namespace :maps do
       map.save!
     end
 
-    print "fixed map image urls\n"
+    puts "fixed map image urls"
   end
 
   desc "support https in image urls"
@@ -105,11 +105,11 @@ namespace :maps do
   desc "generate secret hash for all network maps"
   task generate_secrets: :environment do
     maps = NetworkMap.where(secret: nil)
-    print "generating secret hash for #{maps.count} maps...\n\n"
+    puts "generating secret hash for #{maps.count} maps...\n"
     maps.each do |map|
       map.generate_secret
       map.save
-      print (i + 1).to_s + "\r"
+      puts (i + 1).to_s
     end
     print "\n"
   end
@@ -117,7 +117,7 @@ namespace :maps do
   desc "convert map JSON to graph JSON"
   task generate_oligrapher_data: :environment do
     maps = NetworkMap.where(graph_data: nil)
-    print "generating oligrapher data for #{maps.count} maps...\n\n"
+    puts "generating oligrapher data for #{maps.count} maps...\n"
     maps.each_with_index do |map, i|
       path = Rails.root.to_s + "/tmp/mapData.json"
       open(path, "w") { |f| f << map.data }
@@ -126,7 +126,24 @@ namespace :maps do
       map.update(graph_data: oligrapher_data)
       map.update(annotations_data: annotations_data)
       map.update(annotations_count: map.annotations.count)
-      print (i + 1).to_s + "\r"
+      puts (i + 1).to_s
+    end
+    print "\n"
+  end
+
+  desc "convert legacy map descriptions into annotations"
+  task descriptions_to_annotations: :environment do
+    include_maps_with_annotations = ENV['INCLUDE_MAPS_WITH_ANNOTATIONS'] || false
+    maps = NetworkMap.with_description
+    maps = maps.without_annotations unless include_maps_with_annotations      
+    puts "converting legacy map descriptions into annotations for #{maps.count} maps...\n"
+    maps.each_with_index do |map, i|
+      next if !include_maps_with_annotations and map.has_annotations
+      next if map.annotations.map { |a| a["text"] }.include?(map.description)
+      map.update(annotations_data: map.annotatons_data_with_description)
+      map.update(annotations_count: map.annotations.count)
+      map.update(description: nil)
+      puts "[#{i+1}] processed map #{map.id}: #{map.title}"
     end
     print "\n"
   end
