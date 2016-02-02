@@ -105,6 +105,7 @@ class MapsController < ApplicationController
   end
 
   def raw
+    # old map page for iframe embeds, forward to new embed page
     redirect_to embedded_map_path(@map)
   end
 

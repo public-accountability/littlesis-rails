@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151224175054) do
+ActiveRecord::Schema.define(version: 20160202003823) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -632,7 +632,7 @@ ActiveRecord::Schema.define(version: 20151224175054) do
   add_index "ls_list", ["delta"], name: "index_ls_list_on_delta", using: :btree
   add_index "ls_list", ["featured_list_id"], name: "featured_list_id", using: :btree
   add_index "ls_list", ["last_user_id"], name: "last_user_id_idx", using: :btree
-  add_index "ls_list", ["name"], name: "uniqueness_idx", unique: true, using: :btree
+  add_index "ls_list", ["name"], name: "index_ls_list_on_name", using: :btree
 
   create_table "ls_list_entity", force: true do |t|
     t.integer  "list_id",      limit: 8,                 null: false
