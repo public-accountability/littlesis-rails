@@ -314,7 +314,7 @@ class Image < ActiveRecord::Base
   end
 
   def invalidate_cloudfront_cache
-    if config.cloudfront_distribtion_id
+    if Lilsis::Application.config.cloudfront_distribtion_id
       CloudFront.new.invalidate([
         "/images/profile/#{filename}",
         "/images/small/#{filename}"
