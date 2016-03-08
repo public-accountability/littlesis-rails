@@ -16,11 +16,11 @@ class Image < ActiveRecord::Base
   validates_presence_of :entity_id, :filename, :title
 
   def download_large_to_tmp
-    download_to_tmp(s3_url("large"))
+    download_to_tmp(s3_url("large", true))
   end
 
   def download_profile_to_tmp
-    download_to_tmp(s3_url("profile"))
+    download_to_tmp(s3_url("profile", true))
   end
 
   def download_original_to_tmp
@@ -51,8 +51,12 @@ class Image < ActiveRecord::Base
     S3.url(image_path(filename, type))
   end
 
-  def s3_url(type)
-    image_path(type)
+  def s3_url(type, ensure_protocol = false)
+    url = image_path(type)
+
+    if ensure_protocol and url.match(/^\/\//)
+      url = "https:" + url
+    end
   end
 
   def s3_exists?(type)
