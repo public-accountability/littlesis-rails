@@ -51,8 +51,6 @@ gem 'pry-rails'
 gem 'aws-sdk', '< 2.0'
 gem 'dimensions'
 gem 'fastimage'
-gem 'acts_as_paranoid', :git => "git://github.com/freddy/rails3_acts_as_paranoid.git", 
-  :branch => "rails4.0"
 gem 'nilify_blanks'
 
 gem 'bootsy', :git => "git://github.com/littlesis-org/bootsy.git"

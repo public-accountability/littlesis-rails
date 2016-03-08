@@ -1,12 +1,4 @@
 GIT
-  remote: git://github.com/freddy/rails3_acts_as_paranoid.git
-  revision: 24baf57aecfe066d057b3898ffec845db234b0f0
-  branch: rails4.0
-  specs:
-    acts_as_paranoid (0.4.1)
-      activerecord (>= 3.2)
-
-GIT
   remote: git://github.com/littlesis-org/bootsy.git
   revision: aec845958b132ca987edabaa37ae1ceb818c8987
   specs:
@@ -346,7 +338,6 @@ PLATFORMS
 DEPENDENCIES
   StreetAddress
   activerecord-session_store
-  acts_as_paranoid!
   asset_sync
   aws-sdk (< 2.0)
   better_errors (= 0.7.0)
@@ -399,3 +390,6 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   validate_url
   whenever
+
+BUNDLED WITH
+   1.11.2

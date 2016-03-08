@@ -163,6 +163,7 @@ class Image < ActiveRecord::Base
     end
 
     File.delete(tmp_path)
+    invalidate_cloudfront_cache
     true
   end
 
@@ -309,6 +310,15 @@ class Image < ActiveRecord::Base
 
     if new_featured = Image.where(entity_id: entity_id).where.not(id: id).first
       new_featured.update(is_featured: true)
+    end
+  end
+
+  def invalidate_cloudfront_cache
+    if config.cloudfront_distribtion_id
+      CloudFront.new.invalidate([
+        "/images/profile/#{filename}",
+        "/images/small/#{filename}"
+      ])
     end
   end
 end

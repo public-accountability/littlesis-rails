@@ -31,6 +31,8 @@ defaults: &defaults
   symfony_path: /var/www/littleis/symfony
   bing_maps_key:
   default_network_id: 79
+  asset_host:
+  cloudfront_distribtion_id:
 
 test:
   <<: *defaults
