@@ -57,6 +57,8 @@ class Image < ActiveRecord::Base
     if ensure_protocol and url.match(/^\/\//)
       url = "https:" + url
     end
+
+    url
   end
 
   def s3_exists?(type)
