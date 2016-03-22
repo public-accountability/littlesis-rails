@@ -96,6 +96,7 @@ class MapsController < ApplicationController
         @links.push({ text: "edit", url: edit_map_url(@map) }) if is_owner
         @links.push({ text: "share link", url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
 
+        response.headers.delete('X-Frame-Options')
         render "story_map"
       }
       format.json {
