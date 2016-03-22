@@ -98,7 +98,7 @@ class MapsController < ApplicationController
 
         if params[:embed]
           response.headers.delete('X-Frame-Options')
-          render "story_map", layout: "fullscreen"
+          render action: "story_map", layout: "fullscreen"
         else
           render "story_map"
         end
