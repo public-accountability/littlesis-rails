@@ -3,8 +3,8 @@ class FlattenAddress < ActiveRecord::Migration
     add_column :address, :country_name, :string, limit: 50, null: false
     add_column :address, :state_name, :string, limit: 50
     change_column :address, :postal, :string, limit: 20
-    # remove_foreign_key "address", name: "address_ibfk_1"
-    # remove_foreign_key "address", name: "address_ibfk_3"
+    remove_foreign_key "address", name: "address_ibfk_1"
+    remove_foreign_key "address", name: "address_ibfk_3"
     change_column :address, :state_id, :integer, null: true
     change_column :address, :country_id, :integer, null: true, default: nil
     change_column :address, :street1, :string, limit: 100, null: true
