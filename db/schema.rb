@@ -103,11 +103,11 @@ ActiveRecord::Schema.define(version: 20160202003823) do
   add_index "api_user", ["email"], name: "email_unique_idx", unique: true, using: :btree
 
   create_table "article", force: true do |t|
-    t.text     "url",                 limit: 16777215,                   null: false
+    t.text     "url",                                                    null: false
     t.string   "title",               limit: 200,                        null: false
     t.string   "authors",             limit: 200
     t.text     "body",                limit: 2147483647,                 null: false
-    t.text     "description",         limit: 16777215
+    t.text     "description"
     t.integer  "source_id"
     t.datetime "published_at"
     t.boolean  "is_indexed",                             default: false, null: false
@@ -195,17 +195,17 @@ ActiveRecord::Schema.define(version: 20160202003823) do
   add_index "business_person", ["entity_id"], name: "entity_id_idx", using: :btree
 
   create_table "campaigns", force: true do |t|
-    t.string   "name",                         null: false
+    t.string   "name",        null: false
     t.string   "tagline"
-    t.text     "description", limit: 16777215
+    t.text     "description"
     t.string   "logo"
     t.string   "cover"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "slug"
-    t.text     "findings",    limit: 16777215
-    t.text     "howto",       limit: 16777215
-    t.text     "custom_html", limit: 16777215
+    t.text     "findings"
+    t.text     "howto"
+    t.text     "custom_html"
     t.string   "logo_credit"
   end
 
@@ -261,10 +261,10 @@ ActiveRecord::Schema.define(version: 20160202003823) do
   end
 
   create_table "delayed_jobs", force: true do |t|
-    t.integer  "priority",                    default: 0, null: false
-    t.integer  "attempts",                    default: 0, null: false
-    t.text     "handler",    limit: 16777215,             null: false
-    t.text     "last_error", limit: 16777215
+    t.integer  "priority",   default: 0, null: false
+    t.integer  "attempts",   default: 0, null: false
+    t.text     "handler",                null: false
+    t.text     "last_error"
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
@@ -414,6 +414,19 @@ ActiveRecord::Schema.define(version: 20160202003823) do
 
   add_index "fec_filing", ["relationship_id"], name: "relationship_id_idx", using: :btree
 
+  create_table "fec_filing_backup_040713", force: true do |t|
+    t.integer "relationship_id", limit: 8
+    t.integer "amount",          limit: 8
+    t.string  "fec_filing_id",   limit: 30
+    t.integer "crp_cycle",       limit: 8
+    t.string  "crp_id",          limit: 30, null: false
+    t.string  "start_date",      limit: 10
+    t.string  "end_date",        limit: 10
+    t.boolean "is_current"
+  end
+
+  add_index "fec_filing_backup_040713", ["relationship_id"], name: "relationship_id_idx", using: :btree
+
   create_table "fedspending_filing", force: true do |t|
     t.integer "relationship_id", limit: 8
     t.integer "amount",          limit: 8
@@ -439,12 +452,6 @@ ActiveRecord::Schema.define(version: 20160202003823) do
   create_table "gender", force: true do |t|
     t.string "name", limit: 10, null: false
   end
-
-  create_table "generic", force: true do |t|
-    t.integer "relationship_id", limit: 8, null: false
-  end
-
-  add_index "generic", ["relationship_id"], name: "relationship_id_idx", using: :btree
 
   create_table "government_body", force: true do |t|
     t.boolean "is_federal"
@@ -480,31 +487,25 @@ ActiveRecord::Schema.define(version: 20160202003823) do
   create_table "groups", force: true do |t|
     t.string   "name"
     t.string   "tagline"
-    t.text     "description",        limit: 16777215
-    t.boolean  "is_private",                          default: false, null: false
+    t.text     "description"
+    t.boolean  "is_private",         default: false, null: false
     t.string   "slug"
     t.integer  "default_network_id"
     t.integer  "campaign_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "logo"
-    t.text     "findings",           limit: 16777215
-    t.text     "howto",              limit: 16777215
+    t.text     "findings"
+    t.text     "howto"
     t.integer  "featured_list_id"
     t.string   "cover"
-    t.boolean  "delta",                               default: true,  null: false
+    t.boolean  "delta",              default: true,  null: false
     t.string   "logo_credit"
   end
 
   add_index "groups", ["campaign_id"], name: "index_groups_on_campaign_id", using: :btree
   add_index "groups", ["delta"], name: "index_groups_on_delta", using: :btree
   add_index "groups", ["slug"], name: "index_groups_on_slug", unique: true, using: :btree
-
-  create_table "hierarchy", force: true do |t|
-    t.integer "relationship_id", limit: 8, null: false
-  end
-
-  add_index "hierarchy", ["relationship_id"], name: "relationship_id_idx", using: :btree
 
   create_table "image", force: true do |t|
     t.integer  "entity_id",    limit: 8,                          null: false
@@ -886,6 +887,26 @@ ActiveRecord::Schema.define(version: 20160202003823) do
   add_index "os_entity_preprocess", ["entity_id", "cycle"], name: "entity_cycle_idx", unique: true, using: :btree
   add_index "os_entity_preprocess", ["entity_id"], name: "entity_id_idx", using: :btree
 
+  create_table "os_entity_preprocess_backup_032312", force: true do |t|
+    t.integer  "entity_id",    limit: 8, null: false
+    t.string   "cycle",        limit: 4, null: false
+    t.datetime "processed_at",           null: false
+    t.datetime "updated_at"
+  end
+
+  add_index "os_entity_preprocess_backup_032312", ["entity_id", "cycle"], name: "entity_cycle_idx", unique: true, using: :btree
+  add_index "os_entity_preprocess_backup_032312", ["entity_id"], name: "entity_id_idx", using: :btree
+
+  create_table "os_entity_preprocess_backup_040713", force: true do |t|
+    t.integer  "entity_id",    limit: 8, null: false
+    t.string   "cycle",        limit: 4, null: false
+    t.datetime "processed_at",           null: false
+    t.datetime "updated_at"
+  end
+
+  add_index "os_entity_preprocess_backup_040713", ["entity_id", "cycle"], name: "entity_cycle_idx", unique: true, using: :btree
+  add_index "os_entity_preprocess_backup_040713", ["entity_id"], name: "entity_id_idx", using: :btree
+
   create_table "os_entity_transaction", force: true do |t|
     t.integer  "entity_id",                                      null: false
     t.string   "cycle",               limit: 4,                  null: false
@@ -904,6 +925,67 @@ ActiveRecord::Schema.define(version: 20160202003823) do
   add_index "os_entity_transaction", ["is_synced"], name: "is_synced_idx", using: :btree
   add_index "os_entity_transaction", ["locked_at"], name: "locked_at_idx", using: :btree
   add_index "os_entity_transaction", ["reviewed_at"], name: "reviewed_at_idx", using: :btree
+
+  create_table "os_entity_transaction_backup_031612", force: true do |t|
+    t.integer  "entity_id",                                     null: false
+    t.string   "cycle",               limit: 4,                 null: false
+    t.string   "transaction_id",      limit: 7,                 null: false
+    t.integer  "match_code",          limit: 8
+    t.boolean  "is_verified",                   default: false, null: false
+    t.boolean  "is_processed",                  default: false, null: false
+    t.boolean  "is_synced",                     default: true,  null: false
+    t.integer  "reviewed_by_user_id", limit: 8
+    t.datetime "reviewed_at"
+    t.integer  "locked_by_user_id",   limit: 8
+    t.datetime "locked_at"
+  end
+
+  create_table "os_entity_transaction_backup_032312", force: true do |t|
+    t.integer  "entity_id",                                     null: false
+    t.string   "cycle",               limit: 4,                 null: false
+    t.string   "transaction_id",      limit: 7,                 null: false
+    t.integer  "match_code",          limit: 8
+    t.boolean  "is_verified",                   default: false, null: false
+    t.boolean  "is_processed",                  default: false, null: false
+    t.boolean  "is_synced",                     default: true,  null: false
+    t.integer  "reviewed_by_user_id", limit: 8
+    t.datetime "reviewed_at"
+    t.integer  "locked_by_user_id",   limit: 8
+    t.datetime "locked_at"
+  end
+
+  create_table "os_entity_transaction_backup_032312_unique", force: true do |t|
+    t.integer  "entity_id",                                     null: false
+    t.string   "cycle",               limit: 4,                 null: false
+    t.string   "transaction_id",      limit: 7,                 null: false
+    t.integer  "match_code",          limit: 8
+    t.boolean  "is_verified",                   default: false, null: false
+    t.boolean  "is_processed",                  default: false, null: false
+    t.boolean  "is_synced",                     default: true,  null: false
+    t.integer  "reviewed_by_user_id", limit: 8
+    t.datetime "reviewed_at"
+    t.integer  "locked_by_user_id",   limit: 8
+    t.datetime "locked_at"
+  end
+
+  create_table "os_entity_transaction_backup_040713", force: true do |t|
+    t.integer  "entity_id",                                      null: false
+    t.string   "cycle",               limit: 4,                  null: false
+    t.string   "transaction_id",      limit: 30,                 null: false
+    t.integer  "match_code",          limit: 8
+    t.boolean  "is_verified",                    default: false, null: false
+    t.boolean  "is_processed",                   default: false, null: false
+    t.boolean  "is_synced",                      default: true,  null: false
+    t.integer  "reviewed_by_user_id", limit: 8
+    t.datetime "reviewed_at"
+    t.integer  "locked_by_user_id",   limit: 8
+    t.datetime "locked_at"
+  end
+
+  add_index "os_entity_transaction_backup_040713", ["entity_id", "cycle", "transaction_id"], name: "entity_cycle_transaction_idx", unique: true, using: :btree
+  add_index "os_entity_transaction_backup_040713", ["is_synced"], name: "is_synced_idx", using: :btree
+  add_index "os_entity_transaction_backup_040713", ["locked_at"], name: "locked_at_idx", using: :btree
+  add_index "os_entity_transaction_backup_040713", ["reviewed_at"], name: "reviewed_at_idx", using: :btree
 
   create_table "ownership", force: true do |t|
     t.integer "percent_stake",   limit: 8
@@ -1084,6 +1166,32 @@ ActiveRecord::Schema.define(version: 20160202003823) do
   add_index "relationship", ["entity2_id"], name: "entity2_id_idx", using: :btree
   add_index "relationship", ["last_user_id"], name: "last_user_id_idx", using: :btree
 
+  create_table "relationship_backup_040713", force: true do |t|
+    t.integer  "entity1_id",   limit: 8,                          null: false
+    t.integer  "entity2_id",   limit: 8,                          null: false
+    t.integer  "category_id",  limit: 8,                          null: false
+    t.string   "description1", limit: 100
+    t.string   "description2", limit: 100
+    t.integer  "amount",       limit: 8
+    t.text     "goods",        limit: 2147483647
+    t.integer  "filings",      limit: 8
+    t.text     "notes",        limit: 2147483647
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "start_date",   limit: 10
+    t.string   "end_date",     limit: 10
+    t.boolean  "is_current"
+    t.boolean  "is_deleted",                      default: false, null: false
+    t.integer  "last_user_id"
+  end
+
+  add_index "relationship_backup_040713", ["category_id"], name: "category_id_idx", using: :btree
+  add_index "relationship_backup_040713", ["entity1_id", "category_id"], name: "entity1_category_idx", using: :btree
+  add_index "relationship_backup_040713", ["entity1_id", "entity2_id"], name: "entity_idx", using: :btree
+  add_index "relationship_backup_040713", ["entity1_id"], name: "entity1_id_idx", using: :btree
+  add_index "relationship_backup_040713", ["entity2_id"], name: "entity2_id_idx", using: :btree
+  add_index "relationship_backup_040713", ["last_user_id"], name: "last_user_id_idx", using: :btree
+
   create_table "relationship_category", force: true do |t|
     t.string   "name",                 limit: 30,                 null: false
     t.string   "display_name",         limit: 30,                 null: false
@@ -1148,11 +1256,11 @@ ActiveRecord::Schema.define(version: 20160202003823) do
     t.datetime "updated_at"
   end
 
-  add_index "scraper_meta", ["scraper", "namespace", "predicate", "value"], name: "uniqueness_idx", unique: true, using: :btree
+  add_index "scraper_meta", ["scraper", "namespace", "predicate"], name: "uniqueness_idx", unique: true, using: :btree
 
   create_table "sessions", force: true do |t|
-    t.string   "session_id",                    null: false
-    t.text     "data",       limit: 2147483647
+    t.string   "session_id",                  null: false
+    t.text     "data",       limit: 16777215
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1405,163 +1513,5 @@ ActiveRecord::Schema.define(version: 20160202003823) do
   end
 
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
-
-  add_foreign_key "address", "address_category", name: "address_ibfk_4", column: "category_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "address", "entity", name: "address_ibfk_2", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "address", "sf_guard_user", name: "address_ibfk_5", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "address_state", "address_country", name: "address_state_ibfk_1", column: "country_id", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "alias", "entity", name: "alias_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "alias", "sf_guard_user", name: "alias_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "api_request", "api_user", name: "api_request_ibfk_1", column: "api_key", primary_key: "api_key", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "article", "article_source", name: "article_ibfk_1", column: "source_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "business", "entity", name: "business_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "business_industry", "entity", name: "business_industry_ibfk_2", column: "business_id", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "business_industry", "industry", name: "business_industry_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "business_person", "entity", name: "business_person_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "candidate_district", "political_district", name: "candidate_district_ibfk_1", column: "district_id"
-
-  add_foreign_key "donation", "entity", name: "donation_ibfk_2", column: "bundler_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "donation", "relationship", name: "donation_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "education", "degree", name: "education_ibfk_2", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "education", "relationship", name: "education_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "elected_representative", "entity", name: "elected_representative_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "email", "entity", name: "email_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "email", "sf_guard_user", name: "email_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "entity", "entity", name: "entity_ibfk_1", column: "parent_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "entity", "sf_guard_user", name: "entity_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "extension_definition", "extension_definition", name: "extension_definition_ibfk_1", column: "parent_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "extension_record", "entity", name: "extension_record_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "extension_record", "extension_definition", name: "extension_record_ibfk_2", column: "definition_id", options: "ON UPDATE CASCADE"
-  add_foreign_key "extension_record", "sf_guard_user", name: "extension_record_ibfk_3", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "family", "relationship", name: "family_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "fec_filing", "relationship", name: "fec_filing_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "fedspending_filing", "political_district", name: "fedspending_filing_ibfk_2", column: "district_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "fedspending_filing", "relationship", name: "fedspending_filing_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "government_body", "address_state", name: "government_body_ibfk_1", column: "state_id", options: "ON UPDATE CASCADE"
-  add_foreign_key "government_body", "entity", name: "government_body_ibfk_2", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "image", "entity", name: "image_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "image", "sf_guard_user", name: "image_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "link", "entity", name: "link_ibfk_2", column: "entity2_id"
-  add_foreign_key "link", "entity", name: "link_ibfk_3", column: "entity1_id"
-  add_foreign_key "link", "relationship", name: "link_ibfk_1"
-  add_foreign_key "link", "relationship_category", name: "link_ibfk_4", column: "category_id"
-
-  add_foreign_key "lobby_filing_lobby_issue", "lobby_filing", name: "lobby_filing_lobby_issue_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "lobby_filing_lobby_issue", "lobby_issue", name: "lobby_filing_lobby_issue_ibfk_2", column: "issue_id", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "lobby_filing_lobbyist", "entity", name: "lobby_filing_lobbyist_ibfk_1", column: "lobbyist_id", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "lobby_filing_lobbyist", "lobby_filing", name: "lobby_filing_lobbyist_ibfk_2", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "lobby_filing_relationship", "lobby_filing", name: "lobby_filing_relationship_ibfk_2"
-  add_foreign_key "lobby_filing_relationship", "relationship", name: "lobby_filing_relationship_ibfk_1"
-
-  add_foreign_key "lobbying", "relationship", name: "lobbying_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "lobbyist", "entity", name: "lobbyist_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "ls_list", "ls_list", name: "ls_list_ibfk_2", column: "featured_list_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "ls_list", "sf_guard_user", name: "ls_list_ibfk_1", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "ls_list_entity", "entity", name: "ls_list_entity_ibfk_2", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "ls_list_entity", "ls_list", name: "ls_list_entity_ibfk_1", column: "list_id", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "ls_list_entity", "sf_guard_user", name: "ls_list_entity_ibfk_3", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "membership", "relationship", name: "membership_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "modification", "sf_guard_user", name: "modification_ibfk_1", column: "user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "modification_field", "modification", name: "modification_field_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "note", "sf_guard_user", name: "note_ibfk_1", column: "user_id", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "object_tag", "sf_guard_user", name: "object_tag_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
-  add_foreign_key "object_tag", "tag", name: "object_tag_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "org", "entity", name: "org_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "os_entity_category", "entity", name: "os_entity_category_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "ownership", "relationship", name: "ownership_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "person", "entity", name: "person_ibfk_1", column: "party_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "person", "entity", name: "person_ibfk_3", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "person", "gender", name: "person_ibfk_2"
-
-  add_foreign_key "phone", "entity", name: "phone_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "phone", "sf_guard_user", name: "phone_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "political_candidate", "entity", name: "political_candidate_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "political_district", "address_state", name: "political_district_ibfk_1", column: "state_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "political_fundraising", "address_state", name: "political_fundraising_ibfk_2", column: "state_id", options: "ON UPDATE CASCADE"
-  add_foreign_key "political_fundraising", "entity", name: "political_fundraising_ibfk_3", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "political_fundraising", "political_fundraising_type", name: "political_fundraising_ibfk_1", column: "type_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "position", "entity", name: "position_ibfk_2", column: "boss_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "position", "relationship", name: "position_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "professional", "relationship", name: "professional_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "public_company", "entity", name: "public_company_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "reference", "sf_guard_user", name: "reference_ibfk_1", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "reference_excerpt", "reference", name: "reference_excerpt_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "reference_excerpt", "sf_guard_user", name: "reference_excerpt_ibfk_2", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "relationship", "entity", name: "relationship_ibfk_1", column: "entity2_id", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "relationship", "entity", name: "relationship_ibfk_2", column: "entity1_id", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "relationship", "relationship_category", name: "relationship_ibfk_3", column: "category_id", options: "ON UPDATE CASCADE"
-  add_foreign_key "relationship", "sf_guard_user", name: "relationship_ibfk_4", column: "last_user_id", options: "ON UPDATE CASCADE"
-
-  add_foreign_key "representative", "entity", name: "representative_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "representative_district", "elected_representative", name: "representative_district_ibfk_3", column: "representative_id", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "representative_district", "political_district", name: "representative_district_ibfk_4", column: "district_id", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "school", "entity", name: "school_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "sf_guard_group_list", "ls_list", name: "sf_guard_group_list_ibfk_1", column: "list_id", dependent: :delete, options: "ON UPDATE CASCADE"
-  add_foreign_key "sf_guard_group_list", "sf_guard_group", name: "sf_guard_group_list_ibfk_2", column: "group_id", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "sf_guard_group_permission", "sf_guard_group", name: "sf_guard_group_permission_ibfk_2", column: "group_id", dependent: :delete
-  add_foreign_key "sf_guard_group_permission", "sf_guard_permission", name: "sf_guard_group_permission_ibfk_1", column: "permission_id", dependent: :delete
-
-  add_foreign_key "sf_guard_remember_key", "sf_guard_user", name: "sf_guard_remember_key_ibfk_1", column: "user_id", dependent: :delete
-
-  add_foreign_key "sf_guard_user_group", "sf_guard_group", name: "sf_guard_user_group_ibfk_2", column: "group_id", dependent: :delete
-  add_foreign_key "sf_guard_user_group", "sf_guard_user", name: "sf_guard_user_group_ibfk_1", column: "user_id", dependent: :delete
-
-  add_foreign_key "sf_guard_user_permission", "sf_guard_permission", name: "sf_guard_user_permission_ibfk_2", column: "permission_id", dependent: :delete
-  add_foreign_key "sf_guard_user_permission", "sf_guard_user", name: "sf_guard_user_permission_ibfk_1", column: "user_id", dependent: :delete
-
-  add_foreign_key "sf_guard_user_profile", "sf_guard_user", name: "sf_guard_user_profile_ibfk_1", column: "user_id", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "social", "relationship", name: "social_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
-
-  add_foreign_key "transaction", "entity", name: "transaction_ibfk_2", column: "contact2_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "transaction", "entity", name: "transaction_ibfk_3", column: "contact1_id", dependent: :nullify, options: "ON UPDATE CASCADE"
-  add_foreign_key "transaction", "relationship", name: "transaction_ibfk_1", dependent: :delete, options: "ON UPDATE CASCADE"
 
 end

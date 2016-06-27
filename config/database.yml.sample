@@ -24,7 +24,7 @@ development:
 test:
   adapter: mysql2
   encoding: utf8
-  database: littlesis
+  database: littlesis_test
   pool: 5
   username: littlesis
   password: themanbehindthemanbehindthethrone
