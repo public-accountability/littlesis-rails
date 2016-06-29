@@ -280,6 +280,9 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (~> 1.1)
+    seed_dump (3.2.4)
+      activerecord (>= 4)
+      activesupport (>= 4)
     selenium-webdriver (2.45.0)
       childprocess (~> 0.5)
       multi_json (~> 1.0)
@@ -401,6 +404,7 @@ DEPENDENCIES
   rmagick
   rspec-rails
   sass-rails
+  seed_dump
   selenium-webdriver
   sequel
   soap4r-ruby1.9
