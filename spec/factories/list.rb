@@ -1,4 +1,5 @@
 FactoryGirl.define do
+  
   factory :list, class: List do
     name "Fortune 1000 Companies"
     description "Fortune Magazine's list..."
