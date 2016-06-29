@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.0'
+gem 'rails', '4.1.2'
 gem 'mysql2'
 
 # users and authentication
@@ -88,6 +88,7 @@ group :test, :development do
   gem 'rspec-rails'
   gem 'factory_girl_rails'
   gem 'seed_dump'
+  gem 'database_cleaner'
   ###########################  
   gem 'better_errors', '0.7.0'
   gem 'binding_of_caller', '0.7.0'
