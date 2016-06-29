@@ -84,6 +84,10 @@ gem 'rails_autolink'
 gem 'soap4r-ruby1.9'
 
 group :test, :development do
+  # ziggy: added June 2016
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+  ## ###### 
   gem 'better_errors', '0.7.0'
   gem 'binding_of_caller', '0.7.0'
 end  

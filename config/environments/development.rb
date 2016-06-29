@@ -25,7 +25,8 @@ Lilsis::Application.configure do
   # Debug mode disables concatenation and preprocessing of assets.
   config.assets.debug = true
 
-  # Enable caching
+  # Disable caching for development
+  config.cache_store = :memory_store
   config.action_controller.perform_caching = false
 
   # In development, links in emails should point local

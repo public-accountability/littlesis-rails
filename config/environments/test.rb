@@ -11,7 +11,7 @@ Lilsis::Application.configure do
   # just for the purpose of running a single test. If you are using a tool that
   # preloads Rails for running tests, you may have to set it to true.
   config.eager_load = false
-
+  
   # Configure static asset server for tests with Cache-Control for performance.
   config.serve_static_assets = true
   config.static_cache_control = "public, max-age=3600"
@@ -33,4 +33,6 @@ Lilsis::Application.configure do
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
+
+  config.active_record.schema_format = :sql
 end
