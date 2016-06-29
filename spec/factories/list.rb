@@ -1,4 +1,14 @@
 FactoryGirl.define do
+  factory :sf_user_two, class: SfGuardUser do
+    id 2
+    username 'sfusertwo'
+  end
+
+  factory :user_two, class: User do
+    id 2
+    username 'usertwo'
+    sf_guard_user_id 2
+  end
   
   factory :list, class: List do
     name "Fortune 1000 Companies"
@@ -9,7 +19,15 @@ FactoryGirl.define do
     is_network false
   end
   
-  factory :entity, class: Entity do
-    
+  factory :mega_corp_inc, class: Entity do
+    name "mega corp INC"
+    primary_ext "Org"
+    last_user_id 1
   end
+
+  factory :mega_corp_llc, class: Entity do
+    name "mega corp LLC"
+    primary_ext "Org"
+  end
+  
 end
