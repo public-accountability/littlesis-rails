@@ -293,6 +293,9 @@ GEM
     simple_oauth (0.3.1)
     slop (3.6.0)
     soap4r-ruby1.9 (2.0.5)
+    spring (1.7.1)
+    spring-commands-rspec (1.0.4)
+      spring (>= 0.9.1)
     sprockets (2.11.0)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -410,6 +413,7 @@ DEPENDENCIES
   selenium-webdriver
   sequel
   soap4r-ruby1.9
+  spring-commands-rspec
   sprockets (= 2.11.0)
   thinking-sphinx (~> 3.1.1)
   tinymce-rails (< 4.0)

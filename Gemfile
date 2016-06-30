@@ -89,6 +89,7 @@ group :test, :development do
   gem 'factory_girl_rails'
   gem 'seed_dump'
   gem 'database_cleaner'
+  gem 'spring-commands-rspec'
   ###########################  
   gem 'better_errors', '0.7.0'
   gem 'binding_of_caller', '0.7.0'
