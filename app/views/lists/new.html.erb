@@ -1,5 +1,40 @@
-<h1>New list</h1>
+<h1>Add a list</h1>
 
-<%= render 'form' %>
+<%= form_tag('/lists/create') do %>
+    <div class="field" >
+        
+        <%= label_tag 'ref_source', 'Source URL*' %>
+        <%= text_field(:ref, :source, class: "form-control") %>
+        <%= label_tag 'ref_name', 'Display Name*' %>
+        <%= text_field(:ref, :name, class: "form-control") %>
+        <br/>
+    </div>
+    
+        <div class="field">
+        <%= label_tag 'list_name', 'List Name*'%>
+        <%= text_field(:list, :name, class: "form-control") %>
+        </div>
+        <div class="field">
+        <%= label_tag 'list_description', 'Description'%>
+            <%= text_area(:list, :description, class: "form-control") %>
+        </div>
 
-<%= link_to 'Back', lists_path %>
+        <br >
+        <div class="form-group">
+            <%= label_tag 'list_ranked', 'Ranked'%>
+            <%= check_box_tag 'list[ranked]'  %>
+            <span style="padding-left: .8em;"><small>(are list members sorted by a rank?)</small></span>
+            <br />
+            <%= label_tag 'list_is_admin', 'is admin?'%>
+            <%= check_box_tag 'list[is_admin]'  %>
+            <br />        
+            <%= label_tag 'list_is_featured', 'is featured?'%>
+            <%= check_box_tag 'list[is_featured]'  %>
+        </div>
+        
+        <%=  submit_tag("Add", class: "btn btn-primary") %>
+    <% end %>
+
+<%#= render 'form' %>
+
+<%#= link_to 'Back', lists_path %>
