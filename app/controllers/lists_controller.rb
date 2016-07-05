@@ -2,15 +2,20 @@ class ListsController < ApplicationController
   before_filter :auth, except: [:index, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
   before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
 
-  # GET /lists
-  def index
-    @lists = List
+
+  def self.get_lists(params)
+    List
       .select("ls_list.*, COUNT(DISTINCT(ls_list_entity.entity_id)) AS entity_count")
       .joins(:list_entities)
       .where(is_network: false, is_admin: false)
       .group("ls_list.id")
       .order("entity_count DESC")
-      .page(params[:page]).per(20)
+      .page().per(20)
+  end
+  
+  # GET /lists
+  def index
+    @lists = self.class.get_lists(params[:page])
 
     if params[:q].present?
       is_admin = (current_user and current_user.has_legacy_permission('admin')) ? [0, 1] : 0
