@@ -5,8 +5,8 @@
         <div id="error_explanation" class="alert alert-warning">
             <%= pluralize(@list.errors.count, "error") %> prohibited this list from being saved:
             <ul>
-                <% @list.errors.each do |attr, error_msg| %>
-                    <li><%= attribute.to_s.capitalize if attr == :name  %> <%= error_msg %></li>
+                <% @list.errors.each do |attr, msg| %>
+                    <li><%=  (attr == :base ? '' : attr).to_s.capitalize %> <%= msg %></li>
                 <% end %>
             </ul>
         </div>

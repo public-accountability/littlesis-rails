@@ -3,14 +3,14 @@ class ListsController < ApplicationController
   before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
 
 
-  def self.get_lists(params)
+  def self.get_lists(page)
     List
       .select("ls_list.*, COUNT(DISTINCT(ls_list_entity.entity_id)) AS entity_count")
       .joins(:list_entities)
       .where(is_network: false, is_admin: false)
       .group("ls_list.id")
       .order("entity_count DESC")
-      .page().per(20)
+      .page(page).per(20)
   end
   
   # GET /lists
@@ -29,6 +29,7 @@ class ListsController < ApplicationController
 
   # GET /lists/1
   def show
+    redirect_to action: 'members'
   end
 
   # GET /lists/new
@@ -44,7 +45,7 @@ class ListsController < ApplicationController
   # POST /lists
   def create
     @list = List.new(list_params)
-    if params[:ref][:source].nil?
+    if params[:ref][:source].blank?
       @list.errors.add_on_blank(:name)
       @list.errors[:base] << "A souce URL is required"
       render action: 'new' and return
