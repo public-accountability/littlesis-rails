@@ -67,7 +67,7 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :lists, only: [:index, :edit, :update] do
+  resources :lists, only: [:index, :edit, :update, :new, :create, :show] do
     member do
       get 'relationships'
       get 'match_donations'

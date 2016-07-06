@@ -29,5 +29,20 @@ FactoryGirl.define do
     name "mega corp LLC"
     primary_ext "Org"
   end
+
+  factory :image, class: Image do
+    filename 'image.jpg'
+    title '#corporateSelfie'
+  end
+
+  factory :group, class: Group do
+    name 'a team'
+    slug '/'
+  end
   
+  factory :note, class: Note do
+    user_id 1
+    body 'why is EVERYTHING connected?'
+    body_raw 'why is EVERYTHING connected?'
+  end
 end
