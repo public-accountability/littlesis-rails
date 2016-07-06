@@ -35,3 +35,4 @@
 
 # Ignore sphinx config
 /config/production.sphinx.conf
+public/assets/*
