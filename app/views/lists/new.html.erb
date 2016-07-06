@@ -38,7 +38,9 @@
     </div>
 
      <%= fields_for :ref do |ref_fields|  %>
-         <p class="text-info"> Where is this information coming from?</p>
+         <%=  link_to("/help/sources#q-appropriate", target: "_blank") do%>
+             <p><em>Where is this information coming from?</em></p>
+         <% end %>
          <div class="field">
          <%=  ref_fields.label(:source, "Source URL*") %>
          <%=  ref_fields.text_field :source, class: "form-control" %>

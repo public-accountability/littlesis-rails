@@ -27,6 +27,10 @@ describe 'lists/new.html.erb' do
       expect(rendered).to have_selector('input[type=submit]', :count => 1 )
     end
 
+    it 'contains 1 link' do
+      expect(rendered).to have_selector('a', :count => 1 )
+    end
+
     it 'contains no error message' do
       expect(rendered).not_to have_selector('#error_explanation')
     end
