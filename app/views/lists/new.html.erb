@@ -1,40 +1,53 @@
 <h1>Add a list</h1>
 
-<%= form_tag('/lists/create') do %>
-    <div class="field" >
-        
-        <%= label_tag 'ref_source', 'Source URL*' %>
-        <%= text_field(:ref, :source, class: "form-control") %>
-        <%= label_tag 'ref_name', 'Display Name*' %>
-        <%= text_field(:ref, :name, class: "form-control") %>
-        <br/>
+<%= form_for(@list) do |f|  %>
+    <% if @list.errors.any? %>
+        <div id="error_explanation" class="alert alert-warning">
+            <%= pluralize(@list.errors.count, "error") %> prohibited this list from being saved:
+            <ul>
+                <% @list.errors.each do |attr, error_msg| %>
+                    <li><%= attribute.to_s.capitalize if attr == :name  %> <%= error_msg %></li>
+                <% end %>
+            </ul>
+        </div>
+    <% end %>
+    <div class="field">
+        <%= f.label(:class, "List Name*") %>
+        <%= f.text_field :name, class: "form-control"%>
     </div>
     
-        <div class="field">
-        <%= label_tag 'list_name', 'List Name*'%>
-        <%= text_field(:list, :name, class: "form-control") %>
-        </div>
-        <div class="field">
-        <%= label_tag 'list_description', 'Description'%>
-            <%= text_area(:list, :description, class: "form-control") %>
-        </div>
+    <div class="field">
+        <%= f.label(:description, "Description") %>
+        <%= f.text_area :description, class: "form-control"%>
+    </div>
 
-        <br >
-        <div class="form-group">
-            <%= label_tag 'list_ranked', 'Ranked'%>
-            <%= check_box_tag 'list[ranked]'  %>
-            <span style="padding-left: .8em;"><small>(are list members sorted by a rank?)</small></span>
-            <br />
-            <%= label_tag 'list_is_admin', 'is admin?'%>
-            <%= check_box_tag 'list[is_admin]'  %>
-            <br />        
-            <%= label_tag 'list_is_featured', 'is featured?'%>
-            <%= check_box_tag 'list[is_featured]'  %>
-        </div>
+    <div class="form-group">
+        <%= f.label(:is_ranked, "Ranked") %>
+        <%= f.check_box :is_ranked %>
+        <span style="padding-left: .8em;"><small>(are list members sorted by a rank?)</small></span>
         
-        <%=  submit_tag("Add", class: "btn btn-primary") %>
-    <% end %>
+        <br />
 
-<%#= render 'form' %>
+        <%= f.label(:is_admin, "is admin") %>
+        <%= f.check_box :is_admin %>
+        
+        <br />
 
-<%#= link_to 'Back', lists_path %>
+        <%= f.label(:is_featured, "is featured") %>
+        <%= f.check_box :is_featured %>
+    </div>
+
+     <%= fields_for :ref do |ref_fields|  %>
+         <p class="text-info"> Where is this information comming from?</p>
+         <div class="field">
+         <%=  ref_fields.label(:source, "Source URL*") %>
+         <%=  ref_fields.text_field :source, class: "form-control" %>
+         </div>
+         <div class="field">
+         <%=  ref_fields.label(:name, "Source Display Name") %>
+         <%=  ref_fields.text_field :name, class: "form-control" %>
+         </div>
+     <% end %>
+     <br />
+    <%= f.submit "Add", class: "btn btn-primary" %>
+<% end %>

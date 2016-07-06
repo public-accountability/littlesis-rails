@@ -44,8 +44,14 @@ class ListsController < ApplicationController
   # POST /lists
   def create
     @list = List.new(list_params)
-
+    if params[:ref][:source].nil?
+      @list.errors.add_on_blank(:name)
+      @list.errors[:base] << "A souce URL is required"
+      render action: 'new' and return
+    end
+    
     if @list.save
+      @list.add_reference(params[:ref][:source], params[:ref][:name])
       redirect_to @list, notice: 'List was successfully created.'
     else
       render action: 'new'

@@ -27,7 +27,21 @@ RSpec.describe ListsController, type: :controller do
     end
   end
 
-  describe '/lists/new' do
+    describe 'POST create' do
+      login_user
 
-  end
+      context "When missing name or source" do
+        it 'renders new template' do 
+          post(:create, {list: {name: ''}, ref: {}})
+          expect(response).to render_template(:new)
+        end
+        it 'has two errors' do
+          post(:create, {list: {name: ''}, ref: {}})
+          expect(assigns(:list).errors.size).to eq(2)
+        end
+      end
+      
+    
+    end
+
 end
