@@ -192,10 +192,10 @@ GEM
     nokogiri (1.5.11)
     ntlm-http (0.1.1)
     orm_adapter (0.5.0)
-    paper_trail (4.0.0.rc1)
+    paper_trail (5.2.0)
       activerecord (>= 3.0, < 6.0)
       activesupport (>= 3.0, < 6.0)
-      request_store (~> 1.1.0)
+      request_store (~> 1.1)
     php-serialize (1.1.0)
     poltergeist (1.6.0)
       capybara (~> 2.1)
@@ -250,7 +250,7 @@ GEM
     redis-store (1.1.4)
       redis (>= 2.2)
     remotipart (1.2.1)
-    request_store (1.1.0)
+    request_store (1.3.1)
     responders (1.1.2)
       railties (>= 3.2, < 4.2)
     riddle (1.5.11)
@@ -397,7 +397,7 @@ DEPENDENCIES
   mini_magick
   mysql2
   nilify_blanks
-  paper_trail (~> 4.0.0.beta2)
+  paper_trail (>= 5.1.1)
   php-serialize
   poltergeist
   pry
