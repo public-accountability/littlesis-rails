@@ -47,7 +47,7 @@ class ListsController < ApplicationController
     @list = List.new(list_params)
     if params[:ref][:source].blank?
       @list.errors.add_on_blank(:name)
-      @list.errors[:base] << "A souce URL is required"
+      @list.errors[:base] << "A source URL is required"
       render action: 'new' and return
     end
     
