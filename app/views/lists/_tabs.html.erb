@@ -8,7 +8,7 @@
     <% end %>
   <% end %>
   <%= tab.link :sources, url: references_list_path %>
-  <%= tab.link :edits, url: list.legacy_url('modifications') %>
+  <%= tab.link :edits, url: modifications_list_path(list) %>
 <% end %>
 
 <script>
