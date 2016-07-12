@@ -2,7 +2,7 @@ class ListsController < ApplicationController
   before_filter :auth, except: [:index, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
   before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
 
-  helper_method :version_changes
+  
 
   def self.get_lists(page)
     List
@@ -243,22 +243,6 @@ class ListsController < ApplicationController
     @versions = Kaminari.paginate_array(@list.versions.reverse).page(params[:page]).per(5)
   end
   
-  def version_changes(changeset)
-    changes = ""
-    changeset.each_pair do |key, value| 
-      changes += "<strong>#{key}:</strong> #{self.class.nil_string(value[0])} -> #{self.class.nil_string(value[1])}"
-      changes += "<br>"
-    end
-    changes.html_safe
-  end
-  
-  def self.nil_string(maybe_nil)
-    if maybe_nil.nil?
-      return "nil"
-    else
-      return maybe_nil
-    end
-  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
