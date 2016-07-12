@@ -95,5 +95,51 @@ RSpec.describe ListsController, type: :controller do
       end
       
     end
+
+    describe 'modifications' do
+      
+      before(:each) do 
+        @new_list = create(:list)
+        get(:modifications, {id: @new_list.id})
+      end
+      
+      it 'renders modifications template' do 
+        expect(response).to render_template(:modifications)
+      end
+
+      it 'has @versions' do 
+        expect(assigns(:versions)).to eq(@new_list.versions)
+      end
+      
+    end
+    
   end
+
+  describe 'version changes' do
+    
+    before(:each) do 
+      @lc = ListsController.new
+      @changeset = {"is_ranked"=>[false, true], "name"=>['bob', 'alice']}
+    end
+
+    it 'turns a hash into a string' do
+      expect(@lc.version_changes(@changeset)).to be_a(String)
+    end
+    
+    it 'prettifies the hash'
+    
+  end
+
+  describe 'nil_string' do
+
+    it 'returns "nil" if given nil' do
+      expect(ListsController.nil_string(nil)).to eq("nil")
+    end
+    
+    it 'returns the obj if not given nil' do 
+      expect(ListsController.nil_string("something")).to eq("something")
+    end
+    
+  end
+
 end
