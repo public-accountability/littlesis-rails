@@ -3,7 +3,7 @@
 <%= render partial: 'header', locals: { list: @list } %>
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :edits } %>
 
-<h1>Recent edits:</h1>
+<h2>Recent edits:</h2>
 
 <%= paginate @versions %>
 
@@ -23,3 +23,20 @@
         <% end %>
     </tbody>
 </table>
+
+<h2>Additions and deletions:</h2>
+<%= paginate @all_entities %>
+
+<table class="table">
+    <thead>
+        <th>Date</th>
+        <th>Add/Delete</th>
+        <th>Name</th>
+    </thead>
+    <tbody>
+        <% @all_entities.each do |entity| %>
+            <%= render partial: "entity_row", locals: {entity: entity} %>
+        <% end %>
+    </tbody>
+</table>
+
