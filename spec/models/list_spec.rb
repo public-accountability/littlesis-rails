@@ -108,4 +108,21 @@ describe List do
       expect(List.unscoped.deleted.all.count).to eq(2)
     end
   end
+
+  context 'Using paper_trail for versioning' do
+    with_versioning do
+      it 'records created, modified, and deleted versions' do 
+        l = create(:list)
+        expect(l.versions.size).to eq(1)
+        l.name = "change the name name!"
+        l.save
+        expect(l.versions.size).to eq(2)
+        expect(l.versions.last.event).to eq('update')
+        l.destroy
+        expect(l.versions.size).to eq(3)
+        # this is 'update' and not destroy because the implementation of soft delete
+        expect(l.versions.last.event).to eq('update')
+      end
+    end
+  end
 end
