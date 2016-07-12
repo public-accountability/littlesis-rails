@@ -5,6 +5,8 @@ class List < ActiveRecord::Base
   include Cacheable
   include Referenceable
 
+  has_paper_trail
+  
   has_many :list_entities, inverse_of: :list, dependent: :destroy
   has_many :entities, through: :list_entities
   has_many :images, through: :entities
@@ -31,6 +33,10 @@ class List < ActiveRecord::Base
 
   validates_presence_of :name
 
+  def destroy
+    soft_delete
+  end
+  
   def to_param
     "#{id}-#{name.parameterize}"
   end

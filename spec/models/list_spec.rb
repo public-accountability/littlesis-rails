@@ -72,4 +72,40 @@ describe List do
       expect(list.legacy_url('bam')).to eq("/list/8/Fortune_1000_Companies/bam")
     end
   end
+
+  context 'SoftDelete' do
+    it 'removes item from the count but not he unscoped count' do
+      l = create(:list)
+      expect(List.count).to eq(List.unscoped.count)
+      l.destroy
+      expect(List.count).not_to eq(List.unscoped.count)
+    end
+    
+    it 'sets is_deleted to true' do
+      l = create(:list)
+      expect(l.is_deleted).to eq(false)
+      l.destroy
+      expect(l.is_deleted).to eq(true)
+    end
+
+    it 'List.all returns lists that are not deleted and List.unscoped.deleted returns the deleted lists' do
+      c = List.count
+      list1 = create(:list, name: 'list1')
+      list2 = create(:list, name: 'list2')
+      expect(List.all.count).to eq(c + 2)
+      expect(List.unscoped.all.count).to eq(c + 2)
+      expect(List.unscoped.active.all.count).to eq(c + 2)
+      expect(List.unscoped.deleted.all.count).to eq(0)
+      list1.destroy
+      expect(List.all.count).to eq(c + 1)
+      expect(List.unscoped.all.count).to eq(c + 2)
+      expect(List.active.all.count).to eq(c + 1)
+      expect(List.unscoped.deleted.all.count).to eq(1)
+      list2.destroy
+      expect(List.all.count).to eq(c)
+      expect(List.unscoped.all.count).to eq(c + 2)
+      expect(List.unscoped.active.all.count).to eq(c)
+      expect(List.unscoped.deleted.all.count).to eq(2)
+    end
+  end
 end
