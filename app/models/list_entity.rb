@@ -5,4 +5,9 @@ class ListEntity < ActiveRecord::Base
 
   belongs_to :list, inverse_of: :list_entities
   belongs_to :entity, inverse_of: :list_entities
+
+  def destroy
+    soft_delete
+  end
+
 end

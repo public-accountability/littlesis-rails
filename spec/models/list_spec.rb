@@ -107,6 +107,7 @@ describe List do
       expect(List.unscoped.active.all.count).to eq(c)
       expect(List.unscoped.deleted.all.count).to eq(2)
     end
+
   end
 
   context 'Using paper_trail for versioning' do
@@ -125,4 +126,24 @@ describe List do
       end
     end
   end
+
+  context 'after destroying a list entity' do 
+   it  're-adding the same one creates a new entry' do
+     list = create(:list)
+     inc = create(:mega_corp_inc)
+     
+     le = ListEntity.find_or_create_by(list_id: list.id, entity_id: inc.id)
+     expect(ListEntity.count).to eql(2)
+     expect(ListEntity.unscoped.count).to eql(2)
+     le.destroy
+     expect(ListEntity.count).to eql(1)
+     expect(ListEntity.unscoped.count).to eql(2)
+     expect(ListEntity.unscoped.deleted.last).to eql(le)
+     le2 = ListEntity.find_or_create_by(list_id: list.id, entity_id: inc.id)
+     expect(ListEntity.count).to eql(2)
+     expect(ListEntity.unscoped.count).to eql(3)
+     expect(le.id).not_to eq(le2.id)
+   end
+  end
+
 end
