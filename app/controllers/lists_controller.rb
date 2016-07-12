@@ -240,7 +240,7 @@ class ListsController < ApplicationController
   end
 
   def modifications
-    @versions = Kaminari.paginate_array(@list.versions.reverse).page(params[:page])
+    @versions = Kaminari.paginate_array(@list.versions.reverse).page(params[:page]).per(5)
   end
   
   def version_changes(changeset)
