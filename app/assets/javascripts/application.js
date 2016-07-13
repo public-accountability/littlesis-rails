@@ -27,9 +27,9 @@
 //= require twitter/typeahead
 //= require hogan-3.0.1.js
 //= require d3.v3.min
-//= require oli2/oligrapher.min
-//= require oli2/LsDataConverter
-//= require oli2/LsDataSource
+//= require oligrapher/build/oligrapher.min
+//= require oligrapher/build/LsDataConverter
+//= require oligrapher/build/LsDataSource
 //= require_tree .
 
 $(document).ready(function() {
