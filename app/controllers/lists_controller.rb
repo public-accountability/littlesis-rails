@@ -1,7 +1,8 @@
 class ListsController < ApplicationController
   before_filter :auth, except: [:index, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
 
+  
 
   def self.get_lists(page)
     List
@@ -238,6 +239,12 @@ class ListsController < ApplicationController
     )  
   end
 
+  def modifications
+    @versions = Kaminari.paginate_array(@list.versions.reverse).page(params[:page]).per(5)
+    @all_entities = ListEntity.unscoped.where(list_id: @list.id).order(id: :desc).page(params[:page]).per(10)
+  end
+  
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_list
@@ -252,7 +259,7 @@ class ListsController < ApplicationController
     def interlocks_results(options)
       @page = params.fetch(:page, 1)
       num = params.fetch(:num, 20)
-      results = @list.interlocks(options).page(@page).per(num)
+      results = @list     .interlocks(options).page(@page).per(num)
       count = @list.interlocks_count(options)
       Kaminari.paginate_array(results.to_a, total_count: count).page(@page).per(num)
     end

@@ -105,7 +105,7 @@ gem 'rmagick'
 
 gem 'capybara'
 gem 'capybara-webkit'
-gem 'paper_trail', '~> 4.0.0.beta2'
+gem 'paper_trail', '>= 5.1.1'
 gem 'foreigner'
 gem 'validate_url'
 gem 'selenium-webdriver'

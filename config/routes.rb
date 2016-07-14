@@ -89,6 +89,7 @@ Lilsis::Application.routes.draw do
       get 'references'
       get 'giving'
       get 'funding'
+      get 'modifications'
     end
   end
 

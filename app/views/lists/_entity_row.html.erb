@@ -1,0 +1,15 @@
+<% if entity.is_deleted %>
+    <tr>
+        <td><%=  entity.updated_at  %></td>
+        <td>DELETE</td>
+        <td><%=  entity.entity.name %></td>
+    </tr>
+<% end %>
+
+<tr>
+    <td><%=  entity.created_at  %></td>
+    <td>ADD</td>
+    <td><%=  entity.entity.name %></td>
+</tr>
+
+

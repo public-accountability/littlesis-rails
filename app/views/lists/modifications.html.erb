@@ -1,0 +1,42 @@
+<% content_for(:page_title, raw(@list.name)) %>
+
+<%= render partial: 'header', locals: { list: @list } %>
+<%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :edits } %>
+
+<h2>Recent edits:</h2>
+
+<%= paginate @versions %>
+
+<table class="table">
+    <thead>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Details</th>
+    </thead>
+    <tbody>
+        <% @versions.each do |ver| %>
+            <tr>
+                <td><%=  ver.created_at %></td>
+                <td><%=  ver.event %></td>
+                <td><%=  version_changes(ver.changeset) %></td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>
+
+<h2>Additions and deletions:</h2>
+<%= paginate @all_entities %>
+
+<table class="table">
+    <thead>
+        <th>Date</th>
+        <th>Add/Delete</th>
+        <th>Name</th>
+    </thead>
+    <tbody>
+        <% @all_entities.each do |entity| %>
+            <%= render partial: "entity_row", locals: {entity: entity} %>
+        <% end %>
+    </tbody>
+</table>
+

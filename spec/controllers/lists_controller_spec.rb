@@ -95,5 +95,24 @@ RSpec.describe ListsController, type: :controller do
       end
       
     end
+
+    describe 'modifications' do
+      
+      before(:each) do 
+        @new_list = create(:list)
+        get(:modifications, {id: @new_list.id})
+      end
+      
+      it 'renders modifications template' do 
+        expect(response).to render_template(:modifications)
+      end
+
+      it 'has @versions' do 
+        expect(assigns(:versions)).to eq(@new_list.versions)
+      end
+      
+    end
+    
   end
+
 end
