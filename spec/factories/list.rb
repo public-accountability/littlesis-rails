@@ -19,17 +19,6 @@ FactoryGirl.define do
     is_network false
   end
   
-  factory :mega_corp_inc, class: Entity do
-    name "mega corp INC"
-    primary_ext "Org"
-    last_user_id 1
-  end
-
-  factory :mega_corp_llc, class: Entity do
-    name "mega corp LLC"
-    primary_ext "Org"
-  end
-
   factory :image, class: Image do
     filename 'image.jpg'
     title '#corporateSelfie'
