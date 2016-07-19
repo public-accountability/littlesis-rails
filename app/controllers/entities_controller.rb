@@ -23,8 +23,7 @@ class EntitiesController < ApplicationController
   # end
 
   def show
-    # render json: { yes: 'hello from rails' }
-    @entity = Entity.find(params[:id])
+     @last_user = User.find(@entity.last_user_id)
   end
 
   def new

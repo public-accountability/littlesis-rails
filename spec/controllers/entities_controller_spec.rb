@@ -16,6 +16,10 @@ describe EntitiesController, type: :controller do
       it 'renders show template' do
         expect(response).to render_template(:show) 
       end
+
+      it 'finds last user who edited the entity' do 
+        expect(assigns(:last_user).id).to eql(100)
+      end
     end
   end
 end
