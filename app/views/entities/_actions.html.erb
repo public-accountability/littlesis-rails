@@ -1,0 +1,30 @@
+<div id="entity-actions">
+    <%= link_to "add relationship", @entity.legacy_url("addRelationship") %>
+    <%= link_to "edit", @entity.legacy_url("edit") %>
+    <%= link_to "flag", "/home/contact?type=flag" %>
+    <% if user_signed_in? %>
+        <% if @current_user.has_legacy_permission 'deleter' %>
+            <%= link_to "remove", @entity.legacy_url("remove") %>
+        <% end %>
+    <% end %>
+</div>
+
+<div id="entity-edited-history">
+    Edited by<strong>
+    <%= link_to @last_user.username, legacy_user_path(@last_user) %>
+     </strong>
+     <%= time_ago_in_words(@entity.updated_at) %> ago
+     <%= link_to "History", @entity.legacy_url("modifications") %>
+</div>
+
+<!-- 
+     <div id="header_actions">
+     <nobr><a href="/person/110291/Bill_de_Blasio/addRelationship">add relationship</a></nobr>
+     <nobr><a href="/person/110291/Bill_de_Blasio/edit">edit</a></nobr>
+     <nobr><a href="/home/contact?type=flag">flag</a></nobr>
+     <nobr><a class="disabled_action">match donations</a></nobr>
+     <nobr><a href="/person/110291/Bill_de_Blasio/addBulk">add bulk</a></nobr>
+     <nobr><a href="/person/110291/Bill_de_Blasio/refresh?ref=http%3A%2F%2Fls.dev%3A9000%2Fperson%2F110291%2FBill_de_Blasio">refresh</a></nobr>
+     <div style="display: inline; position: relative; top: -1px;">
+     </div>
+     </div> -->

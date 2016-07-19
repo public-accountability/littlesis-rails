@@ -33,6 +33,51 @@ $tiny_image_size: 35px;
 }
 
 
+/* ENTITY PAGE ACTIONS */
+
+#entity-edited-history {
+  color: #444;
+  font-size: 13px;
+  float: right;
+  padding-top: 1.3em;
+  width: 350px;
+}
+
+#entity-actions {
+  margin-top: 1.2em;
+}
+
+#entity-actions a {
+  position: relative;
+  font-size: 14px;
+  top: -6px;
+  color: #444;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-right: 3px;
+  -moz-border-radius:10px;
+  border-radius: 10px;
+}
+
+#entity-actions a:hover {
+  color: #000;
+  background-color: #ddf;
+  text-decoration: none;
+}
+
+#entity-actions a.disabled_action {
+  color: #888;
+  background-color: #f8f8f8;
+}
+
+#entity-actions a.disabled_action:hover {
+  cursor: default;
+}
+
+
 /* entity/small */
 
 $small_image_size: 50px;

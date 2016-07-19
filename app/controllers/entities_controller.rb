@@ -23,9 +23,11 @@ class EntitiesController < ApplicationController
   # end
 
   def show
+     @current_user = current_user
      @last_user = User.find(@entity.last_user_id)
   end
 
+  
   def new
     @entity = Entity.new
     @person_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::PERSON_ID)

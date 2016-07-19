@@ -86,3 +86,16 @@ List.create!([
   {name: "New York State", description: "Powerful individuals in New York State, including business, political, and social leaders.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "nys", featured_list_id: nil, last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false},
   {name: "Oakland", description: "Powerful individuals in Oakland, CA, including business, political, and social leaders.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "oakland", featured_list_id: nil, last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false}
 ])
+
+SfGuardPermission.create!([
+                            {id: 1, name: "admin", description: "Administrator permission"},
+                            {id: 2, name: "contributor", description: nil},
+                            {id: 3, name: "editor", description: nil},
+                            {id: 5, name: "deleter", description: nil},
+                            {id: 6, name: "lister", description: "enables users to create lists"},
+                            {id: 7, name: "merger", description: "enables users to merge entities"},
+                            {id: 8, name: "importer", description: nil},
+                            {id: 9, name: "bulker", description: "enables users to add relationships in bulk"},
+                            {id: 10, name: "talker", description: "allows user to use web-based chat"},
+                            {id: 11, name: "contacter", description: nil}
+                          ])

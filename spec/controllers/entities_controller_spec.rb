@@ -5,7 +5,6 @@ describe EntitiesController, type: :controller do
   describe '/entities' do
 
     before do 
-      cookies.clear
       create(:sf_user)
       user = create(:user)
       entity = create(:mega_corp_inc, last_user_id: user.id)
