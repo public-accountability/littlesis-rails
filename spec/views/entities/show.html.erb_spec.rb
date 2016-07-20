@@ -77,6 +77,13 @@ describe 'entities/show.html.erb' do
       end
     end  # end of context without legacy permissions
 
+    def assign_entity_user(e, user) 
+      assign(:entity, e)
+      assign(:last_user, user) 
+      assign(:current_user, User.find(user.id))
+    end
+
+    
     context 'with deleter permission' do
 
       before do
@@ -84,9 +91,7 @@ describe 'entities/show.html.erb' do
         @user = create(:user)
         @sf_guard_user = create(:sf_user)
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 5)
-        assign(:entity, @e)
-        assign(:last_user, @user) 
-        assign(:current_user, User.find(@user.id))
+        assign_entity_user(@e, @user)
         sign_in @user
         render
       end
@@ -95,11 +100,68 @@ describe 'entities/show.html.erb' do
         expect(rendered).to have_css('#entity-actions a', :count => 4)
       end
       
-      it 'render remove button' do
+      it 'renders remove button' do
         expect(rendered).to have_css('a', :text => 'remove')
       end
     end
-  
+
+    context 'with importer permission' do
+      before do
+        @e = create(:mega_corp_inc)
+        @user = create(:user)
+        @sf_guard_user = create(:sf_user)
+        SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 8)
+        assign_entity_user(@e, @user)
+        sign_in @user
+        render
+      end
+
+      it 'has 5 links' do
+        expect(rendered).to have_css('#entity-actions a', :count => 5)
+      end
+
+      it 'renders match donations button' do
+        expect(rendered).to have_css('a', :text => 'match donations')
+      end
+
+      it 'renders add bulk button' do
+        expect(rendered).to have_css('a', :text => 'add bulk')
+      end
+      
+    end
+    
+    context 'with importer and deleter permission' do 
+      before do
+        @e = create(:mega_corp_inc)
+        @user = create(:user)
+        @sf_guard_user = create(:sf_user)
+        SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 5)
+        SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 8)
+        assign_entity_user(@e, @user)
+        sign_in @user
+        render
+      end
+
+      it 'has 6 links' do
+        expect(rendered).to have_css('#entity-actions a', :count => 6)
+      end
+    end
+
+    context 'as admin' do 
+      before do
+        @e = create(:mega_corp_inc)
+        @user = create(:user)
+        @sf_guard_user = create(:sf_user)
+        SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 1)
+        assign_entity_user(@e, @user)
+        sign_in @user
+        render
+      end
+      it 'renders refresh button' do 
+        expect(rendered).to have_css('a', :text => 'refresh')
+      end
+    end
+    
   end
 end
 
