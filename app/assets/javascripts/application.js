@@ -22,15 +22,14 @@
 //= require bootstrap
 //= require datatables-bootstrap
 //= require bootsy
-//= require editor_options
-//= reuqire more_link
 //= require twitter/typeahead
 //= require hogan-3.0.1.js
 //= require d3.v3.min
 //= require oligrapher/build/oligrapher.min
 //= require oligrapher/build/LsDataConverter
 //= require oligrapher/build/LsDataSource
-//= require_tree .
+//= require_tree ./common
+//= require_tree ./pages
 
 $(document).ready(function() {
   $('button[data-dismiss-id]').on("click", function() {
