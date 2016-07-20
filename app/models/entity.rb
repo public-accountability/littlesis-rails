@@ -598,4 +598,17 @@ class Entity < ActiveRecord::Base
     related_ids = Link.where(entity1_id: entity1_id).pluck(:entity2_id).uniq
     Link.where(entity1_id: entity2_id, entity2_id: related_ids).pluck(:entity2_id).uniq - [entity1_id, entity2_id].map(&:to_i)
   end
+
+  def summary_excerpt
+    if summary
+      if summary.slice(0,100).include? '\n'
+        return summary.slice(0, summary.index('\n')) + '...'
+      else
+        return summary.truncate(100, separator: ' ')
+      end
+    else
+      return nil
+    end
+  end
+  
 end
