@@ -601,8 +601,8 @@ class Entity < ActiveRecord::Base
 
   def summary_excerpt
     if summary
-      if summary.slice(0,100).include? '\n'
-        return summary.slice(0, summary.index('\n')) + '...'
+      if summary.slice(0,100).include? "\n"
+        return summary.slice(0, summary.index("\n")) + '...'
       else
         return summary.truncate(100, separator: ' ')
       end

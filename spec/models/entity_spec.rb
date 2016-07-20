@@ -14,7 +14,7 @@ describe Entity do
     end
 
     it 'returns just the first  paragraph even if the paragraph is less than 100 chars' do
-      summary = ('x ' * 25) + '\n' + ('word ' * 25)
+      summary = ('x ' * 25) + "\n" + ('word ' * 25)
       mega_corp = build(:mega_corp_inc, summary: summary)
       expect(mega_corp.summary_excerpt.length).to eql(53)
       expect(mega_corp.summary_excerpt).to eql(('x ' * 25) + '...')
