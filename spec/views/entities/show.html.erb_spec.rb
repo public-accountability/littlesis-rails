@@ -1,7 +1,7 @@
 require 'rails_helper' 
 
 describe 'entities/show.html.erb' do
-  describe 'layout' do    
+  describe 'header' do    
     context 'without any permissions' do 
       before do
         @user = create(:user)
@@ -161,7 +161,17 @@ describe 'entities/show.html.erb' do
         expect(rendered).to have_css('a', :text => 'refresh')
       end
     end
+  end
+
+  describe 'tabs' do
     
   end
+
+  describe 'summary' do
+    
+    it 'contains entity summary tab'
+    
+  end
+  
 end
 
