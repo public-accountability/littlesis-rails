@@ -1,4 +1,9 @@
 namespace :opensecrets do
+  desc "import individual contribution data"
+  task import_indivs: :environment do 
+    print "more donations please!"
+  end
+  
   desc "import addresses from matched opensecrets donations"
   task import_addresses: :environment do
     if ENV['ENTITY_ID']
