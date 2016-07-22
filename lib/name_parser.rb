@@ -20,7 +20,7 @@ class NameParser
   ]
 
   SUFFIXES = [
-    'Jr', 'Sr', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'PhD', 'Esq', 'MD',  
+    'JR', 'SR', 'Jr', 'Sr', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII','PHD', 'PhD', 'ESQ', 'Esq', 'MD',  
     'MS', 'AG', 'AC', 'CM', 'JD', 'OP', 'RN', 'DNSC', 'MPH', 'OBE', 'RPH', 'SCD', 'RET', 'USA', 'DBA', 
     'CBE', 'DVM', 'USN', 'USAF', 'EDD', 'OSB', 'MBA', 'SJD'
   ]
@@ -55,6 +55,7 @@ class NameParser
     )
   end
 
+  
   def parse(str)
     return nil unless str.split(/\s+/mu).count > 1
 
@@ -147,5 +148,45 @@ class NameParser
 
   def self.couple_name?(name)
     name.match(/&|\band\b/) and name.split(/&|\band\b/).last.strip.split(/\s/).count > 1
+  end
+
+  # parses name with these variations:
+  # LAST, FIRST
+  # LAST, FIRST M
+  # LAST, FIRST MIDDLE
+  # LAST, FIRST PREFIX
+  # LAST, FIRST SUFFIX
+  # LAST, FRIST M PREFIX
+  # LAST, FRIST M SUFFIX
+  def self.os_parse(str)
+    return nil unless str.split(',').length > 1
+
+    last_name, first_name, middle_name, prefix, suffix = nil,nil,nil,nil,nil
+    
+    name = str.strip.upcase.split(',')
+    
+    last_name = name[0].titleize
+    rest_of_name = name[1].split(' ')
+    first_name = rest_of_name[0].strip.titleize
+
+    for name_part in rest_of_name.drop(1)
+      if NameParser::PREFIXES.include? name_part.titleize
+        prefix = name_part.titleize
+      elsif NameParser::SUFFIXES.include? name_part
+        suffix = name_part
+      else
+        middle_name = "" if middle_name.nil?
+        middle_name << " " unless middle_name.blank?          
+        middle_name << name_part.titleize
+      end
+    end
+    
+    {
+      last: last_name,
+      first: first_name,
+      middle: middle_name,
+      prefix: prefix,
+      suffix: suffix
+    }
   end
 end
