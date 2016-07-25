@@ -1,10 +1,12 @@
 module OsImporter
 
   def OsImporter.import_indivs(filepath)
+
     CSV.foreach(filepath, :quote_char => "|", :headers => false) do |row|
-      donation = OsDonation.new
+      donation = OsDonation.find_or_initialize_by(fec_cycle_id: OsImporter.fec_cycle_id(row))
+
       donation.cycle = row[0]
-      donation.fectransid = row[1]
+      donation.fectransid = row[1].strip
       donation.contribid = row[2].strip
       donation.contrib = row[3].strip.presence
       donation.recipid = row[4].strip.presence
@@ -27,7 +29,7 @@ module OsImporter
       donation.employer = row[21].strip.presence
       donation.source = row[22].strip.presence
 
-      donation.fec_cycle_id = donation.cycle + "_" + donation.fectransid
+      donation.create_fec_cycle_id
       
       name = NameParser.os_parse(donation.contrib)
       donation.name_last = name[:last]
@@ -37,7 +39,6 @@ module OsImporter
       donation.name_suffix = name[:suffix]
 
       donation.save!
-
     end
     
   end
@@ -48,4 +49,7 @@ module OsImporter
     [year, month, day].join('-')
   end
   
+  def OsImporter.fec_cycle_id(row)
+    row[0].strip + "_" + row[1].strip
+  end
 end
