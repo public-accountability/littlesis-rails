@@ -38,5 +38,6 @@ class CreateOsDonations < ActiveRecord::Migration
       
       t.timestamps
     end
+    add_index :os_donations, :fec_cycle_id, :unique => true
   end
 end
