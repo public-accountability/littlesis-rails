@@ -116,6 +116,18 @@ describe 'os_importer' do
         
       end
     end
+    
+    describe "malformed lines" do 
+      before do
+        @count = OsDonation.count
+        filepath = Rails.root.join('spec', 'testdata', 'indivs14_bad_lines.txt')
+        OsImporter.import_indivs filepath
+      end
 
+      it 'can deal with the BAD lines. no problem.' do
+        expect(OsDonation.count).to eql(@count + 1)
+      end
+    end
+    
   end
 end

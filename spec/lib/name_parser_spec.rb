@@ -4,9 +4,9 @@ describe 'NameParser' do
 
   describe 'os_parse' do 
     
-    it 'returns nil for strings without a comma' do
-      expect(NameParser.os_parse("YOUR NAME HERE")).to be_nil
-    end
+    # it 'returns nil for strings without a comma' do
+    #   expect(NameParser.os_parse("YOUR NAME HERE")).to be_nil
+    # end
 
     it 'parses "CAT, ALICE"' do
       x = NameParser.os_parse("CAT, ALICE")
@@ -76,6 +76,15 @@ describe 'NameParser' do
       expect(x[:first]).to eq("Alice")
       expect(x[:last]).to eq("Cat")
       expect(x[:middle]).to eq("Double Middle")
+      expect(x[:prefix]).to be_nil
+      expect(x[:suffix]).to be_nil
+    end
+
+    it 'parses "ALICE CAT"' do 
+      x = NameParser.os_parse("ALICE CAT")
+      expect(x[:first]).to eq("Alice")
+      expect(x[:last]).to eq("Cat")
+      expect(x[:middle]).to be_nil
       expect(x[:prefix]).to be_nil
       expect(x[:suffix]).to be_nil
     end
