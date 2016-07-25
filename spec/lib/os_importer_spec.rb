@@ -129,5 +129,12 @@ describe 'os_importer' do
       end
     end
     
+    describe 'remove_spaces_between_quoted_field_and_comma' do 
+      it  "Fix weird spacing causing malformed csv errors" do 
+        line = "|GA|,||     ,|DI|,|,||         ,|PAC|"
+        fixed = OsImporter.remove_spaces_between_quoted_field_and_comma(line)
+        expect(fixed).to eql("|GA|,||,|DI|,|,||,|PAC|")
+      end
+    end
   end
 end
