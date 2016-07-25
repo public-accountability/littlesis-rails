@@ -1,7 +1,11 @@
 namespace :opensecrets do
   desc "import individual contribution data"
   task :import_indivs, [:filepath] =>  :environment do |t, args| 
+    start = Time.now
     OsImporter.import_indivs args[:filepath]
+    execution_time = Time.now - start
+    printf("** OsImporter took %d seconds **\n", execution_time)
+    printf("** There are currently %s donations in the db **\n", OsDonation.count)
   end
   
   desc "import addresses from matched opensecrets donations"
