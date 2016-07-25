@@ -1,7 +1,7 @@
 namespace :opensecrets do
   desc "import individual contribution data"
-  task import_indivs: :environment do 
-    print "more donations please!"
+  task :import_indivs, [:filepath] =>  :environment do |t, args| 
+    OsImporter.import_indivs args[:filepath]
   end
   
   desc "import addresses from matched opensecrets donations"
