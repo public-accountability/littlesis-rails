@@ -7,7 +7,7 @@ module OsImporter
       begin 
         clean_line = OsImporter.remove_spaces_between_quoted_field_and_comma(line)
         CSV.parse(clean_line, :quote_char => "|") do |row|  
-          OsImporter.insert_row row 
+          OsImporter.insert_row row
         end
         processed += 1
         printf("processed %s lines\n", processed) if (processed % 5000 == 0)
@@ -30,7 +30,7 @@ module OsImporter
   def OsImporter.fec_cycle_id(row)
     row[0].strip + "_" + row[1].strip
   end
-
+  
   def OsImporter.insert_row(row)
     donation = OsDonation.find_or_initialize_by(fec_cycle_id: OsImporter.fec_cycle_id(row))
     
@@ -66,8 +66,10 @@ module OsImporter
     donation.name_middle = name[:middle]
     donation.name_prefix = name[:prefix]
     donation.name_suffix = name[:suffix]
-
-    donation.save!
+    
+    if donation.changed?
+      donation.save!
+    end
   end
   
   def OsImporter.remove_spaces_between_quoted_field_and_comma(line)
