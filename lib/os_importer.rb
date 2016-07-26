@@ -1,19 +1,24 @@
 module OsImporter
 
   def OsImporter.import_indivs(filepath)
+    outfile = File.new("#{filepath}_errors.txt", "w")
+    processed, errors = 0,0
     IO.foreach(filepath) do |line|
       begin 
         clean_line = OsImporter.remove_spaces_between_quoted_field_and_comma(line)
         CSV.parse(clean_line, :quote_char => "|") do |row|  
-         OsImporter.insert_row row 
-        end  
-      rescue CSV::MalformedCSVError => e
-        printf("CSV Error: %s \n    with line: %s\n", e, line)
-      rescue 
-        printf("ERROR with this line:\n     %s\n", line)
-        raise
+          OsImporter.insert_row row 
+        end
+        processed += 1
+        printf("processed %s lines\n", processed) if (processed % 5000 == 0)
+      rescue => e
+        printf("ERROR -- %s \n     with line: %s\n", e, line)
+        errors += 1
+        outfile.write(line)
       end
     end
+    outfile.close()
+    printf("** processed %s donations\n** skipped %s lines with errors\n", processed, errors)
   end
   
   def OsImporter.date_parse(d)
