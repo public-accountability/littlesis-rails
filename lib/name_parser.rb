@@ -151,7 +151,7 @@ class NameParser
   end
 
   # parses name with these variations:
-  # [blank]
+  # [blank] or nil
   # FIRST LAST
   # LAST, FIRST
   # LAST, FIRST M
@@ -162,7 +162,8 @@ class NameParser
   # LAST, FRIST M SUFFIX
   def self.os_parse(str)
     last_name, first_name, middle_name, prefix, suffix = nil,nil,nil,nil,nil
-    name = str.strip.upcase.split(',')
+    
+    name = str.nil? ? [] : str.strip.upcase.split(',')
     
     if name.length == 0
       # do nothing and return nil

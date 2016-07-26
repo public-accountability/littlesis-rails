@@ -125,7 +125,7 @@ describe 'os_importer' do
       end
 
       it 'can deal with the BAD lines. no problem.' do
-        expect(OsDonation.count).to eql(@count + 1)
+        expect(OsDonation.count).to eql(@count + 2)
       end
     end
     

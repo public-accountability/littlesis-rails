@@ -97,6 +97,15 @@ describe 'NameParser' do
       expect(x[:prefix]).to be_nil
       expect(x[:suffix]).to be_nil
     end
+    
+    it 'return nil if nil' do 
+      x = NameParser.os_parse(nil)
+      expect(x[:first]).to be_nil
+      expect(x[:last]).to be_nil
+      expect(x[:middle]).to be_nil
+      expect(x[:prefix]).to be_nil
+      expect(x[:suffix]).to be_nil
+    end
 
   end  
 
