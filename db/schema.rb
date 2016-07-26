@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160712173138) do
+ActiveRecord::Schema.define(version: 20160722151948) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -845,6 +845,42 @@ ActiveRecord::Schema.define(version: 20160712173138) do
 
   add_index "os_category", ["category_id"], name: "unique_id_idx", unique: true, using: :btree
   add_index "os_category", ["category_name"], name: "unique_name_idx", unique: true, using: :btree
+
+  create_table "os_donations", force: true do |t|
+    t.string   "cycle",           limit: 4,  null: false
+    t.string   "fectransid",      limit: 19, null: false
+    t.string   "contribid",       limit: 12
+    t.string   "contrib"
+    t.string   "recipid",         limit: 9
+    t.string   "orgname"
+    t.string   "ultorg"
+    t.string   "realcode",        limit: 5
+    t.date     "date"
+    t.integer  "amount"
+    t.string   "street"
+    t.string   "city"
+    t.string   "state",           limit: 2
+    t.string   "zip",             limit: 5
+    t.string   "recipcode",       limit: 2
+    t.string   "transactiontype", limit: 3
+    t.string   "cmteid",          limit: 9
+    t.string   "otherid",         limit: 9
+    t.string   "gender",          limit: 1
+    t.string   "microfilm",       limit: 11
+    t.string   "occupation"
+    t.string   "employer"
+    t.string   "source",          limit: 5
+    t.string   "fec_cycle_id",    limit: 24, null: false
+    t.string   "name_last"
+    t.string   "name_first"
+    t.string   "name_middle"
+    t.string   "name_suffix"
+    t.string   "name_prefix"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "os_donations", ["fec_cycle_id"], name: "index_os_donations_on_fec_cycle_id", unique: true, using: :btree
 
   create_table "os_entity_category", force: true do |t|
     t.integer  "entity_id",   limit: 8,   null: false
