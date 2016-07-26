@@ -151,6 +151,7 @@ class NameParser
   end
 
   # parses name with these variations:
+  # [blank]
   # FIRST LAST
   # LAST, FIRST
   # LAST, FIRST M
@@ -163,7 +164,9 @@ class NameParser
     last_name, first_name, middle_name, prefix, suffix = nil,nil,nil,nil,nil
     name = str.strip.upcase.split(',')
     
-    if name.length == 1
+    if name.length == 0
+      # do nothing and return nil
+    elsif name.length == 1
       # If there is no comma in the name we will presume that the order is First Last
       first_name, last_name = name[0].strip.titleize.split(' ')
     else

@@ -89,6 +89,15 @@ describe 'NameParser' do
       expect(x[:suffix]).to be_nil
     end
 
+    it 'parses a blank string' do 
+      x = NameParser.os_parse("")
+      expect(x[:first]).to be_nil
+      expect(x[:last]).to be_nil
+      expect(x[:middle]).to be_nil
+      expect(x[:prefix]).to be_nil
+      expect(x[:suffix]).to be_nil
+    end
+
   end  
 
 end
