@@ -162,9 +162,7 @@ class NameParser
   # LAST, FRIST M SUFFIX
   def self.os_parse(str)
     last_name, first_name, middle_name, prefix, suffix = nil,nil,nil,nil,nil
-    
     name = str.nil? ? [] : str.strip.upcase.split(',')
-    
     if name.length == 0
       # do nothing and return nil
     elsif name.length == 1
@@ -172,7 +170,7 @@ class NameParser
       first_name, last_name = name[0].strip.titleize.split(' ')
     else
       last_name = name[0].titleize
-      rest_of_name = name[1].split(' ')
+      rest_of_name = (name - [""])[1].split(' ') # remove blank strings in case of double comma 
       first_name = rest_of_name[0].strip.titleize
 
       for name_part in rest_of_name.drop(1)

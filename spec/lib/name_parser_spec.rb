@@ -3,10 +3,6 @@ require 'rails_helper'
 describe 'NameParser' do 
 
   describe 'os_parse' do 
-    
-    # it 'returns nil for strings without a comma' do
-    #   expect(NameParser.os_parse("YOUR NAME HERE")).to be_nil
-    # end
 
     it 'parses "CAT, ALICE"' do
       x = NameParser.os_parse("CAT, ALICE")
@@ -107,6 +103,24 @@ describe 'NameParser' do
       expect(x[:suffix]).to be_nil
     end
 
-  end  
+    it 'parses name with an extra comma' do
+      x = NameParser.os_parse("CAT,,ALICE")
+      expect(x[:first]).to eql('Alice')
+      expect(x[:last]).to eql('Cat')
+      expect(x[:middle]).to be_nil
+      expect(x[:prefix]).to be_nil
+      expect(x[:suffix]).to be_nil
 
+    end
+
+    it 'parses names with an extra comma and a middle name' do 
+      x = NameParser.os_parse("CAT,,ALICE S")
+      expect(x[:first]).to eql('Alice')
+      expect(x[:last]).to eql('Cat')
+      expect(x[:middle]).to eql('S')
+      expect(x[:prefix]).to be_nil
+      expect(x[:suffix]).to be_nil
+    end
+
+  end  
 end
