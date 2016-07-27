@@ -1,6 +1,28 @@
-module OsLegacyMatcher
+class OsLegacyMatcher
+  attr_reader :relationship_id, :filings
+  
+  def initialize( relationship_id )
+    @relationship_id = relationship_id
+  end
 
-  def OsLegacyMatcher.match
+  def find_filing
+    @filings = FecFiling.where(relationship_id: @relationship_id)
+  end
+
+  def corresponding_os_donation(f)
+    donation = OsDonation.find_by(fectransid: f.fec_filing_id, cycle: f.crp_cycle.to_s)
+    if donation.nil?
+      # continue searching
+    else
+      return donation
+    end
+  end
+
+  
+  def match
+  end
+  
+  def fecFiling
   end
 
 end
@@ -8,15 +30,17 @@ end
 
 #
 #  for each donation relationship
-#    - get fecFillings
+#    - get fecFilings
 #      - find corresponding OsDonation
 #        - First search based on crp_cycle & fec_filing # 
-#          - if fec_filing is nil
+#          - if fec_filing is nil or failed
 #             - try using crp_id
-#              - if that fails
+#              - if that fails or if there are multiple versions
+#                  - try searching by last last name, date and using the fec_filing as the microfilm
 #                 - try searching via year, lastname, amount, zip, date
 #                    -  if that fails
 #                        - write to error log
+#          
 #        - Create OsMatch
 #           * donor_id -> entity1 
 #           * recip_id -> entity2
