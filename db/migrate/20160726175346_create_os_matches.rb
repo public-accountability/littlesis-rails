@@ -5,6 +5,8 @@ class CreateOsMatches < ActiveRecord::Migration
       t.integer :donation_id, index: true
       t.integer :donor_id, index: true, null: false
       t.integer :recip_id, index: true
+      t.integer :relationship_id, index: true
+      t.integer :reference_id, index: true
       t.integer :matched_by
       t.boolean :is_deleted, default: false, null: false
       t.timestamps
