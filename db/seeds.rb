@@ -99,3 +99,17 @@ SfGuardPermission.create!([
                             {id: 10, name: "talker", description: "allows user to use web-based chat"},
                             {id: 11, name: "contacter", description: nil}
                           ])
+RelationshipCategory.create!([
+  {id: 1, name: "Position", display_name: "Position", default_description: "Position", entity1_requirements: "Person", entity2_requirements: nil, has_fields: true},
+  {id: 2, name: "Education", display_name: "Education", default_description: "Student", entity1_requirements: "Person", entity2_requirements: "Org", has_fields: true},
+  {id: 3, name: "Membership", display_name: "Membership", default_description: "Member", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
+  {id: 4, name: "Family", display_name: "Family", default_description: "Relative", entity1_requirements: "Person", entity2_requirements: "Person", has_fields: true},
+  {id: 5, name: "Donation", display_name: "Donation/Grant", default_description: "Donation/Grant", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
+  {id: 6, name: "Transaction", display_name: "Service/Transaction", default_description: "Service/Transaction", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
+  {id: 7, name: "Lobbying", display_name: "Lobbying", default_description: "Lobbying", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
+  {id: 8, name: "Social", display_name: "Social", default_description: "Social", entity1_requirements: "Person", entity2_requirements: "Person", has_fields: true},
+  {id: 9, name: "Professional", display_name: "Professional", default_description: "Professional", entity1_requirements: "Person", entity2_requirements: "Person", has_fields: true},
+  {id: 10, name: "Ownership", display_name: "Ownership", default_description: "Owner", entity1_requirements: nil, entity2_requirements: "Org", has_fields: true},
+  {id: 11, name: "Hierarchy", display_name: "Hierarchy", default_description: "Hierarchy", entity1_requirements: "Org", entity2_requirements: "Org", has_fields: true},
+  {id: 12, name: "Generic", display_name: "Generic", default_description: "Affiliation", entity1_requirements: nil, entity2_requirements: nil, has_fields: true}
+])
