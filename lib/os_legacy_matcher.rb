@@ -10,19 +10,37 @@ class OsLegacyMatcher
   end
 
   def corresponding_os_donation(f)
-    donation = OsDonation.find_by(fectransid: f.fec_filing_id, cycle: f.crp_cycle.to_s)
-    if donation.nil?
-      # continue searching
-    else
-      return donation
-    end
+    d = OsDonation.find_by(fectransid: f.fec_filing_id, cycle: f.crp_cycle.to_s)
+    return d unless d.nil?
+    d = OsDonation.find_by(fectransid: f.crp_id, cycle: f.crp_cycle.to_s)
+    return d unless d.nil?
+
+    return OsDonation.find_by(
+      cycle: f.crp_cycle.to_s, 
+      date: f.start_date, 
+      microfilm: f.fec_filing_id,
+      amount: f.amount)
   end
 
   
-  def match
+  def match_all
+    find_filing
+    @filings.each { |f| match_one(f) }
   end
   
-  def fecFiling
+  def match_one(f)
+    donation = corresponding_os_donation(f)
+    if donation.nil?
+      no_donation f
+    else
+      create_os_match
+    end
+  end
+
+  def no_donation(f)
+    printf("** Count not find a match for FecFiling: %s", f.id)
+    f = File.new("os_legacy_matcher_error_log.txt", "a")
+    f.write("#{@relationship_id},#{f.id}")
   end
 
 end

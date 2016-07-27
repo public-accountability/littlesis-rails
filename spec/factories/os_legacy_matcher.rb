@@ -43,7 +43,7 @@ FactoryGirl.define do
 
 
   factory :loeb_filing_two, class: FecFiling do 
-    amount 30400
+    amount 50000
     fec_filing_id '10020853341'
     crp_cycle 2010
     crp_id '2340167'
@@ -85,7 +85,7 @@ FactoryGirl.define do
     recipid "C00027466"
     orgname "Third Point LLC"
     realcode "F2700"
-    date "2011-11-29"
+    date '2010-09-17'
     amount 50000
     city "NEW YORK"
     state "NY"
