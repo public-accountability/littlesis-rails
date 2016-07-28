@@ -22,21 +22,35 @@ class OsLegacyMatcher
       amount: f.amount)
   end
 
-  
   def match_all
     find_filing
     @filings.each { |f| match_one(f) }
   end
   
-  def match_one(f)
-    donation = corresponding_os_donation(f)
+  def match_one(filing)
+    donation = corresponding_os_donation(filing)
     if donation.nil?
-      no_donation f
+      no_donation filing
     else
-      create_os_match
+      create_os_match donation
     end
   end
 
+  def create_os_match(donation)
+    os_match = OsMatch.new
+    os_match.os_donation = donation
+    rel = Relationship.find(@relationship_id)
+    os_match.relationship = rel
+    os_match.donor_id = rel.entity1_id
+    os_match.recip_id = rel.entity2_id
+    os_match.reference_id = find_reference
+    os_match.donation = rel.donation
+    os_match.save!
+  end
+
+  def find_reference
+  end
+  
   def no_donation(f)
     printf("** Count not find a match for FecFiling: %s", f.id)
     f = File.new("os_legacy_matcher_error_log.txt", "a")

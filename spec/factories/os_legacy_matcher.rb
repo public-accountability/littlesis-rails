@@ -101,18 +101,20 @@ FactoryGirl.define do
   end
 
   factory :loeb_ref_one, class: Reference do
+    name "FEC Filing 11020480483"
+    source  "http://images.nictusa.com/cgi-bin/fecimg/?11020480483"
+    object_model "Relationship"
+    # object_id 419156
+  end
+
+  factory :loeb_ref_two, class: Reference do
     name "FEC Filing 10020853341"
     source "http//images.nictusa.com/cgi-bin/fecimg/?10020853341"
     object_model "Relationship"
     # object_id 419156
   end
   
-  factory :loeb_ref_two, class: Reference do
-     name "FEC Filing 11020480483"
-     source  "http://images.nictusa.com/cgi-bin/fecimg/?11020480483"
-     object_model "Relationship"
-     # object_id 419156
-  end
+  
   
   factory :loeb_ref_three, class: Reference do
     name "FEC contribution search"
