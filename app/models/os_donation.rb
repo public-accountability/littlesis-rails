@@ -10,4 +10,16 @@ class OsDonation < ActiveRecord::Base
     end
   end
 
+  def reference_name
+    "FEC Filing " + microfilm.to_s
+  end
+
+  def reference_source
+    if microfilm.nil?
+      "http://www.fec.gov/finance/disclosure/advindsea.shtml"
+    else
+      "http://docquery.fec.gov/cgi-bin/fecimg/?" + microfilm
+    end
+  end
+
 end

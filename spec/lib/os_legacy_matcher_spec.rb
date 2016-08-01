@@ -12,6 +12,8 @@ describe 'OsLegacyMatcher' do
     @donation_one = create(:loeb_donation_one)
     @donation_two = create(:loeb_donation_two)
     @ref_one = create(:loeb_ref_one, object_id: @relationship.id)
+    @ref_two = create(:loeb_ref_two, object_id: @relationship.id)
+    @ref_three = create(:ref, name: "FEC Filing", source: "http://images.nictusa.com/cgi-bin/fecimg/?1234567", object_model: 'Relationship', object_id: @relationship.id)
     @matcher = OsLegacyMatcher.new @relationship.id
   end
   
@@ -26,10 +28,17 @@ describe 'OsLegacyMatcher' do
     end
   end
 
-  describe '#find_filing' do
+  describe '#find_filings' do
     it 'finds 2 filings' do 
-      @matcher.find_filing
+      @matcher.find_filings
       expect(@matcher.filings.count).to eql(2)
+    end
+  end
+  
+  describe '#find_references' do
+    it 'finds 3 references' do 
+      @matcher.find_references
+      expect(@matcher.references.count).to eql(3)
     end
   end
 
@@ -58,9 +67,9 @@ describe 'OsLegacyMatcher' do
   describe '#match_all' do 
     
     it 'finds the fec_filing and calls match_one for each filing' do 
+      allow(FecFiling).to receive(:where) { [@donation_one, @donation_two] }
       matcher = OsLegacyMatcher.new 555
       expect(matcher).to receive(:match_one).twice
-      allow(FecFiling).to receive(:where) { [@donation_one, @donation_two] }
       matcher.match_all
     end
     
@@ -79,21 +88,45 @@ describe 'OsLegacyMatcher' do
     it 'calls create_os_match if a donation is returned' do
       matcher = OsLegacyMatcher.new 555
       expect(matcher).to receive(:corresponding_os_donation).and_return(@donation_one)
-      expect(matcher).to receive(:create_os_match).with(@donation_one)
+      expect(matcher).to receive(:create_os_match).with(@donation_one, @filing_one)
       matcher.match_one @filing_one
     end
   end
 
   describe '#find_reference' do
 
+    it 'raises ReferencesNotFoundError if no references are found' do
+      matcher = OsLegacyMatcher.new 555
+      filing = build(:loeb_filing_one, fec_filing_id: 'nope', crp_id: 'still_nope')
+      expect {matcher.find_reference filing, @donation_one} .to raise_error(OsLegacyMatcher::ReferencesNotFoundError)
+    end
+
+    it 'finds ref when name includes fec filing id' do 
+      expect(@matcher.find_reference @filing_one, @donation_one).to eql @ref_one.id
+    end
     
-    
+    it 'find ref when crp_id is in the filing name' do 
+      filing = build(:loeb_filing_two, fec_filing_id: '999999', crp_id: '10020853341')
+      expect(@matcher.find_reference filing, @donation_two).to eql @ref_two.id
+    end
+
+    it 'finds ref when link contains id' do 
+      filing = build(:loeb_filing_one, fec_filing_id: '1234567')
+      expect(@matcher.find_reference filing, @donation_one).to eql @ref_three.id
+    end
+
+    it 'creates a new donation if no reference is found' do 
+      ref_count = Reference.count
+      filing = build(:loeb_filing_one, fec_filing_id: '777777', crp_id: 'try to me me')
+      @matcher.find_reference filing, @donation_one
+      expect(Reference.count).to eql(ref_count + 1)
+    end
   end
 
   describe '#create_os_match' do
 
     before(:all) do 
-      @matcher.create_os_match @donation_one
+      @matcher.create_os_match @donation_one, @filing_one
       @os_match = OsMatch.last
     end
     
@@ -118,13 +151,47 @@ describe 'OsLegacyMatcher' do
     end
 
     it 'has reference association' do 
-      expect(@os_match.reference).to eq @ref_one
+       expect(@os_match.reference).to eq @ref_one
     end
 
     it 'has donation assoication' do
       expect(@os_match.donation).to be_a(Donation)
       expect(@os_match.donation.relationship_id).to eq @relationship.id
     end
+    
+    it 'changes matched reference ref_type' do 
+      expect(Reference.find(@os_match.reference_id).ref_type).to eql(2)
+    end
+    
+  end
+
+  
+  describe '#create_new_ref' do
+    
+    before(:all) do
+      ref_id = @matcher.create_new_ref @donation_one
+      @new_ref = Reference.find(ref_id)
+    end
+
+    it 'creates new reference for the donation' do 
+      expect(@new_ref.name).to eql "FEC Filing 11020480483"
+      expect(@new_ref.source).to eql "http://docquery.fec.gov/cgi-bin/fecimg/?11020480483"
+      expect(@new_ref.publication_date).to eql "2011-11-29"
+      expect(@new_ref.object_id).to eql @relationship.id
+      expect(@new_ref.object_model).to eql "Relationship"
+      expect(@new_ref.ref_type).to eql 2
+    end
+    
+  end
+
+
+  describe '#ref_link_helper' do 
+    
+    it 'extracts fec image number' do
+      ref = build(:ref, source: "http://images.nictusa.com/cgi-bin/fecimg/?28931320327", object_id: 123)
+      expect(@matcher.ref_link_helper ref). to eql "28931320327"
+    end
+    
     
   end
 

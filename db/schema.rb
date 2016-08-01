@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160722151948) do
+ActiveRecord::Schema.define(version: 20160801140142) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -941,6 +941,19 @@ ActiveRecord::Schema.define(version: 20160722151948) do
   add_index "os_entity_transaction", ["locked_at"], name: "locked_at_idx", using: :btree
   add_index "os_entity_transaction", ["reviewed_at"], name: "reviewed_at_idx", using: :btree
 
+  create_table "os_matches", force: true do |t|
+    t.integer  "os_donation_id",                  null: false
+    t.integer  "donation_id"
+    t.integer  "donor_id",                        null: false
+    t.integer  "recip_id"
+    t.integer  "relationship_id"
+    t.integer  "reference_id"
+    t.integer  "matched_by"
+    t.boolean  "is_deleted",      default: false, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "ownership", force: true do |t|
     t.integer "percent_stake",   limit: 8
     t.integer "shares",          limit: 8
@@ -1065,14 +1078,15 @@ ActiveRecord::Schema.define(version: 20160722151948) do
   create_table "reference", force: true do |t|
     t.string   "fields",           limit: 200
     t.string   "name",             limit: 100
-    t.string   "source",           limit: 200, null: false
+    t.string   "source",           limit: 200,             null: false
     t.string   "source_detail",    limit: 50
     t.string   "publication_date", limit: 10
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "object_model",     limit: 50,  null: false
-    t.integer  "object_id",        limit: 8,   null: false
+    t.string   "object_model",     limit: 50,              null: false
+    t.integer  "object_id",        limit: 8,               null: false
     t.integer  "last_user_id"
+    t.integer  "ref_type",                     default: 1, null: false
   end
 
   add_index "reference", ["last_user_id"], name: "last_user_id_idx", using: :btree

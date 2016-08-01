@@ -115,10 +115,16 @@ FactoryGirl.define do
   end
   
   
-  
   factory :loeb_ref_three, class: Reference do
     name "FEC contribution search"
     source "http://docquery.fec.gov/cgi-bin/qindcont/1/(lname|MATCHES|:LOEB:)|AND|(fname|MATCHES|:DANIEL*:)"
+    object_model "Relationship"
+    # object_id 419156
+  end
+  
+  factory :loeb_ref_four, class: Reference do
+    name "FEC Filing"
+    source "http//images.nictusa.com/cgi-bin/fecimg/?10020853341"
     object_model "Relationship"
     # object_id 419156
   end
