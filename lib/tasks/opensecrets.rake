@@ -7,6 +7,26 @@ namespace :opensecrets do
     printf("** OsImporter took %d seconds **\n", execution_time)
     printf("** There are currently %s donations in the db **\n", OsDonation.count)
   end
+
+  desc "Match legacy Os Donations"
+  task legacy_matcher: :environment do
+    start = Time.now
+    
+    # smaller query for testing
+    # ids = ActiveRecord::Base.connection.execute("select distinct relationship_id from fec_filing where crp_cycle = 2012 limit 1000")
+    
+    ids = ActiveRecord::Base.connection.execute("select distinct relationship_id from fec_filing")
+    ids.each do |i| 
+       relationship_id = i[0]
+       # printf("\n processing relationship: %s\n", relationship_id)
+       matcher = OsLegacyMatcher.new relationship_id
+       matcher.match_all
+    end
+    
+    execution_time = Time.now - start
+    printf("\n** OsLegacyMatcher took %d seconds **\n", execution_time)
+    printf("** There are currently %s matched donations **\n", OsMatch.count)
+  end
   
   desc "import addresses from matched opensecrets donations"
   task import_addresses: :environment do
