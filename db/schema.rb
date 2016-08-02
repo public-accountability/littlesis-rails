@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160801140142) do
+ActiveRecord::Schema.define(version: 20160802001356) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -880,7 +880,12 @@ ActiveRecord::Schema.define(version: 20160801140142) do
     t.datetime "updated_at"
   end
 
+  add_index "os_donations", ["cycle"], name: "index_os_donations_on_cycle", using: :btree
+  add_index "os_donations", ["date"], name: "index_os_donations_on_date", using: :btree
   add_index "os_donations", ["fec_cycle_id"], name: "index_os_donations_on_fec_cycle_id", unique: true, using: :btree
+  add_index "os_donations", ["fectransid", "cycle"], name: "index_os_donations_on_fectransid_and_cycle", using: :btree
+  add_index "os_donations", ["fectransid"], name: "index_os_donations_on_fectransid", using: :btree
+  add_index "os_donations", ["microfilm"], name: "index_os_donations_on_microfilm", using: :btree
 
   create_table "os_entity_category", force: true do |t|
     t.integer  "entity_id",   limit: 8,   null: false
