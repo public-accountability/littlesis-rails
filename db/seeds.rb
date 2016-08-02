@@ -86,3 +86,30 @@ List.create!([
   {name: "New York State", description: "Powerful individuals in New York State, including business, political, and social leaders.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "nys", featured_list_id: nil, last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false},
   {name: "Oakland", description: "Powerful individuals in Oakland, CA, including business, political, and social leaders.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "oakland", featured_list_id: nil, last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false}
 ])
+
+SfGuardPermission.create!([
+                            {id: 1, name: "admin", description: "Administrator permission"},
+                            {id: 2, name: "contributor", description: nil},
+                            {id: 3, name: "editor", description: nil},
+                            {id: 5, name: "deleter", description: nil},
+                            {id: 6, name: "lister", description: "enables users to create lists"},
+                            {id: 7, name: "merger", description: "enables users to merge entities"},
+                            {id: 8, name: "importer", description: nil},
+                            {id: 9, name: "bulker", description: "enables users to add relationships in bulk"},
+                            {id: 10, name: "talker", description: "allows user to use web-based chat"},
+                            {id: 11, name: "contacter", description: nil}
+                          ])
+RelationshipCategory.create!([
+  {id: 1, name: "Position", display_name: "Position", default_description: "Position", entity1_requirements: "Person", entity2_requirements: nil, has_fields: true},
+  {id: 2, name: "Education", display_name: "Education", default_description: "Student", entity1_requirements: "Person", entity2_requirements: "Org", has_fields: true},
+  {id: 3, name: "Membership", display_name: "Membership", default_description: "Member", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
+  {id: 4, name: "Family", display_name: "Family", default_description: "Relative", entity1_requirements: "Person", entity2_requirements: "Person", has_fields: true},
+  {id: 5, name: "Donation", display_name: "Donation/Grant", default_description: "Donation/Grant", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
+  {id: 6, name: "Transaction", display_name: "Service/Transaction", default_description: "Service/Transaction", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
+  {id: 7, name: "Lobbying", display_name: "Lobbying", default_description: "Lobbying", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
+  {id: 8, name: "Social", display_name: "Social", default_description: "Social", entity1_requirements: "Person", entity2_requirements: "Person", has_fields: true},
+  {id: 9, name: "Professional", display_name: "Professional", default_description: "Professional", entity1_requirements: "Person", entity2_requirements: "Person", has_fields: true},
+  {id: 10, name: "Ownership", display_name: "Ownership", default_description: "Owner", entity1_requirements: nil, entity2_requirements: "Org", has_fields: true},
+  {id: 11, name: "Hierarchy", display_name: "Hierarchy", default_description: "Hierarchy", entity1_requirements: "Org", entity2_requirements: "Org", has_fields: true},
+  {id: 12, name: "Generic", display_name: "Generic", default_description: "Affiliation", entity1_requirements: nil, entity2_requirements: nil, has_fields: true}
+])

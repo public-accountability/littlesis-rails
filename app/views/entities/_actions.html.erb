@@ -1,0 +1,27 @@
+<div class="row thin-grey-bottom-border">
+    <div id="entity-actions" class="col-md-8"> 
+        <%= link_to "add relationship", @entity.legacy_url("addRelationship") %>
+        <%= link_to "edit", @entity.legacy_url("edit") %>
+        <%= link_to "flag", "/home/contact?type=flag" %>
+        <% if user_signed_in? %>
+            <% if @current_user.has_legacy_permission 'deleter' %>
+                <%= link_to "remove", @entity.legacy_url("remove") %>
+            <% end %>
+            <% if @current_user.has_legacy_permission 'importer' %>
+                <%= link_to "match donations", @entity.legacy_url("matchDonations") %>
+                <%= link_to "add bulk", @entity.legacy_url("addBulk") %>
+            <% end %>
+            <% if @current_user.has_legacy_permission 'admin' %>
+                <%= link_to "refresh", @entity.legacy_url("refresh") + '?' + { ref: request.original_url }.to_query %>
+            <% end %>
+        <% end %>
+    </div>
+
+    <div id="entity-edited-history" class="col-md-4">
+        Edited by<strong>
+        <%= link_to @last_user.username, legacy_user_path(@last_user) %>
+        </strong>
+        <%= time_ago_in_words(@entity.updated_at) %> ago
+        <%= link_to "History", @entity.legacy_url("modifications") %>
+    </div>
+</div>

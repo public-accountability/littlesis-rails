@@ -53,6 +53,10 @@ class Entity < ActiveRecord::Base
   has_many :phones, inverse_of: :entity, dependent: :destroy
   has_many :emails, inverse_of: :entity, dependent: :destroy
 
+  # OpenSecrets
+  has_many :contributions, class_name: "OsMatch", inverse_of: :donor, foreign_key: "donor_id"
+  has_many :donors, class_name: "OsMatch", inverse_of: :recipient, foreign_key: "recip_id"
+  
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
 
@@ -598,4 +602,17 @@ class Entity < ActiveRecord::Base
     related_ids = Link.where(entity1_id: entity1_id).pluck(:entity2_id).uniq
     Link.where(entity1_id: entity2_id, entity2_id: related_ids).pluck(:entity2_id).uniq - [entity1_id, entity2_id].map(&:to_i)
   end
+
+  def summary_excerpt
+    if summary
+      if summary.slice(0,100).include? "\n"
+        return summary.slice(0, summary.index("\n")) + '...'
+      else
+        return summary.truncate(100, separator: ' ')
+      end
+    else
+      return nil
+    end
+  end
+  
 end

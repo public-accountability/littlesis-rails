@@ -2,23 +2,32 @@ class EntitiesController < ApplicationController
 	before_filter :auth, except: [:show, :relationships]
   before_action :set_entity, only: [:show, :relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge, :refresh, :images, :feature_image, :remove_image, :new_image, :upload_image]
 
-  def show
-    respond_to do |format|
-      format.json {
-        entity = {
-          id: @entity.id,
-          name: @entity.name,
-          description: @entity.blurb,
-          bio: @entity.summary,
-          primary_type: @entity.primary_ext,
-          image: @entity.featured_image ? @entity.featured_image.s3_url('large') : nil
-        }
+  
+  # Ziggy July 19, 2016: Looks like this was, at one point, going to be used for
+  #                      oligrapher, but is now not being used. 
+  # def show
+  #   respond_to do |format|
+  #     format.json {
+  #       entity = {
+  #         id: @entity.id,
+  #         name: @entity.name,
+  #         description: @entity.blurb,
+  #         bio: @entity.summary,
+  #         primary_type: @entity.primary_ext,
+  #         image: @entity.featured_image ? @entity.featured_image.s3_url('large') : nil
+  #       }
 
-        render json: { entity: entity }
-      }
-    end
+  #       render json: { entity: entity }
+  #     }
+  #   end
+  # end
+
+  def show
+     @current_user = current_user
+     @last_user = User.find(@entity.last_user_id)
   end
 
+  
   def new
     @entity = Entity.new
     @person_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::PERSON_ID)
