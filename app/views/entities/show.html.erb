@@ -2,7 +2,14 @@
     <%= render partial: 'header', locals: { entity: @entity } %>
     <%= render partial: 'actions', locals: { entity: @entity, last_user: @last_user, current_user: @current_user } %>
     <div class="row top-1em">
-        <%= render partial: 'summary', locals: { entity: @entity } %>
-        <h1>Entity Page...</h1>
+        <div class="col-md-8 col-sm-8">
+            <%= render partial: 'summary', locals: { entity: @entity } %>
+            <%= render partial: 'tabs', locals: { active_tab: 'relationships', entity: @entity }  %>
+            <h1>Entity Page...</h1>
+        </div>
+        <div class="col-md-4 col-sm-4">
+            <p>side bar will go here...</p>
+        </div>
     </div>
+    
 </div>

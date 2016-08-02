@@ -1,0 +1,17 @@
+<div class="button-tabs">
+    <span class="<%= active_tab? 'relationships', active_tab %>">
+            <%= entity_link(entity, "Relationships")  %>
+    </span>
+    <span class="<%= active_tab? 'interlocks', active_tab %>">
+        <%= entity_link(entity, "Interlocks", 'interlocks')  %>
+    </span>
+    <span class="<%= active_tab? 'giving', active_tab %>">
+        <%= entity_link(entity, "Giving", 'giving')  %>
+    </span>
+    <span class="<%= active_tab? 'political', active_tab %>">
+        <%= entity_link(entity, "Political", 'political')  %>
+    </span>
+    <span class="<%= active_tab? 'Data', active_tab %>">
+        <%= entity_link(entity, "Data", 'datatable')  %>
+    </span>
+</div>

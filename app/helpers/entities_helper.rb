@@ -1,4 +1,5 @@
 module EntitiesHelper
+
   def entity_link(entity, name=nil, action=nil)
     name ||= entity.name
     link_to name, entity.legacy_url(action)
@@ -15,5 +16,14 @@ module EntitiesHelper
 
   def legacy_user_path(user)
     '/user/' + user.username
+  end
+
+  
+  def active_tab?(tab_name, active_tab)
+    if active_tab == tab_name
+      return 'active'
+    else
+      return 'inactive'
+    end
   end
 end
