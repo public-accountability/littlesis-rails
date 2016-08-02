@@ -103,6 +103,7 @@ Lilsis::Application.routes.draw do
   resources :entities do
     member do
       get 'relationships'
+      get 'political'
       get 'edit_twitter'
       post 'add_twitter'  
       post 'remove_twitter'

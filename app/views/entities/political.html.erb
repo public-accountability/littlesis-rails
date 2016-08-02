@@ -1,0 +1,15 @@
+<div class="container-fluid">
+    <%= render partial: 'header', locals: { entity: @entity } %>
+    <%= render partial: 'actions', locals: { entity: @entity, last_user: @last_user, current_user: @current_user } %>
+    <div class="row top-1em">
+        <div class="col-md-8 col-sm-8">
+            <%= render partial: 'summary', locals: { entity: @entity } %>
+            <%= render partial: 'tabs', locals: { active_tab: 'political', entity: @entity }  %>
+            <h1>Political Page...</h1>
+        </div>
+        <div class="col-md-4 col-sm-4">
+            <!-- side bar -->
+        </div>
+    </div>
+    
+</div>
