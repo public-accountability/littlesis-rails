@@ -23,12 +23,42 @@ class OsLegacyMatcher
     return d unless d.nil?
     d = OsDonation.find_by(fectransid: f.crp_id, cycle: f.crp_cycle.to_s)
     return d unless d.nil?
+    d = OsDonation.find_by(cycle: f.crp_cycle.to_s, date: f.start_date, microfilm: f.fec_filing_id, amount: f.amount)
+    return d unless d.nil?
 
+    raw_db_info = get_raw_info(f)
+    return nil if raw_db_info.nil?
+    
     return OsDonation.find_by(
-      cycle: f.crp_cycle.to_s, 
-      date: f.start_date, 
-      microfilm: f.fec_filing_id,
-      amount: f.amount)
+      date: f.start_date,
+      amount: f.amount,
+      zip: raw_db_info[:zip],
+      contrib: raw_db_info[:donor_name],
+      recipid: raw_db_info[:recipient_id]
+    )
+        
+  end
+
+  def get_raw_info(filing)
+    sql = "SELECT recipient_id, donor_name, zip 
+           from littlesis_raw.os_donation 
+           where row_id = '#{filing.crp_id}' and 
+                 fec_id = '#{filing.fec_filing_id}' and
+                 date = '#{filing.start_date}'"
+    result = ActiveRecord::Base.connection.execute(sql).to_a
+    if result.empty?
+      printf("No match found in littlesis_raw: row_id: %s, rec_id: %s, date: %s\n", filing.crp_id, filing.fec_filing_id, filing.start_date)
+      return nil
+    elsif result.length > 1 
+      printf("More than one match found in Littlesis_raw\n")
+      return nil
+    else
+      return {
+        recipient_id: result[0][0],
+        donor_name: result[0][1],
+        zip: result[0][2]
+      }
+    end
   end
 
   def match_all
@@ -47,7 +77,7 @@ class OsLegacyMatcher
   end
 
   def create_os_match(donation, filing)
-    os_match = OsMatch.find_or_initialize_by(donation_id: donation.id)
+    os_match = OsMatch.find_or_initialize_by(os_donation_id: donation.id)
     os_match.os_donation_id = donation.id
     rel = Relationship.find(@relationship_id)
     os_match.relationship = rel
@@ -75,7 +105,6 @@ class OsLegacyMatcher
         next
       end
     end
-
     printf(" NO REFERENCE FOUND with filing:  %s rel_id: %s donation_id: %s \n", filing.id, @relationship_id, donation.id)
     printf("creating new reference\n")
     return create_new_ref(donation)
@@ -91,7 +120,7 @@ class OsLegacyMatcher
   end
 
   def create_new_ref(donation)
-    ref = Reference.create!(
+    ref = Reference.find_or_create_by!(
       name: donation.reference_name, 
       source: donation.reference_source, 
       publication_date: donation.date.to_s,

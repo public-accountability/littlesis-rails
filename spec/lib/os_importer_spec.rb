@@ -129,6 +129,18 @@ describe 'os_importer' do
       end
     end
     
+    describe "lines with blank date" do 
+      before do 
+        @count = OsDonation.count
+        filepath = Rails.root.join('spec', 'testdata', 'lines_without_dates.txt')
+        OsImporter.import_indivs filepath
+      end
+      
+      it 'can handle lines without dates' do
+        expect(OsDonation.count).to eql(@count + 2)
+      end
+    end
+    
     describe 'remove_spaces_between_quoted_field_and_comma' do 
       it  "Fix weird spacing causing malformed csv errors" do 
         line = "|GA|,||     ,|DI|,|,||         ,|PAC|"
@@ -136,5 +148,6 @@ describe 'os_importer' do
         expect(fixed).to eql("|GA|,||,|DI|,|,||,|PAC|")
       end
     end
+
   end
 end

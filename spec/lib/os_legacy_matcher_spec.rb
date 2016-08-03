@@ -185,6 +185,18 @@ describe 'OsLegacyMatcher' do
   end
 
 
+  # This test requires the littlesis_raw database
+  describe '#get_raw_info' do 
+    it 'retrieves correct row from raw database' do 
+      filing = build(:filing_raw_db_lookup)
+      expect(@matcher.get_raw_info filing).to include(
+                          :recipient_id => 'N00027829',
+                          :donor_name => 'DECONCINI, DENNIS',
+                          :zip => '92037')
+    end
+  end
+
+
   describe '#ref_link_helper' do 
     
     it 'extracts fec image number' do

@@ -1,7 +1,8 @@
 class EntitiesController < ApplicationController
-	before_filter :auth, except: [:show, :relationships]
-  before_action :set_entity, only: [:show, :relationships, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge, :refresh, :images, :feature_image, :remove_image, :new_image, :upload_image]
-
+  before_filter :auth, except: [:show, :relationships, :political]
+  before_action :set_entity, only: [:show, :relationships, :political, :contributions, :potential_contributions, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge, :refresh, :images, :feature_image, :remove_image, :new_image, :upload_image]
+  before_action :set_last_user, only: [:show, :political]
+  before_action :set_current_user, only: [:show, :political]
   
   # Ziggy July 19, 2016: Looks like this was, at one point, going to be used for
   #                      oligrapher, but is now not being used. 
@@ -16,18 +17,14 @@ class EntitiesController < ApplicationController
   #         primary_type: @entity.primary_ext,
   #         image: @entity.featured_image ? @entity.featured_image.s3_url('large') : nil
   #       }
-
   #       render json: { entity: entity }
   #     }
   #   end
   # end
 
   def show
-     @current_user = current_user
-     @last_user = User.find(@entity.last_user_id)
   end
 
-  
   def new
     @entity = Entity.new
     @person_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::PERSON_ID)
@@ -51,6 +48,17 @@ class EntitiesController < ApplicationController
   def relationships
   end
 
+  def political
+  end
+
+  def contributions
+    render json: @entity.contributions
+  end
+  
+  def potential_contributions
+    render json: @entity.potential_contributions
+  end
+  
   def fields
     @fields = JSON.dump(Field.all.map { |f| { value: f.name, tokens: f.display_name.split(/\s+/) } });
   end
@@ -321,6 +329,14 @@ class EntitiesController < ApplicationController
   end
 
   private
+  
+  def set_current_user
+    @current_user = current_user
+  end
+
+  def set_last_user
+    @last_user = User.find(@entity.last_user_id)
+  end
 
   def set_entity
     @entity = Entity.find(params[:id])

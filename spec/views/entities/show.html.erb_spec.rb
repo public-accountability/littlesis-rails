@@ -4,8 +4,8 @@ describe 'entities/show.html.erb' do
   describe 'header' do    
     context 'without any permissions' do 
       before do
-        @user = create(:user)
-        @e = create(:mega_corp_inc)
+        @user = build(:user)
+        @e = build(:mega_corp_inc, updated_at: Time.now)
         assign(:entity, @e)
         assign(:last_user, @user) 
         render
@@ -78,6 +78,8 @@ describe 'entities/show.html.erb' do
     end  # end of context without legacy permissions
 
     def assign_entity_user(e, user) 
+      user = build(:user)
+      e = build(:mega_corp_inc, updated_at: Time.now)      
       assign(:entity, e)
       assign(:last_user, user) 
       assign(:current_user, User.find(user.id))
@@ -161,12 +163,51 @@ describe 'entities/show.html.erb' do
         expect(rendered).to have_css('a', :text => 'refresh')
       end
     end
+
+    describe 'tabs' do
+      
+      before do 
+        @user = build(:user)
+        @e = build(:mega_corp_inc, updated_at: Time.now)
+        assign(:entity, @e)
+        assign(:last_user, @user) 
+        render
+      end
+
+      it 'has only one active tab' do 
+        expect(rendered).to have_css '.button-tabs span.active', :count => 1
+      end
+      
+      it 'renders relationship tab' do
+        expect(rendered).to have_css '.button-tabs span a', :text => 'Relationships', :count => 1
+      end
+
+      it 'Relationships is the active tab' do 
+        expect(rendered).to have_css '.button-tabs span.active a', :text => 'Relationships', :count => 1
+        expect(rendered).not_to have_css '.button-tabs span.active a', :text => 'Interlocks'
+      end
+
+
+      it 'renders Interlocks tab' do
+        expect(rendered).to have_css '.button-tabs span a', :text => 'Interlocks', :count => 1
+      end
+      
+      it 'renders Giving tab' do
+        expect(rendered).to have_css '.button-tabs span a', :text => 'Giving', :count => 1
+      end
+
+      it 'renders Political tab' do
+        expect(rendered).to have_css '.button-tabs span a', :text => 'Political', :count => 1
+      end
+      
+      it 'renders Data tab' do
+        expect(rendered).to have_css '.button-tabs span a', :text => 'Data', :count => 1
+      end
+
+    end
   end
 
-  describe 'tabs' do
-    
-  end
-
+  
   describe 'summary' do
     
     it 'contains entity summary tab'

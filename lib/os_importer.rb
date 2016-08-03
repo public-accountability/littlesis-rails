@@ -23,7 +23,7 @@ module OsImporter
   
   def OsImporter.date_parse(d)
     return nil if d.nil?
-    month, day, year = d.split('/')
+    month, day, year = d.strip.split('/')
     [year, month, day].join('-')
   end
   
@@ -42,7 +42,7 @@ module OsImporter
     donation.orgname = row[5].strip.presence
     donation.ultorg = row[6].strip.presence
     donation.realcode = row[7].strip.presence
-    donation.date = date_parse(row[8].strip.presence)
+    donation.date = date_parse(row[8].presence)
     donation.amount = row[9]
     donation.street = row[10].strip.presence
     donation.city = row[11].strip.presence

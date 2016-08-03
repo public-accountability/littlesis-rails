@@ -24,9 +24,6 @@
 # Ignore dumb OS X files
 *.DS_Store
 
-# Ignore tests, for now
-/test
-
 # Ignore sphinx indexes
 /db/sphinx
 
@@ -36,3 +33,6 @@
 # Ignore sphinx config
 /config/production.sphinx.conf
 public/assets/*
+
+# Ignore node_modules used in test/
+test/node_modules
