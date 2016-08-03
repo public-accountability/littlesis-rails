@@ -36,7 +36,11 @@ describe OsMatch, type: :model do
 
   it 'belongs to donor via entity' do 
     expect(@os_match.donor).to eql @loeb
-    expect(Entity.find(@loeb.id).contributions).to eq [@os_match]
+    expect(Entity.find(@loeb.id).matched_contributions).to eq [@os_match]
+  end
+
+  it 'Entity joined to OsDonation through OsMatch' do 
+    expect(Entity.find(@loeb.id).contributions).to eq [@loeb_os_donation]
   end
   
   it 'belongs to recipient via entity' do

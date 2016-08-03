@@ -3,6 +3,7 @@ class Entity < ActiveRecord::Base
   include SoftDelete
   include Cacheable
   include Referenceable
+  include Political
 
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
@@ -54,7 +55,8 @@ class Entity < ActiveRecord::Base
   has_many :emails, inverse_of: :entity, dependent: :destroy
 
   # OpenSecrets
-  has_many :contributions, class_name: "OsMatch", inverse_of: :donor, foreign_key: "donor_id"
+  has_many :matched_contributions, class_name: "OsMatch", inverse_of: :donor, foreign_key: "donor_id"
+  has_many :contributions, through: :matched_contributions, source: :os_donation
   has_many :donors, class_name: "OsMatch", inverse_of: :recipient, foreign_key: "recip_id"
   
   scope :people, -> { where(primary_ext: 'Person') }
