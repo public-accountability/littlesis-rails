@@ -105,6 +105,7 @@ Lilsis::Application.routes.draw do
       get 'relationships'
       get 'political'
       get 'contributions'
+      get 'potential_contributions'
       get 'edit_twitter'
       post 'add_twitter'  
       post 'remove_twitter'
