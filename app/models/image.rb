@@ -10,7 +10,7 @@ class Image < ActiveRecord::Base
 
   IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }
 
-  after_save :disguise_face, if: :is_featured, unless: :has_face
+  # after_save :disguise_face, if: :is_featured, unless: :has_face
   before_destroy :unfeature, if: :is_featured
 
   validates_presence_of :entity_id, :filename, :title
