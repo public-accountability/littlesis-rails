@@ -58,6 +58,7 @@ class Entity < ActiveRecord::Base
   has_many :matched_contributions, class_name: "OsMatch", inverse_of: :donor, foreign_key: "donor_id"
   has_many :contributions, through: :matched_contributions, source: :os_donation
   has_many :donors, class_name: "OsMatch", inverse_of: :recipient, foreign_key: "recip_id"
+  has_many :committee_donors, class_name: "OsMatch", inverse_of: :committee, foreign_key: "cmte_id"
   
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
