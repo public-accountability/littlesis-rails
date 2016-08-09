@@ -7,6 +7,12 @@ namespace :opensecrets do
     printf("** OsImporter took %d seconds **\n", execution_time)
     printf("** There are currently %s donations in the db **\n", OsDonation.count)
   end
+  
+  desc "import congress"
+  task import_congress: :environment do 
+    importer = OsCongressImporter.new Rails.root.join('data', 'members114.csv') , Rails.root.join('data', 'members114_ids.csv') 
+    importer.start
+  end
 
   desc "Match legacy Os Donations"
   task legacy_matcher: :environment do
