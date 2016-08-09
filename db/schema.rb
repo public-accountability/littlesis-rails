@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160805195708) do
+ActiveRecord::Schema.define(version: 20160809191319) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -845,6 +845,29 @@ ActiveRecord::Schema.define(version: 20160805195708) do
 
   add_index "os_category", ["category_id"], name: "unique_id_idx", unique: true, using: :btree
   add_index "os_category", ["category_name"], name: "unique_name_idx", unique: true, using: :btree
+
+  create_table "os_committees", force: true do |t|
+    t.string   "cycle",           limit: 4, null: false
+    t.string   "cmte_id",                   null: false
+    t.string   "name"
+    t.string   "affiliate"
+    t.string   "ultorg"
+    t.string   "recipid"
+    t.string   "recipcode",       limit: 2
+    t.string   "feccandid"
+    t.string   "party",           limit: 1
+    t.string   "primcode",        limit: 5
+    t.string   "source"
+    t.boolean  "sensitive"
+    t.boolean  "foreign"
+    t.boolean  "active_in_cycle"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "os_committees", ["cmte_id", "cycle"], name: "index_os_committees_on_cmte_id_and_cycle", using: :btree
+  add_index "os_committees", ["cmte_id"], name: "index_os_committees_on_cmte_id", using: :btree
+  add_index "os_committees", ["recipid"], name: "index_os_committees_on_recipid", using: :btree
 
   create_table "os_donations", force: true do |t|
     t.string   "cycle",           limit: 4,  null: false

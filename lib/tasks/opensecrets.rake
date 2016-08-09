@@ -14,6 +14,23 @@ namespace :opensecrets do
     importer.start
   end
 
+  desc "import committees"
+  task import_committees: :environment do 
+    ###### Encoding details ##################################################
+    # Before running, issue this db command:
+    # ALTER TABLE `littlesis`.`os_committees` CONVERT TO CHARACTER SET utf8; 
+    ########################################################################### 
+    start = Time.now
+    Dir.foreach( Rails.root.join('data', 'cmtes') ) do |filename|
+      next if filename == '.' or filename == '..'
+      printf("Processing: %s \n", filename)
+      OsCommitteeImporter.start Rails.root.join('data', 'cmtes', filename)
+    end
+    execution_time = Time.now - start
+    printf("** Import Committees took %d seconds **\n", execution_time)
+    printf("** There are currently %s committees in the db **\n", OsCommittee.count)
+  end
+
   desc "Match legacy Os Donations"
   task legacy_matcher: :environment do
     start = Time.now
