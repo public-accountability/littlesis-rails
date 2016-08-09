@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160802001356) do
+ActiveRecord::Schema.define(version: 20160805195708) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -959,7 +959,15 @@ ActiveRecord::Schema.define(version: 20160802001356) do
     t.boolean  "is_deleted",      default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "cmte_id"
   end
+
+  add_index "os_matches", ["cmte_id"], name: "index_os_matches_on_cmte_id", using: :btree
+  add_index "os_matches", ["donor_id"], name: "index_os_matches_on_donor_id", using: :btree
+  add_index "os_matches", ["os_donation_id"], name: "index_os_matches_on_os_donation_id", using: :btree
+  add_index "os_matches", ["recip_id"], name: "index_os_matches_on_recip_id", using: :btree
+  add_index "os_matches", ["reference_id"], name: "index_os_matches_on_reference_id", using: :btree
+  add_index "os_matches", ["relationship_id"], name: "index_os_matches_on_relationship_id", using: :btree
 
   create_table "ownership", force: true do |t|
     t.integer "percent_stake",   limit: 8

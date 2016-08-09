@@ -6,6 +6,7 @@ class OsMatch < ActiveRecord::Base
   belongs_to :donation, inverse_of: :os_matches
   belongs_to :donor, class_name: "Entity", foreign_key: "donor_id", inverse_of: :matched_contributions
   belongs_to :recipient, class_name: "Entity", foreign_key: "recip_id", inverse_of: :donors
+  belongs_to :committee, class_name: "Entity", foreign_key: "cmte_id", inverse_of: :committee_donors
   belongs_to :reference
   belongs_to :relationship, inverse_of: :os_matches
 
