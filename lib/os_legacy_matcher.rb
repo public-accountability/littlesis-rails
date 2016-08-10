@@ -76,20 +76,65 @@ class OsLegacyMatcher
     end
   end
 
+  # input: <OsDonation>, <FecFiling>
   def create_os_match(donation, filing)
     os_match = OsMatch.find_or_initialize_by(os_donation_id: donation.id)
+    if os_match.persisted?
+      return nil
+    end
+    
     os_match.os_donation_id = donation.id
+
     rel = Relationship.find(@relationship_id)
     os_match.relationship = rel
     os_match.donor_id = rel.entity1_id
     os_match.recip_id = rel.entity2_id
+    set_cmte_id(donation, os_match)
+
     os_match.reference_id = find_reference filing, donation
     change_ref_type os_match.reference_id
+    update_source_link os_match.reference_id, donation
+
     os_match.donation = rel.donation
-    if os_match.changed?
-      os_match.save!
+    os_match.save!
+  end
+
+  # <OsDonation>, <OsMatch>
+  def set_cmte_id(donation, os_match)
+    if Entity.find(os_match.recip_id).org?
+      os_match.cmte_id = os_match.recip_id
+    else
+      os_match.cmte_id = find_or_create_cmte(donation)
     end
   end
+
+  # input: <OsDonation>
+  # output: entity_id (integer)
+  def find_or_create_cmte(donation)
+    fundraising = PoliticalFundraising.includes(:entity).find_by(fec_id: donation.cmteid, entity: {is_deleted: false})
+    
+    if fundraising.nil?
+      cmte = OsCommittee.find_by(cmte_id: donation.cmteid, cycle: donation.cycle)
+      if cmte.nil?
+        printf("Could not find %s in OsCommittee\n", donation.cmteid)
+        return nil
+      else
+        return create_new_cmte(cmte)
+      end
+    else
+      return fundraising.entity_id
+    end
+    
+  end
+
+  def create_new_cmte(cmte)
+    printf("creating new committee %s \n", cmte.name)
+    entity = Entity.create!(name: cmte.name, primary_ext: "Org")
+    ExtensionRecord.create!(entity_id: entity.id, definition_id: 11, last_user_id: 1)
+    PoliticalFundraising.create!(fec_id: cmte.cmte_id, entity_id: entity.id)
+    entity.id
+  end
+  
 
   def find_reference(filing, donation=nil)
     raise ReferencesNotFoundError if @references.blank?
@@ -116,7 +161,7 @@ class OsLegacyMatcher
       puts f.inspect
     end
     error_file = File.new("os_legacy_matcher_error_log.txt", "a")
-    error_file.write("#{@relationship_id},#{f.id}")
+    error_file.write("#{@relationship_id},#{f.id}\n")
   end
 
   def create_new_ref(donation)
@@ -129,6 +174,12 @@ class OsLegacyMatcher
       ref_type: 2,
       last_user_id: 1)
     ref.id
+  end
+
+  def update_source_link(reference_id, donation)
+    if not reference_id.nil?
+      Reference.find(reference_id).update_attribute(:source, donation.reference_source)
+    end
   end
 
   def change_ref_type(reference_id)
@@ -144,7 +195,6 @@ class OsLegacyMatcher
 end
 
 
-#
 #  for each donation relationship
 #    - get fecFilings
 #      - find corresponding OsDonation
@@ -169,7 +219,20 @@ end
 #           * Ensure  correct relationship_id
 #           * Update links
 # 
-#   - After creating all OsDonation
+#   - After creating all OsDonation/OsMatches
 #        * update amount on relationship
 #        * update # of fec_filing
-# 
+#  
+#
+#  
+#     
+#  
+#
+#  
+#
+#  
+#
+#  
+#
+#  
+#

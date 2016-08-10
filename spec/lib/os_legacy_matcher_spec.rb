@@ -6,6 +6,7 @@ describe 'OsLegacyMatcher' do
     Entity.skip_callback(:create, :after, :create_primary_ext)
     @loeb = create(:loeb)
     @nrsc = create(:nrsc)
+    @nrsc_fundraising = create(:political_fundraising, entity_id: @nrsc.id)
     @relationship = create(:loeb_donation)
     @filing_one = create(:loeb_filing_one, relationship_id: @relationship.id)
     @filing_two = create(:loeb_filing_two, relationship_id: @relationship.id)
@@ -14,6 +15,7 @@ describe 'OsLegacyMatcher' do
     @ref_one = create(:loeb_ref_one, object_id: @relationship.id)
     @ref_two = create(:loeb_ref_two, object_id: @relationship.id)
     @ref_three = create(:ref, name: "FEC Filing", source: "http://images.nictusa.com/cgi-bin/fecimg/?1234567", object_model: 'Relationship', object_id: @relationship.id)
+    # @suprepac = create(:os_committee)
     @matcher = OsLegacyMatcher.new @relationship.id
   end
   
@@ -163,6 +165,15 @@ describe 'OsLegacyMatcher' do
       expect(Reference.find(@os_match.reference_id).ref_type).to eql(2)
     end
     
+    it 'updates source link ' do 
+      expect(Reference.find(@os_match.reference_id).source).to eq @donation_one.reference_source
+    end
+
+    it 'sets cmte_id to be the same as recipient id' do
+      expect(@os_match.cmte_id).to eql @nrsc.id
+      expect(@os_match.recip_id).to eql@os_match.cmte_id
+    end
+    
   end
 
   
@@ -194,6 +205,85 @@ describe 'OsLegacyMatcher' do
                           :donor_name => 'DECONCINI, DENNIS',
                           :zip => '92037')
     end
+  end
+
+  
+  describe "#set_cmte_id" do
+    
+    it 'sets cmte_id to be same as recipient if the recipient is an org' do 
+      os_match = OsMatch.new
+      os_match.recip_id = @nrsc.id
+      expect(os_match.cmte_id).to be_nil
+      @matcher.set_cmte_id OsDonation.new, os_match
+      expect(os_match.cmte_id).to eql(@nrsc.id)
+    end
+
+    it 'calls find_or_create_cmte if recipient is not an org' do 
+      os_match = OsMatch.new
+      os_match.recip_id = create(:elected).id
+      donation = OsDonation.new
+      matcher = OsLegacyMatcher.new 555
+      expect(matcher).to receive(:find_or_create_cmte).with(donation).once
+      matcher.set_cmte_id donation, os_match
+    end
+  end
+  
+  describe "#find_or_create_cmte" do
+    
+    it 'returns PoliticalFundraising id if found' do
+      corp = create(:mega_corp_inc)
+      PoliticalFundraising.create(fec_id: '6666', entity_id: corp.id)
+      donation = OsDonation.new { |d| d.cmteid = '6666' }
+      expect(@matcher.find_or_create_cmte donation).to eql(corp.id)
+    end
+
+    it 'calls create new committee if no entity is found' do 
+      matcher = OsLegacyMatcher.new 555
+      committee = OsCommittee.create(cmte_id: '1111', cycle: '2012')
+     
+      donation = OsDonation.new { |d| 
+        d.cmteid = '1111' 
+        d.cycle = '2012' }
+      
+      expect(matcher).to receive(:create_new_cmte).with(committee).once
+      matcher.find_or_create_cmte donation
+      
+    end
+  end
+
+  describe '#create_new_cmte' do 
+    before do 
+      Entity.set_callback(:create, :after, :create_primary_ext)
+      @cmte = create(:os_committee)
+      @id = @matcher.create_new_cmte @cmte
+      @e = Entity.last
+    end
+
+    after do 
+      Entity.skip_callback(:create, :after, :create_primary_ext)
+    end
+    
+    it 'creates a new entity' do 
+      expect(@e.name).to eql "SuprePac"
+    end
+
+    it 'creates ExtensionRecord' do
+      expect(@e.extension_records.count).to eql(2)
+      expect(@e.extension_records.last.definition_id).to eql(11)
+    end
+
+    it 'creates PoliticalFundraising' do
+      expect(PoliticalFundraising.where(entity_id: @e.id).count).to eql(1)
+      expect(@e.political_fundraising.fec_id).to eql 'C00000042'
+    end
+
+    it 'returns the entity id' do 
+      expect(@id).to eql @e.id
+    end
+
+  end
+
+  describe "#add_os_cmte_ref_to_fundraising" do
   end
 
 

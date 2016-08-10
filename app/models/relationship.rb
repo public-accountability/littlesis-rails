@@ -25,6 +25,7 @@ class Relationship < ActiveRecord::Base
   has_many :fec_filings, inverse_of: :relationship, dependent: :destroy
   belongs_to :category, class_name: "RelationshipCategory", inverse_of: :relationships
 
+  # Open Secrets 
   has_many :os_matches, inverse_of: :relationship
 
   validates_presence_of :entity1_id, :entity2_id, :category_id

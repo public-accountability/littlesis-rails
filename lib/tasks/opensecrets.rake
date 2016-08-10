@@ -15,7 +15,7 @@ namespace :opensecrets do
   end
 
   desc "import committees"
-  task import_committees: :environment do 
+  task import_committees: :environment do
     ###### Encoding details ##################################################
     # Before running, issue this db command:
     # ALTER TABLE `littlesis`.`os_committees` CONVERT TO CHARACTER SET utf8; 
@@ -35,10 +35,18 @@ namespace :opensecrets do
   task legacy_matcher: :environment do
     start = Time.now
     
-    # smaller query for testing
-    # ids = ActiveRecord::Base.connection.execute("select distinct relationship_id from fec_filing where crp_cycle = 2012 limit 1000")
+    sql = "select distinct fec_filing.relationship_id from fec_filing 
+           inner join relationship on relationship.id = fec_filing.relationship_id
+           where relationship.is_deleted = 0"
     
-    ids = ActiveRecord::Base.connection.execute("select distinct relationship_id from fec_filing")
+    # smaller query for testing
+    test_sql = "select distinct fec_filing.relationship_id from fec_filing 
+           inner join relationship on relationship.id = fec_filing.relationship_id
+           where fec_filing.crp_cycle = 2008 and relationship.is_deleted = 0
+           limit 3000"
+    
+    ids = ActiveRecord::Base.connection.execute(test_sql)
+        
     ids.each do |i| 
        relationship_id = i[0]
        # printf("\n processing relationship: %s\n", relationship_id)
