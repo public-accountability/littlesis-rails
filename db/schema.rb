@@ -965,7 +965,7 @@ ActiveRecord::Schema.define(version: 20160809191319) do
     t.integer  "locked_by_user_id",   limit: 8
     t.datetime "locked_at"
   end
-
+f
   add_index "os_entity_transaction", ["entity_id", "cycle", "transaction_id"], name: "entity_cycle_transaction_idx", unique: true, using: :btree
   add_index "os_entity_transaction", ["is_synced"], name: "is_synced_idx", using: :btree
   add_index "os_entity_transaction", ["locked_at"], name: "locked_at_idx", using: :btree
