@@ -56,7 +56,10 @@ class EntitiesController < ApplicationController
   end
 
   def match_donation
-    render json: {hello: 'world'}
+    params[:payload].each do |donation_id| 
+       OsMatch.find_or_create_by(os_donation_id: donation_id, donor_id: params[:id])
+     end
+    render json: {status: 'ok'}
   end
 
   def unmatch_donation

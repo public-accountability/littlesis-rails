@@ -1,6 +1,6 @@
 class OsMatch < ActiveRecord::Base
-  include SoftDelete
-  has_paper_trail
+ include SoftDelete
+ # has_paper_trail
   
   belongs_to :os_donation
   belongs_to :donation, inverse_of: :os_matches
@@ -13,12 +13,6 @@ class OsMatch < ActiveRecord::Base
   validates_presence_of :os_donation_id, :donor_id
 
   after_create :post_process
-
-  def self.match_a_donation(os_donation_id, donor_id)
-    OsMatch.find_or_create_by(
-      os_donation_id: os_donation_id,
-      donor_id: donor_id)
-  end
 
   def post_process
     set_recipient_and_committee
@@ -63,8 +57,9 @@ class OsMatch < ActiveRecord::Base
     r.update_start_date_if_earlier os_donation.date
     r.update_end_date_if_later os_donation.date
     
-    r.save
-    update_attribute(:relationship, r)
+    if r.save 
+      update_attribute(:relationship, r)
+    end
   end
 
   #  Int -> Int | Nil
@@ -79,15 +74,17 @@ class OsMatch < ActiveRecord::Base
 
   # must happen after relationship is created
   def create_reference
-    ref = Reference.find_or_create_by!(
-      name: os_donation.reference_name, 
-      source: os_donation.reference_source, 
-      publication_date: os_donation.date.to_s,
-      object_model: 'Relationship',
-      object_id: relationship.id,
-      ref_type: 2,
-      last_user_id: 1)
-    update_attribute(:reference, ref)
+    unless relationship.nil?
+      ref = Reference.find_or_create_by!(
+        name: os_donation.reference_name, 
+        source: os_donation.reference_source, 
+        publication_date: os_donation.date.to_s,
+        object_model: 'Relationship',
+        object_id: relationship.id,
+        ref_type: 2,
+        last_user_id: 1)
+      update_attribute(:reference, ref)
+    end
   end
 
   # output: <Entity> or Nil
@@ -101,10 +98,11 @@ class OsMatch < ActiveRecord::Base
         return OsMatch.create_new_cmte(cmte)
       end
     else
-      return fundraising
+      return fundraising.entity
     end
   end
 
+  # input <OsCommittee>
   # output <Entity>
   def self.create_new_cmte(cmte)
     entity = Entity.create!(name: cmte.name, primary_ext: "Org")

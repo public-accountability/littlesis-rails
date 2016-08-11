@@ -4,10 +4,12 @@ describe OsMatch, type: :model do
   before(:all) do 
     Entity.skip_callback(:create, :after, :create_primary_ext)
     OsMatch.skip_callback(:create, :after, :post_process)
+    DatabaseCleaner.start
   end
   after(:all) do 
     Entity.set_callback(:create, :after, :create_primary_ext)
     OsMatch.set_callback(:create, :after, :post_process)
+    DatabaseCleaner.clean
   end
 
   describe 'Associations' do 
@@ -221,6 +223,8 @@ describe OsMatch, type: :model do
     end
   end
 
+
+
   describe '#find_recip_id' do 
     
     it "finds recip_id if there's an ElectedRepresentative" do 
@@ -242,15 +246,64 @@ describe OsMatch, type: :model do
   end
 
 
-  describe 'Class Methods' do 
-    describe 'match_a_donation' do
-      it 'creates new OsMatch' do 
-        count = OsMatch.count
-        OsMatch.match_a_donation 123, 456
-        expect(OsMatch.count).to eql (count + 1)
-        expect(OsMatch.last.os_donation_id).to eql 123
-        expect(OsMatch.last.donor_id).to eql 456
-      end
+  describe '#find_or_create_cmte' do 
+    
+    before(:all) do
+      @nrsc = create(:nrsc)
+      @donation = create(:loeb_donation_one, cmteid: ":-<")
+      @fundraiser = PoliticalFundraising.create(entity_id: @nrsc.id, fec_id: ":-<")
     end
-  end
+    
+    it 'return entity if a fundraising entity is found' do 
+      expect(OsMatch.create(os_donation_id: @donation.id).find_or_create_cmte).to eql @nrsc
+    end
+  
+end
+
+   describe 'Class Methods' do 
+     
+     describe 'create_new_cmte' do 
+       before do 
+         Entity.set_callback(:create, :after, :create_primary_ext)
+         @cmte = create(:os_committee)
+         @created_entity = OsMatch.create_new_cmte @cmte
+         @e = Entity.last
+       end
+
+       after do 
+         Entity.skip_callback(:create, :after, :create_primary_ext)
+       end
+       
+       it 'creates a new entity' do 
+         expect(@e.name).to eql "SuprePac"
+       end
+
+       it 'creates ExtensionRecord' do
+         expect(@e.extension_records.count).to eql(2)
+         expect(@e.extension_records.last.definition_id).to eql(11)
+       end
+
+       it 'creates PoliticalFundraising' do
+         expect(PoliticalFundraising.where(entity_id: @e.id).count).to eql(1)
+         expect(@e.political_fundraising.fec_id).to eql 'C00000042'
+       end
+
+       it 'returns the entity' do 
+         expect(@created_entity).to eql @e
+       end
+
+       
+     end
+     
+     #   describe 'match_a_donation' do
+     #     it 'creates new OsMatch' do 
+     #       count = OsMatch.count
+     #       OsMatch.match_a_donation 123, 456
+     #       expect(OsMatch.count).to eql (count + 1)
+     #       expect(OsMatch.last.os_donation_id).to eql 123
+     #       expect(OsMatch.last.donor_id).to eql 456
+     #     end
+     #   end
+   end
+
 end
