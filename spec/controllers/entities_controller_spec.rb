@@ -62,5 +62,35 @@ describe EntitiesController, type: :controller do
     end
   end
 
+
+  describe 'match/unmatch donations' do 
+    login_user
+    before do 
+      @entity = create(:mega_corp_inc)
+    end
+    
+    describe 'POST #match_donation' do
+      before do 
+        post :match_donation, {id: @entity.id}
+      end
+      
+      it 'has 200 status code' do 
+        expect(response.status).to eq(200)
+      end
+    end
+    
+    describe 'POST #unmatch_donation'do 
+      before do 
+        post :unmatch_donation, {id: @entity.id}
+      end
+      
+      it 'has 200 status code' do 
+        expect(response.status).to eq(200)
+      end
+    end
+
+  end
+
+  
 end
 

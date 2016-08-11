@@ -1,76 +1,182 @@
 require 'rails_helper'
 
 describe OsMatch, type: :model do
-
-  before(:all) do
-    DatabaseCleaner.start
+  before(:all) do 
     Entity.skip_callback(:create, :after, :create_primary_ext)
-    @loeb = create(:loeb)
-    @nrsc = create(:nrsc)
-    @loeb_donation = create(:loeb_donation) # relationship model
-    @loeb_os_donation = create(:loeb_donation_one)
-    @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
-    @donation_class = create(:donation, relationship_id: @loeb_donation.id)
-    @os_match = OsMatch.create(
-      os_donation_id: @loeb_os_donation.id,
-      donation_id: @donation_class.id,
-      donor_id: @loeb.id,
-      recip_id: @nrsc.id,
-      reference_id: @loeb_ref_one.id,
-      relationship_id: @loeb_donation.id)
   end
-
-  after(:all) do
+  after(:all) do 
     Entity.set_callback(:create, :after, :create_primary_ext)
-    DatabaseCleaner.clean
-  end
-  it 'belongs to os_donation' do 
-    expect(@os_match.os_donation).to eql @loeb_os_donation
-    expect(OsDonation.find(@loeb_os_donation.id).os_match).to eql @os_match
   end
 
-  it 'belongs to donation' do
-    expect(@os_match.donation).to eql @donation_class
-    expect(Donation.find(@donation_class.id).os_matches).to eq [@os_match]
+  describe 'Associations' do 
+
+    before(:all) do
+      DatabaseCleaner.start
+      @loeb = create(:loeb)
+      @nrsc = create(:nrsc)
+      @loeb_donation = create(:loeb_donation) # relationship model
+      @loeb_os_donation = create(:loeb_donation_one)
+      @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
+      @donation_class = create(:donation, relationship_id: @loeb_donation.id)
+      @os_match = OsMatch.create(
+        os_donation_id: @loeb_os_donation.id,
+        donation_id: @donation_class.id,
+        donor_id: @loeb.id,
+        recip_id: @nrsc.id,
+        reference_id: @loeb_ref_one.id,
+        relationship_id: @loeb_donation.id)
+    end
+
+    after(:all) do
+      DatabaseCleaner.clean
+    end
+
+    it 'belongs to os_donation' do 
+      expect(@os_match.os_donation).to eql @loeb_os_donation
+      expect(OsDonation.find(@loeb_os_donation.id).os_match).to eql @os_match
+    end
+
+    it 'belongs to donation' do
+      expect(@os_match.donation).to eql @donation_class
+      expect(Donation.find(@donation_class.id).os_matches).to eq [@os_match]
+    end
+
+    it 'belongs to donor via entity' do 
+      expect(@os_match.donor).to eql @loeb
+      expect(Entity.find(@loeb.id).matched_contributions).to eq [@os_match]
+    end
+
+    it 'Entity joined to OsDonation through OsMatch' do 
+      expect(Entity.find(@loeb.id).contributions).to eq [@loeb_os_donation]
+    end
+    
+    it 'belongs to recipient via entity' do
+      expect(@os_match.recipient).to eql @nrsc
+      expect(Entity.find(@nrsc.id).donors).to eq [@os_match]
+    end
+
+    it 'belongs to a reference' do 
+      expect(@os_match.reference).to eql @loeb_ref_one
+      expect(Reference.find(@loeb_ref_one).os_match).to eql @os_match
+      expect(Reference.find(@loeb_ref_one).os_donation).to eql @loeb_os_donation
+    end
+
+    it 'belongs to a relationship' do 
+      expect(@os_match.relationship).to eql @loeb_donation
+      expect(Relationship.find(@loeb_donation.id).os_matches).to eq [@os_match]
+    end
+    
+    it 'requires os_donation_id' do 
+      os_match = OsMatch.new(donor_id: 123)
+      expect(os_match.valid?).to be false
+      os_match.os_donation_id = 1
+      expect(os_match.valid?).to be true
+    end
+
+    it 'requires donor_id' do
+      os_match = OsMatch.new(os_donation_id: 10)
+      expect(os_match.valid?).to be false
+      os_match.donor_id = 1
+      expect(os_match.valid?).to be true
+    end
   end
 
-  it 'belongs to donor via entity' do 
-    expect(@os_match.donor).to eql @loeb
-    expect(Entity.find(@loeb.id).matched_contributions).to eq [@os_match]
-  end
-
-  it 'Entity joined to OsDonation through OsMatch' do 
-    expect(Entity.find(@loeb.id).contributions).to eq [@loeb_os_donation]
-  end
   
-  it 'belongs to recipient via entity' do
-    expect(@os_match.recipient).to eql @nrsc
-    expect(Entity.find(@nrsc.id).donors).to eq [@os_match]
+
+  describe '#update_donation_relationship' do
+    
+    before do 
+      @relationship_count = Relationship.count
+      @loeb = create(:loeb)
+      @nrsc = create(:nrsc)
+      @os_donation = create(:loeb_donation_one)
+      @os_match = OsMatch.create(os_donation_id: @os_donation.id, donor_id: @loeb.id, recip_id: @nrsc.id)
+      @os_match.update_donation_relationship
+    end
+    
+    it "creates a new relationship if it doesn't yet exist" do
+      expect(Relationship.count).to eql (@relationship_count + 1)
+    end
+
+    it "sets relationship on OsMatch model" do 
+      expect(@os_match.relationship).not_to be_nil
+    end
+    
+    it "sets description 1 & 2 to be campaign contribution" do
+      expect(@os_match.relationship.description1).to eql "Campaign Contribution"
+      expect(@os_match.relationship.description2).to eql "Campaign Contribution"
+    end
+
+    it "updates amount" do
+      expect(@os_match.relationship.amount).to eql 30800
+    end
+
+    it "updates number of filing" do
+      expect(@os_match.relationship.filings).to eql 1
+    end
+    
+    it "sets start date" do 
+      expect(@os_match.relationship.start_date).to eql "2011-11-29"
+    end
+    
+    it "sets end date" do 
+      expect(@os_match.relationship.start_date).to eql "2011-11-29"
+    end
+    
+    
+    it 'does not create a new relationship if called more than once' do 
+      @os_match.update_donation_relationship
+      expect(Relationship.count).to eql (@relationship_count + 1)
+      expect(@os_match.relationship.amount).to eql 30800
+      expect(@os_match.relationship.filings).to eql 1
+    end
+    context 'Another donation affecting the same relationship' do
+      before do
+        d2 = create(:loeb_donation_one, amount: 10000, fec_cycle_id: 'blah', date: "2010-02-02")
+        @os_match2 = OsMatch.create(os_donation_id: d2.id, donor_id: @loeb.id, recip_id: @nrsc.id)
+        @os_match2.update_donation_relationship
+      end
+
+      it 'does not create a new relationship' do 
+        expect(Relationship.count).to eql (@relationship_count + 1)
+      end
+
+      it 'finds same relationship' do 
+        expect(@os_match2.relationship).to eql @os_match.relationship
+      end
+      
+      it 'updates amount'do 
+        expect(@os_match.relationship.reload.amount).to eql 40800
+        expect(@os_match2.relationship.amount).to eql 40800
+      end
+
+      it 'updates number of filings'do 
+        expect(@os_match.relationship.reload.filings).to eql 2
+        expect(@os_match2.relationship.filings).to eql 2
+      end
+      
+      it 'changes start_date' do 
+        expect(@os_match.relationship.reload.start_date).to eql "2010-02-02"
+      end
+
+      it 'keeps same end date' do 
+        expect(@os_match.relationship.reload.end_date).to eql "2011-11-29"
+      end
+    end
+
+
+    
   end
 
-  it 'belongs to a reference' do 
-    expect(@os_match.reference).to eql @loeb_ref_one
-    expect(Reference.find(@loeb_ref_one).os_match).to eql @os_match
-    expect(Reference.find(@loeb_ref_one).os_donation).to eql @loeb_os_donation
+  describe 'Class Methods' do 
+    describe 'match_a_donation' do
+      it 'creates new OsMatch' do 
+        count = OsMatch.count
+        OsMatch.match_a_donation 123, 456
+        expect(OsMatch.count).to eql (count + 1)
+        expect(OsMatch.last.os_donation_id).to eql 123
+        expect(OsMatch.last.donor_id).to eql 456
+      end
+    end
   end
-
-  it 'belongs to a relationship' do 
-    expect(@os_match.relationship).to eql @loeb_donation
-    expect(Relationship.find(@loeb_donation.id).os_matches).to eq [@os_match]
-  end
-  
-  it 'requires os_donation_id' do 
-    os_match = OsMatch.new(donor_id: 123)
-    expect(os_match.valid?).to be false
-    os_match.os_donation_id = 1
-    expect(os_match.valid?).to be true
-  end
-
-  it 'requires donor_id' do
-    os_match = OsMatch.new(os_donation_id: 10)
-    expect(os_match.valid?).to be false
-    os_match.donor_id = 1
-    expect(os_match.valid?).to be true
-  end
-
 end

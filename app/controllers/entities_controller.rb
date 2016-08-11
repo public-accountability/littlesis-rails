@@ -52,6 +52,15 @@ class EntitiesController < ApplicationController
   end
 
   def match_donations
+    
+  end
+
+  def match_donation
+    render json: {hello: 'world'}
+  end
+
+  def unmatch_donation
+    render json: {hello: 'world'}
   end
 
   def contributions

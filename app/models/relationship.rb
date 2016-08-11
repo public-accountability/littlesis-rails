@@ -161,4 +161,46 @@ class Relationship < ActiveRecord::Base
   def is_executive
     position.nil? ? nil : position.is_executive
   end
+
+  # input: <Date>
+  def update_start_date_if_earlier(new_date)
+    if date_string_to_date(:start_date).nil?
+      update_attribute(:start_date, new_date.to_s)
+    elsif new_date < date_string_to_date(:start_date)
+      update_attribute(:start_date, new_date.to_s)
+    else
+      # no change
+    end
+  end
+
+  def update_end_date_if_later(new_date)
+    if date_string_to_date(:end_date).nil?
+      update_attribute(:end_date, new_date.to_s)
+    elsif new_date > date_string_to_date(:end_date)
+      update_attribute(:end_date, new_date.to_s)
+    else
+      # no change
+    end
+  end
+
+  def date_string_to_date(field)
+    return nil if public_send(field).nil?
+    year, month, day = public_send(field).split("-").map { |x| x.to_i }
+    if year.blank? or year == 0
+      nil
+    else
+      if month.blank? or month == 0
+        Date.new(year)
+      else
+        if day.blank? or day == 0
+          Date.new(year, month)
+        else
+          Date.new(year, month, day)
+        end
+      end
+    end    
+  end  
+
+  
+
 end
