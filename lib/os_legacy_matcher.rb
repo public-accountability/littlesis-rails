@@ -30,13 +30,13 @@ class OsLegacyMatcher
     return nil if raw_db_info.nil?
     
     return OsDonation.find_by(
-      date: f.start_date,
-      amount: f.amount,
-      zip: raw_db_info[:zip],
-      contrib: raw_db_info[:donor_name],
-      recipid: raw_db_info[:recipient_id]
-    )
-        
+             date: f.start_date,
+             amount: f.amount,
+             zip: raw_db_info[:zip],
+             contrib: raw_db_info[:donor_name],
+             recipid: raw_db_info[:recipient_id]
+           )
+    
   end
 
   def get_raw_info(filing)
@@ -137,17 +137,18 @@ class OsLegacyMatcher
   
 
   def find_reference(filing, donation=nil)
-    raise ReferencesNotFoundError if @references.blank?
-
-    for r in @references
-      if not filing.fec_filing_id.blank? and r.name.include? filing.fec_filing_id
-        return r.id
-      elsif not filing.crp_id.blank? and r.name.include? filing.crp_id
-        return r.id
-      elsif not filing.fec_filing_id.blank? and r.source.include? filing.fec_filing_id
-        return r.id
-      else
-        next
+    #raise ReferencesNotFoundError if @references.blank?
+    if not @references.blank?
+      for r in @references
+        if not filing.fec_filing_id.blank? and r.name.include? filing.fec_filing_id
+          return r.id
+        elsif not filing.crp_id.blank? and r.name.include? filing.crp_id
+          return r.id
+        elsif not filing.fec_filing_id.blank? and r.source.include? filing.fec_filing_id
+          return r.id
+        else
+          next
+        end
       end
     end
     printf(" NO REFERENCE FOUND with filing:  %s rel_id: %s donation_id: %s \n", filing.id, @relationship_id, donation.id)
@@ -222,17 +223,3 @@ end
 #   - After creating all OsDonation/OsMatches
 #        * update amount on relationship
 #        * update # of fec_filing
-#  
-#
-#  
-#     
-#  
-#
-#  
-#
-#  
-#
-#  
-#
-#  
-#

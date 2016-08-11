@@ -12,26 +12,34 @@ class OsMatch < ActiveRecord::Base
 
   validates_presence_of :os_donation_id, :donor_id
 
+  after_create :post_process
 
   def self.match_a_donation(os_donation_id, donor_id)
     OsMatch.find_or_create_by(
       os_donation_id: os_donation_id,
-      donor_id: donor_id )
+      donor_id: donor_id)
   end
 
-  def update_or_create_relationship
+  def post_process
+    set_recipient_and_committee
+    update_donation_relationship
+    create_reference
+  end
+
+  def set_recipient_and_committee
     # if the ids are the same, then the cmteid is the primary recipient
-    if @os_donation.recipid == @os_donation.cmteid
+    if os_donation.recipid == os_donation.cmteid
       cmte = find_or_create_cmte
-      @committee = cmte
-      @recipient = cmte
+      update_attributes :committee => cmte, :recipient => cmte
+    else
+      update_attributes :recip_id => find_recip_id(os_donation.recipid), :committee => find_or_create_cmte
     end
-    
   end
 
   def update_donation_relationship
     return nil unless relationship.nil?
-    
+    return nil if recipient.nil?
+
     r = Relationship.find_or_initialize_by(
       entity1_id: donor.id,
       entity2_id: recipient.id,
@@ -59,11 +67,50 @@ class OsMatch < ActiveRecord::Base
     update_attribute(:relationship, r)
   end
 
+  #  Int -> Int | Nil
+  def find_recip_id(crp_id)
+    elected = ElectedRepresentative.includes(:entity).find_by(crp_id: crp_id, entity: {is_deleted: false})
+    return elected.entity.id unless elected.nil?
+    candidate = PoliticalCandidate.includes(:entity).find_by(crp_id: crp_id, entity: {is_deleted: false})
+    return candidate.entity.id unless candidate.nil?
+    logger.info "Could not find recipient with id: #{crp_id}"
+    return nil
+  end
+
+  # must happen after relationship is created
   def create_reference
+    ref = Reference.find_or_create_by!(
+      name: os_donation.reference_name, 
+      source: os_donation.reference_source, 
+      publication_date: os_donation.date.to_s,
+      object_model: 'Relationship',
+      object_id: relationship.id,
+      ref_type: 2,
+      last_user_id: 1)
+    update_attribute(:reference, ref)
   end
 
+  # output: <Entity> or Nil
   def find_or_create_cmte
+    fundraising = PoliticalFundraising.includes(:entity).find_by(fec_id: os_donation.cmteid, entity: {is_deleted: false})
+    if fundraising.nil?
+      cmte = OsCommittee.find_by(cmte_id: os_donation.cmteid, cycle: os_donation.cycle)
+      if cmte.nil?
+        return nil
+      else
+        return OsMatch.create_new_cmte(cmte)
+      end
+    else
+      return fundraising
+    end
   end
 
-  
+  # output <Entity>
+  def self.create_new_cmte(cmte)
+    entity = Entity.create!(name: cmte.name, primary_ext: "Org")
+    ExtensionRecord.create!(entity_id: entity.id, definition_id: 11, last_user_id: 1)
+    PoliticalFundraising.create!(fec_id: cmte.cmte_id, entity_id: entity.id)
+    entity
+  end
+
 end

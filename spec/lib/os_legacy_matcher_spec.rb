@@ -4,6 +4,7 @@ describe 'OsLegacyMatcher' do
   before(:all) do 
     DatabaseCleaner.start
     Entity.skip_callback(:create, :after, :create_primary_ext)
+    OsMatch.skip_callback(:create, :after, :post_process)
     @loeb = create(:loeb)
     @nrsc = create(:nrsc)
     @nrsc_fundraising = create(:political_fundraising, entity_id: @nrsc.id)
@@ -21,6 +22,7 @@ describe 'OsLegacyMatcher' do
   
   after(:all) do
     Entity.set_callback(:create, :after, :create_primary_ext)
+    OsMatch.set_callback(:create, :after, :post_process)
     DatabaseCleaner.clean
   end
   
@@ -97,11 +99,11 @@ describe 'OsLegacyMatcher' do
 
   describe '#find_reference' do
 
-    it 'raises ReferencesNotFoundError if no references are found' do
-      matcher = OsLegacyMatcher.new 555
-      filing = build(:loeb_filing_one, fec_filing_id: 'nope', crp_id: 'still_nope')
-      expect {matcher.find_reference filing, @donation_one} .to raise_error(OsLegacyMatcher::ReferencesNotFoundError)
-    end
+    # it 'raises ReferencesNotFoundError if no references are found' do
+    #   matcher = OsLegacyMatcher.new 555
+    #   filing = build(:loeb_filing_one, fec_filing_id: 'nope', crp_id: 'still_nope')
+    #   expect {matcher.find_reference filing, @donation_one} .to raise_error(OsLegacyMatcher::ReferencesNotFoundError)
+    # end
 
     it 'finds ref when name includes fec filing id' do 
       expect(@matcher.find_reference @filing_one, @donation_one).to eql @ref_one.id
@@ -132,8 +134,9 @@ describe 'OsLegacyMatcher' do
       @os_match = OsMatch.last
     end
     
-    it 'creates new os_match' do 
+    it 'creates new os_match and is valid' do 
       expect(@os_match).to be
+      expect(@os_match.valid?).to eql true
     end
 
     it 'has relationship association' do 

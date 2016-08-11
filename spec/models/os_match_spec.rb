@@ -3,9 +3,11 @@ require 'rails_helper'
 describe OsMatch, type: :model do
   before(:all) do 
     Entity.skip_callback(:create, :after, :create_primary_ext)
+    OsMatch.skip_callback(:create, :after, :post_process)
   end
   after(:all) do 
     Entity.set_callback(:create, :after, :create_primary_ext)
+    OsMatch.set_callback(:create, :after, :post_process)
   end
 
   describe 'Associations' do 
@@ -81,10 +83,36 @@ describe OsMatch, type: :model do
     end
   end
 
-  
+
+  describe '#set_recipient_and_committee' do
+    before do 
+      @loeb = create(:loeb)
+      @nrsc = create(:nrsc)
+      @elected = create(:elected)
+    end
+    
+    it 'sets committee to be the same as the recipient if the ids are the same'do
+      os_donation = create(:loeb_donation_one)
+      os_match = OsMatch.create(os_donation_id: os_donation.id, donor_id: @loeb.id)
+      expect(os_match).to receive(:find_or_create_cmte).and_return(@nrsc)
+      os_match.set_recipient_and_committee
+      expect(os_match.committee).to eql @nrsc
+      expect(os_match.recipient).to eql @nrsc
+    end
+
+    it 'sets committee and recipient if different' do 
+      os_donation = create(:loeb_donation_one, recipid: 'N101')
+      os_match = OsMatch.create(os_donation_id: os_donation.id, donor_id: @loeb.id)
+      expect(os_match).to receive(:find_or_create_cmte).and_return(@nrsc)
+      expect(os_match).to receive(:find_recip_id).with('N101').and_return(@elected.id)
+      os_match.set_recipient_and_committee
+      expect(os_match.committee).to eql @nrsc
+      expect(os_match.recipient).to eql @elected
+    end
+    
+  end
 
   describe '#update_donation_relationship' do
-    
     before do 
       @relationship_count = Relationship.count
       @loeb = create(:loeb)
@@ -164,9 +192,55 @@ describe OsMatch, type: :model do
       end
     end
 
+    describe '#create_reference'do 
+      before do 
+        @ref_count = Reference.count
+        @os_match.create_reference
+        @ref = Reference.last
+      end
+      it 'creates a new reference' do 
+        expect(Reference.count).to eql (@ref_count + 1)
+      end
 
+      it 'Reference has correct info' do 
+        expect(@ref.name).to eql "FEC Filing 11020480483"
+        expect(@ref.source).to eql "http://docquery.fec.gov/cgi-bin/fecimg/?11020480483"
+        expect(@ref.object_model).to eql "Relationship"
+        expect(@ref.object_id).to eql @os_match.relationship.id
+        expect(@ref.ref_type).to eql 2
+      end
+
+      it 'sets reference association on OsMatch' do
+        expect(@os_match.reload.reference).to eql @ref
+      end
+
+      it 'can be run twice without creating a new reference' do
+        @os_match.create_reference
+        expect(Reference.count).to eql (@ref_count + 1)
+      end
+    end
+  end
+
+  describe '#find_recip_id' do 
+    
+    it "finds recip_id if there's an ElectedRepresentative" do 
+      elected = create(:elected)
+      ElectedRepresentative.create!(crp_id: 'CRPID1', entity_id: elected.id)
+      expect(OsMatch.new.find_recip_id 'CRPID1').to eql elected.id
+    end
+
+    it "finds id if there's an already existing Political Candidate" do 
+      elected = create(:elected)
+      PoliticalCandidate.create!(crp_id: 'CRPID2', entity_id: elected.id)
+      expect(OsMatch.new.find_recip_id 'CRPID2').to eql elected.id
+    end
+
+    it "return null otherwise" do 
+      expect(OsMatch.new.find_recip_id 'NONEXISTENT').to be_nil
+    end
     
   end
+
 
   describe 'Class Methods' do 
     describe 'match_a_donation' do

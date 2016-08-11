@@ -85,8 +85,9 @@ namespace :opensecrets do
 
   desc "Match legacy Os Donations"
   task legacy_matcher: :environment do
-    start = Time.now
+    OsMatch.skip_callback(:create, :after, :post_process)
     
+    start = Time.now
     sql = "select distinct fec_filing.relationship_id from fec_filing 
            inner join relationship on relationship.id = fec_filing.relationship_id
            where relationship.is_deleted = 0"
@@ -109,6 +110,7 @@ namespace :opensecrets do
     execution_time = Time.now - start
     printf("\n** OsLegacyMatcher took %d seconds **\n", execution_time)
     printf("** There are currently %s matched donations **\n", OsMatch.count)
+    OsMatch.set_callback(:create, :after, :post_process)
   end
   
   desc "import addresses from matched opensecrets donations"
