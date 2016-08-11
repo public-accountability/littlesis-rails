@@ -14,6 +14,20 @@ namespace :opensecrets do
     importer.start
   end
 
+  desc "import candidates"
+  task import_candidates: :environment do 
+    ###### Encoding details ##################################################
+    # Before running, issue this db command:
+    # ALTER TABLE `littlesis`.`os_candidates` CONVERT TO CHARACTER SET utf8; 
+    ########################################################################### 
+    Dir.foreach( Rails.root.join('data', 'cands') ) do |filename|
+      next if filename == '.' or filename == '..'
+      printf("Processing: %s \n", filename)
+      OsCandidateImporter.start Rails.root.join('data', 'cands', filename)
+    end
+    printf("** There are currently %s candidates in the db **\n", OsCandidate.count)
+  end
+
   desc "import committees"
   task import_committees: :environment do
     ###### Encoding details ##################################################
@@ -29,6 +43,44 @@ namespace :opensecrets do
     execution_time = Time.now - start
     printf("** Import Committees took %d seconds **\n", execution_time)
     printf("** There are currently %s committees in the db **\n", OsCommittee.count)
+  end
+
+  desc "Find missing Candidate"
+  task missing_candidates: :environment do 
+    sql = "SELECT DISTINCT recipid from os_donations where recipid like 'N%'"
+    recipids = ActiveRecord::Base.connection.execute(sql)
+    
+    found = 0
+    not_found = 0
+    found_in_os = 0
+    
+    recipids.each do |recpid|
+      id = recpid[0]
+      elected = ElectedRepresentative.includes(:entity).find_by(crp_id: id, entity: {is_deleted: false})
+      unless elected.nil?
+        found += 1
+        next
+      end
+      candidate = PoliticalCandidate.includes(:entity).find_by(crp_id: id, entity: {is_deleted: false})
+      unless candidate.nil?
+        found += 1
+        next
+      end
+      os_candidate = OsCandidate.find_by(crp_id: id)
+      if os_candidate.nil?
+        printf("Could not find candidate in OsCandidate with id: %s \n", id)
+        not_found += 1
+      else
+        found_in_os += 1
+        printf("Found candidate in OsCandidate: %s, %s \n", os_candidate.name, os_candidate.id)
+      end
+    end
+    total = (found + not_found + found_in_os)
+    printf("Found: %s \n", found)
+    printf("NOT Found: %s \n", not_found)
+    printf("Found in OsCandidate: %s \n", found_in_os)
+    printf("total: %s \n", total)
+    printf("Percent found %s  \n", ( ((found + found_in_os) / total) * 100) )
   end
 
   desc "Match legacy Os Donations"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160809191319) do
+ActiveRecord::Schema.define(version: 20160811135725) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -835,6 +835,27 @@ ActiveRecord::Schema.define(version: 20160809191319) do
 
   add_index "org", ["entity_id"], name: "entity_id_idx", using: :btree
 
+  create_table "os_candidates", force: true do |t|
+    t.string   "cycle",                    null: false
+    t.string   "feccandid",                null: false
+    t.string   "crp_id",                   null: false
+    t.string   "name"
+    t.string   "party",          limit: 1
+    t.string   "distid_runfor"
+    t.string   "distid_current"
+    t.boolean  "currcand"
+    t.boolean  "cyclecand"
+    t.string   "crpico",         limit: 1
+    t.string   "recipcode",      limit: 2
+    t.string   "nopacs",         limit: 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "os_candidates", ["crp_id"], name: "index_os_candidates_on_crp_id", using: :btree
+  add_index "os_candidates", ["cycle", "crp_id"], name: "index_os_candidates_on_cycle_and_crp_id", using: :btree
+  add_index "os_candidates", ["feccandid"], name: "index_os_candidates_on_feccandid", using: :btree
+
   create_table "os_category", force: true do |t|
     t.string "category_id",   limit: 10,  null: false
     t.string "category_name", limit: 100, null: false
@@ -965,7 +986,7 @@ ActiveRecord::Schema.define(version: 20160809191319) do
     t.integer  "locked_by_user_id",   limit: 8
     t.datetime "locked_at"
   end
-f
+
   add_index "os_entity_transaction", ["entity_id", "cycle", "transaction_id"], name: "entity_cycle_transaction_idx", unique: true, using: :btree
   add_index "os_entity_transaction", ["is_synced"], name: "is_synced_idx", using: :btree
   add_index "os_entity_transaction", ["locked_at"], name: "locked_at_idx", using: :btree
