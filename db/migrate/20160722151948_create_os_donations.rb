@@ -21,7 +21,7 @@ class CreateOsDonations < ActiveRecord::Migration
       t.string :cmteid, limit: 9
       t.string :otherid, limit: 9
       t.string :gender, limit: 1
-      t.string :microfilm, limit: 11
+      t.string :microfilm, limit: 30
       t.string :occupation
       t.string :employer
       t.string :source, limit: 5
