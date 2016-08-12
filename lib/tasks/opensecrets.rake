@@ -45,7 +45,7 @@ namespace :opensecrets do
     printf("** There are currently %s committees in the db **\n", OsCommittee.count)
   end
 
-  desc "Find missing Candidate"
+  desc "Find missing candidates"
   task missing_candidates: :environment do 
     sql = "SELECT DISTINCT recipid from os_donations where recipid like 'N%'"
     recipids = ActiveRecord::Base.connection.execute(sql)
@@ -98,7 +98,7 @@ namespace :opensecrets do
            where fec_filing.crp_cycle = 2008 and relationship.is_deleted = 0
            limit 3000"
     
-    ids = ActiveRecord::Base.connection.execute(test_sql)
+    ids = ActiveRecord::Base.connection.execute(sql)
         
     ids.each do |i| 
        relationship_id = i[0]

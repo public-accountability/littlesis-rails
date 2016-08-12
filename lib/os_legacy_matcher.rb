@@ -21,12 +21,36 @@ class OsLegacyMatcher
   def corresponding_os_donation(f)
     d = OsDonation.find_by(fectransid: f.fec_filing_id, cycle: f.crp_cycle.to_s)
     return d unless d.nil?
-    d = OsDonation.find_by(fectransid: f.crp_id, cycle: f.crp_cycle.to_s)
+
+    unless f.crp_id.blank?
+      d = OsDonation.find_by(fectransid: f.crp_id, cycle: f.crp_cycle.to_s)
+      return d unless d.nil?
+    end
+  
+    d = search_by_name(f)
     return d unless d.nil?
+    d = search_by_cmte_or_candidate(f)
+    return d unless d.nil?
+    
     d = OsDonation.find_by(cycle: f.crp_cycle.to_s, date: f.start_date, microfilm: f.fec_filing_id, amount: f.amount)
     return d unless d.nil?
+    d = OsDonation.where(microfilm: f.fec_filing_id, date: f.start_date, amount: f.amount)
+    return d[0] unless (d.length != 1)
 
-    raw_db_info = get_raw_info(f)
+    raw_db_info = nil
+    unless f.crp_id.blank?
+      raw_db_info = get_raw_info(f)
+    end
+    if raw_db_info.nil?
+      raw_db_info = get_raw_info_take2(f)
+    end
+    if raw_db_info.nil?
+      raw_db_info = get_raw_info_take3(f)
+    end
+    if raw_db_info.nil?
+      raw_db_info = get_raw_info_take4(f)
+    end
+
     return nil if raw_db_info.nil?
     
     return OsDonation.find_by(
@@ -47,7 +71,82 @@ class OsLegacyMatcher
                  date = '#{filing.start_date}'"
     result = ActiveRecord::Base.connection.execute(sql).to_a
     if result.empty?
-      printf("No match found in littlesis_raw: row_id: %s, rec_id: %s, date: %s\n", filing.crp_id, filing.fec_filing_id, filing.start_date)
+      # printf("No match found in littlesis_raw: row_id: %s, fec_id: %s, date: %s\n", filing.crp_id, filing.fec_filing_id, filing.start_date)
+      return nil
+    elsif result.length > 1 
+      # printf("More than one match found in Littlesis_raw\n")
+      return nil
+    else
+      return {
+        recipient_id: result[0][0],
+        donor_name: result[0][1],
+        zip: result[0][2]
+      }
+    end
+  end
+  
+  def get_raw_info_take2(filing)
+    sql = "SELECT recipient_id, donor_name, zip 
+           from littlesis_raw.os_donation 
+           where fec_id = '#{filing.fec_filing_id}' and
+                 date = '#{filing.start_date}'"
+    result = ActiveRecord::Base.connection.execute(sql).to_a
+    if result.empty?
+      # printf("No match found in littlesis_raw: row_id: %s, fec_id: %s, date: %s\n", filing.crp_id, filing.fec_filing_id, filing.start_date)
+      return nil
+    elsif result.length > 1 
+      # printf("More than one match found in Littlesis_raw\n")
+      return nil
+    else
+      return {
+        recipient_id: result[0][0],
+        donor_name: result[0][1],
+        zip: result[0][2]
+      }
+    end
+  end
+
+  def get_raw_info_take3(filing)
+    if Relationship.find(@relationship_id).entity.org?
+      return nil
+    end
+    last_name = Relationship.find(@relationship_id).entity.person.name_last.upcase()
+    return nil if last_name.blank?
+    sql = "SELECT recipient_id, donor_name, zip 
+           from littlesis_raw.os_donation 
+           where fec_id = '#{filing.fec_filing_id}' and
+                 date = '#{filing.start_date}' and
+                 amount = #{filing.amount} and
+                 donor_name_last = #{ActiveRecord::Base.connection.quote(last_name)}" 
+    
+    result = ActiveRecord::Base.connection.execute(sql).to_a
+    if result.empty? or result.length > 1 
+      return nil
+    else
+      return {
+        recipient_id: result[0][0],
+        donor_name: result[0][1],
+        zip: result[0][2]
+      }
+    end
+  end
+
+  def get_raw_info_take4(filing)
+    if Relationship.find(@relationship_id).entity.org?
+      return nil
+    end
+    last_name = Relationship.find(@relationship_id).entity.person.name_last.upcase()
+    return nil if last_name.blank?
+    sql = "SELECT distinct recipient_id, donor_name, zip 
+           from littlesis_raw.os_donation 
+           where fec_id = '#{filing.fec_filing_id}' and
+                 date = '#{filing.start_date}' and
+                 amount = #{filing.amount} and
+                 donor_name_last = #{ActiveRecord::Base.connection.quote(last_name)}" 
+    
+    result = ActiveRecord::Base.connection.execute(sql).to_a
+    if result.empty?
+      printf("No match found in littlesis_raw: row_id: %s, fec_id: %s, date: %s\n", filing.crp_id, filing.fec_filing_id, filing.start_date)
       return nil
     elsif result.length > 1 
       printf("More than one match found in Littlesis_raw\n")
@@ -58,6 +157,59 @@ class OsLegacyMatcher
         donor_name: result[0][1],
         zip: result[0][2]
       }
+    end
+  end
+
+  def search_by_name(f)
+    if Relationship.find(@relationship_id).entity.person?
+      person = Relationship.find(@relationship_id).entity.person
+     unless person.nil?
+       donations = OsDonation.where(date: f.start_date, 
+                                    amount: f.amount, 
+                                    name_first: person.name_first,
+                                    name_last: person.name_last)
+       if donations.length == 1
+         return donations[0]
+       else
+         return nil
+       end
+     end
+    else
+      nil
+    end
+  end
+
+  def search_by_cmte_or_candidate(f)
+    person = Relationship.find(@relationship_id).entity.person
+    if person.nil?
+      return nil
+    end
+    candidate = Relationship.find(@relationship_id).related.political_candidate
+    if candidate.nil?
+      cmte = Relationship.find(@relationship_id).related.political_fundraising
+      if cmte.nil? or cmte.fec_id.blank?
+        return nil 
+      else
+        printf(' SEARCHING CMTE ')
+        donations = OsDonation.where(date: f.start_date, amount: f.amount, name_first: person.name_first, name_last: person.name_last, recipid: cmte.fec_id)
+        if donations.length == 1
+          printf(" FOUND BY CMTE ")
+          return donations[0]
+        else
+          return nil
+        end
+      end
+    elsif candidate.crp_id.blank?
+      return nil
+    else
+      printf(' SEARCHING CAND ')
+      donations = OsDonation.where(date: f.start_date, amount: f.amount, name_first: person.name_first,name_last: person.name_last, recipid: candidate.crp_id)
+      if donations.length == 1
+        printf(" FOUND BY CAND ")
+        return donations[0]
+      else
+        return nil
+      end
     end
   end
 
@@ -116,7 +268,7 @@ class OsLegacyMatcher
     if fundraising.nil?
       cmte = OsCommittee.find_by(cmte_id: donation.cmteid, cycle: donation.cycle)
       if cmte.nil?
-        printf("Could not find %s in OsCommittee\n", donation.cmteid)
+        printf("\n Could not find %s in OsCommittee\n", donation.cmteid)
         return nil
       else
         return create_new_cmte(cmte)
@@ -128,7 +280,7 @@ class OsLegacyMatcher
   end
 
   def create_new_cmte(cmte)
-    printf("creating new committee %s \n", cmte.name)
+    printf("\n creating new committee %s \n", cmte.name)
     entity = Entity.create!(name: cmte.name, primary_ext: "Org")
     ExtensionRecord.create!(entity_id: entity.id, definition_id: 11, last_user_id: 1)
     PoliticalFundraising.create!(fec_id: cmte.cmte_id, entity_id: entity.id)
@@ -151,16 +303,16 @@ class OsLegacyMatcher
         end
       end
     end
-    printf(" NO REFERENCE FOUND with filing:  %s rel_id: %s donation_id: %s \n", filing.id, @relationship_id, donation.id)
-    printf("creating new reference\n")
+    # printf("Creating new reference for:  %s rel_id: %s donation_id: %s \n", filing.id, @relationship_id, donation.id)
     return create_new_ref(donation)
   end
+
+
+
   
   def no_donation(f)
-    if f.crp_cycle = 2012
-      printf("\n** Count not find a match for FecFiling: %s\n", f.id)
-      puts f.inspect
-    end
+    # printf("\n** Count not find a match for FecFiling: %s\n", f.id)
+    # puts f.inspect
     error_file = File.new("os_legacy_matcher_error_log.txt", "a")
     error_file.write("#{@relationship_id},#{f.id}\n")
   end
