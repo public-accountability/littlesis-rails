@@ -1,0 +1,20 @@
+<div class="container-fluid">
+    
+    <%= render partial: 'header', locals: { entity: @entity } %>
+    <%= render partial: 'actions', locals: { entity: @entity, last_user: @last_user, current_user: @current_user } %>
+    <div class="row top-1em">
+        <div class="col-md-10 col-sm-10">
+            <div id="match-donations" data-entityid="<%= @entity.id %>">
+                
+                <table id="donations-table" class="display" width="100%"></table>
+            </div>
+            <script>matchDonations.init();</script>
+            <h1>Match Donations</h1>
+        </div>
+        <div class="col-md-2 col-sm-2">
+            <!-- side bar -->
+        </div>
+    </div>
+    
+</div>
+

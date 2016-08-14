@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160805195708) do
+ActiveRecord::Schema.define(version: 20160811135725) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -835,6 +835,27 @@ ActiveRecord::Schema.define(version: 20160805195708) do
 
   add_index "org", ["entity_id"], name: "entity_id_idx", using: :btree
 
+  create_table "os_candidates", force: true do |t|
+    t.string   "cycle",                    null: false
+    t.string   "feccandid",                null: false
+    t.string   "crp_id",                   null: false
+    t.string   "name"
+    t.string   "party",          limit: 1
+    t.string   "distid_runfor"
+    t.string   "distid_current"
+    t.boolean  "currcand"
+    t.boolean  "cyclecand"
+    t.string   "crpico",         limit: 1
+    t.string   "recipcode",      limit: 2
+    t.string   "nopacs",         limit: 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "os_candidates", ["crp_id"], name: "index_os_candidates_on_crp_id", using: :btree
+  add_index "os_candidates", ["cycle", "crp_id"], name: "index_os_candidates_on_cycle_and_crp_id", using: :btree
+  add_index "os_candidates", ["feccandid"], name: "index_os_candidates_on_feccandid", using: :btree
+
   create_table "os_category", force: true do |t|
     t.string "category_id",   limit: 10,  null: false
     t.string "category_name", limit: 100, null: false
@@ -845,6 +866,29 @@ ActiveRecord::Schema.define(version: 20160805195708) do
 
   add_index "os_category", ["category_id"], name: "unique_id_idx", unique: true, using: :btree
   add_index "os_category", ["category_name"], name: "unique_name_idx", unique: true, using: :btree
+
+  create_table "os_committees", force: true do |t|
+    t.string   "cycle",           limit: 4, null: false
+    t.string   "cmte_id",                   null: false
+    t.string   "name"
+    t.string   "affiliate"
+    t.string   "ultorg"
+    t.string   "recipid"
+    t.string   "recipcode",       limit: 2
+    t.string   "feccandid"
+    t.string   "party",           limit: 1
+    t.string   "primcode",        limit: 5
+    t.string   "source"
+    t.boolean  "sensitive"
+    t.boolean  "foreign"
+    t.boolean  "active_in_cycle"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "os_committees", ["cmte_id", "cycle"], name: "index_os_committees_on_cmte_id_and_cycle", using: :btree
+  add_index "os_committees", ["cmte_id"], name: "index_os_committees_on_cmte_id", using: :btree
+  add_index "os_committees", ["recipid"], name: "index_os_committees_on_recipid", using: :btree
 
   create_table "os_donations", force: true do |t|
     t.string   "cycle",           limit: 4,  null: false

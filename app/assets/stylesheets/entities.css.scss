@@ -408,21 +408,8 @@ html table.dataTable thead {
   fill: steelblue;
 }
 
-.bar:hover {
-  fill: brown;
-}
+/* match donations */
 
-.axis {
-  font: 10px sans-serif;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.x.axis path {
-  display: none;
+#match-donations .toolbar {
+    float: left;
 }
