@@ -52,10 +52,12 @@ class EntitiesController < ApplicationController
   end
 
   def match_donations
-    
+    check_permission 'importer'
   end
 
   def match_donation
+    check_permission 'importer'
+
     params[:payload].each do |donation_id| 
        OsMatch.find_or_create_by(os_donation_id: donation_id, donor_id: params[:id])
      end
