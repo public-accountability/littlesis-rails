@@ -293,6 +293,12 @@ end
          expect(@created_entity).to eql @e
        end
 
+       it 'returns nil if the cmte has no name' do 
+         committee = build(:os_committee, name: "")
+         expect(OsMatch.create_new_cmte committee).to be_nil
+         committee = build(:os_committee, name: nil)
+         expect(OsMatch.create_new_cmte committee).to be_nil
+       end
        
      end
      

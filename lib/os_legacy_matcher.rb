@@ -298,11 +298,15 @@ class OsLegacyMatcher
   end
 
   def create_new_cmte(cmte)
-    printf("\n creating new committee %s \n", cmte.name)
-    entity = Entity.create!(name: cmte.name, primary_ext: "Org")
-    ExtensionRecord.create!(entity_id: entity.id, definition_id: 11, last_user_id: 1)
-    PoliticalFundraising.create!(fec_id: cmte.cmte_id, entity_id: entity.id)
-    entity.id
+    if cmte.name.blank?
+      return nil
+    else
+      printf("\n creating new committee %s \n", cmte.name)
+      entity = Entity.create!(name: cmte.name, primary_ext: "Org")
+      ExtensionRecord.create!(entity_id: entity.id, definition_id: 11, last_user_id: 1)
+      PoliticalFundraising.create!(fec_id: cmte.cmte_id, entity_id: entity.id)
+      entity.id
+    end
   end
   
 
