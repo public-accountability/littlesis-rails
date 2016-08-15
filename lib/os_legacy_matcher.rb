@@ -41,16 +41,20 @@ class OsLegacyMatcher
     unless f.crp_id.blank?
       raw_db_info = get_raw_info(f)
     end
+    
     if raw_db_info.nil?
       raw_db_info = get_raw_info_take2(f)
     end
-    if raw_db_info.nil?
-      raw_db_info = get_raw_info_take3(f)
+    
+    if not Relationship.find(@relationship_id).entity.nil?
+      if raw_db_info.nil?
+        raw_db_info = get_raw_info_take3(f)
+      end
+      if raw_db_info.nil?
+        raw_db_info = get_raw_info_take4(f)
+      end
     end
-    if raw_db_info.nil?
-      raw_db_info = get_raw_info_take4(f)
-    end
-
+    
     return nil if raw_db_info.nil?
     
     return OsDonation.find_by(
@@ -161,6 +165,9 @@ class OsLegacyMatcher
   end
 
   def search_by_name(f)
+    if Relationship.find(@relationship_id).entity.nil?
+      return nil
+    end
     if Relationship.find(@relationship_id).entity.person?
       person = Relationship.find(@relationship_id).entity.person
      unless person.nil?
@@ -180,6 +187,9 @@ class OsLegacyMatcher
   end
 
   def search_by_cmte_or_candidate(f)
+    if Relationship.find(@relationship_id).entity.nil?
+      return nil
+    end
     person = Relationship.find(@relationship_id).entity.person
     if person.nil?
       return nil
@@ -223,7 +233,6 @@ class OsLegacyMatcher
       printf('X')
       no_donation filing
     else
-      printf("m")
       create_os_match donation, filing
     end
   end
@@ -232,7 +241,10 @@ class OsLegacyMatcher
   def create_os_match(donation, filing)
     os_match = OsMatch.find_or_initialize_by(os_donation_id: donation.id)
     if os_match.persisted?
+      printf("p")
       return nil
+    else
+      printf("m")
     end
     
     os_match.os_donation_id = donation.id
