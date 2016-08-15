@@ -9,16 +9,38 @@ matchDonations.getPotentialMatches = function(id, cb) {
   });
 };
 
+matchDonations.sourceLink = function(microfilm) {
+  if (microfilm) {
+    return '<a target="_blank" href="http://docquery.fec.gov/cgi-bin/fecimg/?' 
+      + microfilm + '">' + microfilm + '</a>';
+  } else {
+    return '';
+  }
+};
+
+matchDonations.processData = function(data) {
+  console.log(data);
+  return data.map(function(x){
+    x.address = x.city + ", " + x.state + " " + x.zip;
+    x.sourceLink = matchDonations.sourceLink(x.microfilm);
+   return x;
+  });
+  
+}
+
+
 matchDonations.datatable = function(data) {
   var table = $('#donations-table').DataTable( {
-    data: data,
+    data: matchDonations.processData(data),
     lengthChange: false,
     "dom": '<"toolbar">frtip',
     columns: [
       { data: 'contrib', title: "Name" },
-      { data: 'city', title: "City" },
+      { data: 'address', title: "City" },
       { data: 'employer', title: "Employer" },
-      { data: 'microfilm', title: "FEC Source" }
+      { data: 'date', title: "Date" },
+      { data: 'sourceLink', title: "FEC Source" },
+      { data: 'transactiontype', title: "Transaction<br>Type" }
     ]
   });
   matchDonations.table = table;
