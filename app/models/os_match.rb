@@ -94,12 +94,16 @@ class OsMatch < ActiveRecord::Base
   end
 
   # input <OsCommittee>
-  # output <Entity>
+  # output <Entity> or nil
   def self.create_new_cmte(cmte)
-    entity = Entity.create!(name: cmte.name, primary_ext: "Org")
-    ExtensionRecord.create!(entity_id: entity.id, definition_id: 11, last_user_id: 1)
-    PoliticalFundraising.create!(fec_id: cmte.cmte_id, entity_id: entity.id)
-    entity
+    if cmte.name.blank?
+      return nil
+    else
+      entity = Entity.create!(name: cmte.name, primary_ext: "Org")
+      ExtensionRecord.create!(entity_id: entity.id, definition_id: 11, last_user_id: 1)
+      PoliticalFundraising.create!(fec_id: cmte.cmte_id, entity_id: entity.id)
+      entity
+    end
   end
 
 end
