@@ -228,23 +228,29 @@ class OsLegacyMatcher
   end
   
   def match_one(filing)
-    donation = corresponding_os_donation(filing)
-    if donation.nil?
-      printf('X')
-      no_donation filing
+    if existing_match?
+      printf("e")
     else
-      create_os_match donation, filing
+      donation = corresponding_os_donation(filing)
+      if donation.nil?
+        printf('X')
+        no_donation filing
+      else
+        printf("m")
+        create_os_match donation, filing
+      end
     end
+  end
+
+  def existing_match?
+    (OsMatch.where(relationship_id: @relationship_id).length != 0)
   end
 
   # input: <OsDonation>, <FecFiling>
   def create_os_match(donation, filing)
     os_match = OsMatch.find_or_initialize_by(os_donation_id: donation.id)
     if os_match.persisted?
-      printf("p")
       return nil
-    else
-      printf("m")
     end
     
     os_match.os_donation_id = donation.id
