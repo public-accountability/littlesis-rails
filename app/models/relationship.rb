@@ -27,6 +27,7 @@ class Relationship < ActiveRecord::Base
 
   # Open Secrets 
   has_many :os_matches, inverse_of: :relationship
+  has_many :os_donations, through: :os_matches
 
   validates_presence_of :entity1_id, :entity2_id, :category_id
 
@@ -173,6 +174,11 @@ class Relationship < ActiveRecord::Base
     end
   end
 
+  def update_os_donation_info
+    self.attributes = { amount: os_donations.sum(:amount), filings: os_donations.count }
+    self
+  end
+
   def update_end_date_if_later(new_date)
     if date_string_to_date(:end_date).nil?
       update_attribute(:end_date, new_date.to_s)
@@ -200,7 +206,5 @@ class Relationship < ActiveRecord::Base
       end
     end    
   end  
-
-  
 
 end
