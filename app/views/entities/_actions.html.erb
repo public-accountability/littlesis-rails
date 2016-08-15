@@ -8,7 +8,7 @@
                 <%= link_to "remove", @entity.legacy_url("remove") %>
             <% end %>
             <% if @current_user.has_legacy_permission 'importer' %>
-                <%= link_to "match donations", @entity.legacy_url("matchDonations") %>
+                <%= link_to "match donations", match_donations_entity_path(@entity) %>
                 <%= link_to "add bulk", @entity.legacy_url("addBulk") %>
             <% end %>
             <% if @current_user.has_legacy_permission 'admin' %>

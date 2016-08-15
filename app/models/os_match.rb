@@ -34,32 +34,23 @@ class OsMatch < ActiveRecord::Base
     return nil unless relationship.nil?
     return nil if recipient.nil?
 
-    r = Relationship.find_or_initialize_by(
+    r = Relationship.find_or_create_by!(
       entity1_id: donor.id,
       entity2_id: recipient.id,
-      category_id: 5 )
-
+      category_id: 5)
+    update_attribute(:relationship, r)
+    
     r.last_user_id = 1    
     r.description1 = "Campaign Contribution" 
     r.description2 = "Campaign Contribution"
+    
+    r.update_os_donation_info
 
-    if r.amount.nil?
-       r.amount = 0
-    end
-    
-    if r.filings.nil?
-       r.filings = 0
-    end
-    
-    r.amount += os_donation.amount
-    r.filings += 1
-    
     r.update_start_date_if_earlier os_donation.date
     r.update_end_date_if_later os_donation.date
     
-    if r.save 
-      update_attribute(:relationship, r)
-    end
+    r.save
+
   end
 
   #  Int -> Int | Nil

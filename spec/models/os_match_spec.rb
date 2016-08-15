@@ -115,7 +115,7 @@ describe OsMatch, type: :model do
   end
 
   describe '#update_donation_relationship' do
-    before do 
+    before(:all) do 
       @relationship_count = Relationship.count
       @loeb = create(:loeb)
       @nrsc = create(:nrsc)
@@ -138,6 +138,7 @@ describe OsMatch, type: :model do
     end
 
     it "updates amount" do
+      
       expect(@os_match.relationship.amount).to eql 30800
     end
 
@@ -249,8 +250,8 @@ describe OsMatch, type: :model do
   describe '#find_or_create_cmte' do 
     
     before(:all) do
-      @nrsc = create(:nrsc)
-      @donation = create(:loeb_donation_one, cmteid: ":-<")
+      @nrsc = create(:nrsc, id: 8888)
+      @donation = create(:loeb_donation_one, cmteid: ":-<", fec_cycle_id: 'xx')
       @fundraiser = PoliticalFundraising.create(entity_id: @nrsc.id, fec_id: ":-<")
     end
     

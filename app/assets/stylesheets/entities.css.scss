@@ -410,6 +410,52 @@ html table.dataTable thead {
 
 /* match donations */
 
+#donations-table {
+  font-size: 11px;
+}
+
 #match-donations .toolbar {
     float: left;
+}
+
+#match-donations .loading {
+  display: inline;
+  margin-left: 1em;
+}
+
+.spin-icon {
+  -webkit-animation: spin-icon .8s infinite linear;
+  -moz-animation: spin-icon .8s infinite linear;
+  -o-animation: spin-icon .8s infinite linear;
+  animation: spin-icon .8s infinite linear;
+     -webkit-transform-origin: 50% 58%;
+         transform-origin:50% 58%;
+         -ms-transform-origin:50% 58%; /* IE 9 */
+}
+
+@-moz-keyframes spin-icon {
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes spin-icon {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-icon {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
