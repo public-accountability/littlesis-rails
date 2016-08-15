@@ -68,22 +68,31 @@ matchDonations.rowClick = function(table) {
 // #match-the-donation
 matchDonations.createMatchButton = function(){
   var html = '<button type="button" id="match-the-donation" class="btn btn-primary">Match Selected</button>';
+  html += '<div class="loading"></div>';
   $("div.toolbar").html(html);
 };
 
 matchDonations.matchRequest = function(donations){
   var url =  "/entities/" + matchDonations.entity_id + "/match_donation";
   $.post(url, {'payload': donations})
-     .done(function(r){ console.log(r); });
-  // post -> ajax /entities/id/12345 {os_donation_id: 1234}
+     .done(function(r){ 
+       $('#match-donations .toolbar .loading').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
+       $('#match-donations .toolbar .loading span').fadeOut(1100);
+     })
+    .fail(function(r){
+      $('#match-donations .toolbar .loading').html('<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>');
+      $('#match-donations .toolbar .loading span').fadeOut(1000);
+    });
 };
 
 matchDonations.onClickMatchButton = function(table){
   $('#match-the-donation').click(function(){
     var selected = table.rows('.selected').data().toArray();
     if (selected.length > 0 ) {
+      $('#match-donations .toolbar .loading').html('<span class="glyphicon glyphicon-cog spin-icon" aria-hidden="true"></span>');
       matchDonations.matchRequest(selected.map(function(x){ return x.id; }));
       table.rows('.selected').remove().draw( false );
+      
     }
   });
 };
