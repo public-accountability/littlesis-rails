@@ -5,6 +5,8 @@ class ApplicationController < ActionController::Base
 
   before_filter :admins_only if Lilsis::Application.config.admins_only
 
+  before_filter :set_paper_trail_whodunnit
+
   rescue_from 'Exceptions::PermissionError' do |exception|
   	render "errors/permission", status: 403
   end
