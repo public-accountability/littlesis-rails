@@ -1,7 +1,6 @@
 class EntitiesController < ApplicationController
   before_filter :auth, except: [:show, :relationships, :political]
   before_action :set_entity, only: [:show, :relationships, :political, :contributions, :potential_contributions, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge, :refresh, :images, :feature_image, :remove_image, :new_image, :upload_image, :match_donations]
-  before_action :set_last_user, only: [:show, :political, :match_donations]
   before_action :set_current_user, only: [:show, :political, :match_donations]
   
   # Ziggy July 19, 2016: Looks like this was, at one point, going to be used for
@@ -349,10 +348,6 @@ class EntitiesController < ApplicationController
   
   def set_current_user
     @current_user = current_user
-  end
-
-  def set_last_user
-    @last_user = User.find(@entity.last_user_id)
   end
 
   def set_entity
