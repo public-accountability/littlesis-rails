@@ -414,6 +414,10 @@ html table.dataTable thead {
   font-size: 11px;
 }
 
+#donations-table tbody td {
+  cursor: pointer;
+}
+
 #match-donations .toolbar {
     float: left;
 }
