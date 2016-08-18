@@ -1,13 +1,31 @@
 require 'rails_helper' 
 
 describe 'entities/show.html.erb' do
+
+  before(:all) do
+    DatabaseCleaner.start
+  end
+
+  after(:all) do 
+    DatabaseCleaner.clean
+  end
+
   describe 'header' do    
     context 'without any permissions' do 
+
+      before(:all) do
+        DatabaseCleaner.start
+        @sf_user = create(:sf_guard_user, username: 'X')
+        @user = create(:user, sf_guard_user_id: @sf_user.id)
+        @e = build(:mega_corp_inc, updated_at: Time.now, last_user_id: @sf_user.id)
+      end
+
+      after(:all) do 
+        DatabaseCleaner.clean
+      end
+      
       before do
-        @user = build(:user)
-        @e = build(:mega_corp_inc, updated_at: Time.now)
         assign(:entity, @e)
-        assign(:last_user, @user) 
         render
       end
 
@@ -77,23 +95,23 @@ describe 'entities/show.html.erb' do
       end
     end  # end of context without legacy permissions
 
-    def assign_entity_user(e, user) 
-      user = build(:user)
-      e = build(:mega_corp_inc, updated_at: Time.now)      
-      assign(:entity, e)
-      assign(:last_user, user) 
-      assign(:current_user, User.find(user.id))
-    end
-
-    
     context 'with deleter permission' do
 
+      before(:all) do 
+        DatabaseCleaner.start
+        @sf_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_user.id)
+        @e = create(:mega_corp_inc, last_user: @sf_user)
+        SfGuardUserPermission.create!(user_id: @sf_user.id, permission_id: 5)
+      end
+      
+      after(:all) do 
+        DatabaseCleaner.clean
+      end
+
       before do
-        @e = create(:mega_corp_inc)
-        @user = create(:user)
-        @sf_guard_user = create(:sf_user)
-        SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 5)
-        assign_entity_user(@e, @user)
+        assign(:entity, @e)
+        assign(:current_user, @user)
         sign_in @user
         render
       end
@@ -107,13 +125,23 @@ describe 'entities/show.html.erb' do
       end
     end
 
-    context 'with importer permission' do
-      before do
-        @e = create(:mega_corp_inc)
-        @user = create(:user)
-        @sf_guard_user = create(:sf_user)
+    describe 'with importer permission' do
+      
+      before(:all) do 
+        DatabaseCleaner.start
+        @sf_guard_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
+        @e = create(:mega_corp_inc, last_user: @sf_guard_user)
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 8)
-        assign_entity_user(@e, @user)
+      end
+      
+      after(:all) do 
+        DatabaseCleaner.clean
+      end
+
+      before do
+        assign(:entity, @e)
+        assign(:current_user, @user)
         sign_in @user
         render
       end
@@ -132,14 +160,15 @@ describe 'entities/show.html.erb' do
       
     end
     
-    context 'with importer and deleter permission' do 
+    describe 'with importer and deleter permission' do 
       before do
-        @e = create(:mega_corp_inc)
-        @user = create(:user)
-        @sf_guard_user = create(:sf_user)
+        @sf_guard_user = create(:sf_guard_user, username: 'Y')
+        @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
+        @e = create(:mega_corp_inc, last_user: @sf_guard_user)
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 5)
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 8)
-        assign_entity_user(@e, @user)
+        assign(:entity, @e)
+        assign(:current_user, @user)
         sign_in @user
         render
       end
@@ -150,12 +179,14 @@ describe 'entities/show.html.erb' do
     end
 
     context 'as admin' do 
-      before do
-        @e = create(:mega_corp_inc)
-        @user = create(:user)
-        @sf_guard_user = create(:sf_user)
+      
+     before do
+        @sf_guard_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
+        @e = create(:mega_corp_inc, last_user: @sf_guard_user)
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 1)
-        assign_entity_user(@e, @user)
+        assign(:entity, @e)
+        assign(:current_user, @user)
         sign_in @user
         render
       end
@@ -165,12 +196,21 @@ describe 'entities/show.html.erb' do
     end
 
     describe 'tabs' do
+
+      before(:all) do
+        DatabaseCleaner.start
+        @sf_guard_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
+        @e = build(:mega_corp_inc, updated_at: Time.now, last_user: @sf_guard_user)
+      end
       
-      before do 
-        @user = build(:user)
-        @e = build(:mega_corp_inc, updated_at: Time.now)
+      after(:all) do 
+        DatabaseCleaner.clean
+      end
+
+      before(:each) do 
         assign(:entity, @e)
-        assign(:last_user, @user) 
+        assign(:current_user, @user)
         render
       end
 
