@@ -35,8 +35,7 @@ entity.political.barChart = function(data){
   var y = d3.scaleLinear()
         .range([h,0]);
 
-  var z = d3.scaleOrdinal()
-        .range(["#3333FF", "#EE3523"]);
+  var z = d3.scaleOrdinal().range(["#3333FF", "#EE3523", "#bfbfbf"]);
 
    // scale	
   x.domain(data.map(function(d){return d.year;}));
@@ -44,7 +43,7 @@ entity.political.barChart = function(data){
   y.domain([0, ymax]);
 
   var stack = d3.stack()
-        .keys(["dem", "gop"]);
+        .keys(["dem", "gop", "other"]);
   //   .order(d3.stackOrderNone)
   //   .offset(d3.stackOffsetNone);
 
@@ -110,12 +109,20 @@ entity.political.parseContributions = function(contributions){
   
     cycles[i].amount += c.amount;
     
-    if (party === 'D') {
-      cycles[i].dem += c.amount;
-    } else if (party === 'R') {
-      cycles[i].gop += c.amount;
-    } else {
-      cycles[i].other += c.amount;
+    // Ignoring donations less than 0. There are negative donations -- refunds.
+    // However, these negative values will cause issues
+    // if d3 formatting on some profiles, so I'm excluding them until
+    // a better solution is reached
+    if (c.amount > 0) {
+
+      if (party === 'D') {
+        cycles[i].dem += c.amount;
+      } else if (party === 'R') {
+        cycles[i].gop += c.amount;
+      } else {
+        cycles[i].other += c.amount;
+      }
+
     }
   });
   return cycles;
