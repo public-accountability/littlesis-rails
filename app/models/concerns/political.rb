@@ -25,4 +25,18 @@ module Political
     OsDonation.find_by_sql [ "#{before_query}#{base_query}#{after_query}", n[:name_last], n[:name_first] ]
     
   end
+
+  def contribution_info
+    query = "SELECT os_matches.id as os_match_id, 
+                    os_donations.*, 
+                    entity.id as recip_id,
+                    entity.name as recip_name,
+                    entity.blurb as recip_blurb,
+                    entity.primary_ext as recip_ext
+             FROM os_matches 
+             LEFT JOIN os_donations on os_matches.os_donation_id = os_donations.id 
+             LEFT JOIN entity on os_matches.recip_id = entity.id
+             WHERE os_matches.donor_id = ?"
+    OsMatch.find_by_sql [ query, self.id ]
+  end
 end

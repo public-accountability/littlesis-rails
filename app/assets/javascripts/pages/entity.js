@@ -111,7 +111,7 @@ entity.political.parseContributions = function(contributions){
     
     // Ignoring donations less than 0. There are negative donations -- refunds.
     // However, these negative values will cause issues
-    // if d3 formatting on some profiles, so I'm excluding them until
+    // with d3 formatting on some profiles, so I'm excluding them until
     // a better solution is reached
     if (c.amount > 0) {
 
