@@ -6,12 +6,14 @@
             <%= render partial: 'summary', locals: { entity: @entity } %>
             <%= render partial: 'tabs', locals: { active_tab: 'political', entity: @entity }  %>
             <div id="political-contributions" data-entityid="<%= @entity.id %>"></div>
-            <script>entity.political.init();</script>
             <h1>Political Page...</h1>
         </div>
         <div class="col-md-4 col-sm-4">
-            <!-- side bar -->
+            <div id="political-pie-chart">
+                <canvas width="200" height="200"></canvas>
+            </div>
         </div>
     </div>
-    
+
+    <script>entity.political.init();</script>
 </div>

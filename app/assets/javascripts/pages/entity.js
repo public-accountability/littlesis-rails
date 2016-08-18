@@ -22,10 +22,10 @@ entity.political.getContributions = function (id, cb){
  * Creates D3 Graphic
  * Modeled after: https://bl.ocks.org/mbostock/3886208
  */
-entity.political.graphic = function(data){
+entity.political.barChart = function(data){
   var container = '#political-contributions';
-  var margin = {top: 10, right: 10, bottom: 30, left: 40};
-  var w = $(container).width() - 20;
+  var margin = {top: 10, right: 20, bottom: 30, left: 60};
+  var w = $(container).width() - 40;
   var h = 250;
   
   var x = d3.scaleBand()
@@ -75,10 +75,12 @@ entity.political.graphic = function(data){
     .call(d3.axisBottom(x));
 
   // add the y Axis
+  var yAxis = d3.axisLeft(y).ticks(5).tickFormat(d3.format("$,.2r"));
   svg.append("g")
-    .call(d3.axisLeft(y));
+    .call(yAxis);
 
 };
+
 
 /**
  * Takes [] of contributions and calculates amount per year
@@ -110,10 +112,61 @@ entity.political.parseContributions = function(contributions){
       cycles[i].other += c.amount;
     }
   });
-  
   return cycles;
-  
 };
+
+/**
+ * [{}] (output of parseContributions) -> [{}]
+ */
+entity.political.contributionAggregate = function(parsedContributions){
+  var dem = {party: 'D', amount: 0};
+  var gop = {party: 'R', amount: 0};
+  var ind = {party: 'I', amount: 0};
+  parsedContributions.forEach(function(x){
+    dem.amount += x.dem;
+    gop.amount += x.gop;
+    ind.amount += x.other;
+  });
+  return [dem, gop, ind];
+};
+
+/**
+ * Pie Chart of contributions
+ * Modeled after: http://bl.ocks.org/mbostock/8878e7fd82034f1d63cf
+ */
+entity.political.pieChart = function(parsedData, year){
+  var canvas = document.querySelector('#political-pie-chart canvas');
+  var context = canvas.getContext("2d");
+  var width = canvas.width;
+  var height = canvas.height;
+  var radius = Math.min(width, height) / 2;
+  var colors = ["#3333FF", "#EE3523", "#bfbfbf"];
+  
+  // [{fields: party, amount }]
+  var data = entity.political.contributionAggregate(parsedData);
+  
+  var arc = d3.arc()
+        .outerRadius(radius - 10)
+        .innerRadius(radius- 40)
+        .padAngle(0.03)
+        .context(context);
+
+  var pie = d3.pie()
+        .value(function(d){ return d.amount; });
+  
+  context.translate(width / 2, height / 2);
+  
+  var arcs = pie(data);
+  
+  arcs.forEach(function(d, i) {
+    context.beginPath();
+    arc(d);
+    context.fillStyle = colors[i];
+    context.fill();
+  });
+ 
+};
+
 
 /**
  * Kicks it all off
@@ -121,7 +174,8 @@ entity.political.parseContributions = function(contributions){
 entity.political.init = function(){
   var id = $('#political-contributions').data('entityid');
   entity.political.getContributions(id, function(contributions){
-    var data = entity.political.parseContributions(contributions);
-    entity.political.graphic(data);
+    entity.political.data = entity.political.parseContributions(contributions);
+    entity.political.barChart(entity.political.data);
+    entity.political.pieChart(entity.political.data);
   });
 };
