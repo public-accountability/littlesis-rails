@@ -20,6 +20,7 @@ describe 'entities/political.html.erb' do
       render
     end
     
+
     it 'has header' do 
       expect(rendered).to have_css '#entity-header'
     end
@@ -35,6 +36,19 @@ describe 'entities/political.html.erb' do
 
     it 'has active Political tab' do 
       expect(rendered).to have_css '.button-tabs span.active a', :text => 'Political', :count => 1
+    end
+
+    it 'has political contribution div' do
+      expect(rendered).to have_css '#political-contributions', :count => 1
+    end
+    
+    it 'has political pie chart div' do
+      expect(rendered).to have_css '#political-pie-chart', :count => 1
+    end
+
+    it 'has pie info div with spans' do
+      expect(rendered).to have_css '#pie-info', :count => 1
+      expect(rendered).to have_css '#pie-info p span', :count => 4
     end
 
   end

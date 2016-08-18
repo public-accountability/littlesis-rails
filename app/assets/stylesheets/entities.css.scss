@@ -402,10 +402,15 @@ html table.dataTable thead {
   margin-right: 10px;
 }
 
-/* D3 chart */
+/* political page */
 
-.bar {
-  fill: steelblue;
+#political-pie-chart canvas {
+  margin-top: e1m;
+}
+
+#pie-info p {
+  line-height: 0.6em;
+  font-size: 0.8em;
 }
 
 /* match donations */
