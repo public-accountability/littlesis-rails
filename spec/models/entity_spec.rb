@@ -50,10 +50,12 @@ describe Entity do
         Entity.set_callback(:create, :after, :create_primary_ext)
         DatabaseCleaner.clean
       end
-
-      it 'retrieves matched contributions'
-    
     end
 
+    describe '#contributions_information' do
+      
+      
+    end
+    
   end
 end

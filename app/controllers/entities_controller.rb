@@ -68,9 +68,9 @@ class EntitiesController < ApplicationController
   end
 
   def contributions
-    render json: @entity.contributions
+    render json: @entity.contribution_info
   end
-  
+
   def potential_contributions
     render json: @entity.potential_contributions
   end

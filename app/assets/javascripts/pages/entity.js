@@ -35,8 +35,7 @@ entity.political.barChart = function(data){
   var y = d3.scaleLinear()
         .range([h,0]);
 
-  var z = d3.scaleOrdinal()
-        .range(["#3333FF", "#EE3523"]);
+  var z = d3.scaleOrdinal().range(["#3333FF", "#EE3523", "#bfbfbf"]);
 
    // scale	
   x.domain(data.map(function(d){return d.year;}));
@@ -44,7 +43,7 @@ entity.political.barChart = function(data){
   y.domain([0, ymax]);
 
   var stack = d3.stack()
-        .keys(["dem", "gop"]);
+        .keys(["dem", "gop", "other"]);
   //   .order(d3.stackOrderNone)
   //   .offset(d3.stackOffsetNone);
 
@@ -59,12 +58,18 @@ entity.political.barChart = function(data){
    svg.selectAll('.series')
     .data(series)
     .enter().append("g")
-       .attr('class', 'series')
+    .attr('class', 'series')
     .attr('fill', function(d){ return z(d.key)})
     .selectAll("rect")
     .data(function(d){ return d; })
     .enter().append('rect')
-    .attr("x", function(d){ return x(d.data.year); })
+    .on('mouseover', function(d){
+      entity.political.pieChart(entity.political.data, d.data.year);
+    })
+    .on('mouseout', function(d){
+      entity.political.pieChart(entity.political.data);
+    })
+     .attr("x", function(d){ return x(d.data.year); })
     .attr("y", function(d){ return y(d[1])})
     .attr("height",function(d) { return y(d[0])- y(d[1]) })
     .attr("width", x.bandwidth());
@@ -104,12 +109,20 @@ entity.political.parseContributions = function(contributions){
   
     cycles[i].amount += c.amount;
     
-    if (party === 'D') {
-      cycles[i].dem += c.amount;
-    } else if (party === 'R') {
-      cycles[i].gop += c.amount;
-    } else {
-      cycles[i].other += c.amount;
+    // Ignoring donations less than 0. There are negative donations -- refunds.
+    // However, these negative values will cause issues
+    // with d3 formatting on some profiles, so I'm excluding them until
+    // a better solution is reached
+    if (c.amount > 0) {
+
+      if (party === 'D') {
+        cycles[i].dem += c.amount;
+      } else if (party === 'R') {
+        cycles[i].gop += c.amount;
+      } else {
+        cycles[i].other += c.amount;
+      }
+
     }
   });
   return cycles;
@@ -134,21 +147,32 @@ entity.political.contributionAggregate = function(parsedContributions){
  * Pie Chart of contributions
  * Modeled after: http://bl.ocks.org/mbostock/8878e7fd82034f1d63cf
  */
-entity.political.pieChart = function(parsedData, year){
+entity.political.pieChart = function(parsedData, y){
+  $('#political-pie-chart').html('<canvas width="200" height="200"></canvas>');
   var canvas = document.querySelector('#political-pie-chart canvas');
   var context = canvas.getContext("2d");
   var width = canvas.width;
   var height = canvas.height;
   var radius = Math.min(width, height) / 2;
   var colors = ["#3333FF", "#EE3523", "#bfbfbf"];
-  
+  var year = (typeof y === 'undefined') ? false : y;
+
   // [{fields: party, amount }]
-  var data = entity.political.contributionAggregate(parsedData);
+  var filteredByYear =  (year) ? parsedData.filter(function(d){ return (d.year === year); }) : parsedData;
+  var data = entity.political.contributionAggregate(filteredByYear);
+  
+  var totalAmount = data.reduce(function(prev,curr){ return prev + curr.amount; }, 0);
+  if (totalAmount < 1) { return; }   // return early if there are no donations;
+
+  var totalFormatted = d3.format("$,.4r")(totalAmount);
+  var demPct = d3.format('.0%')(data[0].amount / totalAmount);
+  var gopPct = d3.format('.0%')(data[1].amount / totalAmount);
+  var indPct = d3.format('.0%')(data[2].amount / totalAmount);
   
   var arc = d3.arc()
-        .outerRadius(radius - 10)
-        .innerRadius(radius- 40)
-        .padAngle(0.03)
+        .outerRadius(radius - 20)
+        .innerRadius(radius- 43)
+        .padAngle(0.04)
         .context(context);
 
   var pie = d3.pie()
@@ -164,9 +188,21 @@ entity.political.pieChart = function(parsedData, year){
     context.fillStyle = colors[i];
     context.fill();
   });
- 
-};
 
+  if (year) {
+    context.font = '12px sans-serif';
+    context.textAlign = 'center';
+    context.fillStyle = '#000';
+    context.fillText(year, 0, 0);
+  }
+
+  $('#pie-info').removeClass('invisible');
+  $('span.total-amount').text(totalFormatted);
+  $('span.republican').text(gopPct);
+  $('span.democrat').text(demPct);
+  $('span.independent').text(indPct);
+  
+};
 
 /**
  * Kicks it all off

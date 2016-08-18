@@ -1,15 +1,19 @@
 FactoryGirl.define do
 
   factory :user, class: User do
-    id 100
+#    id 100
     username "user"
     email "user@littlesis.org"
-    sf_guard_user_id 100
+#    sf_guard_user_id 100
   end
 
   factory :sf_user, class: SfGuardUser do 
     id 100
     username 'user'
+  end
+  
+  factory :sf_guard_user, class: SfGuardUser do 
+    username 'sf_guard_user'
   end
 
   factory :admin, class: User do

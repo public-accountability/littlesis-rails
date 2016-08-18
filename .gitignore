@@ -36,3 +36,14 @@ public/assets/*
 
 # Ignore node_modules used in test/
 test/node_modules
+
+# generated test error files
+spec/testdata/*_errors.txt
+
+# os data
+data/cands/
+data/cmtes/
+data/indivs*
+
+# symlinked asessts
+test/assets
