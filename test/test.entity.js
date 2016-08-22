@@ -1,17 +1,16 @@
 describe('Entity.js', function(){
   describe('political', function(){
     var contributions = [
-      {cycle: '2014', amount: 1000, "recipcode":"DW"},
-      {cycle: '2014', amount: 500, "recipcode":"RL"},
-      {cycle: '2010', amount: 400, "recipcode":"DW"},
-      {cycle: '1998', amount: 100, "recipcode":"DW"}, 
-      {cycle: '2010', amount: 200, "recipcode":"DW"}, 
-      {cycle: '2008', amount: 800, "recipcode":"XL"}, 
+      {cycle: '2014', amount: 1000, "recipcode":"DW", recip_id: 1, recip_name: 'A', recip_ext: 'Person', recip_blurb: null},
+      {cycle: '2014', amount: 500, "recipcode":"RL", recip_id: 2, recip_name: 'B', recip_ext: 'Person', recip_blurb: null},
+      {cycle: '2010', amount: 400, "recipcode":"DW", recip_id: 10, recip_name: 'C', recip_ext: 'Org', recip_blurb: null},
+      {cycle: '1998', amount: 100, "recipcode":"DW", recip_id: 1, recip_name: 'A', recip_ext: 'Person', recip_blurb: null}, 
+      {cycle: '2010', amount: 200, "recipcode":"DW", recip_id: 10, recip_name: 'C', recip_ext: 'Org', recip_blurb: null}, 
+      {cycle: '2008', amount: 800, "recipcode":"XL", recip_id: 15, recip_name: 'D', recip_ext: 'Person', recip_blurb: null}, 
     ];
     describe('parseContributions', function(){
       it('calculates amount per cycle', function(){
         var parsed = entity.political.parseContributions(contributions);
-        console.log(JSON.stringify(parsed));
         expect(parsed).to.be.a('Array');
         expect(parsed).to.have.lengthOf(14);
         expect(parsed[0]).to.eql({year: '1990', amount: 0, dem: 0, gop: 0, other: 0});
@@ -22,7 +21,7 @@ describe('Entity.js', function(){
         expect(parsed[9]).to.eql({year: '2008', amount: 800, dem: 0, gop: 0, other: 800});
       });
     });
-    describe('contributionAggregate', function(){
+    describe('contrnibutionAggregate', function(){
       var parsed = entity.political.parseContributions(contributions);
       var aggregated = entity.political.contributionAggregate(parsed);
       it('returns an array with 3 objects', function(){
@@ -42,6 +41,49 @@ describe('Entity.js', function(){
         expect(aggregated[2].amount).to.eql(800);
       });
     });
+    describe('groupByRecip', function(){
+      var groupedByRecip = entity.political.groupByRecip(contributions);
+      
+      it('returns an array with 2 object with keys: "Org"", and "Person"', function(){
+        expect(groupedByRecip).to.be.an('array');
+        expect(groupedByRecip).to.have.lengthOf(2);
+        expect(groupedByRecip[0].key).to.eql('Org');
+        expect(groupedByRecip[1].key).to.eql('Person');
+      });
+
+
+      it('groups orgs together and calculates sum', function(){
+        expect(groupedByRecip[0].values).to.have.lengthOf(1);
+        expect(groupedByRecip[0].values[0].value.amount).to.eql(600);
+      });
+
+      it('has name, blurb and count fields', function(){
+        expect(groupedByRecip[0].values[0].value.count).to.eql(2);
+        expect(groupedByRecip[0].values[0].value.name).to.eql('C');
+        expect(groupedByRecip[0].values[0].value.blurb).to.eql(null);
+        expect(groupedByRecip[1].values[0].value.count).to.eql(2);
+        expect(groupedByRecip[1].values[1].value.count).to.eql(1);
+        expect(groupedByRecip[1].values[2].value.count).to.eql(1);
+        expect(groupedByRecip[1].values[0].value.name).to.eql('A');
+        expect(groupedByRecip[1].values[0].value.blurb).to.eql(null);
+      });
+      
+      function amountForX(x){
+        return groupedByRecip[1].values.find( d => d.key === x).value.amount;
+      }
+
+      it('groups politicians together and calculates sum', function(){
+        expect(groupedByRecip[1].values).to.have.lengthOf(3);
+        expect(amountForX('1')).to.eql(1100);
+        expect(amountForX('2')).to.eql(500);
+        expect(amountForX('15')).to.eql(800);
+      });
+      
+      it('sorts by largest amount', function(){
+        expect(groupedByRecip[1].values.map( x => x.value.amount)).eql([1100,800,500]);
+      });
+      
+    });
   });
 });
- 
+

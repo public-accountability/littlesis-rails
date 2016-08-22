@@ -59,7 +59,7 @@ entity.political.barChart = function(data){
     .data(series)
     .enter().append("g")
     .attr('class', 'series')
-    .attr('fill', function(d){ return z(d.key)})
+    .attr('fill', function(d){ return z(d.key); })
     .selectAll("rect")
     .data(function(d){ return d; })
     .enter().append('rect')
@@ -70,8 +70,8 @@ entity.political.barChart = function(data){
       entity.political.pieChart(entity.political.data);
     })
      .attr("x", function(d){ return x(d.data.year); })
-    .attr("y", function(d){ return y(d[1])})
-    .attr("height",function(d) { return y(d[0])- y(d[1]) })
+    .attr("y", function(d){ return y(d[1]); })
+    .attr("height",function(d) { return y(d[0])- y(d[1]); })
     .attr("width", x.bandwidth());
 
   // add the x Axis
@@ -89,6 +89,7 @@ entity.political.barChart = function(data){
 
 /**
  * Takes [] of contributions and calculates amount per year
+ * Groups by year * party
  * [{}] -> [{}]
  */
 entity.political.parseContributions = function(contributions){
@@ -130,6 +131,7 @@ entity.political.parseContributions = function(contributions){
 
 /**
  * [{}] (output of parseContributions) -> [{}]
+ * Groups by party
  */
 entity.political.contributionAggregate = function(parsedContributions){
   var dem = {party: 'D', amount: 0};
@@ -141,6 +143,35 @@ entity.political.contributionAggregate = function(parsedContributions){
     ind.amount += x.other;
   });
   return [dem, gop, ind];
+};
+
+/**
+ * Uses d3.nest to group by type and by recipient
+ * [{}] => [{Org}, {person}]
+ */
+entity.political.groupByRecip = function(data) {
+  // Removes matches that don't have a joined LittleSis Entity
+  var _data = data.filter(function(x){ return Boolean(x.recip_id); });
+  
+  var n = d3.nest()
+        .key(function(d){ return d.recip_ext; }).sortKeys(d3.ascending)
+        .key(function(d){ return String(d.recip_id); })
+        // aggregate contributions by recipient
+        .rollup(function(leaves){
+          return {
+            amount: leaves.reduce(function(p, c) { return p + c.amount; }, 0),
+            name: leaves[0].recip_name,
+            blurb: leaves[0].recip_blurb,
+            count: leaves.length
+          };
+        })
+        .entries(_data);
+  // sort by contribution amount to each entity
+  n.forEach(function(ext){
+    ext.values = ext.values.sort(function(a,b){ return b.value.amount - a.value.amount; });
+  });
+
+  return n;
 };
 
 /**
@@ -204,6 +235,7 @@ entity.political.pieChart = function(parsedData, y){
   
 };
 
+
 /**
  * Kicks it all off
  */
@@ -213,5 +245,7 @@ entity.political.init = function(){
     entity.political.data = entity.political.parseContributions(contributions);
     entity.political.barChart(entity.political.data);
     entity.political.pieChart(entity.political.data);
+    console.log(contributions);
+    entity.political.groupByRecip(contributions);
   });
 };
