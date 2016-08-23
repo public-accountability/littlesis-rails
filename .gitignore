@@ -29,9 +29,11 @@
 
 # Ignore sphinx thingy
 /log/production.sphinx.pid
+/log/development.sphinx.pid
 
 # Ignore sphinx config
 /config/production.sphinx.conf
+/config/development.sphinx.conf
 public/assets/*
 
 # Ignore node_modules used in test/
