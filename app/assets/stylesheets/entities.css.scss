@@ -7,6 +7,11 @@ $tiny_image_size: 35px;
   padding-top: 1em;
 }
 
+.m-left-1em {
+  margin-left: 1em;
+}
+
+// 
 .entity_update {
 	padding-top: 1em;
 	padding-bottom: 1em;
@@ -428,8 +433,12 @@ html table.dataTable thead {
 }
 
 #match-donations .loading {
-  display: inline;
+  width: 30px;
+  display: inline-block;
   margin-left: 1em;
+}
+#page-length-select {
+  margin-left: 0.5em;
 }
 
 .spin-icon {
