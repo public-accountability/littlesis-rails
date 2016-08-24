@@ -19,15 +19,12 @@ matchDonations.sourceLink = function(microfilm) {
 };
 
 matchDonations.processData = function(data) {
-  console.log(data);
   return data.map(function(x){
     x.address = x.city + ", " + x.state + " " + x.zip;
     x.sourceLink = matchDonations.sourceLink(x.microfilm);
    return x;
   });
-  
-}
-
+};
 
 matchDonations.datatable = function(data) {
   var table = $('#donations-table').DataTable( {
@@ -48,8 +45,10 @@ matchDonations.datatable = function(data) {
 
 matchDonations.setupTable = function(table) {
   matchDonations.rowClick(table);
-  matchDonations.createMatchButton();
+  matchDonations.createToolBar();
   matchDonations.onClickMatchButton(table);
+  matchDonations.onClickSelectAll();
+  matchDonations.onPageLenSelect(table);
 };
 
 matchDonations.rowClick = function(table) {
@@ -58,19 +57,23 @@ matchDonations.rowClick = function(table) {
        $(this).removeClass('selected');
     }
     else {
-      // this limits it to only one selected at a time
-      // table.$('tr.selected').removeClass('selected');
       $(this).addClass('selected');
     }
   });
 };
 
-// #match-the-donation
-matchDonations.createMatchButton = function(){
+matchDonations.selectHtml = '<span class="m-left-1em text-muted">show:</span><select id="page-length-select"><option>10</option><option>20</option><option>30</option><option>50</option></select>';
+
+// Creates Toolbar with: match donatons button, loading icon, and selected all
+// #match-the-donation, .load, #select-all
+matchDonations.createToolBar = function(){
   var html = '<button type="button" id="match-the-donation" class="btn btn-primary">Match Selected</button>';
   html += '<div class="loading"></div>';
+  html += '<button type="button" id="select-all" class="btn btn-primary">Select all</button>';
+  html += matchDonations.selectHtml;
   $("div.toolbar").html(html);
 };
+
 
 matchDonations.matchRequest = function(donations){
   var url =  "/entities/" + matchDonations.entity_id + "/match_donation";
@@ -92,8 +95,20 @@ matchDonations.onClickMatchButton = function(table){
       $('#match-donations .toolbar .loading').html('<span class="glyphicon glyphicon-cog spin-icon" aria-hidden="true"></span>');
       matchDonations.matchRequest(selected.map(function(x){ return x.id; }));
       table.rows('.selected').remove().draw( false );
-      
     }
+  });
+};
+
+matchDonations.onClickSelectAll = function(table) {
+  $('#select-all').click(function () {
+    $('#donations-table tbody tr').addClass('selected');
+  });
+};
+
+matchDonations.onPageLenSelect = function(table) {
+  $('#page-length-select').change(function(){
+    var len = Number($(this).find('option:selected').text());
+    table.page.len(len).draw();
   });
 };
 

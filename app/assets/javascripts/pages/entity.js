@@ -9,6 +9,9 @@ entity.summaryToggle = function(){
 };
 
 entity.political = {};
+entity.political.data = null;
+entity.political.politicians = null;
+entity.political.orgs = null;
 
 /**
  *  Retrieves contributions json for entity id
@@ -59,7 +62,7 @@ entity.political.barChart = function(data){
     .data(series)
     .enter().append("g")
     .attr('class', 'series')
-    .attr('fill', function(d){ return z(d.key)})
+    .attr('fill', function(d){ return z(d.key); })
     .selectAll("rect")
     .data(function(d){ return d; })
     .enter().append('rect')
@@ -70,8 +73,8 @@ entity.political.barChart = function(data){
       entity.political.pieChart(entity.political.data);
     })
      .attr("x", function(d){ return x(d.data.year); })
-    .attr("y", function(d){ return y(d[1])})
-    .attr("height",function(d) { return y(d[0])- y(d[1]) })
+    .attr("y", function(d){ return y(d[1]); })
+    .attr("height",function(d) { return y(d[0])- y(d[1]); })
     .attr("width", x.bandwidth());
 
   // add the x Axis
@@ -89,6 +92,7 @@ entity.political.barChart = function(data){
 
 /**
  * Takes [] of contributions and calculates amount per year
+ * Groups by year * party
  * [{}] -> [{}]
  */
 entity.political.parseContributions = function(contributions){
@@ -130,6 +134,7 @@ entity.political.parseContributions = function(contributions){
 
 /**
  * [{}] (output of parseContributions) -> [{}]
+ * Groups by party
  */
 entity.political.contributionAggregate = function(parsedContributions){
   var dem = {party: 'D', amount: 0};
@@ -145,7 +150,7 @@ entity.political.contributionAggregate = function(parsedContributions){
 
 /**
  * Pie Chart of contributions
- * Modeled after: http://bl.ocks.org/mbostock/8878e7fd82034f1d63cf
+ * Modeled after: http://bl.ocks.org/mbostock/8878e7FD82034f1d63cf
  */
 entity.political.pieChart = function(parsedData, y){
   $('#political-pie-chart').html('<canvas width="200" height="200"></canvas>');
@@ -205,13 +210,125 @@ entity.political.pieChart = function(parsedData, y){
 };
 
 /**
+ * Groups contributions by recipient and optionally filters by Person or Org
+ * @param {Array} data - Contributions from getContributions()
+ * @param {String|undefined} extType - "Person" or "Org" or undefined
+ * @returns {Array} 
+ */
+entity.political.groupByRecip = function(data, extType) {
+  function sortContributions(a,b){
+    return b.value.amount - a.value.amount;
+  }
+
+  function filterContributions(contributions, extType){
+    return contributions.filter(function(x){ return (x.value.ext === extType); } );
+  }
+
+  // Removes matches that don't have a joined LittleSis Entity
+  var _data = data.filter(function(x){ return Boolean(x.recip_id); });
+
+  var contributions = d3.nest()
+       .key(function(d){ return String(d.recip_id); })
+        // aggregate contributions by recipient
+        .rollup(function(leaves){
+          return {
+            amount: leaves.reduce(function(p, c) { return p + c.amount; }, 0),
+            name: leaves[0].recip_name,
+            blurb: leaves[0].recip_blurb,
+            ext: leaves[0].recip_ext,
+            count: leaves.length
+          };
+        })
+        .entries(_data)
+        .sort(sortContributions);
+
+  if (typeof extType === 'undefined') {
+    return contributions;
+  } else {
+    return filterContributions(contributions, extType);
+  }
+
+};
+
+
+/**
+ * Sets event callbacks for the buttons to pick between showing politicians, orgs or all
+ */
+entity.political.whoTheySupportButtons = function(){
+  var p = entity.political;
+  $('#who-they-support-buttons label').on('click',function(e){
+    var selection = $(this).find('input').attr('name');
+    if (selection === 'all') {
+      p.whoTheySupport(p.allRecipients);
+    } else if (selection === 'politicians') {
+      p.whoTheySupport(p.politicians);
+    } else if (selection === 'orgs') {
+      p.whoTheySupport(p.orgs);
+    } else {
+      console.log('the name for the button must be: all, politicians, or orgs');
+    }
+  });
+};
+
+/**
+ * Creates "Who They Support" chart
+ * @param {Array} data - output of groupByRecip
+ */
+entity.political.whoTheySupport = function(d) {
+  var data = d.slice(0,10); // top 10
+  var container = '#who-they-support';
+  $(container).empty();
+  var margin = {top: 10, right: 10, bottom: 10, left: 10};
+  var w = $(container).width() - 20;
+  var h = 350;
+  
+  var svg = d3.select(container).append('svg')
+        .attr("width", w + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+  
+  var x = d3.scaleLinear()
+        .range([0,w])
+        .domain([0, data[0].value.amount]);
+ 
+  var y = d3.scaleBand()
+        .domain(data.map(function(x,index){ return index; }))
+        .range([0,h])
+        .padding(0.1);
+        
+  svg.selectAll('rect')
+    .data(data)
+    .enter().append('rect')
+    .attr('x', '0')
+    .attr('y', function(d, i){
+      return y(i);
+    })
+    .attr('height', y.bandwidth())
+    .attr('width', function(d){
+      return x(d.value.amount);
+    });
+};
+
+
+
+/**
  * Kicks it all off
  */
 entity.political.init = function(){
+  var p = entity.political;
   var id = $('#political-contributions').data('entityid');
-  entity.political.getContributions(id, function(contributions){
-    entity.political.data = entity.political.parseContributions(contributions);
-    entity.political.barChart(entity.political.data);
-    entity.political.pieChart(entity.political.data);
+  p.getContributions(id, function(contributions){
+    // data //
+    p.data = p.parseContributions(contributions);
+    p.allRecipients = p.groupByRecip(contributions);
+    p.politicians = p.groupByRecip(contributions, 'Person');
+    p.orgs = p.groupByRecip(contributions, 'Org');
+    // charts //
+    p.barChart(p.data);
+    p.pieChart(p.data);
+    p.whoTheySupport(p.allRecipients);
+    // dom events //
+    p.whoTheySupportButtons();
   });
 };
