@@ -21,7 +21,7 @@ describe('Entity.js', function(){
         expect(parsed[9]).to.eql({year: '2008', amount: 800, dem: 0, gop: 0, other: 800});
       });
     });
-    describe('contrnibutionAggregate', function(){
+    describe('contributionAggregate(): groups and sums contributions by party', function(){
       var parsed = entity.political.parseContributions(contributions);
       var aggregated = entity.political.contributionAggregate(parsed);
       it('returns an array with 3 objects', function(){
@@ -41,49 +41,62 @@ describe('Entity.js', function(){
         expect(aggregated[2].amount).to.eql(800);
       });
     });
-    describe('groupByRecip', function(){
-      var groupedByRecip = entity.political.groupByRecip(contributions);
-      
+    describe('groupByRecip(): recipient and type', function(){
+      var groupBy = entity.political.groupByRecip(contributions, true);
       it('returns an array with 2 object with keys: "Org"", and "Person"', function(){
-        expect(groupedByRecip).to.be.an('array');
-        expect(groupedByRecip).to.have.lengthOf(2);
-        expect(groupedByRecip[0].key).to.eql('Org');
-        expect(groupedByRecip[1].key).to.eql('Person');
+        expect(groupBy).to.be.an('array');
+        expect(groupBy).to.have.lengthOf(2);
+        expect(groupBy[0].key).to.eql('Org');
+        expect(groupBy[1].key).to.eql('Person');
       });
 
-
       it('groups orgs together and calculates sum', function(){
-        expect(groupedByRecip[0].values).to.have.lengthOf(1);
-        expect(groupedByRecip[0].values[0].value.amount).to.eql(600);
+        expect(groupBy[0].values).to.have.lengthOf(1);
+        expect(groupBy[0].values[0].value.amount).to.eql(600);
       });
 
       it('has name, blurb and count fields', function(){
-        expect(groupedByRecip[0].values[0].value.count).to.eql(2);
-        expect(groupedByRecip[0].values[0].value.name).to.eql('C');
-        expect(groupedByRecip[0].values[0].value.blurb).to.eql(null);
-        expect(groupedByRecip[1].values[0].value.count).to.eql(2);
-        expect(groupedByRecip[1].values[1].value.count).to.eql(1);
-        expect(groupedByRecip[1].values[2].value.count).to.eql(1);
-        expect(groupedByRecip[1].values[0].value.name).to.eql('A');
-        expect(groupedByRecip[1].values[0].value.blurb).to.eql(null);
+        expect(groupBy[0].values[0].value.count).to.eql(2);
+        expect(groupBy[0].values[0].value.name).to.eql('C');
+        expect(groupBy[0].values[0].value.blurb).to.eql(null);
+        expect(groupBy[1].values[0].value.count).to.eql(2);
+        expect(groupBy[1].values[1].value.count).to.eql(1);
+        expect(groupBy[1].values[2].value.count).to.eql(1);
+        expect(groupBy[1].values[0].value.name).to.eql('A');
+        expect(groupBy[1].values[0].value.blurb).to.eql(null);
       });
       
       function amountForX(x){
-        return groupedByRecip[1].values.find( d => d.key === x).value.amount;
+        return groupBy[1].values.find( d => d.key === x).value.amount;
       }
 
       it('groups politicians together and calculates sum', function(){
-        expect(groupedByRecip[1].values).to.have.lengthOf(3);
+        expect(groupBy[1].values).to.have.lengthOf(3);
         expect(amountForX('1')).to.eql(1100);
         expect(amountForX('2')).to.eql(500);
         expect(amountForX('15')).to.eql(800);
       });
       
       it('sorts by largest amount', function(){
-        expect(groupedByRecip[1].values.map( x => x.value.amount)).eql([1100,800,500]);
+        expect(groupBy[1].values.map( x => x.value.amount)).eql([1100,800,500]);
       });
       
     });
+    
+    describe('groupByRecip(): recipient only', function(){
+      var groupBy = entity.political.groupByRecip(contributions, false);
+      
+      it('return an array with 4 objects', function(){
+        expect(groupBy).to.be.an('array');
+        expect(groupBy).to.have.lengthOf(4);
+        groupBy.forEach( x => expect(x).to.be.an('object') );
+      });
+      
+      it('calculates sum per recipient and sorts', function(){
+        expect(groupBy.map(x => x.value.amount)).to.eql([1100,800,600,500]);
+      });
+    });
+    
   });
 });
 

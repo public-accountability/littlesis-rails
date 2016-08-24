@@ -9,6 +9,7 @@ entity.summaryToggle = function(){
 };
 
 entity.political = {};
+entity.political.data = null;
 
 /**
  *  Retrieves contributions json for entity id
@@ -146,37 +147,8 @@ entity.political.contributionAggregate = function(parsedContributions){
 };
 
 /**
- * Uses d3.nest to group by type and by recipient
- * [{}] => [{Org}, {person}]
- */
-entity.political.groupByRecip = function(data) {
-  // Removes matches that don't have a joined LittleSis Entity
-  var _data = data.filter(function(x){ return Boolean(x.recip_id); });
-  
-  var n = d3.nest()
-        .key(function(d){ return d.recip_ext; }).sortKeys(d3.ascending)
-        .key(function(d){ return String(d.recip_id); })
-        // aggregate contributions by recipient
-        .rollup(function(leaves){
-          return {
-            amount: leaves.reduce(function(p, c) { return p + c.amount; }, 0),
-            name: leaves[0].recip_name,
-            blurb: leaves[0].recip_blurb,
-            count: leaves.length
-          };
-        })
-        .entries(_data);
-  // sort by contribution amount to each entity
-  n.forEach(function(ext){
-    ext.values = ext.values.sort(function(a,b){ return b.value.amount - a.value.amount; });
-  });
-
-  return n;
-};
-
-/**
  * Pie Chart of contributions
- * Modeled after: http://bl.ocks.org/mbostock/8878e7fd82034f1d63cf
+ * Modeled after: http://bl.ocks.org/mbostock/8878e7FD82034f1d63cf
  */
 entity.political.pieChart = function(parsedData, y){
   $('#political-pie-chart').html('<canvas width="200" height="200"></canvas>');
@@ -235,6 +207,72 @@ entity.political.pieChart = function(parsedData, y){
   
 };
 
+/**
+ * Uses d3.nest to group by recipient and (optionally) by type
+ * [{}] => [{Org}, {person}]
+ */
+entity.political.groupByRecip = function(data, groupByType) {
+  // Removes matches that don't have a joined LittleSis Entity
+  var _data = data.filter(function(x){ return Boolean(x.recip_id); });
+
+  var n = d3.nest();
+  
+  if (groupByType) {
+    n.key(function(d){ return d.recip_ext; }).sortKeys(d3.ascending);
+  }
+  
+  n.key(function(d){ return String(d.recip_id); })
+    // aggregate contributions by recipient
+    .rollup(function(leaves){
+      return {
+        amount: leaves.reduce(function(p, c) { return p + c.amount; }, 0),
+        name: leaves[0].recip_name,
+        blurb: leaves[0].recip_blurb,
+        ext: leaves[0].recip_ext,
+        count: leaves.length
+      };
+    });
+  
+  function sortContributions(a,b){
+   return b.value.amount - a.value.amount;
+  }
+  // sort by contribution amount to each entity
+  if (groupByType) {
+    return n.entries(_data).map(function(x){
+      x.values = x.values.sort(sortContributions);
+      return x; 
+    });
+  } else {
+    return n.entries(_data).sort(sortContributions);
+  }
+
+};
+
+/**
+ * Chart of supported 
+ * input: [{}] (output of groupByRecip)
+ */
+entity.political.whoTheySupport = function(data) {
+  //console.log(data);
+  var container = '#politicians-supported';
+  var margin = {top: 10, right: 10, bottom: 10, left: 10};
+  var w = $(container).width() - 20;
+  var h = 350;
+  
+  var orgs = data[0].values;
+  var politicans = data[1].values;
+
+  var svg = d3.select(container).append('svg')
+        .attr("width", w + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+  
+  svg.selectAll('rect')
+    .data(data[1].values, function(d){ });
+};
+
+
 
 /**
  * Kicks it all off
@@ -242,10 +280,13 @@ entity.political.pieChart = function(parsedData, y){
 entity.political.init = function(){
   var id = $('#political-contributions').data('entityid');
   entity.political.getContributions(id, function(contributions){
+    // data //
     entity.political.data = entity.political.parseContributions(contributions);
+    entity.political.groupedByType = entity.political.groupByTypeAndRecip(contributions);
+    entity.political.groupedByRecip = entity.political.groupByRecip(contributions);
+    // charts //
     entity.political.barChart(entity.political.data);
     entity.political.pieChart(entity.political.data);
-    console.log(contributions);
-    entity.political.groupByRecip(contributions);
+    entity.political.whoTheySupport(entity.political.groupedByType);
   });
 };
