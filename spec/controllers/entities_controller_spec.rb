@@ -75,12 +75,18 @@ describe EntitiesController, type: :controller do
     end
     
     describe 'POST #match_donation' do
-      before do 
-        post :match_donation, {id: @entity.id, payload: [1,2,3]}
+      before do
+        d1 = create(:os_donation, fec_cycle_id: 'unique_id_1')
+        d2 = create(:os_donation, fec_cycle_id: 'unique_id_2')
+        post :match_donation, {id: @entity.id, payload: [d1.id, d2.id]}
       end
       
       it 'has 200 status code' do 
         expect(response.status).to eq(200)
+      end
+
+      it "updates the entity's last user id after matching" do 
+        expect(@entity.reload.last_user_id).to eql SfGuardUser.last.id
       end
 
     end
