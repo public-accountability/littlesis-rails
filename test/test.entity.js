@@ -41,60 +41,83 @@ describe('Entity.js', function(){
         expect(aggregated[2].amount).to.eql(800);
       });
     });
-    describe('groupByRecip(): recipient and type', function(){
-      var groupBy = entity.political.groupByRecip(contributions, true);
-      it('returns an array with 2 object with keys: "Org"", and "Person"', function(){
-        expect(groupBy).to.be.an('array');
-        expect(groupBy).to.have.lengthOf(2);
-        expect(groupBy[0].key).to.eql('Org');
-        expect(groupBy[1].key).to.eql('Person');
+
+    describe('groupByRecip(): ', function(){
+      describe('filter by Person', function(){
+        var groupBy = entity.political.groupByRecip(contributions, 'Person');
+
+        it('return an array with 3 objects', function(){
+          expect(groupBy).to.be.an('array');
+          expect(groupBy).to.have.lengthOf(3);
+          groupBy.forEach( x => expect(x).to.be.an('object') );
+        });
+
+        it('each object\'s "value" has the correct keys', function(){
+          groupBy.forEach( x => {
+            expect(x.value).to.include.keys('amount');
+            expect(x.value).to.include.keys('name');
+            expect(x.value).to.include.keys('blurb');
+            expect(x.value).to.include.keys('ext');
+            expect(x.value.ext).to.eql('Person');
+            expect(x.value).to.include.keys('count');
+          });
+        });
+        
+        it('calculates sum per recipient and sorts', function(){
+          expect(groupBy.map(x => x.value.amount)).to.eql([1100,800,500]);
+        });
       });
 
-      it('groups orgs together and calculates sum', function(){
-        expect(groupBy[0].values).to.have.lengthOf(1);
-        expect(groupBy[0].values[0].value.amount).to.eql(600);
+      describe('filter by org', function(){
+        var groupBy = entity.political.groupByRecip(contributions, 'Org');
+
+        it('return an array with 1 objects', function(){
+          expect(groupBy).to.be.an('array');
+          expect(groupBy).to.have.lengthOf(1);
+          groupBy.forEach( x => expect(x).to.be.an('object') );
+        });
+
+        it('each object\'s "value" has the correct keys', function(){
+          groupBy.forEach( x => {
+            expect(x.value).to.include.keys('amount');
+            expect(x.value).to.include.keys('name');
+            expect(x.value).to.include.keys('blurb');
+            expect(x.value).to.include.keys('ext');
+            expect(x.value.ext).to.eql('Org');
+            expect(x.value).to.include.keys('count');
+          });
+        });
+        
+        it('calculates sum per recipient and sorts', function(){
+          expect(groupBy.map(x => x.value.amount)).to.eql([600]);
+        });
       });
 
-      it('has name, blurb and count fields', function(){
-        expect(groupBy[0].values[0].value.count).to.eql(2);
-        expect(groupBy[0].values[0].value.name).to.eql('C');
-        expect(groupBy[0].values[0].value.blurb).to.eql(null);
-        expect(groupBy[1].values[0].value.count).to.eql(2);
-        expect(groupBy[1].values[1].value.count).to.eql(1);
-        expect(groupBy[1].values[2].value.count).to.eql(1);
-        expect(groupBy[1].values[0].value.name).to.eql('A');
-        expect(groupBy[1].values[0].value.blurb).to.eql(null);
-      });
-      
-      function amountForX(x){
-        return groupBy[1].values.find( d => d.key === x).value.amount;
-      }
+      describe('no filter', function(){
+        var groupBy = entity.political.groupByRecip(contributions);
 
-      it('groups politicians together and calculates sum', function(){
-        expect(groupBy[1].values).to.have.lengthOf(3);
-        expect(amountForX('1')).to.eql(1100);
-        expect(amountForX('2')).to.eql(500);
-        expect(amountForX('15')).to.eql(800);
+        it('return an array with 4 objects', function(){
+          expect(groupBy).to.be.an('array');
+          expect(groupBy).to.have.lengthOf(4);
+          groupBy.forEach( x => expect(x).to.be.an('object') );
+        });
+
+        it('each object\'s "value" has the correct keys', function(){
+          groupBy.forEach( x => {
+            expect(x.value).to.include.keys('amount');
+            expect(x.value).to.include.keys('name');
+            expect(x.value).to.include.keys('blurb');
+            expect(x.value).to.include.keys('ext');
+            expect(x.value).to.include.keys('count');
+          });
+        });
+        
+        it('calculates sum per recipient and sorts', function(){
+          expect(groupBy.map(x => x.value.amount)).to.eql([1100,800,600,500]);
+          expect(groupBy.map(x => x.value.ext)).to.eql(['Person','Person','Org','Person']);
+        });
       });
       
-      it('sorts by largest amount', function(){
-        expect(groupBy[1].values.map( x => x.value.amount)).eql([1100,800,500]);
-      });
-      
-    });
-    
-    describe('groupByRecip(): recipient only', function(){
-      var groupBy = entity.political.groupByRecip(contributions, false);
-      
-      it('return an array with 4 objects', function(){
-        expect(groupBy).to.be.an('array');
-        expect(groupBy).to.have.lengthOf(4);
-        groupBy.forEach( x => expect(x).to.be.an('object') );
-      });
-      
-      it('calculates sum per recipient and sorts', function(){
-        expect(groupBy.map(x => x.value.amount)).to.eql([1100,800,600,500]);
-      });
     });
     
   });

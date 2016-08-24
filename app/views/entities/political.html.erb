@@ -34,20 +34,23 @@
 
     <div class="row top-1em">
         <div class="col-md-8 col-sm-8">
-            <h4>Politicians Supported</h4>
-            <div id="politicians-supported"></div>
+            <h4>Politicians and Organizations Supported</h4>
+            <div class="btn-group" data-toggle="buttons" id="who-they-support-buttons">
+                <label class="btn btn-info btn-sm active">
+                    <input type="radio" name="all" id="btn-all" autocomplete="off" checked>All
+                </label>
+                <label class="btn btn-info btn-sm">
+                    <input type="radio" name="politicians" id="btn-politicians" autocomplete="off">Politicians
+                </label>
+                <label class="btn btn-info btn-sm">
+                    <input type="radio" name="orgs" id="btn-organizations" autocomplete="off">Organizations
+                </label>
+            </div>
+            
+            <div id="who-they-support" style="height: 350px;"></div>
         </div>
         <div class="col-md-4 col-sm-4">
         </div>
-    </div>
-
-    <div class="row top-1em">
-        <div class="col-md-8 col-sm-8">
-            <h4>Organizations Supported</h4>
-        </div>
-        <div id="orgs-supported"></div>
-        <div class="col-md-4 col-sm-4">
-q        </div>
     </div>
     
     <div class="row top-1em">

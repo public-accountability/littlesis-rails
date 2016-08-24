@@ -10,6 +10,8 @@ entity.summaryToggle = function(){
 
 entity.political = {};
 entity.political.data = null;
+entity.political.politicians = null;
+entity.political.orgs = null;
 
 /**
  *  Retrieves contributions json for entity id
@@ -208,68 +210,104 @@ entity.political.pieChart = function(parsedData, y){
 };
 
 /**
- * Uses d3.nest to group by recipient and (optionally) by type
- * [{}] => [{Org}, {person}]
+ * Groups contributions by recipient and optionally filters by Person or Org
+ * @param {Array} data - Contributions from getContributions()
+ * @param {String|undefined} extType - "Person" or "Org" or undefined
+ * @returns {Array} 
  */
-entity.political.groupByRecip = function(data, groupByType) {
+entity.political.groupByRecip = function(data, extType) {
+  function sortContributions(a,b){
+    return b.value.amount - a.value.amount;
+  }
+
+  function filterContributions(contributions, extType){
+    return contributions.filter(function(x){ return (x.value.ext === extType); } );
+  }
+
   // Removes matches that don't have a joined LittleSis Entity
   var _data = data.filter(function(x){ return Boolean(x.recip_id); });
 
-  var n = d3.nest();
-  
-  if (groupByType) {
-    n.key(function(d){ return d.recip_ext; }).sortKeys(d3.ascending);
-  }
-  
-  n.key(function(d){ return String(d.recip_id); })
-    // aggregate contributions by recipient
-    .rollup(function(leaves){
-      return {
-        amount: leaves.reduce(function(p, c) { return p + c.amount; }, 0),
-        name: leaves[0].recip_name,
-        blurb: leaves[0].recip_blurb,
-        ext: leaves[0].recip_ext,
-        count: leaves.length
-      };
-    });
-  
-  function sortContributions(a,b){
-   return b.value.amount - a.value.amount;
-  }
-  // sort by contribution amount to each entity
-  if (groupByType) {
-    return n.entries(_data).map(function(x){
-      x.values = x.values.sort(sortContributions);
-      return x; 
-    });
+  var contributions = d3.nest()
+       .key(function(d){ return String(d.recip_id); })
+        // aggregate contributions by recipient
+        .rollup(function(leaves){
+          return {
+            amount: leaves.reduce(function(p, c) { return p + c.amount; }, 0),
+            name: leaves[0].recip_name,
+            blurb: leaves[0].recip_blurb,
+            ext: leaves[0].recip_ext,
+            count: leaves.length
+          };
+        })
+        .entries(_data)
+        .sort(sortContributions);
+
+  if (typeof extType === 'undefined') {
+    return contributions;
   } else {
-    return n.entries(_data).sort(sortContributions);
+    return filterContributions(contributions, extType);
   }
 
 };
 
+
 /**
- * Chart of supported 
- * input: [{}] (output of groupByRecip)
+ * Sets event callbacks for the buttons to pick between showing politicians, orgs or all
  */
-entity.political.whoTheySupport = function(data) {
-  //console.log(data);
-  var container = '#politicians-supported';
+entity.political.whoTheySupportButtons = function(){
+  var p = entity.political;
+  $('#who-they-support-buttons label').on('click',function(e){
+    var selection = $(this).find('input').attr('name');
+    if (selection === 'all') {
+      p.whoTheySupport(p.allRecipients);
+    } else if (selection === 'politicians') {
+      p.whoTheySupport(p.politicians);
+    } else if (selection === 'orgs') {
+      p.whoTheySupport(p.orgs);
+    } else {
+      console.log('the name for the button must be: all, politicians, or orgs');
+    }
+  });
+};
+
+/**
+ * Creates "Who They Support" chart
+ * @param {Array} data - output of groupByRecip
+ */
+entity.political.whoTheySupport = function(d) {
+  var data = d.slice(0,10); // top 10
+  var container = '#who-they-support';
+  $(container).empty();
   var margin = {top: 10, right: 10, bottom: 10, left: 10};
   var w = $(container).width() - 20;
   var h = 350;
   
-  var orgs = data[0].values;
-  var politicans = data[1].values;
-
   var svg = d3.select(container).append('svg')
         .attr("width", w + margin.left + margin.right)
         .attr("height", h + margin.top + margin.bottom)
         .append("g")
         .attr("transform","translate(" + margin.left + "," + margin.top + ")");
   
+  var x = d3.scaleLinear()
+        .range([0,w])
+        .domain([0, data[0].value.amount]);
+ 
+  var y = d3.scaleBand()
+        .domain(data.map(function(x,index){ return index; }))
+        .range([0,h])
+        .padding(0.1);
+        
   svg.selectAll('rect')
-    .data(data[1].values, function(d){ });
+    .data(data)
+    .enter().append('rect')
+    .attr('x', '0')
+    .attr('y', function(d, i){
+      return y(i);
+    })
+    .attr('height', y.bandwidth())
+    .attr('width', function(d){
+      return x(d.value.amount);
+    });
 };
 
 
@@ -278,15 +316,19 @@ entity.political.whoTheySupport = function(data) {
  * Kicks it all off
  */
 entity.political.init = function(){
+  var p = entity.political;
   var id = $('#political-contributions').data('entityid');
-  entity.political.getContributions(id, function(contributions){
+  p.getContributions(id, function(contributions){
     // data //
-    entity.political.data = entity.political.parseContributions(contributions);
-    entity.political.groupedByType = entity.political.groupByTypeAndRecip(contributions);
-    entity.political.groupedByRecip = entity.political.groupByRecip(contributions);
+    p.data = p.parseContributions(contributions);
+    p.allRecipients = p.groupByRecip(contributions);
+    p.politicians = p.groupByRecip(contributions, 'Person');
+    p.orgs = p.groupByRecip(contributions, 'Org');
     // charts //
-    entity.political.barChart(entity.political.data);
-    entity.political.pieChart(entity.political.data);
-    entity.political.whoTheySupport(entity.political.groupedByType);
+    p.barChart(p.data);
+    p.pieChart(p.data);
+    p.whoTheySupport(p.allRecipients);
+    // dom events //
+    p.whoTheySupportButtons();
   });
 };
