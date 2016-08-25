@@ -270,46 +270,92 @@ entity.political.whoTheySupportButtons = function(){
   });
 };
 
+entity.political.entityLink = function(d) {
+  var url = '//littlesis.org/';
+  if (d.value.ext === 'Person') {
+    url += 'person/';
+  } else {
+    url += 'org/';
+  }
+  url += (d.key + '/'  + d.value.name.replace(' ', '_'));
+  return url;
+};
+
 /**
  * Creates "Who They Support" chart
  * @param {Array} data - output of groupByRecip
  */
 entity.political.whoTheySupport = function(d) {
   var data = d.slice(0,10); // top 10
+  
   var container = '#who-they-support';
   $(container).empty();
-  var margin = {top: 10, right: 10, bottom: 10, left: 10};
-  var w = $(container).width() - 20;
-  var h = 350;
   
+  var margin = {top: 10, right: 50, bottom: 10, left: 10};
+  var w = $(container).width();
+  var h = 35 * data.length;
+  var offset = 330;
+
+  var x = d3.scaleLinear()
+        .range([0, (w - offset)])
+        .domain([0, data[0].value.amount]);
+  
+  var y = d3.scaleBand()
+        .domain(data.map(function(x,index){ return index; }))
+        .range([0,h])
+        .padding(0.2);
+
   var svg = d3.select(container).append('svg')
         .attr("width", w + margin.left + margin.right)
         .attr("height", h + margin.top + margin.bottom)
         .append("g")
         .attr("transform","translate(" + margin.left + "," + margin.top + ")");
   
-  var x = d3.scaleLinear()
-        .range([0,w])
-        .domain([0, data[0].value.amount]);
- 
-  var y = d3.scaleBand()
-        .domain(data.map(function(x,index){ return index; }))
-        .range([0,h])
-        .padding(0.1);
-        
-  svg.selectAll('rect')
+  svg.selectAll('.amount-bars')
     .data(data)
     .enter().append('rect')
-    .attr('x', '0')
-    .attr('y', function(d, i){
-      return y(i);
+      .attr('fill', 'Rgba(168,221,181, 0.7)')
+      .attr('x', '0')
+      .attr('y', function(d, i){
+        return y(i); 
+      })
+      .attr('height', y.bandwidth())
+      .attr('width', function(d){
+        return x(d.value.amount) + offset;
+      });
+  
+  svg.selectAll('.name')
+    .data(data).enter()
+    .append("a")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "10px")
+    .attr("fill", "black")
+    .attr("font-weight", "bold")
+    .attr('xlink:href', entity.political.entityLink)
+    .append("text")
+    .text(function(d) { 
+      return d.value.name; 
     })
-    .attr('height', y.bandwidth())
-    .attr('width', function(d){
-      return x(d.value.amount);
+    .attr("x", '5')
+    .attr("y", function(d, i) {
+      return y(i) + (y.bandwidth() / 2);
+    });
+
+  svg.selectAll('.amount')
+    .data(data)
+    .enter()
+    .append("text")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "9px")
+    .attr("fill", "black")
+    .text(function(d) { return d3.format("$,.4r")(d.value.amount); })
+    .attr("x", function(d, i){
+      return x(d.value.amount) + offset + 5;
+    })
+    .attr("y", function(d, i) {
+      return y(i) + (y.bandwidth() / 2);
     });
 };
-
 
 
 /**
