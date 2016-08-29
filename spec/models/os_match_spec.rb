@@ -12,23 +12,27 @@ describe OsMatch, type: :model do
     DatabaseCleaner.clean
   end
 
+  def model_setup
+    @loeb = create(:loeb)
+    @nrsc = create(:nrsc)
+    @loeb_donation = create(:loeb_donation) # relationship model
+    @loeb_os_donation = create(:loeb_donation_one)
+    @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
+    @donation_class = create(:donation, relationship_id: @loeb_donation.id)
+    @os_match = OsMatch.create(
+      os_donation_id: @loeb_os_donation.id,
+      donation_id: @donation_class.id,
+      donor_id: @loeb.id,
+      recip_id: @nrsc.id,
+      reference_id: @loeb_ref_one.id,
+      relationship_id: @loeb_donation.id)
+  end
+
   describe 'Associations' do 
 
     before(:all) do
       DatabaseCleaner.start
-      @loeb = create(:loeb)
-      @nrsc = create(:nrsc)
-      @loeb_donation = create(:loeb_donation) # relationship model
-      @loeb_os_donation = create(:loeb_donation_one)
-      @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
-      @donation_class = create(:donation, relationship_id: @loeb_donation.id)
-      @os_match = OsMatch.create(
-        os_donation_id: @loeb_os_donation.id,
-        donation_id: @donation_class.id,
-        donor_id: @loeb.id,
-        recip_id: @nrsc.id,
-        reference_id: @loeb_ref_one.id,
-        relationship_id: @loeb_donation.id)
+      model_setup
     end
 
     after(:all) do
@@ -87,10 +91,15 @@ describe OsMatch, type: :model do
 
 
   describe '#set_recipient_and_committee' do
-    before do 
+    before(:all) do 
+      DatabaseCleaner.start
       @loeb = create(:loeb)
       @nrsc = create(:nrsc)
       @elected = create(:elected)
+    end
+    
+    after(:all) do
+      DatabaseCleaner.clean
     end
     
     it 'sets committee to be the same as the recipient if the ids are the same'do
@@ -116,12 +125,17 @@ describe OsMatch, type: :model do
 
   describe '#update_donation_relationship' do
     before(:all) do 
+      DatabaseCleaner.start
       @relationship_count = Relationship.count
       @loeb = create(:loeb)
       @nrsc = create(:nrsc)
       @os_donation = create(:loeb_donation_one)
       @os_match = OsMatch.create(os_donation_id: @os_donation.id, donor_id: @loeb.id, recip_id: @nrsc.id)
       @os_match.update_donation_relationship
+    end
+    
+    after(:all) do
+      DatabaseCleaner.clean
     end
     
     it "creates a new relationship if it doesn't yet exist" do
@@ -138,7 +152,6 @@ describe OsMatch, type: :model do
     end
 
     it "updates amount" do
-      
       expect(@os_match.relationship.amount).to eql 30800
     end
 
@@ -196,11 +209,17 @@ describe OsMatch, type: :model do
     end
 
     describe '#create_reference'do 
-      before do 
+      before(:all) do
+        DatabaseCleaner.start
         @ref_count = Reference.count
         @os_match.create_reference
         @ref = Reference.last
       end
+
+      after(:all) do
+        DatabaseCleaner.clean
+      end
+      
       it 'creates a new reference' do 
         expect(Reference.count).to eql (@ref_count + 1)
       end
@@ -246,33 +265,39 @@ describe OsMatch, type: :model do
     
   end
 
-
   describe '#find_or_create_cmte' do 
     
     before(:all) do
+      DatabaseCleaner.start    
       @nrsc = create(:nrsc, id: 8888)
       @donation = create(:loeb_donation_one, cmteid: ":-<", fec_cycle_id: 'xx')
       @fundraiser = PoliticalFundraising.create(entity_id: @nrsc.id, fec_id: ":-<")
+    end
+    
+    after(:all) do
+      DatabaseCleaner.clean
     end
     
     it 'return entity if a fundraising entity is found' do 
       expect(OsMatch.create(os_donation_id: @donation.id).find_or_create_cmte).to eql @nrsc
     end
   
-end
+  end
 
    describe 'Class Methods' do 
      
      describe 'create_new_cmte' do 
-       before do 
+       before(:all) do 
+         DatabaseCleaner.start    
          Entity.set_callback(:create, :after, :create_primary_ext)
          @cmte = create(:os_committee)
          @created_entity = OsMatch.create_new_cmte @cmte
          @e = Entity.last
        end
 
-       after do 
+       after(:all) do 
          Entity.skip_callback(:create, :after, :create_primary_ext)
+         DatabaseCleaner.clean
        end
        
        it 'creates a new entity' do 
@@ -313,4 +338,114 @@ end
      #   end
    end
 
+   # describe 'softDelete' do
+   #   before(:all) do 
+   #     @count = OsMatch.count
+   #     @os_match = OsMatch.create(os_donation_id: 123, donor_id: 123)
+   #   end
+     
+   #   it 'increases os match count' do
+   #     expect(OsMatch.count).to eql (@count + 1)
+   #   end
+     
+   #   it 'returns os match count to regular state after soft delete' do 
+   #     @os_match.destroy
+   #     expect(OsMatch.count).to eql @count
+   #   end
+     
+   #   it 'finds all os matches if unscoped' do 
+   #     expect(OsMatch.unscoped.count).to eql (@count + 1)
+   #   end
+   # end
+
+   describe 'unmatch' do
+
+     before(:all) do
+       DatabaseCleaner.start
+       @loeb = create(:loeb)
+       @nrsc = create(:nrsc)
+       @loeb_donation = create(:loeb_donation) # relationship model
+       @loeb_os_donation = create(:loeb_donation_one)
+       @loeb_os_donation_two = create(:loeb_donation_two)
+       @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
+       @loeb_ref_two = create(:loeb_ref_two, object_id: @loeb_donation.id, object_model: "Relationship")
+       # @donation_class = create(:donation, relationship_id: @loeb_donation.id)
+       @os_match = OsMatch.create(
+         os_donation_id: @loeb_os_donation.id,
+         donor_id: @loeb.id,
+         recip_id: @nrsc.id,
+         reference_id: @loeb_ref_one.id,
+         relationship_id: @loeb_donation.id)
+       @os_match_2 = OsMatch.create(
+         os_donation_id: @loeb_os_donation_two.id,
+         donor_id: @loeb.id,
+         recip_id: @nrsc.id,
+         reference_id: @loeb_ref_two.id,
+         relationship_id: @loeb_donation.id)
+       @loeb_donation.update_os_donation_info
+     end
+
+     after(:all) do
+       DatabaseCleaner.clean
+     end
+     
+     it 'relationship has two matches' do 
+       expect(Relationship.find(@loeb_donation.id).amount).to eql 61200
+       expect(Relationship.find(@loeb_donation.id).filings).to eql 2
+     end
+
+     context 'after destroying os_match_2' do 
+       before(:all) do 
+
+         @count = OsMatch.count
+         @os_match_2.destroy
+       end
+       
+       it 'updates the relationship if relationship still has matches' do 
+         expect(Relationship.find(@loeb_donation.id).filings).to eql 1
+       end
+       
+       it 'destroys the reference' do 
+         expect(Reference.where(id: @loeb_ref_two.id).exists?).to be false
+       end
+       
+        it 'deletes the match' do
+          expect(OsMatch.where(id: @os_match_2.id).exists?).to be false
+          expect(OsMatch.count).to eql (@count - 1)
+       end 
+     
+     end
+     
+     context 'after destroying Os_match' do 
+
+       before(:all) do 
+         @count = OsMatch.count
+         @os_match.destroy
+       end
+
+       it 'destroys the relationship if the match was the only one' do 
+         expect(Relationship.where(id: @loeb_donation.id).exists?).to be false
+         expect(Relationship.unscoped.find(@loeb_donation.id).is_deleted).to be true
+       end
+
+       it 'destroys the donation-class model' do
+         expect(Donation.where(id: @loeb_donation.donation.id).exists?).to be false
+       end
+       
+       it 'deletes associated links' do 
+         expect(Relationship.unscoped.find(@loeb_donation.id).links).to be_empty
+       end
+       
+       it 'destroys the reference' do
+         expect(Reference.where(id: @loeb_ref_one.id).exists?).to be false
+       end
+       
+       it 'deletes the match' do 
+         expect(OsMatch.where(id: @os_match.id).exists?).to be false
+         expect(OsMatch.count).to eql (@count - 1)
+       end
+
+     end
+
+   end
 end

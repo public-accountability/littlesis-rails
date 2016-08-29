@@ -1,6 +1,6 @@
 class OsMatch < ActiveRecord::Base
- include SoftDelete
- # has_paper_trail
+  # include SoftDelete
+  # has_paper_trail
   
   belongs_to :os_donation
   belongs_to :donation, inverse_of: :os_matches
@@ -13,6 +13,8 @@ class OsMatch < ActiveRecord::Base
   validates_presence_of :os_donation_id, :donor_id
 
   after_create :post_process
+
+  after_destroy :unmatch
 
   def post_process
     set_recipient_and_committee
@@ -93,6 +95,21 @@ class OsMatch < ActiveRecord::Base
     end
   end
 
+  # 1) Updates relationship os donation info
+  # 2) Destroys links and donations
+  # 3) Destroys the reference
+  def unmatch
+    relationship.update_os_donation_info.save
+
+    if relationship.filings == 0 
+      relationship.soft_delete 
+      relationship.donation.destroy
+      relationship.links.each { |link| link.delete }
+    end
+    
+    reference.destroy
+  end
+  
   # input <OsCommittee>
   # output <Entity> or nil
   def self.create_new_cmte(cmte)
@@ -105,5 +122,5 @@ class OsMatch < ActiveRecord::Base
       entity
     end
   end
-
+  
 end
