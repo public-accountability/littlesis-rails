@@ -99,7 +99,7 @@ class OsMatch < ActiveRecord::Base
   # 2) Destroys links and donations
   # 3) Destroys the reference
   def unmatch
-    relationship.update_os_donation_info.save
+    relationship.update_os_donation_info.save!
 
     if relationship.filings == 0 
       relationship.soft_delete 

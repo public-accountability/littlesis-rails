@@ -70,7 +70,8 @@ describe EntitiesController, type: :controller do
 
   describe 'match/unmatch donations' do 
     login_user
-    before do 
+
+    before(:all) do 
       @entity = create(:mega_corp_inc)
     end
     
@@ -93,7 +94,10 @@ describe EntitiesController, type: :controller do
     
     describe 'POST #unmatch_donation'do 
       before do 
-        post :unmatch_donation, {id: @entity.id}
+        @os_match = double('os match')
+        expect(@os_match).to receive(:destroy).exactly(3).times
+        expect(OsMatch).to receive(:find).exactly(3).times.and_return(@os_match)
+        post :unmatch_donation, {id: @entity.id, payload: [5,6,7]}
       end
       
       it 'has 200 status code' do 
