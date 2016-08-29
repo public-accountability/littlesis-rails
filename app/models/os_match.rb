@@ -9,6 +9,7 @@ class OsMatch < ActiveRecord::Base
   belongs_to :committee, class_name: "Entity", foreign_key: "cmte_id", inverse_of: :committee_donors
   belongs_to :reference
   belongs_to :relationship, inverse_of: :os_matches
+  belongs_to :user, foreign_key: "matched_by"
 
   validates_presence_of :os_donation_id, :donor_id
 

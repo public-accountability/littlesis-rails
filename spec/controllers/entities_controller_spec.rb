@@ -90,6 +90,13 @@ describe EntitiesController, type: :controller do
         expect(@entity.reload.last_user_id).to eql SfGuardUser.last.id
       end
 
+      it 'sets the matched_by field of OsMatch' do 
+        OsMatch.last(2).each do |match|
+          expect(match.matched_by).to eql User.last.id
+          expect(match.user).to eql User.last
+        end
+      end
+
     end
     
     describe 'POST #unmatch_donation'do 

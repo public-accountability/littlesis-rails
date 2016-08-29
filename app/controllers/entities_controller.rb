@@ -62,7 +62,8 @@ class EntitiesController < ApplicationController
     check_permission 'importer'
 
     params[:payload].each do |donation_id| 
-       OsMatch.find_or_create_by(os_donation_id: donation_id, donor_id: params[:id])
+       match = OsMatch.find_or_create_by(os_donation_id: donation_id, donor_id: params[:id])
+       match.update(matched_by: current_user.id)
     end
     @entity.update(last_user_id: current_user.sf_guard_user.id)
     render json: {status: 'ok'}

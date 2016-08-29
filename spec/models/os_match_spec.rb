@@ -19,13 +19,16 @@ describe OsMatch, type: :model do
     @loeb_os_donation = create(:loeb_donation_one)
     @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
     @donation_class = create(:donation, relationship_id: @loeb_donation.id)
+    @user = create(:user, sf_guard_user_id: 1)
     @os_match = OsMatch.create(
       os_donation_id: @loeb_os_donation.id,
       donation_id: @donation_class.id,
       donor_id: @loeb.id,
       recip_id: @nrsc.id,
       reference_id: @loeb_ref_one.id,
-      relationship_id: @loeb_donation.id)
+      relationship_id: @loeb_donation.id,
+      matched_by: @user.id
+    )
   end
 
   describe 'Associations' do 
@@ -72,6 +75,10 @@ describe OsMatch, type: :model do
     it 'belongs to a relationship' do 
       expect(@os_match.relationship).to eql @loeb_donation
       expect(Relationship.find(@loeb_donation.id).os_matches).to eq [@os_match]
+    end
+
+    it 'belongs to a user' do 
+      expect(@os_match.user).to eql @user
     end
     
     it 'requires os_donation_id' do 
