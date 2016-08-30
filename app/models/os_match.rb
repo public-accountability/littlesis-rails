@@ -1,3 +1,4 @@
+# coding: utf-8
 class OsMatch < ActiveRecord::Base
   # include SoftDelete
   # has_paper_trail
@@ -30,6 +31,18 @@ class OsMatch < ActiveRecord::Base
       update_attributes :committee => cmte, :recipient => cmte
     else
       update_attributes :recip_id => find_recip_id(os_donation.recipid), :committee => find_or_create_cmte
+    end
+  end
+
+  # used by rake task: re_match
+  def set_recipient
+    return nil unless recip_id.nil?
+    recipient = find_recip_id(os_donation.recipid)
+    if recipient.nil?
+      printf("\ncould not find a recipient for %s\n", id)
+    else
+      printf(" ✓")
+      update(recip_id: recipient)
     end
   end
 

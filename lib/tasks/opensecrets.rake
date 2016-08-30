@@ -82,7 +82,34 @@ namespace :opensecrets do
     printf("total: %s \n", total)
     printf("Percent found %s  \n", ( ((found + found_in_os) / total) * 100) )
   end
+  
+  desc "Find Os_Matches without recipients"
+  task os_matches_without_recip: :environment do 
+    OsMatch.where('recip_id is null').each do |match|
+      recipid = match.os_donation.recipid
+      cycle = match.os_donation.cycle
+      cand = OsCandidate.find_by(crp_id: recipid, cycle: cycle)
+      if cand.nil?
+        printf("Could not find a candidate for : %s\n", recipid)
+      else
+        printf("candidate: %s (%s) - %s \n", cand.name, cand.cycle, recipid)
+      end
+    end
+  end
 
+  desc "How many OsMatches are missing relationships"
+  task missing_relationships: :environment do 
+    printf("There are %s os_matches  with NULL relationships\n", OsMatch.where('relationship_id is null').count)
+  end
+
+  desc "Find missing recip_ids and update/creates relationships"
+  task rematch: :environment do 
+    OsMatch.where('relationship_id is null').each do |match|
+       match.set_recipient
+       match.update_donation_relationship
+    end
+  end
+  
   desc "Match legacy Os Donations"
   task legacy_matcher: :environment do
     OsMatch.skip_callback(:create, :after, :post_process)
