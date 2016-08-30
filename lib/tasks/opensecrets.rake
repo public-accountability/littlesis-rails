@@ -107,6 +107,7 @@ namespace :opensecrets do
     OsMatch.where('relationship_id is null').each do |match|
        match.set_recipient
        match.update_donation_relationship
+       match.create_reference
     end
   end
   
