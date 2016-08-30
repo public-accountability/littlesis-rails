@@ -22,6 +22,11 @@ entity.political.getContributions = function (id, cb){
 };
 
 /**
+ * Colors for donations categories: ["dem", "gop", "pac", "other", "out"]
+ */
+entity.political.colors = ["#3333FF", "#E91D0E", "#b3cde3", "#bfbfbf", "#ccebc5"];
+
+/**
  * Creates D3 Graphic
  * Modeled after: https://bl.ocks.org/mbostock/3886208
  */
@@ -37,8 +42,19 @@ entity.political.barChart = function(data){
   
   var y = d3.scaleLinear()
         .range([h,0]);
+  
+  var labelText = {
+    "dem": "Democrat",
+    "gop": "Republican",
+    'other': "3rd party/other",
+    'pac': "Pacs",
+    'out': "Outside spending"
+  };
 
-  var z = d3.scaleOrdinal().range(["#3333FF", "#EE3523", "#bfbfbf"]);
+  var cats = ["dem", "gop", "pac", "other", "out"];
+  var colors = entity.political.colors;
+  
+  var z = d3.scaleOrdinal().range(colors);
 
    // scale	
   x.domain(data.map(function(d){return d.year;}));
@@ -46,12 +62,12 @@ entity.political.barChart = function(data){
   y.domain([0, ymax]);
 
   var stack = d3.stack()
-        .keys(["dem", "gop", "other"]);
+        .keys(cats);
   //   .order(d3.stackOrderNone)
   //   .offset(d3.stackOffsetNone);
 
   var series = stack(data);
-       
+  
   var svg = d3.select(container).append('svg')
         .attr("width", w + margin.left + margin.right)
         .attr("height", h + margin.top + margin.bottom)
@@ -72,7 +88,7 @@ entity.political.barChart = function(data){
     .on('mouseout', function(d){
       entity.political.pieChart(entity.political.data);
     })
-     .attr("x", function(d){ return x(d.data.year); })
+    .attr("x", function(d){ return x(d.data.year); })
     .attr("y", function(d){ return y(d[1]); })
     .attr("height",function(d) { return y(d[0])- y(d[1]); })
     .attr("width", x.bandwidth());
@@ -87,6 +103,24 @@ entity.political.barChart = function(data){
   svg.append("g")
     .call(yAxis);
 
+  var legend = svg.selectAll(".legend")
+        .data(cats)
+        .enter().append("g")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
+        .style("font", "9px sans-serif");
+
+  legend.append("rect")
+    .attr("x", 5)
+    .attr("width", 15)
+    .attr("height", 15)
+    .attr("fill", z);
+
+  legend.append("text")
+    .attr("x", 23)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .attr("text-anchor", "left")
+    .text(function(d) {  return labelText[d]; });
 };
 
 
@@ -103,6 +137,8 @@ entity.political.parseContributions = function(contributions){
       amount: 0,
       dem: 0,
       gop: 0,
+      pac: 0,
+      out: 0,
       other: 0
     };
   });
@@ -118,15 +154,17 @@ entity.political.parseContributions = function(contributions){
     // with d3 formatting on some profiles, so I'm excluding them until
     // a better solution is reached
     if (c.amount > 0) {
-
       if (party === 'D') {
         cycles[i].dem += c.amount;
       } else if (party === 'R') {
         cycles[i].gop += c.amount;
-      } else {
+      } else if (party === 'P') {
+        cycles[i].pac += c.amount;
+      } else if (party === 'O') {
+        cycles[i].out += c.amount;
+      }  else {
         cycles[i].other += c.amount;
       }
-
     }
   });
   return cycles;
@@ -140,12 +178,17 @@ entity.political.contributionAggregate = function(parsedContributions){
   var dem = {party: 'D', amount: 0};
   var gop = {party: 'R', amount: 0};
   var ind = {party: 'I', amount: 0};
+  var pac = {party: 'P', amount: 0};
+  var out = {party: 'O', amount: 0};
+
   parsedContributions.forEach(function(x){
     dem.amount += x.dem;
     gop.amount += x.gop;
     ind.amount += x.other;
+    pac.amount += x.pac;
+    out.amount += x.out;
   });
-  return [dem, gop, ind];
+  return [dem, gop, pac, ind, out];
 };
 
 /**
@@ -159,9 +202,8 @@ entity.political.pieChart = function(parsedData, y){
   var width = canvas.width;
   var height = canvas.height;
   var radius = Math.min(width, height) / 2;
-  var colors = ["#3333FF", "#EE3523", "#bfbfbf"];
+  var colors = entity.political.colors;
   var year = (typeof y === 'undefined') ? false : y;
-
   // [{fields: party, amount }]
   var filteredByYear =  (year) ? parsedData.filter(function(d){ return (d.year === year); }) : parsedData;
   var data = entity.political.contributionAggregate(filteredByYear);
@@ -172,7 +214,9 @@ entity.political.pieChart = function(parsedData, y){
   var totalFormatted = d3.format("$,.4r")(totalAmount);
   var demPct = d3.format('.0%')(data[0].amount / totalAmount);
   var gopPct = d3.format('.0%')(data[1].amount / totalAmount);
-  var indPct = d3.format('.0%')(data[2].amount / totalAmount);
+  var pacPct = d3.format('.0%')(data[2].amount / totalAmount);
+  var indPct = d3.format('.0%')(data[3].amount / totalAmount);
+  var outPct = d3.format('.0%')(data[4].amount / totalAmount);
   
   var arc = d3.arc()
         .outerRadius(radius - 20)
@@ -206,7 +250,8 @@ entity.political.pieChart = function(parsedData, y){
   $('span.republican').text(gopPct);
   $('span.democrat').text(demPct);
   $('span.independent').text(indPct);
-  
+  $('span.pacs').text(pacPct);
+  $('span.outside-spending').text(outPct);
 };
 
 /**
@@ -235,6 +280,7 @@ entity.political.groupByRecip = function(data, extType) {
             amount: leaves.reduce(function(p, c) { return p + c.amount; }, 0),
             name: leaves[0].recip_name,
             blurb: leaves[0].recip_blurb,
+            recipcode: leaves[0].recipcode,
             ext: leaves[0].recip_ext,
             count: leaves.length
           };
@@ -249,7 +295,6 @@ entity.political.groupByRecip = function(data, extType) {
   }
 
 };
-
 
 /**
  * Sets event callbacks for the buttons to pick between showing politicians, orgs or all
@@ -282,6 +327,20 @@ entity.political.entityLink = function(d) {
 };
 
 /**
+ * input: d; d.value = rollup object from groupByRecip
+ * output: string
+ */
+entity.political.formatName = function(d) {
+  var party = d.value.recipcode.slice(0,1);
+  if (d.value.ext === 'Person') {
+    if (party === 'R' || party === 'D' || party === 'I') {
+      return d.value.name + ' (' + party + ')';
+    }
+  }
+  return d.value.name;  // default
+};
+
+/**
  * Creates "Who They Support" chart
  * @param {Array} data - output of groupByRecip
  */
@@ -291,7 +350,7 @@ entity.political.whoTheySupport = function(d) {
   var container = '#who-they-support';
   $(container).empty();
   
-  var margin = {top: 10, right: 50, bottom: 10, left: 10};
+  var margin = {top: 10, right: 65, bottom: 10, left: 10};
   var w = $(container).width();
   var h = 35 * data.length;
   var offset = 330;
@@ -299,7 +358,7 @@ entity.political.whoTheySupport = function(d) {
   var x = d3.scaleLinear()
         .range([0, (w - offset)])
         .domain([0, data[0].value.amount]);
-  
+
   var y = d3.scaleBand()
         .domain(data.map(function(x,index){ return index; }))
         .range([0,h])
@@ -316,31 +375,30 @@ entity.political.whoTheySupport = function(d) {
     .enter().append('rect')
       .attr('fill', 'Rgba(168,221,181, 0.7)')
       .attr('x', '0')
-      .attr('y', function(d, i){
-        return y(i); 
-      })
-      .attr('height', y.bandwidth())
+      .attr('y', function(d, i){ return y(i); })
+    .attr('height', y.bandwidth())
       .attr('width', function(d){
         return x(d.value.amount) + offset;
       });
-  
+
   svg.selectAll('.name')
     .data(data).enter()
     .append("a")
-    .attr("font-family", "sans-serif")
-    .attr("font-size", "10px")
-    .attr("fill", "black")
-    .attr("font-weight", "bold")
-    .attr('xlink:href', entity.political.entityLink)
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "10px")
+      .attr("fill", "black")
+      .attr("font-weight", "bold")
+      .attr('xlink:href', entity.political.entityLink)
     .append("text")
-    .text(function(d) { 
-      return d.value.name; 
-    })
-    .attr("x", '5')
-    .attr("y", function(d, i) {
-      return y(i) + (y.bandwidth() / 2);
-    });
-
+      .text(entity.political.formatName)
+      .attr("x", '5')
+      .attr("y", function(d, i) {
+        return y(i) + (y.bandwidth() / 2);
+      })
+    .filter(function(d){ return (d.value.blurb) ? true : false; })
+    .append('title')
+      .text(function(d){ return d.value.blurb; });
+  
   svg.selectAll('.amount')
     .data(data)
     .enter()
@@ -356,7 +414,6 @@ entity.political.whoTheySupport = function(d) {
       return y(i) + (y.bandwidth() / 2);
     });
 };
-
 
 /**
  * Kicks it all off
