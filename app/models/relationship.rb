@@ -8,7 +8,13 @@ class Relationship < ActiveRecord::Base
   MEMBERSHIP_CATEGORY = 3
   FAMILY_CATEGORY = 4
   DONATION_CATEGORY = 5
+  TRANSATION_CATEGORY = 6
+  LOBBYING_CATEGORY = 7
+  SOCIAL_CATEGORY = 8
+  PROFESSIONAL_CATEGORY = 9
   OWNERSHIP_CATEGORY = 10
+  HIERARCHY_CATEGORY = 11
+  GENERIC_CATEGORY = 12
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
@@ -163,6 +169,45 @@ class Relationship < ActiveRecord::Base
     position.nil? ? nil : position.is_executive
   end
 
+  def is_member?
+    category_id == MEMBERSHIP_CATEGORY
+  end
+
+  def is_education?
+    category_id == EDUCATION_CATEGORY
+  end
+
+  def is_family?
+    category_id == FAMILY_CATEGORY
+  end
+  
+  def title
+    if description1.blank?
+      if is_board
+        return "Board Member"
+      elsif is_member?
+        return "Member"
+      elsif is_education? and education.degree.present?
+        return education.degree.name
+      elsif is_family?
+        
+      else
+        return nil
+      end
+    else
+      description1
+    end
+  end
+    
+  ########################
+  # Open Secrets Helpers #
+  ########################
+
+  def update_os_donation_info
+    self.attributes = { amount: os_donations.sum(:amount), filings: os_donations.count }
+    self
+  end
+
   # input: <Date>
   def update_start_date_if_earlier(new_date)
     if date_string_to_date(:start_date).nil?
@@ -172,11 +217,6 @@ class Relationship < ActiveRecord::Base
     else
       # no change
     end
-  end
-
-  def update_os_donation_info
-    self.attributes = { amount: os_donations.sum(:amount), filings: os_donations.count }
-    self
   end
 
   def update_end_date_if_later(new_date)

@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe Relationship, type: :model do
   before(:all) do 
+    DatabaseCleaner.start
     Entity.skip_callback(:create, :after, :create_primary_ext)
     @loeb = create(:loeb)
     @nrsc = create(:nrsc)
@@ -9,7 +10,35 @@ describe Relationship, type: :model do
   end
   after(:all) do 
     Entity.set_callback(:create, :after, :create_primary_ext)
+    DatabaseCleaner.clean
   end
+
+  describe '#title' do 
+    
+    it 'returns description1 if it exists' do 
+      rel = build(:position_relationship, description1: "dictator")
+      expect(rel.title).to eql 'dictator'
+    end
+
+    it 'returns Board Member if the person is a board member' do 
+       rel = create(:relationship, entity1_id: @loeb.id, entity2_id: @nrsc.id, category_id: 1)
+       rel.position.update(is_board: true)
+       expect(rel.title).to eql 'Board Member'
+    end
+    
+    it 'returns "Member" if the position is a membership category' do 
+      rel = create(:relationship, entity1_id: @loeb.id, entity2_id: @nrsc.id, category_id: 3)
+      expect(rel.title).to eql 'Member'
+    end
+
+    it 'returns degree if Education description1 is blank and there is a degree id' do 
+      rel = create(:relationship, entity1_id: @loeb.id, entity2_id: @nrsc.id, category_id: 2)
+      rel.education.update(degree_id: 2)
+      expect(rel.title).to eql 'Bachelor of Arts'
+    end
+    
+  end
+
 
   describe 'Update Start/End dates' do 
 

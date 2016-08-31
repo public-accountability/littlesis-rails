@@ -18,14 +18,50 @@
     </div>
     
     <div class="row top-1em">
-        <div class="col-md-10 col-sm-10">
+        <div class="col-md-9 col-sm-9">
             <div id="match-donations" data-entityid="<%= @entity.id %>">
                 <table id="donations-table" class="display" width="100%"></table>
             </div>
             <script>matchDonations.init();</script>
         </div>
-        <div class="col-md-2 col-sm-2">
-            <!-- side bar -->
+        <div class="col-md-3 col-sm-3" id="about-sidebar">
+            <div class="row thin-grey-bottom-border">
+                <h3 class="text-center"><%= @entity.name %></h3>
+                <% unless @entity.person.birthplace.blank? %>
+                    <p class="text-center"><strong>Birthplace:</strong> <%= @entity.person.birthplace  %></p>
+                <% end %>
+                <% unless @entity.person.gender_id.blank? %>
+                    <p class="text-center"><strong>Gender:</strong> <%= @entity.person.gender  %></p>
+                <% end %>
+            </div>
+            <br>
+            <% if @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').present? %>
+                <div class="row text-center">
+                    <p class=""><strong>Positions</strong></p>
+                    <% @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').each do |r|  %>
+                        <p><%= r.related.name  %><br><span class="text-primary"><%= rel_link(r, r.title) %></span></p>
+                    <% end %>
+                </div>
+            <% end %>
+
+            <% if @entity.relationships.where(category_id: 2).present? %>
+                <div class="row text-center">
+                    <p><strong>Education</strong></p>
+                    <% @entity.relationships.where(category_id: 2).each do |r|  %>
+                        <p><%= r.related.name  %><br><span class="text-primary"><%= rel_link(r, r.title) %></span></p>
+                    <% end %>
+                </div>
+            <% end %>
+            
+            <% if @entity.relationships.where(category_id: 4).present? %>
+                <div class="row text-center">
+                    <p><strong>Family</strong></p>
+                    <% @entity.relationships.where(category_id: 2).each do |r|  %>
+                        <p><%= r.related.name  %><br><span class="text-primary"><%= rel_link(r, r.title) %></span></p>
+                    <% end %>
+                </div>
+            <% end %>
+            
         </div>
     </div>
     

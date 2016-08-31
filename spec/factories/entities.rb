@@ -5,6 +5,10 @@ FactoryGirl.define do
     primary_ext "Person"
   end
 
+  factory :person, class: Entity do 
+    name "Human Being"
+    primary_ext "Person"
+  end
 
   factory :mega_corp_inc, class: Entity do
     name "mega corp INC"
