@@ -57,7 +57,7 @@
             <% if @entity.relationships.where(category_id: 4).present? %>
                 <div class="row text-center">
                     <p><strong>Family</strong></p>
-                    <% @entity.relationships.where(category_id: 2).each do |r|  %>
+                    <% @entity.relationships.where(category_id: 4).each do |r|  %>
                         <% cache r do %>
                             <%= render partial: 'position', locals: { relationship: r } %>
                         <% end %>
