@@ -27,7 +27,7 @@ describe 'entities/political.html.erb' do
 
     it 'has actions' do 
       expect(rendered).to have_css '#entity-edited-history'
-      expect(rendered).to have_css '#entity-actions a', :count => 3
+      expect(rendered).to have_css '#actions a', :count => 3
     end
 
     it 'has tabs' do 
@@ -48,7 +48,7 @@ describe 'entities/political.html.erb' do
 
     it 'has pie info div with spans' do
       expect(rendered).to have_css '#pie-info', :count => 1
-      expect(rendered).to have_css '#pie-info p span', :count => 4
+      expect(rendered).to have_css '#pie-info p span', :count => 6
     end
 
   end

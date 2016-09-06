@@ -1,9 +1,18 @@
 <div class="conatiner">
 
-<%#= render partial: 'title' %>
-<h1>RELATIONSHIPS</h1>
+<% cache ['name', @relationship] do %>
+    <h1><%=  link_to @relationship.name, relationship_path(@relationship) %></h1>
+<% end %>
 
-<%#= render partial: 'actions' %>
+<% if user_signed_in? %>
+    <%= render partial: 'actions', locals: {signed_in: true } %>
+<% else %>    
+    <% cache ['action_buttons_no_user', @relationship ] do %>
+        <%= render partial: 'actions', locals: {signed_in: false }%>
+    <% end %>        
+<% end %>
+
+
 <%#= render partial: 'details' %>
 <%#= render partial: 'source_links' %>
 

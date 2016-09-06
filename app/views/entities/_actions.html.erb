@@ -1,5 +1,5 @@
 <div class="row thin-grey-bottom-border">
-    <div id="entity-actions" class="col-md-8"> 
+    <div id="actions" class="col-md-8"> 
         <%= link_to "add relationship", @entity.legacy_url("addRelationship") %>
         <%= link_to "edit", @entity.legacy_url("edit") %>
         <%= link_to "flag", "/home/contact?type=flag" %>
@@ -16,12 +16,9 @@
             <% end %>
         <% end %>
     </div>
+    
+    <% cache ['entity_history', @entity ] do %>
+        <%= render partial: 'shared/entity_history', locals: {entity: @entity} %>
+    <% end %>
 
-    <div id="entity-edited-history" class="col-md-4">
-        Edited by<strong>
-        <%= link_to @entity.last_user.user.username, legacy_user_path(@entity.last_user.user) %>
-        </strong>
-        <%= time_ago_in_words(@entity.updated_at) %> ago
-        <%= link_to "History", @entity.legacy_url("modifications") %>
-    </div>
 </div>

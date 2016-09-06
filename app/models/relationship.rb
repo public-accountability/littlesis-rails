@@ -32,6 +32,8 @@ class Relationship < ActiveRecord::Base
   has_many :fec_filings, inverse_of: :relationship, dependent: :destroy
   belongs_to :category, class_name: "RelationshipCategory", inverse_of: :relationships
 
+  belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id"
+
   # Open Secrets 
   has_many :os_matches, inverse_of: :relationship
   has_many :os_donations, through: :os_matches
@@ -119,12 +121,13 @@ class Relationship < ActiveRecord::Base
     hash
   end
 
-  def legacy_url
-    self.class.legacy_url(id)
+  def legacy_url(action=nil)
+    self.class.legacy_url(id, action)
   end
 
-  def self.legacy_url(id)
-    "/relationship/view/id/" + id.to_s
+  def self.legacy_url(id, action=nil)
+    action = action.nil? ? "view" : action
+    "/relationship/#{action}/id/#{id.to_s}"
   end
 
   def full_legacy_url

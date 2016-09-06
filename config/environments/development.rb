@@ -19,9 +19,10 @@ Lilsis::Application.configure do
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
-  config.log_level = :debug
-
-  # Raise an error on page load if there are pending migrations
+  config.log_level = :info
+  config.log_formatter = ::Logger::Formatter.new
+  
+# Raise an error on page load if there are pending migrations
   config.active_record.migration_error = :page_load
 
   # Debug mode disables concatenation and preprocessing of assets.
@@ -29,7 +30,7 @@ Lilsis::Application.configure do
 
   # Disable caching for development
   config.cache_store = :memory_store
-  config.action_controller.perform_caching = false
+  config.action_controller.perform_caching = true
 
   # In development, links in emails should point local
   config.action_mailer.default_url_options = { host: 'lilsis.local' }

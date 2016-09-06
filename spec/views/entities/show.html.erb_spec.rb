@@ -56,11 +56,11 @@ describe 'entities/show.html.erb' do
         describe 'buttons' do 
           
           it 'has action div' do
-            expect(rendered).to have_css('#entity-actions')
+            expect(rendered).to have_css('#actions')
           end
 
           it 'has 3 links' do 
-            expect(rendered).to have_css('#entity-actions a', :count => 3)
+            expect(rendered).to have_css('#actions a', :count => 3)
           end
 
           it 'has relationship link' do
@@ -117,7 +117,7 @@ describe 'entities/show.html.erb' do
       end
       
       it 'has 4 links' do
-        expect(rendered).to have_css('#entity-actions a', :count => 4)
+        expect(rendered).to have_css('#actions a', :count => 4)
       end
       
       it 'renders remove button' do
@@ -147,7 +147,7 @@ describe 'entities/show.html.erb' do
       end
 
       it 'has 5 links' do
-        expect(rendered).to have_css('#entity-actions a', :count => 5)
+        expect(rendered).to have_css('#actions a', :count => 5)
       end
 
       it 'renders match donations button' do
@@ -174,7 +174,7 @@ describe 'entities/show.html.erb' do
       end
 
       it 'has 6 links' do
-        expect(rendered).to have_css('#entity-actions a', :count => 6)
+        expect(rendered).to have_css('#actions a', :count => 6)
       end
     end
 

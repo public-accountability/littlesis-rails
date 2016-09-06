@@ -123,4 +123,28 @@ describe Relationship, type: :model do
 
   end
 
+  describe 'RelationshipDisplay' do
+    describe '#name' do
+      it 'generates correct title for position relationship' do 
+        rel = build(:relationship, category_id: 1, description1: 'boss')
+        rel.position = build(:position, is_board: false)
+        expect(rel.name).to eql "Position: Human Being, mega corp LLC"
+      end
+    end
+  end
+
+  describe 'legacy_url' do 
+    before(:all) do 
+      @rel = build(:relationship, id: 1000)
+    end
+    
+    it 'generates correct url' do 
+      expect(@rel.legacy_url).to eql "/relationship/view/id/1000" 
+    end
+    
+    it 'generates correct url with action' do 
+      expect(@rel.legacy_url('edit')).to eql "/relationship/edit/id/1000" 
+    end
+  end
+
 end
