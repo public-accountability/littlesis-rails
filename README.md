@@ -50,6 +50,8 @@ You will also need to configure your web server to direct requests to the PHP or
       ProxyPass /entities http://127.0.0.1:3000/entities
       ProxyPass /rails_entities http://127.0.0.1:3000/entities
       ProxyPass /lists http://127.0.0.1:3000/lists
+      ProxyPassMatch "^/person/([0-9]+)/.+/matchDonations" "http://127.0.0.1:81/entities/$1/match_donations"
+      ProxyPassMatch "^/person/([0-9]+)/.+/political" "http://127.0.0.1:81/entities/$1/political"
 
       ProxyPass /maps http://127.0.0.1:3000/maps
 
