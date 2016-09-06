@@ -2,7 +2,8 @@ class Relationship < ActiveRecord::Base
   include SingularTable
   include SoftDelete
   include Referenceable
-
+  include RelationshipDisplay
+  
   POSITION_CATEGORY = 1
   EDUCATION_CATEGORY = 2
   MEMBERSHIP_CATEGORY = 3
@@ -198,6 +199,7 @@ class Relationship < ActiveRecord::Base
       description1
     end
   end
+  
     
   ########################
   # Open Secrets Helpers #
