@@ -16,17 +16,18 @@
         <% end %>
     </div>
 
-    <div class="row">
-        <div class="col-md-8 col-lg-8"> 
-            <div class="row">
-                <%= render partial: 'subtitle', locals: {relationship: @relationship } %>
-            </div>
-            <div class="row top-1em">
-                    <%= render partial: 'details', locals: {details: RelationshipDetails.new(@relationship).details } %>                
+    <% cache ['subtitle_details', @relationship] do %>
+        <div class="row">
+            <div class="col-md-8 col-lg-8"> 
+                <div class="row">
+                    <%= render partial: 'subtitle', locals: {relationship: @relationship } %>
+                </div>
+                <div class="row top-1em">
+                    <%= render partial: 'details', locals: {details: @relationship.details } %>                
+                </div>
             </div>
         </div>
-        
-    </div>
+    <% end %>
 
 
 <%#= render partial: 'source_links' %>

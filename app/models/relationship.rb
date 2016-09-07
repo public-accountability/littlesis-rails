@@ -213,6 +213,9 @@ class Relationship < ActiveRecord::Base
     end
   end
   
+  def details 
+    RelationshipDetails.new(self).details
+  end
     
   ########################
   # Open Secrets Helpers #
