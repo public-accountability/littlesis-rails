@@ -22,7 +22,7 @@ class RelationshipDetails
     when 5
       donation
     when 6
-      transation
+      transaciton
     when 7
       lobbying
     when 8
@@ -52,12 +52,32 @@ class RelationshipDetails
   end
   
   def education
-  end
-
-  def family
+    add_field(:description1, 'Type')
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:degree, 'Degree')
+      .add_field(:education_field, 'Field')
+      .add_field(:is_dropout, 'Is Dropout', @@bool)
+      .add_field(:notes, 'Notes')
   end
 
   def membership
+    title
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:is_current, 'Is Current', @@bool)
+      .add_field(:membership_dues, 'Dues')
+      .add_field(:notes, 'Notes')
+  end
+  
+  def family
+    description_field(:description1, @rel.entity)
+      description_field(:description2, @rel.related)
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:is_current, 'Is Current', @@bool)
+      .add_field(:notes, 'Notes')
+
   end
 
   def donation
@@ -101,6 +121,17 @@ class RelationshipDetails
   def add_field(field, header, converter = lambda { |x| x.to_s })
     unless @rel.send(field).nil?
       @details << [ header, converter.call(@rel.send(field)) ]
+    end
+    self
+  end
+
+  
+  # For some categories, "description1" and "description2" are the
+  # the headers and the entity name are the fields
+  # input: symbol, <Entity>
+  def description_field(description, entity)
+    unless @rel.send(description).nil? or entity.name.blank?
+      @details << [ @rel.send(description).capitalize, entity.name ]
     end
     self
   end

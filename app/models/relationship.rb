@@ -167,6 +167,15 @@ class Relationship < ActiveRecord::Base
     desc
   end
 
+  def details 
+    RelationshipDetails.new(self).details
+  end
+
+  ###############################
+  # Extension Helpers & Getters #
+  ###############################
+
+ 
   def is_board
     position.nil? ? nil : position.is_board
   end
@@ -204,7 +213,6 @@ class Relationship < ActiveRecord::Base
       elsif is_education? and education.degree.present?
         return education.degree.name
       elsif is_family?
-        
       else
         return nil
       end
@@ -213,10 +221,26 @@ class Relationship < ActiveRecord::Base
     end
   end
   
-  def details 
-    RelationshipDetails.new(self).details
+  ## education ##
+  
+  def degree
+    education.nil? ? nil : education.degree.name
   end
     
+  def education_field
+    education.nil? ? nil : education.field
+  end
+
+  def is_dropout
+    education.nil? ? nil : education.is_dropout
+  end
+
+  ## membership ##
+  
+  def membership_dues
+    membership.nil? ? nil : membership.dues
+  end
+  
   ########################
   # Open Secrets Helpers #
   ########################
