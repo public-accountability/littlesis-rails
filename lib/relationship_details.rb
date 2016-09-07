@@ -6,8 +6,39 @@ class RelationshipDetails
   def initialize(relationship)
     @rel = relationship
     @details = Array.new
+    calculate_details
   end
 
+  def calculate_details
+    case @rel.category_id
+    when 1
+      position
+    when 2
+      education
+    when 3
+      membership
+    when 4
+      family
+    when 5
+      donation
+    when 6
+      transation
+    when 7
+      lobbying
+    when 8
+      social
+    when 9
+      profession
+    when 10
+      ownership
+    when 11
+      hiearchy
+    when 12
+      generic
+    else
+    end
+  end
+  
   def position
     title
       .add_field(:start_date, 'Start Date')
@@ -17,8 +48,42 @@ class RelationshipDetails
       .add_field(:is_executive, 'Executive', @@bool)
       .add_field(:is_employee, 'Employee', @@bool)
       .add_field(:compensation, 'Compensation')
-      .add_fields(:notes, 'Notes')
+      .add_field(:notes, 'Notes')
   end
+  
+  def education
+  end
+
+  def family
+  end
+
+  def membership
+  end
+
+  def donation
+  end
+
+  def transaciton
+  end
+
+  def lobbying
+  end
+
+  def social
+  end
+
+  def profession
+  end
+
+  def ownership
+  end
+
+  def hiearchy
+  end
+
+  def generic
+  end
+
 
   def title
     return self unless [1,3,5,10].include? @rel.category_id 

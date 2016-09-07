@@ -1,19 +1,34 @@
 <div class="conatiner">
 
-<% cache ['name', @relationship] do %>
-    <h1><%=  link_to @relationship.name, relationship_path(@relationship) %></h1>
-<% end %>
+    <div class="row">
+        <% cache ['name', @relationship] do %>
+            <h1><%=  link_to @relationship.name, relationship_path(@relationship) %></h1>
+        <% end %>
+    </div>
 
-<% if user_signed_in? %>
-    <%= render partial: 'actions', locals: {signed_in: true } %>
-<% else %>    
-    <% cache ['action_buttons_no_user', @relationship ] do %>
-        <%= render partial: 'actions', locals: {signed_in: false }%>
-    <% end %>        
-<% end %>
+    <div class="row thin-grey-bottom-border">
+        <% if user_signed_in? %>
+            <%= render partial: 'actions', locals: {signed_in: true } %>
+        <% else %>    
+            <% cache ['action_buttons_no_user', @relationship ] do %>
+                <%= render partial: 'actions', locals: {signed_in: false }%>
+            <% end %>        
+        <% end %>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 col-lg-8"> 
+            <div class="row">
+                <%= render partial: 'subtitle', locals: {relationship: @relationship } %>
+            </div>
+            <div class="row top-1em">
+                    <%= render partial: 'details', locals: {details: RelationshipDetails.new(@relationship).details } %>                
+            </div>
+        </div>
+        
+    </div>
 
 
-<%#= render partial: 'details' %>
 <%#= render partial: 'source_links' %>
 
 </div>

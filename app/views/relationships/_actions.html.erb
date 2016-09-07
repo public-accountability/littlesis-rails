@@ -1,22 +1,19 @@
-<div class="row thin-grey-bottom-border">
-    <div id="actions" class="col-md-8"> 
-        <% if signed_in %>        
-            <%= link_to "edit", @relationship.legacy_url('edit')  %>
-        <% end %>
-        <%= link_to "flag", "/home/contact?type=flag" %>
-        <% if signed_in and @current_user.has_legacy_permission 'deleter' %>
-            <%=  link_to "remove", @relationship.legacy_url('remove') %>
-        <% end %>
-    </div>
-
-    <% cache ['edited_history', @relationship ] do %>
-        <div id="entity-edited-history" class="col-md-4">
-            Edited by<strong>
-            <%= link_to @relationship.last_user.user.username, legacy_user_path(@relationship.last_user.user) %>
-            </strong>
-            <%= time_ago_in_words(@relationship.updated_at) %> ago
-            <%= link_to "History", @relationship.legacy_url("modifications") %>
-        </div>
+<div id="actions" class="col-md-8"> 
+    <% if signed_in %>        
+        <%= link_to "edit", @relationship.legacy_url('edit')  %>
     <% end %>
-
+    <%= link_to "flag", "/home/contact?type=flag" %>
+    <% if signed_in and @current_user.has_legacy_permission 'deleter' %>
+        <%=  link_to "remove", @relationship.legacy_url('remove') %>
+    <% end %>
 </div>
+
+<% cache ['edited_history', @relationship ] do %>
+    <div id="entity-edited-history" class="col-md-4">
+        Edited by<strong>
+        <%= link_to @relationship.last_user.user.username, legacy_user_path(@relationship.last_user.user) %>
+        </strong>
+        <%= time_ago_in_words(@relationship.updated_at) %> ago
+        <%= link_to "History", @relationship.legacy_url("modifications") %>
+    </div>
+<% end %>

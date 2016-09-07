@@ -123,13 +123,11 @@ describe Relationship, type: :model do
 
   end
 
-  describe 'RelationshipDisplay' do
-    describe '#name' do
-      it 'generates correct title for position relationship' do 
-        rel = build(:relationship, category_id: 1, description1: 'boss')
-        rel.position = build(:position, is_board: false)
-        expect(rel.name).to eql "Position: Human Being, mega corp LLC"
-      end
+  describe '#name' do
+    it 'generates correct title for position relationship' do 
+      rel = build(:relationship, category_id: 1, description1: 'boss')
+      rel.position = build(:position, is_board: false)
+      expect(rel.name).to eql "Position: Human Being, mega corp LLC"
     end
   end
 
@@ -146,5 +144,19 @@ describe Relationship, type: :model do
       expect(@rel.legacy_url('edit')).to eql "/relationship/edit/id/1000" 
     end
   end
+
+  describe '#details' do 
+    describe 'it returns [ [field, value] ] for each Relationship type' do 
+      it 'Position' do 
+        rel = build(:relationship, category_id: 1, description1: 'boss', is_current: true)
+        rel.position = build(:position, is_board: false)
+        expect(rel.details).to eql [ ['Title', 'boss'], ['Is current', 'yes'], ['Board member', 'no'] ]
+      end
+      
+    end
+    
+    
+  end
+  
 
 end

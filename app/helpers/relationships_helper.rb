@@ -1,8 +1,8 @@
 module RelationshipsHelper
-	def rel_link(rel, name=nil)
-		name ||= rel.name
-		link_to name, rel.legacy_url
-	end
+  def rel_link(rel, name=nil)
+    name ||= rel.name
+    link_to name, rel.legacy_url
+  end
 
   def relationship_date(rel)
     start = rel.start_date
@@ -40,4 +40,13 @@ module RelationshipsHelper
     return (abbreviate ? "'" + year[2..4] : year) if year.to_i > 0
     ""
   end
+
+  def title_in_parens(rel)
+    if rel.title.nil?
+      return ""
+    else
+      return " (" + rel.title + ") "
+    end
+  end
+  
 end
