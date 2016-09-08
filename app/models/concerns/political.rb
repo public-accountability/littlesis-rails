@@ -7,23 +7,38 @@ module Political
     def sqlize_array(arr)
       "('" + arr.join("','") + "')"
     end
+    
+    # Array -> String
+    def name_query_string(names)
+      query = " (name_first = ? and name_last = ?) "
+      if names.length == 1
+        query
+      else
+        ( [ query ] * names.length ).join("OR")
+      end
+    end
+
   end
   
   def contribids
     contributions.pluck(:contribid).uniq
   end
 
-  
+  def aliases_names
+    aliases.map { |a| NameParser.parse_to_hash(a.name) }
+  end 
+ 
   def potential_contributions
-    before_query = "SELECT potential.* FROM ( "
-    base_query = "SELECT * FROM os_donations WHERE (name_last = ? and name_first = ?)"
-    after_query = " ) as potential LEFT JOIN os_matches on potential.id = os_matches.os_donation_id where os_matches.os_donation_id is null"
-    n = NameParser.parse_to_hash(name)
+    names = aliases_names
+    return [] unless names.length > 0
     ids = contribids
-    (base_query += " OR contribid IN #{self.class.sqlize_array(ids)}") if not ids.empty?
+
+    before_query = "SELECT potential.* FROM ( "
+    base_query = "SELECT * FROM os_donations WHERE" + Entity.name_query_string(names)
+    after_query = ") as potential LEFT JOIN os_matches on potential.id = os_matches.os_donation_id where os_matches.os_donation_id is null"
+    (base_query += " OR ( contribid IN #{self.class.sqlize_array(ids)} )") if not ids.empty?
     
-    OsDonation.find_by_sql [ "#{before_query}#{base_query}#{after_query}", n[:name_last], n[:name_first] ]
-    
+    OsDonation.find_by_sql([ "#{before_query}#{base_query}#{after_query}" ] + names.map { |name| [ name[:name_first], name[:name_last] ] }.flatten)
   end
 
   def contribution_info

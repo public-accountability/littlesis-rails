@@ -32,30 +32,42 @@ describe Entity do
       before(:all) do
         DatabaseCleaner.start
         Entity.skip_callback(:create, :after, :create_primary_ext)
-        @loeb = create(:loeb)
-        @nrsc = create(:nrsc)
-        @loeb_donation = create(:loeb_donation) # relationship model
-        @loeb_os_donation = create(:loeb_donation_one)
-        @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
-        @donation_class = create(:donation, relationship_id: @loeb_donation.id)
-        @os_match = OsMatch.create(
-          os_donation_id: @loeb_os_donation.id,
-          donation_id: @donation_class.id,
-          donor_id: @loeb.id,
-          recip_id: @nrsc.id,
-          reference_id: @loeb_ref_one.id,
-          relationship_id: @loeb_donation.id)
+        # @loeb = create(:loeb)
+        # @nrsc = create(:nrsc)
+        # @loeb_donation = create(:loeb_donation) # relationship model
+        # @loeb_os_donation = create(:loeb_donation_one)
+        # @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
+        # @donation_class = create(:donation, relationship_id: @loeb_donation.id)
+        # @os_match = OsMatch.create(
+        #   os_donation_id: @loeb_os_donation.id,
+        #   donation_id: @donation_class.id,
+        #   donor_id: @loeb.id,
+        #   recip_id: @nrsc.id,
+        #   reference_id: @loeb_ref_one.id,
+        #   relationship_id: @loeb_donation.id)
       end
       after(:all) do
         Entity.set_callback(:create, :after, :create_primary_ext)
         DatabaseCleaner.clean
       end
+
+      describe '#name_query_string' do 
+        
+        it 'returns correct string if length of names is 1' do 
+          expect(Entity.name_query_string([{}])).to eql " (name_first = ? and name_last = ?) "
+        end
+
+        it 'returns correct string if length of names is > 1' do 
+          expect(Entity.name_query_string([{},{}])).to eql " (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) "
+          expect(Entity.name_query_string([{},{}, {}])).to eql " (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) "
+        end
     end
 
     describe '#contributions_information' do
-      
-      
     end
     
+    
+    end
+
   end
 end
