@@ -241,6 +241,16 @@ class Relationship < ActiveRecord::Base
     membership.nil? ? nil : membership.dues
   end
   
+  ## Ownership ##
+  
+  def percent_stake
+    ownership.nil? ? nil : ownership.percent_stake
+  end
+
+  def shares_owned
+    ownership.nil? ? nil : ownership.shares
+  end
+
   ########################
   # Open Secrets Helpers #
   ########################

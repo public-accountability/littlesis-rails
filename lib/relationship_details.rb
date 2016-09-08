@@ -2,6 +2,9 @@ class RelationshipDetails
   attr_accessor :details
 
   @@bool = lambda { |x| x ? 'yes' : 'no' }
+  @@money = lambda { |x| ActiveSupport::NumberHelper::number_to_currency(x, precision: 0) }
+  @@percent = lambda { |x| x.to_s + '%' }
+  @@human_int = lambda { |x|  ActiveSupport::NumberHelper::number_to_human(x) }
 
   def initialize(relationship)
     @rel = relationship
@@ -22,7 +25,7 @@ class RelationshipDetails
     when 5
       donation
     when 6
-      transaciton
+      transaction
     when 7
       lobbying
     when 8
@@ -32,7 +35,7 @@ class RelationshipDetails
     when 10
       ownership
     when 11
-      hiearchy
+      hierarchy
     when 12
       generic
     else
@@ -47,7 +50,7 @@ class RelationshipDetails
       .add_field(:is_board, 'Board member', @@bool)
       .add_field(:is_executive, 'Executive', @@bool)
       .add_field(:is_employee, 'Employee', @@bool)
-      .add_field(:compensation, 'Compensation')
+      .add_field(:compensation, 'Compensation', @@money)
       .add_field(:notes, 'Notes')
   end
   
@@ -66,7 +69,7 @@ class RelationshipDetails
       .add_field(:start_date, 'Start Date')
       .add_field(:end_date, 'End Date')
       .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:membership_dues, 'Dues')
+      .add_field(:membership_dues, 'Dues', @@money)
       .add_field(:notes, 'Notes')
   end
   
@@ -81,27 +84,81 @@ class RelationshipDetails
   end
 
   def donation
+    add_field(:description1, 'Type')
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:is_current, 'Is Current', @@bool)
+      .add_field(:amount, 'Amount', @@money)
+      .add_field(:filings, 'FEC Filings')
+      .add_field(:goods, 'Goods')
+      .add_field(:notes, 'Notes')
   end
 
-  def transaciton
+  def transaction
+    description_field(:description1, @rel.entity)
+      .description_field(:description2, @rel.related)
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:is_current, 'Is Current', @@bool)
+      .add_field(:amount, 'Amount', @@money)
+      .add_field(:goods, 'Goods')
+      .add_field(:notes, 'Notes')
   end
 
   def lobbying
+    add_field(:description1, 'Type')
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:is_current, 'Is Current', @@bool)
+      .add_field(:amount, 'Amount', @@money)
+      .add_field(:filings, 'LDA Filings')
+      .add_field(:notes, 'Notes')
   end
 
   def social
+    description_field(:description1, @rel.entity)
+      .description_field(:description2, @rel.related)
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:is_current, 'Is Current', @@bool)
+      .add_field(:notes, 'Notes')
   end
 
   def profession
+    description_field(:description1, @rel.entity)
+      .description_field(:description2, @rel.related)
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:is_current, 'Is Current', @@bool)
+      .add_field(:notes, 'Notes')
   end
 
   def ownership
+    title
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:is_current, 'Is Current', @@bool)
+      .add_field(:percent_stake, 'Percent Stake', @@percent)
+      .add_field(:shares_owned, 'Shares', @@human_int)
+      .add_field(:notes, 'Notes')
   end
 
-  def hiearchy
+  def hierarchy
+    description_field(:description1, @rel.entity)
+      .description_field(:description2, @rel.related)
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:is_current, 'Is Current', @@bool)
+      .add_field(:notes, 'Notes')
   end
 
   def generic
+    description_field(:description1, @rel.entity)
+      .description_field(:description2, @rel.related)
+      .add_field(:start_date, 'Start Date')
+      .add_field(:end_date, 'End Date')
+      .add_field(:is_current, 'Is Current', @@bool)
+      .add_field(:notes, 'Notes')
   end
 
 
