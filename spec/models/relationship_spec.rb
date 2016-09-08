@@ -150,7 +150,7 @@ describe Relationship, type: :model do
       it 'Position' do 
         rel = build(:relationship, category_id: 1, description1: 'boss', is_current: true)
         rel.position = build(:position, is_board: false)
-        expect(rel.details).to eql [ ['Title', 'boss'], ['Is current', 'yes'], ['Board member', 'no'] ]
+        expect(rel.details).to eql [ ['Title', 'boss'], ['Is Current', 'yes'], ['Board member', 'no'] ]
       end
       
     end
