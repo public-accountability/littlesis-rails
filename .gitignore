@@ -49,3 +49,4 @@ data/indivs*
 
 # symlinked asessts
 test/assets
+test/vendor
