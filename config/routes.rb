@@ -208,6 +208,8 @@ Lilsis::Application.routes.draw do
 
   resources :relationships, only: [:show]
 
+  resources :references, only: [:create, :destory]
+
   get "/search" => "search#basic"
 
   get "/home/notes" => "home#notes"

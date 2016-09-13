@@ -1,6 +1,6 @@
 class Reference < ActiveRecord::Base
   include SingularTable
-  @@ref_types = {1=>"Generic", 2=>"FEC Filing"}
+  @@ref_types = {1=>"Generic", 2=>"FEC Filing", 3=>"Newspaper", 4=>"Government Document"}
   
   def ref_types
     @@ref_types
