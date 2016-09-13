@@ -1,8 +1,8 @@
-<div class="conatiner">
+<div class="container">
 
     <div class="row">
         <% cache ['name', @relationship] do %>
-            <h1><%=  link_to @relationship.name, relationship_path(@relationship) %></h1>
+            <h1><%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %></h1>
         <% end %>
     </div>
 
@@ -16,20 +16,22 @@
         <% end %>
     </div>
 
-    <% cache ['subtitle_details', @relationship] do %>
+    <% cache ['subtitle_details_sources', @relationship] do %>
         <div class="row">
-            <div class="col-md-8 col-lg-8"> 
+            <div class="col-md-6 col-xs-12 col-sm-6"> 
                 <div class="row">
                     <%= render partial: 'subtitle', locals: {relationship: @relationship } %>
                 </div>
                 <div class="row top-1em">
-                    <%= render partial: 'details', locals: {details: @relationship.details } %>
+                    <div class="col-md-10 col-sm-10 col-xs-10">
+                        <%= render partial: 'details', locals: {details: @relationship.details } %>
+                    </div>
                 </div>
+            </div>
+            <div class="col-md-4 col-sm-4 top-1em col-xs-12 pull-right">
+                <%= render partial: 'sources', locals: {relationship: @relationship } %>
             </div>
         </div>
     <% end %>
-
-
-    <%#= render partial: 'source_links' %>
-
+    
 </div>

@@ -2,16 +2,6 @@
 
 $tiny_image_size: 35px;
 
-// helpers
-.top-1em {
-  padding-top: 1em;
-}
-
-.m-left-1em {
-  margin-left: 1em;
-}
-
-// 
 .entity_update {
 	padding-top: 1em;
 	padding-bottom: 1em;
@@ -133,9 +123,6 @@ $tiny_image_size: 35px;
   cursor: default;
 }
 
-.thin-grey-bottom-border {
-  border-bottom: 1px solid #e7e7e7;
-}
 /* summary toggle */
 #entity-summary {
   line-height: 1.3em;

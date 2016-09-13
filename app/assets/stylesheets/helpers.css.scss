@@ -1,0 +1,32 @@
+/* helper css utilities */
+@import "globals";
+
+.link-blue {
+  color: $link_blue;
+}
+
+.top-1em {
+  padding-top: 1em;
+}
+
+.m-left-1em {
+  margin-left: 1em;
+}
+
+.pad-right-1em {
+  padding-right: 1em;
+}
+
+.pad-right-08em {
+  padding-right: 0.8em;
+}
+
+.thin-grey-bottom-border {
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.borderless {
+   th, td { 
+    border-top: none !important; 
+  }
+}

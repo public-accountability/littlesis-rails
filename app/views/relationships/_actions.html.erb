@@ -1,4 +1,4 @@
-<div id="actions" class="col-md-8"> 
+<div id="actions" class="col-md-8 col-sm-6 hidden-xs"> 
     <% if signed_in %>        
         <%= link_to "edit", @relationship.legacy_url('edit')  %>
     <% end %>
@@ -9,7 +9,7 @@
 </div>
 
 <% cache ['edited_history', @relationship ] do %>
-    <div id="entity-edited-history" class="col-md-4">
+    <div id="entity-edited-history" class="col-md-4 col-sm-6 col-xs-6 hidden-xs hidden-sm">
         Edited by<strong>
         <%= link_to @relationship.last_user.user.username, legacy_user_path(@relationship.last_user.user) %>
         </strong>

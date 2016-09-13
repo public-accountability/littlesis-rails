@@ -1,0 +1,18 @@
+<table class="table table-condensed table-hover" id="source-links-table">
+    <thead>
+        <tr>
+            <th><span class="pad-right-1em">Source Links</span>
+                <a href="" class="pad-right-08em"><span title="Add a source" class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                <a href=""><span title="Edit sources" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <% relationship.source_links.each do |link|  %>
+            <tr>
+                <td><%= link_to link.name, link.source %></td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>
+
