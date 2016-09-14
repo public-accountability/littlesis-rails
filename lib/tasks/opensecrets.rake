@@ -90,9 +90,9 @@ namespace :opensecrets do
       cycle = match.os_donation.cycle
       cand = OsCandidate.find_by(crp_id: recipid, cycle: cycle)
       if cand.nil?
-        printf("Could not find a candidate for : %s\n", recipid)
+        # printf("Could not find a candidate for : %s\n", recipid)
       else
-        printf("candidate: %s (%s) - %s \n", cand.name, cand.cycle, recipid)
+        printf("candidate: %s (%s) - %s - %s \n", cand.name, cand.cycle, recipid, cand.distid_runfor)
       end
     end
   end
