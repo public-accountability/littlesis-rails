@@ -16,6 +16,8 @@ FactoryGirl.define do
   end
 
   factory :relationship, class: Relationship do
+    association :entity, factory: :person, strategy: :build
+    association :related, factory: :mega_corp_llc, strategy: :build
   end
-  
+
 end

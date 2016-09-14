@@ -2,7 +2,8 @@ class Relationship < ActiveRecord::Base
   include SingularTable
   include SoftDelete
   include Referenceable
-
+  include RelationshipDisplay
+  
   POSITION_CATEGORY = 1
   EDUCATION_CATEGORY = 2
   MEMBERSHIP_CATEGORY = 3
@@ -19,8 +20,10 @@ class Relationship < ActiveRecord::Base
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
-  has_many :note_relationships, inverse_of: :relationship
-  has_many :notes, through: :note_relationships, inverse_of: :relationships
+  
+  # has_many :note_relationships, inverse_of: :relationship
+  # has_many :notes, through: :note_relationships, inverse_of: :relationships
+  
   has_one :position, inverse_of: :relationship, dependent: :destroy
   has_one :education, inverse_of: :relationship, dependent: :destroy
   has_one :membership, inverse_of: :relationship, dependent: :destroy
@@ -30,6 +33,8 @@ class Relationship < ActiveRecord::Base
   has_one :ownership, inverse_of: :relationship, dependent: :destroy
   has_many :fec_filings, inverse_of: :relationship, dependent: :destroy
   belongs_to :category, class_name: "RelationshipCategory", inverse_of: :relationships
+
+  belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id"
 
   # Open Secrets 
   has_many :os_matches, inverse_of: :relationship
@@ -118,12 +123,13 @@ class Relationship < ActiveRecord::Base
     hash
   end
 
-  def legacy_url
-    self.class.legacy_url(id)
+  def legacy_url(action=nil)
+    self.class.legacy_url(id, action)
   end
 
-  def self.legacy_url(id)
-    "/relationship/view/id/" + id.to_s
+  def self.legacy_url(id, action=nil)
+    action = action.nil? ? "view" : action
+    "/relationship/#{action}/id/#{id.to_s}"
   end
 
   def full_legacy_url
@@ -161,12 +167,33 @@ class Relationship < ActiveRecord::Base
     desc
   end
 
+  def details 
+    RelationshipDetails.new(self).details
+  end
+
+  def source_links
+    Reference.where(object_id: self.id, object_model: "Relationship")
+  end
+
+  ###############################
+  # Extension Helpers & Getters #
+  ###############################
+
+ 
   def is_board
     position.nil? ? nil : position.is_board
   end
 
   def is_executive
     position.nil? ? nil : position.is_executive
+  end
+
+  def is_employee
+    position.nil? ? nil : position.is_employee
+  end
+
+  def compensation
+    position.nil? ? nil : position.compensation
   end
 
   def is_member?
@@ -190,7 +217,6 @@ class Relationship < ActiveRecord::Base
       elsif is_education? and education.degree.present?
         return education.degree.name
       elsif is_family?
-        
       else
         return nil
       end
@@ -198,7 +224,37 @@ class Relationship < ActiveRecord::Base
       description1
     end
   end
+  
+  ## education ##
+  
+  def degree
+    education.nil? ? nil : education.degree.name
+  end
     
+  def education_field
+    education.nil? ? nil : education.field
+  end
+
+  def is_dropout
+    education.nil? ? nil : education.is_dropout
+  end
+
+  ## membership ##
+  
+  def membership_dues
+    membership.nil? ? nil : membership.dues
+  end
+  
+  ## Ownership ##
+  
+  def percent_stake
+    ownership.nil? ? nil : ownership.percent_stake
+  end
+
+  def shares_owned
+    ownership.nil? ? nil : ownership.shares
+  end
+
   ########################
   # Open Secrets Helpers #
   ########################

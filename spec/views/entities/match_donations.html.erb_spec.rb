@@ -29,7 +29,7 @@ describe 'entities/match_donations.html.erb' do
     
     it 'has actions' do 
       expect(rendered).to have_css '#entity-edited-history'
-      expect(rendered).to have_css '#entity-actions a', :count => 3
+      expect(rendered).to have_css '#actions a', :count => 3
     end
   
     it 'has table' do 
