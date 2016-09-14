@@ -60,6 +60,8 @@ GEM
       rails (>= 3.1.0)
     binding_of_caller (0.7)
       debug_inspector (>= 0.0.1)
+    bootstrap-datepicker-rails (1.6.4.1)
+      railties (>= 3.0)
     buftok (0.2.0)
     builder (3.2.2)
     capybara (2.4.4)
@@ -367,6 +369,7 @@ DEPENDENCIES
   better_errors (= 0.7.0)
   bettertabs
   binding_of_caller (= 0.7.0)
+  bootstrap-datepicker-rails
   bootsy!
   capybara
   capybara-webkit

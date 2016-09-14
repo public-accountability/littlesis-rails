@@ -5,6 +5,9 @@ class ReferencesController < ApplicationController
     ref = Reference.new( reference_params.merge({last_user_id: current_user.sf_guard_user_id}) )
     if ref.save
       params[:data][:object_model].constantize.find(params[:data][:object_id].to_i).touch
+      unless excerpt_params['excerpt'].blank?
+        ref.create_reference_excerpt(excerpt_params)
+      end
       head :created
     else
       # send back errors
@@ -28,4 +31,8 @@ class ReferencesController < ApplicationController
     params.require(:data).permit(:object_id, :object_model, :source, :name, :fields, :source_detail, :publication_date, :ref_type)
   end
 
+  def excerpt_params
+    params.require(:data).permit(:excerpt)
+  end
+  
 end

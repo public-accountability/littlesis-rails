@@ -27,13 +27,16 @@ describe ReferencesController, type: :controller do
                       source: 'interesting.net',
                       name: 'a website',
                       object_model: "Relationship",
+                      excerpt: "so and so said blah blah blah",
                       ref_type: 1}
                    }
     end
 
-    it 'creates a new reference' do 
+    before do 
       allow(Relationship).to receive(:find) { double('relationship').as_null_object  }
-      
+    end
+    
+    it 'creates a new reference' do 
       expect { post(:create, @post_data) }.to change(Reference, :count).by(1)
 
       expect(Reference.last.object_model).to eql "Relationship"
@@ -43,6 +46,37 @@ describe ReferencesController, type: :controller do
       expect(Reference.last.last_user_id). to eql SfGuardUser.last.id
 
       expect(response).to have_http_status(:created)
+    end
+
+    it 'creates a new ReferenceExcerpt if there is an excerpt' do 
+      expect { post(:create, @post_data) }.to change(ReferenceExcerpt, :count).by(1)
+      expect(ReferenceExcerpt.last.reference).to eql Reference.last
+      expect(Reference.last.excerpt).to eql "so and so said blah blah blah"
+    end
+
+    it 'does not create new ReferenceExcept if there is a blank excerpt' do 
+      expect { 
+        post(:create, {data: {object_id: 666,
+                              source: 'interesting.net',
+                              name: 'a website',
+                              object_model: "Relationship",
+                              excerpt: "",
+                              ref_type: 1 }}) 
+      }.to change(ReferenceExcerpt, :count).by(0)
+      
+      expect(Reference.last.excerpt).to be_nil
+    end
+
+    it 'does not create new ReferenceExcept if excerpt is not sent' do 
+      expect { 
+        post(:create, {data: {object_id: 666,
+                              source: 'interesting.net',
+                              name: 'a website',
+                              object_model: "Relationship",
+                              ref_type: 1 }}) 
+      }.to change(ReferenceExcerpt, :count).by(0)
+      
+      expect(Reference.last.excerpt).to be_nil
     end
 
     it 'updates updated_at field of the relationship' do 

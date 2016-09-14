@@ -33,5 +33,8 @@
             </div>
         </div>
     <% end %>
-    
 </div>
+
+<% if user_signed_in? %>
+    <%= render partial: 'shared/reference_new', locals: {model: @relationship, reference: @reference } %>
+<% end %>
