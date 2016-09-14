@@ -3,8 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h3 class="modal-title">Add a new reference</h3>
-                <h3><small><%= model.name %></small></h3>
+                <h4 class="modal-title">Add a new reference<br><small><%= model.name %></small></h4>
             </div>
             <div class="modal-body">
                 
@@ -62,7 +61,7 @@
                     <div class="form-group form-group-sm">
                         <%= label_tag(:data_excerpt, "Excerpt", class: "col-sm-2 control-label") %>
                         <div class="col-sm-10">
-                            <%= text_area(:data, :excerpt, size: "40x8")  %>
+                            <%= text_area(:data, :excerpt, size: "40x6")  %>
                         </div>
                     </div>
                     
