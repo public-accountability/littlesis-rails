@@ -78,6 +78,18 @@ class MapsController < ApplicationController
     render layout: "fullscreen"
   end
 
+  def map_json
+    if @map.is_private and !is_owner
+      raise Exceptions::PermissionError
+    end
+    attributes_to_return = ["id", "user_id", "created_at", "updated_at", "title", "description", "width", "height", "zoom", "is_private", "graph_data", "annotations_data", "annotations_count"]
+    to_hash_if = lambda { |k,v| ["graph_data", "annotations_data"].include?(k) ?  ActiveSupport::JSON.decode(v) : v }
+    
+    render json: @map.attributes
+            .select { |k,v| attributes_to_return.include?(k) }
+            .map { |k,v| [k, to_hash_if.call(k,v) ]  }.to_h
+  end
+
   def show
     if @map.is_private and !is_owner
       unless params[:secret] and params[:secret] == @map.secret

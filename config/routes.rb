@@ -173,6 +173,7 @@ Lilsis::Application.routes.draw do
       post 'destroy_annotation'
       get 'collection'
       get 'embedded'
+      get 'map_json'
     end
 
     collection do
