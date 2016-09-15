@@ -10,7 +10,7 @@ ThinkingSphinx::Index.define :note, :with => :active_record, :delta => ThinkingS
 	has user.id, as: :user_id
   has recipients.id, as: :recipient_ids
   has entities.id, as: :entity_ids
-  has relationships.id, as: :relationship_ids
+  # has relationships.id, as: :relationship_ids
   has lists.id, as: :list_ids
   has networks.id, as: :network_ids
   has groups.id, as: :group_ids

@@ -21,8 +21,8 @@ class Relationship < ActiveRecord::Base
   belongs_to :entity, foreign_key: "entity1_id"
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
   
-  has_many :note_relationships, inverse_of: :relationship
-  has_many :notes, through: :note_relationships, inverse_of: :relationships
+  #has_many :note_relationships, inverse_of: :relationship
+  #has_many :notes, through: :note_relationships, inverse_of: :relationships
   
   has_one :position, inverse_of: :relationship, dependent: :destroy
   has_one :education, inverse_of: :relationship, dependent: :destroy
