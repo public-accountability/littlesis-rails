@@ -20,12 +20,22 @@
 # Learn more: http://github.com/javan/whenever
 
 every 1.minute do
-	rake "users:create_from_new_profiles", output: nil
+  rake "users:create_from_new_profiles", output: nil
   rake "search:update_entity_delta_index", output: nil
+  command "php /var/www/littlesis/symfony/symfony email:send-scheduled", output: nil
+end
+
+every 5.minute do 
+  command "indexer --config /var/www/littlesis/config/sphinx.conf entities_delta lists_delta notes_delta --rotate", output: nil
+end
+
+every 1.hour do 
+  command "php /var/www/littlesis/symfony/symfony links:update --limit=500", output: nil
 end
 
 every 1.day do
   rake "sessions:clear_expired", output: nil
+  command "indexer --config /var/www/littlesis/symfony/config/sphinx.conf entities lists notes --rotate", output: nil
 end
 
 every 1.day, at: '4:30 am' do
@@ -36,11 +46,14 @@ every 1.day, at: '5:00 am' do
   rake "ts:index", output: nil
 end
 
-# these tasks broke after upgrade to oligrapher2:
-# every 1.day, at: '5:30 am' do
-#   rake "maps:generate_recent_thumbs", output: nil
-# end
+every 1.day, at: '3:30 am' do 
+  command "/usr/local/bin/backup-database"
+end
 
-# every :sunday, at: "6:00 am" do
-#   rake "maps:generate_all_thumbs", output: nil
-# end
+every 7.day, at: '3:00 am' do 
+  command "/usr/local/bin/clear-symfony-logs"
+end
+
+every 30.day, at: '7:00 am' do 
+  command "/usr/local/bin/delete-old-api-requests"
+end
