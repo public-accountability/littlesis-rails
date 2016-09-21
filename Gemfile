@@ -78,7 +78,7 @@ gem 'dalli'
 gem 'redis-rails'
 
 # For easy cron scheduling
-gem 'whenever', :require => false
+gem 'whenever', '~> 0.9.7', :require => false
 
 gem 'rails_autolink'
 
@@ -113,3 +113,5 @@ gem 'selenium-webdriver'
 gem 'geocoder'
 gem 'rack-mini-profiler'
 # gem 'ruby-opencv'
+
+gem "passenger"
