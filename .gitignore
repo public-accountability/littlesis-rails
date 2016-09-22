@@ -51,4 +51,6 @@ data/indivs*
 test/assets
 test/vendor
 
+# Passenger files
 Passengerfile.json
+log/*.lock
