@@ -14,9 +14,10 @@ development:
   database: littlesis
   pool: 5
   username: littlesis
-  password: themanbehindthemanbehindthethrone
-  socket: /var/run/mysqld/mysqld.sock
+  password: 
+  host:
   reconnect: true
+  # socket: /var/run/mysqld/mysqld.sock
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -24,19 +25,19 @@ development:
 test:
   adapter: mysql2
   encoding: utf8
-  database: littlesis_test
+  database: littlesis
   pool: 5
   username: littlesis
-  password: themanbehindthemanbehindthethrone
-  socket: /var/run/mysqld/mysqld.sock
+  password: 
+  host: 
   reconnect: true
 
 production:
   adapter: mysql2
   encoding: utf8
   database: littlesis
-  pool: 5
+  pool: 10
   username: littlesis
-  password: themanbehindthemanbehindthethrone
-  socket: /var/run/mysqld/mysqld.sock
+  password: 
+  host: 
   reconnect: true
