@@ -145,8 +145,14 @@ entity.political.parseContributions = function(contributions){
   
   contributions.forEach(function(c){
     var i = years.indexOf(c.cycle); 
-    var party = c.recipcode.slice(0,1);
-  
+    
+    // Skip the contribution if it's missing a recipient.
+    if (c.recipcode) {
+      var party = c.recipcode.slice(0,1);
+    } else {
+      return;
+    }
+    
     cycles[i].amount += c.amount;
     
     // Ignoring donations less than 0. There are negative donations -- refunds.
