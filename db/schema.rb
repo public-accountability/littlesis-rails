@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161004185636) do
+ActiveRecord::Schema.define(version: 20161005180511) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -848,6 +848,29 @@ ActiveRecord::Schema.define(version: 20161004185636) do
   add_index "ny_disclosures", ["e_year"], name: "index_ny_disclosures_on_e_year", using: :btree
   add_index "ny_disclosures", ["filer_id"], name: "index_ny_disclosures_on_filer_id", using: :btree
   add_index "ny_disclosures", ["original_date"], name: "index_ny_disclosures_on_original_date", using: :btree
+
+  create_table "ny_filers", force: true do |t|
+    t.string   "filer_id",         null: false
+    t.string   "name"
+    t.string   "filer_type"
+    t.string   "status"
+    t.string   "committee_type"
+    t.integer  "office"
+    t.integer  "district"
+    t.string   "treas_first_name"
+    t.string   "treas_last_name"
+    t.string   "address"
+    t.string   "city"
+    t.string   "state"
+    t.string   "zip"
+    t.integer  "entity_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ny_filers", ["entity_id"], name: "index_ny_filers_on_entity_id", unique: true, using: :btree
+  add_index "ny_filers", ["filer_id"], name: "index_ny_filers_on_filer_id", unique: true, using: :btree
+  add_index "ny_filers", ["filer_type"], name: "index_ny_filers_on_filer_type", using: :btree
 
   create_table "object_tag", force: true do |t|
     t.integer  "tag_id",       limit: 8,  null: false
