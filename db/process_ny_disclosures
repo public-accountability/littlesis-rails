@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+
+import sys
+
+
+def fix_date(d):
+    month, day, year = d.split('/')
+    return '
+
+for line in sys.stdin.readlines():
+    row = line.replace('""', '\\N').split(",")
+    row[
+    sys.stdout.write(str(row))

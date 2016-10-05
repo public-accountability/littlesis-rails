@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160811135725) do
+ActiveRecord::Schema.define(version: 20161004185636) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -809,6 +809,46 @@ ActiveRecord::Schema.define(version: 20160811135725) do
   add_index "note_users", ["note_id", "user_id"], name: "index_note_users_on_note_id_and_user_id", unique: true, using: :btree
   add_index "note_users", ["user_id"], name: "index_note_users_on_user_id", using: :btree
 
+  create_table "ny_disclosures", force: true do |t|
+    t.string   "filer_id",                  limit: 10, null: false
+    t.string   "report_id"
+    t.string   "transaction_code",          limit: 1,  null: false
+    t.string   "e_year",                    limit: 4,  null: false
+    t.integer  "transaction_id",                       null: false
+    t.date     "schedule_transaction_date"
+    t.date     "original_date"
+    t.string   "contrib_code",              limit: 4
+    t.string   "contrib_type_code",         limit: 1
+    t.string   "corp_name"
+    t.string   "first_name"
+    t.string   "mid_init"
+    t.string   "last_name"
+    t.string   "address"
+    t.string   "city"
+    t.string   "state",                     limit: 2
+    t.string   "zip",                       limit: 5
+    t.string   "check_number"
+    t.date     "check_date"
+    t.float    "amount1",                   limit: 24
+    t.float    "amount2",                   limit: 24
+    t.string   "description"
+    t.string   "other_recpt_code"
+    t.string   "purpose_code1"
+    t.string   "purpose_code2"
+    t.string   "explanation"
+    t.string   "transfer_type",             limit: 1
+    t.string   "bank_loan_check_box",       limit: 1
+    t.string   "crerec_uid"
+    t.datetime "crerec_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ny_disclosures", ["contrib_code"], name: "index_ny_disclosures_on_contrib_code", using: :btree
+  add_index "ny_disclosures", ["e_year"], name: "index_ny_disclosures_on_e_year", using: :btree
+  add_index "ny_disclosures", ["filer_id"], name: "index_ny_disclosures_on_filer_id", using: :btree
+  add_index "ny_disclosures", ["original_date"], name: "index_ny_disclosures_on_original_date", using: :btree
+
   create_table "object_tag", force: true do |t|
     t.integer  "tag_id",       limit: 8,  null: false
     t.datetime "created_at"
@@ -910,7 +950,7 @@ ActiveRecord::Schema.define(version: 20160811135725) do
     t.string   "cmteid",          limit: 9
     t.string   "otherid",         limit: 9
     t.string   "gender",          limit: 1
-    t.string   "microfilm",       limit: 11
+    t.string   "microfilm",       limit: 30
     t.string   "occupation"
     t.string   "employer"
     t.string   "source",          limit: 5
