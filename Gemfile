@@ -91,6 +91,7 @@ group :test, :development do
   gem 'seed_dump'
   gem 'database_cleaner'
   gem 'spring-commands-rspec'
+  gem 'shoulda-matchers', '~> 3.1'
   ###########################  
   gem 'better_errors', '0.7.0'
   gem 'binding_of_caller', '0.7.0'
