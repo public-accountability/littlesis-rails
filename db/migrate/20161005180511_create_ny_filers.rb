@@ -14,13 +14,9 @@ class CreateNyFilers < ActiveRecord::Migration
       t.string :city
       t.string :state
       t.string :zip
-      # This table is the same as the commcand file except it also has
-      # a reference to LittleSis entities.
-      t.integer :entity_id      
       t.timestamps
     end
     add_index :ny_filers, :filer_id, :unique => true
     add_index :ny_filers, :filer_type
-    add_index :ny_filers, :entity_id, :unique => true
   end
 end

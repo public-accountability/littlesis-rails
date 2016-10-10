@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161005180511) do
+ActiveRecord::Schema.define(version: 20161010133616) do
 
   create_table "address", force: true do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -849,6 +849,19 @@ ActiveRecord::Schema.define(version: 20161005180511) do
   add_index "ny_disclosures", ["filer_id"], name: "index_ny_disclosures_on_filer_id", using: :btree
   add_index "ny_disclosures", ["original_date"], name: "index_ny_disclosures_on_original_date", using: :btree
 
+  create_table "ny_filer_entities", force: true do |t|
+    t.integer  "ny_filer_id"
+    t.integer  "entity_id"
+    t.boolean  "is_committee"
+    t.string   "e_year",       limit: 4
+    t.string   "office"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ny_filer_entities", ["entity_id"], name: "index_ny_filer_entities_on_entity_id", using: :btree
+  add_index "ny_filer_entities", ["ny_filer_id"], name: "index_ny_filer_entities_on_ny_filer_id", using: :btree
+
   create_table "ny_filers", force: true do |t|
     t.string   "filer_id",         null: false
     t.string   "name"
@@ -863,12 +876,10 @@ ActiveRecord::Schema.define(version: 20161005180511) do
     t.string   "city"
     t.string   "state"
     t.string   "zip"
-    t.integer  "entity_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "ny_filers", ["entity_id"], name: "index_ny_filers_on_entity_id", unique: true, using: :btree
   add_index "ny_filers", ["filer_id"], name: "index_ny_filers_on_filer_id", unique: true, using: :btree
   add_index "ny_filers", ["filer_type"], name: "index_ny_filers_on_filer_type", using: :btree
 

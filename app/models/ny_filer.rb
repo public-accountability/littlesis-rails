@@ -1,3 +1,3 @@
 class NyFiler < ActiveRecord::Base
-  belongs_to :entity, inverse_of: :ny_filer
+  has_many :entity, :through => :ny_filer_entities
 end
