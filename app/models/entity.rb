@@ -61,7 +61,7 @@ class Entity < ActiveRecord::Base
   has_many :committee_donors, class_name: "OsMatch", inverse_of: :committee, foreign_key: "cmte_id"
 
   # NY Election 
-  # has_one :ny_filer, inverse_of: :entity, dependent: :nullify 
+  has_many :ny_filer_entities
   has_many :ny_filers, through: :ny_filer_entities
   
   scope :people, -> { where(primary_ext: 'Person') }
