@@ -232,6 +232,12 @@ Lilsis::Application.routes.draw do
   get "/oligrapher" => "maps#splash"
   get "/graph" => "graph#all"
 
+
+  get "/nys/candidates" => "nys#candidates"
+  get "/nys/match_donations" => "nys#match_donations"
+  
+  post "/nys/match_donations" => "nys#match_donations"
+
   match "*path", to: "errors#not_found", via: :all
 
   # The priority is based upon order of creation: first created -> highest priority.
