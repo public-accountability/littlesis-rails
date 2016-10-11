@@ -232,11 +232,13 @@ Lilsis::Application.routes.draw do
   get "/oligrapher" => "maps#splash"
   get "/graph" => "graph#all"
 
-
-  get "/nys/candidates" => "nys#candidates"
+  ####### 
+  # NYS #
+  ####### 
   get "/nys/match_donations" => "nys#match_donations"
-  
   post "/nys/match_donations" => "nys#match_donations"
+  get "/nys/candidates" => "nys#candidates"
+  get "/nys/potential_contributions" => "nys#potential_contributions"
 
   match "*path", to: "errors#not_found", via: :all
 

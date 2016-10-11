@@ -15,4 +15,12 @@ class NysController < ApplicationController
     end
   end
   
+  # search for contributions
+  # /nys/potential_contributions?entity=123
+  def potential_contributions
+    check_permission 'importer'
+    name = Entity.find(params.require(:entity).to_i).name
+    render json: NyDisclosure.search(name, :with => { :is_matched => false } )
+  end
+  
 end
