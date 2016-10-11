@@ -10,4 +10,13 @@ class NyMatch < ActiveRecord::Base
 
   after_save ThinkingSphinx::RealTime.callback_for(:ny_disclosure, [:ny_disclosure])
 
+  # input: int, int, int (optional)
+  def self.match(disclosure_id, donor_id, matched_by=APP_CONFIG['system_user_id'])
+    m = self.find_or_initialize_by(ny_disclosure_id: disclosure_id, donor_id: donor_id)
+    if m.new_record?
+      m.matched_by = matched_by
+      m.save
+    end
+  end
+
 end
