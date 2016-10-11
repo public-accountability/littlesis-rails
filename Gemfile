@@ -54,7 +54,7 @@ gem 'dimensions'
 gem 'fastimage'
 gem 'nilify_blanks'
 
-gem 'bootsy', :git => "git://github.com/littlesis-org/bootsy.git"
+gem 'bootsy', :git => "https://github.com/littlesis-org/bootsy.git"
 gem 'tinymce-rails', '< 4.0'
 
 gem 'bettertabs'
@@ -62,7 +62,7 @@ gem 'kaminari'
 gem 'activerecord-session_store'
 
 # For search and indexing
-gem 'thinking-sphinx', '~> 3.1.1'
+gem 'thinking-sphinx', '~> 3.2.0'
 gem 'delayed_job_active_record'
 gem 'ts-delayed-delta', '2.0.2', :require => 'thinking_sphinx/deltas/delayed_delta'
 
