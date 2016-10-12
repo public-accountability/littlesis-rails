@@ -105,7 +105,9 @@ Lilsis::Application.routes.draw do
       get 'relationships'
       get 'political'
       get 'match_donations'
+      get 'match_ny_donations'
       get 'review_donations'
+      get 'review_ny_donations'
       post 'match_donation'
       post 'unmatch_donation'
       get 'contributions'
@@ -235,7 +237,7 @@ Lilsis::Application.routes.draw do
   ####### 
   # NYS #
   ####### 
-  get "/nys/match_donations" => "nys#match_donations"
+  
   post "/nys/match_donations" => "nys#match_donations"
   get "/nys/candidates" => "nys#candidates"
   get "/nys/potential_contributions" => "nys#potential_contributions"

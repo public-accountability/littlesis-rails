@@ -8,11 +8,20 @@ class NysController < ApplicationController
   def new_filer
   end
 
+  # POST data:
+  #  { payload: { 
+  #       disclosure_ids: [int],
+  #       donor_id: int }
+  #   }
+  # 
   def match_donations
     check_permission 'importer'
-    if request.post?
-      render json: {'test'=> 123}
+    
+    match_params[:disclosure_ids].each do |disclosure_id| 
+      NyMatch.match(disclosure_id, match_params[:donor_id], current_user.id)
     end
+    
+    head :accepted
   end
   
   # search for contributions
@@ -21,6 +30,12 @@ class NysController < ApplicationController
     check_permission 'importer'
     name = Entity.find(params.require(:entity).to_i).name
     render json: NyDisclosure.search(name, :with => { :is_matched => false } )
+  end
+
+  private
+
+  def match_params
+    params.require(:payload).permit(:donor_id, :disclosure_ids => [])
   end
   
 end

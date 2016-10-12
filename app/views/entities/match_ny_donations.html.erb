@@ -1,5 +1,7 @@
 <div class="container-fluid">
     
+    <%= render partial: 'header', locals: { entity: @entity } %>
+    <%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
     <div class="row top-1em">
         <h2>Match Political Contributions from New York State</h2>
         <div class="col-md-6 col-sm-6">
@@ -9,4 +11,12 @@
         <div class="col-md-2 col-sm-2"></div>
     </div>
     
+    <div class="row top-1em">
+        <div class="col-md-9 col-sm-9">
+            <div id="match-donations" data-entityid="<%= @entity.id %>">
+                <table id="donations-table" class="display" width="100%"></table>
+            </div>
+            <script>new NyMatchDonations('match', <%= @entity.id %> ).init();</script>
+        </div>
+    </div>
 </div>
