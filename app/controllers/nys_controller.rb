@@ -5,7 +5,8 @@ class NysController < ApplicationController
   def candidates
   end
 
-  def new_filer
+  def new_filer_entity
+    @entity = Entity.find(entity_id)
   end
 
   # POST data:
@@ -37,6 +38,10 @@ class NysController < ApplicationController
   end
 
   private
+
+  def entity_id
+    params.require(:entity)
+  end
 
   def match_params
     params.require(:payload).permit(:donor_id, :disclosure_ids => [])
