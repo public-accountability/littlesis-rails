@@ -19,7 +19,11 @@ class NyMatch < ActiveRecord::Base
     r = Relationship.find_or_create_by!(
       entity1_id: donor_id,
       entity2_id: recip_id,
-      category_id: 5 )
+      category_id: 5,
+      # This avoids problems caused if federal campaign contributions also exist for the same politician.
+      # However, it requires that every NYS campaign contribution relationship have the description set to this string.
+      description1: "NYS Campaign Contribution"  
+    )
     # connect this match to the relationship
     update_attribute(:relationship, r)
     # update and save the relationship
