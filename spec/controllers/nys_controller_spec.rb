@@ -50,4 +50,37 @@ describe NysController, type: :controller do
 
   end
 
+  describe "#create" do 
+    login_user
+
+    it 'Handles POST'  do 
+      ny_filer = build(:ny_filer, filer_id: "C9")
+      expect(NyFilerEntity).to receive(:create!).with(entity_id: '123', ny_filer_id:  '10', filer_id: 'C9')
+      expect(NyFilerEntity).to receive(:create!).with(entity_id: '123', ny_filer_id:  '11', filer_id: 'C9')
+      expect(NyFiler).to receive(:find).with('10').and_return(ny_filer)
+      expect(NyFiler).to receive(:find).with('11').and_return(ny_filer)
+      post(:create, entity: '123', ids: ['10','11'] )
+      expect(response.status).to eq(302)
+    end
+  end
+
+  describe "#new_filer_entity" do 
+    login_user
+
+    before(:each) do 
+      elected = build(:elected, id: 123)
+      expect(elected).to receive(:person).and_return(double(:name_last => "elected"))
+      expect(NyFiler).to receive(:search_filers).with("elected").and_return([])
+      expect(Entity).to receive(:find).and_return(elected)
+    end
+
+    it 'Handles GET' do 
+      get(:new_filer_entity, entity: '123')
+      expect(response.status).to eq(200)
+      expect(response).to render_template(:new_filer_entity)
+    end
+
+    
+  end
+
 end

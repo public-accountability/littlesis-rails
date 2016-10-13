@@ -1,14 +1,14 @@
 class NyFiler < ActiveRecord::Base
-  has_many :ny_filer_entities
-  has_many :entities, :through => :ny_filer_entities
-  has_many :ny_disclosure, foreign_key: "filer_id"
+  has_one :ny_filer_entity
+  has_many :entities, :through => :ny_filer_entity
+  has_many :ny_disclosures, foreign_key: "filer_id"
 
-  def search_filers
-    render json: NyFiler.search( search_params[:name], :sql => { :include => :entities })
+  def self.search_filers(name)
+    NyFiler.search( name, :sql => { :include => :ny_filer_entity })
   end
   
-  private
-  def search_params
-    params.require(:name)
+  def is_matched?
+    ny_filer_entity.present?
   end
+
 end

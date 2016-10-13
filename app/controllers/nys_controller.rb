@@ -1,15 +1,33 @@
 class NysController < ApplicationController
   before_filter :auth
-  skip_before_action :verify_authenticity_token
 
   def candidates
   end
 
-  def new_filer_entity
-    @entity = Entity.find(entity_id)
+  def create
+    check_permission 'importer'
+    
+    ny_filer_ids.each do |id|
+      filer_id = NyFiler.find(id).filer_id
+      NyFilerEntity.create!(entity_id: entity_id, ny_filer_id: id, filer_id: filer_id)
+    end
+    redirect_to :action => "new_filer_entity", :entity => entity_id
   end
 
-  # POST data:
+  def new_filer_entity
+    @entity = Entity.find(entity_id)
+    @matched = []
+    @filers = []
+    NyFiler.search_filers(@entity.person.name_last).each { |filer| 
+      if filer.is_matched?
+        @matched << filer
+      else
+        @filers << filer
+      end
+    }
+  end
+
+  # POST data
   #  { payload: { 
   #       disclosure_ids: [int],
   #       donor_id: int }
@@ -38,6 +56,10 @@ class NysController < ApplicationController
   end
 
   private
+
+  def ny_filer_ids
+    params.require(:ids)
+  end
 
   def entity_id
     params.require(:entity)
