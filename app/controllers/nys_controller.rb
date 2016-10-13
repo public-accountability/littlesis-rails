@@ -24,12 +24,16 @@ class NysController < ApplicationController
     head :accepted
   end
   
+  def unmatch_donations
+    check_permission 'importer'
+  end
+
   # search for contributions
   # /nys/potential_contributions?entity=123
   def potential_contributions
     check_permission 'importer'
     name = Entity.find(params.require(:entity).to_i).name
-    render json: NyDisclosure.search(name, :with => { :is_matched => false } )
+    render json: NyDisclosure.potential_contributions(name)
   end
 
   private

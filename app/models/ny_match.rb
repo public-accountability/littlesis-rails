@@ -10,11 +10,33 @@ class NyMatch < ActiveRecord::Base
 
   after_save ThinkingSphinx::RealTime.callback_for(:ny_disclosure, [:ny_disclosure])
 
+  def create_or_update_relationship
+    # if this match already has a relationship, so we can assume this has already been processed
+    return nil unless relationship.nil?
+    # a relationship requires both a donor and a recipient
+    return nil if donor_id.nil? or recip_id.nil? 
+    # find the existing relationship (or create it)
+    r = Relationship.find_or_create_by!(
+      entity1_id: donor_id,
+      entity2_id: recip_id,
+      category_id: 5 )
+    # connect this match to the relationship
+    update_attribute(:relationship, r)
+    # update and save the relationship
+    r.update_ny_donation_info.save
+  end
+
+  def set_recipient
+    self.recip_id = NyFilerEntity.find_by_filer_id(ny_disclosure.filer_id)&.entity_id
+  end
+
   # input: int, int, int (optional)
   def self.match(disclosure_id, donor_id, matched_by=APP_CONFIG['system_user_id'])
     m = self.find_or_initialize_by(ny_disclosure_id: disclosure_id, donor_id: donor_id)
     if m.new_record?
       m.matched_by = matched_by
+      m.set_recipient
+      m.create_or_update_relationship
       m.save
     end
   end

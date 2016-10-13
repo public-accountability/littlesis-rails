@@ -855,6 +855,7 @@ ActiveRecord::Schema.define(version: 20161010150852) do
     t.boolean  "is_committee"
     t.integer  "cmte_entity_id"
     t.string   "e_year",         limit: 4
+    t.string   "filer_id"
     t.string   "office"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -862,6 +863,7 @@ ActiveRecord::Schema.define(version: 20161010150852) do
 
   add_index "ny_filer_entities", ["cmte_entity_id"], name: "index_ny_filer_entities_on_cmte_entity_id", using: :btree
   add_index "ny_filer_entities", ["entity_id"], name: "index_ny_filer_entities_on_entity_id", using: :btree
+  add_index "ny_filer_entities", ["filer_id"], name: "index_ny_filer_entities_on_filer_id", using: :btree
   add_index "ny_filer_entities", ["is_committee"], name: "index_ny_filer_entities_on_is_committee", using: :btree
   add_index "ny_filer_entities", ["ny_filer_id"], name: "index_ny_filer_entities_on_ny_filer_id", using: :btree
 

@@ -40,13 +40,17 @@ class Relationship < ActiveRecord::Base
   has_many :os_matches, inverse_of: :relationship
   has_many :os_donations, through: :os_matches
 
+  # NY Contributions
+  has_many :ny_matches, inverse_of: :relationship
+  has_many :ny_disclosures, through: :ny_matches
+
   validates_presence_of :entity1_id, :entity2_id, :category_id
 
   after_create :create_category, :create_links
 
   def create_category
     self.class.all_categories[category_id].constantize.create(relationship: self) if self.class.all_category_ids_with_fields.include?(category_id)
-  end
+  end 
 
   def create_links
     Link.create(entity1_id: entity1_id, entity2_id: entity2_id, category_id: category_id, is_reverse: false, relationship: self)
@@ -302,5 +306,16 @@ class Relationship < ActiveRecord::Base
       end
     end    
   end  
+
+  #############################
+  # NYS Contributions helpers #
+  #############################
+
+  def update_ny_donation_info
+    self.attributes = { amount: ny_disclosures.sum(:amount1), filings: ny_disclosures.count }
+    self.attributes = { description1: "NYS Campaign Contribution" } if description1.blank?
+    self
+  end
+
 
 end
