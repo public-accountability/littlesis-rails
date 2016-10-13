@@ -214,6 +214,7 @@ Lilsis::Application.routes.draw do
   resources :references, only: [:create, :destroy]
 
   get "/search" => "search#basic"
+  get "/search/entity" => "search#entity_search"
 
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
