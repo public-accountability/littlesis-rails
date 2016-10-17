@@ -49,7 +49,7 @@ class CreateNyDisclosures < ActiveRecord::Migration
       t.string :state, limit: 2
       t.string :zip, limit: 5
       t.string :check_number
-      t.date :check_date
+      t.string :check_date
       t.float :amount1
       t.float :amount2
       t.string :description

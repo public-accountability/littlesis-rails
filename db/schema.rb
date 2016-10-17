@@ -828,7 +828,7 @@ ActiveRecord::Schema.define(version: 20161010150852) do
     t.string   "state",                     limit: 2
     t.string   "zip",                       limit: 5
     t.string   "check_number"
-    t.date     "check_date"
+    t.string   "check_date"
     t.float    "amount1",                   limit: 24
     t.float    "amount2",                   limit: 24
     t.string   "description"
