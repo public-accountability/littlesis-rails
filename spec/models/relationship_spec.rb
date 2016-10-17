@@ -122,6 +122,42 @@ describe Relationship, type: :model do
     end
 
   end
+  
+  describe '#update_ny_contribution_info' do
+    before(:all) do
+      donor = create(:person, name: 'I <3 ny politicans')
+      elected = create(:elected)
+      @rel = Relationship.create(entity1_id: donor.id, entity2_id: elected.id, category_id: 5)
+      disclosure1 = create(:ny_disclosure, amount1: 2000)
+      disclosure2 = create(:ny_disclosure, amount1: 3000)
+      match1 = create(:ny_match, ny_disclosure_id: disclosure1.id, donor_id: donor.id, recip_id: elected.id, relationship: @rel)
+      match1 = create(:ny_match, ny_disclosure_id: disclosure2.id, donor_id: donor.id, recip_id: elected.id, relationship: @rel)
+      @rel.update_ny_donation_info
+    end
+    
+    it 'updates amount' do
+      expect(@rel.amount).to eql 5000
+    end
+
+    it 'Sets description if blank' do 
+      expect(@rel.description1).to eql "NYS Campaign Contribution"
+    end
+
+    it 'updates filing' do
+      expect(@rel.filings).to eql 2
+    end
+
+    it 'does not update the database' do
+      expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings')).to eql({"amount" => nil, "filings" => nil})
+    end
+
+    it 'can be chained with .save to update the db' do 
+      @rel.update_ny_donation_info.save
+      expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings')).to eql({"amount" => 5000, "filings" => 2})
+    end
+
+  end
+
 
   describe '#name' do
     it 'generates correct title for position relationship' do 

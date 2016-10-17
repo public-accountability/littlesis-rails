@@ -1,0 +1,41 @@
+<div class="col-md-3 col-sm-3" id="about-sidebar">
+    <div class="row thin-grey-bottom-border">
+        <h3 class="text-center"><%= @entity.name %></h3>
+        <% cache @entity.person do %>
+            <%= render partial: 'about_sidebar', locals: { person: @entity.person } %>
+        <% end %>
+    </div>
+    <br>
+    <% if @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').present? %>
+        <div class="row text-center">
+            <p class=""><strong>Positions</strong></p>
+            <% @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').each do |r|  %>
+                <% cache r do %>
+                    <%= render partial: 'position', locals: { relationship: r } %>
+                <% end %>
+            <% end %>
+        </div>
+    <% end %>
+
+    <% if @entity.relationships.where(category_id: 2).present? %>
+        <div class="row text-center">
+            <p><strong>Education</strong></p>
+            <% @entity.relationships.where(category_id: 2).each do |r|  %>
+                <% cache r do %>
+                    <%= render partial: 'position', locals: { relationship: r } %>
+                <% end %>
+            <% end %>
+        </div>    
+    <% end %>
+
+    <% if @entity.relationships.where(category_id: 4).present? %>
+        <div class="row text-center">
+            <p><strong>Family</strong></p>
+            <% @entity.relationships.where(category_id: 4).each do |r|  %>
+                <% cache r do %>
+                    <%= render partial: 'position', locals: { relationship: r } %>
+                <% end %>
+            <% end %>
+        </div>
+    <% end %>
+</div>

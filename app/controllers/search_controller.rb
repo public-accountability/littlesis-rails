@@ -51,4 +51,36 @@ class SearchController < ApplicationController
       }
     end
   end
+
+  def entity_search
+    return head :bad_request unless params[:q].present?
+    q = ThinkingSphinx::Query.escape(params[:q])
+
+    if params[:ext]
+      with = { is_deleted: false , primary_ext: "'#{params[:ext].titleize}'" }
+    else
+      with = { is_deleted: false }
+    end
+    
+    entities = Entity.search(
+      "@(name,aliases) #{q}",
+      match_mode: :extended,
+      with: with,
+      select: "*, weight() * (link_count + 1) AS link_weight",
+      order: "link_weight DESC"
+    ).map { |e|
+      {
+        id: e.id,
+        name: e.name,
+        description: e.blurb,
+        summary: e.summary,
+        primary_type: e.primary_ext,
+        url: e.legacy_url,
+      }
+    }
+
+    render json: entities
+  end
+  
+
 end

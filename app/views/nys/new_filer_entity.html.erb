@@ -1,0 +1,69 @@
+<% content_for(:page_title, "NYS Candidates and Committees") %>
+<div class="row">
+    <h2>Find NYS Candidates and Committees for <%= entity_link(@entity) %></h2>
+    <p><%= link_to "Select a different politician", '/nys/candidates' %></p>
+</div>
+<div class="row">
+    <% if @matched.length > 0 %>
+        <table class="table">
+            <caption>Already Matched</caption>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Filer Type</th>
+                    <th>Committee Type</th>
+                    <th>Office</th>
+                    <th>District</th>
+                    <th>Address</th>
+                    <th>City, State, Zip</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @matched.each do |f| %>
+                    <tr>
+                        <%= render partial: "filer_row", locals: {filer: f } %>
+                    </tr>
+                <% end  %>
+            </tbody>
+            
+        </table>
+    <% end%>
+    <% if @filers.length > 0 %>
+        <%= form_tag('/nys/candidates/new') do -%>
+            <%= hidden_field_tag "entity", @entity.id %>
+            <table class="table">
+                <caption>Possible candidates and committees:</caption>
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Name</th>
+                        <th>Filer Type</th>
+                        <th>Committee Type</th>
+                        <th>Office</th>
+                        <th>District</th>
+                        <th>Address</th>
+                        <th>City, State, Zip</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% @filers.each do |f| %>
+                        <tr>
+                            <td>
+                                <div class="checkbox">
+                                    <%=  check_box_tag 'ids[]', f.id %>
+                                </div>
+                            </td>
+                            <%= render partial: "filer_row", locals: {filer: f } %>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+            <%= submit_tag 'Submit' %>
+
+        <% end %> <!-- end of form -->
+
+    <% end %>
+    
+</div>
+
+

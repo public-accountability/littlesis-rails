@@ -59,13 +59,16 @@ class Entity < ActiveRecord::Base
   has_many :contributions, through: :matched_contributions, source: :os_donation
   has_many :donors, class_name: "OsMatch", inverse_of: :recipient, foreign_key: "recip_id"
   has_many :committee_donors, class_name: "OsMatch", inverse_of: :committee, foreign_key: "cmte_id"
+
+  # NY Election 
+  has_many :ny_filer_entities
+  has_many :ny_filers, through: :ny_filer_entities
   
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
 
   validates_presence_of :name
   validates_presence_of :primary_ext
-
   before_create :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext, :add_to_default_network
 

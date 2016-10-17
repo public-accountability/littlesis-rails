@@ -105,7 +105,9 @@ Lilsis::Application.routes.draw do
       get 'relationships'
       get 'political'
       get 'match_donations'
+      get 'match_ny_donations'
       get 'review_donations'
+      get 'review_ny_donations'
       post 'match_donation'
       post 'unmatch_donation'
       get 'contributions'
@@ -212,6 +214,7 @@ Lilsis::Application.routes.draw do
   resources :references, only: [:create, :destroy]
 
   get "/search" => "search#basic"
+  get "/search/entity" => "search#entity_search"
 
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
@@ -231,6 +234,17 @@ Lilsis::Application.routes.draw do
   get "/partypolitics" => "pages#partypolitics"
   get "/oligrapher" => "maps#splash"
   get "/graph" => "graph#all"
+
+  ####### 
+  # NYS #
+  ####### 
+  
+  post "/nys/match_donations" => "nys#match_donations"
+  get "/nys/candidates" => "nys#candidates"
+  get "/nys/candidates/new" =>  "nys#new_filer_entity"
+  post "/nys/candidates/new" =>  "nys#create"
+  get "/nys/potential_contributions" => "nys#potential_contributions"
+  get "/nys/contributions" => "nys#contributions"
 
   match "*path", to: "errors#not_found", via: :all
 

@@ -1,0 +1,2 @@
+module NysHelper
+end

@@ -20,7 +20,11 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from ActionController::RoutingError do |exception|
-    exit
+    if Rails.env.development?
+      raise
+    else
+      exit
+    end
   end
 
   def admins_only

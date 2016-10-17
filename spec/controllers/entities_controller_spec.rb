@@ -112,6 +112,14 @@ describe EntitiesController, type: :controller do
       end
     end
 
+    describe 'GET /match_ny_donations' do
+     it 'renders match_ny_donations page' do 
+        get(:match_ny_donations, {id: @entity.id})
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:match_ny_donations)
+      end
+    end  
+
   end
 end
 
