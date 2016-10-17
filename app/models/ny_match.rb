@@ -52,4 +52,9 @@ class NyMatch < ActiveRecord::Base
     create_or_update_relationship
   end
 
+  # Returns information as hash for the review donations page
+  def info
+    ny_disclosure.contribution_attributes.merge(:filer_in_littlesis => ny_filer.is_matched? ? 'Y' : 'N')
+  end
+
 end

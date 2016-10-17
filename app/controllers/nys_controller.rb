@@ -55,6 +55,13 @@ class NysController < ApplicationController
     render json: NyDisclosure.potential_contributions(name)
   end
 
+  # Already matched donations
+  # /nys/contributions?entity=123
+  def contributions
+    check_permission 'importer'
+    render json: NyMatch.where(donor_id: entity_id).map(&:info)
+  end
+
   private
 
   def ny_filer_ids

@@ -244,6 +244,7 @@ Lilsis::Application.routes.draw do
   get "/nys/candidates/new" =>  "nys#new_filer_entity"
   post "/nys/candidates/new" =>  "nys#create"
   get "/nys/potential_contributions" => "nys#potential_contributions"
+  get "/nys/contributions" => "nys#contributions"
 
   match "*path", to: "errors#not_found", via: :all
 

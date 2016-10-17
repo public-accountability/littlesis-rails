@@ -8,8 +8,9 @@ function NyMatchDonations(mode, entity_id) {
     $.getJSON('/nys/potential_contributions', {entity: id }, function(data) { cb(data); }); 
   };
 
+  // int, func -> callback([{}])
   this.existingMatches = function(id, cb) {
-    // $.getJSON('/nys/' + id + '/contributions', function(data){ cb(data); }); 
+    $.getJSON('/nys/contributions', {entity: id }, function(data){ cb(data); }); 
   };
   
   this.columns =  {
@@ -21,13 +22,24 @@ function NyMatchDonations(mode, entity_id) {
       { data: 'date', title: "Date", width: '10%'},
       { data: 'filer_name', title: 'Recipient', width: '25%'}
     ],
-    unmatch: [ ]
+    unmatch: [
+      { data: 'name', title: "Name", width: '25%' },
+      { data: 'address', title: "Address", width: '20%' },
+      { data: 'amount', title: "Amount", width: '7%' },
+      { data: 'transaction_code', title: 'Transaction Code', width: '10%'}, 
+      { data: 'date', title: "Date", width: '10%'},
+      { data: 'filer_name', title: 'Recipient', width: '23%'},
+      { data: 'filer_in_littlesis', title: 'Filer in LittleSis?', width: '5%' }
+    ]
   };
 
   this.createToolBar = function(){
-    var html = '<button type="button" id="match-the-donation" class="btn btn-primary">';
-    html += (this.mode === 'match') ? "Match Selected" : "Unmatch Selected";
-    html += '</button>';
+    var html = '';
+    if (this.mode === 'match') {
+      html += '<button type="button" id="match-the-donation" class="btn btn-primary">';
+      html += (this.mode === 'match') ? "Match Selected" : "Unmatch Selected";
+      html += '</button>';
+    }
     html += '<div class="loading"></div>';
     html += '<button type="button" id="select-all" class="btn btn-primary">Select all</button>';
     html += '<span class="m-left-1em text-muted">show:</span><select id="page-length-select"><option>10</option><option>20</option><option>30</option><option>50</option></select>';
@@ -101,8 +113,14 @@ function NyMatchDonations(mode, entity_id) {
   }.bind(this);
 
   this.init = function(){
-    this.mode = 'match';
-    this.potentialMatches(this.entity_id, this.datatable);
+    if (this.mode === 'match') {
+      this.potentialMatches(this.entity_id, this.datatable);
+    } else if (this.mode === 'unmatch') {
+      this.existingMatches(this.entity_id, this.datatable);
+    } else {
+      console.error("The mode must be 'match' or 'unmatch' ");
+    }
+    
   }.bind(this);
 
 };

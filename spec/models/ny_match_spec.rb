@@ -119,4 +119,29 @@ describe NyMatch, type: :model do
     end
    end
 
+  describe '#info' do 
+    before(:all) do 
+      @donor = build(:person, id: 25)
+      @elected = build(:elected, id: 26)
+      @filer = build(:ny_filer, filer_id: '9876', name: 'some committee')
+      @disclosure = create(:ny_disclosure, amount1: 50, ny_filer: @filer)
+      @match = NyMatch.create(ny_disclosure_id: @disclosure.id, donor: @donor, recipient: @elected)
+    end
+
+    it 'returns a hash' do 
+      expect(@match.info).to be_a(Hash)
+    end
+
+    it 'has ny_disclosure keys' do 
+      [ :name, :address, :date, :amount, :filer_id, :filer_name, :transaction_code, :disclosure_id ].each do |k|
+        expect(@match.info).to have_key(k)
+      end
+    end
+
+    it 'has key filer_in_littlesis' do 
+      expect(@match.info).to have_key(:filer_in_littlesis)
+    end
+
+  end
+
 end
