@@ -48,7 +48,7 @@ describe NyFilerEntity, type: :model do
       ny_disclosure = create(:ny_disclosure, ny_filer: ny_filer)
       NyMatch.create(ny_disclosure: ny_disclosure, donor_id: donor.id)
       expect(NyMatch.last.recip_id).to be nil
-      expect{NyFilerEntity.last.rematch_existing_matches}.to change{Relationship.count}.by(1)
+      expect{NyFilerEntity.last.rematch_existing_matches_without_delay}.to change{Relationship.count}.by(1)
       expect(NyMatch.last.recip_id).to eql elected.id
     end
   end

@@ -22,7 +22,7 @@ describe NysController, type: :controller do
       expect(disclosure).to receive(:map)
       expect(Entity).to receive(:find).with(12345).and_return(person)
       expect(NyDisclosure).to receive(:search)
-                               .with('big donor', :with=>{:is_matched=>false}, :sql=>{:include=>:ny_filer}  )
+                               .with('big donor', :with=>{:is_matched=>false, :transaction_code=>["'A'", "'B'", "'C'"]}, :sql=>{:include=>:ny_filer}, :per_page => 500)
                                .and_return(disclosure)
       get(:potential_contributions, entity: '12345')
       expect(response.status).to eq(200)
