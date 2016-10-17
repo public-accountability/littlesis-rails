@@ -1,8 +1,9 @@
 function NyMatchDonations(mode, entity_id) {
   this.mode = mode; // 'match' or 'unmatch'
   this.entity_id = entity_id;
-  this.table = null;
+  this.table = null; // store reference to Datatable object
   
+  // int, func -> callback([{}])
   this.potentialMatches = function(id, cb) {
     $.getJSON('/nys/potential_contributions', {entity: id }, function(data) { cb(data); }); 
   };
@@ -34,7 +35,7 @@ function NyMatchDonations(mode, entity_id) {
   }.bind(this);
 
 
-  this.rowClick = function(table) {
+   this.rowClick = function() {
     $('#donations-table tbody').on( 'click', 'tr', function () {
       if ( $(this).hasClass('selected') ) {
          $(this).removeClass('selected');
@@ -51,15 +52,15 @@ function NyMatchDonations(mode, entity_id) {
     });
   };
 
-  this.onPageLenSelect = function() {
+  this.onPageLenSelect = function(table) {
     $('#page-length-select').change(function(){
       var len = Number($(this).find('option:selected').text());
-      this.table.page.len(len).draw();
+      table.page.len(len).draw();
     });
-  }.bind(this);
+  };
 
   this.matchRequest = function(ids) {
-    var url = '/nys' + this.mode + '_donations';
+    var url = '/nys/' + this.mode + '_donations';
     $.post(url, {payload: {disclosure_ids: ids, donor_id: this.entity_id }})
       .done(function(r){ 
         $('#match-donations .toolbar .loading').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
@@ -95,11 +96,11 @@ function NyMatchDonations(mode, entity_id) {
     this.createToolBar();
     this.rowClick();
     this.onClickSelectAll();
-    this.onPageLenSelect();
+    this.onPageLenSelect(this.table);
     this.onClickMatchButton();
   }.bind(this);
 
-  this.init=  function(){
+  this.init = function(){
     this.mode = 'match';
     this.potentialMatches(this.entity_id, this.datatable);
   }.bind(this);

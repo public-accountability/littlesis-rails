@@ -44,5 +44,10 @@ class NyMatch < ActiveRecord::Base
       m.save
     end
   end
+  
+  def rematch
+    set_recipient
+    create_or_update_relationship.save
+  end
 
 end

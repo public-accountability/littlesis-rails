@@ -31,7 +31,11 @@ class NyDisclosure < ActiveRecord::Base
   end
 
   def self.potential_contributions(name)
-    search(name, :with => { :is_matched => false }, :sql => { :include => :ny_filer } ).map(&:contribution_attributes)
+    search(name, 
+           :with => { :is_matched => false, :transaction_code =>  [ "'A'", "'B'", "'C'" ] }, 
+           :sql => { :include => :ny_filer },
+           :per_page => 500
+          ).map(&:contribution_attributes)
   end
 
   private 
