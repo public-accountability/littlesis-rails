@@ -19,6 +19,8 @@ describe NyMatch, type: :model do
   it { should belong_to(:recipient) }
   it { should belong_to(:relationship) }
   it { should belong_to(:user) }
+  it { should have_one(:ny_filer) }
+  it { should have_one(:ny_filer_entity) }
 
   describe 'match' do 
     

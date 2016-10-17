@@ -1,6 +1,8 @@
 class NyMatch < ActiveRecord::Base
   
   belongs_to :ny_disclosure, inverse_of: :ny_match
+  has_one :ny_filer, :through => :ny_disclosure
+  has_one :ny_filer_entity, :through => :ny_filer
   belongs_to :donor, class_name: "Entity", foreign_key: "donor_id"
   belongs_to :recipient, class_name: "Entity", foreign_key: "recip_id"
   belongs_to :relationship
@@ -47,7 +49,7 @@ class NyMatch < ActiveRecord::Base
   
   def rematch
     set_recipient
-    create_or_update_relationship.save
+    create_or_update_relationship
   end
 
 end

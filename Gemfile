@@ -85,13 +85,13 @@ gem 'rails_autolink'
 gem 'soap4r-ruby1.9'
 
 group :test, :development do
-  # ziggy: added June 2016
   gem 'rspec-rails'
   gem 'factory_girl_rails'
   gem 'seed_dump'
   gem 'database_cleaner'
   gem 'spring-commands-rspec'
   gem 'shoulda-matchers', '~> 3.1'
+  gem 'shoulda-callback-matchers', '~> 1.1.4'
   ###########################  
   gem 'better_errors', '0.7.0'
   gem 'binding_of_caller', '0.7.0'

@@ -293,6 +293,8 @@ GEM
       rubyzip (~> 1.0)
       websocket (~> 1.0)
     sequel (4.22.0)
+    shoulda-callback-matchers (1.1.4)
+      activesupport (>= 3)
     shoulda-matchers (3.1.1)
       activesupport (>= 4.0.0)
     simple_oauth (0.3.1)
@@ -416,6 +418,7 @@ DEPENDENCIES
   seed_dump
   selenium-webdriver
   sequel
+  shoulda-callback-matchers (~> 1.1.4)
   shoulda-matchers (~> 3.1)
   soap4r-ruby1.9
   spring-commands-rspec
