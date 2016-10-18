@@ -26,6 +26,7 @@ class NyMatch < ActiveRecord::Base
       # However, it requires that every NYS campaign contribution relationship have the description set to this string.
       description1: "NYS Campaign Contribution"  
     )
+    r.last_user_id = matched_by.nil? ? 1 : User.find(matched_by).sf_guard_user.id
     # connect this match to the relationship
     update_attribute(:relationship, r)
     # update and save the relationship

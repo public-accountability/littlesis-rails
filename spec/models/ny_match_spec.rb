@@ -27,6 +27,7 @@ describe NyMatch, type: :model do
     before(:each) do 
       expect(NyFilerEntity).to receive(:find_by_filer_id).and_return(double(:entity_id => 100))
       allow(Relationship).to receive(:find_or_create_by!).and_return(build(:relationship))
+      allow(User).to receive(:find).and_return(double(:sf_guard_user => double(:id => 99)))
     end
 
     it 'Creates a new match' do 
@@ -101,6 +102,7 @@ describe NyMatch, type: :model do
       expect(NyMatch.new(donor_id: 123).create_or_update_relationship).to be nil
     end
 
+
     describe 'creating and updating the same relationship' do 
       it 'creates a new relationship, and then updates it.' do
         disclosure = create(:ny_disclosure, amount1: 50)
@@ -117,6 +119,24 @@ describe NyMatch, type: :model do
         expect(match.relationship.filings).to eql 2
       end
     end
+
+    it 'sets the relationship\'s last_user id to be the matched_by user' do 
+      disclosure = create(:ny_disclosure, amount1: 50)
+      sf_user = create(:sf_guard_user)
+      user = create(:user, sf_guard_user_id: sf_user.id)
+      
+      match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected, matched_by: user.id)
+      match.create_or_update_relationship
+      expect(Relationship.last.last_user_id).to eql sf_user.id
+    end
+
+    it 'sets the relationship\'s last_user id to default to be 1' do 
+      disclosure = create(:ny_disclosure, amount1: 50)
+      match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected)
+      match.create_or_update_relationship
+      expect(Relationship.last.last_user_id).to eql 1
+    end
+    
    end
 
   describe '#info' do 
