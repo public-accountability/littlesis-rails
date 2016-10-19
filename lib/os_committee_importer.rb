@@ -1,3 +1,4 @@
+require 'csv'
 module OsCommitteeImporter
 
     def self.line_to_a(line)

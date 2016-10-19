@@ -35,4 +35,6 @@ Lilsis::Application.configure do
   config.active_support.deprecation = :stderr
 
   config.active_record.schema_format = :sql
+
+  config.active_support.test_order = :sorted   # or `:random` if you pref
 end

@@ -34,6 +34,9 @@ module Lilsis
 
     config.assets.paths << "#{Rails.root}/vendor/assets/images"
 
+    config.active_record.raise_in_transactional_callbacks = true
+
+
     @twitter = Twitter::REST::Client.new do |cnf|
       cnf.consumer_key        = config.twitter_consumer_key
       cnf.consumer_secret     = config.twitter_consumer_secret

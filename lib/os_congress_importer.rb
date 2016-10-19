@@ -1,6 +1,9 @@
 # Imports congressional data from Open Secrets
 # Open Secrets data is found in their excel file: https://www.opensecrets.org/downloads/crp/CRP_IDs.xls 
 # The Excel sheet must be first exported to csv with headers, delimiter: ',' quote: ''
+
+require 'csv'
+
 class OsCongressImporter
   attr_reader :list_id
   
