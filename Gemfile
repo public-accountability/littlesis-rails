@@ -1,15 +1,15 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.8'
-gem 'mysql2'
+gem 'rails', '4.2.7'
+gem 'mysql2', '~> 0.3.21'
 
 # users and authentication
-gem 'devise'
+gem 'devise', '= 3.5.10'
 
 # image uploading with amazon s3 storage
 gem 'carrierwave'
 gem 'mini_magick'
-gem "fog", "~> 1.3.1"
+gem "fog"  #  "~> 1.3.1"
 
 gem 'sass-rails'
 gem 'asset_sync'
@@ -84,6 +84,10 @@ gem 'rails_autolink'
 
 gem 'soap4r-ruby1.9'
 
+group :development do 
+  gem 'web-console', '~> 2.0' 
+end
+
 group :test, :development do
   gem 'rspec-rails'
   gem 'factory_girl_rails'
@@ -94,10 +98,10 @@ group :test, :development do
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   ###########################  
   gem 'better_errors', '0.7.0'
-  gem 'binding_of_caller', '0.7.0'
+  gem 'binding_of_caller', '0.7.2'
 end  
 
-gem 'sprockets', '2.11.0'
+gem 'sprockets', '~> 3.0'
 gem 'twitter'
 gem 'poltergeist'
 gem 'mechanize'
@@ -108,7 +112,10 @@ gem 'rmagick'
 gem 'capybara'
 gem 'capybara-webkit'
 gem 'paper_trail', '>= 5.1.1'
-gem 'foreigner'
+
+# no longer needed for
+# gem 'foreigner'
+
 gem 'validate_url'
 gem 'selenium-webdriver'
 gem 'geocoder'
