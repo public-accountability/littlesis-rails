@@ -2,7 +2,15 @@ Lilsis::Application.routes.draw do
   # match "*path", to: "errors#maintenance", via: :all
 
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'
-  devise_for :users
+  #   devise_for :users
+  devise_for :users, controllers: { sessions: 'users/sessions' }
+  
+  # devise_scope :user do 
+  #   get 'users/sign_in', to: "users/sessions#new"
+  #   post 'post/sign_in', to: "users/sessions#create"
+  # end
+  
+
   root to: 'home#dashboard'
 
   get "/admin" => "admin#home"

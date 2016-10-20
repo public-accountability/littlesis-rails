@@ -1,9 +1,10 @@
 class User < ActiveRecord::Base
-  include Cacheable
+
+  # include Cacheable
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :legacy_authenticatable, :registerable,
+  devise :legacy_authenticatable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable
 
   # Setup accessible (or protected) attributes for your model

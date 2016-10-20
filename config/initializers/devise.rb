@@ -208,9 +208,38 @@ Devise.setup do |config|
   # end
 
   config.warden do |manager|
-    manager.default_strategies(:scope => :user).unshift :legacy_authenticatable
+    # manager.strategies.add(:rails_auth, Devise::Strategies::RailsAuth)
+     manager.default_strategies(:scope => :user).unshift :legacy_authenticatable
+     manager.default_strategies(:scope => :user).unshift :rails_auth
   end
 
   config.secret_key = '6294a6c02d368c9016ce75098d6805e9d2c3e1bc63ccdd9df27acdce873404b306311db8e809ca363227443783a59ebeeaa51ca723dbab1e87622a17594d76a9'
 end
 
+
+# module Devise
+#   module Strategies
+#     # Default strategy for signing in a user, based on their email and password in the database.
+#     class DatabaseAuthenticatable <
+
+#       def devise_authenticate
+#         resource  = password.present? && mapping.to.find_for_database_authentication(authentication_hash)
+#         hashed = false
+
+#         if validate(resource){ hashed = true; resource.valid_password?(password) }
+#           remember_me(resource)
+#           resource.after_database_authentication
+#           success!(resource)
+#         end
+
+#         mapping.to.new.password = password if !hashed && Devise.paranoid
+#         fail(:not_found_in_database) unless resource
+#       end
+      
+#       def authenticate!
+#         logger.info "HEY"
+#         devise_authenticate
+#       end
+#     end
+#   end
+# end
