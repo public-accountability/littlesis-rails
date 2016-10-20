@@ -49,3 +49,5 @@ module Lilsis
     end
   end
 end
+
+ActiveRecord::SessionStore::Session.serializer = :json
