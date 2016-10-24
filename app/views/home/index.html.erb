@@ -1,0 +1,47 @@
+<% content_for(:page_title, "Littlesis - Profiling the powers that be") %>
+<%= render partial: 'facebook_js' %>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="row">
+            <h1>LittleSis<span style="color: #cc5454;">*</span> is a free database of who-knows-who at the heights of business and government.</h1>
+            <div style="font-weight: 300; font-size: 14px; color: #cc5454;"><span style="font-size: 16px; font-weight: bold;">*</span> opposite of Big Brother</div>
+
+            <div id="homepage-splash-subheader">
+                We're a grassroots watchdog network connecting the dots between the world's most powerful people and organizations.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-5">
+                <form action="http://groups.google.com/group/littlesis/boxsubscribe">
+                    <div class="input-group">
+                        <input class="form-control" name="email" placeholder="your email" size="25" type="text">
+                        <span class="input-group-btn">
+                            <button class="btn" style="color: white; background-color: #cc5454;" type="submit" name="sub">Join Us!</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-2">
+                <div style="padding-top: 8px;">
+                    <a href="https://twitter.com/twittlesis" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false" data-dnt="true">Follow</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div style="padding-top: 8px;">
+                    <div class="fb-like" data-href="https://littlesis.org" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="false"></div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div id="donate">
+                    <a href="https://public-accountability.org/donate/" class="btn" style="color: white; background-color: #cc5454; text-decoration: none;">Donate</a>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <%= render partial: 'dots_connected' %>
+    </div>
+</div>

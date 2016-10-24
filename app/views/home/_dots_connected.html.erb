@@ -1,0 +1,32 @@
+<div id="homepage-lists">
+
+    <div id="dots-connected-counter">
+        <span>
+            <% @dots_connected.each do |number| %>
+                <div class="homepage-counter"><%= number %></div>
+            <% end  %>
+        </span>
+        <span>dots connected:</span>
+    </div>
+
+    <div id="dots-connected-links">
+        <% HomeController::DOTS_CONNECTED_LISTS.each do |x| %>
+            <% id, title =  x %>
+            ✔ <%= link_to title, List.find(id) %><br />
+        <% end %>
+    </div>
+
+    <div class="container">
+        <div class="row" id="dots-connected-search">
+            <form class="form-inline" action="/search" method="get" role="search">
+                <div class="form-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search for a name" />
+                </div>
+                <button type="submit" class="btn btn-default">
+	            <span class="glyphicon glyphicon-search"></span>
+	        </button>
+            </form>
+        </div>
+    </div>
+
+</div>

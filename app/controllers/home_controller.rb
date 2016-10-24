@@ -1,6 +1,15 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, except: [:dismiss, :sign_in_as]
+  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index]
   # before_filter :auth
+
+  # [list_id, 'title' ]
+  DOTS_CONNECTED_LISTS = [
+    [41, 'Paid for politicians'],
+    [88, 'Corporate fat cats'],
+    [102, 'Revolving door lobbyists'],
+    [114, 'Secretive Super PACs'],
+    [34, 'Elite think tanks']
+  ]
 
 	def notes
     @user = User.includes(:notes, notes: :recipients).find_by_username(current_user.username)
@@ -44,4 +53,9 @@ class HomeController < ApplicationController
     @header = 'My Network Maps'
     render 'maps/index'
   end
+
+  def index
+    @dots_connected = (Person.count + Org.count).to_s.split('')
+  end
+
 end
