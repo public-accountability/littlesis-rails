@@ -4,8 +4,11 @@ class User < ActiveRecord::Base
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :legacy_authenticatable, :database_authenticatable, :registerable,
+  # :legacy_authenticatable, 
+  devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable
+
+  # after_database_authentication :set_sf_session
 
   # Setup accessible (or protected) attributes for your model
   # attr_accessible :email, :password, :password_confirmation, :remember_me
@@ -104,4 +107,9 @@ class User < ActiveRecord::Base
   def full_legacy_url
     "//littlesis.org" + legacy_url
   end
+
+  def legacy_check_password(password)
+    Digest::SHA1.hexdigest(sf_guard_user.salt + password) == sf_guard_user.password
+  end
+  
 end

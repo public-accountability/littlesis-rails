@@ -1,5 +1,6 @@
 class HomeController < ApplicationController
-	before_filter :auth, except: [:dismiss, :sign_in_as]
+  before_action :authenticate_user!, except: [:dismiss, :sign_in_as]
+  # before_filter :auth
 
 	def notes
     @user = User.includes(:notes, notes: :recipients).find_by_username(current_user.username)
