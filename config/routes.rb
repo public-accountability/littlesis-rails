@@ -6,13 +6,7 @@ Lilsis::Application.routes.draw do
   # devise_for :users
   devise_for :users, controllers: { sessions: 'users/sessions' }
   
-  # devise_scope :user do 
-  #   get 'users/sign_in', to: "users/sessions#new"
-  #   post 'post/sign_in', to: "users/sessions#create"
-  # end
-  
-
-  root to: 'home#dashboard'
+  root to: 'home#index'
   get '/home' => 'home#index'
 
   get "/admin" => "admin#home"
