@@ -13,6 +13,7 @@ Lilsis::Application.routes.draw do
   
 
   root to: 'home#dashboard'
+  get '/home' => 'home#index'
 
   get "/admin" => "admin#home"
   post "/admin/clear_cache" => "admin#clear_cache"

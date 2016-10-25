@@ -11,6 +11,8 @@ class HomeController < ApplicationController
     [34, 'Elite think tanks']
   ]
 
+  CAROUSEL_LIST_ID = 404 # The id of the list that contains the entities for the carousel
+
 	def notes
     @user = User.includes(:notes, notes: :recipients).find_by_username(current_user.username)
 
@@ -56,6 +58,19 @@ class HomeController < ApplicationController
 
   def index
     @dots_connected = (Person.count + Org.count).to_s.split('')
+    @carousel_entities = List.find(404).entities.to_a
+    @stats = stats
+  end
+
+  private
+
+
+  # Returns nested array 
+  # [ [ count, display name] ]
+  def stats
+    Rails.cache.fetch('data_summary_stats', expires_in: 1.hour) do 
+      ExtensionRecord.stats.unshift( [Reference.count, 'Citation'] , [ Relationship.count, 'Relationship'  ]  )
+    end
   end
 
 end

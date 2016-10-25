@@ -10,8 +10,8 @@ Lilsis::Application.configure do
   config.eager_load = false
 
   # Show full error reports and disable caching.
-  config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = false
+  config.consider_all_requests_local  = true
+  
 
   # Don't care if the mailer can't send.
   # config.action_mailer.raise_delivery_errors = false
@@ -29,8 +29,9 @@ Lilsis::Application.configure do
   config.assets.debug = true
 
   # Disable caching for development
-  # config.cache_store = :memory_store
-
+  config.action_controller.perform_caching = true
+  config.cache_store = :memory_store
+  
   # In development, links in emails should point local
   config.action_mailer.default_url_options = { host: 'lilsis.local' }
 
