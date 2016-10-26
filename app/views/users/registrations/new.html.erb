@@ -1,6 +1,31 @@
 <h2>Sign up</h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+<%=  javascript_tag do %>
+<% end %>
+
+<script>
+ 
+ function validateForm(){
+     if (!document.getElementById('terms_of_use').checked) {
+         alert("You have to accept the terms first");
+         return false;
+     }
+     var password = document.getElementsByName("user[password]")[0].value
+     var confirmation = document.getElementsByName("user[password_confirmation]")[0].value
+     if (password.length < 8) {
+         alert('Please ensure that your password is 8 or more characters long!');
+         return false;
+     } else if (password !== confirmation) {
+         alert('Your password and password confirmation do not match :(');
+         return false;
+     } else {
+         return true;
+     }
+ }
+ 
+</script>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: {:onsubmit => 'return validateForm();' }) do |f| %>
     <%= devise_error_messages! %>
     <%= f.fields_for :sf_guard_user_profile do |profile_fields| %>
         
@@ -8,10 +33,9 @@
             <%= f.select :default_network_id, Users::RegistrationsController::HOME_NETWORK_IDS %>
         </div>
 
-
         <div class="field form-group">
-            <%= profile_fields.label :name_first, "First Name" %><br />
-            <%= profile_fields.text_field :name_first %>
+            <%= profile_fields.label :name_first, "First Name"  %><br />
+            <%= profile_fields.text_field :name_first, :required => true %>
         </div>
         <div class="field form-group">
             <%= profile_fields.label :name_last, "Last Name" %><br />
@@ -20,7 +44,7 @@
 
         <div class="field form-group">
             <%= f.label :email %><br />
-            <%= f.email_field :email, autofocus: true %>
+            <%= f.email_field :email, autofocus: true, :required => true %>
         </div>
         
         <div class="field form-group">
@@ -34,17 +58,17 @@
             <% if @minimum_password_length %>
                 <em>(<%= @minimum_password_length %> characters minimum)</em>
             <% end %><br />
-            <%= f.password_field :password, autocomplete: "off" %>
+            <%= f.password_field :password, autocomplete: "off", :required => true  %>
         </div>
 
         <div class="field form-group">
             <%= f.label :password_confirmation %><br />
-            <%= f.password_field :password_confirmation, autocomplete: "off" %>
+            <%= f.password_field :password_confirmation, autocomplete: "off", :required => true  %>
         </div>
 
         <div class="field form-group">
             <p> do you agree to the terms? </p>
-            <%= check_box_tag :terms_of_use  %>
+            <%= check_box_tag 'terms_of_use'  %>
         </div>
 
         <div class="field form-group">

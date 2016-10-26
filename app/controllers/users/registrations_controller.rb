@@ -22,7 +22,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
     resource.sf_guard_user.username = resource.email
     resource.sf_guard_user.sf_guard_user_profile.assign_attributes(sf_profile_params)
     
-    
     if resource.sf_guard_user.valid? and resource.sf_guard_user.sf_guard_user_profile.valid?
       resource.sf_guard_user.save
       resource.sf_guard_user_profile.save
@@ -43,25 +42,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
     else
       handle_signup_errors
     end
-    
-    # resource.save
-    # yield resource if block_given?
-    # if resource.persisted?
-    #   if resource.active_for_authentication?
-    #     set_flash_message! :notice, :signed_up
-    #     sign_up(resource_name, resource)
-    #     respond_with resource, location: after_sign_up_path_for(resource)
-    #   else
-    #     set_flash_message! :notice, :"signed_up_but_#{resource.inactive_message}"
-    #     expire_data_after_sign_in!
-    #     respond_with resource, location: after_inactive_sign_up_path_for(resource)
-    #   end
-    # else
-    #   clean_up_passwords resource
-    #   set_minimum_password_length
-    #   respond_with resource
-    # end
-    
   end
 
   def handle_signup_errors
@@ -116,6 +96,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     )
   end
 
+  # The path used after sign up.
+  def after_sign_up_path_for(resource)
+    home_dashboard_path
+  end
+
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_account_update_params
   #   devise_parameter_sanitizer.permit(:account_update, keys: [:attribute])
@@ -125,12 +110,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # def configure_sign_up_params
   # end
 
-
-
-  # The path used after sign up.
-  def after_sign_up_path_for(resource)
-    home_dashboard_path
-  end
 
   # The path used after sign up for inactive accounts.
   # def after_inactive_sign_up_path_for(resource)

@@ -26,7 +26,7 @@ class Users::SessionsController < Devise::SessionsController
   def destroy
     SfGuardRememberKey.delete_keys_for_user(current_user)
     if cookies[:LittleSis].present?
-      Session.find_by(session_id: cookies[:LittleSis]).destroy
+      Session.find_by(session_id: cookies[:LittleSis])&.destroy
       cookies.delete(:LittleSis)
     end
     super
