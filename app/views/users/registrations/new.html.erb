@@ -1,13 +1,7 @@
-<h2>Sign up</h2>
-
-<%=  javascript_tag do %>
-<% end %>
-
 <script>
- 
  function validateForm(){
      if (!document.getElementById('terms_of_use').checked) {
-         alert("You have to accept the terms first");
+         alert("Unfortunately, you have to accept the terms first");
          return false;
      }
      var password = document.getElementsByName("user[password]")[0].value
@@ -22,69 +16,146 @@
          return true;
      }
  }
- 
 </script>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: {:onsubmit => 'return validateForm();' }) do |f| %>
-    <%= devise_error_messages! %>
-    <%= f.fields_for :sf_guard_user_profile do |profile_fields| %>
+<div class="row">
+    <div class="col-sm-7">
+        <div class="thin-grey-bottom-border">
+            <h2>Get Involved!</h2>
+        </div>
+    </div>
+    <div class="col-sm-1"></div>
+    <div class="col-sm-4 thin-grey-bottom-border">
+        <h2 class="text-center">Data Summary</h2>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-8">
+        <div class="row">
+            <div class="col-sm-12">
+            <p><strong>LittleSis is bringing together a community of citizens who believe in transparency and accountability where it matters most.</strong> Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power.</p>
+            <p><strong>We're looking for researchers, programmers, artists and organizers to lend a hand.</strong> If you want to get involved, <%= link_to "send us a note", "/contact" %> join our email list, sign up to become a LittleSis analyst and start adding information to the site, or check out our <%= link_to "help pages", '/help' %> for information on how to use the site.</p>
+            </div>
+        </div>
+        <div class="row bottom-1em">
+            <div class="col-sm-8">
+                <div class="thin-grey-bottom-border">
+                    <h3>Become an analyst!</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            
+
+            
+            <div class="col-sm-12">
+                <p>LittleSis presents an exciting opportunity: editors (called "analysts" on LittleSis) are developing an unprecedented, authoritative database of key relationships between powerful Americans. Sign up to edit the profile pages of your (least) favorite fatcats.</p>
+                <p>To request an account, please provide all of the following information. We promise not to share it with anyone, ever!</p>
+
+                <% label_class = 'col-sm-2' %>
+                <% field_class = 'col-sm-6' %>
+                <br />
+
+                <%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {:onsubmit => 'return validateForm();', :class => 'form-horizontal', }) do |f| %>
+                <%= devise_error_messages! %>
+                <%= f.fields_for :sf_guard_user_profile do |profile_fields| %>
+                    
+                    <div class="form-group">
+                        <%= f.label :default_network_id, "Default Network", :class => label_class %>
+                        <div class="col-sm-3">
+                            <%= f.select :default_network_id, Users::RegistrationsController::HOME_NETWORK_IDS %>
+                        </div>
+                        <div class="col-sm-7">
+                            <small><em>(default local network for new data you contribute) </em></small>
+                        </div>
+                    </div>
+
+                    <div class="field form-group">
+                        <%= profile_fields.label :name_first, "First Name", :class => label_class   %>
+                        <div class="<%= field_class %>">
+                            <%= profile_fields.text_field :name_first, :required => true %>
+
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="field form-group">
+                        <%= profile_fields.label :name_last, "Last Name", :class => label_class %>
+                        <div class="<%= field_class %>">
+                            <%= profile_fields.text_field :name_last %>
+                            <small><em>   (your name and email will not be public)</em> </small>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            
+                        </div>
+
+                    </div>
+                    <div class="field form-group">
+                        <%= f.label :email, "Email", :class => label_class  %>
+                        <div class="<%= field_class %>">
+                            <%= f.email_field :email, autofocus: true, :required => true %>
+                        </div>
+                    </div>
+                    
+                    <div class="field form-group">
+                        <%= f.label :username, "Username", :class => label_class  %>
+                        <div class="<%= field_class %>">
+                            <%= f.text_field :username, autofocus: true %>
+                        </div>
+                    </div>
+
+
+                    <div class="field form-group">
+                        <%= f.label :password, "Password (Minimum 8 letters)", :class => label_class %>
+                        <div class="<%= field_class %>">
+                            <%= f.password_field :password, autocomplete: "off", :required => true  %>
+                        </div>
+                    </div>
+
+                    <div class="field form-group">
+                        <%= f.label :password_confirmation, :class => label_class  %>
+                        <div class="<%= field_class %>">
+                            <%= f.password_field :password_confirmation, autocomplete: "off", :required => true  %>
+                        </div>
+                    </div>
+
+                    <div class="field form-group">
+                        <%= check_box_tag 'terms_of_use'  %>
+                    </div>
+
+                    <div class="field form-group">
+                        <p> Would you like to join our newsletter? </p>
+                        <%= check_box_tag :newsletter %>
+                    </div>
+
+                    <div class="field form-group">
+                        <%= profile_fields.label :reason, "A little about you and why you're signing up", :class => label_class  %>
+                        <div class="<%= field_class %>">
+                        <%= profile_fields.text_area :reason %>
+                        </div>
+                    </div>
+
+                    <div class="actions form-group">
+                        <%= f.submit "Sign up" %>
+                    </div>
+                <% end %>
+            <% end %>
+
+            <%= render "users/shared/links" %>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-1"></div>
+    <div class="col-sm-3">
         
-        <div class="field form-group">
-            <%= f.select :default_network_id, Users::RegistrationsController::HOME_NETWORK_IDS %>
-        </div>
+        <%= render partial: 'home/data_summary', locals: {stats: ExtensionRecord.data_summary} %>
+    </div>
+</div>
 
-        <div class="field form-group">
-            <%= profile_fields.label :name_first, "First Name"  %><br />
-            <%= profile_fields.text_field :name_first, :required => true %>
-        </div>
-        <div class="field form-group">
-            <%= profile_fields.label :name_last, "Last Name" %><br />
-            <%= profile_fields.text_field :name_last %>
-        </div>
-
-        <div class="field form-group">
-            <%= f.label :email %><br />
-            <%= f.email_field :email, autofocus: true, :required => true %>
-        </div>
-        
-        <div class="field form-group">
-            <%= f.label :username, "Username" %><br />
-            <%= f.text_field :username, autofocus: true %>
-        </div>
-
-
-        <div class="field form-group">
-            <%= f.label :password %>
-            <% if @minimum_password_length %>
-                <em>(<%= @minimum_password_length %> characters minimum)</em>
-            <% end %><br />
-            <%= f.password_field :password, autocomplete: "off", :required => true  %>
-        </div>
-
-        <div class="field form-group">
-            <%= f.label :password_confirmation %><br />
-            <%= f.password_field :password_confirmation, autocomplete: "off", :required => true  %>
-        </div>
-
-        <div class="field form-group">
-            <p> do you agree to the terms? </p>
-            <%= check_box_tag 'terms_of_use'  %>
-        </div>
-
-        <div class="field form-group">
-            <p> Would you like to join our newsletter? </p>
-            <%= check_box_tag :newsletter %>
-        </div>
-
-        <div class="field form-group">
-            <%= profile_fields.label :reason, "A little about you and why you're signing up" %><br />
-            <%= profile_fields.text_area :reason %>
-        </div>
-
-        <div class="actions form-group">
-            <%= f.submit "Sign up" %>
-        </div>
-    <% end %>
-<% end %>
-
-<%= render "users/shared/links" %>
+ 

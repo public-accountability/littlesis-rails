@@ -22,4 +22,12 @@ class ExtensionRecord < ActiveRecord::Base
             ON subquery.definition_id = extension_definition.id"
     ActiveRecord::Base.connection.execute(sql).to_a
   end
+
+  # Returns nested array 
+  # [ [ count, display name] ]
+  def self.data_summary
+    Rails.cache.fetch('data_summary_stats', expires_in: 2.hours) do 
+      ExtensionRecord.stats.unshift( [Reference.count, 'Citation'] , [ Relationship.count, 'Relationship'  ]  )
+    end
+  end
 end

@@ -60,7 +60,7 @@ class HomeController < ApplicationController
     redirect_to_dashboard_if_signed_in
     @dots_connected = dots_connected
     @carousel_entities = List.find(404).entities.to_a
-    @stats = stats
+    @stats = ExtensionRecord.data_summary
   end
 
   private
@@ -74,14 +74,6 @@ class HomeController < ApplicationController
   def dots_connected
     Rails.cache.fetch('dots_connected_count', expires_in: 2.hours) do 
       (Person.count + Org.count).to_s.split('')
-    end
-  end
-
-  # Returns nested array 
-  # [ [ count, display name] ]
-  def stats
-    Rails.cache.fetch('data_summary_stats', expires_in: 2.hours) do 
-      ExtensionRecord.stats.unshift( [Reference.count, 'Citation'] , [ Relationship.count, 'Relationship'  ]  )
     end
   end
 
