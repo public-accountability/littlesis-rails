@@ -7,6 +7,9 @@ describe HomeController, type: :controller do
     before do 
       expect(Person).to receive(:count).and_return(5)
       expect(Org).to receive(:count).and_return(10)
+      expect(List).to receive(:find).with(404).and_return(double(:entities => double(:to_a => [])))
+      expect_any_instance_of(HomeController).to receive(:redirect_to_dashboard_if_signed_in).and_return(nil)
+      expect_any_instance_of(HomeController).to receive(:stats).and_return([23, 'Things'])
       get :index
     end
     

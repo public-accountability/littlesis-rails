@@ -1,7 +1,9 @@
 class User < ActiveRecord::Base
+  validates :sf_guard_user_id, presence: true, uniqueness: true
+  validates :email, presence: true, uniqueness: { case_sensitive: false }
+  validates :username, presence: true, uniqueness: { case_sensitive: false }
 
   # include Cacheable
-
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   # :legacy_authenticatable, 
@@ -9,12 +11,14 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable
 
   # after_database_authentication :set_sf_session
-
   # Setup accessible (or protected) attributes for your model
-  # attr_accessible :email, :password, :password_confirmation, :remember_me
+  #  attr_accessible :email, :password, :password_confirmation, :remember_me
+  
 
   belongs_to :sf_guard_user, inverse_of: :user
   has_one :sf_guard_user_profile, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :user
+  accepts_nested_attributes_for :sf_guard_user
+  
   # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
   delegate :image_path, to: :sf_guard_user_profile, allow_nil: true
 
@@ -34,8 +38,8 @@ class User < ActiveRecord::Base
   has_many :received_notes, class_name: "Note", through: :note_users, source: :note, inverse_of: :recipients
   has_many :network_maps, primary_key: "sf_guard_user_id"
 
-  validates_uniqueness_of :sf_guard_user_id
-
+  
+  
   def to_param
   	username
   end
