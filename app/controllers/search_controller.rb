@@ -1,5 +1,5 @@
 class SearchController < ApplicationController
-  before_filter :auth, except: [:basic]
+  before_filter :authenticate_user!, except: [:basic]
 
   def basic
     @q = (params[:q] or "").gsub(/\b(and|the|of)\b/, "")

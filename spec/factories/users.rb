@@ -4,6 +4,7 @@ FactoryGirl.define do
     username "user"
     email "user@littlesis.org"
     default_network_id 79
+    confirmed_at { Time.now }
   end
 
   factory :sf_user, class: SfGuardUser do 
