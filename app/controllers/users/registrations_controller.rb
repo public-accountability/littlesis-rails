@@ -36,18 +36,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
           expire_data_after_sign_in!
           return respond_with resource, location: after_inactive_sign_up_path_for(resource)
         end
-      else
-        handle_signup_errors
       end
     else
-      handle_signup_errors
+      clean_up_passwords resource
+      set_minimum_password_length
+      return respond_with resource
     end
-  end
-
-  def handle_signup_errors
-    clean_up_passwords resource
-    set_minimum_password_length
-    return respond_with resource
   end
 
   # GET /resource/edit

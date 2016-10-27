@@ -1,22 +1,32 @@
-<script>
+<%  simple_math_1 = rand(20) %>
+<%  simple_math_2 = rand(20) %>
+<%  simple_math_total = (simple_math_1 + simple_math_2) %>
+
+<%= javascript_tag do  %>
  function validateForm(){
      if (!document.getElementById('terms_of_use').checked) {
          alert("Unfortunately, you have to accept the terms first");
          return false;
      }
-     var password = document.getElementsByName("user[password]")[0].value
-     var confirmation = document.getElementsByName("user[password_confirmation]")[0].value
+     var password = document.getElementsByName("user[password]")[0].value;
+     var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
+     var solution = Number(<%= simple_math_total %>);
+     var answerProvided = Number(document.getElementById('simple_math').value);
      if (password.length < 8) {
          alert('Please ensure that your password is 8 or more characters long!');
          return false;
      } else if (password !== confirmation) {
          alert('Your password and password confirmation do not match :(');
          return false;
+     } else if (solution  !==  answerProvided) {
+        alert('Please double check your math :( ');
+        return false;
      } else {
          return true;
      }
  }
-</script>
+
+<% end %>
 
 <div class="row">
     <div class="col-sm-7">
@@ -48,13 +58,11 @@
 
         <div class="row">
             
-
-            
             <div class="col-sm-12">
                 <p>LittleSis presents an exciting opportunity: editors (called "analysts" on LittleSis) are developing an unprecedented, authoritative database of key relationships between powerful Americans. Sign up to edit the profile pages of your (least) favorite fatcats.</p>
                 <p>To request an account, please provide all of the following information. We promise not to share it with anyone, ever!</p>
 
-                <% label_class = 'col-sm-2' %>
+                <% label_class = 'col-sm-2 control-label' %>
                 <% field_class = 'col-sm-6' %>
                 <br />
 
@@ -72,7 +80,7 @@
                         </div>
                     </div>
 
-                    <div class="field form-group">
+                    <div class="form-group">
                         <%= profile_fields.label :name_first, "First Name", :class => label_class   %>
                         <div class="<%= field_class %>">
                             <%= profile_fields.text_field :name_first, :required => true %>
@@ -81,11 +89,11 @@
                         
                     </div>
                     
-                    <div class="field form-group">
+                    <div class="form-group">
                         <%= profile_fields.label :name_last, "Last Name", :class => label_class %>
                         <div class="<%= field_class %>">
-                            <%= profile_fields.text_field :name_last %>
-                            <small><em>   (your name and email will not be public)</em> </small>
+                            <%= profile_fields.text_field :name_last %><br />
+                            <small><em>(your name and email will not be public)</em> </small>
                         </div>
                         
                     </div>
@@ -96,14 +104,14 @@
                         </div>
 
                     </div>
-                    <div class="field form-group">
+                    <div class="form-group">
                         <%= f.label :email, "Email", :class => label_class  %>
                         <div class="<%= field_class %>">
                             <%= f.email_field :email, autofocus: true, :required => true %>
                         </div>
                     </div>
                     
-                    <div class="field form-group">
+                    <div class="form-group">
                         <%= f.label :username, "Username", :class => label_class  %>
                         <div class="<%= field_class %>">
                             <%= f.text_field :username, autofocus: true %>
@@ -111,43 +119,64 @@
                     </div>
 
 
-                    <div class="field form-group">
+                    <div class="form-group">
                         <%= f.label :password, "Password (Minimum 8 letters)", :class => label_class %>
                         <div class="<%= field_class %>">
                             <%= f.password_field :password, autocomplete: "off", :required => true  %>
                         </div>
                     </div>
 
-                    <div class="field form-group">
+                    <div class="form-group">
                         <%= f.label :password_confirmation, :class => label_class  %>
                         <div class="<%= field_class %>">
                             <%= f.password_field :password_confirmation, autocomplete: "off", :required => true  %>
                         </div>
                     </div>
 
-                    <div class="field form-group">
-                        <%= check_box_tag 'terms_of_use'  %>
-                    </div>
-
-                    <div class="field form-group">
-                        <p> Would you like to join our newsletter? </p>
-                        <%= check_box_tag :newsletter %>
-                    </div>
-
-                    <div class="field form-group">
-                        <%= profile_fields.label :reason, "A little about you and why you're signing up", :class => label_class  %>
-                        <div class="<%= field_class %>">
-                        <%= profile_fields.text_area :reason %>
+                    <div class="form-group">
+                        <%=  label_tag 'spam_test', "Spam Test", :class => label_class %>
+                        <div class="col-sm-2">
+                            <samp class="text-center"><%= simple_math_1 %> + <%= simple_math_2 %> = </samp>
+                        </div>
+                        <div class="col-sm-2">
+                            <%= text_field_tag :spam_test, "", maxlength: 2, id: 'simple_math', class: 'form-control' %>
                         </div>
                     </div>
 
-                    <div class="actions form-group">
-                        <%= f.submit "Sign up" %>
+
+                    <div class="form-group">
+                        <%=  label_tag 'terms_of_use', "Terms of use", :class => label_class %>
+                        <div class="col-sm-9 bg-info bottom-1em top-1em">
+                            <p>I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith.</p>
+                            <%= check_box_tag 'terms_of_use' %><small> I accept the above terms of use </small>
+                        </div>
                     </div>
+
+                    <div class="form-group">
+                        <%=  label_tag 'newsletter', "Newsletter?", :class => label_class %>
+                        <div class="<%= field_class %>">
+                            <%= check_box_tag :newsletter %><small style="padding-left: 0.5em;">May we put you on our newsletter? </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <%= profile_fields.label :reason, "A little about you and why you're signing up", :class => label_class  %>
+                        <div class="col-sm-9">
+                            <%= profile_fields.text_area :reason, :class => 'form-control', :rows => 5 %>
+                        </div>
+                    </div>
+                    
+                    <div class="actions form-group">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-2">
+                            <%= f.submit "Sign up" %>
+                            <p class="text-center"><small><%= render "users/shared/links" %></small></p>
+                        </div>
+                    </div>
+                    
                 <% end %>
             <% end %>
 
-            <%= render "users/shared/links" %>
             </div>
         </div>
     </div>
