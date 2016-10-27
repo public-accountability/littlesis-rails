@@ -78,7 +78,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def user_params
-    params.require(:user).permit(:username, :email, :password, :password_confirmation, :default_network_id)
+    params.require(:user).permit(:username, :email, :password, :password_confirmation, :default_network_id, :newsletter)
   end
 
   def sf_profile_params

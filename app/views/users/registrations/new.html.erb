@@ -155,7 +155,7 @@
                     <div class="form-group">
                         <%=  label_tag 'newsletter', "Newsletter?", :class => label_class %>
                         <div class="<%= field_class %>">
-                            <%= check_box_tag :newsletter %><small style="padding-left: 0.5em;">May we put you on our newsletter? </small>
+                            <%= f.check_box :newsletter %><small style="padding-left: 0.5em;">May we put you on our newsletter? </small>
                         </div>
                     </div>
 
@@ -182,7 +182,6 @@
     </div>
     <div class="col-sm-1"></div>
     <div class="col-sm-3">
-        
         <%= render partial: 'home/data_summary', locals: {stats: ExtensionRecord.data_summary} %>
     </div>
 </div>
