@@ -8,13 +8,11 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   # :legacy_authenticatable, 
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable
+  devise :database_authenticatable, :registerable, :confirmable, :recoverable, :rememberable, :trackable
 
   # after_database_authentication :set_sf_session
   # Setup accessible (or protected) attributes for your model
   #  attr_accessible :email, :password, :password_confirmation, :remember_me
-  
 
   belongs_to :sf_guard_user, inverse_of: :user
   has_one :sf_guard_user_profile, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :user

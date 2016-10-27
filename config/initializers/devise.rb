@@ -79,6 +79,8 @@ Devise.setup do |config|
   # the user cannot access the website without confirming his account.
   # config.confirm_within = 2.days
 
+  config.reconfirmable = false
+
   # Defines which key will be used when confirming an account
   # config.confirmation_keys = [ :email ]
 

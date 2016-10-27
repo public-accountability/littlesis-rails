@@ -34,6 +34,7 @@ Lilsis::Application.configure do
   # In development, links in emails should point local
   # config.action_mailer.default_url_options = { host: 'lilsis.local' }
 
+  config.action_mailer.default_url_options = { :host => "littlesis.org" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
@@ -57,5 +58,3 @@ Lilsis::Application.configure do
     end
   end
 end
-
-

@@ -32,7 +32,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
           sign_up(resource_name, resource)
           return respond_with resource, location: after_sign_up_path_for(resource)
         else
-          set_flash_message! :notice, :"signed_up_but_#{resource.inactive_message}"
+          # set_flash_message! :notice, :"signed_up_but_#{resource.inactive_message}"
           expire_data_after_sign_in!
           return respond_with resource, location: after_inactive_sign_up_path_for(resource)
         end
@@ -95,6 +95,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     home_dashboard_path
   end
 
+  # The path used after sign up for inactive accounts.
+  def after_inactive_sign_up_path_for(resource)
+    join_success_path
+  end
+
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_account_update_params
   #   devise_parameter_sanitizer.permit(:account_update, keys: [:attribute])
@@ -103,10 +108,5 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_sign_up_params
   # end
-
-
-  # The path used after sign up for inactive accounts.
-  # def after_inactive_sign_up_path_for(resource)
-  #   super(resource)
-  # end
+ 
 end
