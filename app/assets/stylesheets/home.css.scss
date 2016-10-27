@@ -1,6 +1,4 @@
-// Place all the styles related to the Home controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+@import "globals";
 
 #dashboard_user_image .user_image {
 	width: 75px;
@@ -56,4 +54,77 @@
 	background-repeat: no-repeat;
 	margin-bottom: 10px;
 	border: 1px solid #ddd;
+}
+
+#homepage-lists {
+  /* float: right;  */
+  /* width: 280px;  */
+  font-size: 18px; 
+  line-height: 38px;
+  margin-top: 0.5em;
+}
+
+#homepage-lists a {
+  text-decoration: underline;
+  color: $link_blue;
+}
+
+.homepage-counter {
+  display: inline;
+  background-color: #fff;
+  background: -webkit-gradient(linear, top, bottom, from(#fff), to(#bbb));
+  background: -webkit-linear-gradient(top, #fff, #bbb);
+  background: -moz-linear-gradient(top,  #fff,  #bbb);
+  background: -ms-linear-gradient(top, #fff, #bbb);
+  color: #000;
+  border-radius: 4px;
+  padding-left: 3px;
+  padding-right: 3px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#homepage-splash-subheader {
+    font-size: 1.5em;
+    font-weight: 300;
+    line-height: 27px;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+#dots-connected-search {
+  margin-top: 1.5em;
+  
+  button {
+    margin-top: 3px;
+  }
+  button:hover {
+    background-color: $red
+  }
+
+}
+
+#homepage-oligrapher-images {
+  img {
+    height: 220px;
+  }
+}
+
+
+#data-summary-table {
+  td {
+    vertical-align: bottom;
+    font-size: 1em;
+  }
+  tr td:first-child {
+    text-align: right;
+    padding-right: 1em;
+    font-size: 0.8em;
+    font-family: "Courier New", Courier, monospace;
+  }
+
+  tr td:nth-child(2) {
+    text-align: left;
+  }
+  
 }

@@ -9,6 +9,10 @@
   padding-top: 1em;
 }
 
+.bottom-1em {
+  padding-bottom: 1em;
+}
+
 .m-left-1em {
   margin-left: 1em;
 }
@@ -23,6 +27,14 @@
 
 .thin-grey-bottom-border {
   border-bottom: 1px solid #e7e7e7;
+}
+
+.gray-img-border {
+  border: 1px solid #ddd;
+}
+
+.big-text {
+  font-size: 42px;
 }
 
 .borderless {

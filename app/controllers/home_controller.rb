@@ -1,5 +1,17 @@
 class HomeController < ApplicationController
-	before_filter :auth, except: [:dismiss, :sign_in_as]
+  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index]
+  # before_filter :auth
+
+  # [list_id, 'title' ]
+  DOTS_CONNECTED_LISTS = [
+    [41, 'Paid for politicians'],
+    [88, 'Corporate fat cats'],
+    [102, 'Revolving door lobbyists'],
+    [114, 'Secretive Super PACs'],
+    [34, 'Elite think tanks']
+  ]
+
+  CAROUSEL_LIST_ID = 404 # The id of the list that contains the entities for the carousel
 
 	def notes
     @user = User.includes(:notes, notes: :recipients).find_by_username(current_user.username)
@@ -43,4 +55,26 @@ class HomeController < ApplicationController
     @header = 'My Network Maps'
     render 'maps/index'
   end
+
+  def index
+    redirect_to_dashboard_if_signed_in
+    @dots_connected = dots_connected
+    @carousel_entities = List.find(404).entities.to_a
+    @stats = ExtensionRecord.data_summary
+  end
+
+  private
+
+  def redirect_to_dashboard_if_signed_in
+    if user_signed_in?
+        return redirect_to home_dashboard_path
+    end
+  end
+  
+  def dots_connected
+    Rails.cache.fetch('dots_connected_count', expires_in: 2.hours) do 
+      (Person.count + Org.count).to_s.split('')
+    end
+  end
+
 end

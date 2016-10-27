@@ -6,6 +6,7 @@ class SfGuardUser < ActiveRecord::Base
 
   has_one :user, inverse_of: :sf_guard_user
   has_one :sf_guard_user_profile, inverse_of: :sf_guard_user, foreign_key: "user_id"
+  accepts_nested_attributes_for :sf_guard_user_profile
 
   has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", inverse_of: :last_user
 

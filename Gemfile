@@ -4,7 +4,7 @@ gem 'rails', '4.2.7'
 gem 'mysql2', '~> 0.3.21'
 
 # users and authentication
-gem 'devise', '= 3.5.10'
+gem 'devise', '~> 4.2'
 
 # image uploading with amazon s3 storage
 gem 'carrierwave'

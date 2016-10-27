@@ -1,5 +1,5 @@
 class NysController < ApplicationController
-  before_filter :auth
+  before_filter :authenticate_user!
 
   def candidates
   end

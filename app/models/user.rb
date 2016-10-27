@@ -1,16 +1,23 @@
 class User < ActiveRecord::Base
-  include Cacheable
+  validates :sf_guard_user_id, presence: true, uniqueness: true
+  validates :email, presence: true, uniqueness: { case_sensitive: false }
+  validates :username, presence: true, uniqueness: { case_sensitive: false }
+  validates :default_network_id, presence: true
 
+  # include Cacheable
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :legacy_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable
+  # :legacy_authenticatable, 
+  devise :database_authenticatable, :registerable, :confirmable, :recoverable, :rememberable, :trackable
 
+  # after_database_authentication :set_sf_session
   # Setup accessible (or protected) attributes for your model
-  # attr_accessible :email, :password, :password_confirmation, :remember_me
+  #  attr_accessible :email, :password, :password_confirmation, :remember_me
 
   belongs_to :sf_guard_user, inverse_of: :user
   has_one :sf_guard_user_profile, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :user
+  accepts_nested_attributes_for :sf_guard_user
+  
   # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
   delegate :image_path, to: :sf_guard_user_profile, allow_nil: true
 
@@ -30,8 +37,7 @@ class User < ActiveRecord::Base
   has_many :received_notes, class_name: "Note", through: :note_users, source: :note, inverse_of: :recipients
   has_many :network_maps, primary_key: "sf_guard_user_id"
 
-  validates_uniqueness_of :sf_guard_user_id
-
+  
   def to_param
   	username
   end
@@ -103,4 +109,19 @@ class User < ActiveRecord::Base
   def full_legacy_url
     "//littlesis.org" + legacy_url
   end
+
+  def legacy_check_password(password)
+    Digest::SHA1.hexdigest(sf_guard_user.salt + password) == sf_guard_user.password
+  end
+
+  def create_default_permissions
+    unless has_legacy_permission('contributor')
+      SfGuardUserPermission.create(permission_id: 2, user_id: sf_guard_user.id)
+    end
+    unless has_legacy_permission('editor')
+      SfGuardUserPermission.create(permission_id: 3, user_id: sf_guard_user.id)
+    end
+  end
+
+  
 end

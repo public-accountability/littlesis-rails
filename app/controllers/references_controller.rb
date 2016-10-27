@@ -1,5 +1,5 @@
 class ReferencesController < ApplicationController
-  before_filter :auth
+  before_filter :authenticate_user!
 
   def create
     ref = Reference.new( reference_params.merge({last_user_id: current_user.sf_guard_user_id}) )

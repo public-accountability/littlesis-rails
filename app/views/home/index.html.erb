@@ -1,0 +1,115 @@
+<% content_for(:page_title, "Littlesis - Profiling the powers that be") %>
+<%= render partial: 'facebook_js' %>
+
+<div class="row">
+    <div class="col-sm-7">
+        <div class="row">
+            <h1 class="big-text">LittleSis<span style="color: #cc5454;">*</span> is a free database of who-knows-who at the heights of business and government.</h1>
+            <div style="font-weight: 300; font-size: 14px; color: #cc5454;"><span style="font-size: 16px; font-weight: bold;">*</span> opposite of Big Brother</div>
+
+            <div id="homepage-splash-subheader">
+                We're a grassroots watchdog network connecting the dots between the world's most powerful people and organizations.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-5">
+                <form action="http://groups.google.com/group/littlesis/boxsubscribe">
+                    <div class="input-group">
+                        <input class="form-control" name="email" placeholder="your email" size="25" type="text">
+                        <span class="input-group-btn">
+                            <button class="btn" style="color: white; background-color: #cc5454;" type="submit" name="sub">Join Us!</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+            <div class="col-xs-2">
+                <div style="padding-top: 8px;">
+                    <a href="https://twitter.com/twittlesis" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false" data-dnt="true">Follow</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div style="padding-top: 8px;">
+                    <div class="fb-like" data-href="https://littlesis.org" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="false"></div>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div id="donate">
+                    <a href="https://public-accountability.org/donate/" class="btn" style="color: white; background-color: #cc5454; text-decoration: none;">Donate</a>
+                </div>
+            </div>
+            <div class="col-xs-1"></div>
+        </div>
+    </div>
+    <div class="col-sm-1"></div>
+    <div class="col-sm-4">
+        <%= render partial: 'dots_connected' %>
+    </div>
+</div>
+<br />
+<br />
+<!-- CAROUSEL -->
+<% cache @carousel_entities do  %>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="littlesis_carousel">
+	        <%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
+            </div>
+        </div>
+    </div>
+<% end  %>
+<!-- OLIGRAPHER -->
+<%=  render partial: 'oligrapher' %>
+
+<div class="row">
+    <div class="col-sm-12 text-center">
+        <h1 class="big-text text-center">A unique resource for investigating cronyism, conflicts of interest, and systemic corruption.</h1>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-sm-7">
+        <div class="thin-grey-bottom-border">
+            <h3>An involuntary facebook of the 1%</h3>
+        </div>
+        <p>We bring transparency to influential social networks by tracking the key relationships of politicians, business leaders, lobbyists, financiers, and their affiliated institutions. We help answer questions such as:</p>
+        <ul>
+            <li><em>Who do the wealthiest Americans donate their money to?</em></li>
+	    <li><em>Where did White House officials work before they were appointed?</em></li>
+	    <li><em>Which lobbyists are married to politicians? Who do they lobby for?</em></li>
+        </ul>
+        
+        <p>All of this information is public, but scattered. We bring it together in one place. Our data derives from government filings, news articles, and other reputable sources. Some data sets are updated automatically; the rest is filled in by our user community. <%= link_to "More Features", "/features", class: 'link-blue'  %></p>
+
+        <div class="thin-grey-bottom-border">
+            <h3>Names behind the news</h3>
+        </div>
+        
+        <p>Who are the movers and shakers behind the bailouts, government contracts, and austerity policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <%= link_to "Eyes on the Ties", "http://blog.littleorg", class: 'link-blue' %></p>
+
+        <div class="thin-grey-bottom-border">
+            <h3>Made for watchdogs</h3>
+        </div>
+
+        <p>We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <% link_to "Get Involved", "/join", class: 'link-blue' %></p>
+        
+        <div class="thin-grey-bottom-border">
+            <h3>Think and do tank</h3>
+        </div>
+
+        <p>LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from <%= link_to 'foundations', 'http://public-accountability.org/about/funding/', class: 'link-blue' %> and benefit from free software written by the open source community.</p>
+        <p>The <%= link_to "code", "https://github.com/skomputer/lilsis", class: 'link-blue' %> powering LittleSis is free & open source.</p>
+        
+    </div>
+    
+    <div class="col-sm-1"></div>
+    
+    <div class="col-sm-4">
+        <div class="thin-grey-bottom-border">
+            <h3>Data Summary</h3>
+        </div>
+        <%= render partial: 'data_summary', locals: {stats: @stats} %>
+    </div>
+    
+</div>
