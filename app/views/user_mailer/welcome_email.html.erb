@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    </head>
+    <body>
+        <p>Dear <%= @user.sf_guard_user_profile.name_first %>,</p>
+        <p>Congratulations, you're now a LittleSis analyst!  This means you can make edits and take part in the LittleSis community.</p>
+        <p>Once you log in, "edit" and "add relationship" buttons will appear next to the name on each profile page. You will also be able to add new individuals and organizations to the database.</p>
+        <p>To login to the site, just follow this link: <%= @url %>.</p>
+        <p>Use the help pages as a reference for getting started: <% link_to "http://littlesis.org/help" %>. You can reply to this email with any questions or if you are interested in a training.</p>
+
+        <p>Thank you,<br />the LittleSis team</p>
+        
+    </body>
+</html>
+
+

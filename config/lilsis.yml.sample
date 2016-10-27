@@ -33,6 +33,12 @@ defaults: &defaults
   default_network_id: 79
   asset_host:
   cloudfront_distribtion_id:
+  smtp_address: 
+  smtp_port:
+  smtp_domain:
+  smtp_user_name:
+  smtp_password:
+  smtp_authentication:
 
 test:
   <<: *defaults

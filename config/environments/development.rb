@@ -12,7 +12,6 @@ Lilsis::Application.configure do
   # Show full error reports and disable caching.
   config.consider_all_requests_local  = true
   
-
   # Don't care if the mailer can't send.
   # config.action_mailer.raise_delivery_errors = false
 
@@ -33,7 +32,21 @@ Lilsis::Application.configure do
   config.cache_store = :memory_store
   
   # In development, links in emails should point local
-  config.action_mailer.default_url_options = { host: 'lilsis.local' }
+  # config.action_mailer.default_url_options = { host: 'lilsis.local' }
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.smtp_settings = {
+    address:              Lilsis::APP_CONFIG['smtp_address'],
+    port:                 Lilsis::APP_CONFIG['smtp_port'],
+    domain:               Lilsis::APP_CONFIG['smtp_domain'],
+    user_name:            Lilsis::APP_CONFIG['smtp_user_name'],
+    password:             Lilsis::APP_CONFIG['smtp_password'],
+    authentication:       Lilsis::APP_CONFIG['smtp_authentication'],
+    ssl: true 
+  }
+
 
   # Enable serving of images from asset server.
   config.action_controller.asset_host = Proc.new do |source|
