@@ -16,6 +16,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
     super
   end
 
+  # "resource" is the generic term used in devise. 'resource' here
+  #  are just instances of User. (ziggy 10-27-16)
   # POST /resource
   def create
     build_resource(user_params)
@@ -27,6 +29,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       resource.sf_guard_user_profile.save
       resource.save
       if resource.persisted?
+        resource.create_default_permissions
         if resource.active_for_authentication?
           set_flash_message! :notice, :signed_up
           sign_up(resource_name, resource)
@@ -74,7 +77,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     # self.resource = resource_class.new_with_session(hash || {}, session)
     self.resource = User.new(hash)
     self.resource.sf_guard_user = SfGuardUser.new
-    self.resource.sf_guard_user.sf_guard_user_profile = SfGuardUserProfile.new
+    self.resource.sf_guard_user.sf_guard_user_profile = SfGuardUserProfile.new(is_confirmed: true)
   end
 
   def user_params

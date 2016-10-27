@@ -42,6 +42,25 @@ describe User do
     it 'returns false for incorrect password' do 
       expect(@user.legacy_check_password('FAKE_PEANUTS')).to be false
     end
-
   end
+
+  describe 'create_default_permissions' do 
+    before do
+      @sf_user = create(:sf_guard_user, username: "user#{rand(1000)}")
+      @user = create(:user, sf_guard_user_id: @sf_user.id, email: "#{rand(1000)}@fake.com")
+    end
+    
+    it 'creates contributor permission' do 
+      expect(@user.has_legacy_permission('contributor')).to be false
+      @user.create_default_permissions
+      expect(@user.has_legacy_permission('contributor')).to be true
+    end
+
+    it 'creates editor permission' do 
+      expect(@user.has_legacy_permission('editor')).to be false
+      @user.create_default_permissions
+      expect(@user.has_legacy_permission('editor')).to be true
+    end
+  end
+  
 end

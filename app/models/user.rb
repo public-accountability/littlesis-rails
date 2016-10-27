@@ -113,5 +113,15 @@ class User < ActiveRecord::Base
   def legacy_check_password(password)
     Digest::SHA1.hexdigest(sf_guard_user.salt + password) == sf_guard_user.password
   end
+
+  def create_default_permissions
+    unless has_legacy_permission('contributor')
+      SfGuardUserPermission.create(permission_id: 2, user_id: sf_guard_user.id)
+    end
+    unless has_legacy_permission('editor')
+      SfGuardUserPermission.create(permission_id: 3, user_id: sf_guard_user.id)
+    end
+  end
+
   
 end
