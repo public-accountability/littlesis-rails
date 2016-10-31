@@ -1,5 +1,5 @@
 class EntitiesController < ApplicationController
-  before_filter :authenticate_user!, except: [:show, :relationships, :political]
+  before_filter :authenticate_user!, except: [:show, :relationships, :political, :contributions]
   before_action :set_entity, only: [:show, :relationships, :political, :contributions, :potential_contributions, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge, :refresh, :images, :feature_image, :remove_image, :new_image, :upload_image, :match_donation, :unmatch_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
   before_action :set_current_user, only: [:show, :political, :match_donations]
   
@@ -94,7 +94,7 @@ class EntitiesController < ApplicationController
   # ------------------------------ #
 
   def match_ny_donations
-    check_permission 'importer'
+n    check_permission 'importer'
   end
 
   def review_ny_donations
