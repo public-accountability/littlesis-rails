@@ -232,7 +232,7 @@ class Relationship < ActiveRecord::Base
   ## education ##
   
   def degree
-    education.nil? ? nil : education.degree.name
+    education.nil? ? nil : education.degree.try(:name)
   end
     
   def education_field

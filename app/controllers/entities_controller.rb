@@ -94,7 +94,7 @@ class EntitiesController < ApplicationController
   # ------------------------------ #
 
   def match_ny_donations
-n    check_permission 'importer'
+    check_permission 'importer'
   end
 
   def review_ny_donations
