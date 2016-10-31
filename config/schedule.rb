@@ -20,7 +20,6 @@
 # Learn more: http://github.com/javan/whenever
 
 every 1.minute do
-  rake "users:create_from_new_profiles", output: nil
   rake "search:update_entity_delta_index", output: nil
 end
 
