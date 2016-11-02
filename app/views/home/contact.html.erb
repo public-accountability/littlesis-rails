@@ -1,0 +1,54 @@
+<div class="row">
+    <h1>Contact Us</h1>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-8 bg-info">
+        <p>Please only use this form to send a message to the LittleSis team. We DO NOT have contact info for the people and organizations profiled in LittleSis.</p>
+    </div>
+</div>
+<br />
+<div class="row">
+    <%= form_tag("/contact", method: "post", class: 'form-horizontal', multipart: true) do %>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-4">
+                    <%= text_field_tag(:name) %>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-4">
+                <% if user_signed_in? %>
+                    <p class="form-control-static"><%= current_user.email %></p>
+                <% else %>
+                    <%= email_field_tag(:email) %>
+                <% end %>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Subject</label>
+            <div class="col-sm-3">
+                <% select_options = ["", "Something's Broken", "Innacurate Data", "Feature request", "I want to contribute", "Press inquiry", "Other"] %>
+                <%= select_tag "subject", options_for_select(select_options) %>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Message</label>
+            <div class="col-sm-6">
+                <%= text_area_tag "message", nil, size: '40x8'  %>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <%= submit_tag("submit", class: 'btn btn-primary') %>
+            </div>
+        </div>
+    <% end %>
+</div>
+
+
+
+

@@ -9,7 +9,6 @@ describe HomeController, type: :controller do
       expect(Org).to receive(:count).and_return(10)
       expect(List).to receive(:find).with(404).and_return(double(:entities => double(:to_a => [])))
       expect_any_instance_of(HomeController).to receive(:redirect_to_dashboard_if_signed_in).and_return(nil)
-      expect_any_instance_of(HomeController).to receive(:stats).and_return([23, 'Things'])
       get :index
     end
     
@@ -23,5 +22,18 @@ describe HomeController, type: :controller do
       expect(assigns(:dots_connected)).to eql ['1', '5']
     end
     
+  end
+
+  describe 'GET contact' do
+    
+    it 'is successful' do 
+      get :contact
+      expect(response).to be_success
+    end
+    
+  end
+
+  describe 'POST contact'do 
+
   end
 end

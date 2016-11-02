@@ -1,6 +1,5 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index]
-  # before_filter :auth
+  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -61,6 +60,14 @@ class HomeController < ApplicationController
     @dots_connected = dots_connected
     @carousel_entities = List.find(404).entities.to_a
     @stats = ExtensionRecord.data_summary
+  end
+
+  def contact
+    if request.post?
+      # send form
+    else
+      
+    end
   end
 
   private
