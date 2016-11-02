@@ -64,9 +64,19 @@ class HomeController < ApplicationController
 
   def contact
     if request.post?
-      # send form
-    else
-      
+      if contact_params[:name].blank?
+        flash.now[:alert] = "Please enter in your name"
+        @message = params[:message]
+        render 'contact'
+      elsif !user_signed_in? and contact_params[:email].blank?
+        flash.now[:alert] = "Please enter in your name"
+        @message = params[:message]
+        render 'contact'
+      else
+        # send_mail
+        flash.now[:notice] = "Your message has been sent. Thank you!"
+        render 'contact'
+      end
     end
   end
 
@@ -82,6 +92,10 @@ class HomeController < ApplicationController
     Rails.cache.fetch('dots_connected_count', expires_in: 2.hours) do 
       (Person.count + Org.count).to_s.split('')
     end
+  end
+
+  def contact_params
+    params.permit(:email, :subject, :name, :message)
   end
 
 end

@@ -6,6 +6,17 @@
         <p>Please only use this form to send a message to the LittleSis team. We DO NOT have contact info for the people and organizations profiled in LittleSis.</p>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-sm-8">
+        <% if flash[:alert] %>
+            <div class="alert alert-warning"><%= flash[:alert] %></div>
+        <% end %>
+        <% if flash[:notice] %>
+            <div class="alert alert-success"><%= flash[:notice] %></div>
+        <% end %>
+    </div>
+</div>
 <br />
 <div class="row">
     <%= form_tag("/contact", method: "post", class: 'form-horizontal', multipart: true) do %>
@@ -22,7 +33,7 @@
                 <% if user_signed_in? %>
                     <p class="form-control-static"><%= current_user.email %></p>
                 <% else %>
-                    <%= email_field_tag(:email) %>
+                    <%= email_field_tag(:email, :required => true) %>
                 <% end %>
             </div>
         </div>
@@ -37,7 +48,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">Message</label>
             <div class="col-sm-6">
-                <%= text_area_tag "message", nil, size: '40x8'  %>
+                <%= text_area_tag "message", @message, size: '40x8'  %>
             </div>
         </div>
 
