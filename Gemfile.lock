@@ -78,15 +78,15 @@ GEM
       railties (>= 3.0)
     buftok (0.2.0)
     builder (3.2.2)
-    capybara (2.7.1)
+    capybara (2.10.1)
       addressable
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    capybara-webkit (1.11.1)
-      capybara (>= 2.3.0, < 2.8.0)
+    capybara-webkit (1.1.0)
+      capybara (~> 2.0, >= 2.0.2)
       json
     carrierwave (0.11.2)
       activemodel (>= 3.2.0)
@@ -413,11 +413,18 @@ GEM
       railties (>= 4.2.0, < 5.1)
     riddle (2.0.0)
     rmagick (2.16.0)
+    rspec (3.5.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
     rspec-core (3.5.4)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
+    rspec-html-matchers (0.8.1)
+      nokogiri (~> 1)
+      rspec (>= 3.0.0.a, < 4)
     rspec-mocks (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
@@ -536,7 +543,7 @@ DEPENDENCIES
   binding_of_caller (= 0.7.2)
   bootstrap-datepicker-rails
   bootsy!
-  capybara
+  capybara (>= 2.10)
   capybara-webkit
   carrierwave
   coffee-rails
@@ -570,6 +577,7 @@ DEPENDENCIES
   rails_autolink
   redis-rails
   rmagick
+  rspec-html-matchers
   rspec-rails
   sass-rails
   seed_dump

@@ -40,6 +40,8 @@ Lilsis::Application.routes.draw do
 
   root to: 'home#index'
   get '/home' => 'home#index'
+  get '/contact' => 'home#contact'
+  post '/contact' => 'home#contact'
 
   get "/admin" => "admin#home"
   post "/admin/clear_cache" => "admin#clear_cache"

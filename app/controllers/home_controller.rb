@@ -1,6 +1,5 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index]
-  # before_filter :auth
+  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -63,6 +62,25 @@ class HomeController < ApplicationController
     @stats = ExtensionRecord.data_summary
   end
 
+  def contact
+    if request.post?
+      if contact_params[:name].blank?
+        flash.now[:alert] = "Please enter in your name"
+        @message = params[:message]
+      elsif contact_params[:email].blank?
+        flash.now[:alert] = "Please enter in your email"
+        @message = params[:message]
+      elsif contact_params[:message].blank?
+        flash.now[:alert] = "Don't forgot to write a message!"
+        @name = params[:name]
+      else
+        # send_mail
+        NotificationMailer.contact_email(params).deliver_later
+        flash.now[:notice] = "Your message has been sent. Thank you!"
+      end
+    end
+  end
+
   private
 
   def redirect_to_dashboard_if_signed_in
@@ -75,6 +93,10 @@ class HomeController < ApplicationController
     Rails.cache.fetch('dots_connected_count', expires_in: 2.hours) do 
       (Person.count + Org.count).to_s.split('')
     end
+  end
+
+  def contact_params
+    params.permit(:email, :subject, :name, :message)
   end
 
 end

@@ -94,6 +94,7 @@ group :test, :development do
   gem 'seed_dump'
   gem 'database_cleaner'
   gem 'spring-commands-rspec'
+  gem 'rspec-html-matchers'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   ###########################  
@@ -109,7 +110,7 @@ gem 'StreetAddress', :require => "street_address"
 gem 'sequel'
 gem 'rmagick'
 
-gem 'capybara'
+gem 'capybara', '>= 2.10'
 gem 'capybara-webkit'
 gem 'paper_trail', '>= 5.1.1'
 
