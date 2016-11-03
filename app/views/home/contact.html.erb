@@ -7,7 +7,7 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row" style="padding-top: 1.5em;">
     <div class="col-sm-8">
         <% if flash[:alert] %>
             <div class="alert alert-warning"><%= flash[:alert] %></div>
@@ -17,13 +17,13 @@
         <% end %>
     </div>
 </div>
-<br />
+
 <div class="row">
     <%= form_tag("/contact", method: "post", class: 'form-horizontal', multipart: true) do %>
         <div class="form-group">
             <label class="col-sm-2 control-label">Name</label>
             <div class="col-sm-4">
-                    <%= text_field_tag(:name) %>
+                    <%= text_field_tag(:name, @name) %>
             </div>
         </div>
 
@@ -32,8 +32,9 @@
             <div class="col-sm-4">
                 <% if user_signed_in? %>
                     <p class="form-control-static"><%= current_user.email %></p>
+                    <%= hidden_field_tag 'email', current_user.email %>
                 <% else %>
-                    <%= email_field_tag(:email, :required => true) %>
+                    <%= email_field_tag('email', nil, required: true) %>
                 <% end %>
             </div>
         </div>

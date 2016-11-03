@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "home/contact.html.erb", type: :view do
+describe "home/contact.html.erb", :type => :view do
   
   def css(*args)
     expect(rendered).to have_css(*args)
@@ -8,7 +8,7 @@ describe "home/contact.html.erb", type: :view do
 
   describe 'user signed in ' do 
     
-    before do 
+    before(:each) do 
       allow(view).to receive(:user_signed_in?).and_return(true)
       allow(view).to receive(:current_user).and_return(double(:email => 'email@email.com'))
       render
@@ -20,6 +20,10 @@ describe "home/contact.html.erb", type: :view do
 
     it 'has email in form' do 
       css 'p.form-control-static', :text => 'email@email.com'
+    end
+
+    it 'has input with email address' do 
+      expect(rendered).to have_tag('input[type=hidden]', :with => { :value => 'email@email.com' })
     end
     
   end
@@ -37,7 +41,6 @@ describe "home/contact.html.erb", type: :view do
       end
     end
     
-
     it 'contains form' do
       css 'form', :count => 1
     end

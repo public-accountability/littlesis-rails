@@ -39,6 +39,10 @@ defaults: &defaults
   smtp_user_name:
   smtp_password:
   smtp_authentication:
+  notification_email:
+  notification_user_name:
+  notification_user_password:
+  notification_to:
 
 test:
   <<: *defaults
