@@ -71,11 +71,10 @@ class HomeController < ApplicationController
         flash.now[:alert] = "Please enter in your email"
         @message = params[:message]
       elsif contact_params[:message].blank?
-        flash.now[:alert] = "Don't forgot to write a message!"
+        flash.now[:alert] = "Don't forget to write a message!"
         @name = params[:name]
       else
-        # send_mail
-        NotificationMailer.contact_email(params).deliver_later
+        NotificationMailer.contact_email(params).deliver_later # send_mail
         flash.now[:notice] = "Your message has been sent. Thank you!"
       end
     end

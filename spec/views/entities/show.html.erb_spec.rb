@@ -247,12 +247,5 @@ describe 'entities/show.html.erb' do
     end
   end
 
-  
-  describe 'summary' do
-    
-    it 'contains entity summary tab'
-    
-  end
-  
 end
 

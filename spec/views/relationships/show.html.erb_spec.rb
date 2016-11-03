@@ -66,8 +66,8 @@ describe "relationships/show.html.erb", type: :view do
     end
 
     it 'has hidden inputs' do 
-      css 'input[value="Relationship"]', :count => 1
-      css 'input#data_object_id', :count => 1
+      expect(rendered).to have_tag 'input[value="Relationship"]', :count => 1
+      expect(rendered).to have_tag 'input#data_object_id', :count => 1
     end
 
     it 'has url field' do 
