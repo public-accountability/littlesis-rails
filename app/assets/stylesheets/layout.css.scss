@@ -18,321 +18,314 @@
 }
 
 body {
-	margin: 0;
-	font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-	/* needed for bootstrap's fixed navbar */
-	padding-top: $navbar_height;
+  margin: 0;
+  /* font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif; */
+  /* needed for bootstrap's fixed navbar */
+  padding-top: $navbar_height;
 
-	&.static {
-		padding-top: 0;
-	}
+  &.static {
+    padding-top: 0;
+  }
 }
 
 a {
-	text-decoration: none;
-	color: $link_blue;
+  text-decoration: none;
+  /* color: $link_blue; */
 
-	&:hover {
-		text-decoration: underline;
-	}
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 #top {
-	nav.navbar { 
-		margin-bottom: 0;
-		border-radius: 0;
-		height: $navbar_height;
-		
-		li a { 
-			cursor: pointer;
-		}
+  nav.navbar { 
+    margin-bottom: 0;
+    border-radius: 0;
+    height: $navbar_height;
+    
+    li a { 
+      cursor: pointer;
+    }
 
-		.highlighted { font-weight: 500; }
+    .highlighted { font-weight: 500; }
 
-		form.navbar-form { margin-top: 7px; padding-right: 0; }
-	}
+    form.navbar-form { margin-top: 7px; padding-right: 0; }
+  }
 }
 
 #top_content {
-	width: $page_width;
-	margin: 0 auto;
+  width: $page_width;
+  margin: 0 auto;
 }
 
 #top_content_full {
-	margin: 0;
-	margin-left: 20px;
-	margin-right: 20px;
+  margin: 0;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 #logo {
-	float: left;
+  float: left;
 }
 
 #brand {
-	margin-top: 12px;
-	margin-right: 1em;
-	img { width: 180px; }
+  margin-top: 12px;
+  margin-right: 1em;
+  img { width: 180px; }
 }
 
 #menu {
-	float: left;
-	padding-top: 0.2em;
+  float: left;
+  padding-top: 0.2em;
 
-	.dropdown {
-		display: inline-block;
-	}
+  .dropdown {
+    display: inline-block;
+  }
 
-	.menu_dropdown_name { 
-		color: white;
-		cursor: pointer;
-		padding-left: 1em;
-		margin-left: 0.2em;
+  .menu_dropdown_name { 
+    color: white;
+    cursor: pointer;
+    padding-left: 1em;
+    margin-left: 0.2em;
 
-		&:hover { text-decoration: none; }
+    &:hover { text-decoration: none; }
 
-		&.highlighted {
-			color: #ffc;
-		}
-	}
+    &.highlighted {
+      color: #ffc;
+    }
+  }
 
-	li a { 
-		color: $link_blue; 
-	}
+  li a { 
+    color: $link_blue; 
+  }
 }
 
 #top_social_icons {
-	padding-top: 13px;
-	img { border-radius: 0px; }
+  padding-top: 13px;
+  img { border-radius: 0px; }
 }
 
 #top_search {
-	width: 200px;
+  width: 200px;
 }
 
 #session_info {
-	padding-top: 4px;
-	font-size: 0.8em;
-	float: right;
-	a { color: rgb(192, 192, 255); }
+  padding-top: 4px;
+  font-size: 0.8em;
+  float: right;
+  a { color: rgb(192, 192, 255); }
 }
 
 #header {
-	background-color: #eee;
+  background-color: #eee;
 }
 
 #header_content {
-	width: $page_width;
-	margin: 0 auto;
+  width: $page_width;
+  margin: 0 auto;
 }
 
 #title {
-	font-size: 2em;
-	font-weight: bold;
-	padding-top: 0.5em;
-	padding-bottom: 0.5em;
+  font-size: 2em;
+  font-weight: bold;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
 }
 
-
-
 .field label {
-	display: block;
-	margin-top: 0.5em;
-	font-weight: bold;
+  display: block;
+  margin-top: 0.5em;
+  font-weight: bold;
 }
 
 .helper {
-	padding: 1.3em;
-	background-color: #eee;
-	font-size: 1em;
-	border-radius: 8px;
-	a { font-weight: 500; }
-	margin-bottom: 2em;
+  padding: 1.3em;
+  background-color: #eee;
+  font-size: 1em;
+  border-radius: 8px;
+  a { font-weight: 500; }
+  margin-bottom: 2em;
 }
 
 .centered_content {
-	width: $page_width;
-	margin: 0 auto;
+  width: $page_width;
+  margin: 0 auto;
 }
 
 .more_link {
-	font-size: 1em;
-	font-weight: 600;
+  font-size: 1em;
+  font-weight: 600;
 }
 
 .field { 
-	input[type=text] {
-		width: 500px;
-	}
+  input[type=text] {
+    width: 500px;
+  }
 
-	textarea {
-		width: 500px;
-		height: 50px;
-	}
+  textarea {
+    width: 500px;
+    height: 50px;
+  }
 
-	textarea.textarea_medium {
-		width: 500px;
-		height: 200px;
-	}
+  textarea.textarea_medium {
+    width: 500px;
+    height: 200px;
+  }
 }
 
 .header_action {
-	margin-left: 5px;
-	font-size: 12px;
+  margin-left: 5px;
+  font-size: 12px;
 }
 
 nav.pagination {
-	margin: 0;
+  margin: 0;
 
-	.page.current {
-		font-weight: bold;
-	}
+  .page.current {
+    font-weight: bold;
+  }
 }
 
 table.list_table {
-	border-collapse: collapse;
+  border-collapse: collapse;
 
-	tr:hover td {
-		background-color: #f8f8f8;
-	}
+  tr:hover td {
+    background-color: #f8f8f8;
+  }
 
-	th {
-		text-transform: uppercase;
-		font-weight: bold;
-		font-size: 1.1em;
-	}
+  th {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
 
-	td, th {
-		vertical-align: top;
-		padding-left: 14px;
-		padding-right: 14px;
-	}
+  td, th {
+    vertical-align: top;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
 }
 
 div.spacer {
-	height: 1em;
+  height: 1em;
 }
 
 #footer_clear {
-	clear:both;
-	margin-bottom: 2em;
+  clear:both;
+  margin-bottom: 2em;
 }
 
 #footer {
-	width: $page_width;
-	margin: 0 auto;
-	clear: both;
-	border-top: 1px dotted #ccc;
-	padding: 0.6em;
-	font-size: 0.9em;
-	color: #444;
+  width: $page_width;
+  margin: 0 auto;
+  clear: both;
+  border-top: 1px dotted #ccc;
+  padding: 0.6em;
+  font-size: 0.9em;
+  color: #444;
 }
 
 .section_header {
-	margin-bottom: 0.5em;
-	font-size: 1.5em;
-	border-bottom: 1px solid #eee;	
+  margin-bottom: 0.5em;
+  font-size: 1.5em;
+  border-bottom: 1px solid #eee;	
 }
 
 .pagination {
-	margin: 0;
+  margin: 0;
 }
 
 .left_column {	
-	float: left;
-	width: $left_column_width - 30px;
+  float: left;
+  width: $left_column_width - 30px;
 
-	h1, h2, h3 { margin-top: 0; }
+  h1, h2, h3 { margin-top: 0; }
 }
 
 .right_column {
-	margin-left: $left_column_width;
-	width: $right_column_width;
+  margin-left: $left_column_width;
+  width: $right_column_width;
 
-	h1, h2, h3 { margin-top: 0; }
+  h1, h2, h3 { margin-top: 0; }
 }
 
 .small_left_column {
-	float: left;
-	width: $small_column_width;
+  float: left;
+  width: $small_column_width;
 
-	h1, h2, h3 { margin-top: 0; }	
-}
-
-.medium_left_column {
-
+  h1, h2, h3 { margin-top: 0; }	
 }
 
 .big_right_column {
-	margin-left: $small_column_width + 30px;
-	width: $big_column_width;
+  margin-left: $small_column_width + 30px;
+  width: $big_column_width;
 
-	h1, h2, h3 { margin-top: 0; }
+  h1, h2, h3 { margin-top: 0; }
 }
 
-
 .clear_columns {
-	clear: both;
+  clear: both;
 }
 
 form .alert {
-	width: 500px;
+  width: 500px;
 }
 
 .small_caps {
-	font-size: 12px;
-	text-transform: uppercase;
-	font-weight: bold;
-	color: #bbb;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #bbb;
 }
 
 .pagination {
-	height: 34px;
+  height: 34px;
 }
 
 .input-group  { margin-bottom: 5px; }
 
 body.bootsy_text_area.form-control {
-	padding: 0;
+  padding: 0;
 }
 
 .alert { 
-	img {
-		margin-right: 0.8em;
-		height: 16px;
-	}
+  img {
+    margin-right: 0.8em;
+    height: 16px;
+  }
 
-	a { font-weight: 500; }
+  a { font-weight: 500; }
 
-	button.close { margin-top: -1px; }
+  button.close { margin-top: -1px; }
 }
 
 .strong500 {
-	font-weight: 500;
+  font-weight: 500;
 }
 
 .strong600 {
-	font-weight: 600;
+  font-weight: 600;
 }
 
 .bootsy_html a[id] {
-	padding-top: 70px;
-	margin-top: -70px;
+  padding-top: 70px;
+  margin-top: -70px;
 }
 
 blockquote {
-	color: #888;
-	font-size: 1em;
-	font-weight: normal;
+  color: #888;
+  font-size: 1em;
+  font-weight: normal;
 
-	p {
-		font-size: 1em;
-		font-weight: normal;
-		margin-top: 0.5em;
-	}
+  p {
+    font-size: 1em;
+    font-weight: normal;
+    margin-top: 0.5em;
+  }
 }
 
 .bigger_text {
-	font-size: 1.3em;
+  font-size: 1.3em;
 }
 
 h3.section {
@@ -340,7 +333,7 @@ h3.section {
 }
 
 .interlocks-table th:nth-child(1) {
-	width: 250px;
+  width: 250px;
 }
 
 .interlocks-table th:nth-child(2) {

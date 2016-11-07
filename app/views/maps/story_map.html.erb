@@ -4,11 +4,11 @@
 <% content_for(:facebook_title, @map.name) %>
 <% content_for(:facebook_image, @map.thumbnail) %>
 <% content_for(:hide_footer, true) %>
-
 <%= content_for(:body) do %>
 
 <%= render 'shared/facebook_sdk' %>
 
+<%= javascript_include_tag "oligrapher" %>
 <div id="oligrapher"></div>
 
 <div id="oligrapherModal" class="modal fade" tabindex="-1" role="dialog">
