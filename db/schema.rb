@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161027190336) do
+ActiveRecord::Schema.define(version: 20161107142712) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1018,6 +1018,7 @@ ActiveRecord::Schema.define(version: 20161027190336) do
     t.datetime "updated_at"
   end
 
+  add_index "os_donations", ["amount"], name: "index_os_donations_on_amount", using: :btree
   add_index "os_donations", ["contribid"], name: "index_os_donations_on_contribid", using: :btree
   add_index "os_donations", ["cycle"], name: "index_os_donations_on_cycle", using: :btree
   add_index "os_donations", ["date"], name: "index_os_donations_on_date", using: :btree
@@ -1026,6 +1027,9 @@ ActiveRecord::Schema.define(version: 20161027190336) do
   add_index "os_donations", ["fectransid"], name: "index_os_donations_on_fectransid", using: :btree
   add_index "os_donations", ["microfilm"], name: "index_os_donations_on_microfilm", using: :btree
   add_index "os_donations", ["name_last", "name_first"], name: "index_os_donations_on_name_last_and_name_first", using: :btree
+  add_index "os_donations", ["realcode", "amount"], name: "index_os_donations_on_realcode_and_amount", using: :btree
+  add_index "os_donations", ["realcode"], name: "index_os_donations_on_realcode", using: :btree
+  add_index "os_donations", ["state"], name: "index_os_donations_on_state", using: :btree
 
   create_table "os_entity_category", force: :cascade do |t|
     t.integer  "entity_id",   limit: 8,   null: false
