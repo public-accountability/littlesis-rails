@@ -11,19 +11,20 @@ gem 'carrierwave'
 gem 'mini_magick'
 gem "fog"  #  "~> 1.3.1"
 
-gem 'sass-rails'
+gem 'sass-rails', '>= 3.2'
 gem 'asset_sync'
 
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
   gem 'coffee-rails'
-
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', platforms: :ruby
-
   gem 'uglifier', '>= 1.0.3'
 end
+
+#  Nov 2016: Switch to Bootstrap
+gem 'bootstrap-sass', '~> 3.3.7'
 
 gem 'jquery-rails'
 gem 'jquery-ui-rails'

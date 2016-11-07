@@ -60,6 +60,8 @@ GEM
       fog (>= 1.8.0)
       mime-types
       unf
+    autoprefixer-rails (6.5.2)
+      execjs
     aws-sdk (1.66.0)
       aws-sdk-v1 (= 1.66.0)
     aws-sdk-v1 (1.66.0)
@@ -76,6 +78,9 @@ GEM
       debug_inspector (>= 0.0.1)
     bootstrap-datepicker-rails (1.6.4.1)
       railties (>= 3.0)
+    bootstrap-sass (3.3.7)
+      autoprefixer-rails (>= 5.2.1)
+      sass (>= 3.3.4)
     buftok (0.2.0)
     builder (3.2.2)
     capybara (2.10.1)
@@ -542,6 +547,7 @@ DEPENDENCIES
   bettertabs
   binding_of_caller (= 0.7.2)
   bootstrap-datepicker-rails
+  bootstrap-sass (~> 3.3.7)
   bootsy!
   capybara (>= 2.10)
   capybara-webkit
@@ -579,7 +585,7 @@ DEPENDENCIES
   rmagick
   rspec-html-matchers
   rspec-rails
-  sass-rails
+  sass-rails (>= 3.2)
   seed_dump
   selenium-webdriver
   sequel
