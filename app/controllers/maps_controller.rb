@@ -121,6 +121,28 @@ class MapsController < ApplicationController
     end
   end
 
+  def dev
+    check_permission 'admin'
+
+    if @map.is_private and !is_owner
+      unless params[:secret] and params[:secret] == @map.secret
+        raise Exceptions::PermissionError
+      end
+    end
+
+    @editable = false
+    @links = [
+      { text: "embed", url: "#", id: "oligrapherEmbedLink" },
+      { text: "clone", url: clone_map_url(@map), method: "POST" }
+    ]
+    @links.push({ text: "edit", url: edit_map_url(@map) }) if is_owner
+    @links.push({ text: "share link", url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
+
+    @dev_version = true
+    render "story_map"
+  end
+
+
   def raw
     # old map page for iframe embeds, forward to new embed page
     redirect_to embedded_map_path(@map)
