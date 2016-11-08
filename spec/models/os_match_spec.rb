@@ -12,6 +12,10 @@ describe OsMatch, type: :model do
     DatabaseCleaner.clean
   end
 
+  it { should validate_presence_of(:os_donation_id) }
+  it { should validate_presence_of(:donor_id) }
+  
+
   def model_setup
     @loeb = create(:loeb)
     @nrsc = create(:nrsc)
@@ -68,8 +72,8 @@ describe OsMatch, type: :model do
 
     it 'belongs to a reference' do 
       expect(@os_match.reference).to eql @loeb_ref_one
-      expect(Reference.find(@loeb_ref_one).os_match).to eql @os_match
-      expect(Reference.find(@loeb_ref_one).os_donation).to eql @loeb_os_donation
+      expect(Reference.find(@loeb_ref_one.id).os_match).to eql @os_match
+      expect(Reference.find(@loeb_ref_one.id).os_donation).to eql @loeb_os_donation
     end
 
     it 'belongs to a relationship' do 

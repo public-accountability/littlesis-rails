@@ -11,6 +11,7 @@ class NysController < ApplicationController
       filer_id = NyFiler.find(id).filer_id
       NyFilerEntity.create!(entity_id: entity_id, ny_filer_id: id, filer_id: filer_id)
     end
+    Entity.find(entity_id).update(last_user_id: current_user.sf_guard_user.id)
     redirect_to :action => "new_filer_entity", :entity => entity_id
   end
 

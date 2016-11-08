@@ -52,16 +52,22 @@ describe NysController, type: :controller do
 
   describe "#create" do 
     login_user
-
-    it 'Handles POST'  do 
+    before do 
       ny_filer = build(:ny_filer, filer_id: "C9")
       expect(NyFilerEntity).to receive(:create!).with(entity_id: '123', ny_filer_id:  '10', filer_id: 'C9')
       expect(NyFilerEntity).to receive(:create!).with(entity_id: '123', ny_filer_id:  '11', filer_id: 'C9')
       expect(NyFiler).to receive(:find).with('10').and_return(ny_filer)
       expect(NyFiler).to receive(:find).with('11').and_return(ny_filer)
+      entity = double('entity')
+      expect(entity).to receive(:update).with(hash_including(:last_user_id => controller.current_user.sf_guard_user.id))
+      expect(Entity).to receive(:find).with('123').and_return(entity)
+    end
+
+    it 'Handles POST'  do 
       post(:create, entity: '123', ids: ['10','11'] )
       expect(response.status).to eq(302)
     end
+
   end
 
   describe "#new_filer_entity" do 
