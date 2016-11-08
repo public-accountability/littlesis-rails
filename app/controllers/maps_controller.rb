@@ -186,6 +186,15 @@ class MapsController < ApplicationController
     render "story_map"
   end
 
+  def dev_edit
+    check_owner
+    check_permission 'admin'
+    @links = [ { text: "view", url: map_url(@map), target: "_blank" } ]
+    @editable = true
+    @dev_version = true
+    render "story_map"
+  end
+
   def edit_fullscreen
     check_owner
     check_permission 'editor'
