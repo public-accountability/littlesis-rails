@@ -214,6 +214,7 @@ Lilsis::Application.routes.draw do
       get 'collection'
       get 'embedded'
       get 'map_json'
+      get 'dev'
     end
 
     collection do
@@ -225,6 +226,7 @@ Lilsis::Application.routes.draw do
       get 'interlocks'
     end
   end
+
 
   get "/maps/:id/:slide",
     controller: 'maps',
