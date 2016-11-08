@@ -4,7 +4,7 @@ class LegacyCache
   attr_accessor :client, :host
 
   def initialize(host)
-    @client ||= Dalli::Client.new('localhost:11211', compress: false, serializer: PhpSerializer)
+    @client ||= Dalli::Client.new(Lilsis::APP_CONFIG['legacy_cache_connection'], compress: false, serializer: PhpSerializer)
     @host = host
   end
 

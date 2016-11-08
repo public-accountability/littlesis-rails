@@ -43,6 +43,7 @@ defaults: &defaults
   notification_user_name:
   notification_user_password:
   notification_to:
+  legacy_cache_connection: "localhost:11211"
 
 test:
   <<: *defaults
