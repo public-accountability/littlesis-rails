@@ -1029,7 +1029,10 @@ ActiveRecord::Schema.define(version: 20161107142712) do
   add_index "os_donations", ["name_last", "name_first"], name: "index_os_donations_on_name_last_and_name_first", using: :btree
   add_index "os_donations", ["realcode", "amount"], name: "index_os_donations_on_realcode_and_amount", using: :btree
   add_index "os_donations", ["realcode"], name: "index_os_donations_on_realcode", using: :btree
+  add_index "os_donations", ["recipid", "amount"], name: "index_os_donations_on_recipid_and_amount", using: :btree
+  add_index "os_donations", ["recipid"], name: "index_os_donations_on_recipid", using: :btree
   add_index "os_donations", ["state"], name: "index_os_donations_on_state", using: :btree
+  add_index "os_donations", ["zip"], name: "index_os_donations_on_zip", using: :btree
 
   create_table "os_entity_category", force: :cascade do |t|
     t.integer  "entity_id",   limit: 8,   null: false
