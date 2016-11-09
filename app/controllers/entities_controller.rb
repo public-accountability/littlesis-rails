@@ -69,6 +69,7 @@ class EntitiesController < ApplicationController
        match.update(matched_by: current_user.id)
     end
     @entity.update(last_user_id: current_user.sf_guard_user.id)
+    @entity.delay.clear_legacy_cache(request.host)
     render json: {status: 'ok'}
   end
 
@@ -78,6 +79,7 @@ class EntitiesController < ApplicationController
       OsMatch.find(os_match_id).destroy
     end
     @entity.update(last_user_id: current_user.sf_guard_user.id)
+    @entity.delay.clear_legacy_cache(request.host)
     render json: {status: 'ok'}
   end
 

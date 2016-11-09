@@ -40,7 +40,9 @@ class NysController < ApplicationController
     match_params[:disclosure_ids].each do |disclosure_id| 
       NyMatch.match(disclosure_id, match_params[:donor_id], current_user.id)
     end
-    
+    donor = Entity.find(match_params[:donor_id])
+    donor.delay.clear_legacy_cache(request.host)
+    donor.touch
     head :accepted
   end
   

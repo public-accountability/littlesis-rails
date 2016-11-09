@@ -39,13 +39,32 @@ describe NysController, type: :controller do
       post(:match_donations, {payload: {disclosure_ids: [12, 17], donor_id: '666'}})
     end
 
+    it 'clears legacy cache of donor' do 
+      allow(NyMatch).to receive(:match)
+      entity_mock = instance_double('Entity', :touch => nil)
+      expect(Entity).to receive(:find).with('666') { entity_mock }
+      delay_mock = double('delay')
+      expect(entity_mock).to receive(:delay) { delay_mock }
+      expect(delay_mock).to receive(:clear_legacy_cache).with('test.host')
+      post(:match_donations, {payload: {disclosure_ids: [12, 17], donor_id: '666'}})
+    end
+
+
     it 'creates new matches' do 
       person = create(:person, name: "big donor")
+      
       disclosure = create(:ny_disclosure)
       count = NyMatch.count
       post(:match_donations, {payload: {disclosure_ids: [disclosure.id ], donor_id: person.id}})
       
       expect(NyMatch.count).to eql (count + 1)
+    end
+
+    it 'changes updated_at field' do 
+      person = create(:person, name: "big donor", updated_at: 1.day.ago)
+      allow(NyMatch).to receive(:match)
+      post(:match_donations, {payload: {disclosure_ids: [1], donor_id: person.id}})
+      expect(Entity.find(person.id).updated_at > person.updated_at).to be true
     end
 
   end

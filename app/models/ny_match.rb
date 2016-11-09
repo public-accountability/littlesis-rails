@@ -34,7 +34,7 @@ class NyMatch < ActiveRecord::Base
   end
 
   def set_recipient
-    self.recip_id = NyFilerEntity.find_by_filer_id(ny_disclosure.filer_id)&.entity_id
+    self.recip_id = NyFilerEntity.find_by_filer_id(ny_disclosure.filer_id).try(:entity_id)
   end
 
   # input: int, int, int (optional)
@@ -44,6 +44,7 @@ class NyMatch < ActiveRecord::Base
       m.matched_by = matched_by
       m.set_recipient
       m.create_or_update_relationship
+      m.recipient.try(:touch)
       m.save
     end
   end
