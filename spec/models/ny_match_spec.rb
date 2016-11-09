@@ -23,40 +23,51 @@ describe NyMatch, type: :model do
   it { should have_one(:ny_filer_entity) }
 
   describe 'match' do 
-    
-    before(:each) do 
-      expect(NyFilerEntity).to receive(:find_by_filer_id).and_return(double(:entity_id => 100))
+    context 'creating new matches' do 
+      before(:each) do 
+        expect(NyFilerEntity).to receive(:find_by_filer_id).and_return(double(:entity_id => 100))
+        allow(Relationship).to receive(:find_or_create_by!).and_return(build(:relationship))
+        allow(User).to receive(:find).and_return(double(:sf_guard_user => double(:id => 99)))
+      end
+
+      it 'Creates a new match' do 
+        d = create(:ny_disclosure)
+        expect{NyMatch.match(d.id,1,1)}.to change{NyMatch.count}.by(1)
+      end
+      
+      it 'Creates match with correct attributes' do 
+        d = create(:ny_disclosure)
+        NyMatch.match(d.id,50,42)
+        m = NyMatch.last
+        expect(m.ny_disclosure_id).to eql d.id
+        expect(m.donor_id).to eql 50
+        expect(m.matched_by).to eql 42
+      end
+      
+      it 'Sets matched_by to be the system_user_id if no user is given' do 
+        d = create(:ny_disclosure)
+        NyMatch.match(d.id,20)
+        expect(NyMatch.last.matched_by).to eql 1
+      end
+
+      it 'Does not create a new match if the match already exits' do 
+        d = create(:ny_disclosure)
+        expect { NyMatch.match(d.id,20) }.to change{NyMatch.count}.by(1)
+        expect(NyMatch.last.ny_disclosure).to eql d
+        expect(NyMatch.last.matched_by).to eql 1
+        expect{ NyMatch.match(d.id, 20, 55) }.not_to change{NyMatch.count}
+        expect(NyMatch.last.matched_by).to eql 1
+      end
+
+    end
+
+    it 'updates updated_at for recipient' do 
       allow(Relationship).to receive(:find_or_create_by!).and_return(build(:relationship))
       allow(User).to receive(:find).and_return(double(:sf_guard_user => double(:id => 99)))
-    end
-
-    it 'Creates a new match' do 
+      elected = create(:elected, updated_at: 1.day.ago)
+      expect(NyFilerEntity).to receive(:find_by_filer_id).and_return(double(:entity_id => elected.id ))
       d = create(:ny_disclosure)
-      expect{NyMatch.match(d.id,1,1)}.to change{NyMatch.count}.by(1)
-    end
-    
-    it 'Creates match with correct attributes' do 
-      d = create(:ny_disclosure)
-      NyMatch.match(d.id,50,42)
-      m = NyMatch.last
-      expect(m.ny_disclosure_id).to eql d.id
-      expect(m.donor_id).to eql 50
-      expect(m.matched_by).to eql 42
-    end
-    
-    it 'Sets matched_by to be the system_user_id if no user is given' do 
-      d = create(:ny_disclosure)
-      NyMatch.match(d.id,20)
-      expect(NyMatch.last.matched_by).to eql 1
-    end
-
-    it 'Does not create a new match if the match already exits' do 
-      d = create(:ny_disclosure)
-      expect { NyMatch.match(d.id,20) }.to change{NyMatch.count}.by(1)
-      expect(NyMatch.last.ny_disclosure).to eql d
-      expect(NyMatch.last.matched_by).to eql 1
-      expect{ NyMatch.match(d.id, 20, 55) }.not_to change{NyMatch.count}
-      expect(NyMatch.last.matched_by).to eql 1
+      expect { NyMatch.match(d.id, 10) }. to change { Entity.find(elected.id).updated_at }
     end
 
   end
@@ -64,9 +75,9 @@ describe NyMatch, type: :model do
   describe 'set_recipient' do 
     
     it 'sets recip_id' do 
-      disclosure = create(:ny_disclosure, filer_id: 'X1')
+      disclosure = create(:ny_disclosure, filer_id: '5678')
       elected = create(:elected)
-      create(:ny_filer_entity, filer_id: 'X1', entity_id: elected.id)
+      create(:ny_filer_entity, filer_id: '5678', entity_id: elected.id)
       m = NyMatch.new(ny_disclosure_id: disclosure.id, donor_id: 123)
       expect(m.recipient).to be nil
       m.set_recipient

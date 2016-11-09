@@ -39,8 +39,20 @@ describe NysController, type: :controller do
       post(:match_donations, {payload: {disclosure_ids: [12, 17], donor_id: '666'}})
     end
 
+    it 'clears legacy cache of donor' do 
+      allow(NyMatch).to receive(:match)
+      entity_mock = instance_double('Entity', :touch => nil)
+      expect(Entity).to receive(:find).with('666') { entity_mock }
+      delay_mock = double('delay')
+      expect(entity_mock).to receive(:delay) { delay_mock }
+      expect(delay_mock).to receive(:clear_legacy_cache).with('test.host')
+      post(:match_donations, {payload: {disclosure_ids: [12, 17], donor_id: '666'}})
+    end
+
+
     it 'creates new matches' do 
       person = create(:person, name: "big donor")
+      
       disclosure = create(:ny_disclosure)
       count = NyMatch.count
       post(:match_donations, {payload: {disclosure_ids: [disclosure.id ], donor_id: person.id}})
@@ -48,20 +60,33 @@ describe NysController, type: :controller do
       expect(NyMatch.count).to eql (count + 1)
     end
 
+    it 'changes updated_at field' do 
+      person = create(:person, name: "big donor", updated_at: 1.day.ago)
+      allow(NyMatch).to receive(:match)
+      post(:match_donations, {payload: {disclosure_ids: [1], donor_id: person.id}})
+      expect(Entity.find(person.id).updated_at > person.updated_at).to be true
+    end
+
   end
 
   describe "#create" do 
     login_user
-
-    it 'Handles POST'  do 
+    before do 
       ny_filer = build(:ny_filer, filer_id: "C9")
       expect(NyFilerEntity).to receive(:create!).with(entity_id: '123', ny_filer_id:  '10', filer_id: 'C9')
       expect(NyFilerEntity).to receive(:create!).with(entity_id: '123', ny_filer_id:  '11', filer_id: 'C9')
       expect(NyFiler).to receive(:find).with('10').and_return(ny_filer)
       expect(NyFiler).to receive(:find).with('11').and_return(ny_filer)
+      entity = double('entity')
+      expect(entity).to receive(:update).with(hash_including(:last_user_id => controller.current_user.sf_guard_user.id))
+      expect(Entity).to receive(:find).with('123').and_return(entity)
+    end
+
+    it 'Handles POST'  do 
       post(:create, entity: '123', ids: ['10','11'] )
       expect(response.status).to eq(302)
     end
+
   end
 
   describe "#new_filer_entity" do 

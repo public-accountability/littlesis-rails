@@ -74,9 +74,10 @@ describe EntitiesController, type: :controller do
     before(:all) do 
       @entity = create(:mega_corp_inc)
     end
-    
+
     describe 'POST #match_donation' do
-      before do
+ 
+      before(:each) do
         d1 = create(:os_donation, fec_cycle_id: 'unique_id_1')
         d2 = create(:os_donation, fec_cycle_id: 'unique_id_2')
         post :match_donation, {id: @entity.id, payload: [d1.id, d2.id]}
@@ -95,6 +96,28 @@ describe EntitiesController, type: :controller do
           expect(match.matched_by).to eql User.last.id
           expect(match.user).to eql User.last
         end
+      end
+
+      describe 'Clearing Cache' do
+        
+        def setup
+          allow(OsMatch).to receive(:find_or_create_by!) { double('osmatch').as_null_object }
+          mock_entity = instance_double('Entity')
+          mock_delay = double('delay')
+          expect(mock_delay).to receive(:clear_legacy_cache)
+          expect(mock_entity).to receive(:delay) { mock_delay }
+          expect(mock_entity).to receive(:update)
+          expect(Entity).to receive(:find).with('7').and_return(mock_entity)
+        end
+
+        before { OsMatch.skip_callback :create, :after, :post_process }
+        after { OsMatch.set_callback :create, :after, :post_process }
+        
+        it 'deletes legacy cache on match' do
+          setup
+          post :match_donation, {id: 7, payload: [1]}
+        end
+
       end
 
     end
