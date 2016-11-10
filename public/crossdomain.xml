@@ -1,5 +1,4 @@
-<?xml version=1.0?>
+<?xml version="1.0"?>
 <cross-domain-policy>
-        <allow-access-from domain=*.theyrule.net />
+        <allow-access-from domain="*.theyrule.net" />
 </cross-domain-policy>
-
