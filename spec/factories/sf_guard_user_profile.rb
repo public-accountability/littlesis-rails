@@ -6,6 +6,7 @@ FactoryGirl.define do
     public_name 'public_name'
     home_network_id 79
     email 'fake_email@fake_email.com'
+    reason 'research'
   end
   
 end

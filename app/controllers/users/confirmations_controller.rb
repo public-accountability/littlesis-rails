@@ -15,6 +15,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
       # send welcome email to user - views/user_mailer/welcome_email
       if user.errors.empty?
         UserMailer.welcome_email(user).deliver_later
+        NotificationMailer.signup_email(user).deliver_later
       end
     end
   end

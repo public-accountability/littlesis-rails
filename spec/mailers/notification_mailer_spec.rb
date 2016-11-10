@@ -1,6 +1,14 @@
 require "rails_helper"
 
 describe NotificationMailer, type: :mailer do
+  before(:all) do
+    DatabaseCleaner.start
+    ActiveJob::Base.queue_adapter = :test
+  end
+  after(:all) do 
+    DatabaseCleaner.clean
+  end
+
   describe '#contact_email' do 
     before(:each) do 
       @params = {name: 'me', email: 'email@email.com', message: 'hey', subject: 'hi'}
@@ -33,7 +41,45 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'sends email later' do 
-      ActiveJob::Base.queue_adapter = :test
+      expect { @mail.deliver_later }
+        .to have_enqueued_job.on_queue('mailers')
+    end
+  end
+
+  describe '#signup_email' do
+    before(:all) do
+      @sf_user = create(:sf_guard_user)
+      @user = create(:user, sf_guard_user: @sf_user)
+      @profile = create(:sf_guard_user_profile, user_id: @sf_user.id)
+      @mail = NotificationMailer.signup_email(@user)
+    end
+    
+    it 'has correct subject' do
+      expect(@mail.subject).to eql "New User Signup: user"
+    end
+
+    it 'has correct to' do 
+      expect(@mail.to).to eq [APP_CONFIG['notification_to']]
+    end
+
+    it 'has username' do
+      expect(@mail.encoded).to include("user (#{@user.id})")
+    end
+
+    it 'has name' do
+      expect(@mail.encoded).to include('first last')
+    end
+
+    it 'has reason' do 
+      expect(@mail.encoded).to include('research')
+    end
+
+    it 'sends email' do 
+      expect { @mail.deliver_now }
+        .to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+
+    it 'sends email later' do 
       expect { @mail.deliver_later }
         .to have_enqueued_job.on_queue('mailers')
     end

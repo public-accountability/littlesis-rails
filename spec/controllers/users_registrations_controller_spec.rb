@@ -26,7 +26,7 @@ describe Users::RegistrationsController, type: :controller do
         "username"=>"testuser",
         "default_network_id"=>"79",
         "newsletter"=>"0",
-        "sf_guard_user_profile"=>{"name_first"=>"firstname", "name_last"=>"lastname"}
+        "sf_guard_user_profile"=>{"name_first"=>"firstname", "name_last"=>"lastname", "reason"=>"research"}
       }
   end
 
@@ -55,6 +55,14 @@ describe Users::RegistrationsController, type: :controller do
       sf_guard_user_profile_count = SfGuardUserProfile.count
       post_create user_data
       expect(SfGuardUserProfile.count).to eql (sf_guard_user_profile_count + 1 )
+    end
+
+    it 'populates SfGuardProfile with correct info' do
+      post_create user_data
+      profile = SfGuardUserProfile.last
+      expect(profile.name_last).to eql 'lastname'
+      expect(profile.name_first).to eql 'firstname'
+      expect(profile.reason).to eql 'research'
     end
 
     it 'works if user says yes to newsletter' do 

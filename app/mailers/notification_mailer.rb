@@ -14,4 +14,10 @@ class NotificationMailer < ApplicationMailer
          delivery_method_options: SMTP_OPTIONS)
   end
 
+  def signup_email(user)
+    @user = user
+    @profile = user.sf_guard_user_profile
+    mail(to: DEFAULT_TO, subject: "New User Signup: #{user.username}", delivery_method_options: SMTP_OPTIONS)
+  end
+
 end
