@@ -1,3 +1,4 @@
+<% content_for(:page_title, "#{@entity.name} - Political") %>
 <div class="container-fluid">
     <%= render partial: 'header', locals: { entity: @entity } %>
     <%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
