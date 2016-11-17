@@ -219,6 +219,29 @@ describe OsMatch, type: :model do
       end
     end
 
+    context 'The donor has be merged or deleted' do 
+      before do
+        DatabaseCleaner.start
+        donation = create(:loeb_donation_one, amount: 10000, fec_cycle_id: 'blah', date: "2010-02-02")
+        @loeb_new = create(:loeb, id: rand(1000) )
+        @loeb_old = create(:loeb, merged_id: @loeb_new.id, id: rand(1000), is_deleted: true)
+        @match = OsMatch.create(os_donation_id: donation.id, donor_id: @loeb_old.id, recip_id: @nrsc.id)
+      end
+      after  {  DatabaseCleaner.clean } 
+        
+      it 'changes os_match donor_id' do 
+        expect(@match.donor_id).to eql @loeb_old.id
+        @match.update_donation_relationship
+        expect(@match.donor_id).to eql @loeb_new.id
+      end
+
+      it 'creates a new relationship' do 
+        expect { @match.update_donation_relationship }.to change {Relationship.count}.by(1)
+      end
+
+    end
+
+
     describe '#create_reference'do 
       before(:all) do
         DatabaseCleaner.start

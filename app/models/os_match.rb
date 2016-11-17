@@ -50,6 +50,13 @@ class OsMatch < ActiveRecord::Base
     return nil unless relationship.nil?
     return nil if recipient.nil?
 
+    if donor.nil?
+      merged_id = Entity.unscoped.find_by_id(donor_id).merged_id
+      new_donor = Entity.find_by_id(merged_id)
+      return nil if new_donor.nil?
+      update_attribute(:donor_id, new_donor.id)
+    end
+
     r = Relationship.find_or_create_by!(
       entity1_id: donor.id,
       entity2_id: recipient.id,
