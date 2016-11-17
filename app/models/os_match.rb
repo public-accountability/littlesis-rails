@@ -39,9 +39,9 @@ class OsMatch < ActiveRecord::Base
     return nil unless recip_id.nil?
     recipient = find_recip_id(os_donation.recipid)
     if recipient.nil?
-      printf("\ncould not find a recipient for %s\n", id)
+      printf(".", id)
     else
-      printf(" ✓")
+      printf("✓")
       update(recip_id: recipient)
     end
   end
