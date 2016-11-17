@@ -35,6 +35,7 @@ namespace :opensecrets do
     # ALTER TABLE `littlesis`.`os_committees` CONVERT TO CHARACTER SET utf8; 
     ########################################################################### 
     start = Time.now
+    original_committees_count = OsCommittee.count
     Dir.foreach( Rails.root.join('data', 'cmtes') ) do |filename|
       next if filename == '.' or filename == '..'
       printf("Processing: %s \n", filename)
@@ -42,6 +43,7 @@ namespace :opensecrets do
     end
     execution_time = Time.now - start
     printf("** Import Committees took %d seconds **\n", execution_time)
+    printf("** Added %s new committees **\n", (OsCommittee.count - original_committees_count) )
     printf("** There are currently %s committees in the db **\n", OsCommittee.count)
   end
 
