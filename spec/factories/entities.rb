@@ -27,4 +27,10 @@ FactoryGirl.define do
     primary_ext "Org"
     id 12884
   end
+
+  factory :pac, class: Entity do 
+    name "PAC"
+    blurb "Ruining our democracy one dollar at a time"
+    primary_ext "Org"
+  end
 end

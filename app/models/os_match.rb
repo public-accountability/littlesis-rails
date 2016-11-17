@@ -75,6 +75,8 @@ class OsMatch < ActiveRecord::Base
     return elected.entity.id unless elected.nil?
     candidate = PoliticalCandidate.includes(:entity).find_by(crp_id: crp_id, entity: {is_deleted: false})
     return candidate.entity.id unless candidate.nil?
+    fundraising = PoliticalFundraising.includes(:entity).find_by(fec_id: crp_id, entity: {is_deleted: false})
+    return fundraising.entity.id unless fundraising.nil?
     logger.info "Could not find recipient with id: #{crp_id}"
     return nil
   end

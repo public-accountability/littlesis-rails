@@ -270,6 +270,12 @@ describe OsMatch, type: :model do
       expect(OsMatch.new.find_recip_id 'CRPID2').to eql elected.id
     end
 
+    it "finds recip_id if a PoliticalFundraising committee exists" do 
+      pac = create(:pac)
+      fundraising = create(:political_fundraising, fec_id: 'C123', entity_id: pac.id)
+      expect(OsMatch.new.find_recip_id 'C123').to eql pac.id
+    end
+
     it "return null otherwise" do 
       expect(OsMatch.new.find_recip_id 'NONEXISTENT').to be_nil
     end
