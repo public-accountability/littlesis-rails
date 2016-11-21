@@ -4,7 +4,7 @@ defaults: &defaults
   min_infix_len: 3
   min_word_len: 2
   html_strip: true
-  mem_limit: 128M
+  mem_limit: 256M
   charset_type: utf-8
   charset_table: "0..9, a..z, _, -, A..Z->a..z, U+00C0->a, U+00C1->a,
 	  U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e,

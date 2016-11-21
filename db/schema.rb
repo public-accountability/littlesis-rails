@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161107142712) do
+ActiveRecord::Schema.define(version: 20161121184436) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -810,11 +810,11 @@ ActiveRecord::Schema.define(version: 20161107142712) do
   add_index "note_users", ["user_id"], name: "index_note_users_on_user_id", using: :btree
 
   create_table "ny_disclosures", force: :cascade do |t|
-    t.string   "filer_id",                  limit: 10,  null: false
+    t.string   "filer_id",                  limit: 10,                 null: false
     t.string   "report_id",                 limit: 255
-    t.string   "transaction_code",          limit: 1,   null: false
-    t.string   "e_year",                    limit: 4,   null: false
-    t.integer  "transaction_id",            limit: 4,   null: false
+    t.string   "transaction_code",          limit: 1,                  null: false
+    t.string   "e_year",                    limit: 4,                  null: false
+    t.integer  "transaction_id",            limit: 4,                  null: false
     t.date     "schedule_transaction_date"
     t.date     "original_date"
     t.string   "contrib_code",              limit: 4
@@ -842,9 +842,11 @@ ActiveRecord::Schema.define(version: 20161107142712) do
     t.datetime "crerec_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "delta",                                 default: true, null: false
   end
 
   add_index "ny_disclosures", ["contrib_code"], name: "index_ny_disclosures_on_contrib_code", using: :btree
+  add_index "ny_disclosures", ["delta"], name: "index_ny_disclosures_on_delta", using: :btree
   add_index "ny_disclosures", ["e_year"], name: "index_ny_disclosures_on_e_year", using: :btree
   add_index "ny_disclosures", ["filer_id"], name: "index_ny_disclosures_on_filer_id", using: :btree
   add_index "ny_disclosures", ["original_date"], name: "index_ny_disclosures_on_original_date", using: :btree
@@ -1577,8 +1579,8 @@ ActiveRecord::Schema.define(version: 20161107142712) do
   add_index "transaction", ["relationship_id"], name: "relationship_id_idx", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  limit: 255, default: "",   null: false
-    t.string   "encrypted_password",     limit: 255, default: "",   null: false
+    t.string   "email",                  limit: 255, default: "", null: false
+    t.string   "encrypted_password",     limit: 255, default: "", null: false
     t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
@@ -1590,10 +1592,9 @@ ActiveRecord::Schema.define(version: 20161107142712) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "default_network_id",     limit: 4
-    t.integer  "sf_guard_user_id",       limit: 4,                  null: false
-    t.string   "username",               limit: 255,                null: false
+    t.integer  "sf_guard_user_id",       limit: 4,                null: false
+    t.string   "username",               limit: 255,              null: false
     t.string   "remember_token",         limit: 255
-    t.boolean  "is_active",                          default: true
     t.string   "confirmation_token",     limit: 255
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"

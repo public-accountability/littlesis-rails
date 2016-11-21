@@ -40,6 +40,7 @@ class NysController < ApplicationController
     match_params[:disclosure_ids].each do |disclosure_id| 
       NyMatch.match(disclosure_id, match_params[:donor_id], current_user.id)
     end
+    NyDisclosure.update_delta_flag(match_params[:disclosure_ids])
     donor = Entity.find(match_params[:donor_id])
     donor.delay.clear_legacy_cache(request.host)
     donor.touch

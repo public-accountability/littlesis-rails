@@ -4,6 +4,7 @@ describe NysController, type: :controller do
 
   before(:all) do 
     Entity.skip_callback(:create, :after, :create_primary_ext)
+    ActiveJob::Base.queue_adapter = :test
     DatabaseCleaner.start
   end
   
@@ -30,13 +31,32 @@ describe NysController, type: :controller do
     
   end
 
-  describe '#match_donations' do 
+  describe '#match_donations' do
     login_user
     
     it 'Matches provides ids' do 
       expect(NyMatch).to receive(:match).with('12', '666', kind_of(Numeric))
       expect(NyMatch).to receive(:match).with('17', '666', kind_of(Numeric))
       post(:match_donations, {payload: {disclosure_ids: [12, 17], donor_id: '666'}})
+    end
+
+    describe 'thinking sphinx:' do 
+      before(:all) do
+        @disclosure = create(:ny_disclosure)
+      end
+
+      it 'Updates delta on ny disclosure' do 
+        allow(NyMatch).to receive(:match)
+        expect(NyDisclosure).to receive(:update_delta_flag).with(['12', '17'])
+        post(:match_donations, {payload: {disclosure_ids: [12, 17], donor_id: '666'}})
+      end
+
+      # it 'enques delayed_delta job' do 
+      #   allow(NyMatch).to receive(:match)
+      #   expect { post(:match_donations, {payload: {disclosure_ids: [@disclosure.id], donor_id: '666'}}) }
+      #     .to have_enqueued_job.on_queue('delta')
+      # end
+
     end
 
     it 'clears legacy cache of donor' do 
@@ -48,7 +68,6 @@ describe NysController, type: :controller do
       expect(delay_mock).to receive(:clear_legacy_cache).with('test.host')
       post(:match_donations, {payload: {disclosure_ids: [12, 17], donor_id: '666'}})
     end
-
 
     it 'creates new matches' do 
       person = create(:person, name: "big donor")
