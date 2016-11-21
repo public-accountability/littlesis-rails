@@ -10,8 +10,6 @@ class NyMatch < ActiveRecord::Base
 
   validates_presence_of :ny_disclosure_id, :donor_id
 
-  after_save ThinkingSphinx::RealTime.callback_for(:ny_disclosure, [:ny_disclosure])
-
   def create_or_update_relationship
     # if this match already has a relationship, so we can assume this has already been processed
     return nil unless relationship.nil?

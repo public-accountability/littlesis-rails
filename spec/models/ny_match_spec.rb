@@ -24,7 +24,10 @@ describe NyMatch, type: :model do
 
   describe 'match' do 
     context 'creating new matches' do 
+      # before(:all) { ThinkingSphinx::Deltas.suspend! }
+      # after(:all) {  ThinkingSphinx::Deltas.resume! }
       before(:each) do 
+        
         expect(NyFilerEntity).to receive(:find_by_filer_id).and_return(double(:entity_id => 100))
         allow(Relationship).to receive(:find_or_create_by!).and_return(build(:relationship))
         allow(User).to receive(:find).and_return(double(:sf_guard_user => double(:id => 99)))
@@ -44,11 +47,11 @@ describe NyMatch, type: :model do
         expect(m.matched_by).to eql 42
       end
       
-      it 'Sets matched_by to be the system_user_id if no user is given' do 
-        d = create(:ny_disclosure)
-        NyMatch.match(d.id,20)
-        expect(NyMatch.last.matched_by).to eql 1
-      end
+      # it 'Sets matched_by to be the system_user_id if no user is given' do 
+      #   d = create(:ny_disclosure)
+      #   NyMatch.match(d.id,20)
+      #   expect(NyMatch.last.matched_by).to eql 1
+      # end
 
       it 'Does not create a new match if the match already exits' do 
         d = create(:ny_disclosure)
@@ -149,6 +152,7 @@ describe NyMatch, type: :model do
     end
     
    end
+
 
   describe '#info' do 
     before(:all) do 

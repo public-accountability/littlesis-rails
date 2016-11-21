@@ -38,6 +38,10 @@ class NyDisclosure < ActiveRecord::Base
           ).map(&:contribution_attributes)
   end
 
+  def self.update_delta_flag(ids)
+    where(id: ids).update_all(delta: true)
+  end
+
   private 
 
   def format_transaction_code
