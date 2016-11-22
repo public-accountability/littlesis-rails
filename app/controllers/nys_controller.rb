@@ -55,8 +55,8 @@ class NysController < ApplicationController
   # /nys/potential_contributions?entity=123
   def potential_contributions
     check_permission 'importer'
-    name = Entity.find(params.require(:entity).to_i).name
-    render json: NyDisclosure.potential_contributions(name)
+    entity = Entity.find(params.require(:entity).to_i)
+    render json: NyDisclosure.potential_contributions(entity)
   end
 
   # Already matched donations

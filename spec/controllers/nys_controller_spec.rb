@@ -19,11 +19,12 @@ describe NysController, type: :controller do
     
     it 'returns 200' do 
       person = build(:person, id: 12345, name: "big donor")
+      expect(person).to receive(:aliases).and_return( [double(:name => 'Big Donor')] )
       disclosure = double('NyDisclosure')
       expect(disclosure).to receive(:map)
       expect(Entity).to receive(:find).with(12345).and_return(person)
       expect(NyDisclosure).to receive(:search)
-                               .with('big donor', :with=>{:is_matched=>false, :transaction_code=>["'A'", "'B'", "'C'"]}, :sql=>{:include=>:ny_filer}, :per_page => 500)
+                               .with('Big Donor', :with=>{:is_matched=>false, :transaction_code=>["'A'", "'B'", "'C'"]}, :sql=>{:include=>:ny_filer}, :per_page => 500)
                                .and_return(disclosure)
       get(:potential_contributions, entity: '12345')
       expect(response.status).to eq(200)

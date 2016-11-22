@@ -30,12 +30,26 @@ class NyDisclosure < ActiveRecord::Base
     }
   end
 
-  def self.potential_contributions(name)
-    search(name, 
+  # <Entity> -> Hash
+  def self.potential_contributions(entity)
+    search(search_terms(entity), 
            :with => { :is_matched => false, :transaction_code =>  [ "'A'", "'B'", "'C'" ] }, 
            :sql => { :include => :ny_filer },
            :per_page => 500
           ).map(&:contribution_attributes)
+  end
+
+  # <Entity> -> String
+  # Creates variations on an entity's name and aliases for improved matching with sphinx
+  def self.search_terms(entity)
+    search_terms = Set.new  
+    entity.aliases.each do |a|
+      search_terms << a.name                                            # add name
+      name_h = NameParser.parse_to_hash(a.name)                         # get parsed name
+      search_terms << (name_h[:name_first] + " " + name_h[:name_last])  # Add only first + last
+      search_terms << (name_h[:name_nick] + " " + name_h[:name_last]) if name_h[:name_nick].present?
+    end
+    search_terms.to_a.join(" | ")
   end
 
   def self.update_delta_flag(ids)

@@ -25,4 +25,38 @@ describe NyDisclosure, type: :model do
 
   end
 
+  describe 'search_terms' do 
+
+    def build_entity(name)
+      e = build(:person)
+      a = build(:alias, name: name, is_primary: true)
+      allow(e).to receive(:aliases).and_return([a])
+      return e
+    end
+
+    it 'Returns name if the name has no middle, suffix, or preface' do
+      e = build_entity('Alice Coltrane')
+      expect(NyDisclosure.search_terms(e)).to eql 'Alice Coltrane'
+    end
+    
+    it 'Adds first and last only term if middle name exists' do 
+      e = build_entity('Alice X Coltrane')
+      expect(NyDisclosure.search_terms(e)).to eql 'Alice X Coltrane | Alice Coltrane'
+    end
+
+    it 'Adds first and last only term if suffix exists' do 
+      e = build_entity('Alice Coltrane JR')
+      expect(NyDisclosure.search_terms(e)).to eql 'Alice Coltrane JR | Alice Coltrane'
+    end
+
+    it 'Adds both Aliases' do 
+      e = build(:person)
+      a1 = build(:alias, name: "Alice Coltrane JR", is_primary: true)
+      a2 = build(:alias, name: "Al Coltrane", is_primary: false)
+      allow(e).to receive(:aliases).and_return([a1, a2])
+      expect(NyDisclosure.search_terms(e)).to eql 'Alice Coltrane JR | Alice Coltrane | Al Coltrane'
+    end
+
+  end
+  
 end
