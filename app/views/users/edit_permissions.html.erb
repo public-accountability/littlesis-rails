@@ -21,7 +21,7 @@
 		<td><%= permission.description %></td>
 		<% if @user.has_legacy_permission(permission.name) %>
 		    <td></td>
-		    <td><%= link_to "DELETE", delete_permission_user_path(@user.id, permission: permission.id), :method => :delete %></td>
+		    <td><%= link_to "DELETE", delete_permission_user_path(@user.id, permission: permission.id), :method => :delete%></td>
 		<% else  %>
 		    <td><%= link_to "ADD", add_permission_user_path(@user.id, permission: permission.id), :method => :post %></td>
 		    <td></td>

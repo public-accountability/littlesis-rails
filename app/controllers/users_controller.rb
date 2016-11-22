@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission]
+  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy]
   before_action :authenticate_user!
   before_filter :admins_only, except: [:show]
   
@@ -36,15 +36,23 @@ class UsersController < ApplicationController
   def success
   end
 
-  # DELETE /users/1
-  # def destroy
-  #   @user.destroy
-  #   redirect_to users_url, notice: 'User was successfully destroyed.'
-  # end
+  # DELETE /users/1/destroy
+  def destroy
+    if @user.has_legacy_permission('admin')
+      return redirect_to admin_users_path, notice: 'You can\'t delete an admin user'
+    else
+      SfGuardUserPermission.where(user_id: @user.sf_guard_user_id).map(&:permission_id).each do |permission_id|
+        SfGuardUserPermission.remove_permission(permission_id: permission_id, user_id: @user.sf_guard_user_id)
+      end
+      @user.sf_guard_user.update(is_deleted: true)
+      Entity.where(last_user_id: @user.sf_guard_user_id).update_all(last_user_id: 1)
+      Relationship.where(last_user_id: @user.sf_guard_user_id).update_all(last_user_id: 1)
+      @user.destroy
+      redirect_to admin_users_path, notice: 'Successfully deleted the user'
+    end
+  end
 
   def admin
-    check_permission "admin"
-
     @users = User
       .includes(:groups)
       .joins("INNER JOIN sf_guard_user ON sf_guard_user.id = users.sf_guard_user_id")

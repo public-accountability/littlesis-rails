@@ -101,6 +101,7 @@ Lilsis::Application.routes.draw do
       get 'edit_permissions' 
       post 'add_permission'
       delete 'delete_permission'
+      delete 'destroy'
     end
     collection do
       get 'admin'
