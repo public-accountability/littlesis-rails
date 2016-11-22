@@ -51,10 +51,7 @@
           <% end %>
         </td>
         <td><%= user.legacy_created_at.strftime("%F") %></td>
-        <td>
-          <% unless user.sf_guard_user_profile.is_confirmed %>
-            <%= link_to 'confirm email', confirm_user_path(user), method: :post, confirm: "Are you sure?" %>
-          <% end %>
+        <td>          
         </td>
       </tr>
     <% end %>

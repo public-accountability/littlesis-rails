@@ -1,10 +1,9 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :confirm]
-  before_action :authenticate_user!, only: [:index]
+  before_action :set_user, only: [:show, :edit]
+  before_action :authenticate_user!
   
   # GET /users
   def index
-    auth
     @users = User
       .includes(:groups)
       .joins("INNER JOIN sf_guard_user ON sf_guard_user.id = users.sf_guard_user_id")
@@ -21,40 +20,11 @@ class UsersController < ApplicationController
   def success
   end
 
-  # GET /users/new
-  # def new
-  #   @user = User.new
-  # end
-
-  # GET /users/1/edit
-  # def edit
-  # end
-
-  # POST /users
-  # def create
-  #   @user = User.new(user_params)
-
-  #   if @user.save
-  #     redirect_to @user, notice: 'User was successfully created.'
-  #   else
-  #     render action: 'new'
-  #   end
-  # end
-
-  # PATCH/PUT /users/1
-  # def update
-  #   if @user.update(user_params)
-  #     redirect_to @user, notice: 'User was successfully updated.'
-  #   else
-  #     render action: 'edit'
-  #   end
-  # end
-
   # DELETE /users/1
-  def destroy
-    @user.destroy
-    redirect_to users_url, notice: 'User was successfully destroyed.'
-  end
+  # def destroy
+  #   @user.destroy
+  #   redirect_to users_url, notice: 'User was successfully destroyed.'
+  # end
 
   def admin
     check_permission "admin"
@@ -72,17 +42,7 @@ class UsersController < ApplicationController
       @users = @users.where("sf_guard_user_profile.name_last LIKE ? OR sf_guard_user_profile.name_first LIKE ? OR users.username LIKE ? OR users.email LIKE ?", q, q, q, q)
     end
   end
-
-  def confirm
-    check_permission "admin"
-
-    @user.sf_guard_user_profile.is_confirmed = true
-    @user.sf_guard_user_profile.confirmation_code = nil
-    @user.sf_guard_user_profile.save
-
-    redirect_to admin_users_url, notice: 'User was successfully confirmed.'
-  end
-
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
