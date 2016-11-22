@@ -39,7 +39,10 @@ class NyDisclosure < ActiveRecord::Base
   end
 
   def self.update_delta_flag(ids)
-    where(id: ids).update_all(delta: true)
+    where(id: ids).each do |e| 
+      e.delta = true
+      e.save
+    end
   end
 
   private 
