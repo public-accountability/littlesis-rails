@@ -27,7 +27,9 @@
       <th>Name/Bio</th>
       <th>Groups</th>
       <th>Joined</th>
-      <th></th>
+      <th>Permissions</th>
+      <th>Edit Permissions</th>
+      <th>Delete</th>
     </tr>
   </thead>
 
@@ -51,8 +53,11 @@
           <% end %>
         </td>
         <td><%= user.legacy_created_at.strftime("%F") %></td>
-        <td>          
+        <td>
+            <%= user.legacy_permissions.join(", ") %>
         </td>
+	<td><%= link_to "Edit", "/users/#{user.id}/edit_permissions" %></td>
+	<td> DELETE </td>
       </tr>
     <% end %>
   </tbody>

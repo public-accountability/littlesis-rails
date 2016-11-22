@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
   end
 
   def legacy_permissions
-  	sf_gaurd_user.permissions
+    sf_guard_user.permissions
   end
 
   def has_legacy_permission(name)

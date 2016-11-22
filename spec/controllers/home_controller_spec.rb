@@ -17,7 +17,7 @@ describe HomeController, type: :controller do
     it { should render_template('index') }
 
     it 'has @dots_connected' do 
-      expect(assigns(:dots_connected)).to eql ['1', '5']
+      expect(assigns(:dots_connected)).to be_a(Array)
     end
     
   end

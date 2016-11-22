@@ -1,8 +1,9 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit]
+  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission]
   before_action :authenticate_user!
+  before_filter :admins_only, except: [:show]
   
-  # GET /users
+  # get /users
   def index
     @users = User
       .includes(:groups)
@@ -15,6 +16,21 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
+  end
+  
+  # GET /users/:id/edit_permissions
+  def edit_permissions
+
+  end
+
+  def add_permission
+    SfGuardUserPermission.create!(permission_id: params[:permission].to_i, user_id: @user.sf_guard_user_id)
+    redirect_to edit_permissions_user_path(@user.id),  notice: "Permission was successfully added."
+  end
+
+  def delete_permission
+    SfGuardUserPermission.remove_permission(permission_id: params[:permission].to_i, user_id: @user.sf_guard_user_id)
+    redirect_to edit_permissions_user_path(@user.id),  notice: "Permission was successfully deleted."    
   end
 
   def success
@@ -46,11 +62,15 @@ class UsersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find_by_username(params[:id])
+      @user = User.find(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
     def user_params
       params[:user]
+    end
+
+    def permission_id
+      params[:permission]
     end
 end
