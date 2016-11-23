@@ -27,7 +27,9 @@
       <th>Name/Bio</th>
       <th>Groups</th>
       <th>Joined</th>
-      <th></th>
+      <th>Permissions</th>
+      <th>Edit Permissions</th>
+      <th>Delete</th>
     </tr>
   </thead>
 
@@ -52,10 +54,10 @@
         </td>
         <td><%= user.legacy_created_at.strftime("%F") %></td>
         <td>
-          <% unless user.sf_guard_user_profile.is_confirmed %>
-            <%= link_to 'confirm email', confirm_user_path(user), method: :post, confirm: "Are you sure?" %>
-          <% end %>
+            <%= user.legacy_permissions.join(", ") %>
         </td>
+	<td><%= link_to "Edit", "/users/#{user.id}/edit_permissions" %></td>
+	<td><%= link_to "DELETE","/users/#{user.id}/destroy",  :method => :delete, data: { confirm: "Are you sure you want to delete this user? This cannot be undone" } %></td>
       </tr>
     <% end %>
   </tbody>

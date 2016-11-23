@@ -1,0 +1,35 @@
+<% content_for(:page_title, "Littlesis Admin - Edit User Permissions") %>
+<h2>Add or delete permissions for <span class="text-primary"><%= @user.username %></span></h2>
+<br />
+<%= notice_if_notice %>
+<br />
+<table class="table">
+    <thead>
+	<tr>
+	    <th></th>
+	    <th>Name</th>
+	    <th>Description</th>
+	    <th>Add</th>
+	    <th>Remove</th>
+	</tr>
+    </thead>
+    <tbody>
+	<% SfGuardPermission.permissions.each do |permission| %> 
+	    <tr>
+		<td><%= permission.id %></td>
+		<td><%= permission.name %></td>
+		<td><%= permission.description %></td>
+		<% if @user.has_legacy_permission(permission.name) %>
+		    <td></td>
+		    <td><%= link_to "DELETE", delete_permission_user_path(@user.id, permission: permission.id), :method => :delete%></td>
+		<% else  %>
+		    <td><%= link_to "ADD", add_permission_user_path(@user.id, permission: permission.id), :method => :post %></td>
+		    <td></td>
+		<% end %>
+	    </tr>
+	<% end %>
+    </tbody>
+</table>
+
+
+<span class="bg-success"><%= link_to "Go back to the User Admin Page", admin_users_path %></span>

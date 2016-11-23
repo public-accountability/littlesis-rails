@@ -1,10 +1,10 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :confirm]
-  before_action :authenticate_user!, only: [:index]
+  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy]
+  before_action :authenticate_user!
+  before_filter :admins_only, except: [:show]
   
-  # GET /users
+  # get /users
   def index
-    auth
     @users = User
       .includes(:groups)
       .joins("INNER JOIN sf_guard_user ON sf_guard_user.id = users.sf_guard_user_id")
@@ -17,48 +17,42 @@ class UsersController < ApplicationController
   # GET /users/1
   def show
   end
+  
+  # GET /users/:id/edit_permissions
+  def edit_permissions
+
+  end
+
+  def add_permission
+    SfGuardUserPermission.create!(permission_id: params[:permission].to_i, user_id: @user.sf_guard_user_id)
+    redirect_to edit_permissions_user_path(@user.id),  notice: "Permission was successfully added."
+  end
+
+  def delete_permission
+    SfGuardUserPermission.remove_permission(permission_id: params[:permission].to_i, user_id: @user.sf_guard_user_id)
+    redirect_to edit_permissions_user_path(@user.id),  notice: "Permission was successfully deleted."    
+  end
 
   def success
   end
 
-  # GET /users/new
-  # def new
-  #   @user = User.new
-  # end
-
-  # GET /users/1/edit
-  # def edit
-  # end
-
-  # POST /users
-  # def create
-  #   @user = User.new(user_params)
-
-  #   if @user.save
-  #     redirect_to @user, notice: 'User was successfully created.'
-  #   else
-  #     render action: 'new'
-  #   end
-  # end
-
-  # PATCH/PUT /users/1
-  # def update
-  #   if @user.update(user_params)
-  #     redirect_to @user, notice: 'User was successfully updated.'
-  #   else
-  #     render action: 'edit'
-  #   end
-  # end
-
-  # DELETE /users/1
+  # DELETE /users/1/destroy
   def destroy
-    @user.destroy
-    redirect_to users_url, notice: 'User was successfully destroyed.'
+    if @user.has_legacy_permission('admin')
+      return redirect_to admin_users_path, notice: 'You can\'t delete an admin user'
+    else
+      SfGuardUserPermission.where(user_id: @user.sf_guard_user_id).map(&:permission_id).each do |permission_id|
+        SfGuardUserPermission.remove_permission(permission_id: permission_id, user_id: @user.sf_guard_user_id)
+      end
+      @user.sf_guard_user.update(is_deleted: true)
+      Entity.where(last_user_id: @user.sf_guard_user_id).update_all(last_user_id: 1)
+      Relationship.where(last_user_id: @user.sf_guard_user_id).update_all(last_user_id: 1)
+      @user.destroy
+      redirect_to admin_users_path, notice: 'Successfully deleted the user'
+    end
   end
 
   def admin
-    check_permission "admin"
-
     @users = User
       .includes(:groups)
       .joins("INNER JOIN sf_guard_user ON sf_guard_user.id = users.sf_guard_user_id")
@@ -72,25 +66,19 @@ class UsersController < ApplicationController
       @users = @users.where("sf_guard_user_profile.name_last LIKE ? OR sf_guard_user_profile.name_first LIKE ? OR users.username LIKE ? OR users.email LIKE ?", q, q, q, q)
     end
   end
-
-  def confirm
-    check_permission "admin"
-
-    @user.sf_guard_user_profile.is_confirmed = true
-    @user.sf_guard_user_profile.confirmation_code = nil
-    @user.sf_guard_user_profile.save
-
-    redirect_to admin_users_url, notice: 'User was successfully confirmed.'
-  end
-
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find_by_username(params[:id])
+      @user = User.find(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
     def user_params
       params[:user]
+    end
+
+    def permission_id
+      params[:permission]
     end
 end
