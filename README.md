@@ -1,16 +1,25 @@
-lilsis
+LittleSis
 ======
 
-A littlesis rails app. Must run in parallel to the PHP app (https://github.com/littlesis-org/littlesis).
+LittleSis is a free database of who-knows-who at the heights of business and government.
 
+We are currently in the process of migrating all our old code from PHP to Rails (this repo). But for now, this rails app must be run in parallel with the PHP app (https://github.com/littlesis-org/littlesis)
 
 Installation
 ------------
 
-FIRST GET RVM, RUBY 2.1.2, RAILS 4.1:
-- http://blog.coolaj86.com/articles/installing-ruby-on-ubuntu-12-04.html
-- https://gorails.com/setup/ubuntu/14.04
+Requirements:
+- RVM / RUBY 2.3
+- MYSQL 5.5
+- Redis
+- Sphinx 2.2
 
+The best way to get up and running with LittleSis development is to use docker: [LittleSis-Docker](https://github.com/aepyornis/littlesis-docker)
+
+
+
+
+### Old instructions
 
 Install [qt](http://www.qt.io/developers/). Install redis and run "redis-server" or change cache store or disable cache.
 
