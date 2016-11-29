@@ -189,21 +189,26 @@ class NetworkMap < ActiveRecord::Base
     s3 = S3.s3 if s3.nil?
     bucket = s3.buckets[Lilsis::Application.config.aws_s3_bucket]
 
-    url = Rails.application.routes.url_helpers.raw_map_url(self)
+    url = Rails.application.routes.url_helpers.embedded_map_url(self, :host => 'https://littlesis.org')
+    
     local_path = "tmp/map-#{id}.png"
     s3_path = "images/maps/#{id}.png"
 
-    command = "phantomjs vendor/assets/javascripts/makemaps.js #{url} #{local_path}"
-    print command + "\n"
-    `#{command}`
+    # Screenshot is located in lib/screenshot.rb
+    is_successful = Screenshot.take(url, local_path)
+    
+    if is_successful
+      Screenshot.resize_map_thumbnail(local_path)
 
-    obj = bucket.objects[s3_path]
-    obj.write(Pathname.new(local_path), { acl: :public_read })
+      obj = bucket.objects[s3_path]
+      obj.write(Pathname.new(local_path), { acl: :public_read })
 
-    File.delete(local_path)
-    self.thumbnail = S3.url("/" + s3_path) if obj.exists?
-    save
+      File.delete(local_path)
+      self.thumbnail = S3.url("/" + s3_path) if obj.exists?
+      save
+    end
   end
+
 
   def self.entities_for_map(entity_ids)
     interlocks = Link.interlock_hash_from_entities(entity_ids).select { |k, v| v.count > 1 }.sort { |a, b| a[1].count <=> b[1].count }
