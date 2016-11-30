@@ -238,9 +238,5 @@ describe Relationship, type: :model do
       end
       
     end
-    
-    
   end
-  
-
 end

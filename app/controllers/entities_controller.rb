@@ -29,6 +29,9 @@ class EntitiesController < ApplicationController
   def relationships
   end
 
+  def add_relationship
+  end
+
   def political
   end
 
