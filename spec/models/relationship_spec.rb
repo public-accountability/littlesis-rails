@@ -13,6 +13,54 @@ describe Relationship, type: :model do
     DatabaseCleaner.clean
   end
 
+  describe 'associations' do 
+    it { should have_many(:links) }
+    it { should belong_to(:entity) }
+    it { should belong_to(:related) }
+    it { should have_one(:position) }
+    it { should have_one(:education) }
+    it { should have_one(:membership) }
+    it { should have_one(:family) }
+    it { should have_one(:trans) }
+    it { should have_one(:ownership) }
+    it { should belong_to(:category) }
+    it { should belong_to(:last_user) }
+    it { should have_many(:os_matches) }
+    it { should have_many(:os_donations) }
+    it { should have_many(:ny_matches) }
+    it { should have_many(:ny_disclosures) }
+  end
+  
+  describe 'validations' do
+    it { should validate_presence_of(:entity1_id) }
+    it { should validate_presence_of(:entity2_id) }
+    it { should validate_presence_of(:category_id) }
+  end
+
+  describe 'create_category' do
+    it 'creates associated category model' do
+      rel = build(:position_relationship)
+      expect(Position).to receive(:create).with(relationship: rel).once
+      rel.create_category
+    end
+  end
+
+  describe 'create_links' do
+    it 'creates 2 links after creating relationship' do
+      e1 = create(:person)
+      e2 = create(:person)
+      expect{ Relationship.create!(category_id: 12, entity: e1, related: e2)}.to change{ Link.count}.by(2)
+    end
+  end
+
+  describe 'category_name' do
+    it 'returns correct names' do
+      expect(build(:position_relationship).category_name).to eql "Position"
+      expect(build(:generic_relationship).category_name).to eql "Generic"
+    end
+  end
+
+
   describe '#title' do 
     
     it 'returns description1 if it exists' do 
@@ -113,12 +161,12 @@ describe Relationship, type: :model do
     end
 
     it 'does not update the database' do
-      expect(Relationship.find(@loeb_donation).amount).not_to eql 80800
+      expect(Relationship.find(@loeb_donation.id).amount).not_to eql 80800
     end
 
     it 'can be chained with .save' do 
       @loeb_donation.update_os_donation_info.save
-      expect(Relationship.find(@loeb_donation).amount).to eql 80800
+      expect(Relationship.find(@loeb_donation.id).amount).to eql 80800
     end
 
   end

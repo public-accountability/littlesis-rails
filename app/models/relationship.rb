@@ -31,9 +31,10 @@ class Relationship < ActiveRecord::Base
   has_one :donation, inverse_of: :relationship, dependent: :destroy
   has_one :trans, class_name: "Transaction", inverse_of: :relationship, dependent: :destroy
   has_one :ownership, inverse_of: :relationship, dependent: :destroy
+  
+  # fec_filings are no longer used
   has_many :fec_filings, inverse_of: :relationship, dependent: :destroy
   belongs_to :category, class_name: "RelationshipCategory", inverse_of: :relationships
-
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id"
 
   # Open Secrets 
@@ -316,6 +317,5 @@ class Relationship < ActiveRecord::Base
     self.attributes = { description1: "NYS Campaign Contribution" } if description1.blank?
     self
   end
-
 
 end
