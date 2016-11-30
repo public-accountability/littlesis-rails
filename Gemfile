@@ -9,7 +9,7 @@ gem 'devise', '~> 4.2'
 # image uploading with amazon s3 storage
 gem 'carrierwave'
 gem 'mini_magick'
-gem "fog"  #  "~> 1.3.1"
+gem "fog-aws"  #  "~> 1.3.1"
 
 gem 'sass-rails', '>= 3.2'
 gem 'asset_sync'
@@ -119,9 +119,12 @@ gem 'paper_trail', '>= 5.1.1'
 # gem 'foreigner'
 
 gem 'validate_url'
-gem 'selenium-webdriver'
 gem 'geocoder'
 gem 'rack-mini-profiler'
 # gem 'ruby-opencv'
 
 gem "passenger"
+
+# used for screenshot capture
+gem 'selenium-webdriver'
+gem 'headless'

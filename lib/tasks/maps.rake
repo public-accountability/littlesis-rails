@@ -1,24 +1,34 @@
 namespace :maps do
   desc "generates thumbnails for recently saved public maps and saves them to S3"
-  task generate_recent_thumbs: :environment do
-    hostname = ENV['RAILS_ENV'] == 'production' ? 'http://littlesis.org' : 'http://lilsis.local'
+  task :generate_recent_thumbs, [:amount] =>  :environment do |t, args| 
+    hostname = ENV['RAILS_ENV'] == 'production' ? 'https://littlesis.org' : 'http://ls.dev:8080'
     Rails.application.routes.default_url_options[:host] = hostname
-    s3 = S3.s3
+    amount = args[:amount].nil? ? 50 : args[:amount]
 
-    NetworkMap.public_scope.where(thumbnail: nil).each do |map|
-      map.generate_s3_thumb(s3)
+    NetworkMap.public_scope.order('updated_at desc').limit(amount).each do |map|
+      map.generate_s3_thumb
       puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
     end
   end
 
   desc "generates thumbnails for all public maps and saves them to S3"
   task generate_all_thumbs: :environment do
-    hostname = ENV['RAILS_ENV'] == 'production' ? 'http://littlesis.org' : 'http://lilsis.local'
+    hostname = ENV['RAILS_ENV'] == 'production' ? 'https://littlesis.org' : 'http://ls.dev:8080'
     Rails.application.routes.default_url_options[:host] = hostname
-    s3 = S3.s3
 
     NetworkMap.public_scope.each do |map|
-      map.generate_s3_thumb(s3)
+      map.generate_s3_thumb
+      puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
+    end
+  end
+
+  desc "generates thumbnails for all public maps and saves them to S3"
+  task generate_missing_thumbs: :environment do
+    hostname = ENV['RAILS_ENV'] == 'production' ? 'https://littlesis.org' : 'http://ls.dev:8080'
+    Rails.application.routes.default_url_options[:host] = hostname
+
+    NetworkMap.public_scope.where(thumbnail: nil).each do |map|
+      map.generate_s3_thumb
       puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
     end
   end
