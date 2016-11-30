@@ -52,7 +52,7 @@ Lilsis::Application.configure do
   # Enable serving of images from asset server.
   config.action_controller.asset_host = Proc.new do |source|
     if source =~ /images/
-      "//#{config.asset_host}"
+      "https://#{config.asset_host}"
     else
       nil
     end

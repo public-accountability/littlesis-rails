@@ -1,1 +1,63 @@
-<h1>Add Relationship</h1>
+<% content_for(:page_title, "#{@entity.name} - Add Relationship") %>
+<%= render partial: 'header', locals: { entity: @entity } %>
+
+<div class="row">
+    <div class="col-sm-7">
+	<h2>Add Relationship</h2>
+	<p>Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.</p>
+	<div class="row">
+	    <div class="col-sm-6">
+		<input type="text" class="form-control" placeholder="Name" id="name-to-search" >
+	    </div>
+	    <div class="col-sm-2"><button type="submit" class="btn btn-primary" id="search-button" >Search</button>
+	    </div>
+	</div>
+    </div>
+    <div class="col-md-1"><!-- buffer --></div>
+        <div class="col-sm-4 hidden-xs">
+	<%= image_tag(@entity.featured_image_url, alt: @entity.name, class: 'img-rounded') %>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+	<table id="results-table" class="compact hover" cellspacing="0" width="100%"></table>
+    </div>
+    <div class="col-md-1"><!-- buffer --></div>
+    <div class="col-sm-4 hidden-xs">
+    </div>
+</div>
+<script>
+ $(document).ready(function(){
+   $('#search-button').click(function(){
+     $.getJSON('/search/entity', {q: $('#name-to-search').val() }, function(data) {
+       $('#results-table').DataTable({
+	 data: data,
+	 columns: [
+	   { 
+	     data: null, 
+	     defaultContent: '<button>select</button>' 
+	   },
+	   { 
+	     title: 'Name', 
+	     render: function(data, type, row) {
+	       return '<a href="' + row.url + '" target="_blank">' + row.name;
+	     }
+	    },
+	   { 
+	     data: 'description', 
+	     title: 'Summary' 
+	   },
+	 ],
+	 ordering: false,
+	 searching: false,
+	 lengthChange: false,
+	 info: false,
+	 destroy: true // https://datatables.net/reference/option/destroy
+       });
+     });
+   });
+
+ });
+</script>
+<%= javascript_tag do %>
+<% end  %>
