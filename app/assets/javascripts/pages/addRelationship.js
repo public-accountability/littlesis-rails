@@ -20,6 +20,10 @@ var addRelationship = function() {
       "Generic"
   ];
 
+  function entityInfo(info) {
+    return document.getElementById('entity-info').dataset[info];
+  }
+
   $('#search-button').click(function(e){
     e.preventDefault();
     $.getJSON('/search/entity', {q: $('#name-to-search').val() }, function(data) {
@@ -62,13 +66,14 @@ var addRelationship = function() {
       $('#relationship-with-name').html( $('<a>', { href: data.url, text: data.name }) ); // add relationshipt-with entity-link
       $('#category-selection').html(categorySelector(data)); // add category selection
       categoryButtonsSetActiveClass(); // change '.active' on category buttons
+      recentReferences( [entityInfo('entityid'), data.id] );
     });
   }
 
   
   // {} -> HTML ELEMENT
   function categorySelector(data) {
-    var entity1 = document.getElementById('entity-info').dataset.entitytype;
+    var entity1 = entityInfo('entitytype');
     var entity2 = data.primary_type;
     var buttonGroup = $('<div>', { class: 'btn-group-vertical', role: 'group', 'aria-label': 'relationship categories'});
     categories(entity1, entity2).forEach(function(categoryId){
@@ -109,12 +114,26 @@ var addRelationship = function() {
     }
   }
 
-  function addReference() {
-    $('#reference-form').submit(function(event){
-      if (this.checkValidity()) {
-	event.preventDefault();
-      }
-    });
+  // [int] -> null
+  // Gets recent references from /references/recent and populates the
+  // list of <select> options
+  function recentReferences(entities) {
+    var newReferenceOption = $('<option>', {value: 'NEW', selected: "selected", text: "Add a new source link" });
+    $.getJSON('/references/recent', {'entity_ids': entities })
+      .done(function(references) {
+	$('#existing-sources-select').html(
+	  references.slice(0,10).map(function(ref){
+	    return $('<option>', {
+   	      value: ref.id,
+   	      text: ref.name
+	    }).data(ref);
+	  }).concat(newReferenceOption)
+	);
+      })
+      .fail(function() {
+	$('#existing-sources-select').html(newReferenceOption);
+      });
   }
+
 
 };
