@@ -1,29 +1,31 @@
 <% content_for(:page_title, "#{@entity.name} - Add Relationship") %>
 <%= render partial: 'header', locals: { entity: @entity } %>
 
+<div id="entity-info" data-entitytype="<%= @entity.primary_ext %>"  data-entityid="<%= @entity.id %>"></div>
+
 <div class="row">
 
-    <div class="col-sm-7">
-	<h2>Add Relationship</h2>
-	
+    <div class="col-sm-7 text-center">
+	<h2 class="rel-search">Create a new relationship</h2>
 	<p class="rel-search">Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.</p>
 	
 	<div class="hidden rel-add">
-	    <p class="bg-info text-center">Creating a <em>new</em> relationship between <%= @entity.name %> and <strong><span id="relationship-with-name"></span></strong></p>
+	    <h3 class="text-center">Creating a new relationship between <br /><strong><%= @entity.name %></strong><br /><em>and</em><br /><strong><span id="relationship-with-name"></span></strong></h3>
 	</div>
 
-	<div class="row rel-search">
+	<div class="row rel-search text-center">
+	    <div class="col-sm-2"></div>
 	    <div class="col-sm-6">
 		<input type="text" class="form-control" placeholder="Name" id="name-to-search" >
 	    </div>
-	    <div class="col-sm-2"><button type="submit" class="btn btn-primary" id="search-button" >Search</button>
+	    <div class="col-sm-2"><button class="btn btn-primary" id="search-button">Search</button>
 	    </div>
 	</div>
 	
     </div>
 
     <div class="col-md-1"><!-- buffer --></div>
-        <div class="col-sm-4 hidden-xs">
+    <div class="col-sm-4 hidden-xs">
 	<%= image_tag(@entity.featured_image_url, alt: @entity.name, class: 'img-rounded') %>
     </div>
 
@@ -35,9 +37,22 @@
     </div>
 </div>
 
+<div class="row rel-add hidden" id="add-relationship-row">
+    <div class="col-sm-4" >
+	<h6 style="padding-left: 1em;"><strong>Relationship Type:</strong></h6>
+	<div id="category-selection"></div>
+    </div>
+    <div class="col-sm-4" id="reference">
+	<p><strong>Where is this info coming from?</strong></p>
+	<div id="existing-sources"> 
+	    <select class="form-control"></select>
+	</div>
+    </div>
+</div>
+
 
 <%= javascript_tag do %>
-  $(document).ready(function(){ 
+    $(document).ready(function(){ 
     addRelationship();
-  });
+    });
 <% end  %>

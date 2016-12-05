@@ -10,9 +10,7 @@ describe 'entities/add_relationship.html.erb' do
     @e = build(:mega_corp_inc, updated_at: Time.now, last_user: @sf_user)
   end
 
-  after(:all) do 
-    DatabaseCleaner.clean
-  end
+  after(:all) {  DatabaseCleaner.clean } 
 
   describe 'layout' do 
 
@@ -26,8 +24,16 @@ describe 'entities/add_relationship.html.erb' do
     end
 
     it 'has add relationship title section' do
-      expect(rendered).to have_tag 'h2', :text => "Add Relationship"
+      expect(rendered).to have_tag 'h2', :text => "Create a new relationship"
       expect(rendered).to have_css "div.col-sm-7 p"
+    end
+
+    it 'has search-results-row' do 
+      expect(rendered).to have_css "#search-results-row", :count => 1
+    end
+
+    it 'has one table' do
+      expect(rendered).to have_tag "table", :count => 1
     end
 
   end
