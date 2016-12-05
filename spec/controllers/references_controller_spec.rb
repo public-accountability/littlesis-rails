@@ -2,14 +2,14 @@ require 'rails_helper'
 
 describe ReferencesController, type: :controller do
 
-  before(:each) do 
-    DatabaseCleaner.start
-  end
+  before(:all) { Entity.skip_callback(:create, :after, :create_primary_ext) }
+  after(:all) { Entity.set_callback(:create, :after, :create_primary_ext) } 
+  before(:each) {  DatabaseCleaner.start }
+  after(:each) {  DatabaseCleaner.clean } 
 
-  after(:each) do 
-    DatabaseCleaner.clean
-  end
-
+  it { should route(:post, '/references').to(action: :create) }
+  it { should route(:delete, '/references/1').to(action: :destroy, id: 1) }
+  it { should route(:get, '/references/recent').to(action: :recent) }
   
   describe 'auth' do 
     it 'redirects to login if user is not logged in' do 
@@ -119,7 +119,40 @@ describe ReferencesController, type: :controller do
       delete :destroy, id: 8888
       expect(response).to have_http_status(400)
     end
-    
+  end
+
+  describe '/recent' do 
+    login_user
+
+    before(:all) do
+      @e1 = create(:person)
+      @e2 = create(:person)
+    end
+
+    def sample_get
+      expect(Reference).to receive(:last).with(2).and_return(['last']).once
+      expect(Reference).to receive(:recent_references).with([@e1, @e2], 20).and_return(['recent'])
+      get(:recent, entity_ids: [@e1.id, @e2.id])
+    end
+
+
+    it 'has status 200' do
+      sample_get
+      expect(response).to have_http_status(200)
+    end
+
+    it 'has correct json' do
+      sample_get
+      expect(response.body).to eq ["last", "recent"].to_json
+    end
+
+    it 'works with duplicates' do
+      expect(Reference).to receive(:last).with(2).and_return(['last'])
+      expect(Reference).to receive(:recent_references).with([@e1], 20).and_return(['recent'])
+      get(:recent, entity_ids: [@e1.id, @e1.id] )
+      expect(response.body).to eq ["last", "recent"].to_json
+    end
+
   end
 
 end
