@@ -38,21 +38,89 @@
 </div>
 
 <div class="row rel-add hidden" id="add-relationship-row">
-    <div class="col-sm-4" >
+    <div class="col-sm-3" >
 	<h6 style="padding-left: 1em;"><strong>Relationship Type:</strong></h6>
 	<div id="category-selection"></div>
+	
     </div>
-    <div class="col-sm-4" id="reference">
-	<p><strong>Where is this info coming from?</strong></p>
-	<div> 
-	    <select class="form-control" id="existing-sources-select"></select>
+    <div class="col-sm-6" id="reference">
+	
+	<div class="row">
+	    <div class="col-sm-12">
+		<p class="text-center"><strong>Where is this info coming from?</strong></p>
+	    </div>
 	</div>
-    </div>
-</div>
+	
+	<div class="row">
+	    <div class="col-sm-2"></div>
+	    <div class="col-sm-10">
+		<div><select class="form-control" id="existing-sources-select"></select></div>
+	    </div>
+	</div>
+	
+	<div class="thin-grey-bottom-border top-1em"></div>
 
+	<div class="form-horizontal top-1em">
+
+	    <!-- Name -->
+	    <div class="form-group">
+		<label for="reference-name" class="col-sm-2 control-label">Name*</label>
+		<div class="col-sm-10">
+		    <input type="text" class="form-control text-left" id="reference-name">
+		</div>
+	    </div>
+	    
+	    <!-- Url -->
+	    <div class="form-group">
+		<label for="reference-url" class="col-sm-2 control-label">Url*</label>
+		<div class="col-sm-10">
+		    <input type="url" class="form-control text-left" id="reference-url">
+		</div>
+	    </div>
+	    
+	    <!-- Date -->
+	    <div class="form-group">
+		<label for="reference-date" class="col-sm-2 control-label">Publication Date</label>
+		<div class="col-sm-10">
+		    <input type="text" class="form-control" id="reference-date">
+		</div>
+	    </div> 
+
+	    <!--Type  -->
+	    <div class="form-group">
+		<label for="reference-type" class="col-sm-2 control-label">Type</label>
+		<div class="col-sm-6">
+		    <select class="form-control" id="reference-type">
+			<% Reference.ref_type_options.each do |ref_type| %>
+			    <%= content_tag('option', ref_type[0], value: ref_type[1]) %>
+			<% end  %>
+		    </select>
+		</div>
+	    </div>
+	    
+	    <!-- Excerpt -->
+	    <div class="form-group">
+		<label for="reference-excerpt" class="col-sm-2 control-label">Excerpt</label>
+		<div class="col-sm-10">
+		    <%= text_area_tag 'reference-excerpt', nil, size: "35x6", class: 'form-control'  %>
+		</div>
+	    </div>
+
+	    <!-- Submit Button -->
+	    <div class="form-group" >
+		<div class="col-sm-2"></div>
+		<div class="col-sm-6 top-1em">
+		    <button type="button" class="btn btn-primary" id="create-relationship-btn">Create Relationship</button>
+		</div>
+	    </div>
+	    
+	</div> <!-- end of form-forizontal  -->
+    </div> <!-- end of col-sm-6  -->
+</div>
 
 <%= javascript_tag do %>
     $(document).ready(function(){ 
-    addRelationship();
+       addRelationship();
+       $('#reference-date').datepicker({ format: "yyyy-mm-dd" });
     });
 <% end  %>
