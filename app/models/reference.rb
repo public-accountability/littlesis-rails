@@ -41,8 +41,8 @@ class Reference < ActiveRecord::Base
   # The hash will be empty if there are no errors
   def validate_before_create
     errors = Hash.new
-    errors[:source] = "Missing reference Url" if self.source.nil?
-    errors[:name] = "Missing reference name" if self.name.nil?
+    errors[:source] = "Missing reference Url" if self.source.blank?
+    errors[:name] = "Missing reference name" if self.name.blank?
     errors
   end
 

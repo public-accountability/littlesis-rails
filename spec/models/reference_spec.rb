@@ -26,7 +26,12 @@ describe Reference do
       expect(Reference.new.validate_before_create).to have_key :name
     end
 
-    it 'returns emptyhash if there are no errors' do
+    it 'returns errors hash if source or name is a blank string' do
+      expect(Reference.new(source: "").validate_before_create).to have_key :source
+      expect(Reference.new(name: "").validate_before_create).to have_key :name
+    end
+
+    it 'returns empty hash if there are no errors' do
       expect(Reference.new(source: "http://example.com", name: 'resource name').validate_before_create.empty?).to be true
     end
     
