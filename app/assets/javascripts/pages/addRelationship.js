@@ -192,18 +192,52 @@ var addRelationship = function() {
 
   function submit() {
     $('#errors-container').empty();
-    $.post('/relationships', submissionData())
-      .done(function(data, textStatus, jqXHR) {
-	window.location.replace("/relationship/edit/id/" + data.relationship_id + "?ref=auto");
-      })
-      .fail(function(data) {
-	// assuming here that the status code is 400 because of a bad request. we should person also  consider what would happen if the request fails for different reasons besides the submission of invalid or missing information.
-	errorMessages(data.responseJSON);
-      }); 
+    var sd = submissionData();
+    if (catchErrors(sd)) { 
+      
+      $.post('/relationships', sd)
+	.done(function(data, textStatus, jqXHR) {
+	  // redirect to the edit relationship page
+	  window.location.replace("/relationship/edit/id/" + data.relationship_id + "?ref=auto");
+	})
+	.fail(function(data) {
+	  // assuming here that the status code is 400 because of a bad request. we should person also  consider what would happen if the request fails for different reasons besides the submission of invalid or missing information.
+	  displayErrors(data.responseJSON);
+	}); 
+    }
   } 
+
+  // {} -> boolean
+  // If there are errors, it will display error messages and return false
+  // otherwise it returns true
+  function catchErrors(formData) {
+    var errors = {relationship: {}, reference: {} };
+
+    if (!formData.relationship.category_id){
+      errors.relationship.category_id = true;
+    }
+    
+    if (!formData.reference.name) {
+      errors.reference.name = true;
+    }
+
+    if (!formData.reference.source) {
+      errors.reference.source = true;
+    } else if (!validURL(formData.reference.source)) {
+      errors.reference.source = 'INVALID';
+    }
+
+    if ($.isEmptyObject(errors.relationship) && $.isEmptyObject(errors.reference)) {
+      return true;
+    } else {
+      displayErrors(errors);
+      return false;
+    }
+    
+  }
   
-  /*
-   All possible errors from the server:
+  /**
+   Possible errors from the server:
      errors.relationship.category_id
      errors.relationship.entity1_id
      errors.relationship.entity2_id
@@ -228,14 +262,14 @@ var addRelationship = function() {
          }
       }
 
-     {} -> displays errors
+     {} -> 
    */
-  function errorMessages(errorData) {
+  function displayErrors(errorData) {
     var alerts = [];
     var errors = $.extend({reference: {}, relationship: {} }, errorData);
 
     if (Boolean(errors.reference.source)) {
-      if (errors.reference.source === 'invalid') {
+      if (errors.reference.source === 'INVALID') {
 	alerts.push(alert('Invalid data ', "Please enter a correct url"));
       } else {
 	alerts.push(alert('Missing information ', "Please submit a url"));
@@ -264,5 +298,16 @@ var addRelationship = function() {
     
   } 
 
+
+  /**
+   Simple url validation. Tests if it begins with 'http://' or 'https://' and is
+   followed by at least one character followed by a dot followed by another character. 
+   
+   So yes, http://1.blah is a valid url according to these standards...we could go crazy with the regexs...https://mathiasbynens.be/demo/url-regex...but this is FINE
+   */
+  function validURL(str) {
+    var pattern = RegExp('^(https?:\/\/)(.+)[\.]{1}.+$');
+    return pattern.test(str);
+  }
   
 };
