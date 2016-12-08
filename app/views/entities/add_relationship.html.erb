@@ -14,7 +14,7 @@
 	</div>
 
 	<div class="row rel-search text-center">
-	    <div class="col-sm-2"></div>
+	    <div class="col-sm-2"></div> 
 	    <div class="col-sm-6">
 		<input type="text" class="form-control" placeholder="Name" id="name-to-search" >
 	    </div>
@@ -116,7 +116,13 @@
 	    
 	</div> <!-- end of form-forizontal  -->
     </div> <!-- end of col-sm-6  -->
-</div>
+
+    <!-- errors -->
+    <div class="col-sm-3">
+	<div id="errors-container" class="top-3em"></div>
+    </div>
+
+</div> <!-- end of add-relationship-row  -->
 
 <%= javascript_tag do %>
     $(document).ready(function(){ 

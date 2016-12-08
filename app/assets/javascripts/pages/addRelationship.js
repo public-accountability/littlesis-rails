@@ -191,14 +191,78 @@ var addRelationship = function() {
   }
 
   function submit() {
+    $('#errors-container').empty();
     $.post('/relationships', submissionData())
       .done(function(data, textStatus, jqXHR) {
 	window.location.replace("/relationship/edit/id/" + data.relationship_id + "?ref=auto");
       })
       .fail(function(data) {
 	// assuming here that the status code is 400 because of a bad request. we should person also  consider what would happen if the request fails for different reasons besides the submission of invalid or missing information.
-	console.log(data.responseJSON);
+	errorMessages(data.responseJSON);
       }); 
   } 
+  
+  /*
+   All possible errors from the server:
+     errors.relationship.category_id
+     errors.relationship.entity1_id
+     errors.relationship.entity2_id
+     errors.reference.source
+     errors.referene.name
 
+     We are going to mostly deal with three errors:
+      - missing category_id
+      - missing or invalid source url
+      - missing reference name
+
+     Although rails is going to send us back errors, we will also try 
+     to catch the errors before submitting.
+
+      This is the general format, although the message isn't used.
+     { 
+       relationship: {
+          "field": "message"   
+        },
+       reference: {
+          "field": message"
+         }
+      }
+
+     {} -> displays errors
+   */
+  function errorMessages(errorData) {
+    var alerts = [];
+    var errors = $.extend({reference: {}, relationship: {} }, errorData);
+
+    if (Boolean(errors.reference.source)) {
+      if (errors.reference.source === 'invalid') {
+	alerts.push(alert('Invalid data ', "Please enter a correct url"));
+      } else {
+	alerts.push(alert('Missing information ', "Please submit a url"));
+      }
+    }
+
+    if (Boolean(errors.reference.name)) {
+      alerts.push(alert('Missing information ', 'Please include a name for the source'));
+    }
+
+    if (Boolean(errors.relationship.category_id)) {
+      alerts.push(alert('Missing information ', "Don't forget to select a relationship category"));
+    } 
+    
+    if ( Boolean(errors.relationship.entity1_id) || Boolean(errors.relationship.entity1_id) ) {
+      alerts.push(alert('Something went wrong :( ', "Sorry about that! Please contact admin@littlesis.org"));
+    }
+
+    $('#errors-container').html(alerts); // display the errors
+  } 
+
+  function alert(title, message) {
+    return $('<div>', {class: 'alert alert-danger', role: 'alert' })
+      .append($('<strong>', {text: title}))
+      .append($('<span>', {text: message}));
+    
+  } 
+
+  
 };
