@@ -14,7 +14,7 @@ class RelationshipsController < ApplicationController
       @relationship.save!
       @reference.assign_attributes(object_id: @relationship.id, object_model: "Relationship")
       @reference.save
-      head :created
+      render json: {'relationship_id' => @relationship.id}, status: :created
     else
       errors = {
         relationship: @relationship.errors.to_h,

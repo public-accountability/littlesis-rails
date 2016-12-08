@@ -142,7 +142,7 @@ var addRelationship = function() {
 	    return $('<option>', {
    	      value: ref.id,
    	      text: ref.name
-	    }).data(ref);
+	    }).data(ref); // add reference data to element
 	  }).concat(newReferenceOption)
 	);
 	fillInReferenceFields();
@@ -193,15 +193,11 @@ var addRelationship = function() {
   function submit() {
     $.post('/relationships', submissionData())
       .done(function(data, textStatus, jqXHR) {
-	console.log(data);
-	if (jqXHR.status == 201) {
-	  // redirect to edit url
-	} else {
-	  // handle errors;
-	} 
+	window.location.replace("/relationship/edit/id/" + data.relationship_id + "?ref=auto");
       })
-      .fail(function() {
-	// error handling
+      .fail(function(data) {
+	// assuming here that the status code is 400 because of a bad request. we should person also  consider what would happen if the request fails for different reasons besides the submission of invalid or missing information.
+	console.log(data.responseJSON);
       }); 
   } 
 

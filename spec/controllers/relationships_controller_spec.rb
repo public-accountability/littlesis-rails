@@ -63,6 +63,11 @@ describe RelationshipsController, type: :controller do
         post_request
         expect(response.status).to eq 201
       end
+
+      it 'sends back json with relationship_id' do
+        post_request
+        expect(JSON.parse(response.body)).to eql ({ "relationship_id" => Relationship.last.id})
+      end
       
       it 'should create a new relationship' do
         expect { post_request }.to change{Relationship.count}.by(1)
