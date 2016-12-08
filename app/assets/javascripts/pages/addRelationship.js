@@ -19,11 +19,24 @@ var addRelationship = function() {
       "Hierarchy",
       "Generic"
   ];
+  
+  var entity1_id = entityInfo('entityid');
+  var entity2_id = null; // this gets sets after selection.
 
   function entityInfo(info) {
     return document.getElementById('entity-info').dataset[info];
   }
 
+  
+  // submits create relationships request
+  // after button is clicked.
+  $('#create-relationship-btn').click(function(e){ 
+    submit(); 
+  });
+
+  
+  // Searches for name in search bar and then renders table with results
+  //
   $('#search-button').click(function(e){
     e.preventDefault();
     $.getJSON('/search/entity', {q: $('#name-to-search').val() }, function(data) {
@@ -61,12 +74,15 @@ var addRelationship = function() {
     $('#results-table tbody').on( 'click', 'button', function (e) {
       e.preventDefault(); // Prevents form from submitting
       var data = table.row( $(this).parents('tr') ).data();
+      entity2_id = String(data.id); // update 'global' var. 
+
       $('.rel-search').addClass('hidden'); // hide search elements
       $('.rel-add').removeClass('hidden'); // show add relationship elements
-      $('#relationship-with-name').html( $('<a>', { href: data.url, text: data.name }) ); // add relationshipt-with entity-link
+      $('#relationship-with-name').html( $('<a>', { href: data.url, text: data.name }) ); // add relationship-with entity-link
       $('#category-selection').html(categorySelector(data)); // add category selection
+
       categoryButtonsSetActiveClass(); // change '.active' on category buttons
-      recentReferences( [entityInfo('entityid'), data.id] );
+      recentReferences( [entityInfo('entityid'), entity2_id] );
     });
   }
 
@@ -129,11 +145,64 @@ var addRelationship = function() {
 	    }).data(ref);
 	  }).concat(newReferenceOption)
 	);
+	fillInReferenceFields();
       })
       .fail(function() {
 	$('#existing-sources-select').html(newReferenceOption);
       });
   }
 
+  function fillInReferenceFields() {
+    document.getElementById('existing-sources-select')
+      .addEventListener('change', function(){
+	var ref = $(this).find(":selected").data();
+	$('#reference-name').val(ref.name);
+	$('#reference-url').val(ref.source);
+	$('#reference-date').val(ref.publication_date);
+	$('#reference-excerpt').val(ref.source_detail);
+      });
+  }
+
+  // boolean -> 
+  function submissionInProgress(submitting) {
+    if (Boolean(submitting)) {
+      // show loading logic
+    } else {
+      // hide loading logic
+    } 
+  } 
+
+  // -> object
+  function submissionData() {
+    return {
+      relationship: {
+	entity1_id: entity1_id,
+	entity2_id: entity2_id,
+	category_id: ($('#category-selection button.active').length > 0) ? $('#category-selection button.active').data().categoryid : null
+      },
+      reference: {
+	name: $('#reference-name').val(),
+	source_detail: $('#reference-excerpt').val(),
+	source: $('#reference-url').val(),
+	publication_date: $('#reference-date').val(),
+	ref_type: $('#reference-type').val()
+      }
+    };
+  }
+
+  function submit() {
+    $.post('/relationships', submissionData())
+      .done(function(data, textStatus, jqXHR) {
+	console.log(data);
+	if (jqXHR.status == 201) {
+	  // redirect to edit url
+	} else {
+	  // handle errors;
+	} 
+      })
+      .fail(function() {
+	// error handling
+      }); 
+  } 
 
 };

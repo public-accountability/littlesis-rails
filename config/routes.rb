@@ -254,7 +254,7 @@ Lilsis::Application.routes.draw do
 
   resources :industries, only: [:show]
 
-  resources :relationships, only: [:show]
+  resources :relationships, only: [:show, :create]
 
   resources :references, only: [:create, :destroy]
   get "/references/recent" => "references#recent"

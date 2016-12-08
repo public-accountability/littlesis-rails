@@ -15,6 +15,23 @@ describe Reference do
     end
   end
 
+  describe 'validate_before_create' do
+    
+    it 'returns errors hash if missing source' do 
+      expect(Reference.new.validate_before_create).to have_key :source
+    end
+
+    it 'returns errors hash if missing name' do 
+      expect(Reference.new(source: "http://example.com").validate_before_create).to have_key :name
+      expect(Reference.new.validate_before_create).to have_key :name
+    end
+
+    it 'returns emptyhash if there are no errors' do
+      expect(Reference.new(source: "http://example.com", name: 'resource name').validate_before_create.empty?).to be true
+    end
+    
+  end
+
   describe 'recent_references' do
 
     def where_double(order_double=nil)

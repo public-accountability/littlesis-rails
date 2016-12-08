@@ -35,6 +35,17 @@ class Reference < ActiveRecord::Base
   end
 
 
+  # The regular validation process includes checks for object_id, and object_model.
+  # This checks that the other fields are valid, so we know we can safely create the object if we provided the object_id and object_model
+  # Returns: Hash
+  # The hash will be empty if there are no errors
+  def validate_before_create
+    errors = Hash.new
+    errors[:source] = "Missing reference Url" if self.source.nil?
+    errors[:name] = "Missing reference name" if self.name.nil?
+    errors
+  end
+
   private
 
   # Array -> Str

@@ -30,6 +30,8 @@ class EntitiesController < ApplicationController
   end
 
   def add_relationship
+    @relationship = Relationship.new
+    @reference = Reference.new
   end
 
   def political
