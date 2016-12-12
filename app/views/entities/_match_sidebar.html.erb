@@ -33,7 +33,10 @@
             <p><strong>Family</strong></p>
             <% @entity.relationships.where(category_id: 4).each do |r|  %>
                 <% cache r do %>
-                    <%= render partial: 'position', locals: { relationship: r } %>
+		    <% family_details = RelationshipDetails.new(r).family_details_for(@entity) %>
+		    <% unless family_details.nil?  %>
+			<p><%= family_details[1]  %><br><span class="text-primary"><%= rel_link(r, family_details[0]) %></span></p>
+		    <% end %>
                 <% end %>
             <% end %>
         </div>

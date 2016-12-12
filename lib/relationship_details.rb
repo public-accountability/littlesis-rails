@@ -193,4 +193,22 @@ class RelationshipDetails
     self
   end
 
+  
+  # Family relationships work like this:
+  # - Entity1 is the description1 of entity2
+  # - entity2 is the description2 of entity1
+  # This functions allows you to pass in the entity for whom you want the details for 
+  # and it will it provide you the OTHER person in the family relationship.
+  # input: <Entity> or FixNum|String (entity id)
+  # output: [ 'title', 'name' ]
+  def family_details_for(entity)
+    e_id = (entity.class == Entity) ? entity.id : entity.to_i
+    return nil unless [@rel.entity1_id, @rel.entity2_id].include? e_id
+    if e_id == @rel.entity1_id
+      [@rel.description2, @rel.related.name]
+    else
+      [@rel.description1, @rel.entity.name]
+    end
+  end
+
 end

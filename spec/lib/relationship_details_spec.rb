@@ -98,4 +98,32 @@ describe 'RelationshipDetails' do
       .to eql [ ['X', 'Y'], ['Notes', '1234']]
   end
 
+  describe '#family_details_for' do
+
+    before do
+      @rel = build(:relationship, category_id: 4, description1: 'Father', description2: 'Son')
+      @vadar = build(:person, name: 'Vader', id: rand(1000) )
+      @luke = build(:person, name: 'Luke', id: rand(1000) )
+      @rel.entity = @vadar
+      @rel.related = @luke
+    end  
+    
+    it 'returns nil if given a entity not in the relationship' do
+      @rando = build(:person, id: rand(1000) )
+      expect(RelationshipDetails.new(@rel).family_details_for(@rando)).to be nil
+    end
+
+    it 'returns details for other person if given entity' do
+      expect(RelationshipDetails.new(@rel).family_details_for(@vadar)).to eql ['Son', 'Luke']
+      expect(RelationshipDetails.new(@rel).family_details_for(@vadar.id)).to eql ['Son', 'Luke']
+    end
+
+    it 'returns details for other person if given related' do
+      expect(RelationshipDetails.new(@rel).family_details_for(@luke)).to eql ['Father', 'Vader']
+      expect(RelationshipDetails.new(@rel).family_details_for(@luke.id)).to eql ['Father', 'Vader']
+      expect(RelationshipDetails.new(@rel).family_details_for(@luke.id.to_s)).to eql ['Father', 'Vader']
+    end
+    
+  end
+
 end
