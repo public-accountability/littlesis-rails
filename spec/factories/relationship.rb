@@ -9,6 +9,10 @@ FactoryGirl.define do
     is_deleted false
   end
 
+  factory :generic_relationship, class: Relationship do
+    category_id 12
+  end
+
   factory :position_relationship, class: Relationship do
     entity1_id 100
     entity2_id 200

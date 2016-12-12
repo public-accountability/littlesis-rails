@@ -172,6 +172,7 @@ Lilsis::Application.routes.draw do
       post 'upload_image'
       post 'remove_image'
       post 'feature_image'
+      get 'add_relationship'
     end
 
     collection do
@@ -253,9 +254,11 @@ Lilsis::Application.routes.draw do
 
   resources :industries, only: [:show]
 
-  resources :relationships, only: [:show]
+  resources :relationships, only: [:show, :create]
 
   resources :references, only: [:create, :destroy]
+  get "/references/recent" => "references#recent"
+  
 
   get "/search" => "search#basic"
   get "/search/entity" => "search#entity_search"

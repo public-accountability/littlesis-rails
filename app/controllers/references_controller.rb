@@ -26,7 +26,29 @@ class ReferencesController < ApplicationController
     end
   end
 
+  
+  # Takes a list of Entity ids and gathers the most recent 
+  # refences for those entities and their relationships
+  # It also includes the most recent references regardless if they are
+  # associated with the entities or not
+  def recent
+    models = entity_ids.map { |e_id| 
+      e = Entity.find(e_id)
+      [ e, e.relationships.last(10) ]
+    }.flatten.uniq
+    render json: (Reference.last(2) + Reference.recent_references(models, 20)).uniq
+  end
+
   private
+
+  def entity_ids
+    if params[:entity_ids].class == String
+      params[:entity_ids].split(",")
+    else
+      params[:entity_ids]
+    end
+  end
+
   def reference_params
     params.require(:data).permit(:object_id, :object_model, :source, :name, :fields, :source_detail, :publication_date, :ref_type)
   end

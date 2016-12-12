@@ -473,3 +473,23 @@ html table.dataTable thead {
     transform: rotate(360deg);
   }
 }
+
+/* add relationship page */
+
+#results-table tbody a {
+    color: $link_blue;
+}
+
+#results-table tbody tr:hover {
+    background-color: $red_light;
+    /* cursor: pointer; */
+}
+
+#reference {
+    
+    label {
+	font-size: 0.8em;
+	 font-weight: normal;
+    }
+
+}

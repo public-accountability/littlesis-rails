@@ -1,26 +1,8 @@
 class EntitiesController < ApplicationController
   before_filter :authenticate_user!, except: [:show, :relationships, :political, :contributions]
-  before_action :set_entity, only: [:show, :relationships, :political, :contributions, :potential_contributions, :fields, :update_fields, :edit_twitter, :add_twitter, :remove_twitter, :find_articles, :import_articles, :articles, :remove_article, :new_article, :create_article, :find_merges, :merge, :refresh, :images, :feature_image, :remove_image, :new_image, :upload_image, :match_donation, :unmatch_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
+  before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names]
   before_action :set_current_user, only: [:show, :political, :match_donations]
-  
-  # Ziggy July 19, 2016: Looks like this was, at one point, going to be used for
-  #                      oligrapher, but is now not being used. 
-  # def show
-  #   respond_to do |format|
-  #     format.json {
-  #       entity = {
-  #         id: @entity.id,
-  #         name: @entity.name,
-  #         description: @entity.blurb,
-  #         bio: @entity.summary,
-  #         primary_type: @entity.primary_ext,
-  #         image: @entity.featured_image ? @entity.featured_image.s3_url('large') : nil
-  #       }
-  #       render json: { entity: entity }
-  #     }
-  #   end
-  # end
-
+    
   def show
   end
 
@@ -45,6 +27,11 @@ class EntitiesController < ApplicationController
   end
 
   def relationships
+  end
+
+  def add_relationship
+    @relationship = Relationship.new
+    @reference = Reference.new
   end
 
   def political
