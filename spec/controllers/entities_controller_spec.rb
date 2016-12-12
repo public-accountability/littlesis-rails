@@ -76,7 +76,13 @@ describe EntitiesController, type: :controller do
 
         it 'should render json with entity id' do
           post :create, params_add_relationship_page
-          expect(response.body).to eql({entity_id: Entity.last.id, status: 'OK'}.to_json)
+          json = JSON.parse(response.body)
+          expect(json.fetch 'status').to eql 'OK'
+          expect(json['entity']['id']).to eql Entity.last.id
+          expect(json['entity']).to have_key 'name'
+          expect(json['entity']).to have_key 'url'
+          expect(json['entity']).to have_key 'description'
+          expect(json['entity']).to have_key 'primary_type'
         end
       end
 

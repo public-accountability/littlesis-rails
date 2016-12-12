@@ -17,7 +17,16 @@ class EntitiesController < ApplicationController
       params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
       
       if add_relationship_page?
-        render json: {entity_id: @entity.id, status: 'OK' }
+        render json: { 
+                 status: 'OK', 
+                 entity: { 
+                   id: @entity.id,
+                   name: @entity.name,
+                   description: @entity.blurb,
+                   url: @entity.legacy_url,
+                   primary_type: @entity.primary_ext
+                 }
+               }
       else
         redirect_to @entity.legacy_url("edit")
       end

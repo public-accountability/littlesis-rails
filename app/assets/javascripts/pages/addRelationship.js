@@ -36,7 +36,19 @@ var addRelationship = function() {
     submit(); 
   });
 
-  
+  // Overrides default action of submit new entity form
+  $('#new_entity').submit(function(event) {
+    event.preventDefault();
+    $.post('/entities', $('#new_entity').serialize())
+      .done(function(response){
+	if (response.status === 'OK') {
+	  showAddRelationshipForm(response.entity);
+	} else {
+	  console.log(response); // handle errors
+	}
+      });
+  });
+
   // Searches for name in search bar and then renders table with results
   $('#search-button').click(function(e){
     e.preventDefault();
@@ -82,20 +94,26 @@ var addRelationship = function() {
       selectButtonHandler(table);
   } 
 
+  // Used by selectButtonHandler & in $('#new_entity').submit()
+  function showAddRelationshipForm(data) {
+    entity2_id = String(data.id); // update 'global' var. 
+
+    $('.rel-new-entity').addClass('hidden'); // hide new entity elements
+    $('.rel-search').addClass('hidden'); // hide search elements
+    $('.rel-add').removeClass('hidden'); // show add relationship elements
+    $('#relationship-with-name').html( $('<a>', { href: data.url, text: data.name }) ); // add relationship-with entity-link
+    $('#category-selection').html(categorySelector(data)); // add category selection
+
+    categoryButtonsSetActiveClass(); // change '.active' on category buttons
+    recentReferences( [entityInfo('entityid'), entity2_id] );
+  }
+
   // <Table> -> 
   function selectButtonHandler(table) {
     $('#results-table tbody').on( 'click', 'button', function (e) {
       e.preventDefault(); // Prevents form from submitting
       var data = table.row( $(this).parents('tr') ).data();
-      entity2_id = String(data.id); // update 'global' var. 
-
-      $('.rel-search').addClass('hidden'); // hide search elements
-      $('.rel-add').removeClass('hidden'); // show add relationship elements
-      $('#relationship-with-name').html( $('<a>', { href: data.url, text: data.name }) ); // add relationship-with entity-link
-      $('#category-selection').html(categorySelector(data)); // add category selection
-
-      categoryButtonsSetActiveClass(); // change '.active' on category buttons
-      recentReferences( [entityInfo('entityid'), entity2_id] );
+      showAddRelationshipForm(data); 
     });
   }
 
