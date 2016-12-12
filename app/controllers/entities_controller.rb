@@ -15,9 +15,21 @@ class EntitiesController < ApplicationController
     if @entity.save
       @entity.update(last_user_id: current_user.sf_guard_user.id)
       params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
-      redirect_to @entity.legacy_url("edit")
+      
+      if add_relationship_page?
+        render json: {entity_id: @entity.id, status: 'OK' }
+      else
+        redirect_to @entity.legacy_url("edit")
+      end
+
     else
-      render action: 'new'
+      
+      if add_relationship_page?
+        render json: {status: 'ERROR', errors: @entity.errors.messages }
+      else
+        render action: 'new'
+      end
+      
     end
   end
 
@@ -379,4 +391,9 @@ class EntitiesController < ApplicationController
   def entity_params
     params.require(:entity).permit(:name, :blurb, :primary_ext)
   end
+
+  def add_relationship_page?
+     params[:add_relationship_page].present?
+  end
+
 end

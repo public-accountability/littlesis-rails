@@ -24,6 +24,10 @@
 	</div>
     <% end %>
 
+    <% if add_relationship %>
+	<%= hidden_field_tag :add_relationship_page, 'TRUE' %>
+    <% end %>
+
     <div class="field">
 	<%= f.label "Name*" %>
 	<%= f.text_field :name, class: "form-control", placeholder: "example: Jesse L Jackson, Jr" %>
