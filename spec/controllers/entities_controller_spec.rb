@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe EntitiesController, type: :controller do
 
-  before(:each) { DatabaseCleaner.start }
-  after(:each)  { DatabaseCleaner.clean }
+  before(:all) { DatabaseCleaner.start }
+  after(:all)  { DatabaseCleaner.clean }
 
   describe 'routes' do
     it { should route(:get, '/entities/1').to(action: :show, id: 1) }
