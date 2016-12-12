@@ -1,0 +1,147 @@
+<% if @entity.nil? %>
+    <% @entity = Entity.new %>
+<% end %>
+
+<%= form_for(@entity) do |f| %>
+    <% if @entity.errors.any? %>
+	<div id="error_explanation" class="alert alert-warning">
+	    <%= pluralize(@entity.errors.count, "error") %> prohibited this entity from being saved:
+
+	    <ul>
+		<% @entity.errors.each do |attr, msg| %>
+		    <li><%= (attr == :primary_ext ? :type : attr).to_s.capitalize %> <%= msg %></li>
+		<% end %>
+	    </ul>
+	</div>
+    <% end %>
+
+    <div class="field">
+	<%= f.label "Name*" %>
+	<%= f.text_field :name, class: "form-control", placeholder: "example: Jesse L Jackson, Jr" %>
+    </div>
+
+    <div class="field">
+	<%= f.label "Short description" %>
+	<%= f.text_field :blurb, class: "form-control", placeholder: "a short sentence or phrase" %>
+    </div>
+
+    <br>
+    <%= f.label "Type*" %>  
+    <br>
+
+    <label class="radio-inline">
+	<%= f.radio_button :primary_ext, "Person" %> Person
+    </label>
+
+    <label class="radio-inline">
+	<%= f.radio_button :primary_ext, "Org" %> Org
+    </label>
+    <br>
+    <br>
+
+    <div id="other-types">
+	<%= f.label "Other types" %>
+	<br>
+    </div>
+
+    <div id="person-types">
+	<% ExtensionDefinition.person_types.each do |type| %>
+	    <div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
+	<% end %>
+	<br>
+	<br>
+    </div>
+
+    <div id="org-types">
+	<% ExtensionDefinition.org_types.each do |type| %>
+	    <div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
+	<% end %>
+	<br>
+	<br>
+    </div>
+
+    <div class="actions">
+	<%= f.submit "Add", class: "btn btn-primary" %>
+    </div>
+<% end %>
+
+<div id="wait" style="display: none;">
+    <br>
+    <h3>Wait! Does this entity already exist?</h3>
+    <div id="existing">
+    </div>
+    <br>
+</div>
+
+<script >
+ $(document).ready(function() {
+   $('input[type=radio]').on("change", function() {
+     if (this.value == "Person") {
+       $("#other-types").show();
+       $("#org-types").hide();
+       $("#person-types").show();
+     } else if (this.value == "Org") {
+       $("#other-types").show();
+       $("#person-types").hide();      
+       $("#org-types").show();
+     } else {
+       $("#other-types").hide();
+       $("#person-types").hide();      
+       $("#org-types").hide();            
+     }
+   });
+
+   var input = $("#entity_name");
+   var typingTimer;
+   var doneTypingInterval = 100;
+
+   //on keyup, start the countdown
+   input.on('keyup', function () {
+     clearTimeout(typingTimer);
+     typingTimer = setTimeout(findMatches.bind(input[0]), doneTypingInterval);
+   });
+
+   //on keydown, clear the countdown 
+   input.on('keydown', function () {
+     clearTimeout(typingTimer);
+   });
+
+   var existing = $("#existing")[0];
+
+   var findMatches = function() {
+     var query = $.trim(this.value);
+     if (query.length > 2) {
+       $.ajax({
+         method: "GET",
+         url: "<%= name_search_entities_url %>",
+         data: { q: query, num: 5 }
+       }).done(function(results) {
+         existing.innerHTML = "";
+         if (results.length > 0) {
+           results.forEach(function(result) {
+             var strong = document.createElement("strong");
+             var em = document.createElement("em");
+             var link = document.createElement("a");
+             link.href = result.url;
+             link.innerHTML = result.name;
+             strong.appendChild(link);
+             existing.appendChild(strong);
+             if (result.blurb) {
+               em.innerHTML = result.blurb
+               $(existing).append(" &nbsp;");
+               existing.appendChild(em);
+             }
+             $(existing).append("<br>");
+           });
+           $("#wait").show();
+         } else {
+           $("#wait").hide();
+         }
+       });
+     } else {
+       $("#wait").hide();
+       existing.innerHTML = "";      
+     }
+   };
+ });
+</script>
