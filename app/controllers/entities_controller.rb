@@ -8,8 +8,8 @@ class EntitiesController < ApplicationController
 
   def new
     @entity = Entity.new
-    @person_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::PERSON_ID)
-    @org_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::ORG_ID)
+    @person_types = ExtensionDefinition.person_types
+    @org_types = ExtensionDefinition.org_types
   end
 
   def create
@@ -20,8 +20,8 @@ class EntitiesController < ApplicationController
       params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
       redirect_to @entity.legacy_url("edit")
     else
-      @person_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::PERSON_ID)
-      @org_types = ExtensionDefinition.where(parent_id: ExtensionDefinition::ORG_ID)
+      @person_types = ExtensionDefinition.person_types
+      @org_types = ExtensionDefinition.org_types
       render action: 'new'
     end
   end

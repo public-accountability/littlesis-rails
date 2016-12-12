@@ -6,4 +6,14 @@ class ExtensionDefinition < ActiveRecord::Base
 
   PERSON_ID = 1
   ORG_ID = 2
+
+  
+  def self.person_types
+    where(parent_id: PERSON_ID)
+  end
+
+  def self.org_types
+    where(parent_id: ORG_ID)
+  end
+
 end
