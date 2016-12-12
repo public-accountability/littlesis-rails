@@ -1,7 +1,10 @@
 var addRelationship = function() {
   /*
+   
    .rel-search -> show during selection process
+   .rel-results -> table results
    .rel-add -> show during add-relationship process. Start hidden
+   
   */
 
   var categoriesText = [
@@ -27,20 +30,32 @@ var addRelationship = function() {
     return document.getElementById('entity-info').dataset[info];
   }
 
-  
   // submits create relationships request
   // after button is clicked.
-  $('#create-relationship-btn').click(function(e){ 
+  $('#create-relationship-btn').click(function(e){
     submit(); 
   });
 
   
   // Searches for name in search bar and then renders table with results
-  //
   $('#search-button').click(function(e){
     e.preventDefault();
+    $('.rel-new-entity').addClass('hidden');
+    $('.rel-results').removeClass('hidden');
     $.getJSON('/search/entity', {q: $('#name-to-search').val() }, function(data) {
-      var table = $('#results-table').DataTable({
+      if (data.length > 0) {
+	createDataTable(data);
+      } else { 
+	displayCreateNewEntityDialog();
+      } 
+    });
+  });
+
+
+  // Creates a new datatable
+  // {} ->
+  function createDataTable(data) {
+    var table = $('#results-table').DataTable({
 	data: data,
 	columns: [
 	  { 
@@ -64,10 +79,8 @@ var addRelationship = function() {
 	info: false,
 	destroy: true // https://datatables.net/reference/option/destroy
       });
-
       selectButtonHandler(table);
-    });
-  });
+  } 
 
   // <Table> -> 
   function selectButtonHandler(table) {
@@ -105,6 +118,11 @@ var addRelationship = function() {
     return buttonGroup;
   }
   
+  function displayCreateNewEntityDialog() {
+    $('.rel-results').addClass('hidden');
+    $('.rel-new-entity').removeClass('hidden'); 
+  } 
+
   function categoryButtonsSetActiveClass() {
     $("#category-selection .btn-group-vertical > .btn").click(function(){
 	$(this).addClass("active").siblings().removeClass("active");

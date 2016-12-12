@@ -1,14 +1,23 @@
-<% if @entity.nil? %>
-    <% @entity = Entity.new %>
+<!-- 
+     This form is used in two places: the /entities/new and / entities/:id/add_relationship
+ -->
+
+<!-- This initial logic ensures that the variable entity is set correctly depending on which page the from is being used for -->
+
+<% add_relationship = false if local_assigns[:add_relationship].nil? %>
+<% if @entity.nil? || add_relationship %>
+    <% entity = Entity.new %>
+<% else%>
+    <% entity = @entity %>
 <% end %>
 
-<%= form_for(@entity) do |f| %>
-    <% if @entity.errors.any? %>
+<%= form_for(entity) do |f| %>
+    <% if entity.errors.any? %>
 	<div id="error_explanation" class="alert alert-warning">
-	    <%= pluralize(@entity.errors.count, "error") %> prohibited this entity from being saved:
+	    <%= pluralize(entity.errors.count, "error") %> prohibited this entity from being saved:
 
 	    <ul>
-		<% @entity.errors.each do |attr, msg| %>
+		<% entity.errors.each do |attr, msg| %>
 		    <li><%= (attr == :primary_ext ? :type : attr).to_s.capitalize %> <%= msg %></li>
 		<% end %>
 	    </ul>

@@ -31,11 +31,26 @@
 
 </div>
 
-<div class="row rel-search" id="search-results-row">
+<div class="row rel-search rel-results" id="search-results-row">
     <div class="col-sm-12">
 	<table id="results-table" class="compact hover" cellspacing="0" width="100%"></table>
     </div>
 </div>
+
+<div class="row rel-new-entity hidden">
+    <div class="col-sm-6 col-sm-offset-1">
+	<h5><strong>Nothing Found  </strong><small>  Try searching again</small></h5>
+	<p><em>Or</em> if you can't find the entity you are looking for, create it now:</p>
+	<%= render partial: 'new_entity_form', locals: {add_relationship: true } %>
+    </div>
+</div>
+
+<div class="row rel-new-entity hidden">
+    <div class="col-sm-6 col-sm-offset-1">
+	
+    </div>
+</div>
+
 
 <div class="row rel-add hidden" id="add-relationship-row">
     <div class="col-sm-3" >
