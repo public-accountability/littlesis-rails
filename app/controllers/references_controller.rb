@@ -33,7 +33,7 @@ class ReferencesController < ApplicationController
   # associated with the entities or not
   def recent
     models = entity_ids.map { |e_id| 
-      e = Entity.includes(:relationships).find(e_id)
+      e = Entity.find(e_id)
       [ e, e.relationships.last(10) ]
     }.flatten.uniq
     render json: (Reference.last(2) + Reference.recent_references(models, 20)).uniq
