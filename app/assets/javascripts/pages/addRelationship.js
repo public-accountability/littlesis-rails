@@ -39,12 +39,16 @@ var addRelationship = function() {
   // Overrides default action of submit new entity form
   $('#new_entity').submit(function(event) {
     event.preventDefault();
+    $('#new-entity-errors').empty(); 
     $.post('/entities', $('#new_entity').serialize())
       .done(function(response){
 	if (response.status === 'OK') {
 	  showAddRelationshipForm(response.entity);
 	} else {
-	  console.log(response); // handle errors
+	  $.each(response.errors, function(key, val) {
+	    var field = (key === 'primary_ext') ? 'type' : key;
+	    $('#new-entity-errors').append(alertDiv(field, ":  " + val));
+	  });
 	}
       });
   });
@@ -63,7 +67,12 @@ var addRelationship = function() {
     });
   });
 
-
+  // Switches to the "new entity" option after user clicks 
+  // on "click here to create a new entity"
+  $('#cant-find-new-entity-link').click(function(e){
+    displayCreateNewEntityDialog();
+  });
+ 
   // Creates a new datatable
   // {} ->
   function createDataTable(data) {
@@ -306,18 +315,18 @@ var addRelationship = function() {
 
     if (Boolean(errors.reference.source)) {
       if (errors.reference.source === 'INVALID') {
-	alerts.push(alert('Invalid data ', "Please enter a correct url"));
+	alerts.push(alertDiv('Invalid data ', "Please enter a correct url"));
       } else {
-	alerts.push(alert('Missing information ', "Please submit a url"));
+	alerts.push(alertDiv('Missing information ', "Please submit a url"));
       }
     }
 
     if (Boolean(errors.reference.name)) {
-      alerts.push(alert('Missing information ', 'Please include a name for the source'));
+      alerts.push(alertDiv('Missing information ', 'Please include a name for the source'));
     }
 
     if (Boolean(errors.relationship.category_id)) {
-      alerts.push(alert('Missing information ', "Don't forget to select a relationship category"));
+      alerts.push(alertDiv('Missing information ', "Don't forget to select a relationship category"));
     } 
     
     if ( Boolean(errors.relationship.entity1_id) || Boolean(errors.relationship.entity1_id) ) {
@@ -327,7 +336,7 @@ var addRelationship = function() {
     $('#errors-container').html(alerts); // display the errors
   } 
 
-  function alert(title, message) {
+  function alertDiv(title, message) {
     return $('<div>', {class: 'alert alert-danger', role: 'alert' })
       .append($('<strong>', {text: title}))
       .append($('<span>', {text: message}));
