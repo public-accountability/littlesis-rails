@@ -1,7 +1,10 @@
 var addRelationship = function() {
   /*
+   
    .rel-search -> show during selection process
+   .rel-results -> table results
    .rel-add -> show during add-relationship process. Start hidden
+   
   */
 
   var categoriesText = [
@@ -27,20 +30,53 @@ var addRelationship = function() {
     return document.getElementById('entity-info').dataset[info];
   }
 
-  
   // submits create relationships request
   // after button is clicked.
-  $('#create-relationship-btn').click(function(e){ 
+  $('#create-relationship-btn').click(function(e){
     submit(); 
   });
 
-  
+  // Overrides default action of submit new entity form
+  $('#new_entity').submit(function(event) {
+    event.preventDefault();
+    $('#new-entity-errors').empty(); 
+    $.post('/entities', $('#new_entity').serialize())
+      .done(function(response){
+	if (response.status === 'OK') {
+	  showAddRelationshipForm(response.entity);
+	} else {
+	  $.each(response.errors, function(key, val) {
+	    var field = (key === 'primary_ext') ? 'type' : key;
+	    $('#new-entity-errors').append(alertDiv(field, ":  " + val));
+	  });
+	}
+      });
+  });
+
   // Searches for name in search bar and then renders table with results
-  //
   $('#search-button').click(function(e){
     e.preventDefault();
+    $('.rel-new-entity').addClass('hidden');
+    $('.rel-results').removeClass('hidden');
     $.getJSON('/search/entity', {q: $('#name-to-search').val() }, function(data) {
-      var table = $('#results-table').DataTable({
+      if (data.length > 0) {
+	createDataTable(data);
+      } else { 
+	displayCreateNewEntityDialog();
+      } 
+    });
+  });
+
+  // Switches to the "new entity" option after user clicks 
+  // on "click here to create a new entity"
+  $('#cant-find-new-entity-link').click(function(e){
+    displayCreateNewEntityDialog();
+  });
+ 
+  // Creates a new datatable
+  // {} ->
+  function createDataTable(data) {
+    var table = $('#results-table').DataTable({
 	data: data,
 	columns: [
 	  { 
@@ -64,25 +100,29 @@ var addRelationship = function() {
 	info: false,
 	destroy: true // https://datatables.net/reference/option/destroy
       });
-
       selectButtonHandler(table);
-    });
-  });
+  } 
+
+  // Used by selectButtonHandler & in $('#new_entity').submit()
+  function showAddRelationshipForm(data) {
+    entity2_id = String(data.id); // update 'global' var. 
+
+    $('.rel-new-entity').addClass('hidden'); // hide new entity elements
+    $('.rel-search').addClass('hidden'); // hide search elements
+    $('.rel-add').removeClass('hidden'); // show add relationship elements
+    $('#relationship-with-name').html( $('<a>', { href: data.url, text: data.name }) ); // add relationship-with entity-link
+    $('#category-selection').html(categorySelector(data)); // add category selection
+
+    categoryButtonsSetActiveClass(); // change '.active' on category buttons
+    recentReferences( [entityInfo('entityid'), entity2_id] );
+  }
 
   // <Table> -> 
   function selectButtonHandler(table) {
     $('#results-table tbody').on( 'click', 'button', function (e) {
       e.preventDefault(); // Prevents form from submitting
       var data = table.row( $(this).parents('tr') ).data();
-      entity2_id = String(data.id); // update 'global' var. 
-
-      $('.rel-search').addClass('hidden'); // hide search elements
-      $('.rel-add').removeClass('hidden'); // show add relationship elements
-      $('#relationship-with-name').html( $('<a>', { href: data.url, text: data.name }) ); // add relationship-with entity-link
-      $('#category-selection').html(categorySelector(data)); // add category selection
-
-      categoryButtonsSetActiveClass(); // change '.active' on category buttons
-      recentReferences( [entityInfo('entityid'), entity2_id] );
+      showAddRelationshipForm(data); 
     });
   }
 
@@ -105,6 +145,11 @@ var addRelationship = function() {
     return buttonGroup;
   }
   
+  function displayCreateNewEntityDialog() {
+    $('.rel-results').addClass('hidden');
+    $('.rel-new-entity').removeClass('hidden'); 
+  } 
+
   function categoryButtonsSetActiveClass() {
     $("#category-selection .btn-group-vertical > .btn").click(function(){
 	$(this).addClass("active").siblings().removeClass("active");
@@ -270,18 +315,18 @@ var addRelationship = function() {
 
     if (Boolean(errors.reference.source)) {
       if (errors.reference.source === 'INVALID') {
-	alerts.push(alert('Invalid data ', "Please enter a correct url"));
+	alerts.push(alertDiv('Invalid data ', "Please enter a correct url"));
       } else {
-	alerts.push(alert('Missing information ', "Please submit a url"));
+	alerts.push(alertDiv('Missing information ', "Please submit a url"));
       }
     }
 
     if (Boolean(errors.reference.name)) {
-      alerts.push(alert('Missing information ', 'Please include a name for the source'));
+      alerts.push(alertDiv('Missing information ', 'Please include a name for the source'));
     }
 
     if (Boolean(errors.relationship.category_id)) {
-      alerts.push(alert('Missing information ', "Don't forget to select a relationship category"));
+      alerts.push(alertDiv('Missing information ', "Don't forget to select a relationship category"));
     } 
     
     if ( Boolean(errors.relationship.entity1_id) || Boolean(errors.relationship.entity1_id) ) {
@@ -291,7 +336,7 @@ var addRelationship = function() {
     $('#errors-container').html(alerts); // display the errors
   } 
 
-  function alert(title, message) {
+  function alertDiv(title, message) {
     return $('<div>', {class: 'alert alert-danger', role: 'alert' })
       .append($('<strong>', {text: title}))
       .append($('<span>', {text: message}));

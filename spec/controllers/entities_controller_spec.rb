@@ -2,13 +2,21 @@ require 'rails_helper'
 
 describe EntitiesController, type: :controller do
 
-  before(:each) { DatabaseCleaner.start }
-  after(:each)  { DatabaseCleaner.clean }
+  before(:all) { DatabaseCleaner.start }
+  after(:all)  { DatabaseCleaner.clean }
 
-  describe 'GET: Show, Relationships, Political' do 
-    before { @entity = create(:mega_corp_inc, updated_at: Time.now) } 
-    
-    describe "Show" do
+  describe 'routes' do
+    it { should route(:get, '/entities/1').to(action: :show, id: 1) }
+    it { should route(:get, '/entities/1/relationships').to(action: :relationships, id: 1) }
+    it { should route(:get, '/entities/new').to(action: :new) } 
+    it { should route(:post, '/entities').to(action: :create) } 
+  end
+
+
+  describe 'GET' do 
+    before { @entity = create(:mega_corp_inc, updated_at: Time.now) }
+
+    describe "/entity/id" do
       before { get(:show, {id: @entity.id}) } 
 
       it { should render_template(:show) }
@@ -19,10 +27,82 @@ describe EntitiesController, type: :controller do
       
     end
 
-    describe 'Relationships' do 
+    describe 'entity/id/relationships' do 
       before { get(:relationships, {id: @entity.id}) } 
       it { should render_template(:relationships) }
     end
+
+  end
+
+  describe '#create' do
+    login_user
+    let(:params) { {"entity"=>{"name"=>"new entity", "blurb"=>"a blurb goes here", "primary_ext"=>"Org" }} }
+    let(:params_missing_ext) { {"entity"=>{"name"=>"new entity", "blurb"=>"a blurb goes here", "primary_ext"=>"" }} }
+    let(:params_add_relationship_page) { params.merge({'add_relationship_page' => 'TRUE'}) }
+    let(:params_missing_ext_add_relationship_page) { params_missing_ext.merge({'add_relationship_page' => 'TRUE'}) }
+    
+    context 'from the /entities/new page' do
+      context 'without errors' do 
+        
+        it 'redirects to edit url' do
+          post :create, params
+          expect(response).to redirect_to(Entity.last.legacy_url('edit'))
+        end
+
+        it 'should create a new entity' do
+          expect{ post :create, params }.to change{Entity.count}.by(1)
+        end
+
+      end 
+
+      context 'with errors' do
+        
+        it 'Renders new entities page' do
+          post :create, params_missing_ext
+          expect(response).to render_template(:new)
+        end
+
+        it 'sould NOT create a new entity' do
+          expect{ post :create, params_missing_ext }.not_to change{Entity.count}
+        end
+      end
+    end
+    
+    context 'from the /entiites/id/add_relationship page' do
+      context 'without errors' do
+        it 'should create a new entity' do
+          expect{ post :create, params_add_relationship_page }.to change{Entity.count}.by(1)
+        end
+
+        it 'should render json with entity id' do
+          post :create, params_add_relationship_page
+          json = JSON.parse(response.body)
+          expect(json.fetch 'status').to eql 'OK'
+          expect(json['entity']['id']).to eql Entity.last.id
+          expect(json['entity']).to have_key 'name'
+          expect(json['entity']).to have_key 'url'
+          expect(json['entity']).to have_key 'description'
+          expect(json['entity']).to have_key 'primary_type'
+        end
+      end
+
+      context 'with errors' do
+        it 'should NOT create a new entity' do
+          expect{ post :create, params_missing_ext_add_relationship_page }.not_to change{Entity.count}
+        end
+
+        it 'should render json with errors' do
+          post :create, params_missing_ext_add_relationship_page
+          expect(JSON.parse(response.body)).to have_key 'errors'
+          expect(JSON.parse(response.body).fetch 'status').to eql 'ERROR'
+        end
+      end
+    end
+  end
+
+
+  describe 'Political' do 
+    before { @entity = create(:mega_corp_inc, updated_at: Time.now) } 
 
     describe 'Political' do 
       before { get(:political, {id: @entity.id}) } 
