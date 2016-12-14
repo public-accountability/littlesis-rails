@@ -1,47 +1,54 @@
 <% content_for(:page_title, "#{@entity.name} - Add Relationship") %>
-<%= render partial: 'header', locals: { entity: @entity } %>
+<% cache @entity do %>
+    <%= render partial: 'header', locals: { entity: @entity } %>
+    <%= render partial: 'explain_categories_modal' %>
 
-<div id="entity-info" data-entitytype="<%= @entity.primary_ext %>"  data-entityid="<%= @entity.id %>"></div>
+    <div id="entity-info" data-entitytype="<%= @entity.primary_ext %>"  data-entityid="<%= @entity.id %>"></div>
 
-<div class="row">
+    <div class="row">
 
-    <div class="col-sm-7 text-center">
-	<h2 class="rel-search">Create a new relationship</h2>
-	<p class="rel-search">Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.</p>
-	
-	<div class="hidden rel-add">
-	    <h3 class="text-center">Creating a new relationship between <br /><strong><%= @entity.name %></strong><br /><em>and</em><br /><strong><span id="relationship-with-name"></span></strong></h3>
+	<div class="col-sm-7 text-center">
+	    <h2 class="rel-search">Create a new relationship</h2>
+	    <p class="rel-search">Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.</p>
+	    
+	    <div class="hidden rel-add">
+		<h3 class="text-center">Creating a new relationship between <br /><strong><%= @entity.name %></strong><br /><em>and</em><br /><strong><span id="relationship-with-name"></span></strong></h3>
+	    </div>
+
+	    <div class="row rel-search text-center ">
+		<div class="col-sm-6 col-sm-offset-2">
+		    <input type="text" class="form-control" placeholder="Name" id="name-to-search" >
+		</div>
+		<div class="col-sm-2 bottom-1em"><button class="btn btn-primary" id="search-button">Search</button>
+		</div>
+	    </div>
+
+	    <div class="row rel-search text-center">
+		<span class="small-text text-muted">This is the <em>new</em> version of the add relationship page. <%= link_to "Click here", @entity.legacy_url("addRelationship/legacy") %> to use the older version instead.</span>
+	    </div>
+	    
 	</div>
 
-	<div class="row rel-search text-center">
-	    <div class="col-sm-2"></div> 
-	    <div class="col-sm-6">
-		<input type="text" class="form-control" placeholder="Name" id="name-to-search" >
-	    </div>
-	    <div class="col-sm-2"><button class="btn btn-primary" id="search-button">Search</button>
-	    </div>
+	<div class="col-md-1"><!-- buffer --></div>
+	<div class="col-sm-4 hidden-xs">
+	    <%= image_tag(@entity.featured_image_url, alt: @entity.name, class: 'img-rounded') %>
 	</div>
-	
+
     </div>
 
-    <div class="col-md-1"><!-- buffer --></div>
-    <div class="col-sm-4 hidden-xs">
-	<%= image_tag(@entity.featured_image_url, alt: @entity.name, class: 'img-rounded') %>
+    <div class="row rel-search rel-results hidden" id="search-results-row">
+	<div class="col-sm-12">
+	    <table id="results-table" class="compact hover" cellspacing="0" width="100%"></table>
+	</div>
     </div>
 
-</div>
-
-<div class="row rel-search rel-results hidden" id="search-results-row">
-    <div class="col-sm-12">
-	<table id="results-table" class="compact hover" cellspacing="0" width="100%"></table>
+    <div class="row rel-search rel-results hidden">
+	<div class="col-sm-8">
+	    <p>Can't find what you are looking for?  <a href="#" id="cant-find-new-entity-link">Click here to create a new entity</a></p>
+	</div>
     </div>
-</div>
 
-<div class="row rel-search rel-results hidden">
-    <div class="col-sm-8">
-	<p>Can't find what you are looking for?  <a href="#" id="cant-find-new-entity-link">Click here to create a new entity</a></p>
-    </div>
-</div>
+<% end %> <!-- end cache -->
 
 <div class="row rel-new-entity hidden">
     <div class="col-sm-6 col-sm-offset-1">
@@ -58,7 +65,9 @@
     <div class="col-sm-3" >
 	<h6 style="padding-left: 1em;"><strong>Relationship Type:</strong></h6>
 	<div id="category-selection"></div>
-	
+	<div class="top-1em pad-left-1em">
+	    <%= link_to "Explain Categories", "#", data: {toggle: 'modal', target: '#explain-categories-modal' } %>
+	</div>
     </div>
     <div class="col-sm-6" id="reference">
 	

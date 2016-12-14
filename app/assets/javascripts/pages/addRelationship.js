@@ -81,7 +81,7 @@ var addRelationship = function() {
 	columns: [
 	  { 
 	    data: null, 
-	    defaultContent: '<button>select</button>' 
+	    defaultContent: '<button type="button" class="btn btn-success btn-sm">select</button>'
 	  },
 	  { 
 	    title: 'Name', 
@@ -133,10 +133,11 @@ var addRelationship = function() {
     var entity2 = data.primary_type;
     var buttonGroup = $('<div>', { class: 'btn-group-vertical', role: 'group', 'aria-label': 'relationship categories'});
     categories(entity1, entity2).forEach(function(categoryId){
+      var buttonClass = 'btn btn-default' + ( (categoryId === 7) ? ' disabled' : '' );
       buttonGroup.append(
 	$('<button>', {
 	  type: 'button', 
-	  class: 'btn btn-default', 
+	  class: buttonClass,
 	  text: categoriesText[categoryId],
 	  'data-categoryid': categoryId
 	})

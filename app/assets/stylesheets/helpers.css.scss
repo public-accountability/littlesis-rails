@@ -13,7 +13,6 @@
   padding-top: 3em;
 }
 
-
 .bottom-1em {
   padding-bottom: 1em;
 }
@@ -24,6 +23,10 @@
 
 .pad-right-1em {
   padding-right: 1em;
+}
+
+.pad-left-1em {
+  padding-left: 1em;
 }
 
 .pad-right-08em {
@@ -41,6 +44,10 @@
 .big-text {
   font-size: 42px;
 }
+
+.small-text {
+    font-size: 10px;
+} 
 
 .borderless {
    th, td { 
