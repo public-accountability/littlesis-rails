@@ -76,6 +76,7 @@ var addRelationship = function() {
   // Creates a new datatable
   // {} ->
   function createDataTable(data) {
+    $('#results-table').empty(); // Necessary for the search to work multiple times on the same page.
     var table = $('#results-table').DataTable({
 	data: data,
 	columns: [
