@@ -1,4 +1,6 @@
 Lilsis::Application.routes.draw do
+
+
   # match "*path", to: "errors#maintenance", via: :all
 
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'
@@ -292,6 +294,12 @@ Lilsis::Application.routes.draw do
   post "/nys/candidates/new" =>  "nys#create"
   get "/nys/potential_contributions" => "nys#potential_contributions"
   get "/nys/contributions" => "nys#contributions"
+
+  #########
+  # Tools #
+  #########
+
+  get '/tools/bulk/relationships' => "tools#bulk_relationships"
 
   match "*path", to: "errors#not_found", via: :all
 
