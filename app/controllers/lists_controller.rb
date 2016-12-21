@@ -1,8 +1,6 @@
 class ListsController < ApplicationController
-  before_filter :authenticate_user!, except: [:index, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
+  before_filter :authenticate_user!, except: [:index, :show, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
   before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
-
-  
 
   def self.get_lists(page)
     List
@@ -13,7 +11,7 @@ class ListsController < ApplicationController
       .order("entity_count DESC")
       .page(page).per(20)
   end
-  
+
   # GET /lists
   def index
     @lists = self.class.get_lists(params[:page])
@@ -40,7 +38,7 @@ class ListsController < ApplicationController
 
   # GET /lists/1/edit
   def edit
-    check_permission "admin" if @list.is_admin or @list.is_network
+    check_permission 'admin' if @list.is_admin || @list.is_network
   end
 
   # POST /lists
