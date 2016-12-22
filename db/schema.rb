@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161121184436) do
+ActiveRecord::Schema.define(version: 20161222185023) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -724,6 +724,7 @@ ActiveRecord::Schema.define(version: 20161121184436) do
     t.text     "annotations_data",  limit: 65535
     t.integer  "annotations_count", limit: 4,          default: 0,     null: false
     t.boolean  "list_sources",                         default: false, null: false
+    t.boolean  "is_cloneable",                         default: true,  null: false
   end
 
   add_index "network_map", ["delta"], name: "index_network_map_on_delta", using: :btree

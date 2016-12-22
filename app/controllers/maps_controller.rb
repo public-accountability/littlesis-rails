@@ -100,11 +100,11 @@ class MapsController < ApplicationController
     respond_to do |format|
       format.html {
         @editable = false
-
         @links = [
           { text: "embed", url: "#", id: "oligrapherEmbedLink" },
-          { text: "clone", url: clone_map_url(@map), method: "POST" }
+          
         ]
+        @links.push({ text: "clone", url: clone_map_url(@map), method: "POST" }) if @map.is_cloneable
         @links.push({ text: "edit", url: edit_map_url(@map) }) if is_owner
         @links.push({ text: "share link", url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
 
@@ -219,6 +219,7 @@ class MapsController < ApplicationController
       @map.description = params[:description] if params[:title].present?
       @map.is_featured = params[:is_featured] if params[:is_featured].present?
       @map.is_private = params[:is_private] if params[:is_private].present?
+      @map.is_cloneable = params[:is_cloneable] if params[:is_cloneable].present?
       @map.width = params[:width] if params[:width].present?
       @map.height = params[:height] if params[:height].present?
       @map.zoom = params[:zoom] if params[:zoom].present?
@@ -405,7 +406,7 @@ class MapsController < ApplicationController
   end
 
   def oligrapher_params
-    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_featured, :list_sources)
+    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_featured, :is_cloneable, :list_sources)
   end
 
   def is_owner
