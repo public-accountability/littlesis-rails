@@ -5,6 +5,9 @@ namespace :mysql do
 
     tables = [
       'alias',
+      'address_category',
+      'address_country',
+      'address_state',
       'business',
       'business_industry',
       'business_person',
@@ -66,5 +69,11 @@ namespace :mysql do
 
      `#{cmd}`
 
+    # our app user doesn't have correct permissions right now to run 'aws s3'
+    # puts "Copying to aws"
+    # aws_cmd = "aws s3 cp ~/ls_public_data_raw.sql s3://pai-littlesis/public-data/littlesis-public-data-#{Date.today.strftime.gsub('-', '')}.sql"
+    # puts "Running command: #{aws_cmd}"
+    # `#{aws_cmd}`
+     
   end
 end
