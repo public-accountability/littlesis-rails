@@ -162,8 +162,8 @@ var addRelationship = function() {
   function categories(entity1, entity2) {
     var personToPerson = [1,3,4,5,6,7,8,9,12];
     var personToOrg = [1,2,3,5,6,7,10,12];
-    var orgToPerson = [3,5,6,7,10,11,12];
-    var orgToOrg = [1,2,3,5,6,7,10,12];
+    var orgToPerson = [3,5,6,7,10,12];
+    var orgToOrg = [1,2,3,5,6,7,10,11,12];
     if (entity1 === 'Person' && entity2 === 'Person') {
       return personToPerson;
     } else if (entity1 === 'Person' && entity2 === 'Org') {
@@ -173,7 +173,7 @@ var addRelationship = function() {
     } else if (entity1 === 'Org' && entity2 === 'Org') {
       return orgToOrg;
     } else {
-      throw "Missing or incorrect primary extention type";
+      throw "Missing or incorrect primary extension type"; 
     }
   }
 
