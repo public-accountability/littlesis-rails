@@ -162,7 +162,7 @@ var addRelationship = function() {
   function categories(entity1, entity2) {
     var personToPerson = [1,3,4,5,6,7,8,9,12];
     var personToOrg = [1,2,3,5,6,7,10,12];
-    var orgToPerson = [3,5,6,7,10,12];
+    var orgToPerson = [1,3,5,6,7,10,12];
     var orgToOrg = [1,2,3,5,6,7,10,11,12];
     if (entity1 === 'Person' && entity2 === 'Person') {
       return personToPerson;
@@ -219,13 +219,32 @@ var addRelationship = function() {
     } 
   } 
 
+  // -> int | null
+  function category_id() {
+    return ($('#category-selection button.active').length > 0) ? $('#category-selection button.active').data().categoryid : null;
+  }
+
+
+  /** 
+   Entity1 must be a 'person' for position relationshps. This func switches the entity ids if the relationship
+   is between an Org and a Person and the org is current at the entity1_position.
+   */
+  function reverseEntityIdsIf() {
+    if (category_id() === 1 && entityInfo('entitytype') === 'Org') {
+      var tmp = entity1_id;
+      entity1_id = entity2_id;
+      entity2_id = tmp;
+    }
+  }
+
   // -> object
   function submissionData() {
+    reverseEntityIdsIf();
     return {
       relationship: {
 	entity1_id: entity1_id,
 	entity2_id: entity2_id,
-	category_id: ($('#category-selection button.active').length > 0) ? $('#category-selection button.active').data().categoryid : null
+	category_id: category_id()
       },
       reference: {
 	name: $('#reference-name').val(),
