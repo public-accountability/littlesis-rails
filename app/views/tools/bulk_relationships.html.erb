@@ -1,2 +1,26 @@
-<h1>Tools#bulk</h1>
-<p>Find me in app/views/tools/bulk.html.erb</p>
+<h1>Bulk Add Relationships for <%= @entity.name %></h1>
+
+<%= render partial: 'shared/entity_info', locals: { entity: @entity } %>
+
+<div id="table" class="table-editable">
+    <span class="table-add glyphicon glyphicon-plus"></span>
+    <table class="table">
+	<thead>
+	    <tr>
+		<th>Name</th>
+		<th>Blurb</th>
+		<th></th>
+	    </tr>
+	</thead>
+	<tbody>
+	</tbody>
+    </table>
+</div>
+<button id="export-btn" class="btn btn-primary">Export Data</button>
+<p id="export"></p>
+<script>
+$(document).ready(function(){
+   bulkAdd.init();
+});
+</script>
+

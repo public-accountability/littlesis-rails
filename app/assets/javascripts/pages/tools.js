@@ -1,6 +1,41 @@
-// Place all the behaviors and hooks related to the matching controller here.
-// All this logic will automatically be available in application.js.
+/**
+ Editable bulk add relationships table
+ 
+ Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
+*/
+var bulkAdd = (function($){
 
-var bulkAdd = {
-  test: function() { return 'test'; }
-};
+  function test() { return 'test'; }
+  
+  function appendNewRow() {
+    $('#table').find('tbody').append(
+      $('<tr>').append( [
+	$('<td>', { contenteditable: 'true', text: 'Entity Name'}),
+	$('<td>', { contenteditable: 'true', text: 'Blurb'}),
+	$('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>')
+      ])
+    );
+  }
+
+  function addRemove() {
+    $('.table-add').click(appendNewRow);
+    $('#table').on('click', '.table-remove', function() {
+      $(this).parents('tr').detach();
+    });
+  } 
+
+  function exportClick() {
+    $('#export-btn').click(function() {
+      $('table').find('tr')
+    });
+  }
+  
+  return {
+    test: test,
+    init: function() { 
+      addRemove();
+      appendNewRow();
+    }
+  };
+
+})(jQuery);;
