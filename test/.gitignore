@@ -1,0 +1,6 @@
+node_modules
+sinon*.js
+
+# symlinked asessts
+assets
+vendor

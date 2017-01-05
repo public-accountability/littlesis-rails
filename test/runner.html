@@ -6,18 +6,21 @@
     </head>
     <body>
         <div id="mocha"></div>
-
-        <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
+	<div id="test" style="dispay: none;"></div>
+        <script src="node_modules/jquery/dist/jquery.min.js"></script>
         <script src="vendor/assets/javascripts/d3.v4.min.js"></script>
         <script src="node_modules/mocha/mocha.js"></script>
         <script src="node_modules/chai/chai.js"></script>
+	<script src="sinon-1.17.6.js"></script>
          <script>
             mocha.setup('bdd');
             var expect = chai.expect;
         </script>
         
+	<script src="assets/javascripts/common/utility.js"></script>
         <script src="assets/javascripts/pages/entity.js"></script>
 	<script src="assets/javascripts/pages/tools.js"></script>
+	<script src="test.utility.js"></script>
         <script src="test.entity.js"></script>
 	<script src="test.bulkAdd.js"></script>
         <script>

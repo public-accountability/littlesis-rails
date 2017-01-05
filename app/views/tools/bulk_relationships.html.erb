@@ -2,20 +2,38 @@
 
 <%= render partial: 'shared/entity_info', locals: { entity: @entity } %>
 
+<div class="row">
+    <div class="col-sm-8 col-sm-offset-2">
+	<%= select_builder @entity.primary_ext %>
+    </div>
+</div>
+
 <div id="table" class="table-editable">
-    <span class="table-add glyphicon glyphicon-plus"></span>
-    <table class="table">
+    <table class="table table-bordered">
 	<thead>
-	    <tr>
-		<th>Name</th>
-		<th>Blurb</th>
-		<th></th>
+	    <!-- <tr>
+		 <th class="col-1">Name</th>
+		 <th class="col-2">Entity Type</th>
+		 <th class="col-3">Blurb</th>
+		 <th class="col-4">Description1</th>
+		 <th class="col-5">Description2</th>
+		 <th class="col-6">Is Current</th>
+		 <th class="col-7">Start Date</th>
+		 <th class="col-8">End Date</th>
+		 <th class="col-9">Board Member?</th>
+		 <th class="col-10">Amount</th>
+		 <th class="col-11">Reference URL</th>
+		 <th class="col-12">Reference Name</th>
+		 <th class="col-13">
+		 <span class="glyphicon glyphicon-plus table-add"></span>
+		 </th> -->
 	    </tr>
 	</thead>
 	<tbody>
 	</tbody>
     </table>
 </div>
+<!-- <span class="table-add glyphicon glyphicon-plus"></span></th> -->
 <button id="export-btn" class="btn btn-primary">Export Data</button>
 <p id="export"></p>
 <script>
