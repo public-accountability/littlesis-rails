@@ -17,6 +17,30 @@ describe('bulkAdd', function(){
     });
   });
 
+  describe('createTable()', function() {
+    it('append tr to thead', sinon.test(function() {
+      var html = this.stub($.fn, 'html');
+      bulkAdd.createTable(1);
+      expect(html.calledOnce).to.eql(true);
+      expect(html.firstCall.args[0]).to.eql('<tr></tr>');
+    }));
+    
+    it('appends <th> 8 times with position', sinon.test(function() {
+      this.stub($.fn, 'html');
+      var append = this.stub($.fn, 'append');
+      bulkAdd.createTable(1);
+      expect(append.callCount).to.eql(8);
+    }));
+    
+    it('appends <th> 7 times with eduction', sinon.test(function() {
+      this.stub($.fn, 'html');
+      var append = this.stub($.fn, 'append');
+      bulkAdd.createTable(2);
+      expect(append.callCount).to.eql(7);
+    }));
+  });
+
+  
   describe('relationshipSelect', function(){
     before( () => {
       var stub = sinon.stub(utility, "entityInfo");

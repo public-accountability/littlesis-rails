@@ -27,8 +27,26 @@ var bulkAdd = (function($, utility){
     return $('<select>').append(options);
   }
 
+  
+  // Adds column titled (located at col[0]) to thead
+  // [ string ] -> 
+  function addColToThead(col) {
+    $('#table thead tr').append($('<th>', {text: col[0] }));
+  }
+  
+  // recreates table with provded relationship category
+  // int -> 
+  function createTable(selectedCat) {
+    $('#table thead').html('<tr></tr>');
+    utility.relationshipDetails(selectedCat).forEach(addColToThead);
+    $('#table thead tr').append('<th><span class="glyphicon glyphicon-plus table-add"></span></th>');
+  }
+
+  // Sets up table according to selected relationship
   function tableSetup() {
-    
+    $('#relationship-cat-select').change(function(x){
+      createTable(Number($(this).find('option:selected').val()));
+    });
   }
 
   function appendNewRow() {
@@ -67,10 +85,13 @@ var bulkAdd = (function($, utility){
   
   return {
     appendNewRow: appendNewRow,
-    relationshipSelect: relationshipSelect, 
+    relationshipSelect: relationshipSelect,
+    createTable: createTable,
     init: function() { 
       // addRemove();
       // appendNewRow();
+      tableSetup();
+      
     }
   };
 
