@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161222185023) do
+ActiveRecord::Schema.define(version: 20170109160535) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1241,21 +1241,21 @@ ActiveRecord::Schema.define(version: 20161222185023) do
   create_table "reference", force: :cascade do |t|
     t.string   "fields",           limit: 200
     t.string   "name",             limit: 100
-    t.string   "source",           limit: 200,             null: false
-    t.string   "source_detail",    limit: 50
+    t.string   "source",           limit: 1000,             null: false
+    t.string   "source_detail",    limit: 255
     t.string   "publication_date", limit: 10
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "object_model",     limit: 50,              null: false
-    t.integer  "object_id",        limit: 8,               null: false
+    t.string   "object_model",     limit: 50,               null: false
+    t.integer  "object_id",        limit: 8,                null: false
     t.integer  "last_user_id",     limit: 4
-    t.integer  "ref_type",         limit: 4,   default: 1, null: false
+    t.integer  "ref_type",         limit: 4,    default: 1, null: false
   end
 
   add_index "reference", ["last_user_id"], name: "last_user_id_idx", using: :btree
   add_index "reference", ["name"], name: "name_idx", using: :btree
   add_index "reference", ["object_model", "object_id", "updated_at"], name: "object_idx", using: :btree
-  add_index "reference", ["source"], name: "source_idx", using: :btree
+  add_index "reference", ["source"], name: "source_idx", length: {"source"=>255}, using: :btree
   add_index "reference", ["updated_at"], name: "updated_at_idx", using: :btree
 
   create_table "reference_excerpt", force: :cascade do |t|
