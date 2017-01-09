@@ -131,7 +131,7 @@ describe OsMatch, type: :model do
   end
 
   describe '#update_donation_relationship' do
-    before(:all) do 
+    before(:all) do
       DatabaseCleaner.start
       @relationship_count = Relationship.count
       @loeb = create(:loeb)
@@ -204,13 +204,21 @@ describe OsMatch, type: :model do
         expect(@os_match.relationship.reload.filings).to eql 2
         expect(@os_match2.relationship.filings).to eql 2
       end
-      
+
       it 'changes start_date' do
         expect(@os_match.relationship.reload.start_date).to eql '2010-02-02'
       end
 
       it 'keeps same end date' do 
-        expect(@os_match.relationship.reload.end_date).to eql "2011-11-29"
+        expect(@os_match.relationship.reload.end_date).to eql '2011-11-29'
+      end
+    end
+
+    context 'the os_donation date is null' do
+      it 'handles null date' do
+        os_donation = create(:loeb_donation_one, fec_cycle_id: rand(1000), date: nil)
+        os_match = OsMatch.create(os_donation_id: os_donation.id, donor_id: @loeb.id, recip_id: @nrsc.id)
+        expect { os_match.update_donation_relationship }.not_to raise_error
       end
     end
 
@@ -222,7 +230,7 @@ describe OsMatch, type: :model do
         @loeb_old = create(:loeb, merged_id: @loeb_new.id, id: rand(1000), is_deleted: true)
         @match = OsMatch.create(os_donation_id: donation.id, donor_id: @loeb_old.id, recip_id: @nrsc.id)
       end
-      after {  DatabaseCleaner.clean }
+      after { DatabaseCleaner.clean }
 
       it 'changes os_match donor_id' do
         expect(@match.donor_id).to eql @loeb_old.id

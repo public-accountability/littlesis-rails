@@ -116,29 +116,34 @@ describe Relationship, type: :model do
         r = build(:loeb_donation, start_date: "2012-4-10")
         expect(r.date_string_to_date(:start_date)).to eq Date.new(2012, 4, 10)
       end
-      
     end
-    
   end
 
   describe '#update_start_date_if_earlier' do
-    it 'updates start date' do 
+    it 'updates start date' do
       @loeb_donation.update_start_date_if_earlier Date.new(1999)
       expect(@loeb_donation.start_date).to eql('1999-01-01')
-    end 
+    end
 
-    it 'updates end date' do 
+    it 'updates end date' do
       @loeb_donation.update_end_date_if_later Date.new(2012)
       expect(@loeb_donation.end_date).to eql('2012-01-01')
     end
-    
-    it 'does not change if not earlier' do 
+
+    it 'does not change if not earlier' do
       @loeb_donation.update_start_date_if_earlier Date.new(2010)
       expect(@loeb_donation.start_date).to eql('1999-01-01')
     end
 
-    it 'does not change if not later' do 
+    it 'does not change if not later' do
       @loeb_donation.update_end_date_if_later Date.new(2010)
+      expect(@loeb_donation.end_date).to eql('2012-01-01')
+    end
+
+    it 'can handle nil input' do
+      @loeb_donation.update_start_date_if_earlier nil
+      expect(@loeb_donation.start_date).to eql('1999-01-01')
+      @loeb_donation.update_end_date_if_later nil
       expect(@loeb_donation.end_date).to eql('2012-01-01')
     end
   end

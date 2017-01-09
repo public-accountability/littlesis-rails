@@ -271,6 +271,7 @@ class Relationship < ActiveRecord::Base
 
   # input: <Date>
   def update_start_date_if_earlier(new_date)
+    return nil if new_date.nil?
     if date_string_to_date(:start_date).nil?
       update_attribute(:start_date, new_date.to_s)
     elsif new_date < date_string_to_date(:start_date)
@@ -281,6 +282,7 @@ class Relationship < ActiveRecord::Base
   end
 
   def update_end_date_if_later(new_date)
+    return nil if new_date.nil?
     if date_string_to_date(:end_date).nil?
       update_attribute(:end_date, new_date.to_s)
     elsif new_date > date_string_to_date(:end_date)
