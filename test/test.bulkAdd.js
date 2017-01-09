@@ -1,28 +1,12 @@
 describe('bulkAdd', function(){
-  
-  describe('addRemove', function() {
-    before(function() { 
-      $('#test').html('<div id="table"><table><tbody></tbody></table></div>');
-      sinon.stub(utility, "entityInfo").returns('Person');
-    });
-    after(function() {  
-      utility.entityInfo.restore();
-      $('#test').empty();
-    });
     
-    it('appends row to tbody', function() {
-      expect($('tbody tr').length).to.eql(0);
-      bulkAdd.appendNewRow();
-      expect($('tbody tr').length).to.eql(1);
-    });
-  });
 
   describe('createTable()', function() {
-    it('append tr to thead', sinon.test(function() {
+    it('adds thead and tbody', sinon.test(function() {
       var html = this.stub($.fn, 'html');
       bulkAdd.createTable(1);
       expect(html.calledOnce).to.eql(true);
-      expect(html.firstCall.args[0]).to.eql('<tr></tr>');
+      expect(html.firstCall.args[0]).to.eql('<thead><tr></tr></thead><tbody></tbody>');
     }));
     
     it('appends <th> 8 times with position', sinon.test(function() {

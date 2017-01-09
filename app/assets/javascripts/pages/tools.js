@@ -5,15 +5,18 @@
 */
 var bulkAdd = (function($, utility){
   
-  function isNil(x) { return !Boolean(x);}
-  
   // generates <td> tag
-  // input: str, [boolean, str, str]
-  function td(text, editable, cls, append) {
-    editable = isNil(editable) ? 'false' : 'true';
-    cls = isNil(editable) ? '' : cls;
-    append = isNil(append) ? '' : append;
-    return $('<td>', { contenteditable: editable, text: text, class: cls}).append(append);
+  // input [str]
+  function td(col) {
+    var isBooleanColumn = col[2] === 'boolean';
+    var editable = isBooleanColumn ? 'false' : 'true';
+    var td = $('<td>', { contenteditable: editable, text: '' });
+    if (isBooleanColumn) {
+      // include checkbox if boolean
+      return td.append('<input type="checkbox">');
+    } else {
+      return td;
+    }
   }
 
   function relationshipSelect() {
@@ -26,7 +29,6 @@ var bulkAdd = (function($, utility){
     });
     return $('<select>').append(options);
   }
-
   
   // Adds column titled (located at col[0]) to thead
   // [ string ] -> 
@@ -37,7 +39,7 @@ var bulkAdd = (function($, utility){
   // recreates table with provded relationship category
   // int -> 
   function createTable(selectedCat) {
-    $('#table thead').html('<tr></tr>');
+    $('#table table').html('<thead><tr></tr></thead><tbody></tbody>');
     utility.relationshipDetails(selectedCat).forEach(addColToThead);
     $('#table thead tr').append('<th><span class="glyphicon glyphicon-plus table-add"></span></th>');
   }
@@ -49,29 +51,21 @@ var bulkAdd = (function($, utility){
     });
   }
 
+  function relationshipDetails() {
+    var category = Number($('#relationship-cat-select option:selected').val());
+    return utility.relationshipDetails(category);
+  }
+
   function appendNewRow() {
-    var checkbox = '<input type="checkbox">';
-    $('#table').find('tbody').append(
-      $('<tr>').append( [
-	td('Entity Name or ID', true, 'col-1'),
-	td('', false, 'col-2', relationshipSelect()),
-	td('', true, 'col-3'),
-	td('', true, 'col-4'),
-	td('', true, 'col-5'),
-	td('', false, 'col-6', checkbox),
-	td('', true, 'col-7'),
-	td('', true, 'col-8'),
-	td('', false, 'col-9', checkbox),
-	td('', true, 'col-10'),
-	td('', true, 'col-11'),
-	td('', true, 'col-12'),
-	td('', false, 'col-13', '<span class="table-remove glyphicon glyphicon-remove"></span>')
-      ])
-    );
+    var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>');
+    var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd));
+    $('#table tbody').append(row);
   }
 
   function addRemove() {
-    $('.table-add').click(appendNewRow);
+    $('#table').on('click', '.table-add', function() {
+      appendNewRow();
+    });
     $('#table').on('click', '.table-remove', function() {
       $(this).parents('tr').detach();
     });
@@ -79,19 +73,17 @@ var bulkAdd = (function($, utility){
 
   function exportClick() {
     $('#export-btn').click(function() {
-      $('table').find('tr')
     });
   }
   
   return {
     appendNewRow: appendNewRow,
     relationshipSelect: relationshipSelect,
+    relationshipDetails: relationshipDetails,
     createTable: createTable,
     init: function() { 
-      // addRemove();
-      // appendNewRow();
       tableSetup();
-      
+      addRemove();
     }
   };
 
