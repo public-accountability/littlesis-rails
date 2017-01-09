@@ -81,7 +81,6 @@ module RelationshipDisplay
   end
 
   def title_in_parens
-    title.nil? ? "" : " (#{title}) "
+    title.nil? ? ' ' : " (#{title}) "
   end
-  
 end
