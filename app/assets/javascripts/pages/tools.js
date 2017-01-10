@@ -1,6 +1,5 @@
 /**
- Editable bulk add relationships table
- 
+ Editable bulk add relationships table 
  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
 */
 var bulkAdd = (function($, utility){
@@ -44,14 +43,41 @@ var bulkAdd = (function($, utility){
     $('#table thead tr').append('<th><span class="glyphicon glyphicon-plus table-add"></span></th>');
   }
 
+  function searchRequest(text, callback) {
+    $.getJSON('/search/entity', {
+      num: 10,
+      q: text,
+      no_summary: true
+    })
+      .done(function(result){
+	callback(result.map(function(e){
+	  return { value: e.id, label: e.name };
+	}));
+      })
+      .fail(function() {
+	callback([]);
+      });
+  }
+
+  var autocompleteTd = {
+    contenteditable: 'true',
+    autocomplete: {
+      source: function(request, responce) {
+	searchRequest(request.term, responce);
+      }
+    }
+  };
 
   // generates <td> for new row
   // [] -> Element
   function td(col) {
-    var isBooleanColumn = col[2] === 'boolean';
-    var td = $('<td>', { contenteditable: isBooleanColumn ? 'false' : 'true' });
-    // include checkbox if boolean
-    return isBooleanColumn ? td.append('<input type="checkbox">') : td;
+    if (col[2] === 'boolean') {  // boolean column
+      return $('<td>').append('<input type="checkbox">');  // include checkbox
+    } else if (col[1] === 'name') { // autocomplete for entity
+      return $('<td>', autocompleteTd);
+    } else {
+      return $('<td>', { contenteditable: 'true'}); // return editable column
+    }
   }
   
   // Adds a new blank row to the table
@@ -113,10 +139,13 @@ var bulkAdd = (function($, utility){
     });
   }
   
+  
+
   return {
     relationshipDetails: relationshipDetails,
     createTable: createTable,
     tableToJson: tableToJson,
+    search: searchRequest,
     init: function() { 
       domListeners();
       exportClick();
