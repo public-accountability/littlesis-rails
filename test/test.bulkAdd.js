@@ -1,6 +1,4 @@
 describe('bulkAdd', function(){
-    
-
   describe('createTable()', function() {
     it('adds thead and tbody', sinon.test(function() {
       var html = this.stub($.fn, 'html');
@@ -47,34 +45,15 @@ describe('bulkAdd', function(){
 	blurb: '1',
 	primary_ext: '2',
 	description1: '3',
-	is_current: '4',
+	is_current: null,
 	start_date: '5',
 	end_date: '6',
-	is_board: '7',
-	is_executive: '8',
+	is_board: null,
+	is_executive: null,
 	compensation: '9'
       }];
       expect(result).to.eql(expected);
     }));
-    
   });
-  
-  // describe('relationshipSelect', function(){
-  //   before( () => {
-  //     var stub = sinon.stub(utility, "entityInfo");
-  //     stub.onCall(0).returns('Org');
-  //     stub.onCall(1).returns('Person');
-  //   });
-    
-  //   after( () => utility.entityInfo.restore() );
-
-  //   it('returns list with 9 options when entity is an org', function(){
-  //     expect(bulkAdd.relationshipSelect().children().length).to.eql(9);
-  //   });
-
-  //   it('returns list with 12 options when entity is a person', function(){
-  //     expect(bulkAdd.relationshipSelect().children().length).to.eql(12);
-  //   });
-  // });
 
 });

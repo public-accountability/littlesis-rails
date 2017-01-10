@@ -5,26 +5,8 @@
 */
 var bulkAdd = (function($, utility){
   
-  // generates <td> tag
-  // input [str]
-  function td(col) {
-    var isBooleanColumn = col[2] === 'boolean';
-    var td = $('<td>', { contenteditable: isBooleanColumn ? 'false' : 'true' });
-    // include checkbox if boolean
-    return isBooleanColumn ? td.append('<input type="checkbox">') : td;
-  }
-  
-  // Adds column titled (located at col[0]) to thead
-  // [ string ] -> 
-  function addColToThead(col) {
-    $('#table thead tr').append(
-      $('<th>', {
-	text: col[0], 
-	data: { 'colName': col[1], 'colType': col[2] }
-      })
-    );
-  }
-  
+  // This is the structure of table. The number and types of columns vary by
+  // relationship type. See utility.js for more information
   // -> [[]]
   function relationshipDetails() {
     var category = Number($('#relationship-cat-select option:selected').val());
@@ -32,6 +14,8 @@ var bulkAdd = (function($, utility){
     return entityColumns.concat(utility.relationshipDetails(category));
   }
 
+  // -> [ {} }
+  // same information as above represented as an object.
   function relationshipDetailsAsObject() {
     return relationshipDetails().map(function(x) {
       return {
@@ -42,38 +26,54 @@ var bulkAdd = (function($, utility){
     });
   }
 
+  // Adds <th> with title to table header
+  // [] -> 
+  function addColToThead(col) {
+    $('#table thead tr').append(
+      $('<th>', {
+	text: col[0], 
+	data: { 'colName': col[1], 'colType': col[2] }
+      })
+    );
+  }
 
-  // recreates table with provded relationship category
+  // Creates Empty table based on the selected category
   function createTable() {
     $('#table table').html('<thead><tr></tr></thead><tbody></tbody>');
     relationshipDetails().forEach(addColToThead);
     $('#table thead tr').append('<th><span class="glyphicon glyphicon-plus table-add"></span></th>');
   }
 
-  // Sets up table according to selected relationship
-  function tableSetup() {
-    $('#relationship-cat-select').change(function(x){
-      createTable(Number($(this).find('option:selected').val()));
-    });
-  }
 
-  function appendNewRow() {
+  // generates <td> for new row
+  // [] -> Element
+  function td(col) {
+    var isBooleanColumn = col[2] === 'boolean';
+    var td = $('<td>', { contenteditable: isBooleanColumn ? 'false' : 'true' });
+    // include checkbox if boolean
+    return isBooleanColumn ? td.append('<input type="checkbox">') : td;
+  }
+  
+  // Adds a new blank row to the table
+  function newBlankRow() {
     var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>');
     var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd));
     $('#table tbody').append(row);
   }
 
-  function addRemove() {
-    $('#table').on('click', '.table-add', function() {
-      appendNewRow();
-    });
+  // Sets up listeners for:
+  //   - click to add a new row
+  //   - remove row
+  //   - select a relationship category
+  function domListeners() {
+    $('#table').on('click', '.table-add', function() { newBlankRow(); });
     $('#table').on('click', '.table-remove', function() {
       $(this).parents('tr').detach();
     });
+    $('#relationship-cat-select').change(function(x){ createTable(); });
   } 
 
-  
-  // this returns the cell data according to it's type
+  // This returns the cell data according to it's type
   // Most types simply need to return the text, but a few,
   // such as boolean require a different step
   function extractCellData(cell, type) {
@@ -114,13 +114,11 @@ var bulkAdd = (function($, utility){
   }
   
   return {
-    appendNewRow: appendNewRow,
     relationshipDetails: relationshipDetails,
     createTable: createTable,
     tableToJson: tableToJson,
     init: function() { 
-      tableSetup();
-      addRemove();
+      domListeners();
       exportClick();
     }
   };
