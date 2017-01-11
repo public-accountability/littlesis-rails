@@ -27,7 +27,7 @@ end
 gem 'bootstrap-sass', '~> 3.3.7'
 
 gem 'jquery-rails'
-gem 'jquery-ui-rails'
+gem 'jquery-ui-rails', '~> 6.0.0'
 gem 'bootstrap-datepicker-rails'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks

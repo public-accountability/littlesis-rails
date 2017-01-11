@@ -13,7 +13,7 @@
 //= require jquery
 //= require bootstrap
 //= require jquery_ujs
-//= require jquery-ui
+//= require jquery-ui/widgets/autocomplete
 //= require jquery.bettertabs
 //= require jquery.shuffle
 //= require jquery.tinycarousel
@@ -24,7 +24,6 @@
 //= require bootsy
 //= require bootstrap-datepicker
 //= require bootstrap-select.min.js
-//= require twitter/typeahead
 //= require hogan-3.0.1.js
 //= require d3.v4.min.js
 //= require_tree ./common
