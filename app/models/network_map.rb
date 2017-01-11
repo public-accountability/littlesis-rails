@@ -11,7 +11,6 @@ class NetworkMap < ActiveRecord::Base
 
   has_many :topic_maps, inverse_of: :map
   has_many :topics, through: :topic_maps, inverse_of: :maps
-  has_many :annotations, class_name: "MapAnnotation", foreign_key: "map_id", inverse_of: :map
 
   delegate :user, to: :sf_guard_user
 
