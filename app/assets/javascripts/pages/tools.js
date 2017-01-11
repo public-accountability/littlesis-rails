@@ -9,7 +9,7 @@ var bulkAdd = (function($, utility){
   // -> [[]]
   function relationshipDetails() {
     var category = Number($('#relationship-cat-select option:selected').val());
-    var entityColumns = [ [ 'Name or ID', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'text'] ];
+    var entityColumns = [ [ 'Name or ID', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'select'] ];
     return entityColumns.concat(utility.relationshipDetails(category));
   }
 
@@ -43,6 +43,9 @@ var bulkAdd = (function($, utility){
     $('#table thead tr').append('<th><span class="glyphicon glyphicon-plus table-add"></span></th>');
   }
 
+  
+  // AJAX request route: /search/entity
+  // str, function -> callback([{}])
   function searchRequest(text, callback) {
     $.getJSON('/search/entity', {
       num: 10,
@@ -50,8 +53,9 @@ var bulkAdd = (function($, utility){
       no_summary: true
     })
       .done(function(result){
-	callback(result.map(function(e){
-	  return { value: e.id, label: e.name };
+	callback(result.map(function(entity){
+	  // set the value field to be the name for jquery autocomplete
+	  return Object.assign({ value: entity.name }, entity);
 	}));
       })
       .fail(function() {
@@ -59,14 +63,33 @@ var bulkAdd = (function($, utility){
       });
   }
 
-  var autocompleteTd = {
+  // options for the entity search autocomplete <td>
+  var autocomplete = {
     contenteditable: 'true',
     autocomplete: {
       source: function(request, responce) {
 	searchRequest(request.term, responce);
+      },
+      select: function( event, ui ) {
+	// store entity id in dataset
+	$(this).data('entityid', ui.item.id);
+	//  requires order of table to be: name -> blurb -> entityType
+	var blurb = $(this).next();
+	var entityType = blurb.next();
+	blurb.text(ui.item.description ? ui.item.description : '');
+	entityType.find('select').selectpicker('val', ui.item.primary_type);
       }
     }
   };
+
+  function primaryExtRadioButtons() {
+    // Using selectpicker with multiple and max-options 1 in order to get the
+    // 'Nothing selected' message displayed.
+    return $('<select>', { 
+      'class': 'selectpicker',
+      'data-width': 'fit'
+    }).append('<option></option><option>Org</option><option>Person</option>');
+  }
 
   // generates <td> for new row
   // [] -> Element
@@ -74,8 +97,11 @@ var bulkAdd = (function($, utility){
     if (col[2] === 'boolean') {  // boolean column
       return $('<td>').append('<input type="checkbox">');  // include checkbox
     } else if (col[1] === 'name') { // autocomplete for entity
-      return $('<td>', autocompleteTd);
-    } else {
+      return $('<td>', autocomplete);
+    } else if (col[1] === 'primary_ext') {
+      return $('<td>').append(primaryExtRadioButtons());
+    } 
+    else {
       return $('<td>', { contenteditable: 'true'}); // return editable column
     }
   }
@@ -85,6 +111,7 @@ var bulkAdd = (function($, utility){
     var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>');
     var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd));
     $('#table tbody').append(row);
+    $('#table .selectpicker').selectpicker();
   }
 
   // Sets up listeners for:
@@ -108,11 +135,14 @@ var bulkAdd = (function($, utility){
       // However, to keep things simple, right now the false/un-checked state defaults to null
       // So in this tool there is no way of saying that a person is NOT a board member.
       return cell.find('input').is(':checked') ? true : null; 
+    } else if (type === 'select') {
+      var selectpickerArr = cell.find('.selectpicker').selectpicker('val');
+      return selectpickerArr ? selectpickerArr : null;
     } else {
       return cell.text();
     }
   }
-  
+
   //  [{}], element -> {}
   function rowToJson(tableDetails, row) {
     var obj = {};
@@ -138,7 +168,6 @@ var bulkAdd = (function($, utility){
       console.log(tableToJson('#table'));
     });
   }
-  
   
 
   return {
