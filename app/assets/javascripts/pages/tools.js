@@ -13,7 +13,7 @@ var bulkAdd = (function($, utility){
     return entityColumns.concat(utility.relationshipDetails(category));
   }
 
-  // -> [ {} }
+  // -> [ {} ]
   // same information as above represented as an object.
   function relationshipDetailsAsObject() {
     return relationshipDetails().map(function(x) {
@@ -42,7 +42,6 @@ var bulkAdd = (function($, utility){
     relationshipDetails().forEach(addColToThead);
     $('#table thead tr').append('<th><span class="glyphicon glyphicon-plus table-add"></span></th>');
   }
-
   
   // AJAX request route: /search/entity
   // str, function -> callback([{}])
@@ -111,24 +110,31 @@ var bulkAdd = (function($, utility){
     var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>');
     var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd));
     $('#table tbody').append(row);
+    // Because we create the selectpicker after the dom has loaded, we must iniitalize it here:
     $('#table .selectpicker').selectpicker();
   }
 
-  // Sets up listeners for:
+  // Establishes listeners for:
   //   - click to add a new row
   //   - remove row
   //   - select a relationship category
+  //   - upload data button click
   function domListeners() {
     $('#table').on('click', '.table-add', function() { newBlankRow(); });
     $('#table').on('click', '.table-remove', function() {
       $(this).parents('tr').detach();
     });
     $('#relationship-cat-select').change(function(x){ createTable(); });
+    $('#upload-btn').click(function() {
+      $('.bg-warning').removeClass('bg-warning');
+      validate('#table');
+      console.log(tableToJson('#table', relationshipDetailsAsObject()));
+    });
   } 
 
-  // This returns the cell data according to it's type
-  // Most types simply need to return the text, but a few,
-  // such as boolean require a different step
+  // This returns the cell data
+  // Most types simply need to return the text inside the element.
+  // Two expetions: checkboxes and <select>'s
   function extractCellData(cell, type) {
     if (type === 'boolean') {
       // Technically we should allow three values for this field: true, false, and null.
@@ -153,31 +159,74 @@ var bulkAdd = (function($, utility){
     return obj;
   }
 
-  // str -> [ {} ]
-  // Given the selector of a <table> it returns the data as an array
-  // of objects
-  function tableToJson(selector) {
-    var _rowToJson = rowToJson.bind(null, relationshipDetailsAsObject());
+  // str, [ {} ] -> [ {} ]
+  // columns should be relationshipDetailsAsObject()
+  // Given the selector of a <table> and it's associated column data
+  // it returns the data as an array of objects
+  function tableToJson(selector, columns) {
+    var _rowToJson = rowToJson.bind(null, columns);
     return $(selector + ' tbody tr').map(function(){
       return _rowToJson(this);
     }).toArray();
   }
 
-  function exportClick() {
-    $('#export-btn').click(function() {
-      console.log(tableToJson('#table'));
+  // <td> Element -> false
+  // displays validations and return false;
+  function invalidDisplay(element) {
+    $(element).addClass('bg-warning');
+    return false;
+  }
+
+  // input: arr, element, function
+  // calls the provided function on each cell in the row with these args:
+  // rowInfo ({}), cell (element), cellData (various)
+  function traverseRow(columns, row, func) {
+    columns.forEach(function(rowInfo, i){
+      var cell = $(row).find('td:nth-child(' + (i + 1) + ')');
+      var cellData = extractCellData(cell, rowInfo.type);
+      func(rowInfo, cell, cellData);
     });
   }
+
+  // If cell is in valid it called invalidDisplay and returns false;
+  // Otherwise it returns true
+  // {}, element, * -> boolean
+  function cellValidation(rowInfo, cell, cellData) {
+    if (['name', 'primary_ext'].includes(rowInfo.key) && !cellData) {
+      return invalidDisplay(cell);
+    }
+    if (cellData && rowInfo.type === 'date' && !utility.validDate(cellData)) {
+      return invalidDisplay(cell);
+    }
+    return true;
+  }
   
+  // Verifies that each 
+  function validate(selector) {
+    var valid = true; // flag if table is valid
+    var columns = relationshipDetailsAsObject();
+    // for each row
+    $(selector + ' tbody tr').each(function(){
+      // for each cell in the row
+      traverseRow(columns, this, function(rowInfo, cell, cellData){
+	// highlighed cell if invalid and return status
+	valid = cellValidation(rowInfo, cell, cellData);
+      });
+    });
+    return valid;
+  }
 
   return {
     relationshipDetails: relationshipDetails,
+    relationshipDetailsAsObject: relationshipDetailsAsObject,
     createTable: createTable,
     tableToJson: tableToJson,
     search: searchRequest,
+    validate: validate,
+    cellValidation: cellValidation,
+    invalidDisplay: invalidDisplay,
     init: function() { 
       domListeners();
-      exportClick();
     }
   };
 

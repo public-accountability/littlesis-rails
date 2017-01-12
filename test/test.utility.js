@@ -29,4 +29,17 @@ describe('utility', function(){
       expect(() => utility.relationshipDetails(13)).to.throw(/Invalid relationship/);
     });
   });
+
+  describe('validDate', function() {
+
+    it('works with good dates', function() {
+      ['2016-01-01', '1992-12-03'].map(utility.validDate).forEach( d => expect(d).to.be.true );
+    });
+
+    it('works with bad dates', function() {
+      ['tuesday', '20000-01-01', '1888-01', '1999-13-02', '2000-01-50']
+	.map(utility.validDate).forEach( d => expect(d).to.be.false );
+    });
+
+  });
 });

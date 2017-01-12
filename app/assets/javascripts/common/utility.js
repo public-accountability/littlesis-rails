@@ -125,3 +125,18 @@ utility.relationshipDetails = function(category) {
     throw 'Invalid relationship category. It must a be a number between 1 and 12';
   }
 };
+
+utility.validDate = function(str) {
+  var date = str.split('-');
+  if (date.length !== 3
+      || date[0].length !== 4
+      || date[1].length !== 2
+      || date[2].length !== 2
+      || Number(date[1]) > 12
+      || Number(date[1]) < 1
+      || Number(date[2]) > 31)
+  {
+    return false;
+  }
+  return true;
+};
