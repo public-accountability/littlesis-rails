@@ -144,9 +144,8 @@ var bulkAdd = (function($, utility){
     });
     $('#relationship-cat-select').change(function(x){ createTable(); });
     $('#upload-btn').click(function() {
-      $('.bg-warning').removeClass('bg-warning');
-      validate('#table');
-      console.log(tableToJson('#table', relationshipDetailsAsObject()));
+      submit();
+      
     });
   } 
 
@@ -166,7 +165,7 @@ var bulkAdd = (function($, utility){
       // If the entity was selected using the search there will be an entityid field in the cell's dataset
       return cell.data('entityid');
     } else {
-      return cell.text();
+      return (cell.text() === '') ? null : cell.text();
     }
   }
 
@@ -209,7 +208,7 @@ var bulkAdd = (function($, utility){
     });
   }
 
-  // If cell is in valid it called invalidDisplay and returns false;
+  // Calls invalidDisplay  for invalid cells and returns false;
   // Otherwise it returns true
   // {}, element, * -> boolean
   function cellValidation(rowInfo, cell, cellData) {
@@ -222,19 +221,125 @@ var bulkAdd = (function($, utility){
     return true;
   }
   
-  // Verifies that each 
+  
+  // an indicator that can only go from true to false.
+  function ValidFlag() {
+    this.status = true;
+    this.setStatus = function(input) {
+      if (!input) { this.status = false; }
+    };
+  }
+
+  // Verifies that each cell is valid
+  // str -> boolean
   function validate(selector) {
-    var valid = true; // flag if table is valid
+    var validFlag = new ValidFlag();
     var columns = relationshipDetailsAsObject();
     // for each row
     $(selector + ' tbody tr').each(function(){
       // for each cell in the row
       traverseRow(columns, this, function(rowInfo, cell, cellData){
 	// highlighed cell if invalid and return status
-	valid = cellValidation(rowInfo, cell, cellData);
+	validFlag.setStatus(cellValidation(rowInfo, cell, cellData));
       });
     });
-    return valid;
+    return validFlag.status;
+  }
+
+  function showAlert(message, alertType) {
+    var html = '<div class="alert alert-dismissible !!TYPE!!" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>!!MESSAGE!!</div>'
+	  .replace('!!MESSAGE!!', message).replace('!!TYPE!!', alertType);
+    $('#alert-container').html(html);
+  }
+
+  function validateReference() {
+    $('#alert-container').empty();
+    var url = document.getElementById('reference-url');
+    if (url.validity.valid) {
+      return true;
+    } else {
+      showAlert('Please enter in a valid source url', 'alert-danger');
+      return false;
+    }
+  }
+
+  function submit() {
+    if (validateReference()) {
+      $('.bg-warning').removeClass('bg-warning');
+      if ( validate('#table') ) {
+	console.log(tableToJson('#table', relationshipDetailsAsObject()));
+	submitRequest();
+      } else {
+	showAlert('Some cells are missing information or invalid!');
+      }
+    }
+  }
+
+
+  // data format:
+  // {
+  //   entity1_id: int,
+  //   category_id: int,
+  //   reference: {
+  //     source: str
+  //     name: str
+  //   }
+  //   relationships: [{}]
+  // }
+  function prepareTableData(data) {
+    var entity1_id = utility.entityInfo('entityid');
+    var category_id = Number($('#relationship-cat-select option:selected').val());
+    var reference = {
+	'source': $('#reference-url').val(),
+	'name': $('#reference-name').val()
+    };
+    return {
+      entity1_id: entity1_id,
+      category_id: category_id,
+      reference: reference,
+      relationships: data
+    };
+  }
+
+  var afterRequest = {
+    success: function() {
+      $('#table table').empty();
+      showAlert('The request was successful!', 'alert-success');
+    },
+    error: function() {
+      alert('something went wrong :(');
+    }
+  };
+  
+
+  // Sends the data for submission
+  // [{}] -> callbacks
+  function submitRequest() {
+    var data = prepareTableData(tableToJson('#table', relationshipDetailsAsObject()));
+    console.log(data);
+    $.ajax({
+      method: 'POST',
+      url: '/relationships/bulk_add',
+      data: data,
+      statusCode: {
+	201: function() {
+	  afterRequest.success();
+	},
+	207: function() {
+	  // partial sucuess...should eventually figure out what to do here
+	  afterRequest.success();
+	},
+	400: function() {
+	  afterRequest.error();
+	},
+	422: function() { 
+	  afterRequest.error();
+	}
+      },
+      error: function() {
+	afterRequest.error();
+      }
+    });
   }
 
   return {

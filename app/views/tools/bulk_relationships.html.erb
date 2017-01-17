@@ -3,9 +3,27 @@
 <%= render partial: 'shared/entity_info', locals: { entity: @entity } %>
 
 <div class="row">
-    <div class="col-sm-2 col-sm-offset-2"><strong>Relationship Category: </strong></div>
-    <div class="col-sm-6">
+    <div class="col-sm-8 col-sm-offset-2" id="alert-container">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">    
+	<span><em>Relationship Category</em></span>
 	<%= select_builder @entity.primary_ext %>
+    </div>
+    <div class="col-sm-4 col-sm-offset-1">
+	<div class="form-group">
+	    <span><em>Source Url*</em></span><br />
+	    <input type="url" id="reference-url" name="referenceUrl" required>
+	</div>
+	
+    </div>
+    <div class="col-sm-4">
+	<div class="form-group">
+	    <span><em>Source Name*</em></span><br />
+	    <input type="text" id="reference-name" name="referenceName">
+	</div>
     </div>
 </div>
 

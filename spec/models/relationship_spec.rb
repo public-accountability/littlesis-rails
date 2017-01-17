@@ -30,11 +30,13 @@ describe Relationship, type: :model do
     it { should have_many(:ny_matches) }
     it { should have_many(:ny_disclosures) }
   end
-  
+
   describe 'validations' do
     it { should validate_presence_of(:entity1_id) }
     it { should validate_presence_of(:entity2_id) }
     it { should validate_presence_of(:category_id) }
+    it { should validate_length_of(:start_date).is_at_most(10) }
+    it { should validate_length_of(:end_date).is_at_most(10) }
   end
 
   describe 'create_category' do
