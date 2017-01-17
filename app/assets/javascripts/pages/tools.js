@@ -54,7 +54,7 @@ var bulkAdd = (function($, utility){
       .done(function(result){
 	callback(result.map(function(entity){
 	  // set the value field to be the name for jquery autocomplete
-	  return Object.assign({ value: entity.name }, entity);
+	  return Object.assign({value: entity.name }, entity);
 	}));
       })
       .fail(function() {
@@ -70,11 +70,29 @@ var bulkAdd = (function($, utility){
 	searchRequest(request.term, responce);
       },
       select: function( event, ui ) {
-	// store entity id in dataset
-	$(this).data('entityid', ui.item.id);
+	event.preventDefault();
+	var cell = $(this);
 	//  requires order of table to be: name -> blurb -> entityType
-	var blurb = $(this).next();
+	var blurb = cell.next();
 	var entityType = blurb.next();
+	// add link to cell
+	cell.html( $('<a>', { href: 'https://littlesis.org' + ui.item.url, text: ui.item.name, target: '_blank' })) ;
+	cell.attr('contenteditable', 'false');
+	// store entity id in dataset
+	cell.data('entityid', ui.item.id);
+	// add reset-field option
+	cell.append( 
+	  $('<span>', { 
+	    'class': 'glyphicon glyphicon-edit reset-name',
+	    click: function() {
+	      cell.empty();  // empty the cell
+	      blurb.empty(); // empty blurb 
+	      cell.attr('contenteditable', 'true'); // make cell editable again
+	      cell.data('entityid', null); // remove the entity id 
+	    }
+	  })
+	);
+	
 	blurb.text(ui.item.description ? ui.item.description : '');
 	entityType.find('select').selectpicker('val', ui.item.primary_type);
       }
