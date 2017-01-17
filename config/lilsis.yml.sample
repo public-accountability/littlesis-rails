@@ -44,6 +44,7 @@ defaults: &defaults
   notification_user_password:
   notification_to:
   legacy_cache_connection: "localhost:11211"
+  carousel_list_id: 404
 
 test:
   <<: *defaults

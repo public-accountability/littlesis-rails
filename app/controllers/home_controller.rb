@@ -10,8 +10,6 @@ class HomeController < ApplicationController
     [34, 'Elite think tanks']
   ]
 
-  CAROUSEL_LIST_ID = 404 # The id of the list that contains the entities for the carousel
-
 	def notes
     @user = User.includes(:notes, notes: :recipients).find_by_username(current_user.username)
 
@@ -56,9 +54,9 @@ class HomeController < ApplicationController
   end
 
   def index
-    redirect_to_dashboard_if_signed_in
+    redirect_to_dashboard_if_signed_in unless request.env['PATH_INFO'] == '/home'
     @dots_connected = dots_connected
-    @carousel_entities = List.find(404).entities.to_a
+    @carousel_entities = carousel_entities
     @stats = ExtensionRecord.data_summary
   end
 
@@ -87,9 +85,15 @@ class HomeController < ApplicationController
         return redirect_to home_dashboard_path
     end
   end
-  
+
+  def carousel_entities
+    Rails.cache.fetch('home_controller_index_carousel_entities', expires_in: 2.hours) do
+      List.find(APP_CONFIG.fetch('carousel_list_id')).entities.to_a
+    end
+  end
+
   def dots_connected
-    Rails.cache.fetch('dots_connected_count', expires_in: 2.hours) do 
+    Rails.cache.fetch('dots_connected_count', expires_in: 2.hours) do
       (Person.count + Org.count).to_s.split('')
     end
   end
