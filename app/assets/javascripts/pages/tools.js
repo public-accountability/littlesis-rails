@@ -153,15 +153,18 @@ var bulkAdd = (function($, utility){
   // This returns the cell data
   // Most types simply need to return the text inside the element.
   // Two expetions: checkboxes and <select>'s
-  function extractCellData(cell, type) {
-    if (type === 'boolean') {
+  function extractCellData(cell, rowInfo) {
+    if (rowInfo.type === 'boolean') {
       // Technically we should allow three values for this field: true, false, and null.
       // However, to keep things simple, right now the false/un-checked state defaults to null
       // So in this tool there is no way of saying that a person is NOT a board member.
       return cell.find('input').is(':checked') ? true : null; 
-    } else if (type === 'select') {
+    } else if (rowInfo.type === 'select') {
       var selectpickerArr = cell.find('.selectpicker').selectpicker('val');
       return selectpickerArr ? selectpickerArr : null;
+    } else if (rowInfo.key === 'name' && Boolean(cell.data('entityid'))) {
+      // If the entity was selected using the search there will be an entityid field in the cell's dataset
+      return cell.data('entityid');
     } else {
       return cell.text();
     }
@@ -172,7 +175,7 @@ var bulkAdd = (function($, utility){
     var obj = {};
     tableDetails.forEach(function(rowInfo,i) {
       var cell = $(row).find('td:nth-child(' + (i + 1) + ')');
-      obj[rowInfo.key] = extractCellData(cell, rowInfo.type);
+      obj[rowInfo.key] = extractCellData(cell, rowInfo);
     });
     return obj;
   }
