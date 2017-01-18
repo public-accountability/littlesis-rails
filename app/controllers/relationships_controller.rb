@@ -1,8 +1,16 @@
 class RelationshipsController < ApplicationController
-  before_action :set_relationship, only: [:show]
+  before_action :set_relationship, only: [:show, :edit]
   before_action :authenticate_user!, except: [:show]
 
   def show
+  end
+
+  # GET /relationships/:id/edit
+  def edit
+  end
+
+  # PATCH /relationships/:id
+  def update
   end
 
   # Creates a new Relationship and a Reference

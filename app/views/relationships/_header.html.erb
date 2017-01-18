@@ -1,0 +1,15 @@
+<div class="row">
+    <% cache ['name', @relationship] do %>
+        <h1><%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %></h1>
+    <% end %>
+</div>
+
+<div class="row thin-grey-bottom-border">
+    <% if user_signed_in? %>
+        <%= render partial: 'actions', locals: {signed_in: true } %>
+    <% else %>    
+        <% cache ['action_buttons_no_user', @relationship ] do %>
+            <%= render partial: 'actions', locals: {signed_in: false }%>
+        <% end %>        
+    <% end %>
+</div>

@@ -1,0 +1,11 @@
+<% content_for(:page_title, 'Edit: ' + @relationship.name ) %>
+
+<%= render partial: 'header' %>    
+
+<%= render partial: 'edit_references_panel' %>
+
+<div class="row">
+    <%= form_for @relationship, method: 'patch', class: 'form-horizontal'  do |f| %>
+	<%= form_tag( f.label(:description1, class: 'col-sm-2 control-label'), f.text_field(:description1) ) %>
+    <% end %>
+</div>

@@ -13,6 +13,9 @@ describe RelationshipsController, type: :controller do
 
   it { should route(:get, '/relationships/1').to(action: :show, id: 1) }
   it { should route(:post, '/relationships').to(action: :create) }
+  it { should route(:get, '/relationships/1/edit').to(action: :edit, id: 1) }
+  it { should route(:patch, '/relationships/1').to(action: :update, id: 1) }
+  it { should route(:post, '/relationships/bulk_add').to(action: :bulk_add) }
 
   describe 'GET #show' do
     before do
@@ -115,7 +118,7 @@ describe RelationshipsController, type: :controller do
         expect(JSON.parse(response.body)['reference']).to have_key 'source'
         expect(JSON.parse(response.body)['relationship']).to have_key 'category_id'
       end
-    end
+    end 
 
     describe 'params' do
       before do
@@ -135,6 +138,22 @@ describe RelationshipsController, type: :controller do
       end
     end
   end # end describe POST #create
+
+  describe 'GET /relationships/id/edit' do
+    login_user
+    
+    before do
+      @rel = build :relationship
+      expect(Relationship).to receive(:find).with('1').and_return(@rel)
+      get :edit, id: 1
+    end
+
+    it { should respond_with(:success) }
+    it { should render_template(:edit) }
+  end # end GET /retationships/id/edit
+
+  describe 'PATCH /relationships/id' do
+  end
 
   describe 'post bulk_add' do
     login_user

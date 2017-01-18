@@ -48,5 +48,22 @@ module RelationshipsHelper
       return " (" + rel.title + ") "
     end
   end
-  
+
+  def references_select(references)
+    content_tag(:select, class: 'selectpicker', id: 'references-select') do
+      references.map do |r|
+        content_tag(:option, r.name, value: r.id)
+      end.unshift(content_tag(:option, '')).reduce(:+)
+    end
+  end
+
+  def d1_is_title
+    [1, 3, 5, 10].include? @relationship.category_id
+  end
+
+  def form_tag(label, field)
+    content_tag(:div, class: 'form-group') do
+      label + content_tag(:div, class: 'col-sm-6') { field }
+    end
+  end
 end
