@@ -1,5 +1,6 @@
 class RelationshipsController < ApplicationController
   before_action :set_relationship, only: [:show]
+  before_action :authenticate_user!, except: [:show]
 
   def show
   end
@@ -27,7 +28,7 @@ class RelationshipsController < ApplicationController
   # POST /relationships/bulk_add
   # four possible status codes can be returned: 201, 207, 400, 422
   def bulk_add
-    logger.info bulk_relationships_params
+    check_permission 'importer'
     return head :bad_request unless Reference.new(reference_params).validate_before_create.empty?
     @errors = 0
     entity1 = Entity.find(params.fetch('entity1_id'))

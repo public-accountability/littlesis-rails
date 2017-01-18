@@ -30,6 +30,7 @@ describe RelationshipsController, type: :controller do
   end
 
   describe 'POST #create' do
+    login_admin
     let(:e1) { create(:person) }
     let(:e2) { create(:mega_corp_inc) }
 
