@@ -3,7 +3,7 @@ class Relationship < ActiveRecord::Base
   include SoftDelete
   include Referenceable
   include RelationshipDisplay
-  
+
   POSITION_CATEGORY = 1
   EDUCATION_CATEGORY = 2
   MEMBERSHIP_CATEGORY = 3
@@ -46,6 +46,8 @@ class Relationship < ActiveRecord::Base
   has_many :ny_disclosures, through: :ny_matches
 
   validates_presence_of :entity1_id, :entity2_id, :category_id
+  validates :start_date, length: { maximum: 10 }
+  validates :end_date, length: { maximum: 10 }
 
   after_create :create_category, :create_links
 
@@ -96,10 +98,26 @@ class Relationship < ActiveRecord::Base
     [1, 2, 3, 4, 5, 6, 10]
   end
 
+  # This is used by bulk add tool (see tools_helper.rb) to
+  # generate the <option> tag for the relationship select.
+  # If it's an org it excludes relationship categories that
+  # can only occur between two people.
+  # Due to the complexities involved, this function excludes
+  # lobbying relationships (as does the bulk add tool)
+  def self.categories_for(cat)
+    if cat == 'Org'
+      [1, 2, 3, 5, 6, 10, 11, 12]
+    elsif cat == 'Person'
+      [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]
+    else
+      raise ArgumentError, "Input must be 'Org' or 'Person'"
+    end
+  end
+
   def link
     links.find { |link| link.entity1_id = entity1_id }
   end
-  
+
   def reverse_link
     links.find { |link| linl.entity2_id = entity1_id }
   end
@@ -114,12 +132,16 @@ class Relationship < ActiveRecord::Base
     hash
   end
 
-  def category_attributes
-    return {} unless self.class.all_categories_with_fields.include? category_name
+  def get_category
+    return nil unless self.class.all_categories_with_fields.include? category_name
 
-    category = Kernel.const_get(category_name)
-                     .where(relationship_id: id)
-                     .first
+    Kernel.const_get(category_name)
+      .where(relationship_id: id)
+      .first
+  end
+
+  def category_attributes
+    category = get_category
     return {} if category.nil?
 
     hash = category.attributes
@@ -319,5 +341,6 @@ class Relationship < ActiveRecord::Base
     self.attributes = { description1: "NYS Campaign Contribution" } if description1.blank?
     self
   end
+
 
 end

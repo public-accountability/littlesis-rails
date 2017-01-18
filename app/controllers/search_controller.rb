@@ -56,31 +56,48 @@ class SearchController < ApplicationController
     return head :bad_request unless params[:q].present?
     q = ThinkingSphinx::Query.escape(params[:q])
 
-    if params[:ext]
-      with = { is_deleted: false , primary_ext: "'#{params[:ext].titleize}'" }
+    options = {}
+    options[:with] = { is_deleted: false, primary_ext: "'#{params[:ext].titleize}'" } if params[:ext]
+    options[:num] = params[:num] if params[:num]
+
+    search_results = entities(q, options)
+
+    if params[:no_summary]
+      render json: search_results.map { |e| entity_no_summary(e) }
     else
-      with = { is_deleted: false }
+      render json: search_results.map { |e| entity_with_summary(e) }
     end
-    
-    entities = Entity.search(
-      "@(name,aliases) #{q}",
+  end
+
+  private
+
+  def entities(q, opt = {})
+    options = { with: { is_deleted: false }, fields: 'name,aliases', num: 15 }.merge(opt)
+    Entity.search(
+      "@(#{options[:fields]}) #{q}",
       match_mode: :extended,
-      with: with,
-      select: "*, weight() * (link_count + 1) AS link_weight",
-      order: "link_weight DESC"
-    ).map { |e|
-      {
-        id: e.id,
+      with: options[:with],
+      per_page: options[:num],
+      select: '*, weight() * (link_count + 1) AS link_weight',
+      order: 'link_weight DESC'
+    )
+  end
+
+  # TODO: move these methods to the entity model?
+  def entity_with_summary(e)
+    {   id: e.id,
         name: e.name,
         description: e.blurb,
         summary: e.summary,
         primary_type: e.primary_ext,
-        url: e.legacy_url,
-      }
-    }
-
-    render json: entities
+        url: e.legacy_url }
   end
-  
 
+  def entity_no_summary(e)
+    {   id: e.id,
+        name: e.name,
+        description: e.blurb,
+        primary_type: e.primary_ext,
+        url: e.legacy_url }
+  end
 end

@@ -10,6 +10,11 @@ FactoryGirl.define do
     primary_ext "Person"
   end
 
+  factory :corp, class: Entity do
+    name 'corp'
+    primary_ext 'Org'
+  end
+
   factory :mega_corp_inc, class: Entity do
     name "mega corp INC"
     blurb "mega corp is having an existential crisis"

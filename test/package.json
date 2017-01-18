@@ -4,12 +4,14 @@
   "description": "front-end testing for littlesis",
   "main": "runner.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "sensible-browser ls.dev:8080/test/runner.html",
+    "download-sinon": "wget http://sinonjs.org/releases/sinon-1.17.6.js"
   },
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
     "chai": "^3.5.0",
-    "mocha": "^3.0.0"
+    "jquery": "^3.1.1",
+    "mocha": "^3.2.0"
   }
 }

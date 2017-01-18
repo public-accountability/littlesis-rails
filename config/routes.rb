@@ -1,4 +1,6 @@
 Lilsis::Application.routes.draw do
+
+
   # match "*path", to: "errors#maintenance", via: :all
 
   mount Bootsy::Engine => '/bootsy', as: 'bootsy'
@@ -208,13 +210,13 @@ Lilsis::Application.routes.draw do
       post 'update_meta'
       post 'clone'
       get 'edit_fullscreen'
-      get 'annotations'
-      get 'new_annotation'
-      post 'create_annotation'
-      post 'update_annotation'
-      get 'edit_annotation'
-      post 'reorder_annotations'
-      post 'destroy_annotation'
+      # get 'annotations'
+      # get 'new_annotation'
+      # post 'create_annotation'
+      # post 'update_annotation'
+      # get 'edit_annotation'
+      # post 'reorder_annotations'
+      # post 'destroy_annotation'
       get 'collection'
       get 'embedded'
       get 'map_json'
@@ -255,6 +257,7 @@ Lilsis::Application.routes.draw do
   resources :industries, only: [:show]
 
   resources :relationships, only: [:show, :create]
+  post 'relationships/bulk_add' => 'relationships#bulk_add'
 
   resources :references, only: [:create, :destroy]
   get "/references/recent" => "references#recent"
@@ -292,6 +295,12 @@ Lilsis::Application.routes.draw do
   post "/nys/candidates/new" =>  "nys#create"
   get "/nys/potential_contributions" => "nys#potential_contributions"
   get "/nys/contributions" => "nys#contributions"
+
+  #########
+  # Tools #
+  #########
+
+  get '/tools/bulk/relationships' => "tools#bulk_relationships"
 
   match "*path", to: "errors#not_found", via: :all
 

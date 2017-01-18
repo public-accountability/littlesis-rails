@@ -1,8 +1,10 @@
+@import 'jquery-ui/core.css';
+@import "jquery-ui/autocomplete.css";
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "bootsy";
 @import "bootstrap-datepicker";
-@import "typeahead";
+@import "bootstrap-select.min.css";
 @import "jquery.dataTables";
 @import "dataTables.editor";
 @import "jquery.Jcrop";
@@ -30,3 +32,4 @@
 @import "topics";
 @import "typeahead";
 @import "users";
+@import "tools";

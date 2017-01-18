@@ -7,7 +7,7 @@ class MapsController < ApplicationController
 
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
 
-  protect_from_forgery except: [:create, :create_annotation, :update_annotation, :clone]
+  protect_from_forgery except: [:create, :clone]
 
   def index
     maps = NetworkMap.order("created_at DESC, id DESC")
@@ -253,58 +253,58 @@ class MapsController < ApplicationController
     redirect_to edit_map_path(map)
   end
 
-  def annotations
-    check_owner
-  end
+  # def annotations
+  #   check_owner
+  # end
 
-  def new_annotation
-    check_owner
-    @annotation = MapAnnotation.new(map: @map)
-  end
+  # def new_annotation
+  #   check_owner
+  #   @annotation = MapAnnotation.new(map: @map)
+  # end
 
-  def create_annotation
-    check_owner
-    @annotation = MapAnnotation.new(annotation_params)
+  # def create_annotation
+  #   check_owner
+  #   @annotation = MapAnnotation.new(annotation_params)
 
-    if @annotation.save
-      redirect_to annotations_map_path(NetworkMap.find(@annotation.map_id)), notice: 'Annotation was successfully created.'
-    else
-      render :new_annotation
-    end
-  end
+  #   if @annotation.save
+  #     redirect_to annotations_map_path(NetworkMap.find(@annotation.map_id)), notice: 'Annotation was successfully created.'
+  #   else
+  #     render :new_annotation
+  #   end
+  # end
 
-  def edit_annotation
-    check_owner
-    @annotation = MapAnnotation.find(params[:annotation_id])
-  end
+  # def edit_annotation
+  #   check_owner
+  #   @annotation = MapAnnotation.find(params[:annotation_id])
+  # end
 
-  def update_annotation
-    check_owner
-    @annotation = MapAnnotation.find(annotation_params[:id])
+  # def update_annotation
+  #   check_owner
+  #   @annotation = MapAnnotation.find(annotation_params[:id])
 
-    if @annotation.update(annotation_params)
-      redirect_to annotations_map_path(@annotation.map), notice: 'Annotation was successfully updated.'
-    else
-      render :edit_annotation
-    end
-  end
+  #   if @annotation.update(annotation_params)
+  #     redirect_to annotations_map_path(@annotation.map), notice: 'Annotation was successfully updated.'
+  #   else
+  #     render :edit_annotation
+  #   end
+  # end
 
-  def reorder_annotations
-    check_owner
-    annotation_ids = params[:annotation_ids].split(',')
-    annotation_ids.each_with_index do |id, index|
-      MapAnnotation.find(id).update(order: index + 1)
-    end
+  # def reorder_annotations
+  #   check_owner
+  #   annotation_ids = params[:annotation_ids].split(',')
+  #   annotation_ids.each_with_index do |id, index|
+  #     MapAnnotation.find(id).update(order: index + 1)
+  #   end
 
-    render json: { success: { id: @map.id, annotation_ids: annotation_ids } }
-  end
+  #   render json: { success: { id: @map.id, annotation_ids: annotation_ids } }
+  # end
 
-  def destroy_annotation
-    check_owner
-    annotation = MapAnnotation.find(params[:annotation_id])
-    annotation.destroy
-    redirect_to annotations_map_path(@map), notice: 'Annotation was successfully deleted.'
-  end
+  # def destroy_annotation
+  #   check_owner
+  #   annotation = MapAnnotation.find(params[:annotation_id])
+  #   annotation.destroy
+  #   redirect_to annotations_map_path(@map), notice: 'Annotation was successfully deleted.'
+  # end
 
   def collection
     respond_to do |format|
