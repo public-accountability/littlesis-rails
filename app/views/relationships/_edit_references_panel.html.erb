@@ -6,8 +6,8 @@
 	    </div>
 	    <div class="panel-body">
 		<div id="existing-sources-container">
-		    <label for="cleaning-up-checkbox" style="padding-right: 5px;">Just cleaning up:</label>
-		    <input type="checkbox" id="cleaning-up-checkbox" />
+		    <%= label_tag :reference_just_cleaning_up, 'Just Cleaning Up: ', style: 'padding-right: 5px;'%>
+		    <%= check_box :reference, :just_cleaning_up, { required: true } %>
 		    <br />
 		    <label for="references-select" style="padding-right: 5px;">Existing Source:</label>
 		    <%= references_select(@relationship.references) %>
@@ -18,16 +18,16 @@
 		</div>
 		<div id="new-reference-form" class="hidden form-horizontal">
 		    <div class="form-group form-group-sm">
-                        <%= label_tag(:data_source, "Source URL*", class: "col-sm-2 control-label") %>
+                        <%= label_tag(:reference_source, "Source URL*", class: "col-sm-2 control-label") %>
                         <div class="col-sm-10">
-                            <%= url_field(:data, :source ) %>
+                            <%= url_field(:reference, :source ) %>
                         </div>
                     </div>
                     
                     <div class="form-group form-group-sm">
-                        <%= label_tag(:data_name, "Display Name*", class: "col-sm-2 control-label") %>
+                        <%= label_tag(:reference_name, "Display Name*", class: "col-sm-2 control-label") %>
                         <div class="col-sm-10">
-                            <%= text_field(:data, :name ) %>
+                            <%= text_field(:reference, :name ) %>
                         </div>
                     </div>
 		    
@@ -44,7 +44,7 @@
 <script>
  $(function(){
    
-   $('#cleaning-up-checkbox').click(function() {
+   $('#reference_just_cleaning_up').click(function() {
      if($(this).is(':checked')){
        $('#references-select').prop('disabled', true);
        $('#create-new-reference-btn').prop('disabled', true);
@@ -59,8 +59,10 @@
    $('#references-select').change(function(){
      if ($(this).val()) {
        $('#create-new-reference-btn').prop('disabled', true);
+       $('#reference_just_cleaning_up').prop('required', false);
      } else {
        $('#create-new-reference-btn').prop('disabled', false);
+       $('#reference_just_cleaning_up').prop('required', true);
      }
    })
    
@@ -68,13 +70,23 @@
      $('#existing-sources-container').addClass('hidden');
      $('#new-reference-form').removeClass('hidden');
      $('#new-reference-form input').prop('required', true);
+     $('#reference_just_cleaning_up').prop('required', false);
    });
    
    $('#use-existing-reference-btn').click(function() {
      $('#existing-sources-container').removeClass('hidden');
      $('#new-reference-form').addClass('hidden');
      $('#new-reference-form input').prop('required', false);
-   })
+     
+     if (!$('#references-select').val()) {
+       $('#new-reference-form input').prop('required', true);
+     } 
+     
+   });
+
    
+   document.getElementById('reference_just_cleaning_up')
+	   .setCustomValidity("Please check this box if you are just cleaning up. Or select an existing reference or create new reference");
+
  });
 </script>
