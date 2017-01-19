@@ -4,9 +4,19 @@ module RelationshipDisplay
   module ClassMethods
   end
 
+  # Returns an array of the names of the description1 and decription2 fields
+  DESCRIPTION_FIELDS_DISPLAY_NAMES = {
+    1 => ['Position belongs to', 'Position in'],
+    2 => ['Student', 'School'],
+    3 => ['Member', 'Organization'],
+    7 => ['Lobbyist/firm', 'Politician/agency'],
+    10 => ['Owner', 'Organization'],
+    11 => ['Child', 'Parent']
+  }.freeze
+
   # This provides an array of text that goes after Entity one's name 
   # and after Entity two's name
-  # Links are generated in the view. 
+  # Links are generated in the view.
   def description_sentence
     case category_id
     when Relationship::POSITION_CATEGORY
@@ -19,7 +29,7 @@ module RelationshipDisplay
       [ " and ", " #{are_were} in a family" ]
     when Relationship::DONATION_CATEGORY
       [ " gave money to ", ""]
-    when Relationship::TRANSATION_CATEGORY
+    when Relationship::TRANSACTION_CATEGORY
       [ " and ", " #{did_do} business" ]
     when Relationship::LOBBYING_CATEGORY
       [ " #{lobbies_lobbied} ", ""]

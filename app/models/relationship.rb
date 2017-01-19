@@ -9,7 +9,7 @@ class Relationship < ActiveRecord::Base
   MEMBERSHIP_CATEGORY = 3
   FAMILY_CATEGORY = 4
   DONATION_CATEGORY = 5
-  TRANSATION_CATEGORY = 6
+  TRANSACTION_CATEGORY = 6
   LOBBYING_CATEGORY = 7
   SOCIAL_CATEGORY = 8
   PROFESSIONAL_CATEGORY = 9
@@ -22,7 +22,7 @@ class Relationship < ActiveRecord::Base
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
   
   #has_many :note_relationships, inverse_of: :relationship
-  #has_many :notes, through: :note_relationships, inverse_of: :relationships
+  # has_many :notes, through: :note_relationships, inverse_of: :relationships
   
   has_one :position, inverse_of: :relationship, dependent: :destroy
   has_one :education, inverse_of: :relationship, dependent: :destroy
@@ -31,13 +31,21 @@ class Relationship < ActiveRecord::Base
   has_one :donation, inverse_of: :relationship, dependent: :destroy
   has_one :trans, class_name: "Transaction", inverse_of: :relationship, dependent: :destroy
   has_one :ownership, inverse_of: :relationship, dependent: :destroy
-  
+
+  accepts_nested_attributes_for :position
+  accepts_nested_attributes_for :education
+  accepts_nested_attributes_for :membership
+  accepts_nested_attributes_for :family
+  accepts_nested_attributes_for :donation
+  accepts_nested_attributes_for :trans
+  accepts_nested_attributes_for :ownership
+
   # fec_filings are no longer used
   has_many :fec_filings, inverse_of: :relationship, dependent: :destroy
   belongs_to :category, class_name: "RelationshipCategory", inverse_of: :relationships
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id"
 
-  # Open Secrets 
+  # Open Secrets
   has_many :os_matches, inverse_of: :relationship
   has_many :os_donations, through: :os_matches
 
@@ -206,7 +214,6 @@ class Relationship < ActiveRecord::Base
   # Extension Helpers & Getters #
   ###############################
 
- 
   def is_board
     position.nil? ? nil : position.is_board
   end
@@ -223,6 +230,10 @@ class Relationship < ActiveRecord::Base
     position.nil? ? nil : position.compensation
   end
 
+  def is_position?
+    category_id == POSITION_CATEGORY
+  end
+
   def is_member?
     category_id == MEMBERSHIP_CATEGORY
   end
@@ -234,7 +245,19 @@ class Relationship < ActiveRecord::Base
   def is_family?
     category_id == FAMILY_CATEGORY
   end
-  
+
+  def is_donation?
+    category_id == DONATION_CATEGORY
+  end
+
+  def is_transaction?
+    category_id == TRANSACTION_CATEGORY
+  end
+
+  def is_ownership?
+    category_id == OWNERSHIP_CATEGORY
+  end
+
   def title
     if description1.blank?
       if is_board
@@ -341,6 +364,4 @@ class Relationship < ActiveRecord::Base
     self.attributes = { description1: "NYS Campaign Contribution" } if description1.blank?
     self
   end
-
-
 end

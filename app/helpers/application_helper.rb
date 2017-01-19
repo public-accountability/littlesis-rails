@@ -155,4 +155,9 @@ module ApplicationHelper
   def paginate_preview(ary, num, path)
     raw("1-#{num} of #{ary.count} :: " + link_to("see all", path))
   end
+
+  def entity_link(entity, name = nil, action = nil)
+    name ||= entity.name
+    link_to name, entity.legacy_url(action)
+  end
 end

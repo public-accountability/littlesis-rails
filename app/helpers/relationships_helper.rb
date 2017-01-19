@@ -58,12 +58,45 @@ module RelationshipsHelper
   end
 
   def d1_is_title
-    [1, 3, 5, 10].include? @relationship.category_id
+    [1, 3, 10].include? @relationship.category_id
+  end
+  
+  # input: <FormBuilder thingy>, symbol
+  def radio_buttons_producer(form, column)
+    form.radio_button(column, 'true') +
+    form.label(column, 'Yes') +
+    form.radio_button(column, 'false') +
+    form.label(column, 'No') +
+    form.radio_button(column, '') +
+    form.label(column, 'Unknown')
   end
 
-  def form_tag(label, field)
+
+  # family, transaction, social, professional, hiearchy, generic
+  def requires_description_fields
+    [4, 8, 9, 11, 12].include? @relationship.category_id
+  end
+
+  def description_fields(f)
+    return nil unless requires_description_fields
+    content_tag(:div) do
+      [entity_link(@relationship.entity),
+       ' is ',
+       f.text_field(:description1),
+       ' of ',
+       entity_link(@relationship.related),
+       tag(:br),
+       entity_link(@relationship.related),
+       ' is ',
+       f.text_field(:description2),
+       ' of ',
+       entity_link(@relationship.entity)].reduce(:+)
+    end
+  end
+
+  def relationship_form_tag(label, field)
     content_tag(:div, class: 'form-group') do
-      label + content_tag(:div, class: 'col-sm-6') { field }
+      label + content_tag(:div, class: 'col-sm-10') { field }
     end
   end
 end

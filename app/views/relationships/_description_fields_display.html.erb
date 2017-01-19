@@ -1,0 +1,19 @@
+<% e1_name, e2_name = Relationship::DESCRIPTION_FIELDS_DISPLAY_NAMES[@relationship.category_id] %>
+
+<div class="row">
+    <div class="col-sm-2">
+	<p><%= e1_name + ':' %></p>
+    </div>
+    <div class="col-sm-5">
+	<%= entity_link(@relationship.entity) %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2">
+	<p><%= e2_name + ':' %></p>
+    </div>
+    <div class="col-sm-5">
+	<%= entity_link(@relationship.related) %>
+    </div>
+</div>

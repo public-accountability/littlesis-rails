@@ -1,9 +1,5 @@
 module EntitiesHelper
 
-  def entity_link(entity, name=nil, action=nil)
-    name ||= entity.name
-    link_to name, entity.legacy_url(action)
-  end
 
   def entity_hash_link(entity, name=nil, action=nil)
     name ||= entity['name']

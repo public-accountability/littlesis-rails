@@ -3,4 +3,6 @@ class Education < ActiveRecord::Base
 
   belongs_to :relationship, inverse_of: :education
   belongs_to :degree
+
+  SELECT_OPTIONS = ['Undergraduate', 'Graduate', 'High School'].freeze
 end
