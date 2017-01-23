@@ -285,6 +285,10 @@ Lilsis::Application.routes.draw do
   get "/oligrapher" => "maps#splash"
   get "/graph" => "graph#all"
 
+
+  get '/chat_login' => 'chat#login'
+  post '/chat_auth' => 'chat#chat_auth'
+
   ####### 
   # NYS #
   ####### 

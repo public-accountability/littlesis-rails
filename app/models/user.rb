@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  include ChatUser
+  
   validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username, presence: true, uniqueness: { case_sensitive: false }

@@ -63,4 +63,23 @@ describe User do
     end
   end
   
+  describe 'chat user' do
+    describe 'create_chat_account' do
+      it 'returns :existing_account if user has chatid' do
+        expect(build(:user, chatid: '12345').create_chat_account).to be :existing_account
+      end
+
+      it 'creates account' do
+        chat = Chat.new
+        expect(chat).to receive(:admin_login).once
+        expect(chat).to receive(:admin_logout).once
+        expect(chat).to receive(:post).and_return({ 'user' => { '_id' => 'mongoid' }, 'success' => true })
+        expect(Chat).to receive(:new).and_return(chat)
+        user = build(:user)
+        expect(user).to receive(:update).with( { :chatid => 'mongoid'} )
+        user.create_chat_account
+      end
+    end
+  end
+
 end
