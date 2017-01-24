@@ -6,7 +6,6 @@ class Chat
   PASSWORD = APP_CONFIG['chat']['admin_password']
 
   def initialize
-    # @mongo = mongo_client
     @admin_token = nil
     @admin_id = nil
   end
@@ -32,7 +31,7 @@ class Chat
     res = post '/api/v1/login', { username: USERNAME, password: PASSWORD }
     if res.present? && res.fetch('status', '') == 'success'
       @admin_token = res['data'].fetch('authToken')
-      @admin_id =   res['data'].fetch('userId')
+      @admin_id = res['data'].fetch('userId')
     end
   end
 
@@ -42,6 +41,26 @@ class Chat
       @admin_token = nil
       @admin_id = nil
     end
+  end
+
+
+  ##  CLASS METHODS  ##
+
+  #  Str (Mongo ID of user) => Hash
+  # Creates new iframe token for the user, updates the mongo record, and returns a hash with the token
+  def self.login_token(mongo_id)
+    return nil if mongo_id.blank?
+    mongo = mongo_client
+    users = mongo['users']
+    token = SecureRandom.urlsafe_base64(30)
+    users.find_one_and_update({ _id: mongo_id }, { "$set" => { services: { iframe: { token: token } } } }, :return_document => :after, :upsert => false)
+    mongo.close
+    { "token" => token }
+  end
+
+  # returns Mongo::Client connected to db 'rocketchat'
+  private_class_method def self.mongo_client
+    Mongo::Client.new([APP_CONFIG['chat']['mongo_url']], :database => 'rocketchat')  
   end
 
   private
@@ -88,11 +107,8 @@ class Chat
   # <NetResponce> -> json | nil
   def success_check(res)
     return JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
-    logger.debug "Chat API request failed: #{res.inspect}"
+    Rails.logger.debug "Chat API request failed: #{res.inspect}"
+    Rails.logger.debug "Failed response: #{res.body}"
     nil
-  end
-
-  def mongo_client
-    # Mongo::Client.new([APP_CONFIG['chat']['mongo_url']], :database => 'rocketchat')  
   end
 end
