@@ -3,7 +3,7 @@ class ChatController < ApplicationController
 
   # POST littlesis.org/chat_auth
   def chat_auth
-    cors_headers unless Rails.env.production?
+    cors_headers
     # return status code 401 if the user is not logged in
     return head :unauthorized unless user_signed_in?  
     # create chat account if needed
@@ -20,7 +20,12 @@ class ChatController < ApplicationController
   private
 
   def cors_headers
-    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    if Rails.env.production?
+      allow_host = 'https://chat.littlesis.org'
+    else
+      allow_host = 'http://localhost:3000'
+    end
+    response.headers['Access-Control-Allow-Origin'] = allow_host
     response.headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Request-Method'] = '*'
