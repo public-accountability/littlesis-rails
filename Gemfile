@@ -128,3 +128,5 @@ gem "passenger"
 # used for screenshot capture
 gem 'selenium-webdriver'
 gem 'headless'
+
+gem 'mongo'

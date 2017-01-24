@@ -81,6 +81,7 @@ GEM
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
+    bson (4.2.1)
     buftok (0.2.0)
     builder (3.2.2)
     capybara (2.10.1)
@@ -329,6 +330,8 @@ GEM
     mini_magick (4.5.1)
     mini_portile2 (2.1.0)
     minitest (5.9.1)
+    mongo (2.4.1)
+      bson (>= 4.2.1, < 5.0.0)
     multi_json (1.12.1)
     multipart-post (2.0.0)
     mysql2 (0.3.21)
@@ -572,6 +575,7 @@ DEPENDENCIES
   kaminari
   mechanize
   mini_magick
+  mongo
   mysql2 (~> 0.3.21)
   nilify_blanks
   paper_trail (>= 5.1.1)
@@ -607,4 +611,4 @@ DEPENDENCIES
   whenever (~> 0.9.7)
 
 BUNDLED WITH
-   1.13.6
+   1.14.1
