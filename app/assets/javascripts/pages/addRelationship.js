@@ -264,7 +264,7 @@ var addRelationship = function() {
       $.post('/relationships', sd)
 	.done(function(data, textStatus, jqXHR) {
 	  // redirect to the edit relationship page
-	  window.location.replace("/relationship/edit/id/" + data.relationship_id + "?ref=auto");
+	  window.location.replace("/relationships/" + data.relationship_id + "/edit?new_ref=true");
 	})
 	.fail(function(data) {
 	  // assuming here that the status code is 400 because of a bad request. we should person also  consider what would happen if the request fails for different reasons besides the submission of invalid or missing information.

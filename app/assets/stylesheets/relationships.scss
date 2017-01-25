@@ -7,7 +7,11 @@ form.edit_relationship {
     #description-fields input {
 	margin-top: 1em;
     }
-    
+ 
+    label.control-label, div.col-sm-10 {
+	margin-top: 0.5em;
+    }
+   
     input[type="radio"] {
 	margin-left: 0.2em;
 	margin-right: 0.2em;

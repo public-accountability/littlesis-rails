@@ -22,7 +22,6 @@
     <% end  %>
 
     <div class="row">
-	
 	<% if d1_is_title %>	<!-- Postion, Membership, Ownership -->
 	    <% if @relationship.is_ownership? %>
 		<% d1_label = f.label(:description1, 'Description', class: label_class) %>
@@ -36,8 +35,12 @@
 	    <%= relationship_form_tag( f.label(:description1, 'Type', class: label_class), f.text_field(:description1) ) %>
 	<% end %>
 	
-	<%= description_fields(f) %>
-
+	<% if requires_description_fields %>
+	    <div class="col-sm-12 bottom-1em">
+		<%= description_fields(f) %>
+	    </div>
+	<% end %>
+	
 	<% if @relationship.is_education?  %>
 	    <% education_select = f.select :description1, Education::SELECT_OPTIONS, { include_blank: true }, { class: 'selectpicker' } %>
 	    <% education_label = f.label(:description1, 'Type', class: label_class)  %>

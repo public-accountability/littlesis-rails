@@ -9,7 +9,7 @@
 		<%= check_box_tag :reference_just_cleaning_up, "1", false, { required: true, name: 'reference[just_cleaning_up]' } %>
 		<br />
 		<label for="reference_existing" style="padding-right: 5px;">Existing Source:</label>
-		<%= references_select(@relationship.references) %>
+		<%= references_select(@relationship.references, @selected_ref) %>
 		<br />
 		<p class="top-1em">
 		    <button type="button" class="btn btn-primary btn-xs" id="create-new-reference-btn">Create a new reference</button>
@@ -86,6 +86,14 @@
      } 
      
    });
+     
+     if ($('#reference_existing').val()) {
+	 // disable initially if a value is pre-selected
+	 // this happens when param new_ref=true
+	 $('#create-new-reference-btn').prop('disabled', true);
+	 $('#reference_just_cleaning_up').prop('required', false);
+	 $('#reference_just_cleaning_up').prop('disabled', true);
+     }
 
  });
 </script>
