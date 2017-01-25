@@ -76,6 +76,10 @@ describe 'relationships/edit.html.erb', type: :view do
       css 'label', text: 'Compensation'
       css 'input[name="relationship[position_attributes][compensation]"]', count: 1
     end
+
+    it 'has no error divs' do
+      not_css 'div.alert'
+    end
   end
 
   describe 'Donation relationship' do
@@ -105,6 +109,10 @@ describe 'relationships/edit.html.erb', type: :view do
       css 'label', text: 'Goods/services'
       css 'textarea[name="relationship[goods]"]', count: 1
     end
+
+    it 'has no error divs' do
+      not_css 'div.alert'
+    end
   end
 
   describe 'Education relationship' do
@@ -133,6 +141,10 @@ describe 'relationships/edit.html.erb', type: :view do
     it 'has is_droput' do
       css 'label', text: 'Dropout'
       css 'input[name="relationship[education_attributes][is_dropout]"]', count: 3
+    end
+    
+    it 'has no error divs' do
+      not_css 'div.alert'
     end
   end
 
@@ -178,6 +190,48 @@ describe 'relationships/edit.html.erb', type: :view do
 
     it 'has shares' do
       css 'input[name="relationship[ownership_attributes][shares]"]', count: 1
+    end
+
+    it 'has no error divs' do
+      not_css 'div.alert'
+    end
+  end
+ 
+  describe 'Reference error' do
+    before do
+      @rel = build(:relationship, category_id: 12, id: rand(100), updated_at: Time.now)
+      @ref = build(:ref, name: 'name')
+      @ref.valid?
+      @rel.last_user = @sf_user
+      assign(:relationship, @rel)
+      assign(:reference, @ref)
+      render
+    end
+
+    it 'has common fields' do
+      has_common_fields
+    end
+
+    it 'has two error divs' do
+      css 'div.alert', count: 2
+    end
+  end
+  
+  describe 'Relationship error' do
+    before do
+      @rel = build(:relationship, category_id: 12, id: rand(100), updated_at: Time.now)
+      @rel.last_user = @sf_user
+      @rel.valid?
+      assign(:relationship, @rel)
+      render
+    end
+
+    it 'has common fields' do
+      has_common_fields
+    end
+
+    it 'has two error divs' do
+      css 'div.alert', count: 2
     end
   end
 end

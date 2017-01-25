@@ -1,44 +1,43 @@
-<div class="row top-3em">
-    <div class="col-sm-6">
-	<div class="panel panel-default">
-	    <div class="panel-heading">
-		<h3 class="panel-title">Where is this information coming from?</h3>
+<div class="col-sm-6">
+    <div class="panel panel-default">
+	<div class="panel-heading">
+	    <h3 class="panel-title">Where is this information coming from?</h3>
+	</div>
+	<div class="panel-body">
+	    <div id="existing-sources-container">
+		<%= label_tag :reference_just_cleaning_up, 'Just Cleaning Up: ', style: 'padding-right: 5px;'%>
+		<%= check_box_tag :reference_just_cleaning_up, "1", false, { required: true, name: 'reference[just_cleaning_up]' } %>
+		<br />
+		<label for="reference_existing" style="padding-right: 5px;">Existing Source:</label>
+		<%= references_select(@relationship.references) %>
+		<br />
+		<p class="top-1em">
+		    <button type="button" class="btn btn-primary btn-xs" id="create-new-reference-btn">Create a new reference</button>
+		</p>
 	    </div>
-	    <div class="panel-body">
-		<div id="existing-sources-container">
-		    <%= label_tag :reference_just_cleaning_up, 'Just Cleaning Up: ', style: 'padding-right: 5px;'%>
-		    <%= check_box :reference, :just_cleaning_up, { required: true } %>
-		    <br />
-		    <label for="reference_existing" style="padding-right: 5px;">Existing Source:</label>
-		    <%= references_select(@relationship.references) %>
-		    <br />
-		    <p class="top-1em">
-			<button type="button" class="btn btn-primary btn-xs" id="create-new-reference-btn">Create a new reference</button>
-		    </p>
-		</div>
-		<div id="new-reference-form" class="hidden form-horizontal">
-		    <div class="form-group form-group-sm">
-                        <%= label_tag(:reference_source, "Source URL*", class: "col-sm-2 control-label") %>
-                        <div class="col-sm-10">
-                            <%= url_field(:reference, :source ) %>
-                        </div>
+	    <div id="new-reference-form" class="hidden form-horizontal">
+		<div class="form-group form-group-sm">
+                    <%= label_tag(:reference_source, "Source URL*", class: "col-sm-2 control-label") %>
+                    <div class="col-sm-10">
+                        <%= url_field(:reference, :source ) %>
                     </div>
-                    
-                    <div class="form-group form-group-sm">
-                        <%= label_tag(:reference_name, "Display Name*", class: "col-sm-2 control-label") %>
-                        <div class="col-sm-10">
-                            <%= text_field(:reference, :name ) %>
-                        </div>
+                </div>
+                
+                <div class="form-group form-group-sm">
+                    <%= label_tag(:reference_name, "Display Name*", class: "col-sm-2 control-label") %>
+                    <div class="col-sm-10">
+                        <%= text_field(:reference, :name ) %>
                     </div>
-		    
-		    <p class="top-1em">
-			<button type="button" class="btn btn-primary btn-xs" id="use-existing-reference-btn">Use existing source</button>
-		    </p>
-		</div>
+                </div>
+		
+		<p class="top-1em">
+		    <button type="button" class="btn btn-primary btn-xs" id="use-existing-reference-btn">Use existing source</button>
+		</p>
 	    </div>
 	</div>
     </div>
 </div>
+
 
 
 <script>

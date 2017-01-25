@@ -1,0 +1,14 @@
+<% if @reference && !@reference.errors.empty?%>
+    <%= @reference.errors.full_messages.each do |message|  %>
+	<div class="alert alert-warning">
+	    <span><%= message %></span>
+	</div>
+    <% end %>
+<% end %>
+<% if !@relationship.errors.empty? %>
+    <% @relationship.errors.full_messages.each do |message|  %>
+	<div class="alert alert-warning">
+	    <span><%= message %></span>
+	</div>
+    <% end %>
+<% end %>

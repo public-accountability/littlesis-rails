@@ -4,7 +4,12 @@
 
 <%= form_for @relationship, method: 'patch', class: 'form-horizontal'  do |f| %>
     <% label_class = 'col-sm-2 control-label' %>
-    <%= render partial: 'edit_references_panel' %>
+    <div class="row top-3em">
+	<%= render partial: 'edit_references_panel' %>
+	<div class="col-sm-4 col-sm-offset-1">
+	    <%= render partial: 'edit_errors' %>
+	</div>
+    </div>
 
     <% if [1, 2, 3, 7, 10, 11].include? @relationship.category_id %>
 	<%= render partial: 'description_fields_display' %>
