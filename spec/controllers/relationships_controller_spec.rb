@@ -205,12 +205,17 @@ describe RelationshipsController, type: :controller do
       it 'updates db' do
         expect(Relationship.find(@rel.id).end_date).to eql '01-01-01'
       end
+      
+      it 'updates last user id' do
+        expect(Relationship.find(@rel.id).last_user_id). to eql controller.current_user.sf_guard_user_id
+      end
 
       it 'creates a new reference' do
         expect(Reference.count).to eql (@ref_count + 1)
         expect(Reference.last.source).to eql 'http://example.com'
         expect(Reference.last.name).to eql 'example'
       end
+
     end
 
     context 'With nested params: position relationship' do

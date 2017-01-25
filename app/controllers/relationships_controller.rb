@@ -21,7 +21,7 @@ class RelationshipsController < ApplicationController
       # if the reference is valid assign the other attribute required
       @reference.assign_attributes(object_id: @relationship.id, object_model: "Relationship")
     end
-    if @relationship.update_attributes(update_params)
+    if @relationship.update_attributes update_params.merge(last_user_id: current_user.sf_guard_user_id)
       @reference.save unless @reference.nil? # save the reference
       redirect_to relationship_path(@relationship)
     else
