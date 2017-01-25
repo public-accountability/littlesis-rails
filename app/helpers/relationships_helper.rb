@@ -76,7 +76,7 @@ module RelationshipsHelper
 
   def description_fields(f)
     return nil unless requires_description_fields
-    content_tag(:div) do
+    content_tag(:div, id: 'description-fields') do
       [entity_link(@relationship.entity),
        ' is ',
        f.text_field(:description1),
