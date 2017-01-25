@@ -50,11 +50,8 @@ module RelationshipsHelper
   end
 
   def references_select(references)
-    content_tag(:select, class: 'selectpicker', id: 'references-select') do
-      references.map do |r|
-        content_tag(:option, r.name, value: r.id)
-      end.unshift(content_tag(:option, '')).reduce(:+)
-    end
+    options_array = references.map { |r| [r.name, r.id] } 
+    select_tag('reference_existing', options_for_select(options_array), include_blank: true, class: 'selectpicker', name: 'reference[reference_id]')
   end
 
   def d1_is_title

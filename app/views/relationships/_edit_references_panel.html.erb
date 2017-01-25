@@ -9,7 +9,7 @@
 		    <%= label_tag :reference_just_cleaning_up, 'Just Cleaning Up: ', style: 'padding-right: 5px;'%>
 		    <%= check_box :reference, :just_cleaning_up, { required: true } %>
 		    <br />
-		    <label for="references-select" style="padding-right: 5px;">Existing Source:</label>
+		    <label for="reference_existing" style="padding-right: 5px;">Existing Source:</label>
 		    <%= references_select(@relationship.references) %>
 		    <br />
 		    <p class="top-1em">
@@ -46,16 +46,16 @@
    
    $('#reference_just_cleaning_up').click(function() {
      if($(this).is(':checked')){
-       $('#references-select').prop('disabled', true);
+       $('#reference_existing').prop('disabled', true);
        $('#create-new-reference-btn').prop('disabled', true);
      } else {
-       $('#references-select').prop('disabled', false);
+       $('#reference_existing').prop('disabled', false);
        $('#create-new-reference-btn').prop('disabled', false);
     }
-       $('#references-select').selectpicker('refresh');
+       $('#reference_existing').selectpicker('refresh');
    });
 
-   $('#references-select').change(function(){
+   $('#reference_existing').change(function(){
      if ($(this).val()) {
 	 $('#create-new-reference-btn').prop('disabled', true);
 	 $('#reference_just_cleaning_up').prop('required', false);
@@ -80,7 +80,7 @@
      $('#new-reference-form').addClass('hidden');
      $('#new-reference-form input').prop('required', false);
      
-     if (!$('#references-select').val()) {
+     if (!$('#reference_existing').val()) {
 	 $('#new-reference-form input').prop('required', true);
 	 $('#reference_just_cleaning_up').prop('required', true);
 	 $('#reference_just_cleaning_up').prop('disabled', false);

@@ -11,7 +11,17 @@ class RelationshipsController < ApplicationController
 
   # PATCH /relationships/:id
   def update
+    if existing_reference_params['reference_id'].blank? && existing_reference_params['just_cleaning_up'].blank?
+      # If user has not checked the 'just cleaning up' or selected an existing reference
+      # then a  new reference must be created
+      @reference = Reference.new(reference_params)
+      # if not valid: re-render the edit page with the reference error
+      return render :edit unless @reference.validate_before_create.empty?
+      # if the reference is valid assign the other attribute required
+      @reference.assign_attributes(object_id: @relationship.id, object_model: "Relationship")
+    end
     if @relationship.update_attributes(update_params)
+      @reference.save unless @reference.nil? # save the reference
       redirect_to relationship_path(@relationship)
     else
       render :edit
@@ -19,7 +29,7 @@ class RelationshipsController < ApplicationController
   end
 
   # Creates a new Relationship and a Reference
-  # Returns status code 201 if sucuessful or a json of errors with status code 400
+  # Returns status code 201 if successful or a json of errors with status code 400
   def create
     @relationship = Relationship.new(relationship_params)
     @reference = Reference.new(reference_params)
@@ -51,13 +61,13 @@ class RelationshipsController < ApplicationController
       # creating or finding the entity for that relationship
       make_or_get_entity(relationship) do |entity2|
         r = Relationship.create relationship_attributes(entity1, entity2, relationship)
-        # if the relationship is not persisted (meaning an error occured)
+        # if the relationship is not persisted (meaning an error occurred)
         @errors += 1 and next unless r.persisted?
         # creating the reference for that relationship
         Reference.create(reference_params.merge(object_id: r.id, object_model: 'Relationship'))
         # some relationships will have additional fields:
         if extension?
-          # get only the cateogory fields from the relationship hash
+          # get only the category fields from the relationship hash
           new_category_attr = relationship.delete_if { |key| (r.attributes.keys + ['name', 'primary_ext', 'blurb']).include? key }
           # update relationship category - we don't have to update if nothing has changed
           r.get_category.update(new_category_attr) unless r.category_attributes == new_category_attr
@@ -105,8 +115,8 @@ class RelationshipsController < ApplicationController
       entity1_id: entity1.id,
       entity2_id: entity2.id,
       category_id: params.require(:category_id),
-      description1: relationship.fetch('decription1', nil),
-      description2: relationship.fetch('decription2', nil),
+      description1: relationship.fetch('description1', nil),
+      description2: relationship.fetch('description2', nil),
       start_date: relationship.fetch('start_date', nil),
       end_date: relationship.fetch('end_date', nil),
       goods: relationship.fetch('goods', nil),
@@ -143,7 +153,12 @@ class RelationshipsController < ApplicationController
     params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
   end
 
-  # Whitelists relationships and nesseted attributes if the relationship category requires them 
+  def existing_reference_params
+    params.require(:reference).permit(:just_cleaning_up, :reference_id)
+  end
+  
+  # whitelists relationship params and associated nested attributes
+  # if the relationship category requires them 
   def update_params
     relationship_fields = @relationship.attribute_names.map(&:to_sym)
     if Relationship.all_category_ids_with_fields.include? @relationship.category_id

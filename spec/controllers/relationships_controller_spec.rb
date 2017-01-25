@@ -154,12 +154,13 @@ describe RelationshipsController, type: :controller do
   end 
 
   describe 'PATCH /relationships/id' do
+    let(:generic_reference) { create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12) } 
     login_user
 
     context 'When the submission contains errors' do
       before do
-        @rel = create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12)
-        patch :update, { id: @rel.id, relationship: {'start_date' => '012345678910'} }
+        @rel = generic_reference
+        patch :update, { id: @rel.id, relationship: {'start_date' => '012345678910'}, reference: {'just_cleaning_up' => '1'} }
       end
     
       it { should respond_with(:success) }
@@ -168,19 +169,54 @@ describe RelationshipsController, type: :controller do
 
     context "it's a good request" do
       before do
-        @rel = create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12) 
-        patch :update, { id: @rel.id, relationship: {'start_date' => '12-12-12'} }
+        @rel = generic_reference
+        patch :update, { id: @rel.id, relationship: {'start_date' => '12-12-12'}, reference: {'reference_id' => '123'} }
       end
+      
       it { should redirect_to(relationship_path) }
+      
       it 'updates db' do
         expect(Relationship.find(@rel.id).start_date).to eql '12-12-12'
+      end
+    end
+
+    context 'invalid reference' do
+      before do
+        @rel = generic_reference
+        patch :update, { id: @rel.id, relationship: {'start_date' => '01-01-01'}, reference: {'source' => '', 'name' => ''} }
+      end
+      
+      it { should render_template(:edit) }
+      
+      it 'does not update relationship' do 
+        expect(Relationship.find(@rel.id).start_date).to be nil
+      end
+    end
+
+    context 'good request with new reference' do
+      before do
+        @rel = generic_reference
+        @ref_count = Reference.count
+        patch :update, { id: @rel.id, relationship: {'end_date' => '01-01-01'}, reference: {'source' => 'http://example.com', 'name' => 'example'} }
+      end
+      
+      it { should redirect_to(relationship_path) }
+      
+      it 'updates db' do
+        expect(Relationship.find(@rel.id).end_date).to eql '01-01-01'
+      end
+
+      it 'creates a new reference' do
+        expect(Reference.count).to eql (@ref_count + 1)
+        expect(Reference.last.source).to eql 'http://example.com'
+        expect(Reference.last.name).to eql 'example'
       end
     end
 
     context 'With nested params: position relationship' do
       before do
         @rel = create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 1, description1: 'leader')
-        patch(:update, { id: @rel.id, relationship: {'notes' => 'notes notes notes', 'position_attributes' => { 'is_board' => 'true', 'compensation' => '1000' } } })
+        patch(:update, { id: @rel.id, reference: {'just_cleaning_up' => '1'}, relationship: {'notes' => 'notes notes notes', 'position_attributes' => { 'is_board' => 'true', 'compensation' => '1000' } } })
       end
       
       it { should redirect_to(relationship_path) }
