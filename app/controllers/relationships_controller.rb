@@ -1,5 +1,5 @@
 class RelationshipsController < ApplicationController
-  before_action :set_relationship, only: [:show, :edit]
+  before_action :set_relationship, only: [:show, :edit, :update]
   before_action :authenticate_user!, except: [:show]
 
   def show
@@ -11,6 +11,11 @@ class RelationshipsController < ApplicationController
 
   # PATCH /relationships/:id
   def update
+    if @relationship.update_attributes(update_params)
+      redirect_to relationship_path(@relationship)
+    else
+      render :edit
+    end
   end
 
   # Creates a new Relationship and a Reference
@@ -136,5 +141,15 @@ class RelationshipsController < ApplicationController
 
   def reference_params
     params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
+  end
+
+  # Whitelists relationships and nesseted attributes if the relationship category requires them 
+  def update_params
+    relationship_fields = @relationship.attribute_names.map(&:to_sym)
+    if Relationship.all_category_ids_with_fields.include? @relationship.category_id
+      category_fields = @relationship.get_category.attribute_names.map(&:to_sym)
+      relationship_fields.push("#{@relationship.category_name.downcase}_attributes".to_sym => category_fields)
+    end
+    params.require(:relationship).permit(*relationship_fields)
   end
 end

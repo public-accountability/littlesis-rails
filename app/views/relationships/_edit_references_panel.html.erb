@@ -48,12 +48,11 @@
      if($(this).is(':checked')){
        $('#references-select').prop('disabled', true);
        $('#create-new-reference-btn').prop('disabled', true);
-       $('#references-select').selectpicker('refresh');
      } else {
        $('#references-select').prop('disabled', false);
        $('#create-new-reference-btn').prop('disabled', false);
+    }
        $('#references-select').selectpicker('refresh');
-     }
    });
 
    $('#references-select').change(function(){
@@ -88,10 +87,6 @@
      } 
      
    });
-
-   
-   document.getElementById('reference_just_cleaning_up')
-	   .setCustomValidity("Please check this box if you are just cleaning up. Or select an existing reference or create new reference");
 
  });
 </script>
