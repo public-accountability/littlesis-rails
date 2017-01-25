@@ -2,6 +2,13 @@
 
 <%= render partial: 'shared/entity_info', locals: { entity: @entity } %>
 
+<div class="row bottom-1em">
+    <div class="col-sm-10">
+	<span class="small-text text-muted">This is the <em>new</em> version of the add bulk page. <%= link_to "Click here", @entity.legacy_url('addBulk') %> to use the older version instead.</span>
+    </div>
+</div>
+
+
 <div class="row">
     <div class="col-sm-8 col-sm-offset-2" id="alert-container">
     </div>
