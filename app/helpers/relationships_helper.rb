@@ -91,9 +91,9 @@ module RelationshipsHelper
     end
   end
 
-  def relationship_form_tag(label, field)
+  def relationship_form_tag(label, field, html_class = 'col-sm-10')
     content_tag(:div, class: 'form-group') do
-      label + content_tag(:div, class: 'col-sm-10') { field }
+      label + content_tag(:div, class: html_class) { field }
     end
   end
 end
