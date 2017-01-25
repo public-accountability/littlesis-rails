@@ -48,5 +48,52 @@ module RelationshipsHelper
       return " (" + rel.title + ") "
     end
   end
+
+  def references_select(references, selected_id = nil)
+    options_array = references.map { |r| [r.name, r.id] } 
+    select_tag('reference_existing', options_for_select(options_array, selected_id), include_blank: true, class: 'selectpicker', name: 'reference[reference_id]')
+  end
+
+  def d1_is_title
+    [1, 3, 10].include? @relationship.category_id
+  end
   
+  # input: <FormBuilder thingy>, symbol
+  def radio_buttons_producer(form, column)
+    form.radio_button(column, 'true') +
+    form.label(column, 'Yes') +
+    form.radio_button(column, 'false') +
+    form.label(column, 'No') +
+    form.radio_button(column, '') +
+    form.label(column, 'Unknown')
+  end
+
+
+  # family, transaction, social, professional, hiearchy, generic
+  def requires_description_fields
+    [4, 8, 9, 11, 12].include? @relationship.category_id
+  end
+
+  def description_fields(f)
+    return nil unless requires_description_fields
+    content_tag(:div, id: 'description-fields') do
+      [entity_link(@relationship.entity),
+       ' is ',
+       f.text_field(:description1),
+       ' of ',
+       entity_link(@relationship.related),
+       tag(:br),
+       entity_link(@relationship.related),
+       ' is ',
+       f.text_field(:description2),
+       ' of ',
+       entity_link(@relationship.entity)].reduce(:+)
+    end
+  end
+
+  def relationship_form_tag(label, field, html_class = 'col-sm-10')
+    content_tag(:div, class: 'form-group') do
+      label + content_tag(:div, class: html_class) { field }
+    end
+  end
 end

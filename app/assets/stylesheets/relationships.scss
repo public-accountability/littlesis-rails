@@ -1,13 +1,31 @@
-// Place all the styles related to the Relationships controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+form.edit_relationship {
+    
+    .form-group {
+	padding-top: 1em;
+    }
 
+    #description-fields input {
+	margin-top: 1em;
+    }
+ 
+    label.control-label, div.col-sm-10 {
+	margin-top: 0.5em;
+    }
+   
+    input[type="radio"] {
+	margin-left: 0.2em;
+	margin-right: 0.2em;
+    }
 
+    small {
+	padding-left: 0.8em;
+    }
+}
 
 #source-links-table td {
   font-size: 1em;
 }
 
 #source-links-table tbody a {
-  
+ 
 }

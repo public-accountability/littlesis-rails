@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 describe RelationshipsController, type: :controller do
+  let(:e1) { create(:person) }
+  let(:e2) { create(:mega_corp_inc) }
+  
   before(:all) do
     Entity.skip_callback(:create, :after, :create_primary_ext)
     DatabaseCleaner.start
@@ -13,6 +16,9 @@ describe RelationshipsController, type: :controller do
 
   it { should route(:get, '/relationships/1').to(action: :show, id: 1) }
   it { should route(:post, '/relationships').to(action: :create) }
+  it { should route(:get, '/relationships/1/edit').to(action: :edit, id: 1) }
+  it { should route(:patch, '/relationships/1').to(action: :update, id: 1) }
+  it { should route(:post, '/relationships/bulk_add').to(action: :bulk_add) }
 
   describe 'GET #show' do
     before do
@@ -31,8 +37,6 @@ describe RelationshipsController, type: :controller do
 
   describe 'POST #create' do
     login_admin
-    let(:e1) { create(:person) }
-    let(:e2) { create(:mega_corp_inc) }
 
     def example_params(entity1_id='10', entity2_id='20')
       {
@@ -115,7 +119,7 @@ describe RelationshipsController, type: :controller do
         expect(JSON.parse(response.body)['reference']).to have_key 'source'
         expect(JSON.parse(response.body)['relationship']).to have_key 'category_id'
       end
-    end
+    end 
 
     describe 'params' do
       before do
@@ -135,6 +139,99 @@ describe RelationshipsController, type: :controller do
       end
     end
   end # end describe POST #create
+
+  describe 'GET /relationships/id/edit' do
+    login_user
+    
+    before do
+      @rel = build :relationship
+      expect(Relationship).to receive(:find).with('1').and_return(@rel)
+      get :edit, id: 1
+    end
+
+    it { should respond_with(:success) }
+    it { should render_template(:edit) }
+  end 
+
+  describe 'PATCH /relationships/id' do
+    let(:generic_reference) { create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12) } 
+    login_user
+
+    context 'When the submission contains errors' do
+      before do
+        @rel = generic_reference
+        patch :update, { id: @rel.id, relationship: {'start_date' => '012345678910'}, reference: {'just_cleaning_up' => '1'} }
+      end
+    
+      it { should respond_with(:success) }
+      it { should render_template(:edit) }
+    end
+
+    context "it's a good request" do
+      before do
+        @rel = generic_reference
+        patch :update, { id: @rel.id, relationship: {'start_date' => '12-12-12'}, reference: {'reference_id' => '123'} }
+      end
+      
+      it { should redirect_to(relationship_path) }
+      
+      it 'updates db' do
+        expect(Relationship.find(@rel.id).start_date).to eql '12-12-12'
+      end
+    end
+
+    context 'invalid reference' do
+      before do
+        @rel = generic_reference
+        patch :update, { id: @rel.id, relationship: {'start_date' => '01-01-01'}, reference: {'source' => '', 'name' => ''} }
+      end
+      
+      it { should render_template(:edit) }
+      
+      it 'does not update relationship' do 
+        expect(Relationship.find(@rel.id).start_date).to be nil
+      end
+    end
+
+    context 'good request with new reference' do
+      before do
+        @rel = generic_reference
+        @ref_count = Reference.count
+        patch :update, { id: @rel.id, relationship: {'end_date' => '01-01-01'}, reference: {'source' => 'http://example.com', 'name' => 'example'} }
+      end
+      
+      it { should redirect_to(relationship_path) }
+      
+      it 'updates db' do
+        expect(Relationship.find(@rel.id).end_date).to eql '01-01-01'
+      end
+      
+      it 'updates last user id' do
+        expect(Relationship.find(@rel.id).last_user_id). to eql controller.current_user.sf_guard_user_id
+      end
+
+      it 'creates a new reference' do
+        expect(Reference.count).to eql (@ref_count + 1)
+        expect(Reference.last.source).to eql 'http://example.com'
+        expect(Reference.last.name).to eql 'example'
+      end
+
+    end
+
+    context 'With nested params: position relationship' do
+      before do
+        @rel = create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 1, description1: 'leader')
+        patch(:update, { id: @rel.id, reference: {'just_cleaning_up' => '1'}, relationship: {'notes' => 'notes notes notes', 'position_attributes' => { 'is_board' => 'true', 'compensation' => '1000' } } })
+      end
+      
+      it { should redirect_to(relationship_path) }
+      
+      it 'updates db' do
+        expect(Relationship.find(@rel.id).get_category.is_board).to eql true
+        expect(Relationship.find(@rel.id).get_category.compensation).to eql 1000
+      end
+    end
+  end # end describe PATCH #update
 
   describe 'post bulk_add' do
     login_user
@@ -218,8 +315,7 @@ describe RelationshipsController, type: :controller do
         { 'entity1_id' => @e1.id,
           'category_id' => 1,
           'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
-          'relationships' => [relationship1]
-        }
+          'relationships' => [relationship1] }
       end
       
       it 'creates one relationship' do
@@ -250,8 +346,7 @@ describe RelationshipsController, type: :controller do
         { 'entity1_id' => @e1.id,
           'category_id' => 12,
           'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
-          'relationships' => [relationship1]
-        }
+          'relationships' => [relationship1] }
       end
       
       it 'does not create a relationship' do
