@@ -206,7 +206,6 @@ Lilsis::Application.routes.draw do
     member do
       get 'raw'
       post 'clone'
-      get 'collection'
       get 'embedded'
       get 'map_json'
       get 'dev'

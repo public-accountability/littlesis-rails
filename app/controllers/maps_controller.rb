@@ -247,13 +247,6 @@ class MapsController < ApplicationController
     redirect_to edit_map_path(map)
   end
 
-  def collection
-    respond_to do |format|
-      format.json {
-        render json: { map_collection: @map.to_collection_data }
-      }
-    end
-  end
 
   # OLIRAPHER 2 SEARCH API
 
