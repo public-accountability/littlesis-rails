@@ -58,6 +58,7 @@ class Relationship < ActiveRecord::Base
   validates :end_date, length: { maximum: 10 }
 
   after_create :create_category, :create_links
+  after_save :clear_entity_cache_delay
 
   def create_category
     self.class.all_categories[category_id].constantize.create(relationship: self) if self.class.all_category_ids_with_fields.include?(category_id)
@@ -363,5 +364,21 @@ class Relationship < ActiveRecord::Base
     self.attributes = { amount: ny_disclosures.sum(:amount1), filings: ny_disclosures.count }
     self.attributes = { description1: "NYS Campaign Contribution" } if description1.blank?
     self
+  end
+
+  private
+
+  def clear_entity_cache
+    host = 'littlesis.org'
+    begin
+      entity.clear_legacy_cache(host)
+      related.clear_legacy_cache(host)
+    rescue
+      Rails.logger.warn "Failed to clear entity cache for Relationship #{id}"
+    end
+  end
+
+  def clear_entity_cache_delay
+    clear_entity_cache.delay unless Rails.env.test?
   end
 end
