@@ -23,6 +23,7 @@ class RelationshipsController < ApplicationController
     end
     if @relationship.update_attributes prepare_update_params(update_params)
       @reference.save unless @reference.nil? # save the reference
+      update_entity_last_user
       redirect_to relationship_path(@relationship)
     else
       render :edit
@@ -39,6 +40,8 @@ class RelationshipsController < ApplicationController
       @relationship.save!
       @reference.assign_attributes(object_id: @relationship.id, object_model: "Relationship")
       @reference.save
+      # updated last_user_id of the entities in the relationship
+      update_entity_last_user
       render json: {'relationship_id' => @relationship.id}, status: :created
     else
       errors = {
@@ -135,6 +138,11 @@ class RelationshipsController < ApplicationController
     @relationship = Relationship.find(params[:id])
   end
 
+  def update_entity_last_user
+    @relationship.entity.update(last_user_id: current_user.sf_guard_user_id)
+    @relationship.related.update(last_user_id: current_user.sf_guard_user_id)
+  end
+
   # modifies update_params to be passed to Relationship.update
   #  - converts blank_values to nil
   #  - adds last_user_id
@@ -164,6 +172,7 @@ class RelationshipsController < ApplicationController
   def existing_reference_params
     params.require(:reference).permit(:just_cleaning_up, :reference_id)
   end
+
   
   # whitelists relationship params and associated nested attributes
   # if the relationship category requires them 

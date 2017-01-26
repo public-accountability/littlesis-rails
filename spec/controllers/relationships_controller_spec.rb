@@ -1,10 +1,11 @@
 require 'rails_helper'
 
 describe RelationshipsController, type: :controller do
-  let(:e1) { create(:person) }
-  let(:e2) { create(:mega_corp_inc) }
+  let(:e1) { create(:person, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
+  let(:e2) { create(:mega_corp_inc, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
   
   before(:all) do
+    @sf_user =  create(:sf_user)
     Entity.skip_callback(:create, :after, :create_primary_ext)
     DatabaseCleaner.start
   end
@@ -86,6 +87,20 @@ describe RelationshipsController, type: :controller do
         expect(r.object_model).to eql 'Relationship'
         expect(r.object_id). to eql Relationship.last.id
       end
+
+      it 'changes updated_at of entities' do
+        e1_updated_at = e1.updated_at
+        e2_updated_at = e2.updated_at
+        post_request
+        expect(Entity.find(e1.id).updated_at.to_i).not_to eql e1_updated_at.to_i
+        expect(Entity.find(e2.id).updated_at.to_i).not_to eql e2_updated_at.to_i
+      end
+
+      it 'updates last_user_id' do
+        post_request
+        expect(Entity.find(e1.id).last_user_id).not_to eql @sf_user.id
+        expect(Entity.find(e2.id).last_user_id).not_to eql @sf_user.id
+      end
     end
 
     context 'with invalid params' do
@@ -154,22 +169,38 @@ describe RelationshipsController, type: :controller do
   end 
 
   describe 'PATCH /relationships/id' do
-    let(:generic_reference) { create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12) } 
+    let(:generic_reference) { create(:generic_relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12, last_user_id: @sf_user.id) } 
     login_user
 
     context 'When the submission contains errors' do
       before do
         @rel = generic_reference
+        @e1_updated_at = e1.updated_at
+        @e2_updated_at = e2.updated_at
         patch :update, { id: @rel.id, relationship: {'start_date' => '012345678910'}, reference: {'just_cleaning_up' => '1'} }
       end
     
       it { should respond_with(:success) }
       it { should render_template(:edit) }
+      
+      it 'does not change the  updated_at of entities' do
+        expect(Entity.find(e1.id).updated_at.to_i).to eql @e1_updated_at.to_i
+        expect(Entity.find(e2.id).updated_at.to_i).to eql @e2_updated_at.to_i
+      end
+
+      it 'does not update last_user_id' do
+        expect(Entity.find(e1.id).last_user_id).to eql @sf_user.id
+        expect(Entity.find(e2.id).last_user_id).to eql @sf_user.id
+      end
     end
 
     context "it's a good request" do
       before do
-        @rel = generic_reference
+        @e1 = create(:person, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago, name: 'person1')
+        @e2 = create(:mega_corp_inc, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) 
+        @rel = create(:generic_relationship, entity1_id: @e1.id, entity2_id: @e2.id)
+        @e1_updated_at = @e1.updated_at
+        @e2_updated_at = @e2.updated_at
         patch :update, { id: @rel.id, relationship: {'start_date' => '12-12-12'}, reference: {'reference_id' => '123'} }
       end
       
@@ -177,6 +208,16 @@ describe RelationshipsController, type: :controller do
       
       it 'updates db' do
         expect(Relationship.find(@rel.id).start_date).to eql '12-12-12'
+      end
+      
+      it 'changes updated_at of entities' do
+        expect(Entity.find(@e1.id).updated_at.to_i).not_to eql @e1_updated_at.to_i
+        expect(Entity.find(@e2.id).updated_at.to_i).not_to eql @e2_updated_at.to_i
+      end
+
+      it 'updates last_user_id' do
+        expect(Entity.find(@e1.id).last_user_id).not_to eql @sf_user.id
+        expect(Entity.find(@e2.id).last_user_id).not_to eql @sf_user.id
       end
     end
 
