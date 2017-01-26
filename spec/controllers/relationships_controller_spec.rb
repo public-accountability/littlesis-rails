@@ -180,6 +180,21 @@ describe RelationshipsController, type: :controller do
       end
     end
 
+    context 'with blank string as start and end date' do
+      before do
+        @rel = generic_reference
+        patch :update, { id: @rel.id, relationship: {'start_date' => '', 'end_date' => ''}, reference: {'reference_id' => '123'} }
+      end
+      
+      it 'keeps start_date as nil' do
+        expect(Relationship.find(@rel.id).start_date).to be nil
+      end
+      
+      it 'keeps end_date as nil' do
+        expect(Relationship.find(@rel.id).end_date).to be nil
+      end
+    end
+
     context 'invalid reference' do
       before do
         @rel = generic_reference

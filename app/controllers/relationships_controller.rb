@@ -21,7 +21,7 @@ class RelationshipsController < ApplicationController
       # if the reference is valid assign the other attribute required
       @reference.assign_attributes(object_id: @relationship.id, object_model: "Relationship")
     end
-    if @relationship.update_attributes update_params.merge(last_user_id: current_user.sf_guard_user_id)
+    if @relationship.update_attributes prepare_update_params(update_params)
       @reference.save unless @reference.nil? # save the reference
       redirect_to relationship_path(@relationship)
     else
@@ -133,6 +133,13 @@ class RelationshipsController < ApplicationController
 
   def set_relationship
     @relationship = Relationship.find(params[:id])
+  end
+
+  # modifies update_params to be passed to Relationship.update
+  #  - converts blank_values to nil
+  #  - adds last_user_id
+  def prepare_update_params(update_params)
+    blank_to_nil(update_params.to_h).merge(last_user_id: current_user.sf_guard_user_id)
   end
 
   def blank_to_nil(hash)
