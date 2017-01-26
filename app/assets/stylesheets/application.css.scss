@@ -1,35 +1,25 @@
-@import 'jquery-ui/core.css';
-@import "jquery-ui/autocomplete.css";
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require jquery-ui/core
+ *= require jquery-ui/theme
+ *= require jquery-ui/autocomplete
+ *= require_self
+ *= require bootstrap-select.min
+ *= require bootsy
+ *= require jquery.dataTables
+ *= require dataTables.editor
+ *= require jquery.Jcrop
+ *= require main
+ */
+
 @import "bootstrap-sprockets";
 @import "bootstrap";
-@import "bootsy";
 @import "bootstrap-datepicker";
-@import "bootstrap-select.min.css";
-@import "jquery.dataTables";
-@import "dataTables.editor";
-@import "jquery.Jcrop";
-@import "globals";
-@import "helpers";
-@import "layout";
-@import "bettertabs";
-@import "campaigns";
-@import "carousel";
-@import "content_custom";
-@import "cover";
-@import "datatable";
-@import "edits";
-@import "entities";
-@import "globals";
-@import "groups";
-@import "home";
-@import "lists";
-@import "maps";
-@import "notes";
-@import "nys";
-@import "references";
-@import "relationships";
-@import "search";
-@import "topics";
-@import "typeahead";
-@import "users";
-@import "tools";
