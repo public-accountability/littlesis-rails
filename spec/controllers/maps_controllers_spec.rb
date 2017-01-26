@@ -14,6 +14,17 @@ describe MapsController, type: :controller do
     it { should route(:get, '/maps/1706-colorado-s-terrible-ten').to(action: :show, id: '1706-colorado-s-terrible-ten') }
     it { should route(:get, '/maps/1706-colorado-s-terrible-ten/raw').to(action: :raw, id: '1706-colorado-s-terrible-ten') }
     it { should route(:post, '/maps/1706-colorado-s-terrible-ten/clone').to(action: :clone, id: '1706-colorado-s-terrible-ten') }
+    it { should route(:delete, '/maps/1706-colorado-s-terrible-ten').to(action: :destroy, id: '1706-colorado-s-terrible-ten') }
+    it { should route(:get, '/maps/1706-colorado-s-terrible-ten/embedded').to(action: :embedded, id: '1706-colorado-s-terrible-ten') }
+    it { should route(:get, '/maps/1706-colorado-s-terrible-ten/edit').to(action: :edit, id: '1706-colorado-s-terrible-ten') }
+    it { should route(:get, '/maps/1706-colorado-s-terrible-ten/dev').to(action: :dev, id: '1706-colorado-s-terrible-ten') }
+    it { should route(:get, '/maps/1706-colorado-s-terrible-ten/edit/dev').to(action: :dev_edit, id: '1706-colorado-s-terrible-ten') }
+    it { should route(:get, '/maps/featured').to(action: :featured) }
+    it { should route(:get, '/maps/search').to(action: :search) }
+    it { should route(:get, '/maps/find_nodes').to(action: :find_nodes) }
+    it { should route(:get, '/maps/node_with_edges').to(action: :node_with_edges) }
+    it { should route(:get, '/maps/edges_with_nodes').to(action: :edges_with_nodes) }
+    it { should route(:get, '/maps/interlocks').to(action: :interlocks) } 
   end
 
   describe '#show' do
@@ -123,6 +134,29 @@ describe MapsController, type: :controller do
 
       it { should respond_with :unauthorized }
     end
+  end
 
+  describe '#destroy' do
+    before do
+      @map = build(:network_map, graph_data: '{}', is_cloneable: false)
+      expect(NetworkMap).to receive(:find).with('10-a-map').and_return(@map)
+      expect(controller).to receive(:authenticate_user!)
+      expect(controller).to receive(:check_owner)
+      expect(controller).to receive(:check_permission).with('editor')
+      expect(@map).to receive(:destroy)
+      delete :destroy, { id: '10-a-map' }
+    end
+
+    it { should redirect_to(maps_path) }
+  end
+
+  describe '#embedded' do
+    before do
+      expect(NetworkMap).to receive(:find).with('10-a-map').and_return(build(:network_map))
+      get :embedded, { id: '10-a-map' }
+    end
+
+    it { should render_template('embedded') }
+    it { should render_with_layout('fullscreen') }
   end
 end

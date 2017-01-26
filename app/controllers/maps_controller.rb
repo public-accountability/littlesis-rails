@@ -333,12 +333,6 @@ class MapsController < ApplicationController
     )
   end
 
-  def annotation_params
-    params.require(:annotation).permit(
-      :id, :map_id, :title, :description, :highlighted_entity_ids, :highlighted_rel_ids, :highlighted_text_ids
-    )
-  end
-
   def oligrapher_params
     params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_featured, :is_cloneable, :list_sources)
   end
