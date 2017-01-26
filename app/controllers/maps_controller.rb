@@ -243,6 +243,7 @@ class MapsController < ApplicationController
   end
 
   def clone
+    return head :unauthorized unless @map.is_cloneable
     check_permission 'editor'
 
     map = @map.dup
@@ -252,59 +253,6 @@ class MapsController < ApplicationController
 
     redirect_to edit_map_path(map)
   end
-
-  # def annotations
-  #   check_owner
-  # end
-
-  # def new_annotation
-  #   check_owner
-  #   @annotation = MapAnnotation.new(map: @map)
-  # end
-
-  # def create_annotation
-  #   check_owner
-  #   @annotation = MapAnnotation.new(annotation_params)
-
-  #   if @annotation.save
-  #     redirect_to annotations_map_path(NetworkMap.find(@annotation.map_id)), notice: 'Annotation was successfully created.'
-  #   else
-  #     render :new_annotation
-  #   end
-  # end
-
-  # def edit_annotation
-  #   check_owner
-  #   @annotation = MapAnnotation.find(params[:annotation_id])
-  # end
-
-  # def update_annotation
-  #   check_owner
-  #   @annotation = MapAnnotation.find(annotation_params[:id])
-
-  #   if @annotation.update(annotation_params)
-  #     redirect_to annotations_map_path(@annotation.map), notice: 'Annotation was successfully updated.'
-  #   else
-  #     render :edit_annotation
-  #   end
-  # end
-
-  # def reorder_annotations
-  #   check_owner
-  #   annotation_ids = params[:annotation_ids].split(',')
-  #   annotation_ids.each_with_index do |id, index|
-  #     MapAnnotation.find(id).update(order: index + 1)
-  #   end
-
-  #   render json: { success: { id: @map.id, annotation_ids: annotation_ids } }
-  # end
-
-  # def destroy_annotation
-  #   check_owner
-  #   annotation = MapAnnotation.find(params[:annotation_id])
-  #   annotation.destroy
-  #   redirect_to annotations_map_path(@map), notice: 'Annotation was successfully deleted.'
-  # end
 
   def collection
     respond_to do |format|
