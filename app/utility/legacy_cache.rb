@@ -72,7 +72,7 @@ class LegacyCache
   def clear_keys(keys)
     keys.each do |key|
       key = prefix + key unless key.match(prefix)
-      Logger.new(STDOUT).debug(key)
+      Rails.logger.debug(key)
       @client.delete(key)
     end
   end
