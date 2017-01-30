@@ -197,13 +197,6 @@ _    params = oligrapher_params
     render "story_map"
   end
 
-  def edit_fullscreen
-    check_owner
-    check_permission 'editor'
-    response.headers.delete('X-Frame-Options')
-    render layout: "fullscreen"
-  end
-
   def update
     check_owner
     check_permission 'editor'
@@ -245,6 +238,7 @@ _    params = oligrapher_params
   end
 
   def clone
+    return head :unauthorized unless @map.is_cloneable
     check_permission 'editor'
 
     map = @map.dup
@@ -255,66 +249,6 @@ _    params = oligrapher_params
     redirect_to edit_map_path(map)
   end
 
-  # def annotations
-  #   check_owner
-  # end
-
-  # def new_annotation
-  #   check_owner
-  #   @annotation = MapAnnotation.new(map: @map)
-  # end
-
-  # def create_annotation
-  #   check_owner
-  #   @annotation = MapAnnotation.new(annotation_params)
-
-  #   if @annotation.save
-  #     redirect_to annotations_map_path(NetworkMap.find(@annotation.map_id)), notice: 'Annotation was successfully created.'
-  #   else
-  #     render :new_annotation
-  #   end
-  # end
-
-  # def edit_annotation
-  #   check_owner
-  #   @annotation = MapAnnotation.find(params[:annotation_id])
-  # end
-
-  # def update_annotation
-  #   check_owner
-  #   @annotation = MapAnnotation.find(annotation_params[:id])
-
-  #   if @annotation.update(annotation_params)
-  #     redirect_to annotations_map_path(@annotation.map), notice: 'Annotation was successfully updated.'
-  #   else
-  #     render :edit_annotation
-  #   end
-  # end
-
-  # def reorder_annotations
-  #   check_owner
-  #   annotation_ids = params[:annotation_ids].split(',')
-  #   annotation_ids.each_with_index do |id, index|
-  #     MapAnnotation.find(id).update(order: index + 1)
-  #   end
-
-  #   render json: { success: { id: @map.id, annotation_ids: annotation_ids } }
-  # end
-
-  # def destroy_annotation
-  #   check_owner
-  #   annotation = MapAnnotation.find(params[:annotation_id])
-  #   annotation.destroy
-  #   redirect_to annotations_map_path(@map), notice: 'Annotation was successfully deleted.'
-  # end
-
-  def collection
-    respond_to do |format|
-      format.json {
-        render json: { map_collection: @map.to_collection_data }
-      }
-    end
-  end
 
   # OLIRAPHER 2 SEARCH API
 
@@ -402,12 +336,6 @@ _    params = oligrapher_params
     params.require(:map).permit(
       :is_featured, :is_private, :title, :description, :bootsy_image_gallery_id, :data,
        :height, :width, :user_id, :zoom
-    )
-  end
-
-  def annotation_params
-    params.require(:annotation).permit(
-      :id, :map_id, :title, :description, :highlighted_entity_ids, :highlighted_rel_ids, :highlighted_text_ids
     )
   end
 
