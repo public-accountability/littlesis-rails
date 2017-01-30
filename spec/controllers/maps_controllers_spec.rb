@@ -10,6 +10,7 @@ describe MapsController, type: :controller do
 
   describe '#show' do
     def get_request
+      allow(controller).to receive(:user_signed_in?).and_return(true)
       expect(NetworkMap).to receive(:find).with("10-a-map").and_return(@map)
       get :show, {id: '10-a-map' }
     end
@@ -48,8 +49,44 @@ describe MapsController, type: :controller do
       it { should respond_with 403 }
     end
 
+    describe 'Calls cache if user is anonymous' do
+      before do
+        @map = build(:network_map, title: 'a map')
+        mock_cache = double('cache')
+        expect(Rails).to receive(:cache).and_return(mock_cache)
+        expect(mock_cache).to receive(:fetch).with('maps_controller/network_map/10-a-map', expires_in: 5.minutes).and_return(@map)
+        get :show, id: '10-a-map'
+      end
+
+      it { should respond_with :success }
+      it { should render_template 'story_map' }
+      
+      it 'sets cacheable to be true' do
+        expect(assigns(:cacheable)).to eql true
+      end
+    end
+    
+    describe 'does not call cache when user is logged in' do
+      login_user
+      
+      before do
+        @map = build(:network_map, title: 'a map')
+        expect(NetworkMap).to receive(:find).with('10-a-map').and_return(@map)
+        expect(Rails).not_to receive(:cache)
+        get :show, id: '10-a-map'
+      end
+
+      it { should respond_with :success }
+      it { should render_template 'story_map' }
+      
+      it 'sets cacheable to be nil' do
+        expect(assigns(:cacheable)).to be_nil
+      end
+    end
+
     it 'redirects if no slug is provided' do
       @map = build(:network_map, is_private: false, title: 'a map')
+      allow(controller).to receive(:user_signed_in?).and_return(true)
       expect(NetworkMap).to receive(:find).with('10').and_return(@map)
       get :show, id: '10'
       expect(response.status).to eql 302

@@ -96,6 +96,8 @@ class MapsController < ApplicationController
         raise Exceptions::PermissionError
       end
     end
+    
+    @cacheable = true unless user_signed_in?
 
     respond_to do |format|
       format.html {
@@ -160,8 +162,8 @@ class MapsController < ApplicationController
   def create
     check_permission 'editor'
 
-    params = oligrapher_params
-    params[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
+_    params = oligrapher_params
+    paramstory[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
     @map = NetworkMap.new(params)
 
     if @map.save
@@ -389,7 +391,11 @@ class MapsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_map
-    @map = NetworkMap.find(params[:id])
+    if user_signed_in?
+      @map = NetworkMap.find(params[:id])
+    else
+      @map = Rails.cache.fetch("maps_controller/network_map/#{params[:id]}", expires_in: 5.minutes)  { NetworkMap.find(params[:id]) } 
+    end
   end
 
   def map_params
