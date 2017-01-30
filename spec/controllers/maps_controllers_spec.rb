@@ -133,6 +133,7 @@ describe MapsController, type: :controller do
   describe '#raw' do
     before do
       @map = build(:network_map, title: 'a map')
+      allow(controller).to receive(:user_signed_in?).and_return(true)
       expect(NetworkMap).to receive(:find).with("10-a-map").and_return(@map)
       get :raw, {id: '10-a-map' }
     end
@@ -176,6 +177,7 @@ describe MapsController, type: :controller do
   describe '#destroy' do
     before do
       @map = build(:network_map, graph_data: '{}', is_cloneable: false)
+      allow(controller).to receive(:user_signed_in?).and_return(true)
       expect(NetworkMap).to receive(:find).with('10-a-map').and_return(@map)
       expect(controller).to receive(:authenticate_user!)
       expect(controller).to receive(:check_owner)
@@ -190,6 +192,7 @@ describe MapsController, type: :controller do
   describe '#embedded' do
     before do
       expect(NetworkMap).to receive(:find).with('10-a-map').and_return(build(:network_map))
+      allow(controller).to receive(:user_signed_in?).and_return(true)
       get :embedded, { id: '10-a-map' }
     end
 
