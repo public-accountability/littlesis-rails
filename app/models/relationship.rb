@@ -54,8 +54,8 @@ class Relationship < ActiveRecord::Base
   has_many :ny_disclosures, through: :ny_matches
 
   validates_presence_of :entity1_id, :entity2_id, :category_id
-  validates :start_date, length: { maximum: 10 }
-  validates :end_date, length: { maximum: 10 }
+  validates :start_date, length: { maximum: 10 }, date: true
+  validates :end_date, length: { maximum: 10 }, date: true
 
   after_create :create_category, :create_links
   after_save :clear_entity_cache_delay

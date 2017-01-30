@@ -201,13 +201,13 @@ describe RelationshipsController, type: :controller do
         @rel = create(:generic_relationship, entity1_id: @e1.id, entity2_id: @e2.id)
         @e1_updated_at = @e1.updated_at
         @e2_updated_at = @e2.updated_at
-        patch :update, { id: @rel.id, relationship: {'start_date' => '12-12-12'}, reference: {'reference_id' => '123'} }
+        patch :update, { id: @rel.id, relationship: {'start_date' => '2012-12-12'}, reference: {'reference_id' => '123'} }
       end
       
       it { should redirect_to(relationship_path) }
       
       it 'updates db' do
-        expect(Relationship.find(@rel.id).start_date).to eql '12-12-12'
+        expect(Relationship.find(@rel.id).start_date).to eql '2012-12-12'
       end
       
       it 'changes updated_at of entities' do
@@ -239,7 +239,7 @@ describe RelationshipsController, type: :controller do
     context 'invalid reference' do
       before do
         @rel = generic_reference
-        patch :update, { id: @rel.id, relationship: {'start_date' => '01-01-01'}, reference: {'source' => '', 'name' => ''} }
+        patch :update, { id: @rel.id, relationship: {'start_date' => '2001-01-01'}, reference: {'source' => '', 'name' => ''} }
       end
       
       it { should render_template(:edit) }
@@ -253,13 +253,13 @@ describe RelationshipsController, type: :controller do
       before do
         @rel = generic_reference
         @ref_count = Reference.count
-        patch :update, { id: @rel.id, relationship: {'end_date' => '01-01-01'}, reference: {'source' => 'http://example.com', 'name' => 'example'} }
+        patch :update, { id: @rel.id, relationship: {'end_date' => '2001-01-01'}, reference: {'source' => 'http://example.com', 'name' => 'example'} }
       end
       
       it { should redirect_to(relationship_path) }
       
       it 'updates db' do
-        expect(Relationship.find(@rel.id).end_date).to eql '01-01-01'
+        expect(Relationship.find(@rel.id).end_date).to eql '2001-01-01'
       end
       
       it 'updates last user id' do

@@ -37,6 +37,26 @@ describe Relationship, type: :model do
     it { should validate_presence_of(:category_id) }
     it { should validate_length_of(:start_date).is_at_most(10) }
     it { should validate_length_of(:end_date).is_at_most(10) }
+
+    describe 'Date Validation' do
+      def rel(attr)
+        build(:relationship, {category_id: 12, entity1_id: 123, entity2_id: 456}.merge(attr) )
+      end
+      it 'accepts good dates' do
+        expect(rel(start_date: '2000-00-00').valid?).to be true
+        expect(rel(end_date: '2000-10-00').valid?).to be true
+        expect(rel(end_date: '2017-01-20').valid?).to be true
+        expect(rel(start_date: nil).valid?).to be true
+      end
+
+      it 'does not accept bad dates' do
+        expect(rel(start_date: '2000-13-00').valid?).to be false
+        expect(rel(end_date: '2000-10').valid?).to be false
+        expect(rel(end_date: '2017').valid?).to be false
+        expect(rel(start_date: '').valid?).to be false
+      end
+
+    end
   end
 
   describe 'create_category' do
