@@ -1,7 +1,6 @@
 class NetworkMap < ActiveRecord::Base
   include SingularTable
   include SoftDelete
-  include Cacheable
   include Bootsy::Container
 
   delegate :url_helpers, to: 'Rails.application.routes'
