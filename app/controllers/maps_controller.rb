@@ -162,8 +162,8 @@ class MapsController < ApplicationController
   def create
     check_permission 'editor'
 
-_    params = oligrapher_params
-    paramstory[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
+    params = oligrapher_params
+    params[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
     @map = NetworkMap.new(params)
 
     if @map.save
