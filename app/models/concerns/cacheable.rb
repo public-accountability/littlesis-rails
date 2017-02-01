@@ -28,8 +28,9 @@ module Cacheable
 			pattern = "*#{self.class.model_name.cache_key}/new[\\/\\-]*"
 		else
 			sub = subkey.present? ? subkey + "*" : nil
-			pattern = "*#{self.class.model_name.cache_key}/#{self.id}[\\/\\-]*#{sub}"
+			pattern = ".*#{self.class.model_name.cache_key}/#{self.id}[\\/\\-]*#{sub}"
 		end
+
 		Rails.cache.delete_matched(pattern)
 
 		clear_legacy_cache(host) unless subkey.present?
