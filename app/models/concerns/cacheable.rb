@@ -24,16 +24,16 @@ module Cacheable
 	end
 
 	def clear_cache(host, subkey=nil)
-		if new_record?
-			pattern = "*#{self.class.model_name.cache_key}/new[\\/\\-]*"
-		else
-			sub = subkey.present? ? subkey + "*" : nil
-			pattern = ".*#{self.class.model_name.cache_key}/#{self.id}[\\/\\-]*#{sub}"
-		end
+	  if new_record?
+	    pattern = "*#{self.class.model_name.cache_key}/new[\\/\\-]*"
+	  else
+	    sub = subkey.present? ? subkey + "*" : nil
+	    pattern = ".*#{self.class.model_name.cache_key}/#{self.id}[\\/\\-]*#{sub}"
+	  end
+          Rails.logger.info "Deleting cache with pattern: #{pattern}"
+	  Rails.cache.delete_matched(pattern)
 
-		Rails.cache.delete_matched(pattern)
-
-		clear_legacy_cache(host) unless subkey.present?
+	  clear_legacy_cache(host) unless subkey.present?
 	end
 
 	def clear_legacy_cache(host)
