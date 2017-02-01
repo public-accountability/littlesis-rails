@@ -25,11 +25,12 @@ module Cacheable
 
 	def clear_cache(host, subkey=nil)
 	  if new_record?
-	    pattern = "*#{self.class.model_name.cache_key}/new[\\/\\-]*"
+	    pattern = "*#{self.class.model_name.cache_key}\/new[\\/\\-]*"
 	  else
-	    sub = subkey.present? ? subkey + "*" : nil
-	    pattern = ".*#{self.class.model_name.cache_key}/#{self.id}[\\/\\-]*#{sub}"
+	    sub = subkey.present? ? subkey + "*" : ""
+            pattern = ".*#{self.class.model_name.cache_key}\/#{self.id}(\/|\-)*.*#{sub}"
 	  end
+          
           Rails.logger.info "Deleting cache with pattern: #{pattern}"
 	  Rails.cache.delete_matched(pattern)
 
