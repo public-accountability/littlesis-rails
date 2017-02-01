@@ -8,10 +8,7 @@ describe HomeController, type: :controller do
       get :index
     end
 
-    it 'responds with 200' do
-      expect(response.status).to eq(200)
-    end
-
+    it { should respond_with(200) }
     it { should render_template('index') }
 
     it 'has @dots_connected' do
@@ -21,13 +18,24 @@ describe HomeController, type: :controller do
 
   describe 'GET contact' do
     before { get :contact }
-
-    it 'is successful' do 
-      expect(response).to be_success
-    end
-
+    it { should respond_with(:success) }
     it { should render_template('contact') }
     it { should_not set_flash.now }
+  end
+
+  describe 'GET home/dashboard' do
+    login_user
+    
+    before do
+      network_maps = double('network_maps', order: [build(:network_map)])
+      groups = double('groups', includes: double(order: []))
+      edited_entities = double('edited', includes: double(order: double(limit: [])))
+      expect(controller).to receive(:current_user).and_return(double(network_maps: network_maps), double(groups: groups), double(edited_entities: edited_entities))
+      get :dashboard
+    end
+
+    it { should respond_with(:success) }    
+
   end
 
   describe 'POST contact' do
