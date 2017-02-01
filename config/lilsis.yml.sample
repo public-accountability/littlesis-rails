@@ -46,6 +46,7 @@ defaults: &defaults
   legacy_cache_connection: "localhost:11211"
   carousel_list_id: 404
   chat:
+    chat_url: "http://localhost:3000"
     mongo_url: "mongo:27017"
     api_url: "rocketchat:3000"
     admin_username: 

@@ -16,6 +16,11 @@
 	    <% end %>
 	<% end %>
 
+	<%= dismissable_alert('chat_alert') do %>
+	    <strong>New!</strong> LittleSis now has a <%= link_to 'chat', APP_CONFIG['chat']['chat_url'], target: '_blank'  %>, where you can ask questions and discuss research.
+	    Go to <%= link_to 'chat.littlesis.org', APP_CONFIG['chat']['chat_url'], target: '_blank' %> to start chatting!
+	<% end %>
+
 	<form action="/search" method="get">
 	    <div class="input-group">
 		<input type="text" name="q" class="form-control" placeholder="search for a name" />
