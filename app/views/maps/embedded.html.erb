@@ -36,13 +36,14 @@
     isLocked: true
   });
 
-  var windowHeight = window.innerHeight;
 
-  var annotations = $('#oligrapherGraphAnnotations')[0];
-  var annotationsHeight = annotations ? annotations.offsetHeight : 0;
-  var headerHeight = $('#oligrapherHeader')[0].offsetHeight;
-  var graphHeight = windowHeight - annotationsHeight - headerHeight + 25;
-  $('#oligrapherContainer svg')[0].setAttribute("height", graphHeight);
+ var windowHeight = window.innerHeight;
+ var annotations = document.getElementById('oligrapherGraphAnnotations');
+ var annotationsHeight = annotations ? annotations.offsetHeight : 0;
+ var headerHeight = document.getElementById('oligrapherHeader').offsetHeight;
+ var graphHeight = windowHeight - annotationsHeight - headerHeight + 25;
+ document.querySelector('#oligrapherContainer svg').setAttribute('height', graphHeight)
+
 </script>
 
 <% end %>
