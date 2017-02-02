@@ -1,81 +1,105 @@
 <% content_for(:page_title, "Dashboard") %>
 
-<h1>Dashboard</h1>
+<div class="row">
+    <div class="col-md-6">
+    <h1>Dashboard</h1>
+
+    <div class="spacer"></div>
+
+	<% if notice %>
+	    <div class="alert alert-success"><%= notice %></div>
+	<% end %>
+	
+	<% if current_user.sign_in_count < 10 %>
+	    <%= dismissable_alert('dashboard_alert') do %>
+		Need help using LittleSis? Get help for <%= link_to 'beginner', "/beginnerhelp" %> or <%= link_to 'advanced', "/advancedhelp" %> users.
+	    <% end %>
+	<% end %>
+
+	<%= dismissable_alert('chat_alert') do %>
+	    <strong>New!</strong> LittleSis now has a <%= link_to 'chat', APP_CONFIG['chat']['chat_url'], target: '_blank'  %>, where you can ask questions and discuss research.
+	    Go to <%= link_to 'chat.littlesis.org', APP_CONFIG['chat']['chat_url'], target: '_blank' %> to start chatting!
+	<% end %>
+
+	<form action="/search" method="get">
+	    <div class="input-group">
+		<input type="text" name="q" class="form-control" placeholder="search for a name" />
+		<span class="input-group-btn">
+		    <button type="submit" class="btn btn-primary">
+			<span class="glyphicon glyphicon-search"></span>
+		    </button>
+		</span>
+	    </div>
+	</form>
+
+    </div>
+</div> <!-- end-row -->
+
+<div class="row">
+    <div class="col-sm-10 col-md-8">
+	<h3>Explore</h3>
+	<%= link_to("Maps", maps_path, class: "btn btn-default") %>
+	<%= link_to("Lists", lists_path, class: "btn btn-default") %>
+	<%= link_to("Groups", groups_path, class: "btn btn-default") %>
+	<%= link_to("Notes", notes_path, class: "btn btn-default") %>
+	<%= link_to("Edits", edits_path, class: "btn btn-default") %>
+    </div>
+</div> <!-- end-row -->
 
 <div class="spacer"></div>
 
 <div class="row">
-<div class="col-md-6">
+    <div class="col-sm-10 col-md-8">
+	<h3>Your Edits</h3>
 
-<% if notice %>
-	<div class="alert alert-success"><%= notice %></div>
-<% end %>
-
-<%= dismissable_alert('dashboard_alert') do %>
-	Need help using LittleSis? Get help for <%= link_to 'beginner', "/beginnerhelp" %> or <%= link_to 'advanced', "/advancedhelp" %> users.
-<% end %>
-
-<form action="/search" method="get">
-	<div class="input-group">
-		<input type="text" name="q" class="form-control" placeholder="search for a name" />
-		<span class="input-group-btn">
-			<button type="submit" class="btn btn-primary">
-				<span class="glyphicon glyphicon-search"></span>
-			</button>
-		</span>
-	</div>
-</form>
-
-</div>
-</div>
-
-<h3>Explore</h3>
-
-<%= link_to("Maps", maps_path, class: "btn btn-default") %>
-<%= link_to("Lists", lists_path, class: "btn btn-default") %>
-<%= link_to("Groups", groups_path, class: "btn btn-default") %>
-<%= link_to("Notes", notes_path, class: "btn btn-default") %>
-<%= link_to("Edits", edits_path, class: "btn btn-default") %>
-
-<div class="spacer"></div>
-
-<h3>Your Edits</h3>
-
-<% @recent_updates.each do |entity| %>
-  <div class="dashboard-entity">
-    <span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
-  </div>
-<% end %>
-
-<div class="spacer"></div>
-
-<h3>
-	Your Maps
-	<%= header_action('details', home_maps_path) %>
-</h3>
-
-<% @maps.each do |map| %>
-	<div class="dashboard-map">
-		<a href="<%= map_path(map) %>">
-			<% if map.is_private %>
-				<div class="dashboard-private-map-thumbnail"></div>
-			<% else %>
-				<%= image_tag(map.thumbnail, class: "dashboard-map-thumbnail") %><br>
-			<% end %>
-			<%= map.title %>
-		</a>
-	</div>
-<% end %>
-
-<h3>
-	Your Groups
-	<%= header_action('details', home_groups_path) %>
-</h3>
-
-<% if @groups.present? %>
-	<% @groups.each do |group| %>
-		<%= group_link(group) %><br />
+	<% @recent_updates.each do |entity| %>
+	    <div class="dashboard-entity">
+		<span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
+	    </div>
 	<% end %>
-<% else %>
-	<%= link_to 'Join a group', groups_path %>
-<% end %>
+
+    </div>
+</div> <!-- end-row -->
+
+<div class="spacer"></div>
+
+<div class="row">
+    <div class="col-sm-12">
+	<h3>
+	    Your Maps
+	    <%= header_action('details', home_maps_path) %>
+	</h3>
+
+	<% @maps.each do |map| %>
+	    <div class="dashboard-map">
+		<a href="<%= map_path(map) %>">
+		    <% if map.is_private %>
+			<div class="dashboard-private-map-thumbnail"></div>
+		    <% else %>
+			<%= image_tag(map.thumbnail, class: "dashboard-map-thumbnail") %><br>
+		    <% end %>
+		    <%= map.title %>
+		</a>
+	    </div>
+	<% end %>
+    </div>
+</div> <!-- end-row -->
+
+<div class="row">
+    <div class="col-sm-10 col-md-8">
+
+	<h3>
+	    Your Groups
+	    <%= header_action('details', home_groups_path) %>
+	</h3>
+
+	<% if @groups.present? %>
+	    <% @groups.each do |group| %>
+		<%= group_link(group) %><br />
+	    <% end %>
+	<% else %>
+	    <%= link_to 'Join a group', groups_path %>
+	<% end %>
+
+    </div>
+</div> <!-- end-row -->
