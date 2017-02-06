@@ -20,8 +20,10 @@
 			Notes
 			<span class="btn btn-link btn-sm"><%= link_to "see all", notes_group_path(@group) %></span>
 		</h3>
-
-		<%= render partial: "notes/new", locals: { note: @note, redirect: group_path(@group) } %>
+		
+		<div class="well">
+		    <p>The notes function is not currently being maintained. To communicate and coordinate with the rest of your group, please use <%= link_to "chat.littlesis.org", "https://chat.littlesis.org" %> and dm the admins for this group to see if there is a channel dedicated to it.</p>
+		</div>
 
 		<div class="spacer"></div>
 
