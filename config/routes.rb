@@ -244,7 +244,11 @@ Lilsis::Application.routes.draw do
 
   resources :industries, only: [:show]
 
-  resources :relationships, only: [:show, :create, :update, :edit]
+  resources :relationships, only: [:show, :create, :update, :edit] do
+    member do
+      post 'reverse_direction'
+    end
+  end
   post 'relationships/bulk_add' => 'relationships#bulk_add'
 
   resources :references, only: [:create, :destroy]

@@ -18,6 +18,7 @@ describe RelationshipsController, type: :controller do
   it { should route(:get, '/relationships/1').to(action: :show, id: 1) }
   it { should route(:post, '/relationships').to(action: :create) }
   it { should route(:get, '/relationships/1/edit').to(action: :edit, id: 1) }
+  it { should route(:post, '/relationships/1/reverse_direction').to(action: :reverse_direction, id: 1) }
   it { should route(:patch, '/relationships/1').to(action: :update, id: 1) }
   it { should route(:post, '/relationships/bulk_add').to(action: :bulk_add) }
 
@@ -479,5 +480,18 @@ describe RelationshipsController, type: :controller do
           .to change { @controller.instance_variable_get(:@errors) }.by(1)
       end
     end
+  end
+
+  describe 'reverse_direction' do
+    login_user
+    before do
+      @rel = build(:relationship, id: rand(1000))
+      expect(@rel).to receive(:reverse_direction)
+      expect(Relationship).to receive(:find).with('1').and_return(@rel)
+      post :reverse_direction, id: 1
+    end
+    
+    it { should respond_with(302) }
+    it { should redirect_to(edit_relationship_url(@rel)) }
   end
 end

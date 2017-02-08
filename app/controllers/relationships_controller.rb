@@ -1,5 +1,5 @@
 class RelationshipsController < ApplicationController
-  before_action :set_relationship, only: [:show, :edit, :update]
+  before_action :set_relationship, only: [:show, :edit, :update, :reverse_direction]
   before_action :authenticate_user!, except: [:show]
 
   def show
@@ -50,6 +50,11 @@ class RelationshipsController < ApplicationController
       }
       render json: errors, status: :bad_request
     end
+  end
+
+  def reverse_direction
+    @relationship.reverse_direction
+    redirect_to :action => "edit", :id => @relationship.id
   end
 
   # POST /relationships/bulk_add
