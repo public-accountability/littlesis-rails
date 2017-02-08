@@ -114,10 +114,9 @@ describe 'relationships/edit.html.erb', type: :view do
       not_css 'div.alert'
     end
 
-    # it 'has switch icon' do
-    #   css 'span.glyphicon-retweet', count: 1
-    # end
-    
+    it 'has switch icon' do
+      css 'span.glyphicon-retweet', count: 1
+    end
   end
 
   describe 'Education relationship' do

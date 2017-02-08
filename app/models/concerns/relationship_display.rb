@@ -4,11 +4,12 @@ module RelationshipDisplay
   module ClassMethods
   end
 
-  # Returns an array of the names of the description1 and decription2 fields
+  # Returns an array of the names of the description1 and description2 fields
   DESCRIPTION_FIELDS_DISPLAY_NAMES = {
     1 => ['Position belongs to', 'Position in'],
     2 => ['Student', 'School'],
     3 => ['Member', 'Organization'],
+    5 => ['Donor', 'Recipient'],
     7 => ['Lobbyist/firm', 'Politician/agency'],
     10 => ['Owner', 'Organization'],
     11 => ['Child', 'Parent']

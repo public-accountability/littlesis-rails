@@ -72,6 +72,7 @@ module RelationshipsHelper
   def requires_description_fields
     [4, 6, 8, 9, 11, 12].include? @relationship.category_id
   end
+
   def description_fields(f)
     return nil unless requires_description_fields
     content_tag(:div, id: 'description-fields') do
