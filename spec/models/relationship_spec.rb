@@ -71,7 +71,7 @@ describe Relationship, type: :model do
     it 'creates 2 links after creating relationship' do
       e1 = create(:person)
       e2 = create(:person)
-      expect{ Relationship.create!(category_id: 12, entity: e1, related: e2)}.to change{ Link.count}.by(2)
+      expect { Relationship.create!(category_id: 12, entity: e1, related: e2) }.to change { Link.count }.by(2)
     end
   end
 
@@ -84,7 +84,6 @@ describe Relationship, type: :model do
 
 
   describe '#title' do 
-    
     it 'returns description1 if it exists' do 
       rel = build(:position_relationship, description1: "dictator")
       expect(rel.title).to eql 'dictator'
@@ -111,9 +110,7 @@ describe Relationship, type: :model do
 
 
   describe 'Update Start/End dates' do 
-
     describe '#date_string_to_date' do 
-      
       it 'returns nil if no date' do
         r = build(:loeb_donation, start_date: nil)
         expect(r.date_string_to_date(:start_date)).to be_nil
@@ -261,9 +258,31 @@ describe Relationship, type: :model do
       it 'Position' do 
         rel = build(:relationship, category_id: 1, description1: 'boss', is_current: true)
         rel.position = build(:position, is_board: false)
-        expect(rel.details).to eql [ ['Title', 'boss'], ['Is Current', 'yes'], ['Board member', 'no'] ]
+        expect(rel.details).to eql [['Title', 'boss'], ['Is Current', 'yes'], ['Board member', 'no']]
       end
-      
     end
+  end
+  describe 'reverse_direction' do
+    before do
+      @human = create(:person)
+      @corp = create(:corp)
+      @rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
+    end
+
+    it 'changes the direction of relationship' do
+      expect(@rel.entity1_id).to eql @human.id
+      expect(@rel.entity2_id).to eql @corp.id
+      @rel.reverse_direction
+      expect(Relationship.find(@rel.id).entity2_id).to eql @human.id
+      expect(Relationship.find(@rel.id).entity1_id).to eql @corp.id
+    end
+    it 'reverses links' do
+      expect(Link.where(entity1_id: @human.id, relationship_id: @rel.id)[0].is_reverse).to be false
+      expect(Link.where(entity2_id: @human.id, relationship_id: @rel.id)[0].is_reverse).to be true
+      @rel.reverse_direction
+      expect(Link.where(entity1_id: @human.id, relationship_id: @rel.id)[0].is_reverse).to be true
+      expect(Link.where(entity2_id: @human.id, relationship_id: @rel.id)[0].is_reverse).to be false
+    end
+    
   end
 end

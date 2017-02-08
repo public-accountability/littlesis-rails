@@ -123,14 +123,6 @@ class Relationship < ActiveRecord::Base
     end
   end
 
-  def link
-    links.find { |link| link.entity1_id = entity1_id }
-  end
-
-  def reverse_link
-    links.find { |link| linl.entity2_id = entity1_id }
-  end
-
   def category_name
     self.class.all_categories[category_id]
   end
@@ -210,6 +202,36 @@ class Relationship < ActiveRecord::Base
   def source_links
     Reference.where(object_id: self.id, object_model: "Relationship")
   end
+
+  #############
+  #   LINKS   #
+  #############
+
+  def link
+    links.find { |link| link.entity1_id = entity1_id }
+  end
+
+  # COMMENT: does this func work? is it used? (ziggy 2017-02-08) 
+  def reverse_link
+    links.find { |link| linl.entity2_id = entity1_id }
+  end
+
+  def reverse_links
+    links.each do |link|
+      if link.is_reverse == true
+        link.update(is_reverse: false)
+      else
+        link.update(is_reverse: true)
+      end
+    end
+  end
+
+  # Switches entity direction and changes reverses links
+  def reverse_direction
+    update(entity1_id: entity2_id, entity2_id: entity1_id)
+    reverse_links
+  end
+
 
   ###############################
   # Extension Helpers & Getters #
