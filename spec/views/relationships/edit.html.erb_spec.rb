@@ -167,6 +167,26 @@ describe 'relationships/edit.html.erb', type: :view do
     end
   end
 
+
+  describe 'Transaction relationship' do
+    before do
+      @rel = build(:relationship, category_id: 6, description1: 'buyer', id: rand(100), updated_at: Time.now)
+      @rel.trans = build :transaction
+      @rel.last_user = @sf_user
+      assign(:relationship, @rel)
+      render
+    end
+    
+    it 'has common fields' do
+      has_common_fields
+    end
+    
+    it 'has description fields' do
+      css 'div#description-fields'
+    end
+
+  end
+
   describe 'Ownership relationship' do
     before do
       @rel = build(:relationship, category_id: 10, description1: 'owner', id: rand(100), updated_at: Time.now)

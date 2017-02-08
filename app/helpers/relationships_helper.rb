@@ -68,10 +68,9 @@ module RelationshipsHelper
     form.label(column, 'Unknown')
   end
 
-
   # family, transaction, social, professional, hiearchy, generic
   def requires_description_fields
-    [4, 8, 9, 11, 12].include? @relationship.category_id
+    [4, 6, 8, 9, 11, 12].include? @relationship.category_id
   end
 
   def description_fields(f)
