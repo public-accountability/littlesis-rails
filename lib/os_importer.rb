@@ -68,6 +68,7 @@ module OsImporter
     donation.name_suffix = name[:suffix]
     
     if donation.changed?
+      printf("OsDonation %s updated\n", donation.id) if donation.persisted?
       donation.save!
     end
   end
