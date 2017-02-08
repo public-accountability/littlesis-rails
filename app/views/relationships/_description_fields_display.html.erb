@@ -8,7 +8,15 @@
 	<%= entity_link(@relationship.entity) %>
     </div>
 </div>
-
+<% if @relationship.is_reversible?  %>
+    <div class="row">
+	<div class="col-sm-1 col-sm-offset-2" style="padding-bottom: 7px">
+	    <div style="padding-left: 8px">
+		<%= reverse_link %>
+	    </div>
+	</div>
+    </div>
+<% end  %>
 <div class="row">
     <div class="col-sm-2">
 	<p><%= e2_name + ':' %></p>

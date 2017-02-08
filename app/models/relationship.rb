@@ -211,6 +211,10 @@ class Relationship < ActiveRecord::Base
     links.find { |link| link.entity1_id = entity1_id }
   end
 
+  def is_reversible?
+    is_transaction? || is_donation? || is_ownership? || (is_position? && entity.person? && related.person?)
+  end
+
   # COMMENT: does this func work? is it used? (ziggy 2017-02-08) 
   def reverse_link
     links.find { |link| linl.entity2_id = entity1_id }

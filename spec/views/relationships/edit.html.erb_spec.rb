@@ -113,6 +113,11 @@ describe 'relationships/edit.html.erb', type: :view do
     it 'has no error divs' do
       not_css 'div.alert'
     end
+
+    # it 'has switch icon' do
+    #   css 'span.glyphicon-retweet', count: 1
+    # end
+    
   end
 
   describe 'Education relationship' do
@@ -165,6 +170,10 @@ describe 'relationships/edit.html.erb', type: :view do
       css 'label', text: 'Dues'
       css 'input[name="relationship[membership_attributes][dues]"]', count: 1
     end
+
+    it 'does not have switch icon' do
+      not_css 'span.glyphicon-retweet'
+    end
   end
 
 
@@ -185,6 +194,9 @@ describe 'relationships/edit.html.erb', type: :view do
       css 'div#description-fields'
     end
 
+    it 'has switch icon' do
+      css 'span.glyphicon-retweet', count: 1
+    end
   end
 
   describe 'Ownership relationship' do
@@ -214,6 +226,10 @@ describe 'relationships/edit.html.erb', type: :view do
 
     it 'has no error divs' do
       not_css 'div.alert'
+    end
+
+    it 'has switch icon' do
+      css 'span.glyphicon-retweet', count: 1
     end
   end
  

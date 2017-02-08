@@ -72,7 +72,6 @@ module RelationshipsHelper
   def requires_description_fields
     [4, 6, 8, 9, 11, 12].include? @relationship.category_id
   end
-
   def description_fields(f)
     return nil unless requires_description_fields
     content_tag(:div, id: 'description-fields') do
@@ -82,11 +81,23 @@ module RelationshipsHelper
        ' of ',
        entity_link(@relationship.related),
        tag(:br),
+       reverse_link_if,
        entity_link(@relationship.related),
        ' is ',
        f.text_field(:description2),
        ' of ',
        entity_link(@relationship.entity)].reduce(:+)
+    end
+  end
+
+  def reverse_link_if
+    return nil unless @relationship.is_reversible?
+    content_tag(:div, class: 'm-left-1em top-1em') { reverse_link + tag(:br) } 
+  end
+
+  def reverse_link
+    link_to reverse_direction_relationship_path(@relationship), method: :post, class: 'icon-link' do
+      content_tag(:span, nil, {'class' => 'glyphicon glyphicon-retweet icon-link', 'aria-hidden' =>  true, 'title' => 'switch'})
     end
   end
 
