@@ -28,3 +28,8 @@ FactoryGirl.define do
   factory :ownership, class: Ownership do
   end
 end
+
+FactoryGirl.define do
+  factory :transaction, class: Transaction do
+  end
+end

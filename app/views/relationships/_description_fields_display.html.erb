@@ -5,15 +5,23 @@
 	<p><%= e1_name + ':' %></p>
     </div>
     <div class="col-sm-5">
-	<%= entity_link(@relationship.entity) %>
+	<%= entity_link(@relationship.entity, html_class: 'link-blue') %>
     </div>
 </div>
-
+<% if @relationship.is_reversible?  %>
+    <div class="row">
+	<div class="col-sm-2 col-sm-offset-2" style="padding-bottom: 7px">
+	    <div style="padding-left: 8px">
+		<%= reverse_link %>
+	    </div>
+	</div>
+    </div>
+<% end  %>
 <div class="row">
     <div class="col-sm-2">
 	<p><%= e2_name + ':' %></p>
     </div>
     <div class="col-sm-5">
-	<%= entity_link(@relationship.related) %>
+	<%= entity_link(@relationship.related, html_class: 'link-blue') %>
     </div>
 </div>

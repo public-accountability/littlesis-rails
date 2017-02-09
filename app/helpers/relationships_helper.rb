@@ -68,10 +68,9 @@ module RelationshipsHelper
     form.label(column, 'Unknown')
   end
 
-
   # family, transaction, social, professional, hiearchy, generic
   def requires_description_fields
-    [4, 8, 9, 11, 12].include? @relationship.category_id
+    [4, 6, 8, 9, 11, 12].include? @relationship.category_id
   end
 
   def description_fields(f)
@@ -83,11 +82,24 @@ module RelationshipsHelper
        ' of ',
        entity_link(@relationship.related),
        tag(:br),
+       reverse_link_if,
        entity_link(@relationship.related),
        ' is ',
        f.text_field(:description2),
        ' of ',
        entity_link(@relationship.entity)].reduce(:+)
+    end
+  end
+
+  def reverse_link_if
+    return nil unless @relationship.is_reversible?
+    content_tag(:div, class: 'm-left-1em top-1em') { reverse_link + tag(:br) } 
+  end
+
+  def reverse_link
+    link_to reverse_direction_relationship_path(@relationship), method: :post do
+      content_tag(:span, nil, {'class' => 'glyphicon glyphicon-retweet icon-link hvr-pop', 'aria-hidden' =>  true, 'title' => 'switch'}) +
+        content_tag(:span, 'switch', style: 'padding-left: 5px')
     end
   end
 

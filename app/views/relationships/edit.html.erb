@@ -4,7 +4,7 @@
 
 <div class="row rel-search top-1em">
     <div class="col-sm-10">
-	<span class="small-text text-muted">This is the <em>new</em> version of the edit relationship page. <%= link_to "Click here", @relationship.legacy_url('edit') %> to use the older version instead.</span>
+	<span class="text-muted">This is the <em>new</em> version of the edit relationship page. <%= link_to "Click here", @relationship.legacy_url('edit') %> to use the older version instead.</span>
     </div>
 </div>
 
@@ -17,7 +17,7 @@
 	</div>
     </div>
 
-    <% if [1, 2, 3, 7, 10, 11].include? @relationship.category_id %>
+    <% if [1, 2, 3, 5, 7, 10, 11].include? @relationship.category_id %>
 	<%= render partial: 'description_fields_display' %>
     <% end  %>
 
@@ -30,49 +30,72 @@
     	    <% end %>
 	    <%= relationship_form_tag( d1_label, f.text_field(:description1) ) %>
 	<% end %>
-
-	<% if @relationship.is_donation?  %>
+    </div>
+    
+    <% if @relationship.is_donation?  %>
+	<div class="row">
 	    <%= relationship_form_tag( f.label(:description1, 'Type', class: label_class), f.text_field(:description1) ) %>
-	<% end %>
-	
-	<% if requires_description_fields %>
-	    <div class="col-sm-12 bottom-1em">
+	</div>
+    <% end %>
+    
+    <% if requires_description_fields %>
+	<div class="row">
+	    <div class="col-sm-8 bottom-1em">
 		<%= description_fields(f) %>
 	    </div>
-	<% end %>
-	
-	<% if @relationship.is_education?  %>
+	</div>
+    <% end %>
+
+    <% if @relationship.is_education?  %>
+	<div class="row">
 	    <% education_select = f.select :description1, Education::SELECT_OPTIONS, { include_blank: true }, { class: 'selectpicker' } %>
 	    <% education_label = f.label(:description1, 'Type', class: label_class)  %>
 	    <%= relationship_form_tag(education_label , education_select) %>
-	<% end %>
+	</div>
+    <% end %>
 
-	<!-- COMMON FIELDS: start_date, end_date, is_current -->
+    <!-- COMMON FIELDS: start_date, end_date, is_current -->
+
+    <div class="row">
 	<%= relationship_form_tag( 
 	    f.label(:start_date, 'Start date', class: label_class), 
 	    f.text_field(:start_date) + content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)')
 	) %>
-	
+    </div>	
+    
+    <div class="row">
 	<%= relationship_form_tag( 
 	    f.label(:end_date, 'End date', class: label_class), 
 	    f.text_field(:end_date) + content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)')
 	) %>
-	
+    </div>
+    
+    <div class="row">
 	<%= relationship_form_tag( 
 	    f.label(:is_current, 'Is current', class: label_class), 
 	    radio_buttons_producer(f, :is_current) + content_tag(:small, '(is this relationship ongoing?)')
 	) %>
-
-	<% if @relationship.is_position? %>
-	    <%= f.fields_for :position do |p_form|  %>
+    </div>
+    
+    <% if @relationship.is_position? %>
+	<%= f.fields_for :position do |p_form|  %>
+	    <div class="row">
 		<%= relationship_form_tag( p_form.label(:is_board, 'Board member', class: label_class), radio_buttons_producer(p_form, :is_board) )%>
+	    </div>
+	    <div class="row">
 		<%= relationship_form_tag( p_form.label(:is_executive, 'Executive', class: label_class), radio_buttons_producer(p_form, :is_executive) )%>
+	    </div>
+	    <div class="row">
 		<%= relationship_form_tag( p_form.label(:is_exmployee, 'Employee', class: label_class), radio_buttons_producer(p_form, :is_employee) + content_tag(:small, '(is it a non-leadership staff position?)') )%>
+	    </div>
+	    <div class="row">
 		<%= relationship_form_tag( p_form.label(:compensation, 'Compensation', class: label_class), p_form.number_field(:compensation) )%>
-	    <% end  %>
+	    </div>
 	<% end  %>
-
-	<% if @relationship.is_education?  %>
+    <% end  %>
+    
+    <% if @relationship.is_education?  %>
+	<div class="row">
 	    <%= f.fields_for :education do |e_form|  %>
 		<% degree_select = e_form.select :degree_id, Degree.select_options_cache, { include_blank: true }, { class: 'selectpicker' } %>
 		<% degree_label = f.label(:degree_id, 'Degree', class: label_class)  %>
@@ -80,40 +103,48 @@
 		<%= relationship_form_tag( e_form.label(:field, 'Field', class: label_class), e_form.text_field(:field) )%>
 		<%= relationship_form_tag( e_form.label(:is_dropout, 'Dropout', class: label_class), radio_buttons_producer(e_form, :is_dropout) )%>
 	    <% end %>
-	<% end %>
-	
-	<% if @relationship.is_member?  %>
+	</div>
+    <% end %>
+    
+    <% if @relationship.is_member?  %>
+	<div class="row">
 	    <%= f.fields_for :membership do |membership_form|  %>
 		<%= relationship_form_tag( membership_form.label(:dues, 'Dues', class: label_class), membership_form.number_field(:dues) )%>
 	    <% end %>
-	<% end %>
-
-	<!-- Donation, Transaction, Lobbying -->
-	<% if [5, 6, 7].include? @relationship.category_id  %>
+	</div>
+    <% end %>
+    
+    <!-- Donation, Transaction, Lobbying -->
+    <% if [5, 6, 7].include? @relationship.category_id  %>
+	<div class="row">
 	    <%= relationship_form_tag( f.label(:amount, 'Amount', class: label_class), f.number_field(:amount) )%>
-	<% end %>
-	
-	<% if @relationship.is_donation? || @relationship.is_transaction? %>
+	</div>
+    <% end %>
+    
+    
+    <% if @relationship.is_donation? || @relationship.is_transaction? %>
+	<div class="row">
 	    <%= relationship_form_tag( f.label(:goods, 'Goods/services', class: label_class), f.text_area(:goods,  size: '40x5') )%>
-	<% end %>
+	</div>
+    <% end %>
 
-	<% if @relationship.is_ownership? %>
+    <% if @relationship.is_ownership? %>
+	<div class="row">
 	    <%= f.fields_for :ownership do |o_form|  %>
 		<%= relationship_form_tag( o_form.label(:percent_stake, 'Percent Stake', class: label_class), o_form.number_field(:percent_stake, within: 0...101) )%>
 		<%= relationship_form_tag( o_form.label(:shares, 'Shares', class: label_class), o_form.number_field(:shares) )%>
 	    <% end %>
-	<% end %>
+	</div>
+    <% end %>
 
-	<!-- NOTES: common to all -->
+    <!-- notes: common to all -->
+    <div class="row">
 	<%= relationship_form_tag( f.label(:goods, 'Notes', class: label_class), f.text_area(:notes,  size: '40x6') )%>
-	
     </div>
-
 
     <div class="row">
 	<%= f.submit 'Update', class: 'btn btn-primary' %>
 	<%= link_to 'Cancel', relationship_path(@relationship), class: 'btn btn-default' %>
-
     </div>
-<% end %>
 
+<% end %>
