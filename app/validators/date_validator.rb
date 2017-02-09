@@ -17,8 +17,11 @@ class DateValidator < ActiveModel::EachValidator
 
   # anything -> int or false
   def to_int(x)
-    return false if x.nil?
-    Integer(x) rescue false
+    return false unless !x.nil? && x.length.between?(1,4)
+    x = x[1..-1] if x[0] == '0'
+    Integer(x)
+  rescue
+    Rails.logger.debug "Failed to convert - #{x} - to an integer" 
+    false
   end
 end
-
