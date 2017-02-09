@@ -156,8 +156,8 @@ module ApplicationHelper
     raw("1-#{num} of #{ary.count} :: " + link_to("see all", path))
   end
 
-  def entity_link(entity, name = nil, action = nil)
+  def entity_link(entity, name = nil, action = nil, html_class: nil)
     name ||= entity.name
-    link_to name, entity.legacy_url(action)
+    link_to name, entity.legacy_url(action), class: html_class
   end
 end
