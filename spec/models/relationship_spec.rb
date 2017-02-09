@@ -283,6 +283,26 @@ describe Relationship, type: :model do
       expect(Link.where(entity1_id: @human.id, relationship_id: @rel.id)[0].is_reverse).to be true
       expect(Link.where(entity2_id: @human.id, relationship_id: @rel.id)[0].is_reverse).to be false
     end
-    
   end
+
+  context 'Using paper_trail for versioning' do
+    with_versioning do
+      before do
+        @human = create(:person)
+        @corp = create(:corp)
+      end
+      it 'records created, modified, and deleted versions' do
+        rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
+        expect(rel.versions.size).to eq(1)
+        rel.description1 = "important connection"
+        rel.save
+        expect(rel.versions.size).to eq(2)
+        expect(rel.versions.last.event).to eq('update')
+        rel.destroy
+        expect(rel.versions.size).to eq(3)
+        expect(rel.versions.last.event).to eq('destroy')
+      end
+    end
+  end
+
 end

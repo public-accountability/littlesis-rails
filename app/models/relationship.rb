@@ -4,6 +4,8 @@ class Relationship < ActiveRecord::Base
   include Referenceable
   include RelationshipDisplay
 
+  has_paper_trail
+
   POSITION_CATEGORY = 1
   EDUCATION_CATEGORY = 2
   MEMBERSHIP_CATEGORY = 3
