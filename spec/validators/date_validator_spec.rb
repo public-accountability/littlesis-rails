@@ -1,16 +1,14 @@
 require 'rails_helper'
 
-
 describe 'DateValidator' do
-  
-  class DateTester < 
+  class DateTester <
         include ActiveModel::Validations
     attr_accessor :start_date
     validates :start_date, date: true
   end
-  
+
   subject { DateTester.new }
-  
+
   context 'When the date is valid' do
     it 'nil is valid' do
       subject.start_date = nil
@@ -37,7 +35,6 @@ describe 'DateValidator' do
     end
   end
 
-  
   context 'When the date is invalid' do
     it '2012 is not valid' do
       subject.start_date = '2012'
@@ -63,7 +60,7 @@ describe 'DateValidator' do
       subject.start_date = 'Today'
       expect(subject.valid?).to be false
     end
-    
+
     it '1234567891 is not valid' do
       subject.start_date = '1234567891'
       expect(subject.valid?).to be false

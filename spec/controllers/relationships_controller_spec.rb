@@ -197,7 +197,7 @@ describe RelationshipsController, type: :controller do
 
     context "it's a good request" do
       before do
-        @e1 = create(:person, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago, name: 'person1')
+        @e1 = create(:person, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago, name: 'person one')
         @e2 = create(:mega_corp_inc, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) 
         @rel = create(:generic_relationship, entity1_id: @e1.id, entity2_id: @e2.id)
         @e1_updated_at = @e1.updated_at
