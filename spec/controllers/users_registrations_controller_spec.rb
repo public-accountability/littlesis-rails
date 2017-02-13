@@ -4,57 +4,51 @@ describe Users::RegistrationsController, type: :controller do
   # include Devise::Test::ControllerHelpers
   before(:all) { DatabaseCleaner.start }
   after(:all)  { DatabaseCleaner.clean }
-  
-  describe 'GET new' do 
+
+  describe 'GET new' do
     before do
       # reason for this: https://github.com/plataformatec/devise/issues/608
-      request.env['devise.mapping'] = Devise.mappings[:user] 
+      request.env['devise.mapping'] = Devise.mappings[:user]
       get :new
     end
-    
-    it 'request is successful' do 
-      expect(response).to be_success
-    end
-    
-  end 
+    it { should respond_with(:success) }
+  end
 
   def user_data
-    { 
-        "email"=>"test@testing.com", 
-        "password"=>"12345678", 
-        "password_confirmation"=>"12345678",
-        "username"=>"testuser",
-        "default_network_id"=>"79",
-        "newsletter"=>"0",
-        "sf_guard_user_profile"=>{"name_first"=>"firstname", "name_last"=>"lastname", "reason"=>"research"}
+    {
+      'email' => 'test@testing.com',
+      'password' => '12345678',
+      'password_confirmation' => '12345678',
+      'username' => 'testuser',
+      'default_network_id' => '79',
+      'newsletter' => '0',
+      'sf_guard_user_profile' => {
+        'name_first' => 'firstname',
+        'name_last' => 'lastname',
+        'reason' => 'research'
       }
+    }
   end
 
   def post_create(data)
-    post :create, {"user"=> data}
+    post :create, 'user' => data
   end
 
-  describe 'POST create' do 
-    before(:each) do 
-      request.env['devise.mapping'] = Devise.mappings[:user] 
+  describe 'POST create' do
+    before(:each) do
+      request.env['devise.mapping'] = Devise.mappings[:user]
     end
 
-    it 'creates user' do 
-      user_count = User.count
-      post_create user_data
-      expect(User.count).to eql ( user_count + 1 )
+    it 'creates user' do
+      expect { post_create(user_data) }.to change { User.count }.by(1)
     end
 
-    it 'creates sf_user' do 
-      sf_guard_user_count = SfGuardUser.count
-      post_create user_data
-      expect(SfGuardUser.count).to eql (sf_guard_user_count + 1 )
+    it 'creates sf_user' do
+      expect { post_create(user_data) }.to change { SfGuardUser.count }.by(1)
     end
 
-    it 'creates sf_user_profile' do 
-      sf_guard_user_profile_count = SfGuardUserProfile.count
-      post_create user_data
-      expect(SfGuardUserProfile.count).to eql (sf_guard_user_profile_count + 1 )
+    it 'creates sf_user_profile' do
+      expect { post_create(user_data) }.to change { SfGuardUserProfile.count }.by(1)
     end
 
     it 'populates SfGuardProfile with correct info' do
@@ -65,16 +59,14 @@ describe Users::RegistrationsController, type: :controller do
       expect(profile.reason).to eql 'research'
     end
 
-    it 'works if user says yes to newsletter' do 
-      post_create user_data.merge({"newsletter"=>"1"})
+    it 'records answer if user says yes to newsletter' do
+      post_create user_data.merge('newsletter' => '1')
       expect(User.last.newsletter).to be true
     end
-    
-    it 'works if user says no to newsletter' do 
+
+    it 'reocrds answer if users says no to newsletter' do
       post_create user_data
       expect(User.last.newsletter).to be false
     end
-
   end
-
 end
