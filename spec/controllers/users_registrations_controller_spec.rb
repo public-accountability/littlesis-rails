@@ -5,6 +5,14 @@ describe Users::RegistrationsController, type: :controller do
   before(:all) { DatabaseCleaner.start }
   after(:all)  { DatabaseCleaner.clean }
 
+  describe 'Routes' do
+    it { should route(:get, '/join').to(action: :new) }
+    it { should route(:post, '/join').to(action: :create) }
+    it { should route(:get, '/users/edit').to(action: :edit) }
+    it { should route(:put, '/users').to(action: :update) }
+    it { should route(:delete, '/users').to(action: :destroy) }
+  end
+
   describe 'GET new' do
     before do
       # reason for this: https://github.com/plataformatec/devise/issues/608
