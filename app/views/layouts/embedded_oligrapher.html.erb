@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html class="fullscreen">
+    <head>
+	<title><%= page_title %></title>
+	<%= javascript_include_tag "application" %>
+	<%= facebook_meta %>
+    </head>
+    <body>
+	<%= yield %>
+	<%= yield :body %>
+	<%= render 'shared/analytics' %>
+    </body>
+</html>

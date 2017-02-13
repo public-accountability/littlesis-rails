@@ -73,9 +73,15 @@ class MapsController < ApplicationController
     @berman_map = NetworkMap.find(137)
   end
 
+  def dev_embedded
+    @dev_version = true
+    response.headers.delete('X-Frame-Options')
+    render layout: 'embedded_oligrapher'
+  end
+
   def embedded
     response.headers.delete('X-Frame-Options')
-    render layout: "fullscreen"
+    render layout: 'fullscreen'
   end
 
   def map_json
