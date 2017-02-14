@@ -31,8 +31,8 @@
        isLocked: true,
        isEmbedded: true,
        embedded: {
-	 headerPct: 10,
-         annotationPct:  30,
+	 headerPct: <%= @header_pct %>,
+         annotationPct:  <%= @annotation_pct %>,
          logoUrl: "https://dfl6orqdcqt4f.cloudfront.net/assets/lilsis-logo-trans-200-74169fd94db9637c31388ad2060b48720f94450b40c45c23a3889cf480f02c52.png",
          linkUrl: "<%= map_url(@map) %>",
          linkText: "View this map on LittleSis"
@@ -42,8 +42,7 @@
 	 graph: graph,
 	 annotations: annotations
        },
-       startAnnotation: startIndex,
-       startIndex: startIndex,
+       startAnnotation: startIndex
      });
 
     </script>

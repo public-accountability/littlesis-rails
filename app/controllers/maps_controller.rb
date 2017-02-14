@@ -9,6 +9,10 @@ class MapsController < ApplicationController
 
   protect_from_forgery except: [:create, :clone]
 
+  # defaults for embedded oligrapher
+  EMBEDDED_HEADER_PCT = 10
+  EMBEDDED_ANNOTATION_PCT = 28
+
   def index
     maps = NetworkMap.order('created_at DESC, id DESC')
 
@@ -75,6 +79,8 @@ class MapsController < ApplicationController
 
   def dev_embedded
     @dev_version = true
+    @header_pct = embedded_params.fetch(:header_pct, EMBEDDED_HEADER_PCT)
+    @annotation_pct = embedded_params.fetch(:annotation_pct, EMBEDDED_ANNOTATION_PCT)
     response.headers.delete('X-Frame-Options')
     render layout: 'embedded_oligrapher'
   end
@@ -344,6 +350,10 @@ class MapsController < ApplicationController
 
   def oligrapher_params
     params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_featured, :is_cloneable, :list_sources)
+  end
+
+  def embedded_params
+   params.permit(:header_pct, :annotation_pct)
   end
 
   def is_owner
