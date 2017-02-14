@@ -9,12 +9,16 @@ class MapsController < ApplicationController
 
   protect_from_forgery except: [:create, :clone]
 
+  # defaults for embedded oligrapher
+  EMBEDDED_HEADER_PCT = 10
+  EMBEDDED_ANNOTATION_PCT = 28
+
   def index
-    maps = NetworkMap.order("created_at DESC, id DESC")
+    maps = NetworkMap.order('created_at DESC, id DESC')
 
     unless current_user.present? and current_user.has_legacy_permission('admin')
       if current_user.present?
-        maps = maps.where("network_map.is_private = ? OR network_map.user_id = ?", false, current_user.sf_guard_user_id)
+        maps = maps.where('network_map.is_private = ? OR network_map.user_id = ?', false, current_user.sf_guard_user_id)
       else
         maps = maps.public_scope
       end
@@ -25,26 +29,26 @@ class MapsController < ApplicationController
   end
 
   def search
-    order = "updated_at DESC, id DESC"
+    order = 'updated_at DESC, id DESC'
     if user_signed_in?
       if current_user.has_legacy_permission('admin')
         @maps = NetworkMap.search(
-          Riddle::Query.escape(params.fetch(:q, '')), 
+          Riddle::Query.escape(params.fetch(:q, '')),
           order: order
         ).page(params[:page]).per(20)
       else
         @maps = NetworkMap.search(
-          Riddle::Query.escape(params.fetch(:q, '')), 
+          Riddle::Query.escape(params.fetch(:q, '')),
           order: order,
           with: { visible_to_user_ids: [0, current_user.sf_guard_user_id] }
         ).page(params[:page]).per(20)
       end
     else
       @maps = NetworkMap.search(
-        Riddle::Query.escape(params.fetch(:q, '')), 
+        Riddle::Query.escape(params.fetch(:q, '')),
         order: order,
         with: { visible_to_user_ids: [0] }
-      ).page(params[:page]).per(20)      
+      ).page(params[:page]).per(20)
     end
   end
 
@@ -73,9 +77,17 @@ class MapsController < ApplicationController
     @berman_map = NetworkMap.find(137)
   end
 
+  def dev_embedded
+    @dev_version = true
+    @header_pct = embedded_params.fetch(:header_pct, EMBEDDED_HEADER_PCT)
+    @annotation_pct = embedded_params.fetch(:annotation_pct, EMBEDDED_ANNOTATION_PCT)
+    response.headers.delete('X-Frame-Options')
+    render layout: 'embedded_oligrapher'
+  end
+
   def embedded
     response.headers.delete('X-Frame-Options')
-    render layout: "fullscreen"
+    render layout: 'fullscreen'
   end
 
   def map_json
@@ -84,7 +96,7 @@ class MapsController < ApplicationController
     end
     attributes_to_return = ["id", "user_id", "created_at", "updated_at", "title", "description", "width", "height", "zoom", "is_private", "graph_data", "annotations_data", "annotations_count"]
     to_hash_if = lambda { |k,v| ["graph_data", "annotations_data"].include?(k) ?  ActiveSupport::JSON.decode(v) : v }
-    
+
     render json: @map.attributes
             .select { |k,v| attributes_to_return.include?(k) }
             .map { |k,v| [k, to_hash_if.call(k,v) ]  }.to_h
@@ -96,25 +108,24 @@ class MapsController < ApplicationController
         raise Exceptions::PermissionError
       end
     end
-    
+
     @cacheable = true unless user_signed_in?
 
     respond_to do |format|
       format.html {
         @editable = false
         @links = [
-          { text: "embed", url: "#", id: "oligrapherEmbedLink" },
-          
+          { text: "embed", url: "#", id: "oligrapherEmbedLink" }
         ]
-        @links.push({ text: "clone", url: clone_map_url(@map), method: "POST" }) if @map.is_cloneable
-        @links.push({ text: "edit", url: edit_map_url(@map) }) if is_owner
-        @links.push({ text: "share link", url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
+        @links.push({ text: 'clone', url: clone_map_url(@map), method: 'POST' }) if @map.is_cloneable
+        @links.push({ text: 'edit', url: edit_map_url(@map) }) if is_owner
+        @links.push({ text: 'share link', url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
 
         if params[:embed]
           response.headers.delete('X-Frame-Options')
-          render action: "story_map", layout: "fullscreen"
+          render action: 'story_map', layout: 'fullscreen'
         else
-          render "story_map"
+          render 'story_map'
         end
       }
       format.json {
@@ -134,16 +145,15 @@ class MapsController < ApplicationController
 
     @editable = false
     @links = [
-      { text: "embed", url: "#", id: "oligrapherEmbedLink" },
-      { text: "clone", url: clone_map_url(@map), method: "POST" }
+      { text: 'embed', url: '#', id: 'oligrapherEmbedLink' },
+      { text: 'clone', url: clone_map_url(@map), method: 'POST' }
     ]
-    @links.push({ text: "edit", url: edit_map_url(@map) }) if is_owner
-    @links.push({ text: "share link", url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
+    @links.push({ text: 'edit', url: edit_map_url(@map) }) if is_owner
+    @links.push({ text: 'share link', url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
 
     @dev_version = true
-    render "story_map"
+    render 'story_map'
   end
-
 
   def raw
     # old map page for iframe embeds, forward to new embed page
@@ -156,7 +166,7 @@ class MapsController < ApplicationController
     @map.title = 'Untitled Map'
     @map.user = current_user
     @editable = true
-    render "story_map"
+    render 'story_map'
   end
 
   def create
@@ -181,20 +191,20 @@ class MapsController < ApplicationController
     check_permission 'editor'
 
     @links = [
-      { text: "view", url: map_url(@map), target: "_blank" }
+      { text: 'view', url: map_url(@map), target: '_blank' }
     ]
 
     @editable = true
-    render "story_map"
+    render 'story_map'
   end
 
   def dev_edit
     check_owner
     check_permission 'admin'
-    @links = [ { text: "view", url: map_url(@map), target: "_blank" } ]
+    @links = [{ text: 'view', url: map_url(@map), target: '_blank' }]
     @editable = true
     @dev_version = true
-    render "story_map"
+    render 'story_map'
   end
 
   def update
@@ -249,7 +259,6 @@ class MapsController < ApplicationController
     redirect_to edit_map_path(map)
   end
 
-
   # OLIRAPHER 2 SEARCH API
 
   def find_nodes
@@ -257,12 +266,12 @@ class MapsController < ApplicationController
     num = params.fetch(:num, 10)
     fields = params[:desc] ? 'name,aliases,blurb' : 'name,aliases'
     entities = Entity.search(
-      "@(#{fields}) #{q}", 
-      per_page: num, 
-      match_mode: :extended, 
+      "@(#{fields}) #{q}",
+      per_page: num,
+      match_mode: :extended,
       with: { is_deleted: false },
       select: "*, weight() * (link_count + 1) AS link_weight",
-      order: "link_weight DESC"
+      order: 'link_weight DESC'
     )
     data = entities.map { |e| Oligrapher.entity_to_node(e) }
     render json: data
@@ -341,6 +350,10 @@ class MapsController < ApplicationController
 
   def oligrapher_params
     params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_featured, :is_cloneable, :list_sources)
+  end
+
+  def embedded_params
+   params.permit(:header_pct, :annotation_pct)
   end
 
   def is_owner

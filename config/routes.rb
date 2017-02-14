@@ -189,7 +189,8 @@ Lilsis::Application.routes.draw do
       get 'embedded'
       get 'map_json'
       get 'dev'
-      get 'edit/dev'  => "maps#dev_edit"
+      get 'edit/dev' => 'maps#dev_edit'
+      get 'embedded/dev' => 'maps#dev_embedded'
     end
 
     collection do

@@ -9,7 +9,7 @@ class Chat
     @admin_token = nil
     @admin_id = nil
   end
- 
+
   def create_user(user)
     return nil unless user.chatid.blank?
     res = post '/api/v1/users.create', user_payload(user), auth_headers
@@ -21,14 +21,13 @@ class Chat
       Rails.logger.warn "Failed to create chat account for user #{user.id}"
     end
   end
- 
+
   def info
     get '/api/v1/info'
   end
-  
 
   def admin_login
-    res = post '/api/v1/login', { username: USERNAME, password: PASSWORD }
+    res = post '/api/v1/login', username: USERNAME, password: PASSWORD
     if res.present? && res.fetch('status', '') == 'success'
       @admin_token = res['data'].fetch('authToken')
       @admin_id = res['data'].fetch('userId')
@@ -42,7 +41,6 @@ class Chat
       @admin_id = nil
     end
   end
-
 
   ##  CLASS METHODS  ##
 
@@ -60,7 +58,7 @@ class Chat
 
   # returns Mongo::Client connected to db 'rocketchat'
   private_class_method def self.mongo_client
-    Mongo::Client.new([APP_CONFIG['chat']['mongo_url']], :database => 'rocketchat')  
+    Mongo::Client.new([APP_CONFIG['chat']['mongo_url']], :database => 'rocketchat')
   end
 
   private
@@ -68,7 +66,7 @@ class Chat
   def auth_headers
     {'X-Auth-Token' => @admin_token, 'X-User-Id' => @admin_id }
   end
-  
+
   def user_payload(user)
     {
       'email' => user.email,
@@ -96,14 +94,14 @@ class Chat
   end
 
   def add_headers(req, headers)
-    headers.each {  |key, val| req[key] = val } 
+    headers.each { |key, val| req[key] = val }
   end
 
   # str -> <URI>
   def path_to_uri(path)
     URI("#{API_URL}#{path}")
   end
-  
+
   # <NetResponce> -> json | nil
   def success_check(res)
     return JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
