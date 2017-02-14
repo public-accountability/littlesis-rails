@@ -237,6 +237,25 @@ describe RelationshipsController, type: :controller do
       end
     end
 
+    context 'with alternative date formats' do
+      before { @rel = generic_reference }
+
+      it 'allows date as YYYY' do
+        patch :update, { id: @rel.id, relationship: { 'start_date' => '2017' }, reference: { 'reference_id' => '123' } }
+        expect(Relationship.find(@rel.id).start_date).to eql '2017-00-00'
+      end
+
+      it 'allows date as YYYY-MM' do
+        patch :update, { id: @rel.id, relationship: { 'end_date' => '2017-09' }, reference: { 'reference_id' => '123' } }
+        expect(Relationship.find(@rel.id).end_date).to eql '2017-09-00'
+      end
+
+      it 'allows date as YYYYMMDD' do
+        patch :update, { id: @rel.id, relationship: { 'end_date' => '20170925' }, reference: { 'reference_id' => '123' } }
+        expect(Relationship.find(@rel.id).end_date).to eql '2017-09-25'
+      end
+    end
+
     context 'invalid reference' do
       before do
         @rel = generic_reference
@@ -256,13 +275,13 @@ describe RelationshipsController, type: :controller do
         @ref_count = Reference.count
         patch :update, { id: @rel.id, relationship: {'end_date' => '2001-01-01'}, reference: {'source' => 'http://example.com', 'name' => 'example'} }
       end
-      
+
       it { should redirect_to(relationship_path) }
-      
+
       it 'updates db' do
         expect(Relationship.find(@rel.id).end_date).to eql '2001-01-01'
       end
-      
+
       it 'updates last user id' do
         expect(Relationship.find(@rel.id).last_user_id). to eql controller.current_user.sf_guard_user_id
       end
@@ -272,7 +291,6 @@ describe RelationshipsController, type: :controller do
         expect(Reference.last.source).to eql 'http://example.com'
         expect(Reference.last.name).to eql 'example'
       end
-
     end
 
     context 'With nested params: position relationship' do
@@ -280,9 +298,9 @@ describe RelationshipsController, type: :controller do
         @rel = create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 1, description1: 'leader')
         patch(:update, { id: @rel.id, reference: {'just_cleaning_up' => '1'}, relationship: {'notes' => 'notes notes notes', 'position_attributes' => { 'is_board' => 'true', 'compensation' => '1000' } } })
       end
-      
+
       it { should redirect_to(relationship_path) }
-      
+
       it 'updates db' do
         expect(Relationship.find(@rel.id).get_category.is_board).to eql true
         expect(Relationship.find(@rel.id).get_category.compensation).to eql 1000
