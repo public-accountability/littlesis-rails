@@ -214,7 +214,7 @@ class Relationship < ActiveRecord::Base
   end
 
   def is_reversible?
-    is_transaction? || is_donation? || is_ownership? || (is_position? && entity.person? && related.person?)
+    is_transaction? || is_donation? || is_ownership? || is_hierarchy? || (is_position? && entity.person? && related.person?)
   end
 
   # COMMENT: does this func work? is it used? (ziggy 2017-02-08) 
@@ -285,6 +285,10 @@ class Relationship < ActiveRecord::Base
 
   def is_ownership?
     category_id == OWNERSHIP_CATEGORY
+  end
+
+  def is_hierarchy?
+    category_id == HIERARCHY_CATEGORY
   end
 
   def title

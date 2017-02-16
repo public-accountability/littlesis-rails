@@ -92,8 +92,11 @@ module RelationshipsHelper
   end
 
   def reverse_link_if
-    return nil unless @relationship.is_reversible?
-    content_tag(:div, class: 'm-left-1em top-1em') { reverse_link + tag(:br) } 
+    # Hierarchy relationships are the only reversible relationship
+    # that have both description_fields and description fields display.
+    # This prevents the switch icon from appearing twice
+    return nil unless @relationship.is_reversible? && !@relationship.is_hierarchy?
+    content_tag(:div, class: 'm-left-1em top-1em') { reverse_link + tag(:br) }
   end
 
   def reverse_link

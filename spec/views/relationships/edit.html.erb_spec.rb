@@ -231,6 +231,23 @@ describe 'relationships/edit.html.erb', type: :view do
       css 'span.glyphicon-retweet', count: 1
     end
   end
+
+  describe 'hierarchy relationship' do
+    before do
+      @rel = build(:relationship, category_id: 11, id: rand(100), updated_at: Time.now)
+      @rel.last_user = @sf_user
+      assign(:relationship, @rel)
+      render
+    end
+
+    it 'has common fields' do
+      has_common_fields
+    end
+
+    it 'has switch icon' do
+      css 'span.glyphicon-retweet', count: 1
+    end
+   end
  
   describe 'Reference error' do
     before do
