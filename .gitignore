@@ -44,6 +44,9 @@ data/cands/
 data/cmtes/
 data/indivs*
 
+# development db
+data/*.sql
+
 # Passenger files
 Passengerfile.json
 passenger*.pid
