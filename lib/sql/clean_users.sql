@@ -22,6 +22,12 @@ SET encrypted_password = '',
     email = CONCAT('user', id, '@email.com'),
     username = CONCAT('user_', id);
 
+
+-- This sets user #1 (system@littlesis.org) password to be 'password'
+UPDATE clean_users
+SET encrypted_password = '$2a$10$Q2tSw2llUagw1KRNTtLD4.JiYgFA.9pxgV5aPOs/IxFsddZGa8jgO'
+WHERE id = 1 LIMIT 1;
+
 DROP TABLE IF EXISTS clean_sf_guard_user;
 CREATE TABLE clean_sf_guard_user LIKE sf_guard_user;
 INSERT clean_sf_guard_user SELECT * FROM sf_guard_user;

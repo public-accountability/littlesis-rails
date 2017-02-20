@@ -17,8 +17,7 @@ namespace :mysql do
 
   desc 'creates development database'
   task development_db: :environment do
-    ddb = Development_db.new(Rails.root.join('data', "development_db _#{Time.now.strftime('%F')}.sql"))
+    ddb = DevelopmentDb.new(Rails.root.join('data', "development_db_#{Time.now.strftime('%F')}.sql").to_s)
     ddb.run
   end
 end
-

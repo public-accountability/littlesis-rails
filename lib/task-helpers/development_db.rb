@@ -6,10 +6,16 @@ class DevelopmentDb
   end
 
   def run
+    create_clean_tables
     structure_only
     cleaned
     full_tables
     limit
+  end
+
+  def create_clean_tables
+    cmd = "mysql -u #{@db['username']} -p#{@db['password']} -h #{@db['host']} #{@db['database']} < #{Rails.root.join('lib', 'sql', 'clean_users.sql')}"
+    `#{cmd}`
   end
 
   def full_tables
@@ -166,7 +172,7 @@ class DevelopmentDb
               note_relationships
               note_users
               ny_disclosures
-              ny_filer_entities
+              ny_filers
               ny_matches
               os_candidates
               os_committees
