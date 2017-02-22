@@ -16,7 +16,7 @@ describe MapsController, type: :controller do
     it { should route(:post, '/maps/1706-colorado-s-terrible-ten/clone').to(action: :clone, id: '1706-colorado-s-terrible-ten') }
     it { should route(:delete, '/maps/1706-colorado-s-terrible-ten').to(action: :destroy, id: '1706-colorado-s-terrible-ten') }
     it { should route(:get, '/maps/1706-colorado-s-terrible-ten/embedded').to(action: :embedded, id: '1706-colorado-s-terrible-ten') }
-    it { should route(:get, '/maps/1706-colorado-s-terrible-ten/embedded/dev').to(action: :dev_embedded, id: '1706-colorado-s-terrible-ten') }
+    it { should route(:get, '/maps/1706-colorado-s-terrible-ten/embedded/v2').to(action: :embedded_v2, id: '1706-colorado-s-terrible-ten') }
     it { should route(:get, '/maps/1706-colorado-s-terrible-ten/edit').to(action: :edit, id: '1706-colorado-s-terrible-ten') }
     it { should route(:get, '/maps/1706-colorado-s-terrible-ten/dev').to(action: :dev, id: '1706-colorado-s-terrible-ten') }
     it { should route(:get, '/maps/1706-colorado-s-terrible-ten/edit/dev').to(action: :dev_edit, id: '1706-colorado-s-terrible-ten') }

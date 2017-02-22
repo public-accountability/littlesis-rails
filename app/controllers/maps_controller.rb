@@ -10,7 +10,7 @@ class MapsController < ApplicationController
   protect_from_forgery except: [:create, :clone]
 
   # defaults for embedded oligrapher
-  EMBEDDED_HEADER_PCT = 10
+  EMBEDDED_HEADER_PCT = 8
   EMBEDDED_ANNOTATION_PCT = 28
 
   def index
@@ -77,8 +77,7 @@ class MapsController < ApplicationController
     @berman_map = NetworkMap.find(137)
   end
 
-  def dev_embedded
-    @dev_version = true
+  def embedded_v2
     @header_pct = embedded_params.fetch(:header_pct, EMBEDDED_HEADER_PCT)
     @annotation_pct = embedded_params.fetch(:annotation_pct, EMBEDDED_ANNOTATION_PCT)
     response.headers.delete('X-Frame-Options')
