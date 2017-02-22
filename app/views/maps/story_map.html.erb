@@ -9,6 +9,7 @@
 <%= render 'shared/facebook_sdk' %>
 <% if @dev_version %>
     <script type="text/javascript" src="/js/oligrapher-dev.js"></script>
+    <script type="text/javascript" src="/js/LsDataSource.js"></script>
 <% else %>
     <%= javascript_include_tag "oligrapher" %>
 <% end %>
