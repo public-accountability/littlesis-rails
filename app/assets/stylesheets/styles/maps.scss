@@ -161,8 +161,8 @@
   }
 
   #oligrapherGraphAnnotations {
-    position: absolute;
-    height: 30%;
+      position: absolute;
+      max-height: 120px;
     width: 100%;
     bottom: 0px;
   }
