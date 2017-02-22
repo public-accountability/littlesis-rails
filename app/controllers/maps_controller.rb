@@ -78,7 +78,6 @@ class MapsController < ApplicationController
   end
 
   def embedded_v2
-    @dev_version = true
     @header_pct = embedded_params.fetch(:header_pct, EMBEDDED_HEADER_PCT)
     @annotation_pct = embedded_params.fetch(:annotation_pct, EMBEDDED_ANNOTATION_PCT)
     response.headers.delete('X-Frame-Options')

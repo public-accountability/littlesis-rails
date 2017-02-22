@@ -2,12 +2,7 @@
 
 <%= cache_if !user_signed_in?, [ 'embedded', @map ] do %>
     
-    <% if @dev_version %>
-	<script type="text/javascript" src="/js/oligrapher-dev.js"></script>
-	<script type="text/javascript" src="/js/LsDataSource.js"></script>
-    <% else %>
-	<%= javascript_include_tag "oligrapher" %>
-    <% end %>
+    <%= javascript_include_tag "oligrapher" %>
     
     <% content_for(:page_title, raw(@map.name)) %>
     <% content_for(:facebook_title, @map.name) %>
