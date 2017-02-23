@@ -399,7 +399,7 @@ describe RelationshipsController, type: :controller do
 
       it 'creates one Position' do
         expect { post :bulk_add, params }.to change { Position.count }.by(1)
-        expect(Position.last.relationship.entity1_id).to eql @e1.id
+        expect(Position.last.relationship.entity2_id).to eql @e1.id
       end
 
       it 'updates position' do
@@ -465,6 +465,31 @@ describe RelationshipsController, type: :controller do
       it 'responds with 207' do
         post :bulk_add, params
         expect(response.status).to eql 207
+      end
+    end
+
+    context 'When submitting position relationships' do
+      before do
+        @corp = create(:corp)
+        @person = create(:person)
+        @relationship = { 'name' => @person.id, 'primary_ext' => 'Person', 'start_date' => '2017-01-01'}
+
+        @params = { 'entity1_id' => @corp.id,
+                    'category_id' => 1,
+                    'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+                    'relationships' => [@relationship] }
+      end
+
+      it 'creates relationship' do
+        expect { post :bulk_add, @params }.to change { Relationship.count }.by(1)
+      end
+
+      it 'reverses entity id correctly' do
+        post :bulk_add, @params
+        rel = Relationship.last
+        expect(rel.category_id).to eql 1
+        expect(rel.entity.primary_ext).to eql 'Person'
+        expect(rel.related.primary_ext).to eql 'Org'
       end
     end
   end

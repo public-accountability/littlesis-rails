@@ -133,7 +133,7 @@ class RelationshipsController < ApplicationController
       is_current: relationship.fetch('is_current', nil),
       last_user_id: current_user.sf_guard_user_id
     }
-    if params[:category] == 1 && entity1.primary_ext == 'Org' && entity2.primary_ext == 'Person'
+    if r[:category_id].to_i == 1 && entity1.org? && entity2.person?
       r[:entity1_id] = entity2.id
       r[:entity2_id] = entity1.id
     end
