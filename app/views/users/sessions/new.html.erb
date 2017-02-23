@@ -5,6 +5,11 @@
         </div>
     </div>
     <div class="row">
+        <% if flash[:alert] %>
+            <div class="alert alert-warning"><%= flash[:alert] %></div>
+        <% end %>
+    </div>
+    <div class="row">
         <div class="form-group col-sm-5" >
             <%= f.label :email, 'email' %>
             <%= f.email_field :email, autofocus: true, class: 'form-control' %>
