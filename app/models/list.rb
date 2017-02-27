@@ -7,7 +7,7 @@ class List < ActiveRecord::Base
 
   has_paper_trail
   
-  belongs_to :user, foreign_key: "creator_user_id", inverse_of: :ls_lists
+  belongs_to :user, foreign_key: "creator_user_id", inverse_of: :lists
 
   has_many :list_entities, inverse_of: :list, dependent: :destroy
   has_many :entities, through: :list_entities

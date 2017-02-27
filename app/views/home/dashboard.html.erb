@@ -89,6 +89,22 @@
     <div class="col-sm-10 col-md-8">
 
 	<h3>
+	    Your Lists
+	</h3>
+
+	<% if @lists.present? %>
+	    <% @lists.each do |list| %>
+		<%= list_link(list) %><br />
+	    <% end %>
+	<% end %>
+
+    </div>
+</div> <!-- end-row -->
+
+<div class="row">
+    <div class="col-sm-10 col-md-8">
+
+	<h3>
 	    Your Groups
 	    <%= header_action('details', home_groups_path) %>
 	</h3>
@@ -103,3 +119,5 @@
 
     </div>
 </div> <!-- end-row -->
+
+
