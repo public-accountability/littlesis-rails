@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170123193334) do
+ActiveRecord::Schema.define(version: 20170227190903) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -627,6 +627,8 @@ ActiveRecord::Schema.define(version: 20170123193334) do
     t.boolean  "is_deleted",                           default: false, null: false
     t.string   "custom_field_name", limit: 100
     t.boolean  "delta",                                default: true,  null: false
+    t.boolean  "is_private",                           default: false
+    t.integer  "creator_user_id",   limit: 4
   end
 
   add_index "ls_list", ["delta"], name: "index_ls_list_on_delta", using: :btree
@@ -1715,7 +1717,6 @@ ActiveRecord::Schema.define(version: 20170123193334) do
   add_foreign_key "sf_guard_user_group", "sf_guard_user", column: "user_id", name: "sf_guard_user_group_ibfk_1", on_delete: :cascade
   add_foreign_key "sf_guard_user_permission", "sf_guard_permission", column: "permission_id", name: "sf_guard_user_permission_ibfk_2", on_delete: :cascade
   add_foreign_key "sf_guard_user_permission", "sf_guard_user", column: "user_id", name: "sf_guard_user_permission_ibfk_1", on_delete: :cascade
-  add_foreign_key "sf_guard_user_profile", "sf_guard_user", column: "user_id", name: "sf_guard_user_profile_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "social", "relationship", name: "social_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "transaction", "entity", column: "contact1_id", name: "transaction_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "entity", column: "contact2_id", name: "transaction_ibfk_2", on_update: :cascade, on_delete: :nullify
