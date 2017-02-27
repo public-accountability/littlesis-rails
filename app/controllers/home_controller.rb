@@ -66,27 +66,43 @@ class HomeController < ApplicationController
         flash.now[:alert] = "Please enter in your name"
         @message = params[:message]
       elsif contact_params[:email].blank?
-        flash.now[:alert] = "Please enter in your email"
+        flash.now[:alert] = 'Please enter in your email'
         @message = params[:message]
       elsif contact_params[:message].blank?
         flash.now[:alert] = "Don't forget to write a message!"
         @name = params[:name]
       else
         NotificationMailer.contact_email(params).deliver_later # send_mail
-        flash.now[:notice] = "Your message has been sent. Thank you!"
+        flash.now[:notice] = 'Your message has been sent. Thank you!'
       end
     end
   end
 
   def flag
-    @referrer = request.referrer
+    if request.post?
+      if flag_params[:email].blank?
+        flash.now[:alert] = 'Please enter in your email'
+        @message = flag_params[:message]
+        @name = flag_params[:name]
+        @referrer = flag_params[:url]
+      elsif flag_params[:message].blank?
+        flash.now[:alert] = "Don't forget to write a message!"
+        @name = flag_params[:name]
+        @referrer = flag_params[:url]
+      else
+        NotificationMailer.flag_email(flag_params.to_h).deliver_later
+        flash.now[:notice] = 'Your message has been sent. Thank you!'
+      end
+    else
+      @referrer = request.referrer
+    end
   end
 
   private
 
   def redirect_to_dashboard_if_signed_in
     if user_signed_in?
-        return redirect_to home_dashboard_path
+      return redirect_to home_dashboard_path
     end
   end
 
@@ -106,4 +122,7 @@ class HomeController < ApplicationController
     params.permit(:email, :subject, :name, :message)
   end
 
+  def flag_params
+    params.permit(:email, :url, :name, :message)
+  end
 end

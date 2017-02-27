@@ -82,11 +82,43 @@ describe HomeController, type: :controller do
     end
   end
 
-  describe '/flag' do 
+  describe '/flag' do
     describe 'GET' do
       before { get :flag }
       it { should respond_with(:success) }
       it { should render_template('flag') }
+    end
+
+    describe 'POST' do
+      context 'no email provided' do
+        before do
+          expect(NotificationMailer).not_to receive(:flag_email)
+          post :flag, url: 'http://url', message: 'hey'
+        end
+        it { should set_flash.now[:alert] }
+        it { should render_template('flag') }
+      end
+
+      context 'no message provided' do
+        before do
+          expect(NotificationMailer).not_to receive(:flag_email)
+          post :flag, url: 'http://url', email: 'test@example.com'
+        end
+        it { should set_flash.now[:alert] }
+        it { should render_template('flag') }
+      end
+
+      context 'with all params' do
+        let(:params) { {'url' => 'http://url', 'email' => 'test@example.com', 'message' => 'hey' } }
+
+        before do
+          expect(NotificationMailer).to receive(:flag_email).with(params).and_return(double(deliver_later: nil))
+          post :flag, url: 'http://url', email: 'test@example.com', message: 'hey'
+        end
+        it { should_not set_flash.now[:alert] }
+        it { should set_flash.now[:notice] }
+        it { should render_template('flag') }
+      end
     end
   end
 end
