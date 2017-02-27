@@ -44,6 +44,9 @@ class ListsController < ApplicationController
   # POST /lists
   def create
     @list = List.new(list_params)
+    @list.creator_user_id = current_user.id
+    @list.last_user_id = current_user.sf_guard_user_id
+
     if params[:ref][:source].blank?
       @list.errors.add_on_blank(:name)
       @list.errors[:base] << "A source URL is required"
