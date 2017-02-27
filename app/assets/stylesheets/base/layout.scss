@@ -71,7 +71,10 @@ a {
 #brand {
   margin-top: 12px;
   margin-right: 1em;
-  img { width: 180px; }
+  img { 
+    width: 180px; 
+    cursor: pointer;
+  }
 }
 
 #menu {
