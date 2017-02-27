@@ -242,6 +242,7 @@ Lilsis::Application.routes.draw do
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
   get "/home/maps" => "home#maps"
+  get "/home/lists" => "home#lists"
   get "/home/dashboard" => "home#dashboard"
   post "/home/dismiss",
     controller: 'home',

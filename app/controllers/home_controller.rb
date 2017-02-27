@@ -54,6 +54,18 @@ class HomeController < ApplicationController
     render 'maps/index'
   end
 
+  def lists
+    @lists = current_user.lists
+      .select("ls_list.*, COUNT(DISTINCT(ls_list_entity.entity_id)) AS entity_count")
+      .joins(:list_entities)
+      .where(is_network: false, is_admin: false)
+      .group("ls_list.id")
+      .order("entity_count DESC")
+      .page(params[:page]).per(20)
+      
+    render 'lists/index'
+  end
+
   def index
     redirect_to_dashboard_if_signed_in unless request.env['PATH_INFO'] == '/home'
     @dots_connected = dots_connected
