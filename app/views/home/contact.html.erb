@@ -1,22 +1,8 @@
 <div class="row">
     <h1>Contact Us</h1>
 </div>
-<div class="row">
-    <div class="col-sm-12 col-md-8 bg-info">
-        <p>Please only use this form to send a message to the LittleSis team. We DO NOT have contact info for the people and organizations profiled in LittleSis.</p>
-    </div>
-</div>
 
-<div class="row" style="padding-top: 1.5em;">
-    <div class="col-sm-8">
-        <% if flash[:alert] %>
-            <div class="alert alert-warning"><%= flash[:alert] %></div>
-        <% end %>
-        <% if flash[:notice] %>
-            <div class="alert alert-success"><%= flash[:notice] %></div>
-        <% end %>
-    </div>
-</div>
+<%= render partial: 'contact_header' %>
 
 <div class="row">
     <%= form_tag("/contact", method: "post", class: 'form-horizontal', multipart: true) do %>

@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 describe HomeController, type: :controller do
+  describe 'routes' do
+    it { should route(:get, '/contact').to(action: :contact) }
+    it { should route(:get, '/flag').to(action: :flag) }
+  end
+
   describe 'GET #index' do
     before do
       expect_any_instance_of(HomeController).to receive(:redirect_to_dashboard_if_signed_in).and_return(nil)
@@ -25,7 +30,7 @@ describe HomeController, type: :controller do
 
   describe 'GET home/dashboard' do
     login_user
-    
+
     before do
       network_maps = double('network_maps', order: [build(:network_map)])
       groups = double('groups', includes: double(order: []))
@@ -34,8 +39,7 @@ describe HomeController, type: :controller do
       get :dashboard
     end
 
-    it { should respond_with(:success) }    
-
+    it { should respond_with(:success) }
   end
 
   describe 'POST contact' do
@@ -60,7 +64,7 @@ describe HomeController, type: :controller do
       end
     end
 
-    describe 'fields filled out' do 
+    describe 'fields filled out' do
       POST_PARAMS = { name: 'me', email: 'email@email.com', message: 'hey' }
 
       before do

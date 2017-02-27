@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact]
+  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact, :flag]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -76,6 +76,9 @@ class HomeController < ApplicationController
         flash.now[:notice] = "Your message has been sent. Thank you!"
       end
     end
+  end
+
+  def flag
   end
 
   private

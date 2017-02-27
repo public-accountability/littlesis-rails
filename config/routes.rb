@@ -24,6 +24,7 @@ Lilsis::Application.routes.draw do
   get '/home' => 'home#index'
   get '/contact' => 'home#contact'
   post '/contact' => 'home#contact'
+  get '/flag' => 'home#flag'
 
   get "/admin" => "admin#home"
   post "/admin/clear_cache" => "admin#clear_cache"
