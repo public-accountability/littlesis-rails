@@ -79,6 +79,7 @@ class HomeController < ApplicationController
   end
 
   def flag
+    @referrer = request.referrer
   end
 
   private

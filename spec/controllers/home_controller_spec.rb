@@ -3,7 +3,9 @@ require 'rails_helper'
 describe HomeController, type: :controller do
   describe 'routes' do
     it { should route(:get, '/contact').to(action: :contact) }
+    it { should route(:post, '/contact').to(action: :contact) }
     it { should route(:get, '/flag').to(action: :flag) }
+    it { should route(:post, '/flag').to(action: :flag) }
   end
 
   describe 'GET #index' do
@@ -77,6 +79,14 @@ describe HomeController, type: :controller do
       it { should_not set_flash.now[:alert] }
       it { should set_flash.now[:notice] }
       it { should render_template('contact') }
+    end
+  end
+
+  describe '/flag' do 
+    describe 'GET' do
+      before { get :flag }
+      it { should respond_with(:success) }
+      it { should render_template('flag') }
     end
   end
 end
