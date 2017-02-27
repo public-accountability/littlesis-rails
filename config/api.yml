@@ -1,0 +1,16 @@
+---
+
+
+common:
+  ignore:
+    - last_user_id
+    - delta
+    - id
+entity:
+  ignore: 
+    - notes
+    - is_deleted
+relationship:
+  ignore:
+    - amount2
+    - is_gte
