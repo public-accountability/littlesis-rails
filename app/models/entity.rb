@@ -4,7 +4,7 @@ class Entity < ActiveRecord::Base
   include Cacheable
   include Referenceable
   include Political
-
+  include ApiAttributes
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
