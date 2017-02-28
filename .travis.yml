@@ -1,0 +1,12 @@
+language: ruby
+rvm:
+  - 2.3.3
+services:
+  - mysql
+before_script:
+  - cp config/database.travis.yml config/database.yml
+  - cp config/lilsis.yml.sample config/lilsis.yml
+  - mysql -e 'CREATE DATABASE littlesis_test;'
+script:
+  - RAILS_ENV=test bundle exec rake db:structure:load
+  - RAILS_ENV=test bundle exec rspec
