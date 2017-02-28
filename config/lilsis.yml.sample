@@ -56,6 +56,8 @@ defaults: &defaults
 
 test:
   <<: *defaults
+  notification_email: notification@littlesis.dev
+  notification_to: rspec@testing.com
 
 development:
   <<: *defaults
