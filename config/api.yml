@@ -6,10 +6,12 @@ common:
     - last_user_id
     - delta
     - id
+    - created_at
 entity:
   ignore: 
     - notes
     - is_deleted
+    - merged_id
 relationship:
   ignore:
     - amount2
