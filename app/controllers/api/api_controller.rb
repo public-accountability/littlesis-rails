@@ -3,11 +3,11 @@ module Api
     protect_from_forgery with: :null_session
 
     rescue_from ActiveRecord::RecordNotFound do
-      render json: ApiUtils::Response.error(:RECORD_NOT_FOUND)
+      render json: ApiUtils::Response.error(:RECORD_NOT_FOUND), status: :not_found
     end
 
     rescue_from Entity::EntityDeleted do
-      render json: ApiUtils::Response.error(:RECORD_DELETED)
+      render json: ApiUtils::Response.error(:RECORD_DELETED), status: :gone
     end
 
     def index
