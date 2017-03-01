@@ -260,7 +260,7 @@ class ListsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def list_params
-      params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :custom_field_name)
+      params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :is_private, :custom_field_name)
     end
 
     def interlocks_results(options)
