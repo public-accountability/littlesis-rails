@@ -17,7 +17,6 @@
 
 # Ignore database configuration
 /config/database.yml
-db/structure.sql
 
 # Ignore secret configuration
 /config/lilsis.yml
