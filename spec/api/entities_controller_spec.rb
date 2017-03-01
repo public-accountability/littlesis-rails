@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Api::EntitiesController, type: :controller do
   describe 'show' do
-    context 'good request' do 
+    context 'good request' do
       ATTRIBUTE_KEYS = %w(name blurb summary website parent_id primary_ext updated_at start_date end_date is_current link_count)
       before(:all)  { @pac = create(:pac) }
       before(:each) do

@@ -11,8 +11,9 @@ module Api
     end
 
     def index
-      render json: {'test' => 123}
+      render 'api/index', layout: 'application'
     end
-    
   end
 end
+
+

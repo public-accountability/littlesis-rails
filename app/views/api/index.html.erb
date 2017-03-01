@@ -1,0 +1,101 @@
+<style>
+ table th.content, table td.content {
+     width: 100%;
+ }
+</style>
+
+<div class="row">
+    <div class="col-md-10">
+	<h1>LittleSis Api Documentation - Version 2</h1>
+	<div class="well">
+	    <p>This this is the documentation for version 2 of the API, which is in active development and not yet finalized</p>
+	</div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+	<h2>Responses</h2>
+	<p>The API follows closely to the conventions of <%= link_to 'JSON API', 'http://jsonapi.org/' %>.</p>
+	<p>All responses are in JSON.</p>
+    </div>
+    <div class="col-md-8">
+	<h3>Successful Responses</h3>
+	<p>For singular resourses, this will return an object with two fields: data and meta. The meta object contains detail sabout the copyright, data license, api vesrion. The data object will have four fields: <em>type</em>, <em>id</em>, <em>attributes</em>, and <em>links</em>.</p>
+	<p><em>Type</em> is the type of resource requested: (i.e. entities). <em>Id</em> is the resource's id. <em>Attributes</em> contain the attribute and information about the resource. <em>Links</em> contain at least one link to LittleSis where the resource can be viewed</p>
+	<p><strong>Structure of response:</strong></p>
+	<pre><code>
+{
+  data: {
+          type: 'resourceType'
+          id: '123'
+          attributes: { ... }
+          links: { 
+            self: '/link/to/resource'
+          }
+        },
+   meta: { ... }
+}
+	</code></pre>
+
+	<p>All sucuessful responses will return status code <code>200</code></p>
+    </div>
+
+    <div class="col-md-12">
+	<h3>Errors</h3>
+	<p>If an error occurs, the API will return json containing information about the error along with an error status code. The field <em>errors</em> will contains an array of error objects, always with at least one.</p>
+	<h4>Structure of an error response: </h4>
+	<pre><code>
+{
+  errors: [ {title: 'Details here about the error'} ],
+  meta: { ... }
+}
+	</code></pre>
+    </div>
+    
+    <div class="col-md-12">
+	<h4>Error Status Codes</h4>
+	<table class="table">
+	    <thead>
+		<tr>
+		    <th>Status Code</th>
+		    <th class="content">Meaning</th>
+		</tr>
+	    </thead>
+	    <tbody>
+		<tr>
+		    <td>404</td>
+		    <td class="content">Resource is missing or never existed.</td>
+		</tr>
+		<tr>
+		    <td>410</td>
+		    <td class="content">Resource has been deleted (but once existed)</td>
+		</tr>
+	    </tbody>
+	</table>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+	<h2>Entity Resourses</h2>
+    </div>
+
+    <div class="col-md-12">
+	<h3><code>/api/entities/:id</code></h3>
+	<p>This provides basic information about the entity: </p>
+	<ul>
+	    <%= attribute_line('name', 'The primary alias (not necessarily unique) of the Entity in LittleSis') %>
+	    <%= attribute_line('blurb', 'A short phrase or sentence describing the Entity') %>
+	    <%= attribute_line('primary_ext', '"Person" or "Org"') %>
+	    <%= attribute_line('summary', 'A longer bio or summary of the Entity') %>
+	    <%= attribute_line('website', "The Entity's website") %>
+	    <%= attribute_line('start_date', "The date when the Entity came to exist -- DOB for people, founding dates for orgs") %>
+	    <%= attribute_line('end_date', "The date, if any, when the Entity ceased to exist") %>
+	    <%= attribute_line('is_current', "The date, if any, when the Entity ceased to exist") %>
+	    <%= attribute_line('parent_id', "If the Entity is a sub-organization of a parent Entity, the parent's id is stored here") %>
+	    <%= attribute_line('updated_at', 'The last time the Entity data was updated') %>
+	</ul>
+    </div>
+</div>
