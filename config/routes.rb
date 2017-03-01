@@ -279,6 +279,23 @@ Lilsis::Application.routes.draw do
 
   get '/tools/bulk/relationships' => "tools#bulk_relationships"
 
+  #########
+  #  API  #
+  #########
+
+
+  get '/api' => 'api/api#index'
+
+  namespace :api do
+    resources :entities, only: [:show] do
+      member do
+        get 'relationships'
+        get 'details'
+      end
+    end
+  end
+  
+
   match "*path", to: "errors#not_found", via: :all
 
   # The priority is based upon order of creation: first created -> highest priority.
