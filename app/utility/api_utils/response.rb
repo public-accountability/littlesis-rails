@@ -2,6 +2,7 @@ module ApiUtils
   # API response builder
   class Response
     include ApiResponseMeta
+    include ErrorResponses
 
     def initialize(model)
       @model = model
@@ -24,6 +25,14 @@ module ApiUtils
 
     def to_json(options = {})
       response.to_json
+    end
+
+    # symbol -> hash
+    def self.error(err)
+      {
+        errors: [const_get(err)],
+        meta: meta
+      }
     end
 
     private

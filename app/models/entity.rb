@@ -621,5 +621,8 @@ class Entity < ActiveRecord::Base
       return nil
     end
   end
-  
+
+  class EntityDeleted < ActiveRecord::ActiveRecordError
+  end
+
 end

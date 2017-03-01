@@ -14,6 +14,7 @@ class Api::EntitiesController < Api::ApiController
   private
 
   def set_entity
-    @entity = Entity.find(params[:id])
+    @entity = Entity.unscoped.find(params[:id])
+    raise Entity::EntityDeleted if @entity.is_deleted?
   end
 end
