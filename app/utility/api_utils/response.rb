@@ -2,7 +2,7 @@ module ApiUtils
   # API response builder
   class Response
     include ApiResponseMeta
-    
+
     def initialize(model)
       @model = model
       # entity if model_class?(Entity)
@@ -26,7 +26,7 @@ module ApiUtils
     private
 
     def model_class?(klass)
-      @model.kind_of?(klass)
+      @model.is_of?(klass)
     end
   end
 end
