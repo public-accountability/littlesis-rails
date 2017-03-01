@@ -35,6 +35,9 @@ class List < ActiveRecord::Base
 
   validates_presence_of :name
 
+  scope :public_scope, -> { where(is_private: false) }
+  scope :private_scope, -> { where(is_private: true) }
+
   def destroy
     soft_delete
   end

@@ -14,7 +14,13 @@ class ListsController < ApplicationController
 
   # GET /lists
   def index
-    @lists = self.class.get_lists(params[:page])
+    lists = self.class.get_lists(params[:page])
+
+    if current_user.present?
+      @lists = lists.where('ls_list.is_private = ? OR ls_list.creator_user_id = ?', false, current_user.id)
+    else
+      @lists = lists.public_scope
+    end
 
     if params[:q].present?
       is_admin = (current_user and current_user.has_legacy_permission('admin')) ? [0, 1] : 0
