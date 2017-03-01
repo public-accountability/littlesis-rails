@@ -30,9 +30,13 @@ describe Api::EntitiesController, type: :controller do
     end
 
     it 'has correct attribute keys' do
-      ATTRIBUTE_KEYS.each { |k|expect(@json['data']['attributes'].key?(k)).to eql true }
+      ATTRIBUTE_KEYS.each { |k|expect(@json['data']['attributes'].key?(k)).to be true }
       expect(@json['data']['attributes']['name']).to eql 'PAC'
       expect(@json['data']['attributes']['primary_ext']).to eql 'Org'
+    end
+
+    it 'has url link' do
+      expect(@json['data']['links'].key?('self')).to be true
     end
   end
 end

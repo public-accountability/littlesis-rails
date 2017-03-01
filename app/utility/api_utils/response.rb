@@ -13,7 +13,10 @@ module ApiUtils
         data: {
           type: @model.class.name.pluralize.downcase,
           id: @model.id,
-          attributes: @model.api_attributes
+          attributes: @model.api_attributes,
+          links: {
+            self: "https://littlesis.org#{@model.legacy_url}"
+          }
         },
         meta: self.class.meta
       }
