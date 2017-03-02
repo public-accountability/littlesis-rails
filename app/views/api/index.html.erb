@@ -93,9 +93,10 @@
 	    <%= attribute_line('website', "The Entity's website") %>
 	    <%= attribute_line('start_date', "The date when the Entity came to exist -- DOB for people, founding dates for orgs") %>
 	    <%= attribute_line('end_date', "The date, if any, when the Entity ceased to exist") %>
-	    <%= attribute_line('is_current', "The date, if any, when the Entity ceased to exist") %>
 	    <%= attribute_line('parent_id', "If the Entity is a sub-organization of a parent Entity, the parent's id is stored here") %>
 	    <%= attribute_line('updated_at', 'The last time the Entity data was updated') %>
+	    <%= attribute_line('types', 'An array of sub types the entity (i.e. Business, Lawyer)') %>
+	    <%= attribute_line('aliases', 'An array of other names the ntity is known as') %>
 	</ul>
     </div>
 </div>

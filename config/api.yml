@@ -12,6 +12,7 @@ entity:
     - notes
     - is_deleted
     - merged_id
+    - is_current
 relationship:
   ignore:
     - amount2

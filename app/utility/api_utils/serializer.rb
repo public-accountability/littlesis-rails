@@ -4,13 +4,23 @@ module ApiUtils
 
     def initialize(model)
       @model = model
+      
     end
 
     def attributes
-      @model.attributes.delete_if { |k, _| attributes_to_ignore.include?(k) }
+      @attributes = @model.attributes.delete_if { |k, _| attributes_to_ignore.include?(k) }
+      model_specific_attributes
+      @attributes
     end
 
     private
+
+    def model_specific_attributes
+      if @model.is_a? Entity
+        @attributes['aliases'] = @model.aliases.map(&:name)
+        @attributes['types'] = @model.types
+      end
+    end
 
     def attributes_to_ignore
       model_ignores = MODEL_INFO[@model.class.name.downcase].try(:fetch, 'ignore')
