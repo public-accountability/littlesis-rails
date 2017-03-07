@@ -340,33 +340,14 @@ class Relationship < ActiveRecord::Base
 
   ## position ##
 
-  def is_government_position?
-    is_position? && related.extension_names.include?("GovernmentBody") ? true : false
-  end
-
-  def is_active_on? date
-    return true if start_date == nil && end_date == nil
-    
-    if start_date == nil
-      return date <= end_date ? true : false
-    end
-
-    if end_date == nil
-      return date >= start_date ? true : false
-    end
-
-    date >= start_date && date <= end_date ? true : false
-  end
-
   def position_or_membership_type 
     return 'None' unless (is_position? || is_member?)
 
     org_types = related.extension_names
 
-    return 'Business' if org_types.include? 'Business'
+    return 'Business' if (org_types & ['Business', 'BusinessPerson']).any?
     return 'Government' if org_types.include? 'GovernmentBody'
-    return 'In The Office Of' if (org_types & ['ElectedRepresentative', 'PublicOfficial']).any? && (related.held_government_office_on?(start_date) || related.held_government_office_on?(end_date))
-
+    return 'In The Office Of' if (org_types & ['ElectedRepresentative', 'PublicOfficial']).any?
     return 'Other Positions & Memberships'
   end
 

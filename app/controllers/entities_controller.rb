@@ -4,8 +4,8 @@ class EntitiesController < ApplicationController
   before_action :set_current_user, only: [:show, :political, :match_donations]
     
   def show
-    @relationships = @entity.relationships.select { |r| r.entity1_id == @entity.id }
-    @positions = @relationships.select { |r| r.category_id == 1 || r.category_id == 3 }.group_by { |p| p.position_or_membership_type }.sort_by { |k, v| k }
+    @relationships = @entity.relationships.group_by { |r| r.category_id }
+    @positions = (@relationships[1] + @relationships[3]).select { |r| r.entity1_id == @entity.id }.group_by { |p| p.position_or_membership_type }.sort_by { |k, v| k }
   end
 
   def new

@@ -7,6 +7,7 @@
             <%= render partial: 'tabs', locals: { active_tab: 'relationships', entity: @entity }  %>
 
             <div id='relationship_tabs_content'>
+
                 <% @positions.each do |k, v| %>
                     <div class='subsection'>
                         <% if k == 'In The Office Of' || k == 'Other Positions & Memberships' %>
@@ -16,20 +17,26 @@
                         <% end %>
                     </div>
                     <div class='relationship-section'>
-                        <% v.each do |p| %>
-                            <div class='related_entity'>
-                                <div class='related_entity_entity'>
-                                    <%= link_to p.related.name, entity_path(p.related) %>
-                                </div>
-                                <div class='related_entity_relationship'>
-                                    <ul>
-                                        <li><%= link_to "#{p.description1} (#{p.start_date || '?'}—#{p.end_date || '?'})", relationship_path(p) %></li>
-                                    </ul>
-                                </div>
-                            </div>
+                        <% v.each do |position| %>
+                            <%= render partial: "relationship", locals: { rel: position } %>
                         <% end %>
                     </div>
                 <% end %>
+
+                <div class='subsection'>Education</div>
+                <div class='relationship-section'>
+                    <% @relationships[2].each do |r| %>
+                        <%= render partial: "relationship", locals: { rel: r } %>
+                    <% end %>
+                </div>
+
+                <div class='subsection'>Holdings</div>
+                <div class='relationship-section'>
+                    <% @relationships[10].each do |r| %>
+                        <%= render partial: "relationship", locals: { rel: r } %>
+                    <% end %>
+                </div>
+
             </div>
         </div>
         <div class="col-md-4 col-sm-4">
