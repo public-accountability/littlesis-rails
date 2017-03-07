@@ -44,12 +44,6 @@ class EntitiesController < ApplicationController
     end
   end
 
-  def relationships
-  end
-
-  def positions
-  end
-
   def add_relationship
     @relationship = Relationship.new
     @reference = Reference.new

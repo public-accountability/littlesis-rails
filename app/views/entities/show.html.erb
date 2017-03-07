@@ -6,18 +6,31 @@
             <%= render partial: 'summary', locals: { entity: @entity } %>
             <%= render partial: 'tabs', locals: { active_tab: 'relationships', entity: @entity }  %>
 
-            <% @positions.each do |k, v| %>
-                <% if k == 'In The Office Of' || k == 'Other Positions & Memberships' %>
-                    <h3><%= k %></h3>
-                <% else %>
-                    <h3><%= k %> Positions</h3>
+            <div id='relationship_tabs_content'>
+                <% @positions.each do |k, v| %>
+                    <div class='subsection'>
+                        <% if k == 'In The Office Of' || k == 'Other Positions & Memberships' %>
+                            <%= k %>
+                        <% else %>
+                            <%= k %> Positions
+                        <% end %>
+                    </div>
+                    <div class='relationship-section'>
+                        <% v.each do |p| %>
+                            <div class='related_entity'>
+                                <div class='related_entity_entity'>
+                                    <%= link_to p.related.name, entity_path(p.related) %>
+                                </div>
+                                <div class='related_entity_relationship'>
+                                    <ul>
+                                        <li><%= link_to "#{p.description1} (#{p.start_date || '?'}—#{p.end_date || '?'})", relationship_path(p) %></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        <% end %>
+                    </div>
                 <% end %>
-                <ul>
-                    <% v.each do |p| %>
-                        <li><%= @entity.name %><%= p.description_sentence[0] %><%= p.related.name %></li>
-                    <% end %>
-                </ul>
-            <% end %>
+            </div>
         </div>
         <div class="col-md-4 col-sm-4">
             <p>side bar will go here...</p>

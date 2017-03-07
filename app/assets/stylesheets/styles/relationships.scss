@@ -29,3 +29,51 @@ form.edit_relationship {
 #source-links-table tbody a {
  
 }
+
+#relationship_tabs_content {
+    border: 0px solid #ccc;
+    border-top: 0;
+
+    .subsection {
+        font-size: 18px;
+        font-weight: 500;
+        color: black;
+        padding: 0.4em;
+        padding-bottom: 0.2em;
+        padding-left: 0.2em;
+    }
+
+    .relationship-section {
+        border: 0px solid #ddd;
+        border-top: 0;
+        margin-bottom: 1em;
+    
+        .related_entity {
+            color: #444;
+            font-size: 14px;
+            line-height: 1.3em;
+            border-top: 1px solid #ddd;
+            padding: 0.5em;
+            padding-bottom: 0.4em;
+            padding-left: 0.3em;
+        }
+
+        .related_entity:hover {
+            background-color: #f8f8f8;
+        }
+
+        .related_entity_entity {
+            height: 20px;
+            overflow: hidden;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .related_entity_relationship {
+            font-size: 12px;
+            padding-top: 0.2em;
+            padding-left: 0.5em;
+        }
+    }
+
+}
