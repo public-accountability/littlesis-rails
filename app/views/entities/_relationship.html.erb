@@ -1,11 +1,15 @@
-<div class='related_entity'>
-    <div class='related_entity_entity'>
-        <span class='related_entity_name'><%= link_to rel.related.name, entity_path(rel.related) %></span>
-        <span class='related_entity_blurb'><%= rel.related.blurb %></span>
-    </div>
-    <div class='related_entity_relationship'>
-        <ul>
-            <li><%= link_to "#{rel.description1} (#{rel.start_date || '?'}—#{rel.end_date || '?'})", relationship_path(rel) %></li>
-        </ul>
-    </div>
+<div class='relationship-section'>
+    <% relationships.each do |r| %>
+        <div class='related_entity'>
+            <div class='related_entity_entity'>
+                <span class='related_entity_name'><%= link_to r.related.name, entity_path(r.related) %></span>
+                <span class='related_entity_blurb'><%= r.related.blurb %></span>
+            </div>
+            <div class='related_entity_relationship'>
+                <ul>
+                    <li><%= link_to "#{r.description1} (#{r.start_date || '?'}—#{r.end_date || '?'})", relationship_path(r) %></li>
+                </ul>
+            </div>
+        </div>
+    <% end %>
 </div>

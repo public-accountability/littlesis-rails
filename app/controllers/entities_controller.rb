@@ -5,7 +5,14 @@ class EntitiesController < ApplicationController
     
   def show
     @relationships = @entity.relationships.group_by { |r| r.category_id }
-    @positions = (@relationships[1] + @relationships[3]).select { |r| r.entity1_id == @entity.id }.group_by { |p| p.position_or_membership_type }.sort_by { |k, v| k }
+    @positions = (@relationships[1] || [] + @relationships[3] || []).select { |r| r.entity1_id == @entity.id }.group_by { |p| p.position_or_membership_type }.sort_by { |k, v| k }
+    @headings = {
+      2 =>  'Education',
+      4 =>  'Family',
+      6 =>  'Services/Transactions',
+      9 =>  'Professional Associates',
+      10 => 'Holdings'
+    }
   end
 
   def new

@@ -16,26 +16,15 @@
                             <%= k %> Positions
                         <% end %>
                     </div>
-                    <div class='relationship-section'>
-                        <% v.each do |position| %>
-                            <%= render partial: "relationship", locals: { rel: position } %>
-                        <% end %>
-                    </div>
+                    <%= render partial: "relationship", locals: { relationships: v } %>
                 <% end %>
 
-                <div class='subsection'>Education</div>
-                <div class='relationship-section'>
-                    <% @relationships[2].each do |r| %>
-                        <%= render partial: "relationship", locals: { rel: r } %>
+                <% @headings.each do |category_id, heading| %>
+                    <% if @relationships[category_id] %>
+                        <div class='subsection'><%= heading %></div>
+                        <%= render partial: "relationship", locals: { relationships: @relationships[category_id] } %>
                     <% end %>
-                </div>
-
-                <div class='subsection'>Holdings</div>
-                <div class='relationship-section'>
-                    <% @relationships[10].each do |r| %>
-                        <%= render partial: "relationship", locals: { rel: r } %>
-                    <% end %>
-                </div>
+                <% end %>
 
             </div>
         </div>
