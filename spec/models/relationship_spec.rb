@@ -374,7 +374,7 @@ describe Relationship, type: :model do
 
     it 'categorizes all other positions as "Other"' do
       rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @human_2.id, category_id: 1)
-      expect(rel.position_type).to eql 'Other'
+      expect(rel.position_type).to eql 'Other Positions & Memberships'
     end
   end
 

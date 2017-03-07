@@ -367,7 +367,7 @@ class Relationship < ActiveRecord::Base
     return 'Government' if org_types.include? 'GovernmentBody'
     return 'In The Office Of' if (org_types & ['ElectedRepresentative', 'PublicOfficial']).any? && (related.held_government_office_on?(start_date) || related.held_government_office_on?(end_date))
 
-    return 'Other'
+    return 'Other Positions & Memberships'
   end
 
   ########################

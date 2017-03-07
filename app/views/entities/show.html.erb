@@ -7,10 +7,10 @@
             <%= render partial: 'tabs', locals: { active_tab: 'relationships', entity: @entity }  %>
 
             <% @positions.each do |k, v| %>
-                <% if k == 'Other' %>
-                    <h3>Other Positions and Memberships</h3>
+                <% if k == 'In The Office Of' || k == 'Other Positions & Memberships' %>
+                    <h3><%= k %></h3>
                 <% else %>
-                    <h3><%= k.capitalize %> Positions</h3>
+                    <h3><%= k %> Positions</h3>
                 <% end %>
                 <ul>
                     <% v.each do |p| %>
