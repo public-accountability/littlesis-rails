@@ -285,6 +285,99 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'is_active_on?' do
+    before do
+      @human_1 = create(:person)
+      @human_2 = create(:person)
+
+      @rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @human_2.id, category_id: 12, start_date: "2012-01-02", end_date: "2016-03-04")
+      @rel_no_start = Relationship.create!(entity1_id: @human_1.id, entity2_id: @human_2.id, category_id: 12, end_date: "2008-01-02") 
+      @rel_no_end = Relationship.create!(entity1_id: @human_1.id, entity2_id: @human_2.id, category_id: 12, start_date: "2012-01-02")
+      @rel_no_dates = Relationship.create!(entity1_id: @human_1.id, entity2_id: @human_2.id, category_id: 12)
+    end
+
+    it 'returns true if date falls between start and end dates of relationship' do
+      expect(@rel.is_active_on? "2014-05-06").to eql true
+    end
+
+    it 'returns false if date does not fall between start and end dates of relationship' do
+      expect(@rel.is_active_on? "2010-07-08").to eql false
+    end
+
+    it 'returns true if date falls after start date and end date is nil' do
+      expect(@rel_no_end.is_active_on? "2014-05-06").to eql true
+    end
+
+    it 'returns false if date falls before start date and end date is nil' do
+      expect(@rel_no_end.is_active_on? "2000-05-06").to eql false
+    end
+
+    it 'returns false if date falls after end date and start date is nil' do
+      expect(@rel_no_start.is_active_on? "2010-07-08").to eql false
+    end
+
+    it 'returns true if date falls before end date and start date is nil' do
+      expect(@rel_no_start.is_active_on? "2000-07-08").to eql true
+    end
+
+    it 'returns true if both dates are nil' do
+      expect(@rel_no_dates.is_active_on? "2014-05-06").to eql true
+    end
+  end
+
+  describe 'position_or_membership_type' do
+    before do
+      @human_1 = create(:person)
+      @human_2 = create(:person)
+      @corp = create(:corp)
+      @elected = create(:elected)
+      @us_house = create(:us_house)
+    end
+
+    it 'returns "None" for a relationship that is not a position or a membership' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @corp.id, category_id: 4)
+      expect(rel.position_type).to eql 'None'
+    end
+
+    it 'correctly identifies a business position' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @corp.id, category_id: 1)
+      rel.related.stub(:extension_names).and_return ['Org', 'Business']
+      expect(rel.position_type).to eql 'Business'
+    end
+
+    it 'correctly identifies a government position' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @us_house.id, category_id: 1)
+      rel.related.stub(:extension_names).and_return ['Org', 'GovernmentBody']
+      expect(rel.position_type).to eql 'Government'
+    end
+
+    it 'correctly identifies an "in the office of" position' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @elected.id, category_id: 1, start_date: "2012-01-02", end_date: "2016-03-04")
+      rel.related.stub(:extension_names).and_return ['Person', 'ElectedRepresentative']
+      rel.related.stub(:held_government_office_on?).with(rel.start_date).and_return true
+      expect(rel.position_type).to eql 'In The Office Of'
+    end
+
+    it 'assumes a position with no dates under a onetime govt official is not "in the office of"' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @elected.id, category_id: 1)
+      rel.related.stub(:extension_names).and_return ['Person', 'ElectedRepresentative']
+      expect(rel.position_type).not_to eql 'In The Office Of'
+    end
+
+    it 'does not identify an "in the office of" position if the position dates do not fall within the dates the govt official held office' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @elected.id, category_id: 1, start_date: "2012-01-02", end_date: "2016-03-04")
+      rel.related.stub(:extension_names).and_return ['Person', 'ElectedRepresentative']
+      rel.related.stub(:held_government_office_on?).with(rel.start_date).and_return false
+      rel.related.stub(:held_government_office_on?).with(rel.end_date).and_return false
+      expect(rel.position_type).not_to eql 'In The Office Of'
+    end
+
+    it 'categorizes all other positions as "Other"' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @human_2.id, category_id: 1)
+      expect(rel.position_type).to eql 'Other'
+    end
+  end
+
   context 'Using paper_trail for versioning' do
     with_versioning do
       before do

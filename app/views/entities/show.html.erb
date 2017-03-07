@@ -5,7 +5,19 @@
         <div class="col-md-8 col-sm-8">
             <%= render partial: 'summary', locals: { entity: @entity } %>
             <%= render partial: 'tabs', locals: { active_tab: 'relationships', entity: @entity }  %>
-            <h1>Entity Page...</h1>
+
+            <% @positions.each do |k, v| %>
+                <% if k == 'Other' %>
+                    <h3>Other Positions and Memberships</h3>
+                <% else %>
+                    <h3><%= k.capitalize %> Positions</h3>
+                <% end %>
+                <ul>
+                    <% v.each do |p| %>
+                        <li><%= @entity.name %><%= p.description_sentence[0] %><%= p.related.name %></li>
+                    <% end %>
+                </ul>
+            <% end %>
         </div>
         <div class="col-md-4 col-sm-4">
             <p>side bar will go here...</p>

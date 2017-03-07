@@ -387,6 +387,16 @@ class Entity < ActiveRecord::Base
     relateds.where('link.category_id IN (1, 3)')
   end
 
+  def positions_on date
+    return [] if date == nil
+    relationships.select { |r| r.entity1_id == id && r.is_position? && r.is_active_on?(date) }
+  end  
+
+  def held_government_office_on? date
+    return false if date == nil
+    (positions_on date).select { |p| p.is_government_position? }.any?
+  end
+
   def twitter_ids
     keys = external_keys.where(domain_id: Domain::TWITTER_ID)
     return nil unless keys.present?
