@@ -126,12 +126,9 @@ class Entity < ActiveRecord::Base
   # and the value is a hash of the attributes for that extension
   def extensions_with_attributes
     hash = {}
-    (extension_names & self.class.all_extension_names_with_fields).each do |name|
-      ext = Kernel.const_get(name).where(:entity_id => id).first
-      ext_hash = ext.attributes
-      ext_hash.delete 'id'
-      ext_hash.delete 'entity_id'
-      hash[name] = ext_hash
+    (extension_names & Entity.all_extension_names_with_fields).each do |name|
+      ext = name.constantize.find_by_entity_id(id)
+      hash[name] = ext.attributes.except('id', 'entity_id', :id, :entity_id)
     end
     hash
   end
