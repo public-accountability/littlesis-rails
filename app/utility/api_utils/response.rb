@@ -4,8 +4,9 @@ module ApiUtils
     include ApiResponseMeta
     include ErrorResponses
 
-    def initialize(model)
+    def initialize(model, options = {})
       @model = model
+      @options = options
       # entity if model_class?(Entity)
     end
 
@@ -14,10 +15,8 @@ module ApiUtils
         data: {
           type: @model.class.name.pluralize.downcase,
           id: @model.id,
-          attributes: @model.api_attributes,
-          links: {
-            self: "https://littlesis.org#{@model.legacy_url}"
-          }
+          attributes: @model.api_attributes(@options),
+          links: self_link
         },
         meta: self.class.meta
       }
@@ -36,6 +35,10 @@ module ApiUtils
     end
 
     private
+
+    def self_link
+      { self: "https://littlesis.org#{@model.legacy_url}" }
+    end
 
     def model_class?(klass)
       @model.is_of?(klass)

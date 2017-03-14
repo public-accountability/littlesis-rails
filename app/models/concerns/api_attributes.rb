@@ -1,7 +1,7 @@
 module ApiAttributes
   extend ActiveSupport::Concern
 
-  def api_attributes
-    ApiUtils::Serializer.new(self).attributes
+  def api_attributes(options = {})
+    ApiUtils::Serializer.new(self, options).attributes
   end
 end

@@ -13,7 +13,9 @@ module Api
     def index
       render 'api/index', layout: 'application'
     end
+
+    def param_to_bool(val)
+      ![nil, false, 0, '0', 'f', 'F', 'false', 'False', 'FALSE', 'off', 'OFF'].include?(val)
+    end
   end
 end
-
-

@@ -1,8 +1,8 @@
 class Api::EntitiesController < Api::ApiController
-  before_action :set_entity
+  before_action :set_entity, :set_options
 
   def show
-    render json: ApiUtils::Response.new(@entity)
+    render json: ApiUtils::Response.new(@entity, @options)
   end
 
   def relationships
@@ -12,6 +12,12 @@ class Api::EntitiesController < Api::ApiController
   end
 
   private
+
+  def set_options
+    @options = {
+      include_entity_details: param_to_bool(params[:details])
+    }
+  end
 
   def set_entity
     @entity = Entity.unscoped.find(params[:id])
