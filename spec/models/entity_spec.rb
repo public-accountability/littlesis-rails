@@ -70,21 +70,11 @@ describe Entity do
   end # end political
 
   describe 'Extension Attributes Functions' do
-    def create_human
-      human = create(:person)
-      human.create_primary_ext
-      human
-    end
-
-    def create_corp
-      corp = create(:corp)
-      corp.create_primary_ext
-      corp
-    end
+    before(:all) { Entity.set_callback(:create, :after, :create_primary_ext) }
+    after(:all) { Entity.skip_callback(:create, :after, :create_primary_ext) }
 
     def create_school
       school = create(:org, name: 'private school')
-      school.create_primary_ext
       school.add_extension 'School', is_private: true
       school
     end
@@ -95,18 +85,18 @@ describe Entity do
 
     describe '#extension_attributes' do
       it 'includes person attributes except for id or entity_id' do
-        human_extension_attributes = create_human.extension_attributes
-        
+        human_extension_attributes = create(:person).extension_attributes
+
         without_ids(Person.column_names).each do |col|
           expect(human_extension_attributes.has_key?(col)).to be true
         end
-        
+
         expect(human_extension_attributes.has_key?('id')).to be false
         expect(human_extension_attributes.has_key?('entity_id')).to be false
       end
 
       it 'includes org attributes except for id or entity_id' do
-        corp_extension_attributes = create_corp.extension_attributes
+        corp_extension_attributes = create(:corp).extension_attributes
         without_ids(Org.column_names).each do |col|
           expect(corp_extension_attributes.has_key?(col)).to be true
         end
@@ -115,10 +105,24 @@ describe Entity do
       end
 
       it 'includes school attributes if entity is a school' do
-        school_extension_attributes =  create_school.extension_attributes
+        school_extension_attributes = create_school.extension_attributes
         without_ids(School.column_names).each do |col|
           expect(school_extension_attributes.has_key?(col)).to be true
         end
+      end
+    end
+
+    describe '#extension_names' do
+      it 'returns ["Org"] if is an org' do
+        expect(create(:org).extension_names).to eql ['Org']
+      end
+
+      it 'returns ["Person"] if is an person' do
+        expect(create(:person).extension_names).to eql ['Person']
+      end
+
+      it 'includes school and org if Entity is also a school' do
+        expect(create_school.extension_names). to eql ['Org', 'School']
       end
     end
   end # end Extension Attributes Functions

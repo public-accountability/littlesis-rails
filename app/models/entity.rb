@@ -115,13 +115,14 @@ class Entity < ActiveRecord::Base
     hash.delete(:notes)
     hash
   end
-  
+
+  # Returns an hash of all attributes for all extensions for the entity.
+  # All enttites will have attributes associated with 'Person' or 'Org'
   def extension_attributes
     hash = {}
     (extension_names & self.class.all_extension_names_with_fields).each do |name|
       ext = Kernel.const_get(name).where(:entity_id => id).first
-      ext_hash = ext.attributes
-      hash.merge!(ext_hash)
+      hash.merge!(ext.attributes)
     end
     hash.delete('id')
     hash.delete('entity_id')
@@ -145,7 +146,9 @@ class Entity < ActiveRecord::Base
   def extension_ids
     extension_records.pluck(:definition_id)
   end
-  
+
+  # Returns array containing the name of all entity extensions (ExtensionRecord)
+  # All entities will have at least one: 'Person' or 'Org
   def extension_names
     extension_ids.collect { |id| self.class.all_extension_names[id] }
   end
@@ -161,7 +164,10 @@ class Entity < ActiveRecord::Base
     ext_ids = exts.map { |ext| all_extension_names.index(ext) }.compact
     joins(:extension_records).where(extension_record: { definition_id: ext_ids })
   end
-  
+
+  # Names of the extensions (ExtensionDefinition) in order of their definition_id
+  # Can be used as a look up table. For instance
+  # Entity.all_extension_names[27] => LaborUnion
   def self.all_extension_names    
     [
       'None',
@@ -204,7 +210,7 @@ class Entity < ActiveRecord::Base
       'Couple'
     ]
   end
-  
+
   def self.all_extension_names_with_fields
     [
       'Person',
