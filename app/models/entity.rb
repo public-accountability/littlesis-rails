@@ -116,28 +116,21 @@ class Entity < ActiveRecord::Base
     hash
   end
 
-  # Returns an hash of all attributes for all extensions for the entity.
-  # All enttites will have attributes associated with 'Person' or 'Org'
+  # Returns a hash of all attributes for all extensions (that have attrs) for the entity.
+  # All entities will have attributes associated with 'Person' or 'Org'
   def extension_attributes
-    hash = {}
-    (extension_names & self.class.all_extension_names_with_fields).each do |name|
-      ext = Kernel.const_get(name).where(:entity_id => id).first
-      hash.merge!(ext.attributes)
-    end
-    hash.delete('id')
-    hash.delete('entity_id')
-    hash
+    extensions_with_attributes.values.reduce(:merge)
   end
 
+  # Returns a hash where the key in each key/value pair is the extension name
+  # and the value is a hash of the attributes for that extension
   def extensions_with_attributes
     hash = {}
     (extension_names & self.class.all_extension_names_with_fields).each do |name|
       ext = Kernel.const_get(name).where(:entity_id => id).first
       ext_hash = ext.attributes
-      ext_hash.delete("id")
-      ext_hash.delete(:id)
-      ext_hash.delete("entity_id")
-      ext_hash.delete(:entity_id)
+      ext_hash.delete 'id'
+      ext_hash.delete 'entity_id'
       hash[name] = ext_hash
     end
     hash
