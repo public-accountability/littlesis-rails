@@ -123,10 +123,8 @@ class Entity < ActiveRecord::Base
       ext_hash = ext.attributes
       hash.merge!(ext_hash)
     end
-    hash.delete("id")
-    hash.delete(:id)
-    hash.delete("entity_id")
-    hash.delete(:entity_id)
+    hash.delete('id')
+    hash.delete('entity_id')
     hash
   end
 
