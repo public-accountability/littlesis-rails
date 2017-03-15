@@ -5,13 +5,27 @@ class EntitiesController < ApplicationController
     
   def show
     @relationships = @entity.relationships.group_by { |r| r.category_id }
+
+    @family_relationships = @relationships[4]
+
+    @friendships = @relationships[8].uniq do |r|
+      related = @entity.id == r.entity1_id ? r.related : r.entity
+      related
+    end
+
     @positions = (@relationships[1] || [] + @relationships[3] || []).select { |r| r.entity1_id == @entity.id }.group_by { |p| p.position_or_membership_type }.sort_by { |k, v| k }
+    
+    @donation_recipients, @donors = @relationships[5].partition { |r| r.entity1_id == @entity.id }
+
+    @professional_relationships = @relationships[9]
+
     @headings = {
       2 =>  'Education',
-      4 =>  'Family',
       6 =>  'Services/Transactions',
-      9 =>  'Professional Associates',
-      10 => 'Holdings'
+      7 =>  'Lobbying',
+      10 => 'Holdings',
+      11 => 'Hierarchy',
+      12 => 'Miscellaneous'
     }
   end
 
