@@ -21,14 +21,14 @@ describe 'ApiSerializer' do
     it 'keeps name' do
       expect(ApiUtils::Serializer.new(entity).attributes.key?('name')).to be true
     end
-    
+
     context 'extra fields with entity' do
       before(:all) do
         @corp = create(:corp, last_user_id: SfGuardUser.last.id)
         @corp.aliases.create!(name: 'other corp name')
         @corp.extension_records.create!(definition_id: 5)
       end
-      
+
       it 'has aliases' do
         expect(ApiUtils::Serializer.new(@corp).attributes.key?('aliases')).to be true
         expect(ApiUtils::Serializer.new(@corp).attributes['aliases']).to include 'other corp name'
@@ -40,6 +40,15 @@ describe 'ApiSerializer' do
         expect(ApiUtils::Serializer.new(@corp).attributes['types']).to include 'Business'
         expect(ApiUtils::Serializer.new(@corp).attributes['types'].length).to eql 2
       end
+    end
+  end
+
+  describe 'ExtensionRecord' do
+    let(:er) { build(:extension_record) }
+
+    it 'serializes extension records' do
+      expect(ApiUtils::Serializer.new(er).attributes)
+        .to eql('definition_id' => 2, 'name' => 'Org', 'display_name' => 'Organization')
     end
   end
 end

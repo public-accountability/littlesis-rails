@@ -88,5 +88,29 @@ describe Api::EntitiesController, type: :controller do
         expect(@json['data']['attributes']['extensions']['BusinessPerson']['sec_cik']).to eql 12345
       end
     end
+  end # end show
+
+  describe '/entities/:id/extensions' do
+    before(:all) do
+      @entity = create(:org)
+      @entity.add_extension('PoliticalFundraising')
+    end
+
+    before(:each) do
+      get :extensions, id: @entity.id
+      @json = JSON.parse(response.body)
+    end
+
+    it { should respond_with(200) }
+
+    it 'data and meta keys' do
+      expect(@json.key?('meta')).to be true
+      expect(@json.key?('data')).to be true
+    end
+
+    it 'returns extension definitions in data as array' do
+      expect(@json['data']).to be_a Array
+      expect(@json['data'].length). to eql 2
+    end
   end
 end

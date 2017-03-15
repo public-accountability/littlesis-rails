@@ -283,18 +283,17 @@ Lilsis::Application.routes.draw do
   #  API  #
   #########
 
-
   get '/api' => 'api/api#index'
 
   namespace :api do
     resources :entities, only: [:show] do
       member do
         get 'relationships'
-        get 'details'
+        get 'extensions'
       end
     end
   end
-  
+
 
   match "*path", to: "errors#not_found", via: :all
 

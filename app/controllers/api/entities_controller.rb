@@ -8,7 +8,9 @@ class Api::EntitiesController < Api::ApiController
   def relationships
   end
 
-  def details
+  def extensions
+    records = ExtensionRecord.includes(:extension_definition).where(entity_id: @entity.id)
+    render json: ApiUtils::Response.new(records)
   end
 
   private

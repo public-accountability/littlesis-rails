@@ -17,3 +17,6 @@ relationship:
   ignore:
     - amount2
     - is_gte
+extensionrecord:
+  ignore:
+    - entity_id

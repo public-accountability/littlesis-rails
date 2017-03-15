@@ -105,4 +105,46 @@
 	<p>example: <pre><code>curl https://littlesis.org/api/entities/1?details=TRUE </code></pre></p>
 	<p>This will not contain useful information for every entity</p>
     </div>
+
+    <div class="col-md-12">
+	<h3>Entity Extensions</h3>
+	<h3><code>/api/entities/:id/extensions</code></h3>
+	<p>This provides the entity types for the given entity. Example"</p>
+	<p><em>curl https://littlesis.org/api/entities/1/extensions</em></p>
+	<pre><code>
+{
+  "data": [
+    {
+      "type": "extension-records",
+      "id": 1,
+      "attributes": {
+        "definition_id": 2,
+        "display_name": "Organization",
+        "name": "Org"
+      }
+    },
+    {
+      "type": "extension-records",
+      "id": 2,
+      "attributes": {
+        "definition_id": 5,
+        "display_name": "Business",
+        "name": "Business"
+      }
+    },
+    {
+      "type": "extension-records",
+      "id": 3,
+      "attributes": {
+        "definition_id": 13,
+        "display_name": "Public Company",
+        "name": "PublicCompany"
+      }
+    }
+  ],
+  "meta": {...}
+}
+	</code></pre>
+    </div>
+
 </div>

@@ -16,10 +16,14 @@ module ApiUtils
     private
 
     def model_specific_attributes
-      if @model.is_a? Entity
+      case @model
+      when Entity
         @attributes['aliases'] = @model.aliases.map(&:name)
         @attributes['types'] = @model.types
         @attributes['extensions'] = @model.extensions_with_attributes if @options[:include_entity_details]
+      when ExtensionRecord
+        @attributes.merge!(@model.extension_definition.attributes.slice('display_name', 'name'))
+      else
       end
     end
 
