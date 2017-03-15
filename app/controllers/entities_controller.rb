@@ -5,6 +5,7 @@ class EntitiesController < ApplicationController
     
   def show
     @relationships = @entity.relationships.group_by { |r| r.category_id }
+    1.upto(12) { |i| @relationships[i] = [] unless @relationships[i] }
 
     @family_relationships = @relationships[4]
 
@@ -13,7 +14,7 @@ class EntitiesController < ApplicationController
       related
     end
 
-    @positions = (@relationships[1] || [] + @relationships[3] || []).select { |r| r.entity1_id == @entity.id }.group_by { |p| p.position_or_membership_type }.sort_by { |k, v| k }
+    @positions = (@relationships[1] + @relationships[3]).select { |r| r.entity1_id == @entity.id }.group_by { |p| p.position_or_membership_type }.sort_by { |k, v| k }
     
     @donation_recipients, @donors = @relationships[5].partition { |r| r.entity1_id == @entity.id }
 
