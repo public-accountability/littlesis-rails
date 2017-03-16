@@ -16,6 +16,7 @@ Lilsis::Application.routes.draw do
     patch '/users' => 'users/registrations#update'
     put '/users' => 'users/registrations#update'
     delete '/users' => 'users/registrations#destroy'
+    post '/users/api_token' => 'users/registrations#api_token'
   end
 
   get '/join/success' => 'users#success'

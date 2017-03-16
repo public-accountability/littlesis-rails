@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170123193334) do
+ActiveRecord::Schema.define(version: 20170315175216) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -85,6 +85,16 @@ ActiveRecord::Schema.define(version: 20170123193334) do
 
   add_index "api_request", ["api_key"], name: "api_key_idx", using: :btree
   add_index "api_request", ["created_at"], name: "created_at_idx", using: :btree
+
+  create_table "api_tokens", force: :cascade do |t|
+    t.string   "token",      limit: 255, null: false
+    t.integer  "user_id",    limit: 4,   null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "api_tokens", ["token"], name: "index_api_tokens_on_token", unique: true, using: :btree
+  add_index "api_tokens", ["user_id"], name: "index_api_tokens_on_user_id", unique: true, using: :btree
 
   create_table "api_user", force: :cascade do |t|
     t.string   "api_key",       limit: 100,                        null: false
@@ -230,6 +240,88 @@ ActiveRecord::Schema.define(version: 20170123193334) do
   add_index "chat_user", ["room", "updated_at", "user_id"], name: "room_updated_at_user_id_idx", using: :btree
   add_index "chat_user", ["room", "user_id"], name: "room_user_id_idx", unique: true, using: :btree
   add_index "chat_user", ["user_id"], name: "user_id_idx", using: :btree
+
+  create_table "clean_sf_guard_user", force: :cascade do |t|
+    t.string   "username",       limit: 128,                  null: false
+    t.string   "algorithm",      limit: 128, default: "sha1", null: false
+    t.string   "salt",           limit: 128
+    t.string   "password",       limit: 128
+    t.boolean  "is_active",                  default: true
+    t.boolean  "is_super_admin",             default: false
+    t.datetime "last_login"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_deleted",                 default: false,  null: false
+  end
+
+  add_index "clean_sf_guard_user", ["is_active"], name: "is_active_idx_idx", using: :btree
+  add_index "clean_sf_guard_user", ["username"], name: "username", unique: true, using: :btree
+
+  create_table "clean_sf_guard_user_profile", force: :cascade do |t|
+    t.integer  "user_id",                    limit: 4,                          null: false
+    t.string   "name_first",                 limit: 50,                         null: false
+    t.string   "name_last",                  limit: 50,                         null: false
+    t.string   "email",                      limit: 50,                         null: false
+    t.text     "reason",                     limit: 4294967295
+    t.text     "analyst_reason",             limit: 4294967295
+    t.boolean  "is_visible",                                    default: true,  null: false
+    t.string   "invitation_code",            limit: 50
+    t.boolean  "enable_announcements",                          default: true,  null: false
+    t.boolean  "enable_html_editor",                            default: true,  null: false
+    t.boolean  "enable_recent_views",                           default: true,  null: false
+    t.boolean  "enable_favorites",                              default: true,  null: false
+    t.boolean  "enable_pointers",                               default: true,  null: false
+    t.string   "public_name",                limit: 50,                         null: false
+    t.text     "bio",                        limit: 4294967295
+    t.boolean  "is_confirmed",                                  default: false, null: false
+    t.string   "confirmation_code",          limit: 100
+    t.string   "filename",                   limit: 100
+    t.boolean  "ranking_opt_out",                               default: false, null: false
+    t.boolean  "watching_opt_out",                              default: false, null: false
+    t.boolean  "enable_notes_list",                             default: true,  null: false
+    t.boolean  "enable_notes_notifications",                    default: true,  null: false
+    t.integer  "score",                      limit: 8
+    t.boolean  "show_full_name",                                default: false, null: false
+    t.integer  "unread_notes",               limit: 4,          default: 0
+    t.integer  "home_network_id",            limit: 4,                          null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "clean_sf_guard_user_profile", ["email"], name: "unique_email_idx", unique: true, using: :btree
+  add_index "clean_sf_guard_user_profile", ["public_name"], name: "unique_public_name_idx", unique: true, using: :btree
+  add_index "clean_sf_guard_user_profile", ["user_id", "public_name"], name: "user_id_public_name_idx", using: :btree
+  add_index "clean_sf_guard_user_profile", ["user_id"], name: "unique_user_idx", unique: true, using: :btree
+
+  create_table "clean_users", force: :cascade do |t|
+    t.string   "email",                  limit: 255, default: "", null: false
+    t.string   "encrypted_password",     limit: 255, default: "", null: false
+    t.string   "reset_password_token",   limit: 255
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          limit: 4,   default: 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip",     limit: 255
+    t.string   "last_sign_in_ip",        limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "default_network_id",     limit: 4
+    t.integer  "sf_guard_user_id",       limit: 4,                null: false
+    t.string   "username",               limit: 255,              null: false
+    t.string   "remember_token",         limit: 255
+    t.string   "confirmation_token",     limit: 255
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.boolean  "newsletter"
+    t.string   "chatid",                 limit: 255
+  end
+
+  add_index "clean_users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
+  add_index "clean_users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "clean_users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "clean_users", ["sf_guard_user_id"], name: "index_users_on_sf_guard_user_id", unique: true, using: :btree
+  add_index "clean_users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   create_table "couple", force: :cascade do |t|
     t.integer "entity_id",   limit: 4, null: false
