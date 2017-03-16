@@ -5,7 +5,7 @@ class EntitiesController < ApplicationController
     
   def show
     @relationships = @entity.relationships.group_by { |r| r.category_id }
-    1.upto(12) { |i| @relationships[i] = [] unless @relationships[i] }
+    @relationships.default = []
 
     @family_relationships = @relationships[4]
 
