@@ -1,6 +1,6 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
-  # before_action :configure_account_update_params, only: [:update]
+  # before_action :configure_account_update_params, only: [:update]  
 
   HOME_NETWORK_IDS = [
     ['United States', 79],
@@ -45,6 +45,26 @@ class Users::RegistrationsController < Devise::RegistrationsController
       set_minimum_password_length
       return respond_with resource
     end
+  end
+
+  # post /users/api_token
+  def api_token
+    # see https://github.com/plataformatec/devise/blob/master/app/controllers/devise/registrations_controller.rb
+    authenticate_scope!
+
+    if params[:api] == 'generate'
+      current_user.create_api_token! if current_user.api_token.blank?
+    end
+
+    if params[:api] == 'reset'
+      if current_user.api_token.updated_at < 1.day.ago
+        current_user.api_token.reset!
+      else
+        return head :not_acceptable
+      end
+    end
+
+    render action: :edit
   end
 
   # GET /resource/edit

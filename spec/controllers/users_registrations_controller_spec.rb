@@ -11,6 +11,7 @@ describe Users::RegistrationsController, type: :controller do
     it { should route(:get, '/users/edit').to(action: :edit) }
     it { should route(:put, '/users').to(action: :update) }
     it { should route(:delete, '/users').to(action: :destroy) }
+    it { should route(:post, '/users/api_token').to(action: :api_token) }
   end
 
   describe 'GET new' do
@@ -75,6 +76,59 @@ describe Users::RegistrationsController, type: :controller do
     it 'reocrds answer if users says no to newsletter' do
       post_create user_data
       expect(User.last.newsletter).to be false
+    end
+  end
+
+  describe '#api_token' do
+    login_user
+
+    before do
+      request.env['devise.mapping'] = Devise.mappings[:user]
+    end
+
+    def post_api_token(action)
+      post :api_token, 'api' => action
+    end
+
+    context 'generating api tokens' do
+      it 'generates api_token' do
+        expect(controller.current_user.api_token.present?).to be false
+        expect { post_api_token('generate') }.to change { ApiToken.count }.by(1)
+        expect(controller.current_user.api_token.present?).to be true
+        # doesn't generate one if user already has one
+        expect { post_api_token('generate') }.not_to change { ApiToken.count }
+      end
+
+      it 'renders template edit' do
+        post_api_token('generate')
+        expect(response).to render_template 'edit'
+      end
+    end
+
+    context 'resting api token' do
+      before do
+        ApiToken.record_timestamps = false
+        controller.current_user.create_api_token!(created_at: 1.year.ago, updated_at: 1.year.ago)
+        ApiToken.record_timestamps = true
+      end
+
+      it 'resets api token' do
+        original_token = controller.current_user.api_token.token
+        post_api_token('reset')
+        expect(controller.current_user.api_token.updated_at).to be > 1.day.ago
+        expect(controller.current_user.api_token.token).not_to eql original_token
+      end
+
+      it 'renders template edit' do
+        post_api_token('reset')
+        expect(response).to render_template 'edit'
+      end
+
+      it 'responds with unacceptable if attempt to reset more than once in a 24 hour period' do
+        controller.current_user.api_token.touch
+        post_api_token('reset')
+        expect(response).to have_http_status 406
+      end
     end
   end
 end
