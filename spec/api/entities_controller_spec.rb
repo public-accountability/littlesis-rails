@@ -2,9 +2,15 @@ require 'rails_helper'
 
 describe Api::EntitiesController, type: :controller do
   describe 'show' do
+    before(:all) { @token = ApiToken.create!(user_id: 1).token  }
+    before(:each) { request.headers['Littlesis-Api-Token'] = @token }
+
     context 'good request' do
       ATTRIBUTE_KEYS = %w(name blurb summary website parent_id primary_ext updated_at start_date end_date link_count)
-      before(:all)  { @pac = create(:pac) }
+      before(:all) do
+        @pac = create(:pac)
+      end
+
       before(:each) do
         get :show, id: @pac.id
         @json = JSON.parse(response.body)
@@ -92,11 +98,13 @@ describe Api::EntitiesController, type: :controller do
 
   describe '/entities/:id/extensions' do
     before(:all) do
+      @token = ApiToken.create!(user_id: 2).token
       @entity = create(:org)
       @entity.add_extension('PoliticalFundraising')
     end
 
     before(:each) do
+      request.headers['Littlesis-Api-Token'] = @token
       get :extensions, id: @entity.id
       @json = JSON.parse(response.body)
     end
@@ -111,6 +119,19 @@ describe Api::EntitiesController, type: :controller do
     it 'returns extension definitions in data as array' do
       expect(@json['data']).to be_a Array
       expect(@json['data'].length). to eql 2
+    end
+  end
+
+  describe 'Errors' do
+    it 'returns unauthorized if missing Littlesis-Api-Token header' do
+      get :show, id: 123
+      expect(response).to have_http_status 401
+    end
+
+    it 'returns forbidden if you submit an invalid token' do
+      request.headers['Littlesis-Api-Token'] = 'OBVIOUSLY_THIS_ISNT_A_REAL_TOKEN'
+      get :show, id: 123
+      expect(response).to have_http_status 403
     end
   end
 end

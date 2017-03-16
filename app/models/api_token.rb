@@ -9,6 +9,10 @@ class ApiToken < ActiveRecord::Base
     save!
   end
 
+  def self.valid_token?(token)
+    find_by_token(token).present?
+  end
+
   private
 
   def set_token
