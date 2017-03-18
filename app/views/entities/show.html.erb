@@ -8,91 +8,43 @@
 
             <div id='relationship_tabs_content'>
 
-                <% @positions.each do |k, position_group| %>
-                    <div class='subsection'>
-                        <% if k == 'In The Office Of' || k == 'Other Positions & Memberships' %>
-                            <%= k %>
-                        <% else %>
-                            <%= k %> Positions
-                        <% end %>
-                    </div>
+                <% if @business_positions.count > 0 %>
+                    <div class='subsection'>Business Positions</div>
                     <div class='relationship-section'>
-                        <% position_group.each do |p| %>
-                            <%= render partial: "relationship", locals: { relationship: p, related: p.related, description: p.description1 } %>
+                        <% @business_positions.each do |l| %>
+                            <%= render partial: "relationship", locals: { relationship: l.relationship, related: l.related, description: l.relationship.description1 } %>
                         <% end %>
                     </div>
                 <% end %>
 
-                <% if @family_relationships.count > 0 %>
+                <% if @family.count > 0 %>
                     <div class='subsection'>Family</div>
                     <div class='relationship-section'>
-                        <% @family_relationships.each do |r| %>
-                            <% if r.entity == @entity %>
-                                <% related, description = r.related, r.description2 %>
-                            <% else %>
-                                <% related, description = r.entity, r.description1 %>
-                            <% end %>
-                            <%= render partial: "relationship", locals: { relationship: r, related: related, description: description } %>
-                        <% end %>
-                    </div>
-                <% end %>
-
-                <% if @friendships.count > 0 %>
-                    <div class='subsection'>Friends & Colleagues</div>
-                    <div class='relationship-section'>
-                        <% @friendships.each do |r| %>
-                            <% if r.entity == @entity %>
-                                <% related, description = r.related, r.description2 %>
-                            <% else %>
-                                <% related, description = r.entity, r.description1 %>
-                            <% end %>
-                            <%= render partial: "relationship", locals: { relationship: r, related: related, description: description } %>
+                        <% @family.each do |l| %>
+                            <% description = l.is_reverse ? l.relationship.description1 : l.relationship.description2 %>
+                            <%= render partial: "relationship", locals: { relationship: l.relationship, related: l.related, description: description } %>
                         <% end %>
                     </div>
                 <% end %>
 
                 <% if @donation_recipients.count > 0 %>
-                    <div class='subsection'>Donation/Grant Recipients</div>
+                    <div class='subsection'>Donation Recipients</div>
                     <div class='relationship-section'>
-                        <% @donation_recipients[0,10].each do |r| %>
-                            <%= render partial: "relationship", locals: { relationship: r, related: r.related, description: r.description1 } %>
+                        <% @donors.each do |l| %>
+                            <%= render partial: "relationship", locals: { relationship: l.relationship, related: l.related, description: l.relationship.description1 } %>
                         <% end %>
                     </div>
-                <% end %>
+                <% end %> 
 
-                <% if @donors.count > 0 %>
-                    <div class='subsection'>Donors</div>
+                <% if @friendships.count > 0 %>
+                    <div class='subsection'>Friendships</div>
                     <div class='relationship-section'>
-                        <% @donors[0,10].each do |r| %>
-                            <%= render partial: "relationship", locals: { relationship: r, related: r.entity, description: r.description2 } %>
+                        <% @friendships.each do |l| %>
+                            <% description = l.is_reverse ? l.relationship.description1 : l.relationship.description2 %>
+                            <%= render partial: "relationship", locals: { relationship: l.relationship, related: l.related, description: description } %>
                         <% end %>
                     </div>
-                <% end %>
-
-                <% if @professional_relationships.count > 0 %>
-                    <div class='subsection'>Professional Associates</div>
-                    <div class='relationship-section'>
-                        <% @professional_relationships[0,10].each do |r| %>
-                            <% if r.entity == @entity %>
-                                <% related, description = r.related, r.description2 %>
-                            <% else %>
-                                <% related, description = r.entity, r.description1 %>
-                            <% end %>
-                            <%= render partial: "relationship", locals: { relationship: r, related: related, description: description } %>
-                        <% end %>
-                    </div>
-                <% end %>
-
-                <% @headings.each do |category_id, heading| %>
-                    <% unless @relationships[category_id].blank? %>
-                        <div class='subsection'><%= heading %></div>
-                        <div class='relationship-section'>
-                            <% @relationships[category_id].each do |r| %>
-                                <%= render partial: "relationship", locals: { relationship: r, related: r.related, description: r.description1 } %>
-                            <% end %>
-                        </div>
-                    <% end %>
-                <% end %>
+                <% end %>    
 
             </div>
         </div>
