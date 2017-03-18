@@ -10,41 +10,13 @@
 
                 <% if @business_positions.count > 0 %>
                     <div class='subsection'>Business Positions</div>
-                    <div class='relationship-section'>
-                        <% @business_positions.each do |l| %>
-                            <%= render partial: "relationship", locals: { relationship: l.relationship, related: l.related, description: l.relationship.description1 } %>
-                        <% end %>
-                    </div>
+                    <%= render partial: "relationship", locals: { links: @business_positions } %>
                 <% end %>
 
                 <% if @family.count > 0 %>
                     <div class='subsection'>Family</div>
-                    <div class='relationship-section'>
-                        <% @family.each do |l| %>
-                            <% description = l.is_reverse ? l.relationship.description1 : l.relationship.description2 %>
-                            <%= render partial: "relationship", locals: { relationship: l.relationship, related: l.related, description: description } %>
-                        <% end %>
-                    </div>
+                    <%= render partial: "relationship", locals: { links: @family } %>
                 <% end %>
-
-                <% if @donation_recipients.count > 0 %>
-                    <div class='subsection'>Donation Recipients</div>
-                    <div class='relationship-section'>
-                        <% @donors.each do |l| %>
-                            <%= render partial: "relationship", locals: { relationship: l.relationship, related: l.related, description: l.relationship.description1 } %>
-                        <% end %>
-                    </div>
-                <% end %> 
-
-                <% if @friendships.count > 0 %>
-                    <div class='subsection'>Friendships</div>
-                    <div class='relationship-section'>
-                        <% @friendships.each do |l| %>
-                            <% description = l.is_reverse ? l.relationship.description1 : l.relationship.description2 %>
-                            <%= render partial: "relationship", locals: { relationship: l.relationship, related: l.related, description: description } %>
-                        <% end %>
-                    </div>
-                <% end %>    
 
             </div>
         </div>
