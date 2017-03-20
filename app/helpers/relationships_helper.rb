@@ -49,10 +49,7 @@ module RelationshipsHelper
     end
   end
 
-  def references_select(references, selected_id = nil)
-    options_array = references.map { |r| [r.name, r.id] } 
-    select_tag('reference_existing', options_for_select(options_array, selected_id), include_blank: true, class: 'selectpicker', name: 'reference[reference_id]')
-  end
+  
 
   def d1_is_title
     [1, 3, 10].include? @relationship.category_id

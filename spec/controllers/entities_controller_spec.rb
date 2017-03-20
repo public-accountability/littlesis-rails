@@ -14,6 +14,8 @@ describe EntitiesController, type: :controller do
     it { should route(:get, '/entities/1/add_relationship').to(action: :add_relationship, id: 1) }
     it { should route(:get, '/entities/new').to(action: :new) }
     it { should route(:post, '/entities').to(action: :create) }
+    it { should route(:get, '/entities/1/edit').to(action: :edit, id: 1) }
+    it { should route(:patch, '/entities/1').to(action: :update, id: 1) }
     it { should route(:get, '/entities/1/political').to(action: :political, id: 1) }
     it { should route(:get, '/entities/1/match_donations').to(action: :match_donations, id: 1) }
     it { should route(:post, '/entities/1/match_donation').to(action: :match_donation, id: 1) }
@@ -236,15 +238,30 @@ describe EntitiesController, type: :controller do
         it { should render_template(:review_ny_donations) }
       end
     end
+  end # end political
 
-    describe '#add_relationship' do
-      login_user
-      before do
-        expect(Entity).to receive(:find)
-        get :add_relationship, id: rand(100)
-      end
-      it { should render_template(:add_relationship) }
-      it { should respond_with(200) }
+  describe '#add_relationship' do
+    login_user
+    before do
+      expect(Entity).to receive(:find)
+      get :add_relationship, id: rand(100)
     end
+    it { should render_template(:add_relationship) }
+    it { should respond_with(200) }
+  end
+
+  describe '#edit' do
+    login_user
+
+    before do
+      expect(Entity).to receive(:find)
+      get :edit, id: rand(100)
+    end
+    it { should render_template(:edit) }
+    it { should respond_with(200) }
+  end
+
+  describe '#update' do
+    
   end
 end

@@ -11,7 +11,7 @@
 <%= form_for @relationship, method: 'patch', class: 'form-horizontal'  do |f| %>
     <% label_class = 'col-sm-2 control-label' %>
     <div class="row top-3em">
-	<%= render partial: 'edit_references_panel' %>
+	<%= render partial: 'shared/editing/edit_references_panel', locals: {references: @relationship.references, selected_ref: @seleted_ref} %>
 	<div class="col-sm-4 col-sm-offset-1">
 	    <%= render partial: 'edit_errors' %>
 	</div>

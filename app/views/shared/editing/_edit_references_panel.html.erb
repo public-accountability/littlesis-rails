@@ -1,3 +1,4 @@
+<!-- Accepts two locals: references & selected_ref -->
 <div class="col-sm-6">
     <div class="panel panel-default">
 	<div class="panel-heading">
@@ -9,7 +10,7 @@
 		<%= check_box_tag :reference_just_cleaning_up, "1", false, { required: true, name: 'reference[just_cleaning_up]' } %>
 		<br />
 		<label for="reference_existing" style="padding-right: 5px;">Existing Source:</label>
-		<%= references_select(@relationship.references, @selected_ref) %>
+		<%= references_select(references, selected_ref) %>
 		<br />
 		<p class="top-1em">
 		    <button type="button" class="btn btn-primary btn-xs" id="create-new-reference-btn">Create a new reference</button>

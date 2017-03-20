@@ -55,7 +55,7 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'has correct subject' do
-      expect(@mail.subject).to eql 'New User Signup: user'
+      expect(@mail.subject).to include 'New User Signup: user'
     end
 
     it 'has correct to' do
@@ -63,7 +63,7 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'has username' do
-      expect(@mail.encoded).to include "user (#{@user.id})"
+      expect(@mail.encoded).to include "#{@user.username} (#{@user.id})"
     end
 
     it 'has name' do

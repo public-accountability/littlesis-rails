@@ -42,6 +42,13 @@ class EntitiesController < ApplicationController
     end
   end
 
+  def edit
+    @references = @entity.references.order('updated_at desc').limit(10)
+  end
+
+  def update
+  end
+
   def relationships
   end
 

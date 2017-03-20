@@ -1,0 +1,9 @@
+<% content_for(:page_title, 'Edit: ' + @entity.name ) %>
+
+<%= render partial: 'header', locals: { entity: @entity } %>
+<%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
+
+<div class="row">
+    <%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
+</div>
+
