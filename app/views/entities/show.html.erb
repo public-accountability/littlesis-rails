@@ -13,9 +13,79 @@
                     <%= render partial: "relationship", locals: { links: @business_positions } %>
                 <% end %>
 
+                <% if @government_positions.count > 0 %>
+                    <div class='subsection'>Government Positions</div>
+                    <%= render partial: "relationship", locals: { links: @government_positions } %>
+                <% end %>
+
+                <% if @in_the_office_positions.count > 0 %>
+                    <div class='subsection'>In The Office Of</div>
+                    <%= render partial: "relationship", locals: { links: @in_the_office_positions } %>
+                <% end %>
+
+                <% if @other_positions.count > 0 %>
+                    <div class='subsection'>Other Positions & Memberships</div>
+                    <%= render partial: "relationship", locals: { links: @other_positions } %>
+                <% end %>
+
+                <% if @staff.count > 0 %>
+                    <div class='subsection'>Office/Staff</div>
+                    <%= render partial: "relationship", locals: { links: @staff } %>
+                <% end %>                
+
+                <% if @education.count > 0 %>
+                    <div class='subsection'>Education</div>
+                    <%= render partial: "relationship", locals: { links: @education } %>
+                <% end %>
+
                 <% if @family.count > 0 %>
                     <div class='subsection'>Family</div>
                     <%= render partial: "relationship", locals: { links: @family } %>
+                <% end %>
+
+                <% if @donation_recipients.count > 0 %>
+                    <div class='subsection'>Donation Recipients</div>
+                    <%= render partial: "relationship", locals: { links: @donation_recipients } %>
+                <% end %>
+
+                <% if @services_transactions.count > 0 %>
+                    <div class='subsection'>Services/Transactions</div>
+                    <%= render partial: "relationship", locals: { links: @services_transactions } %>
+                <% end %>
+
+                <% if @lobbying.count > 0 %>
+                    <div class='subsection'>Lobbying</div>
+                    <%= render partial: "relationship", locals: { links: @lobbying } %>
+                <% end %>
+
+                <% if @friendships.count > 0 %>
+                    <div class='subsection'>Friends</div>
+                    <%= render partial: "relationship", locals: { links: @friendships } %>
+                <% end %>
+
+                <% if @professional_relationships.count > 0 %>
+                    <div class='subsection'>Professional Relationships</div>
+                    <%= render partial: "relationship", locals: { links: @professional_relationships } %>
+                <% end %>
+
+                <% if @holdings.count > 0 %>
+                    <div class='subsection'>Holdings</div>
+                    <%= render partial: "relationship", locals: { links: @holdings } %>
+                <% end %>
+
+                <% if @owners.count > 0 %>
+                    <div class='subsection'>Owners</div>
+                    <%= render partial: "relationship", locals: { links: @owners } %>
+                <% end %>
+
+                <% if @hierarchy.count > 0 %>
+                    <div class='subsection'>Hierarchy</div>
+                    <%= render partial: "relationship", locals: { links: @hierarchy } %>
+                <% end %>
+
+                <% if @miscellaneous.count > 0 %>
+                    <div class='subsection'>Miscellaneous Relationships</div>
+                    <%= render partial: "relationship", locals: { links: @miscellaneous } %>
                 <% end %>
 
             </div>

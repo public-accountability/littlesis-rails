@@ -5,51 +5,47 @@ class EntitiesController < ApplicationController
     
   def show
     @links = @entity.links.includes(:relationship, :related)
-    # @relationships = @links.map { |l| l.relationship }.compact # I don't know why this is producing some nil values.
 
-    def category arr, category_ids
-      arr.select { |el| category_ids.include? el.category_id }
+    def category category_id
+      @links.select { |el| el.category_id == category_id }
     end
 
-    positions = category(@links, [1,3])
+    positions = category(1) + category(3)
+
+    jobs = positions
       .select { |l| l.is_reverse == false }
       .group_by { |l| l.position_or_membership_type }
 
-    @business_positions = positions['Business']
-    @government_positions = positions['Government']
-    @in_the_office_positions = positions['In The Office Of']
-    @other_positions = positions['Other Positions & Memberships']
+    @business_positions = jobs['Business'] || []
+    @government_positions = jobs['Government'] || []
+    @in_the_office_positions = jobs['In The Office Of'] || []
+    @other_positions = jobs['Other Positions & Memberships'] || []
 
-    @family = category(@links, [4])
+    @staff = positions
+      .select { |l| l.is_reverse == true }
 
-    @donation_recipients, @donors = category(@links, [5])
-      .partition { |l| l.is_reverse }
+    @education = category(2)
 
-    @friendships = category(@links, [8])
+    @family = category(4)
 
-    # @positions = category(@relationships, [1,3]).select { |p| p.entity1_id == @entity.id }.group_by { |p| p.position_or_membership_type }.sort_by { |k, v| k }
-    # @family = category(@relationships, [4]).uniq { |r| related = @entity.id == r.entity1_id ? r.related : r.entity }
-    # @donation_recipients, @donors = category(@relationships, [5]).partition { |r| r.entity1_id == @entity.id }
-    # @friendships = category(@relationships, [8]).uniq { |r| related = @entity.id == r.entity1_id ? r.related : r.entity }
-    # @professional_relationships = category(@relationships, [9])
+    @donors, @donation_recipients = category(5)
+      .partition { |l| l.is_reverse == true }
 
-    # @display_keys = {
-    #   positions:                  {related: :related, description: :description1},
-    #   family:                     {related: :related, description: :description},
-    #   donation_recipients:        {related: :related, description: :description1},
-    #   donors:                     {related: :entity, description: :description2},
-    #   friendships:                {related: :related, description: :description},
-    #   professional_relationships: {related: :related, description: :description}
-    # }
+    @services_transactions = category(6)
 
-    # @headings = {
-    #   2 =>  'Education',
-    #   6 =>  'Services/Transactions',
-    #   7 =>  'Lobbying',
-    #   10 => 'Holdings',
-    #   11 => 'Hierarchy',
-    #   12 => 'Miscellaneous'
-    # }
+    @lobbying = category(7)
+
+    @friendships = category(8)
+
+    @professional_relationships = category(9)
+
+    @owners, @holdings = category(10)
+      .partition { |l| l.is_reverse == true }
+
+    @hierarchy = category(11)
+
+    @miscellaneous = category(12)
+
   end
 
   def new
