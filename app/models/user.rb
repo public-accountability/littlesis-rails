@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   include ChatUser
-  
+
   validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username, presence: true, uniqueness: { case_sensitive: false }
@@ -38,8 +38,11 @@ class User < ActiveRecord::Base
   has_many :note_users, inverse_of: :user, dependent: :destroy
   has_many :received_notes, class_name: "Note", through: :note_users, source: :note, inverse_of: :recipients
   has_many :network_maps, primary_key: "sf_guard_user_id"
+
   has_many :lists, foreign_key: "creator_user_id", inverse_of: :user
-  
+
+  has_one :api_token
+
   def to_param
   	username
   end

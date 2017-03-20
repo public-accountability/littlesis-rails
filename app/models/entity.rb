@@ -4,7 +4,7 @@ class Entity < ActiveRecord::Base
   include Cacheable
   include Referenceable
   include Political
-
+  include ApiAttributes
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
@@ -115,31 +115,20 @@ class Entity < ActiveRecord::Base
     hash.delete(:notes)
     hash
   end
-  
+
+  # Returns a hash of all attributes for all extensions (that have attrs) for the entity.
+  # All entities will have attributes associated with 'Person' or 'Org'
   def extension_attributes
-    hash = {}
-    (extension_names & self.class.all_extension_names_with_fields).each do |name|
-      ext = Kernel.const_get(name).where(:entity_id => id).first
-      ext_hash = ext.attributes
-      hash.merge!(ext_hash)
-    end
-    hash.delete("id")
-    hash.delete(:id)
-    hash.delete("entity_id")
-    hash.delete(:entity_id)
-    hash
+    extensions_with_attributes.values.reduce(:merge)
   end
 
+  # Returns a hash where the key in each key/value pair is the extension name
+  # and the value is a hash of the attributes for that extension
   def extensions_with_attributes
     hash = {}
-    (extension_names & self.class.all_extension_names_with_fields).each do |name|
-      ext = Kernel.const_get(name).where(:entity_id => id).first
-      ext_hash = ext.attributes
-      ext_hash.delete("id")
-      ext_hash.delete(:id)
-      ext_hash.delete("entity_id")
-      ext_hash.delete(:entity_id)
-      hash[name] = ext_hash
+    (extension_names & Entity.all_extension_names_with_fields).each do |name|
+      ext = name.constantize.find_by_entity_id(id)
+      hash[name] = ext.attributes.except('id', 'entity_id', :id, :entity_id)
     end
     hash
   end
@@ -147,7 +136,9 @@ class Entity < ActiveRecord::Base
   def extension_ids
     extension_records.pluck(:definition_id)
   end
-  
+
+  # Returns array containing the name of all entity extensions (ExtensionRecord)
+  # All entities will have at least one: 'Person' or 'Org
   def extension_names
     extension_ids.collect { |id| self.class.all_extension_names[id] }
   end
@@ -163,7 +154,10 @@ class Entity < ActiveRecord::Base
     ext_ids = exts.map { |ext| all_extension_names.index(ext) }.compact
     joins(:extension_records).where(extension_record: { definition_id: ext_ids })
   end
-  
+
+  # Names of the extensions (ExtensionDefinition) in order of their definition_id
+  # Can be used as a look up table. For instance
+  # Entity.all_extension_names[27] => LaborUnion
   def self.all_extension_names    
     [
       'None',
@@ -206,7 +200,7 @@ class Entity < ActiveRecord::Base
       'Couple'
     ]
   end
-  
+
   def self.all_extension_names_with_fields
     [
       'Person',
@@ -621,5 +615,8 @@ class Entity < ActiveRecord::Base
       return nil
     end
   end
-  
+
+  class EntityDeleted < ActiveRecord::ActiveRecordError
+  end
+
 end

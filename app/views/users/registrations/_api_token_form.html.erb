@@ -1,0 +1,11 @@
+<div>
+    <% if current_user.api_token.blank?  %>
+	<%= button_to "Create Api Token", "/users/api_token", params: { 'api' => 'generate' }, id: 'generate-api-token' %>
+    <% else %>
+	<p><strong>Api Token:</strong>  <span class="bg-info"><%= current_user.api_token.try(:token) %></span></p>
+    <% end %>
+
+    <% if current_user.api_token.present? && (current_user.api_token.updated_at < 1.day.ago) %>
+	<%= button_to "Create Api Token", "/users/api_token", params: { 'api' => 'reset' }, id: 'reset-api-token' %>
+    <% end %>
+</div>

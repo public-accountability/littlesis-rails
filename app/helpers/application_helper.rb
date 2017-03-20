@@ -83,15 +83,19 @@ module ApplicationHelper
     raw "<div class='alert alert-success'>#{notice}</div>" if notice
   end
 
-  def dismissable_alert(id, &block)
-    unless session[:dismissed_alerts].kind_of?(Array)
-      session[:dismissed_alerts] = []
-    end
+  def dismissable_alert(id, class_name = 'alert-info', &block)
+    session[:dismissed_alerts] = [] unless session[:dismissed_alerts].kind_of?(Array)
 
     unless session[:dismissed_alerts].include? id
-      content_tag("div", id: id, class: "alert alert-info alert-dismissable") do
-        content_tag("button", raw("&times;"), class: "close", 'data-dismiss-id' => id) + capture(&block)
+      content_tag('div', id: id, class: "alert #{class_name} alert-dismissable") do
+        content_tag('button', raw('&times;'), class: 'close', 'data-dismiss-id' => id) + capture(&block)
       end
+    end
+  end
+
+  def dashboard_panel(heading = '', &block)
+    content_tag('div', class: 'panel panel-default') do
+      content_tag('div', heading, class: 'panel-heading') + content_tag('div', class: 'panel-body') { capture(&block) }
     end
   end
 
