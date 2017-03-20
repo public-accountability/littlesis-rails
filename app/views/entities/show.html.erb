@@ -78,9 +78,14 @@
                     <%= render partial: "relationship", locals: { links: @owners } %>
                 <% end %>
 
-                <% if @hierarchy.count > 0 %>
-                    <div class='subsection'>Hierarchy</div>
-                    <%= render partial: "relationship", locals: { links: @hierarchy } %>
+                <% if @parents.count > 0 %>
+                    <div class='subsection'>Parent Organizations</div>
+                    <%= render partial: "relationship", locals: { links: @parents } %>
+                <% end %>
+
+                <% if @children.count > 0 %>
+                    <div class='subsection'>Child Organization</div>
+                    <%= render partial: "relationship", locals: { links: @children } %>
                 <% end %>
 
                 <% if @miscellaneous.count > 0 %>

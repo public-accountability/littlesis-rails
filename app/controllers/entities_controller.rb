@@ -42,7 +42,8 @@ class EntitiesController < ApplicationController
     @owners, @holdings = category(10)
       .partition { |l| l.is_reverse == true }
 
-    @hierarchy = category(11)
+    @children, @parents = category(11)
+      .partition { |l| l.is_reverse == true }
 
     @miscellaneous = category(12)
 
