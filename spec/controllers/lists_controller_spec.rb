@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe ListsController, type: :controller do
+  before(:each) { DatabaseCleaner.start }
+  after(:each) { DatabaseCleaner.clean }
 
   describe 'GET /lists' do
     login_user
@@ -34,6 +36,24 @@ describe ListsController, type: :controller do
     it '@lists does not include private list created by some other user' do
       list_names = assigns(:lists).map { |list| list.name }
       expect(list_names).not_to include('someone else private list')
+    end
+  end
+
+  describe 'user not logged in' do
+    before do
+      @new_list = create(:list, name: 'my interesting list', is_private: false, creator_user_id: 123)
+      @private_list = create(:list, name: 'someone else private list', is_private: true, creator_user_id: 123)
+      @inc = create(:mega_corp_inc)
+      ListEntity.find_or_create_by(list_id: @new_list.id, entity_id: @inc.id)
+      ListEntity.find_or_create_by(list_id: @private_list.id, entity_id: @inc.id)
+      get :index
+    end
+
+    it { should render_template(:index) }
+
+    it '@lists only includes public lists' do
+      expect(assigns(:lists).length).to eq 1
+      expect(assigns(:lists)[0]).to eq @new_list
     end
   end
 

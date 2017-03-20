@@ -5,6 +5,7 @@ describe User do
   after(:all) { DatabaseCleaner.clean }
 
   it { should have_one(:api_token) }
+  it { should have_many(:lists) }
 
   describe 'validations' do
     before(:all) do

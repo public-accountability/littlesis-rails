@@ -719,6 +719,8 @@ ActiveRecord::Schema.define(version: 20170315175216) do
     t.boolean  "is_deleted",                           default: false, null: false
     t.string   "custom_field_name", limit: 100
     t.boolean  "delta",                                default: true,  null: false
+    t.boolean  "is_private",                           default: false
+    t.integer  "creator_user_id",   limit: 4
   end
 
   add_index "ls_list", ["delta"], name: "index_ls_list_on_delta", using: :btree
