@@ -2,7 +2,8 @@ class EntitiesController < ApplicationController
   before_filter :authenticate_user!, except: [:show, :relationships, :political, :contributions]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names]
   before_action :set_current_user, only: [:show, :political, :match_donations]
-    
+  before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
+
   def show
   end
 
@@ -10,16 +11,15 @@ class EntitiesController < ApplicationController
   end
 
   def create
-    @entity = Entity.new(entity_params)
+    @entity = Entity.new(entity_params.merge(last_user_id: current_user.sf_guard_user_id))
 
-    if @entity.save
-      @entity.update(last_user_id: current_user.sf_guard_user.id)
+    if @entity.save # successfully created entity
       params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
-      
+
       if add_relationship_page?
-        render json: { 
-                 status: 'OK', 
-                 entity: { 
+        render json: {
+                 status: 'OK',
+                 entity: {
                    id: @entity.id,
                    name: @entity.name,
                    description: @entity.blurb,
@@ -31,10 +31,10 @@ class EntitiesController < ApplicationController
         redirect_to @entity.legacy_url("edit")
       end
 
-    else
-      
+    else # encounted error
+
       if add_relationship_page?
-        render json: {status: 'ERROR', errors: @entity.errors.messages }
+        render json: { status: 'ERROR', errors: @entity.errors.messages }
       else
         render action: 'new'
       end
@@ -56,34 +56,31 @@ class EntitiesController < ApplicationController
   # ------------------------------ #
   # Open Secrets Donation Matching #
   # ------------------------------ #
+
   def match_donations
-    check_permission 'importer'
   end
 
   def review_donations
-    check_permission 'importer'
   end
-  
-  def match_donation
-    check_permission 'importer'
 
-    params[:payload].each do |donation_id| 
-       match = OsMatch.find_or_create_by(os_donation_id: donation_id, donor_id: params[:id])
-       match.update(matched_by: current_user.id)
+  def match_donation
+    params[:payload].each do |donation_id|
+      match = OsMatch.find_or_create_by(os_donation_id: donation_id, donor_id: params[:id])
+      match.update(matched_by: current_user.id)
     end
     @entity.update(last_user_id: current_user.sf_guard_user.id)
     @entity.delay.clear_legacy_cache(request.host)
-    render json: {status: 'ok'}
+    render json: { status: 'ok' }
   end
 
   def unmatch_donation
     check_permission 'importer'
-    params[:payload].each do |os_match_id| 
+    params[:payload].each do |os_match_id|
       OsMatch.find(os_match_id).destroy
     end
     @entity.update(last_user_id: current_user.sf_guard_user.id)
     @entity.delay.clear_legacy_cache(request.host)
-    render json: {status: 'ok'}
+    render json: { status: 'ok' }
   end
 
   def contributions
@@ -93,17 +90,15 @@ class EntitiesController < ApplicationController
   def potential_contributions
     render json: @entity.potential_contributions
   end
-  
+
   # ------------------------------ #
   # NYS Donation Matching          #
   # ------------------------------ #
 
   def match_ny_donations
-    check_permission 'importer'
   end
 
   def review_ny_donations
-    check_permission 'importer'
   end
 
   def fields
@@ -376,7 +371,7 @@ class EntitiesController < ApplicationController
   end
 
   private
-  
+
   def set_current_user
     @current_user = current_user
   end
@@ -402,7 +397,10 @@ class EntitiesController < ApplicationController
   end
 
   def add_relationship_page?
-     params[:add_relationship_page].present?
+    params[:add_relationship_page].present?
   end
 
+  def importers_only
+    check_permission 'importer'
+  end
 end
