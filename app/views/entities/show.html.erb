@@ -8,89 +8,15 @@
 
             <div id='relationship_tabs_content'>
 
-                <% if @business_positions.count > 0 %>
-                    <div class='subsection'>Business Positions</div>
-                    <%= render partial: "relationship", locals: { links: @business_positions } %>
+                <% def display_link(links, partial) %>
+                    <% if links.count > 0 %>
+                        <div class='subsection'>Heading</div>
+                        <%= render partial: partial, locals: { links: links } %>
+                    <% end %>
                 <% end %>
 
-                <% if @government_positions.count > 0 %>
-                    <div class='subsection'>Government Positions</div>
-                    <%= render partial: "relationship", locals: { links: @government_positions } %>
-                <% end %>
-
-                <% if @in_the_office_positions.count > 0 %>
-                    <div class='subsection'>In The Office Of</div>
-                    <%= render partial: "relationship", locals: { links: @in_the_office_positions } %>
-                <% end %>
-
-                <% if @other_positions.count > 0 %>
-                    <div class='subsection'>Other Positions & Memberships</div>
-                    <%= render partial: "relationship", locals: { links: @other_positions } %>
-                <% end %>
-
-                <% if @staff.count > 0 %>
-                    <div class='subsection'>Office/Staff</div>
-                    <%= render partial: "relationship", locals: { links: @staff } %>
-                <% end %>                
-
-                <% if @education.count > 0 %>
-                    <div class='subsection'>Education</div>
-                    <%= render partial: "relationship", locals: { links: @education } %>
-                <% end %>
-
-                <% if @family.count > 0 %>
-                    <div class='subsection'>Family</div>
-                    <%= render partial: "relationship", locals: { links: @family } %>
-                <% end %>
-
-                <% if @donation_recipients.count > 0 %>
-                    <div class='subsection'>Donation Recipients</div>
-                    <%= render partial: "relationship", locals: { links: @donation_recipients } %>
-                <% end %>
-
-                <% if @services_transactions.count > 0 %>
-                    <div class='subsection'>Services/Transactions</div>
-                    <%= render partial: "relationship", locals: { links: @services_transactions } %>
-                <% end %>
-
-                <% if @lobbying.count > 0 %>
-                    <div class='subsection'>Lobbying</div>
-                    <%= render partial: "relationship", locals: { links: @lobbying } %>
-                <% end %>
-
-                <% if @friendships.count > 0 %>
-                    <div class='subsection'>Friends</div>
-                    <%= render partial: "relationship", locals: { links: @friendships } %>
-                <% end %>
-
-                <% if @professional_relationships.count > 0 %>
-                    <div class='subsection'>Professional Relationships</div>
-                    <%= render partial: "relationship", locals: { links: @professional_relationships } %>
-                <% end %>
-
-                <% if @holdings.count > 0 %>
-                    <div class='subsection'>Holdings</div>
-                    <%= render partial: "relationship", locals: { links: @holdings } %>
-                <% end %>
-
-                <% if @owners.count > 0 %>
-                    <div class='subsection'>Owners</div>
-                    <%= render partial: "relationship", locals: { links: @owners } %>
-                <% end %>
-
-                <% if @parents.count > 0 %>
-                    <div class='subsection'>Parent Organizations</div>
-                    <%= render partial: "relationship", locals: { links: @parents } %>
-                <% end %>
-
-                <% if @children.count > 0 %>
-                    <div class='subsection'>Child Organization</div>
-                    <%= render partial: "relationship", locals: { links: @children } %>
-                <% end %>
-
-                <% if @miscellaneous.count > 0 %>
-                    <div class='subsection'>Miscellaneous Relationships</div>
-                    <%= render partial: "relationship", locals: { links: @miscellaneous } %>
+                <% @section_order.each do |section| %>
+                    <%= display_link(instance_variable_get("@#{section}"), "relationship") %>
                 <% end %>
 
             </div>

@@ -10,19 +10,19 @@ class EntitiesController < ApplicationController
       @links.select { |el| el.category_id == category_id }
     end
 
-    positions = category(1) + category(3)
+    @staff, positions = category(1)
+      .partition { |l| l.is_reverse == true }
+
+    @members, @memberships = category(3)
+      .partition { |l| l.is_reverse == true }
 
     jobs = positions
-      .select { |l| l.is_reverse == false }
-      .group_by { |l| l.position_or_membership_type }
+      .group_by { |l| l.position_type }
 
-    @business_positions = jobs['Business'] || []
-    @government_positions = jobs['Government'] || []
-    @in_the_office_positions = jobs['In The Office Of'] || []
-    @other_positions = jobs['Other Positions & Memberships'] || []
-
-    @staff = positions
-      .select { |l| l.is_reverse == true }
+    @business_positions = jobs['business'] || []
+    @government_positions = jobs['government'] || []
+    @in_the_office_positions = jobs['office'] || []
+    @other_positions_and_memberships = (jobs['other'] || []) + @memberships
 
     @education = category(2)
 
@@ -46,6 +46,26 @@ class EntitiesController < ApplicationController
       .partition { |l| l.is_reverse == true }
 
     @miscellaneous = category(12)
+
+    @section_order = [
+      'staff',
+      'business_positions',
+      'government_positions',
+      'in_the_office_positions',
+      'other_positions_and_memberships',
+      'education',
+      'family',
+      'donation_recipients',    # currently @donors breaks certain profiles because it is too big
+      'services_transactions',
+      'lobbying',
+      'friendships',
+      'professional_relationships',
+      'owners',
+      'holdings',
+      'children',
+      'parents',
+      'miscellaneous'
+    ]
 
   end
 
