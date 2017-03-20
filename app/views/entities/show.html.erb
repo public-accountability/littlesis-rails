@@ -9,7 +9,7 @@
             <div id='relationship_tabs_content'>
 
                 <% def display_link(links_name, partial) %>
-                    <% links = instance_variable_get("@#{links_arr_name}") %>
+                    <% links = instance_variable_get("@#{links_name}") %>
                     <% if links.count > 0 %>
                         <div class='subsection'><%= @headings[links_name.to_sym] %></div>
                         <%= render partial: partial, locals: { links: links } %>
