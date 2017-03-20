@@ -1,14 +1,6 @@
 require 'rails_helper'
 
 describe 'relationships/edit.html.erb', type: :view do
-  def css(*args)
-    expect(rendered).to have_css(*args)
-  end
-
-  def not_css(*args)
-    expect(rendered).not_to have_css(*args)
-  end
-
   before(:all) do
     @sf_user = build(:sf_guard_user)
     @user = build(:user)

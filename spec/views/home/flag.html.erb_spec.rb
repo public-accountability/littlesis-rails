@@ -1,10 +1,6 @@
 require 'rails_helper'
 
 describe 'home/flag.html.erb', type: :view do
-  def css(*args)
-    expect(rendered).to have_css(*args)
-  end
-
   context 'when referrer is missing' do
     before do
       assign(:referrer, nil)

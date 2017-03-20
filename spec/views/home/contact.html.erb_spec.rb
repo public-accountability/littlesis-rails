@@ -1,10 +1,6 @@
 require 'rails_helper'
 
 describe 'home/contact.html.erb', type: :view do
-  def css(*args)
-    expect(rendered).to have_css(*args)
-  end
-
   describe 'user signed in ' do
     before(:each) do
       allow(view).to receive(:user_signed_in?).and_return(true)
