@@ -67,6 +67,26 @@ class EntitiesController < ApplicationController
       'miscellaneous'
     ]
 
+    @headings = {
+      :staff =>                           'Office/Staff',
+      :business_positions =>              'Business Positions',
+      :government_positions =>            'Government Positions',
+      :in_the_office_positions =>         'In The Office Of',
+      :other_positions_and_memberships => 'Other Positions & Memberships',
+      :education =>                       'Education',
+      :family =>                          'Family',
+      :donation_recipients =>             'Donation/Grant Recipients',    
+      :services_transactions =>           'Services & Transactions',
+      :lobbying =>                        'Lobbying',
+      :friendships =>                     'Friendships',
+      :professional_relationships =>      'Professional Relationships',
+      :owners =>                          'Owners',
+      :holdings =>                        'Holdings',
+      :children =>                        'Child Organizations',
+      :parents =>                         'Parent Organizations',
+      :miscellaneous =>                   'Miscellaneous'
+    }
+
   end
 
   def new
