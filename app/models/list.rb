@@ -7,6 +7,8 @@ class List < ActiveRecord::Base
 
   has_paper_trail
   
+  belongs_to :user, foreign_key: "creator_user_id", inverse_of: :lists
+
   has_many :list_entities, inverse_of: :list, dependent: :destroy
   has_many :entities, through: :list_entities
   has_many :images, through: :entities
@@ -32,6 +34,9 @@ class List < ActiveRecord::Base
   has_one :default_topic, class_name: 'Topic', inverse_of: :default_list, foreign_key: 'default_list_id'
 
   validates_presence_of :name
+
+  scope :public_scope, -> { where(is_private: false) }
+  scope :private_scope, -> { where(is_private: true) }
 
   def destroy
     soft_delete

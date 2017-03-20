@@ -1,24 +1,59 @@
 require 'rails_helper'
 
 describe ListsController, type: :controller do
+  before(:each) { DatabaseCleaner.start }
+  after(:each) { DatabaseCleaner.clean }
 
   describe 'GET /lists' do
+    login_user
+
     before do
       new_list = create(:list)
       new_list2 = create(:list, name: 'my interesting list')
+      new_list3 = create(:list, name: 'someone else private list', is_private: true, creator_user_id: controller.current_user.id + 1)
+      new_list4 = create(:list, name: 'current user private list', is_private: true, creator_user_id: controller.current_user.id)
       @inc = create(:mega_corp_inc)
       ListEntity.find_or_create_by(list_id: new_list.id, entity_id: @inc.id)
       ListEntity.find_or_create_by(list_id: new_list2.id, entity_id: @inc.id)
+      ListEntity.find_or_create_by(list_id: new_list3.id, entity_id: @inc.id)
+      ListEntity.find_or_create_by(list_id: new_list4.id, entity_id: @inc.id)
       get :index
     end
 
     it { should respond_with(:success) }
     it { should render_template(:index) }
 
+    it '@lists only includes public lists and private lists created by the current user' do
+      expect(assigns(:lists).length).to eq(3)
+    end
+
     it '@lists has correct names' do
-      expect(assigns(:lists).length).to eq(2)
       expect(assigns(:lists)[0].name).to eq("Fortune 1000 Companies")
       expect(assigns(:lists)[1].name).to eq("my interesting list")
+      expect(assigns(:lists)[2].name).to eq("current user private list")
+    end
+
+    it '@lists does not include private list created by some other user' do
+      list_names = assigns(:lists).map { |list| list.name }
+      expect(list_names).not_to include('someone else private list')
+    end
+  end
+
+  describe 'user not logged in' do
+    before do
+      @new_list = create(:list, name: 'my interesting list', is_private: false, creator_user_id: 123)
+      @private_list = create(:list, name: 'someone else private list', is_private: true, creator_user_id: 123)
+      @inc = create(:mega_corp_inc)
+      ListEntity.find_or_create_by(list_id: @new_list.id, entity_id: @inc.id)
+      ListEntity.find_or_create_by(list_id: @private_list.id, entity_id: @inc.id)
+      get :index
+    end
+
+    it { should render_template(:index) }
+
+    it '@lists only includes public lists' do
+      expect(assigns(:lists).length).to eq 1
+      expect(assigns(:lists)[0]).to eq @new_list
     end
   end
 

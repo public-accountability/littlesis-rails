@@ -39,6 +39,7 @@ class HomeController < ApplicationController
   def dashboard
     @maps = current_user.network_maps.order("created_at DESC, id DESC")
     @groups = current_user.groups.includes(:campaign).order(:name)
+    @lists = current_user.lists.order("created_at DESC, id DESC")
     @recent_updates = current_user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
   end
 
@@ -51,6 +52,18 @@ class HomeController < ApplicationController
     @maps = current_user.network_maps.order("created_at DESC").page(params[:page]).per(20)
     @header = 'My Network Maps'
     render 'maps/index'
+  end
+
+  def lists
+    @lists = current_user.lists
+      .select("ls_list.*, COUNT(DISTINCT(ls_list_entity.entity_id)) AS entity_count")
+      .joins(:list_entities)
+      .where(is_network: false, is_admin: false)
+      .group("ls_list.id")
+      .order("entity_count DESC")
+      .page(params[:page]).per(20)
+      
+    render 'lists/index'
   end
 
   def index

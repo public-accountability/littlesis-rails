@@ -1,14 +1,10 @@
 require 'rails_helper'
 
 describe List do
+  before(:all)  { DatabaseCleaner.start }
+  after(:all) { DatabaseCleaner.clean }
 
-  before(:all) do 
-    DatabaseCleaner.start
-  end
-
-  after(:all) do 
-    DatabaseCleaner.clean
-  end
+  it { should belong_to(:user) }
 
   it 'validates name' do
     l = List.new

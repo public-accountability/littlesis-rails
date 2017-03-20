@@ -14,7 +14,13 @@ class ListsController < ApplicationController
 
   # GET /lists
   def index
-    @lists = self.class.get_lists(params[:page])
+    lists = self.class.get_lists(params[:page])
+
+    if current_user.present?
+      @lists = lists.where('ls_list.is_private = ? OR ls_list.creator_user_id = ?', false, current_user.id)
+    else
+      @lists = lists.public_scope
+    end
 
     if params[:q].present?
       is_admin = (current_user and current_user.has_legacy_permission('admin')) ? [0, 1] : 0
@@ -44,6 +50,9 @@ class ListsController < ApplicationController
   # POST /lists
   def create
     @list = List.new(list_params)
+    @list.creator_user_id = current_user.id
+    @list.last_user_id = current_user.sf_guard_user_id
+
     if params[:ref][:source].blank?
       @list.errors.add_on_blank(:name)
       @list.errors[:base] << "A source URL is required"
@@ -251,7 +260,7 @@ class ListsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def list_params
-      params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :custom_field_name)
+      params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :is_private, :custom_field_name)
     end
 
     def interlocks_results(options)
