@@ -23,18 +23,38 @@ module EntitiesHelper
     end
   end
 
-  def get_relationship_section_links(section)
-    instance_variable_get("@#{section}")
+# Relationships display
+
+  def get_other_positions_and_memberships_heading(positions_count, other_positions_and_memberships_count)
+    return 'Memberships' if positions_count == 0
+    return 'Positions & Memberships' if positions_count == other_positions_and_memberships_count
+    return 'Other Positions & Memberships'
   end
 
-  def get_relationship_section_heading(section)
-    @sections[section]
-  end
+  def display_relationship_section_heading(links_count, pos_count, other_pos_count, section)
+    headings = {
+      'staff' =>                           'Office/Staff',
+      'business_positions' =>              'Business Positions',
+      'government_positions' =>            'Government Positions',
+      'in_the_office_positions' =>         'In The Office Of',
+      'other_positions_and_memberships' =>  get_other_positions_and_memberships_heading(pos_count, other_pos_count),
+      'schools' =>                         'Education',
+      'students' =>                        'Students',
+      'family' =>                          'Family',
+      'donors' =>                          'Donors',
+      'donation_recipients' =>             'Donation/Grant Recipients',    
+      'services_transactions' =>           'Services/Transactions',
+      'lobbying' =>                        'Lobbying',
+      'friendships' =>                     'Friendships',
+      'professional_relationships' =>      'Professional Relationships',
+      'owners' =>                          'Owners',
+      'holdings' =>                        'Holdings',
+      'children' =>                        'Child Organizations',
+      'parents' =>                         'Parent Organizations',
+      'miscellaneous' =>                   'Miscellaneous'
+    }
 
-  def display_relationship_section_heading(links_count, section)
-    if links_count > 0
-      content_tag(:div, get_relationship_section_heading(section), class: "subsection")
-    end
+    content_tag(:div, headings[section], class: "subsection") if links_count > 0
   end
 
 end

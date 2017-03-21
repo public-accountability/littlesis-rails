@@ -4,68 +4,35 @@ class EntitiesController < ApplicationController
   before_action :set_current_user, only: [:show, :political, :match_donations]
     
   def show
-    @links = @entity.links.includes(:relationship, :related)
+    @links = @entity.links
+      .includes(:relationship, :related)
+      .group_by { |l| l.category_id }
 
-    def category category_id
-      @links.select { |el| el.category_id == category_id }
-    end
+    @links.default = []
 
     is_reverse = Proc.new { |l| l.is_reverse == true }
 
-    @staff, @positions = category(1).partition(&is_reverse)
-    @members, @memberships = category(3).partition(&is_reverse)
+    @staff, @positions = @links[1].partition(&is_reverse)
+    @members, @memberships = @links[3].partition(&is_reverse)
 
     jobs = @positions.group_by { |l| l.position_type }
+    jobs.default = []
 
-    @business_positions = jobs['business'] || []
-    @government_positions = jobs['government'] || []
-    @in_the_office_positions = jobs['office'] || []
-    @other_positions_and_memberships = (jobs['other'] || []) + @memberships
+    @business_positions = jobs['business'] 
+    @government_positions = jobs['government'] 
+    @in_the_office_positions = jobs['office']
+    @other_positions_and_memberships = jobs['other'] + @memberships
 
-    @schools, @students = category(2).partition(&is_reverse)
-    @family = category(4)
-    @donors, @donation_recipients = category(5).partition(&is_reverse)
-    @services_transactions = category(6)
-    @lobbying = category(7)
-    @friendships = category(8)
-    @professional_relationships = category(9)
-    @owners, @holdings = category(10).partition(&is_reverse)
-    @children, @parents = category(11).partition(&is_reverse)
-    @miscellaneous = category(12)
-
-    def get_other_positions_and_memberships_heading
-      return 'Memberships' if @positions.count == 0
-      return 'Positions & Memberships' if @positions.count == @other_positions_and_memberships.count
-      return 'Other Positions & Memberships'
-    end
-
-    @sections = {
-      'staff' =>                           'Office/Staff',
-      'business_positions' =>              'Business Positions',
-      'government_positions' =>            'Government Positions',
-      'in_the_office_positions' =>         'In The Office Of',
-      'other_positions_and_memberships' =>  get_other_positions_and_memberships_heading,
-      'schools' =>                         'Education',
-      'students' =>                        'Students',
-      'family' =>                          'Family',
-      'donors' =>                          'Donors',
-      'donation_recipients' =>             'Donation/Grant Recipients',    
-      'services_transactions' =>           'Services/Transactions',
-      'lobbying' =>                        'Lobbying',
-      'friendships' =>                     'Friendships',
-      'professional_relationships' =>      'Professional Relationships',
-      'owners' =>                          'Owners',
-      'holdings' =>                        'Holdings',
-      'children' =>                        'Child Organizations',
-      'parents' =>                         'Parent Organizations',
-      'miscellaneous' =>                   'Miscellaneous'
-    }
-
-    @partials = {
-      # for custom partial views
-    }
-
-    @partials.default = 'relationship'
+    @schools, @students = @links[2].partition(&is_reverse)
+    @family = @links[4]
+    @donors, @donation_recipients = @links[5].partition(&is_reverse)
+    @services_transactions = @links[6]
+    @lobbying = @links[7]
+    @friendships = @links[8]
+    @professional_relationships = @links[9]
+    @owners, @holdings = @links[10].partition(&is_reverse)
+    @children, @parents = @links[11].partition(&is_reverse)
+    @miscellaneous = @links[12]
 
     section_order_person = ['business_positions', 'government_positions', 'in_the_office_positions', 'other_positions_and_memberships', 'schools', 'holdings', 'services_transactions', 'family', 'professional_relationships', 'friendships', 'donation_recipients', 'staff']
     section_order_org = ['parents', 'children', 'other_positions_and_memberships', 'staff']

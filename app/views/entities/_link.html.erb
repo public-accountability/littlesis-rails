@@ -1,0 +1,13 @@
+<div class='relationship-section'>
+    <div class='related_entity'>
+        <div class='related_entity_entity'>
+            <span class='related_entity_name'><%= link_to link.related.name, entity_path(link.related) %></span>
+            <span class='related_entity_blurb'><%= link.related.blurb %></span>
+        </div>
+        <div class='related_entity_relationship'>
+            <ul>
+                <li><%= link_to "#{link.description} (#{link.relationship.start_date || '?'}—#{link.relationship.end_date || '?'})", relationship_path(link.relationship) %></li>
+            </ul>
+        </div>
+    </div>
+</div>
