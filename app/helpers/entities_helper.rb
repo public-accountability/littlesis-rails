@@ -22,4 +22,19 @@ module EntitiesHelper
       return 'inactive'
     end
   end
+
+  def get_relationship_section_links(section)
+    instance_variable_get("@#{section}")
+  end
+
+  def get_relationship_section_heading(section)
+    @sections[section]
+  end
+
+  def display_relationship_section_heading(links_count, section)
+    if links_count > 0
+      content_tag(:div, get_relationship_section_heading(section), class: "subsection")
+    end
+  end
+
 end
