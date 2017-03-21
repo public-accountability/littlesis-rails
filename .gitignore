@@ -40,6 +40,9 @@ public/assets/*
 # generated test error files
 spec/testdata/*_errors.txt
 
+# coverage files
+coverage
+
 # os data
 data/cands/
 data/cmtes/
