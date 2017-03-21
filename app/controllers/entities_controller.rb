@@ -10,42 +10,25 @@ class EntitiesController < ApplicationController
       @links.select { |el| el.category_id == category_id }
     end
 
-    @staff, @positions = category(1)
-      .partition { |l| l.is_reverse == true }
+    @staff, @positions = category(1).partition { |l| l.is_reverse == true }
+    @members, @memberships = category(3).partition { |l| l.is_reverse == true }
 
-    @members, @memberships = category(3)
-      .partition { |l| l.is_reverse == true }
-
-    jobs = @positions
-      .group_by { |l| l.position_type }
+    jobs = @position.group_by { |l| l.position_type }
 
     @business_positions = jobs['business'] || []
     @government_positions = jobs['government'] || []
     @in_the_office_positions = jobs['office'] || []
     @other_positions_and_memberships = (jobs['other'] || []) + @memberships
 
-    @schools, @students = category(2)
-      .partition { |l| l.is_reverse == true }
-
+    @schools, @students = category(2).partition { |l| l.is_reverse == true }
     @family = category(4)
-
-    @donors, @donation_recipients = category(5)
-      .partition { |l| l.is_reverse == true }
-
+    @donors, @donation_recipients = category(5).partition { |l| l.is_reverse == true }
     @services_transactions = category(6)
-
     @lobbying = category(7)
-
     @friendships = category(8)
-
     @professional_relationships = category(9)
-
-    @owners, @holdings = category(10)
-      .partition { |l| l.is_reverse == true }
-
-    @children, @parents = category(11)
-      .partition { |l| l.is_reverse == true }
-
+    @owners, @holdings = category(10).partition { |l| l.is_reverse == true }
+    @children, @parents = category(11).partition { |l| l.is_reverse == true }
     @miscellaneous = category(12)
 
     def get_other_positions_and_memberships_heading
@@ -76,8 +59,15 @@ class EntitiesController < ApplicationController
       'miscellaneous' =>                   'Miscellaneous'
     }
 
+    @partials = {
+      # for custom partial views
+    }
+
+    @partials.default = 'relationship'
+
     section_order_person = ['business_positions', 'government_positions', 'in_the_office_positions', 'other_positions_and_memberships', 'schools', 'holdings', 'services_transactions', 'family', 'professional_relationships', 'friendships', 'donation_recipients', 'staff']
     section_order_org = ['parents', 'children', 'other_positions_and_memberships', 'staff']
+    
     @section_order = @entity.person? ? section_order_person : section_order_org
 
   end
