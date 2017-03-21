@@ -21,23 +21,9 @@ class LsDate
     set_specificity
   end
 
-  # Specifity helpers
-  ##########################
-  
-  def sp_unknown?
-    @specificity == :unknown
-  end
-
-  def sp_day?
-    @specificity == :day
-  end
-
-  def sp_month?
-    @specificity == :month
-  end
-
-  def sp_year?
-    @specificity == :year
+  # specificity helpers
+  [:unknown, :year, :month, :day].each do |specificity|
+    define_method("sp_#{specificity}?") { @specificity == specificity } 
   end
   
   # ~~~~spaceship method~~~~
