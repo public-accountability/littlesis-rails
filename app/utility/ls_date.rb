@@ -1,4 +1,23 @@
-class LsDate < Date
+# A class for Dates in LittleSis.
+# Dates are represented by a 10 char string
+# with the format: YYYY-MM-DD
+# year is required, but month and day is optional.
+# Month and day can be represented as '00'.
+# Examples:
+# May, 1968 -> '1968-05-00'
+# April 1, 2017 -> '2017-02-01'
+# The year 1975 -> '1975-00-00'
+class LsDate
+  attr_reader :date_string, :specificity, :year, :month, :day
+  
+  # Initialize with string YYYY-MM-DD
+  def initialize(date_string)
+    test_if_valid_input(date_string)
+    @date_string = date_string
+    set_year_month_day
+    set_specificity
+  end
+    
   # str -> str
   # converts string dates in the following formats:
   #   YYYY. Example: 1996 -> 1996-00-00
@@ -11,5 +30,64 @@ class LsDate < Date
     return "#{date.slice(0,4)}-#{date.slice(5,2)}-00" if /^\d{4}-\d{2}$/.match(date)
     return "#{date.slice(0,4)}-#{date.slice(4,2)}-#{date.slice(6,2)}" if /^\d{8}$/.match(date)
     date
+  end
+
+  # string -> boolean
+  # determines if string is a valid ls_date (used by date validator)
+  def self.valid_date_string?(value)
+    return false unless (value.length == 10) && (value.gsub('-').count == 2)
+    year, month, day = year_month_day(value)
+    return false unless valid_year?(year) && valid_month?(month) && valid_day?(day)
+    true
+  end
+  
+  # str -> [year, month, day]
+  def self.year_month_day(value)
+    value.split('-').map { |x| to_int(x) }
+  end
+
+  # anything -> int or nil
+  # converts strings to integers
+  # converts '00' and '0' to nil
+  private_class_method def self.to_int(x)
+    return false unless !x.nil? && x.length.between?(1, 4)
+    x = x[1..-1] if x[0] == '0'
+    int = Integer(x)
+    return nil if int.zero?
+    int
+  rescue
+    Rails.logger.debug "Failed to convert - #{x} - to an integer"
+    nil
+  end
+
+  private_class_method def self.valid_year?(year)
+    year.between?(1000,3000)
+  end
+
+  private_class_method def self.valid_month?(month)
+    month.nil? || month.between?(1, 12)
+  end
+
+  private_class_method def self.valid_day?(day)
+    day.nil? || day.between?(1, 31)
+  end
+
+  private
+
+  def set_year_month_day
+    return if @date_string.nil?
+    @year, @month, @day = self.class.year_month_day(@date_string)
+  end
+
+  def set_specificity
+    @specificity = :unknown if @year.nil? && @month.nil? && @day.nil?
+    @specificity = :year if @year.present? && @month.nil? && @day.nil?
+    @specificity = :month if @year.present? && @month.present? && @day.nil?
+    @specificity = :day if @year.present? && @month.present? && @day.present?
+  end
+
+  def test_if_valid_input(str)
+    return if str.nil? || self.class.valid_date_string?(str)
+    raise ArgumentError, "Not a valid date string"
   end
 end
