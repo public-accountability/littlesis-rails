@@ -17,7 +17,7 @@
                 <% end %>
 
                 <% @section_order.each do |s| %>
-                    <%= display_section(s, "relationship") %>
+                    <%= display_section(s, @partials[s]) %>
                 <% end %>
 
             </div>
