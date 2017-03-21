@@ -24,7 +24,8 @@ class EntitiesController < ApplicationController
     @in_the_office_positions = jobs['office'] || []
     @other_positions_and_memberships = (jobs['other'] || []) + @memberships
 
-    @education = category(2)
+    @schools, @students = category(2)
+      .partition { |l| l.is_reverse == true }
 
     @family = category(4)
 
@@ -47,45 +48,31 @@ class EntitiesController < ApplicationController
 
     @miscellaneous = category(12)
 
-    @section_order = [
-      'staff',
-      'business_positions',
-      'government_positions',
-      'in_the_office_positions',
-      'other_positions_and_memberships',
-      'education',
-      'family',
-      'donation_recipients',    # currently @donors breaks certain profiles because it is too big
-      'services_transactions',
-      'lobbying',
-      'friendships',
-      'professional_relationships',
-      'owners',
-      'holdings',
-      'children',
-      'parents',
-      'miscellaneous'
-    ]
-
-    @headings = {
-      :staff =>                           'Office/Staff',
-      :business_positions =>              'Business Positions',
-      :government_positions =>            'Government Positions',
-      :in_the_office_positions =>         'In The Office Of',
-      :other_positions_and_memberships => 'Other Positions & Memberships',
-      :education =>                       'Education',
-      :family =>                          'Family',
-      :donation_recipients =>             'Donation/Grant Recipients',    
-      :services_transactions =>           'Services & Transactions',
-      :lobbying =>                        'Lobbying',
-      :friendships =>                     'Friendships',
-      :professional_relationships =>      'Professional Relationships',
-      :owners =>                          'Owners',
-      :holdings =>                        'Holdings',
-      :children =>                        'Child Organizations',
-      :parents =>                         'Parent Organizations',
-      :miscellaneous =>                   'Miscellaneous'
+    @sections = {
+      'staff' =>                           'Office/Staff',
+      'business_positions' =>              'Business Positions',
+      'government_positions' =>            'Government Positions',
+      'in_the_office_positions' =>         'In The Office Of',
+      'other_positions_and_memberships' => 'Other Positions & Memberships',
+      'schools' =>                         'Education',
+      'students' =>                        'Students',
+      'family' =>                          'Family',
+      'donors' =>                          'Donors',
+      'donation_recipients' =>             'Donation/Grant Recipients',    
+      'services_transactions' =>           'Services & Transactions',
+      'lobbying' =>                        'Lobbying',
+      'friendships' =>                     'Friendships',
+      'professional_relationships' =>      'Professional Relationships',
+      'owners' =>                          'Owners',
+      'holdings' =>                        'Holdings',
+      'children' =>                        'Child Organizations',
+      'parents' =>                         'Parent Organizations',
+      'miscellaneous' =>                   'Miscellaneous'
     }
+
+    section_order_person = ['business_positions', 'government_positions', 'in_the_office_positions', 'other_positions_and_memberships']
+    section_order_org = ['parents', 'children', 'other_positions_and_memberships', 'staff']
+    @section_order = @entity.person? ? section_order_person : section_order_org
 
   end
 

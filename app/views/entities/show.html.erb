@@ -8,16 +8,16 @@
 
             <div id='relationship_tabs_content'>
 
-                <% def display_link(links_name, partial) %>
-                    <% links = instance_variable_get("@#{links_name}") %>
+                <% def display_section(section, partial) %>
+                    <% links = instance_variable_get("@#{section}") %>
                     <% if links.count > 0 %>
-                        <div class='subsection'><%= @headings[links_name.to_sym] %></div>
+                        <div class='subsection'><%= @sections[section] %></div>
                         <%= render partial: partial, locals: { links: links } %>
                     <% end %>
                 <% end %>
 
-                <% @section_order.each do |section_name| %>
-                    <%= display_link(section_name, "relationship") %>
+                <% @section_order.each do |s| %>
+                    <%= display_section(s, "relationship") %>
                 <% end %>
 
             </div>
