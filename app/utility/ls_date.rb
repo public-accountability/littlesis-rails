@@ -1,13 +1,16 @@
-# A class for Dates in LittleSis.
+# A class for dates in LittleSis
+#
 # Dates are represented by a 10 char string
 # with the format: YYYY-MM-DD
-# year is required, but month and day is optional.
-# Month and day can be represented as '00'.
+# year is required, but month and day are optional.
+# When missing or unknown, month and day can be represented as '00'.
+#
 # Examples:
-# May, 1968 -> '1968-05-00'
-# April 1, 2017 -> '2017-02-01'
-# The year 1975 -> '1975-00-00'
+#    May, 1968 -> '1968-05-00'
+#    April 1, 2017 -> '2017-02-01'
+#    The year 1975 -> '1975-00-00'
 class LsDate
+  include Comparable
   attr_reader :date_string, :specificity, :year, :month, :day
   
   # Initialize with string YYYY-MM-DD
@@ -16,6 +19,57 @@ class LsDate
     @date_string = date_string
     set_year_month_day
     set_specificity
+  end
+
+  # Specifity helpers
+  ##########################
+  
+  def sp_unknown?
+    @specificity == :unknown
+  end
+
+  def sp_day?
+    @specificity == :day
+  end
+
+  def sp_month?
+    @specificity == :month
+  end
+
+  def sp_year?
+    @specificity == :year
+  end
+  
+  # ~~~~spaceship method~~~~
+  def <=>(other)
+    # one of the dates is unknown
+    return 0 if sp_unknown? && other.sp_unknown?
+    return 1 if !sp_unknown? && other.sp_unknown?
+    return -1 if sp_unknown? && !other.sp_unknown?
+    # If the years are different
+    return -1 if @year < other.year
+    return 1 if @year > other.year
+    # year is the same, specificity is year for both
+    if @year == other.year
+      return 0 if sp_year? && other.sp_year?
+      return -1 if sp_year? && (other.sp_month? || other.sp_day?)
+      return 1 if (sp_month? || sp_day?) && other.sp_year?
+    end
+    # if the months are different
+    return 1 if @month > other.month
+    return -1 if @month < other.month
+    # months are the same, one or both of them are are missing a day
+    if @month == other.month
+      return 0 if sp_month? && other.sp_month?
+      return 1 if sp_day? && other.sp_month?
+      return -1 if sp_month? && other.sp_day?
+    end
+    # if we get here then year and month have to be the same and specificity is :day for both LsDates
+    if sp_day? && other.sp_day?
+      return -1 if @day < other.day
+      return 1 if @day > other.day
+      return 0 if @day == other.day
+    end
   end
     
   # str -> str
@@ -88,6 +142,7 @@ class LsDate
 
   def test_if_valid_input(str)
     return if str.nil? || self.class.valid_date_string?(str)
+    Rails.logger.debug "Invalid LsDate input: #{str}"
     raise ArgumentError, "Not a valid date string"
   end
 end

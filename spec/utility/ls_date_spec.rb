@@ -69,7 +69,6 @@ describe LsDate do
     it 'converts YYYY to YYYY-00-OO' do
       expect(LsDate.convert('2019')).to eql '2019-00-00'
     end
-
     it 'converts YYYY-MM to YYYY-MM-OO' do
       expect(LsDate.convert('2019-12')).to eql '2019-12-00'
     end
@@ -84,6 +83,49 @@ describe LsDate do
       expect(LsDate.convert('2000-04-01')).to eql '2000-04-01'
       expect(LsDate.convert(nil)).to be nil
       expect(LsDate.convert('right now')).to eql 'right now'
+    end  end
+
+  describe 'Comparisons' do
+    it 'returns equal when both are unknown' do
+      expect( LsDate.new(nil) == LsDate.new(nil)).to be true
+    end
+    
+    it 'a defined date is greater than an unknown date' do
+      expect( LsDate.new('1799-00-00') > LsDate.new(nil)).to be true
+      expect( LsDate.new('1799-01-00') > LsDate.new(nil)).to be true
+      expect( LsDate.new('1799-01-31') > LsDate.new(nil)).to be true
+      expect( LsDate.new(nil) < LsDate.new('1799-00-00')).to be true 
+    end
+
+    it 'works when years are different' do
+      expect( LsDate.new('1799-00-00') > LsDate.new('1600-00-00')).to be true
+      expect( LsDate.new('2017-00-00') > LsDate.new('2016-10-28')).to be true
+      expect( LsDate.new('2017-10-00') > LsDate.new('2016-10-00')).to be true
+      expect( LsDate.new('2000-00-00') < LsDate.new('2016-10-28')).to be true
+    end
+
+    context 'years are the same' do
+      it 'if month is defined, the more specific date wins' do
+        expect( LsDate.new('2017-00-00') < LsDate.new('2017-03-00')).to be true
+        expect( LsDate.new('2017-00-00') < LsDate.new('2017-01-01')).to be true
+      end
+      
+      it 'if only year is defined, then they are equal' do
+        expect( LsDate.new('2017-00-00') == LsDate.new('2017-00-00')).to be true
+      end
+    end
+    
+    it 'works when years is the same, but the months are different' do
+      expect( LsDate.new('2017-02-00') < LsDate.new('2017-03-00')).to be true
+      expect( LsDate.new('2017-10-00') < LsDate.new('2017-11-00')).to be true
+    end
+
+    it 'is equal when year and month are the same and both are missing days' do 
+      expect( LsDate.new('2017-02-00') == LsDate.new('2017-02-00')).to be true
+    end
+
+    it 'works when year and month are the same and one is missing a day' do 
+      expect( LsDate.new('2017-02-27') > LsDate.new('2017-02-00')).to be true
     end
   end
 end
