@@ -128,4 +128,22 @@ describe LsDate do
       expect( LsDate.new('2017-02-27') > LsDate.new('2017-02-00')).to be true
     end
   end
+
+  describe 'display' do
+    it 'displays unknown as ?' do
+      expect( LsDate.new(nil).display).to eql '?'
+    end
+
+    it "displays :year as 'YY" do
+      expect( LsDate.new('1926-00-00').display).to eql "'26"
+    end
+
+    it "displays :month as 'Mon 'YY" do
+      expect( LsDate.new('1926-11-00').display).to eql "Nov '26"
+    end
+
+    it "displays :year as 'Mon DD, 'YY" do
+      expect( LsDate.new('2008-02-24').display).to eql "Feb 24 '08"
+    end
+  end
 end

@@ -57,7 +57,15 @@ class LsDate
       return 0 if @day == other.day
     end
   end
-    
+  
+  # display string of date
+  def display
+    return '?' if sp_unknown?
+    return year_display if sp_year?
+    return month_display if sp_month?
+    return day_display if sp_day?
+  end
+  
   # str -> str
   # converts string dates in the following formats:
   #   YYYY. Example: 1996 -> 1996-00-00
@@ -130,5 +138,17 @@ class LsDate
     return if str.nil? || self.class.valid_date_string?(str)
     Rails.logger.debug "Invalid LsDate input: #{str}"
     raise ArgumentError, "Not a valid date string"
+  end
+
+  def year_display
+    "'#{@year.to_s[-2..-1]}"
+  end
+
+  def month_display
+    "#{Date::ABBR_MONTHNAMES[@month]} #{year_display}"
+  end
+
+  def day_display
+    "#{Date::ABBR_MONTHNAMES[@month]} #{@day} #{year_display}"
   end
 end
