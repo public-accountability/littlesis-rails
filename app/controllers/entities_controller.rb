@@ -65,7 +65,7 @@ class EntitiesController < ApplicationController
       'family' =>                          'Family',
       'donors' =>                          'Donors',
       'donation_recipients' =>             'Donation/Grant Recipients',    
-      'services_transactions' =>           'Services & Transactions',
+      'services_transactions' =>           'Services/Transactions',
       'lobbying' =>                        'Lobbying',
       'friendships' =>                     'Friendships',
       'professional_relationships' =>      'Professional Relationships',
@@ -76,7 +76,7 @@ class EntitiesController < ApplicationController
       'miscellaneous' =>                   'Miscellaneous'
     }
 
-    section_order_person = ['business_positions', 'government_positions', 'in_the_office_positions', 'other_positions_and_memberships']
+    section_order_person = ['business_positions', 'government_positions', 'in_the_office_positions', 'other_positions_and_memberships', 'schools', 'holdings', 'services_transactions', 'family', 'professional_relationships', 'friendships', 'donation_recipients', 'staff']
     section_order_org = ['parents', 'children', 'other_positions_and_memberships', 'staff']
     @section_order = @entity.person? ? section_order_person : section_order_org
 
