@@ -10,8 +10,10 @@ class EntitiesController < ApplicationController
       @links.select { |el| el.category_id == category_id }
     end
 
-    @staff, @positions = category(1).partition { |l| l.is_reverse == true }
-    @members, @memberships = category(3).partition { |l| l.is_reverse == true }
+    is_reverse = Proc.new { |l| l.is_reverse == true }
+
+    @staff, @positions = category(1).partition(&is_reverse)
+    @members, @memberships = category(3).partition(&is_reverse)
 
     jobs = @positions.group_by { |l| l.position_type }
 
@@ -20,15 +22,15 @@ class EntitiesController < ApplicationController
     @in_the_office_positions = jobs['office'] || []
     @other_positions_and_memberships = (jobs['other'] || []) + @memberships
 
-    @schools, @students = category(2).partition { |l| l.is_reverse == true }
+    @schools, @students = category(2).partition(&is_reverse)
     @family = category(4)
-    @donors, @donation_recipients = category(5).partition { |l| l.is_reverse == true }
+    @donors, @donation_recipients = category(5).partition(&is_reverse)
     @services_transactions = category(6)
     @lobbying = category(7)
     @friendships = category(8)
     @professional_relationships = category(9)
-    @owners, @holdings = category(10).partition { |l| l.is_reverse == true }
-    @children, @parents = category(11).partition { |l| l.is_reverse == true }
+    @owners, @holdings = category(10).partition(&is_reverse)
+    @children, @parents = category(11).partition(&is_reverse)
     @miscellaneous = category(12)
 
     def get_other_positions_and_memberships_heading
