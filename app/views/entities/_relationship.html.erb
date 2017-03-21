@@ -7,8 +7,7 @@
             </div>
             <div class='related_entity_relationship'>
                 <ul>
-                    <% description = l.is_reverse ? l.relationship.description1 : l.relationship.description2 %>
-                    <li><%= link_to "#{description} (#{l.relationship.start_date || '?'}—#{l.relationship.end_date || '?'})", relationship_path(l.relationship) %></li>
+                    <li><%= link_to "#{l.description} (#{l.relationship.start_date || '?'}—#{l.relationship.end_date || '?'})", relationship_path(l.relationship) %></li>
                 </ul>
             </div>
         </div>

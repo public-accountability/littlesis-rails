@@ -27,4 +27,8 @@ class Link < ActiveRecord::Base
     return 'office' if (org_types & ['ElectedRepresentative', 'PublicOfficial']).any?
     return 'other'
   end
+
+  def description
+    is_reverse ? relationship.description1 : relationship.description2
+  end
 end
