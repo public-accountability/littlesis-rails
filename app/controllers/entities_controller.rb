@@ -10,13 +10,13 @@ class EntitiesController < ApplicationController
       @links.select { |el| el.category_id == category_id }
     end
 
-    @staff, positions = category(1)
+    @staff, @positions = category(1)
       .partition { |l| l.is_reverse == true }
 
     @members, @memberships = category(3)
       .partition { |l| l.is_reverse == true }
 
-    jobs = positions
+    jobs = @positions
       .group_by { |l| l.position_type }
 
     @business_positions = jobs['business'] || []
@@ -48,12 +48,18 @@ class EntitiesController < ApplicationController
 
     @miscellaneous = category(12)
 
+    def get_other_positions_and_memberships_heading
+      return 'Memberships' if @positions.count == 0
+      return 'Positions & Memberships' if @positions.count == @other_positions_and_memberships.count
+      return 'Other Positions & Memberships'
+    end
+
     @sections = {
       'staff' =>                           'Office/Staff',
       'business_positions' =>              'Business Positions',
       'government_positions' =>            'Government Positions',
       'in_the_office_positions' =>         'In The Office Of',
-      'other_positions_and_memberships' => 'Other Positions & Memberships',
+      'other_positions_and_memberships' =>  get_other_positions_and_memberships_heading,
       'schools' =>                         'Education',
       'students' =>                        'Students',
       'family' =>                          'Family',
