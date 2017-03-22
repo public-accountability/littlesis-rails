@@ -10,10 +10,12 @@ class EntitiesController < ApplicationController
 
     @links.default = []
 
-    is_reverse = Proc.new { |l| l.is_reverse == true }
+    def split(links)
+      return links.partition { |l| l.is_reverse == true }
+    end
 
-    @staff, @positions = @links[1].partition(&is_reverse)
-    @members, @memberships = @links[3].partition(&is_reverse)
+    @staff, @positions = split @links[1]
+    @members, @memberships = split @links[3]
 
     jobs = @positions.group_by { |l| l.position_type }
     jobs.default = []
@@ -21,17 +23,18 @@ class EntitiesController < ApplicationController
     @business_positions = jobs['business'] 
     @government_positions = jobs['government'] 
     @in_the_office_positions = jobs['office']
-    @other_positions_and_memberships = jobs['other'] + @memberships
+    @other_positions = jobs['other']
+    @other_positions_and_memberships = @other_positions + @memberships
 
-    @schools, @students = @links[2].partition(&is_reverse)
+    @schools, @students = split @links[2]
     @family = @links[4]
-    @donors, @donation_recipients = @links[5].partition(&is_reverse)
+    @donors, @donation_recipients = split @links[5]
     @services_transactions = @links[6]
     @lobbying = @links[7]
     @friendships = @links[8]
     @professional_relationships = @links[9]
-    @owners, @holdings = @links[10].partition(&is_reverse)
-    @children, @parents = @links[11].partition(&is_reverse)
+    @owners, @holdings = split @links[10]
+    @children, @parents = split @links[11]
     @miscellaneous = @links[12]
 
     section_order_person = ['business_positions', 'government_positions', 'in_the_office_positions', 'other_positions_and_memberships', 'schools', 'holdings', 'services_transactions', 'family', 'professional_relationships', 'friendships', 'donation_recipients', 'staff']

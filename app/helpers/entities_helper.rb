@@ -25,19 +25,29 @@ module EntitiesHelper
 
 # Relationships display
 
-  def get_other_positions_and_memberships_heading(positions_count, other_positions_and_memberships_count)
-    return 'Memberships' if positions_count == 0
-    return 'Positions & Memberships' if positions_count == other_positions_and_memberships_count
-    return 'Other Positions & Memberships'
+  def get_other_positions_and_memberships_heading(positions_count, other_positions_count, memberships_count)
+    if other_positions_count == 0
+      return 'Memberships'
+    elsif memberships_count == 0
+      if other_positions_count == positions_count
+        return 'Positions'
+      else
+        return 'Other Positions'
+      end
+    elsif other_positions_count == positions_count
+      return 'Positions & Memberships'
+    else
+      return 'Other Positions & Memberships'
+    end
   end
 
-  def display_relationship_section_heading(links_count, pos_count, other_pos_count, section)
+  def display_relationship_section_heading(links_count, pos_count, other_pos_count, mem_count, section)
     headings = {
       'staff' =>                           'Office/Staff',
       'business_positions' =>              'Business Positions',
       'government_positions' =>            'Government Positions',
       'in_the_office_positions' =>         'In The Office Of',
-      'other_positions_and_memberships' =>  get_other_positions_and_memberships_heading(pos_count, other_pos_count),
+      'other_positions_and_memberships' =>  get_other_positions_and_memberships_heading(pos_count, other_pos_count, mem_count),
       'schools' =>                         'Education',
       'students' =>                        'Students',
       'family' =>                          'Family',
