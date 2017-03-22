@@ -67,4 +67,10 @@ module EntitiesHelper
     content_tag(:div, headings[section], class: "subsection") if links_count > 0
   end
 
+  def get_section_order(entity)
+    section_order_person = ['business_positions', 'government_positions', 'in_the_office_positions', 'other_positions_and_memberships', 'schools', 'holdings', 'services_transactions', 'family', 'professional_relationships', 'friendships', 'donation_recipients', 'staff']
+    section_order_org = ['parents', 'children', 'other_positions_and_memberships', 'staff']
+
+    entity.person? ? section_order_person : section_order_org
+  end
 end

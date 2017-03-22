@@ -37,11 +37,6 @@ class EntitiesController < ApplicationController
     @children, @parents = split @links[11]
     @miscellaneous = @links[12]
 
-    section_order_person = ['business_positions', 'government_positions', 'in_the_office_positions', 'other_positions_and_memberships', 'schools', 'holdings', 'services_transactions', 'family', 'professional_relationships', 'friendships', 'donation_recipients', 'staff']
-    section_order_org = ['parents', 'children', 'other_positions_and_memberships', 'staff']
-
-    @section_order = @entity.person? ? section_order_person : section_order_org
-
   end
 
   def new
