@@ -9,3 +9,23 @@
     </div>
 	<%= type_select_boxes %>
 <% end %>
+
+<script>
+
+ $(function(){
+   
+   const checked_class = 'glyphicon-check';
+   const unchecked_class = 'glyphicon-unchecked';
+
+   $('#entity-types span.glyphicon').click(function(){
+     if ($(this).hasClass(checked_class)) {
+       $(this).removeClass(checked_class);
+       $(this).addClass(unchecked_class);
+     } else if ($(this).hasClass(unchecked_class)) {
+       $(this).removeClass(unchecked_class);
+       $(this).addClass(checked_class);
+     }
+   });
+ });
+ 
+</script>

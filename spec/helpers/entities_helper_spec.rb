@@ -23,11 +23,11 @@ describe EntitiesHelper do
     end
 
     it 'contains all 25 extension org types' do
-      expect(helper.checkboxes(build(:org)).reduce(:+).scan('<span>').count).to eq 25
+      expect(helper.checkboxes(build(:org)).reduce(:+).scan('<span class="entity-type-name"').count).to eq 25
     end
 
     it 'contains all 9 extension person types' do
-      expect(helper.checkboxes(build(:person)).reduce(:+).scan('<span>').count).to eq 9
+      expect(helper.checkboxes(build(:person)).reduce(:+).scan('<span class="entity-type-name"').count).to eq 9
     end
 
     it 'contains one checkbox if org has an extension' do
@@ -40,12 +40,15 @@ describe EntitiesHelper do
 
   describe '#glyph_checkbox' do
     it 'return a checked box if true is passed as first argument' do
-      expect(helper.glyph_checkbox(true)).to include 'glyphicon-check'
+      expect(helper.glyph_checkbox(true, 1)).to include 'glyphicon-check'
     end
 
-    it 'returns an unchecked box if first argument is false or missing' do
-      expect(helper.glyph_checkbox(false)).to include 'glyphicon-unchecked'
-      expect(helper.glyph_checkbox).to include 'glyphicon-unchecked'
+    it 'returns an unchecked box if first argument is false' do
+      expect(helper.glyph_checkbox(false, 1)).to include 'glyphicon-unchecked'
+    end
+
+    it 'has data-definition-id' do
+      expect(helper.glyph_checkbox(false, 15)).to include 'data-definition-id="15"'
     end
   end
 end
