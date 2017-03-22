@@ -3,7 +3,7 @@ require 'rails_helper'
 describe EntitiesHelper do
   describe '#type_select_boxes' do
     it 'has 5 columns for orgs' do
-      expect(helper.type_select_boxes(build(:org)).scan('col-sm-4').count).to eq 5
+      expect(helper.type_select_boxes(build(:org)).scan('col-sm-4').count).to eq 3
     end
 
     it 'has 2 columns for orgs' do

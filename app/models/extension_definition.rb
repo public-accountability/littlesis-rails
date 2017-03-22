@@ -9,11 +9,11 @@ class ExtensionDefinition < ActiveRecord::Base
 
   
   def self.person_types
-    where(parent_id: PERSON_ID)
+    where(parent_id: PERSON_ID).order(name: :asc)
   end
 
   def self.org_types
-    where(parent_id: ORG_ID)
+    where(parent_id: ORG_ID).order(name: :asc)
   end
 
 end

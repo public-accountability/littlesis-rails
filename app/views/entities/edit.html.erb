@@ -3,12 +3,72 @@
 <%= render partial: 'header', locals: { entity: @entity } %>
 <%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
 
-<%= form_for @entity, method: 'patch', class: 'form-horizontal'  do |f| %>
+<%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder  do |f| %>
+    
     <div class="row top-3em">
 	<%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
     </div>
+    <div class="row bottom-1em">
+	<div class="col-sm-3">
+	    <strong>Types:</strong>
+	</div>
+    </div>
+    <div class="row bottom-3em m-left-1em" id="entity-types">
 	<%= type_select_boxes %>
+    </div>
+
+    
+    <% label_class = 'col-sm-2 control-label' %>
+    
+    <div class="form-group">
+	<%= f.label(:blurb, 'Short Description', class: label_class) %>
+	<div class="col-sm-8">
+	    <%= f.text_field(:blurb, class: 'form-control') %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+
+
+    <div class="form-group">
+	<%= f.label(:summary, 'Bio:', class: label_class) %>
+	<div class="col-sm-8">
+	    <%= f.text_area(:summary, class: 'form-control', size: '40x6') %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+    
+    <% start_date_text = { 'Org' => 'Start date:', 'Person' => 'Birth date' } %>
+    <% end_date_text = { 'Org' => 'End date:', 'Person' => 'Death date' } %>
+
+    <div class="form-group">
+	<%= f.label(:start_date, start_date_text[@entity.primary_ext], class: label_class) %>
+	<div class="col-sm-3">
+	    <%= f.text_field(:start_date, class: 'form-control') %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+
+    <div class="form-group">
+	<%= f.label(:end_date, end_date_text[@entity.primary_ext], class: label_class) %>
+	<div class="col-sm-3">
+	    <%= f.text_field(:end_date, class: 'form-control') %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+    
+    <% is_current_text = { 'Org' => 'Is current?', 'Person' => 'Alive?' } %>
+    
+    <div class="form-group">
+	<%= f.label(:is_current, is_current_text[@entity.primary_ext], class: label_class) %>
+	<div class="col-sm-3">
+	    <%= f.tri_boolean(:end_date, class: 'form-control') %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+    
+
 <% end %>
+
 
 <script>
 

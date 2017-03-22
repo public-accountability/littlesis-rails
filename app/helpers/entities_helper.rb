@@ -22,11 +22,10 @@ module EntitiesHelper
   
   # <Entity> -> html
   def type_select_boxes(entity = @entity)
-    content_tag(:div, class: 'row', id: 'entity-types') do
-      checkboxes(entity).each_slice(5).reduce('') do |x, box_group|
+    number_per_group = entity.org? ? 9 : 5
+    checkboxes(entity).each_slice(number_per_group).reduce('') do |x, box_group|
         x + content_tag(:div, box_group.reduce(:+), class: 'col-sm-4')
-      end.html_safe
-    end
+    end.html_safe
   end
 
   # <Entity> -> [ content_tag ]
