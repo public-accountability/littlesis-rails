@@ -10,6 +10,7 @@ describe 'entities/edit.html.erb', type: :view do
     before do
       assign(:entity, @entity)
       assign(:current_user, @user)
+      assign(:references, [])
       render
     end
 
@@ -21,5 +22,12 @@ describe 'entities/edit.html.erb', type: :view do
       expect(view).to render_template(partial: '_actions', count: 1)
     end
 
+    it 'renders actions partial' do
+      expect(view).to render_template(partial: '_edit_references_panel', count: 1)
+    end
+
+    it 'has one form' do
+      css 'form', count: 1
+    end
   end
 end

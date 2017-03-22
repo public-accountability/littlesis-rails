@@ -3,7 +3,9 @@
 <%= render partial: 'header', locals: { entity: @entity } %>
 <%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
 
-<div class="row">
-    <%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
-</div>
-
+<%= form_for @entity, method: 'patch', class: 'form-horizontal'  do |f| %>
+    <div class="row top-3em">
+	<%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
+    </div>
+	<%= type_select_boxes %>
+<% end %>

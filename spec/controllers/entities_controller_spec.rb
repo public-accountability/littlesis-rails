@@ -254,7 +254,7 @@ describe EntitiesController, type: :controller do
     login_user
 
     before do
-      expect(Entity).to receive(:find)
+      expect(Entity).to receive(:find).and_return(build(:org))
       get :edit, id: rand(100)
     end
     it { should render_template(:edit) }
@@ -262,6 +262,5 @@ describe EntitiesController, type: :controller do
   end
 
   describe '#update' do
-    
   end
 end
