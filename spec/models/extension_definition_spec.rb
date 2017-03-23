@@ -11,12 +11,12 @@ describe ExtensionDefinition, type: :model  do
   
   describe 'person types & org types' do
     it 'returns all person types' do
-      expect(ExtensionDefinition).to receive(:where).with(parent_id: 1).once
+      expect(ExtensionDefinition).to receive(:where).with(parent_id: 1).once.and_return(double(order: {name: :asc}))
       ExtensionDefinition.person_types
     end
 
     it 'returns all org types' do
-      expect(ExtensionDefinition).to receive(:where).with(parent_id: 2).once
+      expect(ExtensionDefinition).to receive(:where).with(parent_id: 2).once.and_return(double(order: {name: :asc}))
       ExtensionDefinition.org_types
     end
   end

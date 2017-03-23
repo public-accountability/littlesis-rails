@@ -55,15 +55,10 @@ class Person < ActiveRecord::Base
   end
 
   def gender
-    if gender_id == 1
-      return 'Female'
-    elsif gender_id == 2
-      return 'Male'
-    else
-      return nil
-    end
+    return 'Female' if gender_id == 1
+    return 'Male' if gender_id == 2
+    return 'Other' if gender_id == 3
   end
-
 
   def self.same_first_names(name)
     [].concat([SHORT_FIRST_NAMES[name.downcase]]).concat(LONG_FIRST_NAMES.fetch(name.downcase, [])).compact
