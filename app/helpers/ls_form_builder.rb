@@ -3,13 +3,19 @@ class LsFormBuilder < ActionView::Helpers::FormBuilder
   # to use: f.tri_boolean(:column, options)
   def tri_boolean(method, options = {})
     check_if_column_exists_and_is_boolean(method)
+    set_label_class(options)
     status = @object.send(method)
     radio_options = lambda { |checked| objectify_options(options.merge(checked: checked)) }
 
     @template.content_tag(:div, class: 'tri-boolean-container') do
-      @template.radio_button(@object_name, method, 'true', radio_options.call(status == true)) +
-        @template.radio_button(@object_name, method, 'false', radio_options.call(status == false)) +
-        @template.radio_button(@object_name, method, 'nil', radio_options.call(status.nil?))
+      [
+        @template.radio_button(@object_name, method, 'true', radio_options.call(status == true)),
+        @template.label(@object_name, "#{method}_true", 'Yes', class: @label_class),
+        @template.radio_button(@object_name, method, 'false', radio_options.call(status == false)),
+        @template.label(@object_name, "#{method}_false", 'No', class: @label_class),
+        @template.radio_button(@object_name, method, 'nil', radio_options.call(status.nil?)),
+        @template.label(@object_name, "#{method}_nil", 'Unknown', class: @label_class)
+      ].reduce(:+)
     end
   end
 
@@ -24,4 +30,8 @@ class LsFormBuilder < ActionView::Helpers::FormBuilder
     end
   end
 
+  def set_label_class(options)
+    @label_class = options[:label_class]
+    @label_class = 'tri-boolean-label' unless @label_class
+  end
 end
