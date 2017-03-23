@@ -138,6 +138,11 @@ class Entity < ActiveRecord::Base
     extension_records.pluck(:definition_id)
   end
 
+  # used in the edit entities view as value for extension_definition_ids
+  def extension_ids_without_primary_stringified
+    extension_ids.delete_if { |id| id == 1 || id == 2 }.join(',')
+  end
+
   # Returns array containing the name of all entity extensions (ExtensionRecord)
   # All entities will have at least one: 'Person' or 'Org
   def extension_names

@@ -8,15 +8,17 @@
     <div class="row top-3em">
 	<%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
     </div>
+
     <div class="row bottom-1em">
 	<div class="col-sm-3">
 	    <strong>Types:</strong>
 	</div>
     </div>
+
     <div class="row bottom-3em m-left-1em" id="entity-types">
 	<%= type_select_boxes %>
+	<%= f.hidden_field(:extension_definition_ids, value: @entity.extension_ids_without_primary_stringified) %>
     </div>
-
     
     <% label_class = 'col-sm-2 control-label' %>
     
@@ -27,7 +29,6 @@
 	</div>
 	<div class="clearfix"></div>
     </div>
-
 
     <div class="form-group">
 	<%= f.label(:summary, 'Bio:', class: label_class) %>
@@ -55,9 +56,9 @@
 	</div>
 	<div class="clearfix"></div>
     </div>
-    
+
     <% is_current_text = { 'Org' => 'Is current?', 'Person' => 'Alive?' } %>
-    
+
     <div class="form-group">
 	<%= f.label(:is_current, is_current_text[@entity.primary_ext], class: label_class) %>
 	<div class="col-sm-3">
@@ -65,7 +66,7 @@
 	</div>
 	<div class="clearfix"></div>
     </div>
-    
+
     <div class="form-group">
 	<%= f.label(:website, "Website:", class: label_class) %>
 	<div class="col-sm-3">
@@ -75,14 +76,20 @@
     </div>
 
     <% if @entity.person?  %>
-	<%= render partial: 'person_name_form_components', locals: { f: f, label_class: label_class } %>
+        <%= render partial: 'person_name_form_components', locals: { f: f, label_class: label_class } %>
     <% end %>
-    
+
+    <div class="form-group">
+	<div class="col-sm-3">
+	    <%= f.submit 'Update', class: 'btn btn-primary' %>
+	    <%= link_to 'Cancel', @entity.legacy_url, class: 'btn btn-default m-left-1em' %>
+	</div>
+    </div>
+
 <% end %>
 
 
 <script>
-
  $(function(){
    
    const checked_class = 'glyphicon-check';
@@ -97,6 +104,22 @@
        $(this).addClass(checked_class);
      }
    });
+
+   // The definition id of the type is stored in the HTML5 dataset of the icon
+   // -> string
+   function selectedTypeIds() {
+     return $('#entity-types span.glyphicon-check').map(function(){
+       return $(this).data().definitionId; 
+     }).toArray().join(',');
+   }
+   
+   // The checkboxes for entity types do not use normal form inputs.
+   // This updates the hidden input with the selected types before the form is submitted
+   $('<%= "#edit_entity_#{@entity.id}" %>').submit(function(event){
+     $('#entity_extension_definition_ids').val(selectedTypeIds);
+     return true;
+   });
+
  });
  
 </script>
