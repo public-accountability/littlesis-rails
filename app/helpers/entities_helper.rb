@@ -11,7 +11,7 @@ module EntitiesHelper
   def legacy_user_path(user)
     '/user/' + user.username
   end
-  
+
   def active_tab?(tab_name, active_tab)
     if active_tab == tab_name
       return 'active'
@@ -19,7 +19,7 @@ module EntitiesHelper
       return 'inactive'
     end
   end
-  
+
   # <Entity> -> html
   def type_select_boxes(entity = @entity)
     number_per_group = entity.org? ? 9 : 5
@@ -38,12 +38,12 @@ module EntitiesHelper
       end
     end
   end
-  
+
   # boolean, [] -> content_tag
   def glyph_checkbox(checked, def_id)
     glyphicon_class = ['glyphicon']
     glyphicon_class.append(if checked then 'glyphicon-check' else 'glyphicon-unchecked' end)
-    content_tag(:span, nil, class: glyphicon_class, aria_hidden: 'true', data: {definition_id: def_id} )
+    content_tag(:span, nil, class: glyphicon_class, aria_hidden: 'true', data: { definition_id: def_id })
   end
-  
+
 end
