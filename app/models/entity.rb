@@ -37,6 +37,7 @@ class Entity < ActiveRecord::Base
 
   # extensions
   has_one :person, inverse_of: :entity, dependent: :destroy
+  accepts_nested_attributes_for :person
   has_one :org, inverse_of: :entity, dependent: :destroy
   has_one :couple, inverse_of: :entity, dependent: :destroy
   has_one :public_company, inverse_of: :entity, dependent: :destroy
