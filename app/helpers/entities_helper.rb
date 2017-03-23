@@ -46,4 +46,10 @@ module EntitiesHelper
     content_tag(:span, nil, class: glyphicon_class, aria_hidden: 'true', data: { definition_id: def_id })
   end
 
+  # <FormBuilder Thingy> -> [options for select]
+  def gender_select_options(person_form)
+    person = person_form.instance_variable_get("@object")
+    selected = person.gender_id.nil? ? 'nil' : person.gender_id
+    options_for_select([['', 'nil'], ['Female', 1], ['Male', 2], ['Other', 3]], selected)
+  end
 end

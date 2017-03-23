@@ -6,4 +6,7 @@
 	  locals: { person_form: person_form, attribute: attr, label_class: label_class }
 	%>
     <% end %>
+    <%= render partial: 'person_name_form_gender', locals: { person_form: person_form, label_class: label_class } %>
 <% end %>
+
+
