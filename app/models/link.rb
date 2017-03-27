@@ -31,4 +31,5 @@ class Link < ActiveRecord::Base
   def description
     is_reverse ? relationship.description1 : relationship.description2
   end
+
 end

@@ -7,7 +7,7 @@ class EntitiesController < ApplicationController
     @links = @entity.links
       .includes(:relationship, :related)
       .group_by { |l| l.category_id }
-
+      
     @links.default = []
 
     def split(links)
@@ -31,7 +31,7 @@ class EntitiesController < ApplicationController
     @donors, @donation_recipients = split @links[5]
     @services_transactions = @links[6]
     @lobbying = @links[7]
-    @friendships = @links[8]
+    @friendships = @links[8].group_by { |l| l.entity2_id }.values
     @professional_relationships = @links[9]
     @owners, @holdings = split @links[10]
     @children, @parents = split @links[11]
