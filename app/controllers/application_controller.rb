@@ -121,4 +121,24 @@ class ApplicationController < ActionController::Base
   def skip_queue_entity(key, entity_id)
     QueueEntity.skip_entity(key, entity_id, current_user.id)
   end
+
+  protected
+  
+  # modifies params to be passed to Relationship.update or Entity.update
+  #  - converts blank_values to nil
+  #  - adds last_user_id
+  #  - processes start and end dates
+  def prepare_update_params(update_params)
+    params = blank_to_nil(update_params.to_h)
+    params['start_date'] = LsDate.convert(params['start_date'])
+    params['end_date'] = LsDate.convert(params['end_date'])
+    params.merge(last_user_id: current_user.sf_guard_user_id)
+  end
+
+  def blank_to_nil(hash)
+    new_h = {}
+    hash.each { |key, val| new_h[key] = val.blank? ? nil : val }
+    new_h
+  end
+
 end

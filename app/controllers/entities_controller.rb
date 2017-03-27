@@ -11,7 +11,7 @@ class EntitiesController < ApplicationController
   end
 
   def create
-    @entity = Entity.new(entity_params.merge(last_user_id: current_user.sf_guard_user_id))
+    @entity = Entity.new(new_entity_params.merge(last_user_id: current_user.sf_guard_user_id))
 
     if @entity.save # successfully created entity
       params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
@@ -47,6 +47,14 @@ class EntitiesController < ApplicationController
   end
 
   def update
+    if need_to_create_new_reference
+      @reference = Reference.new(reference_params)
+      return render :edit unless @reference.validate_before_create.empty?
+      @reference.assign_attributes(object_id: @relationship.id, object_model: "Relationship")
+    end
+    
+    render json: params
+
   end
 
   def relationships
@@ -387,6 +395,10 @@ class EntitiesController < ApplicationController
     @entity = Entity.find(params[:id])
   end
 
+  def need_to_create_new_reference
+    existing_reference_params['reference_id'].blank? && existing_reference_params['just_cleaning_up'].blank?
+  end
+
   def article_params
     params.require(:article).permit(
       :title, :url, :snippet, :published_at
@@ -399,7 +411,21 @@ class EntitiesController < ApplicationController
     )
   end
 
+  def reference_params
+    params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
+  end
+
+  def existing_reference_params
+    params.require(:reference).permit(:just_cleaning_up, :reference_id)
+  end
+
   def entity_params
+    params.require(:entity)
+      .permit(:name, :blurb, :summary, :notes, :website, :start_date, :end_date, :is_current, :is_deleted,
+              person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender])
+  end
+
+  def new_entity_params
     params.require(:entity).permit(:name, :blurb, :primary_ext)
   end
 
@@ -411,3 +437,4 @@ class EntitiesController < ApplicationController
     check_permission 'importer'
   end
 end
+
