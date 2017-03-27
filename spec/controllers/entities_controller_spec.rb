@@ -262,5 +262,22 @@ describe EntitiesController, type: :controller do
   end
 
   describe '#update' do
+    login_user
+
+    context 'Updating an Org without a reference' do
+      let(:org)  { create(:org) }
+      let(:params) { { id: org.id, entity: { 'website' => 'http://example.com' }, reference: {'just_cleaning_up' => '1'} } }
+
+      it 'updates entity field' do
+        expect(org.website).to be nil
+        patch :update, params
+        expect(Entity.find(org.id).website).to eq 'http://example.com'
+      end
+
+      it 'does not create a new reference' do
+        expect { patch :update, params }.not_to change { Reference.count } 
+      end
+
+    end
   end
 end
