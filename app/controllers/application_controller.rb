@@ -135,9 +135,17 @@ class ApplicationController < ActionController::Base
     params.merge(last_user_id: current_user.sf_guard_user_id)
   end
 
+  # converts blanks values (.blank?) of a hash to nil
+  # works on nested hashes
   def blank_to_nil(hash)
     new_h = {}
-    hash.each { |key, val| new_h[key] = val.blank? ? nil : val }
+    hash.each do |key, val|
+      if val.is_a? Hash
+        new_h[key] = blank_to_nil(val)
+      else
+        new_h[key] = val.blank? ? nil : val
+      end
+    end
     new_h
   end
 
