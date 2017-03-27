@@ -128,7 +128,7 @@ gem 'rack-mini-profiler'
 gem "passenger"
 
 # used for screenshot capture
-gem 'selenium-webdriver'
+gem 'selenium-webdriver', '>= 3.3.0'
 gem 'headless'
 
 gem 'mongo'

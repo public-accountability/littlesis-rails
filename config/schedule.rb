@@ -35,6 +35,10 @@ every 1.day, at: '5:00 am' do
   rake "ts:index", output: nil
 end
 
+every 1.day, at: '4:00 am' do
+  rake "maps:generate_recent_thumbs", output: nil
+end
+
 # every 1.day, at: '3:30 am' do 
 #   command "/usr/local/bin/backup-database"
 # end
