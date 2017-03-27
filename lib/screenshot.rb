@@ -1,3 +1,7 @@
+# Takes screenshots of oligrapher using firefox and Selenium Webdriver
+# It requires Geckodriver > 0.15
+# Download geckodriver here: https://github.com/mozilla/geckodriver/releases
+# and put it anywhere that's accessible from the shell's path
 class Screenshot
 
   def self.take(url, path)
