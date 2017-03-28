@@ -277,4 +277,24 @@ describe Entity do
       end
     end
   end # end Extension Attributes Functions
+
+  describe 'Using paper_trail for versision' do
+    with_versioning do
+      it 'creates version after updating name' do
+        human = create(:person)
+        expect(human.versions.size).to eq 1
+        expect { human.update(name: 'Emiliano Zapata') }.to change { human.versions.size }.by(1)
+      end
+
+      it 'does not create a version after changing updated_at' do
+        human = create(:person)
+        expect { human.touch }.not_to change { human.versions.size }
+      end
+
+      it 'does not create a version after changing link_count' do
+        human = create(:person)
+        expect { human.update(link_count: 10) }.not_to change { human.versions.size }
+      end
+    end
+  end
 end
