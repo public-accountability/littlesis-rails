@@ -170,7 +170,6 @@ describe Entity do
         expect(create_school.extension_names). to eql ['Org', 'School']
       end
     end
-
     
     describe 'name_or_id_to_name' do
       it 'converts def id to name' do
@@ -195,11 +194,48 @@ describe Entity do
     end
 
     describe 'remove_extension' do
-      
+      it 'removes extension records' do
+        org = create(:org)
+        expect(org.extension_records.count).to eq 1
+        org.add_extension('IndustryTrade')
+        expect(org.extension_records.count).to eq 2
+        org.remove_extension('IndustryTrade')
+        expect(org.extension_records.count).to eq 1
+      end
+
+      it 'removes extension records and their models' do
+        person = create(:person)
+        expect(person.extension_records.count).to eq 1
+        expect(person.political_candidate).to be nil
+        person.add_extension('PoliticalCandidate')
+        expect(person.extension_records.count).to eq 2
+        expect(person.political_candidate).to be_a PoliticalCandidate
+        person.remove_extension('PoliticalCandidate')
+        expect(person.extension_records.count).to eq 1
+        expect(person.reload.political_candidate).to be nil
+      end
+
+      it 'can be run multiple times' do
+        person = create(:person)
+        expect { person.add_extension('PoliticalCandidate') }.to change { PoliticalCandidate.count }.by(1)
+        expect { person.add_extension('PoliticalCandidate') }.not_to change { PoliticalCandidate.count }
+        expect { person.remove_extension('PoliticalCandidate') }.to change { PoliticalCandidate.count }.by(-1)
+        expect { person.remove_extension('PoliticalCandidate') }.not_to change { PoliticalCandidate.count }
+      end
+
+      it 'nothing happens if the extension does not exist' do
+        org = create(:org)
+        expect { org.remove_extension('LaborUnion') }.not_to change { ExtensionRecord.count }
+        expect { org.remove_extension('Business') }.not_to change { Business.count }
+      end
+
+      it 'prevents you from removing primary extensions' do
+        expect { build(:org).remove_extension('Org') }.to raise_error(ArgumentError)
+        expect { build(:person).remove_extension('Person') }.to raise_error(ArgumentError)
+      end
     end
 
-
-    describe 'add_extensions_by_def_ids' do
+    describe '#add_extensions_by_def_ids' do
       it 'creates extension records' do
         org = create(:org)
         expect(org.extension_records.count).to eq 1
@@ -218,6 +254,26 @@ describe Entity do
         expect(org.business).to be nil
         org.add_extensions_by_def_ids([5])
         expect(org.business).to be_a Business
+      end
+    end
+
+    describe '#remove_extensions_by_def_ids' do
+      before do
+        @org = create(:org)
+        @org.add_extension('School')
+        @org.add_extension('NonProfit')
+      end
+
+      it 'removes extension records' do
+        expect { @org.remove_extensions_by_def_ids([7, 10]) }.to change { ExtensionRecord.count }.by(-2)
+      end
+
+      it 'removes extension model' do
+        expect { @org.remove_extensions_by_def_ids([7, 10]) }.to change { School.count }.by(-1)
+      end
+
+      it 'silently ignores extensions that do not exist' do
+        expect { @org.remove_extensions_by_def_ids([7, 10, 9]) }.to change { ExtensionRecord.count }.by(-2)
       end
     end
   end # end Extension Attributes Functions

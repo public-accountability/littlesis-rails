@@ -32,7 +32,7 @@ describe EntitiesHelper do
 
     it 'contains one checkbox if org has an extension' do
       org = create(:org)
-      org.add_extension('business')
+      org.add_extension('Business')
       expect(helper.checkboxes(org).reduce(:+).scan('glyphicon-check').count).to eq 1
       expect(helper.checkboxes(org).reduce(:+).scan('glyphicon-unchecked').count).to eq 24
     end
