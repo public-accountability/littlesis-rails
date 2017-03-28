@@ -17,7 +17,7 @@
 
     <div class="row bottom-3em m-left-1em" id="entity-types">
 	<%= type_select_boxes %>
-	<%= f.hidden_field(:extension_definition_ids, value: @entity.extension_ids_without_primary_stringified) %>
+	<%= f.hidden_field(:extension_def_ids, value: @entity.extension_ids_without_primary_stringified) %>
     </div>
     
     <% label_class = 'col-sm-2 control-label' %>
@@ -116,7 +116,7 @@
    // The checkboxes for entity types do not use normal form inputs.
    // This updates the hidden input with the selected types before the form is submitted
    $('<%= "#edit_entity_#{@entity.id}" %>').submit(function(event){
-     $('#entity_extension_definition_ids').val(selectedTypeIds);
+     $('#entity_extension_def_ids').val(selectedTypeIds);
      return true;
    });
 

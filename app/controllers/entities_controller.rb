@@ -54,8 +54,8 @@ class EntitiesController < ApplicationController
     end
 
     if @entity.update_attributes prepare_update_params(update_entity_params)
+      @entity.update_extension_records(extension_def_ids)
       @reference.save unless @reference.nil? # save the reference
-      # update types (ExtensionRecords) here
       redirect_to @entity.legacy_url
     else
       render :edit
@@ -428,6 +428,13 @@ class EntitiesController < ApplicationController
   def update_entity_params
     params.require(:entity).permit(:name, :blurb, :summary, :notes, :website, :start_date, :end_date, :is_current, :is_deleted,
                                    person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender, :id ])
+  end
+
+  # output: [Int] or nil
+  def extension_def_ids
+    if params.require(:entity).key?(:extension_def_ids)
+      return params.require(:entity).fetch(:extension_def_ids).split(',').map(&:to_i)
+    end
   end
 
   def new_entity_params

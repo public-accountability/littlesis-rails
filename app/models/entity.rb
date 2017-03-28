@@ -140,9 +140,13 @@ class Entity < ActiveRecord::Base
     extension_records.pluck(:definition_id)
   end
 
+  def extension_ids_without_primary
+    extension_ids.delete_if { |id| id == 1 || id == 2 }
+  end
+
   # used in the edit entities view as value for extension_definition_ids
   def extension_ids_without_primary_stringified
-    extension_ids.delete_if { |id| id == 1 || id == 2 }.join(',')
+    extension_ids_without_primary.join(',')
   end
 
   # Returns array containing the name of all entity extensions (ExtensionRecord)
@@ -184,6 +188,14 @@ class Entity < ActiveRecord::Base
   # Removes extensions by definition id
   def remove_extensions_by_def_ids(ids)
     ids.each { |def_id| remove_extension(def_id) }
+  end
+
+  def update_extension_records(def_ids)
+    return nil unless def_ids.is_a? Array
+    def_ids_to_delete = extension_ids_without_primary.delete_if { |x| def_ids.include?(x) }
+    def_ids_to_create = def_ids.delete_if { |x| extension_ids_without_primary.include?(x) }
+    add_extensions_by_def_ids(def_ids_to_create)
+    remove_extensions_by_def_ids(def_ids_to_delete)
   end
 
   def self.with_exts(exts)

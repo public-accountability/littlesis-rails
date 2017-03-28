@@ -50,6 +50,6 @@ module EntitiesHelper
   def gender_select_options(person_form)
     person = person_form.instance_variable_get("@object")
     selected = person.gender_id.nil? ? 'nil' : person.gender_id
-    options_for_select([['', 'nil'], ['Female', 1], ['Male', 2], ['Other', 3]], selected)
+    options_for_select([['', ''], ['Female', 1], ['Male', 2], ['Other', 3]], selected)
   end
 end
