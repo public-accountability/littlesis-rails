@@ -1,6 +1,8 @@
 class Org < ActiveRecord::Base
   include SingularTable
 
+  has_paper_trail :on => [:update, :destroy]
+
   belongs_to :entity, inverse_of: :org
 
   before_create :set_entity_name

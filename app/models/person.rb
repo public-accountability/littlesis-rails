@@ -1,6 +1,8 @@
 class Person < ActiveRecord::Base
   include SingularTable
 
+  has_paper_trail :on => [:update, :destroy]
+
   belongs_to :entity, inverse_of: :person
 
   def titleize_names
