@@ -275,9 +275,51 @@ describe EntitiesController, type: :controller do
       end
 
       it 'does not create a new reference' do
-        expect { patch :update, params }.not_to change { Reference.count } 
+        expect { patch :update, params }.not_to change { Reference.count }
+      end
+    end
+
+    context 'Updating an Org with a reference' do
+      let(:org) { create(:org) }
+      let(:params) { { id: org.id,
+                       entity: { 'start_date' => '1929-08-08' },
+                       reference: { 'source' => 'http://example.com', 'name' => 'new reference' } } }
+    
+      it 'updates entity field' do
+        expect(org.start_date).to be nil
+        patch :update, params
+        expect(Entity.find(org.id).start_date).to eq '1929-08-08'
       end
 
+      it 'creates a new reference' do
+        expect { patch :update, params }.to change { Reference.count }.by(1)
+        expect(Reference.last.name).to eq 'new reference'
+      end
     end
-  end
+
+    context 'Updating a Person without a reference' do
+      let(:person) { create(:person) }
+      let(:params) { { id: person.id,
+                       entity: { 'blurb' => 'just a person',
+                                  'person_attributes' => { 'name_middle' => 'MIDDLE', 'id' => person.person.id } },
+                       reference: { 'reference_id' => '123'} } }
+      
+      it 'updates entity field' do
+        expect(person.blurb).to be nil
+        patch :update, params
+        expect(Entity.find(person.id).blurb).to eq 'just a person'
+      end
+
+      it 'updates person model' do
+        expect(person.person.name_middle).to be nil
+        patch :update, params
+        expect(Entity.find(person.id).person.name_middle).to eq 'MIDDLE'
+      end
+
+      it 'does not create a new reference' do
+        expect { patch :update, params }.not_to change { Reference.count }
+      end
+    end
+
+  end # end describe #update
 end

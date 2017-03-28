@@ -9,7 +9,6 @@ FactoryGirl.define do
     primary_ext 'Person'
   end
 
-  
   factory :person, class: Entity do
     name 'Human Being'
     primary_ext 'Person'

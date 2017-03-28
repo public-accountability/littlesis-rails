@@ -49,11 +49,10 @@ class EntitiesController < ApplicationController
   # this methods follows a similar pattern to relationships_controller#update
   def update
     if need_to_create_new_reference
-      @reference = Reference.new(reference_params)
+      @reference = Reference.new(reference_params.merge(object_id: @entity.id, object_model: "Entity"))
       return render :edit unless @reference.validate_before_create.empty?
-      @reference.assign_attributes(object_id: @relationship.id, object_model: "Relationship")
     end
-    
+
     if @entity.update_attributes prepare_update_params(update_entity_params)
       @reference.save unless @reference.nil? # save the reference
       # update types (ExtensionRecords) here
@@ -427,8 +426,8 @@ class EntitiesController < ApplicationController
   end
 
   def update_entity_params
-    params.require(:entity).permit(:name, :blurbe, :summary, :notes, :website, :start_date, :end_date, :is_current, :is_deleted,
-                                   person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender])
+    params.require(:entity).permit(:name, :blurb, :summary, :notes, :website, :start_date, :end_date, :is_current, :is_deleted,
+                                   person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender, :id ])
   end
 
   def new_entity_params
