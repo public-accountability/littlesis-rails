@@ -170,5 +170,55 @@ describe Entity do
         expect(create_school.extension_names). to eql ['Org', 'School']
       end
     end
+
+    
+    describe 'name_or_id_to_name' do
+      it 'converts def id to name' do
+        expect(Entity.new.send(:name_or_id_to_name, 5)).to eq 'Business'
+      end
+
+      it 'returns valid name' do
+        expect(Entity.new.send(:name_or_id_to_name, 'LaborUnion')).to eq 'LaborUnion'
+      end
+
+      it 'raises ArgumentError if passed something other than an interger or string' do
+        expect { Entity.new.send(:name_or_id_to_name, []) } .to raise_error(ArgumentError)
+      end
+
+      it 'raises ArgumentError if passed invalid name' do
+        expect { Entity.new.send(:name_or_id_to_name, 'i am not an extension') } .to raise_error(ArgumentError)
+      end
+
+      it 'raises ArgumentError if passed invalid def id' do
+        expect { Entity.new.send(:name_or_id_to_name, 1000) }.to raise_error(ArgumentError)
+      end
+    end
+
+    describe 'remove_extension' do
+      
+    end
+
+
+    describe 'add_extensions_by_def_ids' do
+      it 'creates extension records' do
+        org = create(:org)
+        expect(org.extension_records.count).to eq 1
+        org.add_extensions_by_def_ids([23, 24])
+        expect(org.extension_records.count).to eq 3
+      end
+
+      it 'will not create duplicate records' do
+        org = create(:org)
+        expect { org.add_extensions_by_def_ids([23, 24]) }.to change { org.extension_records.count }.by(2)
+        expect { org.add_extensions_by_def_ids([23, 24]) }.not_to change { org.extension_records.count }
+      end
+
+      it 'creates extension model if needed for org' do
+        org = create(:org)
+        expect(org.business).to be nil
+        org.add_extensions_by_def_ids([5])
+        expect(org.business).to be_a Business
+      end
+    end
   end # end Extension Attributes Functions
 end

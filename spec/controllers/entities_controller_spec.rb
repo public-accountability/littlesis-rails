@@ -262,10 +262,11 @@ describe EntitiesController, type: :controller do
   end
 
   describe '#update' do
+    let(:sf_guard_user) { create(:sf_user) }
     login_user
 
     context 'Updating an Org without a reference' do
-      let(:org)  { create(:org) }
+      let(:org)  { create(:org, last_user_id: sf_guard_user.id) }
       let(:params) { { id: org.id, entity: { 'website' => 'http://example.com' }, reference: {'just_cleaning_up' => '1'} } }
 
       it 'updates entity field' do
@@ -276,6 +277,12 @@ describe EntitiesController, type: :controller do
 
       it 'does not create a new reference' do
         expect { patch :update, params }.not_to change { Reference.count }
+      end
+
+      it 'updates last_user_id' do
+        expect(org.last_user_id).to eq sf_guard_user.id
+        patch :update, params
+        expect(Entity.find(org.id).last_user_id).to eq controller.current_user.sf_guard_user.id
       end
     end
 
@@ -295,6 +302,12 @@ describe EntitiesController, type: :controller do
         expect { patch :update, params }.to change { Reference.count }.by(1)
         expect(Reference.last.name).to eq 'new reference'
       end
+      
+      it 'redirects to legacy url' do
+        patch :update, params
+        expect(response).to redirect_to(org.legacy_url)
+      end
+      
     end
 
     context 'Updating a Person without a reference' do
@@ -319,7 +332,15 @@ describe EntitiesController, type: :controller do
       it 'does not create a new reference' do
         expect { patch :update, params }.not_to change { Reference.count }
       end
+
+      it 'redirects to legacy url' do
+        patch :update, params
+        expect(response).to redirect_to(person.legacy_url)
+      end
     end
 
+    describe 'updating type' do
+      
+    end
   end # end describe #update
 end

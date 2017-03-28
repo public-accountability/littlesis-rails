@@ -149,11 +149,23 @@ class Entity < ActiveRecord::Base
     extension_ids.collect { |id| self.class.all_extension_names[id] }
   end
 
-  def add_extension(name, fields={})
-    fields.merge!(entity: self)
-    ext = name.constantize.create(fields) if self.class.all_extension_names_with_fields.include?(name) and name.constantize.where(entity_id: id).count == 0
+  def add_extension(name_or_id, fields = {})
+    name = name_or_id_to_name(name_or_id)
+    fields[:entity] = self
+    name.constantize.create(fields) if self.class.all_extension_names_with_fields.include?(name) && name.constantize.where(entity_id: id).count.zero?
     def_id = ExtensionDefinition.find_by_name(name).id
     ExtensionRecord.find_or_create_by(entity_id: id, definition_id: def_id)
+  end
+
+  # Create new extension by definition ids
+  # Accepts array of ids
+  def add_extensions_by_def_ids(ids)
+    ids.each { |def_id| add_extension(def_id) }
+  end
+
+  # Removes extensions by definition id
+  def remove_extensions_by_def_id(id)
+    
   end
 
   def self.with_exts(exts)
@@ -164,7 +176,7 @@ class Entity < ActiveRecord::Base
   # Names of the extensions (ExtensionDefinition) in order of their definition_id
   # Can be used as a look up table. For instance
   # Entity.all_extension_names[27] => LaborUnion
-  def self.all_extension_names    
+  def self.all_extension_names
     [
       'None',
       'Person',
@@ -623,6 +635,25 @@ class Entity < ActiveRecord::Base
   end
 
   class EntityDeleted < ActiveRecord::ActiveRecordError
+  end
+
+  private
+
+  # A type checker for definition id and names
+  # input: String or Integer
+  # output: String or throws ArgumentError
+  def name_or_id_to_name(name_or_id)
+    case name_or_id
+    when String
+      return name_or_id if self.class.all_extension_names.include?(name_or_id)
+      raise ArgumentError, "there are no extensions associated with name #{name_or_id}"
+    when Integer
+      name = self.class.all_extension_names[name_or_id]
+      return name unless name.nil?
+      raise ArgumentError, "there is no extension associated with id #{name_or_id}"
+    else
+      raise ArgumentError, "input must be a string or an integer"
+    end
   end
 
 end
