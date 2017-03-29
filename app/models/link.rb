@@ -30,7 +30,7 @@ class Link < ActiveRecord::Base
 
   def description
     return relationship.title if relationship.is_position? || relationship.is_member?
-    return "#{ActionController::Base.helpers.pluralize(relationship.filings, 'contribution')} · $#{relationship.amount}" if relationship.is_donation?
+    return "#{ActionController::Base.helpers.pluralize(relationship.filings, 'contribution')} · $#{relationship.amount}" if relationship.is_donation? && relationship.description1 == "Campaign Contribution"
     
     is_reverse ? relationship.description1 : relationship.description2
   end
