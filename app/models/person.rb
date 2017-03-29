@@ -5,6 +5,9 @@ class Person < ActiveRecord::Base
 
   belongs_to :entity, inverse_of: :person
 
+  validates :name_last, length: { maximum: 50 }, presence: true
+  validates :name_first, length: { maximum: 50 }, presence: true
+
   def titleize_names
     %w(name_prefix name_first name_middle name_last name_suffix name_nick).each do |field|
       send(:"#{field}=", send(field.to_sym).gsub(/^\p{Ll}/) { |m| m.upcase }) if send(field.to_sym).present?

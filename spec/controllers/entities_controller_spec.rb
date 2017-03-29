@@ -340,7 +340,45 @@ describe EntitiesController, type: :controller do
     end
 
     describe 'updating type' do
-      
     end
+
+    describe 'updating an Org with errors' do
+      let(:org)  { create(:org, last_user_id: sf_guard_user.id) }
+      let(:params) { { id: org.id, entity: { 'end_date' => 'bad date' }, reference: {'just_cleaning_up' => '1'} } }
+      
+      it 'does not change the end_date' do
+        expect { patch :update, params }.not_to change { Entity.find(org.id).end_date } 
+      end
+
+      it 'renders edit page' do
+        patch :update, params
+        expect(response).to render_template('edit')
+      end
+    end
+    
+
+    describe 'updating a person with a first name that is too long' do
+      let(:person) { create(:person) }
+      let(:params) { { id: person.id,
+                       entity: { 'blurb' => 'new blurb',
+                                 'person_attributes' => { 'name_first' => "#{'x' * 51}", 
+                                                          'id' => person.person.id } },
+                       reference: { 'reference_id' => '123'} } }
+      
+      it 'does not change the first name' do
+        expect { patch :update, params }.not_to change { Entity.find(person.id).person.name_first } 
+      end
+
+      it 'does not change the entity\'s blurb' do
+        expect { patch :update, params }.not_to change { Entity.find(person.id).blurb } 
+      end
+
+      it 'renders edit page' do
+        patch :update, params
+        expect(response).to render_template('edit')
+      end
+
+    end
+
   end # end describe #update
 end
