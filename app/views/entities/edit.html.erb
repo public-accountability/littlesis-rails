@@ -101,6 +101,18 @@
 	<% end %>
     <% end %>
 
+    <% if @entity.has_extension?('School') %>
+	<%= f.fields_for :school, @entity.school do |school_form| %>
+	    <div class="form-group">
+		<%= school_form.label(:is_private, 'Private School?', class: label_class) %>
+		<div class="col-sm-4">
+		    <%= school_form.tri_boolean(:is_private) %>
+		</div>
+		<div class="clearfix"></div>
+	    </div>
+	<% end %>
+    <% end %>
+
     <div class="form-group">
 	<div class="col-sm-3">
 	    <%= f.submit 'Update', class: 'btn btn-primary' %>
@@ -110,7 +122,6 @@
 
 
 <% end %>
-
 
 <script>
  $(function(){

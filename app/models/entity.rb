@@ -54,6 +54,7 @@ class Entity < ActiveRecord::Base
   ## extension nexted attributes
   accepts_nested_attributes_for :person
   accepts_nested_attributes_for :public_company
+  accepts_nested_attributes_for :school
   
   # contact
   has_many :addresses, inverse_of: :entity, dependent: :destroy

@@ -9,11 +9,11 @@ class LsFormBuilder < ActionView::Helpers::FormBuilder
 
     @template.content_tag(:div, class: 'tri-boolean-container') do
       [
-        @template.radio_button(@object_name, method, 'true', radio_options.call(status == true)),
+        @template.radio_button(@object_name, method, '1', radio_options.call(status == true)),
         @template.label(@object_name, "#{method}_true", 'Yes', class: @label_class),
-        @template.radio_button(@object_name, method, 'false', radio_options.call(status == false)),
+        @template.radio_button(@object_name, method, '0', radio_options.call(status == false)),
         @template.label(@object_name, "#{method}_false", 'No', class: @label_class),
-        @template.radio_button(@object_name, method, 'nil', radio_options.call(status.nil?)),
+        @template.radio_button(@object_name, method, '', radio_options.call(status.nil?)),
         @template.label(@object_name, "#{method}_nil", 'Unknown', class: @label_class)
       ].reduce(:+)
     end
