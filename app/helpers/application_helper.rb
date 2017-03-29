@@ -166,7 +166,8 @@ module ApplicationHelper
   end
 
   def references_select(references, selected_id = nil)
-    options_array = references.map { |r| [r.name, r.id] }
+    return nil if references.nil?
+    options_array = references.collect { |r| [r.name, r.id] }
     select_tag('reference_existing', options_for_select(options_array, selected_id), include_blank: true, class: 'selectpicker', name: 'reference[reference_id]')
   end
 end

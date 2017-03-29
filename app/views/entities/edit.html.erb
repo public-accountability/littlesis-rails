@@ -7,6 +7,9 @@
     
     <div class="row top-3em">
 	<%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
+	<div class="col-sm-4 col-sm-offset-1">
+	    <%= render partial: 'shared/editing/reference_errors' %>
+	</div>
     </div>
 
     <div class="row bottom-1em">

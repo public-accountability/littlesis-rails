@@ -43,14 +43,18 @@ class EntitiesController < ApplicationController
   end
 
   def edit
-    @references = @entity.references.order('updated_at desc').limit(10)
+    set_entity_references
   end
 
   # this methods follows a similar pattern to relationships_controller#update
   def update
     if need_to_create_new_reference
       @reference = Reference.new(reference_params.merge(object_id: @entity.id, object_model: "Entity"))
-      return render :edit unless @reference.validate_before_create.empty?
+      unless @reference.validate_before_create.empty?
+        @reference_error_message = "The reference is not valid"
+        set_entity_references
+        return render :edit
+      end
     end
 
     if @entity.update_attributes prepare_update_params(update_entity_params)
@@ -58,6 +62,7 @@ class EntitiesController < ApplicationController
       @reference.save unless @reference.nil? # save the reference
       redirect_to @entity.legacy_url
     else
+      set_entity_references
       render :edit
     end
 
@@ -399,6 +404,10 @@ class EntitiesController < ApplicationController
 
   def set_entity
     @entity = Entity.find(params[:id])
+  end
+
+  def set_entity_references
+    @references = @entity.references.order('updated_at desc').limit(10)
   end
 
   def need_to_create_new_reference
