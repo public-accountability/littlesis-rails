@@ -72,6 +72,8 @@ class Entity < ActiveRecord::Base
 
   validates_presence_of :primary_ext
   validates :name, presence: true, entity_name: true
+  validates :start_date, length: { maximum: 10 }, date: true
+  validates :end_date, length: { maximum: 10 }, date: true
 
   before_create :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext, :add_to_default_network

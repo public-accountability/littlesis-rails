@@ -27,6 +27,28 @@ describe Entity do
       e = Entity.new(primary_ext: 'Org', name: 'onewordname')
       expect(e.valid?).to be true
     end
+    
+    describe 'Date Validation' do
+      
+      def build_entity(attr)
+        build(:org, {id: rand(1000)}.merge(attr) )
+      end
+
+      it 'accepts good dates' do
+        expect(build_entity(start_date: '2000-00-00').valid?).to be true
+        expect(build_entity(end_date: '2000-10-00').valid?).to be true
+        expect(build_entity(end_date: '2017-01-20').valid?).to be true
+        expect(build_entity(start_date: nil).valid?).to be true
+      end
+
+      it 'does not accept bad dates' do
+        expect(build_entity(start_date: '2000-13-00').valid?).to be false
+        expect(build_entity(end_date: '2000-10').valid?).to be false
+        expect(build_entity(end_date: '2017').valid?).to be false
+        expect(build_entity(start_date: '').valid?).to be false
+      end
+    end
+
   end
 
   describe 'summary_excerpt' do
