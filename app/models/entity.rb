@@ -160,6 +160,13 @@ class Entity < ActiveRecord::Base
     extension_ids.collect { |id| self.class.all_extension_names[id] }
   end
 
+  def has_extension?(name_or_id)
+    name_or_id_to_name(name_or_id)
+    def_id = self.class.all_extension_names.index(name_or_id) if name_or_id.is_a? String
+    def_id = name_or_id if name_or_id.is_a? Integer
+    extension_ids.include?(def_id)
+  end
+
   # Adds a new extension. Creates ExtensionRecord and extension model if required
   # Call with the name of the extenion model or with the definition id
   # It will not create duplicates and is safe to run multiple times with with the same value

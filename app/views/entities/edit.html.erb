@@ -88,7 +88,7 @@
     <% end %>
 
     
-    <% if @entity.public_company.present? %>
+    <% if @entity.has_extension?('PublicCompany') %>
 	<%= f.fields_for :public_company do |public_company_form| %>
 	    <div class="form-group">
 		<%= public_company_form.label(:ticker, 'Ticker', class: label_class) %>

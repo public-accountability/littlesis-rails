@@ -215,6 +215,29 @@ describe Entity do
       end
     end
 
+    describe '#has_extension?' do
+
+      it 'works if provided extension name' do
+        org = create(:org)
+        org.add_extension('School')
+        expect(org.has_extension?('School')).to be true
+        expect(org.has_extension?('LaborUnion')).to be false
+      end
+      
+      it 'works if provided def id' do
+        org = create(:org)
+        org.add_extension('Business')
+        expect(org.has_extension?(5)).to be true
+        expect(org.has_extension?(7)).to be false
+      end
+
+      it 'rasises error if passed invalid name or id' do
+        org = create(:org)
+        expect { org.has_extension?(100) }.to raise_error(ArgumentError)
+        expect { org.has_extension?('eh') }.to raise_error(ArgumentError)
+      end
+    end
+
     describe 'remove_extension' do
       it 'removes extension records' do
         org = create(:org)
