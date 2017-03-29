@@ -414,8 +414,35 @@ describe EntitiesController, type: :controller do
         patch :update, params
         expect(response).to render_template('edit')
       end
-
     end
+
+    describe 'updating a public company' do
+      before do
+        @org = create(:org)
+        @org.add_extension('PublicCompany', {ticker: 'XYZ'} )
+        @params = { id: @org.id,
+                    entity: {
+                      name: @org.name,
+                      public_company_attributes: {
+                        id: @org.public_company.id,
+                        ticker: 'ABC'
+                      }
+                    },
+                    reference: { 'source' => 'http://example.com', 'name' => 'new reference' } }
+      end
+      
+      it 'updates ticker' do
+        expect(Entity.find(@org.id).public_company.ticker).to eq 'XYZ'
+        expect { patch :update, @params }.to change { PublicCompany.find(@org.public_company.id).ticker }.to('ABC')
+      end
+
+      it 'redirects to legacy url' do
+        patch :update, @params
+        expect(response).to redirect_to(@org.legacy_url)
+      end
+    end
+
+    
 
   end # end describe #update
 end

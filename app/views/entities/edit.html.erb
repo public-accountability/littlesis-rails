@@ -87,12 +87,27 @@
         <%= render partial: 'person_name_form_components', locals: { f: f, label_class: label_class } %>
     <% end %>
 
+    
+    <% if @entity.public_company.present? %>
+	<%= f.fields_for :public_company do |public_company_form| %>
+	    <div class="form-group">
+		<%= public_company_form.label(:ticker, 'Ticker', class: label_class) %>
+		<div class="col-sm-4">
+		    <%= public_company_form.text_field(:ticker) %>
+		</div>
+		<div class="clearfix"></div>
+	    </div>
+
+	<% end %>
+    <% end %>
+
     <div class="form-group">
 	<div class="col-sm-3">
 	    <%= f.submit 'Update', class: 'btn btn-primary' %>
 	    <%= link_to 'Cancel', @entity.legacy_url, class: 'btn btn-default m-left-1em' %>
 	</div>
     </div>
+
 
 <% end %>
 
