@@ -31,7 +31,7 @@ class Link < ActiveRecord::Base
   def description
     return relationship.title if relationship.is_position? || relationship.is_member?
 
-    if relationship.is_donation? && !is_reverse
+    if relationship.is_donation?
       contributions = ActionController::Base.helpers.pluralize(relationship.filings, 'contribution')
       return "#{contributions} · $#{relationship.amount}"
     end
