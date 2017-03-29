@@ -2,7 +2,8 @@ class EntitiesController < ApplicationController
   before_filter :authenticate_user!, except: [:show, :relationships, :political, :contributions]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names]
   before_action :set_current_user, only: [:show, :political, :match_donations]
-    
+  before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
+
   def show
   end
 
@@ -10,16 +11,15 @@ class EntitiesController < ApplicationController
   end
 
   def create
-    @entity = Entity.new(entity_params)
+    @entity = Entity.new(new_entity_params.merge(last_user_id: current_user.sf_guard_user_id))
 
-    if @entity.save
-      @entity.update(last_user_id: current_user.sf_guard_user.id)
+    if @entity.save # successfully created entity
       params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
-      
+
       if add_relationship_page?
-        render json: { 
-                 status: 'OK', 
-                 entity: { 
+        render json: {
+                 status: 'OK',
+                 entity: {
                    id: @entity.id,
                    name: @entity.name,
                    description: @entity.blurb,
@@ -31,15 +31,41 @@ class EntitiesController < ApplicationController
         redirect_to @entity.legacy_url("edit")
       end
 
-    else
-      
+    else # encounted error
+
       if add_relationship_page?
-        render json: {status: 'ERROR', errors: @entity.errors.messages }
+        render json: { status: 'ERROR', errors: @entity.errors.messages }
       else
         render action: 'new'
       end
       
     end
+  end
+
+  def edit
+    set_entity_references
+  end
+
+  # this methods follows a similar pattern to relationships_controller#update
+  def update
+    if need_to_create_new_reference
+      @reference = Reference.new(reference_params.merge(object_id: @entity.id, object_model: "Entity"))
+      unless @reference.validate_before_create.empty?
+        @reference_error_message = "The reference is not valid"
+        set_entity_references
+        return render :edit
+      end
+    end
+    
+    if @entity.update_attributes prepare_update_params(update_entity_params)
+      @entity.update_extension_records(extension_def_ids)
+      @reference.save unless @reference.nil? # save the reference
+      redirect_to @entity.legacy_url
+    else
+      set_entity_references
+      render :edit
+    end
+
   end
 
   def relationships
@@ -56,34 +82,31 @@ class EntitiesController < ApplicationController
   # ------------------------------ #
   # Open Secrets Donation Matching #
   # ------------------------------ #
+
   def match_donations
-    check_permission 'importer'
   end
 
   def review_donations
-    check_permission 'importer'
   end
-  
-  def match_donation
-    check_permission 'importer'
 
-    params[:payload].each do |donation_id| 
-       match = OsMatch.find_or_create_by(os_donation_id: donation_id, donor_id: params[:id])
-       match.update(matched_by: current_user.id)
+  def match_donation
+    params[:payload].each do |donation_id|
+      match = OsMatch.find_or_create_by(os_donation_id: donation_id, donor_id: params[:id])
+      match.update(matched_by: current_user.id)
     end
     @entity.update(last_user_id: current_user.sf_guard_user.id)
     @entity.delay.clear_legacy_cache(request.host)
-    render json: {status: 'ok'}
+    render json: { status: 'ok' }
   end
 
   def unmatch_donation
     check_permission 'importer'
-    params[:payload].each do |os_match_id| 
+    params[:payload].each do |os_match_id|
       OsMatch.find(os_match_id).destroy
     end
     @entity.update(last_user_id: current_user.sf_guard_user.id)
     @entity.delay.clear_legacy_cache(request.host)
-    render json: {status: 'ok'}
+    render json: { status: 'ok' }
   end
 
   def contributions
@@ -93,17 +116,15 @@ class EntitiesController < ApplicationController
   def potential_contributions
     render json: @entity.potential_contributions
   end
-  
+
   # ------------------------------ #
   # NYS Donation Matching          #
   # ------------------------------ #
 
   def match_ny_donations
-    check_permission 'importer'
   end
 
   def review_ny_donations
-    check_permission 'importer'
   end
 
   def fields
@@ -376,13 +397,21 @@ class EntitiesController < ApplicationController
   end
 
   private
-  
+
   def set_current_user
     @current_user = current_user
   end
 
   def set_entity
     @entity = Entity.find(params[:id])
+  end
+
+  def set_entity_references
+    @references = @entity.references.order('updated_at desc').limit(10)
+  end
+
+  def need_to_create_new_reference
+    existing_reference_params['reference_id'].blank? && existing_reference_params['just_cleaning_up'].blank?
   end
 
   def article_params
@@ -397,12 +426,40 @@ class EntitiesController < ApplicationController
     )
   end
 
-  def entity_params
+  def reference_params
+    params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
+  end
+
+  def existing_reference_params
+    params.require(:reference).permit(:just_cleaning_up, :reference_id)
+  end
+
+  def update_entity_params
+    params.require(:entity).permit(
+      :name, :blurb, :summary, :notes, :website, :start_date, :end_date, :is_current, :is_deleted,
+      person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender, :id ],
+      public_company_attributes: [:ticker, :id],
+      school_attributes: [:is_private, :id]
+    )
+  end
+
+  # output: [Int] or nil
+  def extension_def_ids
+    if params.require(:entity).key?(:extension_def_ids)
+      return params.require(:entity).fetch(:extension_def_ids).split(',').map(&:to_i)
+    end
+  end
+
+  def new_entity_params
     params.require(:entity).permit(:name, :blurb, :primary_ext)
   end
 
   def add_relationship_page?
-     params[:add_relationship_page].present?
+    params[:add_relationship_page].present?
   end
 
+  def importers_only
+    check_permission 'importer'
+  end
 end
+

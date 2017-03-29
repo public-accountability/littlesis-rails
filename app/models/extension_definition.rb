@@ -7,13 +7,16 @@ class ExtensionDefinition < ActiveRecord::Base
   PERSON_ID = 1
   ORG_ID = 2
 
-  
   def self.person_types
-    where(parent_id: PERSON_ID)
+    where(parent_id: PERSON_ID).order(name: :asc)
   end
 
   def self.org_types
-    where(parent_id: ORG_ID)
+    where(parent_id: ORG_ID).order(name: :asc)
+  end
+
+  def self.definition_ids_with_fields
+    where(has_fields: true).map(&:id)
   end
 
 end

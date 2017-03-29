@@ -1,7 +1,12 @@
 class Person < ActiveRecord::Base
   include SingularTable
 
+  has_paper_trail :on => [:update, :destroy]
+
   belongs_to :entity, inverse_of: :person
+
+  validates :name_last, length: { maximum: 50 }, presence: true
+  validates :name_first, length: { maximum: 50 }, presence: true
 
   def titleize_names
     %w(name_prefix name_first name_middle name_last name_suffix name_nick).each do |field|
@@ -54,6 +59,12 @@ class Person < ActiveRecord::Base
     name_last.gsub(/(\p{Ll})/u) { |m| "[#{m}#{m.upcase}]" }.gsub(/[[[:space:]]-]+/mu, '[[[:space:]]-]+')
   end
 
+  def gender
+    return 'Female' if gender_id == 1
+    return 'Male' if gender_id == 2
+    return 'Other' if gender_id == 3
+  end
+
   def self.same_first_names(name)
     [].concat([SHORT_FIRST_NAMES[name.downcase]]).concat(LONG_FIRST_NAMES.fetch(name.downcase, [])).compact
   end
@@ -64,14 +75,15 @@ class Person < ActiveRecord::Base
 
   LONG_FIRST_NAMES = {'abner' => ['ab'], 'abigail' => ['abbie', 'abby', 'nabby'], 'abram' => ['abe'], 'acera' => ['acer'], 'adeline' => ['ada'], 'adelaide' => ['addie'], 'agatha' => ['ag', 'aggy'], 'inez' => ['agnes'], 'alfred' => ['al', 'alf'], 'alexander' => ['alec', 'alex', 'eck'], 'amelia' => ['amy'], 'andrew' => ['andy', 'drew'], 'angeline' => ['angie'], 'susanna' => ['ann', 'anna', 'anne', 'annie'], 'anna' => ['annette'], 'apollonia' => ['appy'], 'archibald' => ['archy'], 'arnold' => ['arnie', 'arny'], 'arthur' => ['art', 'arty'], 'barbara' => ['bab', 'babs', 'barb'], 'barnabas' => ['barney'], 'bartholomew' => ['bart', 'barty'], 'sebastian' => ['bass'], 'beatrice' => ['bea', 'beattie', 'trixie'], 'rebecca' => ['becky', 'reba'], 'mirabel' => ['bella', 'mira'], 'sybil' => ['belle'], 'benjamin' => ['ben'], 'egbert' => ['bert', 'burt'], 'gilbert' => ['bertie'], 'elizabeth' => ['bess', 'bessie', 'beth', 'betsy', 'betty', 'elsie', 'ibby', 'libby', 'liz', 'liza', 'lizzie'], 'alberto' => ['beto'], 'beverly' => ['bev'], 'william' => ['bill', 'will', 'willy'], 'robert' => ['bob', 'rob'], 'calvin' => ['cal'], 'caroline' => ['carol'], 'cassandra' => ['cassie'], 'catherine' => ['cathy', 'caty', 'kate', 'kitty'], 'cecilia' => ['cecily', 'sissy'], 'charles' => ['charlie', 'chuck'], 'chester' => ['chet'], 'crystal' => ['chris'], 'lucinda' => ['cindy', 'lucy'], 'clarissa' => ['cissy'], 'nicholas' => ['claus', 'klaus', 'nick'], 'cleatus' => ['cleat'], 'clementine' => ['clem'], 'clifton' => ['cliff'], 'chloe' => ['clo'], 'cornelia' => ['connie', 'conny', 'neely'], 'corinne' => ['cora', 'ora'], 'courtney' => ['corky'], 'cornelius' => ['cory'], 'lucretia' => ['creasey'], 'christine' => ['crissy'], 'cyrus' => ['cy'], 'cynthia' => ['cyndi'], 'margaret' => ['daisy', 'madge', 'maggie', 'maggy', 'may', 'meg', 'midge', 'peg', 'peggy'], 'daniel' => ['dan', 'danny'], 'david' => ['dave', 'davy'], 'deborah' => ['deb', 'debby'], 'deanne' => ['dee'], 'diedre' => ['deedee'], 'fidelia' => ['delia'], 'delilah' => ['della', 'lila'], 'frederick' => ['derick', 'fred', 'freddie', 'fritz'], 'diane' => ['di', 'didi'], 'eurydice' => ['dicey'], 'richard' => ['dick', 'rich', 'rick'], 'delores' => ['dodie', 'lola'], 'martha' => ['dolly', 'marty'], 'isadora' => ['dora', 'issy'], 'dorothy' => ['dotty'], 'douglas' => ['doug'], 'edward' => ['ed', 'neil'], 'edith' => ['edie'], 'euphemia' => ['effie'], 'eleanor' => ['elaine', 'ellen', 'elly', 'helen', 'lana', 'lenora'], 'elisha' => ['eli'], 'luella' => ['ella', 'ellie'], 'heloise' => ['eloise'], 'emeline' => ['emily', 'millie'], 'emily' => ['emma', 'erma'], 'ephraim' => ['eph'], 'earnestine' => ['erna', 'ernie'], 'loretta' => ['etta'], 'evelyn' => ['ev', 'eve', 'evie'], 'frances' => ['fan', 'fran', 'frankie', 'sis'], 'veronica' => ['fanny', 'ronnie'], 'faith' => ['fay'], 'josephine' => ['fina', 'josie'], 'florence' => ['flo', 'flora', 'flossie'], 'franklin' => ['frank'], 'gabriel' => ['gab', 'gabe'], 'gabrielle' => ['gabby'], 'eugene' => ['gene'], 'gwenevere' => ['genny'], 'geoffrey' => ['geoff'], 'gerald' => ['gerry'], 'gustaf' => ['gus'], 'hamilton' => ['ham'], 'henry' => ['hank', 'harry'], 'johanna' => ['hanna'], 'johannes' => ['hans'], 'esther' => ['hester', 'stella'], 'ignatius' => ['iggy'], 'john' => ['jack', 'johnny'], 'jacqueline' => ['jackie'], 'jacob' => ['jake'], 'jennifer' => ['jan', 'jenny'], 'virginia' => ['jane', 'virgie'], 'jedediah' => ['jed'], 'jeffrey' => ['jeff'], 'winifred' => ['jennifer', 'winnie'], 'jeremiah' => ['jeremy', 'jerry'], 'julia' => ['jill'], 'james' => ['jim', 'jimmy'], 'joseph' => ['joe', 'joey'], 'jonathan' => ['jon'], 'joshua' => ['josh'], 'joyce' => ['joy'], 'judith' => ['judy'], 'kathlene' => ['kathy'], 'katherine' => ['katie'], 'calista' => ['kissy'], 'christopher' => ['kit'], 'leonard' => ['len', 'leo', 'leon'], 'magdalena' => ['lena'], 'felipe' => ['leno'], 'letitia' => ['lettie', 'tish'], 'lewis' => ['lew'], 'elisa' => ['lisa'], 'lorraine' => ['lorrie'], 'charlotte' => ['lottie'], 'louis' => ['lou', 'louie'], 'mehitable' => ['mabel'], 'madeline' => ['maddie', 'maddy'], 'mary' => ['mame', 'mamie', 'moll', 'molly'], 'amanda' => ['manda'], 'samantha' => ['mandy', 'manthy'], 'emanuel' => ['manny'], 'marcia' => ['marcy'], 'marjorie' => ['marge', 'margie'], 'marvin' => ['marv'], 'mathew' => ['mat'], 'matthias' => ['matt'], 'matilda' => ['maud', 'maude', 'tilda'], 'maurice' => ['maury'], 'maxwell' => ['max'], 'melvin' => ['mel'], 'philomena' => ['mena'], 'mervin' => ['merv'], 'michael' => ['mick', 'mickey', 'mike', 'mischa'], 'millicent' => ['milly'], 'milton' => ['milt'], 'wilhelmina' => ['mimi', 'mina', 'willie'], 'minerva' => ['mini', 'minnie'], 'mitchell' => ['mitch'], 'ramona' => ['mona'], 'morton' => ['mort', 'morty'], 'muriel' => ['mur'], 'almira' => ['myra'], 'abel' => ['nab'], 'ignacio' => ['nacho'], 'nadine' => ['nadia'], 'nancy' => ['nan', 'nana'], 'nathaniel' => ['nate'], 'norton' => ['ned'], 'helen' => ['nell', 'nellie', 'nelly'], 'agnes' => ['nessie', 'senga'], 'jeanette' => ['nettie'], 'henrietta' => ['netty'], 'eunice' => ['nicie', 'nicy'], 'nicole' => ['nikki'], 'ann' => ['nina'], 'juanita' => ['nita'], 'elnora' => ['nora'], 'norman' => ['norm'], 'obediah' => ['obed'], 'oliver' => ['ollie'], 'paul' => ['pablo'], 'francisco' => ['pacho', 'paco', 'pancho'], 'patrick' => ['paddy', 'pat'], 'pamela' => ['pam'], 'patricia' => ['patsy', 'patty'], 'penelope' => ['penny'], 'josefa' => ['pepa'], 'jose' => ['pepe'], 'percival' => ['percy'], 'peter' => ['pete'], 'orphelia' => ['phelia'], 'philip' => ['phil'], 'paula' => ['polly'], 'priscilla' => ['prissy', 'silla'], 'prudence' => ['prudy'], 'aquilla' => ['quil', 'quillie'], 'raphael' => ['rafe'], 'randolph' => ['randy'], 'erasmus' => ['rasmus'], 'raymond' => ['ray'], 'reginald' => ['reg', 'reggie'], 'irene' => ['rena'], 'norita' => ['rita'], 'rodrigo' => ['rod'], 'rhoda' => ['rodie'], 'ronald' => ['ron', 'ronny'], 'rosetta' => ['rosie'], 'roxanne' => ['roxy'], 'leroy' => ['roy'], 'rudolph' => ['rudy'], 'russell' => ['russ'], 'sarah' => ['sadie', 'sal', 'sally'], 'samuel' => ['sam'], 'sandra' => ['sandy'], 'asenath' => ['sene', 'senie'], 'sherman' => ['sherm'], 'silas' => ['si'], 'isabella' => ['sibella', 'tibbie'], 'sidney' => ['sid'], 'silvia' => ['silvie'], 'solomon' => ['sol'], 'eustacia' => ['stacia', 'stacy'], 'stanly' => ['stan'], 'steven' => ['steve'], 'stephen' => ['steven'], 'stewart' => ['stew'], 'suzanne' => ['sue', 'susie', 'suzy'], 'suzanna' => ['sukey'], 'thadeus' => ['tad'], 'theodore' => ['ted', 'teddy', 'theo'], 'aristotle' => ['telly'], 'theresa' => ['terry', 'tess', 'tracy'], 'antonia' => ['tia'], 'otilia' => ['tilly'], 'timothy' => ['tim', 'timmy'], 'martina' => ['tina'], 'tobias' => ['toby'], 'thomas' => ['tom'], 'anthony' => ['tony'], 'katherina' => ['trina'], 'gertrude' => ['trudi', 'trudy'], 'ursula' => ['ursie', 'ursy'], 'evangeline' => ['vangie'], 'vernon' => ['vern'], 'violet' => ['vi'], 'victor' => ['vic'], 'victoria' => ['vicky'], 'vincent' => ['vin', 'vinny'], 'lavina' => ['vina'], 'virgil' => ['virg'], 'vivian' => ['viv'], 'yvonne' => ['vonnie'], 'walter' => ['wally', 'walt'], 'webster' => ['web'], 'gwendolen' => ['wendy'], 'wesley' => ['wes'], 'edwin' => ['winn'], 'woodrow' => ['woody'], 'christina' => ['xina'], 'isaac' => ['zac', 'zak'], 'zachariah' => ['zach'], 'zebulon' => ['zeb'], 'zedekiah' => ['zed'], 'ezekiel' => ['zeke'], 'albertina' => ['zena'], 'zephaniah' => ['zeph']}
 
-  def gender
-    if gender_id == 1
-      return 'Female'
-    elsif gender_id == 2
-      return 'Male'
-    else
-      return nil
-    end
-  end
-
+  # Map between attribute as symbol to string text for presentation
+  # Person::DISPLAY_ATTRIBUTES[:name_last] -> 'Last Name:*'
+  DISPLAY_ATTRIBUTES = {
+    name_first: 'First Name:*',
+    name_last: 'Last Name:*',
+    name_middle: 'Middle Name:',
+    name_prefix: 'Prefix:',
+    name_suffix: 'Suffix:',
+    name_nick: 'Nickname:',
+    birthplace: 'Birthplace:'
+  }.freeze
 end

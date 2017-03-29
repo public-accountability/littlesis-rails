@@ -1,0 +1,7 @@
+<% unless @entity.errors.blank? %>
+    <% @entity.errors.full_messages.each do |message| %>
+	<div class="alert alert-warning" style="width: 100%;">
+	    <span><%= message %></span>
+	</div>
+    <% end %>
+<% end %>

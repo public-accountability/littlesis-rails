@@ -226,7 +226,7 @@ describe OsMatch, type: :model do
       before do
         DatabaseCleaner.start
         donation = create(:loeb_donation_one, amount: 10000, fec_cycle_id: 'blah', date: "2010-02-02")
-        @loeb_new = create(:loeb, id: rand(1000) )
+        @loeb_new = create(:loeb, id: rand(10000) )
         @loeb_old = create(:loeb, merged_id: @loeb_new.id, id: rand(1000), is_deleted: true)
         @match = OsMatch.create(os_donation_id: donation.id, donor_id: @loeb_old.id, recip_id: @nrsc.id)
       end

@@ -1,0 +1,9 @@
+<!-- locals: person_form (formbuilder thingy), attribute (sym), label_class (string) -->
+
+<div class="form-group">
+    <%= person_form.label(attribute, Person::DISPLAY_ATTRIBUTES[attribute], class: label_class) %>
+    <div class="col-sm-4">
+	<%= person_form.text_field(attribute) %>
+    </div>
+    <div class="clearfix"></div>
+</div>

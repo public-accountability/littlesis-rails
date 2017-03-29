@@ -13,7 +13,7 @@ describe 'RelationshipDetails' do
     end
 
     it 'returns member if d1 is nil and category_id = 3' do
-      expect(RelationshipDetails.new(build(:relationship, category_id: 3)).details).to eql [ ['Title', 'member']]
+      expect(RelationshipDetails.new(build(:relationship, category_id: 3)).details).to eql [ ['Title', 'Member']]
     end
   end
 
@@ -33,7 +33,7 @@ describe 'RelationshipDetails' do
   it 'returns details for membership relationship' do
     rel = build(:relationship, category_id: 3, start_date: '2000', end_date: '2001')
     rel.membership = build(:membership, dues: 100)
-    expect(RelationshipDetails.new(rel).details).to eql [ ['Title', 'member'], ['Start Date', '2000'], ['End Date', '2001'], ['Dues', '$100']]
+    expect(RelationshipDetails.new(rel).details).to eql [ ['Title', 'Member'], ['Start Date', '2000'], ['End Date', '2001'], ['Dues', '$100']]
   end
 
   it 'returns details for family relationship' do

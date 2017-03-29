@@ -1,0 +1,9 @@
+<!-- locals: person_form (formbuilder), label_class: (string) -->
+
+<div class="form-group">
+    <%= person_form.label(:gender, "Gender:", class: label_class) %>
+    <div class="col-sm-4">
+	<%= person_form.select(:gender_id, gender_select_options(person_form)) %>
+    </div>
+    <div class="clearfix"></div>
+</div>

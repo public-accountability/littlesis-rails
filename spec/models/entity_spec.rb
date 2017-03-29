@@ -27,6 +27,28 @@ describe Entity do
       e = Entity.new(primary_ext: 'Org', name: 'onewordname')
       expect(e.valid?).to be true
     end
+    
+    describe 'Date Validation' do
+      
+      def build_entity(attr)
+        build(:org, {id: rand(1000)}.merge(attr) )
+      end
+
+      it 'accepts good dates' do
+        expect(build_entity(start_date: '2000-00-00').valid?).to be true
+        expect(build_entity(end_date: '2000-10-00').valid?).to be true
+        expect(build_entity(end_date: '2017-01-20').valid?).to be true
+        expect(build_entity(start_date: nil).valid?).to be true
+      end
+
+      it 'does not accept bad dates' do
+        expect(build_entity(start_date: '2000-13-00').valid?).to be false
+        expect(build_entity(end_date: '2000-10').valid?).to be false
+        expect(build_entity(end_date: '2017').valid?).to be false
+        expect(build_entity(start_date: '').valid?).to be false
+      end
+    end
+
   end
 
   describe 'summary_excerpt' do
@@ -170,5 +192,154 @@ describe Entity do
         expect(create_school.extension_names). to eql ['Org', 'School']
       end
     end
+    
+    describe 'name_or_id_to_name' do
+      it 'converts def id to name' do
+        expect(Entity.new.send(:name_or_id_to_name, 5)).to eq 'Business'
+      end
+
+      it 'returns valid name' do
+        expect(Entity.new.send(:name_or_id_to_name, 'LaborUnion')).to eq 'LaborUnion'
+      end
+
+      it 'raises ArgumentError if passed something other than an interger or string' do
+        expect { Entity.new.send(:name_or_id_to_name, []) } .to raise_error(ArgumentError)
+      end
+
+      it 'raises ArgumentError if passed invalid name' do
+        expect { Entity.new.send(:name_or_id_to_name, 'i am not an extension') } .to raise_error(ArgumentError)
+      end
+
+      it 'raises ArgumentError if passed invalid def id' do
+        expect { Entity.new.send(:name_or_id_to_name, 1000) }.to raise_error(ArgumentError)
+      end
+    end
+
+    describe '#has_extension?' do
+
+      it 'works if provided extension name' do
+        org = create(:org)
+        org.add_extension('School')
+        expect(org.has_extension?('School')).to be true
+        expect(org.has_extension?('LaborUnion')).to be false
+      end
+      
+      it 'works if provided def id' do
+        org = create(:org)
+        org.add_extension('Business')
+        expect(org.has_extension?(5)).to be true
+        expect(org.has_extension?(7)).to be false
+      end
+
+      it 'rasises error if passed invalid name or id' do
+        org = create(:org)
+        expect { org.has_extension?(100) }.to raise_error(ArgumentError)
+        expect { org.has_extension?('eh') }.to raise_error(ArgumentError)
+      end
+    end
+
+    describe 'remove_extension' do
+      it 'removes extension records' do
+        org = create(:org)
+        expect(org.extension_records.count).to eq 1
+        org.add_extension('IndustryTrade')
+        expect(org.extension_records.count).to eq 2
+        org.remove_extension('IndustryTrade')
+        expect(org.extension_records.count).to eq 1
+      end
+
+      it 'removes extension records and their models' do
+        person = create(:person)
+        expect(person.extension_records.count).to eq 1
+        expect(person.political_candidate).to be nil
+        person.add_extension('PoliticalCandidate')
+        expect(person.extension_records.count).to eq 2
+        expect(person.political_candidate).to be_a PoliticalCandidate
+        person.remove_extension('PoliticalCandidate')
+        expect(person.extension_records.count).to eq 1
+        expect(person.reload.political_candidate).to be nil
+      end
+
+      it 'can be run multiple times' do
+        person = create(:person)
+        expect { person.add_extension('PoliticalCandidate') }.to change { PoliticalCandidate.count }.by(1)
+        expect { person.add_extension('PoliticalCandidate') }.not_to change { PoliticalCandidate.count }
+        expect { person.remove_extension('PoliticalCandidate') }.to change { PoliticalCandidate.count }.by(-1)
+        expect { person.remove_extension('PoliticalCandidate') }.not_to change { PoliticalCandidate.count }
+      end
+
+      it 'nothing happens if the extension does not exist' do
+        org = create(:org)
+        expect { org.remove_extension('LaborUnion') }.not_to change { ExtensionRecord.count }
+        expect { org.remove_extension('Business') }.not_to change { Business.count }
+      end
+
+      it 'prevents you from removing primary extensions' do
+        expect { build(:org).remove_extension('Org') }.to raise_error(ArgumentError)
+        expect { build(:person).remove_extension('Person') }.to raise_error(ArgumentError)
+      end
+    end
+
+    describe '#add_extensions_by_def_ids' do
+      it 'creates extension records' do
+        org = create(:org)
+        expect(org.extension_records.count).to eq 1
+        org.add_extensions_by_def_ids([23, 24])
+        expect(org.extension_records.count).to eq 3
+      end
+
+      it 'will not create duplicate records' do
+        org = create(:org)
+        expect { org.add_extensions_by_def_ids([23, 24]) }.to change { org.extension_records.count }.by(2)
+        expect { org.add_extensions_by_def_ids([23, 24]) }.not_to change { org.extension_records.count }
+      end
+
+      it 'creates extension model if needed for org' do
+        org = create(:org)
+        expect(org.business).to be nil
+        org.add_extensions_by_def_ids([5])
+        expect(org.business).to be_a Business
+      end
+    end
+
+    describe '#remove_extensions_by_def_ids' do
+      before do
+        @org = create(:org)
+        @org.add_extension('School')
+        @org.add_extension('NonProfit')
+      end
+
+      it 'removes extension records' do
+        expect { @org.remove_extensions_by_def_ids([7, 10]) }.to change { ExtensionRecord.count }.by(-2)
+      end
+
+      it 'removes extension model' do
+        expect { @org.remove_extensions_by_def_ids([7, 10]) }.to change { School.count }.by(-1)
+      end
+
+      it 'silently ignores extensions that do not exist' do
+        expect { @org.remove_extensions_by_def_ids([7, 10, 9]) }.to change { ExtensionRecord.count }.by(-2)
+      end
+    end
   end # end Extension Attributes Functions
+
+  describe 'Using paper_trail for versision' do
+    with_versioning do
+      it 'creates version after updating name' do
+        human = create(:person)
+        expect(human.versions.size).to eq 1
+        expect { human.update(name: 'Emiliano Zapata') }.to change { human.versions.size }.by(1)
+      end
+
+      it 'does not create a version after changing updated_at' do
+        human = create(:person)
+        expect { human.touch }.not_to change { human.versions.size }
+      end
+
+      it 'does not create a version after changing link_count' do
+        human = create(:person)
+        expect { human.update(link_count: 10) }.not_to change { human.versions.size }
+      end
+    end
+  end
 end

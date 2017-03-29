@@ -1,0 +1,172 @@
+<% content_for(:page_title, 'Edit: ' + @entity.name ) %>
+
+<%= render partial: 'header', locals: { entity: @entity } %>
+<%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
+
+<%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder  do |f| %>
+    
+    <div class="row top-3em">
+	<%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
+	<div class="col-sm-4 col-sm-offset-1">
+	    <%= render partial: 'shared/editing/reference_errors' %>
+	    <%= render partial: 'edit_errors' %>
+	</div>
+    </div>
+
+    <div class="row bottom-1em">
+	<div class="col-sm-3">
+	    <a class="collapsed entity-type-toggle" role="button" data-toggle="collapse" href="#entity-types" aria-expanded="false" aria-controls="entity-types">
+		<strong>Types:</strong><span>  <span class="glyphicon glyphicon-collapse-down" aria-hidden="true" id="type-collapse-icon"></span>
+	    </a>
+	</div>
+    </div>
+
+    <div class="row bottom-3em m-left-1em">
+	<div id="entity-types" class="collapse in">
+	    <%= type_select_boxes %>
+	    <%= f.hidden_field(:extension_def_ids, value: @entity.extension_ids_without_primary_stringified) %>
+	</div>
+    </div>
+    
+    <% label_class = 'col-sm-2 control-label' %>
+    
+    <div class="form-group">
+	<%= f.label(:blurb, 'Short Description', class: label_class) %>
+	<div class="col-sm-8">
+	    <%= f.text_field(:blurb, class: 'form-control') %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+
+    <div class="form-group">
+	<%= f.label(:summary, 'Bio:', class: label_class) %>
+	<div class="col-sm-8">
+	    <%= f.text_area(:summary, class: 'form-control', size: '40x6') %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+    
+    <% start_date_text = { 'Org' => 'Start date:', 'Person' => 'Birth date' } %>
+    <% end_date_text = { 'Org' => 'End date:', 'Person' => 'Death date' } %>
+
+    <div class="form-group">
+	<%= f.label(:start_date, start_date_text[@entity.primary_ext], class: label_class) %>
+	<div class="col-sm-3">
+	    <%= f.text_field(:start_date, class: 'form-control') %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+
+    <div class="form-group">
+	<%= f.label(:end_date, end_date_text[@entity.primary_ext], class: label_class) %>
+	<div class="col-sm-3">
+	    <%= f.text_field(:end_date, class: 'form-control') %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+
+    <% is_current_text = { 'Org' => 'Is current?', 'Person' => 'Alive?' } %>
+
+    <div class="form-group">
+	<%= f.label(:is_current, is_current_text[@entity.primary_ext], class: label_class) %>
+	<div class="col-sm-3">
+	    <%= f.tri_boolean(:is_current) %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+
+    <div class="form-group">
+	<%= f.label(:website, "Website:", class: label_class) %>
+	<div class="col-sm-3">
+	    <%= f.url_field(:website) %>
+	</div>
+	<div class="clearfix"></div>
+    </div>
+
+    <% if @entity.person?  %>
+        <%= render partial: 'person_name_form_components', locals: { f: f, label_class: label_class } %>
+    <% end %>
+
+    
+    <% if @entity.has_extension?('PublicCompany') %>
+	<%= f.fields_for :public_company do |public_company_form| %>
+	    <div class="form-group">
+		<%= public_company_form.label(:ticker, 'Ticker', class: label_class) %>
+		<div class="col-sm-4">
+		    <%= public_company_form.text_field(:ticker) %>
+		</div>
+		<div class="clearfix"></div>
+	    </div>
+
+	<% end %>
+    <% end %>
+
+    <% if @entity.has_extension?('School') %>
+	<%= f.fields_for :school, @entity.school do |school_form| %>
+	    <div class="form-group">
+		<%= school_form.label(:is_private, 'Private School?', class: label_class) %>
+		<div class="col-sm-4">
+		    <%= school_form.tri_boolean(:is_private) %>
+		</div>
+		<div class="clearfix"></div>
+	    </div>
+	<% end %>
+    <% end %>
+
+    <div class="form-group">
+	<div class="col-sm-3">
+	    <%= f.submit 'Update', class: 'btn btn-primary' %>
+	    <%= link_to 'Cancel', @entity.legacy_url, class: 'btn btn-default m-left-1em' %>
+	</div>
+    </div>
+
+
+<% end %>
+
+<script>
+ $(function(){
+   
+   const checked_class = 'glyphicon-check';
+   const unchecked_class = 'glyphicon-unchecked';
+
+   $('#entity-types span.glyphicon').click(function(){
+     if ($(this).hasClass(checked_class)) {
+       $(this).removeClass(checked_class);
+       $(this).addClass(unchecked_class);
+     } else if ($(this).hasClass(unchecked_class)) {
+       $(this).removeClass(unchecked_class);
+       $(this).addClass(checked_class);
+     }
+   });
+
+
+   // The definition id of the type is stored in the HTML5 dataset of the icon
+   // -> string
+   function selectedTypeIds() {
+     return $('#entity-types span.glyphicon-check').map(function(){
+       return $(this).data().definitionId; 
+     }).toArray().join(',');
+   }
+   
+   // The checkboxes for entity types do not use normal form inputs.
+   // This updates the hidden input with the selected types before the form is submitted
+   $('<%= "#edit_entity_#{@entity.id}" %>').submit(function(event){
+     $('#entity_extension_def_ids').val(selectedTypeIds);
+     return true;
+   });
+
+   // toggle icon //
+   $('#entity-types').on('shown.bs.collapse', function () {
+     $('#type-collapse-icon').removeClass('glyphicon-expand');
+     $('#type-collapse-icon').addClass('glyphicon-collapse-down');
+   })
+
+   $('#entity-types').on('hidden.bs.collapse', function () {
+     $('#type-collapse-icon').removeClass('glyphicon-collapse-down');
+     $('#type-collapse-icon').addClass('glyphicon-expand');
+   })
+   
+
+ });
+ 
+</script>
