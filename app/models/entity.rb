@@ -4,9 +4,11 @@ class Entity < ActiveRecord::Base
   include Cacheable
   include Referenceable
   include Political
-
+  include ApiAttributes
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
+
+  has_paper_trail :ignore => [:link_count, :delta]
 
   has_many :aliases, inverse_of: :entity, dependent: :destroy
   has_many :images, inverse_of: :entity, dependent: :destroy
@@ -49,6 +51,11 @@ class Entity < ActiveRecord::Base
   has_one :government_body, inverse_of: :entity, dependent: :destroy
   has_one :political_fundraising, inverse_of: :entity, dependent: :destroy
 
+  ## extension nexted attributes
+  accepts_nested_attributes_for :person
+  accepts_nested_attributes_for :public_company
+  accepts_nested_attributes_for :school
+  
   # contact
   has_many :addresses, inverse_of: :entity, dependent: :destroy
   has_many :phones, inverse_of: :entity, dependent: :destroy
@@ -69,6 +76,8 @@ class Entity < ActiveRecord::Base
 
   validates_presence_of :primary_ext
   validates :name, presence: true, entity_name: true
+  validates :start_date, length: { maximum: 10 }, date: true
+  validates :end_date, length: { maximum: 10 }, date: true
 
   before_create :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext, :add_to_default_network
@@ -115,31 +124,20 @@ class Entity < ActiveRecord::Base
     hash.delete(:notes)
     hash
   end
-  
+
+  # Returns a hash of all attributes for all extensions (that have attrs) for the entity.
+  # All entities will have attributes associated with 'Person' or 'Org'
   def extension_attributes
-    hash = {}
-    (extension_names & self.class.all_extension_names_with_fields).each do |name|
-      ext = Kernel.const_get(name).where(:entity_id => id).first
-      ext_hash = ext.attributes
-      hash.merge!(ext_hash)
-    end
-    hash.delete("id")
-    hash.delete(:id)
-    hash.delete("entity_id")
-    hash.delete(:entity_id)
-    hash
+    extensions_with_attributes.values.reduce(:merge)
   end
 
+  # Returns a hash where the key in each key/value pair is the extension name
+  # and the value is a hash of the attributes for that extension
   def extensions_with_attributes
     hash = {}
-    (extension_names & self.class.all_extension_names_with_fields).each do |name|
-      ext = Kernel.const_get(name).where(:entity_id => id).first
-      ext_hash = ext.attributes
-      ext_hash.delete("id")
-      ext_hash.delete(:id)
-      ext_hash.delete("entity_id")
-      ext_hash.delete(:entity_id)
-      hash[name] = ext_hash
+    (extension_names & Entity.all_extension_names_with_fields).each do |name|
+      ext = name.constantize.find_by_entity_id(id)
+      hash[name] = ext.attributes.except('id', 'entity_id', :id, :entity_id)
     end
     hash
   end
@@ -147,24 +145,81 @@ class Entity < ActiveRecord::Base
   def extension_ids
     extension_records.pluck(:definition_id)
   end
-  
+
+  def extension_ids_without_primary
+    extension_ids.delete_if { |id| id == 1 || id == 2 }
+  end
+
+  # used in the edit entities view as value for extension_definition_ids
+  def extension_ids_without_primary_stringified
+    extension_ids_without_primary.join(',')
+  end
+
+  # Returns array containing the name of all entity extensions (ExtensionRecord)
+  # All entities will have at least one: 'Person' or 'Org
   def extension_names
     extension_ids.collect { |id| self.class.all_extension_names[id] }
   end
 
-  def add_extension(name, fields={})
-    fields.merge!(entity: self)
-    ext = name.constantize.create(fields) if self.class.all_extension_names_with_fields.include?(name) and name.constantize.where(entity_id: id).count == 0
+  def has_extension?(name_or_id)
+    name_or_id_to_name(name_or_id)
+    def_id = self.class.all_extension_names.index(name_or_id) if name_or_id.is_a? String
+    def_id = name_or_id if name_or_id.is_a? Integer
+    extension_ids.include?(def_id)
+  end
+
+  # Adds a new extension. Creates ExtensionRecord and extension model if required
+  # Call with the name of the extenion model or with the definition id
+  # It will not create duplicates and is safe to run multiple times with with the same value
+  # Example: Entity.find(123).add_extension('Business')
+  def add_extension(name_or_id, fields = {})
+    name = name_or_id_to_name(name_or_id)
+    fields[:entity] = self
+    name.constantize.create(fields) if extension_with_fields?(name) && name.constantize.where(entity_id: id).count.zero?
     def_id = ExtensionDefinition.find_by_name(name).id
     ExtensionRecord.find_or_create_by(entity_id: id, definition_id: def_id)
+    self
+  end
+
+  # Removes existing ExtensionRecord and associated model
+  def remove_extension(name_or_id)
+    name = name_or_id_to_name(name_or_id)
+    # This func cannot be used to remove a primary extension
+    raise ArgumentError if %w(None Org Person).include?(name)
+    def_id = self.class.all_extension_names.index(name)
+    extension_records.find_by_definition_id(def_id).try(:destroy)
+    send(name.underscore).try(:destroy) if extension_with_fields?(name)
+    self
+  end
+
+  # Create new extension by definition ids
+  # Accepts array of ids
+  def add_extensions_by_def_ids(ids)
+    ids.each { |def_id| add_extension(def_id) }
+  end
+
+  # Removes extensions by definition id
+  def remove_extensions_by_def_ids(ids)
+    ids.each { |def_id| remove_extension(def_id) }
+  end
+
+  def update_extension_records(def_ids)
+    return nil unless def_ids.is_a? Array
+    def_ids_to_delete = extension_ids_without_primary.delete_if { |x| def_ids.include?(x) }
+    def_ids_to_create = def_ids.delete_if { |x| extension_ids_without_primary.include?(x) }
+    add_extensions_by_def_ids(def_ids_to_create)
+    remove_extensions_by_def_ids(def_ids_to_delete)
   end
 
   def self.with_exts(exts)
     ext_ids = exts.map { |ext| all_extension_names.index(ext) }.compact
     joins(:extension_records).where(extension_record: { definition_id: ext_ids })
   end
-  
-  def self.all_extension_names    
+
+  # Names of the extensions (ExtensionDefinition) in order of their definition_id
+  # Can be used as a look up table. For instance
+  # Entity.all_extension_names[27] => LaborUnion
+  def self.all_extension_names
     [
       'None',
       'Person',
@@ -206,7 +261,7 @@ class Entity < ActiveRecord::Base
       'Couple'
     ]
   end
-  
+
   def self.all_extension_names_with_fields
     [
       'Person',
@@ -621,5 +676,31 @@ class Entity < ActiveRecord::Base
       return nil
     end
   end
-  
+
+  class EntityDeleted < ActiveRecord::ActiveRecordError
+  end
+
+  private
+
+  # A type checker for definition id and names
+  # input: String or Integer
+  # output: String or throws ArgumentError
+  def name_or_id_to_name(name_or_id)
+    case name_or_id
+    when String
+      return name_or_id if self.class.all_extension_names.include?(name_or_id)
+      raise ArgumentError, "there are no extensions associated with name: #{name_or_id}"
+    when Integer
+      name = self.class.all_extension_names[name_or_id]
+      return name unless name.nil?
+      raise ArgumentError, "there is no extension associated with id #{name_or_id}"
+    else
+      raise ArgumentError, "input must be a string or an integer"
+    end
+  end
+
+  def extension_with_fields?(name)
+    self.class.all_extension_names_with_fields.include?(name)
+  end
+
 end

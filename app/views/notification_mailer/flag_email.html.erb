@@ -1,0 +1,10 @@
+<p><strong>Flag for review: </strong><%= @url %></p>
+
+<% if @name.blank? %>
+    <p><strong><%= @email %></strong> writes:</p>
+<% else  %>
+    <p><strong><%= @name %></strong> (<%= @email %>) writes:</p>
+<% end  %>
+<br />
+<p><%= @message  %></p>
+

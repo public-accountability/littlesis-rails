@@ -16,6 +16,7 @@ Lilsis::Application.routes.draw do
     patch '/users' => 'users/registrations#update'
     put '/users' => 'users/registrations#update'
     delete '/users' => 'users/registrations#destroy'
+    post '/users/api_token' => 'users/registrations#api_token'
   end
 
   get '/join/success' => 'users#success'
@@ -24,6 +25,8 @@ Lilsis::Application.routes.draw do
   get '/home' => 'home#index'
   get '/contact' => 'home#contact'
   post '/contact' => 'home#contact'
+  get '/flag' => 'home#flag'
+  post '/flag' => 'home#flag'
 
   get "/admin" => "admin#home"
   post "/admin/clear_cache" => "admin#clear_cache"
@@ -242,6 +245,7 @@ Lilsis::Application.routes.draw do
   get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
   get "/home/maps" => "home#maps"
+  get "/home/lists" => "home#lists"
   get "/home/dashboard" => "home#dashboard"
   post "/home/dismiss",
     controller: 'home',
@@ -278,6 +282,22 @@ Lilsis::Application.routes.draw do
   #########
 
   get '/tools/bulk/relationships' => "tools#bulk_relationships"
+
+  #########
+  #  API  #
+  #########
+
+  get '/api' => 'api/api#index'
+
+  namespace :api do
+    resources :entities, only: [:show] do
+      member do
+        get 'relationships'
+        get 'extensions'
+      end
+    end
+  end
+
 
   match "*path", to: "errors#not_found", via: :all
 

@@ -1,0 +1,12 @@
+<!-- locals: { f: f, label_class: label_class }  -->
+
+<%= f.fields_for :person do |person_form| %>
+    <% [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace].each do |attr| %>
+	<%= render partial: 'person_name_form_text_field',  
+	  locals: { person_form: person_form, attribute: attr, label_class: label_class }
+	%>
+    <% end %>
+    <%= render partial: 'person_name_form_gender', locals: { person_form: person_form, label_class: label_class } %>
+<% end %>
+
+

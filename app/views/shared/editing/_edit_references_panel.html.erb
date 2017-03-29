@@ -1,3 +1,4 @@
+<!-- Accepts two locals: references & selected_ref -->
 <div class="col-sm-6">
     <div class="panel panel-default">
 	<div class="panel-heading">
@@ -9,7 +10,7 @@
 		<%= check_box_tag :reference_just_cleaning_up, "1", false, { required: true, name: 'reference[just_cleaning_up]' } %>
 		<br />
 		<label for="reference_existing" style="padding-right: 5px;">Existing Source:</label>
-		<%= references_select(@relationship.references, @selected_ref) %>
+		<%= references_select(references, selected_ref) %>
 		<br />
 		<p class="top-1em">
 		    <button type="button" class="btn btn-primary btn-xs" id="create-new-reference-btn">Create a new reference</button>
@@ -43,6 +44,20 @@
 <script>
  $(function(){
    
+   function disableNewReferenceFields() {
+     $('#reference_source').prop('disabled', true);
+     $('#reference_name').prop('disabled', true);
+     $('#reference_source').prop('required', false);
+     $('#reference_name').prop('required', false);
+   }
+
+   function enableNewReferenceFields() {
+     $('#reference_source').prop('disabled', false);
+     $('#reference_name').prop('disabled', false);
+     $('#reference_source').prop('required', true);
+     $('#reference_name').prop('required', true);
+   }
+
    $('#reference_just_cleaning_up').click(function() {
      if($(this).is(':checked')){
        $('#reference_existing').prop('disabled', true);
@@ -50,19 +65,19 @@
      } else {
        $('#reference_existing').prop('disabled', false);
        $('#create-new-reference-btn').prop('disabled', false);
-    }
-       $('#reference_existing').selectpicker('refresh');
+     }
+     $('#reference_existing').selectpicker('refresh');
    });
 
    $('#reference_existing').change(function(){
      if ($(this).val()) {
-	 $('#create-new-reference-btn').prop('disabled', true);
-	 $('#reference_just_cleaning_up').prop('required', false);
-	 $('#reference_just_cleaning_up').prop('disabled', true);
+       $('#create-new-reference-btn').prop('disabled', true);
+       $('#reference_just_cleaning_up').prop('required', false);
+       $('#reference_just_cleaning_up').prop('disabled', true);
      } else {
-        $('#create-new-reference-btn').prop('disabled', false);
-	 $('#reference_just_cleaning_up').prop('required', true);
-	 $('#reference_just_cleaning_up').prop('disabled', false);
+       $('#create-new-reference-btn').prop('disabled', false);
+       $('#reference_just_cleaning_up').prop('required', true);
+       $('#reference_just_cleaning_up').prop('disabled', false);
      }
    })
    
@@ -70,8 +85,9 @@
      $('#existing-sources-container').addClass('hidden');
      $('#new-reference-form').removeClass('hidden');
      $('#new-reference-form input').prop('required', true);
-       $('#reference_just_cleaning_up').prop('required', false);
-       $('#reference_just_cleaning_up').prop('disabled', true);
+     $('#reference_just_cleaning_up').prop('required', false);
+     $('#reference_just_cleaning_up').prop('disabled', true);
+     enableNewReferenceFields();
    });
    
    $('#use-existing-reference-btn').click(function() {
@@ -80,20 +96,20 @@
      $('#new-reference-form input').prop('required', false);
      
      if (!$('#reference_existing').val()) {
-	 $('#new-reference-form input').prop('required', true);
-	 $('#reference_just_cleaning_up').prop('required', true);
-	 $('#reference_just_cleaning_up').prop('disabled', false);
+       $('#new-reference-form input').prop('required', true);
+       $('#reference_just_cleaning_up').prop('required', true);
+       $('#reference_just_cleaning_up').prop('disabled', false);
      } 
-     
+     disableNewReferenceFields();
    });
-     
-     if ($('#reference_existing').val()) {
-	 // disable initially if a value is pre-selected
-	 // this happens when param new_ref=true
-	 $('#create-new-reference-btn').prop('disabled', true);
-	 $('#reference_just_cleaning_up').prop('required', false);
-	 $('#reference_just_cleaning_up').prop('disabled', true);
-     }
+   
+   if ($('#reference_existing').val()) {
+     // disable initially if a value is pre-selected
+     // this happens when param new_ref=true
+     $('#create-new-reference-btn').prop('disabled', true);
+     $('#reference_just_cleaning_up').prop('required', false);
+     $('#reference_just_cleaning_up').prop('disabled', true);
+   }
 
  });
 </script>

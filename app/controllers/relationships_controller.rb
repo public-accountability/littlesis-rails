@@ -149,22 +149,6 @@ class RelationshipsController < ApplicationController
     @relationship.related.update(last_user_id: current_user.sf_guard_user_id)
   end
 
-  # modifies update_params to be passed to Relationship.update
-  #  - converts blank_values to nil
-  #  - adds last_user_id
-  #  - processes start and end dates
-  def prepare_update_params(update_params)
-    params = blank_to_nil(update_params.to_h)
-    params['start_date'] = LsDate.convert(params['start_date'])
-    params['end_date'] = LsDate.convert(params['end_date'])
-    params.merge(last_user_id: current_user.sf_guard_user_id)
-  end
-
-  def blank_to_nil(hash)
-    new_h = {}
-    hash.each { |key, val| new_h[key] = val.blank? ? nil : val }
-    new_h
-  end
 
   def bulk_relationships_params
     return params[:relationships].map { |x| blank_to_nil(x) } if params[:relationships].is_a?(Array)

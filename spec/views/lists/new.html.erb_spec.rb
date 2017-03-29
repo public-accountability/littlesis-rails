@@ -19,8 +19,8 @@ describe 'lists/new.html.erb' do
       expect(rendered).to have_selector('textarea', :count => 1 )
     end
     
-    it 'contains 3 checkboxes' do
-      expect(rendered).to have_selector('input[type=checkbox]', :count => 3 )
+    it 'contains 4 checkboxes' do
+      expect(rendered).to have_selector('input[type=checkbox]', :count => 4 )
     end
 
     it 'contains 1 submit button' do

@@ -1,0 +1,22 @@
+---
+
+
+common:
+  ignore:
+    - last_user_id
+    - delta
+    - id
+    - created_at
+entity:
+  ignore: 
+    - notes
+    - is_deleted
+    - merged_id
+    - is_current
+relationship:
+  ignore:
+    - amount2
+    - is_gte
+extensionrecord:
+  ignore:
+    - entity_id

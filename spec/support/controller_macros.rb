@@ -26,4 +26,16 @@ module ControllerMacros
       sign_in user
     end
   end
+
+  def login_basic_user
+    before(:each) do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      sf_user = FactoryGirl.create(:sf_guard_user)
+      user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
+      SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+      SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+      SfGuardUserPermission.create!(permission_id: 5, user_id: sf_user.id)
+      sign_in user
+    end
+  end
 end

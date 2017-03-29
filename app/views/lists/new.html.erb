@@ -35,6 +35,11 @@
 
         <%= f.label(:is_featured, "is featured") %>
         <%= f.check_box :is_featured %>
+
+        <br />
+
+        <%= f.label(:is_private, "is private") %>
+        <%= f.check_box :is_private %>
     </div>
 
      <%= fields_for :ref do |ref_fields|  %>

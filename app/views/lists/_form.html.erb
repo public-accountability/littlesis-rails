@@ -33,6 +33,15 @@
 	  </div>
   </div>
 
+  <% if @list.creator_user_id == current_user.id %>
+    <div class="row form-group">
+      <div class="col-sm-8 col-md-6">
+        <%= f.check_box :is_private %>
+        <%= f.label :is_private %>
+      </div>
+    </div>
+  <% end %>
+
   <% if current_user.has_legacy_permission("admin") %>
       <div class="row form-group">
 	  <div class="col-sm-8 col-md-6">

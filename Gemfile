@@ -103,6 +103,8 @@ group :test, :development do
   gem 'binding_of_caller', '0.7.2'
 end  
 
+gem 'simplecov', :require => false, :group => :test
+
 gem 'sprockets', '~> 3.0'
 gem 'twitter'
 gem 'poltergeist'
@@ -126,7 +128,7 @@ gem 'rack-mini-profiler'
 gem "passenger"
 
 # used for screenshot capture
-gem 'selenium-webdriver'
+gem 'selenium-webdriver', '>= 3.3.0'
 gem 'headless'
 
 gem 'mongo'
