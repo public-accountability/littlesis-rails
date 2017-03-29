@@ -163,7 +163,7 @@ class RelationshipDetails
   def title
     return self unless [1,3,5,10].include? @rel.category_id
     if @rel.description1.nil?
-      @details << ['Title', 'member'] if @rel.category_id == 3
+      @details << ['Title', 'Member'] if @rel.category_id == 3
     else
       @details << ['Title', @rel.description1]
     end
