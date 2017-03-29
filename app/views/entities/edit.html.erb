@@ -15,13 +15,17 @@
 
     <div class="row bottom-1em">
 	<div class="col-sm-3">
-	    <strong>Types:</strong>
+	    <a class="collapsed entity-type-toggle" role="button" data-toggle="collapse" href="#entity-types" aria-expanded="false" aria-controls="entity-types">
+		<strong>Types:</strong><span>  <span class="glyphicon glyphicon-collapse-down" aria-hidden="true" id="type-collapse-icon"></span>
+	    </a>
 	</div>
     </div>
 
-    <div class="row bottom-3em m-left-1em" id="entity-types">
-	<%= type_select_boxes %>
-	<%= f.hidden_field(:extension_def_ids, value: @entity.extension_ids_without_primary_stringified) %>
+    <div class="row bottom-3em m-left-1em">
+	<div id="entity-types" class="collapse in">
+	    <%= type_select_boxes %>
+	    <%= f.hidden_field(:extension_def_ids, value: @entity.extension_ids_without_primary_stringified) %>
+	</div>
     </div>
     
     <% label_class = 'col-sm-2 control-label' %>
@@ -109,6 +113,7 @@
      }
    });
 
+
    // The definition id of the type is stored in the HTML5 dataset of the icon
    // -> string
    function selectedTypeIds() {
@@ -123,6 +128,18 @@
      $('#entity_extension_def_ids').val(selectedTypeIds);
      return true;
    });
+
+   // toggle icon //
+   $('#entity-types').on('shown.bs.collapse', function () {
+     $('#type-collapse-icon').removeClass('glyphicon-expand');
+     $('#type-collapse-icon').addClass('glyphicon-collapse-down');
+   })
+
+   $('#entity-types').on('hidden.bs.collapse', function () {
+     $('#type-collapse-icon').removeClass('glyphicon-collapse-down');
+     $('#type-collapse-icon').addClass('glyphicon-expand');
+   })
+   
 
  });
  
