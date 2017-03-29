@@ -114,4 +114,14 @@ module EntitiesHelper
     selected = person.gender_id.nil? ? 'nil' : person.gender_id
     options_for_select([['', ''], ['Female', 1], ['Male', 2], ['Other', 3]], selected)
   end
+
+  def profile_image
+    image_tag(@entity.featured_image_url, alt: @entity.name, class: 'img-rounded')
+  end
+
+  def sidebar_title(title)
+    content_tag(:div, class: 'sidebar-title-container thin-grey-bottom-border') do
+      content_tag(:span, title, class: 'lead sidebar-title-text') 
+    end
+  end
 end
