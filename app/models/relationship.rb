@@ -295,6 +295,8 @@ class Relationship < ActiveRecord::Base
     if description1.blank?
       if is_board
         return "Board Member"
+      elsif is_position?
+        return "Position"
       elsif is_member?
         return "Member"
       elsif is_education? and education.degree.present?
@@ -305,6 +307,15 @@ class Relationship < ActiveRecord::Base
       end
     else
       description1
+    end
+  end
+
+  def display_date_range
+    if start_date == nil && end_date == nil
+      return '(past)' if is_current == false
+    else 
+      return "(#{LsDate.new(start_date).display})" if start_date == end_date && is_donation?
+      return "(#{LsDate.new(start_date).display}→#{LsDate.new(end_date).display})"
     end
   end
   

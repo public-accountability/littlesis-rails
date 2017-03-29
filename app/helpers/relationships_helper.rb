@@ -42,7 +42,7 @@ module RelationshipsHelper
   end
 
   def title_in_parens(rel)
-    if rel.title.nil?
+    if rel.description.nil?
       return ""
     else
       return " (" + rel.title + ") "

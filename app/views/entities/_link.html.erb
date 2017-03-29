@@ -7,7 +7,7 @@
         <ul>
             <% link.each do |l| %>
                 <div class='related_entity_relationship'>
-                    <li><%= link_to "#{l.description} (#{l.relationship.start_date || '?'}—#{l.relationship.end_date || '?'})", relationship_path(l.relationship) %></li>
+                    <li><%= link_to "#{l.description} #{l.relationship.display_date_range}", relationship_path(l.relationship) %></li>
                 </div>
             <% end %>
         </ul>

@@ -26,7 +26,7 @@ class EntitiesController < ApplicationController
     @other_positions = jobs['other']
     @other_positions_and_memberships = @other_positions + @memberships
 
-    @schools, @students = split @links[2]
+    @students, @schools = split @links[2]
     @family = @links[4]
     @donors, @donation_recipients = split @links[5]
     @services_transactions = @links[6]
