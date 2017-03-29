@@ -55,7 +55,7 @@ module EntitiesHelper
       'donation_recipients' =>             'Donation/Grant Recipients',    
       'services_transactions' =>           'Services/Transactions',
       'lobbying' =>                        'Lobbying',
-      'friendships' =>                     'Friendships',
+      'friendships' =>                     'Friends',
       'professional_relationships' =>      'Professional Relationships',
       'owners' =>                          'Owners',
       'holdings' =>                        'Holdings',
@@ -76,5 +76,12 @@ module EntitiesHelper
 
   def group_relationships_by_entity(links)
     links.group_by { |l| l.entity2_id }.values
+  end
+
+  def order(links)
+    return [] if links.empty?
+    return links.sort { |a, b| b.related.links.count <=> a.related.links.count } if links[0].category_id == 4
+    return links.sort { |a, b| b.relationship.amount <=> a.relationship.amount } if links[0].category_id == 5
+    return links.sort { |a, b| LsDate.new(b.relationship.end_date) <=> LsDate.new(a.relationship.end_date) }
   end
 end

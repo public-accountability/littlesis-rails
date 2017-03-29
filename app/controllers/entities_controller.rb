@@ -20,7 +20,7 @@ class EntitiesController < ApplicationController
     jobs = @positions.group_by { |l| l.position_type }
     jobs.default = []
 
-    @business_positions = jobs['business'] 
+    @business_positions = jobs['business']
     @government_positions = jobs['government'] 
     @in_the_office_positions = jobs['office']
     @other_positions = jobs['other']
