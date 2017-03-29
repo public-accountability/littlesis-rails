@@ -339,7 +339,45 @@ describe EntitiesController, type: :controller do
       end
     end
 
-    describe 'updating type' do
+    describe 'adding new types' do
+      before do
+        @org = create(:org, last_user_id: sf_guard_user.id)
+        @params = { id: @org.id,
+                    entity: { 'extension_def_ids' => '8,9,10' },
+                    reference: { 'source' => 'http://example.com', 'name' => 'new reference' } }
+      end
+      
+      it 'should create 3 new extension records' do
+        expect { patch :update, @params }.to change { ExtensionRecord.count }.by(3)
+      end
+
+      it 'redirects to legacy url' do
+        patch :update, @params
+        expect(response).to redirect_to(@org.legacy_url)
+      end
+    end
+
+    describe 'removing types' do
+      before do
+        @org = create(:org, last_user_id: sf_guard_user.id)
+        @org.add_extension('School')
+        @params = { id: @org.id,
+                    entity: { 'extension_def_ids' => '' },
+                    reference: { 'source' => 'http://example.com', 'name' => 'new reference' } }
+      end
+      
+      it 'should remove one extension records' do
+        expect { patch :update, @params }.to change { ExtensionRecord.count }.by(-1)
+      end
+
+      it 'should remove School model' do
+        expect { patch :update, @params }.to change { School.count }.by(-1)
+      end
+      
+      it 'redirects to legacy url' do
+        patch :update, @params
+        expect(response).to redirect_to(@org.legacy_url)
+      end
     end
 
     describe 'updating an Org with errors' do
@@ -356,7 +394,6 @@ describe EntitiesController, type: :controller do
       end
     end
     
-
     describe 'updating a person with a first name that is too long' do
       let(:person) { create(:person) }
       let(:params) { { id: person.id,
