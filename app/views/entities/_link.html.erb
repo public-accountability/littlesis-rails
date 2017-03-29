@@ -1,27 +1,15 @@
 <div class='relationship-section'>
     <div class='related_entity'>
-        <% if link.is_a?(Array) %>
-            <div class='related_entity_entity'>
-                <span class='related_entity_name'><%= link_to link[0].related.name, entity_path(link[0].related) %></span>
-                <span class='related_entity_blurb'><%= link[0].related.blurb %></span>
-            </div>
-            <ul>
-                <% link.each do |l| %>
-                    <div class='related_entity_relationship'>
-                        <li><%= link_to "#{l.description} (#{l.relationship.start_date || '?'}—#{l.relationship.end_date || '?'})", relationship_path(l.relationship) %></li>
-                    </div>
-                <% end %>
-            </ul>
-        <% else %>
-            <div class='related_entity_entity'>
-                <span class='related_entity_name'><%= link_to link.related.name, entity_path(link.related) %></span>
-                <span class='related_entity_blurb'><%= link.related.blurb %></span>
-            </div>
-            <div class='related_entity_relationship'>
-                <ul>
-                    <li><%= link_to "#{link.description} (#{link.relationship.start_date || '?'}—#{link.relationship.end_date || '?'})", relationship_path(link.relationship) %></li>
-                </ul>
-            </div>
-        <% end %>
+        <div class='related_entity_entity'>
+            <span class='related_entity_name'><%= link_to link[0].related.name, entity_path(link[0].related) %></span>
+            <span class='related_entity_blurb'><%= link[0].related.blurb %></span>
+        </div>
+        <ul>
+            <% link.each do |l| %>
+                <div class='related_entity_relationship'>
+                    <li><%= link_to "#{l.description} (#{l.relationship.start_date || '?'}—#{l.relationship.end_date || '?'})", relationship_path(l.relationship) %></li>
+                </div>
+            <% end %>
+        </ul>
     </div>
 </div>

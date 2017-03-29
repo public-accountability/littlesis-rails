@@ -31,7 +31,7 @@ class EntitiesController < ApplicationController
     @donors, @donation_recipients = split @links[5]
     @services_transactions = @links[6]
     @lobbying = @links[7]
-    @friendships = @links[8].group_by { |l| l.entity2_id }.values
+    @friendships = @links[8]
     @professional_relationships = @links[9]
     @owners, @holdings = split @links[10]
     @children, @parents = split @links[11]

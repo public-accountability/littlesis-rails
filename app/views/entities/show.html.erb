@@ -9,7 +9,7 @@
             <div id='relationship_tabs_content'>
 
                 <% get_section_order(@entity).each do |section| %>
-                    <% links = instance_variable_get("@#{section}") %>
+                    <% links = group_relationships_by_entity(instance_variable_get("@#{section}")) %>
                     <%= display_relationship_section_heading(links.count, @positions.count, @other_positions.count, @memberships.count, section) %>
                     <%= render partial: 'link', collection: links %>
                 <% end %>
