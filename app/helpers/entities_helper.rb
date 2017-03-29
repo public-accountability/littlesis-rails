@@ -74,7 +74,7 @@ module EntitiesHelper
     entity.person? ? section_order_person : section_order_org
   end
 
-  def group_relationships_by_entity(links)
+  def group_by_entity(links)
     links.group_by { |l| l.entity2_id }.values
   end
 
