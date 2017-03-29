@@ -11,7 +11,7 @@ class EntitiesController < ApplicationController
     @links.default = []
 
     def split(links)
-      return links.partition { |l| l.is_reverse == true }
+      links.partition { |l| l.is_reverse == true }
     end
 
     @staff, @positions = split @links[1]

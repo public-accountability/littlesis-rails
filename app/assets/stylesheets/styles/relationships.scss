@@ -46,8 +46,12 @@ form.edit_relationship {
     .relationship-section {
         border: 0px solid #ddd;
         border-top: 0;
-    
+
         .related_entity {
+            ul {
+                margin-bottom: 0;
+            }
+            
             color: #444;
             font-size: 14px;
             line-height: 1.3em;
