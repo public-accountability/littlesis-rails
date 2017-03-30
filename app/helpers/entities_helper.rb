@@ -124,4 +124,23 @@ module EntitiesHelper
       content_tag(:span, title, class: 'lead sidebar-title-text') 
     end
   end
+
+  def sidebar_reference_count(count)
+    content_tag(:span, "Number of references: ") + content_tag(:em, count.to_s)
+  end
+
+  # input: Array or <ActiveRecord_relation>
+  def sidebar_references(references)
+    content_tag(:ul, class: 'list-unstyled') do
+      references.collect { |r| sidebar_reference(r) }.reduce(&:+)
+    end
+  end
+
+  def sidebar_reference(reference)
+    link_to(
+      content_tag(:li, reference.name.truncate(33)),
+      reference.source,
+      target: "_blank"
+    )
+  end
 end
