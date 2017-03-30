@@ -84,4 +84,9 @@ module EntitiesHelper
     return links.sort { |a, b| b.relationship.amount <=> a.relationship.amount } if links[0].category_id == 5
     return links.sort { |a, b| LsDate.new(b.relationship.end_date) <=> LsDate.new(a.relationship.end_date) }
   end
+
+  def display_extra_links_count(links)
+    return '' if links.count <= 1
+    "[+#{links.count - 1}]"
+  end
 end

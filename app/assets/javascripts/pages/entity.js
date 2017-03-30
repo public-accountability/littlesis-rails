@@ -13,6 +13,11 @@ entity.political.data = null;
 entity.political.politicians = null;
 entity.political.orgs = null;
 
+// Toggles visibility of a related entity's additional relationships on a profile page
+entity.relationshipsToggle = function(e) {
+  $(e.target).closest('.relationship-section').find('.collapse').collapse('toggle');
+};
+
 /**
  *  Retrieves contributions json for entity id
  *  integer -> callback([])
