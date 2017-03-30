@@ -41,30 +41,8 @@ module EntitiesHelper
     end
   end
 
-  def display_relationship_section_heading(links_count, pos_count, other_pos_count, mem_count, section)
-    headings = {
-      'staff' =>                           'Office/Staff',
-      'business_positions' =>              'Business Positions',
-      'government_positions' =>            'Government Positions',
-      'in_the_office_positions' =>         'In The Office Of',
-      'other_positions_and_memberships' =>  get_other_positions_and_memberships_heading(pos_count, other_pos_count, mem_count),
-      'schools' =>                         'Education',
-      'students' =>                        'Students',
-      'family' =>                          'Family',
-      'donors' =>                          'Donors',
-      'donation_recipients' =>             'Donation/Grant Recipients',    
-      'services_transactions' =>           'Services/Transactions',
-      'lobbying' =>                        'Lobbying',
-      'friendships' =>                     'Friends',
-      'professional_relationships' =>      'Professional Relationships',
-      'owners' =>                          'Owners',
-      'holdings' =>                        'Holdings',
-      'children' =>                        'Child Organizations',
-      'parents' =>                         'Parent Organizations',
-      'miscellaneous' =>                   'Miscellaneous'
-    }
-
-    content_tag(:div, headings[section], class: "subsection") if links_count > 0
+  def display_section_heading(links)
+    content_tag(:div, links.heading, class: "subsection") if links.count > 0
   end
 
   def get_section_order(entity)
