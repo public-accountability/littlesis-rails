@@ -677,6 +677,11 @@ class Entity < ActiveRecord::Base
     end
   end
 
+  # Returns all associated references and references for all relationships the entity is in
+  def all_references
+    Reference.all_entity_references(self)
+  end
+
   class EntityDeleted < ActiveRecord::ActiveRecordError
   end
 

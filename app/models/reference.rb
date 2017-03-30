@@ -51,11 +51,14 @@ class Reference < ActiveRecord::Base
     where(where_statement).order('updated_at DESC').limit(limit)
   end
 
+  # input: <Entity>
+  # output: <Reference::ActiveRecord_Relation>
+  # Retrives  references for the entity AND for relationships that the entity is in
   def self.all_entity_references(entity)
-    link_to_ref_hash = Proc.new { |l| { object_model: 'Relationship', object_id: l.relationship_id } }
-    rel_ids = entity.links.map(&:relationship_ids)
-    objects = entity.links.collect(&link_to_ref_hash).append({ object_model: 'Entity', object_id: entity.id })
-    recent_references(objects)
+    rel_ids = entity.links.map(&:relationship_id)
+    ref_query = [{ class_name: 'Entity', object_ids: [ entity.id ] }]
+    ref_query.append({ class_name: 'Relationship', object_ids: rel_ids }) unless rel_ids.empty?
+    recent_references(ref_query, nil)
   end
 
   # input: hash with keys: :class_name, :object_id
