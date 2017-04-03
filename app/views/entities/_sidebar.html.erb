@@ -4,7 +4,7 @@
     </div>
 </div>
 
-
+<!-- SOURCE LINKS -->
 <div class="row">
     <div class="col-sm-12">
 	<%= sidebar_title('Source Links') %>
@@ -16,7 +16,7 @@
     </div>
 </div>
 
-
+<!-- BASIC INFO -->
 <div class="row">
     <div class="col-sm-12">
 	<%= sidebar_title('Basic info') %>
@@ -25,4 +25,15 @@
 	<%= sidebar_basic_info(@entity.basic_info) %>
     </div>
 </div>
-	
+
+<!-- ADMIN TOOLS -->
+<% if user_signed_in? && current_user.admin? %>
+    <div class="row">
+	<div class="col-sm-12">
+	    <%= sidebar_title('Admin tools') %>
+	</div>
+	<div class="col-sm-12">
+	    <%= link_to 'Addresses', @entity.legacy_url('addresses') %>
+	</div>
+    </div>
+<% end %>
