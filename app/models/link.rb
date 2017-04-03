@@ -28,6 +28,10 @@ class Link < ActiveRecord::Base
     return 'other'
   end
 
+  def is_pfc_link?
+    related.extension_names.include? 'PoliticalFundraising'
+  end
+
   def description
     return relationship.title if relationship.is_position? || relationship.is_member?
     return "#{ActionController::Base.helpers.pluralize(relationship.filings, 'contribution')} · $#{relationship.amount}" if relationship.is_donation? && relationship.description1 == "Campaign Contribution"

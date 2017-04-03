@@ -11,6 +11,7 @@ class SortedLinks
 				:family, 
 				:donors, 
 				:donation_recipients, 
+				:political_fundraising_committees,
 				:services_transactions, 
 				:lobbying, 
 				:friendships, 
@@ -76,13 +77,15 @@ class SortedLinks
 	    @family = LinksGroup.new(categories[4], 'family', 'Family')
 
 	    donors, donation_recipients = split categories[5]
+	    political_fundraising_committees, donors = donors.partition { |l| l.is_pfc_link? }
 	    @donors = LinksGroup.new(donors, 'donors', 'Donors')
+	    @political_fundraising_committees = LinksGroup.new(political_fundraising_committees, 'political_fundraising_committees', 'Political Fundraising Committees')
 	    @donation_recipients = LinksGroup.new(donation_recipients, 'donation_recipients', 'Donation/Grant Recipients')
 
 	    @services_transactions = LinksGroup.new(categories[6], 'services_transactions', 'Services/Transactions')
 	    @lobbying = LinksGroup.new(categories[7], 'lobbying', 'Lobbying')
 	    @friendships = LinksGroup.new(categories[8], 'friendships', 'Friends')
-	    @professional_relationships = LinksGroup.new(categories[9], 'professional_relationships', 'Professional Relationships')
+	    @professional_relationships = LinksGroup.new(categories[9], 'professional_relationships', 'Professional Associates')
 
 	    owners, holdings = split categories[10]
 	    @owners = LinksGroup.new(owners, 'owners', 'Owners')
@@ -92,7 +95,7 @@ class SortedLinks
 	    @children = LinksGroup.new(children, 'children', 'Child Organizations')
 	    @parents = LinksGroup.new(parents, 'parents', 'Parent Organizations')
 
-	    @miscellaneous = LinksGroup.new(categories[12], 'miscellaneous', 'Miscellaneous')
+	    @miscellaneous = LinksGroup.new(categories[12], 'miscellaneous', 'Other Affiliations')
 	end
 
 end
