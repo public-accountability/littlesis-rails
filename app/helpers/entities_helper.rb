@@ -143,4 +143,12 @@ module EntitiesHelper
       target: "_blank"
     )
   end
+
+  def sidebar_basic_info(basic_info)
+    content_tag(:div, class: 'sidebar-basic-info-container') do
+      basic_info.collect do |key, val|
+        content_tag(:strong, "#{key}: ") + content_tag(:span, val) + tag(:br)
+      end.reduce(:+)
+    end
+  end
 end

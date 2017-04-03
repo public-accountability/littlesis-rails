@@ -677,6 +677,31 @@ class Entity < ActiveRecord::Base
     end
   end
 
+  # returns hash of basc info for the given entity
+  def basic_info
+    info = {}
+    info[:types] = types.join(', ')
+    if person?
+      info[:gender] = person.gender unless person.gender_id.nil?
+      info[:birthday] = LsDate.new(start_date).basic_info_display unless start_date.nil?
+      info[:date_of_date] = LsDate.new(end_date).basic_info_display unless end_date.nil?
+    end
+    if org?
+      info[:start_date] = LsDate.new(start_date).basic_info_display unless start_date.nil?
+      info[:end_date] = LsDate.new(end_date).basic_info_display unless end_date.nil?
+      info[:revenue] = ActiveSupport::NumberHelper.number_to_human(org.revenue) unless org.revenue.blank?
+    end
+    info[:website] = website unless website.blank?
+    info[:industries] = industries.join(', ') unless industries.empty?
+    info[:aliases] = also_known_as.join(', ') unless also_known_as.empty?
+    # TODO: address
+    info
+  end
+
+  def also_known_as
+    aliases.where(is_primary: false).map(&:name)
+  end
+
   # Returns all associated references and references for all relationships the entity is in
   def all_references
     Reference.all_entity_references(self)

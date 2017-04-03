@@ -57,7 +57,7 @@ class LsDate
       return 0 if @day == other.day
     end
   end
-  
+
   # display string of date
   def display
     return '?' if sp_unknown?
@@ -65,7 +65,15 @@ class LsDate
     return month_display if sp_month?
     return day_display if sp_day?
   end
-  
+
+  # alternative display string
+  def basic_info_display
+    return '' if sp_unknown?
+    return @year.to_s if sp_year?
+    return month_display_full if sp_month?
+    return day_display if sp_day?
+  end
+
   # str -> str
   # converts string dates in the following formats:
   #   YYYY. Example: 1996 -> 1996-00-00
@@ -146,6 +154,10 @@ class LsDate
 
   def month_display
     "#{Date::ABBR_MONTHNAMES[@month]} #{year_display}"
+  end
+
+  def month_display_full
+    "#{Date::MONTHNAMES[@month]} #{@year.to_s}"
   end
 
   def day_display

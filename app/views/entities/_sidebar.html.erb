@@ -15,3 +15,14 @@
 	<%= sidebar_references(entity_references.take(10))%>
     </div>
 </div>
+
+
+<div class="row">
+    <div class="col-sm-12">
+	<%= sidebar_title('Basic info') %>
+    </div>
+    <div class="col-sm-12">
+	<%= sidebar_basic_info(@entity.basic_info) %>
+    </div>
+</div>
+	

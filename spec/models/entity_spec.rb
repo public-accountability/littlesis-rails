@@ -29,7 +29,6 @@ describe Entity do
     end
     
     describe 'Date Validation' do
-      
       def build_entity(attr)
         build(:org, {id: rand(1000)}.merge(attr) )
       end
@@ -322,6 +321,26 @@ describe Entity do
       end
     end
   end # end Extension Attributes Functions
+
+  describe 'basic_info' do
+    context 'is a person' do
+      let(:person_with_female_gender) { build(:person, person: build(:a_person, gender_id: 1)) }
+      let(:person_with_unknown_gender) { build(:person, person: build(:a_person, gender_id: nil)) }
+
+      it 'contains types' do
+        expect(person_with_female_gender.basic_info).to have_key(:types)
+      end
+
+      it 'contains gender if person has a gender_id' do
+        expect(person_with_female_gender.basic_info).to have_key :gender
+        expect(person_with_female_gender.basic_info.fetch(:gender)).to eq 'Female'
+      end
+
+      it 'does not contain gender if person does not have a gender_id' do
+        expect(person_with_unknown_gender.basic_info).not_to have_key :gender
+      end
+    end
+  end
 
   describe 'Using paper_trail for versision' do
     with_versioning do
