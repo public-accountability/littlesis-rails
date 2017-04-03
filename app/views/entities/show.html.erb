@@ -18,7 +18,11 @@
                 <% elsif section_order(@entity).include? params[:relationships] %>
                     <% links_group = @links.send params[:relationships].to_sym %>
                     <%= section_heading(links_group) %>
-                    <%= render partial: 'link', collection: links_group.links %>
+                    
+                    <% paginatable_links = Kaminari.paginate_array(links_group.links).page(params[:page]).per(20) %>
+                    <%= paginate paginatable_links %>
+                    <%= render partial: 'link', collection: paginatable_links %>
+                    <%= paginate paginatable_links %>
                 <% end %>
 
             </div>
