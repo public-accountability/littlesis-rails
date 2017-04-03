@@ -18,6 +18,18 @@ describe "partial: sidebar" do
     end
   end 
   
+  describe 'When signed in but not admin' do
+    before do
+      allow(view).to receive(:user_signed_in?).and_return(true)
+      allow(view).to receive(:current_user).and_return(double(:admin? => false))
+      render partial: 'entities/sidebar.html.erb'
+    end
+
+    it 'has Advanced tools' do
+      css 'span.sidebar-title-text', text: 'Advanced tools'
+    end
+  end
+
   describe 'Admin tools' do
     context 'When admin' do
       before do
@@ -25,6 +37,7 @@ describe "partial: sidebar" do
         allow(view).to receive(:current_user).and_return(double(:admin? => true))
         render partial: 'entities/sidebar.html.erb' 
       end
+      
       it 'has admin tools' do
         css 'span.sidebar-title-text', text: 'Admin tools'
         css 'a', text: 'Addresses'

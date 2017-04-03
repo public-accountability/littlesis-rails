@@ -121,7 +121,7 @@ module EntitiesHelper
 
   def sidebar_title(title)
     content_tag(:div, class: 'sidebar-title-container thin-grey-bottom-border') do
-      content_tag(:span, title, class: 'lead sidebar-title-text') 
+      content_tag(:span, title, class: 'lead sidebar-title-text')
     end
   end
 
@@ -145,10 +145,30 @@ module EntitiesHelper
   end
 
   def sidebar_basic_info(basic_info)
-    content_tag(:div, class: 'sidebar-basic-info-container') do
-      basic_info.collect do |key, val|
-        content_tag(:strong, "#{key}: ") + content_tag(:span, val) + tag(:br)
-      end.reduce(:+)
-    end
+    basic_info.collect do |key, val|
+      content_tag(:strong, "#{key}: ") + content_tag(:span, val) + tag(:br)
+    end.reduce(:+)
+  end
+
+  # To eager load list and list_entities: Entity.includes(list_entities: [:lists])
+  def sidebar_lists(list_entities)
+    list_entities.collect do |list_entity|
+      content_tag(:li, sidebar_list_link(list_entity), class: 'sidebar-list') if show_list(list_entity)
+    end.reduce(:+)
+  end
+
+  def sidebar_list_link(list_entity)
+    link = link_to list_entity.list.name , list_path(list_entity.list), class: 'link-blue'
+    link += content_tag(:samp, "[\##{list_entity.rank}]") if list_entity.list.is_ranked? && list_entity.rank.present?
+    link
+  end
+
+  private
+
+  # skip deleted lists, private lists (unless current_user has access), and skip lists that are networks
+  def show_list(list_entity)
+    list = list_entity.list
+    return false if list.nil? || list.is_network?
+    list.user_can_access?(current_user)
   end
 end

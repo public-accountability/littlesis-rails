@@ -21,7 +21,7 @@
     <div class="col-sm-12">
 	<%= sidebar_title('Basic info') %>
     </div>
-    <div class="col-sm-12">
+    <div class="col-sm-12 sidebar-basic-info-container">
 	<%= sidebar_basic_info(@entity.basic_info) %>
     </div>
 </div>
@@ -37,3 +37,29 @@
 	</div>
     </div>
 <% end %>
+
+<!-- ADVANCED TOOLS -->
+<% if user_signed_in? %>
+    <div class="row">
+	<div class="col-sm-12">
+	    <%= sidebar_title('Advanced tools') %>
+	</div>
+	<div class="col-sm-12">
+	    <%= link_to 'Network Search', @entity.legacy_url('networkSearch') %>
+	    <br />
+	    <%= link_to 'Find Connections', @entity.legacy_url('findConnections') %>
+	</div>
+    </div>
+<% end %>
+
+<!-- LISTS -->
+<div class="row">
+    <div class="col-sm-12">
+	<%= sidebar_title('Lists') %>
+    </div>
+    <div class="col-sm-12">
+	<ul class="list-unstyled">
+	    <%= sidebar_lists(@entity.list_entities) %>
+	</ul>
+    </div>
+</div>
