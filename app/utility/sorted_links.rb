@@ -9,7 +9,7 @@ class SortedLinks
 				:students, 
 				:schools, 
 				:family, 
-				# :donors, 
+				:donors, 
 				:donation_recipients, 
 				:services_transactions, 
 				:lobbying, 
@@ -76,7 +76,7 @@ class SortedLinks
 	    @family = LinksGroup.new(categories[4], 'family', 'Family')
 
 	    donors, donation_recipients = split categories[5]
-	    # @donors = LinksGroup.new(donors, 'donors', 'Donors')
+	    @donors = LinksGroup.new(donors, 'donors', 'Donors')
 	    @donation_recipients = LinksGroup.new(donation_recipients, 'donation_recipients', 'Donation/Grant Recipients')
 
 	    @services_transactions = LinksGroup.new(categories[6], 'services_transactions', 'Services/Transactions')

@@ -1,1 +1,3 @@
-FAMILY!!!!
+<% links_group = @links.send params[:relationships].to_sym %>
+<%= display_section_heading(links_group) %>
+<%= render partial: 'link', collection: links_group.links %>

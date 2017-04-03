@@ -4,7 +4,7 @@ class EntitiesController < ApplicationController
   before_action :set_current_user, only: [:show, :political, :match_donations]
     
   def show
-    links = @entity.links.includes(:relationship, :related).order('relationship.end_date DESC')
+    links = @entity.links.includes(:relationship, :related).order('relationship.end_date DESC').select { |l| l.relationship }
     @links = SortedLinks.new(links)
   end
 

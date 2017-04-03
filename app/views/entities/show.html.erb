@@ -9,18 +9,16 @@
             <div id='relationship_tabs_content'>
 
                 <% if params[:relationships] == nil %>
-                    <%= link_to 'family', entity_url(:relationships => 'family') %>
-                    <% get_section_order(@entity).each do |section| %>
+                    <% section_order(@entity).each do |section| %>
                         <% links_group = @links.send section.to_sym %>
-                        <%= display_section_heading(links_group) %>
-                        <%= render partial: 'link', collection: links_group.links %>
+                        <%= section_heading(links_group) %>
+                        <%= link_to_all(links_group) %>
+                        <%= render partial: 'link', collection: links_group.links[0..9] %>
                     <% end %>
-                <% elsif get_section_order(@entity).include? params[:relationships] %>
+                <% elsif section_order(@entity).include? params[:relationships] %>
                     <% links_group = @links.send params[:relationships].to_sym %>
-                    <%= display_section_heading(links_group) %>
+                    <%= section_heading(links_group) %>
                     <%= render partial: 'link', collection: links_group.links %>
-                <% else %>
-                    NOPE
                 <% end %>
 
             </div>
