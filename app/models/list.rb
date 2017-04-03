@@ -60,6 +60,14 @@ class List < ActiveRecord::Base
     url
   end
 
+  def user_can_access?(user = nil)
+    return true unless is_private?
+    user_id = user if user.is_a? Integer
+    user_id = user.id if user.is_a? User
+    return false unless user_id.present?
+    creator_user_id == user_id
+  end
+
   def legacy_network_url
     "/#{display_name}"
   end
