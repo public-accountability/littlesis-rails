@@ -82,4 +82,29 @@ describe User do
       end
     end
   end
+
+  describe '#admin?' do
+    context 'is admin' do
+      before do
+        @sf_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_user.id)
+        SfGuardUserPermission.create!(permission_id: 1, user_id: @sf_user.id)
+      end
+
+      it 'returns true' do
+        expect(@user.admin?).to be true
+      end
+    end
+
+    context 'is not admin' do
+      before do
+        @sf_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_user.id)
+      end
+
+      it 'returns true' do
+        expect(@user.admin?).to be false
+      end
+    end
+  end
 end

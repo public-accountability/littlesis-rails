@@ -52,7 +52,11 @@ class User < ActiveRecord::Base
   end
 
   def has_legacy_permission(name)
-  	sf_guard_user.has_permission(name)
+    sf_guard_user.has_permission(name)
+  end
+
+  def admin?
+    has_legacy_permission 'admin'
   end
 
   def in_group?(group)
