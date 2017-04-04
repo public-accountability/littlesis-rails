@@ -5,7 +5,7 @@ class EntitiesController < ApplicationController
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
 
   def show
-    links = @entity.links.joins(:relationship).includes(:relationship, :related).order('relationship.end_date DESC')
+    links = Link.joins(:relationship).preload(:relationship, related: [:extension_records]).where(entity1_id: @entity.id).order('relationship.end_date DESC')
     @links = SortedLinks.new(links)
   end
 

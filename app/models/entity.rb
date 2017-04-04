@@ -144,7 +144,7 @@ class Entity < ActiveRecord::Base
   end
 
   def extension_ids
-    extension_records.pluck(:definition_id)
+    extension_records.map(&:definition_id)
   end
 
   def extension_ids_without_primary
