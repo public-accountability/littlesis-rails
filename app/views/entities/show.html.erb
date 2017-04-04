@@ -1,35 +1,33 @@
-<div class="container-fluid">
-    <%= render partial: 'header', locals: { entity: @entity } %>
-    <%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
-    <div class="row top-1em">
-        <div class="col-md-8 col-sm-8">
-            <%= render partial: 'summary', locals: { entity: @entity } %>
-            <%= render partial: 'tabs', locals: { active_tab: 'relationships', entity: @entity }  %>
+<%= render partial: 'header', locals: { entity: @entity } %>
+<%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
+<div class="row top-1em">
+    <div class="col-md-8 col-sm-8">
+        <%= render partial: 'summary', locals: { entity: @entity } %>
+        <%= render partial: 'tabs', locals: { active_tab: 'relationships', entity: @entity }  %>
 
-            <div id='relationship_tabs_content'>
+        <div id='relationship_tabs_content'>
 
-                <% if params[:relationships] == nil %>
-                    <% section_order(@entity).each do |section| %>
-                        <% links_group = @links.send section.to_sym %>
-                        <%= section_heading(links_group) %>
-                        <%= link_to_all(links_group) %>
-                        <%= render partial: 'link', collection: links_group.links[0..9] %>
-                    <% end %>
-                <% elsif section_order(@entity).include? params[:relationships] %>
-                    <% links_group = @links.send params[:relationships].to_sym %>
+            <% if params[:relationships] == nil %>
+                <% section_order(@entity).each do |section| %>
+                    <% links_group = @links.send section.to_sym %>
                     <%= section_heading(links_group) %>
-                    
-                    <% paginatable_links = Kaminari.paginate_array(links_group.links).page(params[:page]).per(20) %>
-                    <%= paginate paginatable_links %>
-                    <%= render partial: 'link', collection: paginatable_links %>
-                    <%= paginate paginatable_links %>
+                    <%= link_to_all(links_group) %>
+                    <%= render partial: 'link', collection: links_group.links[0..9] %>
                 <% end %>
+            <% elsif section_order(@entity).include? params[:relationships] %>
+                <% links_group = @links.send params[:relationships].to_sym %>
+                <%= section_heading(links_group) %>
+                
+                <% paginatable_links = Kaminari.paginate_array(links_group.links).page(params[:page]).per(20) %>
+                <%= paginate paginatable_links %>
+                <%= render partial: 'link', collection: paginatable_links %>
+                <%= paginate paginatable_links %>
+            <% end %>
 
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-4">
-	    <%= render partial: 'sidebar' %>
         </div>
     </div>
-    
+    <div class="col-md-4 col-sm-4">
+	<%= render partial: 'sidebar' %>
+    </div>
 </div>
+
