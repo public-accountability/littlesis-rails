@@ -5,6 +5,7 @@ class Entity < ActiveRecord::Base
   include Referenceable
   include Political
   include ApiAttributes
+  include SimilarEntities
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
