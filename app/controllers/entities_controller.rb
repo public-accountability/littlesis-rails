@@ -5,39 +5,8 @@ class EntitiesController < ApplicationController
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
 
   def show
-    @links = @entity.links
-      .includes(:relationship, :related)
-      .group_by { |l| l.category_id }
-      
-    @links.default = []
-
-    def split(links)
-      links.partition { |l| l.is_reverse == true }
-    end
-
-    @staff, @positions = split @links[1]
-    @members, @memberships = split @links[3]
-
-    jobs = @positions.group_by { |l| l.position_type }
-    jobs.default = []
-
-    @business_positions = jobs['business']
-    @government_positions = jobs['government'] 
-    @in_the_office_positions = jobs['office']
-    @other_positions = jobs['other']
-    @other_positions_and_memberships = @other_positions + @memberships
-
-    @students, @schools = split @links[2]
-    @family = @links[4]
-    @donors, @donation_recipients = split @links[5]
-    @services_transactions = @links[6]
-    @lobbying = @links[7]
-    @friendships = @links[8]
-    @professional_relationships = @links[9]
-    @owners, @holdings = split @links[10]
-    @children, @parents = split @links[11]
-    @miscellaneous = @links[12]
-
+    links = @entity.links.joins(:relationship).includes(:relationship, :related).order('relationship.end_date DESC')
+    @links = SortedLinks.new(links)
   end
 
   def new

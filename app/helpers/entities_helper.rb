@@ -21,7 +21,7 @@ module EntitiesHelper
   end
 
   # Relationships display
-  
+
   def get_other_positions_and_memberships_heading(positions_count, other_positions_count, memberships_count)
     if other_positions_count == 0
       return 'Memberships'
@@ -38,55 +38,54 @@ module EntitiesHelper
     end
   end
 
-  def display_relationship_section_heading(links_count, pos_count, other_pos_count, mem_count, section)
-    headings = {
-      'staff' =>                           'Office/Staff',
-      'business_positions' =>              'Business Positions',
-      'government_positions' =>            'Government Positions',
-      'in_the_office_positions' =>         'In The Office Of',
-      'other_positions_and_memberships' =>  get_other_positions_and_memberships_heading(pos_count, other_pos_count, mem_count),
-      'schools' =>                         'Education',
-      'students' =>                        'Students',
-      'family' =>                          'Family',
-      'donors' =>                          'Donors',
-      'donation_recipients' =>             'Donation/Grant Recipients',    
-      'services_transactions' =>           'Services/Transactions',
-      'lobbying' =>                        'Lobbying',
-      'friendships' =>                     'Friends',
-      'professional_relationships' =>      'Professional Relationships',
-      'owners' =>                          'Owners',
-      'holdings' =>                        'Holdings',
-      'children' =>                        'Child Organizations',
-      'parents' =>                         'Parent Organizations',
-      'miscellaneous' =>                   'Miscellaneous'
-    }
-
-    content_tag(:div, headings[section], class: "subsection") if links_count > 0
+  def section_heading(links)
+    content_tag(:div, links.heading, class: "subsection") if links.count > 0
   end
 
-  def get_section_order(entity)
-    section_order_person = ['business_positions', 'government_positions', 'in_the_office_positions', 'other_positions_and_memberships', 'schools', 'holdings', 'services_transactions', 'family', 'professional_relationships', 'friendships', 'donation_recipients', 'staff']
-    section_order_org = ['parents', 'children', 'other_positions_and_memberships', 'staff']
+  def link_to_all(links)
+    content_tag :div, class: 'section_meta' do 
+      content_tag(:span, "Showing 1-10 of #{links.count} :: ") + link_to('see all', entity_url(:relationships => links.keyword))
+    end if links.count > 10
+  end
+
+  def section_order(entity)
+    section_order_person = [
+      'business_positions',
+      'government_positions',
+      'in_the_office_positions',
+      'other_positions_and_memberships',
+      'schools',
+      'holdings',
+      'services_transactions',
+      'family',
+      'professional_relationships',
+      'friendships',
+      'donors',
+      'donation_recipients',
+      'staff',
+      'political_fundraising_committees',
+      'miscellaneous'
+    ]
+    section_order_org = [
+      'parents',
+      'children',
+      'other_positions_and_memberships',
+      'staff'
+    ]
 
     entity.person? ? section_order_person : section_order_org
   end
 
-  def group_relationships_by_entity(links)
-    links.group_by { |l| l.entity2_id }.values
+  def extra_links_count(links)
+    return '' if links.count <= 1
+    "[+#{links.count - 1}]"
   end
 
-  def order(links)
-    return [] if links.empty?
-    return links.sort { |a, b| b.related.links.count <=> a.related.links.count } if links[0].category_id == 4
-    return links.sort { |a, b| b.relationship.amount <=> a.relationship.amount } if links[0].category_id == 5
-    return links.sort { |a, b| LsDate.new(b.relationship.end_date) <=> LsDate.new(a.relationship.end_date) }
-  end
-  
   # <Entity> -> html
   def type_select_boxes(entity = @entity)
     number_per_group = entity.org? ? 9 : 5
     checkboxes(entity).each_slice(number_per_group).reduce('') do |x, box_group|
-        x + content_tag(:div, box_group.reduce(:+), class: 'col-sm-4')
+      x + content_tag(:div, box_group.reduce(:+), class: 'col-sm-4')
     end.html_safe
   end
 
@@ -96,7 +95,7 @@ module EntitiesHelper
     ExtensionDefinition.send("#{entity.primary_ext.downcase}_types").collect do |ed|
       is_checked = checked_def_ids.include?(ed.id)
       content_tag(:span, class: 'entity-type-checkbox-wrapper') do 
-        glyph_checkbox(is_checked, ed.id) + content_tag(:span, " #{ed.display_name}", class: 'entity-type-name')+ tag(:br)
+        glyph_checkbox(is_checked, ed.id) + content_tag(:span, " #{ed.display_name}", class: 'entity-type-name') + tag(:br)
       end
     end
   end

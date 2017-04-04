@@ -8,10 +8,21 @@
 
             <div id='relationship_tabs_content'>
 
-                <% get_section_order(@entity).each do |section| %>
-                    <% links = group_relationships_by_entity(order instance_variable_get("@#{section}")) %>
-                    <%= display_relationship_section_heading(links.count, @positions.count, @other_positions.count, @memberships.count, section) %>
-                    <%= render partial: 'link', collection: links %>
+                <% if params[:relationships] == nil %>
+                    <% section_order(@entity).each do |section| %>
+                        <% links_group = @links.send section.to_sym %>
+                        <%= section_heading(links_group) %>
+                        <%= link_to_all(links_group) %>
+                        <%= render partial: 'link', collection: links_group.links[0..9] %>
+                    <% end %>
+                <% elsif section_order(@entity).include? params[:relationships] %>
+                    <% links_group = @links.send params[:relationships].to_sym %>
+                    <%= section_heading(links_group) %>
+                    
+                    <% paginatable_links = Kaminari.paginate_array(links_group.links).page(params[:page]).per(20) %>
+                    <%= paginate paginatable_links %>
+                    <%= render partial: 'link', collection: paginatable_links %>
+                    <%= paginate paginatable_links %>
                 <% end %>
 
             </div>
