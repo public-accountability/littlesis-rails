@@ -55,11 +55,13 @@ describe EntitiesHelper do
   describe 'Sidebar helpers' do
     describe '#sidebar_reference_count' do
       it 'generates correct text' do
-        expect(helper.sidebar_reference_count(22)).to include "<span>Number of references: 22</span>"
+        expect(helper.sidebar_reference_count(22)).to include "Number of references"
+        expect(helper.sidebar_reference_count(22)).to include "22"
+        expect(helper.sidebar_reference_count(22)).to include "<span"
       end
     end
 
-    describe '#sidevar references' do
+    describe '#sidebar references' do
       it 'creates 10 ul tags' do
         refs = Array.new(10).collect { build(:entity_ref) }
         expect(helper.sidebar_references(refs).scan(/<li>/).count).to eq 10
