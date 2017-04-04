@@ -1,3 +1,4 @@
+# coding: utf-8
 class Link < ActiveRecord::Base
   include SingularTable
 
@@ -11,7 +12,7 @@ class Link < ActiveRecord::Base
   end
 
   def self.interlock_hash(links)
-    links.reduce({}) do |hash, link| 
+    links.reduce({}) do |hash, link|
       hash[link.entity2_id] = hash.fetch(link.entity2_id, []).push(link.entity1_id).uniq
       hash
     end
