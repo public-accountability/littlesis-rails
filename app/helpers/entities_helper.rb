@@ -163,6 +163,13 @@ module EntitiesHelper
     link
   end
 
+  def sidebar_similar_entities(similar_entities)
+    similar_entities
+      .collect { |e| link_to(e.name, e.legacy_url) }
+      .collect { |link| content_tag(:li, link) }
+      .reduce(&:+)
+  end
+
   private
 
   # skip deleted lists, private lists (unless current_user has access), and skip lists that are networks

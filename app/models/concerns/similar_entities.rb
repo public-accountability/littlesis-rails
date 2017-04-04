@@ -11,27 +11,27 @@ module SimilarEntities
                   :with => { primary_ext: "'#{primary_ext}'", is_deleted: false },
                   :without => { sphinx_internal_id: id },
                   :per_page => per_page,
-                  :select => "*, weight() + (link_count * 20) AS link_weight",
+                  :ranker => :sph04,
+                  :select => "*, weight() + (link_count * 10) AS link_weight",
                   :order => "link_weight DESC",
                   :field_weights => SIMILAR_ENTITY_FIELD_WEIGHTS)
   end
 
   private
 
-  # -> str
-  # - add basic version of name "First Last"
-  # - add versions of organization names with common suffixes removed
-  # - escapes and adds wildcard to names
-  # - add version of names without wildcards
   def generate_search_terms
+    search_terms = []
     alias_names = aliases.map(&:name)
-    alias_names
-      .dup
-      .tap { |names| names.append("#{person.name_first} #{person.name_last}") if person? }
-      .tap { |names| names.concat(names.map { |name| Org.strip_name(name) }) if org? }
-      .map { |name| ThinkingSphinx::Query.escape(name) }
-      .map { |name| "(#{ThinkingSphinx::Query.wildcard(name)})" }
-      .tap { |names| names.concat(alias_names.map { |n| "(#{ThinkingSphinx::Query.escape(n)})" }) }
+
+    search_terms.concat(alias_names)
+    search_terms.append("#{person.name_first} #{person.name_last}") if person?
+    search_terms.append("#{person.name_first} #{person.name_last}*") if person?
+    search_terms.append("#{person.name_first}* #{person.name_last}") if person?
+    search_terms.concat(alias_names.map { |n| Org.strip_name(n) }) if org?
+    search_terms.append("*#{self.name}*") if org?
+
+    search_terms.uniq
+      .map { |name| "(#{ThinkingSphinx::Query.escape(name)})" }
       .join(' | ')
   end
 end
