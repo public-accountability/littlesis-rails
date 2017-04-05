@@ -411,7 +411,7 @@ class EntitiesController < ApplicationController
   end
 
   def set_entity_with_eager_loading
-    @entity = Entity.includes(list_entities: [:list]).find(params[:id])
+    @entity = Entity.includes(:aliases, list_entities: [:list]).find(params[:id])
   end
 
   def set_entity

@@ -140,8 +140,9 @@ module EntitiesHelper
 
   # input: Array or <ActiveRecord_relation>
   def sidebar_references(references)
+    refs = filter_and_limit_references(references)
     content_tag(:ul, class: 'list-unstyled') do
-      references.collect { |r| sidebar_reference(r) }.reduce(&:+)
+      refs.collect { |r| sidebar_reference(r) }.reduce(&:+)
     end
   end
 
@@ -184,6 +185,12 @@ module EntitiesHelper
   end
 
   private
+
+  # Filters refereces to uniq url/name
+  def filter_and_limit_references(refs)
+    refs.uniq { |ref| "#{ref.name}#{ref.source}" }.take(10)
+  end
+    
 
   # skip deleted lists, private lists (unless current_user has access), and skip lists that are networks
   def show_list(list_entity)

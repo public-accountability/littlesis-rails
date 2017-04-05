@@ -5,16 +5,18 @@
 </div>
 
 <!-- SOURCE LINKS -->
-<div class="row">
-    <div class="col-sm-12">
-	<%= sidebar_title('Source Links') %>
+<% cache ['entity_source_links', @entity.alt_cache_key] do %>
+    <div class="row">
+	<div class="col-sm-12">
+	    <%= sidebar_title('Source Links') %>
+	</div>
+	<div class="col-sm-12 sidebar-references-container">
+	    <% entity_references = @entity.all_references.to_a %>
+	    <%= sidebar_reference_count(entity_references.size)%>
+	    <%= sidebar_references(entity_references)%>
+	</div>
     </div>
-    <div class="col-sm-12 sidebar-references-container">
-	<% entity_references = @entity.all_references %>
-	<%= sidebar_reference_count(entity_references.count)%>
-	<%= sidebar_references(entity_references.take(10))%>
-    </div>
-</div>
+<% end %>
 
 <!-- BASIC INFO -->
 <div class="row">
