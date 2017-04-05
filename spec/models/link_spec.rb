@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rails_helper'
 
 describe Link, type: :model do
@@ -62,4 +63,43 @@ describe Link, type: :model do
     end
   end
 
+  describe 'description' do
+    it 'calls relationship.title if relationship is position' do
+      rel = build(:relationship, category_id: 1)
+      link = build(:link, relationship: rel, category_id: 1)
+      expect(rel).to receive(:title).once
+      link.description
+    end
+
+    it 'calls relationship.title if relationship is membership' do
+      rel = build(:relationship, category_id: 3)
+      link = build(:link, relationship: rel, category_id: 3)
+      expect(rel).to receive(:title).once
+      link.description
+    end
+
+    it 'returns humanized contirbution if is campaign contribution' do
+      rel = build(:donation_relationship, filings: nil, amount: 2000000, description1: "Campaign Contribution")
+      link = build(:link, relationship: rel, category_id: 5)
+      expect(link.description).to eq "Donation · $2,000,000"
+    end
+  end
+
+  describe '#humanize_contributions' do
+    it 'creates correct str when there are filings' do
+      rel = build(:donation_relationship, filings: 3, amount: 1000)
+      link = build(:link, relationship: rel, category_id: 5)
+      expect(link.send(:humanize_contributions)).to eq "3 contributions · $1,000"
+    end
+
+    it 'creates correct str when filings is 0 or nil' do
+      rel = build(:donation_relationship, filings: nil, amount: 2000000)
+      link = build(:link, relationship: rel, category_id: 5)
+      expect(link.send(:humanize_contributions)).to eq "Donation · $2,000,000"
+      rel2 = build(:donation_relationship, filings: 0, amount: 2000000)
+      link2 = build(:link, relationship: rel2, category_id: 5)
+      expect(link2.send(:humanize_contributions)).to eq "Donation · $2,000,000"
+    end
+  end
+  
 end

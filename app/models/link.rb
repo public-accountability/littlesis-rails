@@ -35,9 +35,23 @@ class Link < ActiveRecord::Base
 
   def description
     return relationship.title if relationship.is_position? || relationship.is_member?
-    return "#{ActionController::Base.helpers.pluralize(relationship.filings, 'contribution')} · $#{relationship.amount}" if relationship.is_donation? && relationship.description1 == "Campaign Contribution"
+    return humanize_contributions if relationship.is_donation? && relationship.description1 == "Campaign Contribution"
     
     is_reverse ? relationship.description1 : relationship.description2
+  end
+
+  private
+
+  def humanize_contributions
+    str = ""
+    if relationship.filings.nil? || relationship.filings.zero?
+      str << "Donation"
+    else
+      str << ActionController::Base.helpers.pluralize(relationship.filings, 'contribution')
+    end
+    str << " · " unless relationship.amount.nil?
+    str << ActiveSupport::NumberHelper.number_to_currency(relationship.amount, precision: 0) unless relationship.amount.nil?
+    str
   end
 
 end
