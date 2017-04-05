@@ -10,6 +10,7 @@
 	    <!-- The 'regular' profile page -->
             <% if params[:relationships] == nil %>
                 <% section_order(@entity).each do |section| %>
+		    <!-- @links is a <SortedLinks> -->
                     <% links_group = @links.send(section) %>
                     <%= section_heading(links_group) %>
                     <%= link_to_all(links_group) %>

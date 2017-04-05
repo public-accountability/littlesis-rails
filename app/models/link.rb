@@ -65,9 +65,9 @@ class Link < ActiveRecord::Base
     when 3
       return 'Member'
     when 4
-      return 'Family'
+      return 'Relative'
     when 5
-      return 'Donation'
+      return 'Donation/Grant'
     when 6
       return 'Service/Transaction'
     when 7

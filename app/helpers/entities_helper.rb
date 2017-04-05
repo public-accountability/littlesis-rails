@@ -62,15 +62,25 @@ module EntitiesHelper
       'friendships',
       'donors',
       'donation_recipients',
+      'holdings',
       'staff',
       'political_fundraising_committees',
+      'lobbying',
       'miscellaneous'
     ]
     section_order_org = [
+      'owners',
       'parents',
       'children',
+      'holdings',
       'other_positions_and_memberships',
-      'staff'
+      'services_transactions',
+      'staff',
+      'students',
+      'donors',
+      'donation_recipients',
+      'lobbying',
+      'miscellaneous'
     ]
 
     entity.person? ? section_order_person : section_order_org
