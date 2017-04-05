@@ -27,6 +27,7 @@ describe 'entities/show.html.erb' do
       before do
         assign(:entity, @e)
         assign(:links, sorted_links(@e))
+        assign(:similar_entities, [])
         render
       end
 
