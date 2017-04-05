@@ -5,8 +5,7 @@ class EntitiesController < ApplicationController
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
 
   def show
-    links = Link.joins(:relationship).preload(:relationship, related: [:extension_records]).where(entity1_id: @entity.id).order('relationship.end_date DESC')
-    @links = SortedLinks.new(links)
+    @links = cache_sorted_links
   end
 
   def new
@@ -399,6 +398,13 @@ class EntitiesController < ApplicationController
 
   private
 
+  def cache_sorted_links
+    Rails.cache.fetch("#{@entity.alt_cache_key}/sorted_links", expires_in: 7.days) do
+      links = Link.preload(:relationship, related: [:extension_records]).where(entity1_id: @entity.id)
+      SortedLinks.new(links)
+    end
+  end
+    
   def set_current_user
     @current_user = current_user
   end

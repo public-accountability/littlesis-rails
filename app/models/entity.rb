@@ -708,6 +708,12 @@ class Entity < ActiveRecord::Base
     Reference.all_entity_references(self)
   end
 
+  # The cacheable concern overrides 'cache_key' and uses it for legacy caching.
+  # So until we rid ourselves of legacy cache, will use alt_cache_key  @('_')@
+  def alt_cache_key
+    "entity/#{id}-#{updated_at.to_i}"
+  end
+
   class EntityDeleted < ActiveRecord::ActiveRecordError
   end
 
