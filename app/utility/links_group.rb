@@ -9,6 +9,8 @@ class LinksGroup
     @heading = heading
     @category_id = links.empty? ? nil : links[0].category_id 
     @links = group_by_entity(order(links))
+    # The count here represents not the total amount of all relationships but the grouped count. 
+    # If there are 4 links with the same person (i.e. entity2 is same) then @count will be 1
     @count = @links.count
   end
 
@@ -19,10 +21,11 @@ class LinksGroup
 
   end
 
-  # This groups entities by the 'other' entity so that relationships with the
-  # same entity are grouped together
+
   # input: [ <Link> ] 
   # output: [ [<Link>] [<Link>] ]
+  # This groups entities by the 'other' entity so that relationships with the
+  # same entity are grouped together
   def group_by_entity(links)
     links.group_by { |l| l.entity2_id }.values
   end
