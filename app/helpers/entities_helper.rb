@@ -152,7 +152,11 @@ module EntitiesHelper
   # To eager load list and list_entities: Entity.includes(list_entities: [:lists])
   def sidebar_lists(list_entities)
     list_entities.collect do |list_entity|
-      content_tag(:li, sidebar_list_link(list_entity), class: 'sidebar-list') if show_list(list_entity)
+      if show_list(list_entity)
+        content_tag(:li, sidebar_list_link(list_entity), class: 'sidebar-list')
+      else
+        "".html_safe
+      end
     end.reduce(:+)
   end
 
