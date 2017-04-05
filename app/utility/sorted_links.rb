@@ -26,10 +26,6 @@ class SortedLinks
     create_subgroups(links)
   end
 
-  def split(links)
-    links.partition { |l| l.is_reverse == true }
-  end	
-
   def get_other_positions_and_memberships_heading(positions_count, other_positions_count, memberships_count)
     if other_positions_count == 0
       return 'Memberships'
@@ -98,4 +94,9 @@ class SortedLinks
     @miscellaneous = LinksGroup.new(categories[12], 'miscellaneous', 'Other Affiliations')
   end
 
+  private 
+  
+  def split(links)
+    links.partition { |l| l.is_reverse == true }
+  end
 end

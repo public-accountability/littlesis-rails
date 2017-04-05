@@ -1,8 +1,12 @@
 require 'rails_helper'
 
 describe 'entities/show.html.erb' do
-  before(:all) { DatabaseCleaner.start }
+  before(:all) { DatabaseCleaner.start } 
   after(:all) { DatabaseCleaner.clean }
+
+  before(:each) do
+    allow(Entity).to receive(:search).and_return([])
+  end
 
   def sorted_links(e)
     links = e.links.joins(:relationship).includes(:relationship, :related).order('relationship.end_date DESC')

@@ -11,6 +11,7 @@ FactoryGirl.define do
 
   factory :generic_relationship, class: Relationship do
     category_id 12
+    id { rand(1000) }
   end
 
   factory :position_relationship, class: Relationship do

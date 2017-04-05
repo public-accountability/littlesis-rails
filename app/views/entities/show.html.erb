@@ -7,6 +7,7 @@
 
         <div id='relationship_tabs_content'>
 
+	    <!-- The 'regular' profile page -->
             <% if params[:relationships] == nil %>
                 <% section_order(@entity).each do |section| %>
                     <% links_group = @links.send section.to_sym %>
@@ -14,7 +15,9 @@
                     <%= link_to_all(links_group) %>
                     <%= render partial: 'link', collection: links_group.links[0..9] %>
                 <% end %>
+	    <!-- The profile page for a specific type of relationship-->
             <% elsif section_order(@entity).include? params[:relationships] %>
+		
                 <% links_group = @links.send params[:relationships].to_sym %>
                 <%= section_heading(links_group) %>
                 
