@@ -36,8 +36,9 @@ class Link < ActiveRecord::Base
   def description
     return relationship.title if relationship.is_position? || relationship.is_member?
     return humanize_contributions if relationship.is_donation? && relationship.description1 == "Campaign Contribution"
-    
-    is_reverse ? relationship.description1 : relationship.description2
+    text = is_reverse ? relationship.description1 : relationship.description2
+    return text unless text.blank?
+    return default_description
   end
 
   private
@@ -54,4 +55,37 @@ class Link < ActiveRecord::Base
     str
   end
 
+  def default_description
+    case category_id
+    when 1
+      return 'Position'
+    when 2
+      return 'Student' if is_reverse
+      return 'School' unless is_reverse
+    when 3
+      return 'Member'
+    when 4
+      return 'Family'
+    when 5
+      return 'Donation'
+    when 6
+      return 'Service/Transaction'
+    when 7
+      return 'Lobbying'
+    when 8
+      return 'Social'
+    when 9
+      return 'Professional'
+    when 10
+      return 'Owner'
+    when 11
+      return 'Child Org' if is_reverse
+      return 'Parent Org' unless is_reverse
+    when 12
+      return 'Affiliation'
+    else
+      return ''
+    end
+  end
+  
 end
