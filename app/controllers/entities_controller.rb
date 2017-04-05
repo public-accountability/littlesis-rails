@@ -1,6 +1,7 @@
 class EntitiesController < ApplicationController
   before_filter :authenticate_user!, except: [:show, :relationships, :political, :contributions]
-  before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names]
+  before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show]
+  before_action :set_entity_with_eager_loading, only: [:show]
   before_action :set_current_user, only: [:show, :political, :match_donations]
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
 
@@ -404,9 +405,13 @@ class EntitiesController < ApplicationController
       SortedLinks.new(links)
     end
   end
-    
+
   def set_current_user
     @current_user = current_user
+  end
+
+  def set_entity_with_eager_loading
+    @entity = Entity.includes(list_entities: [:list]).find(params[:id])
   end
 
   def set_entity
