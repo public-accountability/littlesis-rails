@@ -15,6 +15,10 @@ class Reference < ActiveRecord::Base
   def ref_types
     @@ref_types
   end
+  
+  def ref_type_display
+    @@ref_types[ref_type]
+  end
 
   # Returns the reference types as an array: [ [name, number], ... ]
   # Removes the FEC filings option
@@ -50,15 +54,22 @@ class Reference < ActiveRecord::Base
     where_statement = info_array.collect { |h| generate_where(h) }.join(' OR ')
     where(where_statement).order('updated_at DESC').limit(limit)
   end
-
-  # input: <Entity>
-  # output: <Reference::ActiveRecord_Relation>
-  # Retrives  references for the entity AND for relationships that the entity is in
+  
+  # input: <Entity> or Integer
+  # output: [ <Reference> ]
+  # Retrives references for the entity AND for relationships that the entity is in
+  # Note: The returned  models do not contain all the fields that are in the Reference table
   def self.all_entity_references(entity)
-    rel_ids = entity.links.map(&:relationship_id)
-    ref_query = [{ class_name: 'Entity', object_ids: [ entity.id ] }]
-    ref_query.append({ class_name: 'Relationship', object_ids: rel_ids }) unless rel_ids.empty?
-    recent_references(ref_query, nil)
+    entity_id = entity.is_a?(Entity) ? entity.id : entity
+    Reference.find_by_sql([
+      "SELECT ref.source, ref.name, ref.id, ref.object_model, ref.object_id, ref.updated_at, ref.ref_type
+      FROM link 
+      INNER JOIN reference as ref ON (ref.object_id = link.relationship_id AND ref.object_model = 'Relationship')
+      WHERE link.entity1_id = ?
+      UNION ALL
+      SELECT reference.source, reference.name, reference.id, reference.object_model, reference.object_id, reference.updated_at, reference.ref_type
+      FROM reference
+      WHERE object_model = 'Entity' AND object_id = ?", entity_id, entity_id])
   end
 
   # input: hash with keys: :class_name, :object_id

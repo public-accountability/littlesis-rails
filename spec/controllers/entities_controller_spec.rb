@@ -17,6 +17,7 @@ describe EntitiesController, type: :controller do
     it { should route(:get, '/entities/1/edit').to(action: :edit, id: 1) }
     it { should route(:patch, '/entities/1').to(action: :update, id: 1) }
     it { should route(:get, '/entities/1/political').to(action: :political, id: 1) }
+    it { should route(:get, '/entities/1/references').to(action: :references, id: 1) }
     it { should route(:get, '/entities/1/match_donations').to(action: :match_donations, id: 1) }
     it { should route(:post, '/entities/1/match_donation').to(action: :match_donation, id: 1) }
     it { should route(:post, '/entities/1/unmatch_donation').to(action: :unmatch_donation, id: 1) }
@@ -441,8 +442,20 @@ describe EntitiesController, type: :controller do
         expect(response).to redirect_to(@org.legacy_url)
       end
     end
-
-    
-
   end # end describe #update
+
+  describe 'GET /references' do
+    before do
+      @entity = build(:mega_corp_inc, updated_at: Time.now, id: rand(100))
+      expect(Entity).to receive(:find).with(@entity.id.to_s).and_return(@entity)
+      refs = [build(:entity_ref, object_id: @entity.id), build(:entity_ref, object_id: @entity.id) ]
+      expect(@entity).to receive(:all_references).and_return(refs)
+      expect(Kaminari).to receive(:paginate_array).with(refs).and_return(spy('kaminari'))
+      get :references, id: @entity.id
+    end
+    
+    it { should respond_with(200) }
+    it { should render_template(:references) }
+    
+  end
 end

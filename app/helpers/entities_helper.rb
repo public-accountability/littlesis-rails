@@ -135,9 +135,9 @@ module EntitiesHelper
     end
   end
 
-  def sidebar_reference_count(count)
-    content_tag(:span, "Number of references: ") + content_tag(:em, count.to_s)
-  end
+  # def sidebar_reference_count(count)
+  #   content_tag(:span, "Number of references: ") + content_tag(:em, count.to_s)
+  # end
 
   # input: Array or <ActiveRecord_relation>
   def sidebar_references(references)
