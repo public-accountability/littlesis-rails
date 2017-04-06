@@ -53,13 +53,13 @@ describe EntitiesHelper do
   end
 
   describe 'Sidebar helpers' do
-    describe '#sidebar_reference_count' do
-      it 'generates correct text' do
-        expect(helper.sidebar_reference_count(22)).to include "Number of references"
-        expect(helper.sidebar_reference_count(22)).to include "22"
-        expect(helper.sidebar_reference_count(22)).to include "<span"
-      end
-    end
+    # describe '#sidebar_reference_count' do
+    #   it 'generates correct text' do
+    #     expect(helper.sidebar_reference_count(22)).to include "Number of references"
+    #     expect(helper.sidebar_reference_count(22)).to include "22"
+    #     expect(helper.sidebar_reference_count(22)).to include "<span"
+    #   end
+    # end
 
     describe '#sidebar references' do
       it 'creates 10 ul tags' do
@@ -76,7 +76,7 @@ describe EntitiesHelper do
       end
 
       it 'includes entity url' do
-        expect(helper.sidebar_reference(@ref)).to match /href="https:\/\/littlesis.org"/
+        expect(helper.sidebar_reference(@ref)).to include 'littlesis.org'
       end
     end
   end # end Sidebar helpers

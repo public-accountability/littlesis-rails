@@ -6,7 +6,8 @@ FactoryGirl.define do
   factory :entity_ref, class: Reference do
     object_model 'Entity'
     object_id { rand(100) }
+    sequence(:id)
     name 'reference name'
-    source 'https://littlesis.org'
+    sequence(:source) { |n| "https://littlesis.org/#{n}" }
   end
 end

@@ -1,5 +1,5 @@
 class EntitiesController < ApplicationController
-  before_filter :authenticate_user!, except: [:show, :relationships, :political, :contributions]
+  before_filter :authenticate_user!, except: [:show, :relationships, :political, :contributions, :references]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show]
   before_action :set_entity_with_eager_loading, only: [:show]
   before_action :set_current_user, only: [:show, :political, :match_donations]
@@ -79,6 +79,12 @@ class EntitiesController < ApplicationController
   end
 
   def political
+  end
+
+  def references
+    refs = @entity.all_references
+    @reference_count = refs.size
+    @references = Kaminari.paginate_array(refs).page(params[:page]).per(25)
   end
 
   # ------------------------------ #

@@ -137,6 +137,7 @@ Lilsis::Application.routes.draw do
       post 'match_donation'
       post 'unmatch_donation'
       get 'contributions'
+      get 'references'
       get 'potential_contributions'
       get 'edit_twitter'
       post 'add_twitter'  
