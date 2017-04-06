@@ -62,24 +62,25 @@ module EntitiesHelper
       'friendships',
       'donors',
       'donation_recipients',
-      'holdings',
       'staff',
       'political_fundraising_committees',
-      'lobbying',
+      'lobbies',
+      'lobbied_by',
       'miscellaneous'
     ]
     section_order_org = [
-      'owners',
       'parents',
       'children',
       'holdings',
       'other_positions_and_memberships',
-      'services_transactions',
+      'owners',
       'staff',
-      'students',
-      'donors',
       'donation_recipients',
-      'lobbying',
+      'donors',
+      'services_transactions',
+      'students',
+      'lobbies',
+      'lobbied_by',
       'miscellaneous'
     ]
 

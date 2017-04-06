@@ -33,8 +33,8 @@
 /log/development.sphinx.pid
 
 # Ignore sphinx config
-/config/production.sphinx.conf
-/config/development.sphinx.conf
+config/production.sphinx.conf
+config/development.sphinx.conf
 public/assets/*
 
 # generated test error files

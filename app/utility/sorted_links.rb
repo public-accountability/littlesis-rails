@@ -13,7 +13,8 @@ class SortedLinks
               :donation_recipients,
               :political_fundraising_committees,
               :services_transactions,
-              :lobbying,
+              :lobbies,
+              :lobbied_by,
               :friendships,
               :professional_relationships,
               :owners,
@@ -23,7 +24,7 @@ class SortedLinks
               :miscellaneous
 
   def initialize(links)
-    create_subgroups(links)
+    create_subgroups(cull_invalid links)
   end
 
   def get_other_positions_and_memberships_heading(positions_count, other_positions_count, memberships_count)
@@ -79,7 +80,11 @@ class SortedLinks
     @donation_recipients = LinksGroup.new(donation_recipients, 'donation_recipients', 'Donation/Grant Recipients')
 
     @services_transactions = LinksGroup.new(categories[6], 'services_transactions', 'Services/Transactions')
-    @lobbying = LinksGroup.new(categories[7], 'lobbying', 'Lobbying')
+
+    lobbied_by, lobbies = split categories[7]
+    @lobbies = LinksGroup.new(lobbies, 'lobbies', 'Lobbying')
+    @lobbied_by = LinksGroup.new(lobbied_by, 'lobbied_by', 'Lobbied By')
+
     @friendships = LinksGroup.new(categories[8], 'friendships', 'Friends')
     @professional_relationships = LinksGroup.new(categories[9], 'professional_relationships', 'Professional Associates')
 
@@ -95,6 +100,10 @@ class SortedLinks
   end
 
   private 
+
+  def cull_invalid(links)
+  	links.select { |l| l.related.present? }
+  end
   
   def split(links)
     links.partition { |l| l.is_reverse == true }
