@@ -6,7 +6,11 @@ class EntitiesController < ApplicationController
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
 
   def show
-    @links = cache_sorted_links
+    if Rails.env == 'production'
+      @links = cache_sorted_links
+    else
+      @links = sorted_links
+    end
   end
 
   def new
@@ -399,10 +403,14 @@ class EntitiesController < ApplicationController
 
   private
 
+  def sorted_links
+    links = Link.preload(:relationship, related: [:extension_records]).where(entity1_id: @entity.id)
+    SortedLinks.new(links)
+  end
+
   def cache_sorted_links
     Rails.cache.fetch("#{@entity.alt_cache_key}/sorted_links", expires_in: 7.days) do
-      links = Link.preload(:relationship, related: [:extension_records]).where(entity1_id: @entity.id)
-      SortedLinks.new(links)
+      sorted_links
     end
   end
 
