@@ -9,7 +9,10 @@
 		<td><%= val %></td>
 	    <% end %>
 	</tr>
-
+    <% end %>
+    <% unless @entity.os_categories.blank? %>
+	<td><strong>Industries</strong></td>
+	<td><%= raw sidebar_industry_links(@entity.os_categories) %></td>
     <% end %>
     </tbody>
 </table>

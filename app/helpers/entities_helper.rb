@@ -139,6 +139,13 @@ module EntitiesHelper
   #   content_tag(:span, "Number of references: ") + content_tag(:em, count.to_s)
   # end
 
+  def sidebar_industry_links(os_categories)
+    os_categories.to_a
+      .delete_if { |cat| cat.ignore_me_in_view }
+      .collect {  |cat| link_to(cat.category_name, cat.legacy_path) } 
+      .join(', ')
+  end
+
   # input: Array or <ActiveRecord_relation>
   def sidebar_references(references)
     refs = filter_and_limit_references(references)
@@ -148,8 +155,9 @@ module EntitiesHelper
   end
 
   def sidebar_reference(reference)
+    ref_name = reference.name.nil? ? reference.source : reference.name
     link_to(
-      content_tag(:li, reference.name.truncate(33)),
+      content_tag(:li, ref_name.truncate(33)),
       reference.source,
       target: "_blank"
     )
