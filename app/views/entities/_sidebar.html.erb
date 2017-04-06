@@ -1,0 +1,88 @@
+<!-- IMAGE -->
+<%= cache ['entity_image', user_signed_in?, @entity.id, @entity.featured_image_url, @entity.name]  do %>
+    <div class="row">
+	<div class="col-sm-10 col-sm-offset-1">
+	    <%= render partial: 'entities/sidebar/image' %>
+	</div>
+    </div>
+<% end %>
+
+<!-- SOURCE LINKS -->
+<% cache ['entity_source_links', @entity.alt_cache_key] do %>
+    <div class="row">
+	<div class="col-sm-12">
+	    <%= sidebar_title('Source Links') %>
+	</div>
+	<div class="col-sm-12 sidebar-references-container">
+	    <% entity_references = @entity.all_references.to_a %>
+	    <%= sidebar_reference_count(entity_references.size)%>
+	    <%= sidebar_references(entity_references)%>
+	</div>
+    </div>
+<% end %>
+
+<!-- BASIC INFO -->
+<% cache ['entity_basic_info', @entity.alt_cache_key] do %>
+    <div class="row">
+	<div class="col-sm-12">
+	    <%= sidebar_title('Basic info') %>
+	</div>
+	<div class="col-sm-12 sidebar-basic-info-container">
+	    <%= sidebar_basic_info(@entity.basic_info) %>
+	</div>
+    </div>
+<% end %>
+
+<!-- ADMIN TOOLS -->
+<% if user_signed_in? && current_user.admin? %>
+    <div class="row">
+	<div class="col-sm-12">
+	    <%= sidebar_title('Admin tools') %>
+	</div>
+	<div class="col-sm-12">
+	    <%= link_to 'Addresses', @entity.legacy_url('addresses') %>
+	</div>
+    </div>
+<% end %>
+
+<!-- ADVANCED TOOLS -->
+<% if user_signed_in? %>
+    <div class="row">
+	<div class="col-sm-12">
+	    <%= sidebar_title('Advanced tools') %>
+	</div>
+	<div class="col-sm-12">
+	    <%= link_to 'Network Search', @entity.legacy_url('networkSearch') %>
+	    <br />
+	    <%= link_to 'Find Connections', @entity.legacy_url('findConnections') %>
+	</div>
+    </div>
+<% end %>
+
+<!-- LISTS -->
+<% cache(['entity_list_entities', @entity.list_entities], :expires_in => 1.week) do %>
+    <div class="row">
+	<div class="col-sm-12">
+	    <%= sidebar_title('Lists') %>
+	</div>
+	<div class="col-sm-12">
+	    <ul class="list-unstyled">
+		<%= sidebar_lists(@entity.list_entities) %>
+	    </ul>
+	</div>
+    </div>
+<% end %>
+
+<!-- Similar Entities -->
+<% unless @similar_entities.blank? %>
+    <div class="row">
+	<div class="col-sm-12">
+	    <%= sidebar_title('Similar Entities') %>
+	</div>
+	<div class="col-sm-12">
+	    <ul class="list-unstyled">
+		<%= sidebar_similar_entities(@similar_entities) %>
+	    </ul>
+	</div>
+    </div>
+<% end %>

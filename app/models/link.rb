@@ -1,3 +1,4 @@
+# coding: utf-8
 class Link < ActiveRecord::Base
   include SingularTable
 
@@ -11,9 +12,81 @@ class Link < ActiveRecord::Base
   end
 
   def self.interlock_hash(links)
-    links.reduce({}) do |hash, link| 
+    links.reduce({}) do |hash, link|
       hash[link.entity2_id] = hash.fetch(link.entity2_id, []).push(link.entity1_id).uniq
       hash
     end
   end
+
+  def position_type 
+    return 'None' unless category_id == 1
+
+    org_types = related.extension_names
+
+    return 'business' if (org_types & ['Business', 'BusinessPerson']).any?
+    return 'government' if org_types.include? 'GovernmentBody'
+    return 'office' if (org_types & ['ElectedRepresentative', 'PublicOfficial']).any?
+    return 'other'
+  end
+
+  def is_pfc_link?
+    return false if related == nil
+    related.extension_names.include? 'PoliticalFundraising'
+  end
+
+  def description
+    return relationship.title if relationship.is_position? || relationship.is_member?
+    return humanize_contributions if relationship.is_donation? && relationship.description1 == "Campaign Contribution"
+    text = is_reverse ? relationship.description1 : relationship.description2
+    return text unless text.blank?
+    return default_description
+  end
+
+  private
+
+  def humanize_contributions
+    str = ""
+    if relationship.filings.nil? || relationship.filings.zero?
+      str << "Donation"
+    else
+      str << ActionController::Base.helpers.pluralize(relationship.filings, 'contribution')
+    end
+    str << " · " unless relationship.amount.nil?
+    str << ActiveSupport::NumberHelper.number_to_currency(relationship.amount, precision: 0) unless relationship.amount.nil?
+    str
+  end
+
+  def default_description
+    case category_id
+    when 1
+      return 'Position'
+    when 2
+      return 'Student' if is_reverse
+      return 'School' unless is_reverse
+    when 3
+      return 'Member'
+    when 4
+      return 'Relative'
+    when 5
+      return 'Donation/Grant'
+    when 6
+      return 'Service/Transaction'
+    when 7
+      return 'Lobbying'
+    when 8
+      return 'Social'
+    when 9
+      return 'Professional'
+    when 10
+      return 'Owner'
+    when 11
+      return 'Child Org' if is_reverse
+      return 'Parent Org' unless is_reverse
+    when 12
+      return 'Affiliation'
+    else
+      return ''
+    end
+  end
+  
 end

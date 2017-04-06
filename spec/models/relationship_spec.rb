@@ -285,6 +285,44 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'position_or_membership_type' do
+    before do
+      @human_1 = create(:person)
+      @human_2 = create(:person)
+      @corp = create(:corp)
+      @elected = create(:elected)
+      @us_house = create(:us_house)
+    end
+
+    it 'returns "None" for a relationship that is not a position or a membership' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @corp.id, category_id: 4)
+      expect(rel.position_or_membership_type).to eql 'None'
+    end
+
+    it 'correctly identifies a business position' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @corp.id, category_id: 1)
+      rel.related.stub(:extension_names).and_return ['Org', 'Business']
+      expect(rel.position_or_membership_type).to eql 'Business'
+    end
+
+    it 'correctly identifies a government position' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @us_house.id, category_id: 1)
+      rel.related.stub(:extension_names).and_return ['Org', 'GovernmentBody']
+      expect(rel.position_or_membership_type).to eql 'Government'
+    end
+
+    it 'correctly identifies an "in the office of" position' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @elected.id, category_id: 1, start_date: "2012-01-02", end_date: "2016-03-04")
+      rel.related.stub(:extension_names).and_return ['Person', 'ElectedRepresentative']
+      expect(rel.position_or_membership_type).to eql 'In The Office Of'
+    end
+
+    it 'categorizes all other positions as "Other"' do
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @human_2.id, category_id: 1)
+      expect(rel.position_or_membership_type).to eql 'Other Positions & Memberships'
+    end
+  end
+
   context 'Using paper_trail for versioning' do
     with_versioning do
       before do

@@ -27,14 +27,6 @@ class Reference < ActiveRecord::Base
     reference_excerpt.nil? ? nil : reference_excerpt.body
   end
 
-  # Returns recent references for the given object
-  # input: {object_model: str, object_id: int}, or array of objs , or array of ActiveModels
-  # Output: Array
-  def self.recent_references(objects, limit=20)
-    objects = Array.new << objects if objects.class == Hash
-    Reference.where(generate_recent_references_wheres(objects)).order('updated_at DESC').limit(limit)
-  end
-
   # The regular validation process includes checks for object_id, and object_model.
   # This checks that the other fields are valid, so we know we can safely create the object if we provided the object_id and object_model
   # Returns: Hash
@@ -46,17 +38,32 @@ class Reference < ActiveRecord::Base
     errors
   end
 
-  # Array -> Str
-  # Generates where statement to query for  recent references.
-  # Input can be an array of hashes or ActiveRecord models
-  def self.generate_recent_references_wheres(objects)
-    case objects[0]
-    when Hash
-      objects.map { |o| "(object_model = '#{o[:object_model]}' AND object_id = #{o[:object_id]})" }.join(' OR ')
-    when Entity, Relationship
-      objects.map { |o| "(object_model = '#{o.class.to_s}' AND object_id = #{o.id})" }.join(' OR ')
-    else
-      raise ArgumentError, :message => "Input must be an Array of Hashes or Active Record models"
-    end
+  # Returns recent references for a set of models and ids
+  # input: hash | array, int
+  # hash format: { class_name: 'ClassName', object_ids: [object_ids] }
+  # You can also input an array of hashes.
+  # example:
+  #    .recent_references( [ { :class_name = "Entity", :object_ids => [10,11,12] }, { :class_name = "Relationship", :object_ids => [100,101] } ] )
+  def self.recent_references(info, limit = 20)
+    raise ArgumentError unless info.is_a?(Hash) || info.is_a?(Array)
+    info_array = info.is_a?(Hash) ? [info] : info
+    where_statement = info_array.collect { |h| generate_where(h) }.join(' OR ')
+    where(where_statement).order('updated_at DESC').limit(limit)
+  end
+
+  # input: <Entity>
+  # output: <Reference::ActiveRecord_Relation>
+  # Retrives  references for the entity AND for relationships that the entity is in
+  def self.all_entity_references(entity)
+    rel_ids = entity.links.map(&:relationship_id)
+    ref_query = [{ class_name: 'Entity', object_ids: [ entity.id ] }]
+    ref_query.append({ class_name: 'Relationship', object_ids: rel_ids }) unless rel_ids.empty?
+    recent_references(ref_query, nil)
+  end
+
+  # input: hash with keys: :class_name, :object_id
+  # output: str
+  private_class_method def self.generate_where(h)
+    "( object_model = '#{h[:class_name]}' AND object_id IN (#{h[:object_ids].join(',')}) )"
   end
 end

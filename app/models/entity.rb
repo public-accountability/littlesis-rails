@@ -5,6 +5,7 @@ class Entity < ActiveRecord::Base
   include Referenceable
   include Political
   include ApiAttributes
+  include SimilarEntities
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
@@ -143,7 +144,7 @@ class Entity < ActiveRecord::Base
   end
 
   def extension_ids
-    extension_records.pluck(:definition_id)
+    extension_records.map(&:definition_id)
   end
 
   def extension_ids_without_primary
@@ -675,6 +676,42 @@ class Entity < ActiveRecord::Base
     else
       return nil
     end
+  end
+
+  # returns hash of basc info for the given entity
+  def basic_info
+    info = {}
+    info[:types] = types.join(', ')
+    if person?
+      info[:gender] = person.gender unless person.gender_id.nil?
+      info[:birthday] = LsDate.new(start_date).basic_info_display unless start_date.nil?
+      info[:date_of_date] = LsDate.new(end_date).basic_info_display unless end_date.nil?
+    end
+    if org?
+      info[:start_date] = LsDate.new(start_date).basic_info_display unless start_date.nil?
+      info[:end_date] = LsDate.new(end_date).basic_info_display unless end_date.nil?
+      info[:revenue] = ActiveSupport::NumberHelper.number_to_human(org.revenue) unless org.revenue.blank?
+    end
+    info[:website] = website unless website.blank?
+    info[:industries] = industries.join(', ') unless industries.empty?
+    info[:aliases] = also_known_as.join(', ') unless also_known_as.empty?
+    # TODO: address
+    info
+  end
+
+  def also_known_as
+    aliases.where(is_primary: false).map(&:name)
+  end
+
+  # Returns all associated references and references for all relationships the entity is in
+  def all_references
+    Reference.all_entity_references(self)
+  end
+
+  # The cacheable concern overrides 'cache_key' and uses it for legacy caching.
+  # So until we rid ourselves of legacy cache, will use alt_cache_key  @('_')@
+  def alt_cache_key
+    "entity/#{id}-#{updated_at.to_i}"
   end
 
   class EntityDeleted < ActiveRecord::ActiveRecordError
