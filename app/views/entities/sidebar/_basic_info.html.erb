@@ -1,0 +1,15 @@
+<table class="table table-condensed table-hover basic-info-table">
+    <tbody>
+    <% basic_info.each_pair do |key, val| %>
+	<tr>
+	    <td><strong><%= key.capitalize %></strong></td>
+	    <% if key == :website %>
+		<td><%= link_to val, '_target' => 'blank' %>
+	    <% else %>
+		<td><%= val %></td>
+	    <% end %>
+	</tr>
+
+    <% end %>
+    </tbody>
+</table>

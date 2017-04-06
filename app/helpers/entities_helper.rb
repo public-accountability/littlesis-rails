@@ -155,12 +155,6 @@ module EntitiesHelper
     )
   end
 
-  def sidebar_basic_info(basic_info)
-    basic_info.collect do |key, val|
-      content_tag(:strong, "#{key}: ") + content_tag(:span, val) + tag(:br)
-    end.reduce(:+)
-  end
-
   # To eager load list and list_entities: Entity.includes(list_entities: [:lists])
   def sidebar_lists(list_entities)
     list_entities.collect do |list_entity|

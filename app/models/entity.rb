@@ -693,7 +693,7 @@ class Entity < ActiveRecord::Base
       info[:revenue] = ActiveSupport::NumberHelper.number_to_human(org.revenue) unless org.revenue.blank?
     end
     info[:website] = website unless website.blank?
-    info[:industries] = industries.join(', ') unless industries.empty?
+    #info[:industries] = industries.join(', ') unless industries.empty?
     info[:aliases] = also_known_as.join(', ') unless also_known_as.empty?
     # TODO: address
     info

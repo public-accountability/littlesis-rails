@@ -15,3 +15,10 @@
 	cursor: pointer;
     }
 }
+
+.basic-info-table {
+    th, td {
+	border-top: none !important; 
+    }
+}
+     
