@@ -1,7 +1,7 @@
 <div class="row thin-grey-bottom-border">
     <div id="actions" class="col-md-8"> 
         <%= link_to "add relationship", @entity.legacy_url("addRelationship") %>
-        <%= link_to "edit", @entity.legacy_url("edit") %>
+        <%= link_to "edit", edit_entity_path(@entity) %>
         <%= link_to "flag", flag_path %>
         <% if user_signed_in? %>
             <% if @current_user.has_legacy_permission 'deleter' %>

@@ -3,7 +3,7 @@ class Person < ActiveRecord::Base
 
   has_paper_trail :on => [:update, :destroy]
 
-  belongs_to :entity, inverse_of: :person
+  belongs_to :entity, inverse_of: :person, touch: true
 
   validates :name_last, length: { maximum: 50 }, presence: true
   validates :name_first, length: { maximum: 50 }, presence: true

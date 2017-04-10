@@ -15,7 +15,7 @@ class Reference < ActiveRecord::Base
   def ref_types
     @@ref_types
   end
-  
+
   def ref_type_display
     @@ref_types[ref_type]
   end

@@ -157,7 +157,7 @@ module EntitiesHelper
   def sidebar_reference(reference)
     ref_name = reference.name.nil? ? reference.source : reference.name
     link_to(
-      content_tag(:li, ref_name.truncate(33)),
+      content_tag(:li, ref_name.truncate(40)),
       reference.source,
       target: "_blank"
     )

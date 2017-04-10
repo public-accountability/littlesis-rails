@@ -37,7 +37,7 @@ class Entity < ActiveRecord::Base
   has_many :article_entities, inverse_of: :entity, dependent: :destroy
   has_many :articles, through: :article_entities, inverse_of: :entities
   has_many :queue_entities, inverse_of: :entity, dependent: :destroy
-
+  
   # extensions
   has_one :person, inverse_of: :entity, dependent: :destroy
   has_one :org, inverse_of: :entity, dependent: :destroy
@@ -82,6 +82,7 @@ class Entity < ActiveRecord::Base
 
   before_create :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext, :add_to_default_network
+  after_save :clear_entity_cache_delay
 
   def set_last_user_id
     self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
@@ -740,4 +741,8 @@ class Entity < ActiveRecord::Base
     self.class.all_extension_names_with_fields.include?(name)
   end
 
+  def clear_entity_cache_delay
+    clear_legacy_cache('littlesis.org').delay unless Rails.env.test?
+  end
+  
 end
