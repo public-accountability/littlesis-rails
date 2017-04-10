@@ -5,6 +5,7 @@ class Link < ActiveRecord::Base
   belongs_to :relationship, inverse_of: :links
   belongs_to :entity, foreign_key: "entity1_id", inverse_of: :links
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id", inverse_of: :reverse_links
+  has_many :references, through: :relationship
   has_many :chained_links, class_name: "Link", foreign_key: "entity1_id", primary_key: "entity2_id"
 
   def self.interlock_hash_from_entities(entity_ids)

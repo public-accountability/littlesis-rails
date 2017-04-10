@@ -1,3 +1,4 @@
+# coding: utf-8
 class Relationship < ActiveRecord::Base
   include SingularTable
   include SoftDelete
@@ -22,10 +23,11 @@ class Relationship < ActiveRecord::Base
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
-  
+  has_many :references, -> { where(object_model: 'Relationship') }, foreign_key: 'object_id'
+
   #has_many :note_relationships, inverse_of: :relationship
   # has_many :notes, through: :note_relationships, inverse_of: :relationships
-  
+
   has_one :position, inverse_of: :relationship, dependent: :destroy
   has_one :education, inverse_of: :relationship, dependent: :destroy
   has_one :membership, inverse_of: :relationship, dependent: :destroy
