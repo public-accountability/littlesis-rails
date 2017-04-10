@@ -24,7 +24,14 @@ div.tri-boolean-container {
     }
 } 
 
+span.alias-remove {
+    color: black;
+}
+span.alias-remove:hover {
+    color: $link_blue;
+}
 
 .entity-type-toggle {
     color: black;
 }
+

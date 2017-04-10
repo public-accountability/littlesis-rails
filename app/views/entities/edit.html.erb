@@ -125,9 +125,15 @@
 	    <%= link_to 'Cancel', @entity.legacy_url, class: 'btn btn-default m-left-1em' %>
 	</div>
     </div>
-
-
+    <div class="clearfix"></div>
 <% end %>
+<hr>
+<div class="row">
+    
+	<%= render partial: 'edit_aliases' %>
+    </div>
+</div>
+
 
 <script>
  $(function(){

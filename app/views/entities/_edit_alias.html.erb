@@ -1,0 +1,17 @@
+<!-- locals: 'entity_alias' -->
+<li class="list-group-item">
+    <!-- <span class="label label-default">Primary</span> -->
+    <%= entity_alias.name %>
+    <% if entity_alias.is_primary? %>
+	<span class="label label-success"">Primary</span>
+    <% else %>
+	<div class="pull-right">
+	    <button type="button" class="btn btn-default btn-xs" title="Make this the primary alias">
+		<span class="glyphicon glyphicon-star" aria-hidden="true"></span> Primary</button>
+	    
+	    <a href="http://localhost:8080/REMOVE" class="pad-left-1em " title="Remove this alias">
+		<span class="glyphicon glyphicon-remove alias-remove hvr-pop"></span>
+	    </a>
+	</div>
+    <% end %>
+</li>
