@@ -15,10 +15,11 @@ class LinksGroup
   end
 
   def order(links)
-    return links.sort { |a, b| b.related.links.count <=> a.related.links.count } if @category_id == 4
+    # return links.sort { |a, b| b.related.links.count <=> a.related.links.count } if @category_id == 4
+    return links.sort_by { |link| link.related.link_count } if @category_id == 4
     return links.sort { |a, b| a.relationship.amount && b.relationship.amount ? b.relationship.amount <=> a.relationship.amount : -1 } if @category_id == 5
-    return links # Default ordering is end date descending, handled in db query
-
+    # TODO sort by date here or do sorting in SQL
+    return links.sort_by { |link| link.relationship.updated_at }
   end
 
 

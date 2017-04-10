@@ -7,11 +7,7 @@ class EntitiesController < ApplicationController
 
   def show
     @similar_entities = @entity.similar_entities
-    if Rails.env == 'production'
-      @links = cache_sorted_links
-    else
-      @links = sorted_links
-    end
+    @links = cache_sorted_links
   end
 
   def new
@@ -416,7 +412,7 @@ class EntitiesController < ApplicationController
   end
 
   def cache_sorted_links
-    Rails.cache.fetch("#{@entity.alt_cache_key}/sorted_links", expires_in: 7.days) do
+    Rails.cache.fetch("#{@entity.alt_cache_key}/sorted_links", expires_in: 1.day) do
       sorted_links
     end
   end
