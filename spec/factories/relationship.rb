@@ -1,4 +1,8 @@
 FactoryGirl.define do
+  sequence :relationship_id do |n|
+    n
+  end
+  
   factory :relationship_with_house, class: Relationship do
     # entity1_id 10551
     entity2_id 12884
@@ -11,8 +15,14 @@ FactoryGirl.define do
 
   factory :generic_relationship, class: Relationship do
     category_id 12
+    id { generate(:relationship_id) }
   end
-
+  
+  factory :donation_relationship, class: Relationship do
+    category_id 5
+    id { generate(:relationship_id) }
+  end
+  
   factory :position_relationship, class: Relationship do
     entity1_id 100
     entity2_id 200

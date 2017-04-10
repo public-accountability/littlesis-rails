@@ -1,0 +1,38 @@
+<%= render partial: 'header', locals: { entity: @entity } %>
+<%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
+
+<div class="row">
+    <h3>The sources documenting <%= @entity.name %></h3>
+    <% if user_signed_in? %>
+	<p><a href="#add-reference-modal" data-toggle="modal">Add a new reference</a></p>
+    <% end %>	    
+</div>
+
+<div class="col-sm-12 col-md-12">
+    <table class="table table-hover">
+	<caption>Total Number of references: <code><%= @reference_count %></code></caption>
+	<thead>
+	    <tr>
+		<th>Name</th>
+		<th>Url</th>
+		<th>type</th>
+	    </tr>
+	</thead>
+	<tbody>
+	    <% @references.each do |ref| %>
+		<tr>    
+		    <td><%= ref.name %></td>
+		    <td><%= link_to ref.source, ref.source, '_target' => 'blank' %></td>
+		    <td><%= ref.ref_type_display  %></td>
+		</tr>
+	    <% end %>
+	</tbody>
+    </table>
+    <%= paginate @references %>
+</div>
+</div>
+
+<% if user_signed_in? %>
+    <%= render partial: 'shared/reference_new', locals: {model: @entity, reference: nil} %>
+<% end %>
+    

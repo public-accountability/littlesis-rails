@@ -8,9 +8,12 @@ module Referenceable
     scope :active, -> { where(is_deleted: false) }
     scope :deleted, -> { where(is_deleted: true) }
   end
-  
-  def references
-    Reference.where(object_model: self.class.table_name.classify, object_id: id)
+
+  def references(options = {})
+    refs = Reference.where(object_model: self.class.table_name.classify, object_id: id)
+    refs = refs.order('updated_at DESC') if options[:order]
+    refs = refs.limit(options[:limit]) if options[:limit]
+    refs
   end
 
   def add_reference(source, name = nil)

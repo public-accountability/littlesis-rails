@@ -51,4 +51,33 @@ describe EntitiesHelper do
       expect(helper.glyph_checkbox(false, 15)).to include 'data-definition-id="15"'
     end
   end
+
+  describe 'Sidebar helpers' do
+    # describe '#sidebar_reference_count' do
+    #   it 'generates correct text' do
+    #     expect(helper.sidebar_reference_count(22)).to include "Number of references"
+    #     expect(helper.sidebar_reference_count(22)).to include "22"
+    #     expect(helper.sidebar_reference_count(22)).to include "<span"
+    #   end
+    # end
+
+    describe '#sidebar references' do
+      it 'creates 10 ul tags' do
+        refs = Array.new(10).collect { build(:entity_ref) }
+        expect(helper.sidebar_references(refs).scan(/<li>/).count).to eq 10
+      end
+    end
+
+    describe '#sidebar_reference' do
+      before { @ref = build(:entity_ref) }
+
+      it 'has link and li tag' do
+        expect(helper.sidebar_reference(@ref)).to have_selector(:css, "a li", count: 1)
+      end
+
+      it 'includes entity url' do
+        expect(helper.sidebar_reference(@ref)).to include 'littlesis.org'
+      end
+    end
+  end # end Sidebar helpers
 end

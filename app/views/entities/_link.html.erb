@@ -1,0 +1,21 @@
+<div class='relationship-section'>
+    <div class='related_entity'>
+        <div class='related_entity_entity'>
+            <span class='related_entity_name'><%= link_to link[0].related.name, entity_path(link[0].related) %></span>
+            <span class='related_entity_blurb'><%= link[0].related.blurb %></span>
+        </div>
+
+        <div class='related_entity_relationship'>
+            <span>  •  <%= link_to "#{link[0].description} #{link[0].relationship.display_date_range}", relationship_path(link[0].relationship) %></span>
+            <span class='toggle' onclick='entity.relationshipsToggle(event)'><%= extra_links_count(link) %></span>
+        </div>
+
+        <div class='collapse'>
+            <% link.drop(1).each do |l| %>
+                <div class='related_entity_relationship'>
+                    <span>  •  <%= link_to "#{l.description} #{l.relationship.display_date_range}", relationship_path(l.relationship) %></span>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</div>

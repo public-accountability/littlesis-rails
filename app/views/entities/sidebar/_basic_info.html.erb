@@ -1,0 +1,18 @@
+<table class="table table-condensed table-hover basic-info-table">
+    <tbody>
+    <% basic_info.each_pair do |key, val| %>
+	<tr>
+	    <td><strong><%= key.capitalize %></strong></td>
+	    <% if key == :website %>
+		<td><%= link_to val, '_target' => 'blank' %>
+	    <% else %>
+		<td><%= val %></td>
+	    <% end %>
+	</tr>
+    <% end %>
+    <% unless @entity.os_categories.blank? %>
+	<td><strong>Industries</strong></td>
+	<td><%= raw sidebar_industry_links(@entity.os_categories) %></td>
+    <% end %>
+    </tbody>
+</table>

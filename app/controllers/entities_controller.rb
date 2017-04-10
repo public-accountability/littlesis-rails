@@ -1,10 +1,13 @@
 class EntitiesController < ApplicationController
-  before_filter :authenticate_user!, except: [:show, :relationships, :political, :contributions]
-  before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names]
+  before_filter :authenticate_user!, except: [:show, :relationships, :political, :contributions, :references]
+  before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show]
+  before_action :set_entity_with_eager_loading, only: [:show]
   before_action :set_current_user, only: [:show, :political, :match_donations]
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
 
   def show
+    @similar_entities = @entity.similar_entities
+    @links = cache_sorted_links
   end
 
   def new
@@ -65,7 +68,6 @@ class EntitiesController < ApplicationController
       set_entity_references
       render :edit
     end
-
   end
 
   def relationships
@@ -77,6 +79,12 @@ class EntitiesController < ApplicationController
   end
 
   def political
+  end
+
+  def references
+    refs = @entity.all_references
+    @reference_count = refs.size
+    @references = Kaminari.paginate_array(refs).page(params[:page]).per(25)
   end
 
   # ------------------------------ #
@@ -398,8 +406,23 @@ class EntitiesController < ApplicationController
 
   private
 
+  def sorted_links
+    links = Link.preload(:relationship, related: [:extension_records]).where(entity1_id: @entity.id)
+    SortedLinks.new(links)
+  end
+
+  def cache_sorted_links
+    Rails.cache.fetch("#{@entity.alt_cache_key}/sorted_links", expires_in: 1.day) do
+      sorted_links
+    end
+  end
+
   def set_current_user
     @current_user = current_user
+  end
+
+  def set_entity_with_eager_loading
+    @entity = Entity.includes(:aliases, list_entities: [:list]).find(params[:id])
   end
 
   def set_entity
@@ -437,7 +460,7 @@ class EntitiesController < ApplicationController
   def update_entity_params
     params.require(:entity).permit(
       :name, :blurb, :summary, :notes, :website, :start_date, :end_date, :is_current, :is_deleted,
-      person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender, :id ],
+      person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender_id, :id ],
       public_company_attributes: [:ticker, :id],
       school_attributes: [:is_private, :id]
     )

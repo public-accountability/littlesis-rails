@@ -12,9 +12,8 @@ describe List do
     l.name = "bad politicians"
     expect(l).to be_valid
   end
-  
+
   context "active relationships" do
-    
     it 'joins entities via ListEntity' do
       list_entity_count = ListEntity.count
       list = create(:list)
@@ -84,7 +83,7 @@ describe List do
       l.destroy
       expect(List.count).not_to eq(List.unscoped.count)
     end
-    
+
     it 'sets is_deleted to true' do
       l = create(:list)
       expect(l.is_deleted).to eq(false)
@@ -111,7 +110,36 @@ describe List do
       expect(List.unscoped.active.all.count).to eq(c)
       expect(List.unscoped.deleted.all.count).to eq(2)
     end
+  end
 
+  describe '#user_can_access?' do
+    it 'returns true if no user is provided and is a public list' do
+      l = build(:list, is_private: false)
+      expect(l.user_can_access?).to be true
+    end
+
+    it 'returns true if user is provided and is a public list' do
+      l = build(:list, is_private: false)
+      expect(l.user_can_access?(build(:user))).to be true
+      expect(l.user_can_access?(123)).to be true
+    end
+
+    it 'returns false for private lists' do
+      l = build(:list, is_private: true, creator_user_id: rand(1000))
+      expect(l.user_can_access?).to be false
+      expect(l.user_can_access?(build(:user))).to be false
+    end
+
+    it 'returns true for private lists if user is owner of the list' do
+      user = build(:user_with_id)
+      user2 = build(:user, id: (user.id + 1))
+      l = build(:list, is_private: true, creator_user_id: user.id)
+      expect(l.user_can_access?(user)).to be true
+      expect(l.user_can_access?(user.id)).to be true
+      expect(l.user_can_access?(user2)).to be false
+      expect(l.user_can_access?(user2.id)).to be false
+      expect(l.user_can_access?).to be false
+    end
   end
 
   context 'Using paper_trail for versioning' do
@@ -130,5 +158,4 @@ describe List do
       end
     end
   end
-
 end

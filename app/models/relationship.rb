@@ -1,3 +1,4 @@
+# coding: utf-8
 class Relationship < ActiveRecord::Base
   include SingularTable
   include SoftDelete
@@ -22,10 +23,11 @@ class Relationship < ActiveRecord::Base
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
-  
+  has_many :references, -> { where(object_model: 'Relationship') }, foreign_key: 'object_id'
+
   #has_many :note_relationships, inverse_of: :relationship
   # has_many :notes, through: :note_relationships, inverse_of: :relationships
-  
+
   has_one :position, inverse_of: :relationship, dependent: :destroy
   has_one :education, inverse_of: :relationship, dependent: :destroy
   has_one :membership, inverse_of: :relationship, dependent: :destroy
@@ -295,6 +297,8 @@ class Relationship < ActiveRecord::Base
     if description1.blank?
       if is_board
         return "Board Member"
+      elsif is_position?
+        return "Position"
       elsif is_member?
         return "Member"
       elsif is_education? and education.degree.present?
@@ -305,6 +309,15 @@ class Relationship < ActiveRecord::Base
       end
     else
       description1
+    end
+  end
+
+  def display_date_range
+    if start_date == nil && end_date == nil
+      return '(past)' if is_current == false
+    else 
+      return "(#{LsDate.new(start_date).display})" if start_date == end_date && is_donation?
+      return "(#{LsDate.new(start_date).display}→#{LsDate.new(end_date).display})"
     end
   end
   
@@ -336,6 +349,19 @@ class Relationship < ActiveRecord::Base
 
   def shares_owned
     ownership.nil? ? nil : ownership.shares
+  end
+
+  ## position ##
+
+  def position_or_membership_type 
+    return 'None' unless (is_position? || is_member?)
+
+    org_types = related.extension_names
+
+    return 'Business' if (org_types & ['Business', 'BusinessPerson']).any?
+    return 'Government' if org_types.include? 'GovernmentBody'
+    return 'In The Office Of' if (org_types & ['ElectedRepresentative', 'PublicOfficial']).any?
+    return 'Other Positions & Memberships'
   end
 
   ########################
