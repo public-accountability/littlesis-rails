@@ -23,7 +23,13 @@ class SortedLinks
               :parents,
               :miscellaneous
 
-  def initialize(links)
+  # input: [ <Link> ] or <Entity>
+  def initialize(links_or_entity)
+    if links_or_entity.is_a? Entity
+      links = preloaded_links(links_or_entity.id)
+    else
+      links = links_or_entity
+    end
     create_subgroups(cull_invalid links)
   end
 
@@ -101,10 +107,14 @@ class SortedLinks
 
   private 
 
-  def cull_invalid(links)
-  	links.select { |l| l.related.present? }
+  def preloaded_links(entity_id)
+    Link.preload(:relationship, related: [:extension_records]).where(entity1_id: entity_id)
   end
-  
+
+  def cull_invalid(links)
+    links.select { |l| l.related.present? }
+  end
+
   def split(links)
     links.partition { |l| l.is_reverse == true }
   end

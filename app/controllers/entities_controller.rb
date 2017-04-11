@@ -7,7 +7,7 @@ class EntitiesController < ApplicationController
 
   def show
     @similar_entities = @entity.similar_entities
-    @links = cache_sorted_links
+    # @links = cache_sorted_links
   end
 
   def new
