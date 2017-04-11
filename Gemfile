@@ -110,7 +110,7 @@ gem 'twitter'
 gem 'poltergeist'
 gem 'mechanize'
 gem 'StreetAddress', :require => "street_address"
-gem 'sequel'
+gem 'sequel', :require => false
 gem 'rmagick'
 
 gem 'capybara', '>= 2.10'
