@@ -12,7 +12,12 @@ class AliasesController < ApplicationController
   end
 
   def update
-    
+  end
+
+  def make_primary
+    a = Alias.find(params[:id])
+    a.make_primary
+    redirect_to edit_entity_path(a.entity)
   end
 
   def destroy
@@ -22,7 +27,7 @@ class AliasesController < ApplicationController
   end
 
   private
-
+  
   def alias_params
     params.require(:alias).permit(:name, :entity_id).merge(last_user_id: current_user.sf_guard_user_id)
   end

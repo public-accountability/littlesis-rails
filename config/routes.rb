@@ -168,7 +168,11 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :aliases, only: [:create, :destroy, :update]
+  resources :aliases, only: [:create, :destroy, :update] do
+    member do
+      patch 'make_primary'
+    end
+  end
 
   resources :notes, only: [:new, :create, :destroy, :index]
 

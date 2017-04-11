@@ -5,6 +5,7 @@ describe AliasesController, type: :controller do
   it { should route(:patch, '/aliases/123').to(action: :update, id: 123) }
   it { should route(:post, '/aliases').to(action: :create) }
   it { should route(:delete, '/aliases/123').to(action: :destroy, id: 123) }
+  it { should route(:patch, '/aliases/123/make_primary').to(action: :make_primary, id: 123) }
 
   describe '#create' do
     login_user
@@ -43,6 +44,22 @@ describe AliasesController, type: :controller do
         post :create, bad_params
         expect(controller).to set_flash[:alert]
       end
+    end
+  end
+
+  describe '#make_primary' do
+    login_user
+    
+    before do
+      @entity = build(:person)
+      @alias = build(:alias, entity: @entity)
+      expect(Alias).to receive(:find).with('123').and_return(@alias)
+      expect(@alias).to receive(:make_primary).once.and_return(true)
+    end
+
+    it 'redirects to edit entity path' do
+      patch :make_primary, id: 123
+      expect(response).to redirect_to edit_entity_path(@entity)
     end
   end
 
