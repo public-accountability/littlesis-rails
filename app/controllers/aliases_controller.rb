@@ -12,9 +12,13 @@ class AliasesController < ApplicationController
   end
 
   def update
+    
   end
 
   def destroy
+    a = Alias.find(params[:id])
+    a.destroy unless a.is_primary?
+    redirect_to edit_entity_path(a.entity)
   end
 
   private

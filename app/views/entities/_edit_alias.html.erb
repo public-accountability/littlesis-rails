@@ -1,16 +1,31 @@
 <!-- locals: 'entity_alias' -->
 <li class="list-group-item">
-    <!-- <span class="label label-default">Primary</span> -->
     <%= entity_alias.name %>
+    
     <% if entity_alias.is_primary? %>
+	
 	<span class="label label-success"">Primary</span>
-    <% else %>
+
+    <% elsif entity_alias.persisted?  %> <!-- avoids blank caused by new alias associated with @entity -->
+
 	<div class="pull-right">
-	    <button type="button" class="btn btn-default btn-xs" title="Make this the primary alias">Make primary</button>
 	    
-	    <a href="http://localhost:8080/REMOVE" class="pad-left-1em " title="Remove this alias">
-		<span class="glyphicon glyphicon-remove alias-remove hvr-pop"></span>
-	    </a>
+
+	    <button type="button" class="btn btn-default btn-xs" title="Make this the primary alias">Make primary</button>
+	
+
+	    <!-- Delete alias button -->
+
+	    <%= form_for entity_alias, { method: :delete, html: { class: 'alias-form' } }  do |f| %>
+		<a 
+		    href="javascript:{}" 
+		    onclick="document.getElementById('<%= get_form_id(f) %>').submit();" 
+		    title="Remove this alias">
+		    <span class="glyphicon glyphicon-remove alias-remove hvr-pop"></span>
+		</a>
+	    <% end %>
+	
+
 	</div>
     <% end %>
 </li>

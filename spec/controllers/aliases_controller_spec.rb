@@ -8,7 +8,7 @@ describe AliasesController, type: :controller do
 
   describe '#create' do
     login_user
-    before(:all)  { @entity = create(:org) }
+    before(:all) { @entity = create(:org) }
 
     context 'with valid params' do
       def new_alias_post
@@ -42,6 +42,33 @@ describe AliasesController, type: :controller do
       it 'sets flash' do
         post :create, bad_params
         expect(controller).to set_flash[:alert]
+      end
+    end
+  end
+
+  describe '#destroy' do
+    login_user
+    before(:all) { @entity = create(:org) }
+    before { @alias = create(:alias, entity_id: @entity.id) }
+
+    it 'delete one alias' do
+      expect { delete :destroy, id: @alias.id }.to change { Alias.count }.by(-1)
+    end
+
+    it 'reduces entity\'s aliases by one' do
+      expect { delete :destroy, id: @alias.id }
+        .to change { Entity.find(@entity.id).aliases.count }.by(-1)
+    end
+
+    it 'redirects to edit entity path' do
+      delete :destroy, id: @alias.id
+      expect(response).to redirect_to edit_entity_path(@entity)
+    end
+
+    context 'primary alias' do
+      before { @alias = create(:alias, entity_id: @entity.id, is_primary: true) }
+      it 'does not delete the alias if it is the primary alias' do
+        expect { delete :destroy, id: @alias.id }.not_to change { Alias.count }
       end
     end
   end

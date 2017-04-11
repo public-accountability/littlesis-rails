@@ -342,6 +342,17 @@ describe Entity do
     end
   end
 
+  describe 'primary_alias' do
+    before { @org = create(:org) }
+
+    it 'returns the primary alias' do
+      primary_a = @org.aliases[0]
+      @org.aliases.create(name: 'other name')
+      expect(@org.aliases.count).to eql 2
+      expect(@org.primary_alias).to eql primary_a
+    end
+  end
+
   describe 'Using paper_trail for versision' do
     with_versioning do
       it 'creates version after updating name' do

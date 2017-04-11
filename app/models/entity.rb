@@ -88,8 +88,14 @@ class Entity < ActiveRecord::Base
     self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
   end
 
+  # creates primary alias if the entity does not have one
   def create_primary_alias
     Alias.create(entity: self, name: name, is_primary: true, last_user_id: Lilsis::Application.config.system_user_id) unless aliases.where(is_primary: true).count > 0
+  end
+
+  # retrives the primary alias -> <Alias>
+  def primary_alias
+    aliases.find_by_is_primary(true)
   end
 
   def create_primary_ext
