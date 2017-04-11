@@ -1,0 +1,35 @@
+<!-- locals: 'entity_alias' -->
+
+<% if entity_alias.persisted? %> <!-- avoids blank caused by new alias associated with @entity -->
+
+    <li class="list-group-item">
+	<%= entity_alias.name %>
+	
+	<% if entity_alias.is_primary? %>
+	    
+	    <span class="label label-success"">Primary</span>
+
+	<% else  %> 
+
+	    <div class="pull-right">
+		
+		<%= form_tag make_primary_alias_path(entity_alias), method: :patch, class: 'alias-form' do  %>
+		    <button type="submit" class="btn btn-default btn-xs" title="Make this the primary alias">Make primary</button>
+		<% end %>
+		
+		<!-- Delete alias button -->
+
+		<%= form_for entity_alias, { method: :delete, html: { class: 'alias-form' } }  do |f| %>
+		    <a 
+			href="javascript:{}" 
+			onclick="document.getElementById('<%= get_form_id(f) %>').submit();" 
+			title="Remove this alias">
+			<span class="glyphicon glyphicon-remove alias-remove hvr-pop"></span>
+		    </a>
+		<% end %>
+
+	    </div>
+	<% end %>
+    </li>
+
+<% end %>

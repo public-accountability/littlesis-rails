@@ -187,6 +187,10 @@ module EntitiesHelper
       .reduce(&:+)
   end
 
+  def get_form_id(f)
+    f.instance_variable_get('@options')[:html][:id]
+  end
+
   private
 
   # Filters refereces to uniq url/name

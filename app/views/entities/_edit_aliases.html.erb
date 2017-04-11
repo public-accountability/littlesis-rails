@@ -1,0 +1,28 @@
+<h2>Aliases <small style="padding-left: 10px">additional names for the <%= @entity.org? ? 'entity' : 'person' %></small></h2>
+
+<div class="col-sm-12 col-md-10 col-lg-8">
+    <p> Create a new alias:</p>
+    <%= form_for @entity.aliases.new, :html => { class: 'form-inline' } do |f| %>
+	<%= f.hidden_field :entity_id, value: @entity.id %>
+	<div class="form-group">
+	    <%= f.text_field :name, {required: true, class: 'form-control'}  %>
+	    <%= f.submit 'Add', class: 'btn btn-primary' %>
+	</div>
+    <% end %>
+</div>
+<div class="clearfix"></div>
+
+<div class="col-sm-8 col-md-6 top-1em">
+    <% if @entity.aliases.size > 1 %>
+	<p>Click "make primary" to change the entity's default name</p>
+    <% end %>
+    
+    <ul class="list-group">
+    <!-- <ul class="list-unstyled"> -->
+	<% @entity.aliases.each do |a| %>
+	    <%= render partial: 'edit_alias', locals: { entity_alias: a }%>
+	<% end %>
+    </ul>
+</div>
+
+<div class="top-3em"</div>

@@ -5,7 +5,13 @@
 
 <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder  do |f| %>
     
-    <div class="row top-3em">
+    <div class="row top-1em">
+	<div class="col-sm-12">
+	    <span class="small-text text-muted">This is the <em>new</em> version of the edit entity page. <%= link_to "Click here", @entity.legacy_url("edit/legacy") %> to use the older version instead.</span>
+	</div>
+    </div>
+    
+    <div class="row top-1em">
 	<%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
 	<div class="col-sm-4 col-sm-offset-1">
 	    <%= render partial: 'shared/editing/reference_errors' %>
@@ -119,9 +125,15 @@
 	    <%= link_to 'Cancel', @entity.legacy_url, class: 'btn btn-default m-left-1em' %>
 	</div>
     </div>
-
-
+    <div class="clearfix"></div>
 <% end %>
+<hr>
+<div class="row">
+    
+	<%= render partial: 'edit_aliases' %>
+    </div>
+</div>
+
 
 <script>
  $(function(){
