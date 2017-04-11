@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.7'
+gem 'rails', '4.2.8'
 gem 'mysql2', '~> 0.3.21'
 
 # users and authentication
@@ -86,7 +86,7 @@ gem 'rails_autolink'
 gem 'soap4r-ruby1.9'
 
 group :development do 
-  gem 'web-console', '~> 2.0' 
+  gem 'web-console', '~> 2.0'
 end
 
 group :test, :development do
@@ -98,7 +98,7 @@ group :test, :development do
   gem 'rspec-html-matchers'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'shoulda-callback-matchers', '~> 1.1.4'
-  ###########################  
+  ###########################
   gem 'better_errors', '0.7.0'
   gem 'binding_of_caller', '0.7.2'
 end  
@@ -115,7 +115,7 @@ gem 'rmagick'
 
 gem 'capybara', '>= 2.10'
 gem 'capybara-webkit'
-gem 'paper_trail', '>= 5.1.1'
+gem 'paper_trail', '5.2.3'
 
 # no longer needed for
 # gem 'foreigner'
@@ -123,9 +123,9 @@ gem 'paper_trail', '>= 5.1.1'
 gem 'validate_url'
 gem 'geocoder'
 gem 'rack-mini-profiler'
-# gem 'ruby-opencv'
 
-gem "passenger"
+# gem 'ruby-opencv'
+# gem "passenger"
 
 # used for screenshot capture
 gem 'selenium-webdriver', '>= 3.3.0'
