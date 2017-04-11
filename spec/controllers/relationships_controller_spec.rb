@@ -90,6 +90,8 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'changes updated_at of entities' do
+        e1.update_column(:updated_at, 1.day.ago)
+        e2.update_column(:updated_at, 1.day.ago)
         e1_updated_at = e1.updated_at
         e2_updated_at = e2.updated_at
         post_request
@@ -197,20 +199,22 @@ describe RelationshipsController, type: :controller do
 
     context "it's a good request" do
       before do
-        @e1 = create(:person, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago, name: 'person one')
-        @e2 = create(:mega_corp_inc, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) 
+        @e1 = create(:person, last_user_id: @sf_user.id, created_at: 1.day.ago, name: 'person one')
+        @e2 = create(:mega_corp_inc, last_user_id: @sf_user.id, created_at: 1.day.ago)
         @rel = create(:generic_relationship, entity1_id: @e1.id, entity2_id: @e2.id)
+        @e1.update_column(:updated_at, 1.day.ago)
+        @e2.update_column(:updated_at, 1.day.ago)
         @e1_updated_at = @e1.updated_at
         @e2_updated_at = @e2.updated_at
         patch :update, { id: @rel.id, relationship: {'start_date' => '2012-12-12'}, reference: {'reference_id' => '123'} }
       end
-      
+
       it { should redirect_to(relationship_path) }
-      
+
       it 'updates db' do
         expect(Relationship.find(@rel.id).start_date).to eql '2012-12-12'
       end
-      
+
       it 'changes updated_at of entities' do
         expect(Entity.find(@e1.id).updated_at.to_i).not_to eql @e1_updated_at.to_i
         expect(Entity.find(@e2.id).updated_at.to_i).not_to eql @e2_updated_at.to_i

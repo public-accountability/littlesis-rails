@@ -168,6 +168,8 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  resources :aliases, only: [:create, :destroy, :update]
+
   resources :notes, only: [:new, :create, :destroy, :index]
 
   get "/notes/:username",

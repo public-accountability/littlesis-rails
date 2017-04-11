@@ -80,16 +80,16 @@ describe NysController, type: :controller do
       expect(NyMatch.count).to eql (count + 1)
     end
 
-    it 'changes updated_at field' do 
-      person = create(:person, name: "big donor", updated_at: 1.day.ago)
+    it 'changes updated_at field' do
+      person = create(:person, name: "big donor")
+      person.update_column(:updated_at, 1.day.ago)
       allow(NyMatch).to receive(:match)
-      post(:match_donations, {payload: {disclosure_ids: [1], donor_id: person.id}})
+      post(:match_donations, payload: { disclosure_ids: [1], donor_id: person.id })
       expect(Entity.find(person.id).updated_at > person.updated_at).to be true
     end
-
   end
 
-  describe "#create" do 
+  describe "#create" do
     login_user
     before do 
       ny_filer = build(:ny_filer, filer_id: "C9")
