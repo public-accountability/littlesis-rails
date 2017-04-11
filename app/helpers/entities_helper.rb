@@ -63,7 +63,7 @@ module EntitiesHelper
       'donors',
       'donation_recipients',
       'staff',
-      'political_fundraising_committees',
+      #  'political_fundraising_committees',
       'lobbies',
       'lobbied_by',
       'miscellaneous'

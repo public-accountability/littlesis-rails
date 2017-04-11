@@ -32,6 +32,7 @@ class Link < ActiveRecord::Base
 
   def is_pfc_link?
     return false if related == nil
+    # definition_id = 11
     related.extension_names.include? 'PoliticalFundraising'
   end
 
