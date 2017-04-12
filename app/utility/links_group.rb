@@ -1,5 +1,4 @@
 class LinksGroup
-
   attr_reader :links, :count, :keyword, :heading, :category_id
   
   # input: [ <Link> ] , str, str, integer
@@ -9,9 +8,7 @@ class LinksGroup
     @heading = heading
     @category_id = links.empty? ? nil : links[0].category_id 
     @links = group_by_entity(order(links))
-    Rails.logger.warn @keyword
-    Rails.logger.warn @count
-    Rails.logger.warn @links
+    # In situations where the array size does not represent the total count, i.e. queries with LIMIT
     if count.present?
       @count = count
     else

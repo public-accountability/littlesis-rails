@@ -54,7 +54,7 @@ class SortedLinks
     @page = page.to_i
     @per_page = per_page.to_i
     
-    # If initilized with a section, we only need to load one category
+    # If initialized with a section, we only need to load one category
     if section.present?
       create_subgroups(cull_invalid(preloaded_links_for_section(@entity.id, section)))
     elsif entity.link_count > 100
@@ -133,7 +133,7 @@ class SortedLinks
     @miscellaneous = LinksGroup.new(categories[12], 'miscellaneous', 'Other Affiliations')
   end
 
-  # Sorts position relaitonships (category 1) by creating these attributes:
+  # Sorts position relationships (category 1) by creating these attributes:
   #  - @business_positions
   #  - @government_positions
   #  - @in_the_office_positions
@@ -173,7 +173,7 @@ class SortedLinks
 
   # Some politicians have a huge number of political contributions and
   # loading all of their relationships takes a lot of time.
-  # This retrives all donation links (where the entity is the donor)
+  # This retrieves all donation links (where the entity is the donor)
   # and only *50* donation recipient links, sorted by amount.
   # Integer [, Integer, Integer] -> [ <Link> ]
   def donation_links(entity1_id, page = 1, per_page = 20)

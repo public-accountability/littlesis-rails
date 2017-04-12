@@ -7,7 +7,6 @@ class EntitiesController < ApplicationController
 
   def show
     @similar_entities = @entity.similar_entities
-    # @links = cache_sorted_links
   end
 
   def new
@@ -405,17 +404,6 @@ class EntitiesController < ApplicationController
   end
 
   private
-
-  def sorted_links
-    links = Link.preload(:relationship, related: [:extension_records]).where(entity1_id: @entity.id)
-    SortedLinks.new(links)
-  end
-
-  def cache_sorted_links
-    Rails.cache.fetch("#{@entity.alt_cache_key}/sorted_links", expires_in: 1.day) do
-      sorted_links
-    end
-  end
 
   def set_current_user
     @current_user = current_user
