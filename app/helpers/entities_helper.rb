@@ -42,6 +42,7 @@ module EntitiesHelper
     content_tag(:div, links.heading, class: "subsection") if links.count > 0
   end
 
+  # input: <LinksGroup>
   def link_to_all(links)
     content_tag :div, class: 'section_meta' do 
       content_tag(:span, "Showing 1-10 of #{links.count} :: ") + link_to('see all', entity_url(:relationships => links.keyword))
