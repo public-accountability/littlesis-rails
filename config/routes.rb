@@ -305,6 +305,12 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  #############
+  #  Toolkit  #
+  #############
+  
+  get '/toolkit' => 'toolkit#index'
+  
 
   match "*path", to: "errors#not_found", via: :all
 

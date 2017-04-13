@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<title><%= page_title %></title>
+	<%#= stylesheet_link_tag    "application", media: "all" %>
+	<%#= javascript_include_tag "application" %>
+	<%#= csrf_meta_tags %>
+	<%#= facebook_meta %>
+    </head>
+    <body>
+	
+	<div class="container" id="container">
+	    <%= yield %>
+	</div>
+
+	
+	<!-- <div id="footer">
+	     A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>. 
+	     More <%= link_to('about LittleSis', '/about') %>.
+	     Read the <%= link_to('disclaimer', '/disclaimer') %>.
+	     </div> -->
+    </body>
+</html>
