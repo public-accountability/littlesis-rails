@@ -313,6 +313,8 @@ Lilsis::Application.routes.draw do
   get '/toolkit/new' => 'toolkit#new_page'
   post '/toolkit/create_new_page' => 'toolkit#create_new_page'
 
+  get '/toolkit/:toolkit_page' => 'toolkit#display'
+
   match "*path", to: "errors#not_found", via: :all
 
   # The priority is based upon order of creation: first created -> highest priority.

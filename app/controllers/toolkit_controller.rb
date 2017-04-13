@@ -5,6 +5,15 @@ class ToolkitController < ApplicationController
 
   MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true)
 
+  # GET /toolkit/:toolkit_page
+  def display
+    raise Exceptions::NotFoundError if params[:toolkit_page].blank?
+    page_name = ToolkitPage.pagify_name(params[:toolkit_page])
+    @toolkit_page = ToolkitPage.find_by_name(page_name)
+    raise Exceptions::NotFoundError if @toolkit_page.nil?
+  end
+
+  # GET /toolkit
   def index
     @data = markdown("# i am markdown\n## display me!")
   end

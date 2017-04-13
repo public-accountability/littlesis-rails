@@ -3,7 +3,32 @@ require 'rails_helper'
 describe ToolkitController, type: :controller do
   it { should route(:get, '/toolkit').to(action: :index) }
   it { should route(:get, '/toolkit/new').to(action: :new_page) }
+  it { should route(:get, '/toolkit/some_page').to(action: :display, toolkit_page: 'some_page') }
+  it { should route(:get, '/toolkit/another_page').to(action: :display, toolkit_page: 'another_page') }
   it { should route(:post, '/toolkit/create_new_page').to(action: :create_new_page) }
+
+  describe 'display' do
+    before(:all) do
+      ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts')
+    end
+
+    it 'responds with 404 if page does not exist' do
+      get :display, toolkit_page: 'not_a_page_yet'
+      expect(response).to have_http_status(404)
+    end
+
+    it 'renders display if page exists' do
+      get :display, toolkit_page: 'interesting_facts'
+      expect(response).to have_http_status(200)
+      expect(response).to render_template(:display)
+    end
+
+    it 'can accept page names with spaces and capitals' do
+      get :display, toolkit_page: 'iNtErEsTiNg FaCtS'
+      expect(response).to have_http_status(200)
+      expect(response).to render_template(:display)
+    end
+  end
 
   describe '#index' do
     before do
