@@ -132,3 +132,6 @@ gem 'selenium-webdriver', '>= 3.3.0'
 gem 'headless'
 
 gem 'mongo'
+
+
+gem 'redcarpet', '>= 3.4.0'
