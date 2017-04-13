@@ -24,15 +24,19 @@
 	<!-- The profile page for a specific type of relationship-->
 
             <% elsif section_order(@entity).include? params[:relationships] %>
-		<% cache ['relationship_page', @entity.alt_cache_key, params[:relationships], params[:page] ] do  %>
-		    <% @links = SortedLinks.new(@entity, params[:relationships], params[:page]) %>
+
+		<% page = params[:page].blank? ? 1 : params[:page] %>
+
+		<% cache ['relationship_page', @entity.alt_cache_key, params[:relationships], page ] do  %>
+		    <% @links = SortedLinks.new(@entity, params[:relationships], page) %>
                     <% links_group = @links.send(params[:relationships]) %>
                     <%= section_heading(links_group) %>
-                    <% paginatable_links = Kaminari.paginate_array(links_group.links, total_count: links_group.count).page(params[:page]).per(20) %>
+                    <% paginatable_links = Kaminari.paginate_array(links_group.links, total_count: links_group.count).page(page).per(20) %>
                     <%= paginate paginatable_links %>
                     <%= render partial: 'link', collection: paginatable_links %>
                     <%= paginate paginatable_links %>
 		<% end %>
+
             <% end %>
 
         </div>
