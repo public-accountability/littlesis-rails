@@ -1,5 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe ToolkitPage, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+describe ToolkitPage, type: :model do
+  describe 'validations' do
+    subject { ToolkitPage.new(name: "page_name") }
+    it { should validate_uniqueness_of(:name) }
+    it { should validate_presence_of(:name) }
+    it { should belong_to(:last_user) }
+  end
 end

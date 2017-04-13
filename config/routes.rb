@@ -47,7 +47,7 @@ Lilsis::Application.routes.draw do
   end
 
   get '/hubs/:id(/:campaign_tabs_selected_tab)' => 'campaigns#show'
-
+  
   resources :groups do
     member do
       get 'notes'
@@ -310,7 +310,8 @@ Lilsis::Application.routes.draw do
   #############
   
   get '/toolkit' => 'toolkit#index'
-  
+  get '/toolkit/new' => 'toolkit#new_page'
+  post '/toolkit/create_new_page' => 'toolkit#create_new_page'
 
   match "*path", to: "errors#not_found", via: :all
 
