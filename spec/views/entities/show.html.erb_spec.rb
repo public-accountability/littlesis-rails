@@ -26,7 +26,7 @@ describe 'entities/show.html.erb' do
 
       before do
         assign(:entity, @e)
-        assign(:links, sorted_links(@e))
+        # assign(:links, sorted_links(@e))
         assign(:similar_entities, [])
         render
       end
@@ -109,7 +109,7 @@ describe 'entities/show.html.erb' do
 
       before do
         assign(:entity, @e)
-        assign(:links, sorted_links(@e))
+        # assign(:links, sorted_links(@e))
         assign(:current_user, @user)
         sign_in @user
         render
@@ -137,7 +137,6 @@ describe 'entities/show.html.erb' do
 
       before do
         assign(:entity, @e)
-        assign(:links, sorted_links(@e))
         assign(:current_user, @user)
         sign_in @user
         render
@@ -164,7 +163,6 @@ describe 'entities/show.html.erb' do
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 5)
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 8)
         assign(:entity, @e)
-        assign(:links, sorted_links(@e))
         assign(:current_user, @user)
         sign_in @user
         render
@@ -182,7 +180,6 @@ describe 'entities/show.html.erb' do
         @e = create(:mega_corp_inc, last_user: @sf_guard_user)
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 1)
         assign(:entity, @e)
-        assign(:links, sorted_links(@e))
         assign(:current_user, @user)
         sign_in @user
         render
@@ -205,7 +202,6 @@ describe 'entities/show.html.erb' do
 
       before(:each) do
         assign(:entity, @e)
-        assign(:links, sorted_links(@e))
         assign(:current_user, @user)
         render
       end
