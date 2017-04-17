@@ -1,0 +1,10 @@
+<h1>Editing: <%= @toolkit_page.name %></h1>
+
+<%= render partial: "error_alert" %>
+
+<%= form_for @toolkit_page, method: :patch, url: toolkit_update_path(id: @toolkit_page.id) do |f| %>
+    <%= f.text_area :markdown, size: "100x25" %>
+    <br />
+    <%= f.submit "Update",  class: 'btn btn-primary' %>
+    <%= link_to 'Cancel', "/toolkit/#{@toolkit_page.name}", class: 'btn btn-default' %>
+<% end %>

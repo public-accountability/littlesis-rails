@@ -1,16 +1,17 @@
 class ToolkitController < ApplicationController
   layout 'toolkit'
-  before_action :authenticate_user!, only: [:new_page, :create_new_page]
-  before_action :admins_only, only: [:new_page, :create_new_page]
+  before_action :authenticate_user!, only: [:new_page, :create_new_page, :edit]
+  before_action :admins_only, only: [:new_page, :create_new_page, :edit]
+  before_action :set_toolkit_page, only: [:display, :edit]
 
   MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true)
 
   # GET /toolkit/:toolkit_page
   def display
-    raise Exceptions::NotFoundError if params[:toolkit_page].blank?
-    page_name = ToolkitPage.pagify_name(params[:toolkit_page])
-    @toolkit_page = ToolkitPage.find_by_name(page_name)
-    raise Exceptions::NotFoundError if @toolkit_page.nil?
+  end
+
+  # GET /toolkit/:toolkit_page/edit
+  def edit
   end
 
   # GET /toolkit
@@ -33,10 +34,31 @@ class ToolkitController < ApplicationController
     end
   end
 
+  # PATCH /toolkit/:id
+  def update
+    @toolkit_page = ToolkitPage.find(params[:id])
+    if @toolkit_page.update(update_params)
+      redirect_to toolkit_display_url(toolkit_page: @toolkit_page.name)
+    else
+      render :edit
+    end
+  end
+
   private
+
+  def set_toolkit_page
+    raise Exceptions::NotFoundError if params[:toolkit_page].blank?
+    page_name = ToolkitPage.pagify_name(params[:toolkit_page])
+    @toolkit_page = ToolkitPage.find_by_name(page_name)
+    raise Exceptions::NotFoundError if @toolkit_page.nil?
+  end
 
   def markdown(data)
     ToolkitController::MARKDOWN.render(data)
+  end
+
+  def update_params
+    params.require(:toolkit_page).permit(:title, :markdown).merge(last_user_id: current_user.id)
   end
 
   def new_page_params

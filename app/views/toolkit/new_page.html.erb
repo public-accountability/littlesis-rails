@@ -1,13 +1,6 @@
 <h1>Create a new toolkit page</h1>
 
-<% unless @toolkit_page.errors.empty? %>
-    <% @toolkit_page.errors.full_messages.each do |msg| %>
-	<div class="alert alert-danger" role="alert">
-	    <span><%= msg %></span>
-	</div>
-    <% end %>
-<% end %>
-
+<%= render partial: "error_alert" %>
 
 <div class="row">
     <div class="col-sm-8">

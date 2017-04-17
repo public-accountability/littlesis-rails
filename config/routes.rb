@@ -308,12 +308,13 @@ Lilsis::Application.routes.draw do
   #############
   #  Toolkit  #
   #############
-  
+
   get '/toolkit' => 'toolkit#index'
   get '/toolkit/new' => 'toolkit#new_page'
   post '/toolkit/create_new_page' => 'toolkit#create_new_page'
-
-  get '/toolkit/:toolkit_page' => 'toolkit#display'
+  get '/toolkit/:toolkit_page/edit' => 'toolkit#edit'
+  patch '/toolkit/:id' => 'toolkit#update', :as => 'toolkit_update'
+  get '/toolkit/:toolkit_page' => 'toolkit#display', :as => 'toolkit_display'
 
   match "*path", to: "errors#not_found", via: :all
 
