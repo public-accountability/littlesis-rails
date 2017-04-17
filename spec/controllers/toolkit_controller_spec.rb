@@ -11,7 +11,7 @@ describe ToolkitController, type: :controller do
 
   describe 'display' do
     before(:all) do
-      ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts')
+      ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts', markdown: '# interesting facts')
     end
 
     it 'responds with 404 if page does not exist' do

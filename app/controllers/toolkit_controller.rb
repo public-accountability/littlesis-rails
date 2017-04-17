@@ -8,6 +8,7 @@ class ToolkitController < ApplicationController
 
   # GET /toolkit/:toolkit_page
   def display
+    @data = markdown(@toolkit_page.markdown)
   end
 
   # GET /toolkit/:toolkit_page/edit
@@ -16,9 +17,14 @@ class ToolkitController < ApplicationController
 
   # GET /toolkit
   def index
-    @data = markdown("# i am markdown\n## display me!")
+    @toolkit_page = ToolkitPage.find_by_name('index')
+    if @toolkit_page
+      @data = markdown(@toolkit_page.markdown)
+    else
+      @data = markdown("Create a page named 'index' and it will show up here")
+    end
   end
-  
+
   # GET /toolkit/new
   def new_page
     @toolkit_page = ToolkitPage.new
