@@ -128,3 +128,30 @@
   }
   
 }
+
+div.social-media-buttons {
+    margin-top: 5px;
+}
+
+div.social-media-buttons > div {
+    display: inline-block;
+    height: 25px;
+}
+
+div#donate  {
+    a {
+	color: white;
+	background-color: #cc5454;
+	text-decoration: none;
+	height: 22px;
+	
+    }
+    .btn-sm {
+	font-size: 11px;
+    	line-height: 10px;
+    }
+}
+
+.twitter-follow-button { 
+    vertical-align:top 
+}
