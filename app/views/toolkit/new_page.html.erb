@@ -1,0 +1,21 @@
+<h1>Create a new toolkit page</h1>
+
+<%= render partial: "error_alert" %>
+
+<div class="row">
+    <div class="col-sm-8">
+	<%= form_for @toolkit_page, url: toolkit_create_new_page_path do |f| %>
+	    
+	    <div class="form-group">
+		<%= f.label :name, 'Page Name' %>
+		<%= f.text_field :name, class: 'form-control', required: true %>
+	    </div>
+	    
+	    <div class="form-group">
+		<%= f.label :title, 'Page Title' %>
+		<%= f.text_field :title, class: 'form-control' %>
+	    </div>
+	    <%= f.submit 'submit', class: 'btn btn-default' %>
+	<% end %>
+    </div>
+</div>

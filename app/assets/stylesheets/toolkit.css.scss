@@ -1,0 +1,27 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "base/globals.scss";
+
+$page_background_color: #fffcf7;
+$navbar_background_color: #810f7c;
+$navbar_text_color: #fffcf7;
+
+body {
+    background-color: $page_background_color;
+}
+
+.navbar .navbar-brand {
+    color: white;
+}
+.navbar-default .navbar-nav > li > a {
+    color: $navbar_text_color;
+}
+
+.navbar-default .navbar-nav > li.active > a {
+    background-color: $page_background_color;
+}
+
+.navbar {
+    background-color: $navbar_background_color;
+    border-width: 0;
+}

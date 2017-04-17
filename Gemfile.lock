@@ -396,6 +396,7 @@ GEM
       json (>= 1.8)
       nokogiri (~> 1.5)
       trollop (~> 2.1)
+    redcarpet (3.4.0)
     redis (3.3.1)
     redis-actionpack (5.0.0)
       actionpack (>= 4.0.0, < 6)
@@ -588,6 +589,7 @@ DEPENDENCIES
   rack-mini-profiler
   rails (= 4.2.8)
   rails_autolink
+  redcarpet (>= 3.4.0)
   redis-rails
   rmagick
   rspec-html-matchers
