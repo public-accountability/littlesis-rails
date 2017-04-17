@@ -10,6 +10,7 @@ describe ToolkitController, type: :controller do
   it { should route(:patch, '/toolkit/123').to(action: :update, id: '123') }
 
   describe 'display' do
+    login_user
     before(:all) do
       ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts', markdown: '# interesting facts')
     end
@@ -33,10 +34,12 @@ describe ToolkitController, type: :controller do
   end
 
   describe 'edit' do
-    before(:all)  {
+    login_admin
+    
+    before(:all) do
       ToolkitPage.delete_all
       @toolkit_page = ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts')
-    }
+    end
 
     before do
       expect(controller).to receive(:authenticate_user!).once
@@ -61,6 +64,7 @@ describe ToolkitController, type: :controller do
   end
 
   describe '#index' do
+    login_user
     before do
       get :index
     end

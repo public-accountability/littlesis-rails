@@ -1,10 +1,11 @@
 class ToolkitController < ApplicationController
   layout 'toolkit'
-  before_action :authenticate_user!, only: [:new_page, :create_new_page, :edit]
-  before_action :admins_only, only: [:new_page, :create_new_page, :edit]
+  before_action :authenticate_user! # except: [:display, :index]
+  before_action :admins_only, only: [:new_page, :create_new_page, :edit, :update]
   before_action :set_toolkit_page, only: [:display, :edit]
 
-  MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true)
+  MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
+                                     autolink: true, fenced_code_blocks: true)
 
   # GET /toolkit/:toolkit_page
   def display
@@ -18,10 +19,10 @@ class ToolkitController < ApplicationController
   # GET /toolkit
   def index
     @toolkit_page = ToolkitPage.find_by_name('index')
-    if @toolkit_page
+    if @toolkit_page && !@toolkit_page.markdown.nil?
       @data = markdown(@toolkit_page.markdown)
     else
-      @data = markdown("Create a page named 'index' and it will show up here")
+      @data = markdown("The toolkit page named 'index' will be used as the front page.")
     end
   end
 

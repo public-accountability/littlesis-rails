@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :user, class: User do
-    username { "user_#{rand(1000)}" }
-    email { "user_#{rand(1000)}@littlesis.org" }
+    sequence(:username) { |n| "user_#{n}" }
+    sequence(:email) { |n| "user_#{n}@littlesis.org" }
     default_network_id 79
     confirmed_at { Time.now }
   end
@@ -16,11 +16,11 @@ FactoryGirl.define do
 
   factory :sf_user, class: SfGuardUser do
     id 100
-    username { "user_#{rand(1000)}" }
+    sequence(:username) { |n| "user_#{n}" }
   end
 
   factory :sf_guard_user, class: SfGuardUser do
-    username { "sf_guard_user_#{rand(1000)}" }
+    sequence(:username) { |n| "user_#{n}" }
   end
 
   factory :admin, class: User do
