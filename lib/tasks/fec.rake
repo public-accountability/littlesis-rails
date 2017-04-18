@@ -10,4 +10,12 @@ namespace :fec do
   task verify: :environment do
     FecLinks.verify
   end
+
+  desc 'change ref type on all FEC filing references'
+  task fix_fec_filing_ref_type: :environment do
+    sql1 = "UPDATE reference SET ref_type = 2 WHERE name like 'FEC Filing%'"
+    ActiveRecord::Base.connection.execute(sql1)
+    sql2 = "UPDATE reference SET ref_type = 2 WHERE name = 'FEC contribution search'"
+    ActiveRecord::Base.connection.execute(sql2)
+  end
 end

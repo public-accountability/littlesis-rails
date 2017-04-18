@@ -77,6 +77,7 @@ class Reference < ActiveRecord::Base
   #
   # This returns only three reference fields: source (url), name, updated_at
   # It returns only unique combinations of source and name
+  # NOTE: It skips source links for FEC filing (ref_type = 2)
   # input: <Entity> or Int, Int, Int
   # output: [ {} ]
   def self.recent_source_links(entity, page = 1, per_page = 10)
@@ -95,7 +96,7 @@ class Reference < ActiveRecord::Base
         (
 	 SELECT ref.source as source, ref.name as name, max(ref.updated_at) as updated_at
        	 FROM link 
-	 INNER JOIN reference as ref ON (ref.object_id = link.relationship_id AND ref.object_model = 'Relationship')
+	 INNER JOIN reference as ref ON (ref.object_model = 'Relationship' AND ref.object_id = link.relationship_id AND ref_type <> 2)
 	 WHERE link.entity1_id = ?
 	 GROUP BY ref.source, ref.name
 	 )

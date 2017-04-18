@@ -46,10 +46,17 @@ class ReferencesController < ApplicationController
   def entity
     return head :bad_request unless params[:entity_id]
     params.replace(ENTITY_DEFAULTS.merge(params))
-    render json: Reference.recent_source_links(params[:entity_id].to_i, params[:page].to_i, params[:per_page].to_i)
+    @entity = Entity.find(params[:entity_id])
+    render json: cached_recent_source_links
   end
 
   private
+
+  def cached_recent_source_links
+    Rails.cache.fetch("#{@entity.alt_cache_key}/recent_source_links/#{params[:page]}/#{params[:per_page]}", expires_in: 2.weeks) do
+      Reference.recent_source_links(@entity, params[:page].to_i, params[:per_page].to_i)
+    end
+  end
 
   def entity_ids
     if params[:entity_ids].is_a?(String)

@@ -164,12 +164,16 @@ describe ReferencesController, type: :controller do
     end
 
     it 'calls recent_source_links with correct entity_id and default values' do
-      expect(Reference).to receive(:recent_source_links).with(123, 1, 10).and_return([])
+      entity = build(:org, id: 123)
+      expect(Entity).to receive(:find).with('123').and_return(entity)
+      expect(Reference).to receive(:recent_source_links).with(entity, 1, 10).and_return([])
       get :entity, { 'entity_id' => '123' }
     end
 
     it 'calls recent_source_links with correct entity_id and page' do
-      expect(Reference).to receive(:recent_source_links).with(123, 3, 10).and_return([])
+      entity = build(:org, id: 123)
+      expect(Entity).to receive(:find).with('123').and_return(entity)
+      expect(Reference).to receive(:recent_source_links).with(entity, 3, 10).and_return([])
       get :entity, { 'entity_id' => '123', 'page' => 3 }
     end
   end
