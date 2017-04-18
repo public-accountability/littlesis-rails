@@ -77,9 +77,16 @@ class Reference < ActiveRecord::Base
   #
   # This returns only three reference fields: source (url), name, updated_at
   # It returns only unique combinations of source and name
-  # input: <Entity>, Int, Int
+  # input: <Entity> or Int, Int, Int
   # output: [ {} ]
   def self.recent_source_links(entity, page = 1, per_page = 10)
+    if entity.is_a? Entity
+      entity_id = entity.id
+    elsif entity.is_a? Integer
+      entity_id = entity
+    else
+      raise ArgumentError, "recent_source_links must be called with an <Entity> or an <Integer>"
+    end
     limit = per_page
     offset = (page - 1) * limit
     Reference.find_by_sql(
@@ -101,7 +108,8 @@ class Reference < ActiveRecord::Base
          )
         ) as r
         ORDER BY r.updated_at desc
-        LIMIT ? OFFSET ?"] + [entity.id, entity.id, limit, offset]).map(&:attributes)
+        LIMIT ? OFFSET ?"] + [entity_id, entity_id, limit, offset])
+          .map { |ref| ref.attributes.except('id') }
   end
 
   # input: hash with keys: :class_name, :object_id
