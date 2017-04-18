@@ -72,6 +72,38 @@ class Reference < ActiveRecord::Base
       WHERE object_model = 'Entity' AND object_id = ?", entity_id, entity_id])
   end
 
+  # This query is similar to "recent_references"
+  # TODO: replace recent_references with with query
+  #
+  # This returns only three reference fields: source (url), name, updated_at
+  # It returns only unique combinations of source and name
+  # input: <Entity>, Int, Int
+  # output: [ {} ]
+  def self.recent_source_links(entity, page = 1, per_page = 10)
+    limit = per_page
+    offset = (page - 1) * limit
+    Reference.find_by_sql(
+      ["SELECT *
+        FROM (
+        (
+	 SELECT ref.source as source, ref.name as name, max(ref.updated_at) as updated_at
+       	 FROM link 
+	 INNER JOIN reference as ref ON (ref.object_id = link.relationship_id AND ref.object_model = 'Relationship')
+	 WHERE link.entity1_id = ?
+	 GROUP BY ref.source, ref.name
+	 )
+	 UNION ALL
+         (
+          SELECT reference.source as source, reference.name as name, max(reference.updated_at) as updated_at
+	  FROM reference
+  	  WHERE object_model = 'Entity' AND object_id = ?
+  	  GROUP BY reference.source, reference.name
+         )
+        ) as r
+        ORDER BY r.updated_at desc
+        LIMIT ? OFFSET ?"] + [entity.id, entity.id, limit, offset]).map(&:attributes)
+  end
+
   # input: hash with keys: :class_name, :object_id
   # output: str
   private_class_method def self.generate_where(h)
