@@ -1,91 +1,93 @@
 <!-- IMAGE -->
-<%= cache ['entity_image', user_signed_in?, @entity.id, @entity.featured_image_url, @entity.name]  do %>
-    <div class="row">
-	<div class="col-sm-10 col-sm-offset-1">
-	    <%= render partial: 'entities/sidebar/image' %>
+<div id="profile-page-sidebar">
+    <%= cache ['entity_image', user_signed_in?, @entity.id, @entity.featured_image_url, @entity.name]  do %>
+	<div class="row">
+	    <div class="col-sm-10 col-sm-offset-1">
+		<%= render partial: 'entities/sidebar/image' %>
+	    </div>
 	</div>
-    </div>
-<% end %>
+    <% end %>
 
-<!-- BASIC INFO -->
-<% cache ['entity_basic_info', @entity.alt_cache_key] do %>
-    <div class="row">
-	<div class="col-sm-12">
-	    <%= sidebar_title('Basic info') %>
+    <!-- BASIC INFO -->
+    <% cache ['entity_basic_info', @entity.alt_cache_key] do %>
+	<div class="row">
+	    <div class="col-sm-12">
+		<%= sidebar_title('Basic info') %>
+	    </div>
+	    <div class="col-sm-12 sidebar-basic-info-container">
+		<%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
+	    </div>
 	</div>
-	<div class="col-sm-12 sidebar-basic-info-container">
-	    <%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
-	</div>
-    </div>
-<% end %>
+    <% end %>
 
-<!-- SOURCE LINKS -->
-<% cache ['entity_source_links', @entity.alt_cache_key] do %>
-    <div class="row">
-	<div class="col-sm-12">
-	    <%= sidebar_title('Source Links') %>
+    <!-- SOURCE LINKS -->
+    <% cache ['entity_source_links', @entity.alt_cache_key] do %>
+	<div class="row">
+	    <div class="col-sm-12">
+		<%= sidebar_title('Source Links') %>
+	    </div>
+	    <div class="col-sm-12 sidebar-references-container">
+		<% entity_references = @entity.all_references.to_a %>
+		<span>Number of references:  <em><%= entity_references.size.to_s %></em></span>
+		<span style="padding-left: 2em"><small><%= link_to "View more", references_entity_path(@entity) %></small>
+		    <%= sidebar_references(entity_references)%>
+	    </div>
 	</div>
-	<div class="col-sm-12 sidebar-references-container">
-	    <% entity_references = @entity.all_references.to_a %>
-	    <span>Number of references:  <em><%= entity_references.size.to_s %></em></span>
-	    <span style="padding-left: 2em"><small><%= link_to "View more", references_entity_path(@entity) %></small>
-	    <%= sidebar_references(entity_references)%>
-	</div>
-    </div>
-<% end %>
+    <% end %>
 
 
 
-<!-- ADMIN TOOLS -->
-<% if user_signed_in? && current_user.admin? %>
-    <div class="row">
-	<div class="col-sm-12">
-	    <%= sidebar_title('Admin tools') %>
+    <!-- ADMIN TOOLS -->
+    <% if user_signed_in? && current_user.admin? %>
+	<div class="row">
+	    <div class="col-sm-12">
+		<%= sidebar_title('Admin tools') %>
+	    </div>
+	    <div class="col-sm-12">
+		<%= link_to 'Addresses', @entity.legacy_url('addresses') %>
+	    </div>
 	</div>
-	<div class="col-sm-12">
-	    <%= link_to 'Addresses', @entity.legacy_url('addresses') %>
-	</div>
-    </div>
-<% end %>
+    <% end %>
 
-<!-- ADVANCED TOOLS -->
-<% if user_signed_in? %>
-    <div class="row">
-	<div class="col-sm-12">
-	    <%= sidebar_title('Advanced tools') %>
+    <!-- ADVANCED TOOLS -->
+    <% if user_signed_in? %>
+	<div class="row">
+	    <div class="col-sm-12">
+		<%= sidebar_title('Advanced tools') %>
+	    </div>
+	    <div class="col-sm-12">
+		<%= link_to 'Network Search', @entity.legacy_url('networkSearch') %>
+		<br />
+		<%= link_to 'Find Connections', @entity.legacy_url('findConnections') %>
+	    </div>
 	</div>
-	<div class="col-sm-12">
-	    <%= link_to 'Network Search', @entity.legacy_url('networkSearch') %>
-	    <br />
-	    <%= link_to 'Find Connections', @entity.legacy_url('findConnections') %>
-	</div>
-    </div>
-<% end %>
+    <% end %>
 
-<!-- LISTS -->
-<% cache(['entity_list_entities', @entity.list_entities], :expires_in => 1.week) do %>
-    <div class="row">
-	<div class="col-sm-12">
-	    <%= sidebar_title('Lists') %>
+    <!-- LISTS -->
+    <% cache(['entity_list_entities', @entity.list_entities], :expires_in => 1.week) do %>
+	<div class="row">
+	    <div class="col-sm-12">
+		<%= sidebar_title('Lists') %>
+	    </div>
+	    <div class="col-sm-12">
+		<ul class="list-unstyled">
+		    <%= sidebar_lists(@entity.list_entities) %>
+		</ul>
+	    </div>
 	</div>
-	<div class="col-sm-12">
-	    <ul class="list-unstyled">
-		<%= sidebar_lists(@entity.list_entities) %>
-	    </ul>
-	</div>
-    </div>
-<% end %>
+    <% end %>
 
-<!-- Similar Entities -->
-<% unless @similar_entities.blank? %>
-    <div class="row">
-	<div class="col-sm-12">
-	    <%= sidebar_title('Similar Entities') %>
+    <!-- Similar Entities -->
+    <% unless @similar_entities.blank? %>
+	<div class="row">
+	    <div class="col-sm-12">
+		<%= sidebar_title('Similar Entities') %>
+	    </div>
+	    <div class="col-sm-12">
+		<ul class="list-unstyled">
+		    <%= sidebar_similar_entities(@similar_entities) %>
+		</ul>
+	    </div>
 	</div>
-	<div class="col-sm-12">
-	    <ul class="list-unstyled">
-		<%= sidebar_similar_entities(@similar_entities) %>
-	    </ul>
-	</div>
-    </div>
-<% end %>
+    <% end %>
+</div>

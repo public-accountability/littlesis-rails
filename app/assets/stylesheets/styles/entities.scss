@@ -476,10 +476,6 @@ html table.dataTable thead {
 
 /* add relationship page */
 
-#results-table tbody a {
-    color: $link_blue;
-}
-
 #results-table tbody tr:hover {
     background-color: $red_lighter;
 }
@@ -492,3 +488,5 @@ html table.dataTable thead {
     }
 
 }
+
+
