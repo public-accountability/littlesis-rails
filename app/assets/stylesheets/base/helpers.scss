@@ -64,6 +64,15 @@
     text-decoration: none;
 }
 
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+.double-left-padding {
+    padding-left: 30px;
+}
+
 .position-relative {
   position: relative;
 }
