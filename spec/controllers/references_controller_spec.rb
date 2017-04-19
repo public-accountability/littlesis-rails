@@ -166,6 +166,7 @@ describe ReferencesController, type: :controller do
     it 'calls recent_source_links with correct entity_id and default values' do
       entity = build(:org, id: 123)
       expect(Entity).to receive(:find).with('123').and_return(entity)
+      expect(Rails.cache).to receive(:fetch).once.and_call_original
       expect(Reference).to receive(:recent_source_links).with(entity, 1, 10).and_return([])
       get :entity, { 'entity_id' => '123' }
     end
@@ -173,6 +174,7 @@ describe ReferencesController, type: :controller do
     it 'calls recent_source_links with correct entity_id and page' do
       entity = build(:org, id: 123)
       expect(Entity).to receive(:find).with('123').and_return(entity)
+      expect(Rails.cache).to receive(:fetch).once.and_call_original
       expect(Reference).to receive(:recent_source_links).with(entity, 3, 10).and_return([])
       get :entity, { 'entity_id' => '123', 'page' => 3 }
     end

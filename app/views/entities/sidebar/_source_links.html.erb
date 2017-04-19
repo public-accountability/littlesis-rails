@@ -6,7 +6,7 @@
     </div>
     
     <div class="col-sm-12" >
-	<span>Number of references:  <em><%= @entity.all_references.count  %></em></span>
+	<span>Number of reference urls:  <em><%= Reference.unique_url_count(@entity) %></em></span>
     </div>
 
     <div class="col-sm-12" >

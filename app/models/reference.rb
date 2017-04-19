@@ -81,13 +81,7 @@ class Reference < ActiveRecord::Base
   # input: <Entity> or Int, Int, Int
   # output: [ {} ]
   def self.recent_source_links(entity, page = 1, per_page = 10)
-    if entity.is_a? Entity
-      entity_id = entity.id
-    elsif entity.is_a? Integer
-      entity_id = entity
-    else
-      raise ArgumentError, "recent_source_links must be called with an <Entity> or an <Integer>"
-    end
+    entity_id = get_entity_id(entity)
     limit = per_page
     offset = (page - 1) * limit
     Reference.find_by_sql(
@@ -111,6 +105,34 @@ class Reference < ActiveRecord::Base
         ORDER BY r.updated_at desc
         LIMIT ? OFFSET ?"] + [entity_id, entity_id, limit, offset])
           .map { |ref| ref.attributes.except('id') }
+  end
+
+  # returns the number of unique urls documenting the entity and it's relationships
+  def self.unique_url_count(entity)
+    entity_id = get_entity_id(entity)
+    raise ArugmentError, "entity_id must be an interger" unless entity_id.is_a? Integer
+    sql = "SELECT sum(c)
+     FROM (
+     (
+      SELECT count(distinct ref.source) as c
+      FROM link
+      RIGHT JOIN reference as ref ON (ref.object_model = 'Relationship' AND ref.object_id = link.relationship_id)
+      WHERE link.entity1_id = #{entity_id}
+     )
+      UNION ALL
+     (
+      SELECT count(distinct reference.source) as c
+      FROM reference
+      WHERE object_model = 'Entity' AND object_id = #{entity_id}
+     )
+     ) as r"
+    ActiveRecord::Base.connection.execute(sql).to_a[0][0]
+  end
+
+  private_class_method def self.get_entity_id(entity)
+    return entity.id if entity.is_a? Entity
+    return entity if entity.is_a? Integer
+    raise ArgumentError, "This function must be called with an <Entity> or an <Integer>"
   end
 
   # input: hash with keys: :class_name, :object_id
