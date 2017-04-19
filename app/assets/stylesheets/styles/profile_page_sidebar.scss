@@ -1,3 +1,4 @@
+
 .entity-profile-image {
     a > img {
 	cursor: pointer;
@@ -11,8 +12,8 @@
 .sidebar-title-text {}
 
 #source-links-container {
-    display: block;
-    height: 155px;
+    /* display: block; */
+    /* height: 150px; */
 
     li {
 	font-size: 11px;
@@ -29,11 +30,35 @@
 #profile-page-sidebar {}
 
 #sidebar-source-links {
-    span.glyphicon {
+
+    .link-arrow {
+	cursor: pointer;
+	font-size: 19px;
+    }
+
+    .link-arrow:hover {
+	color: $link_blue;
+    }
+
+    .link-count {
+	font-size: 12px;
+    }
+
+    span.glyphicon-new-window {
+	color: #333333;
+	font-size: 11px;
+	padding-left: 2px;
+	padding-right: 2px;
 	cursor: pointer;
     }
 }
 
 .links-loading {
     padding-left: 1em;
+}
+
+.section-pointer {
+    color: #aaa;
+    font-size: 12px;
+    padding-top: 3px;
 }

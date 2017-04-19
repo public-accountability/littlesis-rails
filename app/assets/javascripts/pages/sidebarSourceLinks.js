@@ -85,7 +85,6 @@ var sidebarSourceLinks = (function($){
     }
 
     if (lastPage && lastPage === currentPage) {
-      console.log('hiding right arrow');
       hideRightArrow();
     }
 
