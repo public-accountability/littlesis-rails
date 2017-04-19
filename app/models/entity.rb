@@ -9,6 +9,8 @@ class Entity < ActiveRecord::Base
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
+  EXCERPT_SIZE = 150
+
   has_paper_trail :ignore => [:link_count, :delta]
 
   has_many :aliases, inverse_of: :entity, dependent: :destroy
@@ -56,7 +58,7 @@ class Entity < ActiveRecord::Base
   accepts_nested_attributes_for :person
   accepts_nested_attributes_for :public_company
   accepts_nested_attributes_for :school
-  
+
   # contact
   has_many :addresses, inverse_of: :entity, dependent: :destroy
   has_many :phones, inverse_of: :entity, dependent: :destroy
@@ -674,15 +676,14 @@ class Entity < ActiveRecord::Base
   end
 
   def summary_excerpt
-    if summary
-      if summary.slice(0,100).include? "\n"
-        return summary.slice(0, summary.index("\n")) + '...'
-      else
-        return summary.truncate(100, separator: ' ')
-      end
-    else
-      return nil
+    return nil if summary.nil?
+    return summary if summary.length <= EXCERPT_SIZE
+
+    if summary.slice(0, EXCERPT_SIZE).include? "\n"
+      return summary.slice(0, summary.index("\n")) + '...'
     end
+
+    summary.truncate(EXCERPT_SIZE, separator: ' ')
   end
 
   # returns hash of basc info for the given entity

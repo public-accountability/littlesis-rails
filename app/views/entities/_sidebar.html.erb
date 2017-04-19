@@ -75,6 +75,10 @@
 		<ul class="list-unstyled">
 		    <%= sidebar_similar_entities(@similar_entities) %>
 		</ul>
+		
+		<% if user_signed_in? && current_user.admin? %>
+		    <%= link_to 'Begin merging process »', @entity.legacy_url('merge') %>
+		<% end %>
 	    </div>
 	</div>
     <% end %>
