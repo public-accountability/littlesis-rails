@@ -1,24 +1,22 @@
-<div class="row thin-grey-bottom-border">
-    <div id="actions" class="col-md-8"> 
-        <%= link_to "add relationship", @entity.legacy_url("addRelationship") %>
-        <%= link_to "edit", edit_entity_path(@entity) %>
-        <%= link_to "flag", flag_path %>
-        <% if user_signed_in? %>
-            <% if @current_user.has_legacy_permission 'deleter' %>
-                <%= link_to "remove", @entity.legacy_url("remove"), data: { confirm: "Are you sure you want to remove this entity?" } %>
+<div class="row thin-grey-bottom-border actions-row">
+    <div id="actions">
+	<div id="action-buttons">
+            <%= link_to "add relationship", @entity.legacy_url("addRelationship") %>
+            <%= link_to "edit", edit_entity_path(@entity) %>
+            <%= link_to "flag", flag_path %>
+            <% if user_signed_in? %>
+		<% if @current_user.has_legacy_permission 'deleter' %>
+                    <%= link_to "remove", @entity.legacy_url("remove"), data: { confirm: "Are you sure you want to remove this entity?" } %>
+		<% end %>
+		<% if @current_user.has_legacy_permission 'importer' %>
+                    <%= link_to "match donations", match_donations_entity_path(@entity) %>
+                    <%= link_to "add bulk", tools_bulk_relationships_path(entity_id: @entity.id) %>
+		<% end %>
+		<% if @current_user.has_legacy_permission 'admin' %>
+                    <%= link_to "refresh", @entity.legacy_url("refresh") + '?' + { ref: request.original_url }.to_query %>
+		<% end %>
             <% end %>
-            <% if @current_user.has_legacy_permission 'importer' %>
-                <%= link_to "match donations", match_donations_entity_path(@entity) %>
-                <%= link_to "add bulk", tools_bulk_relationships_path(entity_id: @entity.id) %>
-            <% end %>
-            <% if @current_user.has_legacy_permission 'admin' %>
-                <%= link_to "refresh", @entity.legacy_url("refresh") + '?' + { ref: request.original_url }.to_query %>
-            <% end %>
-        <% end %>
+	</div>
     </div>
-    
-    <% cache ['entity_history', @entity ] do %>
-        <%= render partial: 'shared/entity_history', locals: {entity: @entity} %>
-    <% end %>
-
+    <%= render partial: 'shared/entity_history', locals: {entity: @entity} %>
 </div>
