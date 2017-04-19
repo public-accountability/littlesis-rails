@@ -1,0 +1,31 @@
+<!-- glyphicon glyphicon-menu-left -->
+
+<div class="row" id="sidebar-source-links">
+    <div class="col-sm-12">
+	<%= sidebar_title('Source Links') %>
+    </div>
+    
+    <div class="col-sm-12" >
+	<span>Number of references:  <em><%= @entity.all_references.count  %></em></span>
+    </div>
+
+    <div class="col-sm-12" >
+	<ul class="list-unstyled" id="source-links-container">
+	</ul>
+    </div>
+
+    <div class="col-sm-12">
+	<span id="source-links-left-arrow" class="glyphicon glyphicon-menu-left"  aria-hidden="true"></span>
+	<span style="padding-left: 1em; padding-right: 1em;"><small><%= link_to "View all", references_entity_path(@entity) %></small></span>
+	<span style="" id="source-links-right-arrow" class="glyphicon glyphicon-menu-right"  aria-hidden="true"></span>
+    </div>
+    
+    <%#= sidebar_references(entity_references)%>
+    
+    
+</div>
+<script>
+ $(function(){
+   sidebarSourceLinks.init(<%= @entity.id %>);
+ });
+</script>

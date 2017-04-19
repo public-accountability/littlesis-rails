@@ -21,21 +21,8 @@
     <% end %>
 
     <!-- SOURCE LINKS -->
-    <% cache ['entity_source_links', @entity.alt_cache_key] do %>
-	<div class="row">
-	    <div class="col-sm-12">
-		<%= sidebar_title('Source Links') %>
-	    </div>
-	    <div class="col-sm-12 sidebar-references-container">
-		<% entity_references = @entity.all_references.to_a %>
-		<span>Number of references:  <em><%= entity_references.size.to_s %></em></span>
-		<span style="padding-left: 2em"><small><%= link_to "View more", references_entity_path(@entity) %></small>
-		    <%= sidebar_references(entity_references)%>
-	    </div>
-	</div>
-    <% end %>
-
-
+    <%= render partial: 'entities/sidebar/source_links' %>
+    <%# cache ['entity_source_links', @entity.alt_cache_key] do %><%# end %>
 
     <!-- ADMIN TOOLS -->
     <% if user_signed_in? && current_user.admin? %>
