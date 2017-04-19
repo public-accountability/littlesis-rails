@@ -3,7 +3,7 @@
 <%= render partial: 'header' %>    
 
 <% cache ['subtitle_details_sources', @relationship] do %>
-    <div class="row">
+    <div class="row" style="padding-top: 5px;">
         <div class="col-md-6 col-xs-12 col-sm-6"> 
             <div class="row">
                 <%= render partial: 'subtitle', locals: {relationship: @relationship } %>

@@ -1,23 +1,25 @@
-<div id="actions" class="col-md-8 col-sm-6 hidden-xs"> 
-    <% if signed_in %>        
-        <%= link_to "edit", edit_relationship_path(@relationship)  %>
-    <% end %>
-    <%= link_to "flag", "/home/contact?type=flag" %>
-    <% if signed_in and @current_user.has_legacy_permission 'deleter' %>
-        <%=  link_to "remove", @relationship.legacy_url('remove'), id: 'remove-relationship' %>
-        <%= javascript_tag do %>
-         $('#remove-relationship').click(function(e){
-             e.preventDefault();
-             if (confirm('Are you sure you want to remove this relationship?')) { 
+<div id="actions" class="col-md-8 col-sm-6 hidden-xs">
+    <div id="action-buttons">
+	<% if signed_in %>        
+            <%= link_to "edit", edit_relationship_path(@relationship)  %>
+	<% end %>
+	<%= link_to "flag", "/home/contact?type=flag" %>
+	<% if signed_in and @current_user.has_legacy_permission 'deleter' %>
+            <%=  link_to "remove", @relationship.legacy_url('remove'), id: 'remove-relationship' %>
+            <%= javascript_tag do %>
+             $('#remove-relationship').click(function(e){
+               e.preventDefault();
+               if (confirm('Are you sure you want to remove this relationship?')) { 
                  var f = document.createElement('form'); 
                  document.body.appendChild(f);
                  f.method = 'POST';
                  f.action = this.href;
                  f.submit();
-             }
-         });
-        <% end %>
-    <% end %>
+               }
+             });
+            <% end %>
+	<% end %>
+    </div>
 </div>
 
 <div id="entity-edited-history" class="col-md-4 col-sm-6 col-xs-6 hidden-xs hidden-sm">

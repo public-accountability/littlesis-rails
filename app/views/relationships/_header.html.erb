@@ -4,12 +4,12 @@
     <% end %>
 </div>
 
-<div class="row thin-grey-bottom-border">
+<div class="row thin-grey-bottom-border bottom-1em">
     <% if user_signed_in? %>
         <%= render partial: 'actions', locals: {signed_in: true } %>
     <% else %>    
         <% cache ['action_buttons_no_user', @relationship ] do %>
-            <%= render partial: 'actions', locals: {signed_in: false }%>
+	    <%= render partial: 'actions', locals: {signed_in: false }%>
         <% end %>        
     <% end %>
 </div>
