@@ -21,8 +21,9 @@
     <% end %>
 
     <!-- SOURCE LINKS -->
-    <%= render partial: 'entities/sidebar/source_links' %>
-    <%# cache ['entity_source_links', @entity.alt_cache_key] do %><%# end %>
+    <% cache ['entity_source_links', @entity.alt_cache_key] do %>
+	<%= render partial: 'entities/sidebar/source_links' %>
+    <% end %>
 
     <!-- ADMIN TOOLS -->
     <% if user_signed_in? && current_user.admin? %>

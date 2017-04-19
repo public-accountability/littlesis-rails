@@ -1,5 +1,5 @@
 module EntitiesHelper
-  def entity_hash_link(entity, name=nil, action=nil)
+ def entity_hash_link(entity, name=nil, action=nil)
     name ||= entity['name']
     link_to name, Entity.legacy_url(entity['primary_ext'], entity['id'], name, action)
   end
@@ -136,32 +136,11 @@ module EntitiesHelper
     end
   end
 
-  # def sidebar_reference_count(count)
-  #   content_tag(:span, "Number of references: ") + content_tag(:em, count.to_s)
-  # end
-
   def sidebar_industry_links(os_categories)
     os_categories.to_a
       .delete_if { |cat| cat.ignore_me_in_view }
       .collect {  |cat| link_to(cat.category_name, cat.legacy_path) } 
       .join(', ')
-  end
-
-  # input: Array or <ActiveRecord_relation>
-  def sidebar_references(references)
-    refs = filter_and_limit_references(references)
-    content_tag(:ul, class: 'list-unstyled') do
-      refs.collect { |r| sidebar_reference(r) }.reduce(&:+)
-    end
-  end
-
-  def sidebar_reference(reference)
-    ref_name = reference.name.nil? ? reference.source : reference.name
-    link_to(
-      content_tag(:li, ref_name.truncate(40)),
-      reference.source,
-      target: "_blank"
-    )
   end
 
   # To eager load list and list_entities: Entity.includes(list_entities: [:lists])

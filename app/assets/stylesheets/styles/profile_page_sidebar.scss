@@ -12,22 +12,8 @@
 
 #source-links-container {
     display: block;
-    /* list-style-type: square; */
-    
-    li:before {
-	/*
-         Using a Bootstrap glyphicon as the bullet point
-         thank you to: http://stackoverflow.com/questions/31196980/using-a-glyphicon-as-an-li-bullet-point-bootstrap-3#31196981
-       */
-	/* content: "\e092"; */
-	/* font-family: 'Glyphicons Halflings'; */
-	/* font-size: 9px; */
-	/* float: left; */
-	/* margin-top: 4px; */
-	/* margin-left: -17px; */
-	/* color: #CCCCCC; */
-    }
-    
+    height: 155px;
+
     li {
 	font-size: 11px;
 	cursor: pointer;
@@ -43,8 +29,11 @@
 #profile-page-sidebar {}
 
 #sidebar-source-links {
-    
     span.glyphicon {
 	cursor: pointer;
     }
+}
+
+.links-loading {
+    padding-left: 1em;
 }

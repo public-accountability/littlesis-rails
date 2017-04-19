@@ -31,12 +31,14 @@ var sidebarSourceLinks = (function($){
     }
   }
 
+  // this shows and hides a loading icon
+  // but the references generally load fast, so it's currently disabled
   function retriving(on) {
-    if (on == true) {
-      // show 'processing' 
-    } else {
-      // disable 'processing'
-    }
+    // if (on == true) {
+    //   $('#sidebar-source-links span.links-loading').removeClass('hidden');
+    // } else {
+    //   $('#sidebar-source-links span.links-loading').addClass('hidden');
+    // }
   }
 
   // {} -> html element
@@ -61,10 +63,17 @@ var sidebarSourceLinks = (function($){
     });
   }
 
-  function hideRightArrow(){}
-  function hideLeftArrow(){}
+  function hideRightArrow(){
+    $('#source-links-right-arrow').addClass('invisible');
+  }
+  
+  function hideLeftArrow(){
+    $('#source-links-left-arrow').addClass('invisible');
+  }
   
   function showAllArrows() {
+    $('#source-links-right-arrow').removeClass('invisible');
+    $('#source-links-left-arrow').removeClass('invisible');
   }
 
   // updates arrows and re-renders reference list
@@ -74,8 +83,9 @@ var sidebarSourceLinks = (function($){
     if (currentPage === 1) { 
 	hideLeftArrow();
     }
-    
-    if (lastPage === currentPage) {
+
+    if (lastPage && lastPage === currentPage) {
+      console.log('hiding right arrow');
       hideRightArrow();
     }
 
@@ -88,7 +98,8 @@ var sidebarSourceLinks = (function($){
     updateCurrentPage(arrowSide);
     getRefs(currentPage)
       .done(function(refs) {
-	if (refs.length <= 10) {
+	if (refs.length < 10) {
+	  console.log('this is the last page');
 	  lastPage = currentPage;  // then this is the last page
 	}
 	updateView(refs);
@@ -126,5 +137,3 @@ var sidebarSourceLinks = (function($){
 
   
 })(jQuery);
-
-
