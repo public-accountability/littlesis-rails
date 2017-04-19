@@ -83,13 +83,12 @@ $tiny_image_size: 35px;
 #entity-edited-history {
   color: #444;
   font-size: 12px;
-  float: right;
-  margin-bottom: 2px;
+  padding-left: 15px;
 }
 
 #actions {
-    margin-top: 1.2em;
-    display: inline;
+    /* margin-top: 1.2em; */
+    /* display: inline; */
 }
 
 div.actions-row {
@@ -98,8 +97,8 @@ div.actions-row {
 
 #action-buttons {
     display: inline-block;
+
     a {
-	/* position: relative; */
 	font-size: 14px;
 	top: -6px;
 	color: #444;

@@ -1,5 +1,5 @@
 <div class="row thin-grey-bottom-border actions-row">
-    <div id="actions">
+    <div id="actions" class="col-md-8 col-sm-8 nopadding">
 	<div id="action-buttons">
             <%= link_to "add relationship", @entity.legacy_url("addRelationship") %>
             <%= link_to "edit", edit_entity_path(@entity) %>
@@ -18,5 +18,7 @@
             <% end %>
 	</div>
     </div>
-    <%= render partial: 'shared/entity_history', locals: {entity: @entity} %>
+    <div class="col-md-4 col-sm-4 hidden-xs">
+	<%= render partial: 'shared/entity_history', locals: {entity: @entity} %>
+    </div>
 </div>
