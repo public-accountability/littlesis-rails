@@ -1,3 +1,4 @@
+
 .entity-profile-image {
     a > img {
 	cursor: pointer;
@@ -7,9 +8,13 @@
 .sidebar-title-container {
     margin-top: 2em;
 }
+
 .sidebar-title-text {}
 
-.sidebar-references-container {
+#source-links-container {
+    /* display: block; */
+    /* height: 150px; */
+
     li {
 	font-size: 11px;
 	cursor: pointer;
@@ -21,4 +26,39 @@
 	border-top: none !important; 
     }
 }
-     
+
+#profile-page-sidebar {}
+
+#sidebar-source-links {
+
+    .link-arrow {
+	cursor: pointer;
+	font-size: 19px;
+    }
+
+    .link-arrow:hover {
+	color: $link_blue;
+    }
+
+    .link-count {
+	font-size: 12px;
+    }
+
+    span.glyphicon-new-window {
+	color: #333333;
+	font-size: 11px;
+	padding-left: 2px;
+	padding-right: 2px;
+	cursor: pointer;
+    }
+}
+
+.links-loading {
+    padding-left: 1em;
+}
+
+.section-pointer {
+    color: #aaa;
+    font-size: 12px;
+    padding-top: 3px;
+}

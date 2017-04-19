@@ -28,13 +28,14 @@ body {
   }
 }
 
-a {
-  text-decoration: none;
-  /* color: $link_blue; */
-
-  &:hover {
-    text-decoration: underline;
-  }
+  a {
+      text-decoration: none;
+      color: $link_blue;
+      
+      &:hover {
+	  text-decoration: underline;
+	  color: $link_blue_hover;
+      }
 }
 
 #top {

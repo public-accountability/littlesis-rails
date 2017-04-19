@@ -9,6 +9,7 @@ describe ReferencesController, type: :controller do
   it { should route(:post, '/references').to(action: :create) }
   it { should route(:delete, '/references/1').to(action: :destroy, id: 1) }
   it { should route(:get, '/references/recent').to(action: :recent) }
+  it { should route(:get, '/references/entity').to(action: :entity) }
 
   describe 'auth' do
     it 'redirects to login if user is not logged in' do
@@ -153,6 +154,29 @@ describe ReferencesController, type: :controller do
       expect(Reference).to receive(:recent_references).with(input, 20).and_return(['recent'])
       get(:recent, entity_ids: [@e1.id, @e2.id])
       expect(response.body).to eq ["last", "recent"].to_json
+    end
+  end
+
+  describe 'entity' do
+    it 'returns bad request if missing entity_id' do
+      get :entity
+      expect(response).to have_http_status 400
+    end
+
+    it 'calls recent_source_links with correct entity_id and default values' do
+      entity = build(:org, id: 123)
+      expect(Entity).to receive(:find).with('123').and_return(entity)
+      expect(Rails.cache).to receive(:fetch).once.and_call_original
+      expect(Reference).to receive(:recent_source_links).with(entity, 1, 10).and_return([])
+      get :entity, { 'entity_id' => '123' }
+    end
+
+    it 'calls recent_source_links with correct entity_id and page' do
+      entity = build(:org, id: 123)
+      expect(Entity).to receive(:find).with('123').and_return(entity)
+      expect(Rails.cache).to receive(:fetch).once.and_call_original
+      expect(Reference).to receive(:recent_source_links).with(entity, 3, 10).and_return([])
+      get :entity, { 'entity_id' => '123', 'page' => 3 }
     end
   end
 end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Relationship, type: :model do
-  before(:all) do 
+  before(:all) do
     DatabaseCleaner.start
     Entity.skip_callback(:create, :after, :create_primary_ext)
     @loeb = create(:loeb)
@@ -320,6 +320,18 @@ describe Relationship, type: :model do
     it 'categorizes all other positions as "Other"' do
       rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @human_2.id, category_id: 1)
       expect(rel.position_or_membership_type).to eql 'Other Positions & Memberships'
+    end
+  end
+
+  describe '#display_date_range' do
+    it 'returns (past)' do
+      rel = build(:relationship, start_date: nil, end_date: nil, is_current: false)
+      expect(rel.display_date_range).to eq '(past)'
+    end
+
+    it 'returns plain date if dates are equal' do
+      rel = build(:relationship, start_date: '1999-00-00', end_date: '1999-00-00')
+      expect(rel.display_date_range).to eq "('99)"
     end
   end
 

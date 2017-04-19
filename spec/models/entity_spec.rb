@@ -27,7 +27,7 @@ describe Entity do
       e = Entity.new(primary_ext: 'Org', name: 'onewordname')
       expect(e.valid?).to be true
     end
-    
+
     describe 'Date Validation' do
       def build_entity(attr)
         build(:org, {id: rand(1000)}.merge(attr) )
@@ -47,7 +47,6 @@ describe Entity do
         expect(build_entity(start_date: '').valid?).to be false
       end
     end
-
   end
 
   describe 'summary_excerpt' do
@@ -56,9 +55,9 @@ describe Entity do
       expect(mega_corp.summary_excerpt).to be_nil
     end
 
-    it 'truncates to under 100 chars' do
+    it 'truncates to under 150 chars' do
       mega_corp = build(:mega_corp_inc, summary: 'word ' * 50)
-      expect(mega_corp.summary_excerpt.length).to be < 100
+      expect(mega_corp.summary_excerpt.length).to be < 150
     end
 
     it 'returns just the first  paragraph even if the paragraph is less than 100 chars' do

@@ -1,0 +1,33 @@
+<div class="row" id="sidebar-source-links">
+    <div class="col-sm-12">
+	<%= sidebar_title('Source Links', 'Articles documenting info on this page') %>
+    </div>
+    
+    <div class="col-sm-12" >
+	<span class="link-count">Number of documents:  <em class="link-count"><%= Reference.unique_url_count(@entity) %></em></span>
+	<%= link_to references_entity_path(@entity) do %> 
+	    <span class="glyphicon glyphicon-new-window" title="View more"></span>
+	<% end %>
+	<span id="source-links-left-arrow" class="link-arrow">&laquo;</span>
+	<span id="source-links-right-arrow" class="link-arrow">&raquo;</span>
+    </div>
+
+    <div class="col-sm-12" >
+	<ul class="list-unstyled" id="source-links-container">
+	</ul>
+    </div>
+
+</div>
+<script>
+ $(function(){
+   sidebarSourceLinks.init(<%= @entity.id %>);
+ });
+</script>
+
+
+
+<!-- <span class="links-loading hidden">
+     <span id="source-links-left-arrow" class="glyphicon glyphicon-menu-left"  aria-hidden="true"></span>
+     <span style="" id="source-links-right-arrow" class="glyphicon glyphicon-menu-right"  aria-hidden="true"></span>
+     <span class="glyphicon glyphicon-refresh animate-glyphicon"></span>
+     </span> -->

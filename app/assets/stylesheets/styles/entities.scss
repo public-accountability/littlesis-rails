@@ -25,11 +25,11 @@ $tiny_image_size: 35px;
 }
 
 .entity_update_user {
-	font-size: 0.8em;
-
-	a {
-		font-weight: 500;
-	}
+    font-size: 0.8em;
+    
+    a {
+	font-weight: 500;
+    }
 }
 
 /* TABS */
@@ -83,44 +83,49 @@ $tiny_image_size: 35px;
 #entity-edited-history {
   color: #444;
   font-size: 12px;
-  padding-top: 1.3em;
-  /* float: right; */
-  /* width: 350px; */
+  padding-left: 15px;
 }
 
 #actions {
-  margin-top: 1.2em;
-  padding-bottom: 1em;
+    /* margin-top: 1.2em; */
+    /* display: inline; */
 }
 
-#actions a {
-  position: relative;
-  font-size: 14px;
-  top: -6px;
-  color: #444;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  padding: 4px;
-  padding-left: 8px;
-  padding-right: 8px;
-  margin-right: 3px;
-  -moz-border-radius:10px;
-  border-radius: 10px;
+div.actions-row {
+    padding-bottom: 11px;
 }
 
-#actions a:hover {
-  color: #000;
-  background-color: #ddf;
-  text-decoration: none;
-}
+#action-buttons {
+    display: inline-block;
 
-#actions a.disabled_action {
-  color: #888;
-  background-color: #f8f8f8;
-}
+    a {
+	font-size: 14px;
+	top: -6px;
+	color: #444;
+	background-color: #fff;
+	border: 1px solid #e0e0e0;
+	padding: 4px;
+	padding-left: 8px;
+	padding-right: 8px;
+	margin-right: 3px;
+	-moz-border-radius:10px;
+	border-radius: 10px;
+    }
 
-#actions a.disabled_action:hover {
-  cursor: default;
+    a:hover {
+	color: #000;
+	background-color: #ddf;
+	text-decoration: none;
+    }
+    
+    a.disabled_action {
+	color: #888;
+	background-color: #f8f8f8;
+    }
+ 
+   a.disabled_action:hover {
+       cursor: default;
+   }
 }
 
 /* summary toggle */
@@ -475,10 +480,6 @@ html table.dataTable thead {
 }
 
 /* add relationship page */
-
-#results-table tbody a {
-    color: $link_blue;
-}
 
 #results-table tbody tr:hover {
     background-color: $red_lighter;

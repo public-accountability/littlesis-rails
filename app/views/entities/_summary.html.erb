@@ -1,8 +1,12 @@
-<div id="entity-summary">
-    <span class="summary-excerpt"><%= @entity.summary_excerpt %></span>
-    <span class="summary-full" style="display: none"><%= simple_format(@entity.summary) %></span>
-    <br>
-    <a href="#"><span class="summary-show-more" onclick="entity.summaryToggle()">more »<span></a>
-    <a href="#"><span class="summary-show-less" onclick="entity.summaryToggle()" style="display: none">« less</span></a>
-</div>
+<% unless @entity.summary.nil? %>
+    
+    <div id="entity-summary">
+	<span class="summary-excerpt"><%= @entity.summary_excerpt %></span>
+	<span class="summary-full" style="display: none"><%= simple_format(@entity.summary) %></span>
+	<% if @entity.summary.length > Entity::EXCERPT_SIZE %>
+	    <a href="#"><span class="summary-show-more" onclick="entity.summaryToggle()">  more »<span></a>
+            <a href="#"><span class="summary-show-less" onclick="entity.summaryToggle()" style="display: none">  « less</span></a>
+	<% end %>
+    </div>
 
+<% end  %>
