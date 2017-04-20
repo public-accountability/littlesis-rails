@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html class="fullscreen">
+    <head>
+	<title><%= page_title %></title>
+	<link href="https://fonts.googleapis.com/css?family=Oswald|Raleway" rel="stylesheet">
+	<%= stylesheet_link_tag    "splash", media: "all" %>
+	
+	<%= javascript_include_tag "application" %>
+	<%= facebook_meta %>
+	<% if Lilsis::Application.config.respond_to?(:google_site_verification) %>
+	    <meta name="google-site-verification" content="<%= Lilsis::Application.config.google_site_verification %>" />
+	<% end %>
+    </head>
+    <body>
+	<%= yield %>
+	<%= render 'shared/analytics' %>
+    </body>
+</html>
