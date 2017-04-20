@@ -1,0 +1,90 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "base/globals";
+@import "base/helpers";
+
+body {
+    font-family: 'Raleway', sans-serif;
+    
+    a {
+	color: $link_blue;
+	font-weight: 700;
+    }
+
+    input.btn-lg {
+	background-color: $red;
+	color: #fff;
+	border: 0;
+	font-weight: 200;
+    }
+}
+
+.jumbotron {
+    background-color: rgba(28, 71, 103, 0.3);
+
+    h1 {
+	color: black;
+	font-family: 'Oswald', sans-serif;
+	
+    }
+
+}
+
+#features-title {
+    font-size: 3em;
+}
+
+.embedded-maps {
+    padding-bottom: 1em;
+}
+
+.splash-images {
+  margin-top: 30px; 
+  margin-bottom: 30px; 
+
+  .splash-image {
+    height: 270px;
+    text-align: center;
+  }
+
+  img {
+    width: 330px;
+    height: 250px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+}
+
+#splash-join {
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+#splash-feature-list {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 500;
+  ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  li {
+    padding-left: 1em;
+    text-indent: 0em;
+  }
+
+  li:before {
+    content: '\02605';
+    padding-right: 10px;
+    font-size: 0.8em;
+  }
+  
+}
+
+#splash-more-maps {
+  margin-top: 40px;
+  text-align: center;
+}

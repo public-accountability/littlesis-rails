@@ -266,7 +266,7 @@ Lilsis::Application.routes.draw do
 
   get "/edits" => "edits#index"
   get "/partypolitics" => "pages#partypolitics"
-  get "/oligrapher" => "maps#splash"
+  get "/oligrapher" => "pages#oligrapher_splash"
   get "/graph" => "graph#all"
 
 

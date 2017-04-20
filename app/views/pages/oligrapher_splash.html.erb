@@ -1,0 +1,112 @@
+<% content_for(:page_title, 'Map the Power with Oligrapher') %>
+
+<div class="jumbotron">
+    <div class="container-fluid">
+	<div class="row text-center">
+	    <h1>Map the power with <strong>Oligrapher</strong></h1>
+	    <h2>Oligrapher is a tool for visualizing networks of influence</small></h2>
+	</div>
+	<div class="row text-center">
+	    <%= button_to('Get started on a new map', new_map_path, method: :get, class: 'btn-lg') %>
+	    <div id="splash-join">or <%= link_to('sign up', '/join') %> for a LittleSis account</div>
+	</div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row text-center bottom-1em">
+	<div class="col-md-6 col-lg-5 col-lg-offset-1 col-sm-12">
+	    <iframe height="400" width="510" scrolling="no" style="border: 0px; overflow: hidden;" src="https://littlesis.org/maps/1419-the-rnc-billionaires-banking-for-trump/embedded/v2?annotation_pct=0"></iframe>
+	</div>
+	<div class="col-md-6 col-lg-5 col-sm-12">
+	    <iframe height="400" width="510" scrolling="no" style="border: 0px; overflow: hidden;" src="https://littlesis.org/maps/259-profiting-from-ferguson/embedded/v2?annotation_pct=0"></iframe>
+	</div>
+    </div>
+</div>
+
+<div class="jumbotron">
+    <div class="container-fluid">
+	<div class="row">
+	    <div class="col-sm-12 text-center bottom-1em">
+		<h1 id="features-title">Features:</h1>
+	    </div>
+	</div>
+	<div class="row">
+	    <div class="col-sm-4 col-sm-offset-3">
+		<div id="splash-feature-list">
+		    <ul>
+			<li>easily import data from LittleSis</li>
+			<li>fullscreen and embedded maps</li>
+			<li>customizable nodes, edges, and text</li>
+			<li>force-directed and preset layouts</li>
+			<li>read more on the <%= link_to(raw('LittleSis blog'), 'http://blog.littlesis.org/2014/07/22/introducing-oligrapher-power-mapping-on-littlesis/') %></li>
+		    </ul>
+		</div>
+	    </div>
+	
+	    <div class="col-sm-4">
+		<div id="splash-feature-list">
+		    <ul>
+			<li>undo and redo edits</li>
+			<li>works standalone w/o LittleSis</li>
+			<li>tell a story through click-animations</li>
+			<li>fully-featured graph editor</li>
+			<li><%= link_to('open-source code', 'http://github.com/skomputer/oligrapher') %> using React</li>
+		    </ul>
+		</div>
+	    </div>
+	</div>
+    </div>
+</div>
+
+<div class="container-fluid">    
+    <div class="row hidden-xs splash-images">
+	<div class="col-sm-4 splash-image">
+	    <%= link_to(image_tag('fcc-map.jpg'), map_path(@fcc_map)) %><br>
+	    <%= link_to('FCC Tight with Telecoms', map_path(@fcc_map)) %>
+	</div>
+	<div class="col-sm-4 splash-image">
+	    <%= link_to(image_tag('lawmaking-map.jpg'), map_path(@lawmaking_map)) %><br>
+	    <%= link_to('Lawmaking after Citizens United', map_path(@lawmaking_map)) %>
+	</div>
+	<div class="col-sm-4 splash-image">
+	    <%= link_to(image_tag('ferguson-map.jpg'), map_path(@ferguson_map)) %><br>
+	    <%= link_to('Profiting from Ferguson', map_path(@ferguson_map)) %>
+	</div>
+    </div>
+
+    <div class="row hidden-xs splash-images">
+	<div class="col-sm-4 splash-image">
+	    <%= link_to(image_tag('shale-map.jpg'), map_path(@shale_map)) %><br>
+	    <%= link_to('Center for Sustainable Shale Development', map_path(@shale_map)) %>
+	</div>
+	<div class="col-sm-4 splash-image">
+	    <%= link_to(image_tag('hadley-map.jpg'), map_path(@hadley_map)) %><br>
+	    <%= link_to('Hadley and the Ministry of Peace', map_path(@hadley_map)) %>
+	</div>
+	<div class="col-sm-4 splash-image">
+	    <%= link_to(image_tag('moma-map.jpg'), map_path(@moma_map)) %><br>
+	    <%= link_to('Museum of Modern Finance', map_path(@moma_map)) %>
+	</div>
+	
+    </div>
+    
+    <div class="row">
+	<div id="splash-more-maps">
+	    <%= button_to 'View More Maps', featured_maps_path, method: :get, class: 'btn btn-default btn-lg' %>
+	</div>
+    </div>
+    
+
+    <div class="row bottom-3em">
+	<h2 class="text-center">Learn how to make your own oligrapher</h2>
+	<div class="col-sm-12 col-md-5 col-md-offset-1">
+	    <iframe width="560" height="315" src="https://www.youtube.com/embed/yphZMz_98Fc" frameborder="0" allowfullscreen></iframe>
+	</div>
+	<div class="col-sm-12 col-md-5">
+	    <iframe width="560" height="315" src="https://www.youtube.com/embed/bRgyg9ysyhk" frameborder="0" allowfullscreen></iframe>
+	</div>
+    </div>
+    
+</div>
+

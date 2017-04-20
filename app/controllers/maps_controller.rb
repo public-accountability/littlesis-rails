@@ -1,8 +1,8 @@
 class MapsController < ApplicationController
   include NetworkMapsHelper
 
-  before_action :set_map, except: [:index, :featured, :new, :create, :search, :splash, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
-  before_filter :authenticate_user!, except: [:index, :featured, :show, :raw, :splash, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
+  before_action :set_map, except: [:index, :featured, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
+  before_filter :authenticate_user!, except: [:index, :featured, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
   before_filter :enforce_slug, only: [:show]
 
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
@@ -56,25 +56,6 @@ class MapsController < ApplicationController
     @maps = NetworkMap.featured.order("updated_at DESC, id DESC").page(params[:page]).per(20)
     @featured = true
     render 'index'
-  end
-
-  def splash
-    @maps = NetworkMap.featured.order("updated_at DESC, id DESC").page(params[:page]).per(50)
-
-    @fcc_map = NetworkMap.find(101)
-    @ferguson_map = NetworkMap.find(259)
-
-    @shale_map = NetworkMap.find(152)
-    @hadley_map = NetworkMap.find(238)
-    @moma_map = NetworkMap.find(282)
-
-    @lawmaking_map = NetworkMap.find(542)
-    @uc_map = NetworkMap.find(228)
-    @goldwyn_map = NetworkMap.find(431)
-
-    @mugabe_map = NetworkMap.find(266)
-    @goldman_map = NetworkMap.find(157)
-    @berman_map = NetworkMap.find(137)
   end
 
   def embedded_v2
