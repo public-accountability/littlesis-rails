@@ -126,45 +126,47 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :entities do
-    member do
-      get 'relationships'
-      get 'political'
-      get 'match_donations'
-      get 'match_ny_donations'
-      get 'review_donations'
-      get 'review_ny_donations'
-      post 'match_donation'
-      post 'unmatch_donation'
-      get 'contributions'
-      get 'references'
-      get 'potential_contributions'
-      get 'edit_twitter'
-      post 'add_twitter'  
-      post 'remove_twitter'
-      get 'fields'
-      post 'update_fields'
-      get 'articles'
-      get 'find_articles'
-      post 'import_articles'
-      post 'remove_article'
-      get 'new_article'
-      post 'create_article'
-      get 'find_merges'
-      post 'merge'
-      get 'refresh'
-      get 'images'
-      get 'new_image'
-      post 'upload_image'
-      post 'remove_image'
-      post 'feature_image'
-      get 'add_relationship'
-    end
+  constraints(id: /[0-9]+(-[^\/]+)?/) do
+    resources :entities do
+      member do
+        get 'relationships'
+        get 'political'
+        get 'match_donations'
+        get 'match_ny_donations'
+        get 'review_donations'
+        get 'review_ny_donations'
+        post 'match_donation'
+        post 'unmatch_donation'
+        get 'contributions'
+        get 'references'
+        get 'potential_contributions'
+        get 'edit_twitter'
+        post 'add_twitter'
+        post 'remove_twitter'
+        get 'fields'
+        post 'update_fields'
+        get 'articles'
+        get 'find_articles'
+        post 'import_articles'
+        post 'remove_article'
+        get 'new_article'
+        post 'create_article'
+        get 'find_merges'
+        post 'merge'
+        get 'refresh'
+        get 'images'
+        get 'new_image'
+        post 'upload_image'
+        post 'remove_image'
+        post 'feature_image'
+        get 'add_relationship'
+      end
 
-    collection do
-      get 'search_by_name', as: 'name_search'
-      get 'search_field_names', as: 'field_name_search'
-      get 'next_twitter'
+      collection do
+        get 'search_by_name', as: 'name_search'
+        get 'search_field_names', as: 'field_name_search'
+        get 'next_twitter'
+      end
     end
   end
 
