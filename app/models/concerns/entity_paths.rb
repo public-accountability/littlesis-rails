@@ -5,7 +5,11 @@ module EntityPaths
 
   module ClassMethods
     def name_to_legacy_slug(name)
-      name.tr(" ", "_").tr("/", "~").tr('+', '_')
+      parameterize_name(name)
+    end
+
+    def parameterize_name(name)
+      name.tr(" ", "_").tr("/", "~").tr('+', '_').tr('#', '')
     end
 
     def legacy_url(primary_ext, id, name, action = nil)

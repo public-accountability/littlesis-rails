@@ -111,7 +111,8 @@ class Entity < ActiveRecord::Base
   end
 
   def to_param
-    "#{id}-#{name.parameterize}"
+    # return nil unless persisted?
+    "#{id}-#{self.class.parameterize_name(name)}"
   end
 
   def person?
