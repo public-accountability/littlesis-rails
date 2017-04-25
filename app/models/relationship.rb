@@ -21,8 +21,8 @@ class Relationship < ActiveRecord::Base
   GENERIC_CATEGORY = 12
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
-  belongs_to :entity, foreign_key: "entity1_id"
-  belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
+  belongs_to :entity, foreign_key: "entity1_id", touch: true
+  belongs_to :related, class_name: "Entity", foreign_key: "entity2_id", touch: true
   has_many :references, -> { where(object_model: 'Relationship') }, foreign_key: 'object_id'
 
   #has_many :note_relationships, inverse_of: :relationship

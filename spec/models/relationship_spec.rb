@@ -59,6 +59,25 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'touch: entity and related' do
+    before do
+      @elected = create(:elected)
+      @org = create(:org)
+    end
+    
+    it 'updates updated_at of entity after change' do
+      rel = Relationship.create!(entity1_id: @elected.id, entity2_id: @org.id, category_id: 12, description1: 'relationship')
+      @elected.update_columns(updated_at: 1.week.ago)
+      expect {  rel.update(description1: 'new title') }.to change {  Entity.find(@elected.id).updated_at } 
+    end
+
+    it 'updates updated_at of related after change' do
+      rel = Relationship.create(entity1_id: @elected.id, entity2_id: @org.id, category_id: 12, description1: 'relationship')
+      @org.update_columns(updated_at: 1.week.ago)
+      expect {  rel.update(description1: 'new title') }.to change {  Entity.find(@org.id).updated_at } 
+    end
+  end
+
   describe 'create_category' do
     it 'creates associated category model' do
       rel = build(:position_relationship)
