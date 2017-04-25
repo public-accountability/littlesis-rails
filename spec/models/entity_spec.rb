@@ -352,6 +352,39 @@ describe Entity do
     end
   end
 
+  describe 'EntityPaths' do
+    describe 'Entity.legacy_url' do
+      it 'generates correct url' do
+        url = Entity.legacy_url('Org', 123, 'cat whisperers inc')
+        expect(url).to eq '/org/123/cat_whisperers_inc'
+      end
+
+      it 'generates correct url with action' do
+        url = Entity.legacy_url('Org', 123, 'cat whisperers inc', 'edit')
+        expect(url).to eq '/org/123/cat_whisperers_inc/edit'
+      end
+
+      it 'works as an instance method' do
+        e = build(:org, name: 'some corp', id: 1000)
+        expect(e.legacy_url).to eq "/org/1000/some_corp"
+      end
+    end
+
+    describe 'Entity.name_to_legacy_slug' do
+      it 'removes spaces' do
+        expect(Entity.name_to_legacy_slug('cool name')).to eq 'cool_name'
+      end
+
+      it 'removes slashes' do
+        expect(Entity.name_to_legacy_slug('cool /name')).to eq 'cool_~name'
+      end
+
+      it 'removes plus signs' do
+        expect(Entity.name_to_legacy_slug('+corp')).to eq '_corp'
+      end
+    end
+  end
+
   describe 'Using paper_trail for versision' do
     with_versioning do
       it 'creates version after updating name' do

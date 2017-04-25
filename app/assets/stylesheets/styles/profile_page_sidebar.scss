@@ -12,11 +12,8 @@
 .sidebar-title-text {}
 
 #source-links-container {
-    /* display: block; */
-    /* height: 150px; */
 
     li {
-	font-size: 11px;
 	cursor: pointer;
     }
 }
@@ -30,14 +27,22 @@
 #profile-page-sidebar {}
 
 #sidebar-source-links {
-
-    .link-arrow {
+    /* font-size: 12px; */
+    .source-links-pager {
 	cursor: pointer;
-	font-size: 19px;
+	font-size: 12px;
     }
 
-    .link-arrow:hover {
+    .source-links-pager:hover {
 	color: $link_blue;
+    }
+
+    .link-arrow-text {
+	font-size: 12px;
+    }
+
+    .link-arrow {
+	font-size: 14px;
     }
 
     .link-count {

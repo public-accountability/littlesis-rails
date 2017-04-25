@@ -6,6 +6,7 @@ class Entity < ActiveRecord::Base
   include Political
   include ApiAttributes
   include SimilarEntities
+  include EntityPaths
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
@@ -110,7 +111,8 @@ class Entity < ActiveRecord::Base
   end
 
   def to_param
-    "#{id}-#{name.parameterize}"
+    # return nil unless persisted?
+    "#{id}-#{self.class.parameterize_name(name)}"
   end
 
   def person?
@@ -416,28 +418,6 @@ class Entity < ActiveRecord::Base
 
   def self.rubin # :)
     find(1164)
-  end
-
-  def self.name_to_legacy_slug(name)
-    name.gsub(" ", "_").gsub("/", "~").gsub('+', '_')
-  end
-
-  def name_to_legacy_slug
-    self.class.name_to_legacy_slug(name)
-  end
-
-  def legacy_url(action = nil)
-    self.class.legacy_url(primary_ext, id, name, action)
-  end
-
-  def full_legacy_url(action = nil)
-    "//littlesis.org" + legacy_url(action)
-  end
-
-  def self.legacy_url(primary_ext, id, name, action = nil)
-    url = "/" + primary_ext.downcase + "/" + id.to_s + "/" + name_to_legacy_slug(name)
-    url += "/" + action if action.present?
-    url
   end
 
   def last_new_user

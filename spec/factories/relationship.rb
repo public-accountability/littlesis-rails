@@ -2,7 +2,7 @@ FactoryGirl.define do
   sequence :relationship_id do |n|
     n
   end
-  
+
   factory :relationship_with_house, class: Relationship do
     # entity1_id 10551
     entity2_id 12884
@@ -32,6 +32,7 @@ FactoryGirl.define do
   factory :relationship, class: Relationship do
     association :entity, factory: :person, strategy: :build
     association :related, factory: :mega_corp_llc, strategy: :build
+    id { generate(:relationship_id) }
   end
 
 end
