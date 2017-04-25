@@ -90,16 +90,16 @@ class Reference < ActiveRecord::Base
         (
 	 SELECT ref.source as source, ref.name as name, max(ref.updated_at) as updated_at
        	 FROM link 
-	 INNER JOIN reference as ref ON (ref.object_model = 'Relationship' AND ref.object_id = link.relationship_id AND ref_type <> 2)
+	 INNER JOIN reference as ref ON (ref.object_model = 'Relationship' AND ref.object_id = link.relationship_id)
 	 WHERE link.entity1_id = ?
-	 GROUP BY ref.source, ref.name
+	 GROUP BY ref.source
 	 )
 	 UNION ALL
          (
           SELECT reference.source as source, reference.name as name, max(reference.updated_at) as updated_at
 	  FROM reference
   	  WHERE object_model = 'Entity' AND object_id = ?
-  	  GROUP BY reference.source, reference.name
+  	  GROUP BY reference.source
          )
         ) as r
         ORDER BY r.updated_at desc
