@@ -1,7 +1,11 @@
 require 'rails_helper'
 
 describe 'entities/show.html.erb' do
-  before(:all) { DatabaseCleaner.start } 
+  before(:all) do
+    DatabaseCleaner.start
+    @sf_user = create(:sf_guard_user, username: 'X')
+    @user = create(:user, sf_guard_user_id: @sf_user.id)
+  end
   after(:all) { DatabaseCleaner.clean }
 
   before(:each) do
@@ -9,24 +13,28 @@ describe 'entities/show.html.erb' do
   end
 
   def sorted_links(e)
-    links = e.links.joins(:relationship).includes(:relationship, :related).order('relationship.end_date DESC')
-    SortedLinks.new(links)
+    SortedLinks.new(e)
+  end
+
+  describe 'sets title' do
+    it 'sets title correctly' do
+      assign :entity, create(:mega_corp_inc, last_user_id: @sf_user.id)
+      expect(view).to receive(:content_for).with(:page_title, 'mega corp INC')
+      render
+    end
   end
 
   describe 'header' do    
     context 'without any permissions' do
       before(:all) do
         DatabaseCleaner.start
-        @sf_user = create(:sf_guard_user, username: 'X')
-        @user = create(:user, sf_guard_user_id: @sf_user.id)
-        @e = create(:mega_corp_inc, last_user_id: @sf_user.id )
+        @e = create(:mega_corp_inc, last_user_id: @sf_user.id)
       end
 
       after(:all) { DatabaseCleaner.clean }
 
       before do
         assign(:entity, @e)
-        # assign(:links, sorted_links(@e))
         assign(:similar_entities, [])
         render
       end
