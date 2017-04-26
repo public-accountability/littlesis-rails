@@ -5,7 +5,7 @@
   <%= stylesheet_link_tag    "application", media: "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
-	<%= facebook_meta %>
+  <%= facebook_meta %>
   <% if Lilsis::Application.config.respond_to?(:google_site_verification) %>
   	<meta name="google-site-verification" content="<%= Lilsis::Application.config.google_site_verification %>" />
   <% end %>

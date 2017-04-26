@@ -85,7 +85,6 @@ class Entity < ActiveRecord::Base
 
   before_create :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext, :add_to_default_network
-  after_save :clear_entity_cache_delay
 
   def set_last_user_id
     self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
@@ -727,9 +726,4 @@ class Entity < ActiveRecord::Base
   def extension_with_fields?(name)
     self.class.all_extension_names_with_fields.include?(name)
   end
-
-  def clear_entity_cache_delay
-    clear_legacy_cache('littlesis.org').delay unless Rails.env.test?
-  end
-  
 end

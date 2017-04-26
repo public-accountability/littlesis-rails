@@ -1,4 +1,9 @@
 <% content_for(:page_title, @entity.name) %>
+<% content_for(:facebook_url, entity_url(@entity)) %>
+<% content_for(:facebook_title, "LittleSis: #{@entity.name}") %>
+<% content_for(:facebook_type, "website") %>
+<% content_for(:facebook_image, @entity.featured_image_url) %>
+
 <%= render partial: 'header', locals: { entity: @entity } %>
 <%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
 

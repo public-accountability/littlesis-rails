@@ -189,26 +189,6 @@ describe EntitiesController, type: :controller do
         end
       end
 
-      describe 'Clearing Cache' do
-        def setup
-          allow(OsMatch).to receive(:find_or_create_by!) { double('osmatch').as_null_object }
-          mock_entity = instance_double('Entity')
-          mock_delay = double('delay')
-          expect(mock_delay).to receive(:clear_legacy_cache)
-          expect(mock_entity).to receive(:delay) { mock_delay }
-          expect(mock_entity).to receive(:update)
-          expect(Entity).to receive(:find).with('7').and_return(mock_entity)
-        end
-
-        before { OsMatch.skip_callback :create, :after, :post_process }
-        after { OsMatch.set_callback :create, :after, :post_process }
-
-        it 'deletes legacy cache on match' do
-          setup
-          post :match_donation, id: 7, payload: [1]
-        end
-      end
-
       describe '#unmatch_donation' do
         before do
           expect(controller).to receive(:check_permission).with('importer').and_call_original

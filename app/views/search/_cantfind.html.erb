@@ -9,7 +9,7 @@
 <% else %>
   <% query_str = params.to_query %>
   <% referer = request.fullpath[0] + (query_str ? '?' + query_str : '') %>
-  <strong><%= link_to('Login', legacy_login_path) %></strong> or <strong><%= link_to('sign up', legacy_signup_path) %></strong> to add it yourself!
+    <strong><%= link_to('Login', new_user_session_path) %></strong> or <strong><%= link_to('sign up', new_user_registration_path) %></strong> to add it yourself!
 <% end %>
 
 </span>
