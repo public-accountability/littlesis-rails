@@ -14,19 +14,19 @@ module ApplicationHelper
     title
   end
 
-	def centered_content(id=nil, &block)
-		content_id = (id.nil? ? nil : id.to_s + "_content")
-		str = content_tag("div", 
-			content_tag("div", 
-				"\n" + capture(&block) + "\n", 
-				{ :class => "centered_content", :id => content_id },
-				false
-			), 
-			{ :class => "centered", :id => id },
-			false
-		)			
-		raw str
-	end
+  def centered_content(id=nil, &block)
+    content_id = (id.nil? ? nil : id.to_s + "_content")
+    str = content_tag("div",
+		      content_tag("div",
+				  "\n" + capture(&block) + "\n",
+				  { :class => "centered_content", :id => content_id },
+				  false
+			         ),
+		      { :class => "centered", :id => id },
+		      false
+		     )
+    raw str
+  end
 
   def excerpt(text, length=30)
     if text
@@ -75,11 +75,12 @@ module ApplicationHelper
   end
 
   def yes_or_no(value)
-  	value ? "yes" : "no"
+    value ? "yes" : "no"
   end
 
-  def check_mark(value=true)
-		value ? raw("&#x2713;") : nil
+  # I don't think this is used anywhere... (ziggy - 26 Apr 2017)
+  def check_mark(value = true)
+    value ? raw("&#x2713;") : nil
   end
 
   def header_action(text, path)
@@ -104,18 +105,6 @@ module ApplicationHelper
     content_tag('div', class: 'panel panel-default') do
       content_tag('div', heading, class: 'panel-heading') + content_tag('div', class: 'panel-body') { capture(&block) }
     end
-  end
-
-  def legacy_login_path
-    "/login"
-  end
-
-  def legacy_logout_path
-    "/logout"
-  end
-
-  def legacy_signup_path
-    "/join"
   end
 
   def home_groups_path

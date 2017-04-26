@@ -32,8 +32,8 @@ if user_signed_in?
     end
   end
 else
-  items['Login'] = { url: legacy_login_path }
-  items['Sign Up'] = { url: legacy_signup_path }
+  items['Login'] = { url: new_user_session_path }
+  items['Sign Up'] = { url: new_user_registration_path }
 end
 
 items['Explore'] = {
