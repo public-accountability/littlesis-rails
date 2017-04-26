@@ -20,6 +20,7 @@ describe 'entities/show.html.erb' do
     it 'sets title correctly' do
       assign :entity, create(:mega_corp_inc, last_user_id: @sf_user.id)
       expect(view).to receive(:content_for).with(:page_title, 'mega corp INC')
+      expect(view).to receive(:content_for).with(any_args).exactly(4).times
       render
     end
   end
