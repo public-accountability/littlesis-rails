@@ -145,9 +145,8 @@ module ApplicationHelper
   def facebook_meta
     str = ""
     %w(url type title description image).each do |key|
-      if value = content_for(:"facebook_#{key.to_s}")
-        str += "<meta property=\"og:#{key}\" content=\"#{value}\" />"
-      end
+      value = content_for(:"facebook_#{key}")
+      str += "<meta property=\"og:#{key}\" content=\"#{value}\" />" if value
     end
     raw(str)
   end
