@@ -43,6 +43,11 @@ class HomeController < ApplicationController
     @recent_updates = current_user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
   end
 
+  # Sends CSRF token to browser extension
+  def token
+    render :inline => "<%= csrf_meta_tags %>"
+  end
+
   def dismiss
     dismiss_alert(params[:id])
     render json: { id: params[:id] }
