@@ -5,7 +5,8 @@ class Relationship < ActiveRecord::Base
   include Referenceable
   include RelationshipDisplay
 
-  has_paper_trail :ignore => [:last_user_id]
+  has_paper_trail :ignore => [:last_user_id],
+                  :meta => { :entity1_id => :entity1_id, :entity2_id => :entity2_id }
 
   POSITION_CATEGORY = 1
   EDUCATION_CATEGORY = 2
@@ -452,6 +453,8 @@ class Relationship < ActiveRecord::Base
   end
   
   private
+
+  
 
   def last_user_id_for_entity_update(sf_user_id = nil)
     # if called with a 'sf_user_id' use that id

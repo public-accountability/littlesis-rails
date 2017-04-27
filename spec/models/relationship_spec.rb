@@ -409,6 +409,7 @@ describe Relationship, type: :model do
         @human = create(:person)
         @corp = create(:corp)
       end
+      
       it 'records created, modified, and deleted versions' do
         rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
         expect(rel.versions.size).to eq(1)
@@ -419,6 +420,13 @@ describe Relationship, type: :model do
         rel.destroy
         expect(rel.versions.size).to eq(3)
         expect(rel.versions.last.event).to eq('destroy')
+      end
+
+      it 'saves entity1 and entity2 metadata' do
+        rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
+        rel.update(description1: 'x')
+        expect(rel.versions.last.entity1_id).to eq @human.id
+        expect(rel.versions.last.entity2_id).to eq @corp.id
       end
     end
   end
