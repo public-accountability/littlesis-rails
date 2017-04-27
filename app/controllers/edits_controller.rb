@@ -6,4 +6,5 @@ class EditsController < ApplicationController
              .includes(last_user: :user)
              .order("updated_at DESC").page(params[:page]).per(20)
   end
+
 end
