@@ -256,6 +256,7 @@ Lilsis::Application.routes.draw do
   get "/home/maps" => "home#maps"
   get "/home/lists" => "home#lists"
   get "/home/dashboard" => "home#dashboard"
+  get "/home/token" => "home#token"
   post "/home/dismiss",
     controller: 'home',
     action: 'dismiss',
