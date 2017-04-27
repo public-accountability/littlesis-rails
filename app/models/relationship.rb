@@ -21,8 +21,8 @@ class Relationship < ActiveRecord::Base
   GENERIC_CATEGORY = 12
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
-  belongs_to :entity, foreign_key: "entity1_id", touch: true
-  belongs_to :related, class_name: "Entity", foreign_key: "entity2_id", touch: true
+  belongs_to :entity, foreign_key: "entity1_id"
+  belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
   has_many :references, -> { where(object_model: 'Relationship') }, foreign_key: 'object_id'
 
   #has_many :note_relationships, inverse_of: :relationship
@@ -62,6 +62,10 @@ class Relationship < ActiveRecord::Base
   validates :end_date, length: { maximum: 10 }, date: true
 
   after_create :create_category, :create_links
+  # This callback is basically a modified version of :touch => true
+  # It updates the entity timestamps and also changes the last_user_id of
+  # associated entities for the relationship
+  after_save :update_entity_timestamps
   
   def create_category
     self.class.all_categories[category_id].constantize.create(relationship: self) if self.class.all_category_ids_with_fields.include?(category_id)
@@ -422,4 +426,41 @@ class Relationship < ActiveRecord::Base
     self.attributes = { description1: "NYS Campaign Contribution" } if description1.blank?
     self
   end
+  
+
+  ########################################
+  # Update Entity Timestamp after update #
+  ########################################
+
+
+  # updates timestamp and sets last_user_id of
+  # both entities in the relationship
+  def update_entity_timestamps(sf_user_id = nil)
+    lui = last_user_id_for_entity_update(sf_user_id)
+    
+    if entity.last_user_id == lui
+      entity.touch
+    else
+      entity.update(last_user_id: lui)
+    end
+
+    if related.last_user_id == lui
+      related.touch
+    else
+      related.update(last_user_id: lui)
+    end
+  end
+  
+  private
+
+  def last_user_id_for_entity_update(sf_user_id = nil)
+    # if called with a 'sf_user_id' use that id
+    return sf_user_id unless sf_user_id.nil?
+    # if, for some reason, the relationship's last_user_id is nil, use that
+    return APP_CONFIG.fetch('system_user_id') if last_user_id.nil?
+    # otherwise, use the relationship's last_user_id
+    last_user_id
+  end
+
+
 end

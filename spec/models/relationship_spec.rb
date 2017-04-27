@@ -6,7 +6,8 @@ describe Relationship, type: :model do
     Entity.skip_callback(:create, :after, :create_primary_ext)
     @loeb = create(:loeb)
     @nrsc = create(:nrsc)
-    @loeb_donation = create(:loeb_donation, filings: 1, amount: 10000) # relationship model        
+    @loeb_donation = create(:loeb_donation, filings: 1, amount: 10000) # relationship model
+
   end
   after(:all) do 
     Entity.set_callback(:create, :after, :create_primary_ext)
@@ -55,7 +56,6 @@ describe Relationship, type: :model do
         expect(rel(end_date: '2017').valid?).to be false
         expect(rel(start_date: '').valid?).to be false
       end
-
     end
   end
 
@@ -75,6 +75,55 @@ describe Relationship, type: :model do
       rel = Relationship.create(entity1_id: @elected.id, entity2_id: @org.id, category_id: 12, description1: 'relationship')
       @org.update_columns(updated_at: 1.week.ago)
       expect {  rel.update(description1: 'new title') }.to change {  Entity.find(@org.id).updated_at } 
+    end
+  end
+
+  describe '#last_user_id_for_entity_update' do
+    it 'returns provided sf_user_id' do
+      rel = build(:generic_relationship)
+      expect(rel.send(:last_user_id_for_entity_update, 345)).to eql 345
+    end
+    
+    it 'returns system user id if last_user_id is nil' do
+      rel = build(:generic_relationship, last_user_id: nil)
+      expect(rel.send(:last_user_id_for_entity_update)).to eq APP_CONFIG.fetch('system_user_id')
+    end
+    
+    it 'returns relationship last user id' do
+      rel = build(:generic_relationship, last_user_id: 987)
+      expect(rel.send(:last_user_id_for_entity_update)).to eq 987
+    end
+  end
+
+  describe '#update_entity_timestatmps' do
+    before(:all) do
+      @sf_guard_user_1 = create(:sf_guard_user)
+      @sf_guard_user_2 = create(:sf_guard_user)
+      @sf_guard_user_3 = create(:sf_guard_user)
+    end
+
+    before do
+      @e1 = create(:person, last_user_id: (@sf_guard_user_1.id))
+      @e2 = create(:person, last_user_id: (@sf_guard_user_1.id))
+    end
+
+    it 'updates entity timestamp' do
+      @rel = Relationship.create!(category_id: 12, entity: @e1, related: @e2, last_user_id: @sf_guard_user_2.id)
+      @e1.update_columns(updated_at: 1.day.ago)
+      expect { @rel.update_entity_timestamps }.to change { Entity.find(@e1.id).updated_at }
+    end
+
+    it 'changes entity last_user_id' do
+      @rel = Relationship.create!(category_id: 12, entity: @e1, related: @e2, last_user_id: @sf_guard_user_2.id)
+      expect(Entity.find(@e1.id).last_user_id).to eq @sf_guard_user_2.id
+      @rel.update(description1: 'this is a description', last_user_id: @sf_guard_user_3.id)
+      expect(Entity.find(@e1.id).last_user_id).to eq @sf_guard_user_3.id
+    end
+
+    it 'changes related last_user_id' do
+      @rel = Relationship.create!(category_id: 12, entity: @e1, related: @e2, last_user_id: @sf_guard_user_2.id)
+      @rel.update(description1: 'this is a description')
+      expect(Entity.find(@e2.id).last_user_id).to eq @sf_guard_user_2.id
     end
   end
 
