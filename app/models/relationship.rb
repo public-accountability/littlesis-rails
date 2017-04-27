@@ -5,7 +5,7 @@ class Relationship < ActiveRecord::Base
   include Referenceable
   include RelationshipDisplay
 
-  has_paper_trail
+  has_paper_trail :ignore => [:last_user_id]
 
   POSITION_CATEGORY = 1
   EDUCATION_CATEGORY = 2

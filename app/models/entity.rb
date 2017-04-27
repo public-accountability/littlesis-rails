@@ -12,7 +12,7 @@ class Entity < ActiveRecord::Base
 
   EXCERPT_SIZE = 150
 
-  has_paper_trail :ignore => [:link_count, :delta]
+  has_paper_trail :ignore => [:link_count, :delta, :last_user_id]
 
   has_many :aliases, inverse_of: :entity, dependent: :destroy
   has_many :images, inverse_of: :entity, dependent: :destroy
