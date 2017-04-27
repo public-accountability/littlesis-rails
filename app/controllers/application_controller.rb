@@ -137,6 +137,10 @@ class ApplicationController < ActionController::Base
     parameter_processor(params)
   end
 
+  def set_entity
+    @entity = Entity.find(params[:id])
+  end
+
   # override this method to modify the param object before sent to .update
   def parameter_processor(params)
     params

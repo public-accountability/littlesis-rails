@@ -411,10 +411,6 @@ class EntitiesController < ApplicationController
     @entity = Entity.includes(:aliases, list_entities: [:list]).find(params[:id])
   end
 
-  def set_entity
-    @entity = Entity.find(params[:id])
-  end
-
   def set_entity_references
     @references = @entity.references.order('updated_at desc').limit(10)
   end
