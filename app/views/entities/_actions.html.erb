@@ -15,7 +15,12 @@
 		<% if @current_user.has_legacy_permission 'admin' %>
                     <%= link_to "refresh", @entity.legacy_url("refresh") + '?' + { ref: request.original_url }.to_query %>
 		<% end %>
-            <% end %>
+	    <% else  %>
+		<div class="fb-share-button" 
+		     data-href="<%= entity_url(@entity) %>"
+		     data-layout="button">
+		</div>
+	    <% end %>
 	</div>
     </div>
     <div class="col-md-4 col-sm-4 hidden-xs">
