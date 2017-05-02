@@ -3,7 +3,7 @@
 <%= render partial: 'entities/actions', locals: { entity: @entity } %>
 
 <div class="col-sm-12">
-    <h2>Basic Info Modifications:</h2>
+    <h2>Basic info modifications:</h2>
     <%= paginate @versions, param_name: 'version_page' %>
     <table class="table" id="basic-info-modifications-table">
 	<thead>
@@ -11,7 +11,7 @@
 		<th>Date</th>
 		<th>Event</th>
 		<th>Changes</th>
-		<th>Who Did it?</th>
+		<th>Who?</th>
 	    </tr>
 	</thead>
 	<tbody>
@@ -28,7 +28,7 @@
 </div>
 
 <div class="col-sm-12">
-    <h2>Relationship Modications:</h2>
+    <h2>Relationship modifications:</h2>
     <%= paginate @relationship_changes, param_name: 'rel_page' %>
     <table class="table">
 	<thead>
@@ -36,7 +36,7 @@
 		<th>Date</th>
 		<th>Event</th>
 		<th>Changes</th>
-		<th>Who Did it?</th>
+		<th>Who?</th>
 	    </tr>
 	</thead>
 	<tbody>
