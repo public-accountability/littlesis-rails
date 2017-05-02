@@ -9,21 +9,20 @@ class EditsController < ApplicationController
   end
 
   def entity
-    page = params[:page].blank? ? 1 : params[:page]
-    @versions = @entity.versions.reorder('created_at DESC').page(page).per(10)
-    # @versions = @entity.versions.page(1).per(20)
-    @relationship_changes = rel_versions(@entity.id, 1)
+    version_page = params[:version_page].blank? ? 1 : params[:version_page]
+    rel_page = params[:rel_page].blank? ? 1 : params[:rel_page]
+    @versions = @entity.versions.reorder('created_at DESC').page(version_page).per(5)
+    @relationship_changes = rel_versions(@entity.id, rel_page)
   end
 
   private
 
-  def rel_versions(entity_id, page, per_page = 10)
+  def rel_versions(entity_id, page, per_page = 5)
     raise ArgumentError unless entity_id.is_a? Integer
     PaperTrail::Version
       .where("entity1_id = #{entity_id} OR entity2_id = #{entity_id}")
       .order(created_at: :desc)
-      .page(1)
-      .per(10)
+      .page(page)
+      .per(per_page)
   end
-
 end

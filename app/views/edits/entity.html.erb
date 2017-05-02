@@ -3,9 +3,9 @@
 <%= render partial: 'entities/actions', locals: { entity: @entity } %>
 
 <div class="col-sm-12">
-    <h1>Basic Info Modifications:</h1>
-    <%= paginate @versions %>
-    <table class="table">
+    <h2>Basic Info Modifications:</h2>
+    <%= paginate @versions, param_name: 'version_page' %>
+    <table class="table" id="basic-info-modifications-table">
 	<thead>
 	    <tr>
 		<th>Date</th>
@@ -24,7 +24,31 @@
 		</tr>
             <% end %>
 	</tbody>
+    </table>
+</div>
 
+<div class="col-sm-12">
+    <h2>Relationship Modications:</h2>
+    <%= paginate @relationship_changes, param_name: 'rel_page' %>
+    <table class="table">
+	<thead>
+	    <tr>
+		<th>Date</th>
+		<th>Event</th>
+		<th>Changes</th>
+		<th>Who Did it?</th>
+	    </tr>
+	</thead>
+	<tbody>
+	    <% @relationship_changes.each do |ver| %>
+		<tr>
+                    <td><%=  ver.created_at.to_s(:short) %></td>
+                    <td><%=  ver.event %></td>
+                    <td><%=  version_changes(ver.changeset) %></td>
+		    <td><%=  who_did_it(ver) %></td>
+		</tr>
+            <% end %>
+	</tbody>
     </table>
 </div>
 

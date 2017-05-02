@@ -3,14 +3,15 @@
 # used by edit controller and lists controller
 ################################################
 module EditsHelper
-
-  # Right now all this does is delete 'updated_at'
+  # Right now all this does is delete: 'updated_at', 'last_user_id', 'id'
   def changeset_parse(changeset)
-    changeset
-      .dup # mutation scares me
-      .tap { |x| x.delete('updated_at') } 
+    changeset_hash = changeset.dup # mutation is scary
+    ['updated_at', 'last_user_id', 'id', 'created_at'].each do |key|
+      changeset_hash.delete(key)
+    end
+    changeset_hash
   end
-  
+
   def version_changes(changeset)
     changes = ""
     changeset_parse(changeset).each_pair do |key, value| 
@@ -19,7 +20,6 @@ module EditsHelper
     end
     changes.html_safe
   end
-  
 
   def who_did_it(version)
     return '?' if version.whodunnit.blank?
@@ -27,5 +27,4 @@ module EditsHelper
     return '?' if user.nil?
     user.username
   end
-  
 end
