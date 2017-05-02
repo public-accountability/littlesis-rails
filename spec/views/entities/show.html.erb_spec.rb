@@ -25,7 +25,7 @@ describe 'entities/show.html.erb' do
     end
   end
 
-  describe 'header' do    
+  describe 'header' do
     context 'without any permissions' do
       before(:all) do
         DatabaseCleaner.start
@@ -54,12 +54,12 @@ describe 'entities/show.html.erb' do
             expect(rendered).to have_css('#entity-edited-history strong a', :text => 'user')
           end
 
-          it 'display how long ago it was edited' do 
+          it 'display how long ago it was edited' do
             expect(rendered).to have_css('#entity-edited-history', :text => 'ago')
           end
 
-          it 'links to history' do 
-            expect(rendered).to have_css('a[href="/org/' + @e.id.to_s + '/mega_corp_INC/modifications"]', :text => 'History')
+          it 'links to history' do
+            expect(rendered).to have_css('a[href="/org/' + @e.id.to_s + '-mega_corp_INC/edits"]', :text => 'History')
           end
         end
 
@@ -68,7 +68,7 @@ describe 'entities/show.html.erb' do
             expect(rendered).to have_css('#actions')
           end
 
-          it 'has 3 links' do 
+          it 'has 3 links' do
             expect(rendered).to have_css('#actions a', :count => 3)
           end
 
@@ -83,7 +83,7 @@ describe 'entities/show.html.erb' do
           it 'has flag link' do
             expect(rendered).to have_css('a', :text => 'flag')
           end
-          
+
           it 'does not have remove button' do
             expect(rendered).not_to have_css('a', :text => 'remove')
           end
@@ -99,13 +99,11 @@ describe 'entities/show.html.erb' do
           it 'does not have refresh  button' do
             expect(rendered).not_to have_css('a', :text => 'refresh')
           end
-
         end
       end
     end  # end of context without legacy permissions
 
     context 'with deleter permission' do
-
       before(:all) do
         DatabaseCleaner.start
         @sf_user = create(:sf_guard_user)
@@ -134,7 +132,7 @@ describe 'entities/show.html.erb' do
     end
 
     describe 'with importer permission' do
-      before(:all) do 
+      before(:all) do
         DatabaseCleaner.start
         @sf_guard_user = create(:sf_guard_user)
         @user = create(:user, sf_guard_user_id: @sf_guard_user.id)

@@ -529,7 +529,7 @@ CREATE TABLE `delayed_jobs` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `delayed_jobs_priority` (`priority`,`run_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -670,7 +670,7 @@ CREATE TABLE `entity` (
   KEY `index_entity_on_delta` (`delta`),
   CONSTRAINT `entity_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `entity` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `entity_ibfk_2` FOREIGN KEY (`last_user_id`) REFERENCES `sf_guard_user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=28912 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28805 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1067,7 +1067,7 @@ CREATE TABLE `link` (
   CONSTRAINT `link_ibfk_2` FOREIGN KEY (`entity2_id`) REFERENCES `entity` (`id`),
   CONSTRAINT `link_ibfk_3` FOREIGN KEY (`entity1_id`) REFERENCES `entity` (`id`),
   CONSTRAINT `link_ibfk_4` FOREIGN KEY (`category_id`) REFERENCES `relationship_category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=155 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=165 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1974,7 +1974,7 @@ CREATE TABLE `os_matches` (
   KEY `index_os_matches_on_cmte_id` (`cmte_id`),
   KEY `index_os_matches_on_relationship_id` (`relationship_id`),
   KEY `index_os_matches_on_reference_id` (`reference_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2305,7 +2305,7 @@ CREATE TABLE `relationship` (
   CONSTRAINT `relationship_ibfk_2` FOREIGN KEY (`entity1_id`) REFERENCES `entity` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `relationship_ibfk_3` FOREIGN KEY (`category_id`) REFERENCES `relationship_category` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `relationship_ibfk_4` FOREIGN KEY (`last_user_id`) REFERENCES `sf_guard_user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2587,7 +2587,7 @@ CREATE TABLE `sf_guard_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `is_active_idx_idx` (`is_active`)
-) ENGINE=InnoDB AUTO_INCREMENT=304 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=306 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2915,7 +2915,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `index_users_on_username` (`username`),
   UNIQUE KEY `index_users_on_reset_password_token` (`reset_password_token`),
   UNIQUE KEY `index_users_on_confirmation_token` (`confirmation_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=250 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=248 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2934,8 +2934,12 @@ CREATE TABLE `versions` (
   `object` text,
   `created_at` datetime DEFAULT NULL,
   `object_changes` longtext,
+  `entity1_id` int(11) DEFAULT NULL,
+  `entity2_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `index_versions_on_item_type_and_item_id` (`item_type`,`item_id`)
+  KEY `index_versions_on_item_type_and_item_id` (`item_type`,`item_id`),
+  KEY `index_versions_on_entity1_id` (`entity1_id`),
+  KEY `index_versions_on_entity2_id` (`entity2_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -2948,7 +2952,7 @@ CREATE TABLE `versions` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-18 21:56:38
+-- Dump completed on 2017-04-27 18:16:23
 INSERT INTO schema_migrations (version) VALUES ('20131031182415');
 
 INSERT INTO schema_migrations (version) VALUES ('20131031182500');
@@ -3144,4 +3148,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170412144422');
 INSERT INTO schema_migrations (version) VALUES ('20170413200356');
 
 INSERT INTO schema_migrations (version) VALUES ('20170418215509');
+
+INSERT INTO schema_migrations (version) VALUES ('20170427180140');
 

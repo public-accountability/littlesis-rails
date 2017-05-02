@@ -140,6 +140,7 @@ Lilsis::Application.routes.draw do
         get 'contributions'
         get 'references'
         get 'potential_contributions'
+        get 'edits' => 'edits#entity'
         get 'edit_twitter'
         post 'add_twitter'
         post 'remove_twitter'
@@ -266,12 +267,24 @@ Lilsis::Application.routes.draw do
   #   action: 'search_by_name',
   #   as: 'entity_name_search'
 
+  ######### 
+  # edits #
+  #########
+
   get "/edits" => "edits#index"
+
+  ######### 
+  # Pages #
+  #########
+  
   get "/partypolitics" => "pages#partypolitics"
   get "/oligrapher" => "pages#oligrapher_splash"
   get "/graph" => "graph#all"
 
-
+  ######### 
+  # Chat  #
+  #########
+  
   get '/chat_login' => 'chat#login'
   post '/chat_auth' => 'chat#chat_auth'
 

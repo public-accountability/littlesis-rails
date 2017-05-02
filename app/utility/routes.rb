@@ -7,9 +7,16 @@ module Routes
   end
   private_constant :MODIFY_PATH
 
+  ROUTES_TO_MODIFY = [
+    :entity,
+    :edit_entity,
+    :match_donations_entity,
+    :edits_entity
+  ].freeze
+
   # If a Controller or Helper includes this module, it will convert
   # these Rails router helper methods to use nicer paths
-  [:entity, :edit_entity, :match_donations_entity].each do |route|
+  ROUTES_TO_MODIFY.each do |route|
     define_method("#{route}_path", MODIFY_PATH)
     define_method("#{route}_url", MODIFY_PATH)
   end
