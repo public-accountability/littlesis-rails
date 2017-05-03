@@ -8,21 +8,23 @@ describe('bulkAdd', function(){
       expect(html.firstCall.args[0]).to.eql('<thead><tr></tr></thead><tbody></tbody>');
     }));
     
-    it('appends <th> 8 times with position', sinon.test(function() {
-      this.stub($.fn, 'html');
-      this.stub($.fn, 'val').returns(1);
-      var append = this.stub($.fn, 'append');
-      bulkAdd.createTable();
-      expect(append.callCount).to.eql(11);
-    }));
+    // 
+
+    // it('appends <th> 8 times with position', sinon.test(function() {
+    //   this.stub($.fn, 'html');
+    //   this.stub($.fn, 'val').returns(1);
+    //   var append = this.stub($.fn, 'append');
+    //   bulkAdd.createTable();
+    //   expect(append.callCount).to.eql(11);
+    // }));
     
-    it('appends <th> 7 times with eduction', sinon.test(function() {
-      this.stub($.fn, 'html');
-      this.stub($.fn, 'val').returns(2);
-      var append = this.stub($.fn, 'append');
-      bulkAdd.createTable();
-      expect(append.callCount).to.eql(10);
-    }));
+    // it('appends <th> 7 times with eduction', sinon.test(function() {
+    //   this.stub($.fn, 'html');
+    //   this.stub($.fn, 'val').returns(2);
+    //   var append = this.stub($.fn, 'append');
+    //   bulkAdd.createTable();
+    //   expect(append.callCount).to.eql(10);
+    // }));
   });
 
 

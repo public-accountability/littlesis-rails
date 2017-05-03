@@ -115,7 +115,7 @@ utility.relationshipDetails = function(category) {
     return [ 
       title, startDate, endDate, isCurrent,
       [ 'Percent Stake', 'percent_stake', 'number'],
-      [ 'Shares Owned', 'shares_owned', 'number']
+      [ 'Shares Owned', 'shares', 'number']
     ];
   case 11: // hierarchy
     return [ d1, d2, startDate, endDate, isCurrent ];
@@ -127,13 +127,15 @@ utility.relationshipDetails = function(category) {
 };
 
 utility.validDate = function(str) {
+  if (str.length === 4 && Boolean(str.match(/[0-9]{4}/))) {
+    return true;
+  }
   var date = str.split('-');
   if (date.length !== 3
       || date[0].length !== 4
       || date[1].length !== 2
       || date[2].length !== 2
       || Number(date[1]) > 12
-      || Number(date[1]) < 1
       || Number(date[2]) > 31)
   {
     return false;
