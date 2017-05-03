@@ -69,7 +69,7 @@ describe 'entities/show.html.erb' do
           end
 
           it 'has 3 links' do
-            expect(rendered).to have_css('#actions a', :count => 3)
+            expect(rendered).to have_css('#actions a', :count => 4)
           end
 
           it 'has relationship link' do
@@ -82,6 +82,14 @@ describe 'entities/show.html.erb' do
 
           it 'has flag link' do
             expect(rendered).to have_css('a', :text => 'flag')
+          end
+
+          it 'has share on facebook button' do
+            css 'div.fb-share-button', :count => 1
+          end
+
+          it 'has share on twitter button' do
+            css 'a.twitter-share-button', :text => 'Tweet'
           end
 
           it 'does not have remove button' do
