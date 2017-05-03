@@ -19,19 +19,24 @@ body {
     }
 }
 
+
+div.new-text h1 {
+    color: black;
+    font-family: 'Oswald', sans-serif;
+    font-size: 48px;
+}
+
 .jumbotron {
     background-color: rgba(28, 71, 103, 0.3);
-
     h1 {
 	color: black;
 	font-family: 'Oswald', sans-serif;
-	
+    
     }
-
 }
 
 #features-title {
-    font-size: 3em;
+    font-size: 48px;
 }
 
 .embedded-maps {
