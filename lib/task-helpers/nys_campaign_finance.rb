@@ -8,10 +8,10 @@ module NYSCampaignFinance
   def self.create_staging_table
     ActiveRecord::Base.connection.create_table STAGING_TABLE_NAME do |t|
       t.string :filer_id, limit: 10, null: false
-      t.string :report_id, null: false
+      t.string :report_id, limit: 1, null: false
       t.string :transaction_code, limit: 1, null: false
       t.string :e_year, limit: 4, null: false
-      t.integer :transaction_id, null: false
+      t.integer :transaction_id, limit: 8, null: false
       t.date :schedule_transaction_date
       t.date :original_date
       t.string :contrib_code, limit: 4
@@ -42,8 +42,12 @@ module NYSCampaignFinance
     end
   end
 
+  def self.row_count
+    ActiveRecord::Base.connection.execute("SELECT count(*) from #{STAGING_TABLE_NAME}").to_a[0][0]
+  end
+
   def self.import_disclosure_data(file)
-    sql = "LOAD DATA LOCAL INFILE '#{Pathname.new(file).expand_path}'
+    load_data_sql = "LOAD DATA LOCAL INFILE '#{Pathname.new(file).expand_path}'
            INTO TABLE #{STAGING_TABLE_NAME}
            FIELDS TERMINATED BY ',' ENCLOSED BY '\"'
            LINES TERMINATED BY '\\r\\n'
@@ -55,8 +59,37 @@ module NYSCampaignFinance
                check_date = STR_TO_DATE(@var3, '%m/%d/%Y'),
                crerec_date = STR_TO_DATE(@var4, '%m/%d/%Y %T')"
 
-    puts "executing sql: \n\n#{sql}\n\n"
-    ActiveRecord::Base.connection.execute(sql)
+    trim_data_sql =  "DELETE FROM #{STAGING_TABLE_NAME}
+                      WHERE report_id NOT IN ('A', 'B', 'C', 'D')"
+                            
+
+    puts "executing sql: \n\n#{load_data_sql}\n\n"
+    ActiveRecord::Base.connection.execute(load_data_sql)
+    puts "executing sql: \n\n#{trim_data_sql}\n\n"
+    ActiveRecord::Base.connection.execute(trim_data_sql)
+    puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
+  end
+
+  def self.insert_new_disclosures
+    new_donations = 0
+    NyDisclosure.find_by_sql("SELECT * from #{STAGING_TABLE_NAME}").each do |d|
+      new_disclosure = d.dup # duplicate record from staging
+
+      # look for _real_ records 
+      nyd = NyDisclosure.find_by(
+        filer_id: new_disclosure.filer_id,
+        report_id: new_disclosure.report_id,
+        transaction_code: new_disclosure.transaction_code,
+        schedule_transaction_date: new_disclosure.schedule_transaction_date,
+        e_year: new_disclosure.e_year)
+      
+      if nyd.nil?
+        new_disclosure.save
+        new_donations += 1
+      end
+    end
+    puts "Inserted #{new_donations} new disclosures into the database"
+    puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
   
 end
