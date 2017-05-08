@@ -9,10 +9,10 @@ class ApplicationController < ActionController::Base
   before_filter :set_paper_trail_whodunnit
 
   rescue_from 'Exceptions::PermissionError' do |exception|
-  	render "errors/permission", status: 403
+    render "errors/permission", status: 403
   end
 
-  rescue_from 'Exceptions::NotFoundError' do |exception|
+  rescue_from Exceptions::NotFoundError do |exception|
     render "errors/not_found", status: 404
   end
 

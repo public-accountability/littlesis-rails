@@ -1,4 +1,11 @@
 class PagesController < ApplicationController
+  before_action :set_page, only: :display
+  MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
+                                     autolink: true, fenced_code_blocks: true)
+
+  # GET /:page
+  def display
+  end
 
   # GET /oligrapher
   # Oligrapher splash page
@@ -16,9 +23,18 @@ class PagesController < ApplicationController
     render layout: 'splash'
   end
 
-  
   def partypolitics
     response.headers.delete('X-Frame-Options')
     render layout: "fullscreen"
+  end
+
+  private
+
+  
+
+  def set_page
+    page_name = Page.pagify_name(params[:page])
+    @page = Page.find_by_name(page_name)
+    raise Exceptions::NotFoundError if @page.nil?
   end
 end

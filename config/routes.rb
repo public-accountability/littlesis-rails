@@ -312,14 +312,6 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  #########
-  # Pages #
-  #########
-
-  get "/partypolitics" => "pages#partypolitics"
-  get "/oligrapher" => "pages#oligrapher_splash"
-  get "/graph" => "graph#all"
-
   #############
   #  Toolkit  #
   #############
@@ -330,6 +322,17 @@ Lilsis::Application.routes.draw do
   get '/toolkit/:toolkit_page/edit' => 'toolkit#edit'
   patch '/toolkit/:id' => 'toolkit#update', :as => 'toolkit_update'
   get '/toolkit/:toolkit_page' => 'toolkit#display', :as => 'toolkit_display'
+
+  #########
+  # Pages #
+  #########
+
+  get "/partypolitics" => "pages#partypolitics"
+  get "/oligrapher" => "pages#oligrapher_splash"
+  get "/graph" => "graph#all"
+
+  # edit pages.yml to add more pages
+  get "/:page" => "pages#display", constraints: PagesConstraint.new
 
   match "*path", to: "errors#not_found", via: :all
 
