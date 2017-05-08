@@ -1,0 +1,16 @@
+<h1>Editing: <%= @page.name %></h1>
+
+<% unless @page.errors.empty? %>
+    <% @page.errors.full_messages.each do |msg| %>
+	<div class="alert alert-danger" role="alert">
+	    <span><%= msg %></span>
+	</div>
+    <% end %>
+<% end %>
+
+<%= form_for @page, method: :patch, url: page_path(@page) do |f| %>
+    <%= f.text_area :markdown, size: "100x25" %>
+    <br />
+    <%= f.submit "Update",  class: 'btn btn-primary' %>
+    <%= link_to 'Cancel', "/toolkit/#{@page.name}", class: 'btn btn-default' %>
+<% end %>

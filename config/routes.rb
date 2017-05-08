@@ -326,14 +326,17 @@ Lilsis::Application.routes.draw do
   #########
   # Pages #
   #########
-
+  
   get "/partypolitics" => "pages#partypolitics"
   get "/oligrapher" => "pages#oligrapher_splash"
   get "/graph" => "graph#all"
 
-  # edit pages.yml to add more pages
-  get "/:page" => "pages#display", constraints: PagesConstraint.new
+  get "/pages/:page/edit" => "pages#edit_by_name", constraints: { page: /[A-z]+[^\/]+/ }
+  resources :pages, only: [:new, :create, :edit, :update, :index]
 
+  # edit pages.yml to add more pages
+  get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
+  
   match "*path", to: "errors#not_found", via: :all
 
   # The priority is based upon order of creation: first created -> highest priority.
