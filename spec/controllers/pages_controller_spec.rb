@@ -8,6 +8,7 @@ describe PagesController, type: :controller do
   it { should route(:get, '/features').to(action: :display, page: 'features') }
   it { should_not route(:get, '/bad_page').to(action: :display) }
   it { should route(:get, '/pages/new').to(action: :new) }
+  it { should route(:get, '/pages/666').to(action: :show, id: '666') }
   it { should route(:get, '/pages/666/edit').to(action: :edit, id: '666') }
   it { should route(:get, '/pages/some_page/edit').to(action: :edit_by_name, page: 'some_page') }
   it { should route(:get, '/pages/about/edit').to(action: :edit_by_name, page: 'about') }

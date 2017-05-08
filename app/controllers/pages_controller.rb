@@ -1,7 +1,7 @@
 class PagesController < ApplicationController
   before_action :set_page, only: [:display, :edit_by_name]
-  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :edit_by_name, :index]
-  before_action :admins_only, only: [:new, :create, :edit, :update, :edit_by_name, :index]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :edit_by_name, :index, :show]
+  before_action :admins_only, only: [:new, :create, :edit, :update, :edit_by_name, :index, :show]
 
   MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
                                      autolink: true, fenced_code_blocks: true)
@@ -13,6 +13,11 @@ class PagesController < ApplicationController
 
   # GET /:page
   def display
+  end
+
+  def show
+    @page = Page.find(params[:id])
+    render 'display'
   end
 
   # GET /pages/new

@@ -326,13 +326,13 @@ Lilsis::Application.routes.draw do
   #########
   # Pages #
   #########
-  
+   
   get "/partypolitics" => "pages#partypolitics"
   get "/oligrapher" => "pages#oligrapher_splash"
   get "/graph" => "graph#all"
 
   get "/pages/:page/edit" => "pages#edit_by_name", constraints: { page: /[A-z]+[^\/]+/ }
-  resources :pages, only: [:new, :create, :edit, :update, :index]
+  resources :pages, only: [:new, :create, :edit, :update, :index, :show]
 
   # edit pages.yml to add more pages
   get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
