@@ -9,6 +9,10 @@ describe ToolkitController, type: :controller do
   it { should route(:get, '/toolkit/page/edit').to(action: :edit, toolkit_page: 'page') }
   it { should route(:patch, '/toolkit/123').to(action: :update, id: '123') }
 
+  it 'has MARKDOWN constant' do
+    expect(ToolkitController::MARKDOWN).to be_a(Redcarpet::Markdown)
+  end
+
   describe 'display' do
     login_user
     before(:all) do

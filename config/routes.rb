@@ -267,35 +267,27 @@ Lilsis::Application.routes.draw do
   #   action: 'search_by_name',
   #   as: 'entity_name_search'
 
-  ######### 
+  #########
   # edits #
   #########
 
   get "/edits" => "edits#index"
 
-  ######### 
-  # Pages #
   #########
-  
-  get "/partypolitics" => "pages#partypolitics"
-  get "/oligrapher" => "pages#oligrapher_splash"
-  get "/graph" => "graph#all"
-
-  ######### 
   # Chat  #
   #########
-  
+
   get '/chat_login' => 'chat#login'
   post '/chat_auth' => 'chat#chat_auth'
 
-  ####### 
+  #######
   # NYS #
-  ####### 
-  
+  #######
+
   post "/nys/match_donations" => "nys#match_donations"
   get "/nys/candidates" => "nys#candidates"
-  get "/nys/candidates/new" =>  "nys#new_filer_entity"
-  post "/nys/candidates/new" =>  "nys#create"
+  get "/nys/candidates/new" => "nys#new_filer_entity"
+  post "/nys/candidates/new" => "nys#create"
   get "/nys/potential_contributions" => "nys#potential_contributions"
   get "/nys/contributions" => "nys#contributions"
 
@@ -319,6 +311,14 @@ Lilsis::Application.routes.draw do
       end
     end
   end
+
+  #########
+  # Pages #
+  #########
+
+  get "/partypolitics" => "pages#partypolitics"
+  get "/oligrapher" => "pages#oligrapher_splash"
+  get "/graph" => "graph#all"
 
   #############
   #  Toolkit  #
