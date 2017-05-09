@@ -385,6 +385,46 @@ describe Entity do
     end
   end
 
+  # this is defined in models/concerns/similar_entities.rb
+  describe '#similar_entities' do
+
+    before do
+      @e = build(:org)
+    end
+    
+    it 'calls Entity.search and generate_search_terms' do
+      expect(@e).to receive(:generate_search_terms).once.and_return("(search terms)")
+      expect(Entity).to receive(:search)
+                         .with("@!summary (search terms)", any_args).and_return(['response'])
+      expect(@e.similar_entities).to eq ['response']
+    end
+
+    it 'can rescue from ThinkingSphinx::QueryError' do
+      allow(@e).to receive(:generate_search_terms).and_return("(search terms)")
+      expect(Entity).to receive(:search).and_raise(ThinkingSphinx::QueryError)
+      expect(@e.similar_entities).to eql []
+    end
+
+    it 'can rescue from ThinkingSphinx::SyntaxError' do
+      allow(@e).to receive(:generate_search_terms).and_return("(search terms)")
+      expect(Entity).to receive(:search).and_raise(ThinkingSphinx::SyntaxError)
+      expect(@e.similar_entities).to eql []
+    end
+
+    it 'can rescue from ThinkingSphinx::ConnectionError' do
+      allow(@e).to receive(:generate_search_terms).and_return("(search terms)")
+      expect(Entity).to receive(:search).and_raise(ThinkingSphinx::ConnectionError)
+      expect(@e.similar_entities).to eql []
+    end
+
+    it 'raises other errors' do
+      e = build(:org)
+      allow(e).to receive(:generate_search_terms).and_return("(search terms)")
+      expect(Entity).to receive(:search).and_raise(ArgumentError)
+      expect { e.similar_entities }.to raise_error(ArgumentError)
+    end
+  end
+
   describe 'Using paper_trail for versision' do
     with_versioning do
       it 'creates version after updating name' do

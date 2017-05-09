@@ -14,7 +14,19 @@ module SimilarEntities
                   :ranker => :sph04,
                   :select => "*, weight() + (link_count * 10) AS link_weight",
                   :order => "link_weight DESC",
-                  :field_weights => SIMILAR_ENTITY_FIELD_WEIGHTS)
+                  :field_weights => SIMILAR_ENTITY_FIELD_WEIGHTS,
+                  # needed in order to for the error rescues to work
+                  # see: https://github.com/pat/thinking-sphinx/issues/180
+                  :populate => true)
+
+   # If a sphinx encounters an error, we will ignore it and return an empty array
+  rescue ThinkingSphinx::ConnectionError => err
+    Rails.logger.error "Cannot connect to Sphinx :( \n #{err.message}"
+    return []
+
+  rescue ThinkingSphinx::SphinxError => err
+    Rails.logger.error "A Sphinx Error occured while attempting to get similar entities for entity #{id}:\n #{err.message}"
+    return []
   end
 
   private
