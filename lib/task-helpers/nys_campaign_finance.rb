@@ -1,6 +1,6 @@
 module NYSCampaignFinance
   STAGING_TABLE_NAME = :ny_disclosures_staging
-  
+
   def self.drop_staging_table
     ActiveRecord::Base.connection.execute("DROP TABLE IF EXISTS #{STAGING_TABLE_NAME}")
   end
@@ -74,7 +74,6 @@ module NYSCampaignFinance
     new_donations = 0
     NyDisclosure.find_by_sql("SELECT * from #{STAGING_TABLE_NAME}").each do |d|
       new_disclosure = d.dup # duplicate record from staging
-
       # look for _real_ records 
       nyd = NyDisclosure.find_by(
         filer_id: new_disclosure.filer_id,
@@ -82,7 +81,7 @@ module NYSCampaignFinance
         transaction_code: new_disclosure.transaction_code,
         schedule_transaction_date: new_disclosure.schedule_transaction_date,
         e_year: new_disclosure.e_year)
-      
+
       if nyd.nil?
         new_disclosure.save
         new_donations += 1
@@ -91,5 +90,5 @@ module NYSCampaignFinance
     puts "Inserted #{new_donations} new disclosures into the database"
     puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
-  
+
 end
