@@ -1,0 +1,20 @@
+<div class="row">
+    <table class="table">
+	<thead>
+	    <tr>
+		<th>Name</th>
+		<th>Edit</th>
+		<th>updated at</th>
+	    </tr>
+	</thead>
+	<tbody>
+	    <% @pages.each do |page| %>
+		<tr>
+		    <td><%= link_to page.name, "/#{page.name}" %></td>
+		    <td><%= link_to "Edit this page", edit_page_path(page) %></td>
+		    <td><%= page.updated_at.strftime("%F%l%p") %></td>
+		</tr>
+	    <% end %>
+	</tbody>
+    </table>
+</div>
