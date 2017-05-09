@@ -1,7 +1,8 @@
 class PagesController < ApplicationController
-  before_action :set_page, only: [:display, :edit_by_name]
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :edit_by_name, :index, :show]
   before_action :admins_only, only: [:new, :create, :edit, :update, :edit_by_name, :index, :show]
+  before_action :set_page_by_name, only: [:display, :edit_by_name]
+  before_action :set_page_by_id, only: [:show, :edit]
 
   MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
                                      autolink: true, fenced_code_blocks: true)
@@ -16,7 +17,6 @@ class PagesController < ApplicationController
   end
 
   def show
-    @page = Page.find(params[:id])
     render 'display'
   end
 
@@ -41,7 +41,6 @@ class PagesController < ApplicationController
 
   # GET /pages/123/edit
   def edit
-    @page = Page.find(params[:id])
   end
 
   # patch /pages/123
@@ -77,7 +76,11 @@ class PagesController < ApplicationController
 
   private
 
-  def set_page
+  def set_page_by_id
+    @page = Page.find(params[:id])
+  end
+
+  def set_page_by_name
     page_name = Page.pagify_name(params[:page])
     @page = Page.find_by_name(page_name)
     raise Exceptions::NotFoundError if @page.nil?
