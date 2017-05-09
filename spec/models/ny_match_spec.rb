@@ -33,12 +33,12 @@ describe NyMatch, type: :model do
 
       it 'Creates a new match' do
         d = create(:ny_disclosure)
-        expect{NyMatch.match(d.id,1,1)}.to change{NyMatch.count}.by(1)
+        expect { NyMatch.match(d.id, 1, 1) }.to change { NyMatch.count }.by(1)
       end
 
       it 'Creates match with correct attributes' do
         d = create(:ny_disclosure)
-        NyMatch.match(d.id,50,42)
+        NyMatch.match(d.id, 50, 42)
         m = NyMatch.last
         expect(m.ny_disclosure_id).to eql d.id
         expect(m.donor_id).to eql 50
@@ -53,10 +53,10 @@ describe NyMatch, type: :model do
 
       it 'Does not create a new match if the match already exits' do
         d = create(:ny_disclosure)
-        expect { NyMatch.match(d.id,20) }.to change{NyMatch.count}.by(1)
+        expect { NyMatch.match(d.id, 20) }.to change { NyMatch.count }.by(1)
         expect(NyMatch.last.ny_disclosure).to eql d
         expect(NyMatch.last.matched_by).to eql 1
-        expect{ NyMatch.match(d.id, 20, 55) }.not_to change{NyMatch.count}
+        expect{ NyMatch.match(d.id, 20, 55) }.not_to change { NyMatch.count }
         expect(NyMatch.last.matched_by).to eql 1
       end
     end
@@ -114,21 +114,21 @@ describe NyMatch, type: :model do
       it 'creates a new relationship, and then updates it.' do
         disclosure = create(:ny_disclosure, amount1: 50)
         match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected)
-        expect{ match.create_or_update_relationship  }.to change{Relationship.count}.by(1)
+        expect { match.create_or_update_relationship }.to change { Relationship.count }.by(1)
         expect(match.relationship).to eql Relationship.last
         expect(match.relationship.amount).to eql 50
         expect(match.relationship.filings).to eql 1
         expect(match.relationship.category_id).to eql 5
         disclosure = create(:ny_disclosure, amount1: 200)
         match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected)
-        expect{ match.create_or_update_relationship  }.not_to change{Relationship.count}
+        expect { match.create_or_update_relationship }.not_to change { Relationship.count }
         expect(match.relationship.amount).to eql 250
         expect(match.relationship.filings).to eql 2
       end
     end
 
     it 'sets the relationship\'s last_user id to be the matched_by user' do
-      disclosure = create(:ny_disclosure, amount1: 50)
+      disclosure = build(:ny_disclosure, amount1: 50)
       sf_user = create(:sf_guard_user)
       user = create(:user, sf_guard_user_id: sf_user.id)
       match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected, matched_by: user.id)
@@ -149,8 +149,8 @@ describe NyMatch, type: :model do
       @donor = build(:person, id: rand(1000))
       @elected = build(:elected, id: rand(1000))
       @filer = build(:ny_filer, filer_id: '9876', name: 'some committee')
-      @disclosure = create(:ny_disclosure, amount1: 50, ny_filer: @filer)
-      @match = NyMatch.create(ny_disclosure_id: @disclosure.id, donor: @donor, recipient: @elected)
+      @disclosure = build(:ny_disclosure, amount1: 50, ny_filer: @filer, id: rand(100))
+      @match = create(:ny_match, ny_disclosure: @disclosure, donor: @donor, recipient: @elected)
     end
 
     it 'returns a hash' do
