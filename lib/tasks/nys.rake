@@ -2,15 +2,12 @@ require Rails.root.join('lib', 'task-helpers', 'nys_campaign_finance.rb')
 
 namespace :nys do
   desc 'import latest donation data to staging table'
-  task :disclosure_import, [:file, :dry_run] => :environment do |t, args|
-    puts "This is a dry run" if args[:dry_run].present?
+  task :disclosure_import, [:file] => :environment do |t, args|
     puts "dropping and re-creating #{NYSCampaignFinance::STAGING_TABLE_NAME}"
-    unless args[:dry_run]
-      NYSCampaignFinance.drop_staging_table
-      NYSCampaignFinance.create_staging_table
-    end
+    NYSCampaignFinance.drop_staging_table
+    NYSCampaignFinance.create_staging_table
     puts "Importing file: #{args[:file]}"
-    NYSCampaignFinance.import_disclosure_data(args[:file], args[:dry_run].present?)
+    NYSCampaignFinance.import_disclosure_data(args[:file])
   end
 
   desc 'insert new ny disclosures from staging'

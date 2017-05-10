@@ -2,7 +2,12 @@ class NyDisclosure < ActiveRecord::Base
   has_one :ny_match, inverse_of: :ny_disclosure
   belongs_to :ny_filer, class_name: "NyFiler", foreign_key: "filer_id", primary_key: "filer_id"
 
-  validates_presence_of :filer_id, :report_id, :transaction_code, :e_year, :transaction_id, :schedule_transaction_date
+  validates_presence_of :filer_id,
+                        :report_id,
+                        :transaction_code,
+                        :e_year,
+                        :transaction_id,
+                        :schedule_transaction_date
 
   def full_name
     if corp_name.present?

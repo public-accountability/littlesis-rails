@@ -50,7 +50,7 @@ module NYSCampaignFinance
     load_data_sql = "LOAD DATA LOCAL INFILE '#{Pathname.new(file).expand_path}'
            INTO TABLE #{STAGING_TABLE_NAME}
            FIELDS TERMINATED BY ',' ENCLOSED BY '\"'
-           LINES TERMINATED BY '\\r\\n'
+           LINES TERMINATED BY '\\n'
            (filer_id, report_id, transaction_code, e_year, transaction_id, @var1, @var2, contrib_code, contrib_type_code, corp_name, first_name, mid_init, last_name, address, city, state, zip, check_number, @var3, amount1, amount2, description, other_recpt_code, purpose_code1, purpose_code2, explanation, transfer_type, bank_loan_check_box, crerec_uid, @var4)
            SET created_at = CURRENT_TIMESTAMP,
                updated_at = CURRENT_TIMESTAMP,
@@ -59,26 +59,57 @@ module NYSCampaignFinance
                check_date = STR_TO_DATE(@var3, '%m/%d/%Y'),
                crerec_date = STR_TO_DATE(@var4, '%m/%d/%Y %T')"
 
-    trim_data_sql = "DELETE FROM #{STAGING_TABLE_NAME} WHERE report_id NOT IN ('A', 'B', 'C', 'D')"
+    trim_data_sql = "DELETE FROM #{STAGING_TABLE_NAME} WHERE transaction_code NOT IN ('A', 'B', 'C', 'D')"
     puts "executing sql: \n\n#{load_data_sql}\n\n"
-    ActiveRecord::Base.connection.execute(load_data_sql) unless dry_run
+    ActiveRecord::Base.connection.execute(load_data_sql) #unless dry_run
     puts "executing sql: \n\n#{trim_data_sql}\n\n"
-    ActiveRecord::Base.connection.execute(trim_data_sql) unless dry_run
+    ActiveRecord::Base.connection.execute(trim_data_sql) #unless dry_run
     puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
 
-
-
+  # loops through all dislocsures in the staging table
+  # determining if they are new and inserts the new
+  # disclosures in to the regular ny_disclosures table
   def self.insert_new_disclosures(dry_run = false)
     puts "THIS IS A DRY RUN" if dry_run
+    stats = {
+      :new_disclosures_saved => 0,
+      :invalid_new_disclosures => 0,
+      :existing_disclosures_skipped => 0
+    }
 
-    new_disclosures_saved = 0
-    invalid_new_disclosures = 0
-    existing_disclosures_skipped = 0
+    offset = 0
+    complete = false
+    until complete
+      batch = get_staging_batch(offset)
+      offset += 1000
+      complete = true if batch.size.zero?
+      import_disclosure_batch(batch, stats, dry_run)
+    end
 
-    NyDisclosure.find_by_sql("SELECT * from #{STAGING_TABLE_NAME}").each do |d|
-      new_disclosure = d.dup # duplicate record from staging
+    puts "Inserted #{stats[:new_disclosures_saved]} new disclosures into the database"
+    puts "Skipped #{stats[:existing_disclosures_skipped]} that already exist"
+    puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
+  end
+
+  # We are looping through the disclosures in batches of 1000
+  # in order to limit memory usege
+  def self.get_staging_batch(offset)
+    # This is something of ActiveRecord hack.
+    # We are instantiating versions of NyDisclosures from
+    # the staging stable instead of from the normal table.
+    NyDisclosure.find_by_sql("SELECT * FROM #{STAGING_TABLE_NAME} ORDER BY id ASC LIMIT 1000 OFFSET #{offset}")
+  end
+
+  # [ <NyDisclosure> ], Hash -> 
+  def self.import_disclosure_batch(batch, stats, dry_run = false)
+    batch.each do |d|
+      # these are shadow NyDisclosures, created from
+      # the staging table, so we need to duplicate them
+      # in order for ActiveRecord not to get confused
+      new_disclosure = d.dup 
       if new_disclosure.valid?
+        
         # look for existing disclosures
         nyd = NyDisclosure.find_by(
           filer_id: new_disclosure.filer_id,
@@ -88,27 +119,24 @@ module NYSCampaignFinance
           schedule_transaction_date: new_disclosure.schedule_transaction_date,
           e_year: new_disclosure.e_year
         )
-        
+
         # if we couldn't find one, save the new one
         if nyd.nil?
-          new_disclosure.save  unless dry_run
-          new_disclosures_saved += 1
+          new_disclosure.save unless dry_run
+          stats[:new_disclosures_saved] += 1
         else
-          existing_disclosures_skipped += 1
+          stats[:existing_disclosures_skipped] += 1
         end
 
       # the new disclosure isn't valid
       else
         puts "Invalid disclosure: #{new_disclosure.errors.full_messages.join(',')}"
         puts "\n#{new_disclosure.attributes.to_json}\n"
-        invalid_new_disclosures += 1
+        stats[:invalid_new_disclosures] += 1
       end
     end # end loop through new disclosures
-
-    puts "Inserted #{new_disclosures_saved} new disclosures into the database"
-    puts "Skipped #{existing_disclosures_skipped} that already existed"
-    puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
+
 
   def self.insert_new_filers(file_path)
     puts "there are currently #{NyFiler.count} ny filers in the db"
