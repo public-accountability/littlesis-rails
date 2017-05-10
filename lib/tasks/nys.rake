@@ -9,4 +9,12 @@ namespace :nys do
     puts "Importing file: #{args[:file]}"
     NYSCampaignFinance.import_disclosure_data(args[:file])
   end
+
+  desc 'Remove all NyDisclosures expect those with matches'
+  task cull_disclosures: :environment do
+    where = "id NOT IN (#{NyMatch.pluck(:ny_disclosure_id).join(',')})"
+    puts "Deleting #{NyDisclosure.where(where).count} of #{NyDisclosure.count} disclosures"
+    NyDisclosure.delete_all(where)
+    puts "There are now #{NyDisclosure.count} disclosures"
+  end
 end

@@ -18,6 +18,7 @@ describe 'NYSCampaignFinance' do
         create(:ny_disclosure_for_import_test)
         NYSCampaignFinance.import_disclosure_data(Rails.root.join('spec', 'testdata', 'ALL_REPORTS_test.txt'))
         expect { NYSCampaignFinance.insert_new_disclosures }.to change { NyDisclosure.count }.by(1)
+        expect { NYSCampaignFinance.insert_new_disclosures }.not_to change { NyDisclosure.count }
       end
     end
   end
