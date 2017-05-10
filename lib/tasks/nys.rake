@@ -25,4 +25,9 @@ namespace :nys do
     NyDisclosure.delete_all(where)
     puts "There are now #{NyDisclosure.count} disclosures"
   end
+
+  desc 'Remove all NyDisclosures expect those with matches'
+  task :filer_import, [:file] => :environment do |t, args|
+    NYSCampaignFinance.insert_new_filers(args[:file])
+  end
 end

@@ -67,31 +67,87 @@ module NYSCampaignFinance
     puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
 
+
+
   def self.insert_new_disclosures(dry_run = false)
     puts "THIS IS A DRY RUN" if dry_run
-    new_disclosures_count = 0
+
+    new_disclosures_saved = 0
+    invalid_new_disclosures = 0
     existing_disclosures_skipped = 0
+
     NyDisclosure.find_by_sql("SELECT * from #{STAGING_TABLE_NAME}").each do |d|
       new_disclosure = d.dup # duplicate record from staging
-      # look for existing disclosures
-      nyd = NyDisclosure.find_by(
-        filer_id: new_disclosure.filer_id,
-        report_id: new_disclosure.report_id,
-        transaction_code: new_disclosure.transaction_code,
-        schedule_transaction_date: new_disclosure.schedule_transaction_date,
-        e_year: new_disclosure.e_year
-      )
+      if new_disclosure.valid?
+        # look for existing disclosures
+        nyd = NyDisclosure.find_by(
+          filer_id: new_disclosure.filer_id,
+          report_id: new_disclosure.report_id,
+          transaction_id: new_disclosure.transaction_id,
+          transaction_code: new_disclosure.transaction_code,
+          schedule_transaction_date: new_disclosure.schedule_transaction_date,
+          e_year: new_disclosure.e_year
+        )
+        
+        # if we couldn't find one, save the new one
+        if nyd.nil?
+          new_disclosure.save  unless dry_run
+          new_disclosures_saved += 1
+        else
+          existing_disclosures_skipped += 1
+        end
 
-      # if we couldn't find one, save the new one
-      if nyd.nil?
-        new_disclosure.save unless dry_run
-        new_disclosures_count += 1
+      # the new disclosure isn't valid
       else
-        existing_disclosures_skipped += 1
+        puts "Invalid disclosure: #{new_disclosure.errors.full_messages.join(',')}"
+        puts "\n#{new_disclosure.attributes.to_json}\n"
+        invalid_new_disclosures += 1
       end
-    end
-    puts "Inserted #{new_disclosures_count} new disclosures into the database"
+    end # end loop through new disclosures
+
+    puts "Inserted #{new_disclosures_saved} new disclosures into the database"
     puts "Skipped #{existing_disclosures_skipped} that already existed"
     puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
+  end
+
+  def self.insert_new_filers(file_path)
+    puts "there are currently #{NyFiler.count} ny filers in the db"
+    lines_with_errors = 0
+    rows = []
+    File.readlines(file_path).each do |line|
+      begin
+        rows << CSV.parse_line(line)
+      rescue CSV::MalformedCSVError
+        lines_with_errors += 1
+      end
+    end
+
+    puts "there are #{lines_with_errors} errors"
+    puts "there are #{rows.length} rows"
+
+    new_filer_ids = rows.map { |r| r[0] }
+    filer_ids_in_db = NyFiler.pluck(:filer_id)
+    ids_to_add = new_filer_ids - filer_ids_in_db
+    puts "there are #{ids_to_add.size} new rows to add"
+    puts "adding new filers..."
+    rows
+      .select { |r| ids_to_add.include?(r[0]) }
+      .map { |row| filer_row_to_h(row) }
+      .each { |attr| NyFiler.create(attr) }
+    puts "there are now #{NyFiler.count} ny filers in the db"
+  end
+
+  def self.filer_row_to_h(row)
+    raise ArgumentError unless row.length == 13
+    arr = row.map do |item|
+      if item == '' || item == '\N'
+        nil
+      else
+        item
+      end
+    end
+    cols = [:filer_id, :name, :filer_type, :status, :committee_type, :office, :district, :treas_first_name, :treas_last_name, :address, :city, :state, :zip]
+    h = cols.zip(arr).to_h
+    h
   end
 end
