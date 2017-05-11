@@ -75,6 +75,9 @@ module NYSCampaignFinance
     puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
     puts "There are #{NyDisclosure.count} rows in ny_disclosures"
 
+    # Skip index processing while importing data
+    ThinkingSphinx::Callbacks.suspend!
+
     stats = {
       :new_disclosures_saved => 0,
       :invalid_new_disclosures => 0,
@@ -90,6 +93,7 @@ module NYSCampaignFinance
       import_disclosure_batch(batch, stats, dry_run)
     end
 
+    ThinkingSphinx::Callbacks.resume!
     puts "Inserted #{stats[:new_disclosures_saved]} new disclosures into the database"
     puts "Skipped #{stats[:existing_disclosures_skipped]} that already exist"
     puts "Skipped #{stats[:invalid_new_disclosures]} invalid new disclosures"
@@ -126,6 +130,7 @@ module NYSCampaignFinance
 
         # if we couldn't find one, save the new one
         if nyd.nil?
+          new_disclosure.delta = true # required by ThinkingSphinx; mysql will raise error unless this is set.
           new_disclosure.save unless dry_run
           stats[:new_disclosures_saved] += 1
         else
