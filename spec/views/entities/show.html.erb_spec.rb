@@ -144,7 +144,7 @@ describe 'entities/show.html.erb' do
         DatabaseCleaner.start
         @sf_guard_user = create(:sf_guard_user)
         @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
-        @e = create(:mega_corp_inc, last_user: @sf_guard_user)
+        @e = create(:person, last_user: @sf_guard_user)
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 8)
       end
 
@@ -183,8 +183,9 @@ describe 'entities/show.html.erb' do
         render
       end
 
-      it 'has 6 links' do
-        expect(rendered).to have_css('#actions a', :count => 6)
+      it 'has 5 links' do
+        # missing match donations because entity is an org
+        expect(rendered).to have_css('#actions a', :count => 5)
       end
     end
 
