@@ -7,6 +7,7 @@ describe 'NYSCampaignFinance' do
       expect(NYSCampaignFinance).to receive(:get_staging_batch).with(0).and_return(['data'])
       expect(NYSCampaignFinance).to receive(:get_staging_batch).with(2000).and_return([])
       expect(NYSCampaignFinance).to receive(:import_disclosure_batch).twice.with(kind_of(Array), kind_of(Hash), false)
+      expect(NYSCampaignFinance).to receive(:row_count).and_return('a lot of')
       NYSCampaignFinance.insert_new_disclosures
     end
   end

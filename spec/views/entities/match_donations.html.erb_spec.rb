@@ -17,6 +17,7 @@ describe 'entities/match_donations.html.erb' do
   describe 'layout' do
     before do
       assign(:entity, @e)
+      allow(view).to receive(:current_user).and_return(double(:admin? => false))
       render
     end
 
