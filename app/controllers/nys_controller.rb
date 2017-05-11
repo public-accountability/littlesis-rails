@@ -1,12 +1,15 @@
 class NysController < ApplicationController
   before_filter :authenticate_user!
 
+  def index
+  end
+
   def candidates
   end
 
   def create
     check_permission 'importer'
-    
+
     ny_filer_ids.each do |id|
       filer_id = NyFiler.find(id).filer_id
       NyFilerEntity.create!(entity_id: entity_id, ny_filer_id: id, filer_id: filer_id)
@@ -77,5 +80,4 @@ class NysController < ApplicationController
   def match_params
     params.require(:payload).permit(:donor_id, :disclosure_ids => [])
   end
-  
 end
