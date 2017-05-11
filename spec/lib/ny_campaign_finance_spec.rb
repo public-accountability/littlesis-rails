@@ -5,7 +5,7 @@ describe 'NYSCampaignFinance' do
   describe 'insert_new_disclosures' do
     it 'loops through batches' do
       expect(NYSCampaignFinance).to receive(:get_staging_batch).with(0).and_return(['data'])
-      expect(NYSCampaignFinance).to receive(:get_staging_batch).with(1000).and_return([])
+      expect(NYSCampaignFinance).to receive(:get_staging_batch).with(2000).and_return([])
       expect(NYSCampaignFinance).to receive(:import_disclosure_batch).twice.with(kind_of(Array), kind_of(Hash), false)
       NYSCampaignFinance.insert_new_disclosures
     end

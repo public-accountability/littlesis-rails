@@ -72,6 +72,9 @@ module NYSCampaignFinance
   # disclosures in to the regular ny_disclosures table
   def self.insert_new_disclosures(dry_run = false)
     puts "THIS IS A DRY RUN" if dry_run
+    puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
+    puts "There are #{NyDisclosure.count} rows in ny_disclosures"
+
     stats = {
       :new_disclosures_saved => 0,
       :invalid_new_disclosures => 0,
@@ -82,23 +85,24 @@ module NYSCampaignFinance
     complete = false
     until complete
       batch = get_staging_batch(offset)
-      offset += 1000
+      offset += 2000
       complete = true if batch.size.zero?
       import_disclosure_batch(batch, stats, dry_run)
     end
 
     puts "Inserted #{stats[:new_disclosures_saved]} new disclosures into the database"
     puts "Skipped #{stats[:existing_disclosures_skipped]} that already exist"
-    puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
+    puts "Skipped #{stats[:invalid_new_disclosures]} invalid new disclosures"
+    puts "There are now #{NyDisclosure.count} rows in ny_disclosures"
   end
 
-  # We are looping through the disclosures in batches of 1000
+  # We are looping through the disclosures in batches of 2000
   # in order to limit memory usege
   def self.get_staging_batch(offset)
     # This is something of ActiveRecord hack.
     # We are instantiating versions of NyDisclosures from
     # the staging stable instead of from the normal table.
-    NyDisclosure.find_by_sql("SELECT * FROM #{STAGING_TABLE_NAME} ORDER BY id ASC LIMIT 1000 OFFSET #{offset}")
+    NyDisclosure.find_by_sql("SELECT * FROM #{STAGING_TABLE_NAME} ORDER BY id ASC LIMIT 2000 OFFSET #{offset}")
   end
 
   # [ <NyDisclosure> ], Hash -> 
@@ -107,9 +111,9 @@ module NYSCampaignFinance
       # these are shadow NyDisclosures, created from
       # the staging table, so we need to duplicate them
       # in order for ActiveRecord not to get confused
-      new_disclosure = d.dup 
+      new_disclosure = d.dup
       if new_disclosure.valid?
-        
+
         # look for existing disclosures
         nyd = NyDisclosure.find_by(
           filer_id: new_disclosure.filer_id,
@@ -134,9 +138,8 @@ module NYSCampaignFinance
         puts "\n#{new_disclosure.attributes.to_json}\n"
         stats[:invalid_new_disclosures] += 1
       end
-    end # end loop through new disclosures
+    end # end loop through batch
   end
-
 
   def self.insert_new_filers(file_path)
     puts "there are currently #{NyFiler.count} ny filers in the db"
