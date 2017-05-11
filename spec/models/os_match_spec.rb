@@ -18,7 +18,7 @@ describe OsMatch, type: :model do
   def model_setup
     @loeb = create(:loeb)
     @nrsc = create(:nrsc)
-    @loeb_donation = create(:loeb_donation) # relationship model
+    @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc) # relationship model
     @loeb_os_donation = create(:loeb_donation_one)
     @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: 'Relationship')
     @donation_class = create(:donation, relationship_id: @loeb_donation.id)
@@ -62,7 +62,7 @@ describe OsMatch, type: :model do
     it 'Entity joined to OsDonation through OsMatch' do
       expect(Entity.find(@loeb.id).contributions).to eq [@loeb_os_donation]
     end
-    
+
     it 'belongs to recipient via entity' do
       expect(@os_match.recipient).to eql @nrsc
       expect(Entity.find(@nrsc.id).donors).to eq [@os_match]
@@ -226,8 +226,8 @@ describe OsMatch, type: :model do
       before do
         DatabaseCleaner.start
         donation = create(:loeb_donation_one, amount: 10000, fec_cycle_id: 'blah', date: "2010-02-02")
-        @loeb_new = create(:loeb, id: rand(10000) )
-        @loeb_old = create(:loeb, merged_id: @loeb_new.id, id: rand(1000), is_deleted: true)
+        @loeb_new = create(:loeb)
+        @loeb_old = create(:loeb, merged_id: @loeb_new.id, is_deleted: true)
         @match = OsMatch.create(os_donation_id: donation.id, donor_id: @loeb_old.id, recip_id: @nrsc.id)
       end
       after { DatabaseCleaner.clean }
@@ -396,7 +396,7 @@ describe OsMatch, type: :model do
        DatabaseCleaner.start
        @loeb = create(:loeb)
        @nrsc = create(:nrsc)
-       @loeb_donation = create(:loeb_donation) # relationship model
+       @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc) # relationship model
        @loeb_os_donation = create(:loeb_donation_one)
        @loeb_os_donation_two = create(:loeb_donation_two)
        @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")

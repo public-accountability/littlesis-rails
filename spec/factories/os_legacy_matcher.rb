@@ -1,15 +1,15 @@
 FactoryGirl.define do 
 
   factory :loeb, class: Entity do 
-    id 10551
+    # id 10551
     name "Daniel S Loeb"
     blurb "CEO of Third Point LLC"
     primary_ext "Person"
     last_user_id 1
   end
   
-  factory :nrsc, class: Entity do 
-    id 28799
+  factory :nrsc, class: Entity do
+    # id 28799
     name "National Republican Senatorial Committee"
     primary_ext "Org"
     last_user_id 1

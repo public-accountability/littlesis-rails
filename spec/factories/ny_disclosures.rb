@@ -6,6 +6,7 @@ FactoryGirl.define do
     e_year '2014'
     transaction_id '123'
     schedule_transaction_date '1999-01-14'
+    sequence(:id)
   end
 
   factory :ny_disclosure_for_import_test, class: NyDisclosure do
