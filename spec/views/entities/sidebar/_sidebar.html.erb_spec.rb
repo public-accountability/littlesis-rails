@@ -31,6 +31,7 @@ describe "partial: sidebar" do
     end
   end
 
+
   describe 'Admin tools' do
     context 'When admin' do
       before do
@@ -55,6 +56,19 @@ describe "partial: sidebar" do
       it 'has admin tools' do
         not_css 'span.sidebar-title-text', text: 'Admin tools'
       end
+    end
+  end
+
+  describe 'similar entities' do
+    it 'has merging process link' do
+      allow(view).to receive(:user_signed_in?).and_return(true)
+      assign(:similar_entities, ['some', 'similar', 'entities'])
+      expect(view).to receive(:sidebar_similar_entities)
+      current_user = build(:user)
+      expect(current_user).to receive(:admin?).at_least(:twice).and_return(false)
+      expect(current_user).to receive(:has_legacy_permission).with('merger').and_return(true)
+      expect(view).to receive(:current_user).at_least(:twice).and_return(current_user)
+      render partial: 'entities/sidebar.html.erb' 
     end
   end
 end

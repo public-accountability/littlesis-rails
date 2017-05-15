@@ -76,7 +76,7 @@
 		    <%= sidebar_similar_entities(@similar_entities) %>
 		</ul>
 		
-		<% if user_signed_in? && current_user.admin? %>
+		<% if user_signed_in? && (current_user.admin? || current_user.has_legacy_permission('merger') )%>
 		    <%= link_to 'Begin merging process »', @entity.legacy_url('merge') %>
 		<% end %>
 	    </div>
