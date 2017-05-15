@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'entities/edit.html.erb', type: :view do
   before(:all) do
-    @current_user = create(:user, sf_guard_user: create(:sf_guard_user, id: rand(100)))
+    @current_user = create(:user, sf_guard_user: create(:sf_guard_user))
     @entity = create(:org, last_user_id: @current_user.sf_guard_user.id)
     @person = create(:person, last_user_id: @current_user.sf_guard_user.id)
   end
@@ -62,7 +62,6 @@ describe 'entities/edit.html.erb', type: :view do
     it 'has one alert' do
       css 'div.alert', count: 1
     end
-
   end
 
   context 'if it is an Person' do

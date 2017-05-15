@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+#------------------------------------------------------------------+
+# cleans ny disclosure data
+#
+# example crazy command to process the data:
+#
+# cat ALL_REPORTS.out  |
+#   iconv -f ISO-8859-1 -t UTF-8 |
+#   sed 's/\"\"/\\N/g' |
+#   sed 's/\x0//g' |
+#   clean_ny_disclosures 1> good_disclosures.csv 2> bad_rows.csv
+#
+#------------------------------------------------------------------+
+require 'csv'
+require 'date'
+
+ROW_LENGTH = 30
+
+def valid_date?(row)
+  valid = true
+  row[5..6].each do |date|
+    next if date == "" || date == '\N'
+    begin
+      DateTime.strptime(date, '%m/%d/%Y')
+    rescue ArgumentError
+      valid = false
+    end
+  end
+  valid
+end
+
+ARGF.each do |line|
+  begin
+    CSV.parse(line) do |row|
+      # starts off as bad...gotta prove your validity...
+      good_row = false
+
+      if row.length == ROW_LENGTH
+        good_row = true if valid_date?(row)
+      end
+
+      if good_row
+        $stdout.puts row.to_csv
+      else
+        $stderr.puts line
+      end
+    end
+  rescue CSV::MalformedCSVError
+    $stderr.puts line
+  end
+end

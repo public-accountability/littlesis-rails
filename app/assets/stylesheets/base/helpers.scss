@@ -25,6 +25,14 @@
   margin-left: 1em;
 }
 
+.m-right-1em {
+  margin-right: 1em;
+}
+
+.m-right-3em {
+  margin-right: 3em;
+}
+
 .pad-right-1em {
   padding-right: 1em;
 }
@@ -95,4 +103,10 @@
 @keyframes spin {
     from { transform: scale(1) rotate(0deg);}
     to { transform: scale(1) rotate(360deg);}
+}
+
+.red-button {
+    /* background-color: #A04040; */
+    background-color: $red;
+    color: #fff;
 }

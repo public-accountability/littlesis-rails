@@ -3,6 +3,9 @@ class NyFiler < ActiveRecord::Base
   has_many :entities, :through => :ny_filer_entity
   has_many :ny_disclosures, foreign_key: "filer_id"
 
+  validates_presence_of :filer_id
+  validates_uniqueness_of :filer_id
+
   def self.search_filers(name)
     NyFiler.search( name, 
                     :sql => { :include => :ny_filer_entity },

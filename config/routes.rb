@@ -283,7 +283,8 @@ Lilsis::Application.routes.draw do
   #######
   # NYS #
   #######
-
+  
+  get "/nys" => "nys#index"
   post "/nys/match_donations" => "nys#match_donations"
   get "/nys/candidates" => "nys#candidates"
   get "/nys/candidates/new" => "nys#new_filer_entity"

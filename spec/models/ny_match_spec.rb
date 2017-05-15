@@ -146,10 +146,10 @@ describe NyMatch, type: :model do
 
   describe '#info' do
     before(:all) do
-      @donor = build(:person, id: rand(1000))
-      @elected = build(:elected, id: rand(1000))
+      @donor = build(:person)
+      @elected = build(:elected)
       @filer = build(:ny_filer, filer_id: '9876', name: 'some committee')
-      @disclosure = build(:ny_disclosure, amount1: 50, ny_filer: @filer, id: rand(100))
+      @disclosure = build(:ny_disclosure, amount1: 50, ny_filer: @filer)
       @match = create(:ny_match, ny_disclosure: @disclosure, donor: @donor, recipient: @elected)
     end
 
