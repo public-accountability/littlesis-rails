@@ -91,6 +91,7 @@ module NYSCampaignFinance
       offset += 2000
       complete = true if batch.size.zero?
       import_disclosure_batch(batch, stats, dry_run)
+      print_stats(offset, stats)
     end
 
     ThinkingSphinx::Callbacks.resume!
@@ -144,6 +145,10 @@ module NYSCampaignFinance
         stats[:invalid_new_disclosures] += 1
       end
     end # end loop through batch
+  end
+
+  def self.print_stats(offset, stats)
+    pp(stats) if (offset % 20000).zero?
   end
 
   def self.insert_new_filers(file_path)
