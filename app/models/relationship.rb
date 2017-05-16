@@ -438,18 +438,26 @@ class Relationship < ActiveRecord::Base
   # both entities in the relationship
   def update_entity_timestamps(sf_user_id = nil)
     lui = last_user_id_for_entity_update(sf_user_id)
-    
-    if entity.last_user_id == lui
-      entity.touch
-    else
-      entity.update(last_user_id: lui)
+
+    # In case a entity has been deleted...
+    # TODO: create a warning to let admins know
+    # that dangling relationship exists?
+    unless entity.nil?
+      if entity.last_user_id == lui
+        entity.touch
+      else
+        entity.update(last_user_id: lui)
+      end
     end
 
-    if related.last_user_id == lui
-      related.touch
-    else
-      related.update(last_user_id: lui)
+    unless related.nil?
+      if related.last_user_id == lui
+        related.touch
+      else
+        related.update(last_user_id: lui)
+      end
     end
+
   end
   
   private
