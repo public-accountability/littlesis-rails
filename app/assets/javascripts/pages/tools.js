@@ -41,6 +41,7 @@ var bulkAdd = (function($, utility){
     $('#table table').html('<thead><tr></tr></thead><tbody></tbody>');
     relationshipDetails().forEach(addColToThead);
     $('#table thead tr').append('<th><span class="glyphicon glyphicon-plus table-add"></span></th>');
+    newBlankRow(); // initialize table with a new blank row
   }
   
   // AJAX request route: /search/entity
@@ -213,9 +214,11 @@ var bulkAdd = (function($, utility){
   // {}, element, * -> boolean
   function cellValidation(rowInfo, cell, cellData) {
     if (['name', 'primary_ext'].includes(rowInfo.key) && !cellData) {
+      console.log(rowInfo.key + ' is blank');
       return invalidDisplay(cell);
     }
     if (cellData && rowInfo.type === 'date' && !utility.validDate(cellData)) {
+      console.log(cellData + ' is an invalid date');
       return invalidDisplay(cell);
     }
     return true;
@@ -348,6 +351,7 @@ var bulkAdd = (function($, utility){
     createTable: createTable,
     tableToJson: tableToJson,
     search: searchRequest,
+    newBlankRow: newBlankRow,
     validate: validate,
     cellValidation: cellValidation,
     invalidDisplay: invalidDisplay,
