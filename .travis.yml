@@ -11,3 +11,4 @@ before_script:
 script:
   - RAILS_ENV=test bundle exec rake db:structure:load
   - RAILS_ENV=test bundle exec rspec
+  - RAILS_ENV=test bundle exec rake jasmine:ci

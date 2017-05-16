@@ -123,9 +123,6 @@ boot_files:
 #   server: 'thin'
 rack_options:
   Host: '0.0.0.0'
-  server: 'thin'
-
-
 
 # random
 #
