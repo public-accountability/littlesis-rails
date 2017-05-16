@@ -98,10 +98,12 @@ group :test, :development do
   gem 'rspec-html-matchers'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'shoulda-callback-matchers', '~> 1.1.4'
+  gem 'jasmine'
+  gem 'thin'
   ###########################
   gem 'better_errors', '0.7.0'
   gem 'binding_of_caller', '0.7.2'
-end  
+end
 
 gem 'simplecov', :require => false, :group => :test
 

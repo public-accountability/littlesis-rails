@@ -122,7 +122,7 @@ utility.relationshipDetails = function(category) {
   case 12: // generic
     return [ d1, d2, startDate, endDate, isCurrent ];
   default:
-    throw 'Invalid relationship category. It must a be a number between 1 and 12';
+    throw 'Invalid relationship category. It must be a number between 1 and 12';
   }
 };
 
