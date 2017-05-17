@@ -1,28 +1,123 @@
+@import "base/globals.scss";
+
+/* Toolkit Font */
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+/* Toolkit Vars  */
+$page_background_color: #fffcf7;
+$navbar_background_color: #fff;
+$navbar_height: 97px;
+$navbar_text_color: #201747;
+$article_width: 822px;
+$image_left_margin: 166px;
+$heading_color: #201747;
+$paragraph_color: #828181;
+
+/* CUSTOM BOOTSTRAP VARIABLES  */
+$grid-gutter-width: 30px;
+$container-desktop: 800px + $grid-gutter-width;
+$container-large-desktop: 900px + $grid-gutter-width;
+$navbar-height: 130px;
+
+/* Import bootstrap */
 @import "bootstrap-sprockets";
 @import "bootstrap";
-@import "base/globals.scss";
 @import "bootstrap-markdown.scss";
 
-$page_background_color: #fffcf7;
-$navbar_background_color: #810f7c;
-$navbar_text_color: #fffcf7;
 
 body {
-    background-color: $page_background_color;
+    font-family: 'Montserrat', sans-serif;
 }
 
-.navbar .navbar-brand {
-    color: white;
+nav.navbar  {
+    max-height: $navbar-height;
+    background-color: $navbar_background_color;
+
+    border-bottom: 1px solid;
+    border-color: #C6BCD4;
 }
+
+.navbar-container {
+    display: block;
+    height: $navbar-height;
+}
+
+.navbar-image {
+    
+    @media (min-width: $screen-sm-min) {
+	margin-left: $image_left_margin - 100px;
+    }
+
+    @media (min-width: $screen-md-min) {
+	margin-left: $image_left_margin;
+    }
+
+    
+    float: left;
+    height: 100%;
+    width: 120px;
+    /* overflow: hidden; */
+    
+    img {
+    	height: 100%;
+    	width: auto;
+    }
+}
+
+#navbar {
+    display: inline;
+    float: right;
+    position: relative;
+    top: 25px;
+    
+    @media (min-width: $screen-sm-min) {
+	right: 8em;
+    }
+
+    @media (min-width: $screen-md-min) {
+	right: 14em;
+    }
+    
+
+    li {
+    	margin-left: 1em;
+    }
+
+    a:hover {
+	text-decoration: underline;
+    }
+}
+
 .navbar-default .navbar-nav > li > a {
     color: $navbar_text_color;
+    font-size: 16px;
 }
 
-.navbar-default .navbar-nav > li.active > a {
-    background-color: $page_background_color;
+h1 {
+    font-size: 36px;
+    line-height: 44px;
+    color: $heading_color;
 }
 
-.navbar {
-    background-color: $navbar_background_color;
-    border-width: 0;
+h3, h4, h5, h6 {
+    font-size: 20px; 
+}
+
+p {
+    font-size: 18px;
+    color: $paragraph_color;
+}
+
+hr {
+    max-width: 96px;
+    border: none;
+    margin-left:0;
+    height: 2px;
+    color: #D8D8D8;
+    background-color: #D8D8D8;
+}
+
+.toc-link {
+    font-size: 11px;
+    line-height: 28px;
 }

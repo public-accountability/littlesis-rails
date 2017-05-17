@@ -7,29 +7,32 @@
 	<%#= facebook_meta %>
     </head>
     <body>
-	<nav class="navbar navbar-default navbar-static-top">
-	    <div class="container">
-		<div class="navbar-header">
-		    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-			<span class="sr-only">Toggle navigation</span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		    </button>
-		    <a class="navbar-brand" href="<%= toolkit_path %>">Map the power</a>
-		</div>
-		<div id="navbar" class="navbar-collapse collapse">
-		    <ul class="nav navbar-nav">
-			<li class="active"><a href="#">Home</a></li>
-			<li><a href="#about">About</a></li>
-			<li><a href="#join">Join a pod</a></li>
-			<li><a href="https://littlesis.org">LittleSis.org</a></li>
-		    </ul>
-		</div><!--/.nav-collapse -->
-	    </div>
-	</nav>
 
+	<% if content_for? :article_view %>
+	    <div style="margin-top: 125px;"></div>
+	<% else %>
+	    <nav class="navbar navbar-default navbar-static-top">
+		<div class="navbar-container">
+		    
+		    <div class="navbar-image">
+			<%= image_tag "map_the_power_RGB.gif",  class: 'map-the-power-img-logo'%>
+		    </div>
+
+		    <div id="navbar" class="hidden-xs">
+			<ul class="nav navbar-nav">
+			    <li><a href="#about">About</a></li>
+			    <li><a href="#join">Join a pod</a></li>
+			    <li><a href="https://littlesis.org">Explore LittleSis</a></li>
+			</ul>
+		    </div><!-- #navbar / .nav-collapse -->
+		</div>
+	    </nav>
+	<% end %>
+	
 	<div class="container" id="container">
+	    <% if content_for? :article_view %>
+		<%= link_to "BACK TO TABLE OF CONTENTS", toolkit_path, class: 'toc-link'%>
+	    <% end %>
 	    <%= yield %>
 	</div>
 
