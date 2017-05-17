@@ -26,14 +26,15 @@ $navbar-height: 130px;
 
 
 body {
-    /* background-color: $page_background_color; */
     font-family: 'Montserrat', sans-serif;
 }
 
 nav.navbar  {
     max-height: $navbar-height;
     background-color: $navbar_background_color;
-    border-width: 0;
+
+    border-bottom: 1px solid;
+    border-color: #C6BCD4;
 }
 
 .navbar-container {
@@ -81,8 +82,11 @@ nav.navbar  {
     li {
     	margin-left: 1em;
     }
-}
 
+    a:hover {
+	text-decoration: underline;
+    }
+}
 
 .navbar-default .navbar-nav > li > a {
     color: $navbar_text_color;
@@ -111,4 +115,9 @@ hr {
     height: 2px;
     color: #D8D8D8;
     background-color: #D8D8D8;
+}
+
+.toc-link {
+    font-size: 11px;
+    line-height: 28px;
 }
