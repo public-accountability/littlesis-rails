@@ -4,25 +4,55 @@
 @import "bootstrap-markdown.scss";
 
 $page_background_color: #fffcf7;
-$navbar_background_color: #810f7c;
-$navbar_text_color: #fffcf7;
+$navbar_background_color: #fffc7;
+$navbar_height: 97px;
+$navbar_text_color: #201747;
+$article_width: 822px;
 
 body {
     background-color: $page_background_color;
 }
 
-.navbar .navbar-brand {
-    color: white;
+.map-the-power-img-logo {
+    height: 75px;
 }
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
+#navbar {
+    height: $navbar_height;
+    position: relative;
+    top: 25px;
+}
+
+nav.navbar  {
+    background-color: $navbar_background_color;
+    height: $navbar_height;
+    border-width: 0;
+    
+    .nav-content-wrapper {
+	height: 100%;
+    }
+    
+    .container {
+	height: $navbar_height;
+    }
+
+    .navbar-brand {
+	color: white;
+    }
+
+    
+}
+
 .navbar-default .navbar-nav > li > a {
     color: $navbar_text_color;
+    font-size: 14px;
 }
 
-.navbar-default .navbar-nav > li.active > a {
-    background-color: $page_background_color;
-}
-
-.navbar {
-    background-color: $navbar_background_color;
-    border-width: 0;
-}
+/* .navbar-default .navbar-nav > li.active > a { */
+/*     background-color: $page_background_color; */
+/* } */
