@@ -190,7 +190,7 @@ describe Entity do
         expect(create_school.extension_names). to eql ['Org', 'School']
       end
     end
-    
+
     describe 'name_or_id_to_name' do
       it 'converts def id to name' do
         expect(Entity.new.send(:name_or_id_to_name, 5)).to eq 'Business'
@@ -214,7 +214,6 @@ describe Entity do
     end
 
     describe '#has_extension?' do
-
       it 'works if provided extension name' do
         org = create(:org)
         org.add_extension('School')
@@ -422,6 +421,40 @@ describe Entity do
       allow(e).to receive(:generate_search_terms).and_return("(search terms)")
       expect(Entity).to receive(:search).and_raise(ArgumentError)
       expect { e.similar_entities }.to raise_error(ArgumentError)
+    end
+  end
+
+  describe 'Helpers' do
+    describe 'person?' do
+      it 'returns true if entity is a person' do
+        expect(build(:person).person?).to be true
+        expect(build(:org).person?).to be false
+      end
+    end
+
+    describe 'org?' do
+      it 'returns true if entity is an org' do
+        expect(build(:person).org?).to be false
+        expect(build(:org).org?).to be true
+      end
+    end
+
+    describe 'school?' do
+      it 'returns true if org is a school' do
+        org = create(:org)
+        org.add_extension('School')
+        expect(org.school?).to be true
+      end
+
+      it 'returns false if org is not a school' do
+        org = create(:org)
+        org.add_extension('IndustryTrade')
+        expect(org.school?).to be false
+      end
+
+      it 'returns false for people' do
+        expect(build(:person).school?).to be false
+      end
     end
   end
 

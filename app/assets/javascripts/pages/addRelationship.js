@@ -10,7 +10,7 @@ var addRelationship = function() {
   var categoriesText = [
       "",
       "Position",
-      "Education (as a student)",
+      "Education",
       "Membership",
       "Family",
       "Donation/Grant",
@@ -158,7 +158,7 @@ var addRelationship = function() {
     });
   }
 
-  // str, str -> [int] | Throw Exception
+  // str, str, [school] -> [int] | Throw Exception
   function categories(entity1, entity2) {
     var personToPerson = [1,3,4,5,6,7,8,9,12];
     var personToOrg = [1,2,3,5,6,7,10,12];
@@ -169,7 +169,14 @@ var addRelationship = function() {
     } else if (entity1 === 'Person' && entity2 === 'Org') {
       return personToOrg;
     } else if (entity1 === 'Org' && entity2 === 'Person') {
+
+      // if entity is a school, provide the option to
+      // create a student relationship
+      if (typeof entityInfo('school') !== 'undefined' && entityInfo('school') === 'true') {
+	orgToPerson.splice(1, 0, 2);
+      }
       return orgToPerson;
+      
     } else if (entity1 === 'Org' && entity2 === 'Org') {
       return orgToOrg;
     } else {
@@ -226,14 +233,17 @@ var addRelationship = function() {
 
 
   /** 
-   Entity1 must be a 'person' for position relationshps. This func switches the entity ids if the relationship
-   is between an Org and a Person and the org is current at the entity1_position.
+   Entity1 must be a 'person' for position and education relationshps.
+   This func switches the entity ids if the relationship
+   is between an Org and a Person and the Org is currently at the entity1_position.
    */
   function reverseEntityIdsIf() {
-    if (category_id() === 1 && entityInfo('entitytype') === 'Org') {
-      var tmp = entity1_id;
-      entity1_id = entity2_id;
-      entity2_id = tmp;
+    if (entityInfo('entitytype') === 'Org') {
+      if (category_id() === 1 || category_id() === 2) {
+	var tmp = entity1_id;
+	entity1_id = entity2_id;
+	entity2_id = tmp;
+      }
     }
   }
 

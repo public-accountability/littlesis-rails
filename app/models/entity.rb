@@ -116,7 +116,7 @@ class Entity < ActiveRecord::Base
 
   def person?
     primary_ext == 'Person'
-  end  
+  end
 
   def org?
     primary_ext == 'Org'
@@ -124,6 +124,10 @@ class Entity < ActiveRecord::Base
 
   def couple?
     primary_ext == 'Couple'
+  end
+
+  def school?
+    org? && has_extension?('School')
   end
 
   def other_ext

@@ -3,7 +3,11 @@
     <%= render partial: 'header', locals: { entity: @entity } %>
     <%= render partial: 'explain_categories_modal' %>
 
-    <div id="entity-info" data-entitytype="<%= @entity.primary_ext %>"  data-entityid="<%= @entity.id %>"></div>
+    <div id="entity-info"
+	 data-entitytype="<%= @entity.primary_ext %>"
+	 data-entityid="<%= @entity.id %>"
+	 data-school="<%= @entity.school?.to_s %>">
+    </div>
 
     <div class="row">
 
