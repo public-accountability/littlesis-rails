@@ -5,7 +5,7 @@ class ToolkitController < ApplicationController
   before_action :set_toolkit_page, only: [:display, :edit]
 
   MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
-                                     autolink: true, fenced_code_blocks: true)
+                                     autolink: true, fenced_code_blocks: true, tables: true)
 
   # GET /toolkit/:toolkit_page
   def display
