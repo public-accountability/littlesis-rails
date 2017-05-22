@@ -1,4 +1,8 @@
 FactoryGirl.define do
+  sequence :sf_user_name do |n|
+    "user_#{n}"
+  end
+
   factory :user, class: User do
     sequence(:username) { |n| "user_#{n}" }
     sequence(:email) { |n| "user_#{n}@littlesis.org" }
@@ -15,12 +19,12 @@ FactoryGirl.define do
   end
 
   factory :sf_user, class: SfGuardUser do
-    id 100
-    sequence(:username) { |n| "user_#{n}" }
+    # id 100
+    username { generate(:sf_user_name) }
   end
 
   factory :sf_guard_user, class: SfGuardUser do
-    sequence(:username) { |n| "user_#{n}" }
+    username { generate(:sf_user_name) }
   end
 
   factory :admin, class: User do

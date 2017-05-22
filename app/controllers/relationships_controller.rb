@@ -98,6 +98,10 @@ class RelationshipsController < ApplicationController
     end
   end
 
+  def find_similar
+    render json: {'place': 'holder'}
+  end
+
   private
 
   # Hash -> Nil | yield

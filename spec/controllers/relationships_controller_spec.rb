@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe RelationshipsController, type: :controller do
-  let(:e1) { create(:person, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
-  let(:e2) { create(:mega_corp_inc, last_user_id: @sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
-  
+  let(:sf_user) { create(:sf_user) }
+  let(:e1) { create(:person, last_user_id: sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
+  let(:e2) { create(:mega_corp_inc, last_user_id: sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
+
   before(:all) do
-    @sf_user =  create(:sf_user)
     Entity.skip_callback(:create, :after, :create_primary_ext)
     DatabaseCleaner.start
   end
@@ -21,6 +21,7 @@ describe RelationshipsController, type: :controller do
   it { should route(:post, '/relationships/1/reverse_direction').to(action: :reverse_direction, id: 1) }
   it { should route(:patch, '/relationships/1').to(action: :update, id: 1) }
   it { should route(:post, '/relationships/bulk_add').to(action: :bulk_add) }
+  it { should route(:get, '/relationships/find_similar').to(action: :find_similar) }
 
   describe 'GET #show' do
     before do
@@ -101,8 +102,8 @@ describe RelationshipsController, type: :controller do
 
       it 'updates last_user_id' do
         post_request
-        expect(Entity.find(e1.id).last_user_id).not_to eql @sf_user.id
-        expect(Entity.find(e2.id).last_user_id).not_to eql @sf_user.id
+        expect(Entity.find(e1.id).last_user_id).not_to eql sf_user.id
+        expect(Entity.find(e2.id).last_user_id).not_to eql sf_user.id
       end
     end
 
@@ -160,7 +161,7 @@ describe RelationshipsController, type: :controller do
 
   describe 'GET /relationships/id/edit' do
     login_user
-    
+
     before do
       @rel = build :relationship
       expect(Relationship).to receive(:find).with('1').and_return(@rel)
@@ -169,10 +170,10 @@ describe RelationshipsController, type: :controller do
 
     it { should respond_with(:success) }
     it { should render_template(:edit) }
-  end 
+  end
 
   describe 'PATCH /relationships/id' do
-    let(:generic_reference) { create(:generic_relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12, last_user_id: @sf_user.id) } 
+    let(:generic_reference) { create(:generic_relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12, last_user_id: sf_user.id) }
     login_user
 
     context 'When the submission contains errors' do
@@ -182,25 +183,25 @@ describe RelationshipsController, type: :controller do
         @e2_updated_at = e2.updated_at
         patch :update, { id: @rel.id, relationship: {'start_date' => '012345678910'}, reference: {'just_cleaning_up' => '1'} }
       end
-    
+
       it { should respond_with(:success) }
       it { should render_template(:edit) }
-      
+
       it 'does not change the  updated_at of entities' do
         expect(Entity.find(e1.id).updated_at.to_i).to eql @e1_updated_at.to_i
         expect(Entity.find(e2.id).updated_at.to_i).to eql @e2_updated_at.to_i
       end
 
       it 'does not update last_user_id' do
-        expect(Entity.find(e1.id).last_user_id).to eql @sf_user.id
-        expect(Entity.find(e2.id).last_user_id).to eql @sf_user.id
+        expect(Entity.find(e1.id).last_user_id).to eql sf_user.id
+        expect(Entity.find(e2.id).last_user_id).to eql sf_user.id
       end
     end
 
     context "it's a good request" do
       before do
-        @e1 = create(:person, last_user_id: @sf_user.id, created_at: 1.day.ago, name: 'person one')
-        @e2 = create(:mega_corp_inc, last_user_id: @sf_user.id, created_at: 1.day.ago)
+        @e1 = create(:person, last_user_id: sf_user.id, created_at: 1.day.ago, name: 'person one')
+        @e2 = create(:mega_corp_inc, last_user_id: sf_user.id, created_at: 1.day.ago)
         @rel = create(:generic_relationship, entity1_id: @e1.id, entity2_id: @e2.id)
         @e1.update_column(:updated_at, 1.day.ago)
         @e2.update_column(:updated_at, 1.day.ago)
@@ -221,8 +222,8 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'updates last_user_id' do
-        expect(Entity.find(@e1.id).last_user_id).not_to eql @sf_user.id
-        expect(Entity.find(@e2.id).last_user_id).not_to eql @sf_user.id
+        expect(Entity.find(@e1.id).last_user_id).not_to eql sf_user.id
+        expect(Entity.find(@e2.id).last_user_id).not_to eql sf_user.id
       end
     end
 
@@ -265,10 +266,10 @@ describe RelationshipsController, type: :controller do
         @rel = generic_reference
         patch :update, { id: @rel.id, relationship: {'start_date' => '2001-01-01'}, reference: {'source' => '', 'name' => ''} }
       end
-      
+
       it { should render_template(:edit) }
-      
-      it 'does not update relationship' do 
+
+      it 'does not update relationship' do
         expect(Relationship.find(@rel.id).start_date).to be nil
       end
     end
@@ -396,7 +397,7 @@ describe RelationshipsController, type: :controller do
           'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
           'relationships' => [relationship1] }
       end
-      
+
       it 'creates one relationship' do
         expect { post :bulk_add, params }.to change { Relationship.count }.by(1)
       end
@@ -427,7 +428,7 @@ describe RelationshipsController, type: :controller do
           'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
           'relationships' => [relationship1] }
       end
-      
+
       it 'does not create a relationship' do
         expect { post :bulk_add, params }.not_to change { Relationship.count }
       end
@@ -476,7 +477,7 @@ describe RelationshipsController, type: :controller do
       before do
         @corp = create(:corp)
         @person = create(:person)
-        @relationship = { 'name' => @person.id, 'primary_ext' => 'Person', 'start_date' => '2017-01-01'}
+        @relationship = { 'name' => @person.id, 'primary_ext' => 'Person', 'start_date' => '2017-01-01' }
 
         @params = { 'entity1_id' => @corp.id,
                     'category_id' => 1,
@@ -537,7 +538,7 @@ describe RelationshipsController, type: :controller do
       expect(Relationship).to receive(:find).with('1').and_return(@rel)
       post :reverse_direction, id: 1
     end
-    
+
     it { should respond_with(302) }
     it { should redirect_to(edit_relationship_url(@rel)) }
   end
