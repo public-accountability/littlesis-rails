@@ -69,6 +69,7 @@ module EntitiesHelper
       'lobbied_by',
       'miscellaneous'
     ]
+
     section_order_org = [
       'parents',
       'children',
@@ -93,20 +94,30 @@ module EntitiesHelper
     "[+#{links.count - 1}]"
   end
 
-  # <Entity> -> html
-  def type_select_boxes(entity = @entity)
-    number_per_group = entity.org? ? 9 : 5
-    checkboxes(entity).each_slice(number_per_group).reduce('') do |x, box_group|
+  def type_select_boxes_person(entity = @entity)
+    boxes_to_html(checkboxes(entity, ExtensionDefinition.person_types))
+  end
+
+  def org_boxes_tier2(entity = @entity)
+    boxes_to_html(checkboxes(entity, ExtensionDefinition.org_types_tier2), 4)
+  end
+
+  def org_boxes_tier3(entity = @entity)
+    boxes_to_html(checkboxes(entity, ExtensionDefinition.org_types_tier3), 6)
+  end
+
+  # [ content_tag ] => html
+  def boxes_to_html(boxes, slice = 5)
+    boxes.each_slice(slice).reduce('') do |x, box_group|
       x + content_tag(:div, box_group.reduce(:+), class: 'col-sm-4')
     end.html_safe
   end
 
-  # <Entity> -> [ content_tag ]
-  def checkboxes(entity)
+  def checkboxes(entity, definitions)
     checked_def_ids = entity.extension_records.map(&:definition_id)
-    ExtensionDefinition.send("#{entity.primary_ext.downcase}_types").collect do |ed|
+    definitions.collect do |ed|
       is_checked = checked_def_ids.include?(ed.id)
-      content_tag(:span, class: 'entity-type-checkbox-wrapper') do 
+      content_tag(:span, class: 'entity-type-checkbox-wrapper') do
         glyph_checkbox(is_checked, ed.id) + content_tag(:span, " #{ed.display_name}", class: 'entity-type-name') + tag(:br)
       end
     end

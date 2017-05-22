@@ -1,40 +1,30 @@
 require 'rails_helper'
 
 describe EntitiesHelper do
-  describe '#type_select_boxes' do
-    it 'has 5 columns for orgs' do
-      expect(helper.type_select_boxes(build(:org)).scan('col-sm-4').count).to eq 3
-    end
-
-    it 'has 2 columns for orgs' do
-      expect(helper.type_select_boxes(build(:person)).scan('col-sm-4').count).to eq 2
+  describe '#type_select_boxes_person' do
+    it 'has 2 columns for person' do
+      expect(helper.type_select_boxes_person(build(:person)).scan('col-sm-4').count).to eq 2
     end
   end
 
   describe '#checkboxes' do
-    it 'calls "ExtensionDefintion.org_types" if provided an org' do
-      expect(ExtensionDefinition).to receive(:org_types).once.and_return([])
-      helper.checkboxes(build(:org))
+    it 'contains all 7 tier two types' do
+      expect(helper.checkboxes(build(:org), ExtensionDefinition.org_types_tier2).reduce(:+).scan('<span class="entity-type-name"').count).to eq 7
     end
 
-    it 'calls "ExtensionDefintion.person_types" if provided an person' do
-      expect(ExtensionDefinition).to receive(:person_types).once.and_return([])
-      helper.checkboxes(build(:person))
-    end
-
-    it 'contains all 25 extension org types' do
-      expect(helper.checkboxes(build(:org)).reduce(:+).scan('<span class="entity-type-name"').count).to eq 25
+    it 'contains all 18 tier 3 types' do
+      expect(helper.checkboxes(build(:org), ExtensionDefinition.org_types_tier3).reduce(:+).scan('<span class="entity-type-name"').count).to eq 18
     end
 
     it 'contains all 9 extension person types' do
-      expect(helper.checkboxes(build(:person)).reduce(:+).scan('<span class="entity-type-name"').count).to eq 9
+      expect(helper.checkboxes(build(:person), ExtensionDefinition.person_types).reduce(:+).scan('<span class="entity-type-name"').count).to eq 9
     end
 
     it 'contains one checkbox if org has an extension' do
       org = create(:org)
       org.add_extension('Business')
-      expect(helper.checkboxes(org).reduce(:+).scan('glyphicon-check').count).to eq 1
-      expect(helper.checkboxes(org).reduce(:+).scan('glyphicon-unchecked').count).to eq 24
+      expect(helper.checkboxes(org, ExtensionDefinition.org_types_tier2).reduce(:+).scan('glyphicon-check').count).to eq 1
+      expect(helper.checkboxes(org, ExtensionDefinition.org_types_tier2).reduce(:+).scan('glyphicon-unchecked').count).to eq 6
     end
   end
 
