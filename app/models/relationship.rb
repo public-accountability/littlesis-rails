@@ -4,6 +4,7 @@ class Relationship < ActiveRecord::Base
   include SoftDelete
   include Referenceable
   include RelationshipDisplay
+  include SimilarRelationships
 
   has_paper_trail :ignore => [:last_user_id],
                   :meta => { :entity1_id => :entity1_id, :entity2_id => :entity2_id }
@@ -459,10 +460,8 @@ class Relationship < ActiveRecord::Base
     end
 
   end
-  
-  private
 
-  
+  private
 
   def last_user_id_for_entity_update(sf_user_id = nil)
     # if called with a 'sf_user_id' use that id
