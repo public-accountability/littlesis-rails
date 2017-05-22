@@ -49,7 +49,8 @@ var sidebarSourceLinks = (function($){
     return $('<li>').append(
       $('<a>', {
 	href: ref.source, 
-	text: displayName
+	text: displayName,
+	target: '_blank'
       }));
   }
 
