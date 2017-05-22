@@ -30,6 +30,7 @@ def valid_date?(row)
 end
 
 ARGF.each do |line|
+  line.encode!(invalid: :replace, replace: '')
   begin
     CSV.parse(line) do |row|
       # starts off as bad...gotta prove your validity...
