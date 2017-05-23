@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact, :flag]
+  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact, :flag, :token]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -45,7 +45,15 @@ class HomeController < ApplicationController
 
   # Sends CSRF token to browser extension
   def token
-    render :inline => "<%= csrf_meta_tags %>"
+    if user_signed_in?
+      render :inline => "<%= csrf_meta_tags %>"
+    else
+      head :unauthorized
+    end
+  end
+
+  def extension_path
+    render :inline => "https://dfl6orqdcqt4f.cloudfront.net/assets/#{Rails.application.assets.find_asset('extension.js').digest_path}"
   end
 
   def dismiss
