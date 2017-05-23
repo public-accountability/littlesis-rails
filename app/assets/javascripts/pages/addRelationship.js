@@ -1,4 +1,4 @@
-var addRelationship = (function() {
+var addRelationship = (function(utility) {
   /*
    .rel-search -> show during selection process
    .rel-results -> table results
@@ -256,7 +256,7 @@ var addRelationship = (function() {
 
     if (!formData.reference.source) {
       errors.reference.source = true;
-    } else if (!validURL(formData.reference.source)) {
+    } else if (!utility.validURL(formData.reference.source)) {
       errors.reference.source = 'INVALID';
     }
 
@@ -331,16 +331,7 @@ var addRelationship = (function() {
   } 
 
 
-  /**
-   Simple url validation. Tests if it begins with 'http://' or 'https://' and is
-   followed by at least one character followed by a dot followed by another character. 
-   
-   So yes, http://1.blah is a valid url according to these standards...we could go crazy with the regexs...https://mathiasbynens.be/demo/url-regex...but this is FINE
-   */
-  function validURL(str) {
-    var pattern = RegExp('^(https?:\/\/)(.+)[\.]{1}.+$');
-    return pattern.test(str);
-  }
+  
 
   function init() {
     entity1_id = entityInfo('entityid');
@@ -391,8 +382,7 @@ var addRelationship = (function() {
   }
   
   return {
-    validURL: validURL,
     init: init
   };
 
-}());
+}(utility));

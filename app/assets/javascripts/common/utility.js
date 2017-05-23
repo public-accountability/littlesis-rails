@@ -142,3 +142,14 @@ utility.validDate = function(str) {
   }
   return true;
 };
+
+/**
+   Simple url validation. Tests if it begins with 'http://' or 'https://' and is
+   followed by at least one character followed by a dot followed by another character. 
+   
+   So yes, http://1.blah is a valid url according to these standards...we could go crazy with the regexs...https://mathiasbynens.be/demo/url-regex...but this is FINE
+*/
+utility.validURL = function(str) {
+    var pattern = RegExp('^(https?:\/\/)(.+)[\.]{1}.+$');
+    return pattern.test(str);
+};
