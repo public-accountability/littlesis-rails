@@ -65,7 +65,7 @@
     </div>
 </div>
 
-<div class="row rel-add hidden" id="add-relationship-row">
+<div class="row rel-add hidden bottom-3em" id="add-relationship-row">
     <div class="col-sm-3" >
 	<p><strong>Relationship Category:</strong></p>
 	<div id="category-selection"></div>
@@ -103,7 +103,7 @@
 
 <%= javascript_tag do %>
     $(document).ready(function(){ 
-       addRelationship.init();
-       $('#reference-date').datepicker({ format: "yyyy-mm-dd" });
+    addRelationship.init();
+    $('#reference-date').datepicker({ format: "yyyy-mm-dd" });
     });
 <% end  %>

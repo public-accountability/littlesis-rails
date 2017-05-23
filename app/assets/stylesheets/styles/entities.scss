@@ -490,10 +490,12 @@ html table.dataTable thead {
 }
 
 #reference {
-    
     label {
 	font-size: 0.8em;
 	 font-weight: normal;
     }
+}
 
+div.popover-content {
+    font-size: 12px;
 }

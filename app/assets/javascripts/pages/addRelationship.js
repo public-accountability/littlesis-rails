@@ -70,8 +70,10 @@ var addRelationship = (function(utility) {
     $('.rel-add').removeClass('hidden'); // show add relationship elements
     $('#relationship-with-name').html( $('<a>', { href: data.url, text: data.name }) ); // add relationship-with entity-link
     $('#category-selection').html(categorySelector(data)); // add category selection
-
-    categoryButtonsSetActiveClass(); // change '.active' on category buttons
+    
+    // change '.active' on category buttons
+    // and search for similar entities;
+    onCategorySelectHandlers();
     recentReferences( [entityInfo('entityid'), entity2_id] );
   }
 
@@ -104,15 +106,57 @@ var addRelationship = (function(utility) {
     return buttonGroup;
   }
   
+  function onCategorySelectHandlers() {
+    $("#category-selection .btn-group-vertical > .btn").click(function(){
+      categoryButtonsSetActiveClass(this);
+      lookForSimilarRelationship();
+      $('#similar-relationships').addClass('hidden');
+      $('#similar-relationships').popover('destroy');
+    });
+  }
+
+  // Submits ajax request to /relationships/find_similar
+  // and calls hasSimilarRelationships with the response
+  function lookForSimilarRelationship(){
+    var request = { entity1_id: entity1_id, entity2_id: entity2_id, category_id: category_id() };
+    $.getJSON('/relationships/find_similar', request)
+      .done(hasSimilarRelationships)
+      .fail(function(){
+	console.error('ajax request to /relationships/find_similar failed');
+      });
+  }
+
+  function hasSimilarRelationships(relationships) {
+    if (relationships.length == 0) { return; }
+    $('#similar-relationships').removeClass('hidden').fadeIn();
+    $('#similar-relationships').popover({
+      content: popoverContent(relationships),
+      html: true
+    });
+  }
+
+  function popoverContent (relationships) {
+    var text = "There already exists " + relationships.length + " " + categoriesText[category_id()] + " relationship";
+    (relationships.length > 1) ? text += 's. ' : text += '. ';    // pluralize
+    return $('<span>', {text: text})
+      .append($('<br>'))
+      .append(relationshipLink(relationships));
+  }
+
+  function relationshipLink(relationships) {
+    var examine = ' to examine ';
+    examine += (relationships.length > 1) ? 'one' : 'it';
+    return $('<a>', {text: 'Click here', href: "/relationships/" + relationships[0].id, target: '_blank'})
+      .append( $('<span>', { text:  examine}) );
+  }
+
   function displayCreateNewEntityDialog() {
     $('.rel-results').addClass('hidden');
     $('.rel-new-entity').removeClass('hidden'); 
   } 
 
-  function categoryButtonsSetActiveClass() {
-    $("#category-selection .btn-group-vertical > .btn").click(function(){
-	$(this).addClass("active").siblings().removeClass("active");
-    });
+  function categoryButtonsSetActiveClass(elem) {
+    $(elem).addClass("active").siblings().removeClass("active");
   }
 
   // str, str, [school] -> [int] | Throw Exception
@@ -298,6 +342,7 @@ var addRelationship = (function(utility) {
      {} -> 
    */
   function displayErrors(errorData) {
+
     var alerts = [];
     var errors = $.extend({reference: {}, relationship: {} }, errorData);
 
@@ -322,18 +367,24 @@ var addRelationship = (function(utility) {
     }
 
     $('#errors-container').html(alerts); // display the errors
+    alertFadeOut();
   } 
 
+  function alertFadeOut() {
+    var fade = function() {
+      $('div.alert').fadeOut(2000);
+    };
+    setTimeout(fade, 3000);
+  }
+  
   function alertDiv(title, message) {
     return $('<div>', {class: 'alert alert-danger', role: 'alert' })
       .append($('<strong>', {text: title}))
       .append($('<span>', {text: message}));
   } 
 
-
-  
-
   function init() {
+
     entity1_id = entityInfo('entityid');
     // entity1_id gets set after selection.
   
@@ -379,6 +430,7 @@ var addRelationship = (function(utility) {
     $('#cant-find-new-entity-link').click(function(e){
       displayCreateNewEntityDialog();
     });
+
   }
   
   return {
