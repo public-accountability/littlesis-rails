@@ -542,4 +542,35 @@ describe RelationshipsController, type: :controller do
     it { should respond_with(302) }
     it { should redirect_to(edit_relationship_url(@rel)) }
   end
+
+  describe 'find_similar' do
+    login_user
+
+    it 'returns bad_request if missing params' do
+      get :find_similar
+      expect(response).to have_http_status(:bad_request)
+      get :find_similar, { 'entity1_id' => '123', 'entity2_id' => '456' }
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it 'returns good request if has all params' do
+      get :find_similar, { 'entity1_id' => '123', 'entity2_id' => '456', 'category_id' => '1' }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'returns json with one similar relationships' do
+      org = create :org
+      person = create :person
+      rel = Relationship.create!(entity: person, related: org, category_id: 1, description1: 'influence')
+
+      get :find_similar, { entity1_id: person.id, entity2_id: org.id, category_id: 1 }
+
+      json = JSON.parse(response.body)
+
+      expect(json.length).to eq 1
+      expect(json[0]['id']).to eq rel.id
+      expect(json[0]['description1']).to eq 'influence'
+      expect(json[0].key?('last_user_id')).to be false
+    end
+  end
 end

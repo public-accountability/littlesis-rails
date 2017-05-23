@@ -434,7 +434,6 @@ class Relationship < ActiveRecord::Base
   # Update Entity Timestamp after update #
   ########################################
 
-
   # updates timestamp and sets last_user_id of
   # both entities in the relationship
   def update_entity_timestamps(sf_user_id = nil)
@@ -461,6 +460,11 @@ class Relationship < ActiveRecord::Base
 
   end
 
+  # Removes 'last_user_id' from the json serialization of the object
+  def as_json(options = {})
+    super(options).reject { |k, v| k == 'last_user_id' }
+  end
+
   private
 
   def last_user_id_for_entity_update(sf_user_id = nil)
@@ -471,6 +475,5 @@ class Relationship < ActiveRecord::Base
     # otherwise, use the relationship's last_user_id
     last_user_id
   end
-
 
 end

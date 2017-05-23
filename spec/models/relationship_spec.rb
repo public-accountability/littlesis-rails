@@ -39,6 +39,10 @@ describe Relationship, type: :model do
     it 'has find_similar' do
       expect(Relationship.new.respond_to?(:find_similar)).to be true
     end
+
+    it 'has find_similar class method' do
+      expect(Relationship.respond_to?(:find_similar)).to be true
+    end
   end
 
   describe 'validations' do
@@ -433,6 +437,13 @@ describe Relationship, type: :model do
     it 'returns empty array if no similar relationships are found' do
       similar_rels = Relationship.new(entity: person, related: org, category_id: 5).find_similar
       expect(similar_rels).to eq []
+    end
+  end
+
+  describe 'as_json' do
+    it 'does not contain last_user_id' do
+      rel = build(:relationship, last_user_id: 900)
+      expect(rel.as_json).not_to include 'last_user_id'
     end
   end
 
