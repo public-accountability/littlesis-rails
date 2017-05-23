@@ -304,9 +304,10 @@ Lilsis::Application.routes.draw do
   #  API  #
   #########
 
-  get '/api' => 'api/api#index'
-
   namespace :api do
+    get '/' => 'api#index'
+    get '/entities/search' => 'entities#search'
+
     resources :entities, only: [:show] do
       member do
         get 'relationships'

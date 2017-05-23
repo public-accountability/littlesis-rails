@@ -134,4 +134,18 @@ describe Api::EntitiesController, type: :controller do
       expect(response).to have_http_status 403
     end
   end
+
+  describe 'search' do
+    before(:all) { @token = ApiToken.create!(user_id: ApiToken.last.user_id + 1 ).token  }
+    before(:each) { request.headers['Littlesis-Api-Token'] = @token }
+
+    it 'sets status to be 400 if "q" param is not provided' do
+      get :search
+      expect(response).to have_http_status 400
+    end
+
+    # it 'returns array of entities' do
+    #   get :search, q: 'the name of some entity'
+    # end
+  end
 end

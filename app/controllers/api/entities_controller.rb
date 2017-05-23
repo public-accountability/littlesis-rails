@@ -1,5 +1,6 @@
 class Api::EntitiesController < Api::ApiController
-  before_action :set_entity, :set_options
+  before_action :set_entity, except: [:search]
+  before_action :set_options, except: [:search]
 
   def show
     render json: ApiUtils::Response.new(@entity, @options)
@@ -11,6 +12,11 @@ class Api::EntitiesController < Api::ApiController
   def extensions
     records = ExtensionRecord.includes(:extension_definition).where(entity_id: @entity.id)
     render json: ApiUtils::Response.new(records)
+  end
+
+  def search
+    return head :bad_request unless params[:q].present?
+    render json: { place: 'holder' }
   end
 
   private
