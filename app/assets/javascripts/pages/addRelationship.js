@@ -1,12 +1,9 @@
-var addRelationship = function() {
+var addRelationship = (function(utility) {
   /*
-   
    .rel-search -> show during selection process
    .rel-results -> table results
    .rel-add -> show during add-relationship process. Start hidden
-   
   */
-
   var categoriesText = [
       "",
       "Position",
@@ -23,56 +20,16 @@ var addRelationship = function() {
       "Generic"
   ];
   
-  var entity1_id = entityInfo('entityid');
-  var entity2_id = null; // this gets sets after selection.
 
   function entityInfo(info) {
     return document.getElementById('entity-info').dataset[info];
   }
-
-  // submits create relationships request
-  // after button is clicked.
-  $('#create-relationship-btn').click(function(e){
-    submit(); 
-  });
-
-  // Overrides default action of submit new entity form
-  $('#new_entity').submit(function(event) {
-    event.preventDefault();
-    $('#new-entity-errors').empty(); 
-    $.post('/entities', $('#new_entity').serialize())
-      .done(function(response){
-	if (response.status === 'OK') {
-	  showAddRelationshipForm(response.entity);
-	} else {
-	  $.each(response.errors, function(key, val) {
-	    var field = (key === 'primary_ext') ? 'type' : key;
-	    $('#new-entity-errors').append(alertDiv(field, ":  " + val));
-	  });
-	}
-      });
-  });
-
-  // Searches for name in search bar and then renders table with results
-  $('#search-button').click(function(e){
-    e.preventDefault();
-    $('.rel-new-entity').addClass('hidden');
-    $('.rel-results').removeClass('hidden');
-    $.getJSON('/search/entity', {q: $('#name-to-search').val() }, function(data) {
-      if (data.length > 0) {
-	createDataTable(data);
-      } else { 
-	displayCreateNewEntityDialog();
-      } 
-    });
-  });
-
-  // Switches to the "new entity" option after user clicks 
-  // on "click here to create a new entity"
-  $('#cant-find-new-entity-link').click(function(e){
-    displayCreateNewEntityDialog();
-  });
- 
+  
+  
+  // holds entity ids
+  var entity1_id = null;
+  var entity2_id = null;
+  
   // Creates a new datatable
   // {} ->
   function createDataTable(data) {
@@ -113,8 +70,10 @@ var addRelationship = function() {
     $('.rel-add').removeClass('hidden'); // show add relationship elements
     $('#relationship-with-name').html( $('<a>', { href: data.url, text: data.name }) ); // add relationship-with entity-link
     $('#category-selection').html(categorySelector(data)); // add category selection
-
-    categoryButtonsSetActiveClass(); // change '.active' on category buttons
+    
+    // change '.active' on category buttons
+    // and search for similar entities;
+    onCategorySelectHandlers();
     recentReferences( [entityInfo('entityid'), entity2_id] );
   }
 
@@ -147,15 +106,57 @@ var addRelationship = function() {
     return buttonGroup;
   }
   
+  function onCategorySelectHandlers() {
+    $("#category-selection .btn-group-vertical > .btn").click(function(){
+      categoryButtonsSetActiveClass(this);
+      lookForSimilarRelationship();
+      $('#similar-relationships').addClass('hidden');
+      $('#similar-relationships').popover('destroy');
+    });
+  }
+
+  // Submits ajax request to /relationships/find_similar
+  // and calls hasSimilarRelationships with the response
+  function lookForSimilarRelationship(){
+    var request = { entity1_id: entity1_id, entity2_id: entity2_id, category_id: category_id() };
+    $.getJSON('/relationships/find_similar', request)
+      .done(hasSimilarRelationships)
+      .fail(function(){
+	console.error('ajax request to /relationships/find_similar failed');
+      });
+  }
+
+  function hasSimilarRelationships(relationships) {
+    if (relationships.length == 0) { return; }
+    $('#similar-relationships').removeClass('hidden').fadeIn();
+    $('#similar-relationships').popover({
+      content: popoverContent(relationships),
+      html: true
+    });
+  }
+
+  function popoverContent (relationships) {
+    var text = "There already exists " + relationships.length + " " + categoriesText[category_id()] + " relationship";
+    (relationships.length > 1) ? text += 's. ' : text += '. ';    // pluralize
+    return $('<span>', {text: text})
+      .append($('<br>'))
+      .append(relationshipLink(relationships));
+  }
+
+  function relationshipLink(relationships) {
+    var examine = ' to examine ';
+    examine += (relationships.length > 1) ? 'one' : 'it';
+    return $('<a>', {text: 'Click here', href: "/relationships/" + relationships[0].id, target: '_blank'})
+      .append( $('<span>', { text:  examine}) );
+  }
+
   function displayCreateNewEntityDialog() {
     $('.rel-results').addClass('hidden');
     $('.rel-new-entity').removeClass('hidden'); 
   } 
 
-  function categoryButtonsSetActiveClass() {
-    $("#category-selection .btn-group-vertical > .btn").click(function(){
-	$(this).addClass("active").siblings().removeClass("active");
-    });
+  function categoryButtonsSetActiveClass(elem) {
+    $(elem).addClass("active").siblings().removeClass("active");
   }
 
   // str, str, [school] -> [int] | Throw Exception
@@ -299,7 +300,7 @@ var addRelationship = function() {
 
     if (!formData.reference.source) {
       errors.reference.source = true;
-    } else if (!validURL(formData.reference.source)) {
+    } else if (!utility.validURL(formData.reference.source)) {
       errors.reference.source = 'INVALID';
     }
 
@@ -341,6 +342,7 @@ var addRelationship = function() {
      {} -> 
    */
   function displayErrors(errorData) {
+
     var alerts = [];
     var errors = $.extend({reference: {}, relationship: {} }, errorData);
 
@@ -365,25 +367,74 @@ var addRelationship = function() {
     }
 
     $('#errors-container').html(alerts); // display the errors
+    alertFadeOut();
   } 
 
+  function alertFadeOut() {
+    var fade = function() {
+      $('div.alert').fadeOut(2000);
+    };
+    setTimeout(fade, 3000);
+  }
+  
   function alertDiv(title, message) {
     return $('<div>', {class: 'alert alert-danger', role: 'alert' })
       .append($('<strong>', {text: title}))
       .append($('<span>', {text: message}));
-    
   } 
 
+  function init() {
 
-  /**
-   Simple url validation. Tests if it begins with 'http://' or 'https://' and is
-   followed by at least one character followed by a dot followed by another character. 
-   
-   So yes, http://1.blah is a valid url according to these standards...we could go crazy with the regexs...https://mathiasbynens.be/demo/url-regex...but this is FINE
-   */
-  function validURL(str) {
-    var pattern = RegExp('^(https?:\/\/)(.+)[\.]{1}.+$');
-    return pattern.test(str);
+    entity1_id = entityInfo('entityid');
+    // entity1_id gets set after selection.
+  
+    // submits create relationships request
+    // after button is clicked.
+    $('#create-relationship-btn').click(function(e){
+      submit(); 
+    });
+    
+    // Overrides default action of submit new entity form
+    $('#new_entity').submit(function(event) {
+      event.preventDefault();
+      $('#new-entity-errors').empty(); 
+      $.post('/entities', $('#new_entity').serialize())
+	.done(function(response){
+	  if (response.status === 'OK') {
+	    showAddRelationshipForm(response.entity);
+	  } else {
+	    $.each(response.errors, function(key, val) {
+	      var field = (key === 'primary_ext') ? 'type' : key;
+	      $('#new-entity-errors').append(alertDiv(field, ":  " + val));
+	    });
+	  }
+	});
+    });
+
+    // Searches for name in search bar and then renders table with results
+    $('#search-button').click(function(e){
+      e.preventDefault();
+      $('.rel-new-entity').addClass('hidden');
+      $('.rel-results').removeClass('hidden');
+      $.getJSON('/search/entity', {q: $('#name-to-search').val() }, function(data) {
+	if (data.length > 0) {
+	  createDataTable(data);
+	} else { 
+	  displayCreateNewEntityDialog();
+	} 
+      });
+    });
+
+    // Switches to the "new entity" option after user clicks 
+    // on "click here to create a new entity"
+    $('#cant-find-new-entity-link').click(function(e){
+      displayCreateNewEntityDialog();
+    });
+
   }
   
-};
+  return {
+    init: init
+  };
+
+}(utility));

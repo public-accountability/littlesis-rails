@@ -98,6 +98,14 @@ class RelationshipsController < ApplicationController
     end
   end
 
+  def find_similar
+    if has_required_find_similar_params?
+      render json: Relationship.find_similar(similar_relationships_params)
+    else
+      head :bad_request
+    end
+  end
+
   private
 
   # Hash -> Nil | yield
@@ -149,7 +157,6 @@ class RelationshipsController < ApplicationController
     @relationship.related.update(last_user_id: current_user.sf_guard_user_id)
   end
 
-
   def bulk_relationships_params
     return params[:relationships].map { |x| blank_to_nil(x) } if params[:relationships].is_a?(Array)
     params[:relationships].to_a.map { |x| x[1] }.map { |x| blank_to_nil(x) }
@@ -167,7 +174,6 @@ class RelationshipsController < ApplicationController
     params.require(:reference).permit(:just_cleaning_up, :reference_id)
   end
 
-  
   # whitelists relationship params and associated nested attributes
   # if the relationship category requires them 
   def update_params
@@ -178,4 +184,15 @@ class RelationshipsController < ApplicationController
     end
     params.require(:relationship).permit(*relationship_fields)
   end
+
+  def similar_relationships_params
+    params.permit(:entity1_id, :entity2_id, :category_id)
+  end
+
+  def has_required_find_similar_params?
+    p = similar_relationships_params
+    return true if p.has_key?(:entity1_id) && p.has_key?(:entity2_id) && p.has_key?(:category_id)
+    return false
+  end
+  
 end

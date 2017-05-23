@@ -33,6 +33,15 @@
   margin-right: 3em;
 }
 
+.m-bottom-1em {
+    margin-bottom: 1em;
+}
+
+.m-bottom-3em {
+    margin-bottom: 3em;
+}
+
+
 .pad-right-1em {
   padding-right: 1em;
 }
@@ -109,4 +118,8 @@
     /* background-color: #A04040; */
     background-color: $red;
     color: #fff;
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }

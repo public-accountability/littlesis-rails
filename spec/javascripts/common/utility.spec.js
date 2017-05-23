@@ -41,4 +41,14 @@ describe('utility', function(){
     });
   });
 
+  describe('validURL', function(){
+    it('accepts simple urls', function(){
+      expect(utility.validURL('https://simple.url')).toBeTrue();
+    });
+
+    it('rejects bad urls', function(){
+      expect(utility.validURL('/not/a/url')).toBeFalse();
+    });
+  });
+
 });

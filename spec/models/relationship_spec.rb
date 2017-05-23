@@ -8,7 +8,7 @@ describe Relationship, type: :model do
     @nrsc = create(:nrsc)
     @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc, filings: 1, amount: 10000) # relationship model
   end
-  
+
   after(:all) do
     Entity.set_callback(:create, :after, :create_primary_ext)
     DatabaseCleaner.clean
@@ -30,6 +30,19 @@ describe Relationship, type: :model do
     it { should have_many(:os_donations) }
     it { should have_many(:ny_matches) }
     it { should have_many(:ny_disclosures) }
+  end
+
+  describe 'methods from concerns' do
+    it 'has description_sentence' do
+      expect(Relationship.new.respond_to?(:description_sentence)).to be true
+    end
+    it 'has find_similar' do
+      expect(Relationship.new.respond_to?(:find_similar)).to be true
+    end
+
+    it 'has find_similar class method' do
+      expect(Relationship.respond_to?(:find_similar)).to be true
+    end
   end
 
   describe 'validations' do
@@ -403,13 +416,44 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'Similar Relationships' do
+    let(:org) { create(:org) }
+    let(:person) { create(:person) }
+
+    it 'finds one relationship' do
+      rel = Relationship.create!(entity: person, related: org, category_id: 1)
+      similar_rels = Relationship.new(entity: person, related: org, category_id: 1).find_similar
+      expect(similar_rels.length).to eq 1
+      expect(similar_rels[0]).to eq rel
+    end
+
+    it 'checks both entity1 and entity2' do
+      Relationship.create!(entity: person, related: org, category_id: 12)
+      Relationship.create!(entity: org, related: person, category_id: 12)
+      similar_rels = Relationship.new(entity: person, related: org, category_id: 12).find_similar
+      expect(similar_rels.length).to eq 2
+    end
+
+    it 'returns empty array if no similar relationships are found' do
+      similar_rels = Relationship.new(entity: person, related: org, category_id: 5).find_similar
+      expect(similar_rels).to eq []
+    end
+  end
+
+  describe 'as_json' do
+    it 'does not contain last_user_id' do
+      rel = build(:relationship, last_user_id: 900)
+      expect(rel.as_json).not_to include 'last_user_id'
+    end
+  end
+
   context 'Using paper_trail for versioning' do
     with_versioning do
       before do
         @human = create(:person)
         @corp = create(:corp)
       end
-      
+
       it 'records created, modified, and deleted versions' do
         rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
         expect(rel.versions.size).to eq(1)
