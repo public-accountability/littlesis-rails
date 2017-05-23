@@ -1,12 +1,9 @@
-var addRelationship = function() {
+var addRelationship = (function() {
   /*
-   
    .rel-search -> show during selection process
    .rel-results -> table results
    .rel-add -> show during add-relationship process. Start hidden
-   
   */
-
   var categoriesText = [
       "",
       "Position",
@@ -23,56 +20,16 @@ var addRelationship = function() {
       "Generic"
   ];
   
-  var entity1_id = entityInfo('entityid');
-  var entity2_id = null; // this gets sets after selection.
 
   function entityInfo(info) {
     return document.getElementById('entity-info').dataset[info];
   }
-
-  // submits create relationships request
-  // after button is clicked.
-  $('#create-relationship-btn').click(function(e){
-    submit(); 
-  });
-
-  // Overrides default action of submit new entity form
-  $('#new_entity').submit(function(event) {
-    event.preventDefault();
-    $('#new-entity-errors').empty(); 
-    $.post('/entities', $('#new_entity').serialize())
-      .done(function(response){
-	if (response.status === 'OK') {
-	  showAddRelationshipForm(response.entity);
-	} else {
-	  $.each(response.errors, function(key, val) {
-	    var field = (key === 'primary_ext') ? 'type' : key;
-	    $('#new-entity-errors').append(alertDiv(field, ":  " + val));
-	  });
-	}
-      });
-  });
-
-  // Searches for name in search bar and then renders table with results
-  $('#search-button').click(function(e){
-    e.preventDefault();
-    $('.rel-new-entity').addClass('hidden');
-    $('.rel-results').removeClass('hidden');
-    $.getJSON('/search/entity', {q: $('#name-to-search').val() }, function(data) {
-      if (data.length > 0) {
-	createDataTable(data);
-      } else { 
-	displayCreateNewEntityDialog();
-      } 
-    });
-  });
-
-  // Switches to the "new entity" option after user clicks 
-  // on "click here to create a new entity"
-  $('#cant-find-new-entity-link').click(function(e){
-    displayCreateNewEntityDialog();
-  });
- 
+  
+  
+  // holds entity ids
+  var entity1_id = null;
+  var entity2_id = null;
+  
   // Creates a new datatable
   // {} ->
   function createDataTable(data) {
@@ -371,7 +328,6 @@ var addRelationship = function() {
     return $('<div>', {class: 'alert alert-danger', role: 'alert' })
       .append($('<strong>', {text: title}))
       .append($('<span>', {text: message}));
-    
   } 
 
 
@@ -385,5 +341,58 @@ var addRelationship = function() {
     var pattern = RegExp('^(https?:\/\/)(.+)[\.]{1}.+$');
     return pattern.test(str);
   }
+
+  function init() {
+    entity1_id = entityInfo('entityid');
+    // entity1_id gets set after selection.
   
-};
+    // submits create relationships request
+    // after button is clicked.
+    $('#create-relationship-btn').click(function(e){
+      submit(); 
+    });
+    
+    // Overrides default action of submit new entity form
+    $('#new_entity').submit(function(event) {
+      event.preventDefault();
+      $('#new-entity-errors').empty(); 
+      $.post('/entities', $('#new_entity').serialize())
+	.done(function(response){
+	  if (response.status === 'OK') {
+	    showAddRelationshipForm(response.entity);
+	  } else {
+	    $.each(response.errors, function(key, val) {
+	      var field = (key === 'primary_ext') ? 'type' : key;
+	      $('#new-entity-errors').append(alertDiv(field, ":  " + val));
+	    });
+	  }
+	});
+    });
+
+    // Searches for name in search bar and then renders table with results
+    $('#search-button').click(function(e){
+      e.preventDefault();
+      $('.rel-new-entity').addClass('hidden');
+      $('.rel-results').removeClass('hidden');
+      $.getJSON('/search/entity', {q: $('#name-to-search').val() }, function(data) {
+	if (data.length > 0) {
+	  createDataTable(data);
+	} else { 
+	  displayCreateNewEntityDialog();
+	} 
+      });
+    });
+
+    // Switches to the "new entity" option after user clicks 
+    // on "click here to create a new entity"
+    $('#cant-find-new-entity-link').click(function(e){
+      displayCreateNewEntityDialog();
+    });
+  }
+  
+  return {
+    validURL: validURL,
+    init: init
+  };
+
+}());

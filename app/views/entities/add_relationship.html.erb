@@ -103,7 +103,7 @@
 
 <%= javascript_tag do %>
     $(document).ready(function(){ 
-       addRelationship();
+       addRelationship.init();
        $('#reference-date').datepicker({ format: "yyyy-mm-dd" });
     });
 <% end  %>
