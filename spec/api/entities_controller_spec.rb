@@ -138,6 +138,7 @@ describe Api::EntitiesController, type: :controller do
   describe 'search' do
     before(:all) { @token = ApiToken.create!(user_id: ApiToken.last.user_id + 1 ).token  }
     before(:each) { request.headers['Littlesis-Api-Token'] = @token }
+    let(:mock_search) { double(:per => double(:page => [build(:person)])) }
 
     class TestSphinxResponse < Array
       def is_a?(klass)
@@ -154,6 +155,7 @@ describe Api::EntitiesController, type: :controller do
     end
 
     it 'returns 200 for valid query' do
+      expect(Entity::Search).to receive(:search).and_return(mock_search)
       get :search, q: 'the name of some entity'
       expect(response).to have_http_status 200
     end
