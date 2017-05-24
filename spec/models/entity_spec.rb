@@ -458,6 +458,45 @@ describe Entity do
     end
   end
 
+  describe 'EntitySearch' do
+    describe 'Entity::Search.search' do
+      let(:defaults) {{ match_mode: :extended,
+                        with: {is_deleted: false},
+                        per_page: 15,
+                        select: '*, weight() * (link_count + 1) AS link_weight',
+                        order: 'link_weight DESC' }}
+
+      it 'calls Entity.search with defaults' do
+        expect(Entity).to receive(:search)
+                           .with('@(name,aliases) someone', defaults)
+        Entity::Search.search 'someone'
+      end
+
+      it 'accept hash as second arg to overrides defaults' do
+        expect(Entity).to receive(:search)
+                           .with('@(name,aliases) someone', defaults.merge(per_page: 5))
+        Entity::Search.search 'someone', num: 5
+      end
+    end
+
+    describe 'entity_with_summary' do
+      it 'returns hash with summary field' do
+        e = build(:person, summary: 'i am a summary')
+        h = Entity::Search.entity_with_summary(e)
+        expect(h).to include :summary => 'i am a summary'
+      end
+    end
+
+    describe 'entity_no_summary' do
+      it 'returns hash without summary field' do
+        e = build(:person, summary: 'i am a summary')
+        h = Entity::Search.entity_no_summary(e)
+        expect(h).to be_a Hash
+        expect(h).not_to include :summary => 'i am a summary'
+      end
+    end
+  end
+
   describe 'Using paper_trail for versision' do
     with_versioning do
       it 'creates version after updating name' do
