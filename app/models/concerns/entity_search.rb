@@ -2,6 +2,7 @@ module EntitySearch
   # A wrapper around the default
   # sphinx model search - Entity.search
   class Search
+    # String, Hash -> ThinkingShinx::Search
     def self.search(query, opt = {})
       q = ThinkingSphinx::Query.escape(query)
       options = { with: { is_deleted: false }, fields: 'name,aliases', num: 15 }.merge(opt)

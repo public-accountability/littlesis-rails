@@ -1,7 +1,7 @@
 module ApiUtils
   # API response builder
   class Response
-    include ApiResponseMeta
+    include ApiResponseMeta  # Adds META constant and .meta method
     include ErrorResponses
 
     def initialize(model, options = {})
@@ -25,7 +25,7 @@ module ApiUtils
     def self.error(err)
       {
         errors: [const_get(err)],
-        meta: meta
+        meta: META
       }
     end
 
@@ -45,14 +45,14 @@ module ApiUtils
     def collection_response
       {
         data: @model.collect { |m| data_hash(m) },
-        meta: self.class.meta
+        meta: meta
       }
     end
 
     def singular_response
       {
         data: data_hash,
-        meta: self.class.meta
+        meta: meta
       }
     end
 
