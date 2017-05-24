@@ -45,6 +45,7 @@ class HomeController < ApplicationController
 
   # Sends CSRF token to browser extension
   def token
+<<<<<<< HEAD
     if user_signed_in?
       render :inline => "<%= csrf_meta_tags %>"
     else
@@ -54,6 +55,7 @@ class HomeController < ApplicationController
 
   def extension_path
     render :inline => "https://dfl6orqdcqt4f.cloudfront.net/assets/#{Rails.application.assets.find_asset('extension.js').digest_path}"
+    render :inline => "<%= csrf_meta_tags %>"
   end
 
   def dismiss
