@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact, :flag]
+  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact, :flag, :token]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -41,6 +41,20 @@ class HomeController < ApplicationController
     @groups = current_user.groups.includes(:campaign).order(:name)
     @lists = current_user.lists.order("created_at DESC, id DESC")
     @recent_updates = current_user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
+  end
+
+  # Sends CSRF token to browser extension
+  def token
+    if user_signed_in?
+      render :inline => "<%= csrf_meta_tags %>"
+    else
+      head :unauthorized
+    end
+  end
+
+  def extension_path
+    render :inline => "https://dfl6orqdcqt4f.cloudfront.net/assets/#{Rails.application.assets.find_asset('extension.js').digest_path}"
+    render :inline => "<%= csrf_meta_tags %>"
   end
 
   def dismiss
