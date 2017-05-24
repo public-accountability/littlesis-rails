@@ -7,7 +7,11 @@ module ApiUtils
     }
 
     def meta
-      META
+      if @model.is_a? ThinkingSphinx::Search
+        META.merge({ :currentPage => @model.current_page, :pageCount => @model.total_pages })
+      else
+        META
+      end
     end
   end
 end

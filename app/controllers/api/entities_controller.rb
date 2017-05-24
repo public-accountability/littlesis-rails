@@ -18,8 +18,7 @@ class Api::EntitiesController < Api::ApiController
   def search
     return head :bad_request unless params[:q].present?
     entities = Entity::Search.search(params[:q]).per(ENTITY_SEARCH_PER_PAGE).page(page_requested)
-    
-    render json: { place: 'holder' }
+    render json: ApiUtils::Response.new(entities, {})
   end
 
   private
@@ -28,7 +27,6 @@ class Api::EntitiesController < Api::ApiController
     return 1 if params[:page].blank? || params[:page].to_i.zero?
     params[:page].to_i
   end
-    
 
   def set_options
     @options = {

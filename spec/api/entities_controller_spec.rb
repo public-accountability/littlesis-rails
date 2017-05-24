@@ -139,14 +139,37 @@ describe Api::EntitiesController, type: :controller do
     before(:all) { @token = ApiToken.create!(user_id: ApiToken.last.user_id + 1 ).token  }
     before(:each) { request.headers['Littlesis-Api-Token'] = @token }
 
+    class TestSphinxResponse < Array
+      def is_a?(klass)
+        return true if klass == ThinkingSphinx::Search
+        false
+      end
+      def current_page; 1 end
+      def total_pages; 2 end
+    end
+
     it 'sets status to be 400 if "q" param is not provided' do
       get :search
       expect(response).to have_http_status 400
     end
 
-    # it 'returns array of entities' do
-    #   get :search, q: 'the name of some entity'
-    # end
+    it 'returns 200 for valid query' do
+      get :search, q: 'the name of some entity'
+      expect(response).to have_http_status 200
+    end
+
+    it 'returns array of entities with correct meta data' do
+      entities = TestSphinxResponse.new([build(:org), build(:person)])
+      expect(Entity::Search).to receive(:search).with('the name of some entity')
+                                 .and_return(double(:per => double(:page => entities)))
+
+      get :search, q: 'the name of some entity'
+      json = JSON.parse(response.body)
+      expect(json['data']).to be_a Array
+      expect(json['data'].length).to eql 2
+      expect(json['meta']['currentPage']).to eq 1
+      expect(json['meta']['pageCount']).to eq 2
+    end
   end
 
   describe 'Private Methods' do
