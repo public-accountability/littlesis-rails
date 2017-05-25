@@ -134,4 +134,64 @@ describe Api::EntitiesController, type: :controller do
       expect(response).to have_http_status 403
     end
   end
+
+  describe 'search' do
+    before(:all) { @token = ApiToken.create!(user_id: ApiToken.last.user_id + 1 ).token  }
+    before(:each) { request.headers['Littlesis-Api-Token'] = @token }
+    let(:mock_search) { double(:per => double(:page => [build(:person)])) }
+
+    class TestSphinxResponse < Array
+      def is_a?(klass)
+        return true if klass == ThinkingSphinx::Search
+        false
+      end
+      def current_page; 1 end
+      def total_pages; 2 end
+    end
+
+    it 'sets status to be 400 if "q" param is not provided' do
+      get :search
+      expect(response).to have_http_status 400
+    end
+
+    it 'returns 200 for valid query' do
+      expect(Entity::Search).to receive(:search).and_return(mock_search)
+      get :search, q: 'the name of some entity'
+      expect(response).to have_http_status 200
+    end
+
+    it 'returns array of entities with correct meta data' do
+      entities = TestSphinxResponse.new([build(:org), build(:person)])
+      expect(Entity::Search).to receive(:search).with('the name of some entity')
+                                 .and_return(double(:per => double(:page => entities)))
+
+      get :search, q: 'the name of some entity'
+      json = JSON.parse(response.body)
+      expect(json['data']).to be_a Array
+      expect(json['data'].length).to eql 2
+      expect(json['meta']['currentPage']).to eq 1
+      expect(json['meta']['pageCount']).to eq 2
+    end
+  end
+
+  describe 'Private Methods' do
+    describe 'page_requested' do
+      let(:c) { Api::EntitiesController.new }
+
+      it 'returns 1 if params page is missing' do
+        allow(c).to receive(:params).and_return({})
+        expect(c.send(:page_requested)).to eq 1
+      end
+
+      it 'returns int if valid int is provided' do
+        allow(c).to receive(:params).and_return({:page => '7'})
+        expect(c.send(:page_requested)).to eq 7
+      end
+
+      it 'defaults to 1 if invalid integer is provided' do
+        allow(c).to receive(:params).and_return({:page => 'i would like page number three please'})
+        expect(c.send(:page_requested)).to eq 1
+      end
+    end
+  end
 end
