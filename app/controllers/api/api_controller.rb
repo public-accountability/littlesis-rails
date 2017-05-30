@@ -1,7 +1,7 @@
 module Api
   class ApiController < ActionController::Base
     protect_from_forgery with: :null_session
-    before_action :verify_api_token
+    before_action :verify_api_token unless Rails.env.development?
     skip_before_action :verify_api_token, only: [:index]
 
     rescue_from ActiveRecord::RecordNotFound do

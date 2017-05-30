@@ -204,6 +204,7 @@ Lilsis::Application.routes.draw do
       get 'dev'
       get 'edit/dev' => 'maps#dev_edit'
       get 'embedded/v2' => 'maps#embedded_v2'
+      get 'embedded/v2/dev' => 'maps#embedded_v2_dev'
     end
 
     collection do
@@ -307,9 +308,10 @@ Lilsis::Application.routes.draw do
   #  API  #
   #########
 
-  get '/api' => 'api/api#index'
-
   namespace :api do
+    get '/' => 'api#index'
+    get '/entities/search' => 'entities#search'
+
     resources :entities, only: [:show] do
       member do
         get 'relationships'
