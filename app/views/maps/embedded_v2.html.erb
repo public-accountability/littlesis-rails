@@ -1,9 +1,13 @@
 <%= render 'shared/facebook_sdk' %>
 
-<%= cache_if !user_signed_in?, [ 'embedded', @map ] do %>
-    
+<% if @dev_version %>
+    <%= javascript_include_tag "oligrapher-dev" %>
+<% else %>
     <%= javascript_include_tag "oligrapher" %>
-    
+<% end %>
+
+<%= cache_if !user_signed_in?, [ 'embedded', @map ] do %>
+
     <% content_for(:page_title, raw(@map.name)) %>
     <% content_for(:facebook_title, @map.name) %>
     <% content_for(:facebook_image, @map.thumbnail) %>
