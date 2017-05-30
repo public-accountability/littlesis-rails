@@ -1,6 +1,6 @@
 class ToolkitController < ApplicationController
   layout 'toolkit'
-  before_action :authenticate_user! # except: [:display, :index]
+  before_action :authenticate_user!, except: [:display, :index]
   before_action :admins_only, only: [:new_page, :create_new_page, :edit, :update]
   before_action :set_toolkit_page, only: [:display, :edit]
 

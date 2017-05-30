@@ -14,7 +14,6 @@ describe ToolkitController, type: :controller do
   end
 
   describe 'display' do
-    login_user
     before(:all) do
       ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts', markdown: '# interesting facts')
     end
@@ -68,10 +67,7 @@ describe ToolkitController, type: :controller do
   end
 
   describe '#index' do
-    login_user
-    before do
-      get :index
-    end
+    before { get :index }
     it { should respond_with(:success) }
     it { should render_template(:index) }
     it { should render_with_layout('toolkit') }
