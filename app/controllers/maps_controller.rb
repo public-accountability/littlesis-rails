@@ -65,6 +65,15 @@ class MapsController < ApplicationController
     render layout: 'embedded_oligrapher'
   end
 
+  def embedded_v2_dev
+    @dev_version = true
+
+    @header_pct = embedded_params.fetch(:header_pct, EMBEDDED_HEADER_PCT)
+    @annotation_pct = embedded_params.fetch(:annotation_pct, EMBEDDED_ANNOTATION_PCT)
+    response.headers.delete('X-Frame-Options')
+    render 'embedded_v2', layout: 'embedded_oligrapher'
+  end
+
   def embedded
     response.headers.delete('X-Frame-Options')
     render layout: 'fullscreen'
