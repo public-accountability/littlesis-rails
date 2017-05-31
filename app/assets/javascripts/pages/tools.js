@@ -36,18 +36,32 @@ var bulkAdd = (function($, utility){
     );
   }
 
-  function tableCaption(){
-    return $('<caption>', {class: 'table-add', title: 'add a new row to the table'})
-      .append( $('<span>', {class: 'glyphicon glyphicon-plus'}))
+  // => <Span>
+  function addRowIcon() {
+    return $('<span>', {class: 'table-add', title: 'add a new row to the table'})
+      .append( $('<span>', {class: 'glyphicon glyphicon-plus'}) )
       .append( $('<span>', {text: 'Add a row'}));
   }
-	
+
+  // -> <Caption>
+  function tableCaption(){
+    return $('<caption>')
+      .append(addRowIcon())
+      .append( $('<input>', {id: 'csv-file'}).attr('type', 'file'));
+  }
+  
   // Creates Empty table based on the selected category
   function createTable() {
-    $('#table table').append(tableCaption()).append('<thead><tr></tr></thead><tbody></tbody>');
+    $('#table table')
+      .empty()
+      .append(tableCaption())
+      .append('<thead><tr></tr></thead><tbody></tbody>');
+    
     relationshipDetails().forEach(addColToThead);
     $('#table thead tr').append('<th>Delete</th>');
+    
     newBlankRow(); // initialize table with a new blank row
+    readCSVFileListener('csv-file'); // handle file uploads to #csv-file
   }
   
   // AJAX request route: /search/entity
@@ -58,15 +72,15 @@ var bulkAdd = (function($, utility){
       q: text,
       no_summary: true
     })
-      .done(function(result){
-	callback(result.map(function(entity){
-	  // set the value field to be the name for jquery autocomplete
-	  return Object.assign({value: entity.name }, entity);
-	}));
-      })
-      .fail(function() {
-	callback([]);
-      });
+     .done(function(result){
+       callback(result.map(function(entity){
+	 // set the value field to be the name for jquery autocomplete
+	 return Object.assign({value: entity.name }, entity);
+       }));
+     })
+     .fail(function() {
+       callback([]);
+     });
   }
 
   // options for the entity search autocomplete <td>
@@ -257,7 +271,7 @@ var bulkAdd = (function($, utility){
 
   function showAlert(message, alertType) {
     var html = '<div class="alert alert-dismissible !!TYPE!!" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>!!MESSAGE!!</div>'
-	  .replace('!!MESSAGE!!', message).replace('!!TYPE!!', alertType);
+      .replace('!!MESSAGE!!', message).replace('!!TYPE!!', alertType);
     $('#alert-container').html(html);
   }
 
@@ -299,8 +313,8 @@ var bulkAdd = (function($, utility){
     var entity1_id = utility.entityInfo('entityid');
     var category_id = Number($('#relationship-cat-select option:selected').val());
     var reference = {
-	'source': $('#reference-url').val(),
-	'name': $('#reference-name').val()
+      'source': $('#reference-url').val(),
+      'name': $('#reference-name').val()
     };
     return {
       entity1_id: entity1_id,
@@ -350,6 +364,28 @@ var bulkAdd = (function($, utility){
       }
     });
   }
+
+
+  // str -> attaches event listener
+  function readCSVFileListener(fileInput) {
+    if (!utility.fileOpeningAbilities()) { return; }
+
+    function handleFileSelect() {
+      if (this.files.length > 0) {  // do nothing if no file is selected
+	var file = this.files[0];
+	var reader = new FileReader();
+	reader.onloadend = function() {  // triggered when file is done being read 
+	  if (reader.result) { // this event is still triggered even if there is a failure
+	    
+	  }
+	}
+	reader.readAsText(file);
+      }
+    }
+    
+    document.getElementById(fileInput).addEventListener('change', handleFileSelect, false);
+  }
+
 
   return {
     relationshipDetails: relationshipDetails,
