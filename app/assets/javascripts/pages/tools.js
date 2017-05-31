@@ -9,7 +9,7 @@ var bulkAdd = (function($, utility){
   // -> [[]]
   function relationshipDetails() {
     var category = Number($('#relationship-cat-select option:selected').val());
-    var entityColumns = [ [ 'Name or ID', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'select'] ];
+    var entityColumns = [ [ 'Name', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'select'] ];
     return entityColumns.concat(utility.relationshipDetails(category));
   }
 
@@ -28,7 +28,7 @@ var bulkAdd = (function($, utility){
   // Adds <th> with title to table header
   // [] -> 
   function addColToThead(col) {
-    $('#table thead tr').append(
+   $('#table thead tr').append(
       $('<th>', {
 	text: col[0], 
 	data: { 'colName': col[1], 'colType': col[2] }
@@ -36,11 +36,17 @@ var bulkAdd = (function($, utility){
     );
   }
 
+  function tableCaption(){
+    return $('<caption>', {class: 'table-add', title: 'add a new row to the table'})
+      .append( $('<span>', {class: 'glyphicon glyphicon-plus'}))
+      .append( $('<span>', {text: 'Add a row'}));
+  }
+	
   // Creates Empty table based on the selected category
   function createTable() {
-    $('#table table').html('<thead><tr></tr></thead><tbody></tbody>');
+    $('#table table').append(tableCaption()).append('<thead><tr></tr></thead><tbody></tbody>');
     relationshipDetails().forEach(addColToThead);
-    $('#table thead tr').append('<th><span class="glyphicon glyphicon-plus table-add"></span></th>');
+    $('#table thead tr').append('<th>Delete</th>');
     newBlankRow(); // initialize table with a new blank row
   }
   
