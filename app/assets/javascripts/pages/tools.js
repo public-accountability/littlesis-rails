@@ -42,16 +42,20 @@ var bulkAdd = (function($, utility){
       .append( $('<span>', {text: 'Add a row'}));
   }
 
-  
-// <form onsubmit="download(this['name'].value, this['text'].value)">
-//   <input type="text" name="name" value="test.txt">
-//   <textarea name="text"></textarea>
-//   <input type="submit" value="Download">
-// </form>
 
+  // => <Button>
+  // Returns button that, when clicked, saves a csv file with the correct headers
+  // for the choosen relationship type
   function sampleCSVLink() {
-    var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, "hello world.txt");
+    return $('<button>', {
+      text: 'download sample csv',
+      click: function() {
+	var headers = relationshipDetails().map( x => x[1]).join(',');
+	var blob = new Blob([headers], {type: "text/plain;charset=utf-8"});
+	var fileName = utility.relationshipCategories[Number($('#relationship-cat-select option:selected').val())] + '.csv';
+	saveAs(blob, fileName);
+      }
+    });
   }
 
   // -> <Caption>
@@ -60,7 +64,6 @@ var bulkAdd = (function($, utility){
       .append(addRowIcon())
       .append( $('<input>', {id: 'csv-file'}).attr('type', 'file'))
       .append( sampleCSVLink() );
-    
   }
   
   // Creates Empty table based on the selected category
