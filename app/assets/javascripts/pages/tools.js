@@ -401,7 +401,10 @@ var bulkAdd = (function($, utility){
     $('#table').on('click', '.table-remove', function() {
       $(this).parents('tr').detach();
     });
-    $('#relationship-cat-select').change(function(x){ createTable(); });
+    $('#relationship-cat-select').change(function(x){
+      createTable();
+      $('#upload-btn').removeClass('hidden');
+    });
     $('#upload-btn').click(function() {
       submit();
       
