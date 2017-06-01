@@ -50,7 +50,9 @@ var bulkAdd = (function($, utility){
       text: 'download sample csv',
       class: 'btn btn-default pull-right',
       click: function() {
-	var headers = relationshipDetails().map( x => x[1]).join(',');
+	var headers = relationshipDetails().map(function(x) { 
+	  return x[1];
+	}).join(',');
 	var blob = new Blob([headers], {type: "text/plain;charset=utf-8"});
 	var fileName = utility.relationshipCategories[Number($('#relationship-cat-select option:selected').val())] + '.csv';
 	saveAs(blob, fileName);
@@ -191,9 +193,9 @@ var bulkAdd = (function($, utility){
     }
   }
 
-  const YES_VALUES = [ 1, '1', 'yes', 'Yes', 'YES', 'y', 'Y', true, 'true', 't', 'T', 'True', 'TRUE'];
-  const ORG_VALUES = [ 'org', 'Org', 'ORG', 'organization', 'Organization', 'ORGANIZATION', 'o', 'O' ];
-  const PERSON_VALUES = [ 'person', 'Person', 'PERSON', 'p', 'P', 'per', 'PER', 'capitalist pig'];
+  var YES_VALUES = [ 1, '1', 'yes', 'Yes', 'YES', 'y', 'Y', true, 'true', 't', 'T', 'True', 'TRUE'];
+  var ORG_VALUES = [ 'org', 'Org', 'ORG', 'organization', 'Organization', 'ORGANIZATION', 'o', 'O' ];
+  var PERSON_VALUES = [ 'person', 'Person', 'PERSON', 'p', 'P', 'per', 'PER', 'capitalist pig'];
 
   // This updates the cell with the provided value
   // Similar to extractCellData, but it sets
@@ -407,8 +409,8 @@ var bulkAdd = (function($, utility){
   // see github.com/mholt/PapaParse for PapeParse library docs
   function csvToTable(csvStr) {
     // csv.data contains an array of objects where the keys are the same as rowInfo.key
-    const csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
-    const columns = relationshipDetailsAsObject();
+    var csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
+    var columns = relationshipDetailsAsObject();
     
     csv.data.forEach(function(rowData) {
       var newRow = newBlankRow();
