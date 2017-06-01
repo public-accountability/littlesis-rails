@@ -461,8 +461,15 @@ class Relationship < ActiveRecord::Base
   end
 
   # Removes 'last_user_id' from the json serialization of the object
+  # Can include relationship url if option :url is set to true
   def as_json(options = {})
-    super(options).reject { |k, v| k == 'last_user_id' }
+    super(options)
+      .reject { |k, v| k == 'last_user_id' }
+      .tap do |h|
+        if options[:url]
+          h['url'] = Rails.application.routes.url_helpers.relationship_url(self)
+        end
+      end
   end
 
   private
