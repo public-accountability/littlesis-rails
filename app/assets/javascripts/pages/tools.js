@@ -191,22 +191,40 @@ var bulkAdd = (function($, utility){
   }
 
   const YES_VALUES = [ 1, '1', 'yes', 'Yes', 'YES', 'y', 'Y', true, 'true', 't', 'T', 'True', 'TRUE'];
+  const ORG_VALUES = [ 'org', 'Org', 'ORG', 'organization', 'Organization', 'ORGANIZATION', 'o', 'O' ];
+  const PERSON_VALUES = [ 'person', 'Person', 'PERSON', 'p', 'P', 'per', 'PER', 'capitalist pig'];
 
   // This updates the cell with the provided value
-  // input: <Td>, {}, Any
+  // Similar to extractCellData, but it sets
+  // the values of the cells instead of extracting them
+  // input: <Td>, {relationshipDetailsAsObject}, any
   function updateCellData(cell, rowInfo, value) {
     if (rowInfo.type === 'boolean') {
+      
       if (YES_VALUES.includes(value)) {
 	cell.find('input').prop('checked', true);
       }
+      
     } else if (rowInfo.type === 'select') {
-      //var selectpickerArr = cell.find('.selectpicker').selectpicker('val');
-      // return selectpickerArr ? selectpickerArr : null;
-    } else if (rowInfo.key === 'name' && Boolean(cell.data('entityid'))) {
-      // If the entity was selected using the search there will be an entityid field in the cell's dataset
-      //return cell.data('entityid');
+      
+      if (rowInfo.key === 'primary_ext') {
+	if (ORG_VALUES.includes(value)) {
+	  cell.find('.selectpicker').selectpicker('val', 'Org');
+	} else if (PERSON_VALUES.includes(value)) {
+	  cell.find('.selectpicker').selectpicker('val', 'Person');
+	}
+      } 
+      
+    } else if (rowInfo.key === 'name') {
+      // You can provide the id of a littlesis entity as a name
+      if (Number.isInteger(Number(value))) {
+	cell.data('entityid', Number(value));
+      }
+
+      cell.text(value);
+
     } else {
-      //return (cell.text() === '') ? null : cell.text();
+      cell.text(value);
     }
   };
 
@@ -387,7 +405,7 @@ var bulkAdd = (function($, utility){
   // Takes CSV string and writes result to table
   // see github.com/mholt/PapaParse for PapeParse library docs
   function csvToTable(csvStr) {
-    // csv.data contains and Array of objects
+    // csv.data contains an array of objects where the keys are the same as rowInfo.key
     const csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
     const columns = relationshipDetailsAsObject();
     
@@ -397,11 +415,13 @@ var bulkAdd = (function($, utility){
 	updateCellData(cell, rowInfo, rowData[rowInfo.key]);
       });
     });
-    
   }
 
-  // str -> attaches event listener
-  function readCSVFileListener(fileInput) {
+  // input: str (element id of <input type="file">)
+  // attaches a callback to provided element
+  // which calls csvToTable with the contents of the file
+  // after a file has been selected
+  function readCSVFileListener(fileInputId) {
     if (!utility.fileOpeningAbilities()) { return; }
 
     function handleFileSelect() {
@@ -418,7 +438,7 @@ var bulkAdd = (function($, utility){
       }
     }
     
-    document.getElementById(fileInput).addEventListener('change', handleFileSelect, false);
+    document.getElementById(fileInputId).addEventListener('change', handleFileSelect, false);
   }
 
 
