@@ -48,6 +48,7 @@ var bulkAdd = (function($, utility){
   function sampleCSVLink() {
     return $('<button>', {
       text: 'download sample csv',
+      class: 'btn btn-default pull-right',
       click: function() {
 	var headers = relationshipDetails().map( x => x[1]).join(',');
 	var blob = new Blob([headers], {type: "text/plain;charset=utf-8"});
