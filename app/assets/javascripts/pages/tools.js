@@ -3,7 +3,6 @@
  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
 */
 var bulkAdd = (function($, utility){
-  
   // This is the structure of table. The number and types of columns vary by
   // relationship type. See utility.js for more information
   // -> [[]]
@@ -43,11 +42,25 @@ var bulkAdd = (function($, utility){
       .append( $('<span>', {text: 'Add a row'}));
   }
 
+  
+// <form onsubmit="download(this['name'].value, this['text'].value)">
+//   <input type="text" name="name" value="test.txt">
+//   <textarea name="text"></textarea>
+//   <input type="submit" value="Download">
+// </form>
+
+  function sampleCSVLink() {
+    var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "hello world.txt");
+  }
+
   // -> <Caption>
   function tableCaption(){
     return $('<caption>')
       .append(addRowIcon())
-      .append( $('<input>', {id: 'csv-file'}).attr('type', 'file'));
+      .append( $('<input>', {id: 'csv-file'}).attr('type', 'file'))
+      .append( sampleCSVLink() );
+    
   }
   
   // Creates Empty table based on the selected category
@@ -153,23 +166,6 @@ var bulkAdd = (function($, utility){
     $('#table .selectpicker').selectpicker();
   }
 
-  // Establishes listeners for:
-  //   - click to add a new row
-  //   - remove row
-  //   - select a relationship category
-  //   - upload data button click
-  function domListeners() {
-    $('#table').on('click', '.table-add', function() { newBlankRow(); });
-    $('#table').on('click', '.table-remove', function() {
-      $(this).parents('tr').detach();
-    });
-    $('#relationship-cat-select').change(function(x){ createTable(); });
-    $('#upload-btn').click(function() {
-      submit();
-      
-    });
-  } 
-
   // This returns the cell data
   // Most types simply need to return the text inside the element.
   // Two expetions: checkboxes and <select>'s
@@ -243,7 +239,6 @@ var bulkAdd = (function($, utility){
     }
     return true;
   }
-  
   
   // an indicator that can only go from true to false.
   function ValidFlag() {
@@ -366,26 +361,49 @@ var bulkAdd = (function($, utility){
   }
 
 
+  function csvToTable(csv) {
+    var data = Papa.parse(csv); // see https://github.com/mholt/PapaParse or library documentation
+    console.log(data);
+  }
+
   // str -> attaches event listener
   function readCSVFileListener(fileInput) {
     if (!utility.fileOpeningAbilities()) { return; }
 
     function handleFileSelect() {
       if (this.files.length > 0) {  // do nothing if no file is selected
-	var file = this.files[0];
 	var reader = new FileReader();
-	reader.onloadend = function() {  // triggered when file is done being read 
-	  if (reader.result) { // this event is still triggered even if there is a failure
-	    
+	reader.onloadend = function() {  // triggered when file is finished being read
+	  if (reader.result) { 
+	    csvToTable(reader.result);
+	  } else {
+	    console.error('Error reading the csv file or the file is empty');
 	  }
-	}
-	reader.readAsText(file);
+	};
+	reader.readAsText(this.files[0]);
       }
     }
     
     document.getElementById(fileInput).addEventListener('change', handleFileSelect, false);
   }
 
+
+  // Establishes listeners for:
+  //   - click to add a new row
+  //   - remove row
+  //   - select a relationship category
+  //   - upload data button click
+  function domListeners() {
+    $('#table').on('click', '.table-add', function() { newBlankRow(); });
+    $('#table').on('click', '.table-remove', function() {
+      $(this).parents('tr').detach();
+    });
+    $('#relationship-cat-select').change(function(x){ createTable(); });
+    $('#upload-btn').click(function() {
+      submit();
+      
+    });
+  } 
 
   return {
     relationshipDetails: relationshipDetails,

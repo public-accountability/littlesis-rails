@@ -27,6 +27,8 @@
 //= require twitter/typeahead
 //= require hogan-3.0.1.js
 //= require d3.v4.min.js
+//= require papaparse.min.js
+//= require FileSaver.min.js
 //= require_tree ./common
 //= require_tree ./pages
 
