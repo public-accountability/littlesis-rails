@@ -42,7 +42,6 @@ var bulkAdd = (function($, utility){
       .append( $('<span>', {text: 'Add a row'}));
   }
 
-
   // => <Button>
   // Returns button that, when clicked, saves a csv file with the correct headers
   // for the choosen relationship type
@@ -161,12 +160,14 @@ var bulkAdd = (function($, utility){
   }
   
   // Adds a new blank row to the table
+  // Returns the newly created row
   function newBlankRow() {
     var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>');
     var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd));
     $('#table tbody').append(row);
     // Because we create the selectpicker after the dom has loaded, we must iniitalize it here:
     $('#table .selectpicker').selectpicker();
+    return row;
   }
 
   // This returns the cell data
@@ -188,6 +189,27 @@ var bulkAdd = (function($, utility){
       return (cell.text() === '') ? null : cell.text();
     }
   }
+
+  const YES_VALUES = [ 1, '1', 'yes', 'Yes', 'YES', 'y', 'Y', true, 'true', 't', 'T', 'True', 'TRUE'];
+
+  // This updates the cell with the provided value
+  // input: <Td>, {}, Any
+  function updateCellData(cell, rowInfo, value) {
+    if (rowInfo.type === 'boolean') {
+      if (YES_VALUES.includes(value)) {
+	cell.find('input').prop('checked', true);
+      }
+    } else if (rowInfo.type === 'select') {
+      //var selectpickerArr = cell.find('.selectpicker').selectpicker('val');
+      // return selectpickerArr ? selectpickerArr : null;
+    } else if (rowInfo.key === 'name' && Boolean(cell.data('entityid'))) {
+      // If the entity was selected using the search there will be an entityid field in the cell's dataset
+      //return cell.data('entityid');
+    } else {
+      //return (cell.text() === '') ? null : cell.text();
+    }
+  };
+
 
   //  [{}], element -> {}
   function rowToJson(tableDetails, row) {
@@ -296,7 +318,6 @@ var bulkAdd = (function($, utility){
     }
   }
 
-
   // data format:
   // {
   //   entity1_id: int,
@@ -363,10 +384,20 @@ var bulkAdd = (function($, utility){
     });
   }
 
-
-  function csvToTable(csv) {
-    var data = Papa.parse(csv); // see https://github.com/mholt/PapaParse or library documentation
-    console.log(data);
+  // Takes CSV string and writes result to table
+  // see github.com/mholt/PapaParse for PapeParse library docs
+  function csvToTable(csvStr) {
+    // csv.data contains and Array of objects
+    const csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
+    const columns = relationshipDetailsAsObject();
+    
+    csv.data.forEach(function(rowData) {
+      var newRow = newBlankRow();
+      traverseRow(columns, newRow, function(rowInfo, cell) {
+	updateCellData(cell, rowInfo, rowData[rowInfo.key]);
+      });
+    });
+    
   }
 
   // str -> attaches event listener
