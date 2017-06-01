@@ -3,13 +3,12 @@
  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
 */
 var bulkAdd = (function($, utility){
-  
   // This is the structure of table. The number and types of columns vary by
   // relationship type. See utility.js for more information
   // -> [[]]
   function relationshipDetails() {
     var category = Number($('#relationship-cat-select option:selected').val());
-    var entityColumns = [ [ 'Name or ID', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'select'] ];
+    var entityColumns = [ [ 'Name', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'select'] ];
     return entityColumns.concat(utility.relationshipDetails(category));
   }
 
@@ -28,7 +27,7 @@ var bulkAdd = (function($, utility){
   // Adds <th> with title to table header
   // [] -> 
   function addColToThead(col) {
-    $('#table thead tr').append(
+   $('#table thead tr').append(
       $('<th>', {
 	text: col[0], 
 	data: { 'colName': col[1], 'colType': col[2] }
@@ -36,12 +35,49 @@ var bulkAdd = (function($, utility){
     );
   }
 
+  // => <Span>
+  function addRowIcon() {
+    return $('<span>', {class: 'table-add', title: 'add a new row to the table'})
+      .append( $('<span>', {class: 'glyphicon glyphicon-plus'}) )
+      .append( $('<span>', {text: 'Add a row'}));
+  }
+
+  // => <Button>
+  // Returns button that, when clicked, saves a csv file with the correct headers
+  // for the choosen relationship type
+  function sampleCSVLink() {
+    return $('<button>', {
+      text: 'download sample csv',
+      class: 'btn btn-default pull-right',
+      click: function() {
+	var headers = relationshipDetails().map( x => x[1]).join(',');
+	var blob = new Blob([headers], {type: "text/plain;charset=utf-8"});
+	var fileName = utility.relationshipCategories[Number($('#relationship-cat-select option:selected').val())] + '.csv';
+	saveAs(blob, fileName);
+      }
+    });
+  }
+
+  // -> <Caption>
+  function tableCaption(){
+    return $('<caption>')
+      .append(addRowIcon())
+      .append( $('<input>', {id: 'csv-file'}).attr('type', 'file'))
+      .append( sampleCSVLink() );
+  }
+  
   // Creates Empty table based on the selected category
   function createTable() {
-    $('#table table').html('<thead><tr></tr></thead><tbody></tbody>');
+    $('#table table')
+      .empty()
+      .append(tableCaption())
+      .append('<thead><tr></tr></thead><tbody></tbody>');
+    
     relationshipDetails().forEach(addColToThead);
-    $('#table thead tr').append('<th><span class="glyphicon glyphicon-plus table-add"></span></th>');
+    $('#table thead tr').append('<th>Delete</th>');
+    
     newBlankRow(); // initialize table with a new blank row
+    readCSVFileListener('csv-file'); // handle file uploads to #csv-file
   }
   
   // AJAX request route: /search/entity
@@ -52,15 +88,15 @@ var bulkAdd = (function($, utility){
       q: text,
       no_summary: true
     })
-      .done(function(result){
-	callback(result.map(function(entity){
-	  // set the value field to be the name for jquery autocomplete
-	  return Object.assign({value: entity.name }, entity);
-	}));
-      })
-      .fail(function() {
-	callback([]);
-      });
+     .done(function(result){
+       callback(result.map(function(entity){
+	 // set the value field to be the name for jquery autocomplete
+	 return Object.assign({value: entity.name }, entity);
+       }));
+     })
+     .fail(function() {
+       callback([]);
+     });
   }
 
   // options for the entity search autocomplete <td>
@@ -125,30 +161,15 @@ var bulkAdd = (function($, utility){
   }
   
   // Adds a new blank row to the table
+  // Returns the newly created row
   function newBlankRow() {
     var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>');
     var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd));
     $('#table tbody').append(row);
     // Because we create the selectpicker after the dom has loaded, we must iniitalize it here:
     $('#table .selectpicker').selectpicker();
+    return row;
   }
-
-  // Establishes listeners for:
-  //   - click to add a new row
-  //   - remove row
-  //   - select a relationship category
-  //   - upload data button click
-  function domListeners() {
-    $('#table').on('click', '.table-add', function() { newBlankRow(); });
-    $('#table').on('click', '.table-remove', function() {
-      $(this).parents('tr').detach();
-    });
-    $('#relationship-cat-select').change(function(x){ createTable(); });
-    $('#upload-btn').click(function() {
-      submit();
-      
-    });
-  } 
 
   // This returns the cell data
   // Most types simply need to return the text inside the element.
@@ -169,6 +190,45 @@ var bulkAdd = (function($, utility){
       return (cell.text() === '') ? null : cell.text();
     }
   }
+
+  const YES_VALUES = [ 1, '1', 'yes', 'Yes', 'YES', 'y', 'Y', true, 'true', 't', 'T', 'True', 'TRUE'];
+  const ORG_VALUES = [ 'org', 'Org', 'ORG', 'organization', 'Organization', 'ORGANIZATION', 'o', 'O' ];
+  const PERSON_VALUES = [ 'person', 'Person', 'PERSON', 'p', 'P', 'per', 'PER', 'capitalist pig'];
+
+  // This updates the cell with the provided value
+  // Similar to extractCellData, but it sets
+  // the values of the cells instead of extracting them
+  // input: <Td>, {relationshipDetailsAsObject}, any
+  function updateCellData(cell, rowInfo, value) {
+    if (rowInfo.type === 'boolean') {
+      
+      if (YES_VALUES.includes(value)) {
+	cell.find('input').prop('checked', true);
+      }
+      
+    } else if (rowInfo.type === 'select') {
+      
+      if (rowInfo.key === 'primary_ext') {
+	if (ORG_VALUES.includes(value)) {
+	  cell.find('.selectpicker').selectpicker('val', 'Org');
+	} else if (PERSON_VALUES.includes(value)) {
+	  cell.find('.selectpicker').selectpicker('val', 'Person');
+	}
+      } 
+      
+    } else if (rowInfo.key === 'name') {
+      // You can provide the id of a littlesis entity as a name
+      if (Number.isInteger(Number(value))) {
+	cell.data('entityid', Number(value));
+      }
+
+      cell.text(value);
+
+    } else {
+      cell.text(value);
+    }
+  };
+
 
   //  [{}], element -> {}
   function rowToJson(tableDetails, row) {
@@ -224,7 +284,6 @@ var bulkAdd = (function($, utility){
     return true;
   }
   
-  
   // an indicator that can only go from true to false.
   function ValidFlag() {
     this.status = true;
@@ -251,7 +310,7 @@ var bulkAdd = (function($, utility){
 
   function showAlert(message, alertType) {
     var html = '<div class="alert alert-dismissible !!TYPE!!" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>!!MESSAGE!!</div>'
-	  .replace('!!MESSAGE!!', message).replace('!!TYPE!!', alertType);
+      .replace('!!MESSAGE!!', message).replace('!!TYPE!!', alertType);
     $('#alert-container').html(html);
   }
 
@@ -278,7 +337,6 @@ var bulkAdd = (function($, utility){
     }
   }
 
-
   // data format:
   // {
   //   entity1_id: int,
@@ -293,8 +351,8 @@ var bulkAdd = (function($, utility){
     var entity1_id = utility.entityInfo('entityid');
     var category_id = Number($('#relationship-cat-select option:selected').val());
     var reference = {
-	'source': $('#reference-url').val(),
-	'name': $('#reference-name').val()
+      'source': $('#reference-url').val(),
+      'name': $('#reference-name').val()
     };
     return {
       entity1_id: entity1_id,
@@ -344,6 +402,66 @@ var bulkAdd = (function($, utility){
       }
     });
   }
+
+  // Takes CSV string and writes result to table
+  // see github.com/mholt/PapaParse for PapeParse library docs
+  function csvToTable(csvStr) {
+    // csv.data contains an array of objects where the keys are the same as rowInfo.key
+    const csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
+    const columns = relationshipDetailsAsObject();
+    
+    csv.data.forEach(function(rowData) {
+      var newRow = newBlankRow();
+      traverseRow(columns, newRow, function(rowInfo, cell) {
+	updateCellData(cell, rowInfo, rowData[rowInfo.key]);
+      });
+    });
+  }
+
+  // input: str (element id of <input type="file">)
+  // attaches a callback to provided element
+  // which calls csvToTable with the contents of the file
+  // after a file has been selected
+  function readCSVFileListener(fileInputId) {
+    if (!utility.fileOpeningAbilities()) { return; }
+
+    function handleFileSelect() {
+      if (this.files.length > 0) {  // do nothing if no file is selected
+	var reader = new FileReader();
+	reader.onloadend = function() {  // triggered when file is finished being read
+	  if (reader.result) { 
+	    csvToTable(reader.result);
+	  } else {
+	    console.error('Error reading the csv file or the file is empty');
+	  }
+	};
+	reader.readAsText(this.files[0]);
+      }
+    }
+    
+    document.getElementById(fileInputId).addEventListener('change', handleFileSelect, false);
+  }
+
+
+  // Establishes listeners for:
+  //   - click to add a new row
+  //   - remove row
+  //   - select a relationship category
+  //   - upload data button click
+  function domListeners() {
+    $('#table').on('click', '.table-add', function() { newBlankRow(); });
+    $('#table').on('click', '.table-remove', function() {
+      $(this).parents('tr').detach();
+    });
+    $('#relationship-cat-select').change(function(x){
+      createTable();
+      $('#upload-btn').removeClass('hidden');
+    });
+    $('#upload-btn').click(function() {
+      submit();
+      
+    });
+  } 
 
   return {
     relationshipDetails: relationshipDetails,
