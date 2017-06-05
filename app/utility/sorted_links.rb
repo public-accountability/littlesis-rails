@@ -92,7 +92,7 @@ class SortedLinks
     
     staff, positions = split categories[1]
     members, memberships = split categories[3]
-    @staff = LinksGroup.new(staff, 'staff', 'Office/Staff')
+    @staff = LinksGroup.new(staff, 'staff', 'Leadership & Staff')
     @members = LinksGroup.new(members, 'members', 'Members')
     
     create_position_subgroups(positions, memberships)
