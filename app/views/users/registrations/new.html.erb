@@ -3,27 +3,29 @@
 <%  simple_math_total = (simple_math_1 + simple_math_2) %>
 
 <%= javascript_tag do  %>
+
  function validateForm(){
-     if (!document.getElementById('terms_of_use').checked) {
-         alert("Unfortunately, you have to accept the terms first");
-         return false;
-     }
-     var password = document.getElementsByName("user[password]")[0].value;
-     var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
-     var solution = Number(<%= simple_math_total %>);
-     var answerProvided = Number(document.getElementById('simple_math').value);
-     if (password.length < 8) {
-         alert('Please ensure that your password is 8 or more characters long!');
-         return false;
-     } else if (password !== confirmation) {
-         alert('Your password and password confirmation do not match :(');
-         return false;
-     } else if (solution  !==  answerProvided) {
-        alert('Please double check your math :( ');
-        return false;
-     } else {
-         return true;
-     }
+   if (!document.getElementById('terms_of_use').checked) {
+     alert("Unfortunately, you have to accept the terms first");
+     return false;
+   }
+   
+   var password = document.getElementsByName("user[password]")[0].value;
+   var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
+   var solution = Number(<%= simple_math_total %>);
+   var answerProvided = Number(document.getElementById('simple_math').value);
+   if (password.length < 8) {
+     alert('Please ensure that your password is 8 or more characters long!');
+     return false;
+   } else if (password !== confirmation) {
+     alert('Your password and password confirmation do not match :(');
+     return false;
+   } else if (solution  !==  answerProvided) {
+     alert('Please double check your math :( ');
+     return false;
+   } else {
+     return true;
+   }
  }
 
 <% end %>
@@ -44,8 +46,8 @@
     <div class="col-sm-8">
         <div class="row">
             <div class="col-sm-12">
-            <p><strong>LittleSis is bringing together a community of citizens who believe in transparency and accountability where it matters most.</strong> Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power.</p>
-            <p><strong>We're looking for researchers, programmers, artists and organizers to lend a hand.</strong> If you want to get involved, <%= link_to "send us a note", "/contact" %> join our email list, sign up to become a LittleSis analyst and start adding information to the site, or check out our <%= link_to "help pages", '/help' %> for information on how to use the site.</p>
+		<p><strong>LittleSis is bringing together a community of citizens who believe in transparency and accountability where it matters most.</strong> Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power.</p>
+		<p><strong>We're looking for researchers, programmers, artists and organizers to lend a hand.</strong> If you want to get involved, <%= link_to "send us a note", "/contact" %> join our email list, sign up to become a LittleSis analyst and start adding information to the site, or check out our <%= link_to "help pages", '/help' %> for information on how to use the site.</p>
             </div>
         </div>
         <div class="row bottom-1em">
@@ -67,115 +69,119 @@
                 <br />
 
                 <%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {:onsubmit => 'return validateForm();', :class => 'form-horizontal', }) do |f| %>
-                <%= devise_error_messages! %>
-                <%= f.fields_for :sf_guard_user_profile do |profile_fields| %>
-                    
-                    <div class="form-group">
-                        <%= f.label :default_network_id, "Default Network", :class => label_class %>
-                        <div class="col-sm-3">
-                            <%= f.select :default_network_id, Users::RegistrationsController::HOME_NETWORK_IDS %>
-                        </div>
-                        <div class="col-sm-7">
-                            <small><em>(default local network for new data you contribute) </em></small>
-                        </div>
-                    </div>
+                    <%= devise_error_messages! %>
+                    <%= f.fields_for :sf_guard_user_profile do |profile_fields| %>
+			
+			<div class="form-group">
+                            <%= f.label :default_network_id, "Default Network", :class => label_class %>
+                            <div class="col-sm-3">
+				<%= f.select :default_network_id, Users::RegistrationsController::HOME_NETWORK_IDS %>
+                            </div>
+                            <div class="col-sm-7">
+				<small><em>(default local network for new data you contribute) </em></small>
+                            </div>
+			</div>
 
-                    <div class="form-group">
-                        <%= profile_fields.label :name_first, "First Name", :class => label_class   %>
-                        <div class="<%= field_class %>">
-                            <%= profile_fields.text_field :name_first, :required => true %>
+			<div class="form-group">
+                            <%= profile_fields.label :name_first, "First Name", :class => label_class   %>
+                            <div class="<%= field_class %>">
+				<%= profile_fields.text_field :name_first, :required => true %>
 
-                        </div>
-                        
-                    </div>
-                    
-                    <div class="form-group">
-                        <%= profile_fields.label :name_last, "Last Name", :class => label_class %>
-                        <div class="<%= field_class %>">
-                            <%= profile_fields.text_field :name_last %><br />
-                            <small><em>(your name and email will not be public)</em> </small>
-                        </div>
-                        
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-2"></div>
-                        <div class="col-sm-10">
+                            </div>
                             
-                        </div>
+			</div>
+			
+			<div class="form-group">
+                            <%= profile_fields.label :name_last, "Last Name", :class => label_class %>
+                            <div class="<%= field_class %>">
+				<%= profile_fields.text_field :name_last %><br />
+				<small><em>(your name and email will not be public)</em> </small>
+                            </div>
+                            
+			</div>
+			<div class="row">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-10">
+				
+                            </div>
 
-                    </div>
-                    <div class="form-group">
-                        <%= f.label :email, "Email", :class => label_class  %>
-                        <div class="<%= field_class %>">
-                            <%= f.email_field :email, autofocus: true, :required => true %>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <%= f.label :username, "Username", :class => label_class  %>
-                        <div class="<%= field_class %>">
-                            <%= f.text_field :username, autofocus: true %>
-                        </div>
-                    </div>
-
-
-                    <div class="form-group">
-                        <%= f.label :password, "Password (Minimum 8 letters)", :class => label_class %>
-                        <div class="<%= field_class %>">
-                            <%= f.password_field :password, autocomplete: "off", :required => true  %>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <%= f.label :password_confirmation, :class => label_class  %>
-                        <div class="<%= field_class %>">
-                            <%= f.password_field :password_confirmation, autocomplete: "off", :required => true  %>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <%=  label_tag 'spam_test', "Spam Test", :class => label_class %>
-                        <div class="col-sm-2">
-                            <samp class="text-center"><%= simple_math_1 %> + <%= simple_math_2 %> = </samp>
-                        </div>
-                        <div class="col-sm-2">
-                            <%= text_field_tag :spam_test, "", maxlength: 2, id: 'simple_math', class: 'form-control' %>
-                        </div>
-                    </div>
+			</div>
+			<div class="form-group">
+                            <%= f.label :email, "Email", :class => label_class  %>
+                            <div class="<%= field_class %>">
+				<%= f.email_field :email, autofocus: true, :required => true %>
+                            </div>
+			</div>
+			
+			<div class="form-group">
+                            <%= f.label :username, "Username", :class => label_class  %>
+                            <div class="<%= field_class %>">
+				<%= f.text_field :username, autofocus: true,
+				:required => true,
+				:pattern => '[^@ ]{3,}',
+				:oninvalid => "this.setCustomValidity(\"Usernames must be at least 3 letters and cannot include '@' or spaces\")",
+				:oninput => "this.setCustomValidity('')" %>
+                            </div>
+			</div>
 
 
-                    <div class="form-group">
-                        <%=  label_tag 'terms_of_use', "Terms of use", :class => label_class %>
-                        <div class="col-sm-9 bg-info bottom-1em top-1em">
-                            <p>I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith.</p>
-                            <%= check_box_tag 'terms_of_use' %><small> I accept the above terms of use </small>
-                        </div>
-                    </div>
+			<div class="form-group">
+                            <%= f.label :password, "Password (Minimum 8 letters)", :class => label_class %>
+                            <div class="<%= field_class %>">
+				<%= f.password_field :password, autocomplete: "off", :required => true  %>
+                            </div>
+			</div>
 
-                    <div class="form-group">
-                        <%=  label_tag 'newsletter', "Newsletter?", :class => label_class %>
-                        <div class="<%= field_class %>">
-                            <%= f.check_box :newsletter %><small style="padding-left: 0.5em;">May we put you on our newsletter? </small>
-                        </div>
-                    </div>
+			<div class="form-group">
+                            <%= f.label :password_confirmation, :class => label_class  %>
+                            <div class="<%= field_class %>">
+				<%= f.password_field :password_confirmation, autocomplete: "off", :required => true  %>
+                            </div>
+			</div>
 
-                    <div class="form-group">
-                        <%= profile_fields.label :reason, "A little about you and why you're signing up", :class => label_class  %>
-                        <div class="col-sm-9">
-                            <%= profile_fields.text_area :reason, :class => 'form-control', :rows => 5 %>
-                        </div>
-                    </div>
-                    
-                    <div class="actions form-group">
-                        <div class="col-sm-2"></div>
-                        <div class="col-sm-2">
-                            <%= f.submit "Sign up" %>
-                            <p class="text-center"><small><%= render "users/shared/links" %></small></p>
-                        </div>
-                    </div>
-                    
-                <% end %>
-            <% end %>
+			<div class="form-group">
+                            <%=  label_tag 'spam_test', "Spam Test", :class => label_class %>
+                            <div class="col-sm-2">
+				<samp class="text-center"><%= simple_math_1 %> + <%= simple_math_2 %> = </samp>
+                            </div>
+                            <div class="col-sm-2">
+				<%= text_field_tag :spam_test, "", maxlength: 2, id: 'simple_math', class: 'form-control' %>
+                            </div>
+			</div>
+
+
+			<div class="form-group">
+                            <%=  label_tag 'terms_of_use', "Terms of use", :class => label_class %>
+                            <div class="col-sm-9 bg-info bottom-1em top-1em">
+				<p>I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith.</p>
+				<%= check_box_tag 'terms_of_use' %><small> I accept the above terms of use </small>
+                            </div>
+			</div>
+
+			<div class="form-group">
+                            <%=  label_tag 'newsletter', "Newsletter?", :class => label_class %>
+                            <div class="<%= field_class %>">
+				<%= f.check_box :newsletter %><small style="padding-left: 0.5em;">May we put you on our newsletter? </small>
+                            </div>
+			</div>
+
+			<div class="form-group">
+                            <%= profile_fields.label :reason, "A little about you and why you're signing up", :class => label_class  %>
+                            <div class="col-sm-9">
+				<%= profile_fields.text_area :reason, :class => 'form-control', :rows => 5 %>
+                            </div>
+			</div>
+			
+			<div class="actions form-group">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-2">
+				<%= f.submit "Sign up" %>
+				<p class="text-center"><small><%= render "users/shared/links" %></small></p>
+                            </div>
+			</div>
+			
+                    <% end %>
+		<% end %>
 
             </div>
         </div>
@@ -186,4 +192,4 @@
     </div>
 </div>
 
- 
+
