@@ -83,27 +83,30 @@ nav.navbar  {
 .navbar-container {
     display: block;
     height: $navbar-height;
+
 }
 
 .navbar-image {
-    
+
     @media (min-width: $screen-sm-min) {
-	margin-left: $image_left_margin - 175px;
+	max-width: 50px;
     }
 
     @media (min-width: $screen-md-min) {
-	margin-left: $image_left_margin;
+	max-width: 55px;
     }
 
-    
+    @media (min-width: $screen-lg-min) {
+	max-width: 65px;
+    }
+
     float: left;
-    height: 100%;
-    width: 120px;
-    /* overflow: hidden; */
+    height: 50%;
     
     img {
+	position: relative;
+	top: 50%;
     	height: 100%;
-    	width: auto;
     }
 }
 
@@ -111,19 +114,27 @@ nav.navbar  {
     display: inline;
     float: right;
     position: relative;
-    top: 25px;
+    top: 22px;
     
     @media (min-width: $screen-sm-min) {
-	right: 8em;
+	right: 1em;
+
+	li {
+    	    margin-left: 0;
+	}
+
     }
 
     @media (min-width: $screen-md-min) {
-	right: 14em;
+	right: 2em;
+	
+	li {
+    	    margin-left: 1em;
+	}
     }
-    
 
-    li {
-    	margin-left: 1em;
+    @media (min-width: $screen-lg-min) {
+	right: 3em;
     }
 
     a:hover {

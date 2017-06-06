@@ -10,15 +10,15 @@
 
 	<% if content_for? :article_view %>
 	    <nav class="navbar navbar-default navbar-static-top">
-		<div class="navbar-container">
+		<div class="navbar-container container">
 		    
 		    <div class="navbar-image">
 			<a href="https://littlesis.org/toolkit">
-			    <%= image_tag "map_the_power_RGB.gif",  class: 'map-the-power-img-logo'%>
+			    <%= image_tag "map_the_power_text.jpg"%>
 			</a>
 		    </div>
 
-		    <div id="navbar" class="hidden-xs">
+		    <div id="navbar" class="hidden-xs pull-right">
 			<ul class="nav navbar-nav">
 			    <%= render partial: 'links' %>
 			</ul>
