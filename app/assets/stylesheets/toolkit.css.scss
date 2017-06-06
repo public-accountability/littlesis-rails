@@ -29,6 +29,21 @@ body {
     font-family: 'Montserrat', sans-serif;
 }
 
+
+/* Table of Contents Page */
+
+.splash-logo-img-container {
+    height: 600px;
+    margin: 0 auto;
+}
+
+div.toe-row {
+    padding-bottom: 5em;
+
+}
+
+/* Header */
+
 nav.navbar  {
     max-height: $navbar-height;
     background-color: $navbar_background_color;
@@ -36,6 +51,7 @@ nav.navbar  {
     border-bottom: 1px solid;
     border-color: #C6BCD4;
 }
+
 
 .navbar-container {
     display: block;
@@ -92,6 +108,8 @@ nav.navbar  {
     color: $navbar_text_color;
     font-size: 16px;
 }
+
+/* PAGE */
 
 h1 {
     font-size: 36px;

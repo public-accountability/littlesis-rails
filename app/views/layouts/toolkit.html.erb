@@ -10,6 +10,8 @@
 
 	<% if content_for? :article_view %>
 	    <div style="margin-top: 125px;"></div>
+	<% elsif content_for? :table_of_contents %>
+	    <!-- Table of Contents -->
 	<% else %>
 	    <nav class="navbar navbar-default navbar-static-top">
 		<div class="navbar-container">
