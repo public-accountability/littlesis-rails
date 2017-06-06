@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-	<title><%= page_title %></title>
+	<title><%= raw page_title %></title>
 	<%= stylesheet_link_tag    "toolkit", media: "all" %>
 	<%= javascript_include_tag "toolkit", media: "all"  %>
 	<%#= facebook_meta %>
@@ -20,10 +20,7 @@
 
 		    <div id="navbar" class="hidden-xs">
 			<ul class="nav navbar-nav">
-			    <li><a href="https://littlesis.org/toolkit/about">About</a></li>
-			    <li><a href="https://littlesis.org/toolkit/questions">Questions</a></li>
-			    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfiJh9AjPmE8l6m-OKQH5-Tde6RjlVrZ-q_pjg8UV62h8dneA/viewform">Join a pod</a></li>
-			    <li><a href="https://littlesis.org">Explore LittleSis</a></li>
+			    <%= render partial: 'links' %>
 			</ul>
 		    </div><!-- #navbar / .nav-collapse -->
 		</div>
@@ -44,10 +41,12 @@
 	    <div style="margin-bottom: 2em"></div>
 	</div>
 
-	<!-- <div id="footer">
-	     A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>. 
-	     More <%= link_to('about LittleSis', '/about') %>.
-	     Read the <%= link_to('disclaimer', '/disclaimer') %>.
-	     </div> -->
+	
+	<% if content_for? :table_of_contents %>
+	    <%= render partial: 'footer' %>
+	<% end %>
+
+
     </body>
-</html>
+</html
+

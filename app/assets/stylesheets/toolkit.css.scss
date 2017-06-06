@@ -12,6 +12,7 @@ $article_width: 822px;
 $image_left_margin: 166px;
 $heading_color: #201747;
 $paragraph_color: #828181;
+$footer_background_color: rgba(36,39,42,0.06);
 
 /* CUSTOM BOOTSTRAP VARIABLES  */
 $grid-gutter-width: 30px;
@@ -41,6 +42,32 @@ div.toe-row {
     padding-bottom: 5em;
 
 }
+
+/* Footer */
+
+#toolkit-footer {
+    background-color: $footer_background_color;
+    margin-bottom: 0;
+
+    li {
+	display: inline;
+	list-style-type: none;
+	padding-right: 20px;
+	a {
+	    color: $navbar_text_color;
+	    @media (min-width: $screen-sm-min) {
+		font-size: 14px;
+	    }
+
+	    @media (min-width: $screen-md-min) {
+		font-size: 18px;
+	    }
+	    
+	}
+    }
+
+}
+
 
 /* Header */
 
