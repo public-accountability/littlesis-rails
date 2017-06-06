@@ -9,15 +9,13 @@
     <body>
 
 	<% if content_for? :article_view %>
-	    <div style="margin-top: 125px;"></div>
-	<% elsif content_for? :table_of_contents %>
-	    <!-- Table of Contents -->
-	<% else %>
 	    <nav class="navbar navbar-default navbar-static-top">
 		<div class="navbar-container">
 		    
 		    <div class="navbar-image">
-			<%= image_tag "map_the_power_RGB.gif",  class: 'map-the-power-img-logo'%>
+			<a href="https://littlesis.org/toolkit">
+			    <%= image_tag "map_the_power_RGB.gif",  class: 'map-the-power-img-logo'%>
+			</a>
 		    </div>
 
 		    <div id="navbar" class="hidden-xs">
@@ -30,13 +28,20 @@
 		    </div><!-- #navbar / .nav-collapse -->
 		</div>
 	    </nav>
+	    
+	    <div style="margin-top: 1em"></div>
+	<% elsif content_for? :table_of_contents %>
+	    <!-- Table of Contents -->
+	<% else %>
+	    <!--  -->
 	<% end %>
 	
 	<div class="container" id="container">
+	    <%= yield %>
 	    <% if content_for? :article_view %>
 		<%= link_to "BACK TO TABLE OF CONTENTS", toolkit_path, class: 'toc-link'%>
 	    <% end %>
-	    <%= yield %>
+	    <div style="margin-bottom: 2em"></div>
 	</div>
 
 	<!-- <div id="footer">
