@@ -44,8 +44,12 @@ class User < ActiveRecord::Base
   has_one :api_token
 
   def to_param
-  	username
+    username
   end
+
+  ###############
+  # PERMISSIONS #
+  ###############
 
   def legacy_permissions
     sf_guard_user.permissions
@@ -58,6 +62,11 @@ class User < ActiveRecord::Base
   def admin?
     has_legacy_permission 'admin'
   end
+
+  def importer?
+    has_legacy_permission 'importer'
+  end
+
 
   def in_group?(group)
   	GroupUser.where(group_id: group.id, user_id: id).count > 0
