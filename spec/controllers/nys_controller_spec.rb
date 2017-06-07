@@ -11,12 +11,30 @@ describe NysController, type: :controller do
     DatabaseCleaner.clean
   end
 
+  describe 'routes' do
+    it { should route(:get, '/nys').to(action: :index) }
+    it { should route(:post, '/nys/match_donations').to(action: :match_donations) }
+    it { should route(:get, '/nys/candidates').to(action: :candidates) }
+    it { should route(:get, '/nys/candidates/new').to(action: :new_filer_entity) }
+    it { should route(:post, '/nys/candidates/new').to(action: :create) }
+    it { should route(:get, '/nys/potential_contributions').to(action: :potential_contributions) }
+    it { should route(:get, '/nys/contributions').to(action: :contributions) }
+    it { should route(:get, '/nys/pacs').to(action: :pacs) }
+    
+  end
+  
   describe 'pages' do
     login_user
     describe 'candidates' do
       before { get :candidates }
       it { should respond_with(200) }
       it { should render_template(:candidates) }
+    end
+
+    describe 'pacs' do
+      before { get :pacs }
+      it { should respond_with(200) }
+      it { should render_template(:pacs) }
     end
 
     describe 'index' do

@@ -289,14 +289,18 @@ Lilsis::Application.routes.draw do
   #######
   # NYS #
   #######
+
+  scope '/nys' do
+    get "/" => "nys#index"
+    post "/match_donations" => "nys#match_donations"
+    get "/candidates" => "nys#candidates"
+    get "/pacs" => "nys#pacs"
+    get "/candidates/new" => "nys#new_filer_entity"
+    post "/candidates/new" => "nys#create"
+    get "/potential_contributions" => "nys#potential_contributions"
+    get "/contributions" => "nys#contributions"
+  end
   
-  get "/nys" => "nys#index"
-  post "/nys/match_donations" => "nys#match_donations"
-  get "/nys/candidates" => "nys#candidates"
-  get "/nys/candidates/new" => "nys#new_filer_entity"
-  post "/nys/candidates/new" => "nys#create"
-  get "/nys/potential_contributions" => "nys#potential_contributions"
-  get "/nys/contributions" => "nys#contributions"
 
   #########
   # Tools #

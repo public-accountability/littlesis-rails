@@ -7,6 +7,9 @@ class NysController < ApplicationController
   def candidates
   end
 
+  def pacs
+  end
+  
   def create
     check_permission 'importer'
 
