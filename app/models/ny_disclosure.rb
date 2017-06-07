@@ -49,13 +49,20 @@ class NyDisclosure < ActiveRecord::Base
   # <Entity> -> String
   # Creates variations on an entity's name and aliases for improved matching with sphinx
   def self.search_terms(entity)
-    search_terms = Set.new  
+    search_terms = Set.new
+
     entity.aliases.each do |a|
-      search_terms << a.name                                            # add name
-      name_h = NameParser.parse_to_hash(a.name)                         # get parsed name
-      search_terms << (name_h[:name_first] + " " + name_h[:name_last])  # Add only first + last
-      search_terms << (name_h[:name_nick] + " " + name_h[:name_last]) if name_h[:name_nick].present?
+      search_terms << a.name
+
+      if entity.person?
+        name_h = NameParser.parse_to_hash(a.name)                         # get parsed name
+        search_terms << (name_h[:name_first] + " " + name_h[:name_last])  # Add only first + last
+        search_terms << (name_h[:name_nick] + " " + name_h[:name_last]) if name_h[:name_nick].present?
+      end
+
+      search_terms << Org.strip_name(a.name) if entity.org?
     end
+
     search_terms.to_a.join(" | ")
   end
 

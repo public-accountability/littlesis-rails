@@ -1,7 +1,26 @@
+<%= javascript_include_tag "nys" %>
 <% content_for(:page_title, "NYS Candidates and Committees") %>
+<%= render partial: 'shared/entity_info', locals: {entity: @entity}  %>
+<script>
+ $(function(){
+   nys.filerSearch();
+ });
+</script>
+
 <div class="row">
     <h2>Find NYS Candidates and Committees for <%= entity_link(@entity) %></h2>
     <p><%= link_to "Select a different politician", '/nys/candidates' %></p>
+</div>
+<div class="row">
+    <h3>Custom search:</h3>
+    <div class="col-sm-6">
+	<div class="input-group">
+	    <input type="text" class="form-control" placeholder="Committe or name of filer..." id="custom-search-input">
+	    <span class="input-group-btn">
+		<button class="btn btn-default" type="button" id="custom-search-btn">Search</button>
+	    </span>
+	</div><!-- /input-group -->
+    </div>
 </div>
 <div class="row">
     <% if @matched.length > 0 %>

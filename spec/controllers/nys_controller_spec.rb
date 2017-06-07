@@ -11,12 +11,30 @@ describe NysController, type: :controller do
     DatabaseCleaner.clean
   end
 
+  describe 'routes' do
+    it { should route(:get, '/nys').to(action: :index) }
+    it { should route(:post, '/nys/match_donations').to(action: :match_donations) }
+    it { should route(:get, '/nys/candidates').to(action: :candidates) }
+    it { should route(:get, '/nys/candidates/new').to(action: :new_filer_entity) }
+    it { should route(:post, '/nys/candidates/new').to(action: :create) }
+    it { should route(:get, '/nys/potential_contributions').to(action: :potential_contributions) }
+    it { should route(:get, '/nys/contributions').to(action: :contributions) }
+    it { should route(:get, '/nys/pacs').to(action: :pacs) }
+    
+  end
+  
   describe 'pages' do
     login_user
     describe 'candidates' do
       before { get :candidates }
       it { should respond_with(200) }
       it { should render_template(:candidates) }
+    end
+
+    describe 'pacs' do
+      before { get :pacs }
+      it { should respond_with(200) }
+      it { should render_template(:pacs) }
     end
 
     describe 'index' do
@@ -107,18 +125,48 @@ describe NysController, type: :controller do
 
   describe "#new_filer_entity" do
     login_user
-    before(:each) do
-      elected = build(:elected, id: 123)
-      expect(elected).to receive(:person).and_return(double(:name_last => "elected"))
-      expect(NyFiler).to receive(:search_filers).with("elected").and_return([])
-      expect(Entity).to receive(:find).and_return(elected)
+
+    context 'default search' do 
+      before do
+        elected = build(:elected, id: 123)
+        expect(elected).to receive(:person).and_return(double(:name_last => "elected"))
+        expect(NyFiler).to receive(:search_filers).with("elected").and_return([])
+        expect(Entity).to receive(:find).and_return(elected)
+      end
+
+      it 'Handles GET' do
+        get(:new_filer_entity, entity: '123')
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:new_filer_entity)
+      end
     end
 
-    it 'Handles GET' do
-      get(:new_filer_entity, entity: '123')
-      expect(response.status).to eq(200)
-      expect(response).to render_template(:new_filer_entity)
+    context 'with custom query' do
+      it 'searches for custom query' do
+        elected = build(:elected, id: 123)
+        expect(NyFiler).to receive(:search_filers).with("my custom search").and_return([])
+        expect(Entity).to receive(:find).and_return(elected)
+        get(:new_filer_entity, entity: '123', query: 'my custom search')
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:new_filer_entity)
+      end
     end
+
+    context 'if entity is an org' do
+      before do
+        pac = build(:pac, id: 666)
+        expect(NyFiler).to receive(:search_pacs).with("PAC").and_return([])
+        expect(Entity).to receive(:find).with('666').and_return(pac)
+        get(:new_filer_entity, entity: '666')
+      end
+
+      it 'responds with 200 and renders new_filer_entity template' do
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:new_filer_entity)
+      end
+    end
+    
   end
-
 end
+
+
