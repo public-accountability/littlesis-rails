@@ -151,6 +151,20 @@ describe NysController, type: :controller do
         expect(response).to render_template(:new_filer_entity)
       end
     end
+
+    context 'if entity is an org' do
+      before do
+        pac = build(:pac, id: 666)
+        expect(NyFiler).to receive(:search_pacs).with("PAC").and_return([])
+        expect(Entity).to receive(:find).with('666').and_return(pac)
+        get(:new_filer_entity, entity: '666')
+      end
+
+      it 'responds with 200 and renders new_filer_entity template' do
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:new_filer_entity)
+      end
+    end
     
   end
 end

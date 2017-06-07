@@ -23,15 +23,11 @@ class NysController < ApplicationController
 
   def new_filer_entity
     @entity = Entity.find(entity_id)
-    @matched = []
-    @filers = []
-    NyFiler.search_filers(sphinx_search_query).each { |filer| 
-      if filer.is_matched?
-        @matched << filer
-      else
-        @filers << filer
-      end
-    }
+    @matched = Set.new
+    @filers = Set.new
+    NyFiler.public_send(search_filers_or_pacs, sphinx_search_query).each(&method(:filter_filers))
+    # add all already matched filers that aren't found up via the search
+    NyFilerEntity.where(entity_id: entity_id).each { |f| @matched << f.ny_filer }
   end
 
   # POST data
@@ -72,16 +68,31 @@ class NysController < ApplicationController
 
   private
 
-  def ny_filer_ids
-    params.require(:ids)
+  def search_filers_or_pacs
+    return :search_pacs if @entity.org?
+    return :search_filers if @entity.person?
+  end
+  
+  def filter_filers(filer)
+    if filer.is_matched?
+      @matched << filer
+    else
+      @filers << filer
+    end
   end
 
   def sphinx_search_query
     if params[:query]
       ThinkingSphinx::Query.escape(params[:query])
-    else
+    elsif @entity.person?
       @entity.person.name_last
+    else
+      @entity.name
     end
+  end
+
+  def ny_filer_ids
+    params.require(:ids)
   end
   
   def entity_id
