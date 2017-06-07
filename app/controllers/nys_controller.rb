@@ -22,7 +22,7 @@ class NysController < ApplicationController
     @entity = Entity.find(entity_id)
     @matched = []
     @filers = []
-    NyFiler.search_filers(@entity.person.name_last).each { |filer| 
+    NyFiler.search_filers(sphinx_search_query).each { |filer| 
       if filer.is_matched?
         @matched << filer
       else
@@ -73,6 +73,14 @@ class NysController < ApplicationController
     params.require(:ids)
   end
 
+  def sphinx_search_query
+    if params[:query]
+      ThinkingSphinx::Query.escape(params[:query])
+    else
+      @entity.person.name_last
+    end
+  end
+  
   def entity_id
     params.require(:entity)
   end

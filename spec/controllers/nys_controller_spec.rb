@@ -107,18 +107,34 @@ describe NysController, type: :controller do
 
   describe "#new_filer_entity" do
     login_user
-    before(:each) do
-      elected = build(:elected, id: 123)
-      expect(elected).to receive(:person).and_return(double(:name_last => "elected"))
-      expect(NyFiler).to receive(:search_filers).with("elected").and_return([])
-      expect(Entity).to receive(:find).and_return(elected)
+
+    context 'default search' do 
+      before do
+        elected = build(:elected, id: 123)
+        expect(elected).to receive(:person).and_return(double(:name_last => "elected"))
+        expect(NyFiler).to receive(:search_filers).with("elected").and_return([])
+        expect(Entity).to receive(:find).and_return(elected)
+      end
+
+      it 'Handles GET' do
+        get(:new_filer_entity, entity: '123')
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:new_filer_entity)
+      end
     end
 
-    it 'Handles GET' do
-      get(:new_filer_entity, entity: '123')
-      expect(response.status).to eq(200)
-      expect(response).to render_template(:new_filer_entity)
+    context 'with custom query' do
+      it 'searches for custom query' do
+        elected = build(:elected, id: 123)
+        expect(NyFiler).to receive(:search_filers).with("my custom search").and_return([])
+        expect(Entity).to receive(:find).and_return(elected)
+        get(:new_filer_entity, entity: '123', query: 'my custom search')
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:new_filer_entity)
+      end
     end
+    
   end
-
 end
+
+
