@@ -27,11 +27,7 @@
 	    </nav>
 	    
 	    <div style="margin-top: 1em"></div>
-	<% elsif content_for? :table_of_contents %>
-	    <!-- Table of Contents -->
-	<% else %>
-	    <!--  -->
-	<% end %>
+	<% end %> 
 	
 	<div class="container" id="container">
 	    <%= yield %>
@@ -41,11 +37,7 @@
 	    <div style="margin-bottom: 2em"></div>
 	</div>
 
-	
-	<% if content_for? :table_of_contents %>
-	    <%= render partial: 'footer' %>
-	<% end %>
-
+	<%= render partial: 'footer' %>
 
     </body>
 </html

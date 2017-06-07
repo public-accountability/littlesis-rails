@@ -40,7 +40,24 @@ body {
 
 div.toe-row {
     padding-bottom: 5em;
+}
 
+#index-menu {
+    margin-bottom: 1em;
+
+    ul {
+	display: inline-table;
+    }
+
+    li {
+	display: inline;
+	list-style-type: none;
+    }
+
+    li:not(:first-child) {
+	padding-left: 1em;
+    }
+    
 }
 
 /* Footer */
@@ -50,9 +67,11 @@ div.toe-row {
     margin-bottom: 0;
 
     li {
+
 	display: inline;
 	list-style-type: none;
 	padding-right: 20px;
+
 	a {
 	    color: $navbar_text_color;
 	    @media (min-width: $screen-sm-min) {
@@ -64,6 +83,22 @@ div.toe-row {
 	    }
 	    
 	}
+    }
+
+
+    .littlesis-logo {
+	width: 157px;
+	height: 33px;
+	margin-bottom: 1em;
+    }
+
+    p {
+	font-size: 12px;
+	color: #555;
+    }
+
+    h3 {
+	font-size: 14px;
     }
 
 }
@@ -83,7 +118,6 @@ nav.navbar  {
 .navbar-container {
     display: block;
     height: $navbar-height;
-
 }
 
 .navbar-image {
@@ -176,4 +210,10 @@ hr {
 .toc-link {
     font-size: 11px;
     line-height: 28px;
+}
+
+#container {
+    img {
+	max-width: 100%;
+    }
 }
