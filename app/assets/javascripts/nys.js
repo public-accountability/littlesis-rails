@@ -1,4 +1,4 @@
-var nys = (function($){
+var nys = (function($, utility){
   
   function td(v){
     return "<td>" + v + "</td>";
@@ -38,9 +38,22 @@ var nys = (function($){
     });
   }
 
+  function newFilerUrl(entityId, query) {
+    return "/nys/candidates/new?entity=" + entityId + "&query=" + encodeURIComponent(query);
+  }
+
+  function filerSearch() {
+    $('#custom-search-btn').click(function(e){
+      var entityId = utility.entityInfo('entityid');
+      var query = $('#custom-search-input').val();
+      window.location.href = newFilerUrl(entityId, query);
+    });
+  }
+  
   return {
-    entitySearch: entitySearch 
+    entitySearch: entitySearch,
+    filerSearch: filerSearch
   };
 
 
-})(jQuery);
+})(jQuery, utility);

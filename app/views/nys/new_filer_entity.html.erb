@@ -1,10 +1,12 @@
 <%= javascript_include_tag "nys" %>
 <% content_for(:page_title, "NYS Candidates and Committees") %>
+<%= render partial: 'shared/entity_info', locals: {entity: @entity}  %>
 <script>
- /* $(function(){
-  *   nys.entitySearch();
-  * });*/
+ $(function(){
+   nys.filerSearch();
+ });
 </script>
+
 <div class="row">
     <h2>Find NYS Candidates and Committees for <%= entity_link(@entity) %></h2>
     <p><%= link_to "Select a different politician", '/nys/candidates' %></p>
