@@ -6,18 +6,31 @@ class NyFiler < ActiveRecord::Base
   validates_presence_of :filer_id
   validates_uniqueness_of :filer_id
 
-  def self.search_filers(name)
-    NyFiler.search( name, 
-                    :sql => { :include => :ny_filer_entity },
-                    :with => {:committee_type => ["'1'", "''"] } )
-  end
-  
   def is_matched?
     ny_filer_entity.present?
   end
 
   def office_description
     OFFICES[office]
+  end
+  
+  #---------------#
+  # Class methods #
+  #---------------#
+
+  def self.search_filers(name)
+    search_by_name_and_committee_type(name, ["'1'", "''"])
+  end
+
+  def self.search_pacs(name)
+    search_by_name_and_committee_type(name, ["'2'", "'9'"])
+  end
+    
+  # str, [ str ] => <ThinkingSphinx::Search>
+  private_class_method def self.search_by_name_and_committee_type(name, committee_types)
+    NyFiler.search( name, 
+                    :sql => { :include => :ny_filer_entity },
+                    :with => {:committee_type => committee_types } )
   end
   
   OFFICES = {
@@ -98,6 +111,6 @@ class NyFiler < ActiveRecord::Base
     82 => 'Town Supervisor'
   }.freeze
 
-  
 
+  
 end
