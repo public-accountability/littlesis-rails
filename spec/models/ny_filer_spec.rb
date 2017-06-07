@@ -8,6 +8,22 @@ describe NyFiler, type: :model do
   it { should validate_presence_of(:filer_id) }
   it { should validate_uniqueness_of(:filer_id) }
 
+  it 'has OFFICES constant' do
+    expect(NyFiler::OFFICES).to be_a Hash
+  end
+  
+  describe '#office_description' do
+    it 'translates numeric office code to text description' do
+      filer = build(:ny_filer, office: 22)
+      expect(filer.office_description).to eq 'Mayor'
+    end
+
+    it 'returns nils if code is missing from lookup hash' do
+      filer = build(:ny_filer, office: 100)
+      expect(filer.office_description).to be nil
+    end
+  end
+
   describe 'is_matched' do
     it 'returns true if there is a filer_entity' do
       ny_filer = create(:ny_filer, filer_id: '123')
