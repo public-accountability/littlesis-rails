@@ -25,10 +25,15 @@ var nys = (function($, utility){
     rowClick();
   }
 
-  function entitySearch() {
+  // input: 'Org' or 'Person'
+  function entitySearch(primaryExt) {
+    if (!['Person', 'Org'].includes(primaryExt)) {
+      var msg  = "nys.entitySearch must be called with 'Org' or 'Person'. It was called with " + primaryExt;
+      throw msg;
+    }
     $("#entity-search-submit").click(function(e){
       e.preventDefault();
-      $.getJSON('/search/entity', {q: $('#entity-search').val(), ext: 'Person' }, function(d){
+      $.getJSON('/search/entity', {q: $('#entity-search').val(), ext: primaryExt }, function(d){
 	if (d.length > 0) {
           createTable(d);
 	} else { 
