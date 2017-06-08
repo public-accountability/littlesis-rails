@@ -1,0 +1,22 @@
+BUG REPORT
+==========
+
+<%= @params['summary']%>
+
+Type: <%= @params['type']%>
+
+<% unless @params['email'].blank? %>
+Reported by: <%= @params['email']%>
+<% end %>
+
+Page: <%= @params['page']%>
+
+
+Description
+============
+<%= @params['description']%>
+
+
+Expected Outcome
+=================
+<%= @params['expected']%>

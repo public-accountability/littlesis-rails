@@ -30,4 +30,11 @@ class NotificationMailer < ApplicationMailer
     @profile = user.sf_guard_user_profile
     mail(to: DEFAULT_TO, subject: "New User Signup: #{user.username}", delivery_method_options: SMTP_OPTIONS)
   end
+
+  def bug_report_email(params)
+    params.default = ''
+    subject = "Bug Report: #{params['summary'].truncate(20)}"
+    @params = params
+    mail(to: DEFAULT_TO, subject: subject, method_options: SMTP_OPTIONS)
+  end
 end

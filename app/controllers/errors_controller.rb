@@ -6,15 +6,17 @@ class ErrorsController < ApplicationController
     expected: "What you expected or wished would happen"
   }.freeze
 
+  THANK_YOU_NOTICE = 'Thank you for submitting a bug report and helping to improve LittleSis!'
+
   def bug_report
   end
 
   def file_bug_report
-    # NotificationMailer.bug_report_email(params).deliver_later
-    flash.now[:notice] = 'Thank you for submitting a bug report and helping to improve LittleSis!'
+    NotificationMailer.bug_report_email(bug_report_params).deliver_later
     if user_signed_in?
-      redirect_to home_dashboard_path
+      redirect_to home_dashboard_path, notice: THANK_YOU_NOTICE
     else
+      flash.now[:notice] = THANK_YOU_NOTICE
       render 'bug_report'
     end
   end
@@ -24,5 +26,4 @@ class ErrorsController < ApplicationController
   def bug_report_params
     params.permit(:email, :type, :summary, :page, :description, :reproduce, :expected)
   end
-  
 end
