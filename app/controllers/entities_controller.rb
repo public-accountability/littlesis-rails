@@ -160,7 +160,7 @@ class EntitiesController < ApplicationController
       select: "*, weight() * (link_count + 1) AS link_weight",
       order: "link_weight DESC"
     )
-		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb, url: relationships_entity_path(e) } }
+		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb, url: relationships_entity_path(e), primary_ext: e.primary_ext } }
 
     if list_id = params[:exclude_list]
       entity_ids = ListEntity.where(list_id: list_id).pluck(:entity_id)
