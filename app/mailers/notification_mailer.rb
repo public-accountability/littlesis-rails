@@ -21,6 +21,7 @@ class NotificationMailer < ApplicationMailer
     @url = params.fetch('url')
     mail(to: DEFAULT_TO,
          subject: 'Flag for Review',
+         reply_to: @email,
          delivery_method_options: SMTP_OPTIONS)
   end
 
