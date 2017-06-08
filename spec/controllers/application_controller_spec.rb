@@ -26,4 +26,50 @@ describe ApplicationController, type: :controller do
       expect(result).to eq({ 'start_date' => '1999-00-00', 'last_user_id' => 1000 })
     end
   end
+
+  describe 'errors' do
+    describe 'permission errors' do
+      controller do
+        def index
+          raise Exceptions::PermissionError
+        end
+      end
+      before { get :index }
+      it { should respond_with(403) }
+      it { should render_template('errors/permission') }
+    end
+
+    describe 'NotFoundError' do
+      controller do
+        def index
+          raise Exceptions::NotFoundError
+        end
+      end
+      before { get :index }
+      it { should respond_with(404) }
+      it { should render_template('errors/not_found') }
+    end
+
+    describe 'RoutingError' do
+      controller do
+        def index
+          raise ActionController::RoutingError.new('bad route')
+        end
+      end
+      before { get :index }
+      it { should respond_with(404) }
+      it { should render_template('errors/not_found') }
+    end
+
+    describe 'RecordNotFound' do
+      controller do
+        def index
+          raise ActiveRecord::RecordNotFound
+        end
+      end
+      before { get :index }
+      it { should respond_with(404) }
+      it { should render_template('errors/not_found') }
+    end
+  end
 end

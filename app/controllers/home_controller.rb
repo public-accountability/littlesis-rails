@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact, :flag, :token]
+  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact, :flag, :token, :error]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -127,6 +127,10 @@ class HomeController < ApplicationController
     end
   end
 
+  def error
+    raise StandardError
+  end
+  
   private
 
   def redirect_to_dashboard_if_signed_in

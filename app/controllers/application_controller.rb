@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :set_paper_trail_whodunnit
 
-  rescue_from 'Exceptions::PermissionError' do |exception|
+  rescue_from Exceptions::PermissionError do |exception|
     render "errors/permission", status: 403
   end
 
@@ -16,16 +16,13 @@ class ApplicationController < ActionController::Base
     render "errors/not_found", status: 404
   end
 
-  rescue_from 'ActiveRecord::RecordNotFound' do |exception|
+  rescue_from ActiveRecord::RecordNotFound do |exception|
     render "errors/not_found", status: 404
   end
 
   rescue_from ActionController::RoutingError do |exception|
-    if Rails.env.development?
-      raise
-    else
-      exit
-    end
+    raise if Rails.env.development?
+    render "errors/not_found", status: 404
   end
 
   def admins_only

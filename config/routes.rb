@@ -28,6 +28,9 @@ Lilsis::Application.routes.draw do
   get '/flag' => 'home#flag'
   post '/flag' => 'home#flag'
 
+  get '/bug_report' => 'errors#bug_report'
+  post '/bug_report' => 'errors#file_bug_report'
+
   get "/admin" => "admin#home"
   post "/admin/clear_cache" => "admin#clear_cache"
 
@@ -263,6 +266,8 @@ Lilsis::Application.routes.draw do
   get "/home/token" => "home#token"
   get "/home/extension_path" => "home#extension_path"
 
+  get "/home/error" => "home#error"
+  
   post "/home/dismiss",
     controller: 'home',
     action: 'dismiss',

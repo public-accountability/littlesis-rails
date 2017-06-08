@@ -5,9 +5,7 @@ describe NotificationMailer, type: :mailer do
     DatabaseCleaner.start
     ActiveJob::Base.queue_adapter = :test
   end
-  after(:all) do 
-    DatabaseCleaner.clean
-  end
+  after(:all) { DatabaseCleaner.clean }
 
   describe '#contact_email' do
     before do
@@ -111,6 +109,39 @@ describe NotificationMailer, type: :mailer do
     it 'sends email later' do
       expect { @mail.deliver_later }
         .to have_enqueued_job.on_queue('mailers')
+    end
+  end
+
+  describe '#bug_report_email' do
+    before(:all) do
+      @params = {
+        'email' => 'user@littlesis.org',
+        'type' => 'Bug Report',
+        'page' => 'the bug reporting page',
+        'summary' => 'BUGS ARE EVERYWHERE',
+        'description' => 'bugs are crawling all over the place.',
+        'expected' => 'everything should be perfect always'
+      }
+
+      @mail = NotificationMailer.bug_report_email(@params)
+    end
+
+    it 'has correct subject' do
+      expect(@mail.subject).to eql 'Bug Report: BUGS ARE EVERYWHERE'
+    end
+
+    it 'has correct to' do
+      expect(@mail.to).to eq [APP_CONFIG['notification_to']]
+    end
+
+    it 'has correct from' do
+      expect(@mail.from).to eq [APP_CONFIG['notification_email']]
+    end
+
+    it 'has params contents' do
+      @params.values.each do |val|
+        expect(@mail.encoded).to include val
+      end
     end
   end
 end
