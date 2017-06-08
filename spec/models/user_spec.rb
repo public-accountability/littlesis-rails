@@ -107,4 +107,30 @@ describe User do
       end
     end
   end
+
+  describe '#importer?' do
+    context 'is importer' do
+      before do
+        @sf_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_user.id)
+        SfGuardUserPermission.create!(permission_id: 8, user_id: @sf_user.id)
+      end
+
+      it 'returns true' do
+        expect(@user.importer?).to be true
+      end
+    end
+
+    context 'is not importer' do
+      before do
+        @sf_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_user.id)
+      end
+
+      it 'returns true' do
+        expect(@user.importer?).to be false
+      end
+    end
+  end
+
 end

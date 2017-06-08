@@ -23,7 +23,7 @@ namespace :nys do
     puts "There are now #{NyDisclosure.count} disclosures"
   end
 
-  desc 'Remove all NyDisclosures expect those with matches'
+  desc 'Import new NYS filers (COMMCAND data)'
   task :filer_import, [:file] => :environment do |t, args|
     NYSCampaignFinance.insert_new_filers(args[:file])
   end

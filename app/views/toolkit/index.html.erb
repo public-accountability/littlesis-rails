@@ -1,3 +1,30 @@
 <% content_for(:page_title, 'Map the Power') %>
+<% content_for(:table_of_contents, true) %>
 
-<%= raw @data %>
+
+<div class="row">
+    <div class="col-sm-12">
+	<%= image_tag "map_the_power_RGB.gif",  class: 'img-responsive center-block' %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 col-sm-offset-1 col-md-8 col-md-offset-2">
+	<div id="index-menu">
+	    <%= render partial: 'links' %>
+	</div>
+    </div>
+</div>
+
+
+<div class="row toe-row">
+    <div class="col-sm-12 col-sm-offset-1 col-md-8 col-md-offset-2">
+	    <h2>Map the Power Toolkit</h2>
+	    <p>This toolkit has been designed to provide people with the tools to conduct power research and develop a research pod, or crew of folks, that have the skills to investigate local corporate bodies and organize against them. You can use this toolkit as a starting point for organizing around a common target with your neighbors and friends, or to strengthen the work of your organization!</p>
+	    <div>
+		<%= raw @data %>
+	    </div>
+    </div>
+</div>
+
+

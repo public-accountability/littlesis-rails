@@ -1,44 +1,75 @@
 <div class="col-md-3 col-sm-3" id="about-sidebar">
     <div class="row thin-grey-bottom-border">
         <h3 class="text-center"><%= @entity.name %></h3>
-        <% cache @entity.person do %>
-            <%= render partial: 'about_sidebar', locals: { person: @entity.person } %>
-        <% end %>
+	<% if @entity.person? %>
+            <% cache @entity.person do %>
+		<%= render partial: 'about_sidebar', locals: { person: @entity.person } %>
+            <% end %>
+	<% end %>
     </div>
     <br>
-    <% if @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').present? %>
-        <div class="row text-center">
-            <p class=""><strong>Positions</strong></p>
-            <% @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').each do |r|  %>
-                <% cache r do %>
-                    <%= render partial: 'position', locals: { relationship: r } %>
-                <% end %>
-            <% end %>
-        </div>
+
+    <!-- This section was made before the SortedLinks class was written -->
+    <!-- Eventually we should replace this with a common sorted links section that works for both People and Orgs-->
+    <% if @entity.person? %>
+	
+	
+	<% if @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').present? %>
+            <div class="row text-center">
+		<p class=""><strong>Positions</strong></p>
+		<% @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').each do |r|  %>
+                    <% cache r do %>
+			<%= render partial: 'position', locals: { relationship: r } %>
+                    <% end %>
+		<% end %>
+            </div>
+	<% end %>
+
+	<% if @entity.relationships.where(category_id: 2).present? %>
+            <div class="row text-center">
+		<p><strong>Education</strong></p>
+		<% @entity.relationships.where(category_id: 2).each do |r|  %>
+                    <% cache r do %>
+			<%= render partial: 'position', locals: { relationship: r } %>
+                    <% end %>
+		<% end %>
+            </div>    
+	<% end %>
+
+	<% if @entity.relationships.where(category_id: 4).present? %>
+            <div class="row text-center">
+		<p><strong>Family</strong></p>
+		<% @entity.relationships.where(category_id: 4).each do |r|  %>
+                    <% cache r do %>
+			<% family_details = RelationshipDetails.new(r).family_details_for(@entity) %>
+			<% unless family_details.nil?  %>
+			    <p><%= family_details[1]  %><br><span class="text-primary"><%= rel_link(r, family_details[0]) %></span></p>
+			<% end %>
+                    <% end %>
+		<% end %>
+            </div>
+	<% end %>
     <% end %>
 
-    <% if @entity.relationships.where(category_id: 2).present? %>
-        <div class="row text-center">
-            <p><strong>Education</strong></p>
-            <% @entity.relationships.where(category_id: 2).each do |r|  %>
-                <% cache r do %>
-                    <%= render partial: 'position', locals: { relationship: r } %>
-                <% end %>
-            <% end %>
-        </div>    
+    
+    <% if @entity.org? %>
+	<% cache ['match_sidebar_org', @entity.alt_cache_key] do %>
+	    <% sorted_links = SortedLinks.new(@entity) %>
+	    <% if sorted_links.staff.count > 0 %>
+		<div class="row text-center">
+		    <p><strong>Staff</strong></p>
+		    <% sorted_links.staff.links.flatten.map(&:relationship).slice(0,8).each do |r| %>
+			<% other_entity = r.entity_related_to(@entity) %>
+			<p><%= other_entity.name  %>
+			    <br>
+			    <span class="text-primary"><%= rel_link(r, r.title) %></span>
+			</p>
+		    <% end  %>
+		</div>
+	    <% end  %>
+	<% end  %>
     <% end %>
 
-    <% if @entity.relationships.where(category_id: 4).present? %>
-        <div class="row text-center">
-            <p><strong>Family</strong></p>
-            <% @entity.relationships.where(category_id: 4).each do |r|  %>
-                <% cache r do %>
-		    <% family_details = RelationshipDetails.new(r).family_details_for(@entity) %>
-		    <% unless family_details.nil?  %>
-			<p><%= family_details[1]  %><br><span class="text-primary"><%= rel_link(r, family_details[0]) %></span></p>
-		    <% end %>
-                <% end %>
-            <% end %>
-        </div>
-    <% end %>
+
+    
 </div>

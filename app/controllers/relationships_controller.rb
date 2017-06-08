@@ -100,7 +100,7 @@ class RelationshipsController < ApplicationController
 
   def find_similar
     if has_required_find_similar_params?
-      render json: Relationship.find_similar(similar_relationships_params)
+      render json: Relationship.find_similar(similar_relationships_params).map { |r| r.as_json(:url => true) }
     else
       head :bad_request
     end

@@ -47,6 +47,8 @@ class HomeController < ApplicationController
   def token
     if user_signed_in?
       render :inline => "<%= csrf_meta_tags %>"
+    elsif Rails.env.development?
+      render :inline => '<meta name="csrf-param" content="authenticity_token" /><meta name="csrf-token" content="CSRF-TOKEN-FOR-TESTING" />'
     else
       head :unauthorized
     end

@@ -47,6 +47,10 @@
 		<%= link_to 'Network Search', @entity.legacy_url('networkSearch') %>
 		<br />
 		<%= link_to 'Find Connections', @entity.legacy_url('findConnections') %>
+		<% if current_user.importer? || current_user.admin? %>
+		    <br />
+		    <%= link_to 'Match NY Donations', match_ny_donations_entity_path(@entity) %>
+		<% end %>
 	    </div>
 	</div>
     <% end %>

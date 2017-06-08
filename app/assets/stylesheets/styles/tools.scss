@@ -25,12 +25,23 @@
 /* } */
 
 .table-add {
-  color: #070;
   cursor: pointer;
   &:hover {
     color: #0b0;
-  }
+  } 
+  
+  span.glyphicon {
+      color: #070;
+  } 
 }
+
+#table caption {
+    input[type=file] {
+	display: inline;
+	margin-left: 2em;
+    }
+}
+
 
 .table-editable {
   position: relative;

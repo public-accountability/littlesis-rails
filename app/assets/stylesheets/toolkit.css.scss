@@ -12,6 +12,7 @@ $article_width: 822px;
 $image_left_margin: 166px;
 $heading_color: #201747;
 $paragraph_color: #828181;
+$footer_background_color: rgba(36,39,42,0.06);
 
 /* CUSTOM BOOTSTRAP VARIABLES  */
 $grid-gutter-width: 30px;
@@ -29,6 +30,82 @@ body {
     font-family: 'Montserrat', sans-serif;
 }
 
+
+/* Table of Contents Page */
+
+.splash-logo-img-container {
+    height: 600px;
+    margin: 0 auto;
+}
+
+div.toe-row {
+    padding-bottom: 5em;
+}
+
+#index-menu {
+    margin-bottom: 1em;
+
+    ul {
+	display: inline-table;
+    }
+
+    li {
+	display: inline;
+	list-style-type: none;
+    }
+
+    li:not(:first-child) {
+	padding-left: 1em;
+    }
+    
+}
+
+/* Footer */
+
+#toolkit-footer {
+    background-color: $footer_background_color;
+    margin-bottom: 0;
+
+    li {
+
+	display: inline;
+	list-style-type: none;
+	padding-right: 20px;
+
+	a {
+	    color: $navbar_text_color;
+	    @media (min-width: $screen-sm-min) {
+		font-size: 14px;
+	    }
+
+	    @media (min-width: $screen-md-min) {
+		font-size: 18px;
+	    }
+	    
+	}
+    }
+
+
+    .littlesis-logo {
+	width: 157px;
+	height: 33px;
+	margin-bottom: 1em;
+    }
+
+    p {
+	font-size: 12px;
+	color: #555;
+    }
+
+    h3 {
+	font-size: 14px;
+    }
+
+}
+
+
+/* Header */
+
 nav.navbar  {
     max-height: $navbar-height;
     background-color: $navbar_background_color;
@@ -37,30 +114,33 @@ nav.navbar  {
     border-color: #C6BCD4;
 }
 
+
 .navbar-container {
     display: block;
     height: $navbar-height;
 }
 
 .navbar-image {
-    
+
     @media (min-width: $screen-sm-min) {
-	margin-left: $image_left_margin - 100px;
+	max-width: 50px;
     }
 
     @media (min-width: $screen-md-min) {
-	margin-left: $image_left_margin;
+	max-width: 55px;
     }
 
-    
+    @media (min-width: $screen-lg-min) {
+	max-width: 65px;
+    }
+
     float: left;
-    height: 100%;
-    width: 120px;
-    /* overflow: hidden; */
+    height: 50%;
     
     img {
+	position: relative;
+	top: 50%;
     	height: 100%;
-    	width: auto;
     }
 }
 
@@ -68,19 +148,27 @@ nav.navbar  {
     display: inline;
     float: right;
     position: relative;
-    top: 25px;
+    top: 22px;
     
     @media (min-width: $screen-sm-min) {
-	right: 8em;
+	right: 1em;
+
+	li {
+    	    margin-left: 0;
+	}
+
     }
 
     @media (min-width: $screen-md-min) {
-	right: 14em;
+	right: 2em;
+	
+	li {
+    	    margin-left: 1em;
+	}
     }
-    
 
-    li {
-    	margin-left: 1em;
+    @media (min-width: $screen-lg-min) {
+	right: 3em;
     }
 
     a:hover {
@@ -92,6 +180,8 @@ nav.navbar  {
     color: $navbar_text_color;
     font-size: 16px;
 }
+
+/* PAGE */
 
 h1 {
     font-size: 36px;
@@ -120,4 +210,10 @@ hr {
 .toc-link {
     font-size: 11px;
     line-height: 28px;
+}
+
+#container {
+    img {
+	max-width: 100%;
+    }
 }

@@ -153,3 +153,12 @@ utility.validURL = function(str) {
     var pattern = RegExp('^(https?:\/\/)(.+)[\.]{1}.+$');
     return pattern.test(str);
 };
+
+
+/**
+ * Determines if the browser has the ability to open and read files
+ * @returns {Boolean} 
+ */
+utility.fileOpeningAbilities = function() {
+    return (window.File && window.FileReader && window.FileList && window.Blob);
+};
