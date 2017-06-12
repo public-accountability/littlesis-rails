@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170508151516) do
+ActiveRecord::Schema.define(version: 20170612163321) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -829,7 +829,7 @@ ActiveRecord::Schema.define(version: 20170508151516) do
     t.string   "report_id",                 limit: 255
     t.string   "transaction_code",          limit: 1,                  null: false
     t.string   "e_year",                    limit: 4,                  null: false
-    t.integer  "transaction_id",            limit: 4,                  null: false
+    t.integer  "transaction_id",            limit: 8,                  null: false
     t.date     "schedule_transaction_date"
     t.date     "original_date"
     t.string   "contrib_code",              limit: 4
@@ -868,11 +868,11 @@ ActiveRecord::Schema.define(version: 20170508151516) do
 
   create_table "ny_disclosures_staging", force: :cascade do |t|
     t.string   "filer_id",                  limit: 10,  null: false
-    t.string   "report_id",                 limit: 255
+    t.string   "report_id",                 limit: 1,   null: false
     t.string   "transaction_code",          limit: 1,   null: false
     t.string   "e_year",                    limit: 4,   null: false
-    t.integer  "transaction_id",            limit: 4,   null: false
-    t.date     "schedule_transaction_date"
+    t.integer  "transaction_id",            limit: 8,   null: false
+    t.date     "schedule_transaction_date",             null: false
     t.date     "original_date"
     t.string   "contrib_code",              limit: 4
     t.string   "contrib_type_code",         limit: 1
@@ -1355,7 +1355,6 @@ ActiveRecord::Schema.define(version: 20170508151516) do
   add_index "relationship", ["entity1_id", "category_id"], name: "entity1_category_idx", using: :btree
   add_index "relationship", ["entity1_id", "entity2_id"], name: "entity_idx", using: :btree
   add_index "relationship", ["entity1_id"], name: "entity1_id_idx", using: :btree
-  add_index "relationship", ["entity2_id", "category_id", "amount"], name: "entity2_cat_amount", using: :btree
   add_index "relationship", ["entity2_id"], name: "entity2_id_idx", using: :btree
   add_index "relationship", ["is_deleted", "entity2_id", "category_id", "amount"], name: "index_relationship_is_d_e2_cat_amount", using: :btree
   add_index "relationship", ["last_user_id"], name: "last_user_id_idx", using: :btree
