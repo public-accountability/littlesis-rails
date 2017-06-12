@@ -61,7 +61,7 @@ describe 'RelationshipValidator' do
 
       it 'sets error message' do
         @rel.valid?
-        expect(@rel.errors[:category]).to eq ["Ownership is a not a valid category for Person to Person relationships"]
+        expect(@rel.errors[:category]).to eq ["Ownership is not a valid category for Person to Person relationships"]
       end
     end
 
@@ -78,7 +78,7 @@ describe 'RelationshipValidator' do
 
       it 'sets error message' do
         @rel.valid?
-        expect(@rel.errors[:category]).to eq ["Family is a not a valid category for Person to Org relationships"]
+        expect(@rel.errors[:category]).to eq ["Family is not a valid category for Person to Org relationships"]
       end
     end
 
@@ -95,7 +95,7 @@ describe 'RelationshipValidator' do
 
       it 'sets error message' do
         @rel.valid?
-        expect(@rel.errors[:category]).to eq ["Family is a not a valid category for Org to Org relationships"]
+        expect(@rel.errors[:category]).to eq ["Family is not a valid category for Org to Org relationships"]
       end
     end
 
@@ -112,7 +112,7 @@ describe 'RelationshipValidator' do
 
       it 'sets error message' do
         @rel.valid?
-        expect(@rel.errors[:category]).to eq ["Position is a not a valid category for Org to Person relationships"]
+        expect(@rel.errors[:category]).to eq ["Position is not a valid category for Org to Person relationships"]
       end
     end
     

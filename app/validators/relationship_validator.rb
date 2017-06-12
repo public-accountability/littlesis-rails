@@ -38,7 +38,7 @@ class RelationshipValidator < ActiveModel::Validator
   private
   
   def error_msg(cat_id, rel_direction)
-    "#{Relationship.all_categories[cat_id]} is a not a valid category for #{rel_direction} relationships"
+    "#{Relationship.all_categories[cat_id]} is not a valid category for #{rel_direction} relationships"
   end
   
 end

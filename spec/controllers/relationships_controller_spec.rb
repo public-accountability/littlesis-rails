@@ -120,13 +120,13 @@ describe RelationshipsController, type: :controller do
         expect(JSON.parse(response.body)['relationship']).to have_key 'category_id'
       end
 
-      it 'responds with 400 if reference source' do
-        post :create, example_params.tap { |x| x[:reference].delete(:source) }
+      it 'responds with 400 if missing reference source' do
+        post :create, example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:source) }
         expect(response.status).to eq 400
       end
 
       it 'sends error json with reference params' do
-        post :create, example_params.tap { |x| x[:reference].delete(:source) }
+        post :create,  example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:source) }
         expect(JSON.parse(response.body)).to have_key 'relationship'
         expect(JSON.parse(response.body)).to have_key 'reference'
         expect(JSON.parse(response.body)['reference']). to have_key 'source'

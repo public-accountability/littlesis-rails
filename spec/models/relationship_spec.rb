@@ -54,7 +54,10 @@ describe Relationship, type: :model do
 
     describe 'Date Validation' do
       def rel(attr)
-        build(:relationship, {category_id: 12, entity1_id: 123, entity2_id: 456}.merge(attr) )
+        r = build(:relationship, {category_id: 12, entity1_id: 123, entity2_id: 456}.merge(attr) )
+        allow(r).to receive(:entity).and_return(double('person double', :person? => true, :org? => false))
+        allow(r).to receive(:related).and_return(double('person double', :person? => true, :org? => false))
+        r
       end
       it 'accepts good dates' do
         expect(rel(start_date: '2000-00-00').valid?).to be true
@@ -69,6 +72,25 @@ describe Relationship, type: :model do
         expect(rel(end_date: '2017').valid?).to be false
         expect(rel(start_date: '').valid?).to be false
       end
+    end
+
+    describe 'Relationship Validations' do
+
+      it 'validates position relationship' do
+        person = create(:person)
+        org = create(:org)
+        rel = Relationship.new(category_id: 1, entity: person, related: org)
+        expect(rel.valid?).to eq true
+      end
+
+      it 'fails to validate bad HIERARCHY_CATEGORY relationship' do
+        person1 = create(:person)
+        person2 = create(:person)
+        rel = Relationship.new(category_id: 11, entity: person1, related: person2)
+        expect(rel.valid?).to eq false
+        expect(rel.errors.full_messages[0]).to eql 'Category Hierarchy is not a valid category for Person to Person relationships'
+      end
+      
     end
   end
 
@@ -376,7 +398,7 @@ describe Relationship, type: :model do
     end
 
     it 'returns "None" for a relationship that is not a position or a membership' do
-      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @corp.id, category_id: 4)
+      rel = Relationship.create!(entity1_id: @human_1.id, entity2_id: @corp.id, category_id: 5)
       expect(rel.position_or_membership_type).to eql 'None'
     end
 
