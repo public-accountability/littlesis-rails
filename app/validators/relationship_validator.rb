@@ -9,12 +9,30 @@ class RelationshipValidator < ActiveModel::Validator
     return unless rel.entity1_id.present? && rel.entity2_id.present? && rel.category_id.present?
 
     if rel.entity.person? && rel.related.person?
+
       unless RelationshipValidator::PERSON_TO_PERSON.include?(rel.category_id)
         rel.errors[:category] << error_msg(rel.category_id, 'Person to Person')
       end
-    end
 
-    
+    elsif rel.entity.person? && rel.related.org?
+
+      unless RelationshipValidator::PERSON_TO_ORG.include?(rel.category_id)
+        rel.errors[:category] << error_msg(rel.category_id, 'Person to Org')
+      end
+
+    elsif rel.entity.org? && rel.related.org?
+
+      unless RelationshipValidator::ORG_TO_ORG.include?(rel.category_id)
+        rel.errors[:category] << error_msg(rel.category_id, 'Org to Org')
+      end
+
+    elsif rel.entity.org? && rel.related.person?
+
+      unless RelationshipValidator::ORG_TO_PERSON.include?(rel.category_id)
+        rel.errors[:category] << error_msg(rel.category_id, 'Org to Person')
+      end
+
+    end
   end
 
   private
