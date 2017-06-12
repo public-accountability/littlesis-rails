@@ -1578,7 +1578,8 @@ CREATE TABLE `ny_disclosures` (
   KEY `index_ny_disclosures_on_e_year` (`e_year`),
   KEY `index_ny_disclosures_on_contrib_code` (`contrib_code`),
   KEY `index_ny_disclosures_on_original_date` (`original_date`),
-  KEY `index_ny_disclosures_on_delta` (`delta`)
+  KEY `index_ny_disclosures_on_delta` (`delta`),
+  KEY `index_filer_report_trans_date_e_year` (`filer_id`,`report_id`,`transaction_id`,`schedule_transaction_date`,`e_year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3017,7 +3018,7 @@ CREATE TABLE `versions` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-12 16:37:40
+-- Dump completed on 2017-06-12 17:30:23
 INSERT INTO schema_migrations (version) VALUES ('20131031182415');
 
 INSERT INTO schema_migrations (version) VALUES ('20131031182500');
@@ -3219,4 +3220,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170427180140');
 INSERT INTO schema_migrations (version) VALUES ('20170508151516');
 
 INSERT INTO schema_migrations (version) VALUES ('20170612163321');
+
+INSERT INTO schema_migrations (version) VALUES ('20170612172624');
 

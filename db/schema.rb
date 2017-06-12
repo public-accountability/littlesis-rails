@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170612163321) do
+ActiveRecord::Schema.define(version: 20170612172624) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -863,6 +863,7 @@ ActiveRecord::Schema.define(version: 20170612163321) do
   add_index "ny_disclosures", ["contrib_code"], name: "index_ny_disclosures_on_contrib_code", using: :btree
   add_index "ny_disclosures", ["delta"], name: "index_ny_disclosures_on_delta", using: :btree
   add_index "ny_disclosures", ["e_year"], name: "index_ny_disclosures_on_e_year", using: :btree
+  add_index "ny_disclosures", ["filer_id", "report_id", "transaction_id", "schedule_transaction_date", "e_year"], name: "index_filer_report_trans_date_e_year", using: :btree
   add_index "ny_disclosures", ["filer_id"], name: "index_ny_disclosures_on_filer_id", using: :btree
   add_index "ny_disclosures", ["original_date"], name: "index_ny_disclosures_on_original_date", using: :btree
 
@@ -900,6 +901,12 @@ ActiveRecord::Schema.define(version: 20170612163321) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "ny_disclosures_staging", ["e_year"], name: "index_ny_disclosures_staging_on_e_year", using: :btree
+  add_index "ny_disclosures_staging", ["filer_id"], name: "index_ny_disclosures_staging_on_filer_id", using: :btree
+  add_index "ny_disclosures_staging", ["report_id"], name: "index_ny_disclosures_staging_on_report_id", using: :btree
+  add_index "ny_disclosures_staging", ["schedule_transaction_date"], name: "index_ny_disclosures_staging_on_schedule_transaction_date", using: :btree
+  add_index "ny_disclosures_staging", ["transaction_id"], name: "index_ny_disclosures_staging_on_transaction_id", using: :btree
 
   create_table "ny_filer_entities", force: :cascade do |t|
     t.integer  "ny_filer_id",    limit: 4
