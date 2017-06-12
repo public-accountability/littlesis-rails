@@ -61,15 +61,13 @@ module NYSCampaignFinance
 
     trim_data_sql = "DELETE FROM #{STAGING_TABLE_NAME} WHERE transaction_code NOT IN ('A', 'B', 'C', 'D')"
     puts "executing sql: \n\n#{load_data_sql}\n\n"
-    ActiveRecord::Base.connection.execute(load_data_sql) #unless dry_run
+    ActiveRecord::Base.connection.execute(load_data_sql) unless dry_run
     puts "executing sql: \n\n#{trim_data_sql}\n\n"
-    ActiveRecord::Base.connection.execute(trim_data_sql) #unless dry_run
+    ActiveRecord::Base.connection.execute(trim_data_sql) unless dry_run
     puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
 
-  # loops through all dislocsures in the staging table
-  # determining if they are new and inserts the new
-  # disclosures in to the regular ny_disclosures table
+  # Inserts disclosures from the staging table tht don't already exist
   def self.insert_new_disclosures(dry_run = false)
     puts "THIS IS A DRY RUN" if dry_run
     puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
@@ -78,77 +76,44 @@ module NYSCampaignFinance
     # Skip index processing while importing data
     ThinkingSphinx::Callbacks.suspend!
 
-    stats = {
-      :new_disclosures_saved => 0,
-      :invalid_new_disclosures => 0,
-      :existing_disclosures_skipped => 0
-    }
+    stats = { :new_disclosures_saved => 0, :invalid_new_disclosures => 0 }
 
-    offset = 0
-    complete = false
-    until complete
-      batch = get_staging_batch(offset)
-      offset += 2000
-      complete = true if batch.size.zero?
-      import_disclosure_batch(batch, stats, dry_run)
-      print_stats(offset, stats)
+    staging_disclosure_ids = staging_disclosures_to_add
+    puts "There are #{staging_disclosure_ids.count} disclosures to add"
+    puts "Skipping #{row_count - staging_disclosure_ids.count} disclosures that already exist"
+
+    staging_disclosure_ids.each_with_index do |staging_id, idx|
+      disclosure = NyDisclosure.find_by_sql("SELECT * FROM #{STAGING_TABLE_NAME} where id = #{staging_id} LIMIT 1")[0].dup
+      if disclosure.valid?
+        disclosure.delta = true # required by ThinkingSphinx; mysql will raise error unless this is set.
+        disclosure.save unless dry_run
+        stats[:new_disclosures_saved] += 1
+      else
+        stats[:invalid_new_disclosures] += 1
+      end
+
+      print "." if (idx % 5000).zero?
+      print "\n #{ (idx / Float(staging_disclosure_ids.count) * 100).round }% Complete\n" if (idx % 50_000).zero?
     end
-
+    
     ThinkingSphinx::Callbacks.resume!
     puts "Inserted #{stats[:new_disclosures_saved]} new disclosures into the database"
-    puts "Skipped #{stats[:existing_disclosures_skipped]} that already exist"
     puts "Skipped #{stats[:invalid_new_disclosures]} invalid new disclosures"
     puts "There are now #{NyDisclosure.count} rows in ny_disclosures"
   end
 
-  # We are looping through the disclosures in batches of 2000
-  # in order to limit memory usege
-  def self.get_staging_batch(offset)
-    # This is something of ActiveRecord hack.
-    # We are instantiating versions of NyDisclosures from
-    # the staging stable instead of from the normal table.
-    NyDisclosure.find_by_sql("SELECT * FROM #{STAGING_TABLE_NAME} ORDER BY id ASC LIMIT 2000 OFFSET #{offset}")
-  end
-
-  # [ <NyDisclosure> ], Hash -> 
-  def self.import_disclosure_batch(batch, stats, dry_run = false)
-    batch.each do |d|
-      # these are shadow NyDisclosures, created from
-      # the staging table, so we need to duplicate them
-      # in order for ActiveRecord not to get confused
-      new_disclosure = d.dup
-      if new_disclosure.valid?
-
-        # look for existing disclosures
-        nyd = NyDisclosure.find_by(
-          filer_id: new_disclosure.filer_id,
-          report_id: new_disclosure.report_id,
-          transaction_id: new_disclosure.transaction_id,
-          transaction_code: new_disclosure.transaction_code,
-          schedule_transaction_date: new_disclosure.schedule_transaction_date,
-          e_year: new_disclosure.e_year
-        )
-
-        # if we couldn't find one, save the new one
-        if nyd.nil?
-          new_disclosure.delta = true # required by ThinkingSphinx; mysql will raise error unless this is set.
-          new_disclosure.save unless dry_run
-          stats[:new_disclosures_saved] += 1
-        else
-          stats[:existing_disclosures_skipped] += 1
-        end
-
-      # the new disclosure isn't valid
-      else
-        puts "Invalid disclosure: #{new_disclosure.errors.full_messages.join(',')}"
-        puts "\n#{new_disclosure.attributes.to_json}\n"
-        stats[:invalid_new_disclosures] += 1
-      end
-    end # end loop through batch
-  end
-
-  def self.print_stats(offset, stats)
-    pp(stats) if (offset % 20000).zero?
+  # -> Array of Ints
+  def self.staging_disclosures_to_add
+    sql = "SELECT staging.id
+           FROM ny_disclosures_staging staging
+           LEFT JOIN ny_disclosures main
+           ON staging.filer_id = main.filer_id
+           AND staging.report_id = main.report_id
+           AND staging.transaction_id = main.transaction_id
+           AND staging.schedule_transaction_date = main.schedule_transaction_date
+           AND staging.e_year = main.e_year
+           WHERE main.filer_id IS NULL;"
+    ActiveRecord::Base.connection.execute(sql).to_a.flatten
   end
 
   def self.insert_new_filers(file_path)

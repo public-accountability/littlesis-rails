@@ -4,10 +4,15 @@ require Rails.root.join('lib', 'task-helpers', 'nys_campaign_finance.rb')
 describe 'NYSCampaignFinance' do
   describe 'insert_new_disclosures' do
     it 'loops through batches' do
-      expect(NYSCampaignFinance).to receive(:get_staging_batch).with(0).and_return(['data'])
-      expect(NYSCampaignFinance).to receive(:get_staging_batch).with(2000).and_return([])
-      expect(NYSCampaignFinance).to receive(:import_disclosure_batch).twice.with(kind_of(Array), kind_of(Hash), false)
-      expect(NYSCampaignFinance).to receive(:row_count).and_return('a lot of')
+      expect(NYSCampaignFinance).to receive(:row_count).twice.and_return(2)
+      expect(NYSCampaignFinance).to receive(:staging_disclosures_to_add).and_return([1,2])
+      expect(NyDisclosure).to receive(:find_by_sql)
+                               .with("SELECT * FROM #{NYSCampaignFinance::STAGING_TABLE_NAME} where id = 1 LIMIT 1")
+                               .and_return( [ build(:ny_disclosure) ] )
+      expect(NyDisclosure).to receive(:find_by_sql)
+                               .with("SELECT * FROM #{NYSCampaignFinance::STAGING_TABLE_NAME} where id = 2 LIMIT 1")
+                               .and_return( [ build(:ny_disclosure, report_id: 'B') ] )
+
       NYSCampaignFinance.insert_new_disclosures
     end
   end
