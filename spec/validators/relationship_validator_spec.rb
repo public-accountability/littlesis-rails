@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe 'RelationshipValidator' do
+  puts RelationshipValidator::VALID_CATEGORIES
   class RelTester <
     include ActiveModel::Validations
     attr_accessor :entity1_id
@@ -12,7 +13,7 @@ describe 'RelationshipValidator' do
 
     def related; end
   end
-
+  
   describe 'Constants' do
     it 'has VALID_CATEGORIES constant' do
       expect(RelationshipValidator::VALID_CATEGORIES).to be_a Hash
@@ -24,9 +25,13 @@ describe 'RelationshipValidator' do
 
     it 'has other constants' do
       expect(RelationshipValidator::PERSON_TO_PERSON).to be_a Array
+      expect(RelationshipValidator::PERSON_TO_PERSON).to include 4
       expect(RelationshipValidator::PERSON_TO_ORG).to be_a Array
+      expect(RelationshipValidator::PERSON_TO_ORG).to include 1
       expect(RelationshipValidator::ORG_TO_ORG).to be_a Array
+      expect(RelationshipValidator::ORG_TO_ORG).to include 12
       expect(RelationshipValidator::ORG_TO_PERSON).to be_a Array
+      expect(RelationshipValidator::ORG_TO_PERSON).to include 12
     end
   end
 
