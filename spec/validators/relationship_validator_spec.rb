@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 describe 'RelationshipValidator' do
-  puts "RelationshipValidator::VALID_CATEGORIES:"
-  puts RelationshipValidator::VALID_CATEGORIES
   class RelTester <
     include ActiveModel::Validations
     attr_accessor :entity1_id
@@ -14,29 +12,44 @@ describe 'RelationshipValidator' do
 
     def related; end
   end
-  
-  describe 'Constants' do
-    it 'has VALID_CATEGORIES constant' do
-      expect(RelationshipValidator::VALID_CATEGORIES).to be_a Hash
-      expect(RelationshipValidator::VALID_CATEGORIES).to have_key :person_to_person
-      expect(RelationshipValidator::VALID_CATEGORIES).to have_key :person_to_org
-      expect(RelationshipValidator::VALID_CATEGORIES).to have_key :org_to_org
-      expect(RelationshipValidator::VALID_CATEGORIES).to have_key :org_to_person
+
+  describe 'Class Methods' do
+    it 'has valid_categories' do
+      expect(RelationshipValidator.valid_categories).to be_a Hash
+      expect(RelationshipValidator.valid_categories).to have_key :person_to_person
+      expect(RelationshipValidator.valid_categories).to have_key :person_to_org
+      expect(RelationshipValidator.valid_categories).to have_key :org_to_org
+      expect(RelationshipValidator.valid_categories).to have_key :org_to_person
     end
 
-    it 'has other constants' do
-      expect(RelationshipValidator::PERSON_TO_PERSON).to be_a Array
-      expect(RelationshipValidator::PERSON_TO_PERSON.length).to be < 12
-      expect(RelationshipValidator::PERSON_TO_ORG).to be_a Array
-      expect(RelationshipValidator::PERSON_TO_ORG.length).to be < 12
-      expect(RelationshipValidator::ORG_TO_ORG).to be_a Array
-      expect(RelationshipValidator::ORG_TO_ORG.length).to be < 12
-      expect(RelationshipValidator::ORG_TO_PERSON).to be_a Array
-      expect(RelationshipValidator::ORG_TO_PERSON.length).to be < 12
+    it 'memoizes @valid_categories' do
+      class TestRelationshipValidator < RelationshipValidator; end
+      expect(RelationshipCategory).to receive(:valid_categories).once.and_return({})
+      expect(TestRelationshipValidator.valid_categories).to be_a Hash
+      expect(TestRelationshipValidator.valid_categories).to be_a Hash
     end
 
+    it 'has person_to_person' do
+      expect(RelationshipValidator.person_to_person).to be_a Array
+      expect(RelationshipValidator.person_to_person.length).to be < 12
+    end
+
+    it 'has person_to_org' do
+      expect(RelationshipValidator.person_to_org).to be_a Array
+      expect(RelationshipValidator.person_to_org.length).to be < 12
+    end
+
+    it 'has org_to_org' do
+      expect(RelationshipValidator.org_to_org).to be_a Array
+      expect(RelationshipValidator.org_to_org.length).to be < 12
+    end
+
+    it 'has org_to_person' do
+      expect(RelationshipValidator.org_to_person).to be_a Array
+      expect(RelationshipValidator.org_to_person.length).to be < 12
+    end
   end
-  
+
   describe 'invalid relationships' do
     def tester(cat)
       rel = RelTester.new
