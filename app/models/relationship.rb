@@ -62,6 +62,7 @@ class Relationship < ActiveRecord::Base
   validates_presence_of :entity1_id, :entity2_id, :category_id
   validates :start_date, length: { maximum: 10 }, date: true
   validates :end_date, length: { maximum: 10 }, date: true
+  validates_with RelationshipValidator
 
   after_create :create_category, :create_links
   # This callback is basically a modified version of :touch => true
