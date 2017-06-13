@@ -133,12 +133,38 @@ describe RelationshipsController, type: :controller do
         expect(JSON.parse(response.body)['relationship']).not_to have_key 'category_id'
       end
 
-      it 'sends error json with reference & relationship params' do 
+      it 'sends error json with reference & relationship params' do
         post :create, example_params.tap { |x| x[:reference].delete(:source) }.tap { |x| x[:relationship].delete(:category_id) }
         expect(JSON.parse(response.body)['reference']).to have_key 'source'
         expect(JSON.parse(response.body)['relationship']).to have_key 'category_id'
       end
-    end 
+    end
+
+    context 'submitting relationship with is_current values' do
+      it 'should create a new relationship with given a yes value' do
+        expect do
+          post :create, example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'YES' }
+        end.to change { Relationship.count }.by(1)
+        id_of_created_relationship = JSON.parse(response.body)['relationship_id']
+        expect(Relationship.find(id_of_created_relationship).is_current).to eq true
+      end
+
+      it 'should create a new relationship with given a NO value' do
+        expect do
+          post :create, example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'NO' }
+        end.to change { Relationship.count }.by(1)
+        id_of_created_relationship = JSON.parse(response.body)['relationship_id']
+        expect(Relationship.find(id_of_created_relationship).is_current).to eq false
+      end
+
+      it 'should create a new relationship with given a NULL value' do
+        expect do
+          post :create, example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'NULL' }
+        end.to change { Relationship.count }.by(1)
+        id_of_created_relationship = JSON.parse(response.body)['relationship_id']
+        expect(Relationship.find(id_of_created_relationship).is_current).to be nil
+      end
+    end
 
     describe 'params' do
       before do
@@ -148,7 +174,7 @@ describe RelationshipsController, type: :controller do
       end
 
       it do
-        should permit(:entity1_id, :entity2_id, :category_id)
+        should permit(:entity1_id, :entity2_id, :category_id, :is_current)
                 .for(:create, params: example_params).on(:relationship)
       end
 
