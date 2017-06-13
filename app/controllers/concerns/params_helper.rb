@@ -1,4 +1,9 @@
 module ParamsHelper
+  YES_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'True', 'yes', 'Yes', 'YES', 'Y', 'y'].to_set.freeze
+  NO_VALUES = [false, 0, '0', '00', 'f', 'F', 'false', 'False', 'FALSE', 'NO', 'no', 'No', 'n'].to_set.freeze
+
+  private_constant :YES_VALUES
+  private_constant :NO_VALUES
 
   protected
 
@@ -36,7 +41,14 @@ module ParamsHelper
     new_h
   end
 
-  def is_current_helper
+  def is_current_helper(val)
+    if YES_VALUES.include?(val)
+      true
+    elsif NO_VALUES.include?(val)
+      false
+    else
+      nil
+    end
   end
 
 end
