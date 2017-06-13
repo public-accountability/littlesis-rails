@@ -21,9 +21,18 @@ describe ApplicationController, type: :controller do
   end
 
   describe 'prepare_update_params' do
+    let(:params) do
+      ActionController::Parameters.new({'start_date' => '1999'}).permit(:start_date)
+    end
+
     it 'returns hash with last_user_id and converted dates' do
-      result = TestController.new.send(:prepare_update_params, { 'start_date' => '1999' })
+      result = TestController.new.send(:prepare_update_params, params)
       expect(result).to eq({ 'start_date' => '1999-00-00', 'last_user_id' => 1000 })
+    end
+
+    it 'returns HashWithIndifferentAccess' do
+      result = TestController.new.send(:prepare_update_params, params)
+      expect(result).to be_a ActiveSupport::HashWithIndifferentAccess
     end
   end
 

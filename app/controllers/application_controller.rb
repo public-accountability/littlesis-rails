@@ -122,12 +122,12 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  # modifies params to be passed to Relationship.update or Entity.update
+  # modifies params to be passed to Relationship.update, Relationship.new, or Entity.update
   #  - converts blank_values to nil
   #  - adds last_user_id
   #  - processes start and end dates
   def prepare_update_params(update_params)
-    params = blank_to_nil(update_params.to_h)
+    params = ActiveSupport::HashWithIndifferentAccess.new(blank_to_nil(update_params))
     params['start_date'] = LsDate.convert(params['start_date']) if update_params.key?('start_date')
     params['end_date'] = LsDate.convert(params['end_date']) if update_params.key?('end_date')
     params['last_user_id'] = current_user.sf_guard_user_id
