@@ -1,44 +1,12 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
-
-# c = Campaign.where(slug: "studentdebt").first_or_create do |campaign|
-# 	campaign.name = "Wall Street Off Campus" # 
-# 	campaign.tagline = "A tagline for this awesome campaign"
-# 	campaign.description = "This campaign invites students and teachers to investigate the conflict-ridden relationships between schools, education officials, and the financial industry. This campaign invites students and teachers to investigate the conflict-ridden relationships between schools, education officials, and the financial industry.\n\nThis campaign invites students and teachers to investigate the conflict-ridden relationships between schools, education officials, and the financial industry. This campaign invites students and teachers to investigate the conflict-ridden relationships between schools, education officials, and the financial industry."
-# end
-
-# g = Group.where(slug: "harvardwatch").first_or_create do |group|
-# 	group.name = "HarvardWatch"
-# 	group.tagline = "Conscience is the knowledge that someone is watching."
-# 	group.description = "HarvardWatch is a broad-based coalition of students and alumni across the University's schools concerned with corporate governance at Harvard. The independent and unaffiliated organization advocates a more transparent and accountable administration responsive to the concerns of Harvard students, alumni, and staff. HarvardWatch publicizes information about the nature of Harvard's governance system and investments in an effort to improve the functioning of the University; members of HarvardWatch want the University to be the best it can be."
-# 	group.is_private = false
-# end
-
-# g2 = Group.find_by(slug: "occupy")
-# l = List.find(404) # homepage carousel profiles
-
-# if g2.present? and l.present?
-# 	g2.lists << l
-# 	g2.save!
-
-# 	gl = g2.group_lists.find_by(list_id: 404)
-# 	if gl.present?
-# 		gl.is_featured = true
-# 		gl.save!
-# 	end
-# end
-
-# c.groups << g
-# c.groups << g2 if g2.present?
 
 ExtensionDefinition.create!([
   {name: "Person", display_name: "Person", has_fields: true, parent_id: nil, tier: 1},
-  {name: "Org", display_name: "Organization", has_fields: true, parent_id: nil, tier: 1},
+  {name: "Org", display_name: "Organization", has_fields: true, parent_id: nil, tier: 1}
+])
+
+ExtensionDefinition.create!([
   {name: "PoliticalCandidate", display_name: "Political Candidate", has_fields: true, parent_id: 1, tier: 2},
   {name: "ElectedRepresentative", display_name: "Elected Representative", has_fields: true, parent_id: 1, tier: 2},
   {name: "Business", display_name: "Business", has_fields: true, parent_id: 2, tier: 2},
@@ -113,6 +81,7 @@ RelationshipCategory.create!([
   {id: 11, name: "Hierarchy", display_name: "Hierarchy", default_description: "Hierarchy", entity1_requirements: "Org", entity2_requirements: "Org", has_fields: true},
   {id: 12, name: "Generic", display_name: "Generic", default_description: "Affiliation", entity1_requirements: nil, entity2_requirements: nil, has_fields: true}
 ])
+
 Degree.create!([
   {id: 1, name: "Doctor of Philosophy", abbreviation: "PhD"},
   {id: 2, name: "Bachelor of Arts", abbreviation: "BA"},
