@@ -9,6 +9,6 @@ before_script:
   - cp config/lilsis.yml.sample config/lilsis.yml
   - mysql -e 'CREATE DATABASE littlesis_test;'
 script:
-  - RAILS_ENV=test bundle exec rake db:structure:load
+  - RAILS_ENV=test bundle exec rake db:schema:load
   - RAILS_ENV=test bundle exec rake db:seed
   - RAILS_ENV=test bundle exec rspec
