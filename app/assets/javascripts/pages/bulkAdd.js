@@ -128,7 +128,7 @@
 	// add reset-field option
 	cell.append( 
 	  $('<span>', { 
-	    'class': 'glyphicon glyphicon-edit reset-name',
+	    'class': 'glyphicon glyphicon-remove reset-name',
 	    click: function() {
 	      cell.empty();  // empty the cell
 	      blurb.empty(); // empty blurb 

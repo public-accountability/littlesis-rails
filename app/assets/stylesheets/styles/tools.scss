@@ -15,17 +15,7 @@
   }
 }
 
-/* .table-up, .table-down { */
-/*   color: #007; */
-/*   cursor: pointer; */
-  
-/*   &:hover { */
-/*     color: #00f; */
-/*   } */
-/* } */
-
 .table-add {
-  cursor: pointer;
   &:hover {
     color: #0b0;
   } 
@@ -47,13 +37,14 @@
   position: relative;
   
   .glyphicon {
-    font-size: 20px;
+      font-size: 20px;
+      cursor: pointer;
   }
-}
 
-.reset-name {
-    cursor: pointer;
-    padding-left: 5px;
+  .reset-name {
+      padding-left: 5px;
+      font-size: 14px;
+  }
 }
 
 /* Jquery UI Automcomplete Styling */
