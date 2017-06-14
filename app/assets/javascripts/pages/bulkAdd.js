@@ -2,7 +2,13 @@
  Editable bulk add relationships table 
  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
 */
-var bulkAdd = (function($, utility){
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) {
+    module.exports = factory(require('jQuery'), require('../common/utility'));
+  } else {
+    root.bulkAdd = factory(root.jQuery, root.utility);
+  }
+}(this, function ($, utility) {
   // This is the structure of table. The number and types of columns vary by
   // relationship type. See utility.js for more information
   // -> [[]]
@@ -479,5 +485,5 @@ var bulkAdd = (function($, utility){
       domListeners();
     }
   };
-
-})(jQuery, utility);;
+  
+}));
