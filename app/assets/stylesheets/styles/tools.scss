@@ -2,8 +2,19 @@
   position: relative;
   
   .glyphicon {
-    font-size: 20px;
+      font-size: 20px;
+      cursor: pointer;
   }
+
+  .reset-name {
+      padding-left: 5px;
+      font-size: 14px;
+  }
+
+  td.tri-boolean {
+      min-width: 110px;
+  }
+  
 }
 
 .table-remove {
@@ -33,19 +44,6 @@
 }
 
 
-.table-editable {
-  position: relative;
-  
-  .glyphicon {
-      font-size: 20px;
-      cursor: pointer;
-  }
-
-  .reset-name {
-      padding-left: 5px;
-      font-size: 14px;
-  }
-}
 
 /* Jquery UI Automcomplete Styling */
 .ui-autocomplete {

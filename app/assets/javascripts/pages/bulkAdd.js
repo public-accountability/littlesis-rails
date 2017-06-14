@@ -156,11 +156,47 @@
     }).append('<option></option><option>Org</option><option>Person</option>');
   }
 
+  // trio Boolean Helper
+  // .create(option) => return new button element
+  // .value(<element>) -> returns selected button
+  // .update(<element>, status) => sets status of button set
+  var triBooleanButton =  {
+    // str -> <Button>
+    create: function(option) {
+      return $('<button>', {
+	text: option,
+	class: (option === '?') ? 'btn btn-default active' : 'btn btn-default',
+	value: option,
+	click: function(){
+	  $(this).addClass("active").siblings().removeClass("active");
+	}
+      });
+    },
+    // <td> -> Str
+    value: function(td) {
+      return td.find('button.active').text();
+    },
+    // <td>, Str -> updates the button group inside the provided element
+    update: function(td, status) {
+      if (!['Y', 'N', '?'].includes(status)) { throw "status must be 'Y', 'N', or '?'"; }
+      td.find('button[value="' + status + '"]').addClass('active').siblings().removeClass("active");
+    }
+  };
+
+  function triBooleanButtonSet() {
+    return ['Y', 'N', '?'].reduce(function(groupDiv, opt) {
+      return groupDiv.append(triBooleanButton.create(opt));
+    }, $('<div>', {class: 'btn-group btn-group-sm', role: 'group' }));
+  }
+
+
   // generates <td> for new row
   // [] -> Element
   function td(col) {
     if (col[2] === 'boolean') {  // boolean column
       return $('<td>').append('<input type="checkbox">');  // include checkbox
+    } else if (col[2] === 'triboolean') { // tri-boolean column
+      return $('<td class="tri-boolean">').append(triBooleanButtonSet());
     } else if (col[1] === 'name') { // autocomplete for entity
       return $('<td>', autocomplete);
     } else if (col[1] === 'primary_ext') {
@@ -184,13 +220,15 @@
 
   // This returns the cell data
   // Most types simply need to return the text inside the element.
-  // Two expetions: checkboxes and <select>'s
+  // Three exceptions: checkboxes, "tribooleans", and <select>'s
   function extractCellData(cell, rowInfo) {
     if (rowInfo.type === 'boolean') {
       // Technically we should allow three values for this field: true, false, and null.
       // However, to keep things simple, right now the false/un-checked state defaults to null
       // So in this tool there is no way of saying that a person is NOT a board member.
       return cell.find('input').is(':checked') ? true : null; 
+    } else if (rowInfo.type === 'triboolean' ) {
+      return triBooleanButton.value(cell);
     } else if (rowInfo.type === 'select') {
       var selectpickerArr = cell.find('.selectpicker').selectpicker('val');
       return selectpickerArr ? selectpickerArr : null;
@@ -203,6 +241,8 @@
   }
 
   var YES_VALUES = [ 1, '1', 'yes', 'Yes', 'YES', 'y', 'Y', true, 'true', 't', 'T', 'True', 'TRUE'];
+  var NO_VALUES = [ 0, '0', 'no', 'No', 'NO', 'n', 'N', false, 'false', 'f', 'F', 'False', 'FALSE'];
+  var NULL_VALUES = [ '', 'null', 'NULL', 'Null', 'None', 'NONE', 'none', 'unknown', 'Unknown', 'UNKNOWN', '?'];
   var ORG_VALUES = [ 'org', 'Org', 'ORG', 'organization', 'Organization', 'ORGANIZATION', 'o', 'O' ];
   var PERSON_VALUES = [ 'person', 'Person', 'PERSON', 'p', 'P', 'per', 'PER', 'capitalist pig'];
 
@@ -217,6 +257,17 @@
 	cell.find('input').prop('checked', true);
       }
       
+    } else if (rowInfo.type === 'triboolean') {
+      
+      if (YES_VALUES.includes(value)) {
+	triBooleanButton.update(cell, 'Y');
+      } else if (NO_VALUES.includes(value)) {
+	triBooleanButton.update(cell, 'N');
+      } else {
+	triBooleanButton.update(cell, '?');
+      }
+      
+
     } else if (rowInfo.type === 'select') {
       
       if (rowInfo.key === 'primary_ext') {
