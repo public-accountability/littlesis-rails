@@ -415,7 +415,7 @@ describe RelationshipsController, type: :controller do
           'start_date' => '2017-01-01',
           'is_board' => true,
           'end_date' => nil,
-          'is_current' => nil }
+          'is_current' => '?' }
       end
       let(:params) do
         { 'entity1_id' => @e1.id,

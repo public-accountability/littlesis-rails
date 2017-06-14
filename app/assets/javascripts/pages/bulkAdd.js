@@ -50,7 +50,7 @@
 
   // => <Button>
   // Returns button that, when clicked, saves a csv file with the correct headers
-  // for the choosen relationship type
+  // for the chosen relationship type
   function sampleCSVLink() {
     return $('<button>', {
       text: 'download sample csv',
@@ -111,8 +111,8 @@
   var autocomplete = {
     contenteditable: 'true',
     autocomplete: {
-      source: function(request, responce) {
-	searchRequest(request.term, responce);
+      source: function(request, response) {
+	searchRequest(request.term, response);
       },
       select: function( event, ui ) {
 	event.preventDefault();
@@ -213,7 +213,7 @@
     var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>');
     var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd));
     $('#table tbody').append(row);
-    // Because we create the selectpicker after the dom has loaded, we must iniitalize it here:
+    // Because we create the selectpicker after the dom has loaded, we must initialize it here:
     $('#table .selectpicker').selectpicker();
     return row;
   }
@@ -370,6 +370,26 @@
     return validFlag.status;
   }
 
+
+  function isRowBlank(rowObj) {
+    return Object.keys(rowObj)
+      .map(function(key) {
+	// a new blank row has every value set to null except for is_current which equals '?'
+	return (key === 'is_current' && rowObj[key] === '?') ? null : rowObj[key];
+      }).filter(function(x) {
+	return x !== null;
+      }).length == 0;
+  }
+
+  function removeBlankRows() {
+    tableToJson('#table', relationshipDetailsAsObject())
+      .reduce(function(acc, rowObj, i) {
+	return isRowBlank(rowObj) ? acc.concat($("#table tbody tr").get(i)) : acc;
+      }, []).forEach(function(elem) {
+	elem.parentNode.removeChild(elem);
+      });
+  }
+
   function showAlert(message, alertType) {
     var html = '<div class="alert alert-dismissible !!TYPE!!" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>!!MESSAGE!!</div>'
       .replace('!!MESSAGE!!', message).replace('!!TYPE!!', alertType);
@@ -465,12 +485,19 @@
     });
   }
 
-  // Takes CSV string and writes result to table
+  
+
+  // Takes a CSV string and writes result to the table
   // see github.com/mholt/PapaParse for PapeParse library docs
   function csvToTable(csvStr) {
+    
     // csv.data contains an array of objects where the keys are the same as rowInfo.key
     var csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
     var columns = relationshipDetailsAsObject();
+    
+    // because we typically start out with one blank row
+    // this removes it before the csv data gets inserted into the table
+    removeBlankRows();
     
     csv.data.forEach(function(rowData) {
       var newRow = newBlankRow();
@@ -481,7 +508,7 @@
   }
 
   // input: str (element id of <input type="file">)
-  // attaches a callback to provided element
+  // attaches a callback to the provided element
   // which calls csvToTable with the contents of the file
   // after a file has been selected
   function readCSVFileListener(fileInputId) {
@@ -535,6 +562,7 @@
     validate: validate,
     cellValidation: cellValidation,
     invalidDisplay: invalidDisplay,
+    removeBlankRows: removeBlankRows,
     init: function() { 
       domListeners();
     }
