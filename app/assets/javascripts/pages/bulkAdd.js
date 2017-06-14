@@ -131,14 +131,17 @@
 	    'class': 'glyphicon glyphicon-remove reset-name',
 	    click: function() {
 	      cell.empty();  // empty the cell
-	      blurb.empty(); // empty blurb 
-	      cell.attr('contenteditable', 'true'); // make cell editable again
+	      blurb.empty(); // empty blurb
+	      // make both name and blurb cells editable
+	      cell.attr('contenteditable', 'true'); 
+	      blurb.attr('contenteditable', 'true'); 
 	      cell.data('entityid', null); // remove the entity id 
 	    }
 	  })
 	);
-	
+
 	blurb.text(ui.item.description ? ui.item.description : '');
+	blurb.attr('contenteditable', 'false'); // disable editing of blurb
 	entityType.find('select').selectpicker('val', ui.item.primary_type);
       }
     }
