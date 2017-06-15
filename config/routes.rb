@@ -50,10 +50,9 @@ Lilsis::Application.routes.draw do
   end
 
   get '/hubs/:id(/:campaign_tabs_selected_tab)' => 'campaigns#show'
-  
+
   resources :groups do
     member do
-      get 'notes'
       get 'edits'
       get 'lists'
       post 'remove_list'
@@ -180,20 +179,7 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :notes, only: [:new, :create, :destroy, :index]
-
-  get "/notes/:username",
-    controller: 'notes',
-    action: 'user',
-    constraints: { username: /[\w.]+/ },
-    as: "user_notes"
-  get "/notes/:username/:id",
-    controller: 'notes',
-    action: 'show',
-    constraints: { username: /[\w.]+/, id: /\d+/ },
-    as: "note_with_user"
-
-  get "/story_maps/:id", 
+  get "/story_maps/:id",
     controller: 'story_maps',
     action: 'story_map',
     as: "story_map"
@@ -258,7 +244,6 @@ Lilsis::Application.routes.draw do
   get "/search" => "search#basic"
   get "/search/entity" => "search#entity_search"
 
-  get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
   get "/home/maps" => "home#maps"
   get "/home/lists" => "home#lists"

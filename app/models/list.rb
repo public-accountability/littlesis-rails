@@ -20,9 +20,6 @@ class List < ActiveRecord::Base
   has_many :group_lists, inverse_of: :list
   has_many :groups, through: :group_lists, inverse_of: :lists
 
-  has_many :note_lists, inverse_of: :list
-  has_many :notes, through: :note_lists, inverse_of: :lists
-
   has_many :note_networks, inverse_of: :network
   has_many :network_notes, through: :note_networks, inverse_of: :networks
 
