@@ -199,12 +199,17 @@ describe RelationshipsController, type: :controller do
   end
 
   describe 'PATCH /relationships/id' do
-    let(:generic_reference) { create(:generic_relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12, last_user_id: sf_user.id) }
     login_user
+
+    let(:generic_reference) do
+      create(:generic_relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12, last_user_id: sf_user.id)
+    end
 
     context 'When the submission contains errors' do
       before do
         @rel = generic_reference
+        e1.update_column(:updated_at, 1.day.ago)
+        e2.update_column(:updated_at, 1.day.ago)
         @e1_updated_at = e1.updated_at
         @e2_updated_at = e2.updated_at
         patch :update, { id: @rel.id, relationship: {'start_date' => '012345678910'}, reference: {'just_cleaning_up' => '1'} }
