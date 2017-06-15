@@ -44,7 +44,7 @@ describe RelationshipsController, type: :controller do
 
       it 'should return status 201' do
         post :bulk_add, params
-        expect(response.status).to eql 201
+        expect(response.status).to eql 200
       end
 
       # one entity is new, one isn't
@@ -123,7 +123,7 @@ describe RelationshipsController, type: :controller do
 
       it 'responds with 422' do
         expect { post :bulk_add, params }.not_to change { Relationship.count }
-        expect(response.status).to eql 422
+        expect(response.status).to eql 200
       end
     end
 
@@ -155,9 +155,9 @@ describe RelationshipsController, type: :controller do
         expect { post :bulk_add, params }.to change { Relationship.count }.by(1)
       end
 
-      it 'responds with 207' do
+      it 'responds with 200' do
         post :bulk_add, params
-        expect(response.status).to eql 207
+        expect(response.status).to eql 200
       end
     end
 
@@ -214,6 +214,7 @@ describe RelationshipsController, type: :controller do
       it 'does not create a new entity' do
         expect { post :bulk_add, @params }.not_to change { Entity.count }
       end
+
     end
   end
 

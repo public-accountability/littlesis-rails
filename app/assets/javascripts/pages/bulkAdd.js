@@ -445,8 +445,9 @@
   }
 
   var afterRequest = {
-    success: function() {
+    success: function(data) {
       $('#table table').empty();
+      console.log(data);
       showAlert('The request was successful!', 'alert-success');
     },
     error: function() {
@@ -459,29 +460,12 @@
   // [{}] -> callbacks
   function submitRequest() {
     var data = prepareTableData(tableToJson('#table', relationshipDetailsAsObject()));
-    console.log(data);
     $.ajax({
       method: 'POST',
       url: '/relationships/bulk_add',
       data: data,
-      statusCode: {
-	201: function() {
-	  afterRequest.success();
-	},
-	207: function() {
-	  // partial sucuess...should eventually figure out what to do here
-	  afterRequest.success();
-	},
-	400: function() {
-	  afterRequest.error();
-	},
-	422: function() { 
-	  afterRequest.error();
-	}
-      },
-      error: function() {
-	afterRequest.error();
-      }
+      success: afterRequest.success,
+      error: afterRequest.error
     });
   }
 

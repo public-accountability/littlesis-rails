@@ -72,6 +72,7 @@ class RelationshipsController < ApplicationController
     check_permission 'importer'
     return head :bad_request unless Reference.new(reference_params).validate_before_create.empty?
     @errors = 0
+    @new_relationships = []
     entity1 = Entity.find(params.fetch('entity1_id'))
 
     # Looping through each relationship
@@ -85,17 +86,9 @@ class RelationshipsController < ApplicationController
       end
     end # end loop of submitted relationships
 
-    # This will returns three possible status codes
-    # - 201 if all relationships are created
-    # - 422 if none of the relationships are created
-    # - 207 if some but not all of the relationships are created
-    if @errors.zero?
-      head :created
-    elsif @errors == bulk_relationships_params.length
-      head :unprocessable_entity
-    else
-      render json: { 'errors' => @errors }, status: :multi_status
-    end
+    # Always send back a sucuessful responce,
+    # even if every relationship is an error
+    render :json => bulk_json_response
   end
 
   private
@@ -145,6 +138,7 @@ class RelationshipsController < ApplicationController
       # update relationship category - we don't have to update if nothing has changed
       r.get_category.update(new_category_attr) unless r.category_attributes == new_category_attr
     end
+    @new_relationships << r
   end
 
   # <Entity>, <Entity>, Hash -> Hash
@@ -166,6 +160,10 @@ class RelationshipsController < ApplicationController
       r[:entity2_id] = entity1.id
     end
     prepare_update_params(r)
+  end
+
+  def bulk_json_response
+    { errors: @errors, relationships: @new_relationships }
   end
 
   def bulk_relationships_params
