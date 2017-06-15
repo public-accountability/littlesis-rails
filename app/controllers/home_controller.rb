@@ -10,22 +10,6 @@ class HomeController < ApplicationController
     [34, 'Elite think tanks']
   ]
 
-	def notes
-    @user = User.includes(:notes, notes: :recipients).find_by_username(current_user.username)
-
-    q = Riddle::Query.escape(params[:q]) if params[:q].present?
-
-    if params[:show_replies] == "1"
-    	query = Note.search(q, order: "created_at DESC", with: { visible_to_user_ids: [current_user.id] })
-    else
-    	query = Note.search(q, order: "created_at DESC", with: { user_id: current_user.id })
-    end
-
-    @notes = query.page(params[:page]).per(20)
-
-    prepopulate_note_from_params
-	end
-
 	def groups
     @groups = Group
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")

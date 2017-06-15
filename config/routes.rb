@@ -258,7 +258,6 @@ Lilsis::Application.routes.draw do
   get "/search" => "search#basic"
   get "/search/entity" => "search#entity_search"
 
-  get "/home/notes" => "home#notes"
   get "/home/groups" => "home#groups"
   get "/home/maps" => "home#maps"
   get "/home/lists" => "home#lists"
