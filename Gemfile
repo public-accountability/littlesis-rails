@@ -85,23 +85,23 @@ gem 'rails_autolink'
 
 gem 'soap4r-ruby1.9'
 
-group :development do 
+group :development do
   gem 'web-console', '~> 2.0'
 end
 
 group :test, :development do
-  gem 'rspec-rails'
-  gem 'factory_girl_rails'
-  gem 'seed_dump'
+  gem 'better_errors', '~> 2.1.1'
+  gem 'capybara', '2.13.0'
+  gem 'capybara-webkit', '1.14.0'
   gem 'database_cleaner'
-  gem 'spring-commands-rspec'
+  gem 'factory_girl_rails'
+  gem 'jasmine', '~> 2.6.0'
   gem 'rspec-html-matchers'
-  gem 'shoulda-matchers', '~> 3.1'
+  gem 'rspec-rails'
+  gem 'seed_dump'
   gem 'shoulda-callback-matchers', '~> 1.1.4'
-  gem 'jasmine'
-  ###########################
-  gem 'better_errors', '0.7.0'
-  gem 'binding_of_caller', '0.7.2'
+  gem 'shoulda-matchers', '~> 3.1'
+  gem 'spring-commands-rspec'
 end
 
 gem 'simplecov', :require => false, :group => :test
@@ -114,8 +114,6 @@ gem 'StreetAddress', :require => "street_address"
 gem 'sequel', :require => false
 gem 'rmagick'
 
-gem 'capybara', '>= 2.10'
-gem 'capybara-webkit'
 gem 'paper_trail', '5.2.3'
 
 # no longer needed for
@@ -132,7 +130,7 @@ gem 'rack-mini-profiler'
 gem 'selenium-webdriver', '>= 3.3.0'
 gem 'headless'
 
+# used to connet to Rocket.Chat's mongo
 gem 'mongo'
-
 
 gem 'redcarpet', '>= 3.4.0'
