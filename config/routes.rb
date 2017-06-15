@@ -297,6 +297,7 @@ Lilsis::Application.routes.draw do
   #########
 
   get '/tools/bulk/relationships' => "tools#bulk_relationships"
+  get '/tools/bulk/result' => "tools#bulk_result"
 
   #########
   #  API  #
