@@ -34,9 +34,6 @@
           <% end %>
         </td>
         <td><%= user.legacy_created_at.strftime("%F") %></td>
-        <td>
-          <%= link_to 'write note', new_note_path(user: user.username) %>
-        </td>
       </tr>
     <% end %>
   </tbody>

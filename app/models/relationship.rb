@@ -27,9 +27,6 @@ class Relationship < ActiveRecord::Base
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
   has_many :references, -> { where(object_model: 'Relationship') }, foreign_key: 'object_id'
 
-  #has_many :note_relationships, inverse_of: :relationship
-  # has_many :notes, through: :note_relationships, inverse_of: :relationships
-
   has_one :position, inverse_of: :relationship, dependent: :destroy
   has_one :education, inverse_of: :relationship, dependent: :destroy
   has_one :membership, inverse_of: :relationship, dependent: :destroy
@@ -138,9 +135,7 @@ class Relationship < ActiveRecord::Base
   end
   
   def all_attributes
-    hash = attributes.merge!(category_attributes).reject { |k,v| v.nil? }
-    hash.delete("notes")
-    hash
+    attributes.merge!(category_attributes).reject { |k,v| v.nil? }
   end
 
   def get_category

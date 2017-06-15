@@ -36,20 +36,6 @@ gem 'bootstrap-datepicker-rails'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.0.1'
 
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
-# Use unicorn as the app server
-# gem 'unicorn'
-
-# Deploy with Capistrano
-# gem 'capistrano', group: :development
-
-# To use debugger
-# gem 'debugger'
-
-gem 'pry'
-gem 'pry-rails'
 gem 'aws-sdk', '< 2.0'
 gem 'dimensions'
 gem 'fastimage'
@@ -81,9 +67,11 @@ gem 'redis-rails'
 # For easy cron scheduling
 gem 'whenever', '~> 0.9.7', :require => false
 
-gem 'rails_autolink'
-
+# used in utility/vertical_response.rb
 gem 'soap4r-ruby1.9'
+
+# To use debugger
+# gem 'debugger'
 
 group :development do
   gem 'web-console', '~> 2.0'
@@ -96,6 +84,8 @@ group :test, :development do
   gem 'database_cleaner'
   gem 'factory_girl_rails'
   gem 'jasmine', '~> 2.6.0'
+  gem 'pry'
+  gem 'pry-rails'
   gem 'rspec-html-matchers'
   gem 'rspec-rails'
   gem 'seed_dump'

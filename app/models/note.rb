@@ -1,5 +1,5 @@
 class Note < ActiveRecord::Base
-	extend ActionView::Helpers::SanitizeHelper::ClassMethods
+  extend ActionView::Helpers::SanitizeHelper::ClassMethods
   
   include SingularTable
   include Cacheable
@@ -9,32 +9,32 @@ class Note < ActiveRecord::Base
   belongs_to :user, foreign_key: "new_user_id", inverse_of: :notes
   belongs_to :sf_guard_user, foreign_key: "user_id", inverse_of: :notes
 
-	has_many :note_recipients, class_name: "NoteUser", inverse_of: :note, dependent: :destroy
-	has_many :recipients, through: :note_recipients, source: :user, inverse_of: :received_notes
+  has_many :note_recipients, class_name: "NoteUser", inverse_of: :note, dependent: :destroy
+  has_many :recipients, through: :note_recipients, source: :user, inverse_of: :received_notes
 
-	has_many :note_entities, inverse_of: :note, dependent: :destroy
-	has_many :entities, through: :note_entities, inverse_of: :notes
+  has_many :note_entities, inverse_of: :note, dependent: :destroy
+  has_many :entities, through: :note_entities
 
-	has_many :note_relationships, inverse_of: :note, dependent: :destroy
-	has_many :relationships, through: :note_relationships, inverse_of: :notes
+  has_many :note_relationships, inverse_of: :note, dependent: :destroy
+  has_many :relationships, through: :note_relationships
 
-	has_many :note_lists, inverse_of: :note, dependent: :destroy
-	has_many :lists, through: :note_lists, inverse_of: :notes
+  has_many :note_lists, inverse_of: :note, dependent: :destroy
+  has_many :lists, through: :note_lists
 
-	has_many :note_networks, inverse_of: :note, dependent: :destroy
-	has_many :networks, class_name: "List", through: :note_networks, inverse_of: :network_notes
+  has_many :note_networks, inverse_of: :note, dependent: :destroy
+  has_many :networks, class_name: "List", through: :note_networks, inverse_of: :network_notes
 
-	has_many :note_groups, inverse_of: :note, dependent: :destroy
-	has_many :groups, through: :note_groups, inverse_of: :notes
+  has_many :note_groups, inverse_of: :note, dependent: :destroy
+  has_many :groups, through: :note_groups
 
-	scope :public_scope, -> { where(is_private: false) }
-	scope :private_scope, -> { where(is_private: true) }
-	scope :with_joins, -> { 
-		joins("LEFT JOIN note_users ON note_users.note_id = note.id")
-		.joins("LEFT JOIN users ON users.id = note_users.user_id")		
-		.group("note.id")
-		.order("note.created_at DESC")
-	}
+  scope :public_scope, -> { where(is_private: false) }
+  scope :private_scope, -> { where(is_private: true) }
+  scope :with_joins, -> { 
+    joins("LEFT JOIN note_users ON note_users.note_id = note.id")
+      .joins("LEFT JOIN users ON users.id = note_users.user_id")		
+      .group("note.id")
+      .order("note.created_at DESC")
+  }
 
 	# before_save :parse
 
@@ -188,59 +188,9 @@ class Note < ActiveRecord::Base
 		end
 	end
 
-	def render_body(override=false)
-		return self.body unless self.body.blank? or override
-
-		extend ActionView::Helpers
-		extend ActionView::Helpers::UrlHelper
-		extend UsersHelper
-		extend EntitiesHelper
-		extend RelationshipsHelper
-		extend ListsHelper
-		extend GroupsHelper
-
-		body = self.body_raw
-
-		#users
-		body.gsub!(/@([#{Note.username_chars}]+)(?!([a-zA-Z0-9]|:\d))/i) do |match|
-			user = User.find_by(username: $1)
-			user.present? ? user_at_link(user) : match
-		end
-
-		#entities
-		body.gsub!(/@entity:(\d+)(\[([^\]]+)\])?/i) do |match|
-			entity = Entity.find_by(id: $1)
-			entity.present? ? entity_link(entity, $3) : match
-		end
-
-		#relationships
-		body.gsub!(/@rel:(\d+)(\[([^\]]+)\])?/i) do |match|
-			rel = Relationship.find_by(id: $1)
-			rel.present? ? rel_link(rel, $3) : match
-		end
-
-		#lists
-		body.gsub!(/@list:(\d+)(\[([^\]]+)\])?/i) do |match|
-			list = List.find_by(id: $1)
-			list.present? ? list_link(list, $3) : match
-		end
-
-		#groups
-		body.gsub!(/@group:(\d+)(\[([^\]]+)\])?/i) do |match|
-			group = legacy? ? Group.joins(:sf_guard_group).find_by("sf_guard_group.id" => $1) : Group.find($1)
-			group.present? ? group_link(group, $3) : match
-		end
-
-		#groups
-		body.gsub!(/@group:([#{Note.username_chars}]+)/i) do |match|
-			group = legacy? ? Group.joins(:sf_guard_group).find_by("sf_guard_group.name" => $1) : Group.find_by_slug($1)
-			group.present? ? group_link(group, $3) : match
-		end
-
-		self.body = auto_link(simple_format(body, {}, sanitize: false), sanitize: true) { |text| truncate(text, length: 60) }
-		save
-		self.body
-	end
+        def render_body(override=false)
+          ''
+        end
 
 	def convert_new_legacy
 		return unless new_user_id.nil?
