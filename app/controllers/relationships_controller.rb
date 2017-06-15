@@ -145,7 +145,7 @@ class RelationshipsController < ApplicationController
       r[:entity1_id] = entity2.id
       r[:entity2_id] = entity1.id
     end
-    r
+    prepare_update_params(r)
   end
 
   def set_relationship

@@ -2,8 +2,19 @@
   position: relative;
   
   .glyphicon {
-    font-size: 20px;
+      font-size: 20px;
+      cursor: pointer;
   }
+
+  .reset-name {
+      padding-left: 5px;
+      font-size: 14px;
+  }
+
+  td.tri-boolean {
+      min-width: 110px;
+  }
+  
 }
 
 .table-remove {
@@ -15,17 +26,7 @@
   }
 }
 
-/* .table-up, .table-down { */
-/*   color: #007; */
-/*   cursor: pointer; */
-  
-/*   &:hover { */
-/*     color: #00f; */
-/*   } */
-/* } */
-
 .table-add {
-  cursor: pointer;
   &:hover {
     color: #0b0;
   } 
@@ -43,18 +44,6 @@
 }
 
 
-.table-editable {
-  position: relative;
-  
-  .glyphicon {
-    font-size: 20px;
-  }
-}
-
-.reset-name {
-    cursor: pointer;
-    padding-left: 5px;
-}
 
 /* Jquery UI Automcomplete Styling */
 .ui-autocomplete {
