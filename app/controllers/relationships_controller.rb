@@ -67,11 +67,10 @@ class RelationshipsController < ApplicationController
   end
 
   # POST /relationships/bulk_add
-  # four possible status codes can be returned: 201, 207, 400, 422
   def bulk_add
     check_permission 'importer'
     return head :bad_request unless Reference.new(reference_params).validate_before_create.empty?
-    @errors = 0
+    @errors = []
     @new_relationships = []
     entity1 = Entity.find(params.fetch('entity1_id'))
 
@@ -79,7 +78,7 @@ class RelationshipsController < ApplicationController
     bulk_relationships_params.each do |relationship|
       ActiveRecord::Base.transaction do
         make_or_get_entity(relationship) do |entity2|
-          rollback_if do
+          rollback_if(relationship) do
             create_bulk_relationship(entity1, entity2, relationship)
           end
         end
@@ -110,18 +109,19 @@ class RelationshipsController < ApplicationController
     if entity.try(:persisted?)
       yield entity
     else
-      @errors += 1
+      @errors << relationship.merge('errorMessage' => 'Failed to find or create entity')
     end
   end
 
-  def rollback_if
+  def rollback_if(relationship)
     yield
   rescue ActiveRecord::StatementInvalid
     # The rails documentation recommends not catching this exception: http://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html
     # ...and we shall OBEY the rails docs...
     raise
-  rescue ActiveRecord::ActiveRecordError
-    @errors += 1
+  rescue ActiveRecord::ActiveRecordError => e
+    @errors << relationship.merge('errorMessage' => e.message)
+    Rails.logger.warn "BulkAdd Relationship Error: #{e.message}"
     raise ActiveRecord::Rollback, "Error creating a Relationship"
   end
 
@@ -138,7 +138,7 @@ class RelationshipsController < ApplicationController
       # update relationship category - we don't have to update if nothing has changed
       r.get_category.update(new_category_attr) unless r.category_attributes == new_category_attr
     end
-    @new_relationships << r
+    @new_relationships << r.as_json(:url => true, :name => true)
   end
 
   # <Entity>, <Entity>, Hash -> Hash

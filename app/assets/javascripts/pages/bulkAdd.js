@@ -444,11 +444,81 @@
     };
   }
 
+  function repopulateTable(errors) {
+    $('.result-mode').hide();
+    $('.create-mode').show();
+    createTable();
+    // collect all the errors messages
+    // TODO: display these somewhere
+    var errorMessages = errors.map(function(err) { return err.errorMessage; });
+    // remove the errors messages
+    var relationships = errors.map(function(err) {
+      delete err.errorMessage;
+      return err;
+    });
+    
+    // The array of objects is turned into a string
+    // just to be, moments later, parsed again.
+    // It allows us to re-use the csvToTable function.
+    csvToTable(Papa.unparse(relationships));
+  }
+
   var afterRequest = {
+
+    // summary text with relationship and error count
+    info: function(data) {
+      var text = data.relationships.length.toString() + ' Relationships were created  / ' +  data.errors.length.toString() + ' Errors occured';
+      return $('<div>', {class: 'col-sm-12' }).append($('<h4>', {text: text}));
+    },
+
+    // one list-group-item of a relationship
+    relationshipDisplay: function(relationship) {
+      return $('<a>', {href: relationship.url, class: 'list-group-item', target: '_blank'})
+        .append($('<p>', {class: 'list-group-item-text', text: relationship.name }));
+    },
+
+    errorDisplay: function(errors) {
+      return $('<div>', {class: 'col-sm-8'})
+	.append(
+	  $('<p>', {
+	    class: 'cursor-pointer top-1em',
+	    text: 'click here to repopulate the table with the relationships that failed',
+	    click: function() { repopulateTable(errors); }
+	  }));
+    },
+
+    // show relationship list + summary text
+    display: function(data) {
+      $('.result-mode').show();
+      $('.create-mode').hide();
+      var $results = $('#results')
+	  .empty()
+	  .append(afterRequest.info(data));
+
+      if (data.relationships.length > 0) {
+	var container = $('<div>', {class: 'col-sm-8'}).append( $('<h3>', {class: '', text: 'New relationships'}));
+	var relationships = data.relationships.reduce(function(listGroup, relationship) {
+	  return listGroup.append(afterRequest.relationshipDisplay(relationship));
+	}, $('<div>', {class: 'list-group'}));
+	
+	$results.append(container.append(relationships));
+      }
+
+      if (data.errors.length > 0) {
+	$results.append(afterRequest.errorDisplay(data.errors));
+      }
+    },
+    
     success: function(data) {
       $('#table table').empty();
-      console.log(data);
-      showAlert('The request was successful!', 'alert-success');
+      if (data.errors.length === 0) {
+	showAlert('The request was successful!', 'alert-success');
+      } else if (data.relationships.length === 0) {
+	showAlert('something went wrong :(', 'alert-danger');
+      } else {
+	showAlert('Some relationships could not be created', 'alert-warning');
+      }
+      afterRequest.display(data);
     },
     error: function() {
       alert('something went wrong :(');
@@ -547,6 +617,7 @@
     cellValidation: cellValidation,
     invalidDisplay: invalidDisplay,
     removeBlankRows: removeBlankRows,
+    afterRequest: afterRequest,
     init: function() { 
       domListeners();
     }

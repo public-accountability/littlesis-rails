@@ -230,7 +230,7 @@ describe RelationshipsController, type: :controller do
     def set_controller
       @controller = RelationshipsController.new
       allow(@controller).to receive(:current_user).and_return(double(:sf_guard_user_id => 1234))
-      @controller.instance_variable_set(:@errors, 0)
+      @controller.instance_variable_set(:@errors, [])
     end
 
     it 'creates new entity' do
@@ -247,9 +247,9 @@ describe RelationshipsController, type: :controller do
       
       specify { expect { |b| @controller.send(:make_or_get_entity, relationship_error, &b) }.not_to yield_control }
 
-      it 'increases error count' do
+      it 'increases error array' do
         expect { @controller.send(:make_or_get_entity, relationship_error) }
-          .to change { @controller.instance_variable_get(:@errors) }.by(1)
+          .to change { @controller.instance_variable_get(:@errors).length }.by(1)
       end
     end
 
@@ -260,7 +260,7 @@ describe RelationshipsController, type: :controller do
 
       it 'increases error count' do
         expect { @controller.send(:make_or_get_entity, relationship_error) }
-          .to change { @controller.instance_variable_get(:@errors) }.by(1)
+          .to change { @controller.instance_variable_get(:@errors).length }.by(1)
       end
     end
 

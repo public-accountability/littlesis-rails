@@ -5,10 +5,6 @@ class ToolsController < ApplicationController
   def bulk_relationships
   end
 
-  def bulk_result
-  end
-
-
   private
 
   def set_entity

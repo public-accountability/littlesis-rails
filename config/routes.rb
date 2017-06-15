@@ -290,14 +290,12 @@ Lilsis::Application.routes.draw do
     get "/potential_contributions" => "nys#potential_contributions"
     get "/contributions" => "nys#contributions"
   end
-  
 
   #########
   # Tools #
   #########
 
   get '/tools/bulk/relationships' => "tools#bulk_relationships"
-  get '/tools/bulk/result' => "tools#bulk_result"
 
   #########
   #  API  #
