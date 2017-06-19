@@ -163,7 +163,7 @@ class RelationshipsController < ApplicationController
   end
 
   def relationship_params
-    prepare_update_params(params.require(:relationship).permit(:entity1_id, :entity2_id, :category_id, :is_current))
+    prepare_update_params(params.require(:relationship).permit(:entity1_id, :entity2_id, :category_id, :is_current, :description1, :description2))
   end
 
   def reference_params
