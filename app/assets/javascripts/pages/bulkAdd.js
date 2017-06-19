@@ -2,7 +2,13 @@
  Editable bulk add relationships table 
  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
 */
-var bulkAdd = (function($, utility){
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) {
+    module.exports = factory(require('jQuery'), require('../common/utility'));
+  } else {
+    root.bulkAdd = factory(root.jQuery, root.utility);
+  }
+}(this, function ($, utility) {
   // This is the structure of table. The number and types of columns vary by
   // relationship type. See utility.js for more information
   // -> [[]]
@@ -44,7 +50,7 @@ var bulkAdd = (function($, utility){
 
   // => <Button>
   // Returns button that, when clicked, saves a csv file with the correct headers
-  // for the choosen relationship type
+  // for the chosen relationship type
   function sampleCSVLink() {
     return $('<button>', {
       text: 'download sample csv',
@@ -105,8 +111,8 @@ var bulkAdd = (function($, utility){
   var autocomplete = {
     contenteditable: 'true',
     autocomplete: {
-      source: function(request, responce) {
-	searchRequest(request.term, responce);
+      source: function(request, response) {
+	searchRequest(request.term, response);
       },
       select: function( event, ui ) {
 	event.preventDefault();
@@ -122,17 +128,20 @@ var bulkAdd = (function($, utility){
 	// add reset-field option
 	cell.append( 
 	  $('<span>', { 
-	    'class': 'glyphicon glyphicon-edit reset-name',
+	    'class': 'glyphicon glyphicon-remove reset-name',
 	    click: function() {
 	      cell.empty();  // empty the cell
-	      blurb.empty(); // empty blurb 
-	      cell.attr('contenteditable', 'true'); // make cell editable again
+	      blurb.empty(); // empty blurb
+	      // make both name and blurb cells editable
+	      cell.attr('contenteditable', 'true'); 
+	      blurb.attr('contenteditable', 'true'); 
 	      cell.data('entityid', null); // remove the entity id 
 	    }
 	  })
 	);
-	
+
 	blurb.text(ui.item.description ? ui.item.description : '');
+	blurb.attr('contenteditable', 'false'); // disable editing of blurb
 	entityType.find('select').selectpicker('val', ui.item.primary_type);
       }
     }
@@ -147,11 +156,47 @@ var bulkAdd = (function($, utility){
     }).append('<option></option><option>Org</option><option>Person</option>');
   }
 
+  // trio Boolean Helper
+  // .create(option) => return new button element
+  // .value(<element>) -> returns selected button
+  // .update(<element>, status) => sets status of button set
+  var triBooleanButton =  {
+    // str -> <Button>
+    create: function(option) {
+      return $('<button>', {
+	text: option,
+	class: (option === '?') ? 'btn btn-default active' : 'btn btn-default',
+	value: option,
+	click: function(){
+	  $(this).addClass("active").siblings().removeClass("active");
+	}
+      });
+    },
+    // <td> -> Str
+    value: function(td) {
+      return td.find('button.active').text();
+    },
+    // <td>, Str -> updates the button group inside the provided element
+    update: function(td, status) {
+      if (!['Y', 'N', '?'].includes(status)) { throw "status must be 'Y', 'N', or '?'"; }
+      td.find('button[value="' + status + '"]').addClass('active').siblings().removeClass("active");
+    }
+  };
+
+  function triBooleanButtonSet() {
+    return ['Y', 'N', '?'].reduce(function(groupDiv, opt) {
+      return groupDiv.append(triBooleanButton.create(opt));
+    }, $('<div>', {class: 'btn-group btn-group-sm', role: 'group' }));
+  }
+
+
   // generates <td> for new row
   // [] -> Element
   function td(col) {
     if (col[2] === 'boolean') {  // boolean column
       return $('<td>').append('<input type="checkbox">');  // include checkbox
+    } else if (col[2] === 'triboolean') { // tri-boolean column
+      return $('<td class="tri-boolean">').append(triBooleanButtonSet());
     } else if (col[1] === 'name') { // autocomplete for entity
       return $('<td>', autocomplete);
     } else if (col[1] === 'primary_ext') {
@@ -168,20 +213,22 @@ var bulkAdd = (function($, utility){
     var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>');
     var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd));
     $('#table tbody').append(row);
-    // Because we create the selectpicker after the dom has loaded, we must iniitalize it here:
+    // Because we create the selectpicker after the dom has loaded, we must initialize it here:
     $('#table .selectpicker').selectpicker();
     return row;
   }
 
   // This returns the cell data
   // Most types simply need to return the text inside the element.
-  // Two expetions: checkboxes and <select>'s
+  // Three exceptions: checkboxes, "tribooleans", and <select>'s
   function extractCellData(cell, rowInfo) {
     if (rowInfo.type === 'boolean') {
       // Technically we should allow three values for this field: true, false, and null.
       // However, to keep things simple, right now the false/un-checked state defaults to null
       // So in this tool there is no way of saying that a person is NOT a board member.
       return cell.find('input').is(':checked') ? true : null; 
+    } else if (rowInfo.type === 'triboolean' ) {
+      return triBooleanButton.value(cell);
     } else if (rowInfo.type === 'select') {
       var selectpickerArr = cell.find('.selectpicker').selectpicker('val');
       return selectpickerArr ? selectpickerArr : null;
@@ -194,6 +241,8 @@ var bulkAdd = (function($, utility){
   }
 
   var YES_VALUES = [ 1, '1', 'yes', 'Yes', 'YES', 'y', 'Y', true, 'true', 't', 'T', 'True', 'TRUE'];
+  var NO_VALUES = [ 0, '0', 'no', 'No', 'NO', 'n', 'N', false, 'false', 'f', 'F', 'False', 'FALSE'];
+  var NULL_VALUES = [ '', 'null', 'NULL', 'Null', 'None', 'NONE', 'none', 'unknown', 'Unknown', 'UNKNOWN', '?'];
   var ORG_VALUES = [ 'org', 'Org', 'ORG', 'organization', 'Organization', 'ORGANIZATION', 'o', 'O' ];
   var PERSON_VALUES = [ 'person', 'Person', 'PERSON', 'p', 'P', 'per', 'PER', 'capitalist pig'];
 
@@ -208,6 +257,17 @@ var bulkAdd = (function($, utility){
 	cell.find('input').prop('checked', true);
       }
       
+    } else if (rowInfo.type === 'triboolean') {
+      
+      if (YES_VALUES.includes(value)) {
+	triBooleanButton.update(cell, 'Y');
+      } else if (NO_VALUES.includes(value)) {
+	triBooleanButton.update(cell, 'N');
+      } else {
+	triBooleanButton.update(cell, '?');
+      }
+      
+
     } else if (rowInfo.type === 'select') {
       
       if (rowInfo.key === 'primary_ext') {
@@ -310,6 +370,26 @@ var bulkAdd = (function($, utility){
     return validFlag.status;
   }
 
+
+  function isRowBlank(rowObj) {
+    return Object.keys(rowObj)
+      .map(function(key) {
+	// a new blank row has every value set to null except for is_current which equals '?'
+	return (key === 'is_current' && rowObj[key] === '?') ? null : rowObj[key];
+      }).filter(function(x) {
+	return x !== null;
+      }).length == 0;
+  }
+
+  function removeBlankRows() {
+    tableToJson('#table', relationshipDetailsAsObject())
+      .reduce(function(acc, rowObj, i) {
+	return isRowBlank(rowObj) ? acc.concat($("#table tbody tr").get(i)) : acc;
+      }, []).forEach(function(elem) {
+	elem.parentNode.removeChild(elem);
+      });
+  }
+
   function showAlert(message, alertType) {
     var html = '<div class="alert alert-dismissible !!TYPE!!" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>!!MESSAGE!!</div>'
       .replace('!!MESSAGE!!', message).replace('!!TYPE!!', alertType);
@@ -405,12 +485,19 @@ var bulkAdd = (function($, utility){
     });
   }
 
-  // Takes CSV string and writes result to table
+  
+
+  // Takes a CSV string and writes result to the table
   // see github.com/mholt/PapaParse for PapeParse library docs
   function csvToTable(csvStr) {
+    
     // csv.data contains an array of objects where the keys are the same as rowInfo.key
     var csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
     var columns = relationshipDetailsAsObject();
+    
+    // because we typically start out with one blank row
+    // this removes it before the csv data gets inserted into the table
+    removeBlankRows();
     
     csv.data.forEach(function(rowData) {
       var newRow = newBlankRow();
@@ -421,7 +508,7 @@ var bulkAdd = (function($, utility){
   }
 
   // input: str (element id of <input type="file">)
-  // attaches a callback to provided element
+  // attaches a callback to the provided element
   // which calls csvToTable with the contents of the file
   // after a file has been selected
   function readCSVFileListener(fileInputId) {
@@ -475,9 +562,10 @@ var bulkAdd = (function($, utility){
     validate: validate,
     cellValidation: cellValidation,
     invalidDisplay: invalidDisplay,
+    removeBlankRows: removeBlankRows,
     init: function() { 
       domListeners();
     }
   };
-
-})(jQuery, utility);;
+  
+}));

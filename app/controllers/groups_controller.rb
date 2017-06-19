@@ -1,6 +1,6 @@
 class GroupsController < ApplicationController
   before_action :set_group, only: [
-    :show, :edit, :update, :destroy, :notes, :edits, :lists, :feature_list, :remove_list, :unfeature_list, 
+    :show, :edit, :update, :destroy, :edits, :lists, :feature_list, :remove_list, :unfeature_list, 
     :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin, :entities,
     :clear_cache, :edit_advanced, :edit_findings, :edit_howto
   ]
@@ -37,15 +37,12 @@ class GroupsController < ApplicationController
     @recent_updates = @group.entities.includes(last_user: :user).order("updated_at DESC").limit(10)
 
     if user_signed_in? and current_user.in_group?(@group)
-      @notes = @group.notes.public_scope.order("created_at DESC").limit(10)
       @watched_entities = @group.featured_entities.order("ls_list_entity.created_at DESC").limit(5)
       @group_lists = @group.group_lists.order("is_featured DESC").joins(:list).where("ls_list.is_deleted" => false)
       @group_users = @group.group_users.joins(:user).order("users.username ASC")
     else
       @carousel_entities = @group.featured_entities.limit(20)
     end
-
-    @note = Note.new(body_raw: "@group:#{@group.slug}")
   end
 
   # GET /groups/new
@@ -98,22 +95,6 @@ class GroupsController < ApplicationController
     check_permission "admin"    
     @group.destroy
     redirect_to groups_url, notice: 'Group was successfully destroyed.'
-  end
-
-  def notes
-    current_user_must_belong_to_group
-
-    @new_note = Note.new(body_raw: "@group:#{@group.slug}")
-
-    if params[:q].present?
-      @notes = Note.search(
-        Riddle::Query.escape(params[:q]), 
-        order: "created_at DESC", 
-        with: { group_ids: [@group.id] }
-      ).page(params[:page]).per(20)
-    else
-      @notes = @group.notes.order("updated_at DESC").page(params[:page]).per(20)
-    end
   end
 
   def edits

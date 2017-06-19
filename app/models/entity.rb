@@ -26,8 +26,6 @@ class Entity < ActiveRecord::Base
   has_many :relateds, -> { distinct }, through: :links
   has_many :groups, through: :lists, inverse_of: :entities
   has_many :campaigns, through: :groups, inverse_of: :entities
-  has_many :note_entities, inverse_of: :entity
-  has_many :notes, through: :note_entities, inverse_of: :entities
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", inverse_of: :edited_entities
   has_many :external_keys, inverse_of: :entity, dependent: :destroy
   has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
@@ -136,9 +134,7 @@ class Entity < ActiveRecord::Base
   end
 
   def all_attributes
-    hash = attributes.merge!(extension_attributes).reject { |k,v| v.nil? }
-    hash.delete(:notes)
-    hash
+    attributes.merge!(extension_attributes).reject { |k,v| v.nil? }
   end
 
   # Returns a hash of all attributes for all extensions (that have attrs) for the entity.

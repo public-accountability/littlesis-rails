@@ -441,7 +441,7 @@ class EntitiesController < ApplicationController
 
   def update_entity_params
     params.require(:entity).permit(
-      :name, :blurb, :summary, :notes, :website, :start_date, :end_date, :is_current, :is_deleted,
+      :name, :blurb, :summary, :website, :start_date, :end_date, :is_current, :is_deleted,
       person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender_id, :id ],
       public_company_attributes: [:ticker, :id],
       school_attributes: [:is_private, :id]

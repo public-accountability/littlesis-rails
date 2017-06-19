@@ -64,13 +64,13 @@ utility.relationshipCategories = [
 
 /**
  * Returns an nested array of [ display, fieldname, type ] 
- * possible types: 'text', 'date', 'boolean', 'money', 'number'
+ * possible types: 'text', 'date', 'triboolean', 'boolean', 'money', 'number'
  * @param {number} category
  */
 utility.relationshipDetails = function(category) {
   // reusable fields that are common to multiple categories
   var title = ['Title', 'description1', 'text'];
-  var isCurrent = ['Is current?', 'is_current', 'boolean'];
+  var isCurrent = ['Is current?', 'is_current', 'triboolean'];
   var startDate = ['Start date', 'start_date', 'date' ];
   var endDate = ['End date', 'end_date', 'date' ];
   var type = ['Type', 'description1', 'text'];

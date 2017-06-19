@@ -49,20 +49,6 @@ describe List do
       expect(list.groups.first).to eq(grp)
     end
 
-    it 'has notes & notelists' do
-      list = create(:list)
-      note = create(:note)
-      expect(list.note_lists.count).to eq(0)
-      NoteList.create(list_id: list.id, note_id: note.id)
-      expect(list.note_lists.count).to eq(1)
-      expect(list.notes.count).to eq(1)
-    end
-
-    # it 'has note networks and network_notes'
-    # it 'has users through default_network'
-    # it 'has sf_guard_group_lists'
-    # it 'has topic_lists & topics'
-    # it 'has one default topic'
   end
   context 'methods' do
     it 'name_to_legacy_slug' do
