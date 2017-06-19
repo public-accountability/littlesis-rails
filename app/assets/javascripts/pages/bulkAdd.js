@@ -564,12 +564,19 @@
     // csv.data contains an array of objects where the keys are the same as rowInfo.key
     var csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
     var columns = relationshipDetailsAsObject();
-    
+
     // because we typically start out with one blank row
     // this removes it before the csv data gets inserted into the table
     removeBlankRows();
     
-    csv.data.forEach(function(rowData) {
+    csv.data.map(function(rowData){
+      // downcase the keys
+      var r = {};
+      Object.keys(rowData).forEach(function(key) {
+	r[key.toLowerCase()] = rowData[key];
+      });
+      return r;
+     }).forEach(function(rowData) {
       var newRow = newBlankRow();
       traverseRow(columns, newRow, function(rowInfo, cell) {
 	updateCellData(cell, rowInfo, rowData[rowInfo.key]);
