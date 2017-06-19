@@ -2,7 +2,7 @@
  Editable bulk add relationships table 
  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
 
- External Requirements: jQuery, utility.js, Hogan, jQuery UI Autocomplete
+ External requirements: jQuery, utility.js, Hogan, jQuery UI Autocomplete
 
 */
 (function (root, factory) {
@@ -32,6 +32,8 @@
       };
     });
   }
+
+  /* CREATE TABLE  */
 
   // Adds <th> with title to table header
   // [] -> 
@@ -77,7 +79,7 @@
       .append( sampleCSVLink() );
   }
   
-  // Creates Empty table based on the selected category
+  // Creates empty table based on the selected category
   function createTable() {
     $('#table table')
       .empty()
@@ -90,7 +92,47 @@
     newBlankRow(); // initialize table with a new blank row
     readCSVFileListener('csv-file'); // handle file uploads to #csv-file
   }
-  
+
+  /* FIND SIMILAR RELATIONSHIPS */
+
+  var relationshipAlertContent =  Hogan.compile('<p>A similar relationship was found in the littlesis database. Are you <em>sure</em> you want to create another one?</p><p><a href="{{url}}" target="_blank">Click here</a> to view the relationship.</p>');
+
+  // input: [] -> <Span>
+  function similarRelationshipAlert(relationships) {
+    return $('<span>', {
+      "class": "glyphicon glyphicon-alert similar-relationships-alert",
+      "title": "Similar relationships exist!",
+      "aria-hidden": true,
+      "fadeIn": { duration: 500 },
+      "popover": {
+	content: relationshipAlertContent.render(relationships[0]),
+	placement: 'left',
+        html: true
+      }
+    });
+  }
+
+  // Submits ajax request to /relationships/find_similar
+  // and displays alert if similar relationship is found
+  // Input: <td>, Int
+  function lookForSimilarRelationship(cell, entity2_id) {
+    var request = { entity1_id: utility.entityInfo('entityid'),
+		    entity2_id: entity2_id,
+		    category_id: Number($('#relationship-cat-select option:selected').val()) };
+
+    $.getJSON('/relationships/find_similar', request)
+      .done(function(relationships){
+	if (relationships.length > 0) {
+	  cell.parents('tr').append(similarRelationshipAlert(relationships));
+	}
+      })
+      .fail(function(){
+	console.error('ajax request to /relationships/find_similar failed');
+      });
+  }
+
+  /* ENTITY SEARCH AUTOCOMPLETE */
+
   // AJAX request route: /search/entity
   // str, function -> callback([{}])
   function searchRequest(text, callback) {
@@ -136,7 +178,11 @@
 	    // make both name and blurb cells editable
 	    cell.attr('contenteditable', 'true'); 
 	    blurb.attr('contenteditable', 'true'); 
-	    cell.data('entityid', null); // remove the entity id 
+	    cell.data('entityid', null); // remove the entity id
+	    // Remove the similar relationship alert (if it exists)
+	    cell.parents('tr').find('.similar-relationships-alert').remove();
+	    // Remove the popover if it's left open
+	    cell.parents('tr').find('.popover').remove();
 	  }
 	})
       );
@@ -144,6 +190,7 @@
       blurb.text(ui.item.description ? ui.item.description : '');
       blurb.attr('contenteditable', 'false'); // disable editing of blurb
       entityType.find('select').selectpicker('val', ui.item.primary_type);
+      lookForSimilarRelationship(cell, ui.item.id);
     }
   };
 
@@ -154,13 +201,15 @@
       .append( entitySuggestion.render(item) )
       .appendTo( ul );
   };
-  
 
   function autocompleteTd() {
     var td = $('<td>', {contenteditable: 'true'}).autocomplete(autocompleteOptions);
     td.autocomplete("instance")._renderItem = autocompleteRenderItem;
     return td;
   }
+
+  
+  /* ROW ELEMENTS */
 
   function primaryExtRadioButtons() {
     // Using selectpicker with multiple and max-options 1 in order to get the
@@ -189,6 +238,7 @@
     },
     // <td> -> Str
     value: function(td) {
+
       return td.find('button.active').text();
     },
     // <td>, Str -> updates the button group inside the provided element
@@ -233,6 +283,9 @@
     $('#table .selectpicker').selectpicker();
     return row;
   }
+
+
+  /* EXTRACT AND SET ROW DATA */
 
   // This returns the cell data
   // Most types simply need to return the text inside the element.
@@ -423,6 +476,8 @@
     }
   }
 
+   /* SUBMIT DATA*/
+
   function submit() {
     if (validateReference()) {
       $('.bg-warning').removeClass('bg-warning');
@@ -460,6 +515,7 @@
     };
   }
 
+
   function repopulateTable(errors) {
     $('.result-mode').hide();
     $('.create-mode').show();
@@ -478,6 +534,7 @@
     // It allows us to re-use the csvToTable function.
     csvToTable(Papa.unparse(relationships));
   }
+
 
   var afterRequest = {
 
@@ -556,6 +613,7 @@
   }
 
   
+  /* READ FROM CSV */ 
 
   // Takes a CSV string and writes result to the table
   // see github.com/mholt/PapaParse for PapeParse library docs
