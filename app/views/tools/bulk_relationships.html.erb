@@ -1,4 +1,4 @@
-<h1>Bulk Add Relationships for <%= @entity.name %></h1>
+<h1>Bulk Add Relationships for <%= link_to @entity.name, entity_path(@entity) %></h1>
 
 <%= render partial: 'shared/entity_info', locals: { entity: @entity } %>
 
@@ -14,7 +14,11 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row result-mode" id="results">
+    
+</div>
+
+<div class="row create-mode">
     <div class="col-sm-3">    
 	<span><em>Relationship Category</em></span>
 	<%= select_builder @entity.primary_ext %>
@@ -34,12 +38,14 @@
     </div>
 </div>
 
-<div id="table" class="table-editable">
-    <table class="table table-bordered">
-    </table>
+<div class="row create-mode">
+    <div id="table" class="table-editable">
+	<table class="table table-bordered">
+	</table>
+    </div>
 </div>
 
-<button id="upload-btn" class="btn btn-primary hidden">Upload Data</button>
+<button id="upload-btn" class="btn btn-primary hidden create-mode">Upload Data</button>
 <p id="export"></p>
 <script>
 $(document).ready(function(){

@@ -1,6 +1,9 @@
 /**
  Editable bulk add relationships table 
  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
+
+ External requirements: jQuery, utility.js, Hogan, jQuery UI Autocomplete
+
 */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -29,6 +32,8 @@
       };
     });
   }
+
+  /* CREATE TABLE  */
 
   // Adds <th> with title to table header
   // [] -> 
@@ -74,7 +79,7 @@
       .append( sampleCSVLink() );
   }
   
-  // Creates Empty table based on the selected category
+  // Creates empty table based on the selected category
   function createTable() {
     $('#table table')
       .empty()
@@ -87,7 +92,47 @@
     newBlankRow(); // initialize table with a new blank row
     readCSVFileListener('csv-file'); // handle file uploads to #csv-file
   }
-  
+
+  /* FIND SIMILAR RELATIONSHIPS */
+
+  var relationshipAlertContent =  Hogan.compile('<p>A similar relationship was found in the littlesis database. Are you <em>sure</em> you want to create another one?</p><p><a href="{{url}}" target="_blank">Click here</a> to view the relationship.</p>');
+
+  // input: [] -> <Span>
+  function similarRelationshipAlert(relationships) {
+    return $('<span>', {
+      "class": "glyphicon glyphicon-alert similar-relationships-alert",
+      "title": "Similar relationships exist!",
+      "aria-hidden": true,
+      "fadeIn": { duration: 500 },
+      "popover": {
+	content: relationshipAlertContent.render(relationships[0]),
+	placement: 'left',
+        html: true
+      }
+    });
+  }
+
+  // Submits ajax request to /relationships/find_similar
+  // and displays alert if similar relationship is found
+  // Input: <td>, Int
+  function lookForSimilarRelationship(cell, entity2_id) {
+    var request = { entity1_id: utility.entityInfo('entityid'),
+		    entity2_id: entity2_id,
+		    category_id: Number($('#relationship-cat-select option:selected').val()) };
+
+    $.getJSON('/relationships/find_similar', request)
+      .done(function(relationships){
+	if (relationships.length > 0) {
+	  cell.parents('tr').append(similarRelationshipAlert(relationships));
+	}
+      })
+      .fail(function(){
+	console.error('ajax request to /relationships/find_similar failed');
+      });
+  }
+
+  /* ENTITY SEARCH AUTOCOMPLETE */
+
   // AJAX request route: /search/entity
   // str, function -> callback([{}])
   function searchRequest(text, callback) {
@@ -108,44 +153,63 @@
   }
 
   // options for the entity search autocomplete <td>
-  var autocomplete = {
-    contenteditable: 'true',
-    autocomplete: {
-      source: function(request, response) {
-	searchRequest(request.term, response);
-      },
-      select: function( event, ui ) {
-	event.preventDefault();
-	var cell = $(this);
-	//  requires order of table to be: name -> blurb -> entityType
-	var blurb = cell.next();
-	var entityType = blurb.next();
-	// add link to cell
-	cell.html( $('<a>', { href: 'https://littlesis.org' + ui.item.url, text: ui.item.name, target: '_blank' })) ;
-	cell.attr('contenteditable', 'false');
-	// store entity id in dataset
-	cell.data('entityid', ui.item.id);
-	// add reset-field option
-	cell.append( 
-	  $('<span>', { 
-	    'class': 'glyphicon glyphicon-remove reset-name',
-	    click: function() {
-	      cell.empty();  // empty the cell
-	      blurb.empty(); // empty blurb
-	      // make both name and blurb cells editable
-	      cell.attr('contenteditable', 'true'); 
-	      blurb.attr('contenteditable', 'true'); 
-	      cell.data('entityid', null); // remove the entity id 
-	    }
-	  })
-	);
+  var autocompleteOptions = {
+    source: function(request, response) {
+      searchRequest(request.term, response);
+    },
+    select: function( event, ui ) {
+      event.preventDefault();
+      var cell = $(this);
+      //  requires order of table to be: name -> blurb -> entityType
+      var blurb = cell.next();
+      var entityType = blurb.next();
+      // add link to cell
+      cell.html( $('<a>', { href: 'https://littlesis.org' + ui.item.url, text: ui.item.name, target: '_blank' })) ;
+      cell.attr('contenteditable', 'false');
+      // store entity id in dataset
+      cell.data('entityid', ui.item.id);
+      // add reset-field option
+      cell.append( 
+	$('<span>', { 
+	  'class': 'glyphicon glyphicon-remove reset-name',
+	  click: function() {
+	    cell.empty();  // empty the cell
+	    blurb.empty(); // empty blurb
+	    // make both name and blurb cells editable
+	    cell.attr('contenteditable', 'true'); 
+	    blurb.attr('contenteditable', 'true'); 
+	    cell.data('entityid', null); // remove the entity id
+	    // Remove the similar relationship alert (if it exists)
+	    cell.parents('tr').find('.similar-relationships-alert').remove();
+	    // Remove the popover if it's left open
+	    cell.parents('tr').find('.popover').remove();
+	  }
+	})
+      );
 
-	blurb.text(ui.item.description ? ui.item.description : '');
-	blurb.attr('contenteditable', 'false'); // disable editing of blurb
-	entityType.find('select').selectpicker('val', ui.item.primary_type);
-      }
+      blurb.text(ui.item.description ? ui.item.description : '');
+      blurb.attr('contenteditable', 'false'); // disable editing of blurb
+      entityType.find('select').selectpicker('val', ui.item.primary_type);
+      lookForSimilarRelationship(cell, ui.item.id);
     }
   };
+
+  var entitySuggestion = Hogan.compile('<div class="entity-search-name">{{name}}</div><div class="entity-search-blurb">{{description}}</div>');
+
+  var autocompleteRenderItem = function(ul, item) {
+    return $( "<li>" )
+      .append( entitySuggestion.render(item) )
+      .appendTo( ul );
+  };
+
+  function autocompleteTd() {
+    var td = $('<td>', {contenteditable: 'true'}).autocomplete(autocompleteOptions);
+    td.autocomplete("instance")._renderItem = autocompleteRenderItem;
+    return td;
+  }
+
+  
+  /* ROW ELEMENTS */
 
   function primaryExtRadioButtons() {
     // Using selectpicker with multiple and max-options 1 in order to get the
@@ -174,6 +238,7 @@
     },
     // <td> -> Str
     value: function(td) {
+
       return td.find('button.active').text();
     },
     // <td>, Str -> updates the button group inside the provided element
@@ -198,7 +263,8 @@
     } else if (col[2] === 'triboolean') { // tri-boolean column
       return $('<td class="tri-boolean">').append(triBooleanButtonSet());
     } else if (col[1] === 'name') { // autocomplete for entity
-      return $('<td>', autocomplete);
+      return autocompleteTd();
+      //return $('<td>', autocomplete);
     } else if (col[1] === 'primary_ext') {
       return $('<td>').append(primaryExtRadioButtons());
     } 
@@ -217,6 +283,9 @@
     $('#table .selectpicker').selectpicker();
     return row;
   }
+
+
+  /* EXTRACT AND SET ROW DATA */
 
   // This returns the cell data
   // Most types simply need to return the text inside the element.
@@ -407,6 +476,8 @@
     }
   }
 
+   /* SUBMIT DATA*/
+
   function submit() {
     if (validateReference()) {
       $('.bg-warning').removeClass('bg-warning');
@@ -444,10 +515,83 @@
     };
   }
 
+
+  function repopulateTable(errors) {
+    $('.result-mode').hide();
+    $('.create-mode').show();
+    createTable();
+    // collect all the errors messages
+    // TODO: display these somewhere
+    var errorMessages = errors.map(function(err) { return err.errorMessage; });
+    // remove the errors messages
+    var relationships = errors.map(function(err) {
+      delete err.errorMessage;
+      return err;
+    });
+    
+    // The array of objects is turned into a string
+    // just to be, moments later, parsed again.
+    // It allows us to re-use the csvToTable function.
+    csvToTable(Papa.unparse(relationships));
+  }
+
+
   var afterRequest = {
-    success: function() {
+
+    // summary text with relationship and error count
+    info: function(data) {
+      var text = data.relationships.length.toString() + ' Relationships were created  / ' +  data.errors.length.toString() + ' Errors occured';
+      return $('<div>', {class: 'col-sm-12' }).append($('<h4>', {text: text}));
+    },
+
+    // one list-group-item of a relationship
+    relationshipDisplay: function(relationship) {
+      return $('<a>', {href: relationship.url, class: 'list-group-item', target: '_blank'})
+        .append($('<p>', {class: 'list-group-item-text', text: relationship.name }));
+    },
+
+    errorDisplay: function(errors) {
+      return $('<div>', {class: 'col-sm-8'})
+	.append(
+	  $('<p>', {
+	    class: 'cursor-pointer top-1em',
+	    text: 'click here to repopulate the table with the relationships that failed',
+	    click: function() { repopulateTable(errors); }
+	  }));
+    },
+
+    // show relationship list + summary text
+    display: function(data) {
+      $('.result-mode').show();
+      $('.create-mode').hide();
+      var $results = $('#results')
+	  .empty()
+	  .append(afterRequest.info(data));
+
+      if (data.relationships.length > 0) {
+	var container = $('<div>', {class: 'col-sm-8'}).append( $('<h3>', {class: '', text: 'New relationships'}));
+	var relationships = data.relationships.reduce(function(listGroup, relationship) {
+	  return listGroup.append(afterRequest.relationshipDisplay(relationship));
+	}, $('<div>', {class: 'list-group'}));
+	
+	$results.append(container.append(relationships));
+      }
+
+      if (data.errors.length > 0) {
+	$results.append(afterRequest.errorDisplay(data.errors));
+      }
+    },
+    
+    success: function(data) {
       $('#table table').empty();
-      showAlert('The request was successful!', 'alert-success');
+      if (data.errors.length === 0) {
+	showAlert('The request was successful!', 'alert-success');
+      } else if (data.relationships.length === 0) {
+	showAlert('something went wrong :(', 'alert-danger');
+      } else {
+	showAlert('Some relationships could not be created', 'alert-warning');
+      }
+      afterRequest.display(data);
     },
     error: function() {
       alert('something went wrong :(');
@@ -459,33 +603,17 @@
   // [{}] -> callbacks
   function submitRequest() {
     var data = prepareTableData(tableToJson('#table', relationshipDetailsAsObject()));
-    console.log(data);
     $.ajax({
       method: 'POST',
       url: '/relationships/bulk_add',
       data: data,
-      statusCode: {
-	201: function() {
-	  afterRequest.success();
-	},
-	207: function() {
-	  // partial sucuess...should eventually figure out what to do here
-	  afterRequest.success();
-	},
-	400: function() {
-	  afterRequest.error();
-	},
-	422: function() { 
-	  afterRequest.error();
-	}
-      },
-      error: function() {
-	afterRequest.error();
-      }
+      success: afterRequest.success,
+      error: afterRequest.error
     });
   }
 
   
+  /* READ FROM CSV */ 
 
   // Takes a CSV string and writes result to the table
   // see github.com/mholt/PapaParse for PapeParse library docs
@@ -494,12 +622,19 @@
     // csv.data contains an array of objects where the keys are the same as rowInfo.key
     var csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
     var columns = relationshipDetailsAsObject();
-    
+
     // because we typically start out with one blank row
     // this removes it before the csv data gets inserted into the table
     removeBlankRows();
     
-    csv.data.forEach(function(rowData) {
+    csv.data.map(function(rowData){
+      // downcase the keys
+      var r = {};
+      Object.keys(rowData).forEach(function(key) {
+	r[key.toLowerCase()] = rowData[key];
+      });
+      return r;
+     }).forEach(function(rowData) {
       var newRow = newBlankRow();
       traverseRow(columns, newRow, function(rowInfo, cell) {
 	updateCellData(cell, rowInfo, rowData[rowInfo.key]);
@@ -563,6 +698,7 @@
     cellValidation: cellValidation,
     invalidDisplay: invalidDisplay,
     removeBlankRows: removeBlankRows,
+    afterRequest: afterRequest,
     init: function() { 
       domListeners();
     }

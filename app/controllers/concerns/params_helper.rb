@@ -13,8 +13,8 @@ module ParamsHelper
   #  - processes start and end dates
   def prepare_update_params(update_params)
     params = ActiveSupport::HashWithIndifferentAccess.new(blank_to_nil(update_params))
-    params['start_date'] = LsDate.convert(params['start_date']) if update_params.key?('start_date')
-    params['end_date'] = LsDate.convert(params['end_date']) if update_params.key?('end_date')
+    params['start_date'] = LsDate.convert(params['start_date']) if params.key?('start_date')
+    params['end_date'] = LsDate.convert(params['end_date']) if params.key?('end_date')
     params['last_user_id'] = current_user.sf_guard_user_id
     params['is_current'] = is_current_helper(params['is_current']) if params.key?('is_current')
     parameter_processor(params)

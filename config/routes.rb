@@ -290,7 +290,6 @@ Lilsis::Application.routes.draw do
     get "/potential_contributions" => "nys#potential_contributions"
     get "/contributions" => "nys#contributions"
   end
-  
 
   #########
   # Tools #

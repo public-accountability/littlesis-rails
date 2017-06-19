@@ -58,46 +58,6 @@ class RelationshipsController < ApplicationController
     redirect_to :action => "edit", :id => @relationship.id
   end
 
-  # POST /relationships/bulk_add
-  # four possible status codes can be returned: 201, 207, 400, 422
-  def bulk_add
-    check_permission 'importer'
-    return head :bad_request unless Reference.new(reference_params).validate_before_create.empty?
-    @errors = 0
-    entity1 = Entity.find(params.fetch('entity1_id'))
-
-    # Looping through each relationship
-    bulk_relationships_params.each do |relationship|
-      # creating or finding the entity for that relationship
-      make_or_get_entity(relationship) do |entity2|
-        r = Relationship.create relationship_attributes(entity1, entity2, relationship)
-        # if the relationship is not persisted (meaning an error occurred)
-        @errors += 1 and next unless r.persisted?
-        # creating the reference for that relationship
-        Reference.create(reference_params.merge(object_id: r.id, object_model: 'Relationship'))
-        # some relationships will have additional fields:
-        if extension?
-          # get only the category fields from the relationship hash
-          new_category_attr = relationship.delete_if { |key| (r.attributes.keys + ['name', 'primary_ext', 'blurb']).include? key }
-          # update relationship category - we don't have to update if nothing has changed
-          r.get_category.update(new_category_attr) unless r.category_attributes == new_category_attr
-        end
-      end
-    end # end loop of submitted relationships
-
-    # This will returns three possible status codes
-    # - 201 if all relationships are created
-    # - 422 if none of the relationships are created
-    # - 207 if some but not all of the relationships are created
-    if @errors.zero?
-      head :created
-    elsif @errors == bulk_relationships_params.length
-      head :unprocessable_entity
-    else
-      render json: { 'errors' => @errors }, status: :multi_status
-    end
-  end
-
   def find_similar
     if has_required_find_similar_params?
       render json: Relationship.find_similar(similar_relationships_params).map { |r| r.as_json(:url => true) }
@@ -106,9 +66,38 @@ class RelationshipsController < ApplicationController
     end
   end
 
+  # POST /relationships/bulk_add
+  def bulk_add
+    check_permission 'importer'
+    return head :bad_request unless Reference.new(reference_params).validate_before_create.empty?
+    @errors = []
+    @new_relationships = []
+    entity1 = Entity.find(params.fetch('entity1_id'))
+
+    # Looping through each relationship
+    bulk_relationships_params.each do |relationship|
+      ActiveRecord::Base.transaction do
+        make_or_get_entity(relationship) do |entity2|
+          rollback_if(relationship) do
+            create_bulk_relationship(entity1, entity2, relationship)
+          end
+        end
+      end
+    end # end loop of submitted relationships
+
+    # Always send back a sucuessful responce,
+    # even if every relationship is an error
+    render :json => bulk_json_response
+  end
+
   private
 
+  ####################
+  # Bulk Add Helpers #
+  ####################
+
   # Hash -> Nil | yield
+  # creating or finding the entity for the relationship
   def make_or_get_entity(relationship)
     if relationship.fetch('name').to_i.zero?
       attributes = relationship.slice('name', 'blurb', 'primary_ext').merge('last_user_id' => current_user.sf_guard_user_id)
@@ -116,15 +105,40 @@ class RelationshipsController < ApplicationController
     else
       entity = Entity.find_by_id(relationship.fetch('name').to_i)
     end
-    if entity.persisted?
+
+    if entity.try(:persisted?)
       yield entity
     else
-      @errors += 1
+      @errors << relationship.merge('errorMessage' => 'Failed to find or create entity')
     end
   end
 
-  def extension?
-    [1, 2, 3, 10].include? params.require(:category_id).to_i
+  def rollback_if(relationship)
+    yield
+  rescue ActiveRecord::StatementInvalid
+    # The rails documentation recommends not catching this exception: http://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html
+    # ...and we shall OBEY the rails docs...
+    raise
+  rescue ActiveRecord::ActiveRecordError => e
+    @errors << relationship.merge('errorMessage' => e.message)
+    Rails.logger.warn "BulkAdd Relationship Error: #{e.message}"
+    raise ActiveRecord::Rollback, "Error creating a Relationship"
+  end
+
+  def create_bulk_relationship(entity1, entity2, relationship)
+    r = Relationship.new(relationship_attributes(entity1, entity2, relationship))
+    r.save!
+    # if the relationship is not persisted (meaning an error occurred)
+    # creating the reference for that relationship
+    Reference.create(reference_params.merge(object_id: r.id, object_model: 'Relationship'))
+    # some relationships will have additional fields:
+    if extension?
+      # get only the category fields from the relationship hash
+      new_category_attr = relationship.delete_if { |key| (r.attributes.keys + ['name', 'primary_ext', 'blurb']).include? key }
+      # update relationship category - we don't have to update if nothing has changed
+      r.get_category.update(new_category_attr) unless r.category_attributes == new_category_attr
+    end
+    @new_relationships << r.as_json(:url => true, :name => true)
   end
 
   # <Entity>, <Entity>, Hash -> Hash
@@ -148,6 +162,23 @@ class RelationshipsController < ApplicationController
     prepare_update_params(r)
   end
 
+  def bulk_json_response
+    { errors: @errors, relationships: @new_relationships }
+  end
+
+  def bulk_relationships_params
+    return params[:relationships].map { |x| blank_to_nil(x) } if params[:relationships].is_a?(Array)
+    params[:relationships].to_a.map { |x| x[1] }.map { |x| blank_to_nil(x) }
+  end
+
+  #################
+  # Other Helpres #
+  #################
+
+  def extension?
+    [1, 2, 3, 10].include? params.require(:category_id).to_i
+  end
+
   def set_relationship
     @relationship = Relationship.find(params[:id])
   end
@@ -155,11 +186,6 @@ class RelationshipsController < ApplicationController
   def update_entity_last_user
     @relationship.entity.update(last_user_id: current_user.sf_guard_user_id)
     @relationship.related.update(last_user_id: current_user.sf_guard_user_id)
-  end
-
-  def bulk_relationships_params
-    return params[:relationships].map { |x| blank_to_nil(x) } if params[:relationships].is_a?(Array)
-    params[:relationships].to_a.map { |x| x[1] }.map { |x| blank_to_nil(x) }
   end
 
   def relationship_params
@@ -175,7 +201,7 @@ class RelationshipsController < ApplicationController
   end
 
   # whitelists relationship params and associated nested attributes
-  # if the relationship category requires them 
+  # if the relationship category requires them
   def update_params
     relationship_fields = @relationship.attribute_names.map(&:to_sym)
     if Relationship.all_category_ids_with_fields.include? @relationship.category_id

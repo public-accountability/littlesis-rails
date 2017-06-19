@@ -467,12 +467,21 @@ describe Relationship, type: :model do
       rel = build(:relationship, last_user_id: 900)
       expect(rel.as_json).not_to include 'last_user_id'
       expect(rel.as_json).not_to have_key 'url'
+      expect(rel.as_json).not_to have_key 'name'
     end
 
     it 'contains "url" field with relationship url if options includes :url => true' do
       rel = build(:relationship, last_user_id: 900)
       expect(rel.as_json(:url => true)).to have_key 'url'
       expect(rel.as_json(:url => true)['url']).to eq Rails.application.routes.url_helpers.relationship_url(rel)
+    end
+
+    it 'contains "name" field if options includes :name => true' do
+      org1 = build(:org, name: 'org1')
+      org2 = build(:org, name: 'org2')
+      rel = build(:relationship, last_user_id: 900, entity: org1, related: org2, category_id: 12)
+      expect(rel.as_json(:name => true)).to have_key 'name'
+      expect(rel.as_json(:name => true)['name']).to eq 'Generic: org1, org2'
     end
   end
 

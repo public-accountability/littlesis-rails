@@ -465,6 +465,7 @@ class Relationship < ActiveRecord::Base
         if options[:url]
           h['url'] = Rails.application.routes.url_helpers.relationship_url(self)
         end
+        h['name'] = name if options[:name]
       end
   end
 
