@@ -1,6 +1,9 @@
 /**
  Editable bulk add relationships table 
  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
+
+ External Requirements: jQuery, utility.js, Hogan, jQuery UI Autocomplete
+
 */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -108,44 +111,56 @@
   }
 
   // options for the entity search autocomplete <td>
-  var autocomplete = {
-    contenteditable: 'true',
-    autocomplete: {
-      source: function(request, response) {
-	searchRequest(request.term, response);
-      },
-      select: function( event, ui ) {
-	event.preventDefault();
-	var cell = $(this);
-	//  requires order of table to be: name -> blurb -> entityType
-	var blurb = cell.next();
-	var entityType = blurb.next();
-	// add link to cell
-	cell.html( $('<a>', { href: 'https://littlesis.org' + ui.item.url, text: ui.item.name, target: '_blank' })) ;
-	cell.attr('contenteditable', 'false');
-	// store entity id in dataset
-	cell.data('entityid', ui.item.id);
-	// add reset-field option
-	cell.append( 
-	  $('<span>', { 
-	    'class': 'glyphicon glyphicon-remove reset-name',
-	    click: function() {
-	      cell.empty();  // empty the cell
-	      blurb.empty(); // empty blurb
-	      // make both name and blurb cells editable
-	      cell.attr('contenteditable', 'true'); 
-	      blurb.attr('contenteditable', 'true'); 
-	      cell.data('entityid', null); // remove the entity id 
-	    }
-	  })
-	);
+  var autocompleteOptions = {
+    source: function(request, response) {
+      searchRequest(request.term, response);
+    },
+    select: function( event, ui ) {
+      event.preventDefault();
+      var cell = $(this);
+      //  requires order of table to be: name -> blurb -> entityType
+      var blurb = cell.next();
+      var entityType = blurb.next();
+      // add link to cell
+      cell.html( $('<a>', { href: 'https://littlesis.org' + ui.item.url, text: ui.item.name, target: '_blank' })) ;
+      cell.attr('contenteditable', 'false');
+      // store entity id in dataset
+      cell.data('entityid', ui.item.id);
+      // add reset-field option
+      cell.append( 
+	$('<span>', { 
+	  'class': 'glyphicon glyphicon-remove reset-name',
+	  click: function() {
+	    cell.empty();  // empty the cell
+	    blurb.empty(); // empty blurb
+	    // make both name and blurb cells editable
+	    cell.attr('contenteditable', 'true'); 
+	    blurb.attr('contenteditable', 'true'); 
+	    cell.data('entityid', null); // remove the entity id 
+	  }
+	})
+      );
 
-	blurb.text(ui.item.description ? ui.item.description : '');
-	blurb.attr('contenteditable', 'false'); // disable editing of blurb
-	entityType.find('select').selectpicker('val', ui.item.primary_type);
-      }
+      blurb.text(ui.item.description ? ui.item.description : '');
+      blurb.attr('contenteditable', 'false'); // disable editing of blurb
+      entityType.find('select').selectpicker('val', ui.item.primary_type);
     }
   };
+
+  var entitySuggestion = Hogan.compile('<div class="entity-search-name">{{name}}</div><div class="entity-search-blurb">{{description}}</div>');
+
+  var autocompleteRenderItem = function(ul, item) {
+    return $( "<li>" )
+      .append( entitySuggestion.render(item) )
+      .appendTo( ul );
+  };
+  
+
+  function autocompleteTd() {
+    var td = $('<td>', {contenteditable: 'true'}).autocomplete(autocompleteOptions);
+    td.autocomplete("instance")._renderItem = autocompleteRenderItem;
+    return td;
+  }
 
   function primaryExtRadioButtons() {
     // Using selectpicker with multiple and max-options 1 in order to get the
@@ -198,7 +213,8 @@
     } else if (col[2] === 'triboolean') { // tri-boolean column
       return $('<td class="tri-boolean">').append(triBooleanButtonSet());
     } else if (col[1] === 'name') { // autocomplete for entity
-      return $('<td>', autocomplete);
+      return autocompleteTd();
+      //return $('<td>', autocomplete);
     } else if (col[1] === 'primary_ext') {
       return $('<td>').append(primaryExtRadioButtons());
     } 
