@@ -318,7 +318,9 @@ class Relationship < ActiveRecord::Base
       return '(past)' if is_current == false
       return ''
     end
-    return "(#{LsDate.new(start_date).display})" if start_date == end_date
+    if start_date == end_date || (is_donation? && end_date.nil?)
+      return "(#{LsDate.new(start_date).display})"
+    end
     "(#{LsDate.new(start_date).display}→#{LsDate.new(end_date).display})"
   end
   
