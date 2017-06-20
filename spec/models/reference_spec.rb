@@ -16,6 +16,7 @@ describe Reference do
 
   describe 'validations' do
     it { should validate_length_of(:source).is_at_most(1000) }
+    it { should validate_length_of(:name).is_at_most(100) }
     it { should validate_length_of(:source_detail).is_at_most(255) }
     it { should validate_presence_of(:source) }
     it { should validate_presence_of(:object_id) }

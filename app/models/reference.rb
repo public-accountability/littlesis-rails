@@ -7,6 +7,7 @@ class Reference < ActiveRecord::Base
   has_one :os_donation, :through => :os_match
 
   validates :source, length: { maximum: 1000 }, presence: true
+  validates :name, length: { maximum: 100 }
   validates :source_detail, length: { maximum: 255 }
   validates_presence_of :object_id, :object_model
 
