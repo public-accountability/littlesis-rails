@@ -3,31 +3,33 @@
 <%  simple_math_total = (simple_math_1 + simple_math_2) %>
 
 <%= javascript_tag do  %>
+     function validateForm(){
+       if (!document.getElementById('terms_of_use').checked) {
+	 alert("Unfortunately, you have to accept the terms first");
+	 return false;
+       }
+       
+       var password = document.getElementsByName("user[password]")[0].value;
+       var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
+       var solution = Number(<%= simple_math_total %>);
+       var answerProvided = Number(document.getElementById('simple_math').value);
+       if (password.length < 8) {
+	 alert('Please ensure that your password is 8 or more characters long!');
+	 return false;
+       } else if (password !== confirmation) {
+	 alert('Your password and password confirmation do not match :(');
+	 return false;
+       } else if (solution  !==  answerProvided) {
+	 alert('Please double check your math :( ');
+	 return false;
+       } else {
+	 return true;
+       }
+     }
 
- function validateForm(){
-   if (!document.getElementById('terms_of_use').checked) {
-     alert("Unfortunately, you have to accept the terms first");
-     return false;
-   }
-   
-   var password = document.getElementsByName("user[password]")[0].value;
-   var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
-   var solution = Number(<%= simple_math_total %>);
-   var answerProvided = Number(document.getElementById('simple_math').value);
-   if (password.length < 8) {
-     alert('Please ensure that your password is 8 or more characters long!');
-     return false;
-   } else if (password !== confirmation) {
-     alert('Your password and password confirmation do not match :(');
-     return false;
-   } else if (solution  !==  answerProvided) {
-     alert('Please double check your math :( ');
-     return false;
-   } else {
-     return true;
-   }
- }
-
+     $(function () {
+       $('[data-toggle="tooltip"]').tooltip()
+     })
 <% end %>
 
 <div class="row">
@@ -107,20 +109,28 @@
 
 			</div>
 			<div class="form-group">
-                            <%= f.label :email, "Email", :class => label_class  %>
+                            <%= f.label :email,
+			    "Email",
+			    :class => label_class,
+			    :title => 'We do not share your email with anyone. Email verification is required to use LittleSis, and a confirmation will be sent out after you submit this form',
+			    :data => {toggle: 'tooltip', placement: 'left' } %>
                             <div class="<%= field_class %>">
 				<%= f.email_field :email, autofocus: true, :required => true %>
                             </div>
 			</div>
 			
 			<div class="form-group">
-                            <%= f.label :username, "Username", :class => label_class  %>
+                            <%= f.label :username, "Username",
+			    :class => label_class,
+			    :title => 'This is your public username. Any edits you do will be recorded with this name and visible to other LittleSis users',
+			    :data => {toggle: 'tooltip', placement: 'left' } %>
                             <div class="<%= field_class %>">
 				<%= f.text_field :username, autofocus: true,
 				:required => true,
 				:pattern => '[^@ ]{3,}',
 				:oninvalid => "this.setCustomValidity(\"Usernames must be at least 3 letters and cannot include '@' or spaces\")",
-				:oninput => "this.setCustomValidity('')" %>
+				:oninput => "this.setCustomValidity('')"
+				%>
                             </div>
 			</div>
 
