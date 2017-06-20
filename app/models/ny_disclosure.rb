@@ -10,14 +10,10 @@ class NyDisclosure < ActiveRecord::Base
                         :schedule_transaction_date
 
   def full_name
-    if corp_name.present?
-      corp_name
-    else
-      unless first_name.nil? and last_name.nil?
-        middle_name = mid_init.nil? ? " " : " #{mid_init} "
-        "#{first_name.to_s}#{middle_name}#{last_name.to_s}".titleize
-      end
-    end
+    return corp_name if corp_name.present?
+    return nil if first_name.nil? && last_name.nil?
+    middle_name = mid_init.nil? ? " " : " #{mid_init} "
+    "#{first_name.to_s}#{middle_name}#{last_name.to_s}".titleize
   end
 
   def is_matched
@@ -39,8 +35,8 @@ class NyDisclosure < ActiveRecord::Base
 
   # <Entity> -> Hash
   def self.potential_contributions(entity)
-    search(search_terms(entity), 
-           :with => { :is_matched => false, :transaction_code =>  [ "'A'", "'B'", "'C'" ] }, 
+    search(search_terms(entity),
+           :with => { :is_matched => false, :transaction_code =>  [ "'A'", "'B'", "'C'" ] },
            :sql => { :include => :ny_filer },
            :per_page => 500
           ).map(&:contribution_attributes)
@@ -67,7 +63,7 @@ class NyDisclosure < ActiveRecord::Base
   end
 
   def self.update_delta_flag(ids)
-    where(id: ids).each do |e| 
+    where(id: ids).each do |e|
       e.delta = true
       e.save
     end
@@ -94,5 +90,4 @@ class NyDisclosure < ActiveRecord::Base
     look_nice = lambda { |x| x.to_s.titleize }
     [ look_nice.call(address), look_nice.call(city) + ',', state.to_s, zip.to_s ].join(' ')
   end
-
 end

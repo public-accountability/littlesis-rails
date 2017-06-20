@@ -30,15 +30,14 @@ describe NyDisclosure, type: :model do
   end
 
   describe 'search_terms' do
-
     def build_entity(name, type)
-        e = build(type)
-        a = build(:alias, name: name, is_primary: true)
-        allow(e).to receive(:aliases).and_return([a])
-        return e
-      end
-    
-    context 'searching for a person' do 
+      e = build(type)
+      a = build(:alias, name: name, is_primary: true)
+      allow(e).to receive(:aliases).and_return([a])
+      return e
+    end
+
+    context 'searching for a person' do
       it 'Returns name if the name has no middle, suffix, or preface' do
         e = build_entity('Alice Coltrane', :person)
         expect(NyDisclosure.search_terms(e)).to eql 'Alice Coltrane'
@@ -73,7 +72,6 @@ describe NyDisclosure, type: :model do
         e = build_entity('evil corp', :org)
         expect(NyDisclosure.search_terms(e)).to eql 'evil corp | evil'
       end
-      
     end
   end
 end
