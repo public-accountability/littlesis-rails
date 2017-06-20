@@ -1,11 +1,24 @@
 <% content_for(:page_title, raw(@list.name)) %>
-
 <%= render partial: 'header', locals: { list: @list } %>
-
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :sources } %>
 
-<div id="list-sources">
-  <% @list.references.each do |ref| %>
-    <%= link_to(ref.name, ref.source) %><br>
-  <% end %>
+<div class="row">
+    <div id="list-sources">
+	<% @list.references.each do |ref| %>
+	    <%= link_to(ref.name, ref.source) %><br>
+	<% end %>
+    </div>
 </div>
+
+<% if user_signed_in? %>
+
+    <%= render partial: 'shared/reference_new', locals: {model: @list } %>
+
+    <div class="row top-3em">
+	<button type="button"
+		class="btn btn-default m-left-1em"
+		data-toggle="modal"
+		data-target="#add-reference-modal">Add a new source</button>
+    </div>
+    
+<% end %>
