@@ -7,8 +7,11 @@ class Reference < ActiveRecord::Base
   has_one :os_donation, :through => :os_match
 
   validates :source, length: { maximum: 1000 }, presence: true
+  validates :name, length: { maximum: 100 }
   validates :source_detail, length: { maximum: 255 }
   validates_presence_of :object_id, :object_model
+
+  before_create :legacy_list_object_model_handler
 
   @@ref_types = { 1 => 'Generic', 2 => 'FEC Filing', 3 => 'Newspaper', 4 => 'Government Document' }
 
@@ -139,5 +142,11 @@ class Reference < ActiveRecord::Base
   # output: str
   private_class_method def self.generate_where(h)
     "( object_model = '#{h[:class_name]}' AND object_id IN (#{h[:object_ids].join(',')}) )"
+  end
+
+  private
+
+  def legacy_list_object_model_handler
+    self.object_model = 'LsList' if object_model == 'List'
   end
 end

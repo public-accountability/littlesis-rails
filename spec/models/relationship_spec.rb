@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rails_helper'
 
 describe Relationship, type: :model do
@@ -435,6 +436,16 @@ describe Relationship, type: :model do
     it 'returns plain date if dates are equal' do
       rel = build(:relationship, start_date: '1999-00-00', end_date: '1999-00-00')
       expect(rel.display_date_range).to eq "('99)"
+    end
+
+    it 'returns date only if it is a donation relationship with a null end date' do
+      rel = build(:relationship, start_date: '1999-02-25', end_date: nil, category_id: 5)
+      expect(rel.display_date_range).to eq "(Feb 25 '99)"
+    end
+
+    it 'returns date range' do
+      rel = build(:relationship, start_date: '2000-01-01', end_date: '2012-12-12', category_id: 12)
+      expect(rel.display_date_range).to eq "(Jan 1 '00→Dec 12 '12)"
     end
   end
 

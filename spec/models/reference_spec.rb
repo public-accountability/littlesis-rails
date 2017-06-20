@@ -16,6 +16,7 @@ describe Reference do
 
   describe 'validations' do
     it { should validate_length_of(:source).is_at_most(1000) }
+    it { should validate_length_of(:name).is_at_most(100) }
     it { should validate_length_of(:source_detail).is_at_most(255) }
     it { should validate_presence_of(:source) }
     it { should validate_presence_of(:object_id) }
@@ -41,6 +42,19 @@ describe Reference do
       expect(Reference.new(source: 'http://example.com', name: 'resource name')
               .validate_before_create.empty?).to be true
     end
+  end
+
+  describe 'before create' do
+    it 'changes object_model List to LsList' do
+      ref = Reference.create!(object_model: 'List', source: 'http://example.com', object_id: 1)
+      expect(ref.object_model).to eq 'LsList'
+    end
+
+    it 'does not change other object_model for other models' do
+      ref = Reference.create!(object_model: 'Relationship', source: 'http://example.com', object_id: 1)
+      expect(ref.object_model).to eq 'Relationship'
+    end
+    
   end
 
   # describe 'recent_references' do

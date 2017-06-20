@@ -99,7 +99,7 @@ class NameParser
     # find nickname in quotes
     str.match(/["\']([\S]+)[\'"]/) do |match|
       nick = match[1] ? match[1] : match[2]
-      str = stre.gsub(/["\']([\S]+)[\'"]/, '').strip
+      str = str.gsub(/["\']([\S]+)[\'"]/, '').strip
     end
 
     # condense multiple spaces

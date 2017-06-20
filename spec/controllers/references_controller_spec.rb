@@ -52,23 +52,23 @@ describe ReferencesController, type: :controller do
 
     it 'does not create new ReferenceExcept if there is a blank excerpt' do
       expect {
-        post(:create, {data: {object_id: 666,
-                              source: 'interesting.net',
-                              name: 'a website',
-                              object_model: "Relationship",
-                              excerpt: "",
-                              ref_type: 1 }}) 
+        post(:create, { data: { object_id: 666,
+                                source: 'interesting.net',
+                                name: 'a website',
+                                object_model: "Relationship",
+                                excerpt: "",
+                                ref_type: 1 } })
       }.to change(ReferenceExcerpt, :count).by(0)
       expect(Reference.last.excerpt).to be_nil
     end
 
-    it 'does not create new ReferenceExcept if excerpt is not sent' do 
+    it 'does not create new ReferenceExcept if excerpt is not sent' do
       expect {
-        post(:create, {data: {object_id: 666,
-                              source: 'interesting.net',
-                              name: 'a website',
-                              object_model: "Relationship",
-                              ref_type: 1 }})
+        post(:create, { data: { object_id: 666,
+                                source: 'interesting.net',
+                                name: 'a website',
+                                object_model: "Relationship",
+                                ref_type: 1 } })
       }.to change(ReferenceExcerpt, :count).by(0)
 
       expect(Reference.last.excerpt).to be_nil
@@ -82,15 +82,28 @@ describe ReferencesController, type: :controller do
     end
 
     it 'returns json of errors if reference is not valid' do
-      post(:create, {data: {
-                       object_id: 666,
-                       object_model: "Relationship",
-                       ref_type: 1}
-                    })
+      post(:create, data: {
+             object_id: 666,
+             object_model: "Relationship",
+             ref_type: 1
+           })
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(400)
       expect(body['errors']['source']).to eql ["can't be blank"]
+    end
+
+    it 'returns json of errors if reference name is too long' do
+      post(:create, { data: { object_id: 666,
+                              source: 'https://example.com',
+                              name: 'x' * 101,
+                              object_model: "Relationship",
+                              ref_type: 1 } })
+
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(400)
+      expect(body['errors']['name'][0]).to include "is too long"
     end
   end
 

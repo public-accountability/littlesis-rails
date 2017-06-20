@@ -110,7 +110,7 @@ describe ListsController, type: :controller do
         end.to change { Reference.count }.by(1)
 
         expect(Reference.last.object_id).to eql assigns(:list).id
-        expect(Reference.last.object_model).to eql 'List'
+        expect(Reference.last.object_model).to eql 'LsList'
         # the reference name is set to be the same as the the source url if no name isprovided
         expect(Reference.last.name).to eql 'http://mysource'
         expect(Reference.last.source).to eql 'http://mysource'
