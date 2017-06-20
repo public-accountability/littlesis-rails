@@ -1,4 +1,19 @@
 class NyDisclosure < ActiveRecord::Base
+  REPORT_ID = {
+    "A" => "32 Day Pre Primary",
+    "B" => "11 Day Pre Primary",
+    "C" => "10 Day Post Primary",
+    "D" => "32 Day Pre General",
+    "E" => "11 Day Pre General",
+    "F" => "27 Day Post General",
+    "G" => "32 Day Pre Special",
+    "H" => "11 Day Pre Special",
+    "I" => "27 Day Post Special",
+    "J" => "Periodic Jan",
+    "K" => "Periodic July",
+    "L" => "24 hour Notice"
+  }.freeze
+  
   has_one :ny_match, inverse_of: :ny_disclosure
   belongs_to :ny_filer, class_name: "NyFiler", foreign_key: "filer_id", primary_key: "filer_id"
 
@@ -35,6 +50,10 @@ class NyDisclosure < ActiveRecord::Base
 
   def reference_link
     "http://www.elections.ny.gov:8080/reports/rwservlet?cmdkey=efs_sch_report&p_filer_id=#{filer_id}&p_e_year=#{e_year}&p_freport_id=#{report_id}&p_transaction_code=#{transaction_code}"
+  end
+
+  def reference_name
+    "#{e_year} NYS Board of Elections Financial Disclosure Report: #{NyDisclosure::REPORT_ID[report_id]}"
   end
 
   #################

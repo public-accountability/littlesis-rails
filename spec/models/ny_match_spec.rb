@@ -22,12 +22,18 @@ describe NyMatch, type: :model do
   it { should have_one(:ny_filer_entity) }
 
   describe 'match' do
+    def rel
+      r = build(:relationship)
+      allow(r).to receive(:add_reference)
+      r
+    end
+    
     context 'creating new matches' do
       # before(:all) { ThinkingSphinx::Deltas.suspend! }
       # after(:all) {  ThinkingSphinx::Deltas.resume! }
       before(:each) do
         expect(NyFilerEntity).to receive(:find_by_filer_id).and_return(double(:entity_id => 100))
-        allow(Relationship).to receive(:find_or_create_by!).and_return(build(:relationship))
+        allow(Relationship).to receive(:find_or_create_by!).and_return(rel)
         allow(User).to receive(:find).and_return(double(:sf_guard_user => double(:id => 99)))
       end
 
@@ -45,7 +51,7 @@ describe NyMatch, type: :model do
         expect(m.matched_by).to eql 42
       end
 
-      # it 'Sets matched_by to be the system_user_id if no user is given' do 
+      # it 'Sets matched_by to be the system_user_id if no user is given' do
       #   d = create(:ny_disclosure)
       #   NyMatch.match(d.id,20)
       #   expect(NyMatch.last.matched_by).to eql 1
@@ -62,7 +68,7 @@ describe NyMatch, type: :model do
     end
 
     it 'updates updated_at for recipient' do
-      allow(Relationship).to receive(:find_or_create_by!).and_return(build(:relationship))
+      allow(Relationship).to receive(:find_or_create_by!).and_return(rel)
       allow(User).to receive(:find).and_return(double(:sf_guard_user => double(:id => 99)))
       elected = create(:elected)
       elected.update_column(:updated_at, 1.day.ago)
@@ -128,7 +134,7 @@ describe NyMatch, type: :model do
     end
 
     it 'sets the relationship\'s last_user id to be the matched_by user' do
-      disclosure = build(:ny_disclosure, amount1: 50)
+      disclosure = create(:ny_disclosure, amount1: 50)
       sf_user = create(:sf_guard_user)
       user = create(:user, sf_guard_user_id: sf_user.id)
       match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected, matched_by: user.id)
@@ -142,16 +148,26 @@ describe NyMatch, type: :model do
       match.create_or_update_relationship
       expect(Relationship.last.last_user_id).to eql 1
     end
+
+    it 'creates a new reference' do
+      disclosure = create(:ny_disclosure, amount1: 50)
+      match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected)
+      expect { match.create_or_update_relationship }.to change { Reference.count }.by(1)
+      expect(Reference.last.source).to eq disclosure.reference_link
+      expect(Reference.last.name).to eq disclosure.reference_name
+    end
+  end
+
+  def setup_models
+    @donor = build(:person)
+    @elected = build(:elected)
+    @filer = build(:ny_filer, filer_id: '9876', name: 'some committee')
+    @disclosure = build(:ny_disclosure, amount1: 50, ny_filer: @filer)
+    @match = create(:ny_match, ny_disclosure: @disclosure, donor: @donor, recipient: @elected)
   end
 
   describe '#info' do
-    before(:all) do
-      @donor = build(:person)
-      @elected = build(:elected)
-      @filer = build(:ny_filer, filer_id: '9876', name: 'some committee')
-      @disclosure = build(:ny_disclosure, amount1: 50, ny_filer: @filer)
-      @match = create(:ny_match, ny_disclosure: @disclosure, donor: @donor, recipient: @elected)
-    end
+    before(:all) { setup_models }
 
     it 'returns a hash' do
       expect(@match.info).to be_a(Hash)
@@ -168,4 +184,38 @@ describe NyMatch, type: :model do
     end
   end
 
+  describe '#create_reference' do
+    let(:donor) { create(:person) }
+    let(:elected) { create(:elected) }
+    let(:filer) { build(:ny_filer, filer_id: '9876', name: 'some committee') }
+    let(:disclosure) { build(:ny_disclosure, amount1: 50, ny_filer: filer, e_year: '2017', report_id: 'B') }
+    let(:rel) { create(:relationship, category_id: 5, entity: donor, related: elected, amount: 1000, description1: "NYS Campaign Contribution" ) }
+    
+    it 'adds the ny disclosure referece link' do
+      expect(disclosure).to receive(:reference_link).and_return('ny_state_ref_link')
+      match = create(:ny_match, ny_disclosure: disclosure, donor: donor, recipient: elected)
+
+      expect { match.send(:create_reference, rel) }.to change { Reference.count }.by(1)
+      expect(Reference.last.source).to eq 'ny_state_ref_link'
+    end
+
+    it 'creates a second reference if the url is different' do
+      expect(disclosure).to receive(:reference_link).and_return('ny_state_ref_link_1')
+      expect(disclosure).to receive(:reference_link).and_return('ny_state_ref_link_2')
+      match = create(:ny_match, ny_disclosure: disclosure, donor: donor, recipient: elected)
+
+      expect { match.send(:create_reference, rel) }.to change { Reference.count }.by(1)
+      expect(Reference.last.source).to eq 'ny_state_ref_link_1'
+      expect { match.send(:create_reference, rel) }.to change { Reference.count }.by(1)
+      expect(Reference.last.source).to eq 'ny_state_ref_link_2'
+    end
+
+    it 'does not create a recond reference if the url is the same' do
+      expect(disclosure).to receive(:reference_link).twice.and_return('ny_state_ref_link')      
+      match = create(:ny_match, ny_disclosure: disclosure, donor: donor, recipient: elected)
+
+      expect { match.send(:create_reference, rel) }.to change { Reference.count }.by(1)
+      expect { match.send(:create_reference, rel) }.not_to change { Reference.count }
+    end
+  end
 end
