@@ -1,4 +1,19 @@
 class NyDisclosure < ActiveRecord::Base
+  REPORT_ID = {
+    "A" => "32 Day Pre Primary",
+    "B" => "11 Day Pre Primary",
+    "C" => "10 Day Post Primary",
+    "D" => "32 Day Pre General",
+    "E" => "11 Day Pre General",
+    "F" => "27 Day Post General",
+    "G" => "32 Day Pre Special",
+    "H" => "11 Day Pre Special",
+    "I" => "27 Day Post Special",
+    "J" => "Periodic Jan",
+    "K" => "Periodic July",
+    "L" => "24 hour Notice"
+  }.freeze
+  
   has_one :ny_match, inverse_of: :ny_disclosure
   belongs_to :ny_filer, class_name: "NyFiler", foreign_key: "filer_id", primary_key: "filer_id"
 
@@ -10,14 +25,10 @@ class NyDisclosure < ActiveRecord::Base
                         :schedule_transaction_date
 
   def full_name
-    if corp_name.present?
-      corp_name
-    else
-      unless first_name.nil? and last_name.nil?
-        middle_name = mid_init.nil? ? " " : " #{mid_init} "
-        "#{first_name.to_s}#{middle_name}#{last_name.to_s}".titleize
-      end
-    end
+    return corp_name if corp_name.present?
+    return nil if first_name.nil? && last_name.nil?
+    middle_name = mid_init.nil? ? " " : " #{mid_init} "
+    "#{first_name.to_s}#{middle_name}#{last_name.to_s}".titleize
   end
 
   def is_matched
@@ -37,10 +48,22 @@ class NyDisclosure < ActiveRecord::Base
     }
   end
 
+  def reference_link
+    "http://www.elections.ny.gov:8080/reports/rwservlet?cmdkey=efs_sch_report&p_filer_id=#{filer_id}&p_e_year=#{e_year}&p_freport_id=#{report_id}&p_transaction_code=#{transaction_code}"
+  end
+
+  def reference_name
+    "#{e_year} NYS Board of Elections Financial Disclosure Report: #{NyDisclosure::REPORT_ID[report_id]}"
+  end
+
+  #################
+  # CLASS METHODS #
+  #################
+
   # <Entity> -> Hash
   def self.potential_contributions(entity)
-    search(search_terms(entity), 
-           :with => { :is_matched => false, :transaction_code =>  [ "'A'", "'B'", "'C'" ] }, 
+    search(search_terms(entity),
+           :with => { :is_matched => false, :transaction_code =>  [ "'A'", "'B'", "'C'" ] },
            :sql => { :include => :ny_filer },
            :per_page => 500
           ).map(&:contribution_attributes)
@@ -67,7 +90,7 @@ class NyDisclosure < ActiveRecord::Base
   end
 
   def self.update_delta_flag(ids)
-    where(id: ids).each do |e| 
+    where(id: ids).each do |e|
       e.delta = true
       e.save
     end
@@ -94,5 +117,4 @@ class NyDisclosure < ActiveRecord::Base
     look_nice = lambda { |x| x.to_s.titleize }
     [ look_nice.call(address), look_nice.call(city) + ',', state.to_s, zip.to_s ].join(' ')
   end
-
 end

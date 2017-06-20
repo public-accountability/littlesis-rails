@@ -1,5 +1,4 @@
 class NyMatch < ActiveRecord::Base
-  
   belongs_to :ny_disclosure, inverse_of: :ny_match
   has_one :ny_filer, :through => :ny_disclosure
   has_one :ny_filer_entity, :through => :ny_filer
@@ -14,7 +13,7 @@ class NyMatch < ActiveRecord::Base
     # if this match already has a relationship, so we can assume this has already been processed
     return nil unless relationship.nil?
     # a relationship requires both a donor and a recipient
-    return nil if donor_id.nil? or recip_id.nil? 
+    return nil if donor_id.nil? or recip_id.nil?
     # find the existing relationship (or create it)
     r = Relationship.find_or_create_by!(
       entity1_id: donor_id,
@@ -22,13 +21,14 @@ class NyMatch < ActiveRecord::Base
       category_id: 5,
       # This avoids problems caused if federal campaign contributions also exist for the same politician.
       # However, it requires that every NYS campaign contribution relationship have the description set to this string.
-      description1: "NYS Campaign Contribution"  
+      description1: "NYS Campaign Contribution"
     )
     r.last_user_id = matched_by.nil? ? 1 : User.find(matched_by).sf_guard_user.id
     # connect this match to the relationship
     update_attribute(:relationship, r)
     # update and save the relationship
     r.update_ny_donation_info.save
+    create_reference(r)
   end
 
   def set_recipient
@@ -46,7 +46,7 @@ class NyMatch < ActiveRecord::Base
       m.save
     end
   end
-  
+
   def rematch
     set_recipient
     create_or_update_relationship
@@ -57,4 +57,13 @@ class NyMatch < ActiveRecord::Base
     ny_disclosure.contribution_attributes.merge(:filer_in_littlesis => ny_filer.is_matched? ? 'Y' : 'N')
   end
 
+  private
+
+  # input: Relationship
+  def create_reference(rel)
+    ref_link = ny_disclosure.reference_link
+    unless rel.references.map(&:source).include? ref_link
+      rel.add_reference(ref_link, ny_disclosure.reference_name)
+    end
+  end
 end

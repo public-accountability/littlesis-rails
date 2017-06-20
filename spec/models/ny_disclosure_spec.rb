@@ -10,6 +10,10 @@ describe NyDisclosure, type: :model do
   it { should validate_presence_of(:transaction_id) }
   it { should validate_presence_of(:schedule_transaction_date) }
 
+  it 'has REPORT_ID constant' do
+    expect(NyDisclosure::REPORT_ID).to be_a Hash
+  end
+
   describe '#full_name' do
     it 'returns corp_name if it exists' do
       d = build(:ny_disclosure, corp_name: 'corp inc')
@@ -29,16 +33,29 @@ describe NyDisclosure, type: :model do
     end
   end
 
-  describe 'search_terms' do
+  describe "#reference_link" do
+    it 'returns link to election.ny.gov' do
+      d = build(:ny_disclosure, filer_id: "A12498", report_id: "E", transaction_code: "A", e_year: "2006")
+      expect(d.reference_link).to eq "http://www.elections.ny.gov:8080/reports/rwservlet?cmdkey=efs_sch_report&p_filer_id=A12498&p_e_year=2006&p_freport_id=E&p_transaction_code=A"
+    end
+  end
 
+  describe "#reference_name" do
+    it 'returns reference_name' do
+      d = build(:ny_disclosure, filer_id: "A12498", report_id: "E", transaction_code: "A", e_year: "2006")
+      expect(d.reference_name).to eq "2006 NYS Board of Elections Financial Disclosure Report: 11 Day Pre General"
+    end
+  end
+
+  describe 'search_terms' do
     def build_entity(name, type)
-        e = build(type)
-        a = build(:alias, name: name, is_primary: true)
-        allow(e).to receive(:aliases).and_return([a])
-        return e
-      end
-    
-    context 'searching for a person' do 
+      e = build(type)
+      a = build(:alias, name: name, is_primary: true)
+      allow(e).to receive(:aliases).and_return([a])
+      return e
+    end
+
+    context 'searching for a person' do
       it 'Returns name if the name has no middle, suffix, or preface' do
         e = build_entity('Alice Coltrane', :person)
         expect(NyDisclosure.search_terms(e)).to eql 'Alice Coltrane'
@@ -73,7 +90,6 @@ describe NyDisclosure, type: :model do
         e = build_entity('evil corp', :org)
         expect(NyDisclosure.search_terms(e)).to eql 'evil corp | evil'
       end
-      
     end
   end
 end
