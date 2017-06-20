@@ -29,6 +29,13 @@ describe NyDisclosure, type: :model do
     end
   end
 
+  describe "#reference_link" do
+    it 'returns link to election.ny.gov' do
+      d = build(:ny_disclosure, filer_id: "A12498", report_id: "E", transaction_code: "A", e_year: "2006")
+      expect(d.reference_link).to eq "http://www.elections.ny.gov:8080/reports/rwservlet?cmdkey=efs_sch_report&p_filer_id=A12498&p_e_year=2006&p_freport_id=E&p_transaction_code=A"
+    end
+  end
+
   describe 'search_terms' do
     def build_entity(name, type)
       e = build(type)

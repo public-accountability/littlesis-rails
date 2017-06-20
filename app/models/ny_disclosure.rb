@@ -33,6 +33,14 @@ class NyDisclosure < ActiveRecord::Base
     }
   end
 
+  def reference_link
+    "http://www.elections.ny.gov:8080/reports/rwservlet?cmdkey=efs_sch_report&p_filer_id=#{filer_id}&p_e_year=#{e_year}&p_freport_id=#{report_id}&p_transaction_code=#{transaction_code}"
+  end
+
+  #################
+  # CLASS METHODS #
+  #################
+
   # <Entity> -> Hash
   def self.potential_contributions(entity)
     search(search_terms(entity),
