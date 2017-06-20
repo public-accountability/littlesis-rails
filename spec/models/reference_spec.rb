@@ -44,6 +44,19 @@ describe Reference do
     end
   end
 
+  describe 'before create' do
+    it 'changes object_model List to LsList' do
+      ref = Reference.create!(object_model: 'List', source: 'http://example.com', object_id: 1)
+      expect(ref.object_model).to eq 'LsList'
+    end
+
+    it 'does not change other object_model for other models' do
+      ref = Reference.create!(object_model: 'Relationship', source: 'http://example.com', object_id: 1)
+      expect(ref.object_model).to eq 'Relationship'
+    end
+    
+  end
+
   # describe 'recent_references' do
   #   def where_double(order_double = nil)
   #     order_double = double( :limit => nil) if order_double.nil?
