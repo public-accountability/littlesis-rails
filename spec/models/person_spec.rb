@@ -3,6 +3,18 @@ require 'rails_helper'
 describe Person do
   it { should belong_to(:entity) }
 
+  it 'has SHORT_FIRST_NAMES constant' do
+    expect(Person::SHORT_FIRST_NAMES).to be_a Hash
+  end
+
+  it 'has LONG_FIRST_NAMES constant' do
+    expect(Person::LONG_FIRST_NAMES).to be_a Hash
+  end
+
+  it 'has DISPLAY_ATTRIBUTES' do
+    expect(Person::DISPLAY_ATTRIBUTES).to be_a Hash
+  end
+
   describe 'validations' do
     it { should validate_presence_of(:name_last) }
     it { should validate_presence_of(:name_first) }
@@ -41,6 +53,21 @@ describe Person do
       expect(build(:a_person, gender_id: 2).gender).to eq 'Male'
       expect(build(:a_person, gender_id: 3).gender).to eq 'Other'
       expect(build(:a_person, gender_id: nil).gender).to be nil
+    end
+  end
+
+  describe 'same_first_names' do
+    it 'returns list of similar names for abe' do
+      names = Person.same_first_names 'abe'
+      expect(names).to be_a Array
+      expect(names).to include 'abel'
+      expect(names).to include 'abraham'
+      expect(names).to include 'abram'
+    end
+
+    it 'returns list of similar names for cy' do
+      names = Person.same_first_names 'cy'
+      expect(names).to eq ['cyrus']
     end
   end
 end
