@@ -10,7 +10,7 @@ class Person < ActiveRecord::Base
 
   def titleize_names
     %w(name_prefix name_first name_middle name_last name_suffix name_nick).each do |field|
-      send(:"#{field}=", send(field.to_sym).gsub(/^\p{Ll}/) { |m| m.upcase }) if send(field.to_sym).present?
+      send(:"#{field}=", send(field).gsub(/^\p{Ll}/) { |m| m.upcase }) if send(field).present?
     end
   end
 

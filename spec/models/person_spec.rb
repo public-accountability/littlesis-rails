@@ -10,6 +10,31 @@ describe Person do
     it { should validate_length_of(:name_last).is_at_most(50) }
   end
 
+  describe 'titleize_names' do
+    let(:the_reverend) { build(:a_person,
+                               name_first: 'first',
+                               name_last: 'last',
+                               name_middle: 'middle',
+                               name_suffix: 'II',
+                               name_prefix: 'rev.',
+                               name_nick: 'the rev') }
+                           
+    it 'titleizes first and last names' do
+      rev = the_reverend
+      rev.titleize_names
+      expect(rev.name_first).to eq 'First'
+      expect(rev.name_last).to eq 'Last'
+    end
+
+    it 'titleizes middle and nick name' do
+      rev = the_reverend
+      rev.titleize_names
+      expect(rev.name_middle).to eq 'Middle'
+      expect(rev.name_nick).to eq 'The rev'
+    end
+  end
+
+
   describe '#gender' do
     it 'returns correct gender for female, male, & other' do
       expect(build(:a_person, gender_id: 1).gender).to eq 'Female'
