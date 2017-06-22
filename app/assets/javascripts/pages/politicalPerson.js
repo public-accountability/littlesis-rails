@@ -1,12 +1,13 @@
 /**
- *  Political page tab
+ * politicalPerson: Political page tab for an individual's contributions
+ *
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
       module.exports = factory(require('jQuery'), require('../common/utility'));
   } else {
     // Browser globals (root is window)
-      root.political = factory(root.jQuery, root.utility);
+      root.politicalPerson = factory(root.jQuery, root.utility);
   }
 }(this, function ($, utility) {
   

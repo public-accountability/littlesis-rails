@@ -1,4 +1,4 @@
-describe('political', function(){
+describe('politicalPerson', function(){
   var contributions = [
     {cycle: '2014', amount: 1000, "recipcode":"DW", recip_id: 1, recip_name: 'A', recip_ext: 'Person', recip_blurb: null},
     {cycle: '2014', amount: 500, "recipcode":"RL", recip_id: 2, recip_name: 'B', recip_ext: 'Person', recip_blurb: null},
@@ -9,7 +9,7 @@ describe('political', function(){
   ];
   describe('parseContributions', function(){
     it('calculates amount per cycle', function(){
-      var parsed = political.parseContributions(contributions);
+      var parsed = politicalPerson.parseContributions(contributions);
       expect(parsed).toBeArray();
       expect(parsed).toBeArrayOfSize(14);
       expect(parsed[0]).toEqual({year: '1990', amount: 0, dem: 0, gop: 0, other: 0, pac: 0, out: 0});
@@ -22,8 +22,8 @@ describe('political', function(){
   });
 
   describe('contributionAggregate(): groups and sums contributions by party', function(){
-      var parsed = political.parseContributions(contributions);
-      var aggregated = political.contributionAggregate(parsed);
+      var parsed = politicalPerson.parseContributions(contributions);
+      var aggregated = politicalPerson.contributionAggregate(parsed);
       it('returns an array with 5 objects', function(){
         expect(aggregated).toBeArrayOfSize(5);
         aggregated.forEach(function(x){
@@ -47,7 +47,7 @@ describe('political', function(){
     });
   describe('groupByRecip(): ', function(){
       describe('filter by Person', function(){
-        var groupBy = political.groupByRecip(contributions, 'Person');
+        var groupBy = politicalPerson.groupByRecip(contributions, 'Person');
 
         it('return an array with 3 objects', function(){
           expect(groupBy).toBeArray();
@@ -78,7 +78,7 @@ describe('political', function(){
       });
 
       describe('filter by org', function(){
-        var groupBy = political.groupByRecip(contributions, 'Org');
+        var groupBy = politicalPerson.groupByRecip(contributions, 'Org');
 
         it('return an array with 1 objects', function(){
 	  expect(groupBy).toBeArray();
@@ -103,7 +103,7 @@ describe('political', function(){
       });
 
       describe('no filter', function(){
-        var groupBy = political.groupByRecip(contributions);
+        var groupBy = politicalPerson.groupByRecip(contributions);
 
         it('return an array with 4 objects', function(){
           expect(groupBy).toBeArray();
