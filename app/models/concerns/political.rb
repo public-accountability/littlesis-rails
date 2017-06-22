@@ -41,16 +41,20 @@ module Political
   end
 
   def contribution_info
-    query = "SELECT os_matches.id as os_match_id,
-                    os_donations.*,
-                    entity.id as recip_id,
-                    entity.name as recip_name,
-                    entity.blurb as recip_blurb,
-                    entity.primary_ext as recip_ext
-             FROM os_matches
-             LEFT JOIN os_donations on os_matches.os_donation_id = os_donations.id
-             LEFT JOIN entity on os_matches.recip_id = entity.id
-             WHERE os_matches.donor_id = ?"
-    OsMatch.find_by_sql [query, self.id]
+    # If the entity is a person we just return matches for that person
+    # If the entity is an org, we return all matches for all people who
+    # hold position relationships with the org
+    ids = person? ? Array(self.id) : links.where(category_id: 1).pluck(:entity2_id)
+    OsMatch.find_by_sql Array(
+              "SELECT os_matches.id as os_match_id,
+                      os_donations.*,
+                      entity.id as recip_id,
+                      entity.name as recip_name,
+                      entity.blurb as recip_blurb,
+                      entity.primary_ext as recip_ext
+               FROM os_matches
+               LEFT JOIN os_donations on os_matches.os_donation_id = os_donations.id
+               LEFT JOIN entity on os_matches.recip_id = entity.id
+               WHERE os_matches.donor_id IN #{self.class.sqlize_array(ids)}")
   end
 end

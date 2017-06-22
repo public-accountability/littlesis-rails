@@ -92,18 +92,40 @@ describe Entity do
     describe '#contribution_info' do
       before(:all) do
         @elected = create(:elected)
-        @donor = create(:person)
-        @match1 = create(:os_match, os_donation: create(:os_donation), donor_id: @donor.id)
-        @match2 = create(:os_match, os_donation: create(:os_donation), donor_id: @donor.id)
-        @match3 = create(:os_match, os_donation: create(:os_donation), donor_id: (@donor.id + 100)) # does not match for donor
+      end
+      context 'entity is a person' do
+        before(:all) do
+          @donor = create(:person)
+          @match1 = create(:os_match, os_donation: create(:os_donation), donor_id: @donor.id)
+          @match2 = create(:os_match, os_donation: create(:os_donation), donor_id: @donor.id)
+          @match3 = create(:os_match, os_donation: create(:os_donation), donor_id: (@donor.id + 100)) # does not match for donor
+        end
+
+        it 'returns 2 matches for donor' do
+          expect(@donor.contribution_info.length).to eq 2
+        end
+
+        it 'returns OsMatch' do
+          expect(@donor.contribution_info[0]).to be_a OsMatch
+        end
       end
 
-      it 'returns 2 matches for donor' do
-        expect(@donor.contribution_info.length).to eq 2
-      end
+      context 'entity is an org' do
+        before(:all) do
+          @org = create(:org)
+          @person1 = create(:person)
+          @person2 = create(:person)
+          @person3 = create(:person)
+          [@person1, @person2].each { |p| Relationship.create!(category_id: 1, entity: p, related: @org) }
+          Relationship.create!(category_id: 12, entity: @person3, related: @org)
+          @match1 = create(:os_match, os_donation: create(:os_donation), donor_id: @person1.id)
+          @match2 = create(:os_match, os_donation: create(:os_donation), donor_id: @person2.id)
+          @match3 = create(:os_match, os_donation: create(:os_donation), donor_id: @person3.id) # does not match
+        end
 
-      it 'returns OsMatch' do
-        expect(@donor.contribution_info[0]).to be_a OsMatch
+        it 'returns 2 matches for org' do
+          expect(@org.contribution_info.length).to eq 2
+        end
       end
     end
   end # end political
