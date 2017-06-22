@@ -1,5 +1,5 @@
 /**
- * politicalPerson: Political page tab for an individual's contributions
+ * Political page showing federal contributions
  *
  */
 (function (root, factory) {
@@ -7,7 +7,7 @@
       module.exports = factory(require('jQuery'), require('../common/utility'));
   } else {
     // Browser globals (root is window)
-      root.politicalPerson = factory(root.jQuery, root.utility);
+      root.political = factory(root.jQuery, root.utility);
   }
 }(this, function ($, utility) {
   

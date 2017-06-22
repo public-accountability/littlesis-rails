@@ -31,27 +31,6 @@ describe 'entities/political.html.erb' do
         expect(view).to render_template(partial: 'entities/_tabs')
       end
     end # common
-    context 'entity is a person' do
-      before do
-        assign(:entity, @person)
-        render
-      end
-
-      it 'renders political person partial' do
-        expect(view).to render_template(partial: 'entities/political/_person')
-      end
-    end
-
-    context 'entity is a org' do
-      before do
-        assign(:entity, @org)
-        render
-      end
-
-      it 'renders political org partial' do
-        expect(view).to render_template(partial: 'entities/political/_org')
-      end
-    end
   end # Paritals
 
   describe 'layout' do
