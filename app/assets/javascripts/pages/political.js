@@ -3,12 +3,12 @@
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('jQuery'));
+      module.exports = factory(require('jQuery'), require('../common/utility'));
   } else {
     // Browser globals (root is window)
-    root.political = factory(root.jQuery);
+      root.political = factory(root.jQuery, root.utility);
   }
-}(this, function ($) {
+}(this, function ($, utility) {
   
   var store = {
     data: null,
@@ -322,14 +322,7 @@
   };
 
   var entityLink = function(d) {
-    var url = '//littlesis.org/';
-    if (d.value.ext === 'Person') {
-      url += 'person/';
-    } else {
-      url += 'org/';
-    }
-    url += (d.key + '/'  + d.value.name.replace(' ', '_'));
-    return url;
+    return utility.entityLink(d.key, d.value.name, d.value.ext);
   };
 
   /**
@@ -430,8 +423,6 @@
       // data //
       store.data = parseContributions(contributions);
       store.allRecipients = groupByRecip(contributions);
-      console.log(contributions);
-      console.log(store.allRecipients);
       store.politicians = groupByRecip(contributions, 'Person');
       store.orgs = groupByRecip(contributions, 'Org');
       
