@@ -52,9 +52,12 @@ module Political
                       entity.name as recip_name,
                       entity.blurb as recip_blurb,
                       entity.primary_ext as recip_ext
+                      #{org? ? ',donor.name as donor_name' : '' }
+                      #{org? ? ',donor.id as donor_id' : '' }
                FROM os_matches
                LEFT JOIN os_donations on os_matches.os_donation_id = os_donations.id
                LEFT JOIN entity on os_matches.recip_id = entity.id
+               #{org? ? 'LEFT JOIN entity as donor on os_matches.donor_id = donor.id' : '' }
                WHERE os_matches.donor_id IN #{self.class.sqlize_array(ids)}")
   end
 end

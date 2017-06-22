@@ -10,12 +10,17 @@
 </div>
 
 <div class="row top-1em">
-    <div class="col-md-8 col-sm-8">
+    <%= political_tab_col_left do %>
         <p class="text-muted text-center"><em>U.S. Campaign Contributions since 1990 - <a href="#about">learn more</a></em></p>
+	<% if @entity.org? %>
+	    <p class="text-muted text-center">Federal campaign contributions by people with positions at <%= @entity.name %> </p>
+	<% end %>
+	
         <div id="political-contributions" data-entityid="<%= @entity.id %>">
         </div>
-    </div>
-    <div class="col-md-4 col-sm-4">
+    <% end %>
+    
+    <%= political_tab_col_right do %>
         <div class="row">
             <div class="col-md-9 col-sm-9">
                 <div id="political-pie-chart" class="" style="width:200;height:200;"></div>
@@ -32,11 +37,11 @@
                     <p class="text-left"> <span class="outside-spending text-info"></span>  Outside Spending Groups</p>
             </div>
         </div>
-    </div>
+    <% end %>
 </div>
 
 <div class="row top-1em">
-    <div class="col-md-8 col-sm-8">
+    <%= political_tab_col_left do %>
         <div class="thin-grey-bottom-border"><h3>Politicians and Organizations Supported</h3></div>
         <div class="btn-group m-left-1em top-1em" data-toggle="buttons" id="who-they-support-buttons">
             <label class="btn btn-info btn-sm active">
@@ -51,18 +56,17 @@
         </div>
         <div id="who-they-support" style="height: 350px;"></div>
     </div>
-    <div class="col-md-4 col-sm-4">
-    </div>
+    <% end %>
 </div>
 
 
 <div class="row top-1em">
     <a name="about"></a>
-    <div class="col-md-8 col-sm-8 nopadding">
+    <%= political_tab_col_left do %>
         <h4>About the data</h4>
         <p>This data is compiled using <a href="http://opensecrets.org/">OpenSecrets</a> bulk data downloads. LittleSis analysts match federal campaign contributions given by individuals in our database using the donation matching tool.</p>
         <p>Individual profile pages show giving information for the individual profiled; org pages show an aggregate analysis of giving information for individuals with positions or memberships at those orgs. Note that this information may differ substantially from data found at <a href="http://influenceexplorer.com/">InfluenceExplorer</a> or OpenSecrets, because it only includes donations for individuals in our database who have been donor-matched by an analyst.</p>
-    </div>
+    <% end %>
 </div>
 
 <script>political.init();</script>
