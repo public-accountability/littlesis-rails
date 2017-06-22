@@ -70,21 +70,40 @@ describe Entity do
 
   describe 'Political' do
     describe 'sqlize_array' do
-      it 'stringifies an array for a sql query' do 
-        expect(Entity.sqlize_array ['123', '456', '789']).to eql("('123','456','789')")
+      it 'stringifies an array for a sql query' do
+        expect(Entity.sqlize_array(%w(123 456 789))).to eql("('123','456','789')")
+      end
+    end
+
+    describe 'name_query_string' do
+      it 'returns correct string if length of names is 1' do
+        expect(Entity.name_query_string([{}])).to eql ' (name_first = ? and name_last = ?) '
+      end
+
+      it 'returns correct string if length of names is > 1' do
+        expect(Entity.name_query_string([{}, {}])).to eql " (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) "
+        expect(Entity.name_query_string([{}, {}, {}])).to eql " (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) "
       end
     end
 
     describe '#potential_contributions' do
-      describe '#name_query_string' do
-        it 'returns correct string if length of names is 1' do
-          expect(Entity.name_query_string([{}])).to eql ' (name_first = ? and name_last = ?) '
-        end
+    end
 
-        it 'returns correct string if length of names is > 1' do
-          expect(Entity.name_query_string([{}, {}])).to eql " (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) "
-          expect(Entity.name_query_string([{}, {}, {}])).to eql " (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) "
-        end
+    describe '#contribution_info' do
+      before(:all) do
+        @elected = create(:elected)
+        @donor = create(:person)
+        @match1 = create(:os_match, os_donation: create(:os_donation), donor_id: @donor.id)
+        @match2 = create(:os_match, os_donation: create(:os_donation), donor_id: @donor.id)
+        @match3 = create(:os_match, os_donation: create(:os_donation), donor_id: (@donor.id + 100)) # does not match for donor
+      end
+
+      it 'returns 2 matches for donor' do
+        expect(@donor.contribution_info.length).to eq 2
+      end
+
+      it 'returns OsMatch' do
+        expect(@donor.contribution_info[0]).to be_a OsMatch
       end
     end
   end # end political
