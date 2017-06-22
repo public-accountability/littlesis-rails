@@ -17,11 +17,6 @@
     orgs: null
   };
   
-  // Toggles visibility of a related entity's additional relationships on a profile page
-  var relationshipsToggle = function(e) {
-    $(e.target).closest('.relationship-section').find('.collapse').collapse('toggle');
-  };
-
   /**
    *  Retrieves contributions json for entity id
    *  integer -> callback([])
@@ -451,7 +446,6 @@
 
 
   return {
-    relationshipsToggle: relationshipsToggle,
     getContributions: getContributions,
     barChart: barChart,
     pieChart: pieChart,

@@ -8,3 +8,7 @@ entity.summaryToggle = function(){
   $('.summary-show-less').toggle();
 };
 
+// Toggles visibility of a related entity's additional relationships on a profile page
+entity.relationshipsToggle = function(e) {
+  $(e.target).closest('.relationship-section').find('.collapse').collapse('toggle');
+};
