@@ -200,6 +200,38 @@
     return [dem, gop, pac, ind, out];
   };
 
+
+  /**
+   * Given array of objects with field 'amount' it returns the sum
+   * @param {Array}
+   * @returns {Number}
+   */
+  var sumAmount = function(arr) {
+    return arr.reduce(function(acc, item) {
+      return acc + item.amount;
+    }, 0);
+  };
+  
+  /**
+   * Groups contributions by donor
+   * @param {Array} contributions
+   */
+  var groupByDonor = function(contributions) {
+    return d3.nest()
+      .key(function(d) { return d.donor_id; })
+      .rollup(function(contributions) {
+	return {
+	  name: contributions[0].donor_name,
+	  amount: sumAmount(contributions)
+	};
+      })
+      .entries(contributions)
+      .sort(function(a,b) {
+	return b.value.amount - a.value.amount;
+      });
+    
+  };
+
   /**
    * Pie Chart of contributions
    * Modeled after: http://bl.ocks.org/mbostock/8878e7FD82034f1d63cf
@@ -281,20 +313,20 @@
     var _data = data.filter(function(x){ return Boolean(x.recip_id); });
 
     var contributions = d3.nest()
-	  .key(function(d){ return String(d.recip_id); })
+	.key(function(d){ return String(d.recip_id); })
     // aggregate contributions by recipient
-          .rollup(function(leaves){
-            return {
-              amount: leaves.reduce(function(p, c) { return p + c.amount; }, 0),
-              name: leaves[0].recip_name,
-              blurb: leaves[0].recip_blurb,
-              recipcode: leaves[0].recipcode,
-              ext: leaves[0].recip_ext,
-              count: leaves.length
-            };
-          })
-          .entries(_data)
-          .sort(sortContributions);
+        .rollup(function(leaves){
+          return {
+            amount: sumAmount(leaves),
+            name: leaves[0].recip_name,
+            blurb: leaves[0].recip_blurb,
+            recipcode: leaves[0].recipcode,
+            ext: leaves[0].recip_ext,
+            count: leaves.length
+          };
+        })
+        .entries(_data)
+      .sort(sortContributions);
 
     if (typeof extType === 'undefined') {
       return contributions;
@@ -415,6 +447,35 @@
       });
   };
 
+
+  /**
+   * Creates "Top Donors" graph
+   * @param {Array} d
+   */
+  var topDonors = function(d){
+    var container = '#top-donors';
+    var w = $(container).width();
+    var h = 500;
+    var radius = Math.min(w, h) / 2;
+    // .attr("width", w + margin.left + margin.right)
+    //   .attr("height", h + margin.top + margin.bottom)
+
+    var svg = d3.select(container)
+	.append('svg')
+        .attr("width", w)
+	.attr("height", h)
+	.append('g')
+	.append('g').attr('class', 'slices')
+        .append('g').attr('class', 'labels')
+        .append('g').attr('class', 'lines');
+    
+    var pie = d3.layout.pie()
+	.sort(null)
+	.value(function(d) { d.amount });
+
+    
+  };
+
   /**
    * Kicks it all off
    */
@@ -444,6 +505,7 @@
     parseContributions: parseContributions,
     contributionAggregate: contributionAggregate,
     groupByRecip: groupByRecip,
+    groupByDonor: groupByDonor,
     whoTheySupportButtons: whoTheySupportButtons,
     whoTheySupport: whoTheySupport,
     formatName: formatName,
