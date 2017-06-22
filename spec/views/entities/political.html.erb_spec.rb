@@ -70,5 +70,16 @@ describe 'entities/political.html.erb' do
         expect(rendered).to have_css '#pie-info p span', :count => 6
       end
     end # context: Person
+
+    context 'entity is a org' do
+      before do
+        assign(:entity, @org)
+        render
+      end
+
+      it 'has Top donors title' do
+        css 'h3', text: 'Top donors'
+      end
+    end
   end # layout
 end

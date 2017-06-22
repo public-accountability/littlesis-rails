@@ -55,9 +55,18 @@
             </label>
         </div>
         <div id="who-they-support" style="height: 350px;"></div>
-    </div>
     <% end %>
 </div>
+
+
+<% if  @entity.org? %>
+    <div class="row top-1em">
+	<%= political_tab_col_left do %>
+	    <div class="thin-grey-bottom-border"><h3>Top donors</h3></div>
+	    
+	<% end %>
+    </div>
+<% end %>
 
 
 <div class="row top-1em">
