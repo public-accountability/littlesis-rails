@@ -88,11 +88,12 @@ group :test, :development do
   gem 'pry-rails'
   gem 'rspec-html-matchers'
   gem 'rspec-rails'
-  gem 'seed_dump'
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'spring-commands-rspec'
 end
+
+gem 'seed_dump', :require => false
 
 gem 'simplecov', :require => false, :group => :test
 

@@ -1,3 +1,5 @@
+require 'seed_dump'
+
 namespace :opensecrets do
   desc "import individual contribution data"
   task :import_indivs, [:filepath] =>  :environment do |t, args| 
@@ -172,5 +174,17 @@ namespace :opensecrets do
     end
 
     print "addresses found for #{count} of #{entities.count} entities\n"
+  end
+
+  desc "dump devos and exxon donations"
+  task devos_exxon_dump: :environment do
+    file_path = 'data/devos_exxon_dump.rb'
+    SeedDump.dump(OsMatch.where(donor_id: 38467), file: file_path, append: true)
+    SeedDump.dump(OsMatch.where(donor_id: 38467).map(&:os_donation), file: file_path, append: true)
+
+    Entity.find(2).links.where(category_id: 1).map(&:entity2_id).uniq.each do |entity_id|
+      SeedDump.dump(OsMatch.where(donor_id: entity_id), file: file_path, append: true)
+      SeedDump.dump(OsMatch.where(donor_id: entity_id).map(&:os_donation), file: file_path, append: true)
+    end
   end
 end
