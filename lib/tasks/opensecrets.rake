@@ -179,12 +179,12 @@ namespace :opensecrets do
   desc "dump devos and exxon donations"
   task devos_exxon_dump: :environment do
     file_path = 'data/devos_exxon_dump.rb'
-    SeedDump.dump(OsMatch.where(donor_id: 38467).map(&:os_donation), file: file_path, append: true)
-    SeedDump.dump(OsMatch.where(donor_id: 38467), file: file_path, append: true)
+    SeedDump.dump(OsMatch.where(donor_id: 38467).map(&:os_donation), file: file_path, append: true, exclude: [])
+    SeedDump.dump(OsMatch.where(donor_id: 38467), file: file_path, append: true, exclude: [])
     
     Entity.find(2).links.where(category_id: 1).map(&:entity2_id).uniq.each do |entity_id|
-      SeedDump.dump(OsMatch.where(donor_id: entity_id).map(&:os_donation), file: file_path, append: true)
-      SeedDump.dump(OsMatch.where(donor_id: entity_id), file: file_path, append: true)
+      SeedDump.dump(OsMatch.where(donor_id: entity_id).map(&:os_donation), file: file_path, append: true, exclude: [])
+      SeedDump.dump(OsMatch.where(donor_id: entity_id), file: file_path, append: true, exclude: [])
     end
   end
 end
