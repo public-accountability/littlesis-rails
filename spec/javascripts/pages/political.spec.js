@@ -153,8 +153,8 @@ describe('political', function(){
 
       var groupByDonor = political.groupByDonor(more_than_7_contributions);
       expect(groupByDonor.length).toEqual(8);
-      expect(groupByDonor[0]).toEqual({key: '1', value: { name: 'one', amount: 1, pct: (1 / 9 * 100)}  });
-      expect(groupByDonor[7]).toEqual({key: 'rest', value: { name: 'others', amount: 2, pct: (2 / 9 * 100)}  });
+      expect(groupByDonor[0]).toEqual({key: '1', value: { name: 'one', amount: 1, pct: (1 / 9)}  });
+      expect(groupByDonor[7]).toEqual({key: 'rest', value: { name: 'others', amount: 2, pct: (2 / 9)}  });
     });
   });
 

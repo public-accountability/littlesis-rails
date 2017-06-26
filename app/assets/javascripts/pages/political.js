@@ -225,7 +225,7 @@
 	return {
 	  name: contributions[0].donor_name,
 	  amount: sumAmount(contributions),
-	  pct: sumAmount(contributions) / total * 100
+	  pct: sumAmount(contributions) / total
 	};
       })
       .entries(contributions)
@@ -240,7 +240,7 @@
 	acc.value.amount += contribution.value.amount;
 	return acc;
       }, { "key": 'rest', "value": { name: 'others', amount: 0 } });
-      otherDonors.value.pct = otherDonors.value.amount / total * 100;
+      otherDonors.value.pct = otherDonors.value.amount / total;
       return donorGroups.slice(0,7).concat(otherDonors);
     }
 
@@ -484,10 +484,14 @@
 	  .padAngle(0.02)
 	  .outerRadius(radius * 0.66)
 	  .innerRadius(radius * 0.3);
-	
+    
     var labelArc = d3.arc()
     	  .outerRadius(radius * 0.9)
     	  .innerRadius(radius * 0.9);
+
+    var lineStartArc = d3.arc()
+    	  .outerRadius(radius * 0.55)
+    	  .innerRadius(radius * 0.55);
 
     var lineEndArc = d3.arc()
     	  .outerRadius(radius * 0.8)
@@ -518,10 +522,10 @@
     g.
       append('line')
       .attr("x1", function(d) {
-	return arc.centroid(d)[0];
+	return lineStartArc.centroid(d)[0];
       })
       .attr("y1", function(d) {
-	return arc.centroid(d)[1];
+	return lineStartArc.centroid(d)[1];
       })
       .attr("x2", function(d) {
 	return lineEndArc.centroid(d)[0];
@@ -547,6 +551,18 @@
       });
 
 
+    // 
+    g
+      .append("text")
+      .attr("transform", function(d) {
+        return "translate(" + arc.centroid(d) + ")";
+      })
+      .attr("text-anchor", "middle")
+      .style("fill", "white")
+      .style("font", "bold 10px Arial")
+      .text(function(d, i) {
+    	return d3.format(".1%")(d.data.value.pct);
+      });
     // show lines on hover
     g
       .on("mouseover", function() {
