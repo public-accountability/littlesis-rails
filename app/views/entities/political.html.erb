@@ -59,11 +59,10 @@
 </div>
 
 
-<% if  @entity.org? %>
+<% if @entity.org? %>
     <div class="row top-1em">
 	<%= political_tab_col_left do %>
 	    <div class="thin-grey-bottom-border"><h3>Top donors</h3></div>
-
 	    <div id="top-donors"></div>
 	<% end %>
     </div>
@@ -79,4 +78,5 @@
     <% end %>
 </div>
 
-<script>political.init();</script>
+<script>political.init(<%= raw @entity.org?.to_s %>);</script>
+

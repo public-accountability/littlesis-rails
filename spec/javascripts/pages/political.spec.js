@@ -130,12 +130,32 @@ describe('political', function(){
   describe('groupByDonor()', function(){
     // donor_id 1 amount -> 2000, donor_id 2 amount -> 1000
     var groupByDonor = political.groupByDonor(contributions);
-    console.log(groupByDonor);
     it('groups donors by id and sums up amount', function() {
+      //console.log(groupByDonor);
       expect(groupByDonor).toEqual([
-	{key: '1', value: { name: 'xyz', amount: 2000} },
-	{key: '2', value: { name: 'abc', amount: 1000} },
+	{key: '1', value: { name: 'xyz', amount: 2000, pct: (2000 / 3000 * 100)}  },
+	{key: '2', value: { name: 'abc', amount: 1000, pct: (1000 / 3000 * 100)} },
       ]);
     });
+
+    it('if more than 7 donors are present, it sums the rest into an aggregate', function(){
+      var more_than_7_contributions = [
+	{amount: 1, donor_id: 1, donor_name: 'one'},
+	{amount: 1, donor_id: 2, donor_name: 'two'},
+	{amount: 1, donor_id: 3, donor_name: 'three'},
+	{amount: 1, donor_id: 4, donor_name: 'four'},
+	{amount: 1, donor_id: 5, donor_name: 'five'},
+	{amount: 1, donor_id: 6, donor_name: 'six'},
+	{amount: 1, donor_id: 7, donor_name: 'seven'},
+	{amount: 1, donor_id: 8, donor_name: 'eight'},
+	{amount: 1, donor_id: 9, donor_name: 'nine'},
+      ];
+
+      var groupByDonor = political.groupByDonor(more_than_7_contributions);
+      expect(groupByDonor.length).toEqual(8);
+      expect(groupByDonor[0]).toEqual({key: '1', value: { name: 'one', amount: 1, pct: (1 / 9 * 100)}  });
+      expect(groupByDonor[7]).toEqual({key: 'rest', value: { name: 'others', amount: 2, pct: (2 / 9 * 100)}  });
+    });
   });
+
 });
