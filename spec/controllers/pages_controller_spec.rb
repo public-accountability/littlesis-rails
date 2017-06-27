@@ -28,10 +28,6 @@ describe PagesController, type: :controller do
     before { get :display, page: 'features' }
 
     it { should respond_with(200) }
-
-    it 'sets cache-control headers' do
-      expect(response.headers['Cache-Control']).to include 'max-age=3600, public'
-    end
   end
 
   describe 'create page' do
