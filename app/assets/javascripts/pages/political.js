@@ -497,6 +497,10 @@
     	  .outerRadius(radius * 0.8)
     	  .innerRadius(radius * 0.8);
 
+    function isSmallSlice(d) {
+      return (d.data.value.pct <= 0.05);
+    }
+    
     var svg = d3.select(container)
 	.append("svg")
 	.attr("width", w)
@@ -508,8 +512,8 @@
     var g = svg.selectAll("arc")
 	.data(pieArcs)
 	.enter().append("g")
-	  .attr("class", "arc");
-      
+	.attr("class", "arc");
+    
     //arcs
     g
       .append("path")
@@ -536,6 +540,7 @@
       .attr("stroke", "black")
       .attr("stroke-width", "1")
       .attr("visibility", "hidden");
+
     
     // text
     g
@@ -546,13 +551,18 @@
       .attr("text-anchor", "middle") //center the text on it's origin
       .style("fill", "black")
       .style("font", "bold 10px Arial")
+      .attr("visibility", function(d){
+	return isSmallSlice(d) ? "hidden" : "visible";
+      })
       .text(function(d, i) {
     	return d.data.value.name;
       });
 
-
-    // 
+    // % labels
     g
+      .filter(function(d) {
+	return !isSmallSlice(d);
+      })
       .append("text")
       .attr("transform", function(d) {
         return "translate(" + arc.centroid(d) + ")";
@@ -563,13 +573,20 @@
       .text(function(d, i) {
     	return d3.format(".1%")(d.data.value.pct);
       });
+
     // show lines on hover
     g
-      .on("mouseover", function() {
+      .on("mouseover", function(d) {
         d3.select(this).select('line').attr("visibility", "visible");
+	if (isSmallSlice(d)) {
+	  d3.select(this).select('text').attr("visibility", "visible");
+	}
       })
-      .on("mouseout", function() {
+      .on("mouseout", function(d) {
 	d3.select(this).select('line').attr("visibility", "hidden");
+	if (isSmallSlice(d)) {
+	  d3.select(this).select('text').attr("visibility", "hidden");
+	}
       });
     
   };
