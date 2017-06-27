@@ -3,6 +3,7 @@ class ToolkitController < ApplicationController
   before_action :authenticate_user!, except: [:display, :index]
   before_action :admins_only, only: [:new_page, :create_new_page, :edit, :update]
   before_action :set_toolkit_page, only: [:display, :edit]
+  before_action -> { set_cache_control(1.day) }, only: [:display, :index]
 
   MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
                                      autolink: true, fenced_code_blocks: true, tables: true)

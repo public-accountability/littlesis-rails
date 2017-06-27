@@ -126,4 +126,8 @@ class ApplicationController < ActionController::Base
   def set_entity
     @entity = Entity.find(params[:id])
   end
+
+  def set_cache_control(time = 1.hour)
+    expires_in(time, public: true, must_revalidate: true)
+  end
 end

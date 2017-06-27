@@ -34,6 +34,11 @@ describe ToolkitController, type: :controller do
       expect(response).to have_http_status(200)
       expect(response).to render_template(:display)
     end
+
+    it 'sets cache-control headers' do
+      get :display, toolkit_page: 'interesting_facts'
+      expect(response.headers['Cache-Control']).to include 'max-age=86400, public'
+    end
   end
 
   describe 'edit' do
@@ -71,6 +76,10 @@ describe ToolkitController, type: :controller do
     it { should respond_with(:success) }
     it { should render_template(:index) }
     it { should render_with_layout('toolkit') }
+
+    it 'sets cache-control headers' do
+      expect(response.headers['Cache-Control']).to include 'max-age=86400, public'
+    end
   end
 
   describe '#new_page' do

@@ -20,6 +20,20 @@ describe PagesController, type: :controller do
     expect(ToolkitController::MARKDOWN).to be_a(Redcarpet::Markdown)
   end
 
+  describe '#display - GET /features' do
+    before(:all) do
+      Page.create!(name: 'features', title: 'features', markdown: '# features')
+    end
+
+    before { get :display, page: 'features' }
+
+    it { should respond_with(200) }
+
+    it 'sets cache-control headers' do
+      expect(response.headers['Cache-Control']).to include 'max-age=3600, public'
+    end
+  end
+
   describe 'create page' do
     let(:params) { { page: { name: 'new_page', title: 'this is a new page' } } }
     login_admin

@@ -3,6 +3,7 @@ class PagesController < ApplicationController
   before_action :admins_only, only: [:new, :create, :edit, :update, :edit_by_name, :index, :show]
   before_action :set_page_by_name, only: [:display, :edit_by_name]
   before_action :set_page_by_id, only: [:show, :edit]
+  before_action :set_cache_control, only: [:display]
 
   MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
                                      autolink: true, fenced_code_blocks: true)
