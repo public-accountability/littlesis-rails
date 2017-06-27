@@ -1,14 +1,15 @@
 /**
- *  Political page tab
+ * Political page showing federal contributions
+ *
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('jQuery'));
+      module.exports = factory(require('jQuery'), require('../common/utility'));
   } else {
     // Browser globals (root is window)
-    root.political = factory(root.jQuery);
+      root.political = factory(root.jQuery, root.utility);
   }
-}(this, function ($) {
+}(this, function ($, utility) {
   
   var store = {
     data: null,
@@ -199,6 +200,54 @@
     return [dem, gop, pac, ind, out];
   };
 
+
+  /**
+   * Given array of objects with field 'amount' it returns the sum
+   * @param {Array}
+   * @returns {Number}
+   */
+  var sumAmount = function(arr) {
+    return arr.reduce(function(acc, item) {
+      return acc + item.amount;
+    }, 0);
+  };
+  
+  /**
+   * Groups contributions by donor
+   * @param {Array} contributions
+   */
+  var groupByDonor = function(contributions) {
+    var total = sumAmount(contributions);
+
+    var donorGroups = d3.nest()
+      .key(function(d) { return d.donor_id; })
+      .rollup(function(contributions) {
+	return {
+	  name: contributions[0].donor_name,
+	  amount: sumAmount(contributions),
+	  pct: sumAmount(contributions) / total
+	};
+      })
+      .entries(contributions)
+      .sort(function(a,b) {
+	return b.value.amount - a.value.amount;
+      });
+    
+    if (donorGroups.length < 8) {
+      return donorGroups;
+    } else {
+      var otherDonors = donorGroups.slice(7).reduce(function(acc, contribution){
+	acc.value.amount += contribution.value.amount;
+	return acc;
+      }, { "key": 'rest', "value": { name: 'others', amount: 0 } });
+      otherDonors.value.pct = otherDonors.value.amount / total;
+      return donorGroups.slice(0,7).concat(otherDonors);
+    }
+
+  };
+
+  
+
   /**
    * Pie Chart of contributions
    * Modeled after: http://bl.ocks.org/mbostock/8878e7FD82034f1d63cf
@@ -280,20 +329,20 @@
     var _data = data.filter(function(x){ return Boolean(x.recip_id); });
 
     var contributions = d3.nest()
-	  .key(function(d){ return String(d.recip_id); })
+	.key(function(d){ return String(d.recip_id); })
     // aggregate contributions by recipient
-          .rollup(function(leaves){
-            return {
-              amount: leaves.reduce(function(p, c) { return p + c.amount; }, 0),
-              name: leaves[0].recip_name,
-              blurb: leaves[0].recip_blurb,
-              recipcode: leaves[0].recipcode,
-              ext: leaves[0].recip_ext,
-              count: leaves.length
-            };
-          })
-          .entries(_data)
-          .sort(sortContributions);
+        .rollup(function(leaves){
+          return {
+            amount: sumAmount(leaves),
+            name: leaves[0].recip_name,
+            blurb: leaves[0].recip_blurb,
+            recipcode: leaves[0].recipcode,
+            ext: leaves[0].recip_ext,
+            count: leaves.length
+          };
+        })
+        .entries(_data)
+      .sort(sortContributions);
 
     if (typeof extType === 'undefined') {
       return contributions;
@@ -322,14 +371,7 @@
   };
 
   var entityLink = function(d) {
-    var url = '//littlesis.org/';
-    if (d.value.ext === 'Person') {
-      url += 'person/';
-    } else {
-      url += 'org/';
-    }
-    url += (d.key + '/'  + d.value.name.replace(' ', '_'));
-    return url;
+    return utility.entityLink(d.key, d.value.name, d.value.ext);
   };
 
   /**
@@ -421,17 +463,126 @@
       });
   };
 
+
+  /**
+   * Creates "Top Donors" graph
+   * @param {Array} d
+   */
+  var topDonors = function(d){
+    var container = '#top-donors';
+    var w = $(container).width();
+    var h = 500;
+    var radius = Math.min(w, h) / 2;
+    var colors = ['rgb(166,206,227)','rgb(31,120,180)','rgb(178,223,138)','rgb(51,160,44)','rgb(251,154,153)','rgb(227,26,28)','rgb(253,191,111)','rgb(255,127,0)','rgb(202,178,214)','rgb(106,61,154)','rgb(255,255,153)','rgb(177,89,40)'];
+    //var colors = ['rgb(141,211,199)','rgb(255,255,179)','rgb(190,186,218)','rgb(251,128,114)','rgb(128,177,211)','rgb(253,180,98)','rgb(179,222,105)','rgb(252,205,229)','rgb(217,217,217)','rgb(188,128,189)','rgb(204,235,197)','rgb(255,237,111)'];
+    var pieArcs = d3.pie()
+	  .value(function(d) {
+	    return d.value.amount;
+	  })(d);
+
+    var arc = d3.arc()
+	  .padAngle(0.02)
+	  .outerRadius(radius * 0.66)
+	  .innerRadius(radius * 0.3);
+    
+    var labelArc = d3.arc()
+    	  .outerRadius(radius * 0.9)
+    	  .innerRadius(radius * 0.9);
+
+    var lineStartArc = d3.arc()
+    	  .outerRadius(radius * 0.55)
+    	  .innerRadius(radius * 0.55);
+
+    var lineEndArc = d3.arc()
+    	  .outerRadius(radius * 0.8)
+    	  .innerRadius(radius * 0.8);
+
+    var svg = d3.select(container)
+	.append("svg")
+	.attr("width", w)
+	.attr("height", h)
+	.append("g")
+        // Moving the center point. 1/2 the width and 1/2 the height
+	.attr("transform", "translate(" + w/2 + "," + h/2 +")"); 
+
+    var g = svg.selectAll("arc")
+	.data(pieArcs)
+	.enter().append("g")
+	  .attr("class", "arc");
+      
+    //arcs
+    g
+      .append("path")
+      .attr("d", arc)
+      .style("fill", function(d, i) {
+    	return colors[i];
+      });
+
+    // lines
+    g.
+      append('line')
+      .attr("x1", function(d) {
+	return lineStartArc.centroid(d)[0];
+      })
+      .attr("y1", function(d) {
+	return lineStartArc.centroid(d)[1];
+      })
+      .attr("x2", function(d) {
+	return lineEndArc.centroid(d)[0];
+      })
+      .attr("y2", function(d) {
+	return lineEndArc.centroid(d)[1];
+      })
+      .attr("stroke", "black")
+      .attr("stroke-width", "1")
+      .attr("visibility", "hidden");
+    
+    // text
+    g
+      .append("text")
+      .attr("transform", function(d) {
+        return "translate(" + labelArc.centroid(d) + ")";
+      })
+      .attr("text-anchor", "middle") //center the text on it's origin
+      .style("fill", "black")
+      .style("font", "bold 10px Arial")
+      .text(function(d, i) {
+    	return d.data.value.name;
+      });
+
+
+    // 
+    g
+      .append("text")
+      .attr("transform", function(d) {
+        return "translate(" + arc.centroid(d) + ")";
+      })
+      .attr("text-anchor", "middle")
+      .style("fill", "white")
+      .style("font", "bold 10px Arial")
+      .text(function(d, i) {
+    	return d3.format(".1%")(d.data.value.pct);
+      });
+    // show lines on hover
+    g
+      .on("mouseover", function() {
+        d3.select(this).select('line').attr("visibility", "visible");
+      })
+      .on("mouseout", function() {
+	d3.select(this).select('line').attr("visibility", "hidden");
+      });
+    
+  };
+
   /**
    * Kicks it all off
    */
-  var init = function(){
+  var init = function(showTopDonorChart){
     var id = $('#political-contributions').data('entityid');
     getContributions(id, function(contributions){
       // data //
       store.data = parseContributions(contributions);
       store.allRecipients = groupByRecip(contributions);
-      console.log(contributions);
-      console.log(store.allRecipients);
       store.politicians = groupByRecip(contributions, 'Person');
       store.orgs = groupByRecip(contributions, 'Org');
       
@@ -441,6 +592,9 @@
       whoTheySupport(store.allRecipients);
       // dom events //
       whoTheySupportButtons();
+      if (Boolean(showTopDonorChart)) {
+	topDonors(groupByDonor(contributions));
+      }
     });
   };
 
@@ -452,6 +606,7 @@
     parseContributions: parseContributions,
     contributionAggregate: contributionAggregate,
     groupByRecip: groupByRecip,
+    groupByDonor: groupByDonor,
     whoTheySupportButtons: whoTheySupportButtons,
     whoTheySupport: whoTheySupport,
     formatName: formatName,

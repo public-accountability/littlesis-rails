@@ -1,70 +1,82 @@
 <% content_for(:page_title, "#{@entity.name} - Political") %>
-<div class="container-fluid">
-    <%= render partial: 'header', locals: { entity: @entity } %>
-    <%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
-    
-    <div class="row top-1em">
-        <div class="col-md-8 col-sm-8">
-            <%= render partial: 'summary', locals: { entity: @entity } %>
-            <%= render partial: 'tabs', locals: { active_tab: 'political', entity: @entity }  %>
-        </div>
+<%= render partial: 'header', locals: { entity: @entity } %>
+<%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
+
+<div class="row top-1em">
+    <div class="col-md-8 col-sm-8 nopadding">
+        <%= render partial: 'summary', locals: { entity: @entity } %>
+        <%= render partial: 'tabs', locals: { active_tab: 'political', entity: @entity }  %>
     </div>
+</div>
+
+<div class="row top-1em">
+    <%= political_tab_col_left do %>
+        <p class="text-muted text-center"><em>U.S. Campaign Contributions since 1990 - <a href="#about">learn more</a></em></p>
+	<% if @entity.org? %>
+	    <p class="text-muted text-center">Federal campaign contributions by people with positions at <%= @entity.name %> </p>
+	<% end %>
+	
+        <div id="political-contributions" data-entityid="<%= @entity.id %>">
+        </div>
+    <% end %>
     
-    <div class="row top-1em">
-        <div class="col-md-8 col-sm-8">
-            <p class="text-muted text-center"><em>U.S. Campaign Contributions since 1990 - <a href="#about">learn more</a></em></p>
-            <div id="political-contributions" data-entityid="<%= @entity.id %>">
+    <%= political_tab_col_right do %>
+        <div class="row">
+            <div class="col-md-9 col-sm-9">
+                <div id="political-pie-chart" class="" style="width:200;height:200;"></div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-4">
-            <div class="row">
-                <div class="col-md-9 col-sm-9">
-                    <div id="political-pie-chart" class="" style="width:200;height:200;"></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2 col-sm-2"></div>
-                <div class="col-md-9 col-sm-9 invisible" id="pie-info" >
-                    <p class="text-left"> <b><span class="total-amount"></span></b>  Contributed</p>
-                    <p class="text-left"> <span class="republican text-info"> </span>  Republican</p>
-                    <p class="text-left"> <span class="democrat text-info"></span>  Democrat</p>
-                    <p class="text-left"> <span class="independent text-info"></span>  3rd party / other</p>
-                    <p class="text-left"> <span class="pacs text-info"></span>  PACs</pf>
+        <div class="row">
+            <div class="col-md-2 col-sm-2"></div>
+            <div class="col-md-9 col-sm-9 invisible" id="pie-info" >
+                <p class="text-left"> <b><span class="total-amount"></span></b>  Contributed</p>
+                <p class="text-left"> <span class="republican text-info"> </span>  Republican</p>
+                <p class="text-left"> <span class="democrat text-info"></span>  Democrat</p>
+                <p class="text-left"> <span class="independent text-info"></span>  3rd party / other</p>
+                <p class="text-left"> <span class="pacs text-info"></span>  PACs</pf>
                     <p class="text-left"> <span class="outside-spending text-info"></span>  Outside Spending Groups</p>
-                </div>
             </div>
         </div>
-    </div>
+    <% end %>
+</div>
 
+<div class="row top-1em">
+    <%= political_tab_col_left do %>
+        <div class="thin-grey-bottom-border"><h3>Politicians and Organizations Supported</h3></div>
+        <div class="btn-group m-left-1em top-1em" data-toggle="buttons" id="who-they-support-buttons">
+            <label class="btn btn-info btn-sm active">
+                <input type="radio" name="all" id="btn-all" autocomplete="off" checked>All
+            </label>
+            <label class="btn btn-info btn-sm">
+                <input type="radio" name="politicians" id="btn-politicians" autocomplete="off">Politicians
+            </label>
+            <label class="btn btn-info btn-sm">
+                <input type="radio" name="orgs" id="btn-organizations" autocomplete="off">Organizations
+            </label>
+        </div>
+        <div id="who-they-support" style="height: 350px;"></div>
+    <% end %>
+</div>
+
+
+<% if @entity.org? %>
     <div class="row top-1em">
-        <div class="col-md-8 col-sm-8">
-            <div class="thin-grey-bottom-border"><h3>Politicians and Organizations Supported</h3></div>
-            <div class="btn-group m-left-1em top-1em" data-toggle="buttons" id="who-they-support-buttons">
-                <label class="btn btn-info btn-sm active">
-                    <input type="radio" name="all" id="btn-all" autocomplete="off" checked>All
-                </label>
-                <label class="btn btn-info btn-sm">
-                    <input type="radio" name="politicians" id="btn-politicians" autocomplete="off">Politicians
-                </label>
-                <label class="btn btn-info btn-sm">
-                    <input type="radio" name="orgs" id="btn-organizations" autocomplete="off">Organizations
-                </label>
-            </div>
-            <div id="who-they-support" style="height: 350px;"></div>
-        </div>
-        <div class="col-md-4 col-sm-4">
-        </div>
+	<%= political_tab_col_left do %>
+	    <div class="thin-grey-bottom-border"><h3>Top donors</h3></div>
+	    <div id="top-donors"></div>
+	<% end %>
     </div>
-    
-    <div class="row top-1em">
-        <a name="about"></a>
-        <div class="col-md-8 col-sm-8">
-            <h4>About the data</h4>
-            <p>This data is compiled using <a href="http://opensecrets.org/">OpenSecrets</a> bulk data downloads. LittleSis analysts match federal campaign contributions given by individuals in our database using the donation matching tool.</p>
-            <p>Individual profile pages show giving information for the individual profiled; org pages show an aggregate analysis of giving information for individuals with positions or memberships at those orgs. Note that this information may differ substantially from data found at <a href="http://influenceexplorer.com/">InfluenceExplorer</a> or OpenSecrets, because it only includes donations for individuals in our database who have been donor-matched by an analyst.</p>
-        </div>
-    </div>
+<% end %>
 
-</div>            
 
-<script>political.init();</script>
+<div class="row top-1em">
+    <a name="about"></a>
+    <%= political_tab_col_left do %>
+        <h4>About the data</h4>
+        <p>This data is compiled using <a href="http://opensecrets.org/">OpenSecrets</a> bulk data downloads. LittleSis analysts match federal campaign contributions given by individuals in our database using the donation matching tool.</p>
+        <p>Individual profile pages show giving information for the individual profiled; org pages show an aggregate analysis of giving information for individuals with positions or memberships at those orgs. Note that this information may differ substantially from data found at <a href="http://influenceexplorer.com/">InfluenceExplorer</a> or OpenSecrets, because it only includes donations for individuals in our database who have been donor-matched by an analyst.</p>
+    <% end %>
+</div>
+
+<script>political.init(<%= raw @entity.org?.to_s %>);</script>
+

@@ -1,5 +1,5 @@
 module EntitiesHelper
- def entity_hash_link(entity, name=nil, action=nil)
+  def entity_hash_link(entity, name=nil, action=nil)
     name ||= entity['name']
     link_to name, Entity.legacy_url(entity['primary_ext'], entity['id'], name, action)
   end
@@ -188,12 +188,19 @@ module EntitiesHelper
   def filter_and_limit_references(refs)
     refs.uniq { |ref| "#{ref.name}#{ref.source}" }.take(10)
   end
-    
 
   # skip deleted lists, private lists (unless current_user has access), and skip lists that are networks
   def show_list(list_entity)
     list = list_entity.list
     return false if list.nil? || list.is_network?
     list.user_can_access?(current_user)
+  end
+
+  def political_tab_col_left
+    content_tag(:div, class: 'col-md-8 col-sm-8 nopadding') { yield }
+  end
+
+  def political_tab_col_right
+    content_tag(:div, class: 'col-md-4 col-sm-4 double-left-padding') { yield }
   end
 end

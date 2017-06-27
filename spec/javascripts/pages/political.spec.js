@@ -1,11 +1,11 @@
 describe('political', function(){
   var contributions = [
-    {cycle: '2014', amount: 1000, "recipcode":"DW", recip_id: 1, recip_name: 'A', recip_ext: 'Person', recip_blurb: null},
-    {cycle: '2014', amount: 500, "recipcode":"RL", recip_id: 2, recip_name: 'B', recip_ext: 'Person', recip_blurb: null},
-    {cycle: '2010', amount: 400, "recipcode":"DW", recip_id: 10, recip_name: 'C', recip_ext: 'Org', recip_blurb: null},
-    {cycle: '1998', amount: 100, "recipcode":"DW", recip_id: 1, recip_name: 'A', recip_ext: 'Person', recip_blurb: null}, 
-    {cycle: '2010', amount: 200, "recipcode":"DW", recip_id: 10, recip_name: 'C', recip_ext: 'Org', recip_blurb: null}, 
-    {cycle: '2008', amount: 800, "recipcode":"XL", recip_id: 15, recip_name: 'D', recip_ext: 'Person', recip_blurb: null},
+    {cycle: '2014', amount: 1000, "recipcode":"DW", recip_id: 1, recip_name: 'A', recip_ext: 'Person', recip_blurb: null, donor_id: 1, donor_name: 'xyz'},
+    {cycle: '2014', amount: 500, "recipcode":"RL", recip_id: 2, recip_name: 'B', recip_ext: 'Person', recip_blurb: null, donor_id: 1, donor_name: 'xyz'},
+    {cycle: '2010', amount: 400, "recipcode":"DW", recip_id: 10, recip_name: 'C', recip_ext: 'Org', recip_blurb: null, donor_id: 1, donor_name: 'xyz'},
+    {cycle: '1998', amount: 100, "recipcode":"DW", recip_id: 1, recip_name: 'A', recip_ext: 'Person', recip_blurb: null, donor_id: 1, donor_name: 'xyz'}, 
+    {cycle: '2010', amount: 200, "recipcode":"DW", recip_id: 10, recip_name: 'C', recip_ext: 'Org', recip_blurb: null, donor_id: 2, donor_name: 'abc'}, 
+    {cycle: '2008', amount: 800, "recipcode":"XL", recip_id: 15, recip_name: 'D', recip_ext: 'Person', recip_blurb: null, donor_id: 2, donor_name: 'abc'},
   ];
   describe('parseContributions', function(){
     it('calculates amount per cycle', function(){
@@ -126,5 +126,36 @@ describe('political', function(){
           expect(groupBy.map(x => x.value.ext)).toEqual(['Person','Person','Org','Person']);
         });
       });
+  });
+  describe('groupByDonor()', function(){
+    // donor_id 1 amount -> 2000, donor_id 2 amount -> 1000
+    var groupByDonor = political.groupByDonor(contributions);
+    it('groups donors by id and sums up amount', function() {
+      //console.log(groupByDonor);
+      expect(groupByDonor).toEqual([
+	{key: '1', value: { name: 'xyz', amount: 2000, pct: (2000 / 3000 * 100)}  },
+	{key: '2', value: { name: 'abc', amount: 1000, pct: (1000 / 3000 * 100)} },
+      ]);
+    });
+
+    it('if more than 7 donors are present, it sums the rest into an aggregate', function(){
+      var more_than_7_contributions = [
+	{amount: 1, donor_id: 1, donor_name: 'one'},
+	{amount: 1, donor_id: 2, donor_name: 'two'},
+	{amount: 1, donor_id: 3, donor_name: 'three'},
+	{amount: 1, donor_id: 4, donor_name: 'four'},
+	{amount: 1, donor_id: 5, donor_name: 'five'},
+	{amount: 1, donor_id: 6, donor_name: 'six'},
+	{amount: 1, donor_id: 7, donor_name: 'seven'},
+	{amount: 1, donor_id: 8, donor_name: 'eight'},
+	{amount: 1, donor_id: 9, donor_name: 'nine'},
+      ];
+
+      var groupByDonor = political.groupByDonor(more_than_7_contributions);
+      expect(groupByDonor.length).toEqual(8);
+      expect(groupByDonor[0]).toEqual({key: '1', value: { name: 'one', amount: 1, pct: (1 / 9)}  });
+      expect(groupByDonor[7]).toEqual({key: 'rest', value: { name: 'others', amount: 2, pct: (2 / 9)}  });
     });
   });
+
+});

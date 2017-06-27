@@ -114,6 +114,10 @@ class EntitiesController < ApplicationController
     render json: { status: 'ok' }
   end
 
+  # ------------------------------ #
+  # Open Secrets Contributions     #
+  # ------------------------------ #
+
   def contributions
     render json: @entity.contribution_info
   end
