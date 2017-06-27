@@ -46,6 +46,25 @@ describe EntitiesController, type: :controller do
       it { should render_template(:relationships) }
     end
 
+    describe 'entity/id/contributions' do
+      before do
+        @e = build(:mega_corp_inc, updated_at: Time.now)
+        expect(Entity).to receive(:find).and_return(@e)
+        expect(@e).to receive(:contribution_info).and_return([build(:os_donation)])
+        get :contributions, id: @e.id
+      end
+      it { should respond_with(200) }
+      it 'responds with json' do
+        expect(response.headers['Content-Type']).to include 'application/json'
+      end
+
+      it 'sets cache headers' do
+        expect(response.headers['Cache-Control']).to include 'public'
+        expect(response.headers['Cache-Control']).to include 'max-age=3600'
+        expect(response.headers['Cache-Control']).to include 'must-revalidate'
+      end
+    end
+
     describe '#match_donations and reivew donations' do
       before do
         expect(Entity).to receive(:find).once

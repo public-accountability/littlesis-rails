@@ -119,6 +119,7 @@ class EntitiesController < ApplicationController
   # ------------------------------ #
 
   def contributions
+    expires_in(1.hour, public: true, must_revalidate: true)
     render json: @entity.contribution_info
   end
 
