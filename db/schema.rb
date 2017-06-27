@@ -867,47 +867,6 @@ ActiveRecord::Schema.define(version: 20170612172624) do
   add_index "ny_disclosures", ["filer_id"], name: "index_ny_disclosures_on_filer_id", using: :btree
   add_index "ny_disclosures", ["original_date"], name: "index_ny_disclosures_on_original_date", using: :btree
 
-  create_table "ny_disclosures_staging", force: :cascade do |t|
-    t.string   "filer_id",                  limit: 10,  null: false
-    t.string   "report_id",                 limit: 1,   null: false
-    t.string   "transaction_code",          limit: 1,   null: false
-    t.string   "e_year",                    limit: 4,   null: false
-    t.integer  "transaction_id",            limit: 8,   null: false
-    t.date     "schedule_transaction_date",             null: false
-    t.date     "original_date"
-    t.string   "contrib_code",              limit: 4
-    t.string   "contrib_type_code",         limit: 1
-    t.string   "corp_name",                 limit: 255
-    t.string   "first_name",                limit: 255
-    t.string   "mid_init",                  limit: 255
-    t.string   "last_name",                 limit: 255
-    t.string   "address",                   limit: 255
-    t.string   "city",                      limit: 255
-    t.string   "state",                     limit: 2
-    t.string   "zip",                       limit: 5
-    t.string   "check_number",              limit: 255
-    t.string   "check_date",                limit: 255
-    t.float    "amount1",                   limit: 24
-    t.float    "amount2",                   limit: 24
-    t.string   "description",               limit: 255
-    t.string   "other_recpt_code",          limit: 255
-    t.string   "purpose_code1",             limit: 255
-    t.string   "purpose_code2",             limit: 255
-    t.string   "explanation",               limit: 255
-    t.string   "transfer_type",             limit: 1
-    t.string   "bank_loan_check_box",       limit: 1
-    t.string   "crerec_uid",                limit: 255
-    t.datetime "crerec_date"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "ny_disclosures_staging", ["e_year"], name: "index_ny_disclosures_staging_on_e_year", using: :btree
-  add_index "ny_disclosures_staging", ["filer_id"], name: "index_ny_disclosures_staging_on_filer_id", using: :btree
-  add_index "ny_disclosures_staging", ["report_id"], name: "index_ny_disclosures_staging_on_report_id", using: :btree
-  add_index "ny_disclosures_staging", ["schedule_transaction_date"], name: "index_ny_disclosures_staging_on_schedule_transaction_date", using: :btree
-  add_index "ny_disclosures_staging", ["transaction_id"], name: "index_ny_disclosures_staging_on_transaction_id", using: :btree
-
   create_table "ny_filer_entities", force: :cascade do |t|
     t.integer  "ny_filer_id",    limit: 4
     t.integer  "entity_id",      limit: 4
