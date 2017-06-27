@@ -410,7 +410,11 @@ class Entity < ActiveRecord::Base
 
     entities = r.to_a.collect do |row|
       entity = Entity.find_by_id(row[:degree2_id])
-      { entity: entity, degree1_num: row[:num], degree1_ids: row[:degree1_ids] }
+      if entity.nil?
+        nil
+      else
+        { entity: entity, degree1_num: row[:num], degree1_ids: row[:degree1_ids] }
+      end
     end.compact
 
     entities
