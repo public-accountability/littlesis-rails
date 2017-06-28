@@ -12,6 +12,9 @@
     root.bulkAdd = factory(root.jQuery, root.utility);
   }
 }(this, function ($, utility) {
+  // Does the user have bulk permissions?
+  // All users may submit up to 8 
+  var USER_HAS_BULK_PERMISSIONS = null;
   // This is the structure of table. The number and types of columns vary by
   // relationship type. See utility.js for more information
   // -> [[]]
@@ -276,14 +279,19 @@
   // Adds a new blank row to the table
   // Returns the newly created row
   function newBlankRow() {
-    var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>');
-    var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd));
-    $('#table tbody').append(row);
-    // Because we create the selectpicker after the dom has loaded, we must initialize it here:
-    $('#table .selectpicker').selectpicker();
-    return row;
+    // Unless the user has bulk permissions they are limited to
+    // bulk adding 8 rows at once
+    if ($('#table tbody tr').length >= 8 && !USER_HAS_BULK_PERMISSIONS) {
+      limitAlert();
+    } else {
+      var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>');
+      var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd));
+      $('#table tbody').append(row);
+      // Because we create the selectpicker after the dom has loaded, we must initialize it here:
+      $('#table .selectpicker').selectpicker();
+      return row;
+    }
   }
-
 
   /* EXTRACT AND SET ROW DATA */
 
@@ -465,6 +473,11 @@
     $('#alert-container').html(html);
   }
 
+  function limitAlert() {
+    showAlert('You are only allowed to bulk upload 8 relationships at a time. <a href="/contact" class="alert-link">Contact us</a> if you\'d like to bulk add more than 8 relationships at once.', 'alert-danger');
+  }
+  
+
   function validateReference() {
     $('#alert-container').empty();
     var url = document.getElementById('reference-url');
@@ -623,6 +636,10 @@
     var csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
     var columns = relationshipDetailsAsObject();
 
+    if (csv.data.length > 8 && !USER_HAS_BULK_PERMISSIONS) {
+      limitAlert();
+      return false;
+    }
     // because we typically start out with one blank row
     // this removes it before the csv data gets inserted into the table
     removeBlankRows();
@@ -687,6 +704,11 @@
     });
   } 
 
+  function init(hasBulkPermission) {
+    USER_HAS_BULK_PERMISSIONS = Boolean(hasBulkPermission);
+    domListeners();
+  }
+
   return {
     relationshipDetails: relationshipDetails,
     relationshipDetailsAsObject: relationshipDetailsAsObject,
@@ -699,9 +721,7 @@
     invalidDisplay: invalidDisplay,
     removeBlankRows: removeBlankRows,
     afterRequest: afterRequest,
-    init: function() { 
-      domListeners();
-    }
+    init: init
   };
   
 }));

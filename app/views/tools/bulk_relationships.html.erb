@@ -49,7 +49,7 @@
 <p id="export"></p>
 <script>
 $(document).ready(function(){
-   bulkAdd.init();
+   bulkAdd.init(<%= raw current_user.bulker? %>);
 });
 </script>
 
