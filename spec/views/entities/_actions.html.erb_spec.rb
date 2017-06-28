@@ -12,7 +12,8 @@ describe "partial: entities/actions" do
       user = build(:user)
       expect(user).to receive(:has_legacy_permission).with('deleter').and_return(true)
       expect(user).to receive(:has_legacy_permission).with('importer').and_return(true)
-      expect(user).to receive(:has_legacy_permission).with('admin').and_return(false)
+      expect(user).to receive(:has_legacy_permission).with('bulker').and_return(true)
+      allow(user).to receive(:has_legacy_permission).with('admin').and_return(false)
       assign(:current_user, user)
     end
 

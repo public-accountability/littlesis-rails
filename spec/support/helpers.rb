@@ -20,3 +20,27 @@ def without_transactional_fixtures(&block)
     DatabaseCleaner.strategy = :transaction
   end
 end
+
+
+def create_admin_user
+  sf_user = FactoryGirl.create(:sf_guard_user)
+  user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 1, user_id: sf_user.id)
+  user
+end
+
+def create_bulk_user
+  sf_user = FactoryGirl.create(:sf_guard_user)
+  user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 9, user_id: sf_user.id)
+  user
+end
+
+def create_basic_user
+  sf_user = FactoryGirl.create(:sf_guard_user)
+  user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 5, user_id: sf_user.id)
+  user
+end

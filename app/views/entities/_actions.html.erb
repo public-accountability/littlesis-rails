@@ -10,6 +10,8 @@
 		<% end %>
 		<% if @current_user.has_legacy_permission 'importer' %>
                     <%= link_to "match donations", match_donations_entity_path(@entity) if @entity.person? %>
+		<% end %>
+		<% if show_add_bulk_button(@current_user) %>
                     <%= link_to "add bulk", tools_bulk_relationships_path(entity_id: @entity.id) %>
 		<% end %>
 		<% if @current_user.has_legacy_permission 'admin' %>

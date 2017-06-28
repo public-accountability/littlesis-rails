@@ -157,12 +157,31 @@ describe 'entities/show.html.erb' do
         render
       end
 
-      it 'has 5 links' do
-        expect(rendered).to have_css('#actions a', :count => 5)
+      it 'has 4 links' do
+        expect(rendered).to have_css('#actions a', :count => 4)
       end
 
       it 'renders match donations button' do
         expect(rendered).to have_css('a', :text => 'match donations')
+      end
+    end
+
+    describe 'with bulker permission' do
+      before(:all) do
+        DatabaseCleaner.start
+        @sf_guard_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
+        @e = build(:person, last_user: @sf_guard_user, updated_at: 1.day.ago, person: build(:a_person))
+        SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 9)
+      end
+
+      after(:all) { DatabaseCleaner.clean }
+
+      before do
+        assign(:entity, @e)
+        assign(:current_user, @user)
+        sign_in @user
+        render
       end
 
       it 'renders add bulk button' do
@@ -170,13 +189,13 @@ describe 'entities/show.html.erb' do
       end
     end
 
-    describe 'with importer and deleter permission' do
+    describe 'with bulker and deleter permission' do
       before do
         @sf_guard_user = create(:sf_guard_user, username: 'Y')
         @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
-        @e = create(:mega_corp_inc, last_user: @sf_guard_user)
+        @e = build(:mega_corp_inc, last_user: @sf_guard_user, updated_at: 1.day.ago, org: build(:organization))
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 5)
-        SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 8)
+        SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 9)
         assign(:entity, @e)
         assign(:current_user, @user)
         sign_in @user

@@ -182,6 +182,13 @@ module EntitiesHelper
     f.instance_variable_get('@options')[:html][:id]
   end
 
+  # <User> -> Boolean
+  def show_add_bulk_button(user)
+    return true if user.admin? || user.bulker?
+    return true if user.created_at < 2.weeks.ago && user.sign_in_count > 2
+    false
+  end
+
   private
 
   # Filters refereces to uniq url/name
