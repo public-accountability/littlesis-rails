@@ -68,8 +68,8 @@ class RelationshipsController < ApplicationController
 
   # POST /relationships/bulk_add
   def bulk_add
-    # Users without the importer permission cannot submit more than 8 bulk relationships at a time
-    if params[:relationships].length > 8 && !(current_user.importer? || current_user.admin?)
+    # Users without the bulker permission cannot submit more than 8 bulk relationships at a time
+    if params[:relationships].length > 8 && !(current_user.bulker? || current_user.admin?)
       return head :unauthorized
     end
 

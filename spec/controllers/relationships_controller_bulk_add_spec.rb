@@ -266,7 +266,7 @@ describe RelationshipsController, type: :controller do
       end
     end
 
-    context 'user with importer permissions' do
+    context 'user with bulk permissions' do
       login_user
       it 'allows submission of 10 relationships' do
         expect(Entity).to receive(:find).and_return(build(:org))

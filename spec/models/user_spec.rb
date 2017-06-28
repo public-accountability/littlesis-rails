@@ -133,4 +133,28 @@ describe User do
     end
   end
 
+  describe '#bulker?' do
+    context 'is bulker' do
+      before do
+        @sf_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_user.id)
+        SfGuardUserPermission.create!(permission_id: 9, user_id: @sf_user.id)
+      end
+
+      it 'returns true' do
+        expect(@user.bulker?).to be true
+      end
+    end
+
+    context 'is not bulker' do
+      before do
+        @sf_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_user.id)
+      end
+
+      it 'returns true' do
+        expect(@user.bulker?).to be false
+      end
+    end
+  end
 end
