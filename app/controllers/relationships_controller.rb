@@ -68,10 +68,15 @@ class RelationshipsController < ApplicationController
 
   # POST /relationships/bulk_add
   def bulk_add
-    check_permission 'importer'
+    # Users without the bulker permission cannot submit more than 8 bulk relationships at a time
+    if params[:relationships].length > 8 && !(current_user.bulker? || current_user.admin?)
+      return head :unauthorized
+    end
+
     return head :bad_request unless Reference.new(reference_params).validate_before_create.empty?
     @errors = []
     @new_relationships = []
+
     entity1 = Entity.find(params.fetch('entity1_id'))
 
     # Looping through each relationship

@@ -67,6 +67,9 @@ class User < ActiveRecord::Base
     has_legacy_permission 'importer'
   end
 
+  def bulker?
+    has_legacy_permission 'bulker'
+  end
 
   def in_group?(group)
   	GroupUser.where(group_id: group.id, user_id: id).count > 0
