@@ -104,9 +104,6 @@ describe 'entities/show.html.erb' do
             expect(rendered).not_to have_css('a', :text => 'add bulk')
           end
 
-          it 'does not have refresh  button' do
-            expect(rendered).not_to have_css('a', :text => 'refresh')
-          end
         end
       end
     end  # end of context without legacy permissions
@@ -205,23 +202,6 @@ describe 'entities/show.html.erb' do
       it 'has 5 links' do
         # missing match donations because entity is an org
         expect(rendered).to have_css('#actions a', :count => 5)
-      end
-    end
-
-    context 'as admin' do
-      before do
-        @sf_guard_user = create(:sf_guard_user)
-        @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
-        @e = create(:mega_corp_inc, last_user: @sf_guard_user)
-        SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 1)
-        assign(:entity, @e)
-        assign(:current_user, @user)
-        sign_in @user
-        render
-      end
-
-      it 'renders refresh button' do
-        expect(rendered).to have_css('a', :text => 'refresh')
       end
     end
 
