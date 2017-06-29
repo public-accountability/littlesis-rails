@@ -13,6 +13,8 @@ describe List do
     expect(l).to be_valid
   end
 
+  it { should validate_length_of(:short_description).is_at_most(255) }
+
   context "active relationships" do
     it 'joins entities via ListEntity' do
       list_entity_count = ListEntity.count

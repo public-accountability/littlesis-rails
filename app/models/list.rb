@@ -31,6 +31,7 @@ class List < ActiveRecord::Base
   has_one :default_topic, class_name: 'Topic', inverse_of: :default_list, foreign_key: 'default_list_id'
 
   validates_presence_of :name
+  validates :short_description, length: { maximum: 255 }
 
   scope :public_scope, -> { where(is_private: false) }
   scope :private_scope, -> { where(is_private: true) }
