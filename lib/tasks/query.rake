@@ -35,11 +35,27 @@ namespace :query do
         end
       end
     end
-    
+
     CSV.open(file_path, "wb") do |csv|
       csv << board_members.first.keys
-      board_members.each  { |hash| csv << hash.values } 
+      board_members.each  { |hash| csv << hash.values }
     end
   end
 
+  desc "Download donations to NYS Filer"
+  task :nys_donations_to_filer, [:filer] => :environment do |t, args|
+    filer = args[:filer]
+    file_path = Rails.root.join('data', "donations_to_#{filer}_#{Date.today}.csv")
+
+    donations = NyDisclosure.where(filer_id: filer).map do |nyd|
+      nyd.attributes.except('delta', 'updated_at', 'created_at')
+    end
+
+    CSV.open(file_path, "wb") do |csv|
+      csv << donations.first.keys
+      donations.each do |hash|
+        csv << hash.values
+      end
+    end
+  end
 end
