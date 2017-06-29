@@ -188,14 +188,50 @@ describe RelationshipsController, type: :controller do
   describe 'GET /relationships/id/edit' do
     login_user
 
-    before do
-      @rel = build :relationship
-      expect(Relationship).to receive(:find).with('1').and_return(@rel)
-      get :edit, id: 1
+    context 'editing a reference' do
+      before do
+        @rel = build :relationship
+        expect(Relationship).to receive(:find).with('1').and_return(@rel)
+        get :edit, id: 1
+      end
+
+      it { should respond_with(:success) }
+      it { should render_template(:edit) }
     end
 
-    it { should respond_with(:success) }
-    it { should render_template(:edit) }
+    context 'editing a reference directly after created it (new_ref = true)' do
+      context 'when there is no reference' do
+        before do
+          @rel = build :relationship
+          expect(Relationship).to receive(:find).with('1').and_return(@rel)
+          get :edit, id: 1, new_ref: 'true'
+        end
+
+        it { should respond_with(:success) }
+        it { should render_template(:edit) }
+
+        it 'sets @selected_ref to be nil' do
+          expect(assigns(:selected_ref)).to eql nil
+        end
+      end
+
+      context 'when there is a reference' do
+        before do
+          @rel = build(:relationship)
+          @ref = build(:relationship_ref)
+          expect(@rel).to receive(:references).and_return(double(:last => @ref))
+          expect(Relationship).to receive(:find).with('1').and_return(@rel)
+          get :edit, id: 1, new_ref: 'true'
+        end
+
+        it { should respond_with(:success) }
+        it { should render_template(:edit) }
+
+        it 'sets @selected_ref' do
+          expect(assigns(:selected_ref)).to eql @ref.id
+        end
+      end
+    end
   end
 
   describe 'PATCH /relationships/id' do

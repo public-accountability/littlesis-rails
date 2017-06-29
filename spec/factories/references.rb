@@ -10,4 +10,12 @@ FactoryGirl.define do
     name 'reference name'
     sequence(:source) { |n| "https://littlesis.org/#{n}" }
   end
+
+  factory :relationship_ref, class: Reference do
+    object_model 'Relationship'
+    object_id { rand(100) }
+    sequence(:id)
+    name 'reference name'
+    sequence(:source) { |n| "https://littlesis.org/#{n}" }
+  end
 end
