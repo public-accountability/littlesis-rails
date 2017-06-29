@@ -382,7 +382,7 @@ GEM
     thor (0.19.4)
     thread_safe (0.3.6)
     tilt (2.0.5)
-    tinymce-rails (3.5.11.1)
+    tinymce-rails (4.6.4)
       railties (>= 3.1.1)
     ts-delayed-delta (2.0.2)
       delayed_job
@@ -491,7 +491,7 @@ DEPENDENCIES
   spring-commands-rspec
   sprockets (~> 3.0)
   thinking-sphinx (~> 3.2.0)
-  tinymce-rails (< 4.0)
+  tinymce-rails (~> 4.6.4)
   ts-delayed-delta (= 2.0.2)
   twitter
   twitter-typeahead-rails (~> 0.9.3)

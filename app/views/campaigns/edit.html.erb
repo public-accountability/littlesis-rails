@@ -2,23 +2,19 @@
 
 <% content_for :body do %>
 
+    <%= render partial: "campaigns/header_small", locals: { campaign: @campaign } %>
 
-<%= render partial: "campaigns/header_small", locals: { campaign: @campaign } %>
+    <%= centered_content do %>
 
+	<h1>Editing campaign</h1>
 
-<%= centered_content do %>
+	<%= link_to 'edit findings', edit_findings_campaign_path(@campaign) %><br />
+	<%= link_to 'edit research guide', edit_guide_campaign_path(@campaign) %>
 
-<h1>Editing campaign</h1>
+	<%= render 'form' %>
 
-<%= link_to 'edit findings', edit_findings_campaign_path(@campaign) %><br />
-<%= link_to 'edit research guide', edit_guide_campaign_path(@campaign) %>
-
-<%= render 'form' %>
-
-<% end %>
-
+    <% end %>
 
 <% end %>
-
 
 
