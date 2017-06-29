@@ -9,10 +9,11 @@ gem 'devise', '~> 4.2'
 # image uploading with amazon s3 storage
 gem 'carrierwave'
 gem 'mini_magick'
-gem "fog-aws"  #  "~> 1.3.1"
+
+gem 'asset_sync', '~> 2.1.0'
+gem "fog-aws"
 
 gem 'sass-rails', '>= 3.2'
-gem 'asset_sync'
 
 # Gems used only for assets and not required
 # in production environments by default.
