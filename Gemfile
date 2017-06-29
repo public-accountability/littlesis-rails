@@ -43,7 +43,7 @@ gem 'fastimage'
 gem 'nilify_blanks'
 
 gem 'bootsy', :git => "https://github.com/littlesis-org/bootsy.git"
-gem 'tinymce-rails', '< 4.0'
+gem 'tinymce-rails', '~> 4.6.4'
 
 gem 'bettertabs'
 gem 'kaminari'

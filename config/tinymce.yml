@@ -9,5 +9,4 @@ plugins:
   - fullscreen
 height: 500
 width: 800
-content_css: "/assets/content_custom.css"
 relative_urls: false

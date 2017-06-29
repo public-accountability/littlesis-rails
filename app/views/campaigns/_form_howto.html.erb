@@ -1,3 +1,4 @@
+<%= render partial: 'shared/tinymce' %>
 <%= form_for(@campaign) do |f| %>
   <% if @campaign.errors.any? %>
     <div id="error_explanation" class="alert alert-warning">
@@ -23,6 +24,3 @@
     <button type="button" class="btn btn-link"><%= link_to "Cancel", @campaign %></button>
   </div>
 <% end %>
-
-<%= tinymce_assets %>
-<%= tinymce_on_document_ready %>

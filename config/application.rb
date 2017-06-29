@@ -42,6 +42,8 @@ module Lilsis
 
     config.assets.paths << "#{Rails.root}/vendor/assets/images"
 
+    config.tinymce.install = :compile
+
     config.active_record.raise_in_transactional_callbacks = true
     
     config.active_job.queue_adapter = :delayed_job
