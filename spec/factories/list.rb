@@ -9,7 +9,7 @@ FactoryGirl.define do
     username 'usertwo'
     sf_guard_user_id 2
   end
-  
+
   factory :list, class: List do
     name "Fortune 1000 Companies"
     description "Fortune Magazine's list..."
@@ -18,7 +18,7 @@ FactoryGirl.define do
     is_featured false
     is_network false
   end
-  
+
   factory :image, class: Image do
     filename 'image.jpg'
     title '#corporateSelfie'

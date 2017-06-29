@@ -26,13 +26,24 @@ def create_admin_user
   sf_user = FactoryGirl.create(:sf_guard_user)
   user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 1, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
   user
 end
 
 def create_bulk_user
   sf_user = FactoryGirl.create(:sf_guard_user)
   user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 9, user_id: sf_user.id)
+  user
+end
+
+def create_list_user
+  sf_user = FactoryGirl.create(:sf_guard_user)
+  user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
   user
 end
 
