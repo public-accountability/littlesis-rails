@@ -10,7 +10,7 @@
     </div>
 <% end %>
 
-<%= render partial: 'list_actions', locals: { list: @list } %>
+<%= render partial: 'list_actions', locals: { list: @list, person_count: person_count } %>
 
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :members } %>
 
