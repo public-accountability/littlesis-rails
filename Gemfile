@@ -16,12 +16,11 @@ gem 'rmagick'
 gem 'aws-sdk', '< 2.0'
 
 gem 'sprockets', '~> 3.0'
+gem 'asset_sync', '~> 2.1.0'
+gem "fog-aws"
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'asset_sync', '~> 2.1.0'
-  gem "fog-aws"
-  
   gem 'coffee-rails'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
