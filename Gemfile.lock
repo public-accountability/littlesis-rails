@@ -112,6 +112,7 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     concurrent-ruby (1.0.5)
+    daemons (1.2.4)
     dalli (2.7.6)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
@@ -416,6 +417,7 @@ DEPENDENCIES
   capybara-webkit (= 1.14.0)
   carrierwave
   coffee-rails
+  daemons
   dalli
   database_cleaner
   delayed_job_active_record
