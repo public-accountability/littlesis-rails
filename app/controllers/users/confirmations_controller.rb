@@ -16,6 +16,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
       if user.errors.empty?
         UserMailer.welcome_email(user).deliver_later
         NotificationMailer.signup_email(user).deliver_later
+        user.create_default_permissions
         user.delay.create_chat_account
       end
     end

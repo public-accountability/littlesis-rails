@@ -10,6 +10,7 @@ describe Users::ConfirmationsController, type: :controller do
     expect(NotificationMailer).to receive(:signup_email)
                             .with(user).and_return(double(:deliver_later => nil))
 
+    expect(user).to receive(:create_default_permissions).once
     expect(user).to receive(:delay).once.and_return(double(:create_chat_account => nil))
 
     get :show
