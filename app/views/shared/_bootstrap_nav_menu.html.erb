@@ -78,6 +78,7 @@ items['About'] = {
     'Source Code' => "https://github.com/public-accountability/littlesis-rails",
     Disclaimer: "/disclaimer",
     'Contact Us' => contact_path,
+    'Jobs' => "https://public-accountability.org/about/jobs/",
     'Donate' => "http://public-accountability.org/donate/"
   }
 }
@@ -85,9 +86,9 @@ items['About'] = {
 unless user_signed_in?
   items['About'][:items].delete('Blog')
   items['Blog'] = { url: "http://blog.littlesis.org" }
-end
+  end
 
-items['Chat'] = { url: APP_CONFIG['chat']['chat_url'] } if user_signed_in?
+  items['Chat'] = { url: APP_CONFIG['chat']['chat_url'] } if user_signed_in?
 
 %>
 
