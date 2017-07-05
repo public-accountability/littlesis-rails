@@ -38,4 +38,13 @@ module ControllerMacros
       sign_in user
     end
   end
+
+  def login_user_without_permissions
+    before(:each) do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      sf_user = FactoryGirl.create(:sf_guard_user)
+      user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
+      sign_in user
+    end
+  end
 end

@@ -104,73 +104,103 @@ describe EntitiesController, type: :controller do
   end
 
   describe '#create' do
-    login_user
     let(:params) { {"entity"=>{"name"=>"new entity", "blurb"=>"a blurb goes here", "primary_ext"=>"Org" } } }
     let(:params_missing_ext) { {"entity"=>{"name"=>"new entity", "blurb"=>"a blurb goes here", "primary_ext"=>"" } } }
     let(:params_add_relationship_page) { params.merge({'add_relationship_page' => 'TRUE'}) }
     let(:params_missing_ext_add_relationship_page) { params_missing_ext.merge({ 'add_relationship_page' => 'TRUE' }) }
 
-    context 'from the /entities/new page' do
-      context 'without errors' do
-        it 'redirects to edit url' do
-          post :create, params
-          expect(response).to redirect_to(Entity.last.legacy_url('edit'))
+    context 'user is logged in' do
+      login_user
+
+      context 'from the /entities/new page' do
+        context 'without errors' do
+          it 'redirects to edit url' do
+            post :create, params
+            expect(response).to redirect_to(Entity.last.legacy_url('edit'))
+          end
+
+          it 'should create a new entity' do
+            expect { post :create, params }.to change { Entity.count }.by(1)
+          end
+
+          it "should set last_user_id to be the user's sf guard user id" do
+            post :create, params
+            expect(Entity.last.last_user_id).to eql controller.current_user.sf_guard_user_id
+          end
         end
 
-        it 'should create a new entity' do
-          expect { post :create, params }.to change { Entity.count }.by(1)
-        end
+        context 'with errors' do
+          it 'Renders new entities page' do
+            post :create, params_missing_ext
+            expect(response).to render_template(:new)
+          end
 
-        it "should set last_user_id to be the user's sf guard user id" do
-          post :create, params
-          expect(Entity.last.last_user_id).to eql controller.current_user.sf_guard_user_id
+          it 'sould NOT create a new entity' do
+            expect { post :create, params_missing_ext }.not_to change { Entity.count }
+          end
         end
       end
 
-      context 'with errors' do
-        it 'Renders new entities page' do
-          post :create, params_missing_ext
-          expect(response).to render_template(:new)
+      context 'from the /entiites/id/add_relationship page' do
+        context 'without errors' do
+          it 'should create a new entity' do
+            expect { post :create, params_add_relationship_page }.to change { Entity.count }.by(1)
+          end
+
+          it 'should render json with entity id' do
+            post :create, params_add_relationship_page
+            json = JSON.parse(response.body)
+            expect(json.fetch('status')).to eql 'OK'
+            expect(json['entity']['id']).to eql Entity.last.id
+            expect(json['entity']).to have_key 'name'
+            expect(json['entity']).to have_key 'url'
+            expect(json['entity']).to have_key 'description'
+            expect(json['entity']).to have_key 'primary_type'
+          end
         end
 
-        it 'sould NOT create a new entity' do
-          expect { post :create, params_missing_ext }.not_to change { Entity.count }
+        context 'with errors' do
+          it 'should NOT create a new entity' do
+            expect { post :create, params_missing_ext_add_relationship_page }
+              .not_to change { Entity.count }
+          end
+
+          it 'should render json with errors' do
+            post :create, params_missing_ext_add_relationship_page
+            expect(JSON.parse(response.body)).to have_key 'errors'
+            expect(JSON.parse(response.body).fetch 'status').to eql 'ERROR'
+          end
         end
       end
     end
-
-    context 'from the /entiites/id/add_relationship page' do
-      context 'without errors' do
-        it 'should create a new entity' do
-          expect { post :create, params_add_relationship_page }.to change { Entity.count }.by(1)
-        end
-
-        it 'should render json with entity id' do
-          post :create, params_add_relationship_page
-          json = JSON.parse(response.body)
-          expect(json.fetch('status')).to eql 'OK'
-          expect(json['entity']['id']).to eql Entity.last.id
-          expect(json['entity']).to have_key 'name'
-          expect(json['entity']).to have_key 'url'
-          expect(json['entity']).to have_key 'description'
-          expect(json['entity']).to have_key 'primary_type'
-        end
+    
+    context 'user is not logged in' do
+      it 'does not create a new entity' do
+        expect { post :create, params_add_relationship_page }.not_to change { Entity.count }
       end
-
-      context 'with errors' do
-        it 'should NOT create a new entity' do
-          expect { post :create, params_missing_ext_add_relationship_page }
-            .not_to change { Entity.count }
-        end
-
-        it 'should render json with errors' do
-          post :create, params_missing_ext_add_relationship_page
-          expect(JSON.parse(response.body)).to have_key 'errors'
-          expect(JSON.parse(response.body).fetch 'status').to eql 'ERROR'
-        end
+      
+      it 'redirects to login page' do
+        post :create, params
+        expect(response.location).to include 'login'
+        expect(response).to have_http_status 302
       end
     end
-  end
+
+    context 'user does not have contributors permission' do
+      login_user_without_permissions
+
+      it 'does not create a new entity' do
+        expect { post :create, params }.not_to change { Entity.count }
+      end
+
+           
+      it 'returns http status 403' do
+        post :create, params
+        expect(response).to have_http_status 403
+      end
+    end
+
+  end  # end of create
 
   describe 'Political' do
     before { @entity = create(:mega_corp_inc, updated_at: Time.now) }

@@ -4,6 +4,7 @@ class EntitiesController < ApplicationController
   before_action :set_entity_with_eager_loading, only: [:show]
   before_action :set_current_user, only: [:show, :political, :match_donations]
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
+  before_action -> { check_permission('contributor') }, only: [:create]
 
   def show
     @similar_entities = @entity.similar_entities
