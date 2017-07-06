@@ -5,7 +5,7 @@
 		<%= link_to('edit', edit_list_path(list), class: 'btn btn-default') %>
 	    <% end %>
 	    <% if has_legacy_permission('admin') %>
-		<%= link_to('delete', delete_list_path(list), class: 'btn btn-default', method: :post, data: { confirm: 'Are you sure yu want to delete this list?' }) %>
+		<%= link_to('delete', delete_list_path(list), class: 'btn btn-default', method: :post, data: { confirm: 'Are you sure you want to delete this list?' }) %>
 	    <% end %>
 	    <% if has_legacy_permission('bulker') %>
 		<%= link_to('add bulk', list.legacy_url('addBulk'), class: 'btn btn-default') %>
