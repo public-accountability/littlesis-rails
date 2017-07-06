@@ -55,3 +55,9 @@ def create_basic_user
   SfGuardUserPermission.create!(permission_id: 5, user_id: sf_user.id)
   user
 end
+
+def create_user_with_sf(attrs = {})
+  sf_user = FactoryGirl.create(:sf_user)
+  FactoryGirl.create(:sf_guard_user_profile, user_id: sf_user.id)
+  FactoryGirl.create(:user, attrs.merge(sf_guard_user: sf_user))
+end

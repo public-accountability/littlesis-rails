@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 describe 'home/flag.html.erb', type: :view do
+  before(:all) { Capybara.ignore_hidden_elements = true }
+  after(:all) { Capybara.ignore_hidden_elements = false }
+  
   context 'when referrer is missing' do
     before do
       assign(:referrer, nil)

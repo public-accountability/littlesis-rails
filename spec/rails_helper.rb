@@ -99,4 +99,6 @@ RSpec.configure do |config|
 
   config.include RSpecHtmlMatchers
 
+  Capybara.ignore_hidden_elements = false
+
 end
