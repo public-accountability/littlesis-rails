@@ -1,50 +1,50 @@
 require 'rails_helper'
 
 describe IpBlocker do
-
   def reload_mod
     # Removes the module from object-space:
     Object.send(:remove_const, :IpBlocker) if Module.const_defined?(:IpBlocker)
     # Reloads the module
     load Rails.root.join('app', 'utility', 'ip_blocker.rb')
   end
-  
-  context 'blacklist file is missing' do
+
+  context 'restricted_ips is blank' do
     before do
-      expect(File).to receive(:exist?)
-                        .with(Rails.root.join('config', 'blacklist.yml')).and_return(false)
+      expect(APP_CONFIG).to receive(:[]).with('restricted_ips').and_return(nil)
       reload_mod
     end
 
-    it 'defines .blocked? and always returns false' do
-      expect(IpBlocker.blocked?('10.10.10.10')).to eq false
+    it 'defines .restricted? and always returns false' do
+      expect(IpBlocker.restricted?('10.10.10.10')).to eq false
     end
   end
 
-  context 'blacklist file exists' do
+  context 'restricted_ips contains two ip ranges' do
     before do
-      expect(File).to receive(:exist?)
-                        .with(Rails.root.join('config', 'blacklist.yml')).and_return(true)
-
-      expect(YAML).to receive(:load).and_return(['fake', '192.0.2.0/24'])
-
+      expect(APP_CONFIG).to receive(:[]).twice.with('restricted_ips')
+                              .and_return(['192.0.2.0/24','192.0.3.0/24'])
       reload_mod
     end
     
-    it 'rejects invalid ip addresses from file' do
+    it 'returns true if given ip is in restricted range' do
+      expect(IpBlocker.restricted?('192.0.2.1')).to be true
+    end
+
+    it 'returns fasle for non-restricted ips' do
+      expect(IpBlocker.restricted?('10.11.12.13')).to be false
+    end
+  end
+
+  context 'list of registristed ips contain invalid ip' do
+    before do
+      expect(APP_CONFIG).to receive(:[]).twice.with('restricted_ips')
+                              .and_return(['192.0.2.0/24','FAKE'])
+      reload_mod
+    end
+
+    it 'remove invalid ip addresses form list' do
       expect(IpBlocker::IPS.length).to eq 1
       expect(IpBlocker::IPS[0]).to eq IPAddr.new('192.0.2.0/24')
     end
-
-    it 'blocked? return true if ip address is in list' do
-      
-    end
-
-    it 'blocked? return false if ip address is not inlist' do
-      
-    end
   end
-      
-
-  
 end

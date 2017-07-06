@@ -1,8 +1,10 @@
 # Checks if ip in blacklist.yml
 module IpBlocker
-  if File.exist?(Rails.root.join('config', 'blacklist.yml'))
+  if APP_CONFIG['restricted_ips'].blank?
+    define_singleton_method(:restricted?) { |ip| false }
+  else
 
-    IPS = YAML.load(File.new(Rails.root.join('config', 'blacklist.yml')).read).map do |ip|
+    IPS = APP_CONFIG['restricted_ips'].map do |ip|
       begin
         IPAddr.new(ip)
       rescue IPAddr::InvalidAddressError
@@ -10,11 +12,10 @@ module IpBlocker
       end
     end.compact
 
-    define_singleton_method('blocked?') do |ip|
-      
+    define_singleton_method(:restricted?) do |ip|
+      IPS.each { |blocked_ip| return true if blocked_ip.include?(ip) }
+      return false
     end
-
-  else
-    define_singleton_method('blocked?') { |ip| false }
+    
   end
 end
