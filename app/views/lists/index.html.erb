@@ -29,7 +29,11 @@
       <tr>
         <td class="lists_table_name"><%= list_link(list) %></td>
         <td><%= list.entity_count %></td>
-        <td><%= list.description %></td>
+        <% if list.short_description %>
+          <td><%= list.short_description %></td>
+        <% else %>
+          <td><%= list.description %></td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

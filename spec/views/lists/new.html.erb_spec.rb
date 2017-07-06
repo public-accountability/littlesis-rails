@@ -11,8 +11,8 @@ describe 'lists/new.html.erb' do
       expect(rendered).to have_selector('form', :count => 1 )
     end
 
-    it 'contains 3 text inputs' do
-      expect(rendered).to have_selector('input[type=text]', :count => 3 )
+    it 'contains 4 text inputs' do
+      expect(rendered).to have_selector('input[type=text]', :count => 4 )
     end
 
     it 'contains 1 text_area' do
