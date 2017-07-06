@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy]
+  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict]
   before_action :authenticate_user!
-  before_filter :admins_only, except: [:show]
-  
+  before_filter :admins_only, except: [:show, :restrict]
+
   # get /users
   def index
     @users = User
@@ -52,6 +52,20 @@ class UsersController < ApplicationController
     end
   end
 
+  def restrict
+    if @user.admin?
+      redirect_to admin_users_path, notice: 'You can\'t restrict an admin user'
+    elsif restrict_params == 'RESTRICT'
+      @user.update(is_restricted: true)
+      redirect_to admin_users_path, notice: "Successfully restricted #{@user.username}"
+    elsif restrict_params == 'PERMIT'
+      @user.update(is_restricted: false)
+      redirect_to admin_users_path, notice: "Successfully removed restrictions from #{@user.username}"
+    else
+      redirect_to admin_users_path, notice: 'Incorrect paramters'
+    end
+  end
+
   def admin
     @users = User
       .includes(:groups)
@@ -66,19 +80,24 @@ class UsersController < ApplicationController
       @users = @users.where("sf_guard_user_profile.name_last LIKE ? OR sf_guard_user_profile.name_first LIKE ? OR users.username LIKE ? OR users.email LIKE ?", q, q, q, q)
     end
   end
-  
+
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_user
+    @user = User.find(params[:id])
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def user_params
-      params[:user]
-    end
+  # Only allow a trusted parameter "white list" through.
+  def user_params
+    params[:user]
+  end
 
-    def permission_id
-      params[:permission]
-    end
+  def permission_id
+    params[:permission]
+  end
+
+  def restrict_params
+    Rails.logger.warn params.inspect
+    params[:status].try(:upcase)
+  end
 end

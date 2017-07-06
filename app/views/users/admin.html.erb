@@ -29,6 +29,7 @@
       <th>Joined</th>
       <th>Permissions</th>
       <th>Edit Permissions</th>
+      <th>Restrict</th>
       <th>Delete</th>
     </tr>
   </thead>
@@ -57,6 +58,19 @@
             <%= user.legacy_permissions.join(", ") %>
         </td>
 	<td><%= link_to "Edit", "/users/#{user.id}/edit_permissions" %></td>
+	<td>
+	    <% unless user.admin? %>
+		<%= form_tag "/users/#{user.id}/restrict", method: :post, :id => "restrict_#{user.id}" do %>
+		    <% if user.restricted?  %>
+			<input type="hidden" name="status" value="permit" />
+			<%= button_tag "Remove restriction", class: 'btn btn-primary btn-sm' %>
+		    <% else %>
+			<input type="hidden" name="status" value="restrict" />
+			<%= button_tag "Restrict this user", class: ' btn btn-warning' %>
+		    <% end %>
+		<% end %>
+	    <% end %>
+	</td>
 	<td><%= link_to "DELETE","/users/#{user.id}/destroy",  :method => :delete, data: { confirm: "Are you sure you want to delete this user? This cannot be undone" } %></td>
       </tr>
     <% end %>

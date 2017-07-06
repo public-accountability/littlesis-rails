@@ -16,7 +16,16 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
       if user.errors.empty?
         UserMailer.welcome_email(user).deliver_later
         NotificationMailer.signup_email(user).deliver_later
-        user.delay.create_chat_account
+        user.create_default_permissions
+
+        # If the user's request is from a spamy ip address then automatically restrict the user
+        # and don't create a chat account
+        if IpBlocker.restricted?(request.remote_ip)
+          user.update(is_restricted: true)
+        else
+          user.delay.create_chat_account
+        end
+
       end
     end
   end
@@ -32,4 +41,5 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
   def after_confirmation_path_for(resource_name, resource)
     home_dashboard_path
   end
+
 end

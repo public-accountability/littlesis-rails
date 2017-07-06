@@ -19,7 +19,7 @@ FactoryGirl.define do
   end
 
   factory :sf_user, class: SfGuardUser do
-    # id 100
+    is_active true
     username { generate(:sf_user_name) }
   end
 

@@ -157,4 +157,14 @@ describe User do
       end
     end
   end
+
+  describe '#restricted?' do
+    it 'returns true for restircted user' do
+      expect(build(:user, is_restricted: true).restricted?).to be true
+    end
+
+    it 'returns false for unrestircted user' do
+      expect(build(:user, is_restricted: false).restricted?).to be false
+    end
+  end
 end

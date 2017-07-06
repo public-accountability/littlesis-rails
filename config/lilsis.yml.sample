@@ -45,13 +45,15 @@ defaults: &defaults
   notification_to:
   legacy_cache_connection: "memcached:11211"
   carousel_list_id: 404
+  restricted_ips:
   chat:
     chat_url: "http://localhost:3000"
     mongo_url: "mongo:27017"
     api_url: "rocketchat:3000"
     admin_username: 
     admin_password:
-    
+  
+  
 
 
 test:

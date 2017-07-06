@@ -71,6 +71,12 @@ class User < ActiveRecord::Base
     has_legacy_permission 'bulker'
   end
 
+  def restricted?
+    is_restricted
+  end
+
+  ################
+  
   def in_group?(group)
   	GroupUser.where(group_id: group.id, user_id: id).count > 0
   end

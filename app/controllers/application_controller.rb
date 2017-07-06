@@ -13,6 +13,10 @@ class ApplicationController < ActionController::Base
     render "errors/permission", status: 403
   end
 
+  rescue_from Exceptions::RestrictedUserError do |exception|
+    redirect_to home_dashboard_path, notice: "Your account has been restricted. This might be because we think you are posting spam. If that's a mistake, please contact us"
+  end
+
   rescue_from Exceptions::NotFoundError do |exception|
     render "errors/not_found", status: 404
   end
@@ -35,7 +39,9 @@ class ApplicationController < ActionController::Base
   end
 
   def check_permission(name)
-    raise Exceptions::PermissionError unless current_user.present? and (current_user.has_legacy_permission(name) or current_user.has_legacy_permission("admin"))
+    raise Exceptions::PermissionError unless current_user.present?
+    raise Exceptions::RestrictedUserError if current_user.restricted?
+    raise Exceptions::PermissionError unless current_user.has_legacy_permission(name) || current_user.has_legacy_permission("admin")
   end
 
   def not_found

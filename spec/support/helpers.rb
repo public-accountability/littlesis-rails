@@ -23,7 +23,7 @@ end
 
 
 def create_admin_user
-  sf_user = FactoryGirl.create(:sf_guard_user)
+  sf_user = FactoryGirl.create(:sf_guard_user, sf_guard_user_profile: build(:sf_guard_user_profile))
   user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 1, user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
@@ -54,4 +54,18 @@ def create_basic_user
   SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 5, user_id: sf_user.id)
   user
+end
+
+def create_restricted_user
+  sf_user = FactoryGirl.create(:sf_guard_user)
+  user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id, is_restricted: true)
+  SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+  user
+end
+
+def create_user_with_sf(attrs = {})
+  sf_user = FactoryGirl.create(:sf_user)
+  FactoryGirl.create(:sf_guard_user_profile, user_id: sf_user.id)
+  FactoryGirl.create(:user, attrs.merge(sf_guard_user: sf_user))
 end
