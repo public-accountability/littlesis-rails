@@ -173,12 +173,12 @@ describe EntitiesController, type: :controller do
         end
       end
     end
-    
+
     context 'user is not logged in' do
       it 'does not create a new entity' do
         expect { post :create, params_add_relationship_page }.not_to change { Entity.count }
       end
-      
+
       it 'redirects to login page' do
         post :create, params
         expect(response.location).to include 'login'
@@ -193,14 +193,26 @@ describe EntitiesController, type: :controller do
         expect { post :create, params }.not_to change { Entity.count }
       end
 
-           
       it 'returns http status 403' do
         post :create, params
         expect(response).to have_http_status 403
       end
     end
 
-  end  # end of create
+    context 'user is restricted' do
+      login_restricted_user
+
+      it 'does not create a new entity' do
+        expect { post :create, params }.not_to change { Entity.count }
+      end
+
+      it 'redirects to login page' do
+        post :create, params
+        expect(response).to have_http_status 302
+        expect(response.location).to include '/home/dashboard'
+      end
+    end
+  end # end of create
 
   describe 'Political' do
     before { @entity = create(:mega_corp_inc, updated_at: Time.now) }

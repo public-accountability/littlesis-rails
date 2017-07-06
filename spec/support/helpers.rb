@@ -56,6 +56,14 @@ def create_basic_user
   user
 end
 
+def create_restricted_user
+  sf_user = FactoryGirl.create(:sf_guard_user)
+  user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id, is_restricted: true)
+  SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+  user
+end
+
 def create_user_with_sf(attrs = {})
   sf_user = FactoryGirl.create(:sf_user)
   FactoryGirl.create(:sf_guard_user_profile, user_id: sf_user.id)

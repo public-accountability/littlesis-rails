@@ -45,4 +45,3 @@ describe "Users Admin Page", :type => :feature do
     expect(page).to have_selector 'div.alert', count: 1
   end
 end
-
