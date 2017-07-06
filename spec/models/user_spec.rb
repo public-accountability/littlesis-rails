@@ -152,8 +152,33 @@ describe User do
         @user = create(:user, sf_guard_user_id: @sf_user.id)
       end
 
-      it 'returns true' do
+      it 'returns false' do
         expect(@user.bulker?).to be false
+      end
+    end
+  end
+
+  describe '#merger?' do
+    context 'is merger' do
+      before do
+        @sf_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_user.id)
+        SfGuardUserPermission.create!(permission_id: 7, user_id: @sf_user.id)
+      end
+
+      it 'returns true' do
+        expect(@user.merger?).to be true
+      end
+    end
+
+    context 'is not bulker' do
+      before do
+        @sf_user = create(:sf_guard_user)
+        @user = create(:user, sf_guard_user_id: @sf_user.id)
+      end
+
+      it 'returns false' do
+        expect(@user.merger?).to be false
       end
     end
   end

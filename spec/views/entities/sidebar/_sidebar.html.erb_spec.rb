@@ -23,7 +23,7 @@ describe "partial: sidebar" do
     context 'all users' do
       before do
         allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false))
+        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false, :merger? => false))
         render partial: 'entities/sidebar.html.erb'
       end
 
@@ -47,14 +47,25 @@ describe "partial: sidebar" do
     context 'with importer permission' do
       before do
         allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => true))
+        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => true, :merger? => false))
         render partial: 'entities/sidebar.html.erb'
       end
 
       it 'has Match NY Donations' do
         css 'a', text: 'Match NY Donations'
       end
+    end
 
+    context 'with merger permission' do
+      before do
+        allow(view).to receive(:user_signed_in?).and_return(true)
+        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false, :merger? => true))
+        render partial: 'entities/sidebar.html.erb'
+      end
+
+      it 'has merge link' do
+        css 'a', text: 'Merge this entity'
+      end
     end
   end
 
@@ -62,7 +73,7 @@ describe "partial: sidebar" do
     context 'When admin' do
       before do
         allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user).and_return(double(:admin? => true, :importer? => false))
+        allow(view).to receive(:current_user).and_return(double(:admin? => true, :importer? => false, :merger? => false))
         render partial: 'entities/sidebar.html.erb'
       end
 
@@ -75,7 +86,7 @@ describe "partial: sidebar" do
     context 'When not admin' do
       before do
         allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false))
+        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false, :merger? => false))
         render partial: 'entities/sidebar.html.erb'
       end
 
@@ -93,7 +104,7 @@ describe "partial: sidebar" do
       current_user = build(:user)
       expect(current_user).to receive(:admin?).at_least(:twice).and_return(false)
       allow(current_user).to receive(:importer?).and_return(false)
-      expect(current_user).to receive(:has_legacy_permission).with('merger').and_return(true)
+      expect(current_user).to receive(:has_legacy_permission).at_least(:once).with('merger').and_return(true)
       expect(view).to receive(:current_user).at_least(:twice).and_return(current_user)
       render partial: 'entities/sidebar.html.erb' 
     end

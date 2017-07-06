@@ -70,6 +70,10 @@ class User < ActiveRecord::Base
   def bulker?
     has_legacy_permission 'bulker'
   end
+  
+  def merger?
+    has_legacy_permission 'merger'
+  end
 
   def restricted?
     is_restricted
