@@ -11,6 +11,7 @@ require 'spec_helper'
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'capybara/rspec'
+
 require 'devise'
 require 'paper_trail/frameworks/rspec'
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -36,7 +37,8 @@ RSpec.configure do |config|
   # devise helpers
   config.include Devise::Test::ControllerHelpers, :type => :controller
   config.include Devise::Test::ControllerHelpers, :type => :view
-  
+  config.include Warden::Test::Helpers
+
   config.extend ControllerMacros, :type => :controller
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   # config.fixture_path = "#{::Rails.root}/spec/fixtures"

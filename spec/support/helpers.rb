@@ -23,7 +23,7 @@ end
 
 
 def create_admin_user
-  sf_user = FactoryGirl.create(:sf_guard_user)
+  sf_user = FactoryGirl.create(:sf_guard_user, sf_guard_user_profile: build(:sf_guard_user_profile))
   user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 1, user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
