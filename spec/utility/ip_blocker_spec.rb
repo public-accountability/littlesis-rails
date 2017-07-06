@@ -19,30 +19,30 @@ describe IpBlocker do
     end
   end
 
-  context 'restricted_ips contains two ip ranges' do
+  context 'restricted_ips contain two ip ranges' do
     before do
       expect(APP_CONFIG).to receive(:[]).twice.with('restricted_ips')
                               .and_return(['192.0.2.0/24','192.0.3.0/24'])
       reload_mod
     end
-    
+
     it 'returns true if given ip is in restricted range' do
       expect(IpBlocker.restricted?('192.0.2.1')).to be true
     end
 
-    it 'returns fasle for non-restricted ips' do
+    it 'returns false for non-restricted ips' do
       expect(IpBlocker.restricted?('10.11.12.13')).to be false
     end
   end
 
-  context 'list of registristed ips contain invalid ip' do
+  context 'list of restricted ips contain invalid addresses' do
     before do
       expect(APP_CONFIG).to receive(:[]).twice.with('restricted_ips')
                               .and_return(['192.0.2.0/24','FAKE'])
       reload_mod
     end
 
-    it 'remove invalid ip addresses form list' do
+    it 'removes the invalid ip addresses from the list' do
       expect(IpBlocker::IPS.length).to eq 1
       expect(IpBlocker::IPS[0]).to eq IPAddr.new('192.0.2.0/24')
     end

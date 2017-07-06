@@ -21,7 +21,7 @@ describe "Users Admin Page", :type => :feature do
     expect(page).not_to have_selector 'div.alert'
   end
 
-  it 'has one PERMIT form for restircted user' do
+  it 'has one PERMIT form for the restircted user' do
     expect(page).to have_selector 'button', text: 'Remove restriction', count: 1
   end
 
@@ -37,7 +37,7 @@ describe "Users Admin Page", :type => :feature do
     expect(page).to have_selector 'div.alert', count: 1
   end
 
-  it 'will restriction to be added' do
+  it 'will allow restriction to be added' do
     expect(User.find(@not_restricted_user.id).restricted?).to be false
     page.find("form#restrict_#{@not_restricted_user.id} button").click
     expect(User.find(@not_restricted_user.id).restricted?).to be true
