@@ -1,6 +1,6 @@
 FactoryGirl.define do
   sequence :entity_id do |n|
-    n
+    n + 100
   end
 
   factory :org, class: Entity do
