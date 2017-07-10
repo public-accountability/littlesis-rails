@@ -67,6 +67,10 @@ class Relationship < ActiveRecord::Base
   # associated entities for the relationship
   after_save :update_entity_timestamps
   
+  ##############
+  # CATEGORIES #
+  ##############
+
   def create_category
     self.class.all_categories[category_id].constantize.create(relationship: self) if self.class.all_category_ids_with_fields.include?(category_id)
   end 
@@ -156,6 +160,20 @@ class Relationship < ActiveRecord::Base
     hash
   end
 
+  #####################
+
+  ## callbacks for soft_delete
+  def after_soft_delete
+    links.destroy_all
+    position&.destroy! if is_position?
+    education&.destroy! if is_education?
+    membership&.destroy! if is_member?
+    family&.destroy! if is_family?
+    donation&.destroy! if is_donation?
+    trans&.destroy! if is_transaction?
+    ownership&.destroy! if is_ownership?
+  end
+ 
   def legacy_url(action=nil)
     self.class.legacy_url(id, action)
   end
@@ -207,6 +225,7 @@ class Relationship < ActiveRecord::Base
   def source_links
     Reference.where(object_id: self.id, object_model: "Relationship")
   end
+
 
   #############
   #   LINKS   #

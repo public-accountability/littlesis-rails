@@ -496,6 +496,69 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'Deleting' do
+    let(:rel) { create(:generic_relationship, entity1_id: create(:person).id, entity2_id: create(:person).id) }
+
+    it 'soft_delete set is_deleted to be true' do
+      @rel = rel
+      expect(@rel.is_deleted).to be false
+      @rel.soft_delete
+      expect(@rel.is_deleted).to be true
+    end
+    
+    it 'soft_delete removes links' do
+      @rel = rel
+      expect { @rel.soft_delete }.to change { Link.count }.by(-2)
+    end
+
+    context 'removing associated category models' do
+      before(:all) do
+        @person = create(:person)
+        @org = create(:org)
+      end
+      
+      it 'removes position model' do
+        rel = create(:position_relationship, entity1_id: @person.id, entity2_id: @org.id)
+        expect { rel.soft_delete }.to change { Position.count }.by(-1)
+      end
+      
+      it 'removes education model' do
+        rel = Relationship.create!(category_id: 2, entity1_id: @person.id, entity2_id: create(:org).id)
+        expect { rel.soft_delete }.to change { Education.count }.by(-1)
+      end
+
+      it 'removes membership model' do
+        rel = Relationship.create!(category_id: 3, entity1_id: @person.id, entity2_id: @org.id)
+        expect { rel.soft_delete }.to change { Membership.count }.by(-1)
+      end
+
+      it 'removes family model' do
+        rel = Relationship.create!(category_id: 4, entity1_id: @person.id, entity2_id: create(:person).id)
+        expect { rel.soft_delete }.to change { Family.count }.by(-1)
+      end
+
+      it 'removes donation model' do
+        rel = Relationship.create!(category_id: 5, entity1_id: @person.id, entity2_id: @org.id)
+        expect { rel.soft_delete }.to change { Donation.count }.by(-1)
+      end
+
+      it 'removes transation model' do
+        rel = Relationship.create!(category_id: 6, entity1_id: @person.id, entity2_id: @org.id)
+        expect { rel.soft_delete }.to change { Transaction.count }.by(-1)
+      end
+
+      it 'removes ownership model' do
+        rel = Relationship.create!(category_id: 10, entity1_id: @person.id, entity2_id: @org.id)
+        expect { rel.soft_delete }.to change { Ownership.count }.by(-1)
+      end
+
+      it 'does nothing if deleting a generic relationship' do
+        rel = Relationship.create!(category_id: 12, entity1_id: @person.id, entity2_id: @org.id)
+        expect { rel.soft_delete }.not_to change { Position.count }
+      end
+    end
+  end
+
   context 'Using paper_trail for versioning' do
     with_versioning do
       before do
