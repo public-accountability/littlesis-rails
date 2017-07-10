@@ -49,6 +49,21 @@ describe Entity do
     end
   end
 
+  describe '#soft_delete' do
+    
+    it 'sets is_deleted to be true' do
+      org = create(:org)
+      expect(org.is_deleted).to be false
+      org.soft_delete
+      expect(org.is_deleted).to be true
+    end
+    
+    it 'deletes aliases' do
+      
+    end
+
+  end
+
   describe 'summary_excerpt' do
     it 'returns nil if there is no summary' do
       mega_corp = build(:mega_corp_inc, summary: nil)
@@ -216,6 +231,24 @@ describe Entity do
         expect(school.extensions_with_attributes.key?('Org')).to be true
         expect(school.extensions_with_attributes.length).to eql 2
       end
+    end
+
+    describe '#extension_models' do
+      before(:all) do
+        @person = create(:person)
+        @person.add_extension('Lawyer')
+        @person.add_extension('PoliticalCandidate')
+      end
+ 
+     it 'returns array' do
+       expect(@person.extension_models).to be_a Array
+       expect(@person.extension_models.length).to eq 2
+     end
+
+     it 'has Org and PoliticalCandidate models' do
+       expect(@person.extension_models[0]).to be_a Person
+       expect(@person.extension_models[1]).to be_a PoliticalCandidate
+     end
     end
 
     describe '#extension_names' do

@@ -54,7 +54,7 @@ describe 'relationships/show.html.erb', type: :view do
 
     it 'has modal and form' do
       css '#add-reference-modal'
-      css 'form', :count => 1
+      css 'form#reference-form', :count => 1
     end
 
     it 'has hidden inputs' do
