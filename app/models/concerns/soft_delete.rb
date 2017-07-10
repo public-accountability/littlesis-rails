@@ -20,7 +20,7 @@ module SoftDelete
   end
 
   def soft_delete
-    self.class.transaction do  
+    self.class.transaction do
       update(is_deleted: true)
       after_soft_delete
     end

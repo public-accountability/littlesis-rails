@@ -1,6 +1,7 @@
 class RelationshipsController < ApplicationController
-  before_action :set_relationship, only: [:show, :edit, :update, :reverse_direction]
+  before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction]
   before_action :authenticate_user!, except: [:show]
+  before_action -> { check_permission('deleter') }, only: [:destroy]
 
   def show
   end
@@ -50,6 +51,11 @@ class RelationshipsController < ApplicationController
       }
       render json: errors, status: :bad_request
     end
+  end
+
+  def destroy
+    @relationship.soft_delete
+    redirect_to home_dashboard_path, notice: 'Relationship successfully deleted'
   end
 
   # POST /relationships/:id/reverse_direction
