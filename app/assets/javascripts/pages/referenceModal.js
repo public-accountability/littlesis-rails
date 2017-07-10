@@ -1,5 +1,6 @@
 var referenceModal = function(){
-  $('#data_date').datepicker({ format: "yyyy-mm-dd" });
+
+  $('#data_publication_date').datepicker({ format: "yyyy-mm-dd" });
 
   $('#reference-form').submit(function(event){
     if (this.checkValidity()) {
