@@ -20,6 +20,11 @@
   // -> [[]]
   function relationshipDetails() {
     var category = Number($('#relationship-cat-select option:selected').val());
+    
+    if (category === 50 || category === 51) {   // these are special donation categories.
+      category = 5;                             // set to 5, the regular donation cateogry
+    }
+    
     var entityColumns = [ [ 'Name', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'select'] ];
     return entityColumns.concat(utility.relationshipDetails(category));
   }

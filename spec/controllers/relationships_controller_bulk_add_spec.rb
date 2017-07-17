@@ -215,6 +215,41 @@ describe RelationshipsController, type: :controller do
         end
       end
 
+      context 'When submitting a Donation Received or Doantion Given relationship' do
+        before(:each) do
+          DatabaseCleaner.start
+          @corp = create(:corp)
+          @relationship = { 'name' => 'donor guy', 'primary_ext' => 'Person', 'amount' => '$20' }
+
+          params = { 'entity1_id' => @corp.id,
+                     'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+                     'relationships' => [@relationship] }
+
+          @donation_received = params.merge('category_id' => 50)
+          @donation_given = params.merge('category_id' => 51)
+        end
+
+        after(:each) { DatabaseCleaner.clean }
+
+        it 'creates one donation received relationship' do
+          expect { post :bulk_add, @donation_received }.to change { Relationship.count }.by(1)
+        end
+
+        it 'changes entity order for donation received' do
+          post :bulk_add, @donation_received
+          expect(Relationship.last.entity2_id).to eq @corp.id
+        end
+
+        it 'creates one donation given relationship' do
+          expect { post :bulk_add, @donation_given }.to change { Relationship.count }.by(1)
+        end
+
+        it 'does not change entity order for donation given' do
+          post :bulk_add, @donation_given
+          expect(Relationship.last.entity1_id).to eq @corp.id
+        end
+      end
+
       describe 'it will rollback entity transaction if an ActiveRecord Error occur' do
         let(:generic_relationship) do
           { 'name' => 'new entity',
