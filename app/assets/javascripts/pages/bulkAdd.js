@@ -124,9 +124,14 @@
   // and displays alert if similar relationship is found
   // Input: <td>, Int
   function lookForSimilarRelationship(cell, entity2_id) {
-    var request = { entity1_id: utility.entityInfo('entityid'),
-		    entity2_id: entity2_id,
-		    category_id: Number($('#relationship-cat-select option:selected').val()) };
+    var selectedCategoryId = Number($('#relationship-cat-select option:selected').val());
+    var categoryId = [50,51].includes(selectedCategoryId) ? 5 : selectedCategoryId;
+    var e1Id = (selectedCategoryId === 50) ? entity2_id : utility.entityInfo('entityid');
+    var e2Id = (selectedCategoryId === 50) ? utility.entityInfo('entityid') : entity2_id;
+
+    var request = { entity1_id: e1Id,
+		    entity2_id: e2Id,
+		    category_id: categoryId };
 
     $.getJSON('/relationships/find_similar', request)
       .done(function(relationships){
