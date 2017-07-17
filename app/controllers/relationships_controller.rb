@@ -161,10 +161,22 @@ class RelationshipsController < ApplicationController
       is_current: relationship.fetch('is_current', nil),
       last_user_id: current_user.sf_guard_user_id
     }
+
     if r[:category_id].to_i == 1 && entity1.org? && entity2.person?
       r[:entity1_id] = entity2.id
       r[:entity2_id] = entity1.id
     end
+
+    # 50 & 51 represent special donation categories
+    # see helpers/tools_helper.rb
+    if r[:category_id].to_i == 50 || r[:category_id].to_i == 51
+      if r[:category_id].to_i == 50
+        r[:entity1_id] = entity2.id
+        r[:entity2_id] = entity1.id  
+      end
+      r[:category_id] = 5
+    end
+
     prepare_update_params(r)
   end
 
