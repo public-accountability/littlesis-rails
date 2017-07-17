@@ -15,18 +15,25 @@
   // Does the user have bulk permissions?
   // All users may submit up to 8 
   var USER_HAS_BULK_PERMISSIONS = null;
+
+
+  // Retrieves selected cateogry and converts 50 and 51 to 5
+  function realCategoryId() {
+    var category = Number($('#relationship-cat-select option:selected').val());
+    
+    if (category === 50 || category === 51) {
+      return 5;
+    } else {
+      return category;
+    }
+  }
+  
   // This is the structure of table. The number and types of columns vary by
   // relationship type. See utility.js for more information
   // -> [[]]
   function relationshipDetails() {
-    var category = Number($('#relationship-cat-select option:selected').val());
-    
-    if (category === 50 || category === 51) {   // these are special donation categories.
-      category = 5;                             // set to 5, the regular donation cateogry
-    }
-    
     var entityColumns = [ [ 'Name', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'select'] ];
-    return entityColumns.concat(utility.relationshipDetails(category));
+    return entityColumns.concat(utility.relationshipDetails(realCategoryId()));
   }
 
   // -> [ {} ]
@@ -73,7 +80,7 @@
 	  return x[1];
 	}).join(',');
 	var blob = new Blob([headers], {type: "text/plain;charset=utf-8"});
-	var fileName = utility.relationshipCategories[Number($('#relationship-cat-select option:selected').val())] + '.csv';
+	var fileName = utility.relationshipCategories[realCategoryId()] + '.csv';
 	saveAs(blob, fileName);
       }
     });
@@ -125,13 +132,12 @@
   // Input: <td>, Int
   function lookForSimilarRelationship(cell, entity2_id) {
     var selectedCategoryId = Number($('#relationship-cat-select option:selected').val());
-    var categoryId = [50,51].includes(selectedCategoryId) ? 5 : selectedCategoryId;
     var e1Id = (selectedCategoryId === 50) ? entity2_id : utility.entityInfo('entityid');
     var e2Id = (selectedCategoryId === 50) ? utility.entityInfo('entityid') : entity2_id;
 
     var request = { entity1_id: e1Id,
 		    entity2_id: e2Id,
-		    category_id: categoryId };
+		    category_id: realCategoryId() };
 
     $.getJSON('/relationships/find_similar', request)
       .done(function(relationships){
