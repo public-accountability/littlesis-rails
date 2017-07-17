@@ -186,6 +186,35 @@ describe RelationshipsController, type: :controller do
         end
       end
 
+      context 'When submitting a doantion relationship' do
+        before do
+          @corp = create(:corp)
+          @relationship1 = { 'name' => 'small donor', 'primary_ext' => 'Person', 'amount' => '$1,000' }
+          @relationship2 = { 'name' => 'medium donor', 'primary_ext' => 'Person', 'amount' => '$100000.50' }
+          @relationship3 = { 'name' => 'big donor', 'primary_ext' => 'Person', 'amount' => '1,000,000' }
+          @relationship4 = { 'name' => 'reallybig donor', 'primary_ext' => 'Person', 'amount' => '100000000' }
+
+          @params = { 'entity1_id' => @corp.id,
+                      'category_id' => 5,
+                      'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+                      'relationships' => [@relationship1, @relationship2, @relationship3, @relationship4] }
+        end
+
+        it 'creates 4 relationships' do
+          expect { post :bulk_add, @params }.to change { Relationship.count }.by(4)
+          expect(Entity.find(@corp.id).relationships.count).to eq 4
+        end
+
+        it 'converts amount field' do
+          post :bulk_add, @params
+          amounts = Entity.find(@corp.id).relationships.map(&:amount)
+          expect(amounts).to include 1000
+          expect(amounts).to include 100_000
+          expect(amounts).to include 1_000_000
+          expect(amounts).to include 100_000_000
+        end
+      end
+
       describe 'it will rollback entity transaction if an ActiveRecord Error occur' do
         let(:generic_relationship) do
           { 'name' => 'new entity',

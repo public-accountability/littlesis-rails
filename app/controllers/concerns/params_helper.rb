@@ -11,12 +11,14 @@ module ParamsHelper
   #  - converts blank_values to nil
   #  - adds last_user_id
   #  - processes start and end dates
+  #  - converts money strings into intergers
   def prepare_update_params(update_params)
     params = ActiveSupport::HashWithIndifferentAccess.new(blank_to_nil(update_params))
     params['start_date'] = LsDate.convert(params['start_date']) if params.key?('start_date')
     params['end_date'] = LsDate.convert(params['end_date']) if params.key?('end_date')
     params['last_user_id'] = current_user.sf_guard_user_id
     params['is_current'] = is_current_helper(params['is_current']) if params.key?('is_current')
+    params['amount'] = money_to_int(params['amount']) if params.key?('amount')
     parameter_processor(params)
   end
 
@@ -26,6 +28,13 @@ module ParamsHelper
   end
 
   private
+
+  def money_to_int(money)
+    return money if money.is_a?(Integer) || money.nil?
+    i = money.tr('$', '').tr(',', '').to_i
+    return i if i > 0
+    return nil
+  end
 
   # converts blanks values (.blank?) of a hash to nil
   # works on nested hashes
