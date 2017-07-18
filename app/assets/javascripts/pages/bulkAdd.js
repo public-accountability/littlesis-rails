@@ -626,7 +626,6 @@
     // show relationship list + summary text
     display: function(data) {
       $('.result-mode').show();
-      $('.create-mode').hide();
       var $results = $('#results')
 	  .empty()
 	  .append(afterRequest.info(data));
@@ -646,6 +645,7 @@
     },
     
     success: function(data) {
+      $('#spin-me-round-like-a-record').hide();
       $('#table table').empty();
       if (data.errors.length === 0) {
 	showAlert('The request was successful!', 'alert-success');
@@ -657,14 +657,16 @@
       afterRequest.display(data);
     },
     error: function() {
+      $('#spin-me-round-like-a-record').hide();
       alert('something went wrong :(');
     }
   };
   
 
   // Sends the data for submission
-  // [{}] -> callbacks
   function submitRequest() {
+    $('#spin-me-round-like-a-record').show();
+    $('.create-mode').hide();
     var data = prepareTableData(tableToJson('#table', relationshipDetailsAsObject()));
     $.ajax({
       method: 'POST',

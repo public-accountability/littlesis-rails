@@ -2,6 +2,26 @@
 
 <%= render partial: 'shared/entity_info', locals: { entity: @entity } %>
 
+<div id="spin-me-round-like-a-record" style="display: none;" >
+    <div class="row">
+	<h4>Processing</h4>
+	<div class="sk-circle">
+	    <div class="sk-circle1 sk-child"></div>
+	    <div class="sk-circle2 sk-child"></div>
+	    <div class="sk-circle3 sk-child"></div>
+	    <div class="sk-circle4 sk-child"></div>
+	    <div class="sk-circle5 sk-child"></div>
+	    <div class="sk-circle6 sk-child"></div>
+	    <div class="sk-circle7 sk-child"></div>
+	    <div class="sk-circle8 sk-child"></div>
+	    <div class="sk-circle9 sk-child"></div>
+	    <div class="sk-circle10 sk-child"></div>
+	    <div class="sk-circle11 sk-child"></div>
+	    <div class="sk-circle12 sk-child"></div>
+	</div>
+    </div>
+</div>
+
 <div class="row bottom-1em">
     <div class="col-sm-10">
 	<span class="small-text text-muted">This is the <em>new</em> version of the add bulk page. <%= link_to "Click here", @entity.legacy_url('addBulk') %> to use the older version instead.</span>
