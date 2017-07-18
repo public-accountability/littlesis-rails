@@ -111,7 +111,6 @@
   
 }
 
-
 .entity-search-blurb, .entity-search-name {
     border: none !important;
 }
@@ -120,3 +119,13 @@
   font-size: 12px;
   color: #888;
 }
+
+div.entity-match-box {
+    table {
+	font-size: 12px;
+    }
+    td {
+	cursor: pointer;
+    }
+}
+

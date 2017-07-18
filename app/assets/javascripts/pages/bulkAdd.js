@@ -181,46 +181,58 @@
      });
   }
 
+
+  // Aftering selecting an entity from the autocomplete or via the matching table:
+  //  - adds name and link to cell
+  //  - stores entityid in dataset
+  //  - sets blurb and type
+  //  - makes name, blurb, and type not editable
+  //  - adds reset button
+  //  - searches for similar relationships via ajax
+  function entitySelect( event, ui ) {
+    if (event) {
+      event.preventDefault();
+    }
+    var cell = $(this);
+    //  requires order of table to be: name -> blurb -> entityType
+    var blurb = cell.next();
+    var entityType = blurb.next();
+    // add link to cell
+    cell.html( $('<a>', { href: 'https://littlesis.org' + ui.item.url, text: ui.item.name, target: '_blank' })) ;
+    cell.attr('contenteditable', 'false');
+    // store entity id in dataset
+    cell.data('entityid', ui.item.id);
+    // add reset-field option
+    cell.append( 
+      $('<span>', { 
+	'class': 'glyphicon glyphicon-remove reset-name',
+	click: function() {
+	  cell.empty();  // empty the cell
+	  blurb.empty(); // empty blurb
+	  // make both name and blurb cells editable
+	  cell.attr('contenteditable', 'true'); 
+	  blurb.attr('contenteditable', 'true'); 
+	  cell.data('entityid', null); // remove the entity id
+	  // Remove the similar relationship alert (if it exists)
+	  cell.parents('tr').find('.similar-relationships-alert').remove();
+	  // Remove the popover if it's left open
+	  cell.parents('tr').find('.popover').remove();
+	}
+      })
+    );
+
+    blurb.text(ui.item.description ? ui.item.description : '');
+    blurb.attr('contenteditable', 'false'); // disable editing of blurb
+    entityType.find('select').selectpicker('val', ui.item.primary_type);
+    lookForSimilarRelationship(cell, ui.item.id);
+  }
+
   // options for the entity search autocomplete <td>
   var autocompleteOptions = {
     source: function(request, response) {
       searchRequest(request.term, response);
     },
-    select: function( event, ui ) {
-      event.preventDefault();
-      var cell = $(this);
-      //  requires order of table to be: name -> blurb -> entityType
-      var blurb = cell.next();
-      var entityType = blurb.next();
-      // add link to cell
-      cell.html( $('<a>', { href: 'https://littlesis.org' + ui.item.url, text: ui.item.name, target: '_blank' })) ;
-      cell.attr('contenteditable', 'false');
-      // store entity id in dataset
-      cell.data('entityid', ui.item.id);
-      // add reset-field option
-      cell.append( 
-	$('<span>', { 
-	  'class': 'glyphicon glyphicon-remove reset-name',
-	  click: function() {
-	    cell.empty();  // empty the cell
-	    blurb.empty(); // empty blurb
-	    // make both name and blurb cells editable
-	    cell.attr('contenteditable', 'true'); 
-	    blurb.attr('contenteditable', 'true'); 
-	    cell.data('entityid', null); // remove the entity id
-	    // Remove the similar relationship alert (if it exists)
-	    cell.parents('tr').find('.similar-relationships-alert').remove();
-	    // Remove the popover if it's left open
-	    cell.parents('tr').find('.popover').remove();
-	  }
-	})
-      );
-
-      blurb.text(ui.item.description ? ui.item.description : '');
-      blurb.attr('contenteditable', 'false'); // disable editing of blurb
-      entityType.find('select').selectpicker('val', ui.item.primary_type);
-      lookForSimilarRelationship(cell, ui.item.id);
-    }
+    select: entitySelect
   };
 
   var entitySuggestion = Hogan.compile('<div class="entity-search-name">{{name}}</div><div class="entity-search-blurb">{{description}}</div>');
@@ -521,7 +533,6 @@
     if (validateReference()) {
       $('.bg-warning').removeClass('bg-warning');
       if ( validate('#table') ) {
-	console.log(tableToJson('#table', relationshipDetailsAsObject()));
 	submitRequest();
       } else {
 	showAlert('Some cells are missing information or invalid!');
@@ -724,12 +735,39 @@
     $(row).addClass('info');
   }
   
+  function matchSkip() {
+
+  }
+
+  // input: {}, <tr>
+  function matchEntity(entity, tr) {
+    var cell = $(tr).find('td:first-child').get(0);
+    // entitySelect() is designed to work with jQuery ui autocomplete
+    // and therefore the entity object must be wraped like such:
+    var ui = { item: entity };
+    entitySelect.call(cell, null, ui);
+  }
+
+  function matchClick() {
+    $('#match-results-table tbody tr').click(function(){});
+  }
+
+  function skipBtn() {
+    var skip = $('<button>', {
+      "type": 'button',
+      "class": 'btn btn-default',
+      "text": 'Skip / Create new entity',
+      "click": function() { matchSkip(); }
+    });
+    return $('<div>').append(skip);
+  }
+
   // -> <div>
   function innerMatchBoxTitle() {
     return $('<h2>', {
       "text": 'Select a matching LittleSis Entity',
       "class": 'text-center'
-    });
+    }).append(skipBtn);
   }
 
   // Compiled template for table row
@@ -748,16 +786,21 @@
     searchRequest(name, function(results){
       // loop through results
       results.forEach(function(entity) {
+
+	var tr = $('<tr>', {
+	  "click": function() { matchEntity(entity, row); } 
+	}).append(entityMatchTableRow.render(entity));
+
 	// add row to table
-	$('#match-results-table tbody')
-	  .append(entityMatchTableRow.render(entity));
+	$('#match-results-table tbody').append(tr);
       });
     });
   }
 
   // input: <tr>
   function matchBox(row) {
-    searchAndDisplay(row);    
+    $('.entity-match-box').remove();
+    searchAndDisplay(row);
     var box = $('<div>', {
       css: {
 	"width": $(row).width(),
@@ -778,13 +821,11 @@
 
   // Matches the name to LittleSis Entity for each row (if not yet matched)
   function entityMatch() {
-    // $('#table tbody tr').each();
+    //$('#table tbody tr').each();
     var row = $('#table tbody tr')[0];
     highlightRow(row);
     matchBox(row);
   }
-
-
 
   // Establishes listeners for:
   //   - click to add a new row
