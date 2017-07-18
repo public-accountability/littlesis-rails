@@ -73,7 +73,7 @@
       text: 'Match names',
       class: 'btn btn-default m-right-1em',
       click: function() {
-	entityMatch();
+	entityMatch(0);
       }
     });
   }
@@ -722,52 +722,51 @@
 
   /* ENTITY MATCH */
 
-  // input: str
+  // input: str|element
   function scrollTo(selector) {
     $('html, body').animate({
       scrollTop: $(selector).offset().top
     }, 1000);
   }
 
-  // input: <tr>
+  // input: <tr> | undefined
   function highlightRow(row) {
     $('#table tbody tr').removeClass('info');
-    $(row).addClass('info');
+    if (row) {
+      $(row).addClass('info');
+    }
   }
   
-  function matchSkip() {
-
-  }
-
   // input: {}, <tr>
-  function matchEntity(entity, tr) {
+  function updateCell(entity, tr) {
     var cell = $(tr).find('td:first-child').get(0);
-    // entitySelect() is designed to work with jQuery ui autocomplete
+    // entitySelect() is designed to also work with jQuery ui autocomplete
     // and therefore the entity object must be wraped like such:
     var ui = { item: entity };
     entitySelect.call(cell, null, ui);
   }
-
-  function matchClick() {
-    $('#match-results-table tbody tr').click(function(){});
-  }
-
-  function skipBtn() {
+  
+  // input: int
+  // output: <div>
+  function skipBtn(nextIndex) {
     var skip = $('<button>', {
       "type": 'button',
       "class": 'btn btn-default',
       "text": 'Skip / Create new entity',
-      "click": function() { matchSkip(); }
+      "click": function() {
+	entityMatch(nextIndex);
+      }
     });
     return $('<div>').append(skip);
   }
 
-  // -> <div>
-  function innerMatchBoxTitle() {
+  // input: int
+  // output: <h2>
+  function innerMatchBoxTitle(nextIndex) {
     return $('<h2>', {
       "text": 'Select a matching LittleSis Entity',
       "class": 'text-center'
-    }).append(skipBtn);
+    }).append(skipBtn(nextIndex));
   }
 
   // Compiled template for table row
@@ -779,8 +778,8 @@
 
   // searches for matching entity
   // and appends results to the table
-  // input: <tr>
-  function searchAndDisplay(row){
+  // input: <tr>, int
+  function searchAndDisplay(row, nextIndex) {
     var name = rowToJson(relationshipDetailsAsObject(), row).name;
     // search for matches
     searchRequest(name, function(results){
@@ -788,7 +787,11 @@
       results.forEach(function(entity) {
 
 	var tr = $('<tr>', {
-	  "click": function() { matchEntity(entity, row); } 
+	  "click": function() {
+	    updateCell(entity, row);
+	    entityMatch(nextIndex);
+	    console.log('finished matching');
+	  } 
 	}).append(entityMatchTableRow.render(entity));
 
 	// add row to table
@@ -797,10 +800,11 @@
     });
   }
 
-  // input: <tr>
-  function matchBox(row) {
-    $('.entity-match-box').remove();
-    searchAndDisplay(row);
+  // input: <tr>, int
+  function matchBox(row, currentIndex) {
+    var nextIndex = currentIndex + 1;
+    searchAndDisplay(row, nextIndex);
+    
     var box = $('<div>', {
       css: {
 	"width": $(row).width(),
@@ -813,18 +817,25 @@
       },
       class: 'entity-match-box'
     })
-	.append(innerMatchBoxTitle())
+	.append(innerMatchBoxTitle(nextIndex))
 	.append($('#entityMatchTable').html());
     
     $(row).append(box);
   }
 
   // Matches the name to LittleSis Entity for each row (if not yet matched)
-  function entityMatch() {
-    //$('#table tbody tr').each();
-    var row = $('#table tbody tr')[0];
+  // input: int
+  function entityMatch(i) {
+    var row = $('#table > table > tbody > tr')[i];
     highlightRow(row);
-    matchBox(row);
+    $('.entity-match-box').remove();
+    
+    if (typeof row === 'undefined') {
+      return;
+    } else {
+      scrollTo(row);
+      matchBox(row, i);
+    }
   }
 
   // Establishes listeners for:
