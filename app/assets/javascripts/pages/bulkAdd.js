@@ -65,7 +65,7 @@
   function addRowIcon() {
     return $('<span>', {class: 'table-add', title: 'add a new row to the table'})
       .append( $('<span>', {class: 'glyphicon glyphicon-plus'}) )
-      .append( $('<span>', {text: 'Add a row'}));
+      .append( $('<span>', {text: 'Add a row', class: 'cursor-pointer'}));
   }
 
   function entityMatchBtn() {
@@ -73,7 +73,19 @@
       text: 'Match names',
       class: 'btn btn-default m-right-1em',
       click: function() {
-	entityMatch(0);
+	if ($(this).hasClass('btn-default')) {
+	  // enable matching mode
+	  $(this).removeClass('btn-default');
+	  $(this).addClass('btn-primary');
+	  $(this).text('Cancel matching');
+	  entityMatch(0);
+	} else {
+	  // stop matching
+	  clearMatchingTable();
+	  $(this).addClass('btn-default');
+	  $(this).removeClass('btn-primary');
+	  $(this).text('Match names');
+	}
       }
     });
   }
@@ -406,7 +418,6 @@
     }
   };
 
-
   //  [{}], element -> {}
   function rowToJson(tableDetails, row) {
     var obj = {};
@@ -485,7 +496,6 @@
     return validFlag.status;
   }
 
-
   function isRowBlank(rowObj) {
     return Object.keys(rowObj)
       .map(function(key) {
@@ -515,7 +525,6 @@
     showAlert('You are only allowed to bulk upload 8 relationships at a time. <a href="/contact" class="alert-link">Contact us</a> if you\'d like to bulk add more than 8 relationships at once.', 'alert-danger');
   }
   
-
   function validateReference() {
     $('#alert-container').empty();
     var url = document.getElementById('reference-url');
@@ -780,7 +789,7 @@
   // and appends results to the table
   // input: <tr>, int
   function searchAndDisplay(row, nextIndex) {
-    var name = rowToJson(relationshipDetailsAsObject(), row).name;
+    var name = $(row).find('td:nth-child(1)').text();
     // search for matches
     searchRequest(name, function(results){
       // loop through results
@@ -823,16 +832,21 @@
     $(row).append(box);
   }
 
+  function clearMatchingTable() {
+    $('#table tbody tr').removeClass('info');
+    $('.entity-match-box').remove();
+  }
+
   // Matches the name to LittleSis Entity for each row (if not yet matched)
   // input: int
   function entityMatch(i) {
     var row = $('#table > table > tbody > tr')[i];
-    highlightRow(row);
-    $('.entity-match-box').remove();
+    clearMatchingTable();
     
     if (typeof row === 'undefined') {
       return;
     } else {
+      highlightRow(row);
       scrollTo(row);
       matchBox(row, i);
     }
