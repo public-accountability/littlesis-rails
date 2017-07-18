@@ -72,7 +72,7 @@
   function entityMatchBtn() {
     return $('<button>', {
       text: 'Match names',
-      class: 'btn btn-default m-right-1em',
+      class: 'btn btn-default m-right-1em entity-match-btn',
       click: function() {
 	if ($(this).hasClass('btn-default')) {
 	  // enable matching mode
@@ -818,7 +818,7 @@
   function matchBox(row, currentIndex) {
     var nextIndex = currentIndex + 1;
     searchAndDisplay(row, nextIndex);
-    
+
     var box = $('<div>', {
       css: {
 	"width": $(row).width(),
@@ -826,15 +826,15 @@
 	"background": 'white',
 	"position": 'absolute',
 	"z-index": '100',
-	"top": "50px",
-	"left": "0"
+	"top": $(row).offset().top + 52,
+	"left": $(row).offset().left
       },
       class: 'entity-match-box'
     })
 	.append(innerMatchBoxTitle(nextIndex))
 	.append($('#entityMatchTable').html());
     
-    $(row).append(box);
+    $('body').append(box);
   }
 
   function clearMatchingTable() {
@@ -849,6 +849,7 @@
     clearMatchingTable();
     
     if (typeof row === 'undefined') {
+      $('.entity-match-btn').trigger('click');
       return;
     } else {
       highlightRow(row);
