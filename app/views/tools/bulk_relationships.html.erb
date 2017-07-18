@@ -2,6 +2,26 @@
 
 <%= render partial: 'shared/entity_info', locals: { entity: @entity } %>
 
+<div id="spin-me-round-like-a-record" style="display: none;" >
+    <div class="row">
+	<h4>Processing</h4>
+	<div class="sk-circle">
+	    <div class="sk-circle1 sk-child"></div>
+	    <div class="sk-circle2 sk-child"></div>
+	    <div class="sk-circle3 sk-child"></div>
+	    <div class="sk-circle4 sk-child"></div>
+	    <div class="sk-circle5 sk-child"></div>
+	    <div class="sk-circle6 sk-child"></div>
+	    <div class="sk-circle7 sk-child"></div>
+	    <div class="sk-circle8 sk-child"></div>
+	    <div class="sk-circle9 sk-child"></div>
+	    <div class="sk-circle10 sk-child"></div>
+	    <div class="sk-circle11 sk-child"></div>
+	    <div class="sk-circle12 sk-child"></div>
+	</div>
+    </div>
+</div>
+
 <div class="row bottom-1em">
     <div class="col-sm-10">
 	<span class="small-text text-muted">This is the <em>new</em> version of the add bulk page. <%= link_to "Click here", @entity.legacy_url('addBulk') %> to use the older version instead.</span>
@@ -45,11 +65,52 @@
     </div>
 </div>
 
-<button id="upload-btn" class="btn btn-primary hidden create-mode">Upload Data</button>
+<div class="row create-mode">
+    <div class="col-sm-3 col-sm-offset-2 col-md-2 col-md-offset-8">
+	<div id="autocomplete-toggle" class="btn-group btn-toggle"> 
+	    <button class="btn btn-sm btn-primary active">ON</button>
+	    <button class="btn btn-sm btn-default">OFF</button>
+	</div>
+	<h5>Autocomplete mode</h5>
+    </div>
+    <div class="col-sm-2 col-md-2">
+	<button id="upload-btn" class="btn red-button hidden create-mode">Upload Data</button>
+    </div>
+    
+</div>
+
+
 <p id="export"></p>
-<script>
-$(document).ready(function(){
-   bulkAdd.init(<%= raw current_user.bulker? %>);
-});
+
+<script type="text/template" id="entityMatchTable">
+    <table class="table table-hover table-condensed" id="match-results-table">
+	<thead>
+	    <tr>
+		<th>Name</th>
+		<th>Blurb</th>
+		<th>View</th>
+	    </tr>
+	</thead>
+	<tbody>
+	</tbody>
+    </table>
 </script>
 
+<script type="text/template" id="entityMatchTableRow">
+ <td>
+    {{ name }}
+ </td>
+ <td>
+    {{ description }}
+ </td>
+ <td>
+    <a href="{{ url }}" target="_blank">View profile</a>
+ </td>
+</script>
+
+
+<script>
+ $(document).ready(function(){
+   bulkAdd.init(<%= raw current_user.bulker? %>);
+ });
+</script>
