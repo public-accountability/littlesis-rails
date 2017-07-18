@@ -15,7 +15,8 @@
   // Does the user have bulk permissions?
   // All users may submit up to 8 
   var USER_HAS_BULK_PERMISSIONS = null;
-
+  // Settings for performing
+  var AUTOCOMPLETE_MODE = true;
 
   // Retrieves selected cateogry and converts 50 and 51 to 5
   function realCategoryId() {
@@ -240,12 +241,16 @@
   }
 
   // options for the entity search autocomplete <td>
-  var autocompleteOptions = {
-    source: function(request, response) {
-      searchRequest(request.term, response);
-    },
-    select: entitySelect
-  };
+  // ouput: {}
+  function autocompleteOptions() {
+    return {
+      source: function(request, response) {
+	searchRequest(request.term, response);
+      },
+      select: entitySelect,
+      disabled: !AUTOCOMPLETE_MODE
+    };
+  }
 
   var entitySuggestion = Hogan.compile('<div class="entity-search-name">{{name}}</div><div class="entity-search-blurb">{{description}}</div>');
 
@@ -256,12 +261,11 @@
   };
 
   function autocompleteTd() {
-    var td = $('<td>', {contenteditable: 'true'}).autocomplete(autocompleteOptions);
+    var td = $('<td>', {contenteditable: 'true'}).autocomplete(autocompleteOptions());
     td.autocomplete("instance")._renderItem = autocompleteRenderItem;
     return td;
   }
 
-  
   /* ROW ELEMENTS */
 
   function primaryExtRadioButtons() {
@@ -868,8 +872,22 @@
     });
     $('#upload-btn').click(function() {
       submit();
-      
     });
+
+    $('#autocomplete-toggle').click(function() {
+      $(this).find('.btn').toggleClass('active');  
+      $(this).find('.btn').toggleClass('btn-primary');
+      $(this).find('.btn').toggleClass('btn-default');
+      var status = $(this).find('button.btn.active').text();
+      if (status === 'ON') {
+	AUTOCOMPLETE_MODE = true;
+	$('td.ui-autocomplete-input').autocomplete('option', 'disabled', false);
+      } else {
+	AUTOCOMPLETE_MODE = false;
+	$('td.ui-autocomplete-input').autocomplete('option', 'disabled', true);
+      }
+    });
+    
   } 
 
   function init(hasBulkPermission) {

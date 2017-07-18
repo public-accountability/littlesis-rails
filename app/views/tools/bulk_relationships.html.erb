@@ -45,7 +45,21 @@
     </div>
 </div>
 
-<button id="upload-btn" class="btn btn-primary hidden create-mode">Upload Data</button>
+<div class="row create-mode">
+    <div class="col-sm-3 col-sm-offset-2 col-md-2 col-md-offset-8">
+	<div id="autocomplete-toggle" class="btn-group btn-toggle"> 
+	    <button class="btn btn-sm btn-primary active">ON</button>
+	    <button class="btn btn-sm btn-default">OFF</button>
+	</div>
+	<h5>Autocomplete mode</h5>
+    </div>
+    <div class="col-sm-2 col-md-2">
+	<button id="upload-btn" class="btn red-button hidden create-mode">Upload Data</button>
+    </div>
+    
+</div>
+
+
 <p id="export"></p>
 
 <script type="text/template" id="entityMatchTable">
