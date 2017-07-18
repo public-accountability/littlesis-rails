@@ -15,7 +15,7 @@
   // Does the user have bulk permissions?
   // All users may submit up to 8 
   var USER_HAS_BULK_PERMISSIONS = null;
-  // Settings for performing
+
   var AUTOCOMPLETE_MODE = true;
 
   // Retrieves selected cateogry and converts 50 and 51 to 5
@@ -739,7 +739,7 @@
   function scrollTo(selector) {
     $('html, body').animate({
       scrollTop: $(selector).offset().top
-    }, 1000);
+    }, 200);
   }
 
   // input: <tr> | undefined
@@ -803,7 +803,6 @@
 	  "click": function() {
 	    updateCell(entity, row);
 	    entityMatch(nextIndex);
-	    console.log('finished matching');
 	  } 
 	}).append(entityMatchTableRow.render(entity));
 
@@ -864,7 +863,7 @@
   function domListeners() {
     $('#table').on('click', '.table-add', function() { newBlankRow(); });
     $('#table').on('click', '.table-remove', function() {
-      $(this).parents('tr').detach();
+      $(this).parents('tr').remove();
     });
     $('#relationship-cat-select').change(function(x){
       createTable();
