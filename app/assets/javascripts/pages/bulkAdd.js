@@ -68,13 +68,23 @@
       .append( $('<span>', {text: 'Add a row'}));
   }
 
+  function entityMatchBtn() {
+    return $('<button>', {
+      text: 'Match names',
+      class: 'btn btn-default m-right-1em',
+      click: function() {
+	entityMatch();
+      }
+    });
+  }
+
   // => <Button>
   // Returns button that, when clicked, saves a csv file with the correct headers
   // for the chosen relationship type
   function sampleCSVLink() {
     return $('<button>', {
       text: 'download sample csv',
-      class: 'btn btn-default pull-right',
+      class: 'btn btn-default',
       click: function() {
 	var headers = relationshipDetails().map(function(x) { 
 	  return x[1];
@@ -91,7 +101,7 @@
     return $('<caption>')
       .append(addRowIcon())
       .append( $('<input>', {id: 'csv-file'}).attr('type', 'file'))
-      .append( sampleCSVLink() );
+      .append( $('<div>', {class: 'pull-right'}).append(entityMatchBtn()).append(sampleCSVLink()) );
   }
   
   // Creates empty table based on the selected category
@@ -698,6 +708,82 @@
     
     document.getElementById(fileInputId).addEventListener('change', handleFileSelect, false);
   }
+
+  /* ENTITY MATCH */
+
+  // input: str
+  function scrollTo(selector) {
+    $('html, body').animate({
+      scrollTop: $(selector).offset().top
+    }, 1000);
+  }
+
+  // input: <tr>
+  function highlightRow(row) {
+    $('#table tbody tr').removeClass('info');
+    $(row).addClass('info');
+  }
+  
+  // -> <div>
+  function innerMatchBoxTitle() {
+    return $('<h2>', {
+      "text": 'Select a matching LittleSis Entity',
+      "class": 'text-center'
+    });
+  }
+
+  // Compiled template for table row
+  // see bulk_relationships.html.erb for template
+  var entityMatchTableRow;
+  $(function(){
+    entityMatchTableRow = Hogan.compile($('#entityMatchTableRow').html());
+  });
+
+  // searches for matching entity
+  // and appends results to the table
+  // input: <tr>
+  function searchAndDisplay(row){
+    var name = rowToJson(relationshipDetailsAsObject(), row).name;
+    // search for matches
+    searchRequest(name, function(results){
+      // loop through results
+      results.forEach(function(entity) {
+	// add row to table
+	$('#match-results-table tbody')
+	  .append(entityMatchTableRow.render(entity));
+      });
+    });
+  }
+
+  // input: <tr>
+  function matchBox(row) {
+    searchAndDisplay(row);    
+    var box = $('<div>', {
+      css: {
+	"width": $(row).width(),
+	"height": '500px',
+	"background": 'white',
+	"position": 'absolute',
+	"z-index": '100',
+	"top": "50px",
+	"left": "0"
+      },
+      class: 'entity-match-box'
+    })
+	.append(innerMatchBoxTitle())
+	.append($('#entityMatchTable').html());
+    
+    $(row).append(box);
+  }
+
+  // Matches the name to LittleSis Entity for each row (if not yet matched)
+  function entityMatch() {
+    // $('#table tbody tr').each();
+    var row = $('#table tbody tr')[0];
+    highlightRow(row);
+    matchBox(row);
+  }
+
 
 
   // Establishes listeners for:
