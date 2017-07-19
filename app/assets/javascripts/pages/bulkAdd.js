@@ -788,7 +788,9 @@
   // see bulk_relationships.html.erb for template
   var entityMatchTableRow;
   $(function(){
-    entityMatchTableRow = Hogan.compile($('#entityMatchTableRow').html());
+    if ($('#entityMatchTableRow').html()) {
+      entityMatchTableRow = Hogan.compile($('#entityMatchTableRow').html());
+    }
   });
 
   // searches for matching entity
