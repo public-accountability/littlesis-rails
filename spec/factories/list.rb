@@ -19,16 +19,11 @@ FactoryGirl.define do
     is_network false
   end
 
-  factory :image, class: Image do
-    filename 'image.jpg'
-    title '#corporateSelfie'
-  end
-
   factory :group, class: Group do
     name 'a team'
     slug '/'
   end
-  
+
   factory :note, class: Note do
     user_id 1
     body 'why is EVERYTHING connected?'

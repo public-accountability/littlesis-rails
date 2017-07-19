@@ -36,8 +36,7 @@ describe List do
       inc = create(:mega_corp_inc)
       create(:image, entity_id: inc.id)
       ListEntity.find_or_create_by(list_id: list.id, entity_id: inc.id)
-      expect(list.images.count).to eq (1)
-      expect(list.images.first.filename).to eql ('image.jpg')
+      expect(list.images.count).to eq 1
     end
 
     it 'has groups' do 
