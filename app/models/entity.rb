@@ -724,6 +724,7 @@ class Entity < ActiveRecord::Base
     aliases.destroy_all
     extension_models.each(&:destroy)
     primary_extension_model.destroy
+    images.each(&:soft_delete)
   end
 
   # A type checker for definition id and names

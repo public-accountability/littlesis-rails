@@ -68,7 +68,12 @@ describe Entity do
       person.add_extension('BusinessPerson', sec_cik: 987)
       expect { person.soft_delete }.to change { BusinessPerson.count }.by(-1)
     end
-    
+
+    it 'soft deletes associated images' do
+      org = create(:org)
+      image = create(:image, entity: org)
+      expect { org.soft_delete }.to change { Image.unscoped.find(image.id).is_deleted }.to(true)
+    end
   end
 
   describe 'summary_excerpt' do
