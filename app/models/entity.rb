@@ -143,15 +143,19 @@ class Entity < ActiveRecord::Base
     extensions_with_attributes.values.reduce(:merge)
   end
 
+  # Returns an array of all extension models
+  def extension_models
+    (extension_names & Entity.all_extension_names_with_fields).map do |name|
+      name.constantize.find_by_entity_id(id)
+    end
+  end
+
   # Returns a hash where the key in each key/value pair is the extension name
   # and the value is a hash of the attributes for that extension
   def extensions_with_attributes
-    hash = {}
-    (extension_names & Entity.all_extension_names_with_fields).each do |name|
-      ext = name.constantize.find_by_entity_id(id)
-      hash[name] = ext.attributes.except('id', 'entity_id', :id, :entity_id)
+    extension_models.reduce({}) do |memo, model|
+      memo.merge(model.class.name => model.attributes.except('id', 'entity_id') )
     end
-    hash
   end
 
   def extension_ids
@@ -710,6 +714,10 @@ class Entity < ActiveRecord::Base
   end
 
   private
+
+  def after_soft_delete
+    
+  end
 
   # A type checker for definition id and names
   # input: String or Integer
