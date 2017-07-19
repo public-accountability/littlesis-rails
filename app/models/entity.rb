@@ -720,12 +720,24 @@ class Entity < ActiveRecord::Base
 
   private
 
+  # Callbacks for Soft Delete
   def after_soft_delete
     aliases.destroy_all
     extension_models.each(&:destroy)
-    primary_extension_model.destroy
     images.each(&:soft_delete)
+    # ListEntity
   end
+
+  # When an entity is deleted we will store information
+  # from it's associated models that gets deleted
+  # in a 'meta' field with the PaperTrail version
+  # def set_entity_meta
+  #   @association_data = {
+  #     extension_ids: extension_ids,
+  #     aliases: aliases.where(is_primary: false).map(&:name),
+  #   }
+    # paper_trail.on_destroy
+  #end
 
   # A type checker for definition id and names
   # input: String or Integer

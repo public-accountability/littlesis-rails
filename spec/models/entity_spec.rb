@@ -58,9 +58,14 @@ describe Entity do
       expect(Alias.find_by_id(a.id)).to be nil
     end
 
-    it 'deletes Primary extension' do
+    it 'deletes Primary extension for person' do
       entity = create(:person)
       expect { entity.soft_delete }.to change { Person.count }.by(-1)
+    end
+
+    it 'deletes Primary extension for org' do
+      entity = create(:org)
+      expect { entity.soft_delete }.to change { Org.count }.by(-1)
     end
 
     it 'deletes Extension models' do
@@ -74,6 +79,24 @@ describe Entity do
       image = create(:image, entity: org)
       expect { org.soft_delete }.to change { Image.unscoped.find(image.id).is_deleted }.to(true)
     end
+
+    describe 'soft delete versioning' do
+      with_versioning do
+        before { @org = create(:org) }
+
+        it 'creates two versions: one for the Org model and one for the Entity model' do
+          expect { @org.soft_delete }.to change { PaperTrail::Version.count }.by(2)
+        end
+
+        it 'sets the event type of the version to be soft_delete' do
+          @org.soft_delete
+          expect(@org.versions.last.event).to eq 'soft_delete'
+        end
+      end
+    end
+  end
+
+  describe 'store meta information after entity soft_delete' do
   end
 
   describe 'summary_excerpt' do
@@ -604,6 +627,7 @@ describe Entity do
         human = create(:person)
         expect(human.versions.size).to eq 1
         expect { human.update(name: 'Emiliano Zapata') }.to change { human.versions.size }.by(1)
+        expect(human.versions.last.event).to eq 'update'
       end
 
       it 'does not create a version after changing updated_at' do
