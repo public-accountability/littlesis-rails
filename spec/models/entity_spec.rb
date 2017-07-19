@@ -1,14 +1,8 @@
 require 'rails_helper'
 
 describe Entity do
-  before(:all) do
-    DatabaseCleaner.start
-    Entity.skip_callback(:create, :after, :create_primary_ext)
-  end
-  after(:all) do
-    Entity.set_callback(:create, :after, :create_primary_ext)
-    DatabaseCleaner.clean
-  end
+  before(:all) {  DatabaseCleaner.start } 
+  after(:all)  {  DatabaseCleaner.clean }
 
   describe 'validations' do
     it { should validate_presence_of(:name) }
@@ -63,6 +57,18 @@ describe Entity do
       expect { org.soft_delete }.to change { Alias.count }.by(-2)
       expect(Alias.find_by_id(a.id)).to be nil
     end
+
+    it 'deletes Primary extension' do
+      entity = create(:person)
+      expect { entity.soft_delete }.to change { Person.count }.by(-1)
+    end
+
+    it 'deletes Extension models' do
+      person = create(:person, name: 'johnny business')
+      person.add_extension('BusinessPerson', sec_cik: 987)
+      expect { person.soft_delete }.to change { BusinessPerson.count }.by(-1)
+    end
+    
   end
 
   describe 'summary_excerpt' do
@@ -147,9 +153,6 @@ describe Entity do
   end # end political
 
   describe 'Extension Attributes Functions' do
-    before(:all) { Entity.set_callback(:create, :after, :create_primary_ext) }
-    after(:all) { Entity.skip_callback(:create, :after, :create_primary_ext) }
-
     def create_school
       school = create(:org, name: 'private school')
       school.add_extension 'School', is_private: true
@@ -158,6 +161,24 @@ describe Entity do
 
     def without_ids(array)
       array.reject { |c| c == 'id' || c == 'entity_id' }
+    end
+
+
+    describe '#primary_extension_model' do
+      before(:all) do
+        @org = create(:org)
+        @person = create(:person)
+      end
+
+      it 'returns Org if entity is an org' do
+        expect(@org.primary_extension_model).to be_a Org
+        expect(@person.primary_extension_model).not_to be_a Org
+      end
+
+      it 'returns Person if entity is a person' do
+        expect(@org.primary_extension_model).not_to be_a Person
+        expect(@person.primary_extension_model).to be_a Person
+      end
     end
 
     describe '#extension_attributes' do

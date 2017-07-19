@@ -133,6 +133,11 @@ class Entity < ActiveRecord::Base
     person? ? 'Org' : 'Person'
   end
 
+  def primary_extension_model
+    return person if person?
+    return org if org?
+  end
+
   def all_attributes
     attributes.merge!(extension_attributes).reject { |k,v| v.nil? }
   end
@@ -717,6 +722,8 @@ class Entity < ActiveRecord::Base
 
   def after_soft_delete
     aliases.destroy_all
+    extension_models.each(&:destroy)
+    primary_extension_model.destroy
   end
 
   # A type checker for definition id and names
