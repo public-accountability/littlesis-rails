@@ -1,8 +1,17 @@
+# coding: utf-8
 require 'rails_helper'
 
 describe Entity do
-  before(:all) {  DatabaseCleaner.start } 
+  before(:all) {  DatabaseCleaner.start }
   after(:all)  {  DatabaseCleaner.clean }
+
+  def public_company
+    org = create(:org)
+    org.aliases.create!(name: 'another name')
+    Relationship.create!(entity: org, related: create(:person), category_id: 12)
+    org.add_extension('PublicCompany')
+    org
+  end
 
   describe 'validations' do
     it { should validate_presence_of(:name) }
@@ -80,6 +89,11 @@ describe Entity do
       expect { org.soft_delete }.to change { Image.unscoped.find(image.id).is_deleted }.to(true)
     end
 
+    it 'deletes extension records' do
+      org = create(:org)
+      expect { org.soft_delete }.to change { ExtensionRecord.count }.by(-1)
+    end
+
     describe 'soft delete versioning' do
       with_versioning do
         before { @org = create(:org) }
@@ -92,7 +106,38 @@ describe Entity do
           @org.soft_delete
           expect(@org.versions.last.event).to eq 'soft_delete'
         end
+
+        describe 'association data' do
+          before do
+            @public_company = public_company
+          end
+
+          it 'saves and stores association data' do
+            @public_company.soft_delete
+            expect(@public_company.versions.last.association_data).not_to be nil
+            data = YAML.load(@public_company.versions.last.association_data)
+            expect(data['extension_ids']).to eql [2, 13]
+            expect(data['relationship_ids'].length).to eql 1
+            expect(data['aliases']).to eql ['another name']
+          end
+        end
       end
+    end
+  end
+
+  describe 'get_association_data' do
+    before(:all) { @data = public_company.get_association_data }
+
+    it 'has extension ids' do
+      expect(@data['extension_ids']).to eql [2, 13]
+    end
+
+    it 'has relationship_ids' do
+      expect(@data['relationship_ids'].length).to eql 1
+    end
+
+    it 'has aliases' do
+      expect(@data['aliases']).to eql ['another name']
     end
   end
 
@@ -289,7 +334,7 @@ describe Entity do
         @person.add_extension('Lawyer')
         @person.add_extension('PoliticalCandidate')
       end
- 
+
      it 'returns array' do
        expect(@person.extension_models).to be_a Array
        expect(@person.extension_models.length).to eq 2
@@ -628,6 +673,13 @@ describe Entity do
         expect(human.versions.size).to eq 1
         expect { human.update(name: 'Emiliano Zapata') }.to change { human.versions.size }.by(1)
         expect(human.versions.last.event).to eq 'update'
+      end
+
+      it 'does not store association_data for update event' do
+        human = create(:person)
+        human.update!(blurb: 'マルクスの思想の中心は、史的唯物論である。')
+        expect(human.versions.last.event).to eq 'update'
+        expect(human.versions.last.association_data).to be nil
       end
 
       it 'does not create a version after changing updated_at' do

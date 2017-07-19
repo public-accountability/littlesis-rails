@@ -13,7 +13,12 @@ class Entity < ActiveRecord::Base
 
   EXCERPT_SIZE = 150
 
-  has_paper_trail :ignore => [:link_count, :delta, :last_user_id]
+  has_paper_trail :ignore => [:link_count, :delta, :last_user_id],
+                  :meta => {
+                    :association_data => proc { |e|
+                      e.get_association_data.to_yaml if e.paper_trail_event == 'soft_delete'
+                    }
+                  }
 
   has_many :aliases, inverse_of: :entity, dependent: :destroy
   has_many :images, inverse_of: :entity, dependent: :destroy
@@ -718,26 +723,28 @@ class Entity < ActiveRecord::Base
   class EntityDeleted < ActiveRecord::ActiveRecordError
   end
 
+  # When an entity is deleted we will store information
+  # from it's associated models that gets deleted
+  # in a 'meta' field with the PaperTrail version
+  def get_association_data
+    {
+      'extension_ids' => extension_ids,
+      'relationship_ids' => relationship_ids,
+      'aliases' => aliases.where(is_primary: false).map(&:name)
+    }
+  end
+
   private
 
   # Callbacks for Soft Delete
   def after_soft_delete
     aliases.destroy_all
     extension_models.each(&:destroy)
+    extension_records.destroy_all
     images.each(&:soft_delete)
     # ListEntity
+    # ArticleEntity
   end
-
-  # When an entity is deleted we will store information
-  # from it's associated models that gets deleted
-  # in a 'meta' field with the PaperTrail version
-  # def set_entity_meta
-  #   @association_data = {
-  #     extension_ids: extension_ids,
-  #     aliases: aliases.where(is_primary: false).map(&:name),
-  #   }
-    # paper_trail.on_destroy
-  #end
 
   # A type checker for definition id and names
   # input: String or Integer
