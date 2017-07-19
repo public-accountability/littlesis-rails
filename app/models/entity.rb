@@ -716,7 +716,7 @@ class Entity < ActiveRecord::Base
   private
 
   def after_soft_delete
-    
+    aliases.destroy_all
   end
 
   # A type checker for definition id and names

@@ -50,7 +50,6 @@ describe Entity do
   end
 
   describe '#soft_delete' do
-
     it 'sets is_deleted to be true' do
       org = create(:org)
       expect(org.is_deleted).to be false
@@ -61,10 +60,9 @@ describe Entity do
     it 'deletes aliases' do
       org = create(:org)
       a = org.aliases.create!(name: 'my other org name')
-      expect { org.soft_delete }.to change { Alias.count }.by(-1)
+      expect { org.soft_delete }.to change { Alias.count }.by(-2)
       expect(Alias.find_by_id(a.id)).to be nil
     end
-
   end
 
   describe 'summary_excerpt' do
