@@ -5,6 +5,6 @@
 
 <%= render partial: "lists/interlocks_alert" %>
 
-<% cache(@list.cache_key('government', nil, { page: @page }), expires_in: 1.day) do %>
+<% cache([@list.cache_key, 'government', @page], expires_in: 1.day) do %>
   <%= render partial: "lists/government", locals: { govt_bodies: @govt_bodies } %>
 <% end %>

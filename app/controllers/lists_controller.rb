@@ -157,8 +157,8 @@ class ListsController < ApplicationController
   def remove_entity
     check_permission 'admin'
     ListEntity.find(params[:list_entity_id]).destroy
-    @list.clear_cache(request.host)
-    redirect_to members_list_path(@list)        
+    @list.clear_cache
+    redirect_to members_list_path(@list)
   end
 
   def clear_cache

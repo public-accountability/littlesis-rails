@@ -2,7 +2,6 @@ class List < ActiveRecord::Base
   self.table_name = "ls_list"
 
   include SoftDelete
-  include Cacheable
   include Referenceable
 
   has_paper_trail
@@ -111,6 +110,14 @@ class List < ActiveRecord::Base
     end
 
     query
+  end
+
+  # The host argument is there for compatibility reasons:
+  # the symfony/legacy caching system required it.
+  # In Rails, all we need to do to clear the cache
+  # is change the updated_at timestamp
+  def clear_cache(host = nil)
+    touch
   end
 
   def self.default_network

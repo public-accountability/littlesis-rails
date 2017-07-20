@@ -14,8 +14,8 @@
 
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :members } %>
 
-<% cache(@list.cache_key('members', nil, { editable: @editable, admin: @admin }), expires_in: 1.day) do %>
-  <%= render partial: 'datatable', locals: { table: @table, editable: @editable, admin: @admin } %>
+<% cache( [@list.cache_key, 'members'], expires_in: 1.day) do %>
+    <%= render partial: 'datatable', locals: { table: @table, editable: @editable, admin: @admin } %>
 <% end %>
 
 <%= render partial: 'shared/add_entity_js', locals: { input_id: 'add-entity-input', post_path: add_entity_list_path(@list, entity_id: "XXX"), query_path: raw(name_search_entities_url + "?q=%QUERY&exclude_list=#{@list.id}") } %>

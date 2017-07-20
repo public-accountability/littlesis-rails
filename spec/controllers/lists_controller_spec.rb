@@ -180,6 +180,7 @@ describe ListsController, type: :controller do
     login_admin
     before(:all) do
       @list = create(:list)
+      @list.update_column(:updated_at, 1.day.ago)
       @person = create(:person)
       @list_entity = create(:list_entity, list_id: @list.id, entity_id: @person.id)
     end
@@ -196,6 +197,12 @@ describe ListsController, type: :controller do
       expect(List).to receive(:find).with(@list.id.to_s).and_return(@list)
       expect(@list).to receive(:clear_cache)
       @post_remove_entity.call
+    end
+
+    it 'updates the updated_at of the list' do
+      expect(&@post_remove_entity).to change {
+        List.find(@list.id).updated_at
+      }
     end
 
     it 'redirects to the members page' do
