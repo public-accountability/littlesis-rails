@@ -232,7 +232,7 @@ Lilsis::Application.routes.draw do
   post '/relationships/bulk_add' => 'relationships#bulk_add'
   get '/relationships/find_similar' => 'relationships#find_similar'
 
-  resources :relationships, only: [:show, :create, :update, :edit] do
+  resources :relationships, except: [:index, :new] do
     member do
       post 'reverse_direction'
     end

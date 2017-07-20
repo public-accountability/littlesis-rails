@@ -13,7 +13,12 @@ class Entity < ActiveRecord::Base
 
   EXCERPT_SIZE = 150
 
-  has_paper_trail :ignore => [:link_count, :delta, :last_user_id]
+  has_paper_trail :ignore => [:link_count, :delta, :last_user_id],
+                  :meta => {
+                    :association_data => proc { |e|
+                      e.get_association_data.to_yaml if e.paper_trail_event == 'soft_delete'
+                    }
+                  }
 
   has_many :aliases, inverse_of: :entity, dependent: :destroy
   has_many :images, inverse_of: :entity, dependent: :destroy
@@ -133,6 +138,11 @@ class Entity < ActiveRecord::Base
     person? ? 'Org' : 'Person'
   end
 
+  def primary_extension_model
+    return person if person?
+    return org if org?
+  end
+
   def all_attributes
     attributes.merge!(extension_attributes).reject { |k,v| v.nil? }
   end
@@ -143,15 +153,19 @@ class Entity < ActiveRecord::Base
     extensions_with_attributes.values.reduce(:merge)
   end
 
+  # Returns an array of all extension models
+  def extension_models
+    (extension_names & Entity.all_extension_names_with_fields).map do |name|
+      name.constantize.find_by_entity_id(id)
+    end
+  end
+
   # Returns a hash where the key in each key/value pair is the extension name
   # and the value is a hash of the attributes for that extension
   def extensions_with_attributes
-    hash = {}
-    (extension_names & Entity.all_extension_names_with_fields).each do |name|
-      ext = name.constantize.find_by_entity_id(id)
-      hash[name] = ext.attributes.except('id', 'entity_id', :id, :entity_id)
+    extension_models.reduce({}) do |memo, model|
+      memo.merge(model.class.name => model.attributes.except('id', 'entity_id') )
     end
-    hash
   end
 
   def extension_ids
@@ -709,7 +723,28 @@ class Entity < ActiveRecord::Base
   class EntityDeleted < ActiveRecord::ActiveRecordError
   end
 
+  # When an entity is deleted we will store information
+  # from it's associated models that gets deleted
+  # in a 'meta' field with the PaperTrail version
+  def get_association_data
+    {
+      'extension_ids' => extension_ids,
+      'relationship_ids' => relationship_ids,
+      'aliases' => aliases.where(is_primary: false).map(&:name)
+    }
+  end
+
   private
+
+  # Callbacks for Soft Delete
+  def after_soft_delete
+    aliases.destroy_all
+    extension_models.each(&:destroy)
+    extension_records.destroy_all
+    images.each(&:soft_delete)
+    list_entities.each(&:soft_delete)
+    # ArticleEntity
+  end
 
   # A type checker for definition id and names
   # input: String or Integer

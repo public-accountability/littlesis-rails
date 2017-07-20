@@ -20,6 +20,7 @@ describe RelationshipsController, type: :controller do
   it { should route(:get, '/relationships/1/edit').to(action: :edit, id: 1) }
   it { should route(:post, '/relationships/1/reverse_direction').to(action: :reverse_direction, id: 1) }
   it { should route(:patch, '/relationships/1').to(action: :update, id: 1) }
+  it { should route(:delete, '/relationships/1').to(action: :destroy, id: 1) }
   it { should route(:post, '/relationships/bulk_add').to(action: :bulk_add) }
   it { should route(:get, '/relationships/find_similar').to(action: :find_similar) }
 
@@ -184,6 +185,20 @@ describe RelationshipsController, type: :controller do
       end
     end
   end # end describe POST #create
+
+  describe 'DELETE /relationship/id' do
+    login_user
+    
+    it 'destroys relationship and redirects to dashboard' do
+      @rel = build :relationship
+      expect(Relationship).to receive(:find).with('1').and_return(@rel)
+      expect(@rel).to receive(:soft_delete).once
+      delete :destroy, { id: '1' }
+      expect(response).to have_http_status 302
+      expect(response.location).to include '/home/dashboard'
+    end
+    
+  end
 
   describe 'GET /relationships/id/edit' do
     login_user

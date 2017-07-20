@@ -1,13 +1,16 @@
+# coding: utf-8
 require 'rails_helper'
 
 describe Entity do
-  before(:all) do
-    DatabaseCleaner.start
-    Entity.skip_callback(:create, :after, :create_primary_ext)
-  end
-  after(:all) do
-    Entity.set_callback(:create, :after, :create_primary_ext)
-    DatabaseCleaner.clean
+  before(:all) {  DatabaseCleaner.start }
+  after(:all)  {  DatabaseCleaner.clean }
+
+  def public_company
+    org = create(:org)
+    org.aliases.create!(name: 'another name')
+    Relationship.create!(entity: org, related: create(:person), category_id: 12)
+    org.add_extension('PublicCompany')
+    org
   end
 
   describe 'validations' do
@@ -46,6 +49,103 @@ describe Entity do
         expect(build_entity(end_date: '2017').valid?).to be false
         expect(build_entity(start_date: '').valid?).to be false
       end
+    end
+  end
+
+  describe '#soft_delete' do
+    it 'sets is_deleted to be true' do
+      org = create(:org)
+      expect(org.is_deleted).to be false
+      org.soft_delete
+      expect(org.is_deleted).to be true
+    end
+
+    it 'deletes aliases' do
+      org = create(:org)
+      a = org.aliases.create!(name: 'my other org name')
+      expect { org.soft_delete }.to change { Alias.count }.by(-2)
+      expect(Alias.find_by_id(a.id)).to be nil
+    end
+
+    it 'deletes Primary extension for person' do
+      entity = create(:person)
+      expect { entity.soft_delete }.to change { Person.count }.by(-1)
+    end
+
+    it 'deletes Primary extension for org' do
+      entity = create(:org)
+      expect { entity.soft_delete }.to change { Org.count }.by(-1)
+    end
+
+    it 'deletes Extension models' do
+      person = create(:person, name: 'johnny business')
+      person.add_extension('BusinessPerson', sec_cik: 987)
+      expect { person.soft_delete }.to change { BusinessPerson.count }.by(-1)
+    end
+
+    it 'soft deletes associated images' do
+      org = create(:org)
+      image = create(:image, entity: org)
+      expect { org.soft_delete }.to change { Image.unscoped.find(image.id).is_deleted }.to(true)
+    end
+
+    it 'deletes extension records' do
+      org = create(:org)
+      expect { org.soft_delete }.to change { ExtensionRecord.count }.by(-1)
+    end
+
+    it 'soft deletes list entities (including removing from network)' do
+      org = create(:org)
+      list = create(:list)
+      list_entity = ListEntity.create!(list_id: list.id, entity_id: org.id)
+      expect { org.soft_delete }.to change { ListEntity.count }.by(-2)
+      expect(ListEntity.find_by_id(list_entity.id)).to be nil
+    end
+
+    describe 'soft delete versioning' do
+      with_versioning do
+        before { @org = create(:org) }
+
+        it 'creates two versions: one for the Org model and one for the Entity model' do
+          expect { @org.soft_delete }.to change { PaperTrail::Version.count }.by(2)
+        end
+
+        it 'sets the event type of the version to be soft_delete' do
+          @org.soft_delete
+          expect(@org.versions.last.event).to eq 'soft_delete'
+        end
+
+        describe 'association data' do
+          before do
+            @public_company = public_company
+          end
+
+          it 'saves and stores association data' do
+            @public_company.soft_delete
+            expect(@public_company.versions.last.association_data).not_to be nil
+            data = YAML.load(@public_company.versions.last.association_data)
+            expect(data['extension_ids']).to eql [2, 13]
+            expect(data['relationship_ids'].length).to eql 1
+            expect(data['aliases']).to eql ['another name']
+          end
+        end
+      end
+    end
+  end
+
+  describe 'get_association_data' do
+    before(:all) { @data = public_company.get_association_data }
+
+    it 'has extension ids' do
+      expect(@data['extension_ids']).to eql [2, 13]
+    end
+
+    it 'has relationship_ids' do
+      expect(@data['relationship_ids'].length).to eql 1
+    end
+
+    it 'has aliases' do
+      expect(@data['aliases']).to eql ['another name']
     end
   end
 
@@ -131,9 +231,6 @@ describe Entity do
   end # end political
 
   describe 'Extension Attributes Functions' do
-    before(:all) { Entity.set_callback(:create, :after, :create_primary_ext) }
-    after(:all) { Entity.skip_callback(:create, :after, :create_primary_ext) }
-
     def create_school
       school = create(:org, name: 'private school')
       school.add_extension 'School', is_private: true
@@ -142,6 +239,24 @@ describe Entity do
 
     def without_ids(array)
       array.reject { |c| c == 'id' || c == 'entity_id' }
+    end
+
+
+    describe '#primary_extension_model' do
+      before(:all) do
+        @org = create(:org)
+        @person = create(:person)
+      end
+
+      it 'returns Org if entity is an org' do
+        expect(@org.primary_extension_model).to be_a Org
+        expect(@person.primary_extension_model).not_to be_a Org
+      end
+
+      it 'returns Person if entity is a person' do
+        expect(@org.primary_extension_model).not_to be_a Person
+        expect(@person.primary_extension_model).to be_a Person
+      end
     end
 
     describe '#extension_attributes' do
@@ -216,6 +331,24 @@ describe Entity do
         expect(school.extensions_with_attributes.key?('Org')).to be true
         expect(school.extensions_with_attributes.length).to eql 2
       end
+    end
+
+    describe '#extension_models' do
+      before(:all) do
+        @person = create(:person)
+        @person.add_extension('Lawyer')
+        @person.add_extension('PoliticalCandidate')
+      end
+
+     it 'returns array' do
+       expect(@person.extension_models).to be_a Array
+       expect(@person.extension_models.length).to eq 2
+     end
+
+     it 'has Org and PoliticalCandidate models' do
+       expect(@person.extension_models[0]).to be_a Person
+       expect(@person.extension_models[1]).to be_a PoliticalCandidate
+     end
     end
 
     describe '#extension_names' do
@@ -544,6 +677,14 @@ describe Entity do
         human = create(:person)
         expect(human.versions.size).to eq 1
         expect { human.update(name: 'Emiliano Zapata') }.to change { human.versions.size }.by(1)
+        expect(human.versions.last.event).to eq 'update'
+      end
+
+      it 'does not store association_data for update event' do
+        human = create(:person)
+        human.update!(blurb: 'マルクスの思想の中心は、史的唯物論である。')
+        expect(human.versions.last.event).to eq 'update'
+        expect(human.versions.last.association_data).to be nil
       end
 
       it 'does not create a version after changing updated_at' do

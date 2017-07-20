@@ -16,6 +16,7 @@ describe EntitiesController, type: :controller do
     it { should route(:post, '/entities').to(action: :create) }
     it { should route(:get, '/entities/1/edit').to(action: :edit, id: 1) }
     it { should route(:patch, '/entities/1').to(action: :update, id: 1) }
+    it { should route(:delete, '/entities/1').to(action: :destroy, id: 1) }
     it { should route(:get, '/entities/1/political').to(action: :political, id: 1) }
     it { should route(:get, '/entities/1/references').to(action: :references, id: 1) }
     it { should route(:get, '/entities/1/match_donations').to(action: :match_donations, id: 1) }
@@ -141,7 +142,7 @@ describe EntitiesController, type: :controller do
         end
       end
 
-      context 'from the /entiites/id/add_relationship page' do
+      context 'from the /entities/id/add_relationship page' do
         context 'without errors' do
           it 'should create a new entity' do
             expect { post :create, params_add_relationship_page }.to change { Entity.count }.by(1)

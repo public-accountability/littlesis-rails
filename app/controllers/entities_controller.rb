@@ -70,6 +70,10 @@ class EntitiesController < ApplicationController
     end
   end
 
+  def destroy
+    
+  end
+
   def relationships
   end
 

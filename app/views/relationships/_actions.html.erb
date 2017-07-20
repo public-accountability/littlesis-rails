@@ -5,18 +5,20 @@
 	<% end %>
 	<%= link_to "flag", "/home/contact?type=flag" %>
 	<% if signed_in and @current_user.has_legacy_permission 'deleter' %>
-            <%=  link_to "remove", @relationship.legacy_url('remove'), id: 'remove-relationship' %>
+	    
+	    <%= form_tag relationship_path(@relationship), method: :delete, id: 'remove-relationship-form', style: "display: none;" do %>
+	    <% end %>
+            
+	    <%= link_to "remove", "#", id: 'remove-relationship' %>
             <%= javascript_tag do %>
              $('#remove-relationship').click(function(e){
                e.preventDefault();
-               if (confirm('Are you sure you want to remove this relationship?')) { 
-                 var f = document.createElement('form'); 
-                 document.body.appendChild(f);
-                 f.method = 'POST';
-                 f.action = this.href;
-                 f.submit();
-               }
-             });
+	
+               if (confirm('Are you sure you want to remove this relationship?')) {
+		 document.getElementById('remove-relationship-form').submit();
+	       }
+	       
+	     });
             <% end %>
 	<% end %>
     </div>

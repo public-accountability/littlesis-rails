@@ -10,4 +10,10 @@ class ListEntity < ActiveRecord::Base
     soft_delete
   end
 
+  private
+
+  def after_soft_delete
+    list.touch
+  end
+
 end

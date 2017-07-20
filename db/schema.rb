@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170706142752) do
+ActiveRecord::Schema.define(version: 20170719172615) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1771,15 +1771,16 @@ ActiveRecord::Schema.define(version: 20170706142752) do
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   create_table "versions", force: :cascade do |t|
-    t.string   "item_type",      limit: 255,        null: false
-    t.integer  "item_id",        limit: 4,          null: false
-    t.string   "event",          limit: 255,        null: false
-    t.string   "whodunnit",      limit: 255
-    t.text     "object",         limit: 65535
+    t.string   "item_type",        limit: 255,        null: false
+    t.integer  "item_id",          limit: 4,          null: false
+    t.string   "event",            limit: 255,        null: false
+    t.string   "whodunnit",        limit: 255
+    t.text     "object",           limit: 65535
     t.datetime "created_at"
-    t.text     "object_changes", limit: 4294967295
-    t.integer  "entity1_id",     limit: 4
-    t.integer  "entity2_id",     limit: 4
+    t.text     "object_changes",   limit: 4294967295
+    t.integer  "entity1_id",       limit: 4
+    t.integer  "entity2_id",       limit: 4
+    t.text     "association_data", limit: 4294967295
   end
 
   add_index "versions", ["entity1_id"], name: "index_versions_on_entity1_id", using: :btree

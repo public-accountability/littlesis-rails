@@ -1,6 +1,6 @@
 FactoryGirl.define do
   sequence :relationship_id do |n|
-    n
+    n + 100
   end
 
   factory :relationship_with_house, class: Relationship do

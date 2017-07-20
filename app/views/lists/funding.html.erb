@@ -5,7 +5,7 @@
 
 <%= render partial: "lists/interlocks_alert" %>
 
-<% cache(@list.cache_key('funding', nil, { page: @page }), expires_in: 1.day) do %>
+<% cache( [ @list.cache_key, 'funding', @page ], expires_in: 1.day) do %>
 
   <% if @donors.count > 0 %>
   <h3>Common Donors</h3>
