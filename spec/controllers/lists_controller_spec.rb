@@ -182,7 +182,7 @@ describe ListsController, type: :controller do
       @list = create(:list)
       @list.update_column(:updated_at, 1.day.ago)
       @person = create(:person)
-      @list_entity = create(:list_entity, list_id: @list.id, entity_id: @person.id)
+      @list_entity = ListEntity.create!(list_id: @list.id, entity_id: @person.id)
     end
 
     before do
