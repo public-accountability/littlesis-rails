@@ -141,9 +141,6 @@ describe Entity do
     end
   end
 
-  describe 'store meta information after entity soft_delete' do
-  end
-
   describe 'summary_excerpt' do
     it 'returns nil if there is no summary' do
       mega_corp = build(:mega_corp_inc, summary: nil)

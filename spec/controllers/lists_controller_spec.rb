@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe ListsController, type: :controller do
-  before(:each) { DatabaseCleaner.start }
-  after(:each) { DatabaseCleaner.clean }
+  before(:all) { DatabaseCleaner.start }
+  after(:all) { DatabaseCleaner.clean }
 
   describe 'GET /lists' do
     login_user
@@ -174,5 +174,34 @@ describe ListsController, type: :controller do
       it { should render_template :edit }
       it { should respond_with :success }
     end
+  end
+
+  describe 'remove_entity' do
+    login_admin
+    before(:all) do
+      @list = create(:list)
+      @person = create(:person)
+      @list_entity = create(:list_entity, list_id: @list.id, entity_id: @person.id)
+    end
+
+    before do
+      @post_remove_entity = proc { post :remove_entity, { id: @list.id, list_entity_id: @list_entity.id } }
+    end
+
+    it 'removes the list entity' do
+      expect(&@post_remove_entity).to change { ListEntity.unscoped.find(@list_entity.id).is_deleted}.to(true)
+    end
+    
+    it 'clears the list cache' do
+      expect(List).to receive(:find).with(@list.id.to_s).and_return(@list)
+      expect(@list).to receive(:clear_cache)
+      @post_remove_entity.call
+    end
+
+    it 'redirects to the members page' do
+      @post_remove_entity.call
+      expect(response).to have_http_status(302)
+    end
+
   end
 end

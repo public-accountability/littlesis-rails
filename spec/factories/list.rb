@@ -1,15 +1,4 @@
 FactoryGirl.define do
-  factory :sf_user_two, class: SfGuardUser do
-    id 2
-    username 'sfusertwo'
-  end
-
-  factory :user_two, class: User do
-    id 2
-    username 'usertwo'
-    sf_guard_user_id 2
-  end
-
   factory :list, class: List do
     name "Fortune 1000 Companies"
     description "Fortune Magazine's list..."
@@ -17,6 +6,13 @@ FactoryGirl.define do
     is_admin false
     is_featured false
     is_network false
+  end
+
+  factory :list_entity, class: ListEntity do
+    sequence(:id)
+    sequence(:list_id)
+    sequence(:entity_id)
+    is_deleted false
   end
 
   factory :group, class: Group do
