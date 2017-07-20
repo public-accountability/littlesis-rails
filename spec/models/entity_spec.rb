@@ -94,6 +94,14 @@ describe Entity do
       expect { org.soft_delete }.to change { ExtensionRecord.count }.by(-1)
     end
 
+    it 'soft deletes list entities (including removing from network)' do
+      org = create(:org)
+      list = create(:list)
+      list_entity = ListEntity.create!(list_id: list.id, entity_id: org.id)
+      expect { org.soft_delete }.to change { ListEntity.count }.by(-2)
+      expect(ListEntity.find_by_id(list_entity.id)).to be nil
+    end
+
     describe 'soft delete versioning' do
       with_versioning do
         before { @org = create(:org) }
