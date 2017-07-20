@@ -150,7 +150,8 @@ var addRelationship = (function(utility) {
       .append( $('<span>', { text:  examine}) );
   }
 
-  function displayCreateNewEntityDialog() {
+  function displayCreateNewEntityDialog(name) {
+    $('#entity_name').val(name);
     $('.rel-results').addClass('hidden');
     $('.rel-new-entity').removeClass('hidden'); 
   } 
@@ -416,11 +417,12 @@ var addRelationship = (function(utility) {
       e.preventDefault();
       $('.rel-new-entity').addClass('hidden');
       $('.rel-results').removeClass('hidden');
-      $.getJSON('/search/entity', {q: $('#name-to-search').val() }, function(data) {
+      var name = $('#name-to-search').val();
+      $.getJSON('/search/entity', {q: name }, function(data) {
 	if (data.length > 0) {
 	  createDataTable(data);
-	} else { 
-	  displayCreateNewEntityDialog();
+	} else {
+	  displayCreateNewEntityDialog(name);
 	} 
       });
     });
@@ -428,7 +430,7 @@ var addRelationship = (function(utility) {
     // Switches to the "new entity" option after user clicks 
     // on "click here to create a new entity"
     $('#cant-find-new-entity-link').click(function(e){
-      displayCreateNewEntityDialog();
+      displayCreateNewEntityDialog("");
     });
 
   }
