@@ -596,6 +596,24 @@ describe Entity do
       expect(Entity).to receive(:search).and_raise(ArgumentError)
       expect { e.similar_entities }.to raise_error(ArgumentError)
     end
+
+    describe 'generate_search_terms' do
+
+      it 'generates list of names for org' do
+        e = build(:org, name: 'one')
+        aliases = [build(:alias, name: 'one', is_primary: true), build(:alias, name: 'two')]
+        expect(e).to receive(:aliases).and_return(aliases)
+        expect(e.send(:generate_search_terms)).to eq "(one) | (two) | (*one*)"
+      end
+
+      it 'property escapes names with slashes' do
+        e = build(:org, name: 'weird/name')
+        aliases = [build(:alias, name: 'weird/name', is_primary: true), build(:alias, name: 'name')]
+        expect(e).to receive(:aliases).and_return(aliases)
+        expect(e.send(:generate_search_terms)).to eq "(weird\\/name) | (name) | (*weird\\/name*)"
+      end
+
+    end
   end
 
   describe 'Helpers' do

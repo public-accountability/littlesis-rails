@@ -35,7 +35,7 @@ module SimilarEntities
     search_terms = []
     alias_names = aliases.map(&:name)
 
-    search_terms.concat(alias_names)
+    search_terms.concat(alias_names.map { |n| ts_escape(n) })
     search_terms.append(ts_escape("#{person.name_first} #{person.name_last}")) if person?
     search_terms.append(ts_surround_escape("#{person.name_first} * #{person.name_last}")) if person?
 
