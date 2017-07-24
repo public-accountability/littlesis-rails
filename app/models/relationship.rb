@@ -61,7 +61,7 @@ class Relationship < ActiveRecord::Base
   validates :end_date, length: { maximum: 10 }, date: true
   validates_with RelationshipValidator
 
-  after_create :create_category, :create_links
+  after_create :create_category, :create_links, :update_entity_links
   # This callback is basically a modified version of :touch => true
   # It updates the entity timestamps and also changes the last_user_id of
   # associated entities for the relationship
@@ -165,6 +165,7 @@ class Relationship < ActiveRecord::Base
   ## callbacks for soft_delete
   def after_soft_delete
     links.destroy_all
+    update_entity_links
     position&.destroy! if is_position?
     education&.destroy! if is_education?
     membership&.destroy! if is_member?
@@ -501,4 +502,10 @@ class Relationship < ActiveRecord::Base
     last_user_id
   end
 
+  # Updates link count for entities
+  # called after a relationship is created or removed
+  def update_entity_links
+    entity.update_link_count
+    related.update_link_count
+  end
 end
