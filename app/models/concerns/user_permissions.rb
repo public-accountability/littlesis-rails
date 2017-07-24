@@ -54,8 +54,11 @@ module UserPermissions
       @sf_permissions = @user.sf_guard_user.sf_guard_permissions.pluck(:name).uniq
     end
 
-    # Does the user have permssion to delete entities from given list?
-    def delete_from_list?(list)
+    # Does the user have permssion to add/remove entities from given list?
+    def edit_list?(list)
+      return true if admin? || (list.creator_user_id == @user.id)
+      return true if lister? && !list.is_private && !list.is_admin
+      return false
     end
 
     def legacy_permission?(name)
