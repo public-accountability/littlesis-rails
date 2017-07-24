@@ -80,6 +80,7 @@ group :test, :development do
   gem 'rspec-rails'
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '~> 3.1'
+  gem 'spring', '~> 2.0.2'
   gem 'spring-commands-rspec'
 end
 
