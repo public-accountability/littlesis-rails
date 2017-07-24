@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   include ChatUser
+  include UserPermissions
 
   validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
@@ -47,40 +48,6 @@ class User < ActiveRecord::Base
     username
   end
 
-  ###############
-  # PERMISSIONS #
-  ###############
-
-  def legacy_permissions
-    sf_guard_user.permissions
-  end
-
-  def has_legacy_permission(name)
-    sf_guard_user.has_permission(name)
-  end
-
-  def admin?
-    has_legacy_permission 'admin'
-  end
-
-  def importer?
-    has_legacy_permission 'importer'
-  end
-
-  def bulker?
-    has_legacy_permission 'bulker'
-  end
-  
-  def merger?
-    has_legacy_permission 'merger'
-  end
-
-  def restricted?
-    is_restricted
-  end
-
-  ################
-  
   def in_group?(group)
   	GroupUser.where(group_id: group.id, user_id: id).count > 0
   end
@@ -144,15 +111,5 @@ class User < ActiveRecord::Base
   def legacy_check_password(password)
     Digest::SHA1.hexdigest(sf_guard_user.salt + password) == sf_guard_user.password
   end
-
-  def create_default_permissions
-    unless has_legacy_permission('contributor')
-      SfGuardUserPermission.create(permission_id: 2, user_id: sf_guard_user.id)
-    end
-    unless has_legacy_permission('editor')
-      SfGuardUserPermission.create(permission_id: 3, user_id: sf_guard_user.id)
-    end
-  end
-
   
 end
