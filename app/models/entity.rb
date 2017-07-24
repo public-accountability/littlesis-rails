@@ -663,9 +663,7 @@ class Entity < ActiveRecord::Base
   end
 
   def update_link_count
-    results = Entity.connection.execute("SELECT COUNT(id) FROM link WHERE entity1_id = #{id}")
-    count = results.first.first
-    update(link_count: count)
+    update(link_count: links.count)
   end
 
   def self.interlock_ids(entity1_id, entity2_id)
