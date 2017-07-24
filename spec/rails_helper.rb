@@ -1,5 +1,8 @@
-require 'simplecov'
-SimpleCov.start 'rails'
+# Only generate coverage report if environment variable is set
+if ENV["COVERAGE"]
+  require 'simplecov'
+  SimpleCov.start 'rails'
+end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
