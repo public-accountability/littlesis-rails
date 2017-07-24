@@ -52,7 +52,7 @@ def create_basic_user
   user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-  SfGuardUserPermission.create!(permission_id: 5, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
   user
 end
 
