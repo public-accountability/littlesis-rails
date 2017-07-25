@@ -800,19 +800,29 @@
     var name = $(row).find('td:nth-child(1)').text();
     // search for matches
     searchRequest(name, function(results){
-      // loop through results
-      results.forEach(function(entity) {
 
-	var tr = $('<tr>', {
-	  "click": function() {
-	    updateCell(entity, row);
-	    entityMatch(nextIndex);
-	  } 
-	}).append(entityMatchTableRow.render(entity));
+      if (results.length > 0) {
+	// loop through results
+	results.forEach(function(entity) {
 
-	// add row to table
-	$('#match-results-table tbody').append(tr);
-      });
+	  var tr = $('<tr>', {
+	    "click": function() {
+	      updateCell(entity, row);
+	      entityMatch(nextIndex);
+	    } 
+	  }).append(entityMatchTableRow.render(entity));
+
+	  // add row to table
+	  $('#match-results-table tbody').append(tr);
+	});
+      } else {
+	var nothingFound = $('<h3>', {
+	  class: 'text-center',
+	  text: 'No matching entities found'
+	});
+	$('#match-results-table-container').html(nothingFound);
+      }
+      
     });
   }
 
@@ -824,9 +834,10 @@
     var box = $('<div>', {
       css: {
 	"width": $(row).width(),
-	"height": '500px',
-	"background": 'white',
+	"height": '450px',
+	"background": 'rgba(255, 255, 255, 0.9)',
 	"position": 'absolute',
+	"box-shadow": '5px 5px 5px rgba(0, 0, 0, 0.3)',
 	"z-index": '100',
 	"top": $(row).offset().top + 52,
 	"left": $(row).offset().left
