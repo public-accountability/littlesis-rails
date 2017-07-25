@@ -23,6 +23,11 @@ namespace :nys do
     puts "There are now #{NyDisclosure.count} disclosures"
   end
 
+  desc 'Removes disclosures from staging table that are not in the current year'
+  task limit_staging_to_current_year: :environment do
+    NYSCampaignFinance.limit_staging_to_current_year
+  end
+
   desc 'Import new NYS filers (COMMCAND data)'
   task :filer_import, [:file] => :environment do |t, args|
     NYSCampaignFinance.insert_new_filers(args[:file])

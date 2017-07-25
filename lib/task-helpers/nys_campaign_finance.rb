@@ -67,6 +67,15 @@ module NYSCampaignFinance
     puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
 
+  def self.limit_staging_to_current_year
+    year = Time.now.year.to_s
+    in_year = ActiveRecord::Base.connection.execute("SELECT count(*) from #{STAGING_TABLE_NAME} where e_year = '#{year}'").to_a[0][0]
+    puts "Found #{in_year} disclosures in year #{year}"
+    puts "Preparing to delete all disclosures in #{STAGING_TABLE_NAME} that are NOT from #{year}"
+    ActiveRecord::Base.connection.execute("DELETE FROM #{STAGING_TABLE_NAME} WHERE e_year <> '#{year}'")
+    puts "There are now #{row_count} rows in #{STAGING_TABLE_NAME}"
+  end
+
   # Inserts disclosures from the staging table tht don't already exist
   def self.insert_new_disclosures(dry_run = false)
     puts "THIS IS A DRY RUN" if dry_run
