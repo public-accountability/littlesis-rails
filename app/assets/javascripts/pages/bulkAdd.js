@@ -806,9 +806,15 @@
 	results.forEach(function(entity) {
 
 	  var tr = $('<tr>', {
-	    "click": function() {
-	      updateCell(entity, row);
-	      entityMatch(nextIndex);
+	    "click": function(event) {
+	      if (event.target.tagName === "A") {
+		// DO NOTHING
+		// this means the user has clicked on the 'view profile' link
+		// and we don't want that to trigger a selection
+	      } else {
+		updateCell(entity, row);
+		entityMatch(nextIndex);
+	      }
 	    } 
 	  }).append(entityMatchTableRow.render(entity));
 
@@ -839,6 +845,7 @@
 	"position": 'absolute',
 	"box-shadow": '5px 5px 5px rgba(0, 0, 0, 0.3)',
 	"z-index": '100',
+	"overflow": 'scroll',
 	"top": $(row).offset().top + 52,
 	"left": $(row).offset().left
       },
