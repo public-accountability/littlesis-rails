@@ -27,7 +27,7 @@ class SortedLinks
     'government_positions' => 1,
     'in_the_office_positions' => 1,
     'staff' => 1,
-    'other_positions_and_memberships' => [1,3],
+    'other_positions_and_memberships' => [1, 3],
     'schools' => 2,
     'students' => 2,
     'family' => 4,
@@ -38,28 +38,27 @@ class SortedLinks
     'lobbies' => 7,
     'lobbied_by' => 7,
     'friendships' => 8,
-    'professional_relationships'=> 9,
+    'professional_relationships' => 9,
     'owners' => 10,
     'holdings' => 10,
     'parents' => 11,
-    'children' => 11,      
+    'children' => 11,
     'miscellaneous' => 12
   }.freeze
 
-      
   # input: <Entity>, String, Integer/String, Integer/String
   def initialize(entity, section = nil, page = 1, per_page = 20)
     raise ArgumentError, "SortedLinks must be initialized with a <Entity>" unless entity.is_a? Entity
     @entity = entity
     @page = page.to_i
     @per_page = per_page.to_i
-    
+
     # If initialized with a section, we only need to load one category
     if section.present?
       create_subgroups(cull_invalid(preloaded_links_for_section(@entity.id, section)))
     elsif entity.link_count > 100
       # For entities with lots of relationships, SortedLinks
-      # will execute a different set of SQL statements that 
+      # will execute a different set of SQL statements that
       # loads the donations via it's own optimized query
       @use_separate_donation_query = true
       create_subgroups(cull_invalid(preloaded_links(@entity.id)))
@@ -71,30 +70,26 @@ class SortedLinks
   end
 
   def get_other_positions_and_memberships_heading(positions_count, other_positions_count, memberships_count)
-    if other_positions_count == 0
-      return 'Memberships'
-    elsif memberships_count == 0
-      if other_positions_count == positions_count
-	return 'Positions'
-      else
-	return 'Other Positions'
-      end
-    elsif other_positions_count == positions_count
-      return 'Positions & Memberships'
-    else
-      return 'Other Positions & Memberships'
+    return 'Memberships' if other_positions_count.zero?
+
+    if memberships_count.zero?
+      return 'Positions' if other_positions_count == positions_count
+      return 'Other Positions'
     end
+
+    return 'Positions & Memberships' if other_positions_count == positions_count
+    return 'Other Positions & Memberships'
   end
 
   def create_subgroups(links)
     categories = links.group_by { |l| l.category_id }
     categories.default = []
-    
+
     staff, positions = split categories[1]
     members, memberships = split categories[3]
     @staff = LinksGroup.new(staff, 'staff', 'Leadership & Staff')
     @members = LinksGroup.new(members, 'members', 'Members')
-    
+
     create_position_subgroups(positions, memberships)
 
     students, schools = split categories[2]

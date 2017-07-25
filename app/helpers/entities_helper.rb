@@ -22,22 +22,6 @@ module EntitiesHelper
 
   # Relationships display
 
-  def get_other_positions_and_memberships_heading(positions_count, other_positions_count, memberships_count)
-    if other_positions_count == 0
-      return 'Memberships'
-    elsif memberships_count == 0
-      if other_positions_count == positions_count
-        return 'Positions'
-      else
-        return 'Other Positions'
-      end
-    elsif other_positions_count == positions_count
-      return 'Positions & Memberships'
-    else
-      return 'Other Positions & Memberships'
-    end
-  end
-
   def section_heading(links)
     content_tag(:div, links.heading, class: "subsection") if links.count > 0
   end
@@ -76,6 +60,7 @@ module EntitiesHelper
       'holdings',
       'other_positions_and_memberships',
       'owners',
+      'members',
       'staff',
       'donation_recipients',
       'donors',
