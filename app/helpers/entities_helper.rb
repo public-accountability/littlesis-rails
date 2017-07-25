@@ -76,6 +76,7 @@ module EntitiesHelper
       'holdings',
       'other_positions_and_memberships',
       'owners',
+      'members',
       'staff',
       'donation_recipients',
       'donors',
