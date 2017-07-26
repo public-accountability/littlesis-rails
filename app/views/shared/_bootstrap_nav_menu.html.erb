@@ -18,7 +18,7 @@ if user_signed_in?
     }
   }
 
-  if current_user.sf_guard_user_profile.enable_recent_views
+  if current_user.sf_guard_user_profile.try(:enable_recent_views)
     results = LegacyAuthenticatable.recent_views_from_legacy_cookie(cookies)
     entity_ids = results[:entity_ids]
     
