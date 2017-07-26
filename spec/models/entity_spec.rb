@@ -102,6 +102,15 @@ describe Entity do
       expect(ListEntity.find_by_id(list_entity.id)).to be nil
     end
 
+    it 'update list timestamp of soft deleting list entities' do
+      org = create(:org)
+      list = create(:list)
+      ListEntity.create!(list_id: list.id, entity_id: org.id)
+      list.update_column(:updated_at, 1.day.ago)
+      org.soft_delete
+      expect(List.find(list.id).updated_at).to be > 1.day.ago
+    end
+
     describe 'soft delete versioning' do
       with_versioning do
         before { @org = create(:org) }
