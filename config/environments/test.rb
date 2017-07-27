@@ -15,8 +15,11 @@ Lilsis::Application.configure do
   config.eager_load = false
 
   # Configure static asset server for tests with Cache-Control for performance.
-  config.serve_static_files = false
-  config.static_cache_control = "public, max-age=3600"
+  config.serve_static_files = true
+  config.static_cache_control = "public, max-age=120"
+  config.assets.digest = true
+  config.assets.prefix = '../public/assets/'
+  config.action_controller.asset_host = "//"
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true

@@ -21,6 +21,10 @@ def without_transactional_fixtures(&block)
   end
 end
 
+def truncate_database
+  do_not_truncate = %w(extension_definition ls_list sf_guard_permission relationship_category degree sf_guard_user)
+  DatabaseCleaner.clean_with :truncation, {:except => do_not_truncate }
+end
 
 def create_admin_user
   sf_user = FactoryGirl.create(:sf_guard_user, sf_guard_user_profile: build(:sf_guard_user_profile))
@@ -52,7 +56,6 @@ def create_basic_user
   user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-  SfGuardUserPermission.create!(permission_id: 5, user_id: sf_user.id)
   user
 end
 
@@ -61,6 +64,15 @@ def create_restricted_user
   user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id, is_restricted: true)
   SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+  user
+end
+
+def create_deleter_user
+  sf_user = FactoryGirl.create(:sf_guard_user)
+  user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id, username: 'deleter')
+  SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 5, user_id: sf_user.id)
   user
 end
 

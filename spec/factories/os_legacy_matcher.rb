@@ -1,13 +1,13 @@
-FactoryGirl.define do 
+ FactoryGirl.define do
 
-  factory :loeb, class: Entity do 
+  factory :loeb, class: Entity do
     # id 10551
     name "Daniel S Loeb"
     blurb "CEO of Third Point LLC"
     primary_ext "Person"
     last_user_id 1
   end
-  
+
   factory :nrsc, class: Entity do
     # id 28799
     name "National Republican Senatorial Committee"
@@ -52,11 +52,14 @@ FactoryGirl.define do
     is_current false
   end
 
-  
+  sequence :fectransid do |n|
+    '123' + n.to_s
+  end
 
   factory :loeb_donation_one, class: OsDonation do
     cycle '2012'
-    fectransid '1120620120011115314'
+    #    fectransid '1120620120011115314'
+    fectransid { generate(:fectransid) }
     contribid 'U00000038301'
     contrib "LOEB, DANIEL MR"
     recipid "C00027466"
@@ -74,12 +77,12 @@ FactoryGirl.define do
     microfilm '11020480483'
     occupation 'HEDGE FUND MANAGER'
     employer 'THIRD POINT LLC'
-    fec_cycle_id '2012_1120620120011115314'
+    fec_cycle_id { generate(:fec_cycle_id) }
   end
   
   factory :loeb_donation_two, class: OsDonation do
     cycle '2010'
-    fectransid '1050220110005750383'
+    fectransid { generate(:fectransid) }
     contribid 'U00000038301'
     contrib "LOEB, DANIEL MR"
     recipid "C00027466"
@@ -97,7 +100,7 @@ FactoryGirl.define do
     microfilm '10020853341'
     occupation 'HEDGE FUND MANAGER'
     employer 'THIRD POINT LLC'
-    fec_cycle_id '2010_1050220110005750383'
+    fec_cycle_id { generate(:fec_cycle_id) }
   end
 
   factory :loeb_ref_one, class: Reference do

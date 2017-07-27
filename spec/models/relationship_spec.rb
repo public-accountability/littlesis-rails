@@ -3,19 +3,15 @@ require 'rails_helper'
 
 describe Relationship, type: :model do
   before(:all) do
-    DatabaseCleaner.start
+    truncate_database
     Entity.skip_callback(:create, :after, :create_primary_ext)
-    @loeb = create(:loeb)
-    @nrsc = create(:nrsc)
-    @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc, filings: 1, amount: 10000) # relationship model
   end
 
   after(:all) do
     Entity.set_callback(:create, :after, :create_primary_ext)
-    DatabaseCleaner.clean
   end
 
-  describe 'associations' do 
+  describe 'associations' do
     it { should have_many(:links) }
     it { should belong_to(:entity) }
     it { should belong_to(:related) }
@@ -76,7 +72,6 @@ describe Relationship, type: :model do
     end
 
     describe 'Relationship Validations' do
-
       it 'validates position relationship' do
         person = create(:person)
         org = create(:org)
@@ -91,14 +86,13 @@ describe Relationship, type: :model do
         expect(rel.valid?).to eq false
         expect(rel.errors.full_messages[0]).to eql 'Category Hierarchy is not a valid category for Person to Person relationships'
       end
-      
     end
   end
 
   describe 'touch: entity and related' do
-    before do
+    before(:each) do
       @elected = create(:elected)
-      @org = create(:org)
+      @org = create(:org_no_id)
     end
 
     it 'updates updated_at of entity after change' do
@@ -119,12 +113,12 @@ describe Relationship, type: :model do
       rel = build(:generic_relationship)
       expect(rel.send(:last_user_id_for_entity_update, 345)).to eql 345
     end
-    
+
     it 'returns system user id if last_user_id is nil' do
       rel = build(:generic_relationship, last_user_id: nil)
       expect(rel.send(:last_user_id_for_entity_update)).to eq APP_CONFIG.fetch('system_user_id')
     end
-    
+
     it 'returns relationship last user id' do
       rel = build(:generic_relationship, last_user_id: 987)
       expect(rel.send(:last_user_id_for_entity_update)).to eq 987
@@ -133,14 +127,19 @@ describe Relationship, type: :model do
 
   describe '#update_entity_timestatmps' do
     before(:all) do
+      SfGuardUser.where('id <> 1').destroy_all
       @sf_guard_user_1 = create(:sf_guard_user)
       @sf_guard_user_2 = create(:sf_guard_user)
       @sf_guard_user_3 = create(:sf_guard_user)
     end
 
+    after(:all) do
+      SfGuardUser.where('id <> 1').destroy_all
+    end
+
     before do
-      @e1 = create(:person, last_user_id: (@sf_guard_user_1.id))
-      @e2 = create(:person, last_user_id: (@sf_guard_user_1.id))
+      @e1 = create(:person_no_id, last_user_id: @sf_guard_user_1.id)
+      @e2 = create(:person_no_id, last_user_id: @sf_guard_user_1.id)
     end
 
     it 'updates entity timestamp' do
@@ -186,20 +185,24 @@ describe Relationship, type: :model do
     end
   end
 
+  describe '#title' do
+    before do
+      @loeb = create(:loeb)
+      @nrsc = create(:nrsc)
+    end
 
-  describe '#title' do 
-    it 'returns description1 if it exists' do 
+    it 'returns description1 if it exists' do
       rel = build(:position_relationship, description1: "dictator")
       expect(rel.title).to eql 'dictator'
     end
 
-    it 'returns Board Member if the person is a board member' do 
-       rel = create(:relationship, entity1_id: @loeb.id, entity2_id: @nrsc.id, category_id: 1)
-       rel.position.update(is_board: true)
-       expect(rel.title).to eql 'Board Member'
+    it 'returns Board Member if the person is a board member' do
+      rel = create(:relationship, entity1_id: @loeb.id, entity2_id: @nrsc.id, category_id: 1)
+      rel.position.update(is_board: true)
+      expect(rel.title).to eql 'Board Member'
     end
-    
-    it 'returns "Member" if the position is a membership category' do 
+
+    it 'returns "Member" if the position is a membership category' do
       rel = create(:relationship, entity1_id: @loeb.id, entity2_id: @nrsc.id, category_id: 3)
       expect(rel.title).to eql 'Member'
     end
@@ -209,12 +212,10 @@ describe Relationship, type: :model do
       rel.education.update(degree_id: 2)
       expect(rel.title).to eql 'Bachelor of Arts'
     end
-    
   end
 
-
-  describe 'Update Start/End dates' do 
-    describe '#date_string_to_date' do 
+  describe 'Update Start/End dates' do
+    describe '#date_string_to_date' do
       it 'returns nil if no date' do
         r = build(:loeb_donation, start_date: nil)
         expect(r.date_string_to_date(:start_date)).to be_nil
@@ -224,18 +225,18 @@ describe Relationship, type: :model do
         r = build(:loeb_donation, start_date: "badd-00-00")
         expect(r.date_string_to_date(:start_date)).to be_nil
       end
-      
-      it 'converts "2012-00-00"' do 
+
+      it 'converts "2012-00-00"' do
         r = build(:loeb_donation)
         expect(r.date_string_to_date(:start_date)).to eq Date.new(2010)
       end
 
-      it 'converts "2012-12-00"' do 
+      it 'converts "2012-12-00"' do
         r = build(:loeb_donation, start_date: "2012-12-00")
         expect(r.date_string_to_date(:start_date)).to eq Date.new(2012, 12)
       end
 
-      it 'converts "2012-04-10"' do 
+      it 'converts "2012-04-10"' do
         r = build(:loeb_donation, start_date: "2012-4-10")
         expect(r.date_string_to_date(:start_date)).to eq Date.new(2012, 4, 10)
       end
@@ -243,6 +244,12 @@ describe Relationship, type: :model do
   end
 
   describe '#update_start_date_if_earlier' do
+    before do
+      @loeb = build(:loeb)
+      @nrsc = build(:nrsc)
+      @loeb_donation = build(:loeb_donation, entity: @loeb, related: @nrsc, filings: 1, amount: 10000) # relationship model
+    end
+
     it 'updates start date' do
       @loeb_donation.update_start_date_if_earlier Date.new(1999)
       expect(@loeb_donation.start_date).to eql('1999-01-01')
@@ -254,34 +261,36 @@ describe Relationship, type: :model do
     end
 
     it 'does not change if not earlier' do
-      @loeb_donation.update_start_date_if_earlier Date.new(2010)
-      expect(@loeb_donation.start_date).to eql('1999-01-01')
+      expect { @loeb_donation.update_start_date_if_earlier Date.new(2011) }.not_to change { @loeb_donation.start_date } 
     end
 
     it 'does not change if not later' do
-      @loeb_donation.update_end_date_if_later Date.new(2010)
-      expect(@loeb_donation.end_date).to eql('2012-01-01')
+      @loeb_donation.update_end_date_if_later Date.new()
+      expect(@loeb_donation.end_date).to eq "2011-00-00"
     end
 
     it 'can handle nil input' do
       @loeb_donation.update_start_date_if_earlier nil
-      expect(@loeb_donation.start_date).to eql('1999-01-01')
+      expect(@loeb_donation.start_date).to eq "2010-00-00"
       @loeb_donation.update_end_date_if_later nil
-      expect(@loeb_donation.end_date).to eql('2012-01-01')
+      expect(@loeb_donation.end_date).to eq "2011-00-00"
     end
   end
 
   describe '#update_contribution_info' do
-    before(:all) do
+    before do
+      @loeb = create(:loeb)
+      @nrsc = create(:nrsc)
+      @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc, filings: 1, amount: 10000) # relationship model
       d1 = create(:loeb_donation_one)
       d2 = create(:loeb_donation_two)
       OsMatch.create!(relationship_id: @loeb_donation.id, os_donation_id: d1.id, donor_id: @loeb.id)
       OsMatch.create!(relationship_id: @loeb_donation.id, os_donation_id: d2.id, donor_id: @loeb.id)
       @loeb_donation.update_os_donation_info
     end
-    
+
     it 'updates amount' do
-      expect(@loeb_donation.amount).to eql 80800
+      expect(@loeb_donation.amount).to eql 80_800
     end
 
     it 'updates filing' do
@@ -289,20 +298,19 @@ describe Relationship, type: :model do
     end
 
     it 'does not update the database' do
-      expect(Relationship.find(@loeb_donation.id).amount).not_to eql 80800
+      expect(Relationship.find(@loeb_donation.id).amount).not_to eql 80_800
     end
 
-    it 'can be chained with .save' do 
+    it 'can be chained with .save' do
       @loeb_donation.update_os_donation_info.save
-      expect(Relationship.find(@loeb_donation.id).amount).to eql 80800
+      expect(Relationship.find(@loeb_donation.id).amount).to eql 80_800
     end
-
   end
-  
+
   describe '#update_ny_contribution_info' do
-    before(:all) do
-      donor = create(:person, name: 'I <3 ny politicans')
-      elected = create(:elected)
+    before do
+      donor = create(:person_no_id, name: 'I <3 ny politicans')
+      elected = create(:person_no_id)
       @rel = Relationship.create(entity1_id: donor.id, entity2_id: elected.id, category_id: 5)
       disclosure1 = create(:ny_disclosure, amount1: 2000)
       disclosure2 = create(:ny_disclosure, amount1: 3000)
@@ -310,16 +318,10 @@ describe Relationship, type: :model do
       match1 = create(:ny_match, ny_disclosure_id: disclosure2.id, donor_id: donor.id, recip_id: elected.id, relationship: @rel)
       @rel.update_ny_donation_info
     end
-    
-    it 'updates amount' do
+
+    it 'updates amount, sets description if blank and updates filing' do
       expect(@rel.amount).to eql 5000
-    end
-
-    it 'Sets description if blank' do 
       expect(@rel.description1).to eql "NYS Campaign Contribution"
-    end
-
-    it 'updates filing' do
       expect(@rel.filings).to eql 2
     end
 
@@ -327,45 +329,44 @@ describe Relationship, type: :model do
       expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings')).to eql({"amount" => nil, "filings" => nil})
     end
 
-    it 'can be chained with .save to update the db' do 
+    it 'can be chained with .save to update the db' do
       @rel.update_ny_donation_info.save
       expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings')).to eql({"amount" => 5000, "filings" => 2})
     end
-
   end
 
-
   describe '#name' do
-    it 'generates correct title for position relationship' do 
+    it 'generates correct title for position relationship' do
       rel = build(:relationship, category_id: 1, description1: 'boss')
       rel.position = build(:position, is_board: false)
       expect(rel.name).to eql "Position: Human Being, mega corp LLC"
     end
   end
 
-  describe 'legacy_url' do 
-    before(:all) do 
+  describe 'legacy_url' do
+    before(:all) do
       @rel = build(:relationship, id: 1000)
     end
-    
-    it 'generates correct url' do 
+
+    it 'generates correct url' do
       expect(@rel.legacy_url).to eql "/relationship/view/id/1000" 
     end
-    
-    it 'generates correct url with action' do 
-      expect(@rel.legacy_url('edit')).to eql "/relationship/edit/id/1000" 
+
+    it 'generates correct url with action' do
+      expect(@rel.legacy_url('edit')).to eql "/relationship/edit/id/1000"
     end
   end
 
-  describe '#details' do 
-    describe 'it returns [ [field, value] ] for each Relationship type' do 
-      it 'Position' do 
+  describe '#details' do
+    describe 'it returns [ [field, value] ] for each Relationship type' do
+      it 'Position' do
         rel = build(:relationship, category_id: 1, description1: 'boss', is_current: true)
         rel.position = build(:position, is_board: false)
         expect(rel.details).to eql [['Title', 'boss'], ['Is Current', 'yes'], ['Board member', 'no']]
       end
     end
   end
+
   describe 'reverse_direction' do
     before do
       @human = create(:person)
@@ -380,6 +381,7 @@ describe Relationship, type: :model do
       expect(Relationship.find(@rel.id).entity2_id).to eql @human.id
       expect(Relationship.find(@rel.id).entity1_id).to eql @corp.id
     end
+
     it 'reverses links' do
       expect(Link.where(entity1_id: @human.id, relationship_id: @rel.id)[0].is_reverse).to be false
       expect(Link.where(entity2_id: @human.id, relationship_id: @rel.id)[0].is_reverse).to be true
@@ -390,12 +392,15 @@ describe Relationship, type: :model do
   end
 
   describe 'position_or_membership_type' do
-    before(:all) do
-      @human_1 = create(:person)
-      @human_2 = create(:person)
-      @corp = create(:corp)
+    before do
+      @human_1 = create(:person_no_id)
+      @human_2 = create(:person_no_id)
+      @corp = create(:org)
       @elected = create(:elected)
       @us_house = create(:us_house)
+    end
+
+    after(:all) do
     end
 
     it 'returns "None" for a relationship that is not a position or a membership' do
@@ -505,7 +510,7 @@ describe Relationship, type: :model do
       @rel.soft_delete
       expect(@rel.is_deleted).to be true
     end
-    
+
     it 'soft_delete removes links' do
       @rel = rel
       expect { @rel.soft_delete }.to change { Link.count }.by(-2)
@@ -516,12 +521,12 @@ describe Relationship, type: :model do
         @person = create(:person)
         @org = create(:org)
       end
-      
+
       it 'removes position model' do
         rel = create(:position_relationship, entity1_id: @person.id, entity2_id: @org.id)
         expect { rel.soft_delete }.to change { Position.count }.by(-1)
       end
-      
+
       it 'removes education model' do
         rel = Relationship.create!(category_id: 2, entity1_id: @person.id, entity2_id: create(:org).id)
         expect { rel.soft_delete }.to change { Education.count }.by(-1)

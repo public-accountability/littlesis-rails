@@ -2,11 +2,9 @@ require 'rails_helper'
 
 describe 'entities/show.html.erb' do
   before(:all) do
-    DatabaseCleaner.start
     @sf_user = create(:sf_guard_user, username: 'X')
     @user = create(:user, sf_guard_user_id: @sf_user.id)
   end
-  after(:all) { DatabaseCleaner.clean }
 
   before(:each) do
     allow(Entity).to receive(:search).and_return([])
@@ -28,11 +26,8 @@ describe 'entities/show.html.erb' do
   describe 'header' do
     context 'without any permissions' do
       before(:all) do
-        DatabaseCleaner.start
         @e = create(:mega_corp_inc, last_user_id: @sf_user.id)
       end
-
-      after(:all) { DatabaseCleaner.clean }
 
       before do
         assign(:entity, @e)
@@ -110,14 +105,11 @@ describe 'entities/show.html.erb' do
 
     context 'with deleter permission' do
       before(:all) do
-        DatabaseCleaner.start
         @sf_user = create(:sf_guard_user)
         @user = create(:user, sf_guard_user_id: @sf_user.id)
         @e = create(:mega_corp_inc, last_user: @sf_user)
         SfGuardUserPermission.create!(user_id: @sf_user.id, permission_id: 5)
       end
-
-      after(:all) { DatabaseCleaner.clean }
 
       before do
         assign(:entity, @e)
@@ -127,25 +119,22 @@ describe 'entities/show.html.erb' do
         render
       end
 
-      it 'has 4 links' do
-        expect(rendered).to have_css('#actions a', :count => 4)
+      it 'has 3 links' do
+        expect(rendered).to have_css('#actions a', :count => 3)
       end
 
-      it 'renders remove button' do
-        expect(rendered).to have_css('a', :text => 'remove')
+      it 'renders remove form' do
+        expect(rendered).to have_css('form input[value="remove"]')
       end
     end
 
     describe 'with importer permission' do
       before(:all) do
-        DatabaseCleaner.start
         @sf_guard_user = create(:sf_guard_user)
         @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
         @e = create(:person, last_user: @sf_guard_user)
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 8)
       end
-
-      after(:all) { DatabaseCleaner.clean }
 
       before do
         assign(:entity, @e)
@@ -165,14 +154,12 @@ describe 'entities/show.html.erb' do
 
     describe 'with bulker permission' do
       before(:all) do
-        DatabaseCleaner.start
         @sf_guard_user = create(:sf_guard_user)
         @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
         @e = build(:person, last_user: @sf_guard_user, updated_at: 1.day.ago, person: build(:a_person))
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 9)
       end
 
-      after(:all) { DatabaseCleaner.clean }
 
       before do
         assign(:entity, @e)
@@ -199,21 +186,18 @@ describe 'entities/show.html.erb' do
         render
       end
 
-      it 'has 5 links' do
+      it 'has 4 links' do
         # missing match donations because entity is an org
-        expect(rendered).to have_css('#actions a', :count => 5)
+        expect(rendered).to have_css('#actions a', :count => 4)
       end
     end
 
     describe 'tabs' do
       before(:all) do
-        DatabaseCleaner.start
         @sf_guard_user = create(:sf_guard_user)
         @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
         @e = create(:mega_corp_inc, updated_at: Time.now, last_user: @sf_guard_user)
       end
-
-      after(:all) { DatabaseCleaner.clean }
 
       before(:each) do
         assign(:entity, @e)

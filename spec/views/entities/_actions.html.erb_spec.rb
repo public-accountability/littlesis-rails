@@ -20,7 +20,7 @@ describe "partial: entities/actions" do
     it 'has remove link' do
       assign(:entity, @org)
       render partial: 'entities/actions.html.erb'
-      css 'a', text: 'remove'
+      css 'input[value="remove"]'
     end
 
     it 'has add bulk link' do

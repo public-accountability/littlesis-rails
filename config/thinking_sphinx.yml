@@ -91,6 +91,8 @@ defaults: &defaults
   
 test:
   <<: *defaults
+  mysql41: 9307
+
 
 development:
   <<: *defaults
