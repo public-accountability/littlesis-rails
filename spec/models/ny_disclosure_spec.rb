@@ -63,12 +63,12 @@ describe NyDisclosure, type: :model do
 
       it 'Adds first and last only term if middle name exists' do
         e = build_entity('Alice X Coltrane', :person)
-        expect(NyDisclosure.search_terms(e)).to eql 'Alice X Coltrane | Alice Coltrane'
+        expect(NyDisclosure.search_terms(e)).to eql '(Alice X Coltrane) | (Alice Coltrane)'
       end
 
       it 'Adds first and last only term if suffix exists' do
         e = build_entity('Alice Coltrane JR', :person)
-        expect(NyDisclosure.search_terms(e)).to eql 'Alice Coltrane JR | Alice Coltrane'
+        expect(NyDisclosure.search_terms(e)).to eql '(Alice Coltrane JR) | (Alice Coltrane)'
       end
 
       it 'Adds both Aliases' do
@@ -76,7 +76,7 @@ describe NyDisclosure, type: :model do
         a1 = build(:alias, name: "Alice Coltrane JR", is_primary: true)
         a2 = build(:alias, name: "Al Coltrane", is_primary: false)
         allow(e).to receive(:aliases).and_return([a1, a2])
-        expect(NyDisclosure.search_terms(e)).to eql 'Alice Coltrane JR | Alice Coltrane | Al Coltrane'
+        expect(NyDisclosure.search_terms(e)).to eql '(Alice Coltrane JR) | (Alice Coltrane) | (Al Coltrane)'
       end
     end
 
@@ -88,7 +88,7 @@ describe NyDisclosure, type: :model do
 
       it 'removes common suffix' do
         e = build_entity('evil corp', :org)
-        expect(NyDisclosure.search_terms(e)).to eql 'evil corp | evil'
+        expect(NyDisclosure.search_terms(e)).to eql '(evil corp) | (evil)'
       end
     end
   end

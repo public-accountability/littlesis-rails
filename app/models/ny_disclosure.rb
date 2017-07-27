@@ -86,7 +86,11 @@ class NyDisclosure < ActiveRecord::Base
       search_terms << Org.strip_name(a.name) if entity.org?
     end
 
-    search_terms.to_a.join(" | ")
+    if search_terms.length > 1
+      search_terms.to_a.map { |t| "(#{t})" }.join(" | ")
+    else
+      search_terms.to_a[0]
+    end
   end
 
   def self.update_delta_flag(ids)
