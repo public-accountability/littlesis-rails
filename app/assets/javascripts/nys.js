@@ -8,21 +8,28 @@ var nys = (function($, utility){
     return '<a href="' + entity.url + '">' + entity.name + "</a>";
   }
 
-  function rowClick(){
+  function rowClick(type){
     $('tbody tr').click(function(){
       var entity_id = $(this).find('td')[0].innerText;
-      var link = '/nys/candidates/new?entity='+ entity_id;
+      var link = '/nys/' + type + '/new?entity='+ entity_id;
       window.location.replace(link);
     });
   }
 
-  function createTable(d){
+  // input: 'Person' | 'Org'
+  // output: 'candidates' | 'pacs'
+  function primaryExtToType(primaryExt) {
+    if (!['Person', 'Org'].includes(primaryExt)) { throw "This must be called with 'Org' or 'Person'"; }
+    return (primaryExt === 'Org') ? 'pacs' : 'candidates';
+  }
+
+  function createTable(d, primaryExt){
     $('#table-container').removeClass('hidden');
     d.slice(0,10).forEach(function(entity){
       var html = '<tr>' + td(entity.id) + td(entity_link(entity)) + td(entity.description ? entity.description : "" ) + '</tr>';
       $('tbody').append(html);
     });
-    rowClick();
+    rowClick(primaryExtToType(primaryExt));
   }
 
   // input: 'Org' or 'Person'
@@ -35,7 +42,7 @@ var nys = (function($, utility){
       e.preventDefault();
       $.getJSON('/search/entity', {q: $('#entity-search').val(), ext: primaryExt }, function(d){
 	if (d.length > 0) {
-          createTable(d);
+          createTable(d, primaryExt);
 	} else { 
           // show create new entity message 
 	}
@@ -43,15 +50,16 @@ var nys = (function($, utility){
     });
   }
 
-  function newFilerUrl(entityId, query) {
-    return "/nys/candidates/new?entity=" + entityId + "&query=" + encodeURIComponent(query);
+  function newFilerUrl(entityId, primaryExt, query) {
+    return "/nys/" + primaryExtToType(primaryExt) + "/new?entity=" + entityId + "&query=" + encodeURIComponent(query);
   }
 
   function filerSearch() {
     $('#custom-search-btn').click(function(e){
       var entityId = utility.entityInfo('entityid');
+      var primaryExt = utility.entityInfo('entitytype');
       var query = $('#custom-search-input').val();
-      window.location.href = newFilerUrl(entityId, query);
+      window.location.href = newFilerUrl(entityId, primaryExt, query);
     });
   }
   

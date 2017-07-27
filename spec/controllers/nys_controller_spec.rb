@@ -15,12 +15,13 @@ describe NysController, type: :controller do
     it { should route(:get, '/nys').to(action: :index) }
     it { should route(:post, '/nys/match_donations').to(action: :match_donations) }
     it { should route(:get, '/nys/candidates').to(action: :candidates) }
-    it { should route(:get, '/nys/candidates/new').to(action: :new_filer_entity) }
-    it { should route(:post, '/nys/candidates/new').to(action: :create) }
+    it { should route(:get, '/nys/candidates/new').to(action: :new_filer_entity, type: 'candidates') }
+    it { should route(:get, '/nys/pacs/new').to(action: :new_filer_entity, type: 'pacs') }
+    it { should route(:post, '/nys/candidates/new').to(action: :create, type: 'candidates') }
+    it { should route(:post, '/nys/pacs/new').to(action: :create, type: 'pacs') }
     it { should route(:get, '/nys/potential_contributions').to(action: :potential_contributions) }
     it { should route(:get, '/nys/contributions').to(action: :contributions) }
     it { should route(:get, '/nys/pacs').to(action: :pacs) }
-    
   end
   
   describe 'pages' do
@@ -118,7 +119,7 @@ describe NysController, type: :controller do
     end
 
     it 'Handles POST' do
-      post(:create, entity: '123', ids: %w(10 11))
+      post(:create, entity: '123', ids: %w(10 11), type: 'candidates')
       expect(response.status).to eq 302
     end
   end
@@ -126,7 +127,7 @@ describe NysController, type: :controller do
   describe "#new_filer_entity" do
     login_user
 
-    context 'default search' do 
+    context 'default search' do
       before do
         elected = build(:elected, id: 123)
         expect(elected).to receive(:person).and_return(double(:name_last => "elected"))
@@ -135,7 +136,7 @@ describe NysController, type: :controller do
       end
 
       it 'Handles GET' do
-        get(:new_filer_entity, entity: '123')
+        get(:new_filer_entity, entity: '123', type: 'candidates')
         expect(response.status).to eq(200)
         expect(response).to render_template(:new_filer_entity)
       end
@@ -146,7 +147,7 @@ describe NysController, type: :controller do
         elected = build(:elected, id: 123)
         expect(NyFiler).to receive(:search_filers).with("my custom search").and_return([])
         expect(Entity).to receive(:find).and_return(elected)
-        get(:new_filer_entity, entity: '123', query: 'my custom search')
+        get(:new_filer_entity, entity: '123', query: 'my custom search', type: 'candidates')
         expect(response.status).to eq(200)
         expect(response).to render_template(:new_filer_entity)
       end
@@ -157,7 +158,7 @@ describe NysController, type: :controller do
         pac = build(:pac, id: 666)
         expect(NyFiler).to receive(:search_pacs).with("PAC").and_return([])
         expect(Entity).to receive(:find).with('666').and_return(pac)
-        get(:new_filer_entity, entity: '666')
+        get(:new_filer_entity, entity: '666', type: 'pacs')
       end
 
       it 'responds with 200 and renders new_filer_entity template' do
