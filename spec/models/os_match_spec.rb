@@ -4,12 +4,10 @@ describe OsMatch, type: :model do
   before(:all) do
     Entity.skip_callback(:create, :after, :create_primary_ext)
     OsMatch.skip_callback(:create, :after, :post_process)
-    DatabaseCleaner.start
   end
   after(:all) do
     Entity.set_callback(:create, :after, :create_primary_ext)
     OsMatch.set_callback(:create, :after, :post_process)
-    DatabaseCleaner.clean
   end
 
   it { should validate_presence_of(:os_donation_id) }
@@ -36,12 +34,7 @@ describe OsMatch, type: :model do
 
   describe 'Associations' do
     before(:all) do
-      DatabaseCleaner.start
       model_setup
-    end
-
-    after(:all) do
-      DatabaseCleaner.clean
     end
 
     it 'belongs to os_donation' do
@@ -99,18 +92,13 @@ describe OsMatch, type: :model do
   end
 
   describe '#set_recipient_and_committee' do
-    before(:all) do
-      DatabaseCleaner.start
+    before  do
       @loeb = create(:loeb)
       @nrsc = create(:nrsc)
-      @elected = create(:elected)
+      @elected = create(:person_no_id)
     end
 
-    after(:all) do
-      DatabaseCleaner.clean
-    end
-
-    it 'sets committee to be the same as the recipient if the ids are the same'do
+    it 'sets committee to be the same as the recipient if the ids are the same' do
       os_donation = create(:loeb_donation_one)
       os_match = OsMatch.create(os_donation_id: os_donation.id, donor_id: @loeb.id)
       expect(os_match).to receive(:find_or_create_cmte).and_return(@nrsc)
@@ -119,7 +107,7 @@ describe OsMatch, type: :model do
       expect(os_match.recipient).to eql @nrsc
     end
 
-    it 'sets committee and recipient if different' do 
+    it 'sets committee and recipient if different' do
       os_donation = create(:loeb_donation_one, recipid: 'N101')
       os_match = OsMatch.create(os_donation_id: os_donation.id, donor_id: @loeb.id)
       expect(os_match).to receive(:find_or_create_cmte).and_return(@nrsc)
@@ -132,17 +120,12 @@ describe OsMatch, type: :model do
 
   describe '#update_donation_relationship' do
     before(:all) do
-      DatabaseCleaner.start
       @relationship_count = Relationship.count
       @loeb = create(:loeb)
       @nrsc = create(:nrsc)
       @os_donation = create(:loeb_donation_one)
       @os_match = OsMatch.create(os_donation_id: @os_donation.id, donor_id: @loeb.id, recip_id: @nrsc.id)
       @os_match.update_donation_relationship
-    end
-
-    after(:all) do
-      DatabaseCleaner.clean
     end
 
     it "creates a new relationship if it doesn't yet exist" do
@@ -224,13 +207,11 @@ describe OsMatch, type: :model do
 
     context 'The donor has be merged or deleted' do
       before do
-        DatabaseCleaner.start
         donation = create(:loeb_donation_one, amount: 10000, fec_cycle_id: 'blah', date: "2010-02-02")
         @loeb_new = create(:loeb)
         @loeb_old = create(:loeb, merged_id: @loeb_new.id, is_deleted: true)
         @match = OsMatch.create(os_donation_id: donation.id, donor_id: @loeb_old.id, recip_id: @nrsc.id)
       end
-      after { DatabaseCleaner.clean }
 
       it 'changes os_match donor_id' do
         expect(@match.donor_id).to eql @loeb_old.id
@@ -245,15 +226,11 @@ describe OsMatch, type: :model do
 
     describe '#create_reference'do
       before(:all) do
-        DatabaseCleaner.start
         @ref_count = Reference.count
         @os_match.create_reference
         @ref = Reference.last
       end
 
-      after(:all) do
-        DatabaseCleaner.clean
-      end
 
       it 'creates a new reference' do
         expect(Reference.count).to eql (@ref_count + 1)
@@ -279,22 +256,23 @@ describe OsMatch, type: :model do
   end
 
   describe '#find_recip_id' do
+    before(:all) do
+      @elected = create(:elected)
+      @pac = create(:pac)
+    end
     it "finds recip_id if there's an ElectedRepresentative" do
-      elected = create(:elected)
-      ElectedRepresentative.create!(crp_id: 'CRPID1', entity_id: elected.id)
-      expect(OsMatch.new.find_recip_id('CRPID1')).to eql elected.id
+      ElectedRepresentative.create!(crp_id: 'CRPID1', entity_id: @elected.id)
+      expect(OsMatch.new.find_recip_id('CRPID1')).to eq @elected.id
     end
 
     it "finds id if there's an already existing Political Candidate" do
-      elected = create(:elected)
-      PoliticalCandidate.create!(crp_id: 'CRPID2', entity_id: elected.id)
-      expect(OsMatch.new.find_recip_id('CRPID2')).to eql elected.id
+      PoliticalCandidate.create!(crp_id: 'CRPID2', entity_id: @elected.id)
+      expect(OsMatch.new.find_recip_id('CRPID2')).to eq @elected.id
     end
 
     it 'finds recip_id if a PoliticalFundraising committee exists' do
-      pac = create(:pac)
-      create(:political_fundraising, fec_id: 'C123', entity_id: pac.id)
-      expect(OsMatch.new.find_recip_id('C123')).to eql pac.id
+      create(:political_fundraising, fec_id: 'C123', entity_id: @pac.id)
+      expect(OsMatch.new.find_recip_id('C123')).to eql @pac.id
     end
 
     it 'returns null otherwise' do
@@ -304,15 +282,11 @@ describe OsMatch, type: :model do
 
   describe '#find_or_create_cmte' do
     before(:all) do
-      DatabaseCleaner.start
       @nrsc = create(:nrsc, id: 8888)
       @donation = create(:loeb_donation_one, cmteid: ":-<", fec_cycle_id: 'xx')
       @fundraiser = PoliticalFundraising.create(entity_id: @nrsc.id, fec_id: ":-<")
     end
 
-    after(:all) do
-      DatabaseCleaner.clean
-    end
     
     it 'return entity if a fundraising entity is found' do 
       expect(OsMatch.create(os_donation_id: @donation.id).find_or_create_cmte).to eql @nrsc
@@ -322,7 +296,6 @@ describe OsMatch, type: :model do
    describe 'Class Methods' do
      describe 'create_new_cmte' do
        before(:all) do
-         DatabaseCleaner.start
          Entity.set_callback(:create, :after, :create_primary_ext)
          @cmte = create(:os_committee)
          @created_entity = OsMatch.create_new_cmte @cmte
@@ -331,7 +304,6 @@ describe OsMatch, type: :model do
 
        after(:all) do
          Entity.skip_callback(:create, :after, :create_primary_ext)
-         DatabaseCleaner.clean
        end
 
        it 'creates a new entity' do
@@ -393,7 +365,6 @@ describe OsMatch, type: :model do
 
    describe 'unmatch' do
      before(:all) do
-       DatabaseCleaner.start
        @loeb = create(:loeb)
        @nrsc = create(:nrsc)
        @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc) # relationship model
@@ -415,10 +386,6 @@ describe OsMatch, type: :model do
          reference_id: @loeb_ref_two.id,
          relationship_id: @loeb_donation.id)
        @loeb_donation.update_os_donation_info
-     end
-
-     after(:all) do
-       DatabaseCleaner.clean
      end
 
      it 'relationship has two matches' do 

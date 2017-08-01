@@ -3,12 +3,10 @@ require 'rails_helper'
 describe NyMatch, type: :model do
   before(:all) do
     Entity.skip_callback(:create, :after, :create_primary_ext)
-    DatabaseCleaner.start
   end
 
   after(:all) do
     Entity.set_callback(:create, :after, :create_primary_ext)
-    DatabaseCleaner.clean
   end
 
   it { should validate_presence_of(:ny_disclosure_id) }
@@ -159,15 +157,17 @@ describe NyMatch, type: :model do
   end
 
   def setup_models
-    @donor = build(:person)
-    @elected = build(:elected)
-    @filer = build(:ny_filer, filer_id: '9876', name: 'some committee')
-    @disclosure = build(:ny_disclosure, amount1: 50, ny_filer: @filer)
-    @match = create(:ny_match, ny_disclosure: @disclosure, donor: @donor, recipient: @elected)
+    
   end
 
   describe '#info' do
-    before(:all) { setup_models }
+    before do
+      @donor = create(:person_no_id)
+      @elected = create(:elected)
+      @filer = create(:ny_filer, filer_id: '9876', name: 'some committee')
+      @disclosure = create(:ny_disclosure, amount1: 50, ny_filer: @filer)
+      @match = create(:ny_match, ny_disclosure: @disclosure, donor: @donor, recipient: @elected )  
+    end
 
     it 'returns a hash' do
       expect(@match.info).to be_a(Hash)
@@ -185,7 +185,7 @@ describe NyMatch, type: :model do
   end
 
   describe '#create_reference' do
-    let(:donor) { create(:person) }
+    let(:donor) { create(:person_no_id) }
     let(:elected) { create(:elected) }
     let(:filer) { build(:ny_filer, filer_id: '9876', name: 'some committee') }
     let(:disclosure) { build(:ny_disclosure, amount1: 50, ny_filer: filer, e_year: '2017', report_id: 'B') }

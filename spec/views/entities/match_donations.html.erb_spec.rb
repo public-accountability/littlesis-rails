@@ -43,7 +43,7 @@ describe 'entities/match_donations.html.erb' do
         expect(rendered).to have_css '#about-sidebar h3', :text => 'Human Being'
       end
 
-      it 'has position' do
+      xit 'has position' do
         expect(rendered).to have_css '.row p strong', :text => 'Positions'
         expect(rendered).to have_css '.row p', :text => 'mega corp INC'
       end

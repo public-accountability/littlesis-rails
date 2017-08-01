@@ -2,8 +2,9 @@
 require 'rails_helper'
 
 describe Entity do
-  before(:all) {  DatabaseCleaner.start }
-  after(:all)  {  DatabaseCleaner.clean }
+  before(:all) do
+    truncate_database
+  end
 
   def public_company
     org = create(:org)
@@ -100,6 +101,15 @@ describe Entity do
       list_entity = ListEntity.create!(list_id: list.id, entity_id: org.id)
       expect { org.soft_delete }.to change { ListEntity.count }.by(-2)
       expect(ListEntity.find_by_id(list_entity.id)).to be nil
+    end
+
+    it 'update list timestamp of soft deleting list entities' do
+      org = create(:org)
+      list = create(:list)
+      ListEntity.create!(list_id: list.id, entity_id: org.id)
+      list.update_column(:updated_at, 1.day.ago)
+      org.soft_delete
+      expect(List.find(list.id).updated_at).to be > 1.day.ago
     end
 
     describe 'soft delete versioning' do
@@ -211,11 +221,11 @@ describe Entity do
       end
 
       context 'entity is an org' do
-        before(:all) do
+        before do
           @org = create(:org)
-          @person1 = create(:person)
-          @person2 = create(:person)
-          @person3 = create(:person)
+          @person1 = create(:person_no_id)
+          @person2 = create(:person_no_id)
+          @person3 = create(:person_no_id)
           [@person1, @person2].each { |p| Relationship.create!(category_id: 1, entity: p, related: @org) }
           Relationship.create!(category_id: 12, entity: @person3, related: @org)
           @match1 = create(:os_match, os_donation: create(:os_donation), donor_id: @person1.id)
@@ -240,7 +250,6 @@ describe Entity do
     def without_ids(array)
       array.reject { |c| c == 'id' || c == 'entity_id' }
     end
-
 
     describe '#primary_extension_model' do
       before(:all) do
