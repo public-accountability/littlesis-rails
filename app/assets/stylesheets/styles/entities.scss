@@ -98,7 +98,12 @@ div.actions-row {
 #action-buttons {
     display: inline-block;
 
-    a {
+    form {
+	display: inline;
+    }
+
+
+    input, a {
 	font-size: 14px;
 	top: -6px;
 	color: #444;
@@ -112,7 +117,7 @@ div.actions-row {
 	border-radius: 10px;
     }
 
-    a:hover {
+    input:hover, a:hover {
 	color: #000;
 	background-color: #ddf;
 	text-decoration: none;

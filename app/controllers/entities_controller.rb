@@ -5,6 +5,7 @@ class EntitiesController < ApplicationController
   before_action :set_current_user, only: [:show, :political, :match_donations]
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
   before_action -> { check_permission('contributor') }, only: [:create]
+  before_action -> { check_permission('deleter') }, only: [:destroy]
 
   def show
     @similar_entities = @entity.similar_entities
@@ -71,7 +72,8 @@ class EntitiesController < ApplicationController
   end
 
   def destroy
-    
+    @entity.soft_delete
+    redirect_to home_dashboard_path, notice: "#{@entity.name} has been successfully deleted"
   end
 
   def relationships
