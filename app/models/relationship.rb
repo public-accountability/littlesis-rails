@@ -505,7 +505,7 @@ class Relationship < ActiveRecord::Base
   # Updates link count for entities
   # called after a relationship is created or removed
   def update_entity_links
-    entity.update_link_count
-    related.update_link_count
+    entity&.update_link_count
+    related&.update_link_count
   end
 end

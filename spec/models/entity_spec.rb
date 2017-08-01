@@ -111,6 +111,14 @@ describe Entity do
       expect(List.find(list.id).updated_at).to be > 1.day.ago
     end
 
+    it 'soft deletes associated relationships' do
+      org = create(:org)
+      rel = Relationship.create!(entity: org, related: create(:person), category_id: 12)
+      expect(Relationship.find(rel.id).is_deleted).to be false
+      org.soft_delete
+      expect(Relationship.unscoped.find(rel.id).is_deleted).to be true
+    end
+
     describe 'soft delete versioning' do
       with_versioning do
         before { @org = create(:org) }

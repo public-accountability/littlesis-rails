@@ -11,6 +11,11 @@ describe 'RelationshipValidator' do
     def entity; end
 
     def related; end
+
+    def is_deleted_changed?; end
+
+    def persisted?; end
+
   end
 
   describe 'Class Methods' do
@@ -50,8 +55,7 @@ describe 'RelationshipValidator' do
     end
   end
 
-  describe 'invalid relationships' do
-    def tester(cat)
+  def tester(cat)
       rel = RelTester.new
       rel.entity1_id = 1
       rel.entity2_id = 2
@@ -59,6 +63,17 @@ describe 'RelationshipValidator' do
       rel
     end
 
+  describe 'skipped validations' do
+    it 'skips validations when a relationship has been soft deleted' do
+      rel = tester(1)
+      expect(rel).to receive(:is_deleted_changed?).and_return(true)
+      expect(rel).to receive(:persisted?).and_return(true)
+      expect(rel).not_to receive(:entity)
+      expect(rel.valid?).to be true
+    end
+  end
+
+  describe 'invalid relationships' do
     def person_double
       double('person double', :person? => true, :org? => false)
     end
@@ -66,14 +81,14 @@ describe 'RelationshipValidator' do
     def org_double
       double('org double', :person? => false, :org? => true)
     end
-    
+
     describe 'person to person set to Ownership' do
       before do
         @rel = tester(10)
         allow(@rel).to receive(:entity).and_return(person_double)
         allow(@rel).to receive(:related).and_return(person_double)
       end
-      
+
       it 'sets relationship to be invalid' do
         expect(@rel.valid?).to eql false
       end
@@ -90,7 +105,7 @@ describe 'RelationshipValidator' do
         allow(@rel).to receive(:entity).and_return(person_double)
         allow(@rel).to receive(:related).and_return(org_double)
       end
-      
+
       it 'sets relationship to be invalid' do
         expect(@rel.valid?).to eql false
       end
@@ -107,7 +122,7 @@ describe 'RelationshipValidator' do
         allow(@rel).to receive(:entity).and_return(org_double)
         allow(@rel).to receive(:related).and_return(org_double)
       end
-      
+
       it 'sets relationship to be invalid' do
         expect(@rel.valid?).to eql false
       end
@@ -124,7 +139,7 @@ describe 'RelationshipValidator' do
         allow(@rel).to receive(:entity).and_return(org_double)
         allow(@rel).to receive(:related).and_return(person_double)
       end
-      
+
       it 'sets relationship to be invalid' do
         expect(@rel.valid?).to eql false
       end
@@ -134,7 +149,7 @@ describe 'RelationshipValidator' do
         expect(@rel.errors[:category]).to eq ["Position is not a valid category for Org to Person relationships"]
       end
     end
-    
+
     it "does't change vaidity if missing category_id" do
       rel = RelTester.new
       rel.entity1_id = 1
