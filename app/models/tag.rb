@@ -9,13 +9,18 @@ class Tag
       ActiveSupport::HashWithIndifferentAccess.new(h)
     end
   )
-  
+
+  LOOKUP = TAGS.reduce({}) do |memo, tag|
+    memo[tag[:id]] = tag
+    memo[tag[:name]] = tag
+    memo
+  end
+
+  def self.find(name_or_id)
+    LOOKUP[name_or_id]
+  end
 
   def self.all
     TAGS
-  end
-
-  def self.by_name(name)
-    Tag.all.select{ |t| t[:name] == name }.first
   end
 end
