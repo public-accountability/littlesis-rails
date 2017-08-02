@@ -15,6 +15,7 @@ class Tag
     TAGS
   end
 
-
-
+  def self.by_name(name)
+    Tag.all.select{ |t| t[:name] == name }.first
+  end
 end
