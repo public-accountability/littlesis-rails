@@ -54,9 +54,11 @@ describe Tagable do
     expect(test_tagable.tags[0][:name]).to eq 'oil'
   end
 
-  it "cannot be tagged with a non-existent tag id"
+  it "cannot be tagged with a non-existent tag id or name" do
+    expect { test_tagable.tag("THIS IS NOT A REAL TAG!!!!") }.to raise_error(Tag::NonexistentTagError)
+    expect { test_tagable.tag(1_000_000) }.to raise_error(Tag::NonexistentTagError)
+  end
 
-  it "cannot be tagged with a non-existed tag name"
-
-  it "is applicable to Entity, List, Relationship"
+  xit "is applicable to Entity, List, Relationship" do
+  end
 end

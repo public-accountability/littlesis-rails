@@ -66,4 +66,10 @@ describe Tag do
     expect(Tag.find('foobar')).to be nil
     expect(Tag.find(Integer::MAX_64BIT)).to be nil
   end
+
+  it 'throws on non-existent ids or names' do
+    expect { Tag.find!('foobar') } .to raise_error(Tag::NonexistentTagError)
+    expect { Tag.find!(Integer::MAX_64BIT) }.to raise_error(Tag::NonexistentTagError)
+  end
+
 end
