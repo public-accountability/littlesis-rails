@@ -127,12 +127,12 @@ describe 'entities/show.html.erb' do
         render
       end
 
-      it 'has 4 links' do
-        expect(rendered).to have_css('#actions a', :count => 4)
+      it 'has 3 links' do
+        expect(rendered).to have_css('#actions a', :count => 3)
       end
 
       it 'renders remove button' do
-        expect(rendered).to have_css('a', :text => 'remove')
+        expect(rendered).to have_css('input[value=remove]')
       end
     end
 
@@ -199,9 +199,10 @@ describe 'entities/show.html.erb' do
         render
       end
 
-      it 'has 5 links' do
+      it 'has 4 links' do
         # missing match donations because entity is an org
-        expect(rendered).to have_css('#actions a', :count => 5)
+        expect(rendered).to have_css('#actions a', :count => 4)
+        expect(rendered).to have_css('form input[value=remove]', :count => 1)
       end
     end
 

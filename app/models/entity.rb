@@ -741,6 +741,7 @@ class Entity < ActiveRecord::Base
     extension_records.destroy_all
     images.each(&:soft_delete)
     list_entities.each(&:soft_delete)
+    relationships.each(&:soft_delete)
     # ArticleEntity
   end
 

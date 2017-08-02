@@ -8,7 +8,7 @@ class RelationshipValidator < ActiveModel::Validator
   end
 
   def validate(rel)
-    return unless rel.entity1_id.present? && rel.entity2_id.present? && rel.category_id.present?
+    return if skip_validate?(rel)
 
     if rel.entity.person? && rel.related.person?
 
@@ -38,6 +38,11 @@ class RelationshipValidator < ActiveModel::Validator
   end
 
   private
+
+  def skip_validate?(rel)
+    return true if rel.is_deleted_changed? && rel.persisted?
+    return true unless rel.entity1_id.present? && rel.entity2_id.present? && rel.category_id.present?
+  end
 
   def error_msg(cat_id, rel_direction)
     "#{Relationship.all_categories[cat_id]} is not a valid category for #{rel_direction} relationships"

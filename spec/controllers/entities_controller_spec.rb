@@ -486,6 +486,34 @@ describe EntitiesController, type: :controller do
     end
   end # end describe #update
 
+  describe '#destory' do
+    context 'user is a deleter' do
+      login_user
+
+      before do
+        @entity = double('entity', :name => 'my awesome name')
+        expect(Entity).to receive(:find).and_return(@entity)
+      end
+
+      it 'calls soft delete on entity' do
+        expect(@entity).to receive(:soft_delete).once
+        delete :destroy, id: '123'
+      end
+
+      it 'redirects to dashboard' do
+        expect(@entity).to receive(:soft_delete).once
+        delete :destroy, id: '123'
+        expect(response).to have_http_status(302)
+        expect(response.location).to include 'dashboard'
+      end
+    end
+
+    context 'user is not a deleter' do
+      before { delete :destroy, id: '123' }
+      it { should respond_with 302 }
+    end
+  end
+
   describe 'GET /references' do
     before do
       @entity = build(:mega_corp_inc, updated_at: Time.now, id: rand(100))
