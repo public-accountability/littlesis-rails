@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.18, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.19, for Linux (x86_64)
 --
 -- Host: mysql    Database: littlesis_test
 -- ------------------------------------------------------
--- Server version	5.5.53
+-- Server version	5.5.57
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -2795,6 +2795,27 @@ CREATE TABLE `tag` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `taggings`
+--
+
+DROP TABLE IF EXISTS `taggings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `taggings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tag_id` int(11) NOT NULL,
+  `tagable_class` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `tagable_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_taggings_on_tag_id` (`tag_id`),
+  KEY `index_taggings_on_tagable_class` (`tagable_class`),
+  KEY `index_taggings_on_tagable_id` (`tagable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `task_meta`
 --
 
@@ -3021,7 +3042,7 @@ CREATE TABLE `versions` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-07-19 17:32:48
+-- Dump completed on 2017-08-02 12:55:30
 INSERT INTO schema_migrations (version) VALUES ('20131031182415');
 
 INSERT INTO schema_migrations (version) VALUES ('20131031182500');
@@ -3231,4 +3252,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170626212039');
 INSERT INTO schema_migrations (version) VALUES ('20170706142752');
 
 INSERT INTO schema_migrations (version) VALUES ('20170719172615');
+
+INSERT INTO schema_migrations (version) VALUES ('20170802165123');
 
