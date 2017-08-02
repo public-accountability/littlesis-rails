@@ -1,6 +1,6 @@
 module Tagable
   def tag(name_or_id)
-    Tagging.create(tag_id:         Tag.find(name_or_id)[:id],
+    Tagging.create(tag_id:         Tag.find!(name_or_id)[:id],
                    tagable_class:  self.class.name,
                    tagable_id:     self.id)
   end
