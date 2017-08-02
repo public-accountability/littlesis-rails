@@ -2,6 +2,8 @@
 -
   name: oil
   description: "the reason for our planet's demise"
+  id: 1
 -
   name: nyc
   description: "anything related to New York City"
+  id: 2
