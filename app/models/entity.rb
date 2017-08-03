@@ -8,6 +8,7 @@ class Entity < ActiveRecord::Base
   include SimilarEntities
   include EntityPaths
   include EntitySearch
+  include Tagable
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
