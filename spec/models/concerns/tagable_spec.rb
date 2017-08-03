@@ -15,18 +15,33 @@ describe Tagable do
 
   let(:test_tagable) { TestTagable.new }
 
+  it "is applicable to Entity, List, Relationship" do
+    [Entity.new, Relationship.new, List.new].each do |tagable|
+      expect(tagable).to respond_to(:tag)
+    end
+  end
+
   describe 'creating a tag' do
-    it "#tag crates a new tagging" do
+    
+    it "creates a new tagging" do
       expect { test_tagable.tag("oil") }.to change { Tagging.count }.by(1)
     end
 
-    it "returns Tagging with correct attributes" do
+    it 'only creates one tagging per tag' do
+      expect {
+        test_tagable.tag("oil")
+        test_tagable.tag("oil")
+      }.to change { Tagging.count }.by(1)
+    end
+
+    it "creates a tagging with correct attributes" do
       test_tagable.tag("oil")
       attrs = Tagging.last.attributes
       expect(attrs['tag_id']).to eq 1
       expect(attrs['tagable_class']).to eq 'TestTagable'
       expect(attrs['tagable_id']).to eq test_tagable.id
     end
+
   end
 
   it "retrieves tags applied to it" do
@@ -35,6 +50,14 @@ describe Tagable do
       .to eql [{ 'name' => "oil",
                  'description' => "the reason for our planet's demise",
                  'id' => 1 }]
+  end
+
+  it 'reports if it has a given tag' do
+    test_tagable.tag("oil")
+    expect(test_tagable.has_tag?("oil")).to be true
+    expect(test_tagable.has_tag?(1)).to be true
+    expect(test_tagable.has_tag?("nyc")).to be false
+    expect(test_tagable.has_tag?(2)).to be false
   end
 
   it "doesn't retrieve tags applied to objects of other classes" do
@@ -60,9 +83,4 @@ describe Tagable do
     expect { test_tagable.tag(1_000_000) }.to raise_error(Tag::NonexistentTagError)
   end
 
-  it "is applicable to Entity, List, Relationship" do
-    [Entity.new, Relationship.new, List.new].each do |tagable|
-      expect(tagable).to respond_to(:tag)
-    end
-  end
 end
