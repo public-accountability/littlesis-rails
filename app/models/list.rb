@@ -3,6 +3,7 @@ class List < ActiveRecord::Base
 
   include SoftDelete
   include Referenceable
+  include Tagable
 
   has_paper_trail
   

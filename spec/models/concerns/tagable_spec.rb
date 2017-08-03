@@ -14,7 +14,6 @@ describe Tagable do
   end
 
   let(:test_tagable) { TestTagable.new }
-  let(:other_tagable) { TestTagable.new }
 
   describe 'creating a tag' do
     it "#tag crates a new tagging" do
@@ -39,12 +38,14 @@ describe Tagable do
   end
 
   it "doesn't retrieve tags applied to objects of other classes" do
-    test_tagable.tag("oil")
-    Tagging.create!(tag_id: 2, tagable_class: 'AnotherClass', tagable_id: test_tagable.id)
+    test_tagable.tag(1)
+    expect(test_tagable.tags.length).to eq 1
+    
+    Tagging.create!(tag_id: 1, tagable_class: 'AnotherClass', tagable_id: test_tagable.id)
     expect(test_tagable.tags.length).to eq 1
   end
 
-  it "can retrieve taggings" do
+  it "retrieves taggings" do
     test_tagable.tag("oil")
     expect(test_tagable.taggings.to_a).to eq [Tagging.last]
   end
@@ -59,6 +60,9 @@ describe Tagable do
     expect { test_tagable.tag(1_000_000) }.to raise_error(Tag::NonexistentTagError)
   end
 
-  xit "is applicable to Entity, List, Relationship" do
+  it "is applicable to Entity, List, Relationship" do
+    [Entity.new, Relationship.new, List.new].each do |tagable|
+      expect(tagable).to respond_to(:tag)
+    end
   end
 end
