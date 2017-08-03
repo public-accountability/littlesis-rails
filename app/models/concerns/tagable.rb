@@ -1,8 +1,15 @@
 module Tagable
   def tag(name_or_id)
-    Tagging.create(tag_id:         Tag.find!(name_or_id)[:id],
-                   tagable_class:  self.class.name,
-                   tagable_id:     self.id)
+    unless has_tag?(name_or_id)
+      Tagging.create(tag_id:         Tag.find!(name_or_id)[:id],
+                     tagable_class:  self.class.name,
+                     tagable_id:     self.id)
+      
+    end
+  end
+
+  def has_tag?(name_or_id)
+    taggings.find { |tagging| tagging.tag_id == Tag.find(name_or_id)[:id] } ? true : false
   end
 
   def tags
@@ -12,4 +19,5 @@ module Tagable
   def taggings
     Tagging.where(tagable_id: self.id, tagable_class: self.class.name)
   end
+    
 end
