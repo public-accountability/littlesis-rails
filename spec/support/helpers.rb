@@ -54,6 +54,11 @@ def create_contributor
   user
 end
 
+def create_really_basic_user
+  sf_user = FactoryGirl.create(:sf_guard_user)
+  FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)
+end
+
 def create_basic_user
   sf_user = FactoryGirl.create(:sf_guard_user)
   user = FactoryGirl.create(:user, sf_guard_user_id: sf_user.id)

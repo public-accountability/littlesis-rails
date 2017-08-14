@@ -270,4 +270,17 @@ class ListsController < ApplicationController
       count = @list.interlocks_count(options)
       Kaminari.paginate_array(results.to_a, total_count: count).page(@page).per(num)
     end
+
+    def set_permissions
+      @viewable = true
+      @editable = @configurable = false
+      if current_user
+        p = current_user.permissions
+        @editable = p.edit_list?(@list)
+        @configurable = p.configure_list?(@list)
+      end
+    end
 end
+
+
+

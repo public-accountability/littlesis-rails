@@ -61,6 +61,11 @@ module UserPermissions
       return false
     end
 
+    def configure_list?(list)
+      return true if admin? || (list.creator_user_id == @user.id)
+      return false
+    end
+
     def legacy_permission?(name)
       @sf_permissions.include?(name)
     end

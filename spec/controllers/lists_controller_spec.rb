@@ -209,6 +209,92 @@ describe ListsController, type: :controller do
       @post_remove_entity.call
       expect(response).to have_http_status(302)
     end
+  end
 
+  describe "set_permisions" do
+
+    context "an open list" do
+
+      before do
+        @controller = ListsController.new
+        @creator = create_basic_user
+        list = build(:list, access: List::ACCESS_OPEN, creator_user_id: @creator.id)
+        @controller.instance_variable_set(:@list, list)
+      end
+
+      context "anon user" do
+
+        before do
+          allow(@controller).to receive(:current_user).and_return(nil)
+          @controller.send(:set_permissions)
+        end
+
+        it 'can view the list' do
+          expect(@controller.instance_variable_get(:@viewable)).to be true
+        end
+
+        it 'cannot edit or configure the list' do
+          expect(@controller.instance_variable_get(:@editable)).to be false
+          expect(@controller.instance_variable_get(:@configurable)).to be false
+        end
+      end
+
+
+      context "logged-in creator" do
+
+        before do
+          allow(@controller).to receive(:current_user).and_return(@creator)
+          @controller.send(:set_permissions)
+        end
+
+        it 'can view, edit, and configure the list' do
+          expect(@controller.instance_variable_get(:@viewable)).to be true
+          expect(@controller.instance_variable_get(:@editable)).to be true
+          expect(@controller.instance_variable_get(:@configurable)).to be true
+        end
+      end
+
+      context "logged-in non-creator" do
+
+        before do
+          @non_creator = create_really_basic_user
+          allow(@controller).to receive(:current_user).and_return(@non_creator)
+          @controller.send(:set_permissions)
+        end
+
+        it 'can view, edit, and configure the list' do
+          expect(@controller.instance_variable_get(:@viewable)).to be true
+          expect(@controller.instance_variable_get(:@editable)).to be false
+          expect(@controller.instance_variable_get(:@configurable)).to be false
+        end
+      end
+
+      context "lister" do
+        # basic_user has lister permissions. see spec/support/helpers.rb
+        before do
+          allow(@controller).to receive(:current_user).and_return(create_basic_user)
+          @controller.send(:set_permissions)
+        end
+
+        it "can be viewed and edited, but not configured" do
+          expect(@controller.instance_variable_get(:@viewable)).to be true
+          expect(@controller.instance_variable_get(:@editable)).to be true
+          expect(@controller.instance_variable_get(:@configurable)).to be false
+        end
+      end
+
+      context "admin" do
+        before do
+          allow(@controller).to receive(:current_user).and_return(create_admin_user)
+          @controller.send(:set_permissions)
+        end
+
+        it "can view, edit, and configure" do
+          expect(@controller.instance_variable_get(:@viewable)).to be true
+          expect(@controller.instance_variable_get(:@editable)).to be true
+          expect(@controller.instance_variable_get(:@configurable)).to be true
+        end
+      end #admin
+    end # open list
   end
 end
