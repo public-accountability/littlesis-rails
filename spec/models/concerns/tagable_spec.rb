@@ -52,14 +52,6 @@ describe Tagable do
                  'id' => 1 }]
   end
 
-  it 'reports if it has a given tag' do
-    test_tagable.tag("oil")
-    expect(test_tagable.has_tag?("oil")).to be true
-    expect(test_tagable.has_tag?(1)).to be true
-    expect(test_tagable.has_tag?("nyc")).to be false
-    expect(test_tagable.has_tag?(2)).to be false
-  end
-
   it "doesn't retrieve tags applied to objects of other classes" do
     test_tagable.tag(1)
     expect(test_tagable.tags.length).to eq 1
@@ -67,6 +59,7 @@ describe Tagable do
     Tagging.create!(tag_id: 1, tagable_class: 'AnotherClass', tagable_id: test_tagable.id)
     expect(test_tagable.tags.length).to eq 1
   end
+
 
   it "retrieves taggings" do
     test_tagable.tag("oil")
