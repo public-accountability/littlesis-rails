@@ -14,6 +14,7 @@ describe List do
   end
 
   it { should validate_length_of(:short_description).is_at_most(255) }
+  it { should have_db_column(:access) }
 
   context "active relationships" do
     it 'joins entities via ListEntity' do

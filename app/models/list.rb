@@ -1,6 +1,10 @@
 class List < ActiveRecord::Base
   self.table_name = "ls_list"
 
+  ACCESS_OPEN = 0
+  ACCESS_CLOSED = 1
+  ACCESS_PRIVATE = 2
+
   include SoftDelete
   include Referenceable
 
