@@ -1,17 +1,10 @@
 module Tagable
   def tag(name_or_id)
-    unless has_tag?(name_or_id)
-      Tagging.create(tag_id:         Tag.find!(name_or_id)[:id],
-                     tagable_class:  self.class.name,
-                     tagable_id:     self.id)
-      
-    end
+    Tagging.find_or_create_by(tag_id:         Tag.find!(name_or_id)[:id],
+                              tagable_class:  self.class.name,
+                              tagable_id:     self.id)
   end
-
-  def has_tag?(name_or_id)
-    taggings.find { |tagging| tagging.tag_id == Tag.find(name_or_id)[:id] } ? true : false
-  end
-
+  
   def tags
     taggings.map { |tagging| Tag.find(tagging.tag_id) }
   end
