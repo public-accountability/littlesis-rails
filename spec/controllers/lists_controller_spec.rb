@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe ListsController, type: :controller do
+describe ListsController, :list_helper, type: :controller do
   before(:all) { DatabaseCleaner.start }
   after(:all) { DatabaseCleaner.clean }
 
@@ -211,8 +211,57 @@ describe ListsController, type: :controller do
     end
   end
 
-  describe "#set_permisions" do
+    # let(:expectatations)do
+    #   {
+    #     open: {
+    #       anon: nil,
+    #       creator: nil,
+    #       non-creator: nil,
+    #       lister: nil,
+    #       admin: nil
+    #     },
+    #     closed: {
+    #       anon: nil,
+    #       creator: nil,
+    #       non-creator: nil,
+    #       lister: nil,
+    #       admin: nil
+    #     },
+    #   }
+    # end
 
+  describe 'GET members' do
+    before do
+      allow(ListDatatable).to receive(:new).and_return(spy('table'))
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      # roles:
+      @creator = create_basic_user
+      @non_creator = create_really_basic_user
+      @lister = create_basic_user
+      @admin = create_admin_user
+      @open_list = build(:open_list, creator_user_id: @creator.id)
+    end
+
+    context 'open list' do
+      before  { expect(List).to receive(:find).and_return(@open_list) }
+
+      context 'users who can view' do
+        check_users([['anon', nil],
+                     ['creator', @creator],
+                     ['non-creator', @non_creator],
+                     ['lister', @lister],
+                     ['admin', @admin]], :success)
+      end
+    end
+
+    # context 'anon user' do
+    # context 'user - creator'
+    # context 'user - non-creator'
+    # context 'lister'
+    # context 'admin'
+  end
+
+  describe "#set_permisions" do
     before do
       @controller = ListsController.new
       @user = create_basic_user
