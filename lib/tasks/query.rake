@@ -58,4 +58,29 @@ namespace :query do
       end
     end
   end
+
+  desc "save CSV of an Entity's Federal Contributions"
+  task :os_donations_for_entity, [:entity] => :environment do |t, args|
+    file_path = Rails.root.join('data', "os_donations_for_#{args[:entity]}_#{Date.today}.csv")
+    data = Entity.find(args[:entity]).contribution_info.map do |contribution|
+      json = contribution.as_json
+      cand = OsCandidate.find_by_crp_id(json['recipid'])
+      cmte = OsCommittee.find_by_cmte_id(json['recipid'])
+      json['candidate_name'] = nil
+      json['candidate_party'] = nil
+      json['distid_runfo'] = nil
+      if cand
+        json['candidate_name'] = cand.name
+        json['candidate_party'] = cand.party
+        json['distid_runfo'] = cand.distid_runfor
+      end
+      json['committee_name'] = cmte.name if cmte
+      json
+    end
+
+    CSV.open(file_path, "wb") do |csv|
+      csv << data.first.keys
+      data.each { |hash| csv << hash.values }
+    end
+  end
 end
