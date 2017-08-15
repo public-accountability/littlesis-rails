@@ -41,6 +41,7 @@ module UserPermissions
   end
 
   class Permissions
+
     ALL_PERMISSIONS = ["admin", "contributor", "editor", "deleter", "lister", "merger", "importer", "bulker", "talker", "contacter"].freeze
 
     ALL_PERMISSIONS.each do |permission_name|
@@ -53,6 +54,24 @@ module UserPermissions
       @user = user
       @sf_permissions = @user.sf_guard_user.sf_guard_permissions.pluck(:name).uniq
     end
+
+    def self.anon_list_permissions(list)
+      {
+        viewable: true,
+        editable: false,
+        configurable: false
+      }
+    end
+
+    def list_permissions(list)
+      {
+        viewable: true,
+        editable: edit_list?(list),
+        configurable: configure_list?(list)
+      }
+    end
+
+    private
 
     # Does the user have permssion to add/remove entities from given list?
     def edit_list?(list)

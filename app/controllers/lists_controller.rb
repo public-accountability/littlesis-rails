@@ -272,15 +272,9 @@ class ListsController < ApplicationController
     end
 
     def set_permissions
-      @viewable = true
-      @editable = @configurable = false
-      if current_user
-        p = current_user.permissions
-        @editable = p.edit_list?(@list)
-        @configurable = p.configure_list?(@list)
-      end
+      @permissions = current_user ?
+                       current_user.permissions.list_permissions(@list) :
+                       UserPermissions::Permissions.anon_list_permissions(@list)
     end
 end
-
-
 
