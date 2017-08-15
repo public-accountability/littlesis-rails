@@ -41,7 +41,6 @@ module UserPermissions
   end
 
   class Permissions
-
     ALL_PERMISSIONS = ["admin", "contributor", "editor", "deleter", "lister", "merger", "importer", "bulker", "talker", "contacter"].freeze
 
     ALL_PERMISSIONS.each do |permission_name|
@@ -57,7 +56,7 @@ module UserPermissions
 
     def self.anon_list_permissions(list)
       {
-        viewable: true,
+        viewable: !list.restricted?,
         editable: false,
         configurable: false
       }
@@ -65,7 +64,7 @@ module UserPermissions
 
     def list_permissions(list)
       {
-        viewable: true,
+        viewable: view_list?(list),
         editable: edit_list?(list),
         configurable: configure_list?(list)
       }
@@ -73,10 +72,17 @@ module UserPermissions
 
     private
 
+    def view_list?(list)
+      return true if admin? || (list.creator_user_id == @user.id)
+      return false if list.restricted?
+      return true
+    end
+
     # Does the user have permssion to add/remove entities from given list?
     def edit_list?(list)
       return true if admin? || (list.creator_user_id == @user.id)
-      return true if lister? && !list.is_private && !list.is_admin
+      return false if list.restricted?
+      return true if lister? && (list.access == List::ACCESS_OPEN)
       return false
     end
 
@@ -88,6 +94,5 @@ module UserPermissions
     def legacy_permission?(name)
       @sf_permissions.include?(name)
     end
-
   end
 end

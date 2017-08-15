@@ -105,7 +105,7 @@ describe UserPermissions::Permissions do
       context "anon user" do
 
         it 'cannot view but not edit or configure the list' do
-          expect(UserPermissions::Permissions.anon_list_permissions(@list))
+          expect(UserPermissions::Permissions.anon_list_permissions(@open_list))
             .to eq ({
                       viewable: true,
                       editable: false,
@@ -163,5 +163,120 @@ describe UserPermissions::Permissions do
         end
       end #admin
     end # open list
+
+    context 'closed list' do
+      before do
+        @closed_list = build(:list, access: List::ACCESS_CLOSED, creator_user_id: @creator.id)
+      end
+      
+      context "anon user" do
+        it 'can view but not edit or configure the list' do
+          expect(UserPermissions::Permissions.anon_list_permissions(@closed_list))
+            .to eq ({
+                      viewable: true,
+                      editable: false,
+                      configurable: false
+                    })
+        end
+      end
+
+      context "logged-in creator" do
+        it 'can view, edit, and configure the list' do
+          expect(@creator.permissions.list_permissions(@closed_list))
+            .to eq ({
+                      viewable: true,
+                      editable: true,
+                      configurable: true
+                    })
+        end
+      end
+
+      context "logged-in non-creator" do
+        it 'can view, but no edit, or configure the list' do
+          expect(@non_creator.permissions.list_permissions(@closed_list))
+            .to eq ({
+                      viewable: true,
+                      editable: false,
+                      configurable: false
+                    })
+        end
+      end
+
+      context "lister" do
+        it "can be viewed and edited, but not configured" do
+          expect(@lister.permissions.list_permissions(@closed_list))
+            .to eq ({
+                      viewable: true,
+                      editable: false,
+                      configurable: false
+                    })
+        end
+      end
+
+      context "admin" do
+        it "can view, edit, and configure" do
+          expect(@admin.permissions.list_permissions(@closed_list))
+            .to eq ({
+                      viewable: true,
+                      editable: true,
+                      configurable: true
+                    })
+        end
+      end
+    end # closed list
+
+    context 'private list' do
+      let(:all_false) do
+        {
+          viewable: false,
+          editable: false,
+          configurable: false
+        }
+      end
+
+      before do
+        @closed_list = build(:list, access: List::ACCESS_PRIVATE, creator_user_id: @creator.id, is_private: true)
+      end
+
+      context "anon user" do
+        it 'can not view, eidt or configure the list' do
+          expect(UserPermissions::Permissions.anon_list_permissions(@closed_list)).to eq all_false
+        end
+      end
+
+      context "logged-in creator" do
+        it 'can view, edit, and configure the list' do
+          expect(@creator.permissions.list_permissions(@closed_list))
+            .to eq ({
+                      viewable: true,
+                      editable: true,
+                      configurable: true
+                    })
+        end
+      end
+
+      context "logged-in non-creator" do
+        it 'cannot view, edit, or configure the list' do
+          expect(@non_creator.permissions.list_permissions(@closed_list)).to eq all_false
+        end
+      end
+
+      context "lister" do
+        it 'cannot view, edit, or configure the list' do
+          expect(@lister.permissions.list_permissions(@closed_list)).to eq all_false
+        end
+      end
+
+      context "admin" do
+        it "can view, edit, and configure" do
+          expect(@admin.permissions.list_permissions(@closed_list))
+            .to eq ({
+                      viewable: true,
+                      editable: true,
+                      configurable: true
+                    })
+        end
+      end
+    end # private list
   end
 end

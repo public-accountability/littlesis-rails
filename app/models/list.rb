@@ -51,6 +51,10 @@ class List < ActiveRecord::Base
   	@is_network
   end
 
+  def restricted?
+    is_admin || access == List::ACCESS_PRIVATE
+  end
+
   def name_to_legacy_slug
     name.gsub(" ", "_").gsub("/", "~").gsub('+', '_')
   end
