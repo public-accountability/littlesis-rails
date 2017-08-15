@@ -16,7 +16,7 @@ Style/Lambda:
 
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never
-    
+
 Style/StringLiterals:
   Enabled: false
 
@@ -24,4 +24,7 @@ Style/HashSyntax:
   Enabled: false
 
 Layout/AlignParameters:
+  Enabled: false
+
+Layout/EmtpyLinesAroundBlockBody:
   Enabled: false
