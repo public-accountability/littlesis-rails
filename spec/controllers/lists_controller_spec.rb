@@ -218,6 +218,7 @@ describe ListsController, :list_helper, type: :controller do
       @lister = create_basic_user
       @admin = create_admin_user
       @open_list = build(:open_list, creator_user_id: @creator.id)
+      @closed_list = build(:closed_list, creator_user_id: @creator.id)
       @private_list = build(:private_list, creator_user_id: @creator.id)
     end
 
@@ -298,6 +299,50 @@ describe ListsController, :list_helper, type: :controller do
           after { sign_out @lister }
           it { should respond_with(403) }
         end
+      end
+    end
+
+    context 'closed list' do
+      before do
+        allow(ListDatatable).to receive(:new).and_return(spy('table'))
+        @request.env["devise.mapping"] = Devise.mappings[:user]
+        expect(List).to receive(:find).and_return(@closed_list)
+      end
+
+      context 'can view' do
+
+        context 'anon' do
+          before { sign_in_and_get(nil, :members) }
+          it { should respond_with(:success) }
+        end
+
+        context 'creator' do
+          before { sign_in_and_get(@creator, :members) }
+          after { sign_out @creator }
+          it { should respond_with(:success) }
+        end
+
+        context 'non_creator' do
+          before { sign_in_and_get(@non_creator, :members) }
+          after { sign_out @non_creator }
+          it { should respond_with(:success) }
+        end
+
+        context 'lister' do
+          before { sign_in_and_get(@lister, :members) }
+          after { sign_out @lister }
+          it { should respond_with(:success) }
+        end
+
+
+        context 'admin' do
+          before { sign_in_and_get(@admin, :members) }
+          after { sign_out @admin }
+          it { should respond_with(:success) }
+        end
+      end
+
+      context 'can NOT view' do
       end
     end
     # context 'anon user' do
