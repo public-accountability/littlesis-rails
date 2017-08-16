@@ -48,11 +48,11 @@ class List < ActiveRecord::Base
   end
 
   def network?
-  	@is_network
+    @is_network
   end
 
   def restricted?
-    is_admin || access == List::ACCESS_PRIVATE
+    is_admin || access == List::ACCESS_PRIVATE || is_network
   end
 
   def name_to_legacy_slug

@@ -130,6 +130,13 @@ describe List do
     end
   end
 
+  describe 'restricted?' do
+    it 'restricts access to network lists' do
+      l = build(:list, is_network: true)
+      expect(l.restricted?).to be true
+    end
+  end
+
   context 'Using paper_trail for versioning' do
     with_versioning do
       it 'records created, modified, and deleted versions' do
