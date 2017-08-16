@@ -229,36 +229,33 @@ describe ListsController, :list_helper, type: :controller do
         expect(List).to receive(:find).and_return(@open_list)
       end
 
-      context 'for all users' do
-        context 'anon' do
-          before { sign_in_and_get(nil, :members) }
-          it { should respond_with(:success) }
-        end
-
-        context 'creator' do
-          before { sign_in_and_get(@creator, :members) }
-          after { sign_out @creator }
-          it { should respond_with(:success) }
-        end
-
-        context 'non_creator' do
-          before { sign_in_and_get(@non_creator, :members) }
-          after { sign_out @non_creator }
-          it { should respond_with(:success) }
-        end
-
-        context 'lister' do
-          before { sign_in_and_get(@lister, :members) }
-          after { sign_out @lister }
-          it { should respond_with(:success) }
-        end
-
-        context 'admin' do
-          before { sign_in_and_get(@admin, :members) }
-          after { sign_out @admin }
-          it { should respond_with(:success) }
-        end
-      end
+      [
+        {
+          user: nil,
+          action: :members,
+          response: :success
+        },
+        {
+          user: '@creator',
+          action: :members,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :members,
+          response: :success
+        },
+        {
+          user: '@lister',
+          action: :members,
+          response: :success
+        },
+        {
+          user: '@admin',
+          action: :members,
+          response: :success
+        }
+      ].each { |x| test_request_for_user(x) }
     end
 
     context 'private list' do
@@ -268,38 +265,33 @@ describe ListsController, :list_helper, type: :controller do
         expect(List).to receive(:find).and_return(@private_list)
       end
 
-      context 'can view' do
-        context 'creator' do
-          before { sign_in_and_get(@creator, :members) }
-          after { sign_out @creator }
-          it { should respond_with(:success) }
-        end
-
-        context 'admin' do
-          before { sign_in_and_get(@admin, :members) }
-          after { sign_out @admin }
-          it { should respond_with(:success) }
-        end
-      end
-
-      context 'can NOT view' do
-        context 'anon' do
-          before { sign_in_and_get(nil, :members) }
-          it { should respond_with(403) }
-        end
-
-        context 'non_creator' do
-          before { sign_in_and_get(@non_creator, :members) }
-          after { sign_out @non_creator }
-          it { should respond_with(403) }
-        end
-
-        context 'lister' do
-          before { sign_in_and_get(@lister, :members) }
-          after { sign_out @lister }
-          it { should respond_with(403) }
-        end
-      end
+      [
+        {
+          user: nil,
+          action: :members,
+          response: 403
+        },
+        {
+          user: '@creator',
+          action: :members,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :members,
+          response: 403
+        },
+        {
+          user: '@lister',
+          action: :members,
+          response: 403
+        },
+        {
+          user: '@admin',
+          action: :members,
+          response: :success
+        }
+      ].each { |x| test_request_for_user(x) }
     end
 
     context 'closed list' do
@@ -309,47 +301,34 @@ describe ListsController, :list_helper, type: :controller do
         expect(List).to receive(:find).and_return(@closed_list)
       end
 
-      context 'can view' do
-
-        context 'anon' do
-          before { sign_in_and_get(nil, :members) }
-          it { should respond_with(:success) }
-        end
-
-        context 'creator' do
-          before { sign_in_and_get(@creator, :members) }
-          after { sign_out @creator }
-          it { should respond_with(:success) }
-        end
-
-        context 'non_creator' do
-          before { sign_in_and_get(@non_creator, :members) }
-          after { sign_out @non_creator }
-          it { should respond_with(:success) }
-        end
-
-        context 'lister' do
-          before { sign_in_and_get(@lister, :members) }
-          after { sign_out @lister }
-          it { should respond_with(:success) }
-        end
-
-
-        context 'admin' do
-          before { sign_in_and_get(@admin, :members) }
-          after { sign_out @admin }
-          it { should respond_with(:success) }
-        end
-      end
-
-      context 'can NOT view' do
-      end
+      [
+        {
+          user: nil,
+          action: :members,
+          response: :success
+        },
+        {
+          user: '@creator',
+          action: :members,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :members,
+          response: :success
+        },
+        {
+          user: '@lister',
+          action: :members,
+          response: :success
+        },
+        {
+          user: '@admin',
+          action: :members,
+          response: :success
+        }
+      ].each { |x| test_request_for_user(x) }
     end
-    # context 'anon user' do
-    # context 'user - creator'
-    # context 'user - non-creator'
-    # context 'lister'
-    # context 'admin'
   end
 
   describe "#set_permisions" do
