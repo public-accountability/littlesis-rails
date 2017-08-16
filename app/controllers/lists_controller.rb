@@ -1,6 +1,8 @@
 class ListsController < ApplicationController
   before_filter :authenticate_user!, except: [:index, :show, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
   before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
+  before_action :set_permissions, only: [:members]
+  before_action ->{ check_access(:viewable) }, only: [:members]
 
   def self.get_lists(page)
     List
@@ -128,6 +130,7 @@ class ListsController < ApplicationController
   def members
     @table = ListDatatable.new(@list)
     @table.generate_data
+    
     @editable = (current_user and current_user.has_legacy_permission('lister'))
     @admin = (current_user and current_user.has_legacy_permission('admin'))
   end
@@ -275,6 +278,10 @@ class ListsController < ApplicationController
       @permissions = current_user ?
                        current_user.permissions.list_permissions(@list) :
                        UserPermissions::Permissions.anon_list_permissions(@list)
+    end
+
+    def check_access(permission)
+      raise Exceptions::PermissionError unless @permissions[permission]
     end
 end
 
