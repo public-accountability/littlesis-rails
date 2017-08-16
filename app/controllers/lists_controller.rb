@@ -1,8 +1,8 @@
 class ListsController < ApplicationController
   before_filter :authenticate_user!, except: [:index, :show, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
   before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
-  before_action :set_permissions, only: [:members]
-  before_action ->{ check_access(:viewable) }, only: [:members]
+  before_action :set_permissions, only: [:members, :interlocks, :giving, :funding, :references]
+  before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references]
 
   def self.get_lists(page)
     List
@@ -184,21 +184,7 @@ class ListsController < ApplicationController
   end
 
   def interlocks
-    # get people in the list
-    entity_ids = @list.entities.people.map(&:id)
-
-    # get entities related by position or membership
-    select = "e.*, COUNT(DISTINCT r.entity1_id) num, GROUP_CONCAT(DISTINCT r.entity1_id) degree1_ids, GROUP_CONCAT(DISTINCT ed.name) types"
-    from = "relationship r LEFT JOIN entity e ON (e.id = r.entity2_id) LEFT JOIN extension_record er ON (er.entity_id = e.id) LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)"
-    where = "r.entity1_id IN (#{entity_ids.join(',')}) AND r.category_id IN (#{Relationship::POSITION_CATEGORY}, #{Relationship::MEMBERSHIP_CATEGORY}) AND r.is_deleted = 0"
-    sql = "SELECT #{select} FROM #{from} WHERE #{where} GROUP BY r.entity2_id ORDER BY num DESC"
-    db = ActiveRecord::Base.connection
-    orgs = db.select_all(sql).to_hash
-
-    # filter entities by type
-    @companies = orgs.select { |org| org['types'].split(',').include?('Business') }
-    @govt_bodies = orgs.select { |org| org['types'].split(',').include?('GovernmentBody') }
-    @others = orgs.select { |org| (org['types'].split(',') & ['Business', 'GovernmentBody']).empty? }
+    interlocks_query
   end
 
   def companies
@@ -253,7 +239,6 @@ class ListsController < ApplicationController
     @versions = Kaminari.paginate_array(@list.versions.reverse).page(params[:page]).per(5)
     @all_entities = ListEntity.unscoped.where(list_id: @list.id).order(id: :desc).page(params[:page]).per(10)
   end
-  
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -264,6 +249,24 @@ class ListsController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def list_params
       params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :is_private, :custom_field_name, :short_description)
+    end
+
+    def interlocks_query
+      # get people in the list
+      entity_ids = @list.entities.people.map(&:id)
+
+      # get entities related by position or membership
+      select = "e.*, COUNT(DISTINCT r.entity1_id) num, GROUP_CONCAT(DISTINCT r.entity1_id) degree1_ids, GROUP_CONCAT(DISTINCT ed.name) types"
+      from = "relationship r LEFT JOIN entity e ON (e.id = r.entity2_id) LEFT JOIN extension_record er ON (er.entity_id = e.id) LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)"
+      where = "r.entity1_id IN (#{entity_ids.join(',')}) AND r.category_id IN (#{Relationship::POSITION_CATEGORY}, #{Relationship::MEMBERSHIP_CATEGORY}) AND r.is_deleted = 0"
+      sql = "SELECT #{select} FROM #{from} WHERE #{where} GROUP BY r.entity2_id ORDER BY num DESC"
+      db = ActiveRecord::Base.connection
+      orgs = db.select_all(sql).to_hash
+
+      # filter entities by type
+      @companies = orgs.select { |org| org['types'].split(',').include?('Business') }
+      @govt_bodies = orgs.select { |org| org['types'].split(',').include?('GovernmentBody') }
+      @others = orgs.select { |org| (org['types'].split(',') & ['Business', 'GovernmentBody']).empty? }
     end
 
     def interlocks_results(options)

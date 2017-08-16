@@ -211,15 +211,20 @@ describe ListsController, :list_helper, type: :controller do
     end
   end
 
-  describe 'GET members' do
+  describe 'List access controls' do
     before(:all) do
       @creator = create_basic_user
       @non_creator = create_really_basic_user
       @lister = create_basic_user
       @admin = create_admin_user
-      @open_list = build(:open_list, creator_user_id: @creator.id)
-      @closed_list = build(:closed_list, creator_user_id: @creator.id)
-      @private_list = build(:private_list, creator_user_id: @creator.id)
+      @open_list = create(:open_list, creator_user_id: @creator.id)
+      @closed_list = create(:closed_list, creator_user_id: @creator.id)
+      @private_list = create(:private_list, creator_user_id: @creator.id)
+    end
+
+    before do
+      allow(controller).to receive(:interlocks_query)
+      allow(controller).to receive(:interlocks_results)
     end
 
     context 'open list' do
@@ -230,6 +235,7 @@ describe ListsController, :list_helper, type: :controller do
       end
 
       [
+        # members action
         {
           user: nil,
           action: :members,
@@ -253,6 +259,110 @@ describe ListsController, :list_helper, type: :controller do
         {
           user: '@admin',
           action: :members,
+          response: :success
+        },
+        # interlocks action
+        {
+          user: nil,
+          action: :interlocks,
+          response: :success
+        },
+        {
+          user: '@creator',
+          action: :interlocks,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :interlocks,
+          response: :success
+        },
+        {
+          user: '@lister',
+          action: :interlocks,
+          response: :success
+        },
+        {
+          user: '@admin',
+          action: :interlocks,
+          response: :success
+        },
+        # giving action
+        {
+          user: nil,
+          action: :giving,
+          response: :success
+        },
+        {
+          user: '@creator',
+          action: :giving,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :giving,
+          response: :success
+        },
+        {
+          user: '@lister',
+          action: :giving,
+          response: :success
+        },
+        {
+          user: '@admin',
+          action: :giving,
+          response: :success
+        },
+        # funding action
+        {
+          user: nil,
+          action: :funding,
+          response: :success
+        },
+        {
+          user: '@creator',
+          action: :funding,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :funding,
+          response: :success
+        },
+        {
+          user: '@lister',
+          action: :funding,
+          response: :success
+        },
+        {
+          user: '@admin',
+          action: :funding,
+          response: :success
+        },
+        # references action
+        {
+          user: nil,
+          action: :references,
+          response: :success
+        },
+        {
+          user: '@creator',
+          action: :references,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :references,
+          response: :success
+        },
+        {
+          user: '@lister',
+          action: :references,
+          response: :success
+        },
+        {
+          user: '@admin',
+          action: :references,
           response: :success
         }
       ].each { |x| test_request_for_user(x) }
@@ -266,6 +376,7 @@ describe ListsController, :list_helper, type: :controller do
       end
 
       [
+        # members action
         {
           user: nil,
           action: :members,
@@ -289,6 +400,110 @@ describe ListsController, :list_helper, type: :controller do
         {
           user: '@admin',
           action: :members,
+          response: :success
+        },
+        # interlocks action
+        {
+          user: nil,
+          action: :interlocks,
+          response: 403
+        },
+        {
+          user: '@creator',
+          action: :interlocks,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :interlocks,
+          response: 403
+        },
+        {
+          user: '@lister',
+          action: :interlocks,
+          response: 403
+        },
+        {
+          user: '@admin',
+          action: :interlocks,
+          response: :success
+        },
+        # giving action
+        {
+          user: nil,
+          action: :giving,
+          response: 403
+        },
+        {
+          user: '@creator',
+          action: :giving,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :giving,
+          response: 403
+        },
+        {
+          user: '@lister',
+          action: :giving,
+          response: 403
+        },
+        {
+          user: '@admin',
+          action: :giving,
+          response: :success
+        },
+        # funding action
+        {
+          user: nil,
+          action: :funding,
+          response: 403
+        },
+        {
+          user: '@creator',
+          action: :funding,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :funding,
+          response: 403
+        },
+        {
+          user: '@lister',
+          action: :funding,
+          response: 403
+        },
+        {
+          user: '@admin',
+          action: :giving,
+          response: :success
+        },
+        # references action
+        {
+          user: nil,
+          action: :references,
+          response: 403
+        },
+        {
+          user: '@creator',
+          action: :references,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :references,
+          response: 403
+        },
+        {
+          user: '@lister',
+          action: :references,
+          response: 403
+        },
+        {
+          user: '@admin',
+          action: :giving,
           response: :success
         }
       ].each { |x| test_request_for_user(x) }
@@ -325,6 +540,110 @@ describe ListsController, :list_helper, type: :controller do
         {
           user: '@admin',
           action: :members,
+          response: :success
+        },
+        # interlocks action
+        {
+          user: nil,
+          action: :interlocks,
+          response: :success
+        },
+        {
+          user: '@creator',
+          action: :interlocks,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :interlocks,
+          response: :success
+        },
+        {
+          user: '@lister',
+          action: :interlocks,
+          response: :success
+        },
+        {
+          user: '@admin',
+          action: :interlocks,
+          response: :success
+        },
+        # giving action
+        {
+          user: nil,
+          action: :giving,
+          response: :success
+        },
+        {
+          user: '@creator',
+          action: :giving,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :giving,
+          response: :success
+        },
+        {
+          user: '@lister',
+          action: :giving,
+          response: :success
+        },
+        {
+          user: '@admin',
+          action: :giving,
+          response: :success
+        },
+        # funding action
+        {
+          user: nil,
+          action: :funding,
+          response: :success
+        },
+        {
+          user: '@creator',
+          action: :funding,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :funding,
+          response: :success
+        },
+        {
+          user: '@lister',
+          action: :funding,
+          response: :success
+        },
+        {
+          user: '@admin',
+          action: :funding,
+          response: :success
+        },
+        # references action
+        {
+          user: nil,
+          action: :references,
+          response: :success
+        },
+        {
+          user: '@creator',
+          action: :references,
+          response: :success
+        },
+        {
+          user: '@non_creator',
+          action: :references,
+          response: :success
+        },
+        {
+          user: '@lister',
+          action: :references,
+          response: :success
+        },
+        {
+          user: '@admin',
+          action: :references,
           response: :success
         }
       ].each { |x| test_request_for_user(x) }
