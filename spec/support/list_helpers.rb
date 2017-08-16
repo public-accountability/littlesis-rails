@@ -2,7 +2,13 @@ module ListHelpersForExampleGroups
   def test_request_for_user(x)
     it "is #{x[:response]} for #{x[:action]} by #{x[:user]}" do
       sign_in instance_variable_get(x[:user]) if x[:user].present?
-      get x[:action], id: '123'
+      if x[:action] == :update
+        patch x[:action], { id: '123', list: {name: 'list name'} }
+      elsif x[:action] == :destroy
+        delete x[:action], id: '123'
+      else
+        get x[:action], id: '123'
+      end
       expect(response).to have_http_status(x[:response])
       sign_out instance_variable_get(x[:user]) if x[:user].present?
     end

@@ -1,8 +1,10 @@
 class ListsController < ApplicationController
-  before_filter :authenticate_user!, except: [:index, :show, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
+  before_filter :authenticate_user!, except: [:index, :show, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :edit, :update, :destroy]
   before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
-  before_action :set_permissions, only: [:members, :interlocks, :giving, :funding, :references]
-  before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references]
+  before_action :set_permissions, only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy]
+  before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references, :edit]
+  before_action -> { check_access(:editable) }, only: [:edit, :update]
+  before_action -> { check_access(:configurable) }, only: [:destroy]
 
   def self.get_lists(page)
     List
@@ -46,7 +48,7 @@ class ListsController < ApplicationController
 
   # GET /lists/1/edit
   def edit
-    check_permission 'admin' if @list.is_admin || @list.is_network
+    #check_permission 'admin' if @list.is_admin || @list.is_network
   end
 
   # POST /lists
@@ -80,9 +82,16 @@ class ListsController < ApplicationController
   end
 
   # DELETE /lists/1
+  # def destroy
+  #   @list.destroy
+  #   redirect_to lists_url, notice: 'List was successfully destroyed.'
+  # end
+
   def destroy
-    @list.destroy
-    redirect_to lists_url, notice: 'List was successfully destroyed.'
+    #check_permission 'admin'
+    
+    @list.soft_delete
+    redirect_to lists_path, notice: 'List was successfully destroyed.'
   end
 
   def relationships
@@ -157,16 +166,16 @@ class ListsController < ApplicationController
     end
   end
 
+  def clear_cache
+    @list.clear_cache(request.host)
+    render json: { status: 'success' }
+  end
+
   def remove_entity
     check_permission 'admin'
     ListEntity.find(params[:list_entity_id]).destroy
     @list.clear_cache
     redirect_to members_list_path(@list)
-  end
-
-  def clear_cache
-    @list.clear_cache(request.host)
-    render json: { status: 'success' }
   end
 
   def add_entity
@@ -177,11 +186,7 @@ class ListsController < ApplicationController
     redirect_to members_list_path(@list)
   end
 
-  def delete
-    check_permission 'admin'
-    @list.soft_delete
-    redirect_to lists_path
-  end
+  
 
   def interlocks
     interlocks_query

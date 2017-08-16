@@ -4,6 +4,8 @@ describe ListsController, :list_helper, type: :controller do
   before(:all) { DatabaseCleaner.start }
   after(:all) { DatabaseCleaner.clean }
 
+  it { should route(:delete, '/lists/1').to(action: :destroy, id: 1) }
+
   describe 'GET /lists' do
     login_user
 
@@ -145,37 +147,6 @@ describe ListsController, :list_helper, type: :controller do
     it { should redirect_to(action: :members) }
   end
 
-  describe 'edit' do
-    login_user
-
-    it 'calls check_permission when list is admin' do
-      expect(List).to receive(:find).and_return(build(:list, is_admin: true))
-      expect(controller).to receive(:check_permission).with('admin')
-      get :edit, id: 1
-    end
-
-    it 'calls check_permission when list is network' do
-      expect(List).to receive(:find).and_return(build(:list, is_network: true))
-      expect(controller).to receive(:check_permission).with('admin')
-      get :edit, id: 1
-    end
-
-    it 'does not call check_permission if list is not admin or network' do
-      expect(List).to receive(:find).and_return(build(:list))
-      expect(controller).not_to receive(:check_permission).with('admin')
-      get :edit, id: 1
-    end
-
-    describe 'request' do
-      before do
-        expect(List).to receive(:find).and_return(build(:list))
-        get :edit, id: 1
-      end
-      it { should render_template :edit }
-      it { should respond_with :success }
-    end
-  end
-
   describe 'remove_entity' do
     login_admin
     before(:all) do
@@ -236,135 +207,53 @@ describe ListsController, :list_helper, type: :controller do
 
       [
         # members action
-        {
-          user: nil,
-          action: :members,
-          response: :success
-        },
-        {
-          user: '@creator',
-          action: :members,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :members,
-          response: :success
-        },
-        {
-          user: '@lister',
-          action: :members,
-          response: :success
-        },
-        {
-          user: '@admin',
-          action: :members,
-          response: :success
-        },
+        { user: nil, action: :members, response: :success },
+        { user: '@creator', action: :members, response: :success },
+        { user: '@non_creator', action: :members, response: :success },
+        { user: '@lister', action: :members, response: :success },
+        { user: '@admin', action: :members, response: :success },
         # interlocks action
-        {
-          user: nil,
-          action: :interlocks,
-          response: :success
-        },
-        {
-          user: '@creator',
-          action: :interlocks,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :interlocks,
-          response: :success
-        },
-        {
-          user: '@lister',
-          action: :interlocks,
-          response: :success
-        },
-        {
-          user: '@admin',
-          action: :interlocks,
-          response: :success
-        },
+        { user: nil, action: :interlocks, response: :success },
+        { user: '@creator', action: :interlocks, response: :success },
+        { user: '@non_creator', action: :interlocks, response: :success },
+        { user: '@lister', action: :interlocks, response: :success },
+        { user: '@admin', action: :interlocks, response: :success },
         # giving action
-        {
-          user: nil,
-          action: :giving,
-          response: :success
-        },
-        {
-          user: '@creator',
-          action: :giving,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :giving,
-          response: :success
-        },
-        {
-          user: '@lister',
-          action: :giving,
-          response: :success
-        },
-        {
-          user: '@admin',
-          action: :giving,
-          response: :success
-        },
+        { user: nil, action: :giving, response: :success },
+        { user: '@creator', action: :giving, response: :success },
+        { user: '@non_creator', action: :giving, response: :success },
+        { user: '@lister', action: :giving, response: :success },
+        { user: '@admin', action: :giving, response: :success },
         # funding action
-        {
-          user: nil,
-          action: :funding,
-          response: :success
-        },
-        {
-          user: '@creator',
-          action: :funding,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :funding,
-          response: :success
-        },
-        {
-          user: '@lister',
-          action: :funding,
-          response: :success
-        },
-        {
-          user: '@admin',
-          action: :funding,
-          response: :success
-        },
+        { user: nil, action: :funding, response: :success },
+        { user: '@creator', action: :funding, response: :success },
+        { user: '@non_creator', action: :funding, response: :success },
+        { user: '@lister', action: :funding, response: :success },
+        { user: '@admin', action: :funding, response: :success },
         # references action
-        {
-          user: nil,
-          action: :references,
-          response: :success
-        },
-        {
-          user: '@creator',
-          action: :references,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :references,
-          response: :success
-        },
-        {
-          user: '@lister',
-          action: :references,
-          response: :success
-        },
-        {
-          user: '@admin',
-          action: :references,
-          response: :success
-        }
+        { user: nil, action: :references, response: :success },
+        { user: '@creator', action: :references, response: :success },
+        { user: '@non_creator', action: :references, response: :success },
+        { user: '@lister', action: :references, response: :success },
+        { user: '@admin', action: :references, response: :success },
+        # edit action
+        { user: nil, action: :edit, response: 403 },
+        { user: '@creator', action: :edit, response: :success },
+        { user: '@non_creator', action: :edit, response: 403 },
+        { user: '@admin', action: :edit, response: :success },
+        { user: '@lister', action: :edit,response: :success },
+        # update action
+        { user: nil, action: :update, response: 403 },
+        { user: '@creator', action: :update, response: 302 },
+        { user: '@non_creator', action: :update, response: 403 },
+        { user: '@admin', action: :update, response: 302 },
+        { user: '@lister', action: :update, response: 302 },
+        # destroy action
+        { user: nil, action: :destroy, response: 403 },
+        { user: '@creator', action: :destroy, response: 302 },
+        { user: '@non_creator', action: :destroy, response: 403 },
+        { user: '@admin', action: :destroy, response: 302 },
+        { user: '@lister', action: :destroy, response: 403 }
       ].each { |x| test_request_for_user(x) }
     end
 
@@ -377,135 +266,47 @@ describe ListsController, :list_helper, type: :controller do
 
       [
         # members action
-        {
-          user: nil,
-          action: :members,
-          response: 403
-        },
-        {
-          user: '@creator',
-          action: :members,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :members,
-          response: 403
-        },
-        {
-          user: '@lister',
-          action: :members,
-          response: 403
-        },
-        {
-          user: '@admin',
-          action: :members,
-          response: :success
-        },
+        { user: nil, action: :members, response: 403 },
+        { user: '@creator', action: :members, response: :success },
+        { user: '@non_creator', action: :members, response: 403 },
+        { user: '@lister', action: :members, response: 403 },
+        { user: '@admin', action: :members, response: :success },
         # interlocks action
-        {
-          user: nil,
-          action: :interlocks,
-          response: 403
-        },
-        {
-          user: '@creator',
-          action: :interlocks,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :interlocks,
-          response: 403
-        },
-        {
-          user: '@lister',
-          action: :interlocks,
-          response: 403
-        },
-        {
-          user: '@admin',
-          action: :interlocks,
-          response: :success
-        },
+        { user: nil, action: :interlocks, response: 403 },
+        { user: '@creator', action: :interlocks, response: :success },
+        { user: '@non_creator', action: :interlocks, response: 403 },
+        { user: '@lister', action: :interlocks, response: 403 },
+        { user: '@admin', action: :interlocks, response: :success },
         # giving action
-        {
-          user: nil,
-          action: :giving,
-          response: 403
-        },
-        {
-          user: '@creator',
-          action: :giving,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :giving,
-          response: 403
-        },
-        {
-          user: '@lister',
-          action: :giving,
-          response: 403
-        },
-        {
-          user: '@admin',
-          action: :giving,
-          response: :success
-        },
+        { user: nil, action: :giving, response: 403 },
+        { user: '@creator', action: :giving, response: :success },
+        { user: '@non_creator', action: :giving, response: 403 },
+        { user: '@lister', action: :giving, response: 403 },
+        { user: '@admin', action: :giving, response: :success },
         # funding action
-        {
-          user: nil,
-          action: :funding,
-          response: 403
-        },
-        {
-          user: '@creator',
-          action: :funding,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :funding,
-          response: 403
-        },
-        {
-          user: '@lister',
-          action: :funding,
-          response: 403
-        },
-        {
-          user: '@admin',
-          action: :giving,
-          response: :success
-        },
+        { user: nil, action: :funding, response: 403 },
+        { user: '@creator', action: :funding, response: :success },
+        { user: '@non_creator', action: :funding, response: 403 },
+        { user: '@lister', action: :funding, response: 403 },
+        { user: '@admin', action: :giving, response: :success },
         # references action
-        {
-          user: nil,
-          action: :references,
-          response: 403
-        },
-        {
-          user: '@creator',
-          action: :references,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :references,
-          response: 403
-        },
-        {
-          user: '@lister',
-          action: :references,
-          response: 403
-        },
-        {
-          user: '@admin',
-          action: :giving,
-          response: :success
-        }
+        { user: nil, action: :references, response: 403 },
+        { user: '@creator', action: :references, response: :success },
+        { user: '@non_creator', action: :references, response: 403 },
+        { user: '@lister', action: :references, response: 403 },
+        { user: '@admin', action: :giving, response: :success },
+        # update action
+        { user: nil, action: :update, response: 403 },
+        { user: '@creator', action: :update, response: 302 },
+        { user: '@non_creator', action: :update, response: 403 },
+        { user: '@admin', action: :update, response: 302 },
+        { user: '@lister', action: :update,response: 403 },
+        # destroy action
+        { user: nil, action: :destroy, response: 403 },
+        { user: '@creator', action: :destroy, response: 302 },
+        { user: '@non_creator', action: :destroy, response: 403 },
+        { user: '@admin', action: :destroy, response: 302 },
+        { user: '@lister', action: :destroy, response: 403 }
       ].each { |x| test_request_for_user(x) }
     end
 
@@ -517,135 +318,53 @@ describe ListsController, :list_helper, type: :controller do
       end
 
       [
-        {
-          user: nil,
-          action: :members,
-          response: :success
-        },
-        {
-          user: '@creator',
-          action: :members,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :members,
-          response: :success
-        },
-        {
-          user: '@lister',
-          action: :members,
-          response: :success
-        },
-        {
-          user: '@admin',
-          action: :members,
-          response: :success
-        },
+        { user: nil, action: :members, response: :success },
+        { user: '@creator', action: :members, response: :success },
+        { user: '@non_creator', action: :members, response: :success },
+        { user: '@lister', action: :members, response: :success },
+        { user: '@admin', action: :members, response: :success },
         # interlocks action
-        {
-          user: nil,
-          action: :interlocks,
-          response: :success
-        },
-        {
-          user: '@creator',
-          action: :interlocks,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :interlocks,
-          response: :success
-        },
-        {
-          user: '@lister',
-          action: :interlocks,
-          response: :success
-        },
-        {
-          user: '@admin',
-          action: :interlocks,
-          response: :success
-        },
+        { user: nil, action: :interlocks, response: :success },
+        { user: '@creator', action: :interlocks, response: :success },
+        { user: '@non_creator', action: :interlocks, response: :success },
+        { user: '@lister', action: :interlocks, response: :success },
+        { user: '@admin', action: :interlocks, response: :success },
         # giving action
-        {
-          user: nil,
-          action: :giving,
-          response: :success
-        },
-        {
-          user: '@creator',
-          action: :giving,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :giving,
-          response: :success
-        },
-        {
-          user: '@lister',
-          action: :giving,
-          response: :success
-        },
-        {
-          user: '@admin',
-          action: :giving,
-          response: :success
-        },
+        { user: nil, action: :giving, response: :success },
+        { user: '@creator', action: :giving, response: :success },
+        { user: '@non_creator', action: :giving, response: :success },
+        { user: '@lister', action: :giving, response: :success },
+        { user: '@admin', action: :giving, response: :success },
         # funding action
-        {
-          user: nil,
-          action: :funding,
-          response: :success
-        },
-        {
-          user: '@creator',
-          action: :funding,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :funding,
-          response: :success
-        },
-        {
-          user: '@lister',
-          action: :funding,
-          response: :success
-        },
-        {
-          user: '@admin',
-          action: :funding,
-          response: :success
-        },
+        { user: nil, action: :funding, response: :success },
+        { user: '@creator', action: :funding, response: :success },
+        { user: '@non_creator', action: :funding, response: :success },
+        { user: '@lister', action: :funding, response: :success },
+        { user: '@admin', action: :funding, response: :success },
         # references action
-        {
-          user: nil,
-          action: :references,
-          response: :success
-        },
-        {
-          user: '@creator',
-          action: :references,
-          response: :success
-        },
-        {
-          user: '@non_creator',
-          action: :references,
-          response: :success
-        },
-        {
-          user: '@lister',
-          action: :references,
-          response: :success
-        },
-        {
-          user: '@admin',
-          action: :references,
-          response: :success
-        }
+        { user: nil, action: :references, response: :success },
+        { user: '@creator', action: :references, response: :success },
+        { user: '@non_creator', action: :references, response: :success },
+        { user: '@lister', action: :references, response: :success },
+        { user: '@admin', action: :references, response: :success },
+        # edit action
+        { user: nil, action: :edit, response: 403 },
+        { user: '@creator', action: :edit, response: :success },
+        { user: '@non_creator', action: :edit, response: 403 },
+        { user: '@admin', action: :edit, response: :success },
+        { user: '@lister', action: :edit,response: 403 },
+        # update action
+        { user: nil, action: :update, response: 403 },
+        { user: '@creator', action: :update, response: 302 },
+        { user: '@non_creator', action: :update, response: 403 },
+        { user: '@admin', action: :update, response: 302 },
+        { user: '@lister', action: :update,response: 403 },
+        # destroy action
+        { user: nil, action: :destroy, response: 403 },
+        { user: '@creator', action: :destroy, response: 302 },
+        { user: '@non_creator', action: :destroy, response: 403 },
+        { user: '@admin', action: :destroy, response: 302 },
+        { user: '@lister', action: :destroy, response: 403 }
       ].each { |x| test_request_for_user(x) }
     end
   end

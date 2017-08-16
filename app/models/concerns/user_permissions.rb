@@ -51,7 +51,7 @@ module UserPermissions
 
     def initialize(user)
       @user = user
-      @sf_permissions = @user.sf_guard_user.sf_guard_permissions.pluck(:name).uniq
+      @sf_permissions = @user.sf_guard_user.permissions
     end
 
     def self.anon_list_permissions(list)
