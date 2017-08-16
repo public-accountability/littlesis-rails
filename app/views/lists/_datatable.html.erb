@@ -34,7 +34,7 @@
       <% if table.list.custom_field_name.present? %>
           <th><%= table.context_field_name %></th>
       <% end %>
-      <% if editable %>
+      <% if @permissions[:editable] %>
           <th></th>
       <% end %>
     </tr>
@@ -68,7 +68,7 @@
  }
 
  $(document).ready(function() {
-   <% if editable %>
+   <% if @permissions[:editable] %>
    var editor = new $.fn.dataTable.Editor( {
      ajax: '<%= update_entity_list_path(table.list) %>',
      table: "#datatable-table",
@@ -159,7 +159,7 @@
          className: 'context'
        },
        <% end %>
-       <% if editable %>
+       <% if @permissions[:editable] %>
        {
          data: 'actions',
          name: 'actions',
