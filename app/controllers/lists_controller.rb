@@ -1,10 +1,11 @@
 class ListsController < ApplicationController
-  before_filter :authenticate_user!, except: [:index, :show, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :edit, :update, :destroy]
+  before_filter :authenticate_user!, only: [:new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications]
   before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
-  before_action :set_permissions, only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy]
-  before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references, :edit]
-  before_action -> { check_access(:editable) }, only: [:edit, :update]
-  before_action -> { check_access(:configurable) }, only: [:destroy]
+  # permissions
+  before_action :set_permissions, only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity]
+  before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references]
+  before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity]
+  before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
   def self.get_lists(page)
     List
@@ -48,7 +49,6 @@ class ListsController < ApplicationController
 
   # GET /lists/1/edit
   def edit
-    #check_permission 'admin' if @list.is_admin || @list.is_network
   end
 
   # POST /lists
@@ -62,7 +62,7 @@ class ListsController < ApplicationController
       @list.errors[:base] << "A source URL is required"
       render action: 'new' and return
     end
-    
+
     if @list.save
       @list.add_reference(params[:ref][:source], params[:ref][:name])
       redirect_to @list, notice: 'List was successfully created.'
@@ -139,9 +139,6 @@ class ListsController < ApplicationController
   def members
     @table = ListDatatable.new(@list)
     @table.generate_data
-    
-    @editable = (current_user and current_user.has_legacy_permission('lister'))
-    @admin = (current_user and current_user.has_legacy_permission('admin'))
   end
 
   def create_map
@@ -149,8 +146,12 @@ class ListsController < ApplicationController
     redirect_to edit_map_url(map, wheel: true)
   end
 
+  def clear_cache
+    @list.clear_cache(request.host)
+    render json: { status: 'success' }
+  end
+
   def update_entity
-    check_permission 'lister'
     if data = params[:data]
       list_entity = ListEntity.find(data[:list_entity_id])
       list_entity.rank = data[:rank]
@@ -166,27 +167,20 @@ class ListsController < ApplicationController
     end
   end
 
-  def clear_cache
-    @list.clear_cache(request.host)
-    render json: { status: 'success' }
-  end
-
   def remove_entity
-    check_permission 'admin'
+    #check_permission 'admin'
     ListEntity.find(params[:list_entity_id]).destroy
     @list.clear_cache
     redirect_to members_list_path(@list)
   end
 
   def add_entity
-    check_permission 'lister'
+    #check_permission 'lister'
     le = ListEntity.find_or_create_by(list_id: @list.id, entity_id: params[:entity_id])
     @list.clear_cache(request.host)
     le.entity.clear_cache(request.host)
     redirect_to members_list_path(@list)
   end
-
-  
 
   def interlocks
     interlocks_query

@@ -6,6 +6,8 @@ module ListHelpersForExampleGroups
         patch x[:action], { id: '123', list: {name: 'list name'} }
       elsif x[:action] == :destroy
         delete x[:action], id: '123'
+      elsif [:add_entity, :remove_entity, :update_entity].include?(x[:action])
+        post x[:action], {id: '123', entity_id: '123', list_entity_id: '456' }
       else
         get x[:action], id: '123'
       end

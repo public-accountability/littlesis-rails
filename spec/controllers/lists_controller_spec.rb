@@ -201,6 +201,8 @@ describe ListsController, :list_helper, type: :controller do
     context 'open list' do
       before do
         allow(ListDatatable).to receive(:new).and_return(spy('table'))
+        allow(ListEntity).to receive(:find).and_return(spy('listentity'))
+        allow(ListEntity).to receive(:find_or_create_by).and_return(spy('find_or_create_by'))
         @request.env["devise.mapping"] = Devise.mappings[:user]
         expect(List).to receive(:find).and_return(@open_list)
       end
@@ -241,25 +243,46 @@ describe ListsController, :list_helper, type: :controller do
         { user: '@creator', action: :edit, response: :success },
         { user: '@non_creator', action: :edit, response: 403 },
         { user: '@admin', action: :edit, response: :success },
-        { user: '@lister', action: :edit,response: :success },
+        { user: '@lister', action: :edit,response: 403 },
         # update action
         { user: nil, action: :update, response: 403 },
         { user: '@creator', action: :update, response: 302 },
         { user: '@non_creator', action: :update, response: 403 },
         { user: '@admin', action: :update, response: 302 },
-        { user: '@lister', action: :update, response: 302 },
+        { user: '@lister', action: :update, response: 403 },
         # destroy action
         { user: nil, action: :destroy, response: 403 },
         { user: '@creator', action: :destroy, response: 302 },
         { user: '@non_creator', action: :destroy, response: 403 },
         { user: '@admin', action: :destroy, response: 302 },
-        { user: '@lister', action: :destroy, response: 403 }
+        { user: '@lister', action: :destroy, response: 403 },
+        # add
+        { user: nil, action: :add_entity, response: 403 },
+        { user: '@creator', action: :add_entity, response: 302 },
+        { user: '@non_creator', action: :add_entity, response: 403 },
+        { user: '@admin', action: :add_entity, response: 302 },
+        { user: '@lister', action: :add_entity, response: 302 },
+        # remove
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :remove_entity, response: 302 },
+        { user: '@non_creator', action: :remove_entity, response: 403 },
+        { user: '@admin', action: :remove_entity, response: 302 },
+        { user: '@lister', action: :remove_entity, response: 302 },
+        # update
+        # in #update_entity, 404 = successful call that falls thru
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :update_entity, response: 404 },
+        { user: '@non_creator', action: :update_entity, response: 403 },
+        { user: '@admin', action: :update_entity, response: 404 },
+        { user: '@lister', action: :update_entity, response: 404 }
       ].each { |x| test_request_for_user(x) }
     end
 
     context 'private list' do
       before do
         allow(ListDatatable).to receive(:new).and_return(spy('table'))
+        allow(ListEntity).to receive(:find).and_return(spy('listentity'))
+        allow(ListEntity).to receive(:find_or_create_by).and_return(spy('find_or_create_by'))
         @request.env["devise.mapping"] = Devise.mappings[:user]
         expect(List).to receive(:find).and_return(@private_list)
       end
@@ -306,13 +329,34 @@ describe ListsController, :list_helper, type: :controller do
         { user: '@creator', action: :destroy, response: 302 },
         { user: '@non_creator', action: :destroy, response: 403 },
         { user: '@admin', action: :destroy, response: 302 },
-        { user: '@lister', action: :destroy, response: 403 }
+        { user: '@lister', action: :destroy, response: 403 },
+        # add
+        { user: nil, action: :add_entity, response: 403 },
+        { user: '@creator', action: :add_entity, response: 302 },
+        { user: '@non_creator', action: :add_entity, response: 403 },
+        { user: '@admin', action: :add_entity, response: 302 },
+        { user: '@lister', action: :add_entity, response: 403 },
+        # remove
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :remove_entity, response: 302 },
+        { user: '@non_creator', action: :remove_entity, response: 403 },
+        { user: '@admin', action: :remove_entity, response: 302 },
+        { user: '@lister', action: :remove_entity, response: 403 },
+        # update
+        # in #update_entity, 404 = successful call that falls thru
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :update_entity, response: 404 },
+        { user: '@non_creator', action: :update_entity, response: 403 },
+        { user: '@admin', action: :update_entity, response: 404 },
+        { user: '@lister', action: :update_entity, response: 403 }
       ].each { |x| test_request_for_user(x) }
     end
 
     context 'closed list' do
       before do
         allow(ListDatatable).to receive(:new).and_return(spy('table'))
+        allow(ListEntity).to receive(:find).and_return(spy('listentity'))
+        allow(ListEntity).to receive(:find_or_create_by).and_return(spy('find_or_create_by'))
         @request.env["devise.mapping"] = Devise.mappings[:user]
         expect(List).to receive(:find).and_return(@closed_list)
       end
@@ -364,7 +408,26 @@ describe ListsController, :list_helper, type: :controller do
         { user: '@creator', action: :destroy, response: 302 },
         { user: '@non_creator', action: :destroy, response: 403 },
         { user: '@admin', action: :destroy, response: 302 },
-        { user: '@lister', action: :destroy, response: 403 }
+        { user: '@lister', action: :destroy, response: 403 },
+        # add
+        { user: nil, action: :add_entity, response: 403 },
+        { user: '@creator', action: :add_entity, response: 302 },
+        { user: '@non_creator', action: :add_entity, response: 403 },
+        { user: '@admin', action: :add_entity, response: 302 },
+        { user: '@lister', action: :add_entity, response: 403 },
+        # remove
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :remove_entity, response: 302 },
+        { user: '@non_creator', action: :remove_entity, response: 403 },
+        { user: '@admin', action: :remove_entity, response: 302 },
+        { user: '@lister', action: :remove_entity, response: 403 },
+        # update
+        # in #update_entity, 404 = successful call that falls thru
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :update_entity, response: 404 },
+        { user: '@non_creator', action: :update_entity, response: 403 },
+        { user: '@admin', action: :update_entity, response: 404 },
+        { user: '@lister', action: :update_entity, response: 403 }
       ].each { |x| test_request_for_user(x) }
     end
   end

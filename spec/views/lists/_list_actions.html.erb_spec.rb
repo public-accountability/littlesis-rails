@@ -26,8 +26,8 @@ describe 'partial: lists/list_actions', :type => :view do
       css 'div.list-actions'
     end
 
-    it 'has edit button' do
-      css 'a', text: 'edit'
+    it 'does not have edit button' do
+      not_css 'a', text: 'edit'
     end
 
     it 'has entity input' do
@@ -43,6 +43,10 @@ describe 'partial: lists/list_actions', :type => :view do
     before do
       assign(:permissions, { :editable => true, :configurable => true })
       render partial: 'lists/list_actions.html.erb', locals: { list: build(:list) }
+    end
+
+    it 'has edit button' do
+      css 'a', text: 'edit'
     end
 
     it 'has delete button' do
