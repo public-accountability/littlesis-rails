@@ -28,12 +28,23 @@
 
   <div class="row form-group">
       <div class="col-sm-10 col-md-8">
-    <%= f.label :description %>
+	  <%= f.label :description %>
 	  <%= f.text_area :description, class: "textarea_medium form-control", size: '6x8' %>
-	  </div>
+      </div>
   </div>
 
-
+  <div class="btn-group" role="group" aria-label="...">
+      <button type="button" class="btn btn-default" onclick="$('#radio_open').trigger('click')">Open</button>
+      <button type="button" class="btn btn-default" onclick="$('#radio_closed').trigger('click')">Closed</button>
+      <button type="button" class="btn btn-default" onclick="$('#radio_private').trigger('click')">Private</button>
+  </div>
+  
+  <div class="row">
+      <%= f.radio_button :access, 0, class: 'btn btn-default', id: 'radio_open', style: "display: none" %>
+      <%= f.radio_button :access, 1, class: 'btn btn-default', id: 'radio_closed', style: "display: none"  %>
+      <%= f.radio_button :access, 2, class: 'btn btn-default', id: 'radio_private', style: "display: none"  %>
+  </div>
+  
   <div class="row form-group">
       <div class="col-sm-8 col-md-6">
     <%= f.check_box :is_ranked %>
