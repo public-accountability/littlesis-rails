@@ -197,18 +197,18 @@ describe UserPermissions::Permissions do
       end
 
       before do
-        @closed_list = build(:list, access: List::ACCESS_PRIVATE, creator_user_id: @creator.id, is_private: true)
+        @private_list = build(:private_list, creator_user_id: @creator.id)
       end
 
       context "anon user" do
         it 'can not view, eidt or configure the list' do
-          expect(UserPermissions::Permissions.anon_list_permissions(@closed_list)).to eq all_false
+          expect(UserPermissions::Permissions.anon_list_permissions(@private_list)).to eq all_false
         end
       end
 
       context "logged-in creator" do
         it 'can view, edit, and configure the list' do
-          expect(@creator.permissions.list_permissions(@closed_list))
+          expect(@creator.permissions.list_permissions(@private_list))
             .to eq ({
                       viewable: true,
                       editable: true,
@@ -219,19 +219,19 @@ describe UserPermissions::Permissions do
 
       context "logged-in non-creator" do
         it 'cannot view, edit, or configure the list' do
-          expect(@non_creator.permissions.list_permissions(@closed_list)).to eq all_false
+          expect(@non_creator.permissions.list_permissions(@private_list)).to eq all_false
         end
       end
 
       context "lister" do
         it 'cannot view, edit, or configure the list' do
-          expect(@lister.permissions.list_permissions(@closed_list)).to eq all_false
+          expect(@lister.permissions.list_permissions(@private_list)).to eq all_false
         end
       end
 
       context "admin" do
         it "can view, edit, and configure" do
-          expect(@admin.permissions.list_permissions(@closed_list))
+          expect(@admin.permissions.list_permissions(@private_list))
             .to eq ({
                       viewable: true,
                       editable: true,
