@@ -55,6 +55,14 @@ describe NyDisclosure, type: :model do
       return e
     end
 
+    describe 'Dennis R McCoy' do
+      let(:dennis) { build_entity("Dennis R McCoy", :person) }
+
+      it 'returns correct search terms' do
+        expect(NyDisclosure.search_terms(dennis)).to eq '(Dennis R McCoy) | (Dennis Mccoy)'
+      end
+    end
+
     context 'searching for a person' do
       it 'Returns name if the name has no middle, suffix, or preface' do
         e = build_entity('Alice Coltrane', :person)
