@@ -12,16 +12,16 @@
   <% end %>
 
   <div class="row form-group">
-      <div class="col-sm-8 col-md-6">
-	  <%= f.label "Name*" %>
-	  <%= f.text_field :name, class: "form-control", placeholder: "5-100 characters, no colons" %>
-      </div>
+    <div class="col-sm-8 col-md-6">
+      <%= f.label "Name*" %>
+      <%= f.text_field :name, class: "form-control", placeholder: "5-100 characters, no colons" %>
+    </div>
   </div>
 
   <div class="row form-group">
-      <div class="col-sm-10 col-md-8">
-    <%= f.label :short_description %>
-    <%= f.text_field :short_description, class: "form-control" %>
+    <div class="col-sm-10 col-md-8">
+      <%= f.label :short_description %>
+      <%= f.text_field :short_description, class: "form-control" %>
     </div>
   </div>
 
@@ -33,18 +33,50 @@
       </div>
   </div>
 
-  <div class="btn-group" role="group" aria-label="...">
-      <button type="button" class="btn btn-default" onclick="$('#radio_open').trigger('click')">Open</button>
-      <button type="button" class="btn btn-default" onclick="$('#radio_closed').trigger('click')">Closed</button>
-      <button type="button" class="btn btn-default" onclick="$('#radio_private').trigger('click')">Private</button>
-  </div>
-  
+  <script>
+   function handleRadioClick(access){
+     console.log("access: " + access)
+     $("#" + access + "-radio").trigger('click');
+     $("#list-config-access-buttons button").removeClass('btn-primary');
+     $("#" + access + "-button").addClass('btn-primary');
+   }
+
+   $(function(){
+     switch (Number(<%= raw(@list.access) %>)) {
+       case 0:
+         handleRadioClick('open');
+         break;
+       case 1:
+         handleRadioClick('closed');
+         break;
+       case 2:
+         handleRadioClick('private');
+         break;
+       default:
+         throw 'Invalid access number';
+     }
+   })
+  </script>
+
   <div class="row">
-      <%= f.radio_button :access, 0, class: 'btn btn-default', id: 'radio_open', style: "display: none" %>
-      <%= f.radio_button :access, 1, class: 'btn btn-default', id: 'radio_closed', style: "display: none"  %>
-      <%= f.radio_button :access, 2, class: 'btn btn-default', id: 'radio_private', style: "display: none"  %>
+    <div class="col-sm-10 col-md-8">
+      <%= label_tag 'List settings' %> <br/>
+	  
+      <div id="list-config-access-buttons" class="btn-group m-bottom-1em" role="group" aria-label="...">
+        <button type="button" id="open-button" class="btn btn-default" onclick="handleRadioClick('open')">Open</button>
+        <button type="button" id="closed-button" class="btn btn-default" onclick="handleRadioClick('closed')">Closed</button>
+        <button type="button" id="private-button" class="btn btn-default" onclick="handleRadioClick('private')">Private</button>
+      </div>
+    </div>
+
+    <%= f.radio_button :access, 0, class: 'btn btn-default', id: 'open-radio', style: "display: none" %>
+    <%= f.radio_button :access, 1, class: 'btn btn-default', id: 'closed-radio', style: "display: none"  %>
+    <%= f.radio_button :access, 2, class: 'btn btn-default', id: 'private-radio', style: "display: none"  %>
   </div>
   
+  
+  
+
   <div class="row form-group">
       <div class="col-sm-8 col-md-6">
     <%= f.check_box :is_ranked %>
@@ -64,14 +96,14 @@
   <% if current_user.has_legacy_permission("admin") %>
       <div class="row form-group">
 	  <div class="col-sm-8 col-md-6">
-	<%= f.check_box :is_admin %>  
+	<%= f.check_box :is_admin %>
 	      <%= f.label "Admin only" %>
 	      </div>
     </div>
 
     <div class="row form-group">
 	<div class="col-sm-8 col-md-6">
-	<%= f.check_box :is_featured %>  
+	<%= f.check_box :is_featured %>
 	    <%= f.label :featured %>
 	    </div>
     </div>
