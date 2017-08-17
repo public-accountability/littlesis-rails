@@ -23,7 +23,7 @@ class NyFiler < ActiveRecord::Base
   end
 
   def self.search_pacs(name)
-    search_by_name_and_committee_type(name, ["'2'", "'9'"])
+    search_by_name_and_committee_type(name, ["'2'", "'9'", "'8'"])
   end
     
   # str, [ str ] => <ThinkingSphinx::Search>
