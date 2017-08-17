@@ -444,8 +444,10 @@ class Relationship < ActiveRecord::Base
   def update_ny_donation_info
     self.attributes = { amount: ny_disclosures.sum(:amount1), filings: ny_disclosures.count }
     self.attributes = { description1: "NYS Campaign Contribution" } if description1.blank?
+    self.attributes = { start_date: ny_transaction_date('asc'), end_date: ny_transaction_date('desc') }
     self
   end
+
   
 
   ########################################
@@ -507,5 +509,10 @@ class Relationship < ActiveRecord::Base
   def update_entity_links
     entity&.update_link_count
     related&.update_link_count
+  end
+
+  def ny_transaction_date(sort)
+    raise Exception unless ['asc', 'desc'].include?(sort)
+    ny_disclosures.select('schedule_transaction_date').order("schedule_transaction_date #{sort}").limit(1)[0].schedule_transaction_date
   end
 end
