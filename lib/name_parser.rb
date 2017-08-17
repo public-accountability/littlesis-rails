@@ -62,18 +62,23 @@ class NameParser
     @raw = str
 
     prefix = first = middle = last = suffice = nick = nil
-
-    str = str.titleize
-
+    
+    # Ziggy & Austin on Thu 17 Aug 2017:
+    # replaced this call with the str.split.capitalize below
+    # in order to fix incorrect McLastNames
+    #str = str.titleize
+    
     str = str.gsub('.', '').strip       # trim and remove periods
              .gsub(/\s{2,}/, ' ')       # remove extra spaces
              .gsub(/ \([^\)]+\)/, '')   # remove anything in parentheses at the end
     
+    str = str.split(' ').map(&:capitalize).join(' ')
+
     # get prefixes
     NameParser::PREFIXES.each do |pre|
       new = str.gsub(/^#{pre} /i, '')
-      unless str == new
-        unless NameParser::COMMON_PREFIXES.map(&:downcase).include?(pre.downcase)
+      unless str == new # the case in which the string doesn't contain the prefix under consideration
+        unless NameParser::COMMON_PREFIXES.map(&:downcase).include?(pre.downcase) # the case in which the prefix is a known common prefixg
           prefix = prefix.to_s + ' ' + pre + ' '
         end
 
