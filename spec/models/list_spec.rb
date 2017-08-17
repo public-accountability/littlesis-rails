@@ -102,26 +102,34 @@ describe List do
 
   describe '#user_can_access?' do
     it 'returns true if no user is provided and is a public list' do
-      l = build(:list, is_private: false)
+      l = build(:open_list)
       expect(l.user_can_access?).to be true
     end
 
     it 'returns true if user is provided and is a public list' do
-      l = build(:list, is_private: false)
+      l = build(:open_list)
       expect(l.user_can_access?(build(:user))).to be true
       expect(l.user_can_access?(123)).to be true
     end
 
     it 'returns false for private lists' do
-      l = build(:list, is_private: true, creator_user_id: rand(1000))
+      l = build(:list, access: List::ACCESS_PRIVATE, creator_user_id: 9999)
       expect(l.user_can_access?).to be false
-      expect(l.user_can_access?(build(:user))).to be false
+      expect(l.user_can_access?(create_basic_user)).to be false
     end
 
     it 'returns true for private lists if user is owner of the list' do
-      user = build(:user_with_id)
-      user2 = build(:user, id: (user.id + 1))
-      l = build(:list, is_private: true, creator_user_id: user.id)
+      user = create_basic_user
+      user2 = create_basic_user
+      expect(user).to receive(:permissions)
+                       .and_return(double(:list_permissions => {:viewable => true}))
+
+      expect(user2).to receive(:permissions)
+                       .and_return(double(:list_permissions => {:viewable => false}))
+      l = build(:list, access: List::ACCESS_PRIVATE, creator_user_id: user.id)
+      
+      
+
       expect(l.user_can_access?(user)).to be true
       expect(l.user_can_access?(user.id)).to be true
       expect(l.user_can_access?(user2)).to be false

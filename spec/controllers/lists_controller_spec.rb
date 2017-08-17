@@ -12,8 +12,8 @@ describe ListsController, :list_helper, type: :controller do
     before do
       new_list = create(:list)
       new_list2 = create(:list, name: 'my interesting list')
-      new_list3 = create(:list, name: 'someone else private list', is_private: true, creator_user_id: controller.current_user.id + 1)
-      new_list4 = create(:list, name: 'current user private list', is_private: true, creator_user_id: controller.current_user.id)
+      new_list3 = create(:list, name: 'someone else private list', access: List::ACCESS_PRIVATE, creator_user_id: controller.current_user.id + 1)
+      new_list4 = create(:list, name: 'current user private list', access: List::ACCESS_PRIVATE, creator_user_id: controller.current_user.id)
       @inc = create(:mega_corp_inc)
       ListEntity.find_or_create_by(list_id: new_list.id, entity_id: @inc.id)
       ListEntity.find_or_create_by(list_id: new_list2.id, entity_id: @inc.id)
@@ -43,8 +43,8 @@ describe ListsController, :list_helper, type: :controller do
 
   describe 'user not logged in' do
     before do
-      @new_list = create(:list, name: 'my interesting list', is_private: false, creator_user_id: 123)
-      @private_list = create(:list, name: 'someone else private list', is_private: true, creator_user_id: 123)
+      @new_list = create(:open_list, name: 'my interesting list', creator_user_id: 123)
+      @private_list = create(:list, name: 'someone else private list', access: List::ACCESS_PRIVATE, creator_user_id: 123)
       @inc = create(:mega_corp_inc)
       ListEntity.find_or_create_by(list_id: @new_list.id, entity_id: @inc.id)
       ListEntity.find_or_create_by(list_id: @private_list.id, entity_id: @inc.id)

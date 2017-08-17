@@ -22,7 +22,9 @@ class ListsController < ApplicationController
     lists = self.class.get_lists(params[:page])
 
     if current_user.present?
-      @lists = lists.where('ls_list.is_private = ? OR ls_list.creator_user_id = ?', false, current_user.id)
+      @lists = lists.where('ls_list.access <> ? OR ls_list.creator_user_id = ?',
+                           List::ACCESS_PRIVATE,
+                           current_user.id)
     else
       @lists = lists.public_scope
     end

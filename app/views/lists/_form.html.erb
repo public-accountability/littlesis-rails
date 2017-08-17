@@ -25,7 +25,6 @@
     </div>
   </div>
 
-
   <div class="row form-group">
       <div class="col-sm-10 col-md-8">
 	  <%= f.label :description %>
@@ -33,55 +32,7 @@
       </div>
   </div>
 
-  <script>
-   function handleRadioClick(access){
-     $("#" + access + "-radio").trigger('click');
-     $("#list-config-access-buttons button").removeClass('btn-primary');
-     $("#" + access + "-button").addClass('btn-primary');
-   }
-
-   $(function(){
-     switch (Number(<%= raw(@list.access) %>)) {
-       case 0:
-         handleRadioClick('open');
-         break;
-       case 1:
-         handleRadioClick('closed');
-         break;
-       case 2:
-         handleRadioClick('private');
-         break;
-       default:
-         throw 'Invalid access number';
-     }
-   })
-  </script>
-
-  <div class="row">
-    <div class="col-sm-10 col-md-8">
-      <%= label_tag 'Access level' %> <br/>
-	  
-      <div id="list-config-access-buttons" class="btn-group m-bottom-1em" role="group" aria-label="...">
-        <button type="button" id="open-button" class="btn btn-default" onclick="handleRadioClick('open')">Open</button>
-        <button type="button" id="closed-button" class="btn btn-default" onclick="handleRadioClick('closed')">Closed</button>
-        <button type="button" id="private-button" class="btn btn-default" onclick="handleRadioClick('private')">Private</button>
-      </div>
-    </div>
-
-    <%= f.radio_button :access, 0, class: 'btn btn-default', id: 'open-radio', style: "display: none" %>
-    <%= f.radio_button :access, 1, class: 'btn btn-default', id: 'closed-radio', style: "display: none"  %>
-    <%= f.radio_button :access, 2, class: 'btn btn-default', id: 'private-radio', style: "display: none"  %>
-  </div>
-  
-  
-  
-
-  <div class="row form-group">
-      <div class="col-sm-8 col-md-6">
-    <%= f.check_box :is_ranked %>
-	  <%= f.label :ranked %>
-	  </div>
-  </div>
+  <%= render 'settings',  f: f %>
 
   <div class="row form-group">
     <div class="col-sm-6 col-md-6">
@@ -90,21 +41,8 @@
     </div>
   </div>
 
-
-  <% if current_user.admin? %>
-    <div class="row">
-      <div class="col-sm-4 col-md-3 bg-info bottom-1em m-left-1em" style="border-radius: .3em;">
-        <h4>Admin Settings</h4>
-	<%= f.check_box :is_admin %>
-	<%= f.label "Admin only" %>
-        <br/>
-        <%= f.check_box :is_featured %>
-	<%= f.label :featured %>
-      </div>
-    </div>
-  <% end %>
+  <%= render 'settings_admin', f: f %>
   
-
   <div class="row top-1em bottom-1em">
     <div class="col-sm-8 col-md-6">
       <%= f.submit "Save", class: "btn btn-primary" %>
