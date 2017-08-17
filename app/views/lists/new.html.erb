@@ -26,27 +26,10 @@
         <%= f.text_area :description, class: "form-control"%>
     </div>
 
-    <div class="form-group">
-        <%= f.label(:is_ranked, "Ranked") %>
-        <%= f.check_box :is_ranked %>
-        <span style="padding-left: .8em;"><small>(are list members sorted by a rank?)</small></span>
-        
-        <br />
-
-        <%= f.label(:is_admin, "is admin") %>
-        <%= f.check_box :is_admin %>
-        
-        <br />
-
-        <%= f.label(:is_featured, "is featured") %>
-        <%= f.check_box :is_featured %>
-
-        <br />
-
-        <%= f.label(:is_private, "is private") %>
-        <%= f.check_box :is_private %>
+    <div class="m-tb-1em">
+      <%= render 'settings', f: f %>
     </div>
-
+    
      <%= fields_for :ref do |ref_fields|  %>
          <%=  link_to("/help/sources#q-appropriate", target: "_blank") do%>
              <p><em>Where is this information coming from?</em></p>
@@ -61,5 +44,10 @@
          </div>
      <% end %>
      <br />
+
+     <div class="m-tb-1em">
+       <%= render 'settings_admin', f: f %>
+     </div>
+    
     <%= f.submit "Add", class: "btn btn-primary" %>
 <% end %>

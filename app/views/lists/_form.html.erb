@@ -12,74 +12,42 @@
   <% end %>
 
   <div class="row form-group">
-      <div class="col-sm-8 col-md-6">
-	  <%= f.label "Name*" %>
-	  <%= f.text_field :name, class: "form-control", placeholder: "5-100 characters, no colons" %>
-      </div>
-  </div>
-
-  <div class="row form-group">
-      <div class="col-sm-10 col-md-8">
-    <%= f.label :short_description %>
-    <%= f.text_field :short_description, class: "form-control" %>
+    <div class="col-sm-8 col-md-6">
+      <%= f.label "Name*" %>
+      <%= f.text_field :name, class: "form-control", placeholder: "5-100 characters, no colons" %>
     </div>
   </div>
 
+  <div class="row form-group">
+    <div class="col-sm-10 col-md-8">
+      <%= f.label :short_description %>
+      <%= f.text_field :short_description, class: "form-control" %>
+    </div>
+  </div>
 
   <div class="row form-group">
       <div class="col-sm-10 col-md-8">
-    <%= f.label :description %>
+	  <%= f.label :description %>
 	  <%= f.text_area :description, class: "textarea_medium form-control", size: '6x8' %>
-	  </div>
-  </div>
-
-
-  <div class="row form-group">
-      <div class="col-sm-8 col-md-6">
-    <%= f.check_box :is_ranked %>
-	  <%= f.label :ranked %>
-	  </div>
-  </div>
-
-  <% if @list.creator_user_id == current_user.id %>
-    <div class="row form-group">
-      <div class="col-sm-8 col-md-6">
-        <%= f.check_box :is_private %>
-        <%= f.label :is_private %>
-      </div>
-    </div>
-  <% end %>
-
-  <% if current_user.has_legacy_permission("admin") %>
-      <div class="row form-group">
-	  <div class="col-sm-8 col-md-6">
-	<%= f.check_box :is_admin %>  
-	      <%= f.label "Admin only" %>
-	      </div>
-    </div>
-
-    <div class="row form-group">
-	<div class="col-sm-8 col-md-6">
-	<%= f.check_box :is_featured %>  
-	    <%= f.label :featured %>
-	    </div>
-    </div>
-  <% end %>
-
-  <div class="row form-group">
-      <div class="col-sm-6 col-md-6">
-    <%= f.label "Custom field name" %>
-	  <%= f.text_field :custom_field_name, class: "form-control", placeholder: "name of editable field providing context for each entity" %>
-	  </div>
-  </div>
-
-  <br />
-
-  <div class="row">
-      <div class="col-sm-8 col-md-6">
-	  <div class="actions">
-	      <%= f.submit "Save", class: "btn btn-primary" %>
-	  </div>
       </div>
   </div>
+
+  <%= render 'settings',  f: f %>
+
+  <div class="row form-group">
+    <div class="col-sm-6 col-md-6">
+      <%= f.label "Custom field name" %>
+      <%= f.text_field :custom_field_name, class: "form-control", placeholder: "name of editable field providing context for each entity" %>
+    </div>
+  </div>
+
+  <%= render 'settings_admin', f: f %>
+  
+  <div class="row top-1em bottom-1em">
+    <div class="col-sm-8 col-md-6">
+      <%= f.submit "Save", class: "btn btn-primary" %>
+      <%= link_to 'Cancel', members_list_path(@list), class: "btn btn-default" %>
+    </div>
+  </div>
+  
 <% end %>

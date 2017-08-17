@@ -1,6 +1,10 @@
 class List < ActiveRecord::Base
   self.table_name = "ls_list"
 
+  ACCESS_OPEN = 0
+  ACCESS_CLOSED = 1
+  ACCESS_PRIVATE = 2
+
   include SoftDelete
   include Referenceable
 
@@ -32,8 +36,8 @@ class List < ActiveRecord::Base
   validates_presence_of :name
   validates :short_description, length: { maximum: 255 }
 
-  scope :public_scope, -> { where(is_private: false) }
-  scope :private_scope, -> { where(is_private: true) }
+  scope :public_scope, -> { where("access <> #{List::ACCESS_PRIVATE}") }
+  scope :private_scope, -> { where(access: List::ACCESS_PRIVATE) }
 
   def destroy
     soft_delete
@@ -44,7 +48,11 @@ class List < ActiveRecord::Base
   end
 
   def network?
-  	@is_network
+    @is_network
+  end
+
+  def restricted?
+    is_admin || access == List::ACCESS_PRIVATE || is_network
   end
 
   def name_to_legacy_slug
@@ -57,12 +65,13 @@ class List < ActiveRecord::Base
     url
   end
 
-  def user_can_access?(user = nil)
-    return true unless is_private?
-    user_id = user if user.is_a? Integer
-    user_id = user.id if user.is_a? User
-    return false unless user_id.present?
-    creator_user_id == user_id
+  def user_can_access?(user_or_id = nil)
+    return true unless access == List::ACCESS_PRIVATE
+    user = nil if user_or_id.nil?
+    user = User.find_by_id(user_or_id) if user_or_id.is_a? Integer
+    user = user_or_id if user_or_id.is_a? User
+    return false if user.nil?
+    user.permissions.list_permissions(self)[:viewable]
   end
 
   def legacy_network_url

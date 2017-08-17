@@ -55,3 +55,7 @@ Passengerfile.json
 passenger*.pid
 passenger*.pid.lock
 log/*.lock
+
+# rvm config files
+.ruby-gemset
+.ruby-version

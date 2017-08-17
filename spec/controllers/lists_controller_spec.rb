@@ -1,8 +1,10 @@
 require 'rails_helper'
 
-describe ListsController, type: :controller do
+describe ListsController, :list_helper, type: :controller do
   before(:all) { DatabaseCleaner.start }
   after(:all) { DatabaseCleaner.clean }
+
+  it { should route(:delete, '/lists/1').to(action: :destroy, id: 1) }
 
   describe 'GET /lists' do
     login_user
@@ -10,8 +12,8 @@ describe ListsController, type: :controller do
     before do
       new_list = create(:list)
       new_list2 = create(:list, name: 'my interesting list')
-      new_list3 = create(:list, name: 'someone else private list', is_private: true, creator_user_id: controller.current_user.id + 1)
-      new_list4 = create(:list, name: 'current user private list', is_private: true, creator_user_id: controller.current_user.id)
+      new_list3 = create(:list, name: 'someone else private list', access: List::ACCESS_PRIVATE, creator_user_id: controller.current_user.id + 1)
+      new_list4 = create(:list, name: 'current user private list', access: List::ACCESS_PRIVATE, creator_user_id: controller.current_user.id)
       @inc = create(:mega_corp_inc)
       ListEntity.find_or_create_by(list_id: new_list.id, entity_id: @inc.id)
       ListEntity.find_or_create_by(list_id: new_list2.id, entity_id: @inc.id)
@@ -41,8 +43,8 @@ describe ListsController, type: :controller do
 
   describe 'user not logged in' do
     before do
-      @new_list = create(:list, name: 'my interesting list', is_private: false, creator_user_id: 123)
-      @private_list = create(:list, name: 'someone else private list', is_private: true, creator_user_id: 123)
+      @new_list = create(:open_list, name: 'my interesting list', creator_user_id: 123)
+      @private_list = create(:list, name: 'someone else private list', access: List::ACCESS_PRIVATE, creator_user_id: 123)
       @inc = create(:mega_corp_inc)
       ListEntity.find_or_create_by(list_id: @new_list.id, entity_id: @inc.id)
       ListEntity.find_or_create_by(list_id: @private_list.id, entity_id: @inc.id)
@@ -145,37 +147,6 @@ describe ListsController, type: :controller do
     it { should redirect_to(action: :members) }
   end
 
-  describe 'edit' do
-    login_user
-
-    it 'calls check_permission when list is admin' do
-      expect(List).to receive(:find).and_return(build(:list, is_admin: true))
-      expect(controller).to receive(:check_permission).with('admin')
-      get :edit, id: 1
-    end
-
-    it 'calls check_permission when list is network' do
-      expect(List).to receive(:find).and_return(build(:list, is_network: true))
-      expect(controller).to receive(:check_permission).with('admin')
-      get :edit, id: 1
-    end
-
-    it 'does not call check_permission if list is not admin or network' do
-      expect(List).to receive(:find).and_return(build(:list))
-      expect(controller).not_to receive(:check_permission).with('admin')
-      get :edit, id: 1
-    end
-
-    describe 'request' do
-      before do
-        expect(List).to receive(:find).and_return(build(:list))
-        get :edit, id: 1
-      end
-      it { should render_template :edit }
-      it { should respond_with :success }
-    end
-  end
-
   describe 'remove_entity' do
     login_admin
     before(:all) do
@@ -209,6 +180,276 @@ describe ListsController, type: :controller do
       @post_remove_entity.call
       expect(response).to have_http_status(302)
     end
+  end
 
+  describe 'List access controls' do
+    before(:all) do
+      @creator = create_basic_user
+      @non_creator = create_really_basic_user
+      @lister = create_basic_user
+      @admin = create_admin_user
+      @open_list = create(:open_list, creator_user_id: @creator.id)
+      @closed_list = create(:closed_list, creator_user_id: @creator.id)
+      @private_list = create(:private_list, creator_user_id: @creator.id)
+    end
+
+    before do
+      allow(controller).to receive(:interlocks_query)
+      allow(controller).to receive(:interlocks_results)
+    end
+
+    context 'open list' do
+      before do
+        allow(ListDatatable).to receive(:new).and_return(spy('table'))
+        allow(ListEntity).to receive(:find).and_return(spy('listentity'))
+        allow(ListEntity).to receive(:find_or_create_by).and_return(spy('find_or_create_by'))
+        @request.env["devise.mapping"] = Devise.mappings[:user]
+        expect(List).to receive(:find).and_return(@open_list)
+      end
+
+      [
+        # members action
+        { user: nil, action: :members, response: :success },
+        { user: '@creator', action: :members, response: :success },
+        { user: '@non_creator', action: :members, response: :success },
+        { user: '@lister', action: :members, response: :success },
+        { user: '@admin', action: :members, response: :success },
+        # interlocks action
+        { user: nil, action: :interlocks, response: :success },
+        { user: '@creator', action: :interlocks, response: :success },
+        { user: '@non_creator', action: :interlocks, response: :success },
+        { user: '@lister', action: :interlocks, response: :success },
+        { user: '@admin', action: :interlocks, response: :success },
+        # giving action
+        { user: nil, action: :giving, response: :success },
+        { user: '@creator', action: :giving, response: :success },
+        { user: '@non_creator', action: :giving, response: :success },
+        { user: '@lister', action: :giving, response: :success },
+        { user: '@admin', action: :giving, response: :success },
+        # funding action
+        { user: nil, action: :funding, response: :success },
+        { user: '@creator', action: :funding, response: :success },
+        { user: '@non_creator', action: :funding, response: :success },
+        { user: '@lister', action: :funding, response: :success },
+        { user: '@admin', action: :funding, response: :success },
+        # references action
+        { user: nil, action: :references, response: :success },
+        { user: '@creator', action: :references, response: :success },
+        { user: '@non_creator', action: :references, response: :success },
+        { user: '@lister', action: :references, response: :success },
+        { user: '@admin', action: :references, response: :success },
+        # edit action
+        { user: nil, action: :edit, response: 403 },
+        { user: '@creator', action: :edit, response: :success },
+        { user: '@non_creator', action: :edit, response: 403 },
+        { user: '@admin', action: :edit, response: :success },
+        { user: '@lister', action: :edit,response: 403 },
+        # update action
+        { user: nil, action: :update, response: 403 },
+        { user: '@creator', action: :update, response: 302 },
+        { user: '@non_creator', action: :update, response: 403 },
+        { user: '@admin', action: :update, response: 302 },
+        { user: '@lister', action: :update, response: 403 },
+        # destroy action
+        { user: nil, action: :destroy, response: 403 },
+        { user: '@creator', action: :destroy, response: 302 },
+        { user: '@non_creator', action: :destroy, response: 403 },
+        { user: '@admin', action: :destroy, response: 302 },
+        { user: '@lister', action: :destroy, response: 403 },
+        # add
+        { user: nil, action: :add_entity, response: 403 },
+        { user: '@creator', action: :add_entity, response: 302 },
+        { user: '@non_creator', action: :add_entity, response: 403 },
+        { user: '@admin', action: :add_entity, response: 302 },
+        { user: '@lister', action: :add_entity, response: 302 },
+        # remove
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :remove_entity, response: 302 },
+        { user: '@non_creator', action: :remove_entity, response: 403 },
+        { user: '@admin', action: :remove_entity, response: 302 },
+        { user: '@lister', action: :remove_entity, response: 302 },
+        # update
+        # in #update_entity, 404 = successful call that falls thru
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :update_entity, response: 404 },
+        { user: '@non_creator', action: :update_entity, response: 403 },
+        { user: '@admin', action: :update_entity, response: 404 },
+        { user: '@lister', action: :update_entity, response: 404 }
+      ].each { |x| test_request_for_user(x) }
+    end
+
+    context 'private list' do
+      before do
+        allow(ListDatatable).to receive(:new).and_return(spy('table'))
+        allow(ListEntity).to receive(:find).and_return(spy('listentity'))
+        allow(ListEntity).to receive(:find_or_create_by).and_return(spy('find_or_create_by'))
+        @request.env["devise.mapping"] = Devise.mappings[:user]
+        expect(List).to receive(:find).and_return(@private_list)
+      end
+
+      [
+        # members action
+        { user: nil, action: :members, response: 403 },
+        { user: '@creator', action: :members, response: :success },
+        { user: '@non_creator', action: :members, response: 403 },
+        { user: '@lister', action: :members, response: 403 },
+        { user: '@admin', action: :members, response: :success },
+        # interlocks action
+        { user: nil, action: :interlocks, response: 403 },
+        { user: '@creator', action: :interlocks, response: :success },
+        { user: '@non_creator', action: :interlocks, response: 403 },
+        { user: '@lister', action: :interlocks, response: 403 },
+        { user: '@admin', action: :interlocks, response: :success },
+        # giving action
+        { user: nil, action: :giving, response: 403 },
+        { user: '@creator', action: :giving, response: :success },
+        { user: '@non_creator', action: :giving, response: 403 },
+        { user: '@lister', action: :giving, response: 403 },
+        { user: '@admin', action: :giving, response: :success },
+        # funding action
+        { user: nil, action: :funding, response: 403 },
+        { user: '@creator', action: :funding, response: :success },
+        { user: '@non_creator', action: :funding, response: 403 },
+        { user: '@lister', action: :funding, response: 403 },
+        { user: '@admin', action: :giving, response: :success },
+        # references action
+        { user: nil, action: :references, response: 403 },
+        { user: '@creator', action: :references, response: :success },
+        { user: '@non_creator', action: :references, response: 403 },
+        { user: '@lister', action: :references, response: 403 },
+        { user: '@admin', action: :giving, response: :success },
+        # update action
+        { user: nil, action: :update, response: 403 },
+        { user: '@creator', action: :update, response: 302 },
+        { user: '@non_creator', action: :update, response: 403 },
+        { user: '@admin', action: :update, response: 302 },
+        { user: '@lister', action: :update,response: 403 },
+        # destroy action
+        { user: nil, action: :destroy, response: 403 },
+        { user: '@creator', action: :destroy, response: 302 },
+        { user: '@non_creator', action: :destroy, response: 403 },
+        { user: '@admin', action: :destroy, response: 302 },
+        { user: '@lister', action: :destroy, response: 403 },
+        # add
+        { user: nil, action: :add_entity, response: 403 },
+        { user: '@creator', action: :add_entity, response: 302 },
+        { user: '@non_creator', action: :add_entity, response: 403 },
+        { user: '@admin', action: :add_entity, response: 302 },
+        { user: '@lister', action: :add_entity, response: 403 },
+        # remove
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :remove_entity, response: 302 },
+        { user: '@non_creator', action: :remove_entity, response: 403 },
+        { user: '@admin', action: :remove_entity, response: 302 },
+        { user: '@lister', action: :remove_entity, response: 403 },
+        # update
+        # in #update_entity, 404 = successful call that falls thru
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :update_entity, response: 404 },
+        { user: '@non_creator', action: :update_entity, response: 403 },
+        { user: '@admin', action: :update_entity, response: 404 },
+        { user: '@lister', action: :update_entity, response: 403 }
+      ].each { |x| test_request_for_user(x) }
+    end
+
+    context 'closed list' do
+      before do
+        allow(ListDatatable).to receive(:new).and_return(spy('table'))
+        allow(ListEntity).to receive(:find).and_return(spy('listentity'))
+        allow(ListEntity).to receive(:find_or_create_by).and_return(spy('find_or_create_by'))
+        @request.env["devise.mapping"] = Devise.mappings[:user]
+        expect(List).to receive(:find).and_return(@closed_list)
+      end
+
+      [
+        { user: nil, action: :members, response: :success },
+        { user: '@creator', action: :members, response: :success },
+        { user: '@non_creator', action: :members, response: :success },
+        { user: '@lister', action: :members, response: :success },
+        { user: '@admin', action: :members, response: :success },
+        # interlocks action
+        { user: nil, action: :interlocks, response: :success },
+        { user: '@creator', action: :interlocks, response: :success },
+        { user: '@non_creator', action: :interlocks, response: :success },
+        { user: '@lister', action: :interlocks, response: :success },
+        { user: '@admin', action: :interlocks, response: :success },
+        # giving action
+        { user: nil, action: :giving, response: :success },
+        { user: '@creator', action: :giving, response: :success },
+        { user: '@non_creator', action: :giving, response: :success },
+        { user: '@lister', action: :giving, response: :success },
+        { user: '@admin', action: :giving, response: :success },
+        # funding action
+        { user: nil, action: :funding, response: :success },
+        { user: '@creator', action: :funding, response: :success },
+        { user: '@non_creator', action: :funding, response: :success },
+        { user: '@lister', action: :funding, response: :success },
+        { user: '@admin', action: :funding, response: :success },
+        # references action
+        { user: nil, action: :references, response: :success },
+        { user: '@creator', action: :references, response: :success },
+        { user: '@non_creator', action: :references, response: :success },
+        { user: '@lister', action: :references, response: :success },
+        { user: '@admin', action: :references, response: :success },
+        # edit action
+        { user: nil, action: :edit, response: 403 },
+        { user: '@creator', action: :edit, response: :success },
+        { user: '@non_creator', action: :edit, response: 403 },
+        { user: '@admin', action: :edit, response: :success },
+        { user: '@lister', action: :edit,response: 403 },
+        # update action
+        { user: nil, action: :update, response: 403 },
+        { user: '@creator', action: :update, response: 302 },
+        { user: '@non_creator', action: :update, response: 403 },
+        { user: '@admin', action: :update, response: 302 },
+        { user: '@lister', action: :update,response: 403 },
+        # destroy action
+        { user: nil, action: :destroy, response: 403 },
+        { user: '@creator', action: :destroy, response: 302 },
+        { user: '@non_creator', action: :destroy, response: 403 },
+        { user: '@admin', action: :destroy, response: 302 },
+        { user: '@lister', action: :destroy, response: 403 },
+        # add
+        { user: nil, action: :add_entity, response: 403 },
+        { user: '@creator', action: :add_entity, response: 302 },
+        { user: '@non_creator', action: :add_entity, response: 403 },
+        { user: '@admin', action: :add_entity, response: 302 },
+        { user: '@lister', action: :add_entity, response: 403 },
+        # remove
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :remove_entity, response: 302 },
+        { user: '@non_creator', action: :remove_entity, response: 403 },
+        { user: '@admin', action: :remove_entity, response: 302 },
+        { user: '@lister', action: :remove_entity, response: 403 },
+        # update
+        # in #update_entity, 404 = successful call that falls thru
+        { user: nil, action: :remove_entity, response: 403 },
+        { user: '@creator', action: :update_entity, response: 404 },
+        { user: '@non_creator', action: :update_entity, response: 403 },
+        { user: '@admin', action: :update_entity, response: 404 },
+        { user: '@lister', action: :update_entity, response: 403 }
+      ].each { |x| test_request_for_user(x) }
+    end
+  end
+
+  describe "#set_permisions" do
+    before do
+      @controller = ListsController.new
+      @user = create_basic_user
+      @list = build(:list, access: List::ACCESS_OPEN, creator_user_id: @user.id)
+      @controller.instance_variable_set(:@list, @list)
+    end
+
+    it "sets permissions for a logged-in user" do
+      allow(@controller).to receive(:current_user).and_return(@user)
+      expect(@user.permissions).to receive(:list_permissions).with(@list)
+      @controller.send(:set_permissions)
+    end
+
+    it "sets permissions for an anonymous user" do
+      allow(@controller).to receive(:current_user).and_return(nil)
+      expect(UserPermissions::Permissions).to receive(:anon_list_permissions).with(@list)
+      @controller.send(:set_permissions)
+    end
   end
 end

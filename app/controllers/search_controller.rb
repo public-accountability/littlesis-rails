@@ -25,7 +25,11 @@ class SearchController < ApplicationController
         admin = current_user.present? and current_user.has_legacy_permission("admin")
         list_is_admin = admin ? [0, 1] : 0
         @groups = Group.search("@(name,tagline,description,slug) #{q}", per: 50, match_mode: :extended)
-        @lists = List.search("@(name,description) #{q}", per: 50, match_mode: :extended, with: { is_deleted: false, is_admin: list_is_admin, is_network: false })
+        @lists = List.search("@(name,description) #{q}",
+                             per: 50,
+                             match_mode: :extended,
+                             with: { is_deleted: false, is_admin: list_is_admin, is_network: false },
+                             without: { access: List::ACCESS_PRIVATE } )
         @maps = NetworkMap.search("@(title,description,index_data) #{q}", per: 100, match_mode: :extended, with: { is_deleted: false, is_private: false })
       end
     end

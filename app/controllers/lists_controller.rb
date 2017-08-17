@@ -1,6 +1,11 @@
 class ListsController < ApplicationController
-  before_filter :authenticate_user!, except: [:index, :show, :relationships, :members, :clear_cache, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding]
+  before_filter :authenticate_user!, only: [:new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications]
   before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
+  # permissions
+  before_action :set_permissions, only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity]
+  before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references]
+  before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity]
+  before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
   def self.get_lists(page)
     List
@@ -17,7 +22,9 @@ class ListsController < ApplicationController
     lists = self.class.get_lists(params[:page])
 
     if current_user.present?
-      @lists = lists.where('ls_list.is_private = ? OR ls_list.creator_user_id = ?', false, current_user.id)
+      @lists = lists.where('ls_list.access <> ? OR ls_list.creator_user_id = ?',
+                           List::ACCESS_PRIVATE,
+                           current_user.id)
     else
       @lists = lists.public_scope
     end
@@ -44,7 +51,6 @@ class ListsController < ApplicationController
 
   # GET /lists/1/edit
   def edit
-    check_permission 'admin' if @list.is_admin || @list.is_network
   end
 
   # POST /lists
@@ -58,7 +64,7 @@ class ListsController < ApplicationController
       @list.errors[:base] << "A source URL is required"
       render action: 'new' and return
     end
-    
+
     if @list.save
       @list.add_reference(params[:ref][:source], params[:ref][:name])
       redirect_to @list, notice: 'List was successfully created.'
@@ -78,9 +84,16 @@ class ListsController < ApplicationController
   end
 
   # DELETE /lists/1
+  # def destroy
+  #   @list.destroy
+  #   redirect_to lists_url, notice: 'List was successfully destroyed.'
+  # end
+
   def destroy
-    @list.destroy
-    redirect_to lists_url, notice: 'List was successfully destroyed.'
+    #check_permission 'admin'
+    
+    @list.soft_delete
+    redirect_to lists_path, notice: 'List was successfully destroyed.'
   end
 
   def relationships
@@ -128,8 +141,6 @@ class ListsController < ApplicationController
   def members
     @table = ListDatatable.new(@list)
     @table.generate_data
-    @editable = (current_user and current_user.has_legacy_permission('lister'))
-    @admin = (current_user and current_user.has_legacy_permission('admin'))
   end
 
   def create_map
@@ -137,8 +148,12 @@ class ListsController < ApplicationController
     redirect_to edit_map_url(map, wheel: true)
   end
 
+  def clear_cache
+    @list.clear_cache(request.host)
+    render json: { status: 'success' }
+  end
+
   def update_entity
-    check_permission 'lister'
     if data = params[:data]
       list_entity = ListEntity.find(data[:list_entity_id])
       list_entity.rank = data[:rank]
@@ -155,47 +170,22 @@ class ListsController < ApplicationController
   end
 
   def remove_entity
-    check_permission 'admin'
+    #check_permission 'admin'
     ListEntity.find(params[:list_entity_id]).destroy
     @list.clear_cache
     redirect_to members_list_path(@list)
   end
 
-  def clear_cache
-    @list.clear_cache(request.host)
-    render json: { status: 'success' }
-  end
-
   def add_entity
-    check_permission 'lister'
+    #check_permission 'lister'
     le = ListEntity.find_or_create_by(list_id: @list.id, entity_id: params[:entity_id])
     @list.clear_cache(request.host)
     le.entity.clear_cache(request.host)
     redirect_to members_list_path(@list)
   end
 
-  def delete
-    check_permission 'admin'
-    @list.soft_delete
-    redirect_to lists_path
-  end
-
   def interlocks
-    # get people in the list
-    entity_ids = @list.entities.people.map(&:id)
-
-    # get entities related by position or membership
-    select = "e.*, COUNT(DISTINCT r.entity1_id) num, GROUP_CONCAT(DISTINCT r.entity1_id) degree1_ids, GROUP_CONCAT(DISTINCT ed.name) types"
-    from = "relationship r LEFT JOIN entity e ON (e.id = r.entity2_id) LEFT JOIN extension_record er ON (er.entity_id = e.id) LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)"
-    where = "r.entity1_id IN (#{entity_ids.join(',')}) AND r.category_id IN (#{Relationship::POSITION_CATEGORY}, #{Relationship::MEMBERSHIP_CATEGORY}) AND r.is_deleted = 0"
-    sql = "SELECT #{select} FROM #{from} WHERE #{where} GROUP BY r.entity2_id ORDER BY num DESC"
-    db = ActiveRecord::Base.connection
-    orgs = db.select_all(sql).to_hash
-
-    # filter entities by type
-    @companies = orgs.select { |org| org['types'].split(',').include?('Business') }
-    @govt_bodies = orgs.select { |org| org['types'].split(',').include?('GovernmentBody') }
-    @others = orgs.select { |org| (org['types'].split(',') & ['Business', 'GovernmentBody']).empty? }
+    interlocks_query
   end
 
   def companies
@@ -250,7 +240,6 @@ class ListsController < ApplicationController
     @versions = Kaminari.paginate_array(@list.versions.reverse).page(params[:page]).per(5)
     @all_entities = ListEntity.unscoped.where(list_id: @list.id).order(id: :desc).page(params[:page]).per(10)
   end
-  
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -260,7 +249,25 @@ class ListsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def list_params
-      params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :is_private, :custom_field_name, :short_description)
+      params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :is_private, :custom_field_name, :short_description, :access)
+    end
+
+    def interlocks_query
+      # get people in the list
+      entity_ids = @list.entities.people.map(&:id)
+
+      # get entities related by position or membership
+      select = "e.*, COUNT(DISTINCT r.entity1_id) num, GROUP_CONCAT(DISTINCT r.entity1_id) degree1_ids, GROUP_CONCAT(DISTINCT ed.name) types"
+      from = "relationship r LEFT JOIN entity e ON (e.id = r.entity2_id) LEFT JOIN extension_record er ON (er.entity_id = e.id) LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)"
+      where = "r.entity1_id IN (#{entity_ids.join(',')}) AND r.category_id IN (#{Relationship::POSITION_CATEGORY}, #{Relationship::MEMBERSHIP_CATEGORY}) AND r.is_deleted = 0"
+      sql = "SELECT #{select} FROM #{from} WHERE #{where} GROUP BY r.entity2_id ORDER BY num DESC"
+      db = ActiveRecord::Base.connection
+      orgs = db.select_all(sql).to_hash
+
+      # filter entities by type
+      @companies = orgs.select { |org| org['types'].split(',').include?('Business') }
+      @govt_bodies = orgs.select { |org| org['types'].split(',').include?('GovernmentBody') }
+      @others = orgs.select { |org| (org['types'].split(',') & ['Business', 'GovernmentBody']).empty? }
     end
 
     def interlocks_results(options)
@@ -270,4 +277,15 @@ class ListsController < ApplicationController
       count = @list.interlocks_count(options)
       Kaminari.paginate_array(results.to_a, total_count: count).page(@page).per(num)
     end
+
+    def set_permissions
+      @permissions = current_user ?
+                       current_user.permissions.list_permissions(@list) :
+                       UserPermissions::Permissions.anon_list_permissions(@list)
+    end
+
+    def check_access(permission)
+      raise Exceptions::PermissionError unless @permissions[permission]
+    end
 end
+
