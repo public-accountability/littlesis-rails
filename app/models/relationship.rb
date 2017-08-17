@@ -513,6 +513,11 @@ class Relationship < ActiveRecord::Base
 
   def ny_transaction_date(sort)
     raise Exception unless ['asc', 'desc'].include?(sort)
-    ny_disclosures.select('schedule_transaction_date').order("schedule_transaction_date #{sort}").limit(1)[0].schedule_transaction_date
+    ny_disclosures
+      .select('schedule_transaction_date')
+      .order("schedule_transaction_date #{sort}")
+      .limit(1)
+      &.fetch(0, nil)
+      &.schedule_transaction_date
   end
 end
