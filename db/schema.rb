@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170814200959) do
+ActiveRecord::Schema.define(version: 20170817182616) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -629,7 +629,6 @@ ActiveRecord::Schema.define(version: 20170814200959) do
     t.boolean  "is_deleted",                           default: false, null: false
     t.string   "custom_field_name", limit: 100
     t.boolean  "delta",                                default: true,  null: false
-    t.boolean  "is_private",                           default: false
     t.integer  "creator_user_id",   limit: 4
     t.string   "short_description", limit: 255
     t.integer  "access",            limit: 1,          default: 0,     null: false
