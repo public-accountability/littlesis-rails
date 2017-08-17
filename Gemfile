@@ -78,6 +78,7 @@ group :test, :development do
   gem 'rack-mini-profiler'
   gem 'rspec-html-matchers'
   gem 'rspec-rails'
+  gem 'rubocop', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'spring', '~> 2.0.2'
