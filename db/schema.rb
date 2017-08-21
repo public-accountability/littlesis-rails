@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170802165123) do
+ActiveRecord::Schema.define(version: 20170817182616) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
