@@ -1,0 +1,19 @@
+/* TAGS */
+#tag-list {
+
+    @extend .list-unstyled;
+    
+    margin-top: 1em;
+    
+    li.tag {
+	list-style: none;
+	display: inline;
+	margin-right: 5px;
+	padding: .3em;
+	border: 1px solid red;
+	border-radius: .2em;
+	background-color: rgba(204,133,133,0.4);
+    }
+
+}
+
