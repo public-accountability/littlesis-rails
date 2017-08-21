@@ -125,5 +125,41 @@ describe Link, type: :model do
       expect(link2.send(:humanize_contributions)).to eq "Donation · $2,000,000"
     end
   end
-  
+
+  describe '#education description' do
+    def make_link(field: nil, description1: nil, degree_id: nil)
+      education = build(:education, degree_id: degree_id, field: field) 
+      edu_rel = build(:education_relationship, education: education, description1: description1)
+      build(:link, category_id: Relationship::EDUCATION_CATEGORY, relationship: edu_rel)
+    end
+
+    it 'shows degree abbreviation if it exists' do
+      link = make_link degree_id: 2
+      expect(link.description).to eq "BA"
+    end
+
+    it 'shows field if it exists' do
+      link = make_link field: 'Psychology', degree_id: 2
+      expect(link.description).to eq "BA, Psychology"
+    end
+
+    it 'shows description1 when not degree or field information' do
+      link = make_link description1: "Undergraduate"
+      expect(link.description).to eq "Undergraduate"
+    end
+
+    it 'shows default description' do
+      expect(['School', 'Student']).to include make_link.send(:education_description)
+    end
+
+    it 'shows full degree name if no abbreviation exists' do
+      link = make_link degree_id: 12
+      expect(link.description).to eq "Honorus Degree"
+    end
+
+    it 'handles nil education' do
+      link = build(:link, relationship: build(:education_relationship), category_id: 2)
+      expect(['School', 'Student']).to include link.send(:education_description)
+    end
+  end
 end

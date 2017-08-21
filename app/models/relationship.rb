@@ -345,17 +345,21 @@ class Relationship < ActiveRecord::Base
   end
   
   ## education ##
-  
+
   def degree
-    education.nil? ? nil : education.degree.try(:name)
+    education.degree.try(:name) if education
   end
-    
+
+  def degree_abbrevation
+    education.degree.try(:abbreviation) if education
+  end
+
   def education_field
-    education.nil? ? nil : education.field
+    education&.field
   end
 
   def is_dropout
-    education.nil? ? nil : education.is_dropout
+    education&.is_dropout
   end
 
   ## membership ##
