@@ -1,5 +1,6 @@
 <!-- IMAGE -->
 <div id="profile-page-sidebar">
+    <!-- IMAGE -->
     <%= cache ['entity_image', user_signed_in?, @entity.id, @entity.featured_image_url, @entity.name]  do %>
 	<div class="row">
 	    <div class="col-sm-10 col-sm-offset-1">
@@ -7,6 +8,28 @@
 	    </div>
 	</div>
     <% end %>
+
+    <!-- TAGS -->
+    <% tags = [
+      { id: 1, name: 'nyc', description: 'all things nyc-related'},
+      { id: 2, name: 'oil', description: 'rob researches this'}
+    ]
+
+    %>
+    <div class="row">
+	<div class="col-sm-12">
+		<%= sidebar_title('Tags') %>
+	</div>
+	<div class="col-sm-12">
+	    <ul id="tag-list">
+	    <% tags.each do |tag| %>
+		<li class="tag"><%= tag[:name] %>
+	    <% end %>
+	</ul>
+	</div>
+	
+    </div>
+
 
     <!-- BASIC INFO -->
     <% cache ['entity_basic_info', @entity.alt_cache_key] do %>
