@@ -39,6 +39,7 @@ class Link < ActiveRecord::Base
   def description
     return relationship.title if relationship.is_position? || relationship.is_member?
     return humanize_contributions if relationship.is_donation?
+    return education_description if relationship.is_education?
     text = is_reverse ? relationship.description1 : relationship.description2
     return text unless text.blank?
     return default_description
@@ -72,11 +73,19 @@ class Link < ActiveRecord::Base
     str
   end
 
+  def education_description
+    degree = relationship.degree_abbrevation || relationship.degree || default_description
+    field = relationship.education_field
+    return "#{degree}, #{field}" if field
+    degree
+  end
+
   def default_description
     case category_id
     when 1
       return 'Position'
     when 2
+      return relationship.description1 if relationship.description1.present?
       return 'Student' if is_reverse
       return 'School' unless is_reverse
     when 3
