@@ -1,11 +1,32 @@
 <!-- IMAGE -->
 <div id="profile-page-sidebar">
+    <!-- IMAGE -->
     <%= cache ['entity_image', user_signed_in?, @entity.id, @entity.featured_image_url, @entity.name]  do %>
 	<div class="row">
 	    <div class="col-sm-10 col-sm-offset-1">
 		<%= render partial: 'entities/sidebar/image' %>
 	    </div>
 	</div>
+    <% end %>
+
+    <!-- TAGS -->
+
+    <% if @entity.tags.present? %>
+	
+	<div class="row">
+	    <div class="col-sm-12">
+		<%= sidebar_title('Tags') %>
+	    </div>
+	    <div class="col-sm-12">
+		<ul id="tag-list">
+		    <% @entity.tags.each do |tag| %>
+			<li class="tag"><%= tag[:name] %>
+		    <% end %>
+		</ul>
+	    </div>
+	    
+	</div>
+	
     <% end %>
 
     <!-- BASIC INFO -->

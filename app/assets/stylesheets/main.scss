@@ -1,3 +1,7 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "bootstrap-datepicker";
+
 @import "base/globals.scss";
 @import "base/helpers.scss";
 @import "base/layout.scss";
@@ -23,3 +27,4 @@
 @import "styles/typeahead.scss";
 @import "styles/users.scss";
 @import "styles/tools.scss";
+@import "styles/tags.scss";
