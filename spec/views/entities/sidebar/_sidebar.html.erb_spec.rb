@@ -1,14 +1,17 @@
 require "rails_helper"
 
 describe "partial: sidebar" do
+  let(:org) { build(:org, org: build(:organization), id: rand(1000)) }
+
   before do
     allow(Entity).to receive(:search).and_return([])
-    org = build(:org, org: build(:organization), id: rand(1000))
-    assign(:entity, org)
   end
 
   describe 'layout' do
-    before { render partial: 'entities/sidebar.html.erb' }
+    before do
+      assign(:entity, org)
+      render partial: 'entities/sidebar.html.erb'
+    end
 
     it 'renders partial sidebar/image' do
       expect(view).to render_template(partial: 'entities/sidebar/_image')
@@ -19,9 +22,44 @@ describe "partial: sidebar" do
     end
   end
 
+  describe 'tags' do
+    context 'entity has tags' do
+      before do
+        org.tag('oil')
+        org.tag('nyc')
+        assign(:entity, org)
+        render partial: 'entities/sidebar.html.erb'
+      end
+
+      it 'has #tag-list' do
+        css '#tag-list'
+      end
+
+      it 'has 2 tags in a list' do
+        css 'li.tag', count: 2
+      end
+    end
+
+    context 'entity does not have tags' do
+      before do
+        assign(:entity, org)
+        render partial: 'entities/sidebar.html.erb'
+      end
+
+      it 'does not have #tag-list' do
+        not_css '#tag-list'
+      end
+
+      it 'has no tags' do
+        not_css 'li.tag'
+      end
+    end
+  end
+
   describe 'When signed in but not admin' do
     context 'all users' do
       before do
+        assign(:entity, org)
         allow(view).to receive(:user_signed_in?).and_return(true)
         allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false, :merger? => false))
         render partial: 'entities/sidebar.html.erb'
@@ -46,6 +84,7 @@ describe "partial: sidebar" do
 
     context 'with importer permission' do
       before do
+        assign(:entity, org)
         allow(view).to receive(:user_signed_in?).and_return(true)
         allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => true, :merger? => false))
         render partial: 'entities/sidebar.html.erb'
@@ -58,6 +97,7 @@ describe "partial: sidebar" do
 
     context 'with merger permission' do
       before do
+        assign(:entity, org)
         allow(view).to receive(:user_signed_in?).and_return(true)
         allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false, :merger? => true))
         render partial: 'entities/sidebar.html.erb'
@@ -72,6 +112,7 @@ describe "partial: sidebar" do
   describe 'Admin tools' do
     context 'When admin' do
       before do
+        assign(:entity, org)
         allow(view).to receive(:user_signed_in?).and_return(true)
         allow(view).to receive(:current_user).and_return(double(:admin? => true, :importer? => false, :merger? => false))
         render partial: 'entities/sidebar.html.erb'
@@ -80,11 +121,12 @@ describe "partial: sidebar" do
       it 'has admin tools' do
         css 'span.sidebar-title-text', text: 'Admin tools'
         css 'a', text: 'Addresses'
-      end
+     end
     end
 
     context 'When not admin' do
       before do
+        assign(:entity, org)
         allow(view).to receive(:user_signed_in?).and_return(true)
         allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false, :merger? => false))
         render partial: 'entities/sidebar.html.erb'
@@ -97,6 +139,7 @@ describe "partial: sidebar" do
   end
 
   describe 'similar entities' do
+    before { assign(:entity, org) }
     it 'has merging process link' do
       allow(view).to receive(:user_signed_in?).and_return(true)
       assign(:similar_entities, ['some', 'similar', 'entities'])

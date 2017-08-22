@@ -1,4 +1,6 @@
 module Tagable
+  # TODO: make this clear the cache / update entity timestamp
+  # and create a new paper_trail record
   def tag(name_or_id)
     Tagging.find_or_create_by(tag_id:         Tag.find!(name_or_id)[:id],
                               tagable_class:  self.class.name,
@@ -12,5 +14,6 @@ module Tagable
   def taggings
     Tagging.where(tagable_id: self.id, tagable_class: self.class.name)
   end
-    
+
+  
 end
