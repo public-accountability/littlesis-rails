@@ -7,6 +7,7 @@
 }(this, function ($) {
 
   var TAGS = null;
+  var DIV = null;
   var t = {};
 
   // Tags = { [id: string]: Tag }
@@ -17,18 +18,21 @@
   
   /**
    * 
-   * @param {Tags} all
+   * @param {Tags} tags
    * @param {Array[number]} current
+   * @param {String} divId
+   * @return {Tags}
    *
    */
-  t.init = function(all, current){
+  t.init = function(tags, current, divId){
     TAGS = {
-      all: all.reduce(
+      all: tags.reduce(
     	function(acc, tag){ return Object.assign(acc, { [tag.id]: tag }); },
     	{}
       ),
       current: current
     };//parseInit(all, current);
+    DIV = divId;
     return TAGS;
   };
 
@@ -38,8 +42,26 @@
     t.post(TAGS);
   };
 
-  t.render = function(){}; // update dom
-  t.post = function(){}; // update server
+  // update dom
+  t.render = function(){
+    $(DIV).empty();
+
+    var tags = TAGS.current.map(function(id){
+      var tag = TAGS.all[id];
+      return $('<li>', {
+	class: 'tag',
+	text: tag.name
+      });
+    });
+
+    $(DIV).append(
+      $('<ul>', {id: 'tag-list'}).append(tags)
+    );
+	       
+  };
+
+ // update server
+  t.post = function(){};
   
   t.remove = function(idToRemove){
     TAGS.current = TAGS.current.filter(function(id){

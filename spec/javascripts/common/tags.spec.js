@@ -69,7 +69,21 @@ describe('tag module', function () {
   
   describe('displaying tags', function(){
     
-    it('shows all the tags given for a page');
+    beforeEach(function(){
+      $('body').append('<div id="container-id">');
+    });
+
+    afterEach(function(){
+      $('#container-id').remove();
+    });
+    
+    it('displays list of tags', () => {
+      tags.init(allTags, [1,2], '#container-id');
+      tags.render();
+
+      expect($('#tag-list')).toExist();
+      expect($('#container-id li')).toHaveLength(2);
+    });
 
   });
 
