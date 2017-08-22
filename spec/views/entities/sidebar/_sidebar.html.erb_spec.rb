@@ -41,12 +41,8 @@ describe "partial: sidebar" do
         render partial: 'entities/sidebar.html.erb'
       end
 
-      it 'has #tag-list' do
-        css '#tag-list'
-      end
-
-      it 'has 2 tags in a list' do
-        css 'li.tag', count: 2
+      it 'has #tags-container' do
+        css '#tags-container'
       end
     end
 
@@ -56,12 +52,8 @@ describe "partial: sidebar" do
         render partial: 'entities/sidebar.html.erb'
       end
 
-      it 'does not have #tag-list' do
-        not_css '#tag-list'
-      end
-
-      it 'has no tags' do
-        not_css 'li.tag'
+      it 'does not have #tags-container' do
+        not_css '#tags-container'
       end
     end
   end

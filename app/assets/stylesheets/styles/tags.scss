@@ -10,9 +10,19 @@
 	display: inline;
 	margin-right: 5px;
 	padding: .3em;
-	border: 1px solid red;
+	border: 1px solid $red;
 	border-radius: .2em;
 	background-color: rgba(204,133,133,0.4);
+    }
+
+    .tag-remove-button {
+	@extend .glyphicon;
+	@extend .glyphicon-remove;
+	@extend .hvr-pop;
+	cursor: pointer;
+	font-size: 0.7em;
+	margin-left: 0.5em;
+	color: $red;
     }
 
 }

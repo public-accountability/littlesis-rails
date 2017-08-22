@@ -18,15 +18,20 @@
 		<%= sidebar_title('Tags') %>
 	    </div>
 	    <div class="col-sm-12">
-		<ul id="tag-list">
-		    <% @entity.tags.each do |tag| %>
-			<li class="tag"><%= tag[:name] %>
-		    <% end %>
-		</ul>
+		<div id="tags-container">
+		</div>
 	    </div>
 	    
 	</div>
 	
+	<script>
+	 tags.init(
+	   <%= raw(Tag.all.to_json) %>,
+	  <%= raw(@entity.tags.map { |t| t[:id]}.to_json) %>,
+	   '#tags-container'
+	 );
+	 tags.render();
+	</script>
     <% end %>
 
     <!-- BASIC INFO -->

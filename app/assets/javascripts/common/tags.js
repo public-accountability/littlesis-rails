@@ -44,22 +44,33 @@
 
   // update dom
   t.render = function(){
-    $(DIV).empty();
-
-    var tags = TAGS.current.map(function(id){
-      var tag = TAGS.all[id];
-      return $('<li>', {
-	class: 'tag',
-	text: tag.name
-      });
-    });
-
-    $(DIV).append(
-      $('<ul>', {id: 'tag-list'}).append(tags)
-    );
-	       
+    $(DIV)
+      .empty()
+      .append(tagList());
   };
 
+  function tagList(){
+    return $('<ul>', {id: 'tag-list'})
+      .append(TAGS.current.map(tagButton));
+  }
+  
+  function tagButton(id){
+    return $('<li>', {
+      class: 'tag',
+      text: TAGS.all[id].name
+    }).append(removeButton(id));
+  }
+
+  function removeButton(id) {
+    return $('<span>', {
+      class: 'tag-remove-button',
+      click: function(){
+	// t.update('remove',id);
+	console.log('you clicked on me');
+      }
+    });
+  }
+  
  // update server
   t.post = function(){};
   

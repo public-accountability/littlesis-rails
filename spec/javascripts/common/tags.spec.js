@@ -71,6 +71,8 @@ describe('tag module', function () {
     
     beforeEach(function(){
       $('body').append('<div id="container-id">');
+      tags.init(allTags, [1,2], '#container-id');
+      tags.render();
     });
 
     afterEach(function(){
@@ -78,9 +80,6 @@ describe('tag module', function () {
     });
     
     it('displays list of tags', () => {
-      tags.init(allTags, [1,2], '#container-id');
-      tags.render();
-
       expect($('#tag-list')).toExist();
       expect($('#container-id li')).toHaveLength(2);
     });
@@ -89,14 +88,26 @@ describe('tag module', function () {
 
   describe('editing tags', function(){
 
-    it('shows an x inside tags that a user can remove');
+    beforeEach(function(){
+      $('body').append('<div id="container-id">');
+      tags.init(allTags, [1,2], '#container-id');
+      tags.render();
+    });
 
+    afterEach(function(){
+      $('#container-id').remove();
+    });
+    
+
+    it('shows an x inside tags that a user can remove', function(){
+      expect($('#container-id span.tag-remove-button')).toHaveLength(2);
+    });
+
+
+    
     it('does not show an x inside tags that a user cannot remove');
-
     it('displays whitelisted tags for user to pick from');
-
     it('does not allow user to enter tags that are not whitelisted');
-
     it('stretches the bounding box to contain multiple rows of tags');  
 
     it('submits new tags when user clicks button');
