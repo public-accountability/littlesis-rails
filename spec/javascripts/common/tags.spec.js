@@ -1,5 +1,5 @@
 describe('tag module', function () {
-
+  
   var allTags = [{
     name: 'Oil',
     description: 'flows from pipes',
@@ -10,15 +10,61 @@ describe('tag module', function () {
     id: 2
   }];
   
-  describe('construction', function (){
-    
+  describe('tags store operations', function (){
+
     it('creates a tags data structure from input', function(){
       tags.init(allTags, [1]);
       expect(tags.get()).toEqual({
-	all: allTags,
+	all: {
+	  1: allTags[0],
+	  2: allTags[1]
+	},
 	current: [1]
       });
     });
+
+    it('clears store upon initialization', function(){
+      tags.init(allTags, [1]);
+      expect(tags.get().current).toEqual([1]);
+      tags.init(allTags, [2]);
+      expect(tags.get().current).toEqual([2]);
+    });
+
+    it('adds a tag', () => {
+      tags.init(allTags, [1]);
+      tags.add(2);
+      expect(tags.get().current).toEqual([1,2]);
+    });
+
+    it('removes a tag', () => {
+      tags.init(allTags, [1,2]);
+      tags.remove(2);
+      expect(tags.get().current).toEqual([1]);
+    });
+
+    describe('side effects', () => {
+
+      const stubbed = ['add', 'remove', 'render', 'post'];
+      let spies;
+      
+      beforeEach(() => {
+	spies = stubbed.reduce(
+	  (acc, fn) => Object.assign(acc, { [fn]: spyOn(tags, fn) }),
+	  {}
+	);
+      });
+      
+      it('updates the store and syncs w/ DOM & server', () => {
+	tags.init(allTags, [2]);
+	tags.update('add', 1);
+	tags.update('remove', 2);
+	
+	expect(spies.add).toHaveBeenCalledWith(1);
+	expect(spies.remove).toHaveBeenCalledWith(2);
+	expect(spies.render).toHaveBeenCalled();
+	expect(spies.post).toHaveBeenCalled();
+      });
+    }); //end  side effects
   });
   
   describe('displaying tags', function(){
