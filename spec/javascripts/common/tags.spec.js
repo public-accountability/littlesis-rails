@@ -103,7 +103,11 @@ describe('tag module', function () {
       expect($('#container-id span.tag-remove-button')).toHaveLength(2);
     });
 
-
+    it('removes a tag when user clicks the remove button', function(){
+      expect($('#container-id li')).toHaveLength(2);
+      $($('.tag-remove-button')[0]).trigger('click');
+      expect($('#container-id li')).toHaveLength(1);
+    });
     
     it('does not show an x inside tags that a user cannot remove');
     it('displays whitelisted tags for user to pick from');

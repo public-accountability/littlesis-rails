@@ -65,8 +65,7 @@
     return $('<span>', {
       class: 'tag-remove-button',
       click: function(){
-	// t.update('remove',id);
-	console.log('you clicked on me');
+	t.update('remove', id);
       }
     });
   }
