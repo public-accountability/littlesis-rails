@@ -27,3 +27,13 @@
 
 }
 
+.tag-edit-glyph {
+    @extend .glyphicon;
+    @extend .glyphicon-pencil;
+    cursor: pointer;
+    padding-left: 1em;
+
+    &:hover {
+        color: $red;
+    }
+}
