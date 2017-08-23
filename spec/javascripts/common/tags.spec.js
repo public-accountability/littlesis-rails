@@ -1,13 +1,17 @@
 describe('tag module', function () {
   
   var allTags = [{
-    name: 'Oil',
+    name: 'oil',
     description: 'flows from pipes',
     id: 1
   },{
-    name: 'NYC',
+    name: 'nyc',
     description: 'center of the universe!',
     id: 2
+  },{
+    name: 'finance',
+    description: 'banks got bailed out, we got sold out!',
+    id: 3
   }];
 
   var divs = {
@@ -38,32 +42,34 @@ describe('tag module', function () {
       expect(tags.get()).toEqual({
 	all: {
 	  1: allTags[0],
-	  2: allTags[1]
+	  2: allTags[1],
+          3: allTags[2]
 	},
-	current: [1],
+	current: ['1'],
         divs: divs,
         cache: '<br>'
       });
     });
+    
 
     it('clears store upon initialization', function(){
       tags.init(allTags, [1], divs);
-      expect(tags.get().current).toEqual([1]);
+      expect(tags.get().current).toEqual(['1']);
 
       tags.init(allTags, [2], divs);
-      expect(tags.get().current).toEqual([2]);
+      expect(tags.get().current).toEqual(['2']);
     });
 
     it('adds a tag', () => {
       tags.init(allTags, [1], divs);
       tags.add(2);
-      expect(tags.get().current).toEqual([1,2]);
+      expect(tags.get().current).toEqual(['1', '2']);
     });
 
     it('removes a tag', () => {
       tags.init(allTags, [1,2], divs);
       tags.remove(2);
-      expect(tags.get().current).toEqual([1]);
+      expect(tags.get().current).toEqual(['1']);
     });
 
     describe('side effects', () => {
@@ -94,7 +100,7 @@ describe('tag module', function () {
   describe('displaying tags', function(){
 
     beforeEach(function(){
-      tags.init(allTags, [1,2], divs);
+      tags.init(allTags, ['1','2'], divs);
     });
 
     it('shows nothing new when edit not clicked', () => {
@@ -123,10 +129,32 @@ describe('tag module', function () {
       $($('.tag-remove-button')[0]).trigger('click');
       expect($(`${divs.container} li`)).toHaveLength(1);
     });
-    
-    it('activates edit mode when user clicks edit button');
 
-    it('does not display tag options for used already-applied tags');
+    it('adds a valid tag from user input', () => {
+      expect($(`${divs.container} li`)).toHaveLength(2);
+      $('#tags-input').val('finance'); // --> tag
+      $('#tags-input').trigger({ type: 'keypress', keyCode: 13});
+      expect($(`${divs.container} li`)).toHaveLength(3);
+    });
+
+    it('does nothing if user enters invalid tag', () => {
+      expect($(`${divs.container} li`)).toHaveLength(2);
+      $('#tags-input').val('foobar');
+      $('#tags-input').trigger({ type: 'keypress', keyCode: 13});
+      expect($(`${divs.container} li`)).toHaveLength(2);
+    });
+
+    it('does nothing if user enters duplicate tag', () => {
+      expect($(`${divs.container} li`)).toHaveLength(2);
+
+      $('#tags-input').val('finance');
+      $('#tags-input').trigger({ type: 'keypress', keyCode: 13});
+      expect($(`${divs.container} li`)).toHaveLength(3);
+
+      $('#tags-input').val('finance');
+      $('#tags-input').trigger({ type: 'keypress', keyCode: 13});
+      expect($(`${divs.container} li`)).toHaveLength(3);
+    });
     
     it('does not allow user to enter tags that are not whitelisted');
 
@@ -140,4 +168,5 @@ describe('tag module', function () {
     it('does not show an x inside tags that a user cannot remove');
     it('does not show tag options to a user who may not tag');
   });
+
 });
