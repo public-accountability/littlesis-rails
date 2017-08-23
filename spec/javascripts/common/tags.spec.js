@@ -9,17 +9,24 @@ describe('tag module', function () {
     description: 'center of the universe!',
     id: 2
   }];
+
+  var divs = {
+    control: "#tags-control",
+    container: "#tags-container",
+    editButton: "#tags-edit-button"
+  };
   
   describe('tags store operations', function (){
 
     it('creates a tags data structure from input', function(){
-      tags.init(allTags, [1]);
+      tags.init(allTags, [1], divs);
       expect(tags.get()).toEqual({
 	all: {
 	  1: allTags[0],
 	  2: allTags[1]
 	},
-	current: [1]
+	current: [1],
+        divs: divs
       });
     });
 
@@ -70,50 +77,60 @@ describe('tag module', function () {
   describe('displaying tags', function(){
     
     beforeEach(function(){
-      $('body').append('<div id="container-id">');
-      tags.init(allTags, [1,2], '#container-id');
+      $('body').append(`<div id="${divs.container.replace('#', '')}">`);
+      tags.init(allTags, [1,2], divs);
       tags.render();
     });
 
     afterEach(function(){
-      $('#container-id').remove();
+      $(`${divs.container}`).remove();
     });
     
     it('displays list of tags', () => {
       expect($('#tag-list')).toExist();
-      expect($('#container-id li')).toHaveLength(2);
+      expect($(`${divs.container} li `)).toHaveLength(2);
     });
+
+    it('shows an edit button');
 
   });
 
   describe('editing tags', function(){
 
     beforeEach(function(){
-      $('body').append('<div id="container-id">');
-      tags.init(allTags, [1,2], '#container-id');
+      $('body').append(`<div id="${divs.container.replace('#', '')}">`);
+      tags.init(allTags, [1,2], divs);
       tags.render();
     });
 
     afterEach(function(){
-      $('#container-id').remove();
+      $(`${divs.container}`).remove();
     });
     
-
     it('shows an x inside tags that a user can remove', function(){
-      expect($('#container-id span.tag-remove-button')).toHaveLength(2);
+      expect($(`${divs.container} span.tag-remove-button`)).toHaveLength(2);
     });
 
     it('removes a tag when user clicks the remove button', function(){
-      expect($('#container-id li')).toHaveLength(2);
+      expect($(`${divs.container} li`)).toHaveLength(2);
       $($('.tag-remove-button')[0]).trigger('click');
-      expect($('#container-id li')).toHaveLength(1);
+      expect($(`${divs.container} li`)).toHaveLength(1);
     });
     
-    it('does not show an x inside tags that a user cannot remove');
-    it('displays whitelisted tags for user to pick from');
+    it('activates edit mode when user clicks edit button');
+
+    it('does not display tag options for used already-applied tags');
+    
     it('does not allow user to enter tags that are not whitelisted');
+
     it('stretches the bounding box to contain multiple rows of tags');  
 
-    it('submits new tags when user clicks button');
+    it('restores old tags if user clicks cancel');
+
+    it('refreshes page with new tags if user clicks save');
+
+    // pending permissions card
+    it('does not show an x inside tags that a user cannot remove');
+    it('does not show tag options to a user who may not tag');
   });
 });

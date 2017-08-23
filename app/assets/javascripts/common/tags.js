@@ -7,44 +7,54 @@
 }(this, function ($) {
 
   var TAGS = null;
-  var DIV = null;
   var t = {};
 
-  // Tags = { [id: string]: Tag }
-  // Tag = type { name: string, description: string, id: number }
-  t.add = function(id) {
-    TAGS.current = TAGS.current.concat(id);
-  };
+  // type Tags = { [all: string]: TagsById, [current: string]: Array<number>, divs: Divs}
+  // type TagsById = { [id: string]: Tag }
+  // type Divs = { [id: string]: string }
+  // type Tag = type { name: string, description: string, id: number }
   
   /**
-   * 
-   * @param {Tags} tags
+   * Initalization of widget 
+   * @param {Array[Tag]} tags
    * @param {Array[number]} current
-   * @param {String} divId
+   * @param {Object} divs
    * @return {Tags}
    *
    */
-  t.init = function(tags, current, divId){
+  t.init = function(tags, current, divs){
     TAGS = {
       all: tags.reduce(
-    	function(acc, tag){ return Object.assign(acc, { [tag.id]: tag }); },
-    	{}
+    	function(acc, tag){
+          return Object.assign(acc, { [tag.id]: tag });
+        }, {}
       ),
-      current: current
-    };//parseInit(all, current);
-    DIV = divId;
+      current: current,
+      divs: divs
+    };
     return TAGS;
   };
 
+  // mutate store
   t.update = function(action, id){
     t[action](id);
     t.render(TAGS);
     t.post(TAGS);
   };
 
-  // update dom
+  t.add = function(id) {
+    TAGS.current = TAGS.current.concat(id);
+  };
+  
+  t.remove = function(idToRemove){
+    TAGS.current = TAGS.current.filter(function(id){
+      return id !== idToRemove;
+    });
+  };
+
+  // update done
   t.render = function(){
-    $(DIV)
+    $(TAGS.divs.container)
       .empty()
       .append(tagList());
   };
@@ -70,15 +80,17 @@
     });
   }
   
+
+
+
+
+
+
+
  // update server
   t.post = function(){};
-  
-  t.remove = function(idToRemove){
-    TAGS.current = TAGS.current.filter(function(id){
-      return id !== idToRemove;
-    });
-  };
 
+  // getter
   t.get = function() {
     return TAGS;
   };
