@@ -17,13 +17,13 @@
 	<div class="col-sm-12">            
           <%= sidebar_header 'Tags', addon: capture { %>
           <span id="tags-controls">
-            <span class="tag-edit-glyph"></span>
+            <span class="tag-edit-glyph" id="tags-edit-button"></span>
           </span>
           <% } %>
         </div>
 	<div class="col-sm-12">
 	  <div id="tags-container">
-            <ul id="tag-list">
+            <ul id="tags-list">
               <% @entity.tags.each do |t| %>
                 <li class="tag"><%= t[:name] %></li>
               <% end %>
@@ -35,10 +35,14 @@
 	<script>
 	 tags.init(
 	   <%= raw(Tag.all.to_json) %>,
-	  <%= raw(@entity.tags.map { |t| t[:id]}.to_json) %>,
-	   '#tags-container'
+	   <%= raw(@entity.tags.map { |t| t[:id]}.to_json) %>,
+	   {
+             container: '#tags-container',
+             control: '#tags-controls',
+             edit: '#tags-edit-button'
+           }
 	 );
-	 tags.render();
+	 
 	</script>
     <% end %>
 

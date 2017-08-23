@@ -6,6 +6,7 @@
   }
 }(this, function ($) {
 
+  var LIST_ID = "tags-edit-list";
   var TAGS = null;
   var t = {};
 
@@ -30,8 +31,11 @@
         }, {}
       ),
       current: current,
-      divs: divs
+      divs: divs,
+      cache: $(divs.container).html()
     };
+    // handle edit click
+    $(divs.edit).click(function(){ t.render(); });
     return TAGS;
   };
 
@@ -60,7 +64,7 @@
   };
 
   function tagList(){
-    return $('<ul>', {id: 'tag-list'})
+    return $('<ul>', {id: LIST_ID})
       .append(TAGS.current.map(tagButton));
   }
   

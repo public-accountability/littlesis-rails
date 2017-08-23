@@ -13,8 +13,23 @@ describe('tag module', function () {
   var divs = {
     control: "#tags-control",
     container: "#tags-container",
-    editButton: "#tags-edit-button"
+    edit: "#tags-edit-button"
   };
+
+  var divIds = Object.keys(divs).reduce(
+    (acc, k) => Object.assign(acc, { [k]: divs[k].slice(1) }),
+    {}
+  );
+
+  beforeEach(function(){
+    $('body').append(`<div id="${divIds.container}"><br></div>`);
+    $('body').append($('<button>', {id: divIds.edit}));
+  });
+
+  afterEach(function(){
+    $(divs.container).remove();
+    $(divs.edit).remove();
+  });
   
   describe('tags store operations', function (){
 
@@ -26,25 +41,27 @@ describe('tag module', function () {
 	  2: allTags[1]
 	},
 	current: [1],
-        divs: divs
+        divs: divs,
+        cache: '<br>'
       });
     });
 
     it('clears store upon initialization', function(){
-      tags.init(allTags, [1]);
+      tags.init(allTags, [1], divs);
       expect(tags.get().current).toEqual([1]);
-      tags.init(allTags, [2]);
+
+      tags.init(allTags, [2], divs);
       expect(tags.get().current).toEqual([2]);
     });
 
     it('adds a tag', () => {
-      tags.init(allTags, [1]);
+      tags.init(allTags, [1], divs);
       tags.add(2);
       expect(tags.get().current).toEqual([1,2]);
     });
 
     it('removes a tag', () => {
-      tags.init(allTags, [1,2]);
+      tags.init(allTags, [1,2], divs);
       tags.remove(2);
       expect(tags.get().current).toEqual([1]);
     });
@@ -62,7 +79,7 @@ describe('tag module', function () {
       });
       
       it('updates the store and syncs w/ DOM & server', () => {
-	tags.init(allTags, [2]);
+	tags.init(allTags, [2], divs);
 	tags.update('add', 1);
 	tags.update('remove', 2);
 	
@@ -75,36 +92,26 @@ describe('tag module', function () {
   });
   
   describe('displaying tags', function(){
-    
+
     beforeEach(function(){
-      $('body').append(`<div id="${divs.container.replace('#', '')}">`);
       tags.init(allTags, [1,2], divs);
-      tags.render();
     });
 
-    afterEach(function(){
-      $(`${divs.container}`).remove();
-    });
-    
-    it('displays list of tags', () => {
-      expect($('#tag-list')).toExist();
-      expect($(`${divs.container} li `)).toHaveLength(2);
+    it('shows nothing new when edit not clicked', () => {
+      expect($('#tags-edit-list')).not.toExist();
     });
 
-    it('shows an edit button');
-
+    it('shows edit mode when edit clicked', () => {
+      $(divs.edit).trigger('click');
+      expect($('#tags-edit-list')).toExist();
+    });
   });
 
   describe('editing tags', function(){
 
     beforeEach(function(){
-      $('body').append(`<div id="${divs.container.replace('#', '')}">`);
       tags.init(allTags, [1,2], divs);
       tags.render();
-    });
-
-    afterEach(function(){
-      $(`${divs.container}`).remove();
     });
     
     it('shows an x inside tags that a user can remove', function(){
