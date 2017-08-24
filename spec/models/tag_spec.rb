@@ -72,4 +72,14 @@ describe Tag do
     expect { Tag.find!(Integer::MAX_64BIT) }.to raise_error(Tag::NonexistentTagError)
   end
 
+  it 'partitions tag ids from client into hash of update actions to be taken' do
+    client_ids = [1, 2, 3].to_set
+    server_ids = [2, 3, 4].to_set
+    expect(Tag.parse_update_actions(client_ids, server_ids)).to eql(
+      add: [1].to_set,
+      remove: [4].to_set,
+      ignore: [2, 3].to_set
+    )
+  end
+  
 end

@@ -25,6 +25,7 @@ describe EntitiesController, type: :controller do
     it { should route(:get, '/entities/1/match_ny_donations').to(action: :match_ny_donations, id: 1) }
     it { should route(:get, '/entities/1/review_donations').to(action: :review_donations, id: 1) }
     it { should route(:get, '/entities/1/review_ny_donations').to(action: :review_ny_donations, id: 1) }
+    it { should route(:post, '/entities/1/tags').to(action: :tags, id: 1) }
   end
 
   describe 'GETs' do
