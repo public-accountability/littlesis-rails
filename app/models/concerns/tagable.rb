@@ -1,4 +1,10 @@
 module Tagable
+  extend ActiveSupport::Concern
+
+  included do
+    has_many :taggings, as: :tagable
+  end
+
   # TODO: make this clear the cache / update entity timestamp
   # and create a new paper_trail record
   def tag(name_or_id)

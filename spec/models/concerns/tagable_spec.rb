@@ -2,8 +2,14 @@ require 'rails_helper'
 
 describe Tagable do
 
+  module HasMany
+    def has_many(*args)
+    end
+  end
+
   class TestTagable
     attr_reader :id
+    extend HasMany
     include Tagable
     @@id = 0
 
@@ -15,14 +21,22 @@ describe Tagable do
 
   let(:test_tagable) { TestTagable.new }
 
-  it "is applicable to Entity, List, Relationship" do
+  before(:all) do
+    Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
+  end
+
+  after(:all) do
+    Tagging.set_callback(:save, :after, :update_tagable_timestamp)
+  end
+
+  it "Satisfies the tagable interface" do
     [Entity.new, Relationship.new, List.new].each do |tagable|
       expect(tagable).to respond_to(:tag)
+      expect(tagable).to respond_to(:last_user_id)
     end
   end
 
   describe 'creating a tag' do
-    
     it "creates a new tagging" do
       expect { test_tagable.tag("oil") }.to change { Tagging.count }.by(1)
     end
@@ -41,7 +55,6 @@ describe Tagable do
       expect(attrs['tagable_class']).to eq 'TestTagable'
       expect(attrs['tagable_id']).to eq test_tagable.id
     end
-
   end
 
   it "retrieves tags applied to it" do
@@ -55,11 +68,10 @@ describe Tagable do
   it "doesn't retrieve tags applied to objects of other classes" do
     test_tagable.tag(1)
     expect(test_tagable.tags.length).to eq 1
-    
+
     Tagging.create!(tag_id: 1, tagable_class: 'AnotherClass', tagable_id: test_tagable.id)
     expect(test_tagable.tags.length).to eq 1
   end
-
 
   it "retrieves taggings" do
     test_tagable.tag("oil")
@@ -75,5 +87,4 @@ describe Tagable do
     expect { test_tagable.tag("THIS IS NOT A REAL TAG!!!!") }.to raise_error(Tag::NonexistentTagError)
     expect { test_tagable.tag(1_000_000) }.to raise_error(Tag::NonexistentTagError)
   end
-
 end
