@@ -1,7 +1,17 @@
 require "rails_helper"
 
 describe "partial: sidebar" do
-  let(:org) { build(:org, org: build(:organization), id: rand(1000)) }
+  before(:all) do
+    Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
+  end
+
+  after(:all) do
+    Tagging.set_callback(:save, :after, :update_tagable_timestamp)
+  end
+
+  let(:org) do
+    build(:org, org: build(:organization), id: rand(1000))
+  end
 
   before do
     allow(Entity).to receive(:search).and_return([])
