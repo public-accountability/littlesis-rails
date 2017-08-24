@@ -10,6 +10,8 @@
   var TAGS = null;
   var t = {};
 
+  // STORE FUNCTIONS
+
   // type Tags = { [all: string]: TagsById, [current: string]: Array<string>, divs: Divs}
   // type TagsById = { [id: string]: Tag }
   // type Divs = { [id: string]: string }
@@ -39,11 +41,22 @@
     return TAGS;
   };
 
+  // getter
+  t.get = function() {
+    return TAGS;
+  };
+
   // str -> ?string
-  function getId(name){
+  t.getId = function(name){
     return Object.keys(TAGS.all).filter(function(k){
       return TAGS.all[k].name === name;
     })[0];
+  };
+
+  t.available = function(){
+    return Object.keys(TAGS.all).filter(function(id){
+      return !TAGS.current.includes(id);
+    });
   };
 
   // mutate store
@@ -64,28 +77,47 @@
     });
   };
 
+  // RENDER FUNCTIONS
+  
   // update done
   t.render = function(){
     $(TAGS.divs.container)
       .empty()
-      .append(input())
-      .append(tagList());
+      .append(tagList())
+      .append(select());
+    
+    $('#tags-select').selectpicker(); // possible to move this into select()?
   };
 
-  function input(){
-    return $('<textarea>', {
-      id: 'tags-input',
-      keypress: function(e) {
-        if (e.keyCode === 13 ) {
+  
+  // select field
+  function select(){
+    return $('<select>', {
+      class: 'selectpicker',
+      id: 'tags-select',
+      title: 'Pick a tag...',
+      'data-live-search': true,
+      
+      on: {
+        'changed.bs.select': function(e) {
           updateIfValid($(this).val());
         }
       }
-    }).css('z-index', 1);
-    
+    })
+      .append(selectOptions());
   }
+
+  function selectOptions(){
+    return t.available().map(function(tagId){
+      return $('<option>', {
+        class: 'tags-select-option',
+        text: TAGS.all[tagId].name
+      });
+    });
+  };
   
   function updateIfValid(tagInput){
-    var id = getId(tagInput);
+    var id = t.getId(tagInput);
     if (isValid(id)) t.update('add', id);
   }
 
@@ -96,7 +128,6 @@
   
   function tagList(){
     return $('<ul>', {id: LIST_ID})
-      .css('z-index', 0)
       .append(TAGS.current.map(tagButton));
   }
   
@@ -126,11 +157,6 @@
  // update server
   t.post = function(){};
 
-  // getter
-  t.get = function() {
-    return TAGS;
-  };
-  
   
   return t;
   

@@ -66,6 +66,20 @@ describe('tag module', function () {
       expect(tags.get().current).toEqual(['1', '2']);
     });
 
+    it('retrives a tag id from a name', () => {
+      tags.init(allTags, [], divs);
+      expect(tags.getId('oil')).toEqual('1');
+    });
+
+    it('gets all available tags', () => {
+      tags.init(allTags, [], divs);
+      expect(tags.available()).toEqual(['1','2','3']);
+
+      tags.init(allTags, [1], divs);
+      expect(tags.available()).toEqual(['2','3']);
+      
+    });
+
     it('removes a tag', () => {
       tags.init(allTags, [1,2], divs);
       tags.remove(2);
@@ -125,44 +139,25 @@ describe('tag module', function () {
     });
 
     it('removes a tag when user clicks the remove button', function(){
-      expect($(`${divs.container} li`)).toHaveLength(2);
+      expect($(`#tags-edit-list li`)).toHaveLength(2);
       $($('.tag-remove-button')[0]).trigger('click');
-      expect($(`${divs.container} li`)).toHaveLength(1);
+      expect($(`#tags-edit-list li`)).toHaveLength(1);
     });
 
-    it('adds a valid tag from user input', () => {
-      expect($(`${divs.container} li`)).toHaveLength(2);
-      $('#tags-input').val('finance'); // --> tag
-      $('#tags-input').trigger({ type: 'keypress', keyCode: 13});
-      expect($(`${divs.container} li`)).toHaveLength(3);
-    });
-
-    it('does nothing if user enters invalid tag', () => {
-      expect($(`${divs.container} li`)).toHaveLength(2);
-      $('#tags-input').val('foobar');
-      $('#tags-input').trigger({ type: 'keypress', keyCode: 13});
-      expect($(`${divs.container} li`)).toHaveLength(2);
-    });
-
-    it('does nothing if user enters duplicate tag', () => {
-      expect($(`${divs.container} li`)).toHaveLength(2);
-
-      $('#tags-input').val('finance');
-      $('#tags-input').trigger({ type: 'keypress', keyCode: 13});
-      expect($(`${divs.container} li`)).toHaveLength(3);
-
-      $('#tags-input').val('finance');
-      $('#tags-input').trigger({ type: 'keypress', keyCode: 13});
-      expect($(`${divs.container} li`)).toHaveLength(3);
+    it('shows a dropdown of valid, unused tags', () => {
+      expect('#tags-select .tags-select-option').toHaveLength(1); // doesn't show already used tags
     });
     
-    it('does not allow user to enter tags that are not whitelisted');
-
-    it('stretches the bounding box to contain multiple rows of tags');  
-
-    it('restores old tags if user clicks cancel');
+    it('adds a tag when user selects if from dropdown', () => {
+      expect($('#tags-edit-list').text()).not.toMatch('finance');
+      $('#tags-select').val('finance').trigger('changed.bs.select');
+      expect($('#tags-edit-list').text()).toMatch('finance');
+    });
 
     it('refreshes page with new tags if user clicks save');
+    
+    it('restores old tags if user clicks cancel');
+
 
     // pending permissions card
     it('does not show an x inside tags that a user cannot remove');

@@ -5,24 +5,27 @@
     
     margin-top: 1em;
     
+    $tag_margin: 0.4em;
+
     li.tag {
-	list-style: none;
-	display: inline;
-	margin-right: 5px;
-	padding: .3em;
-	border: 1px solid $red;
-	border-radius: .2em;
 	background-color: rgba(204,133,133,0.4);
+	border-radius: .2em;
+	border: 1px solid $red;
+	display: inline-block;
+	list-style: none; 
+	margin-right: $tag_margin;
+        margin-top: $tag_margin;
+	padding: .3em;
     }
 
     .tag-remove-button {
 	@extend .glyphicon;
 	@extend .glyphicon-remove;
 	@extend .hvr-pop;
+	color: $red;
 	cursor: pointer;
 	font-size: 0.7em;
 	margin-left: 0.5em;
-	color: $red;
     }
 
 }

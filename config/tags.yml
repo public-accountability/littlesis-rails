@@ -1,9 +1,25 @@
 ---
 -
-  name: oil
+  name: fossil-fuel
   description: "the reason for our planet's demise"
   id: 1
 -
   name: nyc
-  description: "anything related to New York City"
+  description: "hmm..."
   id: 2
+-
+  name: nys
+  description: "hmm..."
+  id: 3
+-
+  name: finance
+  description: "the reason for our planet's demise"
+  id: 4
+-
+  name: stl
+  description: "hmm..."
+  id: 5
+-
+  name: fracking
+  description: "hmm..."
+  id: 6
