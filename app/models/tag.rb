@@ -16,6 +16,15 @@ class Tag
     memo
   end
 
+  # (set, set) -> hash
+  def self.parse_update_actions(client_ids, server_ids)
+    {
+      ignore: client_ids & server_ids,
+      add: client_ids - server_ids,
+      remove: server_ids - client_ids
+    }
+  end
+  
   def self.find(name_or_id)
     LOOKUP[name_or_id]
   end

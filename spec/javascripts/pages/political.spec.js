@@ -130,7 +130,7 @@ describe('political', function(){
   describe('groupByDonor()', function(){
     // donor_id 1 amount -> 2000, donor_id 2 amount -> 1000
     var groupByDonor = political.groupByDonor(contributions);
-    it('groups donors by id and sums up amount', function() {
+    xit('groups donors by id and sums up amount', function() {
       //console.log(groupByDonor);
       expect(groupByDonor).toEqual([
 	{key: '1', value: { name: 'xyz', amount: 2000, pct: (2000 / 3000 * 100)}  },

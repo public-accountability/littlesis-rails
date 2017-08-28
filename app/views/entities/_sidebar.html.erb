@@ -9,36 +9,55 @@
 	</div>
     <% end %>
 
-    <!-- TAGS -->
-
-    <% if @entity.tags.present? %>
-	
-	<div class="row">
-	    <div class="col-sm-12">
-		<%= sidebar_title('Tags') %>
-	    </div>
-	    <div class="col-sm-12">
-		<ul id="tag-list">
-		    <% @entity.tags.each do |tag| %>
-			<li class="tag"><%= tag[:name] %>
-		    <% end %>
-		</ul>
-	    </div>
-	    
-	</div>
-	
-    <% end %>
-
     <!-- BASIC INFO -->
     <% cache ['entity_basic_info', @entity.alt_cache_key] do %>
 	<div class="row">
-	    <div class="col-sm-12">
-		<%= sidebar_title('Basic info') %>
-	    </div>
-	    <div class="col-sm-12 sidebar-basic-info-container">
-		<%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
-	    </div>
+	  <div class="col-sm-12">
+	    <%= sidebar_header 'Basic info' %>
+	  </div>
+	  <div class="col-sm-12 sidebar-basic-info-container">
+	    <%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
+	  </div>
 	</div>
+    <% end %>
+
+    <!-- TAGS -->
+
+    <% if user_signed_in? && current_user.admin? %>
+      
+      <div class="row">
+	<div class="col-sm-12">            
+          <%= sidebar_header 'Tags', addon: capture { %>
+          <span id="tags-controls">
+            <span class="tags-edit-glyph" id="tags-edit-button"></span>
+          </span>
+          <% } %>
+        </div>
+	<div class="col-sm-12">
+	  <div id="tags-container">
+            <ul id="tags-list">
+              <% @entity.tags.each do |t| %>
+                <li class="tag"><%= t[:name] %></li>
+              <% end %>
+            </ul>
+	  </div>
+	</div>
+      </div>
+	
+	<script>
+	 tags.init(
+	   <%= raw(Tag.all.to_json) %>,
+	   <%= raw(@entity.tags.map { |t| t[:id]}.to_json) %>,
+           "<%= raw(tags_entity_path(@entity)) %>,
+	   {
+             container: '#tags-container',
+             control: '#tags-controls',
+             edit: '#tags-edit-button'
+           },
+           
+	 );
+	 
+	</script>
     <% end %>
 
     <!-- SOURCE LINKS -->
@@ -50,7 +69,7 @@
     <% if user_signed_in? && current_user.admin? %>
 	<div class="row">
 	    <div class="col-sm-12">
-		<%= sidebar_title('Admin tools') %>
+		<%= sidebar_header('Admin tools') %>
 	    </div>
 	    <div class="col-sm-12">
 		<%= link_to 'Addresses', @entity.legacy_url('addresses') %>
@@ -62,7 +81,7 @@
     <% if user_signed_in? %>
 	<div class="row">
 	    <div class="col-sm-12">
-		<%= sidebar_title('Advanced tools') %>
+		<%= sidebar_header('Advanced tools') %>
 	    </div>
 	    <div class="col-sm-12">
 		<%= link_to 'Network Search', @entity.legacy_url('networkSearch') %>
@@ -84,7 +103,7 @@
     <% cache(['entity_list_entities', @entity.list_entities], :expires_in => 1.week) do %>
 	<div class="row">
 	    <div class="col-sm-12">
-		<%= sidebar_title('Lists', 'Analyst-created lists of people and org') %>
+		<%= sidebar_header('Lists', subtitle: 'Analyst-created lists of people and org') %>
 	    </div>
 	    <div class="col-sm-12">
 		<ul class="list-unstyled">
@@ -98,7 +117,7 @@
     <% unless @similar_entities.blank? %>
 	<div class="row">
 	    <div class="col-sm-12">
-		<%= sidebar_title('Similar Entities') %>
+		<%= sidebar_header('Similar Entities') %>
 	    </div>
 	    <div class="col-sm-12">
 		<ul class="list-unstyled">

@@ -33,6 +33,12 @@ describe "partial: sidebar" do
   end
 
   describe 'tags' do
+    before do
+      allow(view).to receive(:user_signed_in?).and_return(true)
+      allow(view).to receive(:current_user)
+                      .and_return(double(:admin? => true, :importer? => true, :merger? => false))
+      
+    end
     context 'entity has tags' do
       before do
         org.tag('oil')
@@ -41,27 +47,8 @@ describe "partial: sidebar" do
         render partial: 'entities/sidebar.html.erb'
       end
 
-      it 'has #tag-list' do
-        css '#tag-list'
-      end
-
-      it 'has 2 tags in a list' do
-        css 'li.tag', count: 2
-      end
-    end
-
-    context 'entity does not have tags' do
-      before do
-        assign(:entity, org)
-        render partial: 'entities/sidebar.html.erb'
-      end
-
-      it 'does not have #tag-list' do
-        not_css '#tag-list'
-      end
-
-      it 'has no tags' do
-        not_css 'li.tag'
+      it 'has #tags-container' do
+        css '#tags-container'
       end
     end
   end
