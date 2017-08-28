@@ -23,8 +23,7 @@ module TagableController
       tagable.tag(tag_id)
     end
 
-    head :created
-    #TODO: redirect_to tagable.after_tagable_create_path
+    redirect_to send("#{klass_name.downcase}_path", tagable)
   end
 
 

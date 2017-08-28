@@ -15,6 +15,12 @@ describe 'Tagging', :type => :request do
       post "/entities/#{entity.id}/tags", :tag => { ids: ['1','2'] }
       expect(Entity.find(entity.id).tags.length).to eql 2
     end
+
+    it 'redirects to entity page' do
+      post "/entities/#{entity.id}/tags", :tag => { ids: ['1','2'] }
+      expect(response).to have_http_status 302
+      expect(response.location).to include "/org/#{entity.id}"
+    end
     
   end
 
