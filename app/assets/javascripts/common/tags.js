@@ -25,7 +25,7 @@
    * @return {Tags}
    *
    */
-  t.init = function(tags, current, divs){
+  t.init = function(tags, current, endpoint, divs){
     TAGS = {
       all: tags.reduce(
     	function(acc, tag){
@@ -34,10 +34,13 @@
       ),
       current: current.map(String),
       divs: divs,
-      cache: $(divs.container).html()
+      cache: {
+        html: $(divs.container).html(),
+        tags: current.map(String)
+      },
+      endpoint: endpoint
     };
-    // handle edit click
-    $(divs.edit).click(function(){ t.render(); });
+    handleEditClick();
     return TAGS;
   };
 
@@ -78,6 +81,47 @@
   };
 
   // RENDER FUNCTIONS
+
+  function handleEditClick(){
+    $(TAGS.divs.edit).click(function(){
+      $(this).hide();
+      renderControls();
+      t.render();
+    });
+    
+  }
+
+  function renderControls(){
+    $(TAGS.divs.control)
+      .append(saveButton())
+      .append(cancelButton());
+  }
+
+  function saveButton(){
+    return $('<button>', {
+      id: 'tags-save-button',
+      text: 'save',
+      click: function(){
+        $.post(TAGS.endpoint, {tags: { ids: TAGS.current  }})
+          .done(function(){ window.location.reload(true); });
+      }
+    });
+  }
+
+  function cancelButton(){
+    return $('<button>', {
+      id: 'tags-cancel-button',
+      text: 'cancel',
+      click: function(){
+        // restore state
+        $(TAGS.divs.container).html(TAGS.cache.html);
+        TAGS.current = TAGS.cache.tags;
+        $('#tags-save-button').remove();
+        $('#tags-cancel-button').remove();
+        $(TAGS.divs.edit).show();
+      }
+    });    
+  }
   
   // update done
   t.render = function(){

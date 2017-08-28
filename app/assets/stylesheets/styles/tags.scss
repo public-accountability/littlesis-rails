@@ -30,12 +30,27 @@
 
 }
 
-.tag-edit-glyph {
+#tags-save-button, #tags-cancel-button {
+    @extend .btn;
+    @extend .btn-xs;
+    margin-left: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+#tags-save-button {
+    @extend .btn-primary;
+}
+
+#tags-cancel-button {
+    @extend .btn-default;
+}
+
+.tags-edit-glyph {
     @extend .glyphicon;
     @extend .glyphicon-pencil;
     cursor: pointer;
     padding-left: 1em;
-
+    margin-bottom: 0.5em;
     &:hover {
         color: $red;
     }

@@ -17,7 +17,7 @@
 	<div class="col-sm-12">            
           <%= sidebar_header 'Tags', addon: capture { %>
           <span id="tags-controls">
-            <span class="tag-edit-glyph" id="tags-edit-button"></span>
+            <span class="tags-edit-glyph" id="tags-edit-button"></span>
           </span>
           <% } %>
         </div>
@@ -36,11 +36,13 @@
 	 tags.init(
 	   <%= raw(Tag.all.to_json) %>,
 	   <%= raw(@entity.tags.map { |t| t[:id]}.to_json) %>,
+           "<%= raw(tags_entity_path(@entity)) %>",
 	   {
              container: '#tags-container',
              control: '#tags-controls',
              edit: '#tags-edit-button'
-           }
+           },
+           
 	 );
 	 
 	</script>
