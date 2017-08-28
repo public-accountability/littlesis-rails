@@ -57,6 +57,48 @@ describe Tagable do
     end
   end
 
+  describe 'removing tags' do
+    before{ test_tagable.tag("oil") }
+    
+    it 'removes a tag by name' do
+      expect { test_tagable.remove_tag("oil") }.to change { Tagging.count }.by(-1)
+    end
+
+    
+    it 'removes a tag by id' do
+      expect { test_tagable.remove_tag(1) }.to change { Tagging.count }.by(-1)
+    end
+  end
+
+  describe 'batch updating tags' do
+        
+    it 'adds tags in a batch with tags as ints' do
+      expect { test_tagable.update_tags([1, 2]) }.to change { Tagging.count }.by(2)
+    end
+
+    it 'adds tags in a batch with tags as strings' do
+      expect { test_tagable.update_tags(['1', '2']) }.to change { Tagging.count }.by(2)
+    end
+    
+    it'removes tags in a batch' do
+      test_tagable.tag('oil')
+      test_tagable.tag('nyc')
+      expect { test_tagable.update_tags([]) }.to change { Tagging.count }.by(-2)
+    end
+
+    it'adds and removes tags in a batch'  do
+      test_tagable.tag('oil')
+      test_tagable.update_tags(['2'])
+      updated_tag_ids = test_tagable.tags.map { |t| t[:id] }
+      expect(updated_tag_ids).to eql [2]
+    end
+
+    it 'returns self' do
+      expect(test_tagable.update_tags([])).to be_a TestTagable
+    end
+  end
+  
+  
   it "retrieves tags applied to it" do
     test_tagable.tag("oil")
     expect(test_tagable.tags.to_a)
