@@ -48,7 +48,7 @@
 	 tags.init(
 	   <%= raw(Tag.all.to_json) %>,
 	   <%= raw(@entity.tags.map { |t| t[:id]}.to_json) %>,
-           "<%= raw(tags_entity_path(@entity)) %>,
+           "<%= raw(tags_entity_path(@entity)) %>",
 	   {
              container: '#tags-container',
              control: '#tags-controls',
