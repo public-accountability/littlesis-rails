@@ -1,25 +1,17 @@
 ---
 -
   name: fossil-fuel
-  description: "the reason for our planet's demise"
+  description: "Oil, gas, and coal firms"
   id: 1
 -
-  name: nyc
-  description: "hmm..."
+  name: real-estate
+  description: "The real estate industry"
   id: 2
 -
-  name: nys
-  description: "hmm..."
+  name: finance
+  description: "Banks, hedge funds and private equity firms"
   id: 3
 -
-  name: finance
-  description: "the reason for our planet's demise"
-  id: 4
--
-  name: stl
-  description: "hmm..."
-  id: 5
--
   name: fracking
-  description: "hmm..."
-  id: 6
+  description: "People and companies involved in fracking"
+  id: 4
