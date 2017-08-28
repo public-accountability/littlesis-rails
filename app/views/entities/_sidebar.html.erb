@@ -9,9 +9,21 @@
 	</div>
     <% end %>
 
+    <!-- BASIC INFO -->
+    <% cache ['entity_basic_info', @entity.alt_cache_key] do %>
+	<div class="row">
+	  <div class="col-sm-12">
+	    <%= sidebar_header 'Basic info' %>
+	  </div>
+	  <div class="col-sm-12 sidebar-basic-info-container">
+	    <%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
+	  </div>
+	</div>
+    <% end %>
+
     <!-- TAGS -->
 
-    <% if @entity.tags.present? %>
+    <% if user_signed_in? && current_user.admin? %>
       
       <div class="row">
 	<div class="col-sm-12">            
@@ -36,7 +48,7 @@
 	 tags.init(
 	   <%= raw(Tag.all.to_json) %>,
 	   <%= raw(@entity.tags.map { |t| t[:id]}.to_json) %>,
-           "<%= raw(tags_entity_path(@entity)) %>",
+           "<%= raw(tags_entity_path(@entity)) %>,
 	   {
              container: '#tags-container',
              control: '#tags-controls',
@@ -46,18 +58,6 @@
 	 );
 	 
 	</script>
-    <% end %>
-
-    <!-- BASIC INFO -->
-    <% cache ['entity_basic_info', @entity.alt_cache_key] do %>
-	<div class="row">
-	  <div class="col-sm-12">
-	    <%= sidebar_header 'Basic info' %>
-	  </div>
-	  <div class="col-sm-12 sidebar-basic-info-container">
-	    <%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
-	  </div>
-	</div>
     <% end %>
 
     <!-- SOURCE LINKS -->

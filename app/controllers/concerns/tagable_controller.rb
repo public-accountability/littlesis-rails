@@ -1,5 +1,9 @@
 module TagableController
-  
+  extend ActiveSupport::Concern
+
+  included do
+    before_action :authenticate_user!, only: [:tags]
+  end
 
   # {
   #   tag: {
