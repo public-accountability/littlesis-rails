@@ -29,7 +29,9 @@
     TAGS = {
       all: tags.reduce(
     	function(acc, tag){
-          return Object.assign(acc, { [tag.id]: tag });
+	  var _tag = {};
+	  Object.defineProperty(_tag, tag.id.toString(), { value: tag, writable: true, enumerable: true, configurable: true });
+          return Object.assign(acc, _tag);
         }, {}
       ),
       current: current.map(String),
