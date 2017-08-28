@@ -706,6 +706,15 @@ describe Entity do
     end
   end
 
+  describe 'Tagging' do
+    it 'can tag a person with oil' do
+      person = create(:person)
+      expect { person.tag('oil') }.to change { Tagging.count }.by(1)
+      expect(person.taggings).to eq [Tagging.last]
+    end
+  end
+
+
   describe 'Using paper_trail for versision' do
     with_versioning do
       it 'creates version after updating name' do

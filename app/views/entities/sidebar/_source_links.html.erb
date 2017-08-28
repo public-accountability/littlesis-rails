@@ -1,13 +1,13 @@
 <div class="row" id="sidebar-source-links">
     <div class="col-sm-12">
-	<%= sidebar_title('Source Links', 'Articles documenting info on this page') %>
+	<%= sidebar_header('Source Links', subtitle: 'Articles documenting info on this page') %>
     </div>
-    
+
     <div class="col-sm-12" >
 	<span class="link-count">Number of documents: <em class="link-count"><%= Reference.unique_url_count(@entity) %></em></span>
 	<span class="link-count"><%= link_to " :: see all", references_entity_path(@entity) %> </span>
     </div>
-    
+
     <div class="col-sm-12" >
 	<ul class="list-unstyled" id="source-links-container">
 	</ul>

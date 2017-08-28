@@ -164,6 +164,7 @@ Lilsis::Application.routes.draw do
         post 'remove_image'
         post 'feature_image'
         get 'add_relationship'
+        post 'tags'
       end
 
       collection do

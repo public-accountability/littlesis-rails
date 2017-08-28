@@ -1,0 +1,57 @@
+/* TAGS */
+#tags-edit-list, #tags-list {
+
+    @extend .list-unstyled;
+    
+    margin-top: 1em;
+    
+    $tag_margin: 0.4em;
+
+    li.tag {
+	background-color: rgba(204,133,133,0.4);
+	border-radius: .2em;
+	border: 1px solid $red;
+	display: inline-block;
+	list-style: none; 
+	margin-right: $tag_margin;
+        margin-top: $tag_margin;
+	padding: .3em;
+    }
+
+    .tag-remove-button {
+	@extend .glyphicon;
+	@extend .glyphicon-remove;
+	@extend .hvr-pop;
+	color: $red;
+	cursor: pointer;
+	font-size: 0.7em;
+	margin-left: 0.5em;
+    }
+
+}
+
+#tags-save-button, #tags-cancel-button {
+    @extend .btn;
+    @extend .btn-xs;
+    margin-left: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+#tags-save-button {
+    @extend .btn-primary;
+}
+
+#tags-cancel-button {
+    @extend .btn-default;
+}
+
+.tags-edit-glyph {
+    @extend .glyphicon;
+    @extend .glyphicon-pencil;
+    cursor: pointer;
+    padding-left: 1em;
+    margin-bottom: 0.5em;
+    &:hover {
+        color: $red;
+    }
+}

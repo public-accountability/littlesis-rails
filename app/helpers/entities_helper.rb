@@ -126,10 +126,13 @@ module EntitiesHelper
     image_tag(@entity.featured_image_url, alt: @entity.name, class: 'img-rounded')
   end
 
-  def sidebar_title(title, pointer = nil)
-    title = content_tag(:div, content_tag(:span, title, class: 'lead sidebar-title-text'), class: 'sidebar-title-container thin-grey-bottom-border')
-    return title if pointer.nil?
-    title + content_tag(:div, pointer, class: 'section-pointer')
+  # input: string, [string], [block]
+  def sidebar_header(title_text, subtitle: nil, addon: '')
+    content = content_tag(:div, class: 'sidebar-title-container thin-grey-bottom-border') do
+      content_tag(:span, title_text, class: 'lead sidebar-title-text') + addon
+    end
+    return content if subtitle.nil?
+    content + content_tag(:div, subtitle, class: 'section-pointer')
   end
 
   def sidebar_industry_links(os_categories)

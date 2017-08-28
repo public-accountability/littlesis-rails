@@ -5,6 +5,7 @@ class Relationship < ActiveRecord::Base
   include Referenceable
   include RelationshipDisplay
   include SimilarRelationships
+  include Tagable
 
   has_paper_trail :ignore => [:last_user_id],
                   :meta => { :entity1_id => :entity1_id, :entity2_id => :entity2_id }
