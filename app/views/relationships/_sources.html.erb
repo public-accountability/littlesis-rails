@@ -10,7 +10,7 @@
     <tbody>
         <% relationship.source_links.each do |link|  %>
             <tr>
-                <td><%= link_to excerpt( (link.name.blank? ? link.source : link.name) ), link.source %></td>
+                <td><%= link_to excerpt( (link.name.blank? ? link.source : link.name) ), link.source, 'target' => '_blank' %></td>
             </tr>
         <% end %>
     </tbody>
