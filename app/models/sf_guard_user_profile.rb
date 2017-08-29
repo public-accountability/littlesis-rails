@@ -3,15 +3,14 @@ class SfGuardUserProfile < ActiveRecord::Base
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :name_first, presence: true
   validates :home_network_id, presence: true
-  
+  validates :reason, signup_reason: true
+
   belongs_to :sf_guard_user, inverse_of: :sf_guard_user_profile, foreign_key: "user_id"
   belongs_to :user, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :sf_guard_user_profile
 
-    
   # this is used by rake task: create_all_from_profiles
   # After the new sign up system, it's no longer needed
-  # (ziggy 10-27-16) 
-  
+  # (ziggy 10-27-16)
   # def create_user_with_email_password
   # 	User.where(sf_guard_user_id: user_id).first_or_create do |user|
   #       		user.username = public_name
@@ -32,15 +31,15 @@ class SfGuardUserProfile < ActiveRecord::Base
   #   return ActionController::Base.helpers.asset_path("images/system/user.png") if filename.nil?
   #   image_path(type)
   # end
-        
+
   def image_path(type)
     return ActionController::Base.helpers.asset_path("images/system/user.png") if filename.nil?
-    ActionController::Base.helpers.asset_path("images/#{type}/#{filename(type)}")  
+    ActionController::Base.helpers.asset_path("images/#{type}/#{filename(type)}")
   end
 
   def filename(type=nil)
     return read_attribute(:filename) unless type == "square"
-    fn = read_attribute(:filename) 
+    fn = read_attribute(:filename)
     fn.chomp(File.extname(fn)) + '.jpg'
   end
 
