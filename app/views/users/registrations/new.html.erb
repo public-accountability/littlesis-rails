@@ -2,35 +2,51 @@
 <%  simple_math_2 = rand(20) %>
 <%  simple_math_total = (simple_math_1 + simple_math_2) %>
 
-<%= javascript_tag do  %>
-     function validateForm(){
-       if (!document.getElementById('terms_of_use').checked) {
-	 alert("Unfortunately, you have to accept the terms first");
-	 return false;
-       }
-       
-       var password = document.getElementsByName("user[password]")[0].value;
-       var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
-       var solution = Number(<%= simple_math_total %>);
-       var answerProvided = Number(document.getElementById('simple_math').value);
-       if (password.length < 8) {
-	 alert('Please ensure that your password is 8 or more characters long!');
-	 return false;
-       } else if (password !== confirmation) {
-	 alert('Your password and password confirmation do not match :(');
-	 return false;
-       } else if (solution  !==  answerProvided) {
-	 alert('Please double check your math :( ');
-	 return false;
-       } else {
-	 return true;
-       }
-     }
+<script>
+ $(function(){
+   var aboutYouInput = document.getElementById('about-you-input');
+   aboutYouInput.setCustomValidity("Don't forget to fill out this field");
+   
+   aboutYouInput.addEventListener("input", function(e){
+	     if (this.value === '') {
+	       this.setCustomValidity("Don't forget to fill out this field");
+	     } else if (this.value.split(' ').length <= 2) {
+	       this.setCustomValidity("Please include more details")
+	     } else {
+	       this.setCustomValidity("")
+	     }
+	   });
+ });
+ 
 
-     $(function () {
-       $('[data-toggle="tooltip"]').tooltip()
-     })
-<% end %>
+ function validateForm(){
+   if (!document.getElementById('terms_of_use').checked) {
+     alert("Unfortunately, you have to accept the terms first");
+     return false;
+   }
+
+   var password = document.getElementsByName("user[password]")[0].value;
+   var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
+   var solution = Number(<%= simple_math_total %>);
+   var answerProvided = Number(document.getElementById('simple_math').value);
+   if (password.length < 8) {
+     alert('Please ensure that your password is 8 or more characters long!');
+     return false;
+   } else if (password !== confirmation) {
+     alert('Your password and password confirmation do not match :(');
+     return false;
+   } else if (solution  !==  answerProvided) {
+     alert('Please double check your math :( ');
+     return false;
+   } else {
+     return true;
+   }
+ }
+
+ $(function () {
+   $('[data-toggle="tooltip"]').tooltip()
+ })
+</script>
 
 <div class="row">
     <div class="col-sm-7">
@@ -176,9 +192,9 @@
 			</div>
 
 			<div class="form-group">
-                            <%= profile_fields.label :reason, "A little about you and why you're signing up", :class => label_class  %>
+                            <%= profile_fields.label :reason, "A little about you and why you're signing up*", :class => label_class  %>
                             <div class="col-sm-9">
-				<%= profile_fields.text_area :reason, :class => 'form-control', :rows => 5 %>
+				<%= profile_fields.text_area :reason, :class => 'form-control', :rows => 5, :id => 'about-you-input' %>
                             </div>
 			</div>
 			
