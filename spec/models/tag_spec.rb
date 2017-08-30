@@ -17,7 +17,15 @@ describe Tag do
     }
   end
 
-  let(:tags) { [oil, nyc] }
+  let(:finance) do
+    {
+      'name' => 'finance',
+      'description' => 'banks and such',
+      'id' => 3
+    }
+  end
+
+  let(:tags) { [oil, nyc, finance] }
   let(:invalid_tags) { tags.dup.tap { |t| t[1]['id'] = 1 } }
 
   it "returns all tags" do
@@ -48,7 +56,9 @@ describe Tag do
                1 => oil,
                'oil' => oil,
                2 => nyc,
-               'nyc' => nyc
+               'nyc' => nyc,
+               3 => finance,
+               'finance' => finance
              })
   end
 

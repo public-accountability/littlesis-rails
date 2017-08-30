@@ -1,0 +1,11 @@
+<% include_title = false if local_assigns[:include_title].nil? %>
+<div id="list-tags-container" class="list-tags-container">
+    <% if include_title %>
+	<h4 class="thin-grey-bottom-border">Tags</h4>
+    <% end %>
+    <ul id="tags-list">
+	<% tags.each do |t| %>
+	    <li class="tag"><%= t[:name] %></li>
+	<% end %>
+    </ul>
+</div>

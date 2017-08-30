@@ -7,3 +7,7 @@
   name: nyc
   description: "anything related to New York City"
   id: 2
+-
+  name: finance
+  description: "banks and such"
+  id: 3
