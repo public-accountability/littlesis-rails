@@ -3,6 +3,10 @@ module UserPermissions
   # included do
   # end
 
+  ACCESS_OPEN = 0
+  ACCESS_CLOSED = 1
+  ACCESS_PRIVATE = 2
+
   def legacy_permissions
     sf_guard_user.permissions
   end
@@ -82,7 +86,7 @@ module UserPermissions
     def edit_list?(list)
       return true if admin? || (list.creator_user_id == @user.id)
       return false if list.restricted?
-      return true if lister? && (list.access == List::ACCESS_OPEN)
+      return true if lister? && (list.access == ACCESS_OPEN)
       return false
     end
 

@@ -61,7 +61,7 @@ describe UserPermissions::Permissions do
     context "an open list" do
 
       before do
-        @open_list = build(:list, access: List::ACCESS_OPEN, creator_user_id: @creator.id)
+        @open_list = build(:list, access: UserPermissions::ACCESS_OPEN, creator_user_id: @creator.id)
       end
 
       context "anon user" do
@@ -128,7 +128,7 @@ describe UserPermissions::Permissions do
 
     context 'closed list' do
       before do
-        @closed_list = build(:list, access: List::ACCESS_CLOSED, creator_user_id: @creator.id)
+        @closed_list = build(:list, access: UserPermissions::ACCESS_CLOSED, creator_user_id: @creator.id)
       end
       
       context "anon user" do
