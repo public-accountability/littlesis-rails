@@ -2,10 +2,10 @@ require 'rails_helper'
 
 describe LsDate do
   describe 'initalize' do
-    describe 'test_if_valid_input' do 
+    describe 'test_if_valid_input' do
       it 'raises error if provided invalid date string' do
-        expect { LsDate.new('1922') }.to raise_error ArgumentError
-        expect { LsDate.new('2000-12') }.to raise_error ArgumentError
+        expect { LsDate.new('1922') }.to raise_error LsDate::InvalidLsDateError
+        expect { LsDate.new('2000-12') }.to raise_error LsDate::InvalidLsDateError
       end
 
       it 'allows valid date' do

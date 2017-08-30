@@ -343,8 +343,10 @@ class Relationship < ActiveRecord::Base
       return "(#{LsDate.new(start_date).display})"
     end
     "(#{LsDate.new(start_date).display}→#{LsDate.new(end_date).display})"
+  rescue LsDate::InvalidLsDateError
+    return ''
   end
-  
+
   ## education ##
 
   def degree

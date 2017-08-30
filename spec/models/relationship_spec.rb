@@ -434,24 +434,46 @@ describe Relationship, type: :model do
   end
 
   describe '#display_date_range' do
-    it 'returns (past)' do
-      rel = build(:relationship, start_date: nil, end_date: nil, is_current: false)
-      expect(rel.display_date_range).to eq '(past)'
+    let(:start_date) { nil }
+    let(:end_date) { nil }
+    let(:is_current) { nil }
+    let(:category_id) { 12 }
+    let(:rel) do
+      build(:relationship, start_date: start_date, end_date: end_date, is_current: is_current, category_id: category_id)
+    end
+    subject { rel.display_date_range }
+
+    context 'A past relationship without start or end dates' do
+      let(:is_current) { false }
+      it { should eql '(past)' }
     end
 
-    it 'returns plain date if dates are equal' do
-      rel = build(:relationship, start_date: '1999-00-00', end_date: '1999-00-00')
-      expect(rel.display_date_range).to eq "('99)"
+    context 'A current relationship without start or end dates' do
+      let(:is_current) { true }
+      it { should eql '' }
     end
 
-    it 'returns date only if it is a donation relationship with a null end date' do
-      rel = build(:relationship, start_date: '1999-02-25', end_date: nil, category_id: 5)
-      expect(rel.display_date_range).to eq "(Feb 25 '99)"
+    context 'Start date and end date are equal' do
+      let(:start_date) { '1999-00-00' }
+      let(:end_date) { '1999-00-00' }
+      it { should eql "('99)" }
     end
 
-    it 'returns date range' do
-      rel = build(:relationship, start_date: '2000-01-01', end_date: '2012-12-12', category_id: 12)
-      expect(rel.display_date_range).to eq "(Jan 1 '00→Dec 12 '12)"
+    context 'is a donation relationship and missing an end date' do
+      let(:category_id) { 5 }
+      let(:start_date) { '1999-02-25' }
+      it { should eql "(Feb 25 '99)" }
+    end
+
+    context 'has start and end date' do
+      let(:start_date) { '2000-01-01' }
+      let(:end_date) { '2012-12-12' }
+      it { should eql "(Jan 1 '00→Dec 12 '12)" }
+    end
+
+    context 'relationship start date is invalid' do
+      let(:start_date) { '2000' }
+      it { should eql '' }
     end
   end
 
