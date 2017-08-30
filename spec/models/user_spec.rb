@@ -6,7 +6,7 @@ describe User do
 
   it { should have_one(:api_token) }
   it { should have_many(:lists) }
-  it { should have_one(:user_permission) }
+  it { should have_many(:user_permissions) }
 
   describe 'validations' do
     before(:all) do

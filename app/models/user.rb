@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
   has_many :lists, foreign_key: "creator_user_id", inverse_of: :user
 
   has_one :api_token
-  has_one :user_permission
+  has_many :user_permissions
 
   def to_param
     username

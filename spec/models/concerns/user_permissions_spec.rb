@@ -49,6 +49,52 @@ describe UserPermissions::Permissions do
     end
   end
 
+  describe "tag permisions" do
+
+    let(:open_tagging) { build(:open_tagging) } # oil
+    let(:closed_tagging) { build(:closed_tagging) } # nyc
+
+    let(:owner) { create_really_basic_user }
+    let(:non_owner) { create_really_basic_user }
+
+    let(:full_access) { { viewable: true, editable: true } }
+    let(:view_only_access) { { viewable: true, editable: false } }
+
+    before do
+      access_rules = { tag_ids: [open_tagging, closed_tagging].map(&:tag_id) }.to_json
+      owner.user_permissions.create(resource_type: 'Tagging',
+                                    access_rules: access_rules)
+    end
+
+    context('an open tag') do
+
+      it('can be viewed but not edited by an anonymous user') do
+        expect(
+          UserPermissions::Permissions.anon_tag_permissions(open_tagging)
+        ).to eq view_only_access
+      end
+
+      it("can be viewed and edited by any logged in user") do
+        expect(owner.permissions.tag_permissions(open_tagging)).to eq full_access
+        expect(non_owner.permissions.tag_permissions(open_tagging)).to eq full_access
+      end
+    end
+
+    context('a closed tag') do
+
+      it("can be viewed but not edited by an anonymous user") do
+        expect(
+          UserPermissions::Permissions.anon_tag_permissions(closed_tagging)
+        ).to eq view_only_access
+      end
+
+      it("can be viewed by any logged in user but only edited by its owner(s)") do
+        expect(owner.permissions.tag_permissions(closed_tagging)).to eq full_access
+        expect(non_owner.permissions.tag_permissions(closed_tagging)).to eq view_only_access
+      end
+    end
+  end
+
   describe "list permisions" do
 
     before do
@@ -130,7 +176,7 @@ describe UserPermissions::Permissions do
       before do
         @closed_list = build(:list, access: UserPermissions::ACCESS_CLOSED, creator_user_id: @creator.id)
       end
-      
+
       context "anon user" do
         it 'can view but not edit or configure the list' do
           expect(UserPermissions::Permissions.anon_list_permissions(@closed_list))

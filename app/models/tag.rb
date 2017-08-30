@@ -4,11 +4,17 @@ class Tag
     tags
   end
 
-  TAGS = VALIDATE.call(
-    YAML.load(File.open(Rails.root.join(APP_CONFIG["tags_path"]))).map do |h|
-      ActiveSupport::HashWithIndifferentAccess.new(h)
+  TAGIFY = lambda do |hash|
+    ActiveSupport::HashWithIndifferentAccess.new(hash).tap do |tag|
+      def tag.restricted?
+        fetch(:restricted, false)
+      end
     end
-  )
+  end
+
+  TAGS = VALIDATE.call(
+    YAML.load(File.open(Rails.root.join(APP_CONFIG["tags_path"]))).map(&TAGIFY)
+  ).freeze
 
   LOOKUP = TAGS.reduce({}) do |memo, tag|
     memo[tag[:id]] = tag
@@ -41,3 +47,4 @@ class Tag
 
   class NonexistentTagError < StandardError; end
 end
+

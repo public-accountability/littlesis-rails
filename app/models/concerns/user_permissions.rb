@@ -58,6 +58,21 @@ module UserPermissions
       @sf_permissions = @user.sf_guard_user.permissions
     end
 
+    def self.anon_tag_permissions(tagging)
+      {
+        viewable: true,
+        editable: false,
+      }
+    end
+
+
+    def tag_permissions(tagging)
+      {
+        viewable: true,
+        editable: edit_tagging?(tagging)
+      }
+    end
+
     def self.anon_list_permissions(list)
       {
         viewable: !list.restricted?,
@@ -75,6 +90,8 @@ module UserPermissions
     end
 
     private
+
+    # LIST HELPERS
 
     def view_list?(list)
       return true if admin? || (list.creator_user_id == @user.id)
@@ -94,6 +111,21 @@ module UserPermissions
       return true if admin? || (list.creator_user_id == @user.id)
       return false
     end
+
+    # TAG HELPERS
+
+    def edit_tagging?(tagging)
+      return true unless Tag.find(tagging.tag_id).restricted?
+      return true if owns_tag(tagging.tag_id)
+      return false
+    end
+
+    def owns_tag(tag_id)
+      @user.user_permissions.find_by(resource_type: 'Tagging')
+      &.access_rules&.fetch(:tag_ids)&.include?(tag_id)
+    end
+
+    # LEGACY HELPERS
 
     def legacy_permission?(name)
       @sf_permissions.include?(name)
