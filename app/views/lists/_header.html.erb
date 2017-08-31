@@ -4,19 +4,23 @@
 	    <span class="multiline-text">
 		<%= list_link(list) %>
 	    </span>
+
 	    <% if list.tags.present? && !tags_on_right?(list.tags) %>
 		<%= render partial: 'lists/tags', locals: { tags: list.tags } %>
 	    <% end %>
+
+	    <div id="list-description"><%= list.short_description %></div>
+	    <div id="list-long-description"><%= list.description %></div>
+
 	</div>
+
 	<% if tags_on_right?(list.tags) %>
 	    <div class="col-sm-4 col-md-3">
 		<%= render partial: 'lists/tags', locals: { tags: list.tags, include_title: true } %>
 	    </div>
 	<% end %>
+
     </div>
-    
-    <div id="list-description"><%= list.short_description %></div>
-    <div id="list-long-description"><%= list.description %></div>
 </div>
 
 <% if list.default_topic.present? %>

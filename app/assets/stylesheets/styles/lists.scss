@@ -22,10 +22,20 @@ td.lists_table_name {
 	box-decoration-break: clone;
 	-webkit-box-decoration-break: clone;
     }
-    
+
     a:hover {
 	text-decoration: none;
     }
+
+    .list-tags-container {
+	display: inline;
+	position: relative;
+	bottom: 0.4em;
+	ul {
+	    display: inline;
+	}
+    }
+
 }
 
 #list-description {
