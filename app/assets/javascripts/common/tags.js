@@ -12,34 +12,26 @@
 
   // STORE FUNCTIONS
 
-  // type Tags = { [all: string]: TagsById, [current: string]: Array<string>, divs: Divs}
+  // type TagsRepository = { [all: string]: TagsById, [current: string]: Array<string>, divs: Divs}
   // type TagsById = { [id: string]: Tag }
-  // type Divs = { [id: string]: string }
+  // type DivsById = { [id: string]: string }
   // type Tag = type { name: string, description: string, id: number }
   
   /**
    * Initalization of widget 
-   * @param {Array[Tag]} tags
-   * @param {Array[number]} current
-   * @param {Object} divs
+   * @param {TagsRepository} tags
+   * @param {DivsById} divs
    * @param {Boolean|Undefined} alwaysEdit
-   * @return {Tags}
-   *
+   * @return {Object}
    */
-  t.init = function(tags, current, endpoint, divs, alwaysEdit ){
+  t.init = function(tags, endpoint, divs, alwaysEdit ){
     TAGS = {
-      all: tags.reduce(
-    	function(acc, tag){
-	  var _tag = {};
-	  Object.defineProperty(_tag, tag.id.toString(), { value: tag, writable: true, enumerable: true, configurable: true });
-          return Object.assign(acc, _tag);
-        }, {}
-      ),
-      current: current.map(String),
+      all: tags.all,
+      current: tags.current.map(String),
       divs: divs,
       cache: {
         html: $(divs.container).html(),
-        tags: current.map(String)
+        tags: tags.current.map(String)
       },
       endpoint: endpoint,
       alwaysEdit: Boolean(alwaysEdit)
@@ -126,23 +118,19 @@
       text: 'cancel',
       click: function(e){
 	e.preventDefault();
-        // restore state
-	TAGS.current = TAGS.cache.tags;
-	
-	if (TAGS.alwaysEdit) {
-	  t.render();  // in perpetual edit mode we only need to re-render
-	} else {
-	  // in the normal operation we will restore the original view
-	  // as it was before edit mode was initalized
-          $(TAGS.divs.container).html(TAGS.cache.html);
-        
-          $('#tags-save-button').remove();
-          $('#tags-cancel-button').remove();
-          $(TAGS.divs.edit).show();
-	}
-	
+	TAGS.current = TAGS.cache.tags; // restore state
+        TAGS.alwaysEdit
+	  ? t.render()    // in perpetual edit mode we only need to re-render
+	  : restoreDom(); // normally, we must restore the pre-edit-mode view
       }
     });    
+  }
+
+  function restoreDom(){
+    $(TAGS.divs.container).html(TAGS.cache.html);
+    $('#tags-save-button').remove();
+    $('#tags-cancel-button').remove();
+    $(TAGS.divs.edit).show();
   }
   
   // update done

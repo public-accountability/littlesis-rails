@@ -14,6 +14,28 @@ describe('tag module', function () {
     id: 3
   }];
 
+  const defaultTags = {
+    all: {
+      1: {
+        name: 'oil',
+        description: 'flows from pipes',
+        id: 1
+      },
+      2: {
+        name: 'nyc',
+        description: 'center of the universe!',
+        id: 2
+      },
+      3: {
+        name: 'finance',
+        description: 'banks got bailed out, we got sold out!',
+        id: 3
+      }
+    }
+  };
+
+  const currentTagsOf = current => Object.assign(defaultTags, { current });
+
   var divs = {
     control: "#tags-control",
     container: "#tags-container",
@@ -44,13 +66,9 @@ describe('tag module', function () {
   describe('tags store operations', function (){
 
     it('creates a tags data structure from input', function(){
-      tags.init(allTags, [1], '/tag/endpoint', divs);
+      tags.init(currentTagsOf([1]), '/tag/endpoint', divs);
       expect(tags.get()).toEqual({
-	all: {
-	  1: allTags[0],
-	  2: allTags[1],
-          3: allTags[2]
-	},
+	all: defaultTags.all,
 	current: ['1'],
         divs: divs,
         cache: { html: '<br>', tags: ['1']},
@@ -60,40 +78,40 @@ describe('tag module', function () {
     });
 
     it('can enable the perpetual edit mode', function(){
-      tags.init(allTags, [1], '/tag/endpoint', divs, true);
+      tags.init(currentTagsOf([1]), '/tag/endpoint', divs, true);
       expect(tags.get().alwaysEdit).toEqual(true);
     });
 
     it('clears store upon initialization', function(){
-      tags.init(allTags, [1], '/tag/endpoint', divs);
+      tags.init(currentTagsOf([1]), '/tag/endpoint', divs);
       expect(tags.get().current).toEqual(['1']);
 
-      tags.init(allTags, [2], '/tag/endpoint', divs);
+      tags.init(currentTagsOf([2]), '/tag/endpoint', divs);
       expect(tags.get().current).toEqual(['2']);
     });
 
     it('adds a tag', () => {
-      tags.init(allTags, [1], '/tag/endpoint', divs);
+      tags.init(currentTagsOf([1]), '/tag/endpoint', divs);
       tags.add(2);
       expect(tags.get().current).toEqual(['1', '2']);
     });
 
     it('retrives a tag id from a name', () => {
-      tags.init(allTags, [], '/tag/endpoint', divs);
+      tags.init(currentTagsOf([]), '/tag/endpoint', divs);
       expect(tags.getId('oil')).toEqual('1');
     });
 
     it('gets all available tags', () => {
-      tags.init(allTags, [], '/tag/endpoint', divs);
+      tags.init(currentTagsOf([]), '/tag/endpoint', divs);
       expect(tags.available()).toEqual(['1','2','3']);
 
-      tags.init(allTags, [1], '/tag/endpoint', divs);
+      tags.init(currentTagsOf([1]), '/tag/endpoint', divs);
       expect(tags.available()).toEqual(['2','3']);
       
     });
 
     it('removes a tag', () => {
-      tags.init(allTags, [1,2], '/tag/endpoint', divs);
+      tags.init(currentTagsOf([1, 2]), '/tag/endpoint', divs);
       tags.remove(2);
       expect(tags.get().current).toEqual(['1']);
     });
@@ -111,7 +129,7 @@ describe('tag module', function () {
       });
       
       it('updates the store and syncs w/ DOM & server', () => {
-	tags.init(allTags, [2], '/tag/endpoint', divs);
+	tags.init(currentTagsOf([2]), '/tag/endpoint', divs);
 	tags.update('add', 1);
 	tags.update('remove', 2);
 	
@@ -125,7 +143,7 @@ describe('tag module', function () {
   describe('displaying tags', function(){
 
     beforeEach(function(){
-      tags.init(allTags, ['1','2'], '/tag/endpoint', divs);
+      tags.init(currentTagsOf(['1','2']), '/tag/endpoint', divs);
     });
 
     it('shows nothing new when edit not clicked', () => {
@@ -141,7 +159,7 @@ describe('tag module', function () {
   describe('editing tags', function(){
 
     beforeEach(function(){
-      tags.init(allTags, [1,2], '/tag/endpoint', divs);
+      tags.init(currentTagsOf([1, 2]), '/tag/endpoint', divs);
     });
 
     describe('activating edit mode', () => {
@@ -240,7 +258,7 @@ describe('tag module', function () {
 
   describe('Pepertual Edit mode', function(){
     beforeEach(function(){
-      tags.init(allTags, [1,2], '/tag/endpoint', divs, true);
+      tags.init(currentTagsOf([1,2]), '/tag/endpoint', divs, true);
     });
 
     it('shows edit mode withou having to click the edit button', () => {

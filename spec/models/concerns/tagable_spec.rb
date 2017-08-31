@@ -136,7 +136,7 @@ describe Tagable do
     end
   end
 
-  describe 'formating tags' do
+  describe 'formating tags for user editing' do
 
     let(:owner) { create_really_basic_user }
     let(:non_owner) { create_really_basic_user }
@@ -144,27 +144,30 @@ describe Tagable do
     # we have to use string keys here (unlike everywhere else) b/c of our Tag wanna-be model
     let(:full_access) { { 'viewable' =>  true, 'editable' =>  true } }
     let(:view_only_access) { { 'viewable' =>  true, 'editable' =>  false } }
+
     before do
       test_tagable.tag("nyc")
       owner.permissions.add_permission(Tag, { tag_ids: [2]}) # nyc (restricted)
     end
-    it "groups tags into current and all" do
-      tags = test_tagable.tags_for(owner)
-      expect(tags[:all].size).to eq(Tag.all.size)
-      expect(tags[:current].size).to eq(1)
+
+    def verify_permissions(user, expected_permissions)
+      expect(
+        test_tagable.tags_for(user)[:all].values.map{ |t| t[:permissions] }
+      ).to eq expected_permissions
+    end
+
+    it "returns all tags in map by stringified ids" do
+      expect(test_tagable.tags_for(owner)[:all].keys).to eq(['1', '2', '3'])
     end
 
     it "returns current tags as a list of ids" do
-      expect(test_tagable.tags_for(owner)[:current]).to eq [2]
+      expect(test_tagable.tags_for(owner)[:current]).to eq ['2']
     end
 
     it "enriches full tag list with permission info" do
-      expect(
-        test_tagable.tags_for(owner)[:all].map{ |t| t[:permissions] }
-      ).to eq 3.times.map{ full_access }
-      expect(
-        test_tagable.tags_for(non_owner)[:all].map{ |t| t[:permissions] }
-      ).to eq [full_access, view_only_access, full_access]
+      verify_permissions(owner, [full_access, full_access, full_access])
+      verify_permissions(non_owner, [full_access, view_only_access, full_access])
     end
+
   end
 end
