@@ -5,6 +5,7 @@ describe 'Tagging', :tagging_helper, :type => :request do
   let(:list) { create(:list) }
   let(:user) { create_really_basic_user }
   let(:lister) { create_basic_user }
+  let(:admin) { create_admin_user }
   let(:tags_params) { { tags: { ids: ['1', '2'] } } }
   let(:creating_entity_tags) {  -> { post "/entities/#{entity.id}/tags", tags_params } }
   let(:creating_list_tags) { -> { post "/lists/#{list.id}/tags", tags_params } }
@@ -77,6 +78,13 @@ describe 'Tagging', :tagging_helper, :type => :request do
       before { login_as(lister, :scope => :user) }
 
       denies_creating_tags_for_lists
+    end
+
+    context 'when the list is closed and the user is an admin' do
+      let(:list) { create(:closed_list, creator_user_id: user.id) }
+      before { login_as(admin, :scope => :user) }
+
+      creates_tags_and_tells_client_to_redirect
     end
   end
 end
