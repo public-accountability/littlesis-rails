@@ -54,8 +54,14 @@ describe('tag module', function () {
 	current: ['1'],
         divs: divs,
         cache: { html: '<br>', tags: ['1']},
-        endpoint: '/tag/endpoint'
+        endpoint: '/tag/endpoint',
+	alwaysEdit: false
       });
+    });
+
+    it('can enable the perpetual edit mode', function(){
+      tags.init(allTags, [1], '/tag/endpoint', divs, true);
+      expect(tags.get().alwaysEdit).toEqual(true);
     });
 
     it('clears store upon initialization', function(){
@@ -94,7 +100,7 @@ describe('tag module', function () {
 
     describe('side effects', () => {
 
-      const stubbed = ['add', 'remove', 'render', 'post'];
+      const stubbed = ['add', 'remove', 'render'];
       let spies;
       
       beforeEach(() => {
@@ -112,7 +118,6 @@ describe('tag module', function () {
 	expect(spies.add).toHaveBeenCalledWith(1);
 	expect(spies.remove).toHaveBeenCalledWith(2);
 	expect(spies.render).toHaveBeenCalled();
-	expect(spies.post).toHaveBeenCalled();
       });
     }); //end  side effects
   });
@@ -231,6 +236,27 @@ describe('tag module', function () {
       it('does not show tag options to a user who may not tag');
       
     });
+  });
+
+  describe('Pepertual Edit mode', function(){
+    beforeEach(function(){
+      tags.init(allTags, [1,2], '/tag/endpoint', divs, true);
+    });
+
+    it('shows edit mode withou having to click the edit button', () => {
+      expect($('#tags-edit-list')).toExist();
+    });
+
+    it('restores old tags in edit mode if user clicks cancel', () => {
+      expect($(`#tags-edit-list li`)).toHaveLength(2);
+
+      $('#tags-select').val('finance').trigger('changed.bs.select');
+       expect($(`#tags-edit-list li`)).toHaveLength(3);
+
+      $('#tags-cancel-button').click();
+      expect($(`#tags-edit-list li`)).toHaveLength(2);
+    });
+
   });
 
 });
