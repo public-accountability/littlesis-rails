@@ -36,18 +36,30 @@
 	</div>
     </div>
 
-    <%= render 'settings',  f: f %>
 
+    <div class="row">
+	<div class="col-sm-10 col-md-8">
+	    <h2>Tags</h2>
+	    <%= render 'edit_tags' %>
+	</div>
+    </div>
     
-    <%= render 'edit_tags' %>
+    <div class="row bottom-1em">
+	<div class="col-sm-4">
+	    <h2>Settings</h2>
+	</div>
+    </div>
 
-    <div class="row form-group">
+	<div class="row form-group">
 	<div class="col-sm-6 col-md-6">
 	    <%= f.label "Custom field name" %>
 	    <%= f.text_field :custom_field_name, class: "form-control", placeholder: "name of editable field providing context for each entity" %>
 	</div>
     </div>
 
+
+    <%= render 'settings',  f: f %>
+    
     <%= render 'settings_admin', f: f %>
     
     <div class="row top-1em bottom-1em">
