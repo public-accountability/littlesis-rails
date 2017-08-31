@@ -81,3 +81,9 @@ def create_user_with_sf(attrs = {})
   FactoryGirl.create(:sf_guard_user_profile, user_id: sf_user.id)
   FactoryGirl.create(:user, attrs.merge(sf_guard_user: sf_user))
 end
+
+def create_generic_relationship
+  person = FactoryGirl.create(:person)
+  org = FactoryGirl.create(:org)
+  FactoryGirl.create(:generic_relationship, entity: person, related: org, last_user_id: 1)
+end

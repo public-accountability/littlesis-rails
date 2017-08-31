@@ -4,7 +4,7 @@
             <%= link_to "edit", edit_relationship_path(@relationship)  %>
 	<% end %>
 	<%= link_to "flag", "/home/contact?type=flag" %>
-	<% if signed_in and @current_user.has_legacy_permission 'deleter' %>
+	<% if signed_in and current_user.has_legacy_permission 'deleter' %>
 	    
 	    <%= form_tag relationship_path(@relationship), method: :delete, id: 'remove-relationship-form', style: "display: none;" do %>
 	    <% end %>

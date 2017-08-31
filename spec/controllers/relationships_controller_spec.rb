@@ -23,6 +23,7 @@ describe RelationshipsController, type: :controller do
   it { should route(:delete, '/relationships/1').to(action: :destroy, id: 1) }
   it { should route(:post, '/relationships/bulk_add').to(action: :bulk_add) }
   it { should route(:get, '/relationships/find_similar').to(action: :find_similar) }
+  it { should route(:post, '/relationships/1/tags').to(action: :tags, id: 1) }
 
   describe 'GET #show' do
     before do

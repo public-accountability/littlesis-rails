@@ -2,7 +2,7 @@
 
 <%= render partial: 'header' %>    
 
-<% cache ['subtitle_details_sources', @relationship] do %>
+<% cache_unless user_signed_in?, ['subtitle_details_sources', @relationship] do %>
     <div class="row" style="padding-top: 5px;">
         <div class="col-md-6 col-xs-12 col-sm-6"> 
             <div class="row">
@@ -15,7 +15,38 @@
             </div>
         </div>
         <div class="col-md-4 col-sm-4 top-1em col-xs-12 pull-right">
-            <%= render partial: 'sources', locals: {relationship: @relationship } %>
+	    <div class="row">
+		<h4 class="relationship-sidebar-title">Source Links</h4>
+		<%= render partial: 'sources', locals: {relationship: @relationship } %>
+	    </div>
+
+	    <% if @relationship.tags.present? || user_signed_in? %>
+		
+		<div class="row">		    
+		    <h4 class="relationship-sidebar-title">Tags</h4>
+
+		    <%= tags_controls if user_signed_in? %>
+		    <%= display_tags(@relationship.tags) %>
+
+		    <% if user_signed_in?  %>
+			<script id="tags-init-js">
+			 $(function(){
+			   tags.init(
+			     <%= raw(Tag.all.to_json) %>,
+			     <%= raw(@relationship.tags.map { |t| t[:id]}.to_json) %>,
+			     "<%= raw(tags_relationship_path(@relationship)) %>",
+			     {
+			       container: '#tags-container',
+			       control: '#tags-controls',
+			       edit: '#tags-edit-button'
+			     }
+			   );
+			 });
+			</script>
+		    <%  end %>
+		</div>
+	    <%  end %>
+	    
         </div>
     </div>
 <% end %>

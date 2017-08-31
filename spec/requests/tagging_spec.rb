@@ -3,22 +3,39 @@ require 'rails_helper'
 describe 'Tagging', :tagging_helper, :type => :request do
   let(:entity) { create(:org) }
   let(:list) { create(:list) }
+  let(:relationship) { create_generic_relationship }
   let(:user) { create_really_basic_user }
   let(:lister) { create_basic_user }
   let(:admin) { create_admin_user }
   let(:tags_params) { { tags: { ids: ['1', '2'] } } }
   let(:creating_entity_tags) {  -> { post "/entities/#{entity.id}/tags", tags_params } }
   let(:creating_list_tags) { -> { post "/lists/#{list.id}/tags", tags_params } }
+  let(:creating_relationship_tags) { -> { post "/relationships/#{relationship.id}/tags", tags_params } }
 
   def redirects_to_login(r)
     expect(r).to have_http_status 302
     expect(r.location).to include '/login'
   end
 
-  describe 'creating tags for an entity' do
-    before(:each) do
-      login_as(user, :scope => :user)
+  describe 'anon user' do
+    it 'cannot create a tag for an entity' do
+      expect(creating_entity_tags).not_to change { Entity.find(entity.id).tags.length }
+      redirects_to_login(response)
     end
+
+    it 'cannot create a tag for an list' do
+      expect(creating_list_tags).not_to change { List.find(list.id).tags.length }
+      redirects_to_login(response)
+    end
+
+    it 'cannot create a tag for a relationship' do
+      expect(creating_relationship_tags).not_to change { Relationship.find(relationship.id).tags.length }
+      redirects_to_login(response)
+    end
+  end
+
+  describe 'creating tags for an entity' do
+    before(:each) { login_as(user, :scope => :user) }
 
     it 'creates new tags' do
       expect(creating_entity_tags)
@@ -32,15 +49,18 @@ describe 'Tagging', :tagging_helper, :type => :request do
     end
   end
 
-  describe 'anon user' do
-    it 'cannot create a tag for an entity' do
-      expect(creating_entity_tags).not_to change { Entity.find(entity.id).tags.length }
-      redirects_to_login(response)
+  describe 'creating tags for a relationship' do
+    before(:each) { login_as(user, :scope => :user) }
+
+    it 'creates new tags' do
+      expect(creating_relationship_tags)
+        .to change { Relationship.find(relationship.id).tags.length }.by(2)
     end
 
-    it 'cannot create a tag for an list' do
-      expect(creating_list_tags).not_to change { List.find(list.id).tags.length }
-      redirects_to_login(response)
+    it 'redirects to relationship page' do
+      creating_relationship_tags.call
+      expect(response).to have_http_status :accepted
+      expect(JSON.parse(response.body)['redirect']).to include "/relationships/#{relationship.id}"
     end
   end
 
