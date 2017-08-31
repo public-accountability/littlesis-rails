@@ -11,13 +11,31 @@ td.lists_table_name {
 }
 
 #list-name {
-  font-size: 42px; 
-  line-height: 60px;
-  font-weight: 500;
+    .multiline-text { }
+    .multiline-text a {
+	font-size: 42px;
+     	line-height: 1.2;
+    	font-weight: 500;
+    	display: inline;
+	padding: 0.45rem;
+	/* Needs prefixing */
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+    }
 
-  a:hover {
-    text-decoration: none;
-  }
+    a:hover {
+	text-decoration: none;
+    }
+
+    .list-tags-container {
+	display: inline;
+	position: relative;
+	bottom: 0.4em;
+	ul {
+	    display: inline;
+	}
+    }
+
 }
 
 #list-description {
