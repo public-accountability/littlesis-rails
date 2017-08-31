@@ -96,7 +96,7 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :lists  do
+  resources :lists do
     member do
       get 'relationships'
       get 'match_donations'
@@ -119,6 +119,7 @@ Lilsis::Application.routes.draw do
       get 'giving'
       get 'funding'
       get 'modifications'
+      post 'tags'
     end
   end
 
