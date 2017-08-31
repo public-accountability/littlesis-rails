@@ -1,0 +1,30 @@
+<div class="row bottom-1em ">
+    <div class="col-sm-10 col-md-8">
+	<%= label_tag 'Tags' %>
+	
+	<div id="tags-container">
+	</div>
+	
+	<br/>
+
+	<span id="tags-controls"></span>
+	<span id="tags-edit-button"></span>
+    </div>
+</div>
+
+<script>
+ $(function(){
+   tags.init(
+     <%= raw(Tag.all.to_json) %>,
+     <%= raw(@list.tags.map { |t| t[:id]}.to_json) %>,
+     "<%= raw(tags_list_path(@list)) %>",
+     {
+       container: '#tags-container',
+       control: '#tags-controls',
+       edit: '#tags-edit-button'
+     },
+     true
+   );
+
+ });
+</script>
