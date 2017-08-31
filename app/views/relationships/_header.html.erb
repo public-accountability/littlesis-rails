@@ -1,6 +1,6 @@
 <div class="row">
     <% cache ['name', @relationship] do %>
-        <h1><%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %></h1>
+        <h1 class="relationship-title-link" ><%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %></h1>
     <% end %>
 </div>
 
