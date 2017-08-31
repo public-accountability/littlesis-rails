@@ -112,7 +112,8 @@
     return $('<button>', {
       id: 'tags-save-button',
       text: 'save',
-      click: function(){
+      click: function(e){
+	e.preventDefault();
         $.post(TAGS.endpoint, {tags: { ids: TAGS.current  }})
           .done(function(){ window.location.reload(true); });
       }
@@ -123,7 +124,8 @@
     return $('<button>', {
       id: 'tags-cancel-button',
       text: 'cancel',
-      click: function(){
+      click: function(e){
+	e.preventDefault();
         // restore state
 	TAGS.current = TAGS.cache.tags;
 	
