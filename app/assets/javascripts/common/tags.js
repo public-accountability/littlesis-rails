@@ -6,9 +6,15 @@
   }
 }(this, function ($) {
 
-  var LIST_ID = "tags-edit-list";
-  var TAGS = null;
-  var t = {};
+  // IMPORTANT: views MUST supply divs with the below ids for this module to function
+  var DIVS = {
+    container: '#tags-container',
+    control: '#tags-controls',
+    edit: '#tags-edit-button'
+  };
+  
+  var t = {}; // object for public exports
+  var STATE = {}; // store
 
   // STORE FUNCTIONS
 
@@ -24,44 +30,41 @@
    * @param {Boolean|Undefined} alwaysEdit
    * @return {Object}
    */
-  t.init = function(tags, endpoint, divs, alwaysEdit ){
-    TAGS = {
-      all: tags.all,
-      current: tags.current.map(String),
-      divs: divs,
+  t.init = function(tags, endpoint, alwaysEdit){
+    STATE = {
+      tags: {
+        byId: tags.all,
+        current: tags.current.map(String)
+      },
       cache: {
-        html: $(divs.container).html(),
+        html: $(DIVS.container).html(),
         tags: tags.current.map(String)
       },
       endpoint: endpoint,
       alwaysEdit: Boolean(alwaysEdit)
     };
 
-    if (TAGS.alwaysEdit) {
-      // render immediately when in perpetual edit mode
-      renderAndHideEdit();
-    } else {
-      handleEditClick();
-    }
+    // render immediately in perpetual edit mode, otherwise wait for click
+    STATE.alwaysEdit ? renderAndHideEdit() : handleEditClick();
     
-    return TAGS;
+    return STATE;
   };
 
   // getter
   t.get = function() {
-    return TAGS;
+    return STATE;
   };
 
   // str -> ?string
   t.getId = function(name){
-    return Object.keys(TAGS.all).filter(function(k){
-      return TAGS.all[k].name === name;
+    return Object.keys(STATE.tags.byId).filter(function(k){
+      return STATE.tags.byId[k].name === name;
     })[0];
   };
 
   t.available = function(){
-    return Object.keys(TAGS.all).filter(function(id){
-      return !TAGS.current.includes(id);
+    return Object.keys(STATE.tags.byId).filter(function(id){
+      return !STATE.tags.current.includes(id);
     });
   };
 
@@ -73,11 +76,11 @@
 
   // input: str
   t.add = function(id) {
-    TAGS.current = TAGS.current.concat(String(id));
+    STATE.tags.current = STATE.tags.current.concat(String(id));
   };
   
   t.remove = function(idToRemove){
-    TAGS.current = TAGS.current.filter(function(id){
+    STATE.tags.current = STATE.tags.current.filter(function(id){
       return id !== String(idToRemove);
     });
   };
@@ -85,17 +88,17 @@
   // RENDER FUNCTIONS
 
   function handleEditClick(){
-    $(TAGS.divs.edit).click(renderAndHideEdit);
+    $(DIVS.edit).click(renderAndHideEdit);
   }
 
   function renderAndHideEdit() {
-    $(TAGS.divs.edit).hide();
+    $(DIVS.edit).hide();
     renderControls();
     t.render();
   }
 
   function renderControls(){
-    $(TAGS.divs.control)
+    $(DIVS.control)
       .append(saveButton())
       .append(cancelButton());
   }
@@ -106,7 +109,7 @@
       text: 'save',
       click: function(e){
 	e.preventDefault();
-        $.post(TAGS.endpoint, {tags: { ids: TAGS.current  }})
+        $.post(STATE.endpoint, {tags: { ids: STATE.tags.current  }})
           .done(function(){ window.location.reload(true); });
       }
     });
@@ -118,24 +121,24 @@
       text: 'cancel',
       click: function(e){
 	e.preventDefault();
-	TAGS.current = TAGS.cache.tags; // restore state
-        TAGS.alwaysEdit
+	STATE.tags.current = STATE.cache.tags; // restore state
+        STATE.alwaysEdit
 	  ? t.render()    // in perpetual edit mode we only need to re-render
-	  : restoreDom(); // normally, we must restore the pre-edit-mode view
+	  : restoreDom(); // normbyIdy, we must restore the pre-edit-mode view
       }
     });    
   }
 
   function restoreDom(){
-    $(TAGS.divs.container).html(TAGS.cache.html);
+    $(DIVS.container).html(STATE.cache.html);
     $('#tags-save-button').remove();
     $('#tags-cancel-button').remove();
-    $(TAGS.divs.edit).show();
+    $(DIVS.edit).show();
   }
   
   // update done
   t.render = function(){
-    $(TAGS.divs.container)
+    $(DIVS.container)
       .empty()
       .append(tagList())
       .append(select());
@@ -165,7 +168,7 @@
     return t.available().map(function(tagId){
       return $('<option>', {
         class: 'tags-select-option',
-        text: TAGS.all[tagId].name
+        text: STATE.tags.byId[tagId].name
       });
     });
   };
@@ -177,18 +180,18 @@
 
   function isValid(id){
     return Boolean(id) &&
-      !TAGS.current.includes(id);
+      !STATE.tags.current.includes(id);
   }
   
   function tagList(){
-    return $('<ul>', {id: LIST_ID})
-      .append(TAGS.current.map(tagButton));
+    return $('<ul>', {id: 'tags-edit-list'})
+      .append(STATE.tags.current.map(tagButton));
   }
   
   function tagButton(id){
     return $('<li>', {
       class: 'tag',
-      text: TAGS.all[id].name
+      text: STATE.tags.byId[id].name
     }).append(removeButton(id));
   }
 

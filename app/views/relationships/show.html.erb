@@ -34,11 +34,6 @@
 			   tags.init(
 			     <%= raw(@relationship.tags_for(current_user).to_json) %>,
 			     "<%= raw(tags_relationship_path(@relationship)) %>",
-			     {
-			       container: '#tags-container',
-			       control: '#tags-controls',
-			       edit: '#tags-edit-button'
-			     }
 			   );
 			 });
 			</script>

@@ -8,11 +8,6 @@
    tags.init(
      <%= raw(@list.tags_for(current_user).to_json) %>,
      "<%= raw(tags_list_path(@list)) %>",
-     {
-       container: '#tags-container',
-       control: '#tags-controls',
-       edit: '#tags-edit-button'
-     },
      true
    );
 
