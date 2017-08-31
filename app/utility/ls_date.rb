@@ -145,7 +145,7 @@ class LsDate
   def test_if_valid_input(str)
     return if str.nil? || self.class.valid_date_string?(str)
     Rails.logger.debug "Invalid LsDate input: #{str}"
-    raise ArgumentError, "Not a valid date string"
+    raise InvalidLsDateError
   end
 
   def year_display
@@ -162,5 +162,11 @@ class LsDate
 
   def day_display
     "#{Date::ABBR_MONTHNAMES[@month]} #{@day} #{year_display}"
+  end
+
+  class InvalidLsDateError < StandardError
+    def message
+      "Not a valid date string"
+    end
   end
 end
