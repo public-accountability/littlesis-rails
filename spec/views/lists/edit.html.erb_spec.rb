@@ -3,7 +3,8 @@ require 'rails_helper'
 describe 'lists/edit.html.erb', type: :view do
   before(:each) do
     allow(controller).to receive(:current_user)
-                           .and_return(double(:admin? => false))
+                          .and_return(double(:admin? => false,
+                                             :permissions => double(:tag_permissions => {})))
 
     assign(:list, build(:list))
     render

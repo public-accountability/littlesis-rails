@@ -85,7 +85,9 @@ describe 'relationships/show.html.erb', type: :view do
       let(:user_signed_in) { true }
 
       before(:each) do
-        allow(view).to receive(:current_user).and_return(double(has_legacy_permission: true))
+        allow(view).to receive(:current_user)
+                        .and_return(double(has_legacy_permission: true,
+                                           permissions: double(tag_permissions: {})))
         render
       end
       context 'relationship has tags' do
@@ -121,7 +123,9 @@ describe 'relationships/show.html.erb', type: :view do
     before do
       assign(:relationship, @rel)
       allow(view).to receive(:current_user)
-                       .and_return(double('user', has_legacy_permission: true))
+                      .and_return(double('user',
+                                         has_legacy_permission: true,
+                                         permissions: double(tag_permissions: {})))
       allow(view).to receive(:user_signed_in?).and_return(true)
       render
     end

@@ -36,7 +36,10 @@ describe "partial: sidebar" do
     before do
       allow(view).to receive(:user_signed_in?).and_return(true)
       allow(view).to receive(:current_user)
-                      .and_return(double(:admin? => true, :importer? => true, :merger? => false))
+                      .and_return(double(:admin? =>      true,
+                                         :importer? =>   true,
+                                         :merger? =>     false,
+                                         :permissions => double(:tag_permissions => {})))
       
     end
     context 'entity has tags' do
@@ -58,7 +61,12 @@ describe "partial: sidebar" do
       before do
         assign(:entity, org)
         allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false, :merger? => false))
+        allow(view).to receive(:current_user)
+                        .and_return(double(:admin? =>      false,
+                                           :importer? =>   false,
+                                           :merger? =>     false,
+                                           :permissions => double(:tag_permissions => {})))
+        
         render partial: 'entities/sidebar.html.erb'
       end
 
@@ -83,7 +91,12 @@ describe "partial: sidebar" do
       before do
         assign(:entity, org)
         allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => true, :merger? => false))
+        allow(view).to receive(:current_user)
+                        .and_return(double(:admin? =>      false,
+                                           :importer? =>   true,
+                                           :merger? =>     false,
+                                           :permissions => double(:tag_permissions => {})))
+        
         render partial: 'entities/sidebar.html.erb'
       end
 
@@ -96,7 +109,12 @@ describe "partial: sidebar" do
       before do
         assign(:entity, org)
         allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false, :merger? => true))
+        allow(view).to receive(:current_user)
+                        .and_return(double(:admin? =>      false,
+                                           :importer? =>   false,
+                                           :merger? =>     true,
+                                           :permissions => double(:tag_permissions => {})))
+        
         render partial: 'entities/sidebar.html.erb'
       end
 
@@ -125,7 +143,12 @@ describe "partial: sidebar" do
       before do
         assign(:entity, org)
         allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user).and_return(double(:admin? => false, :importer? => false, :merger? => false))
+        allow(view).to receive(:current_user)
+                        .and_return(double(:admin? =>      false,
+                                           :importer? =>   false,
+                                           :merger? =>     false,
+                                           :permissions => double(:tag_permissions => {})))
+
         render partial: 'entities/sidebar.html.erb'
       end
 
