@@ -32,8 +32,7 @@
 			<script id="tags-init-js">
 			 $(function(){
 			   tags.init(
-			     <%= raw(Tag.all.to_json) %>,
-			     <%= raw(@relationship.tags.map { |t| t[:id]}.to_json) %>,
+			     <%= raw(@relationship.tags_for(current_user).to_json) %>,
 			     "<%= raw(tags_relationship_path(@relationship)) %>",
 			     {
 			       container: '#tags-container',
