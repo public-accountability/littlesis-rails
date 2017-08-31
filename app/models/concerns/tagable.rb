@@ -35,5 +35,18 @@ module Tagable
     Tagging.where(tagable_id: self.id, tagable_class: self.class.name)
   end
 
-  
+  def tags_for(user)
+    {
+      all: add_permissions(Tag.all, user),
+      current: tags.map(&:id)
+    }
+  end
+
+  private
+
+  def add_permissions(tags, user)
+    tags.map do |t|
+      t.merge(permissions: user.permissions.tag_permissions(t))
+    end
+  end
 end

@@ -57,7 +57,21 @@ describe Tagable do
     end
   end
 
+  describe 'adding tags' do
+
+    it "can be tagged with an existing tag's id" do
+      expect { test_tagable.tag(1) }.to change { Tagging.count }.by(1)
+      expect(test_tagable.tags[0][:name]).to eq 'oil'
+    end
+
+    it "cannot be tagged with a non-existent tag id or name" do
+      expect { test_tagable.tag("THIS IS NOT A REAL TAG!!!!") }.to raise_error(Tag::NonexistentTagError)
+      expect { test_tagable.tag(1_000_000) }.to raise_error(Tag::NonexistentTagError)
+    end
+  end
+
   describe 'removing tags' do
+
     before{ test_tagable.tag("oil") }
     
     it 'removes a tag by name' do
@@ -97,36 +111,60 @@ describe Tagable do
       expect(test_tagable.update_tags([])).to be_a TestTagable
     end
   end
-  
-  
-  it "retrieves tags applied to it" do
-    test_tagable.tag("oil")
-    expect(test_tagable.tags.to_a)
-      .to eql [{ 'name' => "oil",
-                 'description' => "the reason for our planet's demise",
-                 'id' => 1 }]
+
+  describe "retrieving tags" do
+
+    it "retrieves tags applied to it" do
+      test_tagable.tag("oil")
+      expect(test_tagable.tags.to_a)
+        .to eql [{ 'name' => "oil",
+                   'description' => "the reason for our planet's demise",
+                   'id' => 1 }]
+    end
+
+    it "doesn't retrieve tags applied to objects of other classes" do
+      test_tagable.tag(1)
+      expect(test_tagable.tags.length).to eq 1
+
+      Tagging.create!(tag_id: 1, tagable_class: 'AnotherClass', tagable_id: test_tagable.id)
+      expect(test_tagable.tags.length).to eq 1
+    end
+
+    it "retrieves taggings" do
+      test_tagable.tag("oil")
+      expect(test_tagable.taggings.to_a).to eq [Tagging.last]
+    end
   end
 
-  it "doesn't retrieve tags applied to objects of other classes" do
-    test_tagable.tag(1)
-    expect(test_tagable.tags.length).to eq 1
+  describe 'formating tags' do
 
-    Tagging.create!(tag_id: 1, tagable_class: 'AnotherClass', tagable_id: test_tagable.id)
-    expect(test_tagable.tags.length).to eq 1
-  end
+    let(:owner) { create_really_basic_user }
+    let(:non_owner) { create_really_basic_user }
 
-  it "retrieves taggings" do
-    test_tagable.tag("oil")
-    expect(test_tagable.taggings.to_a).to eq [Tagging.last]
-  end
+    # we have to use string keys here (unlike everywhere else) b/c of our Tag wanna-be model
+    let(:full_access) { { 'viewable' =>  true, 'editable' =>  true } }
+    let(:view_only_access) { { 'viewable' =>  true, 'editable' =>  false } }
+    before do
+      test_tagable.tag("nyc")
+      owner.permissions.add_permission(Tag, { tag_ids: [2]}) # nyc (restricted)
+    end
+    it "groups tags into current and all" do
+      tags = test_tagable.tags_for(owner)
+      expect(tags[:all].size).to eq(Tag.all.size)
+      expect(tags[:current].size).to eq(1)
+    end
 
-  it "can be tagged with an existing tag's id" do
-    expect { test_tagable.tag(1) }.to change { Tagging.count }.by(1)
-    expect(test_tagable.tags[0][:name]).to eq 'oil'
-  end
+    it "returns current tags as a list of ids" do
+      expect(test_tagable.tags_for(owner)[:current]).to eq [2]
+    end
 
-  it "cannot be tagged with a non-existent tag id or name" do
-    expect { test_tagable.tag("THIS IS NOT A REAL TAG!!!!") }.to raise_error(Tag::NonexistentTagError)
-    expect { test_tagable.tag(1_000_000) }.to raise_error(Tag::NonexistentTagError)
+    it "enriches full tag list with permission info" do
+      expect(
+        test_tagable.tags_for(owner)[:all].map{ |t| t[:permissions] }
+      ).to eq 3.times.map{ full_access }
+      expect(
+        test_tagable.tags_for(non_owner)[:all].map{ |t| t[:permissions] }
+      ).to eq [full_access, view_only_access, full_access]
+    end
   end
 end

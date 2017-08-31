@@ -52,8 +52,8 @@ describe UserPermissions::Permissions do
 
   describe "tag permisions" do
 
-    let(:open_tagging) { build(:open_tagging) } # oil
-    let(:closed_tagging) { build(:closed_tagging) } # nyc
+    let(:open_tag) { Tag.find("oil") } # oil
+    let(:closed_tag) { Tag.find("nyc") } # nyc
 
     let(:owner) { create_really_basic_user }
     let(:non_owner) { create_really_basic_user }
@@ -62,48 +62,45 @@ describe UserPermissions::Permissions do
     let(:view_only_access) { { viewable: true, editable: false } }
 
     before do
-      access_rules = { tag_ids: [open_tagging, closed_tagging].map(&:tag_id) }.to_json
-      owner.user_permissions.create(resource_type: 'Tagging',
+      access_rules = { tag_ids: [open_tag.id, closed_tag.id] }.to_json
+      owner.user_permissions.create(resource_type: 'Tag',
                                     access_rules: access_rules)
+    end
+
+    context('any tag') do
+
+      it('can be viewed but not edited by an anonymous user') do
+        expect(
+          UserPermissions::Permissions.anon_tag_permissions
+        ).to eq view_only_access
+      end
     end
 
     context('an open tag') do
 
-      it('can be viewed but not edited by an anonymous user') do
-        expect(
-          UserPermissions::Permissions.anon_tag_permissions(open_tagging)
-        ).to eq view_only_access
-      end
-
       it("can be viewed and edited by any logged in user") do
-        expect(owner.permissions.tag_permissions(open_tagging)).to eq full_access
-        expect(non_owner.permissions.tag_permissions(open_tagging)).to eq full_access
+        expect(owner.permissions.tag_permissions(open_tag)).to eq full_access
+        expect(non_owner.permissions.tag_permissions(open_tag)).to eq full_access
       end
     end
 
     context('a closed tag') do
 
-      it("can be viewed but not edited by an anonymous user") do
-        expect(
-          UserPermissions::Permissions.anon_tag_permissions(closed_tagging)
-        ).to eq view_only_access
-      end
-
       it("can be viewed by any logged in user but only edited by its owner(s)") do
-        expect(owner.permissions.tag_permissions(closed_tagging)).to eq full_access
-        expect(non_owner.permissions.tag_permissions(closed_tagging)).to eq view_only_access
+        expect(owner.permissions.tag_permissions(closed_tag)).to eq full_access
+        expect(non_owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
       end
 
       it('can have edit permissions granted to a new user') do
-        expect(non_owner.permissions.tag_permissions(closed_tagging)).to eq view_only_access
-        non_owner.permissions.add_permission(Tagging, tag_ids: [closed_tagging.tag_id])
-        expect(non_owner.permissions.tag_permissions(closed_tagging)).to eq full_access
+        expect(non_owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
+        non_owner.permissions.add_permission(Tag, tag_ids: [closed_tag.id])
+        expect(non_owner.permissions.tag_permissions(closed_tag)).to eq full_access
       end
 
       it('can have edit permissions revoked from an owner') do
-        expect(owner.permissions.tag_permissions(closed_tagging)).to eq full_access
-        owner.permissions.remove_permission(Tagging, tag_ids: [closed_tagging.tag_id])
-        expect(owner.permissions.tag_permissions(closed_tagging)).to eq view_only_access
+        expect(owner.permissions.tag_permissions(closed_tag)).to eq full_access
+        owner.permissions.remove_permission(Tag, tag_ids: [closed_tag.id])
+        expect(owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
       end
     end
   end
@@ -302,10 +299,10 @@ describe UserPermissions::Permissions do
   end
 end # UserPermissions::Permissions
 
-describe UserPermissions::TaggingAccessRules do
+describe UserPermissions::TagAccessRules do
   it('expands access') do
     expect(
-      UserPermissions::TaggingAccessRules.update({ tag_ids: [1, 2] },
+      UserPermissions::TagAccessRules.update({ tag_ids: [1, 2] },
                                                  { tag_ids: [2, 3] },
                                                  :union)
     ).to eq(tag_ids: [1, 2, 3])
@@ -313,7 +310,7 @@ describe UserPermissions::TaggingAccessRules do
 
   it('restricts access') do
     expect(
-      UserPermissions::TaggingAccessRules.update({ tag_ids: [1, 2] },
+      UserPermissions::TagAccessRules.update({ tag_ids: [1, 2] },
                                                  { tag_ids: [2] },
                                                  :difference)
     ).to eq(tag_ids: [1])
@@ -321,7 +318,7 @@ describe UserPermissions::TaggingAccessRules do
 
   it('handles nil access rules') do
     expect(
-      UserPermissions::TaggingAccessRules.update(nil,
+      UserPermissions::TagAccessRules.update(nil,
                                                  { tag_ids: [2, 3] },
                                                  :union)
     ).to eq(tag_ids: [2, 3])
@@ -329,7 +326,7 @@ describe UserPermissions::TaggingAccessRules do
 
   it 'raises error if passed an invalid set operation' do
     expect {
-      UserPermissions::TaggingAccessRules.update(nil, nil, :foobar)
-    }.to raise_error(UserPermissions::TaggingAccessRules::InvalidOperationError)
+      UserPermissions::TagAccessRules.update(nil, nil, :foobar)
+    }.to raise_error(UserPermissions::TagAccessRules::InvalidOperationError)
   end
 end

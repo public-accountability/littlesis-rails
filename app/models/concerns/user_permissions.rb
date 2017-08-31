@@ -66,17 +66,17 @@ module UserPermissions
       update_permission(resource_type, access_rules, :difference)
     end
 
-    def self.anon_tag_permissions(tagging)
+    def self.anon_tag_permissions
       {
         viewable: true,
         editable: false
       }
     end
 
-    def tag_permissions(tagging)
+    def tag_permissions(tag)
       {
         viewable: true,
-        editable: edit_tagging?(tagging)
+        editable: edit_tag?(tag)
       }
     end
 
@@ -130,14 +130,14 @@ module UserPermissions
 
     # TAG HELPERS
 
-    def edit_tagging?(tagging)
-      return true unless Tag.find(tagging.tag_id).restricted?
-      return true if owns_tag(tagging.tag_id)
+    def edit_tag?(tag)
+      return true unless tag.restricted?
+      return true if owns_tag(tag.id)
       return false
     end
 
     def owns_tag(tag_id)
-      @user.user_permissions.find_by(resource_type: 'Tagging')
+      @user.user_permissions.find_by(resource_type: 'Tag')
       &.access_rules&.fetch(:tag_ids)&.include?(tag_id)
     end
 
@@ -148,7 +148,7 @@ module UserPermissions
     end
   end # Permissions
 
-  class TaggingAccessRules
+  class TagAccessRules
 
     InvalidOperationError = Exception.new("operation must be one of: [:union, :difference]")
 

@@ -9,6 +9,14 @@ class Tag
       def tag.restricted?
         fetch(:restricted, false)
       end
+
+      def tag.id
+        fetch(:id)
+      end
+
+      def tag.permissions
+        fetch(:permissions)
+      end
     end
   end
 
