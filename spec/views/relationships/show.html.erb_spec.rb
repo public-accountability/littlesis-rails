@@ -8,46 +8,120 @@ describe 'relationships/show.html.erb', type: :view do
     @rel = build(:relationship, category_id: 1, description1: 'boss', id: 123, updated_at: Time.now)
     @rel.position = build(:position, is_board: false)
     @rel.last_user = @sf_user
+    
   end
 
   describe 'layout' do
-
-    before do
+    let(:user_signed_in) { false }
+    let(:tags) { Tag.all.take(2) }
+    
+    before(:each) do
       assign(:relationship, @rel)
       expect(@rel).to receive(:source_links).and_return([])
-      render
+      allow(@rel).to receive(:tags).and_return(tags)
+      allow(view).to receive(:user_signed_in?).and_return(user_signed_in)
     end
 
-    it 'has title' do 
-      css 'h1', :text => "Position: Human Being, mega corp LLC"
-    end
-
-    it 'has subtitle' do 
-      css 'h4 a', :count => 2
-    end
-    
-    it 'has source links table' do 
-      css '#source-links-table', :count => 1
-    end
-
-    describe 'actions' do 
-      it 'has actions div' do 
-        css '#actions'
+    context 'anon user view relationship page with 2 tags' do
+      before { render }
+      it 'has title' do
+        css 'h1', :text => "Position: Human Being, mega corp LLC"
       end
 
-      it 'has edited history' do 
-        css '#entity-edited-history'
-        css 'a', :text => 'user'
+      it 'has subtitle' do
+        css 'h4 a', :count => 2
+      end
+
+      it 'has source links table' do
+        css '#source-links-table', :count => 1
+      end
+
+      it { is_expected.to render_template("relationships/_subtitle") }
+      it { is_expected.to render_template("relationships/_details") }
+      it { is_expected.to render_template("relationships/_sources") }
+
+      describe 'actions' do
+        it 'has actions div' do
+          css '#actions'
+        end
+
+        it 'has edited history' do
+          css '#entity-edited-history'
+          css 'a', :text => 'user'
+        end
+      end
+
+      it 'has tags-container div' do
+        css '#tags-container'
+      end
+
+      it 'has tags title' do
+        css 'h4', text: 'Tags'
+      end
+
+      it 'does not have tags-controls' do
+        not_css '#tags-controls'
+      end
+
+      it 'does not have tag edit js' do
+        not_css 'script#tags-init-js'
+      end
+    end
+
+    context 'anon user and the relationship has no tags' do
+      let(:tags) { [] }
+      before { render }
+
+      it 'does not have the tags-container div' do
+        not_css '#tags-container'
+      end
+
+      it 'does not have the tags title' do
+        not_css 'h4', text: 'Tags'
+      end
+    end
+
+    context 'signed in user' do
+      let(:user_signed_in) { true }
+
+      before(:each) do
+        allow(view).to receive(:current_user).and_return(double(has_legacy_permission: true))
+        render
+      end
+      context 'relationship has tags' do
+        it 'has tags-controls' do
+          css '#tags-controls'
+          css '#tags-controls #tags-edit-button'
+        end
+
+        it 'has tag edit js' do
+          css 'script#tags-init-js'
+        end
+      end
+
+      context 'relationship has no tags' do
+        let(:tags) { [] }
+
+        it 'has tags-controls' do
+          css '#tags-controls'
+          css '#tags-controls #tags-edit-button'
+        end
+
+        it 'has tag edit js' do
+          css 'script#tags-init-js'
+        end
+        it 'has tags title' do
+          css 'h4', text: 'Tags'
+        end
       end
     end
   end
 
   describe 'Add Reference Modal' do
     before do
-      @current_user = double('user')
-      allow(@current_user).to receive(:has_legacy_permission).and_return(true)
       assign(:relationship, @rel)
-      assign(:current_user, @current_user)
+      allow(view).to receive(:current_user)
+                       .and_return(double('user', has_legacy_permission: true))
       allow(view).to receive(:user_signed_in?).and_return(true)
       render
     end

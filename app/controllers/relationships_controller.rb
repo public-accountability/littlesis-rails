@@ -1,4 +1,5 @@
 class RelationshipsController < ApplicationController
+  include TagableController
   before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction]
   before_action :authenticate_user!, except: [:show]
   before_action -> { check_permission('deleter') }, only: [:destroy]
