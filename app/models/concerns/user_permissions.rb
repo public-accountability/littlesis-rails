@@ -44,6 +44,15 @@ module UserPermissions
     @permissions ||= Permissions.new(self)
   end
 
+  class TaggingAccessRules
+    # (hash,hash) -> hash
+    def self.update(old_rules, new_rules)
+      old_ids = old_rules&.fetch(:tag_ids) || []
+      new_ids = new_rules.fetch(:tag_ids, [])
+      { tag_ids: old_ids | new_ids }
+    end
+  end
+
   class Permissions
     ALL_PERMISSIONS = ["admin", "contributor", "editor", "deleter", "lister", "merger", "importer", "bulker", "talker", "contacter"].freeze
 
@@ -58,13 +67,19 @@ module UserPermissions
       @sf_permissions = @user.sf_guard_user.permissions
     end
 
+    def add_permission(resource_type, access_rules)
+      permission = @user.user_permissions.find_or_create_by(resource_type: resource_type.to_s)
+      klass = "UserPermissions::#{resource_type}AccessRules".constantize
+      new_access_rules = klass.update(permission.access_rules, access_rules).to_json
+      permission.update(access_rules: new_access_rules)
+    end
+
     def self.anon_tag_permissions(tagging)
       {
         viewable: true,
         editable: false,
       }
     end
-
 
     def tag_permissions(tagging)
       {

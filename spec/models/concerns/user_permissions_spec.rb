@@ -9,6 +9,7 @@ describe 'User Permissions', type: :model do
   
 end
 
+
 describe UserPermissions::Permissions do
 
   describe 'initalize' do
@@ -91,6 +92,12 @@ describe UserPermissions::Permissions do
       it("can be viewed by any logged in user but only edited by its owner(s)") do
         expect(owner.permissions.tag_permissions(closed_tagging)).to eq full_access
         expect(non_owner.permissions.tag_permissions(closed_tagging)).to eq view_only_access
+      end
+
+      it('can have edit permissions granted to a new user') do
+        expect(non_owner.permissions.tag_permissions(closed_tagging)).to eq view_only_access
+        non_owner.permissions.add_permission(Tagging, tag_ids: [closed_tagging.tag_id])
+        expect(non_owner.permissions.tag_permissions(closed_tagging)).to eq full_access
       end
     end
   end
@@ -286,5 +293,22 @@ describe UserPermissions::Permissions do
         end
       end
     end # private list
+  end
+end # UserPermissions::Permissions
+
+describe UserPermissions::TaggingAccessRules do
+
+  it('merges old access rules with new ones') do
+    expect(
+      UserPermissions::TaggingAccessRules.update(
+      { tag_ids: [1,2]},
+      { tag_ids: [2,3]})).to eq(tag_ids: [1,2,3])
+  end
+
+  it('handles nil access rules') do
+    expect(
+      UserPermissions::TaggingAccessRules.update(
+      nil,
+      { tag_ids: [2,3]})).to eq(tag_ids: [2,3])
   end
 end
