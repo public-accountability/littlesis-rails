@@ -1,12 +1,22 @@
 class ListsController < ApplicationController
-  before_filter :authenticate_user!, only: [:new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications]
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
+  include TagableController
+  # The call to :authenticate_user! on the line below overrides the :authenticate_user! call 
+  # from TagableController and therefore including :tags in the list is required
+  # Because of the potential for confusion, perhaps we should no longer use :authenticate_user!
+  # in controller concerns? (ziggy 2017-08-31)
+  before_filter :authenticate_user!,
+                only: [ :new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags ]
+
+  before_action :set_list,
+                only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
   # permissions
-  before_action :set_permissions, only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity]
+  before_action :set_permissions,
+                only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity,]
   before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references]
   before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
+  
   def self.get_lists(page)
     List
       .select("ls_list.*, COUNT(DISTINCT(ls_list_entity.entity_id)) AS entity_count")
@@ -242,50 +252,60 @@ class ListsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_list
-      @list = List.find(params[:id])
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_list
+    @list = List.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def list_params
+    params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :is_private, :custom_field_name, :short_description, :access)
+  end
+
+  def interlocks_query
+    # get people in the list
+    entity_ids = @list.entities.people.map(&:id)
+
+    # get entities related by position or membership
+    select = "e.*, COUNT(DISTINCT r.entity1_id) num, GROUP_CONCAT(DISTINCT r.entity1_id) degree1_ids, GROUP_CONCAT(DISTINCT ed.name) types"
+    from = "relationship r LEFT JOIN entity e ON (e.id = r.entity2_id) LEFT JOIN extension_record er ON (er.entity_id = e.id) LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)"
+    where = "r.entity1_id IN (#{entity_ids.join(',')}) AND r.category_id IN (#{Relationship::POSITION_CATEGORY}, #{Relationship::MEMBERSHIP_CATEGORY}) AND r.is_deleted = 0"
+    sql = "SELECT #{select} FROM #{from} WHERE #{where} GROUP BY r.entity2_id ORDER BY num DESC"
+    db = ActiveRecord::Base.connection
+    orgs = db.select_all(sql).to_hash
+
+    # filter entities by type
+    @companies = orgs.select { |org| org['types'].split(',').include?('Business') }
+    @govt_bodies = orgs.select { |org| org['types'].split(',').include?('GovernmentBody') }
+    @others = orgs.select { |org| (org['types'].split(',') & ['Business', 'GovernmentBody']).empty? }
+  end
+
+  def interlocks_results(options)
+    @page = params.fetch(:page, 1)
+    num = params.fetch(:num, 20)
+    results = @list     .interlocks(options).page(@page).per(num)
+    count = @list.interlocks_count(options)
+    Kaminari.paginate_array(results.to_a, total_count: count).page(@page).per(num)
+  end
+
+  def set_permissions
+    @permissions = current_user ?
+                     current_user.permissions.list_permissions(@list) :
+                     UserPermissions::Permissions.anon_list_permissions(@list)
+  end
+
+  def check_access(permission)
+    raise Exceptions::PermissionError unless @permissions[permission]
+  end
+
+  def after_tags_redirect_url(list)
+    edit_list_url(list)
+  end
+
+  def check_tagable_access(list)
+    unless current_user.permissions.list_permissions(list)[:configurable]
+      raise Exceptions::PermissionError
     end
-
-    # Only allow a trusted parameter "white list" through.
-    def list_params
-      params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :is_private, :custom_field_name, :short_description, :access)
-    end
-
-    def interlocks_query
-      # get people in the list
-      entity_ids = @list.entities.people.map(&:id)
-
-      # get entities related by position or membership
-      select = "e.*, COUNT(DISTINCT r.entity1_id) num, GROUP_CONCAT(DISTINCT r.entity1_id) degree1_ids, GROUP_CONCAT(DISTINCT ed.name) types"
-      from = "relationship r LEFT JOIN entity e ON (e.id = r.entity2_id) LEFT JOIN extension_record er ON (er.entity_id = e.id) LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)"
-      where = "r.entity1_id IN (#{entity_ids.join(',')}) AND r.category_id IN (#{Relationship::POSITION_CATEGORY}, #{Relationship::MEMBERSHIP_CATEGORY}) AND r.is_deleted = 0"
-      sql = "SELECT #{select} FROM #{from} WHERE #{where} GROUP BY r.entity2_id ORDER BY num DESC"
-      db = ActiveRecord::Base.connection
-      orgs = db.select_all(sql).to_hash
-
-      # filter entities by type
-      @companies = orgs.select { |org| org['types'].split(',').include?('Business') }
-      @govt_bodies = orgs.select { |org| org['types'].split(',').include?('GovernmentBody') }
-      @others = orgs.select { |org| (org['types'].split(',') & ['Business', 'GovernmentBody']).empty? }
-    end
-
-    def interlocks_results(options)
-      @page = params.fetch(:page, 1)
-      num = params.fetch(:num, 20)
-      results = @list     .interlocks(options).page(@page).per(num)
-      count = @list.interlocks_count(options)
-      Kaminari.paginate_array(results.to_a, total_count: count).page(@page).per(num)
-    end
-
-    def set_permissions
-      @permissions = current_user ?
-                       current_user.permissions.list_permissions(@list) :
-                       UserPermissions::Permissions.anon_list_permissions(@list)
-    end
-
-    def check_access(permission)
-      raise Exceptions::PermissionError unless @permissions[permission]
-    end
+  end
 end
-

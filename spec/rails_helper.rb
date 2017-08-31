@@ -44,6 +44,7 @@ RSpec.configure do |config|
 
   config.extend ControllerMacros, :type => :controller
   config.extend ListHelpersForExampleGroups, :list_helper
+  config.extend TaggingHelpers, :tagging_helper
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   # config.fixture_path = "#{::Rails.root}/spec/fixtures"
 

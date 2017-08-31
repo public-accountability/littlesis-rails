@@ -22,10 +22,11 @@
    * @param {Array[Tag]} tags
    * @param {Array[number]} current
    * @param {Object} divs
+   * @param {Boolean|Undefined} alwaysEdit
    * @return {Tags}
    *
    */
-  t.init = function(tags, current, endpoint, divs){
+  t.init = function(tags, current, endpoint, divs, alwaysEdit ){
     TAGS = {
       all: tags.reduce(
     	function(acc, tag){
@@ -40,9 +41,17 @@
         html: $(divs.container).html(),
         tags: current.map(String)
       },
-      endpoint: endpoint
+      endpoint: endpoint,
+      alwaysEdit: Boolean(alwaysEdit)
     };
-    handleEditClick();
+
+    if (TAGS.alwaysEdit) {
+      // render immediately when in perpetual edit mode
+      renderAndHideEdit();
+    } else {
+      handleEditClick();
+    }
+    
     return TAGS;
   };
 
@@ -68,7 +77,6 @@
   t.update = function(action, id){
     t[action](id);
     t.render();
-    t.post();
   };
 
   // input: str
@@ -85,12 +93,13 @@
   // RENDER FUNCTIONS
 
   function handleEditClick(){
-    $(TAGS.divs.edit).click(function(){
-      $(this).hide();
-      renderControls();
-      t.render();
-    });
-    
+    $(TAGS.divs.edit).click(renderAndHideEdit);
+  }
+
+  function renderAndHideEdit() {
+    $(TAGS.divs.edit).hide();
+    renderControls();
+    t.render();
   }
 
   function renderControls(){
@@ -103,7 +112,8 @@
     return $('<button>', {
       id: 'tags-save-button',
       text: 'save',
-      click: function(){
+      click: function(e){
+	e.preventDefault();
         $.post(TAGS.endpoint, {tags: { ids: TAGS.current  }})
           .done(function(){ window.location.reload(true); });
       }
@@ -114,13 +124,23 @@
     return $('<button>', {
       id: 'tags-cancel-button',
       text: 'cancel',
-      click: function(){
+      click: function(e){
+	e.preventDefault();
         // restore state
-        $(TAGS.divs.container).html(TAGS.cache.html);
-        TAGS.current = TAGS.cache.tags;
-        $('#tags-save-button').remove();
-        $('#tags-cancel-button').remove();
-        $(TAGS.divs.edit).show();
+	TAGS.current = TAGS.cache.tags;
+	
+	if (TAGS.alwaysEdit) {
+	  t.render();  // in perpetual edit mode we only need to re-render
+	} else {
+	  // in the normal operation we will restore the original view
+	  // as it was before edit mode was initalized
+          $(TAGS.divs.container).html(TAGS.cache.html);
+        
+          $('#tags-save-button').remove();
+          $('#tags-cancel-button').remove();
+          $(TAGS.divs.edit).show();
+	}
+	
       }
     });    
   }
@@ -192,23 +212,8 @@
       }
     });
   }
-  
 
-
-
-
-
-
-
- // update server
-  t.post = function(){};
-
-  
   return t;
   
 }));
-
- /*
-   Entity.tags = x
- */
  
