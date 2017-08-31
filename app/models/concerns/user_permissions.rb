@@ -44,22 +44,6 @@ module UserPermissions
     @permissions ||= Permissions.new(self)
   end
 
-  class TaggingAccessRules
-
-    InvalidOperationError = Exception.new("operation must be one of: [|, -]")
-    # (hash,hash) -> hash
-    def self.update(old_rules, new_rules, operation)
-      check operation
-      old_ids = old_rules&.fetch(:tag_ids) || []
-      new_ids = new_rules.fetch(:tag_ids, [])
-      { tag_ids: old_ids.send(operation, new_ids) }
-    end
-
-    def self.check(operation)
-      raise InvalidOperationError unless [:|, :-].include?(operation)
-    end
-  end
-
   class Permissions
     ALL_PERMISSIONS = ["admin", "contributor", "editor", "deleter", "lister", "merger", "importer", "bulker", "talker", "contacter"].freeze
 
@@ -75,18 +59,17 @@ module UserPermissions
     end
 
     def add_permission(resource_type, access_rules)
-      update_permission(resource_type, access_rules, :|)
+      update_permission(resource_type, access_rules, :union)
     end
 
     def remove_permission(resource_type, access_rules)
-      update_permission(resource_type, access_rules, :-)
+      update_permission(resource_type, access_rules, :difference)
     end
-
 
     def self.anon_tag_permissions(tagging)
       {
         viewable: true,
-        editable: false,
+        editable: false
       }
     end
 
@@ -163,5 +146,21 @@ module UserPermissions
     def legacy_permission?(name)
       @sf_permissions.include?(name)
     end
-  end
+  end # Permissions
+
+  class TaggingAccessRules
+
+    InvalidOperationError = Exception.new("operation must be one of: [:union, :difference]")
+
+    def self.update(old_rules, new_rules, operation)
+      check operation
+      old_ids = (old_rules&.fetch(:tag_ids) || []).to_set
+      new_ids = new_rules.fetch(:tag_ids, []).to_set
+      { tag_ids: old_ids.send(operation, new_ids).to_a }
+    end
+
+    def self.check(operation)
+      raise InvalidOperationError unless %i[union difference].include?(operation)
+    end
+  end # TaggingAccessRules
 end

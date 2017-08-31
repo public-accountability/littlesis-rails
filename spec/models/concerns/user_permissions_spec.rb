@@ -303,12 +303,11 @@ describe UserPermissions::Permissions do
 end # UserPermissions::Permissions
 
 describe UserPermissions::TaggingAccessRules do
-
   it('expands access') do
     expect(
-      UserPermissions::TaggingAccessRules.update({ tag_ids: [1,2] },
-                                                 { tag_ids: [2,3] },
-                                                 :|)
+      UserPermissions::TaggingAccessRules.update({ tag_ids: [1, 2] },
+                                                 { tag_ids: [2, 3] },
+                                                 :union)
     ).to eq(tag_ids: [1, 2, 3])
   end
 
@@ -316,7 +315,7 @@ describe UserPermissions::TaggingAccessRules do
     expect(
       UserPermissions::TaggingAccessRules.update({ tag_ids: [1, 2] },
                                                  { tag_ids: [2] },
-                                                 :-)
+                                                 :difference)
     ).to eq(tag_ids: [1])
   end
 
@@ -324,11 +323,11 @@ describe UserPermissions::TaggingAccessRules do
     expect(
       UserPermissions::TaggingAccessRules.update(nil,
                                                  { tag_ids: [2, 3] },
-                                                 :|)
+                                                 :union)
     ).to eq(tag_ids: [2, 3])
   end
 
-  it 'throws if passed an invalid set operation' do
+  it 'raises error if passed an invalid set operation' do
     expect {
       UserPermissions::TaggingAccessRules.update(nil, nil, :foobar)
     }.to raise_error(UserPermissions::TaggingAccessRules::InvalidOperationError)
