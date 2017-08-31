@@ -45,11 +45,18 @@ module UserPermissions
   end
 
   class TaggingAccessRules
+
+    InvalidOperationError = Exception.new("operation must be one of: [|, -]")
     # (hash,hash) -> hash
-    def self.update(old_rules, new_rules)
+    def self.update(old_rules, new_rules, operation)
+      check operation
       old_ids = old_rules&.fetch(:tag_ids) || []
       new_ids = new_rules.fetch(:tag_ids, [])
-      { tag_ids: old_ids | new_ids }
+      { tag_ids: old_ids.send(operation, new_ids) }
+    end
+
+    def self.check(operation)
+      raise InvalidOperationError unless [:|, :-].include?(operation)
     end
   end
 
@@ -68,11 +75,13 @@ module UserPermissions
     end
 
     def add_permission(resource_type, access_rules)
-      permission = @user.user_permissions.find_or_create_by(resource_type: resource_type.to_s)
-      klass = "UserPermissions::#{resource_type}AccessRules".constantize
-      new_access_rules = klass.update(permission.access_rules, access_rules).to_json
-      permission.update(access_rules: new_access_rules)
+      update_permission(resource_type, access_rules, :|)
     end
+
+    def remove_permission(resource_type, access_rules)
+      update_permission(resource_type, access_rules, :-)
+    end
+
 
     def self.anon_tag_permissions(tagging)
       {
@@ -105,6 +114,15 @@ module UserPermissions
     end
 
     private
+
+    # ACCESS RULE HELPER
+    def update_permission(resource_type, access_rules, operation)
+      permission = @user.user_permissions.find_or_create_by(resource_type: resource_type.to_s)
+      klass = "UserPermissions::#{resource_type}AccessRules".constantize
+      new_access_rules = klass.update(permission.access_rules, access_rules, operation).to_json
+      permission.update(access_rules: new_access_rules)
+    end
+
 
     # LIST HELPERS
 

@@ -99,6 +99,12 @@ describe UserPermissions::Permissions do
         non_owner.permissions.add_permission(Tagging, tag_ids: [closed_tagging.tag_id])
         expect(non_owner.permissions.tag_permissions(closed_tagging)).to eq full_access
       end
+
+      it('can have edit permissions revoked from an owner') do
+        expect(owner.permissions.tag_permissions(closed_tagging)).to eq full_access
+        owner.permissions.remove_permission(Tagging, tag_ids: [closed_tagging.tag_id])
+        expect(owner.permissions.tag_permissions(closed_tagging)).to eq view_only_access
+      end
     end
   end
 
@@ -298,17 +304,33 @@ end # UserPermissions::Permissions
 
 describe UserPermissions::TaggingAccessRules do
 
-  it('merges old access rules with new ones') do
+  it('expands access') do
     expect(
-      UserPermissions::TaggingAccessRules.update(
-      { tag_ids: [1,2]},
-      { tag_ids: [2,3]})).to eq(tag_ids: [1,2,3])
+      UserPermissions::TaggingAccessRules.update({ tag_ids: [1,2] },
+                                                 { tag_ids: [2,3] },
+                                                 :|)
+    ).to eq(tag_ids: [1, 2, 3])
+  end
+
+  it('restricts access') do
+    expect(
+      UserPermissions::TaggingAccessRules.update({ tag_ids: [1, 2] },
+                                                 { tag_ids: [2] },
+                                                 :-)
+    ).to eq(tag_ids: [1])
   end
 
   it('handles nil access rules') do
     expect(
-      UserPermissions::TaggingAccessRules.update(
-      nil,
-      { tag_ids: [2,3]})).to eq(tag_ids: [2,3])
+      UserPermissions::TaggingAccessRules.update(nil,
+                                                 { tag_ids: [2, 3] },
+                                                 :|)
+    ).to eq(tag_ids: [2, 3])
+  end
+
+  it 'throws if passed an invalid set operation' do
+    expect {
+      UserPermissions::TaggingAccessRules.update(nil, nil, :foobar)
+    }.to raise_error(UserPermissions::TaggingAccessRules::InvalidOperationError)
   end
 end
