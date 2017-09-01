@@ -18,7 +18,13 @@
 	padding: .3em;
     }
 
-    .tag-remove-button {
+    li.tag-disabled{
+        @extend li.tag;
+        background-color: gray;
+        border: 1px solid black;
+    }
+
+    .tag-remove-icon {
 	@extend .glyphicon;
 	@extend .glyphicon-remove;
 	@extend .hvr-pop;
@@ -28,6 +34,13 @@
 	margin-left: 0.5em;
     }
 
+    .tag-lock-icon {
+	@extend .glyphicon;
+	@extend .glyphicon-lock;
+	color: black;
+	font-size: 0.7em;
+	margin-left: 0.5em;
+    }
 }
 
 #tags-save-button, #tags-cancel-button {
@@ -45,13 +58,15 @@
     @extend .btn-default;
 }
 
+.tag-button-glyph {
+    @extend .glyphicon;
+}
+
 .tags-edit-glyph {
     @extend .glyphicon;
     @extend .glyphicon-pencil;
-    cursor: pointer;
     padding-left: 1em;
     margin-bottom: 0.5em;
-    &:hover {
-        color: $red;
-    }
+    cursor: pointer;
+    &:hover { color: $red; }
 }

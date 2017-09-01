@@ -50,12 +50,12 @@
     return STATE;
   };
 
-  // getter
+  // STATE SELECTORS
+  
   t.get = function() {
     return STATE;
   };
-
-  // str -> ?string
+  
   t.getId = function(name){
     return Object.keys(STATE.tags.byId).filter(function(k){
       return STATE.tags.byId[k].name === name;
@@ -64,17 +64,21 @@
 
   t.available = function(){
     return Object.keys(STATE.tags.byId).filter(function(id){
-      return !STATE.tags.current.includes(id);
+      return isEditable(id) && !STATE.tags.current.includes(id);
     });
   };
 
-  // mutate store
+  function isEditable(id){
+    return STATE.tags.byId[id].permissions.editable;
+  }
+
+  // STATE MUTATORS
+  
   t.update = function(action, id){
     t[action](id);
     t.render();
   };
 
-  // input: str
   t.add = function(id) {
     STATE.tags.current = STATE.tags.current.concat(String(id));
   };
@@ -86,6 +90,7 @@
   };
 
   // RENDER FUNCTIONS
+
 
   function handleEditClick(){
     $(DIVS.edit).click(renderAndHideEdit);
@@ -135,8 +140,7 @@
     $('#tags-cancel-button').remove();
     $(DIVS.edit).show();
   }
-  
-  // update done
+
   t.render = function(){
     $(DIVS.container)
       .empty()
@@ -145,9 +149,7 @@
     
     $('#tags-select').selectpicker(); // possible to move this into select()?
   };
-
-  
-  // select field
+ 
   function select(){
     return $('<select>', {
       class: 'selectpicker',
@@ -189,19 +191,34 @@
   }
   
   function tagButton(id){
+    return isEditable(id) ? editableTagButton(id) : disabledTagButton(id);
+  }
+
+  function editableTagButton(id){
     return $('<li>', {
       class: 'tag',
       text: STATE.tags.byId[id].name
-    }).append(removeButton(id));
+    }).append(removeIcon(id));
   }
 
-  function removeButton(id) {
+  function removeIcon(id) {
     return $('<span>', {
-      class: 'tag-remove-button',
+      class: 'tag-remove-icon',
       click: function(){
 	t.update('remove', id);
       }
     });
+  }
+
+  function disabledTagButton(id){
+    return $('<li>', {
+      class: 'tag-disabled',
+      text: STATE.tags.byId[id].name
+    }).append(lockIcon());
+  }
+
+  function lockIcon(id) {
+    return $('<span>', { class: 'tag-lock-icon' });
   }
 
   return t;

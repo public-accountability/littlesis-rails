@@ -1,35 +1,30 @@
 describe('tag module', function () {
-  
-  var allTags = [{
-    name: 'oil',
-    description: 'flows from pipes',
-    id: 1
-  },{
-    name: 'nyc',
-    description: 'center of the universe!',
-    id: 2
-  },{
-    name: 'finance',
-    description: 'banks got bailed out, we got sold out!',
-    id: 3
-  }];
 
   const defaultTags = {
     all: {
       1: {
         name: 'oil',
         description: 'flows from pipes',
-        id: 1
+        id: 1,
+        permissions: { editable: true }
       },
       2: {
         name: 'nyc',
         description: 'center of the universe!',
-        id: 2
+        id: 2,
+        permissions: { editable: false }
       },
       3: {
         name: 'finance',
         description: 'banks got bailed out, we got sold out!',
-        id: 3
+        id: 3,
+        permissions: { editable: true }
+      },
+      4: {
+        name: 'buffalo',
+        description: 'this is a city too, right? things happen here?',
+        id: 4,
+        permissions: { editable: false }
       }
     }
   };
@@ -68,7 +63,7 @@ describe('tag module', function () {
     it('creates a tags data structure from input', function(){
       tags.init(currentTagsOf([1]), '/tag/endpoint');
       expect(tags.get()).toEqual({
-        tags: { all: defaultTags.all, current: ['1'] },
+        tags: { byId: defaultTags.all, current: ['1'] },
         cache: { html: '<br>', tags: ['1']},
         endpoint: '/tag/endpoint',
 	alwaysEdit: false
@@ -101,10 +96,10 @@ describe('tag module', function () {
 
     it('gets all available tags', () => {
       tags.init(currentTagsOf([]), '/tag/endpoint');
-      expect(tags.available()).toEqual(['1','2','3']);
+      expect(tags.available()).toEqual(['1','3']); // exclude uneditable tags
 
       tags.init(currentTagsOf([1]), '/tag/endpoint');
-      expect(tags.available()).toEqual(['2','3']);
+      expect(tags.available()).toEqual(['3']);
       
     });
 
@@ -187,17 +182,18 @@ describe('tag module', function () {
       });
 
       it('shows an x inside tags that a user can remove', function(){
-        expect($(`${divs.container} span.tag-remove-button`)).toHaveLength(2);
+        expect($(`${divs.container} span.tag-remove-icon`)).toHaveLength(1);
       });
 
       it('removes a tag when user clicks the remove button', function(){
         expect($(`#tags-edit-list li`)).toHaveLength(2);
-        $($('.tag-remove-button')[0]).trigger('click');
+        $($('.tag-remove-icon')[0]).trigger('click');
         expect($(`#tags-edit-list li`)).toHaveLength(1);
       });
 
-      it('shows a dropdown of valid, unused tags', () => {
-        expect('#tags-select .tags-select-option').toHaveLength(1); // doesn't show already used tags
+      it('shows a dropdown of available tags', () => {
+        // doesn't show invalid, uneditable, or already used tags
+        expect($('#tags-select .tags-select-option')).toHaveLength(1);
       });
       
       it('adds a tag when user selects if from dropdown', () => {
@@ -247,12 +243,15 @@ describe('tag module', function () {
         expect(doneSpy).toHaveBeenCalled();
       });
 
-      // pending permissions card
-      it('does not show an x inside tags that a user cannot remove');
-      it('does not show tag options to a user who may not tag');
+      
+      it('disables tags that a user cannot remove', () => {
+        expect($(`#tags-edit-list li`)[1]).toHaveClass('tag-disabled');
+        expect($(`#tags-edit-list li`)[1]).not.toContain('tag-remove-button');
+      });
       
     });
   });
+
 
   describe('Pepertual Edit mode', function(){
     beforeEach(function(){
@@ -267,7 +266,7 @@ describe('tag module', function () {
       expect($(`#tags-edit-list li`)).toHaveLength(2);
 
       $('#tags-select').val('finance').trigger('changed.bs.select');
-       expect($(`#tags-edit-list li`)).toHaveLength(3);
+      expect($(`#tags-edit-list li`)).toHaveLength(3);
 
       $('#tags-cancel-button').click();
       expect($(`#tags-edit-list li`)).toHaveLength(2);
