@@ -129,7 +129,12 @@ describe "partial: sidebar" do
       before do
         assign(:entity, org)
         allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user).and_return(double(:admin? => true, :importer? => false, :merger? => false))
+        allow(view).to receive(:current_user)
+                        .and_return(double(:admin? =>      true,
+                                           :importer? =>   false,
+                                           :merger? =>     false,
+                                           :permissions => double(:tag_permissions => {})))
+        
         render partial: 'entities/sidebar.html.erb'
       end
 
