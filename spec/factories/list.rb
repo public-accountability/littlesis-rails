@@ -11,7 +11,7 @@ FactoryGirl.define do
   factory :open_list, class: List do
     name "open list"
     description "open list"
-    access UserPermissions::ACCESS_OPEN
+    access Permissions::ACCESS_OPEN
     is_admin false
     is_network false
   end
@@ -19,7 +19,7 @@ FactoryGirl.define do
   factory :closed_list, class: List do
     name "closed list"
     description "closed list"
-    access UserPermissions::ACCESS_CLOSED
+    access Permissions::ACCESS_CLOSED
     is_admin false
     is_network false
   end
@@ -27,7 +27,7 @@ FactoryGirl.define do
   factory :private_list, class: List do
     name "private list"
     description "private list"
-    access UserPermissions::ACCESS_PRIVATE
+    access Permissions::ACCESS_PRIVATE
     is_admin false
     is_network false
   end

@@ -29,7 +29,7 @@ class SearchController < ApplicationController
                              per: 50,
                              match_mode: :extended,
                              with: { is_deleted: false, is_admin: list_is_admin, is_network: false },
-                             without: { access: UserPermissions::ACCESS_PRIVATE } )
+                             without: { access: Permissions::ACCESS_PRIVATE } )
         @maps = NetworkMap.search("@(title,description,index_data) #{q}", per: 100, match_mode: :extended, with: { is_deleted: false, is_private: false })
       end
     end

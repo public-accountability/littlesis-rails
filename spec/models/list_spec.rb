@@ -113,7 +113,7 @@ describe List do
     end
 
     it 'returns false for private lists' do
-      l = build(:list, access: UserPermissions::ACCESS_PRIVATE, creator_user_id: 9999)
+      l = build(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: 9999)
       expect(l.user_can_access?).to be false
       expect(l.user_can_access?(create_basic_user)).to be false
     end
@@ -126,7 +126,7 @@ describe List do
 
       expect(user2).to receive(:permissions)
                        .and_return(double(:list_permissions => {:viewable => false}))
-      l = build(:list, access: UserPermissions::ACCESS_PRIVATE, creator_user_id: user.id)
+      l = build(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: user.id)
       
       
 

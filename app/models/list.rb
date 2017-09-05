@@ -33,8 +33,8 @@ class List < ActiveRecord::Base
   validates_presence_of :name
   validates :short_description, length: { maximum: 255 }
 
-  scope :public_scope, -> { where("access <> #{UserPermissions::ACCESS_PRIVATE}") }
-  scope :private_scope, -> { where(access: UserPermissions::ACCESS_PRIVATE) }
+  scope :public_scope, -> { where("access <> #{Permissions::ACCESS_PRIVATE}") }
+  scope :private_scope, -> { where(access: Permissions::ACCESS_PRIVATE) }
 
   def destroy
     soft_delete
@@ -49,7 +49,7 @@ class List < ActiveRecord::Base
   end
 
   def restricted?
-    is_admin || access == UserPermissions::ACCESS_PRIVATE || is_network
+    is_admin || access == Permissions::ACCESS_PRIVATE || is_network
   end
 
   def name_to_legacy_slug
@@ -63,7 +63,7 @@ class List < ActiveRecord::Base
   end
 
   def user_can_access?(user_or_id = nil)
-    return true unless access == UserPermissions::ACCESS_PRIVATE
+    return true unless access == Permissions::ACCESS_PRIVATE
     user = nil if user_or_id.nil?
     user = User.find_by_id(user_or_id) if user_or_id.is_a? Integer
     user = user_or_id if user_or_id.is_a? User

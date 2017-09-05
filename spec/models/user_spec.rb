@@ -193,4 +193,9 @@ describe User do
       expect(build(:user, is_restricted: false).restricted?).to be false
     end
   end
+
+  it 'user has permissions class' do
+    user = create_basic_user
+    expect(user.permissions).to be_a Permissions
+  end
 end

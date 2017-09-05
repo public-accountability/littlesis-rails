@@ -1,23 +1,12 @@
 require 'rails_helper'
 
-describe 'User Permissions', type: :model do
-
-  it 'user has permissions class' do
-    user = create_basic_user
-    expect(user.permissions).to be_a UserPermissions::Permissions
-  end
-  
-end
-
-
-describe UserPermissions::Permissions do
-
+describe Permissions do
   describe 'initalize' do
 
     context 'basic user with contributor, editor, and lister permissions' do
       before(:all) do
         @user = create_basic_user
-        @permission = UserPermissions::Permissions.new(@user)
+        @permission = Permissions.new(@user)
       end
 
       it 'initializes with user' do
@@ -71,7 +60,7 @@ describe UserPermissions::Permissions do
 
       it('can be viewed but not edited by an anonymous user') do
         expect(
-          UserPermissions::Permissions.anon_tag_permissions
+          Permissions.anon_tag_permissions
         ).to eq view_only_access
       end
     end
@@ -117,13 +106,13 @@ describe UserPermissions::Permissions do
     context "an open list" do
 
       before do
-        @open_list = build(:list, access: UserPermissions::ACCESS_OPEN, creator_user_id: @creator.id)
+        @open_list = build(:list, access: Permissions::ACCESS_OPEN, creator_user_id: @creator.id)
       end
 
       context "anon user" do
 
         it 'cannot view but not edit or configure the list' do
-          expect(UserPermissions::Permissions.anon_list_permissions(@open_list))
+          expect(Permissions.anon_list_permissions(@open_list))
             .to eq ({
                       viewable: true,
                       editable: false,
@@ -184,12 +173,12 @@ describe UserPermissions::Permissions do
 
     context 'closed list' do
       before do
-        @closed_list = build(:list, access: UserPermissions::ACCESS_CLOSED, creator_user_id: @creator.id)
+        @closed_list = build(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: @creator.id)
       end
 
       context "anon user" do
         it 'can view but not edit or configure the list' do
-          expect(UserPermissions::Permissions.anon_list_permissions(@closed_list))
+          expect(Permissions.anon_list_permissions(@closed_list))
             .to eq ({
                       viewable: true,
                       editable: false,
@@ -258,7 +247,7 @@ describe UserPermissions::Permissions do
 
       context "anon user" do
         it 'can not view, eidt or configure the list' do
-          expect(UserPermissions::Permissions.anon_list_permissions(@private_list)).to eq all_false
+          expect(Permissions.anon_list_permissions(@private_list)).to eq all_false
         end
       end
 
@@ -297,12 +286,12 @@ describe UserPermissions::Permissions do
       end
     end # private list
   end
-end # UserPermissions::Permissions
+end # Permissions
 
-describe UserPermissions::TagAccessRules do
+describe Permissions::TagAccessRules do
   it('expands access') do
     expect(
-      UserPermissions::TagAccessRules.update({ tag_ids: [1, 2] },
+      Permissions::TagAccessRules.update({ tag_ids: [1, 2] },
                                                  { tag_ids: [2, 3] },
                                                  :union)
     ).to eq(tag_ids: [1, 2, 3])
@@ -310,7 +299,7 @@ describe UserPermissions::TagAccessRules do
 
   it('restricts access') do
     expect(
-      UserPermissions::TagAccessRules.update({ tag_ids: [1, 2] },
+      Permissions::TagAccessRules.update({ tag_ids: [1, 2] },
                                                  { tag_ids: [2] },
                                                  :difference)
     ).to eq(tag_ids: [1])
@@ -318,7 +307,7 @@ describe UserPermissions::TagAccessRules do
 
   it('handles nil access rules') do
     expect(
-      UserPermissions::TagAccessRules.update(nil,
+      Permissions::TagAccessRules.update(nil,
                                                  { tag_ids: [2, 3] },
                                                  :union)
     ).to eq(tag_ids: [2, 3])
@@ -326,7 +315,7 @@ describe UserPermissions::TagAccessRules do
 
   it 'raises error if passed an invalid set operation' do
     expect {
-      UserPermissions::TagAccessRules.update(nil, nil, :foobar)
-    }.to raise_error(UserPermissions::TagAccessRules::InvalidOperationError)
+      Permissions::TagAccessRules.update(nil, nil, :foobar)
+    }.to raise_error(Permissions::TagAccessRules::InvalidOperationError)
   end
 end
