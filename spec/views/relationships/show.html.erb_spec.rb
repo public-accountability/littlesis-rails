@@ -8,13 +8,17 @@ describe 'relationships/show.html.erb', type: :view do
     @rel = build(:relationship, category_id: 1, description1: 'boss', id: 123, updated_at: Time.now)
     @rel.position = build(:position, is_board: false)
     @rel.last_user = @sf_user
-    
+  end
+
+  # remove this when the admin only view constraint is removed
+  before(:each) do
+    allow(view).to receive(:user_admin?).and_return(true)
   end
 
   describe 'layout' do
     let(:user_signed_in) { false }
     let(:tags) { Tag.all.take(2) }
-    
+
     before(:each) do
       assign(:relationship, @rel)
       expect(@rel).to receive(:source_links).and_return([])
