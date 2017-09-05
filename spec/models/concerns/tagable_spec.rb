@@ -152,12 +152,12 @@ describe Tagable do
 
     def verify_permissions(user, expected_permissions)
       expect(
-        test_tagable.tags_for(user)[:all].values.map{ |t| t[:permissions] }
+        test_tagable.tags_for(user)[:byId].values.map{ |t| t[:permissions] }
       ).to eq expected_permissions
     end
 
     it "returns all tags in map by stringified ids" do
-      expect(test_tagable.tags_for(owner)[:all].keys).to eq(['1', '2', '3'])
+      expect(test_tagable.tags_for(owner)[:byId].keys).to eq(['1', '2', '3'])
     end
 
     it "returns current tags as a list of ids" do

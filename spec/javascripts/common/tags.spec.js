@@ -1,7 +1,7 @@
 describe('tag module', function () {
 
   const defaultTags = {
-    all: {
+    byId: {
       1: {
         name: 'oil',
         description: 'flows from pipes',
@@ -61,9 +61,9 @@ describe('tag module', function () {
   describe('tags store operations', function (){
 
     it('creates a tags data structure from input', function(){
-      tags.init(currentTagsOf([1]), '/tag/endpoint');
+      tags.init(currentTagsOf(['1']), '/tag/endpoint');
       expect(tags.get()).toEqual({
-        tags: { byId: defaultTags.all, current: ['1'] },
+        tags: { byId: defaultTags.byId, current: ['1'] },
         cache: { html: '<br>', tags: ['1']},
         endpoint: '/tag/endpoint',
 	alwaysEdit: false
@@ -71,20 +71,20 @@ describe('tag module', function () {
     });
 
     it('can enable the perpetual edit mode', function(){
-      tags.init(currentTagsOf([1]), '/tag/endpoint', true);
+      tags.init(currentTagsOf(['1']), '/tag/endpoint', true);
       expect(tags.get().alwaysEdit).toEqual(true);
     });
 
     it('clears store upon initialization', function(){
-      tags.init(currentTagsOf([1]), '/tag/endpoint');
+      tags.init(currentTagsOf(['1']), '/tag/endpoint');
       expect(tags.get().tags.current).toEqual(['1']);
 
-      tags.init(currentTagsOf([2]), '/tag/endpoint');
+      tags.init(currentTagsOf(['2']), '/tag/endpoint');
       expect(tags.get().tags.current).toEqual(['2']);
     });
 
     it('adds a tag', () => {
-      tags.init(currentTagsOf([1]), '/tag/endpoint');
+      tags.init(currentTagsOf(['1']), '/tag/endpoint');
       tags.add(2);
       expect(tags.get().tags.current).toEqual(['1', '2']);
     });
@@ -98,14 +98,14 @@ describe('tag module', function () {
       tags.init(currentTagsOf([]), '/tag/endpoint');
       expect(tags.available()).toEqual(['1','3']); // exclude uneditable tags
 
-      tags.init(currentTagsOf([1]), '/tag/endpoint');
+      tags.init(currentTagsOf(['1']), '/tag/endpoint');
       expect(tags.available()).toEqual(['3']);
       
     });
 
     it('removes a tag', () => {
-      tags.init(currentTagsOf([1, 2]), '/tag/endpoint');
-      tags.remove(2);
+      tags.init(currentTagsOf(['1', '2']), '/tag/endpoint');
+      tags.remove('2');
       expect(tags.get().tags.current).toEqual(['1']);
     });
 
@@ -122,12 +122,12 @@ describe('tag module', function () {
       });
       
       it('updates the store and syncs w/ DOM & server', () => {
-	tags.init(currentTagsOf([2]), '/tag/endpoint');
-	tags.update('add', 1);
-	tags.update('remove', 2);
+	tags.init(currentTagsOf(['2']), '/tag/endpoint');
+	tags.update('add', '1');
+	tags.update('remove', '2');
 	
-	expect(spies.add).toHaveBeenCalledWith(1);
-	expect(spies.remove).toHaveBeenCalledWith(2);
+	expect(spies.add).toHaveBeenCalledWith('1');
+	expect(spies.remove).toHaveBeenCalledWith('2');
 	expect(spies.render).toHaveBeenCalled();
       });
     }); //end  side effects
@@ -152,7 +152,7 @@ describe('tag module', function () {
   describe('editing tags', function(){
 
     beforeEach(function(){
-      tags.init(currentTagsOf([1, 2]), '/tag/endpoint');
+      tags.init(currentTagsOf(['1', '2']), '/tag/endpoint');
     });
 
     describe('activating edit mode', () => {
@@ -255,7 +255,7 @@ describe('tag module', function () {
 
   describe('Pepertual Edit mode', function(){
     beforeEach(function(){
-      tags.init(currentTagsOf([1,2]), '/tag/endpoint', true);
+      tags.init(currentTagsOf(['1','2']), '/tag/endpoint', true);
     });
 
     it('shows edit mode withou having to click the edit button', () => {

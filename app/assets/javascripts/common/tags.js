@@ -32,10 +32,7 @@
    */
   t.init = function(tags, endpoint, alwaysEdit){
     STATE = {
-      tags: {
-        byId: tags.all,
-        current: tags.current.map(String)
-      },
+      tags: tags,
       cache: {
         html: $(DIVS.container).html(),
         tags: tags.current.map(String)
