@@ -13,7 +13,8 @@ describe Tag do
     {
       'name' => 'nyc',
       'description' => 'anything related to New York City',
-      'id' => 2
+      'id' => 2,
+      'restricted' => true
     }
   end
 
@@ -91,5 +92,4 @@ describe Tag do
       ignore: [2, 3].to_set
     )
   end
-  
 end

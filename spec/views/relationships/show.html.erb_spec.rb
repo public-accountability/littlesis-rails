@@ -8,13 +8,17 @@ describe 'relationships/show.html.erb', type: :view do
     @rel = build(:relationship, category_id: 1, description1: 'boss', id: 123, updated_at: Time.now)
     @rel.position = build(:position, is_board: false)
     @rel.last_user = @sf_user
-    
+  end
+
+  # remove this when the admin only view constraint is removed
+  before(:each) do
+    allow(view).to receive(:user_admin?).and_return(true)
   end
 
   describe 'layout' do
     let(:user_signed_in) { false }
     let(:tags) { Tag.all.take(2) }
-    
+
     before(:each) do
       assign(:relationship, @rel)
       expect(@rel).to receive(:source_links).and_return([])
@@ -85,7 +89,9 @@ describe 'relationships/show.html.erb', type: :view do
       let(:user_signed_in) { true }
 
       before(:each) do
-        allow(view).to receive(:current_user).and_return(double(has_legacy_permission: true))
+        allow(view).to receive(:current_user)
+                        .and_return(double(has_legacy_permission: true,
+                                           permissions: double(tag_permissions: {})))
         render
       end
       context 'relationship has tags' do
@@ -121,7 +127,9 @@ describe 'relationships/show.html.erb', type: :view do
     before do
       assign(:relationship, @rel)
       allow(view).to receive(:current_user)
-                       .and_return(double('user', has_legacy_permission: true))
+                      .and_return(double('user',
+                                         has_legacy_permission: true,
+                                         permissions: double(tag_permissions: {})))
       allow(view).to receive(:user_signed_in?).and_return(true)
       render
     end

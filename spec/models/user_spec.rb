@@ -6,6 +6,7 @@ describe User do
 
   it { should have_one(:api_token) }
   it { should have_many(:lists) }
+  it { should have_many(:user_permissions) }
 
   describe 'validations' do
     before(:all) do
@@ -191,5 +192,10 @@ describe User do
     it 'returns false for unrestircted user' do
       expect(build(:user, is_restricted: false).restricted?).to be false
     end
+  end
+
+  it 'user has permissions class' do
+    user = create_basic_user
+    expect(user.permissions).to be_a Permissions
   end
 end

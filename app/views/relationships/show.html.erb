@@ -20,33 +20,30 @@
 		<%= render partial: 'sources', locals: {relationship: @relationship } %>
 	    </div>
 
-	    <% if @relationship.tags.present? || user_signed_in? %>
-		
-		<div class="row">		    
-		    <h4 class="relationship-sidebar-title">Tags</h4>
+	    <% if user_admin? %>
 
-		    <%= tags_controls if user_signed_in? %>
-		    <%= display_tags(@relationship.tags) %>
+		<% if @relationship.tags.present? || user_signed_in? %>
+		    
+		    <div class="row">		    
+			<h4 class="relationship-sidebar-title">Tags</h4>
 
-		    <% if user_signed_in?  %>
-			<script id="tags-init-js">
-			 $(function(){
-			   tags.init(
-			     <%= raw(Tag.all.to_json) %>,
-			     <%= raw(@relationship.tags.map { |t| t[:id]}.to_json) %>,
-			     "<%= raw(tags_relationship_path(@relationship)) %>",
-			     {
-			       container: '#tags-container',
-			       control: '#tags-controls',
-			       edit: '#tags-edit-button'
-			     }
-			   );
-			 });
-			</script>
-		    <%  end %>
-		</div>
-	    <%  end %>
-	    
+			<%= tags_controls if user_signed_in? %>
+			<%= display_tags(@relationship.tags) %>
+
+			<% if user_signed_in?  %>
+			    <script id="tags-init-js">
+			     $(function(){
+			       tags.init(
+				 <%= raw(@relationship.tags_for(current_user).to_json) %>,
+				 "<%= raw(tags_relationship_path(@relationship)) %>",
+			       );
+			     });
+			    </script>
+			<%  end %>
+		    </div>
+
+		<% end %>
+	    <% end %> 
         </div>
     </div>
 <% end %>

@@ -9,6 +9,7 @@ describe 'partial: lists/header', type: :view do
   end
 
   before(:each) do
+    allow(view).to receive(:user_admin?).and_return(true)
     render partial: 'lists/header.html.erb', locals: { list: list }
   end
 

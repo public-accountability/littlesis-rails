@@ -33,7 +33,7 @@ class ListsController < ApplicationController
 
     if current_user.present?
       @lists = lists.where('ls_list.access <> ? OR ls_list.creator_user_id = ?',
-                           List::ACCESS_PRIVATE,
+                           Permissions::ACCESS_PRIVATE,
                            current_user.id)
     else
       @lists = lists.public_scope
@@ -292,7 +292,7 @@ class ListsController < ApplicationController
   def set_permissions
     @permissions = current_user ?
                      current_user.permissions.list_permissions(@list) :
-                     UserPermissions::Permissions.anon_list_permissions(@list)
+                     Permissions.anon_list_permissions(@list)
   end
 
   def check_access(permission)

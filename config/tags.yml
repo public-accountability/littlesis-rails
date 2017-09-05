@@ -15,3 +15,18 @@
   name: fracking
   description: "People and companies involved in fracking"
   id: 4
+-
+  name: nys
+  description: "People and companies in New York State"
+  id: 5
+  restricted: true
+-
+  name: philly
+  description: "People and companies in the Philadelphia metro area"
+  id: 6
+  restricted: true
+-
+  name: georgia
+  description: "People and companies in Georgia"
+  id: 7
+  restricted: true

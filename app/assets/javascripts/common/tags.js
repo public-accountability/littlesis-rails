@@ -6,104 +6,101 @@
   }
 }(this, function ($) {
 
-  var LIST_ID = "tags-edit-list";
-  var TAGS = null;
-  var t = {};
+  // IMPORTANT: views MUST supply divs with the below ids for this module to function
+  var DIVS = {
+    container: '#tags-container',
+    control: '#tags-controls',
+    edit: '#tags-edit-button'
+  };
+  
+  var t = {}; // object for public exports
+  var STATE = {}; // store
 
   // STORE FUNCTIONS
 
-  // type Tags = { [all: string]: TagsById, [current: string]: Array<string>, divs: Divs}
+  // type TagsRepository = { [all: string]: TagsById, [current: string]: Array<string>, divs: Divs}
   // type TagsById = { [id: string]: Tag }
-  // type Divs = { [id: string]: string }
+  // type DivsById = { [id: string]: string }
   // type Tag = type { name: string, description: string, id: number }
   
   /**
    * Initalization of widget 
-   * @param {Array[Tag]} tags
-   * @param {Array[number]} current
-   * @param {Object} divs
+   * @param {TagsRepository} tags
+   * @param {DivsById} divs
    * @param {Boolean|Undefined} alwaysEdit
-   * @return {Tags}
-   *
+   * @return {Object}
    */
-  t.init = function(tags, current, endpoint, divs, alwaysEdit ){
-    TAGS = {
-      all: tags.reduce(
-    	function(acc, tag){
-	  var _tag = {};
-	  Object.defineProperty(_tag, tag.id.toString(), { value: tag, writable: true, enumerable: true, configurable: true });
-          return Object.assign(acc, _tag);
-        }, {}
-      ),
-      current: current.map(String),
-      divs: divs,
+  t.init = function(tags, endpoint, alwaysEdit){
+    STATE = {
+      tags: tags,
       cache: {
-        html: $(divs.container).html(),
-        tags: current.map(String)
+        html: $(DIVS.container).html(),
+        tags: tags.current.map(String)
       },
       endpoint: endpoint,
       alwaysEdit: Boolean(alwaysEdit)
     };
 
-    if (TAGS.alwaysEdit) {
-      // render immediately when in perpetual edit mode
-      renderAndHideEdit();
-    } else {
-      handleEditClick();
-    }
+    // render immediately in perpetual edit mode, otherwise wait for click
+    STATE.alwaysEdit ? renderAndHideEdit() : handleEditClick();
     
-    return TAGS;
+    return STATE;
   };
 
-  // getter
+  // STATE SELECTORS
+  
   t.get = function() {
-    return TAGS;
+    return STATE;
   };
-
-  // str -> ?string
+  
   t.getId = function(name){
-    return Object.keys(TAGS.all).filter(function(k){
-      return TAGS.all[k].name === name;
+    return Object.keys(STATE.tags.byId).filter(function(k){
+      return STATE.tags.byId[k].name === name;
     })[0];
   };
 
   t.available = function(){
-    return Object.keys(TAGS.all).filter(function(id){
-      return !TAGS.current.includes(id);
+    return Object.keys(STATE.tags.byId).filter(function(id){
+      return isEditable(id) && !STATE.tags.current.includes(id);
     });
   };
 
-  // mutate store
+  function isEditable(id){
+    return STATE.tags.byId[id].permissions.editable;
+  }
+
+  // STATE MUTATORS
+  
   t.update = function(action, id){
     t[action](id);
     t.render();
   };
 
-  // input: str
   t.add = function(id) {
-    TAGS.current = TAGS.current.concat(String(id));
+    STATE.tags.current = STATE.tags.current.concat(String(id));
   };
   
   t.remove = function(idToRemove){
-    TAGS.current = TAGS.current.filter(function(id){
+    STATE.tags.current = STATE.tags.current.filter(function(id){
       return id !== String(idToRemove);
     });
   };
 
   // RENDER FUNCTIONS
 
+
   function handleEditClick(){
-    $(TAGS.divs.edit).click(renderAndHideEdit);
+    $(DIVS.edit).click(renderAndHideEdit);
   }
 
   function renderAndHideEdit() {
-    $(TAGS.divs.edit).hide();
+    $(DIVS.edit).hide();
     renderControls();
     t.render();
   }
 
   function renderControls(){
-    $(TAGS.divs.control)
+    $(DIVS.control)
       .append(saveButton())
       .append(cancelButton());
   }
@@ -114,7 +111,7 @@
       text: 'save',
       click: function(e){
 	e.preventDefault();
-        $.post(TAGS.endpoint, {tags: { ids: TAGS.current  }})
+        $.post(STATE.endpoint, {tags: { ids: STATE.tags.current  }})
           .done(function(){ window.location.reload(true); });
       }
     });
@@ -126,37 +123,30 @@
       text: 'cancel',
       click: function(e){
 	e.preventDefault();
-        // restore state
-	TAGS.current = TAGS.cache.tags;
-	
-	if (TAGS.alwaysEdit) {
-	  t.render();  // in perpetual edit mode we only need to re-render
-	} else {
-	  // in the normal operation we will restore the original view
-	  // as it was before edit mode was initalized
-          $(TAGS.divs.container).html(TAGS.cache.html);
-        
-          $('#tags-save-button').remove();
-          $('#tags-cancel-button').remove();
-          $(TAGS.divs.edit).show();
-	}
-	
+	STATE.tags.current = STATE.cache.tags; // restore state
+        STATE.alwaysEdit
+	  ? t.render()    // in perpetual edit mode we only need to re-render
+	  : restoreDom(); // normbyIdy, we must restore the pre-edit-mode view
       }
     });    
   }
-  
-  // update done
+
+  function restoreDom(){
+    $(DIVS.container).html(STATE.cache.html);
+    $('#tags-save-button').remove();
+    $('#tags-cancel-button').remove();
+    $(DIVS.edit).show();
+  }
+
   t.render = function(){
-    $(TAGS.divs.container)
+    $(DIVS.container)
       .empty()
       .append(tagList())
       .append(select());
     
     $('#tags-select').selectpicker(); // possible to move this into select()?
   };
-
-  
-  // select field
+ 
   function select(){
     return $('<select>', {
       class: 'selectpicker',
@@ -177,7 +167,7 @@
     return t.available().map(function(tagId){
       return $('<option>', {
         class: 'tags-select-option',
-        text: TAGS.all[tagId].name
+        text: STATE.tags.byId[tagId].name
       });
     });
   };
@@ -189,28 +179,43 @@
 
   function isValid(id){
     return Boolean(id) &&
-      !TAGS.current.includes(id);
+      !STATE.tags.current.includes(id);
   }
   
   function tagList(){
-    return $('<ul>', {id: LIST_ID})
-      .append(TAGS.current.map(tagButton));
+    return $('<ul>', {id: 'tags-edit-list'})
+      .append(STATE.tags.current.map(tagButton));
   }
   
   function tagButton(id){
-    return $('<li>', {
-      class: 'tag',
-      text: TAGS.all[id].name
-    }).append(removeButton(id));
+    return isEditable(id) ? editableTagButton(id) : disabledTagButton(id);
   }
 
-  function removeButton(id) {
+  function editableTagButton(id){
+    return $('<li>', {
+      class: 'tag',
+      text: STATE.tags.byId[id].name
+    }).append(removeIcon(id));
+  }
+
+  function removeIcon(id) {
     return $('<span>', {
-      class: 'tag-remove-button',
+      class: 'tag-remove-icon',
       click: function(){
 	t.update('remove', id);
       }
     });
+  }
+
+  function disabledTagButton(id){
+    return $('<li>', {
+      class: 'tag-disabled',
+      text: STATE.tags.byId[id].name
+    }).append(lockIcon());
+  }
+
+  function lockIcon(id) {
+    return $('<span>', { class: 'tag-lock-icon' });
   }
 
   return t;

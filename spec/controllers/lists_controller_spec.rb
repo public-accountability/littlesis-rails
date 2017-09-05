@@ -13,8 +13,8 @@ describe ListsController, :list_helper, type: :controller do
     before do
       new_list = create(:list)
       new_list2 = create(:list, name: 'my interesting list')
-      new_list3 = create(:list, name: 'someone else private list', access: List::ACCESS_PRIVATE, creator_user_id: controller.current_user.id + 1)
-      new_list4 = create(:list, name: 'current user private list', access: List::ACCESS_PRIVATE, creator_user_id: controller.current_user.id)
+      new_list3 = create(:list, name: 'someone else private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: controller.current_user.id + 1)
+      new_list4 = create(:list, name: 'current user private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: controller.current_user.id)
       @inc = create(:mega_corp_inc)
       ListEntity.find_or_create_by(list_id: new_list.id, entity_id: @inc.id)
       ListEntity.find_or_create_by(list_id: new_list2.id, entity_id: @inc.id)
@@ -45,7 +45,7 @@ describe ListsController, :list_helper, type: :controller do
   describe 'user not logged in' do
     before do
       @new_list = create(:open_list, name: 'my interesting list', creator_user_id: 123)
-      @private_list = create(:list, name: 'someone else private list', access: List::ACCESS_PRIVATE, creator_user_id: 123)
+      @private_list = create(:list, name: 'someone else private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: 123)
       @inc = create(:mega_corp_inc)
       ListEntity.find_or_create_by(list_id: @new_list.id, entity_id: @inc.id)
       ListEntity.find_or_create_by(list_id: @private_list.id, entity_id: @inc.id)
@@ -437,7 +437,7 @@ describe ListsController, :list_helper, type: :controller do
     before do
       @controller = ListsController.new
       @user = create_basic_user
-      @list = build(:list, access: List::ACCESS_OPEN, creator_user_id: @user.id)
+      @list = build(:list, access: Permissions::ACCESS_OPEN, creator_user_id: @user.id)
       @controller.instance_variable_set(:@list, @list)
     end
 
@@ -449,7 +449,7 @@ describe ListsController, :list_helper, type: :controller do
 
     it "sets permissions for an anonymous user" do
       allow(@controller).to receive(:current_user).and_return(nil)
-      expect(UserPermissions::Permissions).to receive(:anon_list_permissions).with(@list)
+      expect(Permissions).to receive(:anon_list_permissions).with(@list)
       @controller.send(:set_permissions)
     end
   end
