@@ -89,6 +89,7 @@ class Permissions
   # TAG HELPERS
 
   def edit_tag?(tag)
+    return true if @user.admin?
     return true unless tag.restricted?
     return true if owns_tag(tag.id)
     return false

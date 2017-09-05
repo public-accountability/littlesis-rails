@@ -46,6 +46,8 @@ describe Permissions do
 
     let(:owner) { create_really_basic_user }
     let(:non_owner) { create_really_basic_user }
+    let(:admin){ create_admin_user }
+    
 
     let(:full_access) { { viewable: true, editable: true } }
     let(:view_only_access) { { viewable: true, editable: false } }
@@ -75,9 +77,10 @@ describe Permissions do
 
     context('a closed tag') do
 
-      it("can be viewed by any logged in user but only edited by its owner(s)") do
+      it("can be viewed by any logged in user but only edited by its owner(s) or an admin") do
         expect(owner.permissions.tag_permissions(closed_tag)).to eq full_access
         expect(non_owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
+        expect(admin.permissions.tag_permissions(closed_tag)).to eq full_access
       end
 
       it('can have edit permissions granted to a new user') do
@@ -91,6 +94,7 @@ describe Permissions do
         owner.permissions.remove_permission(Tag, tag_ids: [closed_tag.id])
         expect(owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
       end
+
     end
   end
 
