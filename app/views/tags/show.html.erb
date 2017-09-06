@@ -1,0 +1,35 @@
+<div class="tag-header">
+
+  <div class="tag-title">
+    Tag: <%= @tag.name.titlecase %>
+  </div>
+
+  <div class="tag-description">
+    <%= @tag.description %>
+  </div>
+
+</div>
+
+<div class="tagable-list">
+
+  <% if !@tag.taggings.empty? %>
+
+  <ul>
+    <div class="tagable-list-header">
+      Items tagged <%= @tag.name %>: 
+    </div>
+    <% @tag.taggings.map(&:tagable).each do |tagable| %>
+      <div class="tagable-list-item">
+        <%= tagable.name.titlecase %>
+      </div>
+    <% end #@tag.taggings.map %>
+  </ul>
+
+  <% else %>
+
+    <div class="empty-tagable-list-notificatoin">
+      There are no items with tag #{tag.nam}
+    </div>
+
+  <% end #if @tag.taggings %>
+</div>

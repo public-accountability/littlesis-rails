@@ -304,6 +304,12 @@ Lilsis::Application.routes.draw do
     get "/contributions" => "nys#contributions"
   end
 
+  ########
+  # Tags #
+  ########
+
+  resources :tags, only: [:show]
+
   #########
   # Tools #
   #########
