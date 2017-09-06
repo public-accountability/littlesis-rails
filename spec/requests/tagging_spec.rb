@@ -1,6 +1,8 @@
 require 'rails_helper'
 
-describe 'Tagging', :tagging_helper, :type => :request do
+describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
+  seed_tags
+
   let(:entity) { create(:org) }
   let(:list) { create(:list) }
   let(:relationship) { create_generic_relationship }

@@ -1,6 +1,8 @@
 require "rails_helper"
 
-describe "partial: sidebar" do
+describe "partial: sidebar", :tag_helper do
+  seed_tags
+  
   before(:all) do
     Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
   end

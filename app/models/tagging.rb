@@ -3,6 +3,8 @@ class Tagging < ActiveRecord::Base
   belongs_to :tagable, polymorphic: true, foreign_type: :tagable_class
   validates_presence_of :tag_id, :tagable_class, :tagable_id
 
+  belongs_to :tag
+
   after_save :update_tagable_timestamp
 
   def update_tagable_timestamp(last_user_id = DEFAULT_LAST_USER_ID)

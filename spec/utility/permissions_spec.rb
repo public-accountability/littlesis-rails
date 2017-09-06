@@ -1,6 +1,8 @@
 require 'rails_helper'
 
-describe Permissions do
+describe Permissions, :tag_helper  do
+  seed_tags
+  
   describe 'initalize' do
 
     context 'basic user with contributor, editor, and lister permissions' do
@@ -41,8 +43,8 @@ describe Permissions do
 
   describe "tag permisions" do
 
-    let(:open_tag) { Tag.find("oil") } # oil
-    let(:closed_tag) { Tag.find("nyc") } # nyc
+    let(:open_tag) { Tag.find_by_name("oil") } # oil
+    let(:closed_tag) { Tag.find_by_name("nyc") } # nyc
 
     let(:owner) { create_really_basic_user }
     let(:non_owner) { create_really_basic_user }

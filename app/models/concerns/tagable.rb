@@ -2,12 +2,13 @@ module Tagable
   extend ActiveSupport::Concern
 
   included do
-    has_many :taggings, as: :tagable
+    has_many :taggings, as: :tagable, foreign_type: :tagable_class
+    has_many :tags, through: :taggings
   end
 
   # [String|Int] -> Tagable
   def update_tags(ids)
-    server_tag_ids = tags.map { |t| t[:id] }.to_set
+    server_tag_ids = tags.map(&:id).to_set
     client_tag_ids = ids.map(&:to_i).to_set
     actions = Tag.parse_update_actions(client_tag_ids, server_tag_ids)
 
@@ -15,24 +16,17 @@ module Tagable
     actions[:add].each { |tag_id| tag(tag_id) }
     self
   end
-  
+
   def tag(name_or_id)
-    Tagging.find_or_create_by(tag_id:         Tag.find!(name_or_id)[:id],
+    Tagging.find_or_create_by(tag_id:         parse_tag_id!(name_or_id),
                               tagable_class:  self.class.name,
                               tagable_id:     self.id)
   end
 
   def remove_tag(name_or_id)
-    id = Tag.find!(name_or_id)[:id]
-    taggings.find_by_tag_id(id).destroy
-  end
-  
-  def tags
-    taggings.map { |tagging| Tag.find(tagging.tag_id) }
-  end
-
-  def taggings
-    Tagging.where(tagable_id: self.id, tagable_class: self.class.name)
+    taggings
+      .find_by_tag_id(parse_tag_id!(name_or_id))
+      .destroy
   end
 
   def tags_for(user)
@@ -44,17 +38,23 @@ module Tagable
 
   private
 
+  # NOTE: does NOT allow string-intergers as ids .ie. '1'
+  def parse_tag_id!(name_or_id)
+    msg = name_or_id.is_a?(String) ? :find_by_name! : :find
+    Tag.public_send(msg, name_or_id).id
+  end
+
   # Array[Tag] -> Hash{[id:string]: Tag}
   def hashify(tags)
     tags.reduce({}) do |acc, t|
-      acc.merge(t[:id].to_s => t)
+      acc.merge(t['id'].to_s => t)
     end
   end
 
   # (Array[Tag], User) -> Array[AugmentedTag]
   def add_permissions(tags, user)
     tags.map do |t|
-      t.merge('permissions' => user.permissions.tag_permissions(t))
+      t.attributes.merge('permissions' => user.permissions.tag_permissions(t))
     end
   end
 end

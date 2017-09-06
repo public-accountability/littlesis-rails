@@ -38,13 +38,17 @@ ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
   # devise helpers
+
+  # these run inside an example (ie: it block)
   config.include Devise::Test::ControllerHelpers, :type => :controller
   config.include Devise::Test::ControllerHelpers, :type => :view
   config.include Warden::Test::Helpers
 
+  # these run inside example groups (ie: describe blocks)
   config.extend ControllerMacros, :type => :controller
   config.extend ListHelpersForExampleGroups, :list_helper
   config.extend TaggingHelpers, :tagging_helper
+  config.extend TagSpecHelper, :tag_helper
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   # config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
