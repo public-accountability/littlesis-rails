@@ -1,10 +1,11 @@
 # coding: utf-8
 require 'rails_helper'
 
-describe Entity do
+describe Entity, :tag_helper  do
   before(:all) {  DatabaseCleaner.start }
   after(:all)  {  DatabaseCleaner.clean }
-
+  seed_tags
+  
   def public_company
     org = create(:org)
     org.aliases.create!(name: 'another name')

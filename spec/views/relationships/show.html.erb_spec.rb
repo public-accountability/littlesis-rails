@@ -1,6 +1,8 @@
 require 'rails_helper'
 
-describe 'relationships/show.html.erb', type: :view do
+describe 'relationships/show.html.erb', :tag_helper, type: :view do
+  seed_tags
+  
   before(:all) do
     @sf_user = build(:sf_guard_user)
     @user = build(:user)

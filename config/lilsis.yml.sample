@@ -46,7 +46,6 @@ defaults: &defaults
   legacy_cache_connection: "memcached:11211"
   carousel_list_id: 404
   restricted_ips:
-  tags_path: 'config/tags.yml'
   chat:
     chat_url: "http://localhost:3000"
     mongo_url: "mongo:27017"
@@ -62,7 +61,6 @@ test:
   <<: *defaults
   notification_email: notification@littlesis.dev
   notification_to: rspec@testing.com
-  tags_path: 'spec/testdata/tags.yml'
 
 development:
   <<: *defaults

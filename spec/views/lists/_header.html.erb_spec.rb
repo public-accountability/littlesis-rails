@@ -1,6 +1,8 @@
 require 'rails_helper'
 
-describe 'partial: lists/header', type: :view do
+describe 'partial: lists/header', :tag_helper, type: :view do
+  seed_tags
+  
   let(:tags) { [] }
   let(:list) do
     list = build(:list)

@@ -1,12 +1,16 @@
 require 'rails_helper'
 
-describe Tagging, type: :model do
+describe Tagging, :tag_helper, type: :model do
+  seed_tags
+
   it { should have_db_column(:tag_id) }
   it { should have_db_column(:tagable_class) }
   it { should have_db_column(:tagable_id) }
   it { should validate_presence_of(:tag_id) }
   it { should validate_presence_of(:tagable_class) }
   it { should validate_presence_of(:tagable_id) }
+
+  it { should belong_to(:tag) }
 
   before(:all) do
     @sf_user = create(:sf_user)
