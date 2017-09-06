@@ -1,7 +1,3 @@
-<%  simple_math_1 = rand(20) %>
-<%  simple_math_2 = rand(20) %>
-<%  simple_math_total = (simple_math_1 + simple_math_2) %>
-
 <script>
  $(function(){
    var aboutYouInput = document.getElementById('about-you-input');
@@ -18,25 +14,19 @@
 	   });
  });
  
-
  function validateForm(){
    if (!document.getElementById('terms_of_use').checked) {
      alert("Unfortunately, you have to accept the terms first");
      return false;
    }
-
    var password = document.getElementsByName("user[password]")[0].value;
    var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
-   var solution = Number(<%= simple_math_total %>);
-   var answerProvided = Number(document.getElementById('simple_math').value);
+   
    if (password.length < 8) {
      alert('Please ensure that your password is 8 or more characters long!');
      return false;
    } else if (password !== confirmation) {
      alert('Your password and password confirmation do not match :(');
-     return false;
-   } else if (solution  !==  answerProvided) {
-     alert('Please double check your math :( ');
      return false;
    } else {
      return true;
@@ -165,15 +155,7 @@
                             </div>
 			</div>
 
-			<div class="form-group">
-                            <%=  label_tag 'spam_test', "Spam Test", :class => label_class %>
-                            <div class="col-sm-2">
-				<samp class="text-center"><%= simple_math_1 %> + <%= simple_math_2 %> = </samp>
-                            </div>
-                            <div class="col-sm-2">
-				<%= text_field_tag :spam_test, "", maxlength: 2, id: 'simple_math', class: 'form-control' %>
-                            </div>
-			</div>
+			
 
 
 			<div class="form-group">
@@ -198,6 +180,14 @@
                             </div>
 			</div>
 			
+			<div class="form-group">
+			    <%=  label_tag 'spam_test', "", :class => label_class %>
+                            <div class="col-sm-10">
+				<%= flash[:recaptcha_error] %>
+				<%= recaptcha_tags %>
+			    </div>
+			</div>
+
 			<div class="actions form-group">
                             <div class="col-sm-2"></div>
                             <div class="col-sm-2">

@@ -105,3 +105,6 @@ gem 'mongo'
 
 # used by Pages and Toolkit for Markdown->Html
 gem 'redcarpet', '>= 3.4.0'
+
+# google's recaptcha
+gem "recaptcha", require: "recaptcha/rails"
