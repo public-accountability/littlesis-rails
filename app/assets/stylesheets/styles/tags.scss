@@ -70,3 +70,9 @@
     cursor: pointer;
     &:hover { color: $red; }
 }
+
+
+input#tag_name {
+    max-width: 250px;
+
+}

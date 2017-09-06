@@ -13,7 +13,7 @@
 		<td><%= tag.name %></td>
 		<td><%= tag.description %></td>
 		<td><%= tag.restricted? %></td>
-		<td>edit_this_tag</td>
+		<td><%= link_to 'Edit this tag' , edit_tag_path(tag) %></td>
 	    </tr>
 	<% end %>
     </tbody>
