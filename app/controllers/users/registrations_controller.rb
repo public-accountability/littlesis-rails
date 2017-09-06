@@ -1,6 +1,6 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
-  # before_action :configure_account_update_params, only: [:update]  
+  # before_action :configure_account_update_params, only: [:update]
 
   HOME_NETWORK_IDS = [
     ['United States', 79],
@@ -21,9 +21,16 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # POST /resource
   def create
     build_resource(user_params)
+
+    # check recaptcha
+    unless verify_recaptcha
+      reset_signup_session
+      return respond_with resource
+    end
+
     resource.sf_guard_user.username = resource.email
     resource.sf_guard_user.sf_guard_user_profile.assign_attributes(sf_profile_params)
-    
+
     if resource.sf_guard_user.valid? and resource.sf_guard_user.sf_guard_user_profile.valid?
       resource.sf_guard_user.save
       resource.sf_guard_user_profile.save
@@ -40,8 +47,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         end
       end
     else
-      clean_up_passwords resource
-      set_minimum_password_length
+      reset_signup_session
       return respond_with resource
     end
   end
@@ -134,5 +140,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_sign_up_params
   # end
- 
+
+  private
+  
+  def reset_signup_session
+    clean_up_passwords resource
+    set_minimum_password_length
+  end
+  
 end
