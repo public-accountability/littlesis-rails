@@ -3,6 +3,9 @@
    $("#" + access + "-radio").trigger('click');
    $("#list-config-access-buttons button").removeClass('btn-primary');
    $("#" + access + "-button").addClass('btn-primary');
+
+   $('.list-access-level-help').hide();
+   $("#list-access-level-help-" + access).show();
  }
 
  $(function(){
@@ -23,7 +26,7 @@
 </script>
 
 <div class="row">
-  <div class="col-sm-10 col-md-8">
+  <div class="col-sm-4 col-md-3">
     <%= label_tag 'Access level' %> <br/>
 
     <div id="list-config-access-buttons" class="btn-group m-bottom-1em" role="group" aria-label="...">
@@ -31,11 +34,23 @@
       <button type="button" id="closed-button" class="btn btn-default" onclick="handleRadioClick('closed')">Closed</button>
       <button type="button" id="private-button" class="btn btn-default" onclick="handleRadioClick('private')">Private</button>
     </div>
+  
+    
+    <%= f.radio_button :access, 0, class: 'btn btn-default', id: 'open-radio', style: "display: none" %>
+    <%= f.radio_button :access, 1, class: 'btn btn-default', id: 'closed-radio', style: "display: none"  %>
+    <%= f.radio_button :access, 2, class: 'btn btn-default', id: 'private-radio', style: "display: none"  %>
   </div>
-
-  <%= f.radio_button :access, 0, class: 'btn btn-default', id: 'open-radio', style: "display: none" %>
-  <%= f.radio_button :access, 1, class: 'btn btn-default', id: 'closed-radio', style: "display: none"  %>
-  <%= f.radio_button :access, 2, class: 'btn btn-default', id: 'private-radio', style: "display: none"  %>
+  <div class="col-sm-4 col-md-4">
+      <div class="list-access-level-help" id="list-access-level-help-open" style="display: none;">
+	  An <b>open list</b> is visible by everyone and can be edited by any LittleSis user who is allowed to modify lists.
+      </div>
+      <div class="list-access-level-help" id="list-access-level-help-closed" style="display: none;">
+	  A <b>closed list</b> is visible by everyone, but it can only be edited you.
+      </div>
+      <div class="list-access-level-help" id="list-access-level-help-private" style="display: none;">
+	  A <b>private list</b> can only be seen and edited by you.
+      </div>
+  </div>
 </div>
 
 <div class="row form-group">
