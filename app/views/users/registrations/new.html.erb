@@ -186,8 +186,8 @@
 
 			<div class="form-group">
                             <%=  label_tag 'newsletter', "Newsletter?", :class => label_class %>
-                            <div class="<%= field_class %>">
-				<%= f.check_box :newsletter %><small style="padding-left: 0.5em;">May we put you on our newsletter? </small>
+                            <div class="col-sm-10">
+				<%= f.check_box :newsletter, checked: true %><small style="padding-left: 0.5em;">Send me your newsletter (we send one every 1-2 months)</small>
                             </div>
 			</div>
 
