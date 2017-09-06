@@ -91,6 +91,15 @@ module ApplicationHelper
     raw "<div class='alert alert-success'>#{notice}</div>" if notice
   end
 
+  def notice_or_alert
+    return unless flash[:alert] || flash[:notice]
+
+    msg = flash[:alert] || flash[:notice]
+    style = flash[:alert].present? ? 'danger' : 'success'
+
+    content_tag(:div, msg, class: "alert alert-#{style}")
+  end
+
   def dismissable_alert(id, class_name = 'alert-info', &block)
     session[:dismissed_alerts] = [] unless session[:dismissed_alerts].kind_of?(Array)
 

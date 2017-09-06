@@ -40,10 +40,33 @@ describe 'Admin Only Pages', :tag_helper, :type => :feature do
       page.assert_selector '#tag-table tbody tr', count: 3
     end
 
-    
-    scenario 'Creating a new tag' do
+    scenario 'Admin creates a new tag' do
+      fill_in('Name', with: 'cylon')
+      fill_in('Description', with: 'spin up those ftl drives')
+      page.check('Restricted')
+      click_button('Create Tag')
+
+      expect(Tag.count).to eql(4)
+      expect(Tag.last.attributes.slice('name', 'description', 'restricted'))
+        .to eq('name' => 'cylon',
+               'description' => 'spin up those ftl drives',
+               'restricted' => true)
+
+      expect(page).to have_current_path '/admin/tags'
+      expect(page).to have_selector 'div.alert-success', count: 1
+      expect(page).not_to have_selector 'div.alert-danger'
     end
 
+    scenario 'Admin tries to create a tag that already exists' do
+      tag_count = Tag.count
+      fill_in('Name', with: 'nyc')
+      fill_in('Description', with: 'all about nyc')
+      click_button('Create Tag')
+      expect(page).to have_current_path '/admin/tags'
+      expect(page).not_to have_selector 'div.alert-success'
+      expect(page).to have_selector 'div.alert-danger', count: 1
+      expect(Tag.count).to eq tag_count
+    end
 
     context 'as a regular user' do
       let(:user) { normal_user }
