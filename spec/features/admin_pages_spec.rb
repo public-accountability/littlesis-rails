@@ -33,15 +33,17 @@ describe 'Admin Only Pages', :tag_helper, :type => :feature do
     before(:each) { visit '/admin/tags' }
     let(:user) { admin }
 
-    it 'displays the tag overview page' do
+    scenario 'Displays overview of current tags' do
       expect(page.status_code).to eq 200
       expect(page).to have_current_path '/admin/tags'
-    end
-
-    it 'shows a table with all current tags' do
       page.assert_selector '#tag-table'
       page.assert_selector '#tag-table tbody tr', count: 3
     end
+
+    
+    scenario 'Creating a new tag' do
+    end
+
 
     context 'as a regular user' do
       let(:user) { normal_user }
