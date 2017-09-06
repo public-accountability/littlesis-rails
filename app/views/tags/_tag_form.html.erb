@@ -1,0 +1,25 @@
+<%= form_for(tag) do |f| %>
+    <div class="form-group">
+	<%= f.label :name %>:
+	<%= f.text_field :name, class: 'form-control' %><br />
+    </div>
+
+    <div class="form-group">
+	<%= f.label :description %>:
+	<%= f.text_area :description,
+	class: 'form-control',
+	cols: 8, rows: 4
+	
+	%><br />
+    </div>
+
+    <div class="form-group">
+	<%= f.label :restricted %>:
+	<%= f.check_box :restricted %><br />
+    </div>
+
+
+  <%= f.submit nil, class: 'btn btn-primary' %>
+<% end %>
+
+    

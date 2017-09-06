@@ -31,8 +31,11 @@ Lilsis::Application.routes.draw do
   get '/bug_report' => 'errors#bug_report'
   post '/bug_report' => 'errors#file_bug_report'
 
-  get "/admin" => "admin#home"
-  post "/admin/clear_cache" => "admin#clear_cache"
+  scope :admin, controller: 'admin', as: 'admin' do
+    get '/', action: :home
+    post "/clear_cache", action: :clear_cache
+    get '/tags', action: :tags
+  end
 
   resources :hubs, controller: 'campaigns', as: 'campaigns' do
     member do
@@ -266,6 +269,12 @@ Lilsis::Application.routes.draw do
   #   controller: 'entities',
   #   action: 'search_by_name',
   #   as: 'entity_name_search'
+
+
+  # Tags
+
+  resources :tags, only: [:edit, :create, :update, :destroy]
+
 
   #########
   # edits #
