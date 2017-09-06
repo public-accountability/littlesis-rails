@@ -1,0 +1,20 @@
+<table class="table" id="tag-table">
+    <thead>
+	<tr>
+	    <th>Name</th>
+	    <th>Description</th>
+	    <th>Restricted?</th>
+	    <th>Edit</th>
+	</tr>
+    </thead>
+    <tbody>
+	<% Tag.all.each do |tag| %>
+	    <tr>
+		<td><%= tag.name %></td>
+		<td><%= tag.description %></td>
+		<td><%= tag.restricted? %></td>
+		<td>edit_this_tag</td>
+	    </tr>
+	<% end %>
+    </tbody>
+</table>
