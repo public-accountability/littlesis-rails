@@ -19,6 +19,7 @@ feature "Editing Tags", :tag_helper, type: :feature do
       expect(page).to have_content "Editing Tag:"
       expect(page).to have_content #{tag.name}"
       expect(page).to have_selector 'form.edit_tag'
+      expect(page).to have_selector '#delete-this-tag'
     end
 
     scenario 'Admin can change the description of the tag' do
@@ -38,6 +39,13 @@ feature "Editing Tags", :tag_helper, type: :feature do
       expect(page).to have_current_path edit_tag_path(tag)
       expect(page).not_to have_selector 'div.alert-success'
       expect(page).to have_selector 'div.alert-danger', count: 1
+    end
+
+    scenario 'Admin wants to delete a tag' do
+      find('#delete-this-tag').click
+      expect(Tag.count).to eq 2
+      expect(page).to have_current_path admin_tags_path
+      expect(page).to have_selector 'div.alert-success', count: 1
     end
 
     context 'user is not an admin' do

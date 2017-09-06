@@ -1,7 +1,7 @@
 class TagsController < ApplicationController
   before_action :authenticate_user!
   before_action -> { check_permission('admin') }
-  before_action :set_tag, only: [:edit, :update]
+  before_action :set_tag, only: [:edit, :update, :destroy]
 
   def edit
   end
@@ -24,6 +24,11 @@ class TagsController < ApplicationController
       flash[:alert] = "Error: #{@tag.errors.full_messages.join('. ')}"
       redirect_to edit_tag_path(@tag)
     end
+  end
+
+  def destroy
+    @tag.destroy
+    redirect_to admin_tags_path, notice: 'The tag has been removed'
   end
 
   private

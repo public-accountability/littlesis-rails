@@ -273,7 +273,7 @@ Lilsis::Application.routes.draw do
 
   # Tags
 
-  resources :tags, only: [:edit, :create, :update]
+  resources :tags, only: [:edit, :create, :update, :destroy]
 
 
   #########
