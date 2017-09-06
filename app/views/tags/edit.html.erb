@@ -1,2 +1,16 @@
-<h1>Tags#edit</h1>
-<p>Find me in app/views/tags/edit.html.erb</p>
+<div class="row">
+    <h1>Editing Tag: <%= @tag.name %></h1>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+	<%= notice_or_alert %>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-sm-12">
+	<%= render partial: 'tag_form', locals: { tag: @tag } %>
+    </div>
+</div>

@@ -14,6 +14,6 @@
 <div class="row">
     <h1>Create a new tag</h1>
     <div class="col-sm-12">
-	<%= render partial: 'new_tag_form' %>
+	<%= render partial: 'tags/tag_form', locals: { tag: Tag.new } %>
     </div>
 </div>
