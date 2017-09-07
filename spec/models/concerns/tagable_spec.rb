@@ -42,7 +42,7 @@ describe Tagable do
     let(:entity) { create(:org) }
 
     it "responds to interface methods" do
-     h [Entity.new, Relationship.new, List.new].each do |tagable|
+      [Entity.new, Relationship.new, List.new].each do |tagable|
         expect(tagable).to respond_to(:tag)
         expect(tagable).to respond_to(:tags)
         expect(tagable).to respond_to(:last_user_id)
@@ -188,7 +188,6 @@ describe Tagable do
 
   describe 'sorting' do
 
-    #let(:tags) { Array.new(2) { create(:tag) } }
     let(:orgs) { Array.new(3) { |n| create(:org, name: "org#{n}") } }
     let(:person) { create(:person) }
 
