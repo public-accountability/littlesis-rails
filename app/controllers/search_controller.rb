@@ -3,19 +3,13 @@ class SearchController < ApplicationController
 
   def basic
     @q = (params[:q] or "").gsub(/\b(and|the|of)\b/, "")
+    @cant_find = params[:q].present? && @q.empty?
 
     if @q.present?      
       q = Riddle::Query.escape(@q)
       page = (params[:page] or 1).to_i
 
-      @entities = Entity.search(
-        "@(name,aliases) #{q}", 
-        page: page, 
-        match_mode: :extended,
-        with: { is_deleted: false },
-        select: "*, weight() * (link_count + 1) AS link_weight",
-        order: "link_weight DESC"
-      )
+      @entities = Entity::Search.search(@q, page: page)
 
       if page > 1
         @groups = []
