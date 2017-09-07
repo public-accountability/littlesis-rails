@@ -1,6 +1,8 @@
 module Tagable
   extend ActiveSupport::Concern
 
+  TAGABLE_CLASSES = [Entity, List, Relationship]
+
   included do
     has_many :taggings, as: :tagable, foreign_type: :tagable_class
     has_many :tags, through: :taggings

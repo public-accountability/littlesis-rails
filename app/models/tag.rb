@@ -8,6 +8,13 @@ class Tag < ActiveRecord::Base
     restricted
   end
 
+  # Tag (implicit) -> Hash[String -> Array[Tagable]]
+  def tagables_grouped_by_resource_type
+    taggings.map(&:tagable).reduce({}) do |acc, tagable|
+      acc.merge(tagable.class.name => (acc[tagable.class.name] || []) + [tagable])
+    end
+  end
+
   # (set, set) -> hash
   def self.parse_update_actions(client_ids, server_ids)
     {

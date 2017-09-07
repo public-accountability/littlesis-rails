@@ -1,14 +1,17 @@
 require 'rails_helper'
 
-describe Tag, :tag_helper do
+describe Tag do
+  #seed_tags
+  let(:tag) { build(:tag) }
+  let(:restricted_tag) { build(:tag, restricted: true) }
 
   it { should have_db_column(:restricted) }
   it { should have_db_column(:name) }
   it { should have_db_column(:description) }
   it { should have_many(:taggings) }
 
-  context 'with seed tags' do
-    seed_tags
+  describe 'validations' do
+    subject { tag }
 
     describe 'validations' do
       subject { Tag.new(name: 'fake tag name', description: 'all about fake tags') }
@@ -19,18 +22,32 @@ describe Tag, :tag_helper do
     end
 
     it 'can determine if a tag is restricted' do
-      expect(Tag.find_by_name('oil').restricted?).to be false
-      expect(Tag.find_by_name('nyc').restricted?).to be true
+      expect(tag.restricted?).to be false
+      expect(restricted_tag.restricted?).to be true
     end
+  end
 
-    it 'partitions tag ids from client into hash of update actions to be taken' do
-      client_ids = [1, 2, 3].to_set
-      server_ids = [2, 3, 4].to_set
-      expect(Tag.parse_update_actions(client_ids, server_ids)).to eql(
-                                                                    add: [1].to_set,
-                                                                    remove: [4].to_set,
-                                                                    ignore: [2, 3].to_set
-                                                                  )
+  describe "custom queries" do
+
+    let(:tag) { create(:tag) }
+    let(:entities) { Array.new(2) { create(:org) } }
+    let(:lists) { Array.new(2) { create(:list) } }
+    let(:relationships) do
+      Array.new(2) do
+        create(:generic_relationship, entity: entities.first, related: entities.second)
+      end
+    end
+    let(:tagables) { entities + lists + relationships }
+
+    before { tagables.map { |t| t.tag(tag.id) } }
+    
+    it "queries tagables grouped by resource type" do
+      expect(tag.tagables_grouped_by_resource_type)
+        .to eq(
+              'List' => lists,
+              'Entity' => entities,
+              'Relationship' => relationships
+            )
     end
   end
 
@@ -42,6 +59,19 @@ describe Tag, :tag_helper do
       @real_estate = build(:real_estate_tag)
       Tag.instance_variable_set(:@lookup, nil)
       allow(Tag).to receive(:all).and_return([@oil, @nyc, @finance, @real_estate])
+    end
+
+    describe('#parse_update_actions') do
+      it 'partitions tag ids from client into hash of update actions to be taken' do
+        client_ids = [1, 2, 3].to_set
+        server_ids = [2, 3, 4].to_set
+        expect(Tag.parse_update_actions(client_ids, server_ids))
+          .to eql(
+                add: [1].to_set,
+                remove: [4].to_set,
+                ignore: [2, 3].to_set
+              )
+      end
     end
 
     describe '#search_by_name' do
@@ -99,7 +129,6 @@ describe Tag, :tag_helper do
                                  'finance' => @finance,
                                  'real estate' => @real_estate)
       end
-
     end
   end
 end
