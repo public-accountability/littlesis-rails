@@ -1,6 +1,7 @@
 class SearchController < ApplicationController
   before_filter :authenticate_user!, except: [:basic]
   before_action :set_page, only: [:basic]
+  before_action :set_initial_search_values, only: [:basic]
 
   def basic
     @q = (params[:q] or "").gsub(/\b(and|the|of)\b/, "")
@@ -8,9 +9,7 @@ class SearchController < ApplicationController
 
     if @q.present?
       if @page > 1
-        # only show entities
-        set_groups_lists_maps_to_be_empty
-        entities_search(@q)
+        entities_search(@q) # only show entities
       else
         perform_search(@q)
       end
@@ -44,18 +43,17 @@ class SearchController < ApplicationController
 
   private
 
-  def set_groups_lists_maps_to_be_empty
-    @groups = []
-    @lists = []
-    @maps = []
-  end
-
   def perform_search(query)
     q = ThinkingSphinx::Query.escape(query)
+    tags_search(query) if current_user&.admin?
     entities_search(query)
     groups_search(q)
     lists_search(q)
     maps_search(q)
+  end
+
+  def tags_search(query)
+    @tags = Tag.search_by_names(query)
   end
 
   # unlike groups, lists, and maps, Entity::Search takes
@@ -82,6 +80,14 @@ class SearchController < ApplicationController
                               per: 100,
                               match_mode: :extended,
                               with: { is_deleted: false, is_private: false })
+  end
+
+  def set_initial_search_values
+    @entities = []
+    @groups = []
+    @lists = []
+    @maps = []
+    @tags = []
   end
 
   def set_page

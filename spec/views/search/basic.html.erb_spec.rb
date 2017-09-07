@@ -6,6 +6,7 @@ describe "search/basic", type: :view do
   let(:groups) { [] }
   let(:lists) { [] }
   let(:maps) { [] }
+  let(:tags) { [] }
   let(:q) { '' }
 
   before(:each) do
@@ -14,6 +15,7 @@ describe "search/basic", type: :view do
     assign(:groups, groups)
     assign(:lists, lists)
     assign(:maps, maps)
+    assign(:tags, tags)
     assign(:q, q)
     render
   end
@@ -82,6 +84,15 @@ describe "search/basic", type: :view do
         css 'span.search-result-link', count: 1
       end
     end
-  end 
+
+    context 'found a tag' do
+      let(:tags) { [build(:oil_tag, id: 123)] }
+
+      it 'shows a link to the tag' do
+        css 'h3', text: 'Tags'
+        css 'span.search-result-link', count: 1
+      end
+    end
+  end
   
 end

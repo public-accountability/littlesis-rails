@@ -93,7 +93,7 @@ describe Tag, :tag_helper do
     end
 
     describe 'lookup' do
-      it 'returns a look up table of all hash by name' do
+      it 'returns a hash lookup table of all tags by name' do
         expect(Tag.lookup).to eq('oil' => @oil,
                                  'nyc' => @nyc,
                                  'finance' => @finance,
