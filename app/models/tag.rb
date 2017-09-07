@@ -10,9 +10,7 @@ class Tag < ActiveRecord::Base
 
   # Tag (implicit) -> Hash[String -> Array[Tagable]]
   def tagables_grouped_by_resource_type
-    taggings.map(&:tagable).reduce({}) do |acc, tagable|
-      acc.merge(tagable.class.name => (acc[tagable.class.name] || []) + [tagable])
-    end
+    taggings.includes(:tagable).map(&:tagable).group_by { |t| t.class.name }
   end
 
   # (set, set) -> hash
