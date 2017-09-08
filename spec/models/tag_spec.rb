@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 describe Tag do
-  #seed_tags
+
+  let(:tags) { Array.new(3) { create(:tag)}}
   let(:tag) { build(:tag) }
   let(:restricted_tag) { build(:tag, restricted: true) }
 
@@ -40,9 +41,9 @@ describe Tag do
     let(:tagables) { entities + lists + relationships }
 
     before { tagables.map { |t| t.tag(tag.id) } }
-    
+
     it "queries tagables grouped by resource type" do
-      expect(tag.tagables_grouped_by_resource_type)
+      expect(tag.tagables_grouped_by_class)
         .to eq(
               'List' => lists,
               'Entity' => entities,

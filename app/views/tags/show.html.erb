@@ -10,26 +10,36 @@
 
 </div>
 
-<div class="tagable-list">
+<% @taggings_by_class.each do |tagable_class, taggings|  %>
 
-  <% if !@tag.taggings.empty? %>
+  <div id="tagable-list-<%= tagable_class.downcase.pluralize %>">
 
-  <ul>
-    <div class="tagable-list-header">
-      Items tagged <%= @tag.name %>: 
-    </div>
-    <% @tag.taggings.map(&:tagable).each do |tagable| %>
-      <div class="tagable-list-item">
-        <%= tagable.name.titlecase %>
+    <% if taggings.empty? %>
+
+      <div class="empty-tagable-list-notificatoin">
+        <%= "There are no #{tagable_class.downcase.pluralize} tagged #{@tag.name}" %>
       </div>
-    <% end #@tag.taggings.map %>
-  </ul>
 
-  <% else %>
+    <% else %>
 
-    <div class="empty-tagable-list-notificatoin">
-      There are no items with tag #{tag.nam}
-    </div>
+      <ul>
 
-  <% end #if @tag.taggings %>
-</div>
+        <div class="tagable-list-header">
+          <%= "#{tagable_class.pluralize} tagged #{@tag.name}" %>
+        </div>
+
+        <% taggings.each do |tagging| %>
+          <div class="tagable-list-item">
+            <%= tagging.tagable.name.titlecase %>
+          </div>
+        <% end #tagables.each %>
+
+        <%= paginate taggings, param_name: Tagable.page_param_of(tagable_class) %>
+
+      </ul>
+
+    <% end #if !tagables.empty %>
+
+  </div>
+
+<% end # tagables_grouped_by_class.map%>

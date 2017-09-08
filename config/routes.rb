@@ -270,11 +270,11 @@ Lilsis::Application.routes.draw do
   #   action: 'search_by_name',
   #   as: 'entity_name_search'
 
-
-  # Tags
+  ########
+  # Tags #
+  ########
 
   resources :tags, only: [:edit, :create, :update, :destroy, :show]
-
 
   #########
   # edits #
@@ -303,12 +303,6 @@ Lilsis::Application.routes.draw do
     get "/potential_contributions" => "nys#potential_contributions"
     get "/contributions" => "nys#contributions"
   end
-
-  ########
-  # Tags #
-  ########
-
-  resources :tags, only: [:show]
 
   #########
   # Tools #

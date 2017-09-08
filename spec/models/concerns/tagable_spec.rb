@@ -208,4 +208,10 @@ describe Tagable do
       expect(sorted).to eq orgs.reverse
     end
   end
+
+  describe 'using tagable class names' do
+    it 'converts a class name to a page param symbol' do
+      expect(Tagable.page_param_of(Entity)).to eq :entity_page
+    end
+  end
 end

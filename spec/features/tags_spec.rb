@@ -1,37 +1,74 @@
 require 'rails_helper'
 
-describe 'Tags', :tag_helper, type: :feature do
-  seed_tags
+describe 'Tags', type: :feature do
 
-  let(:oil_tag) { Tag.find_by_name("oil") }
-  let(:orgs) { (0..3).map { |n| create(:org, name: "org#{n}") } }
-  let(:person) { create(:person) }
+  let(:tag) { create(:tag) }
+  let(:entities) { Array.new(11) { create(:org) } }
+  let(:lists) { Array.new(11) { create(:list) } }
+  let(:relationships) do
+    Array.new(11) do
+      create(:generic_relationship, entity: entities.first, related: entities.second)
+    end
+  end
+  let(:tagables) { [entities, lists, relationships] }
+
+  def n_tagables(n)
+    tagables.map { |t| t.take(n) }.flatten
+  end
+
+  def name_of(tagable_class)
+    tagable_class.to_s.downcase.pluralize
+  end
 
   describe "tag homepage" do
-    context "with taggings" do
-      before do
-        ([person] + orgs).each { |x| x.tag(oil_tag.id) }
-        visit "/tags/#{oil_tag.id}"
-      end
+    context "with no taggings" do
+      before { visit "/tags/#{tag.id}" }
 
       it "shows the tag title and description" do
-        expect(page).to have_text oil_tag.name
-        expect(page).to have_text oil_tag.description
+        expect(page).to have_text tag.name
+        expect(page).to have_text tag.description
       end
 
-      it "shows a list of tagged items" do
-        expect(page.all(".tagable-list-item").length).to eq 5
+      it "shows empty lists for all tagable types" do
+        Tagable::TAGABLE_CLASSES.each { |tc| should_be_empty_for(tc) }
       end
 
-      it "sorts tagged items by # of relationships to items with same tag"
+      def should_be_empty_for(tagable_class)
+        list = page.find("#tagable-list-#{name_of(tagable_class)}")
+        expect(list).to have_text "no #{name_of(tagable_class)} tagged"
+        expect(list).not_to have_selector '.tagable-list-item'
+      end
     end
 
-    context "with no taggings" do
-      before { visit "/tags/#{oil_tag.id}" }
+    context "with less than 10 taggings" do
+      before do
+        n_tagables(2).map { |t| t.tag(tag.id) }
+        visit "/tags/#{tag.id}"
+      end
 
-      it "shows an empty list" do
-        expect(page.all(".tagable-list-item")).to be_empty
-        expect(page.find(".tagable-list")).to have_text "no items with tag"
+      it "shows a list of tagables for each tagable type" do
+        Tagable::TAGABLE_CLASSES.each { |tc| should_show_tagable_list_for(tc) }
+      end
+
+      def should_show_tagable_list_for(tagable_class)
+        expect(page.find("#tagable-list-#{name_of(tagable_class)}"))
+          .to have_selector '.tagable-list-item', count: 2
+      end
+    end
+
+    context "with more than 10 taggings" do
+      before do
+        n_tagables(11).map { |t| t.tag(tag.id) }
+        visit "/tags/#{tag.id}"
+      end
+
+      it "only shows 10 tagables for each tagable type" do
+        Tagable::TAGABLE_CLASSES.each { |tc| should_paginate_for(tc) }
+      end
+
+      def should_paginate_for(tagable_class)
+        expect(page.find("#tagable-list-#{name_of(tagable_class)}"))
+          .to have_selector '.tagable-list-item', count: 10
       end
     end
   end

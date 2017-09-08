@@ -13,6 +13,10 @@ module Tagable
     tagables
   end
 
+  def self.page_param_of(klass_name)
+    (klass_name.to_s.downcase + "_page").to_sym
+  end
+
   # [String|Int] -> Tagable
   def update_tags(ids)
     server_tag_ids = tags.map(&:id).to_set

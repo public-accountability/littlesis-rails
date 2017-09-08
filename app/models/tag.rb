@@ -8,9 +8,16 @@ class Tag < ActiveRecord::Base
     restricted
   end
 
-  # Tag (implicit) -> Hash[String -> Array[Tagable]]
-  def tagables_grouped_by_resource_type
-    taggings.includes(:tagable).map(&:tagable).group_by { |t| t.class.name }
+  # Tag (implicit) -> Hash[String -> ActiveRecord[Tagging]]
+  def taggings_grouped_by_class(params)
+    #taggings.includes(:tagable).map(&:tagable).group_by { |t| t.class.name }
+    Tagable::TAGABLE_CLASSES.reduce({}) do |acc, tagable_class|
+      acc.merge(
+        tagable_class.to_s => taggings.includes(:tagable)
+                             .where(tagable_class: tagable_class)
+                             .page(params[Tagable.page_param_of(tagable_class)])
+      )
+    end
   end
 
   # (set, set) -> hash
