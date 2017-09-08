@@ -1,4 +1,8 @@
 /* TAGS */
+
+$light-maroon: rgba(204,133,133,0.4);
+$maroon: rgba(204, 84, 84, 1);
+
 #tags-edit-list, #tags-list {
 
     @extend .list-unstyled;
@@ -8,7 +12,7 @@
     $tag_margin: 0.4em;
 
     li.tag {
-	background-color: rgba(204,133,133,0.4);
+	background-color: $light-maroon;
 	border-radius: .2em;
 	border: 1px solid $red;
 	display: inline-block;
@@ -74,5 +78,56 @@
 
 input#tag_name {
     max-width: 250px;
+
+}
+
+#tag-show-container {
+
+    #tag-show-header {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        #tag-show-title {
+            font-size: 2em;
+        }
+        #tag-show-description {
+            font-size: 1em;
+            margin: 0 0 .4em 1em; // TRBL
+            font-style: italic;
+            color: gray;
+        }
+    }
+    .tagable-list{
+        margin: 1em 0 1em 0; // TRBL
+
+        .tagable-list-header {
+            background-color: $maroon;
+            color: white;
+            padding: .2em 0 .2em .4em; // TRBL
+            border-radius: 0.2em;
+            font-size: 1.5em;
+        }
+        .tagable-list-items {
+            display: flex;
+            flex-direction: column;
+            margin: 1em 0 1em -2em; // TRBLtrbl
+            .tagable-list-item {
+                display: flex;
+                flex-direction: row;
+                align-items: flex-end;
+                align-content: flex-start;
+                .tagable-list-item-description {
+                    text-align: left;
+                    margin-left: .5em;
+                    font-size: .8em;
+                    color: gray;
+                    font-style: italic;
+                }
+            }
+        }
+        .tagable-list-pagination {
+            padding-left: 1em;
+        }
+    }
 
 }

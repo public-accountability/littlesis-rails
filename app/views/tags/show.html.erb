@@ -1,47 +1,50 @@
-<div class="tag-header">
+<div id="tag-show-container">
 
-  <div class="tag-title">
-    Tag: <%= @tag.name.titlecase %>
+  <div id="tag-show-header">
+
+    <div id="tag-show-title">
+      Tag: <%= @tag.name.titlecase %>
+    </div>
+
+    <div id="tag-show-description">
+      <%= @tag.description %>
+    </div>
+
   </div>
 
-  <div class="tag-description">
-    <%= @tag.description %>
-  </div>
+  <% @taggings_by_class.each do |tagable_class, taggings|  %>
 
-</div>
+    <div class="tagable-list" id="tagable-list-<%= tagable_class.downcase.pluralize %>">
 
-<% @taggings_by_class.each do |tagable_class, taggings|  %>
+      <% if taggings.empty? %>
 
-  <div id="tagable-list-<%= tagable_class.downcase.pluralize %>">
-
-    <% if taggings.empty? %>
-
-      <div class="empty-tagable-list-notificatoin">
-        <%= "There are no #{tagable_class.downcase.pluralize} tagged \"#{@tag.name}\"" %>
-      </div>
-
-    <% else %>
-
-      <ul>
-
-        <div class="tagable-list-header">
-          <%= "#{tagable_class.pluralize}:" %>
+        <div class="empty-tagable-list-notificatoin">
+          <%= "There are no #{tagable_class.downcase.pluralize} tagged \"#{@tag.name}\"" %>
         </div>
 
-        <% taggings.each do |tagging| %>
-          <div class="tagable-list-item">
-            <% tagable = tagging.tagable %>
-            <%= link_to tagable.name.titlecase, tagable, class: "tagable-list-item-name"%>
-            <%= content_tag :div, tagable.description, class: "tagable-list-item-description"%>
-          </div>
-        <% end #tagables.each %>
+      <% else %>
 
-        <%= paginate taggings, param_name: Tagable.page_param_of(tagable_class) %>
+        <div class="tagable-list-header">
+          <%= "#{tagable_class.pluralize}" %>
+        </div>
 
-      </ul>
+        <ul class="tagable-list-items">
+          <% taggings.each do |tagging| %>
+            <div class="tagable-list-item">
+              <% tagable = tagging.tagable %>
+              <%= link_to tagable.name.titlecase, tagable, class: "tagable-list-item-name"%>
+              <%= content_tag :div, tagable.description, class: "tagable-list-item-description"%>
+            </div>
+          <% end #tagables.each %>
+        </ul>
 
-    <% end #if !tagables.empty %>
+        <div class="tagable-list-pagination">            
+          <%= paginate taggings, param_name: Tagable.page_param_of(tagable_class) %>
+        </div>
 
-  </div>
+      <% end #if !tagables.empty %>
+    </div> 
 
-<% end # tagables_grouped_by_class.map%>
+  <% end # tagables_grouped_by_class.map%>
+
+  <div class=".tag-show-container">
