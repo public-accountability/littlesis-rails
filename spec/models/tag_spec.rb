@@ -43,12 +43,10 @@ describe Tag do
     before { tagables.map { |t| t.tag(tag.id) } }
 
     it "queries tagables grouped by resource type" do
-      expect(tag.tagables_grouped_by_class)
-        .to eq(
-              'List' => lists,
-              'Entity' => entities,
-              'Relationship' => relationships
-            )
+      taggings = tag.taggings_grouped_by_class
+      expect(taggings['List'].map(&:tagable)).to eq lists
+      expect(taggings['Entity'].map(&:tagable)).to eq entities
+      expect(taggings['Relationship'].map(&:tagable)).to eq relationships
     end
   end
 

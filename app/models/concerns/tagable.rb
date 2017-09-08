@@ -1,12 +1,12 @@
 module Tagable
   extend ActiveSupport::Concern
 
-  TAGABLE_CLASSES = [Entity, List, Relationship]
-
   included do
     has_many :taggings, as: :tagable, foreign_type: :tagable_class
     has_many :tags, through: :taggings
   end
+
+  TAGABLE_CLASSES = [Entity, List, Relationship]
 
   # sorts a list of tagables in descending order of relationships to tagables w/ same tag
   def self.sort_by_related_tagables(tagables)

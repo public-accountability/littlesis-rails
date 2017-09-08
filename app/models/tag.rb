@@ -4,12 +4,16 @@ class Tag < ActiveRecord::Base
   validates :name, uniqueness: true, presence: true
   validates :description, presence: true
 
+  DEFAULT_TAGGING_PAGES = Tagable::TAGABLE_CLASSES.reduce({}) do |acc, klass|
+    acc.merge(Tagable.page_param_of(klass).to_sym => 1)
+  end
+
   def restricted?
     restricted
   end
 
   # Tag (implicit) -> Hash[String -> ActiveRecord[Tagging]]
-  def taggings_grouped_by_class(params)
+  def taggings_grouped_by_class(params = DEFAULT_TAGGING_PAGES)
     #taggings.includes(:tagable).map(&:tagable).group_by { |t| t.class.name }
     Tagable::TAGABLE_CLASSES.reduce({}) do |acc, tagable_class|
       acc.merge(
