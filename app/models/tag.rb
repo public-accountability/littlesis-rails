@@ -8,10 +8,6 @@ class Tag < ActiveRecord::Base
     restricted
   end
 
-  # def tag.permissions
-  #       fetch(:permissions)
-  #     end
-
   # (set, set) -> hash
   def self.parse_update_actions(client_ids, server_ids)
     {
@@ -20,5 +16,23 @@ class Tag < ActiveRecord::Base
       remove: server_ids - client_ids
     }
   end
-end
 
+  # String -> [Tag]
+  def self.search_by_names(phrase)
+    Tag.lookup.keys
+      .select { |tag_name| phrase.downcase.include?(tag_name) }
+      .map { |tag_name| lookup[tag_name] }
+  end
+
+  # String -> Tag | Nil
+  # Search through tags find tag by name
+  def self.search_by_name(query)
+    lookup[query.downcase]
+  end
+
+  def self.lookup
+    @lookup ||= Tag.all.reduce({}) do |acc, tag|
+      acc.tap { |h| h.store(tag.name.downcase.tr('-', ' '), tag) }
+    end
+  end
+end

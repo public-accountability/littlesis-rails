@@ -39,11 +39,6 @@ FactoryGirl.define do
     is_deleted false
   end
 
-  factory :group, class: Group do
-    name 'a team'
-    slug '/'
-  end
-
   factory :note, class: Note do
     user_id 1
     body 'why is EVERYTHING connected?'

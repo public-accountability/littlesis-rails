@@ -22,6 +22,4 @@ module TagSpecHelper
       Tag.destroy_all
     end
   end
-
-  
 end
