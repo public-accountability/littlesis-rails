@@ -64,14 +64,26 @@ describe 'Tags', type: :feature do
       def should_show_name_as_link_for(tagable_class, tagable_collection)
         list_items = page.all("#tagable-list-#{name_of(tagable_class)} .tagable-list-item")
         list_items.each_with_index do |item, i|
-          link = item.find('a.tagable-list-name')
+          link = item.find('a.tagable-list-item-name')
           tagable = tagable_collection[i]
           expect(link).to have_text(tagable.name.titlecase)
           expect(link[:href]).to include(tagable.id.to_s)
         end
       end
 
-      it "shows a description of each tagable"
+      it "shows a description of each tagable" do
+        Tagable::TAGABLE_CLASSES.each_with_index do |tc, i|
+          should_show_description_for(tc, tagables[i])
+        end
+      end
+
+      def should_show_description_for(tagable_class, tagable_collection)
+        list_items = page.all("#tagable-list-#{name_of(tagable_class)} .tagable-list-item")
+        list_items.each_with_index do |item, i|
+          tagable = tagable_collection[i]
+          expect(item.find(".tagable-list-item-description")).to have_text(tagable.description)
+        end
+      end
 
     end
 
