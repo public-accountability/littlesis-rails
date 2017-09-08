@@ -42,10 +42,12 @@ describe Tagable do
     let(:entity) { create(:org) }
 
     it "responds to interface methods" do
-      [Entity.new, Relationship.new, List.new].each do |tagable|
+      Tagable::TAGABLE_CLASSES.each do |tagable_class|
+        tagable = tagable_class.new
         expect(tagable).to respond_to(:tag)
         expect(tagable).to respond_to(:tags)
         expect(tagable).to respond_to(:last_user_id)
+        expect(tagable).to respond_to(:description)
       end
     end
 

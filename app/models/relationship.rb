@@ -500,6 +500,11 @@ class Relationship < ActiveRecord::Base
       end
   end
 
+  # needed to satisfy Tagable interface
+  def description
+    "#{entity.name} #{description_sentence[0]} #{related.name} #{description_sentence[1]}"
+  end
+
   private
 
   def last_user_id_for_entity_update(sf_user_id = nil)

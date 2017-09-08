@@ -30,7 +30,9 @@
 
         <% taggings.each do |tagging| %>
           <div class="tagable-list-item">
-            <%= link_to tagging.tagable.name.titlecase, tagging.tagable, class: "tagable-list-name"%>
+            <% tagable = tagging.tagable %>
+            <%= link_to tagable.name.titlecase, tagable, class: "tagable-list-item-name"%>
+            <%= content_tag :div, tagable.description, class: "tagable-list-item-description"%>
           </div>
         <% end #tagables.each %>
 
