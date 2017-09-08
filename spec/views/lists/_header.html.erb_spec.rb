@@ -28,14 +28,8 @@ describe 'partial: lists/header', :tag_helper, type: :view do
   context 'list has 1 tag' do
     let(:tags) { Tag.all.take(1) }
 
-    it 'renders tag partial without the title ' do
+    it 'renders tag partial' do
       expect(view).to render_template(:partial => "lists/_tags", :locals => { tags: tags })
-      not_css 'h4'
-    end
-
-    it 'shows tags on same row with title' do
-      css '#list-name div.col-sm-12'
-      not_css '#list-name div.col-sm-8'
     end
   end
 
@@ -48,7 +42,7 @@ describe 'partial: lists/header', :tag_helper, type: :view do
       css 'h4', text: 'Tags'
     end
 
-    it 'shows tags on same row with title' do
+    it 'shows tags on right' do
       not_css '#list-name div.col-sm-12'
       css '#list-name div.col-sm-8'
     end

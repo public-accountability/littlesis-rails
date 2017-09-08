@@ -5,24 +5,17 @@
 		<%= list_link(list) %>
 	    </span>
 
-	    <% if user_admin?  %>
-		<% if list.tags.present? && !tags_on_right?(list.tags) %>
-		    <%= render partial: 'lists/tags', locals: { tags: list.tags } %>
-		<% end %>
-	    <% end %>
-	    
 	    <div id="list-description"><%= list.short_description %></div>
 	    <div id="list-long-description"><%= list.description %></div>
 	    
 	</div>
 
-	
-	<% if tags_on_right?(list.tags) %>
+	<% if list.tags.count.positive? %>
 	    <div class="col-sm-4 col-md-3">
 		<% if user_admin?  %>
 		    <%= render partial: 'lists/tags', locals: { tags: list.tags, include_title: true } %>
-	    </div>
 		<% end %>
+	    </div>
 	<% end %>
 
     </div>
