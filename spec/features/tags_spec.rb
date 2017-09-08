@@ -54,6 +54,25 @@ describe 'Tags', type: :feature do
         expect(page.find("#tagable-list-#{name_of(tagable_class)}"))
           .to have_selector '.tagable-list-item', count: 2
       end
+
+      it "renders the name of each tagable as a link" do
+        Tagable::TAGABLE_CLASSES.each_with_index do |tc, i|
+          should_show_name_as_link_for(tc, tagables[i])
+        end
+      end
+
+      def should_show_name_as_link_for(tagable_class, tagable_collection)
+        list_items = page.all("#tagable-list-#{name_of(tagable_class)} .tagable-list-item")
+        list_items.each_with_index do |item, i|
+          link = item.find('a.tagable-list-name')
+          tagable = tagable_collection[i]
+          expect(link).to have_text(tagable.name.titlecase)
+          expect(link[:href]).to include(tagable.id.to_s)
+        end
+      end
+
+      it "shows a description of each tagable"
+
     end
 
     context "with more than 10 taggings" do

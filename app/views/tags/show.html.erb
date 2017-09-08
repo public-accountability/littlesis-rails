@@ -17,7 +17,7 @@
     <% if taggings.empty? %>
 
       <div class="empty-tagable-list-notificatoin">
-        <%= "There are no #{tagable_class.downcase.pluralize} tagged #{@tag.name}" %>
+        <%= "There are no #{tagable_class.downcase.pluralize} tagged \"#{@tag.name}\"" %>
       </div>
 
     <% else %>
@@ -25,12 +25,12 @@
       <ul>
 
         <div class="tagable-list-header">
-          <%= "#{tagable_class.pluralize} tagged #{@tag.name}" %>
+          <%= "#{tagable_class.pluralize}:" %>
         </div>
 
         <% taggings.each do |tagging| %>
           <div class="tagable-list-item">
-            <%= tagging.tagable.name.titlecase %>
+            <%= link_to tagging.tagable.name.titlecase, tagging.tagable, class: "tagable-list-name"%>
           </div>
         <% end #tagables.each %>
 
