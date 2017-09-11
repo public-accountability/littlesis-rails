@@ -274,6 +274,7 @@ Lilsis::Application.routes.draw do
   # Tags #
   ########
 
+  get '/tags/request' => 'tags#tag_request'
   resources :tags, only: [:edit, :create, :update, :destroy, :show]
 
   #########
