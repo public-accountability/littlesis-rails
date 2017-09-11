@@ -733,6 +733,10 @@ class Entity < ActiveRecord::Base
     }
   end
 
+  def description
+    blurb
+  end
+
   private
 
   # Callbacks for Soft Delete

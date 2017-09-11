@@ -6,6 +6,17 @@ module Tagable
     has_many :tags, through: :taggings
   end
 
+  TAGABLE_CLASSES = [Entity, List, Relationship]
+
+  # sorts a list of tagables in descending order of relationships to tagables w/ same tag
+  def self.sort_by_related_tagables(tagables)
+    tagables
+  end
+
+  def self.page_param_of(klass_name)
+    (klass_name.to_s.downcase + "_page").to_sym
+  end
+
   # [String|Int] -> Tagable
   def update_tags(ids)
     server_tag_ids = tags.map(&:id).to_set
