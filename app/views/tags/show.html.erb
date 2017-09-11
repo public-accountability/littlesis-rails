@@ -29,11 +29,12 @@
         </div>
 
         <ul class="tagable-list-items">
-          <% taggings.each do |tagging| %>
+          <% taggings.each_with_index do |tagging, i| %>
             <div class="tagable-list-item">
               <% tagable = tagging.tagable %>
               <%= link_to tagable.name.titlecase, tagable, class: "tagable-list-item-name"%>
               <%= content_tag :div, tagable.description, class: "tagable-list-item-description"%>
+              <%= content_tag :div, time_ago_in_words(tagging.updated_at) + " ago", class: "tagable-list-item-date", id: "tagable-list-item-date-#{i}"%>
             </div>
           <% end #tagables.each %>
         </ul>

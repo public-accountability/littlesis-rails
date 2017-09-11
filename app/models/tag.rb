@@ -14,11 +14,11 @@ class Tag < ActiveRecord::Base
 
   # Tag (implicit) -> Hash[String -> ActiveRecord[Tagging]]
   def taggings_grouped_by_class(params = DEFAULT_TAGGING_PAGES)
-    #taggings.includes(:tagable).map(&:tagable).group_by { |t| t.class.name }
     Tagable::TAGABLE_CLASSES.reduce({}) do |acc, tagable_class|
       acc.merge(
         tagable_class.to_s => taggings.includes(:tagable)
                              .where(tagable_class: tagable_class)
+                             .order(updated_at: :desc)
                              .page(params[Tagable.page_param_of(tagable_class)])
       )
     end

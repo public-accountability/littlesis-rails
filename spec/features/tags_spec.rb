@@ -2,8 +2,9 @@ require 'rails_helper'
 
 describe 'Tags', type: :feature do
 
+  let(:time_offset) { ->(n) { Time.now - (4 / (n + 1)).days } }
   let(:tag) { create(:tag) }
-  let(:entities) { Array.new(11) { create(:org) } }
+  let(:entities) { Array.new(11) { create(:org)  } }
   let(:lists) { Array.new(11) { create(:list) } }
   let(:relationships) do
     Array.new(11) do
@@ -12,12 +13,22 @@ describe 'Tags', type: :feature do
   end
   let(:tagables) { [entities, lists, relationships] }
 
+  # def n_tagables(n, transform = nil)
+  #   tagables.map do |t|
+  #     t.take(n).tap { |ts| transform&.call(ts) }
+  #   end.flatten
+  # end
+
   def n_tagables(n)
-    tagables.map { |t| t.take(n) }.flatten
+    tagables.map { |ts| ts.take(n) }.flatten
   end
 
   def name_of(tagable_class)
     tagable_class.to_s.downcase.pluralize
+  end
+
+  def list_items_for(tagable_class)
+    page.all("#tagable-list-#{name_of(tagable_class)} .tagable-list-item")
   end
 
   describe "tag homepage" do
@@ -41,8 +52,9 @@ describe 'Tags', type: :feature do
     end
 
     context "with less than 10 taggings" do
+
       before do
-        n_tagables(2).map { |t| t.tag(tag.id) }
+        n_tagables(2).each{ |t| t.tag(tag.id) }
         visit "/tags/#{tag.id}"
       end
 
@@ -62,8 +74,8 @@ describe 'Tags', type: :feature do
       end
 
       def should_show_name_as_link_for(tagable_class, tagable_collection)
-        list_items = page.all("#tagable-list-#{name_of(tagable_class)} .tagable-list-item")
-        list_items.each_with_index do |item, i|
+        
+        list_items_for(tagable_class).each_with_index do |item, i|
           link = item.find('a.tagable-list-item-name')
           tagable = tagable_collection[i]
           expect(link).to have_text(tagable.name.titlecase)
@@ -78,13 +90,54 @@ describe 'Tags', type: :feature do
       end
 
       def should_show_description_for(tagable_class, tagable_collection)
-        list_items = page.all("#tagable-list-#{name_of(tagable_class)} .tagable-list-item")
-        list_items.each_with_index do |item, i|
+        list_items_for(tagable_class).each_with_index do |item, i|
           tagable = tagable_collection[i]
           expect(item.find(".tagable-list-item-description")).to have_text(tagable.description)
         end
       end
 
+      it "displays last updated date for each tagable" do
+        Tagable::TAGABLE_CLASSES.each do |tc|
+          should_show_date_for(tc)
+        end
+      end
+
+      def should_show_date_for(tagable_class)
+        list_items_for(tagable_class).each do |item|
+          expect(item.find(".tagable-list-item-date")).to have_text("ago")
+        end
+      end
+
+
+      describe "sorting" do
+        before do
+          # so that we don't interfere with update_time on entities in a relationship:
+          Relationship.skip_callback(:save, :after, :update_entity_timestamps)
+          n_tagables(2).each_with_index do |t, i|
+            # there are 2 elements for each class in our example set
+            offset = (i % 2) + 1
+            # we want the last elements to be most recently edited (so that sort must move them)
+            t.tag(tag.id).update_columns(updated_at: Time.now - (4 / offset).days)
+          end
+          visit "/tags/#{tag.id}"
+        end
+
+        after do
+          Relationship.set_callback(:save, :after, :update_entity_timestamps)
+        end
+        
+        it "sorts each tagble list in reverse chronological order of last update" do
+          Tagable::TAGABLE_CLASSES.each do |tc|
+            should_be_sorted_by_update_date(tc)
+          end
+        end
+
+        def should_be_sorted_by_update_date(tagable_class)
+          dates = list_items_for(tagable_class).map { |x| x.find(".tagable-list-item-date") }
+          expect(dates.first).to have_text "2 days ago"
+          expect(dates.second).to have_text "4 days ago"
+        end
+      end
     end
 
     context "with more than 10 taggings" do
