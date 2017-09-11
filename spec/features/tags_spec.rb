@@ -2,25 +2,20 @@ require 'rails_helper'
 
 describe 'Tags', type: :feature do
 
-  let(:time_offset) { ->(n) { Time.now - (4 / (n + 1)).days } }
   let(:tag) { create(:tag) }
-  let(:entities) { Array.new(11) { create(:org)  } }
-  let(:lists) { Array.new(11) { create(:list) } }
-  let(:relationships) do
-    Array.new(11) do
-      create(:generic_relationship, entity: entities.first, related: entities.second)
-    end
-  end
-  let(:tagables) { [entities, lists, relationships] }
 
-  # def n_tagables(n, transform = nil)
-  #   tagables.map do |t|
-  #     t.take(n).tap { |ts| transform&.call(ts) }
-  #   end.flatten
-  # end
+  before(:all) do
+    # we use instance variables here as a performance optimization to trim seconds off of this suite
+    @entities = Array.new(11) { create(:org) }
+    @lists = Array.new(11) { create(:list) }
+    @relationships = Array.new(11) do
+      create(:generic_relationship, entity: @entities.first, related: @entities.second)
+    end
+    @tagables = [@entities, @lists, @relationships]
+  end
 
   def n_tagables(n)
-    tagables.map { |ts| ts.take(n) }.flatten
+    @tagables.map { |ts| ts.take(n) }.flatten
   end
 
   def name_of(tagable_class)
@@ -69,7 +64,7 @@ describe 'Tags', type: :feature do
 
       it "renders the name of each tagable as a link" do
         Tagable::TAGABLE_CLASSES.each_with_index do |tc, i|
-          should_show_name_as_link_for(tc, tagables[i])
+          should_show_name_as_link_for(tc, @tagables[i])
         end
       end
 
@@ -85,7 +80,7 @@ describe 'Tags', type: :feature do
 
       it "shows a description of each tagable" do
         Tagable::TAGABLE_CLASSES.each_with_index do |tc, i|
-          should_show_description_for(tc, tagables[i])
+          should_show_description_for(tc, @tagables[i])
         end
       end
 
@@ -111,8 +106,6 @@ describe 'Tags', type: :feature do
 
       describe "sorting" do
         before do
-          # so that we don't interfere with update_time on entities in a relationship:
-          Relationship.skip_callback(:save, :after, :update_entity_timestamps)
           n_tagables(2).each_with_index do |t, i|
             # there are 2 elements for each class in our example set
             offset = (i % 2) + 1
@@ -120,10 +113,6 @@ describe 'Tags', type: :feature do
             t.tag(tag.id).update_columns(updated_at: Time.now - (4 / offset).days)
           end
           visit "/tags/#{tag.id}"
-        end
-
-        after do
-          Relationship.set_callback(:save, :after, :update_entity_timestamps)
         end
         
         it "sorts each tagble list in reverse chronological order of last update" do
