@@ -1,0 +1,23 @@
+TAG REQUEST
+===========
+
+Requester: <%= @user.username %>
+Email: <%= @user.email %>
+
+
+Tag name: <%= @params['tag_name'] %>
+
+
+Description:
+
+<%= @params['tag_description'] %>
+
+
+<% unless @params['tag_additional'].empty? %>
+Additional information:
+
+<%= @params['tag_additional'] %>
+
+<% end %>
+
+    

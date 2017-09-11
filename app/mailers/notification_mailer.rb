@@ -37,4 +37,13 @@ class NotificationMailer < ApplicationMailer
     @params = params
     mail(to: DEFAULT_TO, subject: subject, method_options: SMTP_OPTIONS)
   end
+
+  def tag_request_email(user, params)
+    @user = user
+    @params = params
+    mail(to: DEFAULT_TO,
+         subject: "Tag Request: #{params['tag_name']}",
+         reply_to: user.email,
+         method_options: SMTP_OPTIONS)
+  end
 end
