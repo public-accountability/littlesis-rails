@@ -275,6 +275,7 @@ Lilsis::Application.routes.draw do
   ########
 
   get '/tags/request' => 'tags#tag_request'
+  post '/tags/request' => 'tags#tag_request'
   resources :tags, only: [:edit, :create, :update, :destroy, :show]
 
   #########

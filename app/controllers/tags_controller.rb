@@ -33,6 +33,10 @@ class TagsController < ApplicationController
   end
 
   def tag_request
+    if request.post?
+      NotificationMailer.tag_request_email(current_user, params).deliver_later
+      return redirect_to home_dashboard_path, notice: "Your request for a new tag has been submitted. Thank you!"
+    end
   end
 
   private

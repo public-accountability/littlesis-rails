@@ -3,12 +3,12 @@
 </div>
 
 <div class="row">
-    <%= form_tag("/tags/tag_request", method: "post", multipart: true, class: 'form-horizontal', id: 'request-tag-form') do %>
+    <%= form_tag("/tags/request", method: "post", multipart: true, class: 'form-horizontal', id: 'request-tag-form') do %>
 
 	<div class="form-group">
-	    <label class="col-sm-2 control-label">Email</label>
+	    <label class="col-sm-2 control-label">Your Email:</label>
 	    <div class="col-sm-8">
-		<p class="form-control-static">email@example.com</p>
+		<p class="form-control-static"><%= current_user.email %></p>
 	    </div>
 	</div>
 
@@ -30,7 +30,7 @@
 	    <label class="col-sm-2 control-label">Additional information:</label>
 	    <div class="col-sm-8">
 		<%= text_area_tag :tag_additional, nil, class: 'form-control' %>
-		<p><small>Anything else you like you say. Is there for a special research project you'd like us to know about?</small></p>
+		<p><small>Anything else you'd like you say. Is this for a special research project you'd like us to know about?</small></p>
 	    </div>
 	</div>
 
