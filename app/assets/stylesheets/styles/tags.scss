@@ -99,7 +99,6 @@ input#tag_name {
     }
     .tagable-list{
         margin: 1em 0 1em 0; // TRBL
-
         .tagable-list-header {
             background-color: $maroon;
             color: white;
@@ -107,21 +106,37 @@ input#tag_name {
             border-radius: 0.2em;
             font-size: 1.5em;
         }
+        .tagable-list-empty-message {
+            margin: 1em;
+            font-style: italic;
+        }
         .tagable-list-items {
             display: flex;
             flex-direction: column;
-            margin: 1em 0 1em -2em; // TRBLtrbl
+            margin: 1em 0 1em -2em; // TRBL
             .tagable-list-item {
                 display: flex;
                 flex-direction: row;
                 align-items: flex-end;
                 align-content: flex-start;
+                lign-height: 1.5em;
+                .tagable-list-item-name {
+                    white-space: nowrap;
+                }
                 .tagable-list-item-description {
                     text-align: left;
                     margin-left: .5em;
                     font-size: .8em;
                     color: gray;
                     font-style: italic;
+                }
+                .tagable-list-item-date {
+                    margin-left: 1em;
+                    padding: .1em .5em .1em .5em;
+                    font-size: .6em;
+                    background-color: lightgray;
+                    border-radius: .2em;
+                    color: white;
                 }
             }
         }

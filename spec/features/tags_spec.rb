@@ -12,6 +12,15 @@ describe 'Tags', type: :feature do
       create(:generic_relationship, entity: @entities.first, related: @entities.second)
     end
     @tagables = [@entities, @lists, @relationships]
+    # avoid inadvertantly re-setting entity `updated_at` field when we set relationship `updated_at` field
+    #Relationship.skip_callback(:save, :after, :update_entity_timestamps)
+  end
+
+  after(:all) { Relationship.set_callback(:save, :after, :update_entity_timestamps) }
+
+  # setup helpers
+  def update_time(tagable, i)
+    tagable.update_columns(updated_at: Time.now - (4 / (i + 1)).days)
   end
 
   def n_tagables(n)
@@ -49,10 +58,17 @@ describe 'Tags', type: :feature do
     context "with less than 10 taggings" do
 
       before do
-        n_tagables(2).each{ |t| t.tag(tag.id) }
+        n_tagables(2).each_with_index do |tagable, i|
+          # set dates for each collection in chronological order
+          # so that we will expect view to sort them in reverse
+          offset = 4 / ((i % 2) + 1)
+          tagable
+            .tag(tag.id)
+            .update_columns(updated_at: Time.now - offset.days)
+        end
         visit "/tags/#{tag.id}"
       end
-
+      
       it "shows a list of tagables for each tagable type" do
         Tagable::TAGABLE_CLASSES.each { |tc| should_show_tagable_list_for(tc) }
       end
@@ -69,10 +85,9 @@ describe 'Tags', type: :feature do
       end
 
       def should_show_name_as_link_for(tagable_class, tagable_collection)
-        
         list_items_for(tagable_class).each_with_index do |item, i|
           link = item.find('a.tagable-list-item-name')
-          tagable = tagable_collection[i]
+          tagable = tagable_collection.take(2).reverse[i] # b/c sorting by update reversed order
           expect(link).to have_text(tagable.name.titlecase)
           expect(link[:href]).to include(tagable.id.to_s)
         end
@@ -86,7 +101,7 @@ describe 'Tags', type: :feature do
 
       def should_show_description_for(tagable_class, tagable_collection)
         list_items_for(tagable_class).each_with_index do |item, i|
-          tagable = tagable_collection[i]
+          tagable = tagable_collection.take(2).reverse[i] # b/c sorting by update reversed order
           expect(item.find(".tagable-list-item-description")).to have_text(tagable.description)
         end
       end
@@ -103,29 +118,24 @@ describe 'Tags', type: :feature do
         end
       end
 
+      it "sorts each tagble list in reverse chronological order of last update" do
+        Tagable::TAGABLE_CLASSES.each do |tc|
+          should_be_sorted_by_update_date(tc)
+        end
+      end
 
-      describe "sorting" do
-        before do
-          n_tagables(2).each_with_index do |t, i|
-            # there are 2 elements for each class in our example set
-            offset = (i % 2) + 1
-            # we want the last elements to be most recently edited (so that sort must move them)
-            t.tag(tag.id).update_columns(updated_at: Time.now - (4 / offset).days)
-          end
-          visit "/tags/#{tag.id}"
-        end
-        
-        it "sorts each tagble list in reverse chronological order of last update" do
-          Tagable::TAGABLE_CLASSES.each do |tc|
-            should_be_sorted_by_update_date(tc)
-          end
-        end
+      def should_be_sorted_by_update_date(tagable_class)
+        dates = list_items_for(tagable_class).map { |x| x.find(".tagable-list-item-date") }
+        expect(dates.first).to have_text "2 days ago"
+        expect(dates.second).to have_text "4 days ago"
+      end
 
-        def should_be_sorted_by_update_date(tagable_class)
-          dates = list_items_for(tagable_class).map { |x| x.find(".tagable-list-item-date") }
-          expect(dates.first).to have_text "2 days ago"
-          expect(dates.second).to have_text "4 days ago"
-        end
+      it "truncates descriptions longer than 90 charcaters" do
+        @lists[1].update(description: "a" * 91) # second b/c sorting reverses order
+        visit "/tags/#{tag.id}"
+
+        expect(page.all("#tagable-list-lists .tagable-list-item-description").first.text)
+          .to eq "a" * 87 + "..."
       end
     end
 

@@ -16,30 +16,34 @@
 
     <div class="tagable-list" id="tagable-list-<%= tagable_class.downcase.pluralize %>">
 
+      <div class="tagable-list-header">
+        <%= "#{tagable_class.pluralize}" %>
+      </div>
+
       <% if taggings.empty? %>
 
-        <div class="empty-tagable-list-notificatoin">
+        <div class="tagable-list-empty-message">
           <%= "There are no #{tagable_class.downcase.pluralize} tagged \"#{@tag.name}\"" %>
         </div>
 
       <% else %>
-
-        <div class="tagable-list-header">
-          <%= "#{tagable_class.pluralize}" %>
-        </div>
 
         <ul class="tagable-list-items">
           <% taggings.each_with_index do |tagging, i| %>
             <div class="tagable-list-item">
               <% tagable = tagging.tagable %>
               <%= link_to tagable.name.titlecase, tagable, class: "tagable-list-item-name"%>
-              <%= content_tag :div, tagable.description, class: "tagable-list-item-description"%>
-              <%= content_tag :div, time_ago_in_words(tagging.updated_at) + " ago", class: "tagable-list-item-date", id: "tagable-list-item-date-#{i}"%>
+              <%= content_tag :div,
+                              "tagged #{time_ago_in_words(tagging.updated_at)} ago",
+                              class: "tagable-list-item-date"%>
+              <%= content_tag :div,
+                              truncate(tagable.description, length: 90),
+                              class: "tagable-list-item-description"%>
             </div>
           <% end #tagables.each %>
         </ul>
 
-        <div class="tagable-list-pagination">            
+        <div class="tagable-list-pagination">
           <%= paginate taggings, param_name: Tagable.page_param_of(tagable_class) %>
         </div>
 
