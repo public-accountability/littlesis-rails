@@ -144,4 +144,60 @@ describe NotificationMailer, type: :mailer do
       end
     end
   end
+
+  describe '#tag_request_email' do
+    let(:user) { create_really_basic_user }
+    let(:params) do
+      {
+        'tag_name' => 'cats',
+        'tag_description' => 'cute and furry',
+        'tag_additional' => ''
+      }
+    end
+
+    let(:params_with_additional_info) do
+      params.merge('tag_additional' => "what kind of website doesn't have tag related to cats!?")
+    end
+
+    subject { NotificationMailer.tag_request_email(user, params) }
+
+    it 'sets correct subject' do
+      expect(subject.subject).to eql "Tag Request: cats"
+    end
+
+    it 'sets reply_to header to be the user\'s email' do
+      expect(subject.reply_to).to eql [user.email]
+    end
+
+    it "includes requester's username" do
+      expect(subject.encoded).to include "Requester: #{user.username}"
+    end
+
+    it "includes requester email" do
+      expect(subject.encoded).to include "Email: #{user.email}"
+    end
+
+    it "includes tag description" do
+      expect(subject.encoded).to include params['tag_description']
+    end
+
+    it 'does not contain additional info section when blank' do
+      expect(subject.encoded).not_to include "Additional information"
+    end
+
+    context 'additional information filled out' do
+      subject { NotificationMailer.tag_request_email(user, params_with_additional_info) }
+
+      it "includes additional information" do
+        expect(subject.encoded).to include "Additional information"
+        expect(subject.encoded).to include params_with_additional_info['tag_additional']
+      end
+    end
+
+    it 'sends email' do
+      expect { subject.deliver_now }
+        .to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+  end
+
 end

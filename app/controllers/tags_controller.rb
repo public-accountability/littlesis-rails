@@ -1,6 +1,6 @@
 class TagsController < ApplicationController
   before_action :authenticate_user!, except: [:show]
-  before_action -> { check_permission('admin') }, except: [:show]
+  before_action -> { check_permission('admin') }, except: [:show, :tag_request]
   before_action :set_tag, only: [:edit, :update, :destroy, :show]
   before_action :set_taggings_by_class, only: [:show]
 
@@ -30,6 +30,13 @@ class TagsController < ApplicationController
   def destroy
     @tag.destroy
     redirect_to admin_tags_path, notice: 'The tag has been removed'
+  end
+
+  def tag_request
+    if request.post?
+      NotificationMailer.tag_request_email(current_user, params).deliver_later
+      return redirect_to home_dashboard_path, notice: "Your request for a new tag has been submitted. Thank you!"
+    end
   end
 
   private
