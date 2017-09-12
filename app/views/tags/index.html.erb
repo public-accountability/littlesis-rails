@@ -1,0 +1,24 @@
+<div id="tags-index-container">
+
+  <h1 id="tags-index-title">Tags</h1>
+
+  <hr/>
+
+  <div id="tags-index-description">
+    Tags allow contributors to thematically group people, organizations, lists, and relationships on LittleSis. Below is a list of all the tags on the site. Don't see a tag you want to use? Use <%=link_to "this form", tags_request_path %> to request it!
+  </div>
+
+  <div id="tags-index-list">
+    <ul>
+      <% @tags.each do |tag| %>
+        <div class="item">
+          <div class="tag-container">
+            <%= link_to(tag.name, tag, class: "tag") %>  
+          </div>          
+          <%= content_tag :div, tag.description, class: "description"%>
+        </div>
+      <% end %> 
+    </ul>
+  </div>
+
+</div>
