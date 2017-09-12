@@ -21,7 +21,7 @@ describe PagesController, type: :controller do
   end
 
   describe '#display - GET /features' do
-    before(:all) do
+    before do
       Page.create!(name: 'features', title: 'features', markdown: '# features')
     end
 

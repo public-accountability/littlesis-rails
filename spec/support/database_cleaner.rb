@@ -1,9 +1,9 @@
-RSpec.configure do |config|
+#RSpec.configure do |config|
 #   # Truncating all the tables before test suite start
-   config.before(:suite) do
-     DatabaseCleaner.clean_with(:truncation)
-     load "#{Rails.root}/db/seeds.rb"
-   end
+   # config.before(:suite) do
+   #   DatabaseCleaner.clean_with(:truncation)
+   #   load "#{Rails.root}/db/seeds.rb"
+   # end
 
 #   # Use transaction strategy to clean the db before each test start
 #   config.before(:each) do
@@ -25,4 +25,4 @@ RSpec.configure do |config|
 #   config.after(:each) do
 #     DatabaseCleaner.clean
 #   end
-end
+#end

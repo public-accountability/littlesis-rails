@@ -3,9 +3,7 @@ require 'rails_helper'
 describe ReferencesController, type: :controller do
   before(:all) { Entity.skip_callback(:create, :after, :create_primary_ext) }
   after(:all) { Entity.set_callback(:create, :after, :create_primary_ext) }
-  before(:each) { DatabaseCleaner.start }
-  after(:each) { DatabaseCleaner.clean }
-
+  
   it { should route(:post, '/references').to(action: :create) }
   it { should route(:delete, '/references/1').to(action: :destroy, id: 1) }
   it { should route(:get, '/references/recent').to(action: :recent) }
@@ -20,22 +18,22 @@ describe ReferencesController, type: :controller do
 
   describe 'POST /reference' do
     login_user
-    before(:all) do
-      @post_data = { data: {
-                       object_id: 666,
-                       source: 'interesting.net',
-                       name: 'a website',
-                       object_model: "Relationship",
-                       excerpt: "so and so said blah blah blah",
-                       ref_type: 1 } }
+    let(:post_data) do
+      { data: {
+          object_id: 666,
+          source: 'interesting.net',
+          name: 'a website',
+          object_model: "Relationship",
+          excerpt: "so and so said blah blah blah",
+          ref_type: 1 } }
     end
-
+    
     before do
       allow(Relationship).to receive(:find) { double('relationship').as_null_object }
     end
 
     it 'creates a new reference' do
-      expect { post(:create, @post_data) }.to change(Reference, :count).by(1)
+      expect { post(:create, post_data) }.to change(Reference, :count).by(1)
       expect(Reference.last.object_model).to eql "Relationship"
       expect(Reference.last.source).to eql "interesting.net"
       expect(Reference.last.name).to eql "a website"
@@ -45,7 +43,7 @@ describe ReferencesController, type: :controller do
     end
 
     it 'creates a new ReferenceExcerpt if there is an excerpt' do
-      expect { post(:create, @post_data) }.to change(ReferenceExcerpt, :count).by(1)
+      expect { post(:create, post_data) }.to change(ReferenceExcerpt, :count).by(1)
       expect(ReferenceExcerpt.last.reference).to eql Reference.last
       expect(Reference.last.excerpt).to eql "so and so said blah blah blah"
     end
@@ -78,7 +76,7 @@ describe ReferencesController, type: :controller do
       rel = double("relationship")
       expect(Relationship).to receive(:find).with(666).and_return(rel)
       expect(rel).to receive(:touch)
-      post(:create, @post_data)
+      post(:create, post_data)
     end
 
     it 'returns json of errors if reference is not valid' do
@@ -128,15 +126,13 @@ describe ReferencesController, type: :controller do
   describe '/recent' do
     login_user
 
-    before(:all) do
-      @e1 = create(:person)
-      @e2 = create(:person)
-    end
+    let(:person1) { create(:entity_person) }
+    let(:person2) { create(:entity_person) }
 
     def sample_get
       expect(Reference).to receive(:last).with(2).and_return(['last']).once
       expect(Reference).to receive(:recent_references).and_return(['recent'])
-      get(:recent, entity_ids: [@e1.id, @e2.id])
+      get(:recent, entity_ids: [person1.id, person2.id])
     end
 
     it 'has status 200' do
@@ -151,21 +147,21 @@ describe ReferencesController, type: :controller do
 
     it 'send correct information to recent references' do
       expect(Reference).to receive(:last).with(2).and_return(['last'])
-      input = [{ :class_name => 'Entity', :object_ids => [@e1.id, @e2.id] }]
+      input = [{ :class_name => 'Entity', :object_ids => [person1.id, person2.id] }]
       expect(Reference).to receive(:recent_references).with(input, 20).and_return(['recent'])
-      get(:recent, entity_ids: [@e1.id, @e2.id])
+      get(:recent, entity_ids: [person1.id, person2.id])
       expect(response.body).to eq ["last", "recent"].to_json
     end
 
     it 'send correct information to recent references if there is a relationship' do
-      r = Relationship.create!(entity1_id: @e1.id, entity2_id: @e2.id, category_id: 12)
+      r = Relationship.create!(entity1_id: person1.id, entity2_id: person2.id, category_id: 12)
       expect(Reference).to receive(:last).with(2).and_return(['last'])
       input = [
-        { class_name: 'Entity', object_ids: [@e1.id, @e2.id] },
+        { class_name: 'Entity', object_ids: [person1.id, person2.id] },
         { class_name: 'Relationship', object_ids: [r.id] }
       ]
       expect(Reference).to receive(:recent_references).with(input, 20).and_return(['recent'])
-      get(:recent, entity_ids: [@e1.id, @e2.id])
+      get(:recent, entity_ids: [person1.id, person2.id])
       expect(response.body).to eq ["last", "recent"].to_json
     end
   end

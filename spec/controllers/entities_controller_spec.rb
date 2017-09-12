@@ -29,22 +29,15 @@ describe EntitiesController, type: :controller do
   end
 
   describe 'GETs' do
-    before(:all) do
-      @entity = create(:mega_corp_inc, updated_at: Time.now)
-    end
+    let(:entity) { create(:entity_org, updated_at: Time.now) }
 
     describe "/entity/id" do
-      before { get(:show, id: @entity.id) }
-
+      before { get(:show, id: entity.id) }
       it { should render_template(:show) }
-
-      it 'sets the entity var' do
-        expect(assigns(:entity).id).to eql @entity.id
-      end
     end
 
     describe 'entity/id/relationships' do
-      before { get(:relationships, id: @entity.id) }
+      before { get(:relationships, id: entity.id) }
       it { should render_template(:relationships) }
     end
 
@@ -217,7 +210,7 @@ describe EntitiesController, type: :controller do
   end # end of create
 
   describe 'Political' do
-    before { @entity = create(:mega_corp_inc, updated_at: Time.now) }
+    before { @entity = create(:entity_org, updated_at: Time.now) }
 
     describe 'Political' do
       before { get(:political, id: @entity.id) }
@@ -227,7 +220,9 @@ describe EntitiesController, type: :controller do
     describe 'match/unmatch donations' do
       login_user
 
-      before(:all) { @entity = create(:mega_corp_inc) }
+      before(:all) do
+        @entity = create(:entity_org)
+      end
 
       describe 'POST #match_donation' do
         before(:each) do
@@ -310,7 +305,7 @@ describe EntitiesController, type: :controller do
     login_user
 
     context 'Updating an Org without a reference' do
-      let(:org)  { create(:org, last_user_id: sf_guard_user.id) }
+      let(:org)  { create(:entity_org, last_user_id: sf_guard_user.id) }
       let(:params) { { id: org.id, entity: { 'website' => 'http://example.com' }, reference: {'just_cleaning_up' => '1'} } }
 
       it 'updates entity field' do
@@ -331,7 +326,7 @@ describe EntitiesController, type: :controller do
     end
 
     context 'Updating an Org with a reference' do
-      let(:org) { create(:org) }
+      let(:org) { create(:entity_org) }
       let(:params) { { id: org.id,
                        entity: { 'start_date' => '1929-08-08' },
                        reference: { 'source' => 'http://example.com', 'name' => 'new reference' } } }
@@ -355,7 +350,7 @@ describe EntitiesController, type: :controller do
     end
 
     context 'Updating a Person without a reference' do
-      let(:person) { create(:person) }
+      let(:person) { create(:entity_person) }
       let(:params) { { id: person.id,
                        entity: { 'blurb' => 'just a person',
                                   'person_attributes' => { 'name_middle' => 'MIDDLE', 'id' => person.person.id } },
@@ -385,7 +380,7 @@ describe EntitiesController, type: :controller do
 
     describe 'adding new types' do
       before do
-        @org = create(:org, last_user_id: sf_guard_user.id)
+        @org = create(:entity_org, last_user_id: sf_guard_user.id)
         @params = { id: @org.id,
                     entity: { 'extension_def_ids' => '8,9,10' },
                     reference: { 'source' => 'http://example.com', 'name' => 'new reference' } }
@@ -403,7 +398,7 @@ describe EntitiesController, type: :controller do
 
     describe 'removing types' do
       before do
-        @org = create(:org, last_user_id: sf_guard_user.id)
+        @org = create(:entity_org, last_user_id: sf_guard_user.id)
         @org.add_extension('School')
         @params = { id: @org.id,
                     entity: { 'extension_def_ids' => '' },
@@ -425,7 +420,7 @@ describe EntitiesController, type: :controller do
     end
 
     describe 'updating an Org with errors' do
-      let(:org)  { create(:org, last_user_id: sf_guard_user.id) }
+      let(:org)  { create(:entity_org, last_user_id: sf_guard_user.id) }
       let(:params) { { id: org.id, entity: { 'end_date' => 'bad date' }, reference: {'just_cleaning_up' => '1'} } }
       
       it 'does not change the end_date' do
@@ -439,7 +434,7 @@ describe EntitiesController, type: :controller do
     end
     
     describe 'updating a person with a first name that is too long' do
-      let(:person) { create(:person) }
+      let(:person) { create(:entity_person) }
       let(:params) { { id: person.id,
                        entity: { 'blurb' => 'new blurb',
                                  'person_attributes' => { 'name_first' => "#{'x' * 51}", 
@@ -462,7 +457,7 @@ describe EntitiesController, type: :controller do
 
     describe 'updating a public company' do
       before do
-        @org = create(:org)
+        @org = create(:entity_org)
         @org.add_extension('PublicCompany', {ticker: 'XYZ'} )
         @params = { id: @org.id,
                     entity: {
@@ -524,9 +519,9 @@ describe EntitiesController, type: :controller do
       expect(Kaminari).to receive(:paginate_array).with(refs).and_return(spy('kaminari'))
       get :references, id: @entity.id
     end
-    
+
     it { should respond_with(200) }
     it { should render_template(:references) }
-    
+
   end
 end

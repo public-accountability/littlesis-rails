@@ -1,11 +1,6 @@
 require 'rails_helper'
 
 describe 'partial: lists/list_actions', :type => :view do
-  before(:all) do
-    @lister = create_list_user
-    @admin = create_admin_user
-  end
-
   context 'NOT EDITABLE' do
     before do
       assign(:permissions, { :editable => false})

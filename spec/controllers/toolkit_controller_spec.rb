@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 describe ToolkitController, type: :controller do
+  after(:all){ ToolkitPage.delete_all }
+  before(:all){ ToolkitPage.delete_all }
+
   it { should route(:get, '/toolkit').to(action: :index) }
   it { should route(:get, '/toolkit/new').to(action: :new_page) }
   it { should route(:get, '/toolkit/some_page').to(action: :display, toolkit_page: 'some_page') }

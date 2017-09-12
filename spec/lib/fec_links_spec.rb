@@ -1,7 +1,7 @@
 require 'rails_helper'
 require Rails.root.join('lib', 'task-helpers', 'fec_links.rb')
 
-describe 'FecLinks' do
+xdescribe 'FecLinks' do
   before(:all) do
     l = create(:list)
     @ref1 = create(:ref, source: 'http://query.nictusa.com/link1', object_id: l.id)

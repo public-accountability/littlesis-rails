@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe "Relationship Page", :type => :feature do
-  before(:all) { @user = create_user_with_sf }
+  let(:user) { create_basic_user } 
   let(:org) { create(:org) }
   let(:person) { create(:org) }
   let(:relationship) do
-    rel = Relationship.create!(category_id: 12, entity: org, related: person, last_user_id: @user.sf_guard_user.id)
+    rel = Relationship.create!(category_id: 12, entity: org, related: person, last_user_id: user.sf_guard_user.id)
     Reference.create!(object_id: rel.id, object_model: "Relationship", source: "https://example.com")
     rel
   end

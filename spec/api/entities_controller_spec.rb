@@ -2,17 +2,22 @@ require 'rails_helper'
 
 describe Api::EntitiesController, type: :controller do
   describe 'show' do
-    before(:all) { @token = ApiToken.create!(user_id: 1).token  }
+    before(:all) do
+      DatabaseCleaner.start
+      @user = create_basic_user
+      @token = ApiToken.create!(user_id: @user.id).token
+    end
+
+    after(:all) { DatabaseCleaner.clean }
+    
     before(:each) { request.headers['Littlesis-Api-Token'] = @token }
 
     context 'good request' do
       ATTRIBUTE_KEYS = %w(name blurb summary website parent_id primary_ext updated_at start_date end_date link_count)
-      before(:all) do
-        @pac = create(:pac)
-      end
+      let(:pac) { create(:pac) }
 
       before(:each) do
-        get :show, id: @pac.id
+        get :show, id: pac.id
         @json = JSON.parse(response.body)
       end
 
@@ -33,7 +38,7 @@ describe Api::EntitiesController, type: :controller do
       end
 
       it 'sets correct id' do
-        expect(@json['data']['id']).to eql @pac.id
+        expect(@json['data']['id']).to eql pac.id
       end
 
       it 'has correct attribute keys' do
@@ -65,13 +70,10 @@ describe Api::EntitiesController, type: :controller do
     end
 
     context 'request details' do
-      before(:all) do
-        @business_person = create(:person, name: 'business person')
-        @business_person.add_extension('BusinessPerson', sec_cik: 12345)
-      end
-
       before(:each) do
-        get :show, { id: @business_person.id, details: 'TRUE' }
+        person = create(:entity_person, name: 'business person')
+        person.add_extension('BusinessPerson', sec_cik: 12345)
+        get :show, { id: person.id, details: 'TRUE' }
         @json = JSON.parse(response.body)
       end
 
@@ -98,10 +100,14 @@ describe Api::EntitiesController, type: :controller do
 
   describe '/entities/:id/extensions' do
     before(:all) do
-      @token = ApiToken.create!(user_id: 2).token
-      @entity = create(:org)
+      DatabaseCleaner.start
+      @user = create_basic_user
+      @token = ApiToken.create!(user_id: @user.id).token
+      @entity = create(:entity_org)
       @entity.add_extension('PoliticalFundraising')
     end
+
+    after(:all) { DatabaseCleaner.clean }
 
     before(:each) do
       request.headers['Littlesis-Api-Token'] = @token
@@ -136,8 +142,10 @@ describe Api::EntitiesController, type: :controller do
   end
 
   describe 'search' do
-    before(:all) { @token = ApiToken.create!(user_id: ApiToken.last.user_id + 1 ).token  }
-    before(:each) { request.headers['Littlesis-Api-Token'] = @token }
+    let(:user) { create_really_basic_user }
+    let(:token) { ApiToken.create!(user_id: user.id).token } 
+    
+    before(:each) { request.headers['Littlesis-Api-Token'] = token }
     let(:mock_search) { double(:per => double(:page => [build(:person)])) }
 
     class TestSphinxResponse < Array
