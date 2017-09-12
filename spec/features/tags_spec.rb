@@ -2,17 +2,33 @@ require 'rails_helper'
 
 describe 'Tags', type: :feature do
 
-  before(:all) do
-    # we use instance variables here as a performance optimization to trim seconds off of this suite
-    @tags = Array.new(2) { create(:tag) }
-    @tag = @tags.first
-    @entities = Array.new(11) { create(:org) }
-    @lists = Array.new(11) { create(:list) }
-    @relationships = Array.new(11) do
-      create(:generic_relationship, entity: @entities.first, related: @entities.second)
+  let(:tags) { Array.new(2) { create(:tag) } }
+  let(:tag) { tags.first }
+  let(:entities) { Array.new(11) { create(:org) } }
+  let(:lists) { Array.new(11) { create(:list) } }
+  let(:relationships) do
+    Array.new(11) do
+      create(:generic_relationship, entity: entities.first, related: entities.second)
     end
-    @tagables = [@entities, @lists, @relationships]
   end
+  let(:tagables) { [entities, lists, relationships] }
+  
+  
+  # before(:all) do
+  #   # we use instance variables here as a performance optimization to trim seconds off of this suite
+  #   tags = Array.new(2) { create(:tag) }
+  #   tag = tags.first
+  #   entities = Array.new(11) { create(:org) }
+  #   lists = Array.new(11) { create(:list) }
+  #   relationships = Array.new(11) do
+  #     create(:generic_relationship, entity: entities.first, related: entities.second)
+  #   end
+  #   tagables = [entities, lists, relationships]
+  #   #avoid inadvertantly re-setting entity `updated_at` field when we set relationship `updated_at` field
+  #   Relationship.skip_callback(:save, :after, :update_entity_timestamps)
+  # end
+
+  # after(:all) { Relationship.set_callback(:save, :after, :update_entity_timestamps) }
 
   # setup helpers
   def update_time(tagable, i)
@@ -20,7 +36,7 @@ describe 'Tags', type: :feature do
   end
 
   def n_tagables(n)
-    @tagables.map { |ts| ts.take(n) }.flatten
+    tagables.map { |ts| ts.take(n) }.flatten
   end
 
   def name_of(tagable_class)
@@ -32,7 +48,10 @@ describe 'Tags', type: :feature do
   end
 
   describe "tag index" do
-    before { visit "tags/" }
+    before do
+      tags
+      visit "tags/"
+    end
 
     it "has a title" do
       expect(page).to have_selector "#tags-index-title"
@@ -48,24 +67,18 @@ describe 'Tags', type: :feature do
     end
 
     it "shows a list of all tags" do
-      @tags.each_with_index do |tag, i|
-        expect(page.find("#tags-index-list"))
-          .to have_selector ".item", count: @tags.size
+     tags.each do |tag|
+       expect(page.find("#tags-index-list"))
+         .to have_selector ".item", count: tags.size
       end
     end
 
     it "shows a link to each tag's homepage" do
-      @tags.each_with_index do |tag, i|
-        expect(page.all("#tags-index-list .item")[i])
-          .to have_link(tag.name, href: tag_path(tag))
-      end
+     tags.each{ |tag| expect(page).to have_link(tag.name, href: tag_path(tag)) }
     end
 
     it "shows a description of each tag" do
-      @tags.each_with_index do |tag, i|
-        expect(page.all("#tags-index-list .item .description")[i])
-          .to have_text(tag.description)
-      end
+      tags.each { |tag| expect(page).to have_text(tag.description) }
     end
 
     it "sorts tags in alphabetical order" do
@@ -77,11 +90,11 @@ describe 'Tags', type: :feature do
   
   describe "tag homepage" do
     context "with no taggings" do
-      before { visit "/tags/#{@tag.id}" }
+      before { visit "/tags/#{tag.id}" }
 
       it "shows the tag title and description" do
-        expect(page).to have_text @tag.name
-        expect(page).to have_text @tag.description
+        expect(page).to have_text tag.name
+        expect(page).to have_text tag.description
       end
 
       it "shows empty lists for all tagable types" do
@@ -103,10 +116,10 @@ describe 'Tags', type: :feature do
           # so that we will expect view to sort them in reverse
           offset = 4 / ((i % 2) + 1)
           tagable
-            .tag(@tag.id)
+            .tag(tag.id)
             .update_columns(updated_at: Time.now - offset.days)
         end
-        visit "/tags/#{@tag.id}"
+        visit "/tags/#{tag.id}"
       end
       
       it "shows a list of tagables for each tagable type" do
@@ -120,7 +133,7 @@ describe 'Tags', type: :feature do
 
       it "renders the name of each tagable as a link" do
         Tagable::TAGABLE_CLASSES.each_with_index do |tc, i|
-          should_show_name_as_link_for(tc, @tagables[i])
+          should_show_name_as_link_for(tc, tagables[i])
         end
       end
 
@@ -135,7 +148,7 @@ describe 'Tags', type: :feature do
 
       it "shows a description of each tagable" do
         Tagable::TAGABLE_CLASSES.each_with_index do |tc, i|
-          should_show_description_for(tc, @tagables[i])
+          should_show_description_for(tc, tagables[i])
         end
       end
 
@@ -171,8 +184,8 @@ describe 'Tags', type: :feature do
       end
 
       it "truncates descriptions longer than 90 charcaters" do
-        @lists[1].update(description: "a" * 91) # second b/c sorting reverses order
-        visit "/tags/#{@tag.id}"
+        lists[1].update(description: "a" * 91) # second b/c sorting reverses order
+        visit "/tags/#{tag.id}"
 
         expect(page.all("#tagable-list-lists .tagable-list-item-description").first.text)
           .to eq "a" * 87 + "..."
@@ -181,8 +194,8 @@ describe 'Tags', type: :feature do
 
     context "with more than 10 taggings" do
       before do
-        n_tagables(11).map { |t| t.tag(@tag.id) }
-        visit "/tags/#{@tag.id}"
+        n_tagables(11).map { |t| t.tag(tag.id) }
+        visit "/tags/#{tag.id}"
       end
 
       it "only shows 10 tagables for each tagable type" do
@@ -196,3 +209,4 @@ describe 'Tags', type: :feature do
     end
   end
 end
+;
