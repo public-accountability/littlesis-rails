@@ -1,11 +1,14 @@
 class TagsController < ApplicationController
-  before_action :authenticate_user!, except: [:show]
+  before_action :authenticate_user!, except: [:index, :show]
   before_action -> { check_permission('admin') }, except: [:show, :tag_request]
   before_action :set_tag, only: [:edit, :update, :destroy, :show]
   before_action :set_taggings_by_class, only: [:show]
 
-  def edit
-  end
+  def index; end
+
+  def show; end
+
+  def edit; end
 
   def create
     tag = Tag.new(tag_params)
