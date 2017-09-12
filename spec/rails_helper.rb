@@ -41,10 +41,11 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, :type => :view
   config.include Warden::Test::Helpers
   config.include FactoryGirl::Syntax::Methods
+  config.include FeatureExampleMacros, :type => :feature
 
   # these run inside example groups (ie: describe blocks)
   config.extend ControllerMacros, :type => :controller
-  config.extend FeatureMacros, :type => :feature
+  config.extend FeatureGroupMacros, :type => :feature
   config.extend ListHelpersForExampleGroups, :list_helper
   config.extend TaggingHelpers, :tagging_helper
   config.extend TagSpecHelper, :tag_helper

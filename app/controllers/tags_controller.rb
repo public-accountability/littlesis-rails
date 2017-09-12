@@ -1,7 +1,8 @@
 class TagsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
-  before_action -> { check_permission('admin') }, except: [:show, :tag_request]
+  before_action -> { check_permission('admin') }, except: [:index, :show, :tag_request]
   before_action :set_tag, only: [:edit, :update, :destroy, :show]
+  before_action :set_tags, only: [:index]
   before_action :set_taggings_by_class, only: [:show]
 
   def index; end
@@ -50,6 +51,10 @@ class TagsController < ApplicationController
 
   def set_tag
     @tag = Tag.find(params[:id])
+  end
+
+  def set_tags
+    @tags = Tag.all.order(:name)
   end
 
   def set_taggings_by_class
