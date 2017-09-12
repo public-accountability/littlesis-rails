@@ -13,23 +13,6 @@ describe 'Tags', type: :feature do
   end
   let(:tagables) { [entities, lists, relationships] }
   
-  
-  # before(:all) do
-  #   # we use instance variables here as a performance optimization to trim seconds off of this suite
-  #   tags = Array.new(2) { create(:tag) }
-  #   tag = tags.first
-  #   entities = Array.new(11) { create(:org) }
-  #   lists = Array.new(11) { create(:list) }
-  #   relationships = Array.new(11) do
-  #     create(:generic_relationship, entity: entities.first, related: entities.second)
-  #   end
-  #   tagables = [entities, lists, relationships]
-  #   #avoid inadvertantly re-setting entity `updated_at` field when we set relationship `updated_at` field
-  #   Relationship.skip_callback(:save, :after, :update_entity_timestamps)
-  # end
-
-  # after(:all) { Relationship.set_callback(:save, :after, :update_entity_timestamps) }
-
   # setup helpers
   def update_time(tagable, i)
     tagable.update_columns(updated_at: Time.now - (4 / (i + 1)).days)
