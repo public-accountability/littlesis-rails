@@ -734,6 +734,15 @@ class Entity < ActiveRecord::Base
     }
   end
 
+  def restore!
+    raise "Cannot restore an entity unles the entity has been deleted" unless is_deleted
+    association_data = YAML.load(versions.last.association_data)
+    create_primary_ext
+    add_extensions_by_def_ids(association_data['extension_ids'])
+
+    update_attribute(:is_deleted, false)
+  end
+
   def description
     blurb
   end
