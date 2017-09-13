@@ -3,6 +3,11 @@ require 'csv'
 require Rails.root.join('lib', 'task-helpers', 'bulk_tagger.rb')
 
 describe 'BulkTagging' do
+  let(:csv) { '' }
+  before(:each) do
+    allow(File).to receive(:open).and_return(double(:read => csv))
+  end
+
   context 'Tagging entites' do
     let(:csv) do
       CSV.generate do |csv|
@@ -12,10 +17,6 @@ describe 'BulkTagging' do
         csv << ['/person/789-person_name', 'nyc oil', 'TRUE']
         csv << ['http://littlesis.org/person/1000/person_name', 'georgia', '']
       end
-    end
-
-    before do
-      allow(File).to receive(:open).and_return(double(:read => csv))
     end
 
     let(:tagger) { BulkTagger.new('tags.csv', :entity) }
@@ -60,6 +61,20 @@ describe 'BulkTagging' do
       expect(Entity).to receive(:find).with('1000').and_return(spy)
       tagger.run
     end
-    
+  end
+
+  context 'Tagging lists' do
+    let(:tagger) { BulkTagger.new('tags.csv', :list) }
+    let(:csv) do
+      CSV.generate do |csv|
+        csv << ['list_url', 'tags', 'tag_all_in_list']
+        csv << ["https://littlesis.org/lists/1232-donor-crossover-list-1234/members", 'nyc', '']
+        csv << ["https://littlesis.org/lists/152-austerity-puppetmasters", 'oil', '']
+        csv << ["/lists/1327-cofina-plaintiffs-likely-parent-companies/members", 'georgia oil', 'YES']
+      end
+    end
+
+    it 'tags lists' do
+    end
   end
 end

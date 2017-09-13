@@ -2,32 +2,26 @@ require 'csv'
 
 class BulkTagger
   def initialize(filename, mode)
-    raise ArgumentError, "Unknown mode: #{mode}" unless [:entity, :list].include?(mode)
+    raise ArgumentError, "Unknown mode: #{mode}" unless %i[entity list].include?(mode)
     @mode = mode
     @csv_string = File.open(filename).read
   end
 
   def run
     CSV.parse(@csv_string, headers: true) do |row|
-      if @mode == :entity
-        tag_entity(row)
-      end
-    end                                             
+      tag_entity(row) if @mode == :entity
+      tag_list(row) if @mode == :list
+    end
   end
 
   # input: CSV::Row
+  # fields: entity_url, tags, tag_all_related
   def tag_entity(row)
-    entity = Entity.find(entity_id_from(row.field('entity_url')))
-    tags = row.field('tags').downcase.split(' ')
+    entity = Entity.find(model_id_from(row.field('entity_url')))
+    tags = row_tags(row)
 
-    tags.each do |tag_name|
-      entity.tag(tag_name)
-    end
-
-    if row.field('tag_all_related').present?
-      tag_related_entities(entity, tags)
-    end
-
+    tags.each { |tag_name| entity.tag(tag_name) }
+    tag_related_entities(entity, tags) if row.field('tag_all_related').present?
   end
 
   def tag_related_entities(entity, tags)
@@ -37,9 +31,35 @@ class BulkTagger
     end
   end
 
+  # input: CSV::Row
+  # fields: list_url, tags, tag_all_in_list
+  def tag_list(row)
+    list = List.find(model_id_from(row.field('entity_url')))
+    tags = row_tags(row)
+
+    tags.each { |t| list.tag(t) }
+
+    if row.field('tag_all_in_list').present?
+      tag_all_in_list(list, tags)
+    end
+
+  end
+
+  def tag_all_in_list(list, tags)
+  end
+
   private
 
-  def entity_id_from(url)
-    %r{\/(org|person|entities)\/([0-9]+)[\/-]}.match(url)[2]
+  def model_id_from(url)
+    if url.include? '/lists'
+      %r{\/lists\/([0-9]+)[\/-]}.match(url)[1]
+    else
+      %r{\/(org|person|entities)\/([0-9]+)[\/-]}.match(url)[2]
+    end
+  end
+
+  # CSV::Row -> Array
+  def row_tags(row)
+    row.field('tags').downcase.split(' ')
   end
 end
