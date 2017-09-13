@@ -37,7 +37,9 @@
 	  <div id="tags-container">
             <ul id="tags-list">
               <% @entity.tags.each do |t| %>
-                <li class="tag"><%= t[:name] %></li>
+                <li>
+                  <%= link_to(t.name, t, class: 'tag') %>
+                </li>
               <% end %>
             </ul>
 	  </div>

@@ -1,25 +1,52 @@
 /* TAGS */
 
+// SHARED
+
 $light-maroon: rgba(204,133,133,0.4);
 $maroon: rgba(204, 84, 84, 1);
+$tag_margin: 0.4em;
+
+.tag-like {
+    border: 1px solid $red;
+    background-color: $light-maroon;
+    color: $maroon;
+    &:hover { color: $maroon; }
+}
+
+.tag {
+    @extend .tag-like;
+    border-radius: .2em;
+    margin-right: $tag_margin;
+    margin-top: $tag_margin;
+    padding: .3em;
+    display: inline-block;
+    list-style: none; 
+}
+
+.big-tag {
+    @extend .tag-like;
+    border-radius: .2em;
+    margin-right: $tag_margin;
+    margin-top: $tag_margin;
+    padding: .2em;
+}
+
+.gray-description-text {
+    font-size: 1em;
+    font-style: italic;
+    color: gray;
+}
+
+// TAG SIDEBAR STYLES
 
 #tags-edit-list, #tags-list {
 
     @extend .list-unstyled;
     
     margin-top: 1em;
-    
-    $tag_margin: 0.4em;
 
     li.tag {
-	background-color: $light-maroon;
-	border-radius: .2em;
-	border: 1px solid $red;
-	display: inline-block;
-	list-style: none; 
-	margin-right: $tag_margin;
-        margin-top: $tag_margin;
-	padding: .3em;
+        @extend .tag;
     }
 
     li.tag-disabled{
@@ -78,23 +105,59 @@ $maroon: rgba(204, 84, 84, 1);
 
 input#tag_name {
     max-width: 250px;
-
 }
 
-#tag-show-container {
+// TAGS INDEX STYLES
 
-    #tag-show-header {
+#tags-index-container {
+    #tags-index-list {
+        margin-top: 2em;
+        ul {
+            padding: 0;
+        }
+        .item {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            .tag-container {
+                padding-right: .5em;
+                margin-right: .5em;
+                border-right: 1px solid gray;
+                width: 10em;
+                text-align: right;
+                .tag {
+                    @extend .tag;
+                }
+            }
+            .description {
+                @extend .gray-description-text;
+            }
+        }
+    }
+}
+
+// TAG HOMEPAGE STYLES
+
+#tag-show-container {
+    #tag-header {
         display: flex;
         flex-direction: row;
-        align-items: flex-end;
-        #tag-show-title {
-            font-size: 2em;
+        justify-content: space-between;
+        #tag-title {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            #tag-name {
+                font-size: 2em;
+            }
+            #tag-description {
+                @extend .gray-description-text;
+                margin: 0 0 .4em .4em; // TRBL
+            }
         }
-        #tag-show-description {
-            font-size: 1em;
-            margin: 0 0 .4em 1em; // TRBL
-            font-style: italic;
-            color: gray;
+        #tag-overview-link {
+            margin: 0 .4em .4em 0; // TRBL
+            align-self: flex-end;
         }
     }
     .tagable-list{
@@ -144,5 +207,4 @@ input#tag_name {
             padding-left: 1em;
         }
     }
-
 }

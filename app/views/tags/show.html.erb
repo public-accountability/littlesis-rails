@@ -1,15 +1,20 @@
 <div id="tag-show-container">
 
-  <div id="tag-show-header">
+  <div id="tag-header">
 
-    <div id="tag-show-title">
-      Tag: <%= @tag.name.titlecase %>
+    <div id="tag-title">
+      <div id="tag-name">
+        Tag: <%= content_tag :span, @tag.name, class: "big-tag" %>
+      </div>
+
+      <div id="tag-description">
+        <%= @tag.description %>
+      </div>
     </div>
 
-    <div id="tag-show-description">
-      <%= @tag.description %>
+    <div id="tag-overview-link">
+      <%= link_to "see all tags", tags_path  %>
     </div>
-
   </div>
 
   <% @taggings_by_class.each do |tagable_class, taggings|  %>

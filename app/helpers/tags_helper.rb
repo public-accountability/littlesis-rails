@@ -3,7 +3,9 @@ module TagsHelper
     content_tag(:div, id: 'tags-container') do
       content_tag(:ul, id: 'tags-list') do
         tags.reduce(''.html_safe) do |html, tag|
-          html + content_tag(:li, tag[:name], class: 'tag')
+          html + content_tag(:li) do
+            link_to(tag.name, tag, class: 'tag')
+          end
         end
       end
     end
