@@ -1,12 +1,18 @@
 require 'csv'
 
 class BulkTagger
-  def initialize(filename)
+  def initialize(filename, mode)
+    raise ArgumentError, "Unknown mode: #{mode}" unless [:entity, :list].include?(mode)
+    @mode = mode
     @csv_string = File.open(filename).read
   end
 
   def run
-    CSV.parse(@csv_string, headers: true) { |row| tag_entity(row) }
+    CSV.parse(@csv_string, headers: true) do |row|
+      if @mode == :entity
+        tag_entity(row)
+      end
+    end                                             
   end
 
   # input: CSV::Row

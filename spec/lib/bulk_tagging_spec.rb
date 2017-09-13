@@ -18,7 +18,7 @@ describe 'BulkTagging' do
       allow(File).to receive(:open).and_return(double(:read => csv))
     end
 
-    let(:tagger) { BulkTagger.new('tags.csv') }
+    let(:tagger) { BulkTagger.new('tags.csv', :entity) }
 
     def tagable_mock(tags)
       double('tagable').tap do |double|
@@ -27,6 +27,7 @@ describe 'BulkTagging' do
     end
 
     it 'tags entities with the provided tags' do
+      expect(tagger).to receive(:tag_related_entities).twice
       expect(Entity).to receive(:find).with('123')
                           .and_return(tagable_mock(['nyc']))
       expect(Entity).to receive(:find).with('456')
