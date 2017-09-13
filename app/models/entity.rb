@@ -729,7 +729,8 @@ class Entity < ActiveRecord::Base
     {
       'extension_ids' => extension_ids,
       'relationship_ids' => relationship_ids,
-      'aliases' => aliases.where(is_primary: false).map(&:name)
+      'aliases' => aliases.where(is_primary: false).map(&:name),
+      'tags' => tags.map(&:name)
     }
   end
 
@@ -747,6 +748,7 @@ class Entity < ActiveRecord::Base
     images.each(&:soft_delete)
     list_entities.each(&:soft_delete)
     relationships.each(&:soft_delete)
+    taggings.destroy_all
     # ArticleEntity
   end
 

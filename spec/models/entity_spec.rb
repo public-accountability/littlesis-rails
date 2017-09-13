@@ -151,7 +151,17 @@ describe Entity, :tag_helper  do
   end
 
   describe 'get_association_data' do
-    let(:association_data) { public_company.get_association_data }
+    let(:company) do
+      org = create(:entity_org)
+      org.tag('oil')
+      org.tag('nyc')
+      org.aliases.create!(name: 'another name')
+      Relationship.create!(entity: org, related: create(:entity_person), category_id: 12)
+      org.add_extension('PublicCompany')
+      org
+    end
+
+    let(:association_data) { company.get_association_data }
 
     it 'has extension ids' do
       expect(association_data['extension_ids']).to eql [2, 13]
@@ -163,6 +173,10 @@ describe Entity, :tag_helper  do
 
     it 'has aliases' do
       expect(association_data['aliases']).to eql ['another name']
+    end
+
+    it 'has tags' do
+      expect(association_data['tags']).to eq ['oil', 'nyc']
     end
   end
 
