@@ -5,11 +5,11 @@ describe Entity, :tag_helper  do
   before(:all) {  DatabaseCleaner.start }
   after(:all)  {  DatabaseCleaner.clean }
   seed_tags
-  
+
   def public_company
-    org = create(:org)
+    org = create(:entity_org)
     org.aliases.create!(name: 'another name')
-    Relationship.create!(entity: org, related: create(:person), category_id: 12)
+    Relationship.create!(entity: org, related: create(:entity_person), category_id: 12)
     org.add_extension('PublicCompany')
     org
   end
@@ -17,6 +17,7 @@ describe Entity, :tag_helper  do
   describe 'validations' do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:primary_ext) }
+
     it 'validates that there are at least two words in a name if the entity is a person' do
       e = Entity.new(primary_ext: 'Person', name: 'my name')
       expect(e.valid?).to be true
@@ -34,7 +35,7 @@ describe Entity, :tag_helper  do
 
     describe 'Date Validation' do
       def build_entity(attr)
-        build(:org, {id: rand(1000)}.merge(attr) )
+        build(:org, attr)
       end
 
       it 'accepts good dates' do
@@ -54,49 +55,48 @@ describe Entity, :tag_helper  do
   end
 
   describe '#soft_delete' do
+    let(:org) { create(:entity_org) }
+    let(:person) { create(:entity_person) }
+
     it 'sets is_deleted to be true' do
-      org = create(:org)
       expect(org.is_deleted).to be false
       org.soft_delete
       expect(org.is_deleted).to be true
     end
 
     it 'deletes aliases' do
-      org = create(:org)
       a = org.aliases.create!(name: 'my other org name')
       expect { org.soft_delete }.to change { Alias.count }.by(-2)
       expect(Alias.find_by_id(a.id)).to be nil
     end
 
     it 'deletes Primary extension for person' do
-      entity = create(:person)
-      expect { entity.soft_delete }.to change { Person.count }.by(-1)
+      person
+      expect { person.soft_delete }.to change { Person.count }.by(-1)
     end
 
     it 'deletes Primary extension for org' do
-      entity = create(:org)
-      expect { entity.soft_delete }.to change { Org.count }.by(-1)
+      org
+      expect { org.soft_delete }.to change { Org.count }.by(-1)
     end
 
     it 'deletes Extension models' do
-      person = create(:person, name: 'johnny business')
+      person = create(:entity_person, name: 'johnny business')
       person.add_extension('BusinessPerson', sec_cik: 987)
       expect { person.soft_delete }.to change { BusinessPerson.count }.by(-1)
     end
 
     it 'soft deletes associated images' do
-      org = create(:org)
       image = create(:image, entity: org)
       expect { org.soft_delete }.to change { Image.unscoped.find(image.id).is_deleted }.to(true)
     end
 
     it 'deletes extension records' do
-      org = create(:org)
+      org
       expect { org.soft_delete }.to change { ExtensionRecord.count }.by(-1)
     end
 
     it 'soft deletes list entities (including removing from network)' do
-      org = create(:org)
       list = create(:list)
       list_entity = ListEntity.create!(list_id: list.id, entity_id: org.id)
       expect { org.soft_delete }.to change { ListEntity.count }.by(-2)
@@ -104,7 +104,6 @@ describe Entity, :tag_helper  do
     end
 
     it 'update list timestamp of soft deleting list entities' do
-      org = create(:org)
       list = create(:list)
       ListEntity.create!(list_id: list.id, entity_id: org.id)
       list.update_column(:updated_at, 1.day.ago)
@@ -113,8 +112,7 @@ describe Entity, :tag_helper  do
     end
 
     it 'soft deletes associated relationships' do
-      org = create(:org)
-      rel = Relationship.create!(entity: org, related: create(:person), category_id: 12)
+      rel = Relationship.create!(entity: org, related: create(:entity_person), category_id: 12)
       expect(Relationship.find(rel.id).is_deleted).to be false
       org.soft_delete
       expect(Relationship.unscoped.find(rel.id).is_deleted).to be true
@@ -122,15 +120,16 @@ describe Entity, :tag_helper  do
 
     describe 'soft delete versioning' do
       with_versioning do
-        before { @org = create(:org) }
+        let(:org) { create(:entity_org) }
 
         it 'creates two versions: one for the Org model and one for the Entity model' do
-          expect { @org.soft_delete }.to change { PaperTrail::Version.count }.by(2)
+          org
+          expect { org.soft_delete }.to change { PaperTrail::Version.count }.by(2)
         end
 
         it 'sets the event type of the version to be soft_delete' do
-          @org.soft_delete
-          expect(@org.versions.last.event).to eq 'soft_delete'
+          org.soft_delete
+          expect(org.versions.last.event).to eq 'soft_delete'
         end
 
         describe 'association data' do
@@ -152,18 +151,18 @@ describe Entity, :tag_helper  do
   end
 
   describe 'get_association_data' do
-    before(:all) { @data = public_company.get_association_data }
+    let(:association_data) { public_company.get_association_data }
 
     it 'has extension ids' do
-      expect(@data['extension_ids']).to eql [2, 13]
+      expect(association_data['extension_ids']).to eql [2, 13]
     end
 
     it 'has relationship_ids' do
-      expect(@data['relationship_ids'].length).to eql 1
+      expect(association_data['relationship_ids'].length).to eql 1
     end
 
     it 'has aliases' do
-      expect(@data['aliases']).to eql ['another name']
+      expect(association_data['aliases']).to eql ['another name']
     end
   end
 
@@ -204,36 +203,35 @@ describe Entity, :tag_helper  do
       end
     end
 
-    describe '#potential_contributions' do
-    end
-
     describe '#contribution_info' do
-      before(:all) do
-        @elected = create(:elected)
-      end
+      let(:elected) { create(:entity_person, name: 'Elected Representative') }
+
       context 'entity is a person' do
-        before(:all) do
-          @donor = create(:person)
-          @match1 = create(:os_match, os_donation: create(:os_donation), donor_id: @donor.id)
-          @match2 = create(:os_match, os_donation: create(:os_donation), donor_id: @donor.id)
-          @match3 = create(:os_match, os_donation: create(:os_donation), donor_id: (@donor.id + 100)) # does not match for donor
+        let(:person) { create(:entity_person) }
+        let(:donor) { create(:entity_person) }
+        
+        def create_matches
+          create(:os_match, os_donation: create(:os_donation), donor_id: donor.id) 
+          create(:os_match, os_donation: create(:os_donation), donor_id: donor.id)
+          create(:os_match, os_donation: create(:os_donation), donor_id: (donor.id + 100)) # does not match for donor 
         end
+        before { create_matches }
 
         it 'returns 2 matches for donor' do
-          expect(@donor.contribution_info.length).to eq 2
+          expect(donor.contribution_info.length).to eq 2
         end
 
         it 'returns OsMatch' do
-          expect(@donor.contribution_info[0]).to be_a OsMatch
+          expect(donor.contribution_info[0]).to be_a OsMatch
         end
       end
 
       context 'entity is an org' do
-        before(:all) do
-          @org = create(:org)
-          @person1 = create(:person)
-          @person2 = create(:person)
-          @person3 = create(:person)
+        before do
+          @org = create(:entity_org)
+          @person1 = create(:entity_person)
+          @person2 = create(:entity_person)
+          @person3 = create(:entity_person)
           [@person1, @person2].each { |p| Relationship.create!(category_id: 1, entity: p, related: @org) }
           Relationship.create!(category_id: 12, entity: @person3, related: @org)
           @match1 = create(:os_match, os_donation: create(:os_donation), donor_id: @person1.id)
@@ -250,7 +248,7 @@ describe Entity, :tag_helper  do
 
   describe 'Extension Attributes Functions' do
     def create_school
-      school = create(:org, name: 'private school')
+      school = create(:entity_org, name: 'private school')
       school.add_extension 'School', is_private: true
       school
     end
@@ -259,27 +257,24 @@ describe Entity, :tag_helper  do
       array.reject { |c| c == 'id' || c == 'entity_id' }
     end
 
-
     describe '#primary_extension_model' do
-      before(:all) do
-        @org = create(:org)
-        @person = create(:person)
-      end
+      let(:org) { create(:entity_org) }
+      let(:person) { create(:entity_person) }
 
       it 'returns Org if entity is an org' do
-        expect(@org.primary_extension_model).to be_a Org
-        expect(@person.primary_extension_model).not_to be_a Org
+        expect(org.primary_extension_model).to be_a Org
+        expect(person.primary_extension_model).not_to be_a Org
       end
 
       it 'returns Person if entity is a person' do
-        expect(@org.primary_extension_model).not_to be_a Person
-        expect(@person.primary_extension_model).to be_a Person
+        expect(org.primary_extension_model).not_to be_a Person
+        expect(person.primary_extension_model).to be_a Person
       end
     end
 
     describe '#extension_attributes' do
       it 'includes person attributes except for id or entity_id' do
-        human_extension_attributes = create(:person).extension_attributes
+        human_extension_attributes = create(:entity_person).extension_attributes
 
         without_ids(Person.column_names).each do |col|
           expect(human_extension_attributes.key?(col)).to be true
@@ -306,7 +301,7 @@ describe Entity, :tag_helper  do
       end
 
       it 'works with example Business Person' do
-        person = create(:person, name: 'johnny business')
+        person = create(:entity_person, name: 'johnny business')
         person.add_extension('BusinessPerson', sec_cik: 987)
         expect(person.extension_attributes).to eql ({
                                                        'sec_cik' => 987,
@@ -327,7 +322,7 @@ describe Entity, :tag_helper  do
     end
 
     describe '#extensions_with_attributes' do
-      let(:human) { create(:person) }
+      let(:human) { create(:entity_person) }
       let(:school) { create_school }
 
       it 'returns hash with key "Person"' do
@@ -343,7 +338,7 @@ describe Entity, :tag_helper  do
         expect(human.extension_attributes.key?('id')).to be false
         expect(human.extension_attributes.key?('entity_id')).to be false
       end
-
+      
       it 'School has org and school keys' do
         expect(school.extensions_with_attributes.key?('School')).to be true
         expect(school.extensions_with_attributes.key?('Org')).to be true
@@ -352,30 +347,31 @@ describe Entity, :tag_helper  do
     end
 
     describe '#extension_models' do
-      before(:all) do
-        @person = create(:person)
-        @person.add_extension('Lawyer')
-        @person.add_extension('PoliticalCandidate')
+      let(:person) do
+        person = create(:entity_person)
+        person.add_extension('Lawyer')
+        person.add_extension('PoliticalCandidate')
+        person
       end
 
-     it 'returns array' do
-       expect(@person.extension_models).to be_a Array
-       expect(@person.extension_models.length).to eq 2
-     end
+      it 'returns array' do
+        expect(person.extension_models).to be_a Array
+        expect(person.extension_models.length).to eq 2
+      end
 
-     it 'has Org and PoliticalCandidate models' do
-       expect(@person.extension_models[0]).to be_a Person
-       expect(@person.extension_models[1]).to be_a PoliticalCandidate
-     end
+      it 'has Org and PoliticalCandidate models' do
+        expect(person.extension_models[0]).to be_a Person
+        expect(person.extension_models[1]).to be_a PoliticalCandidate
+      end
     end
 
     describe '#extension_names' do
       it 'returns ["Org"] if is an org' do
-        expect(create(:org).extension_names).to eql ['Org']
+        expect(create(:entity_org).extension_names).to eql ['Org']
       end
 
       it 'returns ["Person"] if is an person' do
-        expect(create(:person).extension_names).to eql ['Person']
+        expect(create(:entity_person).extension_names).to eql ['Person']
       end
 
       it 'includes school and org if Entity is also a school' do
@@ -406,30 +402,31 @@ describe Entity, :tag_helper  do
     end
 
     describe '#has_extension?' do
+      let(:org) { create(:entity_org) }
+
       it 'works if provided extension name' do
-        org = create(:org)
         org.add_extension('School')
         expect(org.has_extension?('School')).to be true
         expect(org.has_extension?('LaborUnion')).to be false
       end
-      
+
       it 'works if provided def id' do
-        org = create(:org)
         org.add_extension('Business')
         expect(org.has_extension?(5)).to be true
         expect(org.has_extension?(7)).to be false
       end
 
       it 'rasises error if passed invalid name or id' do
-        org = create(:org)
         expect { org.has_extension?(100) }.to raise_error(ArgumentError)
         expect { org.has_extension?('eh') }.to raise_error(ArgumentError)
       end
     end
 
     describe 'remove_extension' do
+      let(:org) { create(:entity_org) }
+      let(:person) { create(:entity_person) }
+
       it 'removes extension records' do
-        org = create(:org)
         expect(org.extension_records.count).to eq 1
         org.add_extension('IndustryTrade')
         expect(org.extension_records.count).to eq 2
@@ -438,7 +435,6 @@ describe Entity, :tag_helper  do
       end
 
       it 'removes extension records and their models' do
-        person = create(:person)
         expect(person.extension_records.count).to eq 1
         expect(person.political_candidate).to be nil
         person.add_extension('PoliticalCandidate')
@@ -450,7 +446,6 @@ describe Entity, :tag_helper  do
       end
 
       it 'can be run multiple times' do
-        person = create(:person)
         expect { person.add_extension('PoliticalCandidate') }.to change { PoliticalCandidate.count }.by(1)
         expect { person.add_extension('PoliticalCandidate') }.not_to change { PoliticalCandidate.count }
         expect { person.remove_extension('PoliticalCandidate') }.to change { PoliticalCandidate.count }.by(-1)
@@ -458,7 +453,7 @@ describe Entity, :tag_helper  do
       end
 
       it 'nothing happens if the extension does not exist' do
-        org = create(:org)
+        org
         expect { org.remove_extension('LaborUnion') }.not_to change { ExtensionRecord.count }
         expect { org.remove_extension('Business') }.not_to change { Business.count }
       end
@@ -470,21 +465,20 @@ describe Entity, :tag_helper  do
     end
 
     describe '#add_extensions_by_def_ids' do
+      let(:org) { create(:entity_org) }
+
       it 'creates extension records' do
-        org = create(:org)
         expect(org.extension_records.count).to eq 1
         org.add_extensions_by_def_ids([23, 24])
         expect(org.extension_records.count).to eq 3
       end
 
       it 'will not create duplicate records' do
-        org = create(:org)
         expect { org.add_extensions_by_def_ids([23, 24]) }.to change { org.extension_records.count }.by(2)
         expect { org.add_extensions_by_def_ids([23, 24]) }.not_to change { org.extension_records.count }
       end
 
       it 'creates extension model if needed for org' do
-        org = create(:org)
         expect(org.business).to be nil
         org.add_extensions_by_def_ids([5])
         expect(org.business).to be_a Business
@@ -493,7 +487,7 @@ describe Entity, :tag_helper  do
 
     describe '#remove_extensions_by_def_ids' do
       before do
-        @org = create(:org)
+        @org = create(:entity_org)
         @org.add_extension('School')
         @org.add_extension('NonProfit')
       end
@@ -533,7 +527,7 @@ describe Entity, :tag_helper  do
   end
 
   describe 'primary_alias' do
-    before { @org = create(:org) }
+    before { @org = create(:entity_org) }
 
     it 'returns the primary alias' do
       primary_a = @org.aliases[0]
@@ -578,45 +572,40 @@ describe Entity, :tag_helper  do
 
   # this is defined in models/concerns/similar_entities.rb
   describe '#similar_entities' do
-
-    before do
-      @e = build(:org)
-    end
+    let(:entity) { build(:org) }
     
     it 'calls Entity.search and generate_search_terms' do
-      expect(@e).to receive(:generate_search_terms).once.and_return("(search terms)")
+      expect(entity).to receive(:generate_search_terms).once.and_return("(search terms)")
       expect(Entity).to receive(:search)
                          .with("@!summary (search terms)", any_args).and_return(['response'])
-      expect(@e.similar_entities).to eq ['response']
+      expect(entity.similar_entities).to eq ['response']
     end
 
     it 'can rescue from ThinkingSphinx::QueryError' do
-      allow(@e).to receive(:generate_search_terms).and_return("(search terms)")
+      allow(entity).to receive(:generate_search_terms).and_return("(search terms)")
       expect(Entity).to receive(:search).and_raise(ThinkingSphinx::QueryError)
-      expect(@e.similar_entities).to eql []
+      expect(entity.similar_entities).to eql []
     end
 
     it 'can rescue from ThinkingSphinx::SyntaxError' do
-      allow(@e).to receive(:generate_search_terms).and_return("(search terms)")
+      allow(entity).to receive(:generate_search_terms).and_return("(search terms)")
       expect(Entity).to receive(:search).and_raise(ThinkingSphinx::SyntaxError)
-      expect(@e.similar_entities).to eql []
+      expect(entity.similar_entities).to eql []
     end
 
     it 'can rescue from ThinkingSphinx::ConnectionError' do
-      allow(@e).to receive(:generate_search_terms).and_return("(search terms)")
+      allow(entity).to receive(:generate_search_terms).and_return("(search terms)")
       expect(Entity).to receive(:search).and_raise(ThinkingSphinx::ConnectionError)
-      expect(@e.similar_entities).to eql []
+      expect(entity.similar_entities).to eql []
     end
 
     it 'raises other errors' do
-      e = build(:org)
-      allow(e).to receive(:generate_search_terms).and_return("(search terms)")
+      allow(entity).to receive(:generate_search_terms).and_return("(search terms)")
       expect(Entity).to receive(:search).and_raise(ArgumentError)
-      expect { e.similar_entities }.to raise_error(ArgumentError)
+      expect { entity.similar_entities }.to raise_error(ArgumentError)
     end
 
     describe 'generate_search_terms' do
-
       it 'generates list of names for org' do
         e = build(:org, name: 'one')
         aliases = [build(:alias, name: 'one', is_primary: true), build(:alias, name: 'two')]
@@ -630,7 +619,6 @@ describe Entity, :tag_helper  do
         expect(e).to receive(:aliases).and_return(aliases)
         expect(e.send(:generate_search_terms)).to eq "(weird\\/name) | (name) | (*weird\\/name*)"
       end
-
     end
   end
 
@@ -651,13 +639,13 @@ describe Entity, :tag_helper  do
 
     describe 'school?' do
       it 'returns true if org is a school' do
-        org = create(:org)
+        org = create(:entity_org)
         org.add_extension('School')
         expect(org.school?).to be true
       end
 
       it 'returns false if org is not a school' do
-        org = create(:org)
+        org = create(:entity_org)
         org.add_extension('IndustryTrade')
         expect(org.school?).to be false
       end
@@ -717,36 +705,34 @@ describe Entity, :tag_helper  do
 
   describe 'Tagging' do
     it 'can tag a person with oil' do
-      person = create(:person)
+      person = create(:entity_person)
       expect { person.tag('oil') }.to change { Tagging.count }.by(1)
       expect(person.taggings).to eq [Tagging.last]
     end
   end
 
-
   describe 'Using paper_trail for versision' do
+    let(:human) { create(:entity_person) }
     with_versioning do
       it 'creates version after updating name' do
-        human = create(:person)
         expect(human.versions.size).to eq 1
         expect { human.update(name: 'Emiliano Zapata') }.to change { human.versions.size }.by(1)
         expect(human.versions.last.event).to eq 'update'
       end
 
       it 'does not store association_data for update event' do
-        human = create(:person)
         human.update!(blurb: 'マルクスの思想の中心は、史的唯物論である。')
         expect(human.versions.last.event).to eq 'update'
         expect(human.versions.last.association_data).to be nil
       end
 
       it 'does not create a version after changing updated_at' do
-        human = create(:person)
+        human
         expect { human.touch }.not_to change { human.versions.size }
       end
 
       it 'does not create a version after changing link_count' do
-        human = create(:person)
+        human
         expect { human.update(link_count: 10) }.not_to change { human.versions.size }
       end
     end

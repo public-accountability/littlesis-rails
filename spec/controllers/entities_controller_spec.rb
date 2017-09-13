@@ -32,7 +32,10 @@ describe EntitiesController, type: :controller do
     let(:entity) { create(:entity_org, updated_at: Time.now) }
 
     describe "/entity/id" do
-      before { get(:show, id: entity.id) }
+      before do
+        expect(Entity).to receive(:search)
+        get(:show, id: entity.id)
+      end
       it { should render_template(:show) }
     end
 
