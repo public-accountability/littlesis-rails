@@ -10,7 +10,7 @@ describe 'lists/modifications.html.erb' do
         l.save
         l.is_featured = true
         l.save
-        inc = create(:mega_corp_inc)
+        inc = create(:entity_org)
         inc_entity = ListEntity.find_or_create_by(list_id: l.id, entity_id: inc.id)
         inc_entity.destroy
         assign(:list, l)

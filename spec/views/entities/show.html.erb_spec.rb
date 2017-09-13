@@ -3,7 +3,7 @@ require 'rails_helper'
 describe 'entities/show.html.erb' do
   before(:all) do
     DatabaseCleaner.start
-    @sf_user = create(:sf_guard_user, username: 'X')
+    @sf_user = create(:sf_guard_user)
     @user = create(:user, sf_guard_user_id: @sf_user.id)
   end
   after(:all) { DatabaseCleaner.clean }
@@ -18,8 +18,8 @@ describe 'entities/show.html.erb' do
 
   describe 'sets title' do
     it 'sets title correctly' do
-      assign :entity, create(:mega_corp_inc, last_user_id: @sf_user.id)
-      expect(view).to receive(:content_for).with(:page_title, 'mega corp INC')
+      assign :entity, create(:entity_org, last_user_id: @sf_user.id, name: 'mega corp')
+      expect(view).to receive(:content_for).with(:page_title, 'mega corp')
       expect(view).to receive(:content_for).with(any_args).exactly(4).times
       render
     end
@@ -29,7 +29,7 @@ describe 'entities/show.html.erb' do
     context 'without any permissions' do
       before(:all) do
         DatabaseCleaner.start
-        @e = create(:mega_corp_inc, last_user_id: @sf_user.id)
+        @e = create(:entity_org, last_user_id: @sf_user.id, name: 'mega corp', blurb: 'mega corp is having an existential crisis')
       end
 
       after(:all) { DatabaseCleaner.clean }
@@ -43,7 +43,7 @@ describe 'entities/show.html.erb' do
       it 'has correct header' do
         expect(rendered).to have_css('#entity-header')
         expect(rendered).to have_css('#entity-header a', :count => 1)
-        expect(rendered).to have_css('#entity-name', :text => "mega corp INC")
+        expect(rendered).to have_css('#entity-name', :text => "mega corp")
         expect(rendered).to have_css('#entity-blurb', :text => "mega corp is having an existential crisis")
       end
 
@@ -51,7 +51,7 @@ describe 'entities/show.html.erb' do
         describe 'edited by section' do
           it 'links to recent user' do
             expect(rendered).to have_css('#entity-edited-history')
-            expect(rendered).to have_css('#entity-edited-history strong a', :text => 'user')
+            expect(rendered).to have_css('#entity-edited-history strong a', :text => @sf_user.user.username)
           end
 
           it 'display how long ago it was edited' do
@@ -59,7 +59,7 @@ describe 'entities/show.html.erb' do
           end
 
           it 'links to history' do
-            expect(rendered).to have_css('a[href="/org/' + @e.id.to_s + '-mega_corp_INC/edits"]', :text => 'History')
+            expect(rendered).to have_css('a[href="/org/' + @e.id.to_s + '-mega_corp/edits"]', :text => 'History')
           end
         end
 
@@ -113,7 +113,7 @@ describe 'entities/show.html.erb' do
         DatabaseCleaner.start
         @sf_user = create(:sf_guard_user)
         @user = create(:user, sf_guard_user_id: @sf_user.id)
-        @e = create(:mega_corp_inc, last_user: @sf_user)
+        @e = create(:entity_org, last_user: @sf_user, name: 'mega corp')
         SfGuardUserPermission.create!(user_id: @sf_user.id, permission_id: 5)
       end
 
@@ -141,7 +141,7 @@ describe 'entities/show.html.erb' do
         DatabaseCleaner.start
         @sf_guard_user = create(:sf_guard_user)
         @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
-        @e = create(:person, last_user: @sf_guard_user)
+        @e = create(:entity_person, last_user: @sf_guard_user)
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 8)
       end
 
@@ -168,7 +168,7 @@ describe 'entities/show.html.erb' do
         DatabaseCleaner.start
         @sf_guard_user = create(:sf_guard_user)
         @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
-        @e = build(:person, last_user: @sf_guard_user, updated_at: 1.day.ago, person: build(:a_person))
+        @e = create(:entity_person, last_user: @sf_guard_user, updated_at: 1.day.ago, person: build(:a_person))
         SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 9)
       end
 
@@ -211,7 +211,7 @@ describe 'entities/show.html.erb' do
         DatabaseCleaner.start
         @sf_guard_user = create(:sf_guard_user)
         @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
-        @e = create(:mega_corp_inc, updated_at: Time.now, last_user: @sf_guard_user)
+        @e = create(:entity_org, updated_at: Time.now, last_user: @sf_guard_user)
       end
 
       after(:all) { DatabaseCleaner.clean }

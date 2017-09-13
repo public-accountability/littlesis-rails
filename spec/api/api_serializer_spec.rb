@@ -24,10 +24,13 @@ describe 'ApiSerializer' do
 
     context 'extra fields with entity' do
       before(:all) do
-        @corp = create(:corp, last_user_id: SfGuardUser.last.id)
+        DatabaseCleaner.start
+        @corp = create(:entity_org, last_user_id: SfGuardUser.last.id)
         @corp.aliases.create!(name: 'other corp name')
         @corp.extension_records.create!(definition_id: 5)
       end
+
+      after(:all) { DatabaseCleaner.clean }
 
       it 'has aliases' do
         expect(ApiUtils::Serializer.new(@corp).attributes.key?('aliases')).to be true

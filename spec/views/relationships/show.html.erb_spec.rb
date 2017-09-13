@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'relationships/show.html.erb', :tag_helper, type: :view do
   seed_tags
-  
+
   before(:all) do
     @sf_user = build(:sf_guard_user)
     @user = build(:user)
@@ -53,7 +53,7 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
 
         it 'has edited history' do
           css '#entity-edited-history'
-          css 'a', :text => 'user'
+          css 'a', :text => @sf_user.user.username
         end
       end
 

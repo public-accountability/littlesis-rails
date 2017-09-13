@@ -2,10 +2,13 @@ require 'rails_helper'
 
 describe 'entities/edit.html.erb', type: :view do
   before(:all) do
+    DatabaseCleaner.start
     @current_user = create(:user, sf_guard_user: create(:sf_guard_user))
-    @entity = create(:org, last_user_id: @current_user.sf_guard_user.id)
-    @person = create(:person, last_user_id: @current_user.sf_guard_user.id)
+    @entity = create(:entity_org, last_user_id: @current_user.sf_guard_user.id)
+    @person = create(:entity_person, last_user_id: @current_user.sf_guard_user.id)
   end
+
+  after(:all) { DatabaseCleaner.clean } 
 
   describe 'layout for Org' do
     before do

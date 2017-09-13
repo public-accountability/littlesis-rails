@@ -5,8 +5,8 @@ describe 'entities/match_donations.html.erb' do
     DatabaseCleaner.start
     @sf_user = create(:sf_guard_user)
     @user = create(:user, sf_guard_user_id: @sf_user.id)
-    @e = create(:person, updated_at: Time.now, last_user: @sf_user)
-    @corp = create(:mega_corp_inc)
+    @e = create(:entity_person, updated_at: Time.now, last_user: @sf_user)
+    @corp = create(:entity_org, name: 'mega corp')
     Relationship.create!(entity1_id: @e.id, entity2_id: @corp.id, description1: 'Overlord', category_id: 1)
   end
 
@@ -45,7 +45,7 @@ describe 'entities/match_donations.html.erb' do
 
       it 'has position' do
         expect(rendered).to have_css '.row p strong', :text => 'Positions'
-        expect(rendered).to have_css '.row p', :text => 'mega corp INC'
+        expect(rendered).to have_css '.row p', :text => 'mega corp'
       end
 
       it 'does not have Education' do

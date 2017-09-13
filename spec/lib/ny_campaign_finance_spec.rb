@@ -1,7 +1,7 @@
 require 'rails_helper'
 require Rails.root.join('lib', 'task-helpers', 'nys_campaign_finance.rb')
 
-describe 'NYSCampaignFinance' do
+xdescribe 'NYSCampaignFinance' do
   describe 'insert_new_disclosures' do
     it 'loops through batches' do
       expect(NYSCampaignFinance).to receive(:row_count).twice.and_return(2)

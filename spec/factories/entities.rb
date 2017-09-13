@@ -9,6 +9,11 @@ FactoryGirl.define do
     id { generate(:entity_id) }
   end
 
+  factory :entity_org, class: Entity do
+    name 'org'
+    primary_ext 'Org'
+  end
+
   factory :elected, class: Entity do
     name 'Elected Representative'
     primary_ext 'Person'
@@ -21,6 +26,11 @@ FactoryGirl.define do
     id { generate(:entity_id) }
   end
 
+  factory :entity_person, class: Entity do
+    name 'Human Being'
+    primary_ext 'Person'
+  end
+  
   factory :corp, class: Entity do
     name 'corp'
     primary_ext 'Org'
@@ -51,6 +61,5 @@ FactoryGirl.define do
     name 'PAC'
     blurb 'Ruining our democracy one dollar at a time'
     primary_ext 'Org'
-    id { generate(:entity_id) }
   end
 end

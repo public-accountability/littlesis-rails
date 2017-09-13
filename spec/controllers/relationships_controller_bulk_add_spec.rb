@@ -12,8 +12,8 @@ describe RelationshipsController, type: :controller do
 
       context 'When submitting two good relationships' do
         before do
-          @e1 = create(:corp)
-          @e2 = create(:corp)
+          @e1 = create(:entity_org)
+          @e2 = create(:entity_org)
         end
         let(:relationship1) do
           { 'name' => 'jane doe',
@@ -67,7 +67,7 @@ describe RelationshipsController, type: :controller do
       end
 
       context 'When submitting Relationship with category field' do
-        before { @e1 = create(:corp) }
+        let(:entity) { create(:entity_org) }
 
         let(:relationship1) do
           { 'name' => 'Jane Doe',
@@ -80,7 +80,7 @@ describe RelationshipsController, type: :controller do
             'is_current' => '?' }
         end
         let(:params) do
-          { 'entity1_id' => @e1.id,
+          { 'entity1_id' => entity.id,
             'category_id' => 1,
             'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
             'relationships' => [relationship1] }
@@ -92,7 +92,7 @@ describe RelationshipsController, type: :controller do
 
         it 'creates one Position' do
           expect { post :bulk_add, params }.to change { Position.count }.by(1)
-          expect(Position.last.relationship.entity2_id).to eql @e1.id
+          expect(Position.last.relationship.entity2_id).to eql entity.id
         end
 
         it 'updates position' do
@@ -102,7 +102,7 @@ describe RelationshipsController, type: :controller do
       end
 
       context 'bad relationship data' do
-        before { @e1 = create(:corp) }
+        let(:entity) { create(:entity_org) }
         let(:relationship1) do
           { 'name' => 'Jane Doe',
             'blurb' => nil,
@@ -111,7 +111,7 @@ describe RelationshipsController, type: :controller do
             'start_date' => 'this is not a real date' }
         end
         let(:params) do
-          { 'entity1_id' => @e1.id,
+          { 'entity1_id' => entity.id,
             'category_id' => 12,
             'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
             'relationships' => [relationship1] }
@@ -145,7 +145,7 @@ describe RelationshipsController, type: :controller do
            'is_current' => nil }
         end
         let(:params) do
-          { 'entity1_id' => create(:corp).id,
+          { 'entity1_id' => create(:entity_org).id,
             'category_id' => 12,
             'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
             'relationships' => [relationship1, relationship2] }
@@ -163,8 +163,8 @@ describe RelationshipsController, type: :controller do
 
       context 'When submitting position relationships' do
         before do
-          @corp = create(:corp)
-          @person = create(:person)
+          @corp = create(:entity_org)
+          @person = create(:entity_person)
           @relationship = { 'name' => @person.id, 'primary_ext' => 'Person', 'start_date' => '2017-01-01' }
 
           @params = { 'entity1_id' => @corp.id,
@@ -188,7 +188,7 @@ describe RelationshipsController, type: :controller do
 
       context 'When submitting a doantion relationship' do
         before do
-          @corp = create(:corp)
+          @corp = create(:entity_org)
           @relationship1 = { 'name' => 'small donor', 'primary_ext' => 'Person', 'amount' => '$1,000' }
           @relationship2 = { 'name' => 'medium donor', 'primary_ext' => 'Person', 'amount' => '$100000.50' }
           @relationship3 = { 'name' => 'big donor', 'primary_ext' => 'Person', 'amount' => '1,000,000' }
@@ -217,8 +217,7 @@ describe RelationshipsController, type: :controller do
 
       context 'When submitting a Donation Received or Doantion Given relationship' do
         before(:each) do
-          DatabaseCleaner.start
-          @corp = create(:corp)
+          @corp = create(:entity_org)
           @relationship = { 'name' => 'donor guy', 'primary_ext' => 'Person', 'amount' => '$20' }
 
           params = { 'entity1_id' => @corp.id,
@@ -228,8 +227,6 @@ describe RelationshipsController, type: :controller do
           @donation_received = params.merge('category_id' => 50)
           @donation_given = params.merge('category_id' => 51)
         end
-
-        after(:each) { DatabaseCleaner.clean }
 
         it 'creates one donation received relationship' do
           expect { post :bulk_add, @donation_received }.to change { Relationship.count }.by(1)
@@ -264,7 +261,7 @@ describe RelationshipsController, type: :controller do
         end
 
         before do
-          @corp = create(:corp)
+          @corp = create(:entity_org)
           @params = { 'entity1_id' => @corp.id,
                       'category_id' => 12,
                       'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
@@ -293,7 +290,7 @@ describe RelationshipsController, type: :controller do
     end
 
     let(:params) do
-      { 'entity1_id' => create(:corp).id,
+      { 'entity1_id' => create(:entity_org).id,
         'category_id' => 12,
         'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
         'relationships' => [relationship] }
@@ -361,7 +358,7 @@ describe RelationshipsController, type: :controller do
     end
 
     it' finds existing entity' do
-      expect(Entity).to receive(:find_by_id).with(666).and_return(create(:person))
+      expect(Entity).to receive(:find_by_id).with(666).and_return(create(:entity_person))
       controller.send(:make_or_get_entity, relationship_existing) {}
     end
 

@@ -45,7 +45,7 @@ describe NotificationMailer, type: :mailer do
   end
 
   describe '#signup_email' do
-    before(:all) do
+    before(:each) do
       @sf_user = create(:sf_guard_user)
       @user = create(:user, sf_guard_user: @sf_user)
       @profile = create(:sf_guard_user_profile, user_id: @sf_user.id)
@@ -53,7 +53,7 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'has correct subject' do
-      expect(@mail.subject).to include 'New User Signup: user'
+      expect(@mail.subject).to include "New User Signup: #{@user.username}"
     end
 
     it 'has correct to' do
