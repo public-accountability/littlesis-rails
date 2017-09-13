@@ -12,8 +12,22 @@ class BulkTagger
   # input: CSV::Row
   def tag_entity(row)
     entity = Entity.find(entity_id_from(row.field('entity_url')))
-    row.field('tags').split(' ').each do |tag_name|
-      entity.tag(tag_name.downcase)
+    tags = row.field('tags').downcase.split(' ')
+
+    tags.each do |tag_name|
+      entity.tag(tag_name)
+    end
+
+    if row.field('tag_all_related').present?
+      tag_related_entities(entity, tags)
+    end
+
+  end
+
+  def tag_related_entities(entity, tags)
+    entity.links.map(&:entity2_id).uniq.each do |id|
+      other_entity = Entity.find(id)
+      tags.each { |t| other_entity.tag(t) }
     end
   end
 
