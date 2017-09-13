@@ -8,6 +8,12 @@ describe 'BulkTagging' do
     allow(File).to receive(:open).and_return(double(:read => csv))
   end
 
+  def tagable_mock(tags)
+    double('tagable').tap do |double|
+      tags.each { |t| expect(double).to receive(:tag).with(t) }
+    end
+  end
+
   context 'Tagging entites' do
     let(:csv) do
       CSV.generate do |csv|
@@ -20,12 +26,6 @@ describe 'BulkTagging' do
     end
 
     let(:tagger) { BulkTagger.new('tags.csv', :entity) }
-
-    def tagable_mock(tags)
-      double('tagable').tap do |double|
-        tags.each { |t| expect(double).to receive(:tag).with(t) }
-      end
-    end
 
     it 'tags entities with the provided tags' do
       expect(tagger).to receive(:tag_related_entities).twice
@@ -75,6 +75,30 @@ describe 'BulkTagging' do
     end
 
     it 'tags lists' do
+      expect(tagger).to receive(:tag_all_in_list).once
+      expect(List).to receive(:find).with('1232').and_return(tagable_mock(['nyc']))
+      expect(List).to receive(:find).with('152').and_return(tagable_mock(['oil']))
+      expect(List).to receive(:find).with('1327').and_return(tagable_mock(['georgia', 'oil']))
+
+      tagger.run
+    end
+
+    it 'can tag all entities in list' do
+      list = build(:list)
+      entities_in_list = [build(:org), build(:person)]
+      expect(list).to receive(:tag).with('georgia')
+      expect(list).to receive(:tag).with('oil')
+      expect(list).to receive(:entities).and_return(entities_in_list)
+      entities_in_list.each do |e|
+        expect(e).to receive(:tag).with('georgia')
+        expect(e).to receive(:tag).with('oil')
+      end
+
+      expect(List).to receive(:find).with('1232').and_return(tagable_mock(['nyc']))
+      expect(List).to receive(:find).with('152').and_return(tagable_mock(['oil']))
+      expect(List).to receive(:find).with('1327').and_return(list)
+
+      tagger.run
     end
   end
 end

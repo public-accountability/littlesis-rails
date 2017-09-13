@@ -34,18 +34,17 @@ class BulkTagger
   # input: CSV::Row
   # fields: list_url, tags, tag_all_in_list
   def tag_list(row)
-    list = List.find(model_id_from(row.field('entity_url')))
+    list = List.find(model_id_from(row.field('list_url')))
     tags = row_tags(row)
 
     tags.each { |t| list.tag(t) }
-
-    if row.field('tag_all_in_list').present?
-      tag_all_in_list(list, tags)
-    end
-
+    tag_all_in_list(list, tags) if row.field('tag_all_in_list').present?
   end
 
   def tag_all_in_list(list, tags)
+    list.entities.each do |entity|
+      tags.each { |t| entity.tag(t) }
+    end
   end
 
   private
