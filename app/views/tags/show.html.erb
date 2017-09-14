@@ -17,29 +17,37 @@
     </div>
   </div>
 
-  <% @taggings_by_class.each do |tagable_class, taggings|  %>
+  <div id="tag-nav">
+    <ul class="nav nav-tabs">
+      <% Tagable::TAGABLE_CLASSES.each do |tc|  %>
+        <li role="presentation"
+            id="tag-nav-tab-<%= tc.category_str%>"
+            class=<%= tc == Tagable.class_of(@tagable_category) ? "active" : "inactive" %>
+        >
+          <%=  link_to tc.category_str.capitalize,"/tags/#{@tag.id}/#{tc.category_str}" %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
 
-    <div class="tagable-list" id="tagable-list-<%= tagable_class.downcase.pluralize %>">
+  <%# @taggings_by_class.each do |tagable_class, taggings|  %>
+  
+    <div id="tagable-list">
 
-      <div class="tagable-list-header">
-        <%= "#{tagable_class.pluralize}" %>
-      </div>
-
-      <% if taggings.empty? %>
+      <% if @tagables.empty? %>
 
         <div class="tagable-list-empty-message">
-          <%= "There are no #{tagable_class.downcase.pluralize} tagged \"#{@tag.name}\"" %>
+          <%= "There are no #{@tagable_category} tagged \"#{@tag.name}\"" %>
         </div>
 
       <% else %>
 
         <ul class="tagable-list-items">
-          <% taggings.each_with_index do |tagging, i| %>
+          <% @tagables.each_with_index do |tagable, i| %>
             <div class="tagable-list-item">
-              <% tagable = tagging.tagable %>
-              <%= link_to tagable.name.titlecase, tagable, class: "tagable-list-item-name"%>
+              <%= link_to tagable.name, tagable, class: "tagable-list-item-name"%>
               <%= content_tag :div,
-                              "tagged #{time_ago_in_words(tagging.updated_at)} ago",
+                              "edited #{time_ago_in_words(tagable.updated_at)} ago",
                               class: "tagable-list-item-date"%>
               <%= content_tag :div,
                               truncate(tagable.description, length: 90),
@@ -49,12 +57,12 @@
         </ul>
 
         <div class="tagable-list-pagination">
-          <%= paginate taggings, param_name: Tagable.page_param_of(tagable_class) %>
+          <%= paginate @tagables %>
         </div>
 
       <% end #if !tagables.empty %>
     </div> 
 
-  <% end # tagables_grouped_by_class.map%>
+  <%# end # tagables_grouped_by_class.map%>
 
   <div class=".tag-show-container">

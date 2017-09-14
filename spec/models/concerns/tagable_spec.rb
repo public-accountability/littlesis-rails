@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Tagable do
+describe Tagable, type: :model do
 
   module Assocations
     def has_many(*args)
@@ -29,6 +29,7 @@ describe Tagable do
   let(:tags) { Array.new(3) { create(:tag) } }
   let(:tag_name) { tags.first.name }
   let(:tag_id) { tags.first.id }
+  let(:entity) { create(:entity_org) }
 
   before(:all) do
     Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
@@ -39,7 +40,7 @@ describe Tagable do
   end
 
   describe "the Tagable interface" do
-    let(:entity) { create(:org) }
+    before { entity.tag(tag_id) }
 
     it "responds to interface methods" do
       Tagable::TAGABLE_CLASSES.each do |tagable_class|
@@ -52,16 +53,34 @@ describe Tagable do
     end
 
     it "implements :tags correctly" do
-      entity.tag(tag_id)
-
       expect(entity.tags.length).to eq 1
       expect(entity.tags[0].name).to eq tag_name
     end
 
     it "implements :taggings correctly" do
-      entity.tag(tag_id)
       expect(entity.taggings.length).to eq 1
       expect(entity.taggings[0].tagable_id).to eq entity.id
+    end
+  end
+
+  describe "class methods" do
+
+    it "provides pluralized symbol for tagable category" do
+      expect(Entity.category_sym).to eq(:entities)
+      expect(List.category_sym).to eq(:lists)
+      expect(Relationship.category_sym).to eq(:relationships)
+    end
+
+    it "provides pluralized string for tagable category" do
+      expect(Entity.category_str).to eq('entities')
+      expect(List.category_str).to eq('lists')
+      expect(Relationship.category_str).to eq('relationships')
+    end
+
+    it "generates a class name from a category symbol" do
+      expect(Tagable.class_of(:entities)).to eq Entity
+      expect(Tagable.class_of(:lists)).to eq List
+      expect(Tagable.class_of(:relationships)).to eq Relationship
     end
   end
 
@@ -227,12 +246,6 @@ describe Tagable do
       orgs.each{ |o| puts o.link_count }
 
       expect(sorted).to eq orgs.reverse
-    end
-  end
-
-  describe 'using tagable class names' do
-    it 'converts a class name to a page param symbol' do
-      expect(Tagable.page_param_of(Entity)).to eq :entity_page
     end
   end
 end

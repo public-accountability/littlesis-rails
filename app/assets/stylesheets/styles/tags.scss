@@ -160,7 +160,10 @@ input#tag_name {
             align-self: flex-end;
         }
     }
-    .tagable-list{
+    #tag-nav {
+        margin-top: 1em;
+    }
+    #tagable-list{
         margin: 1em 0 1em 0; // TRBL
         .tagable-list-header {
             background-color: $maroon;
