@@ -15,7 +15,7 @@ describe Relationship, type: :model do
     DatabaseCleaner.clean
   end
 
-  describe 'associations' do 
+  describe 'associations' do
     it { should have_many(:links) }
     it { should belong_to(:entity) }
     it { should belong_to(:related) }
@@ -76,7 +76,6 @@ describe Relationship, type: :model do
     end
 
     describe 'Relationship Validations' do
-
       it 'validates position relationship' do
         person = create(:person)
         org = create(:org)
@@ -91,7 +90,6 @@ describe Relationship, type: :model do
         expect(rel.valid?).to eq false
         expect(rel.errors.full_messages[0]).to eql 'Category Hierarchy is not a valid category for Person to Person relationships'
       end
-      
     end
   end
 
@@ -119,7 +117,7 @@ describe Relationship, type: :model do
       rel = build(:generic_relationship)
       expect(rel.send(:last_user_id_for_entity_update, 345)).to eql 345
     end
-    
+
     it 'returns system user id if last_user_id is nil' do
       rel = build(:generic_relationship, last_user_id: nil)
       expect(rel.send(:last_user_id_for_entity_update)).to eq APP_CONFIG.fetch('system_user_id')
@@ -587,15 +585,68 @@ describe Relationship, type: :model do
     end
   end
 
-  context 'Using paper_trail for versioning' do
+  describe 'restore!' do
+    let(:person) { create(:entity_person) }
+    let(:org) { create(:entity_org) }
+    let(:rel) { Relationship.create!(entity: person, related: org, category_id: Relationship::POSITION_CATEGORY) }
+
+    it 'raises error if called on a model that is not deleted' do
+      expect { build(:relationship, is_deleted: false).restore! }.to raise_error(Exceptions::CannotRestoreError)
+    end
+
     with_versioning do
-      before do
-        @human = create(:person)
-        @corp = create(:corp)
+      before { rel }
+
+      it 'changes is_deleted status' do
+        expect { rel.soft_delete }.to change { rel.is_deleted }.to(true)
+        expect { rel.restore! }.to change { rel.is_deleted }.to(false)
       end
 
+      # :create_category, :create_links, :update_entity_links
+      it 'creates category' do
+        expect { rel.soft_delete }.to change { Position.count }.by(-1)
+        expect { rel.restore! }.to change { Position.count }.by(1)
+      end
+
+      it 'creates links' do
+        expect { rel.soft_delete }.to change { Link.count }.by(-2)
+        expect { rel.restore! }.to change { Link.count }.by(2)
+      end
+
+      it 'it updates entity links' do
+        # called twice: once after soft_delete and once after restore
+        expect(rel).to receive(:update_entity_links).twice 
+        rel.soft_delete
+        rel.restore!
+      end
+
+      context 'entity1 is deleted' do
+        let(:person) { create(:entity_person, is_deleted: true) }
+        it 'does not restore the relationship' do
+          rel.soft_delete
+          expect { rel.restore! }.not_to change { rel.is_deleted }
+          expect(rel.restore!).to be nil
+        end
+      end
+
+      context 'entity2 is deleted' do
+        let(:org) { create(:entity_person, is_deleted: true) }
+        it 'does not restore the relationship' do
+          rel.soft_delete
+          expect { rel.restore! }.not_to change { rel.is_deleted }
+          expect(rel.restore!).to be nil
+        end
+      end
+    end
+  end
+
+  context 'Using paper_trail for versioning' do
+    let(:human) { create(:entity_person) }
+    let(:corp) { create(:entity_org) }
+
+    with_versioning do
       it 'records created, modified, and deleted versions' do
-        rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
+        rel = Relationship.create!(entity1_id: human.id, entity2_id: corp.id, category_id: 12)
         expect(rel.versions.size).to eq(1)
         rel.description1 = "important connection"
         rel.save
@@ -607,10 +658,10 @@ describe Relationship, type: :model do
       end
 
       it 'saves entity1 and entity2 metadata' do
-        rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
+        rel = Relationship.create!(entity1_id: human.id, entity2_id: corp.id, category_id: 12)
         rel.update(description1: 'x')
-        expect(rel.versions.last.entity1_id).to eq @human.id
-        expect(rel.versions.last.entity2_id).to eq @corp.id
+        expect(rel.versions.last.entity1_id).to eq human.id
+        expect(rel.versions.last.entity2_id).to eq corp.id
       end
     end
   end

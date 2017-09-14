@@ -505,6 +505,13 @@ class Relationship < ActiveRecord::Base
     "#{entity.name} #{description_sentence[0]} #{related.name} #{description_sentence[1]}"
   end
 
+  def restore!
+    raise Exceptions::CannotRestoreError unless is_deleted
+    return nil if entity.nil? || related.nil? || entity.is_deleted || related.is_deleted
+    run_callbacks :create
+    update(is_deleted: false)
+  end
+
   private
 
   def last_user_id_for_entity_update(sf_user_id = nil)

@@ -729,8 +729,36 @@ class Entity < ActiveRecord::Base
     {
       'extension_ids' => extension_ids,
       'relationship_ids' => relationship_ids,
-      'aliases' => aliases.where(is_primary: false).map(&:name)
+      'aliases' => aliases.where(is_primary: false).map(&:name),
+      'tags' => tags.map(&:name)
     }
+  end
+
+  # un-deletes an entity
+  # Essentially this just reverts
+  # what happens in #after_soft_delete
+  def restore!(restore_relationships = false)
+    raise Exceptions::CannotRestoreError unless is_deleted
+    association_data = retrieve_deleted_association_data
+    raise Exceptions::MissingEntityAssociationDataError if association_data.nil?
+
+    create_primary_ext
+    create_primary_alias
+    add_extensions_by_def_ids(association_data['extension_ids'])
+    association_data['aliases'].each do |name|
+      aliases.create(name: name, is_primary: false, last_user_id: Lilsis::Application.config.system_user_id)
+    end
+
+    association_data['tags'].each { |tag_name| tag_without_callbacks(tag_name) }
+    Image.unscoped.where(entity_id: self.id).update_all(is_deleted: false)
+
+    update(is_deleted: false)
+
+    if restore_relationships
+      association_data['relationship_ids'].each do |rel_id|
+        Relationship.unscoped.find(rel_id).restore!
+      end
+    end
   end
 
   def description
@@ -738,6 +766,12 @@ class Entity < ActiveRecord::Base
   end
 
   private
+
+  def retrieve_deleted_association_data
+    data = versions.where(event: 'soft_delete').last.association_data
+    return nil if data.nil?
+    YAML.load(data)
+  end
 
   # Callbacks for Soft Delete
   def after_soft_delete
@@ -747,6 +781,7 @@ class Entity < ActiveRecord::Base
     images.each(&:soft_delete)
     list_entities.each(&:soft_delete)
     relationships.each(&:soft_delete)
+    taggings.destroy_all
     # ArticleEntity
   end
 
