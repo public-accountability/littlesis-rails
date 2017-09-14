@@ -130,4 +130,10 @@ describe UsersController, type: :controller do
 
     end
   end
+
+  describe '#success' do
+    before { get :success }
+    it { should respond_with(200) }
+    it { should render_template('success') }
+  end
 end

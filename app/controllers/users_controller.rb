@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict]
-  before_action :authenticate_user!
-  before_filter :admins_only, except: [:show, :restrict]
+  before_action :authenticate_user!, except: [:success]
+  before_filter :admins_only, except: [:show, :restrict, :success]
 
   # get /users
   def index

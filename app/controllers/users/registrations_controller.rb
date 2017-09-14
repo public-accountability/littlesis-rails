@@ -120,7 +120,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # The path used after sign up.
   def after_sign_up_path_for(resource)
-    home_dashboard_path
+    join_success_path
   end
 
   def after_update_path_for(resource)
@@ -142,10 +142,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   private
-  
+
   def reset_signup_session
     clean_up_passwords resource
     set_minimum_password_length
   end
-  
 end
