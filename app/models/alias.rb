@@ -6,6 +6,7 @@ class Alias < ActiveRecord::Base
   validates_presence_of :entity_id
   validates :name, length: { maximum: 200 }, presence: true
 
+  before_validation :trim_name_whitespace
   # Makes this alias the primary alias
   # -> boolean
   def make_primary
@@ -23,5 +24,10 @@ class Alias < ActiveRecord::Base
     person.name_regex(require_first)
   end
 
+  private
+
+  def trim_name_whitespace
+    self.name = self.name.strip unless self.name.nil?
+  end
 end
 

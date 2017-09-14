@@ -52,6 +52,14 @@ describe Entity, :tag_helper  do
         expect(build_entity(start_date: '').valid?).to be false
       end
     end
+
+    describe 'triming whitespace from name' do
+      it 'trims whitespace before vaidation' do
+        e = Entity.new(primary_ext: 'Person', name: ' jane smith  ')
+        expect(e.valid?).to be true
+        expect(e.name).to eql 'jane smith'
+      end
+    end
   end
 
   describe '#soft_delete' do
