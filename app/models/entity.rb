@@ -88,6 +88,7 @@ class Entity < ActiveRecord::Base
   validates :start_date, length: { maximum: 10 }, date: true
   validates :end_date, length: { maximum: 10 }, date: true
 
+  before_validation :trim_name_whitespace
   before_create :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext, :add_to_default_network
 
@@ -804,5 +805,9 @@ class Entity < ActiveRecord::Base
 
   def extension_with_fields?(name)
     self.class.all_extension_names_with_fields.include?(name)
+  end
+
+  def trim_name_whitespace
+    self.name = self.name.strip unless self.name.nil?
   end
 end

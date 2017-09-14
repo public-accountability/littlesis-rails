@@ -6,6 +6,12 @@ describe Alias, type: :model do
   it { should validate_presence_of(:name) }
   it { should validate_presence_of(:entity_id) }
 
+  it 'trim whitespace from name before validation' do
+    a = build(:alias, name: ' company name ', entity_id: rand(100))
+    expect(a.valid?).to be true
+    expect(a.name).to eq 'company name'
+  end
+
   describe '#make_primary' do
     it 'returns true if the element is already the primary alias' do
       expect(build(:alias, is_primary: true).make_primary).to be true
