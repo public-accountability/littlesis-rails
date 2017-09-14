@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Tagable do
+describe Tagable, type: :model do
 
   module Assocations
     def has_many(*args)
@@ -29,6 +29,7 @@ describe Tagable do
   let(:tags) { Array.new(3) { create(:tag) } }
   let(:tag_name) { tags.first.name }
   let(:tag_id) { tags.first.id }
+  let(:entity) { create(:entity_org) }
 
   before(:all) do
     Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
@@ -39,10 +40,10 @@ describe Tagable do
   end
 
   describe "the Tagable interface" do
-    let(:entity) { create(:org) }
+    before { entity.tag(tag_id) }
 
     it "responds to interface methods" do
-      Tagable::TAGABLE_CLASSES.each do |tagable_class|
+      Tagable.classes.each do |tagable_class|
         tagable = tagable_class.new
         expect(tagable).to respond_to(:tag)
         expect(tagable).to respond_to(:tags)
@@ -52,16 +53,52 @@ describe Tagable do
     end
 
     it "implements :tags correctly" do
-      entity.tag(tag_id)
-
       expect(entity.tags.length).to eq 1
       expect(entity.tags[0].name).to eq tag_name
     end
 
     it "implements :taggings correctly" do
-      entity.tag(tag_id)
       expect(entity.taggings.length).to eq 1
       expect(entity.taggings[0].tagable_id).to eq entity.id
+    end
+  end
+
+  describe "class methods" do
+
+    describe"on Tagable module itself" do
+
+      it "enumerates all Tagable classes" do
+        expect(Tagable.classes).to eq([Entity, List, Relationship])
+      end
+
+      it "enumerates all Tagable categories" do
+        expect(Tagable.categories).to eq(%i[entities lists relationships])
+      end
+
+      it "generates a class name from a category symbol" do
+        Tagable.categories.zip(Tagable.classes).each do |category, klass|
+          expect(Tagable.class_of(category)).to eq klass
+        end
+      end
+    end
+
+    describe "on tagable instances" do
+
+      it "does not expose Tagable class methods" do
+        expect(Entity).not_to respond_to(:classes)
+      end
+
+      it "provides pluralized symbol for tagable category" do
+        expect(Entity.category_sym).to eq(:entities)
+        expect(List.category_sym).to eq(:lists)
+        expect(Relationship.category_sym).to eq(:relationships)
+      end
+
+      it "provides pluralized string for tagable category" do
+        expect(Entity.category_str).to eq('entities')
+        expect(List.category_str).to eq('lists')
+        expect(Relationship.category_str).to eq('relationships')
+      end
     end
   end
 
@@ -227,12 +264,6 @@ describe Tagable do
       orgs.each{ |o| puts o.link_count }
 
       expect(sorted).to eq orgs.reverse
-    end
-  end
-
-  describe 'using tagable class names' do
-    it 'converts a class name to a page param symbol' do
-      expect(Tagable.page_param_of(Entity)).to eq :entity_page
     end
   end
 end

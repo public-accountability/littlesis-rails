@@ -1,27 +1,17 @@
 class Tag < ActiveRecord::Base
   has_many :taggings
 
+  # create associations for all tagable classes
+  # ie: tag#entities, tag#lists, tag#relationships, etc...
+  Tagable.classes.each do |klass|
+    has_many klass.category_sym, through: :taggings, source: :tagable, source_type: klass
+  end
+
   validates :name, uniqueness: true, presence: true
   validates :description, presence: true
 
-  DEFAULT_TAGGING_PAGES = Tagable::TAGABLE_CLASSES.reduce({}) do |acc, klass|
-    acc.merge(Tagable.page_param_of(klass).to_sym => 1)
-  end
-
   def restricted?
     restricted
-  end
-
-  # Tag (implicit) -> Hash[String -> ActiveRecord[Tagging]]
-  def taggings_grouped_by_class(params = DEFAULT_TAGGING_PAGES)
-    Tagable::TAGABLE_CLASSES.reduce({}) do |acc, tagable_class|
-      acc.merge(
-        tagable_class.to_s => taggings.includes(:tagable)
-                             .where(tagable_class: tagable_class)
-                             .order(updated_at: :desc)
-                             .page(params[Tagable.page_param_of(tagable_class)])
-      )
-    end
   end
 
   # (set, set) -> hash

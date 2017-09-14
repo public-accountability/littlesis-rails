@@ -1,21 +1,43 @@
 module Tagable
   extend ActiveSupport::Concern
 
+  # Class methods on Tagable
+
+  # () -> Array[ClassConstant]
+  def self.classes
+    @classes ||= [Entity, List, Relationship].freeze
+  end
+
+  # () -> Array[Symbol]
+  def self.categories
+    @categories ||= classes.map(&:category_sym).freeze
+  end
+
+  # str|sym -> ClassConstant
+  def self.class_of(category)
+    category.to_s.singularize.classify.constantize
+  end
+
+  # Instance methods on Tagable instances
+
   included do
     has_many :taggings, as: :tagable, foreign_type: :tagable_class
     has_many :tags, through: :taggings
   end
 
-  TAGABLE_CLASSES = [Entity, List, Relationship]
+  # Class methods on Tagable instances
 
-  # sorts a list of tagables in descending order of relationships to tagables w/ same tag
-  def self.sort_by_related_tagables(tagables)
-    tagables
+  class_methods do
+    def category_str
+      name.downcase.pluralize
+    end
+
+    def category_sym
+      category_str.to_sym
+    end
   end
 
-  def self.page_param_of(klass_name)
-    (klass_name.to_s.downcase + "_page").to_sym
-  end
+  # CRUD METHODS
 
   # [String|Int] -> Tagable
   def update_tags(ids)
@@ -32,6 +54,7 @@ module Tagable
     Tagging.find_or_create_by(tag_id:         parse_tag_id!(name_or_id),
                               tagable_class:  self.class.name,
                               tagable_id:     self.id)
+    self
   end
 
   def tag_without_callbacks(name_or_id)

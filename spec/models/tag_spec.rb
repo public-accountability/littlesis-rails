@@ -22,31 +22,15 @@ describe Tag do
       it { should validate_presence_of(:description) }
     end
 
+    describe "associations" do
+      Tagable.classes.each do |klass|
+        it { should have_many(klass.category_sym) }
+      end
+    end
+
     it 'can determine if a tag is restricted' do
       expect(tag.restricted?).to be false
       expect(restricted_tag.restricted?).to be true
-    end
-  end
-
-  describe "custom queries" do
-
-    let(:tag) { create(:tag) }
-    let(:entities) { Array.new(2) { create(:org) } }
-    let(:lists) { Array.new(2) { create(:list) } }
-    let(:relationships) do
-      Array.new(2) do
-        create(:generic_relationship, entity: entities.first, related: entities.second)
-      end
-    end
-    let(:tagables) { entities + lists + relationships }
-
-    before { tagables.map { |t| t.tag(tag.id) } }
-
-    it "queries tagables grouped by resource type" do
-      taggings = tag.taggings_grouped_by_class
-      expect(taggings['List'].map(&:tagable)).to eq lists
-      expect(taggings['Entity'].map(&:tagable)).to eq entities
-      expect(taggings['Relationship'].map(&:tagable)).to eq relationships
     end
   end
 

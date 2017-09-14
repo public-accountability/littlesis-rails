@@ -3,7 +3,9 @@ class TagsController < ApplicationController
   before_action -> { check_permission('admin') }, except: [:index, :show, :tag_request]
   before_action :set_tag, only: [:edit, :update, :destroy, :show]
   before_action :set_tags, only: [:index]
-  before_action :set_taggings_by_class, only: [:show]
+  before_action :set_tagables, only: [:show]
+
+  TAGABLE_PAGINATION_LIMIT = 20
 
   def index; end
 
@@ -36,6 +38,8 @@ class TagsController < ApplicationController
     redirect_to admin_tags_path, notice: 'The tag has been removed'
   end
 
+  # COMPLEX ACTIONS
+
   def tag_request
     if request.post?
       NotificationMailer.tag_request_email(current_user, params).deliver_later
@@ -49,15 +53,24 @@ class TagsController < ApplicationController
     params.require(:tag).permit(:name, :description, :restricted)
   end
 
+  def set_tagables
+    # TODO(ag|Thu 14 Sep 2017):
+    # consider using dynamic methods to create actions for each tagable class
+    # (corresponding to `tagable_category` string)
+    # instead of pulling `tagable_category` from params as here
+    @tagable_category = params[:tagable_category] || 'entities'
+    @tagables = @tag
+                .send(@tagable_category.to_sym)
+                .order(updated_at: :desc)
+                .page(params[:page])
+                .per(TAGABLE_PAGINATION_LIMIT)
+  end
+
   def set_tag
     @tag = Tag.find(params[:id])
   end
 
   def set_tags
     @tags = Tag.all.order(:name)
-  end
-
-  def set_taggings_by_class
-    @taggings_by_class = @tag.taggings_grouped_by_class(params)
   end
 end
