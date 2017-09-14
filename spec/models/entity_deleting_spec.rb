@@ -44,7 +44,7 @@ describe 'Deleting an Entity', type: :model do
       end
 
       it 'raises error if entity is not deleted' do
-        expect { build(:entity_org, is_deleted: false).restore! }.to raise_error(StandardError)
+        expect { build(:entity_org, is_deleted: false).restore! }.to raise_error(Exceptions::CannotRestoreError)
         # expect { create(:entity_org, is_deleted: true).restore! }.not_to raise_error
       end
 

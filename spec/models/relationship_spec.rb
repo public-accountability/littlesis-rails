@@ -587,15 +587,22 @@ describe Relationship, type: :model do
     end
   end
 
-  context 'Using paper_trail for versioning' do
+  describe 'restore!' do
     with_versioning do
-      before do
-        @human = create(:person)
-        @corp = create(:corp)
+      it 'raises error if called on a model that is not deleted' do
+        expect { build(:relationship, is_deleted: false).restore! }.to raise_error(Exceptions::CannotRestoreError)
       end
+    end
+  end
 
+
+  context 'Using paper_trail for versioning' do
+    let(:human) { create(:entity_person) }
+    let(:corp) { create(:entity_org) }
+
+    with_versioning do
       it 'records created, modified, and deleted versions' do
-        rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
+        rel = Relationship.create!(entity1_id: human.id, entity2_id: corp.id, category_id: 12)
         expect(rel.versions.size).to eq(1)
         rel.description1 = "important connection"
         rel.save
@@ -607,10 +614,10 @@ describe Relationship, type: :model do
       end
 
       it 'saves entity1 and entity2 metadata' do
-        rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
+        rel = Relationship.create!(entity1_id: human.id, entity2_id: corp.id, category_id: 12)
         rel.update(description1: 'x')
-        expect(rel.versions.last.entity1_id).to eq @human.id
-        expect(rel.versions.last.entity2_id).to eq @corp.id
+        expect(rel.versions.last.entity1_id).to eq human.id
+        expect(rel.versions.last.entity2_id).to eq corp.id
       end
     end
   end

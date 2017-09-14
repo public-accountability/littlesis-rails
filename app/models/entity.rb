@@ -736,7 +736,7 @@ class Entity < ActiveRecord::Base
 
   # Restores (un-deletes) an entity
   def restore!
-    raise "Cannot restore an entity unles the entity has been deleted" unless is_deleted
+    raise Exceptions::CannotRestoreError unless is_deleted
     association_data = retrive_deleted_association_data
 
     # TODO: when associaiton_data is nil
