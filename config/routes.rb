@@ -278,7 +278,10 @@ Lilsis::Application.routes.draw do
   post '/tags/request' => 'tags#tag_request'
   resources :tags, only: [:edit, :create, :update, :destroy, :show, :index] do
     member do
-      get '/:tagable_category' => 'tags#show', constraints: { tagable_category: /entities|lists|relationships/ }
+      get '/:tagable_category' => 'tags#show',
+          constraints: {
+            tagable_category: /#{Tagable.categories.join('|')}/
+          }
     end
   end
 

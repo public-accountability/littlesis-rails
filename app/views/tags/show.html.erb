@@ -19,7 +19,7 @@
 
   <div id="tag-nav">
     <ul class="nav nav-tabs">
-      <% Tagable::TAGABLE_CLASSES.each do |tc|  %>
+      <% Tagable.classes.each do |tc|  %>
         <li role="presentation"
             id="tag-nav-tab-<%= tc.category_str%>"
             class=<%= tc == Tagable.class_of(@tagable_category) ? "active" : "inactive" %>
@@ -61,7 +61,7 @@
         </div>
 
       <% end #if !tagables.empty %>
-    </div> 
+    </div>
 
   <%# end # tagables_grouped_by_class.map%>
 

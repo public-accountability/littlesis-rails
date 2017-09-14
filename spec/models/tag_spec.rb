@@ -23,7 +23,7 @@ describe Tag do
     end
 
     describe "associations" do
-      Tagable::TAGABLE_CLASSES.each do |klass|
+      Tagable.classes.each do |klass|
         it { should have_many(klass.category_sym) }
       end
     end

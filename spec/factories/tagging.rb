@@ -5,7 +5,7 @@ FactoryGirl.define do
     sequence(:tag_id)
     sequence(:tagable_id)
     sequence(:tagable_class) do |n|
-      Tagable::TAGABLE_CLASSES[n % Tagable::TAGABLE_CLASSES.size]
+      Tagable.classes[n % Tagable.classes.size]
     end
   end
   factory :open_tagging, class: Tagging  do

@@ -3,7 +3,7 @@ class Tag < ActiveRecord::Base
   has_many :tagables, through: :taggings, source: :tagable, source_type: Tagable
 
   # creates polymorphic joins for all tagable classes
-  Tagable::TAGABLE_CLASSES.each do |klass|
+  Tagable.classes.each do |klass|
     has_many klass.category_sym, through: :taggings, source: :tagable, source_type: klass
   end
 

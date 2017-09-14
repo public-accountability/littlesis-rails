@@ -16,6 +16,16 @@ module Tagable
     end
   end
 
+  # () -> Array[ClassConstant]
+  def self.classes
+    @classes ||= [Entity, List, Relationship].freeze
+  end
+
+  # () -> Array[Symbol]
+  def self.categories
+    @categories ||= classes.map(&:category_sym).freeze
+  end
+
   # str|sym -> ClassConstant
   def self.class_of(category)
     category.to_s.singularize.classify.constantize

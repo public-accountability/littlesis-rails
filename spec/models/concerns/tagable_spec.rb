@@ -43,7 +43,7 @@ describe Tagable, type: :model do
     before { entity.tag(tag_id) }
 
     it "responds to interface methods" do
-      Tagable::TAGABLE_CLASSES.each do |tagable_class|
+      Tagable.classes.each do |tagable_class|
         tagable = tagable_class.new
         expect(tagable).to respond_to(:tag)
         expect(tagable).to respond_to(:tags)
@@ -65,22 +65,40 @@ describe Tagable, type: :model do
 
   describe "class methods" do
 
-    it "provides pluralized symbol for tagable category" do
-      expect(Entity.category_sym).to eq(:entities)
-      expect(List.category_sym).to eq(:lists)
-      expect(Relationship.category_sym).to eq(:relationships)
+    describe"on Tagable module itself" do
+
+      it "enumerates all Tagable classes" do
+        expect(Tagable.classes).to eq([Entity, List, Relationship])
+      end
+
+      it "enumerates all Tagable categories" do
+        expect(Tagable.categories).to eq(%i[entities lists relationships])
+      end
+
+      it "generates a class name from a category symbol" do
+        Tagable.categories.zip(Tagable.classes).each do |category, klass|
+          expect(Tagable.class_of(category)).to eq klass
+        end
+      end
     end
 
-    it "provides pluralized string for tagable category" do
-      expect(Entity.category_str).to eq('entities')
-      expect(List.category_str).to eq('lists')
-      expect(Relationship.category_str).to eq('relationships')
-    end
+    describe "on tagable instances" do
 
-    it "generates a class name from a category symbol" do
-      expect(Tagable.class_of(:entities)).to eq Entity
-      expect(Tagable.class_of(:lists)).to eq List
-      expect(Tagable.class_of(:relationships)).to eq Relationship
+      it "does not expose Tagable class methods" do
+        expect(Entity).not_to respond_to(:classes)
+      end
+
+      it "provides pluralized symbol for tagable category" do
+        expect(Entity.category_sym).to eq(:entities)
+        expect(List.category_sym).to eq(:lists)
+        expect(Relationship.category_sym).to eq(:relationships)
+      end
+
+      it "provides pluralized string for tagable category" do
+        expect(Entity.category_str).to eq('entities')
+        expect(List.category_str).to eq('lists')
+        expect(Relationship.category_str).to eq('relationships')
+      end
     end
   end
 

@@ -7,7 +7,16 @@ describe TagsController, type: :controller do
   it { should route(:post, '/tags').to(action: :create) }
   it { should route(:put, '/tags/456').to(action: :update, id: 456) }
   it { should route(:delete, '/tags/456').to(action: :destroy, id: 456) }
-  it { should route(:get, '/tags/456/entities').to(action: :show, id: 456, tagable_category: 'entities') }
   it { should route(:get, '/tags/request').to(action: :tag_request) }
   it { should route(:post, '/tags/request').to(action: :tag_request) }
+  Tagable.categories.each do |tagable_category|
+    it do
+      should(route(:get, "/tags/456/#{tagable_category}")
+              .to(action: :show, id: 456, tagable_category: tagable_category))
+    end
+  end
+  it do
+    should(route(:get, "tags/456/not_a_tagable_category")
+            .to(controller: :errors, action: :not_found, path: "tags/456/not_a_tagable_category"))
+  end
 end

@@ -97,7 +97,7 @@ describe 'Tags', type: :feature do
       end
     end
 
-    Tagable::TAGABLE_CLASSES.map(&:category_str).each do |tagable_category|
+    Tagable.classes.map(&:category_str).each do |tagable_category|
 
       context "on #{tagable_category} tab" do
 
