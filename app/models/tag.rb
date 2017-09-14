@@ -1,8 +1,8 @@
 class Tag < ActiveRecord::Base
   has_many :taggings
-  has_many :tagables, through: :taggings, source: :tagable, source_type: Tagable
 
-  # creates polymorphic joins for all tagable classes
+  # create associations for all tagable classes
+  # ie: tag#entities, tag#lists, tag#relationships, etc...
   Tagable.classes.each do |klass|
     has_many klass.category_sym, through: :taggings, source: :tagable, source_type: klass
   end

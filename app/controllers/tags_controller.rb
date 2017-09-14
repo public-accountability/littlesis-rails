@@ -38,11 +38,6 @@ class TagsController < ApplicationController
     redirect_to admin_tags_path, notice: 'The tag has been removed'
   end
 
-  def entities
-    set_tag
-    render 'show'
-  end
-
   # COMPLEX ACTIONS
 
   def tag_request

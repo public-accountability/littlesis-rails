@@ -1,20 +1,7 @@
 module Tagable
   extend ActiveSupport::Concern
 
-  included do
-    has_many :taggings, as: :tagable, foreign_type: :tagable_class
-    has_many :tags, through: :taggings
-  end
-
-  class_methods do
-    def category_str
-      name.downcase.pluralize
-    end
-
-    def category_sym
-      category_str.to_sym
-    end
-  end
+  # Class methods on Tagable
 
   # () -> Array[ClassConstant]
   def self.classes
@@ -31,8 +18,24 @@ module Tagable
     category.to_s.singularize.classify.constantize
   end
 
-  # NOTE(@aguestuser): this constant *cannot* go before `included` and `class_methods` blocks
-  TAGABLE_CLASSES = [Entity, List, Relationship]
+  # Instance methods on Tagable instances
+
+  included do
+    has_many :taggings, as: :tagable, foreign_type: :tagable_class
+    has_many :tags, through: :taggings
+  end
+
+  # Class methods on Tagable instances
+
+  class_methods do
+    def category_str
+      name.downcase.pluralize
+    end
+
+    def category_sym
+      category_str.to_sym
+    end
+  end
 
   # CRUD METHODS
 
