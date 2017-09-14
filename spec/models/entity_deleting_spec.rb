@@ -104,8 +104,19 @@ describe 'Deleting an Entity', type: :model do
         expect { business_academic.soft_delete }
           .to change { Relationship.unscoped.find(rel.id).is_deleted }.to(true)
 
-        expect { business_academic.restore! }
+        expect { business_academic.restore!(true) }
           .to change { Relationship.unscoped.find(rel.id).is_deleted }.to(false)
+      end
+
+      it "does not restore the entity's relationships" do
+        business_academic
+        rel = Relationship.create!(entity: entity, related: business_academic, category_id: Relationship::GENERIC_CATEGORY)
+
+        expect { business_academic.soft_delete }
+          .to change { Relationship.unscoped.find(rel.id).is_deleted }.to(true)
+
+        expect { business_academic.restore! }
+          .not_to change { Relationship.unscoped.find(rel.id).is_deleted }
       end
 
       it "raises error if missing association data" do

@@ -737,7 +737,7 @@ class Entity < ActiveRecord::Base
   # un-deletes an entity
   # Essentially this just reverts
   # what happens in #after_soft_delete
-  def restore!
+  def restore!(restore_relationships = false)
     raise Exceptions::CannotRestoreError unless is_deleted
     association_data = retrieve_deleted_association_data
     raise Exceptions::MissingEntityAssociationDataError if association_data.nil?
@@ -754,8 +754,10 @@ class Entity < ActiveRecord::Base
 
     update(is_deleted: false)
 
-    association_data['relationship_ids'].each do |rel_id|
-      Relationship.unscoped.find(rel_id).restore!
+    if restore_relationships
+      association_data['relationship_ids'].each do |rel_id|
+        Relationship.unscoped.find(rel_id).restore!
+      end
     end
   end
 
