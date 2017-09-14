@@ -88,7 +88,6 @@ describe Tagable do
   end
 
   describe 'adding tags' do
-
     it "can be tagged with an existing tag's id" do
       expect { test_tagable.tag(tag_id) }.to change { Tagging.count }.by(1)
     end
@@ -103,6 +102,26 @@ describe Tagable do
       expect { test_tagable.tag(1_000_000) }.to raise_error(not_found)
     end
   end
+
+  describe "adding tags without running tagging's callbacks" do
+
+    it 'skips Tagging callback and then re-enables it' do
+      tagable = test_tagable
+      expect(Tagging).to receive(:skip_callback).with(:save, :after, :update_tagable_timestamp).once
+      expect(Tagging).to receive(:set_callback).with(:save, :after, :update_tagable_timestamp).once
+      expect(tagable).to receive(:tag).with('tagname')
+      tagable.tag_without_callbacks('tagname')
+    end
+
+    it 're-enables callbacks even if the tag raises an error' do
+      tagable = test_tagable
+      expect(Tagging).to receive(:skip_callback).with(:save, :after, :update_tagable_timestamp).once
+      expect(Tagging).to receive(:set_callback).with(:save, :after, :update_tagable_timestamp).once
+      expect(tagable).to receive(:tag).with('tagname').and_raise(ActiveRecord::RecordNotFound)
+      expect { tagable.tag_without_callbacks('tagname') }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
 
   describe 'removing a tag' do
     it 'removes a tag via active record' do

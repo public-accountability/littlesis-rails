@@ -34,6 +34,13 @@ module Tagable
                               tagable_id:     self.id)
   end
 
+  def tag_without_callbacks(name_or_id)
+    Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
+    tag(name_or_id)
+  ensure
+    Tagging.set_callback(:save, :after, :update_tagable_timestamp)
+  end
+
   def remove_tag(name_or_id)
     taggings
       .find_by_tag_id(parse_tag_id!(name_or_id))
