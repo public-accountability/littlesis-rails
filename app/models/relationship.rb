@@ -505,14 +505,11 @@ class Relationship < ActiveRecord::Base
     "#{entity.name} #{description_sentence[0]} #{related.name} #{description_sentence[1]}"
   end
 
-  def restore!(skip_entity_check = nil)
+  def restore!
     raise Exceptions::CannotRestoreError unless is_deleted
-
-    # return nil if (entity1_id !== skip_entity_check) && entity.nil?
-    # return nil if (entity2_id !== skip_entity_check) && related.empty?
-    
-    # run_callbacks :create
-    # update_entity_links
+    return nil if entity.nil? || related.nil? || entity.is_deleted || related.is_deleted
+    run_callbacks :create
+    update(is_deleted: false)
   end
 
   private

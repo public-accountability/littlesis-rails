@@ -45,7 +45,6 @@ describe 'Deleting an Entity', type: :model do
 
       it 'raises error if entity is not deleted' do
         expect { build(:entity_org, is_deleted: false).restore! }.to raise_error(Exceptions::CannotRestoreError)
-        # expect { create(:entity_org, is_deleted: true).restore! }.not_to raise_error
       end
 
       it 'reverts is_deleted state' do
@@ -98,9 +97,22 @@ describe 'Deleting an Entity', type: :model do
         expect { business_academic.restore! }.to change  { Tagging.count }.by(2)
       end
 
-      context 'entity relationships' do
-        it 'un-deletes relationships if the other entity in the relationship has not been deleted'
-        it 'restores relationship links'
+      it "restores the entity's relationships" do
+        business_academic
+        rel = Relationship.create!(entity: entity, related: business_academic, category_id: Relationship::GENERIC_CATEGORY)
+
+        expect { business_academic.soft_delete }
+          .to change { Relationship.unscoped.find(rel.id).is_deleted }.to(true)
+
+        expect { business_academic.restore! }
+          .to change { Relationship.unscoped.find(rel.id).is_deleted }.to(false)
+      end
+
+      it "raises error if missing association data" do
+        business_academic.soft_delete
+        business_academic.versions.last.update_column(:association_data, nil)
+        expect { business_academic.restore! }
+          .to raise_error(Exceptions::MissingEntityAssociationDataError)
       end
     end
   end
