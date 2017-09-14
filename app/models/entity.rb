@@ -734,13 +734,28 @@ class Entity < ActiveRecord::Base
     }
   end
 
+  # Restores (un-deletes) an entity
   def restore!
     raise "Cannot restore an entity unles the entity has been deleted" unless is_deleted
-    association_data = YAML.load(versions.last.association_data)
-    create_primary_ext
-    add_extensions_by_def_ids(association_data['extension_ids'])
+    association_data = retrive_deleted_association_data
 
-    update_attribute(:is_deleted, false)
+    # TODO: when associaiton_data is nil
+
+    create_primary_ext
+    create_primary_alias
+    add_extensions_by_def_ids(association_data['extension_ids'])
+    association_data['aliases'].each do |name|
+      aliases.create(name: name, is_primary: false, last_user_id: Lilsis::Application.config.system_user_id)
+    end
+
+    association_data['tags'].each { |tag_name| tag_without_callbacks(tag_name) }
+    Image.unscoped.where(entity_id: self.id).update_all(is_deleted: false)
+
+    update(is_deleted: false)
+
+    # association_data['relationship_ids'].each do |rel_id|
+    #   Relationship.unscoped.find(rel_id).restore!
+    # end
   end
 
   def description
@@ -748,6 +763,12 @@ class Entity < ActiveRecord::Base
   end
 
   private
+
+  def retrive_deleted_association_data
+    data = versions.where(event: 'soft_delete').last.association_data
+    return nil if data.nil?
+    YAML.load(data)
+  end
 
   # Callbacks for Soft Delete
   def after_soft_delete
