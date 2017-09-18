@@ -2,9 +2,7 @@ require 'rails_helper'
 
 describe Tag do
 
-  let(:tags) { Array.new(3) { create(:tag)}}
-  let(:tag) { build(:tag) }
-  let(:restricted_tag) { build(:tag, restricted: true) }
+  let(:tags) { Array.new(3) { create(:tag) } }
 
   it { should have_db_column(:restricted) }
   it { should have_db_column(:name) }
@@ -12,6 +10,7 @@ describe Tag do
   it { should have_many(:taggings) }
 
   describe 'validations' do
+    let(:tag) { build(:tag) }
     subject { tag }
 
     describe 'validations' do
@@ -27,10 +26,38 @@ describe Tag do
         it { should have_many(klass.category_sym) }
       end
     end
+  end
+
+  describe "Instance methods" do
+    let(:tag) { create(:tag) }
+    let(:restricted_tag) { build(:tag, restricted: true) }
 
     it 'can determine if a tag is restricted' do
       expect(tag.restricted?).to be false
       expect(restricted_tag.restricted?).to be true
+    end
+
+    describe "custom queries" do
+      let(:orgs) { Array.new(4) { |n| create(:entity_org, name: "org#{n}") } }
+
+      before do
+        relate = ->(x, ys) { ys.each { |y| create(:generic_relationship, entity: x, related: y) } }
+        orgs.each { |x| x.tag(tag.id) }
+        # orgs[3]: 3 relationships, orgs[1] & orgs[2]: 2 relationships, orgs[0]: 1 relationship
+        relate.call(orgs[3], orgs[0,3])
+        relate.call(orgs[1], [orgs[2]])
+        # orgs[0] has 2 relationships to person, which won't count for sorting, b/c person is not tagg
+        relate.call(orgs[0], Array.new(3) { create(:entity_person) })
+      end
+
+      it 'retrieves entities sorted by relationships to similarly-tagged entities' do
+        expect(tag.tagables_for_homepage).to eq([
+                                                  [orgs[3].id, 3],
+                                                  [orgs[2].id, 2],
+                                                  [orgs[1].id, 2],
+                                                  [orgs[0].id, 1]
+                                                ])
+      end
     end
   end
 

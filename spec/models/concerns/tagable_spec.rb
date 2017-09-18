@@ -243,27 +243,4 @@ describe Tagable, type: :model do
       verify_permissions(owner, [full_access] * 3)
     end
   end
-
-  describe 'sorting' do
-
-    let(:orgs) { Array.new(3) { |n| create(:org, name: "org#{n}") } }
-    let(:person) { create(:person) }
-
-    before do
-      relate = ->(x, ys) { ys.each { |y| create(:generic_relationship, entity: x, related: y) } }
-      # orgs are all tagged with `tag-name-1`
-      orgs.each { |x| x.tag(tags.first.id) }
-      # orgs[2] has 2 relationships, orgs[1] has 1, orgs[0] has 0
-      orgs.reverse.each_with_index { |org, i| relate.call(org, orgs[0..i - 1]) }
-      # orgs[0] has 2 relationships to person, which won't count for sorting, b/c person is not tagged
-      relate.call(orgs[0], [person, person])
-    end
-
-    xit 'sorts a list of tagables in descending order of relationships to tagables with same tag' do
-      sorted = Tagable.sort_by_related_tagables(orgs)
-      orgs.each{ |o| puts o.link_count }
-
-      expect(sorted).to eq orgs.reverse
-    end
-  end
 end

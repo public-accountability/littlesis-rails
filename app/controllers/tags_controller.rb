@@ -5,7 +5,6 @@ class TagsController < ApplicationController
   before_action :set_tags, only: [:index]
   before_action :set_tagables, only: [:show]
 
-  TAGABLE_PAGINATION_LIMIT = 20
 
   def index; end
 
@@ -54,16 +53,12 @@ class TagsController < ApplicationController
   end
 
   def set_tagables
-    # TODO(ag|Thu 14 Sep 2017):
-    # consider using dynamic methods to create actions for each tagable class
-    # (corresponding to `tagable_category` string)
-    # instead of pulling `tagable_category` from params as here
     @tagable_category = params[:tagable_category] || 'entities'
     @tagables = @tag
                 .send(@tagable_category.to_sym)
                 .order(updated_at: :desc)
                 .page(params[:page])
-                .per(TAGABLE_PAGINATION_LIMIT)
+                .per(Tag::TAGABLE_PAGINATION_LIMIT)
   end
 
   def set_tag
