@@ -16,4 +16,9 @@ module TagsHelper
       content_tag(:span, nil, id: 'tags-edit-button', class: 'tags-edit-glyph')
     end
   end
+
+  def tagable_list_sort_info(tagable, tag)
+    return "#{tagable.related_tagged_entities} #{tag.name} relationships" if tagable.is_a? Entity
+    "edited #{time_ago_in_words(tagable.updated_at)} ago"
+  end
 end

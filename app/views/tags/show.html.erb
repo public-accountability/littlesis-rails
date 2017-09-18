@@ -29,40 +29,36 @@
       <% end %>
     </ul>
   </div>
-
-  <%# @taggings_by_class.each do |tagable_class, taggings|  %>
   
-    <div id="tagable-list">
+  <div id="tagable-list">
 
-      <% if @tagables.empty? %>
+    <% if @tagables.empty? %>
 
-        <div class="tagable-list-empty-message">
-          <%= "There are no #{@tagable_category} tagged \"#{@tag.name}\"" %>
-        </div>
+      <div class="tagable-list-empty-message">
+        <%= "There are no #{@tagable_category} tagged \"#{@tag.name}\"" %>
+      </div>
 
-      <% else %>
+    <% else %>
 
-        <ul class="tagable-list-items">
-          <% @tagables.each_with_index do |tagable, i| %>
-            <div class="tagable-list-item">
-              <%= link_to tagable.name, tagable, class: "tagable-list-item-name"%>
-              <%= content_tag :div,
-                              "edited #{time_ago_in_words(tagable.updated_at)} ago",
-                              class: "tagable-list-item-date"%>
-              <%= content_tag :div,
-                              truncate(tagable.description, length: 90),
-                              class: "tagable-list-item-description"%>
-            </div>
-          <% end #tagables.each %>
-        </ul>
+      <ul class="tagable-list-items">
+        <% @tagables.each_with_index do |tagable, i| %>
+          <div class="tagable-list-item">
+            <%= link_to tagable.name, tagable, class: "tagable-list-item-name"%>
+            <%= content_tag :div,
+                tagable_list_sort_info(tagable, @tag),
+                class: "tagable-list-item-sort-info" %>
+            <%= content_tag :div,
+            truncate(tagable.description, length: 90),
+            class: "tagable-list-item-description"%>
+          </div>
+        <% end #tagables.each %>
+      </ul>
 
-        <div class="tagable-list-pagination">
-          <%= paginate @tagables %>
-        </div>
+      <div class="tagable-list-pagination">
+        <%= paginate @tagables %>
+      </div>
 
-      <% end #if !tagables.empty %>
-    </div>
-
-  <%# end # tagables_grouped_by_class.map%>
+    <% end #if !tagables.empty %>
+  </div>
 
   <div class=".tag-show-container">

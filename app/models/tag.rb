@@ -61,6 +61,14 @@ class Tag < ActiveRecord::Base
   end
 
   def entities_for_homepage(page = 1)
+    Kaminari
+      .paginate_array(entities_with_tagged_relationship_counts, total_count: entities.count)
+      .page(page)
+      .per(TAGABLE_PAGINATION_LIMIT)
+  end
+
+  def entities_with_tagged_relationship_counts(page = 1)
+    raise ArgumentError unless page.is_a? Integer
     # we join on *both* entity1_id and entity2_id and filter out rows w/o both ids so that
     # our result set will only include taggings in which both elements in a relationship are tagged
     sql = <<-SQL
@@ -72,6 +80,8 @@ class Tag < ActiveRecord::Base
          WHERE e1t.id is not null AND e2t.id is not null
          GROUP BY entity1_id
          ORDER BY related_tagged_entities desc
+         LIMIT #{TAGABLE_PAGINATION_LIMIT}
+         OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT}
      ) as entity_counts
      INNER JOIN entity on entity_counts.entity1_id = entity.id
     SQL
