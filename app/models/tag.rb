@@ -48,19 +48,34 @@ class Tag < ActiveRecord::Base
     restricted
   end
 
-  def tagables_for_homepage(params = {})
+  def tagables_for_homepage(tagable_category, page = 1)
+    return entities_for_homepage(page) if tagable_category == Entity.category_str
+    default_tagables_for_homepage(tagable_category, page)
+  end
+
+  def default_tagables_for_homepage(tagable_category, page = 1)
+    public_send(tagable_category.to_sym)
+      .order(updated_at: :desc)
+      .page(page)
+      .per(TAGABLE_PAGINATION_LIMIT)
+  end
+
+  def entities_for_homepage(page = 1)
     # we join on *both* entity1_id and entity2_id and filter out rows w/o both ids so that
     # our result set will only include taggings in which both elements in a relationship are tagged
     sql = <<-SQL
-      SELECT entity1_id, count(*) as related_tagged_entities
-      FROM link
-      LEFT JOIN taggings as e1t on e1t.tagable_id = link.entity1_id AND e1t.tagable_class = 'Entity' AND e1t.tag_id = #{id}
-      LEFT JOIN taggings as e2t on e2t.tagable_id = link.entity2_id AND e2t.tagable_class = 'Entity' AND e2t.tag_id = #{id}
-      WHERE e1t.id is not null AND e2t.id is not null
-      GROUP BY entity1_id
-      ORDER BY related_tagged_entities desc
+      SELECT * FROM (
+         SELECT entity1_id, count(*) as related_tagged_entities
+         FROM link
+         LEFT JOIN taggings as e1t on e1t.tagable_id = link.entity1_id AND e1t.tagable_class = 'Entity' AND e1t.tag_id = #{id}
+         LEFT JOIN taggings as e2t on e2t.tagable_id = link.entity2_id AND e2t.tagable_class = 'Entity' AND e2t.tag_id = #{id}
+         WHERE e1t.id is not null AND e2t.id is not null
+         GROUP BY entity1_id
+         ORDER BY related_tagged_entities desc
+     ) as entity_counts
+     INNER JOIN entity on entity_counts.entity1_id = entity.id
     SQL
 
-    ActiveRecord::Base.connection.execute(sql).to_a
+    Entity.find_by_sql(sql)
   end
 end

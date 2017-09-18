@@ -37,26 +37,52 @@ describe Tag do
       expect(restricted_tag.restricted?).to be true
     end
 
-    describe "custom queries" do
+    describe "querying tagables for tag homepage" do
       let(:orgs) { Array.new(4) { |n| create(:entity_org, name: "org#{n}") } }
 
-      before do
-        relate = ->(x, ys) { ys.each { |y| create(:generic_relationship, entity: x, related: y) } }
-        orgs.each { |x| x.tag(tag.id) }
-        # orgs[3]: 3 relationships, orgs[1] & orgs[2]: 2 relationships, orgs[0]: 1 relationship
-        relate.call(orgs[3], orgs[0,3])
-        relate.call(orgs[1], [orgs[2]])
-        # orgs[0] has 2 relationships to person, which won't count for sorting, b/c person is not tagg
-        relate.call(orgs[0], Array.new(3) { create(:entity_person) })
+      context "entities" do
+        before do
+          relate = ->(x, ys) { ys.each { |y| create(:generic_relationship, entity: x, related: y) } }
+          orgs.each { |x| x.tag(tag.id) }
+          # orgs[3]: 3 relationships, orgs[1] & orgs[2]: 2 relationships, orgs[0]: 1 relationship
+          relate.call(orgs[3], orgs[0, 3])
+          relate.call(orgs[1], [orgs[2]])
+
+          # orgs[0] has 3 relationships to person, which won't affect sort, b/c person not tagged
+          relate.call(orgs[0], Array.new(3) { create(:entity_person) })
+        end
+
+        it 'retrieves entities sorted by relationships to similarly-tagged entities' do
+          sorted_entities = tag.tagables_for_homepage(Entity.category_str)
+          fields = sorted_entities.map { |e| [e.id, e.related_tagged_entities] }
+
+          expect(fields[0]).to eql [orgs[3].id, 3]
+          # sorting of 2nd & 3rd elements are indeterminate & interchangable
+          expect(Set.new(fields[1, 2])).to eql Set.new([[orgs[1].id, 2], [orgs[2].id, 2]])
+          expect(fields[3]).to eql [orgs[0].id, 1]
+        end
       end
 
-      it 'retrieves entities sorted by relationships to similarly-tagged entities' do
-        expect(tag.tagables_for_homepage).to eq([
-                                                  [orgs[3].id, 3],
-                                                  [orgs[2].id, 2],
-                                                  [orgs[1].id, 2],
-                                                  [orgs[0].id, 1]
-                                                ])
+      context 'all other tagables' do
+        %w[lists relationships].each do |tagable_cat|
+          it "dispatches to default search method for tagbles: #{tagable_cat}" do
+            expect(tag).to receive(:default_tagables_for_homepage).with(tagable_cat, 1).once
+            tag.tagables_for_homepage(tagable_cat)
+          end
+        end
+      end
+
+      context "relationships" do
+        let(:lists) { [create(:list), create(:list)] }
+        before do
+          lists.each { |l| l.tag(tag.id) }
+          lists[0].update_column(:updated_at, 1.day.ago)
+        end
+
+        it "retrieves lists sorted by last date modified" do
+          sorted_lists = tag.tagables_for_homepage(List.category_str)
+          expect(sorted_lists).to eq lists.reverse
+        end
       end
     end
   end

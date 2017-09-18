@@ -54,11 +54,8 @@ class TagsController < ApplicationController
 
   def set_tagables
     @tagable_category = params[:tagable_category] || 'entities'
-    @tagables = @tag
-                .send(@tagable_category.to_sym)
-                .order(updated_at: :desc)
-                .page(params[:page])
-                .per(Tag::TAGABLE_PAGINATION_LIMIT)
+    page = params[:page] || 1
+    @tagables = @tag.tagables_for_homepage(@tagable_category, page)
   end
 
   def set_tag
