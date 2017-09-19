@@ -8,7 +8,7 @@ describe 'Tags', type: :feature do
   # setup helpers
 
   def n_entities (n)
-    Array.new(n) { create(:org) }
+    Array.new(n) { create(:entity_org) }
   end
 
   def n_lists (n)
@@ -24,7 +24,7 @@ describe 'Tags', type: :feature do
   end
 
   def n_tagables(n, tagable_category)
-    self.send("n_#{tagable_category}".to_sym, n)
+    send("n_#{tagable_category}".to_sym, n)
   end
 
   describe "tag index" do
@@ -111,17 +111,12 @@ describe 'Tags', type: :feature do
         end
 
         context "less than 20 tagged #{tagable_category}" do
-          let(:tagables){ n_tagables(2, tagable_category) }
+          let(:tagables) do
+            n_tagables(2, tagable_category).map { |t| t.tag(tag.id) }
+          end
 
           before do
-            tagables.each_with_index do |tagable, i|
-              # set dates for each collection in chronological order
-              # so that we will expect view to sort them in reverse
-              offset = (4 / (i + 1)).days
-              tagable
-                .tag(tag.id)
-                .update_columns(updated_at: Time.now - offset)
-            end
+            tagables
             visit "/tags/#{tag.id}/#{tagable_category}"
           end
 
@@ -135,34 +130,24 @@ describe 'Tags', type: :feature do
               .to have_selector '.tagable-list-item', count: 2
           end
 
-          it "renders the name of each entity as a link" do
+          it "renders the name of each #{tagable_category.singularize} as a link" do
             page.all("#tagable-list .tagable-list-item").each_with_index do |item, i|
-              tagable = tagables.reverse[i] # b/c sorting by update reversed order
-              link = item.find('a.tagable-list-item-name')
-
-              expect(link).to have_text(tagable.name)
-              expect(link[:href]).to include(tagable.id.to_s)
+              expect(item).to have_link :class => 'tagable-list-item-name'
             end
           end
 
-          it "shows a description of each entity" do
+          it "shows a description of each #{tagable_category.singularize}" do
             page.all("#tagable-list .tagable-list-item").each_with_index do |item, i|
               tagable = tagables.reverse[i] # b/c sorting by update reversed order
               expect(item.find(".tagable-list-item-description")).to have_text(tagable.description)
             end
           end
 
-          it "displays last updated date for each entity" do
+          it "displays last updated date for each #{tagable_category.singularize}" do
             page.all("#tagable-list .tagable-list-item").each do |item|
-              expect(item.find(".tagable-list-item-date")).to have_text("ago")
+              sort_text = tagable_category == 'entities' ? 'relationships' : 'ago'
+              expect(item.find(".tagable-list-item-sort-info")).to have_text sort_text
             end
-          end
-
-          it "sorts the entity list in reverse chronological order of last update" do
-            list_items = page.all("#tagable-list .tagable-list-item")
-            dates = list_items.map{ |x| x.find(".tagable-list-item-date") }
-            expect(dates.first).to have_text "2 days ago"
-            expect(dates.second).to have_text "4 days ago"
           end
         end
 
