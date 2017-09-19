@@ -72,9 +72,13 @@ class Tag < ActiveRecord::Base
 
     entity_counts_sql = <<-SQL
       SELECT tagged_entity_links.tagable_id,
+
+              # only count record in doubly-joined table if both entities in a link have correct tag
               SUM( case when tagged_entity_links.entity1_id is null then 0
        	         	when taggings.id is null then 0
 	                else 1 end ) as num_related
+
+       # join all of a tag's entities all of each entity's links
        FROM (
 	    SELECT taggings.tagable_id, link.*
 	    FROM taggings
@@ -82,12 +86,16 @@ class Tag < ActiveRecord::Base
 	    WHERE taggings.tag_id = #{id} AND taggings.tagable_class = 'Entity'
        ) AS tagged_entity_links
 
+       # join to find out if linked-to entities are also tagged with our tag
        LEFT JOIN taggings
             ON tagged_entity_links.entity2_id = taggings.tagable_id
      	       AND taggings.tag_id = #{id}
 	       AND taggings.tagable_class = 'Entity'
 
+       # cull record set to unique list of tagged entities with relationship counts
        GROUP BY tagged_entity_links.tagable_id
+
+       # sort and paginate
        ORDER BY num_related desc
        LIMIT #{TAGABLE_PAGINATION_LIMIT}
        OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT}
@@ -96,6 +104,7 @@ class Tag < ActiveRecord::Base
     sql = <<-SQL
        SELECT *
        FROM (#{entity_counts_sql}) AS entity_counts
+       # recover entity fields
        INNER JOIN entity ON entity_counts.tagable_id = entity.id
       SQL
 
