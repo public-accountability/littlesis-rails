@@ -38,16 +38,15 @@ describe Tag do
     end
 
     describe "querying tagables for tag homepage" do
-      let(:orgs) { Array.new(4) { |n| create(:entity_org, name: "org#{n}") } }
+      let(:orgs) { Array.new(5) { |n| create(:entity_org, name: "org#{n}") } }
 
       context "entities" do
         before do
           relate = ->(x, ys) { ys.each { |y| create(:generic_relationship, entity: x, related: y) } }
           orgs.each { |x| x.tag(tag.id) }
-          # orgs[3]: 3 relationships, orgs[1] & orgs[2]: 2 relationships, orgs[0]: 1 relationship
+          # num relationships: orgs[4]: 0, orgs[3]: 3, orgs[1] & orgs[2]: 2, orgs[0]: 1 relationship
           relate.call(orgs[3], orgs[0, 3])
           relate.call(orgs[1], [orgs[2]])
-
           # orgs[0] has 3 relationships to person, which won't affect sort, b/c person not tagged
           relate.call(orgs[0], Array.new(3) { create(:entity_person) })
         end
@@ -60,28 +59,29 @@ describe Tag do
           # sorting of 2nd & 3rd elements are indeterminate & interchangable
           expect(Set.new(fields[1, 2])).to eql Set.new([[orgs[1].id, 2], [orgs[2].id, 2]])
           expect(fields[3]).to eql [orgs[0].id, 1]
+          expect(fields[4]).to eql [orgs[4].id, 0]
         end
       end
 
       context 'all other tagables' do
-        %w[lists relationships].each do |tagable_cat|
-          it "dispatches to default search method for tagbles: #{tagable_cat}" do
-            expect(tag).to receive(:default_tagables_for_homepage).with(tagable_cat, 1).once
-            tag.tagables_for_homepage(tagable_cat)
+        let(:lists) { Array.new(2) { create(:list)} }
+        let(:relationships) do
+          Array.new(2) do
+            create(:generic_relationship, entity: create(:entity_person), related: create(:entity_org))
           end
         end
-      end
+        categories = Tagable.categories.select { |c| c != Entity.category_sym }
 
-      context "relationships" do
-        let(:lists) { [create(:list), create(:list)] }
-        before do
-          lists.each { |l| l.tag(tag.id) }
-          lists[0].update_column(:updated_at, 1.day.ago)
-        end
-
-        it "retrieves lists sorted by last date modified" do
-          sorted_lists = tag.tagables_for_homepage(List.category_str)
-          expect(sorted_lists).to eq lists.reverse
+        categories.each do |tagable_cat|
+          before do
+            send(tagable_cat).each{ |t| t.tag(tag.id)}
+            send(tagable_cat).first.update_column(:updated_at, 1.day.ago)
+          end
+          context tagable_cat do
+            it "sorts #{tagable_cat} by date" do
+              expect(tag.tagables_for_homepage(tagable_cat).to_a).to eq send(tagable_cat).reverse
+            end
+          end
         end
       end
     end

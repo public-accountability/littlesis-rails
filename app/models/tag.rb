@@ -69,8 +69,10 @@ class Tag < ActiveRecord::Base
 
   def entities_with_tagged_relationship_counts(page = 1)
     raise ArgumentError unless page.is_a? Integer
-    # we join on *both* entity1_id and entity2_id and filter out rows w/o both ids so that
+    # * first, we join on *both* entity1_id and entity2_id and filter out rows w/o both ids so that
     # our result set will only include taggings in which both elements in a relationship are tagged
+    # * then we append entities with no relationships
+    # * finally (outside sub-query) we sort and paginate
     sql = <<-SQL
       SELECT * FROM (
          SELECT entity1_id, count(*) as related_tagged_entities
@@ -79,11 +81,21 @@ class Tag < ActiveRecord::Base
          LEFT JOIN taggings as e2t on e2t.tagable_id = link.entity2_id AND e2t.tagable_class = 'Entity' AND e2t.tag_id = #{id}
          WHERE e1t.id is not null AND e2t.id is not null
          GROUP BY entity1_id
-         ORDER BY related_tagged_entities desc
-         LIMIT #{TAGABLE_PAGINATION_LIMIT}
-         OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT}
+
+         UNION
+
+         SELECT tagable_id as entity1_id, 0 as related_tagged_entities
+         FROM taggings
+         INNER JOIN entity ON taggings.tagable_id = entity.id 
+         WHERE taggings.tagable_class = 'Entity' AND taggings.tag_id = #{id}
+               AND entity.link_count = 0
+
      ) as entity_counts
+
      INNER JOIN entity on entity_counts.entity1_id = entity.id
+     ORDER BY entity_counts.related_tagged_entities desc
+     LIMIT #{TAGABLE_PAGINATION_LIMIT}
+     OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT}
     SQL
 
     Entity.find_by_sql(sql)
