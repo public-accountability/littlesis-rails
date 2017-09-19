@@ -83,4 +83,33 @@ namespace :query do
       data.each { |hash| csv << hash.values }
     end
   end
+
+  desc "save CSV of an all federal contributions to trump by state"
+  task :trump_donors_by_state, [:state] => :environment do |t, args|
+    file_path = Rails.root.join('data', "os_donations_for_state_#{args[:state]}_#{Date.today}.csv")
+
+    trump_committees = {
+      "N00023864" => "Donald J Trump for President",
+      "C00618876" => "Rebuilding America Now",
+      "C00618389" => "Trump Victory",
+      "C00618371" => "Trump Make America Great Again Committee",
+      "C00608489" => "Great America PAC",
+      "C00616078" => "Get Our Jobs Back",
+      "C00580373" => "Make America Great Again",
+      "C00580100" => "Donald J. Trump for President, Inc"
+    }
+
+    trump_committees_sql = Entity.sqlize_array(trump_committees.keys)
+
+    CSV.open(file_path, "wb") do |csv|
+      csv << (OsDonation.attribute_names + Array('committee_name'))
+
+      OsDonation
+        .where("recipid in #{trump_committees_sql} AND state = '#{args[:state].upcase}'")
+        .order("amount DESC")
+        .each { |d| csv << (d.attributes.values + Array(trump_committees.fetch(d.recipid))) }
+    end
+
+    puts "Saved to #{file_path}"
+  end
 end
