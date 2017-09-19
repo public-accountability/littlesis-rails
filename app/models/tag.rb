@@ -62,41 +62,42 @@ class Tag < ActiveRecord::Base
 
   def entities_for_homepage(page = 1)
     Kaminari
-      .paginate_array(entities_with_tagged_relationship_counts, total_count: entities.count)
+      .paginate_array(entities_with_tagged_relationship_counts(page.to_i), total_count: entities.count)
       .page(page)
       .per(TAGABLE_PAGINATION_LIMIT)
   end
 
   def entities_with_tagged_relationship_counts(page = 1)
     raise ArgumentError unless page.is_a? Integer
-    # * first, we join on *both* entity1_id and entity2_id and filter out rows w/o both ids so that
-    # our result set will only include taggings in which both elements in a relationship are tagged
-    # * then we append entities with no relationships
-    # * finally (outside sub-query) we sort and paginate
-    sql = <<-SQL
-      SELECT * FROM (
-         SELECT entity1_id, count(*) as related_tagged_entities
-         FROM link
-         LEFT JOIN taggings as e1t on e1t.tagable_id = link.entity1_id AND e1t.tagable_class = 'Entity' AND e1t.tag_id = #{id}
-         LEFT JOIN taggings as e2t on e2t.tagable_id = link.entity2_id AND e2t.tagable_class = 'Entity' AND e2t.tag_id = #{id}
-         WHERE e1t.id is not null AND e2t.id is not null
-         GROUP BY entity1_id
 
-         UNION
+    entity_counts_sql = <<-SQL
+      SELECT tagged_entity_links.tagable_id,
+              SUM( case when tagged_entity_links.entity1_id is null then 0
+       	         	when taggings.id is null then 0
+	                else 1 end ) as num_related
+       FROM (
+	    SELECT taggings.tagable_id, link.*
+	    FROM taggings
+	    LEFT JOIN link ON link.entity1_id = taggings.tagable_id
+	    WHERE taggings.tag_id = #{id} AND taggings.tagable_class = 'Entity'
+       ) AS tagged_entity_links
 
-         SELECT tagable_id as entity1_id, 0 as related_tagged_entities
-         FROM taggings
-         INNER JOIN entity ON taggings.tagable_id = entity.id 
-         WHERE taggings.tagable_class = 'Entity' AND taggings.tag_id = #{id}
-               AND entity.link_count = 0
+       LEFT JOIN taggings
+            ON tagged_entity_links.entity2_id = taggings.tagable_id
+     	       AND taggings.tag_id = #{id}
+	       AND taggings.tagable_class = 'Entity'
 
-     ) as entity_counts
-
-     INNER JOIN entity on entity_counts.entity1_id = entity.id
-     ORDER BY entity_counts.related_tagged_entities desc
-     LIMIT #{TAGABLE_PAGINATION_LIMIT}
-     OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT}
+       GROUP BY tagged_entity_links.tagable_id
+       ORDER BY num_related desc
+       LIMIT #{TAGABLE_PAGINATION_LIMIT}
+       OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT}
     SQL
+
+    sql = <<-SQL
+       SELECT *
+       FROM (#{entity_counts_sql}) AS entity_counts
+       INNER JOIN entity ON entity_counts.tagable_id = entity.id
+      SQL
 
     Entity.find_by_sql(sql)
   end

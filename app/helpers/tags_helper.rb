@@ -18,7 +18,7 @@ module TagsHelper
   end
 
   def tagable_list_sort_info(tagable, tag)
-    return "#{tagable.related_tagged_entities} #{tag.name} relationships" if tagable.is_a? Entity
+    return "#{tagable.num_related} #{tag.name} relationships" if tagable.is_a? Entity
     "edited #{time_ago_in_words(tagable.updated_at)} ago"
   end
 end

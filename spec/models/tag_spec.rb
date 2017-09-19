@@ -53,7 +53,7 @@ describe Tag do
 
         it 'retrieves entities sorted by relationships to similarly-tagged entities' do
           sorted_entities = tag.tagables_for_homepage(Entity.category_str)
-          fields = sorted_entities.map { |e| [e.id, e.related_tagged_entities] }
+          fields = sorted_entities.map { |e| [e.id, e.num_related] }
 
           expect(fields[0]).to eql [orgs[3].id, 3]
           # sorting of 2nd & 3rd elements are indeterminate & interchangable
