@@ -30,35 +30,17 @@
     </ul>
   </div>
   
-  <div id="tagable-list">
+  <div id="tagable-lists">
 
-    <% if @tagables.empty? %>
+    <% # if no subtypes exist, @tagable_subtypes will be `[nil]` %>
+    <% @tagable_subtypes.each do |subtype|  %>
+      <%= render partial: 'tagable_list',
+                 locals: { tagables: subtype ? @tagables[subtype] : @tagables,
+                           tag: @tag,
+                           subheader: subtype&.pluralize,
+                           item_descriptor: subtype&.pluralize&.downcase || @tagable_category } %>
+    <% end %>
 
-      <div class="tagable-list-empty-message">
-        <%= "There are no #{@tagable_category} tagged \"#{@tag.name}\"" %>
-      </div>
-
-    <% else %>
-
-      <ul class="tagable-list-items">
-        <% @tagables.each_with_index do |tagable, i| %>
-          <div class="tagable-list-item">
-            <%= link_to tagable.name, tagable, class: "tagable-list-item-name"%>
-            <%= content_tag :div,
-                tagable_list_sort_info(tagable, @tag),
-                class: "tagable-list-item-sort-info" %>
-            <%= content_tag :div,
-            truncate(tagable.description, length: 90),
-            class: "tagable-list-item-description"%>
-          </div>
-        <% end #tagables.each %>
-      </ul>
-
-      <div class="tagable-list-pagination">
-        <%= paginate @tagables %>
-      </div>
-
-    <% end #if !tagables.empty %>
   </div>
 
   <div class=".tag-show-container">

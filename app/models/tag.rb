@@ -49,9 +49,12 @@ class Tag < ActiveRecord::Base
   end
 
   def tagables_for_homepage(tagable_category, page = 1)
-    return entities_for_homepage(page) if tagable_category == Entity.category_str
-    default_tagables_for_homepage(tagable_category, page)
+    tagable_category == Entity.category_str ?
+      entities_for_homepage(page) :
+      default_tagables_for_homepage(tagable_category, page)
   end
+
+  private
 
   def default_tagables_for_homepage(tagable_category, page = 1)
     public_send(tagable_category.to_sym)
@@ -61,14 +64,34 @@ class Tag < ActiveRecord::Base
   end
 
   def entities_for_homepage(page = 1)
+    %w[Person Org].reduce({}) do |acc, type|
+      acc.merge(type => paginate(page, *sort_and_count_entities(type, page)))
+    end
+  end
+
+  def paginate(page, records, count)
     Kaminari
-      .paginate_array(entities_with_tagged_relationship_counts(page.to_i), total_count: entities.count)
+      .paginate_array(records, total_count: count)
       .page(page)
       .per(TAGABLE_PAGINATION_LIMIT)
   end
 
-  def entities_with_tagged_relationship_counts(page = 1)
-    raise ArgumentError unless page.is_a? Integer
+  def sort_and_count_entities(entity_type, page = 1)
+    # return tuple of:
+    # (1) all entities of type `entity_type` tagged `self`,
+    #     sorted by # relationships to other entities also tagged `self`
+    # (2) count of all entities of type `entity_type` tagged `self`
+    [
+      entities_by_relationship_count(entity_type, page),
+      total_count(entity_type)
+    ]
+  end
+
+  # Self -> [EntityActiveRecord, Int]
+  def entities_by_relationship_count(entity_type, page = 1)
+    # guard against SQL injection
+    raise ArgumentError unless %w[Person Org].include?(entity_type)
+    page = page.to_i
 
     entity_counts_sql = <<-SQL
       SELECT tagged_entity_links.tagable_id,
@@ -95,10 +118,8 @@ class Tag < ActiveRecord::Base
        # cull record set to unique list of tagged entities with relationship counts
        GROUP BY tagged_entity_links.tagable_id
 
-       # sort and paginate
+       # sort
        ORDER BY num_related desc
-       LIMIT #{TAGABLE_PAGINATION_LIMIT}
-       OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT}
     SQL
 
     sql = <<-SQL
@@ -106,8 +127,17 @@ class Tag < ActiveRecord::Base
        FROM (#{entity_counts_sql}) AS entity_counts
        # recover entity fields
        INNER JOIN entity ON entity_counts.tagable_id = entity.id
+       # filter by entity subtype
+       WHERE entity.primary_ext = '#{entity_type}'
+       # paginate
+       LIMIT #{TAGABLE_PAGINATION_LIMIT}
+       OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT}
       SQL
 
     Entity.find_by_sql(sql)
+  end
+
+  def total_count(entity_type)
+    entities.where(primary_ext: entity_type).count
   end
 end
