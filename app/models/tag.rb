@@ -48,6 +48,13 @@ class Tag < ActiveRecord::Base
     restricted
   end
 
+  def recent_edits_for_homepage(page = 1)
+    Kaminari
+      .paginate_array(recent_edits(page), total_count: taggings.count * 2)
+      .page(page)
+      .per(TAGABLE_PAGINATION_LIMIT)
+  end
+
   def recent_edits(page = 1)
     sql = <<-SQL
       (
@@ -78,7 +85,7 @@ class Tag < ActiveRecord::Base
       )
         ORDER BY event_timestamp DESC
         LIMIT #{TAGABLE_PAGINATION_LIMIT}
-        OFFSET #{ (page - 1) * TAGABLE_PAGINATION_LIMIT }
+        OFFSET #{ (page.to_i - 1) * TAGABLE_PAGINATION_LIMIT }
     SQL
 
     # NOTE: our version of Mysql2::Result is missing the very convenient method: #to_hash ...why?

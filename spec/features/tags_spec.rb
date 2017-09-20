@@ -220,7 +220,7 @@ describe 'Tags', :tagging_helper, type: :feature do
           edits_table_has_correct_row_count(2)
         end
 
-        context 'a list and a relationship was recently tagged' do
+        context 'a list and a relationship were recently tagged' do
           let(:setup) do
             proc {
               list

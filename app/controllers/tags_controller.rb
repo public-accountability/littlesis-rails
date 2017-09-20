@@ -37,7 +37,7 @@ class TagsController < ApplicationController
   end
 
   def edits
-    @recent_edits = @tag.recent_edits params.fetch(:page, 1)
+    @recent_edits = @tag.recent_edits_for_homepage params.fetch(:page, 1)
   end
 
   # COMPLEX ACTIONS
