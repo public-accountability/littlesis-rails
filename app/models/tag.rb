@@ -56,14 +56,13 @@ class Tag < ActiveRecord::Base
       .per(TAGABLE_PAGINATION_LIMIT)
   end
 
-  # -> [ ActiveRecord ]
-  # recent_edits_query returns an array of hashes.
+  # -> [ Hash ]
   # This takes those and turn them into an array of Tagables
   def recent_edits(page = 1)
     edits = recent_edits_query(page)
     active_record_lookup = active_record_lookup_for_recent_edits(edits)
-    edits.map do |h|
-      active_record_lookup.fetch(h['tagable_class']).fetch(h['tagable_id'])
+    edits.map do |edit|
+      edit.tap { |h| h.store 'tagable', active_record_lookup.dig(h['tagable_class'], h['tagable_id']) }
     end
   end
 

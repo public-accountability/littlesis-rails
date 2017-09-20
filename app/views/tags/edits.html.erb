@@ -2,28 +2,26 @@
     <%= render partial: 'header', locals: { tag: @tag, active_tab: :edits } %>
 </div>
 
-<div id="tag-homepage-edits-table-container">
+<div id="tag-homepage-edits-table-container" class="top-1em">
     <table class="table" id="tag-homepage-edits-table">
 	<thead>
 	    <tr>
-		<th>Edited By</th>
+		<th>Edited At</th>
 		<th>Resource</th>
 	        <th>Event</th>
-		<th>Description</th>
 	    </tr>
 	</thead>
 	<tbody>
-	    <% @recent_edits.each do |edit| %>
+	    <% @recent_edits.each do |edit_event| %>
 		<tr>
-		    <td><%= time_ago_in_words edit['event_timestamp'] %> ago</td>
-		    <td><%= edit['tagable_class']%></td>
-		    <td><%= edit['event']%></td>
-		    <td>??</td>
+		    <td><%= tags_format_edited_by edit_event %></td>
+		    <td> <%= tagable_link edit_event['tagable'] %></td>
+		    <td><%= tags_format_edit_event edit_event %></td>
 		</tr>
 	    <% end %>
 	</tbody>
     </table>
 
     <%= link_to_previous_page @recent_edits, 'Previous Page' %>
-    <%= link_to_next_page @recent_edits, 'Next Page' %>
+    <%= link_to_next_page @recent_edits, 'Next Page', class: 'pull-right' %>
 </div>

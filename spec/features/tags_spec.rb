@@ -209,26 +209,40 @@ describe 'Tags', :tagging_helper, type: :feature do
       describe 'list of edits' do
         let(:person) { create(:entity_person).tag(tag.id) }
         let(:list) { create(:list).tag(tag.id) }
-
+        let(:relationship) do
+          create(:generic_relationship, entity: create(:entity_org), related: create(:entity_org)).tag(tag.id)
+        end
         context 'a person was recently tagged' do
           let(:setup) { proc { person } }
           edits_table_has_correct_row_count(1)
+
+          it 'contains "tagged" text' do
+            expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'Tagged'
+            expect(page.find('#tag-homepage-edits-table tbody')).not_to have_text 'updated'
+          end
         end
 
         context 'a person was recently updated (and previously tagged)' do
           let(:setup) { proc { person.update_column(:updated_at, Date.tomorrow) } }
           edits_table_has_correct_row_count(2)
+
+          it 'contains "tagged" and "updated" text' do
+            expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'Tagged'
+            expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'Entity updated'
+          end
         end
 
         context 'a list and a relationship were recently tagged' do
-          let(:setup) do
-            proc {
-              list
-              create(:generic_relationship, entity: create(:entity_org), related: create(:entity_org)).tag(tag.id)
-            }
-          end
+          let(:setup) { proc { list; relationship; } }
 
           edits_table_has_correct_row_count(2)
+
+          it 'contains links to the list and relationship' do
+            find('#tag-homepage-edits-table tbody') do |el|
+              expect(el).to have_link list.name
+              expect(el).to have_link relationship.name
+            end
+          end
         end
 
         xcontext 'a person was tagged, untagged, and then updated' do

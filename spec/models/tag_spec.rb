@@ -145,11 +145,11 @@ describe Tag do
         it 'recent_edits returns an array of active record objects' do
           relationships[0].update_column(:updated_at, Date.tomorrow)
 
-          tag.recent_edits.each do |tagable|
-            expect(Tagable.classes).to include tagable.class
+          tag.recent_edits.each do |edit|
+            expect(Tagable.classes).to include edit['tagable'].class
           end
 
-          expect(tag.recent_edits.first).to eq relationships[0]
+          expect(tag.recent_edits.first['tagable']).to eq relationships[0]
           
         end
       end
