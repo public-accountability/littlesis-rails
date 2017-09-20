@@ -191,7 +191,12 @@ describe 'Tags', type: :feature do
     end
 
     describe 'edits tab' do
-      it "has header with text edits"
+      before(:each) { visit "/tags/#{tag.id}/edits" }
+
+      it "has header with active edit tab" do
+        expect(page).to have_selector 'li#tag-nav-tab-edits.active'
+        expect(page).to have_selector 'li#tag-nav-tab-edits.active a', text: 'Edits'
+      end
 
       it "contains list of edits"
 
