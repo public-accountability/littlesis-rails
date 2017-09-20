@@ -94,6 +94,55 @@ describe Tag do
         end
       end
     end
+
+    describe '#recent_edits' do
+      let(:tag) { create(:tag) }
+      let(:untagged_person) { create(:entity_person) }
+      let(:untagged_org) { create(:entity_org) }
+
+      let(:entities) do
+        Array.new(2) { create(:entity_org).tag(tag.id) }
+      end
+
+      let(:relationships) do
+        Array.new(2) do
+          create(:generic_relationship, entity: untagged_person, related: untagged_org).tag(tag.id)
+        end
+      end
+
+      let(:lists) do
+        Array.new(2) { create(:list).tag(tag.id) }
+      end
+
+      context 'all recent edits to tagables are tag updated event' do
+        before { entities; relationships; lists; }
+
+        def it_contains_all_tagables
+          expect(Set.new(tag.recent_edits.map { |x| x['tagable_id'] }))
+            .to eql Set.new( (entities + lists + relationships).map(&:id) )
+        end
+
+        it 'contains a list of tag_added events' do
+          expect(tag.recent_edits.length).to eql 6
+          it_contains_all_tagables
+        end
+
+        it 'also contains a tagable_updated event' do
+          relationships[0].update_column(:updated_at, Date.tomorrow)
+          expect(tag.recent_edits.length).to eql 7
+          it_contains_all_tagables
+          expect(tag.recent_edits[0])
+            .to eq(
+                  "tagging_id" => relationships[0].taggings.first.id,
+                  "tagable_id" => relationships[0].id,
+                  "tagable_class" => "Relationship",
+                  "tagging_created_at" => relationships[0].taggings.first.created_at,
+                  "event_timestamp" => relationships[0].updated_at,
+                  "event" => "tagable_updated"
+                )
+        end
+      end
+    end
   end
 
   describe 'Class Methods' do

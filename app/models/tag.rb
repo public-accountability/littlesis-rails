@@ -48,6 +48,48 @@ class Tag < ActiveRecord::Base
     restricted
   end
 
+  def recent_edits(page = 1)
+    sql = <<-SQL
+      SELECT *
+      FROM (
+            SELECT taggings.id as tagging_id,
+	           taggings.tagable_id,
+	           taggings.tagable_class,
+	           taggings.created_at as tagging_created_at,
+       	           COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at) AS event_timestamp,
+	           'tagable_updated' as event
+	    FROM taggings
+	    LEFT JOIN entity ON taggings.tagable_id = entity.id AND taggings.tagable_class = 'Entity'
+ 	    LEFT JOIN ls_list ON taggings.tagable_id = ls_list.id AND taggings.tagable_class = 'List'
+	    LEFT JOIN relationship ON taggings.tagable_id = relationship.id AND taggings.tagable_class = 'Relationship'
+	    WHERE taggings.tag_id = #{id}
+                  # adding a tag triggers a callback that also updates the tagable. This clause excludes those updates
+	          AND abs(TIMESTAMPDIFF(SECOND, taggings.created_at, COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at))) > 100
+
+            UNION
+
+            SELECT taggings.id as tagging_id,
+	           taggings.tagable_id,
+	           taggings.tagable_class,
+	           taggings.created_at AS tagging_created_at,
+	           taggings.created_at AS event_timestamp,
+	           'tag_added' AS event
+            FROM taggings
+	    WHERE taggings.tag_id = #{id}
+      ) AS tag_edit_history
+        ORDER BY event_timestamp DESC
+        LIMIT #{TAGABLE_PAGINATION_LIMIT}
+        OFFSET #{ (page - 1) * TAGABLE_PAGINATION_LIMIT }
+    SQL
+
+    # NOTE: our version of Mysql2::Result is missing the very convenient method: #to_hash ...why?
+    # we should be able to do ActiveRecord::Base.connection.execute(sql).to_hash instead of
+    # populating the array ourselves...
+    result = []
+    ActiveRecord::Base.connection.execute(sql).each(:as => :hash) { |h| result << h }
+    result
+  end
+
   def tagables_for_homepage(tagable_category, page = 1)
     tagable_category == Entity.category_str ?
       entities_for_homepage(page) :
