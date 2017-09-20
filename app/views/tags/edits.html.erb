@@ -1,3 +1,26 @@
 <div id="tag-show-container">
     <%= render partial: 'header', locals: { tag: @tag, active_tab: :edits } %>
 </div>
+
+<div id="tag-homepage-edits-table-container">
+    <table class="table" id="tag-homepage-edits-table">
+	<thead>
+	    <tr>
+		<th>Edited By</th>
+		<th>Resource</th>
+	        <th>Event</th>
+		<th>Description</th>
+	    </tr>
+	</thead>
+	<tbody>
+	    <% @recent_edits.each do |edit| %>
+		<tr>
+		    <td><%= time_ago_in_words edit['event_timestamp'] %> ago</td>
+		    <td><%= edit['tagable_class']%></td>
+		    <td><%= edit['event']%></td>
+		    <td>??</td>
+		</tr>
+	    <% end %>
+	</tbody>
+    </table>
+</div>

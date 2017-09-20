@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Tags', type: :feature do
+describe 'Tags', :tagging_helper, type: :feature do
 
   let(:tags) { Array.new(2) { create(:tag) } }
   let(:tag) { tags.first }
@@ -191,25 +191,62 @@ describe 'Tags', type: :feature do
     end
 
     describe 'edits tab' do
-      before(:each) { visit "/tags/#{tag.id}/edits" }
+      let(:setup) { -> {} }
+      before(:each) do
+        setup.call
+        visit "/tags/#{tag.id}/edits"
+      end
 
       it "has header with active edit tab" do
         expect(page).to have_selector 'li#tag-nav-tab-edits.active'
         expect(page).to have_selector 'li#tag-nav-tab-edits.active a', text: 'Edits'
       end
 
-      it "contains list of edits"
+      it "contains list of edits" do
+        expect(page).to have_selector '#tag-homepage-edits-table-container table', count: 1
+      end
 
       describe 'list of edits' do
-        it "contains recently edited entity that is tagged"
+        let(:person) { create(:entity_person).tag(tag.id) }
+        let(:list) { create(:list).tag(tag.id) }
 
-        it "contains entity that was recently tagged (add tag)"
+        context 'a person was recently tagged' do
+          let(:setup) { proc { person } }
+          edits_table_has_correct_row_count(1)
+        end
 
-        it "contains entity that was recently un-tagged"
+        context 'a person was recently updated (and previously tagged)' do
+          let(:setup) { proc { person.update_column(:updated_at, Date.tomorrow) } }
+          edits_table_has_correct_row_count(2)
+        end
 
-        it "containts list that was recently tagged"
+        context 'a list and a relationship was recently tagged' do
+          let(:setup) do
+            proc {
+              list
+              create(:generic_relationship, entity: create(:entity_org), related: create(:entity_org)).tag(tag.id)
+            }
+          end
 
-        it "contains list that was recently updated"
+          edits_table_has_correct_row_count(2)
+        end
+
+        xcontext 'a person was tagged, untagged, and then updated' do
+          let(:setup) do
+            proc {
+              person.remove_tag(tag.id)
+              person.update_column(:updated_at, Date.tomorrow)
+            }
+          end
+
+          edits_table_has_correct_row_count(0)
+        end
+
+        context 'a list was recently updated' do
+          let(:setup) { proc { list.update_column(:updated_at, Date.tomorrow) } }
+          edits_table_has_correct_row_count(2)  
+        end
+        
       end
     end # end describe edits tab
   end # end describe tag homepage

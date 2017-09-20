@@ -21,4 +21,10 @@ module TaggingHelpers
       expect(response).to have_http_status :forbidden
     end
   end
+
+  def edits_table_has_correct_row_count(n)
+    it "the edits table contains #{n} row(s)" do
+      expect(page).to have_selector '#tag-homepage-edits-table tbody tr', count: n
+    end
+  end
 end
