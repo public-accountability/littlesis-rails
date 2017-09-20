@@ -1,4 +1,5 @@
 class Tag < ActiveRecord::Base
+  include Pagination
   TAGABLE_PAGINATION_LIMIT = 20
 
   has_many :taggings
@@ -124,15 +125,10 @@ class Tag < ActiveRecord::Base
 
   def entities_for_homepage(page = 1)
     %w[Person Org].reduce({}) do |acc, type|
-      acc.merge(type => paginate(page, *sort_and_count_entities(type, page)))
+      acc.merge(type => paginate(page,
+                                 TAGABLE_PAGINATION_LIMIT,
+                                 *sort_and_count_entities(type, page)))
     end
-  end
-
-  def paginate(page, records, count)
-    Kaminari
-      .paginate_array(records, total_count: count)
-      .page(page)
-      .per(TAGABLE_PAGINATION_LIMIT)
   end
 
   def sort_and_count_entities(entity_type, page = 1)
