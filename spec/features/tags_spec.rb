@@ -7,8 +7,8 @@ describe 'Tags', type: :feature do
 
   # setup helpers
 
-  def n_entities (n)
-    Array.new(n) { create(:entity_org) }
+  def n_entities (n, subtype = 'Person')
+    Array.new(n) { create("entity_#{subtype.downcase}".to_sym) }
   end
 
   def n_lists (n)
@@ -67,9 +67,16 @@ describe 'Tags', type: :feature do
   end
 
   describe "tag homepage" do
+
     describe "tabs" do
+      let(:tagable_category) { "" }
+      let(:tagables) { [] }
+      before(:each) do
+        tagables
+        visit "/tags/#{tag.id}/#{tagable_category}"
+      end
+
       context "with no tab specified" do
-        before { visit "/tags/#{tag.id}" }
 
         it "defaults to the entities tab" do
           expect(page).to have_selector("#tag-nav-tab-entities.active")
@@ -83,12 +90,32 @@ describe 'Tags', type: :feature do
 
       Tagable.categories.each do |tagable_category|
         context "on #{tagable_category} tab" do
-          context "#{tagable_category} is grouped by type" do
-            it "shows a tag list for each type"
-          end
+          let(:tagable_category) { tagable_category }
 
-          context "#{tagable_category} is note grouped by type" do
-            it "shows one tag list"
+          if tagable_category == Entity.category_sym
+            let(:tagables) { n_entities(1, 'Person') + n_entities(1, "Org") }
+
+            context "#{tagable_category} is grouped by subtype" do
+              it "shows a tagable list for each subtype" do
+                expect(page).to have_selector ".tagable-list", count: 2
+              end
+
+              it "shows a subheader for each tag list" do
+                expect(page).to have_selector ".tagable-list-subheader", count: 2
+              end
+            end
+
+          else
+            let(:tagables) { n_tagables(1, tagable_category) }
+            context "#{tagable_category} is not grouped by type" do
+
+              it "shows one tag list" do
+                expect(page).to have_selector ".tagable-list-items", count: 1
+              end
+              it "does not show a tag list subheader" do
+                expect(page).not_to have_selector ".tagable-list-subheader"
+              end
+            end
           end
         end
       end
@@ -98,16 +125,17 @@ describe 'Tags', type: :feature do
       # we use entities here arbitrarily
       let(:tagable_category) { 'entities' }
       let(:tagables) { [] }
-      before(:each) do
+      let(:list) { page.all(".tagable-list").first }
+
+      before do
         tagables
         visit "/tags/#{tag.id}/#{tagable_category}"
       end
 
       context "no tagged items" do
-        let(:tagable_category) { 'relationships' }
         it "shows an empty list message" do
           expect(page).not_to have_selector '.tagable-list-item'
-          expect(page.find("#tagable-list")).to have_text "There are no"
+          expect(page).to have_text "There are no"
         end
       end
 
@@ -122,24 +150,23 @@ describe 'Tags', type: :feature do
         end
 
         it "shows a list of tagables" do
-          expect(page.find("#tagable-list"))
-            .to have_selector '.tagable-list-item', count: 2
+          expect(list).to have_selector '.tagable-list-item', count: 2
         end
 
         it "renders the name of each tagable as a link" do
-          page.all("#tagable-list .tagable-list-item").each_with_index do |item, i|
+          list.all(".tagable-list-item").each do |item|
             expect(item).to have_link :class => 'tagable-list-item-name'
           end
         end
 
         it "shows a description of each tagable" do
-          page.all("#tagable-list .tagable-list-item").each do |item|
+          list.all(".tagable-list-item").each do |item|
             expect(item).to have_selector ".tagable-list-item-description"
           end
         end
 
         it "displays last updated date for each tagable" do
-          page.all("#tagable-list .tagable-list-item").each do |item|
+          list.all(".tagable-list-item").each do |item|
             sort_text = tagable_category == 'entities' ? 'relationships' : 'ago'
             expect(item.find(".tagable-list-item-sort-info")).to have_text sort_text
           end
@@ -155,7 +182,7 @@ describe 'Tags', type: :feature do
       context "more than 20 tagables" do
         let(:tagables) { n_tagables(21, tagable_category).map { |t| t.tag(tag.id) } }
         it "only shows 10 entities with pagination bar" do
-          expect(page.find("#tagable-list"))
+          expect(page.find("#tagable-lists"))
             .to have_selector '.tagable-list-item', count: 20
         end
       end

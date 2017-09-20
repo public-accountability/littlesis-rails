@@ -38,28 +38,35 @@ describe Tag do
     end
 
     describe "querying tagables for tag homepage" do
-      let(:orgs) { Array.new(5) { |n| create(:entity_org, name: "org#{n}") } }
+      let(:entities_by_type) do
+        {
+          'Person' => Array.new(5) { create(:entity_person).tag(tag.id) },
+          'Org' => Array.new(5) { create(:entity_org).tag(tag.id) }
+        }
+      end
 
       context "entities" do
         before do
           relate = ->(x, ys) { ys.each { |y| create(:generic_relationship, entity: x, related: y) } }
-          orgs.each { |x| x.tag(tag.id) }
-          # num relationships: orgs[4]: 0, orgs[3]: 3, orgs[1] & orgs[2]: 2, orgs[0]: 1 relationship
-          relate.call(orgs[3], orgs[0, 3])
-          relate.call(orgs[1], [orgs[2]])
-          # orgs[0] has 3 relationships to person, which won't affect sort, b/c person not tagged
-          relate.call(orgs[0], Array.new(3) { create(:entity_person) })
+          entities_by_type.each do |_, es|
+            # relationships: es[4]: 3, es[3] & es[2]: 2, es[1]: 1, es[0]: 0
+            relate.call(es[4], es[1, 3])
+            relate.call(es[3], [es[2]])
+            # es[0] has 6 relationships to random person: won't affect sort, b/c person not tagged
+            relate.call(es[0], Array.new(6) { create(:entity_person) })
+          end
         end
 
-        it 'retrieves entities sorted by relationships to similarly-tagged entities' do
-          sorted_entities = tag.tagables_for_homepage(Entity.category_str)
-          fields = sorted_entities.map { |e| [e.id, e.num_related] }
+        it 'lists entities by type, sorted by relationships to same-tagged entities of any type' do
+          tagable_list = tag.tagables_for_homepage(Entity.category_str)
+          entities_by_type.each do |type, es|
+            id_counts = tagable_list[type].map { |p| [p.id, p.num_related] }
 
-          expect(fields[0]).to eql [orgs[3].id, 3]
-          # sorting of 2nd & 3rd elements are indeterminate & interchangable
-          expect(Set.new(fields[1, 2])).to eql Set.new([[orgs[1].id, 2], [orgs[2].id, 2]])
-          expect(fields[3]).to eql [orgs[0].id, 1]
-          expect(fields[4]).to eql [orgs[4].id, 0]
+            expect(id_counts[0]).to eq [es[4].id, 3]
+            expect(id_counts[1, 2].to_set).to eq [[es[3].id, 2], [es[2].id, 2]].to_set
+            expect(id_counts[3]).to eq [es[1].id, 1]
+            expect(id_counts[4]).to eq [es[0].id, 0]
+          end
         end
       end
 
@@ -67,10 +74,12 @@ describe Tag do
         let(:lists) { Array.new(2) { create(:list)} }
         let(:relationships) do
           Array.new(2) do
-            create(:generic_relationship, entity: create(:entity_person), related: create(:entity_org))
+            create(:generic_relationship,
+                   entity: create(:entity_person),
+                   related: create(:entity_org))
           end
         end
-        categories = Tagable.categories.select { |c| c != Entity.category_sym }
+        categories = Tagable.categories.reject { |c| c == Entity.category_sym }
 
         categories.each do |tagable_cat|
           before do
