@@ -48,6 +48,7 @@ class Tag < ActiveRecord::Base
     restricted
   end
 
+  # int -> Kaminari::PaginatableArray
   def recent_edits_for_homepage(page = 1)
     Kaminari
       .paginate_array(recent_edits(page), total_count: taggings.count * 2)
@@ -55,7 +56,19 @@ class Tag < ActiveRecord::Base
       .per(TAGABLE_PAGINATION_LIMIT)
   end
 
+  # -> [ ActiveRecord ]
+  # recent_edits_query returns an array of hashes.
+  # This takes those and turn them into an array of Tagables
   def recent_edits(page = 1)
+    edits = recent_edits_query(page)
+    active_record_lookup = active_record_lookup_for_recent_edits(edits)
+    edits.map do |h|
+      active_record_lookup.fetch(h['tagable_class']).fetch(h['tagable_id'])
+    end
+  end
+
+  # int -> [ Hash ]
+  def recent_edits_query(page = 1)
     sql = <<-SQL
       (
         SELECT taggings.id as tagging_id,
@@ -187,5 +200,25 @@ class Tag < ActiveRecord::Base
 
   def total_count(entity_type)
     entities.where(primary_ext: entity_type).count
+  end
+
+  # [ Hash ] -> Hash
+  #  example: output:
+  # {
+  #  "Relationship" => { 12 => <Relationship>, 22 => <Relationship> }
+  #  "Entity" => { 123 => <Entity>}
+  #  "List" => { 987 => <List> }
+  # }
+  #
+  #
+  def active_record_lookup_for_recent_edits(edits)
+    edits
+      .group_by { |h| h['tagable_class'] } # group by classes
+      .transform_values { |tagable_array| tagable_array.map { |h| h['tagable_id'] }.uniq } # with values as tagable ids
+      .to_a # turn into array of pairs and then create lookup table
+      .reduce( "Relationship" => {}, "Entity" => {}, "List" => {} ) { |acc, (klass, tagable_ids)|
+        klass.constantize.find(tagable_ids).each { |tagable| acc[klass].store(tagable.id, tagable) }
+        acc
+    }
   end
 end
