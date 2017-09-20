@@ -1,0 +1,29 @@
+<div id="tag-header">
+
+    <div id="tag-title">
+	<div id="tag-name">
+            Tag: <%= content_tag :span, @tag.name, class: "big-tag" %>
+	</div>
+
+	<div id="tag-description">
+            <%= @tag.description %>
+	</div>
+    </div>
+
+    <div id="tag-overview-link">
+	<%= link_to "see all tags", tags_path  %>
+    </div>
+</div>
+
+<div id="tag-nav">
+    <ul class="nav nav-tabs">
+	<% Tagable.classes.each do |tc|  %>
+            <li role="presentation"
+		      id="tag-nav-tab-<%= tc.category_str%>"
+		      class=<%= tc == Tagable.class_of(@tagable_category) ? "active" : "inactive" %>
+            >
+		<%=  link_to tc.category_str.capitalize,"/tags/#{@tag.id}/#{tc.category_str}" %>
+            </li>
+	<% end %>
+    </ul>
+</div>

@@ -86,6 +86,8 @@ describe 'Tags', type: :feature do
           expect(page).to have_text tag.name
           expect(page).to have_text tag.description
         end
+
+        it "shows edit tab"
       end
 
       Tagable.categories.each do |tagable_category|
@@ -187,5 +189,23 @@ describe 'Tags', type: :feature do
         end
       end
     end
-  end
+
+    describe 'edits tab' do
+      it "has header with text edits"
+
+      it "contains list of edits"
+
+      describe 'list of edits' do
+        it "contains recently edited entity that is tagged"
+
+        it "contains entity that was recently tagged (add tag)"
+
+        it "contains entity that was recently un-tagged"
+
+        it "containts list that was recently tagged"
+
+        it "contains list that was recently updated"
+      end
+    end # end describe edits tab
+  end # end describe tag homepage
 end
