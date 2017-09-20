@@ -1,6 +1,8 @@
 <div id="tag-show-container">
 
-  <%= render partial: 'header' %>
+    <%= render partial: 'header',
+        locals: { tag: @tag, active_tab: @tagable_category.to_sym }
+    %>
   
   <div id="tagable-lists">
 

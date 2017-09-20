@@ -1,12 +1,16 @@
+<%#
+ locals: tag (Tag), active_tab (symbol)
+%>
+
 <div id="tag-header">
 
     <div id="tag-title">
 	<div id="tag-name">
-            Tag: <%= content_tag :span, @tag.name, class: "big-tag" %>
+            Tag: <%= content_tag :span, tag.name, class: "big-tag" %>
 	</div>
 
 	<div id="tag-description">
-            <%= @tag.description %>
+            <%= tag.description %>
 	</div>
     </div>
 
@@ -17,12 +21,11 @@
 
 <div id="tag-nav">
     <ul class="nav nav-tabs">
-	<% Tagable.classes.each do |tc|  %>
+	<% (Tagable.categories + [:edits]).each do |tab|  %>
             <li role="presentation"
-		      id="tag-nav-tab-<%= tc.category_str%>"
-		      class=<%= tc == Tagable.class_of(@tagable_category) ? "active" : "inactive" %>
-            >
-		<%=  link_to tc.category_str.capitalize,"/tags/#{@tag.id}/#{tc.category_str}" %>
+		      id="tag-nav-tab-<%= tab %>"
+		      class=<%= active_tab == tab ? "active" : "inactive" %> >
+		<%=  link_to tab.to_s.capitalize,"/tags/#{tag.id}/#{tab}" %>
             </li>
 	<% end %>
     </ul>
