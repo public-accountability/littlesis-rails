@@ -51,9 +51,19 @@ class Tag < ActiveRecord::Base
 
   # int -> Kaminari::PaginatableArray
   def recent_edits_for_homepage(page = 1)
-    paginate page, recent_edits(page), (taggings.count * 2)
+    paginate(
+      page,
+      TAGABLE_PAGINATION_LIMIT,
+      taggings.count * 2,
+      recent_edits(page)
+    )
   end
 
+  def tagables_for_homepage(tagable_category, page = 1)
+    send("#{tagable_category}_for_homepage", page)
+  end
+
+  private
   # -> [Hash]
   # Adds the ActiveRecord Tagable with key 'tagable' to
   # each hash provided by #recent_edits_query.
@@ -108,28 +118,22 @@ class Tag < ActiveRecord::Base
     result
   end
 
-  def tagables_for_homepage(tagable_category, page = 1)
-    send("#{tagable_category}_for_homepage", page)
-  end
-
-  private
-
   def entities_for_homepage(page = 1)
     %w[Person Org].reduce({}) do |acc, type|
       acc.merge(type => paginate(page,
                                  TAGABLE_PAGINATION_LIMIT,
-                                 *sort_and_count_entities(type, page)))
+                                 *count_and_sort_entities(type, page)))
     end
   end
 
-  def sort_and_count_entities(entity_type, page = 1)
+  def count_and_sort_entities(entity_type, page = 1)
     # return tuple of:
-    # (1) all entities of type `entity_type` tagged `self`,
+    # (1) count of all entities of type `entity_type` tagged `self`
+    # (2) all entities of type `entity_type` tagged `self`,
     #     sorted by # relationships to other entities also tagged `self`
-    # (2) count of all entities of type `entity_type` tagged `self`
     [
-      entities_by_relationship_count(entity_type, page),
-      total_count(entity_type)
+      entities.where(primary_ext: entity_type).count,
+      entities_by_relationship_count(entity_type, page)
     ]
   end
 
@@ -187,11 +191,11 @@ class Tag < ActiveRecord::Base
     paginate(
       page,
       TAGABLE_PAGINATION_LIMIT,
-      *sort_and_count_lists(page)
+      *count_and_sort_lists(page)
     )
   end
 
-  def sort_and_count_lists(page = 1)
+  def count_and_sort_lists(page = 1)
     [lists.count, lists_by_entity_count(page)]
   end
 

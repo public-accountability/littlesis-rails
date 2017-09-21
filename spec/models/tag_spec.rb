@@ -150,20 +150,20 @@ describe Tag do
         before { entities; relationships; lists; }
 
         def it_contains_all_tagables
-          expect(Set.new(tag.recent_edits_query.map { |x| x['tagable_id'] }))
+          expect(Set.new(tag.send(:recent_edits_query).map { |x| x['tagable_id'] }))
             .to eql Set.new( (entities + lists + relationships).map(&:id) )
         end
 
         it 'contains a list of tag_added events' do
-          expect(tag.recent_edits_query.length).to eql 6
+          expect(tag.send(:recent_edits_query).length).to eql 6
           it_contains_all_tagables
         end
 
         it 'also contains a tagable_updated event' do
           relationships[0].update_column(:updated_at, Date.tomorrow)
-          expect(tag.recent_edits_query.length).to eql 7
+          expect(tag.send(:recent_edits_query).length).to eql 7
           it_contains_all_tagables
-          expect(tag.recent_edits_query[0])
+          expect(tag.send(:recent_edits_query)[0])
             .to eq(
                   "tagging_id" => relationships[0].taggings.first.id,
                   "tagable_id" => relationships[0].id,
@@ -177,11 +177,11 @@ describe Tag do
         it 'recent_edits returns an array of active record objects' do
           relationships[0].update_column(:updated_at, Date.tomorrow)
 
-          tag.recent_edits.each do |edit|
+          tag.send(:recent_edits).each do |edit|
             expect(Tagable.classes).to include edit['tagable'].class
           end
 
-          expect(tag.recent_edits.first['tagable']).to eq relationships[0]
+          expect(tag.send(:recent_edits).first['tagable']).to eq relationships[0]
           
         end
       end
