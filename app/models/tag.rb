@@ -109,19 +109,10 @@ class Tag < ActiveRecord::Base
   end
 
   def tagables_for_homepage(tagable_category, page = 1)
-    tagable_category == Entity.category_str ?
-      entities_for_homepage(page) :
-      default_tagables_for_homepage(tagable_category, page)
+    send("#{tagable_category}_for_homepage", page)
   end
 
   private
-
-  def default_tagables_for_homepage(tagable_category, page = 1)
-    public_send(tagable_category.to_sym)
-      .order(updated_at: :desc)
-      .page(page)
-      .per(TAGABLE_PAGINATION_LIMIT)
-  end
 
   def entities_for_homepage(page = 1)
     %w[Person Org].reduce({}) do |acc, type|
@@ -154,7 +145,7 @@ class Tag < ActiveRecord::Base
               # only count record in doubly-joined table if both entities in a link have correct tag
               SUM( case when tagged_entity_links.entity1_id is null then 0
        	         	when taggings.id is null then 0
-	                else 1 end ) as num_related
+	                else 1 end ) as relationship_count
 
        # join all of a tag's entities all of each entity's links
        FROM (
@@ -174,7 +165,7 @@ class Tag < ActiveRecord::Base
        GROUP BY tagged_entity_links.tagable_id
 
        # sort
-       ORDER BY num_related desc
+       ORDER BY relationship_count desc
     SQL
 
     sql = <<-SQL
@@ -192,8 +183,43 @@ class Tag < ActiveRecord::Base
     Entity.find_by_sql(sql)
   end
 
-  def total_count(entity_type)
-    entities.where(primary_ext: entity_type).count
+  def lists_for_homepage(page = 1)
+    paginate(
+      page,
+      TAGABLE_PAGINATION_LIMIT,
+      *sort_and_count_lists(page)
+    )
+  end
+
+  def sort_and_count_lists(page = 1)
+    [lists.count, lists_by_entity_count(page)]
+  end
+
+  def lists_by_entity_count(page = 1)
+    page = page.to_i
+    query = <<-SQL
+      SELECT DISTINCT ls_list.*, COUNT(ls_list_entity.id) AS entity_count
+      FROM ls_list
+      INNER JOIN taggings 
+        ON ls_list.id = taggings.tagable_id 
+        AND taggings.tag_id = #{id} 
+        AND taggings.tagable_class = 'List'
+      LEFT JOIN ls_list_entity 
+        ON ls_list_entity.list_id = ls_list.id
+      WHERE ls_list.is_deleted = 0
+      GROUP BY ls_list.id
+      ORDER BY entity_count DESC
+      LIMIT #{TAGABLE_PAGINATION_LIMIT}
+      OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT};
+    SQL
+    List.find_by_sql query
+  end
+
+  def relationships_for_homepage(page = 1)
+    relationships
+      .order(updated_at: :desc)
+      .page(page)
+      .per(TAGABLE_PAGINATION_LIMIT)
   end
 
   # [ Hash ] -> Hash
