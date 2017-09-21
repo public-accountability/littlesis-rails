@@ -1,10 +1,9 @@
 class TagsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
-  before_action -> { check_permission('admin') }, except: [:index, :show, :tag_request]
-  before_action :set_tag, only: [:edit, :update, :destroy, :show]
+  before_action :authenticate_user!, except: [:index, :show, :edits]
+  before_action -> { check_permission('admin') }, except: [:index, :show, :edits, :tag_request]
+  before_action :set_tag, only: [:edit, :update, :destroy, :show, :edits]
   before_action :set_tags, only: [:index]
   before_action :set_tagables, only: [:show]
-
 
   def index; end
 
@@ -35,6 +34,10 @@ class TagsController < ApplicationController
   def destroy
     @tag.destroy
     redirect_to admin_tags_path, notice: 'The tag has been removed'
+  end
+
+  def edits
+    @recent_edits = @tag.recent_edits_for_homepage params.fetch(:page, 1)
   end
 
   # COMPLEX ACTIONS

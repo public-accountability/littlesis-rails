@@ -9,6 +9,9 @@ describe TagsController, type: :controller do
   it { should route(:delete, '/tags/456').to(action: :destroy, id: 456) }
   it { should route(:get, '/tags/request').to(action: :tag_request) }
   it { should route(:post, '/tags/request').to(action: :tag_request) }
+
+  it { should route(:get, 'tags/456/edits').to(action: :edits, id: 456) }
+
   Tagable.categories.each do |tagable_category|
     it do
       should(route(:get, "/tags/456/#{tagable_category}")

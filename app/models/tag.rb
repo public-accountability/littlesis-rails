@@ -48,6 +48,65 @@ class Tag < ActiveRecord::Base
     restricted
   end
 
+  # int -> Kaminari::PaginatableArray
+  def recent_edits_for_homepage(page = 1)
+    paginate page, recent_edits(page), (taggings.count * 2)
+  end
+
+  # -> [Hash]
+  # Adds the ActiveRecord Tagable with key 'tagable' to
+  # each hash provided by #recent_edits_query.
+  def recent_edits(page = 1)
+    edits = recent_edits_query(page)
+    active_record_lookup = active_record_lookup_for_recent_edits(edits)
+    edits.map do |edit|
+      edit.tap { |h| h.store 'tagable', active_record_lookup.dig(h['tagable_class'], h['tagable_id']) }
+    end
+  end
+
+  # int -> [ Hash ]
+  # Hash keys: tagging_id, tagable_id, tagable_class, tagging_created_at, event_timestamp, event
+  def recent_edits_query(page = 1)
+    sql = <<-SQL
+      (
+        SELECT taggings.id as tagging_id,
+                taggings.tagable_id,
+                taggings.tagable_class,
+                taggings.created_at as tagging_created_at,
+                COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at) AS event_timestamp,
+	        'tagable_updated' as event
+	FROM taggings
+	LEFT JOIN entity ON taggings.tagable_id = entity.id AND taggings.tagable_class = 'Entity'
+ 	LEFT JOIN ls_list ON taggings.tagable_id = ls_list.id AND taggings.tagable_class = 'List'
+	LEFT JOIN relationship ON taggings.tagable_id = relationship.id AND taggings.tagable_class = 'Relationship'
+	WHERE taggings.tag_id = #{id}
+              # adding a tag triggers a callback that also updates the tagable. This clause excludes those updates
+	      AND abs(TIMESTAMPDIFF(SECOND, taggings.created_at, COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at))) > 100
+      )
+        UNION
+      (
+        SELECT taggings.id as tagging_id,
+	       taggings.tagable_id,
+	       taggings.tagable_class,
+	       taggings.created_at AS tagging_created_at,
+	       taggings.created_at AS event_timestamp,
+	       'tag_added' AS event
+        FROM taggings
+	WHERE taggings.tag_id = #{id}
+      )
+        ORDER BY event_timestamp DESC
+        LIMIT #{TAGABLE_PAGINATION_LIMIT}
+        OFFSET #{ (page.to_i - 1) * TAGABLE_PAGINATION_LIMIT }
+    SQL
+
+    # NOTE: our version of Mysql2::Result is missing the very convenient method: #to_hash ...why?
+    # we should be able to do ActiveRecord::Base.connection.execute(sql).to_hash instead of
+    # populating the array ourselves...
+    result = []
+    ActiveRecord::Base.connection.execute(sql).each(:as => :hash) { |h| result << h }
+    result
+  end
+
   def tagables_for_homepage(tagable_category, page = 1)
     tagable_category == Entity.category_str ?
       entities_for_homepage(page) :
@@ -139,5 +198,24 @@ class Tag < ActiveRecord::Base
 
   def total_count(entity_type)
     entities.where(primary_ext: entity_type).count
+  end
+
+  # [ Hash ] -> Hash
+  #  example: output:
+  # {
+  #  "Relationship" => { 12 => <Relationship>, 22 => <Relationship> }
+  #  "Entity" => { 123 => <Entity>}
+  #  "List" => { 987 => <List> }
+  # }
+  #
+  def active_record_lookup_for_recent_edits(edits)
+    edits
+      .group_by { |h| h['tagable_class'] }
+      .transform_values { |tagable_array| tagable_array.map { |h| h['tagable_id'] }.uniq }
+      .to_a
+      .reduce("Relationship" => {}, "Entity" => {}, "List" => {}) do |acc, (klass, tagable_ids)|
+        klass.constantize.find(tagable_ids).each { |tagable| acc[klass].store(tagable.id, tagable) }
+        acc
+      end
   end
 end

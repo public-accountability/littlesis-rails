@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Tags', type: :feature do
+describe 'Tags', :tagging_helper, type: :feature do
 
   let(:tags) { Array.new(2) { create(:tag) } }
   let(:tag) { tags.first }
@@ -86,6 +86,8 @@ describe 'Tags', type: :feature do
           expect(page).to have_text tag.name
           expect(page).to have_text tag.description
         end
+
+        it "shows edit tab"
       end
 
       Tagable.categories.each do |tagable_category|
@@ -187,5 +189,79 @@ describe 'Tags', type: :feature do
         end
       end
     end
-  end
+
+    describe 'edits tab' do
+      let(:setup) { -> {} }
+      before(:each) do
+        setup.call
+        visit "/tags/#{tag.id}/edits"
+      end
+
+      it "has header with active edit tab" do
+        expect(page).to have_selector 'li#tag-nav-tab-edits.active'
+        expect(page).to have_selector 'li#tag-nav-tab-edits.active a', text: 'Edits'
+      end
+
+      it "contains list of edits" do
+        expect(page).to have_selector '#tag-homepage-edits-table-container table', count: 1
+      end
+
+      describe 'list of edits' do
+        let(:person) { create(:entity_person).tag(tag.id) }
+        let(:list) { create(:list).tag(tag.id) }
+        let(:relationship) do
+          create(:generic_relationship, entity: create(:entity_org), related: create(:entity_org)).tag(tag.id)
+        end
+        context 'a person was recently tagged' do
+          let(:setup) { proc { person } }
+          edits_table_has_correct_row_count(1)
+
+          it 'contains "tagged" text' do
+            expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'tagged'
+            expect(page.find('#tag-homepage-edits-table tbody')).not_to have_text 'updated'
+          end
+        end
+
+        context 'a person was recently updated (and previously tagged)' do
+          let(:setup) { proc { person.update_column(:updated_at, Date.tomorrow) } }
+          edits_table_has_correct_row_count(2)
+
+          it 'contains "tagged" and "updated" text' do
+            expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'tagged'
+            expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'Entity updated'
+          end
+        end
+
+        context 'a list and a relationship were recently tagged' do
+          let(:setup) { proc { list; relationship; } }
+
+          edits_table_has_correct_row_count(2)
+
+          it 'contains links to the list and relationship' do
+            find('#tag-homepage-edits-table tbody') do |el|
+              expect(el).to have_link list.name
+              expect(el).to have_link relationship.name
+            end
+          end
+        end
+
+        xcontext 'a person was tagged, untagged, and then updated' do
+          let(:setup) do
+            proc {
+              person.remove_tag(tag.id)
+              person.update_column(:updated_at, Date.tomorrow)
+            }
+          end
+
+          edits_table_has_correct_row_count(0)
+        end
+
+        context 'a list was recently updated' do
+          let(:setup) { proc { list.update_column(:updated_at, Date.tomorrow) } }
+          edits_table_has_correct_row_count(2)  
+        end
+        
+      end
+    end # end describe edits tab
+  end # end describe tag homepage
 end

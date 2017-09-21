@@ -1,0 +1,27 @@
+<div id="tag-show-container">
+    <%= render partial: 'header', locals: { tag: @tag, active_tab: :edits } %>
+</div>
+
+<div id="tag-homepage-edits-table-container" class="top-1em">
+    <table class="table" id="tag-homepage-edits-table">
+	<thead>
+	    <tr>
+		<th>Tagged Resource</th>
+		<th>Action</th>
+		<th>Time</th>
+	    </tr>
+	</thead>
+	<tbody>
+	    <% @recent_edits.each do |edit_event| %>
+		<tr>
+		    <td><%= tagable_link edit_event['tagable'] %></td>
+		    <td><%= tags_edits_format_action(edit_event) %></td>
+		    <td><%= tags_edits_format_time(edit_event) %></td>
+		</tr>
+	    <% end %>
+	</tbody>
+    </table>
+
+    <%= link_to_previous_page @recent_edits, 'Previous Page' %>
+    <%= link_to_next_page @recent_edits, 'Next Page', class: 'pull-right' %>
+</div>

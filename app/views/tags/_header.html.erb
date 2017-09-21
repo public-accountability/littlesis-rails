@@ -1,0 +1,32 @@
+<%#
+ locals: tag (Tag), active_tab (symbol)
+%>
+
+<div id="tag-header">
+
+    <div id="tag-title">
+	<div id="tag-name">
+            Tag: <%= content_tag :span, tag.name, class: "big-tag" %>
+	</div>
+
+	<div id="tag-description">
+            <%= tag.description %>
+	</div>
+    </div>
+
+    <div id="tag-overview-link">
+	<%= link_to "see all tags", tags_path  %>
+    </div>
+</div>
+
+<div id="tag-nav">
+    <ul class="nav nav-tabs">
+	<% (Tagable.categories + [:edits]).each do |tab|  %>
+            <li role="presentation"
+		      id="tag-nav-tab-<%= tab %>"
+		      class=<%= active_tab == tab ? "active" : "inactive" %> >
+		<%=  link_to tab.to_s.capitalize,"/tags/#{tag.id}/#{tab}" %>
+            </li>
+	<% end %>
+    </ul>
+</div>
