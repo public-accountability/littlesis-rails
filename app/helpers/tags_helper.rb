@@ -18,8 +18,15 @@ module TagsHelper
   end
 
   def tagable_list_sort_info(tagable, tag)
-    return "#{tagable.num_related} #{tag.name} relationships" if tagable.is_a? Entity
-    "edited #{time_ago_in_words(tagable.updated_at)} ago"
+    # TODO(ag): move this to an instance method on Tagable?
+    case tagable
+    when Entity
+      "#{tagable.relationship_count} #{tag.name} relationships"
+    when List
+      "#{tagable.entity_count} list members"
+    when Relationship
+      "edited #{time_ago_in_words(tagable.updated_at)} ago"
+    end
   end
 
   def tagable_link(tagable)
