@@ -6,17 +6,17 @@
     <table class="table" id="tag-homepage-edits-table">
 	<thead>
 	    <tr>
-		<th>Edited At</th>
-		<th>Resource</th>
-	        <th>Event</th>
+		<th>Tagged Resource</th>
+		<th>Action</th>
+		<th>Time</th>
 	    </tr>
 	</thead>
 	<tbody>
 	    <% @recent_edits.each do |edit_event| %>
 		<tr>
-		    <td><%= tags_format_edited_by edit_event %></td>
-		    <td> <%= tagable_link edit_event['tagable'] %></td>
-		    <td><%= tags_format_edit_event edit_event %></td>
+		    <td><%= tagable_link edit_event['tagable'] %></td>
+		    <td><%= tags_edits_format_action(edit_event) %></td>
+		    <td><%= tags_edits_format_time(edit_event) %></td>
 		</tr>
 	    <% end %>
 	</tbody>

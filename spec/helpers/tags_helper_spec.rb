@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe TagsHelper, type: :helper do
 
-  describe '#tags_format_edit_event' do
-    subject { helper.tags_format_edited_by(edit_event) }
+  describe '#tags_edits_format_time' do
+    subject { helper.tags_edits_format_time(edit_event) }
 
     let(:username) { Faker::Internet.user_name }
     let(:mock_entity) do
@@ -38,11 +38,11 @@ describe TagsHelper, type: :helper do
     end
   end
 
-  describe '#tags_format_edit_event' do
-    subject { helper.tags_format_edit_event(edit_event) }
+  describe '#tags_edits_format_action' do
+    subject { helper.tags_edits_format_action(edit_event) }
     context 'tag added event' do
-      let(:edit_event) { { 'event' => 'tag_added' } }
-      it { is_expected.to eql 'Tagged' }
+      let(:edit_event) { { 'event' => 'tag_added', 'tagable_class' => 'Relationship' } }
+      it { is_expected.to eql 'Relationship tagged' }
     end
 
     context 'update event' do

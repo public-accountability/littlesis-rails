@@ -26,7 +26,7 @@ module TagsHelper
     link_to tagable.name, send("#{tagable.class.name.downcase}_path", tagable)
   end
 
-  def tags_format_edited_by(edit_event)
+  def tags_edits_format_time(edit_event)
     if edit_event['event'] == 'tag_added' || edit_event['tagable_class'] == 'List'
       "Edited #{time_ago_in_words(edit_event['event_timestamp'])} ago"
     else
@@ -35,15 +35,8 @@ module TagsHelper
     end
   end
 
-  def tags_format_edit_event(edit_event)
-    case edit_event['event']
-    when 'tagable_updated'
-      "#{edit_event['tagable_class']} updated"
-    when 'tag_added'
-      'Tagged'
-    else
-      ''
-    end
+  def tags_edits_format_action(edit_event)
+    action_text = { 'tagable_updated' => 'updated', 'tag_added' => 'tagged' }
+    "#{edit_event['tagable_class']} #{action_text[edit_event['event']]}"
   end
-
 end

@@ -217,7 +217,7 @@ describe 'Tags', :tagging_helper, type: :feature do
           edits_table_has_correct_row_count(1)
 
           it 'contains "tagged" text' do
-            expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'Tagged'
+            expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'tagged'
             expect(page.find('#tag-homepage-edits-table tbody')).not_to have_text 'updated'
           end
         end
@@ -227,7 +227,7 @@ describe 'Tags', :tagging_helper, type: :feature do
           edits_table_has_correct_row_count(2)
 
           it 'contains "tagged" and "updated" text' do
-            expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'Tagged'
+            expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'tagged'
             expect(page.find('#tag-homepage-edits-table tbody')).to have_text 'Entity updated'
           end
         end
