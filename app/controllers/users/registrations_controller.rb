@@ -2,15 +2,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
-  HOME_NETWORK_IDS = [
-    ['United States', 79],
-    ['Buffalo', 78],
-    ['United Kingdom', 96],
-    ['Baltimore', 132],
-    ['New York State', 133],
-    ['Oakland', 198]
-  ]
-
   # GET /resource/sign_up
   def new
     super
@@ -110,11 +101,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def sf_profile_params
-    sf_params = params.require(:user).permit(:email, :username, :default_network_id, sf_guard_user_profile: [:name_first, :name_last, :reason] )
+    sf_params = params.require(:user).permit(:email, :username, sf_guard_user_profile: [:name_first, :name_last, :reason] )
     sf_params[:sf_guard_user_profile].merge(
-      "email"=>sf_params[:email], 
-      "public_name"=>sf_params[:username],
-      "home_network_id"=>sf_params[:default_network_id]
+      "email" => sf_params[:email],
+      "public_name" => sf_params[:username],
+      "home_network_id" => APP_CONFIG['default_network_id']
     )
   end
 
