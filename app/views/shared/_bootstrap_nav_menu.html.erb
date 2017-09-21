@@ -10,8 +10,6 @@ if user_signed_in?
       Lists: home_lists_path,
       Groups: home_groups_path,
       Edits: "/home/modifications",
-      'divider1' => 'divider',
-      current_user.default_network.name => current_user.default_network.legacy_network_url,
       'divider2' => 'divider',
       Settings: edit_user_registration_path,
       Logout: destroy_user_session_path

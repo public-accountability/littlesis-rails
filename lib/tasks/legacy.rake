@@ -1,4 +1,13 @@
 namespace :legacy do
+  desc "Archive networks"
+  task archive_networks: :environment do
+    DB = Rails.configuration.database_configuration['production']
+    filepath = Rails.root.join('data', 'network_entity_archive.sql').to_s
+    cmd = "mysqldump -u #{DB['username']} -p#{DB['password']} -h #{DB['host']} --single-transaction --where=\"list_id IN (78,79,96,132,133,198)\" #{DB['database']} ls_list_entity > #{filepath}"
+    `#{cmd}`
+    puts "Saved to: #{filepath}"
+  end
+
   desc "the one task you need to run to prep a legacy (symfony) littlesis database for use by this applicaton"
   task convert_data: [
   	:environment, 

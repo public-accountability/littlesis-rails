@@ -79,24 +79,12 @@
                 <%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {:onsubmit => 'return validateForm();', :class => 'form-horizontal', }) do |f| %>
                     <%= devise_error_messages! %>
                     <%= f.fields_for :sf_guard_user_profile do |profile_fields| %>
-			
-			<div class="form-group">
-                            <%= f.label :default_network_id, "Default Network", :class => label_class %>
-                            <div class="col-sm-3">
-				<%= f.select :default_network_id, Users::RegistrationsController::HOME_NETWORK_IDS %>
-                            </div>
-                            <div class="col-sm-7">
-				<small><em>(default local network for new data you contribute) </em></small>
-                            </div>
-			</div>
 
 			<div class="form-group">
                             <%= profile_fields.label :name_first, "First Name", :class => label_class   %>
                             <div class="<%= field_class %>">
 				<%= profile_fields.text_field :name_first, :required => true %>
-
                             </div>
-                            
 			</div>
 			
 			<div class="form-group">
