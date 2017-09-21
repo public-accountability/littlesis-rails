@@ -26,13 +26,8 @@ class List < ActiveRecord::Base
   has_many :sf_guard_group_lists, inverse_of: :list, dependent: :destroy
   has_many :sf_guard_groups, through: :sf_guard_group_lists, inverse_of: :lists
 
-  has_many :topic_lists, inverse_of: :list
-  has_many :topics, through: :topic_lists, inverse_of: :lists
-  has_one :default_topic, class_name: 'Topic', inverse_of: :default_list, foreign_key: 'default_list_id'
-
   validates_presence_of :name
   validates :short_description, length: { maximum: 255 }
-
   scope :public_scope, -> { where("access <> #{Permissions::ACCESS_PRIVATE}") }
   scope :private_scope, -> { where(access: Permissions::ACCESS_PRIVATE) }
 
