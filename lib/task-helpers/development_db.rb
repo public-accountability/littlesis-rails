@@ -111,6 +111,7 @@ class DevelopmentDb
                   org
                   os_category
                   ownership
+                  pages
                   person
                   phone
                   political_candidate
@@ -135,11 +136,15 @@ class DevelopmentDb
                   sf_guard_user_permission
                   social
                   tag
+                  tags
+                  taggings
                   topic_industries
                   topic_lists
                   topic_maps
                   topics
-                  transaction)
+                  toolkit_pages
+                  transaction
+                  user_permissions)
 
   STRUCTURE = %w( api_request
                   api_user
