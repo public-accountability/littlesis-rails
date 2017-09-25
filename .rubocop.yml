@@ -28,3 +28,6 @@ Layout/AlignParameters:
 
 Layout/EmtpyLinesAroundBlockBody:
   Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: false

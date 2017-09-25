@@ -34,5 +34,7 @@ describe 'Entity: Interlocks', type: :model do
                  }
                ])
     end
+
+    it "paginates interlocks to #{Entity::PER_PAGE} items"
   end
 end

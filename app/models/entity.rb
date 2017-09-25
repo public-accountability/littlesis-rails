@@ -14,6 +14,7 @@ class Entity < ActiveRecord::Base
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
   EXCERPT_SIZE = 150
+  PER_PAGE = 20
 
   has_paper_trail :ignore => [:link_count, :delta, :last_user_id],
                   :meta => {
