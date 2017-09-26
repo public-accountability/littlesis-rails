@@ -67,6 +67,21 @@ $tiny_image_size: 35px;
   
 }
 
+/* TAB CONTENTS */
+
+#entity-interlocks-tab-contents {
+    th {
+	font-size: 1.25em;
+    }
+    #connecting-entity-header, .connecting-entity-cell {
+	width: 30%;
+    }
+    #connected-entity-header, .connected-entity-cell {
+	
+    }
+    
+}
+
 .button-tabs span a:hover {
   background-color: $red;
 }

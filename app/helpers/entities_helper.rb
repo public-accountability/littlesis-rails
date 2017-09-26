@@ -177,6 +177,10 @@ module EntitiesHelper
     false
   end
 
+  def interlocks_entity_links(entities)
+    safe_join(entities.map { |e| entity_link(e) }, ', ')
+  end
+
   private
 
   # Filters refereces to uniq url/name
@@ -198,4 +202,5 @@ module EntitiesHelper
   def political_tab_col_right
     content_tag(:div, class: 'col-md-4 col-sm-4 double-left-padding') { yield }
   end
+
 end
