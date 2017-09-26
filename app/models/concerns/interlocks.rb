@@ -1,10 +1,11 @@
 module Interlocks
   # extend ActiveSupport::Concern
-  def interlocks
+  def interlocks(page = 1)
     # TODO: create position_scope for Link
-    org_ids = connecting_ids(Relationship::POSITION_CATEGORY)
-
-    people_and_org_ids = connected_and_connecting_ids(org_ids, Relationship::POSITION_CATEGORY)
+    org_ids = connecting_ids(rel_cat_id)
+    people_and_org_ids = paginate(page,
+                                  Entity::PER_PAGE,
+                                  connected_id_hashes_for(org_ids, rel_cat_id))
 
     entities_by_id = Entity.lookup_table_for(collapse(people_and_org_ids))
 
@@ -18,10 +19,14 @@ module Interlocks
 
   private
 
-  def connecting_ids(rel_category_id)
+  def rel_cat_id
+    Relationship::POSITION_CATEGORY
+  end
+
+  def connecting_ids(cat_id)
     links
       .where(entity1_id: id,
-             category_id: rel_category_id,
+             category_id: cat_id,
              is_reverse: false)
       .pluck(:entity2_id)
   end
@@ -29,8 +34,8 @@ module Interlocks
   # type ConnectedIdHash = { connected_id   => Integer,
   #                          connecting_ids => [Integer] }
   # ---
-  # [Integer], Integer -> ConnectedIdHash
-  def connected_and_connecting_ids(connecting_ids, rel_category_id)
+  # [Integer], Integer -> [ConnectedIdHash]
+  def connected_id_hashes_for(connecting_ids, rel_category_id)
     Link
       .where(entity2_id: connecting_ids,
              category_id: rel_category_id,

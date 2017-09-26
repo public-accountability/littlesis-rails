@@ -10,6 +10,7 @@ class Entity < ActiveRecord::Base
   include EntitySearch
   include Tagable
   include Interlocks
+  include Pagination
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
