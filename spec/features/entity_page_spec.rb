@@ -4,9 +4,35 @@ describe "Entity Page", :interlocks_helper, type: :feature do
   # TODO: include Routes (which will force internal handling of /people/..., /orgs/... routes)
   let(:user) { create_basic_user }
   let(:person){ create(:entity_person, last_user_id: user.sf_guard_user.id) }
+  let(:org){ create(:entity_org, last_user_id: user.sf_guard_user.id) }
 
   before do
     visit entity_path(person)
+  end
+
+  describe 'routes' do
+
+    def should_visit_entity_page(url)
+      visit url
+      expect(page.status_code).to eq 200
+      expect(page).to have_current_path url
+      expect(page).to have_selector '#entity-page-container'
+    end
+
+    it 'accepts person a valid entities slug' do
+      should_visit_entity_page "/person/#{person.to_param}"
+      should_visit_entity_page "/person/#{person.to_param}/interlocks"
+    end
+
+    it 'accepts org as an valid entities slug' do
+      should_visit_entity_page "/org/#{org.to_param}"
+      should_visit_entity_page "/org/#{org.to_param}/interlocks"
+    end
+
+    it 'rewrites legacy symfony-style urls to rails urls' do
+      should_visit_entity_page "/org/#{org.id}/#{org.name}"
+      should_visit_entity_page "/org/#{org.id}/#{org.name}/interlocks"
+    end
   end
 
   it "defaults to relationships tab" do
@@ -80,12 +106,7 @@ describe "Entity Page", :interlocks_helper, type: :feature do
     let(:person) { people.first }
     let(:orgs) { Array.new(3) { create(:entity_org) } }
     before { interlock_people_via_orgs(people, orgs)  }
-      
     
-    it "can be visited by clicking"
-
-    it "can be visited by url"
-
     describe "main container" do
 
       before { visit interlocks_entity_path(person) }

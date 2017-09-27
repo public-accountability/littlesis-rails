@@ -246,6 +246,7 @@ GEM
     rack (1.6.8)
     rack-mini-profiler (0.10.1)
       rack (>= 1.2.0)
+    rack-rewrite (1.5.1)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.8)
@@ -466,6 +467,7 @@ DEPENDENCIES
   pry
   pry-rails
   rack-mini-profiler
+  rack-rewrite (~> 1.5.1)
   rails (= 4.2.8)
   recaptcha
   redcarpet (>= 3.4.0)
