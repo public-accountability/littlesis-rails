@@ -50,6 +50,7 @@ RSpec.configure do |config|
   config.extend ListHelpersForExampleGroups, :list_helper
   config.extend TaggingHelpers, :tagging_helper
   config.extend TagSpecHelper, :tag_helper
+  config.extend PaginationExampleGroupHelper, :pagination_helper
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false

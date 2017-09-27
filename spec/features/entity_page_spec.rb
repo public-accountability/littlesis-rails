@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Entity Page", :interlocks_helper, type: :feature do
+describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature do
   # TODO: include Routes (which will force internal handling of /people/..., /orgs/... routes)
   let(:user) { create_basic_user }
   let(:person){ create(:entity_person, last_user_id: user.sf_guard_user.id) }
@@ -105,11 +105,12 @@ describe "Entity Page", :interlocks_helper, type: :feature do
     let(:people) { Array.new(4) { create(:entity_person, last_user_id: APP_CONFIG['system_user_id']) } }
     let(:person) { people.first }
     let(:orgs) { Array.new(3) { create(:entity_org) } }
-    before { interlock_people_via_orgs(people, orgs)  }
+    before do
+      interlock_people_via_orgs(people, orgs)
+      visit interlocks_entity_path(person)
+    end
     
     describe "main container" do
-
-      before { visit interlocks_entity_path(person) }
       
       it 'on the interlocks tab' do
         expect(page).to have_current_path interlocks_entity_path(person)
@@ -143,17 +144,32 @@ describe "Entity Page", :interlocks_helper, type: :feature do
       end
 
       describe "pagination" do
-
-        context "less than #{Entity::PER_PAGE} interlocks" do
-          it "does not show a pagination bar"
-        end
         
         context "less than #{Entity::PER_PAGE} interlocks" do
-          it "shows a pagination bar"
+          it "does not show a pagination bar" do
+            expect(page.find("#entity-interlocks-pagination"))
+              .not_to have_selector(".pagination")
+          end
+        end
+        
+        context "more than #{Entity::PER_PAGE} interlocks" do
+          stub_page_limit(Entity)
+          
+          let(:people) do
+            Array.new(Entity::PER_PAGE + 2) do
+              create(:entity_person, last_user_id: APP_CONFIG['system_user_id'])
+            end
+          end
+          
+          it "shows a pagination bar" do
+            expect(page.find("#entity-interlocks-pagination"))
+              .to have_selector(".pagination")
+          end
 
-          it "only shows #{Entity::PER_PAGE} rows"
-
-          it "shows the page that a user clicks on"
+          it "only shows #{Entity::PER_PAGE} rows" do
+            expect(page.find("#entity-interlocks-table tbody"))
+              .to have_selector "tr", count: Entity::PER_PAGE
+          end
         end
       end
     end
