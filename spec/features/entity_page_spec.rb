@@ -35,41 +35,75 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
     end
   end
 
-  it "defaults to relationships tab" do
-    expect(page).to have_current_path entity_path(person)
-    expect(page.find('div.button-tabs span.active')).to have_text 'Relationships'
+  describe "header/chrome" do
+    it "shows the entity's name" do
+      expect(page.find("#entity-name")).to have_text person.name
+    end
+
+    it "shows a description of the entity" do
+      expect(page.find("#entity-blurb")).to have_text person.blurb
+    end
+
+    it "shows action buttons" do
+      expect(page).to have_selector ".action-button", count: 3
+    end
+
+    it "shows social media buttons" do
+      expect(page).to have_selector ".fb-share-button"
+      expect(page).to have_selector ".twitter-share-button"
+    end
+
+    context 'user is signed in' do
+      it 'show advanced user action buttons'
+    end
   end
 
-  it "shows the entity's name" do
-    expect(page.find("#entity-name")).to have_text person.name
-  end
+  describe "summary field" do
+    it "hides the summary field if user has no summary" do
+      expect(page.find("#entity-summary")).not_to have_text person.summary_excerpt
+    end
+    
+    context "entity has summary" do
+      let(:person) do
+        create(:entity_person, last_user_id: user.sf_guard_user.id, summary: "foobar")
+      end
 
-  it "shows a description of the entity" do
-    expect(page.find("#entity-blurb")).to have_text person.blurb
-  end
+      it "shows the summary" do
+        expect(page.find("#entity-summary")).to have_text person.summary
+      end
+    end
 
-  it "shows edit buttons" do
-    expect(page).to have_selector ".action-button", count: 3
-  end
-      it "shows a similar entities section"
+    context "entity has summary longer than limit" do
+      let(:person) do
+        create(:entity_person,
+               last_user_id: user.sf_guard_user.id,
+               summary: "a" * (Entity::EXCERPT_SIZE + 1))
+      end
+      
+      it "excerpts the summary" do
+        expect(page.find("#entity-summary")).to have_text "a" * Entity::EXCERPT_SIZE
+      end
 
-  it "shows social media buttons" do
-    expect(page).to have_selector ".fb-share-button"
-    expect(page).to have_selector ".twitter-share-button"
-  end
-
-  context 'user is signed in' do
-    it 'show advanced user buttons'
+      it "allows user to hide and show longer version (HACK)" do
+        expect(page).to have_selector ".summary-show-more"
+        expect(page).to have_selector ".summary-show-less", visible: false
+      end
+    end
   end
   
+  describe "navigation tabs" do
 
-  it "shows a description"
+    it "has 5 tabs"
+    
+    it "defaults to relationships tab" do
+      expect(page).to have_current_path entity_path(person)
+      expect(page.find('div.button-tabs span.active')).to have_text 'Relationships'
+    end
 
-  it "has 5 tabs"
+    it "visits a subpage when a user clicks on a tab"
+  end
 
-  it "navigates to tab subpage when tab is clicked"
-
-  describe "sidebar" do
+  xdescribe "sidebar" do
 
     it "shows an edit history"
     
