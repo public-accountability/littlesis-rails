@@ -16,7 +16,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     # check recaptcha
     unless verify_recaptcha
       reset_signup_session
-      return respond_with resource
+      return render 'new'
     end
 
     resource.sf_guard_user.username = resource.email
@@ -36,10 +36,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
           expire_data_after_sign_in!
           return respond_with resource, location: after_inactive_sign_up_path_for(resource)
         end
+      else
+        Rails.logger.warn "FAILED TO CREATE NEW USER"
+        Rails.logger.warn resource.errors.full_messages
+        raise "Failed to create a new user"
       end
     else
       reset_signup_session
-      return respond_with resource
+      return render 'new'
     end
   end
 
