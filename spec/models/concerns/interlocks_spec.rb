@@ -1,19 +1,12 @@
 require "rails_helper"
 
-describe 'Entity: Interlocks', type: :model do
+describe 'Entity: Interlocks', :interlocks_helper, type: :model do
 
   context "for a person" do
     let(:people) { Array.new(4) { create(:entity_person) } }
     let(:person) { people.first }
     let(:orgs) { Array.new(3) { create(:entity_org) } }
-    before do
-      # person[0] is related to all orgs, person[n] is related to n orgs
-      people.each_with_index do |person, idx|
-        (idx.zero? ? orgs : orgs.take(idx)).each do |org|
-          create(:position_relationship, entity: person, related: org)
-        end
-      end
-    end
+    before { interlock_people_via_orgs(people, orgs) }
 
     subject { person.interlocks.to_a }
 

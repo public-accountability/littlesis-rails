@@ -178,7 +178,7 @@ module EntitiesHelper
   end
 
   def interlocks_entity_links(entities)
-    safe_join(entities.map { |e| entity_link(e) }, ', ')
+    safe_join(entities.map { |e| link_to(e.name, e) }, ', ')
   end
 
   private

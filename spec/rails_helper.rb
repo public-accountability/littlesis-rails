@@ -42,6 +42,7 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers
   config.include FactoryGirl::Syntax::Methods
   config.include FeatureExampleMacros, :type => :feature
+  config.include InterlocksExampleHelper, :interlocks_helper
 
   # these run inside example groups (ie: describe blocks)
   config.extend ControllerMacros, :type => :controller

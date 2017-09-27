@@ -1,20 +1,20 @@
 <div class="row thin-grey-bottom-border actions-row">
     <div id="actions" class="col-md-8 col-sm-8 nopadding">
 	<div id="action-buttons">
-            <%= link_to "add relationship", @entity.legacy_url("addRelationship") %>
-            <%= link_to "edit", edit_entity_path(@entity) %>
-            <%= link_to "flag", flag_path %>
+            <%= link_to "add relationship", @entity.legacy_url("addRelationship"), class: "action-button" %>
+            <%= link_to "edit", edit_entity_path(@entity), class: "action-button" %>
+            <%= link_to "flag", flag_path, class: "action-button" %>
             <% if user_signed_in? %>
 		<% if @current_user.has_legacy_permission 'deleter' %>
 		    <%= form_for @entity,  method: :delete, id: "remove_entity_#{@entity.id}"  do |f| %>
-			<% f.submit 'remove', data: { confirm: "Are you sure you want to remove this entity?" }, class: 'delete-entity-btn'  %>
+			<% f.submit 'remove', data: { confirm: "Are you sure you want to remove this entity?" }, class: 'delete-entity-btn action-button'  %>
 		    <% end %>
   		<% end %>
 		<% if @current_user.has_legacy_permission 'importer' %>
-                    <%= link_to "match donations", match_donations_entity_path(@entity) if @entity.person? %>
+                    <%= link_to "match donations", match_donations_entity_path(@entity), class: "action-button" if @entity.person? %>
 		<% end %>
 		<% if show_add_bulk_button(@current_user) %>
-                    <%= link_to "add bulk", tools_bulk_relationships_path(entity_id: @entity.id) %>
+                    <%= link_to "add bulk", tools_bulk_relationships_path(entity_id: @entity.id), class: "action-button" %>
 		<% end %>
 	    <% else  %>
 		<div class="fb-share-button" 

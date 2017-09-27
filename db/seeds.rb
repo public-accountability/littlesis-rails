@@ -45,6 +45,9 @@ ExtensionDefinition.create!([
 ])
 
 SfGuardUser.create!({id: 1, username: "system@littlesis.org", password: 'password', salt:''})
+User.create!({id: 1, email: "system@littlesis.org", username: 'system', default_network_id: 79, confirmed_at: Time.now,
+              sf_guard_user_id: 1,
+              password: '$2a$10$Q2tSw2llUagw1KRNTtLD4.JiYgFA.9pxgV5aPOs/IxFsddZGa8jgO'})
 
 List.create!([
   {name: "Buffalo", description: "Powerful individuals in Buffalo, NY, including business, political, and social leaders.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "buffalo", featured_list_id: nil,last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false},

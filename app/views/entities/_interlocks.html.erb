@@ -1,26 +1,36 @@
 <% interlocks = @entity.interlocks(params[:page]) %>
 <div id="entity-interlocks-tab-contents">
-    <table class="table entity-interlocks-table">
-	<thead>
-	    <tr>
-		<th id="connecting-entity-header">Person</th>
-		<th id="connected-entity-header">Common Orgs</th>
-	    </tr>
-	</thead>
-	<tbody>
-	    <% interlocks.each do |connected_entity_hash| %>
-		<tr>
-		    <td class="connecting-entity-cell">
-			<%= entity_link connected_entity_hash['person'] %>
-		    </td>
-		    <td class="connected-entity-cell">
-			<%= interlocks_entity_links(connected_entity_hash['orgs']) %>
-		    </td>
-		</tr>
-	    <% end %>
-	</tbody>
-    </table>
-    <div class="entity-interlocks-pagination">
-	<%= paginate interlocks %>
+  <div id="entity-interlocks-tab-header">
+    <div id="entity-interlocks-tab-title">
+      People in Common Orgs
     </div>
+    <div id="entity-interlocks-tab-subtitle">
+      People with positions in the same orgs as <%=  @entity.name %>
+    </div>
+  </div>
+
+  <table class="table" id="entity-interlocks-table">
+    <thead id="entity-interlocks-tab-theader">
+      <tr>
+	<th id="connecting-entity-header">Person</th>
+	<th id="connected-entity-header">Common Orgs</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% interlocks.each do |connected_entity_hash| %>
+	<tr>
+	  <td class="connected-entity-cell">
+	    <%= link_to connected_entity_hash['person'].name,  connected_entity_hash['person'] %>
+	  </td>
+	  <td class="connecting-entities-cell">
+	    <%= interlocks_entity_links(connected_entity_hash['orgs']) %>
+	  </td>
+	</tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="entity-interlocks-pagination">
+    <%= paginate interlocks %>
+  </div>
 </div>
