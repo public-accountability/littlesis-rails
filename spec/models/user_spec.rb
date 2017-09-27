@@ -13,8 +13,6 @@ describe User do
       @user = create(:user, sf_guard_user_id: rand(1000), email: 'fake@fake.com', username: 'unqiue2')
     end
 
-    it { should validate_presence_of(:default_network_id) }
-
     it 'validates presence of email' do
       expect(@user.valid?).to be true
       expect(build(:user, sf_guard_user_id: rand(1000), email: nil).valid?).to be false
@@ -29,6 +27,19 @@ describe User do
       subject { build(:user, sf_guard_user_id: rand(1000)) }
       it { should validate_uniqueness_of(:sf_guard_user_id) }
       it { should validate_presence_of(:sf_guard_user_id) }
+    end
+  end
+
+  describe 'set_default_network_id' do
+    let(:user) do
+      User.new(sf_guard_user_id: rand(1000),
+               email: Faker::Internet.unique.user_name,
+               username: Faker::Internet.unique.user_name)
+    end
+
+    it 'sets default network id to be the app config default' do
+      expect(user.valid?).to be true
+      expect(user.default_network_id).to eql APP_CONFIG.fetch('default_network_id')
     end
   end
 

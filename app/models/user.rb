@@ -19,6 +19,8 @@ class User < ActiveRecord::Base
   belongs_to :sf_guard_user, inverse_of: :user
   has_one :sf_guard_user_profile, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :user
   accepts_nested_attributes_for :sf_guard_user
+
+  before_validation :set_default_network_id
   
   # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
   delegate :image_path, to: :sf_guard_user_profile, allow_nil: true
@@ -156,6 +158,10 @@ class User < ActiveRecord::Base
   def permissions
     @permissions ||= Permissions.new(self)
   end
-  
 
+  private
+
+  def set_default_network_id
+    self.default_network_id = APP_CONFIG['default_network_id'] if self.default_network_id.nil?
+  end
 end
