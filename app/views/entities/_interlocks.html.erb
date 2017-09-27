@@ -1,16 +1,16 @@
 <% interlocks = @entity.interlocks(params[:page]) %>
-<div id="entity-interlocks-tab-contents">
-  <div id="entity-interlocks-tab-header">
-    <div id="entity-interlocks-tab-title">
+<div id="entity-interlocks-container">
+  <div id="entity-interlocks-header">
+    <div id="entity-interlocks-title">
       People in Common Orgs
     </div>
-    <div id="entity-interlocks-tab-subtitle">
+    <div id="entity-interlocks-subtitle">
       People with positions in the same orgs as <%=  @entity.name %>
     </div>
   </div>
 
   <table class="table" id="entity-interlocks-table">
-    <thead id="entity-interlocks-tab-theader">
+    <thead>
       <tr>
 	<th id="connecting-entity-header">Person</th>
 	<th id="connected-entity-header">Common Orgs</th>

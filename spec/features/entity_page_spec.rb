@@ -41,11 +41,11 @@ describe "Entity Page", :interlocks_helper, type: :feature do
   end
 
   it "shows the entity's name" do
-    expect(page).to have_selector("#entity-name")
+    expect(page.find("#entity-name")).to have_text person.name
   end
 
-  it "shows a subtititle" do
-    expect(page).to have_selector("#entity-subtitle")
+  it "shows a description of the entity" do
+    expect(page.find("#entity-blurb")).to have_text person.blurb
   end
 
   it "shows edit buttons" do
@@ -116,9 +116,9 @@ describe "Entity Page", :interlocks_helper, type: :feature do
       end
 
       it "shows a header and subheader" do
-        expect(page.find("#entity-interlocks-tab-title"))
+        expect(page.find("#entity-interlocks-title"))
           .to have_text "People in Common Orgs"
-        expect(page.find("#entity-interlocks-tab-subtitle"))
+        expect(page.find("#entity-interlocks-subtitle"))
           .to have_text "same orgs as #{person.name}"
       end
 

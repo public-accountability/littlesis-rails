@@ -69,17 +69,30 @@ $tiny_image_size: 35px;
 
 /* TAB CONTENTS */
 
-#entity-interlocks-tab-contents {
-    th {
-	font-size: 1.25em;
+#entity-interlocks-container {
+    #entity-interlocks-header {
+        #entity-interlocks-title {
+            padding-left: .5em;
+            font-size: large;
+            border-bottom: 1px solid lightgrey !important;
+            font-weight: bold;
+        }
+        #entity-interlocks-subtitle {
+            padding-left: .5em;
+            color: grey;
+            font-style: italic;
+        }
     }
-    #connecting-entity-header, .connecting-entity-cell {
-	width: 30%;
+    #entity-interlocks-table {
+        margin-top: .5em;
+        th {
+            border-bottom: 1px solid lightgrey !important;
+	    font-size: larger;
+        }
+        #connecting-entity-header, .connecting-entity-cell {
+	    width: 30%;
+        }
     }
-    #connected-entity-header, .connected-entity-cell {
-	
-    }
-    
 }
 
 .button-tabs span a:hover {
