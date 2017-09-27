@@ -112,4 +112,32 @@ namespace :query do
 
     puts "Saved to #{file_path}"
   end
+
+  desc 'Most connected entities from a list'
+  task :connected_entities_from_list, [:list_id] => :environment do |t, args|
+    file_path = Rails.root.join('data', "connected_entities_for_list_#{args[:list_id]}_#{Date.today}.csv")
+    entity_ids = List.find(args[:list_id]).entities.map(&:id).uniq
+
+    sql = <<-SQL
+    SELECT entity.name, sub.* FROM (
+           SELECT entity2_id,
+                  count(link.id) as rel_count,
+                  group_concat( concat(entity.name, ' (', link.entity1_id, ')') SEPARATOR ', ') as connected_entities
+           FROM link
+           LEFT JOIN entity ON entity.id = link.entity1_id
+           WHERE entity1_id in #{Entity.sqlize_array(entity_ids)}
+           GROUP BY entity2_id
+           ORDER BY rel_count desc
+    ) as sub
+    LEFT JOIN entity ON entity.id = sub.entity2_id
+    SQL
+
+    result = []
+    ActiveRecord::Base.connection.execute(sql).each(:as => :hash) { |h| result << h }
+
+    CSV.open(file_path, "wb") do |csv|
+      csv << result.first.keys
+      result.each { |hash| csv << hash.values }
+    end
+  end
 end
