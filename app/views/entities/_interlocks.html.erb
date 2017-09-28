@@ -1,36 +1,41 @@
-<% interlocks = @entity.interlocks(params[:page]) %>
-<div id="entity-interlocks-container">
-  <div id="entity-interlocks-header">
-    <div id="entity-interlocks-title">
-      People in Common Orgs
-    </div>
-    <div id="entity-interlocks-subtitle">
-      People with positions in the same orgs as <%=  @entity.name %>
-    </div>
-  </div>
+<% cache(['interlocks', @entity.alt_cache_key,  params[:page] ], expires_in: 2.days) do %>
 
-  <table class="table" id="entity-interlocks-table">
-    <thead>
-      <tr>
-	<th id="connecting-entity-header">Person</th>
-	<th id="connected-entity-header">Common Orgs</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% interlocks.each do |connected_entity_hash| %>
-	<tr>
-	  <td class="connected-entity-cell">
-	    <%= link_to connected_entity_hash['person'].name,  connected_entity_hash['person'] %>
-	  </td>
-	  <td class="connecting-entities-cell">
-	    <%= interlocks_entity_links(connected_entity_hash['orgs']) %>
-	  </td>
-	</tr>
-      <% end %>
-    </tbody>
-  </table>
+    <% interlocks = @entity.interlocks(params[:page]) %>
 
-  <div id="entity-interlocks-pagination">
-    <%= paginate interlocks %>
-  </div>
-</div>
+    <div id="entity-interlocks-container">
+	<div id="entity-interlocks-header">
+	    <div id="entity-interlocks-title">
+		People in Common Orgs
+	    </div>
+	    <div id="entity-interlocks-subtitle">
+		People with positions in the same orgs as <%=  @entity.name %>
+	    </div>
+	</div>
+
+	<table class="table" id="entity-interlocks-table">
+	    <thead>
+		<tr>
+		    <th id="connecting-entity-header">Person</th>
+		    <th id="connected-entity-header">Common Orgs</th>
+		</tr>
+	    </thead>
+	    <tbody>
+		<% interlocks.each do |connected_entity_hash| %>
+		    <tr>
+			<td class="connected-entity-cell">
+			    <%= link_to connected_entity_hash['person'].name,  connected_entity_hash['person'] %>
+			</td>
+			<td class="connecting-entities-cell">
+			    <%= interlocks_entity_links(connected_entity_hash['orgs']) %>
+			</td>
+		    </tr>
+		<% end %>
+	    </tbody>
+	</table>
+
+	<div id="entity-interlocks-pagination">
+	    <%= paginate interlocks %>
+	</div>
+    </div>
+
+<% end  %>
