@@ -16,7 +16,7 @@
     <% if @entity.person? %>
 	<%= render partial: 'type_checkboxes_person', locals: { f: f } %>
     <% else  %>
-	  <%= render partial: 'type_checkboxes_org', locals: { f: f } %>
+	<%= render partial: 'type_checkboxes_org', locals: { f: f } %>
     <% end  %>
 
     
@@ -128,30 +128,22 @@
    const unchecked_class = 'glyphicon-unchecked';
 
    $('#entity-types span.glyphicon').click(function(){
-     if ($(this).hasClass(checked_class)) {
-       $(this).removeClass(checked_class);
-       $(this).addClass(unchecked_class);
-     } else if ($(this).hasClass(unchecked_class)) {
-       $(this).removeClass(unchecked_class);
-       $(this).addClass(checked_class);
-     }
+     $(this).toggleClass(checked_class);
+     $(this).toggleClass(unchecked_class);
+     updateSelectedTypeIds();
    });
+
+   function updateSelectedTypeIds() {
+     $('#entity_extension_def_ids').val(selectedTypeIds());
+   }
 
    // The definition id of the type is stored in the HTML5 dataset of the icon
    // -> string
    function selectedTypeIds() {
-     return $('#entity-types span.glyphicon-check').map(function(){
+     return $('#entity-types span.' + checked_class).map(function(){
        return $(this).data().definitionId; 
      }).toArray().join(',');
    }
-   
-   // The checkboxes for entity types do not use normal form inputs.
-   // This updates the hidden input with the selected types before the form is submitted
-   $('<%= "#edit_entity_#{@entity.id}" %>').submit(function(event){
-     $('#entity_extension_def_ids').val(selectedTypeIds);
-     return true;
-   });
-
 
  });
  
