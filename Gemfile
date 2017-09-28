@@ -3,6 +3,9 @@ source 'https://rubygems.org'
 gem 'rails', '4.2.8'
 gem 'mysql2', '~> 0.3.21'
 
+# Rack middleware
+gem 'rack-rewrite', '~> 1.5.1'
+
 # users and authentication
 gem 'devise', '~> 4.2'
 

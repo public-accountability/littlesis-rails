@@ -132,12 +132,16 @@ Lilsis::Application.routes.draw do
       post 'crop_remote'
     end
   end
-
+  
   constraints(id: /[0-9]+(-[^\/]+)?/) do
     resources :entities do
       member do
-        get 'relationships'
+        # profile page
+        get 'interlocks'
         get 'political'
+        #get 'relationships'
+        get 'datatable'
+        #
         get 'match_donations'
         get 'match_ny_donations'
         get 'review_donations'

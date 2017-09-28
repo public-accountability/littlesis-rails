@@ -2,7 +2,7 @@
 <div id="profile-page-sidebar">
     <!-- IMAGE -->
     <%= cache ['entity_image', user_signed_in?, @entity.id, @entity.featured_image_url, @entity.name]  do %>
-	<div class="row">
+	<div class="row" id="sidebar-image-container">
 	    <div class="col-sm-10 col-sm-offset-1">
 		<%= render partial: 'entities/sidebar/image' %>
 	    </div>
@@ -11,11 +11,11 @@
 
     <!-- BASIC INFO -->
     <% cache ['entity_basic_info', @entity.alt_cache_key] do %>
-	<div class="row">
+	<div id="sidebar-basic-info-container" class="row">
 	  <div class="col-sm-12">
 	    <%= sidebar_header 'Basic info' %>
 	  </div>
-	  <div class="col-sm-12 sidebar-basic-info-container">
+	  <div class="col-sm-12">
 	    <%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
 	  </div>
 	</div>
@@ -25,7 +25,7 @@
 
     <% if user_signed_in? && current_user.admin? %>
       
-      <div class="row">
+      <div class="row" id="sidebar-tags-container">
 	<div class="col-sm-12">            
           <%= sidebar_header 'Tags', addon: capture { %>
           <span id="tags-controls">
@@ -61,7 +61,7 @@
 
     <!-- ADMIN TOOLS -->
     <% if user_signed_in? && current_user.admin? %>
-	<div class="row">
+	<div class="row" id="sidebar-admin-tools-container">
 	    <div class="col-sm-12">
 		<%= sidebar_header('Admin tools') %>
 	    </div>
@@ -73,7 +73,7 @@
 
     <!-- ADVANCED TOOLS -->
     <% if user_signed_in? %>
-	<div class="row">
+	<div class="row" id="side-bar-advanced-tools-container">
 	    <div class="col-sm-12">
 		<%= sidebar_header('Advanced tools') %>
 	    </div>
@@ -95,7 +95,7 @@
 
     <!-- LISTS -->
     <% cache(['entity_list_entities', @entity.list_entities], :expires_in => 1.week) do %>
-	<div class="row">
+	<div class="row" id="sidebar-lists-container">
 	    <div class="col-sm-12">
 		<%= sidebar_header('Lists', subtitle: 'Analyst-created lists of people and org') %>
 	    </div>
@@ -109,7 +109,7 @@
 
     <!-- Similar Entities -->
     <% unless @similar_entities.blank? %>
-	<div class="row">
+	<div class="row" id="sidbar-similar-entities-container">
 	    <div class="col-sm-12">
 		<%= sidebar_header('Similar Entities') %>
 	    </div>

@@ -1,6 +1,6 @@
 class Tag < ActiveRecord::Base
   include Pagination
-  TAGABLE_PAGINATION_LIMIT = 20
+  PER_PAGE = 20
 
   has_many :taggings
 
@@ -53,9 +53,9 @@ class Tag < ActiveRecord::Base
   def recent_edits_for_homepage(page = 1)
     paginate(
       page,
-      TAGABLE_PAGINATION_LIMIT,
-      taggings.count * 2,
-      recent_edits(page)
+      PER_PAGE,
+      recent_edits(page),
+      taggings.count * 2
     )
   end
 
@@ -106,8 +106,8 @@ class Tag < ActiveRecord::Base
 	WHERE taggings.tag_id = #{id}
       )
         ORDER BY event_timestamp DESC
-        LIMIT #{TAGABLE_PAGINATION_LIMIT}
-        OFFSET #{ (page.to_i - 1) * TAGABLE_PAGINATION_LIMIT }
+        LIMIT #{PER_PAGE}
+        OFFSET #{ (page.to_i - 1) * PER_PAGE }
     SQL
 
     # NOTE: our version of Mysql2::Result is missing the very convenient method: #to_hash ...why?
@@ -121,19 +121,19 @@ class Tag < ActiveRecord::Base
   def entities_for_homepage(page = 1)
     %w[Person Org].reduce({}) do |acc, type|
       acc.merge(type => paginate(page,
-                                 TAGABLE_PAGINATION_LIMIT,
+                                 PER_PAGE,
                                  *count_and_sort_entities(type, page)))
     end
   end
 
   def count_and_sort_entities(entity_type, page = 1)
     # return tuple of:
-    # (1) count of all entities of type `entity_type` tagged `self`
-    # (2) all entities of type `entity_type` tagged `self`,
+    # (1) all entities of type `entity_type` tagged `self`,
     #     sorted by # relationships to other entities also tagged `self`
+    # (2) count of all entities of type `entity_type` tagged `self`
     [
-      entities.where(primary_ext: entity_type).count,
-      entities_by_relationship_count(entity_type, page)
+      entities_by_relationship_count(entity_type, page),
+      entities.where(primary_ext: entity_type).count
     ]
   end
 
@@ -180,8 +180,8 @@ class Tag < ActiveRecord::Base
        # filter by entity subtype
        WHERE entity.primary_ext = '#{entity_type}'
        # paginate
-       LIMIT #{TAGABLE_PAGINATION_LIMIT}
-       OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT}
+       LIMIT #{PER_PAGE}
+       OFFSET #{(page - 1) * PER_PAGE}
       SQL
 
     Entity.find_by_sql(sql)
@@ -190,13 +190,13 @@ class Tag < ActiveRecord::Base
   def lists_for_homepage(page = 1)
     paginate(
       page,
-      TAGABLE_PAGINATION_LIMIT,
+      PER_PAGE,
       *count_and_sort_lists(page)
     )
   end
 
   def count_and_sort_lists(page = 1)
-    [lists.count, lists_by_entity_count(page)]
+    [lists_by_entity_count(page), lists.count]
   end
 
   def lists_by_entity_count(page = 1)
@@ -213,8 +213,8 @@ class Tag < ActiveRecord::Base
       WHERE ls_list.is_deleted = 0
       GROUP BY ls_list.id
       ORDER BY entity_count DESC
-      LIMIT #{TAGABLE_PAGINATION_LIMIT}
-      OFFSET #{(page - 1) * TAGABLE_PAGINATION_LIMIT};
+      LIMIT #{PER_PAGE}
+      OFFSET #{(page - 1) * PER_PAGE};
     SQL
     List.find_by_sql query
   end
@@ -223,7 +223,7 @@ class Tag < ActiveRecord::Base
     relationships
       .order(updated_at: :desc)
       .page(page)
-      .per(TAGABLE_PAGINATION_LIMIT)
+      .per(PER_PAGE)
   end
 
   # [ Hash ] -> Hash

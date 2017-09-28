@@ -1,6 +1,6 @@
 class EntitiesController < ApplicationController
   include TagableController
-  before_filter :authenticate_user!, except: [:show, :relationships, :political, :contributions, :references]
+  before_filter :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show]
   before_action :set_entity_with_eager_loading, only: [:show]
   before_action :set_current_user, only: [:show, :political, :match_donations]
@@ -8,9 +8,29 @@ class EntitiesController < ApplicationController
   before_action -> { check_permission('contributor') }, only: [:create]
   before_action -> { check_permission('deleter') }, only: [:destroy]
 
+  ## Profile Page Tabs:
+  # (consider moving these all to #show route)
+  
   def show
     @similar_entities = @entity.similar_entities
+    @active_tab = :relationships
   end
+
+  def interlocks
+    @active_tab = :interlocks
+    render 'show'
+  end
+
+  # def giving; end
+
+  def political
+  end
+
+  # THE DATA 'tab'
+  def datatable
+  end
+
+  #### 
 
   def new
   end
@@ -77,16 +97,14 @@ class EntitiesController < ApplicationController
     redirect_to home_dashboard_path, notice: "#{@entity.name} has been successfully deleted"
   end
 
-  def relationships
-  end
+  
 
   def add_relationship
     @relationship = Relationship.new
     @reference = Reference.new
   end
 
-  def political
-  end
+  
 
   def references
     refs = @entity.all_references
@@ -173,7 +191,7 @@ class EntitiesController < ApplicationController
       select: "*, weight() * (link_count + 1) AS link_weight",
       order: "link_weight DESC"
     )
-		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb, url: relationships_entity_path(e), primary_ext: e.primary_ext } }
+		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb, url: datatable_entity_path(e), primary_ext: e.primary_ext } }
 
     if list_id = params[:exclude_list]
       entity_ids = ListEntity.where(list_id: list_id).pluck(:entity_id)

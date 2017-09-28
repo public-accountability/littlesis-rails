@@ -94,7 +94,7 @@ describe Tag do
 
         describe "pagination" do
 
-          let(:page_limit){ Tag::TAGABLE_PAGINATION_LIMIT }
+          let(:page_limit){ Tag::PER_PAGE }
           let(:lists) { Array.new(page_limit + 1) { create(:list).tag(tag.id) } }
           before { lists }
           

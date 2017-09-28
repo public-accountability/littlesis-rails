@@ -1,32 +1,32 @@
 <div class="row thin-grey-bottom-border actions-row">
-    <div id="actions" class="col-md-8 col-sm-8 nopadding">
-	<div id="action-buttons">
-            <%= link_to "add relationship", @entity.legacy_url("addRelationship") %>
-            <%= link_to "edit", edit_entity_path(@entity) %>
-            <%= link_to "flag", flag_path %>
-            <% if user_signed_in? %>
-		<% if @current_user.has_legacy_permission 'deleter' %>
-		    <%= form_for @entity,  method: :delete, id: "remove_entity_#{@entity.id}"  do |f| %>
-			<% f.submit 'remove', data: { confirm: "Are you sure you want to remove this entity?" }, class: 'delete-entity-btn'  %>
-		    <% end %>
-  		<% end %>
-		<% if @current_user.has_legacy_permission 'importer' %>
-                    <%= link_to "match donations", match_donations_entity_path(@entity) if @entity.person? %>
-		<% end %>
-		<% if show_add_bulk_button(@current_user) %>
-                    <%= link_to "add bulk", tools_bulk_relationships_path(entity_id: @entity.id) %>
-		<% end %>
-	    <% else  %>
-		<div class="fb-share-button" 
-		     data-href="<%= entity_url(@entity) %>"
-		     data-layout="button">
-		</div>
-		<a href="https://twitter.com/share" class="twitter-share-button" data-show-count="false">Tweet</a>
-		<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-	    <% end %>
+  <div id="actions" class="col-md-8 col-sm-8 nopadding">
+    <div id="action-buttons">
+      <%= link_to "add relationship", add_relationship_entity_path(@entity), class: "action-button" %>
+      <%= link_to "edit", edit_entity_path(@entity), class: "action-button" %>
+      <%= link_to "flag", flag_path, class: "action-button" %>
+      <% if user_signed_in? %>
+	<% if @current_user.has_legacy_permission 'deleter' %>
+	  <%= form_for @entity,  method: :delete, id: "remove_entity_#{@entity.id}"  do |f| %>
+	    <% f.submit 'remove', data: { confirm: "Are you sure you want to remove this entity?" }, class: 'delete-entity-btn action-button'  %>
+	  <% end %>
+  	<% end %>
+	<% if @current_user.has_legacy_permission 'importer' %>
+          <%= link_to "match donations", match_donations_entity_path(@entity), class: "action-button" if @entity.person? %>
+	<% end %>
+	<% if show_add_bulk_button(@current_user) %>
+          <%= link_to "add bulk", tools_bulk_relationships_path(entity_id: @entity.id), class: "action-button" %>
+	<% end %>
+      <% else  %>
+	<div class="fb-share-button"
+	     data-href="<%= entity_url(@entity) %>"
+	     data-layout="button">
 	</div>
+	<a href="https://twitter.com/share" class="twitter-share-button" data-show-count="false">Tweet</a>
+	<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+      <% end %>
     </div>
-    <div class="col-md-4 col-sm-4 hidden-xs">
-	<%= render partial: 'shared/entity_history', locals: {entity: @entity} %>
-    </div>
+  </div>
+  <div class="col-md-4 col-sm-4 hidden-xs">
+    <%= render partial: 'shared/entity_history', locals: {entity: @entity} %>
+  </div>
 </div>

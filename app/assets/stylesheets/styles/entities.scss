@@ -67,6 +67,34 @@ $tiny_image_size: 35px;
   
 }
 
+/* TAB CONTENTS */
+
+#entity-interlocks-container {
+    #entity-interlocks-header {
+        #entity-interlocks-title {
+            padding-left: .5em;
+            font-size: large;
+            border-bottom: 1px solid lightgrey !important;
+            font-weight: bold;
+        }
+        #entity-interlocks-subtitle {
+            padding-left: .5em;
+            color: grey;
+            font-style: italic;
+        }
+    }
+    #entity-interlocks-table {
+        margin-top: .5em;
+        th {
+            border-bottom: 1px solid lightgrey !important;
+	    font-size: larger;
+        }
+        #connecting-entity-header, .connecting-entity-cell {
+	    width: 30%;
+        }
+    }
+}
+
 .button-tabs span a:hover {
   background-color: $red;
 }

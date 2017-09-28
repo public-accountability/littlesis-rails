@@ -9,6 +9,13 @@ module Lilsis
   APP_CONFIG = YAML.load(ERB.new(File.new("#{Dir.getwd}/config/lilsis.yml").read).result)[Rails.env]
 
   class Application < Rails::Application
+
+    config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
+      rewrite  %r{/(person|org)/([0-9]+)/[^/ ]+(/.*)?}, '/entities/$2$3'
+      rewrite  %r{/(person|org)/(.*)},                  '/entities/$2'
+      rewrite  %r{/(person|org)/(.*)},                  '/entities/$2'
+    end
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.

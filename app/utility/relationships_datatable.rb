@@ -2,6 +2,7 @@ class RelationshipsDatatable
   include RelationshipsHelper
   include ApplicationHelper
   include Rails.application.routes.url_helpers
+  include Routes
 
   attr_reader :data, :links, :categories, :types, :industries, :entities, :interlocks, :lists
 
@@ -52,12 +53,12 @@ class RelationshipsDatatable
         url: rel.legacy_url,
         entity_id: entity.id,
         entity_name: entity.name,
-        entity_url: relationships_entity_path(entity),
+        entity_url: datatable_entity_path(entity),
         related_entity_id: related.id,
         related_entity_name: related.name,
         related_entity_blurb: related.blurb,
         related_entity_blurb_excerpt: excerpt(related.blurb, 50 - related.name.length),
-        related_entity_url: relationships_entity_path(related),
+        related_entity_url: datatable_entity_path(related),
         related_entity_types: related.types.join(","),
         related_entity_industries: related.industries.join(','),    
         category: rel.category_name,

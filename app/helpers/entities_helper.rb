@@ -1,4 +1,5 @@
 module EntitiesHelper
+  
   def entity_hash_link(entity, name=nil, action=nil)
     name ||= entity['name']
     link_to name, Entity.legacy_url(entity['primary_ext'], entity['id'], name, action)
@@ -13,7 +14,7 @@ module EntitiesHelper
   end
 
   def active_tab?(tab_name, active_tab)
-    if active_tab == tab_name
+    if active_tab.downcase == tab_name.downcase
       return 'active'
     else
       return 'inactive'
@@ -177,7 +178,10 @@ module EntitiesHelper
     false
   end
 
-  private
+  def interlocks_entity_links(entities)
+    safe_join(entities.map { |e| link_to(e.name, e) }, ', ')
+  end
+
 
   # Filters refereces to uniq url/name
   def filter_and_limit_references(refs)
@@ -197,5 +201,22 @@ module EntitiesHelper
 
   def political_tab_col_right
     content_tag(:div, class: 'col-md-4 col-sm-4 double-left-padding') { yield }
+  end
+
+  def entity_tabs(entity, active_tab)
+    tab_contents = [
+      { text: 'Relationships',  path: entity_path(entity) },
+      { text: 'Interlocks',     path: entity.person? ? interlocks_entity_path(entity) : entity.legacy_url('interlocks') },
+      { text: 'Giving',         path: entity.legacy_url('giving') },
+      { text: 'Political',      path: political_entity_path(entity) },
+      { text: 'Data',           path: datatable_entity_path(entity) }
+    ]
+    content_tag(:div, class: 'button-tabs') do
+      tab_contents.map do |tab|
+        content_tag(:span, class: active_tab?(tab[:text], active_tab)) do
+          link_to tab[:text], tab[:path]
+        end
+      end.reduce(:+)
+    end
   end
 end

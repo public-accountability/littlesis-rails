@@ -42,6 +42,7 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers
   config.include FactoryGirl::Syntax::Methods
   config.include FeatureExampleMacros, :type => :feature
+  config.include InterlocksExampleHelper, :interlocks_helper
 
   # these run inside example groups (ie: describe blocks)
   config.extend ControllerMacros, :type => :controller
@@ -49,6 +50,7 @@ RSpec.configure do |config|
   config.extend ListHelpersForExampleGroups, :list_helper
   config.extend TaggingHelpers, :tagging_helper
   config.extend TagSpecHelper, :tag_helper
+  config.extend PaginationExampleGroupHelper, :pagination_helper
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
