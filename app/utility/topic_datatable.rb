@@ -43,7 +43,7 @@ class TopicDatatable
       list_names: lists.map(&:name).sort.join(', '),
       url: entity.legacy_url,
       name: entity.name,
-      rels_url: relationships_entity_path(entity),
+      rels_url: datatable_entity_path(entity),
       blurb: entity.blurb,
       types: entity.types.join(","),
       industries: entity.industries.join(',')

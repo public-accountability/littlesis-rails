@@ -20,7 +20,7 @@
     <td><%= entity.links.count %></td>
     <td><%= entity.addresses.count %></td>
     <td><%= entity.last_reviewed ? time_ago_in_words(entity.last_reviewed) + ' ago' : 'never' %></td>
-    <td><%= entity_link(entity, 'match', 'matchDonations') %></td>
+    <td><%= link_to 'match' match_donations_entity_path(entity) %></td>
   </tr>
 <% end %>
 </table>

@@ -37,7 +37,7 @@ class IndustryDatatable
       id: entity.id,
       url: entity.legacy_url,
       name: entity.name,
-      rels_url: relationships_entity_path(entity),
+      rels_url: datatable_entity_path(entity),
       blurb: entity.blurb,
       types: entity.types.join(","),
       industries: entity.industries.join(',')
