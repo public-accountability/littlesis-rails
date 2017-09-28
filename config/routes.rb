@@ -227,15 +227,6 @@ Lilsis::Application.routes.draw do
     action: 'show',
     as: 'share_map'
 
-  resources :topics do
-    member do
-      get 'new_elements'      
-      post 'add_elements'
-      post 'remove_element'
-      get 'map_collections'
-    end
-  end
-
   resources :industries, only: [:show]
 
   post '/relationships/bulk_add' => 'relationships#bulk_add'
