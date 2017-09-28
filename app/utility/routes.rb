@@ -7,12 +7,11 @@ module Routes
   end
   private_constant :MODIFY_PATH
 
-  ROUTES_TO_MODIFY = [
-    :entity,
-    :edit_entity,
-    :match_donations_entity,
-    :edits_entity
-  ].freeze
+  ROUTES_TO_MODIFY = Rails.application.routes.routes.named_routes.to_a.map do |route_name, route|
+    if route_name.include?('entity') and not route_name.include?('api')
+      route_name if route.constraints[:request_method].match('GET')
+    end
+  end.compact.freeze
 
   # If a Controller or Helper includes this module, it will convert
   # these Rails router helper methods to use nicer paths
