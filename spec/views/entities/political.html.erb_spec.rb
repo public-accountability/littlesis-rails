@@ -26,10 +26,6 @@ describe 'entities/political.html.erb' do
       it 'renders summary' do
         expect(view).to render_template(partial: 'entities/_summary')
       end
-
-      it 'renders tabs' do
-        expect(view).to render_template(partial: 'entities/_tabs')
-      end
     end # common
   end # Paritals
 

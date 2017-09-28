@@ -40,9 +40,9 @@ describe EntitiesController, type: :controller do
       it { should render_template(:show) }
     end
 
-    describe 'entity/id/relationships' do
-      before { get(:relationships, id: entity.id) }
-      it { should render_template(:relationships) }
+    describe 'entity/id/datatable' do
+      before { get(:datatable, id: entity.id) }
+      it { should render_template(:datatable) }
     end
 
     describe 'entity/id/contributions' do

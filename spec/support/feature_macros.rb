@@ -21,4 +21,20 @@ end
 # for use in examples
 module FeatureExampleMacros
   include FeatureSharedMacros
+
+  def page_has_selectors(*selectors)
+    selectors.each { |s| page_has_selector s }
+  end
+
+  def page_has_selector(*args)
+    expect(page).to have_selector(*args)
+  end
+
+  def subject_has_selectors(*selectors)
+    selectors.each { |s| subject_has_selector s }
+  end
+
+  def subject_has_selector(*args)
+    expect(subject).to have_selector(*args)
+  end
 end

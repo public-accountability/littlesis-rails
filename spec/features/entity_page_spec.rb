@@ -35,7 +35,7 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
     end
   end
 
-  describe "header/chrome" do
+  describe "header" do
     it "shows the entity's name" do
       expect(page.find("#entity-name")).to have_text person.name
     end
@@ -45,26 +45,27 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
     end
 
     it "shows action buttons" do
-      expect(page).to have_selector ".action-button", count: 3
+      page_has_selector ".action-button", count: 3
     end
 
     it "shows social media buttons" do
-      expect(page).to have_selector ".fb-share-button"
-      expect(page).to have_selector ".twitter-share-button"
+      page_has_selectors ".fb-share-button", ".twitter-share-button"
     end
 
-    context 'user is signed in' do
-      it 'show advanced user action buttons'
-    end
+    # context 'user is signed in' do
+    #   it 'show advanced user action buttons'
+    # end
 
-    it "shows an edit history"
+    it "shows an edit history" do
+      expect(page.find('#entity-edited-history')).to have_text "ago"
+    end
   end
 
   describe "summary field" do
     it "hides the summary field if user has no summary" do
       expect(page).not_to have_selector("#entity_summary")
     end
-    
+
     context "entity has summary" do
       let(:person) do
         create(:entity_person, last_user_id: user.sf_guard_user.id, summary: "foobar")
@@ -81,7 +82,7 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
                last_user_id: user.sf_guard_user.id,
                summary: "a" * (Entity::EXCERPT_SIZE + 1))
       end
-      
+
       it "excerpts the summary" do
         expect(page.find("#entity-summary")).to have_text "a" * Entity::EXCERPT_SIZE
       end
@@ -99,35 +100,41 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
 
     subject { page.find("#profile-page-sidebar")}
 
-    it "shows an image" do
-      expect(subject).to have_selector("#sidebar-image-container")
+    it 'has sections' do
+      subject_has_selectors "#sidebar-image-container",
+                            "#sidebar-basic-info-container",
+                            "#sidebar-lists-container",
+                            "#sidebar-source-links"
     end
 
-    it "shows a basic info section" do
-      expect(subject).to have_selector("#sidebar-basic-info-container")
+    it "does not show a tag edit button for anon users" do
+      expect(subject).not_to have_selector "#tags-edit-button"
     end
 
-    it "shows a source links section" do
-      expect(subject).to have_selector("#sidebar-basic-info-container")
-    end
-
-    it "shows a lists section containing lists that person is in" do
-      expect(subject).to have_selector("#sidebar-basic-info-container")
-    end
-
-    #TODO: implement this spec once we unhide tags from non-admins
-    it "shows a tags section"
-    
     describe "when logged in" do
-      
-      it "shows a tag edit button"
+      let(:user) { create_basic_user }
+      before { login_as(user, scope: :user) }
+      after { logout(user) }
 
-      it "shows advaced tools section"
+      # TODO(ag|Thu 28 Sep 2017): tags specs will go here once launched
+      context "admin user" do
+        let(:user) { create_admin_user }
+        let(:tags) { Array.new(2) { create(:tag) } }
 
-      it "shows a similar entities section"
-      
-      context "admin" do
-        it "shows an admin tools section"
+        context "when person has tags" do
+          before do
+            tags.each{ |t| person.tag(t.id) }
+            refresh_page
+          end
+
+          it "shows a tag edit button" do
+            subject_has_selector "#tags-edit-button"
+          end
+
+          it "shows tags" do
+            subject_has_selector "a.tag", count: 2
+          end
+        end
       end
     end
   end
@@ -150,13 +157,9 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
 
     it "defaults to relationships tab" do
       expect(page).to have_current_path entity_path(person)
-      puts entity_path(person)
       expect(page.find('div.button-tabs span.active'))
         .to have_link('Relationships')
     end
-
-    # will break for `/datatable` link but otherwise is uninteresting...
-    it "goes to a page when a user clicks on a tab"
   end
 
   xdescribe "relationships tab" do
@@ -171,9 +174,8 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
       interlock_people_via_orgs(people, orgs)
       visit interlocks_entity_path(person)
     end
-    
+
     describe "main container" do
-      
       it 'on the interlocks tab' do
         expect(page).to have_current_path interlocks_entity_path(person)
       end
@@ -206,23 +208,22 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
       end
 
       describe "pagination" do
-        
         context "less than #{Entity::PER_PAGE} interlocks" do
           it "does not show a pagination bar" do
             expect(page.find("#entity-interlocks-pagination"))
               .not_to have_selector(".pagination")
           end
         end
-        
+
         context "more than #{Entity::PER_PAGE} interlocks" do
           stub_page_limit(Entity)
-          
+
           let(:people) do
             Array.new(Entity::PER_PAGE + 2) do
               create(:entity_person, last_user_id: APP_CONFIG['system_user_id'])
             end
           end
-          
+
           it "shows a pagination bar" do
             expect(page.find("#entity-interlocks-pagination"))
               .to have_selector(".pagination")
