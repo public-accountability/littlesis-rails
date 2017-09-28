@@ -56,11 +56,13 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
     context 'user is signed in' do
       it 'show advanced user action buttons'
     end
+
+    it "shows an edit history"
   end
 
   describe "summary field" do
     it "hides the summary field if user has no summary" do
-      expect(page.find("#entity-summary")).not_to have_text person.summary_excerpt
+      expect(page).not_to have_selector("#entity_summary")
     end
     
     context "entity has summary" do
@@ -91,21 +93,32 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
     end
   end
 
-  xdescribe "sidebar" do
+  describe "sidebar" do
 
-    it "shows an edit history"
-    
-    it "shows an image"
+    #TODO(ag|Wed 27 Sep 2017): flesh these out!
 
-    it "shows a basic info section"
+    subject { page.find("#profile-page-sidebar")}
 
-    it "shows a source links section"
+    it "shows an image" do
+      expect(subject).to have_selector("#sidebar-image-container")
+    end
 
-    it "shows a lists section containing lists that person is in"
+    it "shows a basic info section" do
+      expect(subject).to have_selector("#sidebar-basic-info-container")
+    end
 
+    it "shows a source links section" do
+      expect(subject).to have_selector("#sidebar-basic-info-container")
+    end
+
+    it "shows a lists section containing lists that person is in" do
+      expect(subject).to have_selector("#sidebar-basic-info-container")
+    end
+
+    #TODO: implement this spec once we unhide tags from non-admins
     it "shows a tags section"
     
-    context "logged in" do
+    describe "when logged in" do
       
       it "shows a tag edit button"
 
@@ -134,7 +147,7 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
        { text: 'Interlocks',     path: '/interlocks' },
        { text: 'Giving',         path: '/giving' },
        { text: 'Political',      path: '/political' },
-       { text: 'Data',           path: '/datatable' }]
+       { text: 'Data',           path: '/datatable' }] # TODO(ag): handle the `/datatable` route!
     end
 
     it "has tabs for every subpage" do
@@ -150,6 +163,9 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
       expect(page.find('div.button-tabs span.active'))
         .to have_link('Relationships')
     end
+
+    # will break for `/datatable` link but otherwise is uninteresting...
+    it "goes to a page when a user clicks on a tab"
   end
 
   xdescribe "relationships tab" do
