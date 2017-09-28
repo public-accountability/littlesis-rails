@@ -10,8 +10,8 @@ describe EntitiesController, type: :controller do
 
   describe 'routes' do
     it { should route(:get, '/entities/1').to(action: :show, id: 1) }
-    it { should route(:get, '/entities/1/relationships').to(action: :relationships, id: 1) }
     it { should route(:get, '/entities/1/interlocks').to(action: :interlocks, id: 1) }
+    it { should route(:get, '/entities/1/datatable').to(action: :datatable, id: 1) }
     it { should route(:get, '/entities/1/add_relationship').to(action: :add_relationship, id: 1) }
     it { should route(:get, '/entities/new').to(action: :new) }
     it { should route(:post, '/entities').to(action: :create) }

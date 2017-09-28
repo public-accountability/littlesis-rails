@@ -133,27 +133,18 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
   end
 
   describe "navigation tabs" do
-
-    # NOTE(ag|Wed 27 Sep 2017): this is a hack!
-    # i would far prefer to change the tabs to point to non-legacy params
-    # but this involves tangling with `entity_link` and i don't feel
-    # confident changing that
-    def legacy_params(entity)
-      entity.to_param.sub('-', '/')
-    end
-
     let(:subpage_links) do
-      [{ text: 'Relationships',  path: '' },
-       { text: 'Interlocks',     path: '/interlocks' },
-       { text: 'Giving',         path: '/giving' },
-       { text: 'Political',      path: '/political' },
-       { text: 'Data',           path: '/datatable' }] # TODO(ag): handle the `/datatable` route!
+      [{ text: 'Relationships',  path: entity_path(person) },
+       { text: 'Interlocks',     path: interlocks_entity_path(person) },
+       # This is the symfony path. This will change once we migrate the giving page
+       { text: 'Giving',         path: person.legacy_url('giving') },
+       { text: 'Political',      path: political_entity_path(person) },
+       { text: 'Data',           path: datatable_entity_path(person) }]
     end
 
     it "has tabs for every subpage" do
       subpage_links.each do |link|
-        expect(page).to have_link(link[:text],
-                                  href: "/person/#{legacy_params(person)}#{link[:path]}")
+        expect(page).to have_link(link[:text], href: link[:path])
       end
     end
 

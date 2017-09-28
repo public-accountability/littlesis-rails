@@ -139,7 +139,8 @@ Lilsis::Application.routes.draw do
         # profile page
         get 'interlocks'
         get 'political'
-        get 'relationships'
+        #get 'relationships'
+        get 'datatable'
         #
         get 'match_donations'
         get 'match_ny_donations'

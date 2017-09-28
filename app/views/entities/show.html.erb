@@ -11,7 +11,7 @@
     <div class="col-md-8 col-sm-8 nopadding">
 	
         <%= render partial: 'summary', locals: { entity: @entity } %>
-        <%= render partial: 'tabs', locals: { active_tab: @active_tab.to_s, entity: @entity }  %>
+	<%= entity_tabs(@entity, @active_tab.to_s) %>
 	<%= render partial:  @active_tab.to_s %>
 
         
