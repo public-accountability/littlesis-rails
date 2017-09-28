@@ -206,7 +206,7 @@ module EntitiesHelper
   def entity_tabs(entity, active_tab)
     tab_contents = [
       { text: 'Relationships',  path: entity_path(entity) },
-      { text: 'Interlocks',     path: interlocks_entity_path(entity) },
+      { text: 'Interlocks',     path: entity.person? ? interlocks_entity_path(entity) : entity.legacy_url('interlocks') },
       { text: 'Giving',         path: entity.legacy_url('giving') },
       { text: 'Political',      path: political_entity_path(entity) },
       { text: 'Data',           path: datatable_entity_path(entity) }
