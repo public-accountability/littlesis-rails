@@ -90,18 +90,6 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
       end
     end
   end
-  
-  describe "navigation tabs" do
-
-    it "has 5 tabs"
-    
-    it "defaults to relationships tab" do
-      expect(page).to have_current_path entity_path(person)
-      expect(page.find('div.button-tabs span.active')).to have_text 'Relationships'
-    end
-
-    it "visits a subpage when a user clicks on a tab"
-  end
 
   xdescribe "sidebar" do
 
@@ -131,10 +119,43 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
     end
   end
 
+  describe "navigation tabs" do
+
+    # NOTE(ag|Wed 27 Sep 2017): this is a hack!
+    # i would far prefer to change the tabs to point to non-legacy params
+    # but this involves tangling with `entity_link` and i don't feel
+    # confident changing that
+    def legacy_params(entity)
+      entity.to_param.sub('-', '/')
+    end
+
+    let(:subpage_links) do
+      [{ text: 'Relationships',  path: '' },
+       { text: 'Interlocks',     path: '/interlocks' },
+       { text: 'Giving',         path: '/giving' },
+       { text: 'Political',      path: '/political' },
+       { text: 'Data',           path: '/datatable' }]
+    end
+
+    it "has tabs for every subpage" do
+      subpage_links.each do |link|
+        expect(page).to have_link(link[:text],
+                                  href: "/person/#{legacy_params(person)}#{link[:path]}")
+      end
+    end
+
+    it "defaults to relationships tab" do
+      expect(page).to have_current_path entity_path(person)
+      puts entity_path(person)
+      expect(page.find('div.button-tabs span.active'))
+        .to have_link('Relationships')
+    end
+  end
+
   xdescribe "relationships tab" do
     it "shows a series of lists"
   end
-  
+
   describe "interlocks tab" do
     let(:people) { Array.new(4) { create(:entity_person, last_user_id: APP_CONFIG['system_user_id']) } }
     let(:person) { people.first }
