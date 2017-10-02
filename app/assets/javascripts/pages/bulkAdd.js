@@ -18,6 +18,8 @@
 
   var AUTOCOMPLETE_MODE = true;
 
+  var NOTES_MODE = false;
+
   // Retrieves selected cateogry and converts 50 and 51 to 5
   function realCategoryId() {
     var category = Number($('#relationship-cat-select option:selected').val());
@@ -34,7 +36,13 @@
   // -> [[]]
   function relationshipDetails() {
     var entityColumns = [ [ 'Name', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'select'] ];
-    return entityColumns.concat(utility.relationshipDetails(realCategoryId()));
+    var columns = entityColumns.concat(utility.relationshipDetails(realCategoryId()));
+    if (NOTES_MODE) {
+      return columns.concat( [ [ 'Notes', 'notes', 'text' ] ]);
+    } else {
+      return columns;
+    }
+    
   }
 
   // -> [ {} ]
@@ -117,6 +125,11 @@
       .append( $('<div>', {class: 'pull-right'}).append(entityMatchBtn()).append(sampleCSVLink()) );
   }
   
+  function createTableHeader() {
+    relationshipDetails().forEach(addColToThead);
+    $('#table thead tr').append('<th>Delete</th>');
+  }
+
   // Creates empty table based on the selected category
   function createTable() {
     $('#table table')
@@ -124,8 +137,7 @@
       .append(tableCaption())
       .append('<thead><tr></tr></thead><tbody></tbody>');
     
-    relationshipDetails().forEach(addColToThead);
-    $('#table thead tr').append('<th>Delete</th>');
+    createTableHeader();
     
     newBlankRow(); // initialize table with a new blank row
     readCSVFileListener('csv-file'); // handle file uploads to #csv-file
@@ -878,6 +890,23 @@
     }
   }
 
+  function recreateTableHeader() {
+    $('#table thead tr').empty();
+    createTableHeader();
+  }
+
+
+  /* toggle helpers */
+
+  // <element> => String
+  function toggleButtons(element) {
+    $(element).find('.btn').toggleClass('active');  
+    $(element).find('.btn').toggleClass('btn-primary');
+    $(element).find('.btn').toggleClass('btn-default');
+    return $(element).find('button.btn.active').text();
+  }
+  
+
   // Establishes listeners for:
   //   - click to add a new row
   //   - remove row
@@ -894,6 +923,16 @@
     });
     $('#upload-btn').click(function() {
       submit();
+    });
+
+    $('#notes-mode-toggle').click(function(){
+      var status = toggleButtons(this);
+      if (status == 'ON') {
+	NOTES_MODE = true;
+      } else {
+	NOTES_MODE = false;
+      }
+      recreateTableHeader();
     });
 
     $('#autocomplete-toggle').click(function() {
