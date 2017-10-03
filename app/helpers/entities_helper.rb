@@ -206,7 +206,7 @@ module EntitiesHelper
   def entity_tabs(entity, active_tab)
     tab_contents = [
       { text: 'Relationships',  path: entity_path(entity) },
-      { text: 'Interlocks',     path: entity.person? ? interlocks_entity_path(entity) : entity.legacy_url('interlocks') },
+      { text: 'Interlocks',     path: interlocks_entity_path(entity) },
       { text: 'Giving',         path: entity.legacy_url('giving') },
       { text: 'Political',      path: political_entity_path(entity) },
       { text: 'Data',           path: datatable_entity_path(entity) }
@@ -217,6 +217,27 @@ module EntitiesHelper
           link_to tab[:text], tab[:path]
         end
       end.reduce(:+)
+    end
+  end
+
+  def entity_interlocks_header_for(e)
+    title, subtitle = entity_interlocks_title_and_subtitle_for(e)
+    content_tag(:div, id: "entity-interlocks-header") do
+      content_tag(:div, title, id: "entity-interlocks-title") +
+        content_tag(:div, subtitle, id: "entity-interlocks-subtitle")
+    end
+  end
+
+  private
+
+  def entity_interlocks_title_and_subtitle_for(e)
+    case e.primary_ext
+    when "Person"
+      ["People in Common Orgs",
+       "People with positions in the same orgs as #{e.name}"]
+    when "Org"
+      ["Orgs with Common People",
+       "Leadership and staff of #{e.name} also have positions in these orgs"]
     end
   end
 end
