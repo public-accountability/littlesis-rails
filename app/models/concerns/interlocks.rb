@@ -47,12 +47,11 @@ module Interlocks
   end
 
   def rel_category_ids
-    case primary_ext
-    when "Person"
-      [Relationship::POSITION_CATEGORY]
-    when "Org"
-      [Relationship::POSITION_CATEGORY, Relationship::OWNERSHIP_CATEGORY]
-    end
+    # TODO (ag|03-Oct-2017):
+    # * eventually we would like to include OWNERSHIP_CATEGORY for people
+    # * as symphony does not do this and it contradicts the user-facing text
+    #   in `EntitiesHelper#entity_interlocks_header_for`, leave this unimplemented for now
+    [Relationship::POSITION_CATEGORY]
   end
 
   def root_entity_id_key

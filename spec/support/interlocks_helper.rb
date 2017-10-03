@@ -13,13 +13,7 @@ module InterlocksExampleHelper
     # org[n] is a leaf of the interlocks tree and is related to n people
     orgs.each_with_index do |o, i|
       people_subset = i.zero? ? people : people.take(i)
-      people_subset.each_with_index do |p, j|
-        if j.even?
-          create(:position_relationship, entity: p, related: o)
-        else
-          create(:ownership_relationship, entity: p, related: o)
-        end
-      end
+      people_subset.each { |p| create(:position_relationship, entity: p, related: o) }
     end
   end
 end
