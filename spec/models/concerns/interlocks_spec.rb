@@ -45,4 +45,33 @@ describe 'Entity: Interlocks', :interlocks_helper, :pagination_helper, type: :mo
       end
     end
   end
+
+  context "for an org" do
+    let(:orgs) { Array.new(4) { create(:entity_org) } }
+    let(:org) { orgs.first }
+    let(:people) { Array.new(3) { create(:entity_person) } }
+
+    before { interlock_orgs_via_people(orgs, people) }
+
+    context "with less interlocks than pagination limit" do
+
+      it "lists all orgs with common staff or owners" do
+        expect(org.interlocks.to_a)
+          .to eql([
+                    {
+                      "connected_entity" => orgs[3],
+                      "connecting_entities" => people.take(3)
+                    },
+                    {
+                      "connected_entity" => orgs[2],
+                      "connecting_entities" => people.take(2)
+                    },
+                    {
+                      "connected_entity" => orgs[1],
+                      "connecting_entities" => people.take(1)
+                    }
+                  ])
+      end
+    end
+  end
 end
