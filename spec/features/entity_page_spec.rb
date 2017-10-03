@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature do
-  # TODO: include Routes (which will force internal handling of /people/..., /orgs/... routes)
+  include Routes
   let(:user) { create_basic_user }
   let(:person){ create(:entity_person, last_user_id: user.sf_guard_user.id) }
   let(:org){ create(:entity_org, last_user_id: user.sf_guard_user.id) }
@@ -196,7 +196,7 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
 
         it "displays the most-interlocked person's name as link" do
           expect(subject.find('.connected-entity-cell'))
-            .to have_link(person.name, href: "/person/#{people[3].to_param}")
+            .to have_link(person.name, href: entity_path(people[3]))
         end
 
         it "displays interlocking orgs' names as links in same row as interlocked people" do

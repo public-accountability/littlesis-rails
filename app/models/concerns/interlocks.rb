@@ -3,18 +3,19 @@ module Interlocks
   def interlocks(page = 1)
     # TODO: create position_scope for Link
     org_ids = connecting_ids(rel_cat_id)
-    people_and_org_ids = paginate(page,
-                                  Entity::PER_PAGE,
-                                  connected_id_hashes_for(org_ids, rel_cat_id))
+    connected_id_hashes = paginate(page,
+                                   Entity::PER_PAGE,
+                                   connected_id_hashes_for(org_ids, rel_cat_id))
 
-    entities_by_id = Entity.lookup_table_for(collapse(people_and_org_ids))
+    entities_by_id = Entity.lookup_table_for(collapse(connected_id_hashes))
 
-    people_and_org_ids.map do |connected_id_hash|
+    connected_entities = connected_id_hashes.map do |connected_id_hash|
       {
-        "person" => entities_by_id.fetch(connected_id_hash[:connected_id]),
-        "orgs" => connected_id_hash[:connecting_ids].map { |id| entities_by_id.fetch(id) }
+        "connected_entity" => entities_by_id.fetch(connected_id_hash[:connected_id]),
+        "connecting_entities" => connected_id_hash[:connecting_ids].map { |id| entities_by_id.fetch(id) }
       }
     end
+    connected_entities
   end
 
   private
@@ -31,6 +32,7 @@ module Interlocks
       .pluck(:entity2_id)
   end
 
+  # TODO (ag|Tue 03 Oct 2017): extract object for this?
   # type ConnectedIdHash = { connected_id   => Integer,
   #                          connecting_ids => [Integer] }
   # ---
