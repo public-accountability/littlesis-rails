@@ -1,3 +1,5 @@
-<%= render partial: 'connections',
-           locals: { connection_type: :giving,
-                     connected_entities: @entity.similar_donors(params[:page]) } %>
+<% cache(['giving', @entity.alt_cache_key,  params[:page] ], expires_in: 2.days) do %>
+  <%= render partial: 'connections',
+             locals: { connection_type: :giving,
+                       connected_entities: @entity.similar_donors(params[:page]) } %>
+<% end %>
