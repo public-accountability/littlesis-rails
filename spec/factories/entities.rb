@@ -62,4 +62,8 @@ FactoryGirl.define do
     blurb 'Ruining our democracy one dollar at a time'
     primary_ext 'Org'
   end
+
+  trait :with_last_user_id do
+    last_user_id APP_CONFIG['system_user_id']
+  end
 end

@@ -31,7 +31,13 @@ FactoryGirl.define do
   factory :position_relationship, class: Relationship do
     entity1_id 100
     entity2_id 200
-    category_id 1
+    category_id Relationship::POSITION_CATEGORY
+  end
+
+  factory :ownership_relationship, class: Relationship do
+    entity1_id 100 # hmm... why do we do this? is this good? (ag|Tue 03 Oct 2017)
+    entity2_id 200
+    category_id Relationship::OWNERSHIP_CATEGORY
   end
 
   factory :relationship, class: Relationship do

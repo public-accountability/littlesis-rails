@@ -23,7 +23,6 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
       should_visit_entity_page "/person/#{person.to_param}"
       should_visit_entity_page "/person/#{person.to_param}/interlocks"
     end
-
     it 'accepts org as an valid entities slug' do
       should_visit_entity_page "/org/#{org.to_param}"
       should_visit_entity_page "/org/#{org.to_param}/interlocks"
@@ -167,42 +166,45 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
   end
 
   describe "interlocks tab" do
-    let(:people) { Array.new(4) { create(:entity_person, last_user_id: APP_CONFIG['system_user_id']) } }
-    let(:person) { people.first }
-    let(:orgs) { Array.new(3) { create(:entity_org) } }
+    let(:interlocks) {}
+    let(:root_entity) {}
+
     before do
-      interlock_people_via_orgs(people, orgs)
-      visit interlocks_entity_path(person)
+      interlocks
+      visit interlocks_entity_path(root_entity)
     end
 
-    describe "main container" do
-      it 'on the interlocks tab' do
-        expect(page).to have_current_path interlocks_entity_path(person)
-      end
+    context "for a person" do
+      let(:people) { Array.new(4) { create(:entity_person, :with_last_user_id) } }
+      let(:orgs) { Array.new(3) { create(:entity_org) } }
+      let(:root_entity) { people.first }
+      let(:interlocks) { interlock_people_via_orgs(people, orgs)}
 
-      it "shows a header and subheader" do
-        expect(page.find("#entity-interlocks-title"))
-          .to have_text "People in Common Orgs"
-        expect(page.find("#entity-interlocks-subtitle"))
-          .to have_text "same orgs as #{person.name}"
-      end
-
-      it "has a table of connected entites" do
-        expect(page.find("#entity-interlocks-table tbody")).to have_selector "tr", count: 3
-      end
-
-      describe "first row" do
-        subject { page.all("#entity-interlocks-table tbody tr").first }
-
-        it "displays the most-interlocked person's name as link" do
-          expect(subject.find('.connected-entity-cell'))
-            .to have_link(person.name, href: "/person/#{people[3].to_param}")
+      describe "table layout" do
+        it "shows a header and subheader" do
+          expect(page.find("#entity-interlocks-title"))
+            .to have_text "People in Common Orgs"
+          expect(page.find("#entity-interlocks-subtitle"))
+            .to have_text "same orgs as #{person.name}"
         end
 
-        it "displays interlocking orgs' names as links in same row as interlocked people" do
-          orgs.each do |org|
-            expect(subject.find('.connecting-entities-cell'))
-              .to have_link(org.name, href: "/org/#{org.to_param}")
+        it "has a table of connected entites" do
+          expect(page.find("#entity-interlocks-table tbody")).to have_selector "tr", count: 3
+        end
+
+        describe "first row" do
+          subject { page.all("#entity-interlocks-table tbody tr").first }
+
+          it "displays the most-interlocked person's name as link" do
+            expect(subject.find('.connected-entity-cell'))
+              .to have_link(person.name, href: entity_path(people[3]))
+          end
+
+          it "displays interlocking orgs' names as links in same row as interlocked people" do
+            orgs.each do |org|
+              expect(subject.find('.connecting-entities-cell'))
+                .to have_link(org.name, href: entity_path(org))
+            end
           end
         end
       end
@@ -232,6 +234,40 @@ describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature d
           it "only shows #{Entity::PER_PAGE} rows" do
             expect(page.find("#entity-interlocks-table tbody"))
               .to have_selector "tr", count: Entity::PER_PAGE
+          end
+        end
+      end
+    end
+
+    context "for an organization" do
+      let(:orgs) { Array.new(4) { create(:entity_org, :with_last_user_id) } }
+      let(:people) { Array.new(3) { create(:entity_person) } }
+      let(:root_entity) { orgs.first }
+      let(:interlocks) { interlock_orgs_via_people(orgs, people) }
+
+      it "shows a header and subheader" do
+        expect(page.find("#entity-interlocks-title"))
+          .to have_text "Orgs with Common People"
+        expect(page.find("#entity-interlocks-subtitle"))
+          .to have_text "of #{org.name} also have"
+      end
+
+      it "has a table of connected entites" do
+        expect(page.find("#entity-interlocks-table tbody")).to have_selector "tr", count: 3
+      end
+
+      describe "first row" do
+        subject { page.all("#entity-interlocks-table tbody tr").first }
+
+        it "displays the most-interlocked org's name as link" do
+          expect(subject.find('.connected-entity-cell'))
+            .to have_link(org.name, href: entity_path(orgs[3]))
+        end
+
+        it "displays interlocking peoples' names as links in same row as interlocked org" do
+          people.each do |person|
+            expect(subject.find('.connecting-entities-cell'))
+              .to have_link(person.name, href: entity_path(person))
           end
         end
       end
