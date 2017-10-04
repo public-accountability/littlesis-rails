@@ -14,17 +14,17 @@ FactoryGirl.define do
   end
 
   factory :generic_relationship, class: Relationship do
-    category_id 12
+    category_id Relationship::GENERIC_CATEGORY
     id { generate(:relationship_id) }
   end
 
   factory :donation_relationship, class: Relationship do
-    category_id 5
+    category_id Relationship::DONATION_CATEGORY
     id { generate(:relationship_id) }
   end
 
   factory :education_relationship, class: Relationship do
-    category_id 2
+    category_id Relationship::EDUCATION_CATEGORY
     id { generate(:relationship_id) }
   end
 
@@ -35,8 +35,6 @@ FactoryGirl.define do
   end
 
   factory :ownership_relationship, class: Relationship do
-    entity1_id 100 # hmm... why do we do this? is this good? (ag|Tue 03 Oct 2017)
-    entity2_id 200
     category_id Relationship::OWNERSHIP_CATEGORY
   end
 
