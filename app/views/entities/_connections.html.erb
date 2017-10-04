@@ -1,12 +1,12 @@
-<% #locals: connected_entities: [Entity],  connection_type: Symbol %>
+<% #locals: connected_entities: [ConnectedEntityHash],  connection_type: Symbol %>
 
   <div id="entity-connections-container">
 
-    <%= entity_connections_header(@entity)  %>
+    <%= entity_connections_header(connection_type, @entity)  %>
 
     <table class="table" id="entity-connections-table">
 
-      <%= entity_connections_table_headers(connection_type, @entity.primary_ext) %>
+      <%= entity_connections_table_headers(connection_type, @entity) %>
       <tbody>
 	<% connected_entities.each do |connected_entity_hash| %>
 	  <tr>

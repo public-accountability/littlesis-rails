@@ -3,8 +3,8 @@ require 'rails_helper'
 describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :feature do
   # TODO: include Routes (which will force internal handling of /people/..., /orgs/... routes)
   let(:user) { create_basic_user }
-  let(:person){ create(:entity_person, last_user_id: user.sf_guard_user.id) }
-  let(:org){ create(:entity_org, last_user_id: user.sf_guard_user.id) }
+  let(:person) { create(:entity_person, last_user_id: user.sf_guard_user.id) }
+  let(:org) { create(:entity_org, last_user_id: user.sf_guard_user.id) }
 
   before do
     visit entity_path(person)
@@ -142,8 +142,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     let(:subpage_links) do
       [{ text: 'Relationships',  path: entity_path(person) },
        { text: 'Interlocks',     path: interlocks_entity_path(person) },
-       # This is the symfony path. This will change once we migrate the giving page
-       { text: 'Giving',         path: person.legacy_url('giving') },
+       { text: 'Giving',         path: giving_entity_path(person) },
        { text: 'Political',      path: political_entity_path(person) },
        { text: 'Data',           path: datatable_entity_path(person) }]
     end
@@ -158,6 +157,14 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       expect(page).to have_current_path entity_path(person)
       expect(page.find('div.button-tabs span.active'))
         .to have_link('Relationships')
+    end
+
+    # TODO(ag|04-Oct-2017): delete this after playing card #336 (and eliminating legacy url)
+    context "for an org" do
+      it "uses the legacy url for the giving tab" do
+        visit entity_path(org)
+        expect(page).to have_link('Giving', href: org.legacy_url('giving'))
+      end
     end
   end
 
@@ -290,7 +297,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
   end
 
-  xdescribe "giving tab" do
+  describe "giving tab" do
     let(:donations) {}
     let(:root_entity) {}
 
@@ -301,34 +308,42 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     
     describe "for a person" do
       let(:donors) { Array.new(4) { create(:entity_person, :with_last_user_id) } }
-      let(:recipients) { Array.new(3) { create(%i[entity_org enity_person].sample) } }
-      let(:root_entity) { donors.first }
+      let(:recipients) { Array.new(3) { create(%i[entity_org entity_person].sample) } }
       let(:donations) { create_donations(donors, recipients) }
-    end
+      let(:root_entity) { donors.first }
 
-    it "shows a header and subheader" do
-      expect(page.find("#entity-connections-title"))
-        .to have_text "Donors to Similar Recipients"
-      expect(page.find("#entity-connections-subtitle"))
-        .to have_text "that #{root_entity.name} donated to"
-    end
-
-    it "has a table of connected entites" do
-      expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
-    end
-
-    describe "first row" do
-      subject { page.all("#entity-connections-table tbody tr").first }
-
-      it "displays the most-connected donor's name as link" do
-        expect(subject.find('.connected-entity-cell'))
-          .to have_link(person.name, href: entity_path(people[3]))
+      it "shows a header and subheader" do
+        expect(page.find("#entity-connections-title"))
+          .to have_text "Donors to Common Recipients"
+        expect(page.find("#entity-connections-subtitle"))
+          .to have_text "from #{root_entity.name} also received"
       end
 
-      it "displays connecting recipients' names as links in same row as connected donors" do
-        orgs.each do |org|
-          expect(subject.find('.connecting-entities-cell'))
-            .to have_link(org.name, href: entity_path(org))
+      it "has a table of connected entites" do
+        expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
+      end
+
+      it "shows a table header for connected entities" do
+        expect(page.find("#connected-entity-header")).to have_text "Donor"
+      end
+
+      it "shows a table header for connecting entities" do
+        expect(page.find("#connecting-entity-header")).to have_text "Common Recipients"
+      end
+
+      describe "first row" do
+        subject { page.all("#entity-connections-table tbody tr").first }
+
+        it "displays the most-connected donor's name as link" do
+          expect(subject.find('.connected-entity-cell'))
+            .to have_link(root_entity.name, href: entity_path(donors[3]))
+        end
+
+        it "displays connecting recipients' names as links in same row as connected donors" do
+          recipients.each do |r|
+            expect(subject.find('.connecting-entities-cell'))
+              .to have_link(r.name, href: entity_path(r))
+          end
         end
       end
     end

@@ -1,0 +1,3 @@
+<%= render partial: 'connections',
+           locals: { connection_type: :giving,
+                     connected_entities: @entity.similar_donors(params[:page]) } %>
