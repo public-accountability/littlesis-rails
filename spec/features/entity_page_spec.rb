@@ -188,8 +188,16 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
             .to have_text "same orgs as #{root_entity.name}"
         end
 
-        it "has a table of connected entites" do
+        it "shows a table of connected entites" do
           expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
+        end
+
+        it "shows a table header for connected entities" do
+          expect(page.find("#connected-entity-header")).to have_text "Person"
+        end
+
+        it "shows a table header for connecting entities" do
+          expect(page.find("#connecting-entity-header")).to have_text "Common Orgs"
         end
 
         describe "first row" do
@@ -252,8 +260,16 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           .to have_text "of #{org.name} also have"
       end
 
-      it "has a table of connected entites" do
+      it "shows a table of connected entites" do
         expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
+      end
+
+      it "shows a table header for connected entities" do
+        expect(page.find("#connected-entity-header")).to have_text "Org"
+      end
+
+      it "shows a table header for connecting entities" do
+        expect(page.find("#connecting-entity-header")).to have_text "Common "
       end
 
       describe "first row" do

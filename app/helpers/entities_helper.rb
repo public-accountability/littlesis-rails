@@ -178,7 +178,7 @@ module EntitiesHelper
     false
   end
 
-  def interlocks_entity_links(entities)
+  def entity_links(entities)
     safe_join(entities.map { |e| link_to(e.name, e) }, ', ')
   end
 
@@ -220,17 +220,27 @@ module EntitiesHelper
     end
   end
 
-  def entity_interlocks_header_for(e)
-    title, subtitle = entity_interlocks_title_and_subtitle_for(e)
+  def entity_connections_header(e)
+    title, subtitle = connections_title_and_subtitle(e)
     content_tag(:div, id: "entity-connections-header") do
       content_tag(:div, title, id: "entity-connections-title") +
         content_tag(:div, subtitle, id: "entity-connections-subtitle")
     end
   end
 
+  def entity_connections_table_headers(connection_type, primary_ext)
+    connected_header, connecting_header = connections_table_header_text(connection_type, primary_ext)
+    content_tag(:thead) do
+      content_tag(:tr) do
+        content_tag(:th, connected_header, id: "connected-entity-header") +
+          content_tag(:th, connecting_header, id: "connecting-entity-header")
+      end
+    end
+  end
+
   private
 
-  def entity_interlocks_title_and_subtitle_for(e)
+  def connections_title_and_subtitle(e)
     case e.primary_ext
     when "Person"
       ["People in Common Orgs",
@@ -238,6 +248,15 @@ module EntitiesHelper
     when "Org"
       ["Orgs with Common People",
        "Leadership and staff of #{e.name} also have positions in these orgs"]
+    end
+  end
+
+  def connections_table_header_text(connection_type, primary_ext)
+    case [connection_type, primary_ext]
+    when [:interlocks, "Person"]
+      ["Person", "Common Orgs"]
+    when [:interlocks, "Org"]
+      ["Org", "Common People"]
     end
   end
 end
