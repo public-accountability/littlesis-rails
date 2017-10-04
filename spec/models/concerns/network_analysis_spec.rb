@@ -77,4 +77,37 @@ describe 'Network Analysis Module', :network_analysis_helper, :pagination_helper
       end
     end  
   end
+
+  describe "similar donors" do
+    context "as a person" do
+      let(:donors) { Array.new(4) { create(:entity_person) } }
+      let(:donor) { donors.first }
+      let(:recipients) { [create(:entity_org),
+                          create(:entity_person),
+                          create(:entity_org)] }
+
+      before { create_donations(donors, recipients) }
+
+      context "with less similar donors than pagination limit" do
+
+        it "lists all people who have given to same entities" do
+          expect(donor.similar_donors.to_a)
+            .to eq([
+                     {
+                       "connected_entity"    => donors[3],
+                       "connecting_entities" => recipients.take(3)
+                     },
+                     {
+                       "connected_entity"    => donors[2],
+                       "connecting_entities" => recipients.take(2)
+                     },
+                     {
+                       "connected_entity"    => donors[1],
+                       "connecting_entities" => recipients.take(1)
+                     }
+                   ])
+        end
+      end
+    end
+  end
 end

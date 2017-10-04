@@ -16,4 +16,11 @@ module NetworkAnalysisExampleHelper
       people_subset.each { |p| create(:position_relationship, entity: p, related: o) }
     end
   end
+
+  def create_donations(donors, recipients)
+    donors.each_with_index do |d, idx|
+      recipient_subset = idx.zero? ? recipients : recipients.take(idx)
+      recipient_subset.each { |r| create(:donation_relationship, entity: d, related: r) }
+    end
+  end
 end
