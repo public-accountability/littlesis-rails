@@ -182,18 +182,18 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       describe "table layout" do
         it "shows a header and subheader" do
-          expect(page.find("#entity-interlocks-title"))
+          expect(page.find("#entity-connections-title"))
             .to have_text "People in Common Orgs"
-          expect(page.find("#entity-interlocks-subtitle"))
-            .to have_text "same orgs as #{person.name}"
+          expect(page.find("#entity-connections-subtitle"))
+            .to have_text "same orgs as #{root_entity.name}"
         end
 
         it "has a table of connected entites" do
-          expect(page.find("#entity-interlocks-table tbody")).to have_selector "tr", count: 3
+          expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
         end
 
         describe "first row" do
-          subject { page.all("#entity-interlocks-table tbody tr").first }
+          subject { page.all("#entity-connections-table tbody tr").first }
 
           it "displays the most-interlocked person's name as link" do
             expect(subject.find('.connected-entity-cell'))
@@ -212,7 +212,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       describe "pagination" do
         context "less than #{Entity::PER_PAGE} interlocks" do
           it "does not show a pagination bar" do
-            expect(page.find("#entity-interlocks-pagination"))
+            expect(page.find("#entity-connections-pagination"))
               .not_to have_selector(".pagination")
           end
         end
@@ -227,12 +227,12 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           end
 
           it "shows a pagination bar" do
-            expect(page.find("#entity-interlocks-pagination"))
+            expect(page.find("#entity-connections-pagination"))
               .to have_selector(".pagination")
           end
 
           it "only shows #{Entity::PER_PAGE} rows" do
-            expect(page.find("#entity-interlocks-table tbody"))
+            expect(page.find("#entity-connections-table tbody"))
               .to have_selector "tr", count: Entity::PER_PAGE
           end
         end
@@ -246,18 +246,18 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       let(:interlocks) { interlock_orgs_via_people(orgs, people) }
 
       it "shows a header and subheader" do
-        expect(page.find("#entity-interlocks-title"))
+        expect(page.find("#entity-connections-title"))
           .to have_text "Orgs with Common People"
-        expect(page.find("#entity-interlocks-subtitle"))
+        expect(page.find("#entity-connections-subtitle"))
           .to have_text "of #{org.name} also have"
       end
 
       it "has a table of connected entites" do
-        expect(page.find("#entity-interlocks-table tbody")).to have_selector "tr", count: 3
+        expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
       end
 
       describe "first row" do
-        subject { page.all("#entity-interlocks-table tbody tr").first }
+        subject { page.all("#entity-connections-table tbody tr").first }
 
         it "displays the most-interlocked org's name as link" do
           expect(subject.find('.connected-entity-cell'))
@@ -269,6 +269,50 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
             expect(subject.find('.connecting-entities-cell'))
               .to have_link(person.name, href: entity_path(person))
           end
+        end
+      end
+    end
+  end
+
+  xdescribe "giving tab" do
+    let(:donations) {}
+    let(:root_entity) {}
+
+    before do
+      donations
+      visit giving_entity_path(root_entity)
+    end
+    
+    describe "for a person" do
+      let(:donors) { Array.new(4) { create(:entity_person, :with_last_user_id) } }
+      let(:recipients) { Array.new(3) { create(%i[entity_org enity_person].sample) } }
+      let(:root_entity) { donors.first }
+      let(:donations) { create_donations(donors, recipients) }
+    end
+
+    it "shows a header and subheader" do
+      expect(page.find("#entity-connections-title"))
+        .to have_text "Donors to Similar Recipients"
+      expect(page.find("#entity-connections-subtitle"))
+        .to have_text "that #{root_entity.name} donated to"
+    end
+
+    it "has a table of connected entites" do
+      expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
+    end
+
+    describe "first row" do
+      subject { page.all("#entity-connections-table tbody tr").first }
+
+      it "displays the most-connected donor's name as link" do
+        expect(subject.find('.connected-entity-cell'))
+          .to have_link(person.name, href: entity_path(people[3]))
+      end
+
+      it "displays connecting recipients' names as links in same row as connected donors" do
+        orgs.each do |org|
+          expect(subject.find('.connecting-entities-cell'))
+            .to have_link(org.name, href: entity_path(org))
         end
       end
     end

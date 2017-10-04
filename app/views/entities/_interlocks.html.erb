@@ -2,11 +2,11 @@
 
   <% interlocks = @entity.interlocks(params[:page]) %>
 
-  <div id="entity-interlocks-container">
+  <div id="entity-connections-container">
 
     <%= entity_interlocks_header_for(@entity)  %>
 
-    <table class="table" id="entity-interlocks-table">
+    <table class="table" id="entity-connections-table">
       <thead>
 	<tr>
 	  <th id="connecting-entity-header">Person</th>
@@ -28,7 +28,7 @@
       </tbody>
     </table>
 
-    <div id="entity-interlocks-pagination">
+    <div id="entity-connections-pagination">
       <%= paginate interlocks %>
     </div>
   </div>

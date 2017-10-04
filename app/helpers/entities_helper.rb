@@ -222,9 +222,9 @@ module EntitiesHelper
 
   def entity_interlocks_header_for(e)
     title, subtitle = entity_interlocks_title_and_subtitle_for(e)
-    content_tag(:div, id: "entity-interlocks-header") do
-      content_tag(:div, title, id: "entity-interlocks-title") +
-        content_tag(:div, subtitle, id: "entity-interlocks-subtitle")
+    content_tag(:div, id: "entity-connections-header") do
+      content_tag(:div, title, id: "entity-connections-title") +
+        content_tag(:div, subtitle, id: "entity-connections-subtitle")
     end
   end
 
