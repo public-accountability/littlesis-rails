@@ -1,4 +1,4 @@
-module InterlocksExampleHelper
+module NetworkAnalysisExampleHelper
   def interlock_people_via_orgs(people, orgs)
     # person[0] is the root of the interlocks tree and is related to all orgs
     # person[n] is a leaf of the interlocks tree and is related to n orgs

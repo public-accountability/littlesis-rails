@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Entity Page", :interlocks_helper, :pagination_helper, type: :feature do
+describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :feature do
   # TODO: include Routes (which will force internal handling of /people/..., /orgs/... routes)
   let(:user) { create_basic_user }
   let(:person){ create(:entity_person, last_user_id: user.sf_guard_user.id) }
