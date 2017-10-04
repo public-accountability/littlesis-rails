@@ -1,4 +1,4 @@
-module Interlocks
+module NetworkAnalysis
   # extend ActiveSupport::Concern
   def interlocks(page = 1)
     id_hashes = paginate(page, Entity::PER_PAGE, connected_id_hashes)
