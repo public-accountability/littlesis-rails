@@ -138,6 +138,7 @@ Lilsis::Application.routes.draw do
       member do
         # profile page
         get 'interlocks'
+        get 'giving'
         get 'political'
         #get 'relationships'
         get 'datatable'

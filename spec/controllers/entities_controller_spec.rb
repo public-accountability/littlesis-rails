@@ -11,6 +11,7 @@ describe EntitiesController, type: :controller do
   describe 'routes' do
     it { should route(:get, '/entities/1').to(action: :show, id: 1) }
     it { should route(:get, '/entities/1/interlocks').to(action: :interlocks, id: 1) }
+    it { should route(:get, '/entities/1/giving').to(action: :giving, id: 1) }
     it { should route(:get, '/entities/1/datatable').to(action: :datatable, id: 1) }
     it { should route(:get, '/entities/1/add_relationship').to(action: :add_relationship, id: 1) }
     it { should route(:get, '/entities/new').to(action: :new) }

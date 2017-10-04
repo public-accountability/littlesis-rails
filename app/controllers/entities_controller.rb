@@ -1,6 +1,6 @@
 class EntitiesController < ApplicationController
   include TagableController
-  before_filter :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks]
+  before_filter :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show]
   before_action :set_entity_with_eager_loading, only: [:show]
   before_action :set_current_user, only: [:show, :political, :match_donations]
@@ -18,6 +18,11 @@ class EntitiesController < ApplicationController
 
   def interlocks
     @active_tab = :interlocks
+    render 'show'
+  end
+
+  def giving
+    @active_tab = :giving
     render 'show'
   end
 
