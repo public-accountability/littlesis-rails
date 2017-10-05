@@ -438,12 +438,19 @@
     }
   };
 
+
   //  [{}], element -> {}
   function rowToJson(tableDetails, row) {
     var obj = {};
     tableDetails.forEach(function(rowInfo,i) {
       var cell = $(row).find('td:nth-child(' + (i + 1) + ')');
-      obj[rowInfo.key] = extractCellData(cell, rowInfo);
+
+      if (rowInfo.key === 'notes' && !NOTES_MODE) {
+	// do NOT include the notes unless NOTES MODE is activated
+      } else {
+	obj[rowInfo.key] = extractCellData(cell, rowInfo);
+      }
+      
     });
     return obj;
   }
