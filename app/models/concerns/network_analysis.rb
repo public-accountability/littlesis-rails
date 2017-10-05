@@ -53,15 +53,15 @@ module NetworkAnalysis
       .pluck(connecting_entity_id_key_for(connection_type))
   end
 
-  def connected_id_hash_for(connection_type, connected_id, rels)
+  def connected_id_hash_for(connection_type, connected_id, relationships_subset)
     {
       connected_id:    connected_id,
-      connecting_ids:  connecting_ids_subset_for(connection_type, rels)
+      connecting_ids:  connecting_ids_subset_for(connection_type, relationships_subset)
     }
   end
 
-  def connecting_ids_subset_for(connection_type, relationships)
-    relationships
+  def connecting_ids_subset_for(connection_type, relationships_subset)
+    relationships_subset
       .map { |r| r.send(connecting_entity_id_key_for(connection_type)) }
       .uniq
   end
