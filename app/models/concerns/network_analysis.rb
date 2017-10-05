@@ -16,7 +16,8 @@ module NetworkAnalysis
     id_hashes.map do |id_hash|
       {
         "connected_entity" => entities_by_id.fetch(id_hash[:connected_id]),
-        "connecting_entities" => id_hash[:connecting_ids].map { |id| entities_by_id.fetch(id) }
+        "connecting_entities" => id_hash[:connecting_ids].map { |id| entities_by_id.fetch(id) },
+        "stat" => id_hash[:stat]
       }
     end
   end
@@ -31,8 +32,7 @@ module NetworkAnalysis
     second_hop_links_for(connection_type)
       .group_by(&:entity2_id)
       .tap { |grouped_ids| grouped_ids.delete(id) } # filter out root id
-      .map { |connected_id, link_subset| { connected_id:    connected_id,
-                                           connecting_ids:  link_subset.map(&:entity1_id).uniq } }
+      .map { |connected_id, links_subset| id_hash_for(connection_type, connected_id, links_subset) }
       .sort { |a, b| b[:connecting_ids].count <=> a[:connecting_ids].count }
   end
 
@@ -66,6 +66,8 @@ module NetworkAnalysis
       true
     when [:giving, "Person"] # get "gives-money-to" donation links
       false
+    when [:giving, "Org"] # get "receives-money-from" donation links
+      true
     end
   end
   
@@ -80,6 +82,22 @@ module NetworkAnalysis
       false
     when [:giving, "Person"] # get "receivs-money-from" donation links (reverse)
       true
+    when [:giving, "Org"] # get "gives-money-to" donation links
+      false
+    end
+  end
+
+  def id_hash_for(connection_type, connected_id, links_subset)
+    { connected_id:   connected_id,
+      connecting_ids: links_subset.map(&:entity1_id).uniq ,
+      stat:           get_stat(connection_type, links_subset) }
+  end
+
+  def get_stat(connection_type, links_subset)
+    case [connection_type, primary_ext]
+    when [:giving, "Org"]
+      links_subset.reduce(0) { |acc, link| acc + link.relationship.amount }
+      # else nil
     end
   end
 

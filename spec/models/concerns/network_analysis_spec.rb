@@ -18,15 +18,18 @@ describe 'Network Analysis Module', :network_analysis_helper, :pagination_helper
             .to eq([
                      {
                        "connected_entity"    => people[3],
-                       "connecting_entities" => orgs.take(3)
+                       "connecting_entities" => orgs.take(3),
+                       "stat"                => nil
                      },
                      {
                        "connected_entity"    => people[2],
-                       "connecting_entities" => orgs.take(2)
+                       "connecting_entities" => orgs.take(2),
+                       "stat"                => nil
                      },
                      {
                        "connected_entity"    => people[1],
-                       "connecting_entities" => orgs.take(1)
+                       "connecting_entities" => orgs.take(1),
+                       "stat"                => nil
                      }
                    ])
         end
@@ -61,52 +64,83 @@ describe 'Network Analysis Module', :network_analysis_helper, :pagination_helper
           expect(org.interlocks.to_a)
             .to eql([
                       {
-                        "connected_entity" => orgs[3],
-                        "connecting_entities" => people.take(3)
+                        "connected_entity"    => orgs[3],
+                        "connecting_entities" => people.take(3),
+                        "stat"                => nil
                       },
                       {
-                        "connected_entity" => orgs[2],
-                        "connecting_entities" => people.take(2)
+                        "connected_entity"    => orgs[2],
+                        "connecting_entities" => people.take(2),
+                        "stat"                => nil
                       },
                       {
-                        "connected_entity" => orgs[1],
-                        "connecting_entities" => people.take(1)
+                        "connected_entity"    => orgs[1],
+                        "connecting_entities" => people.take(1),
+                        "stat"                => nil
                       }
                     ])
         end
       end
-    end  
+    end
   end
 
   describe "similar donors" do
-    context "as a person" do
+
+    context "for a person" do
       let(:donors) { Array.new(4) { create(:entity_person) } }
-      let(:donor) { donors.first }
-      let(:recipients) { [create(:entity_org),
-                          create(:entity_person),
-                          create(:entity_org)] }
+      let(:recipients) { [create(:entity_org)] + Array.new(3) { create(:entity_person) } }
+      let(:person) { donors.first }
 
-      before { create_donations(donors, recipients) }
+      before { create_donations_from(donors, recipients) }
 
-      context "with less similar donors than pagination limit" do
+      it "lists all people who have given to same entities" do
+        expect(person.similar_donors.to_a)
+          .to eql([
+                    {
+                      "connected_entity"    => donors[3],
+                      "connecting_entities" => recipients.take(3),
+                      "stat"                => nil
+                    },
+                    {
+                      "connected_entity"    => donors[2],
+                      "connecting_entities" => recipients.take(2),
+                      "stat"                => nil
+                    },
+                    {
+                      "connected_entity"    => donors[1],
+                      "connecting_entities" => recipients.take(1),
+                      "stat"                => nil
+                    }
+                  ])
+          
+      end
+    end
 
-        it "lists all people who have given to same entities" do
-          expect(donor.similar_donors.to_a)
-            .to eq([
-                     {
-                       "connected_entity"    => donors[3],
-                       "connecting_entities" => recipients.take(3)
-                     },
-                     {
-                       "connected_entity"    => donors[2],
-                       "connecting_entities" => recipients.take(2)
-                     },
-                     {
-                       "connected_entity"    => donors[1],
-                       "connecting_entities" => recipients.take(1)
-                     }
-                   ])
-        end
+    context "for an org" do
+      let(:recipients) { [create(:entity_org)] + Array.new(3) { create(:entity_person) } }
+      let(:donors) { Array.new(3) { create(:entity_person) } }
+
+      before { create_donations_to(recipients, donors) }
+
+      it "lists all orgs who have received donations from the same entities" do
+        expect(recipients.first.similar_donors.to_a)
+          .to eql([
+                    {
+                      "connected_entity"    => recipients[3],
+                      "connecting_entities" => donors.take(3),
+                      "stat"                => 900 # 300 * 3
+                    },
+                    {
+                      "connected_entity"    => recipients[2],
+                      "connecting_entities" => donors.take(2),
+                      "stat"                => 400 # 200 * 2
+                    },
+                    {
+                      "connected_entity"    => recipients[1],
+                      "connecting_entities" => donors.take(1),
+                      "stat"                => 100
+                    }
+                  ])
       end
     end
   end
