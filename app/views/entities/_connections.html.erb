@@ -1,0 +1,28 @@
+<% #locals: connected_entities: [ConnectedEntityHash],  connection_type: Symbol %>
+
+  <div id="entity-connections-container">
+
+    <%= entity_connections_header(connection_type, @entity)  %>
+
+    <table class="table" id="entity-connections-table">
+
+      <%= entity_connections_table_headers(connection_type, @entity) %>
+      <tbody>
+	<% connected_entities.each do |connected_entity_hash| %>
+	  <tr>
+	    <td class="connected-entity-cell">
+              <% connected_entity =  connected_entity_hash['connected_entity'] %>
+	      <%= link_to connected_entity.name, connected_entity %>
+	    </td>
+	    <td class="connecting-entities-cell">
+	      <%= entity_links(connected_entity_hash['connecting_entities']) %>
+	    </td>
+	  </tr>
+	<% end %>
+      </tbody>
+    </table>
+
+    <div id="entity-connections-pagination">
+      <%= paginate connected_entities %>
+    </div>
+  </div>

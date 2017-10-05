@@ -1,4 +1,4 @@
-module InterlocksExampleHelper
+module NetworkAnalysisExampleHelper
   def interlock_people_via_orgs(people, orgs)
     # person[0] is the root of the interlocks tree and is related to all orgs
     # person[n] is a leaf of the interlocks tree and is related to n orgs
@@ -14,6 +14,13 @@ module InterlocksExampleHelper
     orgs.each_with_index do |o, i|
       people_subset = i.zero? ? people : people.take(i)
       people_subset.each { |p| create(:position_relationship, entity: p, related: o) }
+    end
+  end
+
+  def create_donations(donors, recipients)
+    donors.each_with_index do |d, idx|
+      recipient_subset = idx.zero? ? recipients : recipients.take(idx)
+      recipient_subset.each { |r| create(:donation_relationship, entity: d, related: r) }
     end
   end
 end

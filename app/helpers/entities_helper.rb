@@ -178,7 +178,7 @@ module EntitiesHelper
     false
   end
 
-  def interlocks_entity_links(entities)
+  def entity_links(entities)
     safe_join(entities.map { |e| link_to(e.name, e) }, ', ')
   end
 
@@ -207,7 +207,7 @@ module EntitiesHelper
     tab_contents = [
       { text: 'Relationships',  path: entity_path(entity) },
       { text: 'Interlocks',     path: interlocks_entity_path(entity) },
-      { text: 'Giving',         path: entity.legacy_url('giving') },
+      { text: 'Giving',         path: giving_entity_path_for(entity) },
       { text: 'Political',      path: political_entity_path(entity) },
       { text: 'Data',           path: datatable_entity_path(entity) }
     ]
@@ -220,24 +220,58 @@ module EntitiesHelper
     end
   end
 
-  def entity_interlocks_header_for(e)
-    title, subtitle = entity_interlocks_title_and_subtitle_for(e)
-    content_tag(:div, id: "entity-interlocks-header") do
-      content_tag(:div, title, id: "entity-interlocks-title") +
-        content_tag(:div, subtitle, id: "entity-interlocks-subtitle")
+  def entity_connections_header(connection_type, e)
+    title, subtitle = connections_title_and_subtitle(connection_type, e)
+    content_tag(:div, id: "entity-connections-header") do
+      content_tag(:div, title, id: "entity-connections-title") +
+        content_tag(:div, subtitle, id: "entity-connections-subtitle")
+    end
+  end
+
+  def entity_connections_table_headers(connection_type, e)
+    connected_header, connecting_header = connections_table_header_text(connection_type, e.primary_ext)
+    content_tag(:thead) do
+      content_tag(:tr) do
+        content_tag(:th, connected_header, id: "connected-entity-header") +
+          content_tag(:th, connecting_header, id: "connecting-entity-header")
+      end
     end
   end
 
   private
 
-  def entity_interlocks_title_and_subtitle_for(e)
+  # TODO(ag|04-Oct-2017): delete after playing card #336
+  def giving_entity_path_for(e)
     case e.primary_ext
     when "Person"
+      giving_entity_path(e)
+    when "Org"
+      e.legacy_url('giving')
+    end
+  end
+
+  def connections_title_and_subtitle(connection_type, e)
+    case [connection_type, e.primary_ext]
+    when [:interlocks, "Person"]
       ["People in Common Orgs",
        "People with positions in the same orgs as #{e.name}"]
-    when "Org"
+    when [:interlocks, "Org"]
       ["Orgs with Common People",
        "Leadership and staff of #{e.name} also have positions in these orgs"]
+    when [:giving, "Person"]
+      ["Donors to Common Recipients",
+       "Recipients of donations from #{e.name} also received donations from these orgs and people"]
+    end
+  end
+
+  def connections_table_header_text(connection_type, primary_ext)
+    case [connection_type, primary_ext]
+    when [:interlocks, "Person"]
+      ["Person", "Common Orgs"]
+    when [:interlocks, "Org"]
+      ["Org", "Common People"]
+    when [:giving, "Person"]
+      ["Donor", "Common Recipients"]
     end
   end
 end

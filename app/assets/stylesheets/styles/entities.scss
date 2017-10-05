@@ -69,27 +69,27 @@ $tiny_image_size: 35px;
 
 /* TAB CONTENTS */
 
-#entity-interlocks-container {
-    #entity-interlocks-header {
-        #entity-interlocks-title {
+#entity-connections-container {
+    #entity-connections-header {
+        #entity-connections-title {
             padding-left: .5em;
             font-size: large;
             border-bottom: 1px solid lightgrey !important;
             font-weight: bold;
         }
-        #entity-interlocks-subtitle {
+        #entity-connections-subtitle {
             padding-left: .5em;
             color: grey;
             font-style: italic;
         }
     }
-    #entity-interlocks-table {
+    #entity-connections-table {
         margin-top: .5em;
         th {
             border-bottom: 1px solid lightgrey !important;
 	    font-size: larger;
         }
-        #connecting-entity-header, .connecting-entity-cell {
+        #connected-entity-header, .connected-entity-cell {
 	    width: 30%;
         }
     }

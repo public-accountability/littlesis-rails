@@ -1,36 +1,5 @@
 <% cache(['interlocks', @entity.alt_cache_key,  params[:page] ], expires_in: 2.days) do %>
-
-  <% interlocks = @entity.interlocks(params[:page]) %>
-
-  <div id="entity-interlocks-container">
-
-    <%= entity_interlocks_header_for(@entity)  %>
-
-    <table class="table" id="entity-interlocks-table">
-      <thead>
-	<tr>
-	  <th id="connecting-entity-header">Person</th>
-	  <th id="connected-entity-header">Common Orgs</th>
-	</tr>
-      </thead>
-      <tbody>
-	<% interlocks.each do |connected_entity_hash| %>
-	  <tr>
-	    <td class="connected-entity-cell">
-              <% connected_entity =  connected_entity_hash['connected_entity'] %>
-	      <%= link_to connected_entity.name, connected_entity %>
-	    </td>
-	    <td class="connecting-entities-cell">
-	      <%= interlocks_entity_links(connected_entity_hash['connecting_entities']) %>
-	    </td>
-	  </tr>
-	<% end %>
-      </tbody>
-    </table>
-
-    <div id="entity-interlocks-pagination">
-      <%= paginate interlocks %>
-    </div>
-  </div>
-
+  <%= render partial: 'connections',
+             locals: { connection_type: :interlocks,
+                       connected_entities: @entity.interlocks(params[:page]) } %>
 <% end  %>
