@@ -164,6 +164,7 @@ class RelationshipsController < ApplicationController
       start_date: relationship.fetch('start_date', nil),
       end_date: relationship.fetch('end_date', nil),
       goods: relationship.fetch('goods', nil),
+      notes: relationship.fetch('notes', nil),
       amount: relationship.fetch('amount', nil),
       is_current: relationship.fetch('is_current', nil),
       last_user_id: current_user.sf_guard_user_id
