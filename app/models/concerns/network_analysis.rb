@@ -28,71 +28,58 @@ module NetworkAnalysis
   # ---
   # [Integer], Integer -> [ConnectedIdHash]
   def connected_id_hashes_for(connection_type)
-    connecting_id_key, connecting_ids, category_ids = connection_query_ids_for(connection_type)
-    Relationship
-      .where( connecting_id_key => connecting_ids, :category_id => category_ids)
-      .to_a
-      .group_by { |r| r.send(root_entity_id_key_for(connection_type)) }
+    second_hop_links_for(connection_type)
+      .group_by(&:entity2_id)
       .tap { |grouped_ids| grouped_ids.delete(id) } # filter out root id
-      .map { |connected_id, rels| connected_id_hash_for(connection_type, connected_id, rels) }
+      .map { |connected_id, link_subset| { connected_id:    connected_id,
+                                           connecting_ids:  link_subset.map(&:entity1_id).uniq } }
       .sort { |a, b| b[:connecting_ids].count <=> a[:connecting_ids].count }
   end
 
-  def connection_query_ids_for(connection_type)
-    [
-      connecting_entity_id_key_for(connection_type),
-      connecting_ids_for(connection_type),
-      relationship_categories_for(connection_type)
-    ]
+  def second_hop_links_for(connection_type)
+    Link
+      .where(entity1_id:   connecting_ids_for(connection_type),
+             category_id:  relationship_categories_for(connection_type),
+             is_reverse:   second_hop_link_direction_for(connection_type))
+      .to_a
   end
 
   def connecting_ids_for(connection_type)
-    relationships
-      .where(root_entity_id_key_for(connection_type) => id,
-             category_id: relationship_categories_for(connection_type))
-      .pluck(connecting_entity_id_key_for(connection_type))
-  end
-
-  def connected_id_hash_for(connection_type, connected_id, relationships_subset)
-    {
-      connected_id:    connected_id,
-      connecting_ids:  connecting_ids_subset_for(connection_type, relationships_subset)
-    }
-  end
-
-  def connecting_ids_subset_for(connection_type, relationships_subset)
-    relationships_subset
-      .map { |r| r.send(connecting_entity_id_key_for(connection_type)) }
-      .uniq
+    links
+      .where(category_id: relationship_categories_for(connection_type),
+             is_reverse:  first_hop_link_direction_for(connection_type))
+      .pluck(:entity2_id)
   end
 
   def relationship_categories_for(connection_type)
-    # TODO (ag|03-Oct-2017): include OWNERSHIP_CATEGORY for people interlocks?
     {
-      interlocks: [Relationship::POSITION_CATEGORY],
+      interlocks: [Relationship::POSITION_CATEGORY], # (ag|03-Oct-2017): include OWNERSHIP_CATEGORY?
       giving: [Relationship::DONATION_CATEGORY]
     }.fetch(connection_type)
   end
 
-  def root_entity_id_key_for(connection_type)
+  def first_hop_link_direction_for(connection_type)
     case [connection_type, primary_ext]
-    when [:interlocks, "Person"] # root entity must be employee (eg: entity1)
-      :entity1_id
-    when [:interlocks, "Org"] # root entity must be employer (eg: entity2)
-      :entity2_id
-    when [:giving, "Person"] # root entity must be donor (eg: entity1)
-      :entity1_id
+    when [:interlocks, "Person"] # get "gives-work-to" position links
+      false
+    when [:interlocks, "Org"] # get "receives-work from" position links
+      true
+    when [:giving, "Person"] # get "gives-money-to" donation links
+      false
     end
   end
-
-  def connecting_entity_id_key_for(connection_type)
+  
+  def second_hop_link_direction_for(connection_type)
+    # this happens to be the inverse of first hop directions
+    # for the two operations we currently perform, but we are treating that
+    # as coincidental
     case [connection_type, primary_ext]
-    when [:interlocks, "Person"] # connecting entity must be employer (eg: entity2)
-      :entity2_id
-    when [:interlocks, "Org"] # connecting entity must be employee (eg: entity1)
-      :entity1_id
-    when [:giving, "Person"] # connecting entity must be recipient (eg: entity2)
-      :entity2_id
+    when [:interlocks, "Person"] # get "receives-work-from" position links (reverse)
+      true
+    when [:interlocks, "Org"] # get "gives-work-to" position links (non-reverse)
+      false
+    when [:giving, "Person"] # get "receivs-money-from" donation links (reverse)
+      true
     end
   end
 
