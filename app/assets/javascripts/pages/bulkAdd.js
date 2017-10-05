@@ -1,5 +1,5 @@
 /**
- Editable bulk add relationships table 
+ 
  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
 
  External requirements: jQuery, utility.js, Hogan, jQuery UI Autocomplete
@@ -36,13 +36,8 @@
   // -> [[]]
   function relationshipDetails() {
     var entityColumns = [ [ 'Name', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'select'] ];
-    var columns = entityColumns.concat(utility.relationshipDetails(realCategoryId()));
-    if (NOTES_MODE) {
-      return columns.concat( [ [ 'Notes', 'notes', 'text' ] ]);
-    } else {
-      return columns;
-    }
-    
+    var notes = [ ['Notes', 'notes', 'text' ] ] ;
+    return entityColumns.concat(utility.relationshipDetails(realCategoryId())).concat(notes);
   }
 
   // -> [ {} ]
@@ -59,13 +54,22 @@
 
   /* CREATE TABLE  */
 
+  function cssForNotesColumn(col) {
+    if (col[1] === 'notes' && !NOTES_MODE) {
+      return { display: 'none' };
+    } else {
+      return {};
+    }
+  }
+
   // Adds <th> with title to table header
   // [] -> 
   function addColToThead(col) {
-   $('#table thead tr').append(
+    $('#table thead tr').append(
       $('<th>', {
 	text: col[0], 
-	data: { 'colName': col[1], 'colType': col[2] }
+	data: { 'colName': col[1], 'colType': col[2] },
+	css: cssForNotesColumn(col)
       })
     );
   }
@@ -138,7 +142,6 @@
       .append('<thead><tr></tr></thead><tbody></tbody>');
     
     createTableHeader();
-    
     newBlankRow(); // initialize table with a new blank row
     readCSVFileListener('csv-file'); // handle file uploads to #csv-file
   }
@@ -336,8 +339,9 @@
       //return $('<td>', autocomplete);
     } else if (col[1] === 'primary_ext') {
       return $('<td>').append(primaryExtRadioButtons());
-    } 
-    else {
+    } else if (col[1] === 'notes') {
+      return $('<td>', { css: cssForNotesColumn(col), contenteditable: 'true' });
+    } else {
       return $('<td>', { contenteditable: 'true'}); // return editable column
     }
   }
@@ -905,8 +909,21 @@
     $(element).find('.btn').toggleClass('btn-default');
     return $(element).find('button.btn.active').text();
   }
-  
 
+  
+  // shows or hides NOTES column
+  function toggleNotes() {
+    var notesColIndex = $('#table thead tr th')
+	.toArray()
+	.findIndex(function(th) { return th.innerText === 'Notes'; });
+    
+    var notesColSelector = "#table tbody tr > td:nth-child(" + (notesColIndex +1) + ")";
+
+    $(notesColSelector).each(function(i) {
+      $(this).toggle();
+    });
+  }
+  
   // Establishes listeners for:
   //   - click to add a new row
   //   - remove row
@@ -932,6 +949,7 @@
       } else {
 	NOTES_MODE = false;
       }
+      toggleNotes();
       recreateTableHeader();
     });
 
@@ -968,6 +986,7 @@
     invalidDisplay: invalidDisplay,
     removeBlankRows: removeBlankRows,
     afterRequest: afterRequest,
+    toggleNotes: toggleNotes,
     init: init
   };
   
