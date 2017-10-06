@@ -49,4 +49,33 @@ describe SortedLinks do
     end
 
   end
+
+  context 'initalized with a section' do
+    let(:org_with_members) { create(:entity_org) }
+    let(:org_with_membership) { create(:entity_org) }
+
+    before do
+      create(:generic_relationship, entity: org_with_members, related: create(:entity_person))
+      create(:membership_relationship, entity: org_with_membership, related: org_with_members)
+    end
+
+    it 'returns LinksGroup with members relationship' do
+      links_group = SortedLinks.new(org_with_members, 'members', 1).members
+      expect(links_group.count).to eq 1
+    end
+
+    it 'returns LinksGroup with memberships relationship' do
+      links_group = SortedLinks.new(org_with_membership, 'memberships', 1).memberships
+      expect(links_group.count).to eq 1
+    end
+
+    describe '#preloaded_links_for_section' do
+      it 'returns preloaded Links with members relationships' do
+        sorted_links = SortedLinks.new(org_with_members, 'members', 1)
+        preloaded_links = sorted_links.send(:preloaded_links_for_section, org_with_members.id, 'members')
+        expect(preloaded_links.length).to eql 1
+        expect(preloaded_links.first).to be_a Link
+      end
+    end
+  end
 end

@@ -1,4 +1,4 @@
-<div id='relationship_tabs_content'>
+<div id="relationship_tabs_content">
 
     <!-- The 'regular' profile page -->
     <% if params[:relationships] == nil %>
@@ -13,10 +13,10 @@
             <% end %>
 	<% end %>
 
+
 	<!-- The profile page for a specific type of relationship-->
 
     <% elsif section_order(@entity).include? params[:relationships] %>
-
 	<% page = params[:page].blank? ? 1 : params[:page] %>
 
 	<% cache ['relationship_page', @entity.alt_cache_key, params[:relationships], page ] do  %>

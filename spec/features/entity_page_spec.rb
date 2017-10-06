@@ -5,13 +5,9 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   let(:user) { create_basic_user }
   let(:person) { create(:entity_person, last_user_id: user.sf_guard_user.id) }
   let(:org) { create(:entity_org, last_user_id: user.sf_guard_user.id) }
-
-  before do
-    visit entity_path(person)
-  end
+  let(:visit_page) { proc { visit entity_path(person) } }
 
   describe 'routes' do
-
     def should_visit_entity_page(url)
       visit url
       expect(page.status_code).to eq 200
@@ -35,6 +31,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe "header" do
+    before { visit_page.call }
+
     it "shows the entity's name" do
       expect(page.find("#entity-name")).to have_text person.name
     end
@@ -61,6 +59,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe "summary field" do
+    before { visit_page.call }
+
     it "hides the summary field if user has no summary" do
       expect(page).not_to have_selector("#entity_summary")
     end
@@ -94,9 +94,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe "sidebar" do
-
+    before { visit_page.call }
     #TODO(ag|Wed 27 Sep 2017): flesh these out!
-
     subject { page.find("#profile-page-sidebar")}
 
     it 'has sections' do
@@ -139,6 +138,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe "navigation tabs" do
+    before { visit_page.call }
     let(:subpage_links) do
       [{ text: 'Relationships',  path: entity_path(person) },
        { text: 'Interlocks',     path: interlocks_entity_path(person) },
@@ -164,6 +164,32 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       it "uses the legacy url for the giving tab" do
         visit entity_path(org)
         expect(page).to have_link('Giving', href: org.legacy_url('giving'))
+      end
+    end
+  end
+
+  describe "Relationship Tab - with category Membership" do
+    let(:org_with_members) { create(:entity_org) }
+    let(:org_with_memberships) { create(:entity_org) }
+
+    before do
+      create(:generic_relationship, entity: org_with_members, related: create(:entity_person))
+      create(:membership_relationship, entity: org_with_memberships, related: org_with_members)
+    end
+
+    context 'on entity page with memberships' do
+      before { visit entity_path(org_with_memberships, relationships: 'memberships') }
+
+      it 'show title Memberships' do
+        expect(page.find('#relationship_tabs_content')).to have_text 'Memberships'
+      end
+    end
+
+    context 'on entity page with members' do
+      before { visit entity_path(org_with_members, relationships: 'members') }
+
+      it 'show title Memberships' do
+        expect(page.find('#relationship_tabs_content')).to have_text 'Members'
       end
     end
   end
