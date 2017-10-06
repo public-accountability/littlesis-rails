@@ -309,7 +309,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     describe "for a person" do
       let(:donors) { Array.new(4) { create(:entity_person, :with_last_user_id) } }
       let(:recipients) { Array.new(3) { create(%i[entity_org entity_person].sample) } }
-      let(:donations) { create_donations(donors, recipients) }
+      let(:donations) { create_donations_from(donors, recipients) }
       let(:root_entity) { donors.first }
 
       it "shows a header and subheader" do
