@@ -1,17 +1,30 @@
 module NetworkAnalysis
 
+  NIL_LAMBDA = ->(_) { nil }
+
   def interlocks(page = 1)
-    nodes_connected_by_common_neighbor(:interlocks, page)
+    connected_nodes(hops_for(:interlocks, primary_ext),
+                    get_stat_for(:interlocks, primary_ext),
+                    page)
   end
 
   def similar_donors(page = 1)
-    nodes_connected_by_common_neighbor(:giving, page)
+    connected_nodes(hops_for(:giving, primary_ext),
+                    get_stat_for(:giving, primary_ext),
+                    page)
   end
 
-  private
+  def employee_donations(page = 1)
+    connected_nodes(hops_for(:giving, primary_ext),
+                    get_stat_for(:giving, primary_ext),
+                    page)
+  end
 
-  def nodes_connected_by_common_neighbor(connection_type, page = 1)
-    id_hashes = paginate(page, Entity::PER_PAGE, connected_id_hashes_for(connection_type))
+  # type ConnectedIdHash = { connected_id   => Integer,connecting_ids => [Integer] }
+  # [Integer], Integer -> [ConnectedIdHash]
+  # TODO(ag|Tue 03 Oct 2017): extract object for this?
+  def connected_nodes(hops, get_stat = NIL_LAMBDA, page = 1) 
+    id_hashes = paginate(page, Entity::PER_PAGE, ids_via(hops, get_stat))
     entities_by_id = Entity.lookup_table_for(collapse(id_hashes))
     id_hashes.map do |id_hash|
       {
@@ -22,86 +35,68 @@ module NetworkAnalysis
     end
   end
 
-  # TODO (ag|Tue 03 Oct 2017): extract object for this?
-  # ---
-  # type ConnectedIdHash = { connected_id   => Integer,
-  #                          connecting_ids => [Integer] }
-  # ---
-  # [Integer], Integer -> [ConnectedIdHash]
-  def connected_id_hashes_for(connection_type)
-    second_hop_links_for(connection_type)
+  private
+
+  def hops_for(connection_type, ext)
+    case [connection_type, ext]
+    when [:interlocks, "Person"]
+      [{ category_id: Relationship::POSITION_CATEGORY, is_reverse: false  }, # "gives-labor-to"
+       { category_id: Relationship::POSITION_CATEGORY, is_reverse: true   }] # "gets-labor-from"
+    when [:interlocks, "Org"]
+      [{ category_id: Relationship::POSITION_CATEGORY, is_reverse: true   }, # "gets-labor-from"
+       { category_id: Relationship::POSITION_CATEGORY, is_reverse: false  }] # "gives-labor-to"
+    when [:giving, "Person"]
+      [{ category_id: Relationship::DONATION_CATEGORY, is_reverse: false  }, # "gives-money-to"
+       { category_id: Relationship::DONATION_CATEGORY, is_reverse: true   }] # "gets-money-from"
+    when [:giving, "Org"]
+      [{ category_id: Relationship::POSITION_CATEGORY, is_reverse: true   }, # "gets-labor-from"
+       { category_id: Relationship::DONATION_CATEGORY, is_reverse: false  }] # "gives-money-to"
+    end
+  end
+
+  def get_stat_for(connection_type, ext)
+    case [connection_type, ext]
+    when [:giving, "Org"]
+      # TODO(ag|05-Oct-2017): Refactor this logic to avoid tons of SQL queries!
+      ->(ls) { ls.reduce(0) { |acc, link| acc + (link.relationship.amount || 0) } }
+    else
+      NIL_LAMBDA
+    end
+  end
+
+  # TODO(ag|05-Oct-2017): implement this to sort Org Giving tab by stat (summed giving amount)
+  def get_sort_for(connection_type, ext); end
+
+  def ids_via(hops, get_stat)
+    Link
+      .where(entity1_id:   first_hop_ids(hops.first),
+             category_id:  hops.second[:category_id],
+             is_reverse:   hops.second[:is_reverse])
+      .to_a
       .group_by(&:entity2_id)
       .tap { |grouped_ids| grouped_ids.delete(id) } # filter out root id
-      .map { |connected_id, links_subset| id_hash_for(connection_type, connected_id, links_subset) }
+      .map { |connected_id, links_subset| id_hash_for(connected_id, links_subset, get_stat) }
       .sort { |a, b| b[:connecting_ids].count <=> a[:connecting_ids].count }
+      # TODO(ag|05-Oct-2017): use parameterized sort here (but likely in SQL query...)
   end
 
-  def second_hop_links_for(connection_type)
-    Link
-      .where(entity1_id:   connecting_ids_for(connection_type),
-             category_id:  relationship_categories_for(connection_type),
-             is_reverse:   second_hop_link_direction_for(connection_type))
-      .to_a
-  end
-
-  def connecting_ids_for(connection_type)
+  def first_hop_ids(hop)
+    # TODO(ag|05-Oct-2017):
+    # * if we want to extend this to `next_hop_ids`, we could provide `last_hop_id` as param
+    # * then query `Link.where(entity1_id: last_hop_id)
+    # * worth doing that now, or wait (suspect the latter, curious what @aepyornis thinks...)
     links
-      .where(category_id: relationship_categories_for(connection_type),
-             is_reverse:  first_hop_link_direction_for(connection_type))
+      .where(category_id: hop[:category_id], is_reverse: hop[:is_reverse])
       .pluck(:entity2_id)
   end
 
-  def relationship_categories_for(connection_type)
-    {
-      interlocks: [Relationship::POSITION_CATEGORY], # (ag|03-Oct-2017): include OWNERSHIP_CATEGORY?
-      giving: [Relationship::DONATION_CATEGORY]
-    }.fetch(connection_type)
-  end
-
-  def first_hop_link_direction_for(connection_type)
-    case [connection_type, primary_ext]
-    when [:interlocks, "Person"] # get "gives-work-to" position links
-      false
-    when [:interlocks, "Org"] # get "receives-work from" position links
-      true
-    when [:giving, "Person"] # get "gives-money-to" donation links
-      false
-    when [:giving, "Org"] # get "receives-money-from" donation links
-      true
-    end
-  end
-  
-  def second_hop_link_direction_for(connection_type)
-    # this happens to be the inverse of first hop directions
-    # for the two operations we currently perform, but we are treating that
-    # as coincidental
-    case [connection_type, primary_ext]
-    when [:interlocks, "Person"] # get "receives-work-from" position links (reverse)
-      true
-    when [:interlocks, "Org"] # get "gives-work-to" position links (non-reverse)
-      false
-    when [:giving, "Person"] # get "receivs-money-from" donation links (reverse)
-      true
-    when [:giving, "Org"] # get "gives-money-to" donation links
-      false
-    end
-  end
-
-  def id_hash_for(connection_type, connected_id, links_subset)
+  def id_hash_for(connected_id, links_subset, get_stat)
     { connected_id:   connected_id,
-      connecting_ids: links_subset.map(&:entity1_id).uniq ,
-      stat:           get_stat(connection_type, links_subset) }
+      connecting_ids: links_subset.map(&:entity1_id).uniq,
+      stat:           get_stat.call(links_subset) }
   end
 
-  def get_stat(connection_type, links_subset)
-    case [connection_type, primary_ext]
-    when [:giving, "Org"]
-      links_subset.reduce(0) { |acc, link| acc + link.relationship.amount }
-      # else nil
-    end
-  end
-
-  # Array(ConnectedIdHash) => [Integer]
+  # [ConnectedIdHash] => [Integer]
   def collapse(connected_id_hashes)
     connected_id_hashes.map { |x| [x[:connected_id], x[:connecting_ids]] }.flatten.uniq
   end

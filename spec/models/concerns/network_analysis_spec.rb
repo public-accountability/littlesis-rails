@@ -117,13 +117,20 @@ describe 'Network Analysis Module', :network_analysis_helper, :pagination_helper
     end
 
     context "for an org" do
-      let(:recipients) { [create(:entity_org)] + Array.new(3) { create(:entity_person) } }
+      let(:org) { create(:entity_org) }
       let(:donors) { Array.new(3) { create(:entity_person) } }
+      let(:recipients) do
+        # we want both orgs and people in recipients
+        Array.new(2) { create(:entity_org) } + Array.new(2) { create(:entity_person) }
+      end
 
-      before { create_donations_to(recipients, donors) }
+      before do
+        donors.each_with_index { |d| create(:position_relationship, entity: d, related: org) }
+        create_donations_to(recipients, donors)
+      end
 
-      it "lists all orgs who have received donations from the same entities" do
-        expect(recipients.first.similar_donors.to_a)
+      it "lists all entiites that have received donations from the org's employees" do
+        expect(org.employee_donations.to_a)
           .to eql([
                     {
                       "connected_entity"    => recipients[3],
