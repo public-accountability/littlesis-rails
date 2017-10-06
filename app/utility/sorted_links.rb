@@ -1,6 +1,7 @@
 class SortedLinks
   attr_reader :staff,
               :members,
+              :memberships,
               :business_positions,
               :government_positions,
               :in_the_office_positions,
@@ -27,6 +28,8 @@ class SortedLinks
     'government_positions' => 1,
     'in_the_office_positions' => 1,
     'staff' => 1,
+    'members' => 3,
+    'memberships' => 3,
     'other_positions_and_memberships' => [1, 3],
     'schools' => 2,
     'students' => 2,
@@ -88,7 +91,9 @@ class SortedLinks
     staff, positions = split categories[1]
     members, memberships = split categories[3]
     @staff = LinksGroup.new(staff, 'staff', 'Leadership & Staff')
+
     @members = LinksGroup.new(members, 'members', 'Members')
+    @memberships = LinksGroup.new(memberships, 'memberships', 'Memberships')
 
     create_position_subgroups(positions, memberships)
 
@@ -99,7 +104,7 @@ class SortedLinks
     @family = LinksGroup.new(categories[4], 'family', 'Family')
 
     if @use_separate_donation_query
-       create_donation_subgroups
+      create_donation_subgroups
     else
       donors, donation_recipients = split categories[5]
       # political_fundraising_committees, donors = donors.partition { |l| l.is_pfc_link? }
@@ -128,7 +133,8 @@ class SortedLinks
     @miscellaneous = LinksGroup.new(categories[12], 'miscellaneous', 'Other Affiliations')
   end
 
-  # Sorts position relationships (category 1) by creating these attributes:
+  # Sorts position relationships (category 1) and membership relationship (category 3)
+  # by creating these attributes:
   #  - @business_positions
   #  - @government_positions
   #  - @in_the_office_positions
@@ -154,8 +160,8 @@ class SortedLinks
     @donation_recipients = LinksGroup.new(donation_recipients, 'donation_recipients', 'Donation/Grant Recipients')
   end
 
-  private 
-  
+  private
+
   # This returns donations links preloaded with their relationships and related entities
   # Integer -> [ <Link> ]
   def donation_links_preloaded(entity1_id)
@@ -219,11 +225,11 @@ class SortedLinks
   end
 
   # Removes link where Entity2 is missing
-  # Sometimes an Entity will get removed, but will  have dangling links 
+  # Sometimes an Entity will get removed, but will  have dangling links
   def cull_invalid(links)
     links.select { |l| l.related.present? }
   end
-  
+
   def split(links)
     links.partition { |l| l.is_reverse == true }
   end

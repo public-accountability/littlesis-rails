@@ -28,6 +28,10 @@ FactoryGirl.define do
     id { generate(:relationship_id) }
   end
 
+  factory :membership_relationship, class: Relationship do
+    category_id Relationship::MEMBERSHIP_CATEGORY
+  end
+
   factory :position_relationship, class: Relationship do
     entity1_id 100
     entity2_id 200
