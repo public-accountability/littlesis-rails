@@ -29,19 +29,25 @@ module NetworkAnalysis
   PARAMS_BY_QUERY = {
     interlocks_person: {
       hops: [HOPS[:gives_labor_to], HOPS[:gets_labor_from]],
-      stat: :connecting_id_count
+      stat: :connecting_id_count,
+      format_stat: ->(s) { s }
     },
     interlocks_org: {
       hops: [HOPS[:gets_labor_from], HOPS[:gives_labor_to]],
-      stat: :connecting_id_count
+      stat: :connecting_id_count,
+      format_stat: ->(s) { s }
     },
     similar_donors_person: {
       hops: [HOPS[:gives_money_to], HOPS[:gets_money_from]],
-      stat: :connecting_id_count
+      stat: :connecting_id_count,
+      format_stat: ->(s) { s }
     },
     employee_donations_org: {
       hops: [HOPS[:gets_labor_from], HOPS[:gives_money_to]],
-      stat: :amount_sum
+      stat: :amount_sum,
+      format_stat: ->(s) do
+        ActiveSupport::NumberHelper.number_to_currency(s, precision: 0)
+      end
     }
   }.freeze
 
@@ -75,7 +81,7 @@ module NetworkAnalysis
       {
         "connected_entity" => entities_by_id.fetch(id_hash["connected_id"]),
         "connecting_entities" => id_hash["connecting_ids"].map { |id| entities_by_id.fetch(id) },
-        "stat" => id_hash["stat"]
+        "stat" => query_params[:format_stat].call(id_hash["stat"])
       }
     end
   end

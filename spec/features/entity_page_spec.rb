@@ -378,11 +378,15 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
       end
 
-      it "shows a table header for connected entities" do
+      it "shows a table header for (connected) recipients" do
         expect(page.find("#connected-entity-header")).to have_text "Recipient"
       end
 
-      it "shows a table header for connecting entities" do
+      it "shows a table header for donation amount" do
+        expect(page.find("#connection-stat-header")).to have_text "Total"
+      end
+
+      it "shows a table header for (connecting) donors" do
         expect(page.find("#connecting-entity-header")).to have_text "Donors"
       end
 
@@ -390,16 +394,20 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         subject { page.all("#entity-connections-table tbody tr").first }
 
         it "displays the most-donated-to recipient's name as link" do
-          puts subject.find('.connected-entity-cell').text
           expect(subject.find('.connected-entity-cell'))
             .to have_link(root_entity.name, href: entity_path(recipients[3]))
         end
 
-        it "displays connecting donors' names as links in same row as connected recipient" do
+        it "displays connecting donors' names as links" do
           donors.each do |d|
             expect(subject.find('.connecting-entities-cell'))
               .to have_link(d.name, href: entity_path(d))
           end
+        end
+
+        it "displays the sum of donations given by connecting donors" do
+          expect(subject.find('.connection-stat-cell'))
+            .to have_text ActiveSupport::NumberHelper.number_to_currency(900, precision: 0)
         end
       end
     end
