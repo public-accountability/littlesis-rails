@@ -138,10 +138,6 @@ class DevelopmentDb
                   tag
                   tags
                   taggings
-                  topic_industries
-                  topic_lists
-                  topic_maps
-                  topics
                   toolkit_pages
                   transaction
                   user_permissions)
