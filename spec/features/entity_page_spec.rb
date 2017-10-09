@@ -158,14 +158,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       expect(page.find('div.button-tabs span.active'))
         .to have_link('Relationships')
     end
-
-    # TODO(ag|04-Oct-2017): delete this after playing card #336 (and eliminating legacy url)
-    context "for an org" do
-      it "uses the legacy url for the giving tab" do
-        visit entity_path(org)
-        expect(page).to have_link('Giving', href: org.legacy_url('giving'))
-      end
-    end
   end
 
   xdescribe "relationships tab" do

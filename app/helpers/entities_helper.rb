@@ -207,7 +207,7 @@ module EntitiesHelper
     tab_contents = [
       { text: 'Relationships',  path: entity_path(entity) },
       { text: 'Interlocks',     path: interlocks_entity_path(entity) },
-      { text: 'Giving',         path: giving_entity_path_for(entity) },
+      { text: 'Giving',         path: giving_entity_path(entity) },
       { text: 'Political',      path: political_entity_path(entity) },
       { text: 'Data',           path: datatable_entity_path(entity) }
     ]
@@ -238,16 +238,6 @@ module EntitiesHelper
   end
 
   private
-
-  # TODO(ag|04-Oct-2017): delete after playing card #336
-  def giving_entity_path_for(e)
-    case e.primary_ext
-    when "Person"
-      giving_entity_path(e)
-    when "Org"
-      e.legacy_url('giving')
-    end
-  end
 
   def connections_title_and_subtitle(connection_type, e)
     case [connection_type, e.primary_ext]
