@@ -261,6 +261,9 @@ module EntitiesHelper
     when [:giving, "Person"]
       ["Donors to Common Recipients",
        "Recipients of donations from #{e.name} also received donations from these orgs and people"]
+    when [:giving, "Org"]
+      ["People Have Given To",
+       "People with positions in #{e.name} have made donations to"]
     end
   end
 
@@ -272,6 +275,8 @@ module EntitiesHelper
       ["Org", "Common People"]
     when [:giving, "Person"]
       ["Donor", "Common Recipients"]
+    when [:giving, "Org"]
+      ["Recipient", "Donors"]
     end
   end
 end

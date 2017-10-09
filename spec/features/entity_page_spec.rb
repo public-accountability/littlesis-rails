@@ -298,18 +298,18 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe "giving tab" do
-    let(:donations) {}
+    let(:setup_donations) { proc {} }
     let(:root_entity) {}
 
     before do
-      donations
+      setup_donations.call
       visit giving_entity_path(root_entity)
     end
     
     describe "for a person" do
       let(:donors) { Array.new(4) { create(:entity_person, :with_last_user_id) } }
       let(:recipients) { Array.new(3) { create(%i[entity_org entity_person].sample) } }
-      let(:donations) { create_donations_from(donors, recipients) }
+      let(:setup_donations) { proc { create_donations_from(donors, recipients) } }
       let(:root_entity) { donors.first }
 
       it "shows a header and subheader" do
@@ -343,6 +343,62 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           recipients.each do |r|
             expect(subject.find('.connecting-entities-cell'))
               .to have_link(r.name, href: entity_path(r))
+          end
+        end
+      end
+    end
+
+    describe "for an org" do
+      let(:org) { create(:entity_org, :with_last_user_id) }
+      let(:donors) { Array.new(3) { |n| create(:entity_person) } }
+      let(:recipients) do
+        Array.new(4) { |n| create(:entity_org, name: "org-#{n}") }
+      end
+      let(:root_entity){ org }
+
+      let(:setup_donations) do
+        proc do
+          donors.each_with_index { |d| create(:position_relationship, entity: d, related: org) }
+          create_donations_to(recipients, donors)
+        end
+      end
+
+      it 'shows correct page' do
+        expect(page.current_path).to eql giving_entity_path(org)
+      end
+
+      it "shows a header and subheader" do
+        expect(page.find("#entity-connections-title"))
+          .to have_text "People Have Given To"
+        expect(page.find("#entity-connections-subtitle"))
+          .to have_text "People with positions in #{root_entity.name} have made donations to"
+      end
+
+      it "has a table of connected entites" do
+        expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
+      end
+
+      it "shows a table header for connected entities" do
+        expect(page.find("#connected-entity-header")).to have_text "Recipient"
+      end
+
+      it "shows a table header for connecting entities" do
+        expect(page.find("#connecting-entity-header")).to have_text "Donors"
+      end
+
+      describe "first row" do
+        subject { page.all("#entity-connections-table tbody tr").first }
+
+        it "displays the most-donated-to recipient's name as link" do
+          puts subject.find('.connected-entity-cell').text
+          expect(subject.find('.connected-entity-cell'))
+            .to have_link(root_entity.name, href: entity_path(recipients[3]))
+        end
+
+        it "displays connecting donors' names as links in same row as connected recipient" do
+          donors.each do |d|
+            expect(subject.find('.connecting-entities-cell'))
+              .to have_link(d.name, href: entity_path(d))
           end
         end
       end
