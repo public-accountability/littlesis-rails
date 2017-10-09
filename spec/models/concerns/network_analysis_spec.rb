@@ -14,24 +14,30 @@ describe 'Network Analysis Module', :network_analysis_helper, :pagination_helper
       context "with less interlocks than pagination limit" do
 
         it "lists all people in common orgs" do
-          expect(person.interlocks.to_a)
+          interlocks = person.interlocks
+          expect(interlocks.map { |h| h.slice('connected_entity', 'stat') })
             .to eq([
                      {
                        "connected_entity"    => people[3],
-                       "connecting_entities" => orgs.take(3),
-                       "stat"                => nil
+                       # "connecting_entities" => orgs.take(3),
+                       "stat"                => 3
                      },
                      {
                        "connected_entity"    => people[2],
-                       "connecting_entities" => orgs.take(2),
-                       "stat"                => nil
+                       # "connecting_entities" => orgs.take(2),
+                       "stat"                => 2
                      },
                      {
                        "connected_entity"    => people[1],
-                       "connecting_entities" => orgs.take(1),
-                       "stat"                => nil
+                       # "connecting_entities" => orgs.take(1),
+                       "stat"                => 1
                      }
                    ])
+
+          interlocks.each_with_index do |person, i|
+            expect(person["connecting_entities"].to_set)
+            .to eql orgs.take(3 - i).to_set
+          end
         end
       end
 
@@ -61,24 +67,30 @@ describe 'Network Analysis Module', :network_analysis_helper, :pagination_helper
       context "with less interlocks than pagination limit" do
 
         it "lists all orgs with common staff or owners" do
-          expect(org.interlocks.to_a)
+          interlocks = org.interlocks
+          expect(interlocks.map { |h| h.slice('connected_entity', 'stat') })
             .to eql([
                       {
                         "connected_entity"    => orgs[3],
-                        "connecting_entities" => people.take(3),
-                        "stat"                => nil
+                        # "connecting_entities" => people.take(3),
+                        "stat"                => 3
                       },
                       {
                         "connected_entity"    => orgs[2],
-                        "connecting_entities" => people.take(2),
-                        "stat"                => nil
+                        # "connecting_entities" => people.take(2),
+                        "stat"                => 2
                       },
                       {
                         "connected_entity"    => orgs[1],
-                        "connecting_entities" => people.take(1),
-                        "stat"                => nil
+                        # "connecting_entities" => people.take(1),
+                        "stat"                => 1
                       }
                     ])
+
+          interlocks.each_with_index do |org, i|
+            expect(org["connecting_entities"].to_set)
+              .to eql people.take(3 - i).to_set
+          end
         end
       end
     end
@@ -94,25 +106,34 @@ describe 'Network Analysis Module', :network_analysis_helper, :pagination_helper
       before { create_donations_from(donors, recipients) }
 
       it "lists all people who have given to same entities" do
-        expect(person.similar_donors.to_a)
+        similar_donors = person.similar_donors
+
+        expect(similar_donors.map { |h| h.slice('connected_entity', 'stat') })
           .to eql([
                     {
                       "connected_entity"    => donors[3],
-                      "connecting_entities" => recipients.take(3),
-                      "stat"                => nil
+                      # "connecting_entities" => recipients.take(3),
+                      "stat"                => 3
                     },
                     {
                       "connected_entity"    => donors[2],
-                      "connecting_entities" => recipients.take(2),
-                      "stat"                => nil
+                      # "connecting_entities" => recipients.take(2),
+                      "stat"                => 2
                     },
                     {
                       "connected_entity"    => donors[1],
-                      "connecting_entities" => recipients.take(1),
-                      "stat"                => nil
+                      # "connecting_entities" => recipients.take(1),
+                      "stat"                => 1
                     }
                   ])
-          
+
+
+        # b/c we can't test for array equality in commented lines above...
+        similar_donors.each_with_index do |donor, i|
+          expect(donor["connecting_entities"].to_set)
+            .to eql recipients.take(3 - i).to_set
+        end
+        
       end
     end
 
@@ -130,24 +151,30 @@ describe 'Network Analysis Module', :network_analysis_helper, :pagination_helper
       end
 
       it "lists all entiites that have received donations from the org's employees" do
-        expect(org.employee_donations.to_a)
+        employee_donations = org.employee_donations
+        expect(employee_donations.map { |h| h.slice('connected_entity', 'stat') })
           .to eql([
                     {
                       "connected_entity"    => recipients[3],
-                      "connecting_entities" => donors.take(3),
+                      # "connecting_entities" => donors.take(3),
                       "stat"                => 900 # 300 * 3
                     },
                     {
                       "connected_entity"    => recipients[2],
-                      "connecting_entities" => donors.take(2),
+                      # "connecting_entities" => donors.take(2),
                       "stat"                => 400 # 200 * 2
                     },
                     {
                       "connected_entity"    => recipients[1],
-                      "connecting_entities" => donors.take(1),
+                      # "connecting_entities" => donors.take(1),
                       "stat"                => 100
                     }
                   ])
+
+        employee_donations.each_with_index do |recipient, i|
+          expect(recipient["connecting_entities"].to_set)
+            .to eql donors.take(3 - i).to_set
+        end
       end
     end
   end
