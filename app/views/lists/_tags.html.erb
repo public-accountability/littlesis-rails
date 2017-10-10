@@ -3,11 +3,5 @@
     <% if include_title %>
 	<h4 class="thin-grey-bottom-border">Tags</h4>
     <% end %>
-    <ul id="tags-list">
-	<% tags.each do |t| %>
-	  <li>
-            <%= link_to(t.name, t, class: 'tag') %>
-          </li>
-	<% end %>
-    </ul>
+    <%= display_tags(tags) %>
 </div>

@@ -209,7 +209,7 @@ module EntitiesHelper
     tab_contents = [
       { text: 'Relationships',  path: entity_path(entity) },
       { text: 'Interlocks',     path: interlocks_entity_path(entity) },
-      { text: 'Giving',         path: giving_entity_path_for(entity) },
+      { text: 'Giving',         path: giving_entity_path(entity) },
       { text: 'Political',      path: political_entity_path(entity) },
       { text: 'Data',           path: datatable_entity_path(entity) }
     ]
@@ -231,26 +231,15 @@ module EntitiesHelper
   end
 
   def entity_connections_table_headers(connection_type, e)
-    connected_header, connecting_header = connections_table_header_text(connection_type, e.primary_ext)
     content_tag(:thead) do
       content_tag(:tr) do
-        content_tag(:th, connected_header, id: "connected-entity-header") +
-          content_tag(:th, connecting_header, id: "connecting-entity-header")
+        header_attributes = connections_table_header_attributes(connection_type, e.primary_ext)
+        header_attributes.map { |x| content_tag(:th, x[:text], id: x[:id]) }.reduce(:+)
       end
     end
   end
 
   private
-
-  # TODO(ag|04-Oct-2017): delete after playing card #336
-  def giving_entity_path_for(e)
-    case e.primary_ext
-    when "Person"
-      giving_entity_path(e)
-    when "Org"
-      e.legacy_url('giving')
-    end
-  end
 
   def connections_title_and_subtitle(connection_type, e)
     case [connection_type, e.primary_ext]
@@ -263,6 +252,27 @@ module EntitiesHelper
     when [:giving, "Person"]
       ["Donors to Common Recipients",
        "Recipients of donations from #{e.name} also received donations from these orgs and people"]
+    when [:giving, "Org"]
+      ["People Have Given To",
+       "People with positions in #{e.name} have made donations to"]
+    end
+  end
+
+  def connections_table_header_attributes(connection_type, primary_ext)
+    case [connection_type, primary_ext]
+    when [:interlocks, "Person"]
+      [{ text: 'Person',            id: 'connected-entity-header'  },
+       { text: 'Common Orgs',       id: 'connecting-entity-header' }]
+    when [:interlocks, 'Org']
+      [{ text: 'Org',               id: 'connected-entity-header'  },
+       { text: 'Common People',     id: 'connecting-entity-header' }]
+    when [:giving, 'Person']
+      [{ text: 'Donor',             id: 'connected-entity-header'  },
+       { text: 'Common Recipients', id: 'connecting-entity-header' }]
+    when [:giving, 'Org']
+      [{ text: 'Recipient',         id: 'connected-entity-header'  },
+       { text: 'Total',             id: 'connection-stat-header'   },
+       { text: 'Donors',            id: 'connecting-entity-header' }]
     end
   end
 
@@ -274,6 +284,8 @@ module EntitiesHelper
       ["Org", "Common People"]
     when [:giving, "Person"]
       ["Donor", "Common Recipients"]
+    when [:giving, "Org"]
+      ["Recipient", "Donors"]
     end
   end
 end
