@@ -3,8 +3,8 @@ module TagsHelper
     content_tag(:div, id: 'tags-container') do
       content_tag(:ul, id: 'tags-list') do
         tags.reduce(''.html_safe) do |html, tag|
-          html + content_tag(:li) do
-            link_to(tag.name, tag, class: 'tag')
+          html + link_to(tag, class: 'tag') do
+            content_tag(:li, tag.name)
           end
         end
       end

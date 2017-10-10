@@ -27,22 +27,10 @@
       
       <div class="row" id="sidebar-tags-container">
 	<div class="col-sm-12">            
-          <%= sidebar_header 'Tags', addon: capture { %>
-          <span id="tags-controls">
-            <span class="tags-edit-glyph" id="tags-edit-button"></span>
-          </span>
-          <% } %>
+          <%= sidebar_header 'Tags', addon: capture { tags_controls } %>
         </div>
 	<div class="col-sm-12">
-	  <div id="tags-container">
-            <ul id="tags-list">
-              <% @entity.tags.each do |t| %>
-                <li>
-                  <%= link_to(t.name, t, class: 'tag') %>
-                </li>
-              <% end %>
-            </ul>
-	  </div>
+          <%= display_tags(@entity.tags) %>
 	</div>
       </div>
 	

@@ -45,14 +45,11 @@ $tag_margin: 0.4em;
     
     margin-top: 1em;
 
-    li.tag {
+    .tag-disabled{
         @extend .tag;
-    }
-
-    li.tag-disabled{
-        @extend li.tag;
         background-color: gray;
         border: 1px solid black;
+        color: black;
     }
 
     .tag-remove-icon {
