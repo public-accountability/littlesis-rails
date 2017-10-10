@@ -157,17 +157,17 @@ describe 'Network Analysis Module', :network_analysis_helper, :pagination_helper
                     {
                       "connected_entity"    => recipients[3],
                       # "connecting_entities" => donors.take(3),
-                      "stat"                => 900 # 300 * 3
+                      "stat"                => '$900' # 300 * 3
                     },
                     {
                       "connected_entity"    => recipients[2],
                       # "connecting_entities" => donors.take(2),
-                      "stat"                => 400 # 200 * 2
+                      "stat"                => '$400' # 200 * 2
                     },
                     {
                       "connected_entity"    => recipients[1],
                       # "connecting_entities" => donors.take(1),
-                      "stat"                => 100
+                      "stat"                => '$100'
                     }
                   ])
 
