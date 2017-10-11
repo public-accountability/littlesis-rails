@@ -533,6 +533,28 @@ CREATE TABLE `delayed_jobs` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `documents`
+--
+
+DROP TABLE IF EXISTS `documents`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `documents` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `url` text COLLATE utf8_unicode_ci NOT NULL,
+  `url_hash` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `publication_date` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ref_type` int(11) NOT NULL DEFAULT '1',
+  `excerpt` mediumtext COLLATE utf8_unicode_ci,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_documents_on_url_hash` (`url_hash`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `domain`
 --
 
@@ -2334,6 +2356,25 @@ CREATE TABLE `reference_excerpt` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `references`
+--
+
+DROP TABLE IF EXISTS `references`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `references` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `document_id` bigint(20) NOT NULL,
+  `referenceable_id` bigint(20) NOT NULL,
+  `referenceable_type` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_references_on_referenceable_id_and_referenceable_type` (`referenceable_id`,`referenceable_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `relationship`
 --
 
@@ -3010,7 +3051,8 @@ CREATE TABLE `versions` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-10 21:49:39
+
+-- Dump completed on 2017-10-11 21:50:10
 INSERT INTO schema_migrations (version) VALUES ('20131031182415');
 
 INSERT INTO schema_migrations (version) VALUES ('20131031182500');
@@ -3235,5 +3277,9 @@ INSERT INTO schema_migrations (version) VALUES ('20170905204324');
 
 INSERT INTO schema_migrations (version) VALUES ('20170921224247');
 
+<<<<<<< HEAD
 INSERT INTO schema_migrations (version) VALUES ('20171010214602');
+=======
+INSERT INTO schema_migrations (version) VALUES ('20171011194109');
+>>>>>>> 96e0e534... [#361] Create Document with unique URLs
 
