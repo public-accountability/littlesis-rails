@@ -1,27 +1,17 @@
-<% e1_name, e2_name = Relationship::DESCRIPTION_FIELDS_DISPLAY_NAMES[@relationship.category_id] %>
+<div id="relationship-edit-description-fields-display">
+  <% first_entity, second_entity = description_fields_titles_and_entites(@relationship) %>
+  
+  <%= render partial: 'description_fields_entity_row', locals: { relationship_entity: first_entity }  %>
 
-<div class="row">
-    <div class="col-sm-2">
-	<p><%= e1_name + ':' %></p>
-    </div>
-    <div class="col-sm-5">
-	<%= entity_link(@relationship.entity, html_class: 'link-blue') %>
-    </div>
-</div>
-<% if @relationship.is_reversible?  %>
+  <% if @relationship.is_reversible?  %>
     <div class="row">
-	<div class="col-sm-2 col-sm-offset-2" style="padding-bottom: 7px">
-	    <div style="padding-left: 8px">
-		<%= reverse_link %>
-	    </div>
+      <div class="col-sm-2 col-sm-offset-2" style="padding-bottom: 7px">
+	<div style="padding-left: 8px">
+	  <%= reverse_link %>
 	</div>
+      </div>
     </div>
-<% end  %>
-<div class="row">
-    <div class="col-sm-2">
-	<p><%= e2_name + ':' %></p>
-    </div>
-    <div class="col-sm-5">
-	<%= entity_link(@relationship.related, html_class: 'link-blue') %>
-    </div>
+  <% end  %>
+
+  <%= render partial: 'description_fields_entity_row', locals: { relationship_entity: second_entity }  %>
 </div>

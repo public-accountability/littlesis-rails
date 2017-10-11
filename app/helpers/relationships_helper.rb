@@ -108,4 +108,14 @@ module RelationshipsHelper
       label + content_tag(:div, class: html_class) { field }
     end
   end
+
+  # <Relationship> -> [ Struct ]
+  # Struct fields: title (String), entity (Entity)
+  def description_fields_titles_and_entites(relationship)
+    titles = Relationship::DESCRIPTION_FIELDS_DISPLAY_NAMES[relationship.category_id]
+    entities = [relationship.entity, relationship.related]
+    titles_and_entities = titles.zip(entities)
+    titles_and_entities.reverse! if relationship.is_hierarchy?
+    titles_and_entities.map { |x| Struct.new(:title, :entity).new(*x) }
+  end
 end
