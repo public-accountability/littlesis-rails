@@ -9,11 +9,17 @@ end
 # for use in example groups
 module FeatureGroupMacros
   include FeatureSharedMacros
-  
+
   def denies_access
     it 'denies access' do
       expect(page.status_code).to eq 403
       expect(page).to have_content 'Bad Credentials'
+    end
+  end
+
+  def redirects_to_login_page
+    it 'redirects to /login' do
+      expect(page.current_path).to eql '/login'
     end
   end
 end

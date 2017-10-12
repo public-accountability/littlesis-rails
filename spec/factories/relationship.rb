@@ -42,6 +42,10 @@ FactoryGirl.define do
     category_id Relationship::OWNERSHIP_CATEGORY
   end
 
+  factory :hierarchy_relationship, class: Relationship do
+    category_id Relationship::HIERARCHY_CATEGORY
+  end
+
   factory :relationship, class: Relationship do
     association :entity, factory: :person, strategy: :build
     association :related, factory: :mega_corp_llc, strategy: :build

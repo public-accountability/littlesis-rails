@@ -1,0 +1,10 @@
+<%# Locals: relationship_entity (Struct)  %>
+
+<div class="row">
+  <div class="col-sm-2">
+    <p><%= relationship_entity.title + ':' %></p>
+  </div>
+  <div class="col-sm-5">
+    <%= link_to relationship_entity.entity.name, relationship_entity.entity %>
+  </div>
+</div>
