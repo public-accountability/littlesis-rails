@@ -50,16 +50,17 @@ module Tagable
     self
   end
 
-  def tag(name_or_id)
+  def tag(name_or_id, user_id = APP_CONFIG['system_user_id'])
     Tagging.find_or_create_by(tag_id:         parse_tag_id!(name_or_id),
                               tagable_class:  self.class.name,
-                              tagable_id:     self.id)
+                              tagable_id:     id,
+                              last_user_id:   user_id)
     self
   end
 
-  def tag_without_callbacks(name_or_id)
+  def tag_without_callbacks(name_or_id, user_id = APP_CONFIG['system_user_id'])
     Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
-    tag(name_or_id)
+    tag(name_or_id, user_id)
   ensure
     Tagging.set_callback(:save, :after, :update_tagable_timestamp)
   end

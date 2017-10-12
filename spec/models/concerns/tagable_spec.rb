@@ -103,8 +103,23 @@ describe Tagable, type: :model do
   end
 
   describe 'creating a tag' do
+    let(:user) { create(:sf_user) }
+    let(:system_user) { SfGuardUser.find(APP_CONFIG['system_user_id']) }
+
     it "creates a new tagging" do
       expect { test_tagable.tag(tag_id) }.to change { Tagging.count }.by(1)
+    end
+
+    it "tracks user who created tag" do
+      test_tagable.tag(tag_id, user.id)
+      expect(Tagging.last.last_user_id).to eql user.id
+      expect(Tagging.last.last_user).to eql user
+    end
+
+    it "provides sysem user as default user" do
+      test_tagable.tag(tag_id)
+      expect(Tagging.last.last_user_id).to eq APP_CONFIG['system_user_id']
+      expect(Tagging.last.last_user).to eq system_user
     end
 
     it 'only creates one tagging per tag' do
@@ -141,12 +156,13 @@ describe Tagable, type: :model do
   end
 
   describe "adding tags without running tagging's callbacks" do
+    let!(:sys_id) { APP_CONFIG['system_user_id'] }
 
     it 'skips Tagging callback and then re-enables it' do
       tagable = test_tagable
       expect(Tagging).to receive(:skip_callback).with(:save, :after, :update_tagable_timestamp).once
       expect(Tagging).to receive(:set_callback).with(:save, :after, :update_tagable_timestamp).once
-      expect(tagable).to receive(:tag).with('tagname')
+      expect(tagable).to receive(:tag).with('tagname', sys_id)
       tagable.tag_without_callbacks('tagname')
     end
 
@@ -154,7 +170,7 @@ describe Tagable, type: :model do
       tagable = test_tagable
       expect(Tagging).to receive(:skip_callback).with(:save, :after, :update_tagable_timestamp).once
       expect(Tagging).to receive(:set_callback).with(:save, :after, :update_tagable_timestamp).once
-      expect(tagable).to receive(:tag).with('tagname').and_raise(ActiveRecord::RecordNotFound)
+      expect(tagable).to receive(:tag).with('tagname', sys_id).and_raise(ActiveRecord::RecordNotFound)
       expect { tagable.tag_without_callbacks('tagname') }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
