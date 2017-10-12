@@ -210,8 +210,11 @@ describe 'Tags', :tagging_helper, type: :feature do
         let(:person) { create(:entity_person).tag(tag.id) }
         let(:list) { create(:list).tag(tag.id) }
         let(:relationship) do
-          create(:generic_relationship, entity: create(:entity_org), related: create(:entity_org)).tag(tag.id)
+          create(:generic_relationship,
+                 entity: create(:entity_org),
+                 related: create(:entity_org)).tag(tag.id)
         end
+
         context 'a person was recently tagged' do
           let(:setup) { proc { person } }
           edits_table_has_correct_row_count(1)
@@ -242,6 +245,23 @@ describe 'Tags', :tagging_helper, type: :feature do
               expect(el).to have_link list.name
               expect(el).to have_link relationship.name
             end
+          end
+        end
+
+        context "tags were added by both system and an analyst" do
+          let(:user) { create_basic_user }
+          let(:person) { create(:entity_person).tag(tag.id, APP_CONFIG["system_user_id"]) }
+          let(:list) { create(:list).tag(tag.id, user.sf_guard_user_id) }
+          let(:setup) { proc { list; person;} }
+
+          it "shows `System` next to system edit" do
+            expect(page.all("#tag-homepage-edits-table tbody tr")[0])
+              .to have_text("System")
+          end
+
+          it "shows anaylsist's username next to analyst's edit" do
+            expect(page.all("#tag-homepage-edits-table tbody tr")[1])
+              .to have_text(user.username)
           end
         end
 

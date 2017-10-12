@@ -34,16 +34,20 @@ module TagsHelper
   end
 
   def tags_edits_format_time(edit_event)
-    if edit_event['event'] == 'tag_added' || edit_event['tagable_class'] == 'List'
-      "Edited #{time_ago_in_words(edit_event['event_timestamp'])} ago"
-    else
-      username = edit_event['tagable']&.last_user&.user&.username || 'System'
-      "Edited #{time_ago_in_words(edit_event['event_timestamp'])} ago by #{username}"
-    end
+    "#{time_ago_in_words(edit_event['event_timestamp'])} ago"
   end
 
   def tags_edits_format_action(edit_event)
     action_text = { 'tagable_updated' => 'updated', 'tag_added' => 'tagged' }
     "#{edit_event['tagable_class']} #{action_text[edit_event['event']]}"
+  end
+
+  def tags_edits_format_editor(edit_event)
+    e = edit_event['editor']
+    e.username == "system" ? "System" : link_to(e.username, legacy_user_path(e))
+  end
+
+  def legacy_user_path(user)
+    "/user/#{user.username}"
   end
 end

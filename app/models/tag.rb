@@ -93,7 +93,7 @@ class Tag < ActiveRecord::Base
 
   def recent_edits(page = 1)
     edit_id_hashes = recent_edit_ids(page)
-    edits_by_class_and_id = edits_by_class_and_id_for(edit_id_hashes)
+    tagables_by_class_and_id = tagables_by_class_and_id_for(edit_id_hashes)
     editors_by_id = editors_by_id(edit_id_hashes)
 
     edit_id_hashes.map do |h|
@@ -101,7 +101,7 @@ class Tag < ActiveRecord::Base
         'tagable_class'   => h['tagable_class'],
         'event'           => h['event'],
         'event_timestamp' => h['event_timestamp'],
-        'tagable'         => edits_by_class_and_id.dig(h['tagable_class'], h['tagable_id']),
+        'tagable'         => tagables_by_class_and_id.dig(h['tagable_class'], h['tagable_id']),
         'editor'          => editors_by_id[h['editor_id']]
       }
     end
@@ -241,13 +241,13 @@ class Tag < ActiveRecord::Base
     result
   end
 
-  # type EditsByClassAndId = {
+  # type TagablesByClassAndId = {
   #   "Relationship" => { [id: Integer] => Relationship }
   #   "Entity"       => { [id: Integer] => Entity }
   #   "List"         => { [id: Integer] => List }
   # }
-  # [EditsIdHash] -> EditsByClassAndId
-  def edits_by_class_and_id_for(edits_id_hash)
+  # [EditsIdHash] -> TagablesByClassAndId
+  def tagables_by_class_and_id_for(edits_id_hash)
     base = { "Relationship" => {}, "Entity" => {}, "List" => {} }
     edits_id_hash
       .group_by { |h| h['tagable_class'] }
