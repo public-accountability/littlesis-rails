@@ -42,8 +42,8 @@ describe Tag do
 
         let(:entities_by_type) do
           {
-            'Person' => Array.new(5) { create(:entity_person).tag(tag.id) },
-            'Org' => Array.new(5) { create(:entity_org).tag(tag.id) }
+            'Person' => Array.new(5) { create(:entity_person).add_tag(tag.id) },
+            'Org' => Array.new(5) { create(:entity_org).add_tag(tag.id) }
           }
         end
 
@@ -76,7 +76,7 @@ describe Tag do
 
         describe "sorting" do
 
-          let(:lists) { Array.new(2) { create(:list).tag(tag.id) } }
+          let(:lists) { Array.new(2) { create(:list).add_tag(tag.id) } }
           let(:tagables) { tag.tagables_for_homepage('lists') }          
 
           before do
@@ -95,7 +95,7 @@ describe Tag do
         describe "pagination" do
 
           let(:page_limit){ Tag::PER_PAGE }
-          let(:lists) { Array.new(page_limit + 1) { create(:list).tag(tag.id) } }
+          let(:lists) { Array.new(page_limit + 1) { create(:list).add_tag(tag.id) } }
           before { lists }
           
           it "shows records corresponding to a given page" do
@@ -115,7 +115,7 @@ describe Tag do
               :generic_relationship,
               entity: create(:entity_person),
               related: create(:entity_org)
-            ).tag(tag.id)
+            ).add_tag(tag.id)
           end
         end
 
@@ -128,62 +128,57 @@ describe Tag do
       end
     end
 
-    describe '#recent_edits' do
+    describe 'recent edits' do
+      let(:user) { create_basic_user }
+      let(:system_user) { SfGuardUser.find(APP_CONFIG["system_user_id"]).user }
       let(:tag) { create(:tag) }
+
+      let(:entities) { Array.new(2) { create(:entity_org) } }
+      let(:lists) { Array.new(2) { create(:list) } }
       let(:untagged_person) { create(:entity_person) }
       let(:untagged_org) { create(:entity_org) }
-
-      let(:entities) do
-        Array.new(2) { create(:entity_org).tag(tag.id) }
-      end
-
       let(:relationships) do
         Array.new(2) do
-          create(:generic_relationship, entity: untagged_person, related: untagged_org).tag(tag.id)
+          create(:generic_relationship, entity: untagged_person, related: untagged_org)
+        end
+      end
+      let(:tagables){ entities + relationships + lists }
+
+      before do
+        tagables.each { |t| t.add_tag(tag.id, user.sf_guard_user_id) }
+        # offset tagging updated_at timestamps to yield
+        # reverse chronological ordering equivalent to tagable ordering
+        tagables.reverse.each_with_index do |t, i|
+          t.taggings.first.update_column(:created_at, Time.now + i.seconds)
         end
       end
 
-      let(:lists) do
-        Array.new(2) { create(:list).tag(tag.id) }
-      end
+      describe 'listing `tag_added` events' do
 
-      context 'all recent edits to tagables are tag updated event' do
-        before { entities; relationships; lists; }
-
-        def it_contains_all_tagables
-          expect(Set.new(tag.send(:recent_edits_query).map { |x| x['tagable_id'] }))
-            .to eql Set.new( (entities + lists + relationships).map(&:id) )
-        end
-
-        it 'contains a list of tag_added events' do
-          expect(tag.send(:recent_edits_query).length).to eql 6
-          it_contains_all_tagables
-        end
-
-        it 'also contains a tagable_updated event' do
-          relationships[0].update_column(:updated_at, Date.tomorrow)
-          expect(tag.send(:recent_edits_query).length).to eql 7
-          it_contains_all_tagables
-          expect(tag.send(:recent_edits_query)[0])
-            .to eq(
-                  "tagging_id" => relationships[0].taggings.first.id,
-                  "tagable_id" => relationships[0].id,
-                  "tagable_class" => "Relationship",
-                  "tagging_created_at" => relationships[0].taggings.first.created_at,
-                  "event_timestamp" => relationships[0].updated_at,
-                  "event" => "tagable_updated"
-                )
-        end
-
-        it 'recent_edits returns an array of active record objects' do
-          relationships[0].update_column(:updated_at, Date.tomorrow)
-
-          tag.send(:recent_edits).each do |edit|
-            expect(Tagable.classes).to include edit['tagable'].class
+        it 'shows all `tag_added` events' do
+          tag.recent_edits.each_with_index do |edit, idx|
+            expect(edit)
+              .to eq("tagable"         => tagables[idx],
+                     "tagable_class"   => tagables[idx].class.name,
+                     "event"           => "tag_added",
+                     "event_timestamp" => tagables[idx].taggings.last.created_at,
+                     "editor"          => user)
           end
+        end
+      end
 
-          expect(tag.send(:recent_edits).first['tagable']).to eq relationships[0]
-          
+      describe 'listing `tagable_updated` events' do
+        let(:tomorrow) { Date.tomorrow }
+        let(:relationship) { relationships.first }
+        before { relationship.update_column(:updated_at, tomorrow) }
+
+        it 'shows a `tagable_updated` event' do
+          expect(tag.recent_edits.first)
+            .to eq("tagable"            => relationships.first,
+                   "tagable_class"      => "Relationship",
+                   "event"              => "tagable_updated",
+                   "event_timestamp"    => tomorrow,
+                   "editor"             => system_user)
         end
       end
     end

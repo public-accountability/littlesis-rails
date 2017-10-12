@@ -40,15 +40,19 @@ describe Tagable, type: :model do
   end
 
   describe "the Tagable interface" do
-    before { entity.tag(tag_id) }
+    before { entity.add_tag(tag_id) }
 
     it "responds to interface methods" do
       Tagable.classes.each do |tagable_class|
         tagable = tagable_class.new
-        expect(tagable).to respond_to(:tag)
+        expect(tagable).to respond_to(:add_tag)
+        expect(tagable).to respond_to(:remove_tag)
+        expect(tagable).to respond_to(:update_tags)
         expect(tagable).to respond_to(:tags)
-        expect(tagable).to respond_to(:last_user_id)
+        expect(tagable).to respond_to(:taggings)
+        expect(tagable).to respond_to(:tags_for)
         expect(tagable).to respond_to(:description)
+        expect(tagable).to respond_to(:last_user_id)
       end
     end
 
@@ -103,19 +107,40 @@ describe Tagable, type: :model do
   end
 
   describe 'creating a tag' do
+    let(:user) { create(:sf_user) }
+    let(:system_user) { SfGuardUser.find(APP_CONFIG['system_user_id']) }
+
     it "creates a new tagging" do
-      expect { test_tagable.tag(tag_id) }.to change { Tagging.count }.by(1)
+      expect { test_tagable.add_tag(tag_id) }.to change { Tagging.count }.by(1)
+    end
+
+    it "tracks user who created tag" do
+      test_tagable.add_tag(tag_id, user.id)
+      expect(Tagging.last.last_user_id).to eql user.id
+      expect(Tagging.last.last_user).to eql user
+    end
+
+    it "provides sysem user as default user" do
+      test_tagable.add_tag(tag_id)
+      expect(Tagging.last.last_user_id).to eq APP_CONFIG['system_user_id']
+      expect(Tagging.last.last_user).to eq system_user
     end
 
     it 'only creates one tagging per tag' do
       expect {
-        test_tagable.tag(tag_id)
-        test_tagable.tag(tag_id)
+        test_tagable.add_tag(tag_id)
+        test_tagable.add_tag(tag_id)
       }.to change { Tagging.count }.by(1)
     end
 
+    it 'only allows one user per tagging' do
+      test_tagable.add_tag(tag_id, 1)
+      test_tagable.add_tag(tag_id, 2)
+      expect(Tagging.last.last_user_id).to eq 1
+    end
+
     it "creates a tagging with correct attributes" do
-      test_tagable.tag(tag_id)
+      test_tagable.add_tag(tag_id)
 
       attrs = Tagging.last.attributes
       expect(attrs['tag_id']).to eq tag_id
@@ -126,36 +151,38 @@ describe Tagable, type: :model do
 
   describe 'adding tags' do
     it "can be tagged with an existing tag's id" do
-      expect { test_tagable.tag(tag_id) }.to change { Tagging.count }.by(1)
+      expect { test_tagable.add_tag(tag_id) }.to change { Tagging.count }.by(1)
     end
 
     it "can be tagged with an existing tag's name" do
-      expect { test_tagable.tag(tag_name) }.to change { Tagging.count }.by(1)
+      expect { test_tagable.add_tag(tag_name) }.to change { Tagging.count }.by(1)
     end
 
     it "cannot be tagged with a non-existent tag id or name" do
       not_found = ActiveRecord::RecordNotFound
-      expect { test_tagable.tag("THIS IS NOT A REAL TAG!!!!") }.to raise_error(not_found)
-      expect { test_tagable.tag(1_000_000) }.to raise_error(not_found)
+      expect { test_tagable.add_tag("THIS IS NOT A REAL TAG!!!!") }.to raise_error(not_found)
+      expect { test_tagable.add_tag(1_000_000) }.to raise_error(not_found)
     end
   end
 
   describe "adding tags without running tagging's callbacks" do
+    let!(:sys_id) { APP_CONFIG['system_user_id'] }
 
     it 'skips Tagging callback and then re-enables it' do
       tagable = test_tagable
       expect(Tagging).to receive(:skip_callback).with(:save, :after, :update_tagable_timestamp).once
       expect(Tagging).to receive(:set_callback).with(:save, :after, :update_tagable_timestamp).once
-      expect(tagable).to receive(:tag).with('tagname')
-      tagable.tag_without_callbacks('tagname')
+      expect(tagable).to receive(:add_tag).with('tagname', sys_id)
+      tagable.add_tag_without_callbacks('tagname')
     end
 
     it 're-enables callbacks even if the tag raises an error' do
       tagable = test_tagable
       expect(Tagging).to receive(:skip_callback).with(:save, :after, :update_tagable_timestamp).once
       expect(Tagging).to receive(:set_callback).with(:save, :after, :update_tagable_timestamp).once
-      expect(tagable).to receive(:tag).with('tagname').and_raise(ActiveRecord::RecordNotFound)
-      expect { tagable.tag_without_callbacks('tagname') }.to raise_error(ActiveRecord::RecordNotFound)
+      expect(tagable).to receive(:add_tag).with('tagname', sys_id).and_raise(ActiveRecord::RecordNotFound)
+      expect { tagable.add_tag_without_callbacks('tagname') }
+        .to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
@@ -202,7 +229,7 @@ describe Tagable, type: :model do
 
       it 'adds and removes tags in a batch' do
         expect(test_tagable).to receive(:remove_tag).once.with(tags[1].id)
-        expect(test_tagable).to receive(:tag).once.with(tags[2].id)
+        expect(test_tagable).to receive(:add_tag).once.with(tags[2].id)
         test_tagable.update_tags([tags[0].id, tags[2].id])
       end
     end
@@ -219,7 +246,7 @@ describe Tagable, type: :model do
     let(:view_only_access) { { viewable: true, editable: false } }
 
     before(:each) do
-      test_tagable.tag(restricted_tag.id)
+      test_tagable.add_tag(restricted_tag.id)
       owner.permissions.add_permission(Tag, tag_ids: [restricted_tag.id])
       allow(test_tagable).to receive(:tags).and_return([restricted_tag])
     end

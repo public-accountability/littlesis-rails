@@ -143,7 +143,7 @@ describe 'Tags', :tagging_helper, type: :feature do
 
       context "less than 20 tagged tagables" do
         let(:tagables) do
-          n_tagables(2, tagable_category).map { |t| t.tag(tag.id) }
+          n_tagables(2, tagable_category).map { |t| t.add_tag(tag.id) }
         end
 
         it "shows the tag title and description" do
@@ -182,7 +182,7 @@ describe 'Tags', :tagging_helper, type: :feature do
       end
 
       context "more than 20 tagables" do
-        let(:tagables) { n_tagables(21, tagable_category).map { |t| t.tag(tag.id) } }
+        let(:tagables) { n_tagables(21, tagable_category).map { |t| t.add_tag(tag.id) } }
         it "only shows 10 entities with pagination bar" do
           expect(page.find("#tagable-lists"))
             .to have_selector '.tagable-list-item', count: 20
@@ -207,11 +207,14 @@ describe 'Tags', :tagging_helper, type: :feature do
       end
 
       describe 'list of edits' do
-        let(:person) { create(:entity_person).tag(tag.id) }
-        let(:list) { create(:list).tag(tag.id) }
+        let(:person) { create(:entity_person).add_tag(tag.id) }
+        let(:list) { create(:list).add_tag(tag.id) }
         let(:relationship) do
-          create(:generic_relationship, entity: create(:entity_org), related: create(:entity_org)).tag(tag.id)
+          create(:generic_relationship,
+                 entity: create(:entity_org),
+                 related: create(:entity_org)).add_tag(tag.id)
         end
+
         context 'a person was recently tagged' do
           let(:setup) { proc { person } }
           edits_table_has_correct_row_count(1)
@@ -242,6 +245,23 @@ describe 'Tags', :tagging_helper, type: :feature do
               expect(el).to have_link list.name
               expect(el).to have_link relationship.name
             end
+          end
+        end
+
+        context "tags were added by both system and an analyst" do
+          let(:user) { create_basic_user }
+          let(:person) { create(:entity_person).add_tag(tag.id, APP_CONFIG["system_user_id"]) }
+          let(:list) { create(:list).add_tag(tag.id, user.sf_guard_user_id) }
+          let(:setup) { proc { list; person;} }
+
+          it "shows `System` next to system edit" do
+            expect(page.all("#tag-homepage-edits-table tbody tr")[0])
+              .to have_text("System")
+          end
+
+          it "shows anaylsist's username next to analyst's edit" do
+            expect(page.all("#tag-homepage-edits-table tbody tr")[1])
+              .to have_text(user.username)
           end
         end
 

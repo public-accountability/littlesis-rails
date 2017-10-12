@@ -6,8 +6,8 @@ describe 'Deleting an Entity', type: :model do
   describe 'Deleting an entity with tags' do
     let(:entity) do
       entity = create(:entity_org)
-      entity.tag('oil')
-      entity.tag('nyc')
+      entity.add_tag('oil')
+      entity.add_tag('nyc')
       entity
     end
 
@@ -37,8 +37,8 @@ describe 'Deleting an Entity', type: :model do
         person.aliases.create!(name: Faker::TwinPeaks.character)
         person.add_extension('BusinessPerson')
         person.add_extension('Academic')
-        person.tag('oil')
-        person.tag('nyc')
+        person.add_tag('oil')
+        person.add_tag('nyc')
         person.images.create!(filename: Faker::File.file_name(nil, nil,'png'), title: 'image')
         person
       end

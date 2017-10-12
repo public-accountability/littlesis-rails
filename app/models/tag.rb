@@ -49,73 +49,9 @@ class Tag < ActiveRecord::Base
     restricted
   end
 
-  # int -> Kaminari::PaginatableArray
-  def recent_edits_for_homepage(page = 1)
-    paginate(
-      page,
-      PER_PAGE,
-      recent_edits(page),
-      taggings.count * 2
-    )
-  end
-
+  # Integer -> Kaminari::PaginatableArray
   def tagables_for_homepage(tagable_category, page = 1)
     send("#{tagable_category}_for_homepage", page)
-  end
-
-  private
-  # -> [Hash]
-  # Adds the ActiveRecord Tagable with key 'tagable' to
-  # each hash provided by #recent_edits_query.
-  def recent_edits(page = 1)
-    edits = recent_edits_query(page)
-    active_record_lookup = active_record_lookup_for_recent_edits(edits)
-    edits.map do |edit|
-      edit.tap { |h| h.store 'tagable', active_record_lookup.dig(h['tagable_class'], h['tagable_id']) }
-    end
-  end
-
-  # int -> [ Hash ]
-  # Hash keys: tagging_id, tagable_id, tagable_class, tagging_created_at, event_timestamp, event
-  def recent_edits_query(page = 1)
-    sql = <<-SQL
-      (
-        SELECT taggings.id as tagging_id,
-                taggings.tagable_id,
-                taggings.tagable_class,
-                taggings.created_at as tagging_created_at,
-                COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at) AS event_timestamp,
-	        'tagable_updated' as event
-	FROM taggings
-	LEFT JOIN entity ON taggings.tagable_id = entity.id AND taggings.tagable_class = 'Entity'
- 	LEFT JOIN ls_list ON taggings.tagable_id = ls_list.id AND taggings.tagable_class = 'List'
-	LEFT JOIN relationship ON taggings.tagable_id = relationship.id AND taggings.tagable_class = 'Relationship'
-	WHERE taggings.tag_id = #{id}
-              # adding a tag triggers a callback that also updates the tagable. This clause excludes those updates
-	      AND abs(TIMESTAMPDIFF(SECOND, taggings.created_at, COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at))) > 100
-      )
-        UNION
-      (
-        SELECT taggings.id as tagging_id,
-	       taggings.tagable_id,
-	       taggings.tagable_class,
-	       taggings.created_at AS tagging_created_at,
-	       taggings.created_at AS event_timestamp,
-	       'tag_added' AS event
-        FROM taggings
-	WHERE taggings.tag_id = #{id}
-      )
-        ORDER BY event_timestamp DESC
-        LIMIT #{PER_PAGE}
-        OFFSET #{ (page.to_i - 1) * PER_PAGE }
-    SQL
-
-    # NOTE: our version of Mysql2::Result is missing the very convenient method: #to_hash ...why?
-    # we should be able to do ActiveRecord::Base.connection.execute(sql).to_hash instead of
-    # populating the array ourselves...
-    result = []
-    ActiveRecord::Base.connection.execute(sql).each(:as => :hash) { |h| result << h }
-    result
   end
 
   def entities_for_homepage(page = 1)
@@ -126,11 +62,54 @@ class Tag < ActiveRecord::Base
     end
   end
 
+  def lists_for_homepage(page = 1)
+    paginate(page,
+             PER_PAGE,
+             *count_and_sort_lists(page))
+  end
+
+  def relationships_for_homepage(page = 1)
+    relationships
+      .order(updated_at: :desc)
+      .page(page)
+      .per(PER_PAGE)
+  end
+
+  def recent_edits_for_homepage(page = 1)
+    paginate(page,
+             PER_PAGE,
+             recent_edits(page),
+             taggings.count * 2)
+  end
+
+  # type EditsIdHash = {
+  #   tagable:            Tagable,
+  #   tagable_class:      String,
+  #   event_timestamp:    Timestamp,
+  #   editor:             User, (Rails user)
+  #   event:              Enum('tag_added', 'tagable_updated')
+  # }
+  # Integer -> [EditsHash]
+
+  def recent_edits(page = 1)
+    edit_id_hashes = recent_edit_ids(page)
+    tagables_by_class_and_id = tagables_by_class_and_id_for(edit_id_hashes)
+    editors_by_id = editors_by_id(edit_id_hashes)
+
+    edit_id_hashes.map do |h|
+      {
+        'tagable_class'   => h['tagable_class'],
+        'event'           => h['event'],
+        'event_timestamp' => h['event_timestamp'],
+        'tagable'         => tagables_by_class_and_id.dig(h['tagable_class'], h['tagable_id']),
+        'editor'          => editors_by_id[h['editor_id']]
+      }
+    end
+  end
+
+  private
+
   def count_and_sort_entities(entity_type, page = 1)
-    # return tuple of:
-    # (1) all entities of type `entity_type` tagged `self`,
-    #     sorted by # relationships to other entities also tagged `self`
-    # (2) count of all entities of type `entity_type` tagged `self`
     [
       entities_by_relationship_count(entity_type, page),
       entities.where(primary_ext: entity_type).count
@@ -187,14 +166,6 @@ class Tag < ActiveRecord::Base
     Entity.find_by_sql(sql)
   end
 
-  def lists_for_homepage(page = 1)
-    paginate(
-      page,
-      PER_PAGE,
-      *count_and_sort_lists(page)
-    )
-  end
-
   def count_and_sort_lists(page = 1)
     [lists_by_entity_count(page), lists.count]
   end
@@ -204,12 +175,10 @@ class Tag < ActiveRecord::Base
     query = <<-SQL
       SELECT DISTINCT ls_list.*, COUNT(ls_list_entity.id) AS entity_count
       FROM ls_list
-      INNER JOIN taggings 
-        ON ls_list.id = taggings.tagable_id 
-        AND taggings.tag_id = #{id} 
+      INNER JOIN taggings ON ls_list.id = taggings.tagable_id
+        AND taggings.tag_id = #{id}
         AND taggings.tagable_class = 'List'
-      LEFT JOIN ls_list_entity 
-        ON ls_list_entity.list_id = ls_list.id
+      LEFT JOIN ls_list_entity ON ls_list_entity.list_id = ls_list.id
       WHERE ls_list.is_deleted = 0
       GROUP BY ls_list.id
       ORDER BY entity_count DESC
@@ -219,29 +188,85 @@ class Tag < ActiveRecord::Base
     List.find_by_sql query
   end
 
-  def relationships_for_homepage(page = 1)
-    relationships
-      .order(updated_at: :desc)
-      .page(page)
-      .per(PER_PAGE)
+  # type EditsIdHash = {
+  #   tagging_id:          Integer,
+  #   tagable_id:          Integer,
+  #   tagable_class:       String,
+  #   tagging_created_at:  Timestamp,
+  #   event_timestamp:     Timestamp,
+  #   editor:              Integer,
+  #   event:               Enum('tag_added', 'tagable_updated')
+  # }
+  # Integer -> [EditsIdHash]
+  def recent_edit_ids(page = 1)
+    sql = <<-SQL
+      (
+        SELECT taggings.id as tagging_id,
+               taggings.tagable_id,
+               taggings.tagable_class,
+               taggings.created_at as tagging_created_at,
+               COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at) AS event_timestamp,
+               COALESCE(entity.last_user_id, ls_list.last_user_id, relationship.last_user_id) AS editor_id,
+               'tagable_updated' as event
+	FROM taggings
+	LEFT JOIN entity ON taggings.tagable_id = entity.id AND taggings.tagable_class = 'Entity'
+ 	LEFT JOIN ls_list ON taggings.tagable_id = ls_list.id AND taggings.tagable_class = 'List'
+	LEFT JOIN relationship ON taggings.tagable_id = relationship.id AND taggings.tagable_class = 'Relationship'
+	WHERE taggings.tag_id = #{id}
+            # adding a tag triggers a callback that also updates the tagable. This clause excludes those updates
+	    AND abs(TIMESTAMPDIFF(SECOND, taggings.created_at, COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at))) > 100
+      )
+        UNION
+      (
+        SELECT taggings.id as tagging_id,
+	       taggings.tagable_id,
+	       taggings.tagable_class,
+	       taggings.created_at AS tagging_created_at,
+	       taggings.created_at AS event_timestamp,
+               taggings.last_user_id AS editor_id,
+	       'tag_added' AS event
+        FROM taggings
+	WHERE taggings.tag_id = #{id}
+      )
+        ORDER BY event_timestamp DESC
+        LIMIT #{PER_PAGE}
+        OFFSET #{(page.to_i - 1) * PER_PAGE}
+    SQL
+
+    # NOTE: our version of Mysql2::Result is missing the very convenient method: #to_hash ...why?
+    # we should be able to do ActiveRecord::Base.connection.execute(sql).to_hash instead of
+    # populating the array ourselves...
+    result = []
+    ActiveRecord::Base.connection.execute(sql).each(:as => :hash) { |h| result << h }
+    result
   end
 
-  # [ Hash ] -> Hash
-  #  example: output:
-  # {
-  #  "Relationship" => { 12 => <Relationship>, 22 => <Relationship> }
-  #  "Entity" => { 123 => <Entity>}
-  #  "List" => { 987 => <List> }
+  # type TagablesByClassAndId = {
+  #   "Relationship" => { [id: Integer] => Relationship }
+  #   "Entity"       => { [id: Integer] => Entity }
+  #   "List"         => { [id: Integer] => List }
   # }
-  #
-  def active_record_lookup_for_recent_edits(edits)
-    edits
+  # [EditsIdHash] -> TagablesByClassAndId
+  def tagables_by_class_and_id_for(edits_id_hash)
+    base = { "Relationship" => {}, "Entity" => {}, "List" => {} }
+    edits_id_hash
       .group_by { |h| h['tagable_class'] }
       .transform_values { |tagable_array| tagable_array.map { |h| h['tagable_id'] }.uniq }
       .to_a
-      .reduce("Relationship" => {}, "Entity" => {}, "List" => {}) do |acc, (klass, tagable_ids)|
+      .reduce(base) do |acc, (klass, tagable_ids)|
         klass.constantize.find(tagable_ids).each { |tagable| acc[klass].store(tagable.id, tagable) }
         acc
       end
+  end
+
+  # type EditorsById = { [id: Integer] => User }
+  # [EditsIdHash] => EditorsById
+  def editors_by_id(id_hashes)
+    ids = id_hashes.map { |h| h['editor_id'] }
+    SfGuardUser.find(ids)
+      .to_a
+      .map(&:user)
+      .zip(ids)
+      .reduce({}) { |acc, (editor, id)| acc.merge!(id => editor) }
   end
 end

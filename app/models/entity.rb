@@ -753,7 +753,7 @@ class Entity < ActiveRecord::Base
       aliases.create(name: name, is_primary: false, last_user_id: Lilsis::Application.config.system_user_id)
     end
 
-    association_data['tags'].each { |tag_name| tag_without_callbacks(tag_name) }
+    association_data['tags'].each { |tag_name| add_tag_without_callbacks(tag_name) }
     Image.unscoped.where(entity_id: self.id).update_all(is_deleted: false)
 
     update(is_deleted: false)

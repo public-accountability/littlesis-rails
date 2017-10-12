@@ -161,8 +161,8 @@ describe Entity, :tag_helper  do
   describe 'get_association_data' do
     let(:company) do
       org = create(:entity_org)
-      org.tag('oil')
-      org.tag('nyc')
+      org.add_tag('oil')
+      org.add_tag('nyc')
       org.aliases.create!(name: 'another name')
       Relationship.create!(entity: org, related: create(:entity_person), category_id: 12)
       org.add_extension('PublicCompany')
@@ -728,7 +728,7 @@ describe Entity, :tag_helper  do
   describe 'Tagging' do
     it 'can tag a person with oil' do
       person = create(:entity_person)
-      expect { person.tag('oil') }.to change { Tagging.count }.by(1)
+      expect { person.add_tag('oil') }.to change { Tagging.count }.by(1)
       expect(person.taggings).to eq [Tagging.last]
     end
   end

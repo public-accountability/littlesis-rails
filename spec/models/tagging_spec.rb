@@ -5,11 +5,14 @@ describe Tagging, type: :model do
   it { should have_db_column(:tag_id) }
   it { should have_db_column(:tagable_class) }
   it { should have_db_column(:tagable_id) }
+  it { should have_db_column(:last_user_id) }
+
   it { should validate_presence_of(:tag_id) }
   it { should validate_presence_of(:tagable_class) }
   it { should validate_presence_of(:tagable_id) }
 
   it { should belong_to(:tag) }
+  it { should belong_to(:last_user) }
 
   before(:all) do
     @sf_user = create(:sf_user)
@@ -21,13 +24,13 @@ describe Tagging, type: :model do
 
     it 'updates entity timestamp after creating a tagging' do
       org.update_column(:updated_at, 1.day.ago)
-      expect { org.tag(tag.id) }.to change { org.reload.updated_at }
+      expect { org.add_tag(tag.id) }.to change { org.reload.updated_at }
     end
 
     it 'sets last_user_id to be the system\'s default user' do
       org.update_columns(updated_at: 1.day.ago, last_user_id: @sf_user.id)
-      expect { org.tag(tag.id) }
-        .to change { org.reload.last_user_id }.to(Tagging::DEFAULT_LAST_USER_ID)
+      expect { org.add_tag(tag.id) }
+        .to change { org.reload.last_user_id }.to(APP_CONFIG['system_user_id'])
     end
   end
 end
