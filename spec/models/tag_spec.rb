@@ -42,8 +42,8 @@ describe Tag do
 
         let(:entities_by_type) do
           {
-            'Person' => Array.new(5) { create(:entity_person).tag(tag.id) },
-            'Org' => Array.new(5) { create(:entity_org).tag(tag.id) }
+            'Person' => Array.new(5) { create(:entity_person).add_tag(tag.id) },
+            'Org' => Array.new(5) { create(:entity_org).add_tag(tag.id) }
           }
         end
 
@@ -76,7 +76,7 @@ describe Tag do
 
         describe "sorting" do
 
-          let(:lists) { Array.new(2) { create(:list).tag(tag.id) } }
+          let(:lists) { Array.new(2) { create(:list).add_tag(tag.id) } }
           let(:tagables) { tag.tagables_for_homepage('lists') }          
 
           before do
@@ -95,7 +95,7 @@ describe Tag do
         describe "pagination" do
 
           let(:page_limit){ Tag::PER_PAGE }
-          let(:lists) { Array.new(page_limit + 1) { create(:list).tag(tag.id) } }
+          let(:lists) { Array.new(page_limit + 1) { create(:list).add_tag(tag.id) } }
           before { lists }
           
           it "shows records corresponding to a given page" do
@@ -115,7 +115,7 @@ describe Tag do
               :generic_relationship,
               entity: create(:entity_person),
               related: create(:entity_org)
-            ).tag(tag.id)
+            ).add_tag(tag.id)
           end
         end
 
@@ -145,7 +145,7 @@ describe Tag do
       let(:tagables){ entities + relationships + lists }
 
       before do
-        tagables.each { |t| t.tag(tag.id, user.sf_guard_user_id) }
+        tagables.each { |t| t.add_tag(tag.id, user.sf_guard_user_id) }
         # offset tagging updated_at timestamps to yield
         # reverse chronological ordering equivalent to tagable ordering
         tagables.reverse.each_with_index do |t, i|

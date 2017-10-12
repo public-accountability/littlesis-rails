@@ -39,18 +39,7 @@ module Tagable
 
   # CRUD METHODS
 
-  # [String|Int] -> Tagable
-  def update_tags(ids)
-    server_tag_ids = tags.map(&:id).to_set
-    client_tag_ids = ids.map(&:to_i).to_set
-    actions = Tag.parse_update_actions(client_tag_ids, server_tag_ids)
-
-    actions[:remove].each { |tag_id| remove_tag(tag_id) }
-    actions[:add].each { |tag_id| tag(tag_id) }
-    self
-  end
-
-  def tag(name_or_id, user_id = APP_CONFIG['system_user_id'])
+  def add_tag(name_or_id, user_id = APP_CONFIG['system_user_id'])
     t = Tagging
         .find_or_initialize_by(tag_id:         parse_tag_id!(name_or_id),
                                tagable_class:  self.class.name,
@@ -59,9 +48,9 @@ module Tagable
     self
   end
 
-  def tag_without_callbacks(name_or_id, user_id = APP_CONFIG['system_user_id'])
+  def add_tag_without_callbacks(name_or_id, user_id = APP_CONFIG['system_user_id'])
     Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
-    tag(name_or_id, user_id)
+    add_tag(name_or_id, user_id)
   ensure
     Tagging.set_callback(:save, :after, :update_tagable_timestamp)
   end
@@ -70,6 +59,17 @@ module Tagable
     taggings
       .find_by_tag_id(parse_tag_id!(name_or_id))
       .destroy
+  end
+
+  # [String|Int] -> Tagable
+  def update_tags(ids)
+    server_tag_ids = tags.map(&:id).to_set
+    client_tag_ids = ids.map(&:to_i).to_set
+    actions = Tag.parse_update_actions(client_tag_ids, server_tag_ids)
+
+    actions[:remove].each { |tag_id| remove_tag(tag_id) }
+    actions[:add].each { |tag_id| add_tag(tag_id) }
+    self
   end
 
   def tags_for(user)

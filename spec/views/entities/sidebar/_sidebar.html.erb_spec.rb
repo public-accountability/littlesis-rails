@@ -46,8 +46,8 @@ describe "partial: sidebar", :tag_helper do
     end
     context 'entity has tags' do
       before do
-        org.tag('oil')
-        org.tag('nyc')
+        org.add_tag('oil')
+        org.add_tag('nyc')
         assign(:entity, org)
         render partial: 'entities/sidebar.html.erb'
       end

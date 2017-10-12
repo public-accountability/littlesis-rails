@@ -20,14 +20,14 @@ class BulkTagger
     entity = Entity.find(model_id_from(row.field('entity_url')))
     tags = row_tags(row)
 
-    tags.each { |tag_name| entity.tag(tag_name) }
+    tags.each { |tag_name| entity.add_tag(tag_name) }
     tag_related_entities(entity, tags) if row.field('tag_all_related').present?
   end
 
   def tag_related_entities(entity, tags)
     entity.links.map(&:entity2_id).uniq.each do |id|
       other_entity = Entity.find(id)
-      tags.each { |t| other_entity.tag(t) }
+      tags.each { |t| other_entity.add_tag(t) }
     end
   end
 
@@ -37,13 +37,13 @@ class BulkTagger
     list = List.find(model_id_from(row.field('list_url')))
     tags = row_tags(row)
 
-    tags.each { |t| list.tag(t) }
+    tags.each { |t| list.add_tag(t) }
     tag_all_in_list(list, tags) if row.field('tag_all_in_list').present?
   end
 
   def tag_all_in_list(list, tags)
     list.entities.each do |entity|
-      tags.each { |t| entity.tag(t) }
+      tags.each { |t| entity.add_tag(t) }
     end
   end
 

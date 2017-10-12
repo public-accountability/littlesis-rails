@@ -121,7 +121,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
         context "when person has tags" do
           before do
-            tags.each{ |t| person.tag(t.id) }
+            tags.each{ |t| person.add_tag(t.id) }
             refresh_page
           end
 

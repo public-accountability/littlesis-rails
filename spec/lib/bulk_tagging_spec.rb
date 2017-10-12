@@ -10,7 +10,7 @@ describe 'BulkTagging' do
 
   def tagable_mock(tags)
     double('tagable').tap do |double|
-      tags.each { |t| expect(double).to receive(:tag).with(t) }
+      tags.each { |t| expect(double).to receive(:add_tag).with(t) }
     end
   end
 
@@ -47,7 +47,7 @@ describe 'BulkTagging' do
       mock_links.each do |link|
         other_entity = build(:org)
         expect(Entity).to receive(:find).with(link.entity2_id).and_return(other_entity)
-        tags.each { |t| expect(other_entity).to receive(:tag).with(t) }
+        tags.each { |t| expect(other_entity).to receive(:add_tag).with(t) }
       end
       entity
     end
@@ -86,12 +86,12 @@ describe 'BulkTagging' do
     it 'can tag all entities in list' do
       list = build(:list)
       entities_in_list = [build(:org), build(:person)]
-      expect(list).to receive(:tag).with('georgia')
-      expect(list).to receive(:tag).with('oil')
+      expect(list).to receive(:add_tag).with('georgia')
+      expect(list).to receive(:add_tag).with('oil')
       expect(list).to receive(:entities).and_return(entities_in_list)
       entities_in_list.each do |e|
-        expect(e).to receive(:tag).with('georgia')
-        expect(e).to receive(:tag).with('oil')
+        expect(e).to receive(:add_tag).with('georgia')
+        expect(e).to receive(:add_tag).with('oil')
       end
 
       expect(List).to receive(:find).with('1232').and_return(tagable_mock(['nyc']))
