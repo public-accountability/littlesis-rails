@@ -3052,7 +3052,15 @@ CREATE TABLE `versions` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 
+<<<<<<< HEAD
 -- Dump completed on 2017-10-11 21:50:10
+=======
+
+
+
+
+-- Dump completed on 2017-10-12 18:26:08
+>>>>>>> 85c35c2c... [#361] Migrate legacy references to documents
 INSERT INTO schema_migrations (version) VALUES ('20131031182415');
 
 INSERT INTO schema_migrations (version) VALUES ('20131031182500');
@@ -3282,4 +3290,6 @@ INSERT INTO schema_migrations (version) VALUES ('20171010214602');
 =======
 INSERT INTO schema_migrations (version) VALUES ('20171011194109');
 >>>>>>> 96e0e534... [#361] Create Document with unique URLs
+
+INSERT INTO schema_migrations (version) VALUES ('20171012181822');
 

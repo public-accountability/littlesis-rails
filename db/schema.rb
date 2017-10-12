@@ -11,8 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 
 ActiveRecord::Schema.define(version: 20171011194109) do
+=======
+ActiveRecord::Schema.define(version: 20171012181822) do
+>>>>>>> 85c35c2c... [#361] Migrate legacy references to documents
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
