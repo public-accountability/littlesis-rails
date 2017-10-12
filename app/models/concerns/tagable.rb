@@ -51,10 +51,11 @@ module Tagable
   end
 
   def tag(name_or_id, user_id = APP_CONFIG['system_user_id'])
-    Tagging.find_or_create_by(tag_id:         parse_tag_id!(name_or_id),
-                              tagable_class:  self.class.name,
-                              tagable_id:     id,
-                              last_user_id:   user_id)
+    t = Tagging
+        .find_or_initialize_by(tag_id:         parse_tag_id!(name_or_id),
+                               tagable_class:  self.class.name,
+                               tagable_id:     id)
+    t.update(last_user_id: user_id) unless t.persisted?
     self
   end
 

@@ -129,6 +129,12 @@ describe Tagable, type: :model do
       }.to change { Tagging.count }.by(1)
     end
 
+    it 'only allows one user per tagging' do
+      test_tagable.tag(tag_id, 1)
+      test_tagable.tag(tag_id, 2)
+      expect(Tagging.last.last_user_id).to eq 1
+    end
+
     it "creates a tagging with correct attributes" do
       test_tagable.tag(tag_id)
 
