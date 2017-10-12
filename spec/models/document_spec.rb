@@ -1,5 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe Document, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+describe Document, type: :model do
+  it { should have_many(:references) }
+  it { should validate_presence_of(:url) }
+  it { should validate_presence_of(:url_hash) }
+  it { should validate_length_of(:name).is_at_most(255) }
 end
