@@ -1,5 +1,6 @@
 class EntitiesController < ApplicationController
   include TagableController
+  include ReferenceableController
   before_filter :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show]
   before_action :set_entity_with_eager_loading, only: [:show]
@@ -98,8 +99,6 @@ class EntitiesController < ApplicationController
     @entity.soft_delete
     redirect_to home_dashboard_path, notice: "#{@entity.name} has been successfully deleted"
   end
-
-  
 
   def add_relationship
     @relationship = Relationship.new
@@ -448,9 +447,7 @@ class EntitiesController < ApplicationController
     @references = @entity.references.order('updated_at desc').limit(10)
   end
 
-  def need_to_create_new_reference
-    existing_reference_params['reference_id'].blank? && existing_reference_params['just_cleaning_up'].blank?
-  end
+  
 
   def article_params
     params.require(:article).permit(
@@ -467,14 +464,6 @@ class EntitiesController < ApplicationController
   # def reference_params
   #   params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
   # end
-
-  def reference_params
-    params.require(:reference).permit(:name, :url, :excerpt, :publication_date, :ref_type)
-  end
-
-  def existing_reference_params
-    params.require(:reference).permit(:just_cleaning_up, :reference_id)
-  end
 
   def update_entity_params
     params.require(:entity).permit(

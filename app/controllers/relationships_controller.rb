@@ -1,5 +1,6 @@
 class RelationshipsController < ApplicationController
   include TagableController
+  include ReferenceableController
   before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction]
   before_action :authenticate_user!, except: [:show]
   before_action -> { check_permission('deleter') }, only: [:destroy]
@@ -214,18 +215,12 @@ class RelationshipsController < ApplicationController
     @relationship.related.update(last_user_id: current_user.sf_guard_user_id)
   end
 
+
   def relationship_params
     prepare_update_params(params.require(:relationship).permit(:entity1_id, :entity2_id, :category_id, :is_current, :description1, :description2))
   end
 
-  def reference_params
-    params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
-  end
-
-  def existing_reference_params
-    params.require(:reference).permit(:just_cleaning_up, :reference_id)
-  end
-
+  
   # whitelists relationship params and associated nested attributes
   # if the relationship category requires them
   def update_params
