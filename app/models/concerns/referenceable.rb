@@ -13,6 +13,15 @@ module Referenceable
   #   refs
   # end
 
+
+  def add_reference(url, name)
+    raise ActiveRecord::RecordNotSaved, "Can't create a reference for an unpersisted record" unless persisted?
+    doc = Document.find_by_url(url) || Document.create!(url: url, name: name)
+    references.create(document_id: doc.id) unless references.exists?(document_id: doc.id)
+    self
+  end
+
+  
   # def add_reference(source, name = nil)
   #   raise "can't create reference for unpersisted record" unless persisted?
   #   name = source unless name.present?
