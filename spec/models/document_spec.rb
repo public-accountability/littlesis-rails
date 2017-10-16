@@ -16,6 +16,11 @@ describe Document, type: :model do
       expect(new_doc_with_same_url.errors[:url_hash]).to eql ['has already been taken']
     end
 
+    it 'checks the validitity of urls' do
+      expect(Document.new(url: url).valid?).to be true
+      expect(Document.new(url: 'not-a-complete-url.com').valid?).to be false
+    end
+
     describe 'before validation callbacks: trims whitespace and creates url hash' do
       let(:subject) { Document.new(url: '   https://littlesis.org  ', name: '  LittleSis  ') }
       before { subject.valid? }

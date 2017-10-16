@@ -1,7 +1,7 @@
 class Document < ActiveRecord::Base
   has_many :references
 
-  validates :url, presence: true
+  validates :url, presence: true, url: true
   validates :url_hash, presence: true, uniqueness: true
   validates :name, length: { maximum: 255 }
 
@@ -37,18 +37,18 @@ class Document < ActiveRecord::Base
     find_by_url_hash url_to_hash(url)
   end
 
-  def self.valid_url?(url)
-    URI.parse(url).is_a?(URI::HTTP)
-  rescue URI::InvalidURIError
-    false
-  end
-
   #-----------------------#
   # PRIVATE CLASS METHODS #
   #-----------------------#
 
   def self.url_to_hash(url)
     Digest::SHA1.hexdigest(url)
+  end
+
+  def self.valid_url?(url)
+    URI.parse(url).is_a?(URI::HTTP)
+  rescue URI::InvalidURIError
+    false
   end
 
   private_class_method :url_to_hash
