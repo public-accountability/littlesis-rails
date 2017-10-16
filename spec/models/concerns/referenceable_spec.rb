@@ -8,6 +8,7 @@ describe Referenceable, type: :model do
   class TestReferenceable
     attr_reader :id
     extend Assocations
+    include ActiveModel::Validations
     include Referenceable
 
     @@id = 0
@@ -15,10 +16,10 @@ describe Referenceable, type: :model do
     def initialize
       @@id += 1
       @id = @@id
+      
     end
 
-    def references
-    end
+    def references; end
 
     def persisted?
       true
@@ -29,7 +30,8 @@ describe Referenceable, type: :model do
     let(:referenceable) { TestReferenceable.new }
     let(:url) { Faker::Internet.unique.url }
     let(:url_name) { Faker::Lorem.sentence }
-    let(:add_reference) { proc { referenceable.add_reference(url, url_name) } }
+    let(:attributes) { { url: url, name: url_name } }
+    let(:add_reference) { proc { referenceable.add_reference(attributes) } }
 
     def creates_new_reference
       expect(referenceable).to receive(:references)
@@ -46,6 +48,25 @@ describe Referenceable, type: :model do
       expect { add_reference.call }.to raise_error(ActiveRecord::RecordNotSaved)
     end
 
+    it 'throws if attributes do not include the key :url' do
+      expect { referenceable.add_reference(foo: 'bar') }.to raise_error(ArgumentError)
+    end
+
+    context 'submitted with invalid url' do
+      let(:url) { 'not-a-url' }
+
+      it 'does not create a new document' do
+        expect { add_reference.call }.not_to change { Document.count }
+      end
+      
+      it 'adds an error to the record' do
+        expect(referenceable.valid?).to be true
+        add_reference.call
+        expect(referenceable.valid?).to be false
+        expect(referenceable.errors[:base].first).to eql 'not-a-url is not a valid url'
+      end
+    end
+
     context 'no existing Document or Reference' do
       it 'creates a new document' do
         creates_new_reference
@@ -59,7 +80,7 @@ describe Referenceable, type: :model do
 
       it 'returns self' do
         creates_new_reference
-        expect(referenceable.add_reference(url, url_name)).to eql referenceable
+        expect(add_reference.call).to eql referenceable
       end
     end
 
@@ -80,7 +101,7 @@ describe Referenceable, type: :model do
     context 'existing Document and Reference' do
       before { Document.create!(url: url, name: url_name) }
 
-      it 'does not create a new document' do
+      it 'does not create a new document or reference' do
         does_not_create_new_reference
         expect { add_reference.call }.not_to change { Document.count }
       end

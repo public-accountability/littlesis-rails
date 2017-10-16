@@ -76,25 +76,22 @@ class EntitiesController < ApplicationController
     set_entity_references
   end
 
-  # this methods follows a similar pattern to relationships_controller#update
   def update
-    if need_to_create_new_reference
-      @reference = Reference.new(reference_params.merge(object_id: @entity.id, object_model: "Entity"))
-      unless @reference.validate_before_create.empty?
-        @reference_error_message = "The reference is not valid"
-        set_entity_references
-        return render :edit
+    # assign new attributes to the entity
+    @entity.assign_attributes(prepare_update_params(update_entity_params))
+    # if those attributes are avlid
+    # update the entity extension records  and save the reference
+    if @entity.valid?
+      @entity.update_extension_records(extension_def_ids)
+      @entity.add_reference(reference_params) if need_to_create_new_reference
+      # Add_reference will make the entity invalid if the reference is invalid
+      if @entity.valid?
+        @entity.save!
+        return redirect_to entity_path(@entity)
       end
     end
-    
-    if @entity.update_attributes prepare_update_params(update_entity_params)
-      @entity.update_extension_records(extension_def_ids)
-      @reference.save unless @reference.nil? # save the reference
-      redirect_to @entity.legacy_url
-    else
-      set_entity_references
-      render :edit
-    end
+    set_entity_references
+    render :edit
   end
 
   def destroy
@@ -467,8 +464,12 @@ class EntitiesController < ApplicationController
     )
   end
 
+  # def reference_params
+  #   params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
+  # end
+
   def reference_params
-    params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
+    params.require(:reference).permit(:name, :url, :excerpt, :publication_date, :ref_type)
   end
 
   def existing_reference_params
@@ -503,4 +504,3 @@ class EntitiesController < ApplicationController
     check_permission 'importer'
   end
 end
-
