@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe Document, type: :model do
+  let(:url) { Faker::Internet.unique.url }
   describe 'validations' do
-    let(:url) { Faker::Internet.unique.url }
     subject { Document.new(url: url, name: 'a website') }
 
     it { should have_many(:references) }
@@ -41,4 +41,28 @@ describe Document, type: :model do
       it { is_expected.to eql [['Generic', 1], ['Newspaper', 3], ['Government Document', 4]] }
     end
   end
+
+  describe 'find_by_url' do
+    let!(:document) { create(:document, url: url) }
+
+    it 'find urls by using the hash' do
+      expect(Document.find_by_url(url)).to eq document
+    end
+
+    it 'returns nil for urls that do not yet exist' do
+      expect(Document.find_by_url("#{url}/different_page")).to be nil
+    end
+
+    it 'raises error if blank values are submitted' do
+      expect { Document.find_by_url(nil) }.to raise_error(Exceptions::InvalidUrlError)
+      expect { Document.find_by_url("") }.to raise_error(Exceptions::InvalidUrlError)
+    end
+
+    it 'raises error if invalid urls are are submitted' do
+      expect { Document.find_by_url('website.com') }.to raise_error(Exceptions::InvalidUrlError)
+      expect { Document.find_by_url('i am not a url') }.to raise_error(Exceptions::InvalidUrlError)
+    end
+    
+  end
+
 end

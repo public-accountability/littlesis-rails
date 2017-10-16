@@ -18,12 +18,44 @@ class Document < ActiveRecord::Base
     REF_TYPES[ref_type]
   end
 
+  #---------------#
+  # CLASS METHODS #
+  #---------------#
+
   # Returns the reference types as an array: [ [name, number], ... ]
   # Removes the FEC filings option
   # Used by the add reference modal in _reference_new.html.erb
   def self.ref_type_options
     REF_TYPES.except(2).map(&:reverse)
   end
+
+  # Retrieve a Document by url
+  # input: String
+  # output: <Document> | nil
+  def self.find_by_url(url)
+    raise Exceptions::InvalidUrlError if url.blank? || !valid_url?(url.strip)
+    find_by_url_hash url_to_hash(url)
+  end
+
+  def self.valid_url?(url)
+    URI.parse(url).is_a?(URI::HTTP)
+  rescue URI::InvalidURIError
+    false
+  end
+
+  #-----------------------#
+  # PRIVATE CLASS METHODS #
+  #-----------------------#
+
+  def self.url_to_hash(url)
+    Digest::SHA1.hexdigest(url)
+  end
+
+  private_class_method :url_to_hash
+
+  #--------------------------#
+  # PRIVATE INSTANCE METHODS #
+  #--------------------------#
 
   private
 
@@ -33,6 +65,10 @@ class Document < ActiveRecord::Base
   end
 
   def set_hash
-    self.url_hash = Digest::SHA1.hexdigest(url) unless url.blank?
+    self.url_hash = url_to_hash unless url.blank?
+  end
+
+  def url_to_hash
+    Document.send(:url_to_hash, url)
   end
 end
