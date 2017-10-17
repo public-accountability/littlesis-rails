@@ -1,7 +1,7 @@
 <% content_for(:page_title, 'Edit: ' + @entity.name ) %>
 
 <%= render partial: 'header', locals: { entity: @entity } %>
-<%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
+<%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 
 <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder  do |f| %>
     

@@ -4,7 +4,6 @@ class EntitiesController < ApplicationController
   before_filter :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show]
   before_action :set_entity_with_eager_loading, only: [:show]
-  before_action :set_current_user, only: [:show, :political, :match_donations]
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
   before_action -> { check_permission('contributor') }, only: [:create]
   before_action -> { check_permission('deleter') }, only: [:destroy]
@@ -80,7 +79,7 @@ class EntitiesController < ApplicationController
   def update
     # assign new attributes to the entity
     @entity.assign_attributes(prepare_update_params(update_entity_params))
-    # if those attributes are avlid
+    # if those attributes are valid
     # update the entity extension records  and save the reference
     if @entity.valid?
       @entity.update_extension_records(extension_def_ids)
@@ -434,10 +433,6 @@ class EntitiesController < ApplicationController
   end
 
   private
-
-  def set_current_user
-    @current_user = current_user
-  end
 
   def set_entity_with_eager_loading
     @entity = Entity.includes(:aliases, list_entities: [:list]).find(params[:id])
