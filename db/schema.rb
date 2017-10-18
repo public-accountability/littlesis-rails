@@ -11,12 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-
-ActiveRecord::Schema.define(version: 20171011194109) do
-=======
-ActiveRecord::Schema.define(version: 20171012181822) do
->>>>>>> 85c35c2c... [#361] Migrate legacy references to documents
+ActiveRecord::Schema.define(version: 20171018151914) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -90,16 +85,6 @@ ActiveRecord::Schema.define(version: 20171012181822) do
 
   add_index "api_request", ["api_key"], name: "api_key_idx", using: :btree
   add_index "api_request", ["created_at"], name: "created_at_idx", using: :btree
-
-  create_table "api_tokens", force: :cascade do |t|
-    t.string   "token",      limit: 255, null: false
-    t.integer  "user_id",    limit: 4,   null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
-  add_index "api_tokens", ["token"], name: "index_api_tokens_on_token", unique: true, using: :btree
-  add_index "api_tokens", ["user_id"], name: "index_api_tokens_on_user_id", unique: true, using: :btree
 
   create_table "api_user", force: :cascade do |t|
     t.string   "api_key",       limit: 100,                        null: false
@@ -245,36 +230,6 @@ ActiveRecord::Schema.define(version: 20171012181822) do
   add_index "chat_user", ["room", "updated_at", "user_id"], name: "room_updated_at_user_id_idx", using: :btree
   add_index "chat_user", ["room", "user_id"], name: "room_user_id_idx", unique: true, using: :btree
   add_index "chat_user", ["user_id"], name: "user_id_idx", using: :btree
-
-  create_table "clean_users", force: :cascade do |t|
-    t.string   "email",                  limit: 255, default: "", null: false
-    t.string   "encrypted_password",     limit: 255, default: "", null: false
-    t.string   "reset_password_token",   limit: 255
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          limit: 4,   default: 0
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip",     limit: 255
-    t.string   "last_sign_in_ip",        limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "default_network_id",     limit: 4
-    t.integer  "sf_guard_user_id",       limit: 4,                null: false
-    t.string   "username",               limit: 255,              null: false
-    t.string   "remember_token",         limit: 255
-    t.string   "confirmation_token",     limit: 255
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
-    t.boolean  "newsletter"
-    t.string   "chatid",                 limit: 255
-  end
-
-  add_index "clean_users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
-  add_index "clean_users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "clean_users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-  add_index "clean_users", ["sf_guard_user_id"], name: "index_users_on_sf_guard_user_id", unique: true, using: :btree
-  add_index "clean_users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   create_table "couple", force: :cascade do |t|
     t.integer "entity_id",   limit: 4, null: false
@@ -613,7 +568,6 @@ ActiveRecord::Schema.define(version: 20171012181822) do
   end
 
   add_index "link", ["category_id"], name: "category_id_idx", using: :btree
-  add_index "link", ["entity1_id", "category_id", "is_reverse"], name: "e1_cat_rev_idx", using: :btree
   add_index "link", ["entity1_id", "category_id", "is_reverse"], name: "index_link_on_entity1_id_and_category_id_and_is_reverse", using: :btree
   add_index "link", ["entity1_id", "category_id"], name: "index_link_on_entity1_id_and_category_id", using: :btree
   add_index "link", ["entity1_id"], name: "entity1_id_idx", using: :btree
@@ -913,45 +867,9 @@ ActiveRecord::Schema.define(version: 20171012181822) do
   add_index "ny_disclosures", ["contrib_code"], name: "index_ny_disclosures_on_contrib_code", using: :btree
   add_index "ny_disclosures", ["delta"], name: "index_ny_disclosures_on_delta", using: :btree
   add_index "ny_disclosures", ["e_year"], name: "index_ny_disclosures_on_e_year", using: :btree
-  add_index "ny_disclosures", ["filer_id", "report_id", "transaction_id", "schedule_transaction_date", "e_year"], name: "big_idx", using: :btree
   add_index "ny_disclosures", ["filer_id", "report_id", "transaction_id", "schedule_transaction_date", "e_year"], name: "index_filer_report_trans_date_e_year", using: :btree
   add_index "ny_disclosures", ["filer_id"], name: "index_ny_disclosures_on_filer_id", using: :btree
   add_index "ny_disclosures", ["original_date"], name: "index_ny_disclosures_on_original_date", using: :btree
-
-  create_table "ny_disclosures_staging", force: :cascade do |t|
-    t.string   "filer_id",                  limit: 10,  null: false
-    t.string   "report_id",                 limit: 1,   null: false
-    t.string   "transaction_code",          limit: 1,   null: false
-    t.string   "e_year",                    limit: 4,   null: false
-    t.integer  "transaction_id",            limit: 8,   null: false
-    t.date     "schedule_transaction_date",             null: false
-    t.date     "original_date"
-    t.string   "contrib_code",              limit: 4
-    t.string   "contrib_type_code",         limit: 1
-    t.string   "corp_name",                 limit: 255
-    t.string   "first_name",                limit: 255
-    t.string   "mid_init",                  limit: 255
-    t.string   "last_name",                 limit: 255
-    t.string   "address",                   limit: 255
-    t.string   "city",                      limit: 255
-    t.string   "state",                     limit: 2
-    t.string   "zip",                       limit: 5
-    t.string   "check_number",              limit: 255
-    t.string   "check_date",                limit: 255
-    t.float    "amount1",                   limit: 24
-    t.float    "amount2",                   limit: 24
-    t.string   "description",               limit: 255
-    t.string   "other_recpt_code",          limit: 255
-    t.string   "purpose_code1",             limit: 255
-    t.string   "purpose_code2",             limit: 255
-    t.string   "explanation",               limit: 255
-    t.string   "transfer_type",             limit: 1
-    t.string   "bank_loan_check_box",       limit: 1
-    t.string   "crerec_uid",                limit: 255
-    t.datetime "crerec_date"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "ny_filer_entities", force: :cascade do |t|
     t.integer  "ny_filer_id",    limit: 4
@@ -1417,7 +1335,6 @@ ActiveRecord::Schema.define(version: 20171012181822) do
   add_index "relationship", ["entity1_id", "category_id"], name: "entity1_category_idx", using: :btree
   add_index "relationship", ["entity1_id", "entity2_id"], name: "entity_idx", using: :btree
   add_index "relationship", ["entity1_id"], name: "entity1_id_idx", using: :btree
-  add_index "relationship", ["entity2_id", "category_id", "amount"], name: "entity2_cat_amount", using: :btree
   add_index "relationship", ["entity2_id"], name: "entity2_id_idx", using: :btree
   add_index "relationship", ["is_deleted", "entity2_id", "category_id", "amount"], name: "index_relationship_is_d_e2_cat_amount", using: :btree
   add_index "relationship", ["last_user_id"], name: "last_user_id_idx", using: :btree
@@ -1855,7 +1772,6 @@ ActiveRecord::Schema.define(version: 20171012181822) do
   add_foreign_key "sf_guard_user_group", "sf_guard_user", column: "user_id", name: "sf_guard_user_group_ibfk_1", on_delete: :cascade
   add_foreign_key "sf_guard_user_permission", "sf_guard_permission", column: "permission_id", name: "sf_guard_user_permission_ibfk_2", on_delete: :cascade
   add_foreign_key "sf_guard_user_permission", "sf_guard_user", column: "user_id", name: "sf_guard_user_permission_ibfk_1", on_delete: :cascade
-  add_foreign_key "sf_guard_user_profile", "sf_guard_user", column: "user_id", name: "sf_guard_user_profile_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "social", "relationship", name: "social_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "transaction", "entity", column: "contact1_id", name: "transaction_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "entity", column: "contact2_id", name: "transaction_ibfk_2", on_update: :cascade, on_delete: :nullify
