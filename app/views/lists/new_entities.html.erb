@@ -1,3 +1,9 @@
-<div id="#add-entities-container">
-  Add some entities here!
+<div id="add-entities-container">
+  <input type = file id="csv-upload-button" text="upload">
+  <script>
+   bulkTable.init({
+     rootId: "add-entities-container",
+     uploadButtonId: "csv-upload-button"
+   });
+  </script>
 </div>

@@ -21,7 +21,7 @@
   };
 
   self.get = function(attr){
-    return Object.getOwnPropertyDescriptor(state, attr).value;
+    return getProperty(state, attr);
   };
 
   // FILE HANDLING
@@ -46,16 +46,20 @@
     }, {});
   };
 
-  self.hasFile = function(){
-    console.log("i should not be called!");
-    return Boolean(this.files[0]);
+  self.hasFile = function(caller){
+    return Boolean(caller.files[0]);
   };
 
-  self.getFile = function(){
-    return this.files[0];
+  self.getFile = function(caller){
+    return caller.files[0];
   };
 
   // UTILITY
+
+  // TODO: extract
+  function getProperty(obj, key) {
+    return Object.getOwnPropertyDescriptor(obj, key).value;
+  }
 
   // TODO: exract this mouthful!!! bet we don't want to write it ANYWHERE ELSE!!!!!!
   function setProperty(obj, key, value){
