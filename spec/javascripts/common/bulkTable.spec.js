@@ -1,8 +1,57 @@
 describe('Bulk Table module', () => {
 
-  describe('parsing', () => {
-    it('reads a csv file into a string');
-    it('parses a TableData object from a csv string');
+  const testDom =
+        '<div id="test-dom">' +
+          // '<input type="file" id="csv-upload-button">' +
+          '<input id="csv-upload-button">' +
+        '</div>';
+
+  const entities = {
+    0: {
+      name: "Lew Basnight",
+      primary_ext: "Person",
+      blurb: "Adjacent to the invisible"
+    },
+    1: {
+      name: "Chums Of Chance",
+      primary_ext: "Org",
+      blurb: "Do not -- strictly speaking -- exist"
+    }
+  };
+
+  const csv =
+        "name, primary_ext, blurb, \n" +
+        `${entities[0].name}, ${entities[0].primary_ext}, ${entities[0].blurb}\n` +
+        `${entities[1].name}, ${entities[1].primary_ext}, ${entities[1].blurb}\n`;
+
+  const uploadButtonId = "#csv-upload-button";
+
+  beforeEach(() => { $('body').append(testDom); });
+  afterEach(() => { $('#test-dom').remove(); });
+
+  describe('initialization', () => {
+    beforeEach(() => { bulkTable.init({ rootId: "test-dom" }); });
+
+    it('stores a reference to its root node', () => {
+      expect(bulkTable.get('rootId')).toEqual('test-dom');
+    });
+  });
+
+  xdescribe('parsing', () => {
+
+    beforeEach(() => { bulkTable.init("test-dom"); });
+
+    xit('parses a TableData object from a csv file', () => {
+      const file = new File([csv], "test.csv", {type: "text/plain;charset=utf-8"});
+      const getFileSpy = spyOn(bulkTable, 'getFile').and.returnValue(file);
+      const btn = document.getElementById('csv-upload-button');
+      btn.trigger('change');
+
+      expect(bulkTable.get('entitiesById')).toEqual({
+        unpersisted0: entities[0],
+        unpersisted1: entities[1]
+      });
+    });
   });
 
   describe('matching', () => {
@@ -12,13 +61,13 @@ describe('Bulk Table module', () => {
     it('stores list of possible matches in TableData row');
     it('allows user to choose to use a matched entitiy or create new entity');
 
-    context('user chooses matched entity', () => {
+    describe('user chooses matched entity', () => {
       it('marks entity row as matched');
       it('overwrites user-submitted entity fields with matched fields');
       it('stores an id');
     });
 
-    context('user chooses user-submitted fields', () => {
+    describe('user chooses user-submitted fields', () => {
       it('ignores matched existing entity fields');
     });
   });
@@ -32,39 +81,39 @@ describe('Bulk Table module', () => {
 
   describe('rendering', () => {
 
-    context('with no matches', () => {
+    describe('with no matches', () => {
       it('renders an html table from a TableData object');
       it('re-renders a table row if its contents are edited');
     });
 
-    context('with matches', () => {
+    describe('with matches', () => {
       it('prompts user to use match or create new entity');
 
-      context('user chooses matched entity', () => {
+      describe('user chooses matched entity', () => {
         it('marks rows with matched entities');
         it('blocks edits to matched entity fields');
       });
     });
 
-    context('with invalid fields', () => {
+    describe('with invalid fields', () => {
       it('marks invalid fields');
     });
   });
 
   describe('submitting', () => {
-    context('there are invalid fields', () => {
+    describe('there are invalid fields', () => {
       it('will not submit');
     });
 
-    context('there are no invalid fields', () => {
+    describe('there are no invalid fields', () => {
 
       it('submits a batch of entities to a list endpoint');
 
-      context('all submissions worked', () => {
+      describe('all submissions worked', () => {
         it('redirects to list members tab');
       });
 
-      context('some submissions failed', () => {
+      describe('some submissions failed', () => {
         it('deletes successful submissions from the store');
         it('marks failed submissions with error messages');
         it('renders table with only failed submissions');
