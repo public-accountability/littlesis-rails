@@ -23,7 +23,7 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
 
     before(:each) do
       assign(:relationship, @rel)
-      expect(@rel).to receive(:source_links).and_return([])
+      expect(@rel).to receive(:documents).and_return([])
       allow(@rel).to receive(:tags).and_return(tags)
       allow(view).to receive(:user_signed_in?).and_return(user_signed_in)
     end
@@ -143,7 +143,7 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
 
     it 'has hidden inputs' do
       expect(rendered).to have_tag 'input[value="Relationship"]', :count => 1
-      expect(rendered).to have_tag 'input#data_object_id', :count => 1
+      expect(rendered).to have_tag 'input#data_referenceable_id', :count => 1
     end
 
     it 'has url field' do

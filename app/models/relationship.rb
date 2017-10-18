@@ -224,10 +224,6 @@ class Relationship < ActiveRecord::Base
     RelationshipDetails.new(self).details
   end
 
-  def source_links
-    Reference.where(object_id: self.id, object_model: "Relationship")
-  end
-
 
   #############
   #   LINKS   #
