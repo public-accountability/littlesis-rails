@@ -37,18 +37,64 @@ class Document < ActiveRecord::Base
     find_by_url_hash url_to_hash(url)
   end
 
+  def self.valid_url?(url)
+    URI.parse(url).is_a?(URI::HTTP)
+  rescue URI::InvalidURIError
+    false
+  end
+
+  #
+  # TODO: this query is slow and can probably be better optimized
+  #
+  # To gather the source links documenting an entity
+  # we need to include the documents for the entity's relationships as well
+  # input: entity: <Entity> or Integer, page: Integer, per_page: Integer
+  # Output: [Document]
+  def self.documents_for_entity(entity:, page:, per_page: Entity::PER_PAGE)
+    entity_id = entity.is_a?(Entity) ? entity.id : entity.to_i
+    limit = per_page
+    offset = ((page.to_i - 1) * limit)
+
+    # yes, i'm aware this is kind of insane - ziggy
+    sql = <<~SQL
+            SELECT documents.*
+            FROM (
+                 SELECT all_entity_refs.document_id as document_id,
+                        max(all_entity_refs.updated_at) as updated_at
+                 FROM (
+                        (
+                          SELECT `references`.document_id as document_id,
+    	                          `references`.updated_at as updated_at
+                          FROM link
+                          INNER JOIN `references` ON `references`.referenceable_id = link.relationship_id AND `references`.referenceable_type = 'Relationship'
+                          WHERE entity1_id = #{entity_id}
+                        )
+	                UNION ALL
+                        (
+                          SELECT document_id,
+                                 updated_at
+                          FROM `references`
+                          WHERE referenceable_id = #{entity_id} AND referenceable_type = 'Entity'
+                        )
+                       ) AS all_entity_refs
+                GROUP BY all_entity_refs.document_id
+            ) as documents_for_entity
+            INNER JOIN documents ON documents.id = documents_for_entity.document_id
+            ORDER BY documents_for_entity.updated_at desc
+            LIMIT #{limit}
+            OFFSET #{offset}
+          SQL
+
+    find_by_sql(sql)
+  end
+
+
   #-----------------------#
   # PRIVATE CLASS METHODS #
   #-----------------------#
 
   def self.url_to_hash(url)
     Digest::SHA1.hexdigest(url)
-  end
-
-  def self.valid_url?(url)
-    URI.parse(url).is_a?(URI::HTTP)
-  rescue URI::InvalidURIError
-    false
   end
 
   private_class_method :url_to_hash

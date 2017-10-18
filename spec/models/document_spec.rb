@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Document, type: :model do
+describe Document, :pagination_helper, type: :model do
   let(:url) { Faker::Internet.unique.url }
   describe 'validations' do
     subject { Document.new(url: url, name: 'a website') }
@@ -67,7 +67,58 @@ describe Document, type: :model do
       expect { Document.find_by_url('website.com') }.to raise_error(Exceptions::InvalidUrlError)
       expect { Document.find_by_url('i am not a url') }.to raise_error(Exceptions::InvalidUrlError)
     end
-    
   end
 
+  describe 'documents_for_entity' do
+    let(:entity) { create(:entity_org) }
+    let(:relationships) do
+      Array.new(3) { create(:generic_relationship, entity: entity, related: create(:entity_person)) }
+    end
+    let(:url) { Faker::Internet.unique.url }
+
+    context 'retriving page 1' do
+      # create a reference the entity and each relationship
+      # the first relationship references to the same
+      # document as the entity's refernce
+      # documents_for_entity should return only 3 documents
+      before do
+        # create a random document unrelated to this query
+        create(:document)
+        entity.add_reference(url: url, name: 'a url')
+        # give the first relationship a reference with the same url as the entity
+        relationships.first.add_reference(url: url, name: 'a url')
+        relationships.drop(1).each { |r| r.add_reference(attributes_for(:document)) }
+
+        @oldest_document = Document.last.tap { |d| d.update_column(:updated_at, 1.week.ago) }
+      end
+
+      subject { Document.documents_for_entity(entity: entity, page: 1) } 
+
+      it 'returns 3 documents' do
+        expect(subject.length).to eql 3
+      end
+
+      it 'sorts by updated at date' do
+        expect(subject.last).to eql @oldest_document
+      end
+    end
+
+    context 'pagination' do
+      stub_page_limit(Entity, 2)
+
+      before do
+        3.times { entity.add_reference(attributes_for(:document)) }
+      end
+
+      it 'page one contains 2 documents' do
+        expect(Document.documents_for_entity(entity: entity, page: 1).length).to eql 2
+      end
+
+      it 'page two contains 1 documents' do
+        expect(Document.documents_for_entity(entity: entity, page: 2).length).to eql 1
+        expect(Document.documents_for_entity(entity: entity, page: 1).map(&:url).to_set)
+          .not_to include Document.documents_for_entity(entity: entity, page: 2).first.url
+      end
+    end
+  end
 end
