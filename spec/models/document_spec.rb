@@ -99,7 +99,7 @@ describe Document, :pagination_helper, type: :model do
       end
 
       it 'sorts by updated at date' do
-        expect(subject.last).to eql @oldest_document
+        expect(subject.last).to eq @oldest_document
       end
     end
 
@@ -120,5 +120,24 @@ describe Document, :pagination_helper, type: :model do
           .not_to include Document.documents_for_entity(entity: entity, page: 2).first.url
       end
     end
+  end
+
+  describe 'documents_count_for_entity' do
+    let(:entity) { create(:entity_org) }
+    let(:other_entity) { create(:entity_person) }
+    let(:relationship) do
+      create(:generic_relationship, entity: entity, related: other_entity)
+    end
+
+    # create 3 documents and references for the entity
+    before do
+      2.times { entity.add_reference(attributes_for(:document)) }
+      relationship.add_reference(attributes_for(:document))
+      other_entity.add_reference(attributes_for(:document))
+    end
+
+    subject { Document.documents_count_for_entity(entity) }
+
+    it { is_expected.to eql 3 }
   end
 end

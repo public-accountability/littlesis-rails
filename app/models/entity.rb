@@ -443,6 +443,12 @@ class Entity < ActiveRecord::Base
     find(1164)
   end
 
+  # Input: <Entity> | String | Integer
+  # Output: Integer
+  def self.entity_id_for(entity)
+    entity.is_a?(Entity) ? entity.id : entity.to_i
+  end
+
   def last_new_user
     last_user.user
   end

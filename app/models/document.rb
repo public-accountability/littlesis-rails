@@ -43,6 +43,32 @@ class Document < ActiveRecord::Base
     false
   end
 
+  # The number of documents for the entity (and it's relationships)_
+  # Effectively, this is the total count for the
+  # query `documents_for_entity`
+  # <Entity> | Integer -> Integer
+  def self.documents_count_for_entity(entity)
+    entity_id = Entity.entity_id_for(entity)
+    sql = <<~SQL
+            SELECT count(distinct entity_document_ids.document_id)
+            FROM (
+                  (
+                    SELECT `references`.document_id
+                    FROM link
+                    INNER JOIN `references` ON `references`.referenceable_id = link.relationship_id AND `references`.referenceable_type = 'Relationship'
+                    WHERE entity1_id = #{entity_id}
+                  )
+                  UNION ALL
+                  (
+                    SELECT document_id
+                    FROM `references`
+                    WHERE referenceable_id = #{entity_id} AND referenceable_type = 'Entity'
+                  )
+            ) AS entity_document_ids
+    SQL
+    connection.execute(sql).first.first
+  end
+
   #
   # TODO: this query is slow and can probably be better optimized
   #
@@ -51,10 +77,8 @@ class Document < ActiveRecord::Base
   # input: entity: <Entity> or Integer, page: Integer, per_page: Integer
   # Output: [Document]
   def self.documents_for_entity(entity:, page:, per_page: Entity::PER_PAGE)
-    entity_id = entity.is_a?(Entity) ? entity.id : entity.to_i
-    limit = per_page
-    offset = ((page.to_i - 1) * limit)
-
+    entity_id = Entity.entity_id_for(entity)
+    offset = ((page.to_i - 1) * per_page)
     # yes, i'm aware this is kind of insane - ziggy
     sql = <<~SQL
             SELECT documents.*
@@ -81,13 +105,12 @@ class Document < ActiveRecord::Base
             ) as documents_for_entity
             INNER JOIN documents ON documents.id = documents_for_entity.document_id
             ORDER BY documents_for_entity.updated_at desc
-            LIMIT #{limit}
+            LIMIT #{per_page}
             OFFSET #{offset}
           SQL
 
     find_by_sql(sql)
   end
-
 
   #-----------------------#
   # PRIVATE CLASS METHODS #
