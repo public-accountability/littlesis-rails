@@ -54,7 +54,9 @@ class ReferencesController < ApplicationController
 
   def cached_recent_source_links
     Rails.cache.fetch("#{@entity.alt_cache_key}/recent_source_links/#{params[:page]}/#{params[:per_page]}", expires_in: 2.weeks) do
-      Reference.recent_source_links(@entity, params[:page].to_i, params[:per_page].to_i)
+      Document
+        .documents_for_entity(entity: @entity, page: params[:page].to_i, per_page: params[:per_page].to_i, exclude_type: :fec)
+        .map { |doc| doc.slice(:name, :url) }
     end
   end
 

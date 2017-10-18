@@ -110,4 +110,24 @@ describe Referenceable, type: :model do
     # What should we do in this situation?
     context 'existing Document, with different name'
   end
+
+  describe 'documents count' do
+    context 'if an entity' do
+      it 'uses Document.documents_count_for_entity' do
+        entity = build(:org)
+        expect(Document).to receive(:documents_count_for_entity).once.with(entity)
+        entity.documents_count
+      end
+    end
+
+    context 'if any referenceable besides entity' do
+      it 'uses documents.count' do
+        list = build(:list)
+        documents_double = double('documents')
+        expect(documents_double).to receive(:count).once
+        expect(list).to receive(:documents).and_return(documents_double)
+        list.documents_count
+      end
+    end
+  end
 end

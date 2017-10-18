@@ -7,7 +7,7 @@ module Referenceable
 
     validate :valid_new_reference?
   end
-
+  
   # def references(options = {})
   #   refs = Reference.where(object_model: self.class.table_name.classify, object_id: id)
   #   refs = refs.order('updated_at DESC') if options[:order]
@@ -35,6 +35,14 @@ module Referenceable
     end
 
     self
+  end
+
+  def documents_count
+    if self.is_a?(Entity)
+      Document.documents_count_for_entity(self)
+    else
+      documents.count
+    end
   end
 
   private

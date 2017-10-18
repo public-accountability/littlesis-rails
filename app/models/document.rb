@@ -14,6 +14,13 @@ class Document < ActiveRecord::Base
     4 => 'Government Document'
   }.freeze
 
+  REF_TYPE_LOOKUP = {
+    :generic => 1,
+    :fec => 2,
+    :newspaper => 3,
+    :government => 4
+  }.freeze
+
   def ref_types_display
     REF_TYPES[ref_type]
   end
@@ -74,11 +81,15 @@ class Document < ActiveRecord::Base
   #
   # To gather the source links documenting an entity
   # we need to include the documents for the entity's relationships as well
-  # input: entity: <Entity> or Integer, page: Integer, per_page: Integer
+  # input: entity: <Entity> or Integer,
+  #        page: Integer,
+  #        per_page: Integer,
+  #        exclude_type: Integer | Symbol
   # Output: [Document]
-  def self.documents_for_entity(entity:, page:, per_page: Entity::PER_PAGE)
+  def self.documents_for_entity(entity:, page:, per_page: Entity::PER_PAGE, exclude_type: nil)
     entity_id = Entity.entity_id_for(entity)
     offset = ((page.to_i - 1) * per_page)
+    exclude_ref_type_sql = exclude_type.present? ? "WHERE documents.ref_type <> #{fetch_ref_type(exclude_type)}" : ''
     # yes, i'm aware this is kind of insane - ziggy
     sql = <<~SQL
             SELECT documents.*
@@ -104,6 +115,7 @@ class Document < ActiveRecord::Base
                 GROUP BY all_entity_refs.document_id
             ) as documents_for_entity
             INNER JOIN documents ON documents.id = documents_for_entity.document_id
+            #{exclude_ref_type_sql}
             ORDER BY documents_for_entity.updated_at desc
             LIMIT #{per_page}
             OFFSET #{offset}
@@ -120,7 +132,17 @@ class Document < ActiveRecord::Base
     Digest::SHA1.hexdigest(url)
   end
 
-  private_class_method :url_to_hash
+  def self.fetch_ref_type(type)
+    if REF_TYPES.keys.include?(type)
+      type
+    elsif REF_TYPE_LOOKUP.keys.include?(type)
+      REF_TYPE_LOOKUP.fetch(type)
+    else
+      raise ArgumentError, "#{type} is an invalid ref_type"
+    end
+  end
+
+  private_class_method :url_to_hash, :fetch_ref_type
 
   #--------------------------#
   # PRIVATE INSTANCE METHODS #

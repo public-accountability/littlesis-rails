@@ -87,12 +87,13 @@ describe Document, :pagination_helper, type: :model do
         entity.add_reference(url: url, name: 'a url')
         # give the first relationship a reference with the same url as the entity
         relationships.first.add_reference(url: url, name: 'a url')
-        relationships.drop(1).each { |r| r.add_reference(attributes_for(:document)) }
+        relationships.second.add_reference(attributes_for(:document))
+        relationships.third.add_reference(attributes_for(:fec_document))
 
-        @oldest_document = Document.last.tap { |d| d.update_column(:updated_at, 1.week.ago) }
+        @oldest_document = Document.last.tap { |d| d.update_column(:updated_at, 1.week.ago) }.reload
       end
 
-      subject { Document.documents_for_entity(entity: entity, page: 1) } 
+      subject { Document.documents_for_entity(entity: entity, page: 1) }
 
       it 'returns 3 documents' do
         expect(subject.length).to eql 3
@@ -100,6 +101,24 @@ describe Document, :pagination_helper, type: :model do
 
       it 'sorts by updated at date' do
         expect(subject.last).to eq @oldest_document
+      end
+
+      context 'excluding documents by type' do
+        it 'can exclude fec documents (using a symbol)' do
+          expect(Document.documents_for_entity(entity: entity, page: 1, exclude_type: :fec).length)
+            .to eql 2
+        end
+
+        it 'can exclude fec documents (using an integer)' do
+          expect(Document.documents_for_entity(entity: entity, page: 1, exclude_type: 2).length)
+            .to eql 2
+        end
+
+        it 'raises error if given a incorrect ref type' do
+          expect {
+            Document.documents_for_entity(entity: entity, page: 1, exclude_type: 1000)
+          }.to raise_error(ArgumentError)
+        end
       end
     end
 
