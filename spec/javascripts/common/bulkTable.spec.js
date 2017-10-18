@@ -1,10 +1,5 @@
 describe('Bulk Table module', () => {
 
-  const testDom =
-        '<div id="test-dom">' +
-          // '<input type="file" id="csv-upload-button">' +
-          '<input id="csv-upload-button">' +
-        '</div>';
 
   const entities = {
     0: {
@@ -20,37 +15,68 @@ describe('Bulk Table module', () => {
   };
 
   const csv =
-        "name, primary_ext, blurb, \n" +
-        `${entities[0].name}, ${entities[0].primary_ext}, ${entities[0].blurb}\n` +
-        `${entities[1].name}, ${entities[1].primary_ext}, ${entities[1].blurb}\n`;
+        "name,primary_ext,blurb\n" +
+        `${entities[0].name},${entities[0].primary_ext},${entities[0].blurb}\n` +
+        `${entities[1].name},${entities[1].primary_ext},${entities[1].blurb}\n`;
 
-  const uploadButtonId = "#csv-upload-button";
+  const testDom =
+        '<div id="test-dom">' +
+          '<input type="file" id="csv-upload-button">' +
+        '</div>';
+
+  const defaultState = {
+    rootId: "test-dom",
+    uploadButtonId: "csv-upload-button"
+  };
 
   beforeEach(() => { $('body').append(testDom); });
   afterEach(() => { $('#test-dom').remove(); });
 
   describe('initialization', () => {
-    beforeEach(() => { bulkTable.init({ rootId: "test-dom" }); });
+
+    let onUploadSpy;
+
+    beforeAll(() => {
+      onUploadSpy = spyOn(bulkTable, 'onUpload');
+      bulkTable.init(defaultState);
+    });
 
     it('stores a reference to its root node', () => {
       expect(bulkTable.get('rootId')).toEqual('test-dom');
     });
+
+    it('stores a reference to the upload button', () => {
+      expect(bulkTable.get('uploadButtonId')).toEqual('csv-upload-button');
+    });
+
+    it('registers file upload handler', () => {
+      expect(onUploadSpy).toHaveBeenCalledWith(
+        defaultState.uploadButtonId,
+        bulkTable.parseEntities
+      );
+    });
   });
 
-  xdescribe('parsing', () => {
+  describe('parsing', () => {
 
-    beforeEach(() => { bulkTable.init("test-dom"); });
+    const file = new File([csv], "test.csv", {type: "text/csv"});
+    let hasFileSpy, getFileSpy;
 
-    xit('parses a TableData object from a csv file', () => {
-      const file = new File([csv], "test.csv", {type: "text/plain;charset=utf-8"});
-      const getFileSpy = spyOn(bulkTable, 'getFile').and.returnValue(file);
-      const btn = document.getElementById('csv-upload-button');
-      btn.trigger('change');
+    beforeEach(() => {
+      hasFileSpy = spyOn(bulkTable, 'hasFile').and.returnValue(true);
+      getFileSpy = spyOn(bulkTable, 'getFile').and.returnValue(file);
+      bulkTable.init(defaultState);
+    });
 
-      expect(bulkTable.get('entitiesById')).toEqual({
-        unpersisted0: entities[0],
-        unpersisted1: entities[1]
-      });
+    it('parses a TableData object from a csv file', done => {
+      $(`#${defaultState.uploadButtonId}`).change();
+      setTimeout(() => {
+        expect(bulkTable.get('entitiesById')).toEqual({
+          newEntity0: entities[0],
+          newEntity1: entities[1]
+        });
+        done();
+      }, 5); // wait 5 millis for upload to complete
     });
   });
 
