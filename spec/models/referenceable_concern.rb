@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Referenceable' do
+xdescribe 'Referenceable' do
   describe '#references' do
     before do
       @org = build(:org, id: rand(100))

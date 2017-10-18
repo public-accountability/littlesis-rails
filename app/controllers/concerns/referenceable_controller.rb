@@ -5,8 +5,8 @@ module ReferenceableController
     existing_reference_params['reference_id'].blank? && existing_reference_params['just_cleaning_up'].blank?
   end
 
-  def reference_params
-    params.require(:reference).permit(:name, :url, :excerpt, :publication_date, :ref_type)
+  def reference_params(param_key = :reference)
+    params.require(param_key).permit(:name, :url, :excerpt, :publication_date, :ref_type)
   end
 
   def existing_reference_params

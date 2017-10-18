@@ -1,19 +1,21 @@
 class ReferencesController < ApplicationController
+  include ReferenceableController
   before_filter :authenticate_user!, except: [:entity]
+  before_action :set_referenceable, only: [:create]
 
   ENTITY_DEFAULTS = { page: 1, per_page: 10 }.freeze
 
   def create
-    ref = Reference.new( reference_params.merge({last_user_id: current_user.sf_guard_user_id}) )
-    if ref.save
-      params[:data][:object_model].constantize.find(params[:data][:object_id].to_i).touch
-      unless excerpt_params['excerpt'].blank?
-        ref.create_reference_excerpt(excerpt_params)
-      end
+    if params[:data][:url].blank?
+      return render json: { errors: { url: ["can't be blank"] } }, status: :bad_request
+    end
+    @referenceable.add_reference(reference_params(:data))
+
+    if @referenceable.valid?
+      @referenceable.update(last_user_id: current_user.sf_guard_user_id)
       head :created
     else
-      # send back errors
-      render json: {errors: ref.errors}, status: :bad_request
+      render json: { errors: @referenceable.errors }, status: :bad_request
     end
   end
 
@@ -60,19 +62,15 @@ class ReferencesController < ApplicationController
     end
   end
 
+  def set_referenceable
+    @referenceable = params[:data][:referenceable_type].constantize.find(params[:data][:referenceable_id].to_i)
+  end
+
   def entity_ids
     if params[:entity_ids].is_a?(String)
       params[:entity_ids].split(",").map(&:to_i).uniq
     else
       params[:entity_ids].map(&:to_i).uniq
     end
-  end
-
-  def reference_params
-    params.require(:data).permit(:object_id, :object_model, :source, :name, :fields, :source_detail, :publication_date, :ref_type)
-  end
-
-  def excerpt_params
-    params.require(:data).permit(:excerpt)
   end
 end
