@@ -19,14 +19,18 @@ describe('Bulk Table module', () => {
         `${entities[0].name},${entities[0].primary_ext},${entities[0].blurb}\n` +
         `${entities[1].name},${entities[1].primary_ext},${entities[1].blurb}\n`;
 
+  const uploadButtonId = "csv-upload-button";
+
   const testDom =
         '<div id="test-dom">' +
-          '<input type="file" id="csv-upload-button">' +
+          `<div id="${uploadButtonId}-container">` +
+            `<input type="file" id="${uploadButtonId}">` +
+          '</div>' +
         '</div>';
-
+  
   const defaultState = {
     rootId: "test-dom",
-    uploadButtonId: "csv-upload-button"
+    uploadButtonId: uploadButtonId
   };
 
   beforeEach(() => { $('body').append(testDom); });
@@ -34,26 +38,56 @@ describe('Bulk Table module', () => {
 
   describe('initialization', () => {
 
-    let onUploadSpy;
+    let onUploadSpy, browserCanOpenFilesSpy;
 
-    beforeAll(() => {
-      onUploadSpy = spyOn(bulkTable, 'onUpload');
-      bulkTable.init(defaultState);
+    beforeEach(() => onUploadSpy = spyOn(bulkTable, 'onUpload'));
+
+    describe('in all cases', () => {
+
+      beforeAll(() => bulkTable.init(defaultState));
+
+      it('stores a reference to its root node', () => {
+        expect(bulkTable.get('rootId')).toEqual('test-dom');
+      });
+
+      it('stores a reference to the upload button', () => {
+        expect(bulkTable.get('uploadButtonId')).toEqual('csv-upload-button');
+      });
+    });
+    
+    describe("when browser can open files", () => {
+      
+      beforeEach(() => {
+        browserCanOpenFilesSpy = spyOn(utility, 'browserCanOpenFiles').and.returnValue(true);
+        bulkTable.init(defaultState);
+      });
+
+      it('registers file upload handler', () => {
+        expect(onUploadSpy).toHaveBeenCalledWith(
+          uploadButtonId,
+          bulkTable.parseEntities
+        );
+      });
     });
 
-    it('stores a reference to its root node', () => {
-      expect(bulkTable.get('rootId')).toEqual('test-dom');
-    });
+    describe('when browser cannot open files', () => {
 
-    it('stores a reference to the upload button', () => {
-      expect(bulkTable.get('uploadButtonId')).toEqual('csv-upload-button');
-    });
+      beforeEach(() => {
+        browserCanOpenFilesSpy = spyOn(utility, 'browserCanOpenFiles').and.returnValue(false);
+        bulkTable.init(defaultState);
+      });
 
-    it('registers file upload handler', () => {
-      expect(onUploadSpy).toHaveBeenCalledWith(
-        defaultState.uploadButtonId,
-        bulkTable.parseEntities
-      );
+      it('registers file upload handler', () => {
+        expect(onUploadSpy).not.toHaveBeenCalled();
+      });
+
+      it('hides the upload button', () => {
+        expect($(`#${uploadButtonId}`)).not.toExist();
+      });
+      
+      it('displays an error message', () => {
+        expect($(`#${uploadButtonId}-container`).html()).toMatch('Your browser');
+      });
     });
   });
 

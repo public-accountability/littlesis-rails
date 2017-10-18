@@ -159,6 +159,20 @@ utility.validURL = function(str) {
  * Determines if the browser has the ability to open and read files
  * @returns {Boolean} 
  */
-utility.fileOpeningAbilities = function() {
+utility.browserCanOpenFiles = function() {
     return (window.File && window.FileReader && window.FileList && window.Blob);
 };
+
+utility.getProperty = function(obj, key) {
+  return Object.getOwnPropertyDescriptor(obj, key).value;
+};
+
+utility.setProperty = function(obj, key, value){
+  return Object.defineProperty(obj, key, {
+    configurable: true,
+    enumerable: true,
+    writeable: true,
+    value: value
+  });
+};
+

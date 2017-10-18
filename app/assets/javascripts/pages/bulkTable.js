@@ -1,14 +1,14 @@
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('jQuery'));
+    module.exports = factory(require('jQuery'), require('../common/utility'));
   } else {
-    root.bulkTable = factory(root.jQuery);
+    root.bulkTable = factory(root.jQuery, root.utility);
   }
-}(this, function ($) {
+}(this, function ($, util) {
 
   var self = {}; // returned at bottom of file
 
-  // STORE MUTATION
+  // STATE MANAGEMENT
   var state = {};
 
   self.init = function(args){
@@ -17,24 +17,32 @@
       rootId:         args.rootId,
       uploadButtonId: args.uploadButtonId
     };
-    self.onUpload(state.uploadButtonId, self.parseEntities);
+    registerEventHandlers();
   };
 
   self.get = function(attr){
-    return getProperty(state, attr);
+    return util.getProperty(state, attr);
   };
+
+  // EVENT HANLDERS
+
+  function registerEventHandlers(){
+    util.browserCanOpenFiles() ?
+      self.onUpload(state.uploadButtonId, self.parseEntities) :
+      replaceUploadButton();
+  }
 
   // FILE HANDLING
 
   self.onUpload = function(uploadButtonId, handleUpload){
     // TODO:  handle browser that can't open files
     $("#" + uploadButtonId).change(function(){
-      if (self.hasFile()) {
+      if (self.hasFile(this)) {
     	var reader = new FileReader();
 	reader.onloadend = function() {  // triggered when file is finished being read
           reader.result ? handleUpload(reader.result): console.error('Error reading csv');
 	};
-	reader.readAsText(self.getFile()); // start reading (will trigger `onloadend` when done)
+	reader.readAsText(self.getFile(this)); // start reading (will trigger `onloadend` when done)
       }
     });
   };
@@ -42,7 +50,7 @@
   self.parseEntities = function(csv){
     const rows = Papa.parse(csv, { header: true, skipEmptyLines: true}).data;
     state.entitiesById = rows.reduce(function(acc, row, idx){
-      return setProperty(acc, "newEntity" + idx, row);
+      return util.setProperty(acc, "newEntity" + idx, row);
     }, {});
   };
 
@@ -54,21 +62,15 @@
     return caller.files[0];
   };
 
-  // UTILITY
+  // RENDERING
 
-  // TODO: extract
-  function getProperty(obj, key) {
-    return Object.getOwnPropertyDescriptor(obj, key).value;
-  }
-
-  // TODO: exract this mouthful!!! bet we don't want to write it ANYWHERE ELSE!!!!!!
-  function setProperty(obj, key, value){
-    return Object.defineProperty(obj, key, {
-      configurable: true,
-      enumerable: true,
-      writeable: true,
-      value: value
-    });
+  function replaceUploadButton(){
+    $('#'+state.uploadButtonId).replaceWith(
+      $('<div>', {
+        id: 'new-entities-cant-upload-msg',
+        text: 'Sorry! Your browser does not support uploading files.'
+      })
+    );
   }
 
   // RETURN
