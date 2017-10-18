@@ -109,10 +109,14 @@ Lilsis::Application.routes.draw do
       get 'street_views'
       get 'members'
       post 'create_map'
+      # entities
+      post 'add_entity'
+      get 'add_entities' => 'lists#new_entities'
+      post 'add_entities' => 'lists#create_entities'
       post 'update_entity'
       post 'remove_entity'
+      # ^- entities
       get 'clear_cache'
-      post 'add_entity'
       post 'delete'
       get 'interlocks'
       get 'companies'
