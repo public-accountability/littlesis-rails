@@ -16,7 +16,6 @@ class ListsController < ApplicationController
   before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
-  
   def self.get_lists(page)
     List
       .select("ls_list.*, COUNT(DISTINCT(ls_list_entity.entity_id)) AS entity_count")
@@ -69,14 +68,11 @@ class ListsController < ApplicationController
     @list.creator_user_id = current_user.id
     @list.last_user_id = current_user.sf_guard_user_id
 
-    if params[:ref][:source].blank?
-      @list.errors.add_on_blank(:name)
-      @list.errors[:base] << "A source URL is required"
-      render action: 'new' and return
-    end
+    @list.validate_reference(reference_params)
 
-    if @list.save
-      @list.add_reference(params[:ref][:source], params[:ref][:name])
+    if @list.valid?
+      @list.save!
+      @list.add_reference(reference_params)
       redirect_to @list, notice: 'List was successfully created.'
     else
       render action: 'new'
@@ -261,6 +257,10 @@ class ListsController < ApplicationController
   # Only allow a trusted parameter "white list" through.
   def list_params
     params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :is_private, :custom_field_name, :short_description, :access)
+  end
+
+  def reference_params
+    params.require(:ref).permit(:url, :name)
   end
 
   def interlocks_query

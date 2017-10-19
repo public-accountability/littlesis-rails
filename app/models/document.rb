@@ -40,12 +40,12 @@ class Document < ActiveRecord::Base
   # input: String
   # output: <Document> | nil
   def self.find_by_url(url)
-    raise Exceptions::InvalidUrlError if url.blank? || !valid_url?(url.strip)
+    raise Exceptions::InvalidUrlError if url.blank? || !valid_url?(url)
     find_by_url_hash url_to_hash(url)
   end
 
   def self.valid_url?(url)
-    URI.parse(url).is_a?(URI::HTTP)
+    URI.parse(url.strip).is_a?(URI::HTTP)
   rescue URI::InvalidURIError
     false
   end

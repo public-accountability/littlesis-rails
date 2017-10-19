@@ -17,6 +17,8 @@ module FeatureGroupMacros
     end
   end
 
+  
+
   def redirects_to_login_page
     it 'redirects to /login' do
       expect(page.current_path).to eql '/login'
@@ -27,6 +29,11 @@ end
 # for use in examples
 module FeatureExampleMacros
   include FeatureSharedMacros
+
+  def successfully_visits_page(path)
+    expect(page.status_code).to eq 200
+    expect(page.current_path).to eql path
+  end
 
   def page_has_selectors(*selectors)
     selectors.each { |s| page_has_selector s }

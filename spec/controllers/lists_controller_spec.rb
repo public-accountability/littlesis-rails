@@ -8,7 +8,7 @@ describe ListsController, :list_helper, type: :controller do
   it { should route(:post, '/lists/1/tags').to(action: :tags, id: 1) }
 
   describe 'GET /lists' do
-   login_user
+    login_user
     before do
       new_list = create(:list)
       new_list2 = create(:list, name: 'my interesting list')
@@ -62,66 +62,57 @@ describe ListsController, :list_helper, type: :controller do
   describe 'POST create' do
     login_user
 
-    context 'When missing name and source' do
-      before do
-        post :create, list: { name: '' }, ref: {}
-      end
-
-      it 'renders new template' do
-        expect(response).to render_template(:new)
-      end
-
-      it 'has two errors' do
-        expect(assigns(:list).errors.size).to eq(2)
-      end
+    context 'When missing name and url' do
+      before { post :create, list: { name: '' }, ref: { url: '' } }
+      specify { expect(response).to render_template(:new) }
+      specify { expect(assigns(:list).errors.size).to eq(2) }
     end
 
     context 'When missing just name or just source' do
       it 'renders new template' do
-        post :create, list: { name: 'a name' }, ref: {}
+        post :create, list: { name: 'a name' }, ref: { url: '' }
         expect(response).to render_template(:new)
       end
 
       it 'has one error - blank name' do
-        post :create, list: { name: '' }, ref: { source: 'http://mysource' }
+        post :create, list: { name: '' }, ref: { url: 'http://mysource' }
         expect(assigns(:list).errors.size).to eq 1
       end
 
       it 'has one error - missing source' do
-        post :create, list: { name: 'the list name' }, ref: {}
+        post :create, list: { name: 'the list name' }, ref: { url: '' }
         expect(assigns(:list).errors.size).to eq 1
       end
     end
 
-    context 'When has both name and source' do
+    context 'submission with name and source' do
       it 'redirects to the newly created list' do
-        post :create,  list: {name: 'list name'}, ref: { source: 'http://mysource' }
+        post :create,  list: {name: 'list name'}, ref: { url: 'http://mysource' }
         expect(response).to redirect_to(assigns(:list))
       end
 
       it 'saves the list' do
         expect do
-          post :create, list: { name: 'list name' }, ref: { source: 'http://mysource' }
+          post :create, list: { name: 'list name' }, ref: { url: 'http://mysource' }
         end.to change { List.count }.by(1)
         expect(List.last).to eql assigns(:list)
       end
 
       it 'create a reference with a name provided' do
         expect do
-          post :create, list: { name: 'list name' }, ref: { source: 'http://mysource' }
+          post :create, list: { name: 'list name' }, ref: { url: 'http://mysource' }
         end.to change { Reference.count }.by(1)
 
-        expect(Reference.last.object_id).to eql assigns(:list).id
-        expect(Reference.last.object_model).to eql 'LsList'
+        expect(Reference.last.referenceable_id).to eql assigns(:list).id
+        expect(Reference.last.referenceable_type).to eql 'List'
         # the reference name is set to be the same as the the source url if no name isprovided
-        expect(Reference.last.name).to eql 'http://mysource'
-        expect(Reference.last.source).to eql 'http://mysource'
+        expect(Reference.last.document.url).to eql 'http://mysource'
       end
 
       it 'creates a reference with a name provided' do
-        post(:create, list: { name: 'list name' }, ref: { source: 'http://mysource', name: 'important source' })
-        expect(Reference.last.name).to eql('important source')
-        expect(Reference.last.source).to eql('http://mysource')
+        post(:create, list: { name: 'list name' }, ref: { url: 'http://mysource', name: 'important source' })
+        expect(Reference.last.document.name).to eql'important source'
+        expect(Reference.last.document.url).to eql 'http://mysource'
       end
     end
 
