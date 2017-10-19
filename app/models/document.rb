@@ -7,6 +7,8 @@ class Document < ActiveRecord::Base
 
   before_validation :trim_whitespace, :set_hash
 
+  PER_PAGE = 20
+
   REF_TYPES = {
     1 => 'Generic',
     2 => 'FEC Filing',
@@ -61,7 +63,7 @@ class Document < ActiveRecord::Base
             FROM (
                   (
                     SELECT `references`.document_id
-                    FROM link
+j                    FROM link
                     INNER JOIN `references` ON `references`.referenceable_id = link.relationship_id AND `references`.referenceable_type = 'Relationship'
                     WHERE entity1_id = #{entity_id}
                   )
@@ -81,15 +83,16 @@ class Document < ActiveRecord::Base
   #
   # To gather the source links documenting an entity
   # we need to include the documents for the entity's relationships as well
-  # input: entity: <Entity> or Integer,
+  # input: entity: <Entity> or Integer | Array[Integer] | Array[Entity],
   #        page: Integer,
   #        per_page: Integer,
   #        exclude_type: Integer | Symbol
   # Output: [Document]
-  def self.documents_for_entity(entity:, page:, per_page: Entity::PER_PAGE, exclude_type: nil)
-    entity_id = Entity.entity_id_for(entity)
+  def self.documents_for_entity(entity:, page:, per_page: PER_PAGE, exclude_type: nil)
+    entity_ids = Array(entity).map { |e| Entity.entity_id_for(e) }
     offset = ((page.to_i - 1) * per_page)
     exclude_ref_type_sql = exclude_type.present? ? "WHERE documents.ref_type <> #{fetch_ref_type(exclude_type)}" : ''
+
     # yes, i'm aware this is kind of insane - ziggy
     sql = <<~SQL
             SELECT documents.*
@@ -102,14 +105,14 @@ class Document < ActiveRecord::Base
     	                          `references`.updated_at as updated_at
                           FROM link
                           INNER JOIN `references` ON `references`.referenceable_id = link.relationship_id AND `references`.referenceable_type = 'Relationship'
-                          WHERE entity1_id = #{entity_id}
+                          WHERE #{entity_where('entity1_id', entity_ids)}
                         )
 	                UNION ALL
                         (
                           SELECT document_id,
                                  updated_at
                           FROM `references`
-                          WHERE referenceable_id = #{entity_id} AND referenceable_type = 'Entity'
+                          WHERE #{entity_where('referenceable_id', entity_ids)} AND referenceable_type = 'Entity'
                         )
                        ) AS all_entity_refs
                 GROUP BY all_entity_refs.document_id
@@ -142,7 +145,18 @@ class Document < ActiveRecord::Base
     end
   end
 
-  private_class_method :url_to_hash, :fetch_ref_type
+  # String | Array -> string
+  def self.entity_where(column, entity_ids)
+    if entity_ids.length == 1
+      "#{column} = #{entity_ids.first}"
+    elsif entity_ids.length > 1
+      "#{column} IN (#{entity_ids.join(',')})"
+    else
+      raise ArgumentError, "entity_ids must contain at least one id"
+    end
+  end
+
+  private_class_method :url_to_hash, :fetch_ref_type, :entity_where
 
   #--------------------------#
   # PRIVATE INSTANCE METHODS #

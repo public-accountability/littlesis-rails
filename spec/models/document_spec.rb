@@ -76,20 +76,24 @@ describe Document, :pagination_helper, type: :model do
     end
     let(:url) { Faker::Internet.unique.url }
 
-    context 'retriving page 1' do
-      # create a reference the entity and each relationship
-      # the first relationship references to the same
-      # document as the entity's refernce
-      # documents_for_entity should return only 3 documents
-      before do
-        # create a random document unrelated to this query
-        create(:document)
+    # create a reference the entity and each relationship
+    # the first relationship references to the same
+    # document as the entity's refernce
+    # documents_for_entity should return only 3 documents
+    let(:add_3_documents) do
+      proc {
         entity.add_reference(url: url, name: 'a url')
         # give the first relationship a reference with the same url as the entity
         relationships.first.add_reference(url: url, name: 'a url')
         relationships.second.add_reference(attributes_for(:document))
         relationships.third.add_reference(attributes_for(:fec_document))
+      }
+    end
 
+    context 'retriving page 1' do
+      before do
+        create(:document) # create a random document unrelated to this query
+        add_3_documents.call
         @oldest_document = Document.last.tap { |d| d.update_column(:updated_at, 1.week.ago) }.reload
       end
 
@@ -123,7 +127,7 @@ describe Document, :pagination_helper, type: :model do
     end
 
     context 'pagination' do
-      stub_page_limit(Entity, 2)
+      stub_page_limit(Document, 2)
 
       before do
         3.times { entity.add_reference(attributes_for(:document)) }
@@ -137,6 +141,28 @@ describe Document, :pagination_helper, type: :model do
         expect(Document.documents_for_entity(entity: entity, page: 2).length).to eql 1
         expect(Document.documents_for_entity(entity: entity, page: 1).map(&:url).to_set)
           .not_to include Document.documents_for_entity(entity: entity, page: 2).first.url
+      end
+    end
+
+    context 'retrives documents for multiple entities at once' do
+      # add a second entity, a relationship, and a reference + document for each
+      # the query for both should return 5
+      let(:second_entity) { create(:entity_person) }
+      let(:second_entity_relationship) do
+        Relationship.create!(category_id: 1, entity: second_entity, related: create(:entity_org))
+      end
+
+      before do
+        create(:document) # create a random document unrelated to this query
+        add_3_documents.call # add 3 documents for the first entity
+        # add two for the second:
+        second_entity.add_reference(attributes_for(:document))
+        second_entity_relationship.add_reference(attributes_for(:document))
+      end
+
+      it 'returns 5 documents' do
+        expect(Document.documents_for_entity(entity: [entity.id, second_entity.id], page: 1).length)
+          .to eql 5
       end
     end
   end
