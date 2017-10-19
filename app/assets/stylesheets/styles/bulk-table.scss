@@ -6,11 +6,19 @@ $maroon: rgba(204, 84, 84, 1);
 $table-border-radius: .2em;
 
 #bulk-add-container {
+    h1 {
+        border-bottom: 1px solid gray;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+    }
+    #bulk-add-notifications {
+        font-style: italic;
+        color: gray;
+    }
     table {
         width: 100%;
         border-collapse: separate !important;
         border-spacing: 0;
-        margin: 1em;
         td, th {
             border: 1px solid gray;
             padding: .5em;

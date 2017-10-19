@@ -26,66 +26,86 @@
     input: 'text'
   }];
 
+  var ids = {
+    uploadButton:  "bulk-add-upload-button",
+    notifications: "bulk-add-notifications"
+  };
+
   self.init = function(args){
-    state = {
-      // TODO: (ag|18-Oct-2017)
-      // It would be nice to parameterize here:
-      //   1. resource type
-      //   2. columns by resource type
-      // so table could be reused for any resource (not just entities)
+    // TODO: (ag|18-Oct-2017)
+    // It would be nice to parameterize here:
+    //   1. resource type
+    //   2. columns by resource typeself.
+    // so table could be reused for any resource (not just entities)
+    state = Object.assign(state, {
+      // derrived
       rootId:         args.rootId,
       resource:       args.resource || "entities",
       entitiesById:   args.entitiesById || {},
       rowIds:         Object.keys(args.entitiesById || {}),
-      uploadButtonId: args.uploadButtonId,
       endpoint:       args.endpoint || "/",
-      title:          args.title || "Bulk add"
-    };
-    registerEventHandlers();
+      title:          args.title || "Bulk add",
+      // deterministic
+      canUpload:      true,
+      notification:   ""
+    });
     self.render();
+    detectUploadSupport();
   };
 
   self.get = function(attr){
     return util.getProperty(state, attr);
   };
 
-  function hasRows(){
+  state.hasRows = function(){
     return !util.isEmpty(state.rowIds);
-  }
+  };
 
-  function addEntity(entity){
+  state.addEntity = function(entity){
     util.setProperty(state.entitiesById, entity.id, entity);
     state.rowIds.push(entity.id);
   };
 
-  // EVENT HANLDERS
+  state.disableUpload = function(){
+    state.canUpload = false;
+  };
 
-  function registerEventHandlers(){
-    !util.browserCanOpenFiles() ?
-      replaceUploadButton() :
-      self.onUpload(self.ingestEntities);
+  state.setNotification = function(msg){
+    state.notification = msg;
+  };
+
+  // ENVIRONMENT DETECTION
+
+  function detectUploadSupport(){
+    if (!util.browserCanOpenFiles()) {
+      state.disableUpload();
+      state.setNotification('Your browser does not support uploading files to this page.');
+      self.render();
+    }
   }
 
   // FILE HANDLING
 
-  self.onUpload = function(handleUpload){
-    $("#" + state.uploadButtonId).change(function(){
-      if (self.hasFile(this)) {
-    	var reader = new FileReader();
-	reader.onloadend = function() {  // triggered when file is finished being read
-          reader.result ? handleUpload(reader.result): console.error('Error reading csv');
-	};
-	reader.readAsText(self.getFile(this)); // start reading (will trigger `onloadend` when done)
-      }
-    });
+  function handleUploadThen(processFile, caller){
+    if (self.hasFile(caller)) {
+      var reader = new FileReader();
+      reader.onloadend = function() {  // triggered when file is finished being read
+        reader.result ? processFile(reader.result): console.error('Error reading csv');
+      };
+      reader.readAsText(self.getFile(caller)); // start reading (will trigger `onloadend` when done)
+    }
   };
 
-  self.ingestEntities = function(csv){
+  function ingestEntities(csv){
     const entities = Papa.parse(csv, { header: true, skipEmptyLines: true}).data;
-    entities.forEach((e,idx) => addEntity(Object.assign(e, { id: "newEntity"+idx })));
+    entities.forEach((e,idx) => state.addEntity(Object.assign(e, { id: "newEntity"+idx })));
+    state.disableUpload();
     self.render();
   };
 
+  // expose below 2 functions for testing  seams
+  // (cannot mutate caller.files for security reasons)
+  
   self.hasFile = function(caller){
     return Boolean(caller.files[0]);
   };
@@ -97,10 +117,43 @@
   // RENDERING
 
   self.render = function(){
-    if(hasRows()){
-      $('#'+state.rootId).append(table());
-    }
+    $('#' + state.rootId).empty();
+    $('#' + state.rootId)
+      .append(header())
+      .append(notifications())
+      .append(state.canUpload ? uploadContainer() : null)
+      .append(state.hasRows()? table() : null);
   };
+
+  function header(){
+    return $('<h1>', { text: state.title });
+  }
+
+  function notifications(){
+    return $('<div>', {
+      id: ids.notifications,
+      text: state.notification
+    });
+  };
+
+  function uploadContainer(){
+    return $('<div>', {id: 'bulk-add-upload-container'})
+      .append(uploadButton());
+  }
+
+  function uploadButton(){
+    return $('<label>', {
+      class: 'btn btn-primary btn-file',
+      text: 'Upload CSV'
+    }).append(
+      $('<input>', {
+        id:    ids.uploadButton,
+        type:  "file",
+        style: "display:none",
+        change: function() { handleUploadThen(ingestEntities, this); }
+      })
+    );
+  }
 
   function table(){
     return $('<table>', { id: 'bulk-add-table'})
@@ -131,17 +184,6 @@
             });
           })
         );
-      })
-    );
-  }
-
-  // MISC
-
-  function replaceUploadButton(){
-    $('#'+state.uploadButtonId).replaceWith(
-      $('<div>', {
-        id: 'new-entities-cant-upload-msg',
-        text: 'Sorry! Your browser does not support uploading files.'
       })
     );
   }

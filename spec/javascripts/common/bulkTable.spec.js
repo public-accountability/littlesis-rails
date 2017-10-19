@@ -31,26 +31,23 @@ describe('Bulk Table module', () => {
     input: 'text'
   }];
 
+  var ids = {
+    uploadButton:    "bulk-add-upload-button",
+    notifications: "bulk-add-notifications"
+  };
+
   const csv =
         "name,primary_ext,blurb\n" +
         `${entities.newEntity0.name},${entities.newEntity0.primary_ext},${entities.newEntity0.blurb}\n` +
         `${entities.newEntity1.name},${entities.newEntity1.primary_ext},${entities.newEntity1.blurb}\n`;
 
-  const uploadButtonId = "csv-upload-button";
-
-  const testDom =
-        '<div id="test-dom">' +
-          `<div id="${uploadButtonId}-container">` +
-            `<input type="file" id="${uploadButtonId}">` +
-          '</div>' +
-        '</div>';
+  const testDom ='<div id="test-dom"></div>';
   
   const defaultState = {
     rootId:   "test-dom",
     resource: "entities",
     endpoint: "/lists/1/new_entities",
-    title:    "Add entities to List of Biggest Jerks",
-    uploadButtonId: uploadButtonId
+    title:    "Add entities to List of Biggest Jerks"
   };
 
   beforeEach(() => { $('body').append(testDom); });
@@ -58,93 +55,88 @@ describe('Bulk Table module', () => {
 
   describe('initialization', () => {
 
-    let onUploadSpy, browserCanOpenFilesSpy;
+    beforeAll(() => bulkTable.init(defaultState));
 
-    beforeEach(() => onUploadSpy = spyOn(bulkTable, 'onUpload'));
-
-    describe('in all cases', () => {
-
-      beforeAll(() => bulkTable.init(defaultState));
-
-      it('stores a reference to its root node', () => {
-        expect(bulkTable.get('rootId')).toEqual('test-dom');
-      });
-
-      it('stores a reference to the upload button', () => {
-        expect(bulkTable.get('uploadButtonId')).toEqual('csv-upload-button');
-      });
-
-      it('initializes an empty entites hash table', () =>{
-        expect(bulkTable.get('entitiesById')).toEqual({});
-      });
-
-      it('initializes an empty entites rowIds array', () =>{
-        expect(bulkTable.get('rowIds')).toEqual([]);
-      });
-
-      it('stores a title', () => {
-        expect(bulkTable.get('title')).toEqual("Add entities to List of Biggest Jerks");
-      });
-
-      it('stores an endpoint', () => {
-        expect(bulkTable.get('endpoint')).toEqual("/lists/1/new_entities");
-      });
-    });
-    
-    describe("when browser can open files", () => {
-      
-      beforeEach(() => {
-        browserCanOpenFilesSpy = spyOn(utility, 'browserCanOpenFiles').and.returnValue(true);
-        bulkTable.init(defaultState);
-      });
-
-      it('registers file upload handler', () => {
-        expect(onUploadSpy).toHaveBeenCalledWith(bulkTable.ingestEntities);
-      });
+    it('stores a reference to its root node', () => {
+      expect(bulkTable.get('rootId')).toEqual('test-dom');
     });
 
-    describe('when browser cannot open files', () => {
+    it('initializes an empty entites hash table', () =>{
+      expect(bulkTable.get('entitiesById')).toEqual({});
+    });
 
-      beforeEach(() => {
-        browserCanOpenFilesSpy = spyOn(utility, 'browserCanOpenFiles').and.returnValue(false);
-        bulkTable.init(defaultState);
+    it('initializes an empty entites rowIds array', () =>{
+      expect(bulkTable.get('rowIds')).toEqual([]);
+    });
+
+    it('stores a title', () => {
+      expect(bulkTable.get('title')).toEqual("Add entities to List of Biggest Jerks");
+    });
+
+    it('stores an endpoint', () => {
+      expect(bulkTable.get('endpoint')).toEqual("/lists/1/new_entities");
+    });
+
+    describe('detecting upload support', () => {
+
+      let browserCanOpenFilesSpy;
+
+      describe("when browser can open files", () => {
+
+        beforeEach(() => {
+          browserCanOpenFilesSpy = spyOn(utility, 'browserCanOpenFiles').and.returnValue(true);
+          bulkTable.init(defaultState);
+        });
+
+        it('shows an upload button', () => {
+          expect($(`#${ids.uploadButton}`)).toExist();
+        });
       });
 
-      it('registers file upload handler', () => {
-        expect(onUploadSpy).not.toHaveBeenCalled();
-      });
+      describe('when browser cannot open files', () => {
 
-      it('hides the upload button', () => {
-        expect($(`#${uploadButtonId}`)).not.toExist();
-      });
-      
-      it('displays an error message', () => {
-        expect($(`#${uploadButtonId}-container`).html()).toMatch('Your browser');
+        beforeEach(() => {
+          browserCanOpenFilesSpy = spyOn(utility, 'browserCanOpenFiles').and.returnValue(false);
+          bulkTable.init(defaultState);
+        });
+
+        it('hides the upload button', () => {
+          expect($(`#${ids.uploadButton}`)).not.toExist();
+        });
+
+        it('displays an error message', () => {
+          expect($(`#${ids.notifications}`).html()).toMatch('Your browser');
+        });
       });
     });
   });
 
-  describe('uploading', () => {
+  describe('uploading csv', () => {
 
     const file = new File([csv], "test.csv", {type: "text/csv"});
     let hasFileSpy, getFileSpy;
 
-    beforeEach(() => {
+    beforeEach(done => {
       hasFileSpy = spyOn(bulkTable, 'hasFile').and.returnValue(true);
       getFileSpy = spyOn(bulkTable, 'getFile').and.returnValue(file);
       bulkTable.init(defaultState);
+      $(`#${ids.uploadButton}`).change();
+      setTimeout(done, 1); // wait for file to upload
     });
 
-    it('parses and stores entity data from a csv file', done => {
-      $(`#${defaultState.uploadButtonId}`).change();
-      setTimeout(() => {
-        expect(bulkTable.get('entitiesById')).toEqual({
-          newEntity0: entities['newEntity0'],
-          newEntity1: entities['newEntity1']
-        });
-        //expect(bulkTable.get('rowIds')).toEqual(Object.keys(entities));
-        done();
-      }, 5); // wait 5 millis for upload to complete
+    it('stores entity data', () => {
+      expect(bulkTable.get('entitiesById')).toEqual({
+        newEntity0: entities['newEntity0'],
+        newEntity1: entities['newEntity1']
+      });
+    });
+
+    it('stores row ordering', () => {
+      expect(bulkTable.get('rowIds')).toEqual(Object.keys(entities));
+    });
+
+    it('hides upload button', () => {
+      expect($(`#${ids.uploadButton}`)).not.toExist();
     });
   });
 
