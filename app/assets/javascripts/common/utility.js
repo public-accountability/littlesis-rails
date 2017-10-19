@@ -163,6 +163,9 @@ utility.browserCanOpenFiles = function() {
     return (window.File && window.FileReader && window.FileList && window.Blob);
 };
 
+
+// OBJECT UTILITIES
+
 utility.getProperty = function(obj, key) {
   return Object.getOwnPropertyDescriptor(obj, key).value;
 };
@@ -174,5 +177,9 @@ utility.setProperty = function(obj, key, value){
     writeable: true,
     value: value
   });
+};
+
+utility.isEmpty = function (obj){
+  return !Object.keys(obj).length;
 };
 

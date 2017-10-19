@@ -51,4 +51,38 @@ describe('utility', function(){
     });
   });
 
+  describe('object utilities', () => {
+
+    const obj = { a: 1, b: 2};
+
+    describe('#getProperty', () => {
+      it('reads an arbitrary key from an object', () => {
+        expect(utility.getProperty(obj, 'a')).toEqual(1);
+      });
+    });
+
+    describe('#setProperty', () => {
+      it('sets the value for an arbitary key on an object', () => {
+        expect(utility.setProperty(obj, 'c', 3)).toEqual({ a: 1, b: 2, c: 3 });
+      });
+
+      it('allows the value for key to be subsequently mutated', () => {
+        const _obj = utility.setProperty(obj, 'c', 3);
+        utility.setProperty(_obj, 'c', 4);
+        expect(_obj.c).toEqual(4);
+      });
+    });
+
+    describe('#isEmpty', () => {
+      it("discovers if an object is empty", () => {
+        expect(utility.isEmpty(obj)).toEqual(false);
+        expect(utility.isEmpty({})).toEqual(true);
+      });
+
+      it('discovers if an array is empty', () => {
+        expect(utility.isEmpty([])).toEqual(true);
+        expect(utility.isEmpty([1, 2])).toEqual(false);
+      });
+    });
+  });
 });

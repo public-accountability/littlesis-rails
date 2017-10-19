@@ -11,32 +11,63 @@
   // STATE MANAGEMENT
   var state = {};
 
+  // TODO: parameterize these!
+  var columns = [{
+    label: 'Name',
+    attr:  'name',
+    input: 'text'
+  },{
+    label: 'Entity Type',
+    attr:  'primary_ext',
+    input: 'select'
+  },{
+    label: 'Description',
+    attr:  'blurb',
+    input: 'text'
+  }];
+
+
   self.init = function(args){
     state = {
+      // TODO: (ag|18-Oct-2017)
+      // It would be nice to parameterize here:
+      //   1. resource type
+      //   2. columns by resource type
+      // so table could be reused for any resource (not just entities)
       entitiesById:   args.entitiesById || {},
+      rowIds:         Object.keys(args.entitiesById || {}),
       rootId:         args.rootId,
       uploadButtonId: args.uploadButtonId
     };
     registerEventHandlers();
+    self.render();
   };
 
   self.get = function(attr){
     return util.getProperty(state, attr);
   };
 
+  function hasRows(){
+    return !util.isEmpty(state.rowIds);
+  }
+
+  function addEntity(entity){
+    util.setProperty(state.entitiesById, entity.id, entity);
+    state.rowIds.push(entity.id);
+  };
+
   // EVENT HANLDERS
 
   function registerEventHandlers(){
-    util.browserCanOpenFiles() ?
-      self.onUpload(state.uploadButtonId, self.parseEntities) :
-      replaceUploadButton();
+    !util.browserCanOpenFiles() ?
+      replaceUploadButton() :
+      self.onUpload(self.ingestEntities);
   }
 
   // FILE HANDLING
 
-  self.onUpload = function(uploadButtonId, handleUpload){
-    // TODO:  handle browser that can't open files
-    $("#" + uploadButtonId).change(function(){
+  self.onUpload = function(handleUpload){
+    $("#" + state.uploadButtonId).change(function(){
       if (self.hasFile(this)) {
     	var reader = new FileReader();
 	reader.onloadend = function() {  // triggered when file is finished being read
@@ -47,11 +78,10 @@
     });
   };
 
-  self.parseEntities = function(csv){
-    const rows = Papa.parse(csv, { header: true, skipEmptyLines: true}).data;
-    state.entitiesById = rows.reduce(function(acc, row, idx){
-      return util.setProperty(acc, "newEntity" + idx, row);
-    }, {});
+  self.ingestEntities = function(csv){
+    const entities = Papa.parse(csv, { header: true, skipEmptyLines: true}).data;
+    entities.forEach((e,idx) => addEntity(Object.assign(e, { id: "newEntity"+idx })));
+    self.render();
   };
 
   self.hasFile = function(caller){
@@ -63,6 +93,47 @@
   };
 
   // RENDERING
+
+  self.render = function(){
+    if(hasRows()){
+      $('#'+state.rootId).append(table());
+    }
+  };
+
+  function table(){
+    return $('<table>', { id: 'bulk-add-table'})
+      .append(thead())
+      .append(tbody());
+  };
+
+  function thead(){
+    return $('<thead>').append(
+      $('<tr>').append(
+        columns.map(function(c) {
+          return $('<th>', {
+            text: c.label
+          });
+        })
+      )
+    );
+  }
+
+  function tbody(){
+    return $('<tbody>').append(
+      state.rowIds.map(function(id){
+        var entity = state.entitiesById[id];
+        return $('<tr>').append(
+          columns.map(function(c){
+            return $('<td>', {
+              text: entity[c.attr]
+            });
+          })
+        );
+      })
+    );
+  }
+
+  // MISC
 
   function replaceUploadButton(){
     $('#'+state.uploadButtonId).replaceWith(

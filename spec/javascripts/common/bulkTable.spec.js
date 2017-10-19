@@ -2,22 +2,39 @@ describe('Bulk Table module', () => {
 
 
   const entities = {
-    0: {
+    newEntity0: {
+      id: 'newEntity0',
       name: "Lew Basnight",
       primary_ext: "Person",
       blurb: "Adjacent to the invisible"
     },
-    1: {
+    newEntity1: {
+      id: 'newEntity1',
       name: "Chums Of Chance",
       primary_ext: "Org",
       blurb: "Do not -- strictly speaking -- exist"
     }
   };
 
+  // TODO: sure would be nice to import this from app code and have a single source of truth!
+  const columns = [{
+    label: 'Name',
+    attr:  'name',
+    input: 'text'
+  },{
+    label: 'Entity Type',
+    attr:  'primary_ext',
+    input: 'select'
+  },{
+    label: 'Description',
+    attr:  'blurb',
+    input: 'text'
+  }];
+
   const csv =
         "name,primary_ext,blurb\n" +
-        `${entities[0].name},${entities[0].primary_ext},${entities[0].blurb}\n` +
-        `${entities[1].name},${entities[1].primary_ext},${entities[1].blurb}\n`;
+        `${entities.newEntity0.name},${entities.newEntity0.primary_ext},${entities.newEntity0.blurb}\n` +
+        `${entities.newEntity1.name},${entities.newEntity1.primary_ext},${entities.newEntity1.blurb}\n`;
 
   const uploadButtonId = "csv-upload-button";
 
@@ -53,6 +70,14 @@ describe('Bulk Table module', () => {
       it('stores a reference to the upload button', () => {
         expect(bulkTable.get('uploadButtonId')).toEqual('csv-upload-button');
       });
+
+      it('initializes an empty entites hash table', () =>{
+        expect(bulkTable.get('entitiesById')).toEqual({});
+      });
+
+      it('initializes an empty entites rowIds array', () =>{
+        expect(bulkTable.get('rowIds')).toEqual([]);
+      });
     });
     
     describe("when browser can open files", () => {
@@ -63,10 +88,7 @@ describe('Bulk Table module', () => {
       });
 
       it('registers file upload handler', () => {
-        expect(onUploadSpy).toHaveBeenCalledWith(
-          uploadButtonId,
-          bulkTable.parseEntities
-        );
+        expect(onUploadSpy).toHaveBeenCalledWith(bulkTable.ingestEntities);
       });
     });
 
@@ -91,7 +113,7 @@ describe('Bulk Table module', () => {
     });
   });
 
-  describe('parsing', () => {
+  describe('uploading', () => {
 
     const file = new File([csv], "test.csv", {type: "text/csv"});
     let hasFileSpy, getFileSpy;
@@ -102,13 +124,14 @@ describe('Bulk Table module', () => {
       bulkTable.init(defaultState);
     });
 
-    it('parses a TableData object from a csv file', done => {
+    it('parses and stores entity data from a csv file', done => {
       $(`#${defaultState.uploadButtonId}`).change();
       setTimeout(() => {
         expect(bulkTable.get('entitiesById')).toEqual({
-          newEntity0: entities[0],
-          newEntity1: entities[1]
+          newEntity0: entities['newEntity0'],
+          newEntity1: entities['newEntity1']
         });
+        //expect(bulkTable.get('rowIds')).toEqual(Object.keys(entities));
         done();
       }, 5); // wait 5 millis for upload to complete
     });
@@ -139,11 +162,50 @@ describe('Bulk Table module', () => {
     it('requires a person to have a first and last name');
   });
 
-  describe('rendering', () => {
+  describe('rendering table from store data', () => {
+
+    describe('with no entities', () => {
+
+      beforeEach(() => bulkTable.init(defaultState));
+
+      it('does not show a table', () =>{
+        expect($('#test-dom table#bulk-add-table')).not.toExist();
+      });
+    });
 
     describe('with no matches', () => {
-      it('renders an html table from a TableData object');
-      it('re-renders a table row if its contents are edited');
+
+      beforeEach(() => {
+        bulkTable.init(Object.assign({}, defaultState, { entitiesById: entities }));
+      });
+
+      describe('bulk add table', () => {
+
+        it('exists', () => {
+          expect($('#test-dom table#bulk-add-table')).toExist();
+        });
+
+        it('has columns labeling entity fields', () => {
+          const thTags = $('#bulk-add-table thead tr th').toArray();
+          expect(thTags).toHaveLength(3);
+          thTags.forEach((th, idx) => expect(th).toHaveText(columns[idx].label));
+        });
+
+        it('has rows showing values of entity fields', () => {
+          const rows = $('#bulk-add-table tbody tr').toArray();
+          expect(rows).toHaveLength(2);
+          rows.forEach((row, idx) => {
+            expect(row.textContent).toEqual( // row.textContent concatenates all cell text with no spaces
+              columns.map(col => entities[`newEntity${idx}`][col.attr] ).join("")
+            );
+          });
+        });
+      });
+
+      describe('making edits', () => {
+        it('has inputs specific to each field');
+        it('updates the store when input values change');
+      });
     });
 
     describe('with matches', () => {
