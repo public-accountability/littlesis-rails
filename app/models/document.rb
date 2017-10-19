@@ -63,7 +63,7 @@ class Document < ActiveRecord::Base
             FROM (
                   (
                     SELECT `references`.document_id
-j                    FROM link
+                    FROM link
                     INNER JOIN `references` ON `references`.referenceable_id = link.relationship_id AND `references`.referenceable_type = 'Relationship'
                     WHERE entity1_id = #{entity_id}
                   )
@@ -89,7 +89,7 @@ j                    FROM link
   #        exclude_type: Integer | Symbol
   # Output: [Document]
   def self.documents_for_entity(entity:, page:, per_page: PER_PAGE, exclude_type: nil)
-    entity_ids = Array(entity).map { |e| Entity.entity_id_for(e) }
+    entity_ids = Array.wrap(entity).map { |e| Entity.entity_id_for(e) }
     offset = ((page.to_i - 1) * per_page)
     exclude_ref_type_sql = exclude_type.present? ? "WHERE documents.ref_type <> #{fetch_ref_type(exclude_type)}" : ''
 
@@ -145,7 +145,7 @@ j                    FROM link
     end
   end
 
-  # String | Array -> string
+  # String | Array[Integer] -> string
   def self.entity_where(column, entity_ids)
     if entity_ids.length == 1
       "#{column} = #{entity_ids.first}"

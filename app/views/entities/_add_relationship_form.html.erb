@@ -47,7 +47,7 @@
 	    <label for="reference-type" class="col-sm-2 control-label">Type</label>
 	    <div class="col-sm-6">
 		<select class="form-control" id="reference-type">
-		    <% Reference.ref_type_options.each do |ref_type| %>
+		    <% Document.ref_type_options.each do |ref_type| %>
 			<%= content_tag('option', ref_type[0], value: ref_type[1]) %>
 		    <% end  %>
 		</select>

@@ -100,49 +100,6 @@ describe ReferencesController, type: :controller do
     end
   end
 
-  describe '/recent' do
-    login_user
-
-    let(:person1) { create(:entity_person) }
-    let(:person2) { create(:entity_person) }
-
-    def sample_get
-      expect(Reference).to receive(:last).with(2).and_return(['last']).once
-      expect(Reference).to receive(:recent_references).and_return(['recent'])
-      get(:recent, entity_ids: [person1.id, person2.id])
-    end
-
-    it 'has status 200' do
-      sample_get
-      expect(response).to have_http_status(200)
-    end
-
-    it 'has correct json' do
-      sample_get
-      expect(response.body).to eq ["last", "recent"].to_json
-    end
-
-    it 'send correct information to recent references' do
-      expect(Reference).to receive(:last).with(2).and_return(['last'])
-      input = [{ :class_name => 'Entity', :object_ids => [person1.id, person2.id] }]
-      expect(Reference).to receive(:recent_references).with(input, 20).and_return(['recent'])
-      get(:recent, entity_ids: [person1.id, person2.id])
-      expect(response.body).to eq ["last", "recent"].to_json
-    end
-
-    it 'send correct information to recent references if there is a relationship' do
-      r = Relationship.create!(entity1_id: person1.id, entity2_id: person2.id, category_id: 12)
-      expect(Reference).to receive(:last).with(2).and_return(['last'])
-      input = [
-        { class_name: 'Entity', object_ids: [person1.id, person2.id] },
-        { class_name: 'Relationship', object_ids: [r.id] }
-      ]
-      expect(Reference).to receive(:recent_references).with(input, 20).and_return(['recent'])
-      get(:recent, entity_ids: [person1.id, person2.id])
-      expect(response.body).to eq ["last", "recent"].to_json
-    end
-  end
-
   describe 'entity' do
     it 'returns bad request if missing entity_id' do
       get :entity
