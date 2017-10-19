@@ -192,13 +192,13 @@ var addRelationship = (function(utility) {
   function recentReferences(entities) {
     var newReferenceOption = $('<option>', {value: 'NEW', selected: "selected", text: "Add a new source link" });
     $.getJSON('/references/recent', {'entity_ids': entities })
-      .done(function(references) {
+      .done(function(documents) {
 	$('#existing-sources-select').html(
-	  references.slice(0,10).map(function(ref){
+	  documents.slice(0,10).map(function(doc){
 	    return $('<option>', {
-   	      value: ref.id,
-   	      text: ref.name
-	    }).data(ref); // add reference data to element
+   	      value: doc.id,
+   	      text: doc.name
+	    }).data(doc); // add reference data to element
 	  }).concat(newReferenceOption)
 	);
 	fillInReferenceFields();
@@ -211,11 +211,11 @@ var addRelationship = (function(utility) {
   function fillInReferenceFields() {
     document.getElementById('existing-sources-select')
       .addEventListener('change', function(){
-	var ref = $(this).find(":selected").data();
-	$('#reference-name').val(ref.name);
-	$('#reference-url').val(ref.source);
-	$('#reference-date').val(ref.publication_date);
-	$('#reference-excerpt').val(ref.source_detail);
+	var doc = $(this).find(":selected").data();
+	$('#reference-name').val(doc.name);
+	$('#reference-url').val(doc.url);
+	$('#reference-date').val(doc.publication_date);
+	$('#reference-excerpt').val(doc.excerpt);
       });
   }
 

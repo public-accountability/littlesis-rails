@@ -35,10 +35,9 @@ class ReferencesController < ApplicationController
   # It also includes the most recent references regardless if they are
   # associated with the entities or not
   # This is used on the add relationship page
-  # JSON result:  [ { id:, name:, url: } ]
   def recent
-    docs = Reference.last(2).map(&:document) + Document.documents_for_entity(entity: entity_ids, page: 1, per_page: 10)
-    render json: docs.uniq.map { |d| d.slice(:id, :name, :url) }
+    docs = Reference.last(2).map(&:document) + Document.documents_for_entity(entity: entity_ids, page: 1, per_page: 10, exclude_type: :fec)
+    render json: docs.uniq.map { |d| d.slice(:id, :name, :url, :publication_date, :excerpt) }
   end
 
   # Returns recent source links for the given entity
