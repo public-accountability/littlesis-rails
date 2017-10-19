@@ -2,8 +2,10 @@
   <input type = file id="csv-upload-button" text="upload">
   <script>
    bulkTable.init({
-     rootId: "bulk-add-container",
-     uploadButtonId: "csv-upload-button"
+     rootId:   "bulk-add-container",
+     resource: "entities",
+     title:    "Add entities to <%= raw(@list.name) %>",
+     endpoint: "<%= raw(@list.name) %>"
    });
   </script>
 </div>

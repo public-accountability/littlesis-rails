@@ -26,7 +26,6 @@
     input: 'text'
   }];
 
-
   self.init = function(args){
     state = {
       // TODO: (ag|18-Oct-2017)
@@ -34,10 +33,13 @@
       //   1. resource type
       //   2. columns by resource type
       // so table could be reused for any resource (not just entities)
+      rootId:         args.rootId,
+      resource:       args.resource || "entities",
       entitiesById:   args.entitiesById || {},
       rowIds:         Object.keys(args.entitiesById || {}),
-      rootId:         args.rootId,
-      uploadButtonId: args.uploadButtonId
+      uploadButtonId: args.uploadButtonId,
+      endpoint:       args.endpoint || "/",
+      title:          args.title || "Bulk add"
     };
     registerEventHandlers();
     self.render();

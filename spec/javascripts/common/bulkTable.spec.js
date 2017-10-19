@@ -46,7 +46,10 @@ describe('Bulk Table module', () => {
         '</div>';
   
   const defaultState = {
-    rootId: "test-dom",
+    rootId:   "test-dom",
+    resource: "entities",
+    endpoint: "/lists/1/new_entities",
+    title:    "Add entities to List of Biggest Jerks",
     uploadButtonId: uploadButtonId
   };
 
@@ -77,6 +80,14 @@ describe('Bulk Table module', () => {
 
       it('initializes an empty entites rowIds array', () =>{
         expect(bulkTable.get('rowIds')).toEqual([]);
+      });
+
+      it('stores a title', () => {
+        expect(bulkTable.get('title')).toEqual("Add entities to List of Biggest Jerks");
+      });
+
+      it('stores an endpoint', () => {
+        expect(bulkTable.get('endpoint')).toEqual("/lists/1/new_entities");
       });
     });
     
