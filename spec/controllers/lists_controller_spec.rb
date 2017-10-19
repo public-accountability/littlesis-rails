@@ -6,8 +6,8 @@ describe ListsController, :list_helper, type: :controller do
 
   it { should route(:delete, '/lists/1').to(action: :destroy, id: 1) }
   it { should route(:post, '/lists/1/tags').to(action: :tags, id: 1) }
-  it { should route(:get, '/lists/1/add_entities').to(action: :new_entities, id: 1) }
-  it { should route(:post, '/lists/1/add_entities').to(action: :create_entities, id: 1) }
+  it { should route(:get, '/lists/1/new_entities').to(action: :new_entities, id: 1) }
+  it { should route(:post, '/lists/1/create_entities').to(action: :create_entities, id: 1) }
 
   describe 'GET /lists' do
     login_user
