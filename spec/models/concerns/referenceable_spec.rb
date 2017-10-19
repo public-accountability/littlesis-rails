@@ -26,6 +26,45 @@ describe Referenceable, type: :model do
     end
   end
 
+  describe 'validate_reference' do
+    let(:referenceable) { TestReferenceable.new }
+    
+    it 'invalidates the model if the reference is blank' do
+      referenceable.validate_reference(url: '', name: 'blank url')
+      expect(referenceable.valid?).to be false
+      expect(referenceable.errors[:base]).to include 'A source URL is required'
+    end
+
+    it 'invalidates the model if the reference is not a valid url' do
+      referenceable.validate_reference('url' => 'this is a bad url', 'name' => 'bad url')
+      expect(referenceable.valid?).to be false
+      expect(referenceable.errors[:base]).to include '"this is a bad url" is not a valid url'
+    end
+
+    it 'invalidates the model if the document name is too long' do
+      referenceable.validate_reference(url: Faker::Internet.url, name: ('X' * 256) )
+      expect(referenceable.valid?).to be false
+      expect(referenceable.errors[:base]).to include "name is too long (maximum is 255 characters)"
+    end
+
+    it 'rereverts the invalidation if called again with valid attributes' do
+      referenceable.validate_reference(url: '', name: 'blank url')
+      expect(referenceable.valid?).to be false
+      referenceable.validate_reference(url: Faker::Internet.url, name: 'good url')
+      expect(referenceable.valid?).to be true
+    end
+
+    it 'does NOT invalidate the model if the refrence has a valid url and valid name' do
+      referenceable.validate_reference(url: Faker::Internet.url, name: 'good url')
+      expect(referenceable.valid?).to be true
+    end
+
+    it 'does NOT invalidate the model if the refrence has a valid url and empty name' do
+      referenceable.validate_reference(url: Faker::Internet.url)
+      expect(referenceable.valid?).to be true
+    end
+  end
+
   describe 'add_reference' do
     let(:referenceable) { TestReferenceable.new }
     let(:url) { Faker::Internet.unique.url }
@@ -48,10 +87,6 @@ describe Referenceable, type: :model do
       expect { add_reference.call }.to raise_error(ActiveRecord::RecordNotSaved)
     end
 
-    it 'throws if attributes do not include the key :url' do
-      expect { referenceable.add_reference(foo: 'bar') }.to raise_error(ArgumentError)
-    end
-
     context 'submitted with invalid url' do
       let(:url) { 'not-a-url' }
 
@@ -63,7 +98,7 @@ describe Referenceable, type: :model do
         expect(referenceable.valid?).to be true
         add_reference.call
         expect(referenceable.valid?).to be false
-        expect(referenceable.errors[:base].first).to eql 'not-a-url is not a valid url'
+        expect(referenceable.errors[:base].first).to eql '"not-a-url" is not a valid url'
       end
     end
 
