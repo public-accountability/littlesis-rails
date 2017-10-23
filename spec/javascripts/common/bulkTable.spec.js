@@ -16,6 +16,20 @@ describe('Bulk Table module', () => {
     }
   };
 
+  const searchResultFor= entity => {
+    [0,1,2].map(n => {
+      const id = Math.floor(Math.random() * 10000);
+      const ext = ["Org", "Person"][Math.floor(Math.random() * 2)];
+      return {
+        id:          id,
+        name:        `${entity} dupe name ${n}`,
+        description: `dupe description ${1}`,
+        primary_ext:  ext,
+        url:         `/${ext.toLowerCase()}/${id}/${entity.name.replace(" ", "")}`
+      };
+    });
+  };
+
   // TODO: sure would be nice to import this from app code and have a single source of truth!
   const columns = [{
     label: 'Name',
@@ -50,12 +64,21 @@ describe('Bulk Table module', () => {
     title:    "Add entities to List of Biggest Jerks"
   };
 
-  beforeEach(() => { $('body').append(testDom); });
+  beforeAll(() => {
+    // stub search api call w/ 1 successful, 1 failed result
+    spyOn(api, 'searchEntity').and.callFake((query) => ({
+      [entities.newEntity0.name]: () => Promise.resolve(searchResultFor(entities.newEntity0)),
+      [entities.newEntity1.name]: () => Promise.resolve([])
+    }[query]()));
+  });
+  beforeEach(() => $('body').append(testDom));
   afterEach(() => { $('#test-dom').remove(); });
 
   describe('initialization', () => {
 
-    beforeAll(() => bulkTable.init(defaultState));
+    beforeAll(() => {
+      bulkTable.init(defaultState);
+    });
 
     it('stores a reference to its root node', () => {
       expect(bulkTable.get('rootId')).toEqual('test-dom');
@@ -141,11 +164,24 @@ describe('Bulk Table module', () => {
   });
 
   describe('matching', () => {
-    // TODO: new batch endpoint would be nice...
-    it('queries LS for pre-existing entities from TableData object');
-    it('marks matched entities in TableData object');
-    it('stores list of possible matches in TableData row');
-    it('allows user to choose to use a matched entitiy or create new entity');
+
+    describe('handling match query results', () => {
+
+      beforeAll(done => {
+        bulkTable.init(defaultState);
+        bulkTable.ingestEntities(csv);
+        setTimeout(done, 1); // wait for mock search results to return
+      });
+      
+      it('stores list of possible matches in store', () => {
+        expect(bulkTable.get('matches')).toEqual({
+          newEntity0: searchResultFor(entities.newEntity0),
+          newEntity1: []
+        });
+      });
+
+      it('allows user to choose to use a matched entitiy or create new entity');
+    });
 
     describe('user chooses matched entity', () => {
       it('marks entity row as matched');
@@ -231,7 +267,7 @@ describe('Bulk Table module', () => {
     });
 
     describe('there are no invalid fields', () => {
-
+      // TODO: new batch endpoint would be nice...
       it('submits a batch of entities to a list endpoint');
 
       describe('all submissions worked', () => {

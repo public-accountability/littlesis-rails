@@ -40,11 +40,14 @@
     state = Object.assign(state, {
       // derrived
       rootId:         args.rootId,
-      resource:       args.resource || "entities",
+      endpoint:       args.endpoint || "/",
+      resource:       args.resource || "entities", //TODO: remove
+      title:          args.title || "Bulk add", //TODO: extract to rails view
+      // TODO: extract next 3 fields into `entities sub-field`
       entitiesById:   args.entitiesById || {},
       rowIds:         Object.keys(args.entitiesById || {}),
-      endpoint:       args.endpoint || "/",
-      title:          args.title || "Bulk add",
+      matches:        {},
+      // TODO: ---^
       // deterministic
       canUpload:      true,
       notification:   ""
@@ -52,6 +55,8 @@
     self.render();
     detectUploadSupport();
   };
+
+  // getters
 
   self.get = function(attr){
     return util.getProperty(state, attr);
@@ -61,9 +66,18 @@
     return !util.isEmpty(state.rowIds);
   };
 
+  // setters
+
   state.addEntity = function(entity){
     util.setProperty(state.entitiesById, entity.id, entity);
     state.rowIds.push(entity.id);
+    api.searchEntity(entity.name).then(function(results){
+      state.addEntityMatches(entity.id, results);
+    });
+  };
+
+  state.addEntityMatches = function (id, matches){
+    state.matches[id] = matches;
   };
 
   state.disableUpload = function(){
@@ -96,7 +110,8 @@
     }
   };
 
-  function ingestEntities(csv){
+  // exposed for testing seam for post-upload behavior
+  function ingestEntities (csv){
     const entities = Papa.parse(csv, { header: true, skipEmptyLines: true}).data;
     entities.forEach((e,idx) => state.addEntity(Object.assign(e, { id: "newEntity"+idx })));
     state.disableUpload();
@@ -187,6 +202,12 @@
       })
     );
   }
+
+  // MISC
+
+  // expose ingestEntities as testing seam for post-upload logic
+  // (we want to act as though the csv has already uploaded w/o having to mock file-level browser behavior)
+  self.ingestEntities = ingestEntities;
 
   // RETURN
   return self;
