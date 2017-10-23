@@ -74,7 +74,10 @@ class RelationshipsController < ApplicationController
       return head :unauthorized
     end
 
-    return head :bad_request unless Reference.new(reference_params).validate_before_create.empty?
+    if !Document.valid_url?(reference_params.fetch(:url)) || reference_params.fetch(:name).blank?
+      return head :bad_request
+    end
+    
     @errors = []
     @new_relationships = []
 
@@ -109,6 +112,7 @@ class RelationshipsController < ApplicationController
       attributes = relationship.slice('name', 'blurb', 'primary_ext').merge('last_user_id' => current_user.sf_guard_user_id)
       entity = Entity.create(attributes)
     else
+
       entity = Entity.find_by_id(relationship.fetch('name').to_i)
     end
 
@@ -133,16 +137,18 @@ class RelationshipsController < ApplicationController
 
   def create_bulk_relationship(entity1, entity2, relationship)
     r = Relationship.new(relationship_attributes(entity1, entity2, relationship))
-    r.save!
-    # if the relationship is not persisted (meaning an error occurred)
-    # creating the reference for that relationship
-    Reference.create(reference_params.merge(object_id: r.id, object_model: 'Relationship'))
-    # some relationships will have additional fields:
-    if extension?
-      # get only the category fields from the relationship hash
-      new_category_attr = relationship.delete_if { |key| (r.attributes.keys + ['name', 'primary_ext', 'blurb']).include? key }
-      # update relationship category - we don't have to update if nothing has changed
-      r.get_category.update(new_category_attr) unless r.category_attributes == new_category_attr
+    r.validate_reference(reference_params)
+    if r.valid?
+      r.save!
+      r.add_reference(reference_params)
+      if extension?
+        # get only the category fields from the relationship hash
+        new_category_attr = relationship.delete_if { |key| (r.attributes.keys + ['name', 'primary_ext', 'blurb']).include? key }
+        # update relationship category - we don't have to update if nothing has changed
+        r.get_category.update!(new_category_attr) unless r.category_attributes == new_category_attr
+      end
+    else
+      raise ActiveRecord::ActiveRecordError, r.errors.full_messages
     end
     @new_relationships << r.as_json(:url => true, :name => true)
   end
