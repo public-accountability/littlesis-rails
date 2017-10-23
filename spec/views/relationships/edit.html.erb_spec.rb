@@ -241,7 +241,7 @@ describe 'relationships/edit.html.erb', type: :view do
     end
    end
  
-  describe 'Reference error' do
+  xdescribe 'Reference error' do
     before do
       @rel = build(:relationship, category_id: 12, id: rand(100), updated_at: Time.now)
       @ref = build(:ref, name: 'name')
@@ -273,6 +273,8 @@ describe 'relationships/edit.html.erb', type: :view do
     it 'has common fields' do
       has_common_fields
     end
+
+    
 
     # TODO: Relationship error div is not showing up
     xit 'has two error divs' do

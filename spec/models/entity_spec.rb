@@ -725,6 +725,58 @@ describe Entity, :tag_helper  do
     end
   end
 
+  describe 'Link Count' do
+    let(:person) { create(:entity_person) }
+
+    describe 'entity#update_link_count' do
+      it 'updates link count for entity with no relationships' do
+        expect(Entity.find(person.id).link_count).to eq 0
+        person.update_link_count
+        expect(Entity.find(person.id).link_count).to eq 0
+      end
+
+      it 'updates link count after a new relationship is created' do
+        expect(Entity.find(person.id).link_count).to eq 0
+        Relationship.create!(entity: person, related: create(:entity_person), category_id: 12)
+        person.update_link_count
+        expect(Entity.find(person.id).link_count).to eq 1
+      end
+    end
+
+    describe 'after adding a relationship, the link count is changed for both entities' do
+      let!(:entity1) { create(:entity_person) }
+      let!(:entity2) { create(:entity_person) }
+
+      let(:create_relationship) do
+        proc { Relationship.create!(entity: entity1, related: entity2, category_id: 12) }
+      end
+
+      it "increases entity1's link count" do
+        expect(&create_relationship).to change { Entity.find(entity1.id).link_count }.by(1)
+      end
+
+      it "increases entity2's link count" do
+        expect(&create_relationship).to change { Entity.find(entity2.id).link_count }.by(1)
+      end
+    end
+
+    describe 'after removing a relationship, the link count is decreased for both entities' do
+      let!(:entity1) { create(:entity_person) }
+      let!(:entity2) { create(:entity_person) }
+      let!(:relationship) { Relationship.create!(entity: entity1, related: entity2, category_id: 12) }
+      
+      it "decreases entity1's link count" do
+        expect { relationship.soft_delete }
+          .to change { Entity.find(entity1.id).link_count }.by(-1)
+      end
+
+      it "decreases entity2's link count" do
+        expect { relationship.soft_delete }
+          .to change { Entity.find(entity2.id).link_count }.by(-1)
+      end
+    end
+  end
+
   describe 'Tagging' do
     it 'can tag a person with oil' do
       person = create(:entity_person)
