@@ -75,31 +75,31 @@ describe RelationshipsController, type: :controller do
         expect(JSON.parse(response.body)).to eql ({ "relationship_id" => Relationship.last.id})
       end
 
-      it 'should create a new relationship' do
+      it 'creates a new relationship' do
         expect { post_request }.to change { Relationship.count }.by(1)
       end
 
-      it 'should create a new Reference' do
+      it 'creates a new Reference' do
         expect { post_request }.to change { Reference.count }.by(1)
+        last_ref = Reference.last
+        expect(last_ref.referenceable_type).to eql 'Relationship'
+        expect(last_ref.referenceable_id). to eql Relationship.last.id
       end
 
-      it 'should create or find a document with the correct fields' do
+      it 'creates or finds a document with the correct fields' do
         post_request
         doc = Reference.last.document
         expect(doc.name).to eql 'Interesting website'
+        expect(doc.publication_date).to eql '2016-01-01'
         expect(doc.ref_type).to eql 1
-        expect(doc.referenceable_type).to eql 'Relationship'
-        expect(doc.referenceable_id). to eql Relationship.last.id
       end
 
       it 'changes updated_at of entities' do
         e1.update_column(:updated_at, 1.day.ago)
         e2.update_column(:updated_at, 1.day.ago)
-        e1_updated_at = e1.updated_at
-        e2_updated_at = e2.updated_at
         post_request
-        expect(Entity.find(e1.id).updated_at.to_i).not_to eql e1_updated_at.to_i
-        expect(Entity.find(e2.id).updated_at.to_i).not_to eql e2_updated_at.to_i
+        expect(Entity.find(e1.id).updated_at).to be > 1.minute.ago
+        expect(Entity.find(e2.id).updated_at).to be > 1.minute.ago
       end
 
       it 'updates last_user_id' do
@@ -117,28 +117,25 @@ describe RelationshipsController, type: :controller do
 
       it 'sends error json with bad relationship params' do
         post :create, example_params.tap { |x| x[:relationship].delete(:category_id) }
-        expect(JSON.parse(response.body)).to have_key 'relationship'
-        expect(JSON.parse(response.body)).to have_key 'reference'
-        expect(JSON.parse(response.body)['relationship']).to have_key 'category_id'
+        expect(JSON.parse(response.body)).to have_key 'category_id'
+        expect(JSON.parse(response.body)).not_to have_key 'base'
       end
 
-      it 'responds with 400 if missing reference source' do
-        post :create, example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:source) }
+      it 'responds with 400 if missing reference url' do
+        post :create, example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:url) }
         expect(response.status).to eq 400
       end
 
       it 'sends error json with reference params' do
-        post :create,  example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:source) }
-        expect(JSON.parse(response.body)).to have_key 'relationship'
-        expect(JSON.parse(response.body)).to have_key 'reference'
-        expect(JSON.parse(response.body)['reference']). to have_key 'source'
-        expect(JSON.parse(response.body)['relationship']).not_to have_key 'category_id'
+        post :create,  example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:url) }
+        expect(JSON.parse(response.body)).to have_key 'base'
+        expect(JSON.parse(response.body)).not_to have_key 'category_id'
       end
 
       it 'sends error json with reference & relationship params' do
-        post :create, example_params.tap { |x| x[:reference].delete(:source) }.tap { |x| x[:relationship].delete(:category_id) }
-        expect(JSON.parse(response.body)['reference']).to have_key 'source'
-        expect(JSON.parse(response.body)['relationship']).to have_key 'category_id'
+        post :create, example_params.tap { |x| x[:reference].delete(:url) }.tap { |x| x[:relationship].delete(:category_id) }
+        expect(JSON.parse(response.body)).to have_key 'base'
+        expect(JSON.parse(response.body)).to have_key 'category_id'
       end
     end
 
@@ -181,7 +178,7 @@ describe RelationshipsController, type: :controller do
       end
 
       it do
-        should permit(:name, :source, :source_detail, :publication_date, :ref_type)
+        should permit(:name, :url, :excerpt, :publication_date, :ref_type)
                 .for(:create, params: example_params).on(:reference)
       end
     end
@@ -203,11 +200,11 @@ describe RelationshipsController, type: :controller do
 
   describe 'GET /relationships/id/edit' do
     login_user
-
+    let(:relationship) { build :relationship }
+    
     context 'editing a reference' do
       before do
-        @rel = build :relationship
-        expect(Relationship).to receive(:find).with('1').and_return(@rel)
+        expect(Relationship).to receive(:find).with('1').and_return(build(:relationship))
         get :edit, id: 1
       end
 
@@ -218,8 +215,7 @@ describe RelationshipsController, type: :controller do
     context 'editing a reference directly after created it (new_ref = true)' do
       context 'when there is no reference' do
         before do
-          @rel = build :relationship
-          expect(Relationship).to receive(:find).with('1').and_return(@rel)
+          expect(Relationship).to receive(:find).with('1').and_return(relationship)
           get :edit, id: 1, new_ref: 'true'
         end
 
@@ -232,11 +228,11 @@ describe RelationshipsController, type: :controller do
       end
 
       context 'when there is a reference' do
+        let(:reference) { build(:reference) }
+
         before do
-          @rel = build(:relationship)
-          @ref = build(:relationship_ref)
-          expect(@rel).to receive(:references).and_return(double(:last => @ref))
-          expect(Relationship).to receive(:find).with('1').and_return(@rel)
+          expect(relationship).to receive(:references).and_return(double(:last => reference))
+          expect(Relationship).to receive(:find).with('1').and_return(relationship)
           get :edit, id: 1, new_ref: 'true'
         end
 
@@ -244,7 +240,7 @@ describe RelationshipsController, type: :controller do
         it { should render_template(:edit) }
 
         it 'sets @selected_ref' do
-          expect(assigns(:selected_ref)).to eql @ref.id
+          expect(assigns(:selected_ref)).to eql reference.id
         end
       end
     end

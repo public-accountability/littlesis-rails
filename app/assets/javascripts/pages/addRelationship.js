@@ -316,54 +316,33 @@ var addRelationship = (function(utility) {
   
   /**
    Possible errors from the server:
-     errors.relationship.category_id
-     errors.relationship.entity1_id
-     errors.relationship.entity2_id
-     errors.reference.source
-     errors.referene.name
+     errors.category_id
+     errors.entity1_id
+     errors.entity2_id
+     errors.base
 
      We are going to mostly deal with three errors:
       - missing category_id
       - missing or invalid source url
-      - missing reference name
 
      Although rails is going to send us back errors, we will also try 
      to catch the errors before submitting.
 
-      This is the general format, although the message isn't used.
-     { 
-       relationship: {
-          "field": "message"   
-        },
-       reference: {
-          "field": message"
-         }
-      }
-
      {} -> 
    */
   function displayErrors(errorData) {
-
     var alerts = [];
-    var errors = $.extend({reference: {}, relationship: {} }, errorData);
+    var errors = errorData;
 
-    if (Boolean(errors.reference.source)) {
-      if (errors.reference.source === 'INVALID') {
-	alerts.push(alertDiv('Invalid data ', "Please enter a correct url"));
-      } else {
-	alerts.push(alertDiv('Missing information ', "Please submit a url"));
-      }
+    if (Boolean(errors.base)) {
+      alerts.push(alertDiv(errors.base));
     }
 
-    if (Boolean(errors.reference.name)) {
-      alerts.push(alertDiv('Missing information ', 'Please include a name for the source'));
-    }
-
-    if (Boolean(errors.relationship.category_id)) {
+    if (Boolean(errors.category_id)) {
       alerts.push(alertDiv('Missing information ', "Don't forget to select a relationship category"));
     } 
     
-    if ( Boolean(errors.relationship.entity1_id) || Boolean(errors.relationship.entity1_id) ) {
+    if ( Boolean(errors.entity1_id) || Boolean(errors.entity2_id) ) {
       alerts.push(alert('Something went wrong :( ', "Sorry about that! Please contact admin@littlesis.org"));
     }
 
