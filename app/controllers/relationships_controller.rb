@@ -15,22 +15,21 @@ class RelationshipsController < ApplicationController
 
   # PATCH /relationships/:id
   def update
-    if existing_reference_params['reference_id'].blank? && existing_reference_params['just_cleaning_up'].blank?
-      # If user has not checked the 'just cleaning up' or selected an existing reference
-      # then a  new reference must be created
-      @reference = Reference.new(reference_params)
-      # if not valid: re-render the edit page with the reference error
-      return render :edit unless @reference.validate_before_create.empty?
-      # if the reference is valid assign the other attribute required
-      @reference.assign_attributes(object_id: @relationship.id, object_model: "Relationship")
+    @relationship.assign_attributes(prepare_update_params(update_params))
+    # If user has not checked the 'just cleaning up' or selected an existing reference
+    # then a  new reference must be created
+    if @relationship.valid?
+      @relationship.add_reference(reference_params) if need_to_create_new_reference
+
+      if @relationship.valid?
+        @relationship.save!
+        update_entity_last_user
+        # successful response
+        return redirect_to relationship_path(@relationship)
+      end
+      
     end
-    if @relationship.update_attributes prepare_update_params(update_params)
-      @reference.save unless @reference.nil? # save the reference
-      update_entity_last_user
-      redirect_to relationship_path(@relationship)
-    else
-      render :edit
-    end
+    return render :edit
   end
 
   # Creates a new Relationship and a Reference
@@ -199,7 +198,7 @@ class RelationshipsController < ApplicationController
   end
 
   #################
-  # Other Helpres #
+  # Other Helpers #
   #################
 
   def extension?
