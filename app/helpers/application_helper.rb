@@ -159,10 +159,15 @@ module ApplicationHelper
     link_to name, entity.legacy_url(action), class: html_class
   end
 
+  # Input: [References], Integer | nil
   def references_select(references, selected_id = nil)
     return nil if references.nil?
-    options_array = references.collect { |r| [r.name, r.id] }
-    select_tag('reference_existing', options_for_select(options_array, selected_id), include_blank: true, class: 'selectpicker', name: 'reference[reference_id]')
+    options_array = references.collect { |r| [r.document.name, r.id] }
+    select_tag(
+      'reference_existing',
+      options_for_select(options_array, selected_id),
+      { include_blank: true, class: 'selectpicker', name: 'reference[reference_id]' }
+    )
   end
 
   def user_admin?
