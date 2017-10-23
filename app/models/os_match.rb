@@ -88,16 +88,12 @@ class OsMatch < ActiveRecord::Base
   # must happen after relationship is created
   def create_reference
     unless relationship.nil?
-      ref = Reference.find_or_create_by!(
-        name: os_donation.reference_name,
-        source: os_donation.reference_source,
-        publication_date: os_donation.date.to_s,
-        object_model: 'Relationship',
-        object_id: relationship.id,
-        ref_type: 2,
-        last_user_id: 1
-      )
-      update_attribute(:reference, ref)
+      rel = relationship.add_reference({
+                                   name: os_donation.reference_name,
+                                   url: os_donation.reference_url,
+                                   publication_date: os_donation.date.to_s,
+                                   ref_type: 2 })
+      update_attribute(:reference, rel.references.last)
     end
   end
 
@@ -127,7 +123,7 @@ class OsMatch < ActiveRecord::Base
       relationship.donation.destroy
       relationship.links.each(&:delete)
     end
-    reference.destroy
+    reference.try(:destroy)
   end
 
   # input <OsCommittee>

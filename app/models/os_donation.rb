@@ -15,6 +15,10 @@ class OsDonation < ActiveRecord::Base
   end
 
   def reference_source
+    reference_url
+  end
+
+  def reference_url
     if microfilm.nil?
       "http://www.fec.gov/finance/disclosure/advindsea.shtml"
     else

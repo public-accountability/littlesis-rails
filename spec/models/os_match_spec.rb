@@ -17,12 +17,16 @@ describe OsMatch, type: :model do
   it { should belong_to(:os_donation) }
   it { should belong_to(:donation) }
 
+
+  RefOne = { name: "FEC Filing 11020480483", url: "http://images.nictusa.com/cgi-bin/fecimg/?11020480483" }
+  RefTwo = { name: "FEC Filing 10020853341", url: "http//images.nictusa.com/cgi-bin/fecimg/?10020853341" }
+
   def model_setup
     @loeb = create(:loeb)
     @nrsc = create(:nrsc)
     @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc) # relationship model
     @loeb_os_donation = create(:loeb_donation_one)
-    @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: 'Relationship')
+    @loeb_donation.add_reference(RefOne)
     @donation_class = create(:donation, relationship_id: @loeb_donation.id)
     @user = create_basic_user
     @os_match = OsMatch.create(
@@ -30,7 +34,7 @@ describe OsMatch, type: :model do
       donation_id: @donation_class.id,
       donor_id: @loeb.id,
       recip_id: @nrsc.id,
-      reference_id: @loeb_ref_one.id,
+      reference_id: nil,
       relationship_id: @loeb_donation.id,
       matched_by: @user.id
     )
@@ -213,14 +217,15 @@ describe OsMatch, type: :model do
 
       it 'creates a new reference' do
         expect(Reference.count).to eql(@ref_count + 1)
+        expect(@ref.referenceable_type).to eql "Relationship"
+        expect(@ref.referenceable_id).to eql @os_match.relationship.id
       end
 
-      it 'Reference has correct info' do
-        expect(@ref.name).to eql "FEC Filing 11020480483"
-        expect(@ref.source).to eql "http://docquery.fec.gov/cgi-bin/fecimg/?11020480483"
-        expect(@ref.object_model).to eql "Relationship"
-        expect(@ref.object_id).to eql @os_match.relationship.id
-        expect(@ref.ref_type).to eql 2
+      it 'documennt has correct info' do
+        doc = @ref.document
+        expect(doc.name).to eql "FEC Filing 11020480483"
+        expect(doc.url).to eql "http://docquery.fec.gov/cgi-bin/fecimg/?11020480483"
+        expect(doc.ref_type).to eql 2
       end
 
       it 'sets reference association on OsMatch' do
@@ -333,20 +338,26 @@ describe OsMatch, type: :model do
       @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc) # relationship model
       @loeb_os_donation = create(:loeb_donation_one)
       @loeb_os_donation_two = create(:loeb_donation_two)
-      @loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
-      @loeb_ref_two = create(:loeb_ref_two, object_id: @loeb_donation.id, object_model: "Relationship")
+      @loeb_donation.add_reference(RefOne)
+      @loeb_donation.add_reference(RefTwo)
+      #@loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
+      #@loeb_ref_two = create(:loeb_ref_two, object_id: @loeb_donation.id, object_model: "Relationship")
       # @donation_class = create(:donation, relationship_id: @loeb_donation.id)
+      @ref_one_id = @loeb_donation.references.first.id
+      @ref_two_id = @loeb_donation.references.last.id
+       
       @os_match = OsMatch.create(
         os_donation_id: @loeb_os_donation.id,
         donor_id: @loeb.id,
         recip_id: @nrsc.id,
-        reference_id: @loeb_ref_one.id,
-        relationship_id: @loeb_donation.id)
+        reference_id: @ref_one_id,
+        relationship_id: @loeb_donation.id )
+      
       @os_match_2 = OsMatch.create(
         os_donation_id: @loeb_os_donation_two.id,
         donor_id: @loeb.id,
         recip_id: @nrsc.id,
-        reference_id: @loeb_ref_two.id,
+        reference_id: @ref_two_id,
         relationship_id: @loeb_donation.id)
       @loeb_donation.update_os_donation_info
     end
@@ -369,7 +380,7 @@ describe OsMatch, type: :model do
       end
 
       it 'destroys the reference' do
-        expect(Reference.where(id: @loeb_ref_two.id).exists?).to be false
+        expect(Reference.where(id: @ref_two_id).exists?).to be false
       end
 
       it 'deletes the match' do
@@ -385,7 +396,6 @@ describe OsMatch, type: :model do
       end
 
       it 'destroys the relationship if the match was the only one' do
-        expect(Relationship.where(id: @loeb_donation.id).exists?).to be false
         expect(Relationship.unscoped.find(@loeb_donation.id).is_deleted).to be true
       end
 
@@ -398,7 +408,7 @@ describe OsMatch, type: :model do
       end
 
       it 'destroys the reference' do
-        expect(Reference.where(id: @loeb_ref_one.id).exists?).to be false
+        expect(Reference.where(id: @ref_one_id).exists?).to be false
       end
 
       it 'deletes the match' do
