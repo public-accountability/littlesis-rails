@@ -27,7 +27,7 @@ describe NyMatch, type: :model do
       allow(r).to receive(:add_reference)
       r
     end
-    
+
     context 'creating new matches' do
       # before(:all) { ThinkingSphinx::Deltas.suspend! }
       # after(:all) {  ThinkingSphinx::Deltas.resume! }
@@ -153,8 +153,8 @@ describe NyMatch, type: :model do
       disclosure = create(:ny_disclosure, amount1: 50)
       match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected)
       expect { match.create_or_update_relationship }.to change { Reference.count }.by(1)
-      expect(Reference.last.source).to eq disclosure.reference_link
-      expect(Reference.last.name).to eq disclosure.reference_name
+      expect(Reference.last.document.url).to eq disclosure.reference_link
+      expect(Reference.last.document.name).to eq disclosure.reference_name
     end
   end
 
@@ -185,33 +185,33 @@ describe NyMatch, type: :model do
   end
 
   describe '#create_reference' do
-    let(:donor) { create(:person) }
+    let(:donor) { create(:entity_person) }
     let(:elected) { create(:elected) }
     let(:filer) { build(:ny_filer, filer_id: '9876', name: 'some committee') }
     let(:disclosure) { build(:ny_disclosure, amount1: 50, ny_filer: filer, e_year: '2017', report_id: 'B') }
     let(:rel) { create(:relationship, category_id: 5, entity: donor, related: elected, amount: 1000, description1: "NYS Campaign Contribution" ) }
-    
-    it 'adds the ny disclosure referece link' do
-      expect(disclosure).to receive(:reference_link).and_return('ny_state_ref_link')
-      match = create(:ny_match, ny_disclosure: disclosure, donor: donor, recipient: elected)
+    let(:url) { Faker::Internet.url }
 
+    it 'adds the ny disclosure referece link' do
+      expect(disclosure).to receive(:reference_link).and_return(url)
+      match = create(:ny_match, ny_disclosure: disclosure, donor: donor, recipient: elected)
       expect { match.send(:create_reference, rel) }.to change { Reference.count }.by(1)
-      expect(Reference.last.source).to eq 'ny_state_ref_link'
+      expect(Reference.last.document.url).to eql url
     end
 
-    it 'creates a second reference if the url is different' do
-      expect(disclosure).to receive(:reference_link).and_return('ny_state_ref_link_1')
-      expect(disclosure).to receive(:reference_link).and_return('ny_state_ref_link_2')
+    it 'creates a second reference and document if the url is different' do
+      expect(disclosure).to receive(:reference_link).and_return('http://ny_state_ref_link_1.gov')
+      expect(disclosure).to receive(:reference_link).and_return('http://ny_state_ref_link_2.gov')
       match = create(:ny_match, ny_disclosure: disclosure, donor: donor, recipient: elected)
 
       expect { match.send(:create_reference, rel) }.to change { Reference.count }.by(1)
-      expect(Reference.last.source).to eq 'ny_state_ref_link_1'
+      expect(Reference.last.document.url).to eq 'http://ny_state_ref_link_1.gov'
       expect { match.send(:create_reference, rel) }.to change { Reference.count }.by(1)
-      expect(Reference.last.source).to eq 'ny_state_ref_link_2'
+      expect(Reference.last.document.url).to eq 'http://ny_state_ref_link_2.gov'
     end
 
     it 'does not create a recond reference if the url is the same' do
-      expect(disclosure).to receive(:reference_link).twice.and_return('ny_state_ref_link')      
+      expect(disclosure).to receive(:reference_link).twice.and_return(url)
       match = create(:ny_match, ny_disclosure: disclosure, donor: donor, recipient: elected)
 
       expect { match.send(:create_reference, rel) }.to change { Reference.count }.by(1)
