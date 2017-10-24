@@ -1,4 +1,5 @@
 require 'csv'
+require Rails.root.join('lib', 'task-helpers', 'query.rb')
 
 namespace :query do
   desc "Saves Os Donations for each member of a list as csv"
@@ -17,6 +18,27 @@ namespace :query do
     puts "#{donations.count} donations saved to #{file_path}"
   end
   
+  desc "Saves NY State donations from list"
+  task :ny_donations_from_list, [:list_id] => :environment do |t, args|
+    list_id = args[:list_id]
+    file_path = Rails.root.join('data', "list_#{list_id}_ny_donations_#{Date.today}.csv")
+
+    get_ny_donations = proc do |e|
+      NyMatch.where(donor_id: e.id).map do |match|
+        recipient_entity = match.ny_filer_entity&.entity
+        recipient_name = recipient_entity&.name
+        recipient_id = recipient_entity&.id
+        match.info.merge(:donor_entity_id => e.id, :recipient_name => recipient_name, :recipient_entity_id => recipient_id)
+      end
+    end
+
+    donations = List.find(list_id).entities.collect(&get_ny_donations).flatten
+
+    sorted_donations = donations.sort_by { |h| [h[:entity_id], -h[:amount]] }
+
+    Query.save_hash_array_to_csv(file_path, sorted_donations)
+  end
+
   desc "get board members for given list"
   task :board_members_from_list, [:list_id] =>  :environment do |t, args|
     list_id = args[:list_id]
