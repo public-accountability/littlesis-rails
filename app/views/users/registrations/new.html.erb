@@ -80,6 +80,20 @@
                     <%= devise_error_messages! %>
                     <%= f.fields_for :sf_guard_user_profile do |profile_fields| %>
 
+		      <% if @signup_errors.present? %>
+			<div class="form-group">
+			  <div class="col-sm-10">
+			    <div class="alert alert-danger" role="alert" id="signup-errors-alert">
+			      <h5><strong>Sorry!</strong> We could not create your account for the following reasons:</h5>
+			      <% @signup_errors.each do |msg| %>
+				<p><%= msg %></p>
+			      <% end %>
+			    </div>
+			  </div>
+			</div>
+		      <% end %>
+		      
+
 			<div class="form-group">
                             <%= profile_fields.label :name_first, "First Name", :class => label_class   %>
                             <div class="<%= field_class %>">
