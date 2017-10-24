@@ -4,8 +4,8 @@
 
 <div class="row">
     <div id="list-sources">
-	<% @list.references.each do |ref| %>
-	    <%= link_to(ref.name, ref.source) %><br>
+	<% @list.documents.each do |doc| %>
+	    <%= link_to(doc.name, doc.url) %><br>
 	<% end %>
     </div>
 </div>
