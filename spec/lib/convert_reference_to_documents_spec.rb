@@ -9,7 +9,6 @@ describe 'migrating from the legacy reference system' do
     ReferenceExcerpt.delete_all
     Entity.skip_callback(:create, :after, :create_primary_ext)
     Relationship.skip_callback(:create, :after, :create_links)
-    Relationship.skip_callback(:create, :after, :update_entity_links)
 
     @entities = Array.new(3) { create(:entity_org, last_user_id: 1) }
     @list = create(:list)
@@ -47,7 +46,6 @@ describe 'migrating from the legacy reference system' do
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE `references`")
     Entity.set_callback(:create, :after, :create_primary_ext)
     Relationship.set_callback(:create, :after, :create_links)
-    Relationship.set_callback(:create, :after, :update_entity_links)
   end
 
   describe 'transfering legacy references to documents' do

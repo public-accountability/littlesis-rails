@@ -151,6 +151,25 @@ CREATE TABLE `api_request` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `api_tokens`
+--
+
+DROP TABLE IF EXISTS `api_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `api_tokens` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `token` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_api_tokens_on_token` (`token`),
+  UNIQUE KEY `index_api_tokens_on_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `api_user`
 --
 
@@ -2970,7 +2989,7 @@ CREATE TABLE `versions` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-24 20:04:46
+-- Dump completed on 2017-10-24 20:15:25
 INSERT INTO schema_migrations (version) VALUES ('20131031182415');
 
 INSERT INTO schema_migrations (version) VALUES ('20131031182500');

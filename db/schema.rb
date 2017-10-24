@@ -86,6 +86,16 @@ ActiveRecord::Schema.define(version: 20171018151914) do
   add_index "api_request", ["api_key"], name: "api_key_idx", using: :btree
   add_index "api_request", ["created_at"], name: "created_at_idx", using: :btree
 
+  create_table "api_tokens", force: :cascade do |t|
+    t.string   "token",      limit: 255, null: false
+    t.integer  "user_id",    limit: 4,   null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "api_tokens", ["token"], name: "index_api_tokens_on_token", unique: true, using: :btree
+  add_index "api_tokens", ["user_id"], name: "index_api_tokens_on_user_id", unique: true, using: :btree
+
   create_table "api_user", force: :cascade do |t|
     t.string   "api_key",       limit: 100,                        null: false
     t.string   "name_first",    limit: 50,                         null: false

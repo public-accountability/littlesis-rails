@@ -752,11 +752,11 @@ describe Entity, :tag_helper  do
       end
 
       it "increases entity1's link count" do
-        expect(&create_relationship).to change { Entity.find(entity1.id).link_count }.by(1)
+        expect { create_relationship.call }.to change { Entity.find(entity1.id).link_count }.by(1)
       end
 
       it "increases entity2's link count" do
-        expect(&create_relationship).to change { Entity.find(entity2.id).link_count }.by(1)
+        expect { create_relationship.call }.to change { Entity.find(entity2.id).link_count }.by(1)
       end
     end
 
