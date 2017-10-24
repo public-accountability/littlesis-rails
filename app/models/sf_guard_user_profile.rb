@@ -4,6 +4,7 @@ class SfGuardUserProfile < ActiveRecord::Base
   validates :name_first, presence: true
   validates :home_network_id, presence: true
   validates :reason, signup_reason: true
+  validates_uniqueness_of :public_name
 
   belongs_to :sf_guard_user, inverse_of: :sf_guard_user_profile, foreign_key: "user_id"
   belongs_to :user, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :sf_guard_user_profile

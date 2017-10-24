@@ -11,10 +11,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #  are just instances of User. (ziggy 10-27-16)
   # POST /resource
   def create
+    @signup_errors = []
     build_resource(user_params)
 
     # check recaptcha
     unless verify_recaptcha
+      @signup_errors << "The recaptcha failed to verify"
       reset_signup_session
       return render 'new'
     end
@@ -22,26 +24,46 @@ class Users::RegistrationsController < Devise::RegistrationsController
     resource.sf_guard_user.username = resource.email
     resource.sf_guard_user.sf_guard_user_profile.assign_attributes(sf_profile_params)
 
-    if resource.sf_guard_user.valid? and resource.sf_guard_user.sf_guard_user_profile.valid?
-      resource.sf_guard_user.save
-      resource.sf_guard_user_profile.save
-      resource.save
-      if resource.persisted?
-        if resource.active_for_authentication?
-          set_flash_message! :notice, :signed_up
-          sign_up(resource_name, resource)
-          return respond_with resource, location: after_sign_up_path_for(resource)
-        else
-          # set_flash_message! :notice, :"signed_up_but_#{resource.inactive_message}"
-          expire_data_after_sign_in!
-          return respond_with resource, location: after_inactive_sign_up_path_for(resource)
-        end
+    ActiveRecord::Base.transaction do
+      begin
+        resource.sf_guard_user.save!
+        resource.sf_guard_user_profile.save!
+        resource.save!
+      rescue ActiveRecord::StatementInvalid
+        raise
+      rescue
+        raise ActiveRecord::Rollback
+      end
+    end
+
+    if resource.persisted?
+      if resource.active_for_authentication?
+        set_flash_message! :notice, :signed_up
+        sign_up(resource_name, resource)
+        return respond_with resource, location: after_sign_up_path_for(resource)
       else
-        Rails.logger.warn "FAILED TO CREATE NEW USER"
-        Rails.logger.warn resource.errors.full_messages
-        raise "Failed to create a new user"
+        # set_flash_message! :notice, :"signed_up_but_#{resource.inactive_message}"
+        expire_data_after_sign_in!
+        return respond_with resource, location: after_inactive_sign_up_path_for(resource)
       end
     else
+
+      if resource.sf_guard_user.sf_guard_user_profile.errors[:email].include?("has already been taken") || resource.errors[:email].include?("has already been taken")
+        @signup_errors << "The email address you provided already has an account"
+      end
+
+      if resource.sf_guard_user.sf_guard_user_profile.errors[:public_name].include?("has already been taken") || resource.errors[:username].include?("has already been taken")
+        @signup_errors << "The username -- #{resource.username} -- has already been taken"
+      end
+
+      resource.sf_guard_user.sf_guard_user_profile.errors.delete(:email)
+      resource.sf_guard_user.sf_guard_user_profile.errors.delete(:public_name)
+      resource.sf_guard_user.sf_guard_user_profile.errors.full_messages.each { |msg| @signup_errors << msg }
+
+      if @signup_errors.empty?
+        @signup_errors << "A computer error occured! Please contact admin@littlesis.org"
+      end
+
       reset_signup_session
       return render 'new'
     end
