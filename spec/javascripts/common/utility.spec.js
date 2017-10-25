@@ -55,20 +55,49 @@ describe('utility', function(){
 
     const obj = { a: 1, b: 2};
 
-    describe('#getProperty', () => {
+    describe('#get', () => {
       it('reads an arbitrary key from an object', () => {
-        expect(utility.getProperty(obj, 'a')).toEqual(1);
+        expect(utility.get(obj, 'a')).toEqual(1);
+      });
+
+      it('handles non-existent properties', () => {
+        expect(utility.get(obj, "foo")).toEqual(undefined);
+      });
+
+      it('handles null objects', () => {
+        expect(utility.get(null, "foo")).toEqual(null);
+      });
+
+      it('handles undefined objects', () => {
+        expect(utility.get(undefined, "foo")).toEqual(undefined);
+      });
+    });
+
+    describe('#getIn', () => {
+
+      const obj= { a: { b: 2, c: 3 } };
+
+      it('reads values from a nested sequence of keys in an object', () => {
+        expect(utility.getIn(obj, ["a", "b"])).toEqual(2);
+      });
+
+      it('handles non-existent nested keys', () => {
+        expect(utility.getIn(obj, ["a", "foo"])).toEqual(undefined);
+      });
+
+      it('handles lookup sequences that are longer than depth of object tree', () => {
+        expect(utility.getIn(obj, ["a", "b", "d"])).toEqual(false);
       });
     });
 
     describe('#setProperty', () => {
       it('sets the value for an arbitary key on an object', () => {
-        expect(utility.setProperty(obj, 'c', 3)).toEqual({ a: 1, b: 2, c: 3 });
+        expect(utility.set(obj, 'c', 3)).toEqual({ a: 1, b: 2, c: 3 });
       });
 
       it('allows the value for key to be subsequently mutated', () => {
-        const _obj = utility.setProperty(obj, 'c', 3);
-        utility.setProperty(_obj, 'c', 4);
+        const _obj = utility.set(obj, 'c', 3);
+        utility.set(_obj, 'c', 4);
         expect(_obj.c).toEqual(4);
       });
     });

@@ -41,11 +41,12 @@
       // derrived
       rootId:         args.rootId,
       endpoint:       args.endpoint || "/",
-      // TODO: extract next 3 fields into `entities sub-field`
+      // // TODO: extract next 3 fields into `entities sub-field`
       entitiesById:   args.entitiesById || {},
       rowIds:         Object.keys(args.entitiesById || {}),
       matches:        {},
-      // TODO: ---^
+      // // TODO: ---^
+
       // deterministic
       canUpload:      true,
       notification:   ""
@@ -57,7 +58,7 @@
   // getters
 
   self.get = function(attr){
-    return util.getProperty(state, attr);
+    return util.get(state, attr);
   };
 
   state.hasRows = function(){
@@ -66,7 +67,7 @@
 
   state.hasMatches = function(entity){
     return !util.isEmpty(
-      util.getProperty(state.matches, entity.id) || []
+      util.get(state.matches, entity.id) || []
     );
   };
 
@@ -74,7 +75,7 @@
 
   // Entity -> Entity
   state.addEntity = function(entity){
-    util.setProperty(state.entitiesById, entity.id, entity);
+    util.set(state.entitiesById, entity.id, entity);
     state.rowIds.push(entity.id);
     return entity;
   };
@@ -93,7 +94,7 @@
   state.matchEntity = function(entity){
     return api.searchEntity(entity.name)
       .then(function(matches){
-        util.setProperty(state.matches, entity.id, matches);
+        util.set(state.matches, entity.id, matches);
       });
   };
 
@@ -207,11 +208,11 @@
   function tbody(){
     return $('<tbody>').append(
       state.rowIds.map(function(id){
-        var entity = util.getProperty(state.entitiesById, id);
+        var entity = util.get(state.entitiesById, id);
         return $('<tr>').append(
           columns.map(function(col, idx){
             return $('<td>', {
-              text: util.getProperty(entity, col.attr)
+              text: util.get(entity, col.attr)
             }).append(
               maybeDupeWarning(entity, col, idx)
             );

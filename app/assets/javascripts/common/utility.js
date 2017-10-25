@@ -166,18 +166,29 @@ utility.browserCanOpenFiles = function() {
 
 // OBJECT UTILITIES
 
-utility.getProperty = function(obj, key) {
-  var entry = Object.getOwnPropertyDescriptor(obj, key);
+utility.get = function(obj, key) {
+  var entry = utility.isObject(obj) && Object.getOwnPropertyDescriptor(obj, key);
   return entry && entry.value;
 };
 
-utility.setProperty = function(obj, key, value){
+utility.getIn = function(obj, keys){
+  return keys.reduce(
+    function(acc, key){ return utility.get(acc, key); },
+    obj
+  );
+};
+
+utility.set = function(obj, key, value){
   return Object.defineProperty(obj, key, {
     configurable: true,
     enumerable: true,
     writeable: true,
     value: value
   });
+};
+
+utility.isObject = function(maybeObj){
+  return maybeObj && maybeObj instanceof Object;
 };
 
 utility.isEmpty = function (obj){
