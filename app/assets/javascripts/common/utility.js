@@ -167,7 +167,8 @@ utility.browserCanOpenFiles = function() {
 // OBJECT UTILITIES
 
 utility.getProperty = function(obj, key) {
-  return Object.getOwnPropertyDescriptor(obj, key).value;
+  var entry = Object.getOwnPropertyDescriptor(obj, key);
+  return entry && entry.value;
 };
 
 utility.setProperty = function(obj, key, value){

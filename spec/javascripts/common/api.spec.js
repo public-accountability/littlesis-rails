@@ -1,7 +1,10 @@
 describe('API module', () => {
 
-
-  describe('#searchEntity', () => {
+  // TODO: (ag|24-Oct-2017) extract this to a support file somewhere?
+  const responseOf = (obj) => Promise.resolve(
+    new Response(JSON.stringify(obj)),
+    { status: 200 }
+  );
 
     // retrieved as logged in user from running dev server on 23-Oct-2017
     const wmSearchResults = [
@@ -50,17 +53,18 @@ describe('API module', () => {
         url:          "/org/106423/Walmart_Stores_U.S"}
     ];
 
-    it('resolves a promise of well-formatted entities on successful search', done => {
-      spyOn(jQuery, 'getJSON').and.returnValue(Promise.resolve(wmSearchResults));
-      api.searchEntity('walmart').then((res => {
+  describe('#searchEntity', () => {
 
+    it('resolves a promise of well-formatted entities on successful search', done => {
+      spyOn(window, 'fetch').and.returnValue(responseOf(wmSearchResults));
+      api.searchEntity('walmart').then((res => {
         expect(res).toEqual(formattedWmSearchResults);
         done();
       }));
     });
 
     it('resovles a promise of an empty array on failed search', done => {
-      spyOn(jQuery, 'getJSON').and.returnValue(Promise.reject());
+      spyOn(window, 'fetch').and.returnValue(Promise.reject());
 
       api.searchEntity('walmart').then(res => {
         expect(res).toEqual([]);

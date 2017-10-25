@@ -66,18 +66,37 @@
     return !util.isEmpty(state.rowIds);
   };
 
+  state.hasMatches = function(entity){
+    return !util.isEmpty(
+      util.getProperty(state.matches, entity.id) || []
+    );
+  };
+
   // setters
 
+  // Entity -> Entity
   state.addEntity = function(entity){
     util.setProperty(state.entitiesById, entity.id, entity);
     state.rowIds.push(entity.id);
-    api.searchEntity(entity.name).then(function(results){
-      state.addEntityMatches(entity.id, results);
-    });
+    return entity;
   };
 
-  state.addEntityMatches = function (id, matches){
-    state.matches[id] = matches;
+  // Entity -> Entity
+  state.assignId = function(entity, idx){
+    return Object.assign(entity, { id: "newEntity" + idx });
+  };
+
+  // [Entity] -> Promise[Void]
+  state.matchEntities = function(entities){
+    return Promise.all(entities.map(state.matchEntity));
+  };
+
+  // Entity -> Promise[Void]
+  state.matchEntity = function(entity){
+    return api.searchEntity(entity.name)
+      .then(function(matches){
+        util.setProperty(state.matches, entity.id, matches);
+      });
   };
 
   state.disableUpload = function(){
@@ -110,12 +129,16 @@
     }
   };
 
-  // exposed for testing seam for post-upload behavior
+  // String -> Promise[Void]
   function ingestEntities (csv){
-    const entities = Papa.parse(csv, { header: true, skipEmptyLines: true}).data;
-    entities.forEach((e,idx) => state.addEntity(Object.assign(e, { id: "newEntity"+idx })));
-    state.disableUpload();
-    self.render();
+    const entities = Papa
+          .parse(csv, { header: true, skipEmptyLines: true})
+          .data
+          .map(state.assignId)
+          .map(state.addEntity);
+    return state.matchEntities(entities)
+      .then(state.disableUpload)
+      .then(self.render);
   };
 
   // expose below 2 functions for testing  seams
@@ -191,17 +214,40 @@
   function tbody(){
     return $('<tbody>').append(
       state.rowIds.map(function(id){
-        var entity = state.entitiesById[id];
+        var entity = util.getProperty(state.entitiesById, id);
         return $('<tr>').append(
-          columns.map(function(c){
+          columns.map(function(col, idx){
             return $('<td>', {
-              text: entity[c.attr]
-            });
+              text: util.getProperty(entity, col.attr)
+            }).append(
+              maybeDupeWarning(entity, col, idx)
+            );
           })
         );
       })
     );
   }
+
+  function maybeDupeWarning(entity, col, idx) {
+    return idx == 0 && state.hasMatches(entity) && dupeWarningPopup(entity);
+  }
+
+  function dupeWarningPopup(entity) {
+    return $('<div>', {
+      class:           'dupe-warning',
+      cursor:          'pointer',
+      title:           'Data duplication warning:',
+      'data-toggle':   'popover',
+      'data-content':  dupeWarning(entity)
+    })
+      .append($('<div>', { class: 'alert-icon' }))
+      .popover();
+  }
+
+  function dupeWarning(entity) {
+    return "An entity named " + entity.name + " already exists in LittleSis. " +
+      "Are you sure you want to add " + entity.name + "?";
+  };
 
   // MISC
 

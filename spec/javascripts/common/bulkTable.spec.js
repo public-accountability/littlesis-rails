@@ -1,34 +1,6 @@
 describe('Bulk Table module', () => {
 
-
-  const entities = {
-    newEntity0: {
-      id: 'newEntity0',
-      name: "Lew Basnight",
-      primary_ext: "Person",
-      blurb: "Adjacent to the invisible"
-    },
-    newEntity1: {
-      id: 'newEntity1',
-      name: "Chums Of Chance",
-      primary_ext: "Org",
-      blurb: "Do not -- strictly speaking -- exist"
-    }
-  };
-
-  const searchResultFor= entity => {
-    [0,1,2].map(n => {
-      const id = Math.floor(Math.random() * 10000);
-      const ext = ["Org", "Person"][Math.floor(Math.random() * 2)];
-      return {
-        id:          id,
-        name:        `${entity} dupe name ${n}`,
-        description: `dupe description ${1}`,
-        primary_ext:  ext,
-        url:         `/${ext.toLowerCase()}/${id}/${entity.name.replace(" ", "")}`
-      };
-    });
-  };
+  const asyncDelay = 2; // millis to wait for search, csv upload, etc..
 
   // TODO: sure would be nice to import this from app code and have a single source of truth!
   const columns = [{
@@ -45,11 +17,47 @@ describe('Bulk Table module', () => {
     input: 'text'
   }];
 
-  var ids = {
-    uploadButton:    "bulk-add-upload-button",
+  const ids = {
+    uploadButton:  "bulk-add-upload-button",
     notifications: "bulk-add-notifications"
   };
 
+  const entities = {
+    newEntity0: {
+      id: 'newEntity0',
+      name: "Lew Basnight",
+      primary_ext: "Person",
+      blurb: "Adjacent to the invisible"
+    },
+    newEntity1: {
+      id: 'newEntity1',
+      name: "Chums Of Chance",
+      primary_ext: "Org",
+      blurb: "Do not -- strictly speaking -- exist"
+    }
+  };
+
+  // stub search api call w/ 1 successful, 1 failed result
+  const searchEntityFake = query => {
+    switch(query){
+    case entities.newEntity0.name:
+      return Promise.resolve(searchResultsFor(entities.newEntity0));
+    default:
+      return Promise.resolve([]);
+    }
+  };
+        
+  const searchResultsFor = entity => [0,1,2].map(n => {
+    const ext = ["Org", "Person"][n % 2];
+    return {
+      id:          `n${entity.id}`,
+      name:        `${entity.name} dupe name ${n}`,
+      description: `dupe description ${n}`,
+      primary_ext:  ext,
+      url:         `/${ext.toLowerCase()}/${n}/${entity.name.replace(" ", "")}`
+    };
+  });
+  
   const csv =
         "name,primary_ext,blurb\n" +
         `${entities.newEntity0.name},${entities.newEntity0.primary_ext},${entities.newEntity0.blurb}\n` +
@@ -64,21 +72,17 @@ describe('Bulk Table module', () => {
     title:    "Add entities to List of Biggest Jerks"
   };
 
-  beforeAll(() => {
-    // stub search api call w/ 1 successful, 1 failed result
-    spyOn(api, 'searchEntity').and.callFake((query) => ({
-      [entities.newEntity0.name]: () => Promise.resolve(searchResultFor(entities.newEntity0)),
-      [entities.newEntity1.name]: () => Promise.resolve([])
-    }[query]()));
+  let searchEntityStub;
+  
+  beforeEach(() => {
+    searchEntityStub = spyOn(api, 'searchEntity').and.callFake(searchEntityFake);
+    $('body').append(testDom);
   });
-  beforeEach(() => $('body').append(testDom));
   afterEach(() => { $('#test-dom').remove(); });
 
   describe('initialization', () => {
 
-    beforeAll(() => {
-      bulkTable.init(defaultState);
-    });
+    beforeAll(() => bulkTable.init(defaultState));
 
     it('stores a reference to its root node', () => {
       expect(bulkTable.get('rootId')).toEqual('test-dom');
@@ -144,7 +148,7 @@ describe('Bulk Table module', () => {
       getFileSpy = spyOn(bulkTable, 'getFile').and.returnValue(file);
       bulkTable.init(defaultState);
       $(`#${ids.uploadButton}`).change();
-      setTimeout(done, 1); // wait for file to upload
+      setTimeout(done, asyncDelay); // wait for file to upload
     });
 
     it('stores entity data', () => {
@@ -165,25 +169,38 @@ describe('Bulk Table module', () => {
 
   describe('matching', () => {
 
-    describe('handling match query results', () => {
-
-      beforeAll(done => {
+    describe('searching littlesis for dupes', () => {
+      
+      beforeEach(done => {
         bulkTable.init(defaultState);
         bulkTable.ingestEntities(csv);
-        setTimeout(done, 1); // wait for mock search results to return
+        setTimeout(done, asyncDelay); // wait for mock search results to return
+      });
+
+      it('searches for entities with same name as user submissions', () => {
+        expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity0.name);
+        expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity1.name);
       });
       
-      it('stores list of possible matches in store', () => {
+      it('stores list of search matches in store', () => {
         expect(bulkTable.get('matches')).toEqual({
-          newEntity0: searchResultFor(entities.newEntity0),
+          newEntity0: searchResultsFor(entities.newEntity0),
           newEntity1: []
         });
+      });
+
+      it('displays dupe warnings next to rows with search matches', () => {
+        expect($("#bulk-add-table tbody tr:first-child .dupe-warning")).toExist();
+      });
+
+      it('does not display dupe warnings next to rows with no search matches', () => {
+        expect($("#bulk-add-table tbody tr:nth-child(2) .dupe-warning")).not.toExist();
       });
 
       it('allows user to choose to use a matched entitiy or create new entity');
     });
 
-    describe('user chooses matched entity', () => {
+    describe('when user chooses matched entity', () => {
       it('marks entity row as matched');
       it('overwrites user-submitted entity fields with matched fields');
       it('stores an id');
@@ -247,18 +264,7 @@ describe('Bulk Table module', () => {
       });
     });
 
-    describe('with matches', () => {
-      it('prompts user to use match or create new entity');
-
-      describe('user chooses matched entity', () => {
-        it('marks rows with matched entities');
-        it('blocks edits to matched entity fields');
-      });
-    });
-
-    describe('with invalid fields', () => {
-      it('marks invalid fields');
-    });
+    // include 'with matches' section here? or test in 'matching' section?
   });
 
   describe('submitting', () => {
