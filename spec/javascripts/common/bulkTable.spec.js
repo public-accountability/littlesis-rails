@@ -86,17 +86,18 @@ describe('Bulk Table module', () => {
       expect(bulkTable.get('rootId')).toEqual('test-dom');
     });
 
-    it('initializes an empty entitiesById table', () =>{
-      expect(bulkTable.get('entitiesById')).toEqual({});
-    });
-
-    it('initializes an empty entites rowIds list', () =>{
-      expect(bulkTable.get('rowIds')).toEqual([]);
-    });
-
     it('stores an endpoint', () => {
       expect(bulkTable.get('endpoint')).toEqual("/lists/1/new_entities");
     });
+
+    it('initializes an empty entities state tree', () =>{
+      expect(bulkTable.get('entities')).toEqual({
+        byId:    {},
+        rowIds:  [],
+        matches: {}
+      });
+    });
+    
 
     describe('detecting upload support', () => {
 
@@ -146,7 +147,7 @@ describe('Bulk Table module', () => {
     });
 
     it('stores entity data', () => {
-      expect(bulkTable.get('entitiesById')).toEqual({
+      expect(bulkTable.getIn(['entities', 'byId']).toEqual({
         newEntity0: entities['newEntity0'],
         newEntity1: entities['newEntity1']
       });

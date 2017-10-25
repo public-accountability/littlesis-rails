@@ -32,24 +32,19 @@
   };
 
   self.init = function(args){
-    // TODO: (ag|18-Oct-2017)
-    // It would be nice to parameterize here:
-    //   1. resource type
-    //   2. columns by resource type
-    // so table could be reused for any resource (not just entities)
     state = Object.assign(state, {
       // derrived
       rootId:         args.rootId,
       endpoint:       args.endpoint || "/",
-      // // TODO: extract next 3 fields into `entities sub-field`
-      entitiesById:   args.entitiesById || {},
-      rowIds:         Object.keys(args.entitiesById || {}),
-      matches:        {},
-      // // TODO: ---^
-
       // deterministic
       canUpload:      true,
-      notification:   ""
+      notification:   "",
+      entities:       { byId:    {},
+                        rowIds:  [],
+                        matches: {} }
+      // When/if we wish to paramaterize row fields, we would here paramaterize:
+      //   1. resource type (currently always entity)
+      //   2. columns by resource type (currently stored as constant above)
     });
     self.render();
     detectUploadSupport();
@@ -61,13 +56,17 @@
     return util.get(state, attr);
   };
 
+  self.getIn = function(attrs){
+    return util.getIn(state, attrs);
+  };
+
   state.hasRows = function(){
-    return !util.isEmpty(state.rowIds);
+    return !util.isEmpty(state.entities.rowIds);
   };
 
   state.hasMatches = function(entity){
     return !util.isEmpty(
-      util.get(state.matches, entity.id) || []
+      util.getIn(state, ['entities', 'matches', entity.id]) || []
     );
   };
 
@@ -75,8 +74,8 @@
 
   // Entity -> Entity
   state.addEntity = function(entity){
-    util.set(state.entitiesById, entity.id, entity);
-    state.rowIds.push(entity.id);
+    util.set(state.entities.byId, entity.id, entity);
+    state.entities.rowIds.push(entity.id);
     return entity;
   };
 
@@ -94,7 +93,7 @@
   state.matchEntity = function(entity){
     return api.searchEntity(entity.name)
       .then(function(matches){
-        util.set(state.matches, entity.id, matches);
+        util.set(state.entities.matches, entity.id, matches);
       });
   };
 
@@ -207,8 +206,8 @@
 
   function tbody(){
     return $('<tbody>').append(
-      state.rowIds.map(function(id){
-        var entity = util.get(state.entitiesById, id);
+      state.entities.rowIds.map(function(id){
+        var entity = util.get(state.entities.byId, id);
         return $('<tr>').append(
           columns.map(function(col, idx){
             return $('<td>', {
