@@ -35,14 +35,12 @@
     // TODO: (ag|18-Oct-2017)
     // It would be nice to parameterize here:
     //   1. resource type
-    //   2. columns by resource typeself.
+    //   2. columns by resource type
     // so table could be reused for any resource (not just entities)
     state = Object.assign(state, {
       // derrived
       rootId:         args.rootId,
       endpoint:       args.endpoint || "/",
-      resource:       args.resource || "entities", //TODO: remove
-      title:          args.title || "Bulk add", //TODO: extract to rails view
       // TODO: extract next 3 fields into `entities sub-field`
       entitiesById:   args.entitiesById || {},
       rowIds:         Object.keys(args.entitiesById || {}),
@@ -157,15 +155,10 @@
   self.render = function(){
     $('#' + state.rootId).empty();
     $('#' + state.rootId)
-      .append(header())
       .append(notifications())
       .append(state.canUpload ? uploadContainer() : null)
       .append(state.hasRows()? table() : null);
   };
-
-  function header(){
-    return $('<h1>', { text: state.title });
-  }
 
   function notifications(){
     return $('<div>', {

@@ -64,7 +64,7 @@ describe('API module', () => {
     });
 
     it('resovles a promise of an empty array on failed search', done => {
-      spyOn(window, 'fetch').and.returnValue(Promise.reject());
+      spyOn(window, 'fetch').and.returnValue(Promise.reject("Intentionally-created error for tests."));
 
       api.searchEntity('walmart').then(res => {
         expect(res).toEqual([]);

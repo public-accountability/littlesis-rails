@@ -1,10 +1,11 @@
+<h1 id="bulk-add-header">
+  Add entities to <%= link_to @list.name, @list %>
+</h1>
 <div id="bulk-add-container">
   <script>
    bulkTable.init({
      rootId:   "bulk-add-container",
-     resource: "entities",
-     title:    "Add entities to <%= raw(@list.name) %>",
-     endpoint: "<%= raw(@list.name) %>"
+     endpoint: "<%= raw(new_entities_list_path(@list)) %>"
    });
   </script>
 </div>

@@ -5,12 +5,13 @@ $light-maroon: rgba(204,133,133,0.4);
 $maroon: rgba(204, 84, 84, 1);
 $table-border-radius: .2em;
 
+h1#bulk-add-header {
+    border-bottom: 1px solid gray;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
 #bulk-add-container {
-    h1 {
-        border-bottom: 1px solid gray;
-        padding-bottom: 1rem;
-        margin-bottom: 2rem;
-    }
     #bulk-add-notifications {
         font-style: italic;
         color: gray;

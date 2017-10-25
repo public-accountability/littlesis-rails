@@ -64,12 +64,10 @@ describe('Bulk Table module', () => {
         `${entities.newEntity1.name},${entities.newEntity1.primary_ext},${entities.newEntity1.blurb}\n`;
 
   const testDom ='<div id="test-dom"></div>';
-  
+
   const defaultState = {
     rootId:   "test-dom",
-    resource: "entities",
-    endpoint: "/lists/1/new_entities",
-    title:    "Add entities to List of Biggest Jerks"
+    endpoint: "/lists/1/new_entities"
   };
 
   let searchEntityStub;
@@ -88,16 +86,12 @@ describe('Bulk Table module', () => {
       expect(bulkTable.get('rootId')).toEqual('test-dom');
     });
 
-    it('initializes an empty entites hash table', () =>{
+    it('initializes an empty entitiesById table', () =>{
       expect(bulkTable.get('entitiesById')).toEqual({});
     });
 
-    it('initializes an empty entites rowIds array', () =>{
+    it('initializes an empty entites rowIds list', () =>{
       expect(bulkTable.get('rowIds')).toEqual([]);
-    });
-
-    it('stores a title', () => {
-      expect(bulkTable.get('title')).toEqual("Add entities to List of Biggest Jerks");
     });
 
     it('stores an endpoint', () => {
