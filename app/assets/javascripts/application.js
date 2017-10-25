@@ -11,6 +11,8 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require ./polyfill.js
+//= require fetch
+//= require promise
 //= require jquery
 //= require bootstrap
 //= require jquery_ujs

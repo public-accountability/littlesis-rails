@@ -9,8 +9,6 @@
   // API
   var self = {};
 
-  // TODO: polyfill `fetch` with: https://github.com/github/fetch
-
   self.searchEntity = function(query){
     return get('/search/entity', q({ num: 10, no_summary: true, q: query }))
       .then(format)
