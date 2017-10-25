@@ -10,7 +10,7 @@
   var self = {};
 
   self.searchEntity = function(query){
-    return get('/search/entity', q({ num: 10, no_summary: true, q: query }))
+    return get('/search/entity', { num: 10, no_summary: true, q: query })
       .then(format)
       .catch(handleError);
 
@@ -30,13 +30,13 @@
 
   // helpers
 
-  function get(url, queryString){
-    return fetch(url + '.json?' + queryString,{ credentials: 'include' })
+  function get(url, queryParams){
+    return fetch(url + '.json?' + qs(queryParams), { credentials: 'include' })
       .then(jsonify);
   }
 
-  function q(obj){
-    return $.param(obj);
+  function qs(queryParams){
+    return $.param(queryParams);
   }
 
   function jsonify(response){
