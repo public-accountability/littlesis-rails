@@ -1,26 +1,33 @@
-.tt-dropdown-menu {
-	background: white;
-	border: 1px solid rgba(0, 0, 0, 0.2);
-	border-radius: 6px;
-	box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 10px 0px;
+.tt-menu {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 10px 0px;
+}
+
+.add-entity-suggestion {
+    padding: 0.2em;
+    padding-left: 0.8em;
+    padding-right: 0.8em;
+    cursor: pointer;
 }
 
 .tt-suggestion {
-	padding: 0.3em;
-	padding-left: 0.8em;
-	padding-right: 0.8em;
+    &:hover { 
+	background: $red_lighter;
+    }
+}
 
-	p { margin: 0; }
+#add-entity-input {
+    width: 200px;
+}
 
-	&:hover {
-		background: #f8f8f8;
-	}
+.add-entity-blurb {
+    padding-top: 0.1em;
+    font-size: 12px;
+    color: #888;
 }
 
 .tt-hint {
-	display: none;
-}
-
-.twitter-typeahead {
-	width: 100%;
+    display: none;
 }

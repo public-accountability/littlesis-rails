@@ -25,6 +25,7 @@ class SearchController < ApplicationController
     end
   end
 
+  # /search/entity?q=ENTITY_NAME
   def entity_search
     return head :bad_request unless params[:q].present?
 

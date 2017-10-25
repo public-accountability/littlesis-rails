@@ -49,7 +49,6 @@ gem 'thinking-sphinx', '~> 3.2.0'
 gem 'delayed_job_active_record'
 gem 'ts-delayed-delta', '2.0.2', :require => 'thinking_sphinx/deltas/delayed_delta'
 
-gem 'twitter-typeahead-rails', '~> 0.9.3'
 gem 'php-serialize'
 gem 'htmlentities'
 

@@ -25,7 +25,7 @@
 //= require bootsy
 //= require bootstrap-datepicker
 //= require bootstrap-select.min.js
-//= require twitter/typeahead
+//= require typeahead.bundle.min.js
 //= require hogan-3.0.1.js
 //= require d3.v4.min.js
 //= require papaparse.min.js
