@@ -165,4 +165,36 @@ describe Referenceable, type: :model do
       end
     end
   end
+
+  describe 'all_documents' do
+    let(:entity) { build(:org) }
+    let(:list) { build(:list) }
+
+    context 'if an entity' do
+      it 'uses Document.documents_for_entity' do
+        expect(Document).to receive(:documents_for_entity)
+                              .with(entity: entity, page: 1, per_page: 20)
+                              .and_return([build(:document)])
+
+        expect(Document).to receive(:documents_count_for_entity)
+                              .with(entity).and_return(1)
+        
+        all_documents = entity.all_documents(1)
+        expect(all_documents).to be_a Kaminari::PaginatableArray
+      end
+    end
+
+    context 'if a list' do
+      it 'uses the regular pagination (.page) methods' do
+        mock_documents = spy('documents')
+        expect(mock_documents).to receive(:page).with(1)
+                                    .and_return(double(:per => nil))
+        
+        expect(list).to receive(:documents)
+                          .and_return(mock_documents)
+
+        list.all_documents(1)
+      end
+    end
+  end
 end

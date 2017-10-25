@@ -104,12 +104,8 @@ class EntitiesController < ApplicationController
     @reference = Reference.new
   end
 
-  
-
   def references
-    refs = @entity.all_references
-    @reference_count = refs.size
-    @references = Kaminari.paginate_array(refs).page(params[:page]).per(25)
+    @page = params[:page].present? ? params[:page] : 1
   end
 
   # ------------------------------ #
@@ -441,8 +437,6 @@ class EntitiesController < ApplicationController
   def set_entity_references
     @references = @entity.references.order('updated_at desc').limit(10)
   end
-
-  
 
   def article_params
     params.require(:article).permit(

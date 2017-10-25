@@ -1,5 +1,8 @@
 module Referenceable
   extend ActiveSupport::Concern
+      
+  include Pagination
+
 
   included do
     has_many :references, as: :referenceable
@@ -43,6 +46,23 @@ module Referenceable
       Document.documents_count_for_entity(self)
     else
       documents.count
+    end
+  end
+
+  # For an entity `all_documents` includes the documents
+  # for it's relationships as well (via Document.documents_for_entity)
+  # If called on another type of references, it simply paginates documents
+  # Int | Int -> KimainariArray
+  def all_documents(page, per_page = 20)
+    if self.is_a?(Entity)
+      paginate(
+        page,
+        per_page,
+        Document.documents_for_entity(entity: self, page: page, per_page: per_page),
+        Document.documents_count_for_entity(self)
+      )
+    else
+      documents.page(page).per(per_page)
     end
   end
 
