@@ -22,6 +22,7 @@
     this.options = mergeOptions(ReferenceWidget.DEFAULT_OPTIONS, userOptions);
     this.entityIds = [].concat(entityIds).map(function(n) { return Number(n); });
     this.documents = null;
+    this.selection = null;
     this.render = this._render.bind(this);
     this.init();
   }
@@ -31,7 +32,8 @@
   ReferenceWidget.TYPEAHEAD_INPUT_SELECTOR = '#' + ReferenceWidget.TYPEAHEAD_INPUT_ID;
   ReferenceWidget.DEFAULT_OPTIONS = {
     "containerDiv": "#reference-widget-container",
-    "afterRender": function() {}
+    "afterRender": function() {},
+    "afterSelect": function() {}
   };
 
   /**
@@ -45,9 +47,22 @@
    * Replaces contents of container with a typeahead
    */
   ReferenceWidget.prototype._render = function() {
+    var self = this;
     $(this.options.containerDiv).html(this._typeaheadInput());
+
+    // render the typeahead in to the div
     $(ReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)
-      .typeahead(null, this._typeaheadConfig());
+      .typeahead(null, this._typeaheadConfig())
+      .on('typeahead:selected', function (e, datum) {
+	// set 'selection' property after picked
+	self.selection = datum;
+	self.options.afterSelect(datum);
+      })
+      .on('typeahead:render', function (e) {
+	// 'unselect' if suggestion is re-rendered
+	self.selection = null;
+      });
+    
     this.options.afterRender();
   };
 
@@ -92,6 +107,7 @@
     return {
       name: 'references',
       source: documentBloodhound(this.documents),
+      displayKey: 'name',
       templates: {
 	empty: '<span class="reference-empty">No matches found</span>',
 	suggestion: suggestion
