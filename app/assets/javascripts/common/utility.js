@@ -179,12 +179,37 @@ utility.getIn = function(obj, keys){
 };
 
 utility.set = function(obj, key, value){
-  return Object.defineProperty(obj, key, {
+  var _obj = Object.assign({}, obj);
+  return Object.defineProperty(_obj, key, {
     configurable: true,
     enumerable: true,
     writeable: true,
     value: value
   });
+};
+
+utility.setIn = function(obj, keys, value){
+  if (keys.length === 0) {
+    return value; 
+  } else {
+    return utility.set(
+      obj,
+      keys[0],
+      utility.setIn(
+        utility.get(obj, keys[0]),
+        keys.slice(1),
+        value
+      )
+    );
+  }
+};
+
+// see https://github.com/paularmstrong/normalizr
+utility.normalize = function(arr){
+  return arr.reduce(
+    function(acc, item){ return utility.set(acc, item.id, item); },
+    {}
+  );
 };
 
 utility.isObject = function(maybeObj){

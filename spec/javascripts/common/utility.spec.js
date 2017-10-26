@@ -54,7 +54,8 @@ describe('utility', function(){
   describe('object utilities', () => {
 
     const obj = { a: 1, b: 2};
-
+    const nestedObj = { a: { b: 2, c: 3 } };
+    
     describe('#get', () => {
       it('reads an arbitrary key from an object', () => {
         expect(utility.get(obj, 'a')).toEqual(1);
@@ -75,30 +76,62 @@ describe('utility', function(){
 
     describe('#getIn', () => {
 
-      const obj= { a: { b: 2, c: 3 } };
-
       it('reads values from a nested sequence of keys in an object', () => {
-        expect(utility.getIn(obj, ["a", "b"])).toEqual(2);
+        expect(utility.getIn(nestedObj, ["a", "b"])).toEqual(2);
       });
 
       it('handles non-existent nested keys', () => {
-        expect(utility.getIn(obj, ["a", "foo"])).toEqual(undefined);
+        expect(utility.getIn(nestedObj, ["a", "foo"])).toEqual(undefined);
       });
 
       it('handles lookup sequences that are longer than depth of object tree', () => {
-        expect(utility.getIn(obj, ["a", "b", "d"])).toEqual(false);
+        expect(utility.getIn(nestedObj, ["a", "b", "d"])).toEqual(false);
       });
     });
 
-    describe('#setProperty', () => {
+    describe('#set', () => {
       it('sets the value for an arbitary key on an object', () => {
         expect(utility.set(obj, 'c', 3)).toEqual({ a: 1, b: 2, c: 3 });
       });
 
-      it('allows the value for key to be subsequently mutated', () => {
+      it('does not mutate objects', () => {
+        utility.set(obj, 'c', 3);
+        expect(obj).toEqual({ a: 1, b: 2});
+      });
+
+      it('does not allow newly created entries to be mutated', () => {
         const _obj = utility.set(obj, 'c', 3);
-        utility.set(_obj, 'c', 4);
-        expect(_obj.c).toEqual(4);
+        _obj.c = 4;
+        expect(_obj.c).toEqual(3);
+      });
+
+      it('does allow newly created entries to be re-set', () => {
+        const _obj = utility.set(obj, 'c', 3);
+        const __obj = utility.set(_obj, 'c', 4);
+        expect(__obj.c).toEqual(4);
+      });
+    });
+
+    describe('#setIn', () => {
+
+      it('sets the value for a nested key in an object', () => {
+        expect(utility.setIn(nestedObj, ['a', 'b'], 4))
+          .toEqual({ a: { b: 4, c: 3 } });
+      });
+
+      it('creates and sets the value for a nested key in an object', () => {
+        expect(utility.setIn(nestedObj, ['a', 'd'], 4))
+          .toEqual({ a: { b: 2, c: 3, d: 4 } });
+      });
+
+      it("handles paths longer than tree", () => {
+        expect(utility.setIn(nestedObj, ["a", "d", "e"], 4))
+          .toEqual({ a: { b: 2, c: 3, d: { e: 4 } } });
+      });
+
+      it('handles wierd paths', () => {
+        expect(utility.setIn(nestedObj, ['a', 'b', 'c'], 4))
+          .toEqual({ a: { b: { c: 4}, c: 3 } } );
       });
     });
 
@@ -111,6 +144,25 @@ describe('utility', function(){
       it('discovers if an array is empty', () => {
         expect(utility.isEmpty([])).toEqual(true);
         expect(utility.isEmpty([1, 2])).toEqual(false);
+      });
+    });
+
+
+    
+    describe('#normalize', () => {
+
+      it('transforms an array of resources into a lookup table of resources by id', () => {
+        expect(utility.normalize(
+          [
+            { id: 'a', foo: 'bar' },
+            { id: 'b', foo: 'bar' }
+          ]
+        )).toEqual(
+          {
+            a: { id: 'a', foo: 'bar' },
+            b: { id: 'b', foo: 'bar' }
+          }
+        );
       });
     });
   });
