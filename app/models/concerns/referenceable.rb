@@ -1,8 +1,6 @@
 module Referenceable
   extend ActiveSupport::Concern
-      
   include Pagination
-
 
   included do
     has_many :references, as: :referenceable

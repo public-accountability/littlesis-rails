@@ -16,7 +16,6 @@ describe Referenceable, type: :model do
     def initialize
       @@id += 1
       @id = @@id
-      
     end
 
     def references; end
@@ -28,7 +27,7 @@ describe Referenceable, type: :model do
 
   describe 'validate_reference' do
     let(:referenceable) { TestReferenceable.new }
-    
+
     it 'invalidates the model if the reference is blank' do
       referenceable.validate_reference(url: '', name: 'blank url')
       expect(referenceable.valid?).to be false
@@ -42,7 +41,7 @@ describe Referenceable, type: :model do
     end
 
     it 'invalidates the model if the document name is too long' do
-      referenceable.validate_reference(url: Faker::Internet.url, name: ('X' * 256) )
+      referenceable.validate_reference(url: Faker::Internet.url, name: ('X' * 256))
       expect(referenceable.valid?).to be false
       expect(referenceable.errors[:base]).to include "name is too long (maximum is 255 characters)"
     end
@@ -93,7 +92,7 @@ describe Referenceable, type: :model do
       it 'does not create a new document' do
         expect { add_reference.call }.not_to change { Document.count }
       end
-      
+
       it 'adds an error to the record' do
         expect(referenceable.valid?).to be true
         add_reference.call
@@ -178,7 +177,7 @@ describe Referenceable, type: :model do
 
         expect(Document).to receive(:documents_count_for_entity)
                               .with(entity).and_return(1)
-        
+
         all_documents = entity.all_documents(1)
         expect(all_documents).to be_a Kaminari::PaginatableArray
       end
@@ -189,7 +188,7 @@ describe Referenceable, type: :model do
         mock_documents = spy('documents')
         expect(mock_documents).to receive(:page).with(1)
                                     .and_return(double(:per => nil))
-        
+
         expect(list).to receive(:documents)
                           .and_return(mock_documents)
 

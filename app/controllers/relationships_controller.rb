@@ -27,7 +27,6 @@ class RelationshipsController < ApplicationController
         # successful response
         return redirect_to relationship_path(@relationship)
       end
-      
     end
     return render :edit
   end
@@ -37,12 +36,12 @@ class RelationshipsController < ApplicationController
   def create
     @relationship = Relationship.new(relationship_params)
     @relationship.validate_reference(reference_params)
-    
+
     if @relationship.valid?
       @relationship.save!
       @relationship.add_reference(reference_params)
       update_entity_last_user
-      render json: {'relationship_id' => @relationship.id}, status: :created
+      render json: { 'relationship_id' => @relationship.id }, status: :created
     else
       render json: @relationship.errors.to_h, status: :bad_request
     end
@@ -77,7 +76,7 @@ class RelationshipsController < ApplicationController
     if !Document.valid_url?(reference_params.fetch(:url)) || reference_params.fetch(:name).blank?
       return head :bad_request
     end
-    
+
     @errors = []
     @new_relationships = []
 
@@ -214,12 +213,10 @@ class RelationshipsController < ApplicationController
     @relationship.related.update(last_user_id: current_user.sf_guard_user_id)
   end
 
-
   def relationship_params
     prepare_update_params(params.require(:relationship).permit(:entity1_id, :entity2_id, :category_id, :is_current, :description1, :description2))
   end
 
-  
   # whitelists relationship params and associated nested attributes
   # if the relationship category requires them
   def update_params
@@ -240,5 +237,4 @@ class RelationshipsController < ApplicationController
     return true if p.has_key?(:entity1_id) && p.has_key?(:entity2_id) && p.has_key?(:category_id)
     return false
   end
-  
 end

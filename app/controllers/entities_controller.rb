@@ -10,7 +10,6 @@ class EntitiesController < ApplicationController
 
   ## Profile Page Tabs:
   # (consider moving these all to #show route)
-  
   def show
     @similar_entities = @entity.similar_entities
     @active_tab = :relationships
@@ -26,16 +25,12 @@ class EntitiesController < ApplicationController
     render 'show'
   end
 
-  # def giving; end
-
   def political
   end
 
   # THE DATA 'tab'
   def datatable
   end
-
-  #### 
 
   def new
   end
@@ -449,10 +444,6 @@ class EntitiesController < ApplicationController
       :file, :title, :caption, :url, :is_free, :is_featured
     )
   end
-
-  # def reference_params
-  #   params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
-  # end
 
   def update_entity_params
     params.require(:entity).permit(
