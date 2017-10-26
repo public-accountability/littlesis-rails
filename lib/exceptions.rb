@@ -14,4 +14,10 @@ module Exceptions
       "Missing association data for this Entity"
     end
   end
+
+  class InvalidUrlError < ArgumentError
+    def message
+      "The URL is invalid"
+    end
+  end
 end

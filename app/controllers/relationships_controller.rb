@@ -1,5 +1,6 @@
 class RelationshipsController < ApplicationController
   include TagableController
+  include ReferenceableController
   before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction]
   before_action :authenticate_user!, except: [:show]
   before_action -> { check_permission('deleter') }, only: [:destroy]
@@ -14,43 +15,35 @@ class RelationshipsController < ApplicationController
 
   # PATCH /relationships/:id
   def update
-    if existing_reference_params['reference_id'].blank? && existing_reference_params['just_cleaning_up'].blank?
-      # If user has not checked the 'just cleaning up' or selected an existing reference
-      # then a  new reference must be created
-      @reference = Reference.new(reference_params)
-      # if not valid: re-render the edit page with the reference error
-      return render :edit unless @reference.validate_before_create.empty?
-      # if the reference is valid assign the other attribute required
-      @reference.assign_attributes(object_id: @relationship.id, object_model: "Relationship")
+    @relationship.assign_attributes(prepare_update_params(update_params))
+    # If user has not checked the 'just cleaning up' or selected an existing reference
+    # then a  new reference must be created
+    if @relationship.valid?
+      @relationship.add_reference(reference_params) if need_to_create_new_reference
+
+      if @relationship.valid?
+        @relationship.save!
+        update_entity_last_user
+        # successful response
+        return redirect_to relationship_path(@relationship)
+      end
     end
-    if @relationship.update_attributes prepare_update_params(update_params)
-      @reference.save unless @reference.nil? # save the reference
-      update_entity_last_user
-      redirect_to relationship_path(@relationship)
-    else
-      render :edit
-    end
+    return render :edit
   end
 
   # Creates a new Relationship and a Reference
   # Returns status code 201 if successful or a json of errors with status code 400
   def create
     @relationship = Relationship.new(relationship_params)
-    @reference = Reference.new(reference_params)
+    @relationship.validate_reference(reference_params)
 
-    if @relationship.valid? and @reference.validate_before_create.empty?
+    if @relationship.valid?
       @relationship.save!
-      @reference.assign_attributes(object_id: @relationship.id, object_model: "Relationship")
-      @reference.save
-      # updated last_user_id of the entities in the relationship
+      @relationship.add_reference(reference_params)
       update_entity_last_user
-      render json: {'relationship_id' => @relationship.id}, status: :created
+      render json: { 'relationship_id' => @relationship.id }, status: :created
     else
-      errors = {
-        relationship: @relationship.errors.to_h,
-        reference: @reference.validate_before_create
-      }
-      render json: errors, status: :bad_request
+      render json: @relationship.errors.to_h, status: :bad_request
     end
   end
 
@@ -80,7 +73,10 @@ class RelationshipsController < ApplicationController
       return head :unauthorized
     end
 
-    return head :bad_request unless Reference.new(reference_params).validate_before_create.empty?
+    if !Document.valid_url?(reference_params.fetch(:url)) || reference_params.fetch(:name).blank?
+      return head :bad_request
+    end
+
     @errors = []
     @new_relationships = []
 
@@ -115,6 +111,7 @@ class RelationshipsController < ApplicationController
       attributes = relationship.slice('name', 'blurb', 'primary_ext').merge('last_user_id' => current_user.sf_guard_user_id)
       entity = Entity.create(attributes)
     else
+
       entity = Entity.find_by_id(relationship.fetch('name').to_i)
     end
 
@@ -139,16 +136,18 @@ class RelationshipsController < ApplicationController
 
   def create_bulk_relationship(entity1, entity2, relationship)
     r = Relationship.new(relationship_attributes(entity1, entity2, relationship))
-    r.save!
-    # if the relationship is not persisted (meaning an error occurred)
-    # creating the reference for that relationship
-    Reference.create(reference_params.merge(object_id: r.id, object_model: 'Relationship'))
-    # some relationships will have additional fields:
-    if extension?
-      # get only the category fields from the relationship hash
-      new_category_attr = relationship.delete_if { |key| (r.attributes.keys + ['name', 'primary_ext', 'blurb']).include? key }
-      # update relationship category - we don't have to update if nothing has changed
-      r.get_category.update(new_category_attr) unless r.category_attributes == new_category_attr
+    r.validate_reference(reference_params)
+    if r.valid?
+      r.save!
+      r.add_reference(reference_params)
+      if extension?
+        # get only the category fields from the relationship hash
+        new_category_attr = relationship.delete_if { |key| (r.attributes.keys + ['name', 'primary_ext', 'blurb']).include? key }
+        # update relationship category - we don't have to update if nothing has changed
+        r.get_category.update!(new_category_attr) unless r.category_attributes == new_category_attr
+      end
+    else
+      raise ActiveRecord::ActiveRecordError, r.errors.full_messages
     end
     @new_relationships << r.as_json(:url => true, :name => true)
   end
@@ -198,7 +197,7 @@ class RelationshipsController < ApplicationController
   end
 
   #################
-  # Other Helpres #
+  # Other Helpers #
   #################
 
   def extension?
@@ -216,14 +215,6 @@ class RelationshipsController < ApplicationController
 
   def relationship_params
     prepare_update_params(params.require(:relationship).permit(:entity1_id, :entity2_id, :category_id, :is_current, :description1, :description2))
-  end
-
-  def reference_params
-    params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
-  end
-
-  def existing_reference_params
-    params.require(:reference).permit(:just_cleaning_up, :reference_id)
   end
 
   # whitelists relationship params and associated nested attributes
@@ -246,5 +237,4 @@ class RelationshipsController < ApplicationController
     return true if p.has_key?(:entity1_id) && p.has_key?(:entity2_id) && p.has_key?(:category_id)
     return false
   end
-  
 end

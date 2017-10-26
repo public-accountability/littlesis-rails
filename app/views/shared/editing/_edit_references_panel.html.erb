@@ -1,5 +1,5 @@
 <!-- Accepts two locals: references & selected_ref -->
-<div class="col-sm-6">
+<div class="col-sm-6" id="edit-references-panel">
     <div class="panel panel-default">
 	<div class="panel-heading">
 	    <h3 class="panel-title">Where is this information coming from?</h3>
@@ -18,9 +18,9 @@
 	    </div>
 	    <div id="new-reference-form" class="hidden form-horizontal">
 		<div class="form-group form-group-sm">
-                    <%= label_tag(:reference_source, "Source URL*", class: "col-sm-2 control-label") %>
+                    <%= label_tag(:reference_url, "Source URL*", class: "col-sm-2 control-label") %>
                     <div class="col-sm-10">
-                        <%= url_field(:reference, :source ) %>
+                        <%= url_field(:reference, :url ) %>
                     </div>
                 </div>
                 
@@ -45,16 +45,16 @@
  $(function(){
    
    function disableNewReferenceFields() {
-     $('#reference_source').prop('disabled', true);
+     $('#reference_url').prop('disabled', true);
      $('#reference_name').prop('disabled', true);
-     $('#reference_source').prop('required', false);
+     $('#reference_url').prop('required', false);
      $('#reference_name').prop('required', false);
    }
 
    function enableNewReferenceFields() {
-     $('#reference_source').prop('disabled', false);
+     $('#reference_url').prop('disabled', false);
      $('#reference_name').prop('disabled', false);
-     $('#reference_source').prop('required', true);
+     $('#reference_url').prop('required', true);
      $('#reference_name').prop('required', true);
    }
 

@@ -26,7 +26,7 @@ class Relationship < ActiveRecord::Base
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
-  has_many :references, -> { where(object_model: 'Relationship') }, foreign_key: 'object_id'
+  #has_many :references, -> { where(object_model: 'Relationship') }, foreign_key: 'object_id'
 
   has_one :position, inverse_of: :relationship, dependent: :destroy
   has_one :education, inverse_of: :relationship, dependent: :destroy
@@ -222,10 +222,6 @@ class Relationship < ActiveRecord::Base
 
   def details 
     RelationshipDetails.new(self).details
-  end
-
-  def source_links
-    Reference.where(object_id: self.id, object_model: "Relationship")
   end
 
 

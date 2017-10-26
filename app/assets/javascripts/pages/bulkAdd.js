@@ -581,7 +581,7 @@
   //   entity1_id: int,
   //   category_id: int,
   //   reference: {
-  //     source: str
+  //     url: str
   //     name: str
   //   }
   //   relationships: [{}]
@@ -590,7 +590,7 @@
     var entity1_id = utility.entityInfo('entityid');
     var category_id = Number($('#relationship-cat-select option:selected').val());
     var reference = {
-      'source': $('#reference-url').val(),
+      'url': $('#reference-url').val(),
       'name': $('#reference-name').val()
     };
     return {

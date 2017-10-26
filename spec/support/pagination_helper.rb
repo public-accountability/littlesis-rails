@@ -1,8 +1,8 @@
 module PaginationExampleGroupHelper
   def stub_page_limit(klass, limit = 1)
     before(:all) do
-      @orginal_per_page = klass::PER_PAGE
       klass.class_eval do
+        @orginal_per_page = const_get(:PER_PAGE)
         remove_const(:PER_PAGE)
         const_set(:PER_PAGE, limit)
       end

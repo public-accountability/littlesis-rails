@@ -5,7 +5,7 @@
 <% content_for(:facebook_image, @entity.featured_image_url) %>
 <%= render partial: 'shared/facebook_sdk' %>
 <%= render partial: 'header', locals: { entity: @entity } %>
-<%= render partial: 'actions', locals: { entity: @entity, current_user: @current_user } %>
+<%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 
 <div class="row top-1em" id="entity-page-container">
     <div class="col-md-8 col-sm-8 nopadding">

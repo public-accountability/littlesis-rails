@@ -62,8 +62,8 @@ class NyMatch < ActiveRecord::Base
   # input: Relationship
   def create_reference(rel)
     ref_link = ny_disclosure.reference_link
-    unless rel.references.map(&:source).include? ref_link
-      rel.add_reference(ref_link, ny_disclosure.reference_name)
+    unless rel.references.map { |ref| ref.document.url }.include? ref_link.strip
+      rel.add_reference(url: ref_link, name: ny_disclosure.reference_name)
     end
   end
 end

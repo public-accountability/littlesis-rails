@@ -1,22 +1,19 @@
 FactoryGirl.define do 
 
   factory :loeb, class: Entity do 
-    # id 10551
     name "Daniel S Loeb"
     blurb "CEO of Third Point LLC"
     primary_ext "Person"
     last_user_id 1
   end
-  
+
   factory :nrsc, class: Entity do
-    # id 28799
     name "National Republican Senatorial Committee"
     primary_ext "Org"
     last_user_id 1
   end
 
   factory :loeb_donation, class: Relationship do
-    # id 419156
     entity1_id 10551
     entity2_id 28799
     category_id 5
@@ -31,7 +28,7 @@ FactoryGirl.define do
     is_gte false
   end
 
-  factory :loeb_filing_one, class: FecFiling do 
+  factory :loeb_filing_one, class: FecFiling do
     amount 30800
     fec_filing_id '11020480483'
     crp_cycle 2012
@@ -40,7 +37,6 @@ FactoryGirl.define do
     end_date '2011-11-29'
     is_current false
   end
-
 
   factory :loeb_filing_two, class: FecFiling do 
     amount 50000
@@ -51,8 +47,6 @@ FactoryGirl.define do
     end_date '2010-09-17'
     is_current false
   end
-
-  
 
   factory :loeb_donation_one, class: OsDonation do
     cycle '2012'
@@ -113,7 +107,6 @@ FactoryGirl.define do
     object_model "Relationship"
     # object_id 419156
   end
-  
   
   factory :loeb_ref_three, class: Reference do
     name "FEC contribution search"

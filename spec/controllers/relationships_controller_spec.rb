@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe RelationshipsController, type: :controller do
   let(:sf_user) { create(:sf_user) }
-  let(:e1) { create(:person, last_user_id: sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
-  let(:e2) { create(:mega_corp_inc, last_user_id: sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
+  let(:e1) { create(:entity_person, last_user_id: sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
+  let(:e2) { create(:entity_org, last_user_id: sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
 
   before(:all) do
     Entity.skip_callback(:create, :after, :create_primary_ext)
@@ -52,8 +52,8 @@ describe RelationshipsController, type: :controller do
         },
         reference: {
           name: 'Interesting website',
-          source_detail: '',
-          source: 'http://example.com',
+          excerpt: '',
+          url: 'http://example.com',
           publication_date: '2016-01-01',
           ref_type: '1'
         }
@@ -75,31 +75,31 @@ describe RelationshipsController, type: :controller do
         expect(JSON.parse(response.body)).to eql ({ "relationship_id" => Relationship.last.id})
       end
 
-      it 'should create a new relationship' do
+      it 'creates a new relationship' do
         expect { post_request }.to change { Relationship.count }.by(1)
       end
 
-      it 'should create a new Reference' do
+      it 'creates a new Reference' do
         expect { post_request }.to change { Reference.count }.by(1)
+        last_ref = Reference.last
+        expect(last_ref.referenceable_type).to eql 'Relationship'
+        expect(last_ref.referenceable_id). to eql Relationship.last.id
       end
 
-      it 'should create reference with correct fields' do
+      it 'creates or finds a document with the correct fields' do
         post_request
-        r = Reference.last
-        expect(r.name).to eql 'Interesting website'
-        expect(r.ref_type).to eql 1
-        expect(r.object_model).to eql 'Relationship'
-        expect(r.object_id). to eql Relationship.last.id
+        doc = Reference.last.document
+        expect(doc.name).to eql 'Interesting website'
+        expect(doc.publication_date).to eql '2016-01-01'
+        expect(doc.ref_type).to eql 1
       end
 
       it 'changes updated_at of entities' do
         e1.update_column(:updated_at, 1.day.ago)
         e2.update_column(:updated_at, 1.day.ago)
-        e1_updated_at = e1.updated_at
-        e2_updated_at = e2.updated_at
         post_request
-        expect(Entity.find(e1.id).updated_at.to_i).not_to eql e1_updated_at.to_i
-        expect(Entity.find(e2.id).updated_at.to_i).not_to eql e2_updated_at.to_i
+        expect(Entity.find(e1.id).updated_at).to be > 1.minute.ago
+        expect(Entity.find(e2.id).updated_at).to be > 1.minute.ago
       end
 
       it 'updates last_user_id' do
@@ -117,28 +117,25 @@ describe RelationshipsController, type: :controller do
 
       it 'sends error json with bad relationship params' do
         post :create, example_params.tap { |x| x[:relationship].delete(:category_id) }
-        expect(JSON.parse(response.body)).to have_key 'relationship'
-        expect(JSON.parse(response.body)).to have_key 'reference'
-        expect(JSON.parse(response.body)['relationship']).to have_key 'category_id'
+        expect(JSON.parse(response.body)).to have_key 'category_id'
+        expect(JSON.parse(response.body)).not_to have_key 'base'
       end
 
-      it 'responds with 400 if missing reference source' do
-        post :create, example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:source) }
+      it 'responds with 400 if missing reference url' do
+        post :create, example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:url) }
         expect(response.status).to eq 400
       end
 
       it 'sends error json with reference params' do
-        post :create,  example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:source) }
-        expect(JSON.parse(response.body)).to have_key 'relationship'
-        expect(JSON.parse(response.body)).to have_key 'reference'
-        expect(JSON.parse(response.body)['reference']). to have_key 'source'
-        expect(JSON.parse(response.body)['relationship']).not_to have_key 'category_id'
+        post :create,  example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:url) }
+        expect(JSON.parse(response.body)).to have_key 'base'
+        expect(JSON.parse(response.body)).not_to have_key 'category_id'
       end
 
       it 'sends error json with reference & relationship params' do
-        post :create, example_params.tap { |x| x[:reference].delete(:source) }.tap { |x| x[:relationship].delete(:category_id) }
-        expect(JSON.parse(response.body)['reference']).to have_key 'source'
-        expect(JSON.parse(response.body)['relationship']).to have_key 'category_id'
+        post :create, example_params.tap { |x| x[:reference].delete(:url) }.tap { |x| x[:relationship].delete(:category_id) }
+        expect(JSON.parse(response.body)).to have_key 'base'
+        expect(JSON.parse(response.body)).to have_key 'category_id'
       end
     end
 
@@ -181,7 +178,7 @@ describe RelationshipsController, type: :controller do
       end
 
       it do
-        should permit(:name, :source, :source_detail, :publication_date, :ref_type)
+        should permit(:name, :url, :excerpt, :publication_date, :ref_type)
                 .for(:create, params: example_params).on(:reference)
       end
     end
@@ -203,11 +200,11 @@ describe RelationshipsController, type: :controller do
 
   describe 'GET /relationships/id/edit' do
     login_user
-
+    let(:relationship) { build :relationship }
+    
     context 'editing a reference' do
       before do
-        @rel = build :relationship
-        expect(Relationship).to receive(:find).with('1').and_return(@rel)
+        expect(Relationship).to receive(:find).with('1').and_return(build(:relationship))
         get :edit, id: 1
       end
 
@@ -218,8 +215,7 @@ describe RelationshipsController, type: :controller do
     context 'editing a reference directly after created it (new_ref = true)' do
       context 'when there is no reference' do
         before do
-          @rel = build :relationship
-          expect(Relationship).to receive(:find).with('1').and_return(@rel)
+          expect(Relationship).to receive(:find).with('1').and_return(relationship)
           get :edit, id: 1, new_ref: 'true'
         end
 
@@ -232,11 +228,11 @@ describe RelationshipsController, type: :controller do
       end
 
       context 'when there is a reference' do
+        let(:reference) { build(:reference) }
+
         before do
-          @rel = build(:relationship)
-          @ref = build(:relationship_ref)
-          expect(@rel).to receive(:references).and_return(double(:last => @ref))
-          expect(Relationship).to receive(:find).with('1').and_return(@rel)
+          expect(relationship).to receive(:references).and_return(double(:last => reference))
+          expect(Relationship).to receive(:find).with('1').and_return(relationship)
           get :edit, id: 1, new_ref: 'true'
         end
 
@@ -244,7 +240,7 @@ describe RelationshipsController, type: :controller do
         it { should render_template(:edit) }
 
         it 'sets @selected_ref' do
-          expect(assigns(:selected_ref)).to eql @ref.id
+          expect(assigns(:selected_ref)).to eql reference.id
         end
       end
     end
@@ -253,147 +249,165 @@ describe RelationshipsController, type: :controller do
   describe 'PATCH /relationships/id' do
     login_user
 
-    let(:generic_reference) do
-      create(:generic_relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 12, last_user_id: sf_user.id)
-    end
+    context 'updating start and end dates' do
 
-    context 'When the submission contains errors' do
+      let!(:relationship) { create(:generic_relationship, entity1_id: e1.id, entity2_id: e2.id, last_user_id: sf_user.id) } 
+
       before do
-        @rel = generic_reference
         e1.update_column(:updated_at, 1.day.ago)
         e2.update_column(:updated_at, 1.day.ago)
-        @e1_updated_at = e1.updated_at
-        @e2_updated_at = e2.updated_at
-        patch :update, { id: @rel.id, relationship: {'start_date' => '012345678910'}, reference: {'just_cleaning_up' => '1'} }
       end
 
-      it { should respond_with(:success) }
-      it { should render_template(:edit) }
-
-      it 'does not change the  updated_at of entities' do
-        expect(Entity.find(e1.id).updated_at.to_i).to eql @e1_updated_at.to_i
-        expect(Entity.find(e2.id).updated_at.to_i).to eql @e2_updated_at.to_i
-      end
-
-      it 'does not update last_user_id' do
-        expect(Entity.find(e1.id).last_user_id).to eql sf_user.id
-        expect(Entity.find(e2.id).last_user_id).to eql sf_user.id
-      end
-    end
-
-    context "it's a good request" do
-      before do
-        @e1 = create(:person, last_user_id: sf_user.id, created_at: 1.day.ago, name: 'person one')
-        @e2 = create(:mega_corp_inc, last_user_id: sf_user.id, created_at: 1.day.ago)
-        @rel = create(:generic_relationship, entity1_id: @e1.id, entity2_id: @e2.id)
-        @e1.update_column(:updated_at, 1.day.ago)
-        @e2.update_column(:updated_at, 1.day.ago)
-        @e1_updated_at = @e1.updated_at
-        @e2_updated_at = @e2.updated_at
-        patch :update, { id: @rel.id, relationship: {'start_date' => '2012-12-12'}, reference: {'reference_id' => '123'} }
-      end
-
-      it { should redirect_to(relationship_path) }
-
-      it 'updates db' do
-        expect(Relationship.find(@rel.id).start_date).to eql '2012-12-12'
-      end
-
-      it 'changes updated_at of entities' do
-        expect(Entity.find(@e1.id).updated_at.to_i).not_to eql @e1_updated_at.to_i
-        expect(Entity.find(@e2.id).updated_at.to_i).not_to eql @e2_updated_at.to_i
-      end
-
-      it 'updates last_user_id' do
-        expect(Entity.find(@e1.id).last_user_id).not_to eql sf_user.id
-        expect(Entity.find(@e2.id).last_user_id).not_to eql sf_user.id
-      end
-    end
-
-    context 'with blank string as start and end date' do
-      before do
-        @rel = generic_reference
-        patch :update, { id: @rel.id, relationship: {'start_date' => '', 'end_date' => ''}, reference: {'reference_id' => '123'} }
-      end
       
-      it 'keeps start_date as nil' do
-        expect(Relationship.find(@rel.id).start_date).to be nil
+      context 'submitting an invalid date' do
+        before do
+          patch :update, { id: relationship.id, relationship: {'start_date' => '012345678910'}, reference: {'just_cleaning_up' => '1'} }
+        end
+
+        it { should respond_with(:success) }
+        it { should render_template(:edit) }
+
+        it 'does not change the updated_at of entities' do
+          expect(Entity.find(e1.id).updated_at).to be <= 1.hour.ago
+          expect(Entity.find(e2.id).updated_at).to be <= 1.hour.ago
+        end
+
+        it 'does not update last_user_id' do
+          expect(Entity.find(e1.id).last_user_id).to eql sf_user.id
+          expect(Entity.find(e2.id).last_user_id).to eql sf_user.id
+        end
       end
-      
-      it 'keeps end_date as nil' do
-        expect(Relationship.find(@rel.id).end_date).to be nil
-      end
-    end
+    
+      context "valid request" do
+        before do
+          patch :update, { id: relationship.id, relationship: {'start_date' => '2012-12-12'}, reference: {'reference_id' => '123'} }
+        end
 
-    context 'with alternative date formats' do
-      before { @rel = generic_reference }
+        it { should redirect_to(relationship_path) }
 
-      it 'allows date as YYYY' do
-        patch :update, { id: @rel.id, relationship: { 'start_date' => '2017' }, reference: { 'reference_id' => '123' } }
-        expect(Relationship.find(@rel.id).start_date).to eql '2017-00-00'
-      end
+        it 'updates db' do
+          expect(Relationship.find(relationship.id).start_date).to eql '2012-12-12'
+        end
 
-      it 'allows date as YYYY-MM' do
-        patch :update, { id: @rel.id, relationship: { 'end_date' => '2017-09' }, reference: { 'reference_id' => '123' } }
-        expect(Relationship.find(@rel.id).end_date).to eql '2017-09-00'
-      end
+        it 'changes updated_at of entities' do
+          expect(Entity.find(e1.id).updated_at).to be > 1.hour.ago
+          expect(Entity.find(e2.id).updated_at).to be > 1.hour.ago
+        end
 
-      it 'allows date as YYYYMMDD' do
-        patch :update, { id: @rel.id, relationship: { 'end_date' => '20170925' }, reference: { 'reference_id' => '123' } }
-        expect(Relationship.find(@rel.id).end_date).to eql '2017-09-25'
-      end
-    end
-
-    context 'invalid reference' do
-      before do
-        @rel = generic_reference
-        patch :update, { id: @rel.id, relationship: {'start_date' => '2001-01-01'}, reference: {'source' => '', 'name' => ''} }
-      end
-
-      it { should render_template(:edit) }
-
-      it 'does not update relationship' do
-        expect(Relationship.find(@rel.id).start_date).to be nil
-      end
-    end
-
-    context 'good request with new reference' do
-      before do
-        @rel = generic_reference
-        @ref_count = Reference.count
-        patch :update, { id: @rel.id, relationship: {'end_date' => '2001-01-01'}, reference: {'source' => 'http://example.com', 'name' => 'example'} }
+        it 'updates last_user_id' do
+          expect(Entity.find(e1.id).last_user_id).not_to eql sf_user.id
+          expect(Entity.find(e2.id).last_user_id).not_to eql sf_user.id
+        end
       end
 
-      it { should redirect_to(relationship_path) }
-
-      it 'updates db' do
-        expect(Relationship.find(@rel.id).end_date).to eql '2001-01-01'
+      context 'with blank string as start and end date' do
+        before do
+          patch :update, { id: relationship.id, relationship: {'start_date' => '', 'end_date' => ''}, reference: {'reference_id' => '123'} }
+        end
+        
+        it 'keeps start_date as nil' do
+          expect(Relationship.find(relationship.id).start_date).to be nil
+        end
+        
+        it 'keeps end_date as nil' do
+          expect(Relationship.find(relationship.id).end_date).to be nil
+        end
       end
 
-      it 'updates last user id' do
-        expect(Relationship.find(@rel.id).last_user_id). to eql controller.current_user.sf_guard_user_id
+      context 'with alternative date formats' do
+        it 'allows date as YYYY' do
+          patch :update, { id: relationship.id, relationship: { 'start_date' => '2017' }, reference: { 'reference_id' => '123' } }
+          expect(Relationship.find(relationship.id).start_date).to eql '2017-00-00'
+        end
+
+        it 'allows date as YYYY-MM' do
+          patch :update, { id: relationship.id, relationship: { 'end_date' => '2017-09' }, reference: { 'reference_id' => '123' } }
+          expect(Relationship.find(relationship.id).end_date).to eql '2017-09-00'
+        end
+
+        it 'allows date as YYYYMMDD' do
+          patch :update, { id: relationship.id, relationship: { 'end_date' => '20170925' }, reference: { 'reference_id' => '123' } }
+          expect(Relationship.find(relationship.id).end_date).to eql '2017-09-25'
+        end
       end
 
-      it 'creates a new reference' do
-        expect(Reference.count).to eql (@ref_count + 1)
-        expect(Reference.last.source).to eql 'http://example.com'
-        expect(Reference.last.name).to eql 'example'
+
+      context 'invalid reference' do
+        before do
+          patch :update, { id: relationship.id, relationship: {'start_date' => '2001-01-01'}, reference: {'url' => '', 'name' => ''} }
+        end
+
+        it { should render_template(:edit) }
+
+        it 'does not update the relationship' do
+          expect(Relationship.find(relationship.id).start_date).to be nil
+        end
       end
-    end
+
+      context 'good request with new reference' do
+        let(:document_attributes) { attributes_for(:document) }
+        let(:patch_request) do
+          proc {
+            patch :update, {
+                    id: relationship.id,
+                    relationship: {'end_date' => '2001-01-01'},
+                    reference:  document_attributes }
+          }
+        end
+
+        it 'redirects to relationship path' do
+          patch_request.call
+          expect(response).to redirect_to(relationship_path)
+        end
+        
+        it 'updates db' do
+          expect { patch_request.call }
+            .to change { Relationship.find(relationship.id).end_date }.from(nil).to('2001-01-01')
+        end
+
+        it 'updates last user id' do
+          expect { patch_request.call }
+            .to change { Relationship.find(relationship.id).last_user_id }.to(controller.current_user.sf_guard_user_id)
+        end
+
+        it 'creates a new reference' do
+          expect { patch_request.call }
+            .to change { Reference.count }.by(1)
+        end
+
+        it 'creates a new document' do
+          expect { patch_request.call }
+            .to change { Document.count }.by(1)
+
+          expect(Document.last.url).to eql document_attributes[:url]
+          expect(Document.last.name).to eql document_attributes[:name]
+        end
+      end
+    end # end update start/end dates
 
     context 'With nested params: position relationship' do
-      before do
-        @rel = create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 1, description1: 'leader')
-        patch(:update, { id: @rel.id, reference: {'just_cleaning_up' => '1'}, relationship: {'notes' => 'notes notes notes', 'position_attributes' => { 'is_board' => 'true', 'compensation' => '1000' } } })
+      let(:relationship) do
+        create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 1, description1: 'leader')
+      end
+      
+      let(:update_params) do
+        {
+          id: relationship.id,
+          reference: {'just_cleaning_up' => '1'},
+          relationship: {'notes' => 'notes notes notes', 'position_attributes' => { 'is_board' => 'true', 'compensation' => '1000' } }
+        }
       end
 
+      before { patch(:update, update_params) }
+        
       it { should redirect_to(relationship_path) }
 
       it 'updates db' do
-        expect(Relationship.find(@rel.id).get_category.is_board).to eql true
-        expect(Relationship.find(@rel.id).get_category.compensation).to eql 1000
+        expect(Relationship.find(relationship.id).get_category.is_board).to eql true
+        expect(Relationship.find(relationship.id).get_category.compensation).to eql 1000
       end
     end
+    
   end # end describe PATCH #update
 
   describe 'reverse_direction' do

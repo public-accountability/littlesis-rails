@@ -42,4 +42,25 @@ describe ApplicationHelper, :type => :helper do
     end
   end
 
+  describe 'references_select' do
+    let(:references) { Array.new(2) { build(:reference) } }
+    let(:selected_id) { nil }
+    subject { helper.references_select(references, selected_id) }
+
+    context 'with no selected_id' do
+      it { is_expected.to have_tag 'select.selectpicker' }
+      it { is_expected.to have_tag 'option', count: 3 }
+      it { is_expected.to have_tag('option',
+                                   with: { value: references.first.id }, text: references.first.document.name) }
+      it { is_expected.to have_tag('option',
+                                   with: { value: references.second.id }, text: references.second.document.name) }
+      it { is_expected.not_to include 'selected' }
+    end
+
+    context 'with a selected_id' do
+      let(:selected_id) { references.first.id }
+      it { is_expected.to have_tag('option', with: { value: references.first.id, selected: 'selected' }) }
+      it { is_expected.to have_tag('option', with: { value: references.second.id }) }
+    end
+  end
 end

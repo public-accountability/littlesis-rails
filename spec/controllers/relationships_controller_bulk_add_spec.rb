@@ -5,16 +5,17 @@ describe RelationshipsController, type: :controller do
     describe 'logined user with importer permission' do
       login_user
 
+      let(:url) { Faker::Internet.unique.url }
+
       it 'sends error message if given bad reference' do
-        post :bulk_add, relationships: [], category_id: 1, reference: { source: '', name: 'important source' }
+        post :bulk_add, relationships: [], category_id: 1, reference: { url: '', name: 'important source' }
         expect(response.status).to eq 400
       end
 
       context 'When submitting two good relationships' do
-        before do
-          @e1 = create(:entity_org)
-          @e2 = create(:entity_org)
-        end
+        let!(:e1) { create(:entity_org) }
+        let!(:e2) { create(:entity_org) }
+
         let(:relationship1) do
           { 'name' => 'jane doe',
             'blurb' =>  nil,
@@ -26,7 +27,7 @@ describe RelationshipsController, type: :controller do
             'is_current' => nil }
         end
         let(:relationship2) do
-          { 'name' => @e2.id,
+          { 'name' => e2.id,
             'blurb' =>  nil,
             'primary_ext' => 'Org',
             'amount' =>  1000,
@@ -36,9 +37,9 @@ describe RelationshipsController, type: :controller do
             'is_current' => nil }
         end
         let(:params) do
-          { 'entity1_id' => @e1.id,
+          { 'entity1_id' => e1.id,
             'category_id' => 5,
-            'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+            'reference' => { 'url' => url, 'name' => 'example.com' },
             'relationships' => [relationship1, relationship2] }
         end
 
@@ -62,7 +63,11 @@ describe RelationshipsController, type: :controller do
 
         it 'creates two References' do
           expect { post :bulk_add, params }.to change { Reference.count }.by(2)
-          expect(Reference.last(2).map(&:source)).to eql ['http://example.com'] * 2
+          expect(Reference.last(2).map(&:document).map(&:url)).to eql [url] * 2
+        end
+
+        it 'creates one Document' do
+          expect { post :bulk_add, params }.to change { Document.count }.by(1)
         end
       end
 
@@ -82,7 +87,7 @@ describe RelationshipsController, type: :controller do
         let(:params) do
           { 'entity1_id' => entity.id,
             'category_id' => 1,
-            'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+            'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
             'relationships' => [relationship1] }
         end
 
@@ -110,19 +115,20 @@ describe RelationshipsController, type: :controller do
             'description1' => 'board member',
             'start_date' => 'this is not a real date' }
         end
+
         let(:params) do
           { 'entity1_id' => entity.id,
             'category_id' => 12,
-            'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+            'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
             'relationships' => [relationship1] }
         end
 
-        it 'does not create a relationship' do
-          expect { post :bulk_add, params }.not_to change { Relationship.count }
-        end
+        subject { lambda { post :bulk_add, params } }
+
+        it { is_expected.not_to change { Relationship.count } }
 
         it 'responds with 422' do
-          expect { post :bulk_add, params }.not_to change { Relationship.count }
+          subject.call
           expect(response.status).to eql 200
         end
       end
@@ -147,38 +153,38 @@ describe RelationshipsController, type: :controller do
         let(:params) do
           { 'entity1_id' => create(:entity_org).id,
             'category_id' => 12,
-            'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+            'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
             'relationships' => [relationship1, relationship2] }
         end
 
-        it 'creates one relationship' do
-          expect { post :bulk_add, params }.to change { Relationship.count }.by(1)
-        end
+        subject { lambda { post :bulk_add, params } }
+        it { is_expected.to change { Relationship.count }.by(1) }
 
         it 'responds with 200' do
-          post :bulk_add, params
+          subject.call
           expect(response.status).to eql 200
         end
       end
 
       context 'When submitting position relationships' do
+        let(:corp) { create(:entity_org) }
+        let(:person) { create(:entity_person) }
+        let(:relationship_params) do
+          { 'name' => person.id, 'primary_ext' => 'Person', 'start_date' => '2017-01-01' }
+        end
+
         before do
-          @corp = create(:entity_org)
-          @person = create(:entity_person)
-          @relationship = { 'name' => @person.id, 'primary_ext' => 'Person', 'start_date' => '2017-01-01' }
-
-          @params = { 'entity1_id' => @corp.id,
+          @params = { 'entity1_id' => corp.id,
                       'category_id' => 1,
-                      'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
-                      'relationships' => [@relationship] }
+                      'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+                      'relationships' => [relationship_params] }
         end
 
-        it 'creates relationship' do
-          expect { post :bulk_add, @params }.to change { Relationship.count }.by(1)
-        end
+        subject { lambda { post :bulk_add, @params } }
+        it { is_expected.to change { Relationship.count }.by(1) }
 
         it 'reverses entity id correctly' do
-          post :bulk_add, @params
+          subject.call
           rel = Relationship.last
           expect(rel.category_id).to eql 1
           expect(rel.entity.primary_ext).to eql 'Person'
@@ -196,7 +202,7 @@ describe RelationshipsController, type: :controller do
 
           @params = { 'entity1_id' => @corp.id,
                       'category_id' => 5,
-                      'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+                      'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
                       'relationships' => [@relationship1, @relationship2, @relationship3, @relationship4] }
         end
 
@@ -216,12 +222,13 @@ describe RelationshipsController, type: :controller do
       end
 
       context 'When submitting a Donation Received or Doantion Given relationship' do
+        let(:corp) { create(:entity_org) }
+
         before(:each) do
-          @corp = create(:entity_org)
           @relationship = { 'name' => 'donor guy', 'primary_ext' => 'Person', 'amount' => '$20' }
 
-          params = { 'entity1_id' => @corp.id,
-                     'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+          params = { 'entity1_id' => corp.id,
+                     'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
                      'relationships' => [@relationship] }
 
           @donation_received = params.merge('category_id' => 50)
@@ -234,7 +241,7 @@ describe RelationshipsController, type: :controller do
 
         it 'changes entity order for donation received' do
           post :bulk_add, @donation_received
-          expect(Relationship.last.entity2_id).to eq @corp.id
+          expect(Relationship.last.entity2_id).to eq corp.id
         end
 
         it 'creates one donation given relationship' do
@@ -243,7 +250,7 @@ describe RelationshipsController, type: :controller do
 
         it 'does not change entity order for donation given' do
           post :bulk_add, @donation_given
-          expect(Relationship.last.entity1_id).to eq @corp.id
+          expect(Relationship.last.entity1_id).to eq corp.id
         end
       end
 
@@ -259,22 +266,18 @@ describe RelationshipsController, type: :controller do
             'end_date' => 'THE END!', # <---- bad date
             'is_current' => nil }
         end
+        let!(:corp) { create(:entity_org) }
 
-        before do
-          @corp = create(:entity_org)
-          @params = { 'entity1_id' => @corp.id,
-                      'category_id' => 12,
-                      'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
-                      'relationships' => [generic_relationship] }
+        let(:params) do
+          { 'entity1_id' => corp.id,
+            'category_id' => 12,
+            'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+            'relationships' => [generic_relationship] }
         end
 
-        it 'does not create a relationship' do
-          expect { post :bulk_add, @params }.not_to change { Relationship.count }
-        end
-
-        it 'does not create a new entity' do
-          expect { post :bulk_add, @params }.not_to change { Entity.count }
-        end
+        subject { lambda { post :bulk_add, params } }
+        it { is_expected.not_to change { Relationship.count } }
+        it { is_expected.not_to change { Entity.count } }
       end
     end
   end
@@ -292,14 +295,14 @@ describe RelationshipsController, type: :controller do
     let(:params) do
       { 'entity1_id' => create(:entity_org).id,
         'category_id' => 12,
-        'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+        'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
         'relationships' => [relationship] }
     end
 
     let(:ten_relationships_params) do
       { 'entity1_id' => 1,
         'category_id' => 5,
-        'reference' => { 'source' => 'http://example.com', 'name' => 'example.com' },
+        'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
         'relationships' => [{ 'relationship' => 'details' }] * 10 }
     end
 
@@ -341,7 +344,7 @@ describe RelationshipsController, type: :controller do
   describe 'make_or_get_entity' do
     login_user
     let(:relationship) { { 'name' => 'new person', 'blurb' => 'words', 'primary_ext' => 'Person', 'is_board' => true } }
-    let(:relationship_with_invalid_id) { { 'name' => '987654321', 'blurb' => 'blurb', 'primary_ext' => 'Person' }  } 
+    let(:relationship_with_invalid_id) { { 'name' => '987654321', 'blurb' => 'blurb', 'primary_ext' => 'Person' } }
     let(:relationship_existing) { { 'name' => '666', 'blurb' => '', 'primary_ext' => 'Person' } }
     let(:relationship_error) { { 'name' => 'i am a cat', 'blurb' => 'meow', 'primary_ext' => nil } }
 
@@ -354,7 +357,7 @@ describe RelationshipsController, type: :controller do
     end
 
     it 'creates new entity' do
-      expect { controller.send(:make_or_get_entity, relationship) {} }.to change { Entity.count }.by(1) 
+      expect { controller.send(:make_or_get_entity, relationship) {} }.to change { Entity.count }.by(1)
     end
 
     it' finds existing entity' do

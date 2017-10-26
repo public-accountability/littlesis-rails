@@ -1,16 +1,15 @@
 class EntitiesController < ApplicationController
   include TagableController
+  include ReferenceableController
   before_filter :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show]
   before_action :set_entity_with_eager_loading, only: [:show]
-  before_action :set_current_user, only: [:show, :political, :match_donations]
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
   before_action -> { check_permission('contributor') }, only: [:create]
   before_action -> { check_permission('deleter') }, only: [:destroy]
 
   ## Profile Page Tabs:
   # (consider moving these all to #show route)
-  
   def show
     @similar_entities = @entity.similar_entities
     @active_tab = :relationships
@@ -26,16 +25,12 @@ class EntitiesController < ApplicationController
     render 'show'
   end
 
-  # def giving; end
-
   def political
   end
 
   # THE DATA 'tab'
   def datatable
   end
-
-  #### 
 
   def new
   end
@@ -76,25 +71,22 @@ class EntitiesController < ApplicationController
     set_entity_references
   end
 
-  # this methods follows a similar pattern to relationships_controller#update
   def update
-    if need_to_create_new_reference
-      @reference = Reference.new(reference_params.merge(object_id: @entity.id, object_model: "Entity"))
-      unless @reference.validate_before_create.empty?
-        @reference_error_message = "The reference is not valid"
-        set_entity_references
-        return render :edit
+    # assign new attributes to the entity
+    @entity.assign_attributes(prepare_update_params(update_entity_params))
+    # if those attributes are valid
+    # update the entity extension records  and save the reference
+    if @entity.valid?
+      @entity.update_extension_records(extension_def_ids)
+      @entity.add_reference(reference_params) if need_to_create_new_reference
+      # Add_reference will make the entity invalid if the reference is invalid
+      if @entity.valid?
+        @entity.save!
+        return redirect_to entity_path(@entity)
       end
     end
-    
-    if @entity.update_attributes prepare_update_params(update_entity_params)
-      @entity.update_extension_records(extension_def_ids)
-      @reference.save unless @reference.nil? # save the reference
-      redirect_to @entity.legacy_url
-    else
-      set_entity_references
-      render :edit
-    end
+    set_entity_references
+    render :edit
   end
 
   def destroy
@@ -102,19 +94,13 @@ class EntitiesController < ApplicationController
     redirect_to home_dashboard_path, notice: "#{@entity.name} has been successfully deleted"
   end
 
-  
-
   def add_relationship
     @relationship = Relationship.new
     @reference = Reference.new
   end
 
-  
-
   def references
-    refs = @entity.all_references
-    @reference_count = refs.size
-    @references = Kaminari.paginate_array(refs).page(params[:page]).per(25)
+    @page = params[:page].present? ? params[:page] : 1
   end
 
   # ------------------------------ #
@@ -439,20 +425,12 @@ class EntitiesController < ApplicationController
 
   private
 
-  def set_current_user
-    @current_user = current_user
-  end
-
   def set_entity_with_eager_loading
     @entity = Entity.includes(:aliases, list_entities: [:list]).find(params[:id])
   end
 
   def set_entity_references
     @references = @entity.references.order('updated_at desc').limit(10)
-  end
-
-  def need_to_create_new_reference
-    existing_reference_params['reference_id'].blank? && existing_reference_params['just_cleaning_up'].blank?
   end
 
   def article_params
@@ -465,14 +443,6 @@ class EntitiesController < ApplicationController
     params.require(:image).permit(
       :file, :title, :caption, :url, :is_free, :is_featured
     )
-  end
-
-  def reference_params
-    params.require(:reference).permit(:name, :source, :source_detail, :publication_date, :ref_type)
-  end
-
-  def existing_reference_params
-    params.require(:reference).permit(:just_cleaning_up, :reference_id)
   end
 
   def update_entity_params
@@ -503,4 +473,3 @@ class EntitiesController < ApplicationController
     check_permission 'importer'
   end
 end
-

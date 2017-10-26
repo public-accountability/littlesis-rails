@@ -97,7 +97,7 @@ gem 'twitter'
 gem 'StreetAddress', :require => "street_address"
 gem 'sequel', :require => false
 
-gem 'validate_url'
+gem 'validate_url', :git => 'https://github.com/perfectline/validates_url.git', :branch => 'master'
 gem 'geocoder'
 
 # used for screenshot capture

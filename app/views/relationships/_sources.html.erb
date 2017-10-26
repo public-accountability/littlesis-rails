@@ -4,9 +4,9 @@
 
 <table class="table table-condensed table-hover" id="source-links-table">
 <tbody>
-        <% relationship.source_links.each do |link|  %>
+        <% relationship.documents.each do |doc|  %>
             <tr>
-                <td><%= link_to excerpt( (link.name.blank? ? link.source : link.name) ), link.source, 'target' => '_blank' %></td>
+                <td><%= link_to excerpt( (doc.name.blank? ? doc.url : doc.name) ), doc.url, 'target' => '_blank' %></td>
             </tr>
         <% end %>
     </tbody>

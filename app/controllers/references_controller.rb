@@ -1,19 +1,21 @@
 class ReferencesController < ApplicationController
+  include ReferenceableController
   before_filter :authenticate_user!, except: [:entity]
+  before_action :set_referenceable, only: [:create]
 
   ENTITY_DEFAULTS = { page: 1, per_page: 10 }.freeze
 
   def create
-    ref = Reference.new( reference_params.merge({last_user_id: current_user.sf_guard_user_id}) )
-    if ref.save
-      params[:data][:object_model].constantize.find(params[:data][:object_id].to_i).touch
-      unless excerpt_params['excerpt'].blank?
-        ref.create_reference_excerpt(excerpt_params)
-      end
+    if params[:data][:url].blank?
+      return render json: { errors: { url: ["can't be blank"] } }, status: :bad_request
+    end
+    @referenceable.add_reference(reference_params(:data))
+
+    if @referenceable.valid?
+      @referenceable.update(last_user_id: current_user.sf_guard_user_id)
       head :created
     else
-      # send back errors
-      render json: {errors: ref.errors}, status: :bad_request
+      render json: { errors: @referenceable.errors }, status: :bad_request
     end
   end
 
@@ -34,10 +36,8 @@ class ReferencesController < ApplicationController
   # associated with the entities or not
   # This is used on the add relationship page
   def recent
-    relationship_ids = Entity.find(entity_ids).map { |e| e.links.map { |l| l.relationship_id } }.flatten.uniq
-    recent_reference_query = [ { :class_name => 'Entity', :object_ids => entity_ids } ]
-    recent_reference_query.append({ :class_name => 'Relationship', :object_ids => relationship_ids }) unless relationship_ids.empty?
-    render json: (Reference.last(2) + Reference.recent_references(recent_reference_query, 20)).uniq
+    docs = Reference.last(2).map(&:document) + Document.documents_for_entity(entity: entity_ids, page: 1, per_page: 10, exclude_type: :fec)
+    render json: docs.uniq.map { |d| d.slice(:id, :name, :url, :publication_date, :excerpt) }
   end
 
   # Returns recent source links for the given entity
@@ -54,8 +54,14 @@ class ReferencesController < ApplicationController
 
   def cached_recent_source_links
     Rails.cache.fetch("#{@entity.alt_cache_key}/recent_source_links/#{params[:page]}/#{params[:per_page]}", expires_in: 2.weeks) do
-      Reference.recent_source_links(@entity, params[:page].to_i, params[:per_page].to_i)
+      Document
+        .documents_for_entity(entity: @entity, page: params[:page].to_i, per_page: params[:per_page].to_i, exclude_type: :fec)
+        .map { |doc| doc.slice(:name, :url) }
     end
+  end
+
+  def set_referenceable
+    @referenceable = params[:data][:referenceable_type].constantize.find(params[:data][:referenceable_id].to_i)
   end
 
   def entity_ids
@@ -64,13 +70,5 @@ class ReferencesController < ApplicationController
     else
       params[:entity_ids].map(&:to_i).uniq
     end
-  end
-
-  def reference_params
-    params.require(:data).permit(:object_id, :object_model, :source, :name, :fields, :source_detail, :publication_date, :ref_type)
-  end
-
-  def excerpt_params
-    params.require(:data).permit(:excerpt)
   end
 end

@@ -43,12 +43,12 @@ var sidebarSourceLinks = (function($){
 
   // {} -> html element
   function refToHtml(ref){
-    var name = (ref.name && ref.name.length > 0) ? ref.name : ref.source;
+    var name = (ref.name && ref.name.length > 0) ? ref.name : ref.url;
     var displayName = (name.length > 40) ? (name.substring(0,37) + '...') : name;
 
     return $('<li>').append(
       $('<a>', {
-	href: ref.source, 
+	href: ref.url, 
 	text: displayName,
 	target: '_blank'
       }));
