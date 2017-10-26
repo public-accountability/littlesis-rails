@@ -1,3 +1,26 @@
+#reference-widget-container {
+
+    .reference-typeahead {
+	@extend .form-control;
+	width: 250px;
+    }
+    
+    .reference-suggestion {
+	font-size: 10px;
+	cursor: pointer;
+
+	.reference-suggestion-name {}
+
+	.reference-suggestion-url {
+	    @extend .text-muted;
+	    padding-top: 0.2em;
+	    padding-bottom: 0.2em;
+	}
+    }
+}
+
+/*  Styles for add entity on list page: */
+
 .tt-menu {
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.2);

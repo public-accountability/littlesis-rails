@@ -10,7 +10,7 @@
 }(this, function ($, utility) {
   // CONSTANTS
   var REFERENCES_PER_PAGE = 25;
-  var REQUEST_URL = 'http://localhost:8080/references/recent';
+  var REQUEST_URL = '/references/recent';
     
   /**
    * Reference Widget
@@ -42,7 +42,7 @@
   };
   
   /**
-   * Replaces contents of container with typeahead
+   * Replaces contents of container with a typeahead
    */
   ReferenceWidget.prototype._render = function() {
     $(this.options.containerDiv).html(this._typeaheadInput());
@@ -93,10 +93,8 @@
       name: 'references',
       source: documentBloodhound(this.documents),
       templates: {
-	empty: '<p>empty</p>',
-	suggestion: function(data) {
-	  return '<p><strong>' + data.name + '</strong></p>';
-	}
+	empty: '<span class="reference-empty">No matches found</span>',
+	suggestion: suggestion
       }
     };
   };
@@ -152,15 +150,44 @@
     return $('<input>', {
       "type": 'text',
       "placeholder": 'Select an existing reference',
-      "id": ReferenceWidget.TYPEAHEAD_INPUT_ID
+      "id": ReferenceWidget.TYPEAHEAD_INPUT_ID,
+      "class": 'reference-typeahead'
     });
   };
   
+  
+  /**
+   * 
+   * @param {Object} doc
+   * @returns {String} html for suggestion
+   */
+  function suggestion(doc) {
+    return [ '<div class="reference-suggestion">',
+	     '<div class="reference-suggestion-name">',
+	     doc.name,
+	     '</div>',
+	     '<div class="reference-suggestion-url">',
+	     trimUrl(doc.url),
+	     '</div>',
+	     '</div>'
+	   ].join('');
+    
+  }
+
 
 
   ///////////////
   // HELPERS ///
   /////////////
+
+  function trimUrl(url) {
+    var without_schema = url.replace('https://', '').replace('http://', '');
+    if (without_schema.length < 28) {
+      return without_schema;
+    } else {
+      return (without_schema.slice(0,25) + '...');
+    }
+  }
 
   function mergeOptions(defaultOptions, provided) {
     return Boolean(provided) ? Object.assign({}, defaultOptions, provided) : defaultOptions;
