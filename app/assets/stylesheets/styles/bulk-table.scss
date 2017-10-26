@@ -3,6 +3,7 @@
 // TODO: make a colors.scss file and import from there!
 $light-maroon: rgba(204,133,133,0.4);
 $maroon: rgba(204, 84, 84, 1);
+$primary-blue: rgba(51, 122, 183, 1);
 $table-border-radius: .2em;
 
 h1#bulk-add-header {
@@ -42,17 +43,6 @@ h1#bulk-add-header {
             }
         }
         tbody {
-            .dupe-warning {
-                margin-left: -3em;
-                margin-top: -1.5em;
-                width: 1em;
-                cursor: pointer;
-            }
-            .alert-icon{
-                @extend .glyphicon;
-	        @extend .glyphicon-alert;
-                color: $maroon;
-            }
             td {
                 border-top: 0;
                 border-left: 0;
@@ -66,6 +56,48 @@ h1#bulk-add-header {
                 }
                 td:last-child {
                     border-bottom-right-radius: $table-border-radius;
+                }
+            }
+            .resolver-anchor {
+                margin-left: -3em;
+                margin-top: -1.5em;
+                width: 1em;
+                cursor: pointer;
+            }
+            .alert-icon{
+                @extend .glyphicon;
+	        @extend .glyphicon-alert;
+                color: $maroon;
+            }
+            .arrow {
+                top: calc(0% + 5em) !important;
+            }
+            .popover-title {
+                font-weight: bold;
+            }
+            .resolver-popover {
+                .goto-link-icon{
+                    @extend .glyphicon;
+	            @extend .glyphicon-new-window;
+                    color: $primary-blue;
+                }
+                .btn {
+                    width: 100%;
+                }
+                .btn-danger {
+                    background-color: $maroon;
+                }
+                .resolver-picker-btn {
+                    margin: 1em 0 1em 0; // TRBL
+                }
+                .resolver-picker-result-container {
+                    width: 19em;
+                }
+                .resolver-picker-result {
+                    padding: 1em 0 0 .5em; // TRBL
+                    a {
+                        margin-right: .5em;  
+                    }
                 }
             }
         }

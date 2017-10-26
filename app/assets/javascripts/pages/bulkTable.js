@@ -64,10 +64,20 @@
     return !util.isEmpty(state.entities.rowIds);
   };
 
+  state.getMatch = function(entity, matchId){
+    // TODO: store matches as lookup table too for simpler lookup here?
+    return state.getMatches(entity)
+      .filter(function(match){
+        return match.id === matchId;
+      })[0];
+  };
+
+  state.getMatches = function(entity){
+    return util.getIn(state, ['entities', 'matches', entity.id]) || [];
+  };
+
   state.hasMatches = function(entity){
-    return !util.isEmpty(
-      util.getIn(state, ['entities', 'matches', entity.id]) || []
-    );
+    return !util.isEmpty(state.getMatches(entity));
   };
 
   // setters
@@ -213,7 +223,7 @@
             return $('<td>', {
               text: util.get(entity, col.attr)
             }).append(
-              maybeDupeWarning(entity, col, idx)
+              maybeResolver(entity, col, idx)
             );
           })
         );
@@ -221,26 +231,111 @@
     );
   }
 
-  function maybeDupeWarning(entity, col, idx) {
-    return idx == 0 && state.hasMatches(entity) && dupeWarningPopup(entity);
+  function maybeResolver(entity, col, idx) {
+    return idx == 0 && state.hasMatches(entity) && resolver(entity);
   }
 
-  function dupeWarningPopup(entity) {
+  function resolver(entity) {
     return $('<div>', {
-      class:           'dupe-warning',
-      cursor:          'pointer',
-      title:           'Data duplication warning:',
-      'data-toggle':   'popover',
-      'data-content':  dupeWarning(entity)
+      class:         'resolver-anchor',
+      cursor:        'pointer',
+      'data-toggle': 'popover',
+      click:         activatePicker
     })
       .append($('<div>', { class: 'alert-icon' }))
-      .popover();
+      .popover({
+        html:     true,
+        title:    'Similar entities already exist!',
+        content:  resolverPopup(entity)
+      });
   }
 
-  function dupeWarning(entity) {
-    return "An entity named " + entity.name + " already exists in LittleSis. " +
-      "Are you sure you want to add " + entity.name + "?";
+  function activatePicker(){
+    // wait until popover is in DOM, then call `#selectpicker()` to show selectpicker
+    // do i LIKE this API? HELL NO! i didn't make the JQuery madness. i just live in it.
+    // -- @aguestuser (25-Oct-2017)
+    setTimeout(
+      function(){$(".resolver-selectpicker").selectpicker();},
+      5
+    );
+  }
+
+  function resolverPopup(entity) {
+    return $('<div>', { class: 'resolver-popover' })
+      .append(pickerContainer(entity))
+      .append(createButton(entity));
   };
+
+  function createButton(entity){
+    return $('<div>', {
+      class: "btn btn-danger resolver-create-btn",
+      text:  "Create New Entity",
+      click: function(){ handleResolverCreate(entity); }
+    });
+  }
+
+  function pickerContainer(entity){
+    return $('<div>', { class: 'resolver-picker-container' })
+      .append(picker(entity))
+      .append(pickerResultContainer())
+      .append(pickerButton());
+  }
+
+  function picker(entity){
+    return $('<select>', {
+      class:              'selectpicker resolver-selectpicker',
+      title:              'Pick an existing entity...',
+      'data-live-search': true,
+      on:                 {
+        'changed.bs.select': function(){
+          handleResolutionPick(entity, $(this).val());
+        }
+      }
+    }).append(
+      state.getMatches(entity).map(function(match){
+        return $('<option>', {
+          class: 'resolver-option',
+          text:  match.name,
+          value: match.id
+        });
+      })
+    );
+  }
+
+  function pickerResultContainer(){
+    return $('<div>', { class: 'resolver-picker-result-container'});
+  }
+
+  function pickerResult(entity){
+    return $('<div>', {
+      class: 'resolver-picker-result'
+    })
+      .append($('<a>', {
+        class:  'goto-link-icon',
+        href:   entity.url,
+        target: '_blank'
+      }))
+      .append($('<span>', {
+        text: entity.blurb
+      }));
+  }
+
+  function pickerButton(){
+    return $('<div>', {
+      class: 'btn btn-primary resolver-picker-btn',
+      text:  'Use Existing Entity'
+    });
+  };
+
+  function handleResolverCreate(entity){
+    console.log('Creating entity with name ', entity.name);
+  }
+
+  function handleResolutionPick(entity, matchId){
+    $(".resolver-picker-result-container")
+      .empty()
+      .append(pickerResult(state.getMatch(entity, matchId)));
+  }
 
   // MISC
 

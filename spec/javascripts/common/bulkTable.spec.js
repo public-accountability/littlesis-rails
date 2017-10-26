@@ -1,6 +1,6 @@
 describe('Bulk Table module', () => {
 
-  const asyncDelay = 2; // millis to wait for search, csv upload, etc..
+  const asyncDelay = .01; // millis to wait for search, csv upload, etc..
 
   // TODO: sure would be nice to import this from app code and have a single source of truth!
   const columns = [{
@@ -24,16 +24,16 @@ describe('Bulk Table module', () => {
 
   const entities = {
     newEntity0: {
-      id: 'newEntity0',
-      name: "Lew Basnight",
+      id:          "newEntity0",
+      name:        "Lew Basnight",
       primary_ext: "Person",
-      blurb: "Adjacent to the invisible"
+      blurb:       "Adjacent to the invisible"
     },
     newEntity1: {
-      id: 'newEntity1',
-      name: "Chums Of Chance",
+      id:          "newEntity1",
+      name:        "Chums Of Chance",
       primary_ext: "Org",
-      blurb: "Do not -- strictly speaking -- exist"
+      blurb:       "Do not -- strictly speaking -- exist"
     }
   };
 
@@ -46,13 +46,13 @@ describe('Bulk Table module', () => {
       return Promise.resolve([]);
     }
   };
-        
+
   const searchResultsFor = entity => [0,1,2].map(n => {
     const ext = ["Org", "Person"][n % 2];
     return {
-      id:          `n${entity.id}`,
+      id:          `${n}${entity.id.slice(-1)}`,
       name:        `${entity.name} dupe name ${n}`,
-      description: `dupe description ${n}`,
+      blurb:       `dupe description ${n}`,
       primary_ext:  ext,
       url:         `/${ext.toLowerCase()}/${n}/${entity.name.replace(" ", "")}`
     };
@@ -97,7 +97,6 @@ describe('Bulk Table module', () => {
         matches: {}
       });
     });
-    
 
     describe('detecting upload support', () => {
 
@@ -147,14 +146,14 @@ describe('Bulk Table module', () => {
     });
 
     it('stores entity data', () => {
-      expect(bulkTable.getIn(['entities', 'byId']).toEqual({
+      expect(bulkTable.getIn(['entities', 'byId'])).toEqual({
         newEntity0: entities['newEntity0'],
         newEntity1: entities['newEntity1']
       });
     });
 
     it('stores row ordering', () => {
-      expect(bulkTable.get('rowIds')).toEqual(Object.keys(entities));
+      expect(bulkTable.getIn(['entities', 'rowIds'])).toEqual(Object.keys(entities));
     });
 
     it('hides upload button', () => {
@@ -162,124 +161,176 @@ describe('Bulk Table module', () => {
     });
   });
 
-  describe('matching', () => {
+  describe('table', () => {
 
-    describe('searching littlesis for dupes', () => {
-      
-      beforeEach(done => {
-        bulkTable.init(defaultState);
-        bulkTable.ingestEntities(csv);
-        setTimeout(done, asyncDelay); // wait for mock search results to return
-      });
+    let firstRow, secondRow;
 
-      it('searches for entities with same name as user submissions', () => {
-        expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity0.name);
-        expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity1.name);
-      });
-      
-      it('stores list of search matches in store', () => {
-        expect(bulkTable.get('matches')).toEqual({
-          newEntity0: searchResultsFor(entities.newEntity0),
-          newEntity1: []
-        });
-      });
-
-      it('displays dupe warnings next to rows with search matches', () => {
-        expect($("#bulk-add-table tbody tr:first-child .dupe-warning")).toExist();
-      });
-
-      it('does not display dupe warnings next to rows with no search matches', () => {
-        expect($("#bulk-add-table tbody tr:nth-child(2) .dupe-warning")).not.toExist();
-      });
-
-      it('allows user to choose to use a matched entitiy or create new entity');
+    beforeEach(done => {
+      bulkTable.init(defaultState);
+      bulkTable.ingestEntities(csv);
+      setTimeout(() => {
+        firstRow = $("#bulk-add-table tbody tr:nth-child(1)");
+        secondRow = $("#bulk-add-table tbody tr:nth-child(2)");
+        done();
+      }, asyncDelay); // wait for mock search results to return
     });
 
-    describe('when user chooses matched entity', () => {
-      it('marks entity row as matched');
-      it('overwrites user-submitted entity fields with matched fields');
-      it('stores an id');
+    it('exists', () => {
+      expect($('#test-dom table#bulk-add-table')).toExist();
     });
 
-    describe('user chooses user-submitted fields', () => {
-      it('ignores matched existing entity fields');
+    it('has columns labeling entity fields', () => {
+      const thTags = $('#bulk-add-table thead tr th').toArray();
+      expect(thTags).toHaveLength(3);
+      thTags.forEach((th, idx) => expect(th).toHaveText(columns[idx].label));
     });
-  });
 
-  describe('validations', () => {
-    // TODO: leave a seam here to extend for different pages...
-    it('requires a primary extension be selected');
-    it('requires an org name to be at least 1 character long');
-    it('requires a person to have a first and last name');
-  });
-
-  describe('rendering table from store data', () => {
-
-    describe('with no entities', () => {
-
-      beforeEach(() => bulkTable.init(defaultState));
-
-      it('does not show a table', () =>{
-        expect($('#test-dom table#bulk-add-table')).not.toExist();
+    it('has rows showing values of entity fields', () => {
+      const rows = $('#bulk-add-table tbody tr').toArray();
+      expect(rows).toHaveLength(2);
+      rows.forEach((row, idx) => {
+        expect(row.textContent).toEqual( // row.textContent concatenates all cell text with no spaces
+          columns.map(col => entities[`newEntity${idx}`][col.attr] ).join("")
+        );
       });
     });
 
-    describe('with no matches', () => {
+    describe('entity resolution', () => {
 
-      beforeEach(() => {
-        bulkTable.init(Object.assign({}, defaultState, { entitiesById: entities }));
-      });
+      describe('search', () => {
 
-      describe('bulk add table', () => {
-
-        it('exists', () => {
-          expect($('#test-dom table#bulk-add-table')).toExist();
+        it('searches littlesis for entities with same name as user submissions', () => {
+          expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity0.name);
+          expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity1.name);
         });
 
-        it('has columns labeling entity fields', () => {
-          const thTags = $('#bulk-add-table thead tr th').toArray();
-          expect(thTags).toHaveLength(3);
-          thTags.forEach((th, idx) => expect(th).toHaveText(columns[idx].label));
-        });
-
-        it('has rows showing values of entity fields', () => {
-          const rows = $('#bulk-add-table tbody tr').toArray();
-          expect(rows).toHaveLength(2);
-          rows.forEach((row, idx) => {
-            expect(row.textContent).toEqual( // row.textContent concatenates all cell text with no spaces
-              columns.map(col => entities[`newEntity${idx}`][col.attr] ).join("")
-            );
+        it('stores list of search matches in memory', () => {
+          expect(bulkTable.getIn(['entities', 'matches'])).toEqual({
+            newEntity0: searchResultsFor(entities.newEntity0),
+            newEntity1: []
           });
         });
       });
 
-      describe('making edits', () => {
-        it('has inputs specific to each field');
-        it('updates the store when input values change');
+      describe('alert icons', () => {
+
+        it('displays alert icons next to rows with search matches', () => {
+          expect(firstRow.find(".resolver-anchor")).toExist();
+        });
+
+        it('does not display alert icons next to rows with no search matches', () => {
+
+          expect(secondRow.find(".resolver-anchor")).not.toExist();
+        });
+
+        it('shows a popup when user clicks on alert icon', () => {
+          firstRow.find('.resolver-anchor').trigger('click');
+          expect(firstRow.find(".resolver-popover")).toExist();
+        });
+      });
+
+      describe('popover', () => {
+
+        let popover;
+        const matches = searchResultsFor(entities.newEntity0);
+
+        beforeEach(done => {
+          firstRow.find(".resolver-anchor").trigger('click');
+          popover = firstRow.find(".resolver-popover");
+          setTimeout(done, asyncDelay);
+        });
+
+        it('has a title', () => {
+          expect(firstRow.find(".popover-title")).toHaveText("Similar entities already exist!");
+        });
+
+        it('has a selectpicker with all matched entities', () => {
+          matches.forEach(match => {
+            expect(firstRow.find(".resolver-selectpicker")).toContainText(match.name);
+          });
+        });
+
+        it('has a button to use an existing entity', () => {
+          expect(popover.find(".resolver-picker-btn")).toContainText("Use Existing");
+        });
+
+        it('has a button to create a new entity', () => {
+          expect(popover.find(".resolver-create-btn")).toContainText("Create New");
+        });
+
+        describe('when user selects an entity from the picker', () => {
+
+          beforeEach(() => popover.find('select').val(matches[0].id).trigger('change'));
+
+          it('shows a section about user selection below the picker', () => {
+            expect(popover.find(".resolver-picker-result-container")).toContainElement(".resolver-picker-result");
+          });
+
+          it('shows the matched entity blurb below the picker', () => {
+            expect(popover.find(".resolver-picker-result")).toContainText(matches[0].blurb);
+          });
+
+          it('shows a glyph-link to the matched entity\'s profile below the picker', () => {
+            expect(popover.find(".resolver-picker-result")).toContainElement('a.goto-link-icon');
+            expect(popover.find("a.goto-link-icon")).toHaveAttr("href", matches[0].url);
+          });
+        });
+
+        describe('when user chooses `Use Existing Entity`', () => {
+          it('overwrites user-submitted entity with matched entity');
+          it('deletes matches for the user-submitted entity');
+          it('closes the popover');
+          it('removes the alert icon next to the row');
+        });
+
+        describe('when user chooses `Create New Entity`', () => {
+          it('closes the popover');
+          it('removes the alert icon next to the row');
+          it('deletes matches for the user-submitted entity');
+        });
       });
     });
 
-    // include 'with matches' section here? or test in 'matching' section?
+    describe('validation', () => {
+      // TODO: can we descope this feature on first pass? (@aguestuser)
+      it('requires a primary extension be selected');
+      it('requires an org name to be at least 1 character long');
+      it('requires a person to have a first and last name');
+    });
+
+    describe('editing', () => {
+      // TODO: can we descope this feature on first pass? (@aguestuser)
+      it('has inputs specific to each field');
+      it('updates the store when input values change');
+    });
+
+    describe('submitting', () => {
+      // TODO: can we descope this feature on first pass? (@aguestuser)
+      describe('there are invalid fields', () => {
+        it('will not submit');
+      });
+
+      describe('there are no invalid fields', () => {
+        it('submits a batch of entities to a list endpoint');
+
+        describe('all submissions worked', () => {
+          it('redirects to list members tab');
+        });
+
+        describe('some submissions failed', () => {
+          it('deletes successful submissions from the store');
+          it('marks failed submissions with error messages');
+          it('renders table with only failed submissions');
+        });
+      });
+    });
   });
 
-  describe('submitting', () => {
-    describe('there are invalid fields', () => {
-      it('will not submit');
-    });
+  describe('table with no entities', () => {
+    beforeEach(() => bulkTable.init(defaultState));
 
-    describe('there are no invalid fields', () => {
-      // TODO: new batch endpoint would be nice...
-      it('submits a batch of entities to a list endpoint');
-
-      describe('all submissions worked', () => {
-        it('redirects to list members tab');
-      });
-
-      describe('some submissions failed', () => {
-        it('deletes successful submissions from the store');
-        it('marks failed submissions with error messages');
-        it('renders table with only failed submissions');
-      });
+    it('does not exist', () =>{
+      expect($('#test-dom table#bulk-add-table')).not.toExist();
     });
   });
 });

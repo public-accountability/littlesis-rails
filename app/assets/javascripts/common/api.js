@@ -15,9 +15,15 @@
       .catch(handleError);
 
     function format(results){
+      // TODO: gracefully handle correctly named fields
       return results.reduce(function(acc, res) {
-        var _res = Object.assign({}, res, { primary_ext: res.primary_type });
+        var _res = Object.assign({}, res, {
+          primary_ext: res.primary_type,
+          blurb:       res.description,
+          id:          String(res.id)
+        });
         delete _res.primary_type;
+        delete _res.description;
         return acc.concat([_res]);
       },[]);
     }

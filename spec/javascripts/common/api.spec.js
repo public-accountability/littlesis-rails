@@ -32,25 +32,25 @@ describe('API module', () => {
 
     const formattedWmSearchResults = [
       {
-        id:            1,
-        name:         "Walmart",
-        description:  "Retail merchandising and union busting",
+        id:          "1",
+        name:        "Walmart",
+        blurb:       "Retail merchandising and union busting",
         primary_ext: "Org",
-        url:          "/org/1/Walmart"
+        url:         "/org/1/Walmart"
       },
       {
-        id:           77304,
-        name:         "The Walmart Foundation",
-        description:  "Wal-Mart foundation",
+        id:          "77304",
+        name:        "The Walmart Foundation",
+        blurb:       "Wal-Mart foundation",
         primary_ext: "Org",
-        url:          "/org/77304/The_Walmart_Foundation"
+        url:         "/org/77304/The_Walmart_Foundation"
       },
       {
-        id:           106423,
-        name:         "Walmart Stores U.S",
-        description:  "Largest division of Walmart Stores, Inc.",
+        id:          "106423",
+        name:        "Walmart Stores U.S",
+        blurb:       "Largest division of Walmart Stores, Inc.",
         primary_ext: "Org",
-        url:          "/org/106423/Walmart_Stores_U.S"}
+        url:         "/org/106423/Walmart_Stores_U.S"}
     ];
 
   describe('#searchEntity', () => {
