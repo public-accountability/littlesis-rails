@@ -93,7 +93,7 @@ fdescribe('Bulk Table module', () => {
     it('initializes an empty entities state tree', () =>{
       expect(bulkTable.get('entities')).toEqual({
         byId:    {},
-        rowIds:  [],
+        order:   [],
         matches: {}
       });
     });
@@ -153,7 +153,7 @@ fdescribe('Bulk Table module', () => {
     });
 
     it('stores row ordering', () => {
-      expect(bulkTable.getIn(['entities', 'rowIds'])).toEqual(Object.keys(entities));
+      expect(bulkTable.getIn(['entities', 'order'])).toEqual(Object.keys(entities));
     });
 
     it('hides upload button', () => {

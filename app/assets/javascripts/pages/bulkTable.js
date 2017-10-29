@@ -40,7 +40,7 @@
       canUpload:      true,
       notification:   "",
       entities:       { byId:    {},
-                        rowIds:  [], // TODO: change to `order`
+                        order:   [],
                         matches: {} }
       // When/if we wish to paramaterize row fields, we would here paramaterize:
       //   1. resource type (currently always entity)
@@ -50,7 +50,7 @@
     detectUploadSupport();
   };
 
-  // getters
+  // public getters
 
   self.get = function(attr){
     return util.get(state, attr);
@@ -60,8 +60,22 @@
     return util.getIn(state, attrs);
   };
 
+  // private getters
+
   state.hasRows = function(){
-    return !util.isEmpty(state.entities.rowIds);
+    return !util.isEmpty(state.entities.order);
+  };
+
+  state.getEntity = function(id){
+    return util.getIn(state, ['entities', 'byId', id]);
+  };
+
+  state.getEntityOrder = function(){
+    return util.getIn(state, ['entities', 'order']);
+  };
+
+  state.getOrderedEntities = function(){
+    return util.getIn(state, ['entities', 'order']).map(state.getEntity);
   };
 
   state.getMatch = function(entity, matchId){
@@ -86,9 +100,9 @@
   // Entity -> Entity
   state.addEntity = function(entity){
     state = util.setIn(
-      util.setIn(state, ['entities', 'byId', entity.id],entity),
-      ['entities', 'rowIds'],
-      util.getIn(state, ['entities', 'rowIds']).concat(entity.id)
+      util.setIn(state, ['entities', 'byId', entity.id], entity),
+      ['entities', 'order'],
+      util.getIn(state, ['entities', 'order']).concat(entity.id)
     );
     return entity;
   };
@@ -109,6 +123,7 @@
       .then(state.addMatches(entity));
   };
 
+  // Entity -> Matches -> Matches
   state.addMatches = function(entity){
     return function(matches){
       state = util.setIn(
@@ -120,6 +135,7 @@
           selected: null
         }
       );
+      return matches;
     };
   };
 
@@ -232,8 +248,7 @@
 
   function tbody(){
     return $('<tbody>').append(
-      state.entities.rowIds.map(function(id){
-        var entity = util.get(state.entities.byId, id);
+      state.getOrderedEntities().map(function(entity){
         return $('<tr>').append(
           columns.map(function(col, idx){
             return $('<td>', {
