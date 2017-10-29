@@ -54,7 +54,7 @@ describe('utility', function(){
   describe('object utilities', () => {
 
     const obj = { a: 1, b: 2};
-    const nestedObj = { a: { b: 2, c: 3 } };
+
     
     describe('#get', () => {
       it('reads an arbitrary key from an object', () => {
@@ -71,21 +71,6 @@ describe('utility', function(){
 
       it('handles undefined objects', () => {
         expect(utility.get(undefined, "foo")).toEqual(undefined);
-      });
-    });
-
-    describe('#getIn', () => {
-
-      it('reads values from a nested sequence of keys in an object', () => {
-        expect(utility.getIn(nestedObj, ["a", "b"])).toEqual(2);
-      });
-
-      it('handles non-existent nested keys', () => {
-        expect(utility.getIn(nestedObj, ["a", "foo"])).toEqual(undefined);
-      });
-
-      it('handles lookup sequences that are longer than depth of object tree', () => {
-        expect(utility.getIn(nestedObj, ["a", "b", "d"])).toEqual(false);
       });
     });
 
@@ -109,6 +94,38 @@ describe('utility', function(){
         const _obj = utility.set(obj, 'c', 3);
         const __obj = utility.set(_obj, 'c', 4);
         expect(__obj.c).toEqual(4);
+      });
+    });
+
+    describe('#delete', () => {
+
+      it('removes an entry from an object', () => {
+        expect(utility.delete(obj, 'a')).toEqual({ b: 2 });
+      });
+    });
+
+    const nestedObj = { a: { b: 2, c: 3 } };
+
+    describe('#deleteIn', () => {
+
+      it('removes a nested entry from an object', () => {
+        expect(utility.deleteIn(nestedObj, ['a', 'b']))
+          .toEqual({ a: { c: 3 } });
+      });
+    });
+    
+    describe('#getIn', () => {
+
+      it('reads values from a nested sequence of keys in an object', () => {
+        expect(utility.getIn(nestedObj, ["a", "b"])).toEqual(2);
+      });
+
+      it('handles non-existent nested keys', () => {
+        expect(utility.getIn(nestedObj, ["a", "foo"])).toEqual(undefined);
+      });
+
+      it('handles lookup sequences that are longer than depth of object tree', () => {
+        expect(utility.getIn(nestedObj, ["a", "b", "d"])).toEqual(false);
       });
     });
 

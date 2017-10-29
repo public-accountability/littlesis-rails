@@ -190,7 +190,7 @@ utility.set = function(obj, key, value){
 
 utility.setIn = function(obj, keys, value){
   if (keys.length === 0) {
-    return value; 
+    return value;
   } else {
     return utility.set(
       obj,
@@ -202,6 +202,27 @@ utility.setIn = function(obj, keys, value){
       )
     );
   }
+};
+
+utility.delete = function(obj, keyToDelete){
+  return Object.keys(obj).reduce(
+    function(acc, key){
+      return key === keyToDelete ?
+        acc :
+        utility.set(acc, key, utility.get(obj, key));
+    },
+    {}
+  );
+};
+
+utility.deleteIn = function(obj, keys){
+  var leafPath = keys.slice(0, -1);
+  var leafNode = utility.getIn(obj, leafPath);
+  return utility.setIn(
+    obj,
+    leafPath,
+    utility.delete(leafNode, keys.slice(-1)[0])
+  );
 };
 
 // see https://github.com/paularmstrong/normalizr
