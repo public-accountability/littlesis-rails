@@ -40,7 +40,7 @@
       canUpload:      true,
       notification:   "",
       entities:       { byId:    {},
-                        rowIds:  [],
+                        rowIds:  [], // TODO: change to `order`
                         matches: {} }
       // When/if we wish to paramaterize row fields, we would here paramaterize:
       //   1. resource type (currently always entity)
@@ -65,15 +65,16 @@
   };
 
   state.getMatch = function(entity, matchId){
-    // TODO: store matches as lookup table too for simpler lookup here?
-    return state.getMatches(entity)
-      .filter(function(match){
-        return match.id === matchId;
-      })[0];
+    return util.get(state.getMatches(entity), matchId);
   };
 
   state.getMatches = function(entity){
-    return util.getIn(state, ['entities', 'matches', entity.id]) || [];
+    return util.getIn(state, ['entities', 'matches', entity.id, 'byId']) || {};
+  };
+
+  state.getOrderedMatches = function(entity){
+    return util.getIn(state, ['entities', 'matches', entity.id, 'order'])
+      .map(function(matchId){ return state.getMatch(entity, matchId); });
   };
 
   state.hasMatches = function(entity){
@@ -84,8 +85,11 @@
 
   // Entity -> Entity
   state.addEntity = function(entity){
-    util.set(state.entities.byId, entity.id, entity);
-    state.entities.rowIds.push(entity.id);
+    state = util.setIn(
+      util.setIn(state, ['entities', 'byId', entity.id],entity),
+      ['entities', 'rowIds'],
+      util.getIn(state, ['entities', 'rowIds']).concat(entity.id)
+    );
     return entity;
   };
 
@@ -102,9 +106,21 @@
   // Entity -> Promise[Void]
   state.matchEntity = function(entity){
     return api.searchEntity(entity.name)
-      .then(function(matches){
-        util.set(state.entities.matches, entity.id, matches);
-      });
+      .then(state.addMatches(entity));
+  };
+
+  state.addMatches = function(entity){
+    return function(matches){
+      state = util.setIn(
+        state,
+        ['entities', 'matches', entity.id],
+        {
+          byId:     util.normalize(matches),
+          order:    matches.map(function(match){ return match.id; }),
+          selected: null
+        }
+      );
+    };
   };
 
   state.disableUpload = function(){
@@ -292,7 +308,7 @@
         }
       }
     }).append(
-      state.getMatches(entity).map(function(match){
+      state.getOrderedMatches(entity).map(function(match){
         return $('<option>', {
           class: 'resolver-option',
           text:  match.name,

@@ -1,4 +1,4 @@
-describe('Bulk Table module', () => {
+fdescribe('Bulk Table module', () => {
 
   const asyncDelay = .01; // millis to wait for search, csv upload, etc..
 
@@ -206,8 +206,16 @@ describe('Bulk Table module', () => {
 
         it('stores list of search matches in memory', () => {
           expect(bulkTable.getIn(['entities', 'matches'])).toEqual({
-            newEntity0: searchResultsFor(entities.newEntity0),
-            newEntity1: []
+            newEntity0: {
+              byId:     utility.normalize(searchResultsFor(entities.newEntity0)),
+              order:    ["00", '10', '20'],
+              selected: null
+            },
+            newEntity1: {
+              byId:     {},
+              order:    [],
+              selected: null
+            }
           });
         });
       });
@@ -277,16 +285,27 @@ describe('Bulk Table module', () => {
         });
 
         describe('when user chooses `Use Existing Entity`', () => {
-          it('overwrites user-submitted entity with matched entity');
+
+          beforeEach(() => {
+            popover.find('select').val(matches[0].id).trigger('change');
+            popover.find('.resolver-picker-btn').trigger('click');
+          });
+
+          xit('overwrites user-submitted entity with matched entity', () => {
+            expect(bulkTable.getIn(['entities', 'byId', matches[0].id])).toEqual(matches[0]);
+            expect(bulkTable.getIn(['entities', 'byId', 'newEntity0'])).not.toExist();
+            expect(bulkTable.getIn(['entities', 'rowIds', 0])).toEqual(matches[0].id);
+          });
+
           it('deletes matches for the user-submitted entity');
           it('closes the popover');
           it('removes the alert icon next to the row');
         });
 
         describe('when user chooses `Create New Entity`', () => {
+          it('deletes matches for the user-submitted entity');
           it('closes the popover');
           it('removes the alert icon next to the row');
-          it('deletes matches for the user-submitted entity');
         });
       });
     });
