@@ -82,6 +82,11 @@
     return util.get(state.getMatches(entity), matchId);
   };
 
+  state.getSelectedMatch = function(entity){
+    var matchId = util.getIn(state, ['entities', 'matches', entity.id, 'selected']);
+    return state.getMatch(entity, matchId);
+  };
+
   state.getMatches = function(entity){
     return util.getIn(state, ['entities', 'matches', entity.id, 'byId']) || {};
   };
@@ -137,6 +142,31 @@
       );
       return matches;
     };
+  };
+
+  state.setMatchSelection = function(entity, matchId){
+    state = util.setIn(state,
+                       ['entities', 'matches', entity.id, 'selected'],
+                       matchId);
+  };
+
+  state.replaceWithMatch = function(entity){
+    // TODO: (ag| 29-Oct-2017) extract helpers and use function composition here?
+    var match = state.getSelectedMatch(entity);
+    // add match to entity store
+    var state1 = util.setIn(state, ['entities', 'byId', match.id], match);
+    // replace entity's id with match id in ordering list
+    var state2 = util.setIn(
+      state1,
+      ['entities', 'order'],
+      util.getIn(state, ['entities', 'order']).map(function(id){
+        return id === entity.id ? match.id : id;
+      })
+    );
+    // delete entity
+    var state3 = util.deleteIn(state2, ['entities', 'byId', entity.id]);
+    // delete entity matches, update state
+    state = util.deleteIn(state3, ['entities', 'matches', entity.id]);
   };
 
   state.disableUpload = function(){
@@ -301,7 +331,7 @@
     return $('<div>', {
       class: "btn btn-danger resolver-create-btn",
       text:  "Create New Entity",
-      click: function(){ handleResolverCreate(entity); }
+      click: function(){ handleCreateChoice(entity); }
     });
   }
 
@@ -309,7 +339,7 @@
     return $('<div>', { class: 'resolver-picker-container' })
       .append(picker(entity))
       .append(pickerResultContainer())
-      .append(pickerButton());
+      .append(pickerButton(entity));
   }
 
   function picker(entity){
@@ -319,7 +349,7 @@
       'data-live-search': true,
       on:                 {
         'changed.bs.select': function(){
-          handleResolutionPick(entity, $(this).val());
+          handlePickerSelection(entity, $(this).val());
         }
       }
     }).append(
@@ -351,18 +381,27 @@
       }));
   }
 
-  function pickerButton(){
+  function pickerButton(entity){
     return $('<div>', {
       class: 'btn btn-primary resolver-picker-btn',
-      text:  'Use Existing Entity'
+      text:  'Use Existing Entity',
+      click: function(){ handleUseExistingChoice(entity); }
     });
   };
 
-  function handleResolverCreate(entity){
+  // EVENT HANDLERS
+
+  function handleCreateChoice(entity){
     console.log('Creating entity with name ', entity.name);
   }
 
-  function handleResolutionPick(entity, matchId){
+  function handleUseExistingChoice(entity){
+    state.replaceWithMatch(entity);
+    self.render();
+  }
+
+  function handlePickerSelection(entity, matchId){
+    state.setMatchSelection(entity, matchId);
     $(".resolver-picker-result-container")
       .empty()
       .append(pickerResult(state.getMatch(entity, matchId)));

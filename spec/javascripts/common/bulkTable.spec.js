@@ -1,6 +1,6 @@
-fdescribe('Bulk Table module', () => {
+describe('Bulk Table module', () => {
 
-  const asyncDelay = .01; // millis to wait for search, csv upload, etc..
+  const asyncDelay = .1; // millis to wait for search, csv upload, etc..
 
   // TODO: sure would be nice to import this from app code and have a single source of truth!
   const columns = [{
@@ -164,12 +164,13 @@ fdescribe('Bulk Table module', () => {
   describe('table', () => {
 
     let firstRow, secondRow;
+    const findFirstRow = () => $("#bulk-add-table tbody tr:nth-child(1)");
 
     beforeEach(done => {
       bulkTable.init(defaultState);
       bulkTable.ingestEntities(csv);
       setTimeout(() => {
-        firstRow = $("#bulk-add-table tbody tr:nth-child(1)");
+        firstRow = findFirstRow();
         secondRow = $("#bulk-add-table tbody tr:nth-child(2)");
         done();
       }, asyncDelay); // wait for mock search results to return
@@ -231,7 +232,7 @@ fdescribe('Bulk Table module', () => {
           expect(secondRow.find(".resolver-anchor")).not.toExist();
         });
 
-        it('shows a popup when user clicks on alert icon', () => {
+        it('shows a popover when user clicks on alert icon', () => {
           firstRow.find('.resolver-anchor').trigger('click');
           expect(firstRow.find(".resolver-popover")).toExist();
         });
@@ -270,6 +271,11 @@ fdescribe('Bulk Table module', () => {
 
           beforeEach(() => popover.find('select').val(matches[0].id).trigger('change'));
 
+          it('records the selection in memory', () => {
+            expect(bulkTable.getIn(['entities', 'matches', 'newEntity0', 'selected']))
+              .toEqual(matches[0].id);
+          });
+
           it('shows a section about user selection below the picker', () => {
             expect(popover.find(".resolver-picker-result-container")).toContainElement(".resolver-picker-result");
           });
@@ -289,17 +295,30 @@ fdescribe('Bulk Table module', () => {
           beforeEach(() => {
             popover.find('select').val(matches[0].id).trigger('change');
             popover.find('.resolver-picker-btn').trigger('click');
+            firstRow = findFirstRow();
           });
 
-          xit('overwrites user-submitted entity with matched entity', () => {
+          it('overwrites user-submitted entity with matched entity', () => {
             expect(bulkTable.getIn(['entities', 'byId', matches[0].id])).toEqual(matches[0]);
             expect(bulkTable.getIn(['entities', 'byId', 'newEntity0'])).not.toExist();
-            expect(bulkTable.getIn(['entities', 'rowIds', 0])).toEqual(matches[0].id);
+            expect(bulkTable.getIn(['entities', 'order', 0])).toEqual(matches[0].id);
           });
 
-          it('deletes matches for the user-submitted entity');
-          it('closes the popover');
-          it('removes the alert icon next to the row');
+          it('stores no matches for the user-submitted entity', () => {
+            expect(bulkTable.getIn(['entities', 'matches', 'newEntity0'])).not.toExist();
+          });
+
+          it('stores no matches for the already-matched entity', () => {
+            expect(bulkTable.getIn(['entities', 'matches', matches[0].id])).not.toExist();
+          });
+
+          it('removes the alert icon next to the row', () => {
+            expect(firstRow.find(".resolver-anchor")).not.toExist();
+          });
+
+          it('closes the popover', () => {
+            expect(firstRow.find(".resolver-popover")).not.toExist();
+          });
         });
 
         describe('when user chooses `Create New Entity`', () => {
