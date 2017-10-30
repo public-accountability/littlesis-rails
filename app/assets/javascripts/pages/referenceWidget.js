@@ -175,9 +175,18 @@
     });
   };
   
+
+  var referenceVisitLink = [
+    '<div class="reference-visit-link">',
+    '<a href="{{url}}" target="_blank">',
+    '<span class="glyphicon glyphicon-new-window"></span>',
+    '</a></div>'
+  ].join('');
+
   
   var suggestionRender = Hogan.compile(
     [ '<div class="reference-suggestion" title="{{url}}">',
+      referenceVisitLink,
       '<div class="reference-suggestion-name">{{name}}</div>',
       '<div class="reference-suggestion-url">{{trimUrl}}</div>',
       '</div>'
@@ -218,6 +227,3 @@
 
   return ExistingReferenceWidget;  // Return the constructor
 }));
-
-
-
