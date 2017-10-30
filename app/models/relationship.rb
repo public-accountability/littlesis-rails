@@ -8,7 +8,13 @@ class Relationship < ActiveRecord::Base
   include Tagable
 
   has_paper_trail :ignore => [:last_user_id],
-                  :meta => { :entity1_id => :entity1_id, :entity2_id => :entity2_id }
+                  :meta => {
+                    :entity1_id => :entity1_id,
+                    :entity2_id => :entity2_id,
+                    :association_data => proc { |r|
+                      r.get_association_data.to_yaml if r.paper_trail_event == 'soft_delete'
+                    }
+                  }
 
   POSITION_CATEGORY = 1
   EDUCATION_CATEGORY = 2
@@ -161,12 +167,19 @@ class Relationship < ActiveRecord::Base
     hash
   end
 
+  def get_association_data
+    {
+      'document_ids' => documents.map(&:id)
+    }
+  end
+
   #####################
 
   ## callbacks for soft_delete
   def after_soft_delete
     links.destroy_all
     update_entity_links
+    references.destroy_all
     position&.destroy! if is_position?
     education&.destroy! if is_education?
     membership&.destroy! if is_member?
@@ -504,8 +517,14 @@ class Relationship < ActiveRecord::Base
   def restore!
     raise Exceptions::CannotRestoreError unless is_deleted
     return nil if entity.nil? || related.nil? || entity.is_deleted || related.is_deleted
+    association_data = retrieve_deleted_association_data
     run_callbacks :create
     update(is_deleted: false)
+    if association_data.present? && ['document_ids'].present?
+      association_data['document_ids'].each do |doc_id|
+        add_reference_by_document_id(doc_id)
+      end
+    end
   end
 
   private

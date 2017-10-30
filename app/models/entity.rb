@@ -777,11 +777,7 @@ class Entity < ActiveRecord::Base
 
   private
 
-  def retrieve_deleted_association_data
-    data = versions.where(event: 'soft_delete').last.association_data
-    return nil if data.nil?
-    YAML.load(data)
-  end
+  
 
   # Callbacks for Soft Delete
   def after_soft_delete

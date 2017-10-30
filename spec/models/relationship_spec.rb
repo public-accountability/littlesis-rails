@@ -523,7 +523,7 @@ describe Relationship, type: :model do
   end
 
   describe 'Deleting' do
-    let(:rel) { create(:generic_relationship, entity1_id: create(:person).id, entity2_id: create(:person).id) }
+    let(:rel) { create(:generic_relationship, entity1_id: create(:entity_person).id, entity2_id: create(:entity_person).id) }
 
     it 'soft_delete set is_deleted to be true' do
       @rel = rel
@@ -531,10 +531,15 @@ describe Relationship, type: :model do
       @rel.soft_delete
       expect(@rel.is_deleted).to be true
     end
-    
+
     it 'soft_delete removes links' do
       @rel = rel
       expect { @rel.soft_delete }.to change { Link.count }.by(-2)
+    end
+
+    it 'removing references for the relationship' do
+      rel.add_reference(attributes_for(:document))
+      expect { rel.soft_delete }.to change { Reference.count }.by(-1)
     end
 
     context 'removing associated category models' do
@@ -542,12 +547,12 @@ describe Relationship, type: :model do
         @person = create(:person)
         @org = create(:org)
       end
-      
+
       it 'removes position model' do
         rel = create(:position_relationship, entity1_id: @person.id, entity2_id: @org.id)
         expect { rel.soft_delete }.to change { Position.count }.by(-1)
       end
-      
+
       it 'removes education model' do
         rel = Relationship.create!(category_id: 2, entity1_id: @person.id, entity2_id: create(:org).id)
         expect { rel.soft_delete }.to change { Education.count }.by(-1)
@@ -620,6 +625,16 @@ describe Relationship, type: :model do
         rel.restore!
       end
 
+      it 'restores the reference' do
+        document = create(:document)
+        rel.add_reference(url: document.url)
+        rel.soft_delete
+        expect { rel.restore! }.to change { Reference.count }.by(1)
+        expect(rel.references.count).to eql 1
+        expect(rel.documents.count).to eql 1
+        expect(rel.documents.first).to eq document
+      end
+
       context 'entity1 is deleted' do
         let(:person) { create(:entity_person, is_deleted: true) }
         it 'does not restore the relationship' do
@@ -640,9 +655,22 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'get_association_data' do
+    let(:rel) { create(:generic_relationship, entity1_id: create(:entity_person).id, entity2_id: create(:entity_person).id) }
+    let(:documents) { Array.new(2) { create(:document) } }
+
+    it 'stores documents id in array' do
+      documents.each { |d| rel.add_reference(url: d.url) }
+      expect(rel.get_association_data).to have_key 'document_ids'
+      expect(rel.get_association_data['document_ids'].to_set).to eql documents.map(&:id).to_set
+    end
+  end
+
   context 'Using paper_trail for versioning' do
     let(:human) { create(:entity_person) }
     let(:corp) { create(:entity_org) }
+    let(:rel) { Relationship.create!(entity1_id: human.id, entity2_id: corp.id, category_id: 12) }
+    let(:document)  { create(:document) }
 
     with_versioning do
       it 'records created, modified, and deleted versions' do
@@ -662,6 +690,13 @@ describe Relationship, type: :model do
         rel.update(description1: 'x')
         expect(rel.versions.last.entity1_id).to eq human.id
         expect(rel.versions.last.entity2_id).to eq corp.id
+      end
+
+      it 'saves document ids in the association data column' do
+        rel.add_reference(url: document.url)
+        rel.soft_delete
+        expect(YAML.load(rel.versions.last.association_data))
+          .to eql({ 'document_ids' => [document.id] })
       end
     end
   end

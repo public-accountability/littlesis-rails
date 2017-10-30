@@ -33,6 +33,12 @@ module SoftDelete
 
   private
 
+  def retrieve_deleted_association_data
+    data = versions.where(event: 'soft_delete').last.association_data
+    return nil if data.nil?
+    YAML.load(data)
+  end
+
   def set_paper_trail_event
     self.paper_trail_event = 'soft_delete' if respond_to?(:paper_trail_event)
     yield
