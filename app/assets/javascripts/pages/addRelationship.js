@@ -271,9 +271,9 @@ var addRelationship = (function(utility) {
       return newReferenceForm.value();
     } else {
       if (!existingReferences.selection){
-	return { "reference_id": null };
+	return { "document_id": null };
       }
-      return { "reference_id": existingReferences.selection.id };
+      return { "document_id": existingReferences.selection.id };
     }
   }
 
@@ -303,9 +303,9 @@ var addRelationship = (function(utility) {
       errors.category_id = true;
     }
 
-    if (typeof formData.reference.reference_id === 'undefined') {
+    if (typeof formData.reference.document_id === 'undefined') {
 
-      if (!formData.reference.reference_name) {
+      if (!formData.reference.name) {
 	errors.reference_name = true;
       }
 
@@ -315,7 +315,7 @@ var addRelationship = (function(utility) {
 	errors.url = 'INVALID';
       }
 
-    } else if (formData.reference.reference_id === null) {
+    } else if (formData.reference.document_id === null) {
       errors.no_selection = true;
     }
 
@@ -402,7 +402,6 @@ var addRelationship = (function(utility) {
     // submits create relationships request
     // after button is clicked.
     $('#create-relationship-btn').click(function(e){
-      console.log(submissionData());
       submit(); 
     });
     

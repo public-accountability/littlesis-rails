@@ -39,6 +39,11 @@ module Referenceable
     self
   end
 
+  def add_reference_by_document_id(document_id)
+    raise ArgumentError, "No document found with id: #{document_id}" if Document.find_by_id(document_id).blank?
+    references.create(document_id: document_id) unless references.exists?(document_id: document_id)
+  end
+
   def documents_count
     if self.is_a?(Entity)
       Document.documents_count_for_entity(self)

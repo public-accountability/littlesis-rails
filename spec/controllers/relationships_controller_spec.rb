@@ -139,6 +139,34 @@ describe RelationshipsController, type: :controller do
       end
     end
 
+    context 'submitting with an existing document id' do
+      let!(:document_id) do
+        e1.add_reference(attributes_for(:document))
+        e1.references.first.document_id
+      end
+
+      let(:params) do
+        {
+          relationship: {
+            entity1_id: e1.id,
+            entity2_id: e2.id,
+            category_id: '1'
+          },
+          reference: {
+            document_id: document_id
+          }
+        }
+      end
+
+      it 'creates a new reference, associated with the relationship' do
+        expect { post :create, params }.to change { Reference.count }.by(1)
+      end
+
+      it 'does not create a document' do
+        expect { post :create, params }.not_to change { Document.count }
+      end
+    end
+
     context 'submitting relationship with is_current values' do
       it 'should create a new relationship with given a yes value' do
         expect do
