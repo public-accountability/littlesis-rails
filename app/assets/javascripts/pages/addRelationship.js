@@ -20,16 +20,13 @@ var addRelationship = (function(utility) {
       "Generic"
   ];
   
-
-  function entityInfo(info) {
-    return document.getElementById('entity-info').dataset[info];
-  }
-  
-  
   // holds entity ids
   var entity1_id = null;
   var entity2_id = null;
-  
+  // Reference Components
+  var newReferenceForm;
+  var existingReferences;
+
   // Creates a new datatable
   // {} ->
   function createDataTable(data) {
@@ -59,7 +56,7 @@ var addRelationship = (function(utility) {
 	destroy: true // https://datatables.net/reference/option/destroy
       });
       selectButtonHandler(table);
-  } 
+  }
 
   // Used by selectButtonHandler & in $('#new_entity').submit()
   function showAddRelationshipForm(data) {
@@ -74,7 +71,7 @@ var addRelationship = (function(utility) {
     // change '.active' on category buttons
     // and search for similar entities;
     onCategorySelectHandlers();
-    recentReferences( [entityInfo('entityid'), entity2_id] );
+    referencesInit( [utility.entityInfo('entityid'), entity2_id] );
   }
 
   // <Table> -> 
@@ -89,7 +86,7 @@ var addRelationship = (function(utility) {
   
   // {} -> HTML ELEMENT
   function categorySelector(data) {
-    var entity1 = entityInfo('entitytype');
+    var entity1 = utility.entityInfo('entitytype');
     var entity2 = data.primary_type;
     var buttonGroup = $('<div>', { class: 'btn-group-vertical', role: 'group', 'aria-label': 'relationship categories'});
     categories(entity1, entity2).forEach(function(categoryId){
@@ -174,7 +171,7 @@ var addRelationship = (function(utility) {
 
       // if entity is a school, provide the option to
       // create a student relationship
-      if (typeof entityInfo('school') !== 'undefined' && entityInfo('school') === 'true') {
+      if (typeof utility.entityInfo('school') !== 'undefined' && utility.entityInfo('school') === 'true') {
 	orgToPerson.splice(1, 0, 2);
       }
       return orgToPerson;
@@ -186,38 +183,45 @@ var addRelationship = (function(utility) {
     }
   }
 
+  function referencesInit(entityIds) {
+    newReferenceForm = new NewReferenceForm('#new-reference-form');
+    existingReferences = new ExistingReferenceWidget(entityIds);
+  }
+
+
   // [int] -> null
   // Gets recent references from /references/recent and populates the
   // list of <select> options
-  function recentReferences(entities) {
-    var newReferenceOption = $('<option>', {value: 'NEW', selected: "selected", text: "Add a new source link" });
-    $.getJSON('/references/recent', {'entity_ids': entities })
-      .done(function(documents) {
-	$('#existing-sources-select').html(
-	  documents.slice(0,10).map(function(doc){
-	    return $('<option>', {
-   	      value: doc.id,
-   	      text: doc.name
-	    }).data(doc); // add reference data to element
-	  }).concat(newReferenceOption)
-	);
-	fillInReferenceFields();
-      })
-      .fail(function() {
-	$('#existing-sources-select').html(newReferenceOption);
-      });
-  }
+  // function recentReferences(entities) {
+  //   var newReferenceOption = $('<option>', {value: 'NEW', selected: "selected", text: "Add a new source link" });
+  //   $.getJSON('/references/recent', {'entity_ids': entities })
+  //     .done(function(documents) {
+  // 	$('#existing-sources-select').html(
+  // 	  documents.slice(0,10).map(function(doc){
+  // 	    return $('<option>', {
+  //  	      value: doc.id,
+  //  	      text: doc.name
+  // 	    }).data(doc); // add reference data to element
+  // 	  }).concat(newReferenceOption)
+  // 	);
+  // 	fillInReferenceFields();
+  //     })
+  //     .fail(function() {
+  // 	$('#existing-sources-select').html(newReferenceOption);
+  //     });
+  //}
 
-  function fillInReferenceFields() {
-    document.getElementById('existing-sources-select')
-      .addEventListener('change', function(){
-	var doc = $(this).find(":selected").data();
-	$('#reference-name').val(doc.name);
-	$('#reference-url').val(doc.url);
-	$('#reference-date').val(doc.publication_date);
-	$('#reference-excerpt').val(doc.excerpt);
-      });
-  }
+  // function fillInReferenceFields() {
+  //   document.getElementById('existing-sources-select')
+  //     .addEventListener('change', function(){
+  // 	var doc = $(this).find(":selected").data();
+  // 	$('#reference-name').val(doc.name);
+  // 	$('#reference-url').val(doc.url);
+  // 	$('#reference-date').val(doc.publication_date);
+  // 	$('#reference-excerpt').val(doc.excerpt);
+  //     });
+  // }
+  // 
 
   // boolean -> 
   function submissionInProgress(submitting) {
@@ -240,7 +244,7 @@ var addRelationship = (function(utility) {
    is between an Org and a Person and the Org is currently at the entity1_position.
    */
   function reverseEntityIdsIf() {
-    if (entityInfo('entitytype') === 'Org') {
+    if (utility.entityInfo('entitytype') === 'Org') {
       if (category_id() === 1 || category_id() === 2) {
 	var tmp = entity1_id;
 	entity1_id = entity2_id;
@@ -258,14 +262,19 @@ var addRelationship = (function(utility) {
 	entity2_id: entity2_id,
 	category_id: category_id()
       },
-      reference: {
-	name: $('#reference-name').val(),
-	source_detail: $('#reference-excerpt').val(),
-	source: $('#reference-url').val(),
-	publication_date: $('#reference-date').val(),
-	ref_type: $('#reference-type').val()
-      }
+      reference: referenceData()
     };
+  }
+
+  function referenceData() {
+    if ($('#new-reference-container').is(':visible')) {
+      return newReferenceForm.value();
+    } else {
+      if (!existingReferences.selection){
+	return { "reference_id": null };
+      }
+      return { "reference_id": existingReferences.selection.id };
+    }
   }
 
   function submit() {
@@ -274,14 +283,14 @@ var addRelationship = (function(utility) {
     if (catchErrors(sd)) { 
       
       $.post('/relationships', sd)
-	.done(function(data, textStatus, jqXHR) {
-	  // redirect to the edit relationship page
-	  window.location.replace("/relationships/" + data.relationship_id + "/edit?new_ref=true");
-	})
-	.fail(function(data) {
-	  // assuming here that the status code is 400 because of a bad request. we should person also  consider what would happen if the request fails for different reasons besides the submission of invalid or missing information.
-	  displayErrors(data.responseJSON);
-	}); 
+      	.done(function(data, textStatus, jqXHR) {
+      	  // redirect to the edit relationship page
+      	  window.location.replace("/relationships/" + data.relationship_id + "/edit?new_ref=true");
+      	})
+      	.fail(function(data) {
+      	  // assuming here that the status code is 400 because of a bad request. we should person also  consider what would happen if the request fails for different reasons besides the submission of invalid or missing information.
+      	  displayErrors(data.responseJSON);
+      	}); 
     }
   } 
 
@@ -289,23 +298,29 @@ var addRelationship = (function(utility) {
   // If there are errors, it will display error messages and return false
   // otherwise it returns true
   function catchErrors(formData) {
-    var errors = {relationship: {}, reference: {} };
-
+    var errors = {};
     if (!formData.relationship.category_id){
-      errors.relationship.category_id = true;
-    }
-    
-    if (!formData.reference.name) {
-      errors.reference.name = true;
+      errors.category_id = true;
     }
 
-    if (!formData.reference.source) {
-      errors.reference.source = true;
-    } else if (!utility.validURL(formData.reference.source)) {
-      errors.reference.source = 'INVALID';
+    if (typeof formData.reference.reference_id === 'undefined') {
+
+      if (!formData.reference.reference_name) {
+	errors.reference_name = true;
+      }
+
+      if (!formData.reference.url) {
+	errors.url = true;
+      } else if (!utility.validURL(formData.reference.url)) {
+	errors.url = 'INVALID';
+      }
+
+    } else if (formData.reference.reference_id === null) {
+      errors.no_selection = true;
     }
 
-    if ($.isEmptyObject(errors.relationship) && $.isEmptyObject(errors.reference)) {
+
+    if ($.isEmptyObject(errors)) {
       return true;
     } else {
       displayErrors(errors);
@@ -338,6 +353,22 @@ var addRelationship = (function(utility) {
       alerts.push(alertDiv(errors.base));
     }
 
+    if (Boolean(errors.reference_name)) {
+      alerts.push(alertDiv('Missing information ', "Don't forget to add a reference name"));
+    }
+
+    if (Boolean(errors.no_selection)) {
+      alerts.push(alertDiv('Missing information ', "Don't forget to select an existing reference"));
+    }
+
+    if (Boolean(errors.url)) {
+      if (errors.url === 'INVALID') {
+	alerts.push(alertDiv('Invalid data: ', "The reference url is invalid"));
+      } else {
+	alerts.push(alertDiv('Missing Url: ', "The reference url is missing"));
+      }
+    }
+
     if (Boolean(errors.category_id)) {
       alerts.push(alertDiv('Missing information ', "Don't forget to select a relationship category"));
     } 
@@ -365,12 +396,13 @@ var addRelationship = (function(utility) {
 
   function init() {
 
-    entity1_id = entityInfo('entityid');
+    entity1_id = utility.entityInfo('entityid');
     // entity1_id gets set after selection.
   
     // submits create relationships request
     // after button is clicked.
     $('#create-relationship-btn').click(function(e){
+      console.log(submissionData());
       submit(); 
     });
     
@@ -412,10 +444,24 @@ var addRelationship = (function(utility) {
       displayCreateNewEntityDialog("");
     });
 
+
+    $('#toggle-reference-form').click(function(){
+      $(this).find('.btn').toggleClass('active');  
+      $(this).find('.btn').toggleClass('btn-primary');
+      $(this).find('.btn').toggleClass('btn-default');
+      $('#existing-reference-container').toggle();
+      $('#new-reference-container').toggle();
+
+      // if $('#new-reference-container').is(':visible') {}
+    });
+
+
   }
   
+
+
   return {
     init: init
-  };
+  }
 
 }(utility));

@@ -61,10 +61,9 @@
     return FIELDS_SHOW.map(fieldHtml)
       .concat(collapse())
       .concat(
-	collapseFieldsContainer().append( FIELDS_COLLAPSE.map(fieldHtml))
+	collapseFieldsContainer().append(FIELDS_COLLAPSE.map(fieldHtml))
       );
   }
-
 
   function fieldHtml(x) {
     return inputAndLabel(x[0], x[1], x[2], x[3]);
@@ -138,8 +137,8 @@
 	    .append(toggle)
 	)
     );
-
   }
+  
   return NewReferenceForm;
 
 }));
