@@ -46,10 +46,14 @@ describe 'entities/add_relationship.html.erb' do
       expect(rendered).to have_tag "img", :count => 1
     end
 
+    specify { css '#existing-reference-container' }
+    specify { css '#new-reference-container' }
+    specify { css '#similar-relationships' }
+    specify { css '#create-relationship-btn' }
+
     it { should render_template(partial: '_header') }
     it { should render_template(partial: '_explain_categories_modal') }
     it { should render_template(partial: '_new_entity_form') }
-    it { should render_template(partial: '_add_relationship_form') }
   end
 end
 
