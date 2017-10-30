@@ -1,5 +1,5 @@
 /**
- * Widget to select an existing reference or create a new one
+ * Widget to select an existing reference
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -9,8 +9,12 @@
   }
 }(this, function ($, utility) {
   // CONSTANTS
-  var REFERENCES_PER_PAGE = 25;
+  var REFERENCES_PER_PAGE = 75;
   var REQUEST_URL = '/references/recent';
+  var TYPEAHEAD_OPTIONS = {
+    minLength: 2,
+    highlight: true
+  };
     
   /**
    * Reference Widget
@@ -52,7 +56,7 @@
 
     // render the typeahead in to the div
     $(ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)
-      .typeahead(null, this._typeaheadConfig())
+      .typeahead(TYPEAHEAD_OPTIONS, this._typeaheadConfig())
       .on('typeahead:selected', function (e, datum) {
 	// set 'selection' property after picked
 	self.selection = datum;
@@ -110,7 +114,7 @@
       source: documentBloodhound(this.documents),
       displayKey: 'name',
       templates: {
-	empty: '<span class="reference-empty">No matches found</span>',
+	empty: '<span class="reference-suggestion"><span class="reference-empty">No matches found</span></span>',
 	suggestion: suggestion
       }
     };
@@ -154,7 +158,6 @@
   };
 
 
-
   ///////////////////
   // DOM ELEMENTS ///
   //////////////////
@@ -173,24 +176,23 @@
   };
   
   
+  var suggestionRender = Hogan.compile(
+    [ '<div class="reference-suggestion" title="{{url}}">',
+      '<div class="reference-suggestion-name">{{name}}</div>',
+      '<div class="reference-suggestion-url">{{trimUrl}}</div>',
+      '</div>'
+    ].join('')
+  );
+
   /**
    * 
    * @param {Object} doc
    * @returns {String} html for suggestion
    */
-  function suggestion(doc) {
-    return [ '<div class="reference-suggestion">',
-	     '<div class="reference-suggestion-name">',
-	     doc.name,
-	     '</div>',
-	     '<div class="reference-suggestion-url">',
-	     trimUrl(doc.url),
-	     '</div>',
-	     '</div>'
-	   ].join('');
-    
+    function suggestion(doc) {
+      var data = Object.assign({}, doc, {trimUrl: trimUrl(doc.url)});
+      return suggestionRender.render(data);
   }
-
 
 
   ///////////////
@@ -199,10 +201,10 @@
 
   function trimUrl(url) {
     var without_schema = url.replace('https://', '').replace('http://', '');
-    if (without_schema.length < 28) {
+    if (without_schema.length < 38) {
       return without_schema;
     } else {
-      return (without_schema.slice(0,25) + '...');
+      return (without_schema.slice(0,35) + '...');
     }
   }
 

@@ -1,13 +1,15 @@
 #reference-widget-container {
-
+    
     .reference-typeahead {
 	@extend .form-control;
-	width: 250px;
+	width: 315px;
     }
     
     .reference-suggestion {
-	font-size: 10px;
+	width: 315px;
+	font-size: 12px;
 	cursor: pointer;
+	padding-left: 0.3em;
 
 	.reference-suggestion-name {}
 
