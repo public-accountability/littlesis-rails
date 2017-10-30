@@ -125,23 +125,25 @@
   // Entity -> Promise[Void]
   state.matchEntity = function(entity){
     return api.searchEntity(entity.name)
-      .then(state.addMatches(entity));
+      .then(function(matches){ state.addMatches(entity, matches); });
   };
 
-  // Entity -> Matches -> Matches
-  state.addMatches = function(entity){
-    return function(matches){
-      state = util.setIn(
-        state,
-        ['entities', 'matches', entity.id],
-        {
-          byId:     util.normalize(matches),
-          order:    matches.map(function(match){ return match.id; }),
-          selected: null
-        }
-      );
-      return matches;
-    };
+  // Entity -> Void
+  state.addMatches = function(entity, matches){
+    state = util.setIn(
+      state,
+      ['entities', 'matches', entity.id],
+      {
+        byId:     util.normalize(matches),
+        order:    matches.map(function(match){ return match.id; }),
+        selected: null
+      }
+    );
+  };
+
+  // Entity -> Void
+  state.removeMatches = function(entity){
+    state = util.deleteIn(state, ['entities', 'matches', entity.id]);
   };
 
   state.setMatchSelection = function(entity, matchId){
@@ -392,7 +394,8 @@
   // EVENT HANDLERS
 
   function handleCreateChoice(entity){
-    console.log('Creating entity with name ', entity.name);
+    state.removeMatches(entity);
+    self.render();
   }
 
   function handleUseExistingChoice(entity){

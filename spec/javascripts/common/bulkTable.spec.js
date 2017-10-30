@@ -312,19 +312,33 @@ describe('Bulk Table module', () => {
             expect(bulkTable.getIn(['entities', 'matches', matches[0].id])).not.toExist();
           });
 
+          it('closes the popover', () => {
+            expect(firstRow.find(".resolver-popover")).not.toExist();
+          });
+
           it('removes the alert icon next to the row', () => {
             expect(firstRow.find(".resolver-anchor")).not.toExist();
+          });
+        });
+
+        describe('when user chooses `Create New Entity`', () => {
+
+          beforeEach(() => {
+            popover.find('.resolver-create-btn').trigger('click');
+            firstRow = findFirstRow();
+          });
+
+          it('deletes matches for the user-submitted entity', () => {
+            expect(bulkTable.getIn(['entities', 'matches', 'newEntity0'])).toEqual(undefined);
           });
 
           it('closes the popover', () => {
             expect(firstRow.find(".resolver-popover")).not.toExist();
           });
-        });
 
-        describe('when user chooses `Create New Entity`', () => {
-          it('deletes matches for the user-submitted entity');
-          it('closes the popover');
-          it('removes the alert icon next to the row');
+          it('removes the alert icon next to the row', () => {
+            expect(firstRow.find(".resolver-anchor")).not.toExist();
+          });
         });
       });
     });
