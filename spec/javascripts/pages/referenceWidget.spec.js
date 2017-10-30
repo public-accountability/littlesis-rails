@@ -1,4 +1,4 @@
-describe('referenceWidget', function() {
+describe('existingReferenceWidget', function() {
 
   const elementExists = (selector) => Boolean($(selector).length);
 
@@ -40,9 +40,9 @@ describe('referenceWidget', function() {
 
   describe('creating the typeahead input', function(){
     it('is an input', function(){
-      var rw = new ReferenceWidget([1,2]);
+      var rw = new ExistingReferenceWidget([1,2]);
       var input = rw._typeaheadInput()[0];
-      expect(input.id).toEqual(ReferenceWidget.TYPEAHEAD_INPUT_ID);
+      expect(input.id).toEqual(ExistingReferenceWidget.TYPEAHEAD_INPUT_ID);
     });
   });
 
@@ -50,29 +50,41 @@ describe('referenceWidget', function() {
 
     it('sets the entityIds property', function(){
       expect(
-	new ReferenceWidget([1,2], { containerDiv: '#test-dom'}).entityIds
+	new ExistingReferenceWidget([1,2], { containerDiv: '#test-dom'}).entityIds
       ).toEqual([1,2]);
 
       expect(
-	new ReferenceWidget(['1','2'], { containerDiv: '#test-dom'}).entityIds
+	new ExistingReferenceWidget(['1','2'], { containerDiv: '#test-dom'}).entityIds
       ).toEqual([1,2]);
 
       expect(
-	new ReferenceWidget('1000', { containerDiv: '#test-dom'}).entityIds
+	new ExistingReferenceWidget('1000', { containerDiv: '#test-dom'}).entityIds
       ).toEqual([1000]);
     });
 
 
     it('adds the input to the dom', function(done){
-      expect(elementExists(ReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)).toBeFalse();
+      expect(elementExists(ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)).toBeFalse();
       
-      new ReferenceWidget([1,2], {
+      new ExistingReferenceWidget([1,2], {
 	containerDiv: '#test-dom',
 	afterRender: function() {
-	  expect(elementExists(ReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)).toBeTrue();
+	  expect(elementExists(ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)).toBeTrue();
 	  done();
 	}
       });
+    });
+  });
+
+  xdescribe('selecting an item', function(){
+    it('set the value of the widget', function() {
+      var rw = new ExistingReferenceWidget([1,2], {containerDiv: '#test-dom'});
+      expect(rw.selection).toBeNull();
+      $('#ref-widget-typeahead').typeahead('val', 'CMD');
+      $('#ref-widget-typeahead').typeahead('open');
+      expect($('.tt-suggestion').length).toEqual(1);
+      $('.tt-suggestion').first().trigger('click');
+      expect(rw.selection).toEqual(ajaxRequest[1]);
     });
   });
   

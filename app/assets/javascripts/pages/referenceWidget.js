@@ -5,7 +5,7 @@
   if (typeof module === 'object' && module.exports) {
     module.exports = factory(require('jQuery'), require('../common/utility'));
   } else {
-    root.ReferenceWidget = factory(root.jQuery, root.utility);
+    root.ExistingReferenceWidget = factory(root.jQuery, root.utility);
   }
 }(this, function ($, utility) {
   // CONSTANTS
@@ -18,8 +18,8 @@
    * @param {Array|Integer|String} entityIds
    * @param {Object} userOptions
    */
-  function ReferenceWidget(entityIds, userOptions) {
-    this.options = mergeOptions(ReferenceWidget.DEFAULT_OPTIONS, userOptions);
+  function ExistingReferenceWidget(entityIds, userOptions) {
+    this.options = mergeOptions(ExistingReferenceWidget.DEFAULT_OPTIONS, userOptions);
     this.entityIds = [].concat(entityIds).map(function(n) { return Number(n); });
     this.documents = null;
     this.selection = null;
@@ -28,30 +28,30 @@
   }
 
   // STATIC VALUES
-  ReferenceWidget.TYPEAHEAD_INPUT_ID = 'ref-widget-typeahead';
-  ReferenceWidget.TYPEAHEAD_INPUT_SELECTOR = '#' + ReferenceWidget.TYPEAHEAD_INPUT_ID;
-  ReferenceWidget.DEFAULT_OPTIONS = {
+  ExistingReferenceWidget.TYPEAHEAD_INPUT_ID = 'ref-widget-typeahead';
+  ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR = '#' + ExistingReferenceWidget.TYPEAHEAD_INPUT_ID;
+  ExistingReferenceWidget.DEFAULT_OPTIONS = {
     "containerDiv": "#reference-widget-container",
     "afterRender": function() {},
     "afterSelect": function() {}
   };
 
   /**
-   * Initalize the ReferenceWidget 
+   * Initalize the ExistingReferenceWidget 
    */
-  ReferenceWidget.prototype.init = function() {
+  ExistingReferenceWidget.prototype.init = function() {
     this.getDocs().then(this.render);
   };
   
   /**
    * Replaces contents of container with a typeahead
    */
-  ReferenceWidget.prototype._render = function() {
+  ExistingReferenceWidget.prototype._render = function() {
     var self = this;
     $(this.options.containerDiv).html(this._typeaheadInput());
 
     // render the typeahead in to the div
-    $(ReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)
+    $(ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)
       .typeahead(null, this._typeaheadConfig())
       .on('typeahead:selected', function (e, datum) {
 	// set 'selection' property after picked
@@ -69,6 +69,7 @@
   ///////////////////////////
   // TYPEAHEAD COMPONENTS ///
   //////////////////////////
+  
 
   /**
    * Prepares Bloodhound search with provided references data
@@ -99,7 +100,7 @@
    * @param {Array} references
    * @returns {Object} Configuration for typeahead 
    */
-  ReferenceWidget.prototype._typeaheadConfig = function() {
+  ExistingReferenceWidget.prototype._typeaheadConfig = function() {
     if (!Array.isArray(this.documents)) {
       throw 'Documents are missing or invalid :(';
     }
@@ -121,7 +122,7 @@
    * Sets this.documents if successful.
    * @returns {Promise}
    */
-  ReferenceWidget.prototype.getDocs = function() {
+  ExistingReferenceWidget.prototype.getDocs = function() {
     var self = this;
     var url = this._recentReferencesUrl();
     
@@ -142,7 +143,7 @@
    * Url for request
    * @returns {String} 
    */
-  ReferenceWidget.prototype._recentReferencesUrl = function() {
+  ExistingReferenceWidget.prototype._recentReferencesUrl = function() {
     var params =  $.param({
       "entity_ids":  this.entityIds,
       "per_page": REFERENCES_PER_PAGE,
@@ -162,11 +163,11 @@
    * Input with id ref-widget-typeahead
    * @returns {<input>} 
    */
-  ReferenceWidget.prototype._typeaheadInput = function() {
+  ExistingReferenceWidget.prototype._typeaheadInput = function() {
     return $('<input>', {
       "type": 'text',
       "placeholder": 'Select an existing reference',
-      "id": ReferenceWidget.TYPEAHEAD_INPUT_ID,
+      "id": ExistingReferenceWidget.TYPEAHEAD_INPUT_ID,
       "class": 'reference-typeahead'
     });
   };
@@ -213,7 +214,7 @@
     return Array.prototype.concat.apply([], arrays);
   }
 
-  return ReferenceWidget;  // Return the constructor
+  return ExistingReferenceWidget;  // Return the constructor
 }));
 
 

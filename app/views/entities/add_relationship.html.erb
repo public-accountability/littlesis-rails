@@ -35,6 +35,16 @@
 
     </div>
 
+
+    <div id="reference-widget-container">
+    </div>
+    <script>
+     var newRef = new NewReferenceForm('#reference-widget-container');
+    </script>
+
+
+
+    
     <div class="row rel-search rel-results hidden" id="search-results-row">
 	<div class="col-sm-12">
 	    <table id="results-table" class="compact hover" cellspacing="0" width="100%"></table>
@@ -85,7 +95,7 @@
 	
 	<div class="thin-grey-bottom-border top-1em"></div>
 
-	<%= render partial: 'add_relationship_form' %>
+	<%#= render partial: 'add_relationship_form' %>
 	
     </div> <!-- end of col-sm-6  -->
 
