@@ -233,6 +233,10 @@ utility.normalize = function(arr){
   );
 };
 
+utility.exists = function(obj){
+  return obj !== undefined && obj !== null;
+};
+
 utility.isObject = function(maybeObj){
   return maybeObj && maybeObj instanceof Object;
 };

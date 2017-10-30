@@ -164,7 +164,13 @@ describe('utility', function(){
       });
     });
 
-
+    describe('#exists', () => {
+      it('returns true if an object exists, false otherwise', () => {
+        expect(utility.exists(0)).toBeTrue();// thanks ES5, for making me write a func just for this corner case!
+        expect(utility.exists(undefined)).toBeFalse();
+        expect(utility.exists(null)).toBeFalse();
+      });
+    });
     
     describe('#normalize', () => {
 
