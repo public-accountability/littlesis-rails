@@ -60,7 +60,28 @@
     return util.getIn(state, attrs);
   };
 
+  // we expose below 3 functions for testing  seams...
+
+  // ...we cannot mutate caller.files for security reasons
+  self.hasFile = function(caller){
+    return Boolean(caller.files[0]);
+  };
+
+  // ...ditto
+  self.getFile = function(caller){
+    return caller.files[0];
+  };
+
+  // ...so we can test scenarios after csv has uploaded
+  // without mocking file-reader behavior encapsulated above
+  self.ingestEntities = ingestEntities;
+
+
   // private getters
+
+  state.hasNotification = function(){
+    return state.notification !== "";
+  };
 
   state.hasRows = function(){
     return !util.isEmpty(state.entities.order);
@@ -146,12 +167,14 @@
     state = util.deleteIn(state, ['entities', 'matches', entity.id]);
   };
 
+  // Entity, Integer -> Void
   state.setMatchSelection = function(entity, matchId){
     state = util.setIn(state,
                        ['entities', 'matches', entity.id, 'selected'],
                        matchId);
   };
 
+  // Entity -> Void
   state.replaceWithMatch = function(entity){
     // TODO: (ag| 29-Oct-2017) extract helpers and use function composition here?
     var match = state.getSelectedMatch(entity);
@@ -171,15 +194,22 @@
     state = util.deleteIn(state3, ['entities', 'matches', entity.id]);
   };
 
+  // () -> Void
   state.disableUpload = function(){
     state.canUpload = false;
   };
 
+  // String -> Void
   state.setNotification = function(msg){
     state.notification = msg;
   };
 
-  // ENVIRONMENT DETECTION
+  // () -> Void
+  state.clearNotification = function(){
+    state.notification = "";
+  };
+
+  // CSV UPLOAD HANLDING
 
   function detectUploadSupport(){
     if (!util.browserCanOpenFiles()) {
@@ -188,8 +218,6 @@
       self.render();
     }
   }
-
-  // FILE HANDLING
 
   function handleUploadThen(processFile, caller){
     if (self.hasFile(caller)) {
@@ -203,42 +231,87 @@
 
   // String -> Promise[Void]
   function ingestEntities (csv){
-    const entities = Papa
-          .parse(csv, { header: true, skipEmptyLines: true})
-          .data
-          .map(state.assignId)
-          .map(state.addEntity);
-    return state.matchEntities(entities)
-      .then(state.disableUpload)
-      .then(self.render);
+    const maybeEntities = parseEntities(csv);
+    if (maybeEntities.error){
+      state.setNotification(maybeEntities.error);
+      return Promise.resolve(self.render());
+    } else {
+      state.clearNotification();
+      state.disableUpload();
+      return state.matchEntities(maybeEntities.result)
+        .then(self.render);
+    }
   };
 
-  // expose below 2 functions for testing  seams
-  // (cannot mutate caller.files for security reasons)
-  
-  self.hasFile = function(caller){
-    return Boolean(caller.files[0]);
-  };
+  // String -> [Entity]
+  function parseEntities(csv) {
+    return store(validateHeaders(parse(csv)));
+  }
 
-  self.getFile = function(caller){
-    return caller.files[0];
-  };
+  // type MaybeEntities = { result: PapaObject | [Entity], error: ?String }
+
+  // String -> MaybeEntities
+  function parse(csv){
+    var result = Papa.parse(csv, { header: true, delimiter: ",", skipEmptyLines: true });
+    return util.isEmpty(result.errors) ?
+      { result: result, error:  null } :
+      { result: null,   error:  parseErrorMsg(result.errors[0], result.data) };
+  }
+
+  function parseErrorMsg(error, rows){
+    return "CSV format error: " + error.message +
+      (util.exists(error.row) && " in row: '" + Object.values(rows[error.row]).join(",")) + "'";
+  }
+
+  // MaybeEntities -> MaybeEntities
+  function validateHeaders(maybeEntities){
+    if (maybeEntities.error) return maybeEntities;
+    else {
+      var validHeaders = columns.map(function(col){ return col.attr; }).join(",");
+      var actualHeaders = maybeEntities.result.meta.fields.join(",");
+      return actualHeaders === validHeaders ?
+        maybeEntities :
+        {
+          result: null,
+          error:  invalidHeadersMsg(validHeaders, actualHeaders)
+        };
+    }
+  }
+
+  // String, String -> String
+  function invalidHeadersMsg(validHeaders, actualHeaders){
+    return "Invalid headers.\n" +
+      "Required: '" + validHeaders + "'\n" +
+      "Provided: '" + actualHeaders + "'";
+  }
+
+  // MaybeEntities -> MaybeEntities
+  function store(maybeEntities){
+    if (maybeEntities.error) return maybeEntities;
+    else {
+      return {
+        result: maybeEntities.result.data.map(state.assignId).map(state.addEntity),
+        errors: null
+      };
+    }
+  }
+
 
   // RENDERING
 
   self.render = function(){
     $('#' + state.rootId).empty();
     $('#' + state.rootId)
-      .append(notifications())
+      .append(notificationBar())
       .append(state.canUpload ? uploadContainer() : null)
       .append(state.hasRows()? table() : null);
   };
 
-  function notifications(){
-    return $('<div>', {
-      id: ids.notifications,
-      text: state.notification
-    });
+  function notificationBar(){
+    return state.hasNotification() &&
+      $('<div>', { id: ids.notifications })
+        .append($('<div>', { class: 'alert-icon' }))
+        .append($('<span>', { text: state.notification }));
   };
 
   function uploadContainer(){
@@ -409,12 +482,6 @@
       .empty()
       .append(pickerResult(state.getMatch(entity, matchId)));
   }
-
-  // MISC
-
-  // expose ingestEntities as testing seam for post-upload logic
-  // (we want to act as though the csv has already uploaded w/o having to mock file-level browser behavior)
-  self.ingestEntities = ingestEntities;
 
   // RETURN
   return self;

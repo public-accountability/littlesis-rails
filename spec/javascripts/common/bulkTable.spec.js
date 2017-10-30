@@ -57,8 +57,8 @@ describe('Bulk Table module', () => {
       url:         `/${ext.toLowerCase()}/${n}/${entity.name.replace(" ", "")}`
     };
   });
-  
-  const csv =
+
+  const csvValid =
         "name,primary_ext,blurb\n" +
         `${entities.newEntity0.name},${entities.newEntity0.primary_ext},${entities.newEntity0.blurb}\n` +
         `${entities.newEntity1.name},${entities.newEntity1.primary_ext},${entities.newEntity1.blurb}\n`;
@@ -134,30 +134,91 @@ describe('Bulk Table module', () => {
 
   describe('uploading csv', () => {
 
-    const file = new File([csv], "test.csv", {type: "text/csv"});
-    let hasFileSpy, getFileSpy;
+    let file, hasFileSpy, getFileSpy;
 
-    beforeEach(done => {
+    const setup = (csv, done) => {
+      file = new File([csv], "test.csv", {type: "text/csv"});
       hasFileSpy = spyOn(bulkTable, 'hasFile').and.returnValue(true);
       getFileSpy = spyOn(bulkTable, 'getFile').and.returnValue(file);
       bulkTable.init(defaultState);
       $(`#${ids.uploadButton}`).change();
       setTimeout(done, asyncDelay); // wait for file to upload
-    });
+    };
 
-    it('stores entity data', () => {
-      expect(bulkTable.getIn(['entities', 'byId'])).toEqual({
-        newEntity0: entities['newEntity0'],
-        newEntity1: entities['newEntity1']
+
+    describe("with well-formed csv", () => {
+
+      beforeEach(done => setup(csvValid, done));
+
+      it('stores entity data', () => {
+        expect(bulkTable.getIn(['entities', 'byId'])).toEqual({
+          newEntity0: entities['newEntity0'],
+          newEntity1: entities['newEntity1']
+        });
+      });
+
+      it('stores row ordering', () => {
+        expect(bulkTable.getIn(['entities', 'order'])).toEqual(Object.keys(entities));
+      });
+
+      it('hides upload button', () => {
+        expect($(`#${ids.uploadButton}`)).not.toExist();
       });
     });
 
-    it('stores row ordering', () => {
-      expect(bulkTable.getIn(['entities', 'order'])).toEqual(Object.keys(entities));
+    describe('with invalid header fields', () => {
+
+      const csvInvalidHeaders = "foo,bar\nbaz,bam\n";
+      beforeEach(done => setup(csvInvalidHeaders, done));
+
+      it('does not store csv data', () => {
+        expect(bulkTable.getIn(['entities', 'byId'])).toEqual({});
+      });
+
+      it('displays an error message', () => {
+        expect($("#bulk-add-notifications")).toContainText("Invalid headers");
+      });
+
+      it('still shows upload button', () => {
+        expect($(`#${ids.uploadButton}`)).toExist();
+      });
     });
 
-    it('hides upload button', () => {
-      expect($(`#${ids.uploadButton}`)).not.toExist();
+    describe('with incorrectly formatted csv', () => {
+
+      const csvInvalidShape = "name,primary_ext,blurb\nfoo,bar\n";
+      beforeEach(done => setup(csvInvalidShape, done));
+
+      it('does not store csv data', () => {
+        expect(bulkTable.getIn(['entities', 'byId'])).toEqual({});
+      });
+
+      it('displays an error message', () => {
+        var notification = $("#bulk-add-notifications").text();
+        expect($("#bulk-add-notifications")).toContainText("CSV format error");
+      });
+
+      it('still shows upload button', () => {
+        expect($(`#${ids.uploadButton}`)).toExist();
+      });
+    });
+
+    describe('re-submitting valid csv after an invalid upload', () => {
+
+      beforeEach(done => {
+        setup("foobar", () => null);
+        getFileSpy.and.returnValue(new File([csvValid], "_.csv", { type: "text/csv"} ));
+        $(`#${ids.uploadButton}`).change();
+        setTimeout(done, asyncDelay);
+      });
+
+      it('clears the error message', () => {
+        expect($("bulk-add-notifications")).not.toExist();
+      });
+
+      it('hides the upload button', () => {
+        expect($(`#${ids.uploadButton}`)).not.toExist();
+      });
     });
   });
 
@@ -168,7 +229,7 @@ describe('Bulk Table module', () => {
 
     beforeEach(done => {
       bulkTable.init(defaultState);
-      bulkTable.ingestEntities(csv);
+      bulkTable.ingestEntities(csvValid);
       setTimeout(() => {
         firstRow = findFirstRow();
         secondRow = $("#bulk-add-table tbody tr:nth-child(2)");

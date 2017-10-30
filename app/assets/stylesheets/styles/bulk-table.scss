@@ -16,6 +16,15 @@ h1#bulk-add-header {
     #bulk-add-notifications {
         font-style: italic;
         color: gray;
+        margin-bottom: 1em;
+        span {
+            margin-left: 1em;
+        }
+    }
+    .alert-icon{
+        @extend .glyphicon;
+	@extend .glyphicon-alert;
+        color: $maroon;
     }
     table {
         width: 100%;
@@ -63,11 +72,6 @@ h1#bulk-add-header {
                 margin-top: -1.5em;
                 width: 1em;
                 cursor: pointer;
-            }
-            .alert-icon{
-                @extend .glyphicon;
-	        @extend .glyphicon-alert;
-                color: $maroon;
             }
             .arrow {
                 top: calc(0% + 5em) !important;
