@@ -30,13 +30,25 @@ class ReferencesController < ApplicationController
     end
   end
 
+  # GET '/references/recent'
+  #
+  # Required params: entity_ids
+  # Optional params: per_page, page, exclude_type
+  # Defaults:
+  #    per_page: 10
+  #    page: 1
+  #    exclude_type: fec
+  #
   # Takes a list of Entity ids and gathers the most recent
   # refences for those entities and their relationships
   # It also includes the most recent references regardless if they are
   # associated with the entities or not
   # This is used on the add relationship page
   def recent
-    docs = Reference.last(2).map(&:document) + Document.documents_for_entity(entity: entity_ids, page: 1, per_page: 10, exclude_type: :fec)
+    per_page = value_for_param(:per_page, 10, :to_i)
+    page = value_for_param(:page, 1, :to_i)
+    exclude_type = value_for_param(:exclude_type, :fec, :to_sym)
+    docs = Reference.last(2).map(&:document) + Document.documents_for_entity(entity: entity_ids, page: page, per_page: per_page, exclude_type: exclude_type)
     render json: docs.uniq.map { |d| d.slice(:id, :name, :url, :publication_date, :excerpt) }
   end
 

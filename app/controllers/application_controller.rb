@@ -136,4 +136,8 @@ class ApplicationController < ActionController::Base
   def set_cache_control(time = 1.hour)
     expires_in(time, public: true, must_revalidate: true)
   end
+
+  def value_for_param(param, default_value, transform = :itself)
+    params[param].present? ? params[param].send(transform) : default_value
+  end
 end

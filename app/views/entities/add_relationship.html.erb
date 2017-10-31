@@ -68,29 +68,59 @@
 	    <%= link_to "Explain Categories", "#", data: {toggle: 'modal', target: '#explain-categories-modal' } %>
 	</div>
     </div>
-    <div class="col-sm-6" id="reference">
+
+    a<div class="col-sm-6 col-sm-offset-1" id="reference">
 	
 	<div class="row">
 	    <div class="col-sm-12">
-		<p class="text-center"><strong>Where is this info coming from?</strong></p>
+		<p><strong>Where is this info coming from?</strong></p>
+	    </div>
+	    <div class="col-sm-12">
+	      <div id="toggle-reference-form" class="btn-group btn-toggle"> 
+		<button class="btn btn-sm btn-primary active">Find Reference</button>
+		<button class="btn btn-sm btn-default">Create Reference</button>
+	      </div>
 	    </div>
 	</div>
-	
-	<div class="row">
-	    <div class="col-sm-2"></div>
-	    <div class="col-sm-10">
-		<div><select class="form-control" id="existing-sources-select"></select></div>
-	    </div>
-	</div>
-	
-	<div class="thin-grey-bottom-border top-1em"></div>
 
-	<%= render partial: 'add_relationship_form' %>
+	<div class="thin-grey-bottom-border top-1em m-bottom-1em"></div>
+	
+	<div class="row" id="existing-reference-container">
+	    <div class="col-sm-10">
+		<div id="reference-widget-container"></div>
+	    </div>
+	</div>
+	
+
+	<div class="row" style="display: none;" id="new-reference-container">
+	    <div class="col-sm-10">
+		<div id="new-reference-form"></div>
+	    </div>
+	</div>
+
+	<!-- Submit Button -->
+	<div class="row" >
+	  <div class="col-sm-4 top-1em">
+	    <button type="button" class="btn btn-primary" id="create-relationship-btn">Create Relationship</button>
+	  </div>
+	</div>
+
+	<!-- SIMILAR RELATIONSHIPS -->
+	<div class="row" >
+	  <div class="col-sm-10 top-1em"  style="height: 20px;">
+	    <span id="similar-relationships"
+		      class="hidden cursor-pointer"
+		      data-toggle="popover"
+		      data-placement="right">
+	      <span class="glyphicon glyphicon-warning-sign"></span><span class="text-danger">  Similar relationships exist!</span>
+	    </span>
+	  </div>
+	</div>
 	
     </div> <!-- end of col-sm-6  -->
 
     <!-- errors -->
-    <div class="col-sm-3">
+    <div class="col-sm-4 col-sm-offset-1">
 	<div id="errors-container" class="top-3em"></div>
     </div>
 
@@ -98,7 +128,7 @@
 
 <%= javascript_tag do %>
     $(document).ready(function(){ 
-    addRelationship.init();
-    $('#reference-date').datepicker({ format: "yyyy-mm-dd" });
+      addRelationship.init();
+      $('#reference-date').datepicker({ format: "yyyy-mm-dd" });
     });
 <% end  %>

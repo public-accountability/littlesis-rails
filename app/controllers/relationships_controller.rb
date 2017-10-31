@@ -35,11 +35,16 @@ class RelationshipsController < ApplicationController
   # Returns status code 201 if successful or a json of errors with status code 400
   def create
     @relationship = Relationship.new(relationship_params)
-    @relationship.validate_reference(reference_params)
+    @relationship.validate_reference(reference_params) if !existing_document_id
 
     if @relationship.valid?
       @relationship.save!
-      @relationship.add_reference(reference_params)
+      if existing_document_id
+        @relationship.add_reference_by_document_id(existing_document_id)
+      else
+        @relationship.add_reference(reference_params)
+      end
+
       update_entity_last_user
       render json: { 'relationship_id' => @relationship.id }, status: :created
     else

@@ -407,10 +407,6 @@ GEM
       memoizable (~> 0.4.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
-    twitter-typeahead-rails (0.9.3)
-      actionpack (>= 3.1)
-      jquery-rails
-      railties (>= 3.1)
     tzinfo (1.2.3)
       thread_safe (~> 0.1)
     uglifier (3.0.2)
@@ -496,7 +492,6 @@ DEPENDENCIES
   tinymce-rails (~> 4.6.4)
   ts-delayed-delta (= 2.0.2)
   twitter
-  twitter-typeahead-rails (~> 0.9.3)
   uglifier (>= 1.0.3)
   validate_url!
   web-console (~> 2.0)

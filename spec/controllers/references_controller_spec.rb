@@ -100,6 +100,55 @@ describe ReferencesController, type: :controller do
     end
   end
 
+  describe '/references/recent' do
+    login_user
+
+    def get_recent_references(params)
+      get :recent, {entity_ids: '1,2,3'}.merge(params)
+    end
+
+    def reference_is_called_with_last
+      expect(Reference).to receive(:last).with(2)
+                             .and_return(double(:map => [build(:document)]))
+    end
+
+    def document_is_called_with(*args)
+      expect(Document).to receive(:documents_for_entity)
+                            .with(*args)
+                            .and_return([build(:document)])
+    end
+
+    before(:each) { reference_is_called_with_last }
+
+    it 'uses default values' do
+      document_is_called_with(entity: [1, 2, 3], page: 1, per_page: 10, exclude_type: :fec)
+      get_recent_references({})
+    end
+    
+    it 'can change per_page' do
+      document_is_called_with(entity: [1, 2, 3], page: 1, per_page: 50, exclude_type: :fec)
+      get_recent_references({per_page: '50'})
+    end
+
+    it 'can change page' do
+      document_is_called_with(entity: [1, 2, 3], page: 2, per_page: 10, exclude_type: :fec)
+      get_recent_references({page: '2'})
+    end
+
+    it 'can change exclude_type' do
+      document_is_called_with(entity: [1, 2, 3], page: 1, per_page: 10, exclude_type: :government)
+      get_recent_references({exclude_type: 'government'})
+    end
+
+    it 'can change all three' do
+      document_is_called_with(entity: [1, 2, 3], page: 2, per_page: 50, exclude_type: :government)
+      get_recent_references({exclude_type: 'government', page: '2', per_page: '50'})
+    end
+  end
+    
+
+
+
   describe 'entity' do
     it 'returns bad request if missing entity_id' do
       get :entity
