@@ -13,6 +13,7 @@ entity:
     - is_deleted
     - merged_id
     - is_current
+    - link_count
 relationship:
   ignore:
     - amount2

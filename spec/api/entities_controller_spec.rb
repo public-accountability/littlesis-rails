@@ -13,7 +13,7 @@ describe Api::EntitiesController, type: :controller do
     before(:each) { request.headers['Littlesis-Api-Token'] = @token }
 
     context 'good request' do
-      ATTRIBUTE_KEYS = %w(name blurb summary website parent_id primary_ext updated_at start_date end_date link_count)
+      ATTRIBUTE_KEYS = %w(name blurb summary website parent_id primary_ext updated_at start_date end_date)
       let(:pac) { create(:pac) }
 
       before(:each) do

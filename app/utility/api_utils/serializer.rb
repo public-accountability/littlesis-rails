@@ -10,6 +10,7 @@ module ApiUtils
     def attributes
       @attributes = @model.attributes.delete_if { |k, _| attributes_to_ignore.include?(k) }
       model_specific_attributes
+      isoify_updated_at
       @attributes
     end
 
@@ -35,6 +36,12 @@ module ApiUtils
 
     def common_ignores
       MODEL_INFO['common']['ignore']
+    end
+
+    def isoify_updated_at
+      if @model.respond_to?(:updated_at) && @attributes.key?('updated_at')
+        @attributes.store('updated_at', @model.updated_at&.iso8601)
+      end
     end
   end
 end
