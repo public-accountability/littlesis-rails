@@ -8,7 +8,6 @@ class OsMatch < ActiveRecord::Base
   belongs_to :donor, class_name: 'Entity', foreign_key: 'donor_id', inverse_of: :matched_contributions
   belongs_to :recipient, class_name: 'Entity', foreign_key: 'recip_id', inverse_of: :donors
   belongs_to :committee, class_name: 'Entity', foreign_key: 'cmte_id', inverse_of: :committee_donors
-  belongs_to :reference
   belongs_to :relationship, inverse_of: :os_matches
   belongs_to :user, foreign_key: 'matched_by'
 
@@ -47,7 +46,6 @@ class OsMatch < ActiveRecord::Base
   def update_donation_relationship
     return nil unless relationship.nil?
     return nil if recipient.nil?
-
     if donor.nil?
       merged_id = Entity.unscoped.find_by_id(donor_id).merged_id
       new_donor = Entity.find_by_id(merged_id)
@@ -93,7 +91,6 @@ class OsMatch < ActiveRecord::Base
                                    url: os_donation.reference_url,
                                    publication_date: os_donation.date.to_s,
                                    ref_type: 2 })
-      update_attribute(:reference, rel.references.last)
     end
   end
 
@@ -122,8 +119,15 @@ class OsMatch < ActiveRecord::Base
       relationship.soft_delete
       relationship.donation.destroy
       relationship.links.each(&:delete)
+    else
+
+      doc = Document.find_by_url(os_donation.reference_url)
+
+      unless doc.nil?
+        relationship.references.find_by_document_id(doc.id).try(:destroy)
+      end
+
     end
-    reference.try(:destroy)
   end
 
   # input <OsCommittee>

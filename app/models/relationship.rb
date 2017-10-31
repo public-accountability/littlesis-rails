@@ -168,9 +168,7 @@ class Relationship < ActiveRecord::Base
   end
 
   def get_association_data
-    {
-      'document_ids' => documents.map(&:id)
-    }
+    { 'document_ids' => documents.map(&:id) }
   end
 
   #####################
