@@ -94,7 +94,7 @@ describe Document, :pagination_helper, type: :model do
       before do
         create(:document) # create a random document unrelated to this query
         add_3_documents.call
-        @oldest_document = Document.last.tap { |d| d.update_column(:updated_at, 1.week.ago) }.reload
+        @oldest_document = Document.last.tap { |d| d.update_column(:updated_at, 1.year.ago) }.reload
       end
 
       subject { Document.documents_for_entity(entity: entity, page: 1) }

@@ -518,7 +518,7 @@ class Relationship < ActiveRecord::Base
     association_data = retrieve_deleted_association_data
     run_callbacks :create
     update(is_deleted: false)
-    if association_data.present? && ['document_ids'].present?
+    if association_data.present? && association_data['document_ids'].present?
       association_data['document_ids'].each do |doc_id|
         add_reference_by_document_id(doc_id)
       end
