@@ -33,7 +33,6 @@ describe OsMatch, type: :model do
       donation_id: @donation_class.id,
       donor_id: @loeb.id,
       recip_id: @nrsc.id,
-      reference_id: nil,
       relationship_id: @loeb_donation.id,
       matched_by: @user.id
     )
