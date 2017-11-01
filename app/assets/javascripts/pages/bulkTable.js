@@ -37,10 +37,12 @@
       rootId:         args.rootId,
       endpoint:       args.endpoint || "/",
       entities:       args.entities ||
-                      { byId:    {},
-                        order:   [],
-                        matches: {},
-                        errors:  {} },
+                      { byId:    {},   // { [key: String]: Entity }
+                        order:   [],   // [String] (order corresponds to row order of entities stored in `.byId`)
+                        // `matches` and `errors` are both lookup tables by *entity id*,
+                        //  where entity id is a key in `entities.byId`
+                        matches: {},   // { [key: String]: { byId: { [key: id]: Entity }, order: [String] }]
+                        errors:  {} }, // { [key: String]: }
       // deterministic
       canUpload:      true,
       notification:   ""
@@ -88,6 +90,10 @@
 
   state.hasNotification = function(){
     return state.notification !== "";
+  };
+
+  state.getErrors = function(entity, attr){
+    return state.getIn(['entities', 'errors', entity.id, attr]);
   };
 
   state.hasRows = function(){
@@ -231,8 +237,7 @@
 
   // () -> Void
   self.validate = function(){
-    state = util.setIn(
-      state,
+    state.setIn(
       ['entities', 'errors'],
       validateEntities(Object.values(state.entities.byId), state.entities.errors)
     );
@@ -262,11 +267,10 @@
     var attrs = columns.map(function(c){ return c.attr; });
     return attrs.reduce(
       function(entityErrorsAcc, attr){
-        return util.set(
-          entityErrorsAcc,
-          attr,
-          validateAttr(entity, attr, util.get(entityErrorsAcc, attr))
-        );
+        var errors = validateAttr(entity, attr, util.get(entityErrorsAcc, attr));
+        return util.isEmpty(errors) ?
+          entityErrorsAcc : // don't store an entry in errors accumulator for an empty errors array
+          util.set(entityErrorsAcc, attr, errors);
       },
       entityErrors || {}
     );
@@ -284,7 +288,6 @@
   }
 
   function validationsFor(entity){
-    debugger;
     return entity.primary_ext === "Person" ?
       mergeValidations(commonValidations, personValidations) :
       commonValidations;
@@ -361,10 +364,11 @@
       state.setNotification(maybeEntities.error);
       return Promise.resolve(self.render());
     } else {
-      state.clearNotification();
-      state.disableUpload();
-      return state.matchEntities(maybeEntities.result)
-        .then(self.render);
+      return state
+        .clearNotification()
+        .disableUpload()
+        .matchEntities(maybeEntities.result)
+        .then(self.validateAndRender);
     }
   };
 
@@ -424,6 +428,10 @@
 
   // RENDERING
 
+  self.validateAndRender = function(){
+    self.validate().render();
+  };
+
   self.render = function(){
     $('#' + state.rootId).empty();
     $('#' + state.rootId)
@@ -481,15 +489,44 @@
       state.getOrderedEntities().map(function(entity){
         return $('<tr>').append(
           columns.map(function(col, idx){
-            return $('<td>', {
-              text: util.get(entity, col.attr)
-            }).append(
-              maybeResolver(entity, col, idx)
-            );
+            return td(entity, col, idx);
           })
         );
       })
     );
+  }
+
+  function td(entity, col, idx){
+    var errors = state.getErrors(entity, col.attr);
+    return $('<td>', {
+      text:     util.get(entity, col.attr),
+      class:    errors && "errors"
+    }).append(
+      maybeResolver(entity, col, idx)
+    ).append(
+      maybeErrorAlert(errors, col.label)
+    );
+  };
+
+  function maybeErrorAlert(errors, label){
+    return errors && $('<div>', {
+      class:         'error-alert',
+      'data-toggle': 'tooltip'
+    })
+      .append($('<div>', { class: 'alert-icon' }))
+      .tooltip({
+        placement: 'bottom',
+        html: true,
+        title: errorList(errors, label)
+      });
+  };
+
+  function errorList(errors, label){
+    return errors.map(function(err){
+      return $('<div>', {
+        text: '[ ! ] ' + label + ' ' + err
+      });
+    });
   }
 
   function maybeResolver(entity, col, idx) {
@@ -499,7 +536,6 @@
   function resolver(entity) {
     return $('<div>', {
       class:         'resolver-anchor',
-      cursor:        'pointer',
       'data-toggle': 'popover',
       click:         activatePicker
     })
@@ -517,7 +553,7 @@
     // -- @aguestuser (25-Oct-2017)
     setTimeout(
       function(){$(".resolver-selectpicker").selectpicker();},
-      5
+      1 // only wait 1 milli
     );
   }
 

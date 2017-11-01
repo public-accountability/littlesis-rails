@@ -1,6 +1,6 @@
 describe('Bulk Table module', () => {
 
-  const asyncDelay = .1; // millis to wait for search, csv upload, etc..
+  const asyncDelay = 2; // millis to wait for search, csv upload, etc..
 
   // TODO: sure would be nice to import this from app code and have a single source of truth!
   const columns = [{
@@ -70,13 +70,23 @@ describe('Bulk Table module', () => {
     endpoint: "/lists/1/new_entities"
   };
 
-  let searchEntityStub;
+  let searchEntityStub, file, hasFileSpy, getFileSpy;
   
   beforeEach(() => {
     searchEntityStub = spyOn(api, 'searchEntity').and.callFake(searchEntityFake);
     $('body').append(testDom);
   });
+
   afterEach(() => { $('#test-dom').remove(); });
+
+  const setupWithCsv = (csv, done) => {
+    file = new File([csv], "test.csv", {type: "text/csv"});
+    hasFileSpy = spyOn(bulkTable, 'hasFile').and.returnValue(true);
+    getFileSpy = spyOn(bulkTable, 'getFile').and.returnValue(file);
+    bulkTable.init(defaultState);
+    $(`#${ids.uploadButton}`).change();
+    setTimeout(done, asyncDelay); // wait for file to upload
+  };
 
   describe('initialization', () => {
 
@@ -135,21 +145,9 @@ describe('Bulk Table module', () => {
 
   describe('uploading csv', () => {
 
-    let file, hasFileSpy, getFileSpy;
-
-    const setup = (csv, done) => {
-      file = new File([csv], "test.csv", {type: "text/csv"});
-      hasFileSpy = spyOn(bulkTable, 'hasFile').and.returnValue(true);
-      getFileSpy = spyOn(bulkTable, 'getFile').and.returnValue(file);
-      bulkTable.init(defaultState);
-      $(`#${ids.uploadButton}`).change();
-      setTimeout(done, asyncDelay); // wait for file to upload
-    };
-
-
     describe("with well-formed csv", () => {
 
-      beforeEach(done => setup(csvValid, done));
+      beforeEach(done => setupWithCsv(csvValid, done));
 
       it('stores entity data', () => {
         expect(bulkTable.getIn(['entities', 'byId'])).toEqual({
@@ -170,7 +168,7 @@ describe('Bulk Table module', () => {
     describe('with invalid header fields', () => {
 
       const csvInvalidHeaders = "foo,bar\nbaz,bam\n";
-      beforeEach(done => setup(csvInvalidHeaders, done));
+      beforeEach(done => setupWithCsv(csvInvalidHeaders, done));
 
       it('does not store csv data', () => {
         expect(bulkTable.getIn(['entities', 'byId'])).toEqual({});
@@ -188,7 +186,7 @@ describe('Bulk Table module', () => {
     describe('with incorrectly formatted csv', () => {
 
       const csvInvalidShape = "name,primary_ext,blurb\nfoo,bar\n";
-      beforeEach(done => setup(csvInvalidShape, done));
+      beforeEach(done => setupWithCsv(csvInvalidShape, done));
 
       it('does not store csv data', () => {
         expect(bulkTable.getIn(['entities', 'byId'])).toEqual({});
@@ -207,7 +205,7 @@ describe('Bulk Table module', () => {
     describe('re-submitting valid csv after an invalid upload', () => {
 
       beforeEach(done => {
-        setup("foobar", () => null);
+        setupWithCsv("foobar", () => null);
         getFileSpy.and.returnValue(new File([csvValid], "_.csv", { type: "text/csv"} ));
         $(`#${ids.uploadButton}`).change();
         setTimeout(done, asyncDelay);
@@ -405,7 +403,7 @@ describe('Bulk Table module', () => {
       });
     });
 
-    fdescribe('validation', () => {
+    describe('validation', () => {
 
       describe('rules', () => {
 
@@ -436,73 +434,72 @@ describe('Bulk Table module', () => {
               .getIn([ 'entities', 'errors', 'fakeId']);
 
         it('handles a valid entity', () => {
-          expect(errorsFor(validEntity)).toEqual({
-            name:        [],
-            primary_ext: [],
-            blurb:       []
-          });
+          expect(errorsFor(validEntity)).toEqual({});
         });
 
         it('does not require a blurb', () => {
-          expect(errorsFor({ blurb: '' })).toEqual({
-            name:        [],
-            primary_ext: [],
-            blurb:       []
-          });
+          expect(errorsFor({ blurb: '' })).toEqual({});
         });
 
         it('requires a name', () => {
           expect(errorsFor({ name: "" })).toEqual({
-            name:        ['is required', 'must be at least 2 characters long'],
-            primary_ext: [],
-            blurb:       []
+            name:        ['is required', 'must be at least 2 characters long']
           });
         });
 
         it('requires a name be at least two characters', () => {
           expect(errorsFor({ name: "x" })).toEqual({
-            name:        ['must be at least 2 characters long'],
-            primary_ext: [],
-            blurb:       []
+            name:        ['must be at least 2 characters long']
           });
         });
 
         it('requires a primary extension', () => {
           expect(errorsFor({ primary_ext: "" })).toEqual({
-            name:        [],
-            primary_ext: ['is required', 'must be either "Person" or "Org"'],
-            blurb:       []
+            primary_ext: ['is required', 'must be either "Person" or "Org"']
           });
         });
 
         it('requires a primary extension be either `Person` or `Org`', () => {
           expect(errorsFor({ primary_ext: "tommyknocker" })).toEqual({
-            name:        [],
-            primary_ext: ['must be either "Person" or "Org"'],
-            blurb:       []
+            primary_ext: ['must be either "Person" or "Org"']
           });
         });
 
         it('requires a person to have a first and last name', () => {
           expect(errorsFor({ primary_ext: "Person", name:"duende" })).toEqual({
-            name:        ['must have a first and last name'],
-            primary_ext: [],
-            blurb:       []
+            name:        ['must have a first and last name']
           });
         });
 
         it('handles multiple simultaneous errors', () => {
           expect(errorsFor({ primary_ext: "", name:"" })).toEqual({
             name:        ['is required', 'must be at least 2 characters long'],
-            primary_ext: ['is required', 'must be either "Person" or "Org"'],
-            blurb:       []
+            primary_ext: ['is required', 'must be either "Person" or "Org"']
           });
         });
       });
 
       describe('showing error alerts', () => {
-        it('alerts if a primary extension is not valid');
-        it('alerts if a name is not valid');
+        const csv = "name,primary_ext,blurb\nx,y,z\n";
+        beforeEach(done => setupWithCsv(csv, done));
+
+        it('highlights cell if name is not valid', () => {
+          const cell = findFirstRow().find('td:nth-child(1)');
+          expect(cell).toHaveClass("errors");
+          expect(cell.find(".error-alert")).toExist();
+        });
+
+        it('highlights cell if primary extension is not valid', () => {
+          const cell = findFirstRow().find('td:nth-child(2)');
+          expect(cell).toHaveClass("errors");
+          expect(cell.find(".error-alert")).toExist();
+        });
+
+        it('shows tooltip with error message when user mouses over cell', () => {
+          const cell = findFirstRow().find('td:nth-child(1)');
+          cell.find('.error-alert').trigger('mouseover');
+          expect(cell.find('.tooltip')).toContainText('[ ! ] Name must be');
+        });
       });
 
       describe('removing error alerts', () => {
