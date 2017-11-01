@@ -55,12 +55,14 @@
 
   // public getters
 
+  // String -> Object
   self.get = function(attr){
     return util.get(state, attr);
   };
 
-  self.getIn = function(attrs){
-    return util.getIn(state, attrs);
+  // [String] -> Object
+  self.getIn = function(path){
+    return util.getIn(state, path);
   };
 
   // we expose below functions for testing  seams...
@@ -81,6 +83,8 @@
 
 
   // private getters
+
+  state.getIn = self.getIn;
 
   state.hasNotification = function(){
     return state.notification !== "";
@@ -125,6 +129,19 @@
   };
 
   // setters
+
+  // State(implicit), [String], Object -> State
+  state.setIn = function(path, value){
+    state = util.setIn(state, path, value);
+    return state;
+  };
+
+  // State(implicit), [String] -> State
+
+  state.deleteIn = function(path){
+    state = util.deleteIn(state, path);
+    return state;
+  };
 
   // Entity -> Entity
   state.addEntity = function(entity){
@@ -179,23 +196,21 @@
 
   // Entity -> Void
   state.replaceWithMatch = function(entity){
-    // TODO: (ag| 29-Oct-2017) extract helpers and use function composition here?
     var match = state.getSelectedMatch(entity);
-    // add match to entity store
-    var state1 = util.setIn(state, ['entities', 'byId', match.id], match);
-    // replace entity's id with match id in ordering list
-    var state2 = util.setIn(
-      state1,
-      ['entities', 'order'],
-      util.getIn(state, ['entities', 'order']).map(function(id){
-        return id === entity.id ? match.id : id;
-      })
-    );
-    // delete entity
-    var state3 = util.deleteIn(state2, ['entities', 'byId', entity.id]);
-    // delete entity matches, update state
-    state = util.deleteIn(state3, ['entities', 'matches', entity.id]);
+    return state
+      .setIn(['entities', 'byId', match.id], match) // store match as entity
+      .setIn(['entities', 'order'], spliceMatchIntoOrdering(entity, match)) // order match as entity was ordered
+      .deleteIn(['entities', 'byId', entity.id]) // remove old entity from store
+      .deleteIn(['entities', 'matches', entity.id]); // remove old entity matches
   };
+
+  // Entity, Entity -> [String]
+  function spliceMatchIntoOrdering(entity, match){
+    // replace id of old entity with id of matched entity
+    return state.getIn(['entities', 'order']).map(function(id){
+      return id === entity.id ? match.id : id;
+    });
+  }
 
   // () -> Void
   state.disableUpload = function(){
