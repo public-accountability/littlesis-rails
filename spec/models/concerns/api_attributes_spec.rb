@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-describe 'ApiAttributes', type: :model do
+describe 'Api::Serializable', type: :model do
   FAKE_ATTRIBUTES = { 'api' => 'attributes' }
 
   class TestApiModel < TestActiveRecord
-    include ApiAttributes
+    include Api::Serializable
 
     def api_attributes(options = {})
       FAKE_ATTRIBUTES
