@@ -3,20 +3,19 @@ require 'rails_helper'
 describe OsMatch, type: :model do
   before(:all) do
     Entity.skip_callback(:create, :after, :create_primary_ext)
-    OsMatch.skip_callback(:create, :after, :post_process)
+
+    
   end
 
   after(:all) do
     Entity.set_callback(:create, :after, :create_primary_ext)
-    OsMatch.set_callback(:create, :after, :post_process)
+    #
   end
 
   it { should validate_presence_of(:os_donation_id) }
   it { should validate_presence_of(:donor_id) }
-  it { should belong_to(:reference) }
   it { should belong_to(:os_donation) }
   it { should belong_to(:donation) }
-
 
   RefOne = { name: "FEC Filing 11020480483", url: "http://images.nictusa.com/cgi-bin/fecimg/?11020480483" }
   RefTwo = { name: "FEC Filing 10020853341", url: "http//images.nictusa.com/cgi-bin/fecimg/?10020853341" }
@@ -34,7 +33,6 @@ describe OsMatch, type: :model do
       donation_id: @donation_class.id,
       donor_id: @loeb.id,
       recip_id: @nrsc.id,
-      reference_id: nil,
       relationship_id: @loeb_donation.id,
       matched_by: @user.id
     )
@@ -43,10 +41,14 @@ describe OsMatch, type: :model do
   describe 'Associations' do
     before(:all) do
       DatabaseCleaner.start
+      OsMatch.skip_callback(:create, :after, :post_process)
       model_setup
     end
 
-    after(:all) { DatabaseCleaner.clean }
+    after(:all) do
+      DatabaseCleaner.clean
+      OsMatch.set_callback(:create, :after, :post_process)
+    end
 
     it 'belongs to donor via entity' do
       expect(@os_match.donor).to eql @loeb
@@ -99,6 +101,7 @@ describe OsMatch, type: :model do
 
   describe '#update_donation_relationship' do
     before(:all) do
+      OsMatch.skip_callback(:create, :after, :post_process)
       DatabaseCleaner.start
       @relationship_count = Relationship.count
       @loeb = create(:loeb)
@@ -108,7 +111,10 @@ describe OsMatch, type: :model do
       @os_match.update_donation_relationship
     end
 
-    after(:all) { DatabaseCleaner.clean }
+    after(:all) do
+      OsMatch.set_callback(:create, :after, :post_process)
+      DatabaseCleaner.clean
+    end
 
     it "creates a new relationship if it doesn't yet exist" do
       expect(Relationship.count).to eql(@relationship_count + 1)
@@ -221,15 +227,15 @@ describe OsMatch, type: :model do
         expect(@ref.referenceable_id).to eql @os_match.relationship.id
       end
 
-      it 'documennt has correct info' do
+      it 'document has correct info' do
         doc = @ref.document
         expect(doc.name).to eql "FEC Filing 11020480483"
         expect(doc.url).to eql "http://docquery.fec.gov/cgi-bin/fecimg/?11020480483"
         expect(doc.ref_type).to eql 2
       end
 
-      it 'sets reference association on OsMatch' do
-        expect(@os_match.reload.reference).to eql @ref
+      it 'sets reference on associated relationship' do
+        expect(@os_match.relationship.references.first).to eql @ref
       end
 
       it 'can be run twice without creating a new reference' do
@@ -318,103 +324,93 @@ describe OsMatch, type: :model do
         expect(OsMatch.create_new_cmte committee).to be_nil
       end
     end
-
-    #   describe 'match_a_donation' do
-    #     it 'creates new OsMatch' do 
-    #       count = OsMatch.count
-    #       OsMatch.match_a_donation 123, 456
-    #       expect(OsMatch.count).to eql (count + 1)
-    #       expect(OsMatch.last.os_donation_id).to eql 123
-    #       expect(OsMatch.last.donor_id).to eql 456
-    #     end
-    #   end
   end
 
-  describe 'unmatch' do
-    before(:all) do
-      DatabaseCleaner.start
-      @loeb = create(:loeb)
-      @nrsc = create(:nrsc)
-      @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc) # relationship model
-      @loeb_os_donation = create(:loeb_donation_one)
-      @loeb_os_donation_two = create(:loeb_donation_two)
-      @loeb_donation.add_reference(RefOne)
-      @loeb_donation.add_reference(RefTwo)
-      #@loeb_ref_one = create(:loeb_ref_one, object_id: @loeb_donation.id, object_model: "Relationship")
-      #@loeb_ref_two = create(:loeb_ref_two, object_id: @loeb_donation.id, object_model: "Relationship")
-      # @donation_class = create(:donation, relationship_id: @loeb_donation.id)
-      @ref_one_id = @loeb_donation.references.first.id
-      @ref_two_id = @loeb_donation.references.last.id
-       
-      @os_match = OsMatch.create(
-        os_donation_id: @loeb_os_donation.id,
-        donor_id: @loeb.id,
-        recip_id: @nrsc.id,
-        reference_id: @ref_one_id,
-        relationship_id: @loeb_donation.id )
-      
-      @os_match_2 = OsMatch.create(
-        os_donation_id: @loeb_os_donation_two.id,
-        donor_id: @loeb.id,
-        recip_id: @nrsc.id,
-        reference_id: @ref_two_id,
-        relationship_id: @loeb_donation.id)
-      @loeb_donation.update_os_donation_info
-    end
-
-    after(:all) { DatabaseCleaner.clean }
-
-    it 'relationship has two matches' do
-      expect(Relationship.find(@loeb_donation.id).amount).to eql 61_200
-      expect(Relationship.find(@loeb_donation.id).filings).to eql 2
-    end
-
-    context 'after destroying os_match_2' do
-      before(:all) do
-        @count = OsMatch.count
-        @os_match_2.destroy
-      end
-
-      it 'updates the relationship if relationship still has matches' do
-        expect(Relationship.find(@loeb_donation.id).filings).to eql 1
-      end
-
-      it 'destroys the reference' do
-        expect(Reference.where(id: @ref_two_id).exists?).to be false
-      end
-
-      it 'deletes the match' do
-        expect(OsMatch.where(id: @os_match_2.id).exists?).to be false
-        expect(OsMatch.count).to eql(@count - 1)
+  describe 'matching and unmatching' do
+    let!(:donor) { create(:loeb) }
+    # let(:recipient) { create(:entity_org) }
+    let(:recip_code) { Faker::Number.number(5).to_s }
+    let(:os_donation) { create(:os_donation, recipid: recip_code, cmteid: recip_code) }
+    let(:os_donation_two) { create(:os_donation, recipid: recip_code, cmteid: recip_code, amount: 2) }
+    let(:os_committee) { create(:os_committee, cmte_id: recip_code) }
+    let(:create_match) do
+      proc do |os_donation_id|
+        OsMatch.create(os_donation_id: os_donation_id, donor_id: donor.id)
       end
     end
 
-    context 'after destroying Os_match' do
-      before(:all) do
-        @count = OsMatch.count
-        @os_match.destroy
+    before(:each) do
+      allow(OsCommittee).to receive(:find_by).and_return(os_committee)
+    end
+
+    context 'creating a new os match' do
+      it 'creates a relationship' do
+        expect { create_match.call(os_donation.id) }.to change { Relationship.count }.by(1)
       end
 
-      it 'destroys the relationship if the match was the only one' do
-        expect(Relationship.unscoped.find(@loeb_donation.id).is_deleted).to be true
-      end
-
-      it 'destroys the donation-class model' do
-        expect(Donation.where(id: @loeb_donation.donation.id).exists?).to be false
-      end
-
-      it 'deletes associated links' do
-        expect(Relationship.unscoped.find(@loeb_donation.id).links).to be_empty
-      end
-
-      it 'destroys the reference' do
-        expect(Reference.where(id: @ref_one_id).exists?).to be false
-      end
-
-      it 'deletes the match' do
-        expect(OsMatch.where(id: @os_match.id).exists?).to be false
-        expect(OsMatch.count).to eql(@count - 1)
+      it 'creates a new entity (from the os_committee)' do
+        expect { create_match.call(os_donation.id) }.to change { Entity.count }.by(1)
+        expect(Entity.last.name).to eql os_committee.name
+        expect(Entity.last.political_fundraising).to be_a PoliticalFundraising
+        expect(Entity.last.political_fundraising.fec_id).to eql os_committee.cmte_id
       end
     end
+
+    context 'creating a second match' do
+      it 'creates only one relationship' do
+        expect { create_match.call(os_donation.id) }.to change { Relationship.count }.by(1)
+        expect { create_match.call(os_donation_two.id) }.not_to change { Relationship.count }
+      end
+
+      it 'updates amount fields on relationship' do
+        create_match.call(os_donation.id)
+        create_match.call(os_donation_two.id)
+        expect(Relationship.last.amount).to eql 3
+      end
+
+      it 'creates new references' do
+        expect { create_match.call(os_donation.id) }.to change { Reference.count }.by(1)
+        expect { create_match.call(os_donation_two.id) }.to change { Reference.count }.by(1)
+      end
+    end
+
+    context 'unmatching' do
+      before do
+        @match1 = create_match.call(os_donation.id)
+        @match2 = create_match.call(os_donation_two.id)
+      end
+
+      context 'after removing one match' do
+        it 'changes amount field on relationship' do
+          relationship = @match1.relationship
+          expect { @match1.destroy }.to change { relationship.reload.amount }.by(-1)
+        end
+
+        it 'changes filing number of relationship' do
+          relationship = @match1.relationship
+          expect { @match1.destroy }.to change { relationship.reload.filings }.by(-1)
+        end
+
+        it 'removes one reference' do
+          expect { @match1.destroy }.to change { Reference.count }.by(-1)
+        end
+
+        it 'deletes the match' do
+          expect { @match1.destroy }.to change { OsMatch.count }.by(-1)
+        end
+      end
+
+      context 'after removing both matches' do
+        it 'soft deletes the relationship' do
+          relationship = @match1.relationship
+          @match1.destroy
+          expect { @match2.destroy }.to change { relationship.reload.is_deleted }.from(false).to(true)
+        end
+
+        it 'removes both referneces' do
+          expect { @match1.destroy; @match2.destroy }.to change { Reference.count }.by(-2)
+        end
+      end
+    end # end context unmatching
   end
 end

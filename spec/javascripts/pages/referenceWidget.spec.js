@@ -76,15 +76,22 @@ describe('existingReferenceWidget', function() {
     });
   });
 
-  xdescribe('selecting an item', function(){
+  describe('selecting an item', function(){
+    var rw;
+    beforeEach(function(done){
+      rw = new ExistingReferenceWidget([1,2], {
+	containerDiv: '#test-dom',
+	afterRender: done
+      });
+    });
+
     it('set the value of the widget', function() {
-      var rw = new ExistingReferenceWidget([1,2], {containerDiv: '#test-dom'});
       expect(rw.selection).toBeNull();
       $('#ref-widget-typeahead').typeahead('val', 'CMD');
       $('#ref-widget-typeahead').typeahead('open');
       expect($('.tt-suggestion').length).toEqual(1);
       $('.tt-suggestion').first().trigger('click');
-      expect(rw.selection).toEqual(ajaxRequest[1]);
+      expect(rw.selection).toEqual(ajaxResult[1]);
     });
   });
   

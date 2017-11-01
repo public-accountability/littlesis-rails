@@ -2,6 +2,12 @@ FactoryGirl.define do
   sequence :fec_cycle_id do |n|
     "2012-#{n}"
   end
+  
+  sequence :donation_microfilm do |n|
+    "xyz#{n}"
+  end
+  
+
   factory :os_donation do
     cycle "2012"
     fectransid "MyString"
@@ -22,7 +28,7 @@ FactoryGirl.define do
     cmteid "MyString"
     otherid "MyString"
     gender 'X'
-    microfilm "MyString"
+    microfilm { generate(:donation_microfilm) }
     occupation "MyString"
     employer "MyString"
     source ""

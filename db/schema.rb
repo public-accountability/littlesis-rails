@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171018151914) do
+ActiveRecord::Schema.define(version: 20171031152314) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1131,7 +1131,6 @@ ActiveRecord::Schema.define(version: 20171018151914) do
     t.integer  "donor_id",        limit: 4,                 null: false
     t.integer  "recip_id",        limit: 4
     t.integer  "relationship_id", limit: 4
-    t.integer  "reference_id",    limit: 4
     t.integer  "matched_by",      limit: 4
     t.boolean  "is_deleted",                default: false, null: false
     t.datetime "created_at"
@@ -1143,7 +1142,6 @@ ActiveRecord::Schema.define(version: 20171018151914) do
   add_index "os_matches", ["donor_id"], name: "index_os_matches_on_donor_id", using: :btree
   add_index "os_matches", ["os_donation_id"], name: "index_os_matches_on_os_donation_id", using: :btree
   add_index "os_matches", ["recip_id"], name: "index_os_matches_on_recip_id", using: :btree
-  add_index "os_matches", ["reference_id"], name: "index_os_matches_on_reference_id", using: :btree
   add_index "os_matches", ["relationship_id"], name: "index_os_matches_on_relationship_id", using: :btree
 
   create_table "ownership", force: :cascade do |t|
