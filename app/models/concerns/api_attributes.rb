@@ -14,30 +14,29 @@ module ApiAttributes
     def api_data(ids)
       find(ids).map(&:api_data)
     end
-    
   end
 
-  def as_api_json(route = nil)
-    json =  route.present? ? public_send("api_#{route}") : api_json
+  def as_api_json(route: nil, **serializer_options)
+    json = route.present? ? public_send("api_#{route}") : api_json(serializer_options)
     api_base.merge(json)
   end
-  
+
   def api_base
     self.class.api_base
   end
 
-  # -> Hash
-  def api_json
-    json = { 'data' => api_data, 'links' => api_links }
+  # Options Hash-> Hash
+  def api_json(serializer_options = {})
+    json = { 'data' => api_data(serializer_options), 'links' => api_links }
     json.merge!('included' => api_included) unless api_included.blank?
     json
   end
 
-  def api_data
+  def api_data(serializer_options = {})
     {
       'type' => self.class.name.tableize.dasherize,
       'id' => id,
-      'attributes' => api_attributes
+      'attributes' => api_attributes(serializer_options)
     }
   end
 
@@ -50,7 +49,7 @@ module ApiAttributes
   def api_included
   end
 
-  def api_attributes
-    ApiUtils::Serializer.new(self).attributes
+  def api_attributes(serializer_options = {})
+    Api::Serializer.new(self, **serializer_options).attributes
   end
 end

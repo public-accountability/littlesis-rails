@@ -30,31 +30,31 @@ describe Api do
       before { get api_entity_path(lawyer), {}, @auth_header }
       specify { expect(response).to have_http_status 200 }
 
+      
+
       it 'returns json of model' do
-        expect(json)
-          .to eql({
-                    'data' => {
-                      'type' => 'entities',
-                      'id' => lawyer.id,
-                      'attributes' => {
-                        'name' => lawyer.name,
-                        'blurb' => lawyer.blurb,
-                        'primary_ext' => 'Person',
-                        'summary' => lawyer.summary,
-                        'parent_id' => nil,
-                        'website' => lawyer.website,
-                        'start_date' => lawyer.start_date,
-                        'end_date' => lawyer.end_date,
-                        'types' => ["Person", "Lawyer"],
-                        'aliases' => lawyer.aliases.map(&:name),
-                        'updated_at' => lawyer.updated_at.iso8601
-                      },
-                      'links' => {
-                        'self' => "https://littlesis.org#{lawyer.legacy_url}"
-                      }
-                    },
-                    'meta' => meta,
-                  })
+        expected =  {
+          'data' => {
+            'type' => 'entities',
+            'id' => lawyer.id,
+            'attributes' => {
+              'name' => lawyer.name,
+              'blurb' => lawyer.blurb,
+              'primary_ext' => 'Person',
+              'summary' => lawyer.summary,
+              'parent_id' => nil,
+              'website' => lawyer.website,
+              'start_date' => lawyer.start_date,
+              'end_date' => lawyer.end_date,
+              'types' => ["Person", "Lawyer"],
+              'aliases' => lawyer.aliases.map(&:name),
+              'updated_at' => lawyer.updated_at.iso8601
+            }
+          },
+          'links' => { 'self' => Rails.application.routes.url_helpers.entity_url(lawyer) },
+          'meta' => meta
+        }
+        expect(json).to eql(expected)
       end
     end
   end

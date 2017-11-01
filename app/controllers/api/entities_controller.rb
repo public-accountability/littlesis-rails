@@ -4,7 +4,7 @@ class Api::EntitiesController < Api::ApiController
   before_action :set_options, except: [:search]
 
   def show
-    render json: ApiUtils::Response.new(@entity, @options)
+    render json: @entity.as_api_json(@options) #ApiUtils::Response.new(@entity, @options)
   end
 
   def relationships
@@ -29,9 +29,8 @@ class Api::EntitiesController < Api::ApiController
   end
 
   def set_options
-    @options = {
-      include_entity_details: param_to_bool(params[:details])
-    }
+    @options = {}
+    @options.merge!(exclude: :extensions) unless param_to_bool(params[:details])
   end
 
   def set_entity

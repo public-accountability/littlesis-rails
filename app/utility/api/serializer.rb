@@ -3,11 +3,11 @@ module Api
     attr_reader :attributes
     MODEL_INFO = YAML.load(File.new(Rails.root.join('config', 'api.yml')).read).freeze
 
-    def initialize(model, options = [])
+    def initialize(model, exclude: [])
       @model = model
-      @options = Array.wrap(options)
+      @exclude = Array.wrap(exclude).map(&:to_s)
       @class_name = @model.class.name.downcase
-      @fields = MODEL_INFO.dig @class_name, 'fields'
+      @fields = MODEL_INFO.dig(@class_name, 'fields').reject { |f| @exclude.include?(f) }
       @ignore = attributes_to_ignore
       set_attributes
     end

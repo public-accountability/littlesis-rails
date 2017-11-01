@@ -6,7 +6,7 @@ describe 'ApiAttributes', type: :model do
   class TestApiModel < TestActiveRecord
     include ApiAttributes
 
-    def api_attributes
+    def api_attributes(options = {})
       FAKE_ATTRIBUTES
     end
   end
