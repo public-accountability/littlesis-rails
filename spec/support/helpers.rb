@@ -102,6 +102,9 @@ class TestActiveRecord
     @id_counter
   end
 
+  def self.find(*args)
+  end
+
   def self.has_many(*args)
   end
 end
