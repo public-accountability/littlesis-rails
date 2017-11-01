@@ -171,8 +171,7 @@
 
   // Entity -> Void
   state.addMatches = function(entity, matches){
-    state = util.setIn(
-      state,
+    return state.setIn(
       ['entities', 'matches', entity.id],
       {
         byId:     util.normalize(matches),
@@ -184,14 +183,12 @@
 
   // Entity -> Void
   state.removeMatches = function(entity){
-    state = util.deleteIn(state, ['entities', 'matches', entity.id]);
+    return state.deleteIn(['entities', 'matches', entity.id]);
   };
 
   // Entity, Integer -> Void
   state.setMatchSelection = function(entity, matchId){
-    state = util.setIn(state,
-                       ['entities', 'matches', entity.id, 'selected'],
-                       matchId);
+    return state.setIn(['entities', 'matches', entity.id, 'selected'], matchId);
   };
 
   // Entity -> Void
@@ -215,16 +212,19 @@
   // () -> Void
   state.disableUpload = function(){
     state.canUpload = false;
+    return state;
   };
 
   // String -> Void
   state.setNotification = function(msg){
     state.notification = msg;
+    return state;
   };
 
   // () -> Void
   state.clearNotification = function(){
     state.notification = "";
+    return state;
   };
 
   // VALIDATION
