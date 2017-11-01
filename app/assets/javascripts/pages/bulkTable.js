@@ -36,18 +36,21 @@
       // derrived
       rootId:         args.rootId,
       endpoint:       args.endpoint || "/",
+      entities:       args.entities ||
+                      { byId:    {},
+                        order:   [],
+                        matches: {},
+                        errors:  {} },
       // deterministic
       canUpload:      true,
-      notification:   "",
-      entities:       { byId:    {},
-                        order:   [],
-                        matches: {} }
+      notification:   ""
       // When/if we wish to paramaterize row fields, we would here paramaterize:
       //   1. resource type (currently always entity)
       //   2. columns by resource type (currently stored as constant above)
     });
     self.render();
     detectUploadSupport();
+    return self;
   };
 
   // public getters
@@ -60,7 +63,7 @@
     return util.getIn(state, attrs);
   };
 
-  // we expose below 3 functions for testing  seams...
+  // we expose below functions for testing  seams...
 
   // ...we cannot mutate caller.files for security reasons
   self.hasFile = function(caller){
@@ -207,6 +210,112 @@
   // () -> Void
   state.clearNotification = function(){
     state.notification = "";
+  };
+
+  // VALIDATION
+
+  // () -> Void
+  self.validate = function(){
+    state = util.setIn(
+      state,
+      ['entities', 'errors'],
+      validateEntities(Object.values(state.entities.byId), state.entities.errors)
+    );
+    return self;
+  };
+
+  // type EntitiesErrors = { [id: String]: EntityError }
+  // type EntityErrors = { [id: EntityAtrr]: EntityAttrErrors }
+  // type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
+  // type EntityAttrErrors = [String]
+
+  // [Entities], EntityErrors -> EntityErrors
+  function validateEntities(entities, entitiesErrors){
+    return entities.reduce(
+      function(acc, entity){
+        return util.set(
+          acc,
+          entity.id,
+          self.validateEntity(entity, util.get(acc, entity.id))
+        );
+      },
+      entitiesErrors || {}
+    );
+  };
+
+  self.validateEntity = function(entity, entityErrors){
+    return Object.keys(entity).reduce(
+      function(entityErrorsAcc, attr){
+        return util.set(
+          entityErrorsAcc,
+          attr,
+          validateAttr(entity, attr, util.get(entityErrorsAcc, attr))
+        );
+      },
+      entityErrors || {}
+    );
+  };
+
+  function validateAttr(entity, attr, attrErrors){
+    return (util.get(validationsFor(entity), attr) || []).reduce(
+      function(attrErrorsAcc, validation){
+        return validation.isValid(util.get(entity, attr)) ?
+          attrErrorsAcc :
+          attrErrorsAcc.concat(validation.message);
+      },
+      attrErrors || []
+    );
+  }
+
+  function validationsFor(entity){
+    debugger;
+    return entity.primary_ext === "Person" ?
+      mergeValidations(commonValidations, personValidations) :
+      commonValidations;
+  };
+
+  var commonValidations = {
+    name: [
+      {
+        message: 'is required',
+        isValid: function(attr){ return Boolean(attr); }
+      },
+      {
+        message: 'must be at least 2 characters long',
+        isValid: function(attr){ return attr && attr.length > 1; }
+      }
+    ],
+    primary_ext: [
+      {
+        message: 'is required',
+        isValid: function(attr){ return Boolean(attr); }
+      },
+      {
+        message: 'must be either "Person" or "Org"',
+        isValid: function(attr){
+          return ['Person', 'Org'].some(function(validStr){ return attr === validStr; });
+        }
+      }
+    ]
+  };
+
+  var personValidations = {
+    name: [
+      {
+        message: 'must have a first and last name',
+        isValid: function(attr){ return util.validFirstAndLastName(attr); }
+      }
+    ],
+    primary_ext: []
+  };
+
+  function mergeValidations(v1, v2){
+    return Object.keys(v1).reduce(
+      function(acc, attr){
+        return util.set(acc, attr, util.get(v1, attr).concat(util.get(v2, attr)));
+      },
+      v1
+    );
   };
 
   // CSV UPLOAD HANLDING

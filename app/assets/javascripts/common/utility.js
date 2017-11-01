@@ -155,6 +155,11 @@ utility.validURL = function(str) {
 };
 
 
+utility.validFirstAndLastName = function(str){
+  // we allow suffixes like Jr. as well
+  str.match(/^[a-z,.'-]+\s[a-z,.'-]+(\s[a-z,.'-]+)?$/i);
+};
+
 /**
  * Determines if the browser has the ability to open and read files
  * @returns {Boolean} 

@@ -94,7 +94,8 @@ describe('Bulk Table module', () => {
       expect(bulkTable.get('entities')).toEqual({
         byId:    {},
         order:   [],
-        matches: {}
+        matches: {},
+        errors:  {}
       });
     });
 
@@ -405,10 +406,108 @@ describe('Bulk Table module', () => {
     });
 
     describe('validation', () => {
-      // TODO: can we descope this feature on first pass? (@aguestuser)
-      it('requires a primary extension be selected');
-      it('requires an org name to be at least 1 character long');
-      it('requires a person to have a first and last name');
+
+      describe('rules', () => {
+
+        const validEntity = {
+          id:          'fakeId',
+          name:        'ValidName',
+          primary_ext: 'Org',
+          blurb:       'valid blurb'
+        };
+
+        const baseEntitiesState = {
+          byId:    {},
+          order:   [],
+          matches: {},
+          errors:  {}
+        };
+
+        const stateOf = (entitySpec) => Object.assign({}, defaultState, {
+          entities: Object.assign({}, baseEntitiesState, {
+            byId: { fakeId: Object.assign({}, validEntity, entitySpec) }
+          })
+        });
+
+        const errorsFor =(entitySpec) =>
+              bulkTable
+              .init(stateOf(entitySpec))
+              .validate()
+              .getIn([ 'entities', 'errors', 'fakeId']);
+
+        it('handles a valid entity', () => {
+          expect(errorsFor(validEntity)).toEqual({
+            id:          [],
+            name:        [],
+            primary_ext: [],
+            blurb:       []
+          });
+        });
+
+        it('does not require a blurb', () => {
+          expect(errorsFor({ blurb: '' })).toEqual({
+            id:          [],
+            name:        [],
+            primary_ext: [],
+            blurb:       []
+          });
+        });
+
+        it('requires a name', () => {
+          expect(errorsFor({ name: "" })).toEqual({
+            id:          [],
+            name:        ['is required', 'must be at least 2 characters long'],
+            primary_ext: [],
+            blurb:       []
+          });
+        });
+
+        it('requires a name be at least two characters', () => {
+          expect(errorsFor({ name: "x" })).toEqual({
+            id:          [],
+            name:        ['must be at least 2 characters long'],
+            primary_ext: [],
+            blurb:       []
+          });
+        });
+
+        it('requires a primary extension', () => {
+          expect(errorsFor({ primary_ext: "" })).toEqual({
+            id:          [],
+            name:        [],
+            primary_ext: ['is required', 'must be either "Person" or "Org"'],
+            blurb:       []
+          });
+        });
+
+        it('requires a primary extension be either `Person` or `Org`', () => {
+          expect(errorsFor({ primary_ext: "tommyknocker" })).toEqual({
+            id:          [],
+            name:        [],
+            primary_ext: ['must be either "Person" or "Org"'],
+            blurb:       []
+          });
+        });
+
+        it('requires a person to have a first and last name', () => {
+          expect(errorsFor({ primary_ext: "Person", name:"duende" })).toEqual({
+            id:          [],
+            name:        ['must have a first and last name'],
+            primary_ext: [],
+            blurb:       []
+          });
+        });
+      });
+
+      describe('showing error alerts', () => {
+        it('alerts if a primary extension is not valid');
+        it('alerts if a name is not valid');
+      });
+
+      describe('removing error alerts', () => {
+        it('removes alert if primary extension error is fixed');
+        it('removes alert if entity name error is fixed is fixed');
+      });
     });
 
     describe('editing', () => {
