@@ -4,7 +4,7 @@ class Entity < ActiveRecord::Base
   include Cacheable
   include Referenceable
   include Political
-  include ApiAttributes
+  include Api::Serializable
   include SimilarEntities
   include EntityPaths
   include EntitySearch

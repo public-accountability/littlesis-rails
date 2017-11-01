@@ -11,6 +11,22 @@ describe 'Api::Serializable', type: :model do
     end
   end
 
+  describe 'Api.as_api_json' do
+    let(:mock_api_data) { [{ a: 1 }, { b: 2 }] }
+    let(:models) do
+      Array.new(2) do |n|
+        TestApiModel.new.tap do |model|
+          expect(model).to receive(:api_data).once.and_return(mock_api_data[n])
+        end
+      end
+    end
+
+    it 'returns api json for an array of models' do
+      expect(Api.as_api_json(models))
+        .to eql({ 'data' => mock_api_data, 'meta' => Api::META })
+    end
+  end
+
   describe 'class methods' do
     subject { TestApiModel }
     let(:ids) { [1, 2] }

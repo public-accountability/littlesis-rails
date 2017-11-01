@@ -4,7 +4,7 @@ module Api
 
     class_methods do
       def api_base
-        { 'meta' => Api::META }
+        Api::META_HASH
       end
 
       def as_api_json(ids)

@@ -11,14 +11,13 @@ class Api::EntitiesController < Api::ApiController
   end
 
   def extensions
-    records = ExtensionRecord.includes(:extension_definition).where(entity_id: @entity.id)
-    render json: ApiUtils::Response.new(records)
+    render json: Api.as_api_json(@entity.extension_records.includes(:extension_definition))
   end
 
   def search
     return head :bad_request unless params[:q].present?
     entities = Entity::Search.search(params[:q]).per(ENTITY_SEARCH_PER_PAGE).page(page_requested)
-    render json: ApiUtils::Response.new(entities, {})
+    render json: Api.as_api_json(entities)
   end
 
   private
