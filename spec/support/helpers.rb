@@ -88,3 +88,20 @@ def create_generic_relationship
   org = FactoryGirl.create(:org)
   FactoryGirl.create(:generic_relationship, entity: person, related: org, last_user_id: 1)
 end
+
+class TestActiveRecord
+  attr_reader :id
+
+  def initialize
+    @id = self.class.get_id
+  end
+
+  def self.get_id
+    @id_counter = 0 if @id_counter.nil?
+    @id_counter += 1
+    @id_counter
+  end
+
+  def self.has_many(*args)
+  end
+end
