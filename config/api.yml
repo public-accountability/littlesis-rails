@@ -1,19 +1,21 @@
 ---
-
-
 common:
   ignore:
     - last_user_id
     - delta
     - id
     - created_at
+    - notes
 entity:
   ignore: 
-    - notes
     - is_deleted
     - merged_id
     - is_current
     - link_count
+  fields:
+    aliases: 'aliases.map(&:name)'
+    types: 'types'
+    extensions: 'extensions_with_attributes'
 relationship:
   ignore:
     - amount2
@@ -21,3 +23,7 @@ relationship:
 extensionrecord:
   ignore:
     - entity_id
+  fields:
+    display_name: 'extension_definition.display_name'
+    name: 'extension_definition.name'
+    
