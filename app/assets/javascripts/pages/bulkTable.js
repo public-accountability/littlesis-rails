@@ -259,7 +259,8 @@
   };
 
   self.validateEntity = function(entity, entityErrors){
-    return Object.keys(entity).reduce(
+    var attrs = columns.map(function(c){ return c.attr; });
+    return attrs.reduce(
       function(entityErrorsAcc, attr){
         return util.set(
           entityErrorsAcc,
