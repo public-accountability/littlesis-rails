@@ -191,7 +191,7 @@ describe Api do
       expect(json).to eql({
                             'data' => relationship.api_data,
                             'meta' => meta,
-                            'included' => [ entity1.api_data, entity2.api_data ]
+                            'included' => [ entity1.api_data(exclude: :extensions), entity2.api_data(exclude: :extensions) ]
                           })
     end
 

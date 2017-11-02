@@ -92,7 +92,7 @@ describe 'Api::Serializable', type: :model do
 
     it 'has included field with entity data' do
       expect(relationship.api_json.fetch('included'))
-        .to eql [ relationship.entity.api_data, relationship.related.api_data ]
+        .to eql [ relationship.entity.api_data(exclude: :extensions), relationship.related.api_data(exclude: :extensions) ]
     end
   end
 end

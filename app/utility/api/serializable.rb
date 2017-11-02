@@ -34,7 +34,7 @@ module Api
       {'links' => { 'self' => link } }
     end
 
-    # To return an optional set of included model override this method
+    # To return an optional set of includeds model override this method
     def api_included
     end
 

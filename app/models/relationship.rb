@@ -515,7 +515,7 @@ class Relationship < ActiveRecord::Base
 
   # Array of api data for the entities in the relationship
   def api_included
-    @api_included ||= [entity.api_data, related.api_data]
+    @api_included ||= [entity.api_data(exclude: :extensions), related.api_data(exclude: :extensions)]
   end
 
   def restore!

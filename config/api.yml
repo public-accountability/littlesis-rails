@@ -6,9 +6,9 @@ common:
     - id
     - created_at
     - notes
+    - is_deleted
 entity:
   ignore: 
-    - is_deleted
     - merged_id
     - is_current
     - link_count
@@ -20,6 +20,8 @@ relationship:
   ignore:
     - amount2
     - is_gte
+  fields:
+    description: 'description'
 extensionrecord:
   ignore:
     - entity_id

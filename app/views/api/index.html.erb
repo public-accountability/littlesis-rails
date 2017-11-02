@@ -235,6 +235,93 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
   <%= api_column do %>
     <p>The response object also includes information on the two entities in the relationship under the key <em>'included'</em></p>
 
+    <p>Example request: <code>curl https://littlesis.org/api/relationships/297069</code></p>
+    <pre><code>
+{
+  "meta": {
+    "copyright": "LittleSis CC BY-SA 3.0",
+    "license": "https://creativecommons.org/licenses/by-sa/3.0/us/",
+    "apiVersion": "2.0-beta"
+  },
+  "data": {
+    "type": "relationships",
+    "id": 297069,
+    "attributes": {
+      "entity1_id": 72489,
+      "entity2_id": 28778,
+      "category_id": 5,
+      "description1": "Campaign Contribution",
+      "description2": "Campaign Contribution",
+      "amount": 631700,
+      "goods": null,
+      "filings": 16,
+      "updated_at": "2017-07-25T18:18:13Z",
+      "start_date": "2004-00-00",
+      "end_date": "2016-04-25",
+      "is_current": null,
+      "description": "Robert Mercer gave money to  Republican National Committee"
+    },
+    "links": {
+      "self": "https://littlesis.org/relationships/297069"
+    }
+  },
+  "included": [
+    {
+      "type": "entities",
+      "id": 72489,
+      "attributes": {
+        "name": "Robert Mercer",
+        "blurb": "Renaissance Tech billionaire, Club for Growth backer",
+        "summary": "Robert Mercer, 65, is co-CEO of Renaissance Technologies LLC, a $15 billion hedge fund. The IBM language-recognition whiz-turned-financier brought home $125 million in 2011, making him the 16th highest-earning hedge fund manager, according to Forbes.\r\n\r\nRenaissance Technologies is based in New York City, with additional locations in London and East Setauket, N.Y., where Mercer lives.",
+        "website": null,
+        "parent_id": null,
+        "primary_ext": "Person",
+        "updated_at": "2017-09-11T21:48:02Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "Robert Mercer"
+        ],
+        "types": [
+          "Person",
+          "Business Person"
+        ]
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/72489-Robert_Mercer"
+      }
+    },
+    {
+      "type": "entities",
+      "id": 28778,
+      "attributes": {
+        "name": "Republican National Committee",
+        "blurb": "The Grand Ol' Party",
+        "summary": null,
+        "website": null,
+        "parent_id": null,
+        "primary_ext": "Org",
+        "updated_at": "2017-10-09T01:09:46Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "Republican National Committee",
+          "RNC"
+        ],
+        "types": [
+          "Organization",
+          "Political Fundraising Committee",
+          "Other Campaign Committee"
+        ]
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/28778-Republican_National_Committee"
+      }
+    }
+  ]
+}
+    </pre></code>
+
   <% end %>
   
 </div>
