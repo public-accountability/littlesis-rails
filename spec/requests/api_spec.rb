@@ -138,6 +138,34 @@ describe Api do
     specify { expect(json).to eql(expected) }
   end
 
+  describe '/entities/:id/lists' do
+    let(:entity) { create(:entity_person) }
+    let(:lists) { Array.new(2) { create(:list) } }
+
+    context 'entity with 2 lists' do
+      before do
+        lists.each { |l| ListEntity.create!(list_id: l.id, entity_id: entity.id) }
+        get lists_api_entity_path(entity), {}, @auth_header
+      end
+      specify { expect(response).to have_http_status 200 }
+      specify { expect(json).to eql({ 'meta' => meta, 'data' => lists.map(&:api_data) }) }
+    end
+    
+    context 'entity with no lists' do
+      before { get lists_api_entity_path(entity), {}, @auth_header }
+      specify { expect(json).to eql({ 'meta' => meta, 'data' => [] }) }
+    end
+    context 'entity with one open list and one private list' do
+      let(:lists) { [create(:open_list), create(:private_list)] }
+      before do
+        lists.each { |l| ListEntity.create!(list_id: l.id, entity_id: entity.id) }
+        get lists_api_entity_path(entity), {}, @auth_header
+      end
+      specify { expect(response).to have_http_status 200 }
+      specify { expect(json['data']).to eql [lists.first.api_data] }
+    end
+   end
+
   describe '/entities/search?q=NAME' do
     let(:entities) { TestSphinxResponse.new([build(:org), build(:person)]) }
     let(:mock_search) { double(:per => double(:page => entities)) }

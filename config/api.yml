@@ -28,4 +28,14 @@ extensionrecord:
   fields:
     display_name: 'extension_definition.display_name'
     name: 'extension_definition.name'
-    
+list:
+  ignore:
+    - access
+    - creator_user_id
+    - is_admin
+    - is_network
+    - display_name
+    - featured_list_id
+    - custom_field_name
+  fields:
+    entity_count: 'list_entities.count'

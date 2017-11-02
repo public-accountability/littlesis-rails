@@ -178,6 +178,57 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
     <% end %>
 
     <%= api_column do %>
+	<%= api_title_route('Entity Lists', '/api/entities/:id/lists') %>
+	<p>The list that the entity is on</p>
+
+	<p>Example request: <code>curl https://littlesis.org/api/entities/10/lists</code></p>
+	<pre><code>
+{
+  "meta": {
+    "copyright": "LittleSis CC BY-SA 3.0",
+    "license": "https://creativecommons.org/licenses/by-sa/3.0/us/",
+    "apiVersion": "2.0-beta"
+  },
+  "data": [
+    {
+      "type": "lists",
+      "id": 1,
+      "attributes": {
+        "name": "Fortune 1000 Companies (2008)",
+        "description": "Fortune Magazine's list of the 1000 US companies with the largest published revenue figures.",
+        "is_ranked": true,
+        "is_featured": false,
+        "updated_at": "2017-02-01T15:46:35Z",
+        "short_description": null,
+        "entity_count": 1000
+      },
+      "links": {
+        "self": "https://littlesis.org/lists/1-fortune-1000-companies-2008"
+      }
+    },
+    {
+      "type": "lists",
+      "id": 291,
+      "attributes": {
+        "name": "Top Lobbying Clients in New York State in 2011",
+        "description": "\"In 2011, 2,776 unique groups spent money lobbying in New York. The chart found from pages 2 through 97 of this report ranks each of them and compares their spending to 2010 levels.\"\r\n\r\n-NYPIRG, April 5, 2012",
+        "is_ranked": true,
+        "is_featured": false,
+        "updated_at": "2017-04-27T01:33:39Z",
+        "short_description": null,
+        "entity_count": 96
+      },
+      "links": {
+        "self": "https://littlesis.org/lists/291-top-lobbying-clients-in-new-york-state-in-2011"
+      }
+    }
+  ]
+}
+	</code></pre>
+    <% end %>
+
+
+    <%= api_column do %>
 	<%= api_title_route('Search by name', '/api/entities/search?q=NAME') %>
     <% end %>
     
@@ -215,7 +266,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
 <div class="row">
   <%= api_column do %>
     <%= api_title_route('Relationships', '/api/relationships/:id') %>
-    <p>This provides basic information about n relationship: </p>
+    <p>This provides basic information about a relationship: </p>
     <ul>
       <%= attribute_line('description', 'A sentence describing the relationship') %>
       <%= attribute_line('category_id', 'Integer between 1 and 12, representing the relationship category') %>

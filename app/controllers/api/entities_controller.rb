@@ -10,6 +10,10 @@ class Api::EntitiesController < Api::ApiController
   def relationships
   end
 
+  def lists
+    render json: Api.as_api_json(@entity.lists.where("ls_list.access <> #{Permissions::ACCESS_PRIVATE}"))
+  end
+
   def extensions
     render json: Api.as_api_json(@entity.extension_records.includes(:extension_definition))
   end
