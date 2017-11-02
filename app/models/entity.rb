@@ -729,7 +729,7 @@ class Entity < ActiveRecord::Base
     "entity/#{id}-#{updated_at.to_i}"
   end
 
-  class EntityDeleted < ActiveRecord::ActiveRecordError
+  class EntityDeleted < Exceptions::ModelIsDeletedError
   end
 
   # When an entity is deleted we will store information

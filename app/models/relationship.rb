@@ -6,6 +6,7 @@ class Relationship < ActiveRecord::Base
   include RelationshipDisplay
   include SimilarRelationships
   include Tagable
+  include Api::Serializable
 
   has_paper_trail :ignore => [:last_user_id],
                   :meta => {
@@ -510,6 +511,11 @@ class Relationship < ActiveRecord::Base
   # needed to satisfy Tagable interface
   def description
     "#{entity.name} #{description_sentence[0]} #{related.name} #{description_sentence[1]}"
+  end
+
+  # Array of api data for the entities in the relationship
+  def api_included
+    @api_included ||= [entity.api_data, related.api_data]
   end
 
   def restore!

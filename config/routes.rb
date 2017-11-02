@@ -330,6 +330,8 @@ Lilsis::Application.routes.draw do
         get 'extensions'
       end
     end
+
+    resources :relationships, only: [:show]
   end
 
   #############

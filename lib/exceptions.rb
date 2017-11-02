@@ -20,4 +20,10 @@ module Exceptions
       "The URL is invalid"
     end
   end
+
+  class ModelIsDeletedError < ActiveRecord::ActiveRecordError
+    def message
+      "The model has been deleted"
+    end
+  end
 end

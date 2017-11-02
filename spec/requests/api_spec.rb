@@ -178,4 +178,22 @@ describe Api do
 
     end
   end
+
+  describe '/relationships/:id' do
+    let(:entity1) { create(:entity_person) }
+    let(:entity2) { create(:entity_org) }
+    let(:relationship) { Relationship.create!(category_id: 1, entity: entity1, related: entity2) }
+
+    before { get api_relationship_path(relationship), {}, @auth_header }
+
+    specify { expect(response).to have_http_status 200 }
+    specify do
+      expect(json).to eql({
+                            'data' => relationship.api_data,
+                            'meta' => meta,
+                            'included' => [ entity1.api_data, entity2.api_data ]
+                          })
+    end
+
+  end
 end

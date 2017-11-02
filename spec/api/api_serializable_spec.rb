@@ -86,4 +86,13 @@ describe 'Api::Serializable', type: :model do
       end
     end
   end
+
+  describe 'relationship.api_data' do
+    let(:relationship) { build(:relationship) }
+
+    it 'has included field with entity data' do
+      expect(relationship.api_json.fetch('included'))
+        .to eql [ relationship.entity.api_data, relationship.related.api_data ]
+    end
+  end
 end

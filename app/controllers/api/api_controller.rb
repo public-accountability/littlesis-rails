@@ -8,7 +8,7 @@ module Api
       render json: Api.error_json(:RECORD_NOT_FOUND), status: :not_found
     end
 
-    rescue_from Entity::EntityDeleted do
+    rescue_from Exceptions::ModelIsDeletedError do
       render json: Api.error_json(:RECORD_DELETED), status: :gone
     end
 

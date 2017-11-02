@@ -7,7 +7,7 @@ module Api
       @model = model
       @exclude = Array.wrap(exclude).map(&:to_s)
       @class_name = @model.class.name.downcase
-      @fields = MODEL_INFO.dig(@class_name, 'fields').reject { |f| @exclude.include?(f) }
+      @fields = MODEL_INFO.dig(@class_name, 'fields')&.reject { |f| @exclude.include?(f) }
       @ignore = attributes_to_ignore
       set_attributes
     end
