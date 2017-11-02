@@ -6,6 +6,15 @@ $maroon: rgba(204, 84, 84, 1);
 $primary-blue: rgba(51, 122, 183, 1);
 $table-border-radius: .2em;
 
+// SHARED
+.fill-parent {
+    position: absolute; // only works if parent td has position `absolute`
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 h1#bulk-add-header {
     border-bottom: 1px solid gray;
     padding-bottom: 1rem;
@@ -58,6 +67,7 @@ h1#bulk-add-header {
                 height: 2.5em; // acts like min-height
                 min-width: 10em; // to keep other columns from collapsing when description is very long
                 position: relative; // needed to position error-alert below
+                cursor: pointer;
                 .tooltip-inner {
                     background-color: $maroon;
                 }
@@ -65,16 +75,16 @@ h1#bulk-add-header {
                     border-bottom-color: $maroon;
                 }
                 .error-alert{
-                    position: absolute; // only works if parent td has position `absolute`
-                    bottom: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    cursor: pointer;
+                    @extend .fill-parent;
                     .alert-icon {
                         float: right;
                         margin: .5em .5em 0 0 // TRBL
                     }
+                }
+                .edit-cell{
+                    @extend .fill-parent;
+                    border: inherit;
+                    padding: .5em;
                 }
             }
             td.errors {

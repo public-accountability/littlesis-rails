@@ -50,12 +50,15 @@
       //   1. resource type (currently always entity)
       //   2. columns by resource type (currently stored as constant above)
     });
-    self.render();
-    detectUploadSupport();
+    state.render().detectUploadSupport();
+
+    // TODO: if we want to instantiate tables, we could:
+    // * wrap all references to `state` inside this call to init (incl. methods etc...)
+    // * return `state`` here, but return `self` from module
     return self;
   };
 
-  // public getters
+  // PUBLIC METHODS
 
   // String -> Object
   self.get = function(attr){
@@ -80,11 +83,10 @@
   };
 
   // ...so we can test scenarios after csv has uploaded
-  // without mocking file-reader behavior encapsulated above
+  //    (without mocking file-reader behavior encapsulated above)
   self.ingestEntities = ingestEntities;
 
-
-  // private getters
+  // GETTERS
 
   state.getIn = self.getIn;
 
@@ -134,16 +136,21 @@
     return !util.isEmpty(state.getMatches(entity));
   };
 
-  // setters
+  // SETTERS
 
-  // State(implicit), [String], Object -> State
+  // String, Object -> State
+  state.set = function(key, value){
+    state = util.set(state, key, value);
+    return state;
+  };
+
+  // [String], Object -> State
   state.setIn = function(path, value){
     state = util.setIn(state, path, value);
     return state;
   };
 
-  // State(implicit), [String] -> State
-
+  // [String] -> State
   state.deleteIn = function(path){
     state = util.deleteIn(state, path);
     return state;
@@ -157,6 +164,11 @@
       util.getIn(state, ['entities', 'order']).concat(entity.id)
     );
     return entity;
+  };
+
+  // Entity, String, String -> State
+  state.setEntityAttr = function(entity, attr, value){
+    return state.setIn(['entities', 'byId', entity.id, attr], value);
   };
 
   // Entity -> Entity
@@ -175,7 +187,7 @@
       .then(function(matches){ state.addMatches(entity, matches); });
   };
 
-  // Entity -> Void
+  // Entity -> State
   state.addMatches = function(entity, matches){
     return state.setIn(
       ['entities', 'matches', entity.id],
@@ -187,17 +199,17 @@
     );
   };
 
-  // Entity -> Void
+  // Entity -> State
   state.removeMatches = function(entity){
     return state.deleteIn(['entities', 'matches', entity.id]);
   };
 
-  // Entity, Integer -> Void
+  // Entity, Integer -> State
   state.setMatchSelection = function(entity, matchId){
     return state.setIn(['entities', 'matches', entity.id, 'selected'], matchId);
   };
 
-  // Entity -> Void
+  // Entity -> State
   state.replaceWithMatch = function(entity){
     var match = state.getSelectedMatch(entity);
     return state
@@ -215,55 +227,67 @@
     });
   }
 
-  // () -> Void
+  // () -> State
+  state.detectUploadSupport = function(){
+    return util.browserCanOpenFiles() ?
+      state :
+      state
+      .disableUpload()
+      .setNotification('Your browser does not support uploading files to this page.')
+      .render();
+  };
+
+  // () -> State
   state.disableUpload = function(){
-    state.canUpload = false;
-    return state;
+    return state.set('canUpload', false);
   };
 
-  // String -> Void
+  // String -> State
   state.setNotification = function(msg){
-    state.notification = msg;
-    return state;
+    return state.set('notification', msg);
   };
 
-  // () -> Void
+  // () -> State
   state.clearNotification = function(){
-    state.notification = "";
-    return state;
+    return state.set('notification', "");
   };
 
   // VALIDATION
 
-  // () -> Void
-  self.validate = function(){
-    state.setIn(
-      ['entities', 'errors'],
-      validateEntities(Object.values(state.entities.byId), state.entities.errors)
-    );
-    return self;
+  // () -> State
+  state.validate = function(){
+    return state
+      .deleteIn(['entities', 'errors']) // so we don't see multiple error messages on re-renders
+      .setIn(
+        ['entities', 'errors'],
+        validateEntities(Object.values(state.entities.byId), state.entities.errors)
+      );
   };
+  self.validate = state.validate; // for testing
 
   // type EntitiesErrors = { [id: String]: EntityError }
   // type EntityErrors = { [id: EntityAtrr]: EntityAttrErrors }
   // type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
   // type EntityAttrErrors = [String]
 
-  // [Entities], EntityErrors -> EntityErrors
+  // [Entities], EntitiesErrors -> EntitiesErrors
   function validateEntities(entities, entitiesErrors){
     return entities.reduce(
       function(acc, entity){
         return util.set(
           acc,
           entity.id,
-          self.validateEntity(entity, util.get(acc, entity.id))
+          validateEntity(entity, util.get(acc, entity.id))
         );
       },
       entitiesErrors || {}
     );
   };
 
-  self.validateEntity = function(entity, entityErrors){
+  // expose for unit testing seam
+  self.validateEntity = validateEntity;
+  // Enity, EntityErrors -> EntityErrors
+  function validateEntity(entity, entityErrors){
     var attrs = columns.map(function(c){ return c.attr; });
     return attrs.reduce(
       function(entityErrorsAcc, attr){
@@ -276,6 +300,7 @@
     );
   };
 
+  // Entity, EntityAttr, EntityAttrErrors -> EntityAttrErrors
   function validateAttr(entity, attr, attrErrors){
     return (util.get(validationsFor(entity), attr) || []).reduce(
       function(attrErrorsAcc, validation){
@@ -339,14 +364,7 @@
 
   // CSV UPLOAD HANLDING
 
-  function detectUploadSupport(){
-    if (!util.browserCanOpenFiles()) {
-      state.disableUpload();
-      state.setNotification('Your browser does not support uploading files to this page.');
-      self.render();
-    }
-  }
-
+  // (ReaderResult -> Void), JQueryElement -> Void
   function handleUploadThen(processFile, caller){
     if (self.hasFile(caller)) {
       var reader = new FileReader();
@@ -362,13 +380,13 @@
     const maybeEntities = parseEntities(csv);
     if (maybeEntities.error){
       state.setNotification(maybeEntities.error);
-      return Promise.resolve(self.render());
+      return Promise.resolve(state.render());
     } else {
       return state
         .clearNotification()
         .disableUpload()
         .matchEntities(maybeEntities.result)
-        .then(self.validateAndRender);
+        .then(state.validateAndRender);
     }
   };
 
@@ -387,6 +405,7 @@
       { result: null,   error:  parseErrorMsg(result.errors[0], result.data) };
   }
 
+  // Error, [Object] -> String
   function parseErrorMsg(error, rows){
     return "CSV format error: " + error.message +
       (util.exists(error.row) && " in row: '" + Object.values(rows[error.row]).join(",")) + "'";
@@ -428,16 +447,17 @@
 
   // RENDERING
 
-  self.validateAndRender = function(){
-    self.validate().render();
+  state.validateAndRender = function(){
+    return state.validate().render();
   };
 
-  self.render = function(){
+  state.render = function(){
     $('#' + state.rootId).empty();
     $('#' + state.rootId)
       .append(notificationBar())
       .append(state.canUpload ? uploadContainer() : null)
       .append(state.hasRows()? table() : null);
+    return state;
   };
 
   function notificationBar(){
@@ -499,25 +519,49 @@
   function td(entity, col, idx){
     var errors = state.getErrors(entity, col.attr);
     return $('<td>', {
-      text:     util.get(entity, col.attr),
-      class:    errors && "errors"
+      class: errors && "errors"
     }).append(
+      $('<div>', {
+        text:  util.get(entity, col.attr),
+        class: 'cell-contents',
+        click: function(){ makeEditable(this, entity, col); }
+      })
+    ).append(
       maybeResolver(entity, col, idx)
     ).append(
-      maybeErrorAlert(errors, col.label)
+      maybeErrorAlert(entity, col, errors)
     );
   };
 
-  function maybeErrorAlert(errors, label){
+  function makeEditable(contentsDiv, entity, col){
+    $(contentsDiv).replaceWith($('<input>', {
+      class: 'edit-cell',
+      type:  'text',
+      value:  util.get(entity, col.attr),
+      keyup: function(e){ e.keyCode == 13 && handleCellEdit(entity, col.attr, $(this).val()); }
+    }));
+  };
+
+  // Entity, String, String -> State
+  function handleCellEdit(entity, attr, value){
+    return state
+      .setIn(['entities', 'byId', entity.id, attr], value)
+      .deleteIn(['entities', 'errors', entity.id, attr])
+      .validate()
+      .render();
+  };
+
+  function maybeErrorAlert(entity, col, errors){
     return errors && $('<div>', {
       class:         'error-alert',
-      'data-toggle': 'tooltip'
+      'data-toggle': 'tooltip',
+      click:          function(){ makeEditable(this, entity, col);}
     })
       .append($('<div>', { class: 'alert-icon' }))
       .tooltip({
         placement: 'bottom',
         html: true,
-        title: errorList(errors, label)
+        title: errorList(errors, col.label)
       });
   };
 
@@ -627,16 +671,21 @@
 
   // EVENT HANDLERS
 
+  // Entity -> Void
   function handleCreateChoice(entity){
-    state.removeMatches(entity);
-    self.render();
+    state
+      .removeMatches(entity)
+      .render();
   }
 
+  // Entity -> Void
   function handleUseExistingChoice(entity){
-    state.replaceWithMatch(entity);
-    self.render();
+    state
+      .replaceWithMatch(entity)
+      .render();
   }
 
+  // Entity, String -> Void
   function handlePickerSelection(entity, matchId){
     state.setMatchSelection(entity, matchId);
     $(".resolver-picker-result-container")

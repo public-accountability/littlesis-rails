@@ -1,8 +1,16 @@
 describe('Bulk Table module', () => {
 
-  const asyncDelay = 2; // millis to wait for search, csv upload, etc..
+  // mutable variables used as hooks in setup steps
+  let searchEntityStub, hasFileSpy, getFileSpy, file;
 
-  // TODO: sure would be nice to import this from app code and have a single source of truth!
+  // millis to wait for search, csv upload, etc...
+  // tune this if you are getting
+  // odd non-deterministic failures due to async issues
+  const asyncDelay = 5;
+
+  // CELL FIXTURES
+  // (would be better to import constant from `bulkTable.js`, but we don't have modules)
+
   const columns = [{
     label: 'Name',
     attr:  'name',
@@ -17,10 +25,14 @@ describe('Bulk Table module', () => {
     input: 'text'
   }];
 
+  // ID FIXTURES (to avoid "magic ids")
+
   const ids = {
     uploadButton:  "bulk-add-upload-button",
     notifications: "bulk-add-notifications"
   };
+
+  // ENITY FIXTURES
 
   const entities = {
     newEntity0: {
@@ -37,8 +49,35 @@ describe('Bulk Table module', () => {
     }
   };
 
-  // stub search api call w/ 1 successful, 1 failed result
+  // CSV FIXTURE
+
+  const csvValid =
+        "name,primary_ext,blurb\n" +
+        `${entities.newEntity0.name},${entities.newEntity0.primary_ext},${entities.newEntity0.blurb}\n` +
+        `${entities.newEntity1.name},${entities.newEntity1.primary_ext},${entities.newEntity1.blurb}\n`;
+
+  // DOM/STATE FIXTURES
+
+  const testDom ='<div id="test-dom"></div>';
+
+  const defaultState = {
+    rootId:   "test-dom",
+    endpoint: "/lists/1/new_entities"
+  };
+
+  // HELPERS
+
+  const setupWithCsv = (csv, done) => {
+    file = new File([csv], "test.csv", {type: "text/csv"});
+    hasFileSpy.and.returnValue(true);
+    getFileSpy.and.returnValue(file);
+    bulkTable.init(defaultState);
+    $(`#${ids.uploadButton}`).change();
+    setTimeout(done, asyncDelay); // wait for file to upload, etc.
+  };
+
   const searchEntityFake = query => {
+    // stub search api call w/ 1 successful, 1 failed result
     switch(query){
     case entities.newEntity0.name:
       return Promise.resolve(searchResultsFor(entities.newEntity0));
@@ -58,35 +97,27 @@ describe('Bulk Table module', () => {
     };
   });
 
-  const csvValid =
-        "name,primary_ext,blurb\n" +
-        `${entities.newEntity0.name},${entities.newEntity0.primary_ext},${entities.newEntity0.blurb}\n` +
-        `${entities.newEntity1.name},${entities.newEntity1.primary_ext},${entities.newEntity1.blurb}\n`;
-
-  const testDom ='<div id="test-dom"></div>';
-
-  const defaultState = {
-    rootId:   "test-dom",
-    endpoint: "/lists/1/new_entities"
+  const editCell = (cell, clickable, newValue) => {
+    cell.find(clickable).trigger('click');
+    cell.find('.edit-cell')
+      .val(newValue)
+      .trigger('change')
+      .trigger($.Event('keyup', { keyCode: 13 }));
   };
 
-  let searchEntityStub, file, hasFileSpy, getFileSpy;
+  const findFirstRow = () => $("#bulk-add-table tbody tr:nth-child(1)");
+  const findSecondRow = () => $("#bulk-add-table tbody tr:nth-child(2)");
+
+  // SETUP
   
   beforeEach(() => {
+    hasFileSpy = spyOn(bulkTable, 'hasFile');
+    getFileSpy = spyOn(bulkTable, 'getFile');
     searchEntityStub = spyOn(api, 'searchEntity').and.callFake(searchEntityFake);
     $('body').append(testDom);
   });
 
   afterEach(() => { $('#test-dom').remove(); });
-
-  const setupWithCsv = (csv, done) => {
-    file = new File([csv], "test.csv", {type: "text/csv"});
-    hasFileSpy = spyOn(bulkTable, 'hasFile').and.returnValue(true);
-    getFileSpy = spyOn(bulkTable, 'getFile').and.returnValue(file);
-    bulkTable.init(defaultState);
-    $(`#${ids.uploadButton}`).change();
-    setTimeout(done, asyncDelay); // wait for file to upload
-  };
 
   describe('initialization', () => {
 
@@ -221,20 +252,9 @@ describe('Bulk Table module', () => {
     });
   });
 
-  describe('table', () => {
+  describe('table layout', () => {
 
-    let firstRow, secondRow;
-    const findFirstRow = () => $("#bulk-add-table tbody tr:nth-child(1)");
-
-    beforeEach(done => {
-      bulkTable.init(defaultState);
-      bulkTable.ingestEntities(csvValid);
-      setTimeout(() => {
-        firstRow = findFirstRow();
-        secondRow = $("#bulk-add-table tbody tr:nth-child(2)");
-        done();
-      }, asyncDelay); // wait for mock search results to return
-    });
+    beforeEach(done => setupWithCsv(csvValid, done));
 
     it('exists', () => {
       expect($('#test-dom table#bulk-add-table')).toExist();
@@ -255,288 +275,325 @@ describe('Bulk Table module', () => {
         );
       });
     });
+  });
 
-    describe('entity resolution', () => {
+  describe('entity resolution', () => {
 
-      describe('search', () => {
+    beforeEach(done => setupWithCsv(csvValid, done));
 
-        it('searches littlesis for entities with same name as user submissions', () => {
-          expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity0.name);
-          expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity1.name);
-        });
+    describe('search', () => {
 
-        it('stores list of search matches in memory', () => {
-          expect(bulkTable.getIn(['entities', 'matches'])).toEqual({
-            newEntity0: {
-              byId:     utility.normalize(searchResultsFor(entities.newEntity0)),
-              order:    ["00", '10', '20'],
-              selected: null
-            },
-            newEntity1: {
-              byId:     {},
-              order:    [],
-              selected: null
-            }
-          });
-        });
+      it('searches littlesis for entities with same name as user submissions', () => {
+        expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity0.name);
+        expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity1.name);
       });
 
-      describe('alert icons', () => {
-
-        it('displays alert icons next to rows with search matches', () => {
-          expect(firstRow.find(".resolver-anchor")).toExist();
-        });
-
-        it('does not display alert icons next to rows with no search matches', () => {
-
-          expect(secondRow.find(".resolver-anchor")).not.toExist();
-        });
-
-        it('shows a popover when user clicks on alert icon', () => {
-          firstRow.find('.resolver-anchor').trigger('click');
-          expect(firstRow.find(".resolver-popover")).toExist();
-        });
-      });
-
-      describe('popover', () => {
-
-        let popover;
-        const matches = searchResultsFor(entities.newEntity0);
-
-        beforeEach(done => {
-          firstRow.find(".resolver-anchor").trigger('click');
-          popover = firstRow.find(".resolver-popover");
-          setTimeout(done, asyncDelay);
-        });
-
-        it('has a title', () => {
-          expect(firstRow.find(".popover-title")).toHaveText("Similar entities already exist!");
-        });
-
-        it('has a selectpicker with all matched entities', () => {
-          matches.forEach(match => {
-            expect(firstRow.find(".resolver-selectpicker")).toContainText(match.name);
-          });
-        });
-
-        it('has a button to use an existing entity', () => {
-          expect(popover.find(".resolver-picker-btn")).toContainText("Use Existing");
-        });
-
-        it('has a button to create a new entity', () => {
-          expect(popover.find(".resolver-create-btn")).toContainText("Create New");
-        });
-
-        describe('when user selects an entity from the picker', () => {
-
-          beforeEach(() => popover.find('select').val(matches[0].id).trigger('change'));
-
-          it('records the selection in memory', () => {
-            expect(bulkTable.getIn(['entities', 'matches', 'newEntity0', 'selected']))
-              .toEqual(matches[0].id);
-          });
-
-          it('shows a section about user selection below the picker', () => {
-            expect(popover.find(".resolver-picker-result-container")).toContainElement(".resolver-picker-result");
-          });
-
-          it('shows the matched entity blurb below the picker', () => {
-            expect(popover.find(".resolver-picker-result")).toContainText(matches[0].blurb);
-          });
-
-          it('shows a glyph-link to the matched entity\'s profile below the picker', () => {
-            expect(popover.find(".resolver-picker-result")).toContainElement('a.goto-link-icon');
-            expect(popover.find("a.goto-link-icon")).toHaveAttr("href", matches[0].url);
-          });
-        });
-
-        describe('when user chooses `Use Existing Entity`', () => {
-
-          beforeEach(() => {
-            popover.find('select').val(matches[0].id).trigger('change');
-            popover.find('.resolver-picker-btn').trigger('click');
-            firstRow = findFirstRow();
-          });
-
-          it('overwrites user-submitted entity with matched entity', () => {
-            expect(bulkTable.getIn(['entities', 'byId', matches[0].id])).toEqual(matches[0]);
-            expect(bulkTable.getIn(['entities', 'byId', 'newEntity0'])).not.toExist();
-            expect(bulkTable.getIn(['entities', 'order', 0])).toEqual(matches[0].id);
-          });
-
-          it('stores no matches for the user-submitted entity', () => {
-            expect(bulkTable.getIn(['entities', 'matches', 'newEntity0'])).not.toExist();
-          });
-
-          it('stores no matches for the already-matched entity', () => {
-            expect(bulkTable.getIn(['entities', 'matches', matches[0].id])).not.toExist();
-          });
-
-          it('closes the popover', () => {
-            expect(firstRow.find(".resolver-popover")).not.toExist();
-          });
-
-          it('removes the alert icon next to the row', () => {
-            expect(firstRow.find(".resolver-anchor")).not.toExist();
-          });
-        });
-
-        describe('when user chooses `Create New Entity`', () => {
-
-          beforeEach(() => {
-            popover.find('.resolver-create-btn').trigger('click');
-            firstRow = findFirstRow();
-          });
-
-          it('deletes matches for the user-submitted entity', () => {
-            expect(bulkTable.getIn(['entities', 'matches', 'newEntity0'])).toEqual(undefined);
-          });
-
-          it('closes the popover', () => {
-            expect(firstRow.find(".resolver-popover")).not.toExist();
-          });
-
-          it('removes the alert icon next to the row', () => {
-            expect(firstRow.find(".resolver-anchor")).not.toExist();
-          });
+      it('stores list of search matches in memory', () => {
+        expect(bulkTable.getIn(['entities', 'matches'])).toEqual({
+          newEntity0: {
+            byId:     utility.normalize(searchResultsFor(entities.newEntity0)),
+            order:    ["00", '10', '20'],
+            selected: null
+          },
+          newEntity1: {
+            byId:     {},
+            order:    [],
+            selected: null
+          }
         });
       });
     });
 
-    describe('validation', () => {
+    describe('alert icons', () => {
 
-      describe('rules', () => {
-
-        const validEntity = {
-          id:          'fakeId',
-          name:        'ValidName',
-          primary_ext: 'Org',
-          blurb:       'valid blurb'
-        };
-
-        const baseEntitiesState = {
-          byId:    {},
-          order:   [],
-          matches: {},
-          errors:  {}
-        };
-
-        const stateOf = (entitySpec) => Object.assign({}, defaultState, {
-          entities: Object.assign({}, baseEntitiesState, {
-            byId: { fakeId: Object.assign({}, validEntity, entitySpec) }
-          })
-        });
-
-        const errorsFor =(entitySpec) =>
-              bulkTable
-              .init(stateOf(entitySpec))
-              .validate()
-              .getIn([ 'entities', 'errors', 'fakeId']);
-
-        it('handles a valid entity', () => {
-          expect(errorsFor(validEntity)).toEqual({});
-        });
-
-        it('does not require a blurb', () => {
-          expect(errorsFor({ blurb: '' })).toEqual({});
-        });
-
-        it('requires a name', () => {
-          expect(errorsFor({ name: "" })).toEqual({
-            name:        ['is required', 'must be at least 2 characters long']
-          });
-        });
-
-        it('requires a name be at least two characters', () => {
-          expect(errorsFor({ name: "x" })).toEqual({
-            name:        ['must be at least 2 characters long']
-          });
-        });
-
-        it('requires a primary extension', () => {
-          expect(errorsFor({ primary_ext: "" })).toEqual({
-            primary_ext: ['is required', 'must be either "Person" or "Org"']
-          });
-        });
-
-        it('requires a primary extension be either `Person` or `Org`', () => {
-          expect(errorsFor({ primary_ext: "tommyknocker" })).toEqual({
-            primary_ext: ['must be either "Person" or "Org"']
-          });
-        });
-
-        it('requires a person to have a first and last name', () => {
-          expect(errorsFor({ primary_ext: "Person", name:"duende" })).toEqual({
-            name:        ['must have a first and last name']
-          });
-        });
-
-        it('handles multiple simultaneous errors', () => {
-          expect(errorsFor({ primary_ext: "", name:"" })).toEqual({
-            name:        ['is required', 'must be at least 2 characters long'],
-            primary_ext: ['is required', 'must be either "Person" or "Org"']
-          });
-        });
+      it('displays alert icons next to rows with search matches', () => {
+        expect(findFirstRow().find(".resolver-anchor")).toExist();
       });
 
-      describe('showing error alerts', () => {
-        const csv = "name,primary_ext,blurb\nx,y,z\n";
-        beforeEach(done => setupWithCsv(csv, done));
-
-        it('highlights cell if name is not valid', () => {
-          const cell = findFirstRow().find('td:nth-child(1)');
-          expect(cell).toHaveClass("errors");
-          expect(cell.find(".error-alert")).toExist();
-        });
-
-        it('highlights cell if primary extension is not valid', () => {
-          const cell = findFirstRow().find('td:nth-child(2)');
-          expect(cell).toHaveClass("errors");
-          expect(cell.find(".error-alert")).toExist();
-        });
-
-        it('shows tooltip with error message when user mouses over cell', () => {
-          const cell = findFirstRow().find('td:nth-child(1)');
-          cell.find('.error-alert').trigger('mouseover');
-          expect(cell.find('.tooltip')).toContainText('[ ! ] Name must be');
-        });
+      it('does not display alert icons next to rows with no search matches', () => {
+        expect(findSecondRow().find(".resolver-anchor")).not.toExist();
       });
 
-      describe('removing error alerts', () => {
-        it('removes alert if primary extension error is fixed');
-        it('removes alert if entity name error is fixed is fixed');
+      it('shows a popover when user clicks on alert icon', () => {
+        findFirstRow().find('.resolver-anchor').trigger('click');
+        expect(findFirstRow().find(".resolver-popover")).toExist();
       });
     });
 
-    describe('editing', () => {
-      // TODO: can we descope this feature on first pass? (@aguestuser)
-      it('has inputs specific to each field');
-      it('updates the store when input values change');
-    });
+    describe('popover', () => {
 
-    describe('submitting', () => {
-      // TODO: can we descope this feature on first pass? (@aguestuser)
-      describe('there are invalid fields', () => {
-        it('will not submit');
+      let popover;
+      const matches = searchResultsFor(entities.newEntity0);
+
+      beforeEach(done => {
+        findFirstRow().find(".resolver-anchor").trigger('click');
+        popover = findFirstRow().find(".resolver-popover");
+        setTimeout(done, asyncDelay);
       });
 
-      describe('there are no invalid fields', () => {
-        it('submits a batch of entities to a list endpoint');
+      it('has a title', () => {
+        expect(findFirstRow().find(".popover-title")).toHaveText("Similar entities already exist!");
+      });
 
-        describe('all submissions worked', () => {
-          it('redirects to list members tab');
+      it('has a selectpicker with all matched entities', () => {
+        matches.forEach(match => {
+          expect(findFirstRow().find(".resolver-selectpicker")).toContainText(match.name);
+        });
+      });
+
+      it('has a button to use an existing entity', () => {
+        expect(popover.find(".resolver-picker-btn")).toContainText("Use Existing");
+      });
+
+      it('has a button to create a new entity', () => {
+        expect(popover.find(".resolver-create-btn")).toContainText("Create New");
+      });
+
+      describe('when user selects an entity from the picker', () => {
+
+        beforeEach(() => popover.find('select').val(matches[0].id).trigger('change'));
+
+        it('records the selection in memory', () => {
+          expect(bulkTable.getIn(['entities', 'matches', 'newEntity0', 'selected']))
+            .toEqual(matches[0].id);
         });
 
-        describe('some submissions failed', () => {
-          it('deletes successful submissions from the store');
-          it('marks failed submissions with error messages');
-          it('renders table with only failed submissions');
+        it('shows a section about user selection below the picker', () => {
+          expect(popover.find(".resolver-picker-result-container")).toContainElement(".resolver-picker-result");
+        });
+
+        it('shows the matched entity blurb below the picker', () => {
+          expect(popover.find(".resolver-picker-result")).toContainText(matches[0].blurb);
+        });
+
+        it('shows a glyph-link to the matched entity\'s profile below the picker', () => {
+          expect(popover.find(".resolver-picker-result")).toContainElement('a.goto-link-icon');
+          expect(popover.find("a.goto-link-icon")).toHaveAttr("href", matches[0].url);
+        });
+      });
+
+      describe('when user chooses `Use Existing Entity`', () => {
+
+        beforeEach(() => {
+          popover.find('select').val(matches[0].id).trigger('change');
+          popover.find('.resolver-picker-btn').trigger('click');
+        });
+
+        it('overwrites user-submitted entity with matched entity', () => {
+          expect(bulkTable.getIn(['entities', 'byId', matches[0].id])).toEqual(matches[0]);
+          expect(bulkTable.getIn(['entities', 'byId', 'newEntity0'])).not.toExist();
+          expect(bulkTable.getIn(['entities', 'order', 0])).toEqual(matches[0].id);
+        });
+
+        it('stores no matches for the user-submitted entity', () => {
+          expect(bulkTable.getIn(['entities', 'matches', 'newEntity0'])).not.toExist();
+        });
+
+        it('stores no matches for the already-matched entity', () => {
+          expect(bulkTable.getIn(['entities', 'matches', matches[0].id])).not.toExist();
+        });
+
+        it('closes the popover', () => {
+          expect(findFirstRow().find(".resolver-popover")).not.toExist();
+        });
+
+        it('removes the alert icon next to the row', () => {
+          expect(findFirstRow().find(".resolver-anchor")).not.toExist();
+        });
+      });
+
+      describe('when user chooses `Create New Entity`', () => {
+
+        beforeEach(() => {
+          popover.find('.resolver-create-btn').trigger('click');
+        });
+
+        it('deletes matches for the user-submitted entity', () => {
+          expect(bulkTable.getIn(['entities', 'matches', 'newEntity0'])).toEqual(undefined);
+        });
+
+        it('closes the popover', () => {
+          expect(findFirstRow().find(".resolver-popover")).not.toExist();
+        });
+
+        it('removes the alert icon next to the row', () => {
+          expect(findFirstRow().find(".resolver-anchor")).not.toExist();
         });
       });
     });
   });
 
-  describe('table with no entities', () => {
+  describe('editing', () => {
+    const findCell = () => findFirstRow().find('td:nth-child(1)');
+
+    describe('contents of a valid cell', () => {
+      beforeEach(done => setupWithCsv(csvValid, done));
+
+      it('updates cell and store', () => {
+        expect(findCell()).toHaveText(entities.newEntity0.name);
+        editCell(findCell(), '.cell-contents', 'foobar');
+
+        expect(findCell()).toHaveText('foobar');
+        expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'name']))
+          .toEqual('foobar');
+      });
+    });
+
+    describe('contents of an invalid cell', () => {
+
+      const csv = "name,primary_ext,blurb\nx,y,z\n";
+      beforeEach(done => setupWithCsv(csv, done));
+
+      it('updates cell and store', () => {
+        expect(findCell()).toHaveText('x');
+        editCell(findCell(), '.cell-contents', 'foobar');
+
+        expect(findCell()).toHaveText('foobar');
+        expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'name']))
+          .toEqual('foobar');
+      });
+    });
+  });
+
+  describe('validation', () => {
+
+    describe('rules', () => {
+
+      const validEntity = {
+        id:          'fakeId',
+        name:        'ValidName',
+        primary_ext: 'Org',
+        blurb:       'valid blurb'
+      };
+
+      const baseEntitiesState = {
+        byId:    {},
+        order:   [],
+        matches: {},
+        errors:  {}
+      };
+
+      const stateOf = (entitySpec) => Object.assign({}, defaultState, {
+        entities: Object.assign({}, baseEntitiesState, {
+          byId: { fakeId: Object.assign({}, validEntity, entitySpec) }
+        })
+      });
+
+      const errorsFor =(entitySpec) =>
+            bulkTable
+            .init(stateOf(entitySpec))
+            .validate()
+            .getIn([ 'entities', 'errors', 'fakeId']);
+
+      it('handles a valid entity', () => {
+        expect(errorsFor(validEntity)).toEqual({});
+      });
+
+      it('does not require a blurb', () => {
+        expect(errorsFor({ blurb: '' })).toEqual({});
+      });
+
+      it('requires a name', () => {
+        expect(errorsFor({ name: "" })).toEqual({
+          name:        ['is required', 'must be at least 2 characters long']
+        });
+      });
+
+      it('requires a name be at least two characters', () => {
+        expect(errorsFor({ name: "x" })).toEqual({
+          name:        ['must be at least 2 characters long']
+        });
+      });
+
+      it('requires a primary extension', () => {
+        expect(errorsFor({ primary_ext: "" })).toEqual({
+          primary_ext: ['is required', 'must be either "Person" or "Org"']
+        });
+      });
+
+      it('requires a primary extension be either `Person` or `Org`', () => {
+        expect(errorsFor({ primary_ext: "tommyknocker" })).toEqual({
+          primary_ext: ['must be either "Person" or "Org"']
+        });
+      });
+
+      it('requires a person to have a first and last name', () => {
+        expect(errorsFor({ primary_ext: "Person", name:"duende" })).toEqual({
+          name:        ['must have a first and last name']
+        });
+      });
+
+      it('handles multiple simultaneous errors', () => {
+        expect(errorsFor({ primary_ext: "", name:"" })).toEqual({
+          name:        ['is required', 'must be at least 2 characters long'],
+          primary_ext: ['is required', 'must be either "Person" or "Org"']
+        });
+      });
+    });
+
+    describe('showing error alerts', () => {
+      const csv = "name,primary_ext,blurb\nx,y,z\n";
+      beforeEach(done => setupWithCsv(csv, done));
+
+      it('highlights cell if name is not valid', () => {
+        const cell = findFirstRow().find('td:nth-child(1)');
+        expect(cell).toHaveClass("errors");
+        expect(cell.find(".error-alert")).toExist();
+      });
+
+      it('highlights cell if primary extension is not valid', () => {
+        const cell = findFirstRow().find('td:nth-child(2)');
+        expect(cell).toHaveClass("errors");
+        expect(cell.find(".error-alert")).toExist();
+      });
+
+      it('shows tooltip with error message when user mouses over cell', () => {
+        const cell = findFirstRow().find('td:nth-child(1)');
+        cell.find('.error-alert').trigger('mouseover');
+        expect(cell.find('.tooltip')).toContainText('[ ! ] Name must be');
+      });
+    });
+
+    describe('removing error alerts', () => {
+
+      const csv = "name,primary_ext,blurb\nx,y,z\n";
+      beforeEach(done => setupWithCsv(csv, done));
+
+      it('removes alert after name error is fixed', () => {
+        const findCell = () => findFirstRow().find('td:nth-child(1)');
+        editCell(findCell(), '.error-alert', 'Valid Name');
+        expect(findCell()).not.toHaveClass("errors");
+      });
+
+      it('removes alert after primary_ext error is fixed', () => {
+        const findCell = () => findFirstRow().find('td:nth-child(2)');
+        editCell(findCell(), '.error-alert', 'Org');
+        expect(findCell()).not.toHaveClass("errors");
+      });
+    });
+  });
+
+  describe('submitting', () => {
+    describe('there are invalid fields', () => {
+      it('will not submit');
+    });
+
+    describe('there are no invalid fields', () => {
+      it('submits a batch of entities to a list endpoint');
+
+      describe('all submissions worked', () => {
+        it('redirects to list members tab');
+      });
+
+      describe('some submissions failed', () => {
+        it('deletes successful submissions from the store');
+        it('marks failed submissions with error messages');
+        it('renders table with only failed submissions');
+      });
+    });
+  });
+
+  describe('empty table', () => {
     beforeEach(() => bulkTable.init(defaultState));
 
     it('does not exist', () =>{
