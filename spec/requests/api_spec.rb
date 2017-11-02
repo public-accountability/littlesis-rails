@@ -177,7 +177,5 @@ describe Api do
       end
 
     end
-
-   
   end
 end
