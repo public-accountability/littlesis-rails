@@ -30,10 +30,15 @@ module Api
   end
 
   private_class_method def self.api_base(models)
-    if models.is_a? ThinkingSphinx::Search
+    if paginatable_collection?(models)
       META_HASH.deep_merge('meta' => { :currentPage => models.current_page, :pageCount => models.total_pages })
     else
       META_HASH
     end
+  end
+
+  private_class_method def self.paginatable_collection?(collection)
+    return false unless collection.is_a?(ActiveRecord::AssociationRelation) || collection.is_a?(ThinkingSphinx::Search)
+    collection.respond_to?(:current_page) && collection.respond_to?(:total_pages)
   end
 end

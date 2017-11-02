@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api do
+describe Api, :pagination_helper do
   before(:all) do
     @user = create_really_basic_user
     @api_token = @user.create_api_token!
@@ -165,6 +165,64 @@ describe Api do
       specify { expect(json['data']).to eql [lists.first.api_data] }
     end
    end
+
+  describe '/entities/:id/relationships' do
+    let!(:entity) { create(:entity_person) }
+    subject { json }
+
+    context 'request without page' do
+      let!(:relationships) { Array.new(2) { create(:generic_relationship, entity: entity, related: create(:entity_person)) } } 
+      before { get relationships_api_entity_path(entity), {}, @auth_header }
+      specify { expect(response).to have_http_status 200 }
+      specify do
+        expect(json)
+          .to eql({
+                    'meta' => meta.merge('pageCount' => 1, 'currentPage' => 1),
+                    'data' => relationships.map(&:api_data)
+                  })
+      end
+    end
+
+    context 'pagination' do
+      stub_page_limit(Api::ApiController, 2)
+
+      let!(:relationships) do
+        Array.new(3) do |n|
+          create(:generic_relationship, entity: entity, related: create(:entity_person)).tap do |r|
+            r.update_column(:updated_at, n.days.ago)
+          end
+        end
+      end
+
+      let(:get_request) { proc { |page| get relationships_api_entity_path(entity), {page: page}, @auth_header } }
+      
+      context 'requesting first page' do
+        before { get_request.call(1) }
+        specify { expect(response).to have_http_status 200 }
+        specify { expect(json['data'].length).to eql 2 }
+
+        it do
+          is_expected.to eql({
+                               'meta' => meta.merge('pageCount' => 2, 'currentPage' => 1),
+                               'data' => relationships.first(2).map(&:api_data)
+                             })
+        end
+      end
+
+      context 'requesting second page' do
+        before { get_request.call(2) }
+        specify { expect(response).to have_http_status 200 }
+        specify { expect(json['data'].length).to eql 1 }
+
+        it do
+          is_expected.to eql({
+                               'meta' => meta.merge('pageCount' => 2, 'currentPage' => 2),
+                               'data' => relationships.last(1).map(&:api_data)
+                             })
+        end
+      end
+    end
+  end
 
   describe '/entities/search?q=NAME' do
     let(:entities) { TestSphinxResponse.new([build(:org), build(:person)]) }

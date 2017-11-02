@@ -1,5 +1,6 @@
 module Api
   class ApiController < ActionController::Base
+    PER_PAGE = 100
     protect_from_forgery with: :null_session
     before_action :verify_api_token unless Rails.env.development?
     skip_before_action :verify_api_token, only: [:index]

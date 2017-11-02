@@ -8,6 +8,8 @@ class Api::EntitiesController < Api::ApiController
   end
 
   def relationships
+    relationships = @entity.relationships.order(updated_at: :desc).page(page_requested).per(PER_PAGE)
+    render json: Api.as_api_json(relationships)
   end
 
   def lists
