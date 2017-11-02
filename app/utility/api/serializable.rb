@@ -3,16 +3,8 @@ module Api
     extend ActiveSupport::Concern
 
     class_methods do
-      def api_base
-        Api::META_HASH
-      end
-
       def as_api_json(ids)
-        api_base.merge({ 'data' => api_data(ids) })
-      end
-
-      def api_data(ids)
-        find(ids).map(&:api_data)
+        Api.as_api_json(find(ids))
       end
     end
 
@@ -21,13 +13,9 @@ module Api
       api_base.merge(json)
     end
 
-    def api_base
-      self.class.api_base
-    end
-
     # Options Hash-> Hash
     def api_json(serializer_options = {})
-      json = { 'data' => api_data(serializer_options), 'links' => api_links }
+      json = { 'data' => api_data(serializer_options) }
       json.merge!('included' => api_included) unless api_included.blank?
       json
     end
@@ -37,12 +25,13 @@ module Api
         'type' => self.class.name.tableize.dasherize,
         'id' => id,
         'attributes' => api_attributes(serializer_options)
-      }
+      }.merge(api_links)
     end
 
     def api_links
+      return {} unless api_linkable?
       link = Rails.application.routes.url_helpers.public_send("#{self.class.name.downcase}_url", self)
-      { 'self' => link }
+      {'links' => { 'self' => link } }
     end
 
     # To return an optional set of included model override this method
@@ -51,6 +40,16 @@ module Api
 
     def api_attributes(serializer_options = {})
       Api::Serializer.new(self, **serializer_options).attributes
+    end
+
+    private
+
+    def api_linkable?
+      Api::LINKABLE_CLASSES.include?(self.class.name.downcase.to_sym)
+    end
+
+    def api_base
+      Api::META_HASH
     end
   end
 end

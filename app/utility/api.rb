@@ -12,6 +12,8 @@ module Api
     RECORD_DELETED: { title: 'Record Deleted' }
   }
 
+  LINKABLE_CLASSES = %i[entity relationship list].freeze
+
   # symbol -> hash
     # Accepted symbols:
     #  - RECORD_NOT_FOUND

@@ -23,31 +23,20 @@ describe 'Api::Serializable', type: :model do
 
     it 'returns api json for an array of models' do
       expect(Api.as_api_json(models))
-        .to eql({ 'data' => mock_api_data, 'meta' => Api::META })
+        .to eql('data' => mock_api_data, 'meta' => Api::META)
     end
   end
 
   describe 'class methods' do
     subject { TestApiModel }
     let(:ids) { [1, 2] }
-    let(:mock_model) { TestApiModel.new.tap { |m| expect(m).to receive(:api_data).once } }
-    let(:mock_api_data) { [{ a: 1 }, { b: 2 }] }
-
-    describe '#api_base' do
-      specify { expect(subject.api_base).to eql('meta' => Api::META) }
-    end
-
-    describe '#api_data' do
-      it 'finds models with given ids and call api_data on each model' do
-        expect(subject).to receive(:find).with(ids).and_return([mock_model])
-        subject.api_data(ids)
-      end
-    end
+    let(:mock_api_data) { { a: 1, b: 3 } }
+    let(:mock_model) { TestApiModel.new.tap { |m| expect(m).to receive(:api_data).once.and_return(mock_api_data) } }
 
     describe '#as_api_json' do
       it 'returns json response with array of data' do
-        expect(subject).to receive(:api_data).with(ids).and_return(mock_api_data)
-        expect(subject.as_api_json(ids)).to eql( { 'meta' => Api::META, 'data' => mock_api_data } )
+        expect(subject).to receive(:find).with(ids).and_return([mock_model])
+        expect(subject.as_api_json(ids)).to eql('meta' => Api::META, 'data' => [mock_api_data])
       end
     end
   end
@@ -56,7 +45,7 @@ describe 'Api::Serializable', type: :model do
     subject { TestApiModel.new }
 
     describe '#api_base' do
-      specify { expect(subject.api_base).to eql('meta' => Api::META) }
+      specify { expect(subject.send(:api_base)).to eql('meta' => Api::META) }
     end
 
     describe '#api_data' do
@@ -72,7 +61,7 @@ describe 'Api::Serializable', type: :model do
 
     describe 'api_json' do
       let(:model_url) { 'https://littlesis.org/testapimodel/1' }
-      before  { expect(subject).to receive(:api_links).and_return({'self' => model_url}) }
+      before  { expect(subject).to receive(:api_links).and_return({ 'links' => { 'self' => model_url} }) }
 
       context 'without included' do
         specify do
@@ -81,10 +70,10 @@ describe 'Api::Serializable', type: :model do
                       'data' => {
                         'type' => 'test-api-models',
                         'id' => subject.id,
-                        'attributes' => FAKE_ATTRIBUTES
-                      },
-                      'links' => {
-                        'self' => model_url
+                        'attributes' => FAKE_ATTRIBUTES,
+                        'links' => {
+                          'self' => model_url
+                        }
                       }
                     })
         end

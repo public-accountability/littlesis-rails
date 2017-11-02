@@ -43,9 +43,9 @@ describe Api do
               'types' => ["Person", "Lawyer"],
               'aliases' => lawyer.aliases.map(&:name),
               'updated_at' => lawyer.updated_at.iso8601
-            }
+            },
+            'links' => { 'self' => Rails.application.routes.url_helpers.entity_url(lawyer) },
           },
-          'links' => { 'self' => Rails.application.routes.url_helpers.entity_url(lawyer) },
           'meta' => meta
         }
       end
