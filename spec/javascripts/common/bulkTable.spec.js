@@ -6,7 +6,7 @@ describe('Bulk Table module', () => {
   // millis to wait for search, csv upload, etc...
   // tune this if you are getting
   // odd non-deterministic failures due to async issues
-  const asyncDelay = 5;
+  const asyncDelay = 20;
 
   // CELL FIXTURES
   // (would be better to import constant from `bulkTable.js`, but we don't have modules)
@@ -74,6 +74,18 @@ describe('Bulk Table module', () => {
     bulkTable.init(defaultState);
     $(`#${ids.uploadButton}`).change();
     setTimeout(done, asyncDelay); // wait for file to upload, etc.
+  };
+
+  const setupEdit = (csv, findCell, value, done, clickable = '.cell-contents') => {
+    // needed to accomodate multiple async calls in setup step
+    // not pretty, but it works!
+    // TODO: modify `setupWithCsv` to return a promise so we could chain `thens` here...
+    setupWithCsv(csvValid, () =>  {
+      setTimeout(() => {
+        editCell(findCell(), clickable, value);
+        setTimeout(done, asyncDelay);
+      }, asyncDelay);
+    });
   };
 
   const searchEntityFake = query => {
@@ -428,18 +440,13 @@ describe('Bulk Table module', () => {
     describe('contents of a valid cell', () => {
 
       const findCell = () => findFirstRow().find('td:nth-child(3)');
-
-      beforeEach(done => setupWithCsv(csvValid, () => {
-        setTimeout(done, asyncDelay); // this test wierdly fails in isolation if you don't wait longer
-      }));
+      beforeEach(done => setupEdit(csvValid, findCell, 'foobar', done));
 
       it('updates cell', () => {
-        editCell(findCell(), '.cell-contents', 'foobar');
         expect(findCell()).toContainText('foobar');
       });
 
       it('updates store', () => {
-        editCell(findCell(), '.cell-contents', 'foobar');
         expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'blurb']))
           .toEqual('foobar');
       });
@@ -449,20 +456,27 @@ describe('Bulk Table module', () => {
 
       const csv = "name,primary_ext,blurb\nvalid name,x,y\n";
       const findCell = () => findFirstRow().find('td:nth-child(2)');
-
-      beforeEach(done => setupWithCsv(csv, () => {
-        setTimeout(done, asyncDelay); // ditto on wierdness
-      }));
+      beforeEach(done => setupEdit(csv, findCell, 'Person', done));
 
       it('updates cell', () => {
-        editCell(findCell(), '.cell-contents', 'Person');
         expect(findCell()).toHaveText('Person');
       });
 
       it('updates store', () => {
-        editCell(findCell(), '.cell-contents', 'Person');
         expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'primary_ext']))
           .toEqual('Person');
+      });
+    });
+
+    describe('contents of name cell', () => {
+
+      const findCell = () => findSecondRow().find('td:nth-child(1)');
+      beforeEach(done => setupEdit(csvValid, findCell, entities.newEntity0.name, done));
+
+      it('searches for entities matching new name', () => {
+        expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity0.name);
+        expect(bulkTable.getIn(['entities', 'matches', 'newEntity1'])).toExist();
+        expect(findSecondRow().find(".resolver-anchor")).toExist();
       });
     });
   });
@@ -566,21 +580,28 @@ describe('Bulk Table module', () => {
       });
     });
 
-    describe('removing error alerts', () => {
+     describe('removing error alerts', () => {
 
       const csv = "name,primary_ext,blurb\nx,y,z\n";
-      beforeEach(done => setupWithCsv(csv, done));
 
-      it('removes alert after name error is fixed', () => {
+      describe('in a name field', () => {
         const findCell = () => findFirstRow().find('td:nth-child(1)');
-        editCell(findCell(), '.error-alert', 'Valid Name');
-        expect(findCell()).not.toHaveClass("errors");
+        beforeEach(done => setupEdit(csv, findCell , 'Valid Name', done, '.error-alert'));
+
+        it('removes alert after name error is fixed', () => {
+          editCell(findCell(), '.error-alert', 'Valid Name');
+          expect(findCell()).not.toHaveClass("errors");
+        });
       });
 
-      it('removes alert after primary_ext error is fixed', () => {
+      describe('in a primary_ext field', () => {
         const findCell = () => findFirstRow().find('td:nth-child(2)');
-        editCell(findCell(), '.error-alert', 'Org');
-        expect(findCell()).not.toHaveClass("errors");
+        beforeEach(done => setupEdit(csv, findCell , 'Person', done, '.error-alert'));
+
+        it('removes alert after name error is fixed', () => {
+          editCell(findCell(), '.error-alert', 'Valid Name');
+          expect(findCell()).not.toHaveClass("errors");
+        });
       });
     });
   });

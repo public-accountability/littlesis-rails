@@ -36,6 +36,8 @@
       // derrived
       rootId:         args.rootId,
       endpoint:       args.endpoint || "/",
+      // type Entity = { [key: EntityAttr]: String }
+      // type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
       entities:       args.entities ||
                       { byId:    {},   // { [key: String]: Entity }
                         order:   [],   // [String] (order corresponds to row order of entities stored in `.byId`)
@@ -181,10 +183,19 @@
     return Promise.all(entities.map(state.matchEntity));
   };
 
-  // Entity -> Promise[Void]
+  // Entity, EntityAttr -> Promise[State]
+  state.maybeMatchEntity = function(entity, attr){
+    return attr === 'name' ?
+      state.matchEntity(entity) :
+      Promise.resolve(state);
+  };
+
+  // Entity -> Promise[State]
   state.matchEntity = function(entity){
     return api.searchEntity(entity.name)
-      .then(function(matches){ state.addMatches(entity, matches); });
+      .then(function(matches){
+        return state.addMatches(entity, matches);
+      });
   };
 
   // Entity -> State
@@ -267,7 +278,6 @@
 
   // type EntitiesErrors = { [id: String]: EntityError }
   // type EntityErrors = { [id: EntityAtrr]: EntityAttrErrors }
-  // type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
   // type EntityAttrErrors = [String]
 
   // [Entities], EntitiesErrors -> EntitiesErrors
@@ -527,7 +537,7 @@
         click: function(){ makeEditable(this, entity, col); }
       })
     ).append(
-      maybeResolver(entity, col, idx)
+      maybeMatchResolver(entity, col, idx)
     ).append(
       maybeErrorAlert(entity, col, errors)
     );
@@ -542,13 +552,13 @@
     }));
   };
 
-  // Entity, String, String -> State
+  // Entity, String, String -> Promise[State]
   function handleCellEdit(entity, attr, value){
-    return state
+    state
       .setIn(['entities', 'byId', entity.id, attr], value)
       .deleteIn(['entities', 'errors', entity.id, attr])
-      .validate()
-      .render();
+      .maybeMatchEntity(util.set(entity, attr, value), attr) // search for the *updated* entity
+      .then(s => s.validateAndRender());
   };
 
   function maybeErrorAlert(entity, col, errors){
@@ -573,11 +583,11 @@
     });
   }
 
-  function maybeResolver(entity, col, idx) {
-    return idx == 0 && state.hasMatches(entity) && resolver(entity);
+  function maybeMatchResolver(entity, col, idx) {
+    return idx == 0 && state.hasMatches(entity) && matchResolver(entity);
   }
 
-  function resolver(entity) {
+  function matchResolver(entity) {
     return $('<div>', {
       class:         'resolver-anchor',
       'data-toggle': 'popover',
@@ -587,7 +597,7 @@
       .popover({
         html:     true,
         title:    'Similar entities already exist!',
-        content:  resolverPopup(entity)
+        content:  matchResolverPopup(entity)
       });
   }
 
@@ -601,7 +611,7 @@
     );
   }
 
-  function resolverPopup(entity) {
+  function matchResolverPopup(entity) {
     return $('<div>', { class: 'resolver-popover' })
       .append(pickerContainer(entity))
       .append(createButton(entity));

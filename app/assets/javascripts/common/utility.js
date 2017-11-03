@@ -223,11 +223,13 @@ utility.delete = function(obj, keyToDelete){
 utility.deleteIn = function(obj, keys){
   var leafPath = keys.slice(0, -1);
   var leafNode = utility.getIn(obj, leafPath);
-  return utility.setIn(
-    obj,
-    leafPath,
-    utility.delete(leafNode, keys.slice(-1)[0])
-  );
+  return !(leafPath && leafNode) ?
+    obj :
+    utility.setIn(
+      obj,
+      leafPath,
+      utility.delete(leafNode, keys.slice(-1)[0])
+    );
 };
 
 // see https://github.com/paularmstrong/normalizr
