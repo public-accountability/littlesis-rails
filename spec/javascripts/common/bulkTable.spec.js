@@ -424,33 +424,45 @@ describe('Bulk Table module', () => {
   });
 
   describe('editing', () => {
-    const findCell = () => findFirstRow().find('td:nth-child(1)');
 
     describe('contents of a valid cell', () => {
-      beforeEach(done => setupWithCsv(csvValid, done));
 
-      it('updates cell and store', () => {
-        expect(findCell()).toHaveText(entities.newEntity0.name);
+      const findCell = () => findFirstRow().find('td:nth-child(3)');
+
+      beforeEach(done => setupWithCsv(csvValid, () => {
+        setTimeout(done, asyncDelay); // this test wierdly fails in isolation if you don't wait longer
+      }));
+
+      it('updates cell', () => {
         editCell(findCell(), '.cell-contents', 'foobar');
+        expect(findCell()).toContainText('foobar');
+      });
 
-        expect(findCell()).toHaveText('foobar');
-        expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'name']))
+      it('updates store', () => {
+        editCell(findCell(), '.cell-contents', 'foobar');
+        expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'blurb']))
           .toEqual('foobar');
       });
     });
 
     describe('contents of an invalid cell', () => {
 
-      const csv = "name,primary_ext,blurb\nx,y,z\n";
-      beforeEach(done => setupWithCsv(csv, done));
+      const csv = "name,primary_ext,blurb\nvalid name,x,y\n";
+      const findCell = () => findFirstRow().find('td:nth-child(2)');
 
-      it('updates cell and store', () => {
-        expect(findCell()).toHaveText('x');
-        editCell(findCell(), '.cell-contents', 'foobar');
+      beforeEach(done => setupWithCsv(csv, () => {
+        setTimeout(done, asyncDelay); // ditto on wierdness
+      }));
 
-        expect(findCell()).toHaveText('foobar');
-        expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'name']))
-          .toEqual('foobar');
+      it('updates cell', () => {
+        editCell(findCell(), '.cell-contents', 'Person');
+        expect(findCell()).toHaveText('Person');
+      });
+
+      it('updates store', () => {
+        editCell(findCell(), '.cell-contents', 'Person');
+        expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'primary_ext']))
+          .toEqual('Person');
       });
     });
   });
