@@ -1,22 +1,41 @@
 ---
-
-
 common:
   ignore:
     - last_user_id
     - delta
     - id
     - created_at
-entity:
-  ignore: 
     - notes
     - is_deleted
+entity:
+  ignore: 
     - merged_id
     - is_current
+    - link_count
+  fields:
+    aliases: 'aliases.map(&:name)'
+    types: 'types'
+    extensions: 'extensions_with_attributes'
 relationship:
   ignore:
     - amount2
     - is_gte
+  fields:
+    description: 'description'
 extensionrecord:
   ignore:
     - entity_id
+  fields:
+    display_name: 'extension_definition.display_name'
+    name: 'extension_definition.name'
+list:
+  ignore:
+    - access
+    - creator_user_id
+    - is_admin
+    - is_network
+    - display_name
+    - featured_list_id
+    - custom_field_name
+  fields:
+    entity_count: 'list_entities.count'

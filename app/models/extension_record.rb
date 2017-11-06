@@ -1,6 +1,6 @@
 class ExtensionRecord < ActiveRecord::Base
   include SingularTable
-  include ApiAttributes
+  include Api::Serializable
 
   belongs_to :entity, inverse_of: :extension_records, touch: true
   belongs_to :extension_definition, foreign_key: "definition_id", inverse_of: :extension_records  

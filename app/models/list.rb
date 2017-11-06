@@ -4,9 +4,10 @@ class List < ActiveRecord::Base
   include SoftDelete
   include Referenceable
   include Tagable
+  include Api::Serializable
 
   has_paper_trail
-  
+
   belongs_to :user, foreign_key: "creator_user_id", inverse_of: :lists
 
   has_many :list_entities, inverse_of: :list, dependent: :destroy

@@ -1,15 +1,16 @@
 module Api
   class ApiController < ActionController::Base
+    PER_PAGE = 100
     protect_from_forgery with: :null_session
     before_action :verify_api_token unless Rails.env.development?
     skip_before_action :verify_api_token, only: [:index]
 
     rescue_from ActiveRecord::RecordNotFound do
-      render json: ApiUtils::Response.error(:RECORD_NOT_FOUND), status: :not_found
+      render json: Api.error_json(:RECORD_NOT_FOUND), status: :not_found
     end
 
-    rescue_from Entity::EntityDeleted do
-      render json: ApiUtils::Response.error(:RECORD_DELETED), status: :gone
+    rescue_from Exceptions::ModelIsDeletedError do
+      render json: Api.error_json(:RECORD_DELETED), status: :gone
     end
 
     rescue_from Exceptions::MissingApiTokenError do

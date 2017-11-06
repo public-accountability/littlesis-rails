@@ -1,22 +1,9 @@
 require 'rails_helper'
 
 describe Referenceable, type: :model do
-  module Assocations
-    def has_many(*args); end
-  end
-
-  class TestReferenceable
-    attr_reader :id
-    extend Assocations
+  class TestReferenceable < TestActiveRecord
     include ActiveModel::Validations
     include Referenceable
-
-    @@id = 0
-
-    def initialize
-      @@id += 1
-      @id = @@id
-    end
 
     def references; end
 

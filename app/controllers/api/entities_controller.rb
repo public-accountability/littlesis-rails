@@ -4,21 +4,26 @@ class Api::EntitiesController < Api::ApiController
   before_action :set_options, except: [:search]
 
   def show
-    render json: ApiUtils::Response.new(@entity, @options)
+    render json: @entity.as_api_json(@options) #ApiUtils::Response.new(@entity, @options)
   end
 
   def relationships
+    relationships = @entity.relationships.order(updated_at: :desc).page(page_requested).per(PER_PAGE)
+    render json: Api.as_api_json(relationships)
+  end
+
+  def lists
+    render json: Api.as_api_json(@entity.lists.where("ls_list.access <> #{Permissions::ACCESS_PRIVATE}"))
   end
 
   def extensions
-    records = ExtensionRecord.includes(:extension_definition).where(entity_id: @entity.id)
-    render json: ApiUtils::Response.new(records)
+    render json: Api.as_api_json(@entity.extension_records.includes(:extension_definition))
   end
 
   def search
     return head :bad_request unless params[:q].present?
     entities = Entity::Search.search(params[:q]).per(ENTITY_SEARCH_PER_PAGE).page(page_requested)
-    render json: ApiUtils::Response.new(entities, {})
+    render json: Api.as_api_json(entities)
   end
 
   private
@@ -29,9 +34,8 @@ class Api::EntitiesController < Api::ApiController
   end
 
   def set_options
-    @options = {
-      include_entity_details: param_to_bool(params[:details])
-    }
+    @options = {}
+    @options.merge!(exclude: :extensions) unless param_to_bool(params[:details])
   end
 
   def set_entity

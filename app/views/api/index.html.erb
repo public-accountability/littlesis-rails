@@ -14,12 +14,12 @@
 </div>
 
 <div class="row">
-    <div class="col-md-12">
+    <%= api_column do %>
 	<h2>Signup and Authorization</h2>
 	<p>In order to use the LittleSis API you must have an Api Token. You can get an Api Token from your LittleSis account settings page. If you don't yet have a LittleSis account, <%= link_to "go here to create one", new_user_registration_path %>. If you already have an account, access your settings page by either <%= link_to "following this link", edit_user_registration_path %> or by clicking on your name in the navigation bar and going to 'settings'. On that page you will be able to generate an Api Token or view your current token. </p>
 	
 	<p>Authorization is accomplished by including the http header <code>Littlesis-Api-Token</code> to each request.</p>
-    </div>
+    <% end %>
     
     <div class="col-md-12">
 	    <p>Example:</p>
@@ -31,11 +31,11 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
 </div>
     
 <div class="row">
-    <div class="col-md-12">
+    <%= api_column do %>
 	<h2>Responses</h2>
 	<p>The API follows many of the conventions of <%= link_to 'JSON API', 'http://jsonapi.org/' %>, but does not implement the entire specification.</p>
 	<p>All responses are in JSON.</p>
-    </div>
+    <% end %>
     <div class="col-md-8">
 	<h3>Successful Responses</h3>
 	<p>For singular resources, this will return an object with two fields: data and meta. The meta object contains copyright, license, api version, and other similar information. The data object will have four fields: <em>type</em>, <em>id</em>, <em>attributes</em>, and <em>links</em>. </p>
@@ -70,7 +70,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
 	</code></pre>
     </div>
     
-    <div class="col-md-12">
+    <%= api_column do %>
 	<h4>Error Status Codes</h4>
 	<table class="table">
 	    <thead>
@@ -103,16 +103,16 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
 		
 	    </tbody>
 	</table>
-    </div>
+    <% end %>
 </div>
 
 
 <div class="row">
-    <div class="col-md-12">
+    <%= api_column do %>
 	<h2>Entity Resources</h2>
-    </div>
+    <% end %>
 
-    <div class="col-md-12">
+    <%= api_column do %>
 	<h3><code>/api/entities/:id</code></h3>
 	<p>This provides basic information about an entity: </p>
 	<ul>
@@ -128,15 +128,15 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
 	    <%= attribute_line('types', 'An array of types (also known as extensions) associated with the entity. i.e. Business, Lawyer') %>
 	    <%= attribute_line('aliases', 'An array of other names the entity is known as') %>
 	</ul>
-    </div>
+    <% end %>
 
-    <div class="col-md-12">
+    <%= api_column do %>
 	<p>To include additional information that's contained within the extensions, set the url query parameter <code>details=TRUE</code></p>
 	<p>example: <pre><code>curl https://littlesis.org/api/entities/1?details=TRUE </code></pre></p>
 	<p>However, this may not have useful information for every entity as some extensions do have additional fields.</p>
-    </div>
+    <% end %>
 
-    <div class="col-md-12">
+    <%= api_column do %>
 	<%= api_title_route('Entity Extension', '/api/entities/:id/extensions') %>
 	<p>Extensions are also known as types. All entities have at least one type -- <em>Organization</em> or <em>Person</em>. Other types include: Business Person, Public Company, Political Candidate, and Professional Associations.</p>
 
@@ -175,11 +175,63 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
   "meta": {...}
 }
 	</code></pre>
-    </div>
+    <% end %>
 
-    <div class="col-md-12">
+    <%= api_column do %>
+	<%= api_title_route('Entity Lists', '/api/entities/:id/lists') %>
+	<p>The list that the entity is on</p>
+
+	<p>Example request: <code>curl https://littlesis.org/api/entities/10/lists</code></p>
+	<pre><code>
+{
+  "meta": {
+    "copyright": "LittleSis CC BY-SA 3.0",
+    "license": "https://creativecommons.org/licenses/by-sa/3.0/us/",
+    "apiVersion": "2.0-beta"
+  },
+  "data": [
+    {
+      "type": "lists",
+      "id": 1,
+      "attributes": {
+        "name": "Fortune 1000 Companies (2008)",
+        "description": "Fortune Magazine's list of the 1000 US companies with the largest published revenue figures.",
+        "is_ranked": true,
+        "is_featured": false,
+        "updated_at": "2017-02-01T15:46:35Z",
+        "short_description": null,
+        "entity_count": 1000
+      },
+      "links": {
+        "self": "https://littlesis.org/lists/1-fortune-1000-companies-2008"
+      }
+    },
+    {
+      "type": "lists",
+      "id": 291,
+      "attributes": {
+        "name": "Top Lobbying Clients in New York State in 2011",
+        "description": "\"In 2011, 2,776 unique groups spent money lobbying in New York. The chart found from pages 2 through 97 of this report ranks each of them and compares their spending to 2010 levels.\"\r\n\r\n-NYPIRG, April 5, 2012",
+        "is_ranked": true,
+        "is_featured": false,
+        "updated_at": "2017-04-27T01:33:39Z",
+        "short_description": null,
+        "entity_count": 96
+      },
+      "links": {
+        "self": "https://littlesis.org/lists/291-top-lobbying-clients-in-new-york-state-in-2011"
+      }
+    }
+  ]
+}
+	</code></pre>
+    <% end %>
+
+
+    <%= api_column do %>
 	<%= api_title_route('Search by name', '/api/entities/search?q=NAME') %>
-    </div>
+    <% end %>
+    
     <div class="col-md-10 col-sm-12"
 	<p>This searches our database for entities. The number of the relationships the entity has is used in the ranking algorithm. For instance, searching for 'Bush' will put <%= link_to 'George Bush', entity_path(Entity.find(28776)) %> before <%= link_to 'Jeb Bush', entity_path(Entity.find(34003)) %> because the former has more relationships in our database than the latter.</p>
 
@@ -210,3 +262,117 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
     </div>
 </div>
 
+
+<div class="row">
+  <%= api_column do %>
+    <%= api_title_route('Relationships', '/api/relationships/:id') %>
+    <p>This provides basic information about a relationship: </p>
+    <ul>
+      <%= attribute_line('description', 'A sentence describing the relationship') %>
+      <%= attribute_line('category_id', 'Integer between 1 and 12, representing the relationship category') %>
+      <%= attribute_line('category_name', 'The category of the relationship') %>
+      <%= attribute_line('description1', 'Often the "title", but the precise meaning varies by relationship category') %>
+      <%= attribute_line('description2', '') %>
+      <%= attribute_line('amount', 'Amount of the transaction or donation') %>
+      <%= attribute_line('goods', 'goods provided') %>
+      <%= attribute_line('start_date', "The date when the relationship started") %>
+      <%= attribute_line('end_date', "The date when the relationship ended") %>
+      <%= attribute_line('is_current', "If the relationship is ongoing. (null = unknown)") %>
+      <%= attribute_line('entity1_id', "ID of the first entity in the relationship") %>
+      <%= attribute_line('entity2_id', "ID of the second entity in the relationship") %>
+    </ul>
+  <% end %>
+
+  <%= api_column do %>
+    <p>The response object also includes information on the two entities in the relationship under the key <em>'included'</em></p>
+
+    <p>Example request: <code>curl https://littlesis.org/api/relationships/297069</code></p>
+    <pre><code>
+{
+  "meta": {
+    "copyright": "LittleSis CC BY-SA 3.0",
+    "license": "https://creativecommons.org/licenses/by-sa/3.0/us/",
+    "apiVersion": "2.0-beta"
+  },
+  "data": {
+    "type": "relationships",
+    "id": 297069,
+    "attributes": {
+      "entity1_id": 72489,
+      "entity2_id": 28778,
+      "category_id": 5,
+      "description1": "Campaign Contribution",
+      "description2": "Campaign Contribution",
+      "amount": 631700,
+      "goods": null,
+      "filings": 16,
+      "updated_at": "2017-07-25T18:18:13Z",
+      "start_date": "2004-00-00",
+      "end_date": "2016-04-25",
+      "is_current": null,
+      "description": "Robert Mercer gave money to  Republican National Committee"
+    },
+    "links": {
+      "self": "https://littlesis.org/relationships/297069"
+    }
+  },
+  "included": [
+    {
+      "type": "entities",
+      "id": 72489,
+      "attributes": {
+        "name": "Robert Mercer",
+        "blurb": "Renaissance Tech billionaire, Club for Growth backer",
+        "summary": "Robert Mercer, 65, is co-CEO of Renaissance Technologies LLC, a $15 billion hedge fund. The IBM language-recognition whiz-turned-financier brought home $125 million in 2011, making him the 16th highest-earning hedge fund manager, according to Forbes.\r\n\r\nRenaissance Technologies is based in New York City, with additional locations in London and East Setauket, N.Y., where Mercer lives.",
+        "website": null,
+        "parent_id": null,
+        "primary_ext": "Person",
+        "updated_at": "2017-09-11T21:48:02Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "Robert Mercer"
+        ],
+        "types": [
+          "Person",
+          "Business Person"
+        ]
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/72489-Robert_Mercer"
+      }
+    },
+    {
+      "type": "entities",
+      "id": 28778,
+      "attributes": {
+        "name": "Republican National Committee",
+        "blurb": "The Grand Ol' Party",
+        "summary": null,
+        "website": null,
+        "parent_id": null,
+        "primary_ext": "Org",
+        "updated_at": "2017-10-09T01:09:46Z",
+        "start_date": null,
+        "end_date": null,
+        "aliases": [
+          "Republican National Committee",
+          "RNC"
+        ],
+        "types": [
+          "Organization",
+          "Political Fundraising Committee",
+          "Other Campaign Committee"
+        ]
+      },
+      "links": {
+        "self": "https://littlesis.org/entities/28778-Republican_National_Committee"
+      }
+    }
+  ]
+}
+    </pre></code>
+
+  <% end %>
+  
+</div>

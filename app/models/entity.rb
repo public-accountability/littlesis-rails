@@ -4,7 +4,7 @@ class Entity < ActiveRecord::Base
   include Cacheable
   include Referenceable
   include Political
-  include ApiAttributes
+  include Api::Serializable
   include SimilarEntities
   include EntityPaths
   include EntitySearch
@@ -729,7 +729,7 @@ class Entity < ActiveRecord::Base
     "entity/#{id}-#{updated_at.to_i}"
   end
 
-  class EntityDeleted < ActiveRecord::ActiveRecordError
+  class EntityDeleted < Exceptions::ModelIsDeletedError
   end
 
   # When an entity is deleted we will store information
