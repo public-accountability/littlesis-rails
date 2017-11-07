@@ -2,7 +2,7 @@ class EntitiesController < ApplicationController
   include TagableController
   include ReferenceableController
   before_filter :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving]
-  before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show]
+  before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show, :create_many]
   before_action :set_entity_with_eager_loading, only: [:show]
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
   before_action -> { check_permission('contributor') }, only: [:create]
@@ -29,6 +29,16 @@ class EntitiesController < ApplicationController
 
   # THE DATA 'tab'
   def datatable
+  end
+
+  def create_many
+    # note: clients may not create extensions in POSTS to this endpoing
+    respond_to do |format|
+      format.json do
+        entities = Entity.create!(new_entities_params.map { |e| merge_last_user(e) })
+        render json: Api.as_api_json(entities), status: :created
+      end
+    end
   end
 
   def new
@@ -464,6 +474,10 @@ class EntitiesController < ApplicationController
     params.require(:entity).permit(:name, :blurb, :primary_ext)
   end
 
+  def new_entities_params
+    params.require(:entities).map { |e| e.permit(:name, :blurb, :primary_ext) }
+  end
+
   def add_relationship_page?
     params[:add_relationship_page].present?
   end
@@ -471,4 +485,9 @@ class EntitiesController < ApplicationController
   def importers_only
     check_permission 'importer'
   end
+
+  def merge_last_user(entity_params)
+    entity_params.merge(last_user_id: current_user.sf_guard_user_id)
+  end
+
 end

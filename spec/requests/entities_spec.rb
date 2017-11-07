@@ -4,10 +4,21 @@ describe 'Entity Requests', type: :request do
   let(:person) { create(:entity_person, start_date: '2000-01-01') }
   let(:user) { create_really_basic_user }
 
-  describe 'updating an entity' do
-    before(:each) { login_as(user, :scope => :user) }
-    after(:each) { logout(:user) }
+  before(:each) { login_as(user, :scope => :user) }
+  after(:each) { logout(:user) }
 
+  describe 'creating many entities' do
+
+    let(:entities){ Array.new(3) { build(:random_entity) } }
+    let(:request){ lambda { post '/entities/create_many.json', { entities: entities.map(&:attributes) } } }
+
+    it 'returns a collection of entities with new ids appended' do
+      expect { request.call }.to change { Entity.count }.by(3)
+      expect(json).to eql(Api.as_api_json(Entity.last(3)))
+    end
+  end
+
+  describe 'updating an entity' do
     let(:new_start_date) { '1900-01-01' }
     let(:url) { Faker::Internet.url }
     let(:params) do

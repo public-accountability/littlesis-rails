@@ -146,7 +146,6 @@ Lilsis::Application.routes.draw do
         get 'political'
         #get 'relationships'
         get 'datatable'
-        #
         get 'match_donations'
         get 'match_ny_donations'
         get 'review_donations'
@@ -184,6 +183,7 @@ Lilsis::Application.routes.draw do
         get 'search_by_name', as: 'name_search'
         get 'search_field_names', as: 'field_name_search'
         get 'next_twitter'
+        post 'create_many'
       end
     end
   end

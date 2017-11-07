@@ -14,11 +14,7 @@ describe Api, :pagination_helper do
   end
 
   let(:meta) do
-    {
-      'copyright' => Api::META[:copyright],
-      'license' => Api::META[:license],
-      'apiVersion' => Api::META[:apiVersion]
-    }
+    Api::META
   end
 
   describe 'entities' do
@@ -254,9 +250,9 @@ describe Api, :pagination_helper do
       specify do
         expect(json['meta'])
           .to eql({
-                    'copyright' => Api::META[:copyright],
-                    'license' => Api::META[:license],
-                    'apiVersion' => Api::META[:apiVersion],
+                    'copyright' => Api::META['copyright'],
+                    'license' => Api::META['license'],
+                    'apiVersion' => Api::META['apiVersion'],
                     'currentPage'=> 1,
                     'pageCount' => 2
                   })
