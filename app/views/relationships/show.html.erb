@@ -20,29 +20,26 @@
 		<%= render partial: 'sources', locals: {relationship: @relationship } %>
 	    </div>
 
-	    <% if user_admin? %>
+	    <% if @relationship.tags.present? || user_signed_in? %>
+	      
+	      <div class="row">		    
+		<h4 class="relationship-sidebar-title">Tags</h4>
 
-		<% if @relationship.tags.present? || user_signed_in? %>
-		    
-		    <div class="row">		    
-			<h4 class="relationship-sidebar-title">Tags</h4>
+		<%= tags_controls if user_signed_in? %>
+		<%= display_tags(@relationship.tags) %>
 
-			<%= tags_controls if user_signed_in? %>
-			<%= display_tags(@relationship.tags) %>
+		<% if user_signed_in?  %>
+		  <script id="tags-init-js">
+		   $(function(){
+		     tags.init(
+		       <%= raw(@relationship.tags_for(current_user).to_json) %>,
+		       "<%= raw(tags_relationship_path(@relationship)) %>",
+		     );
+		   });
+		  </script>
+		<%  end %>
+	      </div>
 
-			<% if user_signed_in?  %>
-			    <script id="tags-init-js">
-			     $(function(){
-			       tags.init(
-				 <%= raw(@relationship.tags_for(current_user).to_json) %>,
-				 "<%= raw(tags_relationship_path(@relationship)) %>",
-			       );
-			     });
-			    </script>
-			<%  end %>
-		    </div>
-
-		<% end %>
 	    <% end %> 
         </div>
     </div>
