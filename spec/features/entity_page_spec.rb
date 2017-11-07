@@ -6,6 +6,9 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   let(:person) { create(:entity_person, last_user_id: user.sf_guard_user.id) }
   let(:org) { create(:entity_org, last_user_id: user.sf_guard_user.id) }
   let(:visit_page) { proc { visit entity_path(person) } }
+  before(:each) do
+    allow(Entity).to receive(:search).and_return([])
+  end
 
   describe 'routes' do
     def should_visit_entity_page(url)
@@ -94,19 +97,55 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe "sidebar" do
-    before { visit_page.call }
-    #TODO(ag|Wed 27 Sep 2017): flesh these out!
-    subject { page.find("#profile-page-sidebar")}
-
-    it 'has sections' do
-      subject_has_selectors "#sidebar-image-container",
-                            "#sidebar-basic-info-container",
-                            "#sidebar-lists-container",
-                            "#sidebar-source-links"
+    subject { page.find("#profile-page-sidebar") }
+    let(:tags) { Array.new(2) { create(:tag) } }
+    let(:create_tags) { proc { tags.each { |t| person.add_tag(t.id) } } }
+    before do
+      allow(Entity).to receive(:search).and_return([build(:entity_person)])
     end
 
-    it "does not show a tag edit button for anon users" do
-      expect(subject).not_to have_selector "#tags-edit-button"
+    context 'anon user' do
+      context 'with similar entities' do
+        before do
+          allow(Entity).to receive(:search).and_return([build(:entity_person)])
+          visit_page.call
+        end
+        it { is_expected.to have_selector "#sidebar-similar-entities-container" }
+        it { is_expected.to have_text 'Similar Entities' }
+        it { is_expected.not_to have_selector 'a#begin-merging-process-link' }
+      end
+
+      context 'without similar entities' do
+        before do
+          allow(Entity).to receive(:search).and_return([])
+          visit_page.call
+        end
+
+        it { is_expected.not_to have_selector "#sidebar-similar-entities-container" }
+        it { is_expected.not_to have_text 'Similar Entities' }
+      end
+
+      context 'without tags' do
+        before do
+          visit_page.call
+        end
+
+        it 'has sections' do
+          subject_has_selectors "#sidebar-image-container", "#sidebar-basic-info-container",
+                                "#sidebar-lists-container", "#sidebar-source-links"
+        end
+
+        it { is_expected.not_to have_selector 'a.tag' }
+        it { is_expected.not_to have_selector "#tags-edit-button" }
+        it { is_expected.not_to have_selector 'script#edit-tags-javascript' }
+      end
+
+      context 'with tags' do
+        before { create_tags.call; visit_page.call; }
+        it { is_expected.to have_selector 'a.tag', count: 2 }
+        it { is_expected.not_to have_selector "#tags-edit-button" }
+        it { is_expected.not_to have_selector 'script#edit-tags-javascript' }
+      end
     end
 
     describe "when logged in" do
@@ -114,24 +153,45 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       before { login_as(user, scope: :user) }
       after { logout(user) }
 
-      # TODO(ag|Thu 28 Sep 2017): tags specs will go here once launched
+      context 'regular user' do
+        context 'without tags' do
+          before { visit_page.call; }
+          it { is_expected.not_to have_selector 'a.tag' }
+          it { is_expected.to have_selector "#tags-edit-button" }
+          it { is_expected.to have_selector 'script#edit-tags-javascript' }
+        end
+        context "when person has tags" do
+          before { create_tags.call; visit_page.call; }
+          it { is_expected.to have_selector "#tags-edit-button" }
+          it { is_expected.to have_selector 'a.tag', count: 2 }
+          it { is_expected.to have_selector 'script#edit-tags-javascript' }
+        end
+      end
+
       context "admin user" do
         let(:user) { create_admin_user }
-        let(:tags) { Array.new(2) { create(:tag) } }
+
+        context 'without tags' do
+          before { visit_page.call; }
+          it { is_expected.not_to have_selector 'a.tag' }
+          it { is_expected.to have_selector "#tags-edit-button" }
+          it { is_expected.to have_selector 'script#edit-tags-javascript' }
+        end
+
+        context "with similar entities" do
+          before do
+            allow(Entity).to receive(:search).and_return([build(:entity_person)])
+            visit_page.call
+          end
+          it { is_expected.to have_selector "#sidebar-similar-entities-container" }
+          it { is_expected.to have_selector 'a#begin-merging-process-link' }
+        end
 
         context "when person has tags" do
-          before do
-            tags.each{ |t| person.add_tag(t.id) }
-            refresh_page
-          end
-
-          it "shows a tag edit button" do
-            subject_has_selector "#tags-edit-button"
-          end
-
-          it "shows tags" do
-            subject_has_selector "a.tag", count: 2
-          end
+          before { create_tags.call; visit_page.call; }
+          it { is_expected.to have_selector "#tags-edit-button" }
+          it { is_expected.to have_selector 'a.tag', count: 2 }
+          it { is_expected.to have_selector 'script#edit-tags-javascript' }
         end
       end
     end

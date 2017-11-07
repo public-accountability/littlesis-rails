@@ -5,8 +5,11 @@ module SimilarEntities
 
   SIMILAR_ENTITY_FIELD_WEIGHTS = { name: 15, aliases: 10, blurb: 3 }.freeze
 
-  # -> [ <Entity> ]
   def similar_entities(per_page = 5)
+    @similar_entities ||= _similar_entities(per_page)
+  end
+  # -> [ <Entity> ]
+  def _similar_entities(per_page)
     Entity.search("@!summary #{generate_search_terms}",
                   :with => { primary_ext: "'#{primary_ext}'", is_deleted: false },
                   :without => { sphinx_internal_id: id },

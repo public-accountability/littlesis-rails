@@ -16,7 +16,9 @@ describe 'entities/show.html.erb' do
   context 'switching tabs' do
     before do
       assign(:active_tab, active_tab)
-      assign(:entity, build(:org, last_user_id: @sf_user.id, updated_at: 1.day.ago, org: build(:organization)))
+      entity = build(:org, last_user_id: @sf_user.id, updated_at: 1.day.ago, org: build(:organization))
+      expect(entity).to receive(:similar_entities).and_return([])
+      assign(:entity, entity)
       render
     end
 
