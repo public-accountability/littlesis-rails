@@ -14,6 +14,7 @@ describe 'home/dashboard', type: :feature do
       expect(page).to have_current_path home_dashboard_path
 
       expect(page).to have_selector 'ul.nav li a', text: current_user.username
+      expect(page).to have_selector 'ul.nav li a', text: 'Tags'
       # verifing that networks have been removed:
       expect(page).not_to have_selector 'ul.nav li a', text: 'United States'
     end
