@@ -12,8 +12,9 @@
   var REFERENCES_PER_PAGE = 75;
   var REQUEST_URL = '/references/recent';
   var TYPEAHEAD_OPTIONS = {
-    minLength: 2,
-    highlight: true
+    minLength: 0,
+    highlight: true,
+    limit: 8
   };
     
   /**
@@ -73,11 +74,10 @@
   ///////////////////////////
   // TYPEAHEAD COMPONENTS ///
   //////////////////////////
-  
 
   /**
    * Prepares Bloodhound search with provided references data
-   * @param {Array[Referencs]} data
+   * @param {Array[References]} data
    * @returns {Bloodhound} 
    */
   function documentBloodhound(data) {
@@ -90,6 +90,7 @@
       datumTokenizer: function(d) {
 	return flatten(
 	  [d.name, d.url]
+	    .filter(function(x) { return x !== null; })
 	    .map(function(x) {
 	      return Bloodhound.tokenizers.whitespace(x.toLowerCase());
 	    })
@@ -98,6 +99,24 @@
     });
   }
   
+  /**
+   * Returns function to be used as the 'source' of typeahead 
+   * see https://typeahead.js.org/examples/#default-suggestions for docs on default suggestions
+   * @param {Array[References]} data
+   * @returns {Function} 
+   */
+  function referenceSource(data) {
+    var bloodhound = documentBloodhound(data);
+    var defaultIds = data.slice(0,8).map(function(doc) { return doc.id; });
+    return function(q, sync) {
+      if (q === '') {
+	sync(bloodhound.get(defaultIds));
+      } else {
+	bloodhound.search(q, sync);
+      }
+    };
+  }
+
   /**
    * Provides a configuartion object for typeahead
    * Requires `this.documents` to be set
@@ -111,7 +130,7 @@
     
     return {
       name: 'references',
-      source: documentBloodhound(this.documents),
+      source: referenceSource(this.documents),
       displayKey: 'name',
       templates: {
 	empty: '<span class="reference-suggestion"><span class="reference-empty">No matches found</span></span>',
@@ -169,7 +188,7 @@
   ExistingReferenceWidget.prototype._typeaheadInput = function() {
     return $('<input>', {
       "type": 'text',
-      "placeholder": 'Select an existing reference',
+      "placeholder": 'Search recent references',
       "id": ExistingReferenceWidget.TYPEAHEAD_INPUT_ID,
       "class": 'reference-typeahead'
     });
