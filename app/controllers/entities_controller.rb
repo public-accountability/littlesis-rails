@@ -35,8 +35,14 @@ class EntitiesController < ApplicationController
     # note: clients may not create extensions in POSTS to this endpoing
     respond_to do |format|
       format.json do
-        entities = Entity.create!(new_entities_params.map { |e| merge_last_user(e) })
-        render json: Api.as_api_json(entities), status: :created
+        begin
+          entities = Entity.create!(new_entities_params.map { |e| merge_last_user(e) })
+          render json: Api.as_api_json(entities), status: :created
+        rescue ActionController::ParameterMissing, ActiveRecord::RecordInvalid
+          render json: {
+                   errors: [{ 'title' => 'Could not create new entities: request formatted improperly' }]
+                 }, status: 400
+        end
       end
     end
   end

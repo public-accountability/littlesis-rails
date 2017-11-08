@@ -9,12 +9,26 @@ describe 'Entity Requests', type: :request do
 
   describe 'creating many entities' do
 
-    let(:entities){ Array.new(3) { build(:random_entity) } }
-    let(:request){ lambda { post '/entities/create_many.json', { entities: entities.map(&:attributes) } } }
+    let(:payload) { { entities: Array.new(3) { build(:random_entity) }.map(&:attributes) } }
+    let(:request) { lambda { post '/entities/create_many.json', payload } }
 
-    it 'returns a collection of entities with new ids appended' do
-      expect { request.call }.to change { Entity.count }.by(3)
-      expect(json).to eql(Api.as_api_json(Entity.last(3)))
+    context 'with valid payload' do
+      it 'returns 201 with a collection of entities with new ids appended' do
+        expect { request.call }.to change { Entity.count }.by(3)
+        expect(response).to have_http_status 201
+        expect(json).to eql(Api.as_api_json(Entity.last(3)))
+      end
+    end
+
+    context 'with invalid payload' do
+      let(:payload) { { entities: [{ is_admin: true }] } }
+
+      it 'returns 400 with an error message' do
+        expect { request.call }.to change { Entity.count }.by(0)
+        expect(response).to have_http_status 400
+        expect(json)
+          .to eql('errors' => [{ 'title' => 'Could not create new entities: request formatted improperly' }])
+      end
     end
   end
 
