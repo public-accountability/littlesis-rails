@@ -124,18 +124,6 @@ class ListsController < ApplicationController
            status: 200
   end
 
-  def create_entity_associations_payload
-    begin
-      payload = params.require('data').map { |x| x.permit('type', 'id', { 'attributes' => ['url', 'name'] }) }
-      {
-        'entity_ids'      => payload.select { |x| x['type'] == 'entities' }.map { |x| x['id'] },
-        'reference_attrs' => payload.select { |x| x['type'] == 'references' }.map { |x| x['attributes'] }.first
-      }
-    rescue ActionController::ParameterMissing, ActiveRecord::RecordInvalid
-      nil
-    end
-  end
-
   def destroy
     #check_permission 'admin'
     
@@ -303,6 +291,16 @@ class ListsController < ApplicationController
 
   def reference_params
     params.require(:ref).permit(:url, :name)
+  end
+
+  def create_entity_associations_payload
+    payload = params.require('data').map { |x| x.permit('type', 'id', { 'attributes' => ['url', 'name'] }) }
+    {
+      'entity_ids'      => payload.select { |x| x['type'] == 'entities' }.map { |x| x['id'] },
+      'reference_attrs' => payload.select { |x| x['type'] == 'references' }.map { |x| x['attributes'] }.first
+    }
+  rescue ActionController::ParameterMissing, ActiveRecord::RecordInvalid
+    nil
   end
 
   def interlocks_query

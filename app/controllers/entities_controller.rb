@@ -1,8 +1,15 @@
 class EntitiesController < ApplicationController
   include TagableController
   include ReferenceableController
+
+  ERRORS = ActiveSupport::HashWithIndifferentAccess.new(
+    create_bulk: {
+      errors: [{ 'title' => 'Could not create new entities: request formatted improperly' }]
+    }
+  )
+
   before_filter :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving]
-  before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show, :create_many]
+  before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show, :create_bulk]
   before_action :set_entity_with_eager_loading, only: [:show]
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
   before_action -> { check_permission('contributor') }, only: [:create]
@@ -31,20 +38,13 @@ class EntitiesController < ApplicationController
   def datatable
   end
 
-  def create_many
-    # note: clients may not create extensions in POSTS to this endpoing
-    respond_to do |format|
-      format.json do
-        begin
-          entities = Entity.create!(new_entities_params.map { |e| merge_last_user(e) })
-          render json: Api.as_api_json(entities), status: :created
-        rescue ActionController::ParameterMissing, ActiveRecord::RecordInvalid
-          render json: {
-                   errors: [{ 'title' => 'Could not create new entities: request formatted improperly' }]
-                 }, status: 400
-        end
-      end
-    end
+  def create_bulk
+    # only responds to JSON requests
+    # clients may not create extensions in POSTS to this endpoing
+    entities = Entity.create!(create_bulk_payload.map { |x| merge_last_user(x) })
+    render json: Api.as_api_json(entities), status: :created
+  rescue ActionController::ParameterMissing, NoMethodError, ActiveRecord::RecordInvalid
+    render json: ERRORS[:create_bulk], status: 400
   end
 
   def new
@@ -480,8 +480,12 @@ class EntitiesController < ApplicationController
     params.require(:entity).permit(:name, :blurb, :primary_ext)
   end
 
-  def new_entities_params
-    params.require(:entities).map { |e| e.permit(:name, :blurb, :primary_ext) }
+  def create_bulk_payload
+    payload = params.require('data').map do |record|
+      record.permit('type'       => 'entity',
+                    'attributes' => ['name', 'blurb', 'primary_ext'])
+    end
+    payload.map { |record| record['attributes'] }
   end
 
   def add_relationship_page?
