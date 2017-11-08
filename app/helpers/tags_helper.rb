@@ -12,8 +12,10 @@ module TagsHelper
   end
 
   def tags_controls
-    content_tag(:span, id: 'tags-controls') do
-      content_tag(:span, nil, id: 'tags-edit-button', class: 'tags-edit-glyph')
+    if user_signed_in?
+      content_tag(:span, id: 'tags-controls') do
+        content_tag(:span, nil, id: 'tags-edit-button', class: 'tags-edit-glyph')
+      end
     end
   end
 

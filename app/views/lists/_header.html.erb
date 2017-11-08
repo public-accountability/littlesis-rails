@@ -12,9 +12,7 @@
 
 	<% if list.tags.count.positive? %>
 	    <div class="col-sm-4 col-md-3">
-		<% if user_admin?  %>
-		    <%= render partial: 'lists/tags', locals: { tags: list.tags, include_title: true } %>
-		<% end %>
+	      <%= render partial: 'lists/tags', locals: { tags: list.tags, include_title: true } %>
 	    </div>
 	<% end %>
 

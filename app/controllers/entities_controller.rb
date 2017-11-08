@@ -11,7 +11,6 @@ class EntitiesController < ApplicationController
   ## Profile Page Tabs:
   # (consider moving these all to #show route)
   def show
-    @similar_entities = @entity.similar_entities
     @active_tab = :relationships
   end
 

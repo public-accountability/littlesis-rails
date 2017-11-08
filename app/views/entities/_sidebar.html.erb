@@ -23,8 +23,8 @@
 
     <!-- TAGS -->
 
-    <% if user_signed_in? && current_user.admin? %>
-      
+
+    <% if @entity.tags.present? || user_signed_in? %>
       <div class="row" id="sidebar-tags-container">
 	<div class="col-sm-12">            
           <%= sidebar_header 'Tags', addon: capture { tags_controls } %>
@@ -33,13 +33,15 @@
           <%= display_tags(@entity.tags) %>
 	</div>
       </div>
-	
-	<script>
-	 tags.init(
-	   <%= raw(@entity.tags_for(current_user).to_json) %>,
-           "<%= raw(tags_entity_path(@entity)) %>",
-	 );
-	</script>
+    <% end %>
+
+    <% if user_signed_in? %>
+      <script id="edit-tags-javascript">
+       tags.init(
+	 <%= raw(@entity.tags_for(current_user).to_json) %>,
+         "<%= raw(tags_entity_path(@entity)) %>",
+       );
+      </script>
     <% end %>
 
     <!-- SOURCE LINKS -->
@@ -96,18 +98,18 @@
     <% end %>
 
     <!-- Similar Entities -->
-    <% unless @similar_entities.blank? %>
-	<div class="row" id="sidbar-similar-entities-container">
+    <% unless @entity.similar_entities.blank? %>
+	<div class="row" id="sidebar-similar-entities-container">
 	    <div class="col-sm-12">
 		<%= sidebar_header('Similar Entities') %>
 	    </div>
 	    <div class="col-sm-12">
 		<ul class="list-unstyled">
-		    <%= sidebar_similar_entities(@similar_entities) %>
+		    <%= sidebar_similar_entities(@entity.similar_entities) %>
 		</ul>
 		
 		<% if user_signed_in? && (current_user.admin? || current_user.has_legacy_permission('merger') )%>
-		    <%= link_to 'Begin merging process »', @entity.legacy_url('merge') %>
+		    <%= link_to 'Begin merging process »', @entity.legacy_url('merge'), id: 'begin-merging-process-link' %>
 		<% end %>
 	    </div>
 	</div>
