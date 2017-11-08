@@ -1,6 +1,6 @@
 class ListEntity < ActiveRecord::Base
   self.table_name = "ls_list_entity"
-
+  include Api::Serializable
   include SoftDelete
 
   belongs_to :list, inverse_of: :list_entities

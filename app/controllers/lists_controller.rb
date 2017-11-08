@@ -1,5 +1,15 @@
 class ListsController < ApplicationController
   include TagableController
+
+  ERRORS = ActiveSupport::HashWithIndifferentAccess.new(
+    entity_associations_bad_format: {
+      errors: [{ title: 'Could not add entities to list: improperly formatted request.'}]
+    },
+    entity_associations_invalid_reference: {
+      errors: [{ title: 'Could not add entities to list: invalid reference.'}]
+    }
+  )
+
   # The call to :authenticate_user! on the line below overrides the :authenticate_user! call 
   # from TagableController and therefore including :tags in the list is required
   # Because of the potential for confusion, perhaps we should no longer use :authenticate_user!
@@ -8,7 +18,7 @@ class ListsController < ApplicationController
                 only: [ :new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags ]
 
   before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entities, :create_entities]
+                only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entities, :create_entity_associations]
   # permissions
   before_action :set_permissions,
                 only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity, :new_entities, :create_entities]
@@ -95,12 +105,35 @@ class ListsController < ApplicationController
   #   redirect_to lists_url, notice: 'List was successfully destroyed.'
   # end
 
-  # GET /lists/1/add_entities
+  # GET /lists/:id/add_entities
   def new_entities; end
 
+
+
   # POST /lists/:id/add_entities
-  def create_entities;
-    redirect_to members_list_path(@list)
+  # only handles json
+  def create_entity_associations
+
+    payload = create_entity_associations_payload
+    return render json: ERRORS[:entity_associations_bad_format], status: 400 unless payload
+
+    reference = @list.add_entities(payload['entity_ids']).save_with_reference(payload['reference_attrs'])
+    return render json: ERRORS[:entity_associations_invalid_reference], status: 400 unless reference
+
+    render json: Api.as_api_json(@list.list_entities.to_a).merge('included' => Array.wrap(reference.api_data)),
+           status: 200
+  end
+
+  def create_entity_associations_payload
+    begin
+      payload = params.require('data').map { |x| x.permit('type', 'id', { 'attributes' => ['url', 'name'] }) }
+      {
+        'entity_ids'      => payload.select { |x| x['type'] == 'entities' }.map { |x| x['id'] },
+        'reference_attrs' => payload.select { |x| x['type'] == 'references' }.map { |x| x['attributes'] }.first
+      }
+    rescue ActionController::ParameterMissing, ActiveRecord::RecordInvalid
+      nil
+    end
   end
 
   def destroy
@@ -210,6 +243,7 @@ class ListsController < ApplicationController
       degree2_type: 'Business'      
     )
   end
+
 
   def government
     @govt_bodies = interlocks_results(
