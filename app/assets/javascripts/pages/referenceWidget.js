@@ -74,7 +74,6 @@
   ///////////////////////////
   // TYPEAHEAD COMPONENTS ///
   //////////////////////////
-  
 
   /**
    * Prepares Bloodhound search with provided references data
@@ -91,6 +90,7 @@
       datumTokenizer: function(d) {
 	return flatten(
 	  [d.name, d.url]
+	    .filter(function(x) { return x !== null; })
 	    .map(function(x) {
 	      return Bloodhound.tokenizers.whitespace(x.toLowerCase());
 	    })
