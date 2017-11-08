@@ -18,7 +18,7 @@ class ListsController < ApplicationController
                 only: [ :new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags ]
 
   before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entities, :create_entity_associations]
+                only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
   # permissions
   before_action :set_permissions,
                 only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity, :new_entities, :create_entities]
@@ -105,12 +105,10 @@ class ListsController < ApplicationController
   #   redirect_to lists_url, notice: 'List was successfully destroyed.'
   # end
 
-  # GET /lists/:id/add_entities
-  def new_entities; end
+  # GET /lists/:id/associations/entities
+  def new_entity_associations; end
 
-
-
-  # POST /lists/:id/add_entities
+  # POST /lists/:id/associations/entities
   # only handles json
   def create_entity_associations
 
