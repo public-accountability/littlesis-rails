@@ -6,6 +6,7 @@ describe 'List Requests' do
   after(:each) { logout(:user) }
 
   describe 'adding entities to a list' do
+    let(:user){ create_admin_user } # who may edit lists
     let(:list) { create(:list) }
     let(:entities) { Array.new(2) { create(:random_entity) } }
     let(:document_attrs) { attributes_for(:document) }

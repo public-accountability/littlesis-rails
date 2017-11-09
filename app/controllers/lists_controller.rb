@@ -21,9 +21,9 @@ class ListsController < ApplicationController
                 only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
   # permissions
   before_action :set_permissions,
-                only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity, :new_entities, :create_entities]
+                only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
   before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references]
-  before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity, :new_entities, :create_entities]
+  before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
   def self.get_lists(page)
