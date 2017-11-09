@@ -46,7 +46,8 @@ module TagsHelper
 
   def tags_edits_format_editor(edit_event)
     e = edit_event['editor']
-    e.username == "system" ? "System" : link_to(e.username, legacy_user_path(e))
+    return "System" if e.nil? || e.username == "system"
+    link_to(e.username, legacy_user_path(e))
   end
 
   def legacy_user_path(user)

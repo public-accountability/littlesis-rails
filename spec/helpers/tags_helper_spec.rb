@@ -38,5 +38,10 @@ describe TagsHelper, type: :helper do
 
       it { is_expected.to eql "System" }
     end
+
+    context "when editor is missing" do
+      let(:edit_event) { {} }
+      it { is_expected.to eql "System" }
+    end
   end
 end
