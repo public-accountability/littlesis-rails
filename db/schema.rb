@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109155832) do
+ActiveRecord::Schema.define(version: 20171109174122) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1661,6 +1661,7 @@ ActiveRecord::Schema.define(version: 20171109155832) do
     t.boolean  "newsletter"
     t.string   "chatid",                 limit: 255
     t.boolean  "is_restricted",                      default: false
+    t.boolean  "map_the_power"
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree

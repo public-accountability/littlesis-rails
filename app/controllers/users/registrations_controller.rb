@@ -123,7 +123,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def user_params
-    params.require(:user).permit(:username, :email, :password, :password_confirmation, :default_network_id, :newsletter)
+    params.require(:user).permit(:username, :email, :password, :password_confirmation, :default_network_id, :newsletter, :map_the_power)
   end
 
   def sf_profile_params

@@ -55,7 +55,7 @@
     <p>If you’re interested in <strong>connecting with other power researchers in your region</strong> and doing local or regional power mapping of your city or state, check out our <%= link_to 'Map The Power', 'https://littlesis.org/toolkit' %> toolkit and sign up <%= link_to 'here', 'https://docs.google.com/forms/d/e/1FAIpQLSfiJh9AjPmE8l6m-OKQH5-Tde6RjlVrZ-q_pjg8UV62h8dneA/viewform' %> to be part of our national network of researchers for the resistance!</p>
   </div>
   <div class="col-sm-4 col-md-5 hidden-xs">
-    <%= image_tag "map_the_power_RGB.jpg",  class: 'img-responsive center-block' %>
+    <%= image_tag "map_the_power_RGB.jpg",  class: 'img-responsive' %>
   </div>
 </div>
 
@@ -165,6 +165,15 @@
 		<%= f.check_box :newsletter, checked: true %><small style="padding-left: 0.5em;">Send me your newsletter (we send one every 1-2 months)</small>
               </div>
 	    </div>
+
+
+	    <div class="form-group">
+              <%=  label_tag 'map_the_power', "Map the Power", :class => label_class %>
+              <div class="col-sm-9">
+		<%= f.check_box :map_the_power %><small style="padding-left: 0.5em;">Tell me more about Map the Power!</small>
+              </div>
+	    </div>
+
 
 	    <div class="form-group">
               <%=  label_tag 'location', "Location", :class => label_class %>

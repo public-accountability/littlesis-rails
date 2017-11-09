@@ -4,6 +4,7 @@ describe User do
   before(:all) { DatabaseCleaner.start }
   after(:all) { DatabaseCleaner.clean }
 
+  it { should have_db_column(:map_the_power) }
   it { should have_one(:api_token) }
   it { should have_many(:lists) }
   it { should have_many(:user_permissions) }
