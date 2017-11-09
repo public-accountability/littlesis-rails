@@ -17,6 +17,8 @@ feature "Signing up for an account", type: :feature do
 
     page_has_selector 'h2', text: 'Get Involved!'
     page_has_selector 'h2', text: 'Data Summary'
+
+    expect(page).to have_text "What are your research interests? What are you hoping to use LittleSis for?"
   end
 
   scenario 'Fills out form and signs up' do
@@ -40,6 +42,24 @@ feature "Signing up for an account", type: :feature do
     expect(page).not_to have_selector "#signup-errors-alert"
   end
 
+  scenario 'Fills out form and signs up with location field' do
+    location = 'the center of the earth'
+
+    fill_in 'user_sf_guard_user_profile_name_first', :with => user_info.first_name
+    fill_in 'user_sf_guard_user_profile_name_last', :with => user_info.last_name
+    fill_in 'user_email', :with => user_info.email
+    fill_in 'user_username', :with => user_info.username
+    fill_in 'user_password', :with => user_info.password
+    fill_in 'user_password_confirmation', :with => user_info.password
+    find(:css, "#terms_of_use").set(true)
+    fill_in 'about-you-input', :with => user_info.about_you
+    fill_in 'user_sf_guard_user_profile_location', :with => location
+
+    click_button 'Sign up'
+
+    expect(SfGuardUserProfile.last.location).to eql location
+  end
+
   context 'Attempting to signup with a username that is already taken' do
     let(:username) { Faker::Internet.user_name }
     let!(:user) do
@@ -50,7 +70,7 @@ feature "Signing up for an account", type: :feature do
 
     scenario 'Shows error message regarding the username' do
       counts = [User.count, SfGuardUser.count, SfGuardUserProfile.count]
-      
+
       fill_in 'user_sf_guard_user_profile_name_first', :with => user_info.first_name
       fill_in 'user_sf_guard_user_profile_name_last', :with => user_info.last_name
       fill_in 'user_email', :with => user_info.email
@@ -63,7 +83,7 @@ feature "Signing up for an account", type: :feature do
       click_button 'Sign up'
 
       expect(counts).to eql [User.count, SfGuardUser.count, SfGuardUserProfile.count]
-      
+
       expect(page.status_code).to eq 200
       page_has_selector 'h2', text: 'Get Involved!'
       page_has_selector "#signup-errors-alert"
@@ -71,5 +91,4 @@ feature "Signing up for an account", type: :feature do
 
     end
   end
-  
 end

@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.7.19, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.20, for Linux (x86_64)
 --
 -- Host: mysql    Database: littlesis_test
 -- ------------------------------------------------------
@@ -2773,6 +2773,7 @@ CREATE TABLE `sf_guard_user_profile` (
   `home_network_id` int(11) NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `location` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_user_idx` (`user_id`),
   UNIQUE KEY `unique_email_idx` (`email`),
@@ -3048,7 +3049,7 @@ CREATE TABLE `versions` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-31 15:24:44
+-- Dump completed on 2017-11-09 16:09:47
 INSERT INTO schema_migrations (version) VALUES ('20131031182415');
 
 INSERT INTO schema_migrations (version) VALUES ('20131031182500');
@@ -3282,4 +3283,6 @@ INSERT INTO schema_migrations (version) VALUES ('20171012181822');
 INSERT INTO schema_migrations (version) VALUES ('20171018151914');
 
 INSERT INTO schema_migrations (version) VALUES ('20171031152314');
+
+INSERT INTO schema_migrations (version) VALUES ('20171109155832');
 

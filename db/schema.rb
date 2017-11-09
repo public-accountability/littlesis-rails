@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171031152314) do
+ActiveRecord::Schema.define(version: 20171109155832) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1541,6 +1541,7 @@ ActiveRecord::Schema.define(version: 20171031152314) do
     t.integer  "home_network_id",            limit: 4,                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "location",                   limit: 255
   end
 
   add_index "sf_guard_user_profile", ["email"], name: "unique_email_idx", unique: true, using: :btree

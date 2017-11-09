@@ -127,7 +127,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def sf_profile_params
-    sf_params = params.require(:user).permit(:email, :username, sf_guard_user_profile: [:name_first, :name_last, :reason] )
+    sf_params = params.require(:user).permit(:email, :username, sf_guard_user_profile: [:name_first, :name_last, :reason, :location])
     sf_params[:sf_guard_user_profile].merge(
       "email" => sf_params[:email],
       "public_name" => sf_params[:username],
