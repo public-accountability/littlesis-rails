@@ -38,38 +38,38 @@
  })
 </script>
 
+<% column_class = 'col-sm-8' %>
+
 <div class="row">
-  <div class="col-sm-7">
+  <div class="<%= column_class %>">
     <div class="thin-grey-bottom-border">
       <h2>Get Involved!</h2>
-    </div>
-  </div>
-  <div class="col-sm-1"></div>
-  <div class="col-sm-4 thin-grey-bottom-border">
-    <h2 class="text-center">Data Summary</h2>
+      </div>
   </div>
 </div>
 <br />
 <div class="row">
-  <div class="col-sm-8">
-    <div class="row">
-      <div class="col-sm-12">
-	<p><strong>LittleSis is bringing together a community of researchers who believe in transparency and accountability in our society and economy.</strong> Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power.</p>
-	<p><strong>We're looking for researchers, programmers, artists and organizers to be a part of our activist researcher community.</strong> If you want to get involved sign up to become a LittleSis analyst and start adding information to the site. You can check out our instructional videos for information on how to use all the tools on our site.</p>
-	<p>If you’re interested in <strong>connecting with other power researchers in your region</strong> and doing local or regional power mapping of your city or state, check out our <%= link_to 'Map The Power', 'https://littlesis.org/toolkit' %> toolkit and sign up <%= link_to 'here', 'https://docs.google.com/forms/d/e/1FAIpQLSfiJh9AjPmE8l6m-OKQH5-Tde6RjlVrZ-q_pjg8UV62h8dneA/viewform' %> to be part of our national network of researchers for the resistance!</p>
-      </div>
-    </div>
-    <div class="row bottom-1em">
-      <div class="col-sm-8">
-        <div class="thin-grey-bottom-border">
-          <h3>Become an analyst!</h2>
-        </div>
-      </div>
-    </div>
+  <div class="col-sm-8 col-md-7 col-xs-12" id="join-page-get-involved">
+    <p><strong>LittleSis is bringing together a community of researchers who believe in transparency and accountability in our society and economy.</strong> Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power.</p>
+    <p><strong>We're looking for researchers, programmers, artists and organizers to be a part of our activist researcher community.</strong> If you want to get involved sign up to become a LittleSis analyst and start adding information to the site. You can check out our <%= link_to 'instructional videos', 'https://www.youtube.com/watch?v=aWLnTqQb-BI&list=PLLT8_8t1lsddq42_VmrwIXSkXn0-bLfit' %> for information on how to use all the tools on our site.</p>
+    <p>If you’re interested in <strong>connecting with other power researchers in your region</strong> and doing local or regional power mapping of your city or state, check out our <%= link_to 'Map The Power', 'https://littlesis.org/toolkit' %> toolkit and sign up <%= link_to 'here', 'https://docs.google.com/forms/d/e/1FAIpQLSfiJh9AjPmE8l6m-OKQH5-Tde6RjlVrZ-q_pjg8UV62h8dneA/viewform' %> to be part of our national network of researchers for the resistance!</p>
+  </div>
+  <div class="col-sm-4 col-md-5 hidden-xs">
+    <%= image_tag "map_the_power_RGB.jpg",  class: 'img-responsive center-block' %>
+  </div>
+</div>
 
-    <div class="row">
+<div class="row bottom-1em">
+  <div class="<%= column_class %>">
+    <div class="thin-grey-bottom-border">
+      <h3>Become an analyst!</h2>
+    </div>
+  </div>
+</div>
+
+<div class="row">
       
-      <div class="col-sm-12">
+      <div class="col-sm-7">
         <p>LittleSis presents an exciting opportunity: editors (called "analysts" on LittleSis) are developing an unprecedented, authoritative database of key relationships between powerful Americans. Sign up to edit the profile pages of your (least) favorite fatcats.</p>
         <p>To request an account, please provide all of the following information. We promise not to share it with anyone, ever!</p>
 
@@ -201,8 +201,5 @@
 
       </div>
     </div>
-  </div>
-  <div class="col-sm-3 col-sm-offset-1">
-    <%= render partial: 'home/data_summary', locals: {stats: ExtensionRecord.data_summary} %>
   </div>
 </div>

@@ -16,7 +16,7 @@ feature "Signing up for an account", type: :feature do
     expect(page).to have_current_path new_user_registration_path
 
     page_has_selector 'h2', text: 'Get Involved!'
-    page_has_selector 'h2', text: 'Data Summary'
+    page_has_selector 'h3', text: 'Become an analyst!'
 
     expect(page).to have_text "What are your research interests? What are you hoping to use LittleSis for?"
   end
