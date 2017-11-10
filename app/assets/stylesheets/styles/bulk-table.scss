@@ -140,4 +140,10 @@ h1#bulk-add-header {
             }
         }
     }
+    #bulk-submit-button{
+        @extend .btn;
+        @extend .btn-primary;
+        width: 20%;
+        margin: 1.5em 40%; //TR
+    }
 }

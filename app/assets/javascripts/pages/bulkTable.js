@@ -96,6 +96,7 @@
     return state.notification !== "";
   };
 
+
   state.getErrors = function(entity, attr){
     return state.getIn(['entities', 'errors', entity.id, attr]);
   };
@@ -134,8 +135,29 @@
       .map(function(matchId){ return state.getMatch(entity, matchId); });
   };
 
+  // PREDICATES
+
   state.hasMatches = function(entity){
     return !util.isEmpty(state.getMatches(entity));
+  };
+
+  // () -> Boolean
+  state.canSubmit = function(){
+    return state.isValid() && state.isResolved();
+  };
+
+  // () -> Boolean
+  state.isValid = function(){
+    return Object.keys(state.entities.byId).every(function(entityId){
+      return util.isEmpty(state.getIn(['entities', 'errors', entityId]));
+    });
+  };
+
+  // () -> Boolean
+  state.isResolved = function(){
+    return Object.keys(state.entities.byId).every(function(entityId){
+      return util.isEmpty(state.getIn(['entities', 'matches', entityId, 'byId']));
+    });
   };
 
   // SETTERS
@@ -466,7 +488,7 @@
     $('#' + state.rootId)
       .append(notificationBar())
       .append(state.canUpload ? uploadContainer() : null)
-      .append(state.hasRows()? table() : null);
+      .append(state.hasRows()? tableForm() : null);
     return state;
   };
 
@@ -496,11 +518,17 @@
     );
   }
 
+  function tableForm(){
+    return $('<div>', {id: 'bulk-add-table-form' })
+      .append(table())
+      .append(submitButton());
+  }
+
   function table(){
     return $('<table>', { id: 'bulk-add-table'})
       .append(thead())
       .append(tbody());
-  };
+  }
 
   function thead(){
     return $('<thead>').append(
@@ -541,7 +569,7 @@
     ).append(
       maybeErrorAlert(entity, col, errors)
     );
-  };
+  }
 
   function makeEditable(contentsDiv, entity, col){
     $(contentsDiv).replaceWith($('<input>', {
@@ -679,6 +707,14 @@
     });
   };
 
+  function submitButton(){
+    return $('<button>', {
+      id:       "bulk-submit-button",
+      text:     "Submit",
+      click:    handleSubmit
+    }).prop('disabled', !state.canSubmit());
+  }
+
   // EVENT HANDLERS
 
   // Entity -> Void
@@ -701,6 +737,11 @@
     $(".resolver-picker-result-container")
       .empty()
       .append(pickerResult(state.getMatch(entity, matchId)));
+  }
+
+  // () -> Void
+  function handleSubmit(){
+    console.log('submit!!');
   }
 
   // RETURN

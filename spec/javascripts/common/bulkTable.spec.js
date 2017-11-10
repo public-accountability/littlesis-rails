@@ -1,4 +1,4 @@
-describe('Bulk Table module', () => {
+fdescribe('Bulk Table module', () => {
 
   // mutable variables used as hooks in setup steps
   let searchEntityStub, hasFileSpy, getFileSpy, file;
@@ -6,7 +6,7 @@ describe('Bulk Table module', () => {
   // millis to wait for search, csv upload, etc...
   // tune this if you are getting
   // odd non-deterministic failures due to async issues
-  const asyncDelay = 20;
+  const asyncDelay = 5;
 
   // CELL FIXTURES
   // (would be better to import constant from `bulkTable.js`, but we don't have modules)
@@ -56,6 +56,10 @@ describe('Bulk Table module', () => {
         `${entities.newEntity0.name},${entities.newEntity0.primary_ext},${entities.newEntity0.blurb}\n` +
         `${entities.newEntity1.name},${entities.newEntity1.primary_ext},${entities.newEntity1.blurb}\n`;
 
+  const csvValidNoMatches =
+        "name,primary_ext,blurb\n" +
+         `${entities.newEntity1.name},${entities.newEntity1.primary_ext},${entities.newEntity1.blurb}\n`;
+
   // DOM/STATE FIXTURES
 
   const testDom ='<div id="test-dom"></div>';
@@ -73,7 +77,7 @@ describe('Bulk Table module', () => {
     getFileSpy.and.returnValue(file);
     bulkTable.init(defaultState);
     $(`#${ids.uploadButton}`).change();
-    setTimeout(done, asyncDelay); // wait for file to upload, etc.
+    setTimeout(done, 2 * asyncDelay); // wait for file to upload, etc.
   };
 
   const setupEdit = (csv, findCell, value, done, clickable = '.cell-contents') => {
@@ -286,6 +290,11 @@ describe('Bulk Table module', () => {
           columns.map(col => entities[`newEntity${idx}`][col.attr] ).join("")
         );
       });
+    });
+
+    it('has a submit button', () => {
+      expect($("#bulk-submit-button")).toExist();
+      expect($("#bulk-submit-button")).toHaveText("Submit");
     });
   });
 
@@ -607,11 +616,34 @@ describe('Bulk Table module', () => {
   });
 
   describe('submitting', () => {
+
     describe('there are invalid fields', () => {
-      it('will not submit');
+
+      const csv = "name,primary_ext,blurb\nx,y,z\n";
+      beforeEach(done => setupWithCsv(csv, done));
+
+      it('will not submit', () => {
+        expect($("#bulk-submit-button")).toBeDisabled();
+      });
     });
 
-    describe('there are no invalid fields', () => {
+    describe('there are unresolved matches', () => {
+
+      beforeEach(done => setupWithCsv(csvValid, done));
+
+      it('will not submit', () => {
+        expect($("#bulk-submit-button")).toBeDisabled();
+      });
+    });
+
+    describe('there are no invalid fields or unresolved matches', () => {
+
+      beforeEach(done => setupWithCsv(csvValidNoMatches, done));
+
+      it ('can submit', () => {
+        expect($("#bulk-submit-button")).not.toBeDisabled();
+      });
+
       it('submits a batch of entities to a list endpoint');
 
       describe('all submissions worked', () => {

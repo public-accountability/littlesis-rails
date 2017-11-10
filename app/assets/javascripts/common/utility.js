@@ -249,6 +249,6 @@ utility.isObject = function(maybeObj){
 };
 
 utility.isEmpty = function (obj){
-  return !Object.keys(obj).length;
+  return !Boolean(obj) || !Object.keys(obj).length;
 };
 
