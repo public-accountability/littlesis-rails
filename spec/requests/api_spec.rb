@@ -28,6 +28,7 @@ describe Api, :pagination_helper do
             'type' => 'entities',
             'id' => lawyer.id,
             'attributes' => {
+              'id' => lawyer.id,
               'name' => lawyer.name,
               'blurb' => lawyer.blurb,
               'primary_ext' => 'Person',
