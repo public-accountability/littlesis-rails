@@ -34,6 +34,10 @@
     }
   };
 
+  self.getEntity = function(id){
+    return get('/entities/' + id, {}).then(res => res.data.attributes);
+  };
+
   // helpers
 
   function get(url, queryParams){
