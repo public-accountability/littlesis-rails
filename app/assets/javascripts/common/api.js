@@ -15,11 +15,10 @@
       .catch(handleError);
 
     function format(results){
-      // TODO: gracefully handle correctly named fields
       return results.reduce(function(acc, res) {
         var _res = Object.assign({}, res, {
-          primary_ext: res.primary_type,
-          blurb:       res.description,
+          primary_ext: res.primary_ext || res.primary_type,
+          blurb:       res.blubr || res.description,
           id:          String(res.id)
         });
         delete _res.primary_type;
@@ -34,24 +33,83 @@
     }
   };
 
-  self.getEntity = function(id){
-    return get('/entities/' + id, {}).then(res => res.data.attributes);
+  // [EntityWithoutId] -> Promise[[Entity]]
+  self.createEntities = function(entities){
+    return post('/entities/bulk', formatReq(entities))
+      .then(formatResp);
+
+    function formatReq(entities){
+      return {
+        data: entities.map(function(entity){
+          return {
+            type: "entities",
+            attributes: entity
+          };
+        })
+      };
+    };
+
+    function formatResp(resp){
+      return resp.data.map(function(datum){
+        return Object.assign(
+          datum.attributes,
+          { id: String(datum.attributes.id)}
+        );
+      });
+    }
+  };
+
+  // Integer, [Integer] -> Promise[[ListEntity]]
+  self.addEntitiesToList = function(listId, entityIds){
+    return post('/lists/'+listId+'/associations/entities', formatReq(entityIds))
+      .then(formatResp);
+
+    function formatReq(entityIds){
+      return {
+        data: entityIds.map(function(id){
+          return { type: 'entities', id: id };
+        })
+      };
+    };
+
+    function formatResp(resp){
+      return resp.data.map(function(datum){
+        return util.stringifyValues(datum.attributes);
+      });
+    }
   };
 
   // helpers
 
   function get(url, queryParams){
-    return fetch(url + '.json?' + qs(queryParams), { credentials: 'include' })
-      .then(jsonify);
+    return fetch(url + qs(queryParams), {
+      headers:      jsonHeaders,
+      method:      'get',
+      credentials: 'include' // use auth tokens stored in session cookies
+    }).then(jsonify);
   }
 
+  function post(url, payload){
+    return fetch(url, {
+      headers:     jsonHeaders,
+      method:      'post',
+      credentials: 'include', // use auth tokens stored in session cookies
+      body:        payload
+    }).then(jsonify);
+  };
+
+  var jsonHeaders = {
+    'Accept': 'application/json, text/plain, */*',
+    'Content-Type': 'application/json'
+  };
+
   function qs(queryParams){
-    return $.param(queryParams);
+    return '?' + $.param(queryParams);
   }
 
   function jsonify(response){
     return response.json();
   }
-
+  
   return self;
 }));

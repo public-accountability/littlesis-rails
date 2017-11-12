@@ -1,4 +1,4 @@
-fdescribe('Bulk Table module', () => {
+describe('Bulk Table module', () => {
 
   // mutable variables used as hooks in setup steps
   let searchEntityStub, hasFileSpy, getFileSpy, file;
@@ -34,7 +34,7 @@ fdescribe('Bulk Table module', () => {
 
   // ENITY FIXTURES
 
-  const entities = {
+  const newEntities = {
     newEntity0: {
       id:          "newEntity0",
       name:        "Lew Basnight",
@@ -53,12 +53,12 @@ fdescribe('Bulk Table module', () => {
 
   const csvValid =
         "name,primary_ext,blurb\n" +
-        `${entities.newEntity0.name},${entities.newEntity0.primary_ext},${entities.newEntity0.blurb}\n` +
-        `${entities.newEntity1.name},${entities.newEntity1.primary_ext},${entities.newEntity1.blurb}\n`;
+        `${newEntities.newEntity0.name},${newEntities.newEntity0.primary_ext},${newEntities.newEntity0.blurb}\n` +
+        `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
 
   const csvValidNoMatches =
         "name,primary_ext,blurb\n" +
-         `${entities.newEntity1.name},${entities.newEntity1.primary_ext},${entities.newEntity1.blurb}\n`;
+         `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
 
   // DOM/STATE FIXTURES
 
@@ -95,8 +95,8 @@ fdescribe('Bulk Table module', () => {
   const searchEntityFake = query => {
     // stub search api call w/ 1 successful, 1 failed result
     switch(query){
-    case entities.newEntity0.name:
-      return Promise.resolve(searchResultsFor(entities.newEntity0));
+    case newEntities.newEntity0.name:
+      return Promise.resolve(searchResultsFor(newEntities.newEntity0));
     default:
       return Promise.resolve([]);
     }
@@ -198,13 +198,13 @@ fdescribe('Bulk Table module', () => {
 
       it('stores entity data', () => {
         expect(bulkTable.getIn(['entities', 'byId'])).toEqual({
-          newEntity0: entities['newEntity0'],
-          newEntity1: entities['newEntity1']
+          newEntity0: newEntities['newEntity0'],
+          newEntity1: newEntities['newEntity1']
         });
       });
 
       it('stores row ordering', () => {
-        expect(bulkTable.getIn(['entities', 'order'])).toEqual(Object.keys(entities));
+        expect(bulkTable.getIn(['entities', 'order'])).toEqual(Object.keys(newEntities));
       });
 
       it('hides upload button', () => {
@@ -287,7 +287,7 @@ fdescribe('Bulk Table module', () => {
       expect(rows).toHaveLength(2);
       rows.forEach((row, idx) => {
         expect(row.textContent).toEqual( // row.textContent concatenates all cell text with no spaces
-          columns.map(col => entities[`newEntity${idx}`][col.attr] ).join("")
+          columns.map(col => newEntities[`newEntity${idx}`][col.attr] ).join("")
         );
       });
     });
@@ -305,14 +305,14 @@ fdescribe('Bulk Table module', () => {
     describe('search', () => {
 
       it('searches littlesis for entities with same name as user submissions', () => {
-        expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity0.name);
-        expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity1.name);
+        expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity0.name);
+        expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity1.name);
       });
 
       it('stores list of search matches in memory', () => {
         expect(bulkTable.getIn(['entities', 'matches'])).toEqual({
           newEntity0: {
-            byId:     utility.normalize(searchResultsFor(entities.newEntity0)),
+            byId:     utility.normalize(searchResultsFor(newEntities.newEntity0)),
             order:    ["00", '10', '20'],
             selected: null
           },
@@ -344,7 +344,7 @@ fdescribe('Bulk Table module', () => {
     describe('popover', () => {
 
       let popover;
-      const matches = searchResultsFor(entities.newEntity0);
+      const matches = searchResultsFor(newEntities.newEntity0);
 
       beforeEach(done => {
         findFirstRow().find(".resolver-anchor").trigger('click');
@@ -480,10 +480,10 @@ fdescribe('Bulk Table module', () => {
     describe('contents of name cell', () => {
 
       const findCell = () => findSecondRow().find('td:nth-child(1)');
-      beforeEach(done => setupEdit(csvValid, findCell, entities.newEntity0.name, done));
+      beforeEach(done => setupEdit(csvValid, findCell, newEntities.newEntity0.name, done));
 
       it('searches for entities matching new name', () => {
-        expect(searchEntityStub).toHaveBeenCalledWith(entities.newEntity0.name);
+        expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity0.name);
         expect(bulkTable.getIn(['entities', 'matches', 'newEntity1'])).toExist();
         expect(findSecondRow().find(".resolver-anchor")).toExist();
       });

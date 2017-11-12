@@ -240,6 +240,22 @@ utility.normalize = function(arr){
   );
 };
 
+// mostly for use in deserializing JSON
+utility.stringifyValues = function(obj){
+  return Object.keys(obj).reduce(
+    function(acc, k){
+      var val = utility.get(obj, k);
+      return utility.set(
+        acc,
+        k,
+        // only stringify non-boolean existy vals
+        (val === true || val === false) ? val : val && String(val)
+      );
+    },
+    {}
+  );
+};
+
 utility.exists = function(obj){
   return obj !== undefined && obj !== null;
 };
@@ -251,4 +267,5 @@ utility.isObject = function(maybeObj){
 utility.isEmpty = function (obj){
   return !Boolean(obj) || !Object.keys(obj).length;
 };
+
 

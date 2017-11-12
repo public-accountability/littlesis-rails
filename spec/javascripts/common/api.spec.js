@@ -6,125 +6,23 @@ describe('API module', () => {
     { status: 200 }
   );
 
-    // retrieved as logged in user from running dev server on 23-Oct-2017
-    const wmSearchResults = [
-      {
-        id:            1,
-        name:         "Walmart",
-        description:  "Retail merchandising and union busting",
-        primary_type: "Org",
-        url:          "/org/1/Walmart"
-      },
-      {
-        id:           77304,
-        name:         "The Walmart Foundation",
-        description:  "Wal-Mart foundation",
-        primary_type: "Org",
-        url:          "/org/77304/The_Walmart_Foundation"
-      },
-      {
-        id:           106423,
-        name:         "Walmart Stores U.S",
-        description:  "Largest division of Walmart Stores, Inc.",
-        primary_type: "Org",
-        url:          "/org/106423/Walmart_Stores_U.S"}
-    ];
-
-    const formattedWmSearchResults = [
-      {
-        id:          "1",
-        name:        "Walmart",
-        blurb:       "Retail merchandising and union busting",
-        primary_ext: "Org",
-        url:         "/org/1/Walmart"
-      },
-      {
-        id:          "77304",
-        name:        "The Walmart Foundation",
-        blurb:       "Wal-Mart foundation",
-        primary_ext: "Org",
-        url:         "/org/77304/The_Walmart_Foundation"
-      },
-      {
-        id:          "106423",
-        name:        "Walmart Stores U.S",
-        blurb:       "Largest division of Walmart Stores, Inc.",
-        primary_ext: "Org",
-        url:         "/org/106423/Walmart_Stores_U.S"}
-    ];
-
-  var wmApiJson = {
-    "meta": {
-      "copyright": "LittleSis CC BY-SA 3.0",
-      "license": "https://creativecommons.org/licenses/by-sa/3.0/us/",
-      "apiVersion": "2.0-beta"
-    },
-    "data": {
-      "type": "entities",
-      "id": 1,
-      "attributes": {
-        "id": 1,
-        "name": "Walmart",
-        "blurb": "Retail merchandising and union busting",
-        "summary": null,
-        "website": "http://www.walmartstores.com",
-        "parent_id": null,
-        "primary_ext": "Org",
-        "updated_at": "2017-10-12T18:38:26Z",
-        "start_date": null,
-        "end_date": null,
-        "aliases": [
-          "IRS EIN 71-0415188",
-          "Wal Mart",
-          "Wal-Mart",
-          "Wal-Mart Stores Inc",
-          "Wal-Mart Stores, Inc.",
-          "Walmart"
-        ],
-        "types": [
-          "Organization",
-          "Business",
-          "Public Company"
-        ],
-        "extensions": {
-          "Org": {
-            "name": "Wal-Mart Stores, Inc.",
-            "name_nick": null,
-            "employees": null,
-            "revenue": 378799000000,
-            "fedspending_id": "336092",
-            "lda_registrant_id": "40305"
-          },
-          "Business": {
-            "annual_profit": null
-          },
-          "PublicCompany": {
-            "ticker": "WMT",
-            "sec_cik": 104169
-          }
-        }
-      },
-      "links": {
-        "self":
-        "http://localhost:8080/entities/1-Walmart"
-      }
-    }
+  const jsonHeaders = {
+    'Accept': 'application/json, text/plain, */*',
+    'Content-Type': 'application/json'
   };
 
   describe('#searchEntity', () => {
 
-    it('resolves a promise of well-formatted entities on successful search', done => {
-      spyOn(window, 'fetch').and.returnValue(responseOf(wmSearchResults));
+    it('resolves to an array of entities on successful search', done => {
+      spyOn(window, 'fetch').and.returnValue(responseOf(fxt.walmartSearchResults));
       api.searchEntity('walmart').then((res => {
-        expect(res).toEqual(formattedWmSearchResults);
+        expect(res).toEqual(fxt.walmartSearchResultsParsed);
         done();
       }));
     });
 
-    it('resovles a promise of an empty array on failed search', done => {
-
-      spyOn(window, 'fetch').and.returnValue(Promise.reject("Intentionally-created error for tests."));
-
+    it('resovles to an empty array on failed search', done => {
+      spyOn(window, 'fetch').and.returnValue(Promise.reject("Intentional error for tests."));
       api.searchEntity('walmart').then(res => {
         expect(res).toEqual([]);
         done();
@@ -132,14 +30,68 @@ describe('API module', () => {
     });
   });
 
-  describe('#getEntity', () => {
+  describe('#createEntities', () => {
 
-    it ('resolves a promise of a well-formatted entity on successful response', done => {
-      spyOn(window, 'fetch').and.returnValue(responseOf(wmApiJson));
-      api.getEntity(1).then((res => {
-        expect(res).toEqual(wmApiJson.data.attributes);
-        done();
-      }));
+    let fetchSpy, response;
+    const entities = Object.values(fxt.newEntities);
+
+    beforeAll(done => {
+      fetchSpy = spyOn(window, 'fetch').and.returnValue(responseOf(fxt.createdEntitiesApiJson));
+      api.createEntities(entities).then(res => { response = res; done(); });
+    });
+
+    it ('formats request according to contract', () => {
+      expect(fetchSpy).toHaveBeenCalledWith(
+        '/entities/bulk', {
+          headers: jsonHeaders,
+          method: 'post',
+          credentials: 'include',
+          body: {
+            data: [
+              { type: 'entities', attributes: entities[0] },
+              { type: 'entities', attributes: entities[1] },
+            ]
+          }
+        }); 
+    });
+
+    it('parses array of entities from response', () => {
+      expect(response).toEqual(fxt.createdEntitiesParsed);
+    });
+  });
+
+  describe('#addEntitiesToList', () => {
+
+    let fetchSpy, response;
+    const entities = fxt.createdEntities;
+
+    beforeAll(done => {
+      fetchSpy = spyOn(window, 'fetch')
+        .and.returnValue(responseOf(fxt.listEntitiesApiJson));
+      api.addEntitiesToList(100, [1,2])
+        .then(res => {
+          response = res;
+          done();
+        });
+    });
+
+    it('formats request according to contract', () => {
+      expect(fetchSpy).toHaveBeenCalledWith(
+        '/lists/100/associations/entities', {
+          headers: jsonHeaders,
+          method: 'post',
+          credentials: 'include',
+          body: {
+            data: [
+              { type: 'entities', id: 1 },
+              { type: 'entities', id: 2 },
+            ]
+          }
+        });
+    });
+
+    it('parses array of list entities from response', () => {
+      expect(response).toEqual(fxt.listEntitiesParsed);
     });
   });
 });
