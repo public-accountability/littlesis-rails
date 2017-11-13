@@ -4,6 +4,8 @@ describe SfGuardUserProfile do
   before(:all) { DatabaseCleaner.start }
   after(:all) { DatabaseCleaner.clean }
 
+  it { should have_db_column(:location) }
+
   describe 'validations' do
     before(:all) { @sf_guard_user = create(:sf_guard_user) }
     subject { build(:sf_guard_user_profile, user_id: @sf_guard_user.id) }

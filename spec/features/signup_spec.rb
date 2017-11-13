@@ -16,7 +16,9 @@ feature "Signing up for an account", type: :feature do
     expect(page).to have_current_path new_user_registration_path
 
     page_has_selector 'h2', text: 'Get Involved!'
-    page_has_selector 'h2', text: 'Data Summary'
+    page_has_selector 'h3', text: 'Become an analyst!'
+    expect(page).to have_text "Tell me more about Map the Power!"
+    expect(page).to have_text "What are your research interests? What are you hoping to use LittleSis for?"
   end
 
   scenario 'Fills out form and signs up' do
@@ -36,8 +38,35 @@ feature "Signing up for an account", type: :feature do
     expect(counts.map { |x| x + 1 }).to eql [User.count, SfGuardUser.count, SfGuardUserProfile.count]
     expect(page.status_code).to eq 200
     expect(page).to have_current_path join_success_path
-
     expect(page).not_to have_selector "#signup-errors-alert"
+
+    last_user = User.last
+    expect(last_user.newsletter).to be true
+    expect(last_user.map_the_power).to be false
+  end
+
+  scenario 'Fills out form and signs up with location field and checks map the power' do
+    location = 'the center of the earth'
+
+    fill_in 'user_sf_guard_user_profile_name_first', :with => user_info.first_name
+    fill_in 'user_sf_guard_user_profile_name_last', :with => user_info.last_name
+    fill_in 'user_email', :with => user_info.email
+    fill_in 'user_username', :with => user_info.username
+    fill_in 'user_password', :with => user_info.password
+    fill_in 'user_password_confirmation', :with => user_info.password
+    find(:css, "#terms_of_use").set(true)
+    fill_in 'about-you-input', :with => user_info.about_you
+    fill_in 'user_sf_guard_user_profile_location', :with => location
+
+    find(:css, "#user_map_the_power").set(true)
+
+    click_button 'Sign up'
+
+    expect(SfGuardUserProfile.last.location).to eql location
+
+    last_user = User.last
+    expect(last_user.email).to eql user_info.email
+    expect(last_user.map_the_power).to be true
   end
 
   context 'Attempting to signup with a username that is already taken' do
@@ -50,7 +79,7 @@ feature "Signing up for an account", type: :feature do
 
     scenario 'Shows error message regarding the username' do
       counts = [User.count, SfGuardUser.count, SfGuardUserProfile.count]
-      
+
       fill_in 'user_sf_guard_user_profile_name_first', :with => user_info.first_name
       fill_in 'user_sf_guard_user_profile_name_last', :with => user_info.last_name
       fill_in 'user_email', :with => user_info.email
@@ -63,7 +92,7 @@ feature "Signing up for an account", type: :feature do
       click_button 'Sign up'
 
       expect(counts).to eql [User.count, SfGuardUser.count, SfGuardUserProfile.count]
-      
+
       expect(page.status_code).to eq 200
       page_has_selector 'h2', text: 'Get Involved!'
       page_has_selector "#signup-errors-alert"
@@ -71,5 +100,4 @@ feature "Signing up for an account", type: :feature do
 
     end
   end
-  
 end
