@@ -340,8 +340,8 @@ Lilsis::Application.routes.draw do
   #############
 
   get '/toolkit' => 'toolkit#index'
-  get '/toolkit/new' => 'toolkit#new_page'
-  post '/toolkit/create_new_page' => 'toolkit#create_new_page'
+  get '/toolkit/new' => 'toolkit#new'
+  post '/toolkit' => 'toolkit#create'
   get '/toolkit/:toolkit_page/edit' => 'toolkit#edit', :as => 'toolkit_edit'
   patch '/toolkit/:id' => 'toolkit#update', :as => 'toolkit_update'
   get '/toolkit/:toolkit_page' => 'toolkit#display', :as => 'toolkit_display'

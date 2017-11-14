@@ -1,7 +1,7 @@
 class ToolkitController < ApplicationController
   layout 'toolkit'
   before_action :authenticate_user!, except: [:display, :index]
-  before_action :admins_only, only: [:new_page, :create_new_page, :edit, :update]
+  before_action :admins_only, only: [:new, :create, :edit, :update]
   before_action :set_toolkit_page, only: [:display, :edit]
   before_action -> { set_cache_control(1.day) }, only: [:display, :index]
 
@@ -28,17 +28,17 @@ class ToolkitController < ApplicationController
   end
 
   # GET /toolkit/new
-  def new_page
+  def new
     @toolkit_page = ToolkitPage.new
   end
 
-  # POST /toolkit/create_new_page
-  def create_new_page
+  # POST /toolkit
+  def create
     @toolkit_page = ToolkitPage.new(new_page_params)
     if @toolkit_page.save
       redirect_to toolkit_edit_path(toolkit_page: @toolkit_page.name)
     else
-      render :new_page
+      render :new
     end
   end
 
