@@ -106,15 +106,21 @@
   };
 
   state.getEntity = function(id){
-    return util.getIn(state, ['entities', 'byId', id]);
+    return state.getIn(['entities', 'byId', id]);
   };
 
   state.getEntityOrder = function(){
-    return util.getIn(state, ['entities', 'order']);
+    return state.getIn(['entities', 'order']);
   };
 
   state.getOrderedEntities = function(){
-    return util.getIn(state, ['entities', 'order']).map(state.getEntity);
+    return state.getIn(['entities', 'order']).map(state.getEntity);
+  };
+
+  state.getNewEntities = function(){
+    return Object
+      .values(state.getIn(['entities', 'byId']))
+      .filter(function(entity){ return entity.id.includes("new"); });
   };
 
   state.getMatch = function(entity, matchId){
@@ -243,20 +249,39 @@
   };
 
   // Entity -> State
+
+  // Entity -> State
   state.replaceWithMatch = function(entity){
     var match = state.getSelectedMatch(entity);
+    return state.replaceEntity(entity, match);
+  };
+
+  // [Entities] -> State
+  state.replaceWithCreatedEntities = function(createdEntities){
     return state
-      .setIn(['entities', 'byId', match.id], match) // store match as entity
-      .setIn(['entities', 'order'], spliceMatchIntoOrdering(entity, match)) // order match as entity was ordered
-      .deleteIn(['entities', 'byId', entity.id]) // remove old entity from store
-      .deleteIn(['entities', 'matches', entity.id]); // remove old entity matches
+      .getNewEntities()
+      .reduce(
+        function(acc, newEntity, idx){
+          return state.replaceEntity(newEntity, createdEntities[idx]);
+        },
+        state
+      );
+  };
+
+  // Entity, Entity -> State
+  state.replaceEntity = function(oldEntity, newEntity){
+    return state
+      .setIn(['entities', 'byId', newEntity.id], newEntity) // store newEntity as entity
+      .setIn(['entities', 'order'], replaceInOrdering(oldEntity, newEntity)) // order newEntity as oldEntity was ordered
+      .deleteIn(['entities', 'byId', oldEntity.id]) // remove oldEntity from store
+      .deleteIn(['entities', 'matches', oldEntity.id]); // remove oldEntity matches
   };
 
   // Entity, Entity -> [String]
-  function spliceMatchIntoOrdering(entity, match){
+  function replaceInOrdering(oldEntity, newEntity){
     // replace id of old entity with id of matched entity
     return state.getIn(['entities', 'order']).map(function(id){
-      return id === entity.id ? match.id : id;
+      return id === oldEntity.id ? newEntity.id : id;
     });
   }
 
@@ -730,8 +755,8 @@
       .replaceWithMatch(entity)
       .render();
   }
-
-  // Entity, String -> Void
+ 
+ // Entity, String -> Void
   function handlePickerSelection(entity, matchId){
     state.setMatchSelection(entity, matchId);
     $(".resolver-picker-result-container")
@@ -739,9 +764,13 @@
       .append(pickerResult(state.getMatch(entity, matchId)));
   }
 
-  // () -> Void
+  // () -> Promise[Void]
   function handleSubmit(){
-    console.log('submit!!');
+    return api
+      .createEntities(state.getNewEntities())
+      .then(state.replaceWithCreatedEntities)
+      .catch(state.setNotification)
+      .then(state.render);
   }
 
   // RETURN

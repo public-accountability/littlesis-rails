@@ -1,5 +1,7 @@
 describe('Bulk Table module', () => {
 
+  // TODO: USE THIS IN EVERY ASYNC TEST!!!!
+  const wait = (millis) => new Promise((rslv,rjct) => setTimeout(rslv, millis))
   // mutable variables used as hooks in setup steps
   let searchEntityStub, hasFileSpy, getFileSpy, file;
 
@@ -52,13 +54,13 @@ describe('Bulk Table module', () => {
   // CSV FIXTURE
 
   const csvValid =
-        "name,primary_ext,blurb\n" +
-        `${newEntities.newEntity0.name},${newEntities.newEntity0.primary_ext},${newEntities.newEntity0.blurb}\n` +
-        `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
+    "name,primary_ext,blurb\n" +
+    `${newEntities.newEntity0.name},${newEntities.newEntity0.primary_ext},${newEntities.newEntity0.blurb}\n` +
+    `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
 
   const csvValidNoMatches =
-        "name,primary_ext,blurb\n" +
-         `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
+    "name,primary_ext,blurb\n" +
+    `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
 
   // DOM/STATE FIXTURES
 
@@ -81,9 +83,8 @@ describe('Bulk Table module', () => {
   };
 
   const setupEdit = (csv, findCell, value, done, clickable = '.cell-contents') => {
-    // needed to accomodate multiple async calls in setup step
-    // not pretty, but it works!
-    // TODO: modify `setupWithCsv` to return a promise so we could chain `thens` here...
+    // needed to accomodate multiple async calls in setup step. not pretty, but it works!
+    // TODO: modify `setupWithCsv` to return a promise so we could chain `thens` here?
     setupWithCsv(csvValid, () =>  {
       setTimeout(() => {
         editCell(findCell(), clickable, value);
@@ -93,12 +94,13 @@ describe('Bulk Table module', () => {
   };
 
   const searchEntityFake = query => {
-    // stub search api call w/ 1 successful, 1 failed result
+    // default implementation of search stub
+    // returns match for first new entity, none for second new entity
     switch(query){
-    case newEntities.newEntity0.name:
-      return Promise.resolve(searchResultsFor(newEntities.newEntity0));
-    default:
-      return Promise.resolve([]);
+      case newEntities.newEntity0.name:
+        return Promise.resolve(searchResultsFor(newEntities.newEntity0));
+      default:
+        return Promise.resolve([]);
     }
   };
 
@@ -116,9 +118,9 @@ describe('Bulk Table module', () => {
   const editCell = (cell, clickable, newValue) => {
     cell.find(clickable).trigger('click');
     cell.find('.edit-cell')
-      .val(newValue)
-      .trigger('change')
-      .trigger($.Event('keyup', { keyCode: 13 }));
+        .val(newValue)
+        .trigger('change')
+        .trigger($.Event('keyup', { keyCode: 13 }));
   };
 
   const findFirstRow = () => $("#bulk-add-table tbody tr:nth-child(1)");
@@ -287,7 +289,7 @@ describe('Bulk Table module', () => {
       expect(rows).toHaveLength(2);
       rows.forEach((row, idx) => {
         expect(row.textContent).toEqual( // row.textContent concatenates all cell text with no spaces
-          columns.map(col => newEntities[`newEntity${idx}`][col.attr] ).join("")
+                                         columns.map(col => newEntities[`newEntity${idx}`][col.attr] ).join("")
         );
       });
     });
@@ -515,10 +517,10 @@ describe('Bulk Table module', () => {
       });
 
       const errorsFor =(entitySpec) =>
-            bulkTable
-            .init(stateOf(entitySpec))
-            .validate()
-            .getIn([ 'entities', 'errors', 'fakeId']);
+        bulkTable
+          .init(stateOf(entitySpec))
+          .validate()
+          .getIn([ 'entities', 'errors', 'fakeId']);
 
       it('handles a valid entity', () => {
         expect(errorsFor(validEntity)).toEqual({});
@@ -589,7 +591,7 @@ describe('Bulk Table module', () => {
       });
     });
 
-     describe('removing error alerts', () => {
+    describe('removing error alerts', () => {
 
       const csv = "name,primary_ext,blurb\nx,y,z\n";
 
@@ -615,45 +617,124 @@ describe('Bulk Table module', () => {
     });
   });
 
-  describe('submitting', () => {
+  describe('form submission', () => {
 
-    describe('there are invalid fields', () => {
+    describe('submit button status', () => {
 
-      const csv = "name,primary_ext,blurb\nx,y,z\n";
-      beforeEach(done => setupWithCsv(csv, done));
+      describe('there are invalid fields', () => {
 
-      it('will not submit', () => {
-        expect($("#bulk-submit-button")).toBeDisabled();
+        const csv = "name,primary_ext,blurb\nx,y,z\n";
+        // double async delay for first it block to pass in isolation
+        beforeEach(done => setupWithCsv(csv, () => setTimeout(done, asyncDelay)));
+
+        it('is disabled', () => {
+          expect($("#bulk-submit-button")).toBeDisabled();
+        });
+      });
+
+      describe('there are unresolved matches', () => {
+
+        beforeEach(done => setupWithCsv(csvValid, done));
+
+        it('is disabled', () => {
+          expect($("#bulk-submit-button")).toBeDisabled();
+        });
+      });
+
+      describe('there are no invalid fields or unresolved matches', () => {
+
+        beforeEach(done => setupWithCsv(csvValidNoMatches, done));
+
+        it ('is enabled', () => {
+          expect($("#bulk-submit-button")).not.toBeDisabled();
+        });
       });
     });
 
-    describe('there are unresolved matches', () => {
+    describe('handling submission', () => {
 
-      beforeEach(done => setupWithCsv(csvValid, done));
+      let createEntitiesSpy, addEntitiesToListSpy, errorMsg;
 
-      it('will not submit', () => {
-        expect($("#bulk-submit-button")).toBeDisabled();
+      describe('table has only new entities', () => {
+
+        beforeEach(done => {
+          searchEntityStub.and.returnValue(Promise.resolve([]));
+          setupWithCsv(csvValid, () => {
+            createEntitiesSpy = spyOn(api, 'createEntities')
+              .and.returnValue(Promise.resolve([]));
+            addEntitiesToListSpy = spyOn(api, 'addEntitiesToList')
+              .and.returnValue(Promise.resolve([]));;
+            done();
+          });
+        });
+
+        it('attempts to create entities on submit', done => {
+          $('#bulk-submit-button').trigger('click'),
+          wait(asyncDelay).then(() => {
+            expect(createEntitiesSpy).toHaveBeenCalledWith(Object.values(fxt.newEntities));
+            done();
+          });
+        });
+
+        describe('creating new entities fails', () => {
+
+          beforeEach(done => {
+            errorMsg = "Could not create new entities: request formatted improperly";
+            createEntitiesSpy.and.returnValue(Promise.reject(errorMsg));
+            $('#bulk-submit-button').trigger('click');
+            wait(asyncDelay).then(done);
+          })
+
+          it('displays error message in notifications bar', () => {
+            expect($("#bulk-add-notifications")).toHaveText(errorMsg);
+          });
+
+          it('marks entities that could not be created with alert icon');
+          // or maybe not?
+        });
+
+        describe('creating new entities succeeds', () => {
+
+          beforeEach(done => {
+            createEntitiesSpy.and.returnValue(Promise.resolve(fxt.createdEntitiesParsed));
+            $('#bulk-submit-button').trigger('click');
+            wait(asyncDelay).then(done);
+          })
+
+          it('stores ids for newly created entities in store', () => {
+            expect(bulkTable.getIn(['entities', 'byId'])).toEqual({
+              1: fxt.createdEntitiesParsed[0],
+              2: fxt.createdEntitiesParsed[1],
+            })
+            expect(bulkTable.getIn(['entities', 'order'])).toEqual(["1", "2"]);
+          });
+
+          it('displays newly created entities in table', () => {
+            expect(findFirstRow()).toContainText(fxt.createdEntitiesParsed[0].name);
+            expect(findSecondRow()).toContainText(fxt.createdEntitiesParsed[1].name);
+          });
+
+          describe('adding entities to list fails', () => {
+            it('displays error message in notifications bar');
+          });
+
+          describe('adding entities to list (:. submission) succeeds', () => {
+            it('flashes success notification');
+            it('redirects to list members tab');
+          })
+        });
       });
-    });
 
-    describe('there are no invalid fields or unresolved matches', () => {
-
-      beforeEach(done => setupWithCsv(csvValidNoMatches, done));
-
-      it ('can submit', () => {
-        expect($("#bulk-submit-button")).not.toBeDisabled();
+      describe('table has no new entities', () => {
+        it('does not attempt to create new entities');
       });
 
-      it('submits a batch of entities to a list endpoint');
+      describe('table has some new entities, some matched entities', () => {
+        it('only tries to create new entities');
 
-      describe('all submissions worked', () => {
-        it('redirects to list members tab');
-      });
-
-      describe('some submissions failed', () => {
-        it('deletes successful submissions from the store');
-        it('marks failed submissions with error messages');
-        it('renders table with only failed submissions');
+        describe('creating new entities fails', () => {
+          it('does not mark matched entities with alert icon');
+        });
       });
     });
   });
