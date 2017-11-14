@@ -33,30 +33,38 @@
 
   self.init = function(args){
     state = Object.assign(state, {
-      // derrived
-      rootId:         args.rootId,
-      endpoint:       args.endpoint || "/",
+      // id of the dom node to which this module will be appended on render
+      domId: args.domId, // String
+      // id of base resource with which we wish to associate many entities:
+      resourceId: args.resourceId, // String
+      api: { // we may paramaterize all API calls, but currently only do so w/ `#createAssociations`
+        // create new entities from table input
+        createEntities: api.createEntities, // ([Entity]) -> Promise[[Entities]]
+        // associate all entities in table with base resource:
+        createAssociations: args.createAssociations // (String, [String]) -> Promise[ListEntities]  
+      },
+      // entity lookup tables form the core of the state tree & use the following pseudotypes:
+      // (type notations follow Flow conventions: https://flow.org/en/docs/types/)
       // type Entity = { [key: EntityAttr]: String }
       // type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
-      entities:       args.entities ||
-                      { byId:    {},   // { [key: String]: Entity }
-                        order:   [],   // [String] (order corresponds to row order of entities stored in `.byId`)
-                        // `matches` and `errors` are both lookup tables by *entity id*,
-                        //  where entity id is a key in `entities.byId`
-                        matches: {},   // { [key: String]: { byId: { [key: id]: Entity }, order: [String] }]
-                        errors:  {} }, // { [key: String]: }
-      // deterministic
-      canUpload:      true,
-      notification:   ""
-      // When/if we wish to paramaterize row fields, we would here paramaterize:
-      //   1. resource type (currently always entity)
-      //   2. columns by resource type (currently stored as constant above)
+      entities: args.entities ||{
+        byId:    {},  // { [key: String]: Entity }
+        order:   [],  // [String] (order corresponds to row order of entities stored in `.byId`)
+        // these are lookup tables by *entity id*,  where entity id is a key in `entities.byId`:
+        matches: {},  // { [key: String]: { byId: { [key: id]: Entity }, order: [String] }]
+        errors:  {}  // { [key: String]: }
+      },
+      canUpload: true,
+      notification: ""
     });
     state.render().detectUploadSupport();
 
-    // TODO: if we want to instantiate tables, we could:
-    // * wrap all references to `state` inside this call to init (incl. methods etc...)
-    // * return `state`` here, but return `self` from module
+    // TODO: (ag|14-Nov-2017)
+    // if we want to instantiate tables, we could:
+    // * wrap all references to `state`  (including method defintions) inside the call to `#init`
+    // * return `state`` here, but return `self` (or some differently named wrapper obj) from module
+    // * we could then eliminate call to `Object.assign` on line 35 
+    //   (which is only needed to share binding with `state` methods below)
     return self;
   };
 
@@ -509,8 +517,8 @@
   };
 
   state.render = function(){
-    $('#' + state.rootId).empty();
-    $('#' + state.rootId)
+    $('#' + state.domId).empty();
+    $('#' + state.domId)
       .append(notificationBar())
       .append(state.canUpload ? uploadContainer() : null)
       .append(state.hasRows()? tableForm() : null);

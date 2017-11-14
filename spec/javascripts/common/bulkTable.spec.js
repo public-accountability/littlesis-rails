@@ -1,7 +1,7 @@
 describe('Bulk Table module', () => {
 
   // TODO: USE THIS IN EVERY ASYNC TEST!!!!
-  const wait = (millis) => new Promise((rslv,rjct) => setTimeout(rslv, millis))
+  const wait = (millis) => new Promise((rslv,rjct) => setTimeout(rslv, millis));
   // mutable variables used as hooks in setup steps
   let searchEntityStub, hasFileSpy, getFileSpy, file;
 
@@ -67,8 +67,9 @@ describe('Bulk Table module', () => {
   const testDom ='<div id="test-dom"></div>';
 
   const defaultState = {
-    rootId:   "test-dom",
-    endpoint: "/lists/1/new_entities"
+    domId:              "test-dom",
+    resourceId:         "1",
+    createAssociations: api.addEntitiesToList
   };
 
   // HELPERS
@@ -82,9 +83,10 @@ describe('Bulk Table module', () => {
     setTimeout(done, 2 * asyncDelay); // wait for file to upload, etc.
   };
 
-  const setupEdit = (csv, findCell, value, done, clickable = '.cell-contents') => {
+  const setupEdit = (csv, findCell, value, done, _clickable) => {
     // needed to accomodate multiple async calls in setup step. not pretty, but it works!
     // TODO: modify `setupWithCsv` to return a promise so we could chain `thens` here?
+    const clickable = _clickable || '.cell-contents'; // b/c default args freak out company mode
     setupWithCsv(csvValid, () =>  {
       setTimeout(() => {
         editCell(findCell(), clickable, value);
@@ -97,10 +99,10 @@ describe('Bulk Table module', () => {
     // default implementation of search stub
     // returns match for first new entity, none for second new entity
     switch(query){
-      case newEntities.newEntity0.name:
-        return Promise.resolve(searchResultsFor(newEntities.newEntity0));
-      default:
-        return Promise.resolve([]);
+    case newEntities.newEntity0.name:
+      return Promise.resolve(searchResultsFor(newEntities.newEntity0));
+    default:
+      return Promise.resolve([]);
     }
   };
 
@@ -118,9 +120,9 @@ describe('Bulk Table module', () => {
   const editCell = (cell, clickable, newValue) => {
     cell.find(clickable).trigger('click');
     cell.find('.edit-cell')
-        .val(newValue)
-        .trigger('change')
-        .trigger($.Event('keyup', { keyCode: 13 }));
+      .val(newValue)
+      .trigger('change')
+      .trigger($.Event('keyup', { keyCode: 13 }));
   };
 
   const findFirstRow = () => $("#bulk-add-table tbody tr:nth-child(1)");
@@ -141,21 +143,34 @@ describe('Bulk Table module', () => {
 
     beforeAll(() => bulkTable.init(defaultState));
 
-    it('stores a reference to its root node', () => {
-      expect(bulkTable.get('rootId')).toEqual('test-dom');
+    it('stores a reference to its root dom node', () => {
+      expect(bulkTable.get('domId')).toEqual('test-dom');
     });
 
-    it('stores an endpoint', () => {
-      expect(bulkTable.get('endpoint')).toEqual("/lists/1/new_entities");
+    it('stores a reference to id of the resource it is bulk modifying', () => {
+      expect(bulkTable.get('resourceId')).toEqual('1');
     });
 
-    it('initializes an empty entities state tree', () =>{
+    it('stores references to its api methods', () => {
+      expect(bulkTable.getIn(['api', 'createEntities'])).toEqual(api.createEntities);
+      expect(bulkTable.getIn(['api', 'createAssociations'])).toEqual(api.addEntitiesToList);
+    });
+
+    it('initializes empty resource repositories', () =>{
       expect(bulkTable.get('entities')).toEqual({
         byId:    {},
         order:   [],
         matches: {},
         errors:  {}
       });
+    });
+
+    it('assumes it can upload by default', () => {
+      expect(bulkTable.get('canUpload')).toBeTrue();
+    });
+
+    it('initializes an empty notification holder', () => {
+      expect(bulkTable.get('notification')).toEqual('');
     });
 
     describe('detecting upload support', () => {
@@ -289,7 +304,7 @@ describe('Bulk Table module', () => {
       expect(rows).toHaveLength(2);
       rows.forEach((row, idx) => {
         expect(row.textContent).toEqual( // row.textContent concatenates all cell text with no spaces
-                                         columns.map(col => newEntities[`newEntity${idx}`][col.attr] ).join("")
+          columns.map(col => newEntities[`newEntity${idx}`][col.attr] ).join("")
         );
       });
     });
@@ -517,10 +532,10 @@ describe('Bulk Table module', () => {
       });
 
       const errorsFor =(entitySpec) =>
-        bulkTable
-          .init(stateOf(entitySpec))
-          .validate()
-          .getIn([ 'entities', 'errors', 'fakeId']);
+            bulkTable
+            .init(stateOf(entitySpec))
+            .validate()
+            .getIn([ 'entities', 'errors', 'fakeId']);
 
       it('handles a valid entity', () => {
         expect(errorsFor(validEntity)).toEqual({});
@@ -683,7 +698,7 @@ describe('Bulk Table module', () => {
             createEntitiesSpy.and.returnValue(Promise.reject(errorMsg));
             $('#bulk-submit-button').trigger('click');
             wait(asyncDelay).then(done);
-          })
+          });
 
           it('displays error message in notifications bar', () => {
             expect($("#bulk-add-notifications")).toHaveText(errorMsg);
@@ -699,13 +714,13 @@ describe('Bulk Table module', () => {
             createEntitiesSpy.and.returnValue(Promise.resolve(fxt.createdEntitiesParsed));
             $('#bulk-submit-button').trigger('click');
             wait(asyncDelay).then(done);
-          })
+          });
 
           it('stores ids for newly created entities in store', () => {
             expect(bulkTable.getIn(['entities', 'byId'])).toEqual({
               1: fxt.createdEntitiesParsed[0],
-              2: fxt.createdEntitiesParsed[1],
-            })
+              2: fxt.createdEntitiesParsed[1]
+            });
             expect(bulkTable.getIn(['entities', 'order'])).toEqual(["1", "2"]);
           });
 
@@ -721,7 +736,7 @@ describe('Bulk Table module', () => {
           describe('adding entities to list (:. submission) succeeds', () => {
             it('flashes success notification');
             it('redirects to list members tab');
-          })
+          });
         });
       });
 
