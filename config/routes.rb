@@ -346,6 +346,13 @@ Lilsis::Application.routes.draw do
   patch '/toolkit/:id' => 'toolkit#update', :as => 'toolkit_update'
   get '/toolkit/:page_name' => 'toolkit#display', :as => 'toolkit_display'
 
+
+  ################
+  #  HELP PAGES  #
+  ################
+
+  get '/help' => 'help_pages#index'
+
   #########
   # Pages #
   #########
