@@ -37,14 +37,8 @@
       domId: args.domId, // String
       // id of base resource with which we wish to associate many entities:
       resourceId: args.resourceId, // String
-      api: { // we may paramaterize all API calls, but currently only do so w/ `#createAssociations`
-        // create new entities from table input
-        createEntities: api.createEntities, // ([Entity]) -> Promise[[Entities]]
-        // associate all entities in table with base resource:
-        createAssociations: args.createAssociations // (String, [String]) -> Promise[ListEntities]  
-      },
-      // types for resource repositories given in Flow notation:
-      //   https://flow.org/en/docs/types/objects/
+      // store entities, errors, and matches in hash map repositories
+      // repository types given in Flow notation (see: https://flow.org/en/docs/types/objects)
       // type Entity = { [EntityAttr]: String }
       // type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
       entities: args.entities || { // expose to `#init` for unit testing seam
@@ -99,11 +93,6 @@
 
   state.getIn = self.getIn;
 
-  state.hasNotification = function(){
-    return state.notification !== "";
-  };
-
-
   // Entity -> { [id: EntityAttr]: [String]}
   state.getErrors = function(entity){
     return state.getIn(['errorsByEntityId', entity.id]) || {};
@@ -112,10 +101,6 @@
   // (Entity, EntityAttr) -> [String]
   state.getErrorsByAttr = function(entity, attr){
     return state.getIn(['errorsByEntityId', entity.id, attr]);
-  };
-
-  state.hasRows = function(){
-    return !util.isEmpty(state.entities.order);
   };
 
   state.getEntity = function(id){
@@ -156,6 +141,17 @@
 
   // PREDICATES
 
+  // () -> Boolean
+  state.hasNotification = function(){
+    return state.notification !== "";
+  };
+
+  // () -> Boolean
+  state.hasRows = function(){
+    return !util.isEmpty(state.entities.order);
+  };
+
+  // Entity -> Boolean
   state.hasMatches = function(entity){
     return !util.isEmpty(state.getMatches(entity));
   };
@@ -203,10 +199,9 @@
 
   // Entity -> Entity
   state.addEntity = function(entity){
-    state = util.setIn(
-      util.setIn(state, ['entities', 'byId', entity.id], entity),
-      ['entities', 'order'],
-      util.getIn(state, ['entities', 'order']).concat(entity.id)
+    state
+      .setIn(['entities', 'byId', entity.id], entity)
+      .setIn(['entities', 'order'], state.getIn(['entities', 'order']).concat(entity.id)
     );
     return entity;
   };
@@ -219,26 +214,6 @@
   // Entity -> Entity
   state.assignId = function(entity, idx){
     return Object.assign(entity, { id: "newEntity" + idx });
-  };
-
-  // [Entity] -> Promise[Void]
-  state.matchEntities = function(entities){
-    return Promise.all(entities.map(state.matchEntity));
-  };
-
-  // Entity, EntityAttr -> Promise[State]
-  state.maybeMatchEntity = function(entity, attr){
-    return attr === 'name' ?
-      state.matchEntity(entity) :
-      Promise.resolve(state);
-  };
-
-  // Entity -> Promise[State]
-  state.matchEntity = function(entity){
-    return api.searchEntity(entity.name)
-      .then(function(matches){
-        return state.addMatches(entity, matches);
-      });
   };
 
   // Entity -> State
@@ -321,6 +296,33 @@
   // () -> State
   state.clearNotification = function(){
     return state.set('notification', "");
+  };
+
+  // API CALLS
+
+  // Entity -> Promise[State]
+  state.matchEntity = function(entity){
+    return api.searchEntity(entity.name)
+      .then(function(matches){
+        return state.addMatches(entity, matches);
+      });
+  };
+
+  // [Entity] -> Promise[Void]
+  state.matchEntities = function(entities){
+    return Promise.all(entities.map(state.matchEntity));
+  };
+
+  // Entity, EntityAttr -> Promise[State]
+  state.maybeMatchEntity = function(entity, attr){
+    return attr === 'name' ?
+      state.matchEntity(entity) :
+      Promise.resolve(state);
+  };
+
+  // () -> Promise[[Entity]]
+  state.createEntities = function(){
+    return api.createEntities(state.getNewEntities());
   };
 
   // VALIDATION
@@ -777,8 +779,8 @@
 
   // () -> Promise[Void]
   function handleSubmit(){
-    return api
-      .createEntities(state.getNewEntities())
+    return state
+      .createEntities()
       .then(state.replaceWithCreatedEntities)
       .catch(state.setNotification)
       .then(state.render);
