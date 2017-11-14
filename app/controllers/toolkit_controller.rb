@@ -36,7 +36,7 @@ class ToolkitController < ApplicationController
   def create_new_page
     @toolkit_page = ToolkitPage.new(new_page_params)
     if @toolkit_page.save
-      redirect_to toolkit_path
+      redirect_to toolkit_edit_path(toolkit_page: @toolkit_page.name)
     else
       render :new_page
     end
