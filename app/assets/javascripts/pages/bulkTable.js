@@ -43,17 +43,16 @@
         // associate all entities in table with base resource:
         createAssociations: args.createAssociations // (String, [String]) -> Promise[ListEntities]  
       },
-      // entity lookup tables form the core of the state tree & use the following pseudotypes:
-      // (type notations follow Flow conventions: https://flow.org/en/docs/types/)
-      // type Entity = { [key: EntityAttr]: String }
+      // types for resource repositories given in Flow notation:
+      //   https://flow.org/en/docs/types/objects/
+      // type Entity = { [EntityAttr]: String }
       // type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
-      entities: args.entities ||{
-        byId:    {},  // { [key: String]: Entity }
-        order:   [],  // [String] (order corresponds to row order of entities stored in `.byId`)
-        // these are lookup tables by *entity id*,  where entity id is a key in `entities.byId`:
-        matches: {},  // { [key: String]: { byId: { [key: id]: Entity }, order: [String] }]
-        errors:  {}  // { [key: String]: }
+      entities: args.entities || { // expose to `#init` for unit testing seam
+        byId:    {},  // { [String]: Entity }
+        order:   []  // [String] (order corresponds to row order of entities stored in `.byId`)
       },
+      matchesByEntityId: {}, // { [String]: { byId: { [String]: EntityMatch }, order: [String] }]
+      errorsByEntityId: {}, // { [String]: { [EntityAttr]: [String] } }
       canUpload: true,
       notification: ""
     });
@@ -105,8 +104,14 @@
   };
 
 
-  state.getErrors = function(entity, attr){
-    return state.getIn(['entities', 'errors', entity.id, attr]);
+  // Entity -> { [id: EntityAttr]: [String]}
+  state.getErrors = function(entity){
+    return state.getIn(['errorsByEntityId', entity.id]) || {};
+  };
+
+  // (Entity, EntityAttr) -> [String]
+  state.getErrorsByAttr = function(entity, attr){
+    return state.getIn(['errorsByEntityId', entity.id, attr]);
   };
 
   state.hasRows = function(){
@@ -136,16 +141,16 @@
   };
 
   state.getSelectedMatch = function(entity){
-    var matchId = util.getIn(state, ['entities', 'matches', entity.id, 'selected']);
+    var matchId = state.getIn(['matchesByEntityId', entity.id, 'selected']);
     return state.getMatch(entity, matchId);
   };
 
   state.getMatches = function(entity){
-    return util.getIn(state, ['entities', 'matches', entity.id, 'byId']) || {};
+    return state.getIn(['matchesByEntityId', entity.id, 'byId']) || {};
   };
 
   state.getOrderedMatches = function(entity){
-    return util.getIn(state, ['entities', 'matches', entity.id, 'order'])
+    return state.getIn(['matchesByEntityId', entity.id, 'order'])
       .map(function(matchId){ return state.getMatch(entity, matchId); });
   };
 
@@ -162,16 +167,18 @@
 
   // () -> Boolean
   state.isValid = function(){
-    return Object.keys(state.entities.byId).every(function(entityId){
-      return util.isEmpty(state.getIn(['entities', 'errors', entityId]));
-    });
+    return Object.values(state.entities.byId)
+      .every(function(entity){
+        return util.isEmpty(state.getErrors(entity));
+      });
   };
 
   // () -> Boolean
   state.isResolved = function(){
-    return Object.keys(state.entities.byId).every(function(entityId){
-      return util.isEmpty(state.getIn(['entities', 'matches', entityId, 'byId']));
-    });
+    return Object.values(state.entities.byId)
+      .every(function(entity){
+        return util.isEmpty(state.getMatches(entity));
+      });
   };
 
   // SETTERS
@@ -237,7 +244,7 @@
   // Entity -> State
   state.addMatches = function(entity, matches){
     return state.setIn(
-      ['entities', 'matches', entity.id],
+      ['matchesByEntityId', entity.id],
       {
         byId:     util.normalize(matches),
         order:    matches.map(function(match){ return match.id; }),
@@ -248,15 +255,13 @@
 
   // Entity -> State
   state.removeMatches = function(entity){
-    return state.deleteIn(['entities', 'matches', entity.id]);
+    return state.deleteIn(['matchesByEntityId', entity.id]);
   };
 
-  // Entity, Integer -> State
+  // Entity, String -> State
   state.setMatchSelection = function(entity, matchId){
-    return state.setIn(['entities', 'matches', entity.id, 'selected'], matchId);
+    return state.setIn(['matchesByEntityId', entity.id, 'selected'], matchId);
   };
-
-  // Entity -> State
 
   // Entity -> State
   state.replaceWithMatch = function(entity){
@@ -282,7 +287,7 @@
       .setIn(['entities', 'byId', newEntity.id], newEntity) // store newEntity as entity
       .setIn(['entities', 'order'], replaceInOrdering(oldEntity, newEntity)) // order newEntity as oldEntity was ordered
       .deleteIn(['entities', 'byId', oldEntity.id]) // remove oldEntity from store
-      .deleteIn(['entities', 'matches', oldEntity.id]); // remove oldEntity matches
+      .deleteIn(['matchesByEntityId', oldEntity.id]); // remove oldEntity matches
   };
 
   // Entity, Entity -> [String]
@@ -322,12 +327,10 @@
 
   // () -> State
   state.validate = function(){
-    return state
-      .deleteIn(['entities', 'errors']) // so we don't see multiple error messages on re-renders
-      .setIn(
-        ['entities', 'errors'],
-        validateEntities(Object.values(state.entities.byId), state.entities.errors)
-      );
+    return state.set(
+      'errorsByEntityId',
+      validateEntities(Object.values(state.entities.byId), {})
+    );
   };
   self.validate = state.validate; // for testing
 
@@ -588,7 +591,7 @@
   }
 
   function td(entity, col, idx){
-    var errors = state.getErrors(entity, col.attr);
+    var errors = state.getErrorsByAttr(entity, col.attr);
     return $('<td>', {
       class: errors && "errors"
     }).append(

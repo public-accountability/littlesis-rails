@@ -156,13 +156,19 @@ describe('Bulk Table module', () => {
       expect(bulkTable.getIn(['api', 'createAssociations'])).toEqual(api.addEntitiesToList);
     });
 
-    it('initializes empty resource repositories', () =>{
+    it('initializes empty entity repository', () =>{
       expect(bulkTable.get('entities')).toEqual({
         byId:    {},
-        order:   [],
-        matches: {},
-        errors:  {}
+        order:   []
       });
+    });
+
+    it('initializes empty matches repository', () => {
+      expect(bulkTable.get('matchesByEntityId')).toEqual({});
+    });
+
+    it('initializes empty errors repository', () => {
+      expect(bulkTable.get('errorsByEntityId')).toEqual({});
     });
 
     it('assumes it can upload by default', () => {
@@ -327,7 +333,7 @@ describe('Bulk Table module', () => {
       });
 
       it('stores list of search matches in memory', () => {
-        expect(bulkTable.getIn(['entities', 'matches'])).toEqual({
+        expect(bulkTable.get('matchesByEntityId')).toEqual({
           newEntity0: {
             byId:     utility.normalize(searchResultsFor(newEntities.newEntity0)),
             order:    ["00", '10', '20'],
@@ -392,7 +398,7 @@ describe('Bulk Table module', () => {
         beforeEach(() => popover.find('select').val(matches[0].id).trigger('change'));
 
         it('records the selection in memory', () => {
-          expect(bulkTable.getIn(['entities', 'matches', 'newEntity0', 'selected']))
+          expect(bulkTable.getIn(['matchesByEntityId', 'newEntity0', 'selected']))
             .toEqual(matches[0].id);
         });
 
@@ -501,7 +507,7 @@ describe('Bulk Table module', () => {
 
       it('searches for entities matching new name', () => {
         expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity0.name);
-        expect(bulkTable.getIn(['entities', 'matches', 'newEntity1'])).toExist();
+        expect(bulkTable.getIn(['matchesByEntityId', 'newEntity1'])).toExist();
         expect(findSecondRow().find(".resolver-anchor")).toExist();
       });
     });
@@ -520,22 +526,21 @@ describe('Bulk Table module', () => {
 
       const baseEntitiesState = {
         byId:    {},
-        order:   [],
-        matches: {},
-        errors:  {}
+        order:   []
       };
 
       const stateOf = (entitySpec) => Object.assign({}, defaultState, {
-        entities: Object.assign({}, baseEntitiesState, {
-          byId: { fakeId: Object.assign({}, validEntity, entitySpec) }
-        })
+        entities: {
+          byId: { fakeId: Object.assign({}, validEntity, entitySpec) },
+          order: ['fakeId']
+        }
       });
 
       const errorsFor =(entitySpec) =>
             bulkTable
             .init(stateOf(entitySpec))
             .validate()
-            .getIn([ 'entities', 'errors', 'fakeId']);
+            .getIn(['errorsByEntityId', 'fakeId']);
 
       it('handles a valid entity', () => {
         expect(errorsFor(validEntity)).toEqual({});
@@ -547,13 +552,13 @@ describe('Bulk Table module', () => {
 
       it('requires a name', () => {
         expect(errorsFor({ name: "" })).toEqual({
-          name:        ['is required', 'must be at least 2 characters long']
+          name: ['is required', 'must be at least 2 characters long']
         });
       });
 
       it('requires a name be at least two characters', () => {
         expect(errorsFor({ name: "x" })).toEqual({
-          name:        ['must be at least 2 characters long']
+          name: ['must be at least 2 characters long']
         });
       });
 
@@ -571,7 +576,7 @@ describe('Bulk Table module', () => {
 
       it('requires a person to have a first and last name', () => {
         expect(errorsFor({ primary_ext: "Person", name:"duende" })).toEqual({
-          name:        ['must have a first and last name']
+          name: ['must have a first and last name']
         });
       });
 
