@@ -16,6 +16,12 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
+    @user = User.find(params[:id])
+
+    @maps = @user.network_maps.order("created_at DESC, id DESC")
+    @groups = @user.groups.includes(:campaign).order(:name)
+    @lists = @user.lists.order("created_at DESC, id DESC")
+    @recent_updates = @user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
   end
   
   # GET /users/:id/edit_permissions
