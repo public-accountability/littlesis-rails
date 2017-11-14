@@ -83,7 +83,7 @@
 
   function get(url, queryParams){
     return fetch(url + qs(queryParams), {
-      headers:      jsonHeaders,
+      headers:      headers(),
       method:      'get',
       credentials: 'include' // use auth tokens stored in session cookies
     }).then(jsonify);
@@ -91,24 +91,40 @@
 
   function post(url, payload){
     return fetch(url, {
-      headers:     jsonHeaders,
+      headers:     headers(),
       method:      'post',
       credentials: 'include', // use auth tokens stored in session cookies
-      body:        payload
+      body:        JSON.stringify(payload)
     }).then(jsonify);
   };
 
-  var jsonHeaders = {
-    'Accept': 'application/json, text/plain, */*',
-    'Content-Type': 'application/json'
-  };
+  function headers(){
+    return {
+      'Accept':       'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': getAuthToken()
+    };
+  }
 
   function qs(queryParams){
     return '?' + $.param(queryParams);
   }
 
+  // Response -> Promise[Error|JSON]
   function jsonify(response){
-    return response.json();
+    return response
+      .json()
+      .then(function(json){
+        return json.errors ?
+          Promise.reject(json.errors[0].title) :
+          Promise.resolve(json);
+      });
+  }
+
+  function getAuthToken(){
+    // as per: https://stackoverflow.com/questions/7785079/how-use-token-authentication-with-rails-devise-and-backbone-js#answer-18861372
+    // TODO: figure out how to do this without jQuery
+    return $("meta[name='csrf-token']").attr("content") || "";
   }
   
   return self;
