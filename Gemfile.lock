@@ -101,6 +101,7 @@ GEM
     bson (4.2.1)
     buftok (0.2.0)
     builder (3.2.3)
+    byebug (9.1.0)
     capybara (2.13.0)
       addressable
       mime-types (>= 1.16)
@@ -248,6 +249,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-byebug (3.5.0)
+      byebug (~> 9.1)
+      pry (~> 0.10)
     pry-rails (0.3.4)
       pry (>= 0.9.10)
     public_suffix (2.0.5)
@@ -466,6 +470,7 @@ DEPENDENCIES
   paper_trail (= 5.2.3)
   php-serialize
   pry
+  pry-byebug
   pry-rails
   rack-mini-profiler
   rack-rewrite (~> 1.5.1)

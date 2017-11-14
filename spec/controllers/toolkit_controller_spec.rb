@@ -6,10 +6,10 @@ describe ToolkitController, type: :controller do
 
   it { should route(:get, '/toolkit').to(action: :index) }
   it { should route(:get, '/toolkit/new').to(action: :new) }
-  it { should route(:get, '/toolkit/some_page').to(action: :display, toolkit_page: 'some_page') }
-  it { should route(:get, '/toolkit/another_page').to(action: :display, toolkit_page: 'another_page') }
+  it { should route(:get, '/toolkit/some_page').to(action: :display, page_name: 'some_page') }
+  it { should route(:get, '/toolkit/another_page').to(action: :display, page_name: 'another_page') }
   it { should route(:post, '/toolkit').to(action: :create) }
-  it { should route(:get, '/toolkit/page/edit').to(action: :edit, toolkit_page: 'page') }
+  it { should route(:get, '/toolkit/page/edit').to(action: :edit, page_name: 'page') }
   it { should route(:patch, '/toolkit/123').to(action: :update, id: '123') }
 
   it 'has MARKDOWN constant' do
@@ -22,31 +22,31 @@ describe ToolkitController, type: :controller do
     end
 
     it 'responds with 404 if page does not exist' do
-      get :display, toolkit_page: 'not_a_page_yet'
+      get :display, page_name: 'not_a_page_yet'
       expect(response).to have_http_status(404)
     end
 
     it 'renders display if page exists' do
-      get :display, toolkit_page: 'interesting_facts'
+      get :display, page_name: 'interesting_facts'
       expect(response).to have_http_status(200)
       expect(response).to render_template(:display)
     end
 
     it 'can accept page names with spaces and capitals' do
-      get :display, toolkit_page: 'iNtErEsTiNg FaCtS'
+      get :display, page_name: 'iNtErEsTiNg FaCtS'
       expect(response).to have_http_status(200)
       expect(response).to render_template(:display)
     end
 
     it 'sets cache-control headers' do
-      get :display, toolkit_page: 'interesting_facts'
+      get :display, page_name: 'interesting_facts'
       expect(response.headers['Cache-Control']).to include 'max-age=86400, public'
     end
   end
 
   describe 'edit' do
     login_admin
-    
+
     before(:all) do
       ToolkitPage.delete_all
       @toolkit_page = ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts')
@@ -58,19 +58,19 @@ describe ToolkitController, type: :controller do
     end
 
     it 'responds with 404 if page does not exist' do
-      get :edit, toolkit_page: 'not_a_page_yet'
+      get :edit, page_name: 'not_a_page_yet'
       expect(response).to have_http_status 404
     end
 
     it 'renders edit page' do
-      get :edit, toolkit_page: 'interesting_facts'
+      get :edit, page_name: 'interesting_facts'
       expect(response).to have_http_status 200
       expect(response).to render_template :edit
     end
 
     it 'assigns toolkit_page' do
-      get :edit, toolkit_page: 'interesting_facts'
-      expect(controller.instance_variable_get('@toolkit_page')).to eq @toolkit_page
+      get :edit, page_name: 'interesting_facts'
+      expect(controller.instance_variable_get('@page')).to eq @toolkit_page
     end
   end
 

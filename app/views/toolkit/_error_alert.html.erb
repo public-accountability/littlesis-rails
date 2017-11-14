@@ -1,5 +1,5 @@
-<% unless @toolkit_page.errors.empty? %>
-    <% @toolkit_page.errors.full_messages.each do |msg| %>
+<% unless @page.errors.empty? %>
+    <% @page.errors.full_messages.each do |msg| %>
 	<div class="alert alert-danger" role="alert">
 	    <span><%= msg %></span>
 	</div>
