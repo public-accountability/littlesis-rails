@@ -71,6 +71,7 @@ class DevelopmentDb
                   couple
                   custom_key
                   degree
+                  documents
                   domain
                   donation
                   education
@@ -121,7 +122,7 @@ class DevelopmentDb
                   position
                   professional
                   public_company
-                  reference
+                  references
                   relationship
                   relationship_category
                   representative
@@ -181,6 +182,7 @@ class DevelopmentDb
               os_entity_category
               os_entity_donor
               os_matches
+              reference
               reference_excerpt)
 
   PUBLIC_DATA = [
