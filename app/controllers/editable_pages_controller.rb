@@ -69,7 +69,7 @@ class EditablePagesController < ApplicationController
   protected
 
   def markdown(data)
-    self.class.const_get(:MARKDOWN).render(data)
+    self.class.const_get(:MARKDOWN).render(data || '')
   end
 
   private
