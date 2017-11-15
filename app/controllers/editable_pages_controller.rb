@@ -21,7 +21,7 @@ class EditablePagesController < ApplicationController
     if @page && !@page.markdown.nil?
       @markdown = markdown(@page.markdown)
     else
-      @markdown = markdown("The toolkit page named 'index' will be used as the front page.")
+      @markdown = markdown("The #{self.class.namespace} page named 'index' will be used as the front page.")
     end
   end
 
