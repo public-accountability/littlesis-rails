@@ -163,3 +163,33 @@ div#donate  {
 #join-page-get-involved p {
     text-align: justify;
 }
+
+#donation-header {
+
+    p, h1 {
+	display: inline-block;
+    } 
+
+    p, img {
+	border-radius: 0.4em;
+    }
+
+    p {
+	margin-top: 0.2em;
+    }
+
+    #donation-header-text {
+	padding: 0.3em;
+	border-radius: 0.15em;
+	box-shadow: -4px 4px 10px #888888;
+	background-color: $gray-dark;
+	color: $gray-lighter;
+    }
+
+    #donation-header-text-small {
+	padding-left: 0.8em;
+    }
+}
+    
+
+
