@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :toolkit_page do
     markdown <<~MARKDOWN
                # toolkit page
