@@ -357,7 +357,6 @@
     };
   };
 
-
   // VALIDATION
 
   // () -> State
@@ -592,6 +591,7 @@
   function tableForm(){
     return $('<div>', {id: 'bulk-add-table-form' })
       .append(table())
+      .append(referenceContainer())
       .append(submitButton());
   }
 
@@ -777,6 +777,24 @@
       click: function(){ handleUseExistingChoice(entity); }
     });
   };
+
+  function referenceContainer(){
+    return $('<div>', { id: 'reference-container' })
+      .append($('<div>', {
+        class: 'label',
+        text: 'Reference'
+      }))
+      .append($('<input>', {
+        type: 'text',
+        class: 'name',
+        placeholder: 'Name'
+      }))
+      .append($('<input>', {
+        type: 'text',
+        class: 'url',
+        placeholder: 'Url'
+      }));
+  }
 
   function submitButton(){
     return $('<button>', {

@@ -140,6 +140,39 @@ h1#bulk-add-header {
             }
         }
     }
+    #reference-container {
+        margin: 1.5em 0 0 0;// TRBL
+        display: flex;
+        flex-direction: row;
+        height: 2.7em;
+        .label {
+            display: flex;
+            font-size: medium;
+            font-weight: bold;
+            background-color: $maroon;
+            color: white;
+            padding-top: .7em;
+            border-bottom-left-radius: $table-border-radius;
+            border-top-left-radius: $table-border-radius;
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+        }
+        .name {
+            display: flex;
+            padding-left: .5em;
+            border: 1px solid grey;
+            border-right: hidden;
+            border-radius: 0;
+        }
+        .url {
+            display: flex;
+            padding-left: .5em;
+            flex-grow: 1;
+            border: 1px solid grey;
+            border-bottom-right-radius: $table-border-radius;
+            border-top-right-radius: $table-border-radius;
+        }
+    }
     #bulk-submit-button{
         @extend .btn;
         @extend .btn-primary;

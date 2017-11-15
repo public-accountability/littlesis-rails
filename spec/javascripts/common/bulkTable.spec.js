@@ -293,27 +293,48 @@ fdescribe('Bulk Table module', () => {
     });
   });
 
-  describe('table layout', () => {
+  describe('layout', () => {
 
     beforeEach(done => setupWithCsv(csvValid, done));
 
-    it('exists', () => {
-      expect($('#test-dom table#bulk-add-table')).toExist();
+    describe('table', () => {
+
+      it('exists', () => {
+        expect($('#test-dom table#bulk-add-table')).toExist();
+      });
+
+      it('has columns labeling entity fields', () => {
+        const thTags = $('#bulk-add-table thead tr th').toArray();
+        expect(thTags).toHaveLength(3);
+        thTags.forEach((th, idx) => expect(th).toHaveText(columns[idx].label));
+      });
+
+      it('has rows showing values of entity fields', () => {
+        const rows = $('#bulk-add-table tbody tr').toArray();
+        expect(rows).toHaveLength(2);
+        rows.forEach((row, idx) => {
+          expect(row.textContent).toEqual( // row.textContent concatenates all cell text with no spaces
+            columns.map(col => newEntities[`newEntity${idx}`][col.attr] ).join("")
+          );
+        });
+      });
     });
 
-    it('has columns labeling entity fields', () => {
-      const thTags = $('#bulk-add-table thead tr th').toArray();
-      expect(thTags).toHaveLength(3);
-      thTags.forEach((th, idx) => expect(th).toHaveText(columns[idx].label));
-    });
+    describe('reference container', () => {
 
-    it('has rows showing values of entity fields', () => {
-      const rows = $('#bulk-add-table tbody tr').toArray();
-      expect(rows).toHaveLength(2);
-      rows.forEach((row, idx) => {
-        expect(row.textContent).toEqual( // row.textContent concatenates all cell text with no spaces
-          columns.map(col => newEntities[`newEntity${idx}`][col.attr] ).join("")
-        );
+      it('has a label', () => {
+        expect($('#reference-container div.label')).toExist();
+        expect($('#reference-container div.label')).toHaveText('Reference');
+      });
+
+      it('has a name input field', () => {
+        expect($('#reference-container input.name')).toExist();
+        expect($('#reference-container input.name')).toHaveAttr('placeholder', 'Name');
+      });
+
+      it('has a url input field', () => {
+        expect($('#reference-container input.url')).toExist();
+        expect($('#reference-container input.url')).toHaveAttr('placeholder', 'Url');
       });
     });
 
@@ -405,7 +426,8 @@ fdescribe('Bulk Table module', () => {
         });
 
         it('shows a section about user selection below the picker', () => {
-          expect(popover.find(".resolver-picker-result-container")).toContainElement(".resolver-picker-result");
+          expect(popover.find(".resolver-picker-result-container"))
+            .toContainElement(".resolver-picker-result");
         });
 
         it('shows the matched entity blurb below the picker', () => {
