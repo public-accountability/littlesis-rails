@@ -1,9 +1,9 @@
-describe('Bulk Table module', () => {
+fdescribe('Bulk Table module', () => {
 
   // TODO: USE THIS IN EVERY ASYNC TEST!!!!
   const wait = (millis) => new Promise((rslv,rjct) => setTimeout(rslv, millis));
   // mutable variables used as hooks in setup steps
-  let searchEntityStub, hasFileSpy, getFileSpy, file;
+  let searchEntityStub, redirectSpy, hasFileSpy, getFileSpy, file;
 
   // millis to wait for search, csv upload, etc...
   // tune this if you are getting
@@ -67,8 +67,9 @@ describe('Bulk Table module', () => {
   const testDom ='<div id="test-dom"></div>';
 
   const defaultState = {
-    domId:              "test-dom",
-    resourceId:         "1"
+    domId:        "test-dom",
+    resourceType: "lists",
+    resourceId:   "1"
   };
 
   // HELPERS
@@ -148,6 +149,10 @@ describe('Bulk Table module', () => {
 
     it('stores a reference to id of the resource it is bulk modifying', () => {
       expect(bulkTable.get('resourceId')).toEqual('1');
+    });
+
+    it('stores a reference to type of the resource it is bulk modifying', () => {
+      expect(bulkTable.get('resourceType')).toEqual('lists');
     });
 
     it('stores references to its api methods');
@@ -670,7 +675,7 @@ describe('Bulk Table module', () => {
 
     describe('handling submission', () => {
 
-      let createEntitiesSpy, addEntitiesToListSpy, errorMsg;
+      let createEntitiesSpy, addEntitiesToListSpy, redirectSpy, errorMsg;
 
       describe('table has only new entities', () => {
 
@@ -680,7 +685,7 @@ describe('Bulk Table module', () => {
             createEntitiesSpy = spyOn(api, 'createEntities')
               .and.returnValue(Promise.resolve([]));
             addEntitiesToListSpy = spyOn(api, 'addEntitiesToList')
-              .and.returnValue(Promise.resolve([]));;
+              .and.returnValue(Promise.resolve([]));
             done();
           });
         });
@@ -732,12 +737,36 @@ describe('Bulk Table module', () => {
           });
 
           describe('adding entities to list fails', () => {
-            it('displays error message in notifications bar');
+
+            beforeEach(done => {
+              errorMsg = "Could not create add entities to list: invalid reference";
+              addEntitiesToListSpy.and.returnValue(Promise.reject(errorMsg));
+              redirectSpy = spyOn(Response, 'redirect').and.callFake(console.log);
+              $('#bulk-submit-button').trigger('click');
+              wait(asyncDelay).then(done);
+            });
+
+            it('displays error message in notifications bar', () => {
+              expect($("#bulk-add-notifications")).toHaveText(errorMsg);
+            });
+
+            it('does not redirect', () => {
+              expect(redirectSpy).not.toHaveBeenCalled();
+            });
           });
 
-          describe('adding entities to list (:. submission) succeeds', () => {
-            it('flashes success notification');
-            it('redirects to list members tab');
+          describe('adding entities to list succeeds', () => {
+
+            beforeEach(done => {
+              addEntitiesToListSpy.and.returnValue(Promise.resolve(fxt.listEntitiesParsed));
+              redirectSpy = spyOn(Response, 'redirect').and.callFake(console.log);
+              $('#bulk-submit-button').trigger('click');
+              wait(asyncDelay).then(done);
+            });
+
+            it('redirects to list members tab', () => {
+              expect(redirectSpy).toHaveBeenCalledWith('/lists/1', 200);
+            });
           });
         });
       });

@@ -65,9 +65,19 @@
       .then(formatResp);
 
     function formatReq(entityIds){
+
+      // TODO: unhardcode these!!!
+      var referenceAttrs = {
+        name: 'Google',
+        url: 'https://google.com'
+      };
+
       return {
         data: entityIds.map(function(id){
           return { type: 'entities', id: id };
+        }).concat({
+          type: 'references',
+          attributes: referenceAttrs
         })
       };
     };

@@ -37,6 +37,7 @@
       domId: args.domId, // String
       // id of base resource with which we wish to associate many entities:
       resourceId: args.resourceId, // String
+      resourceType: args.resourceType, // String (must be plural to match rails path conventions)
       // store entities, errors, and matches in hash map repositories
       // repository types given in Flow notation (see: https://flow.org/en/docs/types/objects)
       // type Entity = { [EntityAttr]: String }
@@ -107,6 +108,10 @@
     return state.getIn(['entities', 'byId', id]);
   };
 
+  state.getEntityIds = function(){
+    return Object.keys(state.getIn(['entities', 'byId']) || {});
+  };
+
   state.getEntityOrder = function(){
     return state.getIn(['entities', 'order']);
   };
@@ -137,6 +142,11 @@
   state.getOrderedMatches = function(entity){
     return state.getIn(['matchesByEntityId', entity.id, 'order'])
       .map(function(matchId){ return state.getMatch(entity, matchId); });
+  };
+
+  // () -> String
+  state.getResourcePath = function(){
+    return '/' + state.resourceType + '/' + state.resourceId;
   };
 
   // PREDICATES
@@ -298,14 +308,20 @@
     return state.set('notification', "");
   };
 
+  // () -> State
+  state.setSuccessNotification = function(){
+    return state.setNotification(
+      state.getEntityIds().length + " entities added to list"
+    );
+  };
+
   // API CALLS
 
   // Entity -> Promise[State]
   state.matchEntity = function(entity){
-    return api.searchEntity(entity.name)
-      .then(function(matches){
-        return state.addMatches(entity, matches);
-      });
+    return api
+      .searchEntity(entity.name)
+      .then(function(matches){ return state.addMatches(entity, matches); });
   };
 
   // [Entity] -> Promise[Void]
@@ -320,10 +336,27 @@
       Promise.resolve(state);
   };
 
-  // () -> Promise[[Entity]]
+  // () -> Promise[State]
   state.createEntities = function(){
-    return api.createEntities(state.getNewEntities());
+    return api
+      .createEntities(state.getNewEntities())
+      .then(state.replaceWithCreatedEntities);
   };
+
+  // () -> Promise[State]
+  state.createAssociations = function(){
+    return api
+      .addEntitiesToList(state.resourceId, state.getEntityIds())
+      .then(function(){ return state; });
+  };
+
+  // () -> Promise[Void]
+  state.redirectIfNoErrors = function(){
+    if (!state.hasNotification()) {
+      Response.redirect(state.getResourcePath(), 200);
+    };
+  };
+
 
   // VALIDATION
 
@@ -781,9 +814,10 @@
   function handleSubmit(){
     return state
       .createEntities()
-      .then(state.replaceWithCreatedEntities)
+      .then(state.createAssociations)
       .catch(state.setNotification)
-      .then(state.render);
+      .then(state.render)
+      .then(state.redirectIfNoErrors);
   }
 
   // RETURN

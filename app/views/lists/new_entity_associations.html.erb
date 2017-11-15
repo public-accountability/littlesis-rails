@@ -4,8 +4,9 @@
 <div id="bulk-add-container">
   <script>
    bulkTable.init({
-     domId:      "bulk-add-container",
-     resourceId: "<%= raw(@list.id) %>"
+     domId:        "bulk-add-container",
+     resourceId:   "<%= raw(@list.id) %>",
+     resourceType: "lists"
    });
   </script>
 </div>
