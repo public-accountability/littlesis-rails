@@ -1,0 +1,11 @@
+<% unless @page.errors.empty? %>
+  <div class="row">
+    <div class="col-sm-8">
+      <% @page.errors.full_messages.each do |msg| %>
+	<div class="alert alert-danger" role="alert">
+	  <span><%= msg %></span>
+	</div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

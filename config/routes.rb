@@ -352,6 +352,11 @@ Lilsis::Application.routes.draw do
   ################
 
   get '/help' => 'help_pages#index'
+  get '/help/new' => 'help_pages#new'
+  post '/help' => 'help_pages#create'
+  get '/help/:page_name/edit' => 'help_pages#edit', :as => 'help_edit'
+  patch '/help/:id' => 'help_pages#update', :as => 'help_update'
+  get '/help/:page_name' => 'help_pages#display', :as => 'help_display'
 
   #########
   # Pages #
