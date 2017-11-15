@@ -341,6 +341,7 @@ Lilsis::Application.routes.draw do
 
   get '/toolkit' => 'toolkit#index'
   get '/toolkit/new' => 'toolkit#new'
+  get '/toolkit/pages' => 'toolkit#pages'
   post '/toolkit' => 'toolkit#create'
   get '/toolkit/:page_name/edit' => 'toolkit#edit', :as => 'toolkit_edit'
   patch '/toolkit/:id' => 'toolkit#update', :as => 'toolkit_update'
@@ -353,10 +354,12 @@ Lilsis::Application.routes.draw do
 
   get '/help' => 'help_pages#index'
   get '/help/new' => 'help_pages#new'
+  get '/help/pages' => 'help_pages#pages'
   post '/help' => 'help_pages#create'
   get '/help/:page_name/edit' => 'help_pages#edit', :as => 'help_edit'
   patch '/help/:id' => 'help_pages#update', :as => 'help_update'
   get '/help/:page_name' => 'help_pages#display', :as => 'help_display'
+   
 
   #########
   # Pages #

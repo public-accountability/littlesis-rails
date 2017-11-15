@@ -20,4 +20,16 @@ describe EditablePagesController, type: :controller do
       expect(EditablePagesTestController.instance_variable_get(:@model_param)).to eql 'toolkit_page'
     end
   end
+
+  describe 'editable_page_path' do
+    subject { EditablePagesTestController.new }
+
+    it 'returns path with provided name' do
+      expect(subject.send(:editable_page_path, 'PAGENAME')).to eql '/testnamespace/PAGENAME'
+    end
+
+    it 'returns path with provided name and action' do
+      expect(subject.send(:editable_page_path, 'PAGENAME', 'edit')).to eql '/testnamespace/PAGENAME/edit'
+    end
+  end
 end

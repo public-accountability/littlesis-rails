@@ -1,9 +1,9 @@
 class EditablePagesController < ApplicationController
   before_action :authenticate_user!, except: [:display, :index]
-  before_action :admins_only, only: [:new, :create, :edit, :update]
+  before_action :admins_only, except: [:display, :index]
   before_action :set_page, only: [:display, :edit]
 
-  helper_method :markdown
+  helper_method :markdown, :editable_page_path
 
   MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
                                      autolink: true, fenced_code_blocks: true, tables: true)
@@ -25,12 +25,19 @@ class EditablePagesController < ApplicationController
     end
   end
 
-  # GET /toolkit/new
+  # GET /NAMESPACE/new
   def new
     @page = self.class.page_model.new
   end
 
-  # POST /toolkit
+  # GET /NAMESPACE/pages
+  # Note: this returns all pages in (using the .all method)
+  # By default this will render the template editable_pages/pages.html.erb
+  def pages
+    @pages = self.class.page_model.select('name, title, id, updated_at, created_at, last_user_id').all
+  end
+
+  # POST /NAMESPACE
   def create
     @page = self.class.page_model.new(new_page_params)
     if @page.save
@@ -40,7 +47,7 @@ class EditablePagesController < ApplicationController
     end
   end
 
-  # PATCH /toolkit/:id
+  # PATCH /NAMESPACE/:id
   def update
     @page = self.class.page_model.find(params[:id])
     if @page.update(update_params)
@@ -70,6 +77,12 @@ class EditablePagesController < ApplicationController
 
   def markdown(data)
     self.class.const_get(:MARKDOWN).render(data || '')
+  end
+
+  def editable_page_path(name, action = nil)
+    base = "/#{self.class.namespace}/#{name}"
+    return base if action.nil?
+    "#{base}/#{action}"
   end
 
   private
