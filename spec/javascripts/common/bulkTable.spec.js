@@ -6,9 +6,8 @@ fdescribe('Bulk Table module', () => {
   let searchEntityStub, redirectSpy, hasFileSpy, getFileSpy, file;
 
   // millis to wait for search, csv upload, etc...
-  // tune this if you are getting
-  // odd non-deterministic failures due to async issues
-  const asyncDelay = 5;
+  // tune this if you are getting non-deterministic failures due to async issues
+  const asyncDelay = 8;
 
   // CELL FIXTURES
   // (would be better to import constant from `bulkTable.js`, but we don't have modules)
@@ -170,7 +169,10 @@ fdescribe('Bulk Table module', () => {
     });
 
     it('initializes empty errors repository', () => {
-      expect(bulkTable.get('errorsByEntityId')).toEqual({});
+      expect(bulkTable.get('errors')).toEqual({
+        byEntityId: {},
+        reference: {}
+      });
     });
 
     it('assumes it can upload by default', () => {
@@ -491,7 +493,7 @@ fdescribe('Bulk Table module', () => {
     });
   });
 
-  fdescribe('editing', () => {
+  describe('editing', () => {
 
     describe('table', () => {
 
@@ -558,32 +560,33 @@ fdescribe('Bulk Table module', () => {
 
   describe('validation', () => {
 
-    describe('rules', () => {
+    const validEntity = {
+      id:          'fakeId',
+      name:        'Trystero',
+      primary_ext: 'Org',
+      blurb:       'Starry skein of night.'
+    };
 
-      const validEntity = {
-        id:          'fakeId',
-        name:        'ValidName',
-        primary_ext: 'Org',
-        blurb:       'valid blurb'
-      };
+    const validReference = {
+      name: 'Pynchon Wiki',
+      url:  'https://pynchonwiki.com'
+    };
 
-      const baseEntitiesState = {
-        byId:    {},
-        order:   []
-      };
+    describe('entity rules', () => {
 
       const stateOf = (entitySpec) => Object.assign({}, defaultState, {
         entities: {
           byId: { fakeId: Object.assign({}, validEntity, entitySpec) },
           order: ['fakeId']
-        }
+        },
+        reference: validReference
       });
 
       const errorsFor =(entitySpec) =>
             bulkTable
             .init(stateOf(entitySpec))
             .validate()
-            .getIn(['errorsByEntityId', 'fakeId']);
+            .getIn(['errors', 'byEntityId', 'fakeId']);
 
       it('handles a valid entity', () => {
         expect(errorsFor(validEntity)).toEqual({});
@@ -627,6 +630,44 @@ fdescribe('Bulk Table module', () => {
         expect(errorsFor({ primary_ext: "", name:"" })).toEqual({
           name:        ['is required', 'must be at least 2 characters long'],
           primary_ext: ['is required', 'must be either "Person" or "Org"']
+        });
+      });
+    });
+
+    describe('reference rules', () => {
+
+      const stateOf = (referenceSpec) => Object.assign({}, defaultState, {
+        entities: { byId: { fakeId: validEntity }, order: [] },
+        reference: Object.assign({}, validReference, referenceSpec)
+      });
+
+      const errorsFor =(referenceSpec) =>
+            bulkTable
+            .init(stateOf(referenceSpec))
+            .validate()
+            .getIn(['errors', 'reference']);
+
+      it('requires a name', () => {
+        expect(errorsFor({ name: "" })).toEqual({
+          name: ['is required', 'must be at least 3 characters long']
+        });
+      });
+
+      it('requires a name be at least three characters', () => {
+        expect(errorsFor({ name: "x" })).toEqual({
+          name: ['must be at least 3 characters long']
+        });
+      });
+
+      it('requires a url', () => {
+        expect(errorsFor({ url: "" })).toEqual({
+          url: ['is required', 'must be a valid ip address']
+        });
+      });
+
+      it('requires url to be a valid ip address', () => {
+        expect(errorsFor({ url: "xxx" })).toEqual({
+          url: ['must be a valid ip address']
         });
       });
     });

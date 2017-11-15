@@ -46,8 +46,15 @@
         byId:    {},  // { [String]: Entity }
         order:   []  // [String] (order corresponds to row order of entities stored in `.byId`)
       },
-      matchesByEntityId: {}, // { [String]: { byId: { [String]: EntityMatch }, order: [String] }]
-      errorsByEntityId: {}, // { [String]: { [EntityAttr]: [String] } }
+      matchesByEntityId: {}, // { [String]: { byId: { [id: String]: EntityMatch }, order: [String] }]
+      reference: args.reference || {
+        name: '',
+        url: ''
+      },
+      errors: {
+        byEntityId: {}, // { [id: String]: { [EntityAttr]: [String] } }
+        reference: {}  // { ['name'|'url']: [String] }
+      },
       canUpload: true,
       notification: ""
     });
@@ -96,12 +103,12 @@
 
   // Entity -> { [id: EntityAttr]: [String]}
   state.getErrors = function(entity){
-    return state.getIn(['errorsByEntityId', entity.id]) || {};
+    return state.getIn(['errors', 'byEntityId', entity.id]) || {};
   };
 
   // (Entity, EntityAttr) -> [String]
   state.getErrorsByAttr = function(entity, attr){
-    return state.getIn(['errorsByEntityId', entity.id, attr]);
+    return state.getIn(['errors', 'byEntityId', entity.id, attr]);
   };
 
   state.getEntity = function(id){
@@ -362,56 +369,71 @@
     };
   };
 
-  // VALIDATION
+  // VALIDATION SETTERS
 
   // () -> State
   state.validate = function(){
-    return state.set(
-      'errorsByEntityId',
-      validateEntities(Object.values(state.entities.byId), {})
-    );
+    return state
+      .setIn(
+        ['errors', 'byEntityId'],
+        validateEntities(Object.values(state.entities.byId), {})
+      )
+      .setIn(
+        ['errors', 'reference'],
+        validateReference(state.reference, {})
+      );
   };
   self.validate = state.validate; // for testing
 
   // type EntitiesErrors = { [id: String]: EntityError }
-  // type EntityErrors = { [id: EntityAtrr]: EntityAttrErrors }
-  // type EntityAttrErrors = [String]
+  // type EntityErrors = { [attr: EntityAtrr]: [String] }
 
-  // [Entities], EntitiesErrors -> EntitiesErrors
-  function validateEntities(entities, entitiesErrors){
-    return entities.reduce(
-      function(acc, entity){
-        return util.set(
-          acc,
-          entity.id,
-          validateEntity(entity, util.get(acc, entity.id))
-        );
-      },
-      entitiesErrors || {}
+  // [Entities] -> EntitiesErrors
+  function validateEntities(entities){
+    return entities.reduce(function(acc, entity){
+      return util.set(
+        acc,
+        entity.id,
+        validateResource(
+          entity,
+          columns.map(function(c){ return c.attr; }),
+          validationsFor(entity)
+        )
+      );
+    }, {});
+  };
+
+  // type ReferenceErrors = { ['name'|'url']: [String] }
+  // Reference -> ReferenceErrors
+  function validateReference(reference){
+    return validateResource(
+      reference,
+      Object.keys(reference),
+      referenceValidations
     );
   };
 
-  // expose for unit testing seam
-  self.validateEntity = validateEntity;
-  // Enity, EntityErrors -> EntityErrors
-  function validateEntity(entity, entityErrors){
-    var attrs = columns.map(function(c){ return c.attr; });
-    return attrs.reduce(
-      function(entityErrorsAcc, attr){
-        var errors = validateAttr(entity, attr, util.get(entityErrorsAcc, attr));
-        return util.isEmpty(errors) ?
-          entityErrorsAcc : // don't store an entry in errors accumulator for an empty errors array
-          util.set(entityErrorsAcc, attr, errors);
-      },
-      entityErrors || {}
-    );
+  // type Resource = Entity | Reference
+  // type ResourceError = EntityErrors | ReferenceErrors
+  function validateResource(resource, attrs, validations){
+    return attrs.reduce(function(resourceErrorsAcc, attr){
+      var attrErrors = validateAttr(
+        resource,
+        attr,
+        validations,
+        util.get(resourceErrorsAcc, attr)
+      );
+      return util.isEmpty(attrErrors) ?
+        resourceErrorsAcc : // don't store an entry in errors accumulator for an empty errors array
+        util.set(resourceErrorsAcc, attr, attrErrors);
+    }, {});
   };
 
-  // Entity, EntityAttr, EntityAttrErrors -> EntityAttrErrors
-  function validateAttr(entity, attr, attrErrors){
-    return (util.get(validationsFor(entity), attr) || []).reduce(
+  // Entity, EntityAttr, EntityAttrErrors -> [String]
+  function validateAttr(resource, attr, validations, attrErrors){
+    return (util.get(validations, attr) || []).reduce(  
       function(attrErrorsAcc, validation){
-        return validation.isValid(util.get(entity, attr)) ?
+        return validation.isValid(util.get(resource, attr)) ?
           attrErrorsAcc :
           attrErrorsAcc.concat(validation.message);
       },
@@ -419,44 +441,65 @@
     );
   }
 
-  function validationsFor(entity){
-    return entity.primary_ext === "Person" ?
-      mergeValidations(commonValidations, personValidations) :
-      commonValidations;
+  // VALIDATION RULES
+
+  var validations = {
+    required: {
+      message: 'is required',
+      isValid: function(attr){ return Boolean(attr); }
+    },
+    lengthN: function(n){
+      return {
+        message: 'must be at least ' + n + ' characters long',
+        isValid: function(attr){ return attr && attr.length >= n; }
+      };
+    },
+    personOrOrg: {
+      message: 'must be either "Person" or "Org"',
+      isValid: function(attr){
+        return ['Person', 'Org'].some(function(validStr){ return attr === validStr; });
+      }
+    },
+    firstAndLast: {
+      message: 'must have a first and last name',
+      isValid: function(attr){ return util.validFirstAndLastName(attr); }
+    },
+    validUrl: {
+      message: 'must be a valid ip address',
+      isValid: function(attr){ return util.validURL(attr); }
+    }
   };
 
-  var commonValidations = {
+  function validationsFor(entity){
+    return entity.primary_ext === "Person" ?
+      mergeValidations(entityValidations, personValidations) :
+      entityValidations;
+  };
+
+  var referenceValidations = {
     name: [
-      {
-        message: 'is required',
-        isValid: function(attr){ return Boolean(attr); }
-      },
-      {
-        message: 'must be at least 2 characters long',
-        isValid: function(attr){ return attr && attr.length > 1; }
-      }
+      validations.required,
+      validations.lengthN(3)
+    ],
+    url: [
+      validations.required,
+      validations.validUrl
+    ]
+  };
+
+  var entityValidations = {
+    name: [
+      validations.required,
+      validations.lengthN(2)
     ],
     primary_ext: [
-      {
-        message: 'is required',
-        isValid: function(attr){ return Boolean(attr); }
-      },
-      {
-        message: 'must be either "Person" or "Org"',
-        isValid: function(attr){
-          return ['Person', 'Org'].some(function(validStr){ return attr === validStr; });
-        }
-      }
+      validations.required,
+      validations.personOrOrg
     ]
   };
 
   var personValidations = {
-    name: [
-      {
-        message: 'must have a first and last name',
-        isValid: function(attr){ return util.validFirstAndLastName(attr); }
-      }
-    ],
+    name: [ validations.firstAndLast ],
     primary_ext: []
   };
 
