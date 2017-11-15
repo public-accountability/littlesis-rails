@@ -491,51 +491,70 @@ fdescribe('Bulk Table module', () => {
     });
   });
 
-  describe('editing', () => {
+  fdescribe('editing', () => {
 
-    describe('contents of a valid cell', () => {
+    describe('table', () => {
 
-      const findCell = () => findFirstRow().find('td:nth-child(3)');
-      beforeEach(done => setupEdit(csvValid, findCell, 'foobar', done));
+      describe('contents of a valid cell', () => {
 
-      it('updates cell', () => {
-        expect(findCell()).toContainText('foobar');
+        const findCell = () => findFirstRow().find('td:nth-child(3)');
+        beforeEach(done => setupEdit(csvValid, findCell, 'foobar', done));
+
+        it('updates cell', () => {
+          expect(findCell()).toContainText('foobar');
+        });
+
+        it('updates store', () => {
+          expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'blurb']))
+            .toEqual('foobar');
+        });
       });
 
-      it('updates store', () => {
-        expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'blurb']))
-          .toEqual('foobar');
+      describe('contents of an invalid cell', () => {
+
+        const csv = "name,primary_ext,blurb\nvalid name,x,y\n";
+        const findCell = () => findFirstRow().find('td:nth-child(2)');
+        beforeEach(done => setupEdit(csv, findCell, 'Person', done));
+
+        it('updates cell', () => {
+          expect(findCell()).toHaveText('Person');
+        });
+
+        it('updates store', () => {
+          expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'primary_ext']))
+            .toEqual('Person');
+        });
+      });
+
+      describe('contents of name cell', () => {
+
+        const findCell = () => findSecondRow().find('td:nth-child(1)');
+        beforeEach(done => setupEdit(csvValid, findCell, newEntities.newEntity0.name, done));
+
+        it('searches for entities matching new name', () => {
+          expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity0.name);
+          expect(bulkTable.getIn(['matchesByEntityId', 'newEntity1'])).toExist();
+          expect(findSecondRow().find(".resolver-anchor")).toExist();
+        });
       });
     });
 
-    describe('contents of an invalid cell', () => {
+    describe('reference', () => {
 
-      const csv = "name,primary_ext,blurb\nvalid name,x,y\n";
-      const findCell = () => findFirstRow().find('td:nth-child(2)');
-      beforeEach(done => setupEdit(csv, findCell, 'Person', done));
+      beforeEach(done => setupWithCsv(csvValid, done));
 
-      it('updates cell', () => {
-        expect(findCell()).toHaveText('Person');
+      it('updates the name', () => {
+        $('#reference-container .name').val('Wikipedia').trigger('change');
+        expect(bulkTable.getIn(['reference', 'name'])).toEqual('Wikipedia');
       });
 
-      it('updates store', () => {
-        expect(bulkTable.getIn(['entities', 'byId', 'newEntity0', 'primary_ext']))
-          .toEqual('Person');
-      });
-    });
-
-    describe('contents of name cell', () => {
-
-      const findCell = () => findSecondRow().find('td:nth-child(1)');
-      beforeEach(done => setupEdit(csvValid, findCell, newEntities.newEntity0.name, done));
-
-      it('searches for entities matching new name', () => {
-        expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity0.name);
-        expect(bulkTable.getIn(['matchesByEntityId', 'newEntity1'])).toExist();
-        expect(findSecondRow().find(".resolver-anchor")).toExist();
+      it('updates the url', () => {
+        $('#reference-container .url').val('https://wikipedia.org').trigger('change');
+        expect(bulkTable.getIn(['reference', 'url'])).toEqual('https://wikipedia.org');
       });
     });
   });
+  
 
   describe('validation', () => {
 

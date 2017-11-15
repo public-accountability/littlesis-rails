@@ -51,7 +51,7 @@
       canUpload: true,
       notification: ""
     });
-    state.render().detectUploadSupport();
+    state.render().setUploadSupport();
 
     // TODO: (ag|14-Nov-2017)
     // if we want to instantiate tables, we could:
@@ -216,14 +216,14 @@
     return entity;
   };
 
-  // Entity, String, String -> State
-  state.setEntityAttr = function(entity, attr, value){
-    return state.setIn(['entities', 'byId', entity.id, attr], value);
-  };
-
   // Entity -> Entity
   state.assignId = function(entity, idx){
     return Object.assign(entity, { id: "newEntity" + idx });
+  };
+
+  // Entity, String, String -> State
+  state.setEntityAttr = function(entity, attr, value){
+    return state.setIn(['entities', 'byId', entity.id, attr], value);
   };
 
   // Entity -> State
@@ -284,7 +284,7 @@
   }
 
   // () -> State
-  state.detectUploadSupport = function(){
+  state.setUploadSupport = function(){
     return util.browserCanOpenFiles() ?
       state :
       state
@@ -313,6 +313,11 @@
     return state.setNotification(
       state.getEntityIds().length + " entities added to list"
     );
+  };
+
+  // (String, String) -> State
+  state.setReferenceAttr = function(attr, value){
+    return state.setIn(['reference', attr], value);
   };
 
   // API CALLS
@@ -787,12 +792,14 @@
       .append($('<input>', {
         type: 'text',
         class: 'name',
-        placeholder: 'Name'
+        placeholder: 'Name',
+        change: function(){ state.setReferenceAttr('name', $(this).val()); }
       }))
       .append($('<input>', {
         type: 'text',
         class: 'url',
-        placeholder: 'Url'
+        placeholder: 'Url',
+        change: function(){ state.setReferenceAttr('url', $(this).val()); }
       }));
   }
 
