@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :ny_disclosure, class: NyDisclosure do
     filer_id 'A1'
     report_id "A"

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :sf_guard_user_profile, class: SfGuardUserProfile do
     name_first 'first'
     name_last 'last'

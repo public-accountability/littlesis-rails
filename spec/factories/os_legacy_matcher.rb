@@ -1,4 +1,4 @@
-FactoryGirl.define do 
+FactoryBot.define do 
 
   factory :loeb, class: Entity do 
     name "Daniel S Loeb"

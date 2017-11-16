@@ -73,7 +73,7 @@ group :test, :development do
   gem 'capybara', '2.13.0'
   gem 'capybara-webkit', '1.14.0'
   gem 'database_cleaner'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails', '~> 4.8.2'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   gem 'jasmine', '~> 2.6.0'
   gem 'pry'

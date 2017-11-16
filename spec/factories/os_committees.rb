@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :os_committee do
     cycle '2010'
     cmte_id 'C00000042'

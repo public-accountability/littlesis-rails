@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :document do
     url { Faker::Internet.unique.url }
     name { Faker::Lorem.sentence }

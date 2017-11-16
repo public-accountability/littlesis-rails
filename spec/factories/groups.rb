@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :group do
     sequence(:id)
     name "Goldman Sachs Investigation"

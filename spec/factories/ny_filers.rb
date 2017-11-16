@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :ny_filer do
     filer_id "ABC"
   end

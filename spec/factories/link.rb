@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :link, class: Link do
     sequence(:id)
     entity1_id { rand(1000) }
