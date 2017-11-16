@@ -3,7 +3,7 @@ require 'rails_helper'
 describe ApplicationController, type: :controller do
   class TestController < ApplicationController
     def current_user
-      FactoryGirl.build(:user, sf_guard_user_id: 1000)
+      FactoryBot.build(:user, sf_guard_user_id: 1000)
     end
   end
 

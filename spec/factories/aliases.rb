@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :alias, class: Alias do
     name 'name'
     # entity_id

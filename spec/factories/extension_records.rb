@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :extension_record do
     entity_id 1
     definition_id 2

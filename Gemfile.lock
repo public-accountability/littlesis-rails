@@ -152,10 +152,10 @@ GEM
     erubis (2.7.0)
     excon (0.54.0)
     execjs (2.7.0)
-    factory_girl (4.7.0)
+    factory_bot (4.8.2)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.7.0)
-      factory_girl (~> 4.7.0)
+    factory_bot_rails (4.8.2)
+      factory_bot (~> 4.8.2)
       railties (>= 3.0.0)
     faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
@@ -450,7 +450,7 @@ DEPENDENCIES
   database_cleaner
   delayed_job_active_record
   devise (~> 4.2)
-  factory_girl_rails
+  factory_bot_rails (~> 4.8.2)
   faker!
   fog-aws
   geocoder
@@ -498,4 +498,4 @@ DEPENDENCIES
   whenever (~> 0.9.7)
 
 BUNDLED WITH
-   1.15.4
+   1.16.0

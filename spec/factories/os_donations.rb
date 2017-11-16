@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   sequence :fec_cycle_id do |n|
     "2012-#{n}"
   end

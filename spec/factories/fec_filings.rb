@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
    factory :filing_raw_db_lookup, class: FecFiling do
      crp_id '1946014'
      fec_filing_id '26940556352'

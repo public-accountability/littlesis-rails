@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :entity_version, class: PaperTrail::Version do
     sequence(:id)
     created_at { Time.now }

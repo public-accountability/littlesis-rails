@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :reference, class: Reference do
     referenceable_type 'Relationship'
     sequence(:id)

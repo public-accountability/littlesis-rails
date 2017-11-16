@@ -40,7 +40,7 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, :type => :controller
   config.include Devise::Test::ControllerHelpers, :type => :view
   config.include Warden::Test::Helpers
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
   config.include FeatureExampleMacros, :type => :feature
   config.include RequestExampleMacros, :type => :request
   config.include NetworkAnalysisExampleHelper, :network_analysis_helper

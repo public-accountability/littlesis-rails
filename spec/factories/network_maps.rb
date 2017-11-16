@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :network_map, class: NetworkMap do
     title "so many connections"
     data "{\"entities\":[],\"rels\":[],\"texts\":[]}"

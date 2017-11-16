@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   sequence :user_email do |n|
     "user_#{n}@littlesis.org"
   end

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   
   factory :tagging, class: Tagging do
     sequence(:id)
