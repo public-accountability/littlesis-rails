@@ -352,6 +352,7 @@ Lilsis::Application.routes.draw do
    
   get "/partypolitics" => "pages#partypolitics"
   get "/oligrapher" => "pages#oligrapher_splash"
+  get "/donate" => "pages#donate"
   get "/graph" => "graph#all"
 
   get "/pages/:page/edit" => "pages#edit_by_name", constraints: { page: /[A-z]+[^\/]+/ }

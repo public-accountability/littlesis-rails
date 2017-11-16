@@ -74,6 +74,9 @@ class PagesController < ApplicationController
     render layout: "fullscreen"
   end
 
+  def donate
+  end
+
   private
 
   def set_page_by_id
