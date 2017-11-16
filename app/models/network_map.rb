@@ -57,8 +57,14 @@ class NetworkMap < ActiveRecord::Base
     ERB::Util.json_escape(json)
   end
 
-  def references
-    rels.collect{ |r| r.references }.flatten.uniq(&:source).reject{ |ref| ref.name.blank? }.sort_by{ |ref| ref.updated_at }.reverse
+  def documents
+    @_documents ||= Reference
+                      .includes(:document)
+                      .where(referenceable_id: rels.map(&:id), referenceable_type: 'Relationship')
+                      .order(updated_at: :desc)
+                      .map(&:document)
+                      .uniq
+                      .reject { |d| d.name.blank? }
   end
 
   def self.entity_type(entity)
@@ -267,7 +273,7 @@ class NetworkMap < ActiveRecord::Base
       user: { name: user.username, url: user.legacy_url },
       date: updated_at.strftime("%B %-d, %Y"),
       maps: ary,
-      sources: references.map { |r| { title: r.name, url: r.source } }
+      sources: documents.map { |r| { title: r.name, url: r.url } }
     }
   end
 
@@ -279,25 +285,30 @@ class NetworkMap < ActiveRecord::Base
     annotations.count > 0
   end
 
-  def references_to_html
-    references.map { |r| "<div><a href=\"#{r.source}\">#{r.name}</a></div>" }.join("\n")
+  def documents_to_html
+    documents.map { |d| "<div><a href=\"#{d.url}\">#{d.name}</a></div>"}.join("\n")
   end
 
   def references_to_map_data
     hash = to_clean_hash
     hash[:id] = "#{id}-sources"
     hash[:title] = "Source Links"
-    hash[:description] = references_to_html
+    hash[:description] = documents_to_html
     hash
   end
 
+  # -> Array[String]
   def edge_ids
-    hash = JSON.parse(graph_data)
-    return hash['edges'].keys
+    JSON.parse(graph_data)['edges'].keys
   end
 
+  # -> [String]
+  def numeric_ids
+    edge_ids.select { |id| id.to_s.match(/^\d+$/) }
+  end
+
+  # -> Relationship::ActiveRecord_Relation | Array
   def rels
-    numeric_ids = edge_ids.select { |id| id.to_s.match(/^\d+$/) }
     return [] if numeric_ids.empty?
     Relationship.where(id: numeric_ids)
   end
@@ -321,15 +332,14 @@ class NetworkMap < ActiveRecord::Base
   def annotations_data_with_sources
     annotations = JSON.parse(annotations_data)
 
-    if list_sources and references.count > 0
-      sources_html = references_to_html
+    if list_sources and documents.count > 0
       annotations.concat([{
         id: "sources",
         nodeIds: [],
         edgeIds: [],
         captionIds: [],
         header: "Sources",
-        text: sources_html
+        text: documents_to_html
       }])
     end
 
