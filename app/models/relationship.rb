@@ -404,9 +404,9 @@ class Relationship < ActiveRecord::Base
 
     org_types = related.extension_names
 
-    return 'Business' if (org_types & ['Business', 'BusinessPerson']).any?
+    return 'In The Office Of' if org_types.include? 'Person'
     return 'Government' if org_types.include? 'GovernmentBody'
-    return 'In The Office Of' if (org_types & ['ElectedRepresentative', 'PublicOfficial']).any?
+    return 'Business' if (org_types & ['Business', 'BusinessPerson']).any?
     return 'Other Positions & Memberships'
   end
 
