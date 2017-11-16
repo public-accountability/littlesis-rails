@@ -24,6 +24,8 @@
   function realCategoryId() {
     var category = Number($('#relationship-cat-select option:selected').val());
     
+    // 50 -> Donations Recieved
+    // 51 -> Donations Given
     if (category === 50 || category === 51) {
       return 5;
     } else {
@@ -103,6 +105,40 @@
     });
   }
 
+  function exampleRow(category) {
+    switch(Number(category)) {
+    case 1:
+      return [ 'Rex Tillerson', 'Secretary of state', 'Person', 'CEO', 'N', '', '', '', 'YES', '', '' ];
+    case 2:
+      if (utility.entityInfo('entitytype') === 'Person') {
+	return [ 'Unversity Name', '', 'Org', '', '1996', '2000', 'Graduate', 'Forestry', 'N', ''];
+      } else {
+	return [ 'Example Person', 'One Sentence about them', 'Person', 'Undergraduate', '1985-01-01', '1990-12-01', 'BA', 'physics', '', ''];
+      }
+    case 3:
+      return [ "Oil Company", "The largest oil company in the world", "Org", "", '', '', '', '1000000', '' ] ;
+    case 4:
+      return [ 'Jane Doe', 'About Jane...', 'Person', '', '', '', '' ];
+    case 5:
+      return [ 'Mr. Big Donor', 'Hedge fund manager', 'Person', 'Campaign Contribution', '250000', '2017-05-01', '2017-05-01', '', '', '' ];
+    case 6:
+      return [ 'Company X', '', 'Org', 'sold real estate', 'bought real estate', '1996-10-01', '', '', '', '', ''];
+    case 8:
+      return [ 'Jane Doe', 'About Jane...', 'Person', 'Friend', 'Friend', '2000-01-01', '2015-04-15', 'NO', '' ];
+    case 9:
+      return [ 'Jane Doe', 'About Jane...', 'Person', 'Business Partner', 'Business Partner', '2000-01-01', '2015-04-15', 'NO', '' ];
+    case 10:
+      return [ 'Company X', '', 'Org', '', '1968', '2015', 'N', '25', '', '']  ;
+    case 11:
+      return [ 'Company X', '', 'Org', 'Child Company', 'Parent Company', '1996-01-01', '', 'Y', ''] ;
+    case 12:
+      return [ 'Jane Doe', 'About Jane...', 'Person', "Entity1 is X of Jane", "Jane is Y of entity1", '2000', '2001', '', ''];
+    default:
+      throw 'Invalid Relationship category';
+    }
+  };
+
+ 
   // => <Button>
   // Returns button that, when clicked, saves a csv file with the correct headers
   // for the chosen relationship type
@@ -114,7 +150,8 @@
 	var headers = relationshipDetails().map(function(x) { 
 	  return x[1];
 	}).join(',');
-	var blob = new Blob([headers], {type: "text/plain;charset=utf-8"});
+	var data = headers + "\n" + exampleRow(realCategoryId()).join(',');
+	var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
 	var fileName = utility.relationshipCategories[realCategoryId()] + '.csv';
 	saveAs(blob, fileName);
       }
