@@ -39,9 +39,11 @@
 	<% end %>
 </div>
 
- <% if @user == current_user %>
- 	Permissions
- <% end %>
+<% if @user == current_user %>
+	<h3>
+		Permissions
+	</h3>
+<% end %>
 
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>
