@@ -4,8 +4,8 @@
 	<%= @user.username %>
 </h1>
 
-<div>
- profile picture
+<div class="entity-profile-image">
+    <%= link_to_if(@user == current_user, user_profile_image, image_user_path(@user)) %>
 </div>
 
  <h3>

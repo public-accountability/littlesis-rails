@@ -93,6 +93,8 @@ Lilsis::Application.routes.draw do
       post 'restrict'
       delete 'delete_permission'
       delete 'destroy'
+      get 'image'
+      post 'upload_image'
     end
     collection do
       get 'admin'

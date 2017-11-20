@@ -23,6 +23,32 @@ class UsersController < ApplicationController
     @lists = @user.lists.order("created_at DESC, id DESC")
     @recent_updates = @user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
   end
+
+  def image
+    @user = User.find(params[:id])
+    @image = Image.new
+  end
+
+  def upload_image
+    if uploaded = image_params[:file]
+      filename = Image.random_filename(File.extname(uploaded.original_filename))      
+      src_path = Rails.root.join('tmp', filename).to_s
+      open(src_path, 'wb') do |file|
+        file.write(uploaded.read)
+      end
+    else
+      src_path = image_params[:url]
+    end
+
+    @image = Image.new_from_url(src_path)
+    @image.user = @user
+
+    if @image.save
+      redirect_to image_user_path(@user), notice: 'Image was successfully created.'
+    else
+      render action: 'image'
+    end
+  end
   
   # GET /users/:id/edit_permissions
   def edit_permissions
@@ -105,5 +131,11 @@ class UsersController < ApplicationController
   def restrict_params
     Rails.logger.warn params.inspect
     params[:status].try(:upcase)
+  end
+
+  def image_params
+    params.require(:image).permit(
+      :file, :url
+    )
   end
 end
