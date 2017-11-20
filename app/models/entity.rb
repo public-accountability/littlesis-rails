@@ -334,6 +334,10 @@ class Entity < ActiveRecord::Base
     ]
   end
 
+  def self.extension_with_field?(name_or_id)
+    all_extension_names_with_fields.include? ext_name_or_id_to_name(name_or_id)
+  end
+
   def related_essential_words
     words = []
     relateds.where("link.category_id = 1").where(primary_ext: "Org").each do |related|
@@ -799,9 +803,24 @@ class Entity < ActiveRecord::Base
     blurb
   end
 
-  private
+  # A type checker for definition id and names
+  # input: String or Integer
+  # output: String or throws ArgumentError
+  def self.ext_name_or_id_to_name(name_or_id)
+    case name_or_id
+    when String
+      return name_or_id if all_extension_names.include?(name_or_id)
+      raise ArgumentError, "there are no extensions associated with name: #{name_or_id}"
+    when Integer
+      name = all_extension_names[name_or_id]
+      return name unless name.nil?
+      raise ArgumentError, "there is no extension associated with id #{name_or_id}"
+    else
+      raise ArgumentError, "input must be a string or an integer"
+    end
+  end
 
-  
+  private
 
   # Callbacks for Soft Delete
   def after_soft_delete
@@ -815,21 +834,8 @@ class Entity < ActiveRecord::Base
     # ArticleEntity
   end
 
-  # A type checker for definition id and names
-  # input: String or Integer
-  # output: String or throws ArgumentError
   def name_or_id_to_name(name_or_id)
-    case name_or_id
-    when String
-      return name_or_id if self.class.all_extension_names.include?(name_or_id)
-      raise ArgumentError, "there are no extensions associated with name: #{name_or_id}"
-    when Integer
-      name = self.class.all_extension_names[name_or_id]
-      return name unless name.nil?
-      raise ArgumentError, "there is no extension associated with id #{name_or_id}"
-    else
-      raise ArgumentError, "input must be a string or an integer"
-    end
+    self.class.send(:ext_name_or_id_to_name, name_or_id)
   end
 
   def extension_with_fields?(name)
