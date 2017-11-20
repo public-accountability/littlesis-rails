@@ -223,6 +223,30 @@ class Entity < ActiveRecord::Base
     self
   end
 
+  # Merges extensions attribues for already existing extensions
+  # This will only merge fields that are nil -- it won't update already existing fields
+  # Example:
+  #   If school.attributes['tuition'] => 'nil'
+  #   then merge_extension('school', { tuition' => 20_000 }) will change
+  #   the school tutition attribute to 20_000.
+  #   However if school.attributes['tuition'] => 5_000, merge_extension('school', { tuition' => 20_000 }) will do nothing
+  #   and school.attributes['tuition']  will remain at 5_000
+  def merge_extension(name_or_id, fields)
+    name = name_or_id_to_name(name_or_id)
+    unless extension_with_fields?(name) && has_extension?(name)
+      throw ArgumentError, "merge_extension can only be used with extensions that have fields"
+    end
+    extension = name.constantize.find_by_entity_id(id)
+
+    update_attrs = ActiveSupport::HashWithIndifferentAccess
+                          .new(fields)
+                          .delete_if { |_, v| v.nil? }
+                          .slice(*extension.attributes.select { |_, v| v.nil? }.keys)
+
+    extension.update(update_attrs) unless update_attrs.empty?
+    self
+  end
+
   # Create new extension by definition ids
   # Accepts array of ids
   def add_extensions_by_def_ids(ids)
