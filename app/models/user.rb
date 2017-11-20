@@ -18,6 +18,7 @@ class User < ActiveRecord::Base
 
   belongs_to :sf_guard_user, inverse_of: :user
   has_one :sf_guard_user_profile, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :user
+  has_one :image, inverse_of: :user, dependent: :destroy
   accepts_nested_attributes_for :sf_guard_user
 
   before_validation :set_default_network_id

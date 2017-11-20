@@ -3,6 +3,7 @@ class Image < ActiveRecord::Base
   include SoftDelete
 
   belongs_to :entity, inverse_of: :images
+  belongs_to :user, inverse_of: :image
   belongs_to :address, inverse_of: :images
   
   scope :featured, -> { where(is_featured: true) }
