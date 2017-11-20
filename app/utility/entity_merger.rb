@@ -1,5 +1,70 @@
 class EntityMerger
-  def self.merge_basic(e1, e2, excludes = [])
+  attr_reader :source, :dest, :extensions
+
+  def initialize(source:, dest:)
+    @source = source
+    @dest = dest
+    check_input_validity
+    @extensions = []
+  end
+
+  # the actual merging
+  def merge
+  end
+
+  # trial run
+  def report
+  end
+  
+
+
+  ## Merge Functions ##
+
+  Extension = Struct.new(:ext_id, :new, :fields) do
+    def initialize(ext_id, new, fields={}); super end
+  end
+
+  def merge_extensions
+    source_extension_attributes = source.extensions_with_attributes
+    # new extensions
+    (source.extension_ids.to_set - dest.extension_ids.to_set).each do |ext_id|
+      if Entity.extension_with_field?(ext_id)
+        @extensions << Extension.new(ext_id, true, source_extension_attributes[Entity.ext_name_or_id_to_name(ext_id)])
+      else
+        @extensions << Extension.new(ext_id, true)
+      end
+    end
+
+    # common extensions:
+    source.extension_ids.to_set.intersection(dest.extension_ids.to_set).each do |ext_id|
+      if Entity.extension_with_field?(ext_id)
+        @extensions << Extension.new(ext_id, false, source_extension_attributes[Entity.ext_name_or_id_to_name(ext_id)])
+      end
+    end
+  end
+
+
+  ## ERRORS ## 
+  
+  class ExtensionMismatchError < ArgumentError
+    def message
+      "Only entities with the same primary ext can be merged"
+    end
+  end
+
+  ## Private Methods ##
+
+  private
+
+  def check_input_validity
+    raise ArgumentError, "Both source and dest must an Entity" unless source.is_a?(Entity) && dest.is_a?(Entity)
+    raise ExtensionMismatchError unless source.primary_ext == dest.primary_ext
+  end
+end
+
+=begin
+
+def self.merge_basic(e1, e2, excludes = [])
     ActiveRecord::Base.transaction do
       # have to have the same primary extension
       raise "can't merge entities with different primary extensions" unless e1.primary_ext == e2.primary_ext
@@ -189,4 +254,5 @@ class EntityMerger
       e1
     end
   end
-end
+
+=end
