@@ -14,6 +14,6 @@ module UsersHelper
 	end
 
 	def user_profile_image
-    	image_tag(@user.image.url, alt: @user.username, class: 'img-rounded')
+    	image_tag(@user.image_url, alt: @user.username, class: 'img-rounded')
   	end
 end

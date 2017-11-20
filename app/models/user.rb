@@ -119,6 +119,12 @@ class User < ActiveRecord::Base
     Digest::SHA1.hexdigest(sf_guard_user.salt + password) == sf_guard_user.password
   end
 
+  def image_url
+    return "/images/system/anon.png" if image.nil?
+    type = (image.has_square ? "square" : "profile") if type.nil?
+    image.image_path(type)
+  end
+
   ###############
   # Permissions #
   ###############
