@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109174122) do
+ActiveRecord::Schema.define(version: 20171114212656) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -522,6 +522,17 @@ ActiveRecord::Schema.define(version: 20171109174122) do
   add_index "groups", ["campaign_id"], name: "index_groups_on_campaign_id", using: :btree
   add_index "groups", ["delta"], name: "index_groups_on_delta", using: :btree
   add_index "groups", ["slug"], name: "index_groups_on_slug", unique: true, using: :btree
+
+  create_table "help_pages", force: :cascade do |t|
+    t.string   "name",         limit: 255,      null: false
+    t.string   "title",        limit: 255
+    t.text     "markdown",     limit: 16777215
+    t.integer  "last_user_id", limit: 4
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "help_pages", ["name"], name: "index_help_pages_on_name", unique: true, using: :btree
 
   create_table "hierarchy", force: :cascade do |t|
     t.integer "relationship_id", limit: 8, null: false

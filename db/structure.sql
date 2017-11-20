@@ -980,6 +980,26 @@ CREATE TABLE `groups` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `help_pages`
+--
+
+DROP TABLE IF EXISTS `help_pages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `help_pages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `markdown` mediumtext COLLATE utf8_unicode_ci,
+  `last_user_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_help_pages_on_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `hierarchy`
 --
 
@@ -3050,7 +3070,7 @@ CREATE TABLE `versions` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-09 17:42:33
+-- Dump completed on 2017-11-14 21:35:33
 INSERT INTO schema_migrations (version) VALUES ('20131031182415');
 
 INSERT INTO schema_migrations (version) VALUES ('20131031182500');
@@ -3288,4 +3308,6 @@ INSERT INTO schema_migrations (version) VALUES ('20171031152314');
 INSERT INTO schema_migrations (version) VALUES ('20171109155832');
 
 INSERT INTO schema_migrations (version) VALUES ('20171109174122');
+
+INSERT INTO schema_migrations (version) VALUES ('20171114212656');
 

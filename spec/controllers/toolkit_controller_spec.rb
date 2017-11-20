@@ -5,11 +5,11 @@ describe ToolkitController, type: :controller do
   before(:all){ ToolkitPage.delete_all }
 
   it { should route(:get, '/toolkit').to(action: :index) }
-  it { should route(:get, '/toolkit/new').to(action: :new_page) }
-  it { should route(:get, '/toolkit/some_page').to(action: :display, toolkit_page: 'some_page') }
-  it { should route(:get, '/toolkit/another_page').to(action: :display, toolkit_page: 'another_page') }
-  it { should route(:post, '/toolkit/create_new_page').to(action: :create_new_page) }
-  it { should route(:get, '/toolkit/page/edit').to(action: :edit, toolkit_page: 'page') }
+  it { should route(:get, '/toolkit/new').to(action: :new) }
+  it { should route(:get, '/toolkit/some_page').to(action: :display, page_name: 'some_page') }
+  it { should route(:get, '/toolkit/another_page').to(action: :display, page_name: 'another_page') }
+  it { should route(:post, '/toolkit').to(action: :create) }
+  it { should route(:get, '/toolkit/page/edit').to(action: :edit, page_name: 'page') }
   it { should route(:patch, '/toolkit/123').to(action: :update, id: '123') }
 
   it 'has MARKDOWN constant' do
@@ -22,31 +22,31 @@ describe ToolkitController, type: :controller do
     end
 
     it 'responds with 404 if page does not exist' do
-      get :display, toolkit_page: 'not_a_page_yet'
+      get :display, page_name: 'not_a_page_yet'
       expect(response).to have_http_status(404)
     end
 
     it 'renders display if page exists' do
-      get :display, toolkit_page: 'interesting_facts'
+      get :display, page_name: 'interesting_facts'
       expect(response).to have_http_status(200)
       expect(response).to render_template(:display)
     end
 
     it 'can accept page names with spaces and capitals' do
-      get :display, toolkit_page: 'iNtErEsTiNg FaCtS'
+      get :display, page_name: 'iNtErEsTiNg FaCtS'
       expect(response).to have_http_status(200)
       expect(response).to render_template(:display)
     end
 
     it 'sets cache-control headers' do
-      get :display, toolkit_page: 'interesting_facts'
+      get :display, page_name: 'interesting_facts'
       expect(response.headers['Cache-Control']).to include 'max-age=86400, public'
     end
   end
 
   describe 'edit' do
     login_admin
-    
+
     before(:all) do
       ToolkitPage.delete_all
       @toolkit_page = ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts')
@@ -58,19 +58,19 @@ describe ToolkitController, type: :controller do
     end
 
     it 'responds with 404 if page does not exist' do
-      get :edit, toolkit_page: 'not_a_page_yet'
+      get :edit, page_name: 'not_a_page_yet'
       expect(response).to have_http_status 404
     end
 
     it 'renders edit page' do
-      get :edit, toolkit_page: 'interesting_facts'
+      get :edit, page_name: 'interesting_facts'
       expect(response).to have_http_status 200
       expect(response).to render_template :edit
     end
 
     it 'assigns toolkit_page' do
-      get :edit, toolkit_page: 'interesting_facts'
-      expect(controller.instance_variable_get('@toolkit_page')).to eq @toolkit_page
+      get :edit, page_name: 'interesting_facts'
+      expect(controller.instance_variable_get('@page')).to eq @toolkit_page
     end
   end
 
@@ -85,21 +85,21 @@ describe ToolkitController, type: :controller do
     end
   end
 
-  describe '#new_page' do
+  describe '#new' do
     login_admin
-    before { get :new_page }
+    before { get :new }
     it { should respond_with(:success) }
-    it { should render_template(:new_page) }
+    it { should render_template(:new) }
   end
 
-  describe '#create_new_page' do
+  describe '#create' do
     login_admin
     let(:good_params) { { 'toolkit_page' => { 'name' => 'some_page', 'title' => 'page title' } } }
     let(:bad_params) { { 'toolkit_page' => { 'title' => 'page title' } } }
 
     context 'good post' do
       it 'creates a new toolkit page' do
-        expect { post :create_new_page, good_params }
+        expect { post :create, good_params }
           .to change { ToolkitPage.count }.by(1)
       end
 
@@ -107,19 +107,19 @@ describe ToolkitController, type: :controller do
         expect(ToolkitPage).to receive(:new)
                                 .with(hash_including(:last_user_id => controller.current_user.id))
                                 .and_return(spy('toolkit page'))
-        post :create_new_page, good_params
+        post :create, good_params
       end
     end
 
     context 'bad post' do
       it 'does not create a new toolkit page' do
-        expect { post :create_new_page, bad_params }
+        expect { post :create, bad_params }
           .not_to change { ToolkitPage.count }
       end
 
       it 'renders new page' do
-        post :create_new_page, bad_params
-        expect(response).to render_template(:new_page)
+        post :create, bad_params
+        expect(response).to render_template(:new)
       end
     end
   end
