@@ -526,6 +526,35 @@ describe Entity, :tag_helper  do
         expect { @org.remove_extensions_by_def_ids([7, 10, 9]) }.to change { ExtensionRecord.count }.by(-2)
       end
     end
+
+
+    describe '#merge_extension' do
+      let(:business) do
+        create(:entity_org).tap { |e| e.add_extension('Business') }
+      end
+
+      let(:law_firm) do
+        create(:entity_org).tap { |e| e.add_extension('LawFirm') }
+      end
+
+      it 'throws unless called with an extension that has attributes' do
+        expect { business.merge_extension('Business', {}) }.not_to raise_error
+        expect { business.merge_extension('LawFirm', {}) }.to raise_error(ArgumentError)
+      end
+
+      it 'merges attributes that are nil on the source and not-nil on the dest' do
+        expect(business.business.annual_profit).to be nil
+        business.merge_extension('Business', 'annual_profit' => 100)
+        expect(business.reload.business.annual_profit).to eql 100
+      end
+
+      it 'does not merge attributes that are not nil on the source' do
+        business.business.update('annual_profit' => 10)
+        expect(business.business.annual_profit).to be 10
+        business.merge_extension('Business', 'annual_profit' => 100 )
+        expect(business.reload.business.annual_profit).to eql 10
+      end
+    end
   end # end Extension Attributes Functions
 
   describe 'basic_info' do
