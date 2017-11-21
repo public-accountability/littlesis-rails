@@ -1,16 +1,24 @@
 class EntityMerger
-  attr_reader :source, :dest, :extensions, :contact_info
+  attr_reader :source, :dest, :extensions,
+              :contact_info, :lists, :images,
+              :aliases, :document_ids, :tag_ids
 
   def initialize(source:, dest:)
     @source = source
     @dest = dest
     check_input_validity
+
     @extensions = []
     @contact_info = []
+    @lists = []
+    @images = []
+    @aliases = []
+    @document_ids = []
+    @tag_ids = []
   end
 
   # the actual merging
-  def merge
+  def merge!
   end
 
   # trial run
@@ -18,6 +26,13 @@ class EntityMerger
   end
   
 
+  def merge
+    merge_extensions
+    merge_contact_info
+    merge_lists
+    merge_images
+    merge_aliases
+  end
 
   ## Merge Functions ##
 
@@ -46,8 +61,6 @@ class EntityMerger
 
   
   def merge_contact_info
-    set_dest_entity_id = proc { |x| x.entity_id = dest.id }
-
     source.addresses.each do |address|
       unless dest.addresses.present? && dest.addresses.select { |dest_a| dest_a.same_as?(address) }.present?
         @contact_info << address.dup.tap(&set_dest_entity_id)
@@ -67,6 +80,49 @@ class EntityMerger
     end
   end
 
+  def merge_lists
+    @lists = source.list_entities.pluck(:list_id).to_set - dest.list_entities.pluck(:list_id).to_set
+  end
+  
+  def merge_images
+    source.images.each(&set_dest_entity_id).each { |img| @images << img } 
+  end
+
+  def merge_aliases
+    source.aliases.each do |a|
+      unless dest.aliases.map(&:name).include?(a.name)
+        @aliases << Alias.new(name: a.name, entity_id: dest.id, is_primary: false)
+      end
+    end
+  end
+
+  def merge_references
+    @document_ids = source.references.map(&:document_id).to_set - dest.references.map(&:document_id).to_set
+  end
+
+  def merge_tags
+    #binding.pry
+    @tag_ids = source.taggings.map(&:tag_id).to_set - dest.taggings.map(&:tag_id).to_set
+  end
+
+  def merge_os_donations
+  end
+
+  def merge_ny_donations
+  end
+
+  def merge_os_categories
+  end
+
+  def merge_articles
+  end
+
+  def merge_relationships
+  end
+  
+  #def merge_versions!; end
+
+  
   ## ERRORS ## 
   
   class ExtensionMismatchError < ArgumentError
@@ -82,6 +138,10 @@ class EntityMerger
   def check_input_validity
     raise ArgumentError, "Both source and dest must an Entity" unless source.is_a?(Entity) && dest.is_a?(Entity)
     raise ExtensionMismatchError unless source.primary_ext == dest.primary_ext
+  end
+
+  def set_dest_entity_id
+    proc { |x| x.entity_id = dest.id }
   end
 end
 
