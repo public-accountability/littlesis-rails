@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171121162338) do
+ActiveRecord::Schema.define(version: 20171121212854) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1641,12 +1641,12 @@ ActiveRecord::Schema.define(version: 20171121162338) do
   add_index "user_permissions", ["user_id", "resource_type"], name: "index_user_permissions_on_user_id_and_resource_type", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  limit: 255, default: "",    null: false
-    t.string   "encrypted_password",     limit: 255, default: "",    null: false
+    t.string   "email",                  limit: 255,   default: "",    null: false
+    t.string   "encrypted_password",     limit: 255,   default: "",    null: false
     t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          limit: 4,   default: 0
+    t.integer  "sign_in_count",          limit: 4,     default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip",     limit: 255
@@ -1654,17 +1654,17 @@ ActiveRecord::Schema.define(version: 20171121162338) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "default_network_id",     limit: 4
-    t.integer  "sf_guard_user_id",       limit: 4,                   null: false
-    t.string   "username",               limit: 255,                 null: false
+    t.integer  "sf_guard_user_id",       limit: 4,                     null: false
+    t.string   "username",               limit: 255,                   null: false
     t.string   "remember_token",         limit: 255
     t.string   "confirmation_token",     limit: 255
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.boolean  "newsletter"
     t.string   "chatid",                 limit: 255
-    t.boolean  "is_restricted",                      default: false
+    t.boolean  "is_restricted",                        default: false
     t.boolean  "map_the_power"
-    t.string   "about_me",               limit: 255
+    t.text     "about_me",               limit: 65535
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
