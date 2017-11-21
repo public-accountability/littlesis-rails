@@ -1,11 +1,12 @@
 class EntityMerger
-  attr_reader :source, :dest, :extensions
+  attr_reader :source, :dest, :extensions, :contact_info
 
   def initialize(source:, dest:)
     @source = source
     @dest = dest
     check_input_validity
     @extensions = []
+    @contact_info = []
   end
 
   # the actual merging
@@ -43,6 +44,28 @@ class EntityMerger
     end
   end
 
+  
+  def merge_contact_info
+    set_dest_entity_id = proc { |x| x.entity_id = dest.id }
+
+    source.addresses.each do |address|
+      unless dest.addresses.present? && dest.addresses.select { |dest_a| dest_a.same_as?(address) }.present?
+        @contact_info << address.dup.tap(&set_dest_entity_id)
+      end
+    end
+
+    source.emails.each do |email|
+      unless dest.emails.present? && dest.emails.map(&:address).include?(email.address)
+        @contact_info << email.dup.tap(&set_dest_entity_id)
+      end
+    end
+
+    source.phones.each do |phone|
+      unless dest.phones.present? && dest.phones.map(&:number).include?(phone.number)
+        @contact_info << phone.dup.tap(&set_dest_entity_id)
+      end
+    end
+  end
 
   ## ERRORS ## 
   

@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 describe 'Merging Entities' do
+  let(:source_org) { create(:entity_org, :with_org_name) }
+  let(:dest_org) { create(:entity_org, :with_org_name) }
+
   describe 'initializing' do
     let(:source) { build(:org) }
     let(:dest) { build(:org) }
@@ -27,12 +30,10 @@ describe 'Merging Entities' do
   it 'sets the "merged_id" fields of the merged entity to be the id of the merged entity'
   it 'marks the merged entity as deleted'
 
-
   context 'extensions' do
     let(:source_person) { create(:entity_person, :with_person_name) }
     let(:dest_person) { create(:entity_person, :with_person_name) }
-    let(:source_org) { create(:entity_org, :with_org_name) }
-    let(:dest_org) { create(:entity_org, :with_org_name) }
+    
     subject { EntityMerger.new(source: source_person, dest: dest_person) } 
 
     context 'With no new extensions on the source' do
@@ -87,6 +88,75 @@ describe 'Merging Entities' do
   end
 
   context 'contact info' do
+    subject { EntityMerger.new(source: source_org, dest: dest_org) }
+
+    def verify_contact_info_length_type_and_entity_id(type, entity_id)
+      expect(subject.contact_info.length).to eql 1
+      expect(subject.contact_info.first).to be_a type
+      expect(subject.contact_info.first.entity_id).to eql entity_id
+    end
+
+    context 'addresses' do
+      let!(:address) { create(:address, entity_id: source_org.id) }
+
+      context 'source has a new address' do
+        before { subject.merge_contact_info}
+        it 'duplicates address and appends to @contact_info' do
+          verify_contact_info_length_type_and_entity_id(Address, dest_org.id)
+        end
+      end
+
+      context 'source has an addresses that is the same as the destination adddress' do
+        before do
+          expect(dest_org).to receive(:addresses).and_return(double(:present? => true))
+          expect(dest_org).to receive(:addresses).and_return([address.dup])
+          subject.merge_contact_info
+        end
+        it 'skipped already existing address' do
+          expect(subject.contact_info.length).to be_zero
+        end
+      end
+    end
+
+
+    context 'email' do
+      let!(:email) { create(:email, entity_id: source_org.id) }
+      context 'source has an new email' do
+        before { subject.merge_contact_info }
+
+        it 'duplicates email and appends to @contact_info' do
+          verify_contact_info_length_type_and_entity_id(Email, dest_org.id)
+        end
+      end
+      context 'dest has email with same address' do
+        before do
+          create(:email, address: email.address, entity_id: dest_org.id)
+          subject.merge_contact_info
+        end
+        specify { expect(subject.contact_info.length).to be_zero }
+      end
+    end
+    
+    context 'phone' do
+      let!(:phone) { create(:phone, entity_id: source_org.id) }
+      context 'source has an new phone' do
+        before { subject.merge_contact_info }
+
+        it 'duplicates phone and appends to @contact_info' do
+          verify_contact_info_length_type_and_entity_id(Phone, dest_org.id)
+        end
+      end
+
+      context 'dest has phone with same number' do
+        before do
+          create(:phone, number: phone.number, entity_id: dest_org.id)
+          subject.merge_contact_info
+        end
+        specify { expect(subject.contact_info.length).to be_zero }
+      end
+    end
+
+
     it 'adds addresses to the destination entity'
     it 'adds emails to destination entity'
     it 'adds phone numbers to the destination entity'
