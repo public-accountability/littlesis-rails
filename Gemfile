@@ -77,6 +77,7 @@ group :test, :development do
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   gem 'jasmine', '~> 2.6.0'
   gem 'pry'
+  gem 'pry-byebug'
   gem 'pry-rails'
   gem 'rack-mini-profiler'
   gem 'rspec-html-matchers', '~> 0.9.0'

@@ -1,11 +1,12 @@
+<%= stylesheet_link_tag "markdown_editor" %>
 <%= javascript_include_tag "markdown_editor" %>
 <h1>Editing: <%= @page.name %></h1>
 
 <%= render partial: "editable_pages/error_alert" %>
 
-<%= form_for @page, method: :patch, url: toolkit_update_path(id: @page.id) do |f| %>
+<%= form_for @page, method: :patch, url: help_update_path(id: @page.id) do |f| %>
     <%= f.text_area :markdown, size: "100x25", id: 'editable-markdown' %>
     <br />
     <%= f.submit "Update",  class: 'btn btn-primary' %>
-    <%= link_to 'Cancel', "/toolkit/#{@page.name}", class: 'btn btn-default' %>
+    <%= link_to 'Cancel', "/help/#{@page.name}", class: 'btn btn-default' %>
 <% end %>

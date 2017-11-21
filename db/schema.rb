@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109174122) do
+ActiveRecord::Schema.define(version: 20171121162338) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -85,16 +85,6 @@ ActiveRecord::Schema.define(version: 20171109174122) do
 
   add_index "api_request", ["api_key"], name: "api_key_idx", using: :btree
   add_index "api_request", ["created_at"], name: "created_at_idx", using: :btree
-
-  create_table "api_tokens", force: :cascade do |t|
-    t.string   "token",      limit: 255, null: false
-    t.integer  "user_id",    limit: 4,   null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
-  add_index "api_tokens", ["token"], name: "index_api_tokens_on_token", unique: true, using: :btree
-  add_index "api_tokens", ["user_id"], name: "index_api_tokens_on_user_id", unique: true, using: :btree
 
   create_table "api_user", force: :cascade do |t|
     t.string   "api_key",       limit: 100,                        null: false
@@ -523,6 +513,17 @@ ActiveRecord::Schema.define(version: 20171109174122) do
   add_index "groups", ["delta"], name: "index_groups_on_delta", using: :btree
   add_index "groups", ["slug"], name: "index_groups_on_slug", unique: true, using: :btree
 
+  create_table "help_pages", force: :cascade do |t|
+    t.string   "name",         limit: 255,      null: false
+    t.string   "title",        limit: 255
+    t.text     "markdown",     limit: 16777215
+    t.integer  "last_user_id", limit: 4
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "help_pages", ["name"], name: "index_help_pages_on_name", unique: true, using: :btree
+
   create_table "hierarchy", force: :cascade do |t|
     t.integer "relationship_id", limit: 8, null: false
   end
@@ -530,7 +531,7 @@ ActiveRecord::Schema.define(version: 20171109174122) do
   add_index "hierarchy", ["relationship_id"], name: "relationship_id_idx", using: :btree
 
   create_table "image", force: :cascade do |t|
-    t.integer  "entity_id",    limit: 8,                          null: false
+    t.integer  "entity_id",    limit: 8
     t.string   "filename",     limit: 100,                        null: false
     t.string   "title",        limit: 100,                        null: false
     t.text     "caption",      limit: 4294967295
@@ -547,6 +548,7 @@ ActiveRecord::Schema.define(version: 20171109174122) do
     t.integer  "address_id",   limit: 4
     t.string   "raw_address",  limit: 200
     t.boolean  "has_face",                        default: false, null: false
+    t.integer  "user_id",      limit: 4
   end
 
   add_index "image", ["address_id"], name: "index_image_on_address_id", using: :btree
@@ -1294,7 +1296,7 @@ ActiveRecord::Schema.define(version: 20171109174122) do
   add_index "reference", ["name"], name: "name_idx", using: :btree
   add_index "reference", ["object_model", "object_id", "ref_type"], name: "index_reference_on_object_model_and_object_id_and_ref_type", using: :btree
   add_index "reference", ["object_model", "object_id", "updated_at"], name: "object_idx", using: :btree
-  add_index "reference", ["source"], name: "source_idx", length: {"source"=>255}, using: :btree
+  add_index "reference", ["source"], name: "source_idx", length: {"source"=>191}, using: :btree
   add_index "reference", ["updated_at"], name: "updated_at_idx", using: :btree
 
   create_table "reference_excerpt", force: :cascade do |t|
@@ -1662,6 +1664,7 @@ ActiveRecord::Schema.define(version: 20171109174122) do
     t.string   "chatid",                 limit: 255
     t.boolean  "is_restricted",                      default: false
     t.boolean  "map_the_power"
+    t.string   "about_me",               limit: 255
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree

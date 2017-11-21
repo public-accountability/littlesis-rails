@@ -340,16 +340,31 @@ Lilsis::Application.routes.draw do
   #############
 
   get '/toolkit' => 'toolkit#index'
-  get '/toolkit/new' => 'toolkit#new_page'
-  post '/toolkit/create_new_page' => 'toolkit#create_new_page'
-  get '/toolkit/:toolkit_page/edit' => 'toolkit#edit'
+  get '/toolkit/new' => 'toolkit#new'
+  get '/toolkit/pages' => 'toolkit#pages'
+  get '/toolkit/index', to: redirect('/toolkit')
+  post '/toolkit' => 'toolkit#create'
+  get '/toolkit/:page_name/edit' => 'toolkit#edit', :as => 'toolkit_edit'
   patch '/toolkit/:id' => 'toolkit#update', :as => 'toolkit_update'
-  get '/toolkit/:toolkit_page' => 'toolkit#display', :as => 'toolkit_display'
+  get '/toolkit/:page_name' => 'toolkit#display', :as => 'toolkit_display'
+
+  ################
+  #  HELP PAGES  #
+  ################
+
+  get '/help' => 'help_pages#index'
+  get '/help/new' => 'help_pages#new'
+  get '/help/pages' => 'help_pages#pages'
+  get '/help/index', to: redirect('/help')
+  post '/help' => 'help_pages#create'
+  get '/help/:page_name/edit' => 'help_pages#edit', :as => 'help_edit'
+  patch '/help/:id' => 'help_pages#update', :as => 'help_update'
+  get '/help/:page_name' => 'help_pages#display', :as => 'help_display'
 
   #########
   # Pages #
   #########
-   
+
   get "/partypolitics" => "pages#partypolitics"
   get "/oligrapher" => "pages#oligrapher_splash"
   get "/donate" => "pages#donate"
