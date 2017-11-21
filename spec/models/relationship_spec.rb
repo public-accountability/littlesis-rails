@@ -666,6 +666,16 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'triplet' do
+    let(:person) { create(:entity_person) }
+    let(:person_two) { create(:entity_person) }
+    let(:rel) { create(:generic_relationship, entity: person, related: person_two) }
+
+    it 'returns array with entity ids and category id' do
+      expect(rel.triplet).to eql([ person.id, person_two.id, 12 ])
+    end
+  end
+
   context 'Using paper_trail for versioning' do
     let(:human) { create(:entity_person) }
     let(:corp) { create(:entity_org) }

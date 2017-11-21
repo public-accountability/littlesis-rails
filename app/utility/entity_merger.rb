@@ -1,7 +1,9 @@
 class EntityMerger
   attr_reader :source, :dest, :extensions,
               :contact_info, :lists, :images,
-              :aliases, :document_ids, :tag_ids
+              :aliases, :document_ids, :tag_ids,
+              :articles, :os_categories,
+              :relationships, :potential_duplicate_relationships
 
   def initialize(source:, dest:)
     @source = source
@@ -15,6 +17,9 @@ class EntityMerger
     @aliases = []
     @document_ids = []
     @tag_ids = []
+    @os_categories = []
+    @relationships = []
+    @potential_duplicate_relationships = []
   end
 
   # the actual merging
@@ -101,8 +106,14 @@ class EntityMerger
   end
 
   def merge_tags
-    #binding.pry
     @tag_ids = source.taggings.map(&:tag_id).to_set - dest.taggings.map(&:tag_id).to_set
+  end
+
+  def merge_articles
+    @articles = source
+                  .article_entities
+                  .reject { |ae| dest.article_entities.where(article_id: ae.article_id).exists? }
+                  .map { |ae| ae.tap { |x| x.entity_id = dest.id } }
   end
 
   def merge_os_donations
@@ -112,12 +123,35 @@ class EntityMerger
   end
 
   def merge_os_categories
+    @os_categories = source
+                       .os_entity_categories
+                       .reject { |oec| dest.os_entity_categories.where(category_id: oec.category_id).exists? }
+                       .map { |oec| oec.tap(&set_dest_entity_id) }
   end
 
-  def merge_articles
-  end
 
   def merge_relationships
+    source.relationships.includes(:os_matches).each do |relationship|
+      # Open Secret Relationships are handled in merge_os_donations
+      next if relationship.os_matches.exists?
+
+      attributes = relationship.attributes.except('id', 'entity1_id', 'entity2_id', 'updated_at', 'created_at')
+      
+      if relationship.entity1_id == source.id
+        attributes.merge!('entity1_id' => dest.id, 'entity2_id' => relationship.entity2_id)
+      elsif relationship.entity2_id == source.id
+        attributes.merge!('entity2_id' => dest.id, 'entity1_id' => relationship.entity1_id)
+      else
+        throw Exceptions::ThatsWeirdError
+      end
+      
+      new_relationship = Relationship.new(attributes)
+      @relationships << new_relationship
+
+      if dest_relationship_lookup.include?(new_relationship.triplet)
+        @potential_duplicate_relationships << new_relationship
+      end
+    end
   end
   
   #def merge_versions!; end
@@ -142,6 +176,11 @@ class EntityMerger
 
   def set_dest_entity_id
     proc { |x| x.entity_id = dest.id }
+  end
+
+  # Set of arrays of three elements: [ entity1_id, entity2_id, category_id ]
+  def dest_relationship_lookup
+    @dest_relationship_lookup ||= Set.new(dest.relationships.map(&:triplet))
   end
 end
 

@@ -26,4 +26,10 @@ module Exceptions
       "The model has been deleted"
     end
   end
+
+  class ThatsWeirdError < StandardError
+    def message
+      "Well, that's weird."
+    end
+  end
 end
