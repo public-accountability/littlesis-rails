@@ -3,7 +3,10 @@ require 'rails_helper'
 describe 'Merging Entities' do
   let(:source_org) { create(:entity_org, :with_org_name) }
   let(:dest_org) { create(:entity_org, :with_org_name) }
-
+  let(:source_person) { create(:entity_person, :with_person_name) }
+  let(:dest_person) { create(:entity_person, :with_person_name) }
+  subject { EntityMerger.new(source: source_org, dest: dest_org) }
+  
   describe 'initializing' do
     let(:source) { build(:org) }
     let(:dest) { build(:org) }
@@ -31,9 +34,6 @@ describe 'Merging Entities' do
   it 'marks the merged entity as deleted'
 
   context 'extensions' do
-    let(:source_person) { create(:entity_person, :with_person_name) }
-    let(:dest_person) { create(:entity_person, :with_person_name) }
-    
     subject { EntityMerger.new(source: source_person, dest: dest_person) } 
 
     context 'With no new extensions on the source' do
@@ -83,8 +83,8 @@ describe 'Merging Entities' do
       end
     end
 
-    it 'adds new extensions to the source' 
-    it 'updates fields on the destination entity if they are nil'
+    # it 'adds new extensions to the source' 
+    # it 'updates fields on the destination entity if they are nil'
   end
 
   context 'contact info' do
@@ -157,19 +157,144 @@ describe 'Merging Entities' do
     end
 
 
-    it 'adds addresses to the destination entity'
-    it 'adds emails to destination entity'
-    it 'adds phone numbers to the destination entity'
+    # it 'adds addresses to the destination entity'
+    # it 'adds emails to destination entity'
+    # it 'adds phone numbers to the destination entity'
   end
 
   context 'lists' do
-    it 'adds the destination entity to the lists of the source entity'
-    it 'removes the source entity from it\'s lists'
+    subject { EntityMerger.new(source: source_org, dest: dest_org) }
+    let(:list1) { create(:list) }
+    let(:list2) { create(:open_list) }
+    let(:list3) { create(:closed_list) }
+
+    it '@lists is empty by default' do
+      expect(subject.lists).to eql []
+      subject.merge_lists
+      expect(subject.lists).to eql Set.new
+    end
+
+    context 'source is on two lists that the destination is not on' do
+      before do
+        ListEntity.create!(list_id: list1.id, entity_id: source_org.id)
+        ListEntity.create!(list_id: list2.id, entity_id: source_org.id)
+        ListEntity.create!(list_id: list3.id, entity_id: dest_org.id)
+        subject.merge_lists
+      end
+
+      it '@lists contains a set of new list_ids' do
+        expect(subject.lists).to eql([ list1.id, list2.id].to_set)
+      end
+    end
+
+    context 'source and dest is on the same list' do
+      before do
+        ListEntity.create!(list_id: list1.id, entity_id: source_org.id)
+        ListEntity.create!(list_id: list1.id, entity_id: dest_org.id)
+        subject.merge_lists
+      end
+      specify { expect(subject.lists).to be_empty }  
+    end
+    
+    # it 'adds the destination entity to the lists of the source entity'
+    # it 'removes the source entity from it\'s lists'
   end
 
-  it 'transfers images from the source to the destination entity'
+  context 'images' do
+    subject { EntityMerger.new(source: source_org, dest: dest_org) }
+    let!(:image) { create(:image, entity_id: source_org.id) }
+    before { subject.merge_images }
 
-  it 'transfers aliases (if they do not already exist)'
+    it 'changes images entity id' do
+      expect(subject.images.length).to eql 1
+      expect(subject.images.first).to be_a Image
+      expect(subject.images.first.entity_id).to eql dest_org.id
+    end
+  end
+
+  context 'aliases' do
+    context 'no new aliases' do
+      before do
+        dest_org.aliases.create!(name: source_org.name)
+        subject.merge_aliases
+      end
+      specify { expect(subject.aliases).to eql [] }
+    end
+
+    context 'source has 1 new aliases' do
+      let(:corp_name) { Faker::Company.unique.name }
+      before do
+        dest_org.aliases.create!(name: source_org.name)
+        source_org.aliases.create!(name: corp_name)
+        subject.merge_aliases
+      end
+
+      it 'adds new aliases to @aliases' do
+        expect(subject.aliases.length).to eql 1
+        expect(subject.aliases.first).to be_a Alias
+        expect(subject.aliases.first.name).to eql corp_name
+        expect(subject.aliases.first.entity_id).to eql dest_org.id
+        expect(subject.aliases.first.persisted?).to be false
+      end
+    end
+  end
+
+  context 'references/documents' do
+    subject { EntityMerger.new(source: source_person, dest: dest_person) } 
+    let(:document) { create(:document) }
+
+    context 'no new documents' do
+      before do
+        source_person.add_reference(url: document.url)
+        dest_person.add_reference(url: document.url)
+        dest_person.add_reference(url: Faker::Internet.url )
+        subject.merge_references
+      end
+
+      it 'does not add new documents ids' do
+        expect(subject.document_ids).to be_empty
+      end
+    end
+
+    context 'new document' do
+      before do
+        source_person.add_reference(url: document.url)
+        subject.merge_references
+      end
+
+      it 'adds one new documents ids' do
+        expect(subject.document_ids.length).to eql 1
+        expect(subject.document_ids.first).to eql document.id
+      end
+    end
+  end
+
+  context 'tags' do
+    let(:tags) { Array.new(2) { create(:tag) } }
+
+    context 'source and dest have the same tag' do
+      before do
+        source_org.add_tag(tags.first.id)
+        dest_org.add_tag(tags.first.id)
+        subject.merge_tags
+      end
+      specify { expect(subject.tag_ids).to eql Set.new }
+    end
+
+    context 'source and dest have the diffferent' do
+      before do
+        source_org.add_tag(tags.second.id)
+        dest_org.add_tag(tags.first.id)
+        subject.merge_tags
+      end
+
+      it 'adds tag to list of tag ids' do
+        expect(subject.tag_ids).to eql Set.new([tags.second.id])
+      end
+    end
+  end
+#  it 'transfers images from the source to the destination entity'
+#  it 'transfers aliases (if they do not already exist)'
 
   it 'transfers references'
 
