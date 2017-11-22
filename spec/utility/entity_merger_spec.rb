@@ -502,11 +502,12 @@ describe 'Merging Entities', :merging_helper do
 
       it 'populates @relationships with unsaved new relationships' do
         expect(subject.relationships.length).to eql 2
+        expect(subject.relationships.first).to be_a EntityMerger::MergedRelationship
         expect(subject.potential_duplicate_relationships).to be_empty
       end
 
       it 'changes entity ids' do
-        donation, generic = subject.relationships.sort_by { |r| r.category_id }
+        donation, generic = subject.relationships.sort_by { |r| r.relationship.category_id }.map(&:relationship)
         expect(donation.entity1_id).to eql dest_org.id
         expect(donation.entity2_id).to eql other_org.id
         expect(donation.category_id).to eql 5
@@ -565,6 +566,21 @@ describe 'Merging Entities', :merging_helper do
         expect(r.triplet).to eql([dest_org.id, other_org.id, Relationship::MEMBERSHIP_CATEGORY])
       end
     end
+
+    context 'source has 1 relationship with 2 references' do
+      let!(:documents) { Array.new(2) { create(:document) } }
+
+      before do
+        rel = create(:generic_relationship, entity: other_org, related: source_org)
+        documents.each { |d| rel.add_reference_by_document_id(d.id) }
+        subject.merge!
+      end
+
+      it 'creates a new relationship and transfers references' do
+        expect(Entity.find(dest_org.id).relationships.last.references.count).to eql 2
+        expect(Entity.find(dest_org.id).relationships.map(&:documents).flatten.map(&:url).to_set).to eql documents.map(&:url).to_set
+      end
+    end
   end
 
   context 'os donations' do
@@ -575,21 +591,6 @@ describe 'Merging Entities', :merging_helper do
   context 'ny donations' do
     it 'unmatches the ny donations from the source entity'
     it 'matches those donations on the destination entity'
-  end
-
-  context 'relationships' do
-    context 'when a relationship exists on the source but not the destination' do
-      it 'creates a new reference on the destination'
-      it 'deletes the relationship from the source'
-      it 'transfers the references from the relationship'
-    end
-
-    context 'when a relationship exists on both' do
-      it 'does not create a new relationship'
-      it 'deletes the relationship from the source'
-      it 'updates fields on the existing relationship if the are null'
-      it 'copies references from the source relationship'
-    end
   end
 end
 
