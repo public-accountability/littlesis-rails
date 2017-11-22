@@ -44,6 +44,7 @@ RSpec.configure do |config|
   config.include FeatureExampleMacros, :type => :feature
   config.include RequestExampleMacros, :type => :request
   config.include NetworkAnalysisExampleHelper, :network_analysis_helper
+  config.include MergingExampleMacros, :merging_helper
 
   # these run inside example groups (ie: describe blocks)
   config.extend ControllerMacros, :type => :controller
@@ -52,6 +53,7 @@ RSpec.configure do |config|
   config.extend TaggingHelpers, :tagging_helper
   config.extend TagSpecHelper, :tag_helper
   config.extend PaginationExampleGroupHelper, :pagination_helper
+  config.extend MergingGroupMacros, :merging_helper
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
