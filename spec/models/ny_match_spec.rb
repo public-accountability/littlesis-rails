@@ -78,6 +78,51 @@ describe NyMatch, type: :model do
     end
   end
 
+  describe 'matching then un matching' do
+    let(:filer_id) { SecureRandom.hex(2) }
+    let(:donor) { create(:entity_person) }
+    let(:nys_politician) { create(:entity_person) }
+    let(:ny_disclosures) { Array.new(2) { create(:ny_disclosure, filer_id: filer_id) } }
+    let(:disclosure_sum) { ny_disclosures.reduce(0) { |sum, d| (sum + d.amount1) } }
+
+    let!(:ny_filer_entity) do
+      NyFilerEntity.create!(filer_id: filer_id, entity_id: nys_politician.id, ny_filer_id: rand(1000))
+    end
+
+    let(:create_matches) do
+      proc { ny_disclosures.map(&:id).map { |i| NyMatch.match(i, donor.id) } }
+    end
+
+    
+
+    it 'creates a relationship after matching both disclosures' do
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to be_zero
+      matches = create_matches.call
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to eql 1
+      rel = Relationship.find(matches.first.relationship_id)
+      expect(rel.amount).to eq disclosure_sum
+      expect(rel.filings).to eql 2
+      matches.each { |m| expect(m.recip_id).to eql(nys_politician.id) }
+    end
+
+    it 'changes relationship after removing one match' do
+      matches = create_matches.call
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to eql 1
+      expect { matches.first.unmatch! }.to change { NyMatch.count }.by(-1)
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to eql 1
+      rel = Relationship.find(matches.first.relationship_id)
+      expect(rel.amount).to eq (disclosure_sum - matches.first.ny_disclosure.amount1)
+    end
+
+    it 'removes the relationship after removing both matches' do
+      matches = create_matches.call
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to eql 1
+      expect { matches.each(&:unmatch!) }.to change { NyMatch.count }.by(-2)
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to be_zero
+    end
+
+  end
+
   describe 'set_recipient' do
     it 'sets recip_id' do
       disclosure = create(:ny_disclosure, filer_id: '5678')
