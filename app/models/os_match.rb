@@ -109,16 +109,15 @@ class OsMatch < ActiveRecord::Base
     end
   end
 
-  # 1) Updates relationship os donation info
-  # 2) Destroys links and donations
-  # 3) Destroys the reference
+  # Callback for after_destroy:
+  # - Updates relationship os donation info
+  # - soft_deletes relationship if there are no more matches
+  # - remove the reference from the relationship
   def unmatch
     relationship.update_os_donation_info.save!
 
     if relationship.filings.zero?
       relationship.soft_delete
-      relationship.donation.destroy
-      relationship.links.each(&:delete)
     else
 
       doc = Document.find_by_url(os_donation.reference_url)
