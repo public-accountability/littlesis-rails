@@ -9,21 +9,16 @@ class EntityMerger
     @source = source
     @dest = dest
     check_input_validity
-
-    @extensions = []
-    @contact_info = []
-    @lists = []
-    @images = []
-    @aliases = []
-    @document_ids = []
-    @tag_ids = []
-    @os_categories = []
-    @relationships = []
-    @potential_duplicate_relationships = []
+    reset_instance_vars
   end
 
   # the actual merging
   def merge!
+    merge
+    ActiveRecord::Base.transaction do
+      @extensions.each { |e| e.merge!(@dest) }
+      
+    end
   end
 
   # trial run
@@ -37,12 +32,29 @@ class EntityMerger
     merge_lists
     merge_images
     merge_aliases
+    merge_references
+    merge_tags
+    merge_articles
+    merge_os_donations
+    merge_ny_donations
+    merge_os_categories
+    merge_relationships
   end
 
   ## Merge Functions ##
 
   Extension = Struct.new(:ext_id, :new, :fields) do
-    def initialize(ext_id, new, fields={}); super end
+    def initialize(ext_id, new, fields = {})
+      super
+    end
+
+    def merge!(dest)
+      if self.new
+        dest.add_extension(ext_id, fields)
+      else
+        dest.merge_extension(ext_id, fields)
+      end
+    end
   end
 
   def merge_extensions
@@ -64,7 +76,6 @@ class EntityMerger
     end
   end
 
-  
   def merge_contact_info
     source.addresses.each do |address|
       unless dest.addresses.present? && dest.addresses.select { |dest_a| dest_a.same_as?(address) }.present?
@@ -88,9 +99,9 @@ class EntityMerger
   def merge_lists
     @lists = source.list_entities.pluck(:list_id).to_set - dest.list_entities.pluck(:list_id).to_set
   end
-  
+
   def merge_images
-    source.images.each(&set_dest_entity_id).each { |img| @images << img } 
+    source.images.each(&set_dest_entity_id).each { |img| @images << img }
   end
 
   def merge_aliases
@@ -156,9 +167,13 @@ class EntityMerger
   
   #def merge_versions!; end
 
-  
-  ## ERRORS ## 
-  
+  def set_merged_id_and_delete
+    source.update!(merged_id: dest.id)
+    source.soft_delete
+  end
+
+  ## ERRORS ##
+
   class ExtensionMismatchError < ArgumentError
     def message
       "Only entities with the same primary ext can be merged"
@@ -168,6 +183,19 @@ class EntityMerger
   ## Private Methods ##
 
   private
+
+  def reset_instance_vars
+    @extensions = []
+    @contact_info = []
+    @lists = []
+    @images = []
+    @aliases = []
+    @document_ids = []
+    @tag_ids = []
+    @os_categories = []
+    @relationships = []
+    @potential_duplicate_relationships = []
+  end
 
   def check_input_validity
     raise ArgumentError, "Both source and dest must an Entity" unless source.is_a?(Entity) && dest.is_a?(Entity)

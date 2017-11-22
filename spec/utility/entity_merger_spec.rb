@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Merging Entities' do
+describe 'Merging Entities', :merging_helper do
   let(:source_org) { create(:entity_org, :with_org_name) }
   let(:dest_org) { create(:entity_org, :with_org_name) }
   let(:source_person) { create(:entity_person, :with_person_name) }
@@ -50,6 +50,7 @@ describe 'Merging Entities' do
     context 'when the source has a new extension with fields' do
       before do
         source_person.add_extension('PoliticalCandidate') # ext_id = 3
+        source_person.person.update(name_middle: 'MIDDLE')
         subject.merge_extensions
       end
 
@@ -62,6 +63,24 @@ describe 'Merging Entities' do
         expect(new_ext.new).to be true
         expect(new_ext.ext_id).to eql 3
         expect(new_ext.fields.keys).to contain_exactly('is_federal', 'is_state', 'is_local', 'pres_fec_id', 'senate_fec_id', 'house_fec_id', 'crp_id') 
+      end
+
+      merge! do
+        it 'adds new extenion to destination' do
+          expect { subject.merge! }
+            .to change { Entity.find(dest_person.id).extension_names }.from(['Person']).to(['Person', 'PoliticalCandidate'])
+        end
+
+        it 'updates attributes of existing extensions' do
+          expect { subject.merge! }
+            .to change { Entity.find(dest_person.id).person.name_middle }
+                  .from(nil).to('MIDDLE')
+        end
+
+        it 'doest not update non-nil attributes of existing extensions' do
+          expect { subject.merge! }
+            .not_to change { Entity.find(dest_person.id).person.name_first }
+        end
       end
     end
 
@@ -79,20 +98,18 @@ describe 'Merging Entities' do
         expect(new_ext.ext_id).to eql 9
         expect(new_ext.fields).to eql({})
       end
-    end
 
-    # it 'adds new extensions to the source' 
-    # it 'updates fields on the destination entity if they are nil'
+      merge! do
+        it 'adds new extension to the destination' do
+          expect { subject.merge! }
+            .to change { Entity.find(dest_org.id).has_extension?('Philanthropy') }.from(false).to(true)
+        end
+      end
+    end
   end
 
   context 'contact info' do
     subject { EntityMerger.new(source: source_org, dest: dest_org) }
-
-    def verify_contact_info_length_type_and_entity_id(type, entity_id)
-      expect(subject.contact_info.length).to eql 1
-      expect(subject.contact_info.first).to be_a type
-      expect(subject.contact_info.first.entity_id).to eql entity_id
-    end
 
     context 'addresses' do
       let!(:address) { create(:address, entity_id: source_org.id) }
