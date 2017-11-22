@@ -25,7 +25,7 @@ class EntityMerger
       @tag_ids.each { |tag_id| dest.add_tag(tag_id) }
       @articles.each(&:save!)
       @os_categories.each(&:save!)
-      @relationships.each(&:save!)
+      @relationships.each(&:merge!)
     end
   end
 
@@ -148,6 +148,12 @@ class EntityMerger
                        .map { |oec| oec.tap(&set_dest_entity_id) }
   end
 
+  MergedRelationship = Struct.new(:relationship, :docs) do
+    def merge!
+      relationship.save!
+      docs.each { |doc_id| relationship.add_reference_by_document_id(doc_id) }
+    end
+  end
 
   def merge_relationships
     source.relationships.includes(:os_matches).each do |relationship|
@@ -163,9 +169,10 @@ class EntityMerger
       else
         throw Exceptions::ThatsWeirdError
       end
-      
+
       new_relationship = Relationship.new(attributes)
-      @relationships << new_relationship
+
+      @relationships << MergedRelationship.new(new_relationship, relationship.document_ids)
 
       if dest_relationship_lookup.include?(new_relationship.triplet)
         @potential_duplicate_relationships << new_relationship
