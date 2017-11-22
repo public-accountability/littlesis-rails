@@ -7,10 +7,7 @@ module MergingExampleMacros
 end
 
 module MergingGroupMacros
-  def merge!
-    context 'merge!' do
-      before { subject.send(:reset_instance_vars) }
-      yield
-    end
+  def reset_merger
+    before { subject.send(:reset_instance_vars) }
   end
 end

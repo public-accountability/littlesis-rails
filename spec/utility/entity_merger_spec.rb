@@ -65,7 +65,8 @@ describe 'Merging Entities', :merging_helper do
         expect(new_ext.fields.keys).to contain_exactly('is_federal', 'is_state', 'is_local', 'pres_fec_id', 'senate_fec_id', 'house_fec_id', 'crp_id') 
       end
 
-      merge! do
+      context 'merge!' do
+        reset_merger
         it 'adds new extenion to destination' do
           expect { subject.merge! }
             .to change { Entity.find(dest_person.id).extension_names }.from(['Person']).to(['Person', 'PoliticalCandidate'])
@@ -99,7 +100,8 @@ describe 'Merging Entities', :merging_helper do
         expect(new_ext.fields).to eql({})
       end
 
-      merge! do
+      context 'merge!' do
+        reset_merger
         it 'adds new extension to the destination' do
           expect { subject.merge! }
             .to change { Entity.find(dest_org.id).has_extension?('Philanthropy') }.from(false).to(true)
@@ -111,6 +113,7 @@ describe 'Merging Entities', :merging_helper do
   context 'contact info' do
     subject { EntityMerger.new(source: source_org, dest: dest_org) }
 
+    
     context 'addresses' do
       let!(:address) { create(:address, entity_id: source_org.id) }
 
@@ -170,9 +173,33 @@ describe 'Merging Entities', :merging_helper do
       end
     end
 
-    # it 'adds addresses to the destination entity'
-    # it 'adds emails to destination entity'
-    # it 'adds phone numbers to the destination entity'
+    describe 'source has one phone, email, addresses to be transfered' do
+      let!(:phone) { create(:phone, entity_id: source_org.id) }
+      let!(:email) { create(:email, entity_id: source_org.id) }
+      let!(:address) { create(:address, entity_id: source_org.id) }
+
+      it 'adds addresses to the destination entity' do
+        expect { subject.merge! }
+          .to change { dest_org.reload.addresses.count }.by(1)
+      end
+
+      it 'adds emails to the destination entity' do
+        expect { subject.merge! }
+          .to change { dest_org.reload.emails.count }.by(1)
+      end
+
+      it 'adds phone numbers to the destination entity' do
+        expect { subject.merge! }
+          .to change { dest_org.reload.phones.count }.by(1)
+      end
+
+      xit 'removes email, phone, and addresses from source' do
+        subject.merge!
+        expect(Phone.where(entity_id: source_org.id).exists?).to be false
+        expect(Address.where(entity_id: source_org.id).exists?).to be false
+        expect(Email.where(entity_id: source_org.id).exists?).to be false
+      end
+    end
   end
 
   context 'lists' do
@@ -198,6 +225,14 @@ describe 'Merging Entities', :merging_helper do
       it '@lists contains a set of new list_ids' do
         expect(subject.lists).to eql([list1.id, list2.id].to_set)
       end
+
+      context 'merge!' do
+        reset_merger
+        it 'adds destintion entity to new lists' do
+          expect { subject.merge! }
+            .to change { dest_org.reload.lists.count }.from(1).to(3)
+        end
+      end
     end
 
     context 'source and dest is on the same list' do
@@ -207,10 +242,20 @@ describe 'Merging Entities', :merging_helper do
         subject.merge_lists
       end
       specify { expect(subject.lists).to be_empty }
-    end
 
-    # it 'adds the destination entity to the lists of the source entity'
-    # it 'removes the source entity from it\'s lists'
+      context 'merge!' do
+        reset_merger
+
+        specify do
+          expect { subject.merge! }.not_to change { dest_org.reload.lists.count }
+        end
+
+        xspecify do
+          expect { subject.merge! }.to change { ListEntity.count }.by(-1)
+        end
+
+      end
+    end
   end
 
   context 'images' do
@@ -222,6 +267,15 @@ describe 'Merging Entities', :merging_helper do
       expect(subject.images.length).to eql 1
       expect(subject.images.first).to be_a Image
       expect(subject.images.first.entity_id).to eql dest_org.id
+    end
+
+    context 'merge!' do
+      reset_merger
+
+      it 'transfers images to new entity' do
+        expect { subject.merge! }.to change { Image.find(image.id).entity_id }
+                                       .from(source_org.id).to(dest_org.id)
+      end
     end
   end
 
@@ -249,6 +303,14 @@ describe 'Merging Entities', :merging_helper do
         expect(subject.aliases.first.entity_id).to eql dest_org.id
         expect(subject.aliases.first.persisted?).to be false
       end
+
+      context 'merge!' do
+        reset_merger
+        it 'creates new aliases on destination entity' do
+          expect { subject.merge! }.to change { Entity.find(dest_org.id).aliases.count }.by(1)
+          expect(Alias.last.attributes.slice('name', 'entity_id')).to eql({'name' => corp_name, 'entity_id' => dest_org.id})
+        end
+      end
     end
   end
 
@@ -267,6 +329,13 @@ describe 'Merging Entities', :merging_helper do
       it 'does not add new documents ids' do
         expect(subject.document_ids).to be_empty
       end
+
+      context 'merge!' do
+        reset_merger
+        specify do
+          expect { subject.merge! }.not_to change { dest_person.references.count }
+        end
+      end
     end
 
     context 'new document' do
@@ -278,6 +347,15 @@ describe 'Merging Entities', :merging_helper do
       it 'adds one new documents ids' do
         expect(subject.document_ids.length).to eql 1
         expect(subject.document_ids.first).to eql document.id
+      end
+
+      context 'merge!' do
+        reset_merger
+
+        it 'creates a new reference for the destination entity' do
+          expect { subject.merge! }.to change { Entity.find(dest_person.id).references.count }.by(1)
+          expect(dest_person.references.last.document_id).to eql document.id
+        end
       end
     end
   end
@@ -304,10 +382,16 @@ describe 'Merging Entities', :merging_helper do
       it 'adds tag to list of tag ids' do
         expect(subject.tag_ids).to eql Set.new([tags.second.id])
       end
+
+      context 'merge!' do
+        reset_merger
+        it 'adds the new tag to the destination entity' do
+          expect { subject.merge! }
+            .to change { dest_org.tags.include?(tags.second) }.from(false).to(true)
+        end
+      end
     end
   end
-#  it 'transfers images from the source to the destination entity'
-#  it 'transfers aliases (if they do not already exist)'
 
   context 'articles' do
     subject { EntityMerger.new(source: source_org, dest: dest_org) }
@@ -330,9 +414,21 @@ describe 'Merging Entities', :merging_helper do
         expect(subject.articles.first.entity_id).to eql dest_org.id
         expect(subject.articles.first.article_id).to eql article.id
       end
+
+      context 'merge!' do
+        reset_merger
+
+        it 'transfers the ArticleEntity' do
+          expect { subject.merge! }.to change { dest_org.article_entities.count }.from(0).to(1)
+        end
+
+        it 'does not create new ArticleEntities' do
+          expect { subject.merge! }.not_to change { ArticleEntity.count }
+        end
+      end
     end
 
-    context 'both source and  destination entities have the same article' do
+    context 'both source and destination entities have the same article' do
       before do
         ArticleEntity.create!(article_id: article.id, entity_id: source_org.id)
         ArticleEntity.create!(article_id: article.id, entity_id: dest_org.id)
@@ -342,6 +438,14 @@ describe 'Merging Entities', :merging_helper do
       it 'sets @articles to be an empty arry' do
         expect(subject.articles.length).to eql 0
         expect(subject.articles).to eql []
+      end
+
+      context 'merge!' do
+        reset_merger
+
+        it 'does not transfer the ArticleEntity' do
+          expect { subject.merge! }.not_to change { dest_org.reload.article_entities.count }
+        end
       end
     end
   end
@@ -360,6 +464,18 @@ describe 'Merging Entities', :merging_helper do
         expect(subject.os_categories.length).to eql 1
         expect(subject.os_categories.first).to be_a OsEntityCategory
         expect(subject.os_categories.first.entity_id).to eql dest_org.id
+      end
+
+      context 'merge!' do
+        reset_merger
+
+        it 'transfers the OsEntityCategory' do
+          expect { subject.merge! }.to change { dest_org.os_entity_categories.count }.from(0).to(1)
+        end
+
+        it 'does not create new OsEntitycategory' do
+          expect { subject.merge! }.not_to change { OsEntityCategory.count }
+        end
       end
     end
 
@@ -399,6 +515,14 @@ describe 'Merging Entities', :merging_helper do
         expect(generic.entity2_id).to eql dest_org.id
         expect(generic.persisted?).to be false
       end
+
+      context 'merge!' do
+        reset_merger
+
+        it 'creates 2 new relationships' do
+          expect { subject.merge! }.to change { dest_org.reload.relationships.count }.by(2)
+        end
+      end
     end
 
     context 'source has 2 relationships, one is a os match relationship' do
@@ -413,9 +537,17 @@ describe 'Merging Entities', :merging_helper do
         expect(source_org.relationships.count).to eql 2
         expect(subject.relationships.length).to eql 1
       end
+
+      context 'merge!' do
+        reset_merger
+
+        it 'creates 1 new relationships' do
+          expect { subject.merge! }.to change { dest_org.reload.relationships.count }.by(1)
+        end
+      end
     end
 
-    describe 'souce has 2 relationship, one is a duplicate' do
+    describe 'source has 2 relationship, one is a duplicate' do
       before do
         create(:membership_relationship, entity: source_org, related: other_org)
         create(:membership_relationship, entity: dest_org, related: other_org)

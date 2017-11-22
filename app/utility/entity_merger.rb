@@ -17,7 +17,15 @@ class EntityMerger
     merge
     ActiveRecord::Base.transaction do
       @extensions.each { |e| e.merge!(@dest) }
-      
+      @contact_info.each(&:save!)
+      @lists.each { |list_id| ListEntity.create!(list_id: list_id, entity_id: dest.id) }
+      @images.each(&:save!)
+      @aliases.each(&:save!)
+      @document_ids.each { |doc_id| dest.add_reference_by_document_id(doc_id) }
+      @tag_ids.each { |tag_id| dest.add_tag(tag_id) }
+      @articles.each(&:save!)
+      @os_categories.each(&:save!)
+      @relationships.each(&:save!)
     end
   end
 
@@ -35,9 +43,9 @@ class EntityMerger
     merge_references
     merge_tags
     merge_articles
+    merge_os_categories
     merge_os_donations
     merge_ny_donations
-    merge_os_categories
     merge_relationships
   end
 
