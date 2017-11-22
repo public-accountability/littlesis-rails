@@ -3,13 +3,10 @@ require 'rails_helper'
 describe OsMatch, type: :model do
   before(:all) do
     Entity.skip_callback(:create, :after, :create_primary_ext)
-
-    
   end
 
   after(:all) do
     Entity.set_callback(:create, :after, :create_primary_ext)
-    #
   end
 
   it { should validate_presence_of(:os_donation_id) }
