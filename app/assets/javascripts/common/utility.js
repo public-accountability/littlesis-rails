@@ -169,6 +169,15 @@ utility.browserCanOpenFiles = function() {
 };
 
 
+// STRING UTILITIES
+
+utility.capitalize = function(str){
+  // NOTE (@aguestuser):
+  // opted for util function isntead of polyfilling String.prototype
+  // b/c I did the latter and it produced a fatal namespace collision with datatables.js
+  return str.slice(0,1).toUpperCase() + str.slice(1);
+};
+
 // OBJECT UTILITIES
 
 utility.get = function(obj, key) {
@@ -269,3 +278,8 @@ utility.isEmpty = function (obj){
 };
 
 
+// Browser/DOM Utilities
+
+utility.redirectTo = function(path){
+  document.location.replace(path);
+};

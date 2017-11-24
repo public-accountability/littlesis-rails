@@ -8,7 +8,7 @@ $table-border-radius: .2em;
 
 // SHARED
 .fill-parent {
-    position: absolute; // only works if parent td has position `absolute`
+    position: absolute; // only works if parent has position `absolute`
     bottom: 0;
     left: 0;
     width: 100%;
@@ -21,6 +21,21 @@ h1#bulk-add-header {
     margin-bottom: 2rem;
 }
 
+.alert-icon{
+    @extend .glyphicon;
+    @extend .glyphicon-alert;
+    color: $maroon;
+    float: right;
+}
+
+.tooltip-inner {
+    background-color: $maroon;
+}
+
+.tooltip-arrow {
+    border-bottom-color: $maroon;
+}
+
 #bulk-add-container {
     #bulk-add-notifications {
         font-style: italic;
@@ -30,15 +45,18 @@ h1#bulk-add-header {
             margin-left: 1em;
         }
     }
-    .alert-icon{
-        @extend .glyphicon;
-	@extend .glyphicon-alert;
-        color: $maroon;
-    }
     table {
         width: 100%;
         border-collapse: separate !important;
         border-spacing: 0;
+        .cell-input{
+            @extend .fill-parent;
+            border: none;
+            padding: .5em;
+        }
+        .error-alert{
+            @extend .fill-parent
+        }
         td, th {
             border: 1px solid gray;
             padding: .5em;
@@ -76,19 +94,16 @@ h1#bulk-add-header {
                 }
                 .error-alert{
                     @extend .fill-parent;
-                    .alert-icon {
-                        float: right;
-                        margin: .5em .5em 0 0 // TRBL
-                    }
                 }
-                .edit-cell{
+                .alert-icon {
+                    @extend .alert-icon;
+                    margin: 0 .5em .4em 0; // TRBL
+                }
+                .cell-input{
                     @extend .fill-parent;
-                    border: inherit;
+                    border: 0 0 0 0;
                     padding: .5em;
                 }
-            }
-            td.errors {
-                background-color: $light-maroon;
             }
             td:first-child {
                 border-left: 1px solid gray;
@@ -102,13 +117,17 @@ h1#bulk-add-header {
                 }
             }
             .resolver-anchor {
-                margin-left: -3em;
-                margin-top: -1.5em;
+                margin-left: -2em;
+                //margin-top: -1.5em;
                 width: 1em;
                 cursor: pointer;
+                .alert-icon{
+                    @extend .alert-icon;
+                    margin: 2em 0 0 0; // TRBL
+                }
             }
             .arrow {
-                top: calc(0% + 5em) !important;
+                top: calc(0% + 6em) !important;
             }
             .popover-title {
                 font-weight: bold;
@@ -144,7 +163,11 @@ h1#bulk-add-header {
         margin: 1.5em 0 0 0;// TRBL
         display: flex;
         flex-direction: row;
-        height: 2.7em;
+        height: 2.6em;
+        .alert-icon{
+            @extend .alert-icon;
+            margin: .6em .8em 0 0; // TRBL
+        }
         .label {
             display: flex;
             font-size: medium;
@@ -157,8 +180,9 @@ h1#bulk-add-header {
             border-bottom-right-radius: 0;
             border-top-right-radius: 0;
         }
-        .name {
+        .name{
             display: flex;
+            flex-grow: 1;
             padding-left: .5em;
             border: 1px solid grey;
             border-right: hidden;
@@ -171,6 +195,14 @@ h1#bulk-add-header {
             border: 1px solid grey;
             border-bottom-right-radius: $table-border-radius;
             border-top-right-radius: $table-border-radius;
+        }
+        .name input, .url input {
+            height: 100%;
+            width: 100%;
+            border: none;
+        }
+        .error-alert {
+            width: 20em;
         }
     }
     #bulk-submit-button{

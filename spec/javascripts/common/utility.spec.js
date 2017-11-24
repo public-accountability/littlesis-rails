@@ -51,6 +51,16 @@ describe('utility', function(){
     });
   });
 
+  describe('string utilities', () => {
+
+    describe('#capitalize', () => {
+
+      it('capitalizes a string', () => {
+        expect(utility.capitalize("foobar")).toEqual("Foobar");
+      });
+    });
+  });
+
   describe('object utilities', () => {
 
     const obj = { a: 1, b: 2};

@@ -15,6 +15,37 @@ fxt.newEntities = {
   }
 };
 
+fxt.existingEntities = {
+  100: {
+    id:          "100",
+    name:        "Lew Basnight",
+    primary_ext: "Person",
+    blurb:       "Adjacent to the invisible"
+  },
+  101: {
+    id:          "101",
+    name:        "Chums Of Chance",
+    primary_ext: "Org",
+    blurb:       "Do not -- strictly speaking -- exist"
+  }
+};
+
+fxt.newAndExistingEntities = {
+  newEntity0: {
+    id:          "newEntity0",
+    name:        "Lew Basnight",
+    primary_ext: "Person",
+    blurb:       "Adjacent to the invisible"
+  },
+  101: {
+    id:          "101",
+    name:        "Chums Of Chance",
+    primary_ext: "Org",
+    blurb:       "Do not -- strictly speaking -- exist"
+  }
+};
+
+
 fxt.createdEntitiesApiJson = {
   "meta": {
     "copyright": "LittleSis CC BY-SA 3.0",

@@ -88,13 +88,17 @@ describe('API module', () => {
 
     let fetchSpy, response;
     const entities = fxt.createdEntities;
+    const reference = {
+      name: 'Pynchon Wiki',
+      url:  'https://pynchonwiki.com'
+    };
 
     describe('successful request', () => {
       
       beforeAll(done => {
         fetchSpy = spyOn(window, 'fetch')
           .and.returnValue(responseOf(200, fxt.listEntitiesApiJson));
-        api.addEntitiesToList(100, [1,2])
+        api.addEntitiesToList(100, [1,2], reference)
           .then(res => {
             response = res;
             done();
@@ -111,6 +115,7 @@ describe('API module', () => {
               data: [
                 { type: 'entities', id: 1 },
                 { type: 'entities', id: 2 },
+                { type: 'references', attributes: reference }
               ]
             })
           });

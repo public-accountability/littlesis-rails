@@ -19,7 +19,7 @@
   },{
     label: 'Entity Type',
     attr:  'primary_ext',
-    input: 'select'
+    input: 'text'
   },{
     label: 'Description',
     attr:  'blurb',
@@ -74,7 +74,7 @@
   // String -> Object
   self.get = function(attr){
     return util.get(state, attr);
-  };
+  };;
 
   // [String] -> Object
   self.getIn = function(path){
@@ -100,16 +100,6 @@
   // GETTERS
 
   state.getIn = self.getIn;
-
-  // Entity -> { [id: EntityAttr]: [String]}
-  state.getErrors = function(entity){
-    return state.getIn(['errors', 'byEntityId', entity.id]) || {};
-  };
-
-  // (Entity, EntityAttr) -> [String]
-  state.getErrorsByAttr = function(entity, attr){
-    return state.getIn(['errors', 'byEntityId', entity.id, attr]);
-  };
 
   state.getEntity = function(id){
     return state.getIn(['entities', 'byId', id]);
@@ -151,6 +141,27 @@
       .map(function(matchId){ return state.getMatch(entity, matchId); });
   };
 
+  // Entity -> { [id: EntityAttr]: [String]}
+  state.getEntityErrors = function(entity){
+    return state.getIn(['errors', 'byEntityId', entity.id]) || {};
+  };
+
+  // (Entity, EntityAttr) -> [String]
+  state.getEntityErrorsByAttr = function(entity, attr){
+    return state.getIn(['errors', 'byEntityId', entity.id, attr]);
+  };
+
+  // Reference -> { [id: ResourceAttr]: [String]}
+  state.getReferenceErrors = function(){
+    return state.getIn(['errors', 'reference']) || {};
+  };
+
+  // (Reference, ReferenceAttr) -> ?[String]
+  state.getReferenceErrorsByAttr = function(attr){
+    return state.getIn(['errors', 'reference', attr]);
+  };
+
+
   // () -> String
   state.getResourcePath = function(){
     return '/' + state.resourceType + '/' + state.resourceId;
@@ -180,10 +191,18 @@
 
   // () -> Boolean
   state.isValid = function(){
+    return state.entitiesValid && state.referenceValid();
+  };
+
+  state.entitiesValid = function(){
     return Object.values(state.entities.byId)
       .every(function(entity){
-        return util.isEmpty(state.getErrors(entity));
+        return util.isEmpty(state.getEntityErrors(entity));
       });
+  };
+
+  state.referenceValid = function(){
+    return util.isEmpty(state.getReferenceErrors());
   };
 
   // () -> Boolean
@@ -350,22 +369,25 @@
 
   // () -> Promise[State]
   state.createEntities = function(){
-    return api
-      .createEntities(state.getNewEntities())
+    const newEntities = state.getNewEntities();
+    return util.isEmpty(newEntities) ?
+      Promise.resolve(state) :
+      api
+      .createEntities(newEntities)
       .then(state.replaceWithCreatedEntities);
   };
 
   // () -> Promise[State]
   state.createAssociations = function(){
     return api
-      .addEntitiesToList(state.resourceId, state.getEntityIds())
+      .addEntitiesToList(state.resourceId, state.getEntityIds(), state.reference)
       .then(function(){ return state; });
   };
 
   // () -> Promise[Void]
   state.redirectIfNoErrors = function(){
-    if (!state.hasNotification()) {
-      Response.redirect(state.getResourcePath(), 200);
+    if (state.notification === '') {
+      util.redirectTo(state.getResourcePath());
     };
   };
 
@@ -625,7 +647,7 @@
   function uploadButton(){
     return $('<label>', {
       class: 'btn btn-primary btn-file',
-      text: 'Upload CSV'
+      text:  'Upload CSV'
     }).append(
       $('<input>', {
         id:    ids.uploadButton,
@@ -673,55 +695,59 @@
     );
   }
 
+  // Entity, AttrWrapper, Integer -> JQueryNode
   function td(entity, col, idx){
-    var errors = state.getErrorsByAttr(entity, col.attr);
-    return $('<td>', {
-      class: errors && "errors"
-    }).append(
-      $('<div>', {
-        text:  util.get(entity, col.attr),
-        class: 'cell-contents',
-        click: function(){ makeEditable(this, entity, col); }
-      })
-    ).append(
-      maybeMatchResolver(entity, col, idx)
-    ).append(
-      maybeErrorAlert(entity, col, errors)
-    );
+    var errors = state.getEntityErrorsByAttr(entity, col.attr);
+    return errorWrapperOf(
+      '<td>',
+      col.attr,
+      errors,
+      inputWithErrorAlerts(
+        'cell-input',
+        col.label,
+        util.get(entity, col.attr),
+        errors,
+        handleCellEditOf(entity, col.attr)
+      )
+    ).append(maybeMatchResolver(entity, col, idx));
   }
 
-  function makeEditable(contentsDiv, entity, col){
-    $(contentsDiv).replaceWith($('<input>', {
-      class: 'edit-cell',
-      type:  'text',
-      value:  util.get(entity, col.attr),
-      keyup: function(e){ e.keyCode == 13 && handleCellEdit(entity, col.attr, $(this).val()); }
-    }));
+  // String, String, [String], JQueryNode -> JQueryNode
+  function errorWrapperOf(tag, className, errors, input){
+    return $(tag, { class: className + (errors ? ' errors' : '') })
+      .append(input)
+      .append(errors && $('<div>', { class: 'alert-icon' }));
   };
 
-  // Entity, String, String -> Promise[State]
-  function handleCellEdit(entity, attr, value){
-    state
-      .setIn(['entities', 'byId', entity.id, attr], value)
-      .deleteIn(['entities', 'errors', entity.id, attr])
-      .maybeMatchEntity(util.set(entity, attr, value), attr) // search for the *updated* entity
-      .then(s => s.validateAndRender());
-  };
+  // String, String, [String], Function -> JQueryNode
+  function inputWithErrorAlerts(className, label, value, errors, handleChange){
+    return errorAnchorOf(
+      $('<input>', {
+        class:       className,
+        type:        'text',
+        placeholder: label,
+        value:       value,
+        change:      function(){ handleChange($(this).val()); }
+      }), label, errors);
+  }
 
-  function maybeErrorAlert(entity, col, errors){
-    return errors && $('<div>', {
-      class:         'error-alert',
-      'data-toggle': 'tooltip',
-      click:          function(){ makeEditable(this, entity, col);}
-    })
-      .append($('<div>', { class: 'alert-icon' }))
+  // JQueryNode, String, [String] -> JQueryNode
+  function errorAnchorOf(container, label, errors){
+    return !errors ?
+      container :
+      container
+      .addClass('error-alert')
+      .attr('data-toggle', 'tooltip')
+      .attr('onmouseout', function(){ container.find('.tooltip').hide();})
+      .attr('onblur', function(){ container.find('.tooltip').hide();})
       .tooltip({
         placement: 'bottom',
-        html: true,
-        title: errorList(errors, col.label)
+        html: true, title:
+        errorList(errors, label)
       });
   };
 
+  // [String], String -> [JQueryNode]
   function errorList(errors, label){
     return errors.map(function(err){
       return $('<div>', {
@@ -828,22 +854,25 @@
 
   function referenceContainer(){
     return $('<div>', { id: 'reference-container' })
-      .append($('<div>', {
-        class: 'label',
-        text: 'Reference'
-      }))
-      .append($('<input>', {
-        type: 'text',
-        class: 'name',
-        placeholder: 'Name',
-        change: function(){ state.setReferenceAttr('name', $(this).val()); }
-      }))
-      .append($('<input>', {
-        type: 'text',
-        class: 'url',
-        placeholder: 'Url',
-        change: function(){ state.setReferenceAttr('url', $(this).val()); }
-      }));
+      .append($('<div>', { class: 'label', text: 'Reference' }))
+      .append(referenceInputOf('name'))
+      .append(referenceInputOf('url'));
+  }
+
+  function referenceInputOf(attr){
+    var errors = state.getReferenceErrorsByAttr(attr);
+    return errorWrapperOf(
+      '<div>',
+      attr,
+      errors,
+      inputWithErrorAlerts(
+        'reference-input',
+        util.capitalize(attr),
+        state.getIn(['reference', attr]),
+        errors,
+        handleReferenceInputOf(attr)
+      )
+    );
   }
 
   function submitButton(){
@@ -877,6 +906,36 @@
       .empty()
       .append(pickerResult(state.getMatch(entity, matchId)));
   }
+
+  // (Entity, EntityAttr) -> (String) -> Promise[State]
+  function handleCellEditOf(entity, attr){
+    return function(val){
+      return handleCellEdit(entity, attr, val);
+    };
+  }
+
+  // Entity, String, String -> Promise[State]
+  function handleCellEdit(entity, attr, value){
+    return state
+      .setIn(['entities', 'byId', entity.id, attr], value)
+      .deleteIn(['entities', 'errors', entity.id, attr])
+      .maybeMatchEntity(util.set(entity, attr, value), attr) // search for the *updated* entity
+      .then(s => s.validateAndRender());
+  };
+
+  // String -> String -> State
+  function handleReferenceInputOf(attr){
+    return function(value){
+      return handleReferenceInput(attr, value);
+    };
+  }
+
+  // String, String -> State
+  function handleReferenceInput(attr, value){
+    return state
+      .setReferenceAttr(attr, value)
+      .validateAndRender();
+  };
 
   // () -> Promise[Void]
   function handleSubmit(){

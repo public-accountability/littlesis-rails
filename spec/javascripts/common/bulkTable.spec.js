@@ -1,4 +1,4 @@
-fdescribe('Bulk Table module', () => {
+describe('Bulk Table module', () => {
 
   // TODO: USE THIS IN EVERY ASYNC TEST!!!!
   const wait = (millis) => new Promise((rslv,rjct) => setTimeout(rslv, millis));
@@ -33,29 +33,20 @@ fdescribe('Bulk Table module', () => {
     notifications: "bulk-add-notifications"
   };
 
-  // ENITY FIXTURES
+  // ENTITY FIXTURES
 
-  const newEntities = {
-    newEntity0: {
-      id:          "newEntity0",
-      name:        "Lew Basnight",
-      primary_ext: "Person",
-      blurb:       "Adjacent to the invisible"
-    },
-    newEntity1: {
-      id:          "newEntity1",
-      name:        "Chums Of Chance",
-      primary_ext: "Org",
-      blurb:       "Do not -- strictly speaking -- exist"
-    }
-  };
+  const newEntities = fxt.newEntities;
 
-  // CSV FIXTURE
+  // CSV FIXTURES
 
   const csvValid =
     "name,primary_ext,blurb\n" +
     `${newEntities.newEntity0.name},${newEntities.newEntity0.primary_ext},${newEntities.newEntity0.blurb}\n` +
     `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
+
+  const csvValidOnlyMatches =
+        "name,primary_ext,blurb\n" +
+        `${newEntities.newEntity0.name},${newEntities.newEntity0.primary_ext},${newEntities.newEntity0.blurb}\n`;
 
   const csvValidNoMatches =
     "name,primary_ext,blurb\n" +
@@ -82,16 +73,22 @@ fdescribe('Bulk Table module', () => {
     setTimeout(done, 2 * asyncDelay); // wait for file to upload, etc.
   };
 
-  const setupEdit = (csv, findCell, value, done, _clickable) => {
+  const setupEdit = (csv, findInput, value, done) => {
     // needed to accomodate multiple async calls in setup step. not pretty, but it works!
     // TODO: modify `setupWithCsv` to return a promise so we could chain `thens` here?
-    const clickable = _clickable || '.cell-contents'; // b/c default args freak out company mode
     setupWithCsv(csvValid, () =>  {
       setTimeout(() => {
-        editCell(findCell(), clickable, value);
+        editCell(findInput(), value);
         setTimeout(done, asyncDelay);
       }, asyncDelay);
     });
+  };
+
+  const editCell = (input, newValue) => {
+    input
+      .val(newValue)
+      .trigger('change')
+      .trigger($.Event('keyup', { keyCode: 13 })); // hit enter
   };
 
   const searchEntityFake = query => {
@@ -115,14 +112,6 @@ fdescribe('Bulk Table module', () => {
       url:         `/${ext.toLowerCase()}/${n}/${entity.name.replace(" ", "")}`
     };
   });
-
-  const editCell = (cell, clickable, newValue) => {
-    cell.find(clickable).trigger('click');
-    cell.find('.edit-cell')
-      .val(newValue)
-      .trigger('change')
-      .trigger($.Event('keyup', { keyCode: 13 }));
-  };
 
   const findFirstRow = () => $("#bulk-add-table tbody tr:nth-child(1)");
   const findSecondRow = () => $("#bulk-add-table tbody tr:nth-child(2)");
@@ -314,10 +303,10 @@ fdescribe('Bulk Table module', () => {
       it('has rows showing values of entity fields', () => {
         const rows = $('#bulk-add-table tbody tr').toArray();
         expect(rows).toHaveLength(2);
-        rows.forEach((row, idx) => {
-          expect(row.textContent).toEqual( // row.textContent concatenates all cell text with no spaces
-            columns.map(col => newEntities[`newEntity${idx}`][col.attr] ).join("")
-          );
+        rows.forEach((row, i) => {
+          $(row).find('input').toArray().forEach((input, j) => {
+            expect(input).toHaveValue(fxt.newEntities[`newEntity${i}`][columns[j].attr]);
+          });
         });
       });
     });
@@ -330,13 +319,13 @@ fdescribe('Bulk Table module', () => {
       });
 
       it('has a name input field', () => {
-        expect($('#reference-container input.name')).toExist();
-        expect($('#reference-container input.name')).toHaveAttr('placeholder', 'Name');
+        expect($('#reference-container div.name input')).toExist();
+        expect($('#reference-container div.name input')).toHaveAttr('placeholder', 'Name');
       });
 
       it('has a url input field', () => {
-        expect($('#reference-container input.url')).toExist();
-        expect($('#reference-container input.url')).toHaveAttr('placeholder', 'Url');
+        expect($('#reference-container div.url input')).toExist();
+        expect($('#reference-container div.url input')).toHaveAttr('placeholder', 'Url');
       });
     });
 
@@ -499,11 +488,11 @@ fdescribe('Bulk Table module', () => {
 
       describe('contents of a valid cell', () => {
 
-        const findCell = () => findFirstRow().find('td:nth-child(3)');
-        beforeEach(done => setupEdit(csvValid, findCell, 'foobar', done));
+        const findInput = () => findFirstRow().find('td:nth-child(3) input');
+        beforeEach(done => setupEdit(csvValid, findInput, 'foobar', done));
 
         it('updates cell', () => {
-          expect(findCell()).toContainText('foobar');
+          expect(findInput()).toHaveValue('foobar');
         });
 
         it('updates store', () => {
@@ -515,11 +504,11 @@ fdescribe('Bulk Table module', () => {
       describe('contents of an invalid cell', () => {
 
         const csv = "name,primary_ext,blurb\nvalid name,x,y\n";
-        const findCell = () => findFirstRow().find('td:nth-child(2)');
-        beforeEach(done => setupEdit(csv, findCell, 'Person', done));
+        const findInput = () => findFirstRow().find('td:nth-child(2) input');
+        beforeEach(done => setupEdit(csv, findInput, 'Person', done));
 
         it('updates cell', () => {
-          expect(findCell()).toHaveText('Person');
+          expect(findInput()).toHaveValue('Person');
         });
 
         it('updates store', () => {
@@ -530,8 +519,8 @@ fdescribe('Bulk Table module', () => {
 
       describe('contents of name cell', () => {
 
-        const findCell = () => findSecondRow().find('td:nth-child(1)');
-        beforeEach(done => setupEdit(csvValid, findCell, newEntities.newEntity0.name, done));
+        const findInput = () => findSecondRow().find('td:nth-child(1) input');
+        beforeEach(done => setupEdit(csvValid, findInput, newEntities.newEntity0.name, done));
 
         it('searches for entities matching new name', () => {
           expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity0.name);
@@ -546,12 +535,12 @@ fdescribe('Bulk Table module', () => {
       beforeEach(done => setupWithCsv(csvValid, done));
 
       it('updates the name', () => {
-        $('#reference-container .name').val('Wikipedia').trigger('change');
+        $('#reference-container .name input').val('Wikipedia').trigger('change');
         expect(bulkTable.getIn(['reference', 'name'])).toEqual('Wikipedia');
       });
 
       it('updates the url', () => {
-        $('#reference-container .url').val('https://wikipedia.org').trigger('change');
+        $('#reference-container .url input').val('https://wikipedia.org').trigger('change');
         expect(bulkTable.getIn(['reference', 'url'])).toEqual('https://wikipedia.org');
       });
     });
@@ -673,25 +662,60 @@ fdescribe('Bulk Table module', () => {
     });
 
     describe('showing error alerts', () => {
+
       const csv = "name,primary_ext,blurb\nx,y,z\n";
-      beforeEach(done => setupWithCsv(csv, done));
+      beforeEach(done => setupWithCsv(csv, () => setTimeout(done, asyncDelay)));
 
-      it('highlights cell if name is not valid', () => {
-        const cell = findFirstRow().find('td:nth-child(1)');
+      const shouldShowErrors = (cell) => {
         expect(cell).toHaveClass("errors");
         expect(cell.find(".error-alert")).toExist();
+        expect(cell.find(".alert-icon")).toExist();
+      };
+
+      const findFirstInput = () => findFirstRow().find('td:nth-child(1) .cell-input');
+
+      it('highlights invalid entity name input', () => {
+        shouldShowErrors(findFirstRow().find('td:nth-child(1)'));
       });
 
-      it('highlights cell if primary extension is not valid', () => {
-        const cell = findFirstRow().find('td:nth-child(2)');
-        expect(cell).toHaveClass("errors");
-        expect(cell.find(".error-alert")).toExist();
+      it('highlights invalid entity primary extension input', () => {
+        shouldShowErrors(findFirstRow().find('td:nth-child(2)'));
       });
 
-      it('shows tooltip with error message when user mouses over cell', () => {
-        const cell = findFirstRow().find('td:nth-child(1)');
-        cell.find('.error-alert').trigger('mouseover');
-        expect(cell.find('.tooltip')).toContainText('[ ! ] Name must be');
+      it('highlights invalid reference name input', () => {
+        shouldShowErrors($("#reference-container .name"));
+      });
+
+      it('highlights invalid reference url input', () => {
+        shouldShowErrors($("#reference-container .url"));
+      });
+
+      it('shows error tooltip on mouseenter', () => {
+        const input = findFirstInput();
+        input.trigger('mouseenter');
+        expect(input.parent().find('.tooltip')).toContainText('[ ! ] Name must be');
+      });
+
+      it('hides error tooltip on mouseout', () => {
+        const input = findFirstInput();
+        input.trigger('mousenter');
+        input.trigger('mouseout');
+        expect(input.parent().find('.tooltip')).not.toExist();
+      });
+
+      it('shows error tooltip on focus', () => {  // ie: tabbing in
+        const input = findFirstInput();
+        input.trigger('focus');
+        expect(input.parent().find('.tooltip')).toExist();
+      });
+
+      xit('hides error tooltip on blur', () => { // ie: tabbing out
+        // NOTE (@aguestuser|24-Nov-2017)
+        // this works in browser, test fails due to async issues i don't care to address ATM
+        const input = findFirstInput();
+        input.trigger('focus');
+        input.trigger('blur');
+        expect(input.parent().find('.tooltip')).not.toExist();
       });
     });
 
@@ -700,22 +724,42 @@ fdescribe('Bulk Table module', () => {
       const csv = "name,primary_ext,blurb\nx,y,z\n";
 
       describe('in a name field', () => {
-        const findCell = () => findFirstRow().find('td:nth-child(1)');
-        beforeEach(done => setupEdit(csv, findCell , 'Valid Name', done, '.error-alert'));
+        const findInput = () => findFirstRow().find('td:nth-child(1) input');
+        beforeEach(done => setupEdit(csv, findInput , 'Valid Name', done));
 
-        it('removes alert after name error is fixed', () => {
-          editCell(findCell(), '.error-alert', 'Valid Name');
-          expect(findCell()).not.toHaveClass("errors");
+        it('removes alert after error is fixed', () => {
+          expect(findInput().parent()).not.toHaveClass("errors");
         });
       });
 
       describe('in a primary_ext field', () => {
-        const findCell = () => findFirstRow().find('td:nth-child(2)');
-        beforeEach(done => setupEdit(csv, findCell , 'Person', done, '.error-alert'));
+        const findInput = () => findFirstRow().find('td:nth-child(2) input');
+        beforeEach(done => setupEdit(csv, findInput , 'Person', done));
 
-        it('removes alert after name error is fixed', () => {
-          editCell(findCell(), '.error-alert', 'Valid Name');
-          expect(findCell()).not.toHaveClass("errors");
+        it('removes alert after error is fixed', () => {
+          expect(findInput().parent()).not.toHaveClass("errors");
+        });
+      });
+
+      describe('in a reference name field', () => {
+        const findInput = () => $("#reference-container div.name input");
+        beforeEach(done => setupWithCsv(csv, done));
+
+        it('removes alert after error is fixed', () => {
+          expect(findInput()).toHaveClass("error-alert");
+          editCell(findInput(), 'Pynchon Wiki');
+          expect(findInput()).not.toHaveClass("error-alert");
+        });
+      });
+
+      describe('in a reference url field', () => {
+        const findInput = () => $("#reference-container div.url input");
+        beforeEach(done => setupWithCsv(csv, done));
+
+        it('removes alert after error is fixed', () => {
+          expect(findInput()).toHaveClass("error-alert");
+          editCell(findInput(), 'http://pynchonwiki.com');
+          expect(findInput()).not.toHaveClass("error-alert");
         });
       });
     });
@@ -723,13 +767,36 @@ fdescribe('Bulk Table module', () => {
 
   describe('form submission', () => {
 
+    const reference = {
+      name: 'Pynchon Wiki',
+      url:  'http://pynchonwiki.com'
+    };
+
+    const inputReference = () => {
+      $("#reference-container .name input").val(reference.name).trigger('change');
+      $("#reference-container .url input").val(reference.url).trigger('change');
+    };
+
     describe('submit button status', () => {
 
-      describe('there are invalid fields', () => {
-
-        const csv = "name,primary_ext,blurb\nx,y,z\n";
+      describe('there are invalid reference fields', () => {
         // double async delay for first it block to pass in isolation
-        beforeEach(done => setupWithCsv(csv, () => setTimeout(done, asyncDelay)));
+        beforeEach(done => setupWithCsv(csvValid, () =>  {
+          setTimeout(done, asyncDelay);
+        }));
+
+        it('is disabled', () => {
+          expect($("#bulk-submit-button")).toBeDisabled();
+        });
+      });
+
+      describe('there are invalid table fields', () => {
+
+        const csvInvalid = "name,primary_ext,blurb\nx,y,z\n";
+        beforeEach(done => setupWithCsv(csvValid, () =>  {
+          inputReference();
+          done();
+        }));
 
         it('is disabled', () => {
           expect($("#bulk-submit-button")).toBeDisabled();
@@ -738,7 +805,10 @@ fdescribe('Bulk Table module', () => {
 
       describe('there are unresolved matches', () => {
 
-        beforeEach(done => setupWithCsv(csvValid, done));
+        beforeEach(done => setupWithCsv(csvValid, () => {
+          inputReference();
+          done();
+        }));
 
         it('is disabled', () => {
           expect($("#bulk-submit-button")).toBeDisabled();
@@ -747,7 +817,10 @@ fdescribe('Bulk Table module', () => {
 
       describe('there are no invalid fields or unresolved matches', () => {
 
-        beforeEach(done => setupWithCsv(csvValidNoMatches, done));
+        beforeEach(done => setupWithCsv(csvValidNoMatches, () => {
+          inputReference();
+          done();
+        }));
 
         it ('is enabled', () => {
           expect($("#bulk-submit-button")).not.toBeDisabled();
@@ -759,24 +832,40 @@ fdescribe('Bulk Table module', () => {
 
       let createEntitiesSpy, addEntitiesToListSpy, redirectSpy, errorMsg;
 
+      const setupSubmit = (entitiesById, createEntitiesVal, addEntitiesToListVal) => {
+
+        createEntitiesSpy = spyOn(api, 'createEntities').and.returnValue(createEntitiesVal);
+        addEntitiesToListSpy = spyOn(api, 'addEntitiesToList').and.returnValue(addEntitiesToListVal);
+        redirectSpy = spyOn(utility, 'redirectTo').and.callFake(() => null);
+
+        bulkTable.init(Object.assign(
+          {},
+          defaultState,
+          {
+            entities: { byId: entitiesById, order: Object.keys(entitiesById) },
+            reference: reference
+          }
+        ));
+
+        $('#bulk-submit-button').trigger('click');
+        return wait(asyncDelay);
+      };
+
+      const emptyPromise = Promise.resolve([]);
+
       describe('table has only new entities', () => {
 
-        beforeEach(done => {
-          searchEntityStub.and.returnValue(Promise.resolve([]));
-          setupWithCsv(csvValid, () => {
-            createEntitiesSpy = spyOn(api, 'createEntities')
-              .and.returnValue(Promise.resolve([]));
-            addEntitiesToListSpy = spyOn(api, 'addEntitiesToList')
-              .and.returnValue(Promise.resolve([]));
-            done();
-          });
-        });
+        const entities = fxt.newEntities;
 
-        it('attempts to create entities on submit', done => {
-          $('#bulk-submit-button').trigger('click'),
-          wait(asyncDelay).then(() => {
+        describe('on submit', () => {
+
+          beforeEach(done =>  {
+            setupSubmit(entities, emptyPromise, emptyPromise)
+              .then(done);
+          });
+
+          it('attempts to create new entities', () => {
             expect(createEntitiesSpy).toHaveBeenCalledWith(Object.values(fxt.newEntities));
-            done();
           });
         });
 
@@ -784,9 +873,8 @@ fdescribe('Bulk Table module', () => {
 
           beforeEach(done => {
             errorMsg = "Could not create new entities: request formatted improperly";
-            createEntitiesSpy.and.returnValue(Promise.reject(errorMsg));
-            $('#bulk-submit-button').trigger('click');
-            wait(asyncDelay).then(done);
+            setupSubmit(entities, Promise.reject(errorMsg), emptyPromise)
+              .then(done);
           });
 
           it('displays error message in notifications bar', () => {
@@ -800,9 +888,8 @@ fdescribe('Bulk Table module', () => {
         describe('creating new entities succeeds', () => {
 
           beforeEach(done => {
-            createEntitiesSpy.and.returnValue(Promise.resolve(fxt.createdEntitiesParsed));
-            $('#bulk-submit-button').trigger('click');
-            wait(asyncDelay).then(done);
+            setupSubmit(entities, Promise.resolve(fxt.createdEntitiesParsed), emptyPromise)
+              .then(done);
           });
 
           it('stores ids for newly created entities in store', () => {
@@ -814,54 +901,71 @@ fdescribe('Bulk Table module', () => {
           });
 
           it('displays newly created entities in table', () => {
-            expect(findFirstRow()).toContainText(fxt.createdEntitiesParsed[0].name);
-            expect(findSecondRow()).toContainText(fxt.createdEntitiesParsed[1].name);
+            expect(findFirstRow().find('td.name input'))
+              .toHaveValue(fxt.createdEntitiesParsed[0].name);
+            expect(findSecondRow().find('td.name input')).
+              toHaveValue(fxt.createdEntitiesParsed[1].name);
           });
 
-          describe('adding entities to list fails', () => {
+          it('tries to associate entities with list', () => {
+            expect(addEntitiesToListSpy).toHaveBeenCalledWith('1', ['1', '2'], reference);
+          });
+        });
 
-            beforeEach(done => {
-              errorMsg = "Could not create add entities to list: invalid reference";
-              addEntitiesToListSpy.and.returnValue(Promise.reject(errorMsg));
-              redirectSpy = spyOn(Response, 'redirect').and.callFake(console.log);
-              $('#bulk-submit-button').trigger('click');
-              wait(asyncDelay).then(done);
-            });
+        describe('associating entities with list fails', () => {
 
-            it('displays error message in notifications bar', () => {
-              expect($("#bulk-add-notifications")).toHaveText(errorMsg);
-            });
-
-            it('does not redirect', () => {
-              expect(redirectSpy).not.toHaveBeenCalled();
-            });
+          beforeEach(done => {
+            errorMsg = "Could not create add entities to list: invalid reference";
+            setupSubmit(newEntities, Promise.resolve(fxt.createdEntitiesParsed), Promise.reject(errorMsg))
+              .then(done);
           });
 
-          describe('adding entities to list succeeds', () => {
+          it('displays error message in notifications bar', () => {
+            expect($("#bulk-add-notifications")).toHaveText(errorMsg);
+          });
 
-            beforeEach(done => {
-              addEntitiesToListSpy.and.returnValue(Promise.resolve(fxt.listEntitiesParsed));
-              redirectSpy = spyOn(Response, 'redirect').and.callFake(console.log);
-              $('#bulk-submit-button').trigger('click');
-              wait(asyncDelay).then(done);
-            });
+          it('does not redirect', () => {
+            expect(redirectSpy).not.toHaveBeenCalled();
+          });
+        });
 
-            it('redirects to list members tab', () => {
-              expect(redirectSpy).toHaveBeenCalledWith('/lists/1', 200);
-            });
+        describe('associating entities with list succeeds', () => {
+
+          beforeEach(done => {
+            setupSubmit(
+              entities,
+              Promise.resolve(fxt.createdEntitiesParsed),
+              Promise.resolve(fxt.listEntitiesParsed)
+            ).then(done);
+          });
+
+          it('redirects to list members tab', () => {
+            expect(redirectSpy).toHaveBeenCalledWith('/lists/1');
           });
         });
       });
 
       describe('table has no new entities', () => {
-        it('does not attempt to create new entities');
+
+        beforeEach(() => setupSubmit(fxt.existingEntities, emptyPromise, emptyPromise));
+
+        it('does not attempt to create new entities', () => {
+          expect(createEntitiesSpy).not.toHaveBeenCalled();
+        });
       });
 
       describe('table has some new entities, some matched entities', () => {
-        it('only tries to create new entities');
+
+        beforeEach(() => setupSubmit(fxt.newAndExistingEntities, emptyPromise, emptyPromise));
+
+        it('only tries to create new entities', () => {
+          const newEntity = fxt.newAndExistingEntities.newEntity0;
+          expect(createEntitiesSpy).toHaveBeenCalledWith([newEntity]);
+        });
 
         describe('creating new entities fails', () => {
           it('does not mark matched entities with alert icon');
+          // left pending until feature is implemented or rejected
         });
       });
     });

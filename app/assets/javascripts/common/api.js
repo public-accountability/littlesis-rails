@@ -60,24 +60,18 @@
   };
 
   // Integer, [Integer] -> Promise[[ListEntity]]
-  self.addEntitiesToList = function(listId, entityIds){
+  self.addEntitiesToList = function(listId, entityIds, reference){
     return post('/lists/'+listId+'/associations/entities', formatReq(entityIds))
       .then(formatResp);
 
     function formatReq(entityIds){
-
-      // TODO: unhardcode these!!!
-      var referenceAttrs = {
-        name: 'Google',
-        url: 'https://google.com'
-      };
 
       return {
         data: entityIds.map(function(id){
           return { type: 'entities', id: id };
         }).concat({
           type: 'references',
-          attributes: referenceAttrs
+          attributes: reference
         })
       };
     };
