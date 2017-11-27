@@ -15,6 +15,7 @@ class EntityMerger
   # the actual merging
   def merge!
     merge
+
     ActiveRecord::Base.transaction do
       @extensions.each { |e| e.merge!(@dest) }
       @contact_info.each(&:save!)
@@ -26,6 +27,7 @@ class EntityMerger
       @articles.each(&:save!)
       @os_categories.each(&:save!)
       @relationships.each(&:merge!)
+      set_merged_id_and_delete
     end
   end
 
@@ -44,9 +46,10 @@ class EntityMerger
     merge_tags
     merge_articles
     merge_os_categories
-    merge_os_donations
-    merge_ny_donations
+    
     merge_relationships
+    # merge_os_donations
+    # merge_ny_donations
   end
 
   ## Merge Functions ##
@@ -63,6 +66,7 @@ class EntityMerger
         dest.merge_extension(ext_id, fields)
       end
     end
+
   end
 
   def merge_extensions
@@ -109,7 +113,7 @@ class EntityMerger
   end
 
   def merge_images
-    source.images.each(&set_dest_entity_id).each { |img| @images << img }
+    @images = @source.images.map { |img| img.tap(&set_dest_entity_id) }
   end
 
   def merge_aliases
@@ -135,12 +139,7 @@ class EntityMerger
                   .map { |ae| ae.tap { |x| x.entity_id = dest.id } }
   end
 
-  def merge_os_donations
-  end
-
-  def merge_ny_donations
-  end
-
+  
   def merge_os_categories
     @os_categories = source
                        .os_entity_categories
@@ -157,8 +156,11 @@ class EntityMerger
 
   def merge_relationships
     source.relationships.includes(:os_matches).each do |relationship|
-      # Open Secret Relationships are handled in merge_os_donations
-      next if relationship.os_matches.exists?
+      # OpenSecrets Relationships are handled in merge_os_donations!
+      if relationship.os_matches.exists?
+        @os_match_relationships << relationship
+        next
+      end
 
       attributes = relationship.attributes.except('id', 'entity1_id', 'entity2_id', 'updated_at', 'created_at')
       
@@ -167,7 +169,7 @@ class EntityMerger
       elsif relationship.entity2_id == source.id
         attributes.merge!('entity2_id' => dest.id, 'entity1_id' => relationship.entity1_id)
       else
-        throw Exceptions::ThatsWeirdError
+        raise Exceptions::ThatsWeirdError
       end
 
       new_relationship = Relationship.new(attributes)
@@ -182,9 +184,31 @@ class EntityMerger
   
   #def merge_versions!; end
 
+  def merge_os_donations!
+    @os_match_relationships.each do |rel|
+      if rel.entity1_id == source.id
+        os_donation_ids = rel.os_matches(&:os_donation_id)
+        rel.os_matches.each(&:destroy!)
+        os_donation_ids.each { |i| OsMatch.create!(os_donation_id: i, donor_id: dest.id) }
+      elsif rel.entity2_id == source.id
+        rel.os_matches.each { |m| m.update!(recip_id: dest.id) }
+        rel.update!(entity2_id: dest.id)
+      else
+        raise Exceptions::ThatsWeirdError
+      end
+    end
+  end
+
+  def replace_os_match_cmte_id!
+    # ActiveRecord::Base.connection.execute()
+  end
+
+  def merge_ny_donations!
+  end
+
   def set_merged_id_and_delete
     source.update!(merged_id: dest.id)
-    source.soft_delete
+    source.reload.soft_delete
   end
 
   ## ERRORS ##
@@ -210,6 +234,7 @@ class EntityMerger
     @os_categories = []
     @relationships = []
     @potential_duplicate_relationships = []
+    @os_match_relationships = []
   end
 
   def check_input_validity

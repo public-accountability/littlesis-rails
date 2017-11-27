@@ -113,7 +113,6 @@ describe 'Merging Entities', :merging_helper do
   context 'contact info' do
     subject { EntityMerger.new(source: source_org, dest: dest_org) }
 
-    
     context 'addresses' do
       let!(:address) { create(:address, entity_id: source_org.id) }
 
@@ -273,8 +272,9 @@ describe 'Merging Entities', :merging_helper do
       reset_merger
 
       it 'transfers images to new entity' do
-        expect { subject.merge! }.to change { Image.find(image.id).entity_id }
-                                       .from(source_org.id).to(dest_org.id)
+        expect(Image.find(image.id).entity_id).to eql source_org.id
+        subject.merge!
+        expect(Image.find(image.id).entity_id).to eql dest_org.id
       end
     end
   end
