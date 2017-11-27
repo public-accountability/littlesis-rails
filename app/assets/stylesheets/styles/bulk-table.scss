@@ -99,6 +99,14 @@ h1#bulk-add-header {
                     @extend .alert-icon;
                     margin: 0 .5em .4em 0; // TRBL
                 }
+                .delete-icon {
+                    @extend .glyphicon;
+                    @extend .glyphicon-remove;
+                    position: relative;
+                    left: calc(100% + 1.5em);
+                    color: $maroon;
+                    cursor: pointer;
+                }
                 .cell-input{
                     @extend .fill-parent;
                     border: 0 0 0 0;
@@ -117,13 +125,13 @@ h1#bulk-add-header {
                 }
             }
             .resolver-anchor {
-                margin-left: -2em;
-                //margin-top: -1.5em;
+                position: relative;
+                left: -2em;
+                top: .2em;
                 width: 1em;
                 cursor: pointer;
                 .alert-icon{
                     @extend .alert-icon;
-                    margin: 2em 0 0 0; // TRBL
                 }
             }
             .arrow {

@@ -46,7 +46,8 @@
         byId:    {},  // { [String]: Entity }
         order:   []  // [String] (order corresponds to row order of entities stored in `.byId`)
       },
-      matchesByEntityId: {}, // { [String]: { byId: { [id: String]: EntityMatch }, order: [String] }]
+      matchesByEntityId: args.matchesByEntityId ||
+        {}, // { [String]: { byId: { [id: String]: EntityMatch }, order: [String] }]
       reference: args.reference || {
         name: '',
         url: ''
@@ -265,6 +266,14 @@
   };
 
   // Entity -> State
+  state.deleteEntity = function(entity){
+    return state
+      .deleteIn(['entities', 'byId', entity.id])
+      .deleteIn(['matchesByEntityId', entity.id])
+      .setIn(['entities', 'order'], deleteFromOrdering(entity));
+  };
+
+  // Entity -> State
   state.removeMatches = function(entity){
     return state.deleteIn(['matchesByEntityId', entity.id]);
   };
@@ -308,6 +317,13 @@
       return id === oldEntity.id ? newEntity.id : id;
     });
   }
+
+  // Entity -> [String]
+  function deleteFromOrdering(entity){
+    return state.getIn(['entities', 'order']).filter(function(id){
+      return id !== entity.id;
+    });
+  };
 
   // () -> State
   state.setUploadSupport = function(){
@@ -709,7 +725,9 @@
         errors,
         handleCellEditOf(entity, col.attr)
       )
-    ).append(maybeMatchResolver(entity, col, idx));
+    )
+      .append(maybeMatchResolver(entity, col, idx))
+      .append(maybeDeleteButton(entity, idx));
   }
 
   // String, String, [String], JQueryNode -> JQueryNode
@@ -756,8 +774,21 @@
     });
   }
 
+  // Entity, Integer -> JQueryNode
+  function maybeDeleteButton(entity, idx){
+    return idx === (columns.length - 1) && deleteButton(entity);
+  };
+
+  // Entity -> JQueryNode
+  function deleteButton(entity){
+    return $('<div>', {
+      class: 'delete-icon',
+      click: function(){ handleDelete(entity); }
+    });
+  };
+
   function maybeMatchResolver(entity, col, idx) {
-    return idx == 0 && state.hasMatches(entity) && matchResolver(entity);
+    return idx === 0 && state.hasMatches(entity) && matchResolver(entity);
   }
 
   function matchResolver(entity) {
@@ -946,6 +977,13 @@
       .then(state.render)
       .then(state.redirectIfNoErrors);
   }
+
+  // Entity -> State
+  function handleDelete(entity){
+    return state
+      .deleteEntity(entity)
+      .render();
+  };
 
   // RETURN
   return self;

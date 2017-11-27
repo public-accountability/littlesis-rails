@@ -309,6 +309,14 @@ describe('Bulk Table module', () => {
           });
         });
       });
+
+      it('has a delete button for every row', () => {
+        $('#bulk-add-table tbody tr')
+          .toArray()
+          .forEach(row => {
+            expect($(row).find('.delete-icon')).toExist();
+          });
+      });
     });
 
     describe('reference container', () => {
@@ -762,6 +770,57 @@ describe('Bulk Table module', () => {
           expect(findInput()).not.toHaveClass("error-alert");
         });
       });
+    });
+  });
+
+  describe('deleting', () => {
+
+    beforeEach(() => {
+      bulkTable.init(Object.assign(
+        {},
+        defaultState,
+        {
+          entities: {
+            byId: newEntities,
+            order: Object.keys(newEntities)
+          },
+          matchesByEntityId: {
+            newEntity0: searchResultsFor(newEntities.newEntity0)
+          }
+        },
+      ));
+    });
+
+    it('removes an entity from the entities repository', () => {
+      const count = () => Object.keys(bulkTable.getIn(['entities', 'byId'])).length;
+
+      expect(count()).toEqual(2);
+      $('.delete-icon')[0].click();
+      expect(count()).toEqual(1);
+    });
+
+    it('removes an entity from the matches repository', () => {
+      const count = () => Object.keys(bulkTable.get('matchesByEntityId')).length;
+
+      expect(count()).toEqual(1);
+      $('.delete-icon')[0].click();
+      expect(count()).toEqual(0);
+    });
+
+    it('removes an entity from the order list', () => {
+      const count = () => bulkTable.getIn(['entities', 'order']).length;
+
+      expect(count()).toEqual(2);
+      $('.delete-icon')[0].click();
+      expect(count()).toEqual(1);
+    });
+
+    it('removes a row from the table', () => {
+      const count = () => $('#bulk-add-table tbody tr').length;
+
+      expect(count()).toEqual(2);
+      $('.delete-icon')[0].click();
+      expect(count()).toEqual(1);
     });
   });
 
