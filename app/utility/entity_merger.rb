@@ -3,7 +3,8 @@ class EntityMerger
               :contact_info, :lists, :images,
               :aliases, :document_ids, :tag_ids,
               :articles, :os_categories,
-              :relationships, :potential_duplicate_relationships
+              :relationships, :potential_duplicate_relationships,
+              :os_match_relationships
 
   def initialize(source:, dest:)
     @source = source
@@ -27,6 +28,7 @@ class EntityMerger
       @articles.each(&:save!)
       @os_categories.each(&:save!)
       @relationships.each(&:merge!)
+      merge_os_donations!
       set_merged_id_and_delete
     end
   end
@@ -187,7 +189,8 @@ class EntityMerger
   def merge_os_donations!
     @os_match_relationships.each do |rel|
       if rel.entity1_id == source.id
-        os_donation_ids = rel.os_matches(&:os_donation_id)
+       # binding.pry
+        os_donation_ids = rel.os_matches.map(&:os_donation_id)
         rel.os_matches.each(&:destroy!)
         os_donation_ids.each { |i| OsMatch.create!(os_donation_id: i, donor_id: dest.id) }
       elsif rel.entity2_id == source.id

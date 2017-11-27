@@ -8,6 +8,7 @@ describe 'Merging Entities', :merging_helper do
   subject { EntityMerger.new(source: source_org, dest: dest_org) }
 
   describe 'initializing' do
+
     let(:source) { build(:org) }
     let(:dest) { build(:org) }
 
@@ -539,6 +540,10 @@ describe 'Merging Entities', :merging_helper do
         expect(subject.relationships.length).to eql 1
       end
 
+      it 'adds os_match relationship to os_match_relationships' do
+        expect(subject.os_match_relationships.length).to eql 1
+      end
+      
       context 'merge!' do
         reset_merger
 
@@ -584,8 +589,43 @@ describe 'Merging Entities', :merging_helper do
   end
 
   context 'os donations' do
-    it 'unmatches the os donations from the source entity'
-    it 'matches those donations on the destination entity'
+    subject { EntityMerger.new(source: source_person, dest: dest_person) }
+    context 'source has 2 os matches' do
+      let(:recip_code) { Faker::Number.number(5).to_s }
+      let(:os_committee) { create(:os_committee, cmte_id: recip_code) }
+      let(:os_donations) do
+        [
+          create(:os_donation, recipid: recip_code, cmteid: recip_code),
+          create(:os_donation, recipid: recip_code, cmteid: recip_code, amount: 2)
+        ]
+      end
+
+      before do
+        allow(OsCommittee).to receive(:find_by).and_return(os_committee)
+        os_donations.each { |osd| OsMatch.create!(os_donation_id: osd.id, donor_id: source_person.id) }
+        #subject.merge!
+      end
+
+      it 'removes os_matches from the source' do
+        expect { subject.merge! }
+          .to change { OsMatch.where(donor_id: source_person.id).count }.from(2).to(0)
+      end
+
+      it 'adds the os_matches from the destination' do
+        expect { subject.merge! }
+          .to change { OsMatch.where(donor_id: dest_person.id).count }.from(0).to(2)
+      end
+
+      it 'creates a new relationships for destination' do
+        expect { subject.merge! }
+          .to change { dest_person.reload.relationships.count }.by(1)
+      end
+
+      it 'removes the old donation relationship from the source' do
+        expect { subject.merge! }
+          .to change { source_person.reload.relationships.count }.by(-1)
+      end
+    end
   end
 
   context 'ny donations' do
@@ -593,4 +633,3 @@ describe 'Merging Entities', :merging_helper do
     it 'matches those donations on the destination entity'
   end
 end
-
