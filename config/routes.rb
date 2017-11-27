@@ -111,8 +111,8 @@ Lilsis::Application.routes.draw do
       post 'create_map'
       # entities
       post 'add_entity'
-      get 'associations/entities' => 'lists#new_entity_associations'
-      post 'associations/entities' => 'lists#create_entity_associations'
+      get 'entities/bulk' => 'lists#new_entity_associations'
+      post 'entities/bulk' => 'lists#create_entity_associations'
       post 'create_entities'
       post 'update_entity'
       post 'remove_entity'

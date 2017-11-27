@@ -107,7 +107,7 @@ describe('API module', () => {
 
       it('formats request according to contract', () => {
         expect(fetchSpy).toHaveBeenCalledWith(
-          '/lists/100/associations/entities', {
+          '/lists/100/entities/bulk', {
             headers: headers(),
             method: 'post',
             credentials: 'include',

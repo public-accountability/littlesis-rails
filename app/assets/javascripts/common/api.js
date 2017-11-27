@@ -61,7 +61,7 @@
 
   // Integer, [Integer] -> Promise[[ListEntity]]
   self.addEntitiesToList = function(listId, entityIds, reference){
-    return post('/lists/'+listId+'/associations/entities', formatReq(entityIds))
+    return post('/lists/'+listId+'/entities/bulk', formatReq(entityIds))
       .then(formatResp);
 
     function formatReq(entityIds){
