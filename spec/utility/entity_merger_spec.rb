@@ -590,20 +590,21 @@ describe 'Merging Entities', :merging_helper do
 
   context 'os donations' do
     subject { EntityMerger.new(source: source_person, dest: dest_person) }
+    let(:cmte_id) { Faker::Number.number(5).to_s }
+    let(:recip_id) { Faker::Number.number(5).to_s }
+    let(:os_committee) { create(:os_committee, cmte_id: cmte_id) }
+
     context 'source has 2 os matches' do
-      let(:recip_code) { Faker::Number.number(5).to_s }
-      let(:os_committee) { create(:os_committee, cmte_id: recip_code) }
       let(:os_donations) do
         [
-          create(:os_donation, recipid: recip_code, cmteid: recip_code),
-          create(:os_donation, recipid: recip_code, cmteid: recip_code, amount: 2)
+          create(:os_donation, recipid: cmte_id, cmteid: cmte_id),
+          create(:os_donation, recipid: cmte_id, cmteid: cmte_id, amount: 2)
         ]
       end
 
       before do
         allow(OsCommittee).to receive(:find_by).and_return(os_committee)
         os_donations.each { |osd| OsMatch.create!(os_donation_id: osd.id, donor_id: source_person.id) }
-        #subject.merge!
       end
 
       it 'removes os_matches from the source' do
@@ -624,6 +625,36 @@ describe 'Merging Entities', :merging_helper do
       it 'removes the old donation relationship from the source' do
         expect { subject.merge! }
           .to change { source_person.reload.relationships.count }.by(-1)
+      end
+    end
+
+    context 'source is the recipient of two donations' do
+      let(:donor) { create(:entity_person) }
+      let(:os_donations) do
+        [
+          create(:os_donation, recipid: recip_id, cmteid: cmte_id),
+          create(:os_donation, recipid: recip_id, cmteid: cmte_id, amount: 2)
+        ]
+      end
+
+      before do
+        source_person.add_extension('ElectedRepresentative', { crp_id: recip_id })
+        allow(OsCommittee).to receive(:find_by).and_return(os_committee)
+        os_donations.each { |osd| OsMatch.create!(os_donation_id: osd.id, donor_id: donor.id) }
+      end
+
+      it 'updates the recipient id of the Os Matches' do
+        OsMatch.last(2).each { |m| expect(m.recip_id).to eql source_person.id }
+        subject.merge!
+        OsMatch.last(2).each { |m| expect(m.recip_id).to eql dest_person.id }
+      end
+
+      it 'updates the relationship' do
+        expect(Relationship.where(entity1_id: donor.id, entity2_id: source_person.id)).to exist
+        expect(Relationship.where(entity1_id: donor.id, entity2_id: dest_person.id)).not_to exist
+        subject.merge!
+        expect(Relationship.where(entity1_id: donor.id, entity2_id: source_person.id)).not_to exist
+        expect(Relationship.where(entity1_id: donor.id, entity2_id: dest_person.id)).to exist
       end
     end
   end

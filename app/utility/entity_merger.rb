@@ -189,13 +189,14 @@ class EntityMerger
   def merge_os_donations!
     @os_match_relationships.each do |rel|
       if rel.entity1_id == source.id
-       # binding.pry
         os_donation_ids = rel.os_matches.map(&:os_donation_id)
         rel.os_matches.each(&:destroy!)
         os_donation_ids.each { |i| OsMatch.create!(os_donation_id: i, donor_id: dest.id) }
       elsif rel.entity2_id == source.id
         rel.os_matches.each { |m| m.update!(recip_id: dest.id) }
         rel.update!(entity2_id: dest.id)
+        rel.links.where(is_reverse: false).update_all(entity2_id: dest.id)
+        rel.links.where(is_reverse: true).update_all(entity1_id: dest.id)
       else
         raise Exceptions::ThatsWeirdError
       end
