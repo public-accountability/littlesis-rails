@@ -657,6 +657,56 @@ describe 'Merging Entities', :merging_helper do
         expect(Relationship.where(entity1_id: donor.id, entity2_id: dest_person.id)).to exist
       end
     end
+
+    context 'source is an os committee' do
+      subject { EntityMerger.new(source: source_org, dest: dest_org) }
+      let!(:donor) { create(:entity_person) }
+      let(:other_cmte_id) { Faker::Number.number(5).to_s }
+      let!(:other_cmte) do
+        create(:entity_org).tap { |org| org.add_extension('PoliticalFundraising', { fec_id: other_cmte_id }) }
+      end
+
+      let!(:recipient) do
+        create(:entity_person).tap { |e| e.add_extension('ElectedRepresentative', { crp_id: recip_id }) }
+      end
+
+      let(:os_donations) do
+        [create(:os_donation, recipid: recip_id, cmteid: cmte_id), create(:os_donation, recipid: recip_id, cmteid: cmte_id, amount: 2)]
+      end
+
+      let!(:random_match) do
+        os_donation = create(:os_donation, recipid: recip_id, cmteid: other_cmte_id)
+        OsMatch.create!(os_donation_id: os_donation.id, donor_id: donor.id)
+      end
+
+      before do
+        source_org.add_extension('PoliticalFundraising', { fec_id: cmte_id })
+        @os_matches = os_donations.map { |osd| OsMatch.create!(os_donation_id: osd.id, donor_id: donor.id) }
+      end
+
+      it 'transfers political political funddraising' do
+        subject.merge!
+        expect(dest_org.political_fundraising.fec_id).to eql cmte_id
+      end
+
+      it 'changes os_matches' do
+        @os_matches.each do |m|
+          expect(m.recip_id).to eql recipient.id
+          expect(m.cmte_id).to eql source_org.id
+        end
+        subject.merge!
+        @os_matches.each do |m|
+          m.reload
+          expect(m.recip_id).to eql recipient.id
+          expect(m.cmte_id).to eql dest_org.id
+        end
+      end
+
+      it 'does not change unrelated committees' do
+        expect { subject.merge! }
+          .not_to change { OsMatch.find(random_match.id).cmte_id }
+      end
+    end
   end
 
   context 'ny donations' do

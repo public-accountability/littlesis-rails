@@ -29,6 +29,7 @@ class EntityMerger
       @os_categories.each(&:save!)
       @relationships.each(&:merge!)
       merge_os_donations!
+      replace_os_match_cmte_id!
       set_merged_id_and_delete
     end
   end
@@ -48,7 +49,6 @@ class EntityMerger
     merge_tags
     merge_articles
     merge_os_categories
-    
     merge_relationships
     # merge_os_donations
     # merge_ny_donations
@@ -204,6 +204,7 @@ class EntityMerger
   end
 
   def replace_os_match_cmte_id!
+    OsMatch.where(cmte_id: source.id).update_all(cmte_id: dest.id)
     # ActiveRecord::Base.connection.execute()
   end
 
