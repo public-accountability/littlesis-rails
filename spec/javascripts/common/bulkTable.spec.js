@@ -26,16 +26,10 @@ describe('Bulk Table module', () => {
     input: 'text'
   }];
 
-  // ID FIXTURES (to avoid "magic ids")
-
-  // const ids = {
-  //   uploadButton:  "upload-button",
-  //   notifications: "notifications"
-  // };
-
   // ENTITY FIXTURES
 
   const newEntities = fxt.newEntities;
+  const mixedEntities = fxt.newAndExistingEntities;
 
   // CSV FIXTURES
 
@@ -159,13 +153,16 @@ describe('Bulk Table module', () => {
     });
 
     it('initializes empty matches repository', () => {
-      expect(bulkTable.get('matchesByEntityId')).toEqual({});
+      expect(bulkTable.get('matches')).toEqual({
+        byEntityId: {},
+        chosen:     {}
+      });
     });
 
     it('initializes empty errors repository', () => {
       expect(bulkTable.get('errors')).toEqual({
         byEntityId: {},
-        reference: {}
+        reference:  {}
       });
     });
 
@@ -385,7 +382,7 @@ describe('Bulk Table module', () => {
       });
 
       it('stores list of search matches in memory', () => {
-        expect(bulkTable.get('matchesByEntityId')).toEqual({
+        expect(bulkTable.getIn(['matches', 'byEntityId'])).toEqual({
           newEntity0: {
             byId:     utility.normalize(searchResultsFor(newEntities.newEntity0)),
             order:    ["00", '10', '20'],
@@ -450,7 +447,7 @@ describe('Bulk Table module', () => {
         beforeEach(() => popover.find('select').val(matches[0].id).trigger('change'));
 
         it('records the selection in memory', () => {
-          expect(bulkTable.getIn(['matchesByEntityId', 'newEntity0', 'selected']))
+          expect(bulkTable.getIn(['matches', 'byEntityId', 'newEntity0', 'selected']))
             .toEqual(matches[0].id);
         });
 
@@ -490,12 +487,22 @@ describe('Bulk Table module', () => {
           expect(bulkTable.getIn(['entities', 'matches', matches[0].id])).not.toExist();
         });
 
+        it('stores the id of the chosen match', () => {
+          expect(bulkTable.getIn(['matches', 'chosen', matches[0].id])).toBeTrue();
+        });
+
         it('closes the popover', () => {
           expect(findFirstRow().find(".resolver-popover")).not.toExist();
         });
 
         it('removes the alert icon next to the row', () => {
           expect(findFirstRow().find(".resolver-anchor")).not.toExist();
+        });
+
+        it('disables every input but the name input in the matched row', () => {
+          expect(findFirstRow().find('.name input')).not.toBeDisabled();
+          expect(findFirstRow().find('.primary_ext input')).toBeDisabled();
+          expect(findFirstRow().find('.blurb input')).toBeDisabled();
         });
       });
 
@@ -562,7 +569,7 @@ describe('Bulk Table module', () => {
 
         it('searches for entities matching new name', () => {
           expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity0.name);
-          expect(bulkTable.getIn(['matchesByEntityId', 'newEntity1'])).toExist();
+          expect(bulkTable.getIn(['matches', 'byEntityId', 'newEntity1'])).toExist();
           expect(findSecondRow().find(".resolver-anchor")).toExist();
         });
       });
@@ -583,7 +590,6 @@ describe('Bulk Table module', () => {
       });
     });
   });
-  
 
   describe('validation', () => {
 
@@ -811,11 +817,16 @@ describe('Bulk Table module', () => {
         defaultState,
         {
           entities: {
-            byId: newEntities,
-            order: Object.keys(newEntities)
+            byId: mixedEntities,
+            order: ['newEntity0', '101']
           },
-          matchesByEntityId: {
-            newEntity0: searchResultsFor(newEntities.newEntity0)
+          matches: {
+            byEntityId: {
+              newEntity0: searchResultsFor(newEntities.newEntity0)
+            },
+            chosen: {
+              101: true
+            }
           }
         },
       ));
@@ -830,10 +841,18 @@ describe('Bulk Table module', () => {
     });
 
     it('removes an entity from the matches repository', () => {
-      const count = () => Object.keys(bulkTable.get('matchesByEntityId')).length;
+      const count = () => Object.keys(bulkTable.getIn(['matches', 'byEntityId'])).length;
 
       expect(count()).toEqual(1);
       $('.delete-icon')[0].click();
+      expect(count()).toEqual(0);
+    });
+
+    it('removes an entity from the chosen matches repository', () => {
+      const count = () => Object.keys(bulkTable.getIn(['matches', 'chosen'])).length;
+
+      expect(count()).toEqual(1);
+      $('.delete-icon')[1].click();
       expect(count()).toEqual(0);
     });
 

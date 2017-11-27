@@ -46,11 +46,13 @@
         byId:    {},  // { [String]: Entity }
         order:   []  // [String] (order corresponds to row order of entities stored in `.byId`)
       },
-      matchesByEntityId: args.matchesByEntityId ||
-        {}, // { [String]: { byId: { [id: String]: EntityMatch }, order: [String] }]
+      matches: args.matches || {
+        byEntityId: {}, // {[String]: {byId: {[String]: Entity}, order: [String], selected: String}]
+        chosen:     {} // { [id: String]: true } (set)
+      },
       reference: args.reference || {
-        name: '',
-        url: ''
+        name: '', // String
+        url:  ''  // String
       },
       errors: {
         byEntityId: {}, // { [id: String]: { [EntityAttr]: [String] } }
@@ -129,16 +131,16 @@
   };
 
   state.getSelectedMatch = function(entity){
-    var matchId = state.getIn(['matchesByEntityId', entity.id, 'selected']);
+    var matchId = state.getIn(['matches', 'byEntityId', entity.id, 'selected']);
     return state.getMatch(entity, matchId);
   };
 
   state.getMatches = function(entity){
-    return state.getIn(['matchesByEntityId', entity.id, 'byId']) || {};
+    return state.getIn(['matches', 'byEntityId', entity.id, 'byId']) || {};
   };
 
   state.getOrderedMatches = function(entity){
-    return state.getIn(['matchesByEntityId', entity.id, 'order'])
+    return state.getIn(['matches', 'byEntityId', entity.id, 'order'])
       .map(function(matchId){ return state.getMatch(entity, matchId); });
   };
 
@@ -183,6 +185,11 @@
   // Entity -> Boolean
   state.hasMatches = function(entity){
     return !util.isEmpty(state.getMatches(entity));
+  };
+
+  // Entity -> Boolean
+  state.isChosenMatch = function(entity){
+    return state.getIn(['matches', 'chosen', entity.id]) || false;
   };
 
   // () -> Boolean
@@ -256,7 +263,7 @@
   // Entity -> State
   state.addMatches = function(entity, matches){
     return state.setIn(
-      ['matchesByEntityId', entity.id],
+      ['matches', 'byEntityId', entity.id],
       {
         byId:     util.normalize(matches),
         order:    matches.map(function(match){ return match.id; }),
@@ -269,24 +276,27 @@
   state.deleteEntity = function(entity){
     return state
       .deleteIn(['entities', 'byId', entity.id])
-      .deleteIn(['matchesByEntityId', entity.id])
+      .deleteIn(['matches', 'byEntityId', entity.id])
+      .deleteIn(['matches', 'chosen', entity.id])
       .setIn(['entities', 'order'], deleteFromOrdering(entity));
   };
 
   // Entity -> State
   state.removeMatches = function(entity){
-    return state.deleteIn(['matchesByEntityId', entity.id]);
+    return state.deleteIn(['matches', 'byEntityId', entity.id]);
   };
 
   // Entity, String -> State
   state.setMatchSelection = function(entity, matchId){
-    return state.setIn(['matchesByEntityId', entity.id, 'selected'], matchId);
+    return state.setIn(['matches', 'byEntityId', entity.id, 'selected'], matchId);
   };
 
   // Entity -> State
   state.replaceWithMatch = function(entity){
     var match = state.getSelectedMatch(entity);
-    return state.replaceEntity(entity, match);
+    return state
+      .replaceEntity(entity, match)
+      .setIn(['matches', 'chosen', match.id], true);
   };
 
   // [Entities] -> State
@@ -307,7 +317,7 @@
       .setIn(['entities', 'byId', newEntity.id], newEntity) // store newEntity as entity
       .setIn(['entities', 'order'], replaceInOrdering(oldEntity, newEntity)) // order newEntity as oldEntity was ordered
       .deleteIn(['entities', 'byId', oldEntity.id]) // remove oldEntity from store
-      .deleteIn(['matchesByEntityId', oldEntity.id]); // remove oldEntity matches
+      .deleteIn(['matches', 'byEntityId', oldEntity.id]); // remove oldEntity matches
   };
 
   // Entity, Entity -> [String]
@@ -735,6 +745,7 @@
         errors,
         handleCellEditOf(entity, col.attr)
       )
+        .attr('disabled', idx > 0 && state.isChosenMatch(entity))
     )
       .append(maybeMatchResolver(entity, col, idx))
       .append(maybeDeleteButton(entity, idx));
