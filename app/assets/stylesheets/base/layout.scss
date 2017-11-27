@@ -39,10 +39,27 @@ body {
 }
 
 #top {
-  nav.navbar { 
+  .navbar, nav.navbar {
     margin-bottom: 0;
     border-radius: 0;
     height: $navbar_height;
+
+    #top_donate_link {
+	height: 50px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	span {
+	    a {
+		text-decoration: none;
+		color: black;
+		&:hover {
+		    text-decoration: underline;
+		    color: $link_blue_hover;
+		}
+	    }
+	    
+	}
+    }
     
     li a { 
       cursor: pointer;
