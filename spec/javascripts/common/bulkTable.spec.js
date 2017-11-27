@@ -1,60 +1,22 @@
 describe('Bulk Table module', () => {
 
-  // TODO: USE THIS IN EVERY ASYNC TEST!!!!
-  const wait = (millis) => new Promise((rslv,rjct) => setTimeout(rslv, millis));
   // mutable variables used as hooks in setup steps
   let searchEntityStub, redirectSpy, hasFileSpy, getFileSpy, file;
 
   // millis to wait for search, csv upload, etc...
-  // tune this if you are getting non-deterministic failures due to async issues
-  const asyncDelay = 10;
+  const asyncDelay = 10; // increase this in case of non-deterministic failures due to async issues
 
-  // CELL FIXTURES
-  // (would be better to import constant from `bulkTable.js`, but we don't have modules)
-
-  const columns = [{
-    label: 'Name',
-    attr:  'name',
-    input: 'text'
-  },{
-    label: 'Entity Type',
-    attr:  'primary_ext',
-    input: 'select'
-  },{
-    label: 'Description',
-    attr:  'blurb',
-    input: 'text'
-  }];
-
-  // ENTITY FIXTURES
-
+  // FIXTURES
+  const columns = fxt.entityColumns;
   const newEntities = fxt.newEntities;
   const mixedEntities = fxt.newAndExistingEntities;
-
-  // CSV FIXTURES
-
-  const csvValid =
-    "name,primary_ext,blurb\n" +
-    `${newEntities.newEntity0.name},${newEntities.newEntity0.primary_ext},${newEntities.newEntity0.blurb}\n` +
-    `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
-
-  const csvValidOnlyMatches =
-        "name,primary_ext,blurb\n" +
-        `${newEntities.newEntity0.name},${newEntities.newEntity0.primary_ext},${newEntities.newEntity0.blurb}\n`;
-
-  const csvValidNoMatches =
-    "name,primary_ext,blurb\n" +
-        `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
-
-  const csvSample =
-      'name,primary_ext,blurb\n'+
-      'SampleOrg,Org,Description of SampleOrg\n' +
-      'Sample Person,Person,Description of Sample Person';
-
-  // DOM/STATE FIXTURES
-
+  const csvValid = fxt.entityCsvValid;
+  const csvValidOnlyMatches = fxt.entityCsvValidOnlyMatches;
+  const csvValidNoMatches = fxt.entityCsvValidNoMatches;
+  const csvSample = fxt.entityCsvSample;
+  const searchEntityFake = fxt.entitySearchFake;
+  const searchResultsFor = fxt.entitySearchResultsFor;
   const testDom ='<div id="test-dom"></div>';
-
   const defaultState = {
     domId:        "test-dom",
     resourceType: "lists",
@@ -63,6 +25,8 @@ describe('Bulk Table module', () => {
 
   // HELPERS
 
+  const wait = (millis) => new Promise((rslv,rjct) => setTimeout(rslv, millis));
+  
   const setupWithCsv = (csv, done) => {
     file = new File([csv], "test.csv", {type: "text/csv"});
     hasFileSpy.and.returnValue(true);
@@ -90,32 +54,11 @@ describe('Bulk Table module', () => {
       .trigger($.Event('keyup', { keyCode: 13 })); // hit enter
   };
 
-  const searchEntityFake = query => {
-    // default implementation of search stub
-    // returns match for first new entity, none for second new entity
-    switch(query){
-    case newEntities.newEntity0.name:
-      return Promise.resolve(searchResultsFor(newEntities.newEntity0));
-    default:
-      return Promise.resolve([]);
-    }
-  };
-
-  const searchResultsFor = entity => [0,1,2].map(n => {
-    const ext = ["Org", "Person"][n % 2];
-    return {
-      id:          `${n}${entity.id.slice(-1)}`,
-      name:        `${entity.name} dupe name ${n}`,
-      blurb:       `dupe description ${n}`,
-      primary_ext:  ext,
-      url:         `/${ext.toLowerCase()}/${n}/${entity.name.replace(" ", "")}`
-    };
-  });
 
   const findFirstRow = () => $("#bulk-add-table tbody tr:nth-child(1)");
   const findSecondRow = () => $("#bulk-add-table tbody tr:nth-child(2)");
 
-  // SETUP
+  // SUITE SETUP & TEARDOWN
   
   beforeEach(() => {
     hasFileSpy = spyOn(bulkTable, 'hasFile');
@@ -126,6 +69,8 @@ describe('Bulk Table module', () => {
 
   afterEach(() => { $('#test-dom').remove(); });
 
+  // SPECS (finally!)
+  
   describe('initialization', () => {
 
     beforeAll(() => bulkTable.init(defaultState));

@@ -45,6 +45,61 @@ fxt.newAndExistingEntities = {
   }
 };
 
+fxt.entityColumns = [{
+  label: 'Name',
+  attr:  'name',
+  input: 'text'
+},{
+  label: 'Entity Type',
+  attr:  'primary_ext',
+  input: 'select'
+},{
+  label: 'Description',
+  attr:  'blurb',
+  input: 'text'
+}];
+
+fxt.entityCsvValid =
+  "name,primary_ext,blurb\n" +
+  `${fxt.newEntities.newEntity0.name},${fxt.newEntities.newEntity0.primary_ext},${fxt.newEntities.newEntity0.blurb}\n` +
+  `${fxt.newEntities.newEntity1.name},${fxt.newEntities.newEntity1.primary_ext},${fxt.newEntities.newEntity1.blurb}\n`;
+
+fxt.entityCsvValidOnlyMatches =
+  "name,primary_ext,blurb\n" +
+  `${fxt.newEntities.newEntity0.name},${fxt.newEntities.newEntity0.primary_ext},${fxt.newEntities.newEntity0.blurb}\n`;
+
+fxt.entityCsvValidNoMatches =
+  "name,primary_ext,blurb\n" +
+  `${fxt.newEntities.newEntity1.name},${fxt.newEntities.newEntity1.primary_ext},${fxt.newEntities.newEntity1.blurb}\n`;
+
+fxt.entityCsvSample =
+  'name,primary_ext,blurb\n'+
+  'SampleOrg,Org,Description of SampleOrg\n' +
+  'Sample Person,Person,Description of Sample Person';
+
+fxt.entitySearchResultsFor = entity => [0,1,2].map(n => {
+  const ext = ["Org", "Person"][n % 2];
+  return {
+    id:          `${n}${entity.id.slice(-1)}`,
+    name:        `${entity.name} dupe name ${n}`,
+    blurb:       `dupe description ${n}`,
+    primary_ext:  ext,
+    url:         `/${ext.toLowerCase()}/${n}/${entity.name.replace(" ", "")}`
+  };
+});
+
+fxt.entitySearchFake = query => {
+  // default implementation of search stub
+  // returns match for first new entity, none for second new entity
+  switch(query){
+  case fxt.newEntities.newEntity0.name:
+    return Promise.resolve(fxt.entitySearchResultsFor(fxt.newEntities.newEntity0));
+  default:
+    return Promise.resolve([]);
+  }
+};
+  
+
 
 fxt.createdEntitiesApiJson = {
   "meta": {
