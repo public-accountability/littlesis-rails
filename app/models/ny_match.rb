@@ -53,7 +53,7 @@ class NyMatch < ActiveRecord::Base
   def unmatch!
     destroy!
     if relationship.present?
-      relationship.update_ny_donation_info.save
+      relationship.update_ny_donation_info.save!
       relationship.soft_delete unless relationship.ny_matches.exists?
     end
   end
