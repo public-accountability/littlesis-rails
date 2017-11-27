@@ -804,6 +804,7 @@
   function deleteButton(entity){
     return $('<div>', {
       class: 'delete-icon',
+      title: 'delete row',
       click: function(){ handleDelete(entity); }
     });
   };
@@ -814,14 +815,14 @@
 
   function matchResolver(entity) {
     return $('<div>', {
-      class:         'resolver-anchor',
-      'data-toggle': 'popover',
-      click:         activatePicker
+      class:          'resolver-anchor',
+      'data-toggle':  'popover',
+      click:          activatePicker
     })
-      .append($('<div>', { class: 'alert-icon' }))
+      .append($('<div>', { class: 'alert-icon', title: 'resolve duplicates' }))
       .popover({
         html:     true,
-        title:    'Similar entities already exist!',
+        title:    'Similar entities already exist',
         content:  matchResolverPopup(entity)
       });
   }
@@ -859,10 +860,10 @@
 
   function picker(entity){
     return $('<select>', {
-      class:              'selectpicker resolver-selectpicker',
-      title:              'Pick an existing entity...',
+      class: 'selectpicker resolver-selectpicker',
+      title: 'Pick an existing entity...',
       'data-live-search': true,
-      on:                 {
+      on: {
         'changed.bs.select': function(){
           handlePickerSelection(entity, $(this).val());
         }

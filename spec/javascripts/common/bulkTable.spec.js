@@ -425,7 +425,7 @@ describe('Bulk Table module', () => {
       });
 
       it('has a title', () => {
-        expect(findFirstRow().find(".popover-title")).toHaveText("Similar entities already exist!");
+        expect(findFirstRow().find(".popover-title")).toHaveText("Similar entities already exist");
       });
 
       it('has a selectpicker with all matched entities', () => {
