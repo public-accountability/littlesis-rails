@@ -7,7 +7,7 @@ describe('Bulk Table module', () => {
 
   // millis to wait for search, csv upload, etc...
   // tune this if you are getting non-deterministic failures due to async issues
-  const asyncDelay = 8;
+  const asyncDelay = 10;
 
   // CELL FIXTURES
   // (would be better to import constant from `bulkTable.js`, but we don't have modules)
@@ -28,10 +28,10 @@ describe('Bulk Table module', () => {
 
   // ID FIXTURES (to avoid "magic ids")
 
-  const ids = {
-    uploadButton:  "bulk-add-upload-button",
-    notifications: "bulk-add-notifications"
-  };
+  // const ids = {
+  //   uploadButton:  "upload-button",
+  //   notifications: "notifications"
+  // };
 
   // ENTITY FIXTURES
 
@@ -50,7 +50,12 @@ describe('Bulk Table module', () => {
 
   const csvValidNoMatches =
     "name,primary_ext,blurb\n" +
-    `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
+        `${newEntities.newEntity1.name},${newEntities.newEntity1.primary_ext},${newEntities.newEntity1.blurb}\n`;
+
+  const csvSample =
+      'name,primary_ext,blurb\n'+
+      'SampleOrg,Org,Description of SampleOrg\n' +
+      'Sample Person,Person,Description of Sample Person';
 
   // DOM/STATE FIXTURES
 
@@ -69,7 +74,7 @@ describe('Bulk Table module', () => {
     hasFileSpy.and.returnValue(true);
     getFileSpy.and.returnValue(file);
     bulkTable.init(defaultState);
-    $(`#${ids.uploadButton}`).change();
+    $('#upload-button').change();
     setTimeout(done, 2 * asyncDelay); // wait for file to upload, etc.
   };
 
@@ -172,7 +177,7 @@ describe('Bulk Table module', () => {
       expect(bulkTable.get('notification')).toEqual('');
     });
 
-    describe('detecting upload support', () => {
+    describe('detecting upload/download support', () => {
 
       let browserCanOpenFilesSpy;
 
@@ -183,8 +188,12 @@ describe('Bulk Table module', () => {
           bulkTable.init(defaultState);
         });
 
-        it('shows an upload button', () => {
-          expect($(`#${ids.uploadButton}`)).toExist();
+        it('shostack@http://localhost:8888/__jasmine__/jasmine.js:2155:17ws an upload button', () => {
+          expect($('#upload-button')).toExist();
+        });
+
+        it('shows a download button', () => {
+          expect($('#download-button')).toExist();
         });
       });
 
@@ -196,11 +205,15 @@ describe('Bulk Table module', () => {
         });
 
         it('hides the upload button', () => {
-          expect($(`#${ids.uploadButton}`)).not.toExist();
+          expect($('#upload-button')).not.toExist();
+        });
+
+        it('hides the download button', () => {
+          expect($('#download-button')).not.toExist();
         });
 
         it('displays an error message', () => {
-          expect($(`#${ids.notifications}`).html()).toMatch('Your browser');
+          expect($('#notifications').html()).toMatch('Your browser');
         });
       });
     });
@@ -224,7 +237,7 @@ describe('Bulk Table module', () => {
       });
 
       it('hides upload button', () => {
-        expect($(`#${ids.uploadButton}`)).not.toExist();
+        expect($('#upload-button')).not.toExist();
       });
     });
 
@@ -238,11 +251,11 @@ describe('Bulk Table module', () => {
       });
 
       it('displays an error message', () => {
-        expect($("#bulk-add-notifications")).toContainText("Invalid headers");
+        expect($("#notifications")).toContainText("Invalid headers");
       });
 
       it('still shows upload button', () => {
-        expect($(`#${ids.uploadButton}`)).toExist();
+        expect($('#upload-button')).toExist();
       });
     });
 
@@ -256,12 +269,12 @@ describe('Bulk Table module', () => {
       });
 
       it('displays an error message', () => {
-        var notification = $("#bulk-add-notifications").text();
-        expect($("#bulk-add-notifications")).toContainText("CSV format error");
+        var notification = $("#notifications").text();
+        expect($("#notifications")).toContainText("CSV format error");
       });
 
       it('still shows upload button', () => {
-        expect($(`#${ids.uploadButton}`)).toExist();
+        expect($('#upload-button')).toExist();
       });
     });
 
@@ -270,17 +283,34 @@ describe('Bulk Table module', () => {
       beforeEach(done => {
         setupWithCsv("foobar", () => null);
         getFileSpy.and.returnValue(new File([csvValid], "_.csv", { type: "text/csv"} ));
-        $(`#${ids.uploadButton}`).change();
+        $('#upload-button').change();
         setTimeout(done, asyncDelay);
       });
 
       it('clears the error message', () => {
-        expect($("bulk-add-notifications")).not.toExist();
+        expect($("notifications")).not.toExist();
       });
 
       it('hides the upload button', () => {
-        expect($(`#${ids.uploadButton}`)).not.toExist();
+        expect($('#upload-button')).not.toExist();
       });
+    });
+  });
+
+  describe('downloading', () => {
+
+    let saveAsSpy;
+
+    beforeEach(() =>  {
+      saveAsSpy = spyOn(window, 'saveAs');
+      bulkTable.init(defaultState);
+    });
+
+    it('saves a sample csv to the user\'s file system', () => {
+      $('#download-button').click();
+      expect(saveAsSpy).toHaveBeenCalledWith(
+        new File([csvSample], 'sample.csv', { type: 'text/csv; charset=utf-8' })
+      );
     });
   });
 
@@ -937,7 +967,7 @@ describe('Bulk Table module', () => {
           });
 
           it('displays error message in notifications bar', () => {
-            expect($("#bulk-add-notifications")).toHaveText(errorMsg);
+            expect($("#notifications")).toHaveText(errorMsg);
           });
 
           it('marks entities that could not be created with alert icon');
@@ -980,7 +1010,7 @@ describe('Bulk Table module', () => {
           });
 
           it('displays error message in notifications bar', () => {
-            expect($("#bulk-add-notifications")).toHaveText(errorMsg);
+            expect($("#notifications")).toHaveText(errorMsg);
           });
 
           it('does not redirect', () => {

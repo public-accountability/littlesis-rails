@@ -37,12 +37,21 @@ h1#bulk-add-header {
 }
 
 #bulk-add-container {
-    #bulk-add-notifications {
+    #notifications {
         font-style: italic;
         color: gray;
         margin-bottom: 1em;
         span {
             margin-left: 1em;
+        }
+    }
+    #upload-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        .btn {
+            display: flex;
+            margin: 0 .5em 0 .5em; // TRBL
         }
     }
     table {

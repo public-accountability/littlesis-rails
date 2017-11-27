@@ -26,10 +26,10 @@
     input: 'text'
   }];
 
-  var ids = {
-    uploadButton:  "bulk-add-upload-button",
-    notifications: "bulk-add-notifications"
-  };
+  var sampleCsv =
+      'name,primary_ext,blurb\n'+
+      'SampleOrg,Org,Description of SampleOrg\n' +
+      'Sample Person,Person,Description of Sample Person';
 
   self.init = function(args){
     state = Object.assign(state, {
@@ -650,28 +650,38 @@
 
   function notificationBar(){
     return state.hasNotification() &&
-      $('<div>', { id: ids.notifications })
+      $('<div>', { id: 'notifications' })
         .append($('<div>', { class: 'alert-icon' }))
         .append($('<span>', { text: state.notification }));
   };
 
   function uploadContainer(){
-    return $('<div>', {id: 'bulk-add-upload-container'})
-      .append(uploadButton());
+    return $('<div>', {id: 'upload-container'})
+      .append(uploadButton())
+      .append(downloadButton());
   }
 
   function uploadButton(){
     return $('<label>', {
-      class: 'btn btn-primary btn-file',
+      class: 'btn btn-primary btn-file btn-upload',
       text:  'Upload CSV'
     }).append(
       $('<input>', {
-        id:    ids.uploadButton,
+        id:    "upload-button",
         type:  "file",
         style: "display:none",
         change: function() { handleUploadThen(ingestEntities, this); }
       })
     );
+  }
+
+  function downloadButton(){
+    return $('<button>', {
+      id:    'download-button',
+      class: 'btn btn-primary',
+      text:  'Download Sample CSV',
+      click: handleDownload
+    });
   }
 
   function tableForm(){
@@ -915,6 +925,13 @@
   }
 
   // EVENT HANDLERS
+
+  // () -> Void
+  function handleDownload(){
+    saveAs(
+      new File([sampleCsv], 'sample.csv', { type: 'text/csv; charset=utf-8' })
+    );
+  };
 
   // Entity -> Void
   function handleCreateChoice(entity){
