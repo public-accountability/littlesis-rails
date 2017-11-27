@@ -111,6 +111,7 @@ describe Api, :pagination_helper do
             'type' => 'extension-records',
             'id' => entity.extension_records.first.id,
             'attributes' => {
+              "id" => entity.extension_records.first.id,
               "definition_id"=>2,
               "display_name"=>"Organization",
               "name"=>"Org"
@@ -120,6 +121,7 @@ describe Api, :pagination_helper do
             'type' => 'extension-records',
             'id' => entity.extension_records.second.id,
             'attributes' => {
+              'id' => entity.extension_records.second.id,
               "definition_id" => 11,
               "display_name" => "Political Fundraising Committee",
               "name"=>"PoliticalFundraising"
