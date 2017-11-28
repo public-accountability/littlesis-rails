@@ -46,15 +46,15 @@ body {
 
     #top_donate_link {
 	height: 50px;
-	padding-top: 15px;
-	padding-bottom: 15px;
+	margin-top: 6px;
 	span {
 	    a {
 		text-decoration: none;
-		color: black;
+		color: white;
 		&:hover {
-		    text-decoration: underline;
-		    color: $link_blue_hover;
+		    background-color: $red_light;
+		    color: black;
+		    box-shadow: -3px 3px 3px #737373;
 		}
 	    }
 	    
