@@ -9,12 +9,15 @@
   // API
   var self = {};
 
+  // Object -> Promise[[Entity]]
   self.searchEntity = function(query){
     return get('/search/entity', { num: 10, no_summary: true, q: query })
       .then(format)
       .catch(handleError);
 
+    // [Entity] -> [Entity]
     function format(results){
+      // stringify id & rename keys (`primary_type` -> `primary_ext`; `description` -> `name`)
       return results.reduce(function(acc, result) {
         var _result = Object.assign({}, result, {
           primary_ext: result.primary_ext || result.primary_type,
@@ -27,6 +30,7 @@
       },[]);
     }
 
+    // Error -> []
     function handleError(err){
       console.error('API request error: ', err);
       return [];
@@ -38,6 +42,7 @@
     return post('/entities/bulk', formatReq(entities))
       .then(formatResp);
 
+    // [Entity] -> [Entity]
     function formatReq(entities){
       return {
         data: entities.map(function(entity){
@@ -49,7 +54,9 @@
       };
     };
 
+    // [Entity] -> [Entity]
     function formatResp(resp){
+      // copy, but stringify id
       return resp.data.map(function(datum){
         return Object.assign(
           datum.attributes,

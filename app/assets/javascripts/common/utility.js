@@ -180,11 +180,14 @@ utility.capitalize = function(str){
 
 // OBJECT UTILITIES
 
+// Object -> Any
 utility.get = function(obj, key) {
   var entry = utility.isObject(obj) && Object.getOwnPropertyDescriptor(obj, key);
   return entry && entry.value;
 };
 
+
+// Object, [String] -> Any
 utility.getIn = function(obj, keys){
   return keys.reduce(
     function(acc, key){ return utility.get(acc, key); },
@@ -192,6 +195,7 @@ utility.getIn = function(obj, keys){
   );
 };
 
+// Object, String, Any -> Object
 utility.set = function(obj, key, value){
   var _obj = Object.assign({}, obj);
   return Object.defineProperty(_obj, key, {
@@ -202,6 +206,7 @@ utility.set = function(obj, key, value){
   });
 };
 
+// Object, [String], Any -> Object
 utility.setIn = function(obj, keys, value){
   if (keys.length === 0) {
     return value;
@@ -218,6 +223,7 @@ utility.setIn = function(obj, keys, value){
   }
 };
 
+// Object, String -> Object
 utility.delete = function(obj, keyToDelete){
   return Object.keys(obj).reduce(
     function(acc, key){
@@ -229,6 +235,7 @@ utility.delete = function(obj, keyToDelete){
   );
 };
 
+// Object, [String] -> Object
 utility.deleteIn = function(obj, keys){
   var leafPath = keys.slice(0, -1);
   var leafNode = utility.getIn(obj, leafPath);
@@ -241,16 +248,20 @@ utility.deleteIn = function(obj, keys){
     );
 };
 
-// see https://github.com/paularmstrong/normalizr
+// [Record] -> { [String]: Record}
 utility.normalize = function(arr){
+  // turn an array of records into a lookup table of records by id
+  // see https://github.com/paularmstrong/normalizr
   return arr.reduce(
     function(acc, item){ return utility.set(acc, item.id, item); },
     {}
   );
 };
 
-// mostly for use in deserializing JSON
+// Object -> Object
 utility.stringifyValues = function(obj){
+  // stringify all values except booleans
+  // mostly for use in deserializing JSON
   return Object.keys(obj).reduce(
     function(acc, k){
       var val = utility.get(obj, k);
@@ -265,14 +276,17 @@ utility.stringifyValues = function(obj){
   );
 };
 
+// Object -> Boolean
 utility.exists = function(obj){
   return obj !== undefined && obj !== null;
 };
 
+// ?Object -> Boolean
 utility.isObject = function(maybeObj){
   return maybeObj && maybeObj instanceof Object;
 };
 
+// Object -> Boolean
 utility.isEmpty = function (obj){
   return !Boolean(obj) || !Object.keys(obj).length;
 };
@@ -280,6 +294,7 @@ utility.isEmpty = function (obj){
 
 // Browser/DOM Utilities
 
+// String -> Void
 utility.redirectTo = function(path){
   document.location.replace(path);
 };

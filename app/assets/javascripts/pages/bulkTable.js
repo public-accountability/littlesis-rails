@@ -1,3 +1,20 @@
+/**
+ * TYPES
+ * (in Flow notation: https://flow.org/en/docs/types/objects))
+ *
+ * type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
+ * type Entity = { [EntityAttr]: String }
+ *
+ * type MaybeEntities = { result: PapaObject | [Entity], error: ?String }
+ * type EntityErrors = { [attr: EntityAtrr]: [String] }
+ * type EntitiesErrors = { [id: String]: EntityError }
+ *
+ * type Resource = Entity | Reference
+ * type ResourceError = EntityErrors | ReferenceErrors
+ *
+ * type ReferenceErrors = { ['name'|'url']: [String] }
+*/
+
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
     module.exports = factory(require('jQuery'), require('../common/utility'));
@@ -38,14 +55,7 @@
       // id of base resource with which we wish to associate many entities:
       resourceId: args.resourceId, // String
       resourceType: args.resourceType, // String (must be plural to match rails path conventions)
-      api: args.api, // { [String]: (*String) -> Promise[JSON] }
-      /**
-       * store entities, errors, and matches in hash map repositories
-       * (types given in Flow notation: https://flow.org/en/docs/types/objects)
-       *
-       * type Entity = { [EntityAttr]: String }
-       * type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
-       */
+      api: args.api, // { [String]: (*String) -> Promise[ApiJson] }
       entities: args.entities || { // expose to `#init` for unit testing seam
         byId:    {},  // { [String]: Entity }
         order:   []  // [String] (order corresponds to row order of entities stored in `.byId`)
@@ -67,12 +77,6 @@
     });
     state.render().setUploadSupport();
 
-    // TODO: (ag|14-Nov-2017)
-    // if we want to instantiate tables, we could:
-    // * wrap all references to `state`  (including method defintions) inside the call to `#init`
-    // * return `state`` here, but return `self` (or some differently named wrapper obj) from module
-    // * we could then eliminate call to `Object.assign` on line 35 
-    //   (which is only needed to share binding with `state` methods below)
     return self;
   };
 
@@ -387,6 +391,9 @@
 
   // [Entity] -> Promise[Void]
   state.matchEntities = function(entities){
+    // TODO: (@aguestuser|28-Nov-2017)
+    // * with large number of entities, this call will tax the server and browser
+    // * consider pulling in a promise library like bluebird to support concurrency limits
     return Promise.all(entities.map(state.matchEntity));
   };
 
@@ -716,8 +723,6 @@
 
   // VALIDATION
   
-  // type EntitiesErrors = { [id: String]: EntityError }
-  // type EntityErrors = { [attr: EntityAtrr]: [String] }
 
   // () -> State
   state.validate = function(){
@@ -748,7 +753,7 @@
     }, {});
   };
 
-  // type ReferenceErrors = { ['name'|'url']: [String] }
+
   // Reference -> ReferenceErrors
   function validateReference(reference){
     return validateResource(
@@ -758,8 +763,6 @@
     );
   };
 
-  // type Resource = Entity | Reference
-  // type ResourceError = EntityErrors | ReferenceErrors
   function validateResource(resource, attrs, validations){
     return attrs.reduce(function(resourceErrorsAcc, attr){
       var attrErrors = validateAttr(
@@ -892,7 +895,7 @@
     return store(validateHeaders(parse(csv)));
   }
 
-  // type MaybeEntities = { result: PapaObject | [Entity], error: ?String }
+
 
   // String -> MaybeEntities
   function parse(csv){
