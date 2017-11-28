@@ -559,8 +559,8 @@
       .attr('onblur', function(){ container.find('.tooltip').hide();})
       .tooltip({
         placement: 'bottom',
-        html: true, title:
-        errorList(errors, label)
+        html: true,
+        title: errorList(errors, label)
       });
   };
 
