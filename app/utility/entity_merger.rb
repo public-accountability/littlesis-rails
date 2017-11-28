@@ -65,6 +65,18 @@ class EntityMerger
     unless @potential_duplicate_relationships.length.zero?
       puts cp.red("NOTICE: ") + cp.cyan("found ") + cp.blue(@potential_duplicate_relationships.count.to_s) + cp.cyan(' potential duplicate relationships')
     end
+
+    unless @aliases.length.zero?
+      puts cp.cyan("adding ") + cp.red(@aliases.length.to_s) + cp.cyan(" aliases: ") + cp.blue(@aliases.map(&:name).join(', '))
+    end
+
+    unless @document_ids.length.zero?
+      puts cp.cyan("Transfering ") + cp.red(@document_ids.count.to_s) + cp.cyan(" documents")
+    end
+
+    unless @tag_ids.length.zero?
+      puts cp.cyan("Transfering ") + cp.red(@tag_ids.count.to_s) + cp.cyan(" tags: ") + cp.blue(@tag_ids.map { |t| Tag.find(t).name }.join(', '))
+    end
   end
 
   def merge
