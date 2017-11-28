@@ -18,7 +18,7 @@
       return results.reduce(function(acc, res) {
         var _res = Object.assign({}, res, {
           primary_ext: res.primary_ext || res.primary_type,
-          blurb:       res.blubr || res.description,
+          blurb:       res.blurb || res.description,
           id:          String(res.id)
         });
         delete _res.primary_type;
