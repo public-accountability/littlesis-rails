@@ -155,9 +155,11 @@ utility.validURL = function(str) {
 };
 
 
-utility.validFirstAndLastName = function(str){
-  // we allow suffixes like Jr. as well
-  return Boolean(str.match(/^[a-z,.'-]+\s[a-z,.'-]+(\s[a-z,.'-]+)?$/i));
+utility.validPersonName = function(str){
+  // see specs for documentation of this lovely little regex
+  //return Boolean(str.match(/^[a-z,.'-]+\s[a-z,.'-]+(\s[a-z,.'-]+)?$/i));
+  return Boolean(str.match(/^[^0-9\s]+\s[^0-9\s]+(\s[^0-9\s]+){0,3}$/i));
+
 };
 
 /**
@@ -183,7 +185,7 @@ utility.capitalize = function(str){
 // Object -> Any
 utility.get = function(obj, key) {
   var entry = utility.isObject(obj) && Object.getOwnPropertyDescriptor(obj, key);
-  return entry && entry.value;
+  return entry ? entry.value : undefined;
 };
 
 
@@ -282,8 +284,9 @@ utility.exists = function(obj){
 };
 
 // ?Object -> Boolean
-utility.isObject = function(maybeObj){
-  return maybeObj && maybeObj instanceof Object;
+utility.isObject = function(value){
+  var type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
 };
 
 // Object -> Boolean

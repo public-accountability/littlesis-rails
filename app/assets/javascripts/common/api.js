@@ -18,7 +18,7 @@
     // [Entity] -> [Entity]
     function format(results){
       // stringify id & rename keys (`primary_type` -> `primary_ext`; `description` -> `name`)
-      return results.reduce(function(acc, result) {
+      return results.map(function(result) {
         var _result = Object.assign({}, result, {
           primary_ext: result.primary_ext || result.primary_type,
           blurb:       result.blurb || result.description,
@@ -26,8 +26,8 @@
         });
         delete _result.primary_type;
         delete _result.description;
-        return acc.concat([_result]);
-      },[]);
+        return _result;
+      });
     }
 
     // Error -> []

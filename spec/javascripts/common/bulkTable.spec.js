@@ -653,7 +653,13 @@ describe('Bulk Table module', () => {
 
       it('requires a person to have a first and last name', () => {
         expect(errorsFor({ primary_ext: "Person", name:"duende" })).toEqual({
-          name: ['must have a first and last name']
+          name: ['must have a first and last name with no numbers']
+        });
+      });
+
+      it('requires a person to not have numerical characters', () => {
+        expect(errorsFor({ primary_ext: "Person", name:"f00 b4r" })).toEqual({
+          name: ['must have a first and last name with no numbers']
         });
       });
 

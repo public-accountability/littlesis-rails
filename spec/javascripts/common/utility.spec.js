@@ -30,24 +30,66 @@ describe('utility', function(){
     });
   });
 
-  describe('validDate', function() {
-    it('works with good dates', function() {
-      ['2016-01-01', '1992-12-03'].map(utility.validDate).forEach( d => expect(d).toBeTrue() );
+  describe('validation utilities', () => {
+
+    describe('#validDate', function() {
+
+      it('works with good dates', function() {
+        ['2016-01-01', '1992-12-03'].map(utility.validDate).forEach( d => expect(d).toBeTrue() );
+      });
+
+      it('works with bad dates', function() {
+        ['tuesday', '20000-01-01', '1888-01', '1999-13-02', '2000-01-50']
+	  .map(utility.validDate).forEach( d => expect(d).toBeFalse() );
+      });
     });
 
-    it('works with bad dates', function() {
-      ['tuesday', '20000-01-01', '1888-01', '1999-13-02', '2000-01-50']
-	.map(utility.validDate).forEach( d => expect(d).toBeFalse() );
-    });
-  });
+    describe('#validURL', function(){
 
-  describe('validURL', function(){
-    it('accepts simple urls', function(){
-      expect(utility.validURL('https://simple.url')).toBeTrue();
+      it('accepts simple urls', function(){
+        expect(utility.validURL('https://simple.url')).toBeTrue();
+      });
+
+      it('rejects bad urls', function(){
+        expect(utility.validURL('/not/a/url')).toBeFalse();
+      });
     });
 
-    it('rejects bad urls', function(){
-      expect(utility.validURL('/not/a/url')).toBeFalse();
+    describe('#validPersonName', () => {
+
+      it('requires a first and last name', () => {
+        expect(utility.validPersonName('Oedipa')).toBeFalse();
+        expect(utility.validPersonName('Oedipa Maas')).toBeTrue();
+      });
+
+      it('rejects numerical characters', () => {
+        expect(utility.validPersonName('03d1p4 M445')).toBeFalse();
+      });
+
+      it('allows lower case names', () => {
+        expect(utility.validPersonName('oedipa maas')).toBeTrue();
+      });
+
+      it('allows hyphenated names', () => {
+        expect(utility.validPersonName('Oedipa-Wendell Mucho-Maas')).toBeTrue();
+      });
+
+      it('allows prefixes and suffixes', () => {
+        expect(utility.validPersonName('Mrs. Oedipa Maas, Sr.')).toBeTrue();
+        expect(utility.validPersonName('Mr. Wendell Maas, III')).toBeTrue();
+      });
+
+      it('allows non-english unicode code points', () => {
+        expect(utility.validPersonName('OedìpⒶ Måăß 겫겫겫')).toBeTrue();
+      });
+
+      it('allows very short names', () => {
+        expect(utility.validPersonName('W. A. S. T. E.')).toBeTrue();
+      });
+
+      it('allows up to 5 names', () => {
+        expect(utility.validPersonName('trystero trystero trystero trystero trystero')).toBeTrue();
+      });
     });
   });
 
@@ -76,7 +118,7 @@ describe('utility', function(){
       });
 
       it('handles null objects', () => {
-        expect(utility.get(null, "foo")).toEqual(null);
+        expect(utility.get(null, "foo")).toEqual(undefined);
       });
 
       it('handles undefined objects', () => {
@@ -135,7 +177,7 @@ describe('utility', function(){
       });
 
       it('handles lookup sequences that are longer than depth of object tree', () => {
-        expect(utility.getIn(nestedObj, ["a", "b", "d"])).toEqual(false);
+        expect(utility.getIn(nestedObj, ["a", "b", "d"])).toEqual(undefined);
       });
     });
 
@@ -159,6 +201,35 @@ describe('utility', function(){
       it('handles wierd paths', () => {
         expect(utility.setIn(nestedObj, ['a', 'b', 'c'], 4))
           .toEqual({ a: { b: { c: 4}, c: 3 } } );
+      });
+    });
+
+    describe('#isObject', () => {
+
+      it('returns true for an object', () => {
+        expect(utility.isObject({})).toBeTrue();
+      });
+
+      it('returns true for a function', () => {
+        expect(utility.isObject(() => 'foo')).toBeTrue();
+      });
+
+      it('returns false for a string', () => {
+        expect(utility.isObject('foo')).toBeFalse();
+        expect(utility.isObject('')).toBeFalse();
+      });
+
+      it('returns false for a boolean', () => {
+        expect(utility.isObject(true)).toBeFalse();
+        expect(utility.isObject(false)).toBeFalse();
+      });
+
+      it('returns false for null', () => {
+        expect(utility.isObject(null)).toBeFalse();
+      });
+
+      it('returns false for undefined', () => {
+        expect(utility.isObject(undefined)).toBeFalse();
       });
     });
 

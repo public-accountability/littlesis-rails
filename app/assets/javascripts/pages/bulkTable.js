@@ -406,7 +406,7 @@
 
   // () -> Promise[State]
   state.createEntities = function(){
-    const newEntities = state.getNewEntities();
+    var newEntities = state.getNewEntities();
     return util.isEmpty(newEntities) ?
       Promise.resolve(state) :
       state.api
@@ -808,9 +808,9 @@
         return ['Person', 'Org'].some(function(validStr){ return attr === validStr; });
       }
     },
-    firstAndLast: {
-      message: 'must have a first and last name',
-      isValid: function(attr){ return util.validFirstAndLastName(attr); }
+    personName: {
+      message: 'must have a first and last name with no numbers',
+      isValid: function(attr){ return util.validPersonName(attr); }
     },
     validUrl: {
       message: 'must be a valid ip address',
@@ -847,7 +847,7 @@
   };
 
   var personValidations = {
-    name: [ validations.firstAndLast ],
+    name: [ validations.personName ],
     primary_ext: []
   };
 
@@ -877,7 +877,7 @@
 
   // String -> Promise[Void]
   function ingestEntities (csv){
-    const maybeEntities = parseEntities(csv);
+    var maybeEntities = parseEntities(csv);
     if (maybeEntities.error){
       state.setNotification(maybeEntities.error);
       return Promise.resolve(state.render());
