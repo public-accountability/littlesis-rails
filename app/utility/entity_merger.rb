@@ -42,8 +42,30 @@ class EntityMerger
 
   # trial run
   def report
+    merge
+    cp = ColorPrinter
+    puts "Merging #{cp.colorize(source.name, :red)} (#{cp.colorize(source.id, :bg_red) }) into #{cp.colorize(dest.name, :red)} (#{cp.colorize(dest.id, :bg_red)})"
+
+    unless @extensions.length.zero?
+      puts cp.cyan("Adding or updating ") + cp.red(@extensions.count.to_s) + cp.cyan(" extensions")
+    end
+
+    unless @contact_info.length.zero?
+      puts cp.cyan("Transferring ") + cp.red(@contact_info.count.to_s) + cp.cyan(" contact info models")
+    end
+
+    unless @lists.length.zero?
+      puts cp.cyan("Putting the merged entity on ") + cp.red(@lists.count.to_s) + cp.cyan(" new lists")
+    end
+
+    unless @relationships.length.zero?
+      puts cp.cyan("Transfering ") + cp.red(@relationships.count.to_s) + cp.cyan(" Relationships")
+    end
+
+    unless @potential_duplicate_relationships.length.zero?
+      puts cp.red("NOTICE: ") + cp.cyan("found ") + cp.blue(@potential_duplicate_relationships.count.to_s) + cp.cyan(' potential duplicate relationships')
+    end
   end
-  
 
   def merge
     merge_extensions
