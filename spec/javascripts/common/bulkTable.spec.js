@@ -38,9 +38,9 @@ describe('Bulk Table module', () => {
     resourceType: "lists",
     resourceId:   "1",
     api: {
-      searchEntity:      searchEntitySpy,
-      createEntities:    createEntitiesSpy,
-      addEntitiesToList: addEntitiesToListSpy
+      searchEntity:       searchEntitySpy,
+      createEntities:     createEntitiesSpy,
+      createAssociations: addEntitiesToListSpy
     }
   });
 
@@ -131,9 +131,9 @@ describe('Bulk Table module', () => {
 
     it('stores references to its api methods', () => {
       expect(bulkTable.get('api')).toEqual({
-        searchEntity:      searchEntitySpy,
-        createEntities:    createEntitiesSpy,
-        addEntitiesToList: addEntitiesToListSpy
+        searchEntity:       searchEntitySpy,
+        createEntities:     createEntitiesSpy,
+        createAssociations: addEntitiesToListSpy
       });
     });
 

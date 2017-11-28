@@ -410,7 +410,7 @@
   // () -> Promise[State]
   state.createAssociations = function(){
     return state.api
-      .addEntitiesToList(state.resourceId, state.getEntityIds(), state.reference)
+      .createAssociations(state.resourceId, state.getEntityIds(), state.reference)
       .then(function(){ return state; });
   };
 
