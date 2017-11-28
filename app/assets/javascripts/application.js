@@ -12,7 +12,6 @@
 //
 //= require ./polyfill.js
 //= require fetch
-//= require promise
 //= require jquery
 //= require bootstrap
 //= require jquery_ujs

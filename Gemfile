@@ -112,7 +112,3 @@ gem 'redcarpet', '>= 3.4.0'
 
 # google's recaptcha
 gem "recaptcha", require: "recaptcha/rails"
-
-# JS polyfills
-gem 'es6-promise-rails'
-gem 'fetch-rails'
