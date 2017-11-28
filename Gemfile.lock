@@ -509,8 +509,4 @@ DEPENDENCIES
   whenever (~> 0.9.7)
 
 BUNDLED WITH
-<<<<<<< variant A
    1.16.0
->>>>>>> variant B
-   1.16.0.pre.2
-======= end
