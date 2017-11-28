@@ -25,7 +25,6 @@ h1#bulk-add-header {
     @extend .glyphicon;
     @extend .glyphicon-alert;
     color: $maroon;
-    float: right;
 }
 
 .tooltip-inner {
@@ -107,6 +106,7 @@ h1#bulk-add-header {
                 .alert-icon {
                     @extend .alert-icon;
                     margin: 0 .5em .4em 0; // TRBL
+                    float: right;
                 }
                 .delete-icon {
                     @extend .glyphicon;
@@ -184,6 +184,7 @@ h1#bulk-add-header {
         .alert-icon{
             @extend .alert-icon;
             margin: .6em .8em 0 0; // TRBL
+            float: right;
         }
         .label {
             display: flex;
