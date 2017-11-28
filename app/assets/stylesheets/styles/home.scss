@@ -166,16 +166,13 @@ div#donate  {
 
 #donation-header {
 
-    p, h1 {
+    h1 {
 	display: inline-block;
     } 
 
-    p, img {
-	border-radius: 0.4em;
-    }
-
     p {
-	margin-top: 0.2em;
+	font-size: 1.1em;
+	line-height: 1.1;
     }
 
     #donation-header-text {
