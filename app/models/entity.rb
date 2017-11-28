@@ -5,7 +5,6 @@ class Entity < ActiveRecord::Base
   include Referenceable
   include Political
   include Api::Serializable
-  include SimilarEntities
   include EntityPaths
   include EntitySearch
   include Tagable
@@ -476,6 +475,14 @@ class Entity < ActiveRecord::Base
   # Output: Integer
   def self.entity_id_for(entity)
     entity.is_a?(Entity) ? entity.id : entity.to_i
+  end
+
+  # Input: <Entity> | String | Integer
+  # Output: Entity
+  def self.entity_for(entity_or_id)
+    return entity_or_id if entity_or_id.is_a? Entity
+    return Entity.find(entity_or_id.to_i) if entity_or_id.is_a?(String) || entity_or_id.is_a?(Integer)
+    raise ArgumentError, "Accepted types: Entity, Integer, or String"
   end
 
   def last_new_user
