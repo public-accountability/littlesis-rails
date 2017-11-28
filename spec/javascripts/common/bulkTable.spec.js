@@ -3,8 +3,9 @@ describe('Bulk Table module', () => {
   // mutable variables used as hooks in setup steps
   let searchEntityStub, redirectSpy, hasFileSpy, getFileSpy, file;
 
-  // millis to wait for search, csv upload, etc...
-  const asyncDelay = 10; // increase this in case of non-deterministic failures due to async issues
+  // increase these in case of wierd non-deterministic failures due to async issues
+  const asyncDelay = 15; // millis to wait for async ops like csv upload, api calls, etc..
+  const delayMultiplier = 1.2; // only use for uploading csv setup
 
   // FIXTURES
   const columns = fxt.entityColumns;
@@ -37,7 +38,7 @@ describe('Bulk Table module', () => {
 
     bulkTable.init(defaultState);
     $('#upload-button').change();
-    return wait(1.5 * asyncDelay);
+    return wait(delayMultiplier * asyncDelay); // multiply delay to accomodate multiple async ops
   };
 
   // (String, () -> JQueryNode, String) -> Promise[Void]
