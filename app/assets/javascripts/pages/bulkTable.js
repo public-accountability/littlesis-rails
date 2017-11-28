@@ -417,232 +417,6 @@
     };
   };
 
-  // VALIDATION SETTERS
-
-  // () -> State
-  state.validate = function(){
-    return state
-      .setIn(
-        ['errors', 'byEntityId'],
-        validateEntities(Object.values(state.entities.byId), {})
-      )
-      .setIn(
-        ['errors', 'reference'],
-        validateReference(state.reference, {})
-      );
-  };
-  self.validate = state.validate; // for testing
-
-  // type EntitiesErrors = { [id: String]: EntityError }
-  // type EntityErrors = { [attr: EntityAtrr]: [String] }
-
-  // [Entities] -> EntitiesErrors
-  function validateEntities(entities){
-    return entities.reduce(function(acc, entity){
-      return util.set(
-        acc,
-        entity.id,
-        validateResource(
-          entity,
-          columns.map(function(c){ return c.attr; }),
-          validationsFor(entity)
-        )
-      );
-    }, {});
-  };
-
-  // type ReferenceErrors = { ['name'|'url']: [String] }
-  // Reference -> ReferenceErrors
-  function validateReference(reference){
-    return validateResource(
-      reference,
-      Object.keys(reference),
-      referenceValidations
-    );
-  };
-
-  // type Resource = Entity | Reference
-  // type ResourceError = EntityErrors | ReferenceErrors
-  function validateResource(resource, attrs, validations){
-    return attrs.reduce(function(resourceErrorsAcc, attr){
-      var attrErrors = validateAttr(
-        resource,
-        attr,
-        validations,
-        util.get(resourceErrorsAcc, attr)
-      );
-      return util.isEmpty(attrErrors) ?
-        resourceErrorsAcc : // don't store an entry in errors accumulator for an empty errors array
-        util.set(resourceErrorsAcc, attr, attrErrors);
-    }, {});
-  };
-
-  // Entity, EntityAttr, EntityAttrErrors -> [String]
-  function validateAttr(resource, attr, validations, attrErrors){
-    return (util.get(validations, attr) || []).reduce(  
-      function(attrErrorsAcc, validation){
-        return validation.isValid(util.get(resource, attr)) ?
-          attrErrorsAcc :
-          attrErrorsAcc.concat(validation.message);
-      },
-      attrErrors || []
-    );
-  }
-
-  // VALIDATION RULES
-
-  var validations = {
-    required: {
-      message: 'is required',
-      isValid: function(attr){ return Boolean(attr); }
-    },
-    lengthN: function(n){
-      return {
-        message: 'must be at least ' + n + ' characters long',
-        isValid: function(attr){ return attr && attr.length >= n; }
-      };
-    },
-    personOrOrg: {
-      message: 'must be either "Person" or "Org"',
-      isValid: function(attr){
-        return ['Person', 'Org'].some(function(validStr){ return attr === validStr; });
-      }
-    },
-    firstAndLast: {
-      message: 'must have a first and last name',
-      isValid: function(attr){ return util.validFirstAndLastName(attr); }
-    },
-    validUrl: {
-      message: 'must be a valid ip address',
-      isValid: function(attr){ return util.validURL(attr); }
-    }
-  };
-
-  function validationsFor(entity){
-    return entity.primary_ext === "Person" ?
-      mergeValidations(entityValidations, personValidations) :
-      entityValidations;
-  };
-
-  var referenceValidations = {
-    name: [
-      validations.required,
-      validations.lengthN(3)
-    ],
-    url: [
-      validations.required,
-      validations.validUrl
-    ]
-  };
-
-  var entityValidations = {
-    name: [
-      validations.required,
-      validations.lengthN(2)
-    ],
-    primary_ext: [
-      validations.required,
-      validations.personOrOrg
-    ]
-  };
-
-  var personValidations = {
-    name: [ validations.firstAndLast ],
-    primary_ext: []
-  };
-
-  function mergeValidations(v1, v2){
-    return Object.keys(v1).reduce(
-      function(acc, attr){
-        return util.set(acc, attr, util.get(v1, attr).concat(util.get(v2, attr)));
-      },
-      v1
-    );
-  };
-
-  // CSV UPLOAD HANLDING
-
-  // (ReaderResult -> Void), JQueryElement -> Void
-  function handleUploadThen(processFile, caller){
-    if (self.hasFile(caller)) {
-      var reader = new FileReader();
-      reader.onloadend = function() {  // triggered when file is finished being read
-        reader.result ? processFile(reader.result): console.error('Error reading csv');
-      };
-      reader.readAsText(self.getFile(caller)); // start reading (will trigger `onloadend` when done)
-    }
-  };
-
-  // String -> Promise[Void]
-  function ingestEntities (csv){
-    const maybeEntities = parseEntities(csv);
-    if (maybeEntities.error){
-      state.setNotification(maybeEntities.error);
-      return Promise.resolve(state.render());
-    } else {
-      return state
-        .clearNotification()
-        .disableUpload()
-        .matchEntities(maybeEntities.result)
-        .then(state.validateAndRender);
-    }
-  };
-
-  // String -> [Entity]
-  function parseEntities(csv) {
-    return store(validateHeaders(parse(csv)));
-  }
-
-  // type MaybeEntities = { result: PapaObject | [Entity], error: ?String }
-
-  // String -> MaybeEntities
-  function parse(csv){
-    var result = Papa.parse(csv, { header: true, delimiter: ",", skipEmptyLines: true });
-    return util.isEmpty(result.errors) ?
-      { result: result, error:  null } :
-      { result: null,   error:  parseErrorMsg(result.errors[0], result.data) };
-  }
-
-  // Error, [Object] -> String
-  function parseErrorMsg(error, rows){
-    return "CSV format error: " + error.message +
-      (util.exists(error.row) && " in row: '" + Object.values(rows[error.row]).join(",")) + "'";
-  }
-
-  // MaybeEntities -> MaybeEntities
-  function validateHeaders(maybeEntities){
-    if (maybeEntities.error) return maybeEntities;
-    else {
-      var validHeaders = columns.map(function(col){ return col.attr; }).join(",");
-      var actualHeaders = maybeEntities.result.meta.fields.join(",");
-      return actualHeaders === validHeaders ?
-        maybeEntities :
-        {
-          result: null,
-          error:  invalidHeadersMsg(validHeaders, actualHeaders)
-        };
-    }
-  }
-
-  // String, String -> String
-  function invalidHeadersMsg(validHeaders, actualHeaders){
-    return "Invalid headers.\n" +
-      "Required: '" + validHeaders + "'\n" +
-      "Provided: '" + actualHeaders + "'";
-  }
-
-  // MaybeEntities -> MaybeEntities
-  function store(maybeEntities){
-    if (maybeEntities.error) return maybeEntities;
-    else {
-      return {
-        result: maybeEntities.result.data.map(state.assignId).map(state.addEntity),
-        errors: null
-      };
-    }
-  }
-
-
   // RENDERING
 
   state.validateAndRender = function(){
@@ -936,7 +710,232 @@
     }).prop('disabled', !state.canSubmit());
   }
 
+  // VALIDATION
+  
+  // type EntitiesErrors = { [id: String]: EntityError }
+  // type EntityErrors = { [attr: EntityAtrr]: [String] }
+
+  // () -> State
+  state.validate = function(){
+    return state
+      .setIn(
+        ['errors', 'byEntityId'],
+        validateEntities(Object.values(state.entities.byId), {})
+      )
+      .setIn(
+        ['errors', 'reference'],
+        validateReference(state.reference, {})
+      );
+  };
+  self.validate = state.validate; // for testing
+  
+  // [Entities] -> EntitiesErrors
+  function validateEntities(entities){
+    return entities.reduce(function(acc, entity){
+      return util.set(
+        acc,
+        entity.id,
+        validateResource(
+          entity,
+          columns.map(function(c){ return c.attr; }),
+          validationsFor(entity)
+        )
+      );
+    }, {});
+  };
+
+  // type ReferenceErrors = { ['name'|'url']: [String] }
+  // Reference -> ReferenceErrors
+  function validateReference(reference){
+    return validateResource(
+      reference,
+      Object.keys(reference),
+      referenceValidations
+    );
+  };
+
+  // type Resource = Entity | Reference
+  // type ResourceError = EntityErrors | ReferenceErrors
+  function validateResource(resource, attrs, validations){
+    return attrs.reduce(function(resourceErrorsAcc, attr){
+      var attrErrors = validateAttr(
+        resource,
+        attr,
+        validations,
+        util.get(resourceErrorsAcc, attr)
+      );
+      return util.isEmpty(attrErrors) ?
+        resourceErrorsAcc : // don't store an entry in errors accumulator for an empty errors array
+        util.set(resourceErrorsAcc, attr, attrErrors);
+    }, {});
+  };
+
+  // Entity, EntityAttr, EntityAttrErrors -> [String]
+  function validateAttr(resource, attr, validations, attrErrors){
+    return (util.get(validations, attr) || []).reduce(  
+      function(attrErrorsAcc, validation){
+        return validation.isValid(util.get(resource, attr)) ?
+          attrErrorsAcc :
+          attrErrorsAcc.concat(validation.message);
+      },
+      attrErrors || []
+    );
+  }
+
+  // VALIDATION RULES
+
+  var validations = {
+    required: {
+      message: 'is required',
+      isValid: function(attr){ return Boolean(attr); }
+    },
+    lengthN: function(n){
+      return {
+        message: 'must be at least ' + n + ' characters long',
+        isValid: function(attr){ return attr && attr.length >= n; }
+      };
+    },
+    personOrOrg: {
+      message: 'must be either "Person" or "Org"',
+      isValid: function(attr){
+        return ['Person', 'Org'].some(function(validStr){ return attr === validStr; });
+      }
+    },
+    firstAndLast: {
+      message: 'must have a first and last name',
+      isValid: function(attr){ return util.validFirstAndLastName(attr); }
+    },
+    validUrl: {
+      message: 'must be a valid ip address',
+      isValid: function(attr){ return util.validURL(attr); }
+    }
+  };
+
+  function validationsFor(entity){
+    return entity.primary_ext === "Person" ?
+      mergeValidations(entityValidations, personValidations) :
+      entityValidations;
+  };
+
+  var referenceValidations = {
+    name: [
+      validations.required,
+      validations.lengthN(3)
+    ],
+    url: [
+      validations.required,
+      validations.validUrl
+    ]
+  };
+
+  var entityValidations = {
+    name: [
+      validations.required,
+      validations.lengthN(2)
+    ],
+    primary_ext: [
+      validations.required,
+      validations.personOrOrg
+    ]
+  };
+
+  var personValidations = {
+    name: [ validations.firstAndLast ],
+    primary_ext: []
+  };
+
+  function mergeValidations(v1, v2){
+    return Object.keys(v1).reduce(
+      function(acc, attr){
+        return util.set(acc, attr, util.get(v1, attr).concat(util.get(v2, attr)));
+      },
+      v1
+    );
+  };
+  
   // EVENT HANDLERS
+
+    // CSV UPLOAD HANLDING
+
+  // (ReaderResult -> Void), JQueryElement -> Void
+  function handleUploadThen(processFile, caller){
+    if (self.hasFile(caller)) {
+      var reader = new FileReader();
+      reader.onloadend = function() {  // triggered when file is finished being read
+        reader.result ? processFile(reader.result): console.error('Error reading csv');
+      };
+      reader.readAsText(self.getFile(caller)); // start reading (will trigger `onloadend` when done)
+    }
+  };
+
+  // String -> Promise[Void]
+  function ingestEntities (csv){
+    const maybeEntities = parseEntities(csv);
+    if (maybeEntities.error){
+      state.setNotification(maybeEntities.error);
+      return Promise.resolve(state.render());
+    } else {
+      return state
+        .clearNotification()
+        .disableUpload()
+        .matchEntities(maybeEntities.result)
+        .then(state.validateAndRender);
+    }
+  };
+
+  // String -> [Entity]
+  function parseEntities(csv) {
+    return store(validateHeaders(parse(csv)));
+  }
+
+  // type MaybeEntities = { result: PapaObject | [Entity], error: ?String }
+
+  // String -> MaybeEntities
+  function parse(csv){
+    var result = Papa.parse(csv, { header: true, delimiter: ",", skipEmptyLines: true });
+    return util.isEmpty(result.errors) ?
+      { result: result, error:  null } :
+      { result: null,   error:  parseErrorMsg(result.errors[0], result.data) };
+  }
+
+  // Error, [Object] -> String
+  function parseErrorMsg(error, rows){
+    return "CSV format error: " + error.message +
+      (util.exists(error.row) && " in row: '" + Object.values(rows[error.row]).join(",")) + "'";
+  }
+
+  // MaybeEntities -> MaybeEntities
+  function validateHeaders(maybeEntities){
+    if (maybeEntities.error) return maybeEntities;
+    else {
+      var validHeaders = columns.map(function(col){ return col.attr; }).join(",");
+      var actualHeaders = maybeEntities.result.meta.fields.join(",");
+      return actualHeaders === validHeaders ?
+        maybeEntities :
+        {
+          result: null,
+          error:  invalidHeadersMsg(validHeaders, actualHeaders)
+        };
+    }
+  }
+
+  // String, String -> String
+  function invalidHeadersMsg(validHeaders, actualHeaders){
+    return "Invalid headers.\n" +
+      "Required: '" + validHeaders + "'\n" +
+      "Provided: '" + actualHeaders + "'";
+  }
+
+  // MaybeEntities -> MaybeEntities
+  function store(maybeEntities){
+    if (maybeEntities.error) return maybeEntities;
+    else {
+      return {
+        result: maybeEntities.result.data.map(state.assignId).map(state.addEntity),
+        errors: null
+      };
+    }
+  }
 
   // () -> Void
   function handleDownload(){
