@@ -11,7 +11,7 @@ describe 'List Requests' do
     let(:entities) { Array.new(2) { create(:random_entity) } }
     let(:document_attrs) { attributes_for(:document) }
 
-    let(:request) { lambda { post "/lists/#{list.id}/associations/entities", payload } }
+    let(:request) { lambda { post "/lists/#{list.id}/entities/bulk", payload } }
     let(:payload) do
       {
         data: [
