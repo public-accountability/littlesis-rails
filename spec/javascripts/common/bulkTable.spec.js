@@ -1,11 +1,9 @@
 describe('Bulk Table module', () => {
 
-  // mutable variables used as hooks in setup steps
-  let searchEntityStub, redirectSpy, hasFileSpy, getFileSpy, file;
-
+  // ASYNC TUNING
   // increase these in case of wierd non-deterministic failures due to async issues
   const asyncDelay = 15; // millis to wait for async ops like csv upload, api calls, etc..
-  const delayMultiplier = 1.2; // only use for uploading csv setup
+  const delayMultiplier = 1.2; // only neeed for uploading csv setup (currently)
 
   // FIXTURES
   const columns = fxt.entityColumns;
@@ -17,15 +15,34 @@ describe('Bulk Table module', () => {
   const csvSample = fxt.entityCsvSample;
   const searchEntityFake = fxt.entitySearchFake;
   const searchResultsFor = fxt.entitySearchResultsFor;
-
+  const reference = fxt.reference;
   const testDom ='<div id="test-dom"></div>';
-  const defaultState = {
-    domId:        "test-dom",
-    resourceType: "lists",
-    resourceId:   "1"
-  };
+
+  // SPIES
+  let browserCanOpenFilesSpy,
+      searchEntitySpy,
+      createEntitiesSpy,
+      addEntitiesToListSpy,
+      hasFileSpy,
+      getFileSpy,
+      redirectSpy;
+
+  // STUB VALUES
+  let file, errorMsg;
 
   // HELPERS
+
+  const defaultState = () => ({
+    // this is a thunk b/c  we *must* initialize api spies inside of before block in jasmine :/
+    domId:        "test-dom",
+    resourceType: "lists",
+    resourceId:   "1",
+    api: {
+      searchEntity:      searchEntitySpy,
+      createEntities:    createEntitiesSpy,
+      addEntitiesToList: addEntitiesToListSpy
+    }
+  });
 
   // Integer -> Promise[Void]
   const wait = (millis) => new Promise((rslv,rjct) => setTimeout(rslv, millis));
@@ -36,7 +53,7 @@ describe('Bulk Table module', () => {
     hasFileSpy.and.returnValue(true);
     getFileSpy.and.returnValue(file);
 
-    bulkTable.init(defaultState);
+    bulkTable.init(defaultState());
     $('#upload-button').change();
     return wait(delayMultiplier * asyncDelay); // multiply delay to accomodate multiple async ops
   };
@@ -56,6 +73,26 @@ describe('Bulk Table module', () => {
       .trigger($.Event('keyup', { keyCode: 13 })); // hit enter
   };
 
+  // EntitiesById, ApiJson, ApiJson -> Promise[Void]
+  const setupSubmit = (entitiesById, createEntitiesVal, addEntitiesToListVal) => {
+
+    createEntitiesSpy.and.returnValue(createEntitiesVal);
+    addEntitiesToListSpy.and.returnValue(addEntitiesToListVal);
+
+    bulkTable.init(Object.assign(
+      {},
+      defaultState(),
+      {
+        entities: { byId: entitiesById, order: Object.keys(entitiesById) },
+        reference: reference
+      }
+    ));
+
+    $('#bulk-submit-button').trigger('click');
+    return wait(asyncDelay);
+  };
+
+
   // Void -> JQueryNode
   const findFirstRow = () => $("#bulk-add-table tbody tr:nth-child(1)");
   const findSecondRow = () => $("#bulk-add-table tbody tr:nth-child(2)");
@@ -65,7 +102,10 @@ describe('Bulk Table module', () => {
   beforeEach(() => {
     hasFileSpy = spyOn(bulkTable, 'hasFile');
     getFileSpy = spyOn(bulkTable, 'getFile');
-    searchEntityStub = spyOn(api, 'searchEntity').and.callFake(searchEntityFake);
+    searchEntitySpy = searchEntitySpy = spyOn(api, 'searchEntity').and.callFake(searchEntityFake);
+    createEntitiesSpy = spyOn(api, 'createEntities');
+    addEntitiesToListSpy = spyOn(api, 'addEntitiesToList');
+    redirectSpy = spyOn(utility, 'redirectTo').and.callFake(() => null);
     $('body').append(testDom);
   });
 
@@ -75,7 +115,7 @@ describe('Bulk Table module', () => {
   
   describe('initialization', () => {
 
-    beforeAll(() => bulkTable.init(defaultState));
+    beforeEach(() => bulkTable.init(defaultState()));
 
     it('stores a reference to its root dom node', () => {
       expect(bulkTable.get('domId')).toEqual('test-dom');
@@ -89,13 +129,18 @@ describe('Bulk Table module', () => {
       expect(bulkTable.get('resourceType')).toEqual('lists');
     });
 
-    it('stores references to its api methods');
-    // not yet! (finish the card first)
+    it('stores references to its api methods', () => {
+      expect(bulkTable.get('api')).toEqual({
+        searchEntity:      searchEntitySpy,
+        createEntities:    createEntitiesSpy,
+        addEntitiesToList: addEntitiesToListSpy
+      });
+    });
 
     it('initializes empty entity repository', () =>{
       expect(bulkTable.get('entities')).toEqual({
-        byId:    {},
-        order:   []
+        byId:  {},
+        order: []
       });
     });
 
@@ -123,13 +168,11 @@ describe('Bulk Table module', () => {
 
     describe('detecting upload/download support', () => {
 
-      let browserCanOpenFilesSpy;
-
       describe("when browser can open files", () => {
 
         beforeEach(() => {
           browserCanOpenFilesSpy = spyOn(utility, 'browserCanOpenFiles').and.returnValue(true);
-          bulkTable.init(defaultState);
+          bulkTable.init(defaultState());
         });
 
         it('shows an upload button', () => {
@@ -145,7 +188,7 @@ describe('Bulk Table module', () => {
 
         beforeEach(() => {
           browserCanOpenFilesSpy = spyOn(utility, 'browserCanOpenFiles').and.returnValue(false);
-          bulkTable.init(defaultState);
+          bulkTable.init(defaultState());
         });
 
         it('hides the upload button', () => {
@@ -250,7 +293,7 @@ describe('Bulk Table module', () => {
 
     beforeEach(() =>  {
       saveAsSpy = spyOn(window, 'saveAs');
-      bulkTable.init(defaultState);
+      bulkTable.init(defaultState());
     });
 
     it('saves a sample csv to the user\'s file system', () => {
@@ -330,8 +373,8 @@ describe('Bulk Table module', () => {
     describe('search', () => {
 
       it('searches littlesis for entities with same name as user submissions', () => {
-        expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity0.name);
-        expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity1.name);
+        expect(searchEntitySpy).toHaveBeenCalledWith(newEntities.newEntity0.name);
+        expect(searchEntitySpy).toHaveBeenCalledWith(newEntities.newEntity1.name);
       });
 
       it('stores list of search matches in memory', () => {
@@ -523,7 +566,7 @@ describe('Bulk Table module', () => {
         beforeEach(done => setupEdit(csvValid, findInput, newEntities.newEntity0.name).then(done));
 
         it('searches for entities matching new name', () => {
-          expect(searchEntityStub).toHaveBeenCalledWith(newEntities.newEntity0.name);
+          expect(searchEntitySpy).toHaveBeenCalledWith(newEntities.newEntity0.name);
           expect(bulkTable.getIn(['matches', 'byEntityId', 'newEntity1'])).toExist();
           expect(findSecondRow().find(".resolver-anchor")).toExist();
         });
@@ -562,7 +605,7 @@ describe('Bulk Table module', () => {
 
     describe('entity rules', () => {
 
-      const stateOf = (entitySpec) => Object.assign({}, defaultState, {
+      const stateOf = (entitySpec) => Object.assign({}, defaultState(), {
         entities: {
           byId: { fakeId: Object.assign({}, validEntity, entitySpec) },
           order: ['fakeId']
@@ -624,7 +667,7 @@ describe('Bulk Table module', () => {
 
     describe('reference rules', () => {
 
-      const stateOf = (referenceSpec) => Object.assign({}, defaultState, {
+      const stateOf = (referenceSpec) => Object.assign({}, defaultState(), {
         entities: { byId: { fakeId: validEntity }, order: [] },
         reference: Object.assign({}, validReference, referenceSpec)
       });
@@ -773,7 +816,7 @@ describe('Bulk Table module', () => {
     beforeEach(() => {
       bulkTable.init(Object.assign(
         {},
-        defaultState,
+        defaultState(),
         {
           entities: {
             byId: mixedEntities,
@@ -833,11 +876,6 @@ describe('Bulk Table module', () => {
   });
 
   describe('form submission', () => {
-
-    const reference = {
-      name: 'Pynchon Wiki',
-      url:  'http://pynchonwiki.com'
-    };
 
     const inputReference = () => {
       $("#reference-container .name input").val(reference.name).trigger('change');
@@ -900,27 +938,6 @@ describe('Bulk Table module', () => {
 
     describe('handling submission', () => {
 
-      let createEntitiesSpy, addEntitiesToListSpy, redirectSpy, errorMsg;
-
-      const setupSubmit = (entitiesById, createEntitiesVal, addEntitiesToListVal) => {
-
-        createEntitiesSpy = spyOn(api, 'createEntities').and.returnValue(createEntitiesVal);
-        addEntitiesToListSpy = spyOn(api, 'addEntitiesToList').and.returnValue(addEntitiesToListVal);
-        redirectSpy = spyOn(utility, 'redirectTo').and.callFake(() => null);
-
-        bulkTable.init(Object.assign(
-          {},
-          defaultState,
-          {
-            entities: { byId: entitiesById, order: Object.keys(entitiesById) },
-            reference: reference
-          }
-        ));
-
-        $('#bulk-submit-button').trigger('click');
-        return wait(asyncDelay);
-      };
-
       const emptyPromise = Promise.resolve([]);
 
       describe('table has only new entities', () => {
@@ -943,23 +960,26 @@ describe('Bulk Table module', () => {
 
           beforeEach(done => {
             errorMsg = "Could not create new entities: request formatted improperly";
-            setupSubmit(entities, Promise.reject(errorMsg), emptyPromise)
-              .then(done);
+            setupSubmit(
+              entities,
+              Promise.reject(errorMsg),
+              emptyPromise
+            ).then(done);
           });
 
           it('displays error message in notifications bar', () => {
             expect($("#notifications")).toHaveText(errorMsg);
           });
-
-          it('marks entities that could not be created with alert icon');
-          // or maybe not?
         });
 
         describe('creating new entities succeeds', () => {
 
           beforeEach(done => {
-            setupSubmit(entities, Promise.resolve(fxt.createdEntitiesParsed), emptyPromise)
-              .then(done);
+            setupSubmit(
+              entities,
+              Promise.resolve(fxt.createdEntitiesParsed),
+              emptyPromise
+            ).then(done);
           });
 
           it('stores ids for newly created entities in store', () => {
@@ -986,8 +1006,11 @@ describe('Bulk Table module', () => {
 
           beforeEach(done => {
             errorMsg = "Could not create add entities to list: invalid reference";
-            setupSubmit(newEntities, Promise.resolve(fxt.createdEntitiesParsed), Promise.reject(errorMsg))
-              .then(done);
+            setupSubmit(
+              newEntities,
+              Promise.resolve(fxt.createdEntitiesParsed),
+              Promise.reject(errorMsg)
+            ).then(done);
           });
 
           it('displays error message in notifications bar', () => {
@@ -1032,17 +1055,12 @@ describe('Bulk Table module', () => {
           const newEntity = fxt.newAndExistingEntities.newEntity0;
           expect(createEntitiesSpy).toHaveBeenCalledWith([newEntity]);
         });
-
-        describe('creating new entities fails', () => {
-          it('does not mark matched entities with alert icon');
-          // left pending until feature is implemented or rejected
-        });
       });
     });
   });
 
   describe('empty table', () => {
-    beforeEach(() => bulkTable.init(defaultState));
+    beforeEach(() => bulkTable.init(defaultState()));
 
     it('does not exist', () =>{
       expect($('#test-dom table#bulk-add-table')).not.toExist();

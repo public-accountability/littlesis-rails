@@ -38,10 +38,14 @@
       // id of base resource with which we wish to associate many entities:
       resourceId: args.resourceId, // String
       resourceType: args.resourceType, // String (must be plural to match rails path conventions)
-      // store entities, errors, and matches in hash map repositories
-      // repository types given in Flow notation (see: https://flow.org/en/docs/types/objects)
-      // type Entity = { [EntityAttr]: String }
-      // type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
+      api: args.api, // { [String]: (*String) -> Promise[JSON] }
+      /**
+       * store entities, errors, and matches in hash map repositories
+       * (types given in Flow notation: https://flow.org/en/docs/types/objects)
+       *
+       * type Entity = { [EntityAttr]: String }
+       * type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
+       */
       entities: args.entities || { // expose to `#init` for unit testing seam
         byId:    {},  // { [String]: Entity }
         order:   []  // [String] (order corresponds to row order of entities stored in `.byId`)
@@ -54,7 +58,7 @@
         name: '', // String
         url:  ''  // String
       },
-      errors: {
+      errors: args.errors || {
         byEntityId: {}, // { [id: String]: { [EntityAttr]: [String] } }
         reference: {}  // { ['name'|'url']: [String] }
       },
@@ -376,7 +380,7 @@
 
   // Entity -> Promise[State]
   state.matchEntity = function(entity){
-    return api
+    return state.api
       .searchEntity(entity.name)
       .then(function(matches){ return state.addMatches(entity, matches); });
   };
@@ -398,14 +402,14 @@
     const newEntities = state.getNewEntities();
     return util.isEmpty(newEntities) ?
       Promise.resolve(state) :
-      api
+      state.api
       .createEntities(newEntities)
       .then(state.replaceWithCreatedEntities);
   };
 
   // () -> Promise[State]
   state.createAssociations = function(){
-    return api
+    return state.api
       .addEntitiesToList(state.resourceId, state.getEntityIds(), state.reference)
       .then(function(){ return state; });
   };

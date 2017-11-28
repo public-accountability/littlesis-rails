@@ -6,7 +6,12 @@
    bulkTable.init({
      domId:        "bulk-add-container",
      resourceId:   "<%= raw(@list.id) %>",
-     resourceType: "lists"
+     resourceType: "lists",
+     api: {
+       searchEntity:      api.searchEntity,
+       createEntities:    api.createEntities,
+       addEntitiesToList: api.addEntitiesToList
+     }
    });
   </script>
 </div>

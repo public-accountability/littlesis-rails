@@ -1,5 +1,10 @@
 fxt = {};
 
+fxt.reference = {
+  name: 'Pynchon Wiki',
+  url:  'http://pynchonwiki.com'
+};
+
 fxt.newEntities = {
   newEntity0: {
     id:          "newEntity0",
