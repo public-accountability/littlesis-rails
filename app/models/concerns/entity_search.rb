@@ -43,6 +43,16 @@ module EntitySearch
     DEFAULT_SIMILAR_ENTITIES_PER_PAGE = 5
     SIMILAR_ENTITY_FIELD_WEIGHTS = { name: 15, aliases: 10, blurb: 3 }.freeze
 
+    SIMILAR_ENTITIES_PRESENTER = proc do |e|
+      {
+        name: e.name,
+        blurb: e.blurb,
+        types: e.extension_ids[1..-1].map { |i| ExtensionDefinition.display_names.fetch(i) }.join(', '),
+        slug: e.slug,
+        id: e.id
+      }
+    end
+
     # String, Hash -> ThinkingShinx::Search
     # NOTE: used by SearchController
     def self.search(query, opt = {})
@@ -70,6 +80,7 @@ module EntitySearch
                     :without => { sphinx_internal_id: entity.id },
                     :per_page => per_page,
                     :ranker => :sph04,
+                    :sql => { :include => :extension_records },
                     :select => "*, weight() + (link_count * 10) AS link_weight",
                     :order => "link_weight DESC",
                     :field_weights => SIMILAR_ENTITY_FIELD_WEIGHTS,

@@ -69,6 +69,14 @@ def create_basic_user
   user
 end
 
+def create_bulker_user
+  sf_user = FactoryBot.create(:sf_guard_user)
+  user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 9, user_id: sf_user.id)
+  user
+end
+
 def create_restricted_user
   sf_user = FactoryBot.create(:sf_guard_user)
   user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, is_restricted: true)

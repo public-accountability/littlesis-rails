@@ -320,6 +320,7 @@ Lilsis::Application.routes.draw do
   #########
 
   get '/tools/bulk/relationships' => "tools#bulk_relationships"
+  get '/tools/merge' => "tools#merge_entities"
 
   #########
   #  API  #

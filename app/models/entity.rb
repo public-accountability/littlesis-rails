@@ -811,6 +811,10 @@ class Entity < ActiveRecord::Base
     blurb
   end
 
+  def slug
+    "/#{primary_ext.downcase}/#{to_param}"
+  end
+
   # A type checker for definition id and names
   # input: String or Integer
   # output: String or throws ArgumentError

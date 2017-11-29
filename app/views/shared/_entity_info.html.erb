@@ -1,3 +1,7 @@
 <!-- This adds an div #entity-info with a dataset containg the entity type and id -->
 <!-- requires local var: entity -->
-<div style="display; none" id="entity-info" data-entitytype="<%= entity.primary_ext %>"  data-entityid="<%= entity.id %>"></div>
+<div style="display; none" id="entity-info"
+     data-entitytype="<%= entity.primary_ext %>"
+     data-primary_ext="<%= entity.primary_ext %>"
+     data-slug="<%= entity.slug %>"
+     data-entityid="<%= entity.id %>"></div>
