@@ -38,6 +38,8 @@ class ToolsController < ApplicationController
     @source = Entity.find(params.require(:source).to_i)
     if params[:dest].present?
       @merge_mode = :merge
+      @dest = Entity.find(params[:dest].to_i)
+      @entity_merger = EntityMerger.new(source: @source, dest: @dest).merge
     else
       @merge_mode = :search
       @query = params[:query]

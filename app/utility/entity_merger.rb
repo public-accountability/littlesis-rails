@@ -92,6 +92,7 @@ class EntityMerger
     merge_child_entities
     merge_party_members
     merge_relationships
+    self
   end
 
   ## Merge Functions ##

@@ -16,4 +16,13 @@ module ToolsHelper
         .reduce(:+)
     end
   end
+
+  # em = @entity_merger
+  def em_prop(prop)
+    @entity_merger.send(prop)
+  end
+
+  def unless_em_prop_is_empty(prop)
+    yield unless em_prop(prop).empty?
+  end
 end

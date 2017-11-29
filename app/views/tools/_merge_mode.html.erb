@@ -1,1 +1,49 @@
-<h1>merge_mode</h1>
+<div class="row">
+  <div class="col-sm-12 nopadding">
+    <h2>You are about to <span class="bg-warning">merge</span> all of <%= link_to "#{@source.name} (#{@source.id})'s", entity_path(@source) %>
+      relationships and information with <%= link_to "#{@dest.name} (#{@dest.id})", entity_path(@dest) %></h2>
+    <h2>It will delete <%= link_to "#{@source.name} (#{@source.id})", entity_path(@source) %> from the database</h2>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-sm-12 nopadding">
+    <h4><em>This will make the following changes:</em></h4>
+  </div>
+  <div class="col-sm-12 nopadding">
+    <ul>
+
+      <% unless_em_prop_is_empty :extensions do %>
+	<li>
+	  Add or update the following extensions: <%= @entity_merger.extensions.map(&:ext_id).map { |i| ExtensionDefinition.display_names.fetch(i) }.join(', ') %>
+	</li>
+      <% end  %>
+
+      <% unless_em_prop_is_empty :contact_info  do %>
+	<li>
+	  Transfer <strong><%= @entity_merger.contact_info.count %></strong> emails, address, or phone numbers
+	</li>
+      <% end %>
+
+      <% unless_em_prop_is_empty :lists  do %>
+	<li>
+	  Add <%= link_to "#{@dest.name} (#{@dest.id})", entity_path(@dest) %> to <%= @entity_merger.lists.count %> lists
+	</li>
+      <% end  %>
+
+      <% unless_em_prop_is_empty :images  do %>
+	<li>
+	  Transfer <strong><%= em_prop(:images).count %></strong> images
+	</li>
+      <% end  %>
+
+      <% unless_em_prop_is_empty :aliases  do %>
+	<li>
+	Transfer the following aliases: <em><%= em_prop(:aliases).map(&:name).join(', ') %></em>
+	</li>
+      <% end %>
+      
+    </ul>
+  </div>
+</div>

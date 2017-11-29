@@ -17,9 +17,49 @@ describe ToolsController, type: :controller do
   end
 
   describe 'merge_entities' do
+    let(:entity) { build(:org) }
     login_user
-    before { get :merge_entities }
-    it { should respond_with(200) }
-    it { should render_template(:merge_entities) }
+    context 'search mode' do
+      before do
+        expect(Entity).to receive(:find).with(entity.id).and_return(entity)
+        expect(entity).to receive(:similar_entities).with(75).and_return([])
+        get :merge_entities, source: entity.id
+      end
+    
+      it { should respond_with(200) }
+      it { should render_template(:merge_entities) }
+      specify { expect(assigns(:merge_mode)).to eql :search }
+    end
+
+    context 'search mode with query' do
+      before do
+        expect(Entity).to receive(:find).with(entity.id).and_return(entity)
+        expect(Entity::Search).to receive(:similar_entities)
+                                    .with(entity, query: 'query', per_page: 75)
+                                    .and_return([])
+        get :merge_entities, source: entity.id, query: 'query'
+      end
+
+      it { should respond_with(200) }
+      it { should render_template(:merge_entities) }
+      specify { expect(assigns(:merge_mode)).to eql :search }
+      specify { expect(assigns(:query)).to eql 'query' }
+    end
+
+    context 'merge mode with query' do
+      let(:source) { build(:org) }
+      let(:dest) { build(:org) }
+
+      before do
+        expect(Entity).to receive(:find).with(source.id).and_return(source)
+        expect(Entity).to receive(:find).with(dest.id).and_return(dest)
+        get :merge_entities, source: source.id, dest: dest.id
+      end
+
+      it { should respond_with(200) }
+      it { should render_template(:merge_entities) }
+      specify { expect(assigns(:merge_mode)).to eql :merge }
+      specify { expect(assigns(:entity_merger)).to be_a EntityMerger }
+    end
   end
 end
