@@ -1,0 +1,46 @@
+<%# Requires presence of two instance vars: @similar_entities, @source%>
+
+<table id="merge-entity-table" class="display" width="100%"></table>
+
+<script>
+
+ var potentialDestinationEntities = <%= raw @similar_entities.to_json %>
+
+ <%#
+ # See here: https://datatables.net/reference/option/columns.render
+ # for the docs ths on col.render
+ %>
+
+ var renderName = function(data, type, row, meta) {
+   return $('<a>', { href: row.slug, text: row.name, target: '_blank' }).prop('outerHTML');
+ }
+
+ var selectLink = function(id) {
+   var params = Object.assign({}, { source: <%= @source.id %> }, { dest: id });
+   return "/tools/merge?" + $.param(params); 
+ }
+
+ var selectButton = function(data, type, row, meta) {
+   return $('<a>', {
+     "href": selectLink(data),
+     "text": 'merge',
+     "class": 'btn btn-default'
+   }).prop('outerHTML');
+ }
+
+ $(document).ready(function() {
+   $('#merge-entity-table').DataTable( {
+     searching: false,
+     lengthChange: false,
+     pageLength: 15,
+     order: [],
+     data: potentialDestinationEntities,
+     columns: [
+       { title: "Name", render: renderName },
+       { title: "Description" , data: 'blurb', orderable: false },
+       { title: "Types", data: 'types', orderable: false },
+       { title: "Select", data: 'id', orderable: false, render: selectButton }
+     ]
+   } );
+ }); 
+</script>

@@ -1,5 +1,4 @@
 <%= render partial: 'shared/entity_info', locals: { entity: @source } %>
-<% primary_ext = @source.primary_ext.downcase  %>
 
 <div class="row">
   <div class="col-sm-10 nopadding">
@@ -7,72 +6,8 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col-sm-6 nopadding">
-    <h4>Find the <%= primary_ext %> you want to merge this <%= primary_ext %> with:</h4>
-  </div>
-  <div class="col-sm-4 col-sm-offset-2">
-    <div class="pull-right">
-      <p> Can't find the <%= primary_ext %> you want? Search for it:</p>
-      <%= form_tag('/tools/merge', method: :get) do %>
-	<%= hidden_field_tag 'source', @source.id %>
-	<%= text_field_tag 'query', nil %>
-	<%= submit_tag 'Search' %>
-      <% end %>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-sm-8 nopadding">
-  </div>
-</div>
-
-<div class="row">
-  <table id="merge-entity-table" class="display" width="100%"></table>
-</div>
-
-<script>
-
- var potentialDestinationEntities = <%= raw @similar_entities.to_json %>
-
- <%#
- # See here: https://datatables.net/reference/option/columns.render
- # for the docs ths on col.render
- %>
-
- var renderName = function(data, type, row, meta) {
-   return $('<a>', { href: row.slug, text: row.name, target: '_blank' }).prop('outerHTML');
- }
-
- var selectLink = function(id) {
-   var params = Object.assign({}, { source: <%= @source.id %> }, { dest: id });
-   return "/tools/merge?" + $.param(params); 
- }
-
- var selectButton = function(data, type, row, meta) {
-   return $('<a>', {
-     "href": selectLink(data),
-     "text": 'merge',
-     "class": 'btn btn-default'
-   }).prop('outerHTML');
- }
-
- $(document).ready(function() {
-   $('#merge-entity-table').DataTable( {
-     searching: false,
-     lengthChange: false,
-     pageLength: 15,
-     order: [],
-     data: potentialDestinationEntities,
-     columns: [
-       { title: "Name", render: renderName },
-       { title: "Description" , data: 'blurb', orderable: false },
-       { title: "Types", data: 'types', orderable: false },
-       { title: "Select", data: 'id', orderable: false, render: selectButton }
-     ]
-   } );
- });
- 
-</script>
-
+<% if @merge_mode == :search %>
+  <%= render partial: 'search_mode' %>
+<% elsif @merge_mode == :merge %>
+  <%= render partial: 'merge_mode' %>
+<% end %>
