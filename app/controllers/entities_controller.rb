@@ -39,9 +39,10 @@ class EntitiesController < ApplicationController
   end
 
   def create_bulk
-    # only responds to JSON requests
-    # clients may not create extensions in POSTS to this endpoing
-    entities = Entity.create!(create_bulk_payload.map { |x| merge_last_user(x) })
+    # only responds to JSON, not possible to create extensions in POSTS to this endpoint
+    entity_attrs = create_bulk_payload.map { |x| merge_last_user(x) }
+    block_unless_bulker(entity_attrs, Entity::BULK_LIMIT) # see application_controller
+    entities = Entity.create!(entity_attrs)
     render json: Api.as_api_json(entities), status: :created
   rescue ActionController::ParameterMissing, NoMethodError, ActiveRecord::RecordInvalid
     render json: ERRORS[:create_bulk], status: 400
@@ -184,12 +185,12 @@ class EntitiesController < ApplicationController
     redirect_to fields_entity_path(@entity)
   end
 
-	def search_by_name
-		data = []
-		q = params[:q]
+  def search_by_name
+    data = []
+    q = params[:q]
     num = params.fetch(:num, 10)
     fields = params[:desc] ? 'name,aliases,blurb' : 'name,aliases'
-		entities = Entity.search(
+    entities = Entity.search(
       "@(#{fields}) #{q}", 
       per_page: num, 
       match_mode: :extended, 
@@ -197,7 +198,7 @@ class EntitiesController < ApplicationController
       select: "*, weight() * (link_count + 1) AS link_weight",
       order: "link_weight DESC"
     )
-		data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb, url: datatable_entity_path(e), primary_ext: e.primary_ext } }
+    data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb, url: datatable_entity_path(e), primary_ext: e.primary_ext } }
 
     if list_id = params[:exclude_list]
       entity_ids = ListEntity.where(list_id: list_id).pluck(:entity_id)
@@ -215,8 +216,8 @@ class EntitiesController < ApplicationController
       end      
     end
 
-		render json: data
-	end
+    render json: data
+  end
 
   def search_field_names
     q = params[:q]
@@ -481,11 +482,8 @@ class EntitiesController < ApplicationController
   end
 
   def create_bulk_payload
-    payload = params.require('data').map do |record|
-      record.permit('type'       => 'entity',
-                    'attributes' => ['name', 'blurb', 'primary_ext'])
-    end
-    payload.map { |record| record['attributes'] }
+    params.require('data')
+      .map { |r| r.permit('attributes' => %w[name blurb primary_ext])['attributes'] }
   end
 
   def add_relationship_page?
@@ -495,9 +493,4 @@ class EntitiesController < ApplicationController
   def importers_only
     check_permission 'importer'
   end
-
-  def merge_last_user(entity_params)
-    entity_params.merge(last_user_id: current_user.sf_guard_user_id)
-  end
-
 end

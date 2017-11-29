@@ -9,16 +9,21 @@ describe 'Entity Requests', type: :request do
 
   describe 'creating many entities' do
 
-    let(:entities){ Array.new(2){ build(:random_entity) } }
-
+    let(:entities) { Array.new(2) { build(:random_entity) } }
     let(:request) { lambda { post '/entities/bulk', payload } }
     let(:payload) do
-      {
-        data: [
-          { type: 'entities', attributes: entities.first.attributes },
-          { type: 'entities', attributes: entities.second.attributes }
-        ]
-      }
+      { data: entities.map { |e| { type: 'entities', attributes: e.attributes } } }
+    end
+
+    context 'with insufficient permissions' do
+      let(:entities) { Array.new(Entity::BULK_LIMIT + 1) { build(:random_entity) } }
+
+      it 'returns 401 with an error message' do
+        expect { request.call }.to change { Entity.count }.by(0)
+        expect(response).to have_http_status 401
+        expect(json)
+          .to eql('errors' => ['title' => Exceptions::UnauthorizedBulkRequest.new.message])
+      end
     end
 
     context 'with valid payload' do

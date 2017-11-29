@@ -84,6 +84,8 @@ module Referenceable
   end
 
   def find_reference_by_url(url)
+    # find references associating *this* particular referenceable with a document with a given url
+    # (this method is not a class method on `Reference` because we don't want all references)
     references.find_by_document_id(Document.find_by_url(url))
   end
 
