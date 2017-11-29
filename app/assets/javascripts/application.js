@@ -20,9 +20,9 @@
 //= require jquery.shuffle
 //= require jquery.tinycarousel
 //= require jquery.dataTables
+//= require dataTables.bootstrap
 //= require dataTables.editor
 //= require jquery.Jcrop
-//= require datatables-bootstrap
 //= require bootsy
 //= require bootstrap-datepicker
 //= require bootstrap-select.min.js
