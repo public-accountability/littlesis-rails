@@ -3,8 +3,9 @@ class ToolsController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_entity, only: [:bulk_relationships]
-  before_action -> { check_permission('bulker') }, only: [:merge_entities]
+  before_action -> { check_permission('bulker') }, only: [:merge_entities, :merge_entities!]
   before_action :parse_merge_params, only: [:merge_entities]
+  before_action :set_source_and_dest, only: [:merge_entities!]
 
   def bulk_relationships
   end
@@ -21,6 +22,8 @@ class ToolsController < ApplicationController
   # POST /tools/merge
   # do the merge
   def merge_entities!
+    EntityMerger.new(source: @source, dest: @dest).merge!
+    redirect_to @dest
   end
 
   private
@@ -44,6 +47,11 @@ class ToolsController < ApplicationController
       @merge_mode = :search
       @query = params[:query]
     end
+  end
+
+  def set_source_and_dest
+    @source = Entity.find(params.require(:source).to_i)
+    @dest = Entity.find(params.require(:dest).to_i)
   end
 
   def set_entity

@@ -39,10 +39,26 @@ feature 'Merging entities' do
       page_has_selector 'h4', text: "This will make the following changes:"
       page_has_selector '#merge-report li', count: 4
       page_has_selector 'li', text: "Transfer 1 relationships"
+      page_has_selector '#merge-entities-form'
+      page_has_selector "input.btn[value='Merge']", count: 1
+      page_has_selector 'a.btn', text: 'Go back'
+      page_has_selector 'a.btn', text: 'Dashboard'
     end
 
     scenario 'clicking to merge the two entities' do
-      successfully_visits_page "/tools/merge?source=#{source.id}&dest=#{dest.id}"
+      expect(dest.relationships.count).to eql 0
+      expect(dest.lists.count).to eql 0
+
+      successfully_visits_page "/tools/merge"
+
+      click_button "Merge"
+
+      successfully_visits_page entity_path(dest)
+
+      expect(dest.reload.relationships.count).to eql 1
+      expect(dest.lists.count).to eql 1
+      expect(source.reload.is_deleted).to be true
+      expect(source.merged_id).to eql dest.id
     end
   end
 end

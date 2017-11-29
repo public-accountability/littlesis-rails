@@ -3,6 +3,7 @@ require 'rails_helper'
 describe ToolsController, type: :controller do
   it { should route(:get, '/tools/bulk/relationships').to(action: :bulk_relationships) }
   it { should route(:get, '/tools/merge').to(action: :merge_entities) }
+  it { should route(:post, '/tools/merge').to(action: :merge_entities!) }
 
   describe 'bulk_relationships' do
     login_user
@@ -25,7 +26,7 @@ describe ToolsController, type: :controller do
         expect(entity).to receive(:similar_entities).with(75).and_return([])
         get :merge_entities, source: entity.id
       end
-    
+
       it { should respond_with(200) }
       it { should render_template(:merge_entities) }
       specify { expect(assigns(:merge_mode)).to eql :search }
