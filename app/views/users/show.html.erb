@@ -39,11 +39,18 @@
 	<% end %>
 </div>
 
-<% if @user == current_user %>
+<% if @user == current_user || current_user.admin? %>
 	<h3>
 		Permissions
 	</h3>
+	<div>
+		<table>
+			<% @all_permissions.each do |p| %>
+				<tr>
+					<td class="permission-name"><%= p.capitalize %></td>
+					<td class="permission-boolean"><%= @permissions.include?(p) ? "Yes" : "No" %></td>
+				</tr>
+			<% end %>
+		</table>
+	</div>
 <% end %>
-
-<%= link_to 'Edit', edit_user_path(@user) %> |
-<%= link_to 'Back', users_path %>

@@ -22,6 +22,8 @@ class UsersController < ApplicationController
     @groups = @user.groups.includes(:campaign).order(:name)
     @lists = @user.lists.order("created_at DESC, id DESC")
     @recent_updates = @user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
+    @permissions = @user.permissions.instance_variable_get(:@sf_permissions)
+    @all_permissions = Permissions::ALL_PERMISSIONS
   end
 
   def image
