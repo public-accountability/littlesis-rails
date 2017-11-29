@@ -1,21 +1,40 @@
 <%= render partial: 'shared/entity_info', locals: { entity: @source } %>
-<%= render partial: 'entities/header', locals: { entity: @source } %>
-
-<h1>Merge this entity with another <em>entity</em></h1>
+<% primary_ext = @source.primary_ext.downcase  %>
 
 <div class="row">
-  <div class="col-sm-8">
-    <h4>Find the <%= @source.primary_ext.downcase %> you want to merge this <%= @source.primary_ext.downcase %> with:</h4>
+  <div class="col-sm-10 nopadding">
+    <h1>Merge <%= link_to @source.name, entity_path(@source) %> with another <em>entity</em></h1>
   </div>
 </div>
 
-<div>
+<div class="row">
+  <div class="col-sm-6 nopadding">
+    <h4>Find the <%= primary_ext %> you want to merge this <%= primary_ext %> with:</h4>
+  </div>
+  <div class="col-sm-4 col-sm-offset-2">
+    <div class="pull-right">
+      <p> Can't find the <%= primary_ext %> you want? Search for it:</p>
+      <%= form_tag('/tools/merge', method: :get) do %>
+	<%= hidden_field_tag 'source', @source.id %>
+	<%= text_field_tag 'query', nil %>
+	<%= submit_tag 'Search' %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-8 nopadding">
+  </div>
+</div>
+
+<div class="row">
   <table id="merge-entity-table" class="display" width="100%"></table>
 </div>
 
 <script>
 
- var potentialDestinationEntities = <%= raw @source.similar_entities(75).map(&Entity::Search::SIMILAR_ENTITIES_PRESENTER).to_json %>
+ var potentialDestinationEntities = <%= raw @similar_entities.to_json %>
 
  <%#
  # See here: https://datatables.net/reference/option/columns.render
@@ -44,6 +63,7 @@
      searching: false,
      lengthChange: false,
      pageLength: 15,
+     order: [],
      data: potentialDestinationEntities,
      columns: [
        { title: "Name", render: renderName },

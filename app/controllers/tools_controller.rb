@@ -1,4 +1,6 @@
 class ToolsController < ApplicationController
+  SIMILAR_ENTITIES_PER_PAGE = 75
+
   before_action :authenticate_user!
   before_action :set_entity, only: [:bulk_relationships]
   before_action -> { check_permission('bulker') }, only: [:merge_entities]
@@ -13,6 +15,7 @@ class ToolsController < ApplicationController
   # - source and query
   # - source and dest
   def merge_entities
+    set_similar_entities if @merge_mode == :search
   end
 
   # POST /tools/merge
@@ -22,12 +25,22 @@ class ToolsController < ApplicationController
 
   private
 
+  def set_similar_entities
+    if @query.present?
+      similar_entities = Entity::Search.similar_entities(@source, query: @query, per_page: SIMILAR_ENTITIES_PER_PAGE)
+    else
+      similar_entities = @source.similar_entities(SIMILAR_ENTITIES_PER_PAGE)
+    end
+    @similar_entities = similar_entities.map(&Entity::Search::SIMILAR_ENTITIES_PRESENTER)
+  end
+
   def parse_merge_params
     @source = Entity.find(params.require(:source).to_i)
     if params[:dest].present?
       @merge_mode = :merge
     else
       @merge_mode = :search
+      @query = params[:query]
     end
   end
 
