@@ -5,14 +5,14 @@
 </h1>
 
 <div class="entity-profile-image">
-    <%= link_to_if(@user == current_user, user_profile_image, image_user_path(@user)) %>
+    <%= user_profile_image %>
 </div>
 
  <h3>
  	About
  </h3>
  <div>
- 'about me' text [ editable by user see #397 ]
+ 	<%= @user.about_me %>
  </div>
 
  <h3>
