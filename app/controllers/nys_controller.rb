@@ -45,7 +45,7 @@ class NysController < ApplicationController
     end
     NyDisclosure.update_delta_flag(match_params[:disclosure_ids])
     Entity.find(match_params[:donor_id]).update(last_user_id: current_user.sf_guard_user_id)
-    head :accepted
+    render json: { status: 'ok' }, status: :accepted
   end
 
   # POST data
@@ -53,6 +53,10 @@ class NysController < ApplicationController
   #       ny_match_ids: [int],
   #   }
   def unmatch_donations
+    unmatch_params[:ny_match_ids].each do |i|
+      NyMatch.find(i.to_i).unmatch!
+    end
+    render json: { status: 'ok' }
   end
 
   # search for contributions
@@ -103,5 +107,9 @@ class NysController < ApplicationController
 
   def match_params
     params.require(:payload).permit(:donor_id, :disclosure_ids => [])
+  end
+
+  def unmatch_params
+    params.require(:payload).permit(:ny_match_ids => [])
   end
 end

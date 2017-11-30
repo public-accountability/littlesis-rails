@@ -52,4 +52,22 @@ describe 'NYS requests' do
     end
   end
 
+  describe 'unmatch_donations' do
+    let(:donor) { create(:entity_person) }
+    let!(:disclosures) { Array.new(2) { create(:ny_disclosure) } }
+    let!(:matches) { disclosures.map { |d| NyMatch.match(d.id, donor.id) } }
+    let(:unmatch_donations) do
+      proc do
+        post '/nys/unmatch_donations', { payload: { ny_match_ids: matches.map(&:id) } }
+      end
+    end
+
+    specify { expect(&unmatch_donations).to change { NyMatch.count }.by(-2) }
+
+    context 'response' do
+      before { unmatch_donations.call }
+      subject { response }
+      it { is_expected.to have_http_status(200) }
+    end
+  end
 end
