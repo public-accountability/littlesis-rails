@@ -358,35 +358,6 @@ class EntitiesController < ApplicationController
     end
   end
 
-  def find_merges
-    check_permission 'merger'
-    
-    if @entity.person?
-      person = @entity.person
-      @matches = Entity.search("@(name,aliases) #{person.name_last} #{person.name_first}", per_page: 5, match_mode: :extended, with: { is_deleted: false }).select { |e| e.id != @entity.id }
-    elsif @entity.org?
-      @matches = EntityMatcher.by_org_name(@entity.name).select { |e| e.id != @entity.id }
-    end
-
-    if (@q = params[:q]).present?
-      page = params[:page]
-      num = params[:num]
-      @results = Entity.search("@(name,aliases) #{@q}", per_page: num, page: page, match_mode: :extended, with: { is_deleted: false })
-      @results.select! { |e| e.id != @entity.id }
-    end
-  end
-
-  def merge
-    check_permission 'merger'
-
-    @keep = Entity.find(params[:keep_id])
-    EntityMerger.merge_all(@keep, @entity)
-    @entity.soft_delete
-    @keep.clear_cache(request.host)
-
-    redirect_to @keep.legacy_url, notice: 'Entities were successfully merged.'
-  end
-
   def refresh
     check_permission 'admin'
     @entity.clear_cache(request.host)

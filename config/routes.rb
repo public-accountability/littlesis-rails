@@ -168,8 +168,6 @@ Lilsis::Application.routes.draw do
         post 'remove_article'
         get 'new_article'
         post 'create_article'
-        get 'find_merges'
-        post 'merge'
         get 'refresh'
         get 'images'
         get 'new_image'
