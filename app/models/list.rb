@@ -125,4 +125,23 @@ class List < ActiveRecord::Base
   def self.default_network
     find(Lilsis::Application.config.default_network_id)
   end
+
+  # [Entity|Ids]
+  def add_entities(entities_or_ids)
+    entities_or_ids.each { |x| add_one_entity(x) }
+    touch
+    self
+  end
+
+  def add_entity(entity_or_id)
+    add_one_entity(entity_or_id)
+    touch
+    self
+  end
+
+  private
+
+  def add_one_entity(entity_or_id)
+    ListEntity.find_or_create_by(list_id: id, entity_id: Entity.entity_id_for(entity_or_id))
+  end
 end

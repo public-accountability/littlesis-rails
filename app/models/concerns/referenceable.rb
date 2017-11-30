@@ -69,6 +69,26 @@ module Referenceable
     end
   end
 
+  # Hash -> ?Reference
+  def save_with_reference(reference_attrs)
+    # TODO: @aepyornis would like to think about
+    #   if we want to yield to a block here for entities
+    #   b/c of need to update their extension records
+    validate_reference(reference_attrs)
+    if valid?
+      save!
+      add_reference(reference_attrs)
+      return find_reference_by_url(reference_attrs[:url])
+    end
+    return nil
+  end
+
+  def find_reference_by_url(url)
+    # find references associating *this* particular referenceable with a document with a given url
+    # (this method is not a class method on `Reference` because we don't want all references)
+    references.find_by_document_id(Document.find_by_url(url))
+  end
+
   private
 
   # Required by ` validate :valid_new_reference? `

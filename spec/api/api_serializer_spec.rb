@@ -12,13 +12,13 @@ describe 'Api::Serializer' do
     subject { Api::Serializer.new(entity).attributes }
 
     context 'removes fields from attributes' do
-      ['id', 'is_deleted', 'created_at', 'last_user_id', 'merged_id', 'link_count'].each do |x|
+      ['is_deleted', 'created_at', 'last_user_id', 'merged_id', 'link_count'].each do |x|
         it { is_expected.not_to have_key x }
       end
     end
 
     context 'keeps other attributes' do
-      ["name", "blurb", "summary","website", "parent_id",
+      ["id", "name", "blurb", "summary","website", "parent_id",
        "primary_ext", "updated_at", "start_date", "end_date" ].each do |x|
         it { is_expected.to have_key x }
       end
@@ -60,8 +60,11 @@ describe 'Api::Serializer' do
   end # end describe Entity
 
   describe 'ExtensionRecord' do
-    let(:er) { build(:extension_record) }
+    let(:er) { build(:extension_record, id: 1) }
     subject { Api::Serializer.new(er).attributes }
-    specify { expect(subject).to eql('definition_id' => 2, 'name' => 'Org', 'display_name' => 'Organization') }
+    specify { expect(subject).to eql('id' => 1,
+                                     'definition_id' => 2,
+                                     'name' => 'Org',
+                                     'display_name' => 'Organization') }
   end
 end

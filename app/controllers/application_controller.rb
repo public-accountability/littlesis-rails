@@ -30,6 +30,11 @@ class ApplicationController < ActionController::Base
     render "errors/not_found", status: 404
   end
 
+  rescue_from Exceptions::UnauthorizedBulkRequest do |exception|
+    #return head :unauthorized # for use only with JSON requests
+    render json: { errors: ['title' => exception.message] }, status: 401
+  end
+
   def admins_only
     check_permission("admin")
   end
@@ -42,6 +47,14 @@ class ApplicationController < ActionController::Base
     raise Exceptions::PermissionError unless current_user.present?
     raise Exceptions::RestrictedUserError if current_user.restricted?
     raise Exceptions::PermissionError unless current_user.has_legacy_permission(name) || current_user.has_legacy_permission("admin")
+  end
+
+  # Array, Integer -> Void
+  def block_unless_bulker(resources = [], limit = 0)
+    # users who aren't admins or 'bulkers' may not create more than `limit` resources at a time
+    if resources.length > limit && !(current_user.bulker? || current_user.admin?)
+      raise Exceptions::UnauthorizedBulkRequest
+    end
   end
 
   def not_found
@@ -125,6 +138,10 @@ class ApplicationController < ActionController::Base
 
   def skip_queue_entity(key, entity_id)
     QueueEntity.skip_entity(key, entity_id, current_user.id)
+  end
+
+  def merge_last_user(attrs)
+    attrs.merge(last_user_id: current_user.sf_guard_user_id)
   end
 
   protected

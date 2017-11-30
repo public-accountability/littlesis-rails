@@ -11,6 +11,7 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require ./polyfill.js
+//= require fetch
 //= require jquery
 //= require bootstrap
 //= require jquery_ujs
@@ -30,6 +31,7 @@
 //= require d3.v4.min.js
 //= require papaparse.min.js
 //= require FileSaver.min.js
+//= require ./utility.js
 //= require_tree ./common
 //= require_tree ./pages
 

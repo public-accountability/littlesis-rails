@@ -8,6 +8,8 @@ module ListHelpersForExampleGroups
         delete x[:action], id: '123'
       elsif [:add_entity, :remove_entity, :update_entity].include?(x[:action])
         post x[:action], {id: '123', entity_id: '123', list_entity_id: '456' }
+      elsif x[:action] == :create_entity_associations
+        post x[:action]#, { data: [{ type: 'entities', id: 1 }] }
       else
         get x[:action], id: '123'
       end

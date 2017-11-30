@@ -109,10 +109,15 @@ Lilsis::Application.routes.draw do
       get 'street_views'
       get 'members'
       post 'create_map'
+      # entities
+      post 'add_entity'
+      get 'entities/bulk' => 'lists#new_entity_associations'
+      post 'entities/bulk' => 'lists#create_entity_associations'
+      post 'create_entities'
       post 'update_entity'
       post 'remove_entity'
+      # ^- entities
       get 'clear_cache'
-      post 'add_entity'
       post 'delete'
       get 'interlocks'
       get 'companies'
@@ -142,7 +147,6 @@ Lilsis::Application.routes.draw do
         get 'political'
         #get 'relationships'
         get 'datatable'
-        #
         get 'match_donations'
         get 'match_ny_donations'
         get 'review_donations'
@@ -180,6 +184,7 @@ Lilsis::Application.routes.draw do
         get 'search_by_name', as: 'name_search'
         get 'search_field_names', as: 'field_name_search'
         get 'next_twitter'
+        post 'bulk' => 'entities#create_bulk'
       end
     end
   end

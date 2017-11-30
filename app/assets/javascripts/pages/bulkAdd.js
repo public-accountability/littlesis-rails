@@ -776,7 +776,7 @@
   // which calls csvToTable with the contents of the file
   // after a file has been selected
   function readCSVFileListener(fileInputId) {
-    if (!utility.fileOpeningAbilities()) { return; }
+    if (!utility.browserCanOpenFiles()) { return; }
 
     function handleFileSelect() {
       if (this.files.length > 0) {  // do nothing if no file is selected

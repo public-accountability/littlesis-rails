@@ -3,12 +3,11 @@ common:
   ignore:
     - last_user_id
     - delta
-    - id
     - created_at
     - notes
     - is_deleted
 entity:
-  ignore: 
+  ignore:
     - merged_id
     - is_current
     - link_count

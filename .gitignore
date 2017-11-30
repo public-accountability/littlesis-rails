@@ -24,6 +24,9 @@
 # Ignore dumb OS X files
 *.DS_Store
 
+# Ignore pesky tern files
+.tern-port
+
 # Ignore sphinx indexes
 /db/sphinx
 

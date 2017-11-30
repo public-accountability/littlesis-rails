@@ -3,6 +3,12 @@ FactoryBot.define do
     n + 100
   end
 
+  factory :random_entity, class: Entity do
+    sequence(:id)
+    sequence(:name) { Faker::Name.unique.name }
+    primary_ext ['Org', 'Person'].sample
+  end
+
   factory :org, class: Entity do
     name 'org'
     primary_ext 'Org'

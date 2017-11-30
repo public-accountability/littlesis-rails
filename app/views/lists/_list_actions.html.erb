@@ -1,18 +1,18 @@
 <% if @permissions[:editable] %>
-    <div class="list-actions form-inline">
-	<% if @permissions[:configurable] %>
-	    <%= link_to('edit', edit_list_path(list), class: 'btn btn-default') %>
-	    <%= link_to('delete', list_path(list), class: 'btn btn-default', method: :delete, data: { confirm: 'Are you sure you want to delete this list?' }) %>
-	<% end %>
-	
-	<% if has_legacy_permission('bulker') %>
-	    <%= link_to('add bulk', list.legacy_url('addBulk'), class: 'btn btn-default') %>
-	    <% if person_count > 0 %>
-		<%= link_to('match donors', list.legacy_url('matchRelated'), class: 'btn btn-default') %>
-	    <% end %>
-	<% end %>
-	
-	<input id="add-entity-input" type="text" class="form-control" placeholder="add entity">
-    </div>
-    <br>
+  <div class="list-actions form-inline">
+    <% if @permissions[:configurable] %>
+      <%= link_to('edit', edit_list_path(list), class: 'btn btn-default') %>
+      <%= link_to('delete', list_path(list), class: 'btn btn-default', method: :delete, data: { confirm: 'Are you sure you want to delete this list?' }) %>
+    <% end %>
+    
+    <% if has_legacy_permission('bulker') %>
+      <%= link_to('add bulk', entities_bulk_list_path(list), class: 'btn btn-default') %>
+      <% if person_count > 0 %>
+	<%= link_to('match donors', list.legacy_url('matchRelated'), class: 'btn btn-default') %>
+      <% end %>
+    <% end %>
+    
+    <input id="add-entity-input" type="text" class="form-control" placeholder="add entity">
+  </div>
+  <br>
 <% end %>

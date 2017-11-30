@@ -1,0 +1,232 @@
+/* BULK TABLE STYLES */
+
+// TODO: make a colors.scss file and import from there!
+$light-maroon: rgba(204,133,133,0.4);
+$maroon: rgba(204, 84, 84, 1);
+$primary-blue: rgba(51, 122, 183, 1);
+$table-border-radius: .2em;
+
+// SHARED
+.fill-parent {
+    position: absolute; // only works if parent has position `absolute`
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+h1#bulk-add-header {
+    border-bottom: 1px solid gray;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.alert-icon{
+    @extend .glyphicon;
+    @extend .glyphicon-alert;
+    color: $maroon;
+}
+
+.tooltip-inner {
+    background-color: $maroon;
+}
+
+.tooltip-arrow {
+    border-bottom-color: $maroon;
+}
+
+#bulk-add-container {
+    #notifications {
+        font-style: italic;
+        color: gray;
+        margin-bottom: 1em;
+        span {
+            margin-left: 1em;
+        }
+    }
+    #upload-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        .btn {
+            display: flex;
+            margin: 0 .5em 0 .5em; // TRBL
+        }
+    }
+    table {
+        width: 100%;
+        border-collapse: separate !important;
+        border-spacing: 0;
+        .cell-input{
+            @extend .fill-parent;
+            border: none;
+            padding: .5em;
+        }
+        .error-alert{
+            @extend .fill-parent
+        }
+        td, th {
+            border: 1px solid gray;
+            padding: .5em;
+        }
+        th {
+            background-color: $maroon;
+            color: white;
+            font-size: larger;
+        }
+        thead {
+            th {
+                border-left: 0;
+            }
+            th:first-child {
+                border-top-left-radius: $table-border-radius;
+                border-left: 1px solid grey;
+            }
+            th:last-child {
+                border-top-right-radius: $table-border-radius;
+            }
+        }
+        tbody {
+            td {
+                border-top: 0;
+                border-left: 0;
+                height: 2.5em; // acts like min-height
+                min-width: 10em; // to keep other columns from collapsing when description is very long
+                position: relative; // needed to position error-alert below
+                cursor: pointer;
+                .tooltip-inner {
+                    background-color: $maroon;
+                }
+                .tooltip-arrow {
+                    border-bottom-color: $maroon;
+                }
+                .error-alert{
+                    @extend .fill-parent;
+                }
+                .alert-icon {
+                    @extend .alert-icon;
+                    margin: 0 .5em .4em 0; // TRBL
+                    float: right;
+                }
+                .delete-icon {
+                    @extend .glyphicon;
+                    @extend .glyphicon-remove;
+                    position: relative;
+                    left: calc(100% + 1.5em);
+                    color: $maroon;
+                    cursor: pointer;
+                }
+                .cell-input{
+                    @extend .fill-parent;
+                    border: 0 0 0 0;
+                    padding: .5em;
+                }
+            }
+            td:first-child {
+                border-left: 1px solid gray;
+            }
+            tr:last-child {
+                td:first-child {
+                    border-bottom-left-radius: $table-border-radius;
+                }
+                td:last-child {
+                    border-bottom-right-radius: $table-border-radius;
+                }
+            }
+            .resolver-anchor {
+                position: relative;
+                left: -2em;
+                top: .2em;
+                width: 1em;
+                cursor: pointer;
+                .alert-icon{
+                    @extend .alert-icon;
+                }
+            }
+            .arrow {
+                top: calc(0% + 6em) !important;
+            }
+            .popover-title {
+                font-weight: bold;
+            }
+            .resolver-popover {
+                .goto-link-icon{
+                    @extend .glyphicon;
+	            @extend .glyphicon-new-window;
+                    color: $primary-blue;
+                }
+                .btn {
+                    width: 100%;
+                }
+                .btn-danger {
+                    background-color: $maroon;
+                }
+                .resolver-picker-btn {
+                    margin: 1em 0 1em 0; // TRBL
+                }
+                .resolver-picker-result-container {
+                    width: 19em;
+                }
+                .resolver-picker-result {
+                    padding: 1em 0 0 .5em; // TRBL
+                    a {
+                        margin-right: .5em;  
+                    }
+                }
+            }
+        }
+    }
+    #reference-container {
+        margin: 1.5em 0 0 0;// TRBL
+        display: flex;
+        flex-direction: row;
+        height: 2.6em;
+        .alert-icon{
+            @extend .alert-icon;
+            margin: .6em .8em 0 0; // TRBL
+            float: right;
+        }
+        .label {
+            display: flex;
+            font-size: medium;
+            font-weight: bold;
+            background-color: $maroon;
+            color: white;
+            padding-top: .7em;
+            border-bottom-left-radius: $table-border-radius;
+            border-top-left-radius: $table-border-radius;
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+        }
+        .name{
+            display: flex;
+            flex-grow: 1;
+            padding-left: .5em;
+            border: 1px solid grey;
+            border-right: hidden;
+            border-radius: 0;
+        }
+        .url {
+            display: flex;
+            padding-left: .5em;
+            flex-grow: 1;
+            border: 1px solid grey;
+            border-bottom-right-radius: $table-border-radius;
+            border-top-right-radius: $table-border-radius;
+        }
+        .name input, .url input {
+            height: 100%;
+            width: 100%;
+            border: none;
+        }
+        .error-alert {
+            width: 20em;
+        }
+    }
+    #bulk-submit-button{
+        @extend .btn;
+        @extend .btn-primary;
+        width: 20%;
+        margin: 1.5em 40%; //TR
+    }
+}

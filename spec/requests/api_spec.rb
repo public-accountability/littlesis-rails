@@ -14,11 +14,7 @@ describe Api, :pagination_helper do
   end
 
   let(:meta) do
-    {
-      'copyright' => Api::META[:copyright],
-      'license' => Api::META[:license],
-      'apiVersion' => Api::META[:apiVersion]
-    }
+    Api::META
   end
 
   describe 'entities' do
@@ -32,6 +28,7 @@ describe Api, :pagination_helper do
             'type' => 'entities',
             'id' => lawyer.id,
             'attributes' => {
+              'id' => lawyer.id,
               'name' => lawyer.name,
               'blurb' => lawyer.blurb,
               'primary_ext' => 'Person',
@@ -114,6 +111,7 @@ describe Api, :pagination_helper do
             'type' => 'extension-records',
             'id' => entity.extension_records.first.id,
             'attributes' => {
+              "id" => entity.extension_records.first.id,
               "definition_id"=>2,
               "display_name"=>"Organization",
               "name"=>"Org"
@@ -123,6 +121,7 @@ describe Api, :pagination_helper do
             'type' => 'extension-records',
             'id' => entity.extension_records.second.id,
             'attributes' => {
+              'id' => entity.extension_records.second.id,
               "definition_id" => 11,
               "display_name" => "Political Fundraising Committee",
               "name"=>"PoliticalFundraising"
@@ -254,9 +253,9 @@ describe Api, :pagination_helper do
       specify do
         expect(json['meta'])
           .to eql({
-                    'copyright' => Api::META[:copyright],
-                    'license' => Api::META[:license],
-                    'apiVersion' => Api::META[:apiVersion],
+                    'copyright' => Api::META['copyright'],
+                    'license' => Api::META['license'],
+                    'apiVersion' => Api::META['apiVersion'],
                     'currentPage'=> 1,
                     'pageCount' => 2
                   })

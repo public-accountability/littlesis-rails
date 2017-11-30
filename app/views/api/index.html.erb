@@ -17,10 +17,10 @@
     <%= api_column do %>
 	<h2>Signup and Authorization</h2>
 	<p>In order to use the LittleSis API you must have an Api Token. You can get an Api Token from your LittleSis account settings page. If you don't yet have a LittleSis account, <%= link_to "go here to create one", new_user_registration_path %>. If you already have an account, access your settings page by either <%= link_to "following this link", edit_user_registration_path %> or by clicking on your name in the navigation bar and going to 'settings'. On that page you will be able to generate an Api Token or view your current token. </p>
-	
+
 	<p>Authorization is accomplished by including the http header <code>Littlesis-Api-Token</code> to each request.</p>
     <% end %>
-    
+
     <div class="col-md-12">
 	    <p>Example:</p>
 	    <pre><code>
@@ -29,7 +29,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
 	    <p>For brevity's sake, other examples in this document may omit the authorization header, but it is required for every request. The API will return status code 401 if you forget to include the Littlesis-Api-Token header and will return state code 403 if the token is invalid</p>
     </div>
 </div>
-    
+
 <div class="row">
     <%= api_column do %>
 	<h2>Responses</h2>
@@ -47,7 +47,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
           type: 'resourceType'
           id: '123'
           attributes: { ... }
-          links: { 
+          links: {
             self: '/link/to/resource'
           }
         },
@@ -69,7 +69,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
 }
 	</code></pre>
     </div>
-    
+
     <%= api_column do %>
 	<h4>Error Status Codes</h4>
 	<table class="table">
@@ -100,7 +100,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
 		    <td>410</td>
 		    <td class="content">Resource has been deleted (but once existed)</td>
 		</tr>
-		
+
 	    </tbody>
 	</table>
     <% end %>
@@ -116,6 +116,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
 	<h3><code>/api/entities/:id</code></h3>
 	<p>This provides basic information about an entity: </p>
 	<ul>
+	    <%= attribute_line('id', 'Unique numerical ID for entity in LittleSis database.') %>
 	    <%= attribute_line('name', 'The primary alias (not necessarily unique) of the Entity in LittleSis') %>
 	    <%= attribute_line('blurb', 'A short phrase or sentence describing the Entity') %>
 	    <%= attribute_line('primary_ext', '"Person" or "Org"') %>
@@ -148,6 +149,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
       "type": "extension-records",
       "id": 1,
       "attributes": {
+        "id": 1,
         "definition_id": 2,
         "display_name": "Organization",
         "name": "Org"
@@ -157,6 +159,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
       "type": "extension-records",
       "id": 2,
       "attributes": {
+        "id": 2,
         "definition_id": 5,
         "display_name": "Business",
         "name": "Business"
@@ -166,6 +169,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
       "type": "extension-records",
       "id": 3,
       "attributes": {
+        "id": 3,
         "definition_id": 13,
         "display_name": "Public Company",
         "name": "PublicCompany"
@@ -194,6 +198,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
       "type": "lists",
       "id": 1,
       "attributes": {
+        "id": 1,
         "name": "Fortune 1000 Companies (2008)",
         "description": "Fortune Magazine's list of the 1000 US companies with the largest published revenue figures.",
         "is_ranked": true,
@@ -210,6 +215,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
       "type": "lists",
       "id": 291,
       "attributes": {
+        "id": 291,
         "name": "Top Lobbying Clients in New York State in 2011",
         "description": "\"In 2011, 2,776 unique groups spent money lobbying in New York. The chart found from pages 2 through 97 of this report ranks each of them and compares their spending to 2010 levels.\"\r\n\r\n-NYPIRG, April 5, 2012",
         "is_ranked": true,
@@ -231,16 +237,16 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
     <%= api_column do %>
 	<%= api_title_route('Search by name', '/api/entities/search?q=NAME') %>
     <% end %>
-    
+
     <div class="col-md-10 col-sm-12"
 	<p>This searches our database for entities. The number of the relationships the entity has is used in the ranking algorithm. For instance, searching for 'Bush' will put <%= link_to 'George Bush', entity_path(Entity.find(28776)) %> before <%= link_to 'Jeb Bush', entity_path(Entity.find(34003)) %> because the former has more relationships in our database than the latter.</p>
 
-    
+
     <p>Example response:</p>
     <pre><code>
 {
     "data": [
-	{ 
+	{
 	  // entity objects are identical to those returned by the /api/entities/:id route
 	},
     ],
@@ -268,6 +274,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
     <%= api_title_route('Relationships', '/api/relationships/:id') %>
     <p>This provides basic information about a relationship: </p>
     <ul>
+      <%= attribute_line('id', 'Unique numerical ID for relationship in LittleSis database.') %>
       <%= attribute_line('description', 'A sentence describing the relationship') %>
       <%= attribute_line('category_id', 'Integer between 1 and 12, representing the relationship category') %>
       <%= attribute_line('category_name', 'The category of the relationship') %>
@@ -298,6 +305,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
     "type": "relationships",
     "id": 297069,
     "attributes": {
+      "id": 297069,
       "entity1_id": 72489,
       "entity2_id": 28778,
       "category_id": 5,
@@ -321,6 +329,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
       "type": "entities",
       "id": 72489,
       "attributes": {
+        "id": 72489,
         "name": "Robert Mercer",
         "blurb": "Renaissance Tech billionaire, Club for Growth backer",
         "summary": "Robert Mercer, 65, is co-CEO of Renaissance Technologies LLC, a $15 billion hedge fund. The IBM language-recognition whiz-turned-financier brought home $125 million in 2011, making him the 16th highest-earning hedge fund manager, according to Forbes.\r\n\r\nRenaissance Technologies is based in New York City, with additional locations in London and East Setauket, N.Y., where Mercer lives.",
@@ -346,6 +355,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
       "type": "entities",
       "id": 28778,
       "attributes": {
+        "id": 28778,
         "name": "Republican National Committee",
         "blurb": "The Grand Ol' Party",
         "summary": null,
@@ -374,5 +384,5 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
     </pre></code>
 
   <% end %>
-  
+
 </div>

@@ -16,6 +16,7 @@ class Entity < ActiveRecord::Base
 
   EXCERPT_SIZE = 150
   PER_PAGE = 20
+  BULK_LIMIT = 10
 
   has_paper_trail :ignore => [:link_count, :delta, :last_user_id],
                   :meta => {
