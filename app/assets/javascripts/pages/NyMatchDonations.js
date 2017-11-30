@@ -71,9 +71,14 @@ function NyMatchDonations(mode, entity_id) {
     });
   };
 
+  
   this.matchRequest = function(ids) {
     var url = '/nys/' + this.mode + '_donations';
-    $.post(url, {payload: {disclosure_ids: ids, donor_id: this.entity_id }})
+    var payload = (this.mode == 'match') ?
+	{disclosure_ids: ids, donor_id: this.entity_id } :
+	{ny_match_ids: ids };
+    
+    $.post(url, {payload: payload})
       .done(function(r){ 
         $('#match-donations .toolbar .loading').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
         $('#match-donations .toolbar .loading span').fadeOut(1100);

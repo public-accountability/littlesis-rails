@@ -310,6 +310,7 @@ Lilsis::Application.routes.draw do
   scope '/nys' do
     get "/" => "nys#index"
     post "/match_donations" => "nys#match_donations"
+    post "/unmatch_donations" => "nys#unmatch_donations"
     get "/candidates" => "nys#candidates"
     get "/pacs" => "nys#pacs"
     get "/:type/new" => "nys#new_filer_entity", constraints: { type: /pacs|candidates/ }
