@@ -26,7 +26,15 @@
 	  <% documents = @entity.all_documents(@page, 25) %>
 	  <% documents.each do |doc| %>
 	    <tr> 
-	      <td><%= doc.name %></td>
+	    	<% if user_signed_in? %>
+		      <td>
+		      	<%= link_to edit_document_path(doc) do %>
+	                <span class="glyphicon glyphicon-edit"></span>  <span><%= doc.name %></span>
+	            <% end %>
+		      </td>
+		    <% else %>
+		      <td><%= doc.name %></td>	    	
+		    <% end %>
 	      <td><%= link_to doc.url, doc.url, '_target' => 'blank' %></td>
 	      <td><%= doc.ref_types_display %></td>
 	    </tr>
