@@ -1,16 +1,20 @@
 require 'rails_helper'
 
 feature 'Merging entities' do
-  let(:user) { create_bulker_user }
+  let(:user) { create_merger_user }
   let(:source_entity) { create(:entity_person) }
 
   before(:each)  { login_as(user, scope: :user) }
   after(:each) { logout(:user) }
 
+  context 'as a regular user' do
+    let(:user) { create_basic_user }
+    before { visit "/tools/merge?source=#{source_entity.id}" }
+    denies_access
+  end
+
   context 'viewing the search table' do
-    before do
-      visit "/tools/merge?source=#{source_entity.id}"
-    end
+    before { visit "/tools/merge?source=#{source_entity.id}" }
 
     scenario 'page contains a table with potential entities to merge into' do
       # puts page.html

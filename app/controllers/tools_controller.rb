@@ -3,7 +3,7 @@ class ToolsController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_entity, only: [:bulk_relationships]
-  before_action -> { check_permission('bulker') }, only: [:merge_entities, :merge_entities!]
+  before_action -> { check_permission 'merger' }, only: [:merge_entities, :merge_entities!]
   before_action :parse_merge_params, only: [:merge_entities]
   before_action :set_source_and_dest, only: [:merge_entities!]
 
