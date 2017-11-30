@@ -21,4 +21,11 @@ describe ExtensionDefinition, type: :model  do
     end
   end
 
+  describe 'display_names' do
+    it 'returns a memozined hash map' do
+      expect(ExtensionDefinition.display_names).to be_a Hash
+      expect(ExtensionDefinition.display_names.keys.to_set).to eql ExtensionDefinition.all.map(&:id).to_set
+      expect(ExtensionDefinition.display_names.fetch(26)).to eql  "Political Party"
+    end
+  end
 end

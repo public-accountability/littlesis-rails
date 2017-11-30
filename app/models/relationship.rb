@@ -533,6 +533,11 @@ class Relationship < ActiveRecord::Base
     end
   end
 
+  # -> [ entity1_id, entity2_id, category_id ]
+  def triplet
+    [entity1_id, entity2_id, category_id]
+  end
+
   private
 
   def last_user_id_for_entity_update(sf_user_id = nil)

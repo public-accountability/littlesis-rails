@@ -77,7 +77,7 @@
 		<% end %>
 		<% if current_user.merger? || current_user.admin? %>
 		    <br />
-		    <%= link_to 'Merge this entity', @entity.legacy_url('merge') %>
+		    <%= link_to 'Merge this entity', tools_merge_path(source: @entity.id) %>
 		<% end %>    
 	    </div>
 	</div>
@@ -109,7 +109,7 @@
 		</ul>
 		
 		<% if user_signed_in? && (current_user.admin? || current_user.has_legacy_permission('merger') )%>
-		    <%= link_to 'Begin merging process »', @entity.legacy_url('merge'), id: 'begin-merging-process-link' %>
+		    <%= link_to 'Begin merging process »', tools_merge_path(source: @entity.id), id: 'begin-merging-process-link' %>
 		<% end %>
 	    </div>
 	</div>

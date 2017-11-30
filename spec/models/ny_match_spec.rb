@@ -1,16 +1,6 @@
 require 'rails_helper'
 
 describe NyMatch, type: :model do
-  before(:all) do
-    Entity.skip_callback(:create, :after, :create_primary_ext)
-    DatabaseCleaner.start
-  end
-
-  after(:all) do
-    Entity.set_callback(:create, :after, :create_primary_ext)
-    DatabaseCleaner.clean
-  end
-
   it { should validate_presence_of(:ny_disclosure_id) }
   it { should validate_presence_of(:donor_id) }
   it { should belong_to(:ny_disclosure) }
@@ -29,8 +19,8 @@ describe NyMatch, type: :model do
     end
 
     context 'creating new matches' do
-      # before(:all) { ThinkingSphinx::Deltas.suspend! }
-      # after(:all) {  ThinkingSphinx::Deltas.resume! }
+      let(:disclosure) { create(:ny_disclosure) }
+
       before(:each) do
         expect(NyFilerEntity).to receive(:find_by_filer_id).and_return(double(:entity_id => 100))
         allow(Relationship).to receive(:find_or_create_by!).and_return(rel)
@@ -38,31 +28,27 @@ describe NyMatch, type: :model do
       end
 
       it 'Creates a new match' do
-        d = create(:ny_disclosure)
-        expect { NyMatch.match(d.id, 1, 1) }.to change { NyMatch.count }.by(1)
+        expect { NyMatch.match(disclosure.id, 1, 1) }.to change { NyMatch.count }.by(1)
       end
 
       it 'Creates match with correct attributes' do
-        d = create(:ny_disclosure)
-        NyMatch.match(d.id, 50, 42)
+        NyMatch.match(disclosure.id, 50, 42)
         m = NyMatch.last
-        expect(m.ny_disclosure_id).to eql d.id
+        expect(m.ny_disclosure_id).to eql disclosure.id
         expect(m.donor_id).to eql 50
         expect(m.matched_by).to eql 42
       end
 
-      # it 'Sets matched_by to be the system_user_id if no user is given' do
-      #   d = create(:ny_disclosure)
-      #   NyMatch.match(d.id,20)
-      #   expect(NyMatch.last.matched_by).to eql 1
-      # end
+      it 'Sets matched_by to be the system_user_id if no user is given' do
+        NyMatch.match(disclosure.id,20)
+        expect(NyMatch.last.matched_by).to eql 1
+      end
 
       it 'Does not create a new match if the match already exits' do
-        d = create(:ny_disclosure)
-        expect { NyMatch.match(d.id, 20) }.to change { NyMatch.count }.by(1)
-        expect(NyMatch.last.ny_disclosure).to eql d
+        expect { NyMatch.match(disclosure.id, 20) }.to change { NyMatch.count }.by(1)
+        expect(NyMatch.last.ny_disclosure).to eql disclosure
         expect(NyMatch.last.matched_by).to eql 1
-        expect{ NyMatch.match(d.id, 20, 55) }.not_to change { NyMatch.count }
+        expect{ NyMatch.match(disclosure.id, 20, 55) }.not_to change { NyMatch.count }
         expect(NyMatch.last.matched_by).to eql 1
       end
     end
@@ -76,6 +62,49 @@ describe NyMatch, type: :model do
       d = create(:ny_disclosure)
       expect { NyMatch.match(d.id, 10) }. to change { Entity.find(elected.id).updated_at }
     end
+  end
+
+  describe 'matching then un matching' do
+    let(:filer_id) { SecureRandom.hex(2) }
+    let(:donor) { create(:entity_person) }
+    let(:nys_politician) { create(:entity_person) }
+    let(:ny_disclosures) { Array.new(2) { create(:ny_disclosure, filer_id: filer_id) } }
+    let(:disclosure_sum) { ny_disclosures.reduce(0) { |sum, d| (sum + d.amount1) } }
+
+    let!(:ny_filer_entity) do
+      NyFilerEntity.create!(filer_id: filer_id, entity_id: nys_politician.id, ny_filer_id: rand(1000))
+    end
+
+    let(:create_matches) do
+      proc { ny_disclosures.map(&:id).map { |i| NyMatch.match(i, donor.id) } }
+    end
+
+    it 'creates a relationship after matching both disclosures' do
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to be_zero
+      matches = create_matches.call
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to eql 1
+      rel = Relationship.find(matches.first.relationship_id)
+      expect(rel.amount).to eq disclosure_sum
+      expect(rel.filings).to eql 2
+      matches.each { |m| expect(m.recip_id).to eql(nys_politician.id) }
+    end
+
+    it 'changes relationship after removing one match' do
+      matches = create_matches.call
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to eql 1
+      expect { matches.first.unmatch! }.to change { NyMatch.count }.by(-1)
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to eql 1
+      rel = Relationship.find(matches.first.relationship_id)
+      expect(rel.amount).to eq (disclosure_sum - matches.first.ny_disclosure.amount1)
+    end
+
+    it 'removes the relationship after removing both matches' do
+      matches = create_matches.call
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to eql 1
+      expect { matches.each(&:unmatch!) }.to change { NyMatch.count }.by(-2)
+      expect(Relationship.where(entity1_id: donor.id, entity2_id: nys_politician.id).count).to be_zero
+    end
+
   end
 
   describe 'set_recipient' do
@@ -99,10 +128,8 @@ describe NyMatch, type: :model do
   end
 
   describe 'create_or_update_relationship' do
-    before(:all) do
-      @donor = create(:person)
-      @elected = create(:elected)
-    end
+    let(:donor) { create(:entity_person) }
+    let(:elected) { create(:elected) }
 
     it 'returns nil if relationship if nil' do
       expect(NyMatch.new(relationship_id: 123).create_or_update_relationship).to be nil
@@ -119,14 +146,14 @@ describe NyMatch, type: :model do
     describe 'creating and updating the same relationship' do
       it 'creates a new relationship, and then updates it.' do
         disclosure = create(:ny_disclosure, amount1: 50)
-        match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected)
+        match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: donor, recipient: elected)
         expect { match.create_or_update_relationship }.to change { Relationship.count }.by(1)
         expect(match.relationship).to eql Relationship.last
         expect(match.relationship.amount).to eql 50
         expect(match.relationship.filings).to eql 1
         expect(match.relationship.category_id).to eql 5
         disclosure = create(:ny_disclosure, amount1: 200)
-        match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected)
+        match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: donor, recipient: elected)
         expect { match.create_or_update_relationship }.not_to change { Relationship.count }
         expect(match.relationship.amount).to eql 250
         expect(match.relationship.filings).to eql 2
@@ -137,37 +164,35 @@ describe NyMatch, type: :model do
       disclosure = create(:ny_disclosure, amount1: 50)
       sf_user = create(:sf_guard_user)
       user = create(:user, sf_guard_user_id: sf_user.id)
-      match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected, matched_by: user.id)
+      match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: donor, recipient: elected, matched_by: user.id)
       match.create_or_update_relationship
       expect(Relationship.last.last_user_id).to eql sf_user.id
     end
 
     it 'sets the relationship\'s last_user id to default to be 1' do
       disclosure = create(:ny_disclosure, amount1: 50)
-      match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected)
+      match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: donor, recipient: elected)
       match.create_or_update_relationship
       expect(Relationship.last.last_user_id).to eql 1
     end
 
     it 'creates a new reference' do
       disclosure = create(:ny_disclosure, amount1: 50)
-      match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: @donor, recipient: @elected)
+      match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: donor, recipient: elected)
       expect { match.create_or_update_relationship }.to change { Reference.count }.by(1)
       expect(Reference.last.document.url).to eq disclosure.reference_link
       expect(Reference.last.document.name).to eq disclosure.reference_name
     end
   end
 
-  def setup_models
-    @donor = build(:person)
-    @elected = build(:elected)
-    @filer = build(:ny_filer, filer_id: '9876', name: 'some committee')
-    @disclosure = build(:ny_disclosure, amount1: 50, ny_filer: @filer)
-    @match = create(:ny_match, ny_disclosure: @disclosure, donor: @donor, recipient: @elected)
-  end
-
   describe '#info' do
-    before(:all) { setup_models }
+    before do
+      @donor = build(:person)
+      @elected = build(:elected)
+      @filer = build(:ny_filer, filer_id: '9876', name: 'some committee')
+      @disclosure = build(:ny_disclosure, amount1: 50, ny_filer: @filer)
+      @match = create(:ny_match, ny_disclosure: @disclosure, donor: @donor, recipient: @elected)
+    end
 
     it 'returns a hash' do
       expect(@match.info).to be_a(Hash)

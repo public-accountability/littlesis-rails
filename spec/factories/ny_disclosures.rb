@@ -1,11 +1,12 @@
 FactoryBot.define do
   factory :ny_disclosure, class: NyDisclosure do
-    filer_id 'A1'
+    filer_id { SecureRandom.hex(2) }
     report_id "A"
     transaction_code 'A'
     e_year '2014'
     transaction_id '123'
     schedule_transaction_date '1999-01-14'
+    amount1 { rand(5000) }
     sequence(:id)
   end
 

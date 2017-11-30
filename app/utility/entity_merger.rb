@@ -1,192 +1,348 @@
 class EntityMerger
-  def self.merge_basic(e1, e2, excludes = [])
+  attr_reader :source, :dest, :extensions,
+              :contact_info, :lists, :images,
+              :aliases, :document_ids, :tag_ids,
+              :articles, :os_categories,
+              :child_entities, :party_members,
+              :relationships, :potential_duplicate_relationships,
+              :os_match_relationships, :ny_match_relationships
+
+  def initialize(source:, dest:)
+    @source = source
+    @dest = dest
+    check_input_validity
+    reset_instance_vars
+  end
+
+  # the actual merging
+  def merge!
+    merge
+
     ActiveRecord::Base.transaction do
-      # have to have the same primary extension
-      raise "can't merge entities with different primary extensions" unless e1.primary_ext == e2.primary_ext
+      @extensions.each { |e| e.merge!(@dest) }
+      @contact_info.each(&:save!)
+      @contact_info_to_delete.each(&:destroy!)
+      @lists.each { |list_id| ListEntity.create!(list_id: list_id, entity_id: dest.id) }
+      @images.each(&:save!)
+      @aliases.each(&:save!)
+      @document_ids.each { |doc_id| dest.add_reference_by_document_id(doc_id) }
+      @tag_ids.each { |tag_id| dest.add_tag(tag_id) }
+      @articles.each(&:save!)
+      @child_entities.each(&:merge!)
+      @party_members.each(&:merge!)
+      @os_categories.each(&:save!)
+      @relationships.each(&:merge!)
+      merge_os_donations!
+      merge_ny_donations!
+      transfer_ny_filer_entity!
+      replace_os_match_cmte_id!
+      set_merged_id_and_delete
+    end
+  end
 
-      # add new extensions, if any, to e1, with attributes
-      exts1 = e1.extension_names
-      exts2 = e2.extension_names
+  # trial run
+  def report
+    merge
+    cp = ColorPrinter
+    puts "Merging #{cp.colorize(source.name, :red)} (#{cp.colorize(source.id, :bg_red) }) into #{cp.colorize(dest.name, :red)} (#{cp.colorize(dest.id, :bg_red)})"
 
-      (exts1 - exts2).each do |ext|
-        e1.add_extension(ext)
-      end
+    unless @extensions.length.zero?
+      puts cp.cyan("Adding or updating ") + cp.red(@extensions.count.to_s) + cp.cyan(" extensions")
+    end
 
-      # set values based on merge rules defined in merge_field
-      excludes = (excludes + ['id', 'created_at', 'updated_at']).uniq
-      attrs1 = e1.all_attributes
-      attrs2 = e2.all_attributes
-      attrs2.each do |key, value|
-        next if excludes.include?(key)
-        e1.set_attribute(key, merge_attribute(key, attrs1[key], attrs2[key]))
+    unless @contact_info.length.zero?
+      puts cp.cyan("Transferring ") + cp.red(@contact_info.count.to_s) + cp.cyan(" contact info models")
+    end
+
+    unless @lists.length.zero?
+      puts cp.cyan("Putting the merged entity on ") + cp.red(@lists.count.to_s) + cp.cyan(" new lists")
+    end
+
+    unless @relationships.length.zero?
+      puts cp.cyan("Transfering ") + cp.red(@relationships.count.to_s) + cp.cyan(" Relationships")
+    end
+
+    unless @potential_duplicate_relationships.length.zero?
+      puts cp.red("NOTICE: ") + cp.cyan("found ") + cp.blue(@potential_duplicate_relationships.count.to_s) + cp.cyan(' potential duplicate relationships')
+    end
+
+    unless @aliases.length.zero?
+      puts cp.cyan("adding ") + cp.red(@aliases.length.to_s) + cp.cyan(" aliases: ") + cp.blue(@aliases.map(&:name).join(', '))
+    end
+
+    unless @document_ids.length.zero?
+      puts cp.cyan("Transfering ") + cp.red(@document_ids.count.to_s) + cp.cyan(" documents")
+    end
+
+    unless @tag_ids.length.zero?
+      puts cp.cyan("Transfering ") + cp.red(@tag_ids.count.to_s) + cp.cyan(" tags: ") + cp.blue(@tag_ids.map { |t| Tag.find(t).name }.join(', '))
+    end
+  end
+
+  def merge
+    merge_extensions
+    merge_contact_info
+    merge_lists
+    merge_images
+    merge_aliases
+    merge_references
+    merge_tags
+    merge_articles
+    merge_os_categories
+    merge_child_entities
+    merge_party_members
+    merge_relationships
+    self
+  end
+
+  ## Merge Functions ##
+
+  Extension = Struct.new(:ext_id, :new, :fields) do
+    def initialize(ext_id, new, fields = {})
+      super
+    end
+
+    def merge!(dest)
+      if self.new
+        dest.add_extension(ext_id, fields)
+      else
+        dest.merge_extension(ext_id, fields)
       end
     end
 
-    e1
   end
 
-  def self.merge_attribute(key, old, nu)
-    return nu if old.nil?
-    return old if nu.nil?
-    return old if old == nu
-
-    append_with_new_line_fields = ['summary', 'notes']
-    append_with_space_fields = ['name_suffix', 'name_prefix']
-    date_fields = ['start_date', 'end_date']
-    name_fields = ['name_first', 'name_middle']
-    number_fields = ['employees', 'revenue', 'endowment', 'net_worth']
-
-    return old + "\n\n" + nu if append_with_new_line_fields.include?(key)
-    return old + " " + nu if append_with_space_fields.include?(key)
-
-    if date_fields.include?(key)
-      old_date = Date.new(old)
-      nu_date = Date.new(nu)
-
-      return old_date.format if old_date.how_specific > nu_date.how_specific
-      return nu_date.format if old_date_how_specific < nu_date.how_specific
-
-      return (Date.less_or_equal(old_date, nu_date) ? old_date : nu_date) if old_date.how_specific == Date::YEAR_SPECIFIC
-      return old_date
+  def merge_extensions
+    source_extension_attributes = source.extensions_with_attributes
+    # new extensions
+    (source.extension_ids.to_set - dest.extension_ids.to_set).each do |ext_id|
+      if Entity.extension_with_field?(ext_id)
+        @extensions << Extension.new(ext_id, true, source_extension_attributes[Entity.ext_name_or_id_to_name(ext_id)])
+      else
+        @extensions << Extension.new(ext_id, true)
+      end
     end
 
-    return ((old.length >= nu.length or old.length != 1) ? old : nu) if name_fields.include?(key)
-    return (old == 0 ? nu : old) if number_fields.include?(key)
-
-    old
+    # common extensions:
+    source.extension_ids.to_set.intersection(dest.extension_ids.to_set).each do |ext_id|
+      if Entity.extension_with_field?(ext_id)
+        @extensions << Extension.new(ext_id, false, source_extension_attributes[Entity.ext_name_or_id_to_name(ext_id)])
+      end
+    end
   end
 
-  def self.merge_all(e1, e2)
-    ActiveRecord::Base.transaction do
-      e1 = merge_basic(e1, e2)
+  def merge_contact_info
+    source.addresses.each do |address|
+      unless dest.addresses.present? && dest.addresses.select { |dest_a| dest_a.same_as?(address) }.present?
+        @contact_info << address.dup.tap(&set_dest_entity_id)
+        @contact_info_to_delete << address
+      end
+    end
 
-      # CONTACT INFO
-      e2.phones.each do |phone|
-        phone.update(entity_id: e1.id) unless e1.phones.where(number: phone.number).exists?        
+    source.emails.each do |email|
+      unless dest.emails.present? && dest.emails.map(&:address).include?(email.address)
+        @contact_info << email.dup.tap(&set_dest_entity_id)
+        @contact_info_to_delete << email
       end
-      e2.emails.each do |email|
-        email.update(entity_id: e1.id) unless e1.emails.where(address: email.address).exists?
+    end
+
+    source.phones.each do |phone|
+      unless dest.phones.present? && dest.phones.map(&:number).include?(phone.number)
+        @contact_info << phone.dup.tap(&set_dest_entity_id)
+        @contact_info_to_delete << phone
       end
-      e2.addresses.each do |address|
-        address.update(entity_id: e1.id) unless e1.addresses.find { |a| a.same_as?(address) }
+    end
+  end
+
+  def merge_lists
+    @lists = source.list_entities.pluck(:list_id).to_set - dest.list_entities.pluck(:list_id).to_set
+  end
+
+  def merge_images
+    @images = @source.images.map { |img| img.tap(&set_dest_entity_id) }
+  end
+
+  def merge_aliases
+    source.aliases.each do |a|
+      unless dest.aliases.map(&:name).include?(a.name)
+        @aliases << Alias.new(name: a.name, entity_id: dest.id, is_primary: false)
       end
+    end
+  end
+
+  def merge_references
+    @document_ids = source.references.map(&:document_id).to_set - dest.references.map(&:document_id).to_set
+  end
+
+  def merge_tags
+    @tag_ids = source.taggings.map(&:tag_id).to_set - dest.taggings.map(&:tag_id).to_set
+  end
+
+  def merge_articles
+    @articles = source
+                  .article_entities
+                  .reject { |ae| dest.article_entities.where(article_id: ae.article_id).exists? }
+                  .map { |ae| ae.tap { |x| x.entity_id = dest.id } }
+  end
+
+  
+  def merge_os_categories
+    @os_categories = source
+                       .os_entity_categories
+                       .reject { |oec| dest.os_entity_categories.where(category_id: oec.category_id).exists? }
+                       .map { |oec| oec.tap(&set_dest_entity_id) }
+  end
+
+  MergedRelationship = Struct.new(:relationship, :docs) do
+    def merge!
+      relationship.save!
+      docs.each { |doc_id| relationship.add_reference_by_document_id(doc_id) }
+    end
+  end
+
+  def merge_relationships
+    source.relationships.includes(:os_matches).each do |relationship|
+      # OpenSecrets Relationships are handled in merge_os_donations!
+      if relationship.os_matches.exists?
+        @os_match_relationships << relationship
+        next
+      end
+
+      if relationship.ny_matches.exists?
+        @ny_match_relationships << relationship
+        next
+      end
+
+      attributes = relationship.attributes.except('id', 'entity1_id', 'entity2_id', 'updated_at', 'created_at')
       
-      # RELATIONSHIPS
-      e2.relationships.each do |rel|
-        if rel.entity1_id == e2.id
-          rel.update(entity1_id: e1.id)
-          rel.links.where(is_reverse: false).update_all(entity1_id: e1.id)
-          rel.links.where(is_reverse: true).update_all(entity2_id: e1.id)
-        elsif rel.entity2_id = e2.id
-          rel.update(entity2_id: e1.id)
-          rel.links.where(is_reverse: false).update_all(entity2_id: e1.id)
-          rel.links.where(is_reverse: true).update_all(entity1_id: e1.id)
-        end
+      if relationship.entity1_id == source.id
+        attributes.merge!('entity1_id' => dest.id, 'entity2_id' => relationship.entity2_id)
+      elsif relationship.entity2_id == source.id
+        attributes.merge!('entity2_id' => dest.id, 'entity1_id' => relationship.entity1_id)
+      else
+        raise Exceptions::ThatsWeirdError
       end
 
-      # LISTS
-      e2.list_entities.active.each do |le|
-        le.update(entity_id: e1.id) unless e1.list_entities.active.map(&:list_id).include?(le.list_id)        
+      new_relationship = Relationship.new(attributes)
+
+      @relationships << MergedRelationship.new(new_relationship, relationship.document_ids)
+
+      if dest_relationship_lookup.include?(new_relationship.triplet)
+        @potential_duplicate_relationships << new_relationship
       end
-
-      # IMAGES
-      e2.images.update_all(entity_id: e1.id)
-
-      # ALIASES
-      e2.aliases.each do |a|
-        next if e1.aliases.where(name: a.name, context: a.context).exists?
-        a.update(entity_id: e1.id, is_primary: false)
-      end
-
-      # IGNORE CUSTOM FIELDS B/C THEY'RE NOT USED
-
-      # IGNORE MODIFICATIONS IN RAILS
-
-      # IGNORE TAGS B/C THEY'RE NOT USED
-
-      # REFERENCES
-      e2.references.each do |ref|
-        ref.update(object_id: e1.id) unless e1.references.find { |r| r.source == ref.source }
-      end
-
-      e2.update(merged_id: e1.id)
-
-      # CHILD ENTITIES
-      e2.children.update_all(parent_id: e1.id)
-
-      # PARTY MEMBERS
-      e2.party_members.each do |pm|
-        pm.person.update(party_id: e1.id)
-      end
-
-      # IGNORE BUSINESS INDUSTRIES B/C THEY'RE NOT USED
-
-      # IGNORE BUNDLERS B/C THEY'RE NOT USED
-
-      # LOBBY FILING LOBBYISTS    
-      ActiveRecord::Base.connection.execute("UPDATE lobby_filing_lobbyist SET lobbyist_id = #{e1.id} WHERE lobbyist_id = #{e2.id}")
-
-      # TRANSACTION CONTACTS
-      ActiveRecord::Base.connection.execute("UPDATE transaction SET contact1_id = #{e1.id} WHERE contact1_id = #{e2.id}")
-      ActiveRecord::Base.connection.execute("UPDATE transaction SET contact2_id = #{e1.id} WHERE contact2_id = #{e2.id}")
-
-      # NOTES
-      e2.note_entities.each do |ne|
-        ne.update(entity_id: e1.id) unless e1.note_entities.where(note_id: ne.note_id).exists?
-      end
-
-      # DONATION MATCHES
-      e2.os_entity_transactions.each do |et2|
-        if et1 = e1.os_entity_transactions.where(cycle: et2.cycle, transaction_id: et2.transaction_id).first
-          # only merge in verified matches
-          if et2.is_verified
-            et1.update(is_verified: true, is_processed: false, is_synced: false)
-          end
-
-          et2.destroy
-        else
-          et2.update(entity_id: e1.id, is_processed: false, is_synced: false)
-        end
-      end
-      # remove and rebuild relationships with fec filings based on donation matches
-      e1.relationships.joins(:fec_filings).where(category_id: 5).each { |r| r.soft_delete }
-      e1.os_entity_transactions.where(is_verified: true).update_all(is_processed: false, is_synced: false)
-
-      # DONATION MATCHING PREPROCESS LOG
-      e2.os_entity_preprocesses.each do |ep2|
-        if e1.os_entity_preprocesses.find { |ep1| ep1.cycle == ep2.cycle }
-          ep2.destroy
-        else
-          ep2.update(entity_id: e1.id)
-        end
-      end
-
-      # EXTERNAL KEYS
-      e2.external_keys.each do |key|
-        key.update(entity_id: e1.id) unless e1.external_keys.find { |k| k.domain_id == key.domain_id }
-      end
-
-      # OPENSECRETS CATEGORIES
-      e2.os_entity_categories.each do |ec2|
-        ec2.update(entity_id: e1.id) unless e1.os_entity_categories.where(category_id: ec2.category_id).exists?
-      end
-
-      # FIELDS
-      e2.entity_fields.each do |ef2|
-        ef2.update(entity_id: e1.id) unless e1.entity_fields.where(field_id: ef2.field_id).exists?
-      end
-
-      # ARTICLES
-      e2.article_entities.each do |ae2|
-        ae2.update(entity_id: e1.id) unless e1.article_entities.where(article_id: ae2.article_id).exists?
-      end
-
-      # QUEUES
-      e2.queue_entities.each do |qe2|
-        qe2.update(entity_id: e1.id) unless e1.queue_entities.where(queue: ae2.queue).exists?
-      end
-
-      e1
     end
+  end
+  
+  #def merge_versions!; end
+
+  def merge_os_donations!
+    @os_match_relationships.each do |rel|
+      if rel.entity1_id == source.id
+        os_donation_ids = rel.os_matches.map(&:os_donation_id)
+        rel.os_matches.each(&:destroy!)
+        os_donation_ids.each { |i| OsMatch.create!(os_donation_id: i, donor_id: dest.id) }
+      elsif rel.entity2_id == source.id
+        rel.os_matches.each { |m| m.update!(recip_id: dest.id) }
+        rel.update!(entity2_id: dest.id)
+        rel.links.where(is_reverse: false).update_all(entity2_id: dest.id)
+        rel.links.where(is_reverse: true).update_all(entity1_id: dest.id)
+      else
+        raise Exceptions::ThatsWeirdError
+      end
+    end
+  end
+
+  def replace_os_match_cmte_id!
+    OsMatch.where(cmte_id: source.id).update_all(cmte_id: dest.id)
+  end
+
+  def transfer_ny_filer_entity!
+    NyFilerEntity.where(entity_id: source.id).update_all(entity_id: dest.id)
+  end
+
+  def merge_ny_donations!
+    @ny_match_relationships.each do |rel|
+      if rel.entity1_id == source.id
+        ny_disclosure_ids = rel.ny_matches.map(&:ny_disclosure_id)
+        rel.ny_matches.each(&:unmatch!)
+        ny_disclosure_ids.each { |i| NyMatch.match(i, dest.id) }
+      elsif rel.entity2_id == source.id
+        rel.ny_matches.each { |m| m.update!(recip_id: dest.id) }
+        rel.update!(entity2_id: dest.id)
+        rel.links.where(is_reverse: false).update_all(entity2_id: dest.id)
+        rel.links.where(is_reverse: true).update_all(entity1_id: dest.id)
+      else
+        raise Exceptions::ThatsWeirdError
+      end
+    end
+  end
+
+  def set_merged_id_and_delete
+    source.update!(merged_id: dest.id)
+    source.reload.soft_delete
+  end
+
+  ChildEntity = Struct.new(:child, :dest_id) do
+    def merge!
+      child.update_columns(:parent_id => dest_id)
+    end
+  end
+  
+  def merge_child_entities
+    @child_entities = @source.children.map { |e| ChildEntity.new(e, @dest.id) }
+  end
+
+  PartyMember = Struct.new(:party_member, :dest_id) do
+    def merge!
+      party_member.person.update_columns(party_id: dest_id)
+    end
+  end
+
+  def merge_party_members
+    @party_members = @source.party_members.map { |e| PartyMember.new(e, @dest.id) }
+  end
+
+  ## ERRORS ##
+
+  class ExtensionMismatchError < ArgumentError
+    def message
+      "Only entities with the same primary ext can be merged"
+    end
+  end
+
+  ## Private Methods ##
+
+  private
+
+  def reset_instance_vars
+    @extensions = []
+    @contact_info = []
+    @contact_info_to_delete = []
+    @lists = []
+    @images = []
+    @aliases = []
+    @document_ids = []
+    @tag_ids = []
+    @os_categories = []
+    @child_entities = []
+    @party_members = []
+    @relationships = []
+    @potential_duplicate_relationships = []
+    @os_match_relationships = []
+    @ny_match_relationships = []
+  end
+
+  def check_input_validity
+    raise ArgumentError, "Both source and dest must an Entity" unless source.is_a?(Entity) && dest.is_a?(Entity)
+    raise ExtensionMismatchError unless source.primary_ext == dest.primary_ext
+  end
+
+  def set_dest_entity_id
+    proc { |x| x.entity_id = dest.id }
+  end
+
+  # Set of arrays of three elements: [ entity1_id, entity2_id, category_id ]
+  def dest_relationship_lookup
+    @dest_relationship_lookup ||= Set.new(dest.relationships.map(&:triplet))
   end
 end

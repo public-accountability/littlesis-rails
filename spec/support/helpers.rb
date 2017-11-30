@@ -40,6 +40,14 @@ def create_bulk_user
   user
 end
 
+def create_merger_user
+  sf_user = FactoryBot.create(:sf_guard_user)
+  user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 7, user_id: sf_user.id)
+  user
+end
+
 def create_list_user
   sf_user = FactoryBot.create(:sf_guard_user)
   user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
@@ -66,6 +74,14 @@ def create_basic_user
   SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
   SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
+  user
+end
+
+def create_bulker_user
+  sf_user = FactoryBot.create(:sf_guard_user)
+  user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 9, user_id: sf_user.id)
   user
 end
 

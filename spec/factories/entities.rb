@@ -72,4 +72,12 @@ FactoryBot.define do
   trait :with_last_user_id do
     last_user_id APP_CONFIG['system_user_id']
   end
+
+  trait :with_person_name do
+    name { "#{Faker::Name.first_name} #{Faker::Name.last_name}" }
+  end
+
+  trait :with_org_name do
+    name { Faker::Company.name }
+  end
 end

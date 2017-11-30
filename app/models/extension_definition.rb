@@ -27,4 +27,10 @@ class ExtensionDefinition < ActiveRecord::Base
     where(has_fields: true).map(&:id)
   end
 
+  # Returns a memozined hash map from definition id to display name
+  def self.display_names
+    @display_names_lookup ||= all.inject({}) do |acc, ed|
+      acc.tap { |acc| acc.store(ed.id, ed.display_name) }
+    end
+  end
 end

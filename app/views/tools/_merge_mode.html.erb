@@ -1,0 +1,124 @@
+<div class="row">
+  <div class="col-sm-12 nopadding">
+    <h2>You are about to <span class="bg-warning">merge</span> all of <%= link_to "#{@source.name} (#{@source.id})'s", entity_path(@source) %>
+      relationships and information with <%= link_to "#{@dest.name} (#{@dest.id})", entity_path(@dest) %></h2>
+    <h2>It will delete <%= link_to "#{@source.name} (#{@source.id})", entity_path(@source) %> from the database</h2>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-sm-12 nopadding">
+    <h4><em>This will make the following changes:</em></h4>
+  </div>
+  <div class="col-sm-12 nopadding">
+    <ul id="merge-report">
+      <% unless_em_prop_is_empty :relationships  do %>
+	<% relationship_class =  em_prop(:relationships).count > 5 ? 'bg-danger' : '' %>
+	<li>
+	  <span class="<%= relationship_class %>">
+	    Transfer <strong><%= em_prop(:relationships).count %></strong> relationships
+	  </span>
+	</li>
+      <% end %>
+      
+      <% unless_em_prop_is_empty :extensions do %>
+	<li>
+	  Add or update the following extensions: <%= @entity_merger.extensions.map(&:ext_id).map { |i| ExtensionDefinition.display_names.fetch(i) }.join(', ') %>
+	</li>
+      <% end  %>
+
+      <% unless_em_prop_is_empty :contact_info  do %>
+	<li>
+	  Transfer <strong><%= @entity_merger.contact_info.count %></strong> emails, address, or phone numbers
+	</li>
+      <% end %>
+
+      <% unless_em_prop_is_empty :lists  do %>
+	<li>
+	  Add <%= link_to "#{@dest.name} (#{@dest.id})", entity_path(@dest) %> to <strong><%= @entity_merger.lists.count %></strong> lists
+	</li>
+      <% end  %>
+
+      <% unless_em_prop_is_empty :images  do %>
+	<li>
+	  Transfer <strong><%= em_prop(:images).count %></strong> images
+	</li>
+      <% end  %>
+
+      <% unless_em_prop_is_empty :aliases  do %>
+	<li>
+	Transfer the following aliases: <em><%= em_prop(:aliases).map(&:name).join(', ') %></em>
+	</li>
+      <% end %>
+
+      <% unless_em_prop_is_empty :document_ids  do %>
+	<li>
+	  Transfer <strong><%= em_prop(:document_ids).count %></strong> references
+	</li>
+      <% end %>
+
+      <% unless_em_prop_is_empty :tag_ids  do %>
+	<li>
+	  Add <%= link_to "#{@dest.name} (#{@dest.id})", entity_path(@dest) %> to these tags: <%= em_prop(:tag_ids).map { |t| Tag.find(t).name }.join(', ')%>
+	</li>
+      <% end %>
+
+      <% unless_em_prop_is_empty :articles  do %>
+	<li>
+	  Transfer <strong><%= em_prop(:articles).count %></strong> articles
+	</li>
+      <% end %>
+
+      <% unless_em_prop_is_empty :ny_match_relationships do %>
+	<li>
+	  Transfer <strong><%= em_prop(:ny_match_relationships).count %></strong> New York State donation relationships
+	</li>
+      <% end %>
+      
+      <% unless_em_prop_is_empty :os_match_relationships do %>
+	<li>
+	  Transfer <strong><%= em_prop(:os_match_relationships).count %></strong> Federal donation relationships
+	</li>
+      <% end %>	
+
+      <% unless_em_prop_is_empty :child_entities do %>
+	<li>
+	  Transfer <strong><%= em_prop(:child_entities).count %></strong> child entities
+	</li>
+      <% end %>
+
+      <% unless_em_prop_is_empty :party_members do %>
+	<li>
+	  Transfer <strong><%= em_prop(:party_members).count %></strong> party members
+	</li>
+      <% end %>	
+    </ul>
+  </div>
+  
+  <% unless_em_prop_is_empty :potential_duplicate_relationships do %>
+    <div class="col-sm-8 nopadding">
+      <div class="panel panel-default">
+	<div class="panel-body">
+	  <p>
+	    <strong><%= em_prop(:potential_duplicate_relationships).count %></strong> relationships
+	    were marked as <span class="bg-danger">possible duplicates</span>
+	  </p>
+	  <p>No action is required, but you might consider looking over the profile page afterwards to see if they should be removed.</p>
+	</div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 nopadding" id="merge-report-action-buttons">
+    <%= form_tag('/tools/merge', method: :post, id: 'merge-entities-form') do %>
+      <%= hidden_field_tag 'source', @source.id %>
+      <%= hidden_field_tag 'dest', @dest.id %>
+      <%= submit_tag 'Merge', class: 'btn btn-lrg btn-primary' %>
+    <% end %>
+    <%= link_to "Go back", "/tools/merge?source=#{@source.id}", class: 'btn btn-default m-left-1em' %>
+    <%= link_to "Dashboard", home_dashboard_path, class: 'btn btn-default' %>
+  </div>
+</div>
