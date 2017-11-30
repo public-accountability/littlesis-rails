@@ -1032,7 +1032,7 @@
     return state
       .setIn(['entities', 'byId', entity.id], newEntity)
       .maybeReidentifyEntity(newEntity, attr)
-      .then(s => s.validateAndRender());
+      .then(state.validateAndRender);
   };
 
   // String -> String -> State
