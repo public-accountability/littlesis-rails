@@ -224,6 +224,30 @@ class Entity < ActiveRecord::Base
     self
   end
 
+  # Merges extensions attribues for already existing extensions
+  # This will only merge fields that are nil -- it won't update already existing fields
+  # Example:
+  #   If school.attributes['tuition'] => 'nil'
+  #   then merge_extension('school', { tuition' => 20_000 }) will change
+  #   the school tutition attribute to 20_000.
+  #   However if school.attributes['tuition'] => 5_000, merge_extension('school', { tuition' => 20_000 }) will do nothing
+  #   and school.attributes['tuition']  will remain at 5_000
+  def merge_extension(name_or_id, fields)
+    name = name_or_id_to_name(name_or_id)
+    unless extension_with_fields?(name) && has_extension?(name)
+      throw ArgumentError, "merge_extension can only be used with extensions that have fields"
+    end
+    extension = name.constantize.find_by_entity_id(id)
+
+    update_attrs = ActiveSupport::HashWithIndifferentAccess
+                          .new(fields)
+                          .delete_if { |_, v| v.nil? }
+                          .slice(*extension.attributes.select { |_, v| v.nil? }.keys)
+
+    extension.update(update_attrs) unless update_attrs.empty?
+    self
+  end
+
   # Create new extension by definition ids
   # Accepts array of ids
   def add_extensions_by_def_ids(ids)
@@ -309,6 +333,10 @@ class Entity < ActiveRecord::Base
       'PoliticalFundraising',
       'Couple'
     ]
+  end
+
+  def self.extension_with_field?(name_or_id)
+    all_extension_names_with_fields.include? ext_name_or_id_to_name(name_or_id)
   end
 
   def related_essential_words
@@ -776,9 +804,24 @@ class Entity < ActiveRecord::Base
     blurb
   end
 
-  private
+  # A type checker for definition id and names
+  # input: String or Integer
+  # output: String or throws ArgumentError
+  def self.ext_name_or_id_to_name(name_or_id)
+    case name_or_id
+    when String
+      return name_or_id if all_extension_names.include?(name_or_id)
+      raise ArgumentError, "there are no extensions associated with name: #{name_or_id}"
+    when Integer
+      name = all_extension_names[name_or_id]
+      return name unless name.nil?
+      raise ArgumentError, "there is no extension associated with id #{name_or_id}"
+    else
+      raise ArgumentError, "input must be a string or an integer"
+    end
+  end
 
-  
+  private
 
   # Callbacks for Soft Delete
   def after_soft_delete
@@ -792,21 +835,8 @@ class Entity < ActiveRecord::Base
     # ArticleEntity
   end
 
-  # A type checker for definition id and names
-  # input: String or Integer
-  # output: String or throws ArgumentError
   def name_or_id_to_name(name_or_id)
-    case name_or_id
-    when String
-      return name_or_id if self.class.all_extension_names.include?(name_or_id)
-      raise ArgumentError, "there are no extensions associated with name: #{name_or_id}"
-    when Integer
-      name = self.class.all_extension_names[name_or_id]
-      return name unless name.nil?
-      raise ArgumentError, "there is no extension associated with id #{name_or_id}"
-    else
-      raise ArgumentError, "input must be a string or an integer"
-    end
+    self.class.send(:ext_name_or_id_to_name, name_or_id)
   end
 
   def extension_with_fields?(name)

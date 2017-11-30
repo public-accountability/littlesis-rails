@@ -36,6 +36,8 @@ class NyMatch < ActiveRecord::Base
   end
 
   # input: int, int, int (optional)
+  # output: NyMatch
+  # Matches the NY disclosure with the donor.
   def self.match(disclosure_id, donor_id, matched_by=APP_CONFIG['system_user_id'])
     m = self.find_or_initialize_by(ny_disclosure_id: disclosure_id, donor_id: donor_id)
     if m.new_record?
@@ -44,6 +46,15 @@ class NyMatch < ActiveRecord::Base
       m.create_or_update_relationship
       m.recipient.try(:touch)
       m.save
+    end
+    return m
+  end
+
+  def unmatch!
+    destroy!
+    if relationship.present?
+      relationship.update_ny_donation_info.save!
+      relationship.soft_delete unless relationship.ny_matches.exists?
     end
   end
 

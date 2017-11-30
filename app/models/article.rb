@@ -15,7 +15,6 @@ class Article < ActiveRecord::Base
       driver.navigate.to(url)
       driver.save_screenshot(screenshot_path)
     rescue => e
-      binding.pry
       return false
     end
 
