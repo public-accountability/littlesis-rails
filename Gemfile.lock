@@ -194,12 +194,12 @@ GEM
     i18n (0.8.6)
     innertube (1.1.0)
     ipaddress (0.8.3)
-    jasmine (2.6.0)
-      jasmine-core (>= 2.6.0, < 3.0.0)
+    jasmine (2.8.0)
+      jasmine-core (>= 2.8.0, < 3.0.0)
       phantomjs
       rack (>= 1.2.1)
       rake
-    jasmine-core (2.6.3)
+    jasmine-core (2.8.0)
     joiner (0.3.4)
       activerecord (>= 4.1.0)
     jquery-rails (4.2.2)
@@ -367,11 +367,11 @@ GEM
     shoulda-matchers (3.1.1)
       activesupport (>= 4.0.0)
     simple_oauth (0.3.1)
-    simplecov (0.14.1)
+    simplecov (0.15.1)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
-    simplecov-html (0.10.0)
+    simplecov-html (0.10.2)
     slop (3.6.0)
     soap4r-ruby1.9 (2.0.5)
     spring (2.0.2)
@@ -460,7 +460,7 @@ DEPENDENCIES
   geocoder
   headless
   htmlentities
-  jasmine (~> 2.6.0)
+  jasmine (~> 2.8.0)
   jquery-rails
   jquery-ui-rails (~> 6.0.0)
   kaminari
