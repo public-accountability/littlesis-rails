@@ -73,7 +73,8 @@
         reference: {}  // { ['name'|'url']: [String] }
       },
       canUpload: true,
-      notification: ""
+      notification: "",
+      newIdCount: args.entities ? Object.keys(args.entities.byId).length : -1
     });
     state.render().setUploadSupport();
 
@@ -172,6 +173,15 @@
     return state.getIn(['errors', 'reference', attr]);
   };
 
+  // Integer -> State
+  state.incrementIdCountBy = function(n){
+    return state.set('newIdCount', state.newIdCount + n);
+  };
+
+  // () -> String
+  state.generateNewEntityId = function(){
+    return "newEntity" + String(state.incrementIdCountBy(1).newIdCount);
+  };
 
   // () -> String
   state.getResourcePath = function(){
@@ -210,6 +220,7 @@
     return state.entitiesValid && state.referenceValid();
   };
 
+  // () -> Boolean
   state.entitiesValid = function(){
     return Object.values(state.entities.byId)
       .every(function(entity){
@@ -217,6 +228,7 @@
       });
   };
 
+  // () -> Boolean
   state.referenceValid = function(){
     return util.isEmpty(state.getReferenceErrors());
   };
@@ -250,7 +262,7 @@
   };
 
   // Entity -> Entity
-  state.addEntity = function(entity){
+  state.addIngestedEntity = function(entity){
     state
       .setIn(['entities', 'byId', entity.id], entity)
       .setIn(['entities', 'order'], state.getIn(['entities', 'order']).concat(entity.id)
@@ -260,7 +272,7 @@
 
   // Entity -> Entity
   state.assignId = function(entity, idx){
-    return Object.assign(entity, { id: "newEntity" + idx });
+    return Object.assign(entity, { id: state.generateNewEntityId() });
   };
 
   // Entity, String, String -> State
@@ -281,12 +293,42 @@
   };
 
   // Entity -> State
+  state.addEntity = function(entity, orderIdx){
+    return state
+      .setIn(['entities', 'byId', entity.id], entity) // store entity
+      .spliceIntoOrder(entity.id, orderIdx) // order entity
+      .setIn(['matches', 'byEntityId', entity.id], {}) // create blank matches repo for entity
+      .setIn(['errors', 'byEntityId', entity.id], {}); // create blank errors repo
+  };
+
+  // String, Integer -> State
+  state.spliceIntoOrder = function(id, idx){
+    var order = state.getIn(['entities', 'order']);
+    return state.setIn(
+      ['entities', 'order'],
+      order
+        .slice(0, idx)
+        .concat([id])
+        .concat(order.slice(idx + 1, order.length))
+    );
+  };
+  
+  // Entity -> State
   state.deleteEntity = function(entity){
     return state
       .deleteIn(['entities', 'byId', entity.id])
       .deleteIn(['matches', 'byEntityId', entity.id])
       .deleteIn(['matches', 'chosen', entity.id])
+      .deleteIn(['errors', 'byEntityId', entity.id])
       .setIn(['entities', 'order'], deleteFromOrdering(entity));
+  };
+
+  // Entity, Entity -> State
+  state.replaceEntity = function(oldEntity, newEntity){
+    var idx = state.getIn(['entities', 'order']).indexOf(oldEntity.id);
+    return state
+      .addEntity(newEntity, idx)
+      .deleteEntity(oldEntity);
   };
 
   // Entity -> State
@@ -319,22 +361,26 @@
       );
   };
 
-  // Entity, Entity -> State
-  state.replaceEntity = function(oldEntity, newEntity){
-    return state
-      .setIn(['entities', 'byId', newEntity.id], newEntity) // store newEntity as entity
-      .setIn(['entities', 'order'], replaceInOrdering(oldEntity, newEntity)) // order newEntity as oldEntity was ordered
-      .deleteIn(['entities', 'byId', oldEntity.id]) // remove oldEntity from store
-      .deleteIn(['matches', 'byEntityId', oldEntity.id]); // remove oldEntity matches
+  // Entity, String -> Promise[State]
+  state.maybeReidentifyEntity = function(entity, attr){
+    return attr == 'name' ?
+      state.reidentifyEntity(entity) :
+      Promise.resolve(state);
   };
 
-  // Entity, Entity -> [String]
-  function replaceInOrdering(oldEntity, newEntity){
-    // replace id of old entity with id of matched entity
-    return state.getIn(['entities', 'order']).map(function(id){
-      return id === oldEntity.id ? newEntity.id : id;
-    });
-  }
+  // Entity -> State
+  state.reidentifyEntity = function(entity){
+    var newId = state.generateNewEntityId();
+    return state
+      .spliceNewEntityId(entity, newId)
+      .matchEntity(state.getEntity(newId));
+  };
+
+  // Entity, String -> State
+  state.spliceNewEntityId = function(entity, newId){
+    var newEntity = util.set(entity, 'id', newId);
+    return state.replaceEntity(entity, newEntity);
+  };
 
   // Entity -> [String]
   function deleteFromOrdering(entity){
@@ -938,7 +984,7 @@
     if (maybeEntities.error) return maybeEntities;
     else {
       return {
-        result: maybeEntities.result.data.map(state.assignId).map(state.addEntity),
+        result: maybeEntities.result.data.map(state.assignId).map(state.addIngestedEntity),
         errors: null
       };
     }
@@ -982,10 +1028,10 @@
 
   // Entity, String, String -> Promise[State]
   function handleCellEdit(entity, attr, value){
+    var newEntity = util.set(entity, attr, value);
     return state
-      .setIn(['entities', 'byId', entity.id, attr], value)
-      .deleteIn(['entities', 'errors', entity.id, attr])
-      .maybeMatchEntity(util.set(entity, attr, value), attr) // search for the *updated* entity
+      .setIn(['entities', 'byId', entity.id], newEntity)
+      .maybeReidentifyEntity(newEntity, attr)
       .then(s => s.validateAndRender());
   };
 

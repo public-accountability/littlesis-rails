@@ -2,8 +2,8 @@ describe('Bulk Table module', () => {
 
   // ASYNC TUNING
   // increase these in case of wierd non-deterministic failures due to async issues
-  const asyncDelay = 15; // millis to wait for async ops like csv upload, api calls, etc..
-  const delayMultiplier = 1.2; // only neeed for uploading csv setup (currently)
+  const asyncDelay = 10; // millis to wait for async ops like csv upload, api calls, etc..
+  const delayMultiplier = 1.5; // only neeed for uploading csv setup (currently)
 
   // FIXTURES
   const columns = fxt.entityColumns;
@@ -67,10 +67,7 @@ describe('Bulk Table module', () => {
 
   // JQueryNode, String -> Void
   const editCell = (input, newValue) => {
-    input
-      .val(newValue)
-      .trigger('change')
-      .trigger($.Event('keyup', { keyCode: 13 })); // hit enter
+    input.val(newValue).trigger('change');
   };
 
   // EntitiesById, ApiJson, ApiJson -> Promise[Void]
@@ -563,12 +560,81 @@ describe('Bulk Table module', () => {
       describe('contents of name cell', () => {
 
         const findInput = () => findSecondRow().find('td:nth-child(1) input');
-        beforeEach(done => setupEdit(csvValid, findInput, newEntities.newEntity0.name).then(done));
 
-        it('searches for entities matching new name', () => {
-          expect(searchEntitySpy).toHaveBeenCalledWith(newEntities.newEntity0.name);
-          expect(bulkTable.getIn(['matches', 'byEntityId', 'newEntity1'])).toExist();
-          expect(findSecondRow().find(".resolver-anchor")).toExist();
+        describe('when no match has been chosen', () => {
+
+          beforeEach(done => setupEdit(csvValid, findInput, newEntities.newEntity0.name).then(done));
+
+          it('searches for entities matching new name', () => {
+            expect(searchEntitySpy).toHaveBeenCalledWith(newEntities.newEntity0.name);
+          });
+
+          it('stores search matches', () => {
+            // id will be incremented because entities are always reidentified after name edited
+            expect(bulkTable.getIn(['matches', 'byEntityId', 'newEntity2'])).toExist();
+          });
+
+          it('alerts user to duplicates', () => {
+            expect(findSecondRow().find(".resolver-anchor")).toExist();
+          });
+        });
+
+        describe('after a match has been chosen', () => {
+
+          const entities = fxt.newAndExistingEntities;
+          const name = newEntities.newEntity0.name;
+
+          beforeEach(done => {
+            bulkTable.init(Object.assign(
+              {},
+              defaultState(),
+              {
+                entities: {
+                  byId: entities,
+                  order: ['newEntity0', '101']
+                },
+                matches: {
+                  byEntityId: {},
+                  chosen: { 101: true }
+                }
+              }
+            ));
+            editCell(findInput(), newEntities.newEntity0.name);
+            wait(asyncDelay).then(done);
+          });
+
+          it('replaces edited entity id with new placeholder id', () => {
+            expect(bulkTable.getIn(['entities', 'byId', '101'])).not.toExist();
+            expect(bulkTable.getIn(['entities', 'byId', 'newEntity3'])).toEqual(
+              Object.assign({}, entities['101'], {
+                id: 'newEntity3', // see above comment
+                name: name
+              })
+            );
+          });
+
+          it('uses new id for row ordering', () => {
+            expect(bulkTable.getIn(['entities', 'order']))
+              .toEqual(['newEntity0', 'newEntity3']);
+          });
+
+          it('searches for entities matching new name', () => {
+            expect(searchEntitySpy).toHaveBeenCalledWith(name);
+          });
+
+          it('uses new id for storing search matches', () => {
+            expect(bulkTable.getIn(['matches', 'byEntityId', 'newEntity3'])).toExist();
+          });
+
+          it('removes entity from set of chosen entities', () => {
+            expect(bulkTable.getIn(['matches', 'chosen'])).toEqual({});
+          });
+
+          it('restores editability to row cells', () => {
+            findFirstRow().find('input').toArray().forEach(input => {
+              expect($(input)).not.toBeDisabled();
+            });
+          });
         });
       });
     });
