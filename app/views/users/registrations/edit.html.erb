@@ -66,7 +66,8 @@
     <div class="col-sm-10">
     <h3>Profile Picture</h3>
 		<div class="entity-profile-image">
-		    <%= link_to(user_profile_image, image_user_path(@user)) %>
+		    <%= user_profile_image %>
+		    <p><%= button_to "Edit profile picture", image_user_path(@user) %></p>
 		</div>
     </div>
 </div>
