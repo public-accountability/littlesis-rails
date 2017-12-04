@@ -35,11 +35,9 @@ function NyMatchDonations(mode, entity_id) {
 
   this.createToolBar = function(){
     var html = '';
-    if (this.mode === 'match') {
-      html += '<button type="button" id="match-the-donation" class="btn btn-primary">';
-      html += (this.mode === 'match') ? "Match Selected" : "Unmatch Selected";
-      html += '</button>';
-    }
+    html += '<button type="button" id="match-the-donation" class="btn btn-primary">';
+    html += (this.mode === 'match') ? "Match Selected" : "Unmatch Selected";
+    html += '</button>';
     html += '<div class="loading"></div>';
     html += '<button type="button" id="select-all" class="btn btn-primary">Select all</button>';
     html += '<span class="m-left-1em text-muted">show:</span><select id="page-length-select"><option>10</option><option>20</option><option>30</option><option>50</option></select>';
