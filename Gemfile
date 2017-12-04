@@ -37,7 +37,6 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails', '~> 6.0.0'
 gem 'sass-rails', '>= 3.2'
 
-gem 'bootsy', :git => "https://github.com/littlesis-org/bootsy.git"
 gem 'tinymce-rails', '~> 4.6.4'
 
 gem 'bettertabs'

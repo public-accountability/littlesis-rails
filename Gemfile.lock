@@ -1,13 +1,4 @@
 GIT
-  remote: https://github.com/littlesis-org/bootsy.git
-  revision: aec845958b132ca987edabaa37ae1ceb818c8987
-  specs:
-    bootsy (2.1.0)
-      carrierwave (~> 0.10)
-      mini_magick (~> 4.0)
-      remotipart (~> 1.2)
-
-GIT
   remote: https://github.com/perfectline/validates_url.git
   revision: 9163ba1a38c904dd7ee1a436b81b758d9625a681
   branch: master
@@ -308,7 +299,6 @@ GEM
       redis-store (~> 1.2.0)
     redis-store (1.2.0)
       redis (>= 2.2)
-    remotipart (1.3.1)
     request_store (1.3.2)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
@@ -444,7 +434,6 @@ DEPENDENCIES
   bettertabs
   bootstrap-datepicker-rails
   bootstrap-sass (~> 3.3.7)
-  bootsy!
   capybara (= 2.13.0)
   capybara-webkit (= 1.14.0)
   carrierwave

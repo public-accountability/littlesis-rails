@@ -27,11 +27,6 @@
   </div>
 
   <div class="field">
-    <%= f.label :campaign %>
-    <%= f.collection_select :campaign_id, Campaign.order(:name), :id, :name, include_blank: true, class: "form-control" %>
-  </div>
-
-  <div class="field">
     <%= f.label :tagline %>
     <%= f.text_area :tagline, class: "form-control" %>  
   </div>

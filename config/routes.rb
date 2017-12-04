@@ -2,8 +2,6 @@ Lilsis::Application.routes.draw do
 
   # match "*path", to: "errors#maintenance", via: :all
 
-  mount Bootsy::Engine => '/bootsy', as: 'bootsy'
-
   devise_for :users, controllers: { confirmations: 'users/confirmations'  }, :skip => [:sessions, :registrations]
   as :user do
     get '/login' => 'users/sessions#new', :as => :new_user_session

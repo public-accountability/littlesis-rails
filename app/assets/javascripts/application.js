@@ -23,7 +23,6 @@
 //= require dataTables.bootstrap
 //= require dataTables.editor
 //= require jquery.Jcrop
-//= require bootsy
 //= require bootstrap-datepicker
 //= require bootstrap-select.min.js
 //= require typeahead.bundle.min.js

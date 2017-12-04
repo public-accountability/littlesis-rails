@@ -13,7 +13,8 @@
 
   <div class="field">
     <%= f.label :findings %>
-    <%= f.bootsy_area :findings, class: "wysiwyg form-control" %>  
+    <%= f.text_area :findings, :class => "tinymce", :rows => 40, :cols => 120 %>
+    <%= render partial: 'shared/tinymce' %>
   </div>
 
   <br />
@@ -23,3 +24,5 @@
     <button type="button" class="btn btn-link"><%= link_to "Cancel", @group %></button>
   </div>
 <% end %>
+
+
