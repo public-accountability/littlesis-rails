@@ -11,6 +11,18 @@ feature 'User Pages' do
   end
   after { logout(user) }
 
+  scenario 'visiting the page via the user name' do
+    visit "/users/#{user_for_page.username}"
+    successfully_visits_page "/users/#{user_for_page.username}"
+    page_has_selector 'h1', text: user_for_page.username
+  end
+
+  scenario 'visiting the page via the legacy url' do
+    visit "/user/#{user_for_page.username}"
+    successfully_visits_page "/users/#{user_for_page.username}"
+    page_has_selector 'h1', text: user_for_page.username
+  end
+
   scenario 'visiting a user page as a logged into user' do
     visit "/users/#{user_for_page.id}"
     successfully_visits_page "/users/#{user_for_page.id}"

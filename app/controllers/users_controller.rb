@@ -16,8 +16,6 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
-    @user = User.find(params[:id])
-
     @maps = @user.network_maps.order("created_at DESC, id DESC")
     @groups = @user.groups.includes(:campaign).order(:name)
     @lists = @user.lists.order("created_at DESC, id DESC")
@@ -116,9 +114,19 @@ class UsersController < ApplicationController
   end
 
   private
-  # Use callbacks to share common setup or constraints between actions.
+
   def set_user
-    @user = User.find(params[:id])
+    if params[:id].present?
+      @user = User.find(params[:id])
+    elsif params[:username].present?
+      if params[:username].scan(/^[0-9]+$/).present?
+        @user = User.find(params[:username])
+      else
+        @user = User.find_by_username!(params[:username])
+      end
+    else
+      raise Exceptions::NotFoundError
+    end
   end
 
   # Only allow a trusted parameter "white list" through.
