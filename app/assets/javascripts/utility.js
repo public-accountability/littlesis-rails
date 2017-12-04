@@ -300,6 +300,7 @@ utility.isEmpty = function (obj){
 // JQueryNode -> JQueryNode
 utility.appendSpinner = function(element){
   // leverage `sk-circle` classes in `assets/stylesheets/base/spin.css`
+  // IMPORTANT: THIS MUST RETURN A VALUE OR CALLING CODE WILL BREAK!!!
   return $(element).append(
     $('<div>', { class: 'sk-circle' })
       .append($('<div>', { class: 'sk-circle1 sk-child' }))

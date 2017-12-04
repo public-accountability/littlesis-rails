@@ -25,7 +25,9 @@ describe('Bulk Table module', () => {
       addEntitiesToListSpy,
       hasFileSpy,
       getFileSpy,
-      redirectSpy;
+      redirectSpy,
+      appendSpinnerSpy,
+      removeSpinnerSpy;
 
   // STUB VALUES
   let file, errorMsg;
@@ -207,7 +209,11 @@ describe('Bulk Table module', () => {
 
     describe("with well-formed csv", () => {
 
-      beforeEach(done => setupWithCsv(csvValid).then(done));
+      beforeEach(done => {
+        appendSpinnerSpy = spyOn(utility, 'appendSpinner');
+        removeSpinnerSpy = spyOn(utility, 'removeSpinner');
+        setupWithCsv(csvValid).then(done);
+      });
 
       it('stores entity data', () => {
         expect(bulkTable.getIn(['entities', 'byId'])).toEqual({
@@ -222,6 +228,11 @@ describe('Bulk Table module', () => {
 
       it('hides upload button', () => {
         expect($('#upload-button')).not.toExist();
+      });
+
+      it('shows and hides a spinner', () => {
+        expect(appendSpinnerSpy).toHaveBeenCalled();
+        expect($("#top-spinner")).not.toExist();
       });
     });
 
@@ -1019,12 +1030,21 @@ describe('Bulk Table module', () => {
         describe('on submit', () => {
 
           beforeEach(done =>  {
+            appendSpinnerSpy = spyOn(utility, 'appendSpinner');
             setupSubmit(entities, emptyPromise, emptyPromise)
               .then(done);
           });
 
           it('attempts to create new entities', () => {
             expect(createEntitiesSpy).toHaveBeenCalledWith(Object.values(fxt.newEntities));
+          });
+
+          it('replaces the submit button with a spinner during API call', () => {
+            expect(appendSpinnerSpy).toHaveBeenCalled();
+          });
+
+          it('restores the submit button after API call', () => {
+            expect($("#bulk-submit-button")).toExist();
           });
         });
 

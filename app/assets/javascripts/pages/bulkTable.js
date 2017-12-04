@@ -1,19 +1,22 @@
-/**
- * TYPES
- * (in Flow notation: https://flow.org/en/docs/types/objects))
- *
- * type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
- * type Entity = { [EntityAttr]: String }
- *
- * type MaybeEntities = { result: PapaObject | [Entity], error: ?String }
- * type EntityErrors = { [attr: EntityAtrr]: [String] }
- * type EntitiesErrors = { [id: String]: EntityError }
- *
- * type Resource = Entity | Reference
- * type ResourceError = EntityErrors | ReferenceErrors
- *
- * type ReferenceErrors = { ['name'|'url']: [String] }
-*/
+/** TYPES **********************************************
+
+(in Flow notation: https://flow.org/en/docs/types/objects))
+
+type EntityAttr = 'id' | 'name' | 'primary_ext' | 'blurb'
+type Entity = { [EntityAttr]: String }
+
+type MaybeEntities = { result: PapaObject | [Entity], error: ?String }
+type EntityErrors = { [attr: EntityAtrr]: [String] }
+type EntitiesErrors = { [id: String]: EntityError }
+
+type Resource = Entity | Reference
+type ResourceError = EntityErrors | ReferenceErrors
+
+type ReferenceErrors = { ['name'|'url']: [String] }
+
+type SpinnerElement = 'top' | 'bottom'
+
+*********************************************************/
 
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -71,6 +74,10 @@
       errors: args.errors || {
         byEntityId: {}, // { [id: String]: { [EntityAttr]: [String] } }
         reference: {}  // { ['name'|'url']: [String] }
+      },
+      spinner: {
+        top:    false,
+        bottom: false
       },
       canUpload: true,
       notification: "",
@@ -239,6 +246,11 @@
       .every(function(entity){
         return util.isEmpty(state.getMatches(entity));
       });
+  };
+
+  // SpinnerElement -> Boolean
+  state.hasSpinner = function(element){
+    return state.getIn(['spinner', element]);
   };
 
   // SETTERS
@@ -426,6 +438,16 @@
     return state.setIn(['reference', attr], value);
   };
 
+  // SpinnerElement -> State
+  state.setSpinner = function(element){
+    return state.setIn(['spinner', element], true);
+  };
+
+  // SpinnerElement -> State
+  state.unsetSpinner = function(element){
+    return state.setIn(['spinner', element], false);
+  };
+
   // API CALLS
 
   // Entity -> Promise[State]
@@ -440,7 +462,9 @@
     // TODO: (@aguestuser|28-Nov-2017)
     // * with large number of entities, this call will tax the server and browser
     // * consider pulling in a promise library like bluebird to support concurrency limits
-    return Promise.all(entities.map(state.matchEntity));
+    return Promise
+      .all(entities.map(state.matchEntity))
+      .then(function(){ return state; });
   };
 
   // Entity, EntityAttr -> Promise[State]
@@ -485,6 +509,7 @@
     $('#' + state.domId)
       .append(notificationBar())
       .append(state.canUpload ? uploadContainer() : null)
+      .append(topSpinner())
       .append(state.hasRows()? tableForm() : null);
     return state;
   };
@@ -494,6 +519,12 @@
       $('<div>', { id: 'notifications' })
         .append($('<div>', { class: 'alert-icon' }))
         .append($('<span>', { text: state.notification }));
+  };
+
+
+  function topSpinner(){
+    return state.hasSpinner('top') &&
+      utility.appendSpinner($('<div>', { id: 'top-spinner' }));
   };
 
   function uploadContainer(){
@@ -529,7 +560,7 @@
     return $('<div>', {id: 'bulk-add-table-form' })
       .append(table())
       .append(referenceContainer())
-      .append(submitButton());
+      .append(submitButtonOrSpinner());
   }
 
   function table(){
@@ -759,6 +790,18 @@
     );
   }
 
+  function submitButtonOrSpinner(){
+    return state.hasSpinner('bottom') ?
+      bottomSpinner() :
+      submitButton();
+  }
+
+  function bottomSpinner(){
+    return utility.appendSpinner(
+      $('<div>', { id: 'bottom-spinner' })
+    );
+  };
+
   function submitButton(){
     return $('<button>', {
       id:       "bulk-submit-button",
@@ -923,16 +966,18 @@
 
   // String -> Promise[Void]
   function ingestEntities (csv){
+    state.setSpinner('top').render();
     var maybeEntities = parseEntities(csv);
     if (maybeEntities.error){
       state.setNotification(maybeEntities.error);
       return Promise.resolve(state.render());
     } else {
       return state
-        .clearNotification()
         .disableUpload()
         .matchEntities(maybeEntities.result)
-        .then(state.validateAndRender);
+        .then(function(s){ return s.unsetSpinner('top'); })
+        .then(function(s){ return s.clearNotification(); })
+        .then(function(s){ return s.validateAndRender(); });
     }
   };
 
@@ -1052,9 +1097,12 @@
   // () -> Promise[Void]
   function handleSubmit(){
     return state
+      .setSpinner('bottom')
+      .render()
       .createEntities()
       .then(state.createAssociations)
       .catch(state.setNotification)
+      .then(function(){ return state.unsetSpinner('bottom'); })
       .then(state.render)
       .then(state.redirectIfNoErrors);
   }
