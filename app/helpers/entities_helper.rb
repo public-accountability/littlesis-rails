@@ -9,10 +9,6 @@ module EntitiesHelper
     content_tag('div', nil, class: "entity_tiny_image", style: "background-image: url('#{image_path(entity.featured_image_url('small'))}');")
   end
 
-  def legacy_user_path(user)
-    '/user/' + user.username
-  end
-
   def active_tab?(tab_name, active_tab)
     if active_tab.downcase == tab_name.downcase
       return 'active'

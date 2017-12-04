@@ -1,0 +1,57 @@
+<% content_for(:page_title, raw(@user.username + ' - upload image')) %>
+
+<div id="user-header" class="row">
+  <div id="user-name"><%= user_link(@user) %></div>
+</div>
+
+
+<h3>
+  Edit Image
+</h3>
+
+<%= form_for(@image, url: upload_image_user_path(@user), method: :post) do |f| %>
+  <% if @image.errors.any? %>
+    <div id="error_explanation" class="alert alert-warning">
+      <%= pluralize(@image.errors.count, "error") %> prohibited this image from being saved:
+
+      <ul>
+      <% @image.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+      <div class="col-sm-7">
+          <div style="background-color: #eee; padding: 1em;">
+              You must either upload an image from your computer or enter a valid URL:
+
+              <div class="form-group">
+                  <%= f.label :file %>
+                  <%= f.file_field :file %>
+              </div>
+
+              <div class="field form-group">
+                  <%= f.label :remote_url %>
+                  <%= f.text_field :url, class: "form-control" %>
+              </div>
+          </div>
+
+      </div>
+  </div>
+  <dv class="row">
+      <div class="form-horizontal">  
+          <div class="form-group">
+              <div class="col-sm-10">
+                  <p>By submitting this form, I am ensuring that this content does not violate any copyrights. Please see our policy regarding copyright violations and repeat infringers. </p>
+              </div>
+          </div>
+
+          <div class="actions">
+              <%= f.submit 'Upload', class: "btn btn-primary" %>
+          </div>
+
+      </div>
+    </div>
+<% end %>

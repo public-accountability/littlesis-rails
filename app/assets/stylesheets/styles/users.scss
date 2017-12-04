@@ -32,3 +32,26 @@
   display: inline-block;
   padding-right: 1em;
 }
+
+#user-header {
+  margin-top: -14px;
+  margin-bottom: 20px;
+}
+
+#user-name {
+  font-size: 42px; 
+  line-height: 60px;
+  font-weight: 500;
+
+  a:hover {
+    text-decoration: none;
+  }
+}
+
+.permission-name {
+  font-weight: bold;
+}
+
+.permission-boolean {
+  padding-left: 20px;
+}

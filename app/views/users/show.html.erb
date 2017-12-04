@@ -1,4 +1,56 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_user_path(@user) %> |
-<%= link_to 'Back', users_path %>
+<h1>
+	<%= @user.username %>
+</h1>
+
+<div class="entity-profile-image">
+    <%= user_profile_image %>
+</div>
+
+ <h3>
+ 	About
+ </h3>
+ <div>
+ 	<%= @user.about_me %>
+ </div>
+
+ <h3>
+ 	Groups
+ </h3>
+ <div>
+	<% if @groups.present? %>
+	    <% @groups.each do |group| %>
+		<%= group_link(group) %><br />
+	    <% end %>
+	<% else %>
+	    None
+	<% end %>
+ </div>
+
+<h3>
+	Edits
+</h3>
+<div>
+	<% @recent_updates.each do |entity| %>
+	    <div class="dashboard-entity">
+		<span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
+	    </div>
+	<% end %>
+</div>
+
+<% if @user == current_user || current_user.admin? %>
+	<h3>
+		Permissions
+	</h3>
+	<div>
+		<table>
+			<% @all_permissions.each do |p| %>
+				<tr>
+					<td class="permission-name"><%= p.capitalize %></td>
+					<td class="permission-boolean"><%= @permissions.include?(p) ? "Yes" : "No" %></td>
+				</tr>
+			<% end %>
+		</table>
+	</div>
+<% end %>

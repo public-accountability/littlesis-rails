@@ -29,7 +29,7 @@ describe TagsHelper, type: :helper do
       let(:kropotkin){ build(:user, username: "Kropotkin") }
       let(:edit_event) { { "editor" => kropotkin } }
 
-      it { is_expected.to eql link_to("Kropotkin", "/user/Kropotkin") }
+      it { is_expected.to eql link_to("Kropotkin", "/users/Kropotkin") }
     end
 
     context "when edited by The System" do

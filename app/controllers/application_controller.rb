@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
 
   before_filter :set_paper_trail_whodunnit
 
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
   rescue_from Exceptions::PermissionError do |exception|
     render "errors/permission", status: 403
   end
@@ -156,5 +158,9 @@ class ApplicationController < ActionController::Base
 
   def value_for_param(param, default_value, transform = :itself)
     params[param].present? ? params[param].send(transform) : default_value
+  end
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:account_update, keys: [:about_me])
   end
 end

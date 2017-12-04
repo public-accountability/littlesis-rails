@@ -16,6 +16,38 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
+    @maps = @user.network_maps.order("created_at DESC, id DESC")
+    @groups = @user.groups.includes(:campaign).order(:name)
+    @lists = @user.lists.order("created_at DESC, id DESC")
+    @recent_updates = @user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
+    @permissions = @user.permissions.instance_variable_get(:@sf_permissions)
+    @all_permissions = Permissions::ALL_PERMISSIONS
+  end
+
+  def image
+    @user = User.find(params[:id])
+    @image = Image.new
+  end
+
+  def upload_image
+    if uploaded = image_params[:file]
+      filename = Image.random_filename(File.extname(uploaded.original_filename))      
+      src_path = Rails.root.join('tmp', filename).to_s
+      open(src_path, 'wb') do |file|
+        file.write(uploaded.read)
+      end
+    else
+      src_path = image_params[:url]
+    end
+
+    @image = Image.new_from_url(src_path)
+    @image.user = @user
+
+    if @image.save
+      redirect_to image_user_path(@user), notice: 'Image was successfully created.'
+    else
+      render action: 'image'
+    end
   end
   
   # GET /users/:id/edit_permissions
@@ -82,9 +114,19 @@ class UsersController < ApplicationController
   end
 
   private
-  # Use callbacks to share common setup or constraints between actions.
+
   def set_user
-    @user = User.find(params[:id])
+    if params[:id].present?
+      @user = User.find(params[:id])
+    elsif params[:username].present?
+      if params[:username].scan(/^[0-9]+$/).present?
+        @user = User.find(params[:username])
+      else
+        @user = User.find_by_username!(params[:username])
+      end
+    else
+      raise Exceptions::NotFoundError
+    end
   end
 
   # Only allow a trusted parameter "white list" through.
@@ -99,5 +141,11 @@ class UsersController < ApplicationController
   def restrict_params
     Rails.logger.warn params.inspect
     params[:status].try(:upcase)
+  end
+
+  def image_params
+    params.require(:image).permit(
+      :file, :url
+    )
   end
 end

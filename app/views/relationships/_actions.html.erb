@@ -29,7 +29,7 @@
     <% if @relationship.last_user.nil? %>
 	<% @relationship.last_user = SfGuardUser.find(1) %>
     <% end  %>
-    <%= link_to @relationship.last_user.user.username, legacy_user_path(@relationship.last_user.user) %>
+    <%= link_to @relationship.last_user.user.username, user_page_path(@relationship.last_user.user) %>
     </strong>
     <%= time_ago_in_words(@relationship.updated_at) %> ago
     <%= link_to "History", @relationship.legacy_url("modifications") %>
