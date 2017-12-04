@@ -297,6 +297,34 @@ utility.isEmpty = function (obj){
 
 // Browser/DOM Utilities
 
+// JQueryNode -> JQueryNode
+utility.appendSpinner = function(element){
+  // leverage `sk-circle` classes in `assets/stylesheets/base/spin.css`
+  // IMPORTANT: THIS MUST RETURN A VALUE OR CALLING CODE WILL BREAK!!!
+  return $(element).append(
+    $('<div>', { class: 'sk-circle' })
+      .append($('<div>', { class: 'sk-circle1 sk-child' }))
+      .append($('<div>', { class: 'sk-circle2 sk-child' }))
+      .append($('<div>', { class: 'sk-circle3 sk-child' }))
+      .append($('<div>', { class: 'sk-circle4 sk-child' }))
+      .append($('<div>', { class: 'sk-circle5 sk-child' }))
+      .append($('<div>', { class: 'sk-circle6 sk-child' }))
+      .append($('<div>', { class: 'sk-circle7 sk-child' }))
+      .append($('<div>', { class: 'sk-circle8 sk-child' }))
+      .append($('<div>', { class: 'sk-circle9 sk-child' }))
+      .append($('<div>', { class: 'sk-circle10 sk-child' }))
+      .append($('<div>', { class: 'sk-circle11 sk-child' }))
+      .append($('<div>', { class: 'sk-circle12 sk-child' }))
+  );
+};
+
+// JQueryNode -> JQueryNode
+utility.removeSpinner = function(element){
+  // leverage `sk-circle` classes in `assets/stylesheets/base/spin.css`
+  $(element).find('.sk-circle').remove();
+  return $(element);
+};
+
 // String -> Void
 utility.redirectTo = function(path){
   document.location.replace(path);

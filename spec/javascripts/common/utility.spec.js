@@ -270,4 +270,28 @@ describe('utility', function(){
       });
     });
   });
+
+  describe('DOM utilities', () => {
+
+    const testDom ='<div id="test-dom"></div>';
+    beforeEach(() => $('body').append(testDom));
+    afterEach(() => $('#test-dom').remove());
+
+    describe('#appendSpinner', () => {
+
+      it('appends a spinner to a DOM node', () => {
+        utility.appendSpinner($('#test-dom'));
+        expect($('#test-dom .sk-circle')).toExist();
+      });
+    });
+
+    describe('#removeSpinner', () => {
+
+      it('removes a spinner from a DOM node', () => {
+        utility.appendSpinner($('#test-dom'));
+        utility.removeSpinner($('#test-dom'));
+        expect($('#test-dom .sk-circle')).not.toExist();
+      });
+    });
+  });
 });
