@@ -332,7 +332,7 @@ class MapsController < ApplicationController
 
   def map_params
     params.require(:map).permit(
-      :is_featured, :is_private, :title, :description, :bootsy_image_gallery_id, :data,
+      :is_featured, :is_private, :title, :description, :data,
        :height, :width, :user_id, :zoom
     )
   end
