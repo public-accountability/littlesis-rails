@@ -86,9 +86,7 @@ Lilsis::Application.routes.draw do
 
   get '/groups/:id(/:group_tabs_selected_tab)' => 'groups#show'
 
-  get '/users/:username' => 'users#show'
-
-  resources :users, only: [:index, :show, :edit] do
+  resources :users, only: [:index, :edit] do
     member do
       get 'edit_permissions'
       post 'add_permission'
@@ -102,6 +100,9 @@ Lilsis::Application.routes.draw do
       get 'admin'
     end
   end
+
+  get '/users/:username' => 'users#show', as: :user_page
+
 
   resources :lists do
     member do

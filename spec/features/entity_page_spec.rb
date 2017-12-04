@@ -57,6 +57,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     # end
 
     it "shows an edit history" do
+      expect(page.find('#entity-edited-history strong a')[:href]).to eql "/users/#{person.last_user.user.username}"
       expect(page.find('#entity-edited-history')).to have_text "ago"
     end
   end

@@ -1,6 +1,6 @@
 <div id="entity-edited-history">
     Edited by<strong>
-    <%= link_to entity.last_user.user.username, legacy_user_path(entity.last_user.user) %>
+    <%= link_to entity.last_user.user.username, user_page_path(entity.last_user.user) %>
     </strong>
     <%= time_ago_in_words(entity.updated_at) %> ago
     <%= link_to "History", edits_entity_path(entity) %>

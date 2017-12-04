@@ -3,10 +3,9 @@ require 'rails_helper'
 feature 'help pages' do
   let(:admin) { create_admin_user }
   let(:index_page) { create(:help_page, name: 'index', markdown: '# help pages', title: 'help pages') }
-  let(:page_name) { HelpPage.pagify_name(Faker::Book.genre) } 
+  let(:page_name) { HelpPage.pagify_name(Faker::Book.genre.tr(' ', '_').tr('/', '_')) }
   let(:page_title) { Faker::Book.title }
   let(:help_page) { create(:help_page) }
-  
 
   scenario 'visting the help pages index' do
     visit "/help"
