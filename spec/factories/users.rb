@@ -6,6 +6,7 @@ FactoryBot.define do
   factory :user, class: User do
     username { Faker::Internet.unique.user_name }
     email { Faker::Internet.unique.email }
+    about_me { Faker::Movie.quote }
     default_network_id 79
     confirmed_at { Time.now }
   end
