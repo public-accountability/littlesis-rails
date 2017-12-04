@@ -14,6 +14,7 @@ describe NysController, type: :controller do
   describe 'routes' do
     it { should route(:get, '/nys').to(action: :index) }
     it { should route(:post, '/nys/match_donations').to(action: :match_donations) }
+    it { should route(:post, '/nys/unmatch_donations').to(action: :unmatch_donations) }
     it { should route(:get, '/nys/candidates').to(action: :candidates) }
     it { should route(:get, '/nys/candidates/new').to(action: :new_filer_entity, type: 'candidates') }
     it { should route(:get, '/nys/pacs/new').to(action: :new_filer_entity, type: 'pacs') }

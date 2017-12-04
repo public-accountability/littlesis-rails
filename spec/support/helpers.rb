@@ -63,6 +63,14 @@ def create_contributor
   user
 end
 
+def create_importer
+  sf_user = FactoryBot.create(:sf_guard_user)
+  user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+  SfGuardUserPermission.create!(permission_id: 8, user_id: sf_user.id)
+  user
+end
+
+
 def create_really_basic_user
   sf_user = FactoryBot.create(:sf_guard_user)
   FactoryBot.create(:user, sf_guard_user_id: sf_user.id)

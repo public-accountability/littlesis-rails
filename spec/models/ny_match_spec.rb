@@ -207,6 +207,10 @@ describe NyMatch, type: :model do
     it 'has key filer_in_littlesis' do
       expect(@match.info).to have_key(:filer_in_littlesis)
     end
+
+    it 'has key ny_match_id' do
+      expect(@match.info.fetch(:ny_match_id)).to eql @match.id
+    end
   end
 
   describe '#create_reference' do

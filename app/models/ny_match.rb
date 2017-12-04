@@ -65,7 +65,7 @@ class NyMatch < ActiveRecord::Base
 
   # Returns information as hash for the review donations page
   def info
-    ny_disclosure.contribution_attributes.merge(:filer_in_littlesis => ny_filer.is_matched? ? 'Y' : 'N')
+    ny_disclosure.contribution_attributes.merge(:filer_in_littlesis => ny_filer.is_matched? ? 'Y' : 'N', :ny_match_id => id)
   end
 
   private

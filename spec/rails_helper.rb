@@ -49,6 +49,7 @@ RSpec.configure do |config|
   # these run inside example groups (ie: describe blocks)
   config.extend ControllerMacros, :type => :controller
   config.extend FeatureGroupMacros, :type => :feature
+  config.extend RequestGroupMacros, :type => :request
   config.extend ListHelpersForExampleGroups, :list_helper
   config.extend TaggingHelpers, :tagging_helper
   config.extend TagSpecHelper, :tag_helper
