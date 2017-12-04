@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171121162338) do
+ActiveRecord::Schema.define(version: 20171204223305) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -203,23 +203,6 @@ ActiveRecord::Schema.define(version: 20171121162338) do
   end
 
   add_index "business_person", ["entity_id"], name: "entity_id_idx", using: :btree
-
-  create_table "campaigns", force: :cascade do |t|
-    t.string   "name",        limit: 255,      null: false
-    t.string   "tagline",     limit: 255
-    t.text     "description", limit: 16777215
-    t.string   "logo",        limit: 255
-    t.string   "cover",       limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "slug",        limit: 255
-    t.text     "findings",    limit: 16777215
-    t.text     "howto",       limit: 16777215
-    t.text     "custom_html", limit: 16777215
-    t.string   "logo_credit", limit: 255
-  end
-
-  add_index "campaigns", ["slug"], name: "index_campaigns_on_slug", unique: true, using: :btree
 
   create_table "candidate_district", force: :cascade do |t|
     t.integer  "candidate_id", limit: 8, null: false

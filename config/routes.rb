@@ -37,23 +37,6 @@ Lilsis::Application.routes.draw do
     get '/tags', action: :tags
   end
 
-  resources :hubs, controller: 'campaigns', as: 'campaigns' do
-    member do
-      get 'search_groups'
-      get 'groups'
-      get 'admin'
-      post 'clear_cache'
-      get 'entities'
-      get 'edit_findings'
-      get 'edit_guide'
-      get 'signup'
-      post 'subscribe'
-      get 'thankyou'
-    end
-  end
-
-  get '/hubs/:id(/:campaign_tabs_selected_tab)' => 'campaigns#show'
-
   resources :groups do
     member do
       get 'edits'
