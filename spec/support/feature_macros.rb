@@ -17,8 +17,6 @@ module FeatureGroupMacros
     end
   end
 
-  
-
   def redirects_to_login_page
     it 'redirects to /login' do
       expect(page.current_path).to eql '/login'

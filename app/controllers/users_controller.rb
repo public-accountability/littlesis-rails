@@ -1,7 +1,8 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict]
+  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict, :edits]
   before_action :authenticate_user!, except: [:success]
-  before_filter :admins_only, except: [:show, :restrict, :success]
+  before_action :admins_only, except: [:show, :restrict, :success, :edits]
+  before_action :user_or_admins_only, only: [:edits]
 
   # get /users
   def index
@@ -151,5 +152,9 @@ class UsersController < ApplicationController
     params.require(:image).permit(
       :file, :url
     )
+  end
+
+  def user_or_admins_only
+    raise Exceptions::PermissionError unless (current_user == @user) || current_user.admin?
   end
 end
