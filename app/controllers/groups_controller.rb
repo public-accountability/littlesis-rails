@@ -23,7 +23,6 @@ class GroupsController < ApplicationController
     @groups = Group.public_scope
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
-      .includes(:campaign)
       .group("groups.id")
       .order("user_count DESC")
       .page(params[:page]).per(20)
@@ -194,7 +193,7 @@ class GroupsController < ApplicationController
 
   def clear_cache
     check_permission "admin"
-    @group.clear_cache(request.host)
+    @group.touch
     redirect_to admin_group_path, notice: "Cache was successfully cleared."
   end
 
@@ -225,7 +224,7 @@ class GroupsController < ApplicationController
     def group_params
       params.require(:group).permit(
         :name, :slug, :tagline, :description, :logo, :remove_logo, :logo_cache, :logo_credit, 
-        :is_private, :findings, :howto, :bootsy_image_gallery_id, :campaign_id
+        :is_private, :findings, :howto, :campaign_id
       )
     end
 end

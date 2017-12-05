@@ -13,7 +13,8 @@
 
   <div class="field">
     <%= f.label :howto %>
-    <%= f.bootsy_area :howto, class: "wysiwyg form-control" %>  
+    <%= f.text_area :howto, :class => "tinymce", :rows => 40, :cols => 120 %>
+    <%= render partial: 'shared/tinymce' %>
   </div>
 
   <br />

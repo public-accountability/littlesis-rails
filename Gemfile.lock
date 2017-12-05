@@ -1,13 +1,4 @@
 GIT
-  remote: https://github.com/littlesis-org/bootsy.git
-  revision: aec845958b132ca987edabaa37ae1ceb818c8987
-  specs:
-    bootsy (2.1.0)
-      carrierwave (~> 0.10)
-      mini_magick (~> 4.0)
-      remotipart (~> 1.2)
-
-GIT
   remote: https://github.com/perfectline/validates_url.git
   revision: 9163ba1a38c904dd7ee1a436b81b758d9625a681
   branch: master
@@ -17,11 +8,11 @@ GIT
 
 GIT
   remote: https://github.com/stympy/faker.git
-  revision: dfb0762fffe7cd5ba80a6de726e063b2bf6e6240
+  revision: 47b75064dc00fac534d2b87b69836746ea8c9fb3
   branch: master
   specs:
     faker (1.8.4)
-      i18n (~> 0.5)
+      i18n (~> 0.9.1)
 
 GEM
   remote: https://rubygems.org/
@@ -84,9 +75,9 @@ GEM
       json (~> 1.4)
       nokogiri (>= 1.4.4)
     bcrypt (3.1.11)
-    better_errors (2.1.1)
+    better_errors (2.4.0)
       coderay (>= 1.0.0)
-      erubis (>= 2.6.6)
+      erubi (>= 1.0.0)
       rack (>= 0.9.0)
     bettertabs (1.4.2)
       jquery-rails
@@ -131,13 +122,12 @@ GEM
     coffee-script-source (1.10.0)
     concurrent-ruby (1.0.5)
     daemons (1.2.4)
-    dalli (2.7.6)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
     delayed_job (4.1.2)
       activesupport (>= 3.0, < 5.1)
-    delayed_job_active_record (4.1.1)
-      activerecord (>= 3.0, < 5.1)
+    delayed_job_active_record (4.1.2)
+      activerecord (>= 3.0, < 5.2)
       delayed_job (>= 3.0, < 5)
     devise (4.2.1)
       bcrypt (~> 3.0)
@@ -150,6 +140,7 @@ GEM
     domain_name (0.5.20160826)
       unf (>= 0.0.5, < 1.0.0)
     equalizer (0.0.10)
+    erubi (1.7.0)
     erubis (2.7.0)
     excon (0.54.0)
     execjs (2.7.0)
@@ -191,7 +182,8 @@ GEM
       domain_name (~> 0.5)
     http-form_data (1.0.1)
     http_parser.rb (0.6.0)
-    i18n (0.8.6)
+    i18n (0.9.1)
+      concurrent-ruby (~> 1.0)
     innertube (1.1.0)
     ipaddress (0.8.3)
     jasmine (2.8.0)
@@ -236,14 +228,13 @@ GEM
     nokogiri (1.8.0)
       mini_portile2 (~> 2.2.0)
     orm_adapter (0.5.0)
-    paper_trail (5.2.3)
-      activerecord (>= 3.0, < 6.0)
+    paper_trail (7.1.3)
+      activerecord (>= 4.0, < 5.2)
       request_store (~> 1.1)
     parallel (1.12.0)
     parser (2.4.0.0)
       ast (~> 2.2)
     phantomjs (2.1.1.0)
-    php-serialize (1.1.0)
     powerpack (0.1.1)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -288,27 +279,26 @@ GEM
     rainbow (2.2.2)
       rake
     rake (12.0.0)
-    recaptcha (4.4.0)
+    recaptcha (4.6.2)
       json
     redcarpet (3.4.0)
-    redis (3.3.1)
-    redis-actionpack (5.0.0)
-      actionpack (>= 4.0.0, < 6)
-      redis-rack (~> 2.0.0.pre)
-      redis-store (~> 1.2.0.pre)
-    redis-activesupport (5.0.1)
+    redis (4.0.1)
+    redis-actionpack (5.0.2)
+      actionpack (>= 4.0, < 6)
+      redis-rack (>= 1, < 3)
+      redis-store (>= 1.1.0, < 2)
+    redis-activesupport (5.0.4)
       activesupport (>= 3, < 6)
-      redis-store (~> 1.2.0)
-    redis-rack (2.0.0.pre)
-      rack (> 1.5, < 3)
-      redis-store (~> 1.2.0.pre)
-    redis-rails (5.0.1)
-      redis-actionpack (~> 5.0.0)
-      redis-activesupport (~> 5.0.0)
-      redis-store (~> 1.2.0)
-    redis-store (1.2.0)
-      redis (>= 2.2)
-    remotipart (1.3.1)
+      redis-store (>= 1.3, < 2)
+    redis-rack (2.0.3)
+      rack (>= 1.5, < 3)
+      redis-store (>= 1.2, < 2)
+    redis-rails (5.0.2)
+      redis-actionpack (>= 5.0, < 6)
+      redis-activesupport (>= 5.0, < 6)
+      redis-store (>= 1.2, < 2)
+    redis-store (1.4.1)
+      redis (>= 2.2, < 5)
     request_store (1.3.2)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
@@ -440,19 +430,17 @@ DEPENDENCIES
   activerecord-session_store
   asset_sync (~> 2.1.0)
   aws-sdk (< 2.0)
-  better_errors (~> 2.1.1)
+  better_errors (~> 2.4.0)
   bettertabs
   bootstrap-datepicker-rails
   bootstrap-sass (~> 3.3.7)
-  bootsy!
   capybara (= 2.13.0)
   capybara-webkit (= 1.14.0)
   carrierwave
   coffee-rails
   daemons
-  dalli
   database_cleaner
-  delayed_job_active_record
+  delayed_job_active_record (>= 4.1.2)
   devise (~> 4.2)
   factory_bot_rails (~> 4.8.2)
   faker!
@@ -467,17 +455,16 @@ DEPENDENCIES
   mini_magick
   mongo
   mysql2 (~> 0.3.21)
-  paper_trail (= 5.2.3)
-  php-serialize
+  paper_trail (= 7.1.3)
   pry
   pry-byebug
   pry-rails
   rack-mini-profiler
   rack-rewrite (~> 1.5.1)
   rails (= 4.2.8)
-  recaptcha
+  recaptcha (>= 4.6.2)
   redcarpet (>= 3.4.0)
-  redis-rails
+  redis-rails (>= 5.0.2)
   rmagick
   rspec-html-matchers (~> 0.9.0)
   rspec-rails (~> 3.6.1)

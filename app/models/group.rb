@@ -1,8 +1,4 @@
 class Group < ActiveRecord::Base
-	include Bootsy::Container
-	include Cacheable
-
-	belongs_to :campaign, inverse_of: :groups
 	belongs_to :default_network, class_name: "List", inverse_of: :groups
 	belongs_to :sf_guard_group, foreign_key: "slug", primary_key: "name"
 	

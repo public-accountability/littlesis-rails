@@ -2,8 +2,6 @@ Lilsis::Application.routes.draw do
 
   # match "*path", to: "errors#maintenance", via: :all
 
-  mount Bootsy::Engine => '/bootsy', as: 'bootsy'
-
   devise_for :users, controllers: { confirmations: 'users/confirmations'  }, :skip => [:sessions, :registrations]
   as :user do
     get '/login' => 'users/sessions#new', :as => :new_user_session
@@ -33,26 +31,8 @@ Lilsis::Application.routes.draw do
 
   scope :admin, controller: 'admin', as: 'admin' do
     get '/', action: :home
-    post "/clear_cache", action: :clear_cache
     get '/tags', action: :tags
   end
-
-  resources :hubs, controller: 'campaigns', as: 'campaigns' do
-    member do
-      get 'search_groups'
-      get 'groups'
-      get 'admin'
-      post 'clear_cache'
-      get 'entities'
-      get 'edit_findings'
-      get 'edit_guide'
-      get 'signup'
-      post 'subscribe'
-      get 'thankyou'
-    end
-  end
-
-  get '/hubs/:id(/:campaign_tabs_selected_tab)' => 'campaigns#show'
 
   resources :groups do
     member do

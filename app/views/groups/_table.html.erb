@@ -20,11 +20,6 @@
         </td>
         <td class="groups_table_name">
           <%= group_link(group) %>
-          <% if group.campaign.present? %>
-            <div class="group_campaign_small">
-              Part of <%= campaign_link(group.campaign) %>
-            </div>
-          <% end %> 
         </td>
         <td><%= group.user_count %></td>
         <td><%= group.tagline %></td>

@@ -35,7 +35,7 @@ describe HomeController, type: :controller do
 
     before do
       network_maps = double('network_maps', order: [build(:network_map)])
-      groups = double('groups', includes: double(order: []))
+      groups = double('groups', order: [])
       user_lists_double = double('arbitrary_name', order: [])
       edited_entities = double('edited', includes: double(order: double(limit: [])))
       expect(controller).to receive(:current_user).and_return(

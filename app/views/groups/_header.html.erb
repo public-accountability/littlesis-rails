@@ -16,12 +16,7 @@
 	</div>
 
 	<div class="cover_right">
-		<% if group.campaign.present? %>
-			<div class="group_campaign_small">
-				Part of <%= campaign_link(group.campaign) %>
-			</div>
-		<% end %>	
-
+		
 		<div class="cover_name"><%= group_link(group) %></div>
 
 		<% if group.tagline.present? %>

@@ -10,7 +10,7 @@ gem 'rack-rewrite', '~> 1.5.1'
 gem 'devise', '~> 4.2'
 
 # Versioning
-gem 'paper_trail', '5.2.3'
+gem 'paper_trail', '7.1.3'
 
 # image uploading & processing
 gem 'carrierwave'
@@ -37,7 +37,6 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails', '~> 6.0.0'
 gem 'sass-rails', '>= 3.2'
 
-gem 'bootsy', :git => "https://github.com/littlesis-org/bootsy.git"
 gem 'tinymce-rails', '~> 4.6.4'
 
 gem 'bettertabs'
@@ -46,17 +45,13 @@ gem 'activerecord-session_store'
 
 # For search and indexing
 gem 'thinking-sphinx', '~> 3.2.0'
-gem 'delayed_job_active_record'
+gem 'delayed_job_active_record', '>= 4.1.2'
 gem 'ts-delayed-delta', '2.0.2', :require => 'thinking_sphinx/deltas/delayed_delta'
 
-gem 'php-serialize'
 gem 'htmlentities'
 
-# For memcached integration
-gem 'dalli'
-
 # For redis integration
-gem 'redis-rails'
+gem 'redis-rails', '>= 5.0.2'
 
 # For easy cron scheduling
 gem 'whenever', '~> 0.9.7', :require => false
@@ -69,7 +64,7 @@ group :development do
 end
 
 group :test, :development do
-  gem 'better_errors', '~> 2.1.1'
+  gem 'better_errors', '~> 2.4.0'
   gem 'capybara', '2.13.0'
   gem 'capybara-webkit', '1.14.0'
   gem 'database_cleaner'
@@ -111,4 +106,4 @@ gem 'mongo'
 gem 'redcarpet', '>= 3.4.0'
 
 # google's recaptcha
-gem "recaptcha", require: "recaptcha/rails"
+gem "recaptcha", '>= 4.6.2', require: "recaptcha/rails"

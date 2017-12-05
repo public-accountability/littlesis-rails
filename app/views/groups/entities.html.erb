@@ -15,7 +15,7 @@
 	These are all the entities belonging to one of this group's <%= link_to 'featured lists', lists_group_path(@group) %>.
 <% end %>
 
-<% cache(@group.cache_key('entities/entities', nil, params.slice(:page))) do %>
+<% cache([@group.cache_key, 'entities', params.slice(:page)]) do %>
 	<%= paginate @entities %>
 	<table class="table">
 		<thead>

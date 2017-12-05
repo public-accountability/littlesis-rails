@@ -1,7 +1,6 @@
 class Entity < ActiveRecord::Base
   include SingularTable
   include SoftDelete
-  include Cacheable
   include Referenceable
   include Political
   include Api::Serializable

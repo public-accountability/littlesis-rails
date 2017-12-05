@@ -61,12 +61,9 @@ class DevelopmentDb
                   article_entity
                   article_source
                   articles
-                  bootsy_image_galleries
-                  bootsy_images
                   business
                   business_industry
                   business_person
-                  campaigns
                   candidate_district
                   couple
                   custom_key

@@ -2,7 +2,6 @@ class Note < ActiveRecord::Base
   extend ActionView::Helpers::SanitizeHelper::ClassMethods
   
   include SingularTable
-  include Cacheable
 
   include Rails.application.routes.url_helpers
 

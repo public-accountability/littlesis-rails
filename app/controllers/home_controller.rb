@@ -22,7 +22,7 @@ class HomeController < ApplicationController
 
   def dashboard
     @maps = current_user.network_maps.order("created_at DESC, id DESC")
-    @groups = current_user.groups.includes(:campaign).order(:name)
+    @groups = current_user.groups.order(:name)
     @lists = current_user.lists.order("created_at DESC, id DESC")
     @recent_updates = current_user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
   end
