@@ -4,7 +4,7 @@
       <ul class="overview">
       <% entities.each do |entity| %>
         <li>
-          <% cache(entity.cache_key('partial/carousel')) do %>
+          <% cache([entity.cache_key, 'partial/carousel']) do %>
             <%= render partial: "entities/carousel", locals: { entity: entity } %>
           <% end %>
         </li>

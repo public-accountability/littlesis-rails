@@ -48,11 +48,7 @@ gem 'thinking-sphinx', '~> 3.2.0'
 gem 'delayed_job_active_record', '>= 4.1.2'
 gem 'ts-delayed-delta', '2.0.2', :require => 'thinking_sphinx/deltas/delayed_delta'
 
-gem 'php-serialize'
 gem 'htmlentities'
-
-# For memcached integration
-gem 'dalli'
 
 # For redis integration
 gem 'redis-rails', '>= 5.0.2'

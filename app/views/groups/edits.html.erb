@@ -12,7 +12,7 @@
 	Recent Edits
 </h3>
 
-<% cache(@group.cache_key('edits/edits', nil, params.slice(:page)), expires_in: 10.minutes) do %>
+<% cache( [ @group.cache_key, 'edits',  params.slice(:page) ] , expires_in: 10.minutes) do %>
   <%= paginate @recent_updates %>
 
   <table class="table">

@@ -31,7 +31,6 @@ Lilsis::Application.routes.draw do
 
   scope :admin, controller: 'admin', as: 'admin' do
     get '/', action: :home
-    post "/clear_cache", action: :clear_cache
     get '/tags', action: :tags
   end
 

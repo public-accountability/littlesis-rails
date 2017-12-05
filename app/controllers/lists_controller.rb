@@ -212,8 +212,8 @@ class ListsController < ApplicationController
   def add_entity
     #check_permission 'lister'
     le = ListEntity.find_or_create_by(list_id: @list.id, entity_id: params[:entity_id])
-    @list.clear_cache(request.host)
-    le.entity.clear_cache(request.host)
+    @list.clear_cache
+    le.entity.update(last_user_id: current_user.sf_guard_user_id)
     redirect_to members_list_path(@list)
   end
 

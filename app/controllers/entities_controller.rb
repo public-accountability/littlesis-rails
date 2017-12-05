@@ -360,7 +360,7 @@ class EntitiesController < ApplicationController
 
   def refresh
     check_permission 'admin'
-    @entity.clear_cache(request.host)
+    @entity.update(last_user_id: APP_CONFIG['system_user_id'])
     redirect_to @entity.legacy_url
   end
 

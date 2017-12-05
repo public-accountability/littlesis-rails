@@ -58,7 +58,7 @@
 			Users
 		</h3>
 
-		<% cache(@group.cache_key('show/users'), expires_in: 1.hour) do %>
+		<% cache( [@group.cache_key, 'show/users'], expires_in: 1.hour) do %>
 			<table class="list_table">
 			  <tbody>
 			    <% @group_users.each do |gu| %>
@@ -82,7 +82,7 @@
 			<span class="btn btn-link btn-sm"><%= link_to 'see all', entities_group_path(@group) %></span>
 		</h3>
 
-		<% cache(@group.cache_key('show/watched'), expires_in: 10.minutes) do %>
+		<% cache( [@group.cache_key, 'show/watched'], expires_in: 10.minutes) do %>
 			<% @watched_entities.each do |entity| %>
 				<%= render partial: "entities/small", locals: { entity: entity } %>
 			<% end %>
@@ -96,7 +96,7 @@
 			Recent Edits
 			<%= header_action('see all', edits_group_path(@group)) %>
 		</h3>
-		<% cache(@group.cache_key('show/recent_edits/inside'), expires_in: 10.minutes) do %>
+		<% cache([@group.cache_key, 'show/recent_edits/inside'], expires_in: 10.minutes) do %>
 			<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
 		<% end %>
 	<% end %>
@@ -111,7 +111,7 @@ $('.group_tabs').bettertabs();
 <% if @carousel_entities.count > 0 %>
 <h3>Who We're Watching</h3>
 <div id="group_carousel">
-	<% cache(@group.cache_key('show/carousel'), expires_in: 1.day) do %>
+	<% cache([ @group.cache_key, 'show/carousel'], expires_in: 1.day) do %>
 		<%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
 	<% end %>
 </div>
@@ -133,7 +133,7 @@ $('.group_tabs').bettertabs();
 
 <div class="right_column">
 	<h3>Recent Edits</h3>
-	<% cache(@group.cache_key('show/recent_edits/outside'), expires_in: 1.hour) do %>
+	<% cache([@group.cache_key, 'show/recent_edits/outside'], expires_in: 1.hour) do %>
 		<% @recent_updates.each do |entity| %>
 			<%= render partial: "entities/recent_update", locals: { entity: entity } %>
 		<% end %>
