@@ -64,7 +64,6 @@ class DevelopmentDb
                   business
                   business_industry
                   business_person
-                  campaigns
                   candidate_district
                   couple
                   custom_key
