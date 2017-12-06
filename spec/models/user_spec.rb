@@ -1,25 +1,25 @@
 require 'rails_helper'
 
 describe User do
-  before(:all) { DatabaseCleaner.start }
-  after(:all) { DatabaseCleaner.clean }
-
   it { should have_db_column(:map_the_power) }
   it { should have_one(:api_token) }
   it { should have_many(:lists) }
   it { should have_many(:user_permissions) }
 
+  it 'has constant User::Edits (from module UserEdits)' do
+    expect(User.const_defined?(:Edits)).to be true
+  end
+
   describe 'validations' do
-    before(:all) do
-      @user = create(:user, sf_guard_user_id: rand(1000), email: 'fake@fake.com', username: 'unqiue2')
-    end
+    let(:user) { create(:user, sf_guard_user_id: rand(1000), email: 'fake@fake.com', username: 'unqiue2') }
 
     it 'validates presence of email' do
-      expect(@user.valid?).to be true
+      expect(user.valid?).to be true
       expect(build(:user, sf_guard_user_id: rand(1000), email: nil).valid?).to be false
     end
 
     it 'validates uniqueness of email' do
+      user
       expect(User.new(sf_guard_user_id: rand(1000), email: 'fake@fake.com', username: 'aa', default_network_id: 79).valid?). to be false
       expect(User.new(sf_guard_user_id: rand(1000), email: 'fake2@fake.com', username: 'bb', default_network_id: 79).valid?). to be true
     end
@@ -45,35 +45,32 @@ describe User do
   end
 
   describe 'legacy_check_password' do
-    before(:all) do
-      @sf_user = create(:sf_guard_user, salt: 'SALT', password: Digest::SHA1.hexdigest('SALTPEANUTS'))
-      @user = create(:user, username: 'unique', sf_guard_user_id: @sf_user.id)
-    end
+    let(:sf_user) { create(:sf_guard_user, salt: 'SALT', password: Digest::SHA1.hexdigest('SALTPEANUTS')) }
+    let(:user) { create(:user, username: 'unique', sf_guard_user_id: sf_user.id) }
+
     it 'returns true for correct password' do
-      expect(@user.legacy_check_password('PEANUTS')).to be true
+      expect(user.legacy_check_password('PEANUTS')).to be true
     end
 
     it 'returns false for incorrect password' do
-      expect(@user.legacy_check_password('FAKE_PEANUTS')).to be false
+      expect(user.legacy_check_password('FAKE_PEANUTS')).to be false
     end
   end
 
   describe 'create_default_permissions' do
-    before do
-      @sf_user = create(:sf_guard_user, username: "user#{rand(1000)}")
-      @user = create(:user, sf_guard_user_id: @sf_user.id, email: "#{rand(1000)}@fake.com")
-    end
+    let(:sf_user) { create(:sf_guard_user, username: "user#{rand(1000)}") }
+    let(:user) { create(:user, sf_guard_user_id: sf_user.id, email: "#{rand(1000)}@fake.com") }
 
     it 'creates contributor permission' do
-      expect(@user.has_legacy_permission('contributor')).to be false
-      @user.create_default_permissions
-      expect(@user.has_legacy_permission('contributor')).to be true
+      expect(user.has_legacy_permission('contributor')).to be false
+      user.create_default_permissions
+      expect(user.has_legacy_permission('contributor')).to be true
     end
 
-    it 'creates editor permission' do 
-      expect(@user.has_legacy_permission('editor')).to be false
-      @user.create_default_permissions
-      expect(@user.has_legacy_permission('editor')).to be true
+    it 'creates editor permission' do
+      expect(user.has_legacy_permission('editor')).to be false
+      user.create_default_permissions
+      expect(user.has_legacy_permission('editor')).to be true
     end
   end
 
@@ -97,102 +94,66 @@ describe User do
   end
 
   describe '#admin?' do
-    context 'is admin' do
-      before do
-        @sf_user = create(:sf_guard_user)
-        @user = create(:user, sf_guard_user_id: @sf_user.id)
-        SfGuardUserPermission.create!(permission_id: 1, user_id: @sf_user.id)
-      end
+    let(:admin_user) { create_admin_user }
+    let(:user) { create_really_basic_user }
 
-      it 'returns true' do
-        expect(@user.admin?).to be true
-      end
+    context 'is admin' do
+      specify { expect(admin_user.admin?).to be true }
     end
 
     context 'is not admin' do
-      before do
-        @sf_user = create(:sf_guard_user)
-        @user = create(:user, sf_guard_user_id: @sf_user.id)
-      end
-
-      it 'returns true' do
-        expect(@user.admin?).to be false
-      end
+      specify { expect(user.admin?).to be false }
     end
   end
 
   describe '#importer?' do
-    context 'is importer' do
-      before do
-        @sf_user = create(:sf_guard_user)
-        @user = create(:user, sf_guard_user_id: @sf_user.id)
-        SfGuardUserPermission.create!(permission_id: 8, user_id: @sf_user.id)
-      end
+    let(:importer) do
+      sf_user = create(:sf_guard_user)
+      SfGuardUserPermission.create!(permission_id: 8, user_id: sf_user.id)
+      create(:user, sf_guard_user_id: sf_user.id)
+    end
+    let(:user) { create_really_basic_user }
 
-      it 'returns true' do
-        expect(@user.importer?).to be true
-      end
+    context 'is importer' do
+      specify { expect(importer.importer?).to be true }
     end
 
     context 'is not importer' do
-      before do
-        @sf_user = create(:sf_guard_user)
-        @user = create(:user, sf_guard_user_id: @sf_user.id)
-      end
-
-      it 'returns true' do
-        expect(@user.importer?).to be false
-      end
+      specify { expect(user.importer?).to be false }
     end
   end
 
   describe '#bulker?' do
-    context 'is bulker' do
-      before do
-        @sf_user = create(:sf_guard_user)
-        @user = create(:user, sf_guard_user_id: @sf_user.id)
-        SfGuardUserPermission.create!(permission_id: 9, user_id: @sf_user.id)
-      end
+    let(:bulker) do
+      sf_user = create(:sf_guard_user)
+      SfGuardUserPermission.create!(permission_id: 9, user_id: sf_user.id)
+      create(:user, sf_guard_user_id: sf_user.id)
+    end
+    let(:user) { create_really_basic_user }
 
-      it 'returns true' do
-        expect(@user.bulker?).to be true
-      end
+    context 'is bulker' do
+      specify { expect(bulker.bulker?).to be true }
     end
 
     context 'is not bulker' do
-      before do
-        @sf_user = create(:sf_guard_user)
-        @user = create(:user, sf_guard_user_id: @sf_user.id)
-      end
-
-      it 'returns false' do
-        expect(@user.bulker?).to be false
-      end
+      specify { expect(user.bulker?).to be false }
     end
   end
 
   describe '#merger?' do
-    context 'is merger' do
-      before do
-        @sf_user = create(:sf_guard_user)
-        @user = create(:user, sf_guard_user_id: @sf_user.id)
-        SfGuardUserPermission.create!(permission_id: 7, user_id: @sf_user.id)
-      end
+    let(:merger) do
+      sf_user = create(:sf_guard_user)
+      SfGuardUserPermission.create!(permission_id: 7, user_id: sf_user.id)
+      create(:user, sf_guard_user_id: sf_user.id)
+    end
+    let(:user) { create_really_basic_user }
 
-      it 'returns true' do
-        expect(@user.merger?).to be true
-      end
+    context 'is merger' do
+      specify { expect(merger.merger?).to be true }
     end
 
-    context 'is not bulker' do
-      before do
-        @sf_user = create(:sf_guard_user)
-        @user = create(:user, sf_guard_user_id: @sf_user.id)
-      end
-
-      it 'returns false' do
-        expect(@user.merger?).to be false
-      end
+    context 'is not merger' do
+      specify { expect(user.merger?).to be false }
     end
   end
 
