@@ -35,6 +35,8 @@ class Relationship < ActiveRecord::Base
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
+  belongs_to :unscoped_entity, -> { unscope(where: :is_deleted) }, foreign_key: "entity1_id", class_name: "Entity"
+  belongs_to :unscoped_related, -> { unscope(where: :is_deleted) }, class_name: "Entity", foreign_key: "entity2_id"
   #has_many :references, -> { where(object_model: 'Relationship') }, foreign_key: 'object_id'
 
   has_one :position, inverse_of: :relationship, dependent: :destroy
@@ -204,7 +206,11 @@ class Relationship < ActiveRecord::Base
   end
 
   def name
-    "#{category_name}: #{entity.name}, #{related.name}"
+    if is_deleted
+      "#{category_name}: #{unscoped_entity.name}, #{unscoped_related.name}"
+    else
+      "#{category_name}: #{entity.name}, #{related.name}"
+    end
   end
 
   def entity_related_to(e)

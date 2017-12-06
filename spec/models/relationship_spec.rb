@@ -340,10 +340,27 @@ describe Relationship, type: :model do
   end
 
   describe '#name' do
-    it 'generates correct title for position relationship' do 
+    it 'generates correct title for position relationship' do
       rel = build(:relationship, category_id: 1, description1: 'boss')
       rel.position = build(:position, is_board: false)
       expect(rel.name).to eql "Position: Human Being, mega corp LLC"
+    end
+
+    context 'if relationship and entities have been deleted' do
+      let(:entity) { create(:entity_person, :with_person_name) }
+      let(:related) { create(:entity_org, :with_org_name) }
+      let(:relationship) do
+        Relationship.create!(category_id: 1, entity: entity, related: related)
+      end
+      let!(:name) { "Position: #{entity.name}, #{related.name}" }
+
+      it 'generates title for deleted relationships' do
+        expect(relationship.name).to eql name
+        relationship.soft_delete
+        entity.soft_delete
+        related.soft_delete
+        expect(relationship.name).to eql name
+      end
     end
   end
 
