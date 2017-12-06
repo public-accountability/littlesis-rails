@@ -93,6 +93,15 @@ describe User do
     end
   end
 
+  describe '#recent_edits' do
+    let(:user) { create_really_basic_user }
+
+    it 'returns User::Edits' do
+      expect(user.recent_edits).to be_a User::Edits
+      expect(user.recent_edits(2)).to be_a User::Edits
+    end
+  end
+
   describe '#admin?' do
     let(:admin_user) { create_admin_user }
     let(:user) { create_really_basic_user }

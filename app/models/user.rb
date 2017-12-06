@@ -125,6 +125,10 @@ class User < ActiveRecord::Base
     image.image_path(type)
   end
 
+  def recent_edits(page = 1)
+    Edits.new(self, page: page)
+  end
+
   ###############
   # Permissions #
   ###############
