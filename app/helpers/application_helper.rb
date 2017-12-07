@@ -9,8 +9,9 @@ module ApplicationHelper
 
   def page_title
     title = ""
-    title += content_for(:page_title) + " - " if content_for?(:page_title)
-    title += "LittleSis"
+    title += content_for(:page_title) if content_for?(:page_title)
+    title += " - " if content_for?(:page_title) && !content_for?(:skip_page_title_suffix)
+    title += "LittleSis" unless content_for?(:skip_page_title_suffix)
     title
   end
 
