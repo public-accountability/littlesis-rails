@@ -16,38 +16,74 @@ describe SortedLinks do
     end
   end
 
-  describe '#get_other_positions_and_memberships_heading' do
-    before do
-      @sorted_links = SortedLinks.new(build(:org))
-    end
+  describe 'Position sorted' do
+    let(:government) { create(:entity_org).add_extension('GovernmentBody') }
+    let(:business) { create(:entity_org).add_extension('Business') }
+    let(:person) { create(:entity_person, :with_person_name) }
 
-    it 'returns "Memberships" if other_positions_count is zero' do
-      expect(@sorted_links.get_other_positions_and_memberships_heading(0, 0, 0)).to eq 'Memberships'
-      expect(@sorted_links.get_other_positions_and_memberships_heading(100, 0, 0)).to eq 'Memberships'
-      expect(@sorted_links.get_other_positions_and_memberships_heading(0, 0, 100)).to eq 'Memberships'
-    end
+    subject { SortedLinks.new(person) }
 
-    context 'membership count is 0' do
-      it 'returns "Positions" if other_positions_count equals positions_count' do
-        expect(@sorted_links.get_other_positions_and_memberships_heading(1, 1, 0)).to eq 'Positions'
+    context 'with one business relationship and one government relationships' do
+      before do
+        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: government)
+        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: business)
       end
 
-      it 'returns "Other Positions" if the counts are different' do
-        expect(@sorted_links.get_other_positions_and_memberships_heading(1, 2, 0)).to eq 'Other Positions'
-        expect(@sorted_links.get_other_positions_and_memberships_heading(2, 1, 0)).to eq 'Other Positions'
+      it 'has one business_position' do
+        expect(subject.business_positions).to be_a LinksGroup
+        expect(subject.business_positions.count).to eql 1
+      end
+
+      it 'has one governnment_position' do
+        expect(subject.government_positions).to be_a LinksGroup
+        expect(subject.government_positions.count).to eql 1
+      end
+
+      it 'has NO in the office of positions or other positions' do
+        expect(subject.in_the_office_positions.count).to be_zero 
+        expect(subject.other_positions.count).to be_zero
       end
     end
 
-    it 'returns "positions & Memberships" if other_positions equals positions and membership is not zero' do
-      expect(@sorted_links.get_other_positions_and_memberships_heading(2, 2, 1)).to eq 'Positions & Memberships'
-      expect(@sorted_links.get_other_positions_and_memberships_heading(2, 2, 0)).not_to eq 'Positions & Memberships'
+    context 'with one business position and one other position' do
+      before do
+        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: create(:entity_org))
+        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: business)
+      end
+
+      it 'has one business_position' do
+        expect(subject.business_positions).to be_a LinksGroup
+        expect(subject.business_positions.count).to eql 1
+      end
+
+      it 'has one other position with heading "Other positions"' do
+        expect(subject.other_positions.count).to eql 1
+        expect(subject.other_positions.heading).to eql 'Other Positions'
+      end
+
+      it 'has NO in the office of positions or government  positions' do
+        expect(subject.in_the_office_positions.count).to be_zero
+        expect(subject.government_positions.count).to be_zero
+      end
     end
 
-    it 'returns "Other Positions & Memberships" if other positions and positions are equal' do
-      expect(@sorted_links.get_other_positions_and_memberships_heading(1, 2, 1)).to eq 'Other Positions & Memberships'
-      expect(@sorted_links.get_other_positions_and_memberships_heading(2, 1, 1)).to eq 'Other Positions & Memberships'
-    end
+    context 'with two other positions' do
+      before do
+        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: create(:entity_org))
+        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: create(:entity_org))
+      end
 
+      it 'has two other positions with heading "Positions"' do
+        expect(subject.other_positions.count).to eql 2
+        expect(subject.other_positions.heading).to eql 'Positions'
+      end
+
+      it 'has NO in the office positions, government positions, or business positions' do
+        expect(subject.in_the_office_positions.count).to be_zero
+        expect(subject.government_positions.count).to be_zero
+          expect(subject.business_positions.count).to be_zero
+      end
+    end
   end
 
   context 'initalized with a section' do

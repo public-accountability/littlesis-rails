@@ -5,7 +5,7 @@ class SortedLinks
               :business_positions,
               :government_positions,
               :in_the_office_positions,
-              :other_positions_and_memberships,
+              :other_positions,
               :students,
               :schools,
               :family,
@@ -28,9 +28,9 @@ class SortedLinks
     'government_positions' => 1,
     'in_the_office_positions' => 1,
     'staff' => 1,
+    'other_positions' => 1,
     'members' => 3,
     'memberships' => 3,
-    'other_positions_and_memberships' => [1, 3],
     'schools' => 2,
     'students' => 2,
     'family' => 4,
@@ -72,18 +72,6 @@ class SortedLinks
     end
   end
 
-  def get_other_positions_and_memberships_heading(positions_count, other_positions_count, memberships_count)
-    return 'Memberships' if other_positions_count.zero?
-
-    if memberships_count.zero?
-      return 'Positions' if other_positions_count == positions_count
-      return 'Other Positions'
-    end
-
-    return 'Positions & Memberships' if other_positions_count == positions_count
-    return 'Other Positions & Memberships'
-  end
-
   def create_subgroups(links)
     categories = links.group_by { |l| l.category_id }
     categories.default = []
@@ -95,7 +83,7 @@ class SortedLinks
     @members = LinksGroup.new(members, 'members', 'Members')
     @memberships = LinksGroup.new(memberships, 'memberships', 'Memberships')
 
-    create_position_subgroups(positions, memberships)
+    create_position_subgroups(positions)
 
     students, schools = split categories[2]
     @students = LinksGroup.new(students, 'students', 'Students')
@@ -133,23 +121,27 @@ class SortedLinks
     @miscellaneous = LinksGroup.new(categories[12], 'miscellaneous', 'Other Affiliations')
   end
 
-  # Sorts position relationships (category 1) and membership relationship (category 3)
+  # Sorts position relationships (category 1)
   # by creating these attributes:
   #  - @business_positions
   #  - @government_positions
   #  - @in_the_office_positions
-  #  - @other_positions_and_memberships
-  def create_position_subgroups(positions, memberships)
+  #  - @other_positions
+  def create_position_subgroups(positions)
     jobs = positions.group_by { |l| l.position_type }
     jobs.default = []
 
     @business_positions = LinksGroup.new(jobs['business'], 'business_positions', 'Business Positions')
     @government_positions = LinksGroup.new(jobs['government'], 'government_positions', 'Government Positions')
     @in_the_office_positions = LinksGroup.new(jobs['office'], 'in_the_office_positions', 'In The Office Of')
-    other_positions = jobs['other']
 
-    other_heading = get_other_positions_and_memberships_heading(positions.count, other_positions.count, memberships.count)
-    @other_positions_and_memberships = LinksGroup.new(other_positions + memberships, 'other_positions_and_memberships', other_heading)
+    if [@business_positions, @government_positions, @in_the_office_positions].map(&:count).reduce(:+).zero?
+      other_heading = 'Positions'
+    else
+      other_heading = 'Other Positions'
+    end
+
+    @other_positions = LinksGroup.new(jobs['other'], 'other_positions', other_heading)
   end
 
   def create_donation_subgroups
