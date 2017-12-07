@@ -3,7 +3,8 @@ module UserEdits
     PER_PAGE = 20
     EDITABLE_TYPES = %w[Relationship Entity List Document].freeze
     UserEdit = Struct.new(:resource, :version, :action, :time)
-    VersionsToModel = proc { |vs| vs.first.item_type.constantize.unscoped.find(vs.map(&:item_id).uniq) }
+    VersionsToModels = proc { |vs| vs.first.item_type.constantize.unscoped.find(vs.map(&:item_id).uniq) }
+    ModelsToHashes = proc { |models| models.map { |m| [m.id, m] }.to_h }
 
     def initialize(user, page: 1)
       @user = user
@@ -21,7 +22,7 @@ module UserEdits
     def recent_edits_presenter
       recent_edits.map do |v|
         UserEdit.new(
-          ar_lookup.dig(v.item_type, v.item_id),
+          record_lookup.dig(v.item_type, v.item_id),
           v,
           v.event.tr('_', ' ').capitalize,
           v.created_at.strftime('%B %e, %Y%l%p')
@@ -35,11 +36,11 @@ module UserEdits
     #    'Entity' => { 123 => <Entity>, '345'=> <Entity> },
     #     Relationship' => { 456 => <Relationship> }
     #  }
-    def ar_lookup
-      @ar_lookup ||= recent_edits
+    def record_lookup
+      @record_lookup ||= recent_edits
                        .group_by { |v| v.item_type }
-                       .transform_values(&VersionsToModel)
-                       .transform_values { |models| models.map { |m| [m.id, m] }.to_h }
+                       .transform_values(&VersionsToModels)
+                       .transform_values(&ModelsToHashes)
     end
   end
 end

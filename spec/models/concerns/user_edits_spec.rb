@@ -41,9 +41,9 @@ describe UserEdits::Edits do
       expect(subject.recent_edits_presenter.second.time).to eql versions.second.created_at.strftime('%B %e, %Y%l%p')
     end
 
-    describe '#ar_lookup' do
+    describe '#record_lookup' do
       it 'generates a lookup hash' do
-      expect(subject.send(:ar_lookup))
+      expect(subject.send(:record_lookup))
         .to eq({
                  'Relationship' => { relationship.id => relationship },
                  'Entity' => { entity.id => entity }
