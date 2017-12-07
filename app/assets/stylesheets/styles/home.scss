@@ -138,7 +138,8 @@ div.social-media-buttons > div {
     height: 25px;
 }
 
-div#donate  {
+div#donate-button-container  {
+    display: inline-block;
     a {
 	color: white;
 	background-color: #cc5454;
@@ -150,10 +151,6 @@ div#donate  {
 	font-size: 11px;
     	line-height: 10px;
     }
-}
-
-.twitter-follow-button { 
-    vertical-align:top 
 }
 
 .littlesis_carousel a.buttons img {
