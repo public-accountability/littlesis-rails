@@ -33,6 +33,30 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
   end
 
+  describe'redirecting merged entities' do
+
+    def should_redirect(src_url, dst_url)
+      visit src_url
+      expect(page.status_code).to eq 200
+      expect(page).to have_current_path dst_url
+      expect(page).to have_selector '#entity-page-container'
+    end
+
+    %i[alice bob cassie].each do |sym|
+      let(sym) { create(:entity_person) }
+      let("#{sym}_url".to_sym){ entity_path(send(sym)) }
+    end
+
+    context "when alice has been merged into bob" do
+
+      before { EntityMerger.new(source: alice, dest: bob).merge! }
+
+      it "redirects from alice's profile page to bob's profile page" do
+        should_redirect(alice_url, bob_url)
+      end
+    end
+  end
+
   describe "header" do
     before { visit_page.call }
 

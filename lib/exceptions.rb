@@ -38,4 +38,17 @@ module Exceptions
       "Well, that's weird."
     end
   end
+
+  class MergedEntityError < StandardError
+    attr_reader :merged_entity
+
+    def initialize(merged_entity)
+      super
+      @merged_entity = merged_entity
+    end
+
+    def message
+      "Tried to retrieve entity that has been merged into entity w/ id #{merged_entity.id}"
+    end
+  end
 end

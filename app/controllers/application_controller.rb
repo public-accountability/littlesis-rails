@@ -33,8 +33,12 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from Exceptions::UnauthorizedBulkRequest do |exception|
-    #return head :unauthorized # for use only with JSON requests
+    # for use only with JSON requests
     render json: { errors: ['title' => exception.message] }, status: 401
+  end
+
+  rescue_from Exceptions::MergedEntityError do |exception|
+    redirect_to entity_path(exception.merged_entity)
   end
 
   def admins_only
@@ -148,8 +152,13 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  def set_entity
-    @entity = Entity.find(params[:id])
+  def set_entity(args)
+    base_query = Entity.unscoped.includes(args[:includes])
+    @entity = base_query.find_by_id(params[:id])
+    if @entity.merged_id.present?
+      raise Exceptions::MergedEntityError.new(base_query.find_by_id(@entity.merged_id))
+    end
+    raise ActiveRecord::RecordNotFound if (@entity.nil? || @entity.is_deleted)
   end
 
   def set_cache_control(time = 1.hour)
