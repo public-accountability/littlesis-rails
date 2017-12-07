@@ -47,20 +47,39 @@ feature 'User Pages' do
 
   feature 'User Edits Page' do
     let(:url) { "/users/#{user_for_page.username}/edits" }
-    before { visit url }
+
     context 'logged in as another user' do
       let(:user) { current_user }
+      before { visit url }
       denies_access
     end
 
     context 'logged in as admin' do
       let(:user) { admin }
+      before { visit url }
       specify { successfully_visits_page(url) }
     end
 
     context 'logged in as the user' do
+      let(:entities) { Array.new(2) { create(:entity_org) } }
       let(:user) { user_for_page }
-      specify { successfully_visits_page(url) }
-    end
-  end
+
+      context 'with 2 edits' do
+        with_versioning do
+          before do
+            entities.each { |e| e.update!(blurb: Faker::Dog.meme_phrase) }
+
+            entities.each { |e| e.versions.last.update_columns(whodunnit: user_for_page.id.to_s) }
+            visit url
+          end
+
+          scenario 'page has table of recent edits' do
+            successfully_visits_page(url)
+            page_has_selector 'table#user-edits-table'
+            page_has_selector '#user-edits-table tbody tr', count: 2
+          end
+        end
+      end
+    end # end logged in as the user
+  end # end User Edits Page
 end

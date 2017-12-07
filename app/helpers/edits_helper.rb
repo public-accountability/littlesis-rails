@@ -1,6 +1,6 @@
 ################################################
 # Helpers for modifications pages.
-# used by edit controller and lists controller
+# used by edit controller, lists controller, and users controller
 ################################################
 module EditsHelper
   # Right now all this does is delete: 'updated_at', 'last_user_id', 'id'
@@ -26,5 +26,13 @@ module EditsHelper
     user = User.find_by_id(version.whodunnit)
     return '?' if user.nil?
     user.username
+  end
+
+  def resource_link_or_text(resource)
+    if resource.is_deleted
+      content_tag(:span, resource.name) + content_tag(:em, ' (deleted)')
+    else
+      link_to resource.name, send("#{resource.class.name.downcase}_path", resource)
+    end
   end
 end

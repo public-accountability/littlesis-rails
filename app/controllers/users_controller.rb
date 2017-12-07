@@ -18,7 +18,7 @@ class UsersController < ApplicationController
   # GET /users/:username
   def show
     @maps = @user.network_maps.order("created_at DESC, id DESC")
-    @groups = @user.groups.includes(:campaign).order(:name)
+    @groups = @user.groups.order(:name)
     @lists = @user.lists.order("created_at DESC, id DESC")
     @recent_updates = @user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
     @permissions = @user.permissions.instance_variable_get(:@sf_permissions)
@@ -27,6 +27,7 @@ class UsersController < ApplicationController
 
   # GET /users/:username/edits
   def edits
+    @edits = @user.recent_edits(page_param)
   end
 
   def image
@@ -152,6 +153,14 @@ class UsersController < ApplicationController
     params.require(:image).permit(
       :file, :url
     )
+  end
+
+  def page_param
+    if params[:page].nil?
+      1
+    else
+      params[:page].to_i
+    end
   end
 
   def user_or_admins_only

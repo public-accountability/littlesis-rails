@@ -23,7 +23,7 @@ module UserEdits
         UserEdit.new(
           ar_lookup.dig(v.item_type, v.item_id),
           v,
-          v.event.capitalize,
+          v.event.tr('_', ' ').capitalize,
           v.created_at.strftime('%B %e, %Y%l%p')
         )
       end

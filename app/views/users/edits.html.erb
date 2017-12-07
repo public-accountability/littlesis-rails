@@ -1,1 +1,34 @@
-<h1>edits</h1>
+<div class="row">
+  <h2>Recent edits made by <%= link_to @user.username, user_page_path(@user) %></h2>
+</div>
+
+<div class="row">
+  <div id="user-edits-table-container" class="col-sm-12 nopadding">
+    <table class="table" id="user-edits-table">
+      <thead>
+	<tr>
+	  <th>Resource</th>
+	  <th>Action</th>
+	  <th>Time</th>
+	</tr>
+      </thead>
+      <tbody>
+	<% @edits.recent_edits_presenter.each do |edit| %>
+	  <tr>
+	    <td>
+	      <%= resource_link_or_text(edit.resource) %>
+	    </td>
+	    <td>
+	      <%= edit.action %>
+	    </td>
+	    <td>
+	      <%= edit.time %>
+	    </td>
+	  </tr>
+	<% end %>
+      </tbody>
+    </table>
+    <%= paginate @edits.recent_edits %>
+    <%= link_to  'Back', user_page_path(@user), class: 'm-left-1em pull-right' %>
+  </div>
+</div>
