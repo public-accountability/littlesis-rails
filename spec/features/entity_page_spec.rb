@@ -234,7 +234,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       before { visit entity_path(org_with_memberships, relationships: 'memberships') }
 
       it 'show title Memberships' do
-        expect(page.find('#relationship_tabs_content')).to have_text 'Memberships'
+        # expect(page.find('#relationship_tabs_content')).to have_text 'Memberships', count: 1
+        page_has_selector 'div.subsection', text: 'Memberships', count: 1
       end
     end
 
