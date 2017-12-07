@@ -30,7 +30,13 @@
 
 <h3>
   Edits
+  <% if @user == current_user || current_user.admin? %>
+    <small>
+      <%= link_to 'view all edits', user_edits_path(@user), class: 'm-left-1em' %>
+    </small>
+  <% end %>
 </h3>
+
 <div>
   <% @recent_updates.each do |entity| %>
     <div class="dashboard-entity">

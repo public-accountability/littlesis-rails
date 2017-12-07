@@ -25,13 +25,14 @@ feature 'User Pages' do
       page_has_selector 'h1', text: user_for_page.username
     end
 
-    scenario 'visiting a user page as a logged into user' do
+    scenario 'visiting a user page as any logged into user' do
       visit "/users/#{user_for_page.id}"
       successfully_visits_page "/users/#{user_for_page.id}"
       page_has_selector 'h1', text: user_for_page.username
       page_has_selector 'div', text: user_for_page.about_me
       page_has_selector 'div.dashboard-entity', count: 1
       expect(page).not_to have_selector 'h3', text: 'Permissions'
+      expect(page).not_to have_selector 'h3 small a', text: 'view all edits'
     end
 
     context 'logged in as the user' do
@@ -41,6 +42,7 @@ feature 'User Pages' do
         successfully_visits_page "/users/#{user.id}"
         page_has_selector 'h1', text: user.username
         page_has_selector 'h3', text: 'Permissions'
+        expect(page).to have_selector 'h3 small a', text: 'view all edits'
       end
     end
   end
