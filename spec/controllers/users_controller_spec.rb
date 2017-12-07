@@ -4,6 +4,18 @@ describe UsersController, type: :controller do
   before(:all) { DatabaseCleaner.start }
   after(:all) { DatabaseCleaner.clean }
 
+  describe 'routes' do
+    it { should route(:get, '/users/admin').to(action: :admin) }
+    it { should route(:get, '/users/a_username').to(action: :show, username: 'a_username') }
+    it { should route(:get, '/users/a_username/edits').to(action: :edits, username: 'a_username') }
+    it { should route(:get, '/users/123/edit_permissions').to(action: :edit_permissions, id: '123') }
+    it { should route(:get, '/users/123/image').to(action: :image, id: '123') }
+    it { should route(:post, '/users/123/restrict').to(action: :restrict, id: '123') }
+    it { should route(:post, '/users/123/upload_image').to(action: :upload_image, id: '123') }
+    it { should route(:delete, '/users/123/delete_permission').to(action: :delete_permission, id: '123') }
+    it { should route(:delete, '/users/123/destroy').to(action: :destroy, id: '123') }
+  end
+
   describe 'GET #index' do
     login_admin
     before { get :index }
@@ -11,8 +23,6 @@ describe UsersController, type: :controller do
   end
 
   describe 'GET #admin' do
-    it { should route(:get, '/users/admin').to(action: :admin) }
-
     context 'as an admin' do
       login_admin
       before { get :admin }
@@ -56,11 +66,6 @@ describe UsersController, type: :controller do
     it { should redirect_to(edit_permissions_user_path) }
   end
 
-  describe 'POST #restrict' do
-    login_admin
-    it { should route(:post, '/users/123/restrict').to(action: :restrict, id: '123') }
-  end
-
   describe 'DELETE #destory' do
     # describe 'logged in as regular user' do 
     #   login_user
@@ -78,18 +83,18 @@ describe UsersController, type: :controller do
           SfGuardUserPermission.create!(permission_id: 3, user_id: @sf_user.id)
           @entity = create(:mega_corp_inc, last_user_id: @sf_user.id)
         end
-        
+
         it 'deletes permissions' do
           expect { delete :destroy, :id => @user.id }.to change { SfGuardUserPermission.count }.by(-1)
         end
-        
+
         it 'marks sf_guard_user as deleted' do
           expect(SfGuardUser.unscoped.find(@sf_user.id).is_deleted).to be false
           delete :destroy, :id => @user.id
           expect(SfGuardUser.find_by_id(@sf_user.id)).to be_nil
           expect(SfGuardUser.unscoped.find(@sf_user.id).is_deleted).to be true
         end
-        
+
         it 'updates last_user_id on entities' do
           expect(Entity.find(@entity.id).last_user_id).to eql @sf_user.id
           delete :destroy, :id => @user.id
@@ -110,7 +115,7 @@ describe UsersController, type: :controller do
           it { should redirect_to(admin_users_path) }
         end
       end
-      
+
       context 'Trying to delete an admin' do
         before do
           @sf_user = create(:sf_guard_user, is_deleted: false, username: "user#{rand(1000)}")

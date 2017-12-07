@@ -1,7 +1,8 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict]
+  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict, :edits]
   before_action :authenticate_user!, except: [:success]
-  before_filter :admins_only, except: [:show, :restrict, :success]
+  before_action :admins_only, except: [:show, :restrict, :success, :edits]
+  before_action :user_or_admins_only, only: [:edits]
 
   # get /users
   def index
@@ -14,14 +15,19 @@ class UsersController < ApplicationController
       .page(params[:page]).per(100)
   end
 
-  # GET /users/1
+  # GET /users/:username
   def show
     @maps = @user.network_maps.order("created_at DESC, id DESC")
-    @groups = @user.groups.includes(:campaign).order(:name)
+    @groups = @user.groups.order(:name)
     @lists = @user.lists.order("created_at DESC, id DESC")
     @recent_updates = @user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
     @permissions = @user.permissions.instance_variable_get(:@sf_permissions)
     @all_permissions = Permissions::ALL_PERMISSIONS
+  end
+
+  # GET /users/:username/edits
+  def edits
+    @edits = @user.recent_edits(page_param)
   end
 
   def image
@@ -147,5 +153,17 @@ class UsersController < ApplicationController
     params.require(:image).permit(
       :file, :url
     )
+  end
+
+  def page_param
+    if params[:page].nil?
+      1
+    else
+      params[:page].to_i
+    end
+  end
+
+  def user_or_admins_only
+    raise Exceptions::PermissionError unless (current_user == @user) || current_user.admin?
   end
 end

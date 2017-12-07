@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   include ChatUser
+  include UserEdits
 
   validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
@@ -122,6 +123,10 @@ class User < ActiveRecord::Base
     return "/images/system/anon.png" if image.nil?
     type = (image.has_square ? "square" : "profile") if type.nil?
     image.image_path(type)
+  end
+
+  def recent_edits(page = 1)
+    Edits.new(self, page: page)
   end
 
   ###############

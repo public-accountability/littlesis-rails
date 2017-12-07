@@ -1,17 +1,21 @@
 FactoryBot.define do
   factory :entity_version, class: PaperTrail::Version do
-    sequence(:id)
+    item_type 'Entity'
+    item_id { rand(10_000) }
     created_at { Time.now }
-    event 'Update'
+    whodunnit '1'
+    event 'update'
     object_changes PaperTrail::Serializers::YAML.dump({"blurb" => ["original", "updated blurb"]})
   end
 
   factory :relationship_version, class: PaperTrail::Version do
-    sequence(:id)
     sequence(:entity1_id)
     sequence(:entity2_id) { |n| n + 1000 }
     created_at { Time.now }
-    event 'Update'
+    item_type 'Relationship'
+    item_id { rand(10_000) }
+    whodunnit '1'
+    event 'update'
     object_changes PaperTrail::Serializers::YAML.dump({"start_date" => [nil, "2000-01-01"]})
   end
 end

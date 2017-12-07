@@ -1,56 +1,62 @@
 <p id="notice"><%= notice %></p>
 
 <h1>
-	<%= @user.username %>
+  <%= @user.username %>
 </h1>
 
 <div class="entity-profile-image">
-    <%= user_profile_image %>
+  <%= user_profile_image %>
 </div>
 
- <h3>
- 	About
- </h3>
- <div>
- 	<%= @user.about_me %>
- </div>
-
- <h3>
- 	Groups
- </h3>
- <div>
-	<% if @groups.present? %>
-	    <% @groups.each do |group| %>
-		<%= group_link(group) %><br />
-	    <% end %>
-	<% else %>
-	    None
-	<% end %>
- </div>
-
 <h3>
-	Edits
+  About
 </h3>
 <div>
-	<% @recent_updates.each do |entity| %>
-	    <div class="dashboard-entity">
-		<span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
-	    </div>
-	<% end %>
+  <%= @user.about_me %>
+</div>
+
+<h3>
+  Groups
+</h3>
+<div>
+  <% if @groups.present? %>
+    <% @groups.each do |group| %>
+      <%= group_link(group) %><br />
+    <% end %>
+  <% else %>
+    None
+  <% end %>
+</div>
+
+<h3>
+  Edits
+  <% if @user == current_user || current_user.admin? %>
+    <small>
+      <%= link_to 'view all edits', user_edits_path(@user), class: 'm-left-1em' %>
+    </small>
+  <% end %>
+</h3>
+
+<div>
+  <% @recent_updates.each do |entity| %>
+    <div class="dashboard-entity">
+      <span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
+    </div>
+  <% end %>
 </div>
 
 <% if @user == current_user || current_user.admin? %>
-	<h3>
-		Permissions
-	</h3>
-	<div>
-		<table>
-			<% @all_permissions.each do |p| %>
-				<tr>
-					<td class="permission-name"><%= p.capitalize %></td>
-					<td class="permission-boolean"><%= @permissions.include?(p) ? "Yes" : "No" %></td>
-				</tr>
-			<% end %>
-		</table>
-	</div>
+  <h3>
+    Permissions
+  </h3>
+  <div>
+    <table>
+      <% @all_permissions.each do |p| %>
+	<tr>
+	  <td class="permission-name"><%= p.capitalize %></td>
+	  <td class="permission-boolean"><%= @permissions.include?(p) ? "Yes" : "No" %></td>
+	</tr>
+      <% end %>
+    </table>
+  </div>
 <% end %>

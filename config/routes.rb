@@ -82,7 +82,7 @@ Lilsis::Application.routes.draw do
   end
 
   get '/users/:username' => 'users#show', as: :user_page
-
+  get '/users/:username/edits' => 'users#edits', as: :user_edits
 
   resources :lists do
     member do

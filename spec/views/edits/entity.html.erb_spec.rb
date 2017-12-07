@@ -27,7 +27,7 @@ describe 'edits/entity.html.erb', type: :view do
   end
 
   it 'shows version' do
-    expect(rendered).to match '<td>Update</td>'
+    expect(rendered).to match '<td>update</td>'
     expect(rendered).to match '<strong>blurb:'
     expect(rendered).to match 'original -> updated blurb'
   end
