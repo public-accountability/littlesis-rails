@@ -840,4 +840,37 @@ describe Entity, :tag_helper  do
       end
     end
   end
+
+  describe "resolving merges" do
+
+    %i[alice bob cassie].each do |person|
+      let!(person) { create(:entity_person) }
+    end
+
+    context "when alice has not been merged" do
+
+      it "resolves alice to herself" do
+        expect(alice.resolve_merges).to eql alice
+      end
+    end
+
+    context "when alice has been merged into bob" do
+      before { EntityMerger.new(source: alice, dest: bob).merge! }
+
+      it "resolves alice to bob" do
+        expect(alice.resolve_merges).to eql bob
+      end
+    end
+
+    context "when alice has been merged into bob, bob into cassie" do
+      before do
+        EntityMerger.new(source: alice, dest: bob).merge!
+        EntityMerger.new(source: bob,   dest: cassie).merge!
+      end
+
+      it "resolves alice to cassie" do
+        expect(alice.resolve_merges).to eql cassie
+      end
+    end
+  end
 end

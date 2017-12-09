@@ -53,11 +53,66 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         should_redirect(entity_path(alice), entity_path(bob))
       end
 
-      EntitiesController::TABS.each do |tab| 
+      EntitiesController::TABS.each do |tab|
         it "redirects from alice's #{tab} tab to bob's #{tab} tab" do
           should_redirect(send("#{tab}_entity_path", alice),
                           send("#{tab}_entity_path", bob))
         end
+      end
+    end
+
+    context "when alice has been merged into bob who has been merged into cassie" do
+      before do
+        EntityMerger.new(source: alice, dest: bob).merge!
+        EntityMerger.new(source: bob, dest: cassie).merge!
+      end
+
+      it "redirects from alice's profile page to cassie's profile page" do
+        should_redirect(entity_path(alice), entity_path(cassie))
+      end
+
+      EntitiesController::TABS.each do |tab|
+        it "redirects from alice's #{tab} tab to cassie's #{tab} tab" do
+          should_redirect(send("#{tab}_entity_path", alice),
+                          send("#{tab}_entity_path", cassie))
+        end
+      end
+    end
+
+    context"when alice has been merged into bob, bob is deleted" do
+
+      before do
+        EntityMerger.new(source: alice, dest: bob).merge!
+        bob.soft_delete
+      end
+
+      it "renders 'not found' when trying to visit alice's page" do
+        visit entity_path(alice)
+        expect(page.status_code).to eq 404
+        expect(page).to have_text "Page Not Found"
+      end
+
+      EntitiesController::TABS.each do |tab|
+        it "renders 'not found' when trying to visit alice's #{tab} tab" do
+          visit send("#{tab}_entity_path", alice)
+          expect(page.status_code).to eq 404
+          expect(page).to have_text "Page Not Found"
+        end
+      end
+    end
+
+    context"when alice has been merged into bob, bob into cassie, cassie is deleted" do
+
+      before do
+        EntityMerger.new(source: alice, dest: bob).merge!
+        EntityMerger.new(source: bob, dest: cassie).merge!
+        cassie.soft_delete
+      end
+
+      it "renders 'not found' when trying to visit alice's page" do
+        visit entity_path(alice)
+        expect(page.status_code).to eq 404
+        expect(page).to have_text "Page Not Found"
       end
     end
   end

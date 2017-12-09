@@ -497,9 +497,10 @@ describe EntitiesController, type: :controller do
         # ... why are we writing tests that are as brittle as this anyway?
         # ... why are we writing tests that break when an implementation changes but the result does not?
         # ... do they *really* give us a lot of value we could not get from a less brittle approach?
-        @entity = double('entity', :name => 'my awesome name',
-                                   :merged_id => nil,
-                                   :is_deleted => false)
+        @entity = double('entity', :name        => 'my awesome name',
+                         :merged_id   => nil,
+                         :has_merges? => false,
+                         :is_deleted  => false)
         expect(Entity).to receive(:find_by_id).and_return(@entity)
       end
 

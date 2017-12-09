@@ -155,12 +155,20 @@ class ApplicationController < ActionController::Base
   protected
 
   def set_entity(args = {})
-    base_query = Entity.unscoped.includes(args[:includes])
-    @entity = base_query.find_by_id(params[:id])
-    if @entity&.merged_id&.present?
-      raise Exceptions::MergedEntityError.new(base_query.find_by_id(@entity.merged_id))
-    end
-    raise ActiveRecord::RecordNotFound if (@entity.nil? || @entity.is_deleted)
+    @skope = Entity.unscoped.includes(args[:includes])
+    @entity = @skope.find_by_id(params[:id])
+    raise_merged if @entity&.has_merges?
+    raise_if_not_found @entity
+  end
+
+  def raise_merged
+    merged_entity = @entity.resolve_merges(@skope)
+    raise_if_not_found(merged_entity)
+    raise Exceptions::MergedEntityError.new(merged_entity)
+  end
+
+  def raise_if_not_found(entity)
+    raise ActiveRecord::RecordNotFound if entity.nil? or entity.is_deleted
   end
 
   def set_cache_control(time = 1.hour)

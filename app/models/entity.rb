@@ -814,6 +814,16 @@ class Entity < ActiveRecord::Base
     "/#{primary_ext.downcase}/#{to_param}"
   end
 
+  # ActiveRecordScope -> Entity
+  def resolve_merges(skope = Entity.unscoped)
+    return skope.find_by_id(merged_id).resolve_merges(skope) if has_merges?
+    self
+  end
+
+  def has_merges?
+    merged_id.present?
+  end
+
   # A type checker for definition id and names
   # input: String or Integer
   # output: String or throws ArgumentError
