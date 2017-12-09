@@ -152,10 +152,10 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  def set_entity(args)
+  def set_entity(args = {})
     base_query = Entity.unscoped.includes(args[:includes])
     @entity = base_query.find_by_id(params[:id])
-    if @entity.merged_id.present?
+    if @entity&.merged_id&.present?
       raise Exceptions::MergedEntityError.new(base_query.find_by_id(@entity.merged_id))
     end
     raise ActiveRecord::RecordNotFound if (@entity.nil? || @entity.is_deleted)

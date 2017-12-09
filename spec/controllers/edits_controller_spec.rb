@@ -20,7 +20,7 @@ describe EditsController, type: :controller do
     login_user
 
     before do
-      expect(Entity).to receive(:find).and_return(build(:person))
+      expect(Entity).to receive(:find_by_id).and_return(build(:person))
       get :entity, id: '123'
     end
     it { should respond_with 200 }
