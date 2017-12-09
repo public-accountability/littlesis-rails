@@ -39,20 +39,25 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       visit src_url
       expect(page.status_code).to eq 200
       expect(page).to have_current_path dst_url
-      expect(page).to have_selector '#entity-page-container'
+      expect(page).to have_selector '#entity-header'
     end
 
-    %i[alice bob cassie].each do |sym|
-      let(sym) { create(:entity_person) }
-      let("#{sym}_url".to_sym){ entity_path(send(sym)) }
+    %i[alice bob cassie].each do |person|
+      let!(person) { create(:entity_person) }
     end
 
     context "when alice has been merged into bob" do
-
       before { EntityMerger.new(source: alice, dest: bob).merge! }
 
       it "redirects from alice's profile page to bob's profile page" do
-        should_redirect(alice_url, bob_url)
+        should_redirect(entity_path(alice), entity_path(bob))
+      end
+
+      EntitiesController::TABS.each do |tab| 
+        it "redirects from alice's #{tab} tab to bob's #{tab} tab" do
+          should_redirect(send("#{tab}_entity_path", alice),
+                          send("#{tab}_entity_path", bob))
+        end
       end
     end
   end

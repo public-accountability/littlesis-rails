@@ -37,8 +37,10 @@ class ApplicationController < ActionController::Base
     render json: { errors: ['title' => exception.message] }, status: 401
   end
 
-  rescue_from Exceptions::MergedEntityError do |exception|
-    redirect_to entity_path(exception.merged_entity)
+  rescue_from Exceptions::MergedEntityError do |e|
+    EntitiesController::TABS.include?(action_name) ?
+      redirect_to(send("#{action_name}_entity_path", e.merged_entity)) :
+      redirect_to(entity_path(e.merged_entity))
   end
 
   def admins_only

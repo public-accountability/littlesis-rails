@@ -8,6 +8,8 @@ class EntitiesController < ApplicationController
     }
   )
 
+  TABS = %w[interlocks political giving datatable].freeze
+
   before_filter :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show, :create_bulk]
   before_action :set_entity_with_eager_loading, only: [:show]
