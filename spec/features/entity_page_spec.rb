@@ -33,7 +33,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
   end
 
-  describe'redirecting merged entities' do
+  describe 'redirecting merged entities' do
 
     def should_redirect(src_url, dst_url)
       visit src_url

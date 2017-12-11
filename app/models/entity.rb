@@ -81,9 +81,11 @@ class Entity < ActiveRecord::Base
   # NY Election 
   has_many :ny_filer_entities
   has_many :ny_filers, through: :ny_filer_entities
-  
+
+  # SCOPES
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }
+  scope :profile_scope, -> { includes(:aliases, list_entities: [:list]) }
 
   validates_presence_of :primary_ext
   validates :name, presence: true, entity_name: true
@@ -814,9 +816,16 @@ class Entity < ActiveRecord::Base
     "/#{primary_ext.downcase}/#{to_param}"
   end
 
-  # ActiveRecordScope -> Entity
-  def resolve_merges(skope = Entity.unscoped)
-    return skope.find_by_id(merged_id).resolve_merges(skope) if has_merges?
+  def self.find_with_merges(id:, skope: :itself)
+    e = Entity.unscoped.send(skope).find_by_id(id)
+    raise Exceptions::MergedEntityError.new(e.resolve_merges(skope)) if e&.has_merges?
+    raise ActiveRecord::RecordNotFound if e.nil? or e&.is_deleted?
+    e
+  end
+  
+  # ?Symbol -> Entity
+  def resolve_merges(skope = :itself)
+    return Entity.unscoped.send(skope).find_by_id(merged_id).resolve_merges(skope) if has_merges?
     self
   end
 
