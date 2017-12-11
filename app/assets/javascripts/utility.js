@@ -97,7 +97,7 @@ utility.relationshipDetails = function(category) {
   case 3: // members
     return [
       title, startDate, endDate, isCurrent,
-      ['Membership Dues', 'membership_dues', 'money']
+      ['Membership Dues', 'dues', 'money']
     ];
   case 4: // family
     return [ d1, d2, startDate, endDate, isCurrent ];
