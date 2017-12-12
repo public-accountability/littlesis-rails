@@ -491,16 +491,11 @@ describe EntitiesController, type: :controller do
       login_user
 
       before do
-        # NOTE: @aguestuser twists himself into contortions to write
-        # these mocks to fix controller specs that fail for functionality that works
-        # *and* has passing feature specs and wonders...
-        # ... why are we writing tests that are as brittle as this anyway?
-        # ... why are we writing tests that break when an implementation changes but the result does not?
-        # ... do they *really* give us a lot of value we could not get from a less brittle approach?
-        @entity = double('entity', :name        => 'my awesome name',
+        @entity = double('entity',
+                         :name        => 'Lew Basnight',
                          :merged_id   => nil,
                          :has_merges? => false,
-                         :is_deleted  => false)
+                         :is_deleted? => false)
         expect(Entity).to receive(:find_by_id).and_return(@entity)
       end
 

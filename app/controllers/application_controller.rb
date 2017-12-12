@@ -156,9 +156,6 @@ class ApplicationController < ActionController::Base
 
   def set_entity(skope = :itself)
     @entity = Entity.find_with_merges(id: params[:id], skope: skope)
-    # @entity = Entity.unscoped.send(skope).find_by_id(params[:id])
-    # raise_merged skope if @entity&.has_merges?
-    # raise_if_not_found @entity
   end
 
   def set_cache_control(time = 1.hour)
@@ -171,17 +168,5 @@ class ApplicationController < ActionController::Base
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:account_update, keys: [:about_me])
-  end
-
-  private 
-
-  def raise_merged(skope)
-    merged_entity = @entity.resolve_merges(skope)
-    raise_if_not_found(merged_entity)
-    raise Exceptions::MergedEntityError.new(merged_entity)
-  end
-
-  def raise_if_not_found(entity)
-    raise ActiveRecord::RecordNotFound if entity.nil? or entity.is_deleted
   end
 end
