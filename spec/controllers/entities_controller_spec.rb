@@ -48,7 +48,7 @@ describe EntitiesController, type: :controller do
     describe 'entity/id/contributions' do
       before do
         @e = build(:mega_corp_inc, updated_at: Time.now)
-        expect(Entity).to receive(:find).and_return(@e)
+        expect(Entity).to receive(:find_by_id).and_return(@e)
         expect(@e).to receive(:contribution_info).and_return([build(:os_donation)])
         get :contributions, id: @e.id
       end
@@ -66,7 +66,8 @@ describe EntitiesController, type: :controller do
 
     describe '#match_donations and reivew donations' do
       before do
-        expect(Entity).to receive(:find).once
+        # expect(Entity).to receive(:find_by_id).once
+        expect(Entity).to receive(:find_by_id).and_return(build(:entity_org))
         expect(controller).to receive(:check_permission).with('importer').and_call_original
       end
 
@@ -286,7 +287,7 @@ describe EntitiesController, type: :controller do
   describe '#add_relationship' do
     login_user
     before do
-      expect(Entity).to receive(:find)
+      expect(Entity).to receive(:find_by_id).and_return(build(:entity_org))
       get :add_relationship, id: rand(100)
     end
     it { should render_template(:add_relationship) }
@@ -297,7 +298,7 @@ describe EntitiesController, type: :controller do
     login_user
 
     before do
-      expect(Entity).to receive(:find).and_return(build(:org))
+      expect(Entity).to receive(:find_by_id).and_return(build(:org))
       get :edit, id: rand(100)
     end
     it { should render_template(:edit) }
@@ -490,8 +491,12 @@ describe EntitiesController, type: :controller do
       login_user
 
       before do
-        @entity = double('entity', :name => 'my awesome name')
-        expect(Entity).to receive(:find).and_return(@entity)
+        @entity = double('entity',
+                         :name        => 'Lew Basnight',
+                         :merged_id   => nil,
+                         :has_merges? => false,
+                         :is_deleted? => false)
+        expect(Entity).to receive(:find_by_id).and_return(@entity)
       end
 
       it 'calls soft delete on entity' do

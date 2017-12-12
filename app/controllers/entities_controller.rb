@@ -8,9 +8,11 @@ class EntitiesController < ApplicationController
     }
   )
 
+  TABS = %w[interlocks political giving datatable].freeze
+
   before_filter :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show, :create_bulk]
-  before_action :set_entity_with_eager_loading, only: [:show]
+  before_action :set_entity_for_profile_page, only: [:show]
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
   before_action -> { check_permission('contributor') }, only: [:create]
   before_action -> { check_permission('deleter') }, only: [:destroy]
@@ -412,8 +414,8 @@ class EntitiesController < ApplicationController
 
   private
 
-  def set_entity_with_eager_loading
-    @entity = Entity.includes(:aliases, list_entities: [:list]).find(params[:id])
+  def set_entity_for_profile_page
+    set_entity(:profile_scope)
   end
 
   def set_entity_references
