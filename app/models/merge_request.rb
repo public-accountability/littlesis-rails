@@ -10,4 +10,8 @@ class MergeRequest < UserRequest
     source.merge_with(dest)
     approved!
   end
+
+  def deny
+    denied!
+  end
 end

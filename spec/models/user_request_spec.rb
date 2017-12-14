@@ -49,8 +49,13 @@ describe UserRequest, type: :model do
   end
 
   describe "abstract methods" do
+
     it "defines an abstract #approve method" do
       expect { user_request.approve }.to raise_error NotImplementedError
+    end
+
+    it "defines an abstract #deny method" do
+      expect { user_request.deny }.to raise_error NotImplementedError
     end
   end
 end

@@ -50,4 +50,22 @@ describe MergeRequest, type: :model do
       expect { merge_request.approve }.to change(merge_request, :status).to('approved')
     end
   end
+
+  it "implements #deny" do
+    expect { merge_request.deny }.not_to raise_error
+  end
+
+  describe "#deny" do
+
+    before { allow(merge_request.source).to receive(:merge_with) }
+
+    it "does not execute the requested merge" do
+      merge_request.deny
+      expect(merge_request.source).not_to have_received(:merge_with)
+    end
+
+    it "records the approval" do
+      expect { merge_request.deny }.to change(merge_request, :status).to('denied')
+    end
+  end
 end

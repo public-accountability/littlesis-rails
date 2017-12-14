@@ -11,4 +11,8 @@ class UserRequest < ActiveRecord::Base
   def approve
     raise NotImplementedError
   end
+
+  def deny
+    raise NotImplementedError
+  end
 end
