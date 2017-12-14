@@ -9,13 +9,20 @@ class UserRequest < ActiveRecord::Base
   validates_presence_of :user_id, :status, :type
   validates_inclusion_of :type, in: TYPES.values
 
-  # abstract methods
+  # abstract method(s)
 
-  def approved_by!(_)
+  def approve!
     raise NotImplementedError
   end
 
-  def denied_by!(_)
-    raise NotImplementedError
+  # concrete methods
+
+  def approved_by!(reviewer)
+    approve!
+    update!(status: :approved, reviewer: reviewer)
+  end
+
+  def denied_by!(reviewer)
+    update!(status: :denied, reviewer: reviewer)
   end
 end

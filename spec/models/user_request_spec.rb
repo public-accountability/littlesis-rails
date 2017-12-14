@@ -55,12 +55,43 @@ describe UserRequest, type: :model do
 
   describe "abstract methods" do
 
-    it "defines an abstract #approved_by! method" do
-      expect { user_request.approved_by! nil }.to raise_error NotImplementedError
+    it "defines an abstract #approve! method" do
+      expect { user_request.approve! }.to raise_error NotImplementedError
+    end
+  end
+
+  describe "concrete methods" do
+    let(:reviewer) { create(:admin_user) }
+
+    describe "#approved_by!" do
+      before do
+        allow(user_request).to receive(:approve!).and_return(nil)
+        user_request.approved_by!(reviewer)
+      end
+
+      it "calls approve!" do
+        expect(user_request).to have_received(:approve!)
+      end
+
+      it "records the approval" do
+        expect(user_request.status).to eql('approved')
+      end
+
+      it "records the reviewer" do
+        expect(user_request.reviewer).to eql(reviewer)
+      end
     end
 
-    it "defines an abstract #denied_by! method" do
-      expect { user_request.denied_by! nil }.to raise_error NotImplementedError
+    describe "#denied_by!" do
+      before { user_request.denied_by!(reviewer)}
+
+      it "records the denial" do
+        expect(user_request.status).to eql 'denied'
+      end
+
+      it "records the reviewer" do
+        expect(user_request.reviewer).to eql reviewer
+      end
     end
   end
 end

@@ -9,7 +9,7 @@ describe MergeRequest, type: :model do
       expect(merge_request).to be_a UserRequest
     end
     it "has type MergeRequest" do
-      expect(merge_request.type).to eql UserRequest::TYPES[:merge]
+      expect(merge_request.type).to eql "MergeRequest"
     end
   end
 
@@ -32,46 +32,17 @@ describe MergeRequest, type: :model do
     expect(merge_request.status).to eql 'pending'
   end
 
-
   describe "methods" do
     let(:reviewer) { create(:admin_user) }
 
-    describe "#approved_by!" do
-      before { allow(merge_request.source).to receive(:merge_with) }
-
+    describe "#approve!" do
+      before do
+        allow(merge_request.source).to receive(:merge_with)
+        merge_request.approve! # implicitly tests that #approve! is implemented
+      end
+      
       it "executes the requested merge" do
-        merge_request.approved_by!(reviewer)
-        expect(merge_request.source)
-          .to have_received(:merge_with).with(merge_request.dest)
-      end
-
-      it "records the approval" do
-        expect { merge_request.approved_by!(reviewer) }
-          .to change(merge_request, :status).to('approved')
-      end
-
-      it "records the reviewer" do
-        expect { merge_request.approved_by!(reviewer) }
-          .to change(merge_request, :reviewer_id).to(reviewer.id)
-      end
-    end
-
-    describe "#denied_by!" do
-      before { allow(merge_request.source).to receive(:merge_with) }
-
-      it "does not execute the requested merge" do
-        merge_request.denied_by!(reviewer)
-        expect(merge_request.source).not_to have_received(:merge_with)
-      end
-
-      it "records the approval" do
-        expect { merge_request.denied_by!(reviewer) }
-          .to change(merge_request, :status).to('denied')
-      end
-
-      it "records the reviewer" do
-        expect { merge_request.denied_by!(reviewer) }
-          .to change(merge_request, :reviewer_id).to(reviewer.id)
+        expect(merge_request.source).to have_received(:merge_with).with(merge_request.dest)
       end
     end
   end
