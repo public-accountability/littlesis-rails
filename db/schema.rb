@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171213183910) do
+ActiveRecord::Schema.define(version: 20171214174355) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1634,16 +1634,16 @@ ActiveRecord::Schema.define(version: 20171213183910) do
   add_index "user_permissions", ["user_id", "resource_type"], name: "index_user_permissions_on_user_id_and_resource_type", using: :btree
 
   create_table "user_requests", force: :cascade do |t|
-    t.string   "type",       limit: 255,             null: false
-    t.integer  "user_id",    limit: 4,               null: false
-    t.integer  "status",     limit: 4,   default: 0, null: false
-    t.integer  "source_id",  limit: 4
-    t.integer  "dest_id",    limit: 4
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.string   "type",        limit: 255,             null: false
+    t.integer  "user_id",     limit: 4,               null: false
+    t.integer  "status",      limit: 4,   default: 0, null: false
+    t.integer  "source_id",   limit: 4
+    t.integer  "dest_id",     limit: 4
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.integer  "reviewer_id", limit: 4
   end
 
-  add_index "user_requests", ["source_id", "dest_id"], name: "index_user_requests_on_source_id_and_dest_id", using: :btree
   add_index "user_requests", ["user_id"], name: "index_user_requests_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|

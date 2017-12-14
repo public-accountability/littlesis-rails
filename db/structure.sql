@@ -2984,11 +2984,11 @@ CREATE TABLE `user_requests` (
   `dest_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
+  `reviewer_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_user_requests_on_user_id` (`user_id`),
-  KEY `index_user_requests_on_source_id_and_dest_id` (`source_id`,`dest_id`),
   CONSTRAINT `fk_rails_de8c07e72e` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3069,7 +3069,7 @@ CREATE TABLE `versions` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-14 17:15:52
+-- Dump completed on 2017-12-14 18:00:34
 INSERT INTO schema_migrations (version) VALUES ('20131031182415');
 
 INSERT INTO schema_migrations (version) VALUES ('20131031182500');
@@ -3319,4 +3319,8 @@ INSERT INTO schema_migrations (version) VALUES ('20171121162338');
 INSERT INTO schema_migrations (version) VALUES ('20171204223305');
 
 INSERT INTO schema_migrations (version) VALUES ('20171213183910');
+
+INSERT INTO schema_migrations (version) VALUES ('20171214173831');
+
+INSERT INTO schema_migrations (version) VALUES ('20171214174355');
 
