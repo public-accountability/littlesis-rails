@@ -22,7 +22,7 @@ class ToolsController < ApplicationController
   # POST /tools/merge
   # do the merge
   def merge_entities!
-    EntityMerger.new(source: @source, dest: @dest).merge!
+    @source.merge_with(@dest)
     redirect_to @dest
   end
 
