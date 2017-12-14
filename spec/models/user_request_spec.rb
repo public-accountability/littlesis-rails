@@ -6,6 +6,7 @@ describe UserRequest, type: :model do
 
   describe "schema" do
     it { should have_db_column(:user_id).of_type(:integer) }
+    it { should have_db_column(:reviewer_id).of_type(:integer) }
     it { should have_db_column(:type).of_type(:string) }
     it { should have_db_column(:status).of_type(:integer) }
     it { should have_db_column(:source_id).of_type(:integer) }
@@ -14,6 +15,9 @@ describe UserRequest, type: :model do
 
   describe "associations" do
     it { should belong_to(:user) }
+    it { should belong_to(:reviewer)
+                  .class_name("User")
+                  .with_foreign_key("reviewer_id") }
   end
 
   describe "validations" do
@@ -24,6 +28,7 @@ describe UserRequest, type: :model do
     it { should define_enum_for(:status).with %i[pending approved denied] }
     it { should validate_inclusion_of(:type).in_array %w[MergeRequest] }
 
+    it { should_not validate_presence_of(:reviewer_id) }
     it { should_not validate_presence_of(:source_id) }
     it { should_not validate_presence_of(:dest_id) }
   end
@@ -50,12 +55,12 @@ describe UserRequest, type: :model do
 
   describe "abstract methods" do
 
-    it "defines an abstract #approve method" do
-      expect { user_request.approve }.to raise_error NotImplementedError
+    it "defines an abstract #approved_by! method" do
+      expect { user_request.approved_by! nil }.to raise_error NotImplementedError
     end
 
-    it "defines an abstract #deny method" do
-      expect { user_request.deny }.to raise_error NotImplementedError
+    it "defines an abstract #denied_by! method" do
+      expect { user_request.denied_by! nil }.to raise_error NotImplementedError
     end
   end
 end

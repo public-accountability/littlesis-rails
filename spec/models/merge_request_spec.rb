@@ -33,39 +33,46 @@ describe MergeRequest, type: :model do
   end
 
 
-  it "implements #approve" do
-    expect{ merge_request.approve }.not_to raise_error
-  end
+  describe "methods" do
+    let(:reviewer) { create(:admin_user) }
 
-  describe "#approve" do
+    describe "#approved_by!" do
+      before { allow(merge_request.source).to receive(:merge_with) }
 
-    before { allow(merge_request.source).to receive(:merge_with) }
-    
-    it "executes the requested merge" do
-      merge_request.approve
-      expect(merge_request.source).to have_received(:merge_with).with(merge_request.dest)
+      it "executes the requested merge" do
+        merge_request.approved_by!(reviewer)
+        expect(merge_request.source)
+          .to have_received(:merge_with).with(merge_request.dest)
+      end
+
+      it "records the approval" do
+        expect { merge_request.approved_by!(reviewer) }
+          .to change(merge_request, :status).to('approved')
+      end
+
+      it "records the reviewer" do
+        expect { merge_request.approved_by!(reviewer) }
+          .to change(merge_request, :reviewer_id).to(reviewer.id)
+      end
     end
 
-    it "records the approval" do
-      expect { merge_request.approve }.to change(merge_request, :status).to('approved')
-    end
-  end
+    describe "#denied_by!" do
+      before { allow(merge_request.source).to receive(:merge_with) }
 
-  it "implements #deny" do
-    expect { merge_request.deny }.not_to raise_error
-  end
+      it "does not execute the requested merge" do
+        merge_request.denied_by!(reviewer)
+        expect(merge_request.source).not_to have_received(:merge_with)
+      end
 
-  describe "#deny" do
+      it "records the approval" do
+        expect { merge_request.denied_by!(reviewer) }
+          .to change(merge_request, :status).to('denied')
+      end
 
-    before { allow(merge_request.source).to receive(:merge_with) }
-
-    it "does not execute the requested merge" do
-      merge_request.deny
-      expect(merge_request.source).not_to have_received(:merge_with)
-    end
-
-    it "records the approval" do
-      expect { merge_request.deny }.to change(merge_request, :status).to('denied')
+      it "records the reviewer" do
+        expect { merge_request.denied_by!(reviewer) }
+          .to change(merge_request, :reviewer_id).to(reviewer.id)
+      end
     end
   end
 end
