@@ -142,6 +142,7 @@ class DevelopmentDb
 
   STRUCTURE = %w( api_request
                   api_user
+                  api_token
                   chat_user
                   delayed_jobs
                   map_annotations
@@ -155,6 +156,7 @@ class DevelopmentDb
                   sf_guard_remember_key
                   sphinx_index
                   task_meta
+                  user_requests
                   versions  )
 
   NON_CLEANED_IGNORED = %w(sf_guard_user sf_guard_user_profile users)
