@@ -2,14 +2,14 @@ require 'rails_helper'
 
 describe MergeRequest, type: :model do
 
-  subject { create(:merge_request) }
+  let(:merge_request) { create(:merge_request) }
 
   describe "inheritance" do
     it "subclasses UserRequest" do
-      expect(subject).to be_a UserRequest
+      expect(merge_request).to be_a UserRequest
     end
     it "has type MergeRequest" do
-      expect(subject.type).to eql UserRequest::TYPES[:merge]
+      expect(merge_request.type).to eql UserRequest::TYPES[:merge]
     end
   end
 
@@ -28,9 +28,26 @@ describe MergeRequest, type: :model do
                   .with_foreign_key("dest_id") }
   end
 
-  describe "status" do
-    it "defaults to pending" do
-      expect(subject.status).to eql 'pending'
+  it "defaults to status pending" do
+    expect(merge_request.status).to eql 'pending'
+  end
+
+
+  it "implements #approve" do
+    expect{ merge_request.approve }.not_to raise_error
+  end
+
+  describe "#approve" do
+
+    before { allow(merge_request.source).to receive(:merge_with) }
+    
+    it "executes the requested merge" do
+      merge_request.approve
+      expect(merge_request.source).to have_received(:merge_with).with(merge_request.dest)
+    end
+
+    it "records the approval" do
+      expect { merge_request.approve }.to change(merge_request, :status).to('approved')
     end
   end
 end

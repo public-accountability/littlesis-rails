@@ -5,4 +5,9 @@ class MergeRequest < UserRequest
 
   belongs_to :source, class_name: 'Entity', foreign_key: 'source_id'
   belongs_to :dest, class_name: 'Entity', foreign_key: 'dest_id'
+
+  def approve
+    source.merge_with(dest)
+    approved!
+  end
 end

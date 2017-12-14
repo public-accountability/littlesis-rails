@@ -2,6 +2,8 @@ require 'rails_helper'
 
 describe UserRequest, type: :model do
 
+  let(:user_request){ create(:user_request) }
+
   describe "schema" do
     it { should have_db_column(:user_id).of_type(:integer) }
     it { should have_db_column(:type).of_type(:string) }
@@ -28,7 +30,6 @@ describe UserRequest, type: :model do
 
   describe "status" do
 
-    let(:user_request){ create(:user_request) }
     it "defaults to pending" do
       expect(user_request.pending?).to be true
       expect(user_request.status).to eql 'pending'
@@ -44,6 +45,12 @@ describe UserRequest, type: :model do
       user_request.denied!
       expect(user_request.denied?).to be true
       expect(user_request.status).to eql 'denied'
+    end
+  end
+
+  describe "abstract methods" do
+    it "defines an abstract #approve method" do
+      expect { user_request.approve }.to raise_error NotImplementedError
     end
   end
 end

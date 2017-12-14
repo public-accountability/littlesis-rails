@@ -7,4 +7,8 @@ class UserRequest < ActiveRecord::Base
 
   validates_presence_of :user_id, :status, :type
   validates_inclusion_of :type, in: TYPES.values
+
+  def approve
+    raise NotImplementedError
+  end
 end
