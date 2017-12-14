@@ -18,18 +18,20 @@ describe ToolsController, type: :controller do
   end
 
   describe 'merge_entities' do
+    #TODO consider deleting?
     let(:entity) { build(:org) }
-    login_user
+    login_admin
+
     context 'search mode' do
       before do
         expect(Entity).to receive(:find).with(entity.id).and_return(entity)
         expect(entity).to receive(:similar_entities).with(75).and_return([])
-        get :merge_entities, source: entity.id
+        get :merge_entities, mode: 'search', source: entity.id
       end
 
       it { should respond_with(200) }
       it { should render_template(:merge_entities) }
-      specify { expect(assigns(:merge_mode)).to eql :search }
+      specify { expect(assigns(:merge_mode)).to eql 'search' }
     end
 
     context 'search mode with query' do
@@ -38,12 +40,12 @@ describe ToolsController, type: :controller do
         expect(Entity::Search).to receive(:similar_entities)
                                     .with(entity, query: 'query', per_page: 75)
                                     .and_return([])
-        get :merge_entities, source: entity.id, query: 'query'
+        get :merge_entities, mode: 'search', source: entity.id, query: 'query'
       end
 
       it { should respond_with(200) }
       it { should render_template(:merge_entities) }
-      specify { expect(assigns(:merge_mode)).to eql :search }
+      specify { expect(assigns(:merge_mode)).to eql 'search' }
       specify { expect(assigns(:query)).to eql 'query' }
     end
 
@@ -54,12 +56,12 @@ describe ToolsController, type: :controller do
       before do
         expect(Entity).to receive(:find).with(source.id).and_return(source)
         expect(Entity).to receive(:find).with(dest.id).and_return(dest)
-        get :merge_entities, source: source.id, dest: dest.id
+        get :merge_entities, mode: 'execute', source: source.id, dest: dest.id
       end
 
       it { should respond_with(200) }
       it { should render_template(:merge_entities) }
-      specify { expect(assigns(:merge_mode)).to eql :merge }
+      specify { expect(assigns(:merge_mode)).to eql 'execute' }
       specify { expect(assigns(:entity_merger)).to be_a EntityMerger }
     end
   end

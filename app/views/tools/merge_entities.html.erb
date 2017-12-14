@@ -1,12 +1,12 @@
 <%= render partial: 'shared/entity_info', locals: { entity: @source } %>
 
-<% if @merge_mode == :search %>
+<% if @merge_mode == ToolsController::MergeModes::SEARCH %>
   <div class="row">
     <div class="col-sm-10 nopadding">
       <h1>Merge <%= link_to @source.name, entity_path(@source) %> with another <em>entity</em></h1>
     </div>
   </div>
   <%= render partial: 'search_mode' %>
-<% elsif @merge_mode == :merge %>
+<% else %>
   <%= render partial: 'merge_mode' %>
 <% end %>
