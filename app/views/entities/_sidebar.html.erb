@@ -26,7 +26,7 @@
 
     <% if @entity.tags.present? || user_signed_in? %>
       <div class="row" id="sidebar-tags-container">
-	<div class="col-sm-12">            
+	<div class="col-sm-12">
           <%= sidebar_header 'Tags', addon: capture { tags_controls } %>
         </div>
 	<div class="col-sm-12">
@@ -77,8 +77,9 @@
 		<% end %>
 		<% if current_user.merger? || current_user.admin? %>
 		    <br />
-		    <%= link_to 'Merge this entity', tools_merge_path(source: @entity.id) %>
-		<% end %>    
+		    <%= link_to 'Merge this entity',
+                                tools_merge_path(mode: :search, source: @entity.id) %>
+		<% end %>
 	    </div>
 	</div>
     <% end %>
@@ -107,7 +108,7 @@
 		<ul class="list-unstyled">
 		    <%= sidebar_similar_entities(@entity.similar_entities) %>
 		</ul>
-		
+
 		<% if user_signed_in? && (current_user.admin? || current_user.has_legacy_permission('merger') )%>
 		    <%= link_to 'Begin merging process »', tools_merge_path(source: @entity.id), id: 'begin-merging-process-link' %>
 		<% end %>

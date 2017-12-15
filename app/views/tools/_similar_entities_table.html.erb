@@ -16,8 +16,8 @@
  }
 
  var selectLink = function(id) {
-   var params = Object.assign({}, { source: <%= @source.id %> }, { dest: id });
-   return "/tools/merge?" + $.param(params); 
+  var params = { mode: 'execute', source: <%= @source.id %>, dest: id };
+  return "/tools/merge?" + $.param(params);
  }
 
  var selectButton = function(data, type, row, meta) {
@@ -42,5 +42,5 @@
        { title: "Select", data: 'id', orderable: false, render: selectButton }
      ]
    } );
- }); 
+ });
 </script>

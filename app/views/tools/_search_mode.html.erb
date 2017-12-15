@@ -7,7 +7,8 @@
   <div class="col-sm-4 col-sm-offset-2">
     <div class="pull-right">
       <p> Can't find the <%= primary_ext %> you want? Search for it:</p>
-      <%= form_tag('/tools/merge', method: :get) do %>
+      <%= form_tag(tools_merge_path, method: :get) do %>
+        <%= hidden_field_tag 'mode', 'search' %>
 	<%= hidden_field_tag 'source', @source.id %>
 	<%= text_field_tag 'query', nil %>
 	<%= submit_tag 'Search' %>
