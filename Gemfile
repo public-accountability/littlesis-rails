@@ -12,21 +12,20 @@ gem 'devise', '~> 4.2'
 # Versioning
 gem 'paper_trail', '7.1.3'
 
-# image uploading & processing
+# Required by delayed_job
+gem 'daemons'
+
+# Assets, image uploading & processing
 gem 'aws-sdk-cloudfront', '~> 1'
 gem 'aws-sdk-s3', '~> 1'
 gem 'carrierwave'
 gem 'mini_magick'
 gem 'rmagick'
 
-# Required by delayed_job
-gem 'daemons'
-
 gem 'sprockets', '~> 3.0'
-gem 'asset_sync', '~> 2.1.0'
+gem 'asset_sync', '~> 2.3.0'
 gem "fog-aws"
 
-# asset gems
 gem 'uglifier', '>= 4.0.2'
 gem 'bootstrap-sass', '~> 3.3.7'
 gem 'bootstrap-datepicker-rails'
