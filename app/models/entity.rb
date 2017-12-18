@@ -737,7 +737,7 @@ class Entity < ActiveRecord::Base
     if person?
       info[:gender] = person.gender unless person.gender_id.nil?
       info[:birthday] = LsDate.new(start_date).basic_info_display unless start_date.nil?
-      info[:date_of_date] = LsDate.new(end_date).basic_info_display unless end_date.nil?
+      info[:date_of_death] = LsDate.new(end_date).basic_info_display unless end_date.nil?
     end
     if org?
       info[:start_date] = LsDate.new(start_date).basic_info_display unless start_date.nil?

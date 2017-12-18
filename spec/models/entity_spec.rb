@@ -559,11 +559,15 @@ describe Entity, :tag_helper  do
 
   describe 'basic_info' do
     context 'is a person' do
-      let(:person_with_female_gender) { build(:person, person: build(:a_person, gender_id: 1)) }
+      let(:person_with_female_gender) { build(:person, person: build(:a_person, gender_id: 1, ), end_date: '2001-12-01') }
       let(:person_with_unknown_gender) { build(:person, person: build(:a_person, gender_id: nil)) }
 
       it 'contains types' do
         expect(person_with_female_gender.basic_info).to have_key(:types)
+      end
+
+      it 'contains "date of death"' do
+        expect(person_with_female_gender.basic_info.fetch(:date_of_death)).to eq "Dec 1 '01"
       end
 
       it 'contains gender if person has a gender_id' do
