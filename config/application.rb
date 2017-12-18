@@ -14,6 +14,7 @@ module Lilsis
       rewrite  %r{/(person|org)/([0-9]+)/[^/ ]+(/.*)?}, '/entities/$2$3'
       rewrite  %r{/(person|org)/(.*)},                  '/entities/$2'
       rewrite  %r{/(person|org)/(.*)},                  '/entities/$2'
+      rewrite  %r{/rails/help/(.*)},                    '/help/$1'
       r301     %r{/user/(.*)},                          '/users/$1'
     end
 
