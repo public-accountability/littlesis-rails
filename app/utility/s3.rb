@@ -7,25 +7,28 @@ class S3
     config = Lilsis::Application.config
     config.aws_s3_base + "/" + config.aws_s3_bucket
   end
-  
+
   def self.s3
-    @s3 ||= AWS::S3.new(
+    @s3 ||= Aws::S3::Resource.new(
+      region: Lilsis::Application.config.aws_region,
       access_key_id: Lilsis::Application.config.aws_key,
       secret_access_key: Lilsis::Application.config.aws_secret
     )
   end
 
-  def self.upload_file(bucket, remote_path, local_path, check_first=true)
-    bucket = s3.buckets[bucket]
-    object = bucket.objects[remote_path.gsub(/^\//, '')]
+  def self.file_exists?(path, bucket = Lilsis::Application.config.aws_s3_bucket)
+    s3.bucket(bucket).object(path).exists?
+  end
 
-    if check_first && object.exists?
-      return true
-    end
+  def self.upload_file(bucket, remote_path, local_path, check_first = true)
+    object = s3.bucket(bucket).object(remote_path.gsub(/^\//, ''))
+    return true if check_first && object.exists?
 
     begin
-      object.write(Pathname.new(local_path), { acl: :public_read })
-    rescue
+      object.put(:body => IO.read(Pathname.new(local_path)), :acl => 'public-read')
+    rescue => e
+      Rails.logger.info "Failed to upload file: #{local_path}"
+      Rails.logger.debug e
       return false
     end
 

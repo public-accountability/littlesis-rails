@@ -13,10 +13,11 @@ gem 'devise', '~> 4.2'
 gem 'paper_trail', '7.1.3'
 
 # image uploading & processing
+gem 'aws-sdk-cloudfront', '~> 1'
+gem 'aws-sdk-s3', '~> 1'
 gem 'carrierwave'
 gem 'mini_magick'
 gem 'rmagick'
-gem 'aws-sdk', '< 2.0'
 
 # Required by delayed_job
 gem 'daemons'

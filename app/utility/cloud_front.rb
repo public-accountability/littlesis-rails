@@ -2,7 +2,7 @@ class CloudFront
   def initialize
     config = Lilsis::Application.config
 
-    @cf ||= AWS::CloudFront.new(
+    @cf ||= Aws::CloudFront.new(
       access_key_id: Lilsis::Application.config.aws_key,
       secret_access_key: Lilsis::Application.config.aws_secret
     )
