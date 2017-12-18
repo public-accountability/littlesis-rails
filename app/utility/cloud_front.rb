@@ -1,8 +1,7 @@
 class CloudFront
   def initialize
-    config = Lilsis::Application.config
-
-    @cf ||= Aws::CloudFront.new(
+    @cf ||= Aws::CloudFront::Client.new(
+      region: Lilsis::Application.config.aws_region,
       access_key_id: Lilsis::Application.config.aws_key,
       secret_access_key: Lilsis::Application.config.aws_secret
     )
@@ -12,18 +11,16 @@ class CloudFront
     config = Lilsis::Application.config
 
     if config.cloudfront_distribtion_id
-      ref = Time.now.to_i.to_s
-
-      @cf.client.create_invalidation({
+      @cf.create_invalidation(
         distribution_id: config.cloudfront_distribtion_id,
         invalidation_batch: {
           paths: {
             quantity: paths.count,
             items: paths
           },
-          caller_reference: ref
+          caller_reference: Time.now.to_i.to_s
         }
-      })
+      )
     end
   end
 end
