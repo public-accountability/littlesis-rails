@@ -111,14 +111,4 @@
   <% end %>
 </div>
 
-<div class="row">
-  <div class="col-sm-12 nopadding" id="merge-report-action-buttons">
-    <%= form_tag('/tools/merge', method: :post, id: 'merge-entities-form') do %>
-      <%= hidden_field_tag 'source', @source.id %>
-      <%= hidden_field_tag 'dest', @dest.id %>
-      <%= submit_tag 'Merge', class: 'btn btn-lrg btn-primary' %>
-    <% end %>
-    <%= link_to "Go back", "/tools/merge?source=#{@source.id}", class: 'btn btn-default m-left-1em' %>
-    <%= link_to "Dashboard", home_dashboard_path, class: 'btn btn-default' %>
-  </div>
-</div>
+<%= render partial: "merge_#{@merge_mode}_form" %>

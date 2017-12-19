@@ -9,7 +9,8 @@
       </h1>
     </div>
   </div>
-  <%= render partial: 'search_mode' %>
+  <%= render partial: 'search_page' %>
 <% else %>
-  <%= render partial: 'merge_mode' %>
+  <%= render partial: 'merge_request_description' if @merge_mode == 'review' %>
+  <%= render partial: 'merge_report' %>
 <% end %>

@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="col-sm-12 nopadding" id="merge-report-action-buttons">
+
+    <%= form_tag('/tools/merge', method: :post, id: 'merge-entities-form') do %>
+      <%= hidden_field_tag 'mode', 'review' %>
+      <%= hidden_field_tag 'request', @merge_request.id %>
+      <%= hidden_field_tag 'decision', 'approved' %>
+      <%= submit_tag 'Approve', class: 'btn btn-lrg btn-primary' %>
+    <% end %>
+
+    <%= form_tag('/tools/merge', method: :post, id: 'merge-entities-form') do %>
+      <%= hidden_field_tag 'mode', 'review' %>
+      <%= hidden_field_tag 'request', @merge_request.id %>
+      <%= hidden_field_tag 'decision', 'denied' %>
+      <%= submit_tag 'Deny', class: 'btn btn-lrg btn-danger' %>
+    <% end %>
+
+    <%= link_to "Dashboard", home_dashboard_path, class: 'btn btn-default' %>
+  </div>
+</div>
