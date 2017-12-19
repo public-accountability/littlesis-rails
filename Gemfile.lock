@@ -368,7 +368,6 @@ GEM
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
     slop (3.6.0)
-    soap4r-ruby1.9 (2.0.5)
     spring (2.0.2)
       activesupport (>= 4.2)
     spring-commands-rspec (1.0.4)
@@ -481,7 +480,6 @@ DEPENDENCIES
   shoulda-callback-matchers (~> 1.1.4)
   shoulda-matchers (~> 3.1)
   simplecov
-  soap4r-ruby1.9
   spring (~> 2.0.2)
   spring-commands-rspec
   sprockets (~> 3.0)

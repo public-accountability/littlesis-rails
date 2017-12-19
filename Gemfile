@@ -52,9 +52,6 @@ gem 'redis-rails', '>= 5.0.2'
 # For easy cron scheduling
 gem 'whenever', '~> 0.9.7', :require => false
 
-# used in utility/vertical_response.rb
-gem 'soap4r-ruby1.9'
-
 group :development do
   gem 'web-console', '~> 2.0'
 end
