@@ -89,6 +89,7 @@ class DevelopmentDb
                   group_lists
                   group_users
                   groups
+                  help_pages
                   hierarchy
                   image
                   industries
@@ -142,7 +143,7 @@ class DevelopmentDb
 
   STRUCTURE = %w( api_request
                   api_user
-                  api_token
+                  api_tokens
                   chat_user
                   delayed_jobs
                   map_annotations
