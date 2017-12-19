@@ -12,6 +12,12 @@
 class LsDate
   include Comparable
   attr_reader :date_string, :specificity, :year, :month, :day
+
+  BASIC_FORMAT = "%B %e, %Y, %l%p".freeze
+
+  def self.pretty_print(date)
+    date.strftime(BASIC_FORMAT)
+  end
   
   # Initialize with string YYYY-MM-DD
   def initialize(date_string)
