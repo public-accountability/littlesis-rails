@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.8'
-gem 'mysql2', '~> 0.3.21'
+gem 'rails', '4.2.10'
+#gem 'mysql2', '~> 0.3.21'
+gem 'mysql2', '~> 0.4.10'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
