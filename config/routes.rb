@@ -306,6 +306,7 @@ Lilsis::Application.routes.draw do
   get '/tools/bulk/relationships' => "tools#bulk_relationships"
   get '/tools/merge' => "tools#merge_entities"
   post '/tools/merge' => "tools#merge_entities!"
+  get '/tools/merge/redundant' => "tools#redundant_merge_review"
 
   #########
   #  API  #

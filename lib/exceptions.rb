@@ -51,4 +51,10 @@ module Exceptions
       "Tried to retrieve entity that has been merged into entity w/ id #{merged_entity.id}"
     end
   end
+
+  class RedundantMergeReview < StandardError
+    def messagen
+      "Attempting to review a merge request that has already been reviewed."
+    end
+  end
 end

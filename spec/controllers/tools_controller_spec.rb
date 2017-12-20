@@ -4,6 +4,7 @@ describe ToolsController, type: :controller do
   it { should route(:get, '/tools/bulk/relationships').to(action: :bulk_relationships) }
   it { should route(:get, '/tools/merge').to(action: :merge_entities) }
   it { should route(:post, '/tools/merge').to(action: :merge_entities!) }
+  it { should route(:get, '/tools/merge/redundant').to(action: :redundant_merge_review) }
 
   describe 'bulk_relationships' do
     login_user

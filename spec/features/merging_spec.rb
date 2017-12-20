@@ -48,13 +48,20 @@ feature 'Merging entities' do
       case mode
       when :execute
         page_has_selector '.merge-entities-form', count: 1
+        page_has_selector "input[name='mode'][value='execute']", count: 1
+        page_has_selector "input[name='source'][value='#{source.id}']", count: 1
+        page_has_selector "input[name='dest'][value='#{dest.id}']", count: 1
         page_has_selector "input.btn[value='Merge']", count: 1
         page_has_selector 'a.btn', text: 'Go back'
         page_has_selector 'a.btn', text: 'Dashboard'
       when :review
         page_has_selector '.merge-entities-form', count: 2
+        page_has_selector "input[name='mode'][value='review']", count: 2
+        page_has_selector "input[name='request'][value='#{merge_request.id}']", count: 2
         page_has_selector "input.btn[value='Approve']", count: 1
+        page_has_selector "input[name='decision'][value='approved']", count: 1
         page_has_selector "input.btn[value='Deny']", count: 1
+        page_has_selector "input[name='decision'][value='denied']", count: 1
       end
     end
 
@@ -148,13 +155,6 @@ feature 'Merging entities' do
         # to catch that breakage, but could not (@aguestuser)
       end
 
-      context 'requesting a merge' do
-        let(:mode) { ToolsController::MergeModes::REQUEST }
-        let(:query_param) {}
-
-        it "raises a custom error?"
-      end
-
       context 'executing a merge' do
         let(:mode){ ToolsController::MergeModes::EXECUTE }
         let(:query_param) {}
@@ -181,39 +181,65 @@ feature 'Merging entities' do
         let(:mode) { ToolsController::MergeModes::REVIEW }
         let(:requesting_user) { create(:really_basic_user) }
         let(:username) { requesting_user.username }
-        let(:merge_request) { create(:merge_request,
-                                     user: requesting_user,
-                                     source: source,
-                                     dest: dest) }
-        
-        it "allows access" do
-          expect(page).to have_http_status 200
+        let(:merge_request) do
+          create(:merge_request, user: requesting_user, source: source, dest: dest)
         end
 
-        it "shows a merge report" do
-          should_show_merge_report
-          should_show_merge_form :review
+        context "that is still pending" do
+
+          it "allows access" do
+            expect(page).to have_http_status 200
+          end
+
+          it "shows a merge report" do
+            should_show_merge_report
+            should_show_merge_form :review
+          end
+
+          it "shows a review description" do
+            desc = page.find("#review-description")
+            expect(desc).to have_link username, "/users/#{username}"
+            expect(desc).to have_text "requested"
+            expect(desc).to have_text LsDate.pretty_print(merge_request.created_at)
+          end
+
+          it "approves merge request when admin clicks `Approve`" do
+            click_button "Approve"
+            should_commit_merge
+            expect(merge_request.reload.status).to eql 'approved'
+            expect(merge_request.reviewer).to eql user
+          end
+
+          it "denies merge request when admin clicks `Deny`" do
+            click_button "Deny"
+            should_not_commit_merge
+            expect(merge_request.reload.status).to eql 'denied'
+            expect(merge_request.reviewer).to eql user
+          end
         end
 
-        it "shows a review description" do
-          desc = page.find("#review-description")
-          expect(desc).to have_link username, "/users/#{username}"
-          expect(desc).to have_text "requested"
-          expect(desc).to have_text LsDate.pretty_print(merge_request.created_at)
+        context "that has already been approved" do
+          before do
+            merge_request.approved_by!(user)
+            visit tools_merge_path(mode: mode, request: merge_request)
+          end
+
+          it "redirects to error page" do
+            successfully_visits_page tools_merge_redundant_path(request: merge_request.id)
+            expect(page).to have_text "already approved by #{user.username}"
+          end
         end
 
-        it "approves merge request when admin clicks `Approve`" do
-          click_button "Approve"
-          should_commit_merge
-          expect(merge_request.reload.status).to eql 'approved'
-          expect(merge_request.reviewer).to eql user
-        end
+        context "that has already been denied" do
+          before do
+            merge_request.denied_by!(user)
+            visit tools_merge_path(mode: mode, request: merge_request)
+          end
 
-        it "denies merge request when admin clicks `Deny`" do
-          click_button "Deny"
-          should_not_commit_merge
-          expect(merge_request.reload.status).to eql 'denied'
-          expect(merge_request.reviewer).to eql user
+          it "redirects to error page" do
+            successfully_visits_page tools_merge_redundant_path(request: merge_request.id)
+            expect(page).to have_text "already denied by #{user.username}"
+          end
         end
       end
     end
