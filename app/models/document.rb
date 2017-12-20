@@ -4,6 +4,7 @@ class Document < ActiveRecord::Base
   validates :url, presence: true, url: true
   validates :url_hash, presence: true, uniqueness: true
   validates :name, length: { maximum: 255 }
+  validates :publication_date, length: { maximum: 10 }, date: true
 
   before_validation :trim_whitespace, :set_hash
 

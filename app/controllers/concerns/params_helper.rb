@@ -7,7 +7,7 @@ module ParamsHelper
 
   protected
 
-  # modifies params to be passed to Relationship.update, Relationship.new, or Entity.update
+  # modifies params to be passed to Relationship.update, Relationship.new, Entity.update, or Document.update
   #  - converts blank_values to nil
   #  - adds last_user_id
   #  - processes start and end dates
@@ -16,7 +16,8 @@ module ParamsHelper
     params = ActiveSupport::HashWithIndifferentAccess.new(blank_to_nil(update_params))
     params['start_date'] = LsDate.convert(params['start_date']) if params.key?('start_date')
     params['end_date'] = LsDate.convert(params['end_date']) if params.key?('end_date')
-    params['last_user_id'] = current_user.sf_guard_user_id
+    params['publication_date'] = LsDate.convert(params['publication_date']) if params.key?('publication_date')
+    params['last_user_id'] = current_user.sf_guard_user_id if params.key?('last_user_id')
     params['is_current'] = is_current_helper(params['is_current']) if params.key?('is_current')
     params['amount'] = money_to_int(params['amount']) if params.key?('amount')
     parameter_processor(params)

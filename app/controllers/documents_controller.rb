@@ -7,17 +7,20 @@ class DocumentsController < ApplicationController
 
   def update
     @document = Document.find(params[:id])
-    if @document.update_attributes(document_params)
+    @document.assign_attributes(document_params)
+    if @document.valid?
       @document.save!
-      redirect_to :back
+      redirect_to root_path
     else
-      render 'edit'
+      redirect_to edit_document_path(@document)
     end
   end
 
   private
 
   def document_params
-    params.require(:document).permit(:name, :ref_type, :publication_date, :excerpt)
+    prepare_update_params(
+      params.require(:document).permit(:name, :ref_type, :publication_date, :excerpt)
+    )
   end
 end

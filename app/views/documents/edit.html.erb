@@ -22,6 +22,7 @@
         <%= label_tag(:publication_date, "Publication Date") %>
         <div>
             <%= f.text_field(:publication_date) %>
+            <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
         </div>
     </div>
 
