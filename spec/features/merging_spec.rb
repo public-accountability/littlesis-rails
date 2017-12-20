@@ -45,13 +45,14 @@ feature 'Merging entities' do
     end
 
     def should_show_merge_form(mode)
-      page_has_selector '#merge-entities-form'
       case mode
       when :execute
+        page_has_selector '.merge-entities-form', count: 1
         page_has_selector "input.btn[value='Merge']", count: 1
         page_has_selector 'a.btn', text: 'Go back'
         page_has_selector 'a.btn', text: 'Dashboard'
       when :review
+        page_has_selector '.merge-entities-form', count: 2
         page_has_selector "input.btn[value='Approve']", count: 1
         page_has_selector "input.btn[value='Deny']", count: 1
       end
@@ -176,7 +177,7 @@ feature 'Merging entities' do
         end
       end
 
-      context 'reviewing a merge' do
+      context 'reviewing a merge request' do
         let(:mode) { ToolsController::MergeModes::REVIEW }
         let(:requesting_user) { create(:really_basic_user) }
         let(:username) { requesting_user.username }

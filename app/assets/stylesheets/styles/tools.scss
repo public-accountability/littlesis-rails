@@ -130,8 +130,18 @@ div.entity-match-box {
 }
 
 #merge-report-action-buttons {
-    form, input.btn, a {
-	display: inline-block;
+    display: flex;
+    flex-direction: row;
+    justify-content: center !important;
+    .merge-entities-form {
+        margin: .5em;
     }
-   
+}
+
+#review-description {
+    background-color: lightgray;
+    border: 1px solid gray;
+    border-radius: .3em;
+    padding: 1em !important;
+    font-weight: bold;
 }

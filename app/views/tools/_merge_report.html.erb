@@ -9,6 +9,7 @@
 
 <div class="row">
   <div class="col-sm-12 nopadding">
+    <div class="panel"></div>
     <h4><em>This will make the following changes:</em></h4>
   </div>
   <div class="col-sm-12 nopadding">
@@ -21,7 +22,7 @@
 	  </span>
 	</li>
       <% end %>
-      
+
       <% unless_em_prop_is_empty :extensions do %>
 	<li>
 	  Add or update the following extensions: <%= @entity_merger.extensions.map(&:ext_id).map { |i| ExtensionDefinition.display_names.fetch(i) }.join(', ') %>
@@ -75,12 +76,12 @@
 	  Transfer <strong><%= em_prop(:ny_match_relationships).count %></strong> New York State donation relationships
 	</li>
       <% end %>
-      
+
       <% unless_em_prop_is_empty :os_match_relationships do %>
 	<li>
 	  Transfer <strong><%= em_prop(:os_match_relationships).count %></strong> Federal donation relationships
 	</li>
-      <% end %>	
+      <% end %>
 
       <% unless_em_prop_is_empty :child_entities do %>
 	<li>
@@ -92,12 +93,13 @@
 	<li>
 	  Transfer <strong><%= em_prop(:party_members).count %></strong> party members
 	</li>
-      <% end %>	
+      <% end %>
     </ul>
+    <div class="panel"></div>
   </div>
-  
+
   <% unless_em_prop_is_empty :potential_duplicate_relationships do %>
-    <div class="col-sm-8 nopadding">
+    <div class="col-sm-12 nopadding">
       <div class="panel panel-default">
 	<div class="panel-body">
 	  <p>
