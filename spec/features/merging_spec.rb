@@ -6,7 +6,7 @@ feature 'Merging entities' do
   let(:merge_request) {}
   let(:source) { create(:merge_source_person) }
   let(:dest) { create(:entity_person, :with_person_name) }
-  let(:dest_param) { "&dest=#{dest.id}"}
+  let(:dest_param) { "&dest=#{dest.id}" }
   let(:query) { "foobar" }
   let(:query_param) { "&query=#{query}" }
 
@@ -156,16 +156,16 @@ feature 'Merging entities' do
       end
 
       context 'executing a merge' do
-        let(:mode){ ToolsController::MergeModes::EXECUTE }
+        let(:mode) { ToolsController::MergeModes::EXECUTE }
         let(:query_param) {}
         let(:list) { create(:list) }
-        let(:source){ create(:merge_source_person) }
+        let(:source) { create(:merge_source_person) }
 
         before do
           expect(dest.relationships.count).to eql 0
           expect(dest.lists.count).to eql 0
         end
-        
+
         it 'shows a merge report' do
           should_show_merge_report
           should_show_merge_form :execute

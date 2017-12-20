@@ -1,13 +1,12 @@
 class ToolsController < ApplicationController
-
   SIMILAR_ENTITIES_PER_PAGE = 75
 
   class MergeModes
-    SEARCH  = 'search'
-    EXECUTE = 'execute'
-    REQUEST = 'request'
-    REVIEW  = 'review'
-    ALL = [SEARCH, EXECUTE, REQUEST, REVIEW]
+    SEARCH  = 'search'.freeze
+    EXECUTE = 'execute'.freeze
+    REQUEST = 'request'.freeze
+    REVIEW  = 'review'.freeze
+    ALL = [SEARCH, EXECUTE, REQUEST, REVIEW].freeze
   end
 
   before_action :authenticate_user!
@@ -25,7 +24,7 @@ class ToolsController < ApplicationController
   def merge_entities; end
 
   # POST /tools/merge
-  # do the merge
+  # do the merge.freeze
   def merge_entities!
     case @merge_mode
     when MergeModes::EXECUTE
@@ -56,12 +55,15 @@ class ToolsController < ApplicationController
   def parse_merge_search_params
     set_source
     @query = params[:query]
-    similar_entities =
-      @query.present? ?
-        Entity::Search.similar_entities(@source,query: @query, per_page: SIMILAR_ENTITIES_PER_PAGE) :
-        @source.similar_entities(SIMILAR_ENTITIES_PER_PAGE)
+    @similar_entities = resolve_similar_entities
+                          .map(&Entity::Search::SIMILAR_ENTITIES_PRESENTER)
+  end
 
-    @similar_entities = similar_entities.map(&Entity::Search::SIMILAR_ENTITIES_PRESENTER)
+  def resolve_similar_entities
+    return @source.similar_entities(SIMILAR_ENTITIES_PER_PAGE) unless @query.present?
+    Entity::Search.similar_entities(@source,
+                                    query: @query,
+                                    per_page: SIMILAR_ENTITIES_PER_PAGE)
   end
 
   def parse_merge_execute_params
@@ -74,7 +76,7 @@ class ToolsController < ApplicationController
     set_source_and_dest
     set_entity_merger
   end
-  
+
   def parse_merge_review_params
     admins_only
     set_merge_request
@@ -83,7 +85,6 @@ class ToolsController < ApplicationController
     @source = @merge_request.source
     @dest = @merge_request.dest
     set_entity_merger
-
   rescue Exceptions::RedundantMergeReview
     redirect_to tools_merge_redundant_path(request: @merge_request.id)
   end
@@ -92,9 +93,9 @@ class ToolsController < ApplicationController
     admins_only
     set_merge_request
   end
-  
+
   # ^-- end merge GET param parsers
-  
+
   def parse_merge_post_params
     admins_only
     case @merge_mode

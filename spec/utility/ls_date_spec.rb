@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe LsDate do
-
   describe 'pretty printing' do
     # date = Time.now
 

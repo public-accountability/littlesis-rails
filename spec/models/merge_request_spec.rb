@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe MergeRequest, type: :model do
-
   let(:merge_request) { create(:merge_request) }
 
   describe "inheritance" do
@@ -19,13 +18,17 @@ describe MergeRequest, type: :model do
   end
 
   describe "associations" do
-    it { should belong_to(:source)
+    it do
+      should belong_to(:source)
                .class_name("Entity")
-               .with_foreign_key("source_id") }
+               .with_foreign_key("source_id")
+    end
 
-    it { should belong_to(:dest)
-                  .class_name("Entity")
-                  .with_foreign_key("dest_id") }
+    it do
+      should belong_to(:dest)
+               .class_name("Entity")
+               .with_foreign_key("dest_id")
+    end
   end
 
   it "defaults to status pending" do
@@ -40,7 +43,7 @@ describe MergeRequest, type: :model do
         allow(merge_request.source).to receive(:merge_with)
         merge_request.approve! # implicitly tests that #approve! is implemented
       end
-      
+
       it "executes the requested merge" do
         expect(merge_request.source).to have_received(:merge_with).with(merge_request.dest)
       end

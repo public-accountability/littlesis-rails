@@ -9,7 +9,6 @@ FactoryBot.define do
     about_me { Faker::Movie.quote }
     default_network_id 79
     confirmed_at { Time.now }
-
   end
 
   # sub-factory pattern. see: https://devhints.io/factory_bot

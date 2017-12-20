@@ -1,8 +1,7 @@
 require 'rails_helper'
 
 describe UserRequest, type: :model do
-
-  let(:user_request){ create(:user_request) }
+  let(:user_request) { create(:user_request) }
 
   describe "schema" do
     it { should have_db_column(:user_id).of_type(:integer) }
@@ -15,9 +14,11 @@ describe UserRequest, type: :model do
 
   describe "associations" do
     it { should belong_to(:user) }
-    it { should belong_to(:reviewer)
-                  .class_name("User")
-                  .with_foreign_key("reviewer_id") }
+    it do
+      should belong_to(:reviewer)
+               .class_name("User")
+               .with_foreign_key("reviewer_id")
+    end
   end
 
   describe "validations" do
@@ -34,7 +35,6 @@ describe UserRequest, type: :model do
   end
 
   describe "status" do
-
     it "defaults to pending" do
       expect(user_request.pending?).to be true
       expect(user_request.status).to eql 'pending'
@@ -54,7 +54,6 @@ describe UserRequest, type: :model do
   end
 
   describe "abstract methods" do
-
     it "defines an abstract #approve! method" do
       expect { user_request.approve! }.to raise_error NotImplementedError
     end
@@ -83,7 +82,7 @@ describe UserRequest, type: :model do
     end
 
     describe "#denied_by!" do
-      before { user_request.denied_by!(reviewer)}
+      before { user_request.denied_by!(reviewer) }
 
       it "records the denial" do
         expect(user_request.status).to eql 'denied'

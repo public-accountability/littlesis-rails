@@ -19,7 +19,7 @@ describe ToolsController, type: :controller do
   end
 
   describe 'merge_entities' do
-    #TODO consider deleting?
+    # TODO: consider deleting?
     let(:entity) { build(:org) }
     login_admin
 
