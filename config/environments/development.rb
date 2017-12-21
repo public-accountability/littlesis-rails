@@ -31,9 +31,9 @@ Lilsis::Application.configure do
   # Debug mode disables concatenation and preprocessing of assets.
   config.assets.debug = true
 
-  # Disable caching for development
   config.action_controller.perform_caching = true
-  config.cache_store = :redis_store
+  config.cache_store = :redis_store, "redis://redis:6379/0/cache"
+  
   
   # In development, links in emails should point local
   # config.action_mailer.default_url_options = { host: 'lilsis.local' }

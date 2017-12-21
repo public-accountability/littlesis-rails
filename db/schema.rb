@@ -168,20 +168,6 @@ ActiveRecord::Schema.define(version: 20171214174355) do
     t.datetime "updated_at"
   end
 
-  create_table "bootsy_image_galleries", force: :cascade do |t|
-    t.integer  "bootsy_resource_id",   limit: 4
-    t.string   "bootsy_resource_type", limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "bootsy_images", force: :cascade do |t|
-    t.string   "image_file",       limit: 255
-    t.integer  "image_gallery_id", limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "business", force: :cascade do |t|
     t.integer "annual_profit", limit: 8
     t.integer "entity_id",     limit: 8, null: false
@@ -1148,12 +1134,12 @@ ActiveRecord::Schema.define(version: 20171214174355) do
   add_index "ownership", ["relationship_id"], name: "relationship_id_idx", using: :btree
 
   create_table "pages", force: :cascade do |t|
-    t.string   "name",         limit: 255,        null: false
+    t.string   "name",         limit: 255,      null: false
     t.string   "title",        limit: 255
-    t.text     "markdown",     limit: 4294967295
+    t.text     "markdown",     limit: 16777215
     t.integer  "last_user_id", limit: 4
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
   add_index "pages", ["name"], name: "index_pages_on_name", unique: true, using: :btree
@@ -1289,7 +1275,7 @@ ActiveRecord::Schema.define(version: 20171214174355) do
   add_index "reference", ["name"], name: "name_idx", using: :btree
   add_index "reference", ["object_model", "object_id", "ref_type"], name: "index_reference_on_object_model_and_object_id_and_ref_type", using: :btree
   add_index "reference", ["object_model", "object_id", "updated_at"], name: "object_idx", using: :btree
-  add_index "reference", ["source"], name: "source_idx", length: {"source"=>255}, using: :btree
+  add_index "reference", ["source"], name: "source_idx", length: {"source"=>191}, using: :btree
   add_index "reference", ["updated_at"], name: "updated_at_idx", using: :btree
 
   create_table "reference_excerpt", force: :cascade do |t|
@@ -1601,12 +1587,12 @@ ActiveRecord::Schema.define(version: 20171214174355) do
   add_index "task_meta", ["task", "namespace", "predicate"], name: "uniqueness_idx", unique: true, using: :btree
 
   create_table "toolkit_pages", force: :cascade do |t|
-    t.string   "name",         limit: 255,        null: false
+    t.string   "name",         limit: 255,      null: false
     t.string   "title",        limit: 255
-    t.text     "markdown",     limit: 4294967295
+    t.text     "markdown",     limit: 16777215
     t.integer  "last_user_id", limit: 4
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
   add_index "toolkit_pages", ["name"], name: "index_toolkit_pages_on_name", unique: true, using: :btree

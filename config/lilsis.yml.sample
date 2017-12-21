@@ -13,8 +13,6 @@ defaults: &defaults
   default_to_email: dev@littlesis.org
   admins_only: false
   convert_new_legacy_notes: true
-  verticalresponse_username:
-  verticalresponse_password:
   research_from_email: research@littlesis.org
   netmap_api_key: freeapiforlittlesisdevs
   netmap_default_width: 960

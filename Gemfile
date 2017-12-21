@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.8'
-gem 'mysql2', '~> 0.3.21'
+gem 'rails', '4.2.10'
+gem 'mysql2', '~> 0.4.10'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
@@ -12,30 +12,26 @@ gem 'devise', '~> 4.2'
 # Versioning
 gem 'paper_trail', '7.1.3'
 
-# image uploading & processing
-gem 'carrierwave'
-gem 'mini_magick'
-gem 'rmagick'
-gem 'aws-sdk', '< 2.0'
-
 # Required by delayed_job
 gem 'daemons'
 
+# Assets, image uploading & processing
+gem 'aws-sdk-cloudfront', '~> 1'
+gem 'aws-sdk-s3', '~> 1'
+gem 'carrierwave'
+gem 'mini_magick'
+gem 'rmagick'
+
 gem 'sprockets', '~> 3.0'
-gem 'asset_sync', '~> 2.1.0'
+gem 'asset_sync', '~> 2.3.0'
 gem "fog-aws"
 
-# asset gems
-gem 'coffee-rails'
-# See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
-gem 'uglifier', '>= 1.0.3'
-
+gem 'uglifier', '>= 4.0.2'
 gem 'bootstrap-sass', '~> 3.3.7'
 gem 'bootstrap-datepicker-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails', '~> 6.0.0'
-gem 'sass-rails', '>= 3.2'
+gem 'sass-rails', '>= 5'
 
 gem 'tinymce-rails', '~> 4.6.4'
 
@@ -55,9 +51,6 @@ gem 'redis-rails', '>= 5.0.2'
 
 # For easy cron scheduling
 gem 'whenever', '~> 0.9.7', :require => false
-
-# used in utility/vertical_response.rb
-gem 'soap4r-ruby1.9'
 
 group :development do
   gem 'web-console', '~> 2.0'

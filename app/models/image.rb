@@ -63,7 +63,7 @@ class Image < ActiveRecord::Base
   end
 
   def s3_exists?(type)
-    S3.s3.buckets[Lilsis::Application.config.aws_s3_bucket].objects["images/#{type}/#{filename}"].exists?
+    S3.file_exists? "images/#{type}/#{filename}"
   end
 
   def self.image_path(filename, type)
@@ -103,7 +103,6 @@ class Image < ActiveRecord::Base
     filename = random_filename
 
     begin
-      # RMagick can't seem to open remote files?
       original = MiniMagick::Image.open(url)
     rescue
       return false
