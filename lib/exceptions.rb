@@ -53,7 +53,7 @@ module Exceptions
   end
 
   class RedundantMergeReview < StandardError
-    def messagen
+    def message
       "Attempting to review a merge request that has already been reviewed."
     end
   end

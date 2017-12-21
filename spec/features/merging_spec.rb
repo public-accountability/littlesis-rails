@@ -31,12 +31,12 @@ feature 'Merging entities' do
 
       it "navigates to merge search page from action button" do
         click_link "Merge this entity"
-        successfully_visits_page tools_merge_path(mode: :search, source: source.id)
+        successfully_visits_page merge_path(mode: :search, source: source.id)
       end
 
       it "navigates to merge search page from `similar entities` section" do
         click_link 'Begin merging process »'
-        successfully_visits_page tools_merge_path(mode: :search, source: source.id)
+        successfully_visits_page merge_path(mode: :search, source: source.id)
       end
     end
   end
@@ -92,7 +92,7 @@ feature 'Merging entities' do
 
     before do
       allow(Entity::Search).to receive(:similar_entities).and_return([dest])
-      visit tools_merge_path(mode:    mode,
+      visit merge_path(mode:    mode,
                              source:  source&.id,
                              dest:    dest&.id,
                              query:   query,
@@ -103,7 +103,7 @@ feature 'Merging entities' do
       let(:user) { create(:really_basic_user) }
 
       context 'searching for merge targets' do
-        let(:mode) { ToolsController::MergeModes::SEARCH }
+        let(:mode) { MergeController::Modes::SEARCH }
         let(:dest_param) {}
 
         it "allows access" do
@@ -112,7 +112,7 @@ feature 'Merging entities' do
       end
 
       context 'requesting a merge' do
-        let(:mode) { ToolsController::MergeModes::REQUEST }
+        let(:mode) { MergeController::Modes::REQUEST }
         let(:query_param) {}
 
         it "allows access" do
@@ -121,14 +121,14 @@ feature 'Merging entities' do
       end
 
       context 'executing a merge' do
-        let(:mode) { ToolsController::MergeModes::EXECUTE }
+        let(:mode) { MergeController::Modes::EXECUTE }
         let(:query_param) {}
 
         denies_access
       end
 
       context 'reviewing a merge' do
-        let(:mode) { ToolsController::MergeModes::REVIEW }
+        let(:mode) { MergeController::Modes::REVIEW }
         let(:query_param) {}
 
         denies_access
@@ -139,11 +139,11 @@ feature 'Merging entities' do
       let(:user) { create(:admin_user) }
 
       context 'searching for merge targets' do
-        let(:mode) { ToolsController::MergeModes::SEARCH }
+        let(:mode) { MergeController::Modes::SEARCH }
         let(:query) { source.name }
 
         it "has a search bar to search for more matches" do
-          page_has_selector 'form[action="/tools/merge"]'
+          page_has_selector 'form[action="/merge"]'
           page_has_selector 'input[@value="search"]'
           page_has_selector "input[@value='#{source.id}']"
         end
@@ -163,7 +163,7 @@ feature 'Merging entities' do
       end
 
       context 'executing a merge' do
-        let(:mode) { ToolsController::MergeModes::EXECUTE }
+        let(:mode) { MergeController::Modes::EXECUTE }
         let(:query_param) {}
         let(:list) { create(:list) }
         let(:source) { create(:merge_source_person) }
@@ -185,7 +185,7 @@ feature 'Merging entities' do
       end
 
       context 'reviewing a merge request' do
-        let(:mode) { ToolsController::MergeModes::REVIEW }
+        let(:mode) { MergeController::Modes::REVIEW }
         let(:requesting_user) { create(:really_basic_user) }
         let(:username) { requesting_user.username }
         let(:merge_request) do
@@ -228,11 +228,11 @@ feature 'Merging entities' do
         context "that has already been approved" do
           before do
             merge_request.approved_by!(user)
-            visit tools_merge_path(mode: mode, request: merge_request)
+            visit merge_path(mode: mode, request: merge_request)
           end
 
           it "redirects to error page" do
-            successfully_visits_page tools_merge_redundant_path(request: merge_request.id)
+            successfully_visits_page merge_redundant_path(request: merge_request.id)
             expect(page).to have_text "already approved by #{user.username}"
           end
         end
@@ -240,11 +240,11 @@ feature 'Merging entities' do
         context "that has already been denied" do
           before do
             merge_request.denied_by!(user)
-            visit tools_merge_path(mode: mode, request: merge_request)
+            visit merge_path(mode: mode, request: merge_request)
           end
 
           it "redirects to error page" do
-            successfully_visits_page tools_merge_redundant_path(request: merge_request.id)
+            successfully_visits_page merge_redundant_path(request: merge_request.id)
             expect(page).to have_text "already denied by #{user.username}"
           end
         end

@@ -17,7 +17,7 @@
 
  var selectLink = function(id) {
   var params = { mode: 'execute', source: <%= @source.id %>, dest: id };
-  return "/tools/merge?" + $.param(params);
+  return "/merge?" + $.param(params);
  }
 
  var selectButton = function(data, type, row, meta) {

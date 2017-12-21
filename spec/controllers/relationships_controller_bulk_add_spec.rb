@@ -8,7 +8,7 @@ describe RelationshipsController, type: :controller do
       let(:url) { Faker::Internet.unique.url }
 
       it 'sends error message if given bad reference' do
-        post :bulk_add, relationships: [], category_id: 1, reference: { url: '', name: 'important source' }
+        post :bulk_add!, relationships: [], category_id: 1, reference: { url: '', name: 'important source' }
         expect(response.status).to eq 400
       end
 
@@ -44,30 +44,30 @@ describe RelationshipsController, type: :controller do
         end
 
         it 'should return status 201' do
-          post :bulk_add, params
+          post :bulk_add!, params
           expect(response.status).to eql 200
         end
 
         # one entity is new, one isn't
         it 'creates one new entity' do
-          expect { post :bulk_add, params }.to change { Entity.count }.by(1)
+          expect { post :bulk_add!, params }.to change { Entity.count }.by(1)
         end
 
         it 'creates two relationsips' do
-          expect { post :bulk_add, params }.to change { Relationship.count }.by(2)
+          expect { post :bulk_add!, params }.to change { Relationship.count }.by(2)
         end
 
         it 'creates two donations' do
-          expect { post :bulk_add, params }.to change { Donation.count }.by(2)
+          expect { post :bulk_add!, params }.to change { Donation.count }.by(2)
         end
 
         it 'creates two References' do
-          expect { post :bulk_add, params }.to change { Reference.count }.by(2)
+          expect { post :bulk_add!, params }.to change { Reference.count }.by(2)
           expect(Reference.last(2).map(&:document).map(&:url)).to eql [url] * 2
         end
 
         it 'creates one Document' do
-          expect { post :bulk_add, params }.to change { Document.count }.by(1)
+          expect { post :bulk_add!, params }.to change { Document.count }.by(1)
         end
       end
 
@@ -92,16 +92,16 @@ describe RelationshipsController, type: :controller do
         end
 
         it 'creates one relationship' do
-          expect { post :bulk_add, params }.to change { Relationship.count }.by(1)
+          expect { post :bulk_add!, params }.to change { Relationship.count }.by(1)
         end
 
         it 'creates one Position' do
-          expect { post :bulk_add, params }.to change { Position.count }.by(1)
+          expect { post :bulk_add!, params }.to change { Position.count }.by(1)
           expect(Position.last.relationship.entity2_id).to eql entity.id
         end
 
         it 'updates position' do
-          post :bulk_add, params
+          post :bulk_add!, params
           expect(Position.last.is_board).to eql true
         end
       end
@@ -123,7 +123,7 @@ describe RelationshipsController, type: :controller do
             'relationships' => [relationship1] }
         end
 
-        subject { lambda { post :bulk_add, params } }
+        subject { lambda { post :bulk_add!, params } }
 
         it { is_expected.not_to change { Relationship.count } }
 
@@ -157,7 +157,7 @@ describe RelationshipsController, type: :controller do
             'relationships' => [relationship1, relationship2] }
         end
 
-        subject { lambda { post :bulk_add, params } }
+        subject { lambda { post :bulk_add!, params } }
         it { is_expected.to change { Relationship.count }.by(1) }
 
         it 'responds with 200' do
@@ -180,7 +180,7 @@ describe RelationshipsController, type: :controller do
                       'relationships' => [relationship_params] }
         end
 
-        subject { lambda { post :bulk_add, @params } }
+        subject { lambda { post :bulk_add!, @params } }
         it { is_expected.to change { Relationship.count }.by(1) }
 
         it 'reverses entity id correctly' do
@@ -207,12 +207,12 @@ describe RelationshipsController, type: :controller do
         end
 
         it 'creates 4 relationships' do
-          expect { post :bulk_add, @params }.to change { Relationship.count }.by(4)
+          expect { post :bulk_add!, @params }.to change { Relationship.count }.by(4)
           expect(Entity.find(@corp.id).relationships.count).to eq 4
         end
 
         it 'converts amount field' do
-          post :bulk_add, @params
+          post :bulk_add!, @params
           amounts = Entity.find(@corp.id).relationships.map(&:amount)
           expect(amounts).to include 1000
           expect(amounts).to include 100_000
@@ -236,20 +236,20 @@ describe RelationshipsController, type: :controller do
         end
 
         it 'creates one donation received relationship' do
-          expect { post :bulk_add, @donation_received }.to change { Relationship.count }.by(1)
+          expect { post :bulk_add!, @donation_received }.to change { Relationship.count }.by(1)
         end
 
         it 'changes entity order for donation received' do
-          post :bulk_add, @donation_received
+          post :bulk_add!, @donation_received
           expect(Relationship.last.entity2_id).to eq corp.id
         end
 
         it 'creates one donation given relationship' do
-          expect { post :bulk_add, @donation_given }.to change { Relationship.count }.by(1)
+          expect { post :bulk_add!, @donation_given }.to change { Relationship.count }.by(1)
         end
 
         it 'does not change entity order for donation given' do
-          post :bulk_add, @donation_given
+          post :bulk_add!, @donation_given
           expect(Relationship.last.entity1_id).to eq corp.id
         end
       end
@@ -275,7 +275,7 @@ describe RelationshipsController, type: :controller do
             'relationships' => [generic_relationship] }
         end
 
-        subject { lambda { post :bulk_add, params } }
+        subject { lambda { post :bulk_add!, params } }
         it { is_expected.not_to change { Relationship.count } }
         it { is_expected.not_to change { Entity.count } }
       end
@@ -308,7 +308,7 @@ describe RelationshipsController, type: :controller do
 
     context 'user not logged in' do
       it 'returns 302' do
-        post :bulk_add, ten_relationships_params
+        post :bulk_add!, ten_relationships_params
         expect(response).to have_http_status(302)
       end
     end
@@ -317,7 +317,7 @@ describe RelationshipsController, type: :controller do
       login_basic_user
 
       it 'allows submission of one relationship' do
-        post :bulk_add, params
+        post :bulk_add!, params
         json = JSON.parse(response.body)
         expect(response).to have_http_status 200
         expect(json['errors'].length).to eq 0
@@ -325,7 +325,7 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'does not allow submission of ten relationships' do
-        post :bulk_add, ten_relationships_params
+        post :bulk_add!, ten_relationships_params
         expect(response).to have_http_status :unauthorized
       end
     end
@@ -335,7 +335,7 @@ describe RelationshipsController, type: :controller do
       it 'allows submission of 10 relationships' do
         expect(Entity).to receive(:find).and_return(build(:org))
         expect(controller).to receive(:make_or_get_entity).exactly(10).times
-        post :bulk_add, ten_relationships_params
+        post :bulk_add!, ten_relationships_params
         expect(response).to have_http_status 200
       end
     end
