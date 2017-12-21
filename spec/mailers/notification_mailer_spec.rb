@@ -200,4 +200,43 @@ describe NotificationMailer, type: :mailer do
     end
   end
 
+  describe "#merge_request_email" do
+    let(:user) { create(:really_basic_user) }
+    let(:merge_request) { create(:merge_request, user: user) }
+    let(:mail) { NotificationMailer.merge_request_email(merge_request) }
+
+    it "mentions merge source in subject line" do
+      expect(mail.subject).to eql "Merge request received for #{merge_request.source.name}"
+    end
+
+    it "sets requester as reply_to" do
+      expect(mail.reply_to).to eql [user.email]
+    end
+
+    it "sends email " do
+      expect { mail.deliver_now }
+        .to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+
+    describe "body" do
+      let(:body) { mail.body.raw_source }
+
+      it "mentions requester" do
+        expect(body).to have_text user.username
+      end
+
+      it "mentions merge source" do
+        expect(body).to have_text merge_request.source.name
+      end
+
+      it "mentions merge destination" do
+        expect(body).to have_text merge_request.dest.name
+      end
+
+      it "links to merge review page" do
+        expect(body).to have_text merge_url(mode: 'review',
+                                            request: merge_request.id)
+      end
+    end
+  end
 end
