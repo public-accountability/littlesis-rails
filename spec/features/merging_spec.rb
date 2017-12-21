@@ -15,22 +15,23 @@ feature 'Merging entities' do
   end
   after { logout(:user) }
 
-  describe "clicking on `Merge this entity` link" do
+  describe "navigating to merge pages from an entity profile page" do
     before { visit entity_path source }
 
     context "as a non-admin user" do
       let(:user) { create(:really_basic_user) }
 
-      it "is not possible" do
-        expect(page).not_to have_link("Merge this entity")
+      it "navigates to search page from `merge` action button" do
+        click_link "merge"
+        successfully_visits_page merge_path(mode: :search, source: source.id)
       end
     end
 
     context "as an admin" do
       let(:user) { create(:admin_user) }
 
-      it "navigates to merge search page from action button" do
-        click_link "Merge this entity"
+      it "navigates to search page from `merge` action button" do
+        click_link "merge"
         successfully_visits_page merge_path(mode: :search, source: source.id)
       end
 
