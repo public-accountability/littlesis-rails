@@ -48,8 +48,7 @@ class ToolsController < ApplicationController
   end
 
   def parse_merge_mode
-    @merge_mode = params.require(:mode)
-    raise Exceptions::NotFoundError unless MergeModes::ALL.include? @merge_mode
+    @merge_mode = MergeModes::ALL.dup.delete(params.require(:mode))
   end
 
   def parse_merge_search_params
@@ -103,8 +102,7 @@ class ToolsController < ApplicationController
       set_source_and_dest
     when MergeModes::REVIEW
       @merge_request = MergeRequest.find(params.require(:request).to_i)
-      @decision = params.require(:decision)
-      raise Exceptions::NotFoundError unless %w[approved denied].include? @decision
+      @decision = %w[approved denied].delete(params.require(:decision))
     end
   end
 
