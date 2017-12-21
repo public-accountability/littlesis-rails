@@ -58,7 +58,5 @@ data/indivs*
 data/*.sql
 
 # Passenger files
-Passengerfile.json
-passenger*.pid
-passenger*.pid.lock
+.passenger/
 log/*.lock
