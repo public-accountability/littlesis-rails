@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rails_helper'
 
 feature 'Merging entities' do
@@ -6,11 +7,12 @@ feature 'Merging entities' do
   let(:merge_request) {}
   let(:source) { create(:merge_source_person) }
   let(:dest) { create(:entity_person, :with_person_name) }
-  let(:dest_param) { "&dest=#{dest.id}" }
   let(:query) { "foobar" }
-  let(:query_param) { "&query=#{query}" }
 
-  before { login_as(user, scope: :user) }
+  before do
+    allow(Entity::Search).to receive(:similar_entities).and_return([dest])
+    login_as(user, scope: :user)
+  end
   after { logout(:user) }
 
   describe "clicking on `Merge this entity` link" do
@@ -27,8 +29,13 @@ feature 'Merging entities' do
     context "as an admin" do
       let(:user) { create(:admin_user) }
 
-      it "navigates to the merge searchn page" do
+      it "navigates to merge search page from action button" do
         click_link "Merge this entity"
+        successfully_visits_page tools_merge_path(mode: :search, source: source.id)
+      end
+
+      it "navigates to merge search page from `similar entities` section" do
+        click_link 'Begin merging process »'
         successfully_visits_page tools_merge_path(mode: :search, source: source.id)
       end
     end

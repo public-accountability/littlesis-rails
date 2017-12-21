@@ -110,7 +110,9 @@
 		</ul>
 
 		<% if user_signed_in? && (current_user.admin? || current_user.has_legacy_permission('merger') )%>
-		    <%= link_to 'Begin merging process »', tools_merge_path(source: @entity.id), id: 'begin-merging-process-link' %>
+		  <%= link_to 'Begin merging process »',
+                              tools_merge_path(mode: 'search', source: @entity.id),
+                              id: 'begin-merging-process-link' %>
 		<% end %>
 	    </div>
 	</div>
