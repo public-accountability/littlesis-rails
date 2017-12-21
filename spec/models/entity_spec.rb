@@ -845,6 +845,21 @@ describe Entity, :tag_helper  do
     end
   end
 
+  describe "merging into another entity" do
+
+    %i[alice bob].each { |p| let(p) { create(:entity_person) } }
+    let(:entity_merger_double) { double('EntityMerger', :merge! => nil) }
+
+    before { allow(EntityMerger).to receive(:new).and_return(entity_merger_double) }
+
+    it "delegates to an EntityMerger object" do
+      alice.merge_with(bob)
+
+      expect(EntityMerger).to have_received(:new).with(source: alice, dest: bob)
+      expect(entity_merger_double).to have_received(:merge!)
+    end
+  end
+
   describe "querying an entity that might be merged or not exist" do
 
     %i[alice bob cassie].each do |person|

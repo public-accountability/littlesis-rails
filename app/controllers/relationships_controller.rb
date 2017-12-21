@@ -4,9 +4,9 @@ class RelationshipsController < ApplicationController
   before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction]
   before_action :authenticate_user!, except: [:show]
   before_action -> { check_permission('deleter') }, only: [:destroy]
+  before_action :set_entity, only: [:bulk_add]
 
-  def show
-  end
+  def show; end
 
   # GET /relationships/:id/edit
   def edit
@@ -71,8 +71,11 @@ class RelationshipsController < ApplicationController
     end
   end
 
+  # GET /relationships/bulk_add
+  def bulk_add; end
+
   # POST /relationships/bulk_add
-  def bulk_add
+  def bulk_add!
     block_unless_bulker(params[:relationships], Relationship::BULK_LIMIT) # see application_controller
 
     if !Document.valid_url?(reference_params.fetch(:url)) || reference_params.fetch(:name).blank?
@@ -181,7 +184,7 @@ class RelationshipsController < ApplicationController
     if r[:category_id].to_i == 50 || r[:category_id].to_i == 51
       if r[:category_id].to_i == 50
         r[:entity1_id] = entity2.id
-        r[:entity2_id] = entity1.id  
+        r[:entity2_id] = entity1.id
       end
       r[:category_id] = 5
     end
@@ -208,6 +211,10 @@ class RelationshipsController < ApplicationController
 
   def set_relationship
     @relationship = Relationship.find(params[:id])
+  end
+
+  def set_entity
+    @entity = Entity.find(params.require(:entity_id))
   end
 
   def update_entity_last_user

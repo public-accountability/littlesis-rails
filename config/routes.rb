@@ -218,7 +218,8 @@ Lilsis::Application.routes.draw do
 
   resources :industries, only: [:show]
 
-  post '/relationships/bulk_add' => 'relationships#bulk_add'
+  get '/relationships/bulk_add' => 'relationships#bulk_add'
+  post '/relationships/bulk_add' => 'relationships#bulk_add!'
   get '/relationships/find_similar' => 'relationships#find_similar'
 
   resources :relationships, except: [:index, :new] do
@@ -300,12 +301,12 @@ Lilsis::Application.routes.draw do
   end
 
   #########
-  # Tools #
+  # Merge #
   #########
 
-  get '/tools/bulk/relationships' => "tools#bulk_relationships"
-  get '/tools/merge' => "tools#merge_entities"
-  post '/tools/merge' => "tools#merge_entities!"
+  get '/merge' => "merge#merge"
+  post '/merge' => "merge#merge!"
+  get '/merge/redundant' => "merge#redundant_merge_review"
 
   #########
   #  API  #

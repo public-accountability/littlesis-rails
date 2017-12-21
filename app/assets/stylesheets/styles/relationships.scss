@@ -1,24 +1,20 @@
 form.edit_relationship {
-    
     .form-group {
-	padding-top: 1em;
+        padding-top: 1em;
     }
-
     #description-fields input {
-	margin-top: 1em;
+        margin-top: 1em;
     }
- 
     label.control-label, div.col-sm-10 {
-	margin-top: 0.5em;
+        margin-top: 0.5em;
     }
-   
     input[type="radio"] {
-	margin-left: 0.2em;
-	margin-right: 0.2em;
+        margin-left: 0.2em;
+        margin-right: 0.2em;
     }
 
     small {
-	padding-left: 0.8em;
+        padding-left: 0.8em;
     }
 }
 
@@ -53,12 +49,10 @@ form.edit_relationship {
     .relationship-section {
         border: 0px solid #ddd;
         border-top: 0;
-
         .related_entity {
             ul {
                 margin-bottom: 0;
             }
-            
             color: #444;
             font-size: 14px;
             line-height: 1.3em;
@@ -67,42 +61,162 @@ form.edit_relationship {
             padding-bottom: 0.4em;
             padding-left: 0.3em;
         }
-
         .related_entity:hover {
             background-color: #f8f8f8;
         }
-
         .related_entity_entity {
             height: 20px;
             overflow: hidden;
-
             .related_entity_name {
                 font-weight: bold;
                 font-size: 16px;
                 line-height: 1.2em;
             }
-
             .related_entity_blurb {
                 color: #444;
                 margin-left: 5px;
             }
         }
-
         .related_entity_relationship {
             font-size: 12px;
             padding-top: 0.2em;
             padding-left: 0.5em;
-
             .toggle {
                 margin-left: 10px;
                 cursor: pointer;
             }
         }
     }
-
 }
 
 .relationship-sidebar-title {
     display: inline-block;
     padding-right: 6px;
+}
+
+.table-editable {
+  position: relative;
+
+  .glyphicon {
+      font-size: 20px;
+      cursor: pointer;
+  }
+
+  .reset-name {
+      padding-left: 5px;
+      font-size: 14px;
+  }
+
+  td.tri-boolean {
+      min-width: 110px;
+  }
+
+  tr {
+      position: relative !important;
+  }
+
+  .similar-relationships-alert {
+      font-size: 18px;
+      width: 25px;
+      color: $red;
+      position: absolute;
+      top: 10px;
+      right: 0;
+      left: -30px;
+      bottom: 0;
+  }
+}
+
+.table-remove {
+  color: #700;
+  cursor: pointer;
+  &:hover {
+    color: #f00;
+  }
+}
+
+.table-add {
+  &:hover {
+    color: #0b0;
+  }
+  span.glyphicon {
+      color: #070;
+  }
+}
+
+#table caption {
+    input[type=file] {
+	display: inline;
+	margin-left: 2em;
+    }
+}
+
+
+/* Jquery UI Automcomplete Styling */
+.ui-autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  float: left;
+  display: none;
+  min-width: 160px;
+  _width: 160px;
+  padding: 4px 0;
+  margin: 2px 0 0 0;
+  list-style: none;
+  background-color: #ffffff;
+  border-color: #ccc;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-style: solid;
+  border-width: 1px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+
+  .ui-menu-item > a.ui-corner-all {
+    display: block;
+    padding: 3px 15px;
+    clear: both;
+    font-weight: normal;
+    line-height: 18px;
+    color: #555555;
+    white-space: nowrap;
+
+    &.ui-state-hover, &.ui-state-active {
+      color: #ffffff;
+      text-decoration: none;
+      background-color: #0088cc;
+      border-radius: 0px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      background-image: none;
+    }
+  }
+}
+
+.entity-search-blurb, .entity-search-name {
+    border: none !important;
+}
+
+.entity-search-blurb {
+  font-size: 12px;
+  color: #888;
+}
+
+div.entity-match-box {
+    table {
+        font-size: 12px;
+    }
+    td {
+        cursor: pointer;
+    }
 }

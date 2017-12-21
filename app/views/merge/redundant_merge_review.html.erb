@@ -1,0 +1,12 @@
+<% status = @merge_request.status %>
+<% reviewer = @merge_request.reviewer %>
+<% date = @merge_request.updated_at %>
+
+<div class="row">
+  <div class="col-sm-12 nopadding">
+    <h1>Redundant Merge Reviews Not Allowed</h1>
+    <div>
+      You're trying to review a merge request that was already <%= status %> by <%= reviewer.username %> on <%= LsDate.pretty_print(date) %>.
+    </div>
+  </div>
+</div>

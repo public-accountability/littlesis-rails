@@ -1,3 +1,4 @@
+
 require 'rails_helper'
 
 describe RelationshipsController, type: :controller do
@@ -21,7 +22,8 @@ describe RelationshipsController, type: :controller do
   it { should route(:post, '/relationships/1/reverse_direction').to(action: :reverse_direction, id: 1) }
   it { should route(:patch, '/relationships/1').to(action: :update, id: 1) }
   it { should route(:delete, '/relationships/1').to(action: :destroy, id: 1) }
-  it { should route(:post, '/relationships/bulk_add').to(action: :bulk_add) }
+  it { should route(:get, '/relationships/bulk_add').to(action: :bulk_add) }
+  it { should route(:post, '/relationships/bulk_add').to(action: :bulk_add!) }
   it { should route(:get, '/relationships/find_similar').to(action: :find_similar) }
   it { should route(:post, '/relationships/1/tags').to(action: :tags, id: 1) }
 
@@ -480,5 +482,18 @@ describe RelationshipsController, type: :controller do
       expect(json[0]['description1']).to eq 'influence'
       expect(json[0].key?('last_user_id')).to be false
     end
+  end
+
+  describe "GET relationships/bulk_add" do
+    login_user
+    before do
+      expect(Entity).to receive(:find).with('123').and_return(build(:person))
+      get :bulk_add, entity_id: 123
+    end
+
+    it { should respond_with(200) }
+    it { should render_template(:bulk_add) }
+    it { should use_before_action(:authenticate_user!) }
+    it { should use_before_action(:set_entity) }
   end
 end

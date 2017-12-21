@@ -36,6 +36,16 @@ FactoryBot.define do
     name 'Human Being'
     primary_ext 'Person'
   end
+
+  factory :merge_source_person, parent: :entity_person do
+    with_person_name
+    after :create do |person|
+      list = create(:list)
+      person.add_extension('BusinessPerson')
+      ListEntity.create!(list_id: list.id, entity_id: person.id)
+      Relationship.create!(category_id: 1, entity: person, related: create(:entity_org))
+    end
+  end
   
   factory :corp, class: Entity do
     name 'corp'

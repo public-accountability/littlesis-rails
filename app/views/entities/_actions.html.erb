@@ -10,11 +10,12 @@
 	    <% f.submit 'remove', data: { confirm: "Are you sure you want to remove this entity?" }, class: 'delete-entity-btn action-button'  %>
 	  <% end %>
   	<% end %>
+
 	<% if current_user.has_legacy_permission 'importer' %>
           <%= link_to "match donations", match_donations_entity_path(entity), class: "action-button" if entity.person? %>
 	<% end %>
 	<% if show_add_bulk_button(current_user) %>
-          <%= link_to "add bulk", tools_bulk_relationships_path(entity_id: entity.id), class: "action-button" %>
+          <%= link_to "add bulk", relationships_bulk_add_path(entity_id: entity.id), class: "action-button" %>
 	<% end %>
       <% else  %>
 	<div class="fb-share-button"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171204223305) do
+ActiveRecord::Schema.define(version: 20171214174355) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1148,12 +1148,12 @@ ActiveRecord::Schema.define(version: 20171204223305) do
   add_index "ownership", ["relationship_id"], name: "relationship_id_idx", using: :btree
 
   create_table "pages", force: :cascade do |t|
-    t.string   "name",         limit: 255,      null: false
+    t.string   "name",         limit: 255,        null: false
     t.string   "title",        limit: 255
-    t.text     "markdown",     limit: 16777215
+    t.text     "markdown",     limit: 4294967295
     t.integer  "last_user_id", limit: 4
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
   end
 
   add_index "pages", ["name"], name: "index_pages_on_name", unique: true, using: :btree
@@ -1601,12 +1601,12 @@ ActiveRecord::Schema.define(version: 20171204223305) do
   add_index "task_meta", ["task", "namespace", "predicate"], name: "uniqueness_idx", unique: true, using: :btree
 
   create_table "toolkit_pages", force: :cascade do |t|
-    t.string   "name",         limit: 255,      null: false
+    t.string   "name",         limit: 255,        null: false
     t.string   "title",        limit: 255
-    t.text     "markdown",     limit: 16777215
+    t.text     "markdown",     limit: 4294967295
     t.integer  "last_user_id", limit: 4
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
   end
 
   add_index "toolkit_pages", ["name"], name: "index_toolkit_pages_on_name", unique: true, using: :btree
@@ -1632,6 +1632,19 @@ ActiveRecord::Schema.define(version: 20171204223305) do
   end
 
   add_index "user_permissions", ["user_id", "resource_type"], name: "index_user_permissions_on_user_id_and_resource_type", using: :btree
+
+  create_table "user_requests", force: :cascade do |t|
+    t.string   "type",        limit: 255,             null: false
+    t.integer  "user_id",     limit: 4,               null: false
+    t.integer  "status",      limit: 4,   default: 0, null: false
+    t.integer  "source_id",   limit: 4
+    t.integer  "dest_id",     limit: 4
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.integer  "reviewer_id", limit: 4
+  end
+
+  add_index "user_requests", ["user_id"], name: "index_user_requests_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  limit: 255,   default: "",    null: false
@@ -1782,4 +1795,5 @@ ActiveRecord::Schema.define(version: 20171204223305) do
   add_foreign_key "transaction", "entity", column: "contact1_id", name: "transaction_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "entity", column: "contact2_id", name: "transaction_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "relationship", name: "transaction_ibfk_1", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_requests", "users"
 end

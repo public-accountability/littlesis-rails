@@ -816,6 +816,13 @@ class Entity < ActiveRecord::Base
     "/#{primary_ext.downcase}/#{to_param}"
   end
 
+  # MERGING --v
+  # TODO: extract these 4 methods into a concern?
+
+  def merge_with(dest)
+    EntityMerger.new(source: self, dest: dest).merge!
+  end
+
   def self.find_with_merges(id:, skope: :itself)
     e = Entity.unscoped.send(skope).find_by_id(id)
     raise Exceptions::MergedEntityError.new(e.resolve_merges(skope)) if e&.has_merges?
@@ -832,6 +839,8 @@ class Entity < ActiveRecord::Base
   def has_merges?
     merged_id.present?
   end
+
+  # ^-- MERGING
 
   # A type checker for definition id and names
   # input: String or Integer

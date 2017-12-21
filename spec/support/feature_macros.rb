@@ -30,7 +30,7 @@ module FeatureExampleMacros
 
   def successfully_visits_page(path)
     expect(page.status_code).to eq 200
-    expect(page.current_path).to eql path
+    expect(page).to have_current_path path
   end
 
   def page_has_selectors(*selectors)

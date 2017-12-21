@@ -11,6 +11,31 @@ FactoryBot.define do
     confirmed_at { Time.now }
   end
 
+  # sub-factory pattern. see: https://devhints.io/factory_bot
+  factory :really_basic_user, parent: :user do
+    association :sf_guard_user, factory: :sf_user
+  end
+
+  factory :admin_user, parent: :user do
+    association :sf_guard_user, factory: :admin_sf_user
+  end
+
+  factory :basic_sf_user, parent: :sf_user do
+    after :create do |sf_user|
+      SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+      SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+      SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
+    end
+  end
+
+  factory :admin_sf_user, parent: :sf_user do
+    after :create do |sf_user|
+      SfGuardUserPermission.create!(permission_id: 1, user_id: sf_user.id)
+      SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+      SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
+    end
+  end
+
   factory :user_with_id, class: User do
     username { Faker::Internet.unique.user_name }
     email { generate(:user_email) }
