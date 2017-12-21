@@ -110,6 +110,8 @@ feature 'Merging entities' do
         it "allows access" do
           expect(page).to have_http_status 200
         end
+
+        it "is impossible to test displaying search results because it is in javascript"
       end
 
       context 'requesting a merge' do
@@ -119,6 +121,8 @@ feature 'Merging entities' do
         it "allows access" do
           expect(page).to have_http_status 200
         end
+
+        it "is impossible to test if clicking `merge` goes to correct page  b/c javascript"
       end
 
       context 'executing a merge' do

@@ -1,5 +1,7 @@
 <%# Requires presence of two instance vars: @similar_entities, @source%>
 
+<% mode = current_user.admin? ? 'execute' : 'request' %>
+
 <table id="merge-entity-table" class="display" width="100%"></table>
 
 <script>
@@ -16,7 +18,7 @@
  }
 
  var selectLink = function(id) {
-  var params = { mode: 'execute', source: <%= @source.id %>, dest: id };
+  var params = { mode: '<%= mode %>', source: <%= @source.id %>, dest: id };
   return "/merge?" + $.param(params);
  }
 
