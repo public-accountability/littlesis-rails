@@ -10,10 +10,9 @@ class MergeController < ApplicationController
   end
 
   before_action :authenticate_user!
-  before_action :admins_only, only: [:merge!]
   before_action :parse_merge_mode, only: [:merge, :merge!]
-  before_action :parse_merge_get_params, only: [:merge]
-  before_action :parse_merge_post_params, only: [:merge!]
+  before_action :parse_get_params, only: [:merge]
+  before_action :parse_post_params, only: [:merge!]
   before_action :parse_rendundant_review_params, only: [:redundant_merge_review]
 
   # GET /tools/merge
@@ -29,7 +28,11 @@ class MergeController < ApplicationController
       redirect_to @dest
     when Modes::REVIEW
       @merge_request.send("#{@decision}_by!".to_sym, current_user)
-      redirect_to @merge_request.source
+      redirect_to @merge_request.dest, notice: "Merge request #{@decision}"
+    when Modes::REQUEST
+      mr = MergeRequest.create(user: current_user, source: @source, dest: @dest)
+      NotificationMailer.merge_request_email(mr).deliver_later
+      redirect_to @source, notice: "Your request was sent to LittleSis admins"
     end
   end
 
@@ -38,9 +41,9 @@ class MergeController < ApplicationController
 
   private
 
-  # merge GET param parsers --v
+  # GET param parsers --v
 
-  def parse_merge_get_params
+  def parse_get_params
     send("parse_merge_#{@merge_mode}_params".to_sym)
   end
 
@@ -90,18 +93,23 @@ class MergeController < ApplicationController
     set_merge_request
   end
 
-  # ^-- end merge GET param parsers
+  # ^-- end GET param parsers
 
-  def parse_merge_post_params
-    admins_only
+  def parse_post_params
     case @merge_mode
     when Modes::EXECUTE
+      admins_only
       set_source_and_dest
     when Modes::REVIEW
+      admins_only
       @merge_request = MergeRequest.find(params.require(:request).to_i)
       @decision = %w[approved denied].delete(params.require(:decision))
+    when Modes::REQUEST
+      set_source_and_dest
     end
   end
+
+  # parser helpers
 
   def set_entity_merger
     @entity_merger = EntityMerger.new(source: @source, dest: @dest).merge
