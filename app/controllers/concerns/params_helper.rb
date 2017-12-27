@@ -7,7 +7,7 @@ module ParamsHelper
 
   protected
 
-  # modifies params to be passed to Relationship.update, Relationship.new, or Entity.update
+  # modifies params to be passed to Relationship.update, Relationship.new, Entity.update
   #  - converts blank_values to nil
   #  - adds last_user_id
   #  - processes start and end dates
