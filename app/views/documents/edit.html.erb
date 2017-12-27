@@ -1,53 +1,53 @@
 <h2>
-    Edit document: <%= @document.name %>
+  Edit document: <%= @document.name %>
 </h2>
 
 <%= form_for(@document) do |f| %>
 
-    <div class="form-group form-group-sm">
-        <%= label_tag(:url, "Source URL") %>
-        <div>
-            <%= @document.url %>
-        </div>
-    </div>
-
-    <div class="form-group form-group-sm">
-        <%= label_tag(:name, "Display Name") %>
-        <div>
-            <%= f.text_field(:name, required: true, size: 40) %>
-        </div>
-    </div>
-
-    <div class="form-group form-group-sm">
-        <%= label_tag(:publication_date, "Publication Date") %>
-        <div>
-            <%= f.text_field(:publication_date) %>
-            <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
-        </div>
-    </div>
-
-    <div class="form-group form-group-sm">
-        <%= label_tag(:ref_type, "Type") %>
-        <% if @document.ref_type == 2 %>
-            <div>
-                FEC Filing
-            </div>
-        <% else %>
-            <div>
-                <%= f.select(:ref_type, options_for_select(Document.ref_type_options, @document.ref_type) ) %>
-            </div>
-        <% end %>
-    </div>
-
-    <div class="form-group form-group-sm">
-        <%= label_tag(:excerpt, "Excerpt") %>
-        <div>
-            <%= f.text_area(:excerpt, size: "40x6") %>
-        </div>
-    </div>
-
+  <div class="form-group form-group-sm">
+    <%= label_tag(:url, "Source URL") %>
     <div>
-        <%= f.submit("Update", class: "btn btn-primary") %>
+      <%= @document.url %>
     </div>
+  </div>
+
+  <div class="form-group form-group-sm">
+    <%= label_tag(:name, "Display Name") %>
+    <div>
+      <%= f.text_field(:name, required: true, size: 40) %>
+    </div>
+  </div>
+
+  <div class="form-group form-group-sm">
+    <%= label_tag(:publication_date, "Publication Date") %>
+    <div>
+      <%= f.text_field(:publication_date) %>
+      <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
+    </div>
+  </div>
+
+  <div class="form-group form-group-sm">
+    <%= label_tag(:ref_type, "Type") %>
+    <% if @document.ref_type == 2 %>
+      <div>
+        FEC Filing
+      </div>
+    <% else %>
+      <div>
+        <%= f.select(:ref_type, options_for_select(Document.ref_type_options, @document.ref_type) ) %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="form-group form-group-sm">
+    <%= label_tag(:excerpt, "Excerpt") %>
+    <div>
+      <%= f.text_area(:excerpt, size: "40x6") %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.submit("Update", class: "btn btn-primary") %>
+  </div>
 
 <% end %>
