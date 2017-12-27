@@ -45,6 +45,17 @@ feature 'User Pages' do
         expect(page).to have_selector 'h3 small a', text: 'view all edits'
       end
     end
+
+    context 'user is restricted' do
+      before do
+        user_for_page.update!(is_restricted: true)
+        visit "/users/#{user_for_page.username}"
+      end
+
+      scenario 'does not show user pages for restircted users' do
+        expect(page.status_code).to eq 404
+      end
+    end
   end
 
   feature 'User Edits Page' do

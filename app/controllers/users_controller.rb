@@ -133,6 +133,7 @@ class UsersController < ApplicationController
     else
       raise Exceptions::NotFoundError
     end
+    raise Exceptions::NotFoundError if @user.is_restricted?
   end
 
   # Only allow a trusted parameter "white list" through.
