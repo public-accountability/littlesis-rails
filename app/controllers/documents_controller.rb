@@ -19,8 +19,8 @@ class DocumentsController < ApplicationController
   private
 
   def document_params
-    prepare_update_params(
-      params.require(:document).permit(:name, :ref_type, :publication_date, :excerpt)
-    )
+    doc_params = params.require(:document).permit(:name, :ref_type, :publication_date, :excerpt)
+    doc_params['publication_date'] = LsDate.convert(doc_params['publication_date'])
+    doc_params
   end
 end
