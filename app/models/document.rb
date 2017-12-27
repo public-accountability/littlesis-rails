@@ -4,9 +4,11 @@ class Document < ActiveRecord::Base
   validates :url, presence: true, url: true
   validates :url_hash, presence: true, uniqueness: true
   validates :name, length: { maximum: 255 }
-  validates :publication_date, length: { maximum: 10 }, date: true
+  validates :publication_date, date: true
 
   before_validation :trim_whitespace, :set_hash
+
+  has_paper_trail on: [:update, :destroy]
 
   PER_PAGE = 20
 

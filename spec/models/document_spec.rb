@@ -185,4 +185,19 @@ describe Document, :pagination_helper, type: :model do
 
     it { is_expected.to eql 3 }
   end
+
+  describe 'recording history with paper trail' do
+    with_versioning do
+      it 'does not record create events' do
+        expect { create(:document) }.not_to change { PaperTrail::Version.count }
+      end
+
+      it 'records update events' do
+        d = create(:document)
+        expect(d.versions.count).to eql 0
+        d.update!(name: Faker::Cat.registry)
+        expect(d.versions.count).to eql 1
+      end
+    end
+  end
 end
