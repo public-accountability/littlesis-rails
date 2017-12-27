@@ -555,7 +555,7 @@ class Relationship < ApplicationRecord
       .select('schedule_transaction_date')
       .order("schedule_transaction_date #{sort}")
       .limit(1)
-      &.fetch(0, nil)
+      &.first
       &.schedule_transaction_date
   end
 end
