@@ -7,9 +7,9 @@ module Routes
   end
   private_constant :MODIFY_PATH
 
-  ROUTES_TO_MODIFY = Rails.application.routes.routes.named_routes.to_a.map do |route_name, route|
-    if route_name.include?('entity') and not route_name.include?('api')
-      route_name if route.constraints[:request_method].match('GET')
+  ROUTES_TO_MODIFY = Rails.application.routes.routes.map do |route|
+    if route.name.present? && route.name.include?('entity') && !route.name.include?('api')
+      route.name if route.verb == 'GET'
     end
   end.compact.freeze
 
