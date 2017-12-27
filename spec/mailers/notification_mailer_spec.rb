@@ -45,10 +45,11 @@ describe NotificationMailer, type: :mailer do
   end
 
   describe '#signup_email' do
+    let(:map_the_power) { false }
     before(:each) do
       @sf_user = create(:sf_guard_user)
-      @user = create(:user, sf_guard_user: @sf_user)
-      @profile = create(:sf_guard_user_profile, user_id: @sf_user.id)
+      @user = create(:user, map_the_power: map_the_power, sf_guard_user: @sf_user)
+      @profile = create(:sf_guard_user_profile, user_id: @sf_user.id, location: 'vienna')
       @mail = NotificationMailer.signup_email(@user)
     end
 
@@ -66,6 +67,28 @@ describe NotificationMailer, type: :mailer do
 
     it 'has name' do
       expect(@mail.encoded).to include 'first last'
+    end
+
+    it 'has location' do
+      expect(@mail.encoded).to include '<strong>Location:</strong> vienna'
+    end
+
+    it 'has email' do
+      expect(@mail.encoded).to include "<strong>Email:</strong> #{@user.email}"
+    end
+
+    context 'is interested in map the power' do
+      let(:map_the_power) { true }
+      it 'interested in map the power' do
+        expect(@mail.encoded).to include "<strong>Interested in Map the Power:</strong> yes"
+      end
+    end
+
+    context 'is not interested in map the power' do
+      let(:map_the_power) { false }
+      it 'interested in map the power' do
+        expect(@mail.encoded).to include "<strong>Interested in Map the Power:</strong> no"
+      end
     end
 
     it 'has reason' do

@@ -1,4 +1,8 @@
 <p><strong>New User Signup:</strong> <%= @user.username %> (<%= @user.id %>)</p>
 
 <p><strong>Name:</strong> <%= @profile.name_first + ' ' +  @profile.name_last%></p>
-<p><strong>Why they joined:</strong><br><%= @profile.reason %></p>    
+<p><strong>Email:</strong> <%= @user.email %></p>
+<p><strong>Location:</strong> <%= @profile.location %></p>
+<p><strong>Interested in Map the Power:</strong> <%= yes_or_no @user.map_the_power %></p>
+
+<p><strong>Why they joined:</strong><br><%= @profile.reason %></p>
