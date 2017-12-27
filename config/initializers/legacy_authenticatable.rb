@@ -16,8 +16,8 @@ class LegacyAuthenticatable < Warden::Strategies::Base
     return nil if cookies[:LittleSis].nil?
 
     # LittleSis cookie value must be an existing session_id in the database
-    sql = ActiveRecord::Base.send(:sanitize_sql_array, ["SELECT data FROM sessions WHERE session_id = ?", cookies[:LittleSis]])
-    data = ActiveRecord::Base.connection.select_value(sql)
+    sql = ApplicationRecord.send(:sanitize_sql_array, ["SELECT data FROM sessions WHERE session_id = ?", cookies[:LittleSis]])
+    data = ApplicationRecord.connection.select_value(sql)
   end
 
   def user_from_legacy_cookie

@@ -310,7 +310,7 @@ class ListsController < ApplicationController
     from = "relationship r LEFT JOIN entity e ON (e.id = r.entity2_id) LEFT JOIN extension_record er ON (er.entity_id = e.id) LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)"
     where = "r.entity1_id IN (#{entity_ids.join(',')}) AND r.category_id IN (#{Relationship::POSITION_CATEGORY}, #{Relationship::MEMBERSHIP_CATEGORY}) AND r.is_deleted = 0"
     sql = "SELECT #{select} FROM #{from} WHERE #{where} GROUP BY r.entity2_id ORDER BY num DESC"
-    db = ActiveRecord::Base.connection
+    db = ApplicationRecord.connection
     orgs = db.select_all(sql).to_hash
 
     # filter entities by type

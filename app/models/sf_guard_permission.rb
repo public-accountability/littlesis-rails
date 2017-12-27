@@ -1,4 +1,4 @@
-class SfGuardPermission < ActiveRecord::Base
+class SfGuardPermission < ApplicationRecord
   include SingularTable
 
   has_many :sf_guard_user_permissions, foreign_key: "permission_id", inverse_of: :sf_guard_permission, dependent: :destroy

@@ -1,4 +1,4 @@
-class LegacyReference < ActiveRecord::Base
+class LegacyReference < ApplicationRecord
   self.table_name = 'reference'
   has_one :reference_excerpt
 

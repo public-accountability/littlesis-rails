@@ -1,4 +1,4 @@
-class Field < ActiveRecord::Base
+class Field < ApplicationRecord
   self.inheritance_column = "_type"
 
   has_many :entity_fields, inverse_of: :field, dependent: :destroy

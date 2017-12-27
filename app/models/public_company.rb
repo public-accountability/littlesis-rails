@@ -1,4 +1,4 @@
-class PublicCompany < ActiveRecord::Base
+class PublicCompany < ApplicationRecord
   include SingularTable
   
   has_paper_trail :on => [:update]

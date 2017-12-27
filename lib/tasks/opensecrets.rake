@@ -52,7 +52,7 @@ namespace :opensecrets do
   desc "Find missing candidates"
   task missing_candidates: :environment do 
     sql = "SELECT DISTINCT recipid from os_donations where recipid like 'N%'"
-    recipids = ActiveRecord::Base.connection.execute(sql)
+    recipids = ApplicationRecord.connection.execute(sql)
     
     found = 0
     not_found = 0
@@ -130,7 +130,7 @@ namespace :opensecrets do
            where fec_filing.crp_cycle = 2008 and relationship.is_deleted = 0
            limit 3000"
     
-    ids = ActiveRecord::Base.connection.execute(sql)
+    ids = ApplicationRecord.connection.execute(sql)
         
     ids.each do |i| 
        relationship_id = i[0]

@@ -1,4 +1,4 @@
-class Image < ActiveRecord::Base
+class Image < ApplicationRecord
   include SingularTable
   include SoftDelete
 
@@ -181,7 +181,7 @@ class Image < ActiveRecord::Base
   end
 
   def feature
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       Image.where(entity_id: entity_id).where.not(id: id).update_all(is_featured: false)
       self.is_featured = true
       save

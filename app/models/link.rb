@@ -1,5 +1,5 @@
 # coding: utf-8
-class Link < ActiveRecord::Base
+class Link < ApplicationRecord
   include SingularTable
 
   belongs_to :relationship, inverse_of: :links

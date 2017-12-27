@@ -1,4 +1,4 @@
-class Alias < ActiveRecord::Base
+class Alias < ApplicationRecord
   include SingularTable
 
   belongs_to :entity, inverse_of: :aliases, touch: true

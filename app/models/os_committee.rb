@@ -1,2 +1,2 @@
-class OsCommittee < ActiveRecord::Base
+class OsCommittee < ApplicationRecord
 end

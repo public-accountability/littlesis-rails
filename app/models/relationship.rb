@@ -1,5 +1,5 @@
 # coding: utf-8
-class Relationship < ActiveRecord::Base
+class Relationship < ApplicationRecord
   include SingularTable
   include SoftDelete
   include Referenceable

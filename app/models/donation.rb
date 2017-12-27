@@ -1,4 +1,4 @@
-class Donation < ActiveRecord::Base
+class Donation < ApplicationRecord
   include SingularTable
 
   belongs_to :relationship, inverse_of: :donation

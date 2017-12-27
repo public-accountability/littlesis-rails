@@ -1,4 +1,4 @@
-class Education < ActiveRecord::Base
+class Education < ApplicationRecord
   include SingularTable
 
   belongs_to :relationship, inverse_of: :education

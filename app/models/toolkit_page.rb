@@ -1,3 +1,3 @@
-class ToolkitPage < ActiveRecord::Base
+class ToolkitPage < ApplicationRecord
   include EditablePage
 end

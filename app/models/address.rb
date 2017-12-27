@@ -1,6 +1,6 @@
 require 'street_address'
 
-class Address < ActiveRecord::Base
+class Address < ApplicationRecord
   include SingularTable
   include SoftDelete
 

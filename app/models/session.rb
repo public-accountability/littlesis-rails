@@ -1,4 +1,4 @@
-class Session < ActiveRecord::Base
+class Session < ApplicationRecord
   def self.clear_expired(seconds=nil)
     seconds ||= 7.days
 

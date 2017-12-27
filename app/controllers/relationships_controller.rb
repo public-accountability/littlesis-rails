@@ -89,7 +89,7 @@ class RelationshipsController < ApplicationController
 
     # Looping through each relationship
     bulk_relationships_params.each do |relationship|
-      ActiveRecord::Base.transaction do
+      ApplicationRecord.transaction do
         make_or_get_entity(relationship) do |entity2|
           rollback_if(relationship) do
             create_bulk_relationship(entity1, entity2, relationship)

@@ -1,4 +1,4 @@
-class ExternalKey < ActiveRecord::Base
+class ExternalKey < ApplicationRecord
   include SingularTable
 
   belongs_to :entity, inverse_of: :external_keys

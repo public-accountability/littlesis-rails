@@ -1,4 +1,4 @@
-class NetworkMap < ActiveRecord::Base
+class NetworkMap < ApplicationRecord
   include SingularTable
   include SoftDelete
 
@@ -247,7 +247,7 @@ class NetworkMap < ActiveRecord::Base
           "AND r.entity1_id <> r.entity2_id " +
           "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " +
           "GROUP BY LEAST(r.entity1_id, r.entity2_id), GREATEST(r.entity1_id, r.entity2_id), r.category_id"
-    rels = ActiveRecord::Base.connection.exec_query(sql)
+    rels = ApplicationRecord.connection.exec_query(sql)
   end
 
   def to_clean_hash

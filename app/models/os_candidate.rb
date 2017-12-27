@@ -1,2 +1,2 @@
-class OsCandidate < ActiveRecord::Base
+class OsCandidate < ApplicationRecord
 end

@@ -1,4 +1,4 @@
-class ListEntity < ActiveRecord::Base
+class ListEntity < ApplicationRecord
   self.table_name = "ls_list_entity"
   include Api::Serializable
   include SoftDelete

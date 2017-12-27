@@ -1,4 +1,4 @@
-class NyDisclosure < ActiveRecord::Base
+class NyDisclosure < ApplicationRecord
   REPORT_ID = {
     "A" => "32 Day Pre Primary",
     "B" => "11 Day Pre Primary",

@@ -1,4 +1,4 @@
-class Phone < ActiveRecord::Base
+class Phone < ApplicationRecord
   include SingularTable
 
   # necessary for model to work with "type" field

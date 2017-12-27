@@ -1,4 +1,4 @@
-class Group < ActiveRecord::Base
+class Group < ApplicationRecord
 	belongs_to :default_network, class_name: "List", inverse_of: :groups
 	belongs_to :sf_guard_group, foreign_key: "slug", primary_key: "name"
 	

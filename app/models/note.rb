@@ -1,4 +1,4 @@
-class Note < ActiveRecord::Base
+class Note < ApplicationRecord
   extend ActionView::Helpers::SanitizeHelper::ClassMethods
   
   include SingularTable

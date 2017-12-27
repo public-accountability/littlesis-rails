@@ -1,4 +1,4 @@
-class Article < ActiveRecord::Base
+class Article < ApplicationRecord
   has_many :article_entities, inverse_of: :article, dependent: :destroy
   has_many :entities, through: :article_entities, inverse_of: :articles
 

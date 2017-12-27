@@ -115,7 +115,7 @@ module NetworkAnalysis
 
     # TODO(ag|09-Oct-2017): extract this as a helper?
     result = []
-    ActiveRecord::Base.connection.execute(sql).each(:as => :hash) do |h|
+    ApplicationRecord.connection.execute(sql).each(:as => :hash) do |h|
       result << parse_connecting_ids(h)
     end
     result

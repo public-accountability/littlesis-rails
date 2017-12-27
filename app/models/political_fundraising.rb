@@ -1,4 +1,4 @@
-class PoliticalFundraising < ActiveRecord::Base
+class PoliticalFundraising < ApplicationRecord
   include SingularTable
 
   belongs_to :entity, inverse_of: :political_fundraising

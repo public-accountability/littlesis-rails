@@ -1,4 +1,4 @@
-class SfGuardRememberKey < ActiveRecord::Base
+class SfGuardRememberKey < ApplicationRecord
   include SingularTable
   self.primary_key = "id"
 

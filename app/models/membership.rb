@@ -1,4 +1,4 @@
-class Membership < ActiveRecord::Base
+class Membership < ApplicationRecord
   include SingularTable
 
   has_paper_trail on: [:update, :destroy]

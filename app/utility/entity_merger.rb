@@ -18,7 +18,7 @@ class EntityMerger
   def merge!
     merge
 
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       @extensions.each { |e| e.merge!(@dest) }
       @contact_info.each(&:save!)
       @contact_info_to_delete.each(&:destroy!)

@@ -1,4 +1,4 @@
-class Org < ActiveRecord::Base
+class Org < ApplicationRecord
   include SingularTable
 
   has_paper_trail :on => [:update, :destroy]

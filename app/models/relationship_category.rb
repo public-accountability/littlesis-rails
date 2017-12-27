@@ -1,4 +1,4 @@
-class RelationshipCategory < ActiveRecord::Base
+class RelationshipCategory < ApplicationRecord
   include SingularTable
 
   has_many :relationships, inverse_of: :category

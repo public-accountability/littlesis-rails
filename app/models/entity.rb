@@ -1,4 +1,4 @@
-class Entity < ActiveRecord::Base
+class Entity < ApplicationRecord
   include SingularTable
   include SoftDelete
   include Referenceable
@@ -592,7 +592,7 @@ class Entity < ActiveRecord::Base
   def update_fields_from_extensions
     return false unless id
     skip_cols = %w(id entity_id updated_at created_at name name_prefix name_first name_middle name_last name_suffix name_nick name_maiden)
-    conn = ActiveRecord::Base.connection
+    conn = ApplicationRecord.connection
     hash = {}
     self.class.all_extension_names_with_fields.each do |ext|
       sql = "SELECT * FROM #{ext.underscore} WHERE entity_id = #{id}"
@@ -663,7 +663,7 @@ class Entity < ActiveRecord::Base
   def add_article(hash, featured=true)
     article_entity = nil
 
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       article = Article.create(hash)
       article_entity = ArticleEntity.create(
         article_id: article.id,

@@ -1,4 +1,4 @@
-class Degree < ActiveRecord::Base
+class Degree < ApplicationRecord
   include SingularTable
 
   def self.select_options

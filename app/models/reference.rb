@@ -1,4 +1,4 @@
-class Reference < ActiveRecord::Base
+class Reference < ApplicationRecord
   include Api::Serializable
   belongs_to :referenceable, polymorphic: true
   belongs_to :document

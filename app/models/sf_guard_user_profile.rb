@@ -1,4 +1,4 @@
-class SfGuardUserProfile < ActiveRecord::Base
+class SfGuardUserProfile < ApplicationRecord
   include SingularTable	
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :name_first, presence: true
