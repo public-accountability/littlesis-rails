@@ -397,19 +397,6 @@ class Relationship < ActiveRecord::Base
     ownership.nil? ? nil : ownership.shares
   end
 
-  ## position ##
-
-  def position_or_membership_type 
-    return 'None' unless (is_position? || is_member?)
-
-    org_types = related.extension_names
-
-    return 'Business' if (org_types & ['Business', 'BusinessPerson']).any?
-    return 'Government' if org_types.include? 'GovernmentBody'
-    return 'In The Office Of' if (org_types & ['ElectedRepresentative', 'PublicOfficial']).any?
-    return 'Other Positions & Memberships'
-  end
-
   ########################
   # Open Secrets Helpers #
   ########################

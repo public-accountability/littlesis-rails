@@ -19,14 +19,14 @@ class Link < ActiveRecord::Base
     end
   end
 
-  def position_type 
+  def position_type
     return 'None' unless category_id == 1
 
     org_types = related.extension_names
 
-    return 'business' if (org_types & ['Business', 'BusinessPerson']).any?
+    return 'office' if org_types.include? 'Person'
     return 'government' if org_types.include? 'GovernmentBody'
-    return 'office' if (org_types & ['ElectedRepresentative', 'PublicOfficial']).any?
+    return 'business' if org_types.include? 'Business'
     return 'other'
   end
 
