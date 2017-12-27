@@ -9,7 +9,7 @@ class DocumentsController < ApplicationController
     @document.assign_attributes(document_params)
     if @document.valid?
       @document.save!
-      redirect_to root_path
+      redirect_to home_dashboard_path
     else
       redirect_to edit_document_path(@document)
     end

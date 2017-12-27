@@ -11,7 +11,7 @@ describe DocumentsController, type: :controller do
       login_user
       before do
         @doc = build(:document)
-        expect(Document).to receive(:find).with('1').and_return(@doc)
+        expect(Document).to receive(:find).with(1).and_return(@doc)
         get :edit, id: 1
       end
       it { should render_template 'edit' }
@@ -26,7 +26,8 @@ describe DocumentsController, type: :controller do
   describe "PATCH #update" do
     login_user
     let(:document_params) do
-      attributes_for(:document).merge(excerpt: Faker::Lorem.sentence, publication_date: '2016-01-01', ref_type: '1')
+      attributes_for(:document)
+        .merge(excerpt: Faker::Lorem.sentence, publication_date: '2016-01-01', ref_type: '1')
     end
 
     before :each do
@@ -38,7 +39,7 @@ describe DocumentsController, type: :controller do
       before do
         patch :update, id: @doc.id, document: document_params.merge(publication_date: '2017-01-01')
       end
-      it { should redirect_to root_path }
+      it { should redirect_to home_dashboard_path }
 
       it 'changes the publication date' do
         expect(@doc.reload.publication_date).to eql '2017-01-01'
@@ -47,7 +48,9 @@ describe DocumentsController, type: :controller do
 
     context 'with invalid params' do
       before do
-        patch :update, id: @doc.id, document: document_params.merge(publication_date: 'THIS IS NOT A DATE')
+        patch :update,
+              id: @doc.id,
+              document: document_params.merge(publication_date: 'THIS IS NOT A DATE')
       end
 
       it { should redirect_to edit_document_path(@doc) }
