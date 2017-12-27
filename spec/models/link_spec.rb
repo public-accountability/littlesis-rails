@@ -32,10 +32,10 @@ describe Link, type: :model do
       expect(link.position_type).to eq 'business'
     end
 
-    it 'returns business if other entity is a businessPerson' do
+    it 'returns office if other entity is a businessPerson' do
       person = person_with_type('BusinessPerson')
       link = build(:link, category_id: 1, entity2_id: person.id)
-      expect(link.position_type).to eq 'business'
+      expect(link.position_type).to eq 'office'
     end
 
     it 'returns government if other entity is a gov' do
