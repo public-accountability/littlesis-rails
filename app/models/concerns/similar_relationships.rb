@@ -7,7 +7,7 @@ module SimilarRelationships
     #        string/int, string/int, string/int
     # output: []
     def find_similar(hash_or_entity1_id, entity2_id = nil, category_id = nil)
-      if hash_or_entity1_id.is_a? Hash
+      if hash_or_entity1_id.is_a?(Hash) || hash_or_entity1_id.is_a?(ActionController::Parameters)
         entity1_id = hash_or_entity1_id.fetch 'entity1_id'
         entity2_id = hash_or_entity1_id.fetch 'entity2_id'
         category_id = hash_or_entity1_id.fetch 'category_id'
