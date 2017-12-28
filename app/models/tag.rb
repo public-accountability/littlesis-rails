@@ -112,7 +112,7 @@ class Tag < ApplicationRecord
   def count_and_sort_entities(entity_type, page = 1)
     [
       entities_by_relationship_count(entity_type, page),
-      entities.where(primary_ext: entity_type).count
+      entities.where(primary_ext: entity_type.to_s).count
     ]
   end
 
