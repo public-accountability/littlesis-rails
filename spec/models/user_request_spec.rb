@@ -64,14 +64,13 @@ describe UserRequest, type: :model do
 
     describe "#description" do
       context "of a MergeRequest" do
-
         it "returns 'merge'" do
           expect(user_request.description).to eql 'merge'
         end
       end
 
       context "of a DeletionRequest" do
-        let(:user_request){ create(:user_request, type: 'DeletionRequest') }
+        let(:user_request) { create(:user_request, type: 'DeletionRequest') }
 
         it "returns 'deletion" do
           expect(user_request.description).to eql 'deletion'

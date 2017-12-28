@@ -1,7 +1,7 @@
 class DeletionRequest < UserRequest
   # fields: user_id, type, status, entity_id
 
-  validates_presence_of :entity_id
+  validates :entity_id, presence: true
   belongs_to :entity
 
   def approve!

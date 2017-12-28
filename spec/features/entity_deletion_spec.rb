@@ -1,8 +1,7 @@
-# coding: utf-8
 require 'rails_helper'
 
 feature 'Entity deletion request & review' do
-  let(:user){}
+  let(:user) {}
   let(:requester) { create :really_basic_user }
   let(:entity) { create :entity_person }
   let!(:deletion_request) do
@@ -16,7 +15,7 @@ feature 'Entity deletion request & review' do
     before { visit review_deletion_request_path(deletion_request) }
 
     context "as a non-admin" do
-      let(:user){ create(:really_basic_user) }
+      let(:user) { create(:really_basic_user) }
       denies_access
     end
 
