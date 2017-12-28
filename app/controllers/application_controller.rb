@@ -60,7 +60,7 @@ class ApplicationController < ActionController::Base
   # Array, Integer -> Void
   def block_unless_bulker(resources = [], limit = 0)
     # users who aren't admins or 'bulkers' may not create more than `limit` resources at a time
-    if resources.length > limit && !(current_user.bulker? || current_user.admin?)
+    if (resources.present? && resources.length > limit) && !(current_user.bulker? || current_user.admin?)
       raise Exceptions::UnauthorizedBulkRequest
     end
   end

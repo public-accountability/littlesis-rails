@@ -24,6 +24,6 @@ class ErrorsController < ApplicationController
   private
 
   def bug_report_params
-    params.permit(:email, :type, :summary, :page, :description, :reproduce, :expected)
+    params.permit(:email, :type, :summary, :page, :description, :reproduce, :expected).to_h
   end
 end
