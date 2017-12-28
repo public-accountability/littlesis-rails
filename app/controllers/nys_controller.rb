@@ -1,5 +1,5 @@
 class NysController < ApplicationController
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
   before_action -> { check_permission 'importer' }, only: [
     :match_donations, :unmatch_donations, :potential_contributions, :contributions
   ]

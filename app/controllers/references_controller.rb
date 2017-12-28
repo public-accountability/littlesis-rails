@@ -1,6 +1,6 @@
 class ReferencesController < ApplicationController
   include ReferenceableController
-  before_filter :authenticate_user!, except: [:entity]
+  before_action :authenticate_user!, except: [:entity]
   before_action :set_referenceable, only: [:create]
 
   ENTITY_DEFAULTS = { page: 1, per_page: 10 }.freeze

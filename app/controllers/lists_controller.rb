@@ -14,7 +14,7 @@ class ListsController < ApplicationController
   # from TagableController and therefore including :tags in the list is required
   # Because of the potential for confusion, perhaps we should no longer use :authenticate_user!
   # in controller concerns? (ziggy 2017-08-31)
-  before_filter :authenticate_user!,
+  before_action :authenticate_user!,
                 only: [ :new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags ]
 
   before_action :set_list,

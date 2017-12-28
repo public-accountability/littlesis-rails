@@ -4,7 +4,7 @@ class GroupsController < ApplicationController
     :new_list, :add_list, :join, :leave, :users, :promote_user, :demote_user, :remove_user, :admin, :entities,
     :clear_cache, :edit_advanced, :edit_findings, :edit_howto
   ]
-  before_filter :authenticate_user!, except: [:show, :index, :search]
+  before_action :authenticate_user!, except: [:show, :index, :search]
 
   def must_belong_to_private_group
     current_user_must_belong_to_group if @group.private?
