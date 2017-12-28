@@ -11,16 +11,18 @@ class MergeController < ApplicationController
 
   before_action :authenticate_user!
   before_action :parse_merge_mode, only: [:merge, :merge!]
+  before_action :check_permissions
   before_action :parse_get_params, only: [:merge]
   before_action :parse_post_params, only: [:merge!]
   before_action :parse_rendundant_review_params, only: [:redundant_merge_review]
 
   # GET /tools/merge
+  # view the pages that help you create the merge
   # possible params: mode, source, dest, query
   def merge; end
 
   # POST /tools/merge
-  # do the merge.freeze
+  # do the merge.
   def merge!
     case @merge_mode
     when Modes::EXECUTE
@@ -30,7 +32,7 @@ class MergeController < ApplicationController
       @merge_request.send("#{@decision}_by!".to_sym, current_user)
       redirect_to @merge_request.dest, notice: "Merge request #{@decision}"
     when Modes::REQUEST
-      mr = MergeRequest.create(user: current_user, source: @source, dest: @dest)
+      mr = MergeRequest.create!(user: current_user, source: @source, dest: @dest)
       NotificationMailer.merge_request_email(mr).deliver_later
       redirect_to @source, notice: "Your request was sent to LittleSis admins"
     end
@@ -41,14 +43,18 @@ class MergeController < ApplicationController
 
   private
 
+  def parse_merge_mode
+    @merge_mode = Modes::ALL.dup.delete(params.require(:mode))
+  end
+
+  def check_permissions
+    admins_only unless [Modes::REQUEST, Modes::SEARCH].include? @merge_mode
+  end
+
   # GET param parsers --v
 
   def parse_get_params
     send("parse_merge_#{@merge_mode}_params".to_sym)
-  end
-
-  def parse_merge_mode
-    @merge_mode = Modes::ALL.dup.delete(params.require(:mode))
   end
 
   def parse_merge_search_params
@@ -58,26 +64,16 @@ class MergeController < ApplicationController
                           .map(&Entity::Search::SIMILAR_ENTITIES_PRESENTER)
   end
 
-  def resolve_similar_entities
-    return @source.similar_entities(SIMILAR_ENTITIES_PER_PAGE) unless @query.present?
-    Entity::Search.similar_entities(@source,
-                                    query: @query,
-                                    per_page: SIMILAR_ENTITIES_PER_PAGE)
-  end
-
   def parse_merge_execute_params
-    admins_only
     set_source_and_dest
     set_entity_merger
   end
 
   def parse_merge_request_params
-    set_source_and_dest
-    set_entity_merger
+    parse_merge_execute_params
   end
 
   def parse_merge_review_params
-    admins_only
     set_merge_request
     raise Exceptions::RedundantMergeReview unless @merge_request.pending?
 
@@ -89,7 +85,6 @@ class MergeController < ApplicationController
   end
 
   def parse_rendundant_review_params
-    admins_only
     set_merge_request
   end
 
@@ -98,10 +93,8 @@ class MergeController < ApplicationController
   def parse_post_params
     case @merge_mode
     when Modes::EXECUTE
-      admins_only
       set_source_and_dest
     when Modes::REVIEW
-      admins_only
       @merge_request = MergeRequest.find(params.require(:request).to_i)
       @decision = %w[approved denied].delete(params.require(:decision))
     when Modes::REQUEST
@@ -126,5 +119,12 @@ class MergeController < ApplicationController
 
   def set_merge_request
     @merge_request = MergeRequest.find(params.require(:request).to_i)
+  end
+
+  def resolve_similar_entities
+    return @source.similar_entities(SIMILAR_ENTITIES_PER_PAGE) unless @query.present?
+    Entity::Search.similar_entities(@source,
+                                    query: @query,
+                                    per_page: SIMILAR_ENTITIES_PER_PAGE)
   end
 end
