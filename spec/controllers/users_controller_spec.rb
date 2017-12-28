@@ -40,7 +40,7 @@ describe UsersController, type: :controller do
       login_admin
       before do
         expect(User).to receive(:find).with('1')
-        get :edit_permissions, :id => '1'
+        get :edit_permissions, params: { :id => '1' }
       end
       it { should render_template 'edit_permissions' }
     end
@@ -51,7 +51,7 @@ describe UsersController, type: :controller do
     before do
       expect(User).to receive(:find).with('1').and_return(double(:sf_guard_user_id => 2, :id => 1))
       expect(SfGuardUserPermission).to receive(:create!).with(permission_id: 5, user_id: 2)
-      post :add_permission, :id => '1', :permission => '5'
+      post :add_permission, params: { :id => '1', :permission => '5' }
     end
     it { should redirect_to(edit_permissions_user_path) }
   end
@@ -61,7 +61,7 @@ describe UsersController, type: :controller do
     before do
       expect(User).to receive(:find).with('1').and_return(double(:sf_guard_user_id => 2, :id => 1))
       expect(SfGuardUserPermission).to receive(:remove_permission).with(permission_id: 5, user_id: 2)
-      delete :delete_permission, :id => '1', :permission => '5'
+      delete :delete_permission, params: { :id => '1', :permission => '5' }
     end
     it { should redirect_to(edit_permissions_user_path) }
   end
@@ -85,33 +85,35 @@ describe UsersController, type: :controller do
         end
 
         it 'deletes permissions' do
-          expect { delete :destroy, :id => @user.id }.to change { SfGuardUserPermission.count }.by(-1)
+          expect { delete :destroy, params: { :id => @user.id } }
+            .to change { SfGuardUserPermission.count }.by(-1)
         end
 
         it 'marks sf_guard_user as deleted' do
           expect(SfGuardUser.unscoped.find(@sf_user.id).is_deleted).to be false
-          delete :destroy, :id => @user.id
+          delete :destroy, params: { :id => @user.id }
           expect(SfGuardUser.find_by_id(@sf_user.id)).to be_nil
           expect(SfGuardUser.unscoped.find(@sf_user.id).is_deleted).to be true
         end
 
         it 'updates last_user_id on entities' do
           expect(Entity.find(@entity.id).last_user_id).to eql @sf_user.id
-          delete :destroy, :id => @user.id
+          delete :destroy, params: { :id => @user.id }
           expect(Entity.find(@entity.id).last_user_id).to eql 1
         end
 
         it 'updates last_user_id on relationships' do
           expect(Relationship).to receive(:where).with(last_user_id: @sf_user.id).and_return(double(:update_all => nil))
-          delete :destroy, :id => @user.id
+          delete :destroy, params: { :id => @user.id }
         end
 
         it 'destroys user' do
-          expect { delete :destroy, :id => @user.id }.to change { User.count }.by(-1)
+          expect { delete :destroy, params: { :id => @user.id } }
+            .to change { User.count }.by(-1)
         end
 
         context 'afterwards' do
-          before { delete :destroy, :id => @user.id  }
+          before { delete :destroy, params: { :id => @user.id  } }
           it { should redirect_to(admin_users_path) }
         end
       end
@@ -124,15 +126,15 @@ describe UsersController, type: :controller do
         end
 
         it 'does not delete user' do
-          expect { delete :destroy, :id => @user.id }.not_to change { User.count }
+          expect { delete :destroy, params: { :id => @user.id } }
+            .not_to change { User.count }
         end
 
         context 'afterwards' do
-          before { delete :destroy, :id => @user.id }
+          before { delete :destroy, params: { :id => @user.id } }
           it { should redirect_to(admin_users_path) }
         end
       end
-
     end
   end
 

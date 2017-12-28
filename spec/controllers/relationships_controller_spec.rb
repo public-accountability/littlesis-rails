@@ -1,4 +1,3 @@
-
 require 'rails_helper'
 
 describe RelationshipsController, type: :controller do
@@ -31,7 +30,7 @@ describe RelationshipsController, type: :controller do
     before do
       @rel = build(:relationship)
       expect(Relationship).to receive(:find).with('1').and_return(@rel)
-      get :show, id: 1
+      get :show, params: { id: 1 }
     end
 
     it { should respond_with(:success) }
@@ -45,7 +44,7 @@ describe RelationshipsController, type: :controller do
   describe 'POST #create' do
     login_admin
 
-    def example_params(entity1_id='10', entity2_id='20')
+    def example_params(entity1_id = '10', entity2_id = '20')
       {
         relationship: {
           entity1_id: entity1_id,
@@ -64,7 +63,7 @@ describe RelationshipsController, type: :controller do
 
     context 'with valid params' do
       def post_request
-        post :create, example_params(e1.id, e2.id)
+        post :create, params: example_params(e1.id, e2.id)
       end
 
       it 'responds with 201' do
@@ -113,29 +112,29 @@ describe RelationshipsController, type: :controller do
 
     context 'with invalid params' do
       it 'responds with 400 if missing category_id' do
-        post :create, example_params.tap { |x| x[:relationship].delete(:category_id) }
+        post :create, params: example_params.tap { |x| x[:relationship].delete(:category_id) }
         expect(response.status).to eq 400
       end
 
       it 'sends error json with bad relationship params' do
-        post :create, example_params.tap { |x| x[:relationship].delete(:category_id) }
+        post :create, params: example_params.tap { |x| x[:relationship].delete(:category_id) }
         expect(JSON.parse(response.body)).to have_key 'category_id'
         expect(JSON.parse(response.body)).not_to have_key 'base'
       end
 
       it 'responds with 400 if missing reference url' do
-        post :create, example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:url) }
+        post :create, params: example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:url) }
         expect(response.status).to eq 400
       end
 
       it 'sends error json with reference params' do
-        post :create,  example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:url) }
+        post :create, params: example_params(entity1_id: e1.id, entity2_id: e2.id).tap { |x| x[:reference].delete(:url) }
         expect(JSON.parse(response.body)).to have_key 'base'
         expect(JSON.parse(response.body)).not_to have_key 'category_id'
       end
 
       it 'sends error json with reference & relationship params' do
-        post :create, example_params.tap { |x| x[:reference].delete(:url) }.tap { |x| x[:relationship].delete(:category_id) }
+        post :create, params: example_params.tap { |x| x[:reference].delete(:url) }.tap { |x| x[:relationship].delete(:category_id) }
         expect(JSON.parse(response.body)).to have_key 'base'
         expect(JSON.parse(response.body)).to have_key 'category_id'
       end
@@ -161,18 +160,18 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'creates a new reference, associated with the relationship' do
-        expect { post :create, params }.to change { Reference.count }.by(1)
+        expect { post :create, params: params }.to change { Reference.count }.by(1)
       end
 
       it 'does not create a document' do
-        expect { post :create, params }.not_to change { Document.count }
+        expect { post :create, params: params }.not_to change { Document.count }
       end
     end
 
     context 'submitting relationship with is_current values' do
       it 'should create a new relationship with given a yes value' do
         expect do
-          post :create, example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'YES' }
+          post :create, params: example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'YES' }
         end.to change { Relationship.count }.by(1)
         id_of_created_relationship = JSON.parse(response.body)['relationship_id']
         expect(Relationship.find(id_of_created_relationship).is_current).to eq true
@@ -180,7 +179,7 @@ describe RelationshipsController, type: :controller do
 
       it 'should create a new relationship with given a NO value' do
         expect do
-          post :create, example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'NO' }
+          post :create, params: example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'NO' }
         end.to change { Relationship.count }.by(1)
         id_of_created_relationship = JSON.parse(response.body)['relationship_id']
         expect(Relationship.find(id_of_created_relationship).is_current).to eq false
@@ -188,7 +187,7 @@ describe RelationshipsController, type: :controller do
 
       it 'should create a new relationship with given a NULL value' do
         expect do
-          post :create, example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'NULL' }
+          post :create, params: example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'NULL' }
         end.to change { Relationship.count }.by(1)
         id_of_created_relationship = JSON.parse(response.body)['relationship_id']
         expect(Relationship.find(id_of_created_relationship).is_current).to be nil
@@ -216,26 +215,25 @@ describe RelationshipsController, type: :controller do
 
   describe 'DELETE /relationship/id' do
     login_user
-    
+
     it 'destroys relationship and redirects to dashboard' do
       @rel = build :relationship
       expect(Relationship).to receive(:find).with('1').and_return(@rel)
       expect(@rel).to receive(:soft_delete).once
-      delete :destroy, { id: '1' }
+      delete :destroy, params: { id: '1' }
       expect(response).to have_http_status 302
       expect(response.location).to include '/home/dashboard'
     end
-    
   end
 
   describe 'GET /relationships/id/edit' do
     login_user
     let(:relationship) { build :relationship }
-    
+
     context 'editing a reference' do
       before do
         expect(Relationship).to receive(:find).with('1').and_return(build(:relationship))
-        get :edit, id: 1
+        get :edit, params: { id: 1 }
       end
 
       it { should respond_with(:success) }
@@ -246,7 +244,7 @@ describe RelationshipsController, type: :controller do
       context 'when there is no reference' do
         before do
           expect(Relationship).to receive(:find).with('1').and_return(relationship)
-          get :edit, id: 1, new_ref: 'true'
+          get :edit, params: { id: 1, new_ref: 'true' }
         end
 
         it { should respond_with(:success) }
@@ -263,7 +261,7 @@ describe RelationshipsController, type: :controller do
         before do
           expect(relationship).to receive(:references).and_return(double(:last => reference))
           expect(Relationship).to receive(:find).with('1').and_return(relationship)
-          get :edit, id: 1, new_ref: 'true'
+          get :edit, params: { id: 1, new_ref: 'true' }
         end
 
         it { should respond_with(:success) }
@@ -288,11 +286,11 @@ describe RelationshipsController, type: :controller do
         e2.update_column(:updated_at, 1.day.ago)
       end
 
-      
       context 'submitting an invalid date' do
-        before do
-          patch :update, { id: relationship.id, relationship: {'start_date' => '012345678910'}, reference: {'just_cleaning_up' => '1'} }
+        let(:params) do
+          { id: relationship.id, relationship: {'start_date' => '012345678910' }, reference: { 'just_cleaning_up' => '1' } }
         end
+        before { patch :update, params: params }
 
         it { should respond_with(:success) }
         it { should render_template(:edit) }
@@ -307,12 +305,12 @@ describe RelationshipsController, type: :controller do
           expect(Entity.find(e2.id).last_user_id).to eql sf_user.id
         end
       end
-    
-      context "valid request" do
-        before do
-          patch :update, { id: relationship.id, relationship: {'start_date' => '2012-12-12'}, reference: {'reference_id' => '123'} }
-        end
 
+      context "valid request" do
+        let(:params) do
+          { id: relationship.id, relationship: {'start_date' => '2012-12-12'}, reference: {'reference_id' => '123'} }
+        end
+        before { patch :update, params: params }
         it { should redirect_to(relationship_path) }
 
         it 'updates db' do
@@ -331,14 +329,15 @@ describe RelationshipsController, type: :controller do
       end
 
       context 'with blank string as start and end date' do
-        before do
-          patch :update, { id: relationship.id, relationship: {'start_date' => '', 'end_date' => ''}, reference: {'reference_id' => '123'} }
+        let(:params) do
+          { id: relationship.id, relationship: { 'start_date' => '', 'end_date' => '' }, reference: { 'reference_id' => '123' } }
         end
-        
+        before { patch :update, params: params }
+
         it 'keeps start_date as nil' do
           expect(Relationship.find(relationship.id).start_date).to be nil
         end
-        
+
         it 'keeps end_date as nil' do
           expect(Relationship.find(relationship.id).end_date).to be nil
         end
@@ -346,26 +345,24 @@ describe RelationshipsController, type: :controller do
 
       context 'with alternative date formats' do
         it 'allows date as YYYY' do
-          patch :update, { id: relationship.id, relationship: { 'start_date' => '2017' }, reference: { 'reference_id' => '123' } }
+          patch :update, params: { id: relationship.id, relationship: { 'start_date' => '2017' }, reference: { 'reference_id' => '123' } }
           expect(Relationship.find(relationship.id).start_date).to eql '2017-00-00'
         end
 
         it 'allows date as YYYY-MM' do
-          patch :update, { id: relationship.id, relationship: { 'end_date' => '2017-09' }, reference: { 'reference_id' => '123' } }
+          patch :update, params: { id: relationship.id, relationship: { 'end_date' => '2017-09' }, reference: { 'reference_id' => '123' } }
           expect(Relationship.find(relationship.id).end_date).to eql '2017-09-00'
         end
 
         it 'allows date as YYYYMMDD' do
-          patch :update, { id: relationship.id, relationship: { 'end_date' => '20170925' }, reference: { 'reference_id' => '123' } }
+          patch :update, params: { id: relationship.id, relationship: { 'end_date' => '20170925' }, reference: { 'reference_id' => '123' } }
           expect(Relationship.find(relationship.id).end_date).to eql '2017-09-25'
         end
       end
 
-
       context 'invalid reference' do
-        before do
-          patch :update, { id: relationship.id, relationship: {'start_date' => '2001-01-01'}, reference: {'url' => '', 'name' => ''} }
-        end
+        let(:params) { { id: relationship.id, relationship: {'start_date' => '2001-01-01'}, reference: {'url' => '', 'name' => ''} } }
+        before { patch :update, params: params }
 
         it { should render_template(:edit) }
 
@@ -378,10 +375,12 @@ describe RelationshipsController, type: :controller do
         let(:document_attributes) { attributes_for(:document) }
         let(:patch_request) do
           proc {
-            patch :update, {
+            patch :update,
+                  params: {
                     id: relationship.id,
-                    relationship: {'end_date' => '2001-01-01'},
-                    reference:  document_attributes }
+                    relationship: { 'end_date' => '2001-01-01' },
+                    reference:  document_attributes
+                  }
           }
         end
 
@@ -389,7 +388,7 @@ describe RelationshipsController, type: :controller do
           patch_request.call
           expect(response).to redirect_to(relationship_path)
         end
-        
+
         it 'updates db' do
           expect { patch_request.call }
             .to change { Relationship.find(relationship.id).end_date }.from(nil).to('2001-01-01')
@@ -419,7 +418,7 @@ describe RelationshipsController, type: :controller do
       let(:relationship) do
         create(:relationship, entity1_id: e1.id, entity2_id: e2.id, category_id: 1, description1: 'leader')
       end
-      
+
       let(:update_params) do
         {
           id: relationship.id,
@@ -428,8 +427,8 @@ describe RelationshipsController, type: :controller do
         }
       end
 
-      before { patch(:update, update_params) }
-        
+      before { patch(:update, params: update_params) }
+
       it { should redirect_to(relationship_path) }
 
       it 'updates db' do
@@ -437,7 +436,6 @@ describe RelationshipsController, type: :controller do
         expect(Relationship.find(relationship.id).get_category.compensation).to eql 1000
       end
     end
-    
   end # end describe PATCH #update
 
   describe 'reverse_direction' do
@@ -446,7 +444,7 @@ describe RelationshipsController, type: :controller do
       @rel = build(:relationship, id: rand(1000))
       expect(@rel).to receive(:reverse_direction)
       expect(Relationship).to receive(:find).with('1').and_return(@rel)
-      post :reverse_direction, id: 1
+      post :reverse_direction, params: { id: 1 }
     end
 
     it { should respond_with(302) }
@@ -459,12 +457,12 @@ describe RelationshipsController, type: :controller do
     it 'returns bad_request if missing params' do
       get :find_similar
       expect(response).to have_http_status(:bad_request)
-      get :find_similar, { 'entity1_id' => '123', 'entity2_id' => '456' }
+      get :find_similar, params: { 'entity1_id' => '123', 'entity2_id' => '456' }
       expect(response).to have_http_status(:bad_request)
     end
 
     it 'returns good request if has all params' do
-      get :find_similar, { 'entity1_id' => '123', 'entity2_id' => '456', 'category_id' => '1' }
+      get :find_similar, params: { 'entity1_id' => '123', 'entity2_id' => '456', 'category_id' => '1' }
       expect(response).to have_http_status(:ok)
     end
 
@@ -473,7 +471,7 @@ describe RelationshipsController, type: :controller do
       person = create :person
       rel = Relationship.create!(entity: person, related: org, category_id: 1, description1: 'influence')
 
-      get :find_similar, { entity1_id: person.id, entity2_id: org.id, category_id: 1 }
+      get :find_similar, params: { entity1_id: person.id, entity2_id: org.id, category_id: 1 }
 
       json = JSON.parse(response.body)
 
@@ -488,7 +486,7 @@ describe RelationshipsController, type: :controller do
     login_user
     before do
       expect(Entity).to receive(:find).with('123').and_return(build(:person))
-      get :bulk_add, entity_id: 123
+      get :bulk_add, params: { entity_id: 123 }
     end
 
     it { should respond_with(200) }

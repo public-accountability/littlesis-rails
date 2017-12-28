@@ -26,8 +26,7 @@ describe PagesController, type: :controller do
       Page.create!(name: 'features', title: 'features', markdown: '# features')
     end
 
-    before { get :display, page: 'features' }
-
+    before { get :display, params: { page: 'features' } }
     it { should respond_with(200) }
   end
 
@@ -36,7 +35,7 @@ describe PagesController, type: :controller do
     login_admin
 
     it 'creates new page' do
-      expect { post :create, params }.to change { Page.count }.by(1)
+      expect { post :create, params: params }.to change { Page.count }.by(1)
     end
   end
 
@@ -48,25 +47,25 @@ describe PagesController, type: :controller do
     end
 
     it 'redirects to /pages/id/edit' do
-      get :edit_by_name, page: 'people'
+      get :edit_by_name, params: { page: 'people' }
       expect(response).to redirect_to("/pages/#{@page.id}/edit")
     end
   end
 
   describe '#update' do
     login_admin
-    let(:params) { {'id' => @page.id, 'page' => { 'markdown' => '# part one' } } }
+    let(:params) { { 'id' => @page.id, 'page' => { 'markdown' => '# part one' } } }
 
     before do
       @page = Page.create!(name: 'about', title: 'about us', markdown: '# markdown')
     end
 
     it 'updates markdown' do
-      expect { patch :update, params }.to change { @page.reload.markdown }.to('# part one')
+      expect { patch :update, params: params }.to change { @page.reload.markdown }.to('# part one')
     end
 
     it 'redirects to display page' do
-      patch :update, params
+      patch :update, params: params
       expect(response).to redirect_to '/about'
     end
   end

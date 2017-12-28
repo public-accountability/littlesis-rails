@@ -30,7 +30,7 @@ describe ReferencesController, type: :controller do
           excerpt: "so and so said blah blah blah",
           ref_type: 1 } }
     end
-    let(:post_request) { proc { post(:create, post_data) } }
+    let(:post_request) { proc { post(:create, params: post_data) } }
 
     it 'responds with created' do
       post_request.call
@@ -53,10 +53,12 @@ describe ReferencesController, type: :controller do
     end
 
     it 'returns json of errors if reference is not valid' do
-      post(:create, data: {
-             referenceable_id: relationship.id,
-             referenceable_type: "Relationship",
-             ref_type: 1
+      post(:create, params: {
+                              data: {
+                                referenceable_id: relationship.id,
+                                referenceable_type: "Relationship",
+                                ref_type: 1
+                              }
            })
 
       body = JSON.parse(response.body)
@@ -65,11 +67,12 @@ describe ReferencesController, type: :controller do
     end
 
     xit 'returns json of errors if reference name is too long' do
-      post(:create, { data: { object_id: 666,
+      post(:create, { params: {
+                        data: { object_id: 666,
                               source: 'https://example.com',
                               name: 'x' * 101,
                               object_model: "Relationship",
-                              ref_type: 1 } })
+                              ref_type: 1 } }  })
 
       body = JSON.parse(response.body)
 
@@ -86,15 +89,15 @@ describe ReferencesController, type: :controller do
     context 'reference exists' do
       before do
         expect(Reference).to receive(:find).with('123').and_return(double(:destroy! => nil))
-        delete :destroy, id: '123'
+        delete :destroy, params: { id: '123' }
       end
-      specify { expect(response).to have_http_status(200) } 
+      specify { expect(response).to have_http_status(200) }
     end
 
     context 'reference does not exist' do
       before do
         expect(Reference).to receive(:find).with('123').and_raise(ActiveRecord::RecordNotFound)
-        delete :destroy, id: '123'
+        delete :destroy, params: { id: '123' }
       end
       specify { expect(response).to have_http_status(400) }
     end
@@ -104,7 +107,8 @@ describe ReferencesController, type: :controller do
     login_user
 
     def get_recent_references(params)
-      get :recent, {entity_ids: '1,2,3'}.merge(params)
+      p = { entity_ids: '1,2,3' }.merge(params)
+      get :recent, params: p
     end
 
     def reference_is_called_with_last
@@ -124,7 +128,7 @@ describe ReferencesController, type: :controller do
       document_is_called_with(entity: [1, 2, 3], page: 1, per_page: 10, exclude_type: :fec)
       get_recent_references({})
     end
-    
+
     it 'can change per_page' do
       document_is_called_with(entity: [1, 2, 3], page: 1, per_page: 50, exclude_type: :fec)
       get_recent_references({per_page: '50'})
@@ -145,9 +149,6 @@ describe ReferencesController, type: :controller do
       get_recent_references({exclude_type: 'government', page: '2', per_page: '50'})
     end
   end
-    
-
-
 
   describe 'entity' do
     it 'returns bad request if missing entity_id' do

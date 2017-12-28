@@ -39,9 +39,9 @@ describe HomeController, type: :controller do
       user_lists_double = double('arbitrary_name', order: [])
       edited_entities = double('edited', includes: double(order: double(limit: [])))
       expect(controller).to receive(:current_user).and_return(
-        double(network_maps: network_maps), 
-        double(groups: groups), 
-        double(lists: user_lists_double), 
+        double(network_maps: network_maps),
+        double(groups: groups),
+        double(lists: user_lists_double),
         double(edited_entities: edited_entities))
       get :dashboard
     end
@@ -51,19 +51,22 @@ describe HomeController, type: :controller do
 
   describe 'POST contact' do
     describe 'no name provided' do
-      before { post :contact, email: 'email@email.com', message: 'hey' }
+      let(:params) { { email: 'email@email.com', message: 'hey' } }
+      before { post :contact, params: params }
       it { should set_flash.now[:alert] }
       it { should render_template('contact') }
     end
 
     describe 'no email provided' do
-      before { post :contact, { name: 'me', message: 'hey' } }
+      let(:params) { { name: 'me', message: 'hey' } }
+      before { post :contact, params: params }
       it { should set_flash.now[:alert] }
       it { should render_template('contact') }
     end
 
     describe 'no message provided' do
-      before { post :contact, name: 'me', email: 'email@email.com', message: '' }
+      let(:params) { { name: 'me', email: 'email@email.com', message: ''  } }
+      before { post :contact, params: params }
       it { should set_flash.now[:alert] }
       it { should render_template('contact') }
       it ' assigns given name to @name' do
@@ -78,7 +81,7 @@ describe HomeController, type: :controller do
         email = double('contact_email')
         expect(email).to receive(:deliver_later)
         expect(NotificationMailer).to receive(:contact_email).with(hash_including(POST_PARAMS)).and_return(email)
-        post :contact, POST_PARAMS
+        post :contact, params: POST_PARAMS
       end
 
       it { should_not set_flash.now[:alert] }
@@ -98,7 +101,7 @@ describe HomeController, type: :controller do
       context 'no email provided' do
         before do
           expect(NotificationMailer).not_to receive(:flag_email)
-          post :flag, url: 'http://url', message: 'hey'
+          post :flag, params: { url: 'http://url', message: 'hey' }
         end
         it { should set_flash.now[:alert] }
         it { should render_template('flag') }
@@ -107,7 +110,7 @@ describe HomeController, type: :controller do
       context 'no message provided' do
         before do
           expect(NotificationMailer).not_to receive(:flag_email)
-          post :flag, url: 'http://url', email: 'test@example.com'
+          post :flag, params: { url: 'http://url', email: 'test@example.com' }
         end
         it { should set_flash.now[:alert] }
         it { should render_template('flag') }
@@ -117,9 +120,11 @@ describe HomeController, type: :controller do
         let(:params) { {'url' => 'http://url', 'email' => 'test@example.com', 'message' => 'hey' } }
 
         before do
-          expect(NotificationMailer).to receive(:flag_email).with(params).and_return(double(deliver_later: nil))
-          post :flag, url: 'http://url', email: 'test@example.com', message: 'hey'
+          expect(NotificationMailer)
+            .to receive(:flag_email).with(params).and_return(double(deliver_later: nil))
+          post :flag, params: { url: 'http://url', email: 'test@example.com', message: 'hey' }
         end
+
         it { should_not set_flash.now[:alert] }
         it { should set_flash.now[:notice] }
         it { should render_template('flag') }

@@ -24,7 +24,7 @@ describe NysController, type: :controller do
     it { should route(:get, '/nys/contributions').to(action: :contributions) }
     it { should route(:get, '/nys/pacs').to(action: :pacs) }
   end
-  
+
   describe 'pages' do
     login_user
     describe 'candidates' do
@@ -50,15 +50,15 @@ describe NysController, type: :controller do
     login_user
 
     it 'returns 200' do
-      person = build(:person, id: 12345, name: "big donor")
+      person = build(:person, id: 12_345, name: "big donor")
       expect(person).to receive(:aliases).and_return([double(:name => 'Big Donor')])
       disclosure = double('NyDisclosure')
       expect(disclosure).to receive(:map)
-      expect(Entity).to receive(:find).with(12345).and_return(person)
+      expect(Entity).to receive(:find).with(12_345).and_return(person)
       expect(NyDisclosure).to receive(:search)
                                .with('Big Donor', :with=>{:is_matched=>false, :transaction_code=>["'A'", "'B'", "'C'"]}, :sql=>{:include=>:ny_filer}, :per_page => 500)
                                .and_return(disclosure)
-      get(:potential_contributions, entity: '12345')
+      get :potential_contributions, params: { entity: '12345' }
       expect(response.status).to eq(200)
     end
   end
@@ -69,7 +69,7 @@ describe NysController, type: :controller do
     it 'Matches provides ids' do
       expect(NyMatch).to receive(:match).with('12', '666', kind_of(Numeric))
       expect(NyMatch).to receive(:match).with('17', '666', kind_of(Numeric))
-      post(:match_donations, payload: { disclosure_ids: [12, 17], donor_id: '666' })
+      post :match_donations, params: { payload: { disclosure_ids: [12, 17], donor_id: '666' } }
     end
 
     describe 'thinking sphinx:' do
@@ -78,7 +78,7 @@ describe NysController, type: :controller do
       it 'Updates delta on ny disclosure' do
         allow(NyMatch).to receive(:match)
         expect(NyDisclosure).to receive(:update_delta_flag).with(['12', '17'])
-        post(:match_donations, payload: { disclosure_ids: [12, 17], donor_id: '666' })
+        post :match_donations, params: { payload: { disclosure_ids: [12, 17], donor_id: '666' } }
       end
 
       # it 'enques delayed_delta job' do 
@@ -93,7 +93,8 @@ describe NysController, type: :controller do
       person = create(:person, name: "big donor")
       disclosure = create(:ny_disclosure)
       count = NyMatch.count
-      post(:match_donations, payload: { disclosure_ids: [disclosure.id], donor_id: person.id })
+      post :match_donations,
+           params: { payload: { disclosure_ids: [disclosure.id], donor_id: person.id } }
       expect(NyMatch.count).to eq (count + 1)
     end
 
@@ -101,7 +102,7 @@ describe NysController, type: :controller do
       person = create(:person, name: "big donor")
       person.update_column(:updated_at, 1.day.ago)
       allow(NyMatch).to receive(:match)
-      post(:match_donations, payload: { disclosure_ids: [1], donor_id: person.id })
+      post :match_donations, params: { payload: { disclosure_ids: [1], donor_id: person.id } }
       expect(Entity.find(person.id).updated_at > person.updated_at).to be true
     end
   end
@@ -120,7 +121,7 @@ describe NysController, type: :controller do
     end
 
     it 'Handles POST' do
-      post(:create, entity: '123', ids: %w(10 11), type: 'candidates')
+      post(:create, params: { entity: '123', ids: %w(10 11), type: 'candidates' })
       expect(response.status).to eq 302
     end
   end
@@ -137,7 +138,7 @@ describe NysController, type: :controller do
       end
 
       it 'Handles GET' do
-        get(:new_filer_entity, entity: '123', type: 'candidates')
+        get :new_filer_entity, params: { entity: '123', type: 'candidates' }
         expect(response.status).to eq(200)
         expect(response).to render_template(:new_filer_entity)
       end
@@ -148,7 +149,8 @@ describe NysController, type: :controller do
         elected = build(:elected, id: 123)
         expect(NyFiler).to receive(:search_filers).with("my custom search").and_return([])
         expect(Entity).to receive(:find).and_return(elected)
-        get(:new_filer_entity, entity: '123', query: 'my custom search', type: 'candidates')
+        get :new_filer_entity,
+            params: { entity: '123', query: 'my custom search', type: 'candidates' }
         expect(response.status).to eq(200)
         expect(response).to render_template(:new_filer_entity)
       end
@@ -159,7 +161,7 @@ describe NysController, type: :controller do
         pac = build(:pac, id: 666)
         expect(NyFiler).to receive(:search_pacs).with("PAC").and_return([])
         expect(Entity).to receive(:find).with('666').and_return(pac)
-        get(:new_filer_entity, entity: '666', type: 'pacs')
+        get :new_filer_entity, params: { entity: '666', type: 'pacs' }
       end
 
       it 'responds with 200 and renders new_filer_entity template' do
@@ -167,8 +169,5 @@ describe NysController, type: :controller do
         expect(response).to render_template(:new_filer_entity)
       end
     end
-    
   end
 end
-
-

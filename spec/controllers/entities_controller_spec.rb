@@ -1,9 +1,8 @@
-
 require 'rails_helper'
 
 describe EntitiesController, type: :controller do
   before(:all) { DatabaseCleaner.start }
-  after(:all)  { DatabaseCleaner.clean}
+  after(:all)  { DatabaseCleaner.clean }
 
   it { should use_before_action(:authenticate_user!) }
   it { should use_before_action(:importers_only) }
@@ -36,12 +35,12 @@ describe EntitiesController, type: :controller do
     let(:entity) { create(:entity_org, updated_at: Time.now) }
 
     describe "/entity/id" do
-      before { get(:show, id: entity.id) }
+      before { get :show, params: { id: entity.id } }
       it { should render_template(:show) }
     end
 
     describe 'entity/id/datatable' do
-      before { get(:datatable, id: entity.id) }
+      before { get :datatable, params: { id: entity.id } }
       it { should render_template(:datatable) }
     end
 
@@ -50,9 +49,11 @@ describe EntitiesController, type: :controller do
         @e = build(:mega_corp_inc, updated_at: Time.now)
         expect(Entity).to receive(:find_by_id).and_return(@e)
         expect(@e).to receive(:contribution_info).and_return([build(:os_donation)])
-        get :contributions, id: @e.id
+        get :contributions, params: { id: @e.id }
       end
+
       it { should respond_with(200) }
+
       it 'responds with json' do
         expect(response.headers['Content-Type']).to include 'application/json'
       end
@@ -74,13 +75,13 @@ describe EntitiesController, type: :controller do
       context 'user with importer permissions' do
         login_user
         describe 'match_donations' do
-          before { get(:match_donations, id: rand(100)) }
+          before { get(:match_donations, params: { id: rand(100) }) }
           it { should render_template(:match_donations) }
           it { should respond_with(200) }
         end
 
         describe 'review_donations' do
-          before { get(:review_donations, id: rand(100)) }
+          before { get(:review_donations, params: { id: rand(100) }) }
           it { should render_template(:review_donations) }
           it { should respond_with(200) }
         end
@@ -88,14 +89,15 @@ describe EntitiesController, type: :controller do
 
       context 'user without importer permissions' do
         login_basic_user
+
         describe 'match_donations' do
-          before { get(:match_donations, id: rand(100)) }
+          before { get(:match_donations, params: { id: rand(100) }) }
           it { should respond_with(403) }
           it { should_not render_template(:match_donations) }
         end
 
         describe 'review_donations' do
-          before { get(:review_donations, id: rand(100)) }
+          before { get(:review_donations, params: { id: rand(100) }) }
           it { should_not render_template(:review_donations) }
           it { should respond_with(403) }
         end
@@ -115,28 +117,28 @@ describe EntitiesController, type: :controller do
       context 'from the /entities/new page' do
         context 'without errors' do
           it 'redirects to edit url' do
-            post :create, params
+            post :create, params: params
             expect(response).to redirect_to(Entity.last.legacy_url('edit'))
           end
 
           it 'should create a new entity' do
-            expect { post :create, params }.to change { Entity.count }.by(1)
+            expect { post :create, params: params }.to change { Entity.count }.by(1)
           end
 
           it "should set last_user_id to be the user's sf guard user id" do
-            post :create, params
+            post :create, params: params
             expect(Entity.last.last_user_id).to eql controller.current_user.sf_guard_user_id
           end
         end
 
         context 'with errors' do
           it 'Renders new entities page' do
-            post :create, params_missing_ext
+            post :create, params: params_missing_ext
             expect(response).to render_template(:new)
           end
 
           it 'sould NOT create a new entity' do
-            expect { post :create, params_missing_ext }.not_to change { Entity.count }
+            expect { post :create, params: params_missing_ext }.not_to change { Entity.count }
           end
         end
       end
@@ -144,11 +146,11 @@ describe EntitiesController, type: :controller do
       context 'from the /entities/id/add_relationship page' do
         context 'without errors' do
           it 'should create a new entity' do
-            expect { post :create, params_add_relationship_page }.to change { Entity.count }.by(1)
+            expect { post :create, params: params_add_relationship_page }.to change { Entity.count }.by(1)
           end
 
           it 'should render json with entity id' do
-            post :create, params_add_relationship_page
+            post :create, params: params_add_relationship_page
             json = JSON.parse(response.body)
             expect(json.fetch('status')).to eql 'OK'
             expect(json['entity']['id']).to eql Entity.last.id
@@ -161,12 +163,12 @@ describe EntitiesController, type: :controller do
 
         context 'with errors' do
           it 'should NOT create a new entity' do
-            expect { post :create, params_missing_ext_add_relationship_page }
+            expect { post :create, params: params_missing_ext_add_relationship_page }
               .not_to change { Entity.count }
           end
 
           it 'should render json with errors' do
-            post :create, params_missing_ext_add_relationship_page
+            post :create, params: params_missing_ext_add_relationship_page
             expect(JSON.parse(response.body)).to have_key 'errors'
             expect(JSON.parse(response.body).fetch 'status').to eql 'ERROR'
           end
@@ -176,11 +178,11 @@ describe EntitiesController, type: :controller do
 
     context 'user is not logged in' do
       it 'does not create a new entity' do
-        expect { post :create, params_add_relationship_page }.not_to change { Entity.count }
+        expect { post :create, params: params_add_relationship_page }.not_to change { Entity.count }
       end
 
       it 'redirects to login page' do
-        post :create, params
+        post :create, params: params
         expect(response.location).to include 'login'
         expect(response).to have_http_status 302
       end
@@ -190,11 +192,11 @@ describe EntitiesController, type: :controller do
       login_user_without_permissions
 
       it 'does not create a new entity' do
-        expect { post :create, params }.not_to change { Entity.count }
+        expect { post :create, params: params }.not_to change { Entity.count }
       end
 
       it 'returns http status 403' do
-        post :create, params
+        post :create, params: params
         expect(response).to have_http_status 403
       end
     end
@@ -203,11 +205,11 @@ describe EntitiesController, type: :controller do
       login_restricted_user
 
       it 'does not create a new entity' do
-        expect { post :create, params }.not_to change { Entity.count }
+        expect { post :create, params: params }.not_to change { Entity.count }
       end
 
       it 'redirects to login page' do
-        post :create, params
+        post :create, params: params
         expect(response).to have_http_status 302
         expect(response.location).to include '/home/dashboard'
       end
@@ -218,7 +220,7 @@ describe EntitiesController, type: :controller do
     before { @entity = create(:entity_org, updated_at: Time.now) }
 
     describe 'Political' do
-      before { get(:political, id: @entity.id) }
+      before { get(:political, params: { id: @entity.id }) }
       it { should render_template(:political) }
     end
 
@@ -234,7 +236,7 @@ describe EntitiesController, type: :controller do
           expect(controller).to receive(:check_permission).and_call_original
           d1 = create(:os_donation, fec_cycle_id: 'unique_id_1')
           d2 = create(:os_donation, fec_cycle_id: 'unique_id_2')
-          post :match_donation, id: @entity.id, payload: [d1.id, d2.id]
+          post :match_donation, params: { id: @entity.id , payload: [d1.id, d2.id] }
         end
 
         it { should respond_with(200) }
@@ -258,7 +260,7 @@ describe EntitiesController, type: :controller do
           @os_match = double('os match')
           expect(@os_match).to receive(:destroy).exactly(3).times
           expect(OsMatch).to receive(:find).exactly(3).times.and_return(@os_match)
-          post :unmatch_donation, id: @entity.id, payload: [5, 6, 7]
+          post :unmatch_donation, params: { id: @entity.id, payload: [5, 6, 7] }
         end
 
         it { should respond_with(200) }
@@ -267,7 +269,7 @@ describe EntitiesController, type: :controller do
       describe '#match_ny_donations' do
         before do
           expect(controller).to receive(:check_permission).with('importer').and_call_original
-          get(:match_ny_donations, id: @entity.id)
+          get :match_ny_donations, params: { id: @entity.id }
         end
         it { should respond_with(200) }
         it { should render_template(:match_ny_donations) }
@@ -276,8 +278,9 @@ describe EntitiesController, type: :controller do
       describe '#reiview_ny_donations' do
         before do
           expect(controller).to receive(:check_permission).with('importer').and_call_original
-          get(:review_ny_donations, id: @entity.id)
+          get :review_ny_donations, params: { id: @entity.id }
         end
+
         it { should respond_with(200) }
         it { should render_template(:review_ny_donations) }
       end
@@ -286,10 +289,12 @@ describe EntitiesController, type: :controller do
 
   describe '#add_relationship' do
     login_user
+
     before do
       expect(Entity).to receive(:find_by_id).and_return(build(:entity_org))
-      get :add_relationship, id: rand(100)
+      get :add_relationship, params: { id: rand(100) }
     end
+
     it { should render_template(:add_relationship) }
     it { should respond_with(200) }
   end
@@ -299,8 +304,9 @@ describe EntitiesController, type: :controller do
 
     before do
       expect(Entity).to receive(:find_by_id).and_return(build(:org))
-      get :edit, id: rand(100)
+      get :edit, params: { id: rand(100) }
     end
+
     it { should render_template(:edit) }
     it { should respond_with(200) }
   end
@@ -315,17 +321,17 @@ describe EntitiesController, type: :controller do
 
       it 'updates entity field' do
         expect(org.website).to be nil
-        patch :update, params
+        patch :update, params: params
         expect(Entity.find(org.id).website).to eq 'http://example.com'
       end
 
       it 'does not create a new reference' do
-        expect { patch :update, params }.not_to change { Reference.count }
+        expect { patch :update, params: params }.not_to change { Reference.count }
       end
 
       it 'updates last_user_id' do
         expect(org.last_user_id).to eq sf_guard_user.id
-        patch :update, params
+        patch :update, params: params
         expect(Entity.find(org.id).last_user_id).to eq controller.current_user.sf_guard_user.id
       end
     end
@@ -338,46 +344,47 @@ describe EntitiesController, type: :controller do
 
       it 'updates entity field' do
         expect(org.start_date).to be nil
-        patch :update, params
+        patch :update, params: params
         expect(Entity.find(org.id).start_date).to eq '1929-08-08'
       end
 
       it 'creates a new reference' do
-        expect { patch :update, params }.to change { Reference.count }.by(1)
+        expect { patch :update, params: params }.to change { Reference.count }.by(1)
       end
-      
+
       it 'redirects to legacy url' do
-        patch :update, params
+        patch :update, params: params
         expect(response).to redirect_to entity_path(org)
       end
-      
     end
 
     context 'Updating a Person without a reference' do
       let(:person) { create(:entity_person) }
-      let(:params) { { id: person.id,
-                       entity: { 'blurb' => 'just a person',
-                                  'person_attributes' => { 'name_middle' => 'MIDDLE', 'id' => person.person.id } },
-                       reference: { 'reference_id' => '123'} } }
-      
+      let(:params) do
+        { id: person.id,
+          entity: { 'blurb' => 'just a person',
+                    'person_attributes' => { 'name_middle' => 'MIDDLE', 'id' => person.person.id } },
+          reference: { 'reference_id' => '123' } }
+      end
+
       it 'updates entity field' do
         expect(person.blurb).to be nil
-        patch :update, params
+        patch :update, params: params
         expect(Entity.find(person.id).blurb).to eq 'just a person'
       end
 
       it 'updates person model' do
         expect(person.person.name_middle).to be nil
-        patch :update, params
+        patch :update, params: params
         expect(Entity.find(person.id).person.name_middle).to eq 'MIDDLE'
       end
 
       it 'does not create a new reference' do
-        expect { patch :update, params }.not_to change { Reference.count }
+        expect { patch :update, params: params }.not_to change { Reference.count }
       end
 
       it 'redirects to legacy url' do
-        patch :update, params
+        patch :update, params: params
         expect(response).to redirect_to entity_path(person)
       end
     end
@@ -395,11 +402,11 @@ describe EntitiesController, type: :controller do
         let(:extension_def_ids) { '8,9,10' }
 
         it 'should create 3 new extension records' do
-          expect { patch :update, params }.to change { ExtensionRecord.count }.by(3)
+          expect { patch :update, params: params }.to change { ExtensionRecord.count }.by(3)
         end
 
         it 'redirects to legacy url' do
-          patch :update, params
+          patch :update, params: params
           expect(response).to redirect_to entity_path(org)
         end
       end
@@ -407,17 +414,17 @@ describe EntitiesController, type: :controller do
       describe 'removing types' do
         let(:extension_def_ids) { '' }
         before { org.add_extension('School') }
-        
+
         it 'should remove one extension records' do
-          expect { patch :update, params }.to change { ExtensionRecord.count }.by(-1)
+          expect { patch :update, params: params }.to change { ExtensionRecord.count }.by(-1)
         end
 
         it 'should remove School model' do
-          expect { patch :update, params }.to change { School.count }.by(-1)
+          expect { patch :update, params: params }.to change { School.count }.by(-1)
         end
 
         it 'redirects to legacy url' do
-          patch :update, params
+          patch :update, params: params
           expect(response).to redirect_to entity_path(org)
         end
       end
@@ -426,35 +433,37 @@ describe EntitiesController, type: :controller do
     describe 'updating an Org with errors' do
       let(:org) { create(:entity_org, last_user_id: sf_guard_user.id) }
       let(:params) { { id: org.id, entity: { 'end_date' => 'bad date' }, reference: {'just_cleaning_up' => '1'} } }
-      
+
       it 'does not change the end_date' do
-        expect { patch :update, params }.not_to change { Entity.find(org.id).end_date } 
+        expect { patch :update, params: params }.not_to change { Entity.find(org.id).end_date } 
       end
 
       it 'renders edit page' do
-        patch :update, params
+        patch :update, params: params
         expect(response).to render_template('edit')
       end
     end
 
     describe 'updating a person with a first name that is too long' do
       let(:person) { create(:entity_person) }
-      let(:params) { { id: person.id,
-                       entity: { 'blurb' => 'new blurb',
-                                 'person_attributes' => { 'name_first' => "#{'x' * 51}", 
-                                                          'id' => person.person.id } },
-                       reference: { 'reference_id' => '123'} } }
-      
+      let(:params) do
+        { id: person.id,
+          entity: { 'blurb' => 'new blurb',
+                    'person_attributes' => { 'name_first' => "#{'x' * 51}",
+                                             'id' => person.person.id } },
+          reference: { 'reference_id' => '123' } }
+      end
+
       it 'does not change the first name' do
-        expect { patch :update, params }.not_to change { Entity.find(person.id).person.name_first } 
+        expect { patch :update, params: params }.not_to change { Entity.find(person.id).person.name_first } 
       end
 
       it 'does not change the entity\'s blurb' do
-        expect { patch :update, params }.not_to change { Entity.find(person.id).blurb } 
+        expect { patch :update, params: params }.not_to change { Entity.find(person.id).blurb } 
       end
 
       it 'renders edit page' do
-        patch :update, params
+        patch :update, params: params
         expect(response).to render_template('edit')
       end
     end
@@ -473,14 +482,14 @@ describe EntitiesController, type: :controller do
                     },
                     reference: { 'url' => 'http://example.com', 'name' => 'new reference' } }
       end
-      
+
       it 'updates ticker' do
         expect(Entity.find(@org.id).public_company.ticker).to eq 'XYZ'
-        expect { patch :update, @params }.to change { PublicCompany.find(@org.public_company.id).ticker }.to('ABC')
+        expect { patch :update, params: @params }.to change { PublicCompany.find(@org.public_company.id).ticker }.to('ABC')
       end
 
       it 'redirects to entity url' do
-        patch :update, @params
+        patch :update, params: @params
         expect(response).to redirect_to entity_path(@org)
       end
     end
@@ -501,19 +510,19 @@ describe EntitiesController, type: :controller do
 
       it 'calls soft delete on entity' do
         expect(@entity).to receive(:soft_delete).once
-        delete :destroy, id: '123'
+        delete :destroy, params: { id: '123' }
       end
 
       it 'redirects to dashboard' do
         expect(@entity).to receive(:soft_delete).once
-        delete :destroy, id: '123'
+        delete :destroy, params: { id: '123' }
         expect(response).to have_http_status(302)
         expect(response.location).to include 'dashboard'
       end
     end
 
     context 'user is not a deleter' do
-      before { delete :destroy, id: '123' }
+      before { delete :destroy, params: { id: '123' } }
       it { should respond_with 302 }
     end
   end
@@ -530,6 +539,5 @@ describe EntitiesController, type: :controller do
 
     it { should respond_with(200) }
     it { should render_template(:references) }
-
   end
 end

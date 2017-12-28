@@ -13,7 +13,8 @@ describe AliasesController, type: :controller do
 
     context 'with valid params' do
       def new_alias_post
-        post :create, { 'alias' => { 'name' => 'alt name', 'entity_id' => entity.id } }
+        post :create,
+             params: { 'alias' => { 'name' => 'alt name', 'entity_id' => entity.id } }
       end
       it 'creates a new Alias' do
         entity
@@ -33,16 +34,16 @@ describe AliasesController, type: :controller do
 
       it 'does not create an alias' do
         entity
-        expect { post :create, bad_params }.not_to change { Alias.count }
+        expect { post :create, params: bad_params }.not_to change { Alias.count }
       end
 
       it 'redirects to edit entity path' do
-        post :create, bad_params
+        post :create, params: bad_params
         expect(response).to have_http_status 302
       end
 
       it 'sets flash' do
-        post :create, bad_params
+        post :create, params: bad_params
         expect(controller).to set_flash[:alert]
       end
     end
@@ -59,7 +60,7 @@ describe AliasesController, type: :controller do
     end
 
     it 'redirects to edit entity path' do
-      patch :make_primary, id: 123
+      patch :make_primary, params: { id: 123 }
       expect(response).to redirect_to edit_entity_path(@entity)
     end
   end
@@ -69,23 +70,23 @@ describe AliasesController, type: :controller do
     before { @alias = create(:alias, entity_id: entity.id) }
 
     it 'delete one alias' do
-      expect { delete :destroy, id: @alias.id }.to change { Alias.count }.by(-1)
+      expect { delete :destroy, params: { id: @alias.id } }.to change { Alias.count }.by(-1)
     end
 
     it 'reduces entity\'s aliases by one' do
-      expect { delete :destroy, id: @alias.id }
+      expect { delete :destroy, params: { id: @alias.id } }
         .to change { Entity.find(entity.id).aliases.count }.by(-1)
     end
 
     it 'redirects to edit entity path' do
-      delete :destroy, id: @alias.id
+      delete :destroy, params: { id: @alias.id }
       expect(response).to redirect_to edit_entity_path(entity)
     end
 
     context 'primary alias' do
       before { @alias = create(:alias, entity_id: entity.id, is_primary: true) }
       it 'does not delete the alias if it is the primary alias' do
-        expect { delete :destroy, id: @alias.id }.not_to change { Alias.count }
+        expect { delete :destroy, params: { id: @alias.id } }.not_to change { Alias.count }
       end
     end
   end
