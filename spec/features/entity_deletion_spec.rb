@@ -15,6 +15,11 @@ feature 'Entity deletion request & review' do
   describe "reviewing a deltion request" do
     before { visit review_deletion_request_path(deletion_request) }
 
+    context "as a non-admin" do
+      let(:user){ create(:really_basic_user) }
+      denies_access
+    end
+
     context "as an admin" do
       let(:user) { create(:admin_user) }
 

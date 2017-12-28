@@ -1,5 +1,6 @@
 class DeletionRequestsController < ApplicationController
   before_action :authenticate_user!
+  before_action :admins_only, only: [:review, :commit_review]
   before_action :set_deletion_request, only: [:review, :commit_review]
   before_action :set_decision, only: :commit_review
 
