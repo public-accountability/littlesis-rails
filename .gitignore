@@ -6,6 +6,7 @@
 
 # Ignore bundler config.
 /.bundle
+/vendor/bundle
 
 # Ignore .ruby-gemset
 # use whatever gemset the developer wants
@@ -49,14 +50,12 @@ spec/testdata/*_errors.txt
 # coverage files
 coverage
 
-# os data
-data/cands/
-data/cmtes/
-data/indivs*
-
 # development db
 data/*.sql
 
 # Passenger files
 .passenger/
 log/*.lock
+
+.bash_history
+.pry_history
