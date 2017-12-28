@@ -1,11 +1,5 @@
 #merge-report-action-buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: center !important;
-    align-items: center;
-    .merge-entities-form {
-        margin: .5em;
-    }
+    @extend .user-request-action-buttons;
     :nth-child(3) {
         margin-left: .5em;
     }

@@ -34,7 +34,7 @@ feature 'Entity deletion request & review' do
         expect(report).to have_text "will remove the following person"
         expect(report).to have_link entity.name, href: entity_path(entity)
         expect(report).to have_text entity.description
-        expect(report).to have_text "has #{entity.link_count} relationships"
+        expect(report).to have_text "#{entity.link_count} relationships"
         expect(report).to have_text "Are you sure"
       end
 

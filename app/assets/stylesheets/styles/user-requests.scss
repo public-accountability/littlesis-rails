@@ -1,3 +1,16 @@
+.user-request-action-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center !important;
+    align-items: center;
+    form {
+        margin: .5em;
+    }
+    :nth-child(3) {
+        margin-left: .5em;
+    }
+}
+
 #user-request-description {
     background-color: lightgray;
     border: 1px solid gray;
