@@ -38,14 +38,50 @@ feature 'Entity deletion request & review' do
         expect(report).to have_text "Are you sure"
       end
 
-      context "clicking `Approve`" do
-        it "deletes the entity"
-        it "records the approval"
+      it "shows decision buttons" do
+        expect(page).to have_button "Approve"
+        expect(page).to have_button "Deny"
       end
 
-      context "clicking `Deny`" do
-        it "does not delete the entity"
-        it "records the denial"
+      context "making a decision" do
+        before do
+          expect(Entity.count).to eql 1
+          expect(deletion_request.status).to eql 'pending'
+        end
+
+        context "clicking `Approve`" do
+          before { click_button "Approve" }
+
+          it "deletes the entity" do
+            expect(Entity.count).to eql 0
+          end
+
+          it "records the approval" do
+            expect(deletion_request.reload.status).to eql 'approved'
+            expect(deletion_request.reload.reviewer).to eql user
+          end
+
+          it "redirects to the dashboard" do
+            successfully_visits_page home_dashboard_path
+          end
+        end
+
+        context "clicking `Deny`" do
+          before { click_button "Deny" }
+
+          it "does not delete the entity" do
+            expect(Entity.count).to eql 1
+          end
+
+          it "records the denial" do
+            expect(deletion_request.reload.status).to eql 'denied'
+            expect(deletion_request.reload.reviewer).to eql user
+          end
+
+          it "redirects to the entity page" do
+            successfully_visits_page home_dashboard_path
+          end
+        end
       end
     end
   end

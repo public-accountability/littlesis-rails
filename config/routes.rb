@@ -179,6 +179,7 @@ Lilsis::Application.routes.draw do
   resources :deletion_requests, only: [] do
     member do
       get 'review' => 'deletion_requests#review'
+      post 'review' => 'deletion_requests#commit_review'
     end
   end
 
