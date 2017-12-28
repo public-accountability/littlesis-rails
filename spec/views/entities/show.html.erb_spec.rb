@@ -38,7 +38,7 @@ describe 'entities/show.html.erb' do
       assign(:active_tab, 'relationships')
       allow(Entity).to receive(:search).and_return([])
     end
-    
+
     describe 'sets title' do
       it 'sets title correctly' do
         assign :entity, create(:entity_org, last_user_id: @sf_user.id, name: 'mega corp')
@@ -151,7 +151,7 @@ describe 'entities/show.html.erb' do
         end
 
         it 'has 3 links' do
-          expect(rendered).to have_css('#actions a', :count => 3)
+          expect(rendered).to have_css('#actions a', :count => 4)
         end
 
         it 'renders remove button' do
@@ -178,7 +178,7 @@ describe 'entities/show.html.erb' do
         end
 
         it 'has 4 links' do
-          expect(rendered).to have_css('#actions a', :count => 4)
+          expect(rendered).to have_css('#actions a', :count => 5)
         end
 
         it 'renders match donations button' do
@@ -224,7 +224,7 @@ describe 'entities/show.html.erb' do
 
         it 'has 4 links' do
           # missing match donations because entity is an org
-          expect(rendered).to have_css('#actions a', :count => 4)
+          expect(rendered).to have_css('#actions a', :count => 5)
           expect(rendered).to have_css('form input[value=remove]', :count => 1)
         end
       end

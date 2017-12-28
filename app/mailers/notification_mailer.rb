@@ -46,4 +46,11 @@ class NotificationMailer < ApplicationMailer
          reply_to: user.email,
          method_options: SMTP_OPTIONS)
   end
+
+  def merge_request_email(merge_request)
+    @merge_request = merge_request
+    mail(to: DEFAULT_TO,
+         subject: "Merge request received for #{merge_request.source.name}",
+         reply_to: merge_request.user.email)
+  end
 end

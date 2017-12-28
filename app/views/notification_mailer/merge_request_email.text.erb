@@ -1,0 +1,10 @@
+MERGE REQUEST
+=============
+
+Requester: <%= @merge_request.user.username %>
+Email: <%= @merge_request.user.email %>
+
+Merge Source: <%= @merge_request.source.name %>
+Merge Destination: <%= @merge_request.dest.name %>
+
+Review Page: <%= merge_url mode: 'review', request: @merge_request.id %>

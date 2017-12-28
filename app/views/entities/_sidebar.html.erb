@@ -75,11 +75,6 @@
 		    <br />
 		    <%= link_to 'Match NY Donations', match_ny_donations_entity_path(@entity) %>
 		<% end %>
-		<% if current_user.merger? || current_user.admin? %>
-		    <br />
-		    <%= link_to 'Merge this entity',
-                                merge_path(mode: :search, source: @entity.id) %>
-		<% end %>
 	    </div>
 	</div>
     <% end %>

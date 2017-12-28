@@ -15,22 +15,23 @@ feature 'Merging entities' do
   end
   after { logout(:user) }
 
-  describe "clicking on `Merge this entity` link" do
+  describe "navigating to merge pages from an entity profile page" do
     before { visit entity_path source }
 
     context "as a non-admin user" do
       let(:user) { create(:really_basic_user) }
 
-      it "is not possible" do
-        expect(page).not_to have_link("Merge this entity")
+      it "navigates to search page from `merge` action button" do
+        click_link "merge"
+        successfully_visits_page merge_path(mode: :search, source: source.id)
       end
     end
 
     context "as an admin" do
       let(:user) { create(:admin_user) }
 
-      it "navigates to merge search page from action button" do
-        click_link "Merge this entity"
+      it "navigates to search page from `merge` action button" do
+        click_link "merge"
         successfully_visits_page merge_path(mode: :search, source: source.id)
       end
 
@@ -69,6 +70,14 @@ feature 'Merging entities' do
         page_has_selector "input[name='decision'][value='approved']", count: 1
         page_has_selector "input.btn[value='Deny']", count: 1
         page_has_selector "input[name='decision'][value='denied']", count: 1
+      when :request
+        page_has_selector '.merge-entities-form', count: 1
+        page_has_selector "input[name='mode'][value='request']", count: 1
+        page_has_selector "input[name='source'][value='#{source.id}']", count: 1
+        page_has_selector "input[name='dest'][value='#{dest.id}']", count: 1
+        page_has_selector "input.btn[value='Request Merge']", count: 1
+        page_has_selector 'a.btn', text: 'Go back'
+        page_has_selector 'a.btn', text: 'Dashboard'
       end
     end
 
@@ -82,8 +91,6 @@ feature 'Merging entities' do
     end
 
     def should_not_commit_merge
-      successfully_visits_page entity_path(source)
-
       expect(dest.reload.relationships.count).to eql 0
       expect(dest.lists.count).to eql 0
       expect(source.reload.is_deleted).to be false
@@ -93,10 +100,10 @@ feature 'Merging entities' do
     before do
       allow(Entity::Search).to receive(:similar_entities).and_return([dest])
       visit merge_path(mode:    mode,
-                             source:  source&.id,
-                             dest:    dest&.id,
-                             query:   query,
-                             request: merge_request&.id)
+                       source:  source&.id,
+                       dest:    dest&.id,
+                       query:   query,
+                       request: merge_request&.id)
     end
 
     context 'as a non-admin user' do
@@ -109,14 +116,55 @@ feature 'Merging entities' do
         it "allows access" do
           expect(page).to have_http_status 200
         end
+
+        it "is impossible to test displaying search results because it is in javascript"
+        it "is impossible to test if clicking `merge` goes to correct page  b/c javascript"
       end
 
       context 'requesting a merge' do
         let(:mode) { MergeController::Modes::REQUEST }
         let(:query_param) {}
 
-        it "allows access" do
-          expect(page).to have_http_status 200
+        it "shows a merge report" do
+          should_show_merge_report
+        end
+
+        it "shows a merge request form" do
+          should_show_merge_form :request
+        end
+
+        describe "clicking `Request Merge`" do
+          let(:last) { MergeRequest.last }
+          let(:message_delivery) { instance_double(ActionMailer::MessageDelivery) }
+
+          before do
+            expect(dest.relationships.count).to eql 0
+            expect(dest.lists.count).to eql 0
+            expect(MergeRequest.count).to eql 0
+
+            allow(NotificationMailer).to receive(:merge_request_email).and_return(message_delivery)
+            allow(message_delivery).to receive(:deliver_later)
+
+            click_button "Request Merge"
+          end
+
+          it "does not commit the merge" do
+            successfully_visits_page entity_path(source)
+            should_not_commit_merge
+          end
+
+          it "creates a pending merge request" do
+            expect(MergeRequest.count).to eql 1
+            expect(last.source).to eql source
+            expect(last.dest).to eql dest
+            expect(last.user).to eql user
+            expect(last.status).to eql "pending"
+          end
+
+          it "notifies admins of the merge request by delayed email" do
+            expect(NotificationMailer).to have_received(:merge_request_email).with(last)
+            expect(message_delivery).to have_received(:deliver_later)
+          end
         end
       end
 
@@ -165,8 +213,6 @@ feature 'Merging entities' do
       context 'executing a merge' do
         let(:mode) { MergeController::Modes::EXECUTE }
         let(:query_param) {}
-        let(:list) { create(:list) }
-        let(:source) { create(:merge_source_person) }
 
         before do
           expect(dest.relationships.count).to eql 0
@@ -175,6 +221,9 @@ feature 'Merging entities' do
 
         it 'shows a merge report' do
           should_show_merge_report
+        end
+
+        it "shows a merge execution form" do
           should_show_merge_form :execute
         end
 
@@ -212,6 +261,8 @@ feature 'Merging entities' do
 
           it "approves merge request when admin clicks `Approve`" do
             click_button "Approve"
+
+            successfully_visits_page entity_path(dest)
             should_commit_merge
             expect(merge_request.reload.status).to eql 'approved'
             expect(merge_request.reviewer).to eql user
@@ -219,6 +270,8 @@ feature 'Merging entities' do
 
           it "denies merge request when admin clicks `Deny`" do
             click_button "Deny"
+
+            successfully_visits_page entity_path(dest)
             should_not_commit_merge
             expect(merge_request.reload.status).to eql 'denied'
             expect(merge_request.reviewer).to eql user

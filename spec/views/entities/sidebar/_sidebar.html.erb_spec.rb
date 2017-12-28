@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe "partial: sidebar", :tag_helper do
   seed_tags
-  
+
   before(:all) do
     Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
   end
@@ -42,7 +42,7 @@ describe "partial: sidebar", :tag_helper do
                                          :importer? =>   true,
                                          :merger? =>     false,
                                          :permissions => double(:tag_permissions => {})))
-      
+
     end
     context 'entity has tags' do
       before do
@@ -68,7 +68,7 @@ describe "partial: sidebar", :tag_helper do
                                            :importer? =>   false,
                                            :merger? =>     false,
                                            :permissions => double(:tag_permissions => {})))
-        
+
         render partial: 'entities/sidebar.html.erb'
       end
 
@@ -98,7 +98,7 @@ describe "partial: sidebar", :tag_helper do
                                            :importer? =>   true,
                                            :merger? =>     false,
                                            :permissions => double(:tag_permissions => {})))
-        
+
         render partial: 'entities/sidebar.html.erb'
       end
 
@@ -116,12 +116,8 @@ describe "partial: sidebar", :tag_helper do
                                            :importer? =>   false,
                                            :merger? =>     true,
                                            :permissions => double(:tag_permissions => {})))
-        
-        render partial: 'entities/sidebar.html.erb'
-      end
 
-      it 'has merge link' do
-        css 'a', text: 'Merge this entity'
+        render partial: 'entities/sidebar.html.erb'
       end
     end
   end
@@ -136,7 +132,7 @@ describe "partial: sidebar", :tag_helper do
                                            :importer? =>   false,
                                            :merger? =>     false,
                                            :permissions => double(:tag_permissions => {})))
-        
+
         render partial: 'entities/sidebar.html.erb'
       end
 
