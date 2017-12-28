@@ -151,9 +151,29 @@ describe ReferencesController, type: :controller do
   end
 
   describe 'entity' do
+    let(:org) { build(:org) }
+
     it 'returns bad request if missing entity_id' do
       get :entity
       expect(response).to have_http_status 400
+    end
+
+    it 'calls cached_recent_source_links and sets correct default params ' do
+      expect(Entity).to receive(:find).with(org.id.to_s).and_return(org)
+      expect(controller).to receive(:cached_recent_source_links).once.and_return(['sources'])
+      get :entity, params: { entity_id: org.id }
+      link_params = ActiveSupport::HashWithIndifferentAccess.new(page: 1, per_page: 10, entity_id: org.id.to_s)
+      expect(controller.send(:source_link_params)).to eql link_params
+      expect(response).to have_http_status 200
+    end
+
+    it 'calls cached_recent_source_links and can update default params' do
+      expect(Entity).to receive(:find).with(org.id.to_s).and_return(org)
+      expect(controller).to receive(:cached_recent_source_links).once.and_return(['sources'])
+      get :entity, params: { entity_id: org.id, page: 2, per_page: 20 }
+      link_params = ActiveSupport::HashWithIndifferentAccess.new(page: '2', per_page: '20', entity_id: org.id.to_s)
+      expect(controller.send(:source_link_params)).to eql link_params
+      expect(response).to have_http_status 200
     end
   end
 end
