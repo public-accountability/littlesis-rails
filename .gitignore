@@ -25,6 +25,7 @@
 
 # Ignore secret configuration
 /config/lilsis.yml
+/config/secrets.yml
 
 # Ignore dumb OS X files
 *.DS_Store
