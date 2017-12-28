@@ -4,7 +4,7 @@ class UserRequest < ApplicationRecord
   belongs_to :reviewer, class_name: 'User', foreign_key: 'reviewer_id'
 
   enum status: %i[pending approved denied]
-  TYPES = { merge: 'MergeRequest', delete: 'DeletionRequest' }.freeze
+  TYPES = { merge: 'MergeRequest', deletion: 'DeletionRequest' }.freeze
 
   validates_presence_of :user_id, :status, :type
   validates_inclusion_of :type, in: TYPES.values
@@ -16,6 +16,10 @@ class UserRequest < ApplicationRecord
   end
 
   # concrete methods
+
+  def description
+    type.chomp("Request").downcase
+  end
 
   def approved_by!(reviewer)
     approve!

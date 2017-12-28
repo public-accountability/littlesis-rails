@@ -62,6 +62,23 @@ describe UserRequest, type: :model do
   describe "concrete methods" do
     let(:reviewer) { create(:admin_user) }
 
+    describe "#description" do
+      context "of a MergeRequest" do
+
+        it "returns 'merge'" do
+          expect(user_request.description).to eql 'merge'
+        end
+      end
+
+      context "of a DeletionRequest" do
+        let(:user_request){ create(:user_request, type: 'DeletionRequest') }
+
+        it "returns 'deletion" do
+          expect(user_request.description).to eql 'deletion'
+        end
+      end
+    end
+
     describe "#approved_by!" do
       before do
         allow(user_request).to receive(:approve!).and_return(nil)

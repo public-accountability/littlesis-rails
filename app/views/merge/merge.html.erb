@@ -11,6 +11,8 @@
   </div>
   <%= render partial: 'merge_search' %>
 <% else %>
-  <%= render partial: 'merge_request_description' if @merge_mode == 'review' %>
+  <% if @merge_mode == MergeController::Modes::REVIEW %>
+    <%= render partial: 'user_requests/description', locals: { request: @merge_request} %>
+  <% end %>
   <%= render partial: 'merge_report' %>
 <% end %>
