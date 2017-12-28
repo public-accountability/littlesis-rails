@@ -1,0 +1,12 @@
+<%= render partial: 'user_requests/description', locals: {request: @deletion_request} %>
+<% entity = @deletion_request.entity %>
+
+<div id="deletion-report">
+  <div>
+    This deletion will remove the following <%= entity.primary_ext.downcase %> from the database:
+  </div>
+  <div><%= link_to entity.name, entity_path(entity) %></div>
+  <div><%= entity.description  %></div>
+  <div> It has <%= entity.link_count%> relationships. </div>
+  <div>Are you sure you want to proceed?</div>
+</div>

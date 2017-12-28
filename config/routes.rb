@@ -161,7 +161,6 @@ Lilsis::Application.routes.draw do
         post 'feature_image'
         get 'add_relationship'
         post 'tags'
-        get 'deletion/review' => 'entity_deletions#review'
       end
 
       collection do
@@ -170,6 +169,16 @@ Lilsis::Application.routes.draw do
         get 'next_twitter'
         post 'bulk' => 'entities#create_bulk'
       end
+    end
+  end
+
+  #####################
+  # deletion requests #
+  #####################
+
+  resources :deletion_requests, only: [] do
+    member do
+      get 'review' => 'deletion_requests#review'
     end
   end
 

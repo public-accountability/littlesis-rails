@@ -1,0 +1,11 @@
+<%# locals: request: UserRequest %>
+
+<% username = request.user.username %>
+
+<div class="row">
+ <div id="user-request-description" class="col-sm-12 nopadding">
+    The following <%= request.description %> was requested by
+    <%= link_to username, "/users/#{username}"%>
+    at <%= LsDate.pretty_print(request.created_at) %>:
+  </div>
+</div>
