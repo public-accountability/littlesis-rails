@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171214174355) do
+ActiveRecord::Schema.define(version: 20171228001806) do
 
   create_table "address", force: :cascade do |t|
     t.integer  "entity_id",    limit: 8,                   null: false
@@ -1628,6 +1628,7 @@ ActiveRecord::Schema.define(version: 20171214174355) do
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.integer  "reviewer_id", limit: 4
+    t.integer  "entity_id",   limit: 4
   end
 
   add_index "user_requests", ["user_id"], name: "index_user_requests_on_user_id", using: :btree
