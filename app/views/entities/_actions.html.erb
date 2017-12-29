@@ -4,12 +4,18 @@
       <%= link_to "add relationship", add_relationship_entity_path(entity), class: "action-button" %>
       <%= link_to "edit", edit_entity_path(entity), class: "action-button" %>
       <%= link_to "flag", flag_path, class: "action-button" %>
+
       <% if user_signed_in? %>
-	<% if current_user.has_legacy_permission 'deleter' %>
+
+	<% if current_user.admin? %>
 	  <%= form_for entity,  method: :delete, id: "remove_entity_#{entity.id}"  do |f| %>
 	    <% f.submit 'remove', data: { confirm: "Are you sure you want to remove this entity?" }, class: 'delete-entity-btn action-button'  %>
 	  <% end %>
-  	<% end %>
+
+        <% else %>
+          <%= link_to 'remove', new_deletion_request_path(entity_id: @entity.id) %>
+
+  	<% end # if current_user.admin? %>
 
 	<%= link_to 'merge', merge_path(mode: :search, source: @entity.id) %>
 
@@ -19,14 +25,15 @@
 	<% if show_add_bulk_button(current_user) %>
           <%= link_to "add bulk", relationships_bulk_add_path(entity_id: entity.id), class: "action-button" %>
 	<% end %>
-      <% else  %>
+
+      <% else  # !user.signed_in? %>
 	<div class="fb-share-button"
 	     data-href="<%= entity_url(entity) %>"
 	     data-layout="button">
 	</div>
 	<a href="https://twitter.com/share" class="twitter-share-button" data-show-count="false">Tweet</a>
 	<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-      <% end %>
+      <% end # if user.signed_in?%>
     </div>
   </div>
   <div class="col-md-4 col-sm-4 hidden-xs">

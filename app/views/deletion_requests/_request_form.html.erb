@@ -1,0 +1,8 @@
+<div id="entity-deletion-action-buttons">
+
+  <%= form_tag(deletion_requests_path, method: :post) do %>
+    <%= hidden_field_tag 'entity_id', @entity.id %>
+    <%= submit_tag 'Request Deletion', class: 'btn btn-lrg btn-primary' %>
+  <% end %>
+
+</div>

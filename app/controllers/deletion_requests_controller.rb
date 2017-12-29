@@ -2,7 +2,17 @@ class DeletionRequestsController < ApplicationController
   before_action :authenticate_user!
   before_action :admins_only, only: [:review, :commit_review]
   before_action :set_deletion_request, only: [:review, :commit_review]
+  before_action :set_entity
   before_action :set_decision, only: :commit_review
+
+  # GET /deletion_requests/new
+  def new; end
+
+  # POST /deletion_requests
+  def create
+    DeletionRequest.create!(user: current_user, entity: @entity)
+    redirect_to home_dashboard_path
+  end
 
   # GET /deletion_requests/:id/review
   def review; end
@@ -17,6 +27,11 @@ class DeletionRequestsController < ApplicationController
 
   def set_deletion_request
     @deletion_request = DeletionRequest.find(params.require(:id).to_i)
+  end
+
+  def set_entity
+    @entity = @deletion_request&.entity ||
+              Entity.find(params.require(:entity_id).to_i)
   end
 
   def set_decision
