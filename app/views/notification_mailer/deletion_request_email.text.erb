@@ -1,0 +1,8 @@
+DELETION REQUEST
+================
+
+Requester: <%= @deletion_request.user.username %>
+Email: <%= @deletion_request.user.email %>
+Entity: <%= @deletion_request.entity.name %>
+
+Review Page: <%= review_deletion_request_url id: @deletion_request.id %>

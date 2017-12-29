@@ -44,7 +44,15 @@ feature 'Entity deletion request & review' do
       describe "submitting request" do
         let!(:entity_count){ Entity.count }
         let!(:deletion_request_count){ DeletionRequest.count }
-        before { click_button "Request Deletion" }
+        let(:message_delivery) { instance_double(ActionMailer::MessageDelivery) }
+
+        before do
+          allow(NotificationMailer)
+            .to receive(:deletion_request_email).and_return(message_delivery)
+          allow(message_delivery).to receive(:deliver_later)
+
+          click_button "Request Deletion"
+        end
 
         it "does not delete the entity" do
           expect(Entity.count).to eql entity_count
@@ -61,7 +69,11 @@ feature 'Entity deletion request & review' do
           successfully_visits_page home_dashboard_path
         end
 
-        it "notifies admins of the request by email"
+        it "notifies admins of the request by delayed email" do
+          expect(message_delivery).to have_received(:deliver_later)
+          expect(NotificationMailer)
+            .to have_received(:deletion_request_email).with(DeletionRequest.last)
+        end
       end
     end
   end

@@ -10,8 +10,9 @@ class DeletionRequestsController < ApplicationController
 
   # POST /deletion_requests
   def create
-    DeletionRequest.create!(user: current_user, entity: @entity)
-    redirect_to home_dashboard_path
+    dr = DeletionRequest.create!(user: current_user, entity: @entity)
+    NotificationMailer.deletion_request_email(dr).deliver_later
+    redirect_to home_dashboard_path, notice: "Deletion request sent to admins."
   end
 
   # GET /deletion_requests/:id/review
