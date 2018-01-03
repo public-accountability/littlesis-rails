@@ -122,7 +122,7 @@ Lilsis::Application.routes.draw do
       post 'crop_remote'
     end
   end
-  
+
   constraints(id: /[0-9]+(-[^\/]+)?/) do
     resources :entities do
       member do
@@ -169,6 +169,17 @@ Lilsis::Application.routes.draw do
         get 'next_twitter'
         post 'bulk' => 'entities#create_bulk'
       end
+    end
+  end
+
+  #####################
+  # deletion requests #
+  #####################
+
+  resources :deletion_requests, only: [] do
+    member do
+      get 'review' => 'deletion_requests#review'
+      post 'review' => 'deletion_requests#commit_review'
     end
   end
 
@@ -244,7 +255,7 @@ Lilsis::Application.routes.draw do
   get "/home/extension_path" => "home#extension_path"
 
   get "/home/error" => "home#error"
-  
+
   post "/home/dismiss",
     controller: 'home',
     action: 'dismiss',
@@ -255,7 +266,7 @@ Lilsis::Application.routes.draw do
   #   action: 'search_by_name',
   #   as: 'entity_name_search'
 
-  resources :documents, only: [:edit, :update] 
+  resources :documents, only: [:edit, :update]
 
   ########
   # Tags #
@@ -369,7 +380,7 @@ Lilsis::Application.routes.draw do
 
   # edit pages.yml to add more pages
   get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
-  
+
   match "*path", to: "errors#not_found", via: :all
 
   # The priority is based upon order of creation: first created -> highest priority.
