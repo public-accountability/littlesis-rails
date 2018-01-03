@@ -3,8 +3,8 @@ require Rails.root.join('db', 'migrate', '20171012181822_convert_legacy_referenc
 
 describe 'migrating from the legacy reference system' do
   before(:all) do
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE documents;")
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE `references`")
+    ApplicationRecord.connection.execute("TRUNCATE TABLE documents;")
+    ApplicationRecord.connection.execute("TRUNCATE TABLE `references`")
     LegacyReference.delete_all
     ReferenceExcerpt.delete_all
     Entity.skip_callback(:create, :after, :create_primary_ext)
@@ -42,8 +42,8 @@ describe 'migrating from the legacy reference system' do
 
   after(:all) do
     (@entities + [@ref1, @ref2, @ref3, @ref4, @excerpt1, @excerpt2, @excerpt3]).each(&:delete)
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE documents")
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE `references`")
+    ApplicationRecord.connection.execute("TRUNCATE TABLE documents")
+    ApplicationRecord.connection.execute("TRUNCATE TABLE `references`")
     Entity.set_callback(:create, :after, :create_primary_ext)
     Relationship.set_callback(:create, :after, :create_links)
   end
@@ -85,7 +85,7 @@ describe 'migrating from the legacy reference system' do
   describe 'populating references table' do
     before(:all) do
       sql = File.read(Rails.root.join('lib', 'sql', 'populate_references.sql'))
-      ActiveRecord::Base.connection.execute(sql)
+      ApplicationRecord.connection.execute(sql)
     end
 
     it 'creates 4 references' do

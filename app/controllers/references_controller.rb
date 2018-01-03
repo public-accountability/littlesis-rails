@@ -1,9 +1,9 @@
 class ReferencesController < ApplicationController
   include ReferenceableController
-  before_filter :authenticate_user!, except: [:entity]
+  before_action :authenticate_user!, except: [:entity]
   before_action :set_referenceable, only: [:create]
 
-  ENTITY_DEFAULTS = { page: 1, per_page: 10 }.freeze
+  ENTITY_DEFAULTS = ActiveSupport::HashWithIndifferentAccess.new(page: 1, per_page: 10).freeze
 
   def create
     if params[:data][:url].blank?
@@ -57,7 +57,6 @@ class ReferencesController < ApplicationController
   # optional params: page, per_page defaults: 1, 10
   def entity
     return head :bad_request unless params[:entity_id]
-    params.replace(ENTITY_DEFAULTS.merge(params))
     @entity = Entity.find(params[:entity_id])
     render json: cached_recent_source_links
   end
@@ -65,11 +64,16 @@ class ReferencesController < ApplicationController
   private
 
   def cached_recent_source_links
-    Rails.cache.fetch("#{@entity.alt_cache_key}/recent_source_links/#{params[:page]}/#{params[:per_page]}", expires_in: 2.weeks) do
+    cache_key = "#{@entity.alt_cache_key}/recent_source_links/#{source_link_params[:page]}/#{source_link_params[:per_page]}"
+    Rails.cache.fetch(cache_key, expires_in: 2.weeks) do
       Document
-        .documents_for_entity(entity: @entity, page: params[:page].to_i, per_page: params[:per_page].to_i, exclude_type: :fec)
+        .documents_for_entity(entity: @entity, page: source_link_params[:page].to_i, per_page: source_link_params[:per_page].to_i, exclude_type: :fec)
         .map { |doc| doc.slice(:name, :url) }
     end
+  end
+
+  def source_link_params
+    @_source_link_params ||= ENTITY_DEFAULTS.merge(params.permit(:page, :per_page, :entity_id).to_h)
   end
 
   def set_referenceable

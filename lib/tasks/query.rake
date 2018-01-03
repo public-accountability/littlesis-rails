@@ -155,7 +155,7 @@ namespace :query do
     SQL
 
     result = []
-    ActiveRecord::Base.connection.execute(sql).each(:as => :hash) { |h| result << h }
+    ApplicationRecord.connection.execute(sql).each(:as => :hash) { |h| result << h }
 
     CSV.open(file_path, "wb") do |csv|
       csv << result.first.keys

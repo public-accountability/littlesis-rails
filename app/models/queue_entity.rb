@@ -1,4 +1,4 @@
-class QueueEntity < ActiveRecord::Base
+class QueueEntity < ApplicationRecord
   belongs_to :entity, inverse_of: :queue_entities
 
   scope :skipped, -> { where(is_skipped: true) }

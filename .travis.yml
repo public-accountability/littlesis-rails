@@ -18,9 +18,10 @@ before_install:
 before_script:
   - cp config/database.travis.yml config/database.yml
   - cp config/lilsis.yml.sample config/lilsis.yml
+  - cp config/secrets.yml.sample config/secrets.yml
   - mysql -e 'CREATE DATABASE littlesis_test;'
 
 script:
   - RAILS_ENV=test bundle exec rake db:structure:load
   - RAILS_ENV=test bundle exec rake db:seed
-  - RAILS_ENV=test bundle exec rspec
+  - RAILS_ENV=test COVERAGE=true bundle exec rspec

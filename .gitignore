@@ -6,6 +6,7 @@
 
 # Ignore bundler config.
 /.bundle
+/vendor/bundle
 
 # Ignore .ruby-gemset
 # use whatever gemset the developer wants
@@ -18,12 +19,14 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+.cache/
 
 # Ignore database configuration
 /config/database.yml
 
 # Ignore secret configuration
 /config/lilsis.yml
+/config/secrets.yml
 
 # Ignore dumb OS X files
 *.DS_Store
@@ -49,14 +52,12 @@ spec/testdata/*_errors.txt
 # coverage files
 coverage
 
-# os data
-data/cands/
-data/cmtes/
-data/indivs*
-
 # development db
 data/*.sql
 
 # Passenger files
 .passenger/
 log/*.lock
+
+.bash_history
+.pry_history

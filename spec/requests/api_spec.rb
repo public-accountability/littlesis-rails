@@ -48,7 +48,7 @@ describe Api, :pagination_helper do
       end
 
     describe 'entity information /entities/:id' do
-      before { get api_entity_path(lawyer), {}, @auth_header }
+      before { get api_entity_path(lawyer), headers: @auth_header }
       specify { expect(response).to have_http_status 200 }
       specify { expect(json).to eql(expected) }
     end
@@ -70,14 +70,14 @@ describe Api, :pagination_helper do
                                                         "net_worth"=>nil,
                                                         "name_maiden"=>nil}}} })
       end
-      
-      before { get api_entity_path(lawyer), {'details' => 'true' }, @auth_header }
+
+      before { get api_entity_path(lawyer), params: {'details' => 'true' }, headers: @auth_header }
       specify { expect(response).to have_http_status 200 }
       specify { expect(json).to eql(with_details) }
     end
 
     describe 'record not found' do
-      before { get api_entity_path(id: 1_000_000), {}, @auth_header }
+      before { get api_entity_path(id: 1_000_000), headers: @auth_header }
       specify { expect(response).to have_http_status 404 }
       specify do
         expect(json).to eql({
@@ -90,12 +90,12 @@ describe Api, :pagination_helper do
     describe 'record deleted' do
       before do
         deleted_pac = create(:pac, is_deleted: true)
-        get api_entity_path(deleted_pac), {}, @auth_header 
+        get api_entity_path(deleted_pac), headers: @auth_header
       end
       specify { expect(response).to have_http_status 410 }
       specify do
         expect(json).to eql({
-                              'errors' => [ { 'title' => 'Record Deleted' } ],
+                              'errors' => [{ 'title' => 'Record Deleted' }],
                               'meta' => meta
                             })
       end
@@ -132,7 +132,7 @@ describe Api, :pagination_helper do
       }
     end
 
-    before { get extensions_api_entity_path(entity), {}, @auth_header } 
+    before { get extensions_api_entity_path(entity), headers: @auth_header }
     specify { expect(response).to have_http_status 200 }
     specify { expect(json).to eql(expected) }
   end
@@ -144,21 +144,21 @@ describe Api, :pagination_helper do
     context 'entity with 2 lists' do
       before do
         lists.each { |l| ListEntity.create!(list_id: l.id, entity_id: entity.id) }
-        get lists_api_entity_path(entity), {}, @auth_header
+        get lists_api_entity_path(entity), headers: @auth_header
       end
       specify { expect(response).to have_http_status 200 }
       specify { expect(json).to eql({ 'meta' => meta, 'data' => lists.map(&:api_data) }) }
     end
-    
+
     context 'entity with no lists' do
-      before { get lists_api_entity_path(entity), {}, @auth_header }
+      before { get lists_api_entity_path(entity), headers: @auth_header }
       specify { expect(json).to eql({ 'meta' => meta, 'data' => [] }) }
     end
     context 'entity with one open list and one private list' do
       let(:lists) { [create(:open_list), create(:private_list)] }
       before do
         lists.each { |l| ListEntity.create!(list_id: l.id, entity_id: entity.id) }
-        get lists_api_entity_path(entity), {}, @auth_header
+        get lists_api_entity_path(entity), headers: @auth_header
       end
       specify { expect(response).to have_http_status 200 }
       specify { expect(json['data']).to eql [lists.first.api_data] }
@@ -171,7 +171,7 @@ describe Api, :pagination_helper do
 
     context 'request without page' do
       let!(:relationships) { Array.new(2) { create(:generic_relationship, entity: entity, related: create(:entity_person)) } } 
-      before { get relationships_api_entity_path(entity), {}, @auth_header }
+      before { get relationships_api_entity_path(entity), headers: @auth_header }
       specify { expect(response).to have_http_status 200 }
       specify do
         expect(json)
@@ -193,8 +193,12 @@ describe Api, :pagination_helper do
         end
       end
 
-      let(:get_request) { proc { |page| get relationships_api_entity_path(entity), {page: page}, @auth_header } }
-      
+      let(:get_request) do
+        proc do |page|
+          get relationships_api_entity_path(entity), params: { page: page }, headers: @auth_header
+        end
+      end
+
       context 'requesting first page' do
         before { get_request.call(1) }
         specify { expect(response).to have_http_status 200 }
@@ -237,14 +241,14 @@ describe Api, :pagination_helper do
     end
 
     context 'missing param name' do
-      before { get api_entities_search_path, {}, @auth_header }
+      before { get api_entities_search_path, headers: @auth_header }
       specify { expect(response).to have_http_status 400 }
     end
 
     context 'submission with param name' do
       before do
         expect(Entity::Search).to receive(:search).and_return(mock_search)
-        get api_entities_search_path, {q: 'entity name' }, @auth_header
+        get api_entities_search_path, params: { q: 'entity name' }, headers: @auth_header
       end
 
       specify { expect(response).to have_http_status 200 }
@@ -260,7 +264,6 @@ describe Api, :pagination_helper do
                     'pageCount' => 2
                   })
       end
-
     end
   end
 
@@ -269,7 +272,7 @@ describe Api, :pagination_helper do
     let(:entity2) { create(:entity_org) }
     let(:relationship) { Relationship.create!(category_id: 1, entity: entity1, related: entity2) }
 
-    before { get api_relationship_path(relationship), {}, @auth_header }
+    before { get api_relationship_path(relationship), headers: @auth_header }
 
     specify { expect(response).to have_http_status 200 }
     specify do
@@ -279,6 +282,5 @@ describe Api, :pagination_helper do
                             'included' => [ entity1.api_data(exclude: :extensions), entity2.api_data(exclude: :extensions) ]
                           })
     end
-
   end
 end

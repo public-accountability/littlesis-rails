@@ -1,4 +1,4 @@
-class Tagging < ActiveRecord::Base
+class Tagging < ApplicationRecord
   belongs_to :tagable, polymorphic: true, foreign_type: :tagable_class
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id"
   validates_presence_of :tag_id, :tagable_class, :tagable_id

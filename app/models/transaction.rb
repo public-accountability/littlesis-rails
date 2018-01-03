@@ -1,4 +1,4 @@
-class Transaction < ActiveRecord::Base
+class Transaction < ApplicationRecord
   include SingularTable
 
   belongs_to :relationship, inverse_of: :trans

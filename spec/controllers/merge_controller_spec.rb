@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe MergeController, type: :controller do
-
   describe "routes" do
     it { should route(:get, '/merge').to(action: :merge) }
     it { should route(:post, '/merge').to(action: :merge!) }
@@ -17,7 +16,7 @@ describe MergeController, type: :controller do
       before do
         expect(Entity).to receive(:find).with(entity.id).and_return(entity)
         expect(entity).to receive(:similar_entities).with(75).and_return([])
-        get :merge, mode: 'search', source: entity.id
+        get :merge, params: { mode: 'search', source: entity.id }
       end
 
       it { should respond_with(200) }
@@ -31,7 +30,7 @@ describe MergeController, type: :controller do
         expect(Entity::Search).to receive(:similar_entities)
                                     .with(entity, query: 'query', per_page: 75)
                                     .and_return([])
-        get :merge, mode: 'search', source: entity.id, query: 'query'
+        get :merge, params: { mode: 'search', source: entity.id, query: 'query' }
       end
 
       it { should respond_with(200) }
@@ -47,7 +46,7 @@ describe MergeController, type: :controller do
       before do
         expect(Entity).to receive(:find).with(source.id).and_return(source)
         expect(Entity).to receive(:find).with(dest.id).and_return(dest)
-        get :merge, mode: 'execute', source: source.id, dest: dest.id
+        get :merge, params: { mode: 'execute', source: source.id, dest: dest.id } 
       end
 
       it { should respond_with(200) }

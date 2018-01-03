@@ -1,4 +1,4 @@
-class UserRequest < ActiveRecord::Base
+class UserRequest < ApplicationRecord
   # fields: user_id, reviewer_id, type, status, source_id, dest_id
   belongs_to :user
   belongs_to :reviewer, class_name: 'User', foreign_key: 'reviewer_id'

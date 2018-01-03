@@ -1,5 +1,5 @@
 # coding: utf-8
-class Relationship < ActiveRecord::Base
+class Relationship < ApplicationRecord
   include SingularTable
   include SoftDelete
   include Referenceable
@@ -555,7 +555,7 @@ class Relationship < ActiveRecord::Base
       .select('schedule_transaction_date')
       .order("schedule_transaction_date #{sort}")
       .limit(1)
-      &.fetch(0, nil)
+      &.first
       &.schedule_transaction_date
   end
 end

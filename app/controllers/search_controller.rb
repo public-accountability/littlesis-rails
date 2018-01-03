@@ -1,5 +1,5 @@
 class SearchController < ApplicationController
-  before_filter :authenticate_user!, except: [:basic]
+  before_action :authenticate_user!, except: [:basic]
   before_action :set_page, only: [:basic]
   before_action :set_initial_search_values, only: [:basic]
 

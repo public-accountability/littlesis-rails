@@ -9,22 +9,24 @@ describe 'NYS requests' do
     let(:user) { create_really_basic_user }
 
     context 'match_donations' do
-      before { post '/nys/match_donations', { payload: { disclosure_ids: [1,2,3], donor_id: 1 } }}
+      before do
+        post '/nys/match_donations', params: { payload: { disclosure_ids: [1,2,3], donor_id: 1 } }
+      end
       denies_access
     end
 
     context 'unmatch donations' do
-      before { post '/nys/unmatch_donations', { payload: { ny_match_ids: [1, 2, 3] } } }
+      before { post '/nys/unmatch_donations', params: { payload: { ny_match_ids: [1, 2, 3] } } }
       denies_access
     end
 
     context 'potential contributions' do
-      before { get '/nys/potential_contributions', entity: 123 }
+      before { get '/nys/potential_contributions', params: { entity: 123 } }
       denies_access
     end
 
     context 'contributions' do
-      before { get '/nys/contributions', entity: 123 }
+      before { get '/nys/contributions', params: { entity: 123 } }
       denies_access
     end
   end
@@ -34,7 +36,7 @@ describe 'NYS requests' do
     let(:disclosures) { Array.new(2) { create(:ny_disclosure)} }
     let(:match_donations) do
       proc do
-        post '/nys/match_donations', { payload: { disclosure_ids: disclosures.map(&:id), donor_id: donor.id } }
+        post '/nys/match_donations', params: { payload: { disclosure_ids: disclosures.map(&:id), donor_id: donor.id } }
       end
     end
 
@@ -58,7 +60,7 @@ describe 'NYS requests' do
     let!(:matches) { disclosures.map { |d| NyMatch.match(d.id, donor.id) } }
     let(:unmatch_donations) do
       proc do
-        post '/nys/unmatch_donations', { payload: { ny_match_ids: matches.map(&:id) } }
+        post '/nys/unmatch_donations', params: { payload: { ny_match_ids: matches.map(&:id) } }
       end
     end
 

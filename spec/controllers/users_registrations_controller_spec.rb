@@ -47,7 +47,7 @@ describe Users::RegistrationsController, type: :controller do
   end
 
   def post_create(data)
-    post :create, 'user' => data
+    post :create, params: { 'user' => data }
   end
 
   describe 'Creating new users' do
@@ -112,7 +112,7 @@ describe Users::RegistrationsController, type: :controller do
     end
 
     def post_api_token(action)
-      post :api_token, 'api' => action
+      post :api_token, params: { 'api' => action }
     end
 
     context 'generating api tokens' do

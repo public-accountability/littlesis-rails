@@ -1,5 +1,5 @@
 # coding: utf-8
-class OsMatch < ActiveRecord::Base
+class OsMatch < ApplicationRecord
   # include SoftDelete
   # has_paper_trail
 

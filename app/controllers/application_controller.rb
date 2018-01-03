@@ -5,9 +5,9 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_filter :admins_only if Lilsis::Application.config.admins_only
+  before_action :admins_only if Lilsis::Application.config.admins_only
 
-  before_filter :set_paper_trail_whodunnit
+  before_action :set_paper_trail_whodunnit
 
   before_action :configure_permitted_parameters, if: :devise_controller?
 
@@ -60,7 +60,7 @@ class ApplicationController < ActionController::Base
   # Array, Integer -> Void
   def block_unless_bulker(resources = [], limit = 0)
     # users who aren't admins or 'bulkers' may not create more than `limit` resources at a time
-    if resources.length > limit && !(current_user.bulker? || current_user.admin?)
+    if (resources.present? && resources.length > limit) && !(current_user.bulker? || current_user.admin?)
       raise Exceptions::UnauthorizedBulkRequest
     end
   end

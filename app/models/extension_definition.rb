@@ -1,4 +1,4 @@
-class ExtensionDefinition < ActiveRecord::Base
+class ExtensionDefinition < ApplicationRecord
   include SingularTable
 
   has_many :extension_records, foreign_key: "definition_id", inverse_of: :extension_definition

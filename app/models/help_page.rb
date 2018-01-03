@@ -1,4 +1,4 @@
-class HelpPage < ActiveRecord::Base
+class HelpPage < ApplicationRecord
   include EditablePage
 
   has_paper_trail

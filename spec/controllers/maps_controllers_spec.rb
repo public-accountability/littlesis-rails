@@ -26,14 +26,14 @@ describe MapsController, type: :controller do
     it { should route(:get, '/maps/find_nodes').to(action: :find_nodes) }
     it { should route(:get, '/maps/node_with_edges').to(action: :node_with_edges) }
     it { should route(:get, '/maps/edges_with_nodes').to(action: :edges_with_nodes) }
-    it { should route(:get, '/maps/interlocks').to(action: :interlocks) } 
+    it { should route(:get, '/maps/interlocks').to(action: :interlocks) }
   end
 
   describe '#show' do
     def get_request
       allow(controller).to receive(:user_signed_in?).and_return(true)
       expect(NetworkMap).to receive(:find).with("10-a-map").and_return(@map)
-      get :show, {id: '10-a-map' }
+      get :show, params: { id: '10-a-map' }
     end
 
     it 'has two links if cloneable' do
@@ -76,30 +76,30 @@ describe MapsController, type: :controller do
         mock_cache = double('cache')
         expect(Rails).to receive(:cache).and_return(mock_cache)
         expect(mock_cache).to receive(:fetch).with('maps_controller/network_map/10-a-map', expires_in: 5.minutes).and_return(@map)
-        get :show, id: '10-a-map'
+        get :show, params: { id: '10-a-map' }
       end
 
       it { should respond_with :success }
       it { should render_template 'story_map' }
-      
+
       it 'sets cacheable to be true' do
         expect(assigns(:cacheable)).to eql true
       end
     end
-    
+
     describe 'does not call cache when user is logged in' do
       login_user
-      
+
       before do
         @map = build(:network_map, title: 'a map')
         expect(NetworkMap).to receive(:find).with('10-a-map').and_return(@map)
         expect(Rails).not_to receive(:cache)
-        get :show, id: '10-a-map'
+        get :show, params: { id: '10-a-map' }
       end
 
       it { should respond_with :success }
       it { should render_template 'story_map' }
-      
+
       it 'sets cacheable to be nil' do
         expect(assigns(:cacheable)).to be_nil
       end
@@ -109,7 +109,7 @@ describe MapsController, type: :controller do
       @map = build(:network_map, is_private: false, title: 'a map')
       allow(controller).to receive(:user_signed_in?).and_return(true)
       expect(NetworkMap).to receive(:find).with('10').and_return(@map)
-      get :show, id: '10'
+      get :show, params: { id: '10' }
       expect(response.status).to eql 302
     end
   end
@@ -121,7 +121,7 @@ describe MapsController, type: :controller do
       @map = build(:network_map, is_private: false, title: 'a map')
       expect(NetworkMap).to receive(:find).with('10-a-map').and_return(@map)
       expect(controller).to receive(:check_permission).with('admin')
-      get :dev, id: '10-a-map'
+      get :dev, params: { id: '10-a-map' }
     end
 
     it { should respond_with :success }
@@ -137,39 +137,39 @@ describe MapsController, type: :controller do
       @map = build(:network_map, title: 'a map')
       allow(controller).to receive(:user_signed_in?).and_return(true)
       expect(NetworkMap).to receive(:find).with("10-a-map").and_return(@map)
-      get :raw, {id: '10-a-map' }
+      get :raw, params: { id: '10-a-map' }
     end
     it { should redirect_to(embedded_map_path(@map)) }
   end
 
   describe '#clone' do
     login_user
-    
+
     context 'cloneable map' do
       before do
         @map_count = NetworkMap.count
         @map = build(:network_map, graph_data: '{}', user_id: 10000)
         expect(NetworkMap).to receive(:find).with('10-a-map').and_return(@map)
-        post :clone, { id: '10-a-map' }
+        post :clone, params: { id: '10-a-map' }
       end
-      
+
       it 'creates a new map' do
         expect(NetworkMap.count).to eql(@map_count + 1)
       end
-      
+
       it 'changes the user id' do
         expect(NetworkMap.last.user_id).to be_a(Integer)
         expect(NetworkMap.last.user_id).not_to eql 10000
       end
-      
+
       it { should redirect_to(edit_map_path(NetworkMap.last)) }
     end
-    
+
     context 'uncloneable map' do
       before do
         @map = build(:network_map, graph_data: '{}', is_cloneable: false)
         expect(NetworkMap).to receive(:find).with('10-a-map').and_return(@map)
-        post :clone, { id: '10-a-map' }
+        post :clone, params: { id: '10-a-map' }
       end
 
       it { should respond_with :unauthorized }
@@ -185,7 +185,7 @@ describe MapsController, type: :controller do
       expect(controller).to receive(:check_owner)
       expect(controller).to receive(:check_permission).with('editor')
       expect(@map).to receive(:destroy)
-      delete :destroy, { id: '10-a-map' }
+      delete :destroy, params: { id: '10-a-map' }
     end
 
     it { should redirect_to(maps_path) }
@@ -195,7 +195,7 @@ describe MapsController, type: :controller do
     before do
       expect(NetworkMap).to receive(:find).with('10-a-map').and_return(build(:network_map))
       allow(controller).to receive(:user_signed_in?).and_return(true)
-      get :embedded, { id: '10-a-map' }
+      get :embedded, params: { id: '10-a-map' }
     end
 
     it { should render_template('embedded') }

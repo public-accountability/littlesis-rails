@@ -1,4 +1,4 @@
-class Tag < ActiveRecord::Base
+class Tag < ApplicationRecord
   include Pagination
   PER_PAGE = 20
 
@@ -112,7 +112,7 @@ class Tag < ActiveRecord::Base
   def count_and_sort_entities(entity_type, page = 1)
     [
       entities_by_relationship_count(entity_type, page),
-      entities.where(primary_ext: entity_type).count
+      entities.where(primary_ext: entity_type.to_s).count
     ]
   end
 
@@ -234,10 +234,10 @@ class Tag < ActiveRecord::Base
     SQL
 
     # NOTE: our version of Mysql2::Result is missing the very convenient method: #to_hash ...why?
-    # we should be able to do ActiveRecord::Base.connection.execute(sql).to_hash instead of
+    # we should be able to do ApplicationRecord.connection.execute(sql).to_hash instead of
     # populating the array ourselves...
     result = []
-    ActiveRecord::Base.connection.execute(sql).each(:as => :hash) { |h| result << h }
+    ApplicationRecord.connection.execute(sql).each(:as => :hash) { |h| result << h }
     result
   end
 

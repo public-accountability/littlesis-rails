@@ -1,4 +1,4 @@
-class Domain < ActiveRecord::Base
+class Domain < ApplicationRecord
   include SingularTable
 
   TWITTER_ID = 1

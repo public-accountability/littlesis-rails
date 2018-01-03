@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.10'
+# gem 'rails', '4.2.10'
+gem 'rails', '5.0.6'
 gem 'mysql2', '~> 0.4.10'
 
 # Rack middleware
@@ -60,6 +61,7 @@ group :test, :development do
   gem 'better_errors', '~> 2.4.0'
   gem 'capybara', '2.13.0'
   gem 'capybara-webkit', '1.14.0'
+  gem 'codacy-coverage', :require => false
   gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 4.8.2'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
@@ -68,6 +70,7 @@ group :test, :development do
   gem 'pry-byebug'
   gem 'pry-rails'
   gem 'rack-mini-profiler'
+  gem 'rails-controller-testing'
   gem 'rspec-html-matchers', '~> 0.9.0'
   gem 'rspec-rails', '~> 3.6.1'
   gem 'rubocop', require: false

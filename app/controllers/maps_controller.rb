@@ -2,8 +2,8 @@ class MapsController < ApplicationController
   include NetworkMapsHelper
 
   before_action :set_map, except: [:index, :featured, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
-  before_filter :authenticate_user!, except: [:index, :featured, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
-  before_filter :enforce_slug, only: [:show]
+  before_action :authenticate_user!, except: [:index, :featured, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
+  before_action :enforce_slug, only: [:show]
 
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
 

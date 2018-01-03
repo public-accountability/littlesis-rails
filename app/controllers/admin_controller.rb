@@ -1,5 +1,5 @@
 class AdminController < ApplicationController
-  before_filter :authenticate_user!, :admins_only
+  before_action :authenticate_user!, :admins_only
 
   def home
   end

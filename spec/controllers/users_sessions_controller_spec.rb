@@ -8,8 +8,8 @@ describe Users::SessionsController, type: :controller do
   end
 
   describe 'X-Frame-Options' do
-    before  { request.env['devise.mapping'] = Devise.mappings[:user] } 
-    
+    before { request.env['devise.mapping'] = Devise.mappings[:user] }
+
     it 'sets for login' do
       get :new
       expect(response.headers['X-Frame-Options']).to eq 'ALLOW-FROM http://localhost:3000'

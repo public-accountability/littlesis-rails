@@ -24,7 +24,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     resource.sf_guard_user.username = resource.email
     resource.sf_guard_user.sf_guard_user_profile.assign_attributes(sf_profile_params)
 
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       begin
         resource.sf_guard_user.save!
         resource.sf_guard_user_profile.save!

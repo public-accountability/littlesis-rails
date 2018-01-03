@@ -1,2 +1,2 @@
-class TaskMeta < ActiveRecord::Base
+class TaskMeta < ApplicationRecord
 end

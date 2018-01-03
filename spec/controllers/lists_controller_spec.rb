@@ -65,44 +65,45 @@ describe ListsController, :list_helper, type: :controller do
     login_user
 
     context 'When missing name and url' do
-      before { post :create, list: { name: '' }, ref: { url: '' } }
+      let(:params) { { list: { name: '' }, ref: { url: '' } } }
+      before { post :create, params: params }
       specify { expect(response).to render_template(:new) }
       specify { expect(assigns(:list).errors.size).to eq(2) }
     end
 
     context 'When missing just name or just source' do
       it 'renders new template' do
-        post :create, list: { name: 'a name' }, ref: { url: '' }
+        post :create, params: { list: { name: 'a name' }, ref: { url: '' } }
         expect(response).to render_template(:new)
       end
 
       it 'has one error - blank name' do
-        post :create, list: { name: '' }, ref: { url: 'http://mysource' }
+        post :create, params: { list: { name: '' }, ref: { url: 'http://mysource' } }
         expect(assigns(:list).errors.size).to eq 1
       end
 
       it 'has one error - missing source' do
-        post :create, list: { name: 'the list name' }, ref: { url: '' }
+        post :create, params: { list: { name: 'the list name' }, ref: { url: '' } }
         expect(assigns(:list).errors.size).to eq 1
       end
     end
 
     context 'submission with name and source' do
       it 'redirects to the newly created list' do
-        post :create,  list: {name: 'list name'}, ref: { url: 'http://mysource' }
+        post :create,  params: { list: {name: 'list name'}, ref: { url: 'http://mysource' } }
         expect(response).to redirect_to(assigns(:list))
       end
 
       it 'saves the list' do
         expect do
-          post :create, list: { name: 'list name' }, ref: { url: 'http://mysource' }
+          post :create, params: { list: { name: 'list name' }, ref: { url: 'http://mysource' } }
         end.to change { List.count }.by(1)
         expect(List.last).to eql assigns(:list)
       end
 
       it 'create a reference with a name provided' do
         expect do
-          post :create, list: { name: 'list name' }, ref: { url: 'http://mysource' }
+          post :create, params: { list: { name: 'list name' }, ref: { url: 'http://mysource' } }
         end.to change { Reference.count }.by(1)
 
         expect(Reference.last.referenceable_id).to eql assigns(:list).id
@@ -112,7 +113,8 @@ describe ListsController, :list_helper, type: :controller do
       end
 
       it 'creates a reference with a name provided' do
-        post(:create, list: { name: 'list name' }, ref: { url: 'http://mysource', name: 'important source' })
+        params = { list: { name: 'list name' }, ref: { url: 'http://mysource', name: 'important source' } }
+        post :create, params: params
         expect(Reference.last.document.name).to eql'important source'
         expect(Reference.last.document.url).to eql 'http://mysource'
       end
@@ -121,7 +123,7 @@ describe ListsController, :list_helper, type: :controller do
     describe 'modifications' do
       before do
         @new_list = create(:list)
-        get(:modifications, {id: @new_list.id})
+        get :modifications, params: {id: @new_list.id} 
       end
 
       it 'renders modifications template' do 
@@ -137,7 +139,7 @@ describe ListsController, :list_helper, type: :controller do
   describe 'show' do
     before do
       expect(List).to receive(:find).and_return(build(:list))
-      get :show, id: 1
+      get :show, params: { id: 1 }
     end
     it { should respond_with(302) }
     it { should redirect_to(action: :members) }
@@ -150,13 +152,15 @@ describe ListsController, :list_helper, type: :controller do
     let(:list_entity) {  ListEntity.create!(list_id: list.id, entity_id: person.id) } 
 
     before do
-      @post_remove_entity = proc { post :remove_entity, { id: list.id, list_entity_id: list_entity.id } }
+      @post_remove_entity = proc do
+        post :remove_entity, params: { id: list.id, list_entity_id: list_entity.id }
+      end
     end
 
     it 'removes the list entity' do
       expect(&@post_remove_entity).to change { ListEntity.unscoped.find(list_entity.id).is_deleted}.to(true)
     end
-    
+
     xit 'clears the list cache' do
       expect(List).to receive(:find).with(list.id.to_s).and_return(list)
       expect(list).to receive(:clear_cache)

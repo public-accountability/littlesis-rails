@@ -1,4 +1,4 @@
-class Ownership < ActiveRecord::Base
+class Ownership < ApplicationRecord
   include SingularTable
 
   belongs_to :relationship, inverse_of: :ownership

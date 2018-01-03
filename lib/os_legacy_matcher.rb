@@ -73,7 +73,7 @@ class OsLegacyMatcher
            where row_id = '#{filing.crp_id}' and 
                  fec_id = '#{filing.fec_filing_id}' and
                  date = '#{filing.start_date}'"
-    result = ActiveRecord::Base.connection.execute(sql).to_a
+    result = ApplicationRecord.connection.execute(sql).to_a
     if result.empty?
       # printf("No match found in littlesis_raw: row_id: %s, fec_id: %s, date: %s\n", filing.crp_id, filing.fec_filing_id, filing.start_date)
       return nil
@@ -94,7 +94,7 @@ class OsLegacyMatcher
            from littlesis_raw.os_donation 
            where fec_id = '#{filing.fec_filing_id}' and
                  date = '#{filing.start_date}'"
-    result = ActiveRecord::Base.connection.execute(sql).to_a
+    result = ApplicationRecord.connection.execute(sql).to_a
     if result.empty?
       # printf("No match found in littlesis_raw: row_id: %s, fec_id: %s, date: %s\n", filing.crp_id, filing.fec_filing_id, filing.start_date)
       return nil
@@ -121,9 +121,9 @@ class OsLegacyMatcher
            where fec_id = '#{filing.fec_filing_id}' and
                  date = '#{filing.start_date}' and
                  amount = #{filing.amount} and
-                 donor_name_last = #{ActiveRecord::Base.connection.quote(last_name)}" 
+                 donor_name_last = #{ApplicationRecord.connection.quote(last_name)}" 
     
-    result = ActiveRecord::Base.connection.execute(sql).to_a
+    result = ApplicationRecord.connection.execute(sql).to_a
     if result.empty? or result.length > 1 
       return nil
     else
@@ -146,9 +146,9 @@ class OsLegacyMatcher
            where fec_id = '#{filing.fec_filing_id}' and
                  date = '#{filing.start_date}' and
                  amount = #{filing.amount} and
-                 donor_name_last = #{ActiveRecord::Base.connection.quote(last_name)}" 
+                 donor_name_last = #{ApplicationRecord.connection.quote(last_name)}" 
     
-    result = ActiveRecord::Base.connection.execute(sql).to_a
+    result = ApplicationRecord.connection.execute(sql).to_a
     if result.empty?
       printf("No match found in littlesis_raw: row_id: %s, fec_id: %s, date: %s\n", filing.crp_id, filing.fec_filing_id, filing.start_date)
       return nil

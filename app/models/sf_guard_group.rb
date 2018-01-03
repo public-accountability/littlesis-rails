@@ -1,4 +1,4 @@
-class SfGuardGroup < ActiveRecord::Base
+class SfGuardGroup < ApplicationRecord
   include SingularTable	
 
 	has_many :sf_guard_user_groups, foreign_key: "group_id", inverse_of: :sf_guard_group, dependent: :destroy

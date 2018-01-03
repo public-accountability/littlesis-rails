@@ -12,13 +12,13 @@ describe DocumentsController, type: :controller do
       before do
         @doc = build(:document)
         expect(Document).to receive(:find).with(1).and_return(@doc)
-        get :edit, id: 1
+        get :edit, params: { id: 1 }
       end
       it { should render_template 'edit' }
     end
 
     context 'without logging in' do
-      before { get :edit, id: 1 }
+      before { get :edit, params: { id: 1 } }
       it { should redirect_to '/login' }
     end
   end
@@ -37,7 +37,7 @@ describe DocumentsController, type: :controller do
 
     context 'with valid params' do
       before do
-        patch :update, id: @doc.id, document: document_params.merge(publication_date: '2017-01-01')
+        patch :update, params: { id: @doc.id, document: document_params.merge(publication_date: '2017-01-01') }
       end
       it { should redirect_to home_dashboard_path }
 
@@ -49,8 +49,10 @@ describe DocumentsController, type: :controller do
     context 'with invalid params' do
       before do
         patch :update,
-              id: @doc.id,
-              document: document_params.merge(publication_date: 'THIS IS NOT A DATE')
+              params: {
+                id: @doc.id,
+                document: document_params.merge(publication_date: 'THIS IS NOT A DATE')
+              }
       end
 
       it { should redirect_to edit_document_path(@doc) }

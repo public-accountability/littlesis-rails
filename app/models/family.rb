@@ -1,4 +1,4 @@
-class Family < ActiveRecord::Base
+class Family < ApplicationRecord
   include SingularTable
 
   has_paper_trail on: [:update, :destroy]

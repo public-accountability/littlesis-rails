@@ -8,9 +8,8 @@ describe 'Entity Requests', type: :request do
   after(:each) { logout(:user) }
 
   describe 'creating many entities' do
-
     let(:entities) { Array.new(2) { build(:random_entity) } }
-    let(:request) { lambda { post '/entities/bulk', payload } }
+    let(:request) { lambda { post '/entities/bulk', params: payload } }
     let(:payload) do
       { data: entities.map { |e| { type: 'entities', attributes: e.attributes } } }
     end
@@ -78,14 +77,13 @@ describe 'Entity Requests', type: :request do
         }
       end
 
-    let(:patch_request) { proc { patch "/entities/#{person.to_param}", params } }
+    let(:patch_request) { proc { patch "/entities/#{person.to_param}", params: params } }
 
     def renders_the_edit_page
       patch_request.call
       expect(response).to have_http_status 200
       expect(response).to render_template(:edit)
     end
-     
 
     context 'Adding a birthday with a new reference' do
       it 'changes start date' do
@@ -122,7 +120,7 @@ describe 'Entity Requests', type: :request do
 
     context 'when the reference contains an invalid url' do
       let(:url) { 'i am an invalid url' }
-     
+
       it 'does not change the person\'s start date' do
         expect { patch_request.call }.not_to change { Entity.find(person.id).start_date }
       end
@@ -135,6 +133,5 @@ describe 'Entity Requests', type: :request do
         renders_the_edit_page
       end
     end
-    
   end
 end

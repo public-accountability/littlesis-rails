@@ -1,4 +1,4 @@
-class NyFilerEntity < ActiveRecord::Base
+class NyFilerEntity < ApplicationRecord
   belongs_to :ny_filer
   belongs_to :entity
 

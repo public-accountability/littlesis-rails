@@ -14,7 +14,7 @@ class ListsController < ApplicationController
   # from TagableController and therefore including :tags in the list is required
   # Because of the potential for confusion, perhaps we should no longer use :authenticate_user!
   # in controller concerns? (ziggy 2017-08-31)
-  before_filter :authenticate_user!,
+  before_action :authenticate_user!,
                 only: [ :new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags ]
 
   before_action :set_list,
@@ -310,7 +310,7 @@ class ListsController < ApplicationController
     from = "relationship r LEFT JOIN entity e ON (e.id = r.entity2_id) LEFT JOIN extension_record er ON (er.entity_id = e.id) LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)"
     where = "r.entity1_id IN (#{entity_ids.join(',')}) AND r.category_id IN (#{Relationship::POSITION_CATEGORY}, #{Relationship::MEMBERSHIP_CATEGORY}) AND r.is_deleted = 0"
     sql = "SELECT #{select} FROM #{from} WHERE #{where} GROUP BY r.entity2_id ORDER BY num DESC"
-    db = ActiveRecord::Base.connection
+    db = ApplicationRecord.connection
     orgs = db.select_all(sql).to_hash
 
     # filter entities by type

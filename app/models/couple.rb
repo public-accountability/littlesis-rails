@@ -1,4 +1,4 @@
-class Couple < ActiveRecord::Base
+class Couple < ApplicationRecord
   include SingularTable
 
   belongs_to :entity, inverse_of: :couple

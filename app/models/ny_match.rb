@@ -1,4 +1,4 @@
-class NyMatch < ActiveRecord::Base
+class NyMatch < ApplicationRecord
   belongs_to :ny_disclosure, inverse_of: :ny_match
   has_one :ny_filer, :through => :ny_disclosure
   has_one :ny_filer_entity, :through => :ny_filer

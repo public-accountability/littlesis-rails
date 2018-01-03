@@ -2,11 +2,11 @@ module NYSCampaignFinance
   STAGING_TABLE_NAME = :ny_disclosures_staging
 
   def self.drop_staging_table
-    ActiveRecord::Base.connection.execute("DROP TABLE IF EXISTS #{STAGING_TABLE_NAME}")
+    ApplicationRecord.connection.execute("DROP TABLE IF EXISTS #{STAGING_TABLE_NAME}")
   end
 
   def self.create_staging_table
-    ActiveRecord::Base.connection.create_table STAGING_TABLE_NAME do |t|
+    ApplicationRecord.connection.create_table STAGING_TABLE_NAME do |t|
       t.string :filer_id, limit: 10, null: false
       t.string :report_id, limit: 1, null: false
       t.string :transaction_code, limit: 1, null: false
@@ -43,7 +43,7 @@ module NYSCampaignFinance
   end
 
   def self.row_count
-    ActiveRecord::Base.connection.execute("SELECT count(*) from #{STAGING_TABLE_NAME}").to_a[0][0]
+    ApplicationRecord.connection.execute("SELECT count(*) from #{STAGING_TABLE_NAME}").to_a[0][0]
   end
 
   def self.import_disclosure_data(file, dry_run = false)
@@ -61,18 +61,18 @@ module NYSCampaignFinance
 
     trim_data_sql = "DELETE FROM #{STAGING_TABLE_NAME} WHERE transaction_code NOT IN ('A', 'B', 'C', 'D')"
     puts "executing sql: \n\n#{load_data_sql}\n\n"
-    ActiveRecord::Base.connection.execute(load_data_sql) unless dry_run
+    ApplicationRecord.connection.execute(load_data_sql) unless dry_run
     puts "executing sql: \n\n#{trim_data_sql}\n\n"
-    ActiveRecord::Base.connection.execute(trim_data_sql) unless dry_run
+    ApplicationRecord.connection.execute(trim_data_sql) unless dry_run
     puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
 
   def self.limit_staging_to_current_year
     year = Time.now.year.to_s
-    in_year = ActiveRecord::Base.connection.execute("SELECT count(*) from #{STAGING_TABLE_NAME} where e_year = '#{year}'").to_a[0][0]
+    in_year = ApplicationRecord.connection.execute("SELECT count(*) from #{STAGING_TABLE_NAME} where e_year = '#{year}'").to_a[0][0]
     puts "Found #{in_year} disclosures in year #{year}"
     puts "Preparing to delete all disclosures in #{STAGING_TABLE_NAME} that are NOT from #{year}"
-    ActiveRecord::Base.connection.execute("DELETE FROM #{STAGING_TABLE_NAME} WHERE e_year <> '#{year}'")
+    ApplicationRecord.connection.execute("DELETE FROM #{STAGING_TABLE_NAME} WHERE e_year <> '#{year}'")
     puts "There are now #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
 
@@ -122,7 +122,7 @@ module NYSCampaignFinance
            AND staging.schedule_transaction_date = main.schedule_transaction_date
            AND staging.e_year = main.e_year
            WHERE main.filer_id IS NULL;"
-    ActiveRecord::Base.connection.execute(sql).to_a.flatten
+    ApplicationRecord.connection.execute(sql).to_a.flatten
   end
 
   def self.insert_new_filers(file_path)

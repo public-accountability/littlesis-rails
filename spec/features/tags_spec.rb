@@ -252,16 +252,19 @@ describe 'Tags', :tagging_helper, type: :feature do
           let(:user) { create_basic_user }
           let(:person) { create(:entity_person).add_tag(tag.id, APP_CONFIG["system_user_id"]) }
           let(:list) { create(:list).add_tag(tag.id, user.sf_guard_user_id) }
-          let(:setup) { proc { list; person;} }
+          let(:setup) { proc { list; person; } }
+          let(:text) { page.all("#tag-homepage-edits-table tbody tr").map(&:text).join(' ') }
+
+          it 'contains two edits' do
+            expect(page.all("#tag-homepage-edits-table tbody tr").length).to eql 2
+          end
 
           it "shows `System` next to system edit" do
-            expect(page.all("#tag-homepage-edits-table tbody tr")[0])
-              .to have_text("System")
+            expect(text.scan('System').count).to eql 1
           end
 
           it "shows anaylsist's username next to analyst's edit" do
-            expect(page.all("#tag-homepage-edits-table tbody tr")[1])
-              .to have_text(user.username)
+            expect(text.scan(user.username).count).to eql 1
           end
         end
 

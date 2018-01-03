@@ -6,12 +6,15 @@ describe 'List Requests' do
   after(:each) { logout(:user) }
 
   describe 'adding entities to a list' do
-    let(:user){ create_admin_user } # who may edit lists
+    let(:user) { create_admin_user } # who may edit lists
     let(:list) { create(:list) }
     let(:entities) { Array.new(2) { create(:random_entity) } }
     let(:document_attrs) { attributes_for(:document) }
 
-    let(:request) { lambda { post "/lists/#{list.id}/entities/bulk", payload } }
+    let(:request) do
+      lambda { post "/lists/#{list.id}/entities/bulk", params: payload }
+    end
+
     let(:payload) do
       {
         data: [
@@ -42,7 +45,7 @@ describe 'List Requests' do
     end
 
     context 'with improperly formatted json' do
-      let(:payload){ { foo: 'bar' } }
+      let(:payload) { { foo: 'bar' } }
 
       it 'returns 400 with an error message' do
         request.call

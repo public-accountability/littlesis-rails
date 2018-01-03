@@ -1,4 +1,4 @@
-class OsDonation < ActiveRecord::Base
+class OsDonation < ApplicationRecord
   has_paper_trail  :on => [:update, :destroy]  # don't track create events
   validates_uniqueness_of :fec_cycle_id
 

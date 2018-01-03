@@ -1,4 +1,4 @@
-class ExtensionRecord < ActiveRecord::Base
+class ExtensionRecord < ApplicationRecord
   include SingularTable
   include Api::Serializable
 
@@ -20,7 +20,7 @@ class ExtensionRecord < ActiveRecord::Base
                  ) as subquery
             INNER JOIN extension_definition
             ON subquery.definition_id = extension_definition.id"
-    ActiveRecord::Base.connection.execute(sql).to_a
+    ApplicationRecord.connection.execute(sql).to_a
   end
 
   # Returns nested array 

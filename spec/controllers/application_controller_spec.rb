@@ -7,7 +7,6 @@ describe ApplicationController, type: :controller do
     end
   end
 
-
   describe 'ParamsHelper' do
     describe 'blank_to_nil' do
       it 'converts blank strings to nil' do

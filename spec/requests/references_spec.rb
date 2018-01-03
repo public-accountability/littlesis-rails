@@ -13,7 +13,7 @@ describe 'references requests', type: :request do
       (entities + Array.wrap(non_requested_entity)).each do |e|
         e.add_reference(attributes_for(:document))
       end
-      get '/references/recent', 'entity_ids' => "#{entities.map(&:id).join(',')}"
+      get '/references/recent', params: { 'entity_ids' => "#{entities.map(&:id).join(',')}" }
     end
 
     it 'returns the references for the entity plus the recent reference' do

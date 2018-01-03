@@ -1,4 +1,4 @@
-class SfGuardUser < ActiveRecord::Base
+class SfGuardUser < ApplicationRecord
   include SingularTable
   include SoftDelete
 

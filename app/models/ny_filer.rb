@@ -1,4 +1,4 @@
-class NyFiler < ActiveRecord::Base
+class NyFiler < ApplicationRecord
   has_one :ny_filer_entity
   has_many :entities, :through => :ny_filer_entity
   has_many :ny_disclosures, foreign_key: "filer_id"
