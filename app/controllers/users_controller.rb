@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict, :edits]
+  before_action :prevent_restricted, only: [:show, :edits]
   before_action :authenticate_user!, except: [:success]
   before_action :admins_only, except: [:show, :restrict, :success, :edits]
   before_action :user_or_admins_only, only: [:edits]
@@ -55,7 +56,7 @@ class UsersController < ApplicationController
       render action: 'image'
     end
   end
-  
+
   # GET /users/:id/edit_permissions
   def edit_permissions
 
@@ -133,6 +134,9 @@ class UsersController < ApplicationController
     else
       raise Exceptions::NotFoundError
     end
+  end
+
+  def prevent_restricted
     raise Exceptions::NotFoundError if @user.is_restricted?
   end
 
