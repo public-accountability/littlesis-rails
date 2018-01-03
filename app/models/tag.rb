@@ -50,15 +50,15 @@ class Tag < ApplicationRecord
   end
 
   # Integer -> Kaminari::PaginatableArray
-  def tagables_for_homepage(tagable_category, page = 1)
-    send("#{tagable_category}_for_homepage", page)
+  def tagables_for_homepage(tagable_category, *args)
+    send("#{tagable_category}_for_homepage", *args)
   end
 
-  def entities_for_homepage(page = 1)
+  # keyword args (person_page, org_page) -> Hash
+  def entities_for_homepage(person_page: 1, org_page: 1)
     %w[Person Org].reduce({}) do |acc, type|
-      acc.merge(type => paginate(page,
-                                 PER_PAGE,
-                                 *count_and_sort_entities(type, page)))
+      page = binding.local_variable_get("#{type.downcase}_page").to_i
+      acc.merge(type => paginate(page, PER_PAGE, *count_and_sort_entities(type, page)))
     end
   end
 

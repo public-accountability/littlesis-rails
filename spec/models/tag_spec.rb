@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-describe Tag do
-
+describe Tag, :pagination_helper do
   let(:tags) { Array.new(3) { create(:tag) } }
 
   it { should have_db_column(:restricted) }
@@ -37,41 +36,102 @@ describe Tag do
       expect(restricted_tag.restricted?).to be true
     end
 
+
+    # let(:entities_by_type) do
+    #   {
+    #     'Person' => Array.new(5) { create(:entity_person).add_tag(tag.id) },
+    #     'Org' => Array.new(5) { create(:entity_org).add_tag(tag.id) }
+    #   }
+    # end
+
+    # before do
+    #   relate = ->(x, ys) { ys.each { |y| create(:generic_relationship, entity: x, related: y) } }
+    #   entities_by_type.each do |_, es|
+    #     # relationships: es[4]: 3, es[3] & es[2]: 2, es[1]: 1, es[0]: 0
+    #     relate.call(es[4], es[1, 3])
+    #     relate.call(es[3], [es[2]])
+    #     # es[0] has 6 relationships to random person: won't affect sort, b/c person not tagged
+    #     relate.call(es[0], Array.new(6) { create(:entity_person) })
+    #   end
+    # end
+
+    # # TODO: Fails on travis repeatably but not locally, WHY!?
+    # xit 'lists entities by type, sorted by relationships to same-tagged entities of any type' do
+    #   tagable_list = tag.tagables_for_homepage(Entity.category_str)
+    #   entities_by_type.each do |type, es|
+    #     id_counts = tagable_list[type].map { |p| [p.id, p.relationship_count] }
+
+    #     expect(id_counts[0]).to eq [es[4].id, 3]
+    #     expect(id_counts[1, 2].to_set).to eq [[es[3].id, 2], [es[2].id, 2]].to_set
+    #     expect(id_counts[3]).to eq [es[1].id, 1]
+    #     expect(id_counts[4]).to eq [es[0].id, 0]
+    #   end
+    # end
+
     describe "querying tagables for tag homepage" do
       context "entities" do
+        let!(:people) { Array.new(4) { create(:entity_person).add_tag(tag.id) } }
+        let!(:orgs) { Array.new(4) { create(:entity_org).add_tag(tag.id) } }
+        let!(:setup_people_relationships) do
+          # creates 4 relationsips: with the following totals:
+          # people[0] = 1
+          # people[1] = 2
+          # people[2] = 2
+          # people[3] = 3
 
-        let(:entities_by_type) do
-          {
-            'Person' => Array.new(5) { create(:entity_person).add_tag(tag.id) },
-            'Org' => Array.new(5) { create(:entity_org).add_tag(tag.id) }
-          }
+          people.slice(0, 3).each do |person|
+            create(:generic_relationship, entity: people[3], related: person)
+          end
+          create(:generic_relationship, entity: people[1], related: people[2])
         end
 
-        before do
-          relate = ->(x, ys) { ys.each { |y| create(:generic_relationship, entity: x, related: y) } }
-          entities_by_type.each do |_, es|
-            # relationships: es[4]: 3, es[3] & es[2]: 2, es[1]: 1, es[0]: 0
-            relate.call(es[4], es[1, 3])
-            relate.call(es[3], [es[2]])
-            # es[0] has 6 relationships to random person: won't affect sort, b/c person not tagged
-            relate.call(es[0], Array.new(6) { create(:entity_person) })
+        let(:person_with_the_most_relationships) { people.last.reload }
+        let(:person_with_the_least_relationships) { people.first.reload }
+
+        let!(:setup_org_relationships) do
+          # creates 4 relationsips with the following totals:
+          # with the following totals:
+          # orgs[0] = 1
+          # orgs[1] = 2
+          # orgs[2] = 2
+          # orgs[3] = 3
+
+          orgs.slice(0, 3).each do |org|
+            create(:generic_relationship, entity: orgs[3], related: org)
+          end
+          create(:generic_relationship, entity: orgs[1], related: orgs[2])
+        end
+
+        let(:org_with_the_most_relationships) { orgs.last.reload }
+        let(:org_with_the_least_relationships) { orgs.first.reload }
+
+        context 'sorting' do
+          subject { tag.tagables_for_homepage 'entities' }
+          # subject { tag.entities_for_homepage }
+
+          it 'finds people sorted by count' do
+            expect(subject['Person'].length).to eql 4
+            expect(subject['Person'].first).to eql person_with_the_most_relationships
+            expect(subject['Person'].last).to eql person_with_the_least_relationships
+          end
+
+          it 'finds org sorted by count' do
+            expect(subject['Org'].length).to eql 4
+            expect(subject['Org'].first).to eql org_with_the_most_relationships
+            expect(subject['Org'].last).to eql org_with_the_least_relationships
           end
         end
 
-        # TODO: Fails on travis repeatably but not locally, WHY!?
-        xit 'lists entities by type, sorted by relationships to same-tagged entities of any type' do
-          tagable_list = tag.tagables_for_homepage(Entity.category_str)
-          entities_by_type.each do |type, es|
-            id_counts = tagable_list[type].map { |p| [p.id, p.relationship_count] }
-
-            expect(id_counts[0]).to eq [es[4].id, 3]
-            expect(id_counts[1, 2].to_set).to eq [[es[3].id, 2], [es[2].id, 2]].to_set
-            expect(id_counts[3]).to eq [es[1].id, 1]
-            expect(id_counts[4]).to eq [es[0].id, 0]
-          end
+        context 'pagination' do
+          stub_page_limit Tag, 2
+          
+          it ''
+ 
         end
+
       end
 
+      
       context "lists" do
 
         describe "sorting" do
