@@ -49,9 +49,9 @@ class Tag < ApplicationRecord
     restricted
   end
 
-  # Integer -> Kaminari::PaginatableArray
-  def tagables_for_homepage(tagable_category, *args)
-    send("#{tagable_category}_for_homepage", *args)
+  # ANY -> Kaminari::PaginatableArray
+  def tagables_for_homepage(tagable_category, **kwargs)
+    public_send "#{tagable_category}_for_homepage", **kwargs
   end
 
   # keyword args (person_page, org_page) -> Hash
@@ -62,20 +62,20 @@ class Tag < ApplicationRecord
     end
   end
 
-  def lists_for_homepage(page = 1)
+  def lists_for_homepage(page: 1)
     paginate(page,
              PER_PAGE,
              *count_and_sort_lists(page))
   end
 
-  def relationships_for_homepage(page = 1)
+  def relationships_for_homepage(page: 1)
     relationships
       .order(updated_at: :desc)
       .page(page)
       .per(PER_PAGE)
   end
 
-  def recent_edits_for_homepage(page = 1)
+  def recent_edits_for_homepage(page: 1)
     paginate(page,
              PER_PAGE,
              recent_edits(page),
@@ -111,7 +111,7 @@ class Tag < ApplicationRecord
 
   def count_and_sort_entities(entity_type, page = 1)
     [
-      entities_by_relationship_count(entity_type, page),
+      entities_by_relationship_count(entity_type.to_s, page),
       entities.where(primary_ext: entity_type.to_s).count
     ]
   end
@@ -119,7 +119,7 @@ class Tag < ApplicationRecord
   # Self -> [EntityActiveRecord, Int]
   def entities_by_relationship_count(entity_type, page = 1)
     # guard against SQL injection
-    raise ArgumentError unless %w[Person Org].include?(entity_type)
+    raise ArgumentError unless %w[Person Org].include?(entity_type.to_s)
     page = page.to_i
 
     entity_counts_sql = <<-SQL
@@ -147,8 +147,6 @@ class Tag < ApplicationRecord
        # cull record set to unique list of tagged entities with relationship counts
        GROUP BY tagged_entity_links.tagable_id
 
-       # sort
-       ORDER BY relationship_count desc
     SQL
 
     sql = <<-SQL
@@ -158,6 +156,8 @@ class Tag < ApplicationRecord
        INNER JOIN entity ON entity_counts.tagable_id = entity.id
        # filter by entity subtype
        WHERE entity.primary_ext = '#{entity_type}'
+       # sort
+       ORDER BY relationship_count desc
        # paginate
        LIMIT #{PER_PAGE}
        OFFSET #{(page - 1) * PER_PAGE}

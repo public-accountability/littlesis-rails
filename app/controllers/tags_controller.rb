@@ -61,7 +61,7 @@ class TagsController < ApplicationController
     @tagable_category = params[:tagable_category] || Entity.category_str
     @tagable_subtypes = @tagable_category == Entity.category_str ? %w[Person Org] : [nil]
     page = params[:page] || 1
-    @tagables = @tag.tagablles_for_homepage(@tagable_category, page)
+    @tagables = @tag.tagables_for_homepage(@tagable_category, page: page)
   end
 
   def set_tag
