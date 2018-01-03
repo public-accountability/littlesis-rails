@@ -12,7 +12,7 @@ describe HomeHelper do
 
     context 'thumbnail is nil' do
       subject { helper.networkmap_image_path(map_without_thumbnail) }
-      it { is_expected.to eql '/images/netmap-org.png' }
+      it { is_expected.to include '/assets/netmap-org' }
     end
   end
 end
