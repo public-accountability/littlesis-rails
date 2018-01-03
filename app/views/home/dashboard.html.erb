@@ -80,7 +80,7 @@
 		    <% if map.is_private %>
 			<div class="dashboard-private-map-thumbnail"></div>
 		    <% else %>
-			<%= image_tag(map.thumbnail, class: "dashboard-map-thumbnail") %><br>
+			<%= image_tag(networkmap_image_path(map), class: "dashboard-map-thumbnail") %><br>
 		    <% end %>
 		    <%= map.title %>
 		</a>

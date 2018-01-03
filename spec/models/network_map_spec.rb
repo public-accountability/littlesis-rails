@@ -124,5 +124,4 @@ describe NetworkMap, type: :model do
       end
     end
   end
-
 end
