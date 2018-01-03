@@ -15,7 +15,6 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
       # send welcome email to user - views/user_mailer/welcome_email
       if user.errors.empty?
         UserMailer.welcome_email(user).deliver_later
-        NotificationMailer.signup_email(user).deliver_later
         user.create_default_permissions
 
         # If the user's request is from a spamy ip address then automatically restrict the user
@@ -24,6 +23,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
           user.update(is_restricted: true)
         else
           user.delay.create_chat_account
+          NotificationMailer.signup_email(user).deliver_later                    
         end
 
       end

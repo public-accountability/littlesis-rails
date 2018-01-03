@@ -39,7 +39,7 @@ describe UsersController, type: :controller do
     context 'as an admin' do
       login_admin
       before do
-        expect(User).to receive(:find).with('1')
+        expect(User).to receive(:find).with('1').and_return(build(:user))
         get :edit_permissions, params: { :id => '1' }
       end
       it { should render_template 'edit_permissions' }
@@ -49,7 +49,8 @@ describe UsersController, type: :controller do
   describe 'POST #add_permission' do
     login_admin
     before do
-      expect(User).to receive(:find).with('1').and_return(double(:sf_guard_user_id => 2, :id => 1))
+      expect(User).to receive(:find).with('1')
+                        .and_return(build(:user, sf_guard_user_id: 2, id: 1))
       expect(SfGuardUserPermission).to receive(:create!).with(permission_id: 5, user_id: 2)
       post :add_permission, params: { :id => '1', :permission => '5' }
     end
@@ -59,7 +60,8 @@ describe UsersController, type: :controller do
   describe 'DELETE #delete_permission' do
     login_admin
     before do
-      expect(User).to receive(:find).with('1').and_return(double(:sf_guard_user_id => 2, :id => 1))
+      expect(User).to receive(:find).with('1')
+                        .and_return(build(:user, sf_guard_user_id: 2, id: 1))
       expect(SfGuardUserPermission).to receive(:remove_permission).with(permission_id: 5, user_id: 2)
       delete :delete_permission, params: { :id => '1', :permission => '5' }
     end
@@ -67,12 +69,6 @@ describe UsersController, type: :controller do
   end
 
   describe 'DELETE #destory' do
-    # describe 'logged in as regular user' do 
-    #   login_user
-    #   before { delete :destroy, :id => '1234' }
-    #   it { should respond_with(403) }
-    # end
-    
     describe 'logged in as admin' do
       login_admin
 
@@ -113,7 +109,7 @@ describe UsersController, type: :controller do
         end
 
         context 'afterwards' do
-          before { delete :destroy, params: { :id => @user.id  } }
+          before { delete :destroy, params: { :id => @user.id } }
           it { should redirect_to(admin_users_path) }
         end
       end
