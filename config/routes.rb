@@ -176,7 +176,7 @@ Lilsis::Application.routes.draw do
   # deletion requests #
   #####################
 
-  resources :deletion_requests, only: [] do
+  resources :deletion_requests, only: [:new, :create] do
     member do
       get 'review' => 'deletion_requests#review'
       post 'review' => 'deletion_requests#commit_review'

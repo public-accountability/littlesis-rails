@@ -240,4 +240,41 @@ describe NotificationMailer, type: :mailer do
       end
     end
   end
+
+  describe "#deletion_request_email" do
+    let(:user) { create(:really_basic_user) }
+    let(:deletion_request) { create(:deletion_request, user: user) }
+    let(:mail) { NotificationMailer.deletion_request_email(deletion_request) }
+
+    it "mentions entity in subject line" do
+      expect(mail.subject)
+        .to eql "Deletion request received for #{deletion_request.entity.name}"
+    end
+
+    it "sets requester as reply_to" do
+      expect(mail.reply_to).to eql [user.email]
+    end
+
+    it "sends email " do
+      expect { mail.deliver_now }
+        .to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+
+    describe "body" do
+      let(:body) { mail.body.raw_source }
+
+      it "mentions requester" do
+        expect(body).to have_text user.username
+      end
+
+      it "mentions deletion target" do
+        expect(body).to have_text deletion_request.entity.name
+      end
+
+      it "links to deletion review page" do
+        expect(body)
+          .to have_text review_deletion_request_url(id: deletion_request.id)
+      end
+    end
+  end
 end

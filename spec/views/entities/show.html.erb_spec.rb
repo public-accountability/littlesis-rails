@@ -131,13 +131,12 @@ describe 'entities/show.html.erb' do
         end
       end  # end of context without legacy permissions
 
-      context 'with deleter permission' do
+      context 'with no special permissions' do
         before(:all) do
           DatabaseCleaner.start
           @sf_user = create(:sf_guard_user)
           @user = create(:user, sf_guard_user_id: @sf_user.id)
           @e = create(:entity_org, last_user: @sf_user, name: 'mega corp')
-          SfGuardUserPermission.create!(user_id: @sf_user.id, permission_id: 5)
         end
 
         after(:all) { DatabaseCleaner.clean }
@@ -150,12 +149,8 @@ describe 'entities/show.html.erb' do
           render
         end
 
-        it 'has 3 links' do
-          expect(rendered).to have_css('#actions a', :count => 4)
-        end
-
-        it 'renders remove button' do
-          expect(rendered).to have_css('input[value=remove]')
+        it 'has 5 links' do
+          expect(rendered).to have_css('#actions a', :count => 5)
         end
       end
 
@@ -177,8 +172,8 @@ describe 'entities/show.html.erb' do
           render
         end
 
-        it 'has 4 links' do
-          expect(rendered).to have_css('#actions a', :count => 5)
+        it 'has 6 links' do
+          expect(rendered).to have_css('#actions a', :count => 6)
         end
 
         it 'renders match donations button' do
@@ -206,26 +201,6 @@ describe 'entities/show.html.erb' do
 
         it 'renders add bulk button' do
           expect(rendered).to have_css('a', :text => 'add bulk')
-        end
-      end
-
-      describe 'with bulker and deleter permission' do
-        before do
-          @sf_guard_user = create(:sf_guard_user, username: 'Y')
-          @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
-          @e = build(:mega_corp_inc, last_user: @sf_guard_user, updated_at: 1.day.ago, org: build(:organization))
-          SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 5)
-          SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 9)
-          assign(:entity, @e)
-          assign(:current_user, @user)
-          sign_in @user
-          render
-        end
-
-        it 'has 4 links' do
-          # missing match donations because entity is an org
-          expect(rendered).to have_css('#actions a', :count => 5)
-          expect(rendered).to have_css('form input[value=remove]', :count => 1)
         end
       end
 

@@ -53,4 +53,11 @@ class NotificationMailer < ApplicationMailer
          subject: "Merge request received for #{merge_request.source.name}",
          reply_to: merge_request.user.email)
   end
+
+  def deletion_request_email(deletion_request)
+    @deletion_request = deletion_request
+    mail(to: DEFAULT_TO,
+         subject: "Deletion request received for #{deletion_request.entity.name}",
+         reply_to: deletion_request.user.email)
+  end
 end

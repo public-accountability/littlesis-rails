@@ -8,7 +8,6 @@ describe "partial: entities/actions" do
   context 'when user is an advanced user' do
     let(:user) do
       u = build(:user)
-      expect(u).to receive(:has_legacy_permission).with('deleter').and_return(true)
       expect(u).to receive(:has_legacy_permission).with('importer').and_return(true)
       expect(u).to receive(:has_legacy_permission).with('bulker').and_return(true)
       allow(u).to receive(:has_legacy_permission).with('admin').and_return(false)
@@ -22,14 +21,14 @@ describe "partial: entities/actions" do
     end
 
     context 'org page' do
-      specify { css 'input[value=remove]' }
+      specify { css 'a', text: 'remove' }
       specify { css 'a', text: 'add bulk' }
       specify { not_css 'a', text: 'match donations' }
     end
 
     context 'person page' do
       let(:entity) { person }
-      specify { css 'input[value=remove]' }
+      specify { css 'a', text: 'remove' }
       specify { css 'a', text: 'add bulk' }
       specify { css 'a', text: 'match donations' }
     end
