@@ -7,7 +7,7 @@ class Tag < ApplicationRecord
   # create associations for all tagable classes
   # ie: tag#entities, tag#lists, tag#relationships, etc...
   Tagable.classes.each do |klass|
-    has_many klass.category_sym, through: :taggings, source: :tagable, source_type: klass
+    has_many klass.category_sym, through: :taggings, source: :tagable, source_type: klass.name
   end
 
   validates :name, uniqueness: true, presence: true
