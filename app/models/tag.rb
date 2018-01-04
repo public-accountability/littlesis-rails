@@ -116,85 +116,40 @@ class Tag < ApplicationRecord
     ]
   end
 
-
+  # str|class, int -> [EntityActiveRecord]
   def entities_by_relationship_count(entity_type, page = 1)
     # guard against SQL injection
     raise ArgumentError unless %w[Person Org].include?(entity_type.to_s)
     page = page.to_i
 
     sql = <<-SQL
-    SELECT entity.*, entity_counts.relationship_count
-    FROM (
-         SELECT taggings.tagable_id, 
+         SELECT taggings.tagable_id,
                 SUM( case when linked_taggings.id is null then 0
 		     when taggings.id is null then 0
 		     else 1 end ) as relationship_count
 
          FROM taggings
-         INNER JOIN entity ON entity.id = taggings.tagable_id AND entity.is_deleted = 0
+         INNER JOIN entity ON entity.id = taggings.tagable_id AND entity.is_deleted = 0 AND entity.primary_ext = '#{entity_type}'
          LEFT JOIN link ON link.entity1_id = taggings.tagable_id
          LEFT JOIN taggings as linked_taggings ON linked_taggings.tagable_id = link.entity2_id AND linked_taggings.tagable_class = 'Entity' AND linked_taggings.tag_id = #{id}
-         WHERE taggings.tag_id = #{id} AND taggings.tagable_class = 'Entity' AND entity.primary_ext = '#{entity_type}'
+         WHERE taggings.tag_id = #{id} AND taggings.tagable_class = 'Entity'
          GROUP BY taggings.tagable_id
          ORDER BY relationship_count desc
          LIMIT #{PER_PAGE}
          OFFSET #{(page - 1) * PER_PAGE}
-    ) as entity_counts
-    INNER JOIN entity ON entity.id = entity_counts.tagable_id AND entity.is_deleted = 0
-    SQL
-    
-    Entity.find_by_sql(sql)
-  end
-
-
-
-  # str|class, int -> [EntityActiveRecord]
-  def entities_by_relationship_count_old(entity_type, page = 1)
-    # guard against SQL injection
-    raise ArgumentError unless %w[Person Org].include?(entity_type.to_s)
-    page = page.to_i
-
-    entity_counts_sql = <<-SQL
-      SELECT tagged_entity_links.tagable_id,
-
-              # only count record in doubly-joined table if both entities in a link have correct tag
-              SUM( case when tagged_entity_links.entity1_id is null then 0
-       	         	when taggings.id is null then 0
-	                else 1 end ) as relationship_count
-
-       # join all of a tag's entities all of each entity's links
-       FROM (
-	    SELECT taggings.tagable_id, link.*
-	    FROM taggings
-	    LEFT JOIN link ON link.entity1_id = taggings.tagable_id
-	    WHERE taggings.tag_id = #{id} AND taggings.tagable_class = 'Entity'
-       ) AS tagged_entity_links
-     # join to find out if linked-to entities are also tagged with our tag
-       LEFT JOIN taggings
-            ON tagged_entity_links.entity2_id = taggings.tagable_id
-     	       AND taggings.tag_id = #{id}
-	       AND taggings.tagable_class = 'Entity'
-
-       # cull record set to unique list of tagged entities with relationship counts
-       GROUP BY tagged_entity_links.tagable_id
-
     SQL
 
-    sql = <<-SQL
-       SELECT *
-       FROM (#{entity_counts_sql}) AS entity_counts
-       # recover entity fields
-       INNER JOIN entity ON entity_counts.tagable_id = entity.id
-       # filter by entity subtype
-       WHERE entity.primary_ext = '#{entity_type}'
-       # sort
-       ORDER BY relationship_count desc
-       # paginate
-       LIMIT #{PER_PAGE}
-       OFFSET #{(page - 1) * PER_PAGE}
-      SQL
+    entities_and_counts = ApplicationRecord.connection.execute(sql).to_a
 
-    Entity.find_by_sql(sql)
+    relationship_counts = entities_and_counts.reduce({}) do |memo, arr|
+      memo.merge(arr.first => arr.second)
+    end
+
+    Entity.find(entities_and_counts.map(&:first)).to_a.map! do |entity|
+      entity.singleton_class.class_eval { attr_reader :relationship_count }
+      entity.instance_variable_set(:@relationship_count, relationship_counts.fetch(entity.id))
+      entity
+    end
   end
 
   def count_and_sort_lists(page = 1)
@@ -202,7 +157,7 @@ class Tag < ApplicationRecord
   end
 
   def lists_by_entity_count(page = 1)
-    page = page.to_i
+    page = page.nil? ? 1 : page.to_i
     query = <<-SQL
       SELECT DISTINCT ls_list.*, COUNT(ls_list_entity.id) AS entity_count
       FROM ls_list

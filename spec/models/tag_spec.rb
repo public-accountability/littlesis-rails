@@ -41,9 +41,11 @@ describe Tag, :pagination_helper do
       2.times { create(:generic_relationship, entity: people[1], related: create(:entity_person)) }
     end
 
-    it 'returns 4 People, correct sorted' do
+    it 'returns 4 People, correctly sorted' do
       expect(tag.send(:entities_by_relationship_count, 'Person').length).to eql 4
       expect(tag.send(:entities_by_relationship_count, 'Person').first).to eq people[3].reload
+      expect(tag.send(:entities_by_relationship_count, 'Person').first.relationship_count).to eq 3
+      expect(tag.send(:entities_by_relationship_count, 'Person').last.relationship_count).to eq 1
     end
 
     it 'returns 2 Orgs' do
