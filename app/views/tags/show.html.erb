@@ -6,11 +6,12 @@
   
   <div id="tagable-lists">
 
-    <% # if no subtypes exist, @tagable_subtypes will be `[nil]` %>
+    <%# if no subtypes exist, @tagable_subtypes will be `[nil]` %>
     <% @tagable_subtypes.each do |subtype|  %>
       <%= render partial: 'tagable_list',
                  locals: { tagables: subtype ? @tagables[subtype] : @tagables,
                            tag: @tag,
+		           param_name: subtype.nil? ? 'page' : "#{subtype.downcase}_page",
                            subheader: subtype&.pluralize,
                            item_descriptor: subtype&.pluralize&.downcase || @tagable_category } %>
     <% end %>

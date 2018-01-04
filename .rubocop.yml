@@ -43,6 +43,10 @@ Lint/InterpolationCheck:
   Exclude:
     - 'spec/**/*.rb'
 
+Style/CommentedKeyword:
+  Exclude:
+    - 'spec/**/*.rb'
+
 Style/Documentation:
   Enabled: false
 
