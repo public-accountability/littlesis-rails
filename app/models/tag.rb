@@ -116,8 +116,40 @@ class Tag < ApplicationRecord
     ]
   end
 
-  # Self -> [EntityActiveRecord, Int]
+
   def entities_by_relationship_count(entity_type, page = 1)
+    # guard against SQL injection
+    raise ArgumentError unless %w[Person Org].include?(entity_type.to_s)
+    page = page.to_i
+
+    sql = <<-SQL
+    SELECT entity.*, entity_counts.relationship_count
+    FROM (
+         SELECT taggings.tagable_id, 
+                SUM( case when linked_taggings.id is null then 0
+		     when taggings.id is null then 0
+		     else 1 end ) as relationship_count
+
+         FROM taggings
+         INNER JOIN entity ON entity.id = taggings.tagable_id AND entity.is_deleted = 0
+         LEFT JOIN link ON link.entity1_id = taggings.tagable_id
+         LEFT JOIN taggings as linked_taggings ON linked_taggings.tagable_id = link.entity2_id AND linked_taggings.tagable_class = 'Entity' AND linked_taggings.tag_id = #{id}
+         WHERE taggings.tag_id = #{id} AND taggings.tagable_class = 'Entity' AND entity.primary_ext = '#{entity_type}'
+         GROUP BY taggings.tagable_id
+         ORDER BY relationship_count desc
+         LIMIT #{PER_PAGE}
+         OFFSET #{(page - 1) * PER_PAGE}
+    ) as entity_counts
+    INNER JOIN entity ON entity.id = entity_counts.tagable_id AND entity.is_deleted = 0
+    SQL
+    
+    Entity.find_by_sql(sql)
+  end
+
+
+
+  # str|class, int -> [EntityActiveRecord]
+  def entities_by_relationship_count_old(entity_type, page = 1)
     # guard against SQL injection
     raise ArgumentError unless %w[Person Org].include?(entity_type.to_s)
     page = page.to_i
@@ -137,8 +169,7 @@ class Tag < ApplicationRecord
 	    LEFT JOIN link ON link.entity1_id = taggings.tagable_id
 	    WHERE taggings.tag_id = #{id} AND taggings.tagable_class = 'Entity'
        ) AS tagged_entity_links
-
-       # join to find out if linked-to entities are also tagged with our tag
+     # join to find out if linked-to entities are also tagged with our tag
        LEFT JOIN taggings
             ON tagged_entity_links.entity2_id = taggings.tagable_id
      	       AND taggings.tag_id = #{id}
