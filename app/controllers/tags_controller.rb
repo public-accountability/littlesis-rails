@@ -39,7 +39,7 @@ class TagsController < ApplicationController
   end
 
   def edits
-    @recent_edits = @tag.recent_edits_for_homepage params.fetch(:page, 1)
+    @recent_edits = @tag.recent_edits_for_homepage page: params.fetch(:page, 1)
   end
 
   # COMPLEX ACTIONS
@@ -60,8 +60,18 @@ class TagsController < ApplicationController
   def set_tagables
     @tagable_category = params[:tagable_category] || Entity.category_str
     @tagable_subtypes = @tagable_category == Entity.category_str ? %w[Person Org] : [nil]
-    page = params[:page] || 1
-    @tagables = @tag.tagables_for_homepage(@tagable_category, page: page)
+    @tagables = @tag.tagables_for_homepage @tagable_category, page_params
+  end
+
+  # for the tagable category "entities",
+  # tag#tagables_for_homepage requires two params: "person_page" and "org_page"
+  # all other categories use the just the param "page"
+  def page_params
+    if @tagable_category == 'entities'
+      { person_page: params.fetch(:person_page, 1), org_page: params.fetch(:org_page, 1) }
+    else
+      { page: params.fetch(:page, 1) }
+    end
   end
 
   def set_tag

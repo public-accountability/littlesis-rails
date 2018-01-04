@@ -1,4 +1,4 @@
-<%# locals: tagables, tag, sub_header, tagable_descriptor %>
+<%# locals: tagables, tag, param_name, sub_header, tagable_descriptor %>
 
 <div class="tagable-list">
 
@@ -29,5 +29,5 @@
 </div>
 
 <div class="tagable-list-pagination">
-  <%= paginate tagables %>
+  <%= paginate tagables, param_name: param_name %>
 </div>
