@@ -44,6 +44,7 @@
 # Ignore sphinx config
 config/production.sphinx.conf
 config/development.sphinx.conf
+config/test.sphinx.conf
 public/assets/*
 
 # generated test error files
