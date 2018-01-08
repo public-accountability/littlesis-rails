@@ -4,7 +4,7 @@ describe 'Maps', type: :request do
   before(:all) do
     ThinkingSphinx::Deltas.suspend!
     @apple_corp = create(:entity_org, name: 'apple corp')
-    @banana_crop = create(:entity_org, name: 'banana! corp')
+    @banana_corp = create(:entity_org, name: 'banana! corp')
     ThinkingSphinx::Test.init
     ThinkingSphinx::Test.index 'entity_core'
     ThinkingSphinx::Test.start index: false
@@ -20,10 +20,15 @@ describe 'Maps', type: :request do
   end
 
   describe 'find nodes' do
+    describe 'missing param q' do
+      before { get '/maps/find_nodes' }
+      specify { expect(response).to have_http_status 400 }
+    end
+
     describe 'searching for "apple"' do
       before { get '/maps/find_nodes', params: { q: 'apple' } }
 
-      it 'returns finds one entity and returns search results as json' do
+      it 'finds one entity and returns search results as json' do
         expect(response).to have_http_status 200
         expect(json.length).to eql(1)
         expect(ActiveSupport::HashWithIndifferentAccess.new(json.first))
@@ -34,7 +39,7 @@ describe 'Maps', type: :request do
     describe 'searching for "banana!"' do
       before { get '/maps/find_nodes', params: { q: 'banana!' } }
 
-      it 'returns finds one entity and returns search results as json' do
+      it 'finds one entity and returns search results as json' do
         expect(response).to have_http_status 200
         expect(json.length).to eql(1)
         expect(ActiveSupport::HashWithIndifferentAccess.new(json.first))
