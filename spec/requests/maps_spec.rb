@@ -5,9 +5,16 @@ describe 'Maps', type: :request do
     ThinkingSphinx::Deltas.suspend!
     @apple_corp = create(:entity_org, name: 'apple corp')
     @banana_corp = create(:entity_org, name: 'banana! corp')
-    ThinkingSphinx::Test.init
-    ThinkingSphinx::Test.index 'entity_core'
-    ThinkingSphinx::Test.start index: false
+    begin
+      ThinkingSphinx::Test.init 
+      ThinkingSphinx::Test.index 'entity_core'
+      ThinkingSphinx::Test.start index: false
+    rescue Riddle::CommandFailedError => e
+      puts e
+      puts e.command_result.inspect
+      puts e.command_result.output
+      raise e
+    end
   end
 
   after(:all) do
