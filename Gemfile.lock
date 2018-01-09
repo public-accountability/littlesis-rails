@@ -329,6 +329,9 @@ GEM
       railties (>= 4.2.0, < 5.1)
     riddle (2.0.0)
     rmagick (2.16.0)
+    roo (2.7.1)
+      nokogiri (~> 1)
+      rubyzip (~> 1.1, < 2.0.0)
     rspec (3.6.0)
       rspec-core (~> 3.6.0)
       rspec-expectations (~> 3.6.0)
@@ -495,6 +498,7 @@ DEPENDENCIES
   redcarpet (>= 3.4.0)
   redis-rails (>= 5.0.2)
   rmagick
+  roo (~> 2.7.0)
   rspec-html-matchers (~> 0.9.0)
   rspec-rails (~> 3.6.1)
   rubocop

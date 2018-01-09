@@ -103,3 +103,6 @@ gem 'redcarpet', '>= 3.4.0'
 
 # google's recaptcha
 gem "recaptcha", '>= 4.6.2', require: "recaptcha/rails"
+
+# Used by `lib/cmp`
+gem "roo", "~> 2.7.0", :require => false

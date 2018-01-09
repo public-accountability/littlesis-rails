@@ -56,9 +56,13 @@ coverage
 # development db
 data/*.sql
 
+# CMP data
+data/*.xlsx
+
 # Passenger files
 .passenger/
 log/*.lock
 
 .bash_history
 .pry_history
+.irb-history
