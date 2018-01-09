@@ -52,6 +52,7 @@ RSpec.configure do |config|
   config.include RequestExampleMacros, :type => :request
   config.include NetworkAnalysisExampleHelper, :network_analysis_helper
   config.include MergingExampleMacros, :merging_helper
+  config.include SphinxTestHelper, :sphinx
 
   # these run inside example groups (ie: describe blocks)
   config.extend ControllerMacros, :type => :controller
