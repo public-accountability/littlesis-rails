@@ -1,25 +1,15 @@
 require 'rails_helper'
 
-describe 'Maps', type: :request do
+describe 'Maps', :sphinx, type: :request do
   before(:all) do
     ThinkingSphinx::Deltas.suspend!
     @apple_corp = create(:entity_org, name: 'apple corp')
     @banana_corp = create(:entity_org, name: 'banana! corp')
-    begin
-      ThinkingSphinx::Test.init 
-      ThinkingSphinx::Test.index 'entity_core'
-      ThinkingSphinx::Test.start index: false
-    rescue Riddle::CommandFailedError => e
-      puts e
-      puts e.command_result.inspect
-      puts e.command_result.output
-      raise e
-    end
+    setup_sphinx 'entity_core'
   end
 
   after(:all) do
-    ThinkingSphinx::Test.stop
-    ThinkingSphinx::Test.clear
+    teardown_sphinx
     Entity.delete_all
     Link.delete_all
     Alias.delete_all

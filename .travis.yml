@@ -17,8 +17,7 @@ before_install:
   - sudo add-apt-repository -y 'deb [arch=amd64,i386,ppc64el] http://sfo1.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu trusty main'
   - sudo add-apt-repository -y ppa:builds/sphinxsearch-rel22
   - sudo apt-get -qq update
-  - sudo apt-get install -y libmariadbclient-dev
-  - sudo apt-get install -y sphinxsearch
+  - sudo apt-get install -y libmariadbclient-dev sphinxsearch
 
 before_script:
   - cp config/database.travis.yml config/database.yml
