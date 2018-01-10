@@ -1,19 +1,23 @@
 module Cmp
   class EntityMatch
-    SEARCH_OPTIONS = { :with => { primary_ext: "'Org'", is_deleted: false } }.freeze
-
     attr_reader :search_results
     delegate :count, :empty?, :to => :search_results
 
-    def initialize(name)
+    def initialize(name:, primary_ext:)
+      raise ArgumentError, "Invalid primary_ext" unless %w[Org Person].include? primary_ext
       @name = name
+      @search_options = { :with => { primary_ext: "'#{primary_ext}'", is_deleted: false } }.freeze
       @search_results = perform_search
+    end
+
+    def first
+      @search_results.first unless empty?
     end
 
     private
 
     def perform_search
-      @_results ||= Entity::Search.search(@name, SEARCH_OPTIONS)
+      Entity::Search.search @name, @search_options
     end
   end
 end

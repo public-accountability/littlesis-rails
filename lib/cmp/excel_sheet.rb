@@ -10,17 +10,4 @@ module Cmp
       @sheet = @xlsx.sheet(sheet)
     end
   end
-
-  class OrgSheet < Cmp::ExcelSheet
-    HEADER_MAP = {
-      cmpid: 'CMPID_ORGL',
-      cmpmnemonic: 'CMPMnemonic',
-      cmpname: 'CMPName',
-      orgtype: 'OrgType_a'
-    }.freeze
-
-    def to_a
-      parse(**HEADER_MAP)
-    end
-  end
 end
