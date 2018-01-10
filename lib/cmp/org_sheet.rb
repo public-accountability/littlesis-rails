@@ -14,9 +14,5 @@ module Cmp
       website: 'Websiteaddress_2016',
       status: 'Status_2016'
     }.freeze
-
-    def to_a
-      parse(**HEADER_MAP)
-    end
   end
 end

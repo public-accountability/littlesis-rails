@@ -1,7 +1,5 @@
 module Cmp
-  class CmpOrg
-    attr_reader :attributes
-    
+  class CmpOrg < Cmp::CmpEntity
     # Mapping between cmp fields and Model/Attribute for entities
     ATTRIBUTE_MAP = {
       :cmpname => [:entity, :name],
@@ -12,10 +10,6 @@ module Cmp
       :latitude => [:address, :latitude ],
       :longitude => [:address, :longitude ]
     }.freeze
-
-    def initialize(attrs)
-      @attributes = attrs
-    end
 
     def entity_match
       return @_entity_match if defined?(@_entity_match)
@@ -28,12 +22,5 @@ module Cmp
         url: entity_match.empty? ? "" : entity_url(entity_match.first)
       })
     end
-
-    private
-
-    def entity_url(entity)
-      "https://littlesis.org#{Rails.application.routes.url_helpers.entity_path(entity).gsub('entities', 'org')}"
-    end
-
   end
 end

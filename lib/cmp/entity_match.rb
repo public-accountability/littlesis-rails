@@ -14,6 +14,10 @@ module Cmp
       @search_results.first unless empty?
     end
 
+    def second
+      @search_results.second unless (count < 2)
+    end
+
     private
 
     def perform_search
