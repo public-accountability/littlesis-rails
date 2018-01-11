@@ -39,7 +39,6 @@ module Cmp
         extension: 'Business'
       }
     }
-    
 
     def initialize(type_id)
       @type_id = type_id.to_i
@@ -47,6 +46,5 @@ module Cmp
       @extension = TYPES.dig @type_id, :extension
       @name = TYPES.dig @type_id, :name
     end
-    
   end
 end

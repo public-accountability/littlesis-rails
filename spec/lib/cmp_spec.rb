@@ -1,7 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Cmp do
-
+describe Cmp do
   describe Cmp::CmpEntity do
     let(:attrs) { { :name => Faker::Cat.name } }
     subject { Cmp::CmpEntity.new attrs }
@@ -9,7 +8,6 @@ RSpec.describe Cmp do
   end
 
   describe Cmp::ExcelSheet do
-
     class TestCmpExcelSheet < Cmp::ExcelSheet
       HEADER_MAP = { cmpid: 'CMPID_ORGL', cmpname: 'CMPName' }
     end
@@ -22,6 +20,67 @@ RSpec.describe Cmp do
       expect(subject.to_a).to eql([
                                     { cmpid: 5100178, cmpname: 'BNP PARIBAS' },
                                     { cmpid: 5100179, cmpname: 'TELEFONICA SA' } ])
+    end
+  end
+
+  describe Cmp::OrgType do
+    it 'has TYPES consant' do
+      expect(Cmp::OrgType::TYPES).to be_a Hash
+    end
+
+    it 'raises error if passed an type id that is out of range' do
+      expect { Cmp::OrgType.new(0) }.to raise_error(ArgumentError)
+      expect { Cmp::OrgType.new(10) }.to raise_error(ArgumentError)
+    end
+
+    it 'sets extension and name properly' do
+      org_type = Cmp::OrgType.new('9')
+      expect(org_type.name).to eql 'Corporation'
+      expect(org_type.extension).to eql 'Business'
+      expect(org_type.type_id).to eql 9
+    end
+  end
+
+  describe Cmp::EntityMatch do
+    let(:entity_match) { Cmp::EntityMatch.new(name: 'test name', primary_ext: 'Person') }
+
+    it 'raises error if passed invalid type' do
+      expect {
+        Cmp::EntityMatch.new(name: 'name', primary_ext: 'invalid primary ext')
+      }.to raise_error(ArgumentError)
+    end
+
+    it 'sets @name and @search_options' do
+      expect(Entity::Search).to receive(:search).and_return([])
+      expect(entity_match.instance_variable_get(:@name)).to eql 'test name'
+      expect(entity_match.instance_variable_get(:@search_options))
+        .to eql({ :with => { primary_ext: "'Person'", is_deleted: false } })
+    end
+
+    context 'with no search results' do
+      before { expect(Entity::Search).to receive(:search).and_return([]) }
+      specify { expect(entity_match.empty?).to be true }
+      specify { expect(entity_match.count).to eql 0 }
+      specify { expect(entity_match.first).to be nil }
+      specify { expect(entity_match.second).to be nil }
+    end
+  
+    context 'with one search results' do
+      let(:person) { build(:person) }
+      before { expect(Entity::Search).to receive(:search).and_return(Array.wrap(person)) }
+      specify { expect(entity_match.empty?).to be false }
+      specify { expect(entity_match.count).to eql 1 }
+      specify { expect(entity_match.first).to eql person }
+      specify { expect(entity_match.second).to be nil }
+    end
+
+    context 'with three search results' do
+      let(:people) { Array.new(3) { build(:person) } }
+      before { expect(Entity::Search).to receive(:search).and_return(people) }
+      specify { expect(entity_match.empty?).to be false }
+      specify { expect(entity_match.count).to eql 3 }
+      specify { expect(entity_match.first).to eql people[0] }
+      specify { expect(entity_match.second).to be people[1] }
     end
   end
 end
