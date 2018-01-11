@@ -9,17 +9,16 @@ describe Cmp do
 
   describe Cmp::ExcelSheet do
     class TestCmpExcelSheet < Cmp::ExcelSheet
-      HEADER_MAP = { cmpid: 'CMPID_ORGL', cmpname: 'CMPName' }
+      HEADER_MAP = { cmpid: 'CMPID_ORGL', cmpname: 'CMPName' }.freeze
     end
-    
-    let(:excel_file_path) { Rails.root.join('spec', 'testdata', 'cmp_orgs.xlsx').to_s } 
+
+    let(:excel_file_path) { Rails.root.join('spec', 'testdata', 'cmp_orgs.xlsx').to_s }
       
     subject { TestCmpExcelSheet.new(excel_file_path) }
 
     it 'parses excel sheet into an array of hash according to the header converstion map' do
-      expect(subject.to_a).to eql([
-                                    { cmpid: 5100178, cmpname: 'BNP PARIBAS' },
-                                    { cmpid: 5100179, cmpname: 'TELEFONICA SA' } ])
+      expect(subject.to_a)
+        .to eql [{ cmpid: 5_100_178, cmpname: 'BNP PARIBAS' }, { cmpid: 5_100_179, cmpname: 'TELEFONICA SA' }]
     end
   end
 
@@ -45,16 +44,16 @@ describe Cmp do
     let(:entity_match) { Cmp::EntityMatch.new(name: 'test name', primary_ext: 'Person') }
 
     it 'raises error if passed invalid type' do
-      expect {
+      expect do
         Cmp::EntityMatch.new(name: 'name', primary_ext: 'invalid primary ext')
-      }.to raise_error(ArgumentError)
+      end.to raise_error(ArgumentError)
     end
 
     it 'sets @name and @search_options' do
       expect(Entity::Search).to receive(:search).and_return([])
       expect(entity_match.instance_variable_get(:@name)).to eql 'test name'
       expect(entity_match.instance_variable_get(:@search_options))
-        .to eql({ :with => { primary_ext: "'Person'", is_deleted: false } })
+        .to eql(:with => { primary_ext: "'Person'", is_deleted: false })
     end
 
     context 'with no search results' do

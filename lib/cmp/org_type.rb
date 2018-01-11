@@ -38,11 +38,11 @@ module Cmp
         name: 'Corporation',
         extension: 'Business'
       }
-    }
+    }.freeze
 
     def initialize(type_id)
       @type_id = type_id.to_i
-      raise ArgumentError, "type_id is a number between 1 and 9" unless (1..9).include? @type_id
+      raise ArgumentError, "type_id is a number between 1 and 9" unless (1..9).cover? @type_id
       @extension = TYPES.dig @type_id, :extension
       @name = TYPES.dig @type_id, :name
     end

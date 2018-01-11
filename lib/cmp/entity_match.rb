@@ -14,7 +14,7 @@ module Cmp
     end
 
     def second
-      search_results.second unless (count < 2)
+      search_results.second unless count < 2
     end
 
     def search_results

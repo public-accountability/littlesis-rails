@@ -20,7 +20,8 @@ module Cmp
     private
 
     def entity_url(entity)
-      "https://littlesis.org#{Rails.application.routes.url_helpers.entity_path(entity).gsub('entities', 'person')}"
+      e_path = Rails.application.routes.url_helpers.entity_path(entity).gsub('entities', 'person')
+      "https://littlesis.org#{e_path}"
     end
   end
 end
