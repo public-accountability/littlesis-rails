@@ -58,6 +58,7 @@ data/*.sql
 
 # CMP data
 data/*.xlsx
+data/cmp*.csv
 
 # Passenger files
 .passenger/

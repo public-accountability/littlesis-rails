@@ -16,11 +16,12 @@ module Cmp
   end
 
   # -> [CmpOrg]
-  def self.orgs
-    OrgSheet.new(ORG_FILE_PATH).to_a.map { |attrs| CmpOrg.new(attrs) }
+  def self.orgs(file_path = ORG_FILE_PATH)
+    OrgSheet.new(file_path).to_a.map { |attrs| CmpOrg.new(attrs) }
   end
 
-  def self.people
-    PersonSheet.new(PERSON_FILE_PATH).to_a.map { |attrs| CmpPerson.new(attrs) }
+  # -> [CmpPerson]
+  def self.people(file_path = PERSON_FILE_PATH)
+    PersonSheet.new(file_path).to_a.map { |attrs| CmpPerson.new(attrs) }
   end
 end
