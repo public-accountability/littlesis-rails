@@ -1,5 +1,5 @@
 require 'csv'
-require Rails.root.join('lib', 'task-helpers', 'query.rb')
+require Rails.root.join('lib', 'query.rb').to_s
 
 namespace :query do
   desc "Saves Os Donations for each member of a list as csv"
