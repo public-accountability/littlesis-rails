@@ -32,6 +32,7 @@ Lilsis::Application.routes.draw do
   scope :admin, controller: 'admin', as: 'admin' do
     get '/', action: :home
     get '/tags', action: :tags
+    get '/stats', action: :stats
   end
 
   resources :groups do

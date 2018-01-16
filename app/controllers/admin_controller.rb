@@ -6,4 +6,7 @@ class AdminController < ApplicationController
 
   def tags
   end
+  
+  def stats
+  end
 end

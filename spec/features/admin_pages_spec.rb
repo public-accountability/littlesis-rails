@@ -73,4 +73,18 @@ describe 'Admin Only Pages', :tag_helper, :type => :feature do
       denies_access
     end
   end
+
+  feature 'Stats page' do
+    before(:each) { visit '/admin/stats' }
+    let(:user) { admin }
+
+    scenario 'admin visits stats page' do
+      successfully_visits_page '/admin/stats'
+    end
+
+    context 'as a regular user' do
+      let(:user) { normal_user }
+      denies_access
+    end
+  end
 end
