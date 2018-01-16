@@ -1,4 +1,39 @@
 module UserEdits
+  extend ActiveSupport::Concern
+
+  ActiveUser = Struct.new(:user, :edits, :create_count, :update_count, :delete_count) do
+    delegate *User.column_names.map(&:to_sym), to: :user
+  end
+
+  class_methods do
+    def active_users(since: 1.month.ago, page: 1, per_page: UserEdits::Edits::PER_PAGE)
+      versions = PaperTrail::Version
+                   .select(
+                     <<~SELECT
+                       whodunnit,
+                       count(versions.id) as edits,
+                       sum(case when event = 'create' then 1 else 0 end) as create_count,
+                       sum(case when event = 'update' then 1 else 0 end) as update_count,
+                       sum(case when event = 'soft_delete' then 1 when event = 'destroy' then 1 else 0 end) as delete_count
+                       SELECT
+                   )
+                   .where("versions.created_at >= ?", since)
+                   .group("whodunnit")
+                   .order('edits desc')
+                   .page(page)
+                   .per(per_page)
+                   .map(&:attributes)
+
+      users = User.lookup_table_for versions.map { |v| v['whodunnit'] }
+
+      versions.map do |v|
+        ActiveUser.new(
+          users.fetch(v['whodunnit'].to_i), v['edits'], v['create_count'], v['update_count'], v['delete_count']
+        )
+      end
+    end
+  end
+
   class Edits
     PER_PAGE = 20
     EDITABLE_TYPES = %w[Relationship Entity List Document].freeze
@@ -43,4 +78,6 @@ module UserEdits
                        .transform_values(&ModelsToHashes)
     end
   end
+
+  
 end
