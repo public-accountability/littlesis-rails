@@ -17,7 +17,7 @@ module UserEdits
                        sum(case when event = 'soft_delete' then 1 when event = 'destroy' then 1 else 0 end) as delete_count
                        SELECT
                    )
-                   .where("versions.created_at >= ?", since)
+                   .where("versions.created_at >= ? AND whodunnit IS NOT NULL", since)
                    .group("whodunnit")
                    .order('edits desc')
                    .page(page)

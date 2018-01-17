@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180117165745) do
+ActiveRecord::Schema.define(version: 20180117190400) do
 
   create_table "address", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint   "entity_id",                                null: false
@@ -1560,6 +1560,7 @@ ActiveRecord::Schema.define(version: 20180117165745) do
     t.integer  "entity1_id"
     t.integer  "entity2_id"
     t.text     "association_data", limit: 4294967295
+    t.index ["created_at"], name: "index_versions_on_created_at", using: :btree
     t.index ["entity1_id"], name: "index_versions_on_entity1_id", using: :btree
     t.index ["entity2_id"], name: "index_versions_on_entity2_id", using: :btree
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
