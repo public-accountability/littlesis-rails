@@ -6,6 +6,13 @@ module UserEdits
   end
 
   class_methods do
+    def uniq_active_users(since: 1.month.ago)
+      PaperTrail::Version
+        .where("versions.created_at >= ? AND whodunnit IS NOT NULL", since)
+        .pluck('distinct whodunnit')
+        .count
+    end
+
     def active_users(since: 1.month.ago, page: 1, per_page: UserEdits::Edits::PER_PAGE)
       versions = PaperTrail::Version
                    .select(

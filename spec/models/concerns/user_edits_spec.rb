@@ -59,7 +59,7 @@ describe UserEdits do
     end
   end # UserEdits::Edits
 
-  describe 'User.active_users' do
+  describe 'Active users' do
     before(:all) { PaperTrail::Version.delete_all }
 
     let(:user_one) { create_really_basic_user }
@@ -69,25 +69,33 @@ describe UserEdits do
     let!(:soft_delete_event) { create(:relationship_version, whodunnit: user_one.id.to_s, event: 'soft_delete') }
     let!(:create_event) { create(:entity_version, whodunnit: user_two.id.to_s, event: 'create') }
 
-    subject { User.active_users }
+    describe 'User.active_users' do
+      subject { User.active_users }
 
-    it 'returns an array of ActiveUsers, correctly sorted' do
-      expect(subject.length). to eql 2
-      expect(subject.first).to be_a UserEdits::ActiveUser
-      expect(subject.first.user).to eql user_one
-      expect(subject.second.user).to eql user_two
+      it 'returns an array of ActiveUsers, correctly sorted' do
+        expect(subject.length). to eql 2
+        expect(subject.first).to be_a UserEdits::ActiveUser
+        expect(subject.first.user).to eql user_one
+        expect(subject.second.user).to eql user_two
+      end
+
+      it 'ActiveUser contains correct edits count' do
+        expect(subject.first.edits).to eql 3
+        expect(subject.first.create_count).to be_zero
+        expect(subject.first.update_count).to eql 1
+        expect(subject.first.delete_count).to eql 2
+
+        expect(subject.second.edits).to eql 1
+        expect(subject.second.create_count).to eql 1
+        expect(subject.second.update_count).to be_zero
+        expect(subject.second.delete_count).to be_zero
+      end
     end
 
-    it 'ActiveUser contains correct edits count' do
-      expect(subject.first.edits).to eql 3
-      expect(subject.first.create_count).to be_zero
-      expect(subject.first.update_count).to eql 1
-      expect(subject.first.delete_count).to eql 2
-
-      expect(subject.second.edits).to eql 1
-      expect(subject.second.create_count).to eql 1
-      expect(subject.second.update_count).to be_zero
-      expect(subject.second.delete_count).to be_zero
+    describe 'User.uniq_active_users' do
+      subject { User.uniq_active_users }
+      it { is_expected.to eql 2 }
     end
+
   end
 end
