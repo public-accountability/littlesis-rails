@@ -2,7 +2,7 @@ module UserEdits
   extend ActiveSupport::Concern
 
   ActiveUser = Struct.new(:user, :edits, :create_count, :update_count, :delete_count) do
-    delegate *User.column_names.map(&:to_sym), to: :user
+    delegate :id, to: :user
   end
 
   class_methods do
