@@ -16,10 +16,10 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
     context 'An admin can view the the home page' do
       let(:user) { admin }
 
-      it 'displays the admin page' do
-        expect(page.status_code).to eq 200
-        expect(page).to have_current_path('/admin')
+      scenario 'displays the admin page' do
+        successfully_visits_page '/admin'
         expect(page).to have_content 'Rails Admin'
+        page_has_selector '#admin-links a', count: 3
       end
     end
 
