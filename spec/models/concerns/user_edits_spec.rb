@@ -58,7 +58,7 @@ describe UserEdits do
       end
     end
   end # UserEdits::Edits
-  
+
   describe 'Active users' do
     before(:all) { PaperTrail::Version.delete_all }
 

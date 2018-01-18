@@ -13,8 +13,8 @@ module UserEdits
       'display' => 'in the last 30 days'
     },
     '6_months' => {
-        'time' => 180.days.ago,
-        'display' => 'in the past 6 months'
+      'time' => 180.days.ago,
+      'display' => 'in the past 6 months'
     },
     'year' => {
       'time' =>  1.year.ago,
@@ -25,14 +25,13 @@ module UserEdits
       'display' =>  'since the beginning'
     }
   }.freeze
-  
 
   ActiveUser = Struct.new(:user, :version) do
     delegate :username, :id, to: :user
     delegate :[], to: :version
   end
 
-  class_methods do
+  class_methods do # rubocop:disable Metrics/BlockLength
     def uniq_active_users(since: 30.days.ago)
       PaperTrail::Version
         .where("versions.created_at >= ? AND whodunnit IS NOT NULL", since)
@@ -107,9 +106,9 @@ module UserEdits
     #  }
     def record_lookup
       @record_lookup ||= recent_edits
-                       .group_by { |v| v.item_type }
-                       .transform_values(&VersionsToModels)
-                       .transform_values(&ModelsToHashes)
+                           .group_by { |v| v.item_type }
+                           .transform_values(&VersionsToModels)
+                           .transform_values(&ModelsToHashes)
     end
   end
 end

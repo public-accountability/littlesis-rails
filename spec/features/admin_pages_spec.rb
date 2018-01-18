@@ -85,7 +85,7 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
           create(:entity_version, whodunnit: editors[1].id.to_s),
           create(:entity_version, whodunnit: editors[2].id.to_s),
           # editor[3] last edited something two months ago
-          create(:entity_version, whodunnit: editors[3].id.to_s).tap { |v| v.update_column(:created_at, 2.months.ago) },
+          create(:entity_version, whodunnit: editors[3].id.to_s).tap { |v| v.update_column(:created_at, 2.months.ago) }
         ]
       end
 
@@ -96,11 +96,10 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
         page_has_selector '#active-users-table tbody tr', count: 3
         expect(page).to have_text "Users active in the past week: 3"
         page_has_selector '#time-selectpicker option', count: 5
-        
+
         expect(find_field('time-selectpicker').find('option[selected]').text)
           .to eql 'Week'
       end
-
 
       scenario 'visiting stats from with option 6 months ago' do
         visit '/admin/stats?time=6_months'
@@ -110,9 +109,7 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
 
         expect(find_field('time-selectpicker').find('option[selected]').text)
           .to eql '6 months'
-
       end
-      
 
       context 'pagination' do
         stub_page_limit UserEdits, limit: 2, const: :ACTIVE_USERS_PER_PAGE
@@ -127,8 +124,6 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
           page_has_selector '#active-users-table tbody tr', count: 1
         end
       end
-
-
     end
 
     context 'as a regular user' do
