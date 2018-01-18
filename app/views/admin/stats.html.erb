@@ -1,1 +1,31 @@
-<h1>Stats</h1>
+<% active_users = User.active_users(since: 4.months.ago, page: @page) %>
+
+<div class="row">
+  <div class="col-sm-12 col-md-10">
+    <h2>Users active in the last 30 days:
+       <strong><%= active_users.total_count %></strong>
+    </h2>
+
+    <table id="active-users-table" class="table">
+      <thead>
+	<tr>
+	  <th>User</th>
+	  <th>Edits in past month</th>
+	  <th>"Create" edits</th>
+	  <th>"update" edits</th>
+	</tr>
+      </thead>
+      <tbody>
+	<% active_users.each do |active_user| %>
+	  <tr>
+	    <td><%= link_to active_user.username, "/users/#{active_user.username}" %></td>
+	    <td><%= number_with_delimiter active_user['edits']  %></td>
+	    <td><%= number_with_delimiter active_user['create_count'] %></td>
+	    <td><%= number_with_delimiter active_user['update_count'] %></td>
+	  </tr>
+	<% end %>
+      </tbody>
+    </table>
+
+  </div> <!-- end col -->
+</div> <!-- end row -->

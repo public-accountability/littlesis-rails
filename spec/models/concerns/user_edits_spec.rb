@@ -58,7 +58,7 @@ describe UserEdits do
       end
     end
   end # UserEdits::Edits
-
+  
   describe 'Active users' do
     before(:all) { PaperTrail::Version.delete_all }
 
@@ -80,15 +80,15 @@ describe UserEdits do
       end
 
       it 'ActiveUser contains correct edits count' do
-        expect(subject.first.edits).to eql 3
-        expect(subject.first.create_count).to be_zero
-        expect(subject.first.update_count).to eql 1
-        expect(subject.first.delete_count).to eql 2
+        expect(subject.first['edits']).to eql 3
+        expect(subject.first['create_count']).to be_zero
+        expect(subject.first['update_count']).to eql 1
+        expect(subject.first['delete_count']).to eql 2
 
-        expect(subject.second.edits).to eql 1
-        expect(subject.second.create_count).to eql 1
-        expect(subject.second.update_count).to be_zero
-        expect(subject.second.delete_count).to be_zero
+        expect(subject.second['edits']).to eql 1
+        expect(subject.second['create_count']).to eql 1
+        expect(subject.second['update_count']).to be_zero
+        expect(subject.second['delete_count']).to be_zero
       end
     end
 
@@ -96,6 +96,5 @@ describe UserEdits do
       subject { User.uniq_active_users }
       it { is_expected.to eql 2 }
     end
-
   end
 end

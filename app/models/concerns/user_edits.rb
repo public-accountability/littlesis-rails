@@ -1,19 +1,22 @@
 module UserEdits
   extend ActiveSupport::Concern
 
-  ActiveUser = Struct.new(:user, :edits, :create_count, :update_count, :delete_count) do
-    delegate :id, to: :user
+  ACTIVE_USERS_PER_PAGE = 15
+
+  ActiveUser = Struct.new(:user, :version) do
+    delegate :username, :id, to: :user
+    delegate :[], to: :version
   end
 
   class_methods do
-    def uniq_active_users(since: 1.month.ago)
+    def uniq_active_users(since: 30.days.ago)
       PaperTrail::Version
         .where("versions.created_at >= ? AND whodunnit IS NOT NULL", since)
         .pluck('distinct whodunnit')
         .count
     end
 
-    def active_users(since: 1.month.ago, page: 1, per_page: UserEdits::Edits::PER_PAGE)
+    def active_users(since: 30.days.ago, page: 1, per_page: UserEdits::ACTIVE_USERS_PER_PAGE)
       versions = PaperTrail::Version
                    .select(
                      <<~SELECT
@@ -27,17 +30,15 @@ module UserEdits
                    .where("versions.created_at >= ? AND whodunnit IS NOT NULL", since)
                    .group("whodunnit")
                    .order('edits desc')
-                   .page(page)
-                   .per(per_page)
+                   .limit(per_page)
+                   .offset((page.to_i - 1) * per_page)
                    .map(&:attributes)
 
       users = User.lookup_table_for versions.map { |v| v['whodunnit'] }
 
-      versions.map do |v|
-        ActiveUser.new(
-          users.fetch(v['whodunnit'].to_i), v['edits'], v['create_count'], v['update_count'], v['delete_count']
-        )
-      end
+      Kaminari
+        .paginate_array(versions, total_count: uniq_active_users(since: since))
+        .map { |v| ActiveUser.new(users.fetch(v['whodunnit'].to_i), v) }
     end
   end
 

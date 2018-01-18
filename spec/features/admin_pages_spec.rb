@@ -75,15 +75,30 @@ describe 'Admin Only Pages', :tag_helper, :type => :feature do
   end
 
   feature 'Stats page' do
-    before(:each) { visit '/admin/stats' }
-    let(:user) { admin }
+    context 'as an admin' do
+      let(:user) { admin }
+      let(:editor1) { create_really_basic_user }
+      let(:editor2) { create_really_basic_user }
+      let!(:versions) do
+        [
+          create(:entity_version, whodunnit: editor1.id.to_s),
+          create(:entity_version, whodunnit: editor1.id.to_s),
+          create(:entity_version, whodunnit: editor2.id.to_s)
+        ]
+      end
+      before { visit '/admin/stats' }
 
-    scenario 'admin visits stats page' do
-      successfully_visits_page '/admin/stats'
+      scenario 'admin visits stats page' do
+        successfully_visits_page '/admin/stats'
+        page_has_selector 'table#active-users-table'
+        page_has_selector '#active-users-table tbody tr', count: 2
+        expect(page).to have_text "Users active in the last 30 days: 2"
+      end
     end
 
     context 'as a regular user' do
       let(:user) { normal_user }
+      before { visit '/admin/stats' }
       denies_access
     end
   end
