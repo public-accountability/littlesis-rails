@@ -3,6 +3,30 @@ module UserEdits
 
   ACTIVE_USERS_PER_PAGE = 15
 
+  ACTIVE_USERS_TIME_OPTIONS = {
+    'week' => {
+      'time' => 7.days.ago,
+      'display' => 'in the past week'
+    },
+    'month' => {
+      'time' => 30.days.ago,
+      'display' => 'in the last 30 days'
+    },
+    '6_months' => {
+        'time' => 180.days.ago,
+        'display' => 'in the past 6 months'
+    },
+    'year' => {
+      'time' =>  1.year.ago,
+      'display' => 'in the past year'
+    },
+    'all_time' => {
+      'time' => 100.years.ago,
+      'display' =>  'since the beginning'
+    }
+  }.freeze
+  
+
   ActiveUser = Struct.new(:user, :version) do
     delegate :username, :id, to: :user
     delegate :[], to: :version
@@ -38,6 +62,8 @@ module UserEdits
 
       Kaminari
         .paginate_array(versions, total_count: uniq_active_users(since: since))
+        .page(page)
+        .per(per_page)
         .map { |v| ActiveUser.new(users.fetch(v['whodunnit'].to_i), v) }
     end
   end
@@ -86,6 +112,4 @@ module UserEdits
                        .transform_values(&ModelsToHashes)
     end
   end
-
-  
 end

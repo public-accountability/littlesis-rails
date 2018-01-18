@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Admin Only Pages', :tag_helper, :type => :feature do
+describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature do
   seed_tags # seeds db w/ 3 tags
 
   let(:admin) { create_admin_user }
@@ -77,23 +77,58 @@ describe 'Admin Only Pages', :tag_helper, :type => :feature do
   feature 'Stats page' do
     context 'as an admin' do
       let(:user) { admin }
-      let(:editor1) { create_really_basic_user }
-      let(:editor2) { create_really_basic_user }
+      let(:editors) { Array.new(4) { create_really_basic_user } }
       let!(:versions) do
         [
-          create(:entity_version, whodunnit: editor1.id.to_s),
-          create(:entity_version, whodunnit: editor1.id.to_s),
-          create(:entity_version, whodunnit: editor2.id.to_s)
+          create(:entity_version, whodunnit: editors[0].id.to_s),
+          create(:entity_version, whodunnit: editors[0].id.to_s),
+          create(:entity_version, whodunnit: editors[1].id.to_s),
+          create(:entity_version, whodunnit: editors[2].id.to_s),
+          # editor[3] last edited something two months ago
+          create(:entity_version, whodunnit: editors[3].id.to_s).tap { |v| v.update_column(:created_at, 2.months.ago) },
         ]
       end
-      before { visit '/admin/stats' }
 
       scenario 'admin visits stats page' do
+        visit '/admin/stats'
         successfully_visits_page '/admin/stats'
         page_has_selector 'table#active-users-table'
-        page_has_selector '#active-users-table tbody tr', count: 2
-        expect(page).to have_text "Users active in the last 30 days: 2"
+        page_has_selector '#active-users-table tbody tr', count: 3
+        expect(page).to have_text "Users active in the past week: 3"
+        page_has_selector '#time-selectpicker option', count: 5
+        
+        expect(find_field('time-selectpicker').find('option[selected]').text)
+          .to eql 'Week'
       end
+
+
+      scenario 'visiting stats from with option 6 months ago' do
+        visit '/admin/stats?time=6_months'
+        successfully_visits_page '/admin/stats?time=6_months'
+        page_has_selector '#active-users-table tbody tr', count: 4
+        expect(page).to have_text "Users active in the past 6 months: 4"
+
+        expect(find_field('time-selectpicker').find('option[selected]').text)
+          .to eql '6 months'
+
+      end
+      
+
+      context 'pagination' do
+        stub_page_limit UserEdits, limit: 2, const: :ACTIVE_USERS_PER_PAGE
+        before { visit '/admin/stats' }
+
+        scenario 'paginating through the table' do
+          successfully_visits_page '/admin/stats'
+          page_has_selector '#active-users-table tbody tr', count: 2
+          expect(page).to have_text "Users active in the past week: 3"
+          find('ul li a', text: '2').click
+          successfully_visits_page '/admin/stats?page=2'
+          page_has_selector '#active-users-table tbody tr', count: 1
+        end
+      end
+
+
     end
 
     context 'as a regular user' do

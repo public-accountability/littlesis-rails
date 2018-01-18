@@ -329,3 +329,21 @@ utility.removeSpinner = function(element){
 utility.redirectTo = function(path){
   document.location.replace(path);
 };
+
+
+// -> Object
+// Returns object representation of the query params of the current page url
+utility.currentUrlParams = function() {
+  if (window.location.search  === '') {
+    return {};
+  }
+
+  return window.location.search
+    .replace('?', '')
+    .split('&')
+    .reduce(function(acc, param) {
+      var pair = param.split('=');
+      return utility.set(acc, pair[0], pair[1]);
+  }, {});
+  
+};

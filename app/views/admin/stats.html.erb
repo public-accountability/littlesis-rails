@@ -1,16 +1,33 @@
-<% active_users = User.active_users(since: 4.months.ago, page: @page) %>
+<% since = UserEdits::ACTIVE_USERS_TIME_OPTIONS.fetch(@time)['time'] %>
+<% time_display = UserEdits::ACTIVE_USERS_TIME_OPTIONS.fetch(@time)['display'] %>
+<% active_users = User.active_users(since: since, page: @page ) %>
+
+<% col_class = 'col-sm-12 col-md-10' %>
 
 <div class="row">
-  <div class="col-sm-12 col-md-10">
-    <h2>Users active in the last 30 days:
+
+  <div class="<%= col_class %>">
+    <h2 class="pull-left">Users active <%= time_display %>:
        <strong><%= active_users.total_count %></strong>
     </h2>
+      <div id="time-selectpicker-wrapper">
+	<select class="selectpicker" id="time-selectpicker">
+	  <% UserEdits::ACTIVE_USERS_TIME_OPTIONS.keys.each do |opt| %>
+	    <option <%= (opt == @time) ? 'selected' : '' %>>
+	      <%= opt.tr('_', ' ').capitalize %>
+	    </option>
+	  <% end  %>
+	</select>
 
+    </div>
+  </div>
+  
+  <div class="<%= col_class %>">
     <table id="active-users-table" class="table">
       <thead>
 	<tr>
 	  <th>User</th>
-	  <th>Edits in past month</th>
+	  <th>Total edits</th>
 	  <th>"Create" edits</th>
 	  <th>"update" edits</th>
 	</tr>
@@ -27,5 +44,21 @@
       </tbody>
     </table>
 
+    <%= paginate active_users %>
+
   </div> <!-- end col -->
 </div> <!-- end row -->
+
+<script>
+ $(function(){
+
+   $("#time-selectpicker").on('changed.bs.select', function (e) {
+     var time = $(this).val().replace(' ', '_').toLowerCase();
+     var params = Object.assign({}, utility.currentUrlParams(), { "time": time })
+     var url = window.location.origin + window.location.pathname + '?' + $.param(params);
+     window.location.assign(url);
+   });
+
+
+ });
+</script>

@@ -9,5 +9,6 @@ class AdminController < ApplicationController
 
   def stats
     @page = params.fetch('page', 1)
+    @time = params.fetch('time', 'week')
   end
 end
