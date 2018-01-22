@@ -37,7 +37,7 @@
 	<tbody>
 	  <% active_users.each do |active_user| %>
 	    <tr>
-	      <td><%= link_to active_user.username, "/users/#{active_user.username}" %></td>
+	      <td><%= link_to active_user.username, "/users/#{active_user.username}/edits" %></td>
 	      <td><%= number_with_delimiter active_user['edits']  %></td>
 	      <td><%= number_with_delimiter active_user['create_count'] %></td>
 	      <td><%= number_with_delimiter active_user['update_count'] %></td>
