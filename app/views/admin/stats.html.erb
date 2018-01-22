@@ -1,15 +1,17 @@
-<% since = UserEdits::ACTIVE_USERS_TIME_OPTIONS.fetch(@time)['time'] %>
-<% time_display = UserEdits::ACTIVE_USERS_TIME_OPTIONS.fetch(@time)['display'] %>
-<% active_users = User.active_users(since: since, page: @page ) %>
+<% cache [ 'admin/stats', @time, @page ], expires_in: 20.minutes do %>
 
-<% col_class = 'col-sm-12 col-md-10' %>
+  <% since = UserEdits::ACTIVE_USERS_TIME_OPTIONS.fetch(@time)['time'] %>
+  <% time_display = UserEdits::ACTIVE_USERS_TIME_OPTIONS.fetch(@time)['display'] %>
+  <% active_users = User.active_users(since: since, page: @page ) %>
+  <% col_class = 'col-sm-12 col-md-10' %>
 
-<div class="row">
+  <div class="row">
 
-  <div class="<%= col_class %>">
-    <h2 class="pull-left">Users active <%= time_display %>:
-       <strong><%= active_users.total_count %></strong>
-    </h2>
+    <div class="<%= col_class %>">
+      <h2 class="pull-left">Users active <%= time_display %>:
+	<strong><%= active_users.total_count %></strong>
+      </h2>
+
       <div id="time-selectpicker-wrapper">
 	<select class="selectpicker" id="time-selectpicker">
 	  <% UserEdits::ACTIVE_USERS_TIME_OPTIONS.keys.each do |opt| %>
@@ -19,46 +21,48 @@
 	  <% end  %>
 	</select>
 
+      </div>
     </div>
-  </div>
-  
-  <div class="<%= col_class %>">
-    <table id="active-users-table" class="table">
-      <thead>
-	<tr>
-	  <th>User</th>
-	  <th>Total edits</th>
-	  <th>"Create" edits</th>
-	  <th>"update" edits</th>
-	</tr>
-      </thead>
-      <tbody>
-	<% active_users.each do |active_user| %>
+    
+    <div class="<%= col_class %>">
+      <table id="active-users-table" class="table">
+	<thead>
 	  <tr>
-	    <td><%= link_to active_user.username, "/users/#{active_user.username}" %></td>
-	    <td><%= number_with_delimiter active_user['edits']  %></td>
-	    <td><%= number_with_delimiter active_user['create_count'] %></td>
-	    <td><%= number_with_delimiter active_user['update_count'] %></td>
+	    <th>User</th>
+	    <th>Total edits</th>
+	    <th>"Create" edits</th>
+	    <th>"update" edits</th>
 	  </tr>
-	<% end %>
-      </tbody>
-    </table>
+	</thead>
+	<tbody>
+	  <% active_users.each do |active_user| %>
+	    <tr>
+	      <td><%= link_to active_user.username, "/users/#{active_user.username}" %></td>
+	      <td><%= number_with_delimiter active_user['edits']  %></td>
+	      <td><%= number_with_delimiter active_user['create_count'] %></td>
+	      <td><%= number_with_delimiter active_user['update_count'] %></td>
+	    </tr>
+	  <% end %>
+	</tbody>
+      </table>
 
-    <%= paginate active_users %>
+      <%= paginate active_users %>
 
-  </div> <!-- end col -->
-</div> <!-- end row -->
+    </div> <!-- end col -->
+  </div> <!-- end row -->
 
-<script>
- $(function(){
+  <script>
+   $(function(){
 
-   $("#time-selectpicker").on('changed.bs.select', function (e) {
-     var time = $(this).val().replace(' ', '_').toLowerCase();
-     var params = Object.assign({}, utility.currentUrlParams(), { "time": time })
-     var url = window.location.origin + window.location.pathname + '?' + $.param(params);
-     window.location.assign(url);
+     $("#time-selectpicker").on('changed.bs.select', function (e) {
+       var time = $(this).val().replace(' ', '_').toLowerCase();
+       var params = Object.assign({}, utility.currentUrlParams(), { "time": time })
+       var url = window.location.origin + window.location.pathname + '?' + $.param(params);
+       window.location.assign(url);
+     });
+
+
    });
+  </script>
 
-
- });
-</script>
+<% end %>
