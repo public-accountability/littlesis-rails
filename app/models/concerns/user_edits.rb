@@ -1,4 +1,72 @@
 module UserEdits
+  extend ActiveSupport::Concern
+
+  ACTIVE_USERS_PER_PAGE = 15
+
+  ACTIVE_USERS_TIME_OPTIONS = {
+    'week' => {
+      'time' => 7.days.ago,
+      'display' => 'in the past week'
+    },
+    'month' => {
+      'time' => 30.days.ago,
+      'display' => 'in the last 30 days'
+    },
+    '6_months' => {
+      'time' => 180.days.ago,
+      'display' => 'in the past 6 months'
+    },
+    'year' => {
+      'time' =>  1.year.ago,
+      'display' => 'in the past year'
+    },
+    'all_time' => {
+      'time' => 100.years.ago,
+      'display' =>  'since the beginning'
+    }
+  }.freeze
+
+  ActiveUser = Struct.new(:user, :version) do
+    delegate :username, :id, to: :user
+    delegate :[], to: :version
+  end
+
+  class_methods do # rubocop:disable Metrics/BlockLength
+    def uniq_active_users(since: 30.days.ago)
+      PaperTrail::Version
+        .where("versions.created_at >= ? AND whodunnit IS NOT NULL", since)
+        .pluck('distinct whodunnit')
+        .count
+    end
+
+    def active_users(since: 30.days.ago, page: 1, per_page: UserEdits::ACTIVE_USERS_PER_PAGE)
+      versions = PaperTrail::Version
+                   .select(
+                     <<~SELECT
+                       whodunnit,
+                       count(versions.id) as edits,
+                       sum(case when event = 'create' then 1 else 0 end) as create_count,
+                       sum(case when event = 'update' then 1 else 0 end) as update_count,
+                       sum(case when event = 'soft_delete' then 1 when event = 'destroy' then 1 else 0 end) as delete_count
+                       SELECT
+                   )
+                   .where("versions.created_at >= ? AND whodunnit IS NOT NULL", since)
+                   .group("whodunnit")
+                   .order('edits desc')
+                   .limit(per_page)
+                   .offset((page.to_i - 1) * per_page)
+                   .map(&:attributes)
+
+      users = User.lookup_table_for versions.map { |v| v['whodunnit'] }
+
+      Kaminari
+        .paginate_array(versions, total_count: uniq_active_users(since: since))
+        .page(page)
+        .per(per_page)
+        .map { |v| ActiveUser.new(users.fetch(v['whodunnit'].to_i), v) }
+    end
+  end
+
   class Edits
     PER_PAGE = 20
     EDITABLE_TYPES = %w[Relationship Entity List Document].freeze
@@ -38,9 +106,9 @@ module UserEdits
     #  }
     def record_lookup
       @record_lookup ||= recent_edits
-                       .group_by { |v| v.item_type }
-                       .transform_values(&VersionsToModels)
-                       .transform_values(&ModelsToHashes)
+                           .group_by { |v| v.item_type }
+                           .transform_values(&VersionsToModels)
+                           .transform_values(&ModelsToHashes)
     end
   end
 end

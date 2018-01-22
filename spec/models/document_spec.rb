@@ -127,7 +127,7 @@ describe Document, :pagination_helper, type: :model do
     end
 
     context 'pagination' do
-      stub_page_limit(Document, 2)
+      stub_page_limit Document, limit: 2
 
       before do
         3.times { entity.add_reference(attributes_for(:document)) }

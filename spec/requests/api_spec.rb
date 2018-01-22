@@ -183,7 +183,7 @@ describe Api, :pagination_helper do
     end
 
     context 'pagination' do
-      stub_page_limit(Api::ApiController, 2)
+      stub_page_limit Api::ApiController, limit: 2
 
       let!(:relationships) do
         Array.new(3) do |n|

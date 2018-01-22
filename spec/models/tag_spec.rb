@@ -117,7 +117,7 @@ describe Tag, :pagination_helper do
         end
 
         context 'pagination' do
-          stub_page_limit Tag, 3
+          stub_page_limit Tag, limit: 3
 
           context 'when asking for the default settings: page 1' do
             subject { tag.tagables_for_homepage 'entities' }
