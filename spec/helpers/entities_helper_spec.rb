@@ -12,8 +12,9 @@ describe EntitiesHelper do
       expect(helper.checkboxes(build(:org), ExtensionDefinition.org_types_tier2).reduce(:+).scan('<span class="entity-type-name"').count).to eq 7
     end
 
-    it 'contains all 18 tier 3 types' do
-      expect(helper.checkboxes(build(:org), ExtensionDefinition.org_types_tier3).reduce(:+).scan('<span class="entity-type-name"').count).to eq 18
+    it 'contains all 20 tier 3 types' do
+      expect(helper.checkboxes(build(:org), ExtensionDefinition.org_types_tier3)
+               .reduce(:+).scan('<span class="entity-type-name"').count).to eq 20
     end
 
     it 'contains all 9 extension person types' do
