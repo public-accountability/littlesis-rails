@@ -27,7 +27,7 @@ gem 'sprockets', '~> 3.0'
 gem 'asset_sync', '~> 2.3.0'
 gem "fog-aws"
 
-gem 'uglifier', '>= 4.0.2'
+gem 'uglifier', '>= 4.1.3'
 gem 'bootstrap-sass', '~> 3.3.7'
 gem 'bootstrap-datepicker-rails'
 gem 'jquery-rails'
@@ -54,7 +54,7 @@ gem 'redis-rails', '>= 5.0.2'
 gem 'whenever', '~> 0.9.7', :require => false
 
 group :development do
-  gem 'web-console', '~> 2.0'
+  gem 'web-console', '~> 3.5'
 end
 
 group :test, :development do
