@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180123184642) do
+ActiveRecord::Schema.define(version: 20180123192048) do
 
   create_table "address", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint   "entity_id",                                null: false
@@ -195,6 +195,16 @@ ActiveRecord::Schema.define(version: 20180123184642) do
     t.index ["room", "updated_at", "user_id"], name: "room_updated_at_user_id_idx", using: :btree
     t.index ["room", "user_id"], name: "room_user_id_idx", unique: true, using: :btree
     t.index ["user_id"], name: "user_id_idx", using: :btree
+  end
+
+  create_table "cmp_entities", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint   "entity_id"
+    t.integer  "cmp_id"
+    t.integer  "entity_type", limit: 1, null: false, unsigned: true
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.index ["cmp_id"], name: "index_cmp_entities_on_cmp_id", unique: true, using: :btree
+    t.index ["entity_id"], name: "index_cmp_entities_on_entity_id", unique: true, using: :btree
   end
 
   create_table "couple", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -1583,6 +1593,7 @@ ActiveRecord::Schema.define(version: 20180123184642) do
   add_foreign_key "business_industry", "industry", name: "business_industry_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "business_person", "entity", name: "business_person_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "candidate_district", "political_district", column: "district_id", name: "candidate_district_ibfk_1"
+  add_foreign_key "cmp_entities", "entity"
   add_foreign_key "donation", "entity", column: "bundler_id", name: "donation_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "donation", "relationship", name: "donation_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "education", "degree", name: "education_ibfk_2", on_update: :cascade, on_delete: :nullify
