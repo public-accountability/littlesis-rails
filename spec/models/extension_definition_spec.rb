@@ -21,6 +21,14 @@ describe ExtensionDefinition, type: :model  do
     end
   end
 
+  it 'has Academic Research Institute' do
+    expect(ExtensionDefinition.find(38).name).to eql 'ResearchInstitute'
+  end
+
+  it 'has Government Advisory Body' do
+    expect(ExtensionDefinition.find(39).name).to eql 'GovernmentAdvisoryBody'
+  end
+
   describe 'display_names' do
     it 'returns a memozined hash map' do
       expect(ExtensionDefinition.display_names).to be_a Hash
