@@ -1,6 +1,8 @@
 require 'csv'
 
 module Cmp
+  CMP_USER_ID = 1
+  
   ORG_FILE_PATH = Rails.root.join('data', 'CMPDatabase2_Organizations_2015-2016.xlsx').to_s
   ORG_OUT_CSV_PATH = Rails.root.join('data', "cmp-orgs-#{Time.current.strftime('%F')}.csv").to_s
 
@@ -10,7 +12,7 @@ module Cmp
   def self.save_org_csv
     Query.save_hash_array_to_csv ORG_OUT_CSV_PATH, orgs.map(&:to_h)
   end
-    
+
   def self.save_person_csv
     Query.save_hash_array_to_csv PERSON_OUT_CSV_PATH, people.map(&:to_h)
   end

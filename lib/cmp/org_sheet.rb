@@ -12,7 +12,10 @@ module Cmp
       longitude: 'Longitude',
       revenue: 'Revenue2015_CombinedEstimates',
       website: 'Websiteaddress_2016',
-      status: 'Status_2016'
+      status: 'Status_2016',
+      ticker: 'Tickersymbol_2016',
+      industry_name: 'Industry7cat_a',
+      industry_number: 'Industry7cat_n'
     }.freeze
   end
 end

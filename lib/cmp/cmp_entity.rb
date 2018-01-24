@@ -3,7 +3,11 @@ module Cmp
     attr_reader :attributes
 
     def initialize(attrs)
-      @attributes = attrs
+      @attributes = ActiveSupport::HashWithIndifferentAccess.new(attrs)
+    end
+
+    def cmpid
+      attributes['cmpid']
     end
 
     # join table between CMP IDS and LittleSis Entity
