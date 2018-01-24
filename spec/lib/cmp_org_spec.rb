@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe Cmp::CmpOrg do
   let(:org) { create(:entity_org) }
-
+  let(:override) { {} }
   let(:attributes) do
     {
       cmpid: Faker::Number.number(6),
@@ -14,7 +14,7 @@ describe Cmp::CmpOrg do
       orgtype_code: '9'
     }
   end
-  subject { Cmp::CmpOrg.new(attributes) }
+  subject { Cmp::CmpOrg.new(attributes.merge(override)) }
 
   describe 'import!' do
     context 'Entity is not already in the database' do
@@ -48,8 +48,6 @@ describe Cmp::CmpOrg do
       end
 
       context 'entity is a research institute' do
-        # subject { Cmp::CmpOrg.new(attributes.merge(orgtype_code: '5')) }
-
         before do
           allow(subject).to receive(:entity_match).and_return(double(:empty? => true))
           subject.import!
@@ -66,7 +64,8 @@ describe Cmp::CmpOrg do
 
       context 'entity has revenue fields' do
         let(:revenue) { rand(10_000) }
-        subject { Cmp::CmpOrg.new(attributes.merge(revenue: revenue)) }
+        let(:override) { { revenue: revenue } }
+        # subject { Cmp::CmpOrg.new(attributes.merge(revenue: revenue)) }
 
         it 'updates org field: name_nick' do
           expect { subject.import! }.to change { Org.count }.by(1)
@@ -85,7 +84,7 @@ describe Cmp::CmpOrg do
 
       context 'entity has ticker' do
         let(:ticker) { ('a'..'z').to_a.sample(3).join }
-        subject { Cmp::CmpOrg.new(attributes.merge(ticker: ticker)) }
+        let(:override) { { ticker: ticker } }
 
         it 'creates and updates the public company' do
           expect { subject.import! }.to change { PublicCompany.count }.by(1)
@@ -121,8 +120,15 @@ describe Cmp::CmpOrg do
     end
   end
 
-  it 'sets @org_type during initialization' do
-    expect(Cmp::CmpOrg.new(attributes).org_type).to be_a Cmp::OrgType
+  describe 'initialization' do
+    it 'sets @org_type' do
+      expect(subject.org_type).to be_a Cmp::OrgType
+    end
+
+    context 'has assets_2015' do
+      let(:override) { { assets_2016: nil, assets_2015: 5, assets_2014: nil } }
+      specify { expect(subject.fetch(:assets)).to eql 5 }
+    end
   end
 
   describe 'find_or_create_entity' do

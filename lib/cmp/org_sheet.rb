@@ -16,7 +16,10 @@ module Cmp
       status: 'Status_2016',
       ticker: 'Tickersymbol_2016',
       industry_name: 'Industry7cat_a',
-      industry_number: 'Industry7cat_n'
+      industry_number: 'Industry7cat_n',
+      assets_2016: 'TotalassetsthUSD2016',
+      assets_2015: 'TotalassetsthUSD2015',
+      assets_2014: 'TotalassetsthUSD2014'
     }.freeze
   end
 end

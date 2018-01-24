@@ -1,6 +1,8 @@
 module Cmp
-  class CmpOrg < Cmp::CmpEntityImporter
-    attr_reader :org_type
+  class CmpOrg
+    attr_reader :org_type, :attributes
+    delegate :fetch, to: :attributes
+
     # Mapping between cmp fields and Model/Attribute for entities
     ATTRIBUTE_MAP = {
       # :cmpname => [:entity, :name],
@@ -11,17 +13,24 @@ module Cmp
       :country => [:address, :country_name],
       :latitude => [:address, :latitude],
       :longitude => [:address, :longitude],
-      :ticker => [:public_company, :ticker]
+      :ticker => [:public_company, :ticker],
+      :assets => [:business, :assets]
     }.freeze
 
-    def initialize(*args)
-      super(*args)
-      @org_type = OrgType.new attributes.fetch(:orgtype_code)
+    def initialize(attrs)
+      @attributes = LsHash.new(attrs)
+      @org_type = OrgType.new fetch(:orgtype_code)
+      attributes
+        .store :assets, attributes.values_at(:assets_2016, :assets_2015, :assets_2014).compact.first
+    end
+
+    def cmpid
+      fetch('cmpid')
     end
 
     def entity_match
       return @_entity_match if defined?(@_entity_match)
-      @_entity_match = Cmp::EntityMatch.new name: @attributes.fetch(:cmpname), primary_ext: 'Org'
+      @_entity_match = Cmp::EntityMatch.new name: fetch(:cmpname), primary_ext: 'Org'
     end
 
     def to_h
