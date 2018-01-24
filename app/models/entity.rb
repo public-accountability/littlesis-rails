@@ -314,7 +314,10 @@ class Entity < ApplicationRecord
       'PublicIntellectual',
       'PublicOfficial',
       'Lawyer',
-      'Couple'
+      'Couple',
+      'ResearchInstitute',
+      'GovernmentAdvisoryBody',
+      'EliteConsensus'
     ]
   end
 
