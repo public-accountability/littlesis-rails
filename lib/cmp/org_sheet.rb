@@ -7,6 +7,7 @@ module Cmp
       orgtype: 'OrgType_a',
       orgtype_code: 'OrgType_n',
       city: 'City',
+      country: 'Country',
       province: 'Province-State_US-Can',
       latitude: 'Latitude',
       longitude: 'Longitude',

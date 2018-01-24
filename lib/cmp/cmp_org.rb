@@ -7,6 +7,7 @@ module Cmp
       :revenue => [:org, :revenue],
       :website => [:entity, :website],
       :city => [:address, :city],
+      :country => [:address, :country_name],
       :latitude => [:address, :latitude],
       :longitude => [:address, :longitude],
       :ticker => [:public_company, :ticker]
@@ -27,11 +28,10 @@ module Cmp
     def import!
       ApplicationRecord.transaction do
         entity = find_or_create_entity
-        cmp_entity.create!(entity: entity, entity_type: :org)
-        entity.org.update! attrs_for(:org)
-        entity.addresses.find_or_create_by attrs_for(:addresses).with_last_user(CMP_USER_ID)
-        import_ticker(entity)
         create_cmp_entity(entity)
+        entity.org.update! attrs_for(:org)
+        entity.addresses.find_or_create_by! attrs_for(:address).with_last_user(CMP_USER_ID)
+        import_ticker(entity)
       end
     end
 
@@ -46,7 +46,7 @@ module Cmp
     end
 
     def create_cmp_entity(entity)
-      CmpEntity.find_or_create_by!(entity: entity, cmp_id: cmpid)
+      CmpEntity.find_or_create_by!(entity: entity, cmp_id: cmpid, entity_type: :org)
     end
 
     private
@@ -57,15 +57,12 @@ module Cmp
     end
 
     def attrs_for(model)
-      ATTRIBUTE_MAP
-        .select { |_k, (m, _f)| m == model }
-        .map { |k, (_m, f)| [f, attributes[k]] }
-        .to_h
-    end
-
-    def merge_unless_blank(hash, key, val)
-      return hash if val.blank?
-      hash.merge(key.to_sym => val)
+      LsHash.new(
+        ATTRIBUTE_MAP
+          .select { |_k, (m, _f)| m == model }
+          .map { |k, (_m, f)|  [f, attributes[k]]
+        }.to_h
+      )
     end
 
     # -> <Entity>
