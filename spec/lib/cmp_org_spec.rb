@@ -10,7 +10,8 @@ describe Cmp::CmpOrg do
       cmpmnemonic: Faker::Company.name,
       website: 'http://oil.com',
       city: 'Vancouver',
-      country: 'Canada'
+      country: 'Canada',
+      orgtype_code: '9'
     }
   end
   subject { Cmp::CmpOrg.new(attributes) }
@@ -40,6 +41,27 @@ describe Cmp::CmpOrg do
       it 'creates a new address' do
         expect { subject.import! }.to change { Address.count }.by(1)
         expect(Address.last.city).to eql attributes.fetch(:city)
+      end
+
+      it 'creates an extension' do
+        expect { subject.import! }.to change { Business.count }.by(1)
+      end
+
+      context 'entity is a research institute' do
+        # subject { Cmp::CmpOrg.new(attributes.merge(orgtype_code: '5')) }
+
+        before do
+          allow(subject).to receive(:entity_match).and_return(double(:empty? => true))
+          subject.import!
+        end
+
+        it 'creates the extension while updating' do
+          expect(Entity.last.has_extension?('ResearchInstitute')).to be false
+          expect do
+            Cmp::CmpOrg.new(attributes.merge(orgtype_code: '5')).import!
+          end.not_to change { Entity.count }
+          expect(Entity.last.has_extension?('ResearchInstitute')).to be true
+        end
       end
 
       context 'entity has revenue fields' do
@@ -99,6 +121,10 @@ describe Cmp::CmpOrg do
     end
   end
 
+  it 'sets @org_type during initialization' do
+    expect(Cmp::CmpOrg.new(attributes).org_type).to be_a Cmp::OrgType
+  end
+
   describe 'find_or_create_entity' do
     context 'cmp entity already exists' do
       before do
@@ -137,7 +163,9 @@ describe Cmp::CmpOrg do
 
   describe 'helper methods' do
     describe '#attrs_for' do
-      let(:attributes) { { website: 'http://example.com', city: 'new york', country: 'USA' } }
+      let(:attributes) do
+        { website: 'http://example.com', city: 'new york', country: 'USA', orgtype_code: 9 }
+      end
       subject { Cmp::CmpOrg.new(attributes) }
 
       it 'extracts attributes for given model' do

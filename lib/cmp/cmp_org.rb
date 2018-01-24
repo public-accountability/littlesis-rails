@@ -1,5 +1,6 @@
 module Cmp
   class CmpOrg < Cmp::CmpEntityImporter
+    attr_reader :org_type
     # Mapping between cmp fields and Model/Attribute for entities
     ATTRIBUTE_MAP = {
       # :cmpname => [:entity, :name],
@@ -12,6 +13,11 @@ module Cmp
       :longitude => [:address, :longitude],
       :ticker => [:public_company, :ticker]
     }.freeze
+
+    def initialize(*args)
+      super(*args)
+      @org_type = OrgType.new attributes.fetch(:orgtype_code)
+    end
 
     def entity_match
       return @_entity_match if defined?(@_entity_match)
@@ -30,6 +36,7 @@ module Cmp
         entity = find_or_create_entity
         create_cmp_entity(entity)
         entity.update! attrs_for(:entity).with_last_user(CMP_USER_ID)
+        add_extension(entity)
         entity.org.update! attrs_for(:org)
         entity.addresses.find_or_create_by! attrs_for(:address).with_last_user(CMP_USER_ID)
         import_ticker(entity)
@@ -46,23 +53,28 @@ module Cmp
       end
     end
 
+    private
+
     def create_cmp_entity(entity)
       CmpEntity.find_or_create_by!(entity: entity, cmp_id: cmpid, entity_type: :org)
     end
 
-    private
+    def add_extension(entity)
+      entity.add_extension(org_type.extension) unless org_type.extension.nil?
+    end
 
     def import_ticker(entity)
-      return nil unless attributes[:ticker].present?
+      return nil if attributes[:ticker].blank?
       entity.add_extension('PublicCompany').public_company.update!(ticker: attributes[:ticker])
     end
 
+    # Symbol -> LsHash
     def attrs_for(model)
       LsHash.new(
         ATTRIBUTE_MAP
           .select { |_k, (m, _f)| m == model }
-          .map { |k, (_m, f)|  [f, attributes[k]]
-        }.to_h
+          .map { |k, (_m, f)| [f, attributes[k]] }
+          .to_h
       )
     end
 
@@ -74,6 +86,5 @@ module Cmp
         last_user_id: Cmp::CMP_USER_ID
       )
     end
-
   end
 end
