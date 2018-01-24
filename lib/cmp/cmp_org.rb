@@ -29,6 +29,7 @@ module Cmp
       ApplicationRecord.transaction do
         entity = find_or_create_entity
         create_cmp_entity(entity)
+        entity.update! attrs_for(:entity).with_last_user(CMP_USER_ID)
         entity.org.update! attrs_for(:org)
         entity.addresses.find_or_create_by! attrs_for(:address).with_last_user(CMP_USER_ID)
         import_ticker(entity)

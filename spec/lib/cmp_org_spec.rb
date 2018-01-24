@@ -16,11 +16,11 @@ describe Cmp::CmpOrg do
   subject { Cmp::CmpOrg.new(attributes) }
 
   describe 'import!' do
-    before do
-      expect(subject).to receive(:entity_match).and_return(double(:empty? => true))
-    end
-
     context 'Entity is not already in the database' do
+      before do
+        expect(subject).to receive(:entity_match).and_return(double(:empty? => true))
+      end
+
       it 'creates a new entity' do
         expect { subject.import! }.to change { Entity.count }.by(1)
       end
@@ -41,34 +41,60 @@ describe Cmp::CmpOrg do
         expect { subject.import! }.to change { Address.count }.by(1)
         expect(Address.last.city).to eql attributes.fetch(:city)
       end
-    end
 
-    context 'entity has revenue fields' do
-      let(:revenue) { rand(10_000) }
-      subject { Cmp::CmpOrg.new(attributes.merge(revenue: revenue)) }
+      context 'entity has revenue fields' do
+        let(:revenue) { rand(10_000) }
+        subject { Cmp::CmpOrg.new(attributes.merge(revenue: revenue)) }
 
-      it 'updates org field: name_nick' do
-        expect { subject.import! }.to change { Org.count }.by(1)
-        expect(Org.last.name_nick).to eql attributes.fetch(:cmpmnemonic)
+        it 'updates org field: name_nick' do
+          expect { subject.import! }.to change { Org.count }.by(1)
+          expect(Org.last.name_nick).to eql attributes.fetch(:cmpmnemonic)
+        end
+
+        it 'updates org field: revenue' do
+          subject.import!
+          expect(Org.last.revenue).to eql revenue
+        end
+
+        it 'does not create a public company' do
+          expect { subject.import! }.not_to change { PublicCompany.count }
+        end
       end
 
-      it 'updates org field: revenue' do
+      context 'entity has ticker' do
+        let(:ticker) { ('a'..'z').to_a.sample(3).join }
+        subject { Cmp::CmpOrg.new(attributes.merge(ticker: ticker)) }
+
+        it 'creates and updates the public company' do
+          expect { subject.import! }.to change { PublicCompany.count }.by(1)
+          expect(PublicCompany.last.ticker).to eql ticker
+        end
+      end
+    end
+
+    context 'entity has already been imported, but a field has changed' do
+      before do
+        allow(subject).to receive(:entity_match).and_return(double(:empty? => true))
         subject.import!
-        expect(Org.last.revenue).to eql revenue
       end
 
-      it 'does not create a public company' do
-        expect { subject.import! }.not_to change { PublicCompany.count }
+      specify do
+        expect do
+          Cmp::CmpOrg.new(attributes.merge(website: Faker::Internet.url)).import!
+        end.not_to change { CmpEntity.count }
       end
-    end
 
-    context 'entity has ticker' do
-      let(:ticker) { ('a'..'z').to_a.sample(3).join }
-      subject { Cmp::CmpOrg.new(attributes.merge(ticker: ticker)) }
+      specify do
+        expect do
+          Cmp::CmpOrg.new(attributes.merge(website: Faker::Internet.url)).import!
+        end.not_to change { Entity.count }
+      end
 
-      it 'creates and updates the public company' do
-        expect { subject.import! }.to change { PublicCompany.count }.by(1)
-        expect(PublicCompany.last.ticker).to eql ticker
+      it 'updates entity field' do
+        new_website = Faker::Internet.url
+        expect(Entity.last.website).to eql attributes.fetch(:website)
+        Cmp::CmpOrg.new(attributes.merge(website: new_website)).import!
+        expect(Entity.last.website).to eql new_website
       end
     end
   end
