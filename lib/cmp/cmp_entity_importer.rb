@@ -1,9 +1,9 @@
 module Cmp
-  class CmpEntity
+  class CmpEntityImporter
     attr_reader :attributes
 
     def initialize(attrs)
-      @attributes = ActiveSupport::HashWithIndifferentAccess.new(attrs)
+      @attributes = LsHash.new(attrs)
     end
 
     def cmpid
