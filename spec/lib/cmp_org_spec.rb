@@ -19,7 +19,7 @@ describe Cmp::CmpOrg do
   describe 'import!' do
     context 'Entity is not already in the database' do
       before do
-        expect(subject).to receive(:entity_match).and_return(double(:empty? => true))
+        expect(subject).to receive(:entity_match).and_return(double(:has_match? => false))
       end
 
       it 'creates a new entity' do
@@ -49,7 +49,7 @@ describe Cmp::CmpOrg do
 
       context 'entity is a research institute' do
         before do
-          allow(subject).to receive(:entity_match).and_return(double(:empty? => true))
+          allow(subject).to receive(:entity_match).and_return(double(:has_match? => false))
           subject.import!
         end
 
@@ -95,7 +95,7 @@ describe Cmp::CmpOrg do
 
     context 'entity has already been imported, but a field has changed' do
       before do
-        allow(subject).to receive(:entity_match).and_return(double(:empty? => true))
+        allow(subject).to receive(:entity_match).and_return(double(:has_match? => false))
         subject.import!
       end
 
@@ -146,7 +146,7 @@ describe Cmp::CmpOrg do
       let(:org) { build(:org) }
       before do
         entity_match = double('EntityMatch')
-        expect(entity_match).to receive(:empty?).and_return(false)
+        expect(entity_match).to receive(:has_match?).and_return(true)
         expect(entity_match).to receive(:match).and_return(org)
         subject.instance_variable_set(:@_entity_match, entity_match)
       end
@@ -158,7 +158,7 @@ describe Cmp::CmpOrg do
 
     context 'need to create a new entity' do
       before do
-        expect(subject).to receive(:entity_match).and_return(double(:empty? => true))
+        expect(subject).to receive(:entity_match).and_return(double(:has_match? => false))
       end
       it 'creates a new entity' do
         expect { subject.find_or_create_entity }.to change { Entity.count }.by(1)
