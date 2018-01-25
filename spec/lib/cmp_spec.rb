@@ -54,10 +54,11 @@ describe Cmp do
       end.to raise_error(ArgumentError)
     end
 
-    it 'sets @name, @search_options, and @cmpid' do
+    it 'sets @name, @search_options, @primary_ext, and @cmpid' do
       expect(Entity::Search).to receive(:search).and_return([])
       expect(entity_match.instance_variable_get(:@name)).to eql 'test name'
       expect(entity_match.instance_variable_get(:@cmpid)).to eql '123'
+      expect(entity_match.instance_variable_get(:@primary_ext)).to eql 'Person'
       expect(entity_match.instance_variable_get(:@search_options))
         .to eql(:with => { primary_ext: "'Person'", is_deleted: false })
     end
@@ -82,7 +83,7 @@ describe Cmp do
       specify { expect(entity_match.second).to be nil }
     end
 
-    context 'with one search results AND a mach in the file' do
+    context 'with one search results AND a match in the file' do
       let(:entity_match) { Cmp::EntityMatch.new(name: 'test name', primary_ext: 'Org', cmpid: '2400012') }
       let(:org) { build(:org) }
       let(:file_match) { build(:org, name: "McGill University") }
@@ -96,6 +97,19 @@ describe Cmp do
       specify { expect(entity_match.match).to eql file_match }
       specify { expect(entity_match.first).to eql org }
       specify { expect(entity_match.second).to be nil }
+    end
+
+    context 'file indicates that a new entity should be created' do
+      let(:org) { build(:org) }
+      let(:name) { 'TRANSCONTINENTAL INC.' }
+      let(:entity_match) { Cmp::EntityMatch.new(name: name, primary_ext: 'Org', cmpid: '5000518') }
+      before { allow(Entity::Search).to receive(:search).and_return(Array.wrap(org)) }
+      specify { expect(entity_match.has_match?).to be true }
+      specify do
+        expect { entity_match.match }.to change { Entity.count}.by(1)
+      end
+      specify { expect(entity_match.match.primary_ext).to eql 'Org' }
+      specify { expect(entity_match.match.name).to eql name }
     end
 
     context 'with three search results' do

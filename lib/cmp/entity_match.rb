@@ -6,6 +6,7 @@ module Cmp
     def initialize(name:, primary_ext:, cmpid:)
       raise ArgumentError, "Invalid primary_ext" unless %w[Org Person].include? primary_ext
       @name = name
+      @primary_ext = primary_ext
       @search_options = { :with => { primary_ext: "'#{primary_ext}'", is_deleted: false } }.freeze
       @cmpid = cmpid.to_s
       search_results
@@ -13,7 +14,11 @@ module Cmp
 
     def match
       return nil unless has_match?
-      return Entity.find(self.class.matches.dig(@cmpid, 'entity_id')) if self.class.matches.key?(@cmpid)
+      if self.class.matches.key?(@cmpid)
+        entity_id = self.class.matches.dig(@cmpid, 'entity_id')
+        return create_new_entity if entity_id == 'NEW'
+        return Entity.find(entity_id)
+      end
       return first
     end
 
@@ -38,6 +43,12 @@ module Cmp
       @_matches ||= MATCHES.each_with_object({}) do |h, memo|
         memo.store(h['cmpid'].to_s, h)
       end
+    end
+
+    private
+
+    def create_new_entity
+      Entity.create!(name: @name, primary_ext: @primary_ext, last_user_id: Cmp::CMP_USER_ID)
     end
   end
 end
