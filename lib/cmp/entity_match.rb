@@ -48,7 +48,7 @@ module Cmp
     private
 
     def create_new_entity
-      Entity.create!(name: @name, primary_ext: @primary_ext, last_user_id: Cmp::CMP_USER_ID)
+      Entity.create!(name: @name, primary_ext: @primary_ext, last_user_id: Cmp::CMP_SF_USER_ID)
     end
   end
 end
