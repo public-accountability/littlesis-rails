@@ -30,24 +30,14 @@ module Cmp
 
     def entity_match
       return @_entity_match if defined?(@_entity_match)
-      @_entity_match = Cmp::EntityMatch.new name: fetch(:cmpname), primary_ext: 'Org'
+      @_entity_match = Cmp::EntityMatch.new name: fetch(:cmpname), primary_ext: 'Org', cmpid: cmpid
     end
 
     def matches
       return {} if entity_match.empty?
-      one = { one: "#{entity_match.first.name} - #{entity_url(entity_match.first)}" }
-      if entity_match.second.present?
-        one.merge(two: "#{entity_match.second.name} - #{entity_url(entity_match.second)}")
-      else
-        one
-      end
-    end
-
-    def to_h
-      @attributes.merge(
-        _matches: entity_match.count,
-        url: entity_match.empty? ? "" : entity_url(entity_match.first)
-      )
+      one = { one: entity_str(entity_match.first) }
+      return one.merge(two: entity_str(entity_match.second) ) if entity_match.second.present?
+      return one
     end
 
     def import!
@@ -113,6 +103,10 @@ module Cmp
         name: attributes[:cmpname],
         last_user_id: Cmp::CMP_USER_ID
       )
+    end
+
+    def entity_str(entity)
+      "#{entity.name} - #{entity_url(entity)}"
     end
 
     def entity_url(entity)
