@@ -9,6 +9,7 @@ module Cmp
       :cmpmnemonic => [:org, :name_nick],
       :revenue => [:org, :revenue],
       :website => [:entity, :website],
+      :is_current => [:entity, :is_current],
       :city => [:address, :city],
       :country => [:address, :country_name],
       :latitude => [:address, :latitude],
@@ -20,8 +21,7 @@ module Cmp
     def initialize(attrs)
       @attributes = LsHash.new(attrs)
       @org_type = OrgType.new fetch(:orgtype_code)
-      attributes
-        .store :assets, attributes.values_at(:assets_2016, :assets_2015, :assets_2014).compact.first
+      parse_fields
     end
 
     def cmpid
@@ -63,6 +63,15 @@ module Cmp
     end
 
     private
+
+    # Modifies fields as needed from CMP
+    # - adds 'assets' as latest provided value from 2014-2016
+    # - adds 'is_current' based if status is active
+    def parse_fields
+      attributes
+        .store(:assets, attributes.values_at(:assets_2016, :assets_2015, :assets_2014).compact.first)
+      attributes.store(:is_current, fetch(:status, nil) == 'active' ? true : nil)
+    end
 
     def create_cmp_entity(entity)
       CmpEntity.find_or_create_by!(entity: entity, cmp_id: cmpid, entity_type: :org)

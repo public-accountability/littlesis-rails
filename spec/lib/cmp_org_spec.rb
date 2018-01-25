@@ -176,7 +176,7 @@ describe Cmp::CmpOrg do
 
       it 'extracts attributes for given model' do
         expect(subject.send(:attrs_for, :entity))
-          .to eql('website' => 'http://example.com')
+          .to eql('website' => 'http://example.com', 'is_current' => nil)
 
         expect(subject.send(:attrs_for, :address))
           .to eql(LsHash.new(city: 'new york', latitude: nil, longitude: nil, country_name: 'USA'))
