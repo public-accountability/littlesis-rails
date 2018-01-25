@@ -9,6 +9,10 @@ module Cmp
       search_results
     end
 
+    def match
+      first
+    end
+
     def first
       search_results.first unless empty?
     end

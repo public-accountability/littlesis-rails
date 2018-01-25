@@ -1,5 +1,5 @@
 module Cmp
-  class CmpPerson < Cmp::CmpEntity
+  class CmpPerson < Cmp::CmpEntityImporter
     def name
       "#{@attributes.fetch(:firstname)} #{@attributes.fetch(:middlename)} #{@attributes.fetch(:lastname)}"
     end

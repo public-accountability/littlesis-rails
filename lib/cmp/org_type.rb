@@ -4,7 +4,7 @@ module Cmp
     TYPES = {
       1 => {
         name: 'Policy-Planning',
-        extension: nil #  ?
+        extension: 'ThinkTank'
       },
       2 => {
         name: 'Industry Association',
@@ -12,7 +12,7 @@ module Cmp
       },
       3 => {
         name: 'Advocacy and Consensus',
-        extension: 'ThinkTank'
+        extension: 'EliteConsensus'
       },
       4 => {
         name: 'University',
@@ -20,7 +20,7 @@ module Cmp
       },
       5 => {
         name: 'Research Institute',
-        extension: 'ThinkTank'
+        extension: 'ResearchInstitute'
       },
       6 => {
         name: 'Foundation',
@@ -28,11 +28,11 @@ module Cmp
       },
       7 => {
         name: 'Climate Advisory',
-        extension: nil #  ?
+        extension: 'GovernmentAdvisoryBody'
       },
       8 => {
         name: 'Quasi-state',
-        extension: 'GovernmentBody' # is this right?
+        extension: nil
       },
       9 => {
         name: 'Corporation',

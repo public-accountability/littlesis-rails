@@ -1,9 +1,13 @@
 module Cmp
-  class CmpEntity
+  class CmpEntityImporter
     attr_reader :attributes
 
     def initialize(attrs)
-      @attributes = attrs
+      @attributes = LsHash.new(attrs)
+    end
+
+    def cmpid
+      attributes['cmpid']
     end
 
     # join table between CMP IDS and LittleSis Entity

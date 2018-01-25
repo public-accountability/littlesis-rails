@@ -43,7 +43,8 @@ ExtensionDefinition.create!([
   {name: "Lawyer", display_name: "Lawyer", has_fields: false, parent_id: 1, tier: 2, id: 36},
   {name: "Couple", display_name: "Couple", has_fields: true, parent_id: nil, tier: 1, id: 37},
   {name: "ResearchInstitute", display_name: "Academic Research Institute", has_fields: false, parent_id: 2, tier: 3, id: 38},
-  {name: "GovernmentAdvisoryBody", display_name: "Government Advisory Body", has_fields: false, parent_id: 2, tier: 3, id: 39}
+  {name: "GovernmentAdvisoryBody", display_name: "Government Advisory Body", has_fields: false, parent_id: 2, tier: 3, id: 39},
+  {name: "EliteConsensus", display_name: "Elite Consensus Group", has_fields: false, parent_id: 2, tier: 3, id: 40}
 ])
 
 SfGuardUser.create!({id: 1, username: "system@littlesis.org", password: 'password', salt:''})
