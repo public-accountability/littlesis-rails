@@ -1,0 +1,124 @@
+---
+-
+  name: "McGill University"
+  cmpid: 2400012
+  entity_id: 15062
+-
+  name: "Queen's University"
+  cmpid: 2400018
+  entity_id: 43369
+- 
+  name: "University of Victoria"
+  cmpid: 2400040
+  entity_id: 95516
+-
+  name: Western University
+  cmpid: 2400044
+  entity_id: 57801  
+-
+  name: York University
+  cmpid: 2400046
+  entity_id: 95614
+-
+  name: CRESCENT POINT ENERGY CORP.
+  cmpid: 5000064
+  entity_id: 118845
+-
+  name: ENERPLUS CORPORATION
+  cmpid: 5000085
+  entity_id: 87639
+-
+  name: LEGACY OIL + GAS INC.
+  cmpid: 5000124
+  entity_id: 118854
+-
+  name: SECURE ENERGY SERVICES INC
+  cmpid: 5000197
+  entity_id: 221027
+-
+  name: VERMILION ENERGY INC.
+  cmpid: 5000250
+  entity_id: 118874
+-  
+  name: MAGNA INTERNATIONAL INC
+  cmpid: 5000456
+  entity_id: 119181
+-
+  name: CAMECO CORPORATION
+  cmpid: 5000495
+  entity_id: 76401
+-  
+  name: TRANSCONTINENTAL INC.
+  cmpid: 5000518
+  entity_id: NEW
+-
+  name: CAE INC
+  cmpid: 5000539
+  entity_id: 166979
+-  
+  name: ASSURANT LIFE OF CANADA
+  cmpid: 5000749
+  entity_id: NEW
+-
+  name: CARDINAL HEALTH INC
+  cmpid: 5003027
+  entity_id: 19
+-
+  name: CARGILL INC
+  cmpid: 5003030
+  entity_id: 28221
+-   
+  name: METLIFE INC
+  cmpid: 5003079
+  entity_id: 43
+-
+  name: BHP BILLITON LIMITED
+  cmpid: 5003130
+  entity_id: 86940
+-
+  name: SANOFI
+  cmpid: 5003170
+  entity_id: 119236
+-
+  name: UNITED AIRLINES, INC.
+  cmpid: 5003187
+  entity_id: 112854
+-  
+  name: 3M COMPANY
+  cmpid: 5003230
+  entity_id: 32235
+-
+  name: BECHTEL GROUP INC
+  cmpid: 5003245
+  entity_id: 28225
+-  
+  name: BLACKROCK INC
+  cmpid: 5003247
+  entity_id: 477
+-  
+  name: FEDERAL NATIONAL MORTGAGE ASSOCIATION
+  cmpid: 5003284
+  entity_id: 54
+-
+  name: MASSACHUSETTS MUTUAL LIFE INSURANCE COMPANY
+  cmpid: 5003320
+  entity_id: 34832
+-  
+  name: TJX COMPANIES INC
+  cmpid: 5003388
+  entity_id: 133
+-  
+  name: METRO INC
+  cmpid: 5014220
+  entity_id: NEW
+-  
+  name: TOTAL S.A.
+  cmpid: 5014934
+  entity_id: 76799
+-
+  name: RENAULT
+  cmpid: 5014957
+  entity_id: 217475
+  
+
+  

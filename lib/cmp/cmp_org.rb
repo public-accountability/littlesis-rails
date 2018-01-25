@@ -33,6 +33,16 @@ module Cmp
       @_entity_match = Cmp::EntityMatch.new name: fetch(:cmpname), primary_ext: 'Org'
     end
 
+    def matches
+      return {} if entity_match.empty?
+      one = { one: "#{entity_match.first.name} - #{entity_url(entity_match.first)}" }
+      if entity_match.second.present?
+        one.merge(two: "#{entity_match.second.name} - #{entity_url(entity_match.second)}")
+      else
+        one
+      end
+    end
+
     def to_h
       @attributes.merge(
         _matches: entity_match.count,
@@ -55,7 +65,7 @@ module Cmp
     def find_or_create_entity
       if CmpEntity.find_by(cmp_id: cmpid)
         CmpEntity.find_by(cmp_id: cmpid).entity
-      elsif !entity_match.empty?
+      elsif entity_match.has_match?
         entity_match.match
       else
         create_new_entity!
@@ -103,6 +113,11 @@ module Cmp
         name: attributes[:cmpname],
         last_user_id: Cmp::CMP_USER_ID
       )
+    end
+
+    def entity_url(entity)
+      e_path = Rails.application.routes.url_helpers.entity_path(entity).gsub('entities', 'org')
+      "https://littlesis.org#{e_path}"
     end
   end
 end

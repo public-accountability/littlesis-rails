@@ -41,7 +41,12 @@ describe Cmp do
   end
 
   describe Cmp::EntityMatch do
-    let(:entity_match) { Cmp::EntityMatch.new(name: 'test name', primary_ext: 'Person') }
+    let(:entity_match) { Cmp::EntityMatch.new(name: 'test name', primary_ext: 'Person', cmpid: 123) }
+
+    it 'EntityMatch.matches return hash of all manual matches' do
+      expect(Cmp::EntityMatch.matches).to be_a Hash
+      expect(Cmp::EntityMatch::MATCHES.length).to be > 25
+    end
 
     it 'raises error if passed invalid type' do
       expect do
@@ -49,9 +54,10 @@ describe Cmp do
       end.to raise_error(ArgumentError)
     end
 
-    it 'sets @name and @search_options' do
+    it 'sets @name, @search_options, and @cmpid' do
       expect(Entity::Search).to receive(:search).and_return([])
       expect(entity_match.instance_variable_get(:@name)).to eql 'test name'
+      expect(entity_match.instance_variable_get(:@cmpid)).to eql '123'
       expect(entity_match.instance_variable_get(:@search_options))
         .to eql(:with => { primary_ext: "'Person'", is_deleted: false })
     end
@@ -59,17 +65,36 @@ describe Cmp do
     context 'with no search results' do
       before { expect(Entity::Search).to receive(:search).and_return([]) }
       specify { expect(entity_match.empty?).to be true }
+      specify { expect(entity_match.has_match?).to be false }
       specify { expect(entity_match.count).to eql 0 }
       specify { expect(entity_match.first).to be nil }
       specify { expect(entity_match.second).to be nil }
     end
-  
+
     context 'with one search results' do
       let(:person) { build(:person) }
       before { expect(Entity::Search).to receive(:search).and_return(Array.wrap(person)) }
       specify { expect(entity_match.empty?).to be false }
+      specify { expect(entity_match.has_match?).to be true }
       specify { expect(entity_match.count).to eql 1 }
+      specify { expect(entity_match.match).to eql person }
       specify { expect(entity_match.first).to eql person }
+      specify { expect(entity_match.second).to be nil }
+    end
+
+    context 'with one search results AND a mach in the file' do
+      let(:entity_match) { Cmp::EntityMatch.new(name: 'test name', primary_ext: 'Org', cmpid: '2400012') }
+      let(:org) { build(:org) }
+      let(:file_match) { build(:org, name: "McGill University") }
+      before do
+        allow(Entity::Search).to receive(:search).and_return(Array.wrap(org))
+        allow(Entity).to receive(:find).with(15062).and_return(file_match)
+      end
+      specify { expect(entity_match.empty?).to be false }
+      specify { expect(entity_match.has_match?).to be true }
+      specify { expect(entity_match.count).to eql 1 }
+      specify { expect(entity_match.match).to eql file_match }
+      specify { expect(entity_match.first).to eql org }
       specify { expect(entity_match.second).to be nil }
     end
 
@@ -81,5 +106,6 @@ describe Cmp do
       specify { expect(entity_match.first).to eql people[0] }
       specify { expect(entity_match.second).to be people[1] }
     end
+
   end
 end
