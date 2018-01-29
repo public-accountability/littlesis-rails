@@ -30,24 +30,24 @@ module Cmp
 
     def entity_match
       return @_entity_match if defined?(@_entity_match)
-      @_entity_match = Cmp::EntityMatch.new name: fetch(:cmpname), primary_ext: 'Org'
+      @_entity_match = Cmp::EntityMatch.new name: fetch(:cmpname), primary_ext: 'Org', cmpid: cmpid
     end
 
-    def to_h
-      @attributes.merge(
-        _matches: entity_match.count,
-        url: entity_match.empty? ? "" : entity_url(entity_match.first)
-      )
+    def matches
+      return {} if entity_match.empty?
+      one = { one: entity_str(entity_match.first) }
+      return one.merge(two: entity_str(entity_match.second)) if entity_match.second.present?
+      return one
     end
 
     def import!
       ApplicationRecord.transaction do
         entity = find_or_create_entity
         create_cmp_entity(entity)
-        entity.update! attrs_for(:entity).with_last_user(CMP_USER_ID)
+        entity.update! attrs_for(:entity).with_last_user(CMP_SF_USER_ID)
         add_extension(entity)
         entity.org.update! attrs_for(:org)
-        entity.addresses.find_or_create_by! attrs_for(:address).with_last_user(CMP_USER_ID)
+        import_address(entity)
         import_ticker(entity)
       end
     end
@@ -55,7 +55,7 @@ module Cmp
     def find_or_create_entity
       if CmpEntity.find_by(cmp_id: cmpid)
         CmpEntity.find_by(cmp_id: cmpid).entity
-      elsif !entity_match.empty?
+      elsif entity_match.has_match?
         entity_match.match
       else
         create_new_entity!
@@ -86,6 +86,13 @@ module Cmp
       entity.add_extension('PublicCompany').public_company.update!(ticker: attributes[:ticker])
     end
 
+    def import_address(entity)
+      attrs = attrs_for(:address).with_last_user(CMP_SF_USER_ID)
+      unless attrs[:city].blank? || attrs[:country_name].blank?
+        entity.addresses.find_or_create_by!(attrs)
+      end
+    end
+
     # Symbol -> LsHash
     def attrs_for(model)
       LsHash.new(
@@ -103,6 +110,15 @@ module Cmp
         name: attributes[:cmpname],
         last_user_id: Cmp::CMP_USER_ID
       )
+    end
+
+    def entity_str(entity)
+      "#{entity.name} - #{entity_url(entity)}"
+    end
+
+    def entity_url(entity)
+      e_path = Rails.application.routes.url_helpers.entity_path(entity).gsub('entities', 'org')
+      "https://littlesis.org#{e_path}"
     end
   end
 end
