@@ -43,6 +43,7 @@ module Cmp
     def import!
       ApplicationRecord.transaction do
         entity = find_or_create_entity
+        return if entity.nil?
         create_cmp_entity(entity)
         entity.update! attrs_for(:entity).with_last_user(CMP_SF_USER_ID)
         add_extension(entity)
@@ -56,7 +57,17 @@ module Cmp
       if CmpEntity.find_by(cmp_id: cmpid)
         CmpEntity.find_by(cmp_id: cmpid).entity
       elsif entity_match.has_match?
-        entity_match.match
+
+        if CmpEntity.find_by(entity_id: entity_match.match.id).present?
+          Rails.logger.warn <<~ERROR
+            Failed to import Cmp Org \##{cmpid}
+            The matched entity -- #{entity_match.match.id} -- already has a CmpEntity
+          ERROR
+          return nil
+        else
+          entity_match.match
+        end
+
       else
         create_new_entity!
       end
