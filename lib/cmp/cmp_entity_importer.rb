@@ -1,20 +1,27 @@
 module Cmp
   class CmpEntityImporter
     attr_reader :attributes
+    delegate :fetch, to: :attributes
 
     def initialize(attrs)
       @attributes = LsHash.new(attrs)
     end
 
     def cmpid
-      attributes['cmpid']
+      fetch('cmpid')
     end
 
-    # join table between CMP IDS and LittleSis Entity
-    # Fields:
-    #  - id (int)
-    #  - cmp_id (int)
-    #  - entity_id (int)
-    #  - type ? (org/person)
+    protected
+
+    # Symbol -> LsHash
+    def attrs_for(model)
+      LsHash.new(
+        self.class.const_get(:ATTRIBUTE_MAP)
+          .select { |_k, (m, _f)| m == model }
+          .map { |k, (_m, f)| [f, attributes[k]] }
+          .to_h
+      )
+    end
+
   end
 end

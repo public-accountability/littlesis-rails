@@ -1,7 +1,6 @@
 module Cmp
   class PersonSheet < Cmp::ExcelSheet
     HEADER_MAP = {
-      cmpname: /CMP-IndlName/,
       cmpid: 'CMPID_indl',
       fullname: 'DMCFullname',
       salutation: 'DMCSalutation',
@@ -9,8 +8,10 @@ module Cmp
       middlename: 'DMCMiddlename',
       lastname: 'DMCLastname',
       suffix: 'DMCSuffix',
-      gender: 'DMCGender'
-      # date of birth: which year?
+      gender: 'DMCGender',
+      dob_2015: 'DMCDateofbirth_2015',
+      dob_2016: 'DMCDateofbirth_2016',
+      nationality: 'DMCCountryiesofnationality'
     }.freeze
   end
 end
