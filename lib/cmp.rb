@@ -31,6 +31,10 @@ module Cmp
     OrgSheet.new(file_path).to_a.map { |attrs| CmpOrg.new(attrs) }
   end
 
+  def self.import_orgs
+    orgs.each(&:import!)
+  end
+
   # -> [CmpPerson]
   def self.people(file_path = PERSON_FILE_PATH)
     PersonSheet.new(file_path).to_a.map { |attrs| CmpPerson.new(attrs) }
