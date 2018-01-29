@@ -325,21 +325,22 @@ describe Entity, :tag_helper  do
       it 'works with example Business Person' do
         person = create(:entity_person, name: 'johnny business')
         person.add_extension('BusinessPerson', sec_cik: 987)
-        expect(person.extension_attributes).to eql ({
-                                                       'sec_cik' => 987,
-                                                       'name_first' => 'Johnny',
-                                                       'name_last' => 'Business',
-                                                       'name_middle' => nil,
-                                                       'name_prefix' => nil,
-                                                       'name_suffix' => nil,
-                                                       'name_nick' => nil,
-                                                       'birthplace' => nil,
-                                                       'gender_id' => nil,
-                                                       'party_id' => nil,
-                                                       'is_independent' => nil,
-                                                       'net_worth' => nil,
-                                                       'name_maiden' => nil,
-                                                     })
+        expect(person.extension_attributes).to eql(
+                                                 'sec_cik' => 987,
+                                                 'name_first' => 'Johnny',
+                                                 'name_last' => 'Business',
+                                                 'name_middle' => nil,
+                                                 'name_prefix' => nil,
+                                                 'name_suffix' => nil,
+                                                 'name_nick' => nil,
+                                                 'birthplace' => nil,
+                                                 'gender_id' => nil,
+                                                 'party_id' => nil,
+                                                 'is_independent' => nil,
+                                                 'net_worth' => nil,
+                                                 'name_maiden' => nil,
+                                                 'nationality' => []
+                                               )
       end
     end
 
