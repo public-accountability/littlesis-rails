@@ -36,7 +36,7 @@ module Cmp
     def matches
       return {} if entity_match.empty?
       one = { one: entity_str(entity_match.first) }
-      return one.merge(two: entity_str(entity_match.second) ) if entity_match.second.present?
+      return one.merge(two: entity_str(entity_match.second)) if entity_match.second.present?
       return one
     end
 
@@ -47,7 +47,7 @@ module Cmp
         entity.update! attrs_for(:entity).with_last_user(CMP_SF_USER_ID)
         add_extension(entity)
         entity.org.update! attrs_for(:org)
-        entity.addresses.find_or_create_by! attrs_for(:address).with_last_user(CMP_SF_USER_ID)
+        import_address(entity)
         import_ticker(entity)
       end
     end
@@ -84,6 +84,13 @@ module Cmp
     def import_ticker(entity)
       return nil if attributes[:ticker].blank?
       entity.add_extension('PublicCompany').public_company.update!(ticker: attributes[:ticker])
+    end
+
+    def import_address(entity)
+      attrs = attrs_for(:address).with_last_user(CMP_SF_USER_ID)
+      unless attrs[:city].blank? || attrs[:country_name].blank?
+        entity.addresses.find_or_create_by!(attrs)
+      end
     end
 
     # Symbol -> LsHash

@@ -2,6 +2,7 @@ module Cmp
   class EntityMatch
     MATCHES = YAML.load_file(Rails.root.join('data', 'cmp_matches.yml'))
     delegate :count, :empty?, :to => :search_results
+    delegate :matches, :to => :class
 
     def initialize(name:, primary_ext:, cmpid:)
       raise ArgumentError, "Invalid primary_ext" unless %w[Org Person].include? primary_ext
@@ -14,7 +15,7 @@ module Cmp
 
     def match
       return nil unless has_match?
-      if self.class.matches.key?(@cmpid)
+      if matches.key?(@cmpid)
         entity_id = self.class.matches.dig(@cmpid, 'entity_id')
         return create_new_entity if entity_id == 'NEW'
         return Entity.find(entity_id)
@@ -31,7 +32,7 @@ module Cmp
     end
 
     def has_match? # rubocop:disable PredicateName
-      self.class.matches.key?(@cmpid) || search_results.present?
+      matches.key?(@cmpid) || search_results.present?
     end
 
     def search_results

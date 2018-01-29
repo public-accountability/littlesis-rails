@@ -89,7 +89,7 @@ describe Cmp do
       let(:file_match) { build(:org, name: "McGill University") }
       before do
         allow(Entity::Search).to receive(:search).and_return(Array.wrap(org))
-        allow(Entity).to receive(:find).with(15062).and_return(file_match)
+        allow(Entity).to receive(:find).with(15_062).and_return(file_match)
       end
       specify { expect(entity_match.empty?).to be false }
       specify { expect(entity_match.has_match?).to be true }
@@ -106,7 +106,7 @@ describe Cmp do
       before { allow(Entity::Search).to receive(:search).and_return(Array.wrap(org)) }
       specify { expect(entity_match.has_match?).to be true }
       specify do
-        expect { entity_match.match }.to change { Entity.count}.by(1)
+        expect { entity_match.match }.to change { Entity.count }.by(1)
       end
       specify { expect(entity_match.match.primary_ext).to eql 'Org' }
       specify { expect(entity_match.match.name).to eql name }
@@ -120,6 +120,5 @@ describe Cmp do
       specify { expect(entity_match.first).to eql people[0] }
       specify { expect(entity_match.second).to be people[1] }
     end
-
   end
 end
