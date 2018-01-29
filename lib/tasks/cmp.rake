@@ -16,7 +16,9 @@ namespace :cmp do
 
     desc 'import orgs excel sheet'
     task import: :environment do
+      ThinkingSphinx::Callbacks.suspend!
       Cmp.import_orgs
+      ThinkingSphinx::Callbacks.resume!
     end
   end
 end
