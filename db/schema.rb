@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180124213412) do
+ActiveRecord::Schema.define(version: 20180129193750) do
 
   create_table "address", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint   "entity_id",                                null: false
@@ -1079,8 +1079,8 @@ ActiveRecord::Schema.define(version: 20180124213412) do
   end
 
   create_table "person", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
-    t.string  "name_last",      limit: 50, null: false
-    t.string  "name_first",     limit: 50, null: false
+    t.string  "name_last",      limit: 50,    null: false
+    t.string  "name_first",     limit: 50,    null: false
     t.string  "name_middle",    limit: 50
     t.string  "name_prefix",    limit: 30
     t.string  "name_suffix",    limit: 30
@@ -1090,8 +1090,9 @@ ActiveRecord::Schema.define(version: 20180124213412) do
     t.bigint  "party_id"
     t.boolean "is_independent"
     t.bigint  "net_worth"
-    t.bigint  "entity_id",                 null: false
+    t.bigint  "entity_id",                    null: false
     t.string  "name_maiden",    limit: 50
+    t.text    "nationality",    limit: 65535
     t.index ["entity_id"], name: "entity_id_idx", using: :btree
     t.index ["gender_id"], name: "gender_id_idx", using: :btree
     t.index ["name_last", "name_first", "name_middle"], name: "name_idx", using: :btree
