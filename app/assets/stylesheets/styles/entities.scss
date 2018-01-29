@@ -471,8 +471,13 @@ html table.dataTable thead {
   margin-left: 1em;
 }
 
-#about-sidebar p {
-  font-size: 11px;
+#about-sidebar{
+    padding-left: 25px;
+    
+    p {
+	font-size: 11px;
+    }
+    
 }
 
 #page-length-select {
