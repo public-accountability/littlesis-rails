@@ -1,4 +1,12 @@
 require 'csv'
+require_relative 'cmp/excel_sheet'
+require_relative 'cmp/org_sheet'
+require_relative 'cmp/person_sheet'
+require_relative 'cmp/org_type'
+require_relative 'cmp/cmp_entity_importer'
+require_relative 'cmp/entity_match'
+require_relative 'cmp/cmp_org'
+require_relative 'cmp/cmp_person'
 
 module Cmp
   CMP_USER_ID = 1
