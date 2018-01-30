@@ -2,11 +2,13 @@ require 'csv'
 require_relative 'cmp/excel_sheet'
 require_relative 'cmp/org_sheet'
 require_relative 'cmp/person_sheet'
+require_relative 'cmp/relationship_sheet'
 require_relative 'cmp/org_type'
 require_relative 'cmp/cmp_entity_importer'
 require_relative 'cmp/entity_match'
 require_relative 'cmp/cmp_org'
 require_relative 'cmp/cmp_person'
+require_relative 'cmp/datasets'
 
 module Cmp
   CMP_USER_ID = 1
@@ -15,9 +17,15 @@ module Cmp
   ORG_FILE_PATH = Rails.root.join('data', 'CMPDatabase2_Organizations_2015-2016.xlsx').to_s
   ORG_OUT_CSV_PATH = Rails.root.join('data', "cmp-orgs-#{Time.current.strftime('%F')}.csv").to_s
 
-  PERSON_FILE_PATH = Rails.root.join('data', 'CMPDatabase2_Individuals.xlsx').to_s
-  PERSON_OUT_CSV_PATH = Rails.root.join('data', "cmp-individuals-#{Time.current.strftime('%F')}.csv").to_s
+  # PERSON_FILE_PATH = Rails.root.join('data', 'CMPDatabase2_Individuals.xlsx').to_s
+  # PERSON_OUT_CSV_PATH = Rails.root.join('data', "cmp-individuals-#{Time.current.strftime('%F')}.csv").to_s
 
+  RELATIONSHIP_FILE_PATH = Rails.root.join('data', 'affiliations', 'affiliations.csv').to_s
+
+  def self.affliations
+    RelationshipSheet.new(RELATIONSHIP_FILE_PATH).to_a
+  end
+  
   def self.save_org_csv
     Query.save_hash_array_to_csv ORG_OUT_CSV_PATH, orgs.map(&:to_h)
   end
