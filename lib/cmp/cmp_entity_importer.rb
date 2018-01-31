@@ -23,5 +23,13 @@ module Cmp
       )
     end
 
+    private
+
+    def entity_url(entity)
+      primary_ext = self.class.name.gsub('Cmp::Cmp', '').downcase
+      e_path = Rails.application.routes.url_helpers.entity_path(entity).gsub('entities', primary_ext)
+      "https://littlesis.org#{e_path}"
+    end
+
   end
 end
