@@ -13,9 +13,7 @@ describe Api, :pagination_helper do
     @api_token.delete
   end
 
-  let(:meta) do
-    Api::META
-  end
+  let(:meta) { Api::META }
 
   describe 'entities' do
     let(:lawyer) do
@@ -23,29 +21,29 @@ describe Api, :pagination_helper do
     end
 
     let(:expected) do
-        {
-          'data' => {
-            'type' => 'entities',
+      {
+        'data' => {
+          'type' => 'entities',
+          'id' => lawyer.id,
+          'attributes' => {
             'id' => lawyer.id,
-            'attributes' => {
-              'id' => lawyer.id,
-              'name' => lawyer.name,
-              'blurb' => lawyer.blurb,
-              'primary_ext' => 'Person',
-              'summary' => lawyer.summary,
-              'parent_id' => nil,
-              'website' => lawyer.website,
-              'start_date' => lawyer.start_date,
-              'end_date' => lawyer.end_date,
-              'types' => ["Person", "Lawyer"],
-              'aliases' => lawyer.aliases.map(&:name),
-              'updated_at' => lawyer.updated_at.iso8601
-            },
-            'links' => { 'self' => Rails.application.routes.url_helpers.entity_url(lawyer) },
+            'name' => lawyer.name,
+            'blurb' => lawyer.blurb,
+            'primary_ext' => 'Person',
+            'summary' => lawyer.summary,
+            'parent_id' => nil,
+            'website' => lawyer.website,
+            'start_date' => lawyer.start_date,
+            'end_date' => lawyer.end_date,
+            'types' => %w[Person Lawyer],
+            'aliases' => lawyer.aliases.map(&:name),
+            'updated_at' => lawyer.updated_at.iso8601
           },
-          'meta' => meta
-        }
-      end
+          'links' => { 'self' => Rails.application.routes.url_helpers.entity_url(lawyer) }
+        },
+        'meta' => meta
+      }
+    end
 
     describe 'entity information /entities/:id' do
       before { get api_entity_path(lawyer), headers: @auth_header }
@@ -57,21 +55,23 @@ describe Api, :pagination_helper do
       let(:with_details) do
         expected.deep_merge('data' => { 'attributes' => {
                                           'extensions' => {
-                                            "Person"=> {"name_last"=>"Being",
-                                                        "name_first"=>"Human",
-                                                        "name_middle"=>nil,
-                                                        "name_prefix"=>nil,
-                                                        "name_suffix"=>nil,
-                                                        "name_nick"=>nil,
-                                                        "birthplace"=>nil,
-                                                        "gender_id"=>nil,
-                                                        "party_id"=>nil,
-                                                        "is_independent"=>nil,
-                                                        "net_worth"=>nil,
-                                                        "name_maiden"=>nil}}} })
+                                            "Person" => {
+                                              "name_last" => "Being",
+                                              "name_first" => "Human",
+                                              "name_middle" => nil,
+                                              "name_prefix" => nil,
+                                              "name_suffix" => nil,
+                                              "name_nick" => nil,
+                                              "birthplace" => nil,
+                                              "gender_id" => nil,
+                                              "party_id" => nil,
+                                              "is_independent" => nil,
+                                              "net_worth" => nil,
+                                              "nationality" => [],
+                                              "name_maiden" => nil
+                                            } } } }) # rubocop:disable Layout/MultilineHashBraceLayout
       end
-
-      before { get api_entity_path(lawyer), params: {'details' => 'true' }, headers: @auth_header }
+      before { get api_entity_path(lawyer), params: { 'details' => 'true' }, headers: @auth_header }
       specify { expect(response).to have_http_status 200 }
       specify { expect(json).to eql(with_details) }
     end
@@ -80,10 +80,8 @@ describe Api, :pagination_helper do
       before { get api_entity_path(id: 1_000_000), headers: @auth_header }
       specify { expect(response).to have_http_status 404 }
       specify do
-        expect(json).to eql({
-                              'errors' => [ { 'title' => 'Record Missing' } ],
-                              'meta' => meta
-                            })
+        expect(json).to eql('errors' => [{ 'title' => 'Record Missing' }],
+                            'meta' => meta)
       end
     end
 
@@ -94,16 +92,14 @@ describe Api, :pagination_helper do
       end
       specify { expect(response).to have_http_status 410 }
       specify do
-        expect(json).to eql({
-                              'errors' => [{ 'title' => 'Record Deleted' }],
-                              'meta' => meta
-                            })
+        expect(json).to eql('errors' => [{ 'title' => 'Record Deleted' }],
+                            'meta' => meta)
       end
     end
   end # end describe entiites
 
   describe '/entities/:id/extensions' do
-    let(:entity) { create(:entity_org).tap { |e| e.add_extension('PoliticalFundraising') } } 
+    let(:entity) { create(:entity_org).tap { |e| e.add_extension('PoliticalFundraising') } }
     let(:expected) do
       {
         'data' => [
@@ -112,9 +108,9 @@ describe Api, :pagination_helper do
             'id' => entity.extension_records.first.id,
             'attributes' => {
               "id" => entity.extension_records.first.id,
-              "definition_id"=>2,
-              "display_name"=>"Organization",
-              "name"=>"Org"
+              "definition_id" => 2,
+              "display_name" => "Organization",
+              "name" => "Org"
             }
           },
           {
@@ -124,7 +120,7 @@ describe Api, :pagination_helper do
               'id' => entity.extension_records.second.id,
               "definition_id" => 11,
               "display_name" => "Political Fundraising Committee",
-              "name"=>"PoliticalFundraising"
+              "name" => "PoliticalFundraising"
             }
           }
         ],
@@ -147,13 +143,14 @@ describe Api, :pagination_helper do
         get lists_api_entity_path(entity), headers: @auth_header
       end
       specify { expect(response).to have_http_status 200 }
-      specify { expect(json).to eql({ 'meta' => meta, 'data' => lists.map(&:api_data) }) }
+      specify { expect(json).to eql('meta' => meta, 'data' => lists.map(&:api_data)) }
     end
 
     context 'entity with no lists' do
       before { get lists_api_entity_path(entity), headers: @auth_header }
-      specify { expect(json).to eql({ 'meta' => meta, 'data' => [] }) }
+      specify { expect(json).to eql('meta' => meta, 'data' => []) }
     end
+
     context 'entity with one open list and one private list' do
       let(:lists) { [create(:open_list), create(:private_list)] }
       before do
@@ -163,22 +160,24 @@ describe Api, :pagination_helper do
       specify { expect(response).to have_http_status 200 }
       specify { expect(json['data']).to eql [lists.first.api_data] }
     end
-   end
+  end
 
   describe '/entities/:id/relationships' do
     let!(:entity) { create(:entity_person) }
     subject { json }
 
     context 'request without page' do
-      let!(:relationships) { Array.new(2) { create(:generic_relationship, entity: entity, related: create(:entity_person)) } } 
+      let!(:relationships) do
+        Array.new(2) do
+          create(:generic_relationship, entity: entity, related: create(:entity_person))
+        end
+      end
       before { get relationships_api_entity_path(entity), headers: @auth_header }
       specify { expect(response).to have_http_status 200 }
       specify do
         expect(json)
-          .to eql({
-                    'meta' => meta.merge('pageCount' => 1, 'currentPage' => 1),
-                    'data' => relationships.map(&:api_data)
-                  })
+          .to eql('meta' => meta.merge('pageCount' => 1, 'currentPage' => 1),
+                  'data' => relationships.map(&:api_data))
       end
     end
 
@@ -205,10 +204,8 @@ describe Api, :pagination_helper do
         specify { expect(json['data'].length).to eql 2 }
 
         it do
-          is_expected.to eql({
-                               'meta' => meta.merge('pageCount' => 2, 'currentPage' => 1),
-                               'data' => relationships.first(2).map(&:api_data)
-                             })
+          is_expected.to eql('meta' => meta.merge('pageCount' => 2, 'currentPage' => 1),
+                             'data' => relationships.first(2).map(&:api_data))
         end
       end
 
@@ -218,10 +215,8 @@ describe Api, :pagination_helper do
         specify { expect(json['data'].length).to eql 1 }
 
         it do
-          is_expected.to eql({
-                               'meta' => meta.merge('pageCount' => 2, 'currentPage' => 2),
-                               'data' => relationships.last(1).map(&:api_data)
-                             })
+          is_expected.to eql('meta' => meta.merge('pageCount' => 2, 'currentPage' => 2),
+                             'data' => relationships.last(1).map(&:api_data))
         end
       end
     end
@@ -236,8 +231,8 @@ describe Api, :pagination_helper do
         return true if klass == ThinkingSphinx::Search
         false
       end
-      def current_page; 1 end
-      def total_pages; 2 end
+      define_method(:current_page) { 1 }
+      define_method(:total_pages) { 2 }
     end
 
     context 'missing param name' do
@@ -256,13 +251,11 @@ describe Api, :pagination_helper do
       specify { expect(json['data'].length).to eql 2 }
       specify do
         expect(json['meta'])
-          .to eql({
-                    'copyright' => Api::META['copyright'],
-                    'license' => Api::META['license'],
-                    'apiVersion' => Api::META['apiVersion'],
-                    'currentPage'=> 1,
-                    'pageCount' => 2
-                  })
+          .to eql('copyright' => Api::META['copyright'],
+                  'license' => Api::META['license'],
+                  'apiVersion' => Api::META['apiVersion'],
+                  'currentPage' => 1,
+                  'pageCount' => 2)
       end
     end
   end
@@ -276,11 +269,9 @@ describe Api, :pagination_helper do
 
     specify { expect(response).to have_http_status 200 }
     specify do
-      expect(json).to eql({
-                            'data' => relationship.api_data,
-                            'meta' => meta,
-                            'included' => [ entity1.api_data(exclude: :extensions), entity2.api_data(exclude: :extensions) ]
-                          })
+      expect(json).to eql('data' => relationship.api_data,
+                          'meta' => meta,
+                          'included' => [entity1.api_data(exclude: :extensions), entity2.api_data(exclude: :extensions)])
     end
   end
 end
