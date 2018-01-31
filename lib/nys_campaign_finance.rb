@@ -67,12 +67,13 @@ module NYSCampaignFinance
     puts "There are #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
 
-  def self.limit_staging_to_current_year
-    year = Time.now.year.to_s
-    in_year = ApplicationRecord.connection.execute("SELECT count(*) from #{STAGING_TABLE_NAME} where e_year = '#{year}'").to_a[0][0]
-    puts "Found #{in_year} disclosures in year #{year}"
-    puts "Preparing to delete all disclosures in #{STAGING_TABLE_NAME} that are NOT from #{year}"
-    ApplicationRecord.connection.execute("DELETE FROM #{STAGING_TABLE_NAME} WHERE e_year <> '#{year}'")
+  def self.limit_staging_to_years(years)
+    years = years.map { |y| "'#{y}'" }.join(', ')
+    in_year = ApplicationRecord.connection.execute("SELECT count(*) from #{STAGING_TABLE_NAME} where e_year IN (#{years})").to_a[0][0]
+
+    puts "Found #{in_year} disclosures in years #{years}"
+    puts "Preparing to delete all disclosures in #{STAGING_TABLE_NAME} that are NOT in years #{years}"
+    ApplicationRecord.connection.execute("DELETE FROM #{STAGING_TABLE_NAME} WHERE e_year NOT IN (#{years})")
     puts "There are now #{row_count} rows in #{STAGING_TABLE_NAME}"
   end
 
