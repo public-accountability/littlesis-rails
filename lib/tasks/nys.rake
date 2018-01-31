@@ -1,4 +1,4 @@
-require Rails.root.join('lib', 'task-helpers', 'nys_campaign_finance.rb')
+require Rails.root.join('lib', 'nys_campaign_finance.rb')
 
 namespace :nys do
   desc 'import latest donation data to staging table'
