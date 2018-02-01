@@ -1,4 +1,8 @@
 # rubocop:disable Rails/Output
+#
+# solves some string encoding issues:
+# ALTER TABLE ny_disclosures CONVERT TO CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci';
+#
 module NYSCampaignFinance
   STAGING_TABLE_NAME = :ny_disclosures_staging
 
