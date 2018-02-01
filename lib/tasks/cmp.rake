@@ -1,4 +1,5 @@
-require Rails.root.join('lib', 'cmp.rb')
+require Rails.root.join('lib', 'query.rb').to_s
+require Rails.root.join('lib', 'cmp.rb').to_s
 
 namespace :cmp do
   namespace :orgs do
@@ -16,7 +17,39 @@ namespace :cmp do
 
     desc 'import orgs excel sheet'
     task import: :environment do
+      ThinkingSphinx::Callbacks.suspend!
       Cmp.import_orgs
+      ThinkingSphinx::Callbacks.resume!
+    end
+  end
+
+  namespace :people do
+    desc 'save individuals with potential match information as csvs'
+    task matches_as_csv: :environment do
+      puts 'loading datasets'
+      Cmp::Datasets.people
+      Cmp::Datasets.relationships
+      Cmp::Datasets.orgs
+
+      file_path = Rails.root.join('data', 'cmp_individuals_with_match_info.csv').to_s
+
+      puts 'processing people'
+      people = Cmp::Datasets.people.values.map do |cmp_person|
+        attrs = cmp_person.attributes_with_matches
+
+        org_names = Cmp::Datasets
+                          .relationships
+                          .select { |r| r.fetch(:cmp_person_id) == attrs.fetch(:cmpid) }
+                          .map { |r| r.fetch(:cmp_org_id) }
+                          .map { |id| Cmp::Datasets.orgs.find { |o| o.fetch(:cmpid).to_s == id } }
+                          .compact
+                          .map { |cmp_org| cmp_org.fetch(:cmpname, '') }
+                          .join('|')
+
+        attrs.merge!('associated_corps' => org_names)
+      end
+
+      Query.save_hash_array_to_csv file_path, people
     end
   end
 end

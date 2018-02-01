@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe Person do
   it { should belong_to(:entity) }
+  it { should have_db_column(:nationality) }
 
   it 'has SHORT_FIRST_NAMES constant' do
     expect(Person::SHORT_FIRST_NAMES).to be_a Hash
@@ -13,6 +14,15 @@ describe Person do
 
   it 'has DISPLAY_ATTRIBUTES' do
     expect(Person::DISPLAY_ATTRIBUTES).to be_a Hash
+  end
+
+  it 'serializes nationality' do
+    person_entity = create(:entity_person)
+    expect(person_entity.person.nationality).to eql []
+    person_entity.person.nationality.push 'Malagasy'
+    expect(person_entity.person.nationality).to eql ['Malagasy']
+    person_entity.person.nationality.push 'Laotian'
+    expect(person_entity.person.nationality).to eql %w[Malagasy Laotian]
   end
 
   describe 'validations' do
@@ -30,7 +40,7 @@ describe Person do
                                name_suffix: 'II',
                                name_prefix: 'rev.',
                                name_nick: 'the rev') }
-                           
+
     it 'titleizes first and last names' do
       rev = the_reverend
       rev.titleize_names
@@ -45,7 +55,6 @@ describe Person do
       expect(rev.name_nick).to eq 'The rev'
     end
   end
-
 
   describe '#gender' do
     it 'returns correct gender for female, male, & other' do

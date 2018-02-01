@@ -1,7 +1,6 @@
 module Cmp
-  class CmpOrg
-    attr_reader :org_type, :attributes
-    delegate :fetch, to: :attributes
+  class CmpOrg < CmpEntityImporter
+    attr_reader :org_type
 
     # Mapping between cmp fields and Model/Attribute for entities
     ATTRIBUTE_MAP = {
@@ -18,14 +17,10 @@ module Cmp
       :assets => [:business, :assets]
     }.freeze
 
-    def initialize(attrs)
-      @attributes = LsHash.new(attrs)
+    def initialize(*args)
+      super(*args)
       @org_type = OrgType.new fetch(:orgtype_code)
       parse_fields
-    end
-
-    def cmpid
-      fetch('cmpid')
     end
 
     def entity_match
@@ -43,6 +38,7 @@ module Cmp
     def import!
       ApplicationRecord.transaction do
         entity = find_or_create_entity
+        return if entity.nil?
         create_cmp_entity(entity)
         entity.update! attrs_for(:entity).with_last_user(CMP_SF_USER_ID)
         add_extension(entity)
@@ -56,7 +52,17 @@ module Cmp
       if CmpEntity.find_by(cmp_id: cmpid)
         CmpEntity.find_by(cmp_id: cmpid).entity
       elsif entity_match.has_match?
-        entity_match.match
+
+        if CmpEntity.find_by(entity_id: entity_match.match.id).present?
+          Rails.logger.warn <<~ERROR
+            Failed to import Cmp Org \##{cmpid}
+            The matched entity -- #{entity_match.match.id} -- already has a CmpEntity
+          ERROR
+          return nil
+        else
+          entity_match.match
+        end
+
       else
         create_new_entity!
       end
@@ -93,16 +99,6 @@ module Cmp
       end
     end
 
-    # Symbol -> LsHash
-    def attrs_for(model)
-      LsHash.new(
-        ATTRIBUTE_MAP
-          .select { |_k, (m, _f)| m == model }
-          .map { |k, (_m, f)| [f, attributes[k]] }
-          .to_h
-      )
-    end
-
     # -> <Entity>
     def create_new_entity!
       Entity.create!(
@@ -114,11 +110,6 @@ module Cmp
 
     def entity_str(entity)
       "#{entity.name} - #{entity_url(entity)}"
-    end
-
-    def entity_url(entity)
-      e_path = Rails.application.routes.url_helpers.entity_path(entity).gsub('entities', 'org')
-      "https://littlesis.org#{e_path}"
     end
   end
 end

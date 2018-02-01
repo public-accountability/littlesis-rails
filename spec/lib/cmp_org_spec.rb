@@ -14,6 +14,7 @@ describe Cmp::CmpOrg do
       orgtype_code: '9'
     }
   end
+
   subject { Cmp::CmpOrg.new(attributes.merge(override)) }
 
   describe 'import!' do
@@ -118,6 +119,20 @@ describe Cmp::CmpOrg do
         expect(Entity.last.website).to eql new_website
       end
     end
+
+    context 'matched entity already has a CmpEntity' do
+      let(:entity) { create(:entity_org) }
+      before do
+        CmpEntity.create!(cmp_id: Faker::Number.number(6), entity_id: entity.id, entity_type: :org)
+        expect(subject).to receive(:entity_match).and_return(double(:has_match? => true))
+        expect(subject).to receive(:entity_match).twice.and_return(double(:match => entity))
+        # expect(subject).to receive(:find_or_create_entity).and_return(CmpEntity.last.entity)
+      end
+
+      it 'does not create a new CmpEntity' do
+        expect { subject.import! }.not_to change { CmpEntity.count }
+      end
+    end
   end
 
   describe 'initialization' do
@@ -143,11 +158,11 @@ describe Cmp::CmpOrg do
     end
 
     context 'found a matched entity' do
-      let(:org) { build(:org) }
+      let(:org) { build(:org, id: rand(10_000)) }
       before do
         entity_match = double('EntityMatch')
         expect(entity_match).to receive(:has_match?).and_return(true)
-        expect(entity_match).to receive(:match).and_return(org)
+        expect(entity_match).to receive(:match).twice.and_return(org)
         subject.instance_variable_set(:@_entity_match, entity_match)
       end
 

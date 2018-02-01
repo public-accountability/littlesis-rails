@@ -3,6 +3,8 @@ class Person < ApplicationRecord
   # Provides: SHORT_FIRST_NAMES, LONG_FIRST_NAMES, DISPLAY_ATTRIBUTES
   include PersonConstants
 
+  serialize :nationality, Array
+
   has_paper_trail :on => [:update, :destroy]
   belongs_to :entity, inverse_of: :person, touch: true
   validates :name_last, length: { maximum: 50 }, presence: true

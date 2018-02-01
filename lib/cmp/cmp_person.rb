@@ -1,27 +1,37 @@
 module Cmp
-  class CmpPerson < Cmp::CmpEntityImporter
-    def name
-      "#{@attributes.fetch(:firstname)} #{@attributes.fetch(:middlename)} #{@attributes.fetch(:lastname)}"
-    end
+  class CmpPerson < CmpEntityImporter
+    ATTRIBUTE_MAP = {
+      fullname: [:entity, :name]
+    }.freeze
 
-    def entity_match
-      return @_entity_match if defined?(@_entity_match)
-      @_entity_match = Cmp::EntityMatch.new name: name, primary_ext: 'Person'
-    end
-
-    def to_h
-      @attributes.merge(
-        potential_matches: entity_match.count,
-        url1: entity_match.empty? ? "" : entity_url(entity_match.first),
-        url2: entity_match.count < 1 ? "" : entity_url(entity_match.second)
+    def attributes_with_matches
+      attributes.merge(
+        Array.new(2) { |n| potential_matches[n] }
+          .map.with_index(1) { |entity, n| format_match(entity, n) }
+          .each_with_object({}) { |match, obj| obj.merge!(match) }
       )
+    end
+
+    def potential_matches
+      @_potential_matches ||=
+        EntityMatch.new(name: entity_name, primary_ext: 'Person', cmpid: cmpid).search_results
     end
 
     private
 
-    def entity_url(entity)
-      e_path = Rails.application.routes.url_helpers.entity_path(entity).gsub('entities', 'person')
-      "https://littlesis.org#{e_path}"
+    def entity_name
+      name = "#{fetch(:firstname)} "
+      name << "#{fetch(:middlename)} " if fetch(:middlename, nil).present?
+      name << fetch(:lastname)
+      name
+    end
+
+    def format_match(entity, n)
+      {
+        "match#{n}_name" => entity.present? ? "#{entity.name} (#{entity.id})" : '',
+        "match#{n}_blurb" => entity&.blurb,
+        "match#{n}_url" => entity.present? ? entity_url(entity) : ''
+      }
     end
   end
 end
