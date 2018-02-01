@@ -175,9 +175,8 @@ describe Api, :pagination_helper do
       before { get relationships_api_entity_path(entity), headers: @auth_header }
       specify { expect(response).to have_http_status 200 }
       specify do
-        expect(json)
-          .to eql('meta' => meta.merge('pageCount' => 1, 'currentPage' => 1),
-                  'data' => relationships.map(&:api_data))
+        expect(json['meta']).to eql(meta.merge('pageCount' => 1, 'currentPage' => 1))
+        expect(json['data'].to_set).to eql relationships.map(&:api_data).to_set
       end
     end
 

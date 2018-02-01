@@ -14,7 +14,7 @@ describe Cmp::CmpOrg do
       orgtype_code: '9'
     }
   end
-  
+
   subject { Cmp::CmpOrg.new(attributes.merge(override)) }
 
   describe 'import!' do

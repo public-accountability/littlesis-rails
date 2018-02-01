@@ -30,18 +30,18 @@ namespace :cmp do
       Cmp::Datasets.people
       Cmp::Datasets.relationships
       Cmp::Datasets.orgs
-      
+
       file_path = Rails.root.join('data', 'cmp_individuals_with_match_info.csv').to_s
-      
+
       puts 'processing people'
       people = Cmp::Datasets.people.values.map do |cmp_person|
         attrs = cmp_person.attributes_with_matches
-        
+
         org_names = Cmp::Datasets
                           .relationships
-                          .select { |r| r.fetch(:cmp_person_id) == attrs.fetch(:cmpid) } 
+                          .select { |r| r.fetch(:cmp_person_id) == attrs.fetch(:cmpid) }
                           .map { |r| r.fetch(:cmp_org_id) }
-                          .map { |org_id| Cmp::Datasets.orgs.find { |o| o.fetch(:cmpid).to_s == org_id } }
+                          .map { |id| Cmp::Datasets.orgs.find { |o| o.fetch(:cmpid).to_s == id } }
                           .compact
                           .map { |cmp_org| cmp_org.fetch(:cmpname, '') }
                           .join('|')

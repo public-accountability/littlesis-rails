@@ -3,7 +3,6 @@ module Cmp
     ATTRIBUTE_MAP = {
       fullname: [:entity, :name]
     }.freeze
-    
 
     def attributes_with_matches
       attributes.merge(
@@ -13,12 +12,10 @@ module Cmp
       )
     end
 
-
     def potential_matches
-      @_potential_matches ||= 
+      @_potential_matches ||=
         EntityMatch.new(name: entity_name, primary_ext: 'Person', cmpid: cmpid).search_results
     end
-
 
     private
 
@@ -36,6 +33,5 @@ module Cmp
         "match#{n}_url" => entity.present? ? entity_url(entity) : ''
       }
     end
-
   end
 end

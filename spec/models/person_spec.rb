@@ -22,7 +22,7 @@ describe Person do
     person_entity.person.nationality.push 'Malagasy'
     expect(person_entity.person.nationality).to eql ['Malagasy']
     person_entity.person.nationality.push 'Laotian'
-    expect(person_entity.person.nationality).to eql ['Malagasy', 'Laotian']
+    expect(person_entity.person.nationality).to eql %w[Malagasy Laotian]
   end
 
   describe 'validations' do
@@ -40,7 +40,7 @@ describe Person do
                                name_suffix: 'II',
                                name_prefix: 'rev.',
                                name_nick: 'the rev') }
-                           
+
     it 'titleizes first and last names' do
       rev = the_reverend
       rev.titleize_names
@@ -55,7 +55,6 @@ describe Person do
       expect(rev.name_nick).to eq 'The rev'
     end
   end
-
 
   describe '#gender' do
     it 'returns correct gender for female, male, & other' do
