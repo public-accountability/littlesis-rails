@@ -16,4 +16,10 @@ namespace :legislators do
 		matcher = LegislatorMatcher.new
 		matcher.match
 	end
+
+	desc 'test method'
+	task test_method: :environment do
+		matcher = LegislatorMatcher.new
+		matcher.test_method
+	end
 end

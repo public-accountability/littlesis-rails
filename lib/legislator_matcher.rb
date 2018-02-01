@@ -18,18 +18,22 @@ class LegislatorMatcher
 	end
 
 
-	# In the database, but something is wrong with their entry (name, record of elected office...)
+	# Either no associated id, or not in the database at all
 	def find_unmatched
 		unmatched_by_ids @reps
 	end
 
 	# In the database, but maybe their entry doesn't include their elected position
-	def find_outdated
-		(unmatched_by_ids @reps).select { |rep| search_by_rep(rep).count > 0 }
-	end
+	# def find_outdated
+	# 	(unmatched_by_ids @reps).select { |rep| search_by_rep(rep).count > 0 }
+	# end
 
 	def match
 		@reps.map { |rep| [(match_by_ids rep), rep] }
+	end
+
+	def test_method
+		find_unmatched.each { |rep| p match_by_name rep }
 	end
 
 	private
@@ -41,7 +45,26 @@ class LegislatorMatcher
 		elected_representative ? elected_representative.entity_id : nil
 	end
 
+	# Takes YAML object, returns either a definite Entity matches or [] if they can't be found
+	def match_by_name rep
+		p ''
+		p rep['name']
+
+		by_name = (search_by_full_name rep) | (search_by_name rep['id']['wikipedia']) | (search_by_name rep['name']['last'])
+		filter_by_birth_date by_name, rep['bio']['birthday']
+	end
+
+	def filter_by_extension_names entities
+		entities.select { |e| e[:extension_names].include?('PoliticalCandidate') || e[:extension_names].include?('ElectedRepresentative') }
+	end
+
+	def filter_by_birth_date entities, birth_date
+		entities.select { |e| birth_date == e[:birth_date] }
+	end
+
 	def search_by_name name
+		return [] unless name
+
 	    Entity.search(
 	      "@(name,aliases) #{name}", 
 	      per_page: 10, 
@@ -49,14 +72,14 @@ class LegislatorMatcher
 	      with: { is_deleted: false },
 	      select: "*, weight() * (link_count + 1) AS link_weight",
 	      order: "link_weight DESC"
-	    ).select { |e| e.primary_ext == 'Person' }.collect { |e| { name: e.name, id: e.id, blurb: e.blurb, primary_ext: e.primary_ext } }
+	    ).select { |e| e.primary_ext == 'Person' }.collect { |e| { name: e.name, id: e.id, blurb: e.blurb, extension_names: e.extension_names, birth_date: e.start_date } }
 	end
 
-	def search_by_rep rep
+	def search_by_full_name rep
 		name = rep['name']
-		full, first, middle, last = name['official_full'], name['first'], name['middle'], name['last']
+		full, first, middle, last, suffix, nickname = name['official_full'], name['first'], name['middle'], name['last'], name['suffix'], name['nickname']
 
-		search_by_name full || "#{first} #{middle} #{last}"
+		(search_by_name full) | (search_by_name "#{first} #{middle} #{last} #{suffix}") | (search_by_name "#{nickname} #{last} #{suffix}") | (search_by_name "#{first} #{last}")
 	end
 
 	# Returns reps not in database by bioguide_id (could be in the database, but maybe their entry doesn't include their elected position)
@@ -85,7 +108,7 @@ class LegislatorMatcher
 	end
 
 	# Returns reps not in database by name (either not in the db or an alias is missing)
-	def unmatched_by_name reps
-		reps.select { |rep| search_by_rep(rep).count == 0 }
-	end
+	# def unmatched_by_name reps
+	# 	reps.select { |rep| search_by_rep(rep).count == 0 }
+	# end
 end
