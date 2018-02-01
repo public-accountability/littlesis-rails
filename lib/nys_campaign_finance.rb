@@ -1,3 +1,4 @@
+# rubocop:disable Rails/Output
 module NYSCampaignFinance
   STAGING_TABLE_NAME = :ny_disclosures_staging
 
@@ -103,9 +104,9 @@ module NYSCampaignFinance
       end
 
       print "." if (idx % 5000).zero?
-      print "\n #{ (idx / Float(staging_disclosure_ids.count) * 100).round }% Complete\n" if (idx % 50_000).zero?
+      print "\n #{(idx / Float(staging_disclosure_ids.count) * 100).round }% Complete\n" if (idx % 50_000).zero?
     end
-    
+
     ThinkingSphinx::Callbacks.resume!
     puts "Inserted #{stats[:new_disclosures_saved]} new disclosures into the database"
     puts "Skipped #{stats[:invalid_new_disclosures]} invalid new disclosures"
@@ -114,16 +115,26 @@ module NYSCampaignFinance
 
   # -> Array of Ints
   def self.staging_disclosures_to_add
-    sql = "SELECT staging.id
-           FROM ny_disclosures_staging staging
-           LEFT JOIN ny_disclosures main
-           ON staging.filer_id = main.filer_id
-           AND staging.report_id = main.report_id
-           AND staging.transaction_id = main.transaction_id
-           AND staging.schedule_transaction_date = main.schedule_transaction_date
-           AND staging.e_year = main.e_year
-           WHERE main.filer_id IS NULL;"
-    ApplicationRecord.connection.execute(sql).to_a.flatten
+    ny_disclosures = Set.new
+    staging_disclosure_ids = []
+
+    years_in_staging = execute("SELECT distinct e_year FROM #{STAGING_TABLE_NAME}").to_a.flatten
+
+    # get all existing nys disclosures
+    execute("SELECT filer_id, report_id, transaction_id, schedule_transaction_date, e_year
+             FROM ny_disclosures
+             WHERE e_year IN #{Entity.sqlize_array(years_in_staging)}")
+      .each(as: :hash) { |row| ny_disclosures << row }
+
+    # loop through disclosures in staging table
+    execute("SELECT id, filer_id, report_id, transaction_id, schedule_transaction_date, e_year
+             FROM #{STAGING_TABLE_NAME}")
+      .each(as: :hash) do |row|
+        # if no match is found, add the id to the list of disclosure ids to add
+        staging_disclosure_ids << row['id'] unless ny_disclosures.include?(row.except('id'))
+      end
+
+    staging_disclosure_ids
   end
 
   def self.insert_new_filers(file_path)
@@ -166,4 +177,9 @@ module NYSCampaignFinance
     h = cols.zip(arr).to_h
     h
   end
+
+  private_class_method def self.execute(sql)
+    ApplicationRecord.connection.execute(sql)
+  end
 end
+# rubocop:enable Rails/Output
