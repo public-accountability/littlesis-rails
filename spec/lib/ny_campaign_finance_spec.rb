@@ -1,5 +1,5 @@
 require 'rails_helper'
-require Rails.root.join('lib', 'task-helpers', 'nys_campaign_finance.rb')
+require Rails.root.join('lib', 'nys_campaign_finance.rb')
 
 xdescribe 'NYSCampaignFinance' do
   describe 'insert_new_disclosures' do
