@@ -33,7 +33,7 @@ namespace :cmp do
       file_path = Rails.root.join('data', 'cmp_individuals_with_match_info.csv').to_s
 
       people = Cmp::Datasets.people.values.map do |cmp_person|
-        attrs = { 'littlesis_entity_id' => ''}.merge!(cmp_person.attributes_with_matches)
+        attrs = LsHash.new(littlesis_entity_id: '').merge!(cmp_person.attributes_with_matches)
 
         attrs['littlesis_entity_id'] = 'new' if attrs['match1_name'].blank?
 
