@@ -26,25 +26,25 @@ namespace :cmp do
   namespace :people do
     desc 'save individuals with potential match information as csvs'
     task matches_as_csv: :environment do
-      puts 'loading datasets'
       Cmp::Datasets.people
       Cmp::Datasets.relationships
       Cmp::Datasets.orgs
 
       file_path = Rails.root.join('data', 'cmp_individuals_with_match_info.csv').to_s
 
-      puts 'processing people'
       people = Cmp::Datasets.people.values.map do |cmp_person|
-        attrs = cmp_person.attributes_with_matches
+        attrs = { 'littlesis_entity_id' => ''}.merge!(cmp_person.attributes_with_matches)
+
+        attrs['littlesis_entity_id'] = 'new' if attrs['match1_name'].blank?
 
         org_names = Cmp::Datasets
                           .relationships
-                          .select { |r| r.fetch(:cmp_person_id) == attrs.fetch(:cmpid) }
+                          .select { |r| r.fetch(:cmp_person_id, nil) == attrs.fetch(:cmpid, nil) }
                           .map { |r| r.fetch(:cmp_org_id) }
                           .map { |id| Cmp::Datasets.orgs.find { |o| o.fetch(:cmpid).to_s == id } }
                           .compact
                           .map { |cmp_org| cmp_org.fetch(:cmpname, '') }
-                          .join('|')
+                          .join('| ')
 
         attrs.merge!('associated_corps' => org_names)
       end
