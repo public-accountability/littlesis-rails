@@ -3,6 +3,7 @@ require 'rails_helper'
 describe EntityHistory do
   with_versioning do
     subject { EntityHistory.new(entity) }
+    let(:person) { create(:entity_person) }
 
     describe 'entity internal attribute' do
       let(:entity) { build(:org) }
@@ -19,11 +20,32 @@ describe EntityHistory do
       end
     end
 
-    describe 'pagination' do
-      let(:person) { create(:entity_person) }
-
-      # add two versions
+    describe 'versions includes relationships' do
       before do
+        # create two relationships
+        Relationship.create!(category_id: 1, entity: person, related: create(:entity_org))
+        Relationship.create!(category_id: 12, entity: create(:entity_org), related: person)
+      end
+      subject(:versions) { EntityHistory.new(person).versions }
+
+      it 'returns 3 versions' do
+        expect(versions.total_count).to eql 3
+      end
+
+      it 'returns 2 relationship versions and 1 entity version' do
+        expect(
+          versions.select { |v| v.item_type == 'Entity' }.size
+        ).to eql 1
+
+        expect(
+          versions.select { |v| v.item_type == 'Relationship' }.size
+        ).to eql 2
+      end
+    end
+
+    describe 'pagination' do
+      before do
+        # add two versions
         %w[MediaPersonality PublicIntellectual].each { |ext| person.add_extension ext }
       end
 

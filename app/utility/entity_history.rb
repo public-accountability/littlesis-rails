@@ -33,10 +33,9 @@ class EntityHistory
     <<~SQL
       SELECT #{select}
       FROM versions
-      WHERE
-        (item_id = #{entity_id} AND item_type = 'Entity')
-      OR
-        (entity1_id = #{entity_id})
+      WHERE (item_id = #{entity_id} AND item_type = 'Entity')
+         OR (entity1_id = #{entity_id})
+         OR (entity2_id = #{entity_id})
       #{order}
     SQL
   end
