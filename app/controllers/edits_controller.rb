@@ -9,9 +9,9 @@ class EditsController < ApplicationController
   end
 
   def entity
-    version_page = params[:version_page].blank? ? 1 : params[:version_page]
-    rel_page = params[:rel_page].blank? ? 1 : params[:rel_page]
-    @versions = @entity.versions.reorder('created_at DESC').page(version_page).per(5)
+    version_page = params[:version_page].presence || 1
+    rel_page = params[:rel_page].presence || 1
+    @versions = EntityHistory.new(@entity).versions.page(version_page).per(5)
     @relationship_changes = rel_versions(@entity.id, rel_page)
   end
 

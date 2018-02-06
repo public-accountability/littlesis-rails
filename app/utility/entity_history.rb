@@ -1,5 +1,5 @@
-# Class used to retrive information abou
-# historic changes changes to an entity
+# Class used to retrive versions and edits
+# for entities
 class EntityHistory
   attr_internal :entity
 
@@ -8,6 +8,6 @@ class EntityHistory
   end
 
   def versions
-    entity.versions.order('created_at DESC')
+    entity.versions.reorder('created_at DESC')
   end
 end
