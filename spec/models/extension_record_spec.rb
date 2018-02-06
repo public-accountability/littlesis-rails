@@ -16,8 +16,15 @@ describe ExtensionRecord, type: :model do
     it 'tracks all other extensions' do
       org.add_extension('IndustryTrade')
       expect(
-        org.extension_records.where('definition_id <> 2').first.versions.count
+        org.extension_records.find_by('definition_id <> 2').versions.count
       ).to eql 1
+    end
+
+    it 'stores associated entity id in entity1_id' do
+      org.add_extension('IndustryTrade')
+      expect(
+        org.extension_records.find_by('definition_id <> 2').versions.first.entity1_id
+      ).to eql org.id
     end
   end
 end
