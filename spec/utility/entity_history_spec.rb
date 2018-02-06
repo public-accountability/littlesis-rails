@@ -18,5 +18,33 @@ describe EntityHistory do
         specify { expect(subject.event).to eql 'create' }
       end
     end
+
+    describe 'pagination' do
+      let(:person) { create(:entity_person) }
+
+      # add two versions
+      before do
+        %w[MediaPersonality PublicIntellectual].each { |ext| person.add_extension ext }
+      end
+
+      context 'version count is under default per page limit' do
+        subject { EntityHistory.new(person).versions.total_count }
+        it { is_expected.to eql 3 }
+      end
+
+      context 'has 2 pages of results' do
+        context 'requesting page 1' do
+          subject { EntityHistory.new(person).versions(per_page: 2, page: 1) }
+          specify { expect(subject.count).to eql 2 }
+          specify { expect(subject.total_count).to eql 3 }
+        end
+
+        context 'requesting page 2' do
+          subject { EntityHistory.new(person).versions(per_page: 2, page: 2) }
+          specify { expect(subject.count).to eql 1 }
+          specify { expect(subject.total_count).to eql 3 }
+        end
+      end
+    end
   end
 end
