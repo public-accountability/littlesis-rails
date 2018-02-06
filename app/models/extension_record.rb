@@ -2,8 +2,11 @@ class ExtensionRecord < ApplicationRecord
   include SingularTable
   include Api::Serializable
 
+  has_paper_trail on: [:create, :destroy],
+                  unless: proc { |er| [1, 2].include? er.definition_id }
+
   belongs_to :entity, inverse_of: :extension_records, touch: true
-  belongs_to :extension_definition, foreign_key: "definition_id", inverse_of: :extension_records  
+  belongs_to :extension_definition, foreign_key: "definition_id", inverse_of: :extension_records
 
   # Returns nested array:
   # [ [ count, display_name ] ]
