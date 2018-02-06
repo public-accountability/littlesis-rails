@@ -1,6 +1,9 @@
 class PoliticalFundraising < ApplicationRecord
   include SingularTable
-  has_paper_trail :on => [:update]
+
+  has_paper_trail on: [:update],
+                  meta: { entity1_id: :entity_id }
+
   belongs_to :entity, inverse_of: :political_fundraising
 
   # There are multiple entries of the same committee in the OsCommitte

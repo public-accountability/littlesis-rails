@@ -5,9 +5,10 @@ describe EntityHistory do
     subject { EntityHistory.new(entity) }
     let(:person) { create(:entity_person) }
 
-    describe 'entity internal attribute' do
+    describe 'object setup: entity internal attribute and delegation' do
       let(:entity) { build(:org) }
       specify { expect(subject.send(:entity)).to eql entity }
+      specify { expect(subject.send(:entity_id)).to eql entity.id }
     end
 
     describe 'after entity has been created' do
@@ -40,6 +41,26 @@ describe EntityHistory do
         expect(
           versions.select { |v| v.item_type == 'Relationship' }.size
         ).to eql 2
+      end
+    end
+
+    describe 'versions includes updates to extensions' do
+      let(:entity) { create(:entity_org) }
+      subject(:versions) { EntityHistory.new(entity).versions }
+
+      before do
+        entity.add_extension 'School'
+        entity.school.update endowment: 1_000_000
+      end
+
+      specify { expect(versions.total_count).to eql 3 }
+
+      specify do
+        expect(versions.select { |v| v.item_type == 'ExtensionRecord' }.size).to eql 1
+      end
+
+      specify do
+        expect(versions.select { |v| v.item_type == 'School' }.size).to eql 1
       end
     end
 
