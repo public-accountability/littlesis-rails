@@ -1,23 +1,23 @@
-namespace :users do
-  desc "creates a User for each SfGuardUserProfile"
-  task create_all_from_profiles: :environment do
-    SfGuardUserProfile.all.each do |p| 
-      p.create_user_with_email_password
-    end
-    print "created Users based on legacy SfGuardUsers\n"
-  end
+require Rails.root.join('lib', 'query.rb').to_s
 
-  desc "creates a User for each new SfGuardUserProfile that doesn't already have one"
-  task create_from_new_profiles: :environment do
-    SfGuardUserProfile.without_user.each do |p|
-      begin
-        p.create_user_with_email_password
-      rescue Exception => e
-        print "*** couldn't create User for #{p.email}\n"
-        print e
-        print "\n"
-      end
-    end
-    print "created Users based on new SfGuardUserProfiles\n"
+namespace :users do
+
+  desc 'recent signups since date'
+  task :recent_signups, [:date] => :environment do |_, args|
+    since = DateTime.parse(args[:date])
+    file_path = Rails.root.join('data', "recent_signups_since_#{since.strftime('%F')}.csv")
+
+    users = User
+              .where(is_restricted: false)
+              .where("created_at >= ?", since)
+              .order('created_at DESC')
+              .map(&:attributes)
+              .map { |attrs| attrs.slice('username', 'email', 'map_the_power', 'created_at') }
+
+
+    Query.save_hash_array_to_csv file_path, users
+
+    ColorPrinter.print_blue "#{users.count} users saved to #{file_path.to_s}"
   end
+  
 end
