@@ -12,6 +12,7 @@ class Tagging < ApplicationRecord
 
   after_save :update_tagable_timestamp
 
+  # TODO: replace this with touch_by
   def update_tagable_timestamp(last_user_id = APP_CONFIG['system_user_id'])
     if tagable.last_user_id == last_user_id
       tagable.touch
