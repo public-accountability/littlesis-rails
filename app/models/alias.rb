@@ -1,6 +1,7 @@
 class Alias < ApplicationRecord
   include SingularTable
   extend WithoutPaperTrailVersioning
+  attr_accessor :skip_update_entity_callback
   has_paper_trail on: [:create, :destroy],
                   meta: { entity1_id: :entity_id }
 
@@ -11,8 +12,11 @@ class Alias < ApplicationRecord
 
   before_validation :trim_name_whitespace
 
-  after_create :update_entity_timestamp
-  after_destroy :update_entity_timestamp
+  after_create :update_entity_timestamp,
+               unless: :skip_update_entity_callback
+
+  after_destroy :update_entity_timestamp,
+                unless: :skip_update_entity_callback
 
   # Makes this alias the primary alias
   # -> boolean

@@ -103,8 +103,10 @@ class Entity < ApplicationRecord
   # creates primary alias if the entity does not have one
   def create_primary_alias
     return nil if aliases.where(is_primary: true).count.positive?
-    Alias.without_versioning do 
-      Alias.create(entity: self, name: name, is_primary: true, last_user_id: Lilsis::Application.config.system_user_id)
+    Alias.without_versioning do
+      a = Alias.new(entity: self, name: name, is_primary: true, last_user_id: last_user_id)
+      a.skip_update_entity_callback = true
+      a.save
     end
   end
 
