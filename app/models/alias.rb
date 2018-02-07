@@ -1,7 +1,10 @@
 class Alias < ApplicationRecord
   include SingularTable
 
-  belongs_to :entity, inverse_of: :aliases, touch: true
+  has_paper_trail on: [:create, :destroy],
+                  meta: { entity1_id: :entity_id }
+
+  belongs_to :entity, inverse_of: :aliases
 
   validates :entity_id, presence: true
   validates :name, length: { maximum: 200 }, presence: true
@@ -10,11 +13,14 @@ class Alias < ApplicationRecord
 
   # Makes this alias the primary alias
   # -> boolean
-  def make_primary
+  def make_primary(user)
     return true if is_primary?
-    entity.primary_alias.update!(is_primary: false)
-    update!(is_primary: true)
-    entity.update!(name: name)
+
+    self.class.transation do
+      entity.primary_alias.update!(is_primary: false)
+      update!(is_primary: true)
+      entity.update! LsHash.new(name: name).with_last_user(user)
+    end
     true
   rescue
     false
