@@ -3,10 +3,11 @@ class Alias < ApplicationRecord
 
   belongs_to :entity, inverse_of: :aliases, touch: true
 
-  validates_presence_of :entity_id
+  validates :entity_id, presence: true
   validates :name, length: { maximum: 200 }, presence: true
 
   before_validation :trim_name_whitespace
+
   # Makes this alias the primary alias
   # -> boolean
   def make_primary
@@ -20,14 +21,12 @@ class Alias < ApplicationRecord
   end
 
   def name_regex(require_first = true)
-    return nil unless person = NameParser.parse_to_person(name)
-    person.name_regex(require_first)
+    NameParser.parse_to_person(name).try(:name_regex, require_first)
   end
 
   private
 
   def trim_name_whitespace
-    self.name = self.name.strip unless self.name.nil?
+    self.name = name.strip unless name.nil?
   end
 end
-

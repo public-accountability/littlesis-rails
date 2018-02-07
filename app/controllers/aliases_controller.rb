@@ -28,16 +28,9 @@ class AliasesController < ApplicationController
 
   private
 
-  def entity_path(entity)
-    entity.legacy_url
-  end
-
-  def edit_entity_path(entity)
-    entity.legacy_url('edit')
-  end
-
   def alias_params
-    params.require(:alias).permit(:name, :entity_id).merge(last_user_id: current_user.sf_guard_user_id)
+    params.require(:alias)
+      .permit(:name, :entity_id)
+      .merge(last_user_id: current_user.sf_guard_user_id)
   end
-
 end

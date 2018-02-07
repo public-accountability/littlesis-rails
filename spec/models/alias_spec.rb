@@ -36,4 +36,11 @@ describe Alias, type: :model do
       expect(org.name).to eql 'other name'
     end
   end
+
+  describe 'name_regex' do
+    it 'returns regex if name parser can generate one' do
+      expect(build(:alias, name: 'xyz').name_regex).to be nil
+      expect(build(:alias, name: 'alice the cat').name_regex).to be_a Regexp
+    end
+  end
 end

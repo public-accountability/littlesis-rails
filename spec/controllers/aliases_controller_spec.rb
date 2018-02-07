@@ -12,17 +12,16 @@ describe AliasesController, type: :controller do
     login_user
 
     context 'with valid params' do
-      def new_alias_post
-        post :create,
-             params: { 'alias' => { 'name' => 'alt name', 'entity_id' => entity.id } }
-      end
+      let(:params) { { 'alias' => { 'name' => 'alt name', 'entity_id' => entity.id } } }
+      let(:new_alias_post) { proc { post :create, params: params } }
+      before { entity }
+
       it 'creates a new Alias' do
-        entity
-        expect { new_alias_post }.to change { Alias.count }.by(1)
+        expect { new_alias_post.call }.to change { Alias.count }.by(1)
       end
 
       it 'redirects to edit entity path' do
-        new_alias_post
+        new_alias_post.call
         expect(response).to have_http_status 302
         expect(response).to redirect_to edit_entity_path(entity)
         expect(controller).not_to set_flash[:alert]
