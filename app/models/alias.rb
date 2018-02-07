@@ -1,6 +1,6 @@
 class Alias < ApplicationRecord
   include SingularTable
-
+  extend WithoutPaperTrailVersioning
   has_paper_trail on: [:create, :destroy],
                   meta: { entity1_id: :entity_id }
 
@@ -11,18 +11,23 @@ class Alias < ApplicationRecord
 
   before_validation :trim_name_whitespace
 
+  after_create :update_entity_timestamp
+  after_destroy :update_entity_timestamp
+
   # Makes this alias the primary alias
   # -> boolean
-  def make_primary(user)
+  def make_primary
     return true if is_primary?
 
-    self.class.transation do
+    ApplicationRecord.transaction do
       entity.primary_alias.update!(is_primary: false)
       update!(is_primary: true)
-      entity.update! LsHash.new(name: name).with_last_user(user)
+      entity.update! LsHash.new(name: name).with_last_user(current_user_or_default)
     end
     true
-  rescue
+  rescue => err
+    Rails.logger.warn "Failed to make alias\##{id} primary"
+    Rails.logger.debug err
     false
   end
 
@@ -34,5 +39,13 @@ class Alias < ApplicationRecord
 
   def trim_name_whitespace
     self.name = name.strip unless name.nil?
+  end
+
+  def update_entity_timestamp
+    entity.touch_by(current_user_or_default)
+  end
+
+  def current_user_or_default
+    current_user.presence || Rails.application.config.system_user_id
   end
 end

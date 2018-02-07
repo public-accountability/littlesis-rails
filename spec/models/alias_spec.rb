@@ -2,6 +2,8 @@ require 'rails_helper'
 
 describe Alias, type: :model do
   let(:org) { create(:org, :with_org_name) }
+  let(:create_alias) { proc { org.aliases.create!(name: Faker::Company.name) } }
+  let(:current_user) { create_really_basic_user }
 
   it { should belong_to(:entity) }
   it { should validate_length_of(:name).is_at_most(200) }
@@ -12,6 +14,11 @@ describe Alias, type: :model do
     a = build(:alias, name: ' company name ', entity_id: rand(100))
     expect(a.valid?).to be true
     expect(a.name).to eq 'company name'
+  end
+
+  it 'updates last_user_id of entity after creating' do
+    as = Alias.new(entity: org, name: Faker::Company.name) { |a| a.current_user = current_user }
+    expect { as.save! }.to change { org.reload.last_user_id }.to(current_user.sf_guard_user_id)
   end
 
   describe '#make_primary' do
@@ -48,12 +55,18 @@ describe Alias, type: :model do
 
   describe 'paper trail versioning' do
     with_versioning do
-      let(:create_alias) { proc { org.aliases.create!(name: Faker::Company.name) } }
       before { org }
 
       it 'stores entity metadata with version' do
         expect { create_alias.call }.to change { PaperTrail::Version.count }.by(1)
         expect(Alias.last.versions.last.entity1_id).to eql org.id
+      end
+
+      it 'can skip versioning using without_versioning' do
+        expect { Alias.without_versioning { create_alias.call } }
+          .not_to change { PaperTrail::Version.count }
+        # verifying that it re-enables versioning:
+        expect { create_alias.call }.to change { PaperTrail::Version.count }.by(1)
       end
 
       it 'records destory events' do
