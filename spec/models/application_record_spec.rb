@@ -1,6 +1,26 @@
 require 'rails_helper'
 
 describe ApplicationRecord do
+  describe 'touch_by_current_user' do
+    let(:user) { build(:user_with_id, sf_guard_user_id: rand(1000)) }
+    let(:org) { build(:org) }
+
+    context 'Entity has current_user set' do
+      it 'calls touch_by with current_user' do
+        expect(org).to receive(:touch_by).with(user)
+        org.current_user = user
+        org.touch_by_current_user
+      end
+    end
+
+    context 'Entity does not have current_user set' do
+      it 'calls touch_by with system user' do
+        expect(org).to receive(:touch_by).with(APP_CONFIG.fetch('system_user_id'))
+        org.touch_by_current_user
+      end
+    end
+  end
+
   describe 'touch_by' do
     let(:user) { create_really_basic_user }
     let(:new_user) { create_really_basic_user }

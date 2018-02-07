@@ -1,5 +1,17 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
+  attr_accessor :current_user
+
+  # If the current model has a current user set
+  # it will use that current_user to derive the last_user_id.
+  # Otherwise, it will default to the system user
+  def touch_by_current_user
+    if current_user.present?
+      touch_by current_user
+    else
+      touch_by APP_CONFIG.fetch('system_user_id')
+    end
+  end
 
   # This method updates the timestampes AND the last_user_id field
   # If the model does not have the field 'last_user_id'
