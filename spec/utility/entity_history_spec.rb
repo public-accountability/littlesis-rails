@@ -64,6 +64,15 @@ describe EntityHistory do
       end
     end
 
+    describe 'versions includes user attribute' do
+      let(:user) { create_really_basic_user }
+      let(:entity) { create(:entity_org) }
+      subject(:versions) { EntityHistory.new(entity).versions }
+
+      before { PaperTrail.whodunnit(user.id.to_s) { entity.add_extension 'School' } }
+      specify { versions.each { |v| expect(v.user).to eql user } }
+    end
+
     describe 'pagination' do
       before do
         # add two versions
