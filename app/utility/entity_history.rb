@@ -28,6 +28,7 @@ class EntityHistory
 
   # [Array-like] -> [Array-like]
   # add attribute user to each <Version> which the <User> model
+  # add singleton method `as_presenters` which converts each Version to EntityVersionPresenter
   def add_users_to_versions(versions)
     users = User.lookup_table_for versions.map(&:whodunnit).compact.uniq
 
@@ -35,6 +36,10 @@ class EntityHistory
       version.tap do |v|
         v.singleton_class.class_exec { attr_reader :user }
         v.instance_exec { @user = users.fetch(v.whodunnit.to_i, nil) }
+      end
+    end.tap do |vrs|
+      vrs.define_singleton_method(:as_presenters) do
+        self.map { |v| EntityVersionPresenter.new(v) }
       end
     end
   end
