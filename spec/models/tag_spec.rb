@@ -330,10 +330,14 @@ describe Tag, :pagination_helper do
     end
 
     describe 'lookup' do
-      it 'returns a hash lookup table of all tags by name' do
-        expect(Tag.lookup).to eq('oil' => @oil,
+      it 'returns a hash lookup table of all tags by name and id' do
+        expect(Tag.lookup).to eq(@oil.id => @oil,
+                                 'oil' => @oil,
+                                 @nyc.id => @nyc,
                                  'nyc' => @nyc,
+                                 @finance.id => @finance,
                                  'finance' => @finance,
+                                 @real_estate.id => @real_estate,
                                  'real estate' => @real_estate)
       end
     end

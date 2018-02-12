@@ -38,8 +38,9 @@ class Tag < ApplicationRecord
   end
 
   def self.lookup
-    @lookup ||= Tag.all.reduce({}) do |acc, tag|
-      acc.tap { |h| h.store(tag.name.downcase.tr('-', ' '), tag) }
+    @lookup ||= Tag.all.each_with_object({}) do |tag, h|
+      h.store(tag.name.downcase.tr('-', ' '), tag)
+      h.store(tag.id, tag)
     end
   end
 
