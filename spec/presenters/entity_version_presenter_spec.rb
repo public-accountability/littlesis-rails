@@ -21,16 +21,17 @@ describe 'EntityVersionPresenter' do
     end
 
     context 'extension was created and removed' do
+      let(:time) { "<em>#{LsDate.pretty_print(Time.current)}</em>" }
       before do
         entity.add_extension 'Academic'
         entity.remove_extension 'Academic'
       end
       specify do
-        expect(versions).to include "System added extension Academic"
+        expect(versions).to include "System added extension Academic at #{time}"
       end
 
       specify do
-        expect(versions).to include "System removed extension Academic"
+        expect(versions).to include "System removed extension Academic at #{time}"
       end
     end
 

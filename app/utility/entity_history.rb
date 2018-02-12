@@ -12,7 +12,7 @@ class EntityHistory
   # Returns paginated array of versions
   # Each version has an extra attribute -- user -- with the User model
   # of the user responsible for the change
-  def versions(page: 1, per_page: 20)
+  def versions(page: 1, per_page: 15)
     raise ArgumentError unless page.is_a?(Integer) && per_page.is_a?(Integer)
     add_users_to_versions(
       paginate(
@@ -31,11 +31,18 @@ class EntityHistory
   # add singleton method `as_presenters` which converts each Version to EntityVersionPresenter
   def add_users_to_versions(versions)
     users = User.lookup_table_for versions.map(&:whodunnit).compact.uniq
+    entity_for = self.entity
 
     versions.map do |version|
       version.tap do |v|
-        v.singleton_class.class_exec { attr_reader :user }
-        v.instance_exec { @user = users.fetch(v.whodunnit.to_i, nil) }
+        v.singleton_class.class_exec do
+          attr_reader :user
+          attr_reader :entity
+        end
+        v.instance_exec do
+          @user = users.fetch(v.whodunnit.to_i, nil)
+          @entity = entity_for
+        end
       end
     end.tap do |vrs|
       vrs.define_singleton_method(:as_presenters) do

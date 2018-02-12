@@ -3,7 +3,15 @@
 <%= render partial: 'entities/actions', locals: { entity: @entity } %>
 
 <% versions = EntityHistory.new(@entity).versions(page: @page).as_presenters %>
-
-<div class="col-sm-12 nopadding">
-  <%= render partial: 'entity_version', collection: versions, as: :version %>
+<div class="row">
+  <div class="col-sm-12 nopadding">
+    <div id="entity-history-container">
+      <table class="table table-hover">
+	<tbody>
+	  <%= render partial: 'entity_version', collection: versions, as: :version %>
+	</tbody>
+      </table>
+      <%= paginate versions%>
+    </div>
+  </div>
 </div>

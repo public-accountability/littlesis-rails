@@ -9,10 +9,7 @@ class EditsController < ApplicationController
   end
 
   def entity
-    @page = params[:version_page].presence || 1
-    # @versions = EntityHistory.new(@entity).versions(page: version_page)
-    #rel_page = params[:rel_page].presence || 1
-    #@relationship_changes = rel_versions(@entity.id, rel_page)
+    @page = params[:page].presence&.to_i || 1
   end
 
   private

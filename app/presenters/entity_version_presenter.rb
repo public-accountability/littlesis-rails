@@ -1,11 +1,10 @@
 class EntityVersionPresenter < SimpleDelegator
   include ActionView::Helpers::UrlHelper
-  include Rails.application.routes.url_helpers
   delegate :relationship_path, :entity_path, to: "Rails.application.routes.url_helpers"
   IGNORE_FIELDS = Set.new(%w[id created_at updated_at link_count last_user_id delta])
 
   def render
-    "#{user_link} #{action}"
+    "#{user_link} #{action} at #{time}"
   end
 
   def action
@@ -20,15 +19,15 @@ class EntityVersionPresenter < SimpleDelegator
       return "added extension #{extension_name}" if create_event?
       return "removed extension #{extension_name}" if delete_event?
     when 'Tagging'
-      return "added tag <strong>#{tag_name}</strong>" if create_event?
-      return "removed tag <strong>#{tag_name}</strong>" if delete_event?
+      return "added tag #{tag_name}" if create_event?
+      return "removed tag #{tag_name}" if delete_event?
     when 'Relationship'
       return "added a new #{relationship_link} with #{entity_link}" if create_event?
       return "updated #{relationship_link} with #{entity_link}" if update_event?
       return "removed a #{relationship_link} with #{entity_link}" if delete_event?
     when 'Alias'
-      return "added a alias <strong>#{alias_name}</strong>" if create_event?
-      return "renamed the alias <strong>#{alias_name}</strong>" if delete_event?
+      return "added a alias #{alias_name}" if create_event?
+      return "renamed the alias #{alias_name}" if delete_event?
     else
       raise ThatsWeirdError, "Trying to process Entity Version with type: #{item_type}"
     end
@@ -36,9 +35,13 @@ class EntityVersionPresenter < SimpleDelegator
 
   private
 
+  def time
+    "<em>#{LsDate.pretty_print(created_at)}</em>"
+  end
+
   def user_link
     return 'System' if user.nil?
-    link_to(user.username, "/users/#{user.username}")
+    link_to user.username, "/users/#{user.username}"
   end
 
   def create_event?
@@ -62,20 +65,16 @@ class EntityVersionPresenter < SimpleDelegator
   end
 
   def entity_link
-    related_entity = model.entity_related_to('id' => entity1_id)
+    related_entity = model.entity_related_to(entity)
     if related_entity.is_deleted
       related_entity.name
     else
-      link_to(related_entity.name, entity_path(related_entity))
+      link_to related_entity.name, entity_path(related_entity)
     end
   end
 
   def relationship_link
-    if model.is_deleted
-      "relationship"
-    else
-      link_to("relationship", relationship_path(model))
-    end
+    model.is_deleted ? "relationship" : link_to("relationship", relationship_path(model))
   end
 
   def alias_name
