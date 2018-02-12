@@ -5,7 +5,9 @@ class ChatController < ApplicationController
   def chat_auth
     cors_headers
     # return status code 401 if the user is not logged in
-    return head :unauthorized unless user_signed_in?  
+    return head :unauthorized unless user_signed_in?
+    # return status code 403 if the user is restricted
+    return head :forbidden if current_user.restricted?
     # create chat account if needed
     current_user.create_chat_account if current_user.chatid.blank?
     # Set iframe token and send json back
@@ -16,7 +18,7 @@ class ChatController < ApplicationController
   def login
     response.headers.delete('X-Frame-Options')
   end
-  
+
   private
 
   def cors_headers
