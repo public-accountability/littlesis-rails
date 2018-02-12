@@ -70,19 +70,33 @@ describe 'Entity Requests', type: :request do
     let(:new_start_date) { '1900-01-01' }
     let(:url) { Faker::Internet.url }
     let(:params) do
-        {
-          id: person.id,
-          entity: { 'start_date' => new_start_date },
-          reference: { 'url' => url, 'name' => 'new reference' }
-        }
-      end
+      {
+        id: person.id,
+        entity: { 'start_date' => new_start_date },
+        reference: { 'url' => url, 'name' => 'new reference' }
+      }
+    end
 
     let(:patch_request) { proc { patch "/entities/#{person.to_param}", params: params } }
 
-    def renders_the_edit_page
-      patch_request.call
-      expect(response).to have_http_status 200
-      expect(response).to render_template(:edit)
+    def self.renders_the_edit_page
+      it 'renders the "edit" page' do
+        patch_request.call
+        expect(response).to have_http_status 200
+        expect(response).to render_template(:edit)
+      end
+    end
+
+    def self.does_not_change_start_date
+      it 'does not change the person\'s start date' do
+        expect { patch_request.call }.not_to change { Entity.find(person.id).start_date }
+      end
+    end
+
+    def self.does_not_create_new_reference
+      it 'does not create a new reference' do
+        expect { patch_request.call }.not_to change { Reference.count }
+      end
     end
 
     context 'Adding a birthday with a new reference' do
@@ -102,36 +116,27 @@ describe 'Entity Requests', type: :request do
       end
     end
 
+    context 'as a restricted user' do
+      let(:user) { create_restricted_user }
+      context 'redirection' do
+        before { patch_request.call }
+        redirects_to_dashboard
+      end
+      does_not_change_start_date
+    end
+
     context 'when submitting an invalid date' do
       let(:new_start_date) { "not a date" }
-
-      it 'does not change the person\'s start date' do
-        expect { patch_request.call }.not_to change { Entity.find(person.id).start_date }
-      end
-
-      it 'does not create a new reference' do
-        expect { patch_request.call }.not_to change { Reference.count }
-      end
-
-      it 'renders the "edit" page' do
-        renders_the_edit_page
-      end
+      does_not_change_start_date
+      does_not_create_new_reference
+      renders_the_edit_page
     end
 
     context 'when the reference contains an invalid url' do
       let(:url) { 'i am an invalid url' }
-
-      it 'does not change the person\'s start date' do
-        expect { patch_request.call }.not_to change { Entity.find(person.id).start_date }
-      end
-
-      it 'does not create a new reference' do
-        expect { patch_request.call }.not_to change { Reference.count }
-      end
-
-      it 'renders the "edit" page' do
-        renders_the_edit_page
-      end
+      does_not_change_start_date
+      does_not_create_new_reference
+      renders_the_edit_page
     end
   end
 end

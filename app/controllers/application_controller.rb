@@ -51,6 +51,10 @@ class ApplicationController < ActionController::Base
     redirect_to "/login" unless user_signed_in?
   end
 
+  def block_restricted_user_access
+    raise Exceptions::RestrictedUserError if current_user.restricted?
+  end
+
   def check_permission(name)
     raise Exceptions::PermissionError unless current_user.present?
     raise Exceptions::RestrictedUserError if current_user.restricted?
