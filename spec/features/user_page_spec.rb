@@ -55,6 +55,14 @@ feature 'User Pages' do
       scenario 'does not show user pages for restircted users' do
         expect(page.status_code).to eq 404
       end
+
+      context 'logged in as admin' do
+        let(:user) { admin }
+
+        scenario 'admins can view restricted users pages' do
+          successfully_visits_page "/users/#{user_for_page.username}"
+        end
+      end
     end
   end
 
