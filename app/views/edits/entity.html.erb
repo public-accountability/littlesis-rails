@@ -2,16 +2,21 @@
 <%= render partial: 'entities/header', locals: { entity: @entity } %>
 <%= render partial: 'entities/actions', locals: { entity: @entity } %>
 
-<% versions = EntityHistory.new(@entity).versions(page: @page).as_presenters %>
-<div class="row">
-  <div class="col-sm-12 nopadding">
-    <div id="entity-history-container">
-      <table class="table table-hover">
-	<tbody>
-	  <%= render partial: 'entity_version', collection: versions, as: :version %>
-	</tbody>
-      </table>
-      <%= paginate versions %>
+<%= cache ['entity_history', @entity.cache_key, @page ] do %>
+
+  <% versions = EntityHistory.new(@entity).versions(page: @page).as_presenters %>
+
+  <div class="row">
+    <div class="col-sm-12 nopadding">
+      <div id="entity-history-container">
+	<table class="table table-hover">
+	  <tbody>
+	    <%= render partial: 'entity_version', collection: versions, as: :version %>
+	  </tbody>
+	</table>
+	<%= paginate versions %>
+      </div>
     </div>
   </div>
-</div>
+
+<% end %>
