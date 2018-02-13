@@ -170,6 +170,24 @@ class User < ApplicationRecord
     @permissions ||= Permissions.new(self)
   end
 
+  # Returns the sf_guard_user_id from a range
+  # of types: User, SfGuardUser, Integer, String
+  # Used by LsHash
+  def self.derive_last_user_id_from(input)
+    case input
+    when String
+      input.to_i
+    when Integer
+      input
+    when User
+      input.sf_guard_user_id
+    when SfGuardUser
+      input.id
+    else
+      raise ArgumentError, "Invalid class. Provided: #{input.class}"
+    end
+  end
+
   private
 
   def set_default_network_id

@@ -260,10 +260,10 @@ describe Tag, :pagination_helper do
 
   describe 'Class Methods' do
     before(:each) do
-      @oil = build(:oil_tag)
-      @nyc = build(:nyc_tag)
-      @finance = build(:finance_tag)
-      @real_estate = build(:real_estate_tag)
+      @oil = build(:oil_tag, :with_tag_id)
+      @nyc = build(:nyc_tag, :with_tag_id)
+      @finance = build(:finance_tag, :with_tag_id)
+      @real_estate = build(:real_estate_tag, :with_tag_id)
       Tag.instance_variable_set(:@lookup, nil)
       allow(Tag).to receive(:all).and_return([@oil, @nyc, @finance, @real_estate])
     end
@@ -330,10 +330,14 @@ describe Tag, :pagination_helper do
     end
 
     describe 'lookup' do
-      it 'returns a hash lookup table of all tags by name' do
-        expect(Tag.lookup).to eq('oil' => @oil,
+      it 'returns a hash lookup table of all tags by name and id' do
+        expect(Tag.lookup).to eq(@oil.id => @oil,
+                                 'oil' => @oil,
+                                 @nyc.id => @nyc,
                                  'nyc' => @nyc,
+                                 @finance.id => @finance,
                                  'finance' => @finance,
+                                 @real_estate.id => @real_estate,
                                  'real estate' => @real_estate)
       end
     end

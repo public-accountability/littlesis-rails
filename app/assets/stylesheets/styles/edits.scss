@@ -1,7 +1,3 @@
-// Place all the styles related to the edits controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
-
 #entity-types {
 
     span.glyphicon {
@@ -39,3 +35,26 @@ form.alias-form {
     color: black;
 }
 
+
+
+// entity history page
+
+#entity-history-container {
+    padding-top: 1em;
+    // font-size: 16px;
+
+    table {
+	cursor: default;
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0.3em;
+
+	td {
+	    border-top: 0;
+	}
+    }
+
+    .pagination {
+	padding-top: 0.2em;
+    }
+}

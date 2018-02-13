@@ -1,13 +1,14 @@
 class AliasesController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_alias, only: [:make_primary, :destroy]
 
   def create
     entity = Entity.find(alias_params.fetch('entity_id'))
-    a = Alias.new(alias_params)
-    if a.save
+    as = Alias.new(alias_params) { |a| a.current_user = current_user }
+    if as.save
       redirect_to edit_entity_path(entity)
     else
-      redirect_to edit_entity_path(entity), :flash => { :alert => a.errors.full_messages[0] }
+      redirect_to edit_entity_path(entity), :flash => { :alert => as.errors.full_messages[0] }
     end
   end
 
@@ -15,29 +16,24 @@ class AliasesController < ApplicationController
   end
 
   def make_primary
-    a = Alias.find(params[:id])
-    a.make_primary
-    redirect_to edit_entity_path(a.entity)
+    @alias.make_primary
+    redirect_to edit_entity_path(@alias.entity)
   end
 
   def destroy
-    a = Alias.find(params[:id])
-    a.destroy unless a.is_primary?
-    redirect_to edit_entity_path(a.entity)
+    @alias.destroy unless @alias.is_primary?
+    redirect_to edit_entity_path(@alias.entity)
   end
 
   private
 
-  def entity_path(entity)
-    entity.legacy_url
-  end
-
-  def edit_entity_path(entity)
-    entity.legacy_url('edit')
+  def set_alias
+    @alias = Alias.find(params[:id]).tap { |a| a.current_user = current_user }
   end
 
   def alias_params
-    params.require(:alias).permit(:name, :entity_id).merge(last_user_id: current_user.sf_guard_user_id)
+    params.require(:alias)
+      .permit(:name, :entity_id)
+      .merge(last_user_id: current_user.sf_guard_user_id)
   end
-
 end

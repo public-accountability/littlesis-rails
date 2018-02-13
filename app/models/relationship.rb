@@ -214,7 +214,7 @@ class Relationship < ApplicationRecord
   end
 
   def entity_related_to(e)
-    entity.id == e.id ? related : entity
+    unscoped_entity.id == e['id'] ? unscoped_related : unscoped_entity
   end
 
   def default_description(order = 1)

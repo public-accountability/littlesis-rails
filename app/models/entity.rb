@@ -102,7 +102,12 @@ class Entity < ApplicationRecord
 
   # creates primary alias if the entity does not have one
   def create_primary_alias
-    Alias.create(entity: self, name: name, is_primary: true, last_user_id: Lilsis::Application.config.system_user_id) unless aliases.where(is_primary: true).count > 0
+    return nil if aliases.where(is_primary: true).count.positive?
+    Alias.without_versioning do
+      a = Alias.new(entity: self, name: name, is_primary: true, last_user_id: last_user_id)
+      a.skip_update_entity_callback = true
+      a.save
+    end
   end
 
   # retrives the primary alias -> <Alias>
@@ -866,7 +871,7 @@ class Entity < ApplicationRecord
 
   # Callbacks for Soft Delete
   def after_soft_delete
-    aliases.destroy_all
+    Alias.without_versioning { aliases.destroy_all }
     extension_models.each(&:destroy)
     extension_records.destroy_all
     images.each(&:soft_delete)
