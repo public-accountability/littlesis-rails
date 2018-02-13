@@ -3,22 +3,25 @@ class ListsController < ApplicationController
 
   ERRORS = ActiveSupport::HashWithIndifferentAccess.new(
     entity_associations_bad_format: {
-      errors: [{ title: 'Could not add entities to list: improperly formatted request.'}]
+      errors: [{ title: 'Could not add entities to list: improperly formatted request.' }]
     },
     entity_associations_invalid_reference: {
-      errors: [{ title: 'Could not add entities to list: invalid reference.'}]
+      errors: [{ title: 'Could not add entities to list: invalid reference.' }]
     }
   )
 
-  # The call to :authenticate_user! on the line below overrides the :authenticate_user! call 
+  SIGNED_IN_ACTIONS = [:new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags]
+
+  # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
   # from TagableController and therefore including :tags in the list is required
   # Because of the potential for confusion, perhaps we should no longer use :authenticate_user!
   # in controller concerns? (ziggy 2017-08-31)
-  before_action :authenticate_user!,
-                only: [ :new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags ]
+  before_action :authenticate_user!, only: SIGNED_IN_ACTIONS
+  before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
 
   before_action :set_list,
                 only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
+
   # permissions
   before_action :set_permissions,
                 only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
@@ -124,7 +127,7 @@ class ListsController < ApplicationController
 
   def destroy
     #check_permission 'admin'
-    
+
     @list.soft_delete
     redirect_to lists_path, notice: 'List was successfully destroyed.'
   end
@@ -224,17 +227,16 @@ class ListsController < ApplicationController
   def companies
     @companies = interlocks_results(
       category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
-      order: 2, 
+      order: 2,
       degree1_ext: 'Person',
-      degree2_type: 'Business'      
+      degree2_type: 'Business'
     )
   end
-
 
   def government
     @govt_bodies = interlocks_results(
       category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
-      order: 2, 
+      order: 2,
       degree1_ext: 'Person',
       degree2_type: 'GovernmentBody'
     )
@@ -243,7 +245,7 @@ class ListsController < ApplicationController
   def other_orgs
     @others = interlocks_results(
       category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
-      order: 2, 
+      order: 2,
       degree1_ext: 'Person',
       exclude_degree2_types: ['Business', 'GovernmentBody']
     )
@@ -267,7 +269,7 @@ class ListsController < ApplicationController
       order: 1,
       degree1_ext: 'Person',
       sort: :amount
-    )  
+    )
   end
 
   def modifications

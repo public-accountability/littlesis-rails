@@ -61,6 +61,17 @@ describe ListsController, :list_helper, type: :controller do
     end
   end
 
+  context 'if user is restricted' do
+    login_restricted_user
+    let(:create_list_post) do
+      post :create, params: { list: { name: 'list name' }, ref: { url: 'http://mysource' } }
+    end
+
+    it 'does not create a list' do
+      expect { create_list_post }.not_to change { List.count }
+    end
+  end
+
   describe 'POST create' do
     login_user
 
@@ -90,7 +101,7 @@ describe ListsController, :list_helper, type: :controller do
 
     context 'submission with name and source' do
       it 'redirects to the newly created list' do
-        post :create,  params: { list: {name: 'list name'}, ref: { url: 'http://mysource' } }
+        post :create,  params: { list: { name: 'list name' }, ref: { url: 'http://mysource' } }
         expect(response).to redirect_to(assigns(:list))
       end
 
@@ -121,17 +132,15 @@ describe ListsController, :list_helper, type: :controller do
     end
 
     describe 'modifications' do
-      before do
-        @new_list = create(:list)
-        get :modifications, params: {id: @new_list.id} 
-      end
+      let(:new_list) { create(:list) }
+      before { get :modifications, params: { id: new_list.id } }
 
-      it 'renders modifications template' do 
+      it 'renders modifications template' do
         expect(response).to render_template(:modifications)
       end
 
       it 'has @versions' do
-        expect(assigns(:versions)).to eq(@new_list.versions)
+        expect(assigns(:versions)).to eq(new_list.versions)
       end
     end
   end
@@ -148,33 +157,31 @@ describe ListsController, :list_helper, type: :controller do
   describe 'remove_entity' do
     login_admin
     let(:list) { create(:list).tap { |l| l.update_column(:updated_at, 1.day.ago) } }
-    let(:person) { create(:entity_person) } 
-    let(:list_entity) {  ListEntity.create!(list_id: list.id, entity_id: person.id) } 
+    let(:person) { create(:entity_person) }
+    let(:list_entity) { ListEntity.create!(list_id: list.id, entity_id: person.id) }
 
-    before do
-      @post_remove_entity = proc do
-        post :remove_entity, params: { id: list.id, list_entity_id: list_entity.id }
-      end
+    let(:post_remove_entity) do
+      proc { post :remove_entity, params: { id: list.id, list_entity_id: list_entity.id } }
     end
 
     it 'removes the list entity' do
-      expect(&@post_remove_entity).to change { ListEntity.unscoped.find(list_entity.id).is_deleted}.to(true)
+      expect(&post_remove_entity)
+        .to change { ListEntity.unscoped.find(list_entity.id).is_deleted }.to(true)
     end
 
     xit 'clears the list cache' do
       expect(List).to receive(:find).with(list.id.to_s).and_return(list)
       expect(list).to receive(:clear_cache)
-      @post_remove_entity.call
+      post_remove_entity.call
     end
 
     it 'updates the updated_at of the list' do
-      expect(&@post_remove_entity).to change {
-        List.find(list.id).updated_at
-      }
+      expect(&post_remove_entity)
+        .to change { List.find(list.id).updated_at }
     end
 
     it 'redirects to the members page' do
-      @post_remove_entity.call
+      post_remove_entity.call
       expect(response).to have_http_status(302)
     end
   end
@@ -337,7 +344,7 @@ describe ListsController, :list_helper, type: :controller do
         { user: '@creator', action: :update, response: 302 },
         { user: '@non_creator', action: :update, response: 403 },
         { user: '@admin', action: :update, response: 302 },
-        { user: '@lister', action: :update,response: 403 },
+        { user: '@lister', action: :update, response: 403 },
         # destroy action
         { user: nil, action: :destroy, response: 403 },
         { user: '@creator', action: :destroy, response: 302 },
@@ -424,13 +431,13 @@ describe ListsController, :list_helper, type: :controller do
         { user: '@creator', action: :edit, response: :success },
         { user: '@non_creator', action: :edit, response: 403 },
         { user: '@admin', action: :edit, response: :success },
-        { user: '@lister', action: :edit,response: 403 },
+        { user: '@lister', action: :edit, response: 403 },
         # update action
         { user: nil, action: :update, response: 403 },
         { user: '@creator', action: :update, response: 302 },
         { user: '@non_creator', action: :update, response: 403 },
         { user: '@admin', action: :update, response: 302 },
-        { user: '@lister', action: :update,response: 403 },
+        { user: '@lister', action: :update, response: 403 },
         # destroy action
         { user: nil, action: :destroy, response: 403 },
         { user: '@creator', action: :destroy, response: 302 },
