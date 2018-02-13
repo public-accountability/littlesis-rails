@@ -1,9 +1,10 @@
 FactoryBot.define do
+  sequence(:tag_id) { |n| n }
 
   factory :tag, class: Tag  do
     sequence(:id)
-    sequence(:name) { |n| "tag-name#{n}"}
-    sequence(:description) { |n| "description of tag-name#{n}"}
+    sequence(:name) { |n| "tag-name#{n}" }
+    sequence(:description) { |n| "description of tag-name#{n}" }
   end
 
   factory :oil_tag, class: Tag do
@@ -25,5 +26,9 @@ FactoryBot.define do
   factory :real_estate_tag, class: Tag do
     name 'real-estate'
     description 'The real estate industry'
+  end
+
+  trait :with_tag_id do
+    id { generate(:tag_id) }
   end
 end

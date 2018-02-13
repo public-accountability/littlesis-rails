@@ -27,6 +27,7 @@ class Tag < ApplicationRecord
   # String -> [Tag]
   def self.search_by_names(phrase)
     Tag.lookup.keys
+      .delete_if { |k| k.is_a? Integer }
       .select { |tag_name| phrase.downcase.include?(tag_name) }
       .map { |tag_name| lookup[tag_name] }
   end

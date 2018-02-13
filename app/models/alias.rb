@@ -29,7 +29,7 @@ class Alias < ApplicationRecord
       entity.update! LsHash.new(name: name).with_last_user(current_user_or_default)
     end
     true
-  rescue => err
+  rescue => err # rubocop:disable Style/RescueStandardError
     Rails.logger.warn "Failed to make alias\##{id} primary"
     Rails.logger.debug err
     false

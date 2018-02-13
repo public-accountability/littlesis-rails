@@ -11,9 +11,7 @@ class EntityVersionPresenter < SimpleDelegator
     case item_type
     when 'Entity'
       return 'created the entity' if create_event?
-      if update_event?
-        return "updated #{'field'.pluralize(updated_fields.length)} #{updated_fields.join(',')}"
-      end
+      return updated_fields_text if update_event?
       return 'deleted the entity' if delete_event?
     when 'ExtensionRecord'
       return "added extension #{extension_name}" if create_event?
@@ -28,8 +26,10 @@ class EntityVersionPresenter < SimpleDelegator
     when 'Alias'
       return "added a alias #{alias_name}" if create_event?
       return "renamed the alias #{alias_name}" if delete_event?
+    when *Entity.all_extension_names_with_fields
+      return updated_fields_text if update_event?
     else
-      raise ThatsWeirdError, "Trying to process Entity Version with type: #{item_type}"
+      raise Exceptions::ThatsWeirdError, "Trying to process Entity Version with type: #{item_type}"
     end
   end
 
@@ -100,6 +100,10 @@ class EntityVersionPresenter < SimpleDelegator
 
   def model
     @model ||= item_type.constantize.unscoped.find(item_id)
+  end
+
+  def updated_fields_text
+    "updated #{'field'.pluralize(updated_fields.length)} #{updated_fields.join(',')}"
   end
 
   def updated_fields

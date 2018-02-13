@@ -20,6 +20,11 @@ feature 'EntityHistoryPage' do
   scenario 'viewing the history page' do
     visit edits_entity_path(entity)
     successfully_visits_page edits_entity_path(entity)
-  end
 
+    expect(page).to have_title "Edits: #{entity.name}"
+    page_has_selector "#entity-history-container"
+    page_has_selector "#entity-history-container table tbody tr", count: 3
+    expect(page).to have_content "added extension Lawyer"
+    expect(page).to have_content "added tag #{tag.name}"
+  end
 end

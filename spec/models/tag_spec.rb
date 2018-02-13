@@ -260,10 +260,10 @@ describe Tag, :pagination_helper do
 
   describe 'Class Methods' do
     before(:each) do
-      @oil = build(:oil_tag)
-      @nyc = build(:nyc_tag)
-      @finance = build(:finance_tag)
-      @real_estate = build(:real_estate_tag)
+      @oil = build(:oil_tag, :with_tag_id)
+      @nyc = build(:nyc_tag, :with_tag_id)
+      @finance = build(:finance_tag, :with_tag_id)
+      @real_estate = build(:real_estate_tag, :with_tag_id)
       Tag.instance_variable_set(:@lookup, nil)
       allow(Tag).to receive(:all).and_return([@oil, @nyc, @finance, @real_estate])
     end
