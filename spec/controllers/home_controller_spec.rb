@@ -65,7 +65,7 @@ describe HomeController, type: :controller do
     end
 
     describe 'no message provided' do
-      let(:params) { { name: 'me', email: 'email@email.com', message: ''  } }
+      let(:params) { { name: 'me', email: 'email@email.com', message: '' } }
       before { post :contact, params: params }
       it { should set_flash.now[:alert] }
       it { should render_template('contact') }
@@ -75,13 +75,14 @@ describe HomeController, type: :controller do
     end
 
     describe 'fields filled out' do
-      POST_PARAMS = { name: 'me', email: 'email@email.com', message: 'hey' }
+      let(:post_params) { { name: 'me', email: 'email@email.com', message: 'hey' } }
 
       before do
         email = double('contact_email')
         expect(email).to receive(:deliver_later)
-        expect(NotificationMailer).to receive(:contact_email).with(hash_including(POST_PARAMS)).and_return(email)
-        post :contact, params: POST_PARAMS
+        expect(NotificationMailer)
+          .to receive(:contact_email).with(hash_including(post_params)).and_return(email)
+        post :contact, params: post_params
       end
 
       it { should_not set_flash.now[:alert] }

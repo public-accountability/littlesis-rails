@@ -85,7 +85,7 @@ class HomeController < ApplicationController
         flash.now[:alert] = "Don't forget to write a message!"
         @name = params[:name]
       else
-        NotificationMailer.contact_email(params).deliver_later # send_mail
+        NotificationMailer.contact_email(contact_params).deliver_later # send_mail
         flash.now[:notice] = 'Your message has been sent. Thank you!'
       end
     end
@@ -114,7 +114,7 @@ class HomeController < ApplicationController
   def error
     raise StandardError
   end
-  
+
   private
 
   def redirect_to_dashboard_if_signed_in
@@ -136,7 +136,7 @@ class HomeController < ApplicationController
   end
 
   def contact_params
-    params.permit(:email, :subject, :name, :message)
+    params.permit(:email, :subject, :name, :message).to_h
   end
 
   def flag_params
