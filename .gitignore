@@ -67,3 +67,4 @@ log/*.lock
 .bash_history
 .pry_history
 .irb-history
+.gem

@@ -36,7 +36,6 @@ gem 'sass-rails', '>= 5'
 
 gem 'tinymce-rails', '~> 4.6.4'
 
-gem 'bettertabs'
 gem 'kaminari'
 gem 'activerecord-session_store'
 

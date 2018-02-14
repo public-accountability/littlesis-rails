@@ -1,20 +1,3 @@
-<%= bettertabs :list_tabs, { selected_tab: selected_tab, class: "list_tabs" } do |tab| %>
-    <%= tab.link :members, url: members_list_path(list) %>
-    <% if list.entities.people.count > 0 %>
-	<%= tab.link :interlocks, url: interlocks_list_path(list) %>
-	<%= tab.link :giving, url: giving_list_path(list) %>
-	<% if list.entities.people.count < 500 %>
-	    <%= tab.link :funding, url: funding_list_path(list) %>
-	<% end %>
-    <% end %>
-    <%= tab.link :sources, url: references_list_path(list) %>
-    <% if user_signed_in?  %>
-	<%= tab.link :edits, url: modifications_list_path(list) %>
-    <% end %>
-<% end %>
-
-<script>
- $(document).ready(function() {
-  $('.list_tabs').bettertabs();
-})
-</script>
+<div id="list-tab-menu">
+  <%= list_tab_menu(selected_tab, list) %>
+</div>

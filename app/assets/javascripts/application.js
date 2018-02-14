@@ -16,7 +16,6 @@
 //= require bootstrap
 //= require jquery_ujs
 //= require jquery-ui/widgets/autocomplete
-//= require jquery.bettertabs
 //= require jquery.shuffle
 //= require jquery.tinycarousel
 //= require jquery.dataTables
