@@ -2,148 +2,149 @@
 
 <% content_for :body do %>
 
-<% if user_signed_in? and current_user.in_group?(@group) %>
-	<%= render partial: "groups/header_small", locals: { group: @group, with_description: true } %>
-<% else %>
-	<%= render partial: "groups/header", locals: { group: @group } %>
-<% end %>
+  <% if user_signed_in? and current_user.in_group?(@group) %>
+    <%= render partial: "groups/header_small", locals: { group: @group, with_description: true } %>
+  <% else %>
+    <%= render partial: "groups/header", locals: { group: @group } %>
+  <% end %>
 
-<%= centered_content do %>
+  <%= centered_content do %>
 
-<% if user_signed_in? and current_user.in_group?(@group) %>
+    <% if user_signed_in? && current_user.in_group?(@group) %>
 
-<div class="left_column">
+      <div class="left_column">
+	<h3>Notes</h3>
+	
+	<div class="well">
+	  <p>The notes function is not currently being maintained. To communicate and coordinate with the rest of your group, please use <%= link_to "chat.littlesis.org", "https://chat.littlesis.org" %> and dm the admins for this group to see if there is a channel dedicated to it.</p>
+	</div>
 
-<%= bettertabs :group_tabs, { selected_tab: :notes, class: "group_tabs" } do |tab| %>
-	<%= tab.static :notes do %>
-		<h3>Notes</h3>
-		
-		<div class="well">
-		    <p>The notes function is not currently being maintained. To communicate and coordinate with the rest of your group, please use <%= link_to "chat.littlesis.org", "https://chat.littlesis.org" %> and dm the admins for this group to see if there is a channel dedicated to it.</p>
-		</div>
+	<div class="spacer"></div>
 
-		<div class="spacer"></div>
-
+	<% if @group.findings.present? %>
+	  <h3>Findings & Highlights</h3>
+	  <div id="group_findings">
+	    <%= raw @group.findings %>
+	  </div>
 	<% end %>
-	<%= tab.static :findings do %>
-		<h3>Findings & Highlights</h3>
-		<div id="group_findings" class="bootsy_html"><%= raw @group.findings %></div>		
-	<% end %>
-	<%= tab.static :howto, "How-To" do %>
-		<h3>How-To</h3>
-		<div id="group_howto"><%= simple_format(@group.howto) %></div>
-	<% end %>
-	<%= tab.static :lists, "Lists" do %>
-		<h3>
-			Research Lists
-		  <span class="btn btn-link btn-sm">
-		    <%= link_to('add', new_list_group_path(@group)) %>
-		  </span>
-		</h3>
+	
 
-		<div id="group_lists">
-			<% @group_lists.each do |gl| %>
-				<div class="group_list_name">
-					<%= list_link(gl.list) %> (<%= gl.list.entities.count %>)
-		    	<% if gl.is_featured %>
-		      	<span class="small_caps">Featured</span>
-		    	<% end %>
-		    </div>
-				<div class="group_list_description"><%= gl.list.description %></div>
-			<% end %>
-		</div>		
+	
+	<h3 id="how-to-header">How-To</h3>
+	<% if @group.howto.present? %>
+	  <div id="group_howto">
+	    <%= simple_format(@group.howto) %>
+	  </div>
 	<% end %>
-	<%= tab.static :users, "Users" do %>
-		<h3>
-			Users
-		</h3>
+	
+	<div class="spacer"></div>
+	
+	<h3>
+	  Research Lists
+	  <span class="btn btn-link btn-sm">
+	    <%= link_to('add', new_list_group_path(@group)) %>
+	  </span>
+	</h3>
 
-		<% cache( [@group.cache_key, 'show/users'], expires_in: 1.hour) do %>
-			<table class="list_table">
-			  <tbody>
-			    <% @group_users.each do |gu| %>
-			      <tr class="group_users_row">
-			        <td class="group_users_image"><%= user_image(gu.user) %></td>
-			        <td class="group_users_name"><%= user_link(gu.user) %></td>
-			        <td><%= "(admin)" if gu.is_admin %></td>
-			      </tr>
-			    <% end %>
-			  </tbody>
-			</table>
-		<% end %>
+	<div id="group_lists">
+	  <% @group_lists.each do |gl| %>
+	    <div class="group_list_name">
+	      <%= list_link(gl.list) %> (<%= gl.list.entities.count %>)
+	      <% if gl.is_featured %>
+		<span class="small_caps">Featured</span>
+	      <% end %>
+	    </div>
+	    <div class="group_list_description"><%= gl.list.description %></div>
+	  <% end %>
+	</div>
+	
+	<div class="spacer"></div>
+
+	<h3>Users</h3>
+
+	<% cache( [@group.cache_key, 'show/users'], expires_in: 1.hour) do %>
+	  <table class="list_table">
+	    <tbody>
+	      <% @group_users.each do |gu| %>
+		<tr class="group_users_row">
+		  <td class="group_users_image"><%= user_image(gu.user) %></td>
+		  <td class="group_users_name"><%= user_link(gu.user) %></td>
+		  <td><%= "(admin)" if gu.is_admin %></td>
+		</tr>
+	      <% end %>
+	    </tbody>
+	  </table>
 	<% end %>
-<% end %>
-</div>
 
-<div class="right_column">
+      </div> <!-- end left column -->
+
+
+      <div class="right_column">
 	<% if @watched_entities.present? %>
-		<h3>
-			Who We're Watching
-			<span class="btn btn-link btn-sm"><%= link_to 'see all', entities_group_path(@group) %></span>
-		</h3>
+	  <h3>
+	    Who We're Watching
+	    <span class="btn btn-link btn-sm"><%= link_to 'see all', entities_group_path(@group) %></span>
+	  </h3>
 
-		<% cache( [@group.cache_key, 'show/watched'], expires_in: 10.minutes) do %>
-			<% @watched_entities.each do |entity| %>
-				<%= render partial: "entities/small", locals: { entity: entity } %>
-			<% end %>
-		<% end %>
-		<div class="spacer"> </div>
-		<div class="spacer"> </div>
+	  <% cache( [@group.cache_key, 'show/watched'], expires_in: 10.minutes) do %>
+	    <% @watched_entities.each do |entity| %>
+	      <%= render partial: "entities/small", locals: { entity: entity } %>
+	    <% end %>
+	  <% end %>
+	  <div class="spacer"> </div>
+	  <div class="spacer"> </div>
 	<% end %>
 
 	<% if @recent_updates.count > 0 %>
-		<h3>
-			Recent Edits
-			<%= header_action('see all', edits_group_path(@group)) %>
-		</h3>
-		<% cache([@group.cache_key, 'show/recent_edits/inside'], expires_in: 10.minutes) do %>
-			<%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
-		<% end %>
+	  <h3>
+	    Recent Edits
+	    <%= header_action('see all', edits_group_path(@group)) %>
+	  </h3>
+	  <% cache([@group.cache_key, 'show/recent_edits/inside'], expires_in: 10.minutes) do %>
+	    <%= render partial: "shared/recent_updates", locals: { entities: @recent_updates } %>
+	  <% end %>
 	<% end %>
-</div>
+      </div>
 
-<script>
-$('.group_tabs').bettertabs();
-</script>
 
-<% else %>
+    <% else # user not in group %> 
 
-<% if @carousel_entities.count > 0 %>
-<h3>Who We're Watching</h3>
-<div id="group_carousel">
-	<% cache([ @group.cache_key, 'show/carousel'], expires_in: 1.day) do %>
-		<%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
+	<% if @carousel_entities.count > 0 %>
+	  <h3>Who We're Watching</h3>
+	  <div id="group_carousel">
+	    <% cache([ @group.cache_key, 'show/carousel'], expires_in: 1.day) do %>
+	      <%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
+	    <% end %>
+	  </div>
 	<% end %>
-</div>
-<% end %>
 
-<div class="spacer"> </div>
-<div class="spacer"> </div>
+	<div class="spacer"> </div>
+	<div class="spacer"> </div>
 
-<div class="left_column">
-	<h3>Findings & Highlights</h3>
-	<div id="group_findings">
-		<% if @group.findings.present? %>
-			<%= simple_format(@group.findings) %>
-		<% else %>
-			No findings yet!
-		<% end %>
+	<div class="left_column">
+	  <h3>Findings & Highlights</h3>
+	  <div id="group_findings">
+	    <% if @group.findings.present? %>
+	      <%= simple_format(@group.findings) %>
+	    <% else %>
+	      No findings yet!
+	    <% end %>
+	  </div>
 	</div>
-</div>
 
-<div class="right_column">
-	<h3>Recent Edits</h3>
-	<% cache([@group.cache_key, 'show/recent_edits/outside'], expires_in: 1.hour) do %>
-		<% @recent_updates.each do |entity| %>
-			<%= render partial: "entities/recent_update", locals: { entity: entity } %>
-		<% end %>
-	<% end %>
-</div>
+	<div class="right_column">
+	  <h3>Recent Edits</h3>
+	  <% cache([@group.cache_key, 'show/recent_edits/outside'], expires_in: 1.hour) do %>
+	    <% @recent_updates.each do |entity| %>
+	      <%= render partial: "entities/recent_update", locals: { entity: entity } %>
+	    <% end %>
+	  <% end %>
+	</div>
 
-<div class="clear_columns"></div>
+	<div class="clear_columns"></div>
 
-<% end %>
+    <% end %>
 
-<% end %>
+  <% end %>
 
 <% end %>
