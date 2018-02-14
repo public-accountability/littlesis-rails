@@ -88,3 +88,40 @@ td.lists_table_name {
     margin-top: 25px;
     color: rgba(0,0,0,.8);
 }
+
+
+#list-tab-menu {
+
+    ul {
+	margin: 0;
+	padding: 0;
+	margin-bottom: 1em;
+	box-sizing: border-box;
+    }
+
+    li {
+	display: inline-block;
+    }
+
+    a {
+	display: block;
+	font-size: 17px;
+	padding: 0.4em;
+        padding-right: 0.4em;
+        padding-left: 0.4em;
+	padding-left: 0.8em;
+	padding-right: 0.8em;
+	border: 0;
+	margin-right: 0.5em;
+	color: white;
+	background-color: $red_light;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	text-decoration: none;
+    }
+
+    li.active a, a:hover {
+	background-color: $red;
+    }
+
+}
