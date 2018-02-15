@@ -23,17 +23,17 @@ class LegislatorMatcher
 		unmatched_by_ids @reps
 	end
 
-	# In the database, but maybe their entry doesn't include their elected position
-	# def find_outdated
-	# 	(unmatched_by_ids @reps).select { |rep| search_by_rep(rep).count > 0 }
-	# end
-
+	# Returns YAML object paired with either Entity id or nil
 	def match
-		@reps.map { |rep| [(match_by_ids rep), rep] }
+		@reps.map { |rep| [rep, (match_by_ids rep)] }
+	end
+
+	def name_search_unmatched
+		find_unmatched.each { |rep| p match_by_name rep }
 	end
 
 	def test_method
-		find_unmatched.each { |rep| p match_by_name rep }
+		unmatched_by_pvsid @reps
 	end
 
 	private
@@ -50,16 +50,29 @@ class LegislatorMatcher
 		p ''
 		p rep['name']
 
-		by_name = (search_by_full_name rep) | (search_by_name rep['id']['wikipedia']) | (search_by_name rep['name']['last'])
-		filter_by_birth_date by_name, rep['bio']['birthday']
+		by_name = (search_by_full_name rep) | (search_by_name rep['id']['wikipedia']) #| (search_by_name rep['name']['last'])
+		filtered_by_parsed_name = filter_by_parsed_name by_name, rep
+		filter_by_birth_date filtered_by_parsed_name, rep['bio']['birthday']
 	end
 
 	def filter_by_extension_names entities
 		entities.select { |e| e[:extension_names].include?('PoliticalCandidate') || e[:extension_names].include?('ElectedRepresentative') }
 	end
 
+	# Removes mismatches by birth date
 	def filter_by_birth_date entities, birth_date
-		entities.select { |e| birth_date == e[:birth_date] }
+		entities.reject { |e| birth_date && e[:birth_date] && birth_date != e[:birth_date] }
+	end
+
+	# Removes mismatches by last name or middle initial
+	def filter_by_parsed_name entities, rep
+		middle_name, last = rep['name']['middle'] || '', rep['name']['last']
+		middle_initial = middle_name.first 
+
+		entities.reject do |e|
+			name_hash = NameParser.parse_to_hash(e[:name])
+			(name_hash[:name_middle] != middle_initial && name_hash[:name_middle] && middle_initial) || (name_hash[:name_last] != last && name_hash[:name_last] && last)
+		end
 	end
 
 	def search_by_name name
@@ -79,10 +92,10 @@ class LegislatorMatcher
 		name = rep['name']
 		full, first, middle, last, suffix, nickname = name['official_full'], name['first'], name['middle'], name['last'], name['suffix'], name['nickname']
 
-		(search_by_name full) | (search_by_name "#{first} #{middle} #{last} #{suffix}") | (search_by_name "#{nickname} #{last} #{suffix}") | (search_by_name "#{first} #{last}")
+		(search_by_name full) | (search_by_name "#{first} #{middle} #{last} #{suffix}") | (search_by_name "#{first} #{last}") | (nickname ? (search_by_name "#{nickname} #{last} #{suffix}") : []) 
 	end
 
-	# Returns reps not in database by bioguide_id (could be in the database, but maybe their entry doesn't include their elected position)
+	# Returns reps not in database by bioguide_id 
 	def unmatched_by_bgid reps
 		bioguide_ids = reps.map { |rep| rep['id']['bioguide'] }
 		records = ElectedRepresentative.joins(:entity).where(bioguide_id: bioguide_ids) # ActiveRecord entries
@@ -103,12 +116,15 @@ class LegislatorMatcher
 		reps.select { |rep| records.pluck(:crp_id).exclude? rep['id']['opensecrets'] } # YAML objects
 	end	
 
-	def unmatched_by_ids reps
-		(unmatched_by_crpid @reps) & (unmatched_by_bgid @reps) & (unmatched_by_gtid @reps)
-	end
+	# Returns reps not in database by pvs_id
+	def unmatched_by_pvsid reps
+		pvs_ids = reps.map { |rep| rep['id']['votesmart'] }
+		records = ElectedRepresentative.joins(:entity).where(pvs_id: pvs_ids) # ActiveRecord entries
+		reps.select { |rep| records.pluck(:pvs_id).exclude? rep['id']['votesmart'] } # YAML objects
+	end	
 
-	# Returns reps not in database by name (either not in the db or an alias is missing)
-	# def unmatched_by_name reps
-	# 	reps.select { |rep| search_by_rep(rep).count == 0 }
-	# end
+	# Returns reps not id-matched in the database (could still be in the database)
+	def unmatched_by_ids reps
+		(unmatched_by_crpid @reps) & (unmatched_by_bgid @reps) & (unmatched_by_gtid @reps) & (unmatched_by_pvsid @reps)
+	end
 end

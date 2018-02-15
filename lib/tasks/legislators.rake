@@ -17,7 +17,13 @@ namespace :legislators do
 		matcher.match
 	end
 
-	desc 'test method'
+	desc 'Searches for possible name matches to legislators with no id match'
+	task name_search_unmatched: :environment do
+		matcher = LegislatorMatcher.new
+		matcher.name_search_unmatched
+	end
+
+	desc 'test'
 	task test_method: :environment do
 		matcher = LegislatorMatcher.new
 		matcher.test_method
