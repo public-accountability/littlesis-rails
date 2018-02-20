@@ -10,7 +10,6 @@ defaults: &defaults
   google_custom_news_search_engine_id:
   google_custom_search_key: 
   default_from_email: dev@littlesis.org
-  default_to_email: dev@littlesis.org
   admins_only: false
   convert_new_legacy_notes: true
   research_from_email: research@littlesis.org

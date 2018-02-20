@@ -1,9 +1,10 @@
 class NotificationMailer < ApplicationMailer
   add_template_helper(ApplicationHelper)
   default from: APP_CONFIG['notification_email']
+  DEFAULT_TO = APP_CONFIG['notification_to']
 
   SMTP_OPTIONS = { user_name: APP_CONFIG['notification_user_name'], password: APP_CONFIG['notification_password'] }
-  DEFAULT_TO = APP_CONFIG['notification_to']
+  
 
   def contact_email(params)
     @name = params[:name]
