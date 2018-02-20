@@ -1,9 +1,16 @@
 module Routes
   # converts 'entities' to 'org' or 'person'
+  REPLACE_ENTITIES_IN_STRING = proc do |str, entity|
+    if entity.org?
+      str.gsub('/entities/', '/org/')
+    elsif entity.person?
+      str.gsub('/entities/', '/person/')
+    end
+  end
+
   MODIFY_PATH = proc do |entity, *args|
     raise ArgumentError, "#{__method__}'s first argument must be an <entity>" unless entity.is_a? Entity
-    return super(entity, *args).gsub('/entities/', '/org/') if entity.org?
-    return super(entity, *args).gsub('/entities/', '/person/') if entity.person?
+    REPLACE_ENTITIES_IN_STRING.call(super(entity, *args), entity)
   end
   private_constant :MODIFY_PATH
 
@@ -18,5 +25,10 @@ module Routes
   ROUTES_TO_MODIFY.each do |route|
     define_method("#{route}_path", MODIFY_PATH)
     define_method("#{route}_url", MODIFY_PATH)
+  end
+
+  def self.modify_entity_path(str, entity)
+    raise ArgumentError unless str.is_a?(String) && entity.is_a?(Entity)
+    REPLACE_ENTITIES_IN_STRING.call(str, entity)
   end
 end

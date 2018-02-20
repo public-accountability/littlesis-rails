@@ -18,6 +18,27 @@ describe Routes, type: :feature do
   end
 
   it 'modifies URL helpers' do
-    expect(interlocks_entity_url(org)).to eql "http://www.example.com/org/#{org.to_param}/interlocks"
+    expect(interlocks_entity_url(org))
+      .to eql "http://www.example.com/org/#{org.to_param}/interlocks"
+  end
+
+  # NOTE: if an entity route is added or removed this test will fail.
+  #       and will need to be updated.
+  #
+  # The code that generates ROUTES_TO_MODIFY reaches deep into the rails API
+  # and thus might change between rails versions
+  # This test will hopefully catch that if it does
+  it 'modifies 25 routes' do
+    expect(Routes::ROUTES_TO_MODIFY.length).to eql 25
+  end
+
+  describe 'modify_entity_path' do
+    it 'changes entities to "org" or "person" for any string path' do
+      expect(Routes.modify_entity_path('http://example.com/entities/123', org))
+        .to eql 'http://example.com/org/123'
+
+      expect(Routes.modify_entity_path('http://example.com/entities/123', person))
+        .to eql 'http://example.com/person/123'
+    end
   end
 end

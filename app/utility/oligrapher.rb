@@ -5,7 +5,7 @@ class Oligrapher
       display: {
         name: entity.name,
         image: node_image(entity),
-        url: entity.full_legacy_url
+        url: entity_url(entity)
       }
     }
   end
@@ -55,5 +55,9 @@ class Oligrapher
       edgeIds: annotation.highlighted_rel_ids.split(","),
       captionIds: annotation.highlighted_text_ids.split(",")
     }
+  end
+
+  private_class_method def self.entity_url(entity)
+    Routes.modify_entity_path(Rails.application.routes.url_helpers.entity_url(entity), entity)
   end
 end
