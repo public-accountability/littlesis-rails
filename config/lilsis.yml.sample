@@ -52,6 +52,7 @@ defaults: &defaults
   recaptcha:
     site_key: 'your-recaptcha-site-key-here'
     secret_key: 'your-recaptcha-secret-key-here'
+  action_network_api_key: 'your-action-network-api-key-here'
   
 
 test:
