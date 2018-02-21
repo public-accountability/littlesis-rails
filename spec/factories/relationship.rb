@@ -32,6 +32,11 @@ FactoryBot.define do
     category_id Relationship::MEMBERSHIP_CATEGORY
   end
 
+  factory :social_relationship, class: Relationship do
+    category_id Relationship::SOCIAL_CATEGORY
+    id { generate(:relationship_id) }
+  end
+
   factory :position_relationship, class: Relationship do
     entity1_id 100
     entity2_id 200
