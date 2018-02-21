@@ -1,50 +1,31 @@
-class Oligrapher
+module Oligrapher
+  DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
+                                      Relationship::EDUCATION_CATEGORY,
+                                      Relationship::MEMBERSHIP_CATEGORY,
+                                      Relationship::DONATION_CATEGORY,
+                                      Relationship::OWNERSHIP_CATEGORY]).freeze
+
   def self.entity_to_node(entity)
     {
       id: entity.id,
       display: {
         name: entity.name,
-        image: node_image(entity),
+        image: entity&.featured_image&.s3_url("profile"),
         url: entity_url(entity)
       }
     }
   end
 
-  def self.node_image(entity)
-    if image = entity.featured_image
-      return image.s3_url("profile")
-    end
-
-    nil
-  end
-
   def self.rel_to_edge(rel)
     {
-      id: rel.id,
-      node1_id: rel.entity1_id,
-      node2_id: rel.entity2_id,
+      id: rel.id, node1_id: rel.entity1_id, node2_id: rel.entity2_id,
       display: {
-        label: edge_label(rel),
+        label: RelationshipLabel.new(rel).label,
         arrow: edge_arrow(rel),
         dash: rel.is_current != true,
-        url: rel.full_legacy_url
+        url: relationship_url(rel)
       }
     }
-  end
-
-  def self.edge_label(rel)
-    return rel.description1 if rel.description1.present? and !rel.description2.present?
-    return rel.description2 if rel.description2.present? and !rel.description1.present?
-    return rel.description1 if rel.description1 == rel.description2 and rel.description1.present?
-    rel.category_name
-  end
-
-  def self.edge_arrow(rel)
-    [ Relationship::POSITION_CATEGORY,
-      Relationship::EDUCATION_CATEGORY,
-      Relationship::MEMBERSHIP_CATEGORY,
-      Relationship::DONATION_CATEGORY,
-      Relationship::OWNERSHIP_CATEGORY ].include?(rel.category_id)
   end
 
   def self.annotation_data(annotation)
@@ -57,7 +38,15 @@ class Oligrapher
     }
   end
 
+  private_class_method def self.edge_arrow(rel)
+    return '1->2' if DISPLAY_ARROW_CATEGORIES.include?(rel.category_id)
+  end
+
   private_class_method def self.entity_url(entity)
     Routes.modify_entity_path(Rails.application.routes.url_helpers.entity_url(entity), entity)
+  end
+
+  private_class_method def self.relationship_url(relationship)
+    Rails.application.routes.url_helpers.relationship_url(relationship)
   end
 end
