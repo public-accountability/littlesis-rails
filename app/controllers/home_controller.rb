@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact, :flag, :token, :error]
+  before_action :authenticate_user!, except: [:dismiss, :index, :contact, :flag, :token]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -8,17 +8,17 @@ class HomeController < ApplicationController
     [102, 'Revolving door lobbyists'],
     [114, 'Secretive Super PACs'],
     [34, 'Elite think tanks']
-  ]
+  ].freeze
 
-	def groups
+  def groups
     @groups = Group
-      .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
-      .joins(:group_users)
-      .group("groups.id")
-      .where(id: current_user.group_ids)
-      .order("user_count DESC")
-      .page(params[:page]).per(20)
-	end
+                .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
+                .joins(:group_users)
+                .group("groups.id")
+                .where(id: current_user.group_ids)
+                .order("user_count DESC")
+                .page(params[:page]).per(20)
+  end
 
   def dashboard
     @maps = current_user.network_maps.order("created_at DESC, id DESC")
@@ -36,11 +36,6 @@ class HomeController < ApplicationController
     else
       head :unauthorized
     end
-  end
-
-  def extension_path
-    render :inline => "https://dfl6orqdcqt4f.cloudfront.net/assets/#{Rails.application.assets.find_asset('extension.js').digest_path}"
-    render :inline => "<%= csrf_meta_tags %>"
   end
 
   def dismiss
@@ -62,7 +57,7 @@ class HomeController < ApplicationController
       .group("ls_list.id")
       .order("entity_count DESC")
       .page(params[:page]).per(20)
-      
+
     render 'lists/index'
   end
 
@@ -109,10 +104,6 @@ class HomeController < ApplicationController
     else
       @referrer = request.referrer
     end
-  end
-
-  def error
-    raise StandardError
   end
 
   private
