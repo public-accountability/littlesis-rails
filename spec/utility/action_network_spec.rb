@@ -45,7 +45,7 @@ describe ActionNetwork do
                 .with(URI.parse(ActionNetwork::PEOPLE_URL), kind_of(Net::HTTP::Post))
                 .and_raise(ActionNetwork::HTTPRequestFailedError)
         expect(Rails.logger)
-          .to receive(:warn).with("Failed to add user #{user.username}(#{user.id}) to ActionNetwork")
+          .to receive(:warn).with("Post request failed: #{ActionNetwork.signup_params(user)}")
       end
 
       specify { expect(ActionNetwork.signup(user)).to be false }
@@ -80,4 +80,26 @@ describe ActionNetwork do
       end
     end
   end # end signup
+
+  describe 'add_email_to_newsletter' do
+    let(:email) { Faker::Internet.email }
+    let(:email_params) do
+      { "person" => { "email_addresses" => [{ "address" => email }] },
+        "add_tags" => ['PAI and LittleSis Updates'] }
+    end
+
+    before do
+      expect(ActionNetwork)
+        .to receive(:post)
+              .with(URI.parse(ActionNetwork::PEOPLE_URL), email_params)
+              .and_call_original
+
+      expect(ActionNetwork)
+        .to receive(:http).once
+              .with(URI.parse(ActionNetwork::PEOPLE_URL), kind_of(Net::HTTP::Post))
+              .and_return({})
+    end
+
+    specify { expect(ActionNetwork.add_email_to_newsletter(email)).to be true }
+  end
 end
