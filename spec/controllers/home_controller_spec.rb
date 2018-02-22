@@ -2,25 +2,11 @@ require 'rails_helper'
 
 describe HomeController, type: :controller do
   describe 'routes' do
-    it { should route(:get, '/contact').to(action: :contact) }
-    it { should route(:post, '/contact').to(action: :contact) }
-    it { should route(:get, '/flag').to(action: :flag) }
-    it { should route(:post, '/flag').to(action: :flag) }
-  end
-
-  describe 'GET #index' do
-    before do
-      expect_any_instance_of(HomeController).to receive(:redirect_to_dashboard_if_signed_in).and_return(nil)
-      expect_any_instance_of(HomeController).to receive(:carousel_entities).and_return(double(:entities => double(:to_a => [])))
-      get :index
-    end
-
-    it { should respond_with(200) }
-    it { should render_template('index') }
-
-    it 'has @dots_connected' do
-      expect(assigns(:dots_connected)).to be_a(Array)
-    end
+    it { is_expected.to route(:get, '/contact').to(action: :contact) }
+    it { is_expected.to route(:post, '/contact').to(action: :contact) }
+    it { is_expected.to route(:get, '/flag').to(action: :flag) }
+    it { is_expected.to route(:post, '/flag').to(action: :flag) }
+    it { is_expected.to route(:post, '/home/newsletter_signup').to(action: :newsletter_signup) }
   end
 
   describe 'GET contact' do

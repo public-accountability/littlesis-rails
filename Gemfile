@@ -13,8 +13,10 @@ gem 'devise', '~> 4.2'
 # Versioning
 gem 'paper_trail', '7.1.3'
 
-# Required by delayed_job
-gem 'daemons'
+# delayed job
+gem 'daemons' # Required by delayed_job
+gem 'delayed_job', '~> 4.1.4'
+gem 'delayed_job_active_record', '>= 4.1.2'
 
 # Assets, image uploading & processing
 gem 'aws-sdk-cloudfront', '~> 1'
@@ -41,7 +43,6 @@ gem 'activerecord-session_store'
 
 # For search and indexing
 gem 'thinking-sphinx', '~> 3.2.0'
-gem 'delayed_job_active_record', '>= 4.1.2'
 gem 'ts-delayed-delta', '2.0.2', :require => 'thinking_sphinx/deltas/delayed_delta'
 
 gem 'htmlentities'

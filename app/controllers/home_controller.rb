@@ -1,5 +1,6 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, except: [:dismiss, :index, :contact, :flag, :token]
+  before_action :authenticate_user!,
+                except: [:dismiss, :index, :contact, :flag, :token, :newsletter_signup]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -106,6 +107,15 @@ class HomeController < ApplicationController
     end
   end
 
+  # Adds user newsletter and redirects back to home page.
+  #
+  # POST /home/newsletter_signup
+  #
+  def newsletter_signup
+    NewsletterSignupJob.perform_later params.fetch('email') unless likely_a_spam_bot
+    redirect_to root_path
+  end
+
   private
 
   def redirect_to_dashboard_if_signed_in
@@ -132,5 +142,9 @@ class HomeController < ApplicationController
 
   def flag_params
     params.permit(:email, :url, :name, :message)
+  end
+
+  def likely_a_spam_bot
+    params['very_important_wink_wink'].present?
   end
 end
