@@ -26,13 +26,17 @@ describe 'Homepage' do
       expect(NewsletterSignupJob).to receive(:perform_later).with(email).once
 
       expect(page.status_code).to eq 200
+      expect(page).not_to have_selector '#newsletter-thankyou'
 
       fill_in 'newsletter-signup-form-email', with: email
       click_button 'Join!'
 
-      successfully_visits_page '/'
+      successfully_visits_page '/?nlty=yes'
 
-      # check for display of 'thank you!'
+      page_has_selector '#newsletter-thankyou',
+                        text: "Thank you! You've been added to our newsletter."
+
+      expect(page).not_to have_selector '#newsletter-signup-form'
     end
 
     scenario 'super advanced™ spam bot protection' do
@@ -40,7 +44,7 @@ describe 'Homepage' do
       fill_in 'newsletter-signup-form-email', with: email
       fill_in 'very_important_wink_wink', with: "i'm a bot and i don't know any better"
       click_button 'Join!'
-      successfully_visits_page '/'
+      successfully_visits_page '/?nlty=yes'
     end
   end
 end

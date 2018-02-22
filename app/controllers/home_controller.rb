@@ -64,6 +64,7 @@ class HomeController < ApplicationController
 
   def index
     redirect_to_dashboard_if_signed_in unless request.env['PATH_INFO'] == '/home'
+    @newsletter_thankyou = params[:nlty].present?
     @dots_connected = dots_connected
     @carousel_entities = carousel_entities
     @stats = ExtensionRecord.data_summary
@@ -112,8 +113,10 @@ class HomeController < ApplicationController
   # POST /home/newsletter_signup
   #
   def newsletter_signup
-    NewsletterSignupJob.perform_later params.fetch('email') unless likely_a_spam_bot
-    redirect_to root_path
+    unless likely_a_spam_bot || Rails.env.development?
+      NewsletterSignupJob.perform_later params.fetch('email')
+    end
+    redirect_to root_path(nlty: 'yes')
   end
 
   private
