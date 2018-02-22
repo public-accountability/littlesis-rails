@@ -8,7 +8,7 @@ FactoryBot.define do
     email { Faker::Internet.unique.email }
     about_me { Faker::Movie.quote }
     default_network_id 79
-    confirmed_at { Time.now }
+    confirmed_at { Time.current }
   end
 
   # sub-factory pattern. see: https://devhints.io/factory_bot

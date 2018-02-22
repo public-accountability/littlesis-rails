@@ -53,6 +53,9 @@ spec/testdata/*_errors.txt
 # coverage files
 coverage
 
+# rdoc
+doc/
+
 # development db
 data/*.sql
 
