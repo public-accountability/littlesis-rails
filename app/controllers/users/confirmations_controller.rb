@@ -22,8 +22,10 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
         if IpBlocker.restricted?(request.remote_ip)
           user.update(is_restricted: true)
         else
+          # TODO: combine these into a unifed "post-signup" method
           user.delay.create_chat_account
-          NotificationMailer.signup_email(user).deliver_later                    
+          NotificationMailer.signup_email(user).deliver_later
+          NewsletterSignupJob.perform_later(user)
         end
 
       end
