@@ -4,8 +4,8 @@ LittleSis
 [LittleSis](https://littlesis.org) is a free database of who-knows-who at the heights of business and government.
 
 LittleSis uses these technologies among others:
-- Rails 4.2
-- Ruby 2.3
+- Rails 5
+- Ruby 2.4
 - Mariadb 10.1
 - Phusion Passenger
 - Nginx
