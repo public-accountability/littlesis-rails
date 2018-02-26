@@ -49,6 +49,19 @@ describe NysController, type: :controller do
   describe '#potential_contributions' do
     login_user
 
+    let(:search_options) do
+      {
+        with: {
+          is_matched: false,
+          transaction_code: %w[A B C]
+        },
+        sql: {
+          include: :ny_filer
+        },
+        per_page: 500
+      }
+    end
+
     it 'returns 200' do
       person = build(:person, id: 12_345, name: "big donor")
       expect(person).to receive(:aliases).and_return([double(:name => 'Big Donor')])
@@ -56,7 +69,7 @@ describe NysController, type: :controller do
       expect(disclosure).to receive(:map)
       expect(Entity).to receive(:find).with(12_345).and_return(person)
       expect(NyDisclosure).to receive(:search)
-                               .with('Big Donor', :with=>{:is_matched=>false, :transaction_code=>["'A'", "'B'", "'C'"]}, :sql=>{:include=>:ny_filer}, :per_page => 500)
+                               .with('Big Donor', **search_options)
                                .and_return(disclosure)
       get :potential_contributions, params: { entity: '12345' }
       expect(response.status).to eq(200)
@@ -95,7 +108,7 @@ describe NysController, type: :controller do
       count = NyMatch.count
       post :match_donations,
            params: { payload: { disclosure_ids: [disclosure.id], donor_id: person.id } }
-      expect(NyMatch.count).to eq (count + 1)
+      expect(NyMatch.count).to eql(count + 1)
     end
 
     it 'changes updated_at field' do
@@ -111,8 +124,10 @@ describe NysController, type: :controller do
     login_user
     before do
       ny_filer = build(:ny_filer, filer_id: "C9")
-      expect(NyFilerEntity).to receive(:create!).with(entity_id: '123', ny_filer_id:  '10', filer_id: 'C9')
-      expect(NyFilerEntity).to receive(:create!).with(entity_id: '123', ny_filer_id:  '11', filer_id: 'C9')
+      expect(NyFilerEntity).to receive(:create!)
+                                 .with(entity_id: '123', ny_filer_id: '10', filer_id: 'C9')
+      expect(NyFilerEntity).to receive(:create!)
+                                 .with(entity_id: '123', ny_filer_id: '11', filer_id: 'C9')
       expect(NyFiler).to receive(:find).with('10').and_return(ny_filer)
       expect(NyFiler).to receive(:find).with('11').and_return(ny_filer)
       entity = double('entity')
@@ -121,7 +136,7 @@ describe NysController, type: :controller do
     end
 
     it 'Handles POST' do
-      post(:create, params: { entity: '123', ids: %w(10 11), type: 'candidates' })
+      post(:create, params: { entity: '123', ids: %w[10 11], type: 'candidates' })
       expect(response.status).to eq 302
     end
   end
