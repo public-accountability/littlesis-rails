@@ -80,7 +80,7 @@ items['About'] = {
 
 unless user_signed_in?
   items['About'][:items].delete('Blog')
-  items['Blog'] = { url: "http://blog.littlesis.org" }
+  items['Blog'] = { url: "https://news.littlesis.org" }
   end
 
   items['Chat'] = { url: APP_CONFIG['chat']['chat_url'] } if user_signed_in?
