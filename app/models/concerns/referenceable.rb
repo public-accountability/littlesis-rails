@@ -32,7 +32,7 @@ module Referenceable
 
     if self.valid?
       url = document_attributes[:url] || document_attributes['url']
-      doc = Document.find_by_url(url) || Document.create(document_attributes)
+      doc = Document.find_by_url(url) || Document.create!(document_attributes)
       references.create(document_id: doc.id) unless references.exists?(document_id: doc.id)
     end
 

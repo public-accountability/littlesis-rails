@@ -6,7 +6,7 @@ class Document < ApplicationRecord
   validates :name, length: { maximum: 255 }
   validates :publication_date, date: true
 
-  before_validation :trim_whitespace, :set_hash
+  before_validation :trim_whitespace, :set_hash, :convert_date
 
   has_paper_trail on: [:update, :destroy]
 
@@ -174,6 +174,10 @@ class Document < ApplicationRecord
 
   def set_hash
     self.url_hash = url_to_hash unless url.blank?
+  end
+
+  def convert_date
+    self.publication_date = LsDate.convert(publication_date) unless publication_date.nil?
   end
 
   def url_to_hash

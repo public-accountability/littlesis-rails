@@ -9,7 +9,8 @@ class ReferencesController < ApplicationController
     if params[:data][:url].blank?
       return render json: { errors: { url: ["can't be blank"] } }, status: :bad_request
     end
-    @referenceable.add_reference(reference_params(:data))
+
+    @referenceable.add_reference(reference_params(:data).to_h)
 
     if @referenceable.valid?
       @referenceable.update(last_user_id: current_user.sf_guard_user_id)
