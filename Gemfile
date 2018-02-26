@@ -42,7 +42,7 @@ gem 'kaminari'
 gem 'activerecord-session_store'
 
 # For search and indexing
-gem 'thinking-sphinx', '~> 3.2.0'
+gem 'thinking-sphinx', '~> 3.4.2'
 gem 'ts-delayed-delta', '2.0.2', :require => 'thinking_sphinx/deltas/delayed_delta'
 
 gem 'htmlentities'

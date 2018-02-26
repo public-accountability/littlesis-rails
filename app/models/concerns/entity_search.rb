@@ -61,8 +61,8 @@ module EntitySearch
         "@(#{options[:fields]}) #{ts_escape(query)}",
         match_mode: :extended,
         with: options[:with],
-        per_page: options[:num],
-        page: options[:page],
+        per_page: options[:num].to_i,
+        page: options[:page].to_i,
         select: '*, weight() * (link_count + 1) AS link_weight',
         order: 'link_weight DESC'
       )
@@ -76,7 +76,7 @@ module EntitySearch
       entity = Entity.entity_for(entity_or_id)
       q = query.present? ? ts_escape(query) : entity.send(:generate_search_terms)
       Entity.search("@!summary #{q}",
-                    :with => { primary_ext: "'#{entity.primary_ext}'", is_deleted: false },
+                    :with => { primary_ext: entity.primary_ext, is_deleted: false },
                     :without => { sphinx_internal_id: entity.id },
                     :per_page => per_page,
                     :ranker => :sph04,
