@@ -243,7 +243,7 @@ GEM
     mysql2 (0.4.10)
     naught (1.1.0)
     nio4r (2.2.0)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     orm_adapter (0.5.0)
     paper_trail (7.1.3)
