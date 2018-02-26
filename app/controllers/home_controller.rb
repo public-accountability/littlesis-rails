@@ -1,5 +1,6 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, except: [:dismiss, :sign_in_as, :index, :contact, :flag, :token, :error]
+  before_action :authenticate_user!,
+                except: [:dismiss, :index, :contact, :flag, :token, :newsletter_signup]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -8,17 +9,17 @@ class HomeController < ApplicationController
     [102, 'Revolving door lobbyists'],
     [114, 'Secretive Super PACs'],
     [34, 'Elite think tanks']
-  ]
+  ].freeze
 
-	def groups
+  def groups
     @groups = Group
-      .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
-      .joins(:group_users)
-      .group("groups.id")
-      .where(id: current_user.group_ids)
-      .order("user_count DESC")
-      .page(params[:page]).per(20)
-	end
+                .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
+                .joins(:group_users)
+                .group("groups.id")
+                .where(id: current_user.group_ids)
+                .order("user_count DESC")
+                .page(params[:page]).per(20)
+  end
 
   def dashboard
     @maps = current_user.network_maps.order("created_at DESC, id DESC")
@@ -36,11 +37,6 @@ class HomeController < ApplicationController
     else
       head :unauthorized
     end
-  end
-
-  def extension_path
-    render :inline => "https://dfl6orqdcqt4f.cloudfront.net/assets/#{Rails.application.assets.find_asset('extension.js').digest_path}"
-    render :inline => "<%= csrf_meta_tags %>"
   end
 
   def dismiss
@@ -62,12 +58,13 @@ class HomeController < ApplicationController
       .group("ls_list.id")
       .order("entity_count DESC")
       .page(params[:page]).per(20)
-      
+
     render 'lists/index'
   end
 
   def index
     redirect_to_dashboard_if_signed_in unless request.env['PATH_INFO'] == '/home'
+    @newsletter_thankyou = params[:nlty].present?
     @dots_connected = dots_connected
     @carousel_entities = carousel_entities
     @stats = ExtensionRecord.data_summary
@@ -111,8 +108,15 @@ class HomeController < ApplicationController
     end
   end
 
-  def error
-    raise StandardError
+  # Adds user newsletter and redirects back to home page.
+  #
+  # POST /home/newsletter_signup
+  #
+  def newsletter_signup
+    unless likely_a_spam_bot || Rails.env.development?
+      NewsletterSignupJob.perform_later params.fetch('email')
+    end
+    redirect_to root_path(nlty: 'yes')
   end
 
   private
@@ -141,5 +145,9 @@ class HomeController < ApplicationController
 
   def flag_params
     params.permit(:email, :url, :name, :message)
+  end
+
+  def likely_a_spam_bot
+    params['very_important_wink_wink'].present?
   end
 end

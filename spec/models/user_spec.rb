@@ -31,6 +31,19 @@ describe User do
     end
   end
 
+  describe 'delagates first and last names to sf_guard_user_profile' do
+    let!(:user) { create_really_basic_user }
+    let!(:sf_profile) do
+      create(:sf_guard_user_profile,
+             name_first: Faker::Name.first_name,
+             name_last: Faker::Name.last_name,
+             user_id: user.sf_guard_user_id)
+    end
+
+    specify { expect(user.name_first).to eql sf_profile.name_first }
+    specify { expect(user.name_last).to eql sf_profile.name_last }
+  end
+
   describe 'set_default_network_id' do
     let(:user) do
       User.new(sf_guard_user_id: rand(1000),

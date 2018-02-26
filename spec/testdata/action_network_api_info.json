@@ -1,0 +1,96 @@
+{
+  "motd": "Welcome to the Action Network OSDI API v2 Entry Point!",
+  "_links": {
+    "curies": [
+      {
+        "name": "osdi",
+        "href": "https://actionnetwork.org/docs/v2/{rel}",
+        "templated": true
+      },
+      {
+        "name": "action_network",
+        "href": "https://actionnetwork.org/docs/v2/{rel}",
+        "templated": true
+      }
+    ],
+    "canvasser:brand_logo": {
+      "href": "https://actionnetwork.org/images/logo.png",
+      "title": "The branding logo for use in UI"
+    },
+    "docs": {
+      "href": "https://actionnetwork.org/docs/",
+      "title": "Documentation",
+      "name": "Docs",
+      "index": "index"
+    },
+    "self": {
+      "title": "This API entry point",
+      "href": "https://actionnetwork.org/api/v2/"
+    },
+    "osdi:people": {
+      "title": "The collection of people in the system",
+      "href": "https://actionnetwork.org/api/v2/people"
+    },
+    "osdi:events": {
+      "title": "The collection of events in the system",
+      "href": "https://actionnetwork.org/api/v2/events"
+    },
+    "osdi:petitions": {
+      "title": "The collection of petitions in the system",
+      "href": "https://actionnetwork.org/api/v2/petitions"
+    },
+    "osdi:fundraising_pages": {
+      "title": "The collection of fundraising_pages in the system",
+      "href": "https://actionnetwork.org/api/v2/fundraising_pages"
+    },
+    "osdi:donations": {
+      "title": "The collection of donations in the system",
+      "href": "https://actionnetwork.org/api/v2/donations"
+    },
+    "osdi:queries": {
+      "title": "The collection of queries in the system",
+      "href": "https://actionnetwork.org/api/v2/queries"
+    },
+    "osdi:forms": {
+      "title": "The collection of forms in the system",
+      "href": "https://actionnetwork.org/api/v2/forms"
+    },
+    "action_network:event_campaigns": {
+      "title": "The collection of event campaigns in the system",
+      "href": "https://actionnetwork.org/api/v2/event_campaigns"
+    },
+    "action_network:campaigns": {
+      "title": "The collection of campaigns in the system",
+      "href": "https://actionnetwork.org/api/v2/campaigns"
+    },
+    "osdi:tags": {
+      "title": "The collection of tags in the system",
+      "href": "https://actionnetwork.org/api/v2/tags"
+    },
+    "osdi:lists": {
+      "title": "The collection of lists in the system",
+      "href": "https://actionnetwork.org/api/v2/lists"
+    },
+    "osdi:wrappers": {
+      "title": "The collection of email wrappers in the system",
+      "href": "https://actionnetwork.org/api/v2/wrappers"
+    },
+    "osdi:messages": {
+      "title": "The collection of messages in the system",
+      "href": "https://actionnetwork.org/api/v2/messages"
+    },
+    "osdi:person_signup_helper": {
+      "title": "Person Signup Helper",
+      "href": "https://actionnetwork.org/api/v2/people"
+    },
+    "osdi:advocacy_campaigns": {
+      "title": "The collection of advocacy_campaigns in the system",
+      "href": "https://actionnetwork.org/api/v2/advocacy_campaigns"
+    }
+  },
+  "max_page_size": 25,
+  "vendor_name": "Action Network",
+  "product_name": "Action Network",
+  "namespace": "action_network",
+  "osdi_version": "1.1.1"
+}

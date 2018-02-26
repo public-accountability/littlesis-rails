@@ -22,9 +22,10 @@ class User < ApplicationRecord
   accepts_nested_attributes_for :sf_guard_user
 
   before_validation :set_default_network_id
-  
+
   # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
   delegate :image_path, to: :sf_guard_user_profile, allow_nil: true
+  delegate :name_first, :name_last, to: :sf_guard_user_profile
 
   has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", primary_key: "sf_guard_user_id"
 
@@ -46,6 +47,8 @@ class User < ApplicationRecord
 
   has_one :api_token
   has_many :user_permissions
+
+  
 
   def to_param
     username
