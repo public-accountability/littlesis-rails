@@ -1,12 +1,11 @@
+# rubocop:disable Lint/UselessComparison
 require 'rails_helper'
 
 describe LsDate do
   describe 'pretty printing' do
-    # date = Time.now
-
     it "prints a date with BASIC_FORMAT" do
-      s17 = Time.new(2011, 9, 17, 12, 0, 0)
-      expect(LsDate.pretty_print(s17)).to eql("September 17, 2011, 12PM")
+      s17 = Date.new(2011, 9, 17, 12)
+      expect(LsDate.pretty_print(s17)).to eql("September 17, 2011, 12AM")
     end
   end
 
@@ -52,8 +51,8 @@ describe LsDate do
         expect(d.month).to eql nil
         expect(d.day).to eql nil
       end
-    end    
-    
+    end
+
     describe 'specificity' do
       it 'has correct specificity :day when full date' do
         expect(LsDate.new('2017-01-01').specificity).to eql :day
@@ -71,7 +70,6 @@ describe LsDate do
         expect(LsDate.new(nil).specificity).to eql :unknown
       end
     end
-    
   end
 
   describe 'convert' do
@@ -86,6 +84,10 @@ describe LsDate do
       expect(LsDate.convert('20011231')).to eql '2001-12-31'
     end
 
+    it 'converts blank strings to nil' do
+      expect(LsDate.convert('')).to eql nil
+    end
+
     it 'returns input if it can\'t convert' do
       expect(LsDate.convert('88')).to eql '88'
       expect(LsDate.convert('1234567')).to eql '1234567'
@@ -96,63 +98,64 @@ describe LsDate do
 
   describe 'Comparisons' do
     it 'returns equal when both are unknown' do
-      expect( LsDate.new(nil) == LsDate.new(nil)).to be true
+      expect(LsDate.new(nil) == LsDate.new(nil)).to be true
     end
-    
+
     it 'a defined date is greater than an unknown date' do
-      expect( LsDate.new('1799-00-00') > LsDate.new(nil)).to be true
-      expect( LsDate.new('1799-01-00') > LsDate.new(nil)).to be true
-      expect( LsDate.new('1799-01-31') > LsDate.new(nil)).to be true
-      expect( LsDate.new(nil) < LsDate.new('1799-00-00')).to be true 
+      expect(LsDate.new('1799-00-00') > LsDate.new(nil)).to be true
+      expect(LsDate.new('1799-01-00') > LsDate.new(nil)).to be true
+      expect(LsDate.new('1799-01-31') > LsDate.new(nil)).to be true
+      expect(LsDate.new(nil) < LsDate.new('1799-00-00')).to be true
     end
 
     it 'works when years are different' do
-      expect( LsDate.new('1799-00-00') > LsDate.new('1600-00-00')).to be true
-      expect( LsDate.new('2017-00-00') > LsDate.new('2016-10-28')).to be true
-      expect( LsDate.new('2017-10-00') > LsDate.new('2016-10-00')).to be true
-      expect( LsDate.new('2000-00-00') < LsDate.new('2016-10-28')).to be true
+      expect(LsDate.new('1799-00-00') > LsDate.new('1600-00-00')).to be true
+      expect(LsDate.new('2017-00-00') > LsDate.new('2016-10-28')).to be true
+      expect(LsDate.new('2017-10-00') > LsDate.new('2016-10-00')).to be true
+      expect(LsDate.new('2000-00-00') < LsDate.new('2016-10-28')).to be true
     end
 
     context 'years are the same' do
       it 'if month is defined, the more specific date wins' do
-        expect( LsDate.new('2017-00-00') < LsDate.new('2017-03-00')).to be true
-        expect( LsDate.new('2017-00-00') < LsDate.new('2017-01-01')).to be true
+        expect(LsDate.new('2017-00-00') < LsDate.new('2017-03-00')).to be true
+        expect(LsDate.new('2017-00-00') < LsDate.new('2017-01-01')).to be true
       end
-      
+
       it 'if only year is defined, then they are equal' do
-        expect( LsDate.new('2017-00-00') == LsDate.new('2017-00-00')).to be true
+        expect(LsDate.new('2017-00-00') == LsDate.new('2017-00-00')).to be true
       end
     end
-    
+
     it 'works when years is the same, but the months are different' do
-      expect( LsDate.new('2017-02-00') < LsDate.new('2017-03-00')).to be true
-      expect( LsDate.new('2017-10-00') < LsDate.new('2017-11-00')).to be true
+      expect(LsDate.new('2017-02-00') < LsDate.new('2017-03-00')).to be true
+      expect(LsDate.new('2017-10-00') < LsDate.new('2017-11-00')).to be true
     end
 
-    it 'is equal when year and month are the same and both are missing days' do 
-      expect( LsDate.new('2017-02-00') == LsDate.new('2017-02-00')).to be true
+    it 'is equal when year and month are the same and both are missing days' do
+      expect(LsDate.new('2017-02-00') == LsDate.new('2017-02-00')).to be true
     end
 
-    it 'works when year and month are the same and one is missing a day' do 
-      expect( LsDate.new('2017-02-27') > LsDate.new('2017-02-00')).to be true
+    it 'works when year and month are the same and one is missing a day' do
+      expect(LsDate.new('2017-02-27') > LsDate.new('2017-02-00')).to be true
     end
   end
 
   describe 'display' do
     it 'displays unknown as ?' do
-      expect( LsDate.new(nil).display).to eql '?'
+      expect(LsDate.new(nil).display).to eql '?'
     end
 
     it "displays :year as 'YY" do
-      expect( LsDate.new('1926-00-00').display).to eql "'26"
+      expect(LsDate.new('1926-00-00').display).to eql "'26"
     end
 
     it "displays :month as 'Mon 'YY" do
-      expect( LsDate.new('1926-11-00').display).to eql "Nov '26"
+      expect(LsDate.new('1926-11-00').display).to eql "Nov '26"
     end
 
     it "displays :year as 'Mon DD, 'YY" do
-      expect( LsDate.new('2008-02-24').display).to eql "Feb 24 '08"
+      expect(LsDate.new('2008-02-24').display).to eql "Feb 24 '08"
     end
   end
 end
+# rubocop:enable Lint/UselessComparison

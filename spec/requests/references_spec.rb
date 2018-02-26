@@ -26,4 +26,28 @@ describe 'references requests', type: :request do
         .to eql (entities.map { |e| e.documents.map(&:id) }.flatten + non_requested_entity.documents.map(&:id)).to_set
     end
   end
+
+
+  describe 'creating a new reference' do
+    let(:entity) { create(:entity_person) }
+    let(:url) { Faker::Internet.url }
+    let(:post_data) do
+      {
+        "data" => {
+          "referenceable_id" => entity.id,
+          "referenceable_type" => 'Entity',
+          "url" => url,
+          "name" => "This is a document",
+          "publication_date" => '',
+          "ref_type" => '1',
+          "excerpt" => nil
+        }
+      }
+    end
+
+    it 'returns "created"' do
+      post '/references', params: post_data
+      expect(response).to have_http_status :created
+    end
+  end
 end

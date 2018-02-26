@@ -28,6 +28,17 @@ describe Document, :pagination_helper, type: :model do
       specify { expect(subject.name).to eql 'LittleSis' }
       specify { expect(subject.url_hash).to eql Digest::SHA1.hexdigest('https://littlesis.org') }
     end
+
+    it 'converts blank string publication dates into nil' do
+      document = build(:document, url: url, publication_date: '')
+      expect(document.valid?).to be true
+    end
+
+    it 'uses LsDate to handle varations on publication date' do
+      document = build(:document, url: url, publication_date: '1999')
+      expect(document.valid?).to be true
+      expect(document.publication_date).to eql '1999-00-00'
+    end
   end
 
   describe 'ref types' do
