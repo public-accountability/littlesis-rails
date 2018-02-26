@@ -16,12 +16,12 @@ class LsDate
   BASIC_FORMAT = "%B %e, %Y, %l%p".freeze
 
   def self.pretty_print(date)
-    unless [Time, DateTime, ActiveSupport::TimeWithZone].include? date.class
-      raise ArgumentError, "Invalid input type"
+    unless date.respond_to? :strftime
+      raise ArgumentError, "#{date.class} is missing the method 'strftime'"
     end
     date.strftime(BASIC_FORMAT)
   end
-  
+
   # Initialize with string YYYY-MM-DD
   def initialize(date_string)
     test_if_valid_input(date_string)
@@ -32,9 +32,9 @@ class LsDate
 
   # specificity helpers
   [:unknown, :year, :month, :day].each do |specificity|
-    define_method("sp_#{specificity}?") { @specificity == specificity } 
+    define_method("sp_#{specificity}?") { @specificity == specificity }
   end
-  
+
   # ~~~~spaceship method~~~~
   def <=>(other)
     # one of the dates is unknown
@@ -83,17 +83,19 @@ class LsDate
     return day_display if sp_day?
   end
 
-  # str -> str
+  # str -> str | nil
   # converts string dates in the following formats:
   #   YYYY. Example: 1996 -> 1996-00-00
   #   YYY-MM. Example: 2017-01 -> 2017-01-00
   #   YYYYMMDD. Example: 20011231 -> 2001-12-31
+  # turns blank strings into nil
   # Otherwise, it returns the input unchanged
   def self.convert(date)
     return date unless date.is_a? String
-    return "#{date}-00-00" if /^\d{4}$/.match(date)
-    return "#{date.slice(0,4)}-#{date.slice(5,2)}-00" if /^\d{4}-\d{2}$/.match(date)
-    return "#{date.slice(0,4)}-#{date.slice(4,2)}-#{date.slice(6,2)}" if /^\d{8}$/.match(date)
+    return nil if date.blank?
+    return "#{date}-00-00" if /^\d{4}$/ =~ date
+    return "#{date.slice(0, 4)}-#{date.slice(5, 2)}-00" if /^\d{4}-\d{2}$/ =~ date
+    return "#{date.slice(0, 4)}-#{date.slice(4, 2)}-#{date.slice(6, 2)}" if /^\d{8}$/ =~ date
     date
   end
 
@@ -105,7 +107,7 @@ class LsDate
     return false unless valid_year?(year) && valid_month?(month) && valid_day?(day)
     true
   end
-  
+
   # str -> [year, month, day]
   def self.year_month_day(value)
     value.split('-').map { |x| to_int(x) }
@@ -126,7 +128,7 @@ class LsDate
   end
 
   private_class_method def self.valid_year?(year)
-    year.between?(1000,3000)
+    year.between?(1000, 3000)
   end
 
   private_class_method def self.valid_month?(month)
@@ -166,7 +168,7 @@ class LsDate
   end
 
   def month_display_full
-    "#{Date::MONTHNAMES[@month]} #{@year.to_s}"
+    "#{Date::MONTHNAMES[@month]} #{@year}"
   end
 
   def day_display
