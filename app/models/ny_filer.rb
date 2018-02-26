@@ -13,26 +13,26 @@ class NyFiler < ApplicationRecord
   def office_description
     OFFICES[office]
   end
-  
+
   #---------------#
   # Class methods #
   #---------------#
 
   def self.search_filers(name)
-    search_by_name_and_committee_type(name, ["'1'", "''"])
+    search_by_name_and_committee_type(name, ["1", ""])
   end
 
   def self.search_pacs(name)
-    search_by_name_and_committee_type(name, ["'2'", "'9'", "'8'"])
+    search_by_name_and_committee_type(name, ["2", "9", "8"])
   end
-    
+
   # str, [ str ] => <ThinkingSphinx::Search>
   private_class_method def self.search_by_name_and_committee_type(name, committee_types)
-    NyFiler.search( name, 
+    NyFiler.search(name,
                     :sql => { :include => :ny_filer_entity },
-                    :with => {:committee_type => committee_types } )
+                    :with => { :committee_type => committee_types })
   end
-  
+
   OFFICES = {
     4 => 'Governor',
     5 => 'Lt. Governor',
