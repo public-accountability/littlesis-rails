@@ -4,7 +4,7 @@ class SearchController < ApplicationController
   before_action :set_initial_search_values, only: [:basic]
 
   def basic
-    @q = (params[:q] or "").gsub(/\b(and|the|of)\b/, "")
+    @q = params.fetch(:q, "").gsub(/\b(and|the|of)\b/, "")
     @cant_find = params[:q].present? && @q.empty?
 
     if @q.present?
@@ -64,22 +64,20 @@ class SearchController < ApplicationController
   end
 
   def groups_search(q)
-    @groups = Group.search("@(name,tagline,description,slug) #{q}", per: 50, match_mode: :extended)
+    @groups = Group.search("@(name,tagline,description,slug) #{q}", per_page: 50)
   end
 
   def lists_search(q)
     list_is_admin = current_user&.admin? ? [0, 1] : 0
     @lists = List.search("@(name,description) #{q}",
-                         per: 50,
-                         match_mode: :extended,
+                         per_page: 50,
                          with: { is_deleted: false, is_admin: list_is_admin, is_network: false },
                          without: { access: Permissions::ACCESS_PRIVATE })
   end
 
   def maps_search(q)
     @maps = NetworkMap.search("@(title,description,index_data) #{q}",
-                              per: 100,
-                              match_mode: :extended,
+                              per_page: 50,
                               with: { is_deleted: false, is_private: false })
   end
 
@@ -92,6 +90,6 @@ class SearchController < ApplicationController
   end
 
   def set_page
-    @page = (params[:page] or 1).to_i
+    @page = params.fetch(:page, 1).to_i
   end
 end
