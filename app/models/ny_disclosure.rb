@@ -63,7 +63,7 @@ class NyDisclosure < ApplicationRecord
   # <Entity> -> Hash
   def self.potential_contributions(entity)
     search(search_terms(entity),
-           :with => { :is_matched => false, :transaction_code =>  [ "'A'", "'B'", "'C'" ] },
+           :with => { :is_matched => false, :transaction_code => ["A", "B", "C"] },
            :sql => { :include => :ny_filer },
            :per_page => 500
           ).map(&:contribution_attributes)
@@ -100,7 +100,7 @@ class NyDisclosure < ApplicationRecord
     end
   end
 
-  private 
+  private
 
   def format_transaction_code
     case transaction_code
