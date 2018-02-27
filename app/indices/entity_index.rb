@@ -10,4 +10,6 @@ ThinkingSphinx::Index.define :entity, :with => :active_record, :delta => Thinkin
   has updated_at
   has networks.id, as: :network_ids
   has link_count
+
+  set_property :morphology => "stem_en, metaphone"
 end
