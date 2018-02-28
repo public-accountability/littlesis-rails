@@ -24,37 +24,37 @@ describe EntityMatcher, :sphinx do
       end
 
       describe 'finds by alias' do
-        subject { EntityMatcher.search_by_name(@chum_alias[:last]) }
+        subject { EntityMatcher::Search.by_name(@chum_alias[:last]) }
         expect_to_find_the_chum
       end
 
       describe 'finds by nickname' do
-        subject { EntityMatcher.search_by_name('Balloonist') }
+        subject { EntityMatcher::Search.by_name('Balloonist') }
         expect_to_find_the_chum
       end
     end
 
     describe 'searching using a person' do
       specify do
-        expect(EntityMatcher.search_by_person(@entities.first).count).to eql 1
+        expect(EntityMatcher::Search.by_person(@entities.first).count).to eql 1
       end
     end
 
     describe 'last name search' do
       it 'finds 2 traverses' do
-        expect(EntityMatcher.search_by_name('traverse').count).to eql 2
+        expect(EntityMatcher::Search.by_name('traverse').count).to eql 2
       end
 
       it 'finds 2 traverses if other names are also included in the search' do
-        expect(EntityMatcher.search_by_name('traverse', 'randomname').count).to eql 2
+        expect(EntityMatcher::Search.by_name('traverse', 'randomname').count).to eql 2
       end
 
       it 'finds 2 vibes' do
-        expect(EntityMatcher.search_by_name('vibe').count).to eql 2
+        expect(EntityMatcher::Search.by_name('vibe').count).to eql 2
       end
 
       it 'finds vibes and traverses at once' do
-        expect(EntityMatcher.search_by_name('traverse', 'vibe').count).to eql 4
+        expect(EntityMatcher::Search.by_name('traverse', 'vibe').count).to eql 4
       end
     end
   end
