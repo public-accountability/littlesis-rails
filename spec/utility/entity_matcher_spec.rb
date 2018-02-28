@@ -1,6 +1,14 @@
 require 'rails_helper'
 
-describe EntityMatcher do
+describe EntityMatcher, :sphinx do
+  describe 'Search' do
+    before(:all) do
+    end
+
+    after(:all) do
+    end
+  end
+
   describe 'Query' do
     describe 'Person' do
       subject { EntityMatcher::Query::Person.new(entity).to_s }
@@ -33,6 +41,11 @@ describe EntityMatcher do
             .to eql "(#{entity.name}) | (#{person.name_first} #{person.name_last}) | (#{person.name_first} #{person.name_last} #{person.name_suffix}) | (#{person.name_prefix} #{person.name_last})"
         end
       end
+    end
+
+    describe 'LastName' do
+      subject { EntityMatcher::Query::LastName.new('Thoreau').to_s }
+      it { is_expected.to eql "(*Thoreau*)" }
     end
   end
 
