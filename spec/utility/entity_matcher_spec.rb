@@ -24,12 +24,12 @@ describe EntityMatcher, :sphinx do
       end
 
       describe 'finds by alias' do
-        subject { EntityMatcher.search_by_lastname(@chum_alias[:last]) }
+        subject { EntityMatcher.search_by_name(@chum_alias[:last]) }
         expect_to_find_the_chum
       end
 
       describe 'finds by nickname' do
-        subject { EntityMatcher.search_by_lastname('Balloonist') }
+        subject { EntityMatcher.search_by_name('Balloonist') }
         expect_to_find_the_chum
       end
     end
@@ -42,11 +42,19 @@ describe EntityMatcher, :sphinx do
 
     describe 'last name search' do
       it 'finds 2 traverses' do
-        expect(EntityMatcher.search_by_lastname('traverse').count).to eql 2
+        expect(EntityMatcher.search_by_name('traverse').count).to eql 2
+      end
+
+      it 'finds 2 traverses if other names are also included in the search' do
+        expect(EntityMatcher.search_by_name('traverse', 'randomname').count).to eql 2
       end
 
       it 'finds 2 vibes' do
-        expect(EntityMatcher.search_by_lastname('vibe').count).to eql 2
+        expect(EntityMatcher.search_by_name('vibe').count).to eql 2
+      end
+
+      it 'finds vibes and traverses at once' do
+        expect(EntityMatcher.search_by_name('traverse', 'vibe').count).to eql 4
       end
     end
   end
@@ -85,9 +93,20 @@ describe EntityMatcher, :sphinx do
       end
     end
 
-    describe 'LastName' do
-      subject { EntityMatcher::Query::LastName.new('Thoreau').to_s }
-      it { is_expected.to eql "(*Thoreau*)" }
+    describe 'Names' do
+      context 'single name' do
+        subject { EntityMatcher::Query::Names.new('Thoreau').to_s }
+        it { is_expected.to eql "(*Thoreau*)" }
+      end
+      context 'two names' do
+        subject { EntityMatcher::Query::Names.new('bob', 'alice').to_s }
+        it { is_expected.to eql "(*bob*) | (*alice*)" }
+      end
+
+      context 'two names in an array' do
+        subject { EntityMatcher::Query::Names.new(%w[bob alice]).to_s }
+        it { is_expected.to eql "(*bob*) | (*alice*)" }
+      end
     end
   end
 

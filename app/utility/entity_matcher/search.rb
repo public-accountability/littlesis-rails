@@ -28,7 +28,7 @@ module EntityMatcher
     search EntityMatcher::Query::Org.new(org).to_s, primary_ext: 'Org'
   end
 
-  def self.search_by_lastname(name)
-    search EntityMatcher::Query::LastName.new(name).to_s, primary_ext: 'Person'
+  def self.search_by_name(*names)
+    search EntityMatcher::Query::Names.new(*names).to_s, primary_ext: 'Person'
   end
 end

@@ -6,13 +6,13 @@ module EntityMatcher
       attr_reader :query
       alias to_s query
 
-      # input: <Entity> | <String>
-      def initialize(entity_or_string)
-        case entity_or_string
-        when String
-          super(entity_or_string.dup)
+      # input: <Entity> | <String> | <Array>
+      def initialize(arg)
+        case arg
+        when String, Array
+          super(arg.dup)
         when Entity
-          super(entity_or_string)
+          super(arg)
         else
           raise ArgumentError
         end
@@ -70,10 +70,21 @@ module EntityMatcher
       end
     end
 
-    # Simple query building for one-word strings
-    class LastName < Base
+    # Simple query building for strings
+    class Names < Base
+      # input: *args | <Array>
+      def initialize(*args)
+        raise ArgumentError if args.length.zero?
+
+        if args.length == 1 && args.first.is_a?(Array)
+          super(args.first)
+        else
+          super(args)
+        end
+      end
+
       def run
-        @parts << ThinkingSphinx::Query.wildcard(__getobj__)
+        each { |name| @parts << ThinkingSphinx::Query.wildcard(name) }
       end
     end
 
