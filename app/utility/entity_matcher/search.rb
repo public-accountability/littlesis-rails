@@ -9,7 +9,7 @@ module EntityMatcher
   # str --> ThinkginSphinx
   # Search database for potential matches
   def self.search(query, primary_ext:)
-    Entity.search("@(name,aliases) ( #{query} )",
+    Entity.search("@(name,aliases,name_nick) ( #{query} )",
                   SEARCH_OPTS.deep_merge(:with => { primary_ext: primary_ext }))
   end
 

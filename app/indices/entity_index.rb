@@ -3,6 +3,7 @@ ThinkingSphinx::Index.define :entity, :with => :active_record, :delta => Thinkin
   indexes blurb
   indexes summary
   indexes aliases.name, as: :aliases
+  indexes person.name_nick, as: :name_nick
 
   has primary_ext
   has is_deleted, facet: true
