@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EntityMatcher
   # Generators for Person and Org that
   # create Sphinx query strings
