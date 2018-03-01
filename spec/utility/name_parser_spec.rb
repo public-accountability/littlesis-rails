@@ -1,6 +1,29 @@
 require 'rails_helper'
 
 describe 'NameParser' do
+  describe 'parse_to_hash' do
+    it 'parses valid name' do
+      expect(NameParser.parse_to_hash("emma goldman"))
+        .to eql(name_prefix: nil,
+                name_first: 'Emma',
+                name_middle: nil,
+                name_last: 'Goldman',
+                name_suffix: nil,
+                name_nick: nil)
+    end
+
+    it 'returns false for invalid names' do
+      expect(NameParser.parse_to_hash("emma")).to be false
+    end
+  end
+
+  describe 'parse to person' do
+    subject { NameParser.parse_to_person('Hannah Arendt') }
+    it { is_expected.to be_a Person }
+    specify { expect(subject.name_first).to eql 'Hannah' }
+    specify { expect(subject.name_last).to eql 'Arendt' }
+  end
+
   describe 'os_parse' do
     it 'parses "CAT, ALICE"' do
       x = NameParser.os_parse("CAT, ALICE")

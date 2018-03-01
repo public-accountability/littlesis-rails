@@ -26,32 +26,6 @@ class NameParser
     parse(str)
   end
 
-  def self.parse_to_hash(str)
-    parser = new(str)
-    return false unless parser.first and parser.last
-    {
-      name_prefix: parser.prefix,
-      name_first: parser.first,
-      name_middle: parser.middle,
-      name_last: parser.last,
-      name_suffix: parser.suffix,
-      name_nick: parser.nick      
-    }
-  end
-
-  def self.parse_to_person(str)
-    parser = new(str)
-    return false unless parser.first and parser.last
-    Person.new(
-      name_prefix: parser.prefix,
-      name_first: parser.first,
-      name_middle: parser.middle,
-      name_last: parser.last,
-      name_suffix: parser.suffix,
-      name_nick: parser.nick
-    )
-  end
-
   def parse(str)
     return nil unless str.split(/\s+/mu).count > 1
 
@@ -145,6 +119,32 @@ class NameParser
     @nick = nick
 
     return self
+  end
+
+  def to_h
+    {
+      name_prefix: @prefix,
+      name_first: @first,
+      name_middle: @middle,
+      name_last: @last,
+      name_suffix: @suffix,
+      name_nick: @nick
+    }
+  end
+
+  ##
+  # Class Methods
+
+  def self.parse_to_hash(str)
+    parser = new(str)
+    return false unless parser.first && parser.last
+    parser.to_h
+  end
+
+  def self.parse_to_person(str)
+    parser = new(str)
+    return false unless parser.first && parser.last
+    Person.new(parser.to_h)
   end
 
   def self.couple_name?(name)
