@@ -1,9 +1,7 @@
 require 'rails_helper'
 
-describe 'NameParser' do 
-
-  describe 'os_parse' do 
-
+describe 'NameParser' do
+  describe 'os_parse' do
     it 'parses "CAT, ALICE"' do
       x = NameParser.os_parse("CAT, ALICE")
       expect(x[:first]).to eq("Alice")
@@ -22,7 +20,7 @@ describe 'NameParser' do
       expect(x[:suffix]).to be_nil
     end
 
-    it 'parses "CAT, ALICE THE"' do 
+    it 'parses "CAT, ALICE THE"' do
       x = NameParser.os_parse("CAT, ALICE THE")
       expect(x[:first]).to eq("Alice")
       expect(x[:last]).to eq("Cat")
@@ -31,7 +29,7 @@ describe 'NameParser' do
       expect(x[:suffix]).to be_nil
     end
 
-    it 'parses "CAT, ALICE IV"' do 
+    it 'parses "CAT, ALICE IV"' do
       x = NameParser.os_parse("CAT, ALICE IV")
       expect(x[:first]).to eq("Alice")
       expect(x[:last]).to eq("Cat")
@@ -40,7 +38,7 @@ describe 'NameParser' do
       expect(x[:suffix]).to eq("IV")
     end
 
-    it 'parses "CAT, ALICE MS"' do 
+    it 'parses "CAT, ALICE MS"' do
       x = NameParser.os_parse("CAT, ALICE MS")
       expect(x[:first]).to eq("Alice")
       expect(x[:last]).to eq("Cat")
@@ -49,7 +47,7 @@ describe 'NameParser' do
       expect(x[:suffix]).to be_nil
     end
 
-    it 'parses "CAT, ALICE THE IV"' do 
+    it 'parses "CAT, ALICE THE IV"' do
       x = NameParser.os_parse("CAT, ALICE THE IV")
       expect(x[:first]).to eq("Alice")
       expect(x[:last]).to eq("Cat")
@@ -58,7 +56,7 @@ describe 'NameParser' do
       expect(x[:suffix]).to eq("IV")
     end
 
-    it 'parses "CAT, ALICE E CAPT"' do 
+    it 'parses "CAT, ALICE E CAPT"' do
       x = NameParser.os_parse("CAT, ALICE E CAPT")
       expect(x[:first]).to eq("Alice")
       expect(x[:last]).to eq("Cat")
@@ -67,7 +65,7 @@ describe 'NameParser' do
       expect(x[:suffix]).to be_nil
     end
 
-    it 'parses "CAT, ALICE DOUBLE MIDDLE"' do 
+    it 'parses "CAT, ALICE DOUBLE MIDDLE"' do
       x = NameParser.os_parse("CAT, ALICE DOUBLE MIDDLE")
       expect(x[:first]).to eq("Alice")
       expect(x[:last]).to eq("Cat")
@@ -76,7 +74,7 @@ describe 'NameParser' do
       expect(x[:suffix]).to be_nil
     end
 
-    it 'parses "ALICE CAT"' do 
+    it 'parses "ALICE CAT"' do
       x = NameParser.os_parse("ALICE CAT")
       expect(x[:first]).to eq("Alice")
       expect(x[:last]).to eq("Cat")
@@ -85,7 +83,7 @@ describe 'NameParser' do
       expect(x[:suffix]).to be_nil
     end
 
-    it 'parses a blank string' do 
+    it 'parses a blank string' do
       x = NameParser.os_parse("")
       expect(x[:first]).to be_nil
       expect(x[:last]).to be_nil
@@ -93,8 +91,8 @@ describe 'NameParser' do
       expect(x[:prefix]).to be_nil
       expect(x[:suffix]).to be_nil
     end
-    
-    it 'return nil if nil' do 
+
+    it 'return nil if nil' do
       x = NameParser.os_parse(nil)
       expect(x[:first]).to be_nil
       expect(x[:last]).to be_nil
@@ -110,10 +108,9 @@ describe 'NameParser' do
       expect(x[:middle]).to be_nil
       expect(x[:prefix]).to be_nil
       expect(x[:suffix]).to be_nil
-
     end
 
-    it 'parses names with an extra comma and a middle name' do 
+    it 'parses names with an extra comma and a middle name' do
       x = NameParser.os_parse("CAT,,ALICE S")
       expect(x[:first]).to eql('Alice')
       expect(x[:last]).to eql('Cat')
@@ -121,6 +118,5 @@ describe 'NameParser' do
       expect(x[:prefix]).to be_nil
       expect(x[:suffix]).to be_nil
     end
-
-  end  
+  end
 end
