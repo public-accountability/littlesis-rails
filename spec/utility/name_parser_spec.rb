@@ -1,6 +1,13 @@
 require 'rails_helper'
 
-describe 'NameParser' do
+describe 'NameParser', :name_parser_helper do
+  describe 'parse' do
+    assert_parsed_name 'Wendell Phillips', last: 'Phillips', first: 'Wendell'
+    assert_parsed_name 'anna garlin spencer', last: 'Spencer', first: 'Anna', middle: 'Garlin'
+    assert_parsed_name 'Ida B. Wells', first: 'Ida', middle: 'B', last: 'Wells'
+    assert_parsed_name 'Dr. Ethel Bentham', prefix: 'Dr', first: 'Ethel', last: 'Bentham'
+  end
+
   describe 'parse_to_hash' do
     it 'parses valid name' do
       expect(NameParser.parse_to_hash("emma goldman"))

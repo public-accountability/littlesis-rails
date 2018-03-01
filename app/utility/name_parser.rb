@@ -1,26 +1,100 @@
+##
+# Parses string names into components: prefix, first, middle, last, suffix, and nick
+#
 class NameParser
   attr_reader :prefix, :first, :middle, :last, :suffix, :nick, :raw
 
   PREFIXES = [
-    'Honorable',
-    'General',
-    'Lieutenant',
-    'Colonel',
-    'Corporal',
-    'Senator',
-    'Representative',
+    # common
+    'Sir',
+    'Madam',
+    'Mr',
+    'Ms',
+    'Mrs',
+    'Miss',
+    'Mme',
+    'Mister',
+    'Mast', 'Master',
+    # Police and military
+    'General', 'Gen',
+    'Lieutenant', 'Lt',
+    'Colonel', 'Col',
+    'Corporal', 'Cpl',
+    'Captain', 'Cpt', 'Capt',
+    'Cdr',
+    'Amn',
+    'Ens',
+    'Major', 'Maj',
+    'Private', 'Pvt',
+    'Sargent', 'Sgt',
+    'Admiral', 'Adm',
+    'Detective', 'Det',
+    'Inspector', 'Insp',
+    'Pte',
+    # Political & Legal
+    'Senator', 'Sen',
+    'Representative', 'Rep',
+    'Councilmember',
+    'Mayor',
+    'Honorable', 'Hon',
+    'Alderman', 'Ald',
+    # Medical and education
+    'Dr', 'Doctor',
+    'Prof', 'Professor',
+    # Religious
     'Minister',
-    'Mr', 'Ms', 'Mrs', 'Miss', 'Dr', 'Rev', 'Hon', 'Prof', 'Rt', 'Gen', 'Adm', 'Br', 'Fr', 'Rabbi', 'Sr',
-    'Sen', 'Cpt', 'Capt', 'Cdr', 'Col', 'Amn', 'Cpl', 'Ens', 'Lt', 'Maj', 'Pvt', 'Sgt', 'Msg', 'Rep','Sir'
-  ].freeze
+    'Rev',
+    'Rt',
+    'Brother', 'Br',
+    'Father', 'Fr',
+    'Mother',
+    'Rabbi',
+    'Chaplain',
+    'Sr',
+    # Other
+    'Msg',
+    'Lord',
+    'Lady',
+    'Dame',
+    'King',
+    'Queen',
+    'Sheik', 'Shayk', 'Shekh'
+  ].to_set.freeze
 
   COMMON_PREFIXES = ['Mr', 'Mrs', 'Ms', 'Miss'].freeze
 
   SUFFIXES = [
-    'JR', 'SR', 'Jr', 'Sr', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'PHD', 'PhD', 'ESQ', 'Esq', 'MD',
-    'MS', 'AG', 'AC', 'CM', 'JD', 'OP', 'RN', 'DNSC', 'MPH', 'OBE', 'RPH', 'SCD', 'RET', 'USA', 'DBA',
-    'CBE', 'DVM', 'USN', 'USAF', 'EDD', 'OSB', 'MBA', 'SJD'
-  ].freeze
+    'JR', 'Jr',
+    'SR', 'Sr',
+    'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII',
+    'PHD', 'PhD',
+    'ESQ', 'Esq', 'Esquire',
+    'MD', 'Md',
+    'MS', 'Ms',
+    'MSC', 'MSc',
+    'AG',
+    'AC',
+    'CM',
+    'JD',
+    'OP',
+    'RN',
+    'DNSC',
+    'MPH',
+    'OBE',
+    'RPH',
+    'SCD',
+    'RET',
+    'USA',
+    'DBA',
+    'CBE',
+    'DVM',
+    'USN',
+    'USAF',
+    'EDD',
+    'OSB',
+    'MBA',
+    'SJD'
+  ].to_set.freeze
 
   def initialize(str)
     parse(str)
