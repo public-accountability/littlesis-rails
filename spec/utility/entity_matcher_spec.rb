@@ -116,4 +116,34 @@ describe EntityMatcher, :sphinx do
       specify { expect(EntityMatcher::Matcher.new(org).__getobj__).to eql org }
     end
   end
+
+  describe 'TestCase' do
+    describe 'EntityMatcher::TestCase::Base' do
+      subject { EntityMatcher::TestCase::Base }
+      let(:name) { Faker::Name.name }
+
+      it 'sets primary extention for entities' do
+        expect(subject.new(build(:org)).primary_ext).to eql 'Org'
+      end
+
+      it 'sets @entity for entities' do
+        expect(subject.new(build(:org)).entity).to be_a Entity
+        expect(subject.new(name, primary_ext: :person).entity).to be nil
+      end
+
+      it 'excepts bot symobls and strings for "primary_ext"' do
+        [subject.new(name, primary_ext: :person),
+         subject.new(name, primary_ext: 'Person')].each do |tc|
+          expect(tc.primary_ext).to eql 'Person'
+        end
+      end
+
+      it 'raises error if called with a missing or invalid primary_ext' do
+        expect { subject.new(name, primary_ext: :blah) }
+          .to raise_error(EntityMatcher::TestCase::MissingOrInvalidPrimaryExtError)
+        expect { subject.new(name) }
+          .to raise_error(EntityMatcher::TestCase::MissingOrInvalidPrimaryExtError)
+      end
+    end
+  end
 end
