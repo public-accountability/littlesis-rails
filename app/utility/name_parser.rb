@@ -1,5 +1,4 @@
 class NameParser
-
   attr_reader :prefix, :first, :middle, :last, :suffix, :nick, :raw
 
   PREFIXES = [
@@ -11,19 +10,17 @@ class NameParser
     'Senator',
     'Representative',
     'Minister',
-    'Mr', 'Ms', 'Mrs', 'Miss', 'Dr', 'Rev', 'Hon', 'Prof', 'Rt', 'Gen', 'Adm', 'Br', 'Fr', 'Rabbi', 'Sr', 
+    'Mr', 'Ms', 'Mrs', 'Miss', 'Dr', 'Rev', 'Hon', 'Prof', 'Rt', 'Gen', 'Adm', 'Br', 'Fr', 'Rabbi', 'Sr',
     'Sen', 'Cpt', 'Capt', 'Cdr', 'Col', 'Amn', 'Cpl', 'Ens', 'Lt', 'Maj', 'Pvt', 'Sgt', 'Msg', 'Rep','Sir'
-  ]
+  ].freeze
 
-  COMMON_PREFIXES = [
-    'Mr', 'Mrs', 'Ms', 'Miss'
-  ]
+  COMMON_PREFIXES = ['Mr', 'Mrs', 'Ms', 'Miss'].freeze
 
   SUFFIXES = [
-    'JR', 'SR', 'Jr', 'Sr', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII','PHD', 'PhD', 'ESQ', 'Esq', 'MD',  
-    'MS', 'AG', 'AC', 'CM', 'JD', 'OP', 'RN', 'DNSC', 'MPH', 'OBE', 'RPH', 'SCD', 'RET', 'USA', 'DBA', 
+    'JR', 'SR', 'Jr', 'Sr', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'PHD', 'PhD', 'ESQ', 'Esq', 'MD',
+    'MS', 'AG', 'AC', 'CM', 'JD', 'OP', 'RN', 'DNSC', 'MPH', 'OBE', 'RPH', 'SCD', 'RET', 'USA', 'DBA',
     'CBE', 'DVM', 'USN', 'USAF', 'EDD', 'OSB', 'MBA', 'SJD'
-  ]
+  ].freeze
 
   def initialize(str)
     parse(str)
@@ -55,7 +52,6 @@ class NameParser
     )
   end
 
-  
   def parse(str)
     return nil unless str.split(/\s+/mu).count > 1
 
@@ -166,31 +162,32 @@ class NameParser
   # LAST, FRIST M PREFIX
   # LAST, FRIST M SUFFIX
   def self.os_parse(str)
-    last_name, first_name, middle_name, prefix, suffix = nil,nil,nil,nil,nil
+    last_name, first_name, middle_name, prefix, suffix = nil
     name = str.nil? ? [] : str.strip.upcase.split(',')
-    if name.length == 0
-      # do nothing and return nil
+
+    if name.length.zero?
+      # do nothing and return all nil hash
     elsif name.length == 1
       # If there is no comma in the name we will presume that the order is First Last
       first_name, last_name = name[0].strip.titleize.split(' ')
     else
       last_name = name[0].titleize
-      rest_of_name = (name - [""])[1].split(' ') # remove blank strings in case of double comma 
+      rest_of_name = (name - [""])[1].split(' ') # remove blank strings in case of double comma
       first_name = rest_of_name[0].strip.titleize
 
-      for name_part in rest_of_name.drop(1)
+      rest_of_name.drop(1).each do |name_part|
         if NameParser::PREFIXES.include? name_part.titleize
           prefix = name_part.titleize
         elsif NameParser::SUFFIXES.include? name_part
           suffix = name_part
         else
           middle_name = "" if middle_name.nil?
-          middle_name << " " unless middle_name.blank?          
+          middle_name << " " if middle_name.present?
           middle_name << name_part.titleize
         end
       end
-      
     end
+
     {
       last: last_name,
       first: first_name,
