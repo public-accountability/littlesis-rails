@@ -58,7 +58,9 @@ Style/EmptyMethod:
   Enabled: false
 
 Style/FrozenStringLiteralComment:
-  EnforcedStyle: never
+  EnforcedStyle: when_needed
+  Exclude:
+    - 'spec/**/*.rb'
 
 Style/StringLiterals:
   Enabled: false

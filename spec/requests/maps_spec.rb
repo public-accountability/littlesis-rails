@@ -2,18 +2,14 @@ require 'rails_helper'
 
 describe 'Maps', :sphinx, type: :request do
   before(:all) do
-    ThinkingSphinx::Deltas.suspend!
-    @apple_corp = create(:entity_org, name: 'apple corp')
-    @banana_corp = create(:entity_org, name: 'banana! corp')
-    setup_sphinx 'entity_core'
+    setup_sphinx 'entity_core' do
+      @apple_corp = create(:entity_org, name: 'apple corp')
+      @banana_corp = create(:entity_org, name: 'banana! corp')
+    end
   end
 
   after(:all) do
-    teardown_sphinx
-    Entity.delete_all
-    Link.delete_all
-    Alias.delete_all
-    ThinkingSphinx::Deltas.resume!
+    teardown_sphinx { delete_entity_tables }
   end
 
   describe 'find nodes' do

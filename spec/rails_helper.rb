@@ -63,6 +63,7 @@ RSpec.configure do |config|
   config.extend TagSpecHelper, :tag_helper
   config.extend PaginationExampleGroupHelper, :pagination_helper
   config.extend MergingGroupMacros, :merging_helper
+  config.extend NameParserMacros, :name_parser_helper
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false

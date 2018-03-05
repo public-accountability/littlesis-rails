@@ -1,4 +1,23 @@
-class EntityMatcher
+require_relative 'entity_matcher/query'
+require_relative 'entity_matcher/search'
+
+module EntityMatcher
+  class Matcher < SimpleDelegator
+    def potential_matches
+    end
+
+    def keyword_matches
+    end
+
+    def exact_name_matches
+    end
+
+    def fuzzy_name_matches
+    end
+
+    def common_relationships
+    end
+  end
 
   # +by_person_name+, +by_full_name+ and +by_org_name+
   # are legacy methods used in ForbesFourHundredImporter and EntityNameAddressCsvImporter,
@@ -17,7 +36,6 @@ class EntityMatcher
     raise NotImplementedError
   end
 end
-
 # OLD implementation:
 =begin
 def self.by_person_name(first, last, middle = nil, suffix = nil, nick = nil, maiden = nil)

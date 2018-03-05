@@ -1,154 +1,468 @@
-class NameParser
+# frozen_string_literal: true
 
-  attr_reader :prefix, :first, :middle, :last, :suffix, :nick, :raw
+# rubocop:disable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength
+# rubocop:disable Metrics/PerceivedComplexity, Style/WordArray
+#
+# === Parses string names into components: prefix, first, middle, last, suffix, and nick
+#     In LittleSis names are required to have a first and last name
+#
+class NameParser
+  attr_reader :prefix, :first, :middle, :last, :suffix, :nick,
+              :raw, :errors
+
+  attr_internal :parts
 
   PREFIXES = [
-    'Honorable',
-    'General',
-    'Lieutenant',
-    'Colonel',
-    'Corporal',
-    'Senator',
-    'Representative',
+    # common
+    'Sir',
+    'Madam',
+    'Mr',
+    'Ms',
+    'Mrs',
+    'Miss',
+    'Mme',
+    'Mister',
+    'Mast', 'Master',
+    # Police and military
+    'General', 'Gen',
+    'Lieutenant', 'Lt',
+    'Colonel', 'Col',
+    'Corporal', 'Cpl',
+    'Captain', 'Cpt', 'Capt',
+    'Cdr',
+    'Amn',
+    'Ens',
+    'Major', 'Maj',
+    'Private', 'Pvt',
+    'Sargent', 'Sgt',
+    'Admiral', 'Adm',
+    'Detective', 'Det',
+    'Inspector', 'Insp',
+    'Pte',
+    # Political & Legal
+    'Senator', 'Sen',
+    'Representative', 'Rep',
+    'Councilmember',
+    'Mayor',
+    'Judge',
+    'Honorable', 'Hon',
+    'Alderman', 'Ald',
+    # Medical and education
+    'Dr', 'Doctor',
+    'Prof', 'Professor',
+    # Religious
     'Minister',
-    'Mr', 'Ms', 'Mrs', 'Miss', 'Dr', 'Rev', 'Hon', 'Prof', 'Rt', 'Gen', 'Adm', 'Br', 'Fr', 'Rabbi', 'Sr', 
-    'Sen', 'Cpt', 'Capt', 'Cdr', 'Col', 'Amn', 'Cpl', 'Ens', 'Lt', 'Maj', 'Pvt', 'Sgt', 'Msg', 'Rep','Sir'
-  ]
+    'Rev',
+    'Rt',
+    'Brother', 'Br',
+    'Father', 'Fr',
+    'Mother',
+    'Rabbi',
+    'Chaplain',
+    'Sr',
+    # Other
+    'Msg',
+    'Lord',
+    'Lady',
+    'Dame',
+    'King',
+    'Queen',
+    'Sheik', 'Shayk', 'Shekh'
+  ].to_set.freeze
 
-  COMMON_PREFIXES = [
-    'Mr', 'Mrs', 'Ms', 'Miss'
-  ]
+  COMMON_PREFIXES = ['Mr', 'Mrs', 'Ms', 'Miss'].freeze
 
   SUFFIXES = [
-    'JR', 'SR', 'Jr', 'Sr', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII','PHD', 'PhD', 'ESQ', 'Esq', 'MD',  
-    'MS', 'AG', 'AC', 'CM', 'JD', 'OP', 'RN', 'DNSC', 'MPH', 'OBE', 'RPH', 'SCD', 'RET', 'USA', 'DBA', 
-    'CBE', 'DVM', 'USN', 'USAF', 'EDD', 'OSB', 'MBA', 'SJD'
-  ]
+    'JR', 'Jr',
+    'SR', 'Sr',
+    'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII',
+    'PHD', 'PhD',
+    'ESQ', 'Esq', 'Esquire',
+    'MD', 'Md',
+    'MS', 'Ms',
+    'MSC', 'MSc',
+    'AG',
+    'AC',
+    'CM',
+    'JD',
+    'OP',
+    'RN',
+    'DNSC',
+    'MPH',
+    'OBE',
+    'RPH',
+    'SCD',
+    'RET',
+    'USA',
+    'DBA',
+    'CBE',
+    'DVM',
+    'USN',
+    'USAF',
+    'EDD',
+    'OSB',
+    'MBA',
+    'SJD'
+  ].to_set.freeze
+
+  LASTNAME_PREFIXES = [
+    'abu',
+    'bin',
+    'bon',
+    'da',
+    'dal',
+    'de',
+    'degli',
+    'dei',
+    'del',
+    'dela',
+    'della',
+    'delle',
+    'delli',
+    'dello',
+    'der',
+    'di',
+    'du',
+    'dí',
+    'ibn',
+    'la',
+    'le',
+    'san',
+    'santa',
+    'st',
+    'ste',
+    'van',
+    'vel',
+    'von'
+  ].to_set.freeze
+
+  HAS_LASTNAME_PREFIX = Regexp.new " (#{LASTNAME_PREFIXES.to_a.join('|')}) "
+
+  IN_QUOTES = /^"(\w+)"$/
+
+  MC_NAME = /\b[Mm]a?c[A-Za-z]{2,}\b/
+
+  MAC_EXCEPTIONS = [
+    'macedo', 'macevicius', 'machado', 'machar', 'machin',
+    'machlin', 'macias', 'maciulis', 'mackie',
+    'mackle', 'macklin', 'mackmin', 'macquarie'
+  ].to_set.freeze
 
   def initialize(str)
-    parse(str)
+    @errors = []
+    @raw = str
+    @_parts = split_name(str)
+    parse
+    prettify!
   end
+
+  # Returns parased name as hash, formatted for +Person+
+  def to_h
+    {
+      name_prefix: @prefix,
+      name_first: @first,
+      name_middle: @middle,
+      name_last: @last,
+      name_suffix: @suffix,
+      name_nick: @nick
+    }
+  end
+
+  def to_indifferent_hash
+    ActiveSupport::HashWithIndifferentAccess.new(to_h)
+  end
+
+  def valid?
+    @first && @last
+  end
+
+  private
+
+  def split_name(str)
+    names = str.split(/\s+/u)
+    return names unless HAS_LASTNAME_PREFIX.match?(str)
+
+    out = []
+
+    while names.length.positive?
+      name_part = names.shift
+      if LASTNAME_PREFIXES.include?(name_part)
+        out << "#{name_part} #{names.shift}"
+      else
+        out << name_part
+      end
+    end
+
+    return out
+  end
+
+  # sets the component attributes
+  def parse
+    case parts.length
+    when 0
+      @errors << "Empty string"
+    when 1
+      @errors << "String is one word"
+      @last = parts.first
+    when 2
+      parse_double_word
+    when 3
+      extract_nick
+      if parts.length == 2
+        parse_double_word
+      else
+        parse_triple_word
+      end
+    else
+      parse_long
+    end
+  end
+
+  def parse_long
+    extract_nick
+    return parse_triple_word if parts.length == 3
+    # In situations when  we have many names extra names wils become appended to the middle name
+    @middle = []
+
+    # last, first middle, [middle]
+    # last, prefix first middle [middle] ...
+    if ends_with_comma(parts[0])
+      @last = parts[0]
+      if prefix?(parts[1])
+        @prefix = parts[1]
+        @first = parts[2]
+        @middle = parts.drop(3)
+      else
+        @first = parts[1]
+        @middle = parts.drop(2)
+      end
+
+    # last suffix, first middle
+    # last suffix, prefix first
+    # last suffix, prefix first middle
+    elsif ends_with_comma(parts[1]) && suffix?(parts[1])
+      @last = parts[0]
+      @suffix = parts[1]
+
+      if prefix?(parts[2])
+        @prefix = parts[2]
+        @first = parts[3]
+        @middle = parts.drop(4)
+      else
+        @first = parts[2]
+        @middle = parts.drop(3)
+      end
+
+    # prefix first middle [middle] last
+    # prefix first last suffix
+    # prefix first middle [middle] last suffix
+    elsif prefix?(parts[0])
+      @prefix, @first = parts.take(2)
+
+      if suffix?(parts.last)
+        @last, @suffix = parts.last(2)
+        # the "2" here excludes the prefix and first name
+        # the "-3" here excludes last and suffix
+        @middle = parts[2..-3]
+      else
+        @last = parts.last
+        @middle = parts[2..-2]
+      end
+
+    # first middle [middle] ... last
+    # first middle [middle] ... last suffix
+    else
+      @first = parts.first
+
+      if suffix?(parts.last)
+        @last, @suffix = parts.last(2)
+        # the "1" here excludes the first name
+        # the "-3" here excludes last and suffix
+        @middle = parts[1..-3]
+      else
+        @last = parts.last
+        @middle = parts[1..-2]
+      end
+    end
+  end
+
+  def parse_triple_word
+    # Case when first word is a known prefix. There is only one valid outcome in this situation: PREFIX FIRST LAST
+    # It will record an error message if this pattern -- PREFIX LAST SUFFIX -- is found
+    if prefix?(parts[0])
+      if suffix?(parts[2])
+        @prefix, @last, @suffix = parts
+        @errors << "#{@raw} has both a suffix and prefix and no apparent first name"
+      else
+        @prefix, @first, @last = parts
+      end
+
+    # Cases:
+    #   FIRST MIDDLE LAST
+    #   FIRST LAST SUFFIX
+    #   FIRST LAST, SUFFIX
+    #   FIRST "NICK" LAST
+    #   LAST, FIRST MIDDLE
+    #   LAST, PREFIX FIRST
+    #   LAST SUFFIX, FIRST
+    else
+      # LAST, PREFIX FIRST
+      if ends_with_comma(parts[0]) && prefix?(parts[1])
+        @last, @prefix, @first = parts
+
+      # LAST, FIRST MIDDLE
+      elsif ends_with_comma(parts[0]) && !prefix?(parts[1])
+        @last, @first, @middle = parts
+
+      # FIRST LAST SUFFIX
+      # FIRST LAST, SUFFIX
+      elsif suffix?(parts[2])
+        @first, @last, @suffix = parts
+      # LAST SUFFIX, FIRST
+      elsif ends_with_comma(parts[1]) && suffix?(parts[1])
+        @last, @suffix, @first = parts
+      # FIRST MIDDLE LAST
+      else
+        @first, @middle, @last = parts
+      end
+    end
+  end
+
+  # Parses input that is only two words
+  # Handles two cases:
+  #  First Last
+  #  Last, First
+  # If first name or last name is is the list of prefixes or suffixes, respectively,
+  # it will mark theses as nil
+  def parse_double_word
+    parts.reverse! if ends_with_comma(parts[0])
+    maybe_first, maybe_last = parts
+
+    if prefix? maybe_first
+      @errors << "Could not find a first name. #{maybe_first} is a known prefix"
+      @prefix = maybe_first
+    else
+      @first = maybe_first
+    end
+
+    if suffix? maybe_last
+      @errors << "could not find a last name. #{maybe_last} is a known suffix"
+      @suffix = maybe_last
+    else
+      @last = maybe_last
+    end
+  end
+
+  ##
+  # Helpers
+
+  def prefix?(name)
+    PREFIXES.include? clean(name).capitalize
+  end
+
+  def suffix?(name)
+    SUFFIXES.include? clean(name).upcase
+  end
+
+  def extract_nick
+    # find location of a name in quotes
+    nick_index = parts.index { |x| quoted?(x) }
+    # remove nickname from parts array if it exists
+    @nick = parts.delete_at(nick_index) if nick_index
+  end
+
+  def ends_with_comma(str)
+    str[-1] == ','
+  end
+
+  def quoted?(str)
+    IN_QUOTES.match? str
+  end
+
+  def clean(str, keep_periods: false)
+    if keep_periods
+      str.tr(',', '').tr('"', '')
+    else
+      str.tr(',', '').tr('"', '').tr('.', '')
+    end
+  end
+
+  def capitalize_hyphenated_name(name)
+    name
+      .split('-')
+      .map { |n| smart_capitalize(n) }
+      .join('-')
+  end
+
+  def smart_capitalize(s)
+    if MC_NAME.match?(s.downcase)
+      return s.capitalize if MAC_EXCEPTIONS.include?(s.downcase)
+      match = s.match(/\b(ma?c)([A-Za-z]+)/)
+      return s.gsub(/\bma?c[A-Za-z]+/) { match[1].capitalize + match[2].capitalize }
+    else
+      s.capitalize
+    end
+  end
+
+  def simple_capitalize(s)
+    clean(s).capitalize
+  end
+
+  def prettify(str, keep_periods: false)
+    name = clean(str, keep_periods: keep_periods)
+    # simple case where name has no hyphen or spaces
+    return smart_capitalize(name) unless str.include?('-') || str.include?(' ')
+
+    name = name.split(' ').map { |x| capitalize_hyphenated_name(x) }.join(' ')
+
+    return name unless name.include?(' ')
+
+    lastname_prefix = name.split(' ')[0].downcase
+
+    if LASTNAME_PREFIXES.include?(lastname_prefix)
+      return ([lastname_prefix] + name.split(' ')[1..-1]).join(' ')
+    else
+      return smart_capitalize(name)
+    end
+  end
+
+  def prettify!
+    @first = prettify(@first) if @first
+    if @middle
+      if @middle.is_a?(Array)
+        prettify_middle_array
+      else
+        @middle = prettify(@middle)
+      end
+    end
+    @last = prettify(@last) if @last
+    @prefix = simple_capitalize(@prefix) if @prefix
+    @suffix = clean(@suffix).upcase if @suffix
+    @nick = simple_capitalize(@nick) if @nick
+  end
+
+  def prettify_middle_array
+    if @middle.empty?
+      @middle = nil
+    else
+      keep_periods = (@middle.length > 1)
+      @middle = @middle.map { |x| prettify(x, keep_periods: keep_periods) }.join(' ')
+    end
+  end
+
+  ##
+  # Class Methods
 
   def self.parse_to_hash(str)
     parser = new(str)
-    return false unless parser.first and parser.last
-    {
-      name_prefix: parser.prefix,
-      name_first: parser.first,
-      name_middle: parser.middle,
-      name_last: parser.last,
-      name_suffix: parser.suffix,
-      name_nick: parser.nick      
-    }
+    return false unless parser.first && parser.last
+    parser.to_h
   end
 
   def self.parse_to_person(str)
     parser = new(str)
-    return false unless parser.first and parser.last
-    Person.new(
-      name_prefix: parser.prefix,
-      name_first: parser.first,
-      name_middle: parser.middle,
-      name_last: parser.last,
-      name_suffix: parser.suffix,
-      name_nick: parser.nick
-    )
-  end
-
-  
-  def parse(str)
-    return nil unless str.split(/\s+/mu).count > 1
-
-    @raw = str
-
-    prefix = first = middle = last = suffice = nick = nil
-    
-    # Ziggy & Austin on Thu 17 Aug 2017:
-    # replaced this call with the str.split.capitalize below
-    # in order to fix incorrect McLastNames
-    #str = str.titleize
-    
-    str = str.gsub('.', '').strip       # trim and remove periods
-             .gsub(/\s{2,}/, ' ')       # remove extra spaces
-             .gsub(/ \([^\)]+\)/, '')   # remove anything in parentheses at the end
-    
-    str = str.split(' ').map(&:capitalize).join(' ')
-
-    # get prefixes
-    NameParser::PREFIXES.each do |pre|
-      new = str.gsub(/^#{pre} /i, '')
-      unless str == new # the case in which the string doesn't contain the prefix under consideration
-        unless NameParser::COMMON_PREFIXES.map(&:downcase).include?(pre.downcase) # the case in which the prefix is a known common prefixg
-          prefix = prefix.to_s + ' ' + pre + ' '
-        end
-
-        str = new.strip
-      end
-    end
-    prefix = prefix.strip if prefix
-
-    # get suffixes
-    suffixes = NameParser::SUFFIXES
-    suffixes.each do |suf|
-      new = str.gsub(/ #{suf}$/i, '')
-      unless str == new
-        suffix = suf + ' ' + suffix.to_s
-        str = new.strip
-      end
-    end
-    suffix = suffix.strip if suffix
-
-    # remove commas left over from suffixes
-    str = str.gsub(',', '').strip
-
-    # find nickname in quotes
-    str.match(/["\']([\S]+)[\'"]/) do |match|
-      nick = match[1] ? match[1] : match[2]
-      str = str.gsub(/["\']([\S]+)[\'"]/, '').strip
-    end
-
-    # condense multiple spaces
-    str = str.gsub(/\s{2,}/, ' ')
-
-    # split into parts
-    parts = str.split(' ')
-
-    case parts.count
-    when 1
-      if prefix
-        first = prefix
-        last = parts.first
-        prefix = nil
-      elsif suffix
-        first = parts.first
-        last = suffix
-        suffix = nil
-      else
-        first = parts.first
-      end
-    when 2
-      first = parts.first
-      last = parts.last
-    when 3
-      first = parts[0]
-      middle = parts[1]
-      last = parts[2]
-    else
-      first = parts.first
-      last = parts.last
-      middle = parts.drop(1).take(parts.count - 2).join(' ')
-    end
-
-    last = last.gsub('_', ' ')
-
-    @first = first
-    @last = last
-    @middle = middle
-    @prefix = prefix
-    @suffix = suffix
-    @nick = nick
-
-    return self
+    return false unless parser.first && parser.last
+    Person.new(parser.to_h)
   end
 
   def self.couple_name?(name)
@@ -166,31 +480,32 @@ class NameParser
   # LAST, FRIST M PREFIX
   # LAST, FRIST M SUFFIX
   def self.os_parse(str)
-    last_name, first_name, middle_name, prefix, suffix = nil,nil,nil,nil,nil
+    last_name, first_name, middle_name, prefix, suffix = nil
     name = str.nil? ? [] : str.strip.upcase.split(',')
-    if name.length == 0
-      # do nothing and return nil
+
+    if name.length.zero?
+      # do nothing and return all nil hash
     elsif name.length == 1
       # If there is no comma in the name we will presume that the order is First Last
       first_name, last_name = name[0].strip.titleize.split(' ')
     else
       last_name = name[0].titleize
-      rest_of_name = (name - [""])[1].split(' ') # remove blank strings in case of double comma 
+      rest_of_name = (name - [""])[1].split(' ') # remove blank strings in case of double comma
       first_name = rest_of_name[0].strip.titleize
 
-      for name_part in rest_of_name.drop(1)
+      rest_of_name.drop(1).each do |name_part|
         if NameParser::PREFIXES.include? name_part.titleize
           prefix = name_part.titleize
         elsif NameParser::SUFFIXES.include? name_part
           suffix = name_part
         else
           middle_name = "" if middle_name.nil?
-          middle_name << " " unless middle_name.blank?          
-          middle_name << name_part.titleize
+          middle_name += " " if middle_name.present?
+          middle_name += name_part.titleize
         end
       end
-      
     end
+
     {
       last: last_name,
       first: first_name,
@@ -200,3 +515,5 @@ class NameParser
     }
   end
 end
+# rubocop:enable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength
+# rubocop:enable Metrics/PerceivedComplexity, Style/WordArray
