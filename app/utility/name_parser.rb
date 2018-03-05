@@ -151,9 +151,13 @@ class NameParser
   def initialize(str)
     @errors = []
     @raw = str
-    @_parts = split_name(str)
-    parse
-    prettify!
+    if str.is_a?(String)
+      @_parts = split_name(str)
+      parse
+      prettify!
+    else
+      Rails.logger.warn "NameParser called with a #{str.class}. It only accepts strings"
+    end
   end
 
   # Returns parased name as hash, formatted for +Person+

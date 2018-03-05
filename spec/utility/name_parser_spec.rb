@@ -41,6 +41,16 @@ describe 'NameParser', :name_parser_helper do
                        first: "Jane", last: 'Doe', middle: 'With Way Too Many Middle Names'
   end
 
+  it 'return blank hash if called with a non-string' do
+    expect(NameParser.new(false).to_h)
+      .to eql(name_prefix: nil,
+              name_first: nil,
+              name_middle: nil,
+              name_last: nil,
+              name_suffix: nil,
+              name_nick: nil)
+  end
+
   describe 'parse_to_hash' do
     it 'parses valid name' do
       expect(NameParser.parse_to_hash("emma goldman"))
