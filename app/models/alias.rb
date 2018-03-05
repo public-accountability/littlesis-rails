@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Alias < ApplicationRecord
   include SingularTable
   extend WithoutPaperTrailVersioning
@@ -36,7 +38,8 @@ class Alias < ApplicationRecord
   end
 
   def name_regex(require_first = true)
-    NameParser.parse_to_person(name).try(:name_regex, require_first)
+    person = NameParser.parse_to_person(name)
+    return person.name_regex(require_first) if person.valid?
   end
 
   private
