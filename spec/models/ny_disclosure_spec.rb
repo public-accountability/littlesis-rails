@@ -10,6 +10,14 @@ describe NyDisclosure, type: :model do
   it { should validate_presence_of(:transaction_id) }
   it { should validate_presence_of(:schedule_transaction_date) }
 
+  let(:disclosure) do
+    build(:ny_disclosure,
+          filer_id: "A12498",
+          report_id: "E",
+          transaction_code: "A",
+          e_year: "2006")
+  end
+
   it 'has REPORT_ID constant' do
     expect(NyDisclosure::REPORT_ID).to be_a Hash
   end
@@ -35,15 +43,15 @@ describe NyDisclosure, type: :model do
 
   describe "#reference_link" do
     it 'returns link to election.ny.gov' do
-      d = build(:ny_disclosure, filer_id: "A12498", report_id: "E", transaction_code: "A", e_year: "2006")
-      expect(d.reference_link).to eq "http://www.elections.ny.gov:8080/reports/rwservlet?cmdkey=efs_sch_report&p_filer_id=A12498&p_e_year=2006&p_freport_id=E&p_transaction_code=A"
+      expect(disclosure.reference_link)
+        .to eq "http://www.elections.ny.gov:8080/reports/rwservlet?cmdkey=efs_sch_report&p_filer_id=A12498&p_e_year=2006&p_freport_id=E&p_transaction_code=A"
     end
   end
 
   describe "#reference_name" do
     it 'returns reference_name' do
-      d = build(:ny_disclosure, filer_id: "A12498", report_id: "E", transaction_code: "A", e_year: "2006")
-      expect(d.reference_name).to eq "2006 NYS Board of Elections Financial Disclosure Report: 11 Day Pre General"
+      expect(disclosure.reference_name)
+        .to eq "2006 NYS Board of Elections Financial Disclosure Report: 11 Day Pre General"
     end
   end
 
@@ -59,7 +67,7 @@ describe NyDisclosure, type: :model do
       let(:dennis) { build_entity("Dennis R McCoy", :person) }
 
       it 'returns correct search terms' do
-        expect(NyDisclosure.search_terms(dennis)).to eq '(Dennis R McCoy) | (Dennis Mccoy)'
+        expect(NyDisclosure.search_terms(dennis)).to eq '(Dennis R McCoy) | (Dennis McCoy)'
       end
     end
 
@@ -84,7 +92,8 @@ describe NyDisclosure, type: :model do
         a1 = build(:alias, name: "Alice Coltrane JR", is_primary: true)
         a2 = build(:alias, name: "Al Coltrane", is_primary: false)
         allow(e).to receive(:aliases).and_return([a1, a2])
-        expect(NyDisclosure.search_terms(e)).to eql '(Alice Coltrane JR) | (Alice Coltrane) | (Al Coltrane)'
+        expect(NyDisclosure.search_terms(e))
+          .to eql '(Alice Coltrane JR) | (Alice Coltrane) | (Al Coltrane)'
       end
     end
 
