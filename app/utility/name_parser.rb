@@ -140,6 +140,14 @@ class NameParser
 
   IN_QUOTES = /^"(\w+)"$/
 
+  MC_NAME = /\b[Mm]a?c[A-Za-z]{2,}\b/
+
+  MAC_EXCEPTIONS = [
+    'macedo', 'macevicius', 'machado', 'machar', 'machin',
+    'machlin', 'macias', 'maciulis', 'mackie',
+    'mackle', 'macklin', 'mackmin', 'macquarie'
+  ].to_set.freeze
+
   def initialize(str)
     @errors = []
     @raw = str
@@ -380,23 +388,37 @@ class NameParser
   end
 
   def capitalize_hyphenated_name(name)
-    name.split('-').map(&:capitalize).join('-')
+    name
+      .split('-')
+      .map { |n| smart_capitalize(n) }
+      .join('-')
   end
 
-  def prettify(str, keep_periods: false, capitalize_hyphenated: true)
-    pretty_name = clean(str, keep_periods: keep_periods)
-    # simple case where name has no hyphen or spaces
-    return pretty_name.capitalize unless str.include?('-') || str.include?(' ')
-
-    pretty_name = pretty_name.split(' ').map { |x| capitalize_hyphenated_name(x) }.join(' ')
-
-    return pretty_name unless pretty_name.include?(' ')
-
-    lastname_prefix = pretty_name.split(' ')[0].downcase
-    if LASTNAME_PREFIXES.include?(lastname_prefix)
-      return ([lastname_prefix] + pretty_name.split(' ')[1..-1]).join(' ')
+  def smart_capitalize(s)
+    if MC_NAME.match?(s.downcase)
+      return s.capitalize if MAC_EXCEPTIONS.include?(s.downcase)
+      match = s.match(/\b(ma?c)([A-Za-z]+)/)
+      return s.gsub(/\bma?c[A-Za-z]+/) { match[1].capitalize + match[2].capitalize }
     else
-      return pretty_name
+      s.capitalize
+    end
+  end
+
+  def prettify(str, keep_periods: false)
+    name = clean(str, keep_periods: keep_periods)
+    # simple case where name has no hyphen or spaces
+    return smart_capitalize(name) unless str.include?('-') || str.include?(' ')
+
+    name = name.split(' ').map { |x| capitalize_hyphenated_name(x) }.join(' ')
+
+    return name unless name.include?(' ')
+
+    lastname_prefix = name.split(' ')[0].downcase
+
+    if LASTNAME_PREFIXES.include?(lastname_prefix)
+      return ([lastname_prefix] + name.split(' ')[1..-1]).join(' ')
+    else
+      return smart_capitalize(name)
     end
   end
 
