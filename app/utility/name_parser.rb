@@ -200,9 +200,9 @@ class NameParser
   def parse
     case parts.length
     when 0
-      @errors << "Empty string"
+      @errors << "Name is an empty string"
     when 1
-      @errors << "String is one word"
+      @errors << "The name is only one word. Valid names are at least two words"
       @last = parts.first
     when 2
       parse_double_word
