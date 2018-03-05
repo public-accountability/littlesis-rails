@@ -455,13 +455,11 @@ class NameParser
 
   def self.parse_to_hash(str)
     parser = new(str)
-    return false unless parser.first && parser.last
     parser.to_h
   end
 
   def self.parse_to_person(str)
     parser = new(str)
-    return false unless parser.first && parser.last
     Person.new(parser.to_h)
   end
 

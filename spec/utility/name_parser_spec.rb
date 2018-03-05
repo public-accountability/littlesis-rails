@@ -52,7 +52,7 @@ describe 'NameParser', :name_parser_helper do
                 name_nick: nil)
     end
 
-    it 'returns false for invalid names' do
+    xit 'returns false for invalid names' do
       expect(NameParser.parse_to_hash("emma")).to be false
     end
   end
