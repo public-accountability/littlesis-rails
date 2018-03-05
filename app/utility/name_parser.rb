@@ -404,6 +404,10 @@ class NameParser
     end
   end
 
+  def simple_capitalize(s)
+    clean(s).capitalize
+  end
+
   def prettify(str, keep_periods: false)
     name = clean(str, keep_periods: keep_periods)
     # simple case where name has no hyphen or spaces
@@ -432,9 +436,9 @@ class NameParser
       end
     end
     @last = prettify(@last) if @last
-    @prefix = prettify(@prefix) if @prefix
+    @prefix = simple_capitalize(@prefix) if @prefix
     @suffix = clean(@suffix).upcase if @suffix
-    @nick = prettify(@nick) if @nick
+    @nick = simple_capitalize(@nick) if @nick
   end
 
   def prettify_middle_array
