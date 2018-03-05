@@ -105,12 +105,45 @@ class NameParser
     'SJD'
   ].to_set.freeze
 
+  LASTNAME_PREFIXES = [
+    'abu',
+    'bin',
+    'bon',
+    'da',
+    'dal',
+    'de',
+    'degli',
+    'dei',
+    'del',
+    'dela',
+    'della',
+    'delle',
+    'delli',
+    'dello',
+    'der',
+    'di',
+    'du',
+    'dí',
+    'ibn',
+    'la',
+    'le',
+    'san',
+    'santa',
+    'st',
+    'ste',
+    'van',
+    'vel',
+    'von'
+  ].to_set.freeze
+
+  HAS_LASTNAME_PREFIX = Regexp.new " (#{LASTNAME_PREFIXES.to_a.join('|')}) "
+
   IN_QUOTES = /^"(\w+)"$/
 
   def initialize(str)
     @errors = []
     @raw = str
-    @_parts = str.split(/\s+/u)
+    @_parts = split_name(str)
     parse
     prettify!
   end
@@ -137,6 +170,24 @@ class NameParser
 
   private
 
+  def split_name(str)
+    names = str.split(/\s+/u)
+    return names unless HAS_LASTNAME_PREFIX.match?(str)
+
+    out = []
+
+    while names.length.positive?
+      name_part = names.shift
+      if LASTNAME_PREFIXES.include?(name_part)
+        out << "#{name_part} #{names.shift}"
+      else
+        out << name_part
+      end
+    end
+
+    return out
+  end
+
   # sets the component attributes
   def parse
     case parts.length
@@ -162,8 +213,7 @@ class NameParser
   def parse_long
     extract_nick
     return parse_triple_word if parts.length == 3
-    # In situations where we have many names
-    # "extra" names become appended
+    # In situations when  we have many names extra names wils become appended to the middle name
     @middle = []
 
     # last, first middle, [middle]
@@ -329,12 +379,24 @@ class NameParser
     end
   end
 
+  def capitalize_hyphenated_name(name)
+    name.split('-').map(&:capitalize).join('-')
+  end
+
   def prettify(str, keep_periods: false, capitalize_hyphenated: true)
-    s = clean(str, keep_periods: keep_periods)
-    if capitalize_hyphenated && s.include?('-')
-      s.split('-').map(&:capitalize).join('-')
+    pretty_name = clean(str, keep_periods: keep_periods)
+    # simple case where name has no hyphen or spaces
+    return pretty_name.capitalize unless str.include?('-') || str.include?(' ')
+
+    pretty_name = pretty_name.split(' ').map { |x| capitalize_hyphenated_name(x) }.join(' ')
+
+    return pretty_name unless pretty_name.include?(' ')
+
+    lastname_prefix = pretty_name.split(' ')[0].downcase
+    if LASTNAME_PREFIXES.include?(lastname_prefix)
+      return ([lastname_prefix] + pretty_name.split(' ')[1..-1]).join(' ')
     else
-      s.capitalize
+      return pretty_name
     end
   end
 
