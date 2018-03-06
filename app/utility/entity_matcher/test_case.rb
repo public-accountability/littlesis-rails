@@ -20,6 +20,14 @@ module EntityMatcher
       attr_reader :entity, :name
       delegate :fetch, to: :name
 
+      # calling .first, .last, etc.
+      # returns upcased versions of the name component
+      %i[prefix first middle last suffix nick].each do |name_component|
+        define_method(name_component) do
+          fetch("name_#{name_component}")&.upcase
+        end
+      end
+
       # input: Entity | String | Hash
       def initialize(input)
         case input

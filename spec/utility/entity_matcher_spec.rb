@@ -162,4 +162,80 @@ describe EntityMatcher, :sphinx do
       end
     end
   end
+
+  describe 'Evaluation' do
+    describe 'argument validation' do
+      subject { EntityMatcher::Evaluation }
+
+      def generate_test_case
+        EntityMatcher::TestCase::Person.new(
+          build(:person, person: build(:a_person))
+        )
+      end
+
+      context 'test_case is invalid' do
+        specify do
+          expect { subject.new(build(:person), generate_test_case) }
+            .to raise_error(ArgumentError)
+        end
+      end
+
+      context 'match is invalid' do
+        specify do
+          expect { subject.new(generate_test_case, EntityMatcher::TestCase::Person.new('first last')) }
+            .to raise_error(ArgumentError)
+        end
+      end
+    end
+
+    describe 'evaluation' do
+      subject { EntityMatcher::Evaluation }
+
+      def generate_test_case(fields = {})
+        EntityMatcher::TestCase::Person.new(build(:person, person: build(:a_person, **fields)))
+      end
+      
+      # EntityMatcher::TestCase::Person.new(
+      #     build(:person, person: build(:a_person, fields))
+      #   )
+      context 'same last names' do
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new('jane doe')
+        end
+
+        let(:match) do
+          generate_test_case name_last: 'Doe'
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_last_name)
+            .to eql true
+
+          expect(subject.new(test_case, match).result.same_first_name)
+            .to eql false
+        end
+      end
+      
+      context 'same first name' do
+        let(:first_name) { Faker::Name.first_name }
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "#{first_name} #{Faker::Name.unique.last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: first_name, name_last: Faker::Name.unique.last_name
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_first_name)
+            .to eql true
+
+          expect(subject.new(test_case, match).result.same_last_name)
+            .to eql false
+        end
+      end
+
+    end
+
+  end
 end

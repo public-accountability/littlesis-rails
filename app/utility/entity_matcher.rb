@@ -2,6 +2,7 @@
 
 require_relative 'entity_matcher/query'
 require_relative 'entity_matcher/search'
+require_relative 'entity_matcher/evaluator'
 
 module EntityMatcher
   class Matcher < SimpleDelegator
