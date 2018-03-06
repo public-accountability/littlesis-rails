@@ -118,31 +118,47 @@ describe EntityMatcher, :sphinx do
   end
 
   describe 'TestCase' do
-    describe 'EntityMatcher::TestCase::Base' do
-      subject { EntityMatcher::TestCase::Base }
+    describe EntityMatcher::TestCase::Person do
+      subject { EntityMatcher::TestCase::Person }
       let(:name) { Faker::Name.name }
-
-      it 'sets primary extention for entities' do
-        expect(subject.new(build(:org)).primary_ext).to eql 'Org'
-      end
+      let(:person) { build(:person, :with_person_name, person: build(:a_person)) }
+      let(:persisted_person) { create(:entity_person, :with_person_name) }
 
       it 'sets @entity for entities' do
-        expect(subject.new(build(:org)).entity).to be_a Entity
-        expect(subject.new(name, primary_ext: :person).entity).to be nil
+        expect(subject.new(person).entity).to be_a Entity
+        expect(subject.new(name).entity).to be nil
       end
 
-      it 'excepts bot symobls and strings for "primary_ext"' do
-        [subject.new(name, primary_ext: :person),
-         subject.new(name, primary_ext: 'Person')].each do |tc|
-          expect(tc.primary_ext).to eql 'Person'
-        end
+      it 'sets name when provided entity' do
+        expect(subject.new(persisted_person).name)
+          .to eql ActiveSupport::HashWithIndifferentAccess
+                    .new(persisted_person.person.name_attributes)
       end
 
-      it 'raises error if called with a missing or invalid primary_ext' do
-        expect { subject.new(name, primary_ext: :blah) }
-          .to raise_error(EntityMatcher::TestCase::MissingOrInvalidPrimaryExtError)
-        expect { subject.new(name) }
-          .to raise_error(EntityMatcher::TestCase::MissingOrInvalidPrimaryExtError)
+      it 'sets name when provided string' do
+        expect(subject.new(name).name)
+          .to eql NameParser.new(name).to_indifferent_hash
+      end
+
+      it 'sets name when provided hash' do
+        expect(subject.new('name_last' => 'Last', 'name_first' => 'First').name)
+          .to eql ActiveSupport::HashWithIndifferentAccess
+                          .new(name_prefix: nil,
+                               name_first: "First",
+                               name_middle: nil,
+                               name_last: "Last",
+                               name_suffix: nil,
+                               name_nick: nil)
+      end
+
+      it 'raises error if called with the wrong entity type' do
+        expect { subject.new(build(:org)) }
+          .to raise_error(EntityMatcher::TestCase::WrongEntityTypeError)
+      end
+
+      it 'raises error if called with an hashing missing a last name' do
+        expect { subject.new(first_name: 'xyz') }
+          .to raise_error(EntityMatcher::TestCase::InvalidPersonHash)
       end
     end
   end
