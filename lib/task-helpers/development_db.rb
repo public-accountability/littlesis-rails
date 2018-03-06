@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DevelopmentDb
 
   def initialize(path)
@@ -185,58 +187,57 @@ class DevelopmentDb
               reference
               reference_excerpt)
 
-  PUBLIC_DATA = [
-    'alias',
-    'business',
-    'business_industry',
-    'business_person',
-    'candidate_district',
-    'couple',
-    'degree',
-    'donation',
-    'education',
-    'elected_representative',
-    'entity',
-    'entity_fields',
-    'extension_definition',
-    'extension_record',
-    'family',
-    'fields',
-    'gender',
-    'generic',
-    'government_body',
-    'hierarchy',
-    'industries',
-    'industry',
-    'link',
-    'lobby_filing',
-    'lobby_filing_lobby_issue',
-    'lobby_filing_lobbyist',
-    'lobby_filing_relationship',
-    'lobby_issue',
-    'lobbying',
-    'lobbyist',
-    'membership',
-    'org',
-    'ownership',
-    'person',
-    'political_candidate',
-    'political_district',
-    'political_fundraising',
-    'political_fundraising_type',
-    'position',
-    'professional',
-    'public_company',
-    'relationship_category',
-    'representative',
-    'representative_district',
-    'school',
-    'social',
-    'transaction',
-    # these tables need to be cleaned afterwards
-    'entity',
-    'relationship',
-    'reference',
-    'reference_excerpt'
-  ]
+  # these tables need to be cleaned afterwards:
+  # entity, alias, relationship, extension_record,
+  # link, taggings, taggings
+  # see: clean_public_data.sql
+  PUBLIC_DATA = %w[
+    alias
+    business
+    business_industry
+    business_person
+    candidate_district
+    couple
+    degree
+    donation
+    education
+    elected_representative
+    entity
+    entity_fields
+    extension_definition
+    extension_record
+    family
+    fields
+    gender
+    generic
+    government_body
+    hierarchy
+    industries
+    industry
+    link
+    lobbyist
+    membership
+    org
+    ownership
+    person
+    political_candidate
+    political_district
+    political_fundraising
+    political_fundraising_type
+    position
+    professional
+    public_company
+    relationship_category
+    representative
+    representative_district
+    school
+    social
+    tags
+    taggings
+    transaction
+    entity
+    relationship
+    references
+    documents
+  ].freeze
 end
