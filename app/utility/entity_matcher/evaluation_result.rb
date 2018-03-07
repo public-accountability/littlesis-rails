@@ -1,0 +1,31 @@
+# frozen_string_literal: true
+
+# Simple data class for results of matching evaluation
+# Criteria
+#  name:
+#    - same_last_name
+#    - same_first_name
+#    - same_prefix
+#    - same_suffix
+#    - same_middle
+#    - mismatched_suffix
+#    - similar_first_name
+#    - similar_last_name
+#  relationship:
+#    - common_relationship
+#  keywords:
+#    - keyword_found_in_blurb
+  
+module EntityMatcher
+  class EvaluationResult
+    attr_accessor :same_last_name,
+                  :same_first_name,
+                  :same_prefix,
+                  :same_middle,
+                  :same_suffix,
+                  :mismatched_suffix,
+                  :similar_last_name,
+                  :similar_first_name,
+                  :common_relationship
+  end
+end

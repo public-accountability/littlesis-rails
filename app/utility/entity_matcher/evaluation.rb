@@ -1,6 +1,13 @@
 # frozen_string_literal: true
-
 module EntityMatcher
+
+  # EntityMatcher::TestCase::Person ---> EntityMatcher::EvaluationResult
+  def self.evaluate(*args)
+    EntityMatcher::Evaluation.new(*args).result
+  end
+
+  # Evaluations two instances +TestCase+
+  # 
   class Evaluation
     attr_reader :result, :test_case, :match
 
@@ -47,7 +54,7 @@ module EntityMatcher
       NameSimilarity
         .similar?(@test_case.fetch('name_first'), @match.fetch('name_first'), first_name: true)
     end
-
+    
     def similar_last_name
       NameSimilarity
         .similar?(@test_case.fetch('name_last'), @match.fetch('name_last'))
@@ -64,33 +71,5 @@ module EntityMatcher
       raise ArgumentError unless match.is_a? EntityMatcher::TestCase::Person
       raise ArgumentError unless match.entity.is_a? Entity
     end
-  end
-
-  # criteria
-  #  name:
-  #    - same_last_name
-  #    - same_first_name
-  #    - same_prefix
-  #    - same_suffix
-  #    - same_middle
-  #    - mismatched_suffix
-  #    - similar_first_name
-  #    - similar_last_name
-  #  relationship:
-  #    - common_relationship
-  #  keywords:
-  #    - keyword_found_in_blurb
-
-
-  class EvaluationResult
-    attr_accessor :same_last_name,
-                  :same_first_name,
-                  :same_prefix,
-                  :same_middle,
-                  :same_suffix,
-                  :mismatched_suffix,
-                  :similar_last_name,
-                  :similar_first_name,
-                  :common_relationship
   end
 end
