@@ -264,6 +264,41 @@ describe EntityMatcher, :sphinx do
           expect(subject.new(test_case, match).result.similar_first_name).to eql true
         end
       end
+
+      context 'relationship in common' do
+        let(:org) { create(:entity_org) }
+        let(:match_entity) do
+          create(:entity_person).tap do |entity|
+            Relationship.create!(category_id: 12, entity: entity, related: org)
+          end
+        end
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new("#{Faker::Name.first_name} #{Faker::Name.last_name}", associated: org.id)
+        end
+        let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
+
+        specify do
+          expect(subject.new(test_case, match).result.common_relationship).to eql true
+        end
+      end
+
+      context 'no relationship in common' do
+        let(:org) { create(:entity_org) }
+        let(:other_org) { create(:entity_org) }
+        let(:match_entity) do
+          create(:entity_person).tap do |entity|
+            Relationship.create!(category_id: 12, entity: entity, related: org)
+          end
+        end
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new("#{Faker::Name.first_name} #{Faker::Name.last_name}", associated: other_org.id)
+        end
+        let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
+
+        specify do
+          expect(subject.new(test_case, match).result.common_relationship).to eql false
+        end
+      end
     end
   end
 end

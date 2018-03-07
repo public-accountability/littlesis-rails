@@ -33,8 +33,14 @@ module EntityMatcher
         [:same_suffix, -> { compare_field :suffix }],
         [:mismatched_suffix, -> { @test_case.suffix.present? || @match.suffix.present? }],
         [:similar_first_name, -> { similar_first_name }],
-        [:similar_last_name, -> { similar_last_name }]
+        [:similar_last_name, -> { similar_last_name }],
+        [:common_relationship, -> { common_relationship }]
       ]
+    end
+
+    def common_relationship
+      return nil if @test_case.associated_entities.blank?
+      @common_relationship = (@test_case.associated_entities.to_set & @match.associated_entities.to_set).present?
     end
 
     def similar_first_name
@@ -70,10 +76,11 @@ module EntityMatcher
   #    - mismatched_suffix
   #    - similar_first_name
   #    - similar_last_name
+  #  relationship:
+  #    - common_relationship
   #  keywords:
   #    - keyword_found_in_blurb
-  #  relationship:
-  #    - relationship_in_common
+
 
   class EvaluationResult
     attr_accessor :same_last_name,
@@ -83,6 +90,7 @@ module EntityMatcher
                   :same_suffix,
                   :mismatched_suffix,
                   :similar_last_name,
-                  :similar_first_name
+                  :similar_first_name,
+                  :common_relationship
   end
 end

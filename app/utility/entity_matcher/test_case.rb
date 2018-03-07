@@ -17,7 +17,7 @@ module EntityMatcher
                                name_suffix: nil,
                                name_nick: nil).freeze
 
-      attr_reader :entity, :name
+      attr_reader :entity, :name, :associated_entities
       delegate :fetch, to: :name
 
       # calling .first, .last, etc.
@@ -29,7 +29,7 @@ module EntityMatcher
       end
 
       # input: Entity | String | Hash
-      def initialize(input)
+      def initialize(input, associated: nil)
         case input
         when Entity
           raise WrongEntityTypeError unless input.person?
@@ -41,8 +41,10 @@ module EntityMatcher
           validate_input_hash(input)
           @name = BLANK_NAME_HASH.merge(input)
         else
-          raise ArgumentError
+          raise TypeError
         end
+
+        parse_associated(associated)
       end
 
       private
@@ -52,8 +54,25 @@ module EntityMatcher
           raise InvalidPersonHash
         end
       end
-    end
 
+      # Associated entites can be used to help determined matches
+      def parse_associated(associated)
+        # if no associated entites are included in the intilzation phase,
+        # they will be automatically added in the input is a entity
+        if associated.blank?
+          if @entity
+            @associated_entities = @entity.links.map(&:entity2_id)
+          else
+            @associated_entities = []
+          end
+        else
+          # associated can be either an array or mix of integers, entities, and strings
+          @associated_entities = Array.wrap(associated).map do |x|
+            x.respond_to?(:id) ? x.id.to_i : x.to_i
+          end
+        end
+      end
+    end
     ##
     # Exceptions
     #
