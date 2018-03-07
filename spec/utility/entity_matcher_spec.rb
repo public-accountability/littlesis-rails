@@ -245,6 +245,7 @@ describe EntityMatcher, :sphinx do
         end
 
         specify do
+          expect(subject.new(test_case, match).result.blurb_keyword).to be_nil
           expect(subject.new(test_case, match).result.same_suffix).to be_nil
           expect(subject.new(test_case, match).result.mismatched_suffix).to eql true
         end
@@ -297,6 +298,63 @@ describe EntityMatcher, :sphinx do
 
         specify do
           expect(subject.new(test_case, match).result.common_relationship).to eql false
+        end
+      end
+
+      describe 'searching blub and summary' do
+        context 'does not have keyword in blurb' do
+          let(:match_entity) do
+            create(:entity_person, blurb: 'blah blah. not a very interesting match')
+          end
+          let(:test_case) do
+            EntityMatcher::TestCase::Person
+              .new("#{Faker::Name.first_name} #{Faker::Name.last_name}",
+                   associated: '123',
+                   keywords: ['oil'])
+          end
+          let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
+
+          specify do
+            expect(subject.new(test_case, match).result.blurb_keyword).to eql false
+          end
+        end
+
+
+        context 'has keyword in blurb' do
+          let(:match_entity) do
+            create(:entity_person, blurb: 'oil executive')
+          end
+          let(:test_case) do
+            EntityMatcher::TestCase::Person
+              .new("#{Faker::Name.first_name} #{Faker::Name.last_name}",
+                   associated: '123',
+                   keywords: ['oil'])
+          end
+          let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
+
+          specify do
+            expect(subject.new(test_case, match).result.common_relationship).to eql false
+            expect(subject.new(test_case, match).result.blurb_keyword).to eql true
+          end
+        end
+
+        context 'has keyword in summary' do
+          let(:match_entity) do
+            create(:entity_person, summary: 'i am into ruining the planet by extracting oil!')
+          end
+
+          let(:test_case) do
+            EntityMatcher::TestCase::Person
+              .new("#{Faker::Name.first_name} #{Faker::Name.last_name}",
+                   associated: '123',
+                   keywords: ['oil'])
+          end
+          let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
+
+          specify do
+            expect(subject.new(test_case, match).result.common_relationship).to eql false
+            expect(subject.new(test_case, match).result.blurb_keyword).to eql true
+          end
         end
       end
     end

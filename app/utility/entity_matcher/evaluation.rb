@@ -6,8 +6,7 @@ module EntityMatcher
     EntityMatcher::Evaluation.new(*args).result
   end
 
-  # Evaluations two instances +TestCase+
-  # 
+  # Evaluatutes two instances of +TestCase+
   class Evaluation
     attr_reader :result, :test_case, :match
 
@@ -40,6 +39,20 @@ module EntityMatcher
     end
 
     def blurb_keyword
+      return nil unless @test_case.keywords.present?
+      return false if @match.entity.blurb.blank? && @match.entity.summary.blank?
+
+      test_keywords =  "#{@match.entity.blurb} #{@match.entity.summary}"
+                         .downcase
+                         .gsub(/[[:punct:]]/, '')
+                         .split(' ')
+                         .to_set
+
+      @test_case.keywords.each do |keyword|
+        return true if test_keywords.include? keyword.downcase
+      end
+
+      return false
     end 
     
     def common_relationship

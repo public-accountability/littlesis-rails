@@ -2,10 +2,10 @@
 
 module EntityMatcher
   ##
-  # Module contain wrapper objects for the *test case*
+  # Module containing wrapper objects for the *test case*
   #
   # They can be initalized with an Entity (use case: searching for duplicates), strings or hashes.
-  # The hashes have to contain the attributes used in the +Person+ model
+  # The hashes must contain the attributes used in the +Person+ model
   #
   module TestCase
     class Person
@@ -17,11 +17,10 @@ module EntityMatcher
                                name_suffix: nil,
                                name_nick: nil).freeze
 
-      attr_reader :entity, :name, :associated_entities
+      attr_reader :entity, :name, :associated_entities, :keywords
       delegate :fetch, to: :name
 
-      # calling .first, .last, etc.
-      # returns upcased versions of the name component
+      # calling .first, .last, etc. returns upcased versions of the name component
       %i[prefix first middle last suffix nick].each do |name_component|
         define_method(name_component) do
           fetch("name_#{name_component}")&.upcase
@@ -29,7 +28,7 @@ module EntityMatcher
       end
 
       # input: Entity | String | Hash
-      def initialize(input, associated: nil)
+      def initialize(input, associated: nil, keywords: [])
         case input
         when Entity
           raise WrongEntityTypeError unless input.person?
@@ -43,7 +42,8 @@ module EntityMatcher
         else
           raise TypeError
         end
-
+        
+        @keywords = keywords
         parse_associated(associated)
       end
 
