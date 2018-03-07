@@ -21,30 +21,27 @@ module EntityMatcher
       @test_case = test_case
       @match = match
       @result = EvaluationResult.new
-
-      comparisons.each do |(criteria, evaluation)|
-        @result.public_send "#{criteria}=", evaluation.call
-      end
+      comparisons
     end
 
     private
 
-    # nested array containing the result field name
-    # and a lambda that returns the value for that field
     def comparisons
-      [
-        [:same_last_name, -> { compare_field :last }],
-        [:same_first_name, -> { compare_field :first }],
-        [:same_prefix, -> { compare_field :prefix }],
-        [:same_middle, -> { compare_field :prefix }],
-        [:same_suffix, -> { compare_field :suffix }],
-        [:mismatched_suffix, -> { @test_case.suffix.present? || @match.suffix.present? }],
-        [:similar_first_name, -> { similar_first_name }],
-        [:similar_last_name, -> { similar_last_name }],
-        [:common_relationship, -> { common_relationship }]
-      ]
+      @result.same_last_name = compare_field(:last)
+      @result.same_first_name = compare_field(:first)
+      @result.same_prefix = compare_field(:prefix)
+      @result.same_middle = compare_field(:prefix)
+      @result.same_suffix = compare_field(:suffix)
+      @result.mismatched_suffix = mismatched_suffix
+      @result.similar_first_name = similar_first_name
+      @result.similar_last_name = similar_last_name
+      @result.common_relationship = common_relationship
+      @result.blurb_keyword = blurb_keyword
     end
 
+    def blurb_keyword
+    end 
+    
     def common_relationship
       return nil if @test_case.associated_entities.blank?
       @common_relationship = (@test_case.associated_entities.to_set & @match.associated_entities.to_set).present?
@@ -60,6 +57,10 @@ module EntityMatcher
         .similar?(@test_case.fetch('name_last'), @match.fetch('name_last'))
     end
 
+    def mismatched_suffix
+      [@test_case.suffix.present?, @match.suffix.present?].select { |x| x == true }.length == 1
+    end
+
     # symbol --> nil | true | false
     def compare_field(field)
       return nil if @test_case.public_send(field).nil? || @match.public_send(field).nil?
@@ -67,9 +68,9 @@ module EntityMatcher
     end
 
     def validate_arguments(test_case, match)
-      raise ArgumentError unless test_case.is_a? EntityMatcher::TestCase::Person
-      raise ArgumentError unless match.is_a? EntityMatcher::TestCase::Person
-      raise ArgumentError unless match.entity.is_a? Entity
+      TypeCheck.check test_case, EntityMatcher::TestCase::Person
+      TypeCheck.check match, EntityMatcher::TestCase::Person
+      TypeCheck.check match.entity, Entity
     end
   end
 end

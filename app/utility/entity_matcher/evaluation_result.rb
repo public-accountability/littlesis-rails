@@ -14,7 +14,7 @@
 #  relationship:
 #    - common_relationship
 #  keywords:
-#    - keyword_found_in_blurb
+#    - blurb_keyword
   
 module EntityMatcher
   class EvaluationResult
@@ -26,6 +26,7 @@ module EntityMatcher
                   :mismatched_suffix,
                   :similar_last_name,
                   :similar_first_name,
-                  :common_relationship
+                  :common_relationship,
+                  :blurb_keyword
   end
 end

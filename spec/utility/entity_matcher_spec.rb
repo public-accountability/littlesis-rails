@@ -176,14 +176,14 @@ describe EntityMatcher, :sphinx do
       context 'test_case is invalid' do
         specify do
           expect { subject.new(build(:person), generate_test_case) }
-            .to raise_error(ArgumentError)
+            .to raise_error(TypeError)
         end
       end
 
       context 'match is invalid' do
         specify do
           expect { subject.new(generate_test_case, EntityMatcher::TestCase::Person.new('first last')) }
-            .to raise_error(ArgumentError)
+            .to raise_error(TypeError)
         end
       end
     end
