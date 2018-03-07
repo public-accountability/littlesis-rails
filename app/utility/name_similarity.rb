@@ -9,15 +9,23 @@ class NameSimilarity
               :equal,
               :levenshtein,
               :first_name_alias
-  
+
   MAX_LEVENSHTEIN_VALUE = 2
+
+  def self.compare(a, b)
+    new(a, b)
+  end
+
+  def self.similar?(a, b, **kwargs)
+    new(a, b, **kwargs).similar
+  end
 
   def initialize(a, b, first_name: false)
     type_check a, String
     type_check b, String
     @a = a.upcase
     @b = b.upcase
-    
+
     run { equal_test }
     run { levenshtein_test }
     run { first_name_test } if first_name
@@ -25,6 +33,8 @@ class NameSimilarity
     # set similar to false if it hasn't changed in the tests
     @similar = false if @similar.nil?
   end
+
+  private
 
   def equal_test
     @equal = (@a == @b)
@@ -43,21 +53,11 @@ class NameSimilarity
     end
   end
 
-  private
-
   def run
     yield unless similar
   end
 
   def is_similar
     @similar = true
-  end
-
-  def self.compare(a,b)
-    new(a,b)
-  end
-
-  def self.similar?(a,b, **kwargs)
-    new(a,b, **kwargs).similar
   end
 end

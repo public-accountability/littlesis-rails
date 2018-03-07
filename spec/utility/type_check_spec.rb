@@ -44,4 +44,3 @@ describe TypeCheck do
     end
   end
 end
-

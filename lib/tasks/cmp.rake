@@ -32,19 +32,16 @@ namespace :cmp do
 
       file_path = Rails.root.join('data', 'cmp_individuals_with_match_info.csv').to_s
 
-
       people = Cmp::Datasets.people.values.map do |cmp_person|
         attrs = LsHash.new(littlesis_entity_id: '').merge!(cmp_person.attributes)
 
-        #attrs['littlesis_entity_id'] = 'new' if attrs['match1_name'].blank?
+        # attrs['littlesis_entity_id'] = 'new' if attrs['match1_name'].blank?
 
         associated = CmpEntity
                        .where(cmp_id:Cmp::Datasets.relationships
                                 .select { |r| r.fetch(:cmp_person_id, 'REL_ID') == attrs.fetch(:cmpid, "ATTR_ID") }
                                 .map { |r| r.fetch(:cmp_org_id) })
                        .map(&:entity)
-        
-        
 
         attrs.merge!('associated_corps' => org_names)
       end

@@ -194,7 +194,7 @@ describe EntityMatcher, :sphinx do
       def generate_test_case(fields = {})
         EntityMatcher::TestCase::Person.new(build(:person, person: build(:a_person, **fields)))
       end
-      
+
       # EntityMatcher::TestCase::Person.new(
       #     build(:person, person: build(:a_person, fields))
       #   )
@@ -232,6 +232,25 @@ describe EntityMatcher, :sphinx do
 
           expect(subject.new(test_case, match).result.same_last_name)
             .to eql false
+        end
+      end
+
+      context 'same first, middle, and last name' do
+        let(:first_name) { Faker::Name.first_name }
+        let(:middle_name) { Faker::Name.first_name }
+        let(:last_name) { Faker::Name.last_name }
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "#{first_name} #{middle_name} #{last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: first_name, name_middle: middle_name, name_last: last_name
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_first_name).to eql true
+          expect(subject.new(test_case, match).result.same_last_name).to eql true
+          expect(subject.new(test_case, match).result.same_middle_name).to eql true
         end
       end
 
@@ -273,8 +292,9 @@ describe EntityMatcher, :sphinx do
             Relationship.create!(category_id: 12, entity: entity, related: org)
           end
         end
+        let(:full_name) { "#{Faker::Name.first_name} #{Faker::Name.last_name}" }
         let(:test_case) do
-          EntityMatcher::TestCase::Person.new("#{Faker::Name.first_name} #{Faker::Name.last_name}", associated: org.id)
+          EntityMatcher::TestCase::Person.new(full_name, associated: org.id)
         end
         let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
 
@@ -318,7 +338,6 @@ describe EntityMatcher, :sphinx do
             expect(subject.new(test_case, match).result.blurb_keyword).to eql false
           end
         end
-
 
         context 'has keyword in blurb' do
           let(:match_entity) do

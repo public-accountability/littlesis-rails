@@ -5,9 +5,9 @@
 #  name:
 #    - same_last_name
 #    - same_first_name
+#    - same_middle_name
 #    - same_prefix
 #    - same_suffix
-#    - same_middle
 #    - mismatched_suffix
 #    - similar_first_name
 #    - similar_last_name
@@ -15,13 +15,13 @@
 #    - common_relationship
 #  keywords:
 #    - blurb_keyword
-  
+
 module EntityMatcher
   class EvaluationResult
     attr_accessor :same_last_name,
                   :same_first_name,
+                  :same_middle_name,
                   :same_prefix,
-                  :same_middle,
                   :same_suffix,
                   :mismatched_suffix,
                   :similar_last_name,

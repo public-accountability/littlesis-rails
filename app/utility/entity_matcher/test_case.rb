@@ -42,7 +42,7 @@ module EntityMatcher
         else
           raise TypeError
         end
-        
+
         @keywords = keywords
         parse_associated(associated)
       end

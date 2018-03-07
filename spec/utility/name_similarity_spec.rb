@@ -19,7 +19,7 @@ describe NameSimilarity do
     subject { NameSimilarity.new('alice', 'alice') }
     assert_attribute :equal, true
     assert_attribute :similar, true
-    
+
     context 'with different capitalization' do
       subject { NameSimilarity.new('alIcE', 'alice') }
       assert_attribute :equal, true

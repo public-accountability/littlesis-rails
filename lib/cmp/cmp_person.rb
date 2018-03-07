@@ -14,33 +14,33 @@ module Cmp
       )
     end
 
-   def to_person_hash
-     {
-       name_prefix: fetch("salutation"),
-       name_first: fetch("firstname"),
-       name_middle: fetch("middlename"),
-       name_last: fetch("lastname"),
-       name_suffix: fetch("suffix")
+    def to_person_hash
+      {
+        name_prefix: fetch("salutation"),
+        name_first: fetch("firstname"),
+        name_middle: fetch("middlename"),
+        name_last: fetch("lastname"),
+        name_suffix: fetch("suffix")
       }
     end
 
-   def associated_entities
-     CmpEntity
-       .where(cmp_id: Cmp::Datasets.relationships
-                .select { |r| r.fetch(:cmp_person_id, 'REL_ID') == fetch(:cmpid, "ATTR_ID") }
-                .map { |r| r.fetch(:cmp_org_id) })
-       .map(&:entity)
-   end
+    def associated_entities
+      CmpEntity
+        .where(cmp_id: Cmp::Datasets.relationships
+                 .select { |r| r.fetch(:cmp_person_id, 'REL_ID') == fetch(:cmpid, "ATTR_ID") }
+                 .map { |r| r.fetch(:cmp_org_id) })
+        .map(&:entity)
+    end
 
     def potential_matches
       EntityMatcher::Search.by_name(fetch('lastname')).map do |entity|
+        test_case = EntityMatcher::TestCase::Person
+                      .new(to_person_hash, associated: associated_entities)
 
-        test_case = EntityMatcher::TestCase::Person.new(to_person_hash, associated: associated_entities)
-        match =  EntityMatcher::TestCase::Person.new(entity)
+        match = EntityMatcher::TestCase::Person.new(entity)
         EntityMatcher.evaluate(test_case, match)
       end
     end
-
 
     # def potential_matches
     #   @_potential_matches ||=
