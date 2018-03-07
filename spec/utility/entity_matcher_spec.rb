@@ -249,7 +249,21 @@ describe EntityMatcher, :sphinx do
           expect(subject.new(test_case, match).result.mismatched_suffix).to eql true
         end
       end
-    end
 
+      context 'similar first names' do
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "Cindi #{Faker::Name.unique.last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: 'cindy', name_last: Faker::Name.unique.last_name
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.similar_last_name).to be false
+          expect(subject.new(test_case, match).result.similar_first_name).to eql true
+        end
+      end
+    end
   end
 end

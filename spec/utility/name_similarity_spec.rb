@@ -9,6 +9,12 @@ describe NameSimilarity do
     expect(NameSimilarity.compare('xyz', 'abc')).to be_a NameSimilarity
   end
 
+  it 'class method #similar? as boolean shortcut ' do
+    expect(NameSimilarity.similar?('little', 'sis')).to eql false
+    expect(NameSimilarity.similar?('sandy', 'sandi')).to eql true
+    expect(NameSimilarity.similar?('ag', 'agatha', first_name: true)).to eql true
+  end
+
   context 'names are the same' do
     subject { NameSimilarity.new('alice', 'alice') }
     assert_attribute :equal, true

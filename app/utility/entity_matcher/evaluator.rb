@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 module EntityMatcher
-  class ResultSet
-    def initialize(test_case, matches)
-    end
-  end
-
   class Evaluation
     attr_reader :result, :test_case, :match
 
@@ -36,8 +31,20 @@ module EntityMatcher
         [:same_prefix, -> { compare_field :prefix }],
         [:same_middle, -> { compare_field :prefix }],
         [:same_suffix, -> { compare_field :suffix }],
-        [:mismatched_suffix, -> { @test_case.suffix.present? || @match.suffix.present? }]
+        [:mismatched_suffix, -> { @test_case.suffix.present? || @match.suffix.present? }],
+        [:similar_first_name, -> { similar_first_name }],
+        [:similar_last_name, -> { similar_last_name }]
       ]
+    end
+
+    def similar_first_name
+      NameSimilarity
+        .similar?(@test_case.fetch('name_first'), @match.fetch('name_first'), first_name: true)
+    end
+
+    def similar_last_name
+      NameSimilarity
+        .similar?(@test_case.fetch('name_last'), @match.fetch('name_last'))
     end
 
     # symbol --> nil | true | false

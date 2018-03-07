@@ -56,4 +56,8 @@ class NameSimilarity
   def self.compare(a,b)
     new(a,b)
   end
+
+  def self.similar?(a,b, **kwargs)
+    new(a,b, **kwargs).similar
+  end
 end
