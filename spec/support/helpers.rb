@@ -100,6 +100,12 @@ module RspecExampleHelpers
 end
 
 module RspecGroupHelpers
+  def assert_attribute(attr, expected)
+    it "attribute \"#{attr}\" is equal to #{expected}" do
+      expect(subject.send(attr)).to eql expected
+    end
+  end
+
   # thanks to https://stackoverflow.com/questions/3853098/turn-off-transactional-fixtures-for-one-spec-with-rspec-2
   def without_transactional_fixtures(&block)
     self.use_transactional_fixtures = false

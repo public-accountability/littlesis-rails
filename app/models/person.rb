@@ -74,6 +74,8 @@ class Person < ApplicationRecord
   end
 
   def self.same_first_names(name)
-    [].concat(Array(SHORT_FIRST_NAMES[name.downcase])).concat(LONG_FIRST_NAMES.fetch(name.downcase, [])).compact
+    Array.wrap(SHORT_FIRST_NAMES.fetch(name.downcase, []))
+      .concat(Array.wrap(LONG_FIRST_NAMES.fetch(name.downcase, [])))
+      .compact
   end
 end
