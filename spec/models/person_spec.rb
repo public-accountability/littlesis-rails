@@ -78,5 +78,10 @@ describe Person do
       names = Person.same_first_names 'cy'
       expect(names).to eq ['cyrus']
     end
+
+    it 'returns empty list if no names found ' do
+      names = Person.same_first_names 'mynamecannotbeshorten'
+      expect(names).to eq []
+    end
   end
 end

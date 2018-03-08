@@ -106,3 +106,6 @@ gem "recaptcha", '>= 4.6.2', require: "recaptcha/rails"
 
 # Used by `lib/cmp`
 gem "roo", "~> 2.7.0", :require => false
+
+# Used by NameSimilarity
+gem 'text', '>= 1.3.1'

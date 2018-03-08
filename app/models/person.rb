@@ -69,7 +69,13 @@ class Person < ApplicationRecord
     return 'Other' if gender_id == 3
   end
 
+  def name_attributes
+    attributes.slice("name_last", "name_first", "name_middle", "name_prefix", "name_suffix", "name_nick")
+  end
+
   def self.same_first_names(name)
-    [].concat(Array(SHORT_FIRST_NAMES[name.downcase])).concat(LONG_FIRST_NAMES.fetch(name.downcase, [])).compact
+    Array.wrap(SHORT_FIRST_NAMES.fetch(name.downcase, []))
+      .concat(Array.wrap(LONG_FIRST_NAMES.fetch(name.downcase, [])))
+      .compact
   end
 end

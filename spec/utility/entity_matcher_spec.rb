@@ -118,31 +118,263 @@ describe EntityMatcher, :sphinx do
   end
 
   describe 'TestCase' do
-    describe 'EntityMatcher::TestCase::Base' do
-      subject { EntityMatcher::TestCase::Base }
+    describe EntityMatcher::TestCase::Person do
+      subject { EntityMatcher::TestCase::Person }
       let(:name) { Faker::Name.name }
-
-      it 'sets primary extention for entities' do
-        expect(subject.new(build(:org)).primary_ext).to eql 'Org'
-      end
+      let(:person) { build(:person, :with_person_name, person: build(:a_person)) }
+      let(:persisted_person) { create(:entity_person, :with_person_name) }
 
       it 'sets @entity for entities' do
-        expect(subject.new(build(:org)).entity).to be_a Entity
-        expect(subject.new(name, primary_ext: :person).entity).to be nil
+        expect(subject.new(person).entity).to be_a Entity
+        expect(subject.new(name).entity).to be nil
       end
 
-      it 'excepts bot symobls and strings for "primary_ext"' do
-        [subject.new(name, primary_ext: :person),
-         subject.new(name, primary_ext: 'Person')].each do |tc|
-          expect(tc.primary_ext).to eql 'Person'
+      it 'sets name when provided entity' do
+        expect(subject.new(persisted_person).name)
+          .to eql ActiveSupport::HashWithIndifferentAccess
+                    .new(persisted_person.person.name_attributes)
+      end
+
+      it 'sets name when provided string' do
+        expect(subject.new(name).name)
+          .to eql NameParser.new(name).to_indifferent_hash
+      end
+
+      it 'sets name when provided hash' do
+        expect(subject.new('name_last' => 'Last', 'name_first' => 'First').name)
+          .to eql ActiveSupport::HashWithIndifferentAccess
+                          .new(name_prefix: nil,
+                               name_first: "First",
+                               name_middle: nil,
+                               name_last: "Last",
+                               name_suffix: nil,
+                               name_nick: nil)
+      end
+
+      it 'raises error if called with the wrong entity type' do
+        expect { subject.new(build(:org)) }
+          .to raise_error(EntityMatcher::TestCase::WrongEntityTypeError)
+      end
+
+      it 'raises error if called with an hashing missing a last name' do
+        expect { subject.new(first_name: 'xyz') }
+          .to raise_error(EntityMatcher::TestCase::InvalidPersonHash)
+      end
+    end
+  end
+
+  describe 'Evaluation' do
+    describe 'argument validation' do
+      subject { EntityMatcher::Evaluation }
+
+      def generate_test_case
+        EntityMatcher::TestCase::Person.new(
+          build(:person, person: build(:a_person))
+        )
+      end
+
+      context 'test_case is invalid' do
+        specify do
+          expect { subject.new(build(:person), generate_test_case) }
+            .to raise_error(TypeError)
         end
       end
 
-      it 'raises error if called with a missing or invalid primary_ext' do
-        expect { subject.new(name, primary_ext: :blah) }
-          .to raise_error(EntityMatcher::TestCase::MissingOrInvalidPrimaryExtError)
-        expect { subject.new(name) }
-          .to raise_error(EntityMatcher::TestCase::MissingOrInvalidPrimaryExtError)
+      context 'match is invalid' do
+        specify do
+          expect { subject.new(generate_test_case, EntityMatcher::TestCase::Person.new('first last')) }
+            .to raise_error(TypeError)
+        end
+      end
+    end
+
+    describe 'evaluation' do
+      subject { EntityMatcher::Evaluation }
+
+      def generate_test_case(fields = {})
+        EntityMatcher::TestCase::Person.new(build(:person, person: build(:a_person, **fields)))
+      end
+
+      # EntityMatcher::TestCase::Person.new(
+      #     build(:person, person: build(:a_person, fields))
+      #   )
+      context 'same last names' do
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new('jane doe')
+        end
+
+        let(:match) do
+          generate_test_case name_last: 'Doe'
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_last_name)
+            .to eql true
+
+          expect(subject.new(test_case, match).result.same_first_name)
+            .to eql false
+        end
+      end
+
+      context 'same first name' do
+        let(:first_name) { Faker::Name.first_name }
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "#{first_name} #{Faker::Name.unique.last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: first_name, name_last: Faker::Name.unique.last_name
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_first_name)
+            .to eql true
+
+          expect(subject.new(test_case, match).result.same_last_name)
+            .to eql false
+        end
+      end
+
+      context 'same first, middle, and last name' do
+        let(:first_name) { Faker::Name.first_name }
+        let(:middle_name) { Faker::Name.first_name }
+        let(:last_name) { Faker::Name.last_name }
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "#{first_name} #{middle_name} #{last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: first_name, name_middle: middle_name, name_last: last_name
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_first_name).to eql true
+          expect(subject.new(test_case, match).result.same_last_name).to eql true
+          expect(subject.new(test_case, match).result.same_middle_name).to eql true
+        end
+      end
+
+      context 'mismatched suffix ' do
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "#{Faker::Name.first_name} #{Faker::Name.last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: Faker::Name.first_name, name_suffix: 'JR'
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.blurb_keyword).to be_nil
+          expect(subject.new(test_case, match).result.same_suffix).to be_nil
+          expect(subject.new(test_case, match).result.mismatched_suffix).to eql true
+        end
+      end
+
+      context 'similar first names' do
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "Cindi #{Faker::Name.unique.last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: 'cindy', name_last: Faker::Name.unique.last_name
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.similar_last_name).to be false
+          expect(subject.new(test_case, match).result.similar_first_name).to eql true
+        end
+      end
+
+      context 'relationship in common' do
+        let(:org) { create(:entity_org) }
+        let(:match_entity) do
+          create(:entity_person).tap do |entity|
+            Relationship.create!(category_id: 12, entity: entity, related: org)
+          end
+        end
+        let(:full_name) { "#{Faker::Name.first_name} #{Faker::Name.last_name}" }
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new(full_name, associated: org.id)
+        end
+        let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
+
+        specify do
+          expect(subject.new(test_case, match).result.common_relationship).to eql true
+        end
+      end
+
+      context 'no relationship in common' do
+        let(:org) { create(:entity_org) }
+        let(:other_org) { create(:entity_org) }
+        let(:match_entity) do
+          create(:entity_person).tap do |entity|
+            Relationship.create!(category_id: 12, entity: entity, related: org)
+          end
+        end
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new("#{Faker::Name.first_name} #{Faker::Name.last_name}", associated: other_org.id)
+        end
+        let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
+
+        specify do
+          expect(subject.new(test_case, match).result.common_relationship).to eql false
+        end
+      end
+
+      describe 'searching blub and summary' do
+        context 'does not have keyword in blurb' do
+          let(:match_entity) do
+            create(:entity_person, blurb: 'blah blah. not a very interesting match')
+          end
+          let(:test_case) do
+            EntityMatcher::TestCase::Person
+              .new("#{Faker::Name.first_name} #{Faker::Name.last_name}",
+                   associated: '123',
+                   keywords: ['oil'])
+          end
+          let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
+
+          specify do
+            expect(subject.new(test_case, match).result.blurb_keyword).to eql false
+          end
+        end
+
+        context 'has keyword in blurb' do
+          let(:match_entity) do
+            create(:entity_person, blurb: 'oil executive')
+          end
+          let(:test_case) do
+            EntityMatcher::TestCase::Person
+              .new("#{Faker::Name.first_name} #{Faker::Name.last_name}",
+                   associated: '123',
+                   keywords: ['oil'])
+          end
+          let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
+
+          specify do
+            expect(subject.new(test_case, match).result.common_relationship).to eql false
+            expect(subject.new(test_case, match).result.blurb_keyword).to eql true
+          end
+        end
+
+        context 'has keyword in summary' do
+          let(:match_entity) do
+            create(:entity_person, summary: 'i am into ruining the planet by extracting oil!')
+          end
+
+          let(:test_case) do
+            EntityMatcher::TestCase::Person
+              .new("#{Faker::Name.first_name} #{Faker::Name.last_name}",
+                   associated: '123',
+                   keywords: ['oil'])
+          end
+          let(:match) { EntityMatcher::TestCase::Person.new(match_entity) }
+
+          specify do
+            expect(subject.new(test_case, match).result.common_relationship).to eql false
+            expect(subject.new(test_case, match).result.blurb_keyword).to eql true
+          end
+        end
       end
     end
   end

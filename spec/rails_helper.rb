@@ -44,6 +44,7 @@ ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
   # these run inside an example (ie: it block)
+  config.include RspecExampleHelpers
   config.include Devise::Test::ControllerHelpers, :type => :controller
   config.include Devise::Test::ControllerHelpers, :type => :view
   config.include Warden::Test::Helpers
@@ -55,6 +56,7 @@ RSpec.configure do |config|
   config.include SphinxTestHelper, :sphinx
 
   # these run inside example groups (ie: describe blocks)
+  config.extend RspecGroupHelpers
   config.extend ControllerMacros, :type => :controller
   config.extend FeatureGroupMacros, :type => :feature
   config.extend RequestGroupMacros, :type => :request
