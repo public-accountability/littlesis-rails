@@ -20,7 +20,7 @@ class UsersController < ApplicationController
 
   # GET /users/:username
   def show
-    @user = UserPresenter.new(@user)
+    @user = UserPresenter.new(@user, current_user: current_user)
   end
 
   # GET /users/:username/edits

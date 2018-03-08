@@ -1,10 +1,17 @@
 # frozen_string_literal: true
 
 class UserPresenter < SimpleDelegator
+  attr_internal :current_user
+
+  def initialize(user, current_user: nil)
+    super(user)
+    @_current_user = current_user
+  end
+
   # Only the user's themselves and admins can view
   # certain sections of the profile page such as the permission section
-  def show_private?(current_user)
-    user == current_user || current_user.admin?
+  def show_private?
+    user == current_user || (current_user.present? && current_user.admin?)
   end
 
   def groups

@@ -33,10 +33,12 @@ feature 'User Pages' do
       page_has_selector 'div.dashboard-entity', count: 1
       expect(page).not_to have_selector 'h3', text: 'Permissions'
       expect(page).not_to have_selector 'h3 small a', text: 'view all edits'
+      expect(page).not_to have_selector 'h3', text: 'Maps'
     end
 
     context 'logged in as the user' do
       let(:user) { user_for_page }
+
       scenario 'visiting your own user page' do
         visit "/users/#{user.id}"
         successfully_visits_page "/users/#{user.id}"
@@ -44,6 +46,20 @@ feature 'User Pages' do
         page_has_selector 'h3', text: 'Permissions'
         expect(page).to have_selector 'h3 small a', text: 'view all edits'
       end
+
+      context 'maps section' do
+        before do
+          create(:network_map, user_id: user_for_page.sf_guard_user_id)
+        end
+
+        scenario 'viewing maps section of the users page' do
+          visit "/users/#{user.id}"
+          successfully_visits_page "/users/#{user.id}"
+          page_has_selector 'h3', text: 'Maps'
+        end
+        
+      end
+      
     end
 
     context 'user is restricted' do

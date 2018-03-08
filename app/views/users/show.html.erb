@@ -30,7 +30,7 @@
 
 <h3>
   Edits
-  <% if @user.show_private?(current_user) %>
+  <% if @user.show_private? %>
     <small>
       <%= link_to 'view all edits', user_edits_path(@user), class: 'm-left-1em' %>
     </small>
@@ -45,7 +45,13 @@
   <% end %>
 </div>
 
-<% if @user.show_private?(current_user) %>
+<% if @user.show_private? %>
+  <h3>Maps</h3>
+  <div>
+  </div>
+<% end %>
+
+  <% if @user.show_private? %>
   <h3>
     Permissions
   </h3>
