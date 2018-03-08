@@ -3,7 +3,6 @@ ThinkingSphinx::Index.define :network_map, :with => :active_record, :delta => Th
   indexes description
   indexes index_data
 
-  has [is_private, user_id], as: :visible_to_user_ids, multi: true, type: :integer
   has is_private, facet: true
   has is_featured, facet: true
   has is_deleted, facet: true

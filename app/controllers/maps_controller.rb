@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MapsController < ApplicationController
   include NetworkMapsHelper
 
@@ -42,20 +44,12 @@ class MapsController < ApplicationController
   end
 
   def search
-    order = 'updated_at DESC, id DESC'
-    if user_signed_in?
-      @maps = NetworkMap.search(
-        Riddle::Query.escape(params.fetch(:q, '')),
-        order: order,
-        with: { visible_to_user_ids: [0, current_user.sf_guard_user_id] }
-      ).page(params[:page]).per(20)
-    else
-      @maps = NetworkMap.search(
-        Riddle::Query.escape(params.fetch(:q, '')),
-        order: order,
-        with: { visible_to_user_ids: [0] }
-      ).page(params[:page]).per(20)
-    end
+    page = params[:page].presence || 1
+    @maps = NetworkMap
+              .search(ThinkingSphinx::Query.escape(params.fetch(:q, '')),
+                      order: 'updated_at DESC, id DESC',
+                      with: { is_private: false })
+              .page(page).per(20)
   end
 
   def embedded_v2
