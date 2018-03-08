@@ -8,10 +8,11 @@ class UserPresenter < SimpleDelegator
     @_current_user = current_user
   end
 
-  # Only the user's themselves and admins can view
-  # certain sections of the profile page such as the permission section
+  # helper to limit access to users viewing their own page and admins
+  # certain sections of the user page such as the permissions section
+  # are currently limited to admins and users's themselves
   def show_private?
-    user == current_user || (current_user.present? && current_user.admin?)
+    current_user_is_user || (current_user.present? && current_user.admin?)
   end
 
   def groups
@@ -24,7 +25,7 @@ class UserPresenter < SimpleDelegator
   end
 
   def recent_updates
-    edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
+    edited_entities.includes(last_user: :user).order("updated_at DESC").limit(15)
   end
 
   # string ---> string
@@ -37,11 +38,19 @@ class UserPresenter < SimpleDelegator
     @_permissions = super().instance_variable_get(:@sf_permissions)
   end
 
+  # If the current user is viewing their own profile page
+  # all maps will shown. Anyone else will not be able to see their private maps
   def maps
-    network_maps.order("created_at DESC, id DESC")
+    return @_maps if defined?(@_maps)
+    where = current_user_is_user ? {} : { is_private: false }
+    @_maps = network_maps.where(where).order("updated_at DESC").limit(75)
   end
 
   private
+
+  def current_user_is_user
+    user == current_user
+  end
 
   def user
     __getobj__

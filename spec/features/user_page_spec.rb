@@ -6,6 +6,14 @@ feature 'User Pages' do
   let(:admin) { create_admin_user }
   let(:user) { current_user }
   let(:entity) { create(:entity_person) }
+
+  let(:create_maps) do
+    proc do
+      create(:network_map, user_id: user_for_page.sf_guard_user_id, is_private: false)
+      create(:network_map, user_id: user_for_page.sf_guard_user_id, is_private: true)
+    end
+  end
+
   before do
     login_as(user, scope: :user)
     entity.update!(is_current: true, last_user_id: user_for_page.sf_guard_user_id)
@@ -30,36 +38,45 @@ feature 'User Pages' do
       successfully_visits_page "/users/#{user_for_page.id}"
       page_has_selector 'h1', text: user_for_page.username
       page_has_selector 'div', text: user_for_page.about_me
-      page_has_selector 'div.dashboard-entity', count: 1
+      page_has_selector '#user-page-recent-updates-table tr', count: 1
       expect(page).not_to have_selector 'h3', text: 'Permissions'
       expect(page).not_to have_selector 'h3 small a', text: 'view all edits'
       expect(page).not_to have_selector 'h3', text: 'Maps'
+    end
+
+    context 'loggin in as an admin' do
+      let(:user) { admin }
+      before { create_maps.call }
+
+      scenario 'viewing the maps section' do
+        visit "/users/#{user_for_page.id}"
+        successfully_visits_page "/users/#{user_for_page.id}"
+        page_has_selector 'h3', text: 'Maps'
+        page_has_selector "#user-page-network-maps-table tr", count: 1
+      end
     end
 
     context 'logged in as the user' do
       let(:user) { user_for_page }
 
       scenario 'visiting your own user page' do
-        visit "/users/#{user.id}"
-        successfully_visits_page "/users/#{user.id}"
+        visit "/users/#{user_for_page.id}"
+        successfully_visits_page "/users/#{user_for_page.id}"
         page_has_selector 'h1', text: user.username
         page_has_selector 'h3', text: 'Permissions'
         expect(page).to have_selector 'h3 small a', text: 'view all edits'
       end
 
       context 'maps section' do
-        before do
-          create(:network_map, user_id: user_for_page.sf_guard_user_id)
-        end
+        before { create_maps.call }
 
         scenario 'viewing maps section of the users page' do
-          visit "/users/#{user.id}"
-          successfully_visits_page "/users/#{user.id}"
+          visit "/users/#{user_for_page.id}"
+          successfully_visits_page "/users/#{user_for_page.id}"
           page_has_selector 'h3', text: 'Maps'
+          page_has_selector "#user-page-network-maps-table tr", count: 2
         end
-        
       end
-      
     end
 
     context 'user is restricted' do

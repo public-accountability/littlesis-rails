@@ -1,23 +1,17 @@
 <p id="notice"><%= notice %></p>
 
-<h1>
-  <%= @user.username %>
-</h1>
+<h1><%= @user.username %></h1>
 
 <div class="entity-profile-image">
   <%= user_profile_image %>
 </div>
 
-<h3>
-  About
-</h3>
-<div>
-  <%= @user.about_me %>
-</div>
+<h3>About</h3>
 
-<h3>
-  Groups
-</h3>
+<div><%= @user.about_me %></div>
+
+<h3>Groups</h3>
+
 <div>
   <% if @user.groups.present? %>
     <% @user.groups.each do |group| %>
@@ -38,20 +32,25 @@
 </h3>
 
 <div>
-  <% @user.recent_updates.each do |entity| %>
-    <div class="dashboard-entity">
-      <span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
-    </div>
-  <% end %>
+  <table class="user-page-table" id="user-page-recent-updates-table">
+    <% @user.recent_updates.each do |entity| %>
+      <tr>
+	<td><%= entity_link(entity) %></span> &nbsp;<em><%= (entity.blurb || "") %></em></td>
+      </tr>
+    <% end %>
+  </table>
 </div>
 
 <% if @user.show_private? %>
   <h3>Maps</h3>
-  <div>
-  </div>
+  <% if @user.maps.empty? %>
+    <div><em>No maps</em></div>
+  <% else %>
+    <%= render partial: 'maps_table' %>
+  <% end %>
 <% end %>
 
-  <% if @user.show_private? %>
+<% if @user.show_private? %>
   <h3>
     Permissions
   </h3>

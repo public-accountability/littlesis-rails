@@ -12,12 +12,7 @@
   <tbody>
     <% maps.each do |map| %>
       <tr>
-        <td>
-          <%= network_map_link(map) %>
-          <% if map.is_private %>
-            &nbsp;<span class="glyphicon glyphicon-lock"></span>
-          <% end %>
-        </td>
+        <td><%= network_map_link(map) %></td>
         <td>
           <%= user_link(map.user) %>
         </td>
