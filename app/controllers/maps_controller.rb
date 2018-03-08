@@ -1,8 +1,10 @@
 class MapsController < ApplicationController
   include NetworkMapsHelper
 
-  before_action :set_map, except: [:index, :featured, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
-  before_action :authenticate_user!, except: [:index, :featured, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
+  before_action :set_map,
+                except: [:featured, :all, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
+  before_action :authenticate_user!,
+                except: [:featured, :all, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
   before_action :enforce_slug, only: [:show]
 
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
@@ -13,36 +15,40 @@ class MapsController < ApplicationController
   EMBEDDED_HEADER_PCT = 8
   EMBEDDED_ANNOTATION_PCT = 28
 
-  def index
-    maps = NetworkMap.order('created_at DESC, id DESC')
-
-    unless current_user.present? and current_user.has_legacy_permission('admin')
-      if current_user.present?
-        maps = maps.where('network_map.is_private = ? OR network_map.user_id = ?', false, current_user.sf_guard_user_id)
-      else
-        maps = maps.public_scope
-      end
+  def all
+    if current_user.present?
+      maps = NetworkMap.scope_for_user(current_user)
+    else
+      maps = NetworkMap.public_scope
     end
-
-    @maps = maps.page(params[:page]).per(20)
+    @maps = maps
+              .order('updated_at DESC')
+              .page(params[:page].presence || 1)
+              .per(20)
     @featured = false
+    render 'index'
+  end
+
+  def featured
+    @maps = NetworkMap
+              .public_scope
+              .featured
+              .order("updated_at DESC, id DESC")
+              .page(params[:page].presence || 1)
+              .per(20)
+
+    @featured = true
+    render 'index'
   end
 
   def search
     order = 'updated_at DESC, id DESC'
     if user_signed_in?
-      if current_user.has_legacy_permission('admin')
-        @maps = NetworkMap.search(
-          Riddle::Query.escape(params.fetch(:q, '')),
-          order: order
-        ).page(params[:page]).per(20)
-      else
-        @maps = NetworkMap.search(
-          Riddle::Query.escape(params.fetch(:q, '')),
-          order: order,
-          with: { visible_to_user_ids: [0, current_user.sf_guard_user_id] }
-        ).page(params[:page]).per(20)
-      end
+      @maps = NetworkMap.search(
+        Riddle::Query.escape(params.fetch(:q, '')),
+        order: order,
+        with: { visible_to_user_ids: [0, current_user.sf_guard_user_id] }
+      ).page(params[:page]).per(20)
     else
       @maps = NetworkMap.search(
         Riddle::Query.escape(params.fetch(:q, '')),
@@ -50,12 +56,6 @@ class MapsController < ApplicationController
         with: { visible_to_user_ids: [0] }
       ).page(params[:page]).per(20)
     end
-  end
-
-  def featured
-    @maps = NetworkMap.featured.order("updated_at DESC, id DESC").page(params[:page]).per(20)
-    @featured = true
-    render 'index'
   end
 
   def embedded_v2

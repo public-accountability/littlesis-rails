@@ -361,4 +361,15 @@ class NetworkMap < ApplicationRecord
       JSON.parse(annotations_data).concat([legacy_description_as_annotation])
     )
   end
+
+  ###
+
+  # input: <User> --> NetworkMap::ActiveRecord_Relation
+  def self.scope_for_user(user)
+    where_condition = <<~SQL
+      `network_map`.`is_private` = 0
+      OR (`network_map`.`is_private` = 1 AND `network_map`.`user_id` = ?)
+    SQL
+    where(where_condition, user.sf_guard_user_id)
+  end
 end

@@ -191,12 +191,9 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  get "/story_maps/:id",
-    controller: 'story_maps',
-    action: 'story_map',
-    as: "story_map"
+  get '/maps', to: redirect('/maps/featured')
 
-  resources :maps do
+  resources :maps, except: [:index] do
     member do
       get 'raw'
       post 'clone'
@@ -211,13 +208,13 @@ Lilsis::Application.routes.draw do
     collection do
       get 'search'
       get 'featured'
+      get 'all'
       get 'find_nodes'
       get 'node_with_edges'
       get 'edges_with_nodes'
       get 'interlocks'
     end
   end
-
 
   get "/maps/:id/:slide",
     controller: 'maps',
