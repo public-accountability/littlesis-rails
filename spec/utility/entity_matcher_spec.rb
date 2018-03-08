@@ -110,13 +110,6 @@ describe EntityMatcher, :sphinx do
     end
   end
 
-  describe 'Matcher' do
-    describe 'initialize using delegator pattern' do
-      let(:org) { build(:org) }
-      specify { expect(EntityMatcher::Matcher.new(org).__getobj__).to eql org }
-    end
-  end
-
   describe 'TestCase' do
     describe EntityMatcher::TestCase::Person do
       subject { EntityMatcher::TestCase::Person }

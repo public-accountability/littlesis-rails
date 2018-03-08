@@ -27,6 +27,7 @@ module EntityMatcher
                   :similar_last_name,
                   :similar_first_name,
                   :common_relationship,
-                  :blurb_keyword
+                  :blurb_keyword,
+                  :entity
   end
 end

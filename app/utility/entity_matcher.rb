@@ -6,21 +6,18 @@ require_relative 'entity_matcher/evaluation_result'
 require_relative 'entity_matcher/evaluation'
 
 module EntityMatcher
-  class Matcher < SimpleDelegator
-    def potential_matches
-    end
+  def self.find_matches(name, **kwargs)
+    test_case = TestCase::Person.new(name, **kwargs)
 
-    def keyword_matches
+    Search.by_name(test_case.last).map do |entity|
+      potential_match = TestCase::Person.new(entity)
+      evaluate(test_case, potential_match)
     end
+  end
 
-    def exact_name_matches
-    end
-
-    def fuzzy_name_matches
-    end
-
-    def common_relationships
-    end
+  # TestCase::Person, TestCase::Person ---> EvaluationResult
+  def self.evaluate(*args)
+    EntityMatcher::Evaluation.new(*args).result
   end
 
   # +by_person_name+, +by_full_name+ and +by_org_name+
@@ -40,42 +37,3 @@ module EntityMatcher
     raise NotImplementedError
   end
 end
-# OLD implementation:
-=begin
-def self.by_person_name(first, last, middle = nil, suffix = nil, nick = nil, maiden = nil)
-    first = [first, nick] if nick
-    last = [last, maiden] if maiden
-    firsts = [first].concat(Person.same_first_names(first))
-
-    matches = Entity.joins(:person).where(
-      person: {
-        name_first: firsts,
-        name_last: last
-      }
-    ).where("entity.is_deleted = 0")
-
-    if middle
-      matches = matches.select do |e| 
-        [nil, middle, middle[0]].include?(e.person.name_middle) or middle == e.person.name_middle[0] or e.person.name_middle.split(/\s/).include?(middle) or middle.split(/\s/).include?(e.person.name_middle)
-      end
-    end
-
-    if suffix
-      matches = matches.select { |e| [nil, suffix].include?(e.person.name_suffix) }
-    end
-
-    matches
-  end
-
-  def self.by_full_name(name)
-    Entity.joins(:aliases).where("LOWER(entity.name) = ? OR LOWER(alias.name) = ?", name.downcase, name.downcase)
-  end
-
-  def self.by_org_name(name)
-    matches = by_full_name(name)
-    stripped = Org.strip_name(name, strip_geo = false)
-    results = Entity.search "@(name,aliases) #{Riddle::Query.escape(stripped)} @primary_ext Org", per_page: 20, match_mode: :extended, with: { is_deleted: 0 }
-    matches.concat(results).uniq(&:id)
-  end
-
-=end

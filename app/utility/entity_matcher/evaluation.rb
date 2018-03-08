@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 module EntityMatcher
-  # EntityMatcher::TestCase::Person ---> EntityMatcher::EvaluationResult
-  def self.evaluate(*args)
-    EntityMatcher::Evaluation.new(*args).result
-  end
-
   # Evaluatutes two instances of +TestCase+
   class Evaluation
     attr_reader :result, :test_case, :match
@@ -15,11 +10,12 @@ module EntityMatcher
     #
     # .result returns an instance of  `EvaluationResult`
     def initialize(test_case, match)
-      validate_arguments(test_case, match)
+      validate_arguments test_case, match
 
       @test_case = test_case
       @match = match
       @result = EvaluationResult.new
+      @result.entity = @match.entity
       comparisons
     end
 
