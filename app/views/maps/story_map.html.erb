@@ -88,8 +88,7 @@
              annotations_count: annotations.length,
              title: data.title,
              is_private: data.settings.is_private,
-             is_featured: data.settings.is_featured,
-	     is_cloneable: data.settings.is_cloneable,  
+	     is_cloneable: data.settings.is_cloneable,
              list_sources: data.settings.list_sources
 	 },
 	 success: function(data) { 
@@ -123,7 +122,6 @@
      links: <%= raw(JSON.dump(@links || [])) %>,
      settings: {
 	 is_private: <%= @map.is_private.to_s %>,
-	 is_featured: <%= @map.is_featured.to_s %>,
 	 is_cloneable: <%= @map.is_cloneable.to_s %>,
 	 list_sources: <%= @map.list_sources.to_s %>
      },
