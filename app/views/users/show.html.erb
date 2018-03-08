@@ -19,8 +19,8 @@
   Groups
 </h3>
 <div>
-  <% if @groups.present? %>
-    <% @groups.each do |group| %>
+  <% if @user.groups.present? %>
+    <% @user.groups.each do |group| %>
       <%= group_link(group) %><br />
     <% end %>
   <% else %>
@@ -30,7 +30,7 @@
 
 <h3>
   Edits
-  <% if @user == current_user || current_user.admin? %>
+  <% if @user.show_private?(current_user) %>
     <small>
       <%= link_to 'view all edits', user_edits_path(@user), class: 'm-left-1em' %>
     </small>
@@ -38,23 +38,23 @@
 </h3>
 
 <div>
-  <% @recent_updates.each do |entity| %>
+  <% @user.recent_updates.each do |entity| %>
     <div class="dashboard-entity">
       <span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
     </div>
   <% end %>
 </div>
 
-<% if @user == current_user || current_user.admin? %>
+<% if @user.show_private?(current_user) %>
   <h3>
     Permissions
   </h3>
   <div>
     <table>
-      <% @all_permissions.each do |p| %>
+      <% Permissions::ALL_PERMISSIONS.each do |p| %>
 	<tr>
 	  <td class="permission-name"><%= p.capitalize %></td>
-	  <td class="permission-boolean"><%= @permissions.include?(p) ? "Yes" : "No" %></td>
+	  <td class="permission-boolean"><%= @user.permisison_display(p) %></td>
 	</tr>
       <% end %>
     </table>
