@@ -71,7 +71,6 @@ class DevelopmentDb
                   custom_key
                   degree
                   documents
-                  domain
                   donation
                   education
                   elected_representative
@@ -80,7 +79,6 @@ class DevelopmentDb
                   entity_fields
                   extension_definition
                   extension_record
-                  external_key
                   family
                   fec_filing
                   fedspending_filing
