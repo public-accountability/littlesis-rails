@@ -205,7 +205,6 @@ class MapsController < ApplicationController
 
       @map.title = params[:title] if params[:title].present?
       @map.description = params[:description] if params[:title].present?
-      @map.is_featured = params[:is_featured] if params[:is_featured].present?
       @map.is_private = params[:is_private] if params[:is_private].present?
       @map.is_cloneable = params[:is_cloneable] if params[:is_cloneable].present?
       @map.width = params[:width] if params[:width].present?
@@ -317,14 +316,12 @@ class MapsController < ApplicationController
   end
 
   def map_params
-    params.require(:map).permit(
-      :is_featured, :is_private, :title, :description, :data,
-       :height, :width, :user_id, :zoom
-    )
+    params.require(:map)
+      .permit(:is_private, :title, :description, :data, :height, :width, :user_id, :zoom)
   end
 
   def oligrapher_params
-    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_featured, :is_cloneable, :list_sources)
+    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_cloneable, :list_sources)
   end
 
   def embedded_params
