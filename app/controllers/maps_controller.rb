@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class MapsController < ApplicationController
-  include NetworkMapsHelper
-
-  before_action :set_map, except: [:index, :featured, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
-  before_action :authenticate_user!, except: [:index, :featured, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
+  before_action :set_map,
+                except: [:featured, :all, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
+  before_action :authenticate_user!,
+                except: [:featured, :all, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
   before_action :enforce_slug, only: [:show]
-
+  before_action :admins_only, only: [:feature]
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
 
   protect_from_forgery except: [:create, :clone]
@@ -13,49 +15,39 @@ class MapsController < ApplicationController
   EMBEDDED_HEADER_PCT = 8
   EMBEDDED_ANNOTATION_PCT = 28
 
-  def index
-    maps = NetworkMap.order('created_at DESC, id DESC')
-
-    unless current_user.present? and current_user.has_legacy_permission('admin')
-      if current_user.present?
-        maps = maps.where('network_map.is_private = ? OR network_map.user_id = ?', false, current_user.sf_guard_user_id)
-      else
-        maps = maps.public_scope
-      end
-    end
-
-    @maps = maps.page(params[:page]).per(20)
-    @featured = false
-  end
-
-  def search
-    order = 'updated_at DESC, id DESC'
-    if user_signed_in?
-      if current_user.has_legacy_permission('admin')
-        @maps = NetworkMap.search(
-          Riddle::Query.escape(params.fetch(:q, '')),
-          order: order
-        ).page(params[:page]).per(20)
-      else
-        @maps = NetworkMap.search(
-          Riddle::Query.escape(params.fetch(:q, '')),
-          order: order,
-          with: { visible_to_user_ids: [0, current_user.sf_guard_user_id] }
-        ).page(params[:page]).per(20)
-      end
+  def all
+    if current_user.present?
+      maps = NetworkMap.scope_for_user(current_user)
     else
-      @maps = NetworkMap.search(
-        Riddle::Query.escape(params.fetch(:q, '')),
-        order: order,
-        with: { visible_to_user_ids: [0] }
-      ).page(params[:page]).per(20)
+      maps = NetworkMap.public_scope
     end
+    @maps = maps
+              .order('updated_at DESC')
+              .page(params[:page].presence || 1)
+              .per(20)
+    @featured = false
+    render 'index'
   end
 
   def featured
-    @maps = NetworkMap.featured.order("updated_at DESC, id DESC").page(params[:page]).per(20)
+    @maps = NetworkMap
+              .public_scope
+              .featured
+              .order("updated_at DESC, id DESC")
+              .page(params[:page].presence || 1)
+              .per(20)
+
     @featured = true
     render 'index'
+  end
+
+  def search
+    page = params[:page].presence || 1
+    @maps = NetworkMap
+              .search(ThinkingSphinx::Query.escape(params.fetch(:q, '')),
+                      order: 'updated_at DESC, id DESC',
+                      with: { is_private: false })
+              .page(page).per(20)
   end
 
   def embedded_v2
@@ -211,7 +203,6 @@ class MapsController < ApplicationController
 
       @map.title = params[:title] if params[:title].present?
       @map.description = params[:description] if params[:title].present?
-      @map.is_featured = params[:is_featured] if params[:is_featured].present?
       @map.is_private = params[:is_private] if params[:is_private].present?
       @map.is_cloneable = params[:is_cloneable] if params[:is_cloneable].present?
       @map.width = params[:width] if params[:width].present?
@@ -247,6 +238,27 @@ class MapsController < ApplicationController
 
     redirect_to edit_map_path(map)
   end
+
+  ##
+  # POST /maps/:id/feature
+  # Two possible actions: { map: { feature_action: 'ADD' } | { feature_action: 'REMOVE' } }
+  #
+  # rubocop:disable Rails/SkipsModelValidations
+  def feature
+    # private maps cannot be featured
+    return head :bad_request if @map.is_private
+
+    case params.require(:map)[:feature_action]&.upcase
+    when 'ADD'
+      @map.update_columns(is_featured: true)
+    when 'REMOVE'
+      @map.update_columns(is_featured: false)
+    else
+      return head :bad_request
+    end
+    redirect_back fallback_location: all_maps_path
+  end
+  # rubocop:enable Rails/SkipsModelValidations
 
   # OLIRAPHER 2 SEARCH API
 
@@ -308,8 +320,8 @@ class MapsController < ApplicationController
 
     is_json = request.path_info.match(/\.json$/)
 
-    if !is_json and @map.title.present? and !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
-      redirect_to smart_map_path(@map)
+    if !is_json && @map.title.present? && !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
+      redirect_to map_path(@map)
     end
   end
 
@@ -323,14 +335,12 @@ class MapsController < ApplicationController
   end
 
   def map_params
-    params.require(:map).permit(
-      :is_featured, :is_private, :title, :description, :data,
-       :height, :width, :user_id, :zoom
-    )
+    params.require(:map)
+      .permit(:is_private, :title, :description, :data, :height, :width, :user_id, :zoom)
   end
 
   def oligrapher_params
-    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_featured, :is_cloneable, :list_sources)
+    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_cloneable, :list_sources)
   end
 
   def embedded_params

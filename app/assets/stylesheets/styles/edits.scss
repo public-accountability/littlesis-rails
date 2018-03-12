@@ -50,7 +50,7 @@ form.alias-form {
 	border-spacing: 0.3em;
 
 	td {
-	    border-top: 0;
+	    @extend .no-border-top;
 	}
     }
 

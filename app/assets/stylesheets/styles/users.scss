@@ -55,3 +55,19 @@
 .permission-boolean {
   padding-left: 20px;
 }
+
+.user-page-table {
+    width: 100%;
+    
+    a {
+    	@extend .link-blue;
+    }
+ 
+    td {
+	@extend .no-border-top;
+	padding: 0;
+	em {
+	    font-size: 12px;
+	}
+    }
+}

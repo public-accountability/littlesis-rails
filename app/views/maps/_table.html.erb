@@ -1,27 +1,34 @@
 <%= paginate maps %>
 
-<table class="table">
+<table class="table" id="maps-table">
   <thead>
     <tr>
       <th>Title</th>
       <th>Author</th>
-      <th>Created</th>
+      <th>Updated</th>
+      <% if current_user&.admin? %>
+	<th>Feature</th>
+      <% end %>
     </tr>
   </thead>
 
   <tbody>
     <% maps.each do |map| %>
       <tr>
-        <td>
-          <%= network_map_link(map) %>
-          <% if map.is_private %>
-            &nbsp;<span class="glyphicon glyphicon-lock"></span>
-          <% end %>
-        </td>
+        <td><%= network_map_link(map) %></td>
         <td>
           <%= user_link(map.user) %>
         </td>
-        <td><%= time_ago_in_words(map.created_at) %> ago</td>
+        <td><%= time_ago_in_words(map.updated_at) %> ago</td>
+
+	<% if current_user&.admin? %>
+	  <td>
+	    <% unless map.is_private %>
+	      <%= network_map_feature_btn(map) %>
+	    <% end %>
+	  </td>
+	<% end %>
+
       </tr>
     <% end %>
   </tbody>

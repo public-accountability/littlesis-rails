@@ -51,6 +51,10 @@
   padding-right: 1em;
 }
 
+.pad-left-05em {
+  padding-left: 0.5em;
+}
+
 .pad-left-1em {
   padding-left: 1em;
 }
@@ -127,4 +131,14 @@
 
 .cursor-pointer {
     cursor: pointer;
+}
+
+.no-border-top {
+    border-top: 0;
+}
+
+.empty-button {
+    background: none;
+    border: none;
+    padding: 0;
 }
