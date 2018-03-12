@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Cmp
   class EntityMatch
     MATCHES = YAML.load_file(Rails.root.join('data', 'cmp_matches.yml'))

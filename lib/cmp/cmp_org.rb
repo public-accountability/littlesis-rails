@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Cmp
   class CmpOrg < CmpEntityImporter
     attr_reader :org_type
