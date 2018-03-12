@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class MapsController < ApplicationController
-  include NetworkMapsHelper
-
   before_action :set_map,
                 except: [:featured, :all, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
   before_action :authenticate_user!,
@@ -301,8 +299,8 @@ class MapsController < ApplicationController
 
     is_json = request.path_info.match(/\.json$/)
 
-    if !is_json and @map.title.present? and !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
-      redirect_to smart_map_path(@map)
+    if !is_json && @map.title.present? && !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
+      redirect_to map_path(@map)
     end
   end
 
