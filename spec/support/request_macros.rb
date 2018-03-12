@@ -5,6 +5,15 @@ module RequestExampleMacros
 end
 
 module RequestGroupMacros
+  def as_basic_user
+    let(:basic_user) { create_really_basic_user }
+    before(:each) { login_as(basic_user, :scope => :user) }
+    context 'when logged in as a basic user' do
+      yield
+    end
+    after(:each) { logout(:user) }
+  end
+
   def denies_access
     it 'denies access' do
       expect(response).to have_http_status(403)

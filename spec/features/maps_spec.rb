@@ -22,6 +22,8 @@ feature 'maps index page' do
     scenario 'visiting /maps/all' do
       successfully_visits_page '/maps/all'
       page_has_selector '#maps-table'
+      page_has_selector '#maps-table thead th', count: 3
+      expect(page).not_to have_selector '.featured-map-star' # non-admins don't have this option
       page_has_selector '#maps-table tbody tr', count: 2 # skips private maps
     end
   end
@@ -49,6 +51,8 @@ feature 'maps index page' do
 
     scenario 'visiting /maps/all as an admin' do
       successfully_visits_page '/maps/all'
+      page_has_selector '.featured-map-star', count: 1
+      page_has_selector '.not-featured-map-star', count: 1
       page_has_selector '#maps-table tbody tr', count: 2 # skips private maps
     end
   end
@@ -65,6 +69,29 @@ feature 'maps index page' do
     scenario 'visiting /maps/all' do
       successfully_visits_page '/maps/all'
       page_has_selector '#maps-table tbody tr', count: 3 # includes private maps
+    end
+  end
+
+  feature 'setting and removing featured maps' do
+    context 'as an admin' do
+      before { login_as(admin, scope: :user) }
+      after { logout(admin) }
+
+      scenario 'adding feature a map' do
+        visit '/maps/all'
+        page_has_selector '.featured-map-star', count: 1
+        page.find('.not-featured-map-star').first(:xpath,".//..").click
+        successfully_visits_page '/maps/all'
+        page_has_selector '.featured-map-star', count: 2
+      end
+
+      scenario 'removing is featured from a map' do
+        visit '/maps/all'
+        page_has_selector '.featured-map-star', count: 1
+        page.find('.featured-map-star').first(:xpath,".//..").click
+        successfully_visits_page '/maps/all'
+        expect(page).not_to have_selector '.featured-map-star'
+      end
     end
   end
 end

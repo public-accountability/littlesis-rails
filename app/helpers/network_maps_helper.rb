@@ -10,4 +10,12 @@ module NetworkMapsHelper
     return link unless map.is_private
     link + content_tag('span', nil, class: "glyphicon glyphicon-lock private-network-map-icon pad-left-05em")
   end
+
+  def network_map_feature_btn(map)
+    icon_class = map.is_featured ? 'featured-map-star' : 'not-featured-map-star'
+    form_tag(feature_map_path(map), id: "feature-map-form-#{map.id}") do
+      hidden_field_tag('map[feature_action]', (map.is_featured ? 'REMOVE' : 'ADD')) +
+        button_tag(type: 'submit', class: 'featured-map-star-button') { content_tag :span, nil, class: icon_class }
+    end
+  end
 end

@@ -6,7 +6,7 @@ class MapsController < ApplicationController
   before_action :authenticate_user!,
                 except: [:featured, :all, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
   before_action :enforce_slug, only: [:show]
-
+  before_action :admins_only, only: [:feature]
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
 
   protect_from_forgery except: [:create, :clone]
@@ -238,6 +238,27 @@ class MapsController < ApplicationController
 
     redirect_to edit_map_path(map)
   end
+
+  ##
+  # POST /maps/:id/feature
+  # Two possible actions: { map: { feature_action: 'ADD' } | { feature_action: 'REMOVE' } }
+  #
+  # rubocop:disable Rails/SkipsModelValidations
+  def feature
+    # private maps cannot be featured
+    return head :bad_request if @map.is_private
+
+    case params.require(:map)[:feature_action]&.upcase
+    when 'ADD'
+      @map.update_columns(is_featured: true)
+    when 'REMOVE'
+      @map.update_columns(is_featured: false)
+    else
+      return head :bad_request
+    end
+    redirect_back fallback_location: all_maps_path
+  end
+  # rubocop:enable Rails/SkipsModelValidations
 
   # OLIRAPHER 2 SEARCH API
 
