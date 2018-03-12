@@ -506,12 +506,6 @@ class Entity < ApplicationRecord
     relateds.where('link.category_id IN (1, 3)')
   end
 
-  def twitter_ids
-    keys = external_keys.where(domain_id: Domain::TWITTER_ID)
-    return nil unless keys.present?
-    keys.collect(&:external_id)
-  end
-
   def types
     extension_definitions.map(&:display_name)
   end

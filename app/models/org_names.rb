@@ -1,3 +1,6 @@
+# NOTE (Mon 12 Mar 2018)
+# This class appears to only be used by twitter.rake,
+# a task not run in **YEARS**
 class OrgNames
   
   def self.get_name_words_from_text(text)

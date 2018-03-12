@@ -56,17 +56,6 @@ module Lilsis
     config.tinymce.install = :copy
 
     config.active_job.queue_adapter = :delayed_job
-
-    @twitter = Twitter::REST::Client.new do |cnf|
-      cnf.consumer_key        = config.twitter_consumer_key
-      cnf.consumer_secret     = config.twitter_consumer_secret
-      cnf.access_token        = config.twitter_access_token
-      cnf.access_token_secret = config.twitter_access_token_secret
-    end
-
-    def self.twitter
-      @twitter
-    end
   end
 end
 
