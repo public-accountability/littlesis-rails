@@ -8,7 +8,53 @@ module EntityMatcher
   # The hashes must contain the attributes used in the +Person+ model
   #
   module TestCase
-    class Person
+    class Base
+      attr_reader :entity, :name, :associated_entities, :keywords
+
+      def initialize(associated: nil, keywords: [])
+        @keywords = keywords
+        parse_associated(associated)
+      end
+
+      protected
+
+      # Associated entites can be used to help determined matches
+      def parse_associated(associated)
+        # if no associated entites are included in the intilzation phase,
+        # they will be automatically added in the input is a entity
+        if associated.blank?
+          if @entity
+            @associated_entities = @entity.links.map(&:entity2_id)
+          else
+            @associated_entities = []
+          end
+        else
+          # associated can be either an array or mix of integers, entities, and strings
+          @associated_entities = Array.wrap(associated).map do |x|
+            x.respond_to?(:id) ? x.id.to_i : x.to_i
+          end
+        end
+      end
+    end
+
+    class Org < Base
+      # input: String | Entity
+      def initialize(input, associated: nil, keywords: [])
+        case input
+        when Entity
+          raise WrongEntityTypeError unless input.org?
+          @entity = input
+          @name = @entity.name
+        when String
+          @name = input
+        else
+          raise TypeError
+        end
+        super associated: associated, keywords: keywords
+      end
+    end
+
+    class Person < Base
       BLANK_NAME_HASH = ActiveSupport::HashWithIndifferentAccess
                           .new(name_prefix: nil,
                                name_first: nil,
@@ -17,7 +63,6 @@ module EntityMatcher
                                name_suffix: nil,
                                name_nick: nil).freeze
 
-      attr_reader :entity, :name, :associated_entities, :keywords
       delegate :fetch, to: :name
 
       # calling .first, .last, etc. returns upcased versions of the name component
@@ -42,9 +87,7 @@ module EntityMatcher
         else
           raise TypeError
         end
-
-        @keywords = keywords
-        parse_associated(associated)
+        super associated: associated, keywords: keywords
       end
 
       private
@@ -52,24 +95,6 @@ module EntityMatcher
       def validate_input_hash(h)
         unless (h[:name_first] || h['name_first']) && (h[:name_last] || h['name_last'])
           raise InvalidPersonHash
-        end
-      end
-
-      # Associated entites can be used to help determined matches
-      def parse_associated(associated)
-        # if no associated entites are included in the intilzation phase,
-        # they will be automatically added in the input is a entity
-        if associated.blank?
-          if @entity
-            @associated_entities = @entity.links.map(&:entity2_id)
-          else
-            @associated_entities = []
-          end
-        else
-          # associated can be either an array or mix of integers, entities, and strings
-          @associated_entities = Array.wrap(associated).map do |x|
-            x.respond_to?(:id) ? x.id.to_i : x.to_i
-          end
         end
       end
     end

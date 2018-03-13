@@ -111,6 +111,16 @@ describe EntityMatcher, :sphinx do
   end
 
   describe 'TestCase' do
+    describe EntityMatcher::TestCase::Org do
+      subject { EntityMatcher::TestCase::Org }
+      let(:org) { build(:org, :with_org_name) }
+
+      it 'sets @entity' do
+        expect(subject.new(org).entity).to be_a Entity
+        expect(subject.new('corp').entity).to be nil
+      end
+    end
+
     describe EntityMatcher::TestCase::Person do
       subject { EntityMatcher::TestCase::Person }
       let(:name) { Faker::Name.name }

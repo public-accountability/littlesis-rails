@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180129193750) do
+ActiveRecord::Schema.define(version: 20180312221213) do
 
   create_table "address", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint   "entity_id",                                null: false
@@ -261,11 +261,6 @@ ActiveRecord::Schema.define(version: 20180129193750) do
     t.index ["url_hash"], name: "index_documents_on_url_hash", unique: true, using: :btree
   end
 
-  create_table "domain", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
-    t.string "name", limit: 40,  null: false
-    t.string "url",  limit: 200, null: false
-  end
-
   create_table "donation", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "bundler_id"
     t.bigint "relationship_id", null: false
@@ -359,15 +354,6 @@ ActiveRecord::Schema.define(version: 20180129193750) do
     t.index ["definition_id"], name: "definition_id_idx", using: :btree
     t.index ["entity_id"], name: "entity_id_idx", using: :btree
     t.index ["last_user_id"], name: "last_user_id_idx", using: :btree
-  end
-
-  create_table "external_key", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
-    t.bigint "entity_id",               null: false
-    t.string "external_id", limit: 200, null: false
-    t.bigint "domain_id",               null: false
-    t.index ["domain_id"], name: "domain_id_idx", using: :btree
-    t.index ["entity_id"], name: "entity_id_idx", using: :btree
-    t.index ["external_id", "domain_id"], name: "uniqueness_idx", unique: true, using: :btree
   end
 
   create_table "family", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|

@@ -35,7 +35,6 @@ class Entity < ApplicationRecord
   has_many :groups, through: :lists, inverse_of: :entities
   has_many :campaigns, through: :groups, inverse_of: :entities
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", inverse_of: :edited_entities
-  has_many :external_keys, inverse_of: :entity, dependent: :destroy
   has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
   has_many :os_entity_preprocesses, inverse_of: :entity, dependent: :destroy
   has_many :extension_records, inverse_of: :entity, dependent: :destroy
@@ -506,12 +505,6 @@ class Entity < ApplicationRecord
     relateds.where('link.category_id IN (1, 3)')
   end
 
-  def twitter_ids
-    keys = external_keys.where(domain_id: Domain::TWITTER_ID)
-    return nil unless keys.present?
-    keys.collect(&:external_id)
-  end
-
   def types
     extension_definitions.map(&:display_name)
   end
@@ -616,12 +609,6 @@ class Entity < ApplicationRecord
       end
     end
     hash
-    update_fields(hash)
-  end
-
-  def update_fields_from_external_keys
-    return false unless id
-    hash = Hash[external_keys.joins(:domain).map { |k| [k.domain.name.downcase + "_id", k.external_id] }]
     update_fields(hash)
   end
 

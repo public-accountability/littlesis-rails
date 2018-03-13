@@ -144,9 +144,6 @@ Lilsis::Application.routes.draw do
         get 'references'
         get 'potential_contributions'
         get 'edits' => 'edits#entity'
-        get 'edit_twitter'
-        post 'add_twitter'
-        post 'remove_twitter'
         get 'fields'
         post 'update_fields'
         get 'articles'
@@ -168,7 +165,6 @@ Lilsis::Application.routes.draw do
       collection do
         get 'search_by_name', as: 'name_search'
         get 'search_field_names', as: 'field_name_search'
-        get 'next_twitter'
         post 'bulk' => 'entities#create_bulk'
       end
     end

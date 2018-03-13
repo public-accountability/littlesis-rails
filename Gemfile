@@ -83,8 +83,6 @@ end
 gem 'seed_dump', :require => false
 gem 'simplecov', :require => false, :group => :test
 
-gem 'twitter'
-
 gem 'StreetAddress', :require => "street_address"
 gem 'sequel', :require => false
 
