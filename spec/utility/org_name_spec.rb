@@ -1,7 +1,25 @@
 require 'rails_helper'
 
 describe OrgName do
-  describe 'parse'
+  describe 'parse' do
+    specify { expect(OrgName.parse('ABC')).to be_a OrgName::Name }
+
+    it 'parses "Liberty Mutual Insurance Group"' do
+      name = OrgName.parse('Liberty Mutual Insurance Group')
+      expect(name.original).to eql 'Liberty Mutual Insurance Group'
+      expect(name.clean).to eql 'liberty mutual insurance'
+      expect(name.suffix).to eql 'Group'
+      expect(name.essential_words).to eql %w[liberty mutual]
+    end
+
+    it 'parses "Comcast"' do
+      name = OrgName.parse 'Comcast.'
+      expect(name.original).to eql 'Comcast.'
+      expect(name.clean).to eql 'comcast'
+      expect(name.suffix).to be_nil
+      expect(name.essential_words).to eql ['comcast']
+    end
+  end
 
   describe 'strip_name_punctuation' do
     it 'removes commas and period' do
@@ -19,6 +37,32 @@ describe OrgName do
 
     it 'replaces double spaces with single spaces' do
       expect(OrgName.strip_name_punctuation('XYZ  INC')).to eql 'XYZ INC'
+    end
+  end
+
+  describe 'find_suffix' do
+    specify { expect(OrgName.find_suffix('no suffix for me')).to be nil }
+    specify { expect(OrgName.find_suffix('123 llc')).to eql 'llc' }
+    specify { expect(OrgName.find_suffix('CORP LIMITED')).to eql 'LIMITED' }
+    specify { expect(OrgName.find_suffix('123 llc-nation')).to be nil }
+    specify do
+      expect(OrgName.find_suffix('GAS NETWORKS HOLDINGS LIMITED'))
+        .to eql 'HOLDINGS LIMITED'
+    end
+  end
+
+  describe 'clean' do
+    specify { expect(OrgName.clean('Company Name, LLC.')).to eql 'company name' }
+    specify { expect(OrgName.clean('EXTERRAN CORPORATION')).to eql 'exterran' }
+  end
+
+  describe 'essential_words' do
+    specify do
+      expect(OrgName.essential_words("THE WEBSTER FINANCIAL CORP")).to eql %w[webster]
+    end
+
+    specify do
+      expect(OrgName.essential_words("BAOSHAN IRON & STEEL COMPANY LIMITED")).to eql %w[baoshan iron steel]
     end
   end
 end

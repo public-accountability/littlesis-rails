@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+# === Parses organization names
+# The "org" version of NameParser
+#
+# OrgName.parse returns a +struct+ with 4 components:
+#   - original
+#   - clean (name without punctuation or suffix)
+#   - suffix (if found)
+#   - essential words
+#
 module OrgName
   COMMON_SUFFIXES = [
     "Inc",
@@ -12,8 +21,10 @@ module OrgName
     "LLP",
     "LLC",
     "LP",
+    "PLC",
     "PA",
     "Chtd",
+    "GMBH",
     "Chartered",
     "Companies",
     "Bancorp",
@@ -21,6 +32,8 @@ module OrgName
     "Ins",
     "Stores",
     "Holdings",
+    "Holdings Limited",
+    "Company Limited",
     "Group",
     "Limited",
     "Ltd",
@@ -37,6 +50,10 @@ module OrgName
     "Systems",
     "Group"
   ].freeze
+
+  SUFFIX_REGEX = Regexp.new "(#{COMMON_SUFFIXES.join('|')})(?:[,\.]*)$", Regexp::IGNORECASE
+
+  GRAMMAR_WORDS = ['And', 'Of', 'The'].freeze
 
   COMMON_WORDS = [
     "American",
@@ -69,11 +86,14 @@ module OrgName
     "First"
   ].freeze
 
-  # Set combining common words and suffixes
-  ALL_COMMON_WORDS = (COMMON_SUFFIXES + COMMON_WORDS).to_set
+  # Set combining of both common words and suffixes
+  ALL_COMMON_WORDS = (GRAMMAR_WORDS + COMMON_SUFFIXES + COMMON_WORDS).map(&:downcase).to_set
 
-  # parsed Org Name
+  Name = Struct.new(:original, :clean, :suffix, :essential_words)
+
+  # String ---> OrgName::Name
   def self.parse(name)
+    OrgName::Name.new(name, clean(name), find_suffix(name), essential_words(name))
   end
 
   def self.strip_name_punctuation(name)
@@ -84,19 +104,26 @@ module OrgName
       .strip
   end
 
-  def self.remove_common_suffixes(name)
-    common_suffixes.each do |suffix|
-      name = name.gsub(/#{suffix}[\.\,]?$/, "")
-    end 
-    name
+  def self.find_suffix(name)
+    SUFFIX_REGEX.match(name.strip).try(:[], 1)
+  end
+
+  # remove punctuation, common suffix, and downcases the name
+  def self.clean(name)
+    strip_name_punctuation(name)
+      .gsub(SUFFIX_REGEX, '')
+      .strip
+      .downcase
   end
 
   # returns lowercase array of words from a org name that aren't common
   def self.essential_words(name)
-    words_to_remove = common_words.uniq.map(&:downcase)    
-    name_words = strip_name_punctuation(name).split(/\s+/).map(&:downcase).keep_if do |word|
-      word.size > 2
-    end
-    name_words - words_to_remove
+    strip_name_punctuation(name)
+      .split(/\s+/)
+      .keep_if { |word| word.size > 2 }
+      .map(&:downcase)
+      .to_set
+      .difference(ALL_COMMON_WORDS)
+      .to_a
   end
 end
