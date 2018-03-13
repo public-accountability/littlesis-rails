@@ -51,7 +51,7 @@ module OrgName
     "Group"
   ].freeze
 
-  SUFFIX_REGEX = Regexp.new "(#{COMMON_SUFFIXES.join('|')})(?:[,\.]*)$", Regexp::IGNORECASE
+  SUFFIX_REGEX = Regexp.new "(?<=[ ])(#{COMMON_SUFFIXES.join('|')})(?:[,\.]*)$", Regexp::IGNORECASE
 
   GRAMMAR_WORDS = ['And', 'Of', 'The'].freeze
 

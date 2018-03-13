@@ -54,6 +54,7 @@ describe OrgName do
   describe 'clean' do
     specify { expect(OrgName.clean('Company Name, LLC.')).to eql 'company name' }
     specify { expect(OrgName.clean('EXTERRAN CORPORATION')).to eql 'exterran' }
+    specify { expect(OrgName.clean('simplecorp')).to eql 'simplecorp' }
   end
 
   describe 'essential_words' do
