@@ -60,6 +60,29 @@ describe EntityMatcher, :sphinx do
   end
 
   describe 'Query' do
+    describe 'Org' do
+      context 'provided string name' do
+        let(:name) { '' }
+        subject { EntityMatcher::Query::Org.new(name).to_s }
+        context 'simple name' do
+          let(:name) { "simplecorp" }
+          it { is_expected.to eql "(*simplecorp*)" }
+        end
+
+        context 'simple name with suffix' do
+          let(:name) { "SimpleCorp llc" }
+          it { is_expected.to eql "(*simplecorp* *llc*) | (simplecorp)" }
+        end
+
+        context 'long name with essential words' do
+          let(:name) { "American Green Tomatoes Corp" }
+          it do
+            is_expected.to eql "(*american* *green* *tomatoes* *corp*) | (american green tomatoes) | (green tomatoes)"
+          end
+        end
+      end
+    end
+
     describe 'Person' do
       subject { EntityMatcher::Query::Person.new(entity).to_s }
       let(:names) { [] }

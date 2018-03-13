@@ -72,7 +72,7 @@ module EntityMatcher
       end
     end
 
-    # Simple query building for strings
+    # Simple query for last names
     class Names < Base
       # input: *args | <Array>
       def initialize(*args)
@@ -91,6 +91,21 @@ module EntityMatcher
     end
 
     class Org < Base
+      def initialize(str)
+        TypeCheck.check str, String
+        @org_name = OrgName.parse(str)
+        super(str)
+      end
+
+      def run
+        simple_name = __getobj__.downcase
+        @parts << ThinkingSphinx::Query.wildcard(simple_name)
+        @parts << @org_name.clean if @org_name.clean != simple_name
+
+        if @org_name.essential_words.length > 1
+          @parts << @org_name.essential_words.join(' ')
+        end
+      end
     end
   end
 end
