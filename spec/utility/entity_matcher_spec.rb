@@ -191,7 +191,7 @@ describe EntityMatcher, :sphinx do
 
   describe 'Evaluation' do
     describe 'argument validation' do
-      subject { EntityMatcher::Evaluation }
+      subject { EntityMatcher::Evaluation::Person }
 
       def generate_test_case
         EntityMatcher::TestCase::Person.new(
@@ -215,7 +215,7 @@ describe EntityMatcher, :sphinx do
     end
 
     describe 'evaluation' do
-      subject { EntityMatcher::Evaluation }
+      subject { EntityMatcher::Evaluation::Person }
 
       def generate_test_case(fields = {})
         EntityMatcher::TestCase::Person.new(build(:person, person: build(:a_person, **fields)))
