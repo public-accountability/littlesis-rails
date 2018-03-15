@@ -1,6 +1,13 @@
 require 'rails_helper'
 
 describe EntityMatcher, :sphinx do
+
+  def result_maker(*args)
+    EntityMatcher::EvaluationResult::Person.new.tap do |er|
+      args.each { |x| er.send("#{x}=", true) }
+    end
+  end
+
   describe 'Search' do
     # creates a sample set of 5 people: 2 Vibes, 2 Traverses, and 1 Chum of chance
     before(:all) do
@@ -214,7 +221,7 @@ describe EntityMatcher, :sphinx do
       end
     end
 
-    describe 'evaluation' do
+    describe EntityMatcher::Evaluation::Person do
       subject { EntityMatcher::Evaluation::Person }
 
       def generate_test_case(fields = {})
@@ -402,6 +409,81 @@ describe EntityMatcher, :sphinx do
           end
         end
       end
+    end # end EntityMatcher::Evaluation::Person
+
+    describe EntityMatcher::EvaluationResult::Person do
+      describe '#equal_first_last?' do
+        context 'same names' do
+          subject { result_maker(:same_last_name, :same_first_name) }
+          specify { expect(subject.same_first_last?).to eql true }
+        end
+
+        context 'different names' do
+          before do
+            subject.same_last_name = false
+            subject.same_first_name = true
+          end
+          specify { expect(subject.same_first_last?).to eql false }
+        end
+
+        describe 'same_middle_prefix_suffix_count' do
+          context 'zero' do
+            specify { expect(subject.same_middle_prefix_suffix_count).to eql 0 }
+          end
+
+          context 'two' do
+            subject { result_maker(:same_prefix, :same_suffix) }
+            before  { subject.same_middle_name = false }
+            specify { expect(subject.same_middle_prefix_suffix_count).to eql 2 }
+          end
+        end
+      end
+      
+      describe 'Sorting' do
+        describe 'same first_and_last' do
+          let(:results) do
+            [
+              result_maker(:same_first_name, :same_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_maker(:same_first_name, :same_last_name, :same_middle_name, :same_prefix),
+              result_maker(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
+              result_maker(:same_first_name, :same_last_name, :same_middle_name),
+              result_maker(:same_first_name, :same_last_name, :common_relationship),
+              result_maker(:same_first_name, :same_last_name, :blurb_keyword)
+#              result_maker(:same_first_name, :similar_last_name, :same_suffix)
+            ]
+          end
+
+          it 'sorts array' do
+            3.times do
+              sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+              expect(sorted).to eql results
+            end
+          end
+        end
+
+        describe 'same_first_similar_last' do
+          let(:results) do
+            [
+              result_maker(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_maker(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :common_relationship),
+              result_maker(:same_first_name, :similar_last_name, :common_relationship),
+              result_maker(:same_first_name, :similar_last_name, :same_suffix, :blurb_keyword),
+              result_maker(:same_first_name, :similar_last_name, :blurb_keyword),
+              result_maker(:same_first_name, :similar_last_name)
+            ]
+          end
+          it 'sorts array' do
+            3.times do
+              sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+              expect(sorted).to eql results
+            end
+          end
+        end
+
+        
+      end
+      
     end
   end
 end
+
