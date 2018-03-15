@@ -3,9 +3,10 @@
 # === Parses organization names
 # The "org" version of NameParser
 #
-# OrgName.parse returns a +struct+ with 4 components:
+# OrgName.parse returns a +struct+ with 5 components:
 #   - original
 #   - clean (name without punctuation or suffix)
+#   - root (org name without suffix)
 #   - suffix (if found)
 #   - essential words
 #
@@ -89,11 +90,15 @@ module OrgName
   # Set combining of both common words and suffixes
   ALL_COMMON_WORDS = (GRAMMAR_WORDS + COMMON_SUFFIXES + COMMON_WORDS).map(&:downcase).to_set
 
-  Name = Struct.new(:original, :clean, :suffix, :essential_words)
+  Name = Struct.new(:original, :clean, :root, :suffix, :essential_words)
 
   # String ---> OrgName::Name
   def self.parse(name)
-    OrgName::Name.new(name, clean(name), find_suffix(name), essential_words(name))
+    OrgName::Name.new(name,
+                      clean(name),
+                      find_root(name),
+                      find_suffix(name),
+                      essential_words(name))
   end
 
   def self.strip_name_punctuation(name)
@@ -102,6 +107,12 @@ module OrgName
       .gsub(/[,"*]/, "")
       .gsub(/\s{2,}/, " ")
       .strip
+  end
+
+  def self.find_root(name)
+    suffix_idx = (name.strip =~ SUFFIX_REGEX)
+    return clean(name) if suffix_idx.nil?
+    clean name.strip.slice(0, suffix_idx)
   end
 
   def self.find_suffix(name)

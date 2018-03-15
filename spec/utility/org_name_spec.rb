@@ -8,6 +8,7 @@ describe OrgName do
       name = OrgName.parse('Liberty Mutual Insurance Group')
       expect(name.original).to eql 'Liberty Mutual Insurance Group'
       expect(name.clean).to eql 'liberty mutual insurance group'
+      expect(name.root).to eql 'liberty mutual insurance'
       expect(name.suffix).to eql 'Group'
       expect(name.essential_words).to eql %w[liberty mutual]
     end
@@ -17,6 +18,7 @@ describe OrgName do
       expect(name.original).to eql 'Comcast.'
       expect(name.clean).to eql 'comcast'
       expect(name.suffix).to be_nil
+      expect(name.root).to eql 'comcast'
       expect(name.essential_words).to eql ['comcast']
     end
   end
@@ -48,6 +50,17 @@ describe OrgName do
     specify do
       expect(OrgName.find_suffix('GAS NETWORKS HOLDINGS LIMITED'))
         .to eql 'HOLDINGS LIMITED'
+    end
+  end
+
+  describe 'find_root' do
+    specify { expect(OrgName.find_root('no suffix for me')).to eql 'no suffix for me' }
+    specify { expect(OrgName.find_root('123 llc')).to eql '123' }
+    specify { expect(OrgName.find_root('CORP LIMITED')).to eql 'corp' }
+    specify { expect(OrgName.find_root('123 llc-nation')).to eql'123 llc-nation' }
+    specify do
+      expect(OrgName.find_root('GAS NETWORKS HOLDINGS LIMITED'))
+        .to eql 'gas networks'
     end
   end
 
