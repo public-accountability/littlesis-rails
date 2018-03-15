@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/RedundantSelf
+# rubocop:disable Style/RedundantSelf, Metrics/LineLength
+# rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
 #
 # Two data classes EvaluationResult:Person and EvaluationResult:Org
 # to containg the results of matching evaluation
@@ -22,7 +23,7 @@
 #
 # == Ranking order for Person:
 
-# Same last name and Similar or same first
+# Tier 1: Same last name and Similar or same first
 #--------------
 # same first and last name + highest equal (non-zero) count of prefix/suffix/middle
 # same first and last name + common relationship
@@ -34,27 +35,27 @@
 # similar first name and same last name + blurb keyword
 # similar first name and same last name
 
-# Same first and similar last
+# Tier 2: Same first and similar last
 #--------------
 # same first and similar last + highest equal count of prefix/suffix/middle
 # same first and similar last + common relationship
 # same first and similar last + blurb keyword
 # same first and similar last
 
-# Similar first and similar last
+# Tier 3: Similar first and similar last
 #--------------
 # similar first and similar last + highest equal count of prefix/suffix/middlew
 # similar first and similar last + common relationshipa
 # similar first and similar last + blurb keyword
 # similar first and similar last
 
-# Same last
+# Tier 4: Same last
 #--------------
 # same last + highest equal count of prefix/suffix/middle
 # same last + common relationship
 # same last + blurb keyword
 
-# Similar last
+# Tier 5: Similar last
 #--------------
 # similar last + highest equal count of prefix/suffix/middle
 # similar last + common relationship
@@ -90,7 +91,7 @@ module EntityMatcher
       alias_method :similar_first, :similar_first_name
       alias_method :similar_last, :similar_last_name
 
-      # ignore the "entity" field testing for equality
+      # ignore entity when testing for equality
       def eql?(other)
         self.to_h.except(:entity) == other.to_h.except(:entity)
       end
@@ -99,18 +100,35 @@ module EntityMatcher
         self.eql? other.to_h
       end
 
-      # This is sorted by ranking "higher" matches higher (returning 1)
-      # However causes the best matches to be placed at the END of the array
-      # EvalutationResultSet reverses the array, but unexpected outcomes might happen
-      # if you use an array directly instead of the ResultSet oject
+      # This is sorted by placing better ranked matches "higher" (returning 1) However, this causes
+      # the best matches to be placed at the END of the array as if sorted in ascending order.
+      # +EvalutationResultSet+ reverses the array, but unexpected outcomes might happen
+      # if you use an array of Person Structs directly instead of the ResultSet class
       def <=>(other)
         return 0 if self == other
 
+        ##
+        # These sort base on common tier criteria
+        #
+
+        # Tier 1
+        return 1 if (self.same_last && self.same_or_similar_first_name) && !(other.same_last && other.same_or_similar_first_name)
+        return -1 if !(self.same_last && self.same_or_similar_first_name) && (other.same_last && other.same_or_similar_first_name)
+        # Tier 2
+        return 1 if (self.same_first && self.similar_last) && !(other.same_first && other.similar_last)
+        return -1 if !(self.same_first && self.similar_last) && (other.same_first && other.similar_last)
+        # Tier 3
+        return 1 if (self.similar_first && self.similar_last) && !(other.similar_first && other.similar_last)
+        return -1 if !(self.similar_first && self.similar_last) && (other.similar_first && other.similar_last)
+        # Tier 4
         return 1 if self.same_last && !other.same_last
         return -1 if !self.same_last && other.same_last
+        # Tier 5
+        return 1 if self.similar_last && !other.similar_last
+        return -1 if !self.similar_last && other.similar_last
 
-        return 1 if self.same_first && !other.same_first
-        return -1 if !self.same_first && other.same_first
+        ##
+        # These sort the between each tier
 
         # tier 1
         # Same last name and same or similar first name
@@ -130,6 +148,20 @@ module EntityMatcher
           return compare_extras_or_equal(other)
         end
 
+        # tier 4
+        # same last name
+        if self.same_last && other.same_last
+          return compare_extras_or_equal(other)
+        end
+
+        # tier 5
+        if self.similar_last && other.similar_last
+          return compare_extras_or_equal(other)
+        end
+
+        return compare_attr(:common_relationship_and_blurb, other) if compare_attr(:common_relationship_and_blurb, other)
+        return compare_attr(:common_relationship, other) if compare_attr(:common_relationship, other)
+        return compare_attr(:blurb_keyword, other) if compare_attr(:blurb_keyword, other)
         return 0
       end
 
@@ -137,7 +169,7 @@ module EntityMatcher
       def compare_same_last(other)
         return compare_extras(other) if self.same_first && other.same_first && compare_extras(other)
 
-        if self.similar_first_name && other.similar_first_name
+        if (self.similar_first && self.same_last) && (other.similar_first && other.same_last)
           return 1 if (self.same_middle_name || self.same_suffix) && !(other.same_middle_name || other.same_suffix)
           return -1 if !(self.same_middle_name || self.same_suffix) && (other.same_middle_name || other.same_suffix)
           return 0 if (self.same_middle_name || self.same_suffix) && (other.same_middle_name || other.same_suffix)
@@ -164,17 +196,19 @@ module EntityMatcher
           count_diff = self.same_middle_prefix_suffix_count - other.same_middle_prefix_suffix_count
           return 1 if count_diff.positive?
           return -1 if count_diff.negative?
+          return compare_attr(:common_relationship_and_blurb, other) if compare_attr(:common_relationship_and_blurb, other)
           return compare_attr(:common_relationship, other) if compare_attr(:common_relationship, other)
           return compare_attr(:blurb_keyword, other) if compare_attr(:blurb_keyword, other)
           return 0
         end
+        return compare_attr(:common_relationship_and_blurb, other) if compare_attr(:common_relationship_and_blurb, other)
         return compare_attr(:common_relationship, other) if compare_attr(:common_relationship, other)
         return compare_attr(:blurb_keyword, other) if compare_attr(:blurb_keyword, other)
       end
 
       # :category: helpers
 
-      # count of positive values for three criteria: same_middle, smae_prefix, and same_suffix
+      # count of positive values for three criteria: same_middle, sameprefix, and same_suffix
       def same_middle_prefix_suffix_count
         [same_middle_name, same_prefix, same_suffix].keep_if(&:present?).count
       end
@@ -185,6 +219,10 @@ module EntityMatcher
 
       def same_or_similar_first_name
         same_first_name || similar_first_name
+      end
+
+      def common_relationship_and_blurb
+        common_relationship && blurb_keyword
       end
 
       private
@@ -205,4 +243,5 @@ module EntityMatcher
     end
   end
 end
-# rubocop:enable Style/RedundantSelf
+# rubocop:enable Style/RedundantSelf, Metrics/LineLength
+# rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize

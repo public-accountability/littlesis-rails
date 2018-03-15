@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
+# rubocop:disable Metrics/LineLength
+
 require 'rails_helper'
 
 describe EntityMatcher, :sphinx do
-
   def result_maker(*args)
     EntityMatcher::EvaluationResult::Person.new.tap do |er|
       args.each { |x| er.send("#{x}=", true) }
@@ -437,8 +440,31 @@ describe EntityMatcher, :sphinx do
             specify { expect(subject.same_middle_prefix_suffix_count).to eql 2 }
           end
         end
+
+        describe 'does not check entity when comparing equality' do
+          it 'having the same properies are equal' do
+            expect(result_maker(:same_first_name, :same_last_name) == result_maker(:same_first_name, :same_last_name)).to be true
+            expect(result_maker(:same_first_name, :same_last_name).eql? result_maker(:same_first_name, :same_last_name)).to be true
+            expect(result_maker(:same_first_name, :similar_last_name) == result_maker(:same_first_name, :same_last_name)).to be false
+            expect(result_maker(:same_first_name, :similar_last_name).eql? result_maker(:same_first_name, :same_last_name)).to be false
+          end
+
+          it 'having the same properies are equal even if entityies are different' do
+            entity1 = build(:org, :with_org_name)
+            entity2 = build(:org, :with_org_name)
+            
+            person1 = result_maker(:same_first_name, :same_last_name)
+            person1.entity = entity1
+            person2 = result_maker(:same_first_name, :same_last_name)
+            person2.entity = entity2
+            expect(person1 == person2).to be true
+            expect(person1.eql? person2).to be true
+          end
+          
+        end
+        
       end
-      
+
       describe 'Sorting' do
         describe 'same first_and_last' do
           let(:results) do
@@ -448,8 +474,8 @@ describe EntityMatcher, :sphinx do
               result_maker(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
               result_maker(:same_first_name, :same_last_name, :same_middle_name),
               result_maker(:same_first_name, :same_last_name, :common_relationship),
-              result_maker(:same_first_name, :same_last_name, :blurb_keyword)
-#              result_maker(:same_first_name, :similar_last_name, :same_suffix)
+              result_maker(:same_first_name, :same_last_name, :blurb_keyword),
+              result_maker(:same_first_name, :similar_last_name, :same_suffix)
             ]
           end
 
@@ -490,6 +516,7 @@ describe EntityMatcher, :sphinx do
               result_maker(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :common_relationship),
               result_maker(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :blurb_keyword),
               result_maker(:similar_first_name, :similar_last_name, :same_suffix, :blurb_keyword),
+              result_maker(:similar_first_name, :similar_last_name, :common_relationship, :blurb_keyword),
               result_maker(:similar_first_name, :similar_last_name, :common_relationship),
               result_maker(:similar_first_name, :similar_last_name, :blurb_keyword),
               result_maker(:similar_first_name, :similar_last_name)
@@ -502,9 +529,67 @@ describe EntityMatcher, :sphinx do
             end
           end
         end
+
+        describe 'same last and similar last' do
+          let(:results) do
+            [
+              result_maker(:same_last_name, :same_middle_name, :same_prefix),
+              result_maker(:same_last_name, :same_suffix, :blurb_keyword),
+              result_maker(:same_last_name, :same_suffix),
+              result_maker(:same_last_name, :same_suffix),
+              result_maker(:same_last_name, :blurb_keyword, :common_relationship),
+              result_maker(:same_last_name, :common_relationship),
+              result_maker(:same_last_name, :common_relationship),
+              result_maker(:same_last_name, :blurb_keyword),
+              result_maker(:similar_last_name, :same_middle_name, :same_prefix),
+              result_maker(:similar_last_name, :blurb_keyword),
+              result_maker(:similar_last_name),
+              result_maker(:similar_last_name),
+              result_maker(:blurb_keyword, :same_first_name)
+            ]
+          end
+          it 'sorts array' do
+            3.times do
+              sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+              expect(sorted).to eql results
+            end
+          end
+        end
+
+        describe 'from all categories' do
+          let(:results) do
+            [
+              result_maker(:same_first_name, :same_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_maker(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
+              result_maker(:same_first_name, :same_last_name, :common_relationship),
+              result_maker(:same_first_name, :same_last_name, :blurb_keyword),
+              result_maker(:same_first_name, :similar_last_name, :common_relationship),
+              result_maker(:same_first_name, :similar_last_name, :blurb_keyword),
+              result_maker(:same_first_name, :similar_last_name),
+              result_maker(:similar_first_name, :similar_last_name, :same_middle_name),
+              result_maker(:similar_first_name, :similar_last_name, :blurb_keyword),
+              result_maker(:similar_first_name, :similar_last_name),
+              result_maker(:same_last_name, :same_middle_name, :same_prefix),
+              result_maker(:same_last_name, :same_suffix, :blurb_keyword),
+              result_maker(:similar_last_name, :blurb_keyword),
+              result_maker(:similar_last_name),
+              result_maker(:blurb_keyword, :common_relationship),
+              result_maker(:common_relationship),
+              result_maker(:blurb_keyword),
+              result_maker(:same_middle_name)
+            ]
+          end
+          it 'sorts array' do
+            3.times do
+              sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+              expect(sorted).to eql results
+            end
+          end
+        end
       end
-      
+
     end
   end
 end
 
+# rubocop:enable Metrics/LineLength
