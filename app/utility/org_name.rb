@@ -108,12 +108,9 @@ module OrgName
     SUFFIX_REGEX.match(name.strip).try(:[], 1)
   end
 
-  # remove punctuation, common suffix, and downcases the name
+  # remove punctuation and downcases the name
   def self.clean(name)
-    strip_name_punctuation(name)
-      .gsub(SUFFIX_REGEX, '')
-      .strip
-      .downcase
+    strip_name_punctuation(name).downcase
   end
 
   # returns lowercase array of words from a org name that aren't common

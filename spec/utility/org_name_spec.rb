@@ -7,7 +7,7 @@ describe OrgName do
     it 'parses "Liberty Mutual Insurance Group"' do
       name = OrgName.parse('Liberty Mutual Insurance Group')
       expect(name.original).to eql 'Liberty Mutual Insurance Group'
-      expect(name.clean).to eql 'liberty mutual insurance'
+      expect(name.clean).to eql 'liberty mutual insurance group'
       expect(name.suffix).to eql 'Group'
       expect(name.essential_words).to eql %w[liberty mutual]
     end
@@ -52,8 +52,8 @@ describe OrgName do
   end
 
   describe 'clean' do
-    specify { expect(OrgName.clean('Company Name, LLC.')).to eql 'company name' }
-    specify { expect(OrgName.clean('EXTERRAN CORPORATION')).to eql 'exterran' }
+    specify { expect(OrgName.clean('Company Name, LLC.')).to eql 'company name llc' }
+    specify { expect(OrgName.clean('EXTERRAN CORPORATION')).to eql 'exterran corporation' }
     specify { expect(OrgName.clean('simplecorp')).to eql 'simplecorp' }
   end
 
