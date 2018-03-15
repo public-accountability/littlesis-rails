@@ -466,8 +466,9 @@ describe EntityMatcher, :sphinx do
             [
               result_maker(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :same_suffix),
               result_maker(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :common_relationship),
-              result_maker(:same_first_name, :similar_last_name, :common_relationship),
+              result_maker(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :blurb_keyword),
               result_maker(:same_first_name, :similar_last_name, :same_suffix, :blurb_keyword),
+              result_maker(:same_first_name, :similar_last_name, :common_relationship),
               result_maker(:same_first_name, :similar_last_name, :blurb_keyword),
               result_maker(:same_first_name, :similar_last_name)
             ]
@@ -480,7 +481,27 @@ describe EntityMatcher, :sphinx do
           end
         end
 
-        
+        describe 'similar first and similar last' do
+          let(:results) do
+            [
+              result_maker(:same_first_name, :same_last_name),
+              result_maker(:same_first_name, :similar_last_name),
+              result_maker(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_maker(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :common_relationship),
+              result_maker(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :blurb_keyword),
+              result_maker(:similar_first_name, :similar_last_name, :same_suffix, :blurb_keyword),
+              result_maker(:similar_first_name, :similar_last_name, :common_relationship),
+              result_maker(:similar_first_name, :similar_last_name, :blurb_keyword),
+              result_maker(:similar_first_name, :similar_last_name)
+            ]
+          end
+          it 'sorts array' do
+            3.times do
+              sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+              expect(sorted).to eql results
+            end
+          end
+        end
       end
       
     end

@@ -22,7 +22,7 @@
 #
 # == Ranking order for Person:
 
-# SAME LAST NAME and Similar or same first
+# Same last name and Similar or same first
 #--------------
 # same first and last name + highest equal (non-zero) count of prefix/suffix/middle
 # same first and last name + common relationship
@@ -54,7 +54,7 @@
 # same last + common relationship
 # same last + blurb keyword
 
-# similar last
+# Similar last
 #--------------
 # similar last + highest equal count of prefix/suffix/middle
 # similar last + common relationship
@@ -87,10 +87,14 @@ module EntityMatcher
       include Comparable
       alias_method :same_first, :same_first_name
       alias_method :same_last, :same_last_name
+      alias_method :similar_first, :similar_first_name
+      alias_method :similar_last, :similar_last_name
 
-      # I'm not 100% sure why but the default struct equality does not work as expected.
-      # It might have to do with how it comparses subclasses?...anyways, not worth the time right now.
-      # eql? does what we want [ziggy Thu 15 Mar 2018]
+      # ignore the "entity" field testing for equality
+      def eql?(other)
+        self.to_h.except(:entity) == other.to_h.except(:entity)
+      end
+
       def ==(other)
         self.eql? other.to_h
       end
@@ -110,11 +114,19 @@ module EntityMatcher
 
         # tier 1
         # Same last name and same or similar first name
-        if (self.same_last && other.same_last) && (self.same_or_similar_first_name && other.same_or_similar_first_name)
+        if (self.same_last && self.same_or_similar_first_name) && (other.same_last && other.same_or_similar_first_name)
           return compare_same_last(other)
         end
 
-        if (self.same_first_name && self.similar_last_name) && (other.same_first_name && other.similar_last_name)
+        # tier 2
+        # same first name and similar last name
+        if (self.same_first && self.similar_last) && (other.same_first && other.similar_last)
+          return compare_extras_or_equal(other)
+        end
+
+        # tier 3
+        # similar first and similar last
+        if (self.similar_first && self.similar_last) && (other.similar_first && other.similar_last)
           return compare_extras_or_equal(other)
         end
 
@@ -136,10 +148,10 @@ module EntityMatcher
         compare_extras_or_equal(other)
       end
 
-      # The same as compare_extras, except it return 0 intead of nil
+      # The same as compare_extras, except returning 0 intead of nil
       def compare_extras_or_equal(other)
         extras_comparsion_val = compare_extras(other)
-        return extras_comparsion_val.nil? ? 0 : extras_comparsion_val  
+        return extras_comparsion_val.nil? ? 0 : extras_comparsion_val
       end
 
       # Compares in order:
@@ -148,8 +160,8 @@ module EntityMatcher
       # - presense of keyword
       # returns 0, 1, -1 or nil
       def compare_extras(other)
-        if self.extra_name_c.positive? || other.extra_name_c.positive?
-          count_diff = self.extra_name_c - other.extra_name_c
+        if self.same_middle_prefix_suffix_count.positive? || other.same_middle_prefix_suffix_count.positive?
+          count_diff = self.same_middle_prefix_suffix_count - other.same_middle_prefix_suffix_count
           return 1 if count_diff.positive?
           return -1 if count_diff.negative?
           return compare_attr(:common_relationship, other) if compare_attr(:common_relationship, other)
@@ -160,13 +172,13 @@ module EntityMatcher
         return compare_attr(:blurb_keyword, other) if compare_attr(:blurb_keyword, other)
       end
 
+      # :category: helpers
+
       # count of positive values for three criteria: same_middle, smae_prefix, and same_suffix
       def same_middle_prefix_suffix_count
         [same_middle_name, same_prefix, same_suffix].keep_if(&:present?).count
       end
-      alias_method :extra_name_c, :same_middle_prefix_suffix_count
 
-      # are the first and last name the same
       def same_first_last?
         same_last_name && same_first_name
       end
@@ -180,13 +192,12 @@ module EntityMatcher
       # returns 0 if both have the attribute
       # returns -1 if the other has it
       # returns 1 if self has it
-
+      # returns nil if neither have the attribute
       def compare_attr(prop, other)
         return 0 if self.send(prop) && other.send(prop)
         return 1 if self.send(prop) && !other.send(prop)
         return -1 if !self.send(prop) && other.send(prop)
       end
-      
     end
 
     Org = Struct.new(*ORG_ATTRS) do
