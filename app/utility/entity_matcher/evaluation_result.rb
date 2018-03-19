@@ -39,6 +39,7 @@
 #--------------
 # Tier 4: only blurb keyword and/or simlar relationship
 #--------------
+
 # == critera for orgs
 # - same_name
 # - matches_alias
@@ -80,8 +81,11 @@ module EntityMatcher
       :blurb_keyword
     ].freeze
 
-    module EvaluationResultEquality
-      # by using values it will ignore entity when testing for equality
+    class Base
+      attr_accessor :entity
+      include Comparable
+
+      # by comparinng #values, we can ignore the attributes, entity, when testing for equality
       def eql?(other)
         (self.class == other.class) && (self.values == other.values)
       end
@@ -89,13 +93,33 @@ module EntityMatcher
       def ==(other)
         self.eql? other
       end
+
+      # Returns a Set of symbols
+      # The subclass must define the constant CRITERIA
+      def values
+        return @_values if defined?(@_values)
+        @_values = self.class.const_get(:CRITERIA).dup.keep_if { |attr| self.send(attr) }.to_set
+      end
+
+      # Returns relative ranking of where the values line in up
+      # according to the critia established by the constant RANKING
+      #
+      # The lower the integer the better the match.
+      # If no match in found in the rankings array it returns
+      # the the value of one more than the last item in the array
+      #
+      # Set#superset? is used instead of #== because
+      # there are same critea that are not used in the ranking sets that can be ignored.
+      def ranking
+        idx = self.class.const_get(:RANKINGS).find_index { |s| values.superset?(s) }
+        return self.class.const_get(:RANKINGS).length if idx.nil?
+        idx
+      end
     end
 
-    class Person
-      attr_accessor :entity
+    class Person < Base
       attr_accessor(*PERSON_ATTRS)
-      include Comparable
-      include EvaluationResultEquality
+      CRITERIA = PERSON_ATTRS
 
       NAME_EXTRAS = [
         Set[:same_middle_name, :same_prefix, :same_suffix],
@@ -158,33 +182,12 @@ module EntityMatcher
 
       RANKINGS = (TIER1 + TIER2 + TIER3 + TIER4).freeze
 
-      # returns a Set of symbols
-      def values
-        return @_values if defined?(@_values)
-        @_values = PERSON_ATTRS.dup.keep_if { |attr| self.send(attr) }.to_set
-      end
-
-      # Returns relative ranking of where the values line in up
-      # according to the critia established by the constant RANKING
-      #
-      # The lower the integer the better the match.
-      # If no match in found in the rankings array it returns
-      # the the value of one more than the last item in the array
-      #
-      # Set#superset? is used instead of #== because
-      # there are same critea that are not used in the ranking sets that can be ignored.
-      def ranking
-        idx = RANKINGS.find_index { |s| values.superset?(s) }
-        return RANKINGS.length if idx.nil?
-        idx
-      end
-
       # Lower values are "better" matchers here
       def <=>(other)
         ##
         # Sort based on common tier criteria
-        # This isn't strickly necessary since comparing ranking will correctly sort
-        # there **might* be a performance benefit to this, but that's not fully confirmed.
+        # This isn't strickly necessary since comparing ranking will correctly sort.
+        # There **might* be a performance benefit to this, but that's not fully confirmed.
         #
         # Tier One
         return -1 if self.tier_one? && !other.tier_one?
@@ -219,12 +222,19 @@ module EntityMatcher
       end
     end
 
-    class Org
-      include Comparable
-      include EvaluationResultEquality
+    class Org < Base
+      attr_accessor(*ORG_ATTRS)
+      CRITERIA = ORG_ATTRS
+      
+      RANKINGS = [
 
+      ]
+
+      # returns a Set of symbols
       def <=>(other)
+        
       end
+
     end
   end
 end
