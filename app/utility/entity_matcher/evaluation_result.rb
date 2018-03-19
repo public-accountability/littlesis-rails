@@ -22,46 +22,39 @@
 #    - blurb_keyword
 #
 # == Ranking order for Person:
-
-# Tier 1: Same last name and Similar or same first
-#--------------
-# same first and last name + highest equal (non-zero) count of prefix/suffix/middle
-# same first and last name + common relationship
-# same first and last name + blurb keyword
-# similar first name and same last name + same_middle | same_suffix
-# similar first name and same last name + common relationship
-# same first and last name
-# similar first name and same last name + highest equal count of prefix/suffix/middle
-# similar first name and same last name + blurb keyword
-# similar first name and same last name
-
-# Tier 2: Same first and similar last
-#--------------
-# same first and similar last + highest equal count of prefix/suffix/middle
-# same first and similar last + common relationship
-# same first and similar last + blurb keyword
-# same first and similar last
-
-# Tier 3: Similar first and similar last
-#--------------
-# similar first and similar last + highest equal count of prefix/suffix/middlew
-# similar first and similar last + common relationshipa
-# similar first and similar last + blurb keyword
-# similar first and similar last
-
-# Tier 4: Same last
-#--------------
-# same last + highest equal count of prefix/suffix/middle
-# same last + common relationship
-# same last + blurb keyword
-
-# Tier 5: Similar last
-#--------------
-# similar last + highest equal count of prefix/suffix/middle
-# similar last + common relationship
-# similar last + blurb keyword
-# similar last
 #
+#
+# TODO:
+#   - determine level for automatch
+#   - check commonality of name
+#   - check aliases
+#   - devalue mismatched suffix?
+#
+
+# Tier 1: Same last name and same or similar first name
+#-----------
+# Tier 2: similar last name
+#--------------
+# Tier 3: Same last and similar last
+#--------------
+# Tier 4: only blurb keyword and/or simlar relationship
+#--------------
+# == critera for orgs
+# - same_name
+# - matches_alias
+# - similar_name
+# - same_root
+# - similar_root
+# - common_relationship
+# - blurb_keyword
+
+# == Ranking order for Org
+# - same_name
+# - matches_alias
+# - same_root
+# - similar_name
+# - similar_root
+#  common_relationship and common_blurb are evaluated within those categories
 module EntityMatcher
   module EvaluationResult
     PERSON_ATTRS = [
@@ -74,172 +67,164 @@ module EntityMatcher
       :similar_last_name,
       :similar_first_name,
       :common_relationship,
-      :blurb_keyword,
-      :entity
+      :blurb_keyword
     ].freeze
 
     ORG_ATTRS = [
+      :same_name,
+      :similar_name,
+      :same_root,
+      :similar_root,
+      :matches_alias,
       :common_relationship,
-      :blurb_keyword,
-      :entity
+      :blurb_keyword
     ].freeze
 
-    Person = Struct.new(*PERSON_ATTRS) do
-      include Comparable
-      alias_method :same_first, :same_first_name
-      alias_method :same_last, :same_last_name
-      alias_method :similar_first, :similar_first_name
-      alias_method :similar_last, :similar_last_name
-
-      # ignore entity when testing for equality
+    module EvaluationResultEquality
+      # by using values it will ignore entity when testing for equality
       def eql?(other)
-        self.to_h.except(:entity) == other.to_h.except(:entity)
+        (self.class == other.class) && (self.values == other.values)
       end
 
       def ==(other)
-        self.eql? other.to_h
+        self.eql? other
+      end
+    end
+
+    class Person
+      attr_accessor :entity
+      attr_accessor(*PERSON_ATTRS)
+      include Comparable
+      include EvaluationResultEquality
+
+      NAME_EXTRAS = [
+        Set[:same_middle_name, :same_prefix, :same_suffix],
+        Set[:same_middle_name, :same_suffix],
+        Set[:same_middle_name, :same_prefix],
+        Set[:same_middle_name],
+        Set[:same_suffix, :same_prefix],
+        Set[:same_suffix],
+        Set[:same_prefix],
+        Set.new
+      ].freeze
+
+      # *Symbols -> Array[Set]
+      private_class_method def self.compute_name_sets(*symbols)
+        NAME_EXTRAS.map { |set_of_name_extras| (Set.new(symbols) + set_of_name_extras).freeze }
       end
 
-      # This is sorted by placing better ranked matches "higher" (returning 1) However, this causes
-      # the best matches to be placed at the END of the array as if sorted in ascending order.
-      # +EvalutationResultSet+ reverses the array, but unexpected outcomes might happen
-      # if you use an array of Person Structs directly instead of the ResultSet class
+      # Same last name + same or similar first name
+      TIER1 = [
+        compute_name_sets(:same_last_name, :same_first_name, :common_relationship, :blurb_keyword),
+        compute_name_sets(:same_last_name, :same_first_name, :common_relationship),
+        compute_name_sets(:same_last_name, :same_first_name, :blurb_keyword),
+        compute_name_sets(:same_last_name, :similar_first_name, :common_relationship, :blurb_keyword),
+        compute_name_sets(:same_last_name, :similar_first_name, :common_relationship),
+        compute_name_sets(:same_last_name, :similar_first_name, :blurb_keyword),
+        compute_name_sets(:same_last_name, :same_first_name),
+        compute_name_sets(:same_last_name, :similar_first_name)
+      ].flatten.freeze
+
+      # Similar last name + same or similar first name
+      TIER2 = [
+        compute_name_sets(:similar_last_name, :same_first_name, :common_relationship, :blurb_keyword),
+        compute_name_sets(:similar_last_name, :same_first_name, :common_relationship),
+        compute_name_sets(:similar_last_name, :same_first_name, :blurb_keyword),
+        compute_name_sets(:similar_last_name, :same_first_name),
+        compute_name_sets(:similar_last_name, :similar_first_name, :common_relationship, :blurb_keyword),
+        compute_name_sets(:similar_last_name, :similar_first_name, :common_relationship),
+        compute_name_sets(:similar_last_name, :similar_first_name, :blurb_keyword),
+        compute_name_sets(:similar_last_name, :similar_first_name)
+      ].flatten.freeze
+
+      # same or simialr last with no matching first name
+      TIER3 = [
+        compute_name_sets(:same_last_name, :common_relationship, :blurb_keyword),
+        compute_name_sets(:same_last_name, :common_relationship),
+        compute_name_sets(:same_last_name, :blurb_keyword),
+        compute_name_sets(:same_last_name),
+        compute_name_sets(:similar_last_name, :common_relationship, :blurb_keyword),
+        compute_name_sets(:similar_last_name, :common_relationship),
+        compute_name_sets(:similar_last_name, :blurb_keyword),
+        compute_name_sets(:similar_last_name)
+      ].flatten.freeze
+
+      # no same or similar last or first names. only common relationship and blurb keyword
+      TIER4 = [
+        Set[:common_relationship, :blurb_keyword],
+        Set[:common_relationship],
+        Set[:blurb_keyword]
+      ].freeze
+
+      RANKINGS = (TIER1 + TIER2 + TIER3 + TIER4).freeze
+
+      # returns a Set of symbols
+      def values
+        return @_values if defined?(@_values)
+        @_values = PERSON_ATTRS.dup.keep_if { |attr| self.send(attr) }.to_set
+      end
+
+      # Returns relative ranking of where the values line in up
+      # according to the critia established by the constant RANKING
+      #
+      # The lower the integer the better the match.
+      # If no match in found in the rankings array it returns
+      # the the value of one more than the last item in the array
+      #
+      # Set#superset? is used instead of #== because
+      # there are same critea that are not used in the ranking sets that can be ignored.
+      def ranking
+        idx = RANKINGS.find_index { |s| values.superset?(s) }
+        return RANKINGS.length if idx.nil?
+        idx
+      end
+
+      # Lower values are "better" matchers here
       def <=>(other)
-        return 0 if self == other
-
         ##
-        # These sort base on common tier criteria
+        # Sort based on common tier criteria
+        # This isn't strickly necessary since comparing ranking will correctly sort
+        # there **might* be a performance benefit to this, but that's not fully confirmed.
         #
+        # Tier One
+        return -1 if self.tier_one? && !other.tier_one?
+        return 1 if !self.tier_one? && other.tier_one?
+        # Tier Two
+        return -1 if self.tier_two? && !other.tier_two?
+        return 1 if !self.tier_two? && other.tier_two?
+        # Tier Three
+        return -1 if self.tier_three? && !other.tier_three?
+        return 1 if !self.tier_three? && other.tier_three?
 
-        # Tier 1
-        return 1 if (self.same_last && self.same_or_similar_first_name) && !(other.same_last && other.same_or_similar_first_name)
-        return -1 if !(self.same_last && self.same_or_similar_first_name) && (other.same_last && other.same_or_similar_first_name)
-        # Tier 2
-        return 1 if (self.same_first && self.similar_last) && !(other.same_first && other.similar_last)
-        return -1 if !(self.same_first && self.similar_last) && (other.same_first && other.similar_last)
-        # Tier 3
-        return 1 if (self.similar_first && self.similar_last) && !(other.similar_first && other.similar_last)
-        return -1 if !(self.similar_first && self.similar_last) && (other.similar_first && other.similar_last)
-        # Tier 4
-        return 1 if self.same_last && !other.same_last
-        return -1 if !self.same_last && other.same_last
-        # Tier 5
-        return 1 if self.similar_last && !other.similar_last
-        return -1 if !self.similar_last && other.similar_last
-
-        ##
-        # These sort the between each tier
-
-        # tier 1
-        # Same last name and same or similar first name
-        if (self.same_last && self.same_or_similar_first_name) && (other.same_last && other.same_or_similar_first_name)
-          return compare_same_last(other)
-        end
-
-        # tier 2
-        # same first name and similar last name
-        if (self.same_first && self.similar_last) && (other.same_first && other.similar_last)
-          return compare_extras_or_equal(other)
-        end
-
-        # tier 3
-        # similar first and similar last
-        if (self.similar_first && self.similar_last) && (other.similar_first && other.similar_last)
-          return compare_extras_or_equal(other)
-        end
-
-        # tier 4
-        # same last name
-        if self.same_last && other.same_last
-          return compare_extras_or_equal(other)
-        end
-
-        # tier 5
-        if self.similar_last && other.similar_last
-          return compare_extras_or_equal(other)
-        end
-
-        return compare_attr(:common_relationship_and_blurb, other) if compare_attr(:common_relationship_and_blurb, other)
-        return compare_attr(:common_relationship, other) if compare_attr(:common_relationship, other)
-        return compare_attr(:blurb_keyword, other) if compare_attr(:blurb_keyword, other)
-        return 0
+        # return 0 if self == other
+        self.ranking <=> other.ranking
       end
 
-      # ASSUMES only called if both have same last name and the same or similar first name
-      def compare_same_last(other)
-        return compare_extras(other) if self.same_first && other.same_first && compare_extras(other)
-
-        if (self.similar_first && self.same_last) && (other.similar_first && other.same_last)
-          return 1 if (self.same_middle_name || self.same_suffix) && !(other.same_middle_name || other.same_suffix)
-          return -1 if !(self.same_middle_name || self.same_suffix) && (other.same_middle_name || other.same_suffix)
-          return 0 if (self.same_middle_name || self.same_suffix) && (other.same_middle_name || other.same_suffix)
-          return compare_attr(:common_relationship, other) if compare_attr(:common_relationship, other)
-        end
-
-        return compare_attr(:same_first_last?, other) if compare_attr(:same_first_last?, other)
-        compare_extras_or_equal(other)
+      def tier_one?
+        same_last_name && same_or_similar_first_name
       end
 
-      # The same as compare_extras, except returning 0 intead of nil
-      def compare_extras_or_equal(other)
-        extras_comparsion_val = compare_extras(other)
-        return extras_comparsion_val.nil? ? 0 : extras_comparsion_val
+      def tier_two?
+        similar_last_name && same_or_similar_first_name
       end
 
-      # Compares in order:
-      # - highest non-zero values of same prefix, same suffix, and same middle
-      # - presense of common relationship
-      # - presense of keyword
-      # returns 0, 1, -1 or nil
-      def compare_extras(other)
-        if self.same_middle_prefix_suffix_count.positive? || other.same_middle_prefix_suffix_count.positive?
-          count_diff = self.same_middle_prefix_suffix_count - other.same_middle_prefix_suffix_count
-          return 1 if count_diff.positive?
-          return -1 if count_diff.negative?
-          return compare_attr(:common_relationship_and_blurb, other) if compare_attr(:common_relationship_and_blurb, other)
-          return compare_attr(:common_relationship, other) if compare_attr(:common_relationship, other)
-          return compare_attr(:blurb_keyword, other) if compare_attr(:blurb_keyword, other)
-          return 0
-        end
-        return compare_attr(:common_relationship_and_blurb, other) if compare_attr(:common_relationship_and_blurb, other)
-        return compare_attr(:common_relationship, other) if compare_attr(:common_relationship, other)
-        return compare_attr(:blurb_keyword, other) if compare_attr(:blurb_keyword, other)
-      end
-
-      # :category: helpers
-
-      # count of positive values for three criteria: same_middle, sameprefix, and same_suffix
-      def same_middle_prefix_suffix_count
-        [same_middle_name, same_prefix, same_suffix].keep_if(&:present?).count
-      end
-
-      def same_first_last?
-        same_last_name && same_first_name
-      end
-
-      def same_or_similar_first_name
-        same_first_name || similar_first_name
-      end
-
-      def common_relationship_and_blurb
-        common_relationship && blurb_keyword
+      def tier_three?
+        (same_last_name || similar_last_name) && !same_or_similar_first_name
       end
 
       private
 
-      # returns 0 if both have the attribute
-      # returns -1 if the other has it
-      # returns 1 if self has it
-      # returns nil if neither have the attribute
-      def compare_attr(prop, other)
-        return 0 if self.send(prop) && other.send(prop)
-        return 1 if self.send(prop) && !other.send(prop)
-        return -1 if !self.send(prop) && other.send(prop)
+      def same_or_similar_first_name
+        same_first_name || similar_first_name
       end
     end
 
-    Org = Struct.new(*ORG_ATTRS) do
+    class Org
       include Comparable
+      include EvaluationResultEquality
+
+      def <=>(other)
+      end
     end
   end
 end

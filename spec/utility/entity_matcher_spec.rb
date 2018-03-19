@@ -5,8 +5,14 @@
 require 'rails_helper'
 
 describe EntityMatcher, :sphinx do
-  def result_maker(*args)
+  def result_person(*args)
     EntityMatcher::EvaluationResult::Person.new.tap do |er|
+      args.each { |x| er.send("#{x}=", true) }
+    end
+  end
+
+  def result_org(*args)
+    EntityMatcher::EvaluationResult::Org.new.tap do |er|
       args.each { |x| er.send("#{x}=", true) }
     end
   end
@@ -414,68 +420,51 @@ describe EntityMatcher, :sphinx do
       end
     end # end EntityMatcher::Evaluation::Person
 
+    describe EntityMatcher::Evaluation::Org do
+      subject { EntityMatcher::Evaluation::org }
+    end
+
     describe EntityMatcher::EvaluationResult::Person do
-      describe '#equal_first_last?' do
-        context 'same names' do
-          subject { result_maker(:same_last_name, :same_first_name) }
-          specify { expect(subject.same_first_last?).to eql true }
+      describe 'values' do
+        subject { result_person(:same_last_name, :same_first_name) }
+        it 'returns attributes, ignoring entity' do
+          subject.entity = build(:person)
+          expect(subject.values).to eql Set[:same_last_name, :same_first_name]
         end
-
-        context 'different names' do
-          before do
-            subject.same_last_name = false
-            subject.same_first_name = true
-          end
-          specify { expect(subject.same_first_last?).to eql false }
-        end
-
-        describe 'same_middle_prefix_suffix_count' do
-          context 'zero' do
-            specify { expect(subject.same_middle_prefix_suffix_count).to eql 0 }
-          end
-
-          context 'two' do
-            subject { result_maker(:same_prefix, :same_suffix) }
-            before  { subject.same_middle_name = false }
-            specify { expect(subject.same_middle_prefix_suffix_count).to eql 2 }
-          end
-        end
-
-        describe 'does not check entity when comparing equality' do
-          it 'having the same properies are equal' do
-            expect(result_maker(:same_first_name, :same_last_name) == result_maker(:same_first_name, :same_last_name)).to be true
-            expect(result_maker(:same_first_name, :same_last_name).eql? result_maker(:same_first_name, :same_last_name)).to be true
-            expect(result_maker(:same_first_name, :similar_last_name) == result_maker(:same_first_name, :same_last_name)).to be false
-            expect(result_maker(:same_first_name, :similar_last_name).eql? result_maker(:same_first_name, :same_last_name)).to be false
-          end
-
-          it 'having the same properies are equal even if entityies are different' do
-            entity1 = build(:org, :with_org_name)
-            entity2 = build(:org, :with_org_name)
-            
-            person1 = result_maker(:same_first_name, :same_last_name)
-            person1.entity = entity1
-            person2 = result_maker(:same_first_name, :same_last_name)
-            person2.entity = entity2
-            expect(person1 == person2).to be true
-            expect(person1.eql? person2).to be true
-          end
-          
-        end
-        
       end
 
-      describe 'Sorting' do
+      describe 'does not check entity when comparing equality' do
+        it 'having the same properies are equal' do
+          expect(result_person(:same_first_name, :same_last_name) == result_person(:same_first_name, :same_last_name)).to be true
+          expect(result_person(:same_first_name, :same_last_name).eql? result_person(:same_first_name, :same_last_name)).to be true
+          expect(result_person(:same_first_name, :similar_last_name) == result_person(:same_first_name, :same_last_name)).to be false
+          expect(result_person(:same_first_name, :similar_last_name).eql? result_person(:same_first_name, :same_last_name)).to be false
+        end
+
+        it 'having the same properies are equal even if entityies are different' do
+          entity1 = build(:org, :with_org_name)
+          entity2 = build(:org, :with_org_name)
+
+          person1 = result_person(:same_first_name, :same_last_name)
+          person1.entity = entity1
+          person2 = result_person(:same_first_name, :same_last_name)
+          person2.entity = entity2
+          expect(person1 == person2).to be true
+          expect(person1.eql? person2).to be true
+        end
+      end
+
+      describe 'Sorting People' do
         describe 'same first_and_last' do
           let(:results) do
             [
-              result_maker(:same_first_name, :same_last_name, :same_middle_name, :same_prefix, :same_suffix),
-              result_maker(:same_first_name, :same_last_name, :same_middle_name, :same_prefix),
-              result_maker(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
-              result_maker(:same_first_name, :same_last_name, :same_middle_name),
-              result_maker(:same_first_name, :same_last_name, :common_relationship),
-              result_maker(:same_first_name, :same_last_name, :blurb_keyword),
-              result_maker(:same_first_name, :similar_last_name, :same_suffix)
+              result_person(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
+              result_person(:same_first_name, :same_last_name, :common_relationship),
+              result_person(:same_first_name, :same_last_name, :blurb_keyword),
+              result_person(:same_first_name, :same_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_person(:same_first_name, :same_last_name, :same_middle_name, :same_prefix),
+              result_person(:same_first_name, :same_last_name, :same_middle_name),
+              result_person(:same_first_name, :similar_last_name, :same_suffix)
             ]
           end
 
@@ -490,13 +479,13 @@ describe EntityMatcher, :sphinx do
         describe 'same_first_similar_last' do
           let(:results) do
             [
-              result_maker(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :same_suffix),
-              result_maker(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :common_relationship),
-              result_maker(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :blurb_keyword),
-              result_maker(:same_first_name, :similar_last_name, :same_suffix, :blurb_keyword),
-              result_maker(:same_first_name, :similar_last_name, :common_relationship),
-              result_maker(:same_first_name, :similar_last_name, :blurb_keyword),
-              result_maker(:same_first_name, :similar_last_name)
+              result_person(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :common_relationship),
+              result_person(:same_first_name, :similar_last_name, :common_relationship),
+              result_person(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :blurb_keyword),
+              result_person(:same_first_name, :similar_last_name, :same_suffix, :blurb_keyword),
+              result_person(:same_first_name, :similar_last_name, :blurb_keyword),
+              result_person(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_person(:same_first_name, :similar_last_name)
             ]
           end
           it 'sorts array' do
@@ -510,18 +499,19 @@ describe EntityMatcher, :sphinx do
         describe 'similar first and similar last' do
           let(:results) do
             [
-              result_maker(:same_first_name, :same_last_name),
-              result_maker(:same_first_name, :similar_last_name),
-              result_maker(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :same_suffix),
-              result_maker(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :common_relationship),
-              result_maker(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :blurb_keyword),
-              result_maker(:similar_first_name, :similar_last_name, :same_suffix, :blurb_keyword),
-              result_maker(:similar_first_name, :similar_last_name, :common_relationship, :blurb_keyword),
-              result_maker(:similar_first_name, :similar_last_name, :common_relationship),
-              result_maker(:similar_first_name, :similar_last_name, :blurb_keyword),
-              result_maker(:similar_first_name, :similar_last_name)
+              result_person(:same_first_name, :same_last_name),
+              result_person(:same_first_name, :similar_last_name),
+              result_person(:similar_first_name, :similar_last_name, :common_relationship, :blurb_keyword),
+              result_person(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :common_relationship),
+              result_person(:similar_first_name, :similar_last_name, :common_relationship),
+              result_person(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :blurb_keyword),
+              result_person(:similar_first_name, :similar_last_name, :same_suffix, :blurb_keyword),
+              result_person(:similar_first_name, :similar_last_name, :blurb_keyword),
+              result_person(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_person(:similar_first_name, :similar_last_name)
             ]
           end
+
           it 'sorts array' do
             3.times do
               sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
@@ -533,19 +523,19 @@ describe EntityMatcher, :sphinx do
         describe 'same last and similar last' do
           let(:results) do
             [
-              result_maker(:same_last_name, :same_middle_name, :same_prefix),
-              result_maker(:same_last_name, :same_suffix, :blurb_keyword),
-              result_maker(:same_last_name, :same_suffix),
-              result_maker(:same_last_name, :same_suffix),
-              result_maker(:same_last_name, :blurb_keyword, :common_relationship),
-              result_maker(:same_last_name, :common_relationship),
-              result_maker(:same_last_name, :common_relationship),
-              result_maker(:same_last_name, :blurb_keyword),
-              result_maker(:similar_last_name, :same_middle_name, :same_prefix),
-              result_maker(:similar_last_name, :blurb_keyword),
-              result_maker(:similar_last_name),
-              result_maker(:similar_last_name),
-              result_maker(:blurb_keyword, :same_first_name)
+              result_person(:same_last_name, :blurb_keyword, :common_relationship),
+              result_person(:same_last_name, :common_relationship),
+              result_person(:same_last_name, :common_relationship),
+              result_person(:same_last_name, :same_suffix, :blurb_keyword),
+              result_person(:same_last_name, :blurb_keyword),
+              result_person(:same_last_name, :same_middle_name, :same_prefix),
+              result_person(:same_last_name, :same_suffix),
+              result_person(:same_last_name, :same_suffix),
+              result_person(:similar_last_name, :blurb_keyword),
+              result_person(:similar_last_name, :same_middle_name, :same_prefix),
+              result_person(:similar_last_name),
+              result_person(:similar_last_name),
+              result_person(:blurb_keyword, :same_first_name)
             ]
           end
           it 'sorts array' do
@@ -559,24 +549,24 @@ describe EntityMatcher, :sphinx do
         describe 'from all categories' do
           let(:results) do
             [
-              result_maker(:same_first_name, :same_last_name, :same_middle_name, :same_prefix, :same_suffix),
-              result_maker(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
-              result_maker(:same_first_name, :same_last_name, :common_relationship),
-              result_maker(:same_first_name, :same_last_name, :blurb_keyword),
-              result_maker(:same_first_name, :similar_last_name, :common_relationship),
-              result_maker(:same_first_name, :similar_last_name, :blurb_keyword),
-              result_maker(:same_first_name, :similar_last_name),
-              result_maker(:similar_first_name, :similar_last_name, :same_middle_name),
-              result_maker(:similar_first_name, :similar_last_name, :blurb_keyword),
-              result_maker(:similar_first_name, :similar_last_name),
-              result_maker(:same_last_name, :same_middle_name, :same_prefix),
-              result_maker(:same_last_name, :same_suffix, :blurb_keyword),
-              result_maker(:similar_last_name, :blurb_keyword),
-              result_maker(:similar_last_name),
-              result_maker(:blurb_keyword, :common_relationship),
-              result_maker(:common_relationship),
-              result_maker(:blurb_keyword),
-              result_maker(:same_middle_name)
+              result_person(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
+              result_person(:same_first_name, :same_last_name, :common_relationship),
+              result_person(:same_first_name, :same_last_name, :blurb_keyword),
+              result_person(:same_first_name, :same_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_person(:same_first_name, :similar_last_name, :common_relationship),
+              result_person(:same_first_name, :similar_last_name, :blurb_keyword),
+              result_person(:same_first_name, :similar_last_name),
+              result_person(:similar_first_name, :similar_last_name, :blurb_keyword),
+              result_person(:similar_first_name, :similar_last_name, :same_middle_name),
+              result_person(:similar_first_name, :similar_last_name),
+              result_person(:same_last_name, :same_suffix, :blurb_keyword),
+              result_person(:same_last_name, :same_middle_name, :same_prefix),
+              result_person(:similar_last_name, :blurb_keyword),
+              result_person(:similar_last_name),
+              result_person(:blurb_keyword, :common_relationship),
+              result_person(:common_relationship),
+              result_person(:blurb_keyword),
+              result_person(:same_middle_name)
             ]
           end
           it 'sorts array' do
