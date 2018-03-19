@@ -3,16 +3,33 @@ require Rails.root.join('lib', 'cmp.rb').to_s
 
 namespace :cmp do
   namespace :orgs do
-    desc 'find orgs that have 2 or more matches'
-    task with_multiple_matches: :environment do
-      Cmp.orgs.select { |cmp_org| cmp_org.entity_match.count >= 2 }. each do |cmp_org|
-        matches = cmp_org.matches
-        puts '|----------------------------------------------------------|'
-        puts "name: #{cmp_org.fetch(:cmpname)}"
-        puts "cmpid: #{cmp_org.cmpid}"
-        puts "match one: #{matches[:one]}"
-        puts "match two: #{matches[:two]}"
+    desc 'saves spreadsheet of org matches'
+    task save_org_matches: :environment do
+      file_path = Rails.root
+                    .join('data', "cmp_orgs_matched_#{Time.current.strftime('%F')}.csv").to_s
+
+      blank_match_values = {
+        match1_name: nil, match1_id: nil, match1_values: nil,
+        match2_name: nil, match2_id: nil, match2_values: nil
+      }
+
+      sheet = Cmp.orgs.take(1000).map do |cmp_org|
+        attrs = cmp_org.attributes.merge(blank_match_values)
+
+        EntityMatcher
+          .find_matches_for_org(cmp_org.fetch(:cmpname))
+          .first(2) # take first 2 matches
+          .each.with_index do |match, idx|
+
+          attrs["match#{idx + 1}_name".to_sym] = match.entity.name
+          attrs["match#{idx + 1}_id".to_sym] = match.entity.id
+          attrs["match#{idx + 1}_values".to_sym] = match.values.to_a.join('|')
+        end
+        attrs[:pre_selected] = Cmp::EntityMatch.matches.dig(cmp_org.cmpid.to_s, 'entity_id')
+        attrs
       end
+      Query.save_hash_array_to_csv file_path, sheet
+      puts "Saved orgs to: #{file_path}"
     end
 
     desc 'import orgs excel sheet'

@@ -31,6 +31,10 @@ module EntityMatcher
         raise NotImplementedError
       end
 
+      def ts_escape(x)
+        ThinkingSphinx::Query.escape(x)
+      end
+
       private
 
       def create_query
@@ -98,11 +102,11 @@ module EntityMatcher
       end
 
       def run
-        @parts << ThinkingSphinx::Query.wildcard(@org_name.clean)
-        @parts << @org_name.root if @org_name.root != @org_name.clean
+        @parts << ThinkingSphinx::Query.wildcard(ts_escape(@org_name.clean))
+        @parts << ts_escape(@org_name.root) if ts_escape(@org_name.root) != ts_escape(@org_name.clean)
 
         if @org_name.essential_words.length > 1
-          @parts << @org_name.essential_words.join(' ')
+          @parts << @org_name.essential_words.map { |x| ts_escape(x) }.join(' ')
         end
       end
     end
