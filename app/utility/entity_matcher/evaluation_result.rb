@@ -225,16 +225,32 @@ module EntityMatcher
     class Org < Base
       attr_accessor(*ORG_ATTRS)
       CRITERIA = ORG_ATTRS
-      
-      RANKINGS = [
 
-      ]
-
-      # returns a Set of symbols
-      def <=>(other)
-        
+      # *Symbols -> Array[Set]
+      private_class_method def self.compute_variations(*symbols)
+        [
+          Set[:common_relationship, :blurb_keyword],
+          Set[:common_relationship],
+          Set[:blurb_keyword]
+        ].map { |s| (Set.new(symbols) + s).freeze }
       end
 
+      RANKINGS = [
+        compute_variations(:same_name),
+        compute_variations(:matches_alias),
+        Set[:same_name],
+        Set[:matches_alias],
+        compute_variations(:similar_name),
+        compute_variations(:same_root),
+        compute_variations(:similar_root),
+        Set[:similar_name],
+        Set[:same_root],
+        Set[:similar_root]
+      ].flatten.freeze
+
+      def <=>(other)
+        self.ranking <=> other.ranking
+      end
     end
   end
 end

@@ -667,14 +667,32 @@ describe EntityMatcher, :sphinx do
             end
           end
         end
-      end
-
+      end # end sorting people
 
       describe 'Sorting orgs' do
-        
-      end
-
+        let(:results) do
+          [
+            result_org(:same_name, :common_relationship, :blurb_keyword),
+            result_org(:same_name, :similar_name, :blurb_keyword),
+            result_org(:matches_alias, :similar_name, :blurb_keyword, :common_relationship),
+            result_org(:same_name),
+            result_org(:matches_alias, :similar_name),
+            result_org(:similar_name, :common_relationship),
+            result_org(:same_root, :blurb_keyword),
+            result_org(:similar_root, :common_relationship),
+            result_org(:similar_name),
+            result_org(:same_root)
+          ]
+        end
+        it 'sorts array' do
+          3.times do
+            sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+            expect(sorted).to eql results
+          end
+        end
+      end # end sorting orgs
     end
+
   end
 end
 
