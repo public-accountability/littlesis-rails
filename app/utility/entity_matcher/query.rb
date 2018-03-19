@@ -98,9 +98,8 @@ module EntityMatcher
       end
 
       def run
-        simple_name = __getobj__.downcase
-        @parts << ThinkingSphinx::Query.wildcard(simple_name)
-        @parts << @org_name.clean if @org_name.clean != simple_name
+        @parts << ThinkingSphinx::Query.wildcard(@org_name.clean)
+        @parts << @org_name.root if @org_name.root != @org_name.clean
 
         if @org_name.essential_words.length > 1
           @parts << @org_name.essential_words.join(' ')
