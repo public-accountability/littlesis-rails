@@ -5,7 +5,7 @@
 #
 # OrgName.parse returns a +struct+ with 5 components:
 #   - original
-#   - clean (name without punctuation or suffix)
+#   - clean (name without punctuation, downcased)
 #   - root (org name without suffix)
 #   - suffix (if found)
 #   - essential words

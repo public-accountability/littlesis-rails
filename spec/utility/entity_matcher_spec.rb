@@ -158,6 +158,14 @@ describe EntityMatcher, :sphinx do
         expect(subject.new(org).entity).to be_a Entity
         expect(subject.new('corp').entity).to be nil
       end
+
+      it 'sets @name for a string' do
+        expect(subject.new(Faker::Company.name).name).to be_a OrgName::Name
+      end
+
+      it 'sets @name for a string' do
+        expect(subject.new(org).name).to be_a OrgName::Name
+      end
     end
 
     describe EntityMatcher::TestCase::Person do
@@ -421,12 +429,95 @@ describe EntityMatcher, :sphinx do
     end # end EntityMatcher::Evaluation::Person
 
     describe EntityMatcher::Evaluation::Org do
-      subject { EntityMatcher::Evaluation::org }
+      let(:entity) { build(:org) }
+      # subject { EntityMatcher::Evaluation::Org }
+
+      context 'has same name' do
+        let(:test_case) { EntityMatcher::TestCase::Org.new("test company") }
+        let(:match) { EntityMatcher::TestCase::Org.new(create(:entity_org, name: "Test Company")) }
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.same_name).to eql true
+          expect(subject.result.similar_name).to eql true
+          expect(subject.result.matches_alias).to eql nil
+          expect(subject.result.common_relationship).to eql nil
+        end
+      end
+
+      context 'similar name' do
+        let(:test_case) { EntityMatcher::TestCase::Org.new("ABC COMPANY") }
+        let(:match) { EntityMatcher::TestCase::Org.new(create(:entity_org, name: "ABCD COMPANY")) }
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.same_name).to eql false
+          expect(subject.result.similar_name).to eql true
+        end
+      end
+
+      context 'same root' do
+        let(:test_case) { EntityMatcher::TestCase::Org.new("ABC COMPANY") }
+        let(:match) { EntityMatcher::TestCase::Org.new(create(:entity_org, name: "ABC LLC")) }
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.same_name).to eql false
+          expect(subject.result.similar_name).to eql false
+          expect(subject.result.same_root).to eql true
+        end
+      end
+
+      context 'simmilar root' do
+        let(:test_case) { EntityMatcher::TestCase::Org.new("123 COMPANY") }
+        let(:match) { EntityMatcher::TestCase::Org.new(create(:entity_org, name: "124 LLC")) }
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.same_root).to eql false
+          expect(subject.result.similar_root).to eql true
+        end
+      end
+
+      context 'matches alias' do
+        let(:test_case) { EntityMatcher::TestCase::Org.new("123 COMPANY") }
+        let(:entity) do
+          create(:entity_org, :with_org_name).tap do |e|
+            e.aliases.create!(name: '123 company')
+          end
+        end
+        let(:match) { EntityMatcher::TestCase::Org.new(entity) }
+
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.same_name).to eql false
+          expect(subject.result.similar_name).to eql false
+          expect(subject.result.matches_alias).to eql true
+        end
+      end
+
+      context 'relationship in common' do
+        let(:other_org) { create(:entity_org) }
+        let(:test_case) { EntityMatcher::TestCase::Org.new("123 COMPANY", associated: other_org.id) }
+        let(:entity) do
+          create(:entity_org, :with_org_name).tap do |e|
+            Relationship.create!(category_id: 12, entity: e, related: other_org)
+          end
+        end
+        let(:match) { EntityMatcher::TestCase::Org.new(entity) }
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.common_relationship).to eql true
+        end
+      end
     end
 
     describe EntityMatcher::EvaluationResult::Person do
       describe 'values' do
         subject { result_person(:same_last_name, :same_first_name) }
+
         it 'returns attributes, ignoring entity' do
           subject.entity = build(:person)
           expect(subject.values).to eql Set[:same_last_name, :same_first_name]
@@ -576,6 +667,11 @@ describe EntityMatcher, :sphinx do
             end
           end
         end
+      end
+
+
+      describe 'Sorting orgs' do
+        
       end
 
     end

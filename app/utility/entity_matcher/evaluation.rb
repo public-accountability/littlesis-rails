@@ -57,8 +57,8 @@ module EntityMatcher
       private
 
       def validate_arguments(test_case, match)
-        TypeCheck.check test_case, EntityMatcher::TestCase::Person
-        TypeCheck.check match, EntityMatcher::TestCase::Person
+        TypeCheck.check test_case, EntityMatcher::TestCase::const_get(self.class.name.demodulize)
+        TypeCheck.check match, EntityMatcher::TestCase::const_get(self.class.name.demodulize)
         TypeCheck.check match.entity, Entity
       end
     end
@@ -101,6 +101,26 @@ module EntityMatcher
     # Evaluates two Orgs
     #
     class Org < Base
+      private
+
+      def comparisons
+        @result.same_name = (@test_case.name.clean == @match.name.clean)
+        @result.similar_name = NameSimilarity.similar?(@test_case.name.clean, @match.name.clean)
+        @result.same_root = (@test_case.name.root == @match.name.root)
+        @result.similar_root = NameSimilarity.similar?(@test_case.name.root, @match.name.root)
+        @result.matches_alias = matches_alias
+        @result.common_relationship = common_relationship
+        @result.blurb_keyword = blurb_keyword
+      end
+
+      def matches_alias
+        aliases = @match.entity.also_known_as.map { |n| OrgName.parse(n).clean }
+        return nil if aliases.empty?
+        aliases.each do |a|
+          return true if a == @test_case.name.clean
+        end
+        return false
+      end        
     end
   end
 end
