@@ -245,9 +245,6 @@ describe EntityMatcher, :sphinx do
         EntityMatcher::TestCase::Person.new(build(:person, person: build(:a_person, **fields)))
       end
 
-      # EntityMatcher::TestCase::Person.new(
-      #     build(:person, person: build(:a_person, fields))
-      #   )
       context 'same last names' do
         let(:test_case) do
           EntityMatcher::TestCase::Person.new('jane doe')
@@ -542,6 +539,32 @@ describe EntityMatcher, :sphinx do
           person2.entity = entity2
           expect(person1 == person2).to be true
           expect(person1.eql? person2).to be true
+        end
+      end
+
+      describe 'automatch?' do
+        context 'for a person' do
+          context 'can be automatch' do
+            subject { result_person(:same_first_name, :same_last_name, :common_relationship, :same_middle_name) }
+            specify { expect(subject.automatch?).to be true }
+          end
+
+          context 'can not be automatch' do
+            subject { result_person(:same_first_name, :same_last_name, :blurb_keyword) }
+            specify { expect(subject.automatch?).to be false }
+          end
+        end
+
+        context 'for an org' do
+          context 'can be automatch' do
+            subject { result_org(:matches_alias) }
+            specify { expect(subject.automatch?).to be true }
+          end
+
+          context 'can not be automatch' do
+            subject { result_org(:same_root) }
+            specify { expect(subject.automatch?).to be false }
+          end
         end
       end
 
