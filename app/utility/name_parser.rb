@@ -342,8 +342,8 @@ class NameParser
     parts.reverse! if ends_with_comma(parts[0])
     maybe_first, maybe_last = parts
 
-    if prefix? maybe_first
-      @errors << "Could not find a first name. #{maybe_first} is a known prefix"
+    if common_prefix? maybe_first
+      @errors << "Could not find a first name. #{maybe_first} is a common prefix"
       @prefix = maybe_first
     else
       @first = maybe_first
@@ -362,6 +362,10 @@ class NameParser
 
   def prefix?(name)
     PREFIXES.include? clean(name).capitalize
+  end
+
+  def common_prefix?(name)
+    COMMON_PREFIXES.include? clean(name).capitalize
   end
 
   def suffix?(name)
