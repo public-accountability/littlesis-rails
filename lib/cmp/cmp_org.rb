@@ -106,7 +106,7 @@ module Cmp
     def create_new_entity!
       Entity.create!(
         primary_ext: 'Org',
-        name: attributes[:cmpname],
+        name: OrgName.format(attributes[:cmpname]),
         last_user_id: Cmp::CMP_USER_ID
       )
     end

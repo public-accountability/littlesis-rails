@@ -191,7 +191,7 @@ describe Cmp::CmpOrg do
       end
       it 'creates a new entity' do
         expect { subject.find_or_create_entity }.to change { Entity.count }.by(1)
-        expect(Entity.last.name).to eql attributes[:cmpname]
+        expect(Entity.last.name).to eql "Big Oil Inc"
       end
     end
   end

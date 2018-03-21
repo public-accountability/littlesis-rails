@@ -24,6 +24,7 @@ module OrgName
     "LP",
     "PLC",
     "PA",
+    "SA",
     "Chtd",
     "GMBH",
     "Chartered",
@@ -51,6 +52,9 @@ module OrgName
     "Systems",
     "Group"
   ].freeze
+
+  SUFFIX_ACRONYMS = %w[LLP LLC LP PLC PA SA].freeze
+  SUFFIX_ACRONYMS_REGEX = Regexp.new "(?<=[ ])(#{SUFFIX_ACRONYMS.join('|')})$", Regexp::IGNORECASE
 
   SUFFIX_REGEX = Regexp.new "(?<=[ ])(#{COMMON_SUFFIXES.join('|')})(?:[,\.]*)$", Regexp::IGNORECASE
 
@@ -91,6 +95,16 @@ module OrgName
   ALL_COMMON_WORDS = (GRAMMAR_WORDS + COMMON_SUFFIXES + COMMON_WORDS).map(&:downcase).to_set
 
   Name = Struct.new(:original, :clean, :root, :suffix, :essential_words)
+
+  # String ---> String
+  def self.format(name)
+    name
+      .split(' ')
+      .map(&:capitalize)
+      .join(' ')
+      .gsub(/\w{3,}-\w{3,}/) { |x| x.split('-').map(&:capitalize).join('-') }
+      .gsub(SUFFIX_ACRONYMS_REGEX) { |x| x.upcase }
+  end
 
   # String ---> OrgName::Name
   def self.parse(name)
