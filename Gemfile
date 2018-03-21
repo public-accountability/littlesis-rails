@@ -29,7 +29,7 @@ gem 'sprockets', '~> 3.0'
 gem 'asset_sync', '~> 2.3.0'
 gem "fog-aws"
 
-gem 'uglifier', '>= 4.1.3'
+gem 'uglifier', '>= 4.1'
 gem 'bootstrap-sass', '~> 3.3.7'
 gem 'bootstrap-datepicker-rails'
 gem 'jquery-rails'
@@ -43,7 +43,7 @@ gem 'activerecord-session_store'
 
 # For search and indexing
 gem 'thinking-sphinx', '~> 3.4.2'
-gem 'ts-delayed-delta', '2.0.2', :require => 'thinking_sphinx/deltas/delayed_delta'
+gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_delta'
 
 gem 'htmlentities'
 
