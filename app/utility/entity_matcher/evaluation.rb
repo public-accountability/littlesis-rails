@@ -57,8 +57,8 @@ module EntityMatcher
       private
 
       def validate_arguments(test_case, match)
-        TypeCheck.check test_case, EntityMatcher::TestCase::const_get(self.class.name.demodulize)
-        TypeCheck.check match, EntityMatcher::TestCase::const_get(self.class.name.demodulize)
+        TypeCheck.check test_case, EntityMatcher::TestCase.const_get(self.class.name.demodulize)
+        TypeCheck.check match, EntityMatcher::TestCase.const_get(self.class.name.demodulize)
         TypeCheck.check match.entity, Entity
       end
     end
@@ -120,7 +120,7 @@ module EntityMatcher
           return true if a == @test_case.name.clean
         end
         return false
-      end        
+      end
     end
   end
 end
