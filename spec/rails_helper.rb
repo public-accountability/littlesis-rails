@@ -88,9 +88,6 @@ RSpec.configure do |config|
     end
   end
 
-  # https://github.com/kucaahbe/rspec-html-matchers
-  config.include RSpecHtmlMatchers
-
   Capybara.ignore_hidden_elements = false
 
   # config.before(:suite) do

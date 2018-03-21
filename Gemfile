@@ -71,7 +71,6 @@ group :test, :development do
   gem 'pry-rails'
   gem 'rack-mini-profiler'
   gem 'rails-controller-testing'
-  gem 'rspec-html-matchers', '~> 0.9.0'
   gem 'rspec-rails', '~> 3.6.1'
   gem 'rubocop', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'

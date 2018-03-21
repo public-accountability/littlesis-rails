@@ -142,8 +142,8 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
     end
 
     it 'has hidden inputs' do
-      expect(rendered).to have_tag 'input[value="Relationship"]', :count => 1
-      expect(rendered).to have_tag 'input#data_referenceable_id', :count => 1
+      css 'input[value="Relationship"]', :count => 1
+      css 'input#data_referenceable_id', :count => 1
     end
 
     it 'has url field' do

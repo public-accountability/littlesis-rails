@@ -1,9 +1,6 @@
 require 'rails_helper'
 
 describe 'home/flag.html.erb', type: :view do
-  before(:all) { Capybara.ignore_hidden_elements = true }
-  after(:all) { Capybara.ignore_hidden_elements = false }
-  
   context 'when referrer is missing' do
     before do
       assign(:referrer, nil)
@@ -11,6 +8,7 @@ describe 'home/flag.html.erb', type: :view do
     end
     it 'has text_field_tag' do
       css 'input#url', count: 1
+      not_css 'input#url[type=hidden]'
     end
 
     it 'does not have static url' do
@@ -29,11 +27,7 @@ describe 'home/flag.html.erb', type: :view do
     end
 
     it 'has hidden url tag' do
-      expect(rendered).to have_tag('input[type=hidden]', with: { value: 'https://littlesis.org/some_page' })
-    end
-
-    it 'does not has text_field_tag' do
-      expect(rendered).not_to have_css('input#url')
+      css 'input#url[type=hidden]', count: 1
     end
   end
 
@@ -45,7 +39,7 @@ describe 'home/flag.html.erb', type: :view do
     end
 
     it 'has submit' do
-      expect(rendered).to have_tag('input[type=submit]', count: 1)
+      css 'input[type=submit]', count: 1
     end
   end
 end

@@ -17,7 +17,7 @@ describe 'home/contact.html.erb', type: :view do
     end
 
     it 'has input with email address' do
-      expect(rendered).to have_tag('input[type=hidden]', with: { value: 'email@email.com' })
+      css "input[type=hidden][value='email@email.com']"
     end
   end
 

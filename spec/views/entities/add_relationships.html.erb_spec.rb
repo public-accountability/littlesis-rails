@@ -1,19 +1,13 @@
-require 'rails_helper' 
+require 'rails_helper'
 
 describe 'entities/add_relationship.html.erb' do
-  
-
-  before(:all) do 
-    DatabaseCleaner.start
+  before(:all) do
     @sf_user = build(:sf_guard_user)
     @user = build(:user, sf_guard_user: @sf_user)
-    @e = build(:mega_corp_inc, updated_at: Time.now, last_user: @sf_user, id: rand(100) )
+    @e = build(:mega_corp_inc, updated_at: Time.current, last_user: @sf_user, id: rand(100))
   end
 
-  after(:all) {  DatabaseCleaner.clean } 
-
-  describe 'layout' do 
-
+  describe 'layout' do
     before do
       assign(:entity, @e)
       render
@@ -25,25 +19,25 @@ describe 'entities/add_relationship.html.erb' do
       expect(rendered).to have_css "div#entity-info[data-entityid='#{@e.id}']"
     end
 
-    it 'has entity header' do 
-      expect(rendered).to have_tag '#entity-header'
+    it 'has entity header' do
+      css '#entity-header'
     end
 
     it 'has add relationship title section' do
-      expect(rendered).to have_tag 'h2', :text => "Create a new relationship"
-      expect(rendered).to have_css "div.col-sm-7 p"
+      css 'h2', :text => "Create a new relationship"
+      css "div.col-sm-7 p"
     end
 
-    it 'has search-results-row' do 
+    it 'has search-results-row' do
       expect(rendered).to have_css "#search-results-row", :count => 1
     end
 
     it 'has one table' do
-      expect(rendered).to have_tag "table", :count => 1
+      css "table", :count => 1
     end
-    
+
     it 'has one image' do
-      expect(rendered).to have_tag "img", :count => 1
+      css "img", :count => 1
     end
 
     specify { css '#existing-reference-container' }
@@ -56,5 +50,3 @@ describe 'entities/add_relationship.html.erb' do
     it { should render_template(partial: '_new_entity_form') }
   end
 end
-
-
