@@ -44,9 +44,9 @@ module EntityMatcher
         when Entity
           raise WrongEntityTypeError unless input.org?
           @entity = input
-          @name = @entity.name
+          @name = OrgName.parse(@entity.name)
         when String
-          @name = input
+          @name = OrgName.parse(input)
         else
           raise TypeError
         end

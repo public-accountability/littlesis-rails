@@ -6,18 +6,34 @@ require_relative 'entity_matcher/evaluation_result'
 require_relative 'entity_matcher/evaluation'
 
 module EntityMatcher
-  def self.find_matches(name, **kwargs)
+  def self.find_matches_for_person(name, **kwargs)
     test_case = TestCase::Person.new(name, **kwargs)
 
-    Search.by_name(test_case.last).map do |entity|
-      potential_match = TestCase::Person.new(entity)
-      evaluate(test_case, potential_match)
-    end
+    EvaluationResultSet.new(
+      Search.by_name(test_case.last).map do |entity|
+        potential_match = TestCase::Person.new(entity)
+        evalute_people(test_case, potential_match)
+      end
+    ).to_a
   end
 
-  # TestCase::Person, TestCase::Person ---> EvaluationResult
-  def self.evaluate(*args)
-    EntityMatcher::Evaluation.new(*args).result
+  def self.find_matches_for_org(name, **kwargs)
+    test_case = TestCase::Org.new(name, **kwargs)
+
+    EvaluationResultSet.new(
+      Search.by_org(name).map do |entity|
+        potential_match = TestCase::Org.new(entity)
+        evaluate_orgs(test_case, potential_match)
+      end
+    ).to_a
+  end
+
+  def self.evaluate_people(test_case, match)
+    EntityMatcher::Evaluation::Person.new(test_case, match).result
+  end
+
+  def self.evaluate_orgs(test_case, match)
+    EntityMatcher::Evaluation::Org.new(test_case, match).result
   end
 
   # +by_person_name+, +by_full_name+ and +by_org_name+

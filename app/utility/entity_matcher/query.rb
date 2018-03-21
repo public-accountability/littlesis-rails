@@ -31,6 +31,10 @@ module EntityMatcher
         raise NotImplementedError
       end
 
+      def ts_escape(x)
+        ThinkingSphinx::Query.escape(x)
+      end
+
       private
 
       def create_query
@@ -72,7 +76,7 @@ module EntityMatcher
       end
     end
 
-    # Simple query building for strings
+    # Simple query for last names
     class Names < Base
       # input: *args | <Array>
       def initialize(*args)
@@ -91,6 +95,20 @@ module EntityMatcher
     end
 
     class Org < Base
+      def initialize(str)
+        TypeCheck.check str, String
+        @org_name = OrgName.parse(str)
+        super(str)
+      end
+
+      def run
+        @parts << ThinkingSphinx::Query.wildcard(ts_escape(@org_name.clean))
+        @parts << ts_escape(@org_name.root) if ts_escape(@org_name.root) != ts_escape(@org_name.clean)
+
+        if @org_name.essential_words.length > 1
+          @parts << @org_name.essential_words.map { |x| ts_escape(x) }.join(' ')
+        end
+      end
     end
   end
 end

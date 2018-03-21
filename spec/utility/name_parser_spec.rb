@@ -5,7 +5,6 @@ describe 'NameParser', :name_parser_helper do
     assert_parsed_name 'god', last: 'God'
     assert_parsed_name 'Wendell Phillips', last: 'Phillips', first: 'Wendell'
     assert_parsed_name 'Phillips, Wendell', last: 'Phillips', first: 'Wendell'
-    assert_parsed_name 'Mayor blah', last: 'Blah', prefix: 'Mayor'
     assert_parsed_name 'Mayor Bill de Blasio', last: 'de Blasio', prefix: 'Mayor', first: 'Bill'
     assert_parsed_name 'Ruperta Chirpingden-Groin', first: 'Ruperta', last: 'Chirpingden-Groin'
     assert_parsed_name 'anna garlin spencer', last: 'Spencer', first: 'Anna', middle: 'Garlin'
@@ -25,6 +24,9 @@ describe 'NameParser', :name_parser_helper do
     assert_parsed_name 'John A Doe', first: 'John', middle: 'A', last: 'Doe'
     assert_parsed_name 'John A. Doe', first: 'John', middle: 'A', last: 'Doe'
     assert_parsed_name 'Jane "J" Doe III', first: 'Jane', last: 'Doe', suffix: 'III', nick: 'J'
+
+    assert_parsed_name "Ms. Alice", prefix: 'Ms', last: 'Alice'
+    assert_parsed_name "Major Tom", first: 'Major', last: 'Tom'
 
     assert_parsed_name 'Pavel "Fyodor" Fyodorovitch Smerdyakov',
                        first: 'Pavel', middle: 'Fyodorovitch', last: 'Smerdyakov', nick: 'Fyodor'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Org < ApplicationRecord
   include SingularTable
 
@@ -31,24 +33,21 @@ class Org < ApplicationRecord
     'Group'
   ]
 
-  def set_entity_name
-    self.name = entity.name
-  end
-
   def self.strip_name_punctuation(name)
     name.gsub(/\.(?!com)/i, '')
         .gsub(/[,"*]/, '')
         .gsub(/\s'/m, '')
         .gsub(/'\s/m, '')
-        .gsub(/\s+/, ' ')    
+        .gsub(/\s+/, ' ')
   end
 
   def self.name_words_to_remove(remove_geo = false)
     words = ['the', 'and', 'of', 'for'].concat(COMMON_SUFFIXES).concat(Language::SCHOOLS).concat(Language::BUSINESS)
     words.concat(Language::REGIONS).concat(Language::GEOGRAPHY) if remove_geo
     words.uniq
-  end 
- 
+  end
+
+  # used by entity_search
   def self.strip_name(name, strip_geo = false)
     name = strip_name_punctuation(name)
     stripped = name
@@ -56,5 +55,11 @@ class Org < ApplicationRecord
       stripped.gsub!(/\b#{word}\b/i, ' ')
     end
     stripped.gsub(/\s+/, ' ').strip
+  end
+
+  private
+
+  def set_entity_name
+    self.name = entity.name
   end
 end

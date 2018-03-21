@@ -7,8 +7,8 @@ module EntityMatcher
       :with => { is_deleted: false }
     }.freeze
 
-    # == These use the classes in EntityMatcher::Query
-    #    to first cast the input into a formated sphinx query
+    # == These helpers use the classes in EntityMatcher::Query
+    #    cast the input into a formated sphinx query
 
     def self.by_entity(entity)
       public_send("by_#{entity.primary_ext.downcase}", entity)

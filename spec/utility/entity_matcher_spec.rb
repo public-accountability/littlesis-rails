@@ -1,6 +1,22 @@
+# frozen_string_literal: true
+
+# rubocop:disable Metrics/LineLength
+
 require 'rails_helper'
 
 describe EntityMatcher, :sphinx do
+  def result_person(*args)
+    EntityMatcher::EvaluationResult::Person.new.tap do |er|
+      args.each { |x| er.send("#{x}=", true) }
+    end
+  end
+
+  def result_org(*args)
+    EntityMatcher::EvaluationResult::Org.new.tap do |er|
+      args.each { |x| er.send("#{x}=", true) }
+    end
+  end
+
   describe 'Search' do
     # creates a sample set of 5 people: 2 Vibes, 2 Traverses, and 1 Chum of chance
     before(:all) do
@@ -60,6 +76,29 @@ describe EntityMatcher, :sphinx do
   end
 
   describe 'Query' do
+    describe 'Org' do
+      context 'provided string name' do
+        let(:name) { '' }
+        subject { EntityMatcher::Query::Org.new(name).to_s }
+        context 'simple name' do
+          let(:name) { "simplecorp" }
+          it { is_expected.to eql "(*simplecorp*)" }
+        end
+
+        context 'simple name with suffix' do
+          let(:name) { "SimpleCorp llc" }
+          it { is_expected.to eql "(*simplecorp* *llc*) | (simplecorp)" }
+        end
+
+        context 'long name with essential words' do
+          let(:name) { "American Green Tomatoes Corp" }
+          it do
+            is_expected.to eql "(*american* *green* *tomatoes* *corp*) | (american green tomatoes) | (green tomatoes)"
+          end
+        end
+      end
+    end
+
     describe 'Person' do
       subject { EntityMatcher::Query::Person.new(entity).to_s }
       let(:names) { [] }
@@ -119,6 +158,14 @@ describe EntityMatcher, :sphinx do
         expect(subject.new(org).entity).to be_a Entity
         expect(subject.new('corp').entity).to be nil
       end
+
+      it 'sets @name for a string' do
+        expect(subject.new(Faker::Company.name).name).to be_a OrgName::Name
+      end
+
+      it 'sets @name for a string' do
+        expect(subject.new(org).name).to be_a OrgName::Name
+      end
     end
 
     describe EntityMatcher::TestCase::Person do
@@ -168,7 +215,7 @@ describe EntityMatcher, :sphinx do
 
   describe 'Evaluation' do
     describe 'argument validation' do
-      subject { EntityMatcher::Evaluation }
+      subject { EntityMatcher::Evaluation::Person }
 
       def generate_test_case
         EntityMatcher::TestCase::Person.new(
@@ -191,8 +238,8 @@ describe EntityMatcher, :sphinx do
       end
     end
 
-    describe 'evaluation' do
-      subject { EntityMatcher::Evaluation }
+    describe EntityMatcher::Evaluation::Person do
+      subject { EntityMatcher::Evaluation::Person }
 
       def generate_test_case(fields = {})
         EntityMatcher::TestCase::Person.new(build(:person, person: build(:a_person, **fields)))
@@ -379,6 +426,274 @@ describe EntityMatcher, :sphinx do
           end
         end
       end
+    end # end EntityMatcher::Evaluation::Person
+
+    describe EntityMatcher::Evaluation::Org do
+      let(:entity) { build(:org) }
+      # subject { EntityMatcher::Evaluation::Org }
+
+      context 'has same name' do
+        let(:test_case) { EntityMatcher::TestCase::Org.new("test company") }
+        let(:match) { EntityMatcher::TestCase::Org.new(create(:entity_org, name: "Test Company")) }
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.same_name).to eql true
+          expect(subject.result.similar_name).to eql true
+          expect(subject.result.matches_alias).to eql nil
+          expect(subject.result.common_relationship).to eql nil
+        end
+      end
+
+      context 'similar name' do
+        let(:test_case) { EntityMatcher::TestCase::Org.new("ABC COMPANY") }
+        let(:match) { EntityMatcher::TestCase::Org.new(create(:entity_org, name: "ABCD COMPANY")) }
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.same_name).to eql false
+          expect(subject.result.similar_name).to eql true
+        end
+      end
+
+      context 'same root' do
+        let(:test_case) { EntityMatcher::TestCase::Org.new("ABC COMPANY") }
+        let(:match) { EntityMatcher::TestCase::Org.new(create(:entity_org, name: "ABC LLC")) }
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.same_name).to eql false
+          expect(subject.result.similar_name).to eql false
+          expect(subject.result.same_root).to eql true
+        end
+      end
+
+      context 'simmilar root' do
+        let(:test_case) { EntityMatcher::TestCase::Org.new("123 COMPANY") }
+        let(:match) { EntityMatcher::TestCase::Org.new(create(:entity_org, name: "124 LLC")) }
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.same_root).to eql false
+          expect(subject.result.similar_root).to eql true
+        end
+      end
+
+      context 'matches alias' do
+        let(:test_case) { EntityMatcher::TestCase::Org.new("123 COMPANY") }
+        let(:entity) do
+          create(:entity_org, :with_org_name).tap do |e|
+            e.aliases.create!(name: '123 company')
+          end
+        end
+        let(:match) { EntityMatcher::TestCase::Org.new(entity) }
+
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.same_name).to eql false
+          expect(subject.result.similar_name).to eql false
+          expect(subject.result.matches_alias).to eql true
+        end
+      end
+
+      context 'relationship in common' do
+        let(:other_org) { create(:entity_org) }
+        let(:test_case) { EntityMatcher::TestCase::Org.new("123 COMPANY", associated: other_org.id) }
+        let(:entity) do
+          create(:entity_org, :with_org_name).tap do |e|
+            Relationship.create!(category_id: 12, entity: e, related: other_org)
+          end
+        end
+        let(:match) { EntityMatcher::TestCase::Org.new(entity) }
+        subject { EntityMatcher::Evaluation::Org.new(test_case, match) }
+
+        specify do
+          expect(subject.result.common_relationship).to eql true
+        end
+      end
     end
+
+    describe EntityMatcher::EvaluationResult::Person do
+      describe 'values' do
+        subject { result_person(:same_last_name, :same_first_name) }
+
+        it 'returns attributes, ignoring entity' do
+          subject.entity = build(:person)
+          expect(subject.values).to eql Set[:same_last_name, :same_first_name]
+        end
+      end
+
+      describe 'does not check entity when comparing equality' do
+        it 'having the same properies are equal' do
+          expect(result_person(:same_first_name, :same_last_name) == result_person(:same_first_name, :same_last_name)).to be true
+          expect(result_person(:same_first_name, :same_last_name).eql? result_person(:same_first_name, :same_last_name)).to be true
+          expect(result_person(:same_first_name, :similar_last_name) == result_person(:same_first_name, :same_last_name)).to be false
+          expect(result_person(:same_first_name, :similar_last_name).eql? result_person(:same_first_name, :same_last_name)).to be false
+        end
+
+        it 'having the same properies are equal even if entityies are different' do
+          entity1 = build(:org, :with_org_name)
+          entity2 = build(:org, :with_org_name)
+
+          person1 = result_person(:same_first_name, :same_last_name)
+          person1.entity = entity1
+          person2 = result_person(:same_first_name, :same_last_name)
+          person2.entity = entity2
+          expect(person1 == person2).to be true
+          expect(person1.eql? person2).to be true
+        end
+      end
+
+      describe 'Sorting People' do
+        describe 'same first_and_last' do
+          let(:results) do
+            [
+              result_person(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
+              result_person(:same_first_name, :same_last_name, :common_relationship),
+              result_person(:same_first_name, :same_last_name, :blurb_keyword),
+              result_person(:same_first_name, :same_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_person(:same_first_name, :same_last_name, :same_middle_name, :same_prefix),
+              result_person(:same_first_name, :same_last_name, :same_middle_name),
+              result_person(:same_first_name, :similar_last_name, :same_suffix)
+            ]
+          end
+
+          it 'sorts array' do
+            3.times do
+              sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+              expect(sorted).to eql results
+            end
+          end
+        end
+
+        describe 'same_first_similar_last' do
+          let(:results) do
+            [
+              result_person(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :common_relationship),
+              result_person(:same_first_name, :similar_last_name, :common_relationship),
+              result_person(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :blurb_keyword),
+              result_person(:same_first_name, :similar_last_name, :same_suffix, :blurb_keyword),
+              result_person(:same_first_name, :similar_last_name, :blurb_keyword),
+              result_person(:same_first_name, :similar_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_person(:same_first_name, :similar_last_name)
+            ]
+          end
+          it 'sorts array' do
+            3.times do
+              sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+              expect(sorted).to eql results
+            end
+          end
+        end
+
+        describe 'similar first and similar last' do
+          let(:results) do
+            [
+              result_person(:same_first_name, :same_last_name),
+              result_person(:same_first_name, :similar_last_name),
+              result_person(:similar_first_name, :similar_last_name, :common_relationship, :blurb_keyword),
+              result_person(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :common_relationship),
+              result_person(:similar_first_name, :similar_last_name, :common_relationship),
+              result_person(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :blurb_keyword),
+              result_person(:similar_first_name, :similar_last_name, :same_suffix, :blurb_keyword),
+              result_person(:similar_first_name, :similar_last_name, :blurb_keyword),
+              result_person(:similar_first_name, :similar_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_person(:similar_first_name, :similar_last_name)
+            ]
+          end
+
+          it 'sorts array' do
+            3.times do
+              sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+              expect(sorted).to eql results
+            end
+          end
+        end
+
+        describe 'same last and similar last' do
+          let(:results) do
+            [
+              result_person(:same_last_name, :blurb_keyword, :common_relationship),
+              result_person(:same_last_name, :common_relationship),
+              result_person(:same_last_name, :common_relationship),
+              result_person(:same_last_name, :same_suffix, :blurb_keyword),
+              result_person(:same_last_name, :blurb_keyword),
+              result_person(:same_last_name, :same_middle_name, :same_prefix),
+              result_person(:same_last_name, :same_suffix),
+              result_person(:same_last_name, :same_suffix),
+              result_person(:similar_last_name, :blurb_keyword),
+              result_person(:similar_last_name, :same_middle_name, :same_prefix),
+              result_person(:similar_last_name),
+              result_person(:similar_last_name),
+              result_person(:blurb_keyword, :same_first_name)
+            ]
+          end
+          it 'sorts array' do
+            3.times do
+              sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+              expect(sorted).to eql results
+            end
+          end
+        end
+
+        describe 'from all categories' do
+          let(:results) do
+            [
+              result_person(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
+              result_person(:same_first_name, :same_last_name, :common_relationship),
+              result_person(:same_first_name, :same_last_name, :blurb_keyword),
+              result_person(:same_first_name, :same_last_name, :same_middle_name, :same_prefix, :same_suffix),
+              result_person(:same_first_name, :similar_last_name, :common_relationship),
+              result_person(:same_first_name, :similar_last_name, :blurb_keyword),
+              result_person(:same_first_name, :similar_last_name),
+              result_person(:similar_first_name, :similar_last_name, :blurb_keyword),
+              result_person(:similar_first_name, :similar_last_name, :same_middle_name),
+              result_person(:similar_first_name, :similar_last_name),
+              result_person(:same_last_name, :same_suffix, :blurb_keyword),
+              result_person(:same_last_name, :same_middle_name, :same_prefix),
+              result_person(:similar_last_name, :blurb_keyword),
+              result_person(:similar_last_name),
+              result_person(:blurb_keyword, :common_relationship),
+              result_person(:common_relationship),
+              result_person(:blurb_keyword),
+              result_person(:same_middle_name)
+            ]
+          end
+          it 'sorts array' do
+            3.times do
+              sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+              expect(sorted).to eql results
+            end
+          end
+        end
+      end # end sorting people
+
+      describe 'Sorting orgs' do
+        let(:results) do
+          [
+            result_org(:same_name, :common_relationship, :blurb_keyword),
+            result_org(:same_name, :similar_name, :blurb_keyword),
+            result_org(:matches_alias, :similar_name, :blurb_keyword, :common_relationship),
+            result_org(:same_name),
+            result_org(:matches_alias, :similar_name),
+            result_org(:similar_name, :common_relationship),
+            result_org(:same_root, :blurb_keyword),
+            result_org(:similar_root, :common_relationship),
+            result_org(:similar_name),
+            result_org(:same_root)
+          ]
+        end
+        it 'sorts array' do
+          3.times do
+            sorted = EntityMatcher::EvaluationResultSet.new(results.shuffle).to_a
+            expect(sorted).to eql results
+          end
+        end
+      end # end sorting orgs
+    end
+
   end
 end
+
+# rubocop:enable Metrics/LineLength
