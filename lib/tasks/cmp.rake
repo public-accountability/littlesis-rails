@@ -13,7 +13,7 @@ namespace :cmp do
         match2_name: nil, match2_id: nil, match2_values: nil
       }
 
-      sheet = Cmp.orgs.take(1000).map do |cmp_org|
+      sheet = Cmp.orgs.map do |cmp_org|
         attrs = cmp_org.attributes.merge(blank_match_values)
 
         EntityMatcher
