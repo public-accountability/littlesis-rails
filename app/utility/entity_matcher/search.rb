@@ -4,6 +4,7 @@ module EntityMatcher
       :per_page => 200,
       :ranker => :none,
       :populate => true,
+      :sql => { include: :links },
       :with => { is_deleted: false }
     }.freeze
 

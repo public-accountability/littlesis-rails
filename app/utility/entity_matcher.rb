@@ -12,7 +12,7 @@ module EntityMatcher
     EvaluationResultSet.new(
       Search.by_name(test_case.last).map do |entity|
         potential_match = TestCase::Person.new(entity)
-        evalute_people(test_case, potential_match)
+        evaluate_people(test_case, potential_match)
       end
     ).to_a
   end
