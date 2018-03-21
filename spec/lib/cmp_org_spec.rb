@@ -17,6 +17,15 @@ describe Cmp::CmpOrg do
 
   subject { Cmp::CmpOrg.new(attributes.merge(override)) }
 
+  before(:all) do
+    @cmp_tag = Tag.create!("id" => Cmp::CMP_TAG_ID,
+                           "restricted" => true,
+                           "name" => "cmp",
+                           "description" => "Data from the Corporate Mapping Project")
+  end
+
+  after(:all) { @cmp_tag.delete }
+
   describe 'import!' do
     context 'Entity is not already in the database' do
       before do
@@ -46,6 +55,11 @@ describe Cmp::CmpOrg do
 
       it 'creates an extension' do
         expect { subject.import! }.to change { Business.count }.by(1)
+      end
+
+      it 'adds CMP tag' do
+        expect { subject.import! }.to change { Tagging.count }.by(1)
+        expect(Entity.last.tags.last).to eql @cmp_tag
       end
 
       context 'entity is a research institute' do

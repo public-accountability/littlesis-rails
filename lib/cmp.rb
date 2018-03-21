@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'csv'
 require_relative 'cmp/excel_sheet'
 require_relative 'cmp/org_sheet'
@@ -13,6 +15,7 @@ require_relative 'cmp/datasets'
 module Cmp
   CMP_USER_ID = 1
   CMP_SF_USER_ID = 1
+  CMP_TAG_ID = 11
 
   ORG_FILE_PATH = Rails.root.join('data', 'CMPDatabase2_Organizations_2015-2016.xlsx').to_s
   ORG_OUT_CSV_PATH = Rails.root.join('data', "cmp-orgs-#{Time.current.strftime('%F')}.csv").to_s

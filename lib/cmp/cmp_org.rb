@@ -44,6 +44,7 @@ module Cmp
         create_cmp_entity(entity)
         entity.update! attrs_for(:entity).with_last_user(CMP_SF_USER_ID)
         add_extension(entity)
+        entity.add_tag(Cmp::CMP_TAG_ID)
         entity.org.update! attrs_for(:org)
         import_address(entity)
         import_ticker(entity)
