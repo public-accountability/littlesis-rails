@@ -119,6 +119,29 @@
   name: RENAULT
   cmpid: 5014957
   entity_id: 217475
-  
+-
+  name: BOEING COMPANY (THE)
+  cmpid: 5003068
+  entity_id: 27
+-
+  name: DOW CHEMICAL COMPANY (THE)
+  cmpid: 5003071
+  entity_id: 19192
+-
+  name: AIRBUS GROUP SE
+  cmpid: 5003085
+  entity_id: 261779
+-
+  name: LVMH MOET HENNESSY - LOUIS VUITTON SE
+  cmpid: 5003191
+  entity_id: 112999
+-
+  name: EXXONMOBIL PETROLEUM & CHEMICAL
+  cmpid: 5003195
+  entity_id: 111585
+-
+  name: COCA-COLA
+  cmpid: 5003260
+  entity_id: 84
 
   
