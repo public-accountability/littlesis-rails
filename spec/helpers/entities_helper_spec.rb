@@ -1,6 +1,27 @@
 require 'rails_helper'
 
 describe EntitiesHelper do
+  describe 'link_to_all' do
+    let(:entity) { build(:org) }
+
+    context 'length of LinksGroup is less than 10' do
+      let(:links_group) { LinksGroup.new([], 'keyword', 'heading', 2) }
+
+      it 'returns nil' do
+        expect(helper.link_to_all(entity, links_group)).to eql nil
+      end
+    end
+
+    context 'LinksGroup is greater than 10' do
+      let(:links_group) { LinksGroup.new([], 'keyword', 'heading', 15) }
+      subject { helper.link_to_all(entity, links_group) }
+
+      it { is_expected.to have_css 'div.section_meta', count: 1 }
+      it { is_expected.to have_css 'a', text: 'see all' }
+      it { is_expected.to include "/org/#{entity.to_param}?relationships=keyword" }
+    end
+  end
+
   describe '#type_select_boxes_person' do
     it 'has 2 columns for person' do
       expect(helper.type_select_boxes_person(build(:person)).scan('col-sm-4').count).to eq 2
@@ -9,7 +30,8 @@ describe EntitiesHelper do
 
   describe '#checkboxes' do
     it 'contains all 7 tier two types' do
-      expect(helper.checkboxes(build(:org), ExtensionDefinition.org_types_tier2).reduce(:+).scan('<span class="entity-type-name"').count).to eq 7
+      expect(helper.checkboxes(build(:org), ExtensionDefinition.org_types_tier2)
+               .reduce(:+).scan('<span class="entity-type-name"').count).to eq 7
     end
 
     it 'contains all 21 tier 3 types' do
@@ -18,14 +40,17 @@ describe EntitiesHelper do
     end
 
     it 'contains all 9 extension person types' do
-      expect(helper.checkboxes(build(:person), ExtensionDefinition.person_types).reduce(:+).scan('<span class="entity-type-name"').count).to eq 9
+      expect(helper.checkboxes(build(:person), ExtensionDefinition.person_types)
+               .reduce(:+).scan('<span class="entity-type-name"').count).to eq 9
     end
 
     it 'contains one checkbox if org has an extension' do
       org = create(:org)
       org.add_extension('Business')
-      expect(helper.checkboxes(org, ExtensionDefinition.org_types_tier2).reduce(:+).scan('glyphicon-check').count).to eq 1
-      expect(helper.checkboxes(org, ExtensionDefinition.org_types_tier2).reduce(:+).scan('glyphicon-unchecked').count).to eq 6
+      expect(helper.checkboxes(org, ExtensionDefinition.org_types_tier2)
+               .reduce(:+).scan('glyphicon-check').count).to eq 1
+      expect(helper.checkboxes(org, ExtensionDefinition.org_types_tier2)
+               .reduce(:+).scan('glyphicon-unchecked').count).to eq 6
     end
   end
 
