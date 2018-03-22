@@ -26,7 +26,19 @@ module Cmp
 
     def matches
       EntityMatcher
-        .find_matches_for_person(to_person_hash, associated: associated_entity_ids)
+        .find_matches_for_person(search_name_or_hash, associated: associated_entity_ids)
+    end
+
+    def search_name_or_hash
+      if EntityMatcher::TestCase::Person.validate_person_hash(to_person_hash)
+        to_person_hash
+      elsif fetch("lastname").present?
+        Rails.logger.debug "searching using last name #{fetch('lastname')} for #{cmpid}"
+        fetch("lastname")
+      else
+        Rails.logger.warn "invalid search for #{cmpid}"
+        raise StandardError, "Cannot find name to search for matches"
+      end
     end
 
     def to_person_hash

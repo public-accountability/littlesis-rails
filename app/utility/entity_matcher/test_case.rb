@@ -55,6 +55,10 @@ module EntityMatcher
     end
 
     class Person < Base
+      def self.validate_person_hash(h)
+        (h[:name_first] || h['name_first']) && (h[:name_last] || h['name_last'])
+      end
+
       BLANK_NAME_HASH = ActiveSupport::HashWithIndifferentAccess
                           .new(name_prefix: nil,
                                name_first: nil,
@@ -93,8 +97,8 @@ module EntityMatcher
       private
 
       def validate_input_hash(h)
-        unless (h[:name_first] || h['name_first']) && (h[:name_last] || h['name_last'])
-          raise InvalidPersonHash
+        unless self.class.validate_person_hash(h)
+          raise InvalidPersonHash, "Invalid Hash: #{h.inspect}"
         end
       end
     end
