@@ -68,7 +68,7 @@ describe Cmp::CmpOrg do
 
       it 'sets last user id to cmp sf user' do
         subject.import!
-        expect(Entity.last.last_user_id).to eql @cmp_user.sf_guard_user_id
+        expect(CmpEntity.last.entity.last_user_id).to eql Cmp::CMP_SF_USER_ID
       end
 
       context 'entity is a research institute' do
@@ -157,8 +157,6 @@ describe Cmp::CmpOrg do
     end
 
     describe 'records history attributed to the CMP USER' do
-      let(:user) { create_basic_user }
-
       with_versioning do
         before do
           expect(subject).to receive(:entity_match).and_return(nil)

@@ -13,7 +13,7 @@ namespace :cmp do
         match2_name: nil, match2_id: nil, match2_values: nil
       }
 
-      sheet = Cmp.orgs.map do |cmp_org|
+      sheet = Cmp::Datsets.orgs.map do |cmp_org|
         attrs = cmp_org.attributes.merge(blank_match_values)
 
         EntityMatcher
@@ -41,29 +41,29 @@ namespace :cmp do
   end
 
   namespace :people do
-    desc 'save individuals with potential match information as csvs'
-    task matches_as_csv: :environment do
-      Cmp::Datasets.people
-      Cmp::Datasets.relationships
-      Cmp::Datasets.orgs
+    desc 'saves spreadsheet of people matches'
+    task save_people_matches: :environment do
+      file_path = Rails.root
+                    .join('data', "cmp_people_matched_#{Time.current.strftime('%F')}.csv").to_s
 
-      file_path = Rails.root.join('data', 'cmp_individuals_with_match_info.csv').to_s
+      blank_match_values = {
+        match1_name: nil, match1_id: nil, match1_values: nil,
+        match2_name: nil, match2_id: nil, match2_values: nil
+      }
 
-      people = Cmp::Datasets.people.values.map do |cmp_person|
-        attrs = LsHash.new(littlesis_entity_id: '').merge!(cmp_person.attributes)
+      sheet = Cmp::Datasets.people.to_a.map(&:second).map do |cmp_person|
+        attrs = cmp_person.attributes.merge(blank_match_values)
 
-        # attrs['littlesis_entity_id'] = 'new' if attrs['match1_name'].blank?
-
-        associated = CmpEntity
-                       .where(cmp_id:Cmp::Datasets.relationships
-                                .select { |r| r.fetch(:cmp_person_id, 'REL_ID') == attrs.fetch(:cmpid, "ATTR_ID") }
-                                .map { |r| r.fetch(:cmp_org_id) })
-                       .map(&:entity)
-
-        attrs.merge!('associated_corps' => org_names)
+        cmp_person.matches.first(2).each.with_index do |match, idx|
+          attrs["match#{idx + 1}_name".to_sym] = match.entity.name
+          attrs["match#{idx + 1}_id".to_sym] = match.entity.id
+          attrs["match#{idx + 1}_values".to_sym] = match.values.to_a.join('|')
+        end
+        attrs
       end
 
-      Query.save_hash_array_to_csv file_path, people
+      Query.save_hash_array_to_csv file_path, sheet
+      puts "Saved people to: #{file_path}"
     end
   end
 end

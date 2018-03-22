@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # @relationships = [ relationship ]
 # @person = {
 #     'cmpid' -> `cmp_person`
@@ -25,7 +27,7 @@
 module Cmp
   class CmpRelationship
     attr_reader :attributes
-    delegate :fetch, to: :attributes
+    delegate :[], :fetch, to: :attributes
 
     def initialize(attrs)
       @attributes = LsHash.new(attrs)

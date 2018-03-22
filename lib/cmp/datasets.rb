@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Cmp
   module Datasets
     RELATIONSHIP_FILE_PATH = Rails.root.join('data', 'affiliations', 'affiliations.csv').to_s
