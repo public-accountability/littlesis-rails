@@ -6,7 +6,6 @@ module EntityMatcher
       :per_page => 500,
       :ranker => :none,
       :populate => true,
-      :sql => { include: :links },
       :with => { is_deleted: false }
     }.freeze
 
@@ -33,9 +32,22 @@ module EntityMatcher
     # Search database for potential matches
     def self.search(query, primary_ext:)
       Entity.search("@(name,aliases,name_nick) ( #{query} )",
-                    SEARCH_OPTS.deep_merge(:with => { primary_ext: primary_ext }))
+                    SEARCH_OPTS
+                      .deep_merge(:sql => sql_include(primary_ext))
+                      .deep_merge(:with => { primary_ext: primary_ext }))
     end
 
-    private_class_method :search
+    def self.sql_include(primary_ext)
+      case primary_ext
+      when 'Person'
+        { :include => [:links, :person] }
+      when 'Org'
+        { :include => [:links, :org, :aliases] }
+      else
+        raise TypeError
+      end
+    end
+
+    private_class_method :search, :sql_include
   end
 end
