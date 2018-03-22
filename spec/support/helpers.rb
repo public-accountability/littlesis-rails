@@ -55,10 +55,18 @@ module RspecExampleHelpers
     user
   end
 
-
   def create_really_basic_user
     sf_user = FactoryBot.create(:sf_guard_user)
     FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+  end
+
+  def create_basic_user_with_ids(user_id, sf_user_id)
+    sf_user = FactoryBot.create(:sf_guard_user, id: sf_user_id)
+    user = FactoryBot.create(:user, id: user_id, sf_guard_user_id: sf_user.id)
+    SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+    SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+    SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
+    user
   end
 
   def create_basic_user

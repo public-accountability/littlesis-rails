@@ -18,13 +18,19 @@ describe Cmp::CmpOrg do
   subject { Cmp::CmpOrg.new(attributes.merge(override)) }
 
   before(:all) do
+    @cmp_user = create_basic_user_with_ids(Cmp::CMP_USER_ID, Cmp::CMP_SF_USER_ID)
     @cmp_tag = Tag.create!("id" => Cmp::CMP_TAG_ID,
                            "restricted" => true,
                            "name" => "cmp",
                            "description" => "Data from the Corporate Mapping Project")
   end
 
-  after(:all) { @cmp_tag.delete }
+  after(:all) do
+    @cmp_tag.delete
+    @cmp_user.sf_guard_user.delete
+    @cmp_user.delete
+    SfGuardUserPermission.delete_all
+  end
 
   describe 'import!' do
     context 'Entity is not already in the database' do
@@ -58,6 +64,11 @@ describe Cmp::CmpOrg do
       it 'adds CMP tag' do
         expect { subject.import! }.to change { Tagging.count }.by(1)
         expect(Entity.last.tags.last).to eql @cmp_tag
+      end
+
+      it 'sets last user id to cmp sf user' do
+        subject.import!
+        expect(Entity.last.last_user_id).to eql @cmp_user.sf_guard_user_id
       end
 
       context 'entity is a research institute' do
@@ -142,6 +153,23 @@ describe Cmp::CmpOrg do
 
       it 'does not create a new CmpEntity' do
         expect { subject.import! }.not_to change { CmpEntity.count }
+      end
+    end
+
+    describe 'records history attributed to the CMP USER' do
+      let(:user) { create_basic_user }
+
+      with_versioning do
+        before do
+          expect(subject).to receive(:entity_match).and_return(nil)
+        end
+
+        it 'creates 5 versions' do
+          expect { subject.import! }.to change { PaperTrail::Version.count }.by(5)
+          whodunnit = PaperTrail::Version.last(5).pluck('whodunnit').uniq
+          expect(whodunnit.count).to eql 1
+          expect(whodunnit.first).to eql Cmp::CMP_USER_ID.to_s
+        end
       end
     end
   end

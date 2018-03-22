@@ -31,16 +31,19 @@ module Cmp
     end
 
     def import!
-      ApplicationRecord.transaction do
-        entity = find_or_create_entity
-        return if entity.nil?
-        create_cmp_entity(entity)
-        entity.update! attrs_for(:entity).with_last_user(CMP_SF_USER_ID)
-        add_extension(entity)
-        entity.add_tag(Cmp::CMP_TAG_ID)
-        entity.org.update! attrs_for(:org)
-        import_address(entity)
-        import_ticker(entity)
+      Cmp.set_whodunnit do
+        ApplicationRecord.transaction do
+          entity = find_or_create_entity
+          return if entity.nil?
+          create_cmp_entity(entity)
+          entity.update! attrs_for(:entity).with_last_user(Cmp::CMP_SF_USER_ID)
+          add_extension(entity)
+          entity.add_tag(Cmp::CMP_TAG_ID)
+          entity.org.update! attrs_for(:org)
+          import_address(entity)
+          import_ticker(entity)
+          entity.update_columns(last_user_id: Cmp::CMP_SF_USER_ID)
+        end
       end
     end
 
@@ -109,7 +112,7 @@ module Cmp
       Entity.create!(
         primary_ext: 'Org',
         name: OrgName.format(attributes[:cmpname]),
-        last_user_id: Cmp::CMP_USER_ID
+        last_user_id: Cmp::CMP_SF_USER_ID
       )
     end
   end

@@ -13,8 +13,8 @@ require_relative 'cmp/cmp_person'
 require_relative 'cmp/datasets'
 
 module Cmp
-  CMP_USER_ID = 1
-  CMP_SF_USER_ID = 1
+  CMP_USER_ID = 9948
+  CMP_SF_USER_ID = 8178
   CMP_TAG_ID = 11
 
   ORG_FILE_PATH = Rails.root.join('data', 'CMPDatabase2_Organizations_2015-2016.xlsx').to_s
@@ -46,5 +46,9 @@ module Cmp
   # -> [CmpPerson]
   def self.people(file_path = PERSON_FILE_PATH)
     PersonSheet.new(file_path).to_a.map { |attrs| CmpPerson.new(attrs) }
+  end
+
+  def self.set_whodunnit
+    PaperTrail.whodunnit(CMP_USER_ID.to_s) { yield }
   end
 end
