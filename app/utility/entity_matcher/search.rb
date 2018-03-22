@@ -3,7 +3,7 @@
 module EntityMatcher
   module Search
     SEARCH_OPTS = {
-      :per_page => 500,
+      :per_page => 800,
       :ranker => :none,
       :populate => true,
       :with => { is_deleted: false }
