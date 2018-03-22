@@ -44,7 +44,9 @@ module Cmp
           entity.org.update! attrs_for(:org)
           import_address(entity)
           import_ticker(entity)
-          entity.update_columns(last_user_id: Cmp::CMP_SF_USER_ID)
+          if entity.last_user_id != Cmp::CMP_SF_USER_ID
+            entity.update_columns(last_user_id: Cmp::CMP_SF_USER_ID)
+          end
         end
       end
     end
