@@ -75,7 +75,7 @@ module Cmp
 
     def find_entity_match
       matches = EntityMatcher.find_matches_for_org(fetch(:cmpname))
-      return matches.first if matches&.first&.automatch?
+      return matches.first.entity if matches&.first&.automatch?
     end
 
     # Modifies fields as needed from CMP
