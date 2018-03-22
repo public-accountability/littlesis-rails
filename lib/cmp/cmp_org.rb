@@ -51,7 +51,11 @@ module Cmp
       if CmpEntity.find_by(cmp_id: cmpid)
         CmpEntity.find_by(cmp_id: cmpid).entity
       elsif preselected_match
-        Entity.find(preselected_match)
+        if preselected_match.to_s.casecmp('NEW').zero?
+          create_new_entity!
+        else
+          Entity.find(preselected_match)
+        end
       elsif entity_match
         if CmpEntity.find_by(entity_id: entity_match.id).present?
           Rails.logger.warn <<~ERROR
