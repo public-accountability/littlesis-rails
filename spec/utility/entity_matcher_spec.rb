@@ -542,7 +542,7 @@ describe EntityMatcher, :sphinx do
         end
       end
 
-      describe 'automatch?' do
+      describe 'automatchable? and automatch?' do
         context 'for a person' do
           context 'can be automatch' do
             subject { result_person(:same_first_name, :same_last_name, :common_relationship, :same_middle_name) }
@@ -565,6 +565,44 @@ describe EntityMatcher, :sphinx do
             subject { result_org(:same_root) }
             specify { expect(subject.automatch?).to be false }
           end
+        end
+
+        it 'set is not automatchable if it has too many matches' do
+          results = [
+            result_person(:similar_first_name, :similar_last_name),
+            result_person(:same_first_name, :same_last_name, :common_relationship, :same_middle_name),
+            result_person(:similar_first_name, :same_last_name, :common_relationship)
+          ]
+          expect(EntityMatcher::EvaluationResultSet.new(results).automatchable?).to be false
+        end
+
+        it 'set is not automatchable if it has no matches' do
+          results = [
+            result_org(:similar_name), result_org(:same_root, :blurb_keyword), result_org(:same_root)
+          ]
+          expect(EntityMatcher::EvaluationResultSet.new(results).automatchable?).to be false
+        end
+
+        it 'set is not automatchable if it has no matches' do
+          results = [
+            result_org(:similar_name), result_org(:same_root, :blurb_keyword), result_org(:same_root)
+          ]
+          expect(EntityMatcher::EvaluationResultSet.new(results).automatchable?).to be false
+        end
+
+        it 'works with zero or one matches' do
+          expect(EntityMatcher::EvaluationResultSet.new([result_org(:same_name)]).automatchable?).to be true
+          expect(EntityMatcher::EvaluationResultSet.new([result_org(:same_name), result_org(:same_name)]).automatchable?).to be false
+          expect(EntityMatcher::EvaluationResultSet.new([]).automatchable?).to be nil
+        end
+
+        it 'set is automatachable if it only one match' do
+          results = [
+            result_org(:same_name, :common_relationship),
+            result_org(:same_root, :blurb_keyword),
+            result_org(:same_root)
+          ]
+          expect(EntityMatcher::EvaluationResultSet.new(results).automatchable?).to be true
         end
       end
 
