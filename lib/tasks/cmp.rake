@@ -60,18 +60,33 @@ namespace :cmp do
         match2_name: nil, match2_id: nil, match2_values: nil
       }
 
-      sheet = Cmp::Datasets.people.to_a.take(take).map(&:second).map do |cmp_person|
-        attrs = cmp_person.attributes.merge(blank_match_values)
+      write_limit = 1000
+      write_queue = []
 
-        cmp_person.matches.first(2).each.with_index do |match, idx|
-          attrs["match#{idx + 1}_name".to_sym] = match.entity.name
-          attrs["match#{idx + 1}_id".to_sym] = match.entity.id
-          attrs["match#{idx + 1}_values".to_sym] = match.values.to_a.join('|')
+      Cmp::Datasets.people.to_a.take(take).map(&:second).each do |cmp_person|
+        begin
+          attrs = cmp_person.attributes.merge(blank_match_values)
+
+          cmp_person.matches.first(2).each.with_index do |match, idx|
+            attrs["match#{idx + 1}_name".to_sym] = match.entity.name
+            attrs["match#{idx + 1}_id".to_sym] = match.entity.id
+            attrs["match#{idx + 1}_values".to_sym] = match.values.to_a.join('|')
+          end
+          write_queue << attrs
+        rescue => e
+          puts '--------------------------------------------------------'
+          puts "Error encontered with cmp person: #{cmp_person.cmpid}"
+          puts e
+          puts '--------------------------------------------------------'
         end
-        attrs
+
+        if write_queue.length >= write_limit
+          Query.save_hash_array_to_csv file_path, write_queue, mode: 'ab'
+          write_queue.clear
+        end
       end
 
-      Query.save_hash_array_to_csv file_path, sheet
+      Query.save_hash_array_to_csv file_path, write_queue, mode: 'ab' unless write_queue.empty?
       puts "Saved people to: #{file_path}"
     end
   end
