@@ -42,16 +42,25 @@ namespace :cmp do
 
   namespace :people do
     desc 'saves spreadsheet of people matches'
-    task save_people_matches: :environment do
-      file_path = Rails.root
-                    .join('data', "cmp_people_matched_#{Time.current.strftime('%F')}.csv").to_s
+    task :save_people_matches, [:take] => :environment do |_, args|
+      if args[:take].present?
+        file_path_root = "cmp_people_matched_#{Time.current.strftime('%F')}_limited.csv"
+        take = args[:take].to_i
+        puts "saving the first #{take} rows"
+      else
+        file_path_root = "cmp_people_matched_#{Time.current.strftime('%F')}.csv"
+        puts "saving the all rows"
+        take = Cmp::Datasets.people.to_a.length
+      end
+
+      file_path = Rails.root.join('data', file_path_root)
 
       blank_match_values = {
         match1_name: nil, match1_id: nil, match1_values: nil,
         match2_name: nil, match2_id: nil, match2_values: nil
       }
 
-      sheet = Cmp::Datasets.people.to_a.map(&:second).map do |cmp_person|
+      sheet = Cmp::Datasets.people.to_a.take(take).map(&:second).map do |cmp_person|
         attrs = cmp_person.attributes.merge(blank_match_values)
 
         cmp_person.matches.first(2).each.with_index do |match, idx|
