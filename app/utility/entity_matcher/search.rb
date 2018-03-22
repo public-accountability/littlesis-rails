@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module EntityMatcher
   module Search
     SEARCH_OPTS = {
-      :per_page => 200,
+      :per_page => 500,
       :ranker => :none,
       :populate => true,
       :sql => { include: :links },
