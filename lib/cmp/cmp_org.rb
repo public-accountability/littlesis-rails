@@ -31,6 +31,8 @@ module Cmp
     end
 
     def import!
+      Rails.logger.debug "Importing: #{cmpid}"
+
       Cmp.set_whodunnit do
         ApplicationRecord.transaction do
           entity = find_or_create_entity
