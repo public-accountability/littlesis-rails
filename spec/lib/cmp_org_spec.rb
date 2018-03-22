@@ -28,9 +28,7 @@ describe Cmp::CmpOrg do
 
   describe 'import!' do
     context 'Entity is not already in the database' do
-      before do
-        expect(subject).to receive(:entity_match).and_return(double(:has_match? => false))
-      end
+      before { expect(subject).to receive(:entity_match).and_return(nil) }
 
       it 'creates a new entity' do
         expect { subject.import! }.to change { Entity.count }.by(1)
@@ -110,7 +108,7 @@ describe Cmp::CmpOrg do
 
     context 'entity has already been imported, but a field has changed' do
       before do
-        allow(subject).to receive(:entity_match).and_return(double(:has_match? => false))
+        expect(subject).to receive(:entity_match).once.and_return(nil)
         subject.import!
       end
 
@@ -138,9 +136,8 @@ describe Cmp::CmpOrg do
       let(:entity) { create(:entity_org) }
       before do
         CmpEntity.create!(cmp_id: Faker::Number.number(6), entity_id: entity.id, entity_type: :org)
-        expect(subject).to receive(:entity_match).and_return(double(:has_match? => true))
-        expect(subject).to receive(:entity_match).twice.and_return(double(:match => entity))
-        # expect(subject).to receive(:find_or_create_entity).and_return(CmpEntity.last.entity)
+        subject.instance_variable_set(:@_entity_match, entity)
+        expect(Rails.logger).to receive(:warn).once
       end
 
       it 'does not create a new CmpEntity' do
@@ -173,12 +170,7 @@ describe Cmp::CmpOrg do
 
     context 'found a matched entity' do
       let(:org) { build(:org, id: rand(10_000)) }
-      before do
-        entity_match = double('EntityMatch')
-        expect(entity_match).to receive(:has_match?).and_return(true)
-        expect(entity_match).to receive(:match).twice.and_return(org)
-        subject.instance_variable_set(:@_entity_match, entity_match)
-      end
+      before { subject.instance_variable_set(:@_entity_match, org) }
 
       it 'returns matched entity' do
         expect(subject.find_or_create_entity).to eql org
@@ -186,9 +178,8 @@ describe Cmp::CmpOrg do
     end
 
     context 'need to create a new entity' do
-      before do
-        expect(subject).to receive(:entity_match).and_return(double(:has_match? => false))
-      end
+      before { expect(subject).to receive(:entity_match).and_return(nil) }
+
       it 'creates a new entity' do
         expect { subject.find_or_create_entity }.to change { Entity.count }.by(1)
         expect(Entity.last.name).to eql "Big Oil Inc"

@@ -27,14 +27,7 @@ module Cmp
 
     def entity_match
       return @_entity_match if defined?(@_entity_match)
-      @_entity_match = Cmp::EntityMatch.new name: fetch(:cmpname), primary_ext: 'Org', cmpid: cmpid
-    end
-
-    def matches
-      return {} if entity_match.empty?
-      one = { one: entity_str(entity_match.first) }
-      return one.merge(two: entity_str(entity_match.second)) if entity_match.second.present?
-      return one
+      @_entity_match = find_entity_match
     end
 
     def import!
@@ -54,24 +47,33 @@ module Cmp
     def find_or_create_entity
       if CmpEntity.find_by(cmp_id: cmpid)
         CmpEntity.find_by(cmp_id: cmpid).entity
-      elsif entity_match.has_match?
-
-        if CmpEntity.find_by(entity_id: entity_match.match.id).present?
+      elsif preselected_match
+        Entity.find(preselected_match)
+      elsif entity_match
+        if CmpEntity.find_by(entity_id: entity_match.id).present?
           Rails.logger.warn <<~ERROR
             Failed to import Cmp Org \##{cmpid}
-            The matched entity -- #{entity_match.match.id} -- already has a CmpEntity
+            The matched entity -- #{entity_match.id} -- already has a CmpEntity
           ERROR
           return nil
         else
-          entity_match.match
+          entity_match
         end
-
       else
         create_new_entity!
       end
     end
 
     private
+
+    def preselected_match
+      Cmp::EntityMatch.matches.dig(cmpid.to_s, 'entity_id')
+    end
+
+    def find_entity_match
+      matches = EntityMatcher.find_matches_for_org(fetch(:cmpname))
+      return matches.first if matches&.first&.automatch?
+    end
 
     # Modifies fields as needed from CMP
     # - adds 'assets' as latest provided value from 2014-2016
@@ -109,10 +111,6 @@ module Cmp
         name: OrgName.format(attributes[:cmpname]),
         last_user_id: Cmp::CMP_USER_ID
       )
-    end
-
-    def entity_str(entity)
-      "#{entity.name} - #{entity_url(entity)}"
     end
   end
 end
