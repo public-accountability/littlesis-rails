@@ -6,12 +6,66 @@ module Cmp
       fullname: [:entity, :name]
     }.freeze
 
-    def attributes_with_matches
-      attributes.merge(
-        Array.new(2) { |n| potential_matches[n] }
-          .map.with_index(1) { |entity, n| format_match(entity, n) }
-          .each_with_object({}) { |match, obj| obj.merge!(match) }
-      )
+    def import!
+      entity = find_or_create_entity
+    end
+
+    # importing helpers
+
+    def find_or_create_entity
+      cmp_entity = CmpEntity.find_by(cmp_id: cmpid, entity_type: :person)
+      return cmp_entity if cmp_entity
+
+      if preselected_match
+        if preselected_match.to_s.casecmp('NEW').zero?
+          return create_new_entity!
+        else
+          return Entity.find(preselected_match)
+        end
+      end
+
+      return matches.first if matches.automatchable?
+      return create_new_entity!
+    end
+
+    # -> <Entity>
+    def create_new_entity!
+      Entity.create!(primary_ext: 'Person', name: fetch('fullname'), last_user_id: Cmp::CMP_SF_USER_ID)
+    end
+
+    def preselected_match
+      Cmp::EntityMatch.matches.dig(cmpid.to_s, 'entity_id')
+    end
+
+    # utilites to find matches
+
+    def cmp_relationships
+      @cmp_relationships ||= Cmp::Datasets
+                               .relationships
+                               .select { |r| r['cmp_person_id'] == cmpid }
+    end
+
+    def related_cmp_org_ids
+      cmp_relationships.map { |r| r['cmp_org_id'].to_i }
+    end
+
+    def associated_entity_ids
+      return [] if related_cmp_org_ids.empty?
+      CmpEntity
+        .where(cmp_id: related_cmp_org_ids)
+        .distinct
+        .pluck('entity_id')
+    end
+
+    def matches
+      unless EntityMatcher::TestCase::Person.validate_person_hash(to_person_hash)
+        Rails.logger.warn "#{cmpid} is missing a first or last name!"
+        return EntityMatcher::EvaluationResultSet.new([])
+      end
+
+      return @matches if defined?(@matches)
+      @matches = EntityMatcher
+                   .find_matches_for_person(to_person_hash, associated: associated_entity_ids)
     end
 
     def to_person_hash
@@ -21,46 +75,6 @@ module Cmp
         name_middle: fetch("middlename"),
         name_last: fetch("lastname"),
         name_suffix: fetch("suffix")
-      }
-    end
-
-    def associated_entities
-      CmpEntity
-        .where(cmp_id: Cmp::Datasets.relationships
-                 .select { |r| r.fetch(:cmp_person_id, 'REL_ID') == fetch(:cmpid, "ATTR_ID") }
-                 .map { |r| r.fetch(:cmp_org_id) })
-        .map(&:entity)
-    end
-
-    def potential_matches
-      EntityMatcher::Search.by_name(fetch('lastname')).map do |entity|
-        test_case = EntityMatcher::TestCase::Person
-                      .new(to_person_hash, associated: associated_entities)
-
-        match = EntityMatcher::TestCase::Person.new(entity)
-        EntityMatcher.evaluate(test_case, match)
-      end
-    end
-
-    # def potential_matches
-    #   @_potential_matches ||=
-    #     EntityMatch.new(name: entity_name, primary_ext: 'Person', cmpid: cmpid).search_results
-    # end
-
-    private
-
-    def entity_name
-      name = "#{fetch(:firstname)} "
-      name << "#{fetch(:middlename)} " if fetch(:middlename, nil).present?
-      name << fetch(:lastname)
-      name
-    end
-
-    def format_match(entity, n)
-      {
-        "match#{n}_name" => entity.present? ? "#{entity.name} (#{entity.id})" : '',
-        "match#{n}_blurb" => entity&.blurb,
-        "match#{n}_url" => entity.present? ? entity_url(entity) : ''
       }
     end
   end

@@ -18,6 +18,14 @@ module EntityMatcher
       @results
     end
 
+    # In order for the set to be considered automatachable
+    # the set must contain only one result that can be automatched.
+    # If there are two (or more) results, then there is no way to know which
+    # one is better without human intervention
+    def automatchable?
+      @results&.first&.automatch? && !@results&.second&.automatch?
+    end
+
     private
 
     def check_argument(evaluation_results)

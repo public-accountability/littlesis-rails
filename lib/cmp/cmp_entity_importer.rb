@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Cmp
   class CmpEntityImporter
     attr_reader :attributes
@@ -30,6 +32,5 @@ module Cmp
       e_path = Rails.application.routes.url_helpers.entity_path(entity).gsub('entities', primary_ext)
       "https://littlesis.org#{e_path}"
     end
-
   end
 end

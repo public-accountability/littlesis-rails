@@ -1,6 +1,25 @@
 require 'rails_helper'
 
 describe OrgName do
+  describe 'format' do
+    specify do
+      expect(OrgName.format("TWENTY-FIRST CENTURY FOX, INC."))
+        .to eql "Twenty-First Century Fox, Inc."
+    end
+
+    specify do
+      expect(OrgName.format("blah blah llc")).to eql "Blah Blah LLC"
+    end
+
+    specify do
+      expect(OrgName.format("blahllc")).to eql "Blahllc"
+    end
+
+    specify do
+      expect(OrgName.format("no suffix, here")).to eql "No Suffix, Here"
+    end
+  end
+
   describe 'parse' do
     specify { expect(OrgName.parse('ABC')).to be_a OrgName::Name }
 

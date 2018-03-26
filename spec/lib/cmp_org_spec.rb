@@ -17,11 +17,24 @@ describe Cmp::CmpOrg do
 
   subject { Cmp::CmpOrg.new(attributes.merge(override)) }
 
+  before(:all) do
+    @cmp_user = create_basic_user_with_ids(Cmp::CMP_USER_ID, Cmp::CMP_SF_USER_ID)
+    @cmp_tag = Tag.create!("id" => Cmp::CMP_TAG_ID,
+                           "restricted" => true,
+                           "name" => "cmp",
+                           "description" => "Data from the Corporate Mapping Project")
+  end
+
+  after(:all) do
+    @cmp_tag.delete
+    @cmp_user.sf_guard_user.delete
+    @cmp_user.delete
+    SfGuardUserPermission.delete_all
+  end
+
   describe 'import!' do
     context 'Entity is not already in the database' do
-      before do
-        expect(subject).to receive(:entity_match).and_return(double(:has_match? => false))
-      end
+      before { expect(subject).to receive(:entity_match).and_return(nil) }
 
       it 'creates a new entity' do
         expect { subject.import! }.to change { Entity.count }.by(1)
@@ -46,6 +59,16 @@ describe Cmp::CmpOrg do
 
       it 'creates an extension' do
         expect { subject.import! }.to change { Business.count }.by(1)
+      end
+
+      it 'adds CMP tag' do
+        expect { subject.import! }.to change { Tagging.count }.by(1)
+        expect(Entity.last.tags.last).to eql @cmp_tag
+      end
+
+      it 'sets last user id to cmp sf user' do
+        subject.import!
+        expect(CmpEntity.last.entity.last_user_id).to eql Cmp::CMP_SF_USER_ID
       end
 
       context 'entity is a research institute' do
@@ -96,7 +119,7 @@ describe Cmp::CmpOrg do
 
     context 'entity has already been imported, but a field has changed' do
       before do
-        allow(subject).to receive(:entity_match).and_return(double(:has_match? => false))
+        expect(subject).to receive(:entity_match).once.and_return(nil)
         subject.import!
       end
 
@@ -124,13 +147,27 @@ describe Cmp::CmpOrg do
       let(:entity) { create(:entity_org) }
       before do
         CmpEntity.create!(cmp_id: Faker::Number.number(6), entity_id: entity.id, entity_type: :org)
-        expect(subject).to receive(:entity_match).and_return(double(:has_match? => true))
-        expect(subject).to receive(:entity_match).twice.and_return(double(:match => entity))
-        # expect(subject).to receive(:find_or_create_entity).and_return(CmpEntity.last.entity)
+        subject.instance_variable_set(:@_entity_match, entity)
+        expect(Rails.logger).to receive(:warn).once
       end
 
       it 'does not create a new CmpEntity' do
         expect { subject.import! }.not_to change { CmpEntity.count }
+      end
+    end
+
+    describe 'records history attributed to the CMP USER' do
+      with_versioning do
+        before do
+          expect(subject).to receive(:entity_match).and_return(nil)
+        end
+
+        it 'creates 5 versions' do
+          expect { subject.import! }.to change { PaperTrail::Version.count }.by(5)
+          whodunnit = PaperTrail::Version.last(5).pluck('whodunnit').uniq
+          expect(whodunnit.count).to eql 1
+          expect(whodunnit.first).to eql Cmp::CMP_USER_ID.to_s
+        end
       end
     end
   end
@@ -159,12 +196,7 @@ describe Cmp::CmpOrg do
 
     context 'found a matched entity' do
       let(:org) { build(:org, id: rand(10_000)) }
-      before do
-        entity_match = double('EntityMatch')
-        expect(entity_match).to receive(:has_match?).and_return(true)
-        expect(entity_match).to receive(:match).twice.and_return(org)
-        subject.instance_variable_set(:@_entity_match, entity_match)
-      end
+      before { subject.instance_variable_set(:@_entity_match, org) }
 
       it 'returns matched entity' do
         expect(subject.find_or_create_entity).to eql org
@@ -172,12 +204,11 @@ describe Cmp::CmpOrg do
     end
 
     context 'need to create a new entity' do
-      before do
-        expect(subject).to receive(:entity_match).and_return(double(:has_match? => false))
-      end
+      before { expect(subject).to receive(:entity_match).and_return(nil) }
+
       it 'creates a new entity' do
         expect { subject.find_or_create_entity }.to change { Entity.count }.by(1)
-        expect(Entity.last.name).to eql attributes[:cmpname]
+        expect(Entity.last.name).to eql "Big Oil Inc"
       end
     end
   end

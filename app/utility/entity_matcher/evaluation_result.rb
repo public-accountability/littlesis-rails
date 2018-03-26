@@ -85,6 +85,11 @@ module EntityMatcher
       attr_accessor :entity
       include Comparable
 
+      # Determines if the current match has enough critera to be automatched
+      def automatch?
+        raise NotImplementedError
+      end
+
       # by comparinng #values, we can ignore the attributes, entity, when testing for equality
       def eql?(other)
         (self.class == other.class) && (self.values == other.values)
@@ -141,9 +146,11 @@ module EntityMatcher
       TIER1 = [
         compute_name_sets(:same_last_name, :same_first_name, :common_relationship, :blurb_keyword),
         compute_name_sets(:same_last_name, :same_first_name, :common_relationship),
-        compute_name_sets(:same_last_name, :same_first_name, :blurb_keyword),
+
         compute_name_sets(:same_last_name, :similar_first_name, :common_relationship, :blurb_keyword),
         compute_name_sets(:same_last_name, :similar_first_name, :common_relationship),
+
+        compute_name_sets(:same_last_name, :same_first_name, :blurb_keyword),
         compute_name_sets(:same_last_name, :similar_first_name, :blurb_keyword),
         compute_name_sets(:same_last_name, :same_first_name),
         compute_name_sets(:same_last_name, :similar_first_name)
@@ -182,6 +189,10 @@ module EntityMatcher
 
       RANKINGS = (TIER1 + TIER2 + TIER3 + TIER4).freeze
 
+      AUTOMATCH_MINIMUM_SET = Set[:same_last_name, :similar_first_name, :common_relationship].freeze
+      AUTOMATCH_MINIMUM_RANK = RANKINGS.rindex { |s| s == AUTOMATCH_MINIMUM_SET }
+
+      # same_last_name, :similar_first_name, :common_relationship
       # Lower values are "better" matchers here
       def <=>(other)
         ##
@@ -201,6 +212,10 @@ module EntityMatcher
 
         # return 0 if self == other
         self.ranking <=> other.ranking
+      end
+
+      def automatch?
+        ranking <= AUTOMATCH_MINIMUM_RANK
       end
 
       def tier_one?
@@ -248,8 +263,15 @@ module EntityMatcher
         Set[:similar_root]
       ].flatten.freeze
 
+      AUTOMATCH_MINIMUM_SET = Set[:matches_alias].freeze
+      AUTOMATCH_MINIMUM_RANK = RANKINGS.rindex { |s| s == AUTOMATCH_MINIMUM_SET }
+
       def <=>(other)
         self.ranking <=> other.ranking
+      end
+
+      def automatch?
+        ranking <= AUTOMATCH_MINIMUM_RANK
       end
     end
   end
