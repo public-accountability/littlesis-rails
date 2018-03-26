@@ -38,6 +38,10 @@ class UserPresenter < SimpleDelegator
     @_permissions = super().instance_variable_get(:@sf_permissions)
   end
 
+  def member_since
+    "member since #{created_at.strftime('%B %Y')}"
+  end
+
   # If the current user is viewing their own profile page
   # all maps will shown. Anyone else will not be able to see their private maps
   def maps

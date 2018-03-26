@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe UserPresenter do
+  let(:user) { create(:really_basic_user) }
   describe 'show_private?' do
-    let(:user) { create(:really_basic_user) }
     let(:current_user) { create(:really_basic_user) }
     let(:admin_user) { create(:admin_user) }
 
@@ -28,6 +28,16 @@ describe UserPresenter do
       specify do
         expect(UserPresenter.new(user).show_private?).to be false
       end
+    end
+  end
+
+  describe 'member_since' do
+    before do
+      user.update_column(:created_at, Time.zone.parse('2009-02-01'))
+    end
+
+    specify do
+      expect(UserPresenter.new(user).member_since).to eql "member since February 2009"
     end
   end
 end

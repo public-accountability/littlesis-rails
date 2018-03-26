@@ -1,6 +1,9 @@
 <p id="notice"><%= notice %></p>
 
-<h1><%= @user.username %></h1>
+<h1>
+  <%= @user.username %>
+  <small style="font-size: 12px"><%= @user.member_since %></small>
+</h1>
 
 <div class="entity-profile-image">
   <%= user_profile_image %>

@@ -25,6 +25,7 @@ feature 'User Pages' do
       visit "/users/#{user_for_page.username}"
       successfully_visits_page "/users/#{user_for_page.username}"
       page_has_selector 'h1', text: user_for_page.username
+      page_has_selector 'small', text: "member since #{user.created_at.strftime('%B %Y')}"
     end
 
     scenario 'visiting the page via the legacy url' do
