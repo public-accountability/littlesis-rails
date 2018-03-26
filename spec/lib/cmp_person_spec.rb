@@ -40,9 +40,12 @@ describe Cmp::CmpPerson do
   describe 'import!' do
     context 'Entity is not already in the database' do
       before do
-        allow(subject). to receive(:preselected_match).and_return(nil)
+        allow(subject).to receive(:preselected_match).and_return(nil)
+        allow(Cmp::Datasets).to receive(:relationships).and_return([])
+
         expect(EntityMatcher)
-          .to receive(:find_matches_for_person).and_return(EntityMatcher::EvaluationResultSet.new([]))
+          .to receive(:find_matches_for_person)
+                .and_return(EntityMatcher::EvaluationResultSet.new([]))
       end
 
       it 'creates a new entity' do
@@ -51,7 +54,6 @@ describe Cmp::CmpPerson do
       end
     end
   end
-  
 
   describe '#attrs_for' do
     specify do
