@@ -83,6 +83,7 @@ class MapsController < ApplicationController
             .map { |k,v| [k, to_hash_if.call(k,v) ]  }.to_h
   end
 
+  # renders the 'story_map' template
   def show
     if @map.is_private and !is_owner
       unless params[:secret] and params[:secret] == @map.secret
@@ -101,6 +102,9 @@ class MapsController < ApplicationController
         @links.push({ text: 'clone', url: clone_map_url(@map), method: 'POST' }) if @map.is_cloneable
         @links.push({ text: 'edit', url: edit_map_url(@map) }) if is_owner
         @links.push({ text: 'share link', url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
+
+        # see views/maps/_disclaimer_modal for the disclaimer modal
+        @links.push(text: 'disclaimer', url: '#disclaimer')
 
         if params[:embed]
           response.headers.delete('X-Frame-Options')
