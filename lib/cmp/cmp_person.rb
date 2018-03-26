@@ -7,6 +7,34 @@ module Cmp
     }.freeze
 
     def import!
+      entity = find_or_create_entity
+    end
+
+    # importing helpers
+
+    def find_or_create_entity
+      cmp_entity = CmpEntity.find_by(cmp_id: cmpid, entity_type: :person)
+      return cmp_entity if cmp_entity
+
+      if preselected_match
+        if preselected_match.to_s.casecmp('NEW').zero?
+          return create_new_entity!
+        else
+          return Entity.find(preselected_match)
+        end
+      end
+
+      return matches.first if matches.automatchable?
+      return create_new_entity!
+    end
+
+    # -> <Entity>
+    def create_new_entity!
+      Entity.create!(primary_ext: 'Person', name: fetch('fullname'), last_user_id: Cmp::CMP_SF_USER_ID)
+    end
+
+    def preselected_match
+      Cmp::EntityMatch.matches.dig(cmpid.to_s, 'entity_id')
     end
 
     # utilites to find matches
@@ -35,8 +63,9 @@ module Cmp
         return EntityMatcher::EvaluationResultSet.new([])
       end
 
-      EntityMatcher
-        .find_matches_for_person(to_person_hash, associated: associated_entity_ids)
+      return @matches if defined?(@matches)
+      @matches = EntityMatcher
+                   .find_matches_for_person(to_person_hash, associated: associated_entity_ids)
     end
 
     def to_person_hash
