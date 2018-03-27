@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UserRequest < ApplicationRecord
-  # fields: user_id, reviewer_id, type, status, source_id, dest_id
+  # fields: user_id, reviewer_id, type, status, source_id, dest_id, justification
   belongs_to :user
   belongs_to :reviewer,
              class_name: 'User', foreign_key: 'reviewer_id', inverse_of: :reviewed_requests
@@ -11,6 +11,7 @@ class UserRequest < ApplicationRecord
 
   validates :user_id, presence: true
   validates :status, presence: true
+  validates :justification, presence: true
   validates :type, presence: true, inclusion: { in: TYPES.values }
 
   # abstract method(s)

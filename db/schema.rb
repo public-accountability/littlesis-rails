@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180312221213) do
+ActiveRecord::Schema.define(version: 20180327200500) do
 
   create_table "address", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint   "entity_id",                                null: false
@@ -1504,16 +1504,17 @@ ActiveRecord::Schema.define(version: 20180312221213) do
     t.index ["user_id", "resource_type"], name: "index_user_permissions_on_user_id_and_resource_type", using: :btree
   end
 
-  create_table "user_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
-    t.string   "type",                    null: false
-    t.integer  "user_id",                 null: false
-    t.integer  "status",      default: 0, null: false
+  create_table "user_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string   "type",                                    null: false
+    t.integer  "user_id",                                 null: false
+    t.integer  "status",                      default: 0, null: false
     t.integer  "source_id"
     t.integer  "dest_id"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
     t.integer  "reviewer_id"
     t.integer  "entity_id"
+    t.text     "justification", limit: 65535
     t.index ["user_id"], name: "index_user_requests_on_user_id", using: :btree
   end
 
