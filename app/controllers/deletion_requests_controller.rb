@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DeletionRequestsController < ApplicationController
   before_action :authenticate_user!
   before_action :admins_only, only: [:review, :commit_review]
@@ -10,7 +12,7 @@ class DeletionRequestsController < ApplicationController
 
   # POST /deletion_requests
   def create
-    dr = DeletionRequest.create!(user: current_user, entity: @entity)
+    dr = DeletionRequest.create!(deletion_request_params)
     NotificationMailer.deletion_request_email(dr).deliver_later
     redirect_to home_dashboard_path, notice: "Deletion request sent to admins."
   end
@@ -25,6 +27,14 @@ class DeletionRequestsController < ApplicationController
   end
 
   private
+
+  def deletion_request_params
+    {
+      user: current_user,
+      entity: @entity,
+      justification: params.require('justification')
+    }
+  end
 
   def set_deletion_request
     @deletion_request = DeletionRequest.find(params.require(:id).to_i)

@@ -1,8 +1,13 @@
-<div id="entity-deletion-action-buttons">
-
+<div id="entity-deletion-request-form">
   <%= form_tag(deletion_requests_path, method: :post) do %>
     <%= hidden_field_tag 'entity_id', @entity.id %>
-    <%= submit_tag 'Request Deletion', class: 'btn btn-lrg btn-primary' %>
+    <!-- <div class="entity-deletion-warning"> -->
+    <div class="entity-deletion-justification">
+      <p>Please breifly explain why this entity should be deleted:</p>
+    </div>
+    <div id="entity-deletion-action-buttons">
+      <%= text_area_tag 'justification', nil, size: "25x4", required: true %>
+      <%= submit_tag 'Request Deletion', class: 'btn btn-lrg btn-primary', id: 'entity-deletion-request-btn' %>
+    </div>
   <% end %>
-
 </div>

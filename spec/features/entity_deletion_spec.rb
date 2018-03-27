@@ -4,9 +4,6 @@ feature 'Entity deletion request & review' do
   let(:user) {}
   let(:requester) { create :really_basic_user }
   let(:entity) { create :entity_person }
-  let!(:deletion_request) do
-    create :deletion_request, user: requester, entity: entity
-  end
 
   before { login_as user, scope: :user }
   after { logout :user }
@@ -17,7 +14,6 @@ feature 'Entity deletion request & review' do
     expect(report).to have_link entity.name, href: entity_path(entity)
     expect(report).to have_text entity.description
     expect(report).to have_text "#{entity.link_count} relationships"
-    expect(report).to have_text "Are you sure"
   end
 
   describe "requesting a deletion" do
@@ -37,20 +33,25 @@ feature 'Entity deletion request & review' do
         should_show_deletion_report
       end
 
-      it "shows submit button" do
+      it "shows submit button and text area" do
+        page_has_selector '#entity-deletion-request-form', count: 1
+        page_has_selector '#entity-deletion-request-form form', count: 1
+        page_has_selector "textarea#justification"
         expect(page).to have_button "Request Deletion"
       end
 
       describe "submitting request" do
-        let!(:entity_count){ Entity.count }
-        let!(:deletion_request_count){ DeletionRequest.count }
+        let!(:entity_count) { Entity.count }
+        let!(:deletion_request_count) { DeletionRequest.count }
         let(:message_delivery) { instance_double(ActionMailer::MessageDelivery) }
+        let(:justification) { Faker::Movie.quote }
 
         before do
           allow(NotificationMailer)
             .to receive(:deletion_request_email).and_return(message_delivery)
           allow(message_delivery).to receive(:deliver_later)
 
+          fill_in 'justification', with: justification
           click_button "Request Deletion"
         end
 
@@ -63,6 +64,7 @@ feature 'Entity deletion request & review' do
           expect(DeletionRequest.last.status).to eql 'pending'
           expect(DeletionRequest.last.user).to eql requester
           expect(DeletionRequest.last.entity).to eql entity
+          expect(DeletionRequest.last.justification).to eql justification
         end
 
         it "redirects to the dashboard" do
@@ -78,7 +80,8 @@ feature 'Entity deletion request & review' do
     end
   end
 
-  describe "reviewing a deltion request" do
+  describe "reviewing a deletion request" do
+    let(:deletion_request) { create :deletion_request, user: requester, entity: entity }
     before { visit review_deletion_request_path(deletion_request) }
 
     context "as a non-admin" do
@@ -89,7 +92,7 @@ feature 'Entity deletion request & review' do
     context "as an admin" do
       let(:user) { create(:admin_user) }
 
-      it "shows the deltion review page" do
+      it "shows the deletion review page" do
         successfully_visits_page review_deletion_request_path(deletion_request)
       end
 
