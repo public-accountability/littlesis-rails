@@ -51,7 +51,9 @@ form.alias-form {
 
 	td {
 	    @extend .no-border-top;
+	    padding-left: 0;
 	}
+
     }
 
     .pagination {
