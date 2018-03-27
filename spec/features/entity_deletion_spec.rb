@@ -107,6 +107,10 @@ feature 'Entity deletion request & review' do
         should_show_deletion_report
       end
 
+      it "shows the user's submitted justification" do
+        expect(page).to have_text deletion_request.justification
+      end
+
       it "shows decision buttons" do
         expect(page).to have_button "Approve"
         expect(page).to have_button "Deny"

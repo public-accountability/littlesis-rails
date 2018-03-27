@@ -12,9 +12,19 @@
 }
 
 #user-request-description {
+    @extend .col-sm-12;
+    @extend .nopadding;
     background-color: lightgray;
     border: 1px solid gray;
     border-radius: .3em;
     padding: 1em !important;
-    font-weight: bold;
+    
+    strong {
+	font-size: 14px;
+    }
+    
+    p {
+	font-size: 12px;
+	padding-top: 1em;
+    }
 }
