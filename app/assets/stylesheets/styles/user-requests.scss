@@ -28,3 +28,15 @@
 	padding-top: 1em;
     }
 }
+
+.user-request-justification {
+    margin: 0 auto;
+    font-weight: bold;
+    text-align: center;
+}
+
+form.user-request-form {
+    input, textarea {
+	margin: 5px;
+    }
+}

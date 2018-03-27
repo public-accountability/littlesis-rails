@@ -35,17 +35,3 @@
         border-bottom: solid 1px lightgray;
     }
 }
-
-#entity-deletion-request-form {
-    .entity-deletion-justification {
-	margin: 0 auto;
-	font-weight: bold;
-	text-align: center;
-    }
-
-    form {
-	input, textarea {
-	    margin: 5px;
-	}
-    }
-}

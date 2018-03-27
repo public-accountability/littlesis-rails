@@ -1,4 +1,3 @@
-# coding: utf-8
 require 'rails_helper'
 
 feature 'Merging entities' do
@@ -75,9 +74,9 @@ feature 'Merging entities' do
         page_has_selector "input[name='mode'][value='request']", count: 1
         page_has_selector "input[name='source'][value='#{source.id}']", count: 1
         page_has_selector "input[name='dest'][value='#{dest.id}']", count: 1
+        page_has_selector "textarea[name='justification']", count: 1
         page_has_selector "input.btn[value='Request Merge']", count: 1
         page_has_selector 'a.btn', text: 'Go back'
-        page_has_selector 'a.btn', text: 'Dashboard'
       end
     end
 
@@ -124,6 +123,7 @@ feature 'Merging entities' do
       context 'requesting a merge' do
         let(:mode) { MergeController::Modes::REQUEST }
         let(:query_param) {}
+        let(:justification) { Faker::Movie.quote }
 
         it "shows a merge report" do
           should_show_merge_report
@@ -145,6 +145,7 @@ feature 'Merging entities' do
             allow(NotificationMailer).to receive(:merge_request_email).and_return(message_delivery)
             allow(message_delivery).to receive(:deliver_later)
 
+            fill_in 'justification', with: justification
             click_button "Request Merge"
           end
 
@@ -159,6 +160,7 @@ feature 'Merging entities' do
             expect(last.dest).to eql dest
             expect(last.user).to eql user
             expect(last.status).to eql "pending"
+            expect(last.justification).to eql justification
           end
 
           it "notifies admins of the merge request by delayed email" do
@@ -257,6 +259,10 @@ feature 'Merging entities' do
             expect(desc).to have_link username, href: "/users/#{username}"
             expect(desc).to have_text "requested"
             expect(desc).to have_text LsDate.pretty_print(merge_request.created_at)
+          end
+
+          it "shows the user's submitted justification" do
+            expect(page).to have_text merge_request.justification
           end
 
           it "approves merge request when admin clicks `Approve`" do
