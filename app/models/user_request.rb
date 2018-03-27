@@ -9,8 +9,9 @@ class UserRequest < ApplicationRecord
   enum status: %i[pending approved denied]
   TYPES = { merge: 'MergeRequest', deletion: 'DeletionRequest' }.freeze
 
-  validates_presence_of :user_id, :status, :type
-  validates_inclusion_of :type, in: TYPES.values
+  validates :user_id, presence: true
+  validates :status, presence: true
+  validates :type, presence: true, inclusion: { in: TYPES.values }
 
   # abstract method(s)
 
