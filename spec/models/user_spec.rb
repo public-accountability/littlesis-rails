@@ -5,6 +5,8 @@ describe User do
   it { should have_one(:api_token) }
   it { should have_many(:lists) }
   it { should have_many(:user_permissions) }
+  it { should have_many(:user_requests) }
+  it { should have_many(:reviewed_requests) }
 
   it 'has constant User::Edits (from module UserEdits)' do
     expect(User.const_defined?(:Edits)).to be true
