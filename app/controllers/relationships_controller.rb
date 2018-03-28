@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RelationshipsController < ApplicationController
   include TagableController
   include ReferenceableController
@@ -20,14 +22,17 @@ class RelationshipsController < ApplicationController
     # If user has not checked the 'just cleaning up' or selected an existing reference
     # then a  new reference must be created
     if @relationship.valid?
-      @relationship.add_reference(reference_params) if need_to_create_new_reference
+      ApplicationRecord.transaction do
+        @relationship.add_reference(reference_params) if need_to_create_new_reference
 
-      if @relationship.valid?
-        @relationship.save!
-        update_entity_last_user
-        # successful response
-        return redirect_to relationship_path(@relationship)
+        if @relationship.valid?
+          @relationship.save!
+          update_entity_last_user
+          # successful response
+          return redirect_to relationship_path(@relationship)
+        end
       end
+
     end
     return render :edit
   end
