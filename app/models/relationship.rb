@@ -1,4 +1,5 @@
-# coding: utf-8
+# frozen_string_literal: true
+
 class Relationship < ApplicationRecord
   include SingularTable
   include SoftDelete
@@ -55,8 +56,6 @@ class Relationship < ApplicationRecord
   accepts_nested_attributes_for :trans
   accepts_nested_attributes_for :ownership
 
-  # fec_filings are no longer used
-  has_many :fec_filings, inverse_of: :relationship, dependent: :destroy
   belongs_to :category, class_name: "RelationshipCategory", inverse_of: :relationships
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id"
 

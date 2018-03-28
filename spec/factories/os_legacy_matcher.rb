@@ -28,26 +28,6 @@ FactoryBot.define do
     is_gte false
   end
 
-  factory :loeb_filing_one, class: FecFiling do
-    amount 30800
-    fec_filing_id '11020480483'
-    crp_cycle 2012
-    crp_id '1120620120011115314'
-    start_date '2011-11-29'
-    end_date '2011-11-29'
-    is_current false
-  end
-
-  factory :loeb_filing_two, class: FecFiling do 
-    amount 50000
-    fec_filing_id '10020853341'
-    crp_cycle 2010
-    crp_id '2340167'
-    start_date '2010-09-17'
-    end_date '2010-09-17'
-    is_current false
-  end
-
   factory :loeb_donation_one, class: OsDonation do
     cycle '2012'
     fectransid '1120620120011115314'
