@@ -240,12 +240,12 @@ class Relationship < ApplicationRecord
     return false
   end
 
-  def reverse_links
+  def reverse_links(update_method = :update)
     links.each do |link|
       if link.is_reverse == true
-        link.update(is_reverse: false)
+        link.public_send(update_method, is_reverse: false)
       else
-        link.update(is_reverse: true)
+        link.public_send(update_method, is_reverse: true)
       end
     end
   end
@@ -254,6 +254,11 @@ class Relationship < ApplicationRecord
   def reverse_direction
     update(entity1_id: entity2_id, entity2_id: entity1_id)
     reverse_links
+  end
+
+  def reverse_direction!
+    update!(entity1_id: entity2_id, entity2_id: entity1_id)
+    reverse_links(:update!)
   end
 
   ###############################

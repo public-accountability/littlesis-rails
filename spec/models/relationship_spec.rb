@@ -438,24 +438,44 @@ describe Relationship, type: :model do
         @rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
       end
 
-      it 'changes the direction of relationship' do
+      def changes_direction_of_relationship(method)
         expect(@rel.entity1_id).to eql @human.id
         expect(@rel.entity2_id).to eql @corp.id
-        @rel.reverse_direction
+        @rel.public_send(method)
         expect(Relationship.find(@rel.id).entity2_id).to eql @human.id
         expect(Relationship.find(@rel.id).entity1_id).to eql @corp.id
       end
 
-      it 'reverses links' do
+      def it_reverses_links(method)
         expect(Link.where(entity1_id: @human.id, relationship_id: @rel.id)[0].is_reverse)
           .to be false
         expect(Link.where(entity2_id: @human.id, relationship_id: @rel.id)[0].is_reverse)
           .to be true
-        @rel.reverse_direction
+        @rel.public_send(method)
         expect(Link.where(entity1_id: @human.id, relationship_id: @rel.id)[0].is_reverse)
           .to be true
         expect(Link.where(entity2_id: @human.id, relationship_id: @rel.id)[0].is_reverse)
           .to be false
+      end
+
+      context '#reverse_direction' do
+        it 'changes the direction of relationship' do
+          changes_direction_of_relationship(:reverse_direction)
+        end
+
+        it 'reverses links' do
+          it_reverses_links(:reverse_direction)
+        end
+      end
+
+      context '#reverse_direction!' do
+        it 'changes the direction of relationship' do
+          changes_direction_of_relationship(:reverse_direction!)
+        end
+
+        it 'reverses links' do
+          it_reverses_links(:reverse_direction!)
+        end
       end
     end
   end
