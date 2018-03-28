@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   include ChatUser
   include UserEdits
@@ -48,7 +50,8 @@ class User < ApplicationRecord
   has_one :api_token
   has_many :user_permissions
 
-  
+  has_many :user_requests, inverse_of: :user, dependent: :destroy
+  has_many :reviewed_requests, class_name: "UserRequest", foreign_key: 'reviewer_id', inverse_of: :reviewer
 
   def to_param
     username

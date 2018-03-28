@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class MergeController < ApplicationController
   SIMILAR_ENTITIES_PER_PAGE = 75
 
   class Modes
-    SEARCH  = 'search'.freeze
-    EXECUTE = 'execute'.freeze
-    REQUEST = 'request'.freeze
-    REVIEW  = 'review'.freeze
+    SEARCH  = 'search'
+    EXECUTE = 'execute'
+    REQUEST = 'request'
+    REVIEW  = 'review'
     ALL = [SEARCH, EXECUTE, REQUEST, REVIEW].freeze
   end
 
@@ -32,7 +34,7 @@ class MergeController < ApplicationController
       @merge_request.send("#{@decision}_by!".to_sym, current_user)
       redirect_to @merge_request.dest, notice: "Merge request #{@decision}"
     when Modes::REQUEST
-      mr = MergeRequest.create!(user: current_user, source: @source, dest: @dest)
+      mr = MergeRequest.create!(new_merge_request_params)
       NotificationMailer.merge_request_email(mr).deliver_later
       redirect_to @source, notice: "Your request was sent to LittleSis admins"
     end
@@ -100,6 +102,15 @@ class MergeController < ApplicationController
     when Modes::REQUEST
       set_source_and_dest
     end
+  end
+
+  def new_merge_request_params
+    {
+      user: current_user,
+      source: @source,
+      dest: @dest,
+      justification: params.require('justification')
+    }
   end
 
   # parser helpers

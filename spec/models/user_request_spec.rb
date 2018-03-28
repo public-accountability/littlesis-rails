@@ -10,6 +10,7 @@ describe UserRequest, type: :model do
     it { should have_db_column(:status).of_type(:integer) }
     it { should have_db_column(:source_id).of_type(:integer) }
     it { should have_db_column(:dest_id).of_type(:integer) }
+    it { should have_db_column(:justification).of_type(:text) }
   end
 
   describe "associations" do
@@ -25,6 +26,7 @@ describe UserRequest, type: :model do
     it { should validate_presence_of(:user_id) }
     it { should validate_presence_of(:status) }
     it { should validate_presence_of(:type) }
+    it { should validate_presence_of(:justification) }
 
     it { should define_enum_for(:status).with %i[pending approved denied] }
     it { should validate_inclusion_of(:type).in_array %w[MergeRequest DeletionRequest] }
