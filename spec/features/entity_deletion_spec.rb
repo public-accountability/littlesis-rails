@@ -117,8 +117,9 @@ feature 'Entity deletion request & review' do
       end
 
       context "making a decision" do
+        let!(:initial_entity_count) { Entity.count }
+
         before do
-          expect(Entity.count).to eql 1
           expect(deletion_request.status).to eql 'pending'
         end
 
@@ -126,7 +127,7 @@ feature 'Entity deletion request & review' do
           before { click_button "Approve" }
 
           it "deletes the entity" do
-            expect(Entity.count).to eql 0
+            expect(Entity.count).to eql(initial_entity_count - 1)
           end
 
           it "records the approval" do
@@ -143,7 +144,7 @@ feature 'Entity deletion request & review' do
           before { click_button "Deny" }
 
           it "does not delete the entity" do
-            expect(Entity.count).to eql 1
+            expect(Entity.count).to eql initial_entity_count
           end
 
           it "records the denial" do
