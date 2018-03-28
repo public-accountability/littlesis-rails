@@ -144,7 +144,7 @@ class Relationship < ApplicationRecord
   end
 
   def category_name
-    self.class.all_categories[category_id]
+    ALL_CATEGORIES[category_id]
   end
 
   def all_attributes
