@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NetworkMap < ApplicationRecord
   include SingularTable
   include SoftDelete
@@ -135,7 +137,7 @@ class NetworkMap < ApplicationRecord
     if is_custom_rel?(rel)
       url = rel['url']
     else
-      url = ActionController::Base.helpers.url_for(Relationship.legacy_url(rel['id']))
+      url = url_helpers.relationship_url(id: rel['id'])
     end
 
     # backward compatibility for maps created before rels could have multiple categories

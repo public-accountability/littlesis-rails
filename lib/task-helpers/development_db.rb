@@ -80,7 +80,6 @@ class DevelopmentDb
                   extension_definition
                   extension_record
                   family
-                  fec_filing
                   fedspending_filing
                   fields
                   gender

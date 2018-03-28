@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module RelationshipsHelper
-  def rel_link(rel, name=nil)
+  def rel_link(rel, name = nil)
     name ||= rel.name
-    link_to name, rel.legacy_url
+    link_to name, relationship_url(rel)
   end
 
   def relationship_date(rel)
@@ -49,20 +51,18 @@ module RelationshipsHelper
     end
   end
 
-  
-
   def d1_is_title
     [1, 3, 10].include? @relationship.category_id
   end
-  
+
   # input: <FormBuilder thingy>, symbol
   def radio_buttons_producer(form, column)
     form.radio_button(column, 'true') +
-    form.label(column, 'Yes') +
-    form.radio_button(column, 'false') +
-    form.label(column, 'No') +
-    form.radio_button(column, '') +
-    form.label(column, 'Unknown')
+      form.label(column, 'Yes') +
+      form.radio_button(column, 'false') +
+      form.label(column, 'No') +
+      form.radio_button(column, '') +
+      form.label(column, 'Unknown')
   end
 
   # family, transaction, social, professional, hiearchy, generic
@@ -92,12 +92,12 @@ module RelationshipsHelper
     # Hierarchy relationships are the only reversible relationship
     # that have both description_fields and description fields display.
     # This prevents the switch icon from appearing twice
-    return nil unless @relationship.is_reversible? && !@relationship.is_hierarchy?
+    return nil unless @relationship.reversible? && !@relationship.is_hierarchy?
     content_tag(:div, class: 'm-left-1em top-1em') { reverse_link + tag(:br) }
   end
 
   def reverse_link
-    link_to reverse_direction_relationship_path(@relationship), method: :post do
+    link_to reverse_direction_relationship_path(@relationship), method: :post, class: 'relationship-reverse-link' do
       content_tag(:span, nil, {'class' => 'glyphicon glyphicon-retweet icon-link hvr-pop', 'aria-hidden' =>  true, 'title' => 'switch'}) +
         content_tag(:span, 'switch', style: 'padding-left: 5px')
     end

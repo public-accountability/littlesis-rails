@@ -114,37 +114,7 @@ namespace :opensecrets do
        match.create_reference
     end
   end
-  
-  desc "Match legacy Os Donations"
-  task legacy_matcher: :environment do
-    OsMatch.skip_callback(:create, :after, :post_process)
-    
-    start = Time.now
-    sql = "select distinct fec_filing.relationship_id from fec_filing 
-           inner join relationship on relationship.id = fec_filing.relationship_id
-           where relationship.is_deleted = 0"
-    
-    # smaller query for testing
-    test_sql = "select distinct fec_filing.relationship_id from fec_filing 
-           inner join relationship on relationship.id = fec_filing.relationship_id
-           where fec_filing.crp_cycle = 2008 and relationship.is_deleted = 0
-           limit 3000"
-    
-    ids = ApplicationRecord.connection.execute(sql)
-        
-    ids.each do |i| 
-       relationship_id = i[0]
-       # printf("\n processing relationship: %s\n", relationship_id)
-       matcher = OsLegacyMatcher.new relationship_id
-       matcher.match_all
-    end
-    
-    execution_time = Time.now - start
-    printf("\n** OsLegacyMatcher took %d seconds **\n", execution_time)
-    printf("** There are currently %s matched donations **\n", OsMatch.count)
-    OsMatch.set_callback(:create, :after, :post_process)
-  end
-  
+
   desc "import addresses from matched opensecrets donations"
   task import_addresses: :environment do
     if ENV['ENTITY_ID']
