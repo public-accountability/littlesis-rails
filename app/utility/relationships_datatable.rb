@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RelationshipsDatatable
   include RelationshipsHelper
   include ApplicationHelper
@@ -50,7 +52,7 @@ class RelationshipsDatatable
       list_ids = list_hash.to_a.select { |l| l[1].include?(related.id) }.map { |l| l[0] }.uniq if lists?
       { 
         id: link.relationship_id,
-        url: rel.legacy_url,
+        url: relationship_path(rel),
         entity_id: entity.id,
         entity_name: entity.name,
         entity_url: datatable_entity_path(entity),

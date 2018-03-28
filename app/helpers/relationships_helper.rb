@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module RelationshipsHelper
-  def rel_link(rel, name=nil)
+  def rel_link(rel, name = nil)
     name ||= rel.name
-    link_to name, rel.legacy_url
+    link_to name, relationship_url(rel)
   end
 
   def relationship_date(rel)
@@ -51,20 +51,18 @@ module RelationshipsHelper
     end
   end
 
-  
-
   def d1_is_title
     [1, 3, 10].include? @relationship.category_id
   end
-  
+
   # input: <FormBuilder thingy>, symbol
   def radio_buttons_producer(form, column)
     form.radio_button(column, 'true') +
-    form.label(column, 'Yes') +
-    form.radio_button(column, 'false') +
-    form.label(column, 'No') +
-    form.radio_button(column, '') +
-    form.label(column, 'Unknown')
+      form.label(column, 'Yes') +
+      form.radio_button(column, 'false') +
+      form.label(column, 'No') +
+      form.radio_button(column, '') +
+      form.label(column, 'Unknown')
   end
 
   # family, transaction, social, professional, hiearchy, generic

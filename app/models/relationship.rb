@@ -186,19 +186,6 @@ class Relationship < ApplicationRecord
     ownership&.destroy! if is_ownership?
   end
 
-  def legacy_url(action = nil)
-    self.class.legacy_url(id, action)
-  end
-
-  def self.legacy_url(id, action = nil)
-    action = action.nil? ? "view" : action
-    "/relationship/#{action}/id/#{id.to_s}"
-  end
-
-  def full_legacy_url
-    "//littlesis.org" + legacy_url
-  end
-
   def name
     if is_deleted
       "#{category_name}: #{unscoped_entity.name}, #{unscoped_related.name}"
@@ -251,11 +238,6 @@ class Relationship < ApplicationRecord
     return true if is_position? && entity.person? && related.person?
     return true if is_member? && entity.org? && related.org?
     return false
-  end
-
-  # COMMENT: does this func work? is it used? (ziggy 2017-02-08) 
-  def reverse_link
-    links.find { |link| linl.entity2_id = entity1_id }
   end
 
   def reverse_links

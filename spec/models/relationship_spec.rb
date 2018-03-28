@@ -396,20 +396,6 @@ describe Relationship, type: :model do
     end
   end
 
-  describe 'legacy_url' do
-    before(:all) do
-      @rel = build(:relationship, id: 1000)
-    end
-    
-    it 'generates correct url' do 
-      expect(@rel.legacy_url).to eql "/relationship/view/id/1000" 
-    end
-    
-    it 'generates correct url with action' do 
-      expect(@rel.legacy_url('edit')).to eql "/relationship/edit/id/1000" 
-    end
-  end
-
   describe '#details' do 
     describe 'it returns [ [field, value] ] for each Relationship type' do 
       it 'Position' do 
