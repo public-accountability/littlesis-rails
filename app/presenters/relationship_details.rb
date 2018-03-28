@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RelationshipDetails
   attr_accessor :details
 
@@ -88,7 +90,7 @@ class RelationshipDetails
       .add_field(:end_date, 'End Date')
       .add_field(:is_current, 'Is Current', @@bool)
       .add_field(:amount, 'Amount', @@money)
-      .add_field(:filings, 'FEC Filings')
+      .add_field(:filings, filings_text)
       .add_field(:goods, 'Goods')
       .add_field(:notes, 'Notes')
   end
@@ -202,6 +204,17 @@ class RelationshipDetails
       [@rel.description2, @rel.related.name]
     else
       [@rel.description1, @rel.entity.name]
+    end
+  end
+
+  private
+
+  # distinguishes between NYC and federal campaign contributions
+  def filings_text
+    if @rel.description1 == 'NYS Campaign Contribution'
+      'Filings'
+    else
+      'FEC Filings'
     end
   end
 end

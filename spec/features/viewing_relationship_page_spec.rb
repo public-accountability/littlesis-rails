@@ -21,7 +21,7 @@ describe "Relationship Page", :type => :feature do
       it { is_expected.to have_selector '#source-links-table tbody tr', count: 1, text: url }
       it { is_expected.not_to have_selector '#tags-container' }
       it 'opens the source links in a new tab' do
-        page.all('#source-links-table tbody tr a').each do |element| 
+        page.all('#source-links-table tbody tr a').each do |element|
           expect(element[:target]).to eql '_blank'
         end
       end
@@ -51,5 +51,33 @@ describe "Relationship Page", :type => :feature do
     it { is_expected.to have_selector '#tags-edit-button' }
     it { is_expected.to have_selector '#tags-list li', text: tag.name }
     it { is_expected.to have_selector '#tags-init-js' }
+  end
+
+  context 'NYS donation relationship' do
+    let(:politician) { create(:entity_person) }
+    let(:relationship) do
+      create(:nys_donation_relationship,
+             entity: person, related: politician, last_user_id: user.sf_guard_user.id, filings: 2)
+    end
+    before { visit relationship_path(relationship) }
+
+    scenario 'viewing relationship page with filings' do
+      successfully_visits_page relationship_path(relationship)
+      page_has_selector 'td > strong', text: /^Filings$/, count: 1
+    end
+  end
+
+  context 'Federal donation relationship' do
+    let(:politician) { create(:entity_person) }
+    let(:relationship) do
+      create(:federal_donation_relationship,
+             entity: person, related: politician, last_user_id: user.sf_guard_user.id, filings: 2)
+    end
+    before { visit relationship_path(relationship) }
+
+    scenario 'viewing relationship page with FEC filings' do
+      successfully_visits_page relationship_path(relationship)
+      page_has_selector 'td > strong', text: /^FEC Filings$/, count: 1
+    end
   end
 end

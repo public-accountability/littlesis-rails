@@ -5,7 +5,7 @@ FactoryBot.define do
 
   factory :relationship_with_house, class: Relationship do
     # entity1_id 10551
-    entity2_id 12884
+    entity2_id 12_884
     category_id 3
     description1 "Representative"
     description2 "Representative"
@@ -57,4 +57,13 @@ FactoryBot.define do
     id { generate(:relationship_id) }
   end
 
+  factory :nys_donation_relationship, class: Relationship do
+    description1 'NYS Campaign Contribution'
+    category_id Relationship::DONATION_CATEGORY
+  end
+
+  factory :federal_donation_relationship, class: Relationship do
+    description1 'Campaign Contribution'
+    category_id Relationship::DONATION_CATEGORY
+  end
 end
