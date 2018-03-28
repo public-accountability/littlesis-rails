@@ -33,6 +33,24 @@ class Relationship < ApplicationRecord
 
   BULK_LIMIT = 8
 
+  ALL_CATEGORIES = [
+    "",
+    "Position",
+    "Education",
+    "Membership",
+    "Family",
+    "Donation",
+    "Transaction",
+    "Lobbying",
+    "Social",
+    "Professional",
+    "Ownership",
+    "Hierarchy",
+    "Generic"
+  ].freeze
+
+  ALL_CATEGORIES_WITH_FIELDS = %w[Position Education Membership Family Donation Transaction Ownership].freeze
+
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
@@ -67,7 +85,9 @@ class Relationship < ApplicationRecord
   has_many :ny_matches, inverse_of: :relationship
   has_many :ny_disclosures, through: :ny_matches
 
-  validates_presence_of :entity1_id, :entity2_id, :category_id
+  validates :entity1_id, presence: true
+  validates :entity2_id, presence: true
+  validates :category_id, presence: true
   validates :start_date, length: { maximum: 10 }, date: true
   validates :end_date, length: { maximum: 10 }, date: true
   validates_with RelationshipValidator
@@ -77,7 +97,7 @@ class Relationship < ApplicationRecord
   # It updates the entity timestamps and also changes the last_user_id of
   # associated entities for the relationship
   after_save :update_entity_timestamps
-  
+
   ##############
   # CATEGORIES #
   ##############
@@ -92,21 +112,7 @@ class Relationship < ApplicationRecord
   end
 
   def self.all_categories
-    [
-      "",
-      "Position",
-      "Education",
-      "Membership",
-      "Family",
-      "Donation",
-      "Transaction",
-      "Lobbying",
-      "Social",
-      "Professional",
-      "Ownership",
-      "Hierarchy",
-      "Generic"
-    ]
+    ALL_CATEGORIES
   end
 
   def self.category_hash
@@ -114,15 +120,7 @@ class Relationship < ApplicationRecord
   end
 
   def self.all_categories_with_fields
-    [
-      "Position",
-      "Education",
-      "Membership",
-      "Family",
-      "Donation",
-      "Transaction",
-      "Ownership"
-    ]
+    ALL_CATEGORIES_WITH_FIELDS
   end
 
   def self.all_category_ids_with_fields
@@ -148,9 +146,9 @@ class Relationship < ApplicationRecord
   def category_name
     self.class.all_categories[category_id]
   end
-  
+
   def all_attributes
-    attributes.merge!(category_attributes).reject { |k,v| v.nil? }
+    attributes.merge!(category_attributes).reject { |_k, v| v.nil? }
   end
 
   def get_category
@@ -190,12 +188,12 @@ class Relationship < ApplicationRecord
     trans&.destroy! if is_transaction?
     ownership&.destroy! if is_ownership?
   end
- 
-  def legacy_url(action=nil)
+
+  def legacy_url(action = nil)
     self.class.legacy_url(id, action)
   end
 
-  def self.legacy_url(id, action=nil)
+  def self.legacy_url(id, action = nil)
     action = action.nil? ? "view" : action
     "/relationship/#{action}/id/#{id.to_s}"
   end
@@ -239,10 +237,9 @@ class Relationship < ApplicationRecord
     desc
   end
 
-  def details 
+  def details
     RelationshipDetails.new(self).details
   end
-
 
   #############
   #   LINKS   #
@@ -276,7 +273,6 @@ class Relationship < ApplicationRecord
     update(entity1_id: entity2_id, entity2_id: entity1_id)
     reverse_links
   end
-
 
   ###############################
   # Extension Helpers & Getters #
@@ -381,13 +377,13 @@ class Relationship < ApplicationRecord
   end
 
   ## membership ##
-  
+
   def membership_dues
     membership.nil? ? nil : membership.dues
   end
-  
+
   ## Ownership ##
-  
+
   def percent_stake
     ownership.nil? ? nil : ownership.percent_stake
   end
@@ -457,8 +453,6 @@ class Relationship < ApplicationRecord
     self
   end
 
-  
-
   ########################################
   # Update Entity Timestamp after update #
   ########################################
@@ -486,14 +480,13 @@ class Relationship < ApplicationRecord
         related.update(last_user_id: lui)
       end
     end
-
   end
 
   # Removes 'last_user_id' from the json serialization of the object
   # Can include relationship url if option :url is set to true
   def as_json(options = {})
     super(options)
-      .reject { |k, v| k == 'last_user_id' }
+      .reject { |k, _v| k == 'last_user_id' }
       .tap do |h|
         if options[:url]
           h['url'] = Rails.application.routes.url_helpers.relationship_url(self)
