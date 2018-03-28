@@ -1,9 +1,8 @@
 /* helper css utilities */
 @import "base/globals";
 
-.link-blue {
-  color: $link_blue;
-}
+
+// Padding and margins
 
 .top-1em {
   padding-top: 1em;
@@ -46,7 +45,6 @@
     margin-bottom: 1em;
 }
 
-
 .pad-right-1em {
   padding-right: 1em;
 }
@@ -63,31 +61,8 @@
   padding-right: 0.8em;
 }
 
-.thin-grey-bottom-border {
-  border-bottom: 1px solid #e7e7e7;
-}
-
-.gray-img-border {
-  border: 1px solid #ddd;
-}
-
-.big-text {
-  font-size: 42px;
-}
-
-.small-text {
-    font-size: 10px;
-} 
-
-.borderless {
-   th, td { 
-    border-top: none !important; 
-  }
-}
-
-.icon-link {
-    color: black;
-    text-decoration: none;
+.no-border-top {
+    border-top: 0;
 }
 
 .nopadding {
@@ -99,6 +74,43 @@
     padding-left: 30px;
 }
 
+
+// font size and typography
+
+.big-text {
+  font-size: 42px;
+}
+
+.small-text {
+    font-size: 10px;
+} 
+
+// Colors
+
+.grey-text {
+    color: $gray;
+}
+
+
+// link helpers
+
+.link-blue {
+  color: $link_blue;
+}
+
+
+.icon-link {
+    color: black;
+    text-decoration: none;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+
+// Position
+
 .position-relative {
   position: relative;
 }
@@ -107,6 +119,52 @@
     position: absolute;
 }
 
+
+.red-button {
+    /* background-color: #A04040; */
+    background-color: $red;
+    color: #fff;
+}
+
+
+.empty-button {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+// Borders and boxes
+
+.light-gray-box {
+    background-color: $light_gray;
+    padding: 0.3em;
+}
+
+.light-gray-box-rounded {
+    @extend .light-gray-box;
+    border-radius: 3px;
+}
+
+.grey-bottom-border {
+    border-bottom: 1.2px solid $gray;
+}
+
+.thin-grey-bottom-border {
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.gray-img-border {
+  border: 1px solid #ddd;
+}
+
+.borderless {
+   th, td { 
+    border-top: none !important; 
+  }
+}
+
+
+// Animate
 
 .animate-glyphicon {
     -animation: spin .7s infinite linear;
@@ -121,24 +179,4 @@
 @keyframes spin {
     from { transform: scale(1) rotate(0deg);}
     to { transform: scale(1) rotate(360deg);}
-}
-
-.red-button {
-    /* background-color: #A04040; */
-    background-color: $red;
-    color: #fff;
-}
-
-.cursor-pointer {
-    cursor: pointer;
-}
-
-.no-border-top {
-    border-top: 0;
-}
-
-.empty-button {
-    background: none;
-    border: none;
-    padding: 0;
 }

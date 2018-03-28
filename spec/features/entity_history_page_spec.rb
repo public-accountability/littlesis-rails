@@ -5,26 +5,48 @@ feature 'EntityHistoryPage' do
   let(:entity) { create(:entity_person) }
   let(:tag) { create(:tag) }
 
-  before do
-    with_versioning do
-      # craete entity with 3 history items:
-      PaperTrail.whodunnit(users[0].id.to_s) { entity }
-      PaperTrail.whodunnit(users[1].id.to_s) { entity.add_extension('Lawyer') }
-      PaperTrail.whodunnit(users[2].id.to_s) { entity.add_tag(tag.id) }
+  feature 'viewing entity page' do
+    before do
+      allow(Tag).to receive(:lookup).and_return(double(:fetch => tag))
+
+      with_versioning do
+        # craete entity with 3 history items:
+        PaperTrail.whodunnit(users[0].id.to_s) { entity }
+        PaperTrail.whodunnit(users[1].id.to_s) { entity.add_extension('Lawyer') }
+        PaperTrail.whodunnit(users[2].id.to_s) { entity.add_tag(tag.id) }
+      end
+      login_as(users[0], scope: :user)
     end
-    login_as(users[0], scope: :user)
-  end
 
-  after { logout(:user) }
+    after { logout(:user) }
 
-  scenario 'viewing the history page' do
-    visit edits_entity_path(entity)
-    successfully_visits_page edits_entity_path(entity)
+    scenario 'viewing the history page' do
+      visit edits_entity_path(entity)
+      successfully_visits_page edits_entity_path(entity)
 
-    expect(page).to have_title "Edits: #{entity.name}"
-    page_has_selector "#entity-history-container"
-    page_has_selector "#entity-history-container table tbody tr", count: 3
-    expect(page).to have_content "added extension Lawyer"
-    expect(page).to have_content "added tag #{tag.name}"
+      expect(page).to have_title "Edits: #{entity.name}"
+      page_has_selector "#entity-history-container"
+      page_has_selector "#entity-history-container table tbody tr", count: 3
+      expect(page).to have_content "added extension Lawyer"
+      expect(page).to have_content "added tag #{tag.name}"
+      page_has_selector "h4", text: "Revision history for #{entity.name}"
+      expect(page).not_to have_selector '#entity-history-date-caveat'
+    end
+
+    context 'entity was created before 2017' do
+      before do
+        login_as(users[0], scope: :user)
+        entity.update_column(:created_at, Time.zone.parse('2016-01-01'))
+      end
+
+      after { logout(:user) }
+
+      scenario 'viewing cavet notice' do
+        visit edits_entity_path(entity)
+        successfully_visits_page edits_entity_path(entity)
+        page_has_selector "h4", text: "Revision history for #{entity.name}"
+        page_has_selector '#entity-history-date-caveat'
+      end
+    end
   end
 end
