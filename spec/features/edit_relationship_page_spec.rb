@@ -35,7 +35,7 @@ describe 'Edit Relationship Page', type: :feature do
 
     context 'editing a membership relationship' do
       let(:membership_relationship) do
-        create(:membership_relationship, entity: create(:entity_person), related: create(:entity_org), last_user_id: user.sf_guard_user_id)
+        create(:membership_relationship, entity: create(:entity_org), related: create(:entity_org), last_user_id: user.sf_guard_user_id)
       end
 
       before { visit edit_relationship_path(membership_relationship) }
@@ -44,6 +44,10 @@ describe 'Edit Relationship Page', type: :feature do
         selector = "#relationship-edit-description-fields-display p"
         page_has_selector selector, count: 2
         expect(page.all(selector).map(&:text)).to eql ['Member:', 'Organization:']
+      end
+
+      it 'has reverse link' do
+        page_has_selector '.relationship-reverse-link', count: 1
       end
     end
   end # end 'user is logged in'
