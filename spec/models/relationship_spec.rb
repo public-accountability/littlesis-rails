@@ -175,15 +175,24 @@ describe Relationship, type: :model do
 
     describe 'get_category' do
       let(:donation_relationship) do
-        create(:donation_relationship, entity: create(:entity_person), org: create(:entity_org))
+        create(:donation_relationship, entity: create(:entity_person), related: create(:entity_org))
+      end
+
+      let(:position_relationship) do
+        Relationship
+          .create!(category_id: 1, entity: create(:entity_person), related: create(:entity_org))
       end
 
       it 'returns nil if category does not have fields' do
         expect(build(:social_relationship).get_category).to be_nil
       end
 
-      xit 'returns category for given model' do
-        expect(build(:social_relationship).get_category).to be_nil
+      it 'returns category instance for donation relationship' do
+        expect(donation_relationship.get_category).to eql donation_relationship.donation
+      end
+
+      it 'returns category instance for position relationship' do
+        expect(position_relationship.get_category).to eql position_relationship.position
       end
     end
   end

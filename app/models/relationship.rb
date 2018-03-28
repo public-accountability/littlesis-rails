@@ -152,11 +152,8 @@ class Relationship < ApplicationRecord
   end
 
   def get_category
-    return nil unless self.class.all_categories_with_fields.include? category_name
-
-    Kernel.const_get(category_name)
-      .where(relationship_id: id)
-      .first
+    return nil unless ALL_CATEGORIES_WITH_FIELDS.include? category_name
+    public_send(category_name.downcase)
   end
 
   def category_attributes
