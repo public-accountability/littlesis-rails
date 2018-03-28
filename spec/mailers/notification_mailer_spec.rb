@@ -257,6 +257,10 @@ describe NotificationMailer, type: :mailer do
         expect(body).to have_text merge_request.dest.name
       end
 
+      it "has merge justification" do
+        expect(body).to have_text merge_request.justification
+      end
+
       it "links to merge review page" do
         expect(body).to have_text merge_url(mode: 'review',
                                             request: merge_request.id)
@@ -292,6 +296,10 @@ describe NotificationMailer, type: :mailer do
 
       it "mentions deletion target" do
         expect(body).to have_text deletion_request.entity.name
+      end
+
+      it "has merge justification" do
+        expect(body).to have_text deletion_request.justification
       end
 
       it "links to deletion review page" do

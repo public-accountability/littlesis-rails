@@ -1,10 +1,14 @@
+# frozen_string_literal: true
+
 class NotificationMailer < ApplicationMailer
   add_template_helper(ApplicationHelper)
   default from: APP_CONFIG['notification_email']
   DEFAULT_TO = APP_CONFIG['notification_to']
 
-  SMTP_OPTIONS = { user_name: APP_CONFIG['notification_user_name'], password: APP_CONFIG['notification_password'] }
-  
+  SMTP_OPTIONS = {
+    user_name: APP_CONFIG['notification_user_name'],
+    password: APP_CONFIG['notification_password']
+  }.freeze
 
   def contact_email(params)
     @name = params[:name]
@@ -30,7 +34,9 @@ class NotificationMailer < ApplicationMailer
   def signup_email(user)
     @user = user
     @profile = user.sf_guard_user_profile
-    mail(to: DEFAULT_TO, subject: "New User Signup: #{user.username}", delivery_method_options: SMTP_OPTIONS)
+    mail(to: DEFAULT_TO,
+         subject: "New User Signup: #{user.username}",
+         delivery_method_options: SMTP_OPTIONS)
   end
 
   def bug_report_email(params)
