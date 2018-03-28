@@ -3,7 +3,7 @@
   
   <%= render partial: 'description_fields_entity_row', locals: { relationship_entity: first_entity }  %>
 
-  <% if @relationship.is_reversible?  %>
+  <% if @relationship.reversible? %>
     <div class="row">
       <div class="col-sm-2 col-sm-offset-2" style="padding-bottom: 7px">
 	<div style="padding-left: 8px">

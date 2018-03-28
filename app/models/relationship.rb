@@ -246,7 +246,7 @@ class Relationship < ApplicationRecord
     links.find { |link| link.entity1_id = entity1_id }
   end
 
-  def is_reversible?
+  def reversible?
     is_transaction? || is_donation? || is_ownership? || is_hierarchy? || (is_position? && entity.person? && related.person?)
   end
 
