@@ -64,6 +64,20 @@ describe 'RelationshipDetails' do
                ['End Date', '2000'], ['Amount', '$7,000'], ['FEC Filings', '2']]
   end
 
+  it 'returns details for NYS donation relationship' do
+    rel = build(:nys_donation_relationship, filings: 10, amount: 10_000)
+    expect(RelationshipDetails.new(rel).details)
+      .to eql [['Type', 'NYS Campaign Contribution'],
+               ['Amount', '$10,000'], ['Filings', '10']]
+  end
+
+  it 'returns details for federal donation relationship' do
+    rel = build(:federal_donation_relationship, filings: 10, amount: 10_000)
+    expect(RelationshipDetails.new(rel).details)
+      .to eql [['Type', 'Campaign Contribution'],
+               ['Amount', '$10,000'], ['FEC Filings', '10']]
+  end
+
   it 'returns details for transaction relationship' do
     rel = build(:relationship, category_id: 6, goods: 'jelly beans', is_current: true)
     expect(RelationshipDetails.new(rel).details)
