@@ -247,7 +247,10 @@ class Relationship < ApplicationRecord
   end
 
   def reversible?
-    is_transaction? || is_donation? || is_ownership? || is_hierarchy? || (is_position? && entity.person? && related.person?)
+    return true if is_transaction? || is_donation? || is_ownership? || is_hierarchy?
+    return true if is_position? && entity.person? && related.person?
+    return true if is_member? && entity.org? && related.org?
+    return false
   end
 
   # COMMENT: does this func work? is it used? (ziggy 2017-02-08) 
