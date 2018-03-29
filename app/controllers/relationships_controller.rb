@@ -17,6 +17,9 @@ class RelationshipsController < ApplicationController
   end
 
   # PATCH /relationships/:id
+  #
+  # if the parameter "reverse_direction" is passed with this request,
+  # it also reverse the direction of the relationship
   def update
     @relationship.assign_attributes(prepare_update_params(update_params))
     # If user has not checked the 'just cleaning up' or selected an existing reference
@@ -27,12 +30,12 @@ class RelationshipsController < ApplicationController
 
         if @relationship.valid?
           @relationship.save!
+          @relationship.reverse_direction! if reverse_direction?
           update_entity_last_user
           # successful response
           return redirect_to relationship_path(@relationship)
         end
       end
-
     end
     return render :edit
   end
@@ -251,5 +254,9 @@ class RelationshipsController < ApplicationController
     p = similar_relationships_params
     return true if p.has_key?(:entity1_id) && p.has_key?(:entity2_id) && p.has_key?(:category_id)
     return false
+  end
+
+  def reverse_direction?
+    cast_to_boolean(params[:reverse_direction]) && @relationship.reversible?
   end
 end
