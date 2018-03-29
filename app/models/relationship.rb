@@ -147,6 +147,12 @@ class Relationship < ApplicationRecord
     ALL_CATEGORIES[category_id]
   end
 
+  # same as category_name, except returns "Transaction" instead of Trans
+  def category_name_display
+    return "Transaction" if category_id == TRANSACTION_CATEGORY
+    category_name
+  end
+
   def all_attributes
     attributes.merge!(category_attributes).reject { |_k, v| v.nil? }
   end
@@ -188,9 +194,9 @@ class Relationship < ApplicationRecord
 
   def name
     if is_deleted
-      "#{category_name}: #{unscoped_entity.name}, #{unscoped_related.name}"
+      "#{category_name_display}: #{unscoped_entity.name}, #{unscoped_related.name}"
     else
-      "#{category_name}: #{entity.name}, #{related.name}"
+      "#{category_name_display}: #{entity.name}, #{related.name}"
     end
   end
 

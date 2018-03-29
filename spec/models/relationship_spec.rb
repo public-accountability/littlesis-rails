@@ -184,6 +184,14 @@ describe Relationship, type: :model do
       end
     end
 
+    describe 'category_name_display' do
+      it 'returns correct names' do
+        expect(build(:position_relationship).category_name_display).to eql "Position"
+        expect(build(:generic_relationship).category_name_display).to eql "Generic"
+        expect(build(:transaction_relationship).category_name_display).to eql "Transaction"
+      end
+    end
+
     describe 'get_category' do
       let(:donation_relationship) do
         create(:donation_relationship, entity: create(:entity_person), related: create(:entity_org))
