@@ -40,7 +40,7 @@ class Relationship < ApplicationRecord
     "Membership",
     "Family",
     "Donation",
-    "Transaction",
+    "Trans",
     "Lobbying",
     "Social",
     "Professional",
@@ -49,7 +49,7 @@ class Relationship < ApplicationRecord
     "Generic"
   ].freeze
 
-  ALL_CATEGORIES_WITH_FIELDS = %w[Position Education Membership Family Donation Transaction Ownership].freeze
+  ALL_CATEGORIES_WITH_FIELDS = %w[Position Education Membership Family Donation Trans Ownership].freeze
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"

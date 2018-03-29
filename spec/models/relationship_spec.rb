@@ -19,6 +19,12 @@ describe Relationship, type: :model do
     it { should have_many(:os_donations) }
     it { should have_many(:ny_matches) }
     it { should have_many(:ny_disclosures) }
+
+    it 'aliases trans as transaction' do
+      expect(Trans).to eql Transaction
+      expect(Transaction.new).to be_a Trans
+      expect(Trans.new).to be_a Transaction
+    end
   end
 
   describe 'methods from concerns' do
