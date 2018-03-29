@@ -180,6 +180,14 @@ utility.capitalize = function(str){
   return str.slice(0,1).toUpperCase() + str.slice(1);
 };
 
+utility.formatIdSelector = function(str) {
+  if (str.slice(0,1) === '#') {
+    return str;
+  } else {
+    return '#' + str;
+  }
+};
+
 // OBJECT UTILITIES
 
 // Object -> Any
@@ -345,5 +353,39 @@ utility.currentUrlParams = function() {
       var pair = param.split('=');
       return utility.set(acc, pair[0], pair[1]);
   }, {});
-  
+};
+
+
+/**
+ * Swaps two elements given their ids
+ * Thanks to: https://stackoverflow.com/questions/10716986/swap-2-html-elements-and-preserve-event-listeners-on-them
+ * @param {String} a ID 
+ * @param {String} b ID
+ */
+utility.swapDomElementsById = function(aId, bId) {
+  var a = document.getElementById(aId);
+  var b = document.getElementById(bId);
+  var temp = document.createElement("div");
+
+  a.parentNode.insertBefore(temp, a);
+  // move obj1 to right before obj2
+  b.parentNode.insertBefore(a, b);
+  // move obj2 to right before where obj1 used to be
+  temp.parentNode.insertBefore(b, temp);
+  // remove temporary marker node
+  temp.parentNode.removeChild(temp);
+};
+
+
+/**
+ * Swaps the value of two inputs given their ids
+ * @param {String} a ID
+ * @param {String} a ID
+ */
+utility.swapInputTextById = function(aId, bId) {
+  var a = $(utility.formatIdSelector(aId));
+  var b = $(utility.formatIdSelector(bId));
+  var temp = a.val();
+  a.val(b.val());
+  b.val(temp);
 };

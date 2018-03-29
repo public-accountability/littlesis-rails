@@ -73,18 +73,18 @@ module RelationshipsHelper
   def description_fields(f)
     return nil unless requires_description_fields
     content_tag(:div, id: 'description-fields') do
-      [entity_link(@relationship.entity),
+      [entity_link(@relationship.entity, html_id: 'df-forward-link-entity1'),
        ' is ',
        f.text_field(:description1),
        ' of ',
-       entity_link(@relationship.related),
+       entity_link(@relationship.related, html_id: 'df-forward-link-entity2'),
        tag(:br),
        reverse_link_if,
-       entity_link(@relationship.related),
+       entity_link(@relationship.related, html_id: 'df-backward-link-entity2'),
        ' is ',
        f.text_field(:description2),
        ' of ',
-       entity_link(@relationship.entity)].reduce(:+)
+       entity_link(@relationship.entity, html_id: 'df-backward-link-entity1')].reduce(:+)
     end
   end
 
