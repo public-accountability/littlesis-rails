@@ -51,7 +51,7 @@ gem 'htmlentities'
 gem 'redis-rails', '>= 5.0.2'
 
 # For easy cron scheduling
-gem 'whenever', '~> 0.9.7', :require => false
+gem 'whenever', '~> 0.10.0', :require => false
 
 group :development do
   gem 'web-console', '~> 3.5'
@@ -99,7 +99,7 @@ gem 'mongo'
 gem 'redcarpet', '>= 3.4.0'
 
 # google's recaptcha
-gem "recaptcha", '>= 4.6.2', require: "recaptcha/rails"
+gem "recaptcha", '>= 4.6.6', require: "recaptcha/rails"
 
 # Used by `lib/cmp`
 gem "roo", "~> 2.7.0", :require => false
