@@ -11,7 +11,7 @@ gem 'rack-rewrite', '~> 1.5.1'
 gem 'devise', '~> 4.2'
 
 # Versioning
-gem 'paper_trail', '7.1.3'
+gem 'paper_trail', '8.1.2'
 
 # delayed job
 gem 'daemons' # Required by delayed_job
@@ -26,7 +26,7 @@ gem 'mini_magick'
 gem 'rmagick'
 
 gem 'sprockets', '~> 3.0'
-gem 'asset_sync', '~> 2.3.0'
+gem 'asset_sync', '~> 2.4.0'
 gem "fog-aws"
 
 gem 'uglifier', '>= 4.1'
@@ -51,7 +51,7 @@ gem 'htmlentities'
 gem 'redis-rails', '>= 5.0.2'
 
 # For easy cron scheduling
-gem 'whenever', '~> 0.9.7', :require => false
+gem 'whenever', '~> 0.10.0', :require => false
 
 group :development do
   gem 'web-console', '~> 3.5'
@@ -59,13 +59,13 @@ end
 
 group :test, :development do
   gem 'better_errors', '~> 2.4.0'
-  gem 'capybara', '2.13.0'
-  gem 'capybara-webkit', '1.14.0'
+  gem 'capybara', '2.18.0'
+  gem 'capybara-webkit', '1.15.0'
   gem 'codacy-coverage', :require => false
   gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 4.8.2'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
-  gem 'jasmine', '~> 2.8.0'
+  gem 'jasmine', '~> 3.1.0'
   gem 'pry'
   gem 'pry-byebug'
   gem 'pry-rails'
@@ -99,7 +99,7 @@ gem 'mongo'
 gem 'redcarpet', '>= 3.4.0'
 
 # google's recaptcha
-gem "recaptcha", '>= 4.6.2', require: "recaptcha/rails"
+gem "recaptcha", '>= 4.6.6', require: "recaptcha/rails"
 
 # Used by `lib/cmp`
 gem "roo", "~> 2.7.0", :require => false

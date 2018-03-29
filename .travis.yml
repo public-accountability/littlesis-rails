@@ -3,7 +3,7 @@ dist: trusty
 sudo: required
 cache: bundler
 rvm:
-  - 2.4.3
+  - 2.4.4
 
 addons:
   mariadb: '10.1'
@@ -12,6 +12,7 @@ services:
   - mysql
 
 before_install:
+  - gem install bundler
   - sudo apt-get install software-properties-common
   - sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
   - sudo add-apt-repository -y 'deb [arch=amd64,i386,ppc64el] http://sfo1.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu trusty main'
