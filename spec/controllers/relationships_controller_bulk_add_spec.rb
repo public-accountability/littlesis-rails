@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe RelationshipsController, type: :controller do
@@ -251,6 +253,66 @@ describe RelationshipsController, type: :controller do
         it 'does not change entity order for donation given' do
           post :bulk_add!, params: @donation_given
           expect(Relationship.last.entity1_id).to eq corp.id
+        end
+      end
+
+      context 'when submitting a membership (30) relationship' do
+        let(:person) { create(:entity_person) }
+        let(:relationship) do
+          { 'name' => 'some membership org', 'primary_ext' => 'Org' }
+        end
+
+        let(:params) do
+          { 'entity1_id' => person.id,
+            'category_id' => 30,
+            'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+            'relationships' => [relationship] }
+        end
+
+        it 'creates one relationship' do
+          expect { post :bulk_add!, params: params }.to change { Relationship.count }.by(1)
+        end
+
+        it 'sets correct entity id order' do
+          post :bulk_add!, params: params
+          expect(Relationship.last.entity1_id).to eq person.id
+        end
+      end
+
+      context 'when submitting a members (31) relationship' do
+        let(:org) { create(:entity_org) }
+        let(:relationship) { { 'name' => 'some membership org', 'primary_ext' => 'Org' } }
+
+        let(:params) do
+          { 'entity1_id' => org.id,
+            'category_id' => 31,
+            'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+            'relationships' => [relationship] }
+        end
+
+        it 'creates one relationship' do
+          expect { post :bulk_add!, params: params }.to change { Relationship.count }.by(1)
+        end
+
+        it 'sets correct entity id order' do
+          post :bulk_add!, params: params
+          expect(Relationship.last.entity2_id).to eq org.id
+        end
+      end
+
+      xcontext 'when submitting an invalid members (31) relationship' do
+        let(:person) { create(:entity_person) }
+        let(:relationship) { { 'name' => 'some membership org', 'primary_ext' => 'Org' } }
+
+        let(:params) do
+          { 'entity1_id' => person.id,
+            'category_id' => 31,
+            'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+            'relationships' => [relationship] }
+        end
+
+        it 'does not creates one relationship' do
+          expect { post :bulk_add!, params: params }.not_to change { Relationship.count }
         end
       end
 

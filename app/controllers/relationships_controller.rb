@@ -188,14 +188,14 @@ class RelationshipsController < ApplicationController
       r[:entity2_id] = entity1.id
     end
 
-    # 50 & 51 represent special donation categories
+    # 30, 31, 50, and 51 represent special categories
     # see helpers/tools_helper.rb
-    if r[:category_id].to_i == 50 || r[:category_id].to_i == 51
-      if r[:category_id].to_i == 50
+    if [30, 31, 50, 51]. include? r[:category_id].to_i
+      if r[:category_id].to_i == 50 || r[:category_id].to_i == 31
         r[:entity1_id] = entity2.id
         r[:entity2_id] = entity1.id
       end
-      r[:category_id] = 5
+      r[:category_id] = r[:category_id].to_s[0]
     end
 
     prepare_update_params(r)
