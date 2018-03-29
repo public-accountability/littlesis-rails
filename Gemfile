@@ -26,7 +26,7 @@ gem 'mini_magick'
 gem 'rmagick'
 
 gem 'sprockets', '~> 3.0'
-gem 'asset_sync', '~> 2.3.0'
+gem 'asset_sync', '~> 2.4.0'
 gem "fog-aws"
 
 gem 'uglifier', '>= 4.1'
@@ -59,8 +59,8 @@ end
 
 group :test, :development do
   gem 'better_errors', '~> 2.4.0'
-  gem 'capybara', '2.13.0'
-  gem 'capybara-webkit', '1.14.0'
+  gem 'capybara', '2.18.0'
+  gem 'capybara-webkit', '1.15.0'
   gem 'codacy-coverage', :require => false
   gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 4.8.2'
