@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RelationshipsController < ApplicationController
   include TagableController
   include ReferenceableController
@@ -15,18 +17,24 @@ class RelationshipsController < ApplicationController
   end
 
   # PATCH /relationships/:id
+  #
+  # if the parameter "reverse_direction" is passed with this request,
+  # it also reverse the direction of the relationship
   def update
     @relationship.assign_attributes(prepare_update_params(update_params))
     # If user has not checked the 'just cleaning up' or selected an existing reference
     # then a  new reference must be created
     if @relationship.valid?
-      @relationship.add_reference(reference_params) if need_to_create_new_reference
+      ApplicationRecord.transaction do
+        @relationship.add_reference(reference_params) if need_to_create_new_reference
 
-      if @relationship.valid?
-        @relationship.save!
-        update_entity_last_user
-        # successful response
-        return redirect_to relationship_path(@relationship)
+        if @relationship.valid?
+          @relationship.save!
+          @relationship.reverse_direction! if reverse_direction?
+          update_entity_last_user
+          # successful response
+          return redirect_to relationship_path(@relationship)
+        end
       end
     end
     return render :edit
@@ -180,14 +188,14 @@ class RelationshipsController < ApplicationController
       r[:entity2_id] = entity1.id
     end
 
-    # 50 & 51 represent special donation categories
+    # 30, 31, 50, and 51 represent special categories
     # see helpers/tools_helper.rb
-    if r[:category_id].to_i == 50 || r[:category_id].to_i == 51
-      if r[:category_id].to_i == 50
+    if [30, 31, 50, 51]. include? r[:category_id].to_i
+      if r[:category_id].to_i == 50 || r[:category_id].to_i == 31
         r[:entity1_id] = entity2.id
         r[:entity2_id] = entity1.id
       end
-      r[:category_id] = 5
+      r[:category_id] = r[:category_id].to_s[0]
     end
 
     prepare_update_params(r)
@@ -246,5 +254,9 @@ class RelationshipsController < ApplicationController
     p = similar_relationships_params
     return true if p.has_key?(:entity1_id) && p.has_key?(:entity2_id) && p.has_key?(:category_id)
     return false
+  end
+
+  def reverse_direction?
+    cast_to_boolean(params[:reverse_direction]) && @relationship.reversible?
   end
 end

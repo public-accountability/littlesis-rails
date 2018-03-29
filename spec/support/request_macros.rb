@@ -2,6 +2,11 @@ module RequestExampleMacros
   def json
     JSON.parse(response.body)
   end
+
+  def redirects_to_path(path)
+    expect(response).to have_http_status 302
+    expect(response.location).to include path
+  end
 end
 
 module RequestGroupMacros
@@ -17,6 +22,13 @@ module RequestGroupMacros
   def denies_access
     it 'denies access' do
       expect(response).to have_http_status(403)
+    end
+  end
+
+  def renders_the_edit_page
+    it 'renders the "edit" page' do
+      expect(response).to have_http_status 200
+      expect(response).to render_template(:edit)
     end
   end
 

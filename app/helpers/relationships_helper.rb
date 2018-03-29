@@ -73,18 +73,18 @@ module RelationshipsHelper
   def description_fields(f)
     return nil unless requires_description_fields
     content_tag(:div, id: 'description-fields') do
-      [entity_link(@relationship.entity),
+      [entity_link(@relationship.entity, html_id: 'df-forward-link-entity1'),
        ' is ',
        f.text_field(:description1),
        ' of ',
-       entity_link(@relationship.related),
+       entity_link(@relationship.related, html_id: 'df-forward-link-entity2'),
        tag(:br),
        reverse_link_if,
-       entity_link(@relationship.related),
+       entity_link(@relationship.related, html_id: 'df-backward-link-entity2'),
        ' is ',
        f.text_field(:description2),
        ' of ',
-       entity_link(@relationship.entity)].reduce(:+)
+       entity_link(@relationship.entity, html_id: 'df-backward-link-entity1')].reduce(:+)
     end
   end
 
@@ -97,7 +97,7 @@ module RelationshipsHelper
   end
 
   def reverse_link
-    link_to reverse_direction_relationship_path(@relationship), method: :post, class: 'relationship-reverse-link' do
+    link_to(reverse_direction_relationship_path(@relationship), method: :post, class: 'relationship-reverse-link', id: 'relationship-reverse-link') do
       content_tag(:span, nil, {'class' => 'glyphicon glyphicon-retweet icon-link hvr-pop', 'aria-hidden' =>  true, 'title' => 'switch'}) +
         content_tag(:span, 'switch', style: 'padding-left: 5px')
     end

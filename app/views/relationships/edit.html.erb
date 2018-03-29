@@ -11,6 +11,7 @@
 	</div>
     </div>
 
+    <%# description fields displays are non-editable fields %>
     <% if [1, 2, 3, 5, 7, 10, 11].include? @relationship.category_id %>
 	<%= render partial: 'description_fields_display' %>
     <% end  %>
@@ -27,11 +28,12 @@
     </div>
     
     <% if @relationship.is_donation?  %>
-	<div class="row">
-	    <%= relationship_form_tag( f.label(:description1, 'Type', class: label_class), f.text_field(:description1) ) %>
-	</div>
+      <div class="row">
+	<%= relationship_form_tag( f.label(:description1, 'Type', class: label_class), f.text_field(:description1) ) %>
+      </div>
     <% end %>
     
+    <%# description_fields are editable, unlike 'description_fields_display' %>
     <% if requires_description_fields %>
 	<div class="row">
 	    <div class="col-sm-8 bottom-1em">
@@ -133,12 +135,20 @@
 
     <!-- notes: common to all -->
     <div class="row">
-	<%= relationship_form_tag( f.label(:goods, 'Notes', class: label_class), f.text_area(:notes,  size: '40x6') )%>
+      <%= relationship_form_tag( f.label(:goods, 'Notes', class: label_class), f.text_area(:notes,  size: '40x6') )%>
     </div>
 
+
+    <% if @relationship.reversible? %>
+      <%= hidden_field_tag "reverse_direction", nil, id: 'relationship-reverse-direction-input' %>
+      <%= javascript_tag { render partial: 'reverse_link.js' } %>
+    <% end %>
+
     <div class="row">
-	<%= f.submit 'Update', class: 'btn btn-primary' %>
-	<%= link_to 'Cancel', relationship_path(@relationship), class: 'btn btn-default' %>
+      <%= f.submit 'Update', class: 'btn btn-primary' %>
+      <%= link_to 'Cancel', relationship_path(@relationship), class: 'btn btn-default' %>
     </div>
 
 <% end %>
+
+

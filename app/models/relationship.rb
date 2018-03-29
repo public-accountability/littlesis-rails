@@ -40,7 +40,7 @@ class Relationship < ApplicationRecord
     "Membership",
     "Family",
     "Donation",
-    "Transaction",
+    "Trans",
     "Lobbying",
     "Social",
     "Professional",
@@ -49,7 +49,7 @@ class Relationship < ApplicationRecord
     "Generic"
   ].freeze
 
-  ALL_CATEGORIES_WITH_FIELDS = %w[Position Education Membership Family Donation Transaction Ownership].freeze
+  ALL_CATEGORIES_WITH_FIELDS = %w[Position Education Membership Family Donation Trans Ownership].freeze
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
@@ -147,6 +147,12 @@ class Relationship < ApplicationRecord
     ALL_CATEGORIES[category_id]
   end
 
+  # same as category_name, except returns "Transaction" instead of Trans
+  def category_name_display
+    return "Transaction" if category_id == TRANSACTION_CATEGORY
+    category_name
+  end
+
   def all_attributes
     attributes.merge!(category_attributes).reject { |_k, v| v.nil? }
   end
@@ -188,9 +194,9 @@ class Relationship < ApplicationRecord
 
   def name
     if is_deleted
-      "#{category_name}: #{unscoped_entity.name}, #{unscoped_related.name}"
+      "#{category_name_display}: #{unscoped_entity.name}, #{unscoped_related.name}"
     else
-      "#{category_name}: #{entity.name}, #{related.name}"
+      "#{category_name_display}: #{entity.name}, #{related.name}"
     end
   end
 
@@ -240,12 +246,12 @@ class Relationship < ApplicationRecord
     return false
   end
 
-  def reverse_links
+  def reverse_links(update_method = :update)
     links.each do |link|
       if link.is_reverse == true
-        link.update(is_reverse: false)
+        link.public_send(update_method, is_reverse: false)
       else
-        link.update(is_reverse: true)
+        link.public_send(update_method, is_reverse: true)
       end
     end
   end
@@ -254,6 +260,11 @@ class Relationship < ApplicationRecord
   def reverse_direction
     update(entity1_id: entity2_id, entity2_id: entity1_id)
     reverse_links
+  end
+
+  def reverse_direction!
+    update!(entity1_id: entity2_id, entity2_id: entity1_id)
+    reverse_links(:update!)
   end
 
   ###############################

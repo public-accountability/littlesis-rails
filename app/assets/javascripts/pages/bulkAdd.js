@@ -26,8 +26,13 @@
     
     // 50 -> Donations Recieved
     // 51 -> Donations Given
+    // 30 -> Memberships
+    // 31 -> Members
     if (category === 50 || category === 51) {
       return 5;
+    }
+    else if (category === 30 || category === 31) {
+      return 3;
     } else {
       return category;
     }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   include Routes
   include ParamsHelper
@@ -168,6 +170,10 @@ class ApplicationController < ActionController::Base
 
   def value_for_param(param, default_value, transform = :itself)
     params[param].present? ? params[param].send(transform) : default_value
+  end
+
+  def cast_to_boolean(value)
+    ActiveRecord::Type::Boolean.new.deserialize(value)
   end
 
   def configure_permitted_parameters

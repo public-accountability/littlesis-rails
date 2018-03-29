@@ -1,10 +1,10 @@
-<%# Locals: relationship_entity (Struct)  %>
+<%# Locals: relationship_entity (Struct), link_id (string)  %>
 
 <div class="row">
   <div class="col-sm-2">
     <p><%= relationship_entity.title + ':' %></p>
   </div>
   <div class="col-sm-5">
-    <%= link_to relationship_entity.entity.name, relationship_entity.entity %>
+    <%= link_to relationship_entity.entity.name, relationship_entity.entity, id: link_id %>
   </div>
 </div>

@@ -43,6 +43,10 @@ FactoryBot.define do
     category_id Relationship::POSITION_CATEGORY
   end
 
+  factory :transaction_relationship, class: Relationship do
+    category_id Relationship::TRANSACTION_CATEGORY
+  end
+
   factory :ownership_relationship, class: Relationship do
     category_id Relationship::OWNERSHIP_CATEGORY
   end
