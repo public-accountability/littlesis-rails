@@ -65,7 +65,7 @@ group :test, :development do
   gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 4.8.2'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
-  gem 'jasmine', '~> 2.8.0'
+  gem 'jasmine', '~> 3.1.0'
   gem 'pry'
   gem 'pry-byebug'
   gem 'pry-rails'
