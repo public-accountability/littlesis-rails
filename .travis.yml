@@ -3,7 +3,7 @@ dist: trusty
 sudo: required
 cache: bundler
 rvm:
-  - 2.4.3
+  - 2.4.4
 
 addons:
   mariadb: '10.1'
