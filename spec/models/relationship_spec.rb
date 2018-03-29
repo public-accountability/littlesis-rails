@@ -49,7 +49,7 @@ describe Relationship, type: :model do
 
     describe 'Date Validation' do
       def rel(attr)
-        r = build(:relationship, {category_id: 12, entity1_id: 123, entity2_id: 456}.merge(attr) )
+        r = build(:relationship, {category_id: 12, entity1_id: 123, entity2_id: 456}.merge(attr))
         allow(r).to receive(:entity).and_return(double('person double', :person? => true, :org? => false))
         allow(r).to receive(:related).and_return(double('person double', :person? => true, :org? => false))
         r
@@ -96,13 +96,13 @@ describe Relationship, type: :model do
     it 'updates updated_at of entity after change' do
       rel = Relationship.create!(entity1_id: @elected.id, entity2_id: @org.id, category_id: 12, description1: 'relationship')
       @elected.update_columns(updated_at: 1.week.ago)
-      expect {  rel.update(description1: 'new title') }.to change {  Entity.find(@elected.id).updated_at } 
+      expect { rel.update(description1: 'new title') }.to change { Entity.find(@elected.id).updated_at }
     end
 
     it 'updates updated_at of related after change' do
       rel = Relationship.create(entity1_id: @elected.id, entity2_id: @org.id, category_id: 12, description1: 'relationship')
       @org.update_columns(updated_at: 1.week.ago)
-      expect {  rel.update(description1: 'new title') }.to change {  Entity.find(@org.id).updated_at } 
+      expect { rel.update(description1: 'new title') }.to change { Entity.find(@org.id).updated_at }
     end
   end
 
@@ -116,7 +116,7 @@ describe Relationship, type: :model do
       rel = build(:generic_relationship, last_user_id: nil)
       expect(rel.send(:last_user_id_for_entity_update)).to eq APP_CONFIG.fetch('system_user_id')
     end
-    
+
     it 'returns relationship last user id' do
       rel = build(:generic_relationship, last_user_id: 987)
       expect(rel.send(:last_user_id_for_entity_update)).to eq 987
@@ -130,9 +130,13 @@ describe Relationship, type: :model do
       @sf_guard_user_3 = create(:sf_guard_user)
     end
 
+    after(:all) do
+      [@sf_guard_user_1, @sf_guard_user_2, @sf_guard_user_3].each(&:delete)
+    end
+
     before do
-      @e1 = create(:person, last_user_id: (@sf_guard_user_1.id))
-      @e2 = create(:person, last_user_id: (@sf_guard_user_1.id))
+      @e1 = create(:person, last_user_id: @sf_guard_user_1.id)
+      @e2 = create(:person, last_user_id: @sf_guard_user_1.id)
     end
 
     it 'updates entity timestamp' do
@@ -168,7 +172,8 @@ describe Relationship, type: :model do
       it 'creates 2 links after creating relationship' do
         e1 = create(:person)
         e2 = create(:person)
-        expect { Relationship.create!(category_id: 12, entity: e1, related: e2) }.to change { Link.count }.by(2)
+        expect { Relationship.create!(category_id: 12, entity: e1, related: e2) }
+          .to change { Link.count }.by(2)
       end
     end
 
@@ -264,7 +269,7 @@ describe Relationship, type: :model do
       DatabaseCleaner.start
       @loeb = create(:loeb)
       @nrsc = create(:nrsc)
-      @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc, filings: 1, amount: 10000) # relationship model
+      @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc, filings: 1, amount: 10_000) # relationship model
     end
 
     after(:all) { DatabaseCleaner.clean }
@@ -302,7 +307,7 @@ describe Relationship, type: :model do
       DatabaseCleaner.start
       @loeb = create(:loeb)
       @nrsc = create(:nrsc)
-      @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc, filings: 1, amount: 10000) # relationship model
+      @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc, filings: 1, amount: 10_000) # relationship model
       d1 = create(:loeb_donation_one)
       d2 = create(:loeb_donation_two)
       OsMatch.create!(relationship_id: @loeb_donation.id, os_donation_id: d1.id, donor_id: @loeb.id)
@@ -402,12 +407,13 @@ describe Relationship, type: :model do
     end
   end
 
-  describe '#details' do 
-    describe 'it returns [ [field, value] ] for each Relationship type' do 
-      it 'Position' do 
+  describe '#details' do
+    describe 'it returns [ [field, value] ] for each Relationship type' do
+      it 'Position' do
         rel = build(:relationship, category_id: 1, description1: 'boss', is_current: true)
         rel.position = build(:position, is_board: false)
-        expect(rel.details).to eql [['Title', 'boss'], ['Is Current', 'yes'], ['Board member', 'no']]
+        expect(rel.details)
+          .to eql [['Title', 'boss'], ['Is Current', 'yes'], ['Board member', 'no']]
       end
     end
   end
@@ -578,7 +584,10 @@ describe Relationship, type: :model do
   end
 
   describe 'Deleting' do
-    let(:rel) { create(:generic_relationship, entity1_id: create(:entity_person).id, entity2_id: create(:entity_person).id) }
+    let(:rel) do
+      create(:generic_relationship,
+             entity1_id: create(:entity_person).id, entity2_id: create(:entity_person).id)
+    end
 
     it 'soft_delete set is_deleted to be true' do
       @rel = rel
@@ -599,9 +608,12 @@ describe Relationship, type: :model do
 
     context 'removing associated category models' do
       before(:all) do
+        DatabaseCleaner.start
         @person = create(:person)
         @org = create(:org)
       end
+
+      after(:all) { DatabaseCleaner.clean }
 
       it 'removes position model' do
         rel = create(:position_relationship, entity1_id: @person.id, entity2_id: @org.id)
@@ -648,7 +660,9 @@ describe Relationship, type: :model do
   describe 'restore!' do
     let(:person) { create(:entity_person) }
     let(:org) { create(:entity_org) }
-    let(:rel) { Relationship.create!(entity: person, related: org, category_id: Relationship::POSITION_CATEGORY) }
+    let(:rel) do
+      Relationship.create!(entity: person, related: org, category_id: Relationship::POSITION_CATEGORY)
+    end
 
     it 'raises error if called on a model that is not deleted' do
       expect { build(:relationship, is_deleted: false).restore! }.to raise_error(Exceptions::CannotRestoreError)
@@ -675,7 +689,7 @@ describe Relationship, type: :model do
 
       it 'it updates entity links' do
         # called twice: once after soft_delete and once after restore
-        expect(rel).to receive(:update_entity_links).twice 
+        expect(rel).to receive(:update_entity_links).twice
         rel.soft_delete
         rel.restore!
       end
@@ -727,7 +741,7 @@ describe Relationship, type: :model do
     let(:rel) { create(:generic_relationship, entity: person, related: person_two) }
 
     it 'returns array with entity ids and category id' do
-      expect(rel.triplet).to eql([ person.id, person_two.id, 12 ])
+      expect(rel.triplet).to eql([person.id, person_two.id, 12])
     end
   end
 
