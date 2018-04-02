@@ -1,14 +1,14 @@
 source 'https://rubygems.org'
 
 # gem 'rails', '4.2.10'
-gem 'rails', '5.0.6'
+gem 'rails', '5.1.6'
 gem 'mysql2', '~> 0.4.10'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
 
 # users and authentication
-gem 'devise', '~> 4.2'
+gem 'devise', '~> 4.4.2'
 
 # Versioning
 gem 'paper_trail', '8.1.2'
@@ -21,7 +21,7 @@ gem 'delayed_job_active_record', '>= 4.1.2'
 # Assets, image uploading & processing
 gem 'aws-sdk-cloudfront', '~> 1'
 gem 'aws-sdk-s3', '~> 1'
-gem 'carrierwave'
+# gem 'carrierwave'
 gem 'mini_magick'
 gem 'rmagick'
 

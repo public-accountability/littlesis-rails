@@ -20,12 +20,13 @@ class GroupsController < ApplicationController
 
   # GET /groups
   def index
+    @page = params[:page].presence || 1
     @groups = Group.public_scope
       .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
       .joins(:group_users)
       .group("groups.id")
       .order("user_count DESC")
-      .page(params[:page]).per(20)
+      .page(@page).per(20)
   end
 
   # GET /groups/1
@@ -33,7 +34,7 @@ class GroupsController < ApplicationController
     not_found if @group.blank?
     must_belong_to_private_group
 
-    @recent_updates = @group.entities.includes(last_user: :user).order("updated_at DESC").limit(10)
+    @recent_updates = @group.entities.includes(last_user: :user).order("updated_at DESC").limit(10).to_a
 
     if user_signed_in? and current_user.in_group?(@group)
       @watched_entities = @group.featured_entities.order("ls_list_entity.created_at DESC").limit(5)

@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 ##
 # Interacts with the action network api
 # can add users and email address to LittleSis
 #
 module ActionNetwork
   API_KEY = APP_CONFIG.fetch('action_network_api_key').dup.freeze
-  API_INFO_URL = 'https://actionnetwork.org/api/v2'.freeze
-  PEOPLE_URL = 'https://actionnetwork.org/api/v2/people'.freeze
+  API_INFO_URL = 'https://actionnetwork.org/api/v2'
+  PEOPLE_URL = 'https://actionnetwork.org/api/v2/people'
 
   # Tags are primarily how the LittleSis staff
   # organizes and sorts  users on action network
@@ -30,7 +32,7 @@ module ActionNetwork
   def self.add_email_to_newsletter(email)
     post URI.parse(PEOPLE_URL), email_params(email)
   end
-  
+
   # Retrieves people from our Action Network Api
   # Int --> Hash
   def self.people(page = 1)

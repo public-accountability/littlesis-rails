@@ -4,6 +4,6 @@
 
 <%= groups_alert %>
 
-<% cache( [ 'groups/index', params.slice(:page) ], expires_in: 1.day) do %>
+<% cache( [ 'groups/index', @page ], expires_in: 1.day) do %>
 	<%= render partial: "groups/table", locals: { groups: @groups } %>
 <% end %>

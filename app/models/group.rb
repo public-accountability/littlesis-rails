@@ -11,8 +11,8 @@ class Group < ApplicationRecord
 	
 	has_many :entities, through: :lists, inverse_of: :groups
 
-	mount_uploader :logo, GroupLogoUploader
-	mount_uploader :cover, GroupCoverUploader
+	# mount_uploader :logo, GroupLogoUploader
+	# mount_uploader :cover, GroupCoverUploader
 
 	scope :working, -> { joins(:sf_guard_group).where("sf_guard_group.is_working" => true) }
 	scope :public_scope, -> { where(is_private: false) }
@@ -43,4 +43,14 @@ class Group < ApplicationRecord
 	def convert_legacy_description		
 		self.description =  HTMLEntities.new.decode(description)
 	end
+
+        
+        # replace legacy calls for carrierwave
+        def logo_url
+          "https://#{APP_CONFIG['asset_host']}/images/group_logos/#{logo}"
+        end
+
+        def logo_thumb_url
+          "https://#{APP_CONFIG['asset_host']}/images/group_logos/thumb_#{logo}"
+        end
 end
