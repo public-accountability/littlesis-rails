@@ -8,7 +8,7 @@ gem 'mysql2', '~> 0.4.10'
 gem 'rack-rewrite', '~> 1.5.1'
 
 # users and authentication
-gem 'devise', '~> 4.2'
+gem 'devise', '~> 4.4.2'
 
 # Versioning
 gem 'paper_trail', '8.1.2'
