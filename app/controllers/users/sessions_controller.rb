@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
   after_action :allow_chat_iframe, only: [:new, :create]
@@ -25,11 +27,6 @@ class Users::SessionsController < Devise::SessionsController
 
   # GET /resource/sign_out
   def destroy
-    SfGuardRememberKey.delete_keys_for_user(current_user)
-    if cookies[:LittleSis].present?
-      Session.find_by(session_id: cookies[:LittleSis])&.destroy
-      cookies.delete(:LittleSis)
-    end
     super
   end
 
