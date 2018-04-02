@@ -32,7 +32,6 @@ describe ActionNetwork do
           .to receive(:http).once
                 .with(URI.parse(ActionNetwork::PEOPLE_URL), kind_of(Net::HTTP::Post))
                 .and_return(mock_http_response)
-        expect(Rails.logger).to receive(:debug).with(mock_http_response)
       end
 
       specify { expect(ActionNetwork.signup(user)).to be true }
