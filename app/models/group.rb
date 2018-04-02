@@ -11,8 +11,8 @@ class Group < ApplicationRecord
 	
 	has_many :entities, through: :lists, inverse_of: :groups
 
-	mount_uploader :logo, GroupLogoUploader
-	mount_uploader :cover, GroupCoverUploader
+	# mount_uploader :logo, GroupLogoUploader
+	# mount_uploader :cover, GroupCoverUploader
 
 	scope :working, -> { joins(:sf_guard_group).where("sf_guard_group.is_working" => true) }
 	scope :public_scope, -> { where(is_private: false) }
