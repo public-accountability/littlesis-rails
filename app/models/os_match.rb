@@ -79,7 +79,7 @@ class OsMatch < ApplicationRecord
     return candidate.entity.id unless candidate.nil?
     fundraising = PoliticalFundraising.includes(:entity).find_by(fec_id: crp_id, entity: {is_deleted: false})
     return fundraising.entity.id unless fundraising.nil?
-    logger.info "Could not find recipient with id: #{crp_id}"
+    Rails.logger.info "Could not find recipient with id: #{crp_id}"
     return nil
   end
 

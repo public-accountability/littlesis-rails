@@ -708,7 +708,7 @@ describe 'Merging Entities', :merging_helper do
     end
 
     context 'source is the recipient of two donations' do
-      let(:donor) { create(:entity_person) }
+      let!(:donor) { create(:entity_person) }
       let(:os_donations) do
         [
           create(:os_donation, recipid: recip_id, cmteid: cmte_id),
@@ -719,13 +719,15 @@ describe 'Merging Entities', :merging_helper do
       before do
         source_person.add_extension('ElectedRepresentative', { crp_id: recip_id })
         allow(OsCommittee).to receive(:find_by).and_return(os_committee)
-        os_donations.each { |osd| OsMatch.create!(os_donation_id: osd.id, donor_id: donor.id) }
+        @os_matches = os_donations.map { |osd| OsMatch.create!(os_donation_id: osd.id, donor_id: donor.id) }
       end
 
       it 'updates the recipient id of the Os Matches' do
-        OsMatch.last(2).each { |m| expect(m.recip_id).to eql source_person.id }
+        expect(@os_matches[0].recip_id).to eql source_person.id
+        expect(@os_matches[1].recip_id).to eql source_person.id
         subject.merge!
-        OsMatch.last(2).each { |m| expect(m.recip_id).to eql dest_person.id }
+        expect(@os_matches[0].reload.recip_id).to eql dest_person.id
+        expect(@os_matches[1].reload.recip_id).to eql dest_person.id
       end
 
       it 'updates the relationship' do
@@ -740,7 +742,7 @@ describe 'Merging Entities', :merging_helper do
     context 'source is an os committee' do
       subject { EntityMerger.new(source: source_org, dest: dest_org) }
       let!(:donor) { create(:entity_person) }
-      let(:other_cmte_id) { Faker::Number.number(5).to_s }
+      let!(:other_cmte_id) { Faker::Number.unique.number(5).to_s }
       let!(:other_cmte) do
         create(:entity_org).tap { |org| org.add_extension('PoliticalFundraising', { fec_id: other_cmte_id }) }
       end
@@ -773,7 +775,9 @@ describe 'Merging Entities', :merging_helper do
           expect(m.recip_id).to eql recipient.id
           expect(m.cmte_id).to eql source_org.id
         end
+
         subject.merge!
+
         @os_matches.each do |m|
           m.reload
           expect(m.recip_id).to eql recipient.id
