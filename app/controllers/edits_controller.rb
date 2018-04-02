@@ -1,18 +1,24 @@
+# frozen_string_literal: true
+
 class EditsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_page, only: [:index, :entity]
   before_action :set_entity, only: [:entity]
 
   def index
     @edits = Entity
              .includes(last_user: :user)
-             .order("updated_at DESC").page(params[:page]).per(10)
+             .order("updated_at DESC").page(@page).per(10)
   end
 
   def entity
-    @page = params[:page].presence&.to_i || 1
   end
 
   private
+
+  def set_page
+    @page = params[:page].presence&.to_i || 1
+  end
 
   def rel_versions(entity_id, page, per_page = 5)
     raise ArgumentError unless entity_id.is_a? Integer
