@@ -15,7 +15,7 @@
       <tr>
         <td class="groups_table_logo">
           <% if group.logo.present? %>
-            <%= link_to(image_tag(group.logo.thumb.url), group) %>
+            <%= link_to(image_tag(group.logo_thumb_url), group) %>
           <% end %>
         </td>
         <td class="groups_table_name">
