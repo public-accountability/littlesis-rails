@@ -1,0 +1,55 @@
+- id:
+    bioguide: B001133
+    govtrack: 402077
+    icpsr: 1302
+    wikipedia: Aaron Burr
+    wikidata: Q179090
+    google_entity_id: kg:/m/0fsc6
+  name:
+    first: Aaron
+    last: Burr
+  bio:
+    birthday: '1756-02-06'
+    gender: M
+  terms:
+  - type: sen
+    start: '1791-10-24'
+    end: '1797-03-03'
+    state: NY
+    class: 1
+    party: Republican
+- id:
+    bioguide: S001202
+    govtrack: 412734
+    lis: S392
+    fec:
+    - S8AL00308
+    maplight: 2245
+    wikipedia: Luther Strange
+    wikidata: Q6705642
+    cspan: 9278255
+    icpsr: 41704
+    votesmart: 121424
+    ballotpedia: Luther Strange
+    google_entity_id: kg:/m/06w5pjw
+    opensecrets: N00040607
+  name:
+    first: Luther
+    last: Strange
+    official_full: Luther Strange
+  bio:
+    birthday: '1953-03-01'
+    gender: M
+  terms:
+  - type: sen
+    start: '2017-02-09'
+    end: '2018-01-03'
+    state: AL
+    class: 2
+    party: Republican
+    state_rank: junior
+    address: 326 Russell Senate Office Building Washington DC 20510
+    office: 326 Russell Senate Office Building
+    phone: 202-224-4124
+    url: https://www.strange.senate.gov
+    contact_form: https://www.strange.senate.gov/content/contact-senator
