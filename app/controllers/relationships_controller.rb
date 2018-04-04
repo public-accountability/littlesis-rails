@@ -9,6 +9,29 @@ class RelationshipsController < ApplicationController
   before_action -> { check_permission('deleter') }, only: [:destroy]
   before_action :set_entity, only: [:bulk_add]
 
+  # see utility.js
+  BULK_RELATIONSHIP_ATTRIBUTES = [
+    :name,
+    :blurb,
+    :primary_ext,
+    :description1,
+    :description2,
+    :is_current,
+    :start_date,
+    :end_date,
+    :amount,
+    :goods,
+    :is_board,
+    :is_executive,
+    :compensation,
+    :degree,
+    :education_field,
+    :is_dropout,
+    :dues,
+    :percent_stake,
+    :shares
+  ].freeze
+
   def show; end
 
   # GET /relationships/:id/edit
@@ -85,7 +108,7 @@ class RelationshipsController < ApplicationController
 
   # POST /relationships/bulk_add
   def bulk_add!
-    block_unless_bulker(params[:relationships], Relationship::BULK_LIMIT) # see application_controller
+    block_unless_bulker(bulk_relationships_params, Relationship::BULK_LIMIT) # see application_controller
 
     if !Document.valid_url?(reference_params.fetch(:url)) || reference_params.fetch(:name).blank?
       return head :bad_request
@@ -107,7 +130,7 @@ class RelationshipsController < ApplicationController
       end
     end # end loop of submitted relationships
 
-    # Always send back a sucuessful responce,
+    # Always send back a successful response,
     # even if every relationship is an error
     render :json => bulk_json_response
   end
@@ -126,7 +149,7 @@ class RelationshipsController < ApplicationController
       entity = Entity.create(attributes)
     else
 
-      entity = Entity.find_by_id(relationship.fetch('name').to_i)
+      entity = Entity.find_by(id: relationship.fetch('name').to_i)
     end
 
     if entity.try(:persisted?)
@@ -206,8 +229,11 @@ class RelationshipsController < ApplicationController
   end
 
   def bulk_relationships_params
-    return params[:relationships].map { |x| blank_to_nil(x) } if params[:relationships].is_a?(Array)
-    params[:relationships].to_a.map { |x| x[1] }.map { |x| blank_to_nil(x) }
+    return params
+             .permit('relationships' => BULK_RELATIONSHIP_ATTRIBUTES)
+             .to_h
+             .fetch('relationships', [])
+             .map { |x| blank_to_nil(x) }
   end
 
   #################
@@ -252,7 +278,7 @@ class RelationshipsController < ApplicationController
 
   def has_required_find_similar_params?
     p = similar_relationships_params
-    return true if p.has_key?(:entity1_id) && p.has_key?(:entity2_id) && p.has_key?(:category_id)
+    return true if p.key?(:entity1_id) && p.key?(:entity2_id) && p.key?(:category_id)
     return false
   end
 

@@ -10,7 +10,8 @@ describe RelationshipsController, type: :controller do
       let(:url) { Faker::Internet.unique.url }
 
       it 'sends error message if given bad reference' do
-        post :bulk_add!, params: { relationships: [], category_id: 1, reference: { url: '', name: 'important source' } }
+        params = { 'relationships' => [], 'category_id' => 1, 'reference' => { 'url' => '', 'name' => 'important source' } }
+        post :bulk_add!, params: params
         expect(response.status).to eq 400
       end
 
@@ -423,7 +424,7 @@ describe RelationshipsController, type: :controller do
     end
 
     it' finds existing entity' do
-      expect(Entity).to receive(:find_by_id).with(666).and_return(create(:entity_person))
+      expect(Entity).to receive(:find_by).with(id: 666).and_return(create(:entity_person))
       controller.send(:make_or_get_entity, relationship_existing) {}
     end
 
