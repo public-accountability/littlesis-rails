@@ -153,7 +153,6 @@ class DevelopmentDb
                   scheduled_email
                   scraper_meta
                   sessions
-                  sf_guard_remember_key
                   sphinx_index
                   task_meta
                   user_requests

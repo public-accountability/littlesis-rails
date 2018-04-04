@@ -13,14 +13,6 @@ class Users::SessionsController < Devise::SessionsController
   def create
     store_location_for(:user, home_dashboard_path)
     super do |user|
-      
-      if Devise::TRUE_VALUES.include?(params['user']['remember_me'])
-        cookies[:LittleSisRememberMe] = {
-          value: SfGuardRememberKey.create_new_key_for_user(user, request.remote_ip),
-          expires: 2.weeks.from_now
-        }
-      end
-      
       session[:sf_user_id] = user.sf_guard_user.id
     end
   end
