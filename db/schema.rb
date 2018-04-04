@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180402151948) do
+ActiveRecord::Schema.define(version: 20180404144759) do
 
   create_table "address", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "entity_id", null: false
@@ -1331,17 +1331,6 @@ ActiveRecord::Schema.define(version: 20180402151948) do
     t.index ["name"], name: "name", unique: true
   end
 
-  create_table "sf_guard_remember_key", primary_key: ["id", "ip_address"], force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
-    t.integer "id", null: false, auto_increment: true
-    t.integer "user_id"
-    t.string "remember_key", limit: 32
-    t.string "ip_address", limit: 50, default: "", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["remember_key"], name: "remember_key_idx"
-    t.index ["user_id"], name: "user_id_idx"
-  end
-
   create_table "sf_guard_user", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string "username", limit: 128, null: false
     t.string "algorithm", limit: 128, default: "sha1", null: false
@@ -1644,7 +1633,6 @@ ActiveRecord::Schema.define(version: 20180402151948) do
   add_foreign_key "sf_guard_group_list", "sf_guard_group", column: "group_id", name: "sf_guard_group_list_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "sf_guard_group_permission", "sf_guard_group", column: "group_id", name: "sf_guard_group_permission_ibfk_2", on_delete: :cascade
   add_foreign_key "sf_guard_group_permission", "sf_guard_permission", column: "permission_id", name: "sf_guard_group_permission_ibfk_1", on_delete: :cascade
-  add_foreign_key "sf_guard_remember_key", "sf_guard_user", column: "user_id", name: "sf_guard_remember_key_ibfk_1", on_delete: :cascade
   add_foreign_key "sf_guard_user_group", "sf_guard_group", column: "group_id", name: "sf_guard_user_group_ibfk_2", on_delete: :cascade
   add_foreign_key "sf_guard_user_group", "sf_guard_user", column: "user_id", name: "sf_guard_user_group_ibfk_1", on_delete: :cascade
   add_foreign_key "sf_guard_user_permission", "sf_guard_permission", column: "permission_id", name: "sf_guard_user_permission_ibfk_2", on_delete: :cascade
