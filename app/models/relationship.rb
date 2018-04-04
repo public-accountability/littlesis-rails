@@ -115,6 +115,11 @@ class Relationship < ApplicationRecord
     ALL_CATEGORIES
   end
 
+  def self.category_display_name(cat_id)
+    return "Transaction" if cat_id == TRANSACTION_CATEGORY
+    ALL_CATEGORIES[cat_id]
+  end
+
   def self.category_hash
     Hash[[*all_categories.map.with_index]].invert.select { |k, v| v.present? }
   end
@@ -149,8 +154,7 @@ class Relationship < ApplicationRecord
 
   # same as category_name, except returns "Transaction" instead of Trans
   def category_name_display
-    return "Transaction" if category_id == TRANSACTION_CATEGORY
-    category_name
+    self.class.category_display_name(category_id)
   end
 
   def all_attributes

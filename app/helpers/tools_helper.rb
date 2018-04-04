@@ -4,7 +4,7 @@ module ToolsHelper
   # Creates <select> html with relationship category options
   #--------------
   # Adds  'unofficial' Relationship category options: 30 & 31, 50 & 51
-  # 
+  #
   # 50 represents "Donations Received" where the selected entity is entity2
   # 51 represents "Donations Given" where the selected entity is entity1
   #
@@ -15,7 +15,7 @@ module ToolsHelper
       Relationship
         .categories_for(entity.primary_ext)
         .reject { |c| c == 5 || c == 3 }
-        .map { |c| content_tag(:option, Relationship.all_categories[c], value: c) }
+        .map { |c| content_tag(:option, Relationship.category_display_name(c), value: c) }
         .unshift(content_tag(:option, ''))
         .push(content_tag(:option, 'Donations Received', value: 50))
         .push(content_tag(:option, 'Donations Given', value: 51))

@@ -15,6 +15,11 @@ describe ToolsHelper, type: :helper do
       expect(@html_person).to include 'Family'
     end
 
+    it 'says "Transaction" not "Trans"' do
+      expect(@html_person).not_to include '>Trans</option>'
+      expect(@html_person).to include '>Transaction</option>'
+    end
+
     it 'includes position for both' do
       expect(@html_org).to include 'Position'
       expect(@html_person).to include 'Position'
