@@ -10,7 +10,7 @@ describe RelationshipsController, type: :controller do
       let(:url) { Faker::Internet.unique.url }
 
       it 'sends error message if given bad reference' do
-        params = { 'relationships' => [], 'category_id' => 1, 'reference' => { 'url' => '', 'name' => 'important source' } }
+        params = { 'relationships' => [{ 'name' => 123 }], 'category_id' => 1, 'reference' => { 'url' => '', 'name' => 'important source' } }
         post :bulk_add!, params: params
         expect(response.status).to eq 400
       end

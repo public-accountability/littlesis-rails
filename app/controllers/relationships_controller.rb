@@ -229,11 +229,9 @@ class RelationshipsController < ApplicationController
   end
 
   def bulk_relationships_params
-    return params
-             .permit('relationships' => BULK_RELATIONSHIP_ATTRIBUTES)
-             .to_h
-             .fetch('relationships', [])
-             .map { |x| blank_to_nil(x) }
+    params
+      .require(:relationships)
+      .map { |p| blank_to_nil(p.permit(*BULK_RELATIONSHIP_ATTRIBUTES).to_h) }
   end
 
   #################

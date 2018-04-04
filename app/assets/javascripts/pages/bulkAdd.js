@@ -736,7 +736,9 @@
     $.ajax({
       method: 'POST',
       url: '/relationships/bulk_add',
-      data: data,
+      contentType: 'application/json',
+      dataType: "json", 
+      data: JSON.stringify(data),
       success: afterRequest.success,
       error: afterRequest.error
     });
