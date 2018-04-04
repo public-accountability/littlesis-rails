@@ -94,7 +94,7 @@ class RelationshipsController < ApplicationController
     @errors = []
     @new_relationships = []
 
-    entity1 = Entity.find(params.fetch('entity1_id'))
+    entity1 = Entity.find(params.require('entity1_id'))
 
     # Looping through each relationship
     bulk_relationships_params.each do |relationship|
