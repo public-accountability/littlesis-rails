@@ -1,7 +1,11 @@
+# frozen_string_literal: true
+
+# rubocop:disable Rails/Output
+
 class ColorPrinter
   NOCOLOR = "\e[0m"
 
-  COLORS = [:black, :red, :green, :brown, :blue, :magenta, :cyan, :gray, :bg_red, :bg_gray]
+  COLORS = [:black, :red, :green, :brown, :blue, :magenta, :cyan, :gray, :bg_red, :bg_gray].freeze
 
   COLORS.each do |color|
     define_singleton_method("print_#{color}") do |text|
@@ -59,3 +63,5 @@ end
 # def underline;      "\e[4m#{self}\e[24m" end
 # def blink;          "\e[5m#{self}\e[25m" end
 # def reverse_color;  "\e[7m#{self}\e[27m" end
+
+# rubocop:enable Rails/Output
