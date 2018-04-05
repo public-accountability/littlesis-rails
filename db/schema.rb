@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180405192653) do
+ActiveRecord::Schema.define(version: 20180405204432) do
 
   create_table "address", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "entity_id", null: false
@@ -381,10 +381,6 @@ ActiveRecord::Schema.define(version: 20180405192653) do
     t.string "display_name", null: false
     t.string "type", default: "string", null: false
     t.index ["name"], name: "index_fields_on_name", unique: true
-  end
-
-  create_table "gender", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
-    t.string "name", limit: 10, null: false
   end
 
   create_table "generic", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
@@ -1606,7 +1602,6 @@ ActiveRecord::Schema.define(version: 20180405192653) do
   add_foreign_key "ownership", "relationship", name: "ownership_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "person", "entity", column: "party_id", name: "person_ibfk_1", on_update: :cascade, on_delete: :nullify
   add_foreign_key "person", "entity", name: "person_ibfk_3", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "person", "gender", name: "person_ibfk_2"
   add_foreign_key "phone", "entity", name: "phone_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "phone", "sf_guard_user", column: "last_user_id", name: "phone_ibfk_2", on_update: :cascade
   add_foreign_key "political_candidate", "entity", name: "political_candidate_ibfk_1", on_update: :cascade, on_delete: :cascade
