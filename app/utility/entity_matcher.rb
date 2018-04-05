@@ -15,7 +15,7 @@ module EntityMatcher
         potential_match = TestCase::Person.new(entity)
         evaluate_people(test_case, potential_match)
       end
-    ).to_a
+    )
   end
 
   # String, kwargs --> Array[EvaluateResult]
@@ -27,7 +27,7 @@ module EntityMatcher
         potential_match = TestCase::Org.new(entity)
         evaluate_orgs(test_case, potential_match)
       end
-    ).to_a
+    )
   end
 
   def self.evaluate_people(test_case, match)
