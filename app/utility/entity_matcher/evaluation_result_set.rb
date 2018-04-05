@@ -26,6 +26,12 @@ module EntityMatcher
       @results&.first&.automatch? && !@results&.second&.automatch?
     end
 
+    # Returns the automatched EvalutionResult
+    # if set is automatchable
+    def automatch
+      return @results.first if automatchable?
+    end
+
     private
 
     def check_argument(evaluation_results)
