@@ -16,6 +16,9 @@ class LegislatorMatcher
   HOUSE_OF_REPS = 12_884
   SENATE = 12_885
 
+  CONGRESS_BOT_USER = 1
+  CONGRESS_BOT_SF_USER = 1
+
   attr_reader :current_reps, :historical_reps, :reps
 
   # Wrapper around the hash parsed from
@@ -39,6 +42,33 @@ class LegislatorMatcher
     def match
       return @_match if defined?(@_match)
       @_match = _match
+    end
+
+    def import!
+      if match.blank?
+      end
+    end
+
+    def to_entity_attributes
+      LsHash.new(
+        name: dig('name', 'official_full').presence || "#{fetch('first')} #{fetch('last')}",
+        primary_ext: "Person",
+        blurb: generate_blurb,
+        website: fetch('terms').last.fetch('url', nil),
+        start_date: dig('bio', 'birthday'),
+        last_user_id: CONGRESS_BOT_SF_USER
+      ).remove_nil_vals
+    end
+
+    def to_person_attributes
+      LsHash.new(
+        name_last: dig('name', 'last'),
+        name_first: dig('name', 'first'),
+        name_middle: dig('name', 'middle'),
+        name_suffix: dig('name', 'suffix'),
+        name_nick: dig('name', 'nick'),
+        gender_id: Person.gender_to_id(dig('bio', 'gender'))
+      ).remove_nil_vals
     end
 
     # returns +Entity+ or Nil.
@@ -85,6 +115,16 @@ class LegislatorMatcher
     end
 
     private
+
+    def generate_blurb
+      term = fetch('terms').last
+      rep_or_sen = term['type'] == 'sen' ? 'Senator' : "Representative"
+      state = AddressState.abbreviation_map.fetch(term['state'].upcase)
+
+      "US #{rep_or_sen} from #{state}"
+    rescue # rubocop:disable Style/RescueStandardError
+      nil
+    end
 
     def match_by_bioguide(bioguide_id)
       ElectedRepresentative.find_by(bioguide_id: bioguide_id)&.entity

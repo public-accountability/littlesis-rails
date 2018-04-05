@@ -55,4 +55,40 @@ describe 'LegislatorMatcher' do
       end
     end
   end
+
+  describe LegislatorMatcher::Legislator do
+    before(:all) do
+      @legislators_current = YAML.load_file Rails.root.join('spec', 'testdata', 'legislators-current.yaml')
+    end
+    let(:sherrod_brown) { LegislatorMatcher::Legislator.new(@legislators_current[0]) }
+
+    describe '#to_entity_attributes' do
+      specify do
+        expect(sherrod_brown.to_entity_attributes)
+          .to eql(LsHash.new(name: "Sherrod Brown",
+                             blurb: "US Senator from Ohio",
+                             website: "https://www.brown.senate.gov",
+                             primary_ext: "Person",
+                             start_date: "1952-11-09",
+                             last_user_id: LegislatorMatcher::CONGRESS_BOT_SF_USER))
+      end
+    end
+
+    describe '#to_person_attributes' do
+      specify do
+        expect(sherrod_brown.to_person_attributes)
+          .to eql(LsHash.new(name_first: "Sherrod",
+                             name_last: "Brown",
+                             gender_id: 2))
+      end
+    end
+
+    describe '#import!' do
+      context "legislator doesn't exist in LittleSis" do
+        before do
+          sherrod_brown.instance_variable_set(:@_match, nil)
+        end
+      end
+    end
+  end
 end

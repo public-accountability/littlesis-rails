@@ -1,4 +1,4 @@
-b# frozen_string_literal: true
+# frozen_string_literal: true
 
 namespace :legislators do
   desc 'Display statics about matches '
