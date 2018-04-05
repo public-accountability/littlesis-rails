@@ -7,7 +7,7 @@ module EntityMatcher
     attr_reader :results
     extend Forwardable
 
-    def_delegators :@results, :each, :first, :second
+    def_delegators :@results, :each, :first, :second, :map
 
     def initialize(evaluation_results)
       check_argument(evaluation_results)
@@ -24,6 +24,12 @@ module EntityMatcher
     # one is better without human intervention
     def automatchable?
       @results&.first&.automatch? && !@results&.second&.automatch?
+    end
+
+    # Returns the automatched EvalutionResult
+    # if set is automatchable
+    def automatch
+      return @results.first if automatchable?
     end
 
     private

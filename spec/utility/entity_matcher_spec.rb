@@ -593,8 +593,10 @@ describe EntityMatcher, :sphinx do
         it 'works with zero or one matches' do
           expect(EntityMatcher::EvaluationResultSet.new([result_org(:same_name)]).automatchable?).to be true
           expect(EntityMatcher::EvaluationResultSet.new([result_org(:same_name), result_org(:same_name)]).automatchable?).to be false
+          expect(EntityMatcher::EvaluationResultSet.new([result_org(:same_name), result_org(:same_name)]).automatch).to be_nil
           expect(EntityMatcher::EvaluationResultSet.new([]).automatchable?).to be nil
         end
+
 
         it 'set is automatachable if it only one match' do
           results = [
@@ -603,6 +605,7 @@ describe EntityMatcher, :sphinx do
             result_org(:same_root)
           ]
           expect(EntityMatcher::EvaluationResultSet.new(results).automatchable?).to be true
+          expect(EntityMatcher::EvaluationResultSet.new(results).automatch).to be_a EntityMatcher::EvaluationResult::Org
         end
       end
 
