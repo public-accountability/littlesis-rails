@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180404144759) do
+ActiveRecord::Schema.define(version: 20180405165850) do
 
   create_table "address", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "entity_id", null: false
@@ -284,6 +284,7 @@ ActiveRecord::Schema.define(version: 20180404144759) do
     t.string "pvs_id", limit: 20
     t.string "watchdog_id", limit: 50
     t.bigint "entity_id", null: false
+    t.text "fec_ids"
     t.index ["crp_id"], name: "crp_id_idx"
     t.index ["entity_id"], name: "entity_id_idx"
   end
