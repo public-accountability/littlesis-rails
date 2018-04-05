@@ -46,6 +46,11 @@ class LegislatorMatcher
 
     def import!
       if match.blank?
+        ApplicationRecord.transaction do
+          entity = Entity.create!(to_entity_attributes)
+          entity.person.update!(to_person_attributes)
+          entity.add_extension('ElectedRepresentative', to_elected_representative_attributes)
+        end
       end
     end
 
@@ -68,6 +73,15 @@ class LegislatorMatcher
         name_suffix: dig('name', 'suffix'),
         name_nick: dig('name', 'nick'),
         gender_id: Person.gender_to_id(dig('bio', 'gender'))
+      ).remove_nil_vals
+    end
+
+    def to_elected_representative_attributes
+      LsHash.new(
+        bioguide_id: dig('id', 'bioguide'),
+        govtrack_id: dig('id', 'govtrack'),
+        crp_id: dig('id', 'opensecrets'),
+        fec_ids: dig('id', 'fec')
       ).remove_nil_vals
     end
 

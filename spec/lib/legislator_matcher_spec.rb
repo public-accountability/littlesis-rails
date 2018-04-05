@@ -83,10 +83,34 @@ describe 'LegislatorMatcher' do
       end
     end
 
+    describe '#to_elected_representative_attributes' do
+      specify do
+        expect(sherrod_brown.to_elected_representative_attributes)
+          .to eql(LsHash.new(bioguide_id: 'B000944',
+                             govtrack_id: 400_050,
+                             fec_ids: %w[H2OH13033 S6OH00163],
+                             crp_id: 'N00003535'))
+      end
+    end
+
     describe '#import!' do
       context "legislator doesn't exist in LittleSis" do
         before do
           sherrod_brown.instance_variable_set(:@_match, nil)
+        end
+
+        let(:import!) { proc { sherrod_brown.import! } }
+
+        it 'creates a new entity' do
+          expect { import!.call }.to change { Entity.count }.by(1)
+        end
+
+        it 'creates a person entity' do
+          expect { import!.call }.to change { Person.count }.by(1)
+        end
+
+        it 'creates a new elected rep' do
+          expect { import!.call }.to change { ElectedRepresentative.count }.by(1)
         end
       end
     end
