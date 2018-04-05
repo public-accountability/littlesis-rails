@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180405165850) do
+ActiveRecord::Schema.define(version: 20180405192653) do
 
   create_table "address", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "entity_id", null: false
@@ -1548,7 +1548,6 @@ ActiveRecord::Schema.define(version: 20180405165850) do
 
   add_foreign_key "address", "address_category", column: "category_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "address", "entity", name: "address_ibfk_2", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "address_state", "address_country", column: "country_id", name: "address_state_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "alias", "entity", name: "alias_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "alias", "sf_guard_user", column: "last_user_id", name: "alias_ibfk_2", on_update: :cascade
   add_foreign_key "api_request", "api_user", column: "api_key", primary_key: "api_key", name: "api_request_ibfk_1", on_update: :cascade, on_delete: :cascade
