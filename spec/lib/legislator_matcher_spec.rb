@@ -94,12 +94,12 @@ describe 'LegislatorMatcher' do
     end
 
     describe '#import!' do
+      let(:import!) { proc { sherrod_brown.import! } }
+
       context "legislator doesn't exist in LittleSis" do
         before do
           sherrod_brown.instance_variable_set(:@_match, nil)
         end
-
-        let(:import!) { proc { sherrod_brown.import! } }
 
         it 'creates a new entity' do
           expect { import!.call }.to change { Entity.count }.by(1)
@@ -111,6 +111,47 @@ describe 'LegislatorMatcher' do
 
         it 'creates a new elected rep' do
           expect { import!.call }.to change { ElectedRepresentative.count }.by(1)
+        end
+
+        it 'correctly imports attributes' do
+          import!.call
+          entity = Entity.last
+          expect(entity.name).to eql 'Sherrod Brown'
+          expect(entity.person.gender).to eql 'Male'
+          expect(entity.elected_representative.bioguide_id).to eql 'B000944'
+          expect(entity.elected_representative.crp_id).to eql  'N00003535'
+          expect(entity.elected_representative.fec_ids).to eql %w[H2OH13033 S6OH00163]
+        end
+      end
+
+      context 'legislator exists in LittleSis - attributes changed' do
+        let!(:entity) do
+          create(:entity_person, name: 'Sherrod "nickname" Brown', blurb: 'i am sherrod brown').tap do |e|
+            e.add_extension('ElectedRepresentative', bioguide_id: 'B000944')
+          end
+        end
+
+        it 'does not create a new entity' do
+          expect { import!.call }.not_to change { Entity.count }
+        end
+
+        it 'updates entity attributes' do
+          import!.call
+          e = Entity.find(entity.id)
+          expect(e.blurb).to eql 'i am sherrod brown'
+          expect(e.start_date).to eql '1952-11-09'
+          expect(e.person.gender).to eql 'Male'
+          expect(e.aliases.count).to eql 2
+          expect(e.also_known_as).to eql ['Sherrod Brown']
+          expect(e.elected_representative.crp_id).to eql 'N00003535'
+        end
+
+        it 'does not update if none of the attributes have changed' do
+          import!.call
+          date = 1.year.ago
+          entity.update_column(:updated_at, date)
+          import!.call
+          expect(Entity.find(entity.id).updated_at.to_i).to eql date.to_i
         end
       end
     end

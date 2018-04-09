@@ -45,21 +45,44 @@ class LegislatorMatcher
     end
 
     def import!
-      if match.blank?
-        ApplicationRecord.transaction do
+      ApplicationRecord.transaction do
+        if match.blank?
           entity = Entity.create!(to_entity_attributes)
           entity.person.update!(to_person_attributes)
           entity.add_extension('ElectedRepresentative', to_elected_representative_attributes)
+        else
+          match.website = fetch_website
+          match.start_date = dig('bio', 'birthday') if dig('bio', 'birthday')
+          match.assign_attribute_unless_present :blurb, generate_blurb
+          match.person.assign_attribute_unless_present :name_middle, dig('name', 'middle')
+          match.person.gender_id = Person.gender_to_id(dig('bio', 'gender'))
+          if match.changed?
+            match.last_user_id = CONGRESS_BOT_SF_USER
+            match.save!
+          end
+
+          add_alias if dig('name', 'official_full')
+
+          match.add_extension('ElectedRepresentative')
+          match.elected_representative.update!(to_elected_representative_attributes)
         end
       end
     end
 
+    def match_entity_attributes
+      LsHash
+        .new(website: fetch_website, start_date: dig('bio', 'birthday'))
+        .remove_nil_vals
+    end
+
+    # Attributes when creating a new entity;
+
     def to_entity_attributes
       LsHash.new(
-        name: dig('name', 'official_full').presence || "#{fetch('first')} #{fetch('last')}",
+        name: generate_name,
         primary_ext: "Person",
         blurb: generate_blurb,
-        website: fetch('terms').last.fetch('url', nil),
+        website: fetch_website,
         start_date: dig('bio', 'birthday'),
         last_user_id: CONGRESS_BOT_SF_USER
       ).remove_nil_vals
@@ -129,6 +152,21 @@ class LegislatorMatcher
     end
 
     private
+
+    def add_alias
+      unless match.also_known_as.map(&:downcase).include? dig('name', 'official_full').downcase
+        match.aliases.create!(name: dig('name', 'official_full'),
+                              last_user_id: CONGRESS_BOT_SF_USER)
+      end
+    end
+
+    def fetch_website
+      fetch('terms').last.fetch('url', nil)
+    end
+
+    def generate_name
+      dig('name', 'official_full').presence || "#{fetch('first')} #{fetch('last')}"
+    end
 
     def generate_blurb
       term = fetch('terms').last
