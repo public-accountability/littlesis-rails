@@ -45,11 +45,9 @@ class LegislatorMatcher
     end
 
     def import!
-      ApplicationRecord.transaction do
+      transaction do
         if match.blank?
-          entity = Entity.create!(to_entity_attributes)
-          entity.person.update!(to_person_attributes)
-          entity.add_extension('ElectedRepresentative', to_elected_representative_attributes)
+          create_new_entity
         else
           match.website = fetch_website
           match.start_date = dig('bio', 'birthday') if dig('bio', 'birthday')
@@ -80,7 +78,7 @@ class LegislatorMatcher
     def to_entity_attributes
       LsHash.new(
         name: generate_name,
-        primary_ext: "Person",
+        primary_ext: 'Person',
         blurb: generate_blurb,
         website: fetch_website,
         start_date: dig('bio', 'birthday'),
@@ -152,6 +150,21 @@ class LegislatorMatcher
     end
 
     private
+
+    def transaction
+      PaperTrail.whodunnit(CONGRESS_BOT_USER.to_s) do
+        ApplicationRecord.transaction do
+          yield
+        end
+      end
+    end
+
+    def create_new_entity
+      entity = Entity.create!(to_entity_attributes)
+      entity.person.update!(to_person_attributes)
+      entity.add_extension('ElectedRepresentative', to_elected_representative_attributes)
+      entity
+    end
 
     def add_alias
       unless match.also_known_as.map(&:downcase).include? dig('name', 'official_full').downcase
