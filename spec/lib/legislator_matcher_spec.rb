@@ -7,8 +7,10 @@ describe 'LegislatorMatcher' do
   before(:each) do
     stub_current = Rails.root.join('spec', 'testdata', 'legislators-current.yaml').to_s
     stub_historical = Rails.root.join('spec', 'testdata', 'legislators-historical.yaml').to_s
-    stub_const("LegislatorMatcher::CURRENT_YAML", stub_current)
-    stub_const("LegislatorMatcher::HISTORICAL_YAML", stub_historical)
+    stub_const('LegislatorMatcher::CURRENT_YAML', stub_current)
+    stub_const('LegislatorMatcher::HISTORICAL_YAML', stub_historical)
+    stub_const('LegislatorMatcher::CONGRESS_BOT_USER', 1)
+    stub_const('LegislatorMatcher::CONGRESS_BOT_SF_USER', 1)
   end
 
   subject { LegislatorMatcher.new }
@@ -58,18 +60,20 @@ describe 'LegislatorMatcher' do
 
   describe LegislatorMatcher::Legislator do
     before(:all) do
-      @legislators_current = YAML.load_file Rails.root.join('spec', 'testdata', 'legislators-current.yaml')
+      @legislators_current = YAML.load_file(
+        Rails.root.join('spec', 'testdata', 'legislators-current.yaml')
+      )
     end
     let(:sherrod_brown) { LegislatorMatcher::Legislator.new(@legislators_current[0]) }
 
     describe '#to_entity_attributes' do
       specify do
         expect(sherrod_brown.to_entity_attributes)
-          .to eql(LsHash.new(name: "Sherrod Brown",
-                             blurb: "US Senator from Ohio",
-                             website: "https://www.brown.senate.gov",
-                             primary_ext: "Person",
-                             start_date: "1952-11-09",
+          .to eql(LsHash.new(name: 'Sherrod Brown',
+                             blurb: 'US Senator from Ohio',
+                             website: 'https://www.brown.senate.gov',
+                             primary_ext: 'Person',
+                             start_date: '1952-11-09',
                              last_user_id: LegislatorMatcher::CONGRESS_BOT_SF_USER))
       end
     end
@@ -77,8 +81,8 @@ describe 'LegislatorMatcher' do
     describe '#to_person_attributes' do
       specify do
         expect(sherrod_brown.to_person_attributes)
-          .to eql(LsHash.new(name_first: "Sherrod",
-                             name_last: "Brown",
+          .to eql(LsHash.new(name_first: 'Sherrod',
+                             name_last: 'Brown',
                              gender_id: 2))
       end
     end
@@ -126,9 +130,8 @@ describe 'LegislatorMatcher' do
 
       context 'legislator exists in LittleSis - attributes changed' do
         let!(:entity) do
-          create(:entity_person, name: 'Sherrod "nickname" Brown', blurb: 'i am sherrod brown').tap do |e|
-            e.add_extension('ElectedRepresentative', bioguide_id: 'B000944')
-          end
+          create(:entity_person, name: 'Sherrod "nickname" Brown', blurb: 'i am sherrod brown')
+            .tap { |e| e.add_extension('ElectedRepresentative', bioguide_id: 'B000944') }
         end
 
         it 'does not create a new entity' do

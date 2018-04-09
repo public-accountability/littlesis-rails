@@ -8,10 +8,10 @@ require 'open-uri'
 # Processes congressional legistors yaml files and matches
 # each legistor with existing LittleSis entities
 class LegislatorMatcher
-  # CURRENT_YAML = 'https://theunitedstates.io/congress-legislators/legislators-current.yaml'
-  # HISTORICAL_YAML = 'https://theunitedstates.io/congress-legislators/legislators-historical.yaml'
-  CURRENT_YAML = Rails.root.join('tmp', 'legislators-current.yaml').to_s
-  HISTORICAL_YAML = Rails.root.join('tmp', 'legislators-historical.yaml').to_s
+  CURRENT_YAML = 'https://theunitedstates.io/congress-legislators/legislators-current.yaml'
+  HISTORICAL_YAML = 'https://theunitedstates.io/congress-legislators/legislators-historical.yaml'
+  # CURRENT_YAML = Rails.root.join('tmp', 'legislators-current.yaml').to_s
+  # HISTORICAL_YAML = Rails.root.join('tmp', 'legislators-historical.yaml').to_s
 
   HOUSE_OF_REPS = 12_884
   SENATE = 12_885
@@ -183,7 +183,7 @@ class LegislatorMatcher
 
     def generate_blurb
       term = fetch('terms').last
-      rep_or_sen = term['type'] == 'sen' ? 'Senator' : "Representative"
+      rep_or_sen = term['type'] == 'sen' ? 'Senator' : 'Representative'
       state = AddressState.abbreviation_map.fetch(term['state'].upcase)
 
       "US #{rep_or_sen} from #{state}"
