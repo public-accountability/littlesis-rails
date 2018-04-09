@@ -4,6 +4,12 @@ require 'rails_helper'
 require Rails.root.join('lib', 'legislator_matcher')
 
 describe 'LegislatorMatcher' do
+  before(:all) do
+    @legislators_current = YAML.load_file(
+      Rails.root.join('spec', 'testdata', 'legislators-current.yaml')
+    )
+  end
+
   before(:each) do
     stub_current = Rails.root.join('spec', 'testdata', 'legislators-current.yaml').to_s
     stub_historical = Rails.root.join('spec', 'testdata', 'legislators-historical.yaml').to_s
@@ -59,11 +65,6 @@ describe 'LegislatorMatcher' do
   end
 
   describe LegislatorMatcher::Legislator do
-    before(:all) do
-      @legislators_current = YAML.load_file(
-        Rails.root.join('spec', 'testdata', 'legislators-current.yaml')
-      )
-    end
     let(:sherrod_brown) { LegislatorMatcher::Legislator.new(@legislators_current[0]) }
 
     describe '#to_entity_attributes' do
@@ -157,6 +158,41 @@ describe 'LegislatorMatcher' do
           expect(Entity.find(entity.id).updated_at.to_i).to eql date.to_i
         end
       end
+    end
+  end
+
+  describe LegislatorMatcher::TermsImporter do
+    let(:sherrod_brown) { LegislatorMatcher::Legislator.new(@legislators_current[0]) }
+
+    describe 'helper methods' do
+      subject { LegislatorMatcher::TermsImporter.new(sherrod_brown) }
+
+      specify { expect(subject.rep_terms.length).to eql 7 }
+      specify { expect(subject.sen_terms.length).to eql 2 }
+
+      describe 'distinct_terms' do
+        let(:terms) do
+          [
+            { 'start' => '2000-01-01', 'end' => '2001-01-01', 'state' => 'NY', 'district' => 3 },
+            { 'start' => '2001-01-02', 'end' => '2002-01-01', 'state' => 'NY', 'district' => 3 },
+            # ^^ should get combined because the start date is one past the end date
+            { 'start' => '2005-01-02', 'end' => '2006-01-01', 'state' => 'NY', 'district' => 3 },
+            # ^^ should be it's own relationship because the start state skips a few years
+            { 'start' => '2006-01-02', 'end' => '2007-01-01', 'state' => 'NY', 'district' => 4 }
+            # ^^ should be it's own relationship because the district changes
+          ]
+        end
+
+        specify do
+          expect(subject.send(:distill, terms))
+            .to eql([
+                      { 'start' => '2000-01-01', 'end' => '2002-01-01', 'state' => 'NY', 'district' => 3 },
+                      { 'start' => '2005-01-02', 'end' => '2006-01-01', 'state' => 'NY', 'district' => 3 },
+                      { 'start' => '2006-01-02', 'end' => '2007-01-01', 'state' => 'NY', 'district' => 4 }
+                    ])
+        end
+      end
+
     end
   end
 end
