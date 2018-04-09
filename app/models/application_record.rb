@@ -1,6 +1,20 @@
+# frozen_string_literal: true
+
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
   attr_accessor :current_user
+
+  # This works just like `attribute=` except that
+  # it skips assigning the attribute if it's not blank.
+  # It's useful if you want to only a model, without
+  # overriding existing data.
+  def assign_attribute_unless_present(attribute, value)
+    if respond_to?("#{attribute}=")
+      public_send("#{attribute}=", value) if public_send(attribute).blank?
+    else
+      raise ActiveRecord::UnknownAttributeError.new(self, attribute)
+    end
+  end
 
   # If the current model has a current user set
   # it will use that current_user to derive the last_user_id.

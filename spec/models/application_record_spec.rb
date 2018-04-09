@@ -1,6 +1,28 @@
 require 'rails_helper'
 
 describe ApplicationRecord do
+  describe 'assign_attribute_unless_present' do
+    let(:org) { build(:org) }
+
+    it 'assigns new atribute' do
+      expect(org.start_date).to be nil
+      org.assign_attribute_unless_present :start_date, '1999-05-06'
+      expect(org.start_date).to eq '1999-05-06'
+    end
+
+    it 'does not assigns new atribute' do
+      org.start_date = '2000-00-00'
+      expect(org.start_date).to eq '2000-00-00'
+      org.assign_attribute_unless_present 'start_date', '2018-01-01'
+      expect(org.start_date).to eql '2000-00-00'
+    end
+
+    it 'raises error if attribute does not exist' do
+      expect { org.assign_attribute_unless_present('FOO', 'BAR') }
+        .to raise_error(ActiveRecord::UnknownAttributeError)
+    end
+  end
+
   describe 'touch_by_current_user' do
     let(:user) { build(:user_with_id, sf_guard_user_id: rand(1000)) }
     let(:org) { build(:org) }

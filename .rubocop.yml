@@ -51,19 +51,21 @@ Style/CommentedKeyword:
 Style/Documentation:
   Enabled: false
 
+Style/EmptyMethod:
+  Exclude:
+    - 'app/controllers/**/*.rb'
+
+Style/GuardClause:
+  Enabled: false
+
 Style/Lambda:
   Enabled: false
 
-Style/EmptyMethod:
-  Enabled: false
 
 Style/FrozenStringLiteralComment:
   EnforcedStyle: when_needed
   Exclude:
     - 'spec/**/*.rb'
-
-Style/StringLiterals:
-  Enabled: false
 
 Style/HashSyntax:
   EnforcedStyle: no_mixed_keys

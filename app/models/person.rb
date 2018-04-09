@@ -78,4 +78,15 @@ class Person < ApplicationRecord
       .concat(Array.wrap(LONG_FIRST_NAMES.fetch(name.downcase, [])))
       .compact
   end
+
+  def self.gender_to_id(gender)
+    case gender.to_s.upcase
+    when '1', 'FEMALE', 'F'
+      1
+    when '2', 'MALE', 'M'
+      2
+    when '3', 'OTHER', 'O', 'THEY', 'THEM'
+      3
+    end
+  end
 end

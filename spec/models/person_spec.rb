@@ -84,4 +84,14 @@ describe Person do
       expect(names).to eq []
     end
   end
+
+  describe 'gender_to_id' do
+    specify { expect(Person.gender_to_id('F')).to eql 1 }
+    specify { expect(Person.gender_to_id(1)).to eql 1 }
+    specify { expect(Person.gender_to_id('2')).to eql 2 }
+    specify { expect(Person.gender_to_id('male')).to eql 2 }
+    specify { expect(Person.gender_to_id('o')).to eql 3 }
+    specify { expect(Person.gender_to_id('xyz')).to be nil }
+    specify { expect(Person.gender_to_id(nil)).to be nil }
+  end
 end

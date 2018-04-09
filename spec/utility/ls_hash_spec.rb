@@ -28,4 +28,16 @@ describe LsHash do
       expect { subject.with_last_user([]) }.to raise_error(ArgumentError)
     end
   end
+
+  describe 'remove_nil_vals' do
+    specify do
+      expect(LsHash.new('one' => 1, 'two' => nil).remove_nil_vals)
+        .to eql LsHash.new('one' => 1)
+    end
+
+    specify do
+      expect(LsHash.new('one' => 1, 'two' => 2).remove_nil_vals)
+        .to eql LsHash.new('one' => 1, 'two' => 2)
+    end
+  end
 end
