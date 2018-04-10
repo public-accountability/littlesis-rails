@@ -157,5 +157,35 @@ describe LsDate do
       expect(LsDate.new('2008-02-24').display).to eql "Feb 24 '08"
     end
   end
+
+  describe 'to_date' do
+    it 'returns nil' do
+      expect(LsDate.new(nil).to_date).to be nil
+    end
+
+    it 'returns <Date>' do
+      expect(LsDate.new('1915-02-08').to_date).to be_a Date
+    end
+
+    it 'raises error if date cannot be parsed' do
+      expect { LsDate.new('1915-00-00').to_date }.to raise_error(ArgumentError)
+      expect { LsDate.new('1915-02-00').to_date }.to raise_error(ArgumentError)
+    end
+  end
+
+  describe 'coerce_to_date' do
+    it 'returns nil' do
+      expect(LsDate.new(nil).coerce_to_date).to be nil
+    end
+
+    it 'returns <Date>' do
+      expect(LsDate.new('1915-02-08').coerce_to_date).to be_a Date
+    end
+
+    it 'returns valid dates even if month or day is unknown' do
+      expect(LsDate.new('1915-00-00').coerce_to_date).to eql Date.parse('1915-01-01')
+      expect(LsDate.new('1915-02-00').coerce_to_date).to eql Date.parse('1915-02-01')
+    end
+  end
 end
 # rubocop:enable Lint/UselessComparison
