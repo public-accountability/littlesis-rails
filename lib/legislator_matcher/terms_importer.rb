@@ -2,13 +2,47 @@
 
 class LegislatorMatcher
   class TermsImporter
-    attr_internal :legislator
+    attr_internal :legislator, :distilled_terms
+    DistilledTerms = Struct.new(:rep, :sen)
 
     def initialize(legislator)
       @_legislator = legislator
+      @_distilled_terms = DistilledTerms.new(distilled_rep_terms, distilled_sen_terms)
     end
 
+    # If there are no existing relationsips
+    # this will create all new relationsips.
+    # Otherwise it will match relationships based on their 'start-date'
+    # and update them accordingly.
     def import!
+      rep_relationships = legislator.entity.relationships.where(entity2_id: LegislatorMatcher::HOUSE_OF_REPS).to_a
+      sen_relationships = legislator.entity.relationships.where(entity2_id: LegislatorMatcher::SENATE).to_a
+
+      distilled_terms.reps.each do |term|
+        rel = rep_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
+        if rel.present?
+          update_relationship(rel, term)
+        else
+          create_new_relationship(term)
+        end
+      end
+
+      distilled_terms.sen.each do |term|
+        rel = sen_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
+        if rel.present?
+          update_relationship(rel, term)
+        else
+          create_new_relationship(term)
+        end
+      end
+    end
+
+    private
+
+    def update_relationship(rel, term)
+    end
+
+    def create_new_relationship(term)
     end
 
     def distill(terms, distinct_terms = [])
@@ -31,11 +65,20 @@ class LegislatorMatcher
       end
 
       define_method "distilled_#{type}_terms" do
-        distill public_send("#{type}_terms")
+        distill send("#{type}_terms")
       end
     end
 
-    private
+    #######################
+    # Comparision helpers #
+    #######################
+
+    def same_start_date(relationship_date, term_date)
+      ls_date = LsDate.new(relationship_date)
+      # if the current relationship's date only has year information, compare years
+      return (ls_date.year == term_date.slice(0, 4).to_i) if ls_date.sp_year?
+      within_one_month(ls_date.coerce_to_date_str, term_date)
+    end
 
     # str, str --> boolean
     def within_one_month(date_one, date_two)

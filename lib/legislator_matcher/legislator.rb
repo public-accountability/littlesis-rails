@@ -4,7 +4,7 @@ class LegislatorMatcher
   # Wrapper around the hash parsed from
   # the theunitedstates.io's yaml file
   class Legislator < SimpleDelegator
-    attr_reader :match_type
+    attr_reader :match_type, :entity
 
     def representative?
       types.include? 'rep'
@@ -31,8 +31,9 @@ class LegislatorMatcher
     def import!
       transaction do
         if match.blank?
-          create_new_entity
+          @entity = create_new_entity
         else
+          @entity = match
           match.website = fetch_website
           match.start_date = dig('bio', 'birthday') if dig('bio', 'birthday')
           match.assign_attribute_unless_present :blurb, generate_blurb

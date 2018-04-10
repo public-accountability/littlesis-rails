@@ -167,8 +167,10 @@ describe 'LegislatorMatcher' do
     describe 'helper methods' do
       subject { LegislatorMatcher::TermsImporter.new(sherrod_brown) }
 
-      specify { expect(subject.rep_terms.length).to eql 7 }
-      specify { expect(subject.sen_terms.length).to eql 2 }
+      specify { expect(subject.send(:rep_terms).length).to eql 7 }
+      specify { expect(subject.send(:sen_terms).length).to eql 2 }
+      specify { expect(subject.send(:distilled_terms).rep.length).to eql 1 }
+      specify { expect(subject.send(:distilled_terms).sen.length).to eql 1 }
 
       describe 'distill' do
         let(:terms) do
@@ -195,8 +197,22 @@ describe 'LegislatorMatcher' do
       end
     end # end describe helper methods
 
-    describe 'import!' do
-      context 'entity has no current relationships'
+    xdescribe 'import!' do
+      subject { LegislatorMatcher::TermsImporter.new(sherrod_brown) }
+      context 'entity has no current relationships' do
+        it 'creates 3 new relationships' do
+          expect {  subject.import! }.to change { Relationship.count }.by(3)
+        end
+
+        it 'creates 3 new Memberhsip' do
+          expect {  subject.import! }.to change { Membership.count }.by(3)
+        end
+      end
+
+      context 'entity has one current relationships' do
+        
+       
+      end
     end
     
   end # end LegislatorMatcher::TermsImporter
