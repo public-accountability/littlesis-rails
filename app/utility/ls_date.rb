@@ -97,9 +97,15 @@ class LsDate
   # Unlike `to_date` this will assign 1 for the
   # first month and/or day if they are missing
   def coerce_to_date
+    return nil if sp_unknown?
     return to_date if sp_day?
-    return Date.parse("#{year}-01-01") if sp_year?
-    return Date.parse("#{year}-#{month}-01") if sp_month?
+    Date.parse(coerce_to_date_str)
+  end
+
+  def coerce_to_date_str
+    return @date_str if sp_day?
+    return "#{year}-01-01" if sp_year?
+    return "#{year}-#{month}-01" if sp_month?
   end
 
   # str -> str | nil
