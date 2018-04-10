@@ -24,6 +24,10 @@ class LegislatorMatcher
       @_match = _match
     end
 
+    def terms_importer
+      LegislatorMatcher::TermsImporter.new(self)
+    end
+
     def import!
       transaction do
         if match.blank?

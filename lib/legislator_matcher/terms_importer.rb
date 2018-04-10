@@ -24,12 +24,15 @@ class LegislatorMatcher
       return distill terms.drop(1), distinct_terms.push(terms.first)
     end 
 
-    def rep_terms
-      legislator['terms'].select { |t| t['type'] == 'rep' }.sort_by { |t| t['start'] }
-    end
+    # defines methods: rep_terms, distilled_rep_terms, sen_terms, distilled_sen_terms
+    %w[rep sen].each do |type|
+      define_method "#{type}_terms" do
+        legislator['terms'].select { |t| t['type'] == type }.sort_by { |t| t['start'] }
+      end
 
-    def sen_terms
-      legislator['terms'].select { |t| t['type'] == 'sen' }.sort_by { |t| t['start'] }
+      define_method "distilled_#{type}_terms" do
+        distill public_send("#{type}_terms")
+      end
     end
 
     private
