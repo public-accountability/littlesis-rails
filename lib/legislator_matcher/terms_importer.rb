@@ -13,16 +13,16 @@ class LegislatorMatcher
 
     def distill(terms, distinct_terms = [])
       return distinct_terms if terms.empty?
-      return distill(terms.drop(1), Array.wrap(terms.first)) if distinct_terms.empty?
+      return distill(terms.drop(1), Array.wrap(terms.first.deep_dup)) if distinct_terms.empty?
 
-      if (Date.parse(terms.first['start']) - Date.parse(distinct_terms.last['end'])) == 1
+      if within_one_month(terms.first['start'], distinct_terms.last['end'])
         if equivalent?(terms.first, distinct_terms.last)
-          distinct_terms.last['end'] = terms.first['end']
+          distinct_terms.last['end'] = terms.first['end'].clone
           return distill terms.drop(1), distinct_terms
         end
       end
-      return distill terms.drop(1), distinct_terms.push(terms.first)
-    end 
+      return distill terms.drop(1), distinct_terms.push(terms.first.deep_dup)
+    end
 
     # defines methods: rep_terms, distilled_rep_terms, sen_terms, distilled_sen_terms
     %w[rep sen].each do |type|
@@ -37,8 +37,15 @@ class LegislatorMatcher
 
     private
 
+    # str, str --> boolean
+    def within_one_month(date_one, date_two)
+      (Date.parse(date_one) - Date.parse(date_two)).to_i.abs <= 30
+    end
+
     def equivalent?(a, b)
       a['state'].eql?(b['state']) && a['district'].eql?(b['district']) && a['party'].eql?(b['party'])
     end
   end
 end
+
+

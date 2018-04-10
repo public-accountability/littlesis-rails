@@ -170,7 +170,7 @@ describe 'LegislatorMatcher' do
       specify { expect(subject.rep_terms.length).to eql 7 }
       specify { expect(subject.sen_terms.length).to eql 2 }
 
-      describe 'distinct_terms' do
+      describe 'distill' do
         let(:terms) do
           [
             { 'start' => '2000-01-01', 'end' => '2001-01-01', 'state' => 'NY', 'district' => 3, 'party' => 'Democrat' },
@@ -182,7 +182,7 @@ describe 'LegislatorMatcher' do
             # ^^ should be it's own relationship because the district changes
           ]
         end
-        
+
         specify do
           expect(subject.send(:distill, terms))
             .to eql([
@@ -190,9 +190,14 @@ describe 'LegislatorMatcher' do
                       { 'start' => '2005-01-02', 'end' => '2006-01-01', 'state' => 'NY', 'district' => 3, 'party' => 'Democrat' },
                       { 'start' => '2006-01-02', 'end' => '2007-01-01', 'state' => 'NY', 'district' => 4, 'party' => 'Democrat' }
                     ])
+          expect(subject.send(:distill, terms).length).to eql 3
         end
       end
+    end # end describe helper methods
 
+    describe 'import!' do
+      context 'entity has no current relationships'
     end
-  end
+    
+  end # end LegislatorMatcher::TermsImporter
 end
