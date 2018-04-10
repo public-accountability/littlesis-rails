@@ -200,6 +200,18 @@ describe 'LegislatorMatcher' do
     xdescribe 'import!' do
       subject { LegislatorMatcher::TermsImporter.new(sherrod_brown) }
       context 'entity has no current relationships' do
+        it 'creates 4 new relationships' do
+          expect {  subject.import! }.to change { Relationship.count }.by(4)
+        end
+
+        it 'creates 4 new Memberhsip' do
+          expect {  subject.import! }.to change { Membership.count }.by(4)
+        end
+
+        it 'created membership have correct fields'
+      end
+
+      context 'entity has one current relationship that matches' do
         it 'creates 3 new relationships' do
           expect {  subject.import! }.to change { Relationship.count }.by(3)
         end
@@ -207,11 +219,22 @@ describe 'LegislatorMatcher' do
         it 'creates 3 new Memberhsip' do
           expect {  subject.import! }.to change { Membership.count }.by(3)
         end
+
+        it 'updates existing relationship'
       end
 
-      context 'entity has one current relationships' do
-        
-       
+      context 'entity has one current relationship that matches and one totally incorrect relationship' do
+        it 'creates 3 new relationships' do
+          expect {  subject.import! }.to change { Relationship.count }.by(3)
+        end
+
+        it 'creates 3 new Memberhsip' do
+          expect {  subject.import! }.to change { Membership.count }.by(3)
+        end
+
+        it 'updates existing relationship'
+
+        it 'deletes incorrect relationship'
       end
     end
     

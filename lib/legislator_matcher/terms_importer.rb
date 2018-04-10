@@ -5,6 +5,9 @@ class LegislatorMatcher
     attr_internal :legislator, :distilled_terms
     DistilledTerms = Struct.new(:rep, :sen)
 
+    TERM_TYPE_TO_ENTITY = { 'rep' => 12_884, 'sen' => 12_885 }.freeze
+    TERM_TYPE_TO_DESCRIPTION = { 'rep' => 'Representative', 'sen' => 'Senator' }.freeze
+
     def initialize(legislator)
       @_legislator = legislator
       @_distilled_terms = DistilledTerms.new(distilled_rep_terms, distilled_sen_terms)
@@ -35,6 +38,8 @@ class LegislatorMatcher
           create_new_relationship(term)
         end
       end
+
+      verify_all_relationships!
     end
 
     private
@@ -43,6 +48,30 @@ class LegislatorMatcher
     end
 
     def create_new_relationship(term)
+      relationship = Relationship.create!(category_id: Relationship::MEMBERSHIP_CATEGORY,
+                                entity1_id: legislator.entity.id,
+                                entity2_id: TERM_TYPE_TO_ENTITY.fetch(term['type']),
+                                description1: TERM_TYPE_TO_DESCRIPTION..fetch(term['type']),
+                                description2: TERM_TYPE_TO_DESCRIPTION..fetch(term['type']),
+                                start_date:
+                                end_date:)
+      
+    end
+
+    def verify_all_relationships!
+      legislator.entity.reload
+
+      if legislator.entity.relationships.where(entity2_id: LegislatorMatcher::HOUSE_OF_REPS).count > distilled_rep_terms.count
+        legislator.entity.relationships.where(entity2_id: LegislatorMatcher::HOUSE_OF_REPS).each do |r|
+          r.soft_delete if r.membership.elected_term.type.nil?
+        end
+      end
+
+      if legislator.entity.relationships.where(entity2_id: LegislatorMatcher::SENATE).count > distilled_sen_terms.count
+        legislator.entity.relationships.where(entity2_id: LegislatorMatcher::SENATE).each do |r|
+          r.soft_delete if r.membership.elected_term.type.nil?
+        end
+      end
     end
 
     def distill(terms, distinct_terms = [])
@@ -69,6 +98,7 @@ class LegislatorMatcher
       end
     end
 
+    
     #######################
     # Comparision helpers #
     #######################
