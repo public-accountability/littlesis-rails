@@ -4,11 +4,11 @@
 
 require 'uri'
 require 'open-uri'
-require_relative 'legislator_matcher/legislator'
+require_relative 'congress_importer/legislator'
 
 # Processes congressional legistors yaml files and matches
 # each legistor with existing LittleSis entities
-class LegislatorMatcher
+class CongressImporter
   CURRENT_YAML = 'https://theunitedstates.io/congress-legislators/legislators-current.yaml'
   HISTORICAL_YAML = 'https://theunitedstates.io/congress-legislators/legislators-historical.yaml'
   # CURRENT_YAML = Rails.root.join('tmp', 'legislators-current.yaml').to_s

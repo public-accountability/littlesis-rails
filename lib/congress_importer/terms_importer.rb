@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LegislatorMatcher
+class CongressImporter
   class TermsImporter
     attr_internal :legislator, :distilled_terms
     DistilledTerms = Struct.new(:rep, :sen)
@@ -18,8 +18,8 @@ class LegislatorMatcher
     # Otherwise it will match relationships based on their 'start-date'
     # and update them accordingly.
     def import!
-      rep_relationships = legislator.entity.relationships.where(entity2_id: LegislatorMatcher::HOUSE_OF_REPS).to_a
-      sen_relationships = legislator.entity.relationships.where(entity2_id: LegislatorMatcher::SENATE).to_a
+      rep_relationships = legislator.entity.relationships.where(entity2_id: CongressImporter::HOUSE_OF_REPS).to_a
+      sen_relationships = legislator.entity.relationships.where(entity2_id: CongressImporter::SENATE).to_a
 
       distilled_terms.rep.each do |term|
         rel = rep_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
@@ -45,7 +45,7 @@ class LegislatorMatcher
                            description2: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),
                            start_date: term['start'],
                            end_date: term['end'],
-                           last_user_id: LegislatorMatcher::CONGRESS_BOT_SF_USER)
+                           last_user_id: CongressImporter::CONGRESS_BOT_SF_USER)
       relationship.membership.update!(elected_term: elected_term_struct(term))
     end
 
@@ -56,14 +56,14 @@ class LegislatorMatcher
     def verify_all_relationships!
       legislator.entity.reload
 
-      if legislator.entity.relationships.where(entity2_id: LegislatorMatcher::HOUSE_OF_REPS).count > distilled_rep_terms.count
-        legislator.entity.relationships.where(entity2_id: LegislatorMatcher::HOUSE_OF_REPS).each do |r|
+      if legislator.entity.relationships.where(entity2_id: CongressImporter::HOUSE_OF_REPS).count > distilled_rep_terms.count
+        legislator.entity.relationships.where(entity2_id: CongressImporter::HOUSE_OF_REPS).each do |r|
           r.soft_delete if r.membership.elected_term.type.nil?
         end
       end
 
-      if legislator.entity.relationships.where(entity2_id: LegislatorMatcher::SENATE).count > distilled_sen_terms.count
-        legislator.entity.relationships.where(entity2_id: LegislatorMatcher::SENATE).each do |r|
+      if legislator.entity.relationships.where(entity2_id: CongressImporter::SENATE).count > distilled_sen_terms.count
+        legislator.entity.relationships.where(entity2_id: CongressImporter::SENATE).each do |r|
           r.soft_delete if r.membership.elected_term.type.nil?
         end
       end

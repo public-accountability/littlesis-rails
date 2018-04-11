@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LegislatorMatcher
+class CongressImporter
   # Wrapper around the hash parsed from
   # the theunitedstates.io's yaml file
   class Legislator < SimpleDelegator
@@ -27,11 +27,11 @@ class LegislatorMatcher
     end
 
     def terms_importer
-      LegislatorMatcher::TermsImporter.new(self)
+      CongressImporter::TermsImporter.new(self)
     end
 
     def import!
-      LegislatorMatcher.transaction do
+      CongressImporter.transaction do
         if match.blank?
           @entity = create_new_entity
         else

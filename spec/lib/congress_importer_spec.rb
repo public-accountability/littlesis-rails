@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require Rails.root.join('lib', 'legislator_matcher')
+require Rails.root.join('lib', 'congress_importer')
 
-describe 'LegislatorMatcher' do
+describe 'CongressImporter' do
   before(:all) do
     @legislators_current = YAML.load_file(
       Rails.root.join('spec', 'testdata', 'legislators-current.yaml')
@@ -13,13 +13,13 @@ describe 'LegislatorMatcher' do
   before(:each) do
     stub_current = Rails.root.join('spec', 'testdata', 'legislators-current.yaml').to_s
     stub_historical = Rails.root.join('spec', 'testdata', 'legislators-historical.yaml').to_s
-    stub_const('LegislatorMatcher::CURRENT_YAML', stub_current)
-    stub_const('LegislatorMatcher::HISTORICAL_YAML', stub_historical)
-    stub_const('LegislatorMatcher::CONGRESS_BOT_USER', 1)
-    stub_const('LegislatorMatcher::CONGRESS_BOT_SF_USER', 1)
+    stub_const('CongressImporter::CURRENT_YAML', stub_current)
+    stub_const('CongressImporter::HISTORICAL_YAML', stub_historical)
+    stub_const('CongressImporter::CONGRESS_BOT_USER', 1)
+    stub_const('CongressImporter::CONGRESS_BOT_SF_USER', 1)
   end
 
-  subject { LegislatorMatcher.new }
+  subject { CongressImporter.new }
 
   context 'initalize' do
     it 'sets current_reps and historical_reps' do
@@ -36,7 +36,7 @@ describe 'LegislatorMatcher' do
     let(:strange) { create(:entity_person, name: 'Luther Strange') }
 
     subject do
-      LegislatorMatcher.new.reps.find { |r| r.dig('id', 'bioguide') == 'S001202' }
+      CongressImporter.new.reps.find { |r| r.dig('id', 'bioguide') == 'S001202' }
     end
 
     context 'bioguide in LittleSis' do
@@ -64,8 +64,8 @@ describe 'LegislatorMatcher' do
     end
   end
 
-  describe LegislatorMatcher::Legislator do
-    let(:sherrod_brown) { LegislatorMatcher::Legislator.new(@legislators_current[0]) }
+  describe CongressImporter::Legislator do
+    let(:sherrod_brown) { CongressImporter::Legislator.new(@legislators_current[0]) }
 
     describe '#to_entity_attributes' do
       specify do
@@ -75,7 +75,7 @@ describe 'LegislatorMatcher' do
                              website: 'https://www.brown.senate.gov',
                              primary_ext: 'Person',
                              start_date: '1952-11-09',
-                             last_user_id: LegislatorMatcher::CONGRESS_BOT_SF_USER))
+                             last_user_id: CongressImporter::CONGRESS_BOT_SF_USER))
       end
     end
 
@@ -161,8 +161,8 @@ describe 'LegislatorMatcher' do
     end
   end
 
-  describe LegislatorMatcher::TermsImporter do
-    let(:sherrod_brown) { LegislatorMatcher::Legislator.new(@legislators_current[0]) }
+  describe CongressImporter::TermsImporter do
+    let(:sherrod_brown) { CongressImporter::Legislator.new(@legislators_current[0]) }
     let(:sherrod_brown_entity) do
       create(:entity_person, name: 'Sherrod Brown').tap do |e|
         e.add_extension 'ElectedRepresentative', :bioguide_id => 'B000944'
@@ -170,7 +170,7 @@ describe 'LegislatorMatcher' do
     end
 
     describe 'helper methods' do
-      subject { LegislatorMatcher::TermsImporter.new(sherrod_brown) }
+      subject { CongressImporter::TermsImporter.new(sherrod_brown) }
 
       specify { expect(subject.send(:rep_terms).length).to eql 7 }
       specify { expect(subject.send(:sen_terms).length).to eql 2 }
@@ -256,7 +256,7 @@ describe 'LegislatorMatcher' do
           expect(relationship.end_date).to eql '2007-01-03'
           expect(relationship.description1).to eql 'Representative'
           expect(relationship.description2).to eql 'Representative'
-          expect(relationship.last_user_id).to eql LegislatorMatcher::CONGRESS_BOT_SF_USER
+          expect(relationship.last_user_id).to eql CongressImporter::CONGRESS_BOT_SF_USER
         end
 
         it 'sets membership.elected_term to be an OpenStruct of term information' do
@@ -267,7 +267,7 @@ describe 'LegislatorMatcher' do
     end # end describe helper methods
 
     describe 'import!' do
-      subject { LegislatorMatcher::TermsImporter.new(sherrod_brown) }
+      subject { CongressImporter::TermsImporter.new(sherrod_brown) }
 
       before do
         sherrod_brown_entity
@@ -362,5 +362,5 @@ describe 'LegislatorMatcher' do
         end
       end
     end
-  end # end LegislatorMatcher::TermsImporter
+  end # end CongressImporter::TermsImporter
 end
