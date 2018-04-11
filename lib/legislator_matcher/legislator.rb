@@ -22,6 +22,8 @@ class LegislatorMatcher
     def match
       return @_match if defined?(@_match)
       @_match = _match
+      @entity = @_match if @_match.present?
+      @_match
     end
 
     def terms_importer
@@ -33,7 +35,6 @@ class LegislatorMatcher
         if match.blank?
           @entity = create_new_entity
         else
-          @entity = match
           match.website = fetch_website
           match.start_date = dig('bio', 'birthday') if dig('bio', 'birthday')
           match.assign_attribute_unless_present :blurb, generate_blurb

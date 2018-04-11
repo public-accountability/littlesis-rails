@@ -163,6 +163,7 @@ describe 'LegislatorMatcher' do
 
   describe LegislatorMatcher::TermsImporter do
     let(:sherrod_brown) { LegislatorMatcher::Legislator.new(@legislators_current[0]) }
+    
 
     describe 'helper methods' do
       subject { LegislatorMatcher::TermsImporter.new(sherrod_brown) }
@@ -193,6 +194,53 @@ describe 'LegislatorMatcher' do
                       { 'start' => '2006-01-02', 'end' => '2007-01-01', 'state' => 'NY', 'district' => 4, 'party' => 'Democrat' }
                     ])
           expect(subject.send(:distill, terms).length).to eql 3
+        end
+      end
+
+      describe 'create_new_relationship' do
+        let!(:sherrod_brown_entity) do
+          create(:entity_person, name: 'Sherrod Brown').tap do |e|
+            e.add_extension 'ElectedRepresentative', :bioguide_id => 'B000944'
+          end
+        end
+
+        let(:sherrod_brown) { LegislatorMatcher::Legislator.new(@legislators_current[0]) }
+        let(:term) do
+          { 'type' => 'rep', 'start' => '1993-01-05', 'end' => '2007-01-03', 'state' => 'OH', 'district' => 13, 'party' => 'Democrat' }
+        end
+
+        let(:create_new_relationship) { proc { sherrod_brown.terms_importer.send(:create_new_relationship, term) } }
+
+        before do
+          sherrod_brown_entity
+          create(:us_house)
+          create(:us_senate)
+          sherrod_brown.match
+        end
+
+        it 'creates a new relationship' do
+          expect(&create_new_relationship).to change { Relationship.count }.by(1)
+        end
+
+        it 'creates a new membership' do
+          expect(&create_new_relationship).to change { Membership.count }.by(1)
+        end
+
+        it 'sets correct relationship fields' do
+          create_new_relationship.call
+          relationship = Relationship.last
+          expect(relationship.entity).to eql sherrod_brown_entity
+          expect(relationship.entity2_id).to eql 12_884
+          expect(relationship.start_date).to eql '1993-01-05'
+          expect(relationship.end_date).to eql '2007-01-03'
+          expect(relationship.description1).to eql 'Representative'
+          expect(relationship.description2).to eql 'Representative'
+          expect(relationship.last_user_id).to eql LegislatorMatcher::CONGRESS_BOT_SF_USER
+        end
+
+        it 'sets membership.elected_term to be an OpenStruct of term information' do
+          create_new_relationship.call
+          expect(Relationship.last.membership.elected_term).to eql OpenStruct.new(term.merge('source' => '@unitedstates'))
         end
       end
     end # end describe helper methods

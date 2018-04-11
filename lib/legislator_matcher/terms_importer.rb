@@ -49,13 +49,18 @@ class LegislatorMatcher
 
     def create_new_relationship(term)
       relationship = Relationship.create!(category_id: Relationship::MEMBERSHIP_CATEGORY,
-                                entity1_id: legislator.entity.id,
-                                entity2_id: TERM_TYPE_TO_ENTITY.fetch(term['type']),
-                                description1: TERM_TYPE_TO_DESCRIPTION..fetch(term['type']),
-                                description2: TERM_TYPE_TO_DESCRIPTION..fetch(term['type']),
-                                start_date:
-                                end_date:)
-      
+                                          entity1_id: legislator.entity.id,
+                                          entity2_id: TERM_TYPE_TO_ENTITY.fetch(term['type']),
+                                          description1: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),
+                                          description2: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),
+                                          start_date: term['start'],
+                                          end_date: term['end'],
+                                          last_user_id: LegislatorMatcher::CONGRESS_BOT_SF_USER)
+      relationship.membership.update!(elected_term: elected_term_struct(term))
+    end
+
+    def elected_term_struct(term)
+      OpenStruct.new term.merge('source' => '@unitedstates')
     end
 
     def verify_all_relationships!
