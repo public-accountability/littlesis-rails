@@ -21,7 +21,7 @@ class LegislatorMatcher
       rep_relationships = legislator.entity.relationships.where(entity2_id: LegislatorMatcher::HOUSE_OF_REPS).to_a
       sen_relationships = legislator.entity.relationships.where(entity2_id: LegislatorMatcher::SENATE).to_a
 
-      distilled_terms.reps.each do |term|
+      distilled_terms.rep.each do |term|
         rel = rep_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
         update_or_create_relationship term, relationship: rel
       end
@@ -75,8 +75,8 @@ class LegislatorMatcher
 
       if within_one_month(terms.first['start'], distinct_terms.last['end'])
         if equivalent?(terms.first, distinct_terms.last)
-          distinct_terms.last['end'] = terms.first['end'].clone
-          return distill terms.drop(1), distinct_terms
+          new_term = terms.first.deep_dup.merge('start' => distinct_terms.last['start'])
+          return distill terms.drop(1), distinct_terms.take(distinct_terms.length - 1).push(new_term)
         end
       end
       return distill terms.drop(1), distinct_terms.push(terms.first.deep_dup)
@@ -93,7 +93,6 @@ class LegislatorMatcher
       end
     end
 
-    
     #######################
     # Comparision helpers #
     #######################

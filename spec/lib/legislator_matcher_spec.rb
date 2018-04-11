@@ -163,7 +163,11 @@ describe 'LegislatorMatcher' do
 
   describe LegislatorMatcher::TermsImporter do
     let(:sherrod_brown) { LegislatorMatcher::Legislator.new(@legislators_current[0]) }
-    
+    let(:sherrod_brown_entity) do
+      create(:entity_person, name: 'Sherrod Brown').tap do |e|
+        e.add_extension 'ElectedRepresentative', :bioguide_id => 'B000944'
+      end
+    end
 
     describe 'helper methods' do
       subject { LegislatorMatcher::TermsImporter.new(sherrod_brown) }
@@ -186,6 +190,19 @@ describe 'LegislatorMatcher' do
           ]
         end
 
+        let(:sen_terms) do
+          [
+            { 'type' => 'sen', 'start' => '2009-01-06', 'end' => '2015-01-03',
+              'state' => 'AL', 'class' => 3, 'party' => 'Republican',
+              'url' => 'http://www.sessions.senate.gov' },
+            { 'type' => 'sen', 'start' => '2015-01-06', 'end' => '2017-02-08',
+              'state' => 'AL', 'class' => 2, 'party' => 'Republican',
+              'url' => 'http://www.sessions.senate.gov/public',
+              'address' => '326 Russell Senate Office Building Washington DC 20510' }
+          ]
+          # Classes changes from 3 -> 2, url changes, and address is added
+        end
+
         specify do
           expect(subject.send(:distill, terms))
             .to eql([
@@ -195,16 +212,20 @@ describe 'LegislatorMatcher' do
                     ])
           expect(subject.send(:distill, terms).length).to eql 3
         end
+
+        specify do
+          expect(subject.send(:distill, sen_terms))
+            .to eql([
+                      { 'type' => 'sen', 'start' => '2009-01-06', 'end' => '2017-02-08',
+                        'state' => 'AL', 'class' => 2, 'party' => 'Republican',
+                        'url' => 'http://www.sessions.senate.gov/public',
+                        'address' => '326 Russell Senate Office Building Washington DC 20510' }
+                    ])
+          expect(subject.send(:distill, sen_terms).length).to eql 1
+        end
       end
 
       describe 'update_or_create_relationship' do
-        let!(:sherrod_brown_entity) do
-          create(:entity_person, name: 'Sherrod Brown').tap do |e|
-            e.add_extension 'ElectedRepresentative', :bioguide_id => 'B000944'
-          end
-        end
-
-        let(:sherrod_brown) { LegislatorMatcher::Legislator.new(@legislators_current[0]) }
         let(:term) do
           { 'type' => 'rep', 'start' => '1993-01-05', 'end' => '2007-01-03', 'state' => 'OH', 'district' => 13, 'party' => 'Democrat' }
         end
@@ -245,21 +266,56 @@ describe 'LegislatorMatcher' do
       end
     end # end describe helper methods
 
-    xdescribe 'import!' do
+    describe 'import!' do
       subject { LegislatorMatcher::TermsImporter.new(sherrod_brown) }
-      context 'entity has no current relationships' do
-        it 'creates 4 new relationships' do
-          expect {  subject.import! }.to change { Relationship.count }.by(4)
-        end
 
-        it 'creates 4 new Memberhsip' do
-          expect {  subject.import! }.to change { Membership.count }.by(4)
-        end
-
-        it 'created membership have correct fields'
+      before do
+        sherrod_brown_entity
+        create(:us_house)
+        create(:us_senate)
+        sherrod_brown.match
       end
 
-      context 'entity has one current relationship that matches' do
+      let(:sen_term) do
+        { 'type' => 'sen',
+          'start' => '2007-01-04',
+          'end' => '2019-01-03',
+          'state' => 'OH',
+          'party' => 'Democrat',
+          'class' =>  1,
+          'url' =>  'https://www.brown.senate.gov',
+          'address' => '713 Hart Senate Office Building Washington DC 20510',
+          'phone' => '202-224-2315',
+          'fax' => '202-228-6321',
+          'contact_form' => 'http://www.brown.senate.gov/contact/',
+          'office' => '713 Hart Senate Office Building',
+          'state_rank' => 'senior',
+          'rss_url' => 'http://www.brown.senate.gov/rss/feeds/?type=all&amp;',
+          'source' => '@unitedstates' }
+      end
+
+      context 'entity has no current relationships' do
+        it 'creates 2 new relationships' do
+          expect {  subject.import! }.to change { Relationship.count }.by(2)
+        end
+
+        it 'creates 2 new Memberhsip' do
+          expect { subject.import! }.to change { Membership.count }.by(2)
+        end
+
+        it 'created membership have correct fields' do
+          subject.import!
+          expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_884).membership.elected_term)
+            .to eql OpenStruct.new('type' => 'rep', 'start' => '1993-01-05', 'end' => '2007-01-03',
+                                   'state' => 'OH', 'district' => 13, 'party' => 'Democrat',
+                                   'url' => 'http://www.house.gov/sherrodbrown', 'source' => '@unitedstates')
+
+          expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).membership.elected_term)
+            .to eql OpenStruct.new(sen_term)
+        end
+      end
+
+      xcontext 'entity has one current relationship that matches' do
         it 'creates 3 new relationships' do
           expect {  subject.import! }.to change { Relationship.count }.by(3)
         end
@@ -271,7 +327,7 @@ describe 'LegislatorMatcher' do
         it 'updates existing relationship'
       end
 
-      context 'entity has one current relationship that matches and one totally incorrect relationship' do
+      xcontext 'entity has one current relationship that matches and one totally incorrect relationship' do
         it 'creates 3 new relationships' do
           expect {  subject.import! }.to change { Relationship.count }.by(3)
         end
