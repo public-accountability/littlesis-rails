@@ -197,7 +197,7 @@ describe 'LegislatorMatcher' do
         end
       end
 
-      describe 'create_new_relationship' do
+      describe 'update_or_create_relationship' do
         let!(:sherrod_brown_entity) do
           create(:entity_person, name: 'Sherrod Brown').tap do |e|
             e.add_extension 'ElectedRepresentative', :bioguide_id => 'B000944'
@@ -209,7 +209,7 @@ describe 'LegislatorMatcher' do
           { 'type' => 'rep', 'start' => '1993-01-05', 'end' => '2007-01-03', 'state' => 'OH', 'district' => 13, 'party' => 'Democrat' }
         end
 
-        let(:create_new_relationship) { proc { sherrod_brown.terms_importer.send(:create_new_relationship, term) } }
+        let(:update_or_create_relationship) { proc { sherrod_brown.terms_importer.send(:update_or_create_relationship, term) } }
 
         before do
           sherrod_brown_entity
@@ -219,15 +219,15 @@ describe 'LegislatorMatcher' do
         end
 
         it 'creates a new relationship' do
-          expect(&create_new_relationship).to change { Relationship.count }.by(1)
+          expect(&update_or_create_relationship).to change { Relationship.count }.by(1)
         end
 
         it 'creates a new membership' do
-          expect(&create_new_relationship).to change { Membership.count }.by(1)
+          expect(&update_or_create_relationship).to change { Membership.count }.by(1)
         end
 
         it 'sets correct relationship fields' do
-          create_new_relationship.call
+          update_or_create_relationship.call
           relationship = Relationship.last
           expect(relationship.entity).to eql sherrod_brown_entity
           expect(relationship.entity2_id).to eql 12_884
@@ -239,7 +239,7 @@ describe 'LegislatorMatcher' do
         end
 
         it 'sets membership.elected_term to be an OpenStruct of term information' do
-          create_new_relationship.call
+          update_or_create_relationship.call
           expect(Relationship.last.membership.elected_term).to eql OpenStruct.new(term.merge('source' => '@unitedstates'))
         end
       end

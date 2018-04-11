@@ -23,20 +23,12 @@ class LegislatorMatcher
 
       distilled_terms.reps.each do |term|
         rel = rep_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
-        if rel.present?
-          update_relationship(rel, term)
-        else
-          create_new_relationship(term)
-        end
+        update_or_create_relationship term, relationship: rel
       end
 
       distilled_terms.sen.each do |term|
         rel = sen_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
-        if rel.present?
-          update_relationship(rel, term)
-        else
-          create_new_relationship(term)
-        end
+        update_or_create_relationship term, relationship: rel
       end
 
       verify_all_relationships!
@@ -44,18 +36,16 @@ class LegislatorMatcher
 
     private
 
-    def update_relationship(rel, term)
-    end
-
-    def create_new_relationship(term)
-      relationship = Relationship.create!(category_id: Relationship::MEMBERSHIP_CATEGORY,
-                                          entity1_id: legislator.entity.id,
-                                          entity2_id: TERM_TYPE_TO_ENTITY.fetch(term['type']),
-                                          description1: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),
-                                          description2: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),
-                                          start_date: term['start'],
-                                          end_date: term['end'],
-                                          last_user_id: LegislatorMatcher::CONGRESS_BOT_SF_USER)
+    def update_or_create_relationship(term, relationship: nil)
+      relationship = Relationship.new unless relationship.present?
+      relationship.update!(category_id: Relationship::MEMBERSHIP_CATEGORY,
+                           entity1_id: legislator.entity.id,
+                           entity2_id: TERM_TYPE_TO_ENTITY.fetch(term['type']),
+                           description1: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),
+                           description2: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),
+                           start_date: term['start'],
+                           end_date: term['end'],
+                           last_user_id: LegislatorMatcher::CONGRESS_BOT_SF_USER)
       relationship.membership.update!(elected_term: elected_term_struct(term))
     end
 
