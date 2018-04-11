@@ -17,8 +17,8 @@ class LegislatorMatcher
   HOUSE_OF_REPS = 12_884
   SENATE = 12_885
 
-  CONGRESS_BOT_USER = 1
-  CONGRESS_BOT_SF_USER = 1
+  CONGRESS_BOT_USER = 10_040
+  CONGRESS_BOT_SF_USER = 8_270
 
   attr_reader :current_reps, :historical_reps, :reps
 
@@ -31,6 +31,14 @@ class LegislatorMatcher
 
   def match_all
     @reps.each(&:match)
+  end
+
+  def self.transaction
+    PaperTrail.whodunnit(CONGRESS_BOT_USER.to_s) do
+      ApplicationRecord.transaction do
+        yield
+      end
+    end
   end
 
   private

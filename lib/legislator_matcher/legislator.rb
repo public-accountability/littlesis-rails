@@ -31,7 +31,7 @@ class LegislatorMatcher
     end
 
     def import!
-      transaction do
+      LegislatorMatcher.transaction do
         if match.blank?
           @entity = create_new_entity
         else
@@ -137,13 +137,7 @@ class LegislatorMatcher
 
     private
 
-    def transaction
-      PaperTrail.whodunnit(CONGRESS_BOT_USER.to_s) do
-        ApplicationRecord.transaction do
-          yield
-        end
-      end
-    end
+    
 
     def create_new_entity
       entity = Entity.create!(to_entity_attributes)
