@@ -315,32 +315,52 @@ describe 'LegislatorMatcher' do
         end
       end
 
-      xcontext 'entity has one current relationship that matches' do
-        it 'creates 3 new relationships' do
-          expect {  subject.import! }.to change { Relationship.count }.by(3)
+      context 'entity has one current relationship that matches' do
+        before do
+          @rel = Relationship.create!(category_id: 3, start_date: '1993-01-00', entity: sherrod_brown_entity, entity2_id: 12_884)
         end
 
-        it 'creates 3 new Memberhsip' do
-          expect {  subject.import! }.to change { Membership.count }.by(3)
+        it 'creates 1 new relationships' do
+          expect {  subject.import! }.to change { Relationship.count }.by(1)
         end
 
-        it 'updates existing relationship'
+        it 'creates 1 new Memberhsip' do
+          expect { subject.import! }.to change { Membership.count }.by(1)
+        end
+
+        it 'updates existing relationship' do
+          subject.import!
+          @rel.reload
+          expect(@rel.end_date).to eql '2007-01-03'
+          expect(@rel.membership.elected_term.party).to eql 'Democrat'
+        end
       end
 
-      xcontext 'entity has one current relationship that matches and one totally incorrect relationship' do
-        it 'creates 3 new relationships' do
-          expect {  subject.import! }.to change { Relationship.count }.by(3)
+      context 'entity has one current relationship that matches and one totally incorrect relationship' do
+        before do
+          @rel = Relationship.create!(category_id: 3, start_date: '1993-01-00', entity: sherrod_brown_entity, entity2_id: 12_884)
+          @invalid_relationship = Relationship.create!(category_id: 3, start_date: '1950-01-01', entity: sherrod_brown_entity, entity2_id: 12_884)
         end
 
-        it 'creates 3 new Memberhsip' do
-          expect {  subject.import! }.to change { Membership.count }.by(3)
+        it 'creates 0 new relationships' do
+          expect { subject.import! }.to change { Relationship.count }.by(0)
         end
 
-        it 'updates existing relationship'
+        it 'updates existing relationship' do
+          subject.import!
+          @rel.reload
+          expect(@rel.end_date).to eql '2007-01-03'
+        end
 
-        it 'deletes incorrect relationship'
+        it 'deletes incorrect relationships' do
+          subject.import!
+          @invalid_relationship.reload
+          expect(@invalid_relationship.is_deleted).to eql true
+          expect(Relationship.where(entity: sherrod_brown_entity, entity2_id: 12_884).count).to eql 1
+          expect(Relationship.where(entity: sherrod_brown_entity, entity2_id: 12_885).count).to eql 1
+          expect(sherrod_brown_entity.reload.relationships.count).to eql 2
+        end
       end
     end
-    
   end # end LegislatorMatcher::TermsImporter
 end

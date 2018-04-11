@@ -103,7 +103,7 @@ class LsDate
   end
 
   def coerce_to_date_str
-    return @date_str if sp_day?
+    return @date_string if sp_day?
     return "#{year}-01-01" if sp_year?
     return "#{year}-#{month}-01" if sp_month?
   end
