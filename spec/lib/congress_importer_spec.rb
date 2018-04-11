@@ -254,6 +254,7 @@ describe 'CongressImporter' do
           expect(relationship.entity2_id).to eql 12_884
           expect(relationship.start_date).to eql '1993-01-05'
           expect(relationship.end_date).to eql '2007-01-03'
+          expect(relationship.is_current).to eql false
           expect(relationship.description1).to eql 'Representative'
           expect(relationship.description2).to eql 'Representative'
           expect(relationship.last_user_id).to eql CongressImporter::CONGRESS_BOT_SF_USER
@@ -312,6 +313,8 @@ describe 'CongressImporter' do
 
           expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).membership.elected_term)
             .to eql OpenStruct.new(sen_term)
+
+          expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).is_current).to eql true
         end
       end
 

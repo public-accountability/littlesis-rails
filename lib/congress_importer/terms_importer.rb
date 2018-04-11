@@ -49,6 +49,7 @@ class CongressImporter
                            description2: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),
                            start_date: term['start'],
                            end_date: term['end'],
+                           is_current: (Date.parse(term['end']) > Date.today),
                            last_user_id: CongressImporter::CONGRESS_BOT_SF_USER)
       relationship.membership.update!(elected_term: elected_term_struct(term))
     end
