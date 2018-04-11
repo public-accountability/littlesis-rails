@@ -33,6 +33,18 @@ class CongressImporter
     @reps.each(&:match)
   end
 
+  def import_all
+    match_all
+    @reps.each(&:import!)
+  end
+
+  def import_all_relationships
+    match_all
+    @reps.each do |legislator|
+      legislator.terms_importer.import!
+    end
+  end
+
   def self.transaction
     PaperTrail.whodunnit(CONGRESS_BOT_USER.to_s) do
       ApplicationRecord.transaction do

@@ -8,6 +8,9 @@ class CongressImporter
     TERM_TYPE_TO_ENTITY = { 'rep' => 12_884, 'sen' => 12_885 }.freeze
     TERM_TYPE_TO_DESCRIPTION = { 'rep' => 'Representative', 'sen' => 'Senator' }.freeze
 
+    HOUSE_QUERY = { entity2_id: 12_884, category_id: 3 }.freeze
+    SENATE_QUERY = { entity2_id: 12_885, category_id: 3 }.freeze
+
     def initialize(legislator)
       @_legislator = legislator
       @_distilled_terms = DistilledTerms.new(distilled_rep_terms, distilled_sen_terms)
@@ -18,20 +21,21 @@ class CongressImporter
     # Otherwise it will match relationships based on their 'start-date'
     # and update them accordingly.
     def import!
-      rep_relationships = legislator.entity.relationships.where(entity2_id: CongressImporter::HOUSE_OF_REPS).to_a
-      sen_relationships = legislator.entity.relationships.where(entity2_id: CongressImporter::SENATE).to_a
+      CongressImporter.transaction do
+        rep_relationships = legislator.entity.relationships.where(HOUSE_QUERY).to_a
+        sen_relationships = legislator.entity.relationships.where(SENATE_QUERY).to_a
 
-      distilled_terms.rep.each do |term|
-        rel = rep_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
-        update_or_create_relationship term, relationship: rel
+        distilled_terms.rep.each do |term|
+          rel = rep_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
+          update_or_create_relationship term, relationship: rel
+        end
+
+        distilled_terms.sen.each do |term|
+          rel = sen_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
+          update_or_create_relationship term, relationship: rel
+        end
+        verify_all_relationships!
       end
-
-      distilled_terms.sen.each do |term|
-        rel = sen_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
-        update_or_create_relationship term, relationship: rel
-      end
-
-      verify_all_relationships!
     end
 
     private
@@ -56,14 +60,14 @@ class CongressImporter
     def verify_all_relationships!
       legislator.entity.reload
 
-      if legislator.entity.relationships.where(entity2_id: CongressImporter::HOUSE_OF_REPS).count > distilled_rep_terms.count
-        legislator.entity.relationships.where(entity2_id: CongressImporter::HOUSE_OF_REPS).each do |r|
+      if legislator.entity.relationships.where(HOUSE_QUERY).count > distilled_rep_terms.count
+        legislator.entity.relationships.where(HOUSE_QUERY).each do |r|
           r.soft_delete if r.membership.elected_term.type.nil?
         end
       end
 
-      if legislator.entity.relationships.where(entity2_id: CongressImporter::SENATE).count > distilled_sen_terms.count
-        legislator.entity.relationships.where(entity2_id: CongressImporter::SENATE).each do |r|
+      if legislator.entity.relationships.where(SENATE_QUERY).count > distilled_sen_terms.count
+        legislator.entity.relationships.where(SENATE_QUERY).each do |r|
           r.soft_delete if r.membership.elected_term.type.nil?
         end
       end
