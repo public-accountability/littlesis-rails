@@ -137,8 +137,6 @@ class CongressImporter
 
     private
 
-    
-
     def create_new_entity
       entity = Entity.create!(to_entity_attributes)
       entity.person.update!(to_person_attributes)
@@ -158,7 +156,8 @@ class CongressImporter
     end
 
     def generate_name
-      dig('name', 'official_full').presence || "#{fetch('first')} #{fetch('last')}"
+      name = fetch('name')
+      name['official_full'] || "#{name.fetch('first')} #{name.fetch('last')}"
     end
 
     def generate_blurb
