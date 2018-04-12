@@ -16,10 +16,10 @@ class CongressImporter
       @_distilled_terms = DistilledTerms.new(distilled_rep_terms, distilled_sen_terms)
     end
 
-    # If there are no existing relationsips
-    # this will create all new relationsips.
-    # Otherwise it will match relationships based on their 'start-date'
-    # and update them accordingly.
+    # Updates existing relationships with House and Senate and/or creates
+    # new ones if they don't yet exit.
+    # It will match existing relationships based on their 'start-date', 
+    # and afterwards prune relationships as neeeded.
     def import!
       CongressImporter.transaction do
         rep_relationships = legislator.entity.relationships.where(HOUSE_QUERY).to_a
@@ -34,7 +34,8 @@ class CongressImporter
           rel = sen_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
           update_or_create_relationship term, relationship: rel
         end
-        verify_all_relationships!
+        legislator.entity.reload
+        prune_all_relationships!
       end
     end
 
@@ -58,22 +59,19 @@ class CongressImporter
       OpenStruct.new term.merge('source' => '@unitedstates')
     end
 
-    def verify_all_relationships!
-      legislator.entity.reload
+    def prune_all_relationships!
+      delete_if_nil = proc { |r| r.soft_delete if r.membership.elected_term.type.nil? }
 
       if legislator.entity.relationships.where(HOUSE_QUERY).count > distilled_rep_terms.count
-        legislator.entity.relationships.where(HOUSE_QUERY).each do |r|
-          r.soft_delete if r.membership.elected_term.type.nil?
-        end
+        legislator.entity.relationships.where(HOUSE_QUERY).each(&delete_if_nil)
       end
 
       if legislator.entity.relationships.where(SENATE_QUERY).count > distilled_sen_terms.count
-        legislator.entity.relationships.where(SENATE_QUERY).each do |r|
-          r.soft_delete if r.membership.elected_term.type.nil?
-        end
+        legislator.entity.relationships.where(SENATE_QUERY).each(&delete_if_nil)
       end
     end
 
+    # Reduces the list of terms into a list of consecutive periods in office.
     def distill(terms, distinct_terms = [])
       return distinct_terms if terms.empty?
       return distill(terms.drop(1), Array.wrap(terms.first.deep_dup)) if distinct_terms.empty?
@@ -102,6 +100,7 @@ class CongressImporter
     # Comparision helpers #
     #######################
 
+    # str, str --> boolean
     def same_start_date(relationship_date, term_date)
       ls_date = LsDate.new(relationship_date)
       # if the current relationship's date only has year information, compare years
@@ -114,6 +113,7 @@ class CongressImporter
       (Date.parse(date_one) - Date.parse(date_two)).to_i.abs <= 30
     end
 
+    # Hash, Hash (terms) --> boolean
     def equivalent?(a, b)
       a['state'].eql?(b['state']) && a['district'].eql?(b['district']) && a['party'].eql?(b['party'])
     end
