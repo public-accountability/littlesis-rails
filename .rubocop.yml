@@ -11,6 +11,8 @@ Rails:
   
 Metrics/LineLength:
   Max: 100
+  Exclude:
+    - 'spec/**/*.rb'
 
 Metrics/BlockLength:
   Enabled: false

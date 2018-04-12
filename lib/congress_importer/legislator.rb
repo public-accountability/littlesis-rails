@@ -1,30 +1,10 @@
 # frozen_string_literal: true
 
-# rubocop:disable Security/Open
-
-require 'uri'
-require 'open-uri'
-
-# Processes congressional legistors yaml files and matches
-# each legistor with existing LittleSis entities
-class LegislatorMatcher
-  CURRENT_YAML = 'https://theunitedstates.io/congress-legislators/legislators-current.yaml'
-  HISTORICAL_YAML = 'https://theunitedstates.io/congress-legislators/legislators-historical.yaml'
-  # CURRENT_YAML = Rails.root.join('tmp', 'legislators-current.yaml').to_s
-  # HISTORICAL_YAML = Rails.root.join('tmp', 'legislators-historical.yaml').to_s
-
-  HOUSE_OF_REPS = 12_884
-  SENATE = 12_885
-
-  CONGRESS_BOT_USER = 1
-  CONGRESS_BOT_SF_USER = 1
-
-  attr_reader :current_reps, :historical_reps, :reps
-
+class CongressImporter
   # Wrapper around the hash parsed from
   # the theunitedstates.io's yaml file
   class Legislator < SimpleDelegator
-    attr_reader :match_type
+    attr_reader :match_type, :entity
 
     def representative?
       types.include? 'rep'
@@ -42,12 +22,18 @@ class LegislatorMatcher
     def match
       return @_match if defined?(@_match)
       @_match = _match
+      @entity = @_match if @_match.present?
+      @_match
+    end
+
+    def terms_importer
+      CongressImporter::TermsImporter.new(self)
     end
 
     def import!
-      transaction do
+      CongressImporter.transaction do
         if match.blank?
-          create_new_entity
+          @entity = create_new_entity
         else
           match.website = fetch_website
           match.start_date = dig('bio', 'birthday') if dig('bio', 'birthday')
@@ -143,21 +129,13 @@ class LegislatorMatcher
                  .transform_keys { |k| "name_#{k}" }
 
       associated = []
-      associated << HOUSE_OF_REPS if representative?
-      associated << SENATE if senator?
+      associated << NotableEntities::HOUSE_OF_REPS if representative?
+      associated << NotableEntities::SENATE if senator?
 
       EntityMatcher.find_matches_for_person(person, associated: associated)
     end
 
     private
-
-    def transaction
-      PaperTrail.whodunnit(CONGRESS_BOT_USER.to_s) do
-        ApplicationRecord.transaction do
-          yield
-        end
-      end
-    end
 
     def create_new_entity
       entity = Entity.create!(to_entity_attributes)
@@ -178,7 +156,8 @@ class LegislatorMatcher
     end
 
     def generate_name
-      dig('name', 'official_full').presence || "#{fetch('first')} #{fetch('last')}"
+      name = fetch('name')
+      name['official_full'] || "#{name.fetch('first')} #{name.fetch('last')}"
     end
 
     def generate_blurb
@@ -199,25 +178,4 @@ class LegislatorMatcher
       ElectedRepresentative.find_by(govtrack_id: govtrack_id)&.entity
     end
   end
-
-  def initialize
-    open(CURRENT_YAML) { |f| @current_reps = YAML.load_file f }
-    open(HISTORICAL_YAML) { |f| @historical_reps = YAML.load_file f }
-    # Reps since 1990, returns array of YAML objects
-    @reps = (historical_reps_after_1990 | @current_reps).map { |rep| Legislator.new(rep) }
-  end
-
-  def match_all
-    @reps.each(&:match)
-  end
-
-  private
-
-  def historical_reps_after_1990
-    historical_reps.select do |r|
-      r['terms'].select { |t| t['start'].slice(0, 4) >= '1990' }.present?
-    end
-  end
 end
-
-# rubocop:enable Security/Open

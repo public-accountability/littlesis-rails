@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A class for dates in LittleSis
 #
 # Dates are represented by a 10 char string
@@ -13,7 +15,7 @@ class LsDate
   include Comparable
   attr_reader :date_string, :specificity, :year, :month, :day
 
-  BASIC_FORMAT = "%B %e, %Y, %l%p".freeze
+  BASIC_FORMAT = '%B %e, %Y, %l%p'
 
   def self.pretty_print(date)
     unless date.respond_to? :strftime
@@ -83,6 +85,29 @@ class LsDate
     return day_display if sp_day?
   end
 
+  # returns <Date> instance
+  # Raises error unless date has a valid month and day
+  # return nil if specifiy is unknown
+  def to_date
+    return nil if sp_unknown?
+    Date.parse(@date_string)
+  end
+
+  # returns <Date> instance
+  # Unlike `to_date` this will assign 1 for the
+  # first month and/or day if they are missing
+  def coerce_to_date
+    return nil if sp_unknown?
+    return to_date if sp_day?
+    Date.parse(coerce_to_date_str)
+  end
+
+  def coerce_to_date_str
+    return @date_string if sp_day?
+    return "#{year}-01-01" if sp_year?
+    return "#{year}-#{month}-01" if sp_month?
+  end
+
   # str -> str | nil
   # converts string dates in the following formats:
   #   YYYY. Example: 1996 -> 1996-00-00
@@ -122,7 +147,7 @@ class LsDate
     int = Integer(x)
     return nil if int.zero?
     int
-  rescue
+  rescue # rubocop:disable Style/RescueStandardError
     Rails.logger.debug "Failed to convert - #{x} - to an integer"
     nil
   end
@@ -177,7 +202,7 @@ class LsDate
 
   class InvalidLsDateError < StandardError
     def message
-      "Not a valid date string"
+      'Not a valid date string'
     end
   end
 end

@@ -70,7 +70,25 @@ FactoryBot.define do
   factory :us_house, class: Entity do
     name 'U.S. House'
     primary_ext 'Org'
-    id 12884
+    id 12_884
+  end
+
+  factory :us_senate, class: Entity do
+    name 'U.S. Senate'
+    primary_ext 'Org'
+    id 12_885
+  end
+
+  factory :democratic_party, class: Entity do
+    name 'Democratic Party'
+    primary_ext 'Org'
+    id 12_886
+  end
+
+  factory :republican_party, class: Entity do
+    name 'Republican Party'
+    primary_ext 'Org'
+    id 12_901
   end
 
   factory :pac, class: Entity do
