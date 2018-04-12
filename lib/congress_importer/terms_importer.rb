@@ -2,7 +2,6 @@
 
 class CongressImporter
   class TermsImporter
-    include NotableEntities
     attr_internal :legislator, :distilled_terms
     DistilledTerms = Struct.new(:rep, :sen)
 
@@ -47,12 +46,12 @@ class CongressImporter
       democrat_memberships = p_memberships.select { |m| m['party'] == 'Democrat' }
 
       if republican_memberships.count.positive?
-        membership = find_party_memberships(REPUBLICAN_PARTY).first
+        membership = find_party_memberships(NotableEntities::REPUBLICAN_PARTY).first
         update_party_membership(republican_memberships.last, membership)
       end
 
       if democrat_memberships.count.positive?
-        membership = find_party_memberships(DEMOCRATIC_PARTY).first
+        membership = find_party_memberships(NotableEntities::DEMOCRATIC_PARTY).first
         update_party_membership(democrat_memberships.last, membership)
       end
     end

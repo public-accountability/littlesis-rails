@@ -25,6 +25,17 @@ namespace :legislators do
     end
   end
 
+  desc 'import legislator party memberships'
+  task import_party_memberships: :environment do
+    begin
+      ThinkingSphinx::Callbacks.suspend!
+      importer = CongressImporter.new
+      importer.import_party_memberships
+    ensure
+      ThinkingSphinx::Callbacks.resume!
+    end
+  end
+
   desc 'Display statics about matches '
   task summary: :environment do
     importer = CongressImporter.new
