@@ -2,11 +2,13 @@
 
 class CongressImporter
   class TermsImporter
+    include NotableEntities
     attr_internal :legislator, :distilled_terms
     DistilledTerms = Struct.new(:rep, :sen)
 
     TERM_TYPE_TO_ENTITY = { 'rep' => 12_884, 'sen' => 12_885 }.freeze
     TERM_TYPE_TO_DESCRIPTION = { 'rep' => 'Representative', 'sen' => 'Senator' }.freeze
+    PARTY_TO_ENTITY = { 'Democrat' => 12_886, 'Republican' => 12_901 }.freeze
 
     HOUSE_QUERY = { entity2_id: 12_884, category_id: 3 }.freeze
     SENATE_QUERY = { entity2_id: 12_885, category_id: 3 }.freeze
@@ -26,12 +28,12 @@ class CongressImporter
         sen_relationships = legislator.entity.relationships.where(SENATE_QUERY).to_a
 
         distilled_terms.rep.each do |term|
-          rel = rep_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
+          rel = rep_relationships.select(&same_start_date_proc(term['start'])).first
           update_or_create_relationship term, relationship: rel
         end
 
         distilled_terms.sen.each do |term|
-          rel = sen_relationships.select { |r| same_start_date(r.start_date, term['start']) }.first
+          rel = sen_relationships.select(&same_start_date_proc(term['start'])).first
           update_or_create_relationship term, relationship: rel
         end
         legislator.entity.reload
@@ -39,7 +41,41 @@ class CongressImporter
       end
     end
 
+    def import_party_memberships!
+      p_memberships = party_memberships
+      republican_memberships = p_memberships.select { |m| m['party'] == 'Republican' }
+      democrat_memberships = p_memberships.select { |m| m['party'] == 'Democrat' }
+
+      if republican_memberships.count.positive?
+        membership = find_party_memberships(REPUBLICAN_PARTY).first
+        update_party_membership(republican_memberships.last, membership)
+      end
+
+      if democrat_memberships.count.positive?
+        membership = find_party_memberships(DEMOCRATIC_PARTY).first
+        update_party_membership(democrat_memberships.last, membership)
+      end
+    end
+
     private
+
+    def update_party_membership(membership, relationship)
+      relationship = Relationship.new unless relationship.present?
+
+      relationship.update!(category_id: Relationship::MEMBERSHIP_CATEGORY,
+                           entity1_id: legislator.entity.id,
+                           entity2_id: PARTY_TO_ENTITY.fetch(membership['party']),
+                           last_user_id: CongressImporter::CONGRESS_BOT_SF_USER)
+    end
+
+    def find_party_memberships(party_id)
+      legislator
+        .entity
+        .relationships
+        .reload
+        .where(category_id: Relationship::MEMBERSHIP_CATEGORY, entity2_id: party_id)
+        .order('updated_at desc')
+    end
 
     def update_or_create_relationship(term, relationship: nil)
       relationship = Relationship.new unless relationship.present?
@@ -123,6 +159,11 @@ class CongressImporter
     #######################
     # Comparision helpers #
     #######################
+
+    # str --> proc
+    def same_start_date_proc(date)
+      proc { |r| same_start_date(r.start_date, date) }
+    end
 
     # str, str --> boolean
     def same_start_date(relationship_date, term_date)

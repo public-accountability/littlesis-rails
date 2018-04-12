@@ -372,7 +372,7 @@ describe 'CongressImporter' do
         end
 
         it 'creates 0 new relationships' do
-          expect { subject.import! }.to change { Relationship.count }.by(0)
+          expect { subject.import! }.not_to change { Relationship.count }
         end
 
         it 'updates existing relationship' do
@@ -388,6 +388,33 @@ describe 'CongressImporter' do
           expect(Relationship.where(entity: sherrod_brown_entity, entity2_id: 12_884).count).to eql 1
           expect(Relationship.where(entity: sherrod_brown_entity, entity2_id: 12_885).count).to eql 1
           expect(sherrod_brown_entity.reload.relationships.count).to eql 2
+        end
+      end
+    end # end describe 'import!'
+
+    describe '#import_party_memberships!' do
+      subject { CongressImporter::TermsImporter.new(sherrod_brown) }
+
+      before do
+        sherrod_brown_entity
+        create(:democratic_party)
+        sherrod_brown.match
+      end
+
+      context 'party membership is not yet in LittleSis' do
+        it 'creates a new relationship' do
+          expect { subject.import_party_memberships! }.to change { Relationship.count }.by(1)
+          expect(Relationship.last.entity2_id).to eql NotableEntities::DEMOCRATIC_PARTY
+        end
+      end
+
+      context 'party membership is already in LittleSis' do
+        before do
+          Relationship.create!(entity: sherrod_brown_entity, entity2_id: NotableEntities::DEMOCRATIC_PARTY, category_id: 3)
+        end
+
+        it 'does not create a new relationship' do
+          expect { subject.import_party_memberships! }.not_to change { Relationship.count }
         end
       end
     end

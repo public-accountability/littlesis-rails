@@ -79,6 +79,18 @@ FactoryBot.define do
     id 12_885
   end
 
+  factory :democratic_party, class: Entity do
+    name 'Democratic Party'
+    primary_ext 'Org'
+    id 12_886
+  end
+
+  factory :republican_party, class: Entity do
+    name 'Republican Party'
+    primary_ext 'Org'
+    id 12_901
+  end
+
   factory :pac, class: Entity do
     name 'PAC'
     blurb 'Ruining our democracy one dollar at a time'
