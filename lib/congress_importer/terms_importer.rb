@@ -18,7 +18,7 @@ class CongressImporter
 
     # Updates existing relationships with House and Senate and/or creates
     # new ones if they don't yet exit.
-    # It will match existing relationships based on their 'start-date', 
+    # It will match existing relationships based on their 'start-date',
     # and afterwards prune relationships as neeeded.
     def import!
       CongressImporter.transaction do
@@ -93,6 +93,30 @@ class CongressImporter
 
       define_method "distilled_#{type}_terms" do
         distill send("#{type}_terms")
+      end
+    end
+
+    def party_memberships
+      distill_party_memberships legislator['terms']
+    end
+
+    def distill_party_memberships(terms, p_memberships = [])
+      return p_memberships if terms.empty?
+
+      unless %w[Republican Democrat].include?(terms.first['party'])
+        return distill_party_memberships(terms.drop(1), p_memberships)
+      end
+
+      if p_memberships.empty? || terms.first['party'] != p_memberships.last['party']
+        membership = terms.first.deep_dup.slice('party', 'start', 'end')
+        return distill_party_memberships(terms.drop(1), p_memberships.push(membership))
+      else
+        membership = terms.first.deep_dup
+                       .slice('party', 'start', 'end')
+                       .merge('start' => p_memberships.last['start'])
+
+        return distill_party_memberships(terms.drop(1),
+                                         p_memberships.take(p_memberships.length - 1).push(membership))
       end
     end
 

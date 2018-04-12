@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 require Rails.root.join('lib', 'congress_importer')
 
@@ -222,6 +220,34 @@ describe 'CongressImporter' do
                         'address' => '326 Russell Senate Office Building Washington DC 20510' }
                     ])
           expect(subject.send(:distill, sen_terms).length).to eql 1
+        end
+      end
+
+      describe '#distill_party_membership' do
+        let(:terms) do
+          [
+            { 'start' => '2000-01-01', 'end' => '2001-01-01', 'state' => 'NY', 'district' => 3, 'party' => 'Democrat' },
+            { 'start' => '2001-01-02', 'end' => '2002-01-01', 'state' => 'NY', 'district' => 3, 'party' => 'Democrat' },
+            { 'start' => '2005-01-02', 'end' => '2006-01-01', 'state' => 'NY', 'district' => 3, 'party' => 'Republican' },
+            { 'start' => '2006-01-02', 'end' => '2007-01-01', 'state' => 'NY', 'district' => 4, 'party' => 'Democrat' },
+            { 'start' => '2008-01-02', 'end' => '2010-01-01', 'state' => 'NY', 'district' => 4, 'party' => 'Green' }
+          ]
+        end
+
+        specify do
+          expect(subject.send(:distill_party_memberships, terms))
+            .to eql([
+                      { 'start' => '2000-01-01', 'end' => '2002-01-01', 'party' => 'Democrat' },
+                      { 'start' => '2005-01-02', 'end' => '2006-01-01', 'party' => 'Republican' },
+                      { 'start' => '2006-01-02', 'end' => '2007-01-01', 'party' => 'Democrat' }
+                    ])
+
+          expect(subject.send(:distill_party_memberships, terms).length).to eql 3
+        end
+
+        specify do
+          expect(subject.send(:party_memberships))
+            .to eql([{ 'start' => '1993-01-05', 'end' => '2019-01-03', 'party' => 'Democrat' }])
         end
       end
 
