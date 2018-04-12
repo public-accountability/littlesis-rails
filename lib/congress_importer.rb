@@ -9,13 +9,11 @@ require_relative 'congress_importer/legislator'
 # Processes congressional legistors yaml files and matches
 # each legistor with existing LittleSis entities
 class CongressImporter
+  include NotableEntities
   CURRENT_YAML = 'https://theunitedstates.io/congress-legislators/legislators-current.yaml'
   HISTORICAL_YAML = 'https://theunitedstates.io/congress-legislators/legislators-historical.yaml'
   # CURRENT_YAML = Rails.root.join('tmp', 'legislators-current.yaml').to_s
   # HISTORICAL_YAML = Rails.root.join('tmp', 'legislators-historical.yaml').to_s
-
-  HOUSE_OF_REPS = 12_884
-  SENATE = 12_885
 
   CONGRESS_BOT_USER = 10_040
   CONGRESS_BOT_SF_USER = 8_270
