@@ -25,6 +25,13 @@ describe Tag, :pagination_helper do
         it { should have_many(klass.category_sym) }
       end
     end
+
+    describe 'strip whitespace' do
+      it 'remove whitepspace before creating' do
+        tag = create(:tag, name: ' spacy-tag-name ')
+        expect(Tag.find(tag.id).name).to eql 'spacy-tag-name'
+      end
+    end
   end
 
   describe '#entities_by_relationship_count' do
