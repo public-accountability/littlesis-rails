@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SortedLinks
   attr_reader :staff,
               :members,
