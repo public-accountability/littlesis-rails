@@ -1,15 +1,16 @@
 <div class="row">
-    <% cache ['name', @relationship] do %>
-        <h1 class="relationship-title-link" ><%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %></h1>
-    <% end %>
+  <% cache ['name', @relationship] do %>
+    <h1 class="relationship-title-link" ><%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %></h1>
+  <% end %>
 </div>
 
 <div class="row thin-grey-bottom-border bottom-1em">
-    <% if user_signed_in? %>
-        <%= render partial: 'actions', locals: {signed_in: true } %>
-    <% else %>    
-        <% cache ['action_buttons_no_user', @relationship ] do %>
-	    <%= render partial: 'actions', locals: {signed_in: false }%>
-        <% end %>        
+  <% if user_signed_in? %>
+    <%= render partial: 'actions', locals: {signed_in: true } %>
+  <% else %>
+    <% cache ['action_buttons_no_user', @relationship ] do %>
+      <%# updated Thu 12 Apr 2018 %>
+      <%= render partial: 'actions', locals: {signed_in: false }%>
     <% end %>
+  <% end %>
 </div>

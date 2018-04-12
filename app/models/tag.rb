@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class Tag < ApplicationRecord
   include Pagination
   PER_PAGE = 20
 
-  has_many :taggings
+  has_many :taggings, dependent: :destroy
 
   # create associations for all tagable classes
   # ie: tag#entities, tag#lists, tag#relationships, etc...
@@ -12,6 +14,8 @@ class Tag < ApplicationRecord
 
   validates :name, uniqueness: true, presence: true
   validates :description, presence: true
+
+  before_validation :trim_name_whitespace, on: :create
 
   # CLASS METHODS
 
@@ -256,5 +260,9 @@ class Tag < ApplicationRecord
       .map(&:user)
       .zip(ids)
       .reduce({}) { |acc, (editor, id)| acc.merge!(id => editor) }
+  end
+
+  def trim_name_whitespace
+    self.name = name.strip unless name.nil?
   end
 end

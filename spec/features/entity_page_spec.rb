@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+# rubocop:disable Style/StringLiterals
+
 describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :feature do
   # TODO: include Routes (which will force internal handling of /people/..., /orgs/... routes)
   let(:user) { create_basic_user }
@@ -34,7 +36,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe 'redirecting merged entities' do
-
     def should_redirect(src_url, dst_url)
       visit src_url
       expect(page.status_code).to eq 200
@@ -79,7 +80,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
     end
 
-    context"when alice has been merged into bob, bob is deleted" do
+    context "when alice has been merged into bob, bob is deleted" do
 
       before do
         EntityMerger.new(source: alice, dest: bob).merge!
@@ -101,7 +102,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
     end
 
-    context"when alice has been merged into bob, bob into cassie, cassie is deleted" do
+    context "when alice has been merged into bob, bob into cassie, cassie is deleted" do
 
       before do
         EntityMerger.new(source: alice, dest: bob).merge!
@@ -130,10 +131,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
     it "shows action buttons" do
       page_has_selector ".action-button", count: 3
-    end
-
-    it "shows social media buttons" do
-      page_has_selectors ".fb-share-button", ".twitter-share-button"
     end
 
     # context 'user is signed in' do
@@ -577,3 +574,5 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
   end
 end
+
+# rubocop:enable Style/StringLiterals

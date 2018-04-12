@@ -22,18 +22,12 @@
 	<% if current_user.has_legacy_permission 'importer' %>
           <%= link_to "match donations", match_donations_entity_path(entity), class: "action-button" if entity.person? %>
 	<% end %>
+
 	<% if show_add_bulk_button(current_user) %>
           <%= link_to "add bulk", relationships_bulk_add_path(entity_id: entity.id), class: "action-button" %>
 	<% end %>
 
-      <% else  # !user.signed_in? %>
-	<div class="fb-share-button"
-	     data-href="<%= entity_url(entity) %>"
-	     data-layout="button">
-	</div>
-	<a href="https://twitter.com/share" class="twitter-share-button" data-show-count="false">Tweet</a>
-	<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-      <% end # if user.signed_in?%>
+      <% end # if user.signed_in? %>
     </div>
   </div>
   <div class="col-md-4 col-sm-4 hidden-xs">
