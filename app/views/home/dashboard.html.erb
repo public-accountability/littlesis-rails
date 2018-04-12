@@ -12,7 +12,7 @@
 	
 	<% if current_user.sign_in_count < 10 %>
 	    <%= dismissable_alert('dashboard_alert') do %>
-		Need help using LittleSis? Get help for <%= link_to 'beginner', "/beginnerhelp" %> or <%= link_to 'advanced', "/advancedhelp" %> users.
+		Need help using LittleSis? Visit our <%= link_to 'help pages', '/help' %>.
 	    <% end %>
 	<% end %>
 
