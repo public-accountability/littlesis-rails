@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class EntityMerger
   attr_reader :source, :dest, :extensions,
               :contact_info, :lists, :images,
               :aliases, :document_ids, :tag_ids,
               :articles, :os_categories,
-              :child_entities, :party_members,
+              :child_entities, :party_members, :cmp_entity,
               :relationships, :potential_duplicate_relationships,
               :os_match_relationships, :ny_match_relationships
 
@@ -30,6 +32,7 @@ class EntityMerger
       @articles.each(&:save!)
       @child_entities.each(&:merge!)
       @party_members.each(&:merge!)
+      @cmp_entity&.save!
       @os_categories.each(&:save!)
       @relationships.each(&:merge!)
       merge_os_donations!
@@ -91,6 +94,7 @@ class EntityMerger
     merge_os_categories
     merge_child_entities
     merge_party_members
+    merge_cmp_entity
     merge_relationships
     self
   end
@@ -287,7 +291,7 @@ class EntityMerger
       child.update_columns(:parent_id => dest_id)
     end
   end
-  
+
   def merge_child_entities
     @child_entities = @source.children.map { |e| ChildEntity.new(e, @dest.id) }
   end
@@ -302,11 +306,28 @@ class EntityMerger
     @party_members = @source.party_members.map { |e| PartyMember.new(e, @dest.id) }
   end
 
+  def merge_cmp_entity
+    @cmp_entity = CmpEntity.find_by(entity_id: @source.id)
+    if @cmp_entity.present?
+      if CmpEntity.exists?(entity_id: @dest.id)
+        raise MergingTwoCmpEntitiesError
+      else
+        @cmp_entity.assign_attributes(entity_id: @dest.id)
+      end
+    end
+  end
+
   ## ERRORS ##
 
   class ExtensionMismatchError < ArgumentError
     def message
-      "Only entities with the same primary ext can be merged"
+      'Only entities with the same primary ext can be merged'
+    end
+  end
+
+  class MergingTwoCmpEntitiesError < StandardError
+    def message
+      'Both source and dest are a CMP entity. Merging thsee two is likely a mistake'
     end
   end
 
