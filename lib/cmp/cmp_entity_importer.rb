@@ -2,15 +2,12 @@
 
 module Cmp
   class CmpEntityImporter
-    attr_reader :attributes
+    attr_reader :attributes, :cmpid
     delegate :fetch, to: :attributes
 
     def initialize(attrs)
       @attributes = LsHash.new(attrs)
-    end
-
-    def cmpid
-      fetch('cmpid')
+      @cmpid = @attributes.fetch('cmpid')
     end
 
     protected
