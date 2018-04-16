@@ -50,7 +50,12 @@ describe Cmp::CmpPerson do
 
       it 'creates a new entity' do
         expect { subject.import! }.to change { Entity.count }.by(1)
-        expect(Entity.last.name).to eql 'Mr. Oil Executive'
+        # expect(Entity.last.name).to eql 'Mr. Oil Executive'
+      end
+
+      it 'creates a new alias' do
+        expect { subject.import! }.to change { Alias.count }.by(2)
+        expect(Entity.last.also_known_as).to eql ['Mr. Oil Executive']
       end
 
       it 'creates a cmp entity' do
@@ -78,13 +83,18 @@ describe Cmp::CmpPerson do
           CmpEntity.create!(entity: e, cmp_id: attributes[:cmpid], entity_type: :person)
         end
       end
-      
+
       it 'does not create a new entity' do
         expect { subject.import! }.not_to change { Entity.count }
       end
 
       it 'does not create a new cmp entity' do
         expect { subject.import! }.not_to change { CmpEntity.count }
+      end
+
+      it 'creates a new alias' do
+        expect { subject.import! }.to change { Alias.count }.by(1)
+        expect(Entity.last.also_known_as).to eql ['Mr. Oil Executive']
       end
 
       it 'sets correct person and entity fields' do

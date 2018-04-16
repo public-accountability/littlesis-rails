@@ -27,7 +27,8 @@ module Cmp
         CmpEntity.find_or_create_by!(entity: entity, cmp_id: cmpid, entity_type: :person)
 
         entity.add_tag(Cmp::CMP_TAG_ID, Cmp::CMP_SF_USER_ID)
-        entity.update! attrs_for(:entity).with_last_user(Cmp::CMP_SF_USER_ID)
+        add_alias(entity)
+        entity.update!(start_date: fetch('date_of_birth'))
         entity.person.update! attrs_for(:person)
         if fetch('nationality').present?
           fetch('nationality').split(';').each do |place|
@@ -58,7 +59,14 @@ module Cmp
 
     # -> <Entity>
     def create_new_entity!
-      Entity.create!(primary_ext: 'Person', name: fetch('fullname'), last_user_id: Cmp::CMP_SF_USER_ID)
+      Entity.create!(primary_ext: 'Person', name: name_for_entity, last_user_id: Cmp::CMP_SF_USER_ID)
+    end
+
+    def name_for_entity
+      first = fetch('firstname')
+      middle = fetch('middlename', nil).blank? ? '' : " #{fetch('middlename')}"
+      last = fetch('lastname')
+      "#{first}#{middle} #{last}"
     end
 
     def preselected_match
@@ -107,6 +115,13 @@ module Cmp
         @attributes[:date_of_birth] = LsDate.parse_cmp_date(dates.first)&.to_s
       elsif dates.length == 2
         @attributes[:date_of_birth] = dates.map { |d| LsDate.parse_cmp_date(d)&.to_s }.compact.sort.last
+      end
+    end
+
+    def add_alias(entity)
+      fn = fetch('fullname')
+      unless fn.present? && entity.also_known_as.map(&:downcase).include?(fn.downcase)
+        entity.aliases.create!(name: fn, last_user_id: Cmp::CMP_SF_USER_ID)
       end
     end
 
