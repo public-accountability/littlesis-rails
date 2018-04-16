@@ -22,7 +22,7 @@ module Cmp
           .select { |_k, (m, _f)| m == model }
           .map { |k, (_m, f)| [f, attributes[k]] }
           .to_h
-      )
+      ).remove_nil_vals
     end
 
     private

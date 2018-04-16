@@ -50,7 +50,47 @@ describe Cmp::CmpPerson do
 
       it 'creates a new entity' do
         expect { subject.import! }.to change { Entity.count }.by(1)
-        expect(Entity.last.name).to eql "Mr. Oil Executive"
+        expect(Entity.last.name).to eql 'Mr. Oil Executive'
+      end
+
+      it 'creates a cmp entity' do
+        expect { subject.import! }.to change { CmpEntity.count }.by(1)
+      end
+
+      it 'adds a taggings' do
+        expect { subject.import! }.to change { Tagging.count }.by(1)
+      end
+
+      it 'sets correct person and entity fields' do
+        subject.import!
+        entity = Entity.last
+        expect(entity.start_date).to eql '1960-00-00'
+        # expect(entity.last_user_id).to eql Cmp::CMP_SF_USER_ID
+        expect(entity.person.gender_id).to eql 2
+        expect(entity.person.name_prefix).to eql 'Mr.'
+      end
+    end
+
+    context 'entity exists already' do
+      before do
+        create(:entity_person, name: 'Oil Executive').tap do |e|
+          CmpEntity.create!(entity: e, cmp_id: attributes[:cmpid], entity_type: :person)
+        end
+      end
+      
+      it 'does not create a new entity' do
+        expect { subject.import! }.not_to change { Entity.count }
+      end
+
+      it 'does not create a new cmp entity' do
+        expect { subject.import! }.not_to change { CmpEntity.count }
+      end
+
+      it 'sets correct person and entity fields' do
+        subject.import!
+        entity = Entity.last
+        expect(entity.start_date).to eql '1960-00-00'
+        expect(entity.person.name_prefix).to eql 'Mr.'
       end
     end
   end
@@ -58,7 +98,7 @@ describe Cmp::CmpPerson do
   describe '#attrs_for' do
     specify do
       expect(subject.send(:attrs_for, :entity))
-        .to eql LsHash.new(name: 'Mr. Oil Executive')
+        .to eql LsHash.new(name: 'Mr. Oil Executive', start_date: '1960-00-00')
     end
   end
 end
