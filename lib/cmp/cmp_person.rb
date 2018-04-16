@@ -52,7 +52,7 @@ module Cmp
         end
       end
 
-      return matches.first if matches.automatchable?
+      return matches.first.entity if matches.automatchable?
       return create_new_entity!
     end
 
