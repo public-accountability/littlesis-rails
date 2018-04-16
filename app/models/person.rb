@@ -16,7 +16,7 @@ class Person < ApplicationRecord
   # str --> self
   def add_nationality(place)
     unless nationality.map(&:downcase).include?(place.downcase)
-      nationality << place.capitalize
+      nationality << place.titleize
     end
     self
   end

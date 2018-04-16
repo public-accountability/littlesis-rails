@@ -6,7 +6,7 @@ describe Cmp::CmpPerson do
     {
       cmpid: Faker::Number.number(6),
       fullname: 'Mr. Oil Executive',
-      nationality: 'Canada',
+      nationality: 'Canada;United Kingdom',
       firstname: 'oil',
       lastname: 'Executive',
       middlename: nil,
@@ -68,6 +68,7 @@ describe Cmp::CmpPerson do
         # expect(entity.last_user_id).to eql Cmp::CMP_SF_USER_ID
         expect(entity.person.gender_id).to eql 2
         expect(entity.person.name_prefix).to eql 'Mr.'
+        expect(entity.person.nationality).to eql ['Canada', 'United Kingdom']
       end
     end
 

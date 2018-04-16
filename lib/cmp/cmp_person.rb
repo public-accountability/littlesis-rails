@@ -20,12 +20,22 @@ module Cmp
     end
 
     def import!
-      entity = find_or_create_entity
-      CmpEntity.find_or_create_by!(entity: entity, cmp_id: cmpid, entity_type: :person)
+      Rails.logger.info "Importing: #{cmpid}"
 
-      entity.add_tag(Cmp::CMP_TAG_ID, Cmp::CMP_SF_USER_ID)
-      entity.update! attrs_for(:entity).with_last_user(Cmp::CMP_SF_USER_ID)
-      entity.person.update! attrs_for(:person)
+      Cmp.transaction do
+        entity = find_or_create_entity
+        CmpEntity.find_or_create_by!(entity: entity, cmp_id: cmpid, entity_type: :person)
+
+        entity.add_tag(Cmp::CMP_TAG_ID, Cmp::CMP_SF_USER_ID)
+        entity.update! attrs_for(:entity).with_last_user(Cmp::CMP_SF_USER_ID)
+        entity.person.update! attrs_for(:person)
+        if fetch('nationality').present?
+          fetch('nationality').split(';').each do |place|
+            entity.person.add_nationality(place)
+          end
+          entity.person.save!
+        end
+      end
     end
 
     # importing helpers
