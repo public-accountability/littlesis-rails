@@ -67,7 +67,7 @@ describe 'Merging Entities', :merging_helper do
         new_ext = subject.extensions.select { |e| e.new == true }.first
         expect(new_ext.new).to be true
         expect(new_ext.ext_id).to eql 3
-        expect(new_ext.fields.keys).to contain_exactly('is_federal', 'is_state', 'is_local', 'pres_fec_id', 'senate_fec_id', 'house_fec_id', 'crp_id') 
+        expect(new_ext.fields.keys).to contain_exactly('is_federal', 'is_state', 'is_local', 'pres_fec_id', 'senate_fec_id', 'house_fec_id', 'crp_id')
       end
 
       context 'merge!' do
@@ -789,6 +789,35 @@ describe 'Merging Entities', :merging_helper do
       it 'does not change unrelated committees' do
         expect { subject.merge! }
           .not_to change { OsMatch.find(random_match.id).cmte_id }
+      end
+    end
+  end
+
+  context 'cmp entities' do
+    subject { EntityMerger.new(source: source_person, dest: dest_person) }
+
+    context 'source person is a cmp entities' do
+      let!(:cmp_entity) do
+        CmpEntity.create!(entity: source_person, cmp_id: Faker::Number.unique.number(6).to_i, entity_type: :person)
+      end
+
+      it 'transfers cmp entity' do
+        subject.merge!
+        expect(cmp_entity.reload.entity).to eql dest_person
+      end
+    end
+
+    context 'both source and dest person are cmp entities' do
+      let!(:cmp_entity) do
+        CmpEntity.create!(entity: source_person, cmp_id: Faker::Number.unique.number(6).to_i, entity_type: :person)
+      end
+
+      let!(:dest_cmp_entity) do
+        CmpEntity.create!(entity: dest_person, cmp_id: Faker::Number.unique.number(6).to_i, entity_type: :person)
+      end
+
+      it 'does not merge and raises error instead' do
+        expect { subject.merge! }.to raise_error(EntityMerger::MergingTwoCmpEntitiesError)
       end
     end
   end
