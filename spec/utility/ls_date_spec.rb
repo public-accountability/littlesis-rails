@@ -94,7 +94,32 @@ describe LsDate do
       expect(LsDate.convert('2000-04-01')).to eql '2000-04-01'
       expect(LsDate.convert(nil)).to be nil
       expect(LsDate.convert('right now')).to eql 'right now'
-    end  end
+    end
+  end
+
+  describe 'parse_cmp_date' do
+    it 'handles nil and blank strings' do
+      expect(LsDate.parse_cmp_date(nil)).to be nil
+      expect(LsDate.parse_cmp_date('')).to be nil
+    end
+
+    it 'handles years' do
+      expect(LsDate.parse_cmp_date('1960').to_s).to eql '1960-00-00'
+    end
+
+    it 'handles months' do
+      expect(LsDate.parse_cmp_date('04/1970').to_s).to eql '1970-04-00'
+    end
+
+    it 'handles full dates' do
+      expect(LsDate.parse_cmp_date('22/04/1970').to_s).to eql '1970-04-22'
+    end
+
+    it 'returns nil for invalid dates' do
+      expect(LsDate.parse_cmp_date('25/1980')).to be nil
+      expect(LsDate.parse_cmp_date('7/980')).to be nil
+    end
+  end
 
   describe 'Comparisons' do
     it 'returns equal when both are unknown' do
@@ -171,6 +196,10 @@ describe LsDate do
       expect { LsDate.new('1915-00-00').to_date }.to raise_error(ArgumentError)
       expect { LsDate.new('1915-02-00').to_date }.to raise_error(ArgumentError)
     end
+  end
+
+  describe 'to_s' do
+    specify { expect(LsDate.new('2018-10-10').to_s).to eql '2018-10-10' }
   end
 
   describe 'coerce_to_date' do

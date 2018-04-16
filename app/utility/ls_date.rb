@@ -69,6 +69,10 @@ class LsDate
     end
   end
 
+  def to_s
+    @date_string
+  end
+
   # display string of date
   def display
     return '?' if sp_unknown?
@@ -136,6 +140,27 @@ class LsDate
   # str -> [year, month, day]
   def self.year_month_day(value)
     value.split('-').map { |x| to_int(x) }
+  end
+
+  # CMP dates are in the following format:
+  # - MM/DD/YYYY
+  # - MM/YYYY
+  # - YYYYY
+  # str ---> LsDate | nil
+  # returns nil if date is invalid or missing
+  def self.parse_cmp_date(date)
+    return nil if date.blank?
+    if /^\d{4}$/.match?(date)
+      new("#{date}-00-00")
+    elsif %r{^\d{2}\/\d{4}$}.match?(date)
+      month, year = date.split('/')
+      return nil unless valid_year?(year.to_i) && valid_month?(month.to_i)
+      new("#{year}-#{month}-00")
+    elsif %r{^(\d{2}\/){2}\d{4}$}.match?(date)
+      day, month, year = date.split('/')
+      return nil unless valid_year?(year.to_i) && valid_month?(month.to_i) && valid_day?(day.to_i)
+      new("#{year}-#{month}-#{day}")
+    end
   end
 
   # anything -> int or nil
