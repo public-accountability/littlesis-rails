@@ -12,6 +12,15 @@ class Person < ApplicationRecord
   validates :name_last, length: { maximum: 50 }, presence: true
   validates :name_first, length: { maximum: 50 }, presence: true
 
+  # adds a new nationality it's not already in the array
+  # str --> self
+  def add_nationality(place)
+    unless nationality.map(&:downcase).include?(place.downcase)
+      nationality << place.titleize
+    end
+    self
+  end
+
   def titleize_names
     %w(name_prefix name_first name_middle name_last name_suffix name_nick).each do |field|
       send(:"#{field}=", send(field).gsub(/^\p{Ll}/) { |m| m.upcase }) if send(field).present?

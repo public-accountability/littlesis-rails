@@ -24,4 +24,12 @@ module Cmp
   def self.set_whodunnit
     PaperTrail.whodunnit(CMP_USER_ID.to_s) { yield }
   end
+
+  def self.transaction
+    Cmp.set_whodunnit do
+      ApplicationRecord.transaction do
+        yield
+      end
+    end
+  end
 end

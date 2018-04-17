@@ -1,4 +1,4 @@
-require "rails_helper"
+require 'rails_helper'
 
 describe Cmp::CmpOrg do
   let(:org) { create(:entity_org) }
@@ -208,24 +208,29 @@ describe Cmp::CmpOrg do
 
       it 'creates a new entity' do
         expect { subject.find_or_create_entity }.to change { Entity.count }.by(1)
-        expect(Entity.last.name).to eql "Big Oil Inc"
+        expect(Entity.last.name).to eql 'Big Oil Inc'
       end
     end
   end
 
   describe 'helper methods' do
     describe '#attrs_for' do
+      let(:cmpid) { Faker::Number.number(6) } 
       let(:attributes) do
-        { website: 'http://example.com', city: 'new york', country: 'USA', orgtype_code: 9 }
+        { website: 'http://example.com',
+          city: 'new york',
+          country: 'USA',
+          orgtype_code: 9,
+          cmpid: cmpid }
       end
       subject { Cmp::CmpOrg.new(attributes) }
 
       it 'extracts attributes for given model' do
         expect(subject.send(:attrs_for, :entity))
-          .to eql('website' => 'http://example.com', 'is_current' => nil)
+          .to eql('website' => 'http://example.com')
 
         expect(subject.send(:attrs_for, :address))
-          .to eql(LsHash.new(city: 'new york', latitude: nil, longitude: nil, country_name: 'USA'))
+          .to eql(LsHash.new(city: 'new york', country_name: 'USA'))
       end
     end
   end

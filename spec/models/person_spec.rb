@@ -16,14 +16,35 @@ describe Person do
     expect(Person::DISPLAY_ATTRIBUTES).to be_a Hash
   end
 
-  it 'serializes nationality' do
-    person_entity = create(:entity_person)
-    expect(person_entity.person.nationality).to eql []
-    person_entity.person.nationality.push 'Malagasy'
-    expect(person_entity.person.nationality).to eql ['Malagasy']
-    person_entity.person.nationality.push 'Laotian'
-    expect(person_entity.person.nationality).to eql %w[Malagasy Laotian]
+  describe 'nationality' do
+    it 'serializes nationality' do
+      person_entity = create(:entity_person)
+      expect(person_entity.person.nationality).to eql []
+      person_entity.person.nationality.push 'Malagasy'
+      expect(person_entity.person.nationality).to eql ['Malagasy']
+      person_entity.person.nationality.push 'Laotian'
+      expect(person_entity.person.nationality).to eql %w[Malagasy Laotian]
+    end
+
+    describe 'add nationality' do
+      let(:person) { create(:entity_person).person }
+      it 'add nationality to list' do
+        expect(person.nationality).to eql []
+        person.add_nationality('Canadian')
+        expect(person.nationality).to eql ['Canadian']
+      end
+
+      it 'does not add duplicates' do
+        expect(person.nationality).to eql []
+        person.add_nationality('Canadian')
+        expect(person.nationality).to eql ['Canadian']
+        person.add_nationality('canadian')
+        expect(person.nationality).to eql ['Canadian']
+      end
+    end
   end
+
+  
 
   describe 'validations' do
     it { should validate_presence_of(:name_last) }
