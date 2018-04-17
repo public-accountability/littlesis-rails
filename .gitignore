@@ -56,13 +56,6 @@ coverage
 # rdoc
 doc/
 
-# development db
-data/*.sql
-
-# CMP data
-data/*.xlsx
-data/cmp*.csv
-
 # Passenger files
 .passenger/
 log/*.lock
@@ -71,3 +64,13 @@ log/*.lock
 .pry_history
 .irb-history
 .gem
+
+# everything in the data folder is ignored outright
+/data/*
+
+# add data files here if they need to be included:
+!/data/members114.csv
+!/data/members114_ids.csv
+!/data/cmp_matches.yml
+
+
