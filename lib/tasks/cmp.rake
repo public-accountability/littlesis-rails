@@ -60,17 +60,24 @@ namespace :cmp do
 
           begin
             if CmpEntity.exists?(cmp_id: cmpid)
+
               ColorPrinter.print_brown "cmp entity already imported: #{cmpid}"
               stats[:exists] += 0
+
             elsif cmp_person.preselected_match
+
               ColorPrinter.print_blue "preselected match: #{cmp_display}"
               stats[:preselected] += 1
               cmp_person.import!
+
             elsif cmp_person.matches.automatchable?
+
               ColorPrinter.print_green "automatching: #{cmp_display}"
               stats[:automatch] += 1
               cmp_person.import!
+
             elsif cmp_person.matches.first&.tier_one?
+
               ColorPrinter.print_red "potential match -- #{cmp_display} -- saving to csv"
               stats[:potential] += 1
               attrs = cmp_person.attributes
@@ -79,19 +86,23 @@ namespace :cmp do
               attrs[:match_id] = match.entity.id
               attrs[:match_values] = match.values.to_a.join('|')
               potential_matches << attrs
+
             else
+
               ColorPrinter.print_cyan "no match for #{cmp_display}. Creating a new entity"
               stats[:new] += 1
               cmp_person.import!
             end
+          
           rescue => e
             ColorPrinter.print_red "error while importing #{cmpid}"
             puts e
             stats[:error] += 1
-            cmp_error_ids << { :cmpid => cmp_person.fetch('cmpid') }
+            error_cmp_ids << { :cmpid => cmp_person.fetch('cmpid') }
           end
 
-        end
+        end # end of each loop
+
         Query.save_hash_array_to_csv file_path, potential_matches
         Query.save_hash_array_to_csv error_file_path, error_cmp_ids
         puts stats
