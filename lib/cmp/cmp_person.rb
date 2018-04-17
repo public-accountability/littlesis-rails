@@ -99,9 +99,14 @@ module Cmp
         return EntityMatcher::EvaluationResultSet.new([])
       end
 
-      return @matches if defined?(@matches)
+      return @matches unless @matches.nil?
       @matches = EntityMatcher
                    .find_matches_for_person(to_person_hash, associated: associated_entity_ids)
+    end
+
+    def clear_matches
+      @matches = nil
+      self
     end
 
     def update_date_of_birth

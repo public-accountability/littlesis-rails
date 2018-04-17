@@ -92,21 +92,22 @@ namespace :cmp do
               ColorPrinter.print_cyan "no match for #{cmp_display}. Creating a new entity"
               stats[:new] += 1
               cmp_person.import!
+
             end
-          
+
+            cmp_person.clear_matches
           rescue => e
             ColorPrinter.print_red "error while importing #{cmpid}"
             puts e
             stats[:error] += 1
             error_cmp_ids << { :cmpid => cmp_person.fetch('cmpid') }
           end
-
         end # end of each loop
-
+        
+      ensure
         Query.save_hash_array_to_csv file_path, potential_matches
         Query.save_hash_array_to_csv error_file_path, error_cmp_ids
         puts stats
-      ensure
         ThinkingSphinx::Callbacks.resume!
       end
     end
