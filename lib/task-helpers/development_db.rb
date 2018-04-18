@@ -82,7 +82,6 @@ class DevelopmentDb
                   family
                   fedspending_filing
                   fields
-                  gender
                   generic
                   government_body
                   group_lists
@@ -144,6 +143,7 @@ class DevelopmentDb
                   api_user
                   api_tokens
                   chat_user
+                  cmp_entities
                   delayed_jobs
                   map_annotations
                   object_tag
