@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180409211819) do
+ActiveRecord::Schema.define(version: 20180418185245) do
 
   create_table "address", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "entity_id", null: false
@@ -205,6 +205,14 @@ ActiveRecord::Schema.define(version: 20180409211819) do
     t.datetime "updated_at", null: false
     t.index ["cmp_id"], name: "index_cmp_entities_on_cmp_id", unique: true
     t.index ["entity_id"], name: "index_cmp_entities_on_entity_id", unique: true
+  end
+
+  create_table "cmp_relationships", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "cmp_affiliation_id", null: false
+    t.integer "cmp_org_id", null: false
+    t.integer "cmp_person_id", null: false
+    t.bigint "relationship_id"
+    t.index ["cmp_affiliation_id"], name: "index_cmp_relationships_on_cmp_affiliation_id", unique: true
   end
 
   create_table "couple", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
