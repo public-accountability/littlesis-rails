@@ -48,9 +48,36 @@ describe Cmp::CmpRelationship do
                    end_date: nil,
                    position_attributes: { is_board: true, is_executive: false } }]
     end
+
+    context 'change in status' do
+      before do
+        attributes[:new_in_2016] = 1
+        attributes[:ex_status_2016] = 1
+      end
+
+      it 'produces two relationship if required' do
+        expect(subject.relationships.length).to eql 2
+        expect(subject.relationships)
+          .to eql([
+                    {
+                      description1: 'title',
+                      is_current: false,
+                      start_date: '2014-00-00',
+                      end_date: '2015-00-00',
+                      position_attributes: { is_board: true, is_executive: false }
+                    },
+                    {
+                      description1: 'title',
+                      is_current: nil,
+                      start_date: '2016-00-00',
+                      end_date: nil,
+                      position_attributes: { is_board: true, is_executive: true }
+                    }
+                  ])
+      end
+    end
   end
 
-  
   xdescribe 'cmp_person' do
     context 'CmpEntity already exists in the database' do
       it 'returns the associated entity'

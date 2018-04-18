@@ -68,14 +68,17 @@ module Cmp
         {
           description1: description1,
           is_current: false,
-          end_date: '2016-00-00',
+          start_date: start_date,
+          end_date: '2015-00-00',
           position_attributes: {
             is_board: board_member?('2015'), is_executive: executive?('2015')
           }
         },
         {
           description1: description1,
+          is_current: nil,
           start_date: '2016-00-00',
+          end_date: nil,
           position_attributes: {
             is_board: board_member?('2016'), is_executive: executive?('2016')
           }
@@ -88,7 +91,7 @@ module Cmp
     end
 
     def start_date
-      if /^\d{4}$/.match? fetch('appointment_year')
+      if /^\d{4}$/.match? fetch('appointment_year', '')
         "#{fetch('appointment_year')}-00-00"
       elsif @status == :only_2016
         '2016-00-00'
@@ -96,7 +99,7 @@ module Cmp
     end
 
     def end_date
-      '2016-00-00' if @status == :only_2015
+      '2015-00-00' if @status == :only_2015
     end
 
     def is_current
