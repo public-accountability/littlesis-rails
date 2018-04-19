@@ -38,7 +38,25 @@ module Cmp
       # possible values:
       #   :only_2015, :only_2016, :both_years, :change, :unknown
       @status = derive_status
+      @affiliation_id = @attributes.fetch('cmpid')
+      @cmp_org_id = @attributes.fetch('cmp_org_id')
+      @cmp_person_id = @attributes.fetch('cmp_person_id')
       # @org = CmpEntity.find_by(cmp_id: fetch(:cmp_org_id))&.entity
+    end
+
+    def import!
+      return if skip_import?
+      Cmp.transaction do
+        relationships.each do |attrs|
+          if find_matching_relationship
+            relationship = find_matching_relationship
+          else
+            relationship = new_relationship
+          end
+
+          relationship.update!(attrs)
+        end
+      end
     end
 
     def relationships
@@ -53,6 +71,51 @@ module Cmp
 
     private
 
+    ##
+    # Import helpers
+    #
+
+    def new_relationship
+      Relationship.create!(category_id: Relationship::POSITION_CATEGORY,
+                           entity: person_entity,
+                           related: org_entity)
+    end
+
+    # --> <Relationship> | nil
+    def find_matching_relationship
+      # NOT YET IMPLEMENTED
+    end
+
+    def org_entity
+      CmpEntity.find_by(cmp_id: @cmp_org_id, entity_type: :org).entity
+    end
+
+    def person_entity
+      CmpEntity.find_by(cmp_id: @cmp_person_id, entity_type: :person).entity
+    end
+
+    def skip_import?
+      if ::CmpRelationship.find_by(cmp_affiliation_id: @affiliation_id)&.relationship_id
+        Rails.logger.warn "CMP Relationship #{@affiliation_id} has already been imported"
+        return true
+      end
+
+      unless CmpEntity.exists?(cmp_id: @cmp_org_id)
+        Rails.logger.warn "Cannot import #{@affiliation_id} because cmp org \##{@cmp_org_id} does not exist"
+        return true
+      end
+
+      unless CmpEntity.exists?(cmp_id: @cmp_person_id)
+        Rails.logger.warn "Cannot import #{@affiliation_id} because cmp org \##{@cmp_person_id} does not exist"
+        return true
+      end
+
+      return false
+    end
+
+    ##
+    # Relationship attribute helpers
+    #
     def relationship_attributes
       {
         description1: description1,
@@ -86,8 +149,30 @@ module Cmp
       ]
     end
 
-    def description1
-      'title'
+    def description1(job_title = nil)
+      job_title = fetch('job_title', nil) if job_title.nil?
+      standardized_position = fetch('standardized_position', nil)
+
+      if job_title.present?
+        return job_title if job_title.length <= 50
+        return Regexp.new('(.*);').match(job_title)[1] if job_title.include? ';'
+        return Regexp.new('(.*\)),').match(job_title)[1] if job_title.include? '),'
+        return Regexp.new('(.*),').match(job_title)[1] if job_title.include? ','
+        return Regexp.new('(.*)-').match(job_title)[1] if job_title.include? '-'
+      end
+
+      if standardized_position.present?
+        return 'CEO' if standardized_position.include?('CEO')
+        return 'CFO' if standardized_position.include?('CFO')
+        return 'COO' if standardized_position.include?('COO')
+        return 'CIO' if standardized_position.include?('CIO')
+        return 'Secretary' if standardized_position.downcase.include?('secretary')
+        return 'Treasurer' if standardized_position.downcase.include?('treasurer')
+        return 'Comptroller' if standardized_position.include?('Comptroller')
+        return 'Vice Chairman' if standardized_position.include?('Vice Chairman')
+        return 'Partner' if standardized_position.include?('Partner')
+        return standardized_position.delete('+').strip if standardized_position.length < 40
+      end
     end
 
     def start_date
@@ -127,6 +212,8 @@ module Cmp
     def executive?(year)
       EXECUTIVE_INTS.include? fetch("ex_status_#{year}").to_i
     end
+
+    
 
     # 'human readable symbol for variable NewIn2016
     def derive_status
