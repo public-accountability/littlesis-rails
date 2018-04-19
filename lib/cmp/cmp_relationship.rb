@@ -125,10 +125,10 @@ module Cmp
 
       if job_title.present? && !Regexp.new('^\d+$').match?(job_title)
         return job_title if job_title.length <= 50
-        return Regexp.new('(.*);').match(job_title)[1] if job_title.include? ';'
-        return Regexp.new('(.*\)),').match(job_title)[1] if job_title.include? '),'
-        return Regexp.new('(.*),').match(job_title)[1] if job_title.include? ','
-        return Regexp.new('(.*)-').match(job_title)[1] if job_title.include? '-'
+        simplified_job_title = long_job_title(job_title)
+        if simplified_job_title.present?
+          return simplified_job_title.truncate(100, separator: ' ', omission: '')
+        end
       end
 
       if standardized_position.present?
@@ -143,6 +143,13 @@ module Cmp
         return 'Partner' if standardized_position.include?('Partner')
         return standardized_position.delete('+').strip if standardized_position.length < 40
       end
+    end
+
+    def long_job_title(title)
+      return Regexp.new('(.*);').match(title)[1] if title.include? ';'
+      return Regexp.new('(.*\)),').match(title)[1] if title.include? '),'
+      return Regexp.new('(.*),').match(title)[1] if title.include? ','
+      return Regexp.new('(.*)-').match(title)[1] if title.include? '-'
     end
 
     def start_date

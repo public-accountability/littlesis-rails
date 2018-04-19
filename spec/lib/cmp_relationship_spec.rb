@@ -34,7 +34,7 @@ describe Cmp::CmpRelationship do
       ex_status_2016: '0',
       ex_status_2015: '0',
       standardized_position: 'Director',
-      job_title: 'Director (Board of Directors)'
+      job_title: 'Director (Board of Directors), Chief Executive Officer, Chairman (Strategy and Sustainable Development Committee)'
     }
   end
 
@@ -191,10 +191,10 @@ describe Cmp::CmpRelationship do
     end
 
     context 'job title has ";"' do
-      let(:title) { "Acting Executive Vice President for Marketing, Processing & Renewable Energy ); Senior Vice President, Marketing and Trading"}
+      let(:title) { "Acting Executive Vice President for Marketing, Processing & Renewable Energy; Senior Vice President, Marketing and Trading"}
       specify do
         expect(Cmp::CmpRelationship.new(attributes).send(:description1, title))
-          .to eql 'Acting Executive Vice President for Marketing, Processing & Renewable Energy )'
+          .to eql 'Acting Executive Vice President for Marketing, Processing & Renewable Energy'
       end
     end
 
@@ -206,10 +206,16 @@ describe Cmp::CmpRelationship do
     end
 
     context 'job title has ","' do
-      let(:title) { 'Director (Board of Directors), Member (Officers-Directors Compensation Committee)' }
+      let(:title1) { 'Director (Board of Directors), Member (Officers-Directors Compensation Committee)' }
+      let(:title2) { 'Chairman (Board of Directors), Chief Executive Officer, Chairman (Strategy and Sustainable Development Committee)' }
       specify do
-        expect(Cmp::CmpRelationship.new(attributes).send(:description1, title))
+        expect(Cmp::CmpRelationship.new(attributes).send(:description1, title1))
           .to eql 'Director (Board of Directors)'
+      end
+
+      specify do
+        expect(Cmp::CmpRelationship.new(attributes).send(:description1, title2))
+          .to eql 'Chairman (Board of Directors)'
       end
     end
   end
