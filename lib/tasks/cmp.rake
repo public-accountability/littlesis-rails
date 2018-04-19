@@ -171,7 +171,7 @@ namespace :cmp do
 
       relationship_errors = []
 
-      Cmp::Datasets.relationships.take(200).each do |relationship|
+      Cmp::Datasets.relationships.each do |relationship|
         begin
           if relationship.send(:skip_import?)
             ColorPrinter.print_blue "skipping #{relationship.affiliation_id}"
