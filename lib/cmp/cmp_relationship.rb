@@ -1,29 +1,5 @@
 # frozen_string_literal: true
 
-# @relationships = [ relationship ]
-# @person = {
-#     'cmpid' -> `cmp_person`
-# }
-# loop through relationships
-#
-#   get Org viap CmpEntity
-#
-#   get person:
-#     1) CmpEntity exists
-#     2) Search for matching person
-#     3) create new person
-#
-#   look for similar relationship)
-#
-#    1) look for CmpRelationship
-#       if found, check for updates
-#
-#    2) look for similar relationships
-#       if found, check for updates
-#
-#    3) create new relationship
-#
-#        also create CmpRelationship
 module Cmp
   class CmpRelationship
     BOARD_INTS = [2, 3, 4, 5].to_set.freeze
@@ -41,17 +17,14 @@ module Cmp
       @affiliation_id = @attributes.fetch('cmpid')
       @cmp_org_id = @attributes.fetch('cmp_org_id')
       @cmp_person_id = @attributes.fetch('cmp_person_id')
-      # @org = CmpEntity.find_by(cmp_id: fetch(:cmp_org_id))&.entity
     end
 
     def import!
       return if skip_import?
       Cmp.transaction do
-        if find_matching_relationship
-          relationship = find_matching_relationship
-        else
-          relationship = new_relationship
-        end
+        relationship = find_matching_relationship
+        relationship = new_relationship if relationship.nil?
+
         relationship.update! relationship_attributes
         ::CmpRelationship.find_or_create_by!(relationship: relationship,
                                              cmp_affiliation_id: @affiliation_id,
@@ -67,22 +40,49 @@ module Cmp
     #
 
     def new_relationship
-      Relationship.create!(category_id: Relationship::POSITION_CATEGORY,
-                           entity: person_entity,
-                           related: org_entity)
+      Relationship.create!(basic_relationship_attributes)
     end
 
     # --> <Relationship> | nil
+    # tries to find a matching relationship in our database either
+    # via an existing CmpRelationship or by finding matching relationship.
     def find_matching_relationship
-      # NOT YET IMPLEMENTED
+      by_cmp_relationship = ::CmpRelationship.find_by(cmp_affiliation_id: @affiliation_id)&.relationship
+      return by_cmp_relationship if by_cmp_relationship
+
+      rel = Relationship.find_by(basic_relationship_attributes)
+      return nil if rel.nil?
+      return nil if different?(rel.position.is_board, position_attributes.fetch(:is_board))
+      return nil if different?(rel.position.is_executive, position_attributes.fetch(:is_executive))
+      return rel
+    end
+
+    def basic_relationship_attributes
+      {
+        category_id: Relationship::POSITION_CATEGORY,
+        entity: person_entity,
+        related: org_entity
+      }
+    end
+
+    # Compares two values and determines if they different.
+    # if either a or b is nil, then they are considered the same,
+    # regardless of what the value of the other one is
+    # Used to determine if a new relationship should be created
+    # or if the found relationship is okay.
+    def different?(a, b)
+      return false if a.nil? || b.nil?
+      a != b
     end
 
     def org_entity
-      CmpEntity.find_by(cmp_id: @cmp_org_id, entity_type: :org).entity
+      return @_org_entity if defined?(@_org_entity)
+      @_org_entity = CmpEntity.find_by(cmp_id: @cmp_org_id, entity_type: :org).entity
     end
 
     def person_entity
-      CmpEntity.find_by(cmp_id: @cmp_person_id, entity_type: :person).entity
+      return @_person_entity if defined?(@_person_entity)
+      @_person_entity = CmpEntity.find_by(cmp_id: @cmp_person_id, entity_type: :person).entity
     end
 
     def skip_import?
@@ -113,7 +113,8 @@ module Cmp
         is_current: is_current,
         start_date: start_date,
         end_date: end_date,
-        position_attributes: position_attributes
+        position_attributes: position_attributes,
+        last_user_id: Cmp::CMP_SF_USER_ID
       }
     end
 
@@ -121,7 +122,7 @@ module Cmp
       job_title = fetch('job_title', nil) if job_title.nil?
       standardized_position = fetch('standardized_position', nil)
 
-      if job_title.present?
+      if job_title.present? && !Regexp.new('^\d+$').match?(job_title)
         return job_title if job_title.length <= 50
         return Regexp.new('(.*);').match(job_title)[1] if job_title.include? ';'
         return Regexp.new('(.*\)),').match(job_title)[1] if job_title.include? '),'

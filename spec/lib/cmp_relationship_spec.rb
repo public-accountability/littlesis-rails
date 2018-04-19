@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 describe Cmp::CmpRelationship do
+  before do
+    stub_const('Cmp::CMP_USER_ID', 1)
+    stub_const('Cmp::CMP_SF_USER_ID', 1)
+  end
+
   let(:cmp_org_id) { Faker::Number.unique.number(6) }
   let(:cmp_person_id) { Faker::Number.unique.number(6) }
   let(:attributes) do
@@ -80,8 +85,35 @@ describe Cmp::CmpRelationship do
       end
 
       context 'matching relationship is in littlesis' do
-        it 'does not create a new relationship'
-        it 'updates existing relationship'
+        let!(:relationship) do
+          Relationship.create!(category_id: 1, entity: person, related: org)
+        end
+
+        it 'does not create a new relationship' do
+          expect { subject.import! }.not_to change { Relationship.count }
+        end
+
+        it 'creates a new CmpRelationship' do
+          expect { subject.import! }.to change { CmpRelationship.count }.by(1)
+        end
+
+        it 'updates existing relationship' do
+          expect { subject.import! }
+            .to change { relationship.reload.position.is_board }
+                  .from(nil).to(true)
+        end
+      end
+
+      context 'matching relationship in LittleSis is different' do
+        let!(:relationship) do
+          Relationship.create!(category_id: 1, entity: person, related: org). tap do |r|
+            r.position.update_column(:is_board, false)
+          end
+        end
+
+        it 'creates a new relationship' do
+          expect { subject.import! }.to change { Relationship.count }.by(1)
+        end
       end
     end
   end
@@ -93,6 +125,7 @@ describe Cmp::CmpRelationship do
                 is_current: nil,
                 start_date: '2014-00-00',
                 end_date: nil,
+                last_user_id: Cmp::CMP_SF_USER_ID,
                 position_attributes: { is_board: true, is_executive: false })
     end
 
@@ -108,6 +141,7 @@ describe Cmp::CmpRelationship do
                   is_current: nil,
                   start_date: '2014-00-00',
                   end_date: nil,
+                  last_user_id: Cmp::CMP_SF_USER_ID,
                   position_attributes: { is_board: true, is_executive: true })
       end
     end
@@ -137,26 +171,19 @@ describe Cmp::CmpRelationship do
       end
     end
 
+    context 'job title contains only numbers' do
+      before { attributes[:standardized_position] = '' }
+      specify do
+        expect(Cmp::CmpRelationship.new(attributes).send(:description1, '9')).to be nil
+      end
+    end
+
     context 'job title has ","' do
       let(:title) { 'Director (Board of Directors), Member (Officers-Directors Compensation Committee)' }
       specify do
         expect(Cmp::CmpRelationship.new(attributes).send(:description1, title))
           .to eql 'Director (Board of Directors)'
       end
-    end
-  end
-
-  xdescribe 'cmp_person' do
-    context 'CmpEntity already exists in the database' do
-      it 'returns the associated entity'
-    end
-
-    context 'Found a potential matching person' do
-      it 'returns match'
-    end
-
-    context 'found no match' do
-      it 'creates a new entity'
     end
   end
 end
