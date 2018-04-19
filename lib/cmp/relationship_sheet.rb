@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Cmp
   class RelationshipSheet < Cmp::ExcelSheet
     HEADER_MAP = {
@@ -11,6 +13,7 @@ module Cmp
       board_status_2015: 'BdStatus15',
       ex_status_2016: 'ExStatus16',
       ex_status_2015: 'ExStatus15',
+      standardized_position: 'Standardizedposition',
       job_title: 'DMCOriginaljobtitleinEnglish'
     }.freeze
   end

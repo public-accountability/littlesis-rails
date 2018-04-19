@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require Rails.root.join('lib', 'query.rb').to_s
 require Rails.root.join('lib', 'cmp.rb').to_s
 
@@ -103,7 +105,7 @@ namespace :cmp do
             error_cmp_ids << { :cmpid => cmp_person.fetch('cmpid') }
           end
         end # end of each loop
-        
+
       ensure
         Query.save_hash_array_to_csv file_path, potential_matches
         Query.save_hash_array_to_csv error_file_path, error_cmp_ids
@@ -159,6 +161,36 @@ namespace :cmp do
 
       Query.save_hash_array_to_csv file_path, write_queue, mode: 'ab' unless write_queue.empty?
       puts "Saved people to: #{file_path}"
+    end
+  end
+
+  namespace :relationships do
+    desc 'import cmp relationships'
+    task import: :environment do
+      ThinkingSphinx::Callbacks.suspend!
+
+      relationship_errors = []
+
+      Cmp::Datasets.relationships.each do |relationship|
+        begin
+          if relationship.send(:skip_import?)
+            ColorPrinter.print_blue "skipping #{relationship.affiliation_id}"
+          else
+            relationship.import!
+            ColorPrinter.print_gray "imported #{relationship.affiliation_id}"
+          end
+        rescue => e
+          ColorPrinter.print_red "error while importing #{relationship.affiliation_id}"
+          puts e
+          relationship_errors << { :affiliation_id => relationship.affiliation_id }
+        end
+      end
+
+      unless relationship_errors.empty?
+        file_path = Rails.root.join('data', 'cmp_relationship_errors.txt')
+        Query.save_hash_array_to_csv file_path, relationship_errors
+      end
+      ThinkingSphinx::Callbacks.resume!
     end
   end
 end
