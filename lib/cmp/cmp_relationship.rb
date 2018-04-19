@@ -55,6 +55,10 @@ module Cmp
           end
 
           relationship.update!(attrs)
+          ::CmpRelationship.find_or_create_by!(relationship: relationship,
+                                               cmp_affiliation_id: @affiliation_id,
+                                               cmp_org_id: @cmp_org_id.to_i,
+                                               cmp_person_id: @cmp_person_id.to_i)
         end
       end
     end

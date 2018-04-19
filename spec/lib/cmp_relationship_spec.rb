@@ -40,23 +40,43 @@ describe Cmp::CmpRelationship do
   end
 
   describe '#import!' do
-    let(:org) { crete(:entity_org, :with_org_name) }
-    let(:person) { crete(:entity_person, :with_person_name) }
-    let(:cmp_entity_org) { create(:cmp_entity_org, entity: org, cmp_id: cmp_org_id) }
-    let(:cmp_entity_person) { create(:cmp_person_org, entity: person, cmp_id: cmp_person_id) }
+    let!(:org) { create(:entity_org, :with_org_name) }
+    let!(:person) { create(:entity_person, :with_person_name) }
+    let!(:cmp_entity_org) { create(:cmp_entity_org, entity: org, cmp_id: cmp_org_id) }
+    let!(:cmp_entity_person) { create(:cmp_entity_person, entity: person, cmp_id: cmp_person_id) }
 
     context 'one relationship' do
       context 'relationship has already been imported' do
-        it 'skips importing'
+        before do
+          r = Relationship.create!(category_id: 1, entity: person, related: org)
+          CmpRelationship.create!(relationship: r,
+                                  cmp_affiliation_id: attributes[:cmpid],
+                                  cmp_org_id: attributes[:cmp_org_id],
+                                  cmp_person_id: attributes[:cmp_person_id])
+        end
+
+        it 'skips importing' do
+          expect(Cmp).not_to receive(:transaction)
+          subject.import!
+        end
       end
 
       context 'relationship does not exist in littlesis' do
         it 'creates a new relationship' do
           expect { subject.import! }.to change { Relationship.count }.by(1)
         end
-        it 'creates a new CmpRelationship'
-        it 'correctly sets position attributes'
-        it 'attributes the changes to the cmp user'
+
+        it 'creates a new CmpRelationship' do
+          expect { subject.import! }.to change { CmpRelationship.count }.by(1)
+        end
+        it 'correctly sets position attributes' do
+          subject.import!
+          relationship = Relationship.last
+          expect(relationship.description1).to eql 'Director (Board of Directors)'
+          expect(relationship.position.is_board).to eql true
+          expect(relationship.position.is_executive).to eql false
+        end
+        xit 'attributes the changes to the cmp user'
       end
 
       context 'matching relationship is in littlesis' do
