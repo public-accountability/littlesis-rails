@@ -5,7 +5,7 @@ module Cmp
     BOARD_INTS = [2, 3, 4, 5].to_set.freeze
     EXECUTIVE_INTS = [1, 2, 3, 4, 5].to_set.freeze
 
-    attr_reader :attributes, :status
+    attr_reader :attributes, :status, :affiliation_id
     delegate :[], :fetch, to: :attributes
 
     def initialize(attrs)
@@ -97,7 +97,7 @@ module Cmp
       end
 
       unless CmpEntity.exists?(cmp_id: @cmp_person_id)
-        Rails.logger.warn "Cannot import #{@affiliation_id} because cmp org \##{@cmp_person_id} does not exist"
+        Rails.logger.warn "Cannot import #{@affiliation_id} because cmp person \##{@cmp_person_id} does not exist"
         return true
       end
 
