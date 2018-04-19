@@ -6,6 +6,19 @@ describe Cmp::CmpRelationship do
     stub_const('Cmp::CMP_SF_USER_ID', 1)
   end
 
+  before(:all) do
+    ThinkingSphinx::Callbacks.suspend!
+    @cmp_tag = Tag.create!('id' => Cmp::CMP_TAG_ID,
+                           'restricted' => true,
+                           'name' => 'cmp',
+                           'description' => 'Data from the Corporate Mapping Project')
+  end
+
+  after(:all) do
+    @cmp_tag.delete
+    ThinkingSphinx::Callbacks.resume!
+  end
+
   let(:cmp_org_id) { Faker::Number.unique.number(6) }
   let(:cmp_person_id) { Faker::Number.unique.number(6) }
   let(:attributes) do
@@ -74,6 +87,7 @@ describe Cmp::CmpRelationship do
         it 'creates a new CmpRelationship' do
           expect { subject.import! }.to change { CmpRelationship.count }.by(1)
         end
+
         it 'correctly sets position attributes' do
           subject.import!
           relationship = Relationship.last
@@ -81,6 +95,12 @@ describe Cmp::CmpRelationship do
           expect(relationship.position.is_board).to eql true
           expect(relationship.position.is_executive).to eql false
         end
+
+        it 'creates a new tagging' do
+          expect { subject.import! }.to change { Tagging.count }.by(1)
+          expect(Relationship.last.tags.first.name).to eql 'cmp'
+        end
+
         xit 'attributes the changes to the cmp user'
       end
 
@@ -127,6 +147,13 @@ describe Cmp::CmpRelationship do
                 end_date: nil,
                 last_user_id: Cmp::CMP_SF_USER_ID,
                 position_attributes: { is_board: true, is_executive: false })
+    end
+
+    context 'relationship only exists in 2015' do
+      before { attributes[:new_in_2016] = 0 }
+      specify do
+        expect(subject.send(:relationship_attributes)[:end_date]).to eql '2015-00-00'
+      end
     end
 
     context 'change in status' do

@@ -26,6 +26,7 @@ module Cmp
         relationship = new_relationship if relationship.nil?
 
         relationship.update! relationship_attributes
+        relationship.add_tag(Cmp::CMP_TAG_ID)
         ::CmpRelationship.find_or_create_by!(relationship: relationship,
                                              cmp_affiliation_id: @affiliation_id,
                                              cmp_org_id: @cmp_org_id.to_i,

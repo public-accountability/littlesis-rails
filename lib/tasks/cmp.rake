@@ -167,7 +167,7 @@ namespace :cmp do
   namespace :relationships do
     desc 'import cmp relationships'
     task import: :environment do
-      ThinkingSphinx::Callbacks.suspendrelationship_errors!
+      ThinkingSphinx::Callbacks.suspend!
 
       relationship_errors = []
 
@@ -186,7 +186,7 @@ namespace :cmp do
         end
       end
 
-      if relationship_errors.length > 0
+      unless relationship_errors.empty?
         file_path = Rails.root.join('data', 'cmp_relationship_errors.txt')
         Query.save_hash_array_to_csv file_path, relationship_errors
       end
