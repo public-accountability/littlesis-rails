@@ -47,29 +47,16 @@ module Cmp
     def import!
       return if skip_import?
       Cmp.transaction do
-        relationships.each do |attrs|
-          if find_matching_relationship
-            relationship = find_matching_relationship
-          else
-            relationship = new_relationship
-          end
-
-          relationship.update!(attrs)
-          ::CmpRelationship.find_or_create_by!(relationship: relationship,
-                                               cmp_affiliation_id: @affiliation_id,
-                                               cmp_org_id: @cmp_org_id.to_i,
-                                               cmp_person_id: @cmp_person_id.to_i)
+        if find_matching_relationship
+          relationship = find_matching_relationship
+        else
+          relationship = new_relationship
         end
-      end
-    end
-
-    def relationships
-      if status_changed
-        # this indiciates that a change in status occurs
-        # meaning, we should create two relationships
-        relationships_for_both_years
-      else
-        Array.wrap(relationship_attributes)
+        relationship.update! relationship_attributes
+        ::CmpRelationship.find_or_create_by!(relationship: relationship,
+                                             cmp_affiliation_id: @affiliation_id,
+                                             cmp_org_id: @cmp_org_id.to_i,
+                                             cmp_person_id: @cmp_person_id.to_i)
       end
     end
 
@@ -128,29 +115,6 @@ module Cmp
         end_date: end_date,
         position_attributes: position_attributes
       }
-    end
-
-    def relationships_for_both_years
-      [
-        {
-          description1: description1,
-          is_current: false,
-          start_date: start_date,
-          end_date: '2015-00-00',
-          position_attributes: {
-            is_board: board_member?('2015'), is_executive: executive?('2015')
-          }
-        },
-        {
-          description1: description1,
-          is_current: nil,
-          start_date: '2016-00-00',
-          end_date: nil,
-          position_attributes: {
-            is_board: board_member?('2016'), is_executive: executive?('2016')
-          }
-        }
-      ]
     end
 
     def description1(job_title = nil)
@@ -217,8 +181,6 @@ module Cmp
       EXECUTIVE_INTS.include? fetch("ex_status_#{year}").to_i
     end
 
-    
-
     # 'human readable symbol for variable NewIn2016
     def derive_status
       case fetch('new_in_2016').to_i
@@ -234,6 +196,5 @@ module Cmp
         :unknown
       end
     end
-    
   end
 end

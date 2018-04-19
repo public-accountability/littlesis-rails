@@ -86,14 +86,14 @@ describe Cmp::CmpRelationship do
     end
   end
 
-  describe '#relationships' do
+  describe '#relationship_attributes' do
     it 'computes attributes for relationship' do
-      expect(subject.relationships)
-        .to eql [{ description1: 'Director (Board of Directors)',
-                   is_current: nil,
-                   start_date: '2014-00-00',
-                   end_date: nil,
-                   position_attributes: { is_board: true, is_executive: false } }]
+      expect(subject.send(:relationship_attributes))
+        .to eql(description1: 'Director (Board of Directors)',
+                is_current: nil,
+                start_date: '2014-00-00',
+                end_date: nil,
+                position_attributes: { is_board: true, is_executive: false })
     end
 
     context 'change in status' do
@@ -102,25 +102,13 @@ describe Cmp::CmpRelationship do
         attributes[:ex_status_2016] = 1
       end
 
-      it 'produces two relationship if required' do
-        expect(subject.relationships.length).to eql 2
-        expect(subject.relationships)
-          .to eql([
-                    {
-                      description1: 'Director (Board of Directors)',
-                      is_current: false,
-                      start_date: '2014-00-00',
-                      end_date: '2015-00-00',
-                      position_attributes: { is_board: true, is_executive: false }
-                    },
-                    {
-                      description1: 'Director (Board of Directors)',
-                      is_current: nil,
-                      start_date: '2016-00-00',
-                      end_date: nil,
-                      position_attributes: { is_board: true, is_executive: true }
-                    }
-                  ])
+      it 'uses 2016 info' do
+        expect(subject.send(:relationship_attributes))
+          .to eql(description1: 'Director (Board of Directors)',
+                  is_current: nil,
+                  start_date: '2014-00-00',
+                  end_date: nil,
+                  position_attributes: { is_board: true, is_executive: true })
       end
     end
   end
