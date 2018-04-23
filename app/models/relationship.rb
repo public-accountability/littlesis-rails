@@ -34,22 +34,23 @@ class Relationship < ApplicationRecord
   BULK_LIMIT = 8
 
   ALL_CATEGORIES = [
-    "",
-    "Position",
-    "Education",
-    "Membership",
-    "Family",
-    "Donation",
-    "Trans",
-    "Lobbying",
-    "Social",
-    "Professional",
-    "Ownership",
-    "Hierarchy",
-    "Generic"
+    '',
+    'Position',
+    'Education',
+    'Membership',
+    'Family',
+    'Donation',
+    'Trans',
+    'Lobbying',
+    'Social',
+    'Professional',
+    'Ownership',
+    'Hierarchy',
+    'Generic'
   ].freeze
 
   ALL_CATEGORIES_WITH_FIELDS = %w[Position Education Membership Family Donation Trans Ownership].freeze
+  ALL_CATEGORY_IDS_WITH_FIELDS = [1, 2, 3, 4, 5, 6, 10].freeze
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
@@ -129,7 +130,19 @@ class Relationship < ApplicationRecord
   end
 
   def self.all_category_ids_with_fields
-    [1, 2, 3, 4, 5, 6, 10]
+    ALL_CATEGORY_IDS_WITH_FIELDS
+  end
+
+  # Integer -> Array[Symbol] | nil
+  # returns list of attributes for categories
+  def self.attribute_fields_for(cat_id)
+    TypeCheck.check cat_id, Integer
+    return nil unless all_category_ids_with_fields.include?(cat_id)
+    ALL_CATEGORIES
+      .fetch(cat_id)
+      .constantize
+      .attribute_names
+      .map(&:to_sym) - [:id, :relationship_id]
   end
 
   # This is used by bulk add tool (see tools_helper.rb) to

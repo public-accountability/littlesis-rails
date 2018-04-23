@@ -192,6 +192,17 @@ describe Relationship, type: :model do
       end
     end
 
+    describe 'attribute_fields_for' do
+      it 'returns nil for category without fields' do
+        expect(Relationship.attribute_fields_for(12)).to be nil
+      end
+
+      it 'returns correct_fields for position' do
+        expect(Relationship.attribute_fields_for(1).to_set)
+          .to eql [:is_board, :is_executive, :is_employee, :compensation, :boss_id].to_set
+      end
+    end
+
     describe 'get_category' do
       let(:donation_relationship) do
         create(:donation_relationship, entity: create(:entity_person), related: create(:entity_org))
