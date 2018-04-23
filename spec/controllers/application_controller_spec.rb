@@ -40,36 +40,36 @@ describe ApplicationController, type: :controller do
       end
     end
 
-    describe 'prepare_update_params' do
+    describe 'prepare_params' do
       let(:params) do
         ActionController::Parameters.new('start_date' => '1999').permit(:start_date)
       end
 
       it 'returns hash with last_user_id and converted dates' do
-        result = TestController.new.send(:prepare_update_params, params)
+        result = TestController.new.send(:prepare_params, params)
         expect(result).to eq('start_date' => '1999-00-00', 'last_user_id' => 1000)
       end
 
       it 'returns HashWithIndifferentAccess' do
-        result = TestController.new.send(:prepare_update_params, params)
+        result = TestController.new.send(:prepare_params, params)
         expect(result).to be_a ActiveSupport::HashWithIndifferentAccess
       end
 
       it 'handles input for is_current: true' do
         p = ActionController::Parameters.new('start_date' => '1999', 'is_current' => 'YES').permit(:start_date, :is_current)
-        result = TestController.new.send(:prepare_update_params, p)
+        result = TestController.new.send(:prepare_params, p)
         expect(result).to eq('start_date' => '1999-00-00', 'last_user_id' => 1000, 'is_current' => true)
       end
 
       it 'handles input for is_current: missing' do
         p = ActionController::Parameters.new('start_date' => '1999').permit(:start_date, :is_current)
-        result = TestController.new.send(:prepare_update_params, p)
+        result = TestController.new.send(:prepare_params, p)
         expect(result).to eq('start_date' => '1999-00-00', 'last_user_id' => 1000)
       end
 
       it 'handles input for is_current: nil' do
         p = ActionController::Parameters.new('start_date' => '1999', 'is_current' => nil).permit(:start_date, :is_current)
-        result = TestController.new.send(:prepare_update_params, p)
+        result = TestController.new.send(:prepare_params, p)
         expect(result).to eq('start_date' => '1999-00-00', 'last_user_id' => 1000, 'is_current' => nil)
       end
     end

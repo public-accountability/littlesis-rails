@@ -44,7 +44,7 @@ class RelationshipsController < ApplicationController
   # if the parameter "reverse_direction" is passed with this request,
   # it also reverse the direction of the relationship
   def update
-    @relationship.assign_attributes(prepare_update_params(update_params))
+    @relationship.assign_attributes(prepare_params(update_params))
     # If user has not checked the 'just cleaning up' or selected an existing reference
     # then a  new reference must be created
     if @relationship.valid?
@@ -221,7 +221,7 @@ class RelationshipsController < ApplicationController
       r[:category_id] = r[:category_id].to_s[0]
     end
 
-    prepare_update_params(r)
+    prepare_params(r)
   end
 
   def bulk_json_response
@@ -256,7 +256,7 @@ class RelationshipsController < ApplicationController
   end
 
   def relationship_params
-    prepare_update_params(params.require(:relationship).permit(:entity1_id, :entity2_id, :category_id, :is_current, :description1, :description2))
+    prepare_params(params.require(:relationship).permit(:entity1_id, :entity2_id, :category_id, :is_current, :description1, :description2))
   end
 
   # whitelists relationship params and associated nested attributes
