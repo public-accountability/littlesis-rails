@@ -32,6 +32,8 @@ class RelationshipsController < ApplicationController
     :shares
   ].freeze
 
+  PERMITTED_RELATIONSHIP_FIELDS = %i[entity1_id entity2_id category_id is_current description1 description2 amount].freeze
+
   def show; end
 
   # GET /relationships/:id/edit
@@ -259,7 +261,7 @@ class RelationshipsController < ApplicationController
     prepare_params(
       params
         .require(:relationship)
-        .permit(:entity1_id, :entity2_id, :category_id, :is_current, :description1, :description2)
+        .permit(*PERMITTED_RELATIONSHIP_FIELDS)
     )
   end
 

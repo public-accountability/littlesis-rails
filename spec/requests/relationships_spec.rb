@@ -34,11 +34,32 @@ describe 'Relationships Requests' do
       it do
         is_expected.to change { org.reload.last_user_id }.to(user.sf_guard_user.id)
       end
+
+      it 'responds with json containing the relationship id' do
+        subject.call
+        expect(json).to eql('relationship_id' => Relationship.last.id)
+      end
     end
 
     context 'with invalid url' do
       before { params[:reference][:url] = 'I AM A BAD URL' }
       it { is_expected.not_to change { Relationship.count } }
+
+      it 'rends json of errors' do
+        subject.call
+        expect(response).to have_http_status :bad_request
+        expect(response.body).to include 'is not a valid url'
+      end
+    end
+
+    context 'providing amount field' do
+      before { params[:relationship][:amount] = '$25,000' }
+      it { is_expected.to change { Relationship.count }.by(1) }
+
+      it 'adds amount field to relationship' do
+        subject.call
+        expect(Relationship.last.amount).to eql 25_000
+      end
     end
   end
 
