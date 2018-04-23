@@ -104,13 +104,22 @@ class Relationship < ApplicationRecord
   ##############
 
   def create_category
-    self.class.all_categories[category_id].constantize.create(relationship: self) if self.class.all_category_ids_with_fields.include?(category_id)
-  end 
+    if category_has_fields? && get_category.nil?
+      ALL_CATEGORIES
+        .fetch(category_id)
+        .constantize
+        .create(relationship: self)
+    end
+  end
+
+  private :create_category
 
   def create_links
     Link.create(entity1_id: entity1_id, entity2_id: entity2_id, category_id: category_id, is_reverse: false, relationship: self)
     Link.create(entity1_id: entity2_id, entity2_id: entity1_id, category_id: category_id, is_reverse: true, relationship: self)
   end
+
+  private :create_links
 
   def self.all_categories
     ALL_CATEGORIES
@@ -174,8 +183,12 @@ class Relationship < ApplicationRecord
     attributes.merge!(category_attributes).reject { |_k, v| v.nil? }
   end
 
+  def category_has_fields?
+    ALL_CATEGORY_IDS_WITH_FIELDS.include? category_id
+  end
+
   def get_category
-    return nil unless ALL_CATEGORIES_WITH_FIELDS.include? category_name
+    return nil unless category_has_fields?
     public_send(category_name.downcase)
   end
 
