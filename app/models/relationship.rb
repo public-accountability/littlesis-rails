@@ -183,8 +183,12 @@ class Relationship < ApplicationRecord
     attributes.merge!(category_attributes).reject { |_k, v| v.nil? }
   end
 
-  def category_has_fields?
+  def self.category_has_fields?(category_id)
     ALL_CATEGORY_IDS_WITH_FIELDS.include? category_id
+  end
+
+  def category_has_fields?
+    Relationship.category_has_fields?(category_id)
   end
 
   def get_category

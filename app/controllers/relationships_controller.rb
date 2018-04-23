@@ -32,7 +32,19 @@ class RelationshipsController < ApplicationController
     :shares
   ].freeze
 
-  PERMITTED_RELATIONSHIP_FIELDS = %i[entity1_id entity2_id category_id is_current description1 description2 amount].freeze
+  PERMITTED_FIELDS = [
+    :entity1_id,
+    :entity2_id,
+    :category_id,
+    :description1,
+    :description2,
+    :amount,
+    :goods,
+    :notes,
+    :start_date,
+    :end_date,
+    :is_current
+  ].freeze
 
   def show; end
 
@@ -46,7 +58,7 @@ class RelationshipsController < ApplicationController
   # if the parameter "reverse_direction" is passed with this request,
   # it also reverse the direction of the relationship
   def update
-    @relationship.assign_attributes(prepare_params(update_params))
+    @relationship.assign_attributes relationship_params
     # If user has not checked the 'just cleaning up' or selected an existing reference
     # then a  new reference must be created
     if @relationship.valid?
@@ -257,23 +269,22 @@ class RelationshipsController < ApplicationController
     @relationship.related.update(last_user_id: current_user.sf_guard_user_id)
   end
 
-  def relationship_params
-    prepare_params(
-      params
-        .require(:relationship)
-        .permit(*PERMITTED_RELATIONSHIP_FIELDS)
-    )
-  end
-
   # whitelists relationship params and associated nested attributes
   # if the relationship category requires them
-  def update_params
-    relationship_fields = @relationship.attribute_names.map(&:to_sym)
-    if Relationship.all_category_ids_with_fields.include? @relationship.category_id
-      category_fields = @relationship.get_category.attribute_names.map(&:to_sym)
-      relationship_fields.push("#{@relationship.category_name.downcase}_attributes".to_sym => category_fields)
+  def relationship_params
+    relationship_fields = PERMITTED_FIELDS.dup
+
+    unless (category_id = @relationship&.category_id)
+      category_id = params.require(:relationship).require(:category_id).to_i
     end
-    params.require(:relationship).permit(*relationship_fields)
+
+    if Relationship.category_has_fields?(category_id)
+      category_fields = Relationship.attribute_fields_for(category_id)
+      category_name = Relationship::ALL_CATEGORIES.fetch(category_id).downcase
+      relationship_fields.push("#{category_name}_attributes".to_sym => category_fields)
+    end
+
+    prepare_params params.require(:relationship).permit(*relationship_fields)
   end
 
   def similar_relationships_params

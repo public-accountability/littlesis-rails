@@ -21,7 +21,8 @@ describe 'Relationships Requests' do
         reference: attributes_for(:document)
       }
     end
-    subject { proc { post relationships_path, params: params } }
+
+    subject { -> { post relationships_path, params: params } }
 
     context 'valid position relationship' do
       it { is_expected.to change { Relationship.count }.by(1) }
@@ -39,6 +40,19 @@ describe 'Relationships Requests' do
         subject.call
         expect(json).to eql('relationship_id' => Relationship.last.id)
       end
+
+      context 'is board membership' do
+        before do
+          params[:relationship][:position_attributes] = { is_board: 'true' }
+        end
+
+        it { is_expected.to change { Relationship.count }.by(1) }
+
+        it 'corrects updates "is_board" on position' do
+          expect(&subject).to change { Position.count }.by(1)
+          expect(Position.last.is_board).to eql true
+        end
+      end
     end
 
     context 'with invalid url' do
@@ -52,7 +66,7 @@ describe 'Relationships Requests' do
       end
     end
 
-    context 'providing amount field' do
+    context 'with amount amount field' do
       before { params[:relationship][:amount] = '$25,000' }
       it { is_expected.to change { Relationship.count }.by(1) }
 
@@ -96,6 +110,7 @@ describe 'Relationships Requests' do
       let(:patch_request) { proc { patch relationship_path(position_relationship), params: params } }
 
       context 'updating relationship fields' do
+        
         it 'redirects to relationship page' do
           patch_request.call
           redirects_to_path relationship_path(position_relationship)
