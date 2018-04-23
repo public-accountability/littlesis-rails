@@ -5,12 +5,47 @@ describe 'Relationships Requests' do
   before(:each) { login_as(user, :scope => :user) }
   after(:each) { logout(:user) }
 
+  let(:person) { create(:entity_person, :with_person_name) }
+  let(:org) { create(:entity_org, :with_org_name) }
+
+  describe 'Creating Relationships' do
+    let(:params) do
+      {
+        relationship: {
+          entity1_id: person.id,
+          entity2_id: org.id,
+          category_id: 1,
+          is_current: 'YES',
+          description1: 'Director'
+        },
+        reference: attributes_for(:document)
+      }
+    end
+    subject { proc { post relationships_path, params: params } }
+
+    context 'valid position relationship' do
+      it { is_expected.to change { Relationship.count }.by(1) }
+      it { is_expected.to change { Reference.count }.by(1) }
+
+      it do
+        is_expected.to change { person.reload.last_user_id }.to(user.sf_guard_user.id)
+      end
+
+      it do
+        is_expected.to change { org.reload.last_user_id }.to(user.sf_guard_user.id)
+      end
+    end
+
+    context 'with invalid url' do
+      before { params[:reference][:url] = 'I AM A BAD URL' }
+      it { is_expected.not_to change { Relationship.count } }
+    end
+  end
+
   describe 'Updating relationships' do
     let(:notes) { Faker::Lorem.sentence }
-    let(:person) { create(:entity_person, :with_person_name) }
-    let(:org) { create(:entity_org, :with_org_name) }
 
-    describe 'Position Relationshi' do
+    describe 'Position Relationship' do
       let(:position_relationship) do
         Relationship
           .create!(category_id: 1, entity: person, related: org, description1: 'Lobbyist')
@@ -70,7 +105,7 @@ describe 'Relationships Requests' do
           expect(position_relationship.reload.notes).to be nil
         end
       end
-    end # Positiong Relationship
+    end # Position Relationship
 
     describe 'Transaction Relationship' do
       let(:entity1) { create(:entity_org, :with_org_name) }
@@ -80,16 +115,16 @@ describe 'Relationships Requests' do
         Relationship.create!(category_id: Relationship::TRANSACTION_CATEGORY,
                              entity: entity1,
                              related: entity2,
-                             description1: "Contractor",
-                             description2: "Client")
+                             description1: 'Contractor',
+                             description2: 'Client')
       end
 
       let(:base_params) do
         {
           reference: { just_cleaning_up: 1, url: nil, name: nil },
           relationship: {
-            description1: "Contractor",
-            description2: "Client",
+            description1: 'Contractor',
+            description2: 'Client',
             start_date: '',
             end_date: '',
             is_current: '',

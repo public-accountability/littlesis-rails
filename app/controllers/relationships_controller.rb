@@ -256,7 +256,11 @@ class RelationshipsController < ApplicationController
   end
 
   def relationship_params
-    prepare_params(params.require(:relationship).permit(:entity1_id, :entity2_id, :category_id, :is_current, :description1, :description2))
+    prepare_params(
+      params
+        .require(:relationship)
+        .permit(:entity1_id, :entity2_id, :category_id, :is_current, :description1, :description2)
+    )
   end
 
   # whitelists relationship params and associated nested attributes
