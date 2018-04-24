@@ -9,6 +9,5 @@ ThinkingSphinx::Index.define :entity, :with => :active_record, :delta => Thinkin
   has is_deleted, facet: true
   has last_user_id, facet: true
   has updated_at
-  has networks.id, as: :network_ids
   has link_count
 end
