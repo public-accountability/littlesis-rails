@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180418185245) do
+ActiveRecord::Schema.define(version: 20180424164740) do
 
   create_table "address", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "entity_id", null: false
@@ -568,7 +568,6 @@ ActiveRecord::Schema.define(version: 20180418185245) do
     t.boolean "is_ranked", default: false, null: false
     t.boolean "is_admin", default: false, null: false
     t.boolean "is_featured", default: false, null: false
-    t.boolean "is_network", default: false, null: false
     t.string "display_name", limit: 50
     t.bigint "featured_list_id"
     t.datetime "created_at"

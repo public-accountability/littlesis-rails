@@ -16,8 +16,6 @@ class List < ApplicationRecord
   has_many :entities, through: :list_entities
   has_many :images, through: :entities
 
-  has_many :users, inverse_of: :default_network
-
   # Groups
   has_many :default_groups, inverse_of: :default_network
   has_many :featured_in_groups, class_name: "Group", inverse_of: :featured_list
@@ -44,12 +42,8 @@ class List < ApplicationRecord
     "#{id}-#{name.parameterize}"
   end
 
-  def network?
-    @is_network
-  end
-
   def restricted?
-    is_admin || access == Permissions::ACCESS_PRIVATE || is_network
+    is_admin || access == Permissions::ACCESS_PRIVATE
   end
 
   def name_to_legacy_slug

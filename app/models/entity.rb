@@ -26,8 +26,8 @@ class Entity < ApplicationRecord
   has_many :aliases, inverse_of: :entity, dependent: :destroy
   has_many :images, inverse_of: :entity, dependent: :destroy
   has_many :list_entities, inverse_of: :entity, dependent: :destroy
-  has_many :lists, -> { where(is_network: false) }, through: :list_entities
-  has_many :networks, -> { where(is_network: true) }, class_name: "List", through: :list_entities, source: :list
+  has_many :lists, through: :list_entities
+  # has_many :networks, -> { where(is_network: true) }, class_name: "List", through: :list_entities, source: :list
   has_many :links, foreign_key: "entity1_id", inverse_of: :entity, dependent: :destroy
   has_many :reverse_links, class_name: "Link", foreign_key: "entity2_id", inverse_of: :related, dependent: :destroy
   has_many :relationships, through: :links
@@ -93,7 +93,7 @@ class Entity < ApplicationRecord
 
   before_validation :trim_name_whitespace
   before_create :set_last_user_id
-  after_create :create_primary_alias, :create_primary_ext, :add_to_default_network
+  after_create :create_primary_alias, :create_primary_ext
 
   def set_last_user_id
     self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
@@ -119,9 +119,9 @@ class Entity < ApplicationRecord
     add_extension(primary_ext, fields)
   end
 
-  def add_to_default_network
-    self.lists << List.default_network unless lists.count > 0
-  end
+  # def add_to_default_network
+  #   self.lists << List.default_network unless lists.count > 0
+  # end
 
   def to_param
     # return nil unless persisted?

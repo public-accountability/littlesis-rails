@@ -104,10 +104,10 @@ describe Entity, :tag_helper  do
       expect { org.soft_delete }.to change { ExtensionRecord.count }.by(-1)
     end
 
-    it 'soft deletes list entities (including removing from network)' do
+    it 'soft deletes list entities' do
       list = create(:list)
       list_entity = ListEntity.create!(list_id: list.id, entity_id: org.id)
-      expect { org.soft_delete }.to change { ListEntity.count }.by(-2)
+      expect { org.soft_delete }.to change { ListEntity.count }.by(-1)
       expect(ListEntity.find_by_id(list_entity.id)).to be nil
     end
 

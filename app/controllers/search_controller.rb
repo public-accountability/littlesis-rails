@@ -71,7 +71,7 @@ class SearchController < ApplicationController
     list_is_admin = current_user&.admin? ? [0, 1] : 0
     @lists = List.search("@(name,description) #{q}",
                          per_page: 50,
-                         with: { is_deleted: false, is_admin: list_is_admin, is_network: false },
+                         with: { is_deleted: false, is_admin: list_is_admin },
                          without: { access: Permissions::ACCESS_PRIVATE })
   end
 

@@ -5,7 +5,6 @@ FactoryBot.define do
     is_ranked true
     is_admin false
     is_featured false
-    is_network false
   end
 
   factory :open_list, class: List do
@@ -13,7 +12,6 @@ FactoryBot.define do
     description "open list"
     access Permissions::ACCESS_OPEN
     is_admin false
-    is_network false
   end
 
   factory :closed_list, class: List do
@@ -21,7 +19,6 @@ FactoryBot.define do
     description "closed list"
     access Permissions::ACCESS_CLOSED
     is_admin false
-    is_network false
   end
 
   factory :private_list, class: List do
@@ -29,7 +26,6 @@ FactoryBot.define do
     description "private list"
     access Permissions::ACCESS_PRIVATE
     is_admin false
-    is_network false
   end
 
   factory :list_entity, class: ListEntity do

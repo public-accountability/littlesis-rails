@@ -33,8 +33,6 @@ class User < ApplicationRecord
 
   alias :image_url :image_path
 
-  belongs_to :default_network, class_name: "List"
-
   has_many :group_users, inverse_of: :user, dependent: :destroy
   has_many :groups, through: :group_users, inverse_of: :users
   has_many :campaigns, through: :groups, inverse_of: :users

@@ -8,20 +8,17 @@ describe List do
   it { is_expected.to validate_length_of(:short_description).is_at_most(255) }
 
   it { is_expected.to have_db_column(:access) }
+  it { is_expected.not_to have_db_column(:is_network) }
 
   context 'active relationship' do
     it 'joins entities via ListEntity' do
-      list_entity_count = ListEntity.count
       list = create(:list)
       inc = create(:mega_corp_inc)
       llc = create(:mega_corp_llc)
-      # Every time you create an entity you create a ListEntity because all entites
-      # are in a network and all networks are lists joined via the list_entities table.
-      # This is why there are 2 list_entities to start with.
-      expect(ListEntity.count).to eql (list_entity_count + 2)
+      expect(ListEntity.count).to eql 0
       ListEntity.find_or_create_by(list_id: list.id, entity_id: inc.id)
       ListEntity.find_or_create_by(list_id: list.id, entity_id: llc.id)
-      expect(ListEntity.count).to eql (list_entity_count + 4)
+      expect(ListEntity.count).to eql 2
       expect(list.list_entities.count).to eql 2
     end
 
@@ -120,8 +117,6 @@ describe List do
       expect(user2).to receive(:permissions)
                        .and_return(double(:list_permissions => {:viewable => false}))
       l = build(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: user.id)
-      
-      
 
       expect(l.user_can_access?(user)).to be true
       expect(l.user_can_access?(user.id)).to be true
@@ -132,10 +127,10 @@ describe List do
   end
 
   describe 'restricted?' do
-    it 'restricts access to network lists' do
-      l = build(:list, is_network: true)
-      expect(l.restricted?).to be true
-    end
+    # it 'restricts access to network lists' do
+    #   l = build(:list, is_network: true)
+    #   expect(l.restricted?).to be true
+    # end
   end
 
   context 'Using paper_trail for versioning' do
