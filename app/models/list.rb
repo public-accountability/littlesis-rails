@@ -41,16 +41,6 @@ class List < ApplicationRecord
     is_admin || access == Permissions::ACCESS_PRIVATE
   end
 
-  def name_to_legacy_slug
-    name.gsub(" ", "_").gsub("/", "~").gsub('+', '_')
-  end
-
-  def legacy_url(action = nil)
-    url = "/list/" + id.to_s + "/" + name_to_legacy_slug
-    url += "/" + action if action.present?
-    url
-  end
-
   def user_can_access?(user_or_id = nil)
     return true unless access == Permissions::ACCESS_PRIVATE
     user = nil if user_or_id.nil?
@@ -58,10 +48,6 @@ class List < ApplicationRecord
     user = user_or_id if user_or_id.is_a? User
     return false if user.nil?
     user.permissions.list_permissions(self)[:viewable]
-  end
-
-  def legacy_network_url
-    "/#{display_name}"
   end
 
   def entities_with_couples

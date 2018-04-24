@@ -42,18 +42,6 @@ describe List do
     end
   end
 
-  context 'methods' do
-    it 'name_to_legacy_slug' do
-      l = build(:list, name: 'my/cool+name')
-      expect(l.name_to_legacy_slug).to eq("my~cool_name")
-    end
-    it 'leagacy_url' do
-      list = build(:list, id: 8)
-      expect(list.legacy_url).to eq("/list/8/Fortune_1000_Companies")
-      expect(list.legacy_url('bam')).to eq("/list/8/Fortune_1000_Companies/bam")
-    end
-  end
-
   context 'SoftDelete' do
     it 'removes item from the count but not he unscoped count' do
       l = create(:list)
@@ -127,10 +115,9 @@ describe List do
   end
 
   describe 'restricted?' do
-    # it 'restricts access to network lists' do
-    #   l = build(:list, is_network: true)
-    #   expect(l.restricted?).to be true
-    # end
+    it 'restricts access to admin lists' do
+      expect(build(:list, is_admin: true).restricted?).to be true
+    end
   end
 
   context 'Using paper_trail for versioning' do
