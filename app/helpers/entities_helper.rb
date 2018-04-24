@@ -189,7 +189,7 @@ module EntitiesHelper
   # skip deleted lists, private lists (unless current_user has access), and skip lists that are networks
   def show_list(list_entity)
     list = list_entity.list
-    return false if list.nil? || list.is_network?
+    return false if list.nil?
     list.user_can_access?(current_user)
   end
 

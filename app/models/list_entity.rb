@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ListEntity < ApplicationRecord
   self.table_name = "ls_list_entity"
   include Api::Serializable

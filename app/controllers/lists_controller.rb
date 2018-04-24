@@ -33,7 +33,7 @@ class ListsController < ApplicationController
     List
       .select("ls_list.*, COUNT(DISTINCT(ls_list_entity.entity_id)) AS entity_count")
       .joins(:list_entities)
-      .where(is_network: false, is_admin: false)
+      .where(is_admin: false)
       .group("ls_list.id")
       .order("entity_count DESC")
       .page(page).per(20)
@@ -55,7 +55,7 @@ class ListsController < ApplicationController
       is_admin = (current_user and current_user.has_legacy_permission('admin')) ? [0, 1] : 0
       list_ids = List.search(
         Riddle::Query.escape(params[:q]),
-        with: { is_deleted: 0, is_admin: is_admin, is_network: 0 }
+        with: { is_deleted: 0, is_admin: is_admin }
       ).map(&:id)
       @lists = @lists.where(id: list_ids).reorder('')
     end

@@ -31,7 +31,7 @@ class RelationshipsDatatable
     end
 
     if lists?
-      list_entities = ListEntity.select(:list_id, :entity_id).includes(:list).where(entity_id: @related_ids).where(ls_list: { is_network: false, is_admin: false }).map { |le| [le.list_id, le.entity_id] }.uniq
+      list_entities = ListEntity.select(:list_id, :entity_id).includes(:list).where(entity_id: @related_ids).where(ls_list: { is_admin: false }).map { |le| [le.list_id, le.entity_id] }.uniq
       list_hash = list_entities.reduce({}) do |hash, item|
         hash[item[0]] = hash.fetch(item[0], []).push(item[1])
         hash

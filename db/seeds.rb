@@ -52,14 +52,6 @@ User.create!({id: 1, email: "system@littlesis.org", username: 'system', default_
               sf_guard_user_id: 1,
               password: '$2a$10$Q2tSw2llUagw1KRNTtLD4.JiYgFA.9pxgV5aPOs/IxFsddZGa8jgO'})
 
-List.create!([
-  {name: "Buffalo", description: "Powerful individuals in Buffalo, NY, including business, political, and social leaders.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "buffalo", featured_list_id: nil,last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false},
-  {id: 79, name: "United States", description: "People and organizations with significant influence on the policies of the United States.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "us", featured_list_id: nil, last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false},
-  {name: "United Kingdom", description: "People and organizations with significant influence on the policies of the United Kingdom.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "uk", featured_list_id: nil, last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false},
-  {name: "Baltimore", description: "Powerful individuals in Baltimore, MD, including business, political, and social leaders.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "baltimore", featured_list_id: nil, last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false},
-  {name: "New York State", description: "Powerful individuals in New York State, including business, political, and social leaders.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "nys", featured_list_id: nil, last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false},
-  {name: "Oakland", description: "Powerful individuals in Oakland, CA, including business, political, and social leaders.", is_ranked: false, is_admin: false, is_featured: false, is_network: true, display_name: "oakland", featured_list_id: nil, last_user_id: 1, is_deleted: false, custom_field_name: nil, delta: false}
-])
 
 SfGuardPermission.create!([
                             {id: 1, name: "admin", description: "Administrator permission"},
@@ -73,6 +65,7 @@ SfGuardPermission.create!([
                             {id: 10, name: "talker", description: "allows user to use web-based chat"},
                             {id: 11, name: "contacter", description: nil}
                           ])
+
 RelationshipCategory.create!([
   {id: 1, name: "Position", display_name: "Position", default_description: "Position", entity1_requirements: "Person", entity2_requirements: nil, has_fields: true},
   {id: 2, name: "Education", display_name: "Education", default_description: "Student", entity1_requirements: "Person", entity2_requirements: "Org", has_fields: true},

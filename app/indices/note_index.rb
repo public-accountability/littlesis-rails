@@ -12,7 +12,6 @@ ThinkingSphinx::Index.define :note, :with => :active_record, :delta => ThinkingS
   has entities.id, as: :entity_ids
   # has relationships.id, as: :relationship_ids
   has lists.id, as: :list_ids
-  has networks.id, as: :network_ids
   has groups.id, as: :group_ids
   has is_private
   has created_at

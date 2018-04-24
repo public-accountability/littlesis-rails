@@ -54,7 +54,7 @@ class HomeController < ApplicationController
     @lists = current_user.lists
       .select("ls_list.*, COUNT(DISTINCT(ls_list_entity.entity_id)) AS entity_count")
       .joins(:list_entities)
-      .where(is_network: false, is_admin: false)
+      .where(is_admin: false)
       .group("ls_list.id")
       .order("entity_count DESC")
       .page(params[:page]).per(20)

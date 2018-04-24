@@ -1,34 +1,24 @@
 require 'rails_helper'
 
 describe List do
-  before(:all)  { DatabaseCleaner.start }
-  after(:all) { DatabaseCleaner.clean }
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to have_many(:list_entities) }
+  it { is_expected.to have_many(:entities) }
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_length_of(:short_description).is_at_most(255) }
 
-  it { should belong_to(:user) }
+  it { is_expected.to have_db_column(:access) }
+  it { is_expected.not_to have_db_column(:is_network) }
 
-  it 'validates name' do
-    l = List.new
-    expect(l).not_to be_valid
-    l.name = "bad politicians"
-    expect(l).to be_valid
-  end
-
-  it { should validate_length_of(:short_description).is_at_most(255) }
-  it { should have_db_column(:access) }
-
-  context "active relationships" do
+  context 'active relationship' do
     it 'joins entities via ListEntity' do
-      list_entity_count = ListEntity.count
       list = create(:list)
       inc = create(:mega_corp_inc)
       llc = create(:mega_corp_llc)
-      # Every time you create an entity you create a ListEntity because all entites
-      # are in a network and all networks are lists joined via the list_entities table.
-      # This is why there are 2 list_entities to start with.
-      expect(ListEntity.count).to eql (list_entity_count + 2)
+      expect(ListEntity.count).to eql 0
       ListEntity.find_or_create_by(list_id: list.id, entity_id: inc.id)
       ListEntity.find_or_create_by(list_id: list.id, entity_id: llc.id)
-      expect(ListEntity.count).to eql (list_entity_count + 4)
+      expect(ListEntity.count).to eql 2
       expect(list.list_entities.count).to eql 2
     end
 
@@ -40,7 +30,7 @@ describe List do
       expect(list.images.count).to eq 1
     end
 
-    it 'has groups' do 
+    it 'has groups' do
       list = create(:list)
       grp = create(:group)
       expect(list.groups.count).to eq (0)
@@ -49,18 +39,6 @@ describe List do
       expect(GroupList.count).to eq(1) 
       expect(grp.lists.first).to eq(list)
       expect(list.groups.first).to eq(grp)
-    end
-
-  end
-  context 'methods' do
-    it 'name_to_legacy_slug' do
-      l = build(:list, name: 'my/cool+name')
-      expect(l.name_to_legacy_slug).to eq("my~cool_name")
-    end
-    it 'leagacy_url' do
-      list = build(:list, id: 8)
-      expect(list.legacy_url).to eq("/list/8/Fortune_1000_Companies")
-      expect(list.legacy_url('bam')).to eq("/list/8/Fortune_1000_Companies/bam")
     end
   end
 
@@ -127,8 +105,6 @@ describe List do
       expect(user2).to receive(:permissions)
                        .and_return(double(:list_permissions => {:viewable => false}))
       l = build(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: user.id)
-      
-      
 
       expect(l.user_can_access?(user)).to be true
       expect(l.user_can_access?(user.id)).to be true
@@ -139,9 +115,8 @@ describe List do
   end
 
   describe 'restricted?' do
-    it 'restricts access to network lists' do
-      l = build(:list, is_network: true)
-      expect(l.restricted?).to be true
+    it 'restricts access to admin lists' do
+      expect(build(:list, is_admin: true).restricted?).to be true
     end
   end
 

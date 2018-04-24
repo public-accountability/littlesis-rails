@@ -20,9 +20,6 @@ class Note < ApplicationRecord
   has_many :note_lists, inverse_of: :note, dependent: :destroy
   has_many :lists, through: :note_lists
 
-  has_many :note_networks, inverse_of: :note, dependent: :destroy
-  has_many :networks, class_name: "List", through: :note_networks, inverse_of: :network_notes
-
   has_many :note_groups, inverse_of: :note, dependent: :destroy
   has_many :groups, through: :note_groups
 
