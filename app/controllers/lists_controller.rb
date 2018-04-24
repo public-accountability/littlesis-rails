@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ListsController < ApplicationController
   include TagableController
 
@@ -10,7 +12,7 @@ class ListsController < ApplicationController
     }
   )
 
-  SIGNED_IN_ACTIONS = [:new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags]
+  SIGNED_IN_ACTIONS = [:new, :create, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags]
 
   # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
   # from TagableController and therefore including :tags in the list is required
@@ -20,7 +22,7 @@ class ListsController < ApplicationController
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
 
   before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
+                only: [:show, :edit, :update, :destroy, :relationships, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
 
   # permissions
   before_action :set_permissions,
@@ -133,18 +135,6 @@ class ListsController < ApplicationController
   end
 
   def relationships
-  end
-
-  def match_donations
-    check_permission 'bulker'
-    page = params.fetch(:page, 1)
-    num = params.fetch(:num, 100)
-    @entities = @list.entities_with_couples.people
-                .joins(:os_entity_transactions)
-                .includes(:links, :addresses)
-                .joins("LEFT JOIN address ON (address.entity_id = entity.id)")
-                .select("entity.*, COUNT(os_entity_transaction.id) AS num_matches, MAX(os_entity_transaction.reviewed_at) AS last_reviewed")
-                .group("entity.id").having('COUNT(os_entity_transaction.id) > 0').order("last_reviewed ASC, num_matches DESC").page(page).per(num)
   end
 
   def admin

@@ -89,7 +89,6 @@ Lilsis::Application.routes.draw do
   resources :lists do
     member do
       get 'relationships'
-      get 'match_donations'
       get 'admin'
       get 'find_articles'
       get 'crop_images'
