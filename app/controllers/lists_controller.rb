@@ -12,7 +12,7 @@ class ListsController < ApplicationController
     }
   )
 
-  SIGNED_IN_ACTIONS = [:new, :create, :admin, :find_articles, :crop_images, :create_map, :update_cache, :modifications, :tags]
+  SIGNED_IN_ACTIONS = [:new, :create, :admin, :crop_images, :update_cache, :modifications, :tags]
 
   # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
   # from TagableController and therefore including :tags in the list is required
@@ -22,7 +22,7 @@ class ListsController < ApplicationController
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
 
   before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :relationships, :search_data, :admin, :find_articles, :crop_images, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
+                only: [:show, :edit, :update, :destroy, :relationships, :search_data, :admin, :crop_images, :members, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
 
   # permissions
   before_action :set_permissions,
@@ -140,14 +140,6 @@ class ListsController < ApplicationController
   def admin
   end
 
-  def find_articles
-    check_permission 'importer'    
-    entity_ids = @list.entities_with_couples.joins("LEFT JOIN article_entities ON (article_entities.entity_id = entity.id)").where(article_entities: { id: nil }).pluck(:id)
-    set_entity_queue(:find_articles, entity_ids, @list.id)
-    next_entity_id = next_entity_in_queue(:find_articles)
-    redirect_to find_articles_entity_path(id: next_entity_id)
-  end
-
   def crop_images
     check_permission 'importer'
     entity_ids = @list.entities.joins(:images).where(image: { is_featured: true }).group("entity.id").order("image.updated_at ASC").pluck(:id)
@@ -160,11 +152,6 @@ class ListsController < ApplicationController
   def members
     @table = ListDatatable.new(@list)
     @table.generate_data
-  end
-
-  def create_map
-    map = NetworkMap.create_from_entities(@list.name, current_user.id, @list.entities_with_couples.pluck(:id))
-    redirect_to edit_map_url(map, wheel: true)
   end
 
   def clear_cache

@@ -90,10 +90,8 @@ Lilsis::Application.routes.draw do
     member do
       get 'relationships'
       get 'admin'
-      get 'find_articles'
       get 'crop_images'
       get 'members'
-      post 'create_map'
       # entities
       post 'add_entity'
       get 'entities/bulk' => 'lists#new_entity_associations'

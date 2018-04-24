@@ -222,19 +222,6 @@ class NetworkMap < ApplicationRecord
     ids
   end
 
-  def self.create_from_entities(title, user_id, entity_ids)
-    entity_ids = entities_for_map(entity_ids)
-    entities = Entity.joins("LEFT JOIN image ON (image.entity_id = entity.id AND image.is_featured = 1)").where(id: entity_ids).select("entity.*, image.filename")
-    rels = rels_from_entities(entities.map(&:id))
-    data = ERB::Util.json_escape(JSON.dump({ 
-      entities: entities.map { |entity| prepare_entity(entity) },
-      rels: rels.map { |rel| prepare_rel(rel) },
-      texts: []
-    }))
-    sf_guard_user_id = User.find(user_id).sf_guard_user_id
-    create(title: title, user_id: sf_guard_user_id, data: data)
-  end
-
   def self.rels_from_entities(entity_ids)
     sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.end_date, r.is_deleted, " + 
           "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " + 
