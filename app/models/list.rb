@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class List < ApplicationRecord
-  self.table_name = "ls_list"
+  self.table_name = 'ls_list'
 
   include SoftDelete
   include Referenceable
@@ -8,34 +10,36 @@ class List < ApplicationRecord
 
   has_paper_trail
 
-  belongs_to :user, foreign_key: "creator_user_id", inverse_of: :lists
+  belongs_to :user, foreign_key: 'creator_user_id', inverse_of: :lists
 
   has_many :list_entities, inverse_of: :list, dependent: :destroy
   has_many :entities, through: :list_entities
   has_many :images, through: :entities
 
   has_many :users, inverse_of: :default_network
+
+  # Groups
   has_many :default_groups, inverse_of: :default_network
   has_many :featured_in_groups, class_name: "Group", inverse_of: :featured_list
-
   has_many :group_lists, inverse_of: :list
   has_many :groups, through: :group_lists, inverse_of: :lists
-
-  has_many :note_networks, inverse_of: :network
-  has_many :network_notes, through: :note_networks, inverse_of: :networks
-
   has_many :sf_guard_group_lists, inverse_of: :list, dependent: :destroy
   has_many :sf_guard_groups, through: :sf_guard_group_lists, inverse_of: :lists
 
-  validates_presence_of :name
+  # TODO: remove these
+  has_many :note_networks, inverse_of: :network
+  has_many :network_notes, through: :note_networks, inverse_of: :networks
+
+  validates :name, presence: true
   validates :short_description, length: { maximum: 255 }
+
   scope :public_scope, -> { where("access <> #{Permissions::ACCESS_PRIVATE}") }
   scope :private_scope, -> { where(access: Permissions::ACCESS_PRIVATE) }
 
   def destroy
     soft_delete
   end
-  
+
   def to_param
     "#{id}-#{name.parameterize}"
   end

@@ -1,22 +1,15 @@
 require 'rails_helper'
 
 describe List do
-  before(:all)  { DatabaseCleaner.start }
-  after(:all) { DatabaseCleaner.clean }
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to have_many(:list_entities) }
+  it { is_expected.to have_many(:entities) }
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_length_of(:short_description).is_at_most(255) }
 
-  it { should belong_to(:user) }
+  it { is_expected.to have_db_column(:access) }
 
-  it 'validates name' do
-    l = List.new
-    expect(l).not_to be_valid
-    l.name = "bad politicians"
-    expect(l).to be_valid
-  end
-
-  it { should validate_length_of(:short_description).is_at_most(255) }
-  it { should have_db_column(:access) }
-
-  context "active relationships" do
+  context 'active relationship' do
     it 'joins entities via ListEntity' do
       list_entity_count = ListEntity.count
       list = create(:list)
@@ -40,7 +33,7 @@ describe List do
       expect(list.images.count).to eq 1
     end
 
-    it 'has groups' do 
+    it 'has groups' do
       list = create(:list)
       grp = create(:group)
       expect(list.groups.count).to eq (0)
@@ -50,8 +43,8 @@ describe List do
       expect(grp.lists.first).to eq(list)
       expect(list.groups.first).to eq(grp)
     end
-
   end
+
   context 'methods' do
     it 'name_to_legacy_slug' do
       l = build(:list, name: 'my/cool+name')
