@@ -23,10 +23,6 @@ class List < ApplicationRecord
   has_many :sf_guard_group_lists, inverse_of: :list, dependent: :destroy
   has_many :sf_guard_groups, through: :sf_guard_group_lists, inverse_of: :lists
 
-  # TODO: remove these
-  has_many :note_networks, inverse_of: :network
-  has_many :network_notes, through: :note_networks, inverse_of: :networks
-
   validates :name, presence: true
   validates :short_description, length: { maximum: 255 }
 
@@ -118,10 +114,6 @@ class List < ApplicationRecord
   def clear_cache(host = nil)
     touch
   end
-
-  # def self.default_network
-  #   find(Lilsis::Application.config.default_network_id)
-  # end
 
   # [Entity|Ids]
   def add_entities(entities_or_ids)

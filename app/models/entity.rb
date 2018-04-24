@@ -119,10 +119,6 @@ class Entity < ApplicationRecord
     add_extension(primary_ext, fields)
   end
 
-  # def add_to_default_network
-  #   self.lists << List.default_network unless lists.count > 0
-  # end
-
   def to_param
     # return nil unless persisted?
     "#{id}-#{self.class.parameterize_name(name)}"

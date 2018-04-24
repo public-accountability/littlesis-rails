@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180424165127) do
+ActiveRecord::Schema.define(version: 20180424181848) do
 
   create_table "address", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "entity_id", null: false
@@ -726,13 +726,6 @@ ActiveRecord::Schema.define(version: 20180424165127) do
     t.integer "list_id"
     t.index ["list_id"], name: "index_note_lists_on_list_id"
     t.index ["note_id", "list_id"], name: "index_note_lists_on_note_id_and_list_id", unique: true
-  end
-
-  create_table "note_networks", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
-    t.integer "note_id"
-    t.integer "network_id"
-    t.index ["network_id"], name: "index_note_networks_on_network_id"
-    t.index ["note_id", "network_id"], name: "index_note_networks_on_note_id_and_network_id", unique: true
   end
 
   create_table "note_relationships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
