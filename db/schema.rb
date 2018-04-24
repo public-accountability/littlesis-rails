@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180424181848) do
+ActiveRecord::Schema.define(version: 20180424203632) do
 
   create_table "address", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "entity_id", null: false
@@ -592,13 +592,11 @@ ActiveRecord::Schema.define(version: 20180424181848) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "last_user_id"
-    t.boolean "is_deleted", default: false, null: false
     t.text "custom_field"
     t.index ["created_at"], name: "created_at_idx"
-    t.index ["entity_id", "is_deleted", "list_id"], name: "entity_deleted_list_idx"
+    t.index ["entity_id", "list_id"], name: "index_ls_list_entity_on_entity_id_and_list_id"
     t.index ["entity_id"], name: "entity_id_idx"
     t.index ["last_user_id"], name: "last_user_id_idx"
-    t.index ["list_id", "is_deleted", "entity_id"], name: "list_deleted_entity_idx"
     t.index ["list_id"], name: "list_id_idx"
   end
 
