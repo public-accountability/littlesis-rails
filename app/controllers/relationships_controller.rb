@@ -46,6 +46,10 @@ class RelationshipsController < ApplicationController
     :is_current
   ].freeze
 
+  rescue_from Exceptions::MissingCategoryIdParamError do |exception|
+    render json: exception.error_hash, status: :bad_request
+  end
+
   def show; end
 
   # GET /relationships/:id/edit
@@ -275,7 +279,11 @@ class RelationshipsController < ApplicationController
     relationship_fields = PERMITTED_FIELDS.dup
 
     unless (category_id = @relationship&.category_id)
-      category_id = params.require(:relationship).require(:category_id).to_i
+      begin
+        category_id = params.require(:relationship).require(:category_id).to_i
+      rescue ActionController::ParameterMissing
+        raise Exceptions::MissingCategoryIdParamError
+      end
     end
 
     if Relationship.category_has_fields?(category_id)
