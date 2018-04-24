@@ -12,7 +12,7 @@ class ListsController < ApplicationController
     }
   )
 
-  SIGNED_IN_ACTIONS = [:new, :create, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags]
+  SIGNED_IN_ACTIONS = [:new, :create, :admin, :find_articles, :crop_images, :create_map, :update_cache, :modifications, :tags]
 
   # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
   # from TagableController and therefore including :tags in the list is required
@@ -22,7 +22,7 @@ class ListsController < ApplicationController
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
 
   before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :relationships, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
+                only: [:show, :edit, :update, :destroy, :relationships, :search_data, :admin, :find_articles, :crop_images, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
 
   # permissions
   before_action :set_permissions,
@@ -155,13 +155,6 @@ class ListsController < ApplicationController
     next_entity_id = next_entity_in_queue(:crop_images)
     image_id = Image.where(entity_id: next_entity_id, is_featured: true).first
     redirect_to crop_image_path(id: image_id)
-  end
-
-  def street_views
-    check_permission 'editor'
-    entity_ids = @list.entities_with_couples.pluck(:id).uniq
-    @images = Image.joins(entity: :addresses).where(entity_id: entity_ids).where("image.caption LIKE 'street view:%'").order(:created_at)
-    render layout: false
   end
 
   def members
