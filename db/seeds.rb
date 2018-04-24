@@ -65,6 +65,7 @@ SfGuardPermission.create!([
                             {id: 10, name: "talker", description: "allows user to use web-based chat"},
                             {id: 11, name: "contacter", description: nil}
                           ])
+
 RelationshipCategory.create!([
   {id: 1, name: "Position", display_name: "Position", default_description: "Position", entity1_requirements: "Person", entity2_requirements: nil, has_fields: true},
   {id: 2, name: "Education", display_name: "Education", default_description: "Student", entity1_requirements: "Person", entity2_requirements: "Org", has_fields: true},

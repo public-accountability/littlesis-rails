@@ -75,7 +75,7 @@ class List < ApplicationRecord
   end
 
   def interlocks_hash
-    list_entities = ListEntity.joins(:list).where(entity_id: entity_ids, is_deleted: false, ls_list: { is_network: false, is_deleted: false, is_admin: false }).where.not(list_id: id).limit(50000)
+    list_entities = ListEntity.joins(:list).where(entity_id: entity_ids, is_deleted: false, ls_list: { is_deleted: false, is_admin: false }).where.not(list_id: id).limit(50000)
     list_entities.reduce({}) do |hash, le| 
       hash[le.list_id] = hash.fetch(le.list_id, []).push(le.entity_id).uniq
       hash
@@ -119,9 +119,9 @@ class List < ApplicationRecord
     touch
   end
 
-  def self.default_network
-    find(Lilsis::Application.config.default_network_id)
-  end
+  # def self.default_network
+  #   find(Lilsis::Application.config.default_network_id)
+  # end
 
   # [Entity|Ids]
   def add_entities(entities_or_ids)
