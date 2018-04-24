@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ParamsHelper
   YES_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'True', 'yes', 'Yes', 'YES', 'Y', 'y'].to_set.freeze
   NO_VALUES = [false, 0, '0', '00', 'f', 'F', 'false', 'False', 'FALSE', 'NO', 'no', 'No', 'n'].to_set.freeze
@@ -12,14 +14,14 @@ module ParamsHelper
   #  - adds last_user_id
   #  - processes start and end dates
   #  - converts money strings into intergers
-  def prepare_update_params(update_params)
-    params = ActiveSupport::HashWithIndifferentAccess.new(blank_to_nil(update_params))
-    params['start_date'] = LsDate.convert(params['start_date']) if params.key?('start_date')
-    params['end_date'] = LsDate.convert(params['end_date']) if params.key?('end_date')
-    params['last_user_id'] = current_user.sf_guard_user_id
-    params['is_current'] = is_current_helper(params['is_current']) if params.key?('is_current')
-    params['amount'] = money_to_int(params['amount']) if params.key?('amount')
-    parameter_processor(params)
+  def prepare_params(parameters)
+    p = ActiveSupport::HashWithIndifferentAccess.new blank_to_nil(parameters.to_h)
+    p['start_date'] = LsDate.convert(p['start_date']) if p.key?('start_date')
+    p['end_date'] = LsDate.convert(p['end_date']) if p.key?('end_date')
+    p['last_user_id'] = current_user.sf_guard_user_id
+    p['is_current'] = is_current_helper(p['is_current']) if p.key?('is_current')
+    p['amount'] = money_to_int(p['amount']) if p.key?('amount')
+    parameter_processor(p)
   end
 
   # override this method to modify the param object before sent to .update
@@ -32,7 +34,7 @@ module ParamsHelper
   def money_to_int(money)
     return money if money.is_a?(Integer) || money.nil?
     i = money.tr('$', '').tr(',', '').to_i
-    return i if i > 0
+    return i if i.positive?
     return nil
   end
 

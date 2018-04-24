@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Exceptions
   class PermissionError < StandardError; end
   class NotFoundError < StandardError; end
@@ -55,6 +57,16 @@ module Exceptions
   class RedundantMergeReview < StandardError
     def message
       "Attempting to review a merge request that has already been reviewed."
+    end
+  end
+
+  class MissingCategoryIdParamError < StandardError
+    def message
+      'missing required paramater: "category_id"'
+    end
+
+    def error_hash
+      { 'category_id' => 'is absent' }
     end
   end
 end

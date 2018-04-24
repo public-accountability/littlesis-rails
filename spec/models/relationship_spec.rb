@@ -3,6 +3,9 @@
 require 'rails_helper'
 
 describe Relationship, type: :model do
+  let(:person1) { create(:entity_person, :with_person_name) }
+  let(:person2) { create(:entity_person, :with_person_name) }
+
   describe 'associations' do
     it { should have_many(:links) }
     it { should belong_to(:entity) }
@@ -78,8 +81,6 @@ describe Relationship, type: :model do
       end
 
       it 'fails to validate bad HIERARCHY_CATEGORY relationship' do
-        person1 = create(:person)
-        person2 = create(:person)
         rel = Relationship.new(category_id: 11, entity: person1, related: person2)
         expect(rel.valid?).to eq false
         expect(rel.errors.full_messages[0]).to eql 'Category Hierarchy is not a valid category for Person to Person relationships'
@@ -164,15 +165,28 @@ describe Relationship, type: :model do
       it 'creates associated category model' do
         rel = build(:position_relationship)
         expect(Position).to receive(:create).with(relationship: rel).once
-        rel.create_category
+        rel.send(:create_category)
+      end
+
+      it 'creates model Position after relationship is created' do
+        expect { Relationship.create!(category_id: 1, entity: person1, related: create(:entity_org)) }
+          .to change { Position.count }.by(1)
+      end
+
+      it 'create_category works nicely with nested_attributes' do
+        create_relationship = proc do
+          Relationship.create!(category_id: 1, entity: person1, related: create(:entity_org), position_attributes: { is_board: true })
+        end
+        expect { create_relationship.call }.to change { Position.count }.by(1)
+        expect(Position.last.is_board).to eql true
       end
     end
 
     describe 'create_links' do
       it 'creates 2 links after creating relationship' do
-        e1 = create(:person)
-        e2 = create(:person)
-        expect { Relationship.create!(category_id: 12, entity: e1, related: e2) }
+        # e1 = create(:person)
+        # e2 = create(:person)
+        expect { Relationship.create!(category_id: 12, entity: person1, related: person2) }
           .to change { Link.count }.by(2)
       end
     end
@@ -189,6 +203,17 @@ describe Relationship, type: :model do
         expect(build(:position_relationship).category_name_display).to eql "Position"
         expect(build(:generic_relationship).category_name_display).to eql "Generic"
         expect(build(:transaction_relationship).category_name_display).to eql "Transaction"
+      end
+    end
+
+    describe 'attribute_fields_for' do
+      it 'returns nil for category without fields' do
+        expect(Relationship.attribute_fields_for(12)).to be nil
+      end
+
+      it 'returns correct_fields for position' do
+        expect(Relationship.attribute_fields_for(1).to_set)
+          .to eql [:is_board, :is_executive, :is_employee, :compensation, :boss_id].to_set
       end
     end
 
@@ -687,6 +712,7 @@ describe Relationship, type: :model do
       # :create_category, :create_links, :update_entity_links
       it 'creates category' do
         expect { rel.soft_delete }.to change { Position.count }.by(-1)
+        expect(rel.reload.position).to be nil
         expect { rel.restore! }.to change { Position.count }.by(1)
       end
 

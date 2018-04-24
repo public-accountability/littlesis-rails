@@ -34,22 +34,23 @@ class Relationship < ApplicationRecord
   BULK_LIMIT = 8
 
   ALL_CATEGORIES = [
-    "",
-    "Position",
-    "Education",
-    "Membership",
-    "Family",
-    "Donation",
-    "Trans",
-    "Lobbying",
-    "Social",
-    "Professional",
-    "Ownership",
-    "Hierarchy",
-    "Generic"
+    '',
+    'Position',
+    'Education',
+    'Membership',
+    'Family',
+    'Donation',
+    'Trans',
+    'Lobbying',
+    'Social',
+    'Professional',
+    'Ownership',
+    'Hierarchy',
+    'Generic'
   ].freeze
 
   ALL_CATEGORIES_WITH_FIELDS = %w[Position Education Membership Family Donation Trans Ownership].freeze
+  ALL_CATEGORY_IDS_WITH_FIELDS = [1, 2, 3, 4, 5, 6, 10].freeze
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id"
@@ -103,13 +104,22 @@ class Relationship < ApplicationRecord
   ##############
 
   def create_category
-    self.class.all_categories[category_id].constantize.create(relationship: self) if self.class.all_category_ids_with_fields.include?(category_id)
-  end 
+    if category_has_fields? && get_category.nil?
+      ALL_CATEGORIES
+        .fetch(category_id)
+        .constantize
+        .create(relationship: self)
+    end
+  end
+
+  private :create_category
 
   def create_links
     Link.create(entity1_id: entity1_id, entity2_id: entity2_id, category_id: category_id, is_reverse: false, relationship: self)
     Link.create(entity1_id: entity2_id, entity2_id: entity1_id, category_id: category_id, is_reverse: true, relationship: self)
   end
+
+  private :create_links
 
   def self.all_categories
     ALL_CATEGORIES
@@ -129,7 +139,19 @@ class Relationship < ApplicationRecord
   end
 
   def self.all_category_ids_with_fields
-    [1, 2, 3, 4, 5, 6, 10]
+    ALL_CATEGORY_IDS_WITH_FIELDS
+  end
+
+  # Integer -> Array[Symbol] | nil
+  # returns list of attributes for categories
+  def self.attribute_fields_for(cat_id)
+    TypeCheck.check cat_id, Integer
+    return nil unless all_category_ids_with_fields.include?(cat_id)
+    ALL_CATEGORIES
+      .fetch(cat_id)
+      .constantize
+      .attribute_names
+      .map(&:to_sym) - [:id, :relationship_id]
   end
 
   # This is used by bulk add tool (see tools_helper.rb) to
@@ -161,8 +183,16 @@ class Relationship < ApplicationRecord
     attributes.merge!(category_attributes).reject { |_k, v| v.nil? }
   end
 
+  def self.category_has_fields?(category_id)
+    ALL_CATEGORY_IDS_WITH_FIELDS.include? category_id
+  end
+
+  def category_has_fields?
+    Relationship.category_has_fields?(category_id)
+  end
+
   def get_category
-    return nil unless ALL_CATEGORIES_WITH_FIELDS.include? category_name
+    return nil unless category_has_fields?
     public_send(category_name.downcase)
   end
 

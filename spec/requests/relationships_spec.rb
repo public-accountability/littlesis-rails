@@ -5,12 +5,82 @@ describe 'Relationships Requests' do
   before(:each) { login_as(user, :scope => :user) }
   after(:each) { logout(:user) }
 
+  let(:person) { create(:entity_person, :with_person_name) }
+  let(:org) { create(:entity_org, :with_org_name) }
+
+  describe 'Creating Relationships' do
+    let(:params) do
+      {
+        relationship: {
+          entity1_id: person.id,
+          entity2_id: org.id,
+          category_id: 1,
+          is_current: 'YES',
+          description1: 'Director'
+        },
+        reference: attributes_for(:document)
+      }
+    end
+
+    subject { -> { post relationships_path, params: params } }
+
+    context 'valid position relationship' do
+      it { is_expected.to change { Relationship.count }.by(1) }
+      it { is_expected.to change { Reference.count }.by(1) }
+
+      it do
+        is_expected.to change { person.reload.last_user_id }.to(user.sf_guard_user.id)
+      end
+
+      it do
+        is_expected.to change { org.reload.last_user_id }.to(user.sf_guard_user.id)
+      end
+
+      it 'responds with json containing the relationship id' do
+        subject.call
+        expect(json).to eql('relationship_id' => Relationship.last.id)
+      end
+
+      context 'is board membership' do
+        before do
+          params[:relationship][:position_attributes] = { is_board: 'true' }
+        end
+
+        it { is_expected.to change { Relationship.count }.by(1) }
+
+        it 'corrects updates "is_board" on position' do
+          expect(&subject).to change { Position.count }.by(1)
+          expect(Position.last.is_board).to eql true
+        end
+      end
+    end
+
+    context 'with invalid url' do
+      before { params[:reference][:url] = 'I AM A BAD URL' }
+      it { is_expected.not_to change { Relationship.count } }
+
+      it 'rends json of errors' do
+        subject.call
+        expect(response).to have_http_status :bad_request
+        expect(response.body).to include 'is not a valid url'
+      end
+    end
+
+    context 'with amount amount field' do
+      before { params[:relationship][:amount] = '$25,000' }
+      it { is_expected.to change { Relationship.count }.by(1) }
+
+      it 'adds amount field to relationship' do
+        subject.call
+        expect(Relationship.last.amount).to eql 25_000
+      end
+    end
+  end
+
   describe 'Updating relationships' do
     let(:notes) { Faker::Lorem.sentence }
-    let(:person) { create(:entity_person, :with_person_name) }
-    let(:org) { create(:entity_org, :with_org_name) }
 
-    describe 'Position Relationshi' do
+    describe 'Position Relationship' do
       let(:position_relationship) do
         Relationship
           .create!(category_id: 1, entity: person, related: org, description1: 'Lobbyist')
@@ -40,6 +110,7 @@ describe 'Relationships Requests' do
       let(:patch_request) { proc { patch relationship_path(position_relationship), params: params } }
 
       context 'updating relationship fields' do
+        
         it 'redirects to relationship page' do
           patch_request.call
           redirects_to_path relationship_path(position_relationship)
@@ -70,7 +141,7 @@ describe 'Relationships Requests' do
           expect(position_relationship.reload.notes).to be nil
         end
       end
-    end # Positiong Relationship
+    end # Position Relationship
 
     describe 'Transaction Relationship' do
       let(:entity1) { create(:entity_org, :with_org_name) }
@@ -80,16 +151,16 @@ describe 'Relationships Requests' do
         Relationship.create!(category_id: Relationship::TRANSACTION_CATEGORY,
                              entity: entity1,
                              related: entity2,
-                             description1: "Contractor",
-                             description2: "Client")
+                             description1: 'Contractor',
+                             description2: 'Client')
       end
 
       let(:base_params) do
         {
           reference: { just_cleaning_up: 1, url: nil, name: nil },
           relationship: {
-            description1: "Contractor",
-            description2: "Client",
+            description1: 'Contractor',
+            description2: 'Client',
             start_date: '',
             end_date: '',
             is_current: '',

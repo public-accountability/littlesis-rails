@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ReferenceableController
   private
 
@@ -12,7 +14,10 @@ module ReferenceableController
   end
 
   def reference_params(param_key = :reference)
-    params.require(param_key).permit(:name, :url, :excerpt, :publication_date, :ref_type)
+    params
+      .require(param_key)
+      .permit(:name, :url, :excerpt, :publication_date, :ref_type)
+      .to_h
   end
 
   def existing_reference_params
