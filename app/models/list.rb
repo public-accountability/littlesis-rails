@@ -8,7 +8,9 @@ class List < ApplicationRecord
   include Tagable
   include Api::Serializable
 
-  has_paper_trail
+  IGNORE_FIELDS = %i[is_admin is_featured last_user_id delta access featured_list_id]
+
+  has_paper_trail ignore: IGNORE_FIELDS
 
   belongs_to :user, foreign_key: 'creator_user_id', inverse_of: :lists
 
