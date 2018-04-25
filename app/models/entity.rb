@@ -858,7 +858,7 @@ class Entity < ApplicationRecord
     extension_models.each(&:destroy)
     extension_records.destroy_all
     images.each(&:soft_delete)
-    list_entities.each(&:soft_delete)
+    list_entities.each(&:destroy)
     relationships.each(&:soft_delete)
     taggings.destroy_all
     # ArticleEntity

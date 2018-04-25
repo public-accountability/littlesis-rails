@@ -162,15 +162,14 @@ describe ListsController, :list_helper, type: :controller do
     login_admin
     let(:list) { create(:list).tap { |l| l.update_column(:updated_at, 1.day.ago) } }
     let(:person) { create(:entity_person) }
-    let(:list_entity) { ListEntity.create!(list_id: list.id, entity_id: person.id) }
+    let!(:list_entity) { ListEntity.create!(list_id: list.id, entity_id: person.id) }
 
     let(:post_remove_entity) do
       proc { post :remove_entity, params: { id: list.id, list_entity_id: list_entity.id } }
     end
 
     it 'removes the list entity' do
-      expect(&post_remove_entity)
-        .to change { ListEntity.unscoped.find(list_entity.id).is_deleted }.to(true)
+      expect(&post_remove_entity).to change { ListEntity.count }.by(-1)
     end
 
     it 'updates the updated_at of the list' do
