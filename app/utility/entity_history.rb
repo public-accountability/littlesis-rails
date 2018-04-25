@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 # Class used to retrieve versions and edits for entities
-class EntityHistory
-  include Pagination
+class EntityHistory < RecordHistory
   attr_internal :entity
   delegate :id, to: :entity, prefix: true
 
@@ -16,21 +15,26 @@ class EntityHistory
   # of the user responsible for the change
   def versions(page: 1, per_page: 15)
     raise ArgumentError unless page.is_a?(Integer) && per_page.is_a?(Integer)
-    add_users_to_versions(
-      paginate(
-        page,
-        per_page,
-        versions_for(page: page, per_page: per_page),
-        versions_count
+    define_as_presenters(
+      add_users_to_versions(
+        paginate_versions(page, per_page)
       )
     )
   end
 
   private
 
+  # add singleton method `as_presenters` which converts each Version to EntityVersionPresenter
+  def define_as_presenters(versions)
+    versions.tap do |vrs|
+      vrs.define_singleton_method(:as_presenters) do
+        self.map { |v| EntityVersionPresenter.new(v) }
+      end
+    end
+  end
+
   # [Array-like] -> [Array-like]
   # add attribute user to each <Version> which the <User> model
-  # add singleton method `as_presenters` which converts each Version to EntityVersionPresenter
   def add_users_to_versions(versions)
     users = User.lookup_table_for versions.map(&:whodunnit).compact.uniq
     entity_for = self.entity
@@ -46,29 +50,7 @@ class EntityHistory
           @entity = entity_for
         end
       end
-    end.tap do |vrs|
-      vrs.define_singleton_method(:as_presenters) do
-        self.map { |v| EntityVersionPresenter.new(v) }
-      end
     end
-  end
-
-  # int, int -> Array[Version]
-  # returns PaperTrail::Version models, ordered by most recent
-  def versions_for(page:, per_page:)
-    PaperTrail::Version.find_by_sql(versions_paginated_sql(page: page, per_page: per_page))
-  end
-
-  # -> integer
-  # total count of all versions for the entity
-  def versions_count
-    ApplicationRecord.execute_one versions_sql(select: 'COUNT(*)', order: '')
-  end
-
-  # int, int -> str
-  # paginated sql of versions query
-  def versions_paginated_sql(page:, per_page:)
-    "#{versions_sql} LIMIT #{per_page} OFFSET #{(page - 1) * per_page}"
   end
 
   # str, str -> str
