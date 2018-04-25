@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class EntityVersionPresenter < SimpleDelegator
   include ActionView::Helpers::UrlHelper
-  delegate :relationship_path, :entity_path, to: "Rails.application.routes.url_helpers"
+  delegate :relationship_path, :entity_path, :list_path, to: "Rails.application.routes.url_helpers"
   IGNORE_FIELDS = Set.new(%w[id created_at updated_at link_count last_user_id delta])
 
   def render
@@ -26,6 +28,9 @@ class EntityVersionPresenter < SimpleDelegator
     when 'Alias'
       return "added a alias #{alias_name}" if create_event?
       return "renamed the alias #{alias_name}" if delete_event?
+    when 'ListEntity'
+      return "added this entity to the list #{list_name}" if create_event?
+      return "removed this entity from the list #{list_name}" if delete_event?
     when *Entity.all_extension_names_with_fields
       return updated_fields_text if update_event?
     else
@@ -84,6 +89,13 @@ class EntityVersionPresenter < SimpleDelegator
   def tag_name
     tag_id = fetch_from_object_or_changeset('tag_id')
     Tag.lookup.fetch(tag_id).name
+  end
+
+  def list_name
+    return '?' if other_id.blank?
+    list = List.unscoped.find(other_id)
+    return list.name if list.is_deleted
+    link_to list.name, list_path(list)
   end
 
   def extension_name

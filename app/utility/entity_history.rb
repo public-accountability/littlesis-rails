@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Class used to retrieve versions and edits for entities
 class EntityHistory
   include Pagination
