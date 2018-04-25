@@ -10,6 +10,17 @@
 class RecordHistory
   include Pagination
 
+  private_class_method def self.model_name(name)
+    class_eval do
+      const_set :MODEL_NAME, name
+      attr_reader name
+    end
+  end
+
+  def initialize(record)
+    instance_variable_set "@#{self.class.const_get(:MODEL_NAME)}", record
+  end
+
   def versions
     raise NotImplementedError    
   end

@@ -2,12 +2,8 @@
 
 # Class used to retrieve versions and edits for entities
 class EntityHistory < RecordHistory
-  attr_internal :entity
+  model_name :entity
   delegate :id, to: :entity, prefix: true
-
-  def initialize(entity_or_id)
-    self.entity = Entity.entity_for(entity_or_id)
-  end
 
   # int, int -> Kaminari::PaginatableArray
   # Returns paginated array of versions
