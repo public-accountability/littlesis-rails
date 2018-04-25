@@ -34,4 +34,16 @@ feature 'list page', type: :feature do
       expect(page).to have_selector '#tags-list li', text: tag.name
     end
   end
+
+  features 'viewing modifications to a list' do
+    with_versioning do
+      let(:user) { create_basic_user }
+      before do
+        PaperTrail.whodunnit(user.id.to_s)  { @list = create(:list)  }
+      end
+      scenario 'list has been created' do
+        
+      end
+    end
+  end
 end

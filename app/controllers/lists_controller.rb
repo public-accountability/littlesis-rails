@@ -243,8 +243,8 @@ class ListsController < ApplicationController
   end
 
   def modifications
-    @versions = Kaminari.paginate_array(@list.versions.reverse).page(params[:page]).per(5)
-    @all_entities = ListEntity.unscoped.where(list_id: @list.id).order(id: :desc).page(params[:page]).per(10)
+    # @versions = Kaminari.paginate_array(@list.versions.reverse).page(params[:page]).per(5)
+    # @all_entities = ListEntity.unscoped.where(list_id: @list.id).order(id: :desc).page(params[:page]).per(10)
   end
 
   private

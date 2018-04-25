@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'lists/modifications.html.erb' do
+xdescribe 'lists/modifications.html.erb' do
   with_versioning do
     describe 'layout' do
       include ListsHelper

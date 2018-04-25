@@ -3,6 +3,7 @@
 # intended to be subclassed to wrap PaperTrail::Version objects
 class VersionPresenter < SimpleDelegator
   include ActionView::Helpers::UrlHelper
+  delegate :relationship_path, :entity_path, :list_path, to: "Rails.application.routes.url_helpers"
 
   protected
 
@@ -44,5 +45,9 @@ class VersionPresenter < SimpleDelegator
 
   def updated_fields
     @updated_fields ||= (object_changes.keys.to_set - IGNORE_FIELDS).to_a
+  end
+
+  def model
+    @model ||= item_type.constantize.unscoped.find(item_id)
   end
 end
