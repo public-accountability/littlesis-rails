@@ -5,7 +5,10 @@ class ListEntity < ApplicationRecord
   include Api::Serializable
 
   has_paper_trail on: [:create, :destroy],
-                  meta: { entity1_id: :entity_id }
+                  meta: {
+                    entity1_id: :entity_id,
+                    other_id: :list_id
+                  }
 
   belongs_to :list, inverse_of: :list_entities
   belongs_to :entity, inverse_of: :list_entities

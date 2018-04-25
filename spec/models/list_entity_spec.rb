@@ -27,6 +27,11 @@ describe ListEntity do
           create_list_entity.call
           expect(ListEntity.last.versions.first.entity1_id).to eql entity.id
         end
+
+        it 'puts list_id in other_id column' do
+          create_list_entity.call
+          expect(ListEntity.last.versions.first.other_id).to eql list.id
+        end
       end
     end
   end
