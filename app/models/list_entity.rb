@@ -13,6 +13,7 @@ class ListEntity < ApplicationRecord
   belongs_to :list, inverse_of: :list_entities
   belongs_to :entity, inverse_of: :list_entities
 
+  # after_save :touch_list_and_update
   after_destroy :touch_list
 
   private

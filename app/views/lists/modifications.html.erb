@@ -1,3 +1,4 @@
+
 <% content_for(:page_title, raw(@list.name)) %>
 
 <%= render partial: 'header', locals: { list: @list } %>
@@ -5,16 +6,13 @@
 
 <h2>Recent edits:</h2>
 
-<% versions = ListHistory.new(@list).versions(page: 1).as_presenters %>
+<% versions = ListHistory.new(@list).versions(page: @page).as_presenters %>
 
 <div class="row">
-  <div class="col-sm-12 nopadding">
+  <div class="col-sm-12">
     <div id="record-history-container">
-      
       <%= render partial: 'edits/record_history_table', locals: { versions: versions } %>
-      
       <%= paginate versions %>
     </div>
-    
-  </div> <%# end of col-sm %>
+  </div>
 </div>
