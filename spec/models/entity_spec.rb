@@ -1,7 +1,8 @@
-# coding: utf-8
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-describe Entity, :tag_helper  do
+describe Entity, :tag_helper do
   before(:all) {  DatabaseCleaner.start }
   after(:all)  {  DatabaseCleaner.clean }
   seed_tags
@@ -528,7 +529,6 @@ describe Entity, :tag_helper  do
       end
     end
 
-
     describe '#merge_extension' do
       let(:business) do
         create(:entity_org).tap { |e| e.add_extension('Business') }
@@ -557,6 +557,51 @@ describe Entity, :tag_helper  do
       end
     end
   end # end Extension Attributes Functions
+
+  describe 'user related methods' do
+    describe '#update_timestamp_for' do
+      let(:initial_user) { create_really_basic_user }
+      let(:new_user) { create_really_basic_user }
+
+      let!(:entity) do
+        create(:entity_person, last_user_id: initial_user.sf_guard_user_id).tap do |e|
+          e.update_column(:updated_at, 1.year.ago)
+        end
+      end
+
+      it 'updates last user id and updated_at' do
+        expect(entity.last_user_id).to eql initial_user.sf_guard_user_id
+        entity.update_timestamp_for(new_user)
+        expect(entity.updated_at).to be > 1.second.ago
+        expect(entity.last_user_id).to eql new_user.sf_guard_user_id
+      end
+
+      it 'only changes updated_at when user is the same' do
+        entity.update_timestamp_for(initial_user)
+        expect(entity.updated_at).to be > 1.second.ago
+        expect(entity.last_user_id).to eql initial_user.sf_guard_user_id
+      end
+
+      it 'defaults to system user if provided user is nil' do
+        entity.update_timestamp_for(nil)
+        expect(entity.updated_at).to be > 1.second.ago
+        expect(entity.last_user_id).to eql APP_CONFIG.fetch('system_user_id')
+      end
+
+      it 'returns self' do
+        expect(entity.update_timestamp_for(new_user)).to eql entity
+        expect(entity.update_timestamp_for(nil)).to eql entity
+        expect(entity.update_timestamp_for(initial_user)).to eql entity
+      end
+
+      with_versioning do
+        it 'does not create a version' do
+          expect { entity.update_timestamp_for(new_user) }
+            .not_to change { PaperTrail::Version.count }
+        end
+      end
+    end
+  end
 
   describe 'basic_info' do
     context 'is a person' do

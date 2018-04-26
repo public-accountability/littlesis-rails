@@ -560,6 +560,24 @@ class Entity < ApplicationRecord
   # User-related methods
   #
 
+  # This update the timestamps and last_user_id as needed.
+  # valid inputs:
+  #   - string/integer of the SF GUARD user id
+  #   - SfGuardUser
+  #   - User
+  # If input is any other class it will default to using the default 'system' user
+  def update_timestamp_for(input)
+    sf_user_id = User.derive_last_user_id_from(input, allow_invalid: true)
+
+    if sf_user_id == last_user_id
+      touch # rubocop:disable Rails/SkipsModelValidations
+    else
+      update(last_user_id: sf_user_id)
+    end
+
+    self
+  end
+
   def set_last_user_id
     self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
   end
