@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Entity < ApplicationRecord
   include SingularTable
   include SoftDelete
@@ -27,7 +29,6 @@ class Entity < ApplicationRecord
   has_many :images, inverse_of: :entity, dependent: :destroy
   has_many :list_entities, inverse_of: :entity, dependent: :destroy
   has_many :lists, through: :list_entities
-  # has_many :networks, -> { where(is_network: true) }, class_name: "List", through: :list_entities, source: :list
   has_many :links, foreign_key: "entity1_id", inverse_of: :entity, dependent: :destroy
   has_many :reverse_links, class_name: "Link", foreign_key: "entity2_id", inverse_of: :related, dependent: :destroy
   has_many :relationships, through: :links
@@ -46,7 +47,7 @@ class Entity < ApplicationRecord
   has_many :article_entities, inverse_of: :entity, dependent: :destroy
   has_many :articles, through: :article_entities, inverse_of: :entities
   has_many :queue_entities, inverse_of: :entity, dependent: :destroy
-  
+
   # extensions
   has_one :person, inverse_of: :entity, dependent: :destroy
   has_one :org, inverse_of: :entity, dependent: :destroy
@@ -95,9 +96,9 @@ class Entity < ApplicationRecord
   before_create :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext
 
-  def set_last_user_id
-    self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
-  end
+  ##
+  # aliases
+  #
 
   # creates primary alias if the entity does not have one
   def create_primary_alias
@@ -113,6 +114,14 @@ class Entity < ApplicationRecord
   def primary_alias
     aliases.find_by_is_primary(true)
   end
+
+  def also_known_as
+    aliases.where(is_primary: false).map(&:name)
+  end
+
+  ##
+  # extensions
+  #
 
   def create_primary_ext
     fields = person? ? NameParser.parse_to_hash(name) : {}
@@ -164,6 +173,10 @@ class Entity < ApplicationRecord
     (extension_names & Entity.all_extension_names_with_fields).map do |name|
       name.constantize.find_by_entity_id(id)
     end
+  end
+
+  def types
+    extension_definitions.map(&:display_name)
   end
 
   # Returns a hash where the key in each key/value pair is the extension name
@@ -342,40 +355,9 @@ class Entity < ApplicationRecord
     all_extension_names_with_fields.include? ext_name_or_id_to_name(name_or_id)
   end
 
-  def related_essential_words
-    words = []
-    relateds.where("link.category_id = 1").where(primary_ext: "Org").each do |related|
-      words.concat(OrgName.essential_words(related.name))
-    end
-    words.uniq
-  end
-
-  def google_image_search_result_urls(page=1, filter_with_related=false)
-    key = Lilsis::Application.config.google_custom_search_key
-    engine_id = Lilsis::Application.config.google_custom_search_engine_id
-    start = 1 + (10 * (page - 1))
-
-    query = '"' + name + '"'
-
-    url = "https://www.googleapis.com/customsearch/v1?" + {
-      key: key,
-      cx: engine_id,
-      q: query,
-      imgSize: "xxlarge",
-      imgType: "face",
-      start: start
-    }.to_query
-    JSON::parse(open(url).read)["items"].collect do |i| 
-      if i["pagemap"].nil? ||  i["pagemap"]["cse_image"].nil?
-        nil
-      elsif filter_with_related && (i["snippet"].split(/[\.,\-\/\s]/).map(&:downcase) & related_essential_words.take(20)).empty?
-        nil
-      else
-        i["pagemap"]["cse_image"].first["src"]
-      end      
-    end.reject(&:nil?)
-  end
-
+  ##
+  # images
+  #
   def default_image_url
     return "/images/system/anon.png" if person?
     "/images/system/anons.png"
@@ -400,6 +382,21 @@ class Entity < ApplicationRecord
     return nil unless image = featured_image
     image.url
   end
+
+  def add_image_from_url(url, force_featured = false, caption = nil)
+    return if images.find { |i| i.url == url }
+    image = Image.new_from_url(url)
+    return false unless image
+    image.title = name
+    image.caption = caption
+    images << image
+    image.feature if force_featured or !has_featured_image
+    image
+  end
+
+  ##
+  # interlocks
+  #
 
   def relateds_by_count(num=5, primary_ext=nil)
     r = relateds.select("entity.*, COUNT(link.id) AS num").group("link.entity2_id").order("num DESC").limit(num)
@@ -471,6 +468,38 @@ class Entity < ApplicationRecord
     entities
   end
 
+  def self.interlock_ids(entity1_id, entity2_id)
+    related_ids = Link.where(entity1_id: entity1_id).pluck(:entity2_id).uniq
+    Link.where(entity1_id: entity2_id, entity2_id: related_ids).pluck(:entity2_id).uniq - [entity1_id, entity2_id].map(&:to_i)
+  end
+
+  ##
+  # utilities
+  #
+
+  # The cacheable concern overrides 'cache_key' and uses it for legacy caching.
+  # So until we rid ourselves of legacy cache, will use alt_cache_key  @('_')@
+  def alt_cache_key
+    "entity/#{id}-#{updated_at.to_i}"
+  end
+
+  # A type checker for definition id and names
+  # input: String or Integer
+  # output: String or throws ArgumentError
+  def self.ext_name_or_id_to_name(name_or_id)
+    case name_or_id
+    when String
+      return name_or_id if all_extension_names.include?(name_or_id)
+      raise ArgumentError, "there are no extensions associated with name: #{name_or_id}"
+    when Integer
+      name = all_extension_names[name_or_id]
+      return name unless name.nil?
+      raise ArgumentError, "there is no extension associated with id #{name_or_id}"
+    else
+      raise ArgumentError, "input must be a string or an integer"
+    end
+  end
+
   def self.rubin # :)
     find(1164)
   end
@@ -489,8 +518,21 @@ class Entity < ApplicationRecord
     raise ArgumentError, "Accepted types: Entity, Integer, or String"
   end
 
-  def last_new_user
-    last_user.user
+  def set_attribute(key, value)
+    if has_attribute?(key)
+      update_attribute(key.to_sym, value)
+    else
+      extensions_with_attributes.each do |ext, hash|
+        if hash.has_key?(key)
+          ext.constantize.find_by(entity_id: id).update_attribute(key, value)
+          break
+        end
+      end
+    end
+  end
+
+  def update_link_count
+    update(link_count: links.count)
   end
 
   def name_without_initials
@@ -499,10 +541,6 @@ class Entity < ApplicationRecord
 
   def affiliations
     relateds.where('link.category_id IN (1, 3)')
-  end
-
-  def types
-    extension_definitions.map(&:display_name)
   end
 
   def industries
@@ -517,6 +555,22 @@ class Entity < ApplicationRecord
       []
     end
   end
+
+  ##
+  # User-related methods
+  #
+
+  def set_last_user_id
+    self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
+  end
+
+  def last_new_user
+    last_user.user
+  end
+
+  ##
+  # Entity Fields
+  #
 
   def all_field_details
     entity_fields.includes(:field)
@@ -608,6 +662,10 @@ class Entity < ApplicationRecord
     update_fields(hash)
   end
 
+  ##
+  # Couple
+  #
+
   def self.create_couple(name, partner1, partner2)
     blurb = [partner1.blurb, partner2.blurb].compact.join('; ')
     blurb = nil unless blurb.present?
@@ -636,15 +694,13 @@ class Entity < ApplicationRecord
     couples.map { |c| c.partner1_id == id ? c.partner2 : c.partner1 }
   end
 
-  def add_image_from_url(url, force_featured = false, caption = nil)
-    return if images.find { |i| i.url == url }
-    image = Image.new_from_url(url)
-    return false unless image
-    image.title = name
-    image.caption = caption
-    images << image
-    image.feature if force_featured or !has_featured_image
-    image
+  ##
+  # articles, addresses, references
+  #
+
+  # Returns all associated references and references for all relationships the entity is in
+  def all_references
+    Reference.all_entity_references(self)
   end
 
   def featured_articles
@@ -674,19 +730,6 @@ class Entity < ApplicationRecord
     Entity.joins(:person).where(person: { party_id: id})
   end
 
-  def set_attribute(key, value)
-    if has_attribute?(key)
-      update_attribute(key.to_sym, value)
-    else
-      extensions_with_attributes.each do |ext, hash|
-        if hash.has_key?(key)
-          ext.constantize.find_by(entity_id: id).update_attribute(key, value)
-          break
-        end
-      end
-    end
-  end
-
   def unique_addresses
     # returns addresses without geocoding and the most recent address per unique lonlat
     index = {}
@@ -701,13 +744,13 @@ class Entity < ApplicationRecord
     index.values.concat(nils)
   end
 
-  def update_link_count
-    update(link_count: links.count)
-  end
+  ##
+  # View Helpers
+  # TODO: Move these to a presenter
+  #
 
-  def self.interlock_ids(entity1_id, entity2_id)
-    related_ids = Link.where(entity1_id: entity1_id).pluck(:entity2_id).uniq
-    Link.where(entity1_id: entity2_id, entity2_id: related_ids).pluck(:entity2_id).uniq - [entity1_id, entity2_id].map(&:to_i)
+  def description
+    blurb
   end
 
   def summary_excerpt
@@ -742,20 +785,9 @@ class Entity < ApplicationRecord
     info
   end
 
-  def also_known_as
-    aliases.where(is_primary: false).map(&:name)
-  end
-
-  # Returns all associated references and references for all relationships the entity is in
-  def all_references
-    Reference.all_entity_references(self)
-  end
-
-  # The cacheable concern overrides 'cache_key' and uses it for legacy caching.
-  # So until we rid ourselves of legacy cache, will use alt_cache_key  @('_')@
-  def alt_cache_key
-    "entity/#{id}-#{updated_at.to_i}"
-  end
+  ##
+  # Merging, and history History
+  #
 
   class EntityDeleted < Exceptions::ModelIsDeletedError
   end
@@ -799,10 +831,6 @@ class Entity < ApplicationRecord
     end
   end
 
-  def description
-    blurb
-  end
-
   def slug
     "/#{primary_ext.downcase}/#{to_param}"
   end
@@ -820,7 +848,7 @@ class Entity < ApplicationRecord
     raise ActiveRecord::RecordNotFound if e.nil? or e&.is_deleted?
     e
   end
-  
+
   # ?Symbol -> Entity
   def resolve_merges(skope = :itself)
     return Entity.unscoped.send(skope).find_by_id(merged_id).resolve_merges(skope) if has_merges?
@@ -833,22 +861,9 @@ class Entity < ApplicationRecord
 
   # ^-- MERGING
 
-  # A type checker for definition id and names
-  # input: String or Integer
-  # output: String or throws ArgumentError
-  def self.ext_name_or_id_to_name(name_or_id)
-    case name_or_id
-    when String
-      return name_or_id if all_extension_names.include?(name_or_id)
-      raise ArgumentError, "there are no extensions associated with name: #{name_or_id}"
-    when Integer
-      name = all_extension_names[name_or_id]
-      return name unless name.nil?
-      raise ArgumentError, "there is no extension associated with id #{name_or_id}"
-    else
-      raise ArgumentError, "input must be a string or an integer"
-    end
-  end
+  ##
+  # Private helper methods
+  #
 
   private
 
