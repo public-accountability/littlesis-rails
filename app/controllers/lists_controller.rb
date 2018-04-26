@@ -31,6 +31,8 @@ class ListsController < ApplicationController
   before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
+  before_action :set_page, only: [:modifications]
+
   def self.get_lists(page)
     List
       .select("ls_list.*, COUNT(DISTINCT(ls_list_entity.entity_id)) AS entity_count")
@@ -243,8 +245,6 @@ class ListsController < ApplicationController
   end
 
   def modifications
-    # @versions = Kaminari.paginate_array(@list.versions.reverse).page(params[:page]).per(5)
-    # @all_entities = ListEntity.unscoped.where(list_id: @list.id).order(id: :desc).page(params[:page]).per(10)
   end
 
   private
