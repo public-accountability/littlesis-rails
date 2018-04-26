@@ -107,23 +107,6 @@ describe Relationship, type: :model do
     end
   end
 
-  describe '#last_user_id_for_entity_update' do
-    it 'returns provided sf_user_id' do
-      rel = build(:generic_relationship)
-      expect(rel.send(:last_user_id_for_entity_update, 345)).to eql 345
-    end
-
-    it 'returns system user id if last_user_id is nil' do
-      rel = build(:generic_relationship, last_user_id: nil)
-      expect(rel.send(:last_user_id_for_entity_update)).to eq APP_CONFIG.fetch('system_user_id')
-    end
-
-    it 'returns relationship last user id' do
-      rel = build(:generic_relationship, last_user_id: 987)
-      expect(rel.send(:last_user_id_for_entity_update)).to eq 987
-    end
-  end
-
   describe '#update_entity_timestatmps' do
     before(:all) do
       @sf_guard_user_1 = create(:sf_guard_user)
