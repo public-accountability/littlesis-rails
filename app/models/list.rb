@@ -80,7 +80,7 @@ class List < ApplicationRecord
               .joins("LEFT JOIN ls_list_entity le ON (le.entity_id = e1.id)")
               .joins("LEFT JOIN extension_record er ON (er.entity_id = entity.id)")
               .joins("LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)")
-              .where("le.is_deleted = 0 AND entity.is_deleted = 0 AND e1.is_deleted = 0")
+              .where("entity.is_deleted = 0 AND e1.is_deleted = 0")
               .where("le.list_id = #{id}")
               .where("link.category_id IN (#{options[:category_ids].join(', ')})")
               .group("entity.id")
