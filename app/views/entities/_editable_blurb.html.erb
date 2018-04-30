@@ -1,2 +1,11 @@
-<span id="entity-blurb-text">you can edit me!</span>
+<div id="editable-blurb">
+  <span id="entity-blurb-text"><%= entity.blurb %></span>
+  <span id="entity-blurb-pencil"><button>edit</button></span>
+</div>
+
+
+<%= javascript_tag do %>
+  $(function(){ entity.editableBlurb(); });
+<% end %>
+
 
