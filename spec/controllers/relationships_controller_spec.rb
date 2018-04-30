@@ -199,19 +199,6 @@ describe RelationshipsController, type: :controller do
     end
   end # end describe POST #create
 
-  describe 'DELETE /relationship/id' do
-    login_user
-
-    it 'destroys relationship and redirects to dashboard' do
-      @rel = build :relationship
-      expect(Relationship).to receive(:find).with('1').and_return(@rel)
-      expect(@rel).to receive(:soft_delete).once
-      delete :destroy, params: { id: '1' }
-      expect(response).to have_http_status 302
-      expect(response.location).to include '/home/dashboard'
-    end
-  end
-
   describe 'GET /relationships/id/edit' do
     login_user
     let(:relationship) { build :relationship }

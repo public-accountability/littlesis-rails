@@ -103,6 +103,7 @@ class RelationshipsController < ApplicationController
   end
 
   def destroy
+    @relationship.current_user = current_user
     @relationship.soft_delete
     redirect_to home_dashboard_path, notice: 'Relationship successfully deleted'
   end

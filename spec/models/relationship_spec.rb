@@ -91,7 +91,7 @@ describe Relationship, type: :model do
   describe 'touch: entity and related' do
     before do
       @elected = create(:elected)
-      @org = create(:org)
+      @org = create(:entity_org)
     end
 
     it 'updates updated_at of entity after change' do

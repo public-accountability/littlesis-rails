@@ -210,5 +210,31 @@ describe 'Relationships Requests' do
         end
       end
     end # end updating and reversing
+  end # end updating relationships
+
+  describe 'deleting relationships' do
+    # let(:user) { create_admin_user }
+    let(:entity) { create(:entity_org) }
+    let(:related) { create(:entity_person) }
+    let!(:relationship) do
+      create(:generic_relationship, entity: entity, related: related, last_user_id: 1)
+    end
+    subject { -> { delete relationship_path(relationship), params: { id: relationship.id } } }
+
+    context 'as a regular user' do
+      before { subject.call }
+      denies_access
+    end
+
+    context 'as an admin user' do
+      let(:user) { create_admin_user }
+      it { is_expected.to change { Relationship.count }.by(-1) }
+      it { is_expected.to change { entity.reload.last_user_id }.from(1).to(user.sf_guard_user_id) }
+      it { is_expected.to change { related.reload.last_user_id }.from(1).to(user.sf_guard_user_id) }
+      it 'redirects to dashboard' do
+        subject.call
+        redirects_to_path home_dashboard_path
+      end
+    end
   end
 end
