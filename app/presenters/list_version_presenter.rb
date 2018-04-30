@@ -15,7 +15,7 @@ class ListVersionPresenter < VersionPresenter
       return 'deleted the list' if delete_event?
     when 'ListEntity'
       return "added #{entity_link} to the list" if create_event?
-      return "removed #{entity_link} to the list" if delete_event?
+      return "removed #{entity_link} from the list" if delete_event?
     else
       raise Exceptions::ThatsWeirdError, "Trying to process ListVersion with type: #{item_type}"
     end

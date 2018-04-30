@@ -48,6 +48,9 @@ feature 'list page', type: :feature do
       scenario 'list has been created' do
         visit "#{list_path(List.last)}/modifications"
 
+        page_has_selectors '#list-header', '#list-tab-menu'
+        page_has_selector '.tab', text: 'Sources'
+
         page_has_selector '#record-history-container'
         page_has_selector '#record-history-container table tr', count: 1
         expect(page).to have_text "#{user.username} created the list"

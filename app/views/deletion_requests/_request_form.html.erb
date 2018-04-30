@@ -2,7 +2,7 @@
   <%= form_tag(deletion_requests_path, method: :post, class: 'user-request-form') do %>
     <%= hidden_field_tag 'entity_id', @entity.id %>
     <div class="entity-deletion-justification user-request-justification">
-      <p>Please breifly explain why this entity should be deleted:</p>
+      <p>Please briefly explain why this entity should be deleted:</p>
     </div>
     <div id="entity-deletion-action-buttons">
       <%= text_area_tag 'justification', nil, size: "25x4", required: true %>

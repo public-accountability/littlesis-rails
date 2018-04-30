@@ -161,21 +161,18 @@ describe ListsController, :list_helper, type: :controller do
 
   describe 'remove_entity' do
     login_admin
-    let(:list) { create(:list).tap { |l| l.update_column(:updated_at, 1.day.ago) } }
+    let(:list) { create(:list) }
     let(:person) { create(:entity_person) }
     let!(:list_entity) { ListEntity.create!(list_id: list.id, entity_id: person.id) }
 
     let(:post_remove_entity) do
-      proc { post :remove_entity, params: { id: list.id, list_entity_id: list_entity.id } }
+      proc do
+        post :remove_entity, params: { id: list.id, list_entity_id: list_entity.id }
+      end
     end
 
     it 'removes the list entity' do
       expect(&post_remove_entity).to change { ListEntity.count }.by(-1)
-    end
-
-    it 'updates the updated_at of the list' do
-      expect(&post_remove_entity)
-        .to change { List.find(list.id).updated_at }
     end
 
     it 'redirects to the members page' do

@@ -7,9 +7,13 @@ module ListHelpersForExampleGroups
       elsif x[:action] == :destroy
         delete x[:action], params: { id: '123' }
       elsif [:add_entity, :remove_entity, :update_entity].include?(x[:action])
+
+        allow(ListEntity).to receive(:add_to_list!) if x[:action] == :add_entity
+        allow(ListEntity).to receive(:remove_from_list!) if x[:action] == :remove_entity
+
         post x[:action], params: { id: '123', entity_id: '123', list_entity_id: '456' }
       elsif x[:action] == :create_entity_associations
-        post x[:action] #,{ data: [{ type: 'entities', id: 1 }] }
+        post x[:action] # { data: [{ type: 'entities', id: 1 }] }
       else
         get x[:action], params: { id: '123' }
       end
