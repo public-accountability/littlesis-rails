@@ -121,25 +121,34 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   describe "header" do
     before { visit_page.call }
 
-    it "shows the entity's name" do
-      expect(page.find("#entity-name")).to have_text person.name
+    context 'anon user' do
+
+      it "shows the entity's name" do
+        expect(page.find("#entity-name")).to have_text person.name
+      end
+
+      it "shows a description of the entity" do
+        expect(page.find("#entity-blurb-text")).to have_text person.blurb
+      end
+
+      it 'does not link to edit blurb'
+
+      it "shows action buttons" do
+        page_has_selector ".action-button", count: 3
+      end
+
+      it "shows an edit history" do
+        expect(page.find('#entity-edited-history strong a')[:href]).to eql "/users/#{person.last_user.user.username}"
+        expect(page.find('#entity-edited-history')).to have_text "ago"
+      end
     end
 
-    it "shows a description of the entity" do
-      expect(page.find("#entity-blurb")).to have_text person.blurb
-    end
+    context 'user is signed in' do
+      let(:user) { create_basic_user }
+      before { login_as(user, scope: :user) }
+      after { logout(user) }
 
-    it "shows action buttons" do
-      page_has_selector ".action-button", count: 3
-    end
-
-    # context 'user is signed in' do
-    #   it 'show advanced user action buttons'
-    # end
-
-    it "shows an edit history" do
-      expect(page.find('#entity-edited-history strong a')[:href]).to eql "/users/#{person.last_user.user.username}"
-      expect(page.find('#entity-edited-history')).to have_text "ago"
+      it 'has editable blurb'
     end
   end
 

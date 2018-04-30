@@ -255,10 +255,14 @@ $small_image_size: 50px;
   }
 }
 
-#entity-blurb {
-  font-size: 21px;
-  line-height: 30px;
-  font-weight: 300;
+#entity-blurb-wrapper {
+
+    #entity-blurb-text {
+	font-size: 21px;
+	line-height: 30px;
+	font-weight: 300;
+    }
+  
 }
 
 .entity-blurb {
