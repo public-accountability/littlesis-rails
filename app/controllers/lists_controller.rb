@@ -178,17 +178,14 @@ class ListsController < ApplicationController
   end
 
   def remove_entity
-    #check_permission 'admin'
-    ListEntity.find(params[:list_entity_id]).destroy
-    @list.clear_cache
+    ListEntity.remove_from_list!(params[:list_entity_id].to_i, current_user: current_user)
     redirect_to members_list_path(@list)
   end
 
   def add_entity
-    #check_permission 'lister'
-    le = ListEntity.find_or_create_by(list_id: @list.id, entity_id: params[:entity_id])
-    @list.clear_cache
-    le.entity.update(last_user_id: current_user.sf_guard_user_id)
+    ListEntity.add_to_list!(list_id: @list.id,
+                            entity_id: params[:entity_id],
+                            current_user: current_user)
     redirect_to members_list_path(@list)
   end
 

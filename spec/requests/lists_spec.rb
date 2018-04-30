@@ -5,7 +5,46 @@ describe 'List Requests' do
   before(:each) { login_as(user, :scope => :user) }
   after(:each) { logout(:user) }
 
-  describe 'adding entities to a list' do
+  let(:list) { create(:list, creator_user_id: user.id) }
+  let(:entity) { EntitySpecHelpers.org_updated_one_year_ago }
+
+  describe 'adding one entity to a list' do
+    subject do
+      -> { post add_entity_list_path(list), params: { :entity_id => entity.id } }
+    end
+
+    it { is_expected.to change { ListEntity.count }.by(1) }
+
+    it do
+      is_expected.to change { entity.reload.last_user_id }.to(user.sf_guard_user_id)
+    end
+
+    it do
+      is_expected.to change { entity.reload.updated_at.strftime('%F') }
+                       .from(1.year.ago.strftime('%F'))
+                       .to(Time.current.strftime('%F'))
+    end
+  end
+
+  describe 'removing entity from a list' do
+    let!(:list_entity) do
+      ListEntity.create!(list_id: list.id, entity_id: entity.id)
+    end
+
+    before { list_entity }
+
+    subject do
+      -> { post remove_entity_list_path(list), params: { :list_entity_id => list_entity.id } }
+    end
+
+    it { is_expected.to change { ListEntity.count }.by(-1) }
+
+    it do
+      is_expected.to change { entity.reload.last_user_id }.to(user.sf_guard_user_id)
+    end
+  end
+
+  describe 'adding entities to a list in bulk' do
     let(:user) { create_admin_user } # who may edit lists
     let(:list) { create(:list) }
     let(:entities) { Array.new(2) { create(:random_entity) } }
