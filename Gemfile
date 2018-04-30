@@ -66,6 +66,7 @@ group :test, :development do
   gem 'factory_bot_rails', '~> 4.8.2'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   gem 'jasmine', '~> 3.1.0'
+  gem 'jasmine_selenium_runner'
   gem 'pry'
   gem 'pry-byebug'
   gem 'pry-rails'
@@ -89,7 +90,7 @@ gem 'validate_url', :git => 'https://github.com/perfectline/validates_url.git', 
 gem 'geocoder'
 
 # used for screenshot capture
-gem 'selenium-webdriver', '>= 3.3.0'
+gem 'selenium-webdriver', '>= 3.11.0'
 gem 'headless'
 
 # used to connect to Rocket.Chat's mongo
