@@ -25,7 +25,7 @@ describe LsHash do
     end
 
     it 'raises error if provided invalid class type' do
-      expect { subject.with_last_user([]) }.to raise_error(ArgumentError)
+      expect { subject.with_last_user([]) }.to raise_error(TypeError)
     end
   end
 

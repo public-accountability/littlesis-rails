@@ -50,7 +50,7 @@ class ListDatatable
   end
 
   def get_data
-    list_entities = ListEntity.includes(entity: [:extension_definitions, :os_categories]).where(list_id: @list.id, is_deleted: false, entity: { is_deleted: false })
+    list_entities = ListEntity.includes(entity: [:extension_definitions, :os_categories]).where(list_id: @list.id, entity: { is_deleted: false })
     @data = list_entities.map do |le|
       entity = le.entity
       @types = @types.concat(entity.types)

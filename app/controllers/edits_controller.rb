@@ -16,10 +16,6 @@ class EditsController < ApplicationController
 
   private
 
-  def set_page
-    @page = params[:page].presence&.to_i || 1
-  end
-
   def rel_versions(entity_id, page, per_page = 5)
     raise ArgumentError unless entity_id.is_a? Integer
     PaperTrail::Version

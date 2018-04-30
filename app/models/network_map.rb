@@ -211,47 +211,6 @@ class NetworkMap < ApplicationRecord
     end
   end
 
-
-  def self.entities_for_map(entity_ids)
-    interlocks = Link.interlock_hash_from_entities(entity_ids).select { |k, v| v.count > 1 }.sort { |a, b| a[1].count <=> b[1].count }
-    ids = []
-    interlocks.each do |id, ary|
-      break if ids.count + ary.count > 30
-      ids = entity_ids.concat([id]).concat(ary).uniq
-    end
-    ids
-  end
-
-  def self.create_from_entities(title, user_id, entity_ids)
-    entity_ids = entities_for_map(entity_ids)
-    entities = Entity.joins("LEFT JOIN image ON (image.entity_id = entity.id AND image.is_featured = 1)").where(id: entity_ids).select("entity.*, image.filename")
-    rels = rels_from_entities(entities.map(&:id))
-    data = ERB::Util.json_escape(JSON.dump({ 
-      entities: entities.map { |entity| prepare_entity(entity) },
-      rels: rels.map { |rel| prepare_rel(rel) },
-      texts: []
-    }))
-    sf_guard_user_id = User.find(user_id).sf_guard_user_id
-    create(title: title, user_id: sf_guard_user_id, data: data)
-  end
-
-  def self.rels_from_entities(entity_ids)
-    sql = "SELECT r.id, r.entity1_id, r.entity2_id, r.category_id, r.is_current, r.end_date, r.is_deleted, " + 
-          "GROUP_CONCAT(DISTINCT(rc.name) SEPARATOR ', ') AS label, " + 
-          "GROUP_CONCAT(DISTINCT(r.category_id) SEPARATOR ',') AS category_ids, " + 
-          "COUNT(r.id) AS num " +
-          "FROM relationship r LEFT JOIN relationship_category rc ON (rc.id = r.category_id) " +
-          "LEFT JOIN entity e1 ON (e1.id = r.entity1_id) " +
-          "LEFT JOIN entity e2 ON (e2.id = r.entity2_id) " +
-          "WHERE r.entity1_id IN (" + entity_ids.join(',') + ") " +
-          "AND r.entity2_id IN (" + entity_ids.join(',') + ") " +
-          "AND r.is_deleted = 0 " +
-          "AND r.entity1_id <> r.entity2_id " +
-          "AND e1.is_deleted = 0 AND e2.is_deleted = 0 " +
-          "GROUP BY LEAST(r.entity1_id, r.entity2_id), GREATEST(r.entity1_id, r.entity2_id), r.category_id"
-    rels = ApplicationRecord.connection.exec_query(sql)
-  end
-
   def to_clean_hash
     data = prepared_objects
     map = {

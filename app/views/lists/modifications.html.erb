@@ -1,3 +1,4 @@
+
 <% content_for(:page_title, raw(@list.name)) %>
 
 <%= render partial: 'header', locals: { list: @list } %>
@@ -5,38 +6,13 @@
 
 <h2>Recent edits:</h2>
 
-<%= paginate @versions %>
+<% versions = ListHistory.new(@list).versions(page: @page).as_presenters %>
 
-<table class="table">
-    <thead>
-        <th>Date</th>
-        <th>Type</th>
-        <th>Details</th>
-    </thead>
-    <tbody>
-        <% @versions.each do |ver| %>
-            <tr>
-                <td><%=  ver.created_at %></td>
-                <td><%=  ver.event %></td>
-                <td><%=  version_changes(ver.changeset) %></td>
-            </tr>
-        <% end %>
-    </tbody>
-</table>
-
-<h2>Additions and deletions:</h2>
-<%= paginate @all_entities %>
-
-<table class="table">
-    <thead>
-        <th>Date</th>
-        <th>Add/Delete</th>
-        <th>Name</th>
-    </thead>
-    <tbody>
-        <% @all_entities.each do |entity| %>
-            <%= render partial: "entity_row", locals: {entity: entity} %>
-        <% end %>
-    </tbody>
-</table>
-
+<div class="row">
+  <div class="col-sm-12">
+    <div id="record-history-container">
+      <%= render partial: 'edits/record_history_table', locals: { versions: versions } %>
+      <%= paginate versions %>
+    </div>
+  </div>
+</div>

@@ -177,7 +177,7 @@ class User < ApplicationRecord
   # Returns the sf_guard_user_id from a range
   # of types: User, SfGuardUser, Integer, String
   # Used by LsHash
-  def self.derive_last_user_id_from(input)
+  def self.derive_last_user_id_from(input, allow_invalid: false)
     case input
     when String
       input.to_i
@@ -188,7 +188,11 @@ class User < ApplicationRecord
     when SfGuardUser
       input.id
     else
-      raise ArgumentError, "Invalid class. Provided: #{input.class}"
+      if allow_invalid
+        APP_CONFIG['system_user_id']
+      else
+        raise TypeError, "Invalid class. Provided: #{input.class}"
+      end
     end
   end
 

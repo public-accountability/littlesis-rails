@@ -160,6 +160,10 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def set_page
+    @page = params[:page].presence&.to_i || 1
+  end
+
   def set_entity(skope = :itself)
     @entity = Entity.find_with_merges(id: params[:id], skope: skope)
   end

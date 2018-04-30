@@ -35,6 +35,34 @@ describe 'EntityVersionPresenter' do
       end
     end
 
+    context 'adding and removing entity from lists' do
+      let!(:list) { create(:list) }
+      subject do
+        entity_history.versions.as_presenters.map(&:render).join(' ')
+      end
+
+      context 'entity was added to a list' do
+        before { ListEntity.create!(list: list, entity: entity) }
+
+        it 'has correct message' do
+          expect(subject).to include 'added this entity to the list'
+          expect(subject).not_to include 'removed this entity from the list'
+        end
+      end
+
+      context 'entity was added and removed from a list' do
+        before do
+          le = ListEntity.create!(list: list, entity: entity)
+          le.destroy!
+        end
+
+        it 'has correct message' do
+          expect(subject).to include 'removed this entity from the list'
+          expect(subject).to include "#{list.name}</a>"
+        end
+      end
+    end
+
     describe '#user_link' do
       subject { entity_history.versions.as_presenters.first }
       it 'generates link for user' do

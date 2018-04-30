@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180424181848) do
+ActiveRecord::Schema.define(version: 20180425160916) do
 
   create_table "address", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "entity_id", null: false
@@ -592,13 +592,11 @@ ActiveRecord::Schema.define(version: 20180424181848) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "last_user_id"
-    t.boolean "is_deleted", default: false, null: false
     t.text "custom_field"
     t.index ["created_at"], name: "created_at_idx"
-    t.index ["entity_id", "is_deleted", "list_id"], name: "entity_deleted_list_idx"
+    t.index ["entity_id", "list_id"], name: "index_ls_list_entity_on_entity_id_and_list_id"
     t.index ["entity_id"], name: "entity_id_idx"
     t.index ["last_user_id"], name: "last_user_id_idx"
-    t.index ["list_id", "is_deleted", "entity_id"], name: "list_deleted_entity_idx"
     t.index ["list_id"], name: "list_id_idx"
   end
 
@@ -742,7 +740,7 @@ ActiveRecord::Schema.define(version: 20180424181848) do
     t.index ["user_id"], name: "index_note_users_on_user_id"
   end
 
-  create_table "ny_disclosures", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
+  create_table "ny_disclosures", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "filer_id", limit: 10, null: false
     t.string "report_id"
     t.string "transaction_code", limit: 1, null: false
@@ -779,7 +777,7 @@ ActiveRecord::Schema.define(version: 20180424181848) do
     t.index ["contrib_code"], name: "index_ny_disclosures_on_contrib_code"
     t.index ["delta"], name: "index_ny_disclosures_on_delta"
     t.index ["e_year"], name: "index_ny_disclosures_on_e_year"
-    t.index ["filer_id", "report_id", "transaction_id", "schedule_transaction_date", "e_year"], name: "index_filer_report_trans_date_e_year"
+    t.index ["filer_id", "report_id", "transaction_id", "schedule_transaction_date", "e_year"], name: "index_filer_report_trans_date_e_year", length: { report_id: 191 }
     t.index ["filer_id"], name: "index_ny_disclosures_on_filer_id"
     t.index ["original_date"], name: "index_ny_disclosures_on_original_date"
   end
@@ -1479,7 +1477,7 @@ ActiveRecord::Schema.define(version: 20180424181848) do
     t.index ["user_id", "resource_type"], name: "index_user_permissions_on_user_id_and_resource_type"
   end
 
-  create_table "user_requests", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "user_requests", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "type", null: false
     t.integer "user_id", null: false
     t.integer "status", default: 0, null: false
@@ -1536,6 +1534,7 @@ ActiveRecord::Schema.define(version: 20180424181848) do
     t.integer "entity1_id"
     t.integer "entity2_id"
     t.text "association_data", limit: 4294967295
+    t.bigint "other_id"
     t.index ["created_at"], name: "index_versions_on_created_at"
     t.index ["entity1_id"], name: "index_versions_on_entity1_id"
     t.index ["entity2_id"], name: "index_versions_on_entity2_id"

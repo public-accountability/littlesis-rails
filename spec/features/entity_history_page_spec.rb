@@ -25,8 +25,8 @@ feature 'EntityHistoryPage' do
       successfully_visits_page edits_entity_path(entity)
 
       expect(page).to have_title "Edits: #{entity.name}"
-      page_has_selector "#entity-history-container"
-      page_has_selector "#entity-history-container table tbody tr", count: 3
+      page_has_selector "#record-history-container"
+      page_has_selector "#record-history-container table tbody tr", count: 3
       expect(page).to have_content "added extension Lawyer"
       expect(page).to have_content "added tag #{tag.name}"
       page_has_selector "h4", text: "Revision history for #{entity.name}"

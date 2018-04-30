@@ -31,7 +31,7 @@ class ApplicationRecord < ActiveRecord::Base
   # If the model does not have the field 'last_user_id'
   # it will delgate to `touch` without raising an error.
   def touch_by(user_or_id)
-    new_last_user_id = User.derive_last_user_id_from(user_or_id)
+    new_last_user_id = User.derive_last_user_id_from(user_or_id, allow_invalid: true)
     if has_attribute?(:last_user_id) && (last_user_id != new_last_user_id)
       update(last_user_id: new_last_user_id)
     else

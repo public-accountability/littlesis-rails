@@ -32,7 +32,6 @@ FactoryBot.define do
     sequence(:id)
     sequence(:list_id)
     sequence(:entity_id)
-    is_deleted false
   end
 
   factory :note, class: Note do

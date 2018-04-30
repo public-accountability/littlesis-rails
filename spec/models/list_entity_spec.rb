@@ -1,15 +1,38 @@
 require 'rails_helper'
 
-describe ListEntity do  
+describe ListEntity do
+  it { is_expected.to belong_to(:list) }
+  it { is_expected.to belong_to(:entity) }
 
-  describe 'soft delete' do
-    it 'changes the list\'s updated at field after being deleted' do
-      list = create(:list)
-      corp = create(:mega_corp_inc)
-      le = ListEntity.create!(list_id: list.id, entity_id: corp.id)
-      list.update_column(:updated_at, 1.day.ago)
-      expect { le.soft_delete }.to change { list.reload.updated_at }
+  describe 'versioning' do
+    with_versioning do
+      let!(:user) { create_really_basic_user }
+      let!(:list) { create(:list) }
+      let!(:entity) { create(:entity_org) }
+      let(:create_list_entity) do
+        proc do
+          PaperTrail.whodunnit(user.id.to_s) do
+            ListEntity.create!(entity_id: entity.id, list_id: list.id)
+          end
+        end
+      end
+
+      context 'creating a list' do
+        it 'creates a version' do
+          expect(&create_list_entity)
+            .to change { PaperTrail::Version.count }.by(1)
+        end
+
+        it 'sets entity1_id correctly' do
+          create_list_entity.call
+          expect(ListEntity.last.versions.first.entity1_id).to eql entity.id
+        end
+
+        it 'puts list_id in other_id column' do
+          create_list_entity.call
+          expect(ListEntity.last.versions.first.other_id).to eql list.id
+        end
+      end
     end
   end
-
 end

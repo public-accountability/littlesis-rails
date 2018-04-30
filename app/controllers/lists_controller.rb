@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ListsController < ApplicationController
   include TagableController
 
@@ -10,7 +12,7 @@ class ListsController < ApplicationController
     }
   )
 
-  SIGNED_IN_ACTIONS = [:new, :create, :match_donations, :admin, :find_articles, :crop_images, :street_views, :create_map, :update_cache, :modifications, :tags]
+  SIGNED_IN_ACTIONS = [:new, :create, :admin, :crop_images, :update_cache, :modifications, :tags]
 
   # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
   # from TagableController and therefore including :tags in the list is required
@@ -20,7 +22,7 @@ class ListsController < ApplicationController
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
 
   before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :relationships, :match_donations, :search_data, :admin, :find_articles, :crop_images, :street_views, :members, :create_map, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
+                only: [:show, :edit, :update, :destroy, :relationships, :search_data, :admin, :crop_images, :members, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
 
   # permissions
   before_action :set_permissions,
@@ -28,6 +30,8 @@ class ListsController < ApplicationController
   before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references]
   before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
+
+  before_action :set_page, only: [:modifications]
 
   def self.get_lists(page)
     List
@@ -135,27 +139,7 @@ class ListsController < ApplicationController
   def relationships
   end
 
-  def match_donations
-    check_permission 'bulker'
-    page = params.fetch(:page, 1)
-    num = params.fetch(:num, 100)
-    @entities = @list.entities_with_couples.people
-                .joins(:os_entity_transactions)
-                .includes(:links, :addresses)
-                .joins("LEFT JOIN address ON (address.entity_id = entity.id)")
-                .select("entity.*, COUNT(os_entity_transaction.id) AS num_matches, MAX(os_entity_transaction.reviewed_at) AS last_reviewed")
-                .group("entity.id").having('COUNT(os_entity_transaction.id) > 0').order("last_reviewed ASC, num_matches DESC").page(page).per(num)
-  end
-
   def admin
-  end
-
-  def find_articles
-    check_permission 'importer'    
-    entity_ids = @list.entities_with_couples.joins("LEFT JOIN article_entities ON (article_entities.entity_id = entity.id)").where(article_entities: { id: nil }).pluck(:id)
-    set_entity_queue(:find_articles, entity_ids, @list.id)
-    next_entity_id = next_entity_in_queue(:find_articles)
-    redirect_to find_articles_entity_path(id: next_entity_id)
   end
 
   def crop_images
@@ -167,21 +151,9 @@ class ListsController < ApplicationController
     redirect_to crop_image_path(id: image_id)
   end
 
-  def street_views
-    check_permission 'editor'
-    entity_ids = @list.entities_with_couples.pluck(:id).uniq
-    @images = Image.joins(entity: :addresses).where(entity_id: entity_ids).where("image.caption LIKE 'street view:%'").order(:created_at)
-    render layout: false
-  end
-
   def members
     @table = ListDatatable.new(@list)
     @table.generate_data
-  end
-
-  def create_map
-    map = NetworkMap.create_from_entities(@list.name, current_user.id, @list.entities_with_couples.pluck(:id))
-    redirect_to edit_map_url(map, wheel: true)
   end
 
   def clear_cache
@@ -206,17 +178,14 @@ class ListsController < ApplicationController
   end
 
   def remove_entity
-    #check_permission 'admin'
-    ListEntity.find(params[:list_entity_id]).destroy
-    @list.clear_cache
+    ListEntity.remove_from_list!(params[:list_entity_id].to_i, current_user: current_user)
     redirect_to members_list_path(@list)
   end
 
   def add_entity
-    #check_permission 'lister'
-    le = ListEntity.find_or_create_by(list_id: @list.id, entity_id: params[:entity_id])
-    @list.clear_cache
-    le.entity.update(last_user_id: current_user.sf_guard_user_id)
+    ListEntity.add_to_list!(list_id: @list.id,
+                            entity_id: params[:entity_id],
+                            current_user: current_user)
     redirect_to members_list_path(@list)
   end
 
@@ -273,8 +242,6 @@ class ListsController < ApplicationController
   end
 
   def modifications
-    @versions = Kaminari.paginate_array(@list.versions.reverse).page(params[:page]).per(5)
-    @all_entities = ListEntity.unscoped.where(list_id: @list.id).order(id: :desc).page(params[:page]).per(10)
   end
 
   private

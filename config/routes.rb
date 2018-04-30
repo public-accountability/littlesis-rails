@@ -89,13 +89,9 @@ Lilsis::Application.routes.draw do
   resources :lists do
     member do
       get 'relationships'
-      get 'match_donations'
       get 'admin'
-      get 'find_articles'
       get 'crop_images'
-      get 'street_views'
       get 'members'
-      post 'create_map'
       # entities
       post 'add_entity'
       get 'entities/bulk' => 'lists#new_entity_associations'

@@ -8,7 +8,6 @@ describe EntityHistory do
     describe 'object setup: entity internal attribute and delegation' do
       let(:entity) { build(:org) }
       specify { expect(subject.send(:entity)).to eql entity }
-      specify { expect(subject.send(:entity_id)).to eql entity.id }
     end
 
     describe 'after entity has been created' do

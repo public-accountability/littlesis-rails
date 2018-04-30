@@ -34,4 +34,40 @@ feature 'list page', type: :feature do
       expect(page).to have_selector '#tags-list li', text: tag.name
     end
   end
+
+  feature 'viewing modifications to a list' do
+    let(:user) { create_basic_user }
+    before(:each) { login_as(user, scope: :user) }
+    after(:each) { logout(:user) }
+
+    with_versioning do
+      before do
+        PaperTrail.whodunnit(user.id.to_s) { @list = create(:list) }
+      end
+
+      scenario 'list has been created' do
+        visit "#{list_path(List.last)}/modifications"
+
+        page_has_selectors '#list-header', '#list-tab-menu'
+        page_has_selector '.tab', text: 'Sources'
+
+        page_has_selector '#record-history-container'
+        page_has_selector '#record-history-container table tr', count: 1
+        expect(page).to have_text "#{user.username} created the list"
+      end
+
+      context 'adding an entity to the list' do
+        before do
+          PaperTrail.whodunnit(user.id.to_s) do
+            ListEntity.create!(list: @list, entity: create(:entity_org))
+          end
+        end
+
+        scenario 'shows both edits' do
+          visit "#{list_path(List.last)}/modifications"
+          page_has_selector '#record-history-container table tr', count: 2
+        end
+      end
+    end
+  end
 end

@@ -12,6 +12,11 @@ describe User do
     expect(User.const_defined?(:Edits)).to be true
   end
 
+  it 'user has permissions class' do
+    user = create_basic_user
+    expect(user.permissions).to be_a Permissions
+  end
+
   describe 'validations' do
     let(:user) { create(:user, sf_guard_user_id: rand(1000), email: 'fake@fake.com', username: 'unqiue2') }
 
@@ -191,8 +196,32 @@ describe User do
     end
   end
 
-  it 'user has permissions class' do
-    user = create_basic_user
-    expect(user.permissions).to be_a Permissions
+  describe 'User.derive_last_user_id_from' do
+    it 'accepts strings and integer' do
+      expect(User.derive_last_user_id_from('123')).to eql 123
+      expect(User.derive_last_user_id_from(123)).to eql 123
+    end
+
+    it 'accepts User' do
+      user = build(:user, sf_guard_user_id: 123)
+      expect(User.derive_last_user_id_from(user)).to eql 123
+    end
+
+    it 'accepts SfGuardUser' do
+      sf_user = build(:sf_user, id: 456)
+      expect(User.derive_last_user_id_from(sf_user)).to eql 456
+    end
+
+    it 'by default it raises TypeError if provided nil' do
+      expect { User.derive_last_user_id_from(nil) }
+        .to raise_error(TypeError)
+    end
+
+    it 'returns system_user_id if allow_invalid is set' do
+      expect { User.derive_last_user_id_from(Object.new, allow_invalid: true) }
+        .not_to raise_error
+
+      expect(User.derive_last_user_id_from(nil, allow_invalid: true)).to eq 1
+    end
   end
 end

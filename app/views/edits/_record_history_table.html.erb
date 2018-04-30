@@ -1,0 +1,7 @@
+<%# required local: versions %>
+
+<table class="table table-hover record-history-table">
+  <tbody>
+    <%= render partial: 'edits/record_history_row', collection: versions, as: :version %>
+  </tbody>
+</table>

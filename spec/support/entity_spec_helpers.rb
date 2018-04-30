@@ -38,6 +38,12 @@ module EntitySpecHelpers
     entity
   end
 
+  def self.org_updated_one_year_ago
+    FactoryBot.create(:entity_org, :with_org_name).tap do |e|
+      e.update_columns(:updated_at => 1.year.ago, :created_at => 1.year.ago)
+    end
+  end
+
   private_class_method def self.name_for(type)
     case type
     when 'first', 'middle', 'nick'

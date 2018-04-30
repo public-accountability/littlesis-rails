@@ -484,29 +484,13 @@ class Relationship < ApplicationRecord
   # Update Entity Timestamp after update #
   ########################################
 
-  # updates timestamp and sets last_user_id of
-  # both entities in the relationship
-  def update_entity_timestamps(sf_user_id = nil)
-    lui = last_user_id_for_entity_update(sf_user_id)
-
-    # In case a entity has been deleted...
-    # TODO: create a warning to let admins know
-    # that dangling relationship exists?
-    unless entity.nil?
-      if entity.last_user_id == lui
-        entity.touch
-      else
-        entity.update(last_user_id: lui)
-      end
-    end
-
-    unless related.nil?
-      if related.last_user_id == lui
-        related.touch
-      else
-        related.update(last_user_id: lui)
-      end
-    end
+  # updates timestamp and sets last_user_id for both entities in the relationship
+  def update_entity_timestamps
+    # The safe navigation operator here is for the
+    # the odd-case that an entity has been deleted.
+    # TODO: notify admins that a dangling relationship exists?
+    entity&.update_timestamp_for(last_user_id)
+    related&.update_timestamp_for(last_user_id)
   end
 
   # Removes 'last_user_id' from the json serialization of the object
@@ -551,15 +535,6 @@ class Relationship < ApplicationRecord
   end
 
   private
-
-  def last_user_id_for_entity_update(sf_user_id = nil)
-    # if called with a 'sf_user_id' use that id
-    return sf_user_id unless sf_user_id.nil?
-    # if, for some reason, the relationship's last_user_id is nil, use that
-    return APP_CONFIG.fetch('system_user_id') if last_user_id.nil?
-    # otherwise, use the relationship's last_user_id
-    last_user_id
-  end
 
   # Updates link count for entities
   # called after a relationship is created or removed

@@ -4,58 +4,63 @@ describe ListsController, :list_helper, type: :controller do
   before(:all) { DatabaseCleaner.start }
   after(:all) { DatabaseCleaner.clean }
 
-  it { should route(:delete, '/lists/1').to(action: :destroy, id: 1) }
-  it { should route(:post, '/lists/1/tags').to(action: :tags, id: 1) }
-  it { should route(:get, '/lists/1/entities/bulk').to(action: :new_entity_associations, id: 1) }
-  it { should route(:post, '/lists/1/entities/bulk').to(action: :create_entity_associations, id: 1) }
+  it { is_expected.to route(:delete, '/lists/1').to(action: :destroy, id: 1) }
+  it { is_expected.to route(:post, '/lists/1/tags').to(action: :tags, id: 1) }
+  it { is_expected.to route(:get, '/lists/1234-list-name/modifications').to(action: :modifications, id: '1234-list-name') }
+  it { is_expected.to route(:get, '/lists/1/entities/bulk').to(action: :new_entity_associations, id: 1) }
+  it { is_expected.to route(:post, '/lists/1/entities/bulk').to(action: :create_entity_associations, id: 1) }
 
   describe 'GET /lists' do
     login_user
+    let(:inc) { create(:entity_org) }
+
     before do
-      new_list = create(:list)
-      new_list2 = create(:list, name: 'my interesting list')
-      new_list3 = create(:list, name: 'someone else private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: controller.current_user.id + 1)
-      new_list4 = create(:list, name: 'current user private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: controller.current_user.id)
-      @inc = create(:entity_org)
-      ListEntity.find_or_create_by(list_id: new_list.id, entity_id: @inc.id)
-      ListEntity.find_or_create_by(list_id: new_list2.id, entity_id: @inc.id)
-      ListEntity.find_or_create_by(list_id: new_list3.id, entity_id: @inc.id)
-      ListEntity.find_or_create_by(list_id: new_list4.id, entity_id: @inc.id)
+      lists = [
+        create(:list),
+        create(:list, name: 'my interesting list'),
+        create(:list, name: 'someone else private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: controller.current_user.id + 1),
+        create(:list, name: 'current user private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: controller.current_user.id)
+      ]
+      lists.each do |list|
+        ListEntity.find_or_create_by(list_id: list.id, entity_id: inc.id)
+      end
+
       get :index
     end
 
     it { should respond_with(:success) }
     it { should render_template(:index) }
 
-    xit '@lists only includes public lists and private lists created by the current user' do
+    it '@lists only includes public lists and private lists created by the current user' do
       expect(assigns(:lists).length).to eq(3)
     end
 
-    xit '@lists has correct names' do
-      expect(assigns(:lists)[0].name).to eq("Fortune 1000 Companies")
-      expect(assigns(:lists)[1].name).to eq("my interesting list")
-      expect(assigns(:lists)[2].name).to eq("current user private list")
+    it '@lists has correct names' do
+      expect(assigns(:lists)[0].name).to eq 'Fortune 1000 Companies'
+      expect(assigns(:lists)[1].name).to eq 'my interesting list'
+      expect(assigns(:lists)[2].name).to eq 'current user private list'
     end
 
-    xit '@lists does not include private list created by some other user' do
-      list_names = assigns(:lists).map { |list| list.name }
+    it '@lists does not include private list created by some other user' do
+      list_names = assigns(:lists).map(&:name)
       expect(list_names).not_to include('someone else private list')
     end
   end
 
   describe 'user not logged in' do
+    let(:entity) { create(:entity_org) }
+
     before do
       @new_list = create(:open_list, name: 'my interesting list', creator_user_id: 123)
       @private_list = create(:list, name: 'someone else private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: nil)
-      @inc = create(:entity_org)
-      ListEntity.find_or_create_by(list_id: @new_list.id, entity_id: @inc.id)
-      ListEntity.find_or_create_by(list_id: @private_list.id, entity_id: @inc.id)
+      ListEntity.find_or_create_by(list_id: @new_list.id, entity_id: entity.id)
+      ListEntity.find_or_create_by(list_id: @private_list.id, entity_id: entity.id)
       get :index
     end
 
     it { should render_template(:index) }
 
-    xit '@lists only includes public lists' do
+    it '@lists only includes public lists' do
       expect(assigns(:lists).length).to eq 1
       expect(assigns(:lists)[0]).to eq @new_list
     end
@@ -131,7 +136,7 @@ describe ListsController, :list_helper, type: :controller do
       end
     end
 
-    describe 'modifications' do
+    xdescribe 'modifications' do
       let(:new_list) { create(:list) }
       before { get :modifications, params: { id: new_list.id } }
 
@@ -156,28 +161,18 @@ describe ListsController, :list_helper, type: :controller do
 
   describe 'remove_entity' do
     login_admin
-    let(:list) { create(:list).tap { |l| l.update_column(:updated_at, 1.day.ago) } }
+    let(:list) { create(:list) }
     let(:person) { create(:entity_person) }
-    let(:list_entity) { ListEntity.create!(list_id: list.id, entity_id: person.id) }
+    let!(:list_entity) { ListEntity.create!(list_id: list.id, entity_id: person.id) }
 
     let(:post_remove_entity) do
-      proc { post :remove_entity, params: { id: list.id, list_entity_id: list_entity.id } }
+      proc do
+        post :remove_entity, params: { id: list.id, list_entity_id: list_entity.id }
+      end
     end
 
     it 'removes the list entity' do
-      expect(&post_remove_entity)
-        .to change { ListEntity.unscoped.find(list_entity.id).is_deleted }.to(true)
-    end
-
-    xit 'clears the list cache' do
-      expect(List).to receive(:find).with(list.id.to_s).and_return(list)
-      expect(list).to receive(:clear_cache)
-      post_remove_entity.call
-    end
-
-    it 'updates the updated_at of the list' do
-      expect(&post_remove_entity)
-        .to change { List.find(list.id).updated_at }
+      expect(&post_remove_entity).to change { ListEntity.count }.by(-1)
     end
 
     it 'redirects to the members page' do
