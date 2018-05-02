@@ -41,8 +41,15 @@ entity._editableBlurbInput = function(text) {
 };
 
 
-// 
 entity.editableBlurb = function() {
+  $("#editable-blurb").hover(
+    function() {
+      $("#entity-blurb-pencil").show();
+    },
+    function() {
+      $("#entity-blurb-pencil").hide();
+    }
+  );
   $('#entity-blurb-pencil').click(function(x){
     $(this).hide();
 

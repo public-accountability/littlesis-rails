@@ -112,6 +112,7 @@ $tiny_image_size: 35px;
   color: #444;
   font-size: 12px;
   padding-left: 15px;
+  padding-top: 2px;
 }
 
 #actions {
@@ -262,7 +263,16 @@ $small_image_size: 50px;
 	line-height: 30px;
 	font-weight: 300;
     }
-  
+    
+}
+
+#editable-blurb {
+    min-height: 30px;
+
+    #entity-blurb-pencil {
+	cursor: pointer;
+	margin-left: 2px;
+    }
 }
 
 .entity-blurb {
