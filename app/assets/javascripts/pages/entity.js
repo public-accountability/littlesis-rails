@@ -19,7 +19,7 @@ entity.relationshipsToggle = function(e) {
 
 entity._submitBlurb = function(newBlurb, original) {
   if (newBlurb !== original) {
-    // do ajax
+    api.addBlurbToEntity(newBlurb, utility.entityInfo('entityid'));
   }
 
   $('#entity-blurb-text').html(newBlurb);
@@ -27,11 +27,10 @@ entity._submitBlurb = function(newBlurb, original) {
 };
 
 entity._editableBlurbInput = function(text) {
-
   function handleKeyup(e) {
-    if (e.keyCode === 13) {
+    if ((e.keyCode || e.which) === 13) {
       entity._submitBlurb($(this).val(), text);
-    } else if (e.keyCode === 27) {
+    } else if ( (e.keyCode || e.which) === 27) {
       $('#entity-blurb-text').html(text);
       $('#entity-blurb-pencil').show();
     }
@@ -42,7 +41,7 @@ entity._editableBlurbInput = function(text) {
 };
 
 
-// utility.entityInfo
+// 
 entity.editableBlurb = function() {
   $('#entity-blurb-pencil').click(function(x){
     $(this).hide();

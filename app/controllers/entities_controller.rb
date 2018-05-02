@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EntitiesController < ApplicationController
   include TagableController
   include ReferenceableController

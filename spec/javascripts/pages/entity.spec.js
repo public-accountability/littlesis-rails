@@ -19,6 +19,11 @@ describe('entity', function () {
     
   describe('editing blurb in place', () => {
 
+    beforeEach(() => {
+      spyOn(api, 'addBlurbToEntity');
+      spyOn(utility, 'entityInfo').and.returnValue('123');
+    });
+
     it('clicking on pencil replaces text with input', () => {
       expect($('#entity-blurb-text').html()).toEqual('blurb goes here');
       expect($('#entity-blurb-text input').length).toEqual(0);
@@ -30,6 +35,14 @@ describe('entity', function () {
       expect($('#entity-blurb-pencil')).toBeVisible();
       $('#entity-blurb-pencil').trigger('click');
       expect($('#entity-blurb-pencil')).not.toBeVisible();
+    });
+
+    it('submit request to server', () => {
+      $('#entity-blurb-pencil').trigger('click');
+      $('#entity-blurb-text input').val('updating');
+      var e = $.Event( 'keyup', { which: 13 } );
+      $('#entity-blurb-text input').trigger(e);
+      expect(api.addBlurbToEntity).toHaveBeenCalled();
     });
 
   });
