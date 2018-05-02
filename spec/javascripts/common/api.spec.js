@@ -9,6 +9,7 @@ describe('API module', () => {
   const headers = () => ({
     'Accept':       'application/json, text/plain, */*',
     'Content-Type': 'application/json',
+    'Littlesis-Request-Type': 'API',
     'X-CSRF-Token': ''
   });
 

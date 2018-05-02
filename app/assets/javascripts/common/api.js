@@ -136,6 +136,7 @@
     return {
       'Accept':       'application/json, text/plain, */*',
       'Content-Type': 'application/json',
+      'Littlesis-Request-Type': 'API',
        // TODO: retrieve this w/o JQuery
       'X-CSRF-Token': $("meta[name='csrf-token']").attr("content") || ""
     };

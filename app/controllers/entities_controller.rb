@@ -103,6 +103,7 @@ class EntitiesController < ApplicationController
       # Add_reference will make the entity invalid if the reference is invalid
       if @entity.valid?
         @entity.save!
+        return render json: { status: 'OK' } if api_request?
         return redirect_to entity_path(@entity)
       end
     end

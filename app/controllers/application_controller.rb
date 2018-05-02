@@ -183,4 +183,12 @@ class ApplicationController < ActionController::Base
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:account_update, keys: [:about_me])
   end
+
+  def api_request?
+    request_type && request_type == 'API'
+  end
+
+  def request_type
+    request.headers['Littlesis-Request-Type']
+  end
 end
