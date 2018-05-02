@@ -5,8 +5,14 @@ cache: bundler
 rvm:
   - 2.4.4
 
+env:
+  global:
+    - JASMINE_BROWSER=firefox
+    - MOZ_HEADLESS=1
+
 addons:
   mariadb: '10.1'
+  firefox: latest
   
 services:
   - mysql
@@ -19,6 +25,7 @@ before_install:
   - sudo add-apt-repository -y ppa:builds/sphinxsearch-rel22
   - sudo apt-get -qq update
   - sudo apt-get install -y libmariadbclient-dev sphinxsearch
+  - sudo sh -c 'curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz | tar -C /usr/local/bin/ -xzf - geckodriver'
 
 before_script:
   - cp config/database.travis.yml config/database.yml
@@ -30,3 +37,4 @@ script:
   - RAILS_ENV=test bundle exec rake db:schema:load
   - RAILS_ENV=test bundle exec rake db:seed
   - RAILS_ENV=test COVERAGE=true bundle exec rspec
+  - RAILS_ENV=test bundle exec rake jasmine:ci

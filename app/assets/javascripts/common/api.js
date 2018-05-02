@@ -90,6 +90,14 @@
     }
   };
 
+  // String, Integer -> Promise
+  self.addBlurbToEntity = function (blurb, entityId) {
+    return patch("/entities/" + entityId, {
+      "entity": { "blurb": blurb },
+      "reference": { "just_cleaning_up": 1 }
+    });
+  };
+
   // helpers
 
   function get(url, queryParams){
@@ -107,6 +115,21 @@
       credentials: 'include', // use auth tokens stored in session cookies
       body:        JSON.stringify(payload)
     }).then(jsonify);
+  };
+
+  function patch(url, payload){
+    return fetch(url, {
+      headers:     headers(),
+      method:      'PATCH',
+      credentials: 'include', // use auth tokens stored in session cookies
+      body:        JSON.stringify(payload)
+    }).then(function(response) {
+      if (response.body) {
+	return jsonify(response);
+      } else {
+	return response;
+      }
+    });
   };
 
   function headers(){
@@ -131,6 +154,7 @@
           Promise.reject(json.errors[0].title) :
           Promise.resolve(json);
       });
+    
   }
   
   return self;

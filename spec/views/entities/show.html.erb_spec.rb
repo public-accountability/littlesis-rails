@@ -66,7 +66,7 @@ describe 'entities/show.html.erb' do
           expect(rendered).to have_css('#entity-header')
           expect(rendered).to have_css('#entity-header a', :count => 1)
           expect(rendered).to have_css('#entity-name', :text => "mega corp")
-          expect(rendered).to have_css('#entity-blurb', :text => "mega corp is having an existential crisis")
+          expect(rendered).to have_css('#entity-blurb-wrapper', :text => "mega corp is having an existential crisis")
         end
 
         describe 'actions' do

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class EntityVersionPresenter < VersionPresenter
-  IGNORE_FIELDS = Set.new(%w[id created_at updated_at link_count last_user_id delta])
-
   def render
     "#{user_link} #{action} at #{time}"
   end

@@ -2,8 +2,11 @@
 
 # intended to be subclassed to wrap PaperTrail::Version objects
 class VersionPresenter < SimpleDelegator
+  
   include ActionView::Helpers::UrlHelper
   delegate :relationship_path, :entity_path, :list_path, to: "Rails.application.routes.url_helpers"
+
+  IGNORE_FIELDS = Set.new(%w[id created_at updated_at link_count last_user_id delta])
 
   protected
 

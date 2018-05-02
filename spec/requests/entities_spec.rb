@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Entity Requests', type: :request do
-  let(:person) { create(:entity_person, start_date: '2000-01-01') }
+  let(:person) { create(:entity_person, start_date: '2000-01-01', blurb: nil) }
   let(:user) { create_really_basic_user }
 
   before(:each) { login_as(user, :scope => :user) }
@@ -113,6 +113,24 @@ describe 'Entity Requests', type: :request do
         patch_request.call
         expect(response).to have_http_status 302
         expect(response.location).to include person.to_param
+      end
+    end
+
+    context "updating an entity's blurb" do
+      let(:blurb) { Faker::Lorem.sentence }
+      let(:params) do
+        { entity: { 'blurb' => blurb }, reference: { just_cleaning_up: 1 } }
+      end
+      let(:patch_request) { proc { patch "/entities/#{person.id}", params: params } }
+
+      before { person }
+
+      it 'updates blurb and returns 302' do
+        expect(&patch_request)
+          .to change { Entity.find(person.id).blurb }
+                .from(nil).to(blurb)
+
+        expect(response).to have_http_status 302
       end
     end
 

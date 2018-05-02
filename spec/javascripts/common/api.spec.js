@@ -142,4 +142,31 @@ describe('API module', () => {
       });
     });
   });
+
+  describe('#addBlurbToEntity', () => {
+    let fetchSpy, response;
+
+    beforeAll(done => {
+      let responsePromise = Promise.resolve(new Response(null, { "status": 302 }));
+      fetchSpy = spyOn(window, 'fetch').and.returnValue(responsePromise);
+      api.addBlurbToEntity('new blurb', 123).then(res => {
+        response = res;
+        done();
+      });
+    });
+
+
+    it('submits request',()  => {
+      expect(fetchSpy).toHaveBeenCalledWith(
+        '/entities/123', {
+          headers: headers(),
+          method: 'PATCH',
+          credentials: 'include',
+          body: JSON.stringify({
+	    "entity": { "blurb": 'new blurb' },
+	    "reference": { "just_cleaning_up": 1 }
+          })
+        });
+    });
+  });
 });
