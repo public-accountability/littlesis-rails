@@ -111,10 +111,6 @@ form.edit_relationship {
       min-width: 110px;
   }
 
-  tr {
-      position: relative !important;
-  }
-
   .similar-relationships-alert {
       font-size: 18px;
       width: 25px;
@@ -122,7 +118,7 @@ form.edit_relationship {
       position: absolute;
       top: 10px;
       right: 0;
-      left: -30px;
+      left: -40px;
       bottom: 0;
   }
 }

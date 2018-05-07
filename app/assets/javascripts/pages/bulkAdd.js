@@ -194,17 +194,20 @@
 
   // input: [] -> <Span>
   function similarRelationshipAlert(relationships) {
-    return $('<span>', {
-      "class": "glyphicon glyphicon-alert similar-relationships-alert",
-      "title": "Similar relationships exist!",
-      "aria-hidden": true,
-      "fadeIn": { duration: 500 },
-      "popover": {
-	content: relationshipAlertContent.render(relationships[0]),
-	placement: 'left',
-        html: true
-      }
-    });
+    return $('<div>', { "style": "position: relative" })
+      .append(
+	$('<span>', {
+	  "class": "glyphicon glyphicon-alert similar-relationships-alert",
+	  "title": "Similar relationships exist!",
+	  "aria-hidden": true,
+	  "fadeIn": { duration: 500 },
+	  "popover": {
+	    content: relationshipAlertContent.render(relationships[0]),
+	    placement: 'left',
+            html: true
+	  }
+	})
+      );
   }
 
   // Submits ajax request to /relationships/find_similar
@@ -222,7 +225,7 @@
     $.getJSON('/relationships/find_similar', request)
       .done(function(relationships){
 	if (relationships.length > 0) {
-	  cell.parents('tr').append(similarRelationshipAlert(relationships));
+	  cell.prepend(similarRelationshipAlert(relationships));
 	}
       })
       .fail(function(){
