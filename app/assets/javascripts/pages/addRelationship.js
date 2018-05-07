@@ -162,7 +162,7 @@ var addRelationship = (function(utility) {
     var personToPerson = [1,3,4,5,6,7,8,9,12];
     var personToOrg = [1,2,3,5,6,7,10,12];
     var orgToPerson = [1,3,5,6,7,10,12];
-    var orgToOrg = [1,2,3,5,6,7,10,11,12];
+    var orgToOrg = [3,5,6,7,10,11,12];
     if (entity1 === 'Person' && entity2 === 'Person') {
       return personToPerson;
     } else if (entity1 === 'Person' && entity2 === 'Org') {
