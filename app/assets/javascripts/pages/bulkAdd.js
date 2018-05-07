@@ -203,7 +203,9 @@
 	  "fadeIn": { duration: 500 },
 	  "popover": {
 	    content: relationshipAlertContent.render(relationships[0]),
-	    placement: 'left',
+	    container: 'body',
+	    trigger: 'click',
+	    placement: 'auto',
             html: true
 	  }
 	})
