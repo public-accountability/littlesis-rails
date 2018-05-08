@@ -10,7 +10,6 @@ describe UserPermission, type: :model do
   # associations
   it { should belong_to(:user) }
 
-
   # validation
   it { should validate_presence_of(:user_id) }
   it { should validate_presence_of(:resource_type) }
@@ -26,9 +25,9 @@ describe UserPermission, type: :model do
                           resource_type: 'List',
                           access_rules: nil)
   end
-  
+
   it 'returns access rules as hash with indifferent access' do
-    expect(user_permission.access_rules).to eq ({ 'tag_ids' => [1] })
+    expect(user_permission.access_rules).to eq('tag_ids' => [1])
     expect(user_permission.access_rules[:tag_ids]).to eq [1]
     expect(user_permission_without_rules.access_rules).to be_nil
   end
