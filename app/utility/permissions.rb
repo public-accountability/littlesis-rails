@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Refactoring notes:  github.com/public-accountability/littlesis-rails/pull/288
 class Permissions
   ACCESS_OPEN = 0
@@ -61,7 +63,7 @@ class Permissions
   def update_permission(resource_type, access_rules, operation)
     permission = @user.user_permissions.find_or_create_by(resource_type: resource_type.to_s)
     klass = "Permissions::#{resource_type}AccessRules".constantize
-    new_access_rules = klass.update(permission.access_rules, access_rules, operation).to_json
+    new_access_rules = klass.update(permission.access_rules, access_rules, operation)
     permission.update(access_rules: new_access_rules)
   end
 
@@ -112,7 +114,7 @@ class Permissions
 
     def self.update(old_rules, new_rules, operation)
       check operation
-      old_ids = (old_rules&.fetch(:tag_ids) || []).to_set
+      old_ids = old_rules&.fetch(:tag_ids, [])&.to_set || Set.new
       new_ids = new_rules.fetch(:tag_ids, []).to_set
       { tag_ids: old_ids.send(operation, new_ids).to_a }
     end

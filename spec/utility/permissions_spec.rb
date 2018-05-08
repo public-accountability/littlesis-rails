@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Permissions, :tag_helper  do
   seed_tags
-  
+
   describe 'initalize' do
 
     context 'basic user with contributor, editor, and lister permissions' do
@@ -48,14 +48,13 @@ describe Permissions, :tag_helper  do
 
     let(:owner) { create_really_basic_user }
     let(:non_owner) { create_really_basic_user }
-    let(:admin){ create_admin_user }
-    
+    let(:admin) { create_admin_user }
 
     let(:full_access) { { viewable: true, editable: true } }
     let(:view_only_access) { { viewable: true, editable: false } }
 
     before do
-      access_rules = { tag_ids: [open_tag.id, closed_tag.id] }.to_json
+      access_rules = { tag_ids: [open_tag.id, closed_tag.id] }
       owner.user_permissions.create(resource_type: 'Tag',
                                     access_rules: access_rules)
     end
@@ -79,19 +78,19 @@ describe Permissions, :tag_helper  do
 
     context('a closed tag') do
 
-      it("can be viewed by any logged in user but only edited by its owner(s) or an admin") do
+      it 'can be viewed by any logged in user but only edited by its owner(s) or an admin' do
         expect(owner.permissions.tag_permissions(closed_tag)).to eq full_access
         expect(non_owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
         expect(admin.permissions.tag_permissions(closed_tag)).to eq full_access
       end
 
-      it('can have edit permissions granted to a new user') do
+      it 'can have edit permissions granted to a new user' do
         expect(non_owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
         non_owner.permissions.add_permission(Tag, tag_ids: [closed_tag.id])
         expect(non_owner.permissions.tag_permissions(closed_tag)).to eq full_access
       end
 
-      it('can have edit permissions revoked from an owner') do
+      it 'can have edit permissions revoked from an owner' do
         expect(owner.permissions.tag_permissions(closed_tag)).to eq full_access
         owner.permissions.remove_permission(Tag, tag_ids: [closed_tag.id])
         expect(owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
