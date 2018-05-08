@@ -87,6 +87,10 @@ Layout/AlignParameters:
 Layout/MultilineMethodCallIndentation:
   Enabled: false
 
+Layout/EmptyLinesAroundBlockBody:
+  Exclude:
+    - 'spec/**/*.rb'
+
 Rails/SkipsModelValidations:
   Exclude:
     - 'spec/**/*.rb'

@@ -32,9 +32,9 @@ describe EntitiesController, type: :controller do
   end
 
   describe 'GETs' do
-    let(:entity) { create(:entity_org, updated_at: Time.now) }
+    let(:entity) { create(:entity_org, updated_at: Time.current) }
 
-    describe "/entity/id" do
+    describe '/entity/id' do
       before { get :show, params: { id: entity.id } }
       it { should render_template(:show) }
     end
@@ -45,11 +45,11 @@ describe EntitiesController, type: :controller do
     end
 
     describe 'entity/id/contributions' do
+      let(:entity) { build(:mega_corp_inc, updated_at: Time.current) }
       before do
-        @e = build(:mega_corp_inc, updated_at: Time.now)
-        expect(Entity).to receive(:find_by_id).and_return(@e)
-        expect(@e).to receive(:contribution_info).and_return([build(:os_donation)])
-        get :contributions, params: { id: @e.id }
+        expect(Entity).to receive(:find_by_id).and_return(entity)
+        expect(entity).to receive(:contribution_info).and_return([build(:os_donation)])
+        get :contributions, params: { id: entity.id }
       end
 
       it { should respond_with(200) }
@@ -170,7 +170,7 @@ describe EntitiesController, type: :controller do
           it 'should render json with errors' do
             post :create, params: params_missing_ext_add_relationship_page
             expect(JSON.parse(response.body)).to have_key 'errors'
-            expect(JSON.parse(response.body).fetch 'status').to eql 'ERROR'
+            expect(JSON.parse(response.body).fetch('status')).to eql 'ERROR'
           end
         end
       end
@@ -217,7 +217,7 @@ describe EntitiesController, type: :controller do
   end # end of create
 
   describe 'Political' do
-    before { @entity = create(:entity_org, updated_at: Time.now) }
+    before { @entity = create(:entity_org, updated_at: Time.current) }
 
     describe 'Political' do
       before { get(:political, params: { id: @entity.id }) }
@@ -229,6 +229,10 @@ describe EntitiesController, type: :controller do
 
       before(:all) do
         @entity = create(:entity_org)
+      end
+
+      after(:all) do
+        @entity.delete
       end
 
       describe 'POST #match_donation' do
@@ -317,7 +321,9 @@ describe EntitiesController, type: :controller do
 
     context 'Updating an Org without a reference' do
       let(:org)  { create(:entity_org, last_user_id: sf_guard_user.id) }
-      let(:params) { { id: org.id, entity: { 'website' => 'http://example.com' }, reference: {'just_cleaning_up' => '1'} } }
+      let(:params) do
+        { id: org.id, entity: { 'website' => 'http://example.com' }, reference: { 'just_cleaning_up' => '1' } }
+      end
 
       it 'updates entity field' do
         expect(org.website).to be nil
@@ -338,9 +344,11 @@ describe EntitiesController, type: :controller do
 
     context 'Updating an Org with a reference' do
       let(:org) { create(:entity_org) }
-      let(:params) { { id: org.id,
-                       entity: { 'start_date' => '1929-08-08' },
-                       reference: { 'url' => 'http://example.com', 'name' => 'new reference' } } }
+      let(:params) do
+        { id: org.id,
+          entity: { 'start_date' => '1929-08-08' },
+          reference: { 'url' => 'http://example.com', 'name' => 'new reference' } }
+      end
 
       it 'updates entity field' do
         expect(org.start_date).to be nil
@@ -432,10 +440,12 @@ describe EntitiesController, type: :controller do
 
     describe 'updating an Org with errors' do
       let(:org) { create(:entity_org, last_user_id: sf_guard_user.id) }
-      let(:params) { { id: org.id, entity: { 'end_date' => 'bad date' }, reference: {'just_cleaning_up' => '1'} } }
+      let(:params) do
+        { id: org.id, entity: { 'end_date' => 'bad date' }, reference: { 'just_cleaning_up' => '1' } }
+      end
 
       it 'does not change the end_date' do
-        expect { patch :update, params: params }.not_to change { Entity.find(org.id).end_date } 
+        expect { patch :update, params: params }.not_to change { Entity.find(org.id).end_date }
       end
 
       it 'renders edit page' do
@@ -455,11 +465,11 @@ describe EntitiesController, type: :controller do
       end
 
       it 'does not change the first name' do
-        expect { patch :update, params: params }.not_to change { Entity.find(person.id).person.name_first } 
+        expect { patch :update, params: params }.not_to change { Entity.find(person.id).person.name_first }
       end
 
       it 'does not change the entity\'s blurb' do
-        expect { patch :update, params: params }.not_to change { Entity.find(person.id).blurb } 
+        expect { patch :update, params: params }.not_to change { Entity.find(person.id).blurb }
       end
 
       it 'renders edit page' do
@@ -471,7 +481,7 @@ describe EntitiesController, type: :controller do
     describe 'updating a public company' do
       before do
         @org = create(:entity_org)
-        @org.add_extension('PublicCompany', {ticker: 'XYZ'} )
+        @org.add_extension('PublicCompany', ticker: 'XYZ')
         @params = { id: @org.id,
                     entity: {
                       name: @org.name,
@@ -496,48 +506,9 @@ describe EntitiesController, type: :controller do
   end # end describe #update
 
   describe '#destory' do
-    context 'user is a deleter' do
-      login_user
-
-      before do
-        @entity = double('entity',
-                         :name        => 'Lew Basnight',
-                         :merged_id   => nil,
-                         :has_merges? => false,
-                         :is_deleted? => false)
-        expect(Entity).to receive(:find_by_id).and_return(@entity)
-      end
-
-      it 'calls soft delete on entity' do
-        expect(@entity).to receive(:soft_delete).once
-        delete :destroy, params: { id: '123' }
-      end
-
-      it 'redirects to dashboard' do
-        expect(@entity).to receive(:soft_delete).once
-        delete :destroy, params: { id: '123' }
-        expect(response).to have_http_status(302)
-        expect(response.location).to include 'dashboard'
-      end
-    end
-
     context 'user is not a deleter' do
       before { delete :destroy, params: { id: '123' } }
       it { should respond_with 302 }
     end
-  end
-
-  xdescribe 'GET /references' do
-    before do
-      @entity = build(:mega_corp_inc, updated_at: Time.now, id: rand(100))
-      expect(Entity).to receive(:find).with(@entity.id.to_s).and_return(@entity)
-      refs = [build(:entity_ref, object_id: @entity.id), build(:entity_ref, object_id: @entity.id) ]
-      expect(@entity).to receive(:all_references).and_return(refs)
-      expect(Kaminari).to receive(:paginate_array).with(refs).and_return(spy('kaminari'))
-      get :references, id: @entity.id
-    end
-
-    it { should respond_with(200) }
-    it { should render_template(:references) }
   end
 end

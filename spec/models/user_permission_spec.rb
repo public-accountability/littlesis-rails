@@ -10,7 +10,6 @@ describe UserPermission, type: :model do
   # associations
   it { should belong_to(:user) }
 
-
   # validation
   it { should validate_presence_of(:user_id) }
   it { should validate_presence_of(:resource_type) }
@@ -19,18 +18,19 @@ describe UserPermission, type: :model do
   let(:user_permission) do
     UserPermission.create(user_id: 1,
                           resource_type: 'Tagging',
-                          access_rules: '{ "tag_ids": [1]}')
+                          access_rules: { 'tag_ids' => [1] })
   end
   let(:user_permission_without_rules) do
     UserPermission.create(user_id: 1,
                           resource_type: 'List',
                           access_rules: nil)
   end
-  
+
   it 'returns access rules as hash with indifferent access' do
-    expect(user_permission.access_rules).to eq ({ 'tag_ids' => [1] })
+    expect(user_permission.access_rules).to eq('tag_ids' => [1])
     expect(user_permission.access_rules[:tag_ids]).to eq [1]
-    expect(user_permission_without_rules.access_rules).to be_nil
+    expect(user_permission_without_rules.access_rules)
+      .to eq ActiveSupport::HashWithIndifferentAccess.new
   end
 
   it 'returns resource type as a class name constant' do

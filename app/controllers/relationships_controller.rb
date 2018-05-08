@@ -6,7 +6,7 @@ class RelationshipsController < ApplicationController
   before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction]
   before_action :authenticate_user!, except: [:show]
   before_action :block_restricted_user_access, only: [:create, :update, :destroy, :bulk_add]
-  before_action -> { check_permission('deleter') }, only: [:destroy]
+  before_action :check_delete_permission, only: [:destroy]
   before_action :set_entity, only: [:bulk_add]
 
   # see utility.js
@@ -105,6 +105,7 @@ class RelationshipsController < ApplicationController
   def destroy
     @relationship.current_user = current_user
     @relationship.soft_delete
+
     redirect_to home_dashboard_path, notice: 'Relationship successfully deleted'
   end
 
@@ -308,5 +309,11 @@ class RelationshipsController < ApplicationController
 
   def reverse_direction?
     cast_to_boolean(params[:reverse_direction]) && @relationship.reversible?
+  end
+
+  def check_delete_permission
+    unless current_user.permissions.relationship_permissions(@relationship).fetch(:deleteable)
+      raise Exceptions::PermissionError
+    end
   end
 end

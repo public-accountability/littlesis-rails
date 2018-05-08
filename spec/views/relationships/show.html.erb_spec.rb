@@ -17,6 +17,20 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
     allow(view).to receive(:user_admin?).and_return(true)
   end
 
+
+  def mock_current_user_permissions
+    permissions = double('permisions')
+    allow(permissions).to receive(:relationship_permissions)
+                            .and_return({deleteable: false})
+    
+    allow(permissions).to receive(:tag_permissions).and_return({})
+
+    allow(view).to receive(:current_user)
+                     .and_return(double('user',
+                                        has_legacy_permission: true,
+                                        permissions: permissions))
+  end
+
   describe 'layout' do
     let(:user_signed_in) { false }
     let(:tags) { Tag.all.take(2) }
@@ -90,12 +104,11 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
     context 'signed in user' do
       let(:user_signed_in) { true }
 
-      before(:each) do
-        allow(view).to receive(:current_user)
-                        .and_return(double(has_legacy_permission: true,
-                                           permissions: double(tag_permissions: {})))
+      before do
+        mock_current_user_permissions
         render
       end
+      
       context 'relationship has tags' do
         it 'has tags-controls' do
           css '#tags-controls'
@@ -128,10 +141,7 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
   describe 'Add Reference Modal' do
     before do
       assign(:relationship, @rel)
-      allow(view).to receive(:current_user)
-                      .and_return(double('user',
-                                         has_legacy_permission: true,
-                                         permissions: double(tag_permissions: {})))
+      mock_current_user_permissions
       allow(view).to receive(:user_signed_in?).and_return(true)
       render
     end

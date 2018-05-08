@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Permissions, :tag_helper  do
   seed_tags
-  
+
   describe 'initalize' do
 
     context 'basic user with contributor, editor, and lister permissions' do
@@ -48,14 +48,13 @@ describe Permissions, :tag_helper  do
 
     let(:owner) { create_really_basic_user }
     let(:non_owner) { create_really_basic_user }
-    let(:admin){ create_admin_user }
-    
+    let(:admin) { create_admin_user }
 
     let(:full_access) { { viewable: true, editable: true } }
     let(:view_only_access) { { viewable: true, editable: false } }
 
     before do
-      access_rules = { tag_ids: [open_tag.id, closed_tag.id] }.to_json
+      access_rules = { tag_ids: [open_tag.id, closed_tag.id] }
       owner.user_permissions.create(resource_type: 'Tag',
                                     access_rules: access_rules)
     end
@@ -79,19 +78,19 @@ describe Permissions, :tag_helper  do
 
     context('a closed tag') do
 
-      it("can be viewed by any logged in user but only edited by its owner(s) or an admin") do
+      it 'can be viewed by any logged in user but only edited by its owner(s) or an admin' do
         expect(owner.permissions.tag_permissions(closed_tag)).to eq full_access
         expect(non_owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
         expect(admin.permissions.tag_permissions(closed_tag)).to eq full_access
       end
 
-      it('can have edit permissions granted to a new user') do
+      it 'can have edit permissions granted to a new user' do
         expect(non_owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
         non_owner.permissions.add_permission(Tag, tag_ids: [closed_tag.id])
         expect(non_owner.permissions.tag_permissions(closed_tag)).to eq full_access
       end
 
-      it('can have edit permissions revoked from an owner') do
+      it 'can have edit permissions revoked from an owner' do
         expect(owner.permissions.tag_permissions(closed_tag)).to eq full_access
         owner.permissions.remove_permission(Tag, tag_ids: [closed_tag.id])
         expect(owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
@@ -291,6 +290,122 @@ describe Permissions, :tag_helper  do
         end
       end
     end # private list
+  end # list permissions
+
+  describe 'entity permissions' do
+    let(:user) { create_really_basic_user }
+    with_versioning do
+      before do
+        PaperTrail.whodunnit(user.id.to_s) { @entity = create(:entity_person) }
+      end
+
+      subject { Permissions.new(user).entity_permissions(@entity) }
+
+      context 'entity was created recently by the user' do
+
+        it 'the creator can delete the entity' do
+          expect(subject[:deleteable]).to eql true
+        end
+
+        it 'the creator cannot merge the entity' do
+          expect(subject[:mergeable]).to eql false
+        end
+
+        it 'other users cannot delete or merge the entity' do
+          expect(Permissions.new(create_really_basic_user).entity_permissions(@entity))
+            .to eql(mergeable: false, deleteable: false)
+        end
+      end
+
+      context 'entity was recently created, but has more than 2 relationships' do
+        before { expect(@entity).to receive(:link_count).and_return(4) }
+
+        it 'the creator cannot delete the entity' do
+          expect(subject[:deleteable]).to eql false
+        end
+      end
+
+      context 'entity was create more than a week ago' do
+        before { expect(@entity).to receive(:created_at).and_return(1.month.ago) }
+
+        it 'the creator cannot delete the entity' do
+          expect(subject[:deleteable]).to eql false
+        end
+      end
+
+      context 'user is an admin' do
+        let(:user) { create_admin_user }
+
+        it 'admin can delete and merge the entity' do
+          expect(subject).to eql(mergeable: true, deleteable: true)
+        end
+      end
+    end
+  end # entity permissions
+
+  describe 'relationship permissions' do
+    let(:user) { build(:user) }
+    let(:relationship) { build(:generic_relationship, created_at: Time.current) }
+    let(:permissions) { Permissions.new(user) }
+    subject { permissions.relationship_permissions(relationship) }
+
+    let(:legacy_permissions) { [] }
+
+    before do
+      expect(user).to receive(:sf_guard_user)
+                        .and_return(double(:permissions => legacy_permissions))
+    end
+
+    context 'user created the relationship' do
+      before do
+        allow(permissions).to receive(:user_is_creator?)
+                                .with(relationship)
+                                .and_return(true)
+      end
+
+      context 'relationship is new' do
+        specify { expect(subject[:deleteable]).to be true }
+      end
+
+      context 'relationship is more than a week old' do
+        let(:relationship) { build(:generic_relationship, created_at: 2.weeks.ago) }
+        specify { expect(subject[:deleteable]).to be false }
+      end
+
+      context 'relationship is a campaign contribution' do
+        let(:relationship) do
+          build(:donation_relationship,
+                created_at: Time.current,
+                description1: 'NYS Campaign Contribution',
+                filings: 2)
+        end
+        specify { expect(subject[:deleteable]).to be false }
+      end
+    end
+
+    context 'user did not create the relationship' do
+      before do
+        expect(permissions).to receive(:user_is_creator?)
+                                .with(relationship)
+                                .and_return(false)
+      end
+
+      context 'relationship is new' do
+        specify { expect(subject[:deleteable]).to be false }
+      end
+    end
+
+    context 'user is a deleter' do
+      let(:legacy_permissions) { ['deleter'] }
+      specify { expect(subject[:deleteable]).to be true }
+    end
+
+    context 'user is an admin' do
+      let(:legacy_permissions) { ['admin'] }
+      context 'relationship is new' do
+        specify { expect(subject[:deleteable]).to be true }
+      end
+    end
   end
 end # Permissions
 
