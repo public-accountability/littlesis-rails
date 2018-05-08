@@ -290,7 +290,59 @@ describe Permissions, :tag_helper  do
         end
       end
     end # private list
-  end
+  end # list permissions
+
+  describe 'entity permissions' do
+    let(:user) { create_really_basic_user }
+    with_versioning do
+      before do
+        PaperTrail.whodunnit(user.id.to_s) { @entity = create(:entity_person) }
+      end
+
+      subject { Permissions.new(user).entity_permissions(@entity) }
+
+      context 'entity was created recently by the user' do
+
+        it 'the creator can delete the entity' do
+          expect(subject[:deleteable]).to eql true
+        end
+
+        it 'the creator cannot merge the entity' do
+          expect(subject[:mergeable]).to eql false
+        end
+
+        it 'other users cannot delete or merge the entity' do
+          expect(Permissions.new(create_really_basic_user).entity_permissions(@entity))
+            .to eql(mergeable: false, deleteable: false)
+        end
+      end
+
+      context 'entity was recently created, but has more than 2 relationships' do
+        before { expect(@entity).to receive(:link_count).and_return(4) }
+
+        it 'the creator cannot delete the entity' do
+          expect(subject[:deleteable]).to eql false
+        end
+      end
+
+      context 'entity was create more than a week ago' do
+        before { expect(@entity).to receive(:created_at).and_return(1.month.ago) }
+
+        it 'the creator cannot delete the entity' do
+          expect(subject[:deleteable]).to eql false
+        end
+      end
+
+      context 'user is an admin' do
+        let(:user) { create_admin_user }
+
+        it 'admin can delete and merge the entity' do
+          expect(subject).to eql(mergeable: true, deleteable: true)
+        end
+      end
+    end
+  end # entity permissions
+  
 end # Permissions
 
 describe Permissions::TagAccessRules do

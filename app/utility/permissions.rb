@@ -26,6 +26,13 @@ class Permissions
     update_permission(resource_type, access_rules, :difference)
   end
 
+  def entity_permissions(entity)
+    {
+      mergeable: admin?,
+      deleteable: delete_entity?(entity)
+    }
+  end
+
   def self.anon_tag_permissions
     {
       viewable: true,
@@ -100,6 +107,19 @@ class Permissions
   def owns_tag(tag_id)
     @user.user_permissions.find_by(resource_type: 'Tag')
       &.access_rules&.fetch(:tag_ids)&.include?(tag_id)
+  end
+
+  # ENTITY HELPERS
+
+  def delete_entity?(entity)
+    return true if admin?
+    return false unless user_created_the_entity?(entity)
+    return true if entity.created_at >= 1.week.ago && entity.link_count < 3
+    return false
+  end
+
+  def user_created_the_entity?(entity)
+    entity.versions.find_by(event: 'create')&.whodunnit == @user.id.to_s
   end
 
   # LEGACY HELPERS
