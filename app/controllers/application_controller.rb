@@ -13,30 +13,32 @@ class ApplicationController < ActionController::Base
 
   before_action :configure_permitted_parameters, if: :devise_controller?
 
-  rescue_from Exceptions::PermissionError do |exception|
-    render "errors/permission", status: 403
+  rescue_from Exceptions::PermissionError do
+    render 'errors/permission', status: :forbidden
   end
 
-  rescue_from Exceptions::RestrictedUserError do |exception|
-    redirect_to home_dashboard_path, notice: "Your account has been restricted. This might be because we think you are posting spam. If that's a mistake, please contact us"
+  rescue_from Exceptions::RestrictedUserError do
+    redirect_to home_dashboard_path, notice: <<~NOTICE
+      Your account has been restricted. This might be because we think you are posting spam. If that's a mistake, please contact us
+    NOTICE
   end
 
-  rescue_from Exceptions::NotFoundError do |exception|
-    render "errors/not_found", status: 404
+  rescue_from Exceptions::NotFoundError do
+    render 'errors/not_found', status: :not_found
   end
 
-  rescue_from ActiveRecord::RecordNotFound do |exception|
-    render "errors/not_found", status: 404
+  rescue_from ActiveRecord::RecordNotFound do
+    render 'errors/not_found', status: :not_found
   end
 
-  rescue_from ActionController::RoutingError do |exception|
+  rescue_from ActionController::RoutingError do
     raise if Rails.env.development?
-    render "errors/not_found", status: 404
+    render 'errors/not_found', status: :not_found
   end
 
   rescue_from Exceptions::UnauthorizedBulkRequest do |exception|
     # for use only with JSON requests
-    render json: { errors: ['title' => exception.message] }, status: 401
+    render json: { errors: ['title' => exception.message] }, status: :unauthorized
   end
 
   rescue_from Exceptions::MergedEntityError do |e|
@@ -46,11 +48,11 @@ class ApplicationController < ActionController::Base
   end
 
   def admins_only
-    check_permission("admin")
+    check_permission 'admin'
   end
 
   def auth
-    redirect_to "/login" unless user_signed_in?
+    redirect_to '/login' unless user_signed_in?
   end
 
   def block_restricted_user_access
@@ -84,44 +86,10 @@ class ApplicationController < ActionController::Base
     session[:dismissed_alerts] = []
   end
 
-  def prepopulate_note_from_params
-    @note = Note.new
-    default_body = []
-
-    if params[:reply_to].present?
-      if (@reply_to_note = Note.find(params[:reply_to])).present?
-        default_body += @reply_to_note.all_users.collect { |u| "@" + u.username }
-        default_body += @reply_to_note.groups.collect { |g| "@group:" + g.slug }
-        @note.is_private if @reply_to_note.is_private
-      end
-    end
-
-    if params[:user].present?
-      default_body += ["@" + params[:user]]
-    end
-
-    # for legacy "write to this user" links
-    if params[:user_id].present?
-      user = User.where(sf_guard_user_id: params[:user_id]).first
-      default_body += ["@" + user.username] if user.present?
-    end
-
-    if params[:group].present?
-      default_body += ["@group:" + params[:group]]
-    end
-
-    if params[:entity_id].present?
-      entity = Entity.find(params[:entity_id])
-      default_body += [Note.entity_markup(entity)] if entity.present?
-    end
-
-    if params[:list_id].present?
-      list = List.find(params[:list_id])
-      default_body += [Note.list_markup(list)] if list.present?
-    end
-
-    @note.body_raw = default_body.uniq.join(" ") unless default_body.blank?
-  end
+  ##
+  # Entity Queue
+  # TODO: Delete this
+  # see: entities_controller, images_controller, articles
 
   def ensure_entity_queue(key)
     session[:entity_queues] = {} unless session[:entity_queues].present?
@@ -154,6 +122,9 @@ class ApplicationController < ActionController::Base
     QueueEntity.skip_entity(key, entity_id, current_user.id)
   end
 
+  ##
+  # merge
+  #
   def merge_last_user(attrs)
     attrs.merge(last_user_id: current_user.sf_guard_user_id)
   end

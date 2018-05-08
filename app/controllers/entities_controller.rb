@@ -232,6 +232,10 @@ class EntitiesController < ApplicationController
     render json: fields.map { |f| f.name }.sort
   end
 
+  ##
+  # Articles
+  #
+
   def articles
   end
 
@@ -307,11 +311,9 @@ class EntitiesController < ApplicationController
     end
   end
 
-  def refresh
-    check_permission 'admin'
-    @entity.update(last_user_id: APP_CONFIG['system_user_id'])
-    redirect_to @entity.legacy_url
-  end
+  ##
+  # images
+  #
 
   def images
     check_permission 'contributor'
