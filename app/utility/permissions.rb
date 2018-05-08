@@ -129,7 +129,7 @@ class Permissions
   # RELATIONSHIP HELPERS
 
   def delete_relationship?(rel)
-    return true if admin?
+    return true if admin? || deleter?
     rel.created_at >= 1.week.ago &&
       !(rel.filings.present? && rel.description1.include?('Campaign Contribution')) &&
       user_is_creator?(rel)

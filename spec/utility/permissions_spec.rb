@@ -349,9 +349,11 @@ describe Permissions, :tag_helper  do
     let(:permissions) { Permissions.new(user) }
     subject { permissions.relationship_permissions(relationship) }
 
+    let(:legacy_permissions) { [] }
+
     before do
       expect(user).to receive(:sf_guard_user)
-                        .and_return(double(:permissions => []))
+                        .and_return(double(:permissions => legacy_permissions))
     end
 
     context 'user created the relationship' do
@@ -393,11 +395,13 @@ describe Permissions, :tag_helper  do
       end
     end
 
-    context 'user is an admin' do
-      before do
-        expect(permissions).to receive(:admin?).and_return(true)
-      end
+    context 'user is a deleter' do
+      let(:legacy_permissions) { ['deleter'] }
+      specify { expect(subject[:deleteable]).to be true }
+    end
 
+    context 'user is an admin' do
+      let(:legacy_permissions) { ['admin'] }
       context 'relationship is new' do
         specify { expect(subject[:deleteable]).to be true }
       end
