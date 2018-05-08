@@ -113,9 +113,9 @@ class Permissions
 
   def delete_entity?(entity)
     return true if admin?
-    return false unless user_created_the_entity?(entity)
-    return true if entity.created_at >= 1.week.ago && entity.link_count < 3
-    return false
+    entity.created_at >= 1.week.ago &&
+      entity.link_count < 3 &&
+      user_created_the_entity?(entity)
   end
 
   def user_created_the_entity?(entity)
