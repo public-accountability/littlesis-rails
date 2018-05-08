@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ReferencesController < ApplicationController
   include ReferenceableController
   before_action :authenticate_user!, except: [:entity]

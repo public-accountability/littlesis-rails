@@ -13,7 +13,7 @@ describe 'references requests', type: :request do
       (entities + Array.wrap(non_requested_entity)).each do |e|
         e.add_reference(attributes_for(:document))
       end
-      get '/references/recent', params: { 'entity_ids' => "#{entities.map(&:id).join(',')}" }
+      get '/references/recent', params: { 'entity_ids' => entities.map(&:id).join(',') }
     end
 
     it 'returns the references for the entity plus the recent reference' do
@@ -27,20 +27,19 @@ describe 'references requests', type: :request do
     end
   end
 
-
   describe 'creating a new reference' do
     let(:entity) { create(:entity_person) }
     let(:url) { Faker::Internet.url }
     let(:post_data) do
       {
-        "data" => {
-          "referenceable_id" => entity.id,
-          "referenceable_type" => 'Entity',
-          "url" => url,
-          "name" => "This is a document",
-          "publication_date" => '',
-          "ref_type" => '1',
-          "excerpt" => nil
+        'data' => {
+          'referenceable_id' => entity.id,
+          'referenceable_type' => 'Entity',
+          'url' => url,
+          'name' => 'This is a document',
+          'publication_date' => '',
+          'ref_type' => '1',
+          'excerpt' => nil
         }
       }
     end
