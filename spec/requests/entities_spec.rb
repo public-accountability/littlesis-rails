@@ -157,4 +157,41 @@ describe 'Entity Requests', type: :request do
       renders_the_edit_page
     end
   end
+
+  describe 'deleting an entity' do
+    with_versioning do
+      let(:delete_request) { proc { delete "/entities/#{@entity.id}" } }
+
+      context 'user has permission to delete the entity' do
+        before { PaperTrail.whodunnit(user.id.to_s) { @entity = create(:entity_org) } }
+
+        it 'deletes the entity and redirects to dashboard' do
+          expect(&delete_request)
+            .to change { Entity.unscoped.find(@entity.id).is_deleted }
+                  .from(false).to(true)
+
+          redirects_to_path '/home/dashboard'
+        end
+      end
+
+      context 'user does NOT have permission to delete the entity' do
+        context 'entity created by someone else' do
+          before do
+            PaperTrail.whodunnit((user.id + 1).to_s) { @entity = create(:entity_org) }
+            delete_request.call
+          end
+          denies_access
+        end
+
+        context 'entity created one year ago' do
+          before do
+            PaperTrail.whodunnit(user.id.to_s) { @entity = create(:entity_org) }
+            @entity.update_column(:created_at, 1.year.ago)
+            delete_request.call
+          end
+          denies_access
+        end
+      end
+    end
+  end # deleting an enetity
 end

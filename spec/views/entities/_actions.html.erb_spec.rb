@@ -1,8 +1,18 @@
 require "rails_helper"
 
 describe "partial: entities/actions" do
-  let(:org) { build(:org, updated_at: 1.day.ago, last_user: build(:sf_user, user: build(:user))) }
-  let(:person) { build(:person, updated_at: 1.day.ago, last_user: build(:sf_user, user: build(:user))) }
+  let(:org) do
+    build(:org,
+          created_at: 1.day.ago,
+          updated_at: 1.day.ago,
+          last_user: build(:sf_user, user: build(:user)))
+  end
+  let(:person) do
+    build(:person,
+          created_at: 1.day.ago,
+          updated_at: 1.day.ago,
+          last_user: build(:sf_user, user: build(:user)))
+  end
   let(:entity) { org }
 
   context 'when user is an advanced user' do
@@ -11,6 +21,10 @@ describe "partial: entities/actions" do
       expect(u).to receive(:has_legacy_permission).with('importer').and_return(true)
       expect(u).to receive(:has_legacy_permission).with('bulker').and_return(true)
       allow(u).to receive(:has_legacy_permission).with('admin').and_return(false)
+
+      allow(u).to receive(:sf_guard_user)
+                    .and_return(double(:permissions => %w[contributor bulker importer]))
+
       u
     end
 

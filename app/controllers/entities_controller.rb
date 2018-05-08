@@ -18,7 +18,7 @@ class EntitiesController < ApplicationController
   before_action :set_entity_for_profile_page, only: [:show]
   before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
   before_action -> { check_permission('contributor') }, only: [:create]
-  before_action -> { check_permission('deleter') }, only: [:destroy]
+  before_action :check_delete_permission, only: [:destroy]
 
   ## Profile Page Tabs:
   # (consider moving these all to #show route)
@@ -414,5 +414,11 @@ class EntitiesController < ApplicationController
 
   def importers_only
     check_permission 'importer'
+  end
+
+  def check_delete_permission
+    unless current_user.permissions.entity_permissions(@entity).fetch(:deleteable)
+      raise Exceptions::PermissionError
+    end
   end
 end
