@@ -342,7 +342,67 @@ describe Permissions, :tag_helper  do
       end
     end
   end # entity permissions
-  
+
+  describe 'relationship permissions' do
+    let(:user) { build(:user) }
+    let(:relationship) { build(:generic_relationship, created_at: Time.current) }
+    let(:permissions) { Permissions.new(user) }
+    subject { permissions.relationship_permissions(relationship) }
+
+    before do
+      expect(user).to receive(:sf_guard_user)
+                        .and_return(double(:permissions => []))
+    end
+
+    context 'user created the relationship' do
+      before do
+        allow(permissions).to receive(:user_is_creator?)
+                                .with(relationship)
+                                .and_return(true)
+      end
+
+      context 'relationship is new' do
+        specify { expect(subject[:deleteable]).to be true }
+      end
+
+      context 'relationship is more than a week old' do
+        let(:relationship) { build(:generic_relationship, created_at: 2.weeks.ago) }
+        specify { expect(subject[:deleteable]).to be false }
+      end
+
+      context 'relationship is a campaign contribution' do
+        let(:relationship) do
+          build(:donation_relationship,
+                created_at: Time.current,
+                description1: 'NYS Campaign Contribution',
+                filings: 2)
+        end
+        specify { expect(subject[:deleteable]).to be false }
+      end
+    end
+
+    context 'user did not create the relationship' do
+      before do
+        expect(permissions).to receive(:user_is_creator?)
+                                .with(relationship)
+                                .and_return(false)
+      end
+
+      context 'relationship is new' do
+        specify { expect(subject[:deleteable]).to be false }
+      end
+    end
+
+    context 'user is an admin' do
+      before do
+        expect(permissions).to receive(:admin?).and_return(true)
+      end
+
+      context 'relationship is new' do
+        specify { expect(subject[:deleteable]).to be true }
+      end
+    end
+  end
 end # Permissions
 
 describe Permissions::TagAccessRules do

@@ -33,6 +33,10 @@ class Permissions
     }
   end
 
+  def relationship_permissions(rel)
+    { deleteable: delete_relationship?(rel) }
+  end
+
   def self.anon_tag_permissions
     {
       viewable: true,
@@ -115,11 +119,20 @@ class Permissions
     return true if admin?
     entity.created_at >= 1.week.ago &&
       entity.link_count < 3 &&
-      user_created_the_entity?(entity)
+      user_is_creator?(entity)
   end
 
-  def user_created_the_entity?(entity)
-    entity.versions.find_by(event: 'create')&.whodunnit == @user.id.to_s
+  def user_is_creator?(item)
+    item.versions.find_by(event: 'create')&.whodunnit == @user.id.to_s
+  end
+
+  # RELATIONSHIP HELPERS
+
+  def delete_relationship?(rel)
+    return true if admin?
+    rel.created_at >= 1.week.ago &&
+      !(rel.filings.present? && rel.description1.include?('Campaign Contribution')) &&
+      user_is_creator?(rel)
   end
 
   # LEGACY HELPERS
