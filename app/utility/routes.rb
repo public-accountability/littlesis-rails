@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Routes
   # converts 'entities' to 'org' or 'person'
   REPLACE_ENTITIES_IN_STRING = proc do |str, entity|
