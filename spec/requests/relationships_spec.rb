@@ -213,27 +213,40 @@ describe 'Relationships Requests' do
   end # end updating relationships
 
   describe 'deleting relationships' do
-    # let(:user) { create_admin_user }
-    let(:entity) { create(:entity_org) }
-    let(:related) { create(:entity_person) }
-    let!(:relationship) do
-      create(:generic_relationship, entity: entity, related: related, last_user_id: 1)
-    end
-    subject { -> { delete relationship_path(relationship), params: { id: relationship.id } } }
+    with_versioning do
+      before { PaperTrail.whodunnit = user.id.to_s }
+      after { PaperTrail.whodunnit = nil }
 
-    context 'as a regular user' do
-      before { subject.call }
-      denies_access
-    end
+      let(:entity) { create(:entity_org) }
+      let(:related) { create(:entity_person) }
+      let!(:relationship) do
+        create(:generic_relationship, entity: entity, related: related, last_user_id: 1)
+      end
 
-    context 'as an admin user' do
-      let(:user) { create_admin_user }
-      it { is_expected.to change { Relationship.count }.by(-1) }
-      it { is_expected.to change { entity.reload.last_user_id }.from(1).to(user.sf_guard_user_id) }
-      it { is_expected.to change { related.reload.last_user_id }.from(1).to(user.sf_guard_user_id) }
-      it 'redirects to dashboard' do
-        subject.call
-        redirects_to_path home_dashboard_path
+      subject { -> { delete relationship_path(relationship) } }
+
+      context 'as a regular user' do
+        context 'relationship is new' do
+          it 'redirects to dashboard' do
+            subject.call
+            redirects_to_path home_dashboard_path
+          end
+        end
+
+        context 'relationship is old' do
+          before do
+            relationship.update_column(:created_at, 1.month.ago)
+            subject.call
+          end
+          denies_access
+        end
+      end
+
+      context 'as an admin user' do
+        let(:user) { create_admin_user }
+        it { is_expected.to change { Relationship.count }.by(-1) }
+        it { is_expected.to change { entity.reload.last_user_id }.from(1).to(user.sf_guard_user_id) }
+        it { is_expected.to change { related.reload.last_user_id }.from(1).to(user.sf_guard_user_id) }
       end
     end
   end
