@@ -15,7 +15,11 @@ class ReferencesController < ApplicationController
     @referenceable.add_reference(reference_params(:data).to_h)
 
     if @referenceable.valid?
-      @referenceable.update(last_user_id: current_user.sf_guard_user_id)
+      # We don't record the history of when references are
+      # added, and don't want to confuse the user by having
+      # an edit not show up on the modifications page.
+      # This is why the system user is being used.
+      @referenceable.touch_by(APP_CONFIG['system_user_id'])
       head :created
     else
       render json: { errors: @referenceable.errors }, status: :bad_request

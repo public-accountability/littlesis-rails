@@ -49,7 +49,7 @@ describe ReferencesController, type: :controller do
       relationship.update_column(:updated_at, 1.year.ago)
       post_request.call
       expect(relationship.reload.updated_at.strftime('%F')).to eq Time.now.strftime('%F')
-      expect(relationship.last_user_id).to eql controller.current_user.sf_guard_user_id
+      expect(relationship.last_user_id).to eql APP_CONFIG['system_user_id']
     end
 
     it 'returns json of errors if reference is not valid' do

@@ -28,7 +28,10 @@ describe 'references requests', type: :request do
   end
 
   describe 'creating a new reference' do
-    let(:entity) { create(:entity_person) }
+    let(:entity) do
+      create(:entity_person).tap { |e| e.update_column(:updated_at, 1.day.ago) }
+    end
+
     let(:url) { Faker::Internet.url }
     let(:post_data) do
       {
@@ -44,9 +47,15 @@ describe 'references requests', type: :request do
       }
     end
 
+    let(:create_new_reference) { -> { post '/references', params: post_data } }
+
     it 'returns "created"' do
-      post '/references', params: post_data
+      create_new_reference.call
       expect(response).to have_http_status :created
+    end
+
+    it 'updates the entity updated_at time' do
+      expect(&create_new_reference).to change { entity.reload.updated_at }
     end
   end
 end
