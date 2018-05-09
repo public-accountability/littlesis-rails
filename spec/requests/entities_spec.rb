@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'Entity Requests', type: :request do
   let(:person) { create(:entity_person, start_date: '2000-01-01', blurb: nil) }
-  let(:user) { create_really_basic_user }
+  let(:user) { create_basic_user }
 
   before(:each) { login_as(user, :scope => :user) }
   after(:each) { logout(:user) }
@@ -63,6 +63,31 @@ describe 'Entity Requests', type: :request do
         expect(response).to have_http_status 400
         expect(json).to eql EntitiesController::ERRORS[:create_bulk]
       end
+    end
+  end # creating many entities
+
+  describe 'creating an entity' do
+    let(:params) do
+      {
+        entity: {
+          name: 'John Henry',
+          blurb: '',
+          primary_ext: 'Person'
+        }
+      }
+    end
+
+    let(:new_entity_request) { -> { post '/entities', params: params } }
+
+    it 'creates a new entity' do
+      expect(&new_entity_request).to change { Entity.count }.by(1)
+    end
+
+    it 'sets blurb to nil if blank' do
+      new_entity_request.call
+      entity = Entity.last
+      expect(entity.name).to eql 'John Henry'
+      expect(entity.blurb).to eql nil
     end
   end
 
@@ -131,6 +156,18 @@ describe 'Entity Requests', type: :request do
                 .from(nil).to(blurb)
 
         expect(response).to have_http_status 302
+      end
+    end
+
+    context 'submitting a request with an empty blurb' do
+      with_versioning do
+        let(:params) { { entity: { 'blurb' => '' }, reference: { just_cleaning_up: 1 } } }
+        let(:patch_request) { proc { patch "/entities/#{person.id}", params: params } }
+        before { person }
+
+        it 'should not create a new paper_trail' do
+          expect(&patch_request).not_to change { PaperTrail::Version.count }
+        end
       end
     end
 

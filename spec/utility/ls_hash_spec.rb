@@ -40,4 +40,16 @@ describe LsHash do
         .to eql LsHash.new('one' => 1, 'two' => 2)
     end
   end
+
+  describe 'nilify_blank_vals' do
+    specify do
+      expect(LsHash.new('one' => '', 'two' => 0).nilify_blank_vals)
+        .to eql LsHash.new('one' => nil, 'two' => 0)
+    end
+
+    specify do
+      expect(LsHash.new('test' => false).nilify_blank_vals)
+        .to eql LsHash.new('test' => false)
+    end
+  end
 end

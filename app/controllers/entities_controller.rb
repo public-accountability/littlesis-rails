@@ -57,7 +57,7 @@ class EntitiesController < ApplicationController
   end
 
   def create
-    @entity = Entity.new(new_entity_params.merge(last_user_id: current_user.sf_guard_user_id))
+    @entity = Entity.new(new_entity_params)
 
     if @entity.save # successfully created entity
       params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
@@ -385,7 +385,7 @@ class EntitiesController < ApplicationController
 
   def update_entity_params
     params.require(:entity).permit(
-      :name, :blurb, :summary, :website, :start_date, :end_date, :is_current, :is_deleted,
+      :name, :blurb, :summary, :website, :start_date, :end_date, :is_current,
       person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender_id, :id ],
       public_company_attributes: [:ticker, :id],
       school_attributes: [:is_private, :id]
@@ -400,7 +400,9 @@ class EntitiesController < ApplicationController
   end
 
   def new_entity_params
-    params.require(:entity).permit(:name, :blurb, :primary_ext)
+    LsHash.new(params.require(:entity).permit(:name, :blurb, :primary_ext).to_h)
+      .with_last_user(current_user)
+      .nilify_blank_vals
   end
 
   def create_bulk_payload
