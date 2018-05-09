@@ -224,6 +224,7 @@ class Relationship < ApplicationRecord
     donation&.destroy! if is_donation?
     trans&.destroy! if is_transaction?
     ownership&.destroy! if is_ownership?
+    update_entity_timestamps
   end
 
   def name
