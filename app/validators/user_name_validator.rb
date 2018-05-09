@@ -5,7 +5,7 @@
 #   - cannot start with a number
 #   - contains only letters, numbers, underscores
 class UserNameValidator  < ActiveModel::EachValidator
-  USER_NAME_REGEX = /^[A-z]{1}[\d\w_]{2,}$/
+  USER_NAME_REGEX = /^[A-Za-z]{1}\w{2,}$/
 
   def validate_each(record, attribute, value)
     return if USER_NAME_REGEX.match?(value)

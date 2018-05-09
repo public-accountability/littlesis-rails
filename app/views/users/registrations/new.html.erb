@@ -130,8 +130,8 @@
               <div class="<%= field_class %>">
 		<%= f.text_field :username, autofocus: true,
 		:required => true,
-		:pattern => '[^@ ]{3,}',
-		:oninvalid => "this.setCustomValidity(\"Usernames must be at least 3 letters and cannot include '@' or spaces\")",
+		:pattern => '^[A-Za-z]{1}\w{2,}$',
+		:oninvalid => 'this.setCustomValidity("Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed.")',
 		:oninput => "this.setCustomValidity('')"
 		%>
               </div>
