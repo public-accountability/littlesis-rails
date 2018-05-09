@@ -34,8 +34,8 @@
     </div>
 
     <div class="field">
-	<%= f.label "Short description" %>
-	<%= f.text_field :blurb, class: "form-control", placeholder: "a short sentence or phrase" %>
+      <%= f.label "Short description" %>
+      <%= f.text_field :blurb, class: "form-control", placeholder: "a short sentence or phrase", pattern: '.{0,200}', title: "Enter a blurb less than 200 characters" %>
     </div>
 
     <br>

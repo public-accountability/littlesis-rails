@@ -6,7 +6,7 @@ class User < ApplicationRecord
 
   validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
-  validates :username, presence: true, uniqueness: { case_sensitive: false }
+  validates :username, presence: true, uniqueness: { case_sensitive: false }, user_name: true, on: :create
   validates :default_network_id, presence: true
 
   # Include default devise modules. Others available are:

@@ -87,8 +87,9 @@ class Entity < ApplicationRecord
   scope :orgs, -> { where(primary_ext: 'Org') }
   scope :profile_scope, -> { includes(:aliases, list_entities: [:list]) }
 
-  validates_presence_of :primary_ext
+  validates :primary_ext, presence: true
   validates :name, presence: true, entity_name: true
+  validates :blurb, length: { maximum: 200 }
   validates :start_date, length: { maximum: 10 }, date: true
   validates :end_date, length: { maximum: 10 }, date: true
 

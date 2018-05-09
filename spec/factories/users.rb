@@ -4,7 +4,7 @@ FactoryBot.define do
   end
 
   factory :user, class: User do
-    username { Faker::Internet.unique.user_name.tr('.', '') }
+    username { Faker::Internet.unique.user_name(5).tr('.', '') }
     email { Faker::Internet.unique.email }
     about_me { Faker::Movie.quote }
     default_network_id 79

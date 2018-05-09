@@ -16,8 +16,9 @@ describe Entity, :tag_helper do
   end
 
   describe 'validations' do
-    it { should validate_presence_of(:name) }
-    it { should validate_presence_of(:primary_ext) }
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:primary_ext) }
+    it { is_expected.to validate_length_of(:blurb).is_at_most(200) }
 
     it 'validates that there are at least two words in a name if the entity is a person' do
       e = Entity.new(primary_ext: 'Person', name: 'my name')
