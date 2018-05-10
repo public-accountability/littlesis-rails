@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Document < ApplicationRecord
   has_many :references
 
@@ -7,6 +9,7 @@ class Document < ApplicationRecord
   validates :publication_date, date: true
 
   before_validation :trim_whitespace, :set_hash, :convert_date
+  after_create -> { InternetArchiveJob.perform_later(url) }
 
   has_paper_trail on: [:update, :destroy]
 

@@ -39,4 +39,6 @@ Lilsis::Application.configure do
   config.active_support.deprecation = :stderr
 
   config.active_support.test_order = :sorted   # or `:random` if you pref
+
+  config.active_job.queue_adapter = :test
 end
