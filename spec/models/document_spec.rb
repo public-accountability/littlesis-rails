@@ -211,4 +211,15 @@ describe Document, :pagination_helper, type: :model do
       end
     end
   end
+
+  describe 'Saving to internet archive' do
+    let(:document) { build(:document) }
+
+    context 'creating a new document' do
+      specify do
+        expect { document.save! }
+          .to have_enqueued_job.with(document.url)
+      end
+    end
+  end
 end
