@@ -21,11 +21,11 @@ class Image < ApplicationRecord
   validates :title, presence: true
 
   def download_large_to_tmp
-    download_to_tmp(s3_url("large", true))
+    download_to_tmp s3_url('large')
   end
 
   def download_profile_to_tmp
-    download_to_tmp(s3_url("profile", true))
+    download_to_tmp s3_ur('profile')
   end
 
   def download_original_to_tmp
