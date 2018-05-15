@@ -4,7 +4,7 @@ feature "Signing up for an account", type: :feature do
   let(:user_info) do
     Struct
       .new(:first_name, :last_name, :email, :password, :username, :about_you)
-      .new(Faker::Name.first_name, Faker::Name.last_name, Faker::Internet.email, Faker::Internet.password(8), Faker::Internet.user_name, Faker::Lovecraft.sentence)
+      .new(Faker::Name.first_name, Faker::Name.last_name, Faker::Internet.email, Faker::Internet.password(8), random_username, Faker::Lovecraft.sentence)
   end
 
   before do
@@ -70,7 +70,7 @@ feature "Signing up for an account", type: :feature do
   end
 
   context 'Attempting to signup with a username that is already taken' do
-    let(:username) { Faker::Internet.user_name }
+    let(:username) { random_username }
     let!(:user) do
       sf_user = create(:sf_guard_user)
       create(:sf_guard_user_profile, public_name: username, user_id: sf_user.id)

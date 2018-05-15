@@ -1,4 +1,8 @@
 module RspecExampleHelpers
+  def random_username
+    Faker::Internet.unique.user_name(5).tr('.', '_')
+  end
+
   def css(*args)
     expect(rendered).to have_css(*args)
   end

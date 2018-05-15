@@ -63,8 +63,8 @@ describe User do
   describe 'set_default_network_id' do
     let(:user) do
       User.new(sf_guard_user_id: rand(1000),
-               email: Faker::Internet.unique.user_name,
-               username: Faker::Internet.unique.user_name)
+               email: Faker::Internet.unique.email,
+               username: random_username)
     end
 
     it 'sets default network id to be the app config default' do
