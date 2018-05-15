@@ -12,6 +12,7 @@ class Image < ApplicationRecord
   scope :persons, -> { joins(:entity).where(entity: { primary_ext: 'Person' }) }
 
   IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }.freeze
+  DEFAULT_FILE_TYPE = Lilsis::Application.config.default_image_file_type
 
   before_destroy :unfeature, if: :is_featured
 
@@ -73,16 +74,11 @@ class Image < ApplicationRecord
     fn.chomp(File.extname(fn)) + '.jpg'
   end
 
-  def self.random_filename(file_type=nil)
-    if file_type.nil?
-      type = Lilsis::Application.config.default_image_file_type
-    else
-      type = file_type
-    end
-
-    return "#{SecureRandom.hex(16)}.#{type}"
+  def self.random_filename(file_type = nil)
+    file_type = DEFAULT_FILE_TYPE if file_type.nil?
+    "#{SecureRandom.hex(16)}.#{file_type}"
   end
-  
+
   def tmp_path
     Rails.root.join("tmp", filename).to_s
   end

@@ -40,5 +40,20 @@ describe Image, type: :model do
           .to eql "https://assets.example.net/images/profile/#{filename}"
       end
     end
+
+    describe 'random_filename' do
+      it 'returns random file name with provided extension' do
+        filename = Image.random_filename('svg')
+        expect(filename.split('.')[0].length).to eql 32
+        expect(filename.split('.')[1]).to eql 'svg'
+      end
+
+      it 'returns random file name with default extension' do
+        filename = Image.random_filename
+        expect(filename.split('.')[0].length).to eql 32
+        expect(filename.split('.')[1]).to eql 'jpg'
+      end
+
+    end
   end
 end
