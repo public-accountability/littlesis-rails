@@ -54,6 +54,7 @@ test:
   <<: *defaults
   notification_email: notification@littlesis.dev
   notification_to: rspec@testing.com
+  asset_host: assets.example.net
 
 development:
   <<: *defaults

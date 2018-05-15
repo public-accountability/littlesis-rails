@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Image < ApplicationRecord
   include SingularTable
   include SoftDelete
@@ -5,16 +7,17 @@ class Image < ApplicationRecord
   belongs_to :entity, inverse_of: :images
   belongs_to :user, inverse_of: :image
   belongs_to :address, inverse_of: :images
-  
+
   scope :featured, -> { where(is_featured: true) }
   scope :persons, -> { joins(:entity).where(entity: { primary_ext: 'Person' }) }
 
-  IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }
+  IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }.freeze
 
-  # after_save :disguise_face, if: :is_featured, unless: :has_face
   before_destroy :unfeature, if: :is_featured
 
-  validates_presence_of :entity_id, :filename, :title
+  validates :entity_id, presence: true
+  validates :filename, presence: true
+  validates :title, presence: true
 
   def download_large_to_tmp
     download_to_tmp(s3_url("large", true))
@@ -27,10 +30,10 @@ class Image < ApplicationRecord
   def download_original_to_tmp
     download_to_tmp(url)
   end
-  
+
   def download_to_tmp(remote_url)
-    open(tmp_path, "wb") do |file|
-      begin 
+    open(tmp_path, 'wb') do |file|
+      begin
         file << open(remote_url).read  
       rescue OpenURI::HTTPError
         return false
@@ -47,19 +50,13 @@ class Image < ApplicationRecord
     response = request.request_head(uri.path)
     response.code.to_i == 200
   end
-  
+
   def self.s3_url(filename, type)
-    S3.url(image_path(filename, type))
+    "https://#{APP_CONFIG['asset_host']}/images/#{type}/#{filename}"
   end
 
   def s3_url(type, ensure_protocol = false)
-    url = image_path(type)
-
-    if ensure_protocol and url.match(/^\/\//)
-      url = "https:" + url
-    end
-
-    url
+    self.class.s3_url(filename, type)
   end
 
   def s3_exists?(type)

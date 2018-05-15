@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class S3
   def self.url(path)
     base_url + path
   end
-  
+
   def self.base_url
     config = Lilsis::Application.config
-    config.aws_s3_base + "/" + config.aws_s3_bucket
+    config.aws_s3_base + '/' + config.aws_s3_bucket
   end
 
   def self.s3
