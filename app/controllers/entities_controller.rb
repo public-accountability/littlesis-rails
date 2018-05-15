@@ -348,16 +348,19 @@ class EntitiesController < ApplicationController
     end
 
     @image = Image.new_from_url(src_path)
-    @image.entity = @entity
-    @image.is_free = image_params[:is_free]
-    @image.title = image_params[:title]
-    @image.caption = image_params[:caption]
+    if @image
+      @image.entity = @entity
+      @image.is_free = cast_to_boolean(image_params[:is_free])
+      @image.title = image_params[:title]
+      @image.caption = image_params[:caption]
+    end
 
-    if @image.save
-      @image.feature if image_params[:is_featured]
+    if @image && @image.save
+      @image.feature if cast_to_boolean(image_params[:is_featured])
       redirect_to images_entity_path(@entity), notice: 'Image was successfully created.'
     else
-      render action: 'new_image'
+      @image = Image.new(url: src_path, title: image_params[:title], caption: image_params[:caption])
+      render action: 'new_image', notice: 'Failed to add the image :('
     end
   end
 

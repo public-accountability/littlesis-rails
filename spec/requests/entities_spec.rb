@@ -231,4 +231,40 @@ describe 'Entity Requests', type: :request do
       end
     end
   end # deleting an enetity
+
+  describe 'adding an image with a url' do
+    let(:example_url) { 'https://example.com/image.png' }
+    let(:featured) { '0' }
+    let(:params) do
+      { 'image' => { 'url' => example_url,
+                     'title' => 'example image',
+                     'is_free' => '1',
+                     'is_featured' =>  featured } }
+    end
+
+    let(:request) do
+      -> { post upload_image_entity_path(person), params: params }
+    end
+
+    before do
+      expect(Image).to receive(:new_from_url)
+                         .with(example_url)
+                         .and_return(Image.new(filename: Image.random_filename,
+                                               url: example_url,
+                                               width: 100,
+                                               height: 100))
+    end
+
+    it 'creates a new image' do
+      expect(&request).to change { Image.count }.by(1)
+    end
+
+    it 'sets title and is featured' do
+      request.call
+      image = Image.last
+      expect(image.entity_id).to eql person.id
+      expect(image.title).to eql params.dig('image', 'title')
+      expect(image.is_featured).to be false
+    end
+  end
 end
