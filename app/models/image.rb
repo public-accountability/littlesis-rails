@@ -55,20 +55,16 @@ class Image < ApplicationRecord
     "https://#{APP_CONFIG['asset_host']}/images/#{type}/#{filename}"
   end
 
-  def s3_url(type, ensure_protocol = false)
+  singleton_class.send(:alias_method, :image_path, :s3_url)
+
+  def s3_url(type)
     self.class.s3_url(filename, type)
   end
 
+  alias_method :image_path, :s3_url
+
   def s3_exists?(type)
     S3.file_exists? "images/#{type}/#{filename}"
-  end
-
-  def self.image_path(filename, type)
-    ActionController::Base.helpers.asset_path("images/#{type}/#{filename}")  
-  end
-
-  def image_path(type)
-    self.class.image_path(filename(type), type)
   end
 
   def filename(type=nil)
@@ -83,8 +79,8 @@ class Image < ApplicationRecord
     else
       type = file_type
     end
-      
-    return "#{SecureRandom.hex(16)}.#{type}" 
+
+    return "#{SecureRandom.hex(16)}.#{type}"
   end
   
   def tmp_path
