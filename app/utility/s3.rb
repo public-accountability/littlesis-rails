@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class S3
   def self.url(path)
     base_url + path
   end
-  
+
   def self.base_url
     config = Lilsis::Application.config
-    config.aws_s3_base + "/" + config.aws_s3_bucket
+    config.aws_s3_base + '/' + config.aws_s3_bucket
   end
 
   def self.s3
@@ -25,7 +27,7 @@ class S3
     return true if check_first && object.exists?
 
     begin
-      object.put(:body => IO.read(Pathname.new(local_path)), :acl => 'public-read')
+      object.put s3_options(local_path)
     rescue => e
       Rails.logger.info "Failed to upload file: #{local_path}"
       Rails.logger.debug e
@@ -33,5 +35,11 @@ class S3
     end
 
     true
+  end
+
+  private_class_method def self.s3_options(local_path)
+    options = { body: IO.read(Pathname.new(local_path)), acl: 'public-read' }
+    options.store(:content_type, 'image/svg+xml') if local_path.slice(-3, 3).casecmp?('svg')
+    options
   end
 end
