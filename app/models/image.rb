@@ -80,11 +80,17 @@ class Image < ApplicationRecord
   end
 
   def self.new_from_url(url)
-    filename = random_filename
+    # This assumes that the image url has an filetype extension
+    #   ie: http://example.com/image.png
+    # a url fwithout an extension will not work
+    filename = random_filename(URI(url).path[-3, 3])
 
     begin
       original = MiniMagick::Image.open(url)
-    rescue
+    rescue => e
+      Rails.logger.info "Failed to open: #{url}"
+      Rails.logger.debug e.message
+      Rails.logger.deubg e.backtrace.join('\n')
       return false
     end
 
@@ -96,13 +102,11 @@ class Image < ApplicationRecord
       small = create_asset(filename, 'small', url, 50, 50)
     end
 
-    if large and profile and small
-      return new({
-        filename: filename,
-        url: url.match(/^https?:/) ? url : nil,
-        width: original[:width],
-        height: original[:height]
-      })
+    if large && profile && small
+      return new(filename: filename,
+                 url: url.match?(/^https?:/) ? url : nil,
+                 width: original[:width],
+                 height: original[:height])
     else
       return false
     end
@@ -119,7 +123,7 @@ class Image < ApplicationRecord
     width = img[:width]
     height = img[:height]
 
-    if (max_width and width > max_width) or (max_height and height > max_height)
+    if (max_width && (width > max_width)) || (max_height && (height > max_height))
       w = max_width ? max_width : img[:width]
       h = max_height ? max_height : img[:height]
       img.resize([w, h].join("x"))
