@@ -2,7 +2,7 @@ defaults: &defaults
   aws_key: ''
   aws_secret: ''
   aws_region: ''
-  aws_s3_base: "http://s3.amazonaws.com"
+  aws_s3_base: "https://s3.amazonaws.com"
   aws_s3_bucket: "littlesis-dev"
   square_image_file_type: jpg
   imagemagick_binary_path: "/usr/bin/convert"
