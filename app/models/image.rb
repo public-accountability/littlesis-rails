@@ -90,7 +90,7 @@ class Image < ApplicationRecord
     rescue => e
       Rails.logger.info "Failed to open: #{url}"
       Rails.logger.debug e.message
-      Rails.logger.deubg e.backtrace.join('\n')
+      Rails.logger.debug e.backtrace.join('\n')
       return false
     end
 
