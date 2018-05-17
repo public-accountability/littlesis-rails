@@ -11,4 +11,11 @@ describe CommonName, type: :model do
   it 'rejects blank strings' do
     expect { CommonName.create(name: '') }.not_to change { CommonName.count }
   end
+
+  describe 'CommonName.includes?' do
+    before { CommonName.create!(name: 'JONES') }
+    specify { expect(CommonName.includes?('JONES')).to be true }
+    specify { expect(CommonName.includes?('jones')).to be true }
+    specify { expect(CommonName.includes?('unusualname')).to be false }
+  end
 end
