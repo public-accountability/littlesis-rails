@@ -263,6 +263,24 @@ describe EntityMatcher, :sphinx do
         end
       end
 
+      context 'common last name' do
+        let(:test_case) { EntityMatcher::TestCase::Person.new('jane doe') }
+        let(:match) { generate_test_case name_last: 'Doe' }
+        let(:match_uncommon_name) { generate_test_case name_last: 'uncommon' }
+
+        before { CommonName.create!(name: 'DOE') }
+
+        it 'determines if match has a common last name' do
+          expect(subject.new(test_case, match).result.common_last_name)
+              .to be true
+        end
+
+        it 'determines if match has an uncommon last name' do
+          expect(subject.new(test_case, match_uncommon_name).result.common_last_name)
+              .to be false
+        end
+      end
+
       context 'same first name' do
         let(:first_name) { Faker::Name.first_name }
         let(:test_case) do
@@ -549,7 +567,40 @@ describe EntityMatcher, :sphinx do
             specify { expect(subject.automatch?).to be true }
           end
 
-          context 'can not be automatch' do
+          context 'can be automatched if last_name is uncommon' do
+            subject do
+              result_person(:same_first_name, :same_last_name).tap do |rp|
+                rp.common_last_name = false
+              end
+            end
+            specify { expect(subject.automatch?).to be true }
+          end
+
+          context 'cannot be automatched if last_name is uncommon with a mismatched suffix' do
+            subject do
+              result_person(:same_first_name, :same_last_name, :mismatched_suffix).tap do |rp|
+                rp.common_last_name = false
+              end
+            end
+            specify { expect(subject.automatch?).to be false }
+          end
+
+          context 'cannot be automatched if last name is common' do
+            subject do
+              result_person(:same_first_name, :same_last_name).tap do |rp|
+                rp.common_last_name = true
+              end
+            end
+            specify { expect(subject.automatch?).to be false }
+          end
+
+          context 'cannot be automatched if commonality is unknown' do
+            subject { result_person(:same_first_name, :same_last_name) } 
+            specify { expect(subject.automatch?).to be false }
+          end
+
+
+          context 'cannot be automatched' do
             subject { result_person(:same_first_name, :same_last_name, :blurb_keyword) }
             specify { expect(subject.automatch?).to be false }
           end
