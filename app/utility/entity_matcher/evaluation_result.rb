@@ -68,7 +68,8 @@ module EntityMatcher
       :similar_last_name,
       :similar_first_name,
       :common_relationship,
-      :blurb_keyword
+      :blurb_keyword,
+      :common_last_name
     ].freeze
 
     ORG_ATTRS = [
@@ -215,7 +216,14 @@ module EntityMatcher
       end
 
       def automatch?
-        ranking <= AUTOMATCH_MINIMUM_RANK
+        return true if ranking <= AUTOMATCH_MINIMUM_RANK
+        # The match has the exact same first and last name
+        # and the last name is uncommon, it can also be automatched
+        if same_last_name && same_first_name && (common_last_name == false) && !mismatched_suffix
+          return true
+        else
+          return false
+        end
       end
 
       def tier_one?

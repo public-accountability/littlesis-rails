@@ -80,6 +80,7 @@ module EntityMatcher
         @result.similar_last_name = similar_last_name
         @result.common_relationship = common_relationship
         @result.blurb_keyword = blurb_keyword
+        @result.common_last_name = CommonName.includes?(@match.fetch('name_last'))
       end
 
       def similar_first_name
