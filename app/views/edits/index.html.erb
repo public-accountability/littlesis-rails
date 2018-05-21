@@ -1,11 +1,11 @@
 <% content_for(:page_title, "Recent Edits") %>
 
-<h3>
-	Recent Edits
-</h3>
+<h3>Recent Edits</h3>
 
-<% cache( [ 'edits/index', @page ], expires_in: 10.minutes) do %>
-  <%= paginate @edits %>
+<% cache( [ 'edits/index', @page ], expires_in: 5.minutes) do %>
+  <% edits = EntityHistory.recently_edited_entities(page: @page) %>
+  
+  <%= paginate edits %>
 
   <table class="table">
     <thead>
@@ -17,7 +17,7 @@
     </thead>
 
     <tbody>
-      <% @edits.each do |entity| %>
+      <% edits.each do |entity| %>
         <tr>
           <td class="group_edits_user"><%= user_link(entity.last_user.user) %> <%= time_ago_in_words(entity.updated_at) %> ago</td>
           <td class="group_edits_name"><%= entity_link(entity) %></td>
@@ -27,5 +27,5 @@
     </tbody>
   </table>
 
-  <%= paginate @edits %>
+  <%= paginate edits %>
 <% end %>

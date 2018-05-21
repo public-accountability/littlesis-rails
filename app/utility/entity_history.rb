@@ -4,6 +4,18 @@
 class EntityHistory < RecordHistory
   model_name :entity
 
+  # exclude users: system, cmp-bot, congress-bot
+  EXCLUDED_LAST_USERS = [1, 8178, 8270].freeze
+
+  def self.recently_edited_entities(page: 1)
+    Entity
+      .includes(last_user: :user)
+      .where("last_user_id NOT IN (#{EXCLUDED_LAST_USERS.join(',')})")
+      .order('updated_at DESC')
+      .page(page)
+      .per(10)
+  end
+
   private
 
   # str, str -> str
