@@ -40,7 +40,7 @@ Lilsis::Application.routes.draw do
     get '/stats', action: :stats
   end
 
-  resources :dashboard_bulletins, only: [:new, :create]
+  resources :dashboard_bulletins, only: [:new, :create, :update, :edit]
 
   resources :groups do
     member do

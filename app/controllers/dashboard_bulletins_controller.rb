@@ -5,11 +5,22 @@ class DashboardBulletinsController < ApplicationController
   before_action :admins_only
 
   def new
-    @bulletin = DashboardBulletin.new
   end
 
   def create
     DashboardBulletin.create!(bulletin_params)
+    redirect_to home_dashboard_path
+  end
+
+  def edit
+    @bulletin = DashboardBulletin.find(params.require(:id))
+  end
+
+  def update
+    DashboardBulletin
+      .find(params.require(:id))
+      .update!(bulletin_params)
+
     redirect_to home_dashboard_path
   end
 

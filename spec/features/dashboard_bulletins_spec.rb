@@ -15,19 +15,39 @@ feature 'DashboardBulletins', type: :feature do
     let(:title) { Faker::Book.title }
     let(:markdown) { Faker::Markdown.headers }
 
-    before { visit '/dashboard_bulletins/new' }
+    feature 'creating a bulletin' do
+      before { visit '/dashboard_bulletins/new' }
 
-    successfully_visits_page('/dashboard_bulletins/new')
+      successfully_visits_page('/dashboard_bulletins/new')
 
-    scenario 'adding a new bulletins' do
-      fill_in 'dashboard_bulletin_title', :with => title
-      fill_in 'editable-markdown', :with => markdown
-      click_button 'Create'
+      scenario 'admin adds a new bulletins' do
+        fill_in 'dashboard_bulletin_title', :with => title
+        fill_in 'editable-markdown', :with => markdown
+        click_button 'Create'
 
-      expect(DashboardBulletin.count).not_to eql 0
-      expect(DashboardBulletin.last.markdown).to eql markdown
+        expect(DashboardBulletin.count).not_to eql 0
+        expect(DashboardBulletin.last.markdown).to eql markdown
 
-      successfully_visits_page('/home/dashboard')
+        successfully_visits_page('/home/dashboard')
+      end
     end
+
+    feature 'modifying existing bulletins' do
+      let(:bulletin) { DashboardBulletin.create!(title: title, markdown: Faker::Markdown.emphasis) }
+
+      before do
+        visit edit_dashboard_bulletin_path(bulletin)
+      end
+
+      scenario 'updating the bulletin\'s content' do
+        successfully_visits_page edit_dashboard_bulletin_path(bulletin)
+        fill_in 'editable-markdown', :with => markdown
+        click_button 'Update'
+
+        expect(bulletin.reload.markdown).to eql markdown
+        successfully_visits_page('/home/dashboard')
+      end
+    end
+
   end
 end

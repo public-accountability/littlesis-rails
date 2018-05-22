@@ -1,0 +1,26 @@
+<%#=
+Required locals: bulletin, title, method, url, submit_text
+%>
+
+<%= stylesheet_link_tag "markdown_editor" %>
+<%= javascript_include_tag "markdown_editor" %>
+
+<div class="row">
+  <div class="col-sm-8 nopadding">
+    <h1><%= title %></h1>
+
+    <%= form_for bulletin, method: method, url: url do |f| %>
+
+      <div class="form-group">
+	<%= f.label :title, 'Title' %>
+	<%= f.text_field :title, class: 'form-control', required: true %>
+      </div>
+
+      <%= f.text_area :markdown, size: "10x10", id: 'editable-markdown' %>
+      <br />
+      <%= f.submit submit_text,  class: 'btn btn-primary' %>
+      <%= link_to 'Cancel', '/admin', class: 'btn btn-default' %>
+    <% end %>
+  </div>
+</div>
+
