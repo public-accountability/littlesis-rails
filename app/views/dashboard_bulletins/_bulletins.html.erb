@@ -1,0 +1,5 @@
+<% DashboardBulletin.all.each do |bulletin| %>
+  <%= cache(bulletin) do %>
+    <%= render partial: 'dashboard_bulletins/bulletin', locals: { bulletin: bulletin } %>
+  <% end %>
+<% end %>

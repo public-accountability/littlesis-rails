@@ -1,0 +1,9 @@
+<% content_for(:page_title, 'New Dashboard Bulletin') %>
+
+<%= render partial: 'form', locals: {
+  bulletin: DashboardBulletin.new,
+  title: 'Create a new dashboard bulletin',
+  method: :post,
+  url: dashboard_bulletins_path,
+  submit_text: 'Create'
+} %>

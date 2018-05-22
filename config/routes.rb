@@ -30,11 +30,17 @@ Lilsis::Application.routes.draw do
   get '/bug_report' => 'errors#bug_report'
   post '/bug_report' => 'errors#file_bug_report'
 
+  #########
+  # ADMIN #
+  #########
+
   scope :admin, controller: 'admin', as: 'admin' do
     get '/', action: :home
     get '/tags', action: :tags
     get '/stats', action: :stats
   end
+
+  resources :dashboard_bulletins, except: [:show]
 
   resources :groups do
     member do

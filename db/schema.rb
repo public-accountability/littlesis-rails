@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180517154454) do
+ActiveRecord::Schema.define(version: 20180522142905) do
 
   create_table "address", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.bigint "entity_id", null: false
@@ -240,6 +240,14 @@ ActiveRecord::Schema.define(version: 20180517154454) do
     t.index ["object_model", "object_id", "name", "value"], name: "object_name_value_idx", unique: true, length: { value: 100 }
     t.index ["object_model", "object_id", "name"], name: "object_name_idx", unique: true
     t.index ["object_model", "object_id"], name: "object_idx"
+  end
+
+  create_table "dashboard_bulletins", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.text "markdown"
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_dashboard_bulletins_on_created_at"
   end
 
   create_table "degree", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|

@@ -42,8 +42,10 @@
 
     </div> <!-- end  col -->
     
-    <div class="col-sm-5 col-sm-offset-1">
-	<%= render partial: 'list_alerts' %>
+    <div class="col-sm-5 col-sm-offset-1" id="dashboard-bulletins">
+      <%= cache ['home_dashboard_bulletins', DashboardBulletin.last_bulletin_updated_at ] do %>
+	<%= render partial: 'dashboard_bulletins/bulletins' %>
+      <% end %>
     </div>
 
     

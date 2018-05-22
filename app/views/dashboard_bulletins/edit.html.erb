@@ -1,0 +1,9 @@
+<% content_for(:page_title, 'Dashboard Bulletin Update') %>
+
+<%= render partial: 'form', locals: {
+  bulletin: @bulletin,
+  title: 'Update a dashboard bulletin',
+  method: :patch,
+  url: dashboard_bulletin_path(@bulletin),
+  submit_text: 'Update'
+} %>

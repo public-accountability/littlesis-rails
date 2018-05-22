@@ -162,4 +162,8 @@ class ApplicationController < ActionController::Base
   def request_type
     request.headers['Littlesis-Request-Type']
   end
+
+  def redirect_to_dashboard
+    redirect_to home_dashboard_path
+  end
 end
