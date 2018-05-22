@@ -1,2 +1,24 @@
-<h1>DashboardBulletins#new</h1>
-<p>Find me in app/views/dashboard_bulletins/new.html.erb</p>
+<% content_for(:page_title, 'New Dashboard Bulletin') %>
+<%= stylesheet_link_tag "markdown_editor" %>
+<%= javascript_include_tag "markdown_editor" %>
+
+<div class="row">
+  <div class="col-sm-8 nopadding">
+    <h1>Create a new Dashboard Bulletin</h1>
+
+    <%= form_for @bulletin, method: :post, url: dashboard_bulletins_path do |f| %>
+
+      <div class="form-group">
+	<%= f.label :title, 'Bulletin Title' %>
+	<%= f.text_field :title, class: 'form-control', required: true %>
+      </div>
+
+      <%= f.text_area :markdown, size: "10x10", id: 'editable-markdown' %>
+      <br />
+      <%= f.submit "Create",  class: 'btn btn-primary' %>
+      <%= link_to 'Cancel', '/admin', class: 'btn btn-default' %>
+    <% end %>
+  </div>
+</div>
+
+
