@@ -1,0 +1,10 @@
+<%#=
+locals: bulletin
+
+This partial is the html of the actual bulletin, used
+on the home dashboard
+%>
+
+<%= dashboard_panel(bulletin.title) do %>
+  <%= raw EditablePagesController::MARKDOWN.render(bulletin.markdown) %>
+<% end %>
