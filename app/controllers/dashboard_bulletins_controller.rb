@@ -3,28 +3,37 @@
 class DashboardBulletinsController < ApplicationController
   before_action :authenticate_user!
   before_action :admins_only
+  before_action :set_bulletin, only: %i[edit update destroy]
+
+  def index
+  end
 
   def new
   end
 
   def create
     DashboardBulletin.create!(bulletin_params)
-    redirect_to home_dashboard_path
+    redirect_to_dashboard
   end
 
   def edit
-    @bulletin = DashboardBulletin.find(params.require(:id))
   end
 
   def update
-    DashboardBulletin
-      .find(params.require(:id))
-      .update!(bulletin_params)
+    @bulletin.update!(bulletin_params)
+    redirect_to_dashboard
+  end
 
-    redirect_to home_dashboard_path
+  def destroy
+    @bulletin.destroy!
+    redirect_to_dashboard
   end
 
   private
+
+  def set_bulletin
+    @bulletin = DashboardBulletin.find(params.require(:id))
+  end
 
   def bulletin_params
     params.require(:dashboard_bulletin).permit(:title, :markdown).to_h
