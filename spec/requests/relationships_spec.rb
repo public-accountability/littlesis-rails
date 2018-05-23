@@ -53,6 +53,19 @@ describe 'Relationships Requests' do
           expect(Position.last.is_board).to eql true
         end
       end
+
+      context 'is not a board member' do
+        before do
+          params[:relationship][:position_attributes] = { is_board: 'no' }
+        end
+
+        it { is_expected.to change { Relationship.count }.by(1) }
+
+        it 'corrects updates "is_board" on position' do
+          expect(&subject).to change { Position.count }.by(1)
+          expect(Position.last.is_board).to eql false
+        end
+      end
     end
 
     context 'with invalid url' do

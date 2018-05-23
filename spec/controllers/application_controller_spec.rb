@@ -22,24 +22,6 @@ describe ApplicationController, type: :controller do
       end
     end
 
-    describe 'is_current_helper' do
-      it 'converts a yes value to true' do
-        expect(ApplicationController.new.send(:is_current_helper, 'y')).to be true
-        expect(ApplicationController.new.send(:is_current_helper, '1')).to be true
-      end
-
-      it 'converts a no value to false' do
-        expect(ApplicationController.new.send(:is_current_helper, 'no')).to be false
-        expect(ApplicationController.new.send(:is_current_helper, 'False')).to be false
-      end
-
-      it 'converts any other value to nil' do
-        expect(ApplicationController.new.send(:is_current_helper, '')).to be nil
-        expect(ApplicationController.new.send(:is_current_helper, 'NULL')).to be nil
-        expect(ApplicationController.new.send(:is_current_helper, 'i can write anything here?')).to be nil
-      end
-    end
-
     describe 'prepare_params' do
       let(:params) do
         ActionController::Parameters.new('start_date' => '1999').permit(:start_date)
@@ -118,6 +100,32 @@ describe ApplicationController, type: :controller do
       before { get :index }
       it { should respond_with(404) }
       it { should render_template('errors/not_found') }
+    end
+  end
+
+  describe 'cast_to_boolean' do
+    subject { ApplicationController.new }
+
+    specify do
+      expect(subject.send(:cast_to_boolean, 'yes')).to be true
+      expect(subject.send(:cast_to_boolean, 'y')).to be true
+      expect(subject.send(:cast_to_boolean, 'TRUE')).to be true
+      expect(subject.send(:cast_to_boolean, '1')).to be true
+    end
+
+    specify do
+      expect(subject.send(:cast_to_boolean, 'no')).to be false
+      expect(subject.send(:cast_to_boolean, 'N')).to be false
+      expect(subject.send(:cast_to_boolean, 'FALSE')).to be false
+      expect(subject.send(:cast_to_boolean, '0')).to be false
+    end
+
+    specify do
+      expect(subject.send(:cast_to_boolean, '')).to be nil
+      expect(subject.send(:cast_to_boolean, 'NIL')).to be nil
+      expect(subject.send(:cast_to_boolean, 'nil')).to be nil
+      expect(subject.send(:cast_to_boolean, 'null')).to be nil
+      expect(subject.send(:cast_to_boolean, 'NULL')).to be nil
     end
   end
 end
