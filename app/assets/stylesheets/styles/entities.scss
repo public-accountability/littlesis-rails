@@ -105,6 +105,17 @@ $tiny_image_size: 35px;
   border-bottom: 1px solid $red;
 }
 
+#entity-without-relationships-message {
+    @media (min-width: $screen-sm-min) {
+	width: 80%;
+    }
+    
+    p {
+	color: $gray;
+	font-size: 0.8em;
+    }
+}
+
 
 /* ENTITY PAGE ACTIONS */
 
