@@ -297,6 +297,17 @@ class RelationshipsController < ApplicationController
     prepare_params params.require(:relationship).permit(*relationship_fields)
   end
 
+  def parameter_processor(p)
+    if p.dig('position_attributes', 'is_board')
+      p['position_attributes']['is_board'] = cast_to_boolean(p.dig('position_attributes', 'is_board'))
+    end
+
+    if p.dig('position_attributes', 'compensation')
+      p['position_attributes']['compensation'] = money_to_int(p.dig('position_attributes', 'compensation'))
+    end
+    p
+  end
+
   def similar_relationships_params
     params.permit(:entity1_id, :entity2_id, :category_id)
   end
