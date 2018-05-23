@@ -68,14 +68,9 @@
 	    <br>
 	<% end %>
 
-
-	<% if @groups.count + @lists.count + @entities.count + @maps.count + @tags.count == 0 %>
-	    <strong>No results found.</strong>
+	<% if (@groups.count + @lists.count + @entities.count + @maps.count + @tags.count) == 0 %>
+	  <%= render partial: "cantfind" %>
 	<% end %>
     <% end %>
 
 </div>
-
-<% if @cant_find %>
-    <%= render partial: "cantfind" %>
-<% end %>
