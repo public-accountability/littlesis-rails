@@ -54,6 +54,7 @@ class EntitiesController < ApplicationController
   end
 
   def new
+    @entity = Entity.new(name: params[:name]) if params[:name].present?
   end
 
   def create

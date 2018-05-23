@@ -4,7 +4,7 @@
 <h4 class="top-1em">Can't find something that should be on LittleSis?</h4>
 
 <% if user_signed_in? %>
-  <%= link_to('Add It', new_entity_path, class: "btn btn-primary") %>
+  <%= link_to('Add It', new_entity_path(:name => @q), class: "btn btn-primary") %>
 <% else %>
   <strong><%= link_to('Login', new_user_session_path) %></strong> or <strong><%= link_to('sign up', new_user_registration_path) %></strong> to add it yourself!
 <% end %>
