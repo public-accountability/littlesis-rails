@@ -147,10 +147,6 @@ class ApplicationController < ActionController::Base
     params[param].present? ? params[param].send(transform) : default_value
   end
 
-  def cast_to_boolean(value)
-    ActiveRecord::Type::Boolean.new.deserialize(value)
-  end
-
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:account_update, keys: [:about_me])
   end

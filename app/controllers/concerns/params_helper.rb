@@ -2,7 +2,8 @@
 
 module ParamsHelper
   YES_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'True', 'yes', 'Yes', 'YES', 'Y', 'y'].to_set.freeze
-  NO_VALUES = [false, 0, '0', '00', 'f', 'F', 'false', 'False', 'FALSE', 'NO', 'no', 'No', 'n'].to_set.freeze
+  NO_VALUES = [false, 0, '0', '00', 'f', 'F', 'false', 'False', 'FALSE', 'NO', 'N', 'no', 'No', 'n'].to_set.freeze
+  NIL_VALUES = [nil, '', 'NULL', 'null', 'NIL', 'nil'].to_set.freeze
 
   private_constant :YES_VALUES
   private_constant :NO_VALUES
@@ -19,7 +20,7 @@ module ParamsHelper
     p['start_date'] = LsDate.convert(p['start_date']) if p.key?('start_date')
     p['end_date'] = LsDate.convert(p['end_date']) if p.key?('end_date')
     p['last_user_id'] = current_user.sf_guard_user_id
-    p['is_current'] = is_current_helper(p['is_current']) if p.key?('is_current')
+    p['is_current'] = cast_to_boolean(p['is_current']) if p.key?('is_current')
     p['amount'] = money_to_int(p['amount']) if p.key?('amount')
     parameter_processor(p)
   end
@@ -27,6 +28,15 @@ module ParamsHelper
   # override this method to modify the param object before sent to .update
   def parameter_processor(params)
     params
+  end
+
+  protected
+
+  def cast_to_boolean(value)
+    return true if YES_VALUES.include?(value)
+    return false if NO_VALUES.include?(value)
+    return nil if NIL_VALUES.include?(value)
+    ActiveRecord::Type::Boolean.new.deserialize(value)
   end
 
   private
@@ -51,15 +61,4 @@ module ParamsHelper
     end
     new_h
   end
-
-  def is_current_helper(val)
-    if YES_VALUES.include?(val)
-      true
-    elsif NO_VALUES.include?(val)
-      false
-    else
-      nil
-    end
-  end
-
 end
