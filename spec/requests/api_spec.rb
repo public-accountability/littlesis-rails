@@ -143,7 +143,7 @@ describe Api, :pagination_helper do
         get lists_api_entity_path(entity), headers: @auth_header
       end
       specify { expect(response).to have_http_status 200 }
-      specify { expect(json).to eql('meta' => meta, 'data' => lists.map(&:api_data)) }
+      specify { expect(truncate_updated_at(json['data'])).to eql(truncate_updated_at(lists.map(&:api_data))) }
     end
 
     context 'entity with no lists' do

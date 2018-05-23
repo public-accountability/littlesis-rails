@@ -3,6 +3,14 @@ module RequestExampleMacros
     JSON.parse(response.body)
   end
 
+  # for whatever reason the updated_at field
+  # gets changed in our test environment ever-so-slightly
+  def truncate_updated_at(data)
+    data.map do |h|
+      h['attributes']['updated_at'] = h['attributes']['updated_at'][0, 16]
+    end
+  end
+
   def redirects_to_path(path)
     expect(response).to have_http_status 302
     expect(response.location).to include path

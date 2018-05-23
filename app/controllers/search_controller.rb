@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 class SearchController < ApplicationController
   before_action :authenticate_user!, except: [:basic]
   before_action :set_page, only: [:basic]
   before_action :set_initial_search_values, only: [:basic]
 
   def basic
-    @q = params.fetch(:q, "").gsub(/\b(and|the|of)\b/, "")
-    @cant_find = params[:q].present? && @q.empty?
+    @q = params.fetch(:q, '').gsub(/\b(and|the|of)\b/, '')
 
     if @q.present?
       if @page > 1
@@ -16,7 +17,7 @@ class SearchController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { render "basic" }
+      format.html { render 'basic' }
 
       format.json do
         entities = @entities.map { |e| Entity::Search.entity_with_summary(e) }

@@ -1,22 +1,22 @@
 require 'rails_helper'
 
-describe "search/basic", type: :view do
-  let(:cant_find) { false }
+describe 'search/basic', type: :view do
   let(:entities) { [] }
   let(:groups) { [] }
   let(:lists) { [] }
   let(:maps) { [] }
   let(:tags) { [] }
   let(:q) { '' }
+  let(:user_signed_in) { false }
 
-  before(:each) do
-    assign(:cant_find, cant_find)
+  before do
     assign(:entities, entities)
     assign(:groups, groups)
     assign(:lists, lists)
     assign(:maps, maps)
     assign(:tags, tags)
     assign(:q, q)
+    allow(view).to receive(:user_signed_in?).and_return(user_signed_in)
     render
   end
 
@@ -28,21 +28,40 @@ describe "search/basic", type: :view do
     end
 
     context 'results found' do
+      let(:q) { 'xyz' }
+      let(:entities) { Kaminari.paginate_array([build(:org)]).page(1) }
       it { is_expected.not_to render_template(partial: '_cantfind') }
     end
 
     context 'no results found' do
-      let(:cant_find) { true }
+      let(:q) { 'xyz' }
       it { is_expected.to render_template(partial: '_cantfind') }
     end
   end
 
-  context 'Searching for bufffalo' do
+  context 'Searching for buffalo' do
     let(:q) { 'buffalo' }
 
     context 'nothing found' do
       it 'displays no results found message' do
         css 'strong', text: 'No results found.'
+        css 'h4', text: "Can't find something that should be on LittleSis?"
+      end
+
+      context 'user signed in' do
+        let(:user_signed_in) { true }
+
+        it 'has button to add it' do
+          css 'a.btn', text: 'Add It'
+          expect(rendered).not_to include 'to add it yourself!'
+        end
+      end
+
+      context 'user not signed in' do
+        it 'suggests you sign in and add it yourself' do
+          expect(rendered).to include 'to add it yourself!'
+          not_css 'a.btn', text: 'Add It'
+        end
       end
     end
 
@@ -52,6 +71,7 @@ describe "search/basic", type: :view do
       it 'shows research groups' do
         css 'h3', text: 'Research Groups'
         css 'span.search-result-link'
+        expect(rendered).not_to include 'to add it yourself!'
       end
     end
 
@@ -94,5 +114,5 @@ describe "search/basic", type: :view do
       end
     end
   end
-  
+
 end
