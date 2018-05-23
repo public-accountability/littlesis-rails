@@ -1,5 +1,15 @@
+# frozen_string_literal: true
+
 module EntitiesHelper
-  
+
+  def entity_primary_ext_display(entity)
+    if entity.org?
+      'organization'
+    else
+      'person'
+    end
+  end
+
   def entity_hash_link(entity, name=nil, action=nil)
     name ||= entity['name']
     link_to name, Entity.legacy_url(entity['primary_ext'], entity['id'], name, action)

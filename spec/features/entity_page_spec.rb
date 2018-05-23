@@ -338,8 +338,33 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
   end
 
-  xdescribe "relationships tab" do
-    it "shows a series of lists"
+  describe "relationships tab" do
+    before { visit entity_path(person) }
+    context 'with no relationships' do
+      it 'shows stub message' do
+        successfully_visits_page entity_path(person)
+        page_has_selector '#entity-without-relationships-message'
+        expect(find('#entity-without-relationships-message p a')[:href])
+          .to eql add_relationship_entity_path(person)
+      end
+    end
+
+    context 'with two relationships: position and generic' do
+      let(:entity) { create(:entity_person) }
+      before do
+        Relationship.create!(category_id: 1, entity: entity, related: create(:entity_org))
+        Relationship.create!(category_id: 12, entity: entity, related: create(:entity_org))
+        visit entity_path(entity)
+      end
+
+      scenario 'displays two relationships' do
+        successfully_visits_page entity_path(entity)
+        expect(page).not_to have_selector '#entity-without-relationships-message'
+        page_has_selector 'div.relationship-section', count: 2
+        page_has_selector 'div.subsection', text: 'Positions'
+        page_has_selector 'div.subsection', text: 'Other Affiliations'
+      end
+    end
   end
 
   describe "interlocks tab" do
