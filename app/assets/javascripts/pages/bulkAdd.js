@@ -20,6 +20,9 @@
 
   var NOTES_MODE = false;
 
+  var MATCHING_MODE = false;
+  var MATCHING_INDEX = null;
+
   // Retrieves selected cateogry and converts 50 and 51 to 5
   function realCategoryId() {
     var category = Number($('#relationship-cat-select option:selected').val());
@@ -88,6 +91,7 @@
       .append( $('<span>', {text: 'Add a row', class: 'cursor-pointer'}));
   }
 
+
   function entityMatchBtn() {
     return $('<button>', {
       text: 'Match names',
@@ -95,12 +99,16 @@
       click: function() {
 	if ($(this).hasClass('btn-default')) {
 	  // enable matching mode
+	  MATCHING_MODE = true;
+	  MATCHING_INDEX = 0;
 	  $(this).removeClass('btn-default');
 	  $(this).addClass('btn-primary');
 	  $(this).text('Cancel matching');
-	  entityMatch(0);
+	  entityMatch();
 	} else {
 	  // stop matching
+	  MATCHING_MODE = false;
+	  MATCHING_INDEX = null;
 	  clearMatchingTable();
 	  $(this).addClass('btn-default');
 	  $(this).removeClass('btn-primary');
@@ -835,13 +843,14 @@
   
   // input: int
   // output: <div>
-  function skipBtn(nextIndex) {
+  function skipBtn() {
     var skip = $('<button>', {
       "type": 'button',
       "class": 'btn btn-default',
       "text": 'Skip / Create new entity',
       "click": function() {
-	entityMatch(nextIndex);
+	MATCHING_INDEX++;
+	entityMatch();
       }
     });
     return $('<div>').append(skip);
@@ -849,11 +858,11 @@
 
   // input: int
   // output: <h2>
-  function innerMatchBoxTitle(nextIndex) {
+  function innerMatchBoxTitle() {
     return $('<h2>', {
       "text": 'Select a matching LittleSis Entity',
       "class": 'text-center'
-    }).append(skipBtn(nextIndex));
+    }).append(skipBtn());
   }
 
   // Compiled template for table row
@@ -867,8 +876,8 @@
 
   // searches for matching entity
   // and appends results to the table
-  // input: <tr>, int
-  function searchAndDisplay(row, nextIndex) {
+  // input: <tr>
+  function searchAndDisplay(row) {
     var name = $(row).find('td:nth-child(1)').text();
     // search for matches
     searchRequest(name, function(results){
@@ -885,7 +894,8 @@
 		// and we don't want that to trigger a selection
 	      } else {
 		updateCell(entity, row);
-		entityMatch(nextIndex);
+		MATCHING_INDEX++;
+		entityMatch();
 	      }
 	    } 
 	  }).append(entityMatchTableRow.render(entity));
@@ -904,10 +914,9 @@
     });
   }
 
-  // input: <tr>, int
-  function matchBox(row, currentIndex) {
-    var nextIndex = currentIndex + 1;
-    searchAndDisplay(row, nextIndex);
+  // input: <tr>
+  function matchBox(row) {
+    searchAndDisplay(row);
 
     var box = $('<div>', {
       css: {
@@ -923,7 +932,7 @@
       },
       class: 'entity-match-box'
     })
-	.append(innerMatchBoxTitle(nextIndex))
+	.append(innerMatchBoxTitle())
 	.append($('#entityMatchTable').html());
     
     $('body').append(box);
@@ -935,9 +944,8 @@
   }
 
   // Matches the name to LittleSis Entity for each row (if not yet matched)
-  // input: int
-  function entityMatch(i) {
-    var row = $('#table > table > tbody > tr')[i];
+  function entityMatch() {
+    var row = $('#table > table > tbody > tr')[MATCHING_INDEX];
     clearMatchingTable();
     
     if (typeof row === 'undefined') {
@@ -946,7 +954,7 @@
     } else {
       highlightRow(row);
       scrollTo(row);
-      matchBox(row, i);
+      matchBox(row);
     }
   }
 
@@ -987,9 +995,23 @@
   //   - upload data button click
   function domListeners() {
     $('#table').on('click', '.table-add', function() { newBlankRow(); });
+
+    // handler to remove row
+    // by clicking 'X' in right-most column in table
     $('#table').on('click', '.table-remove', function() {
+      var index = $(this).parents('tr').index();
       $(this).parents('tr').remove();
+
+      // If we are currently matching names,
+      // adjust the index of the queue
+      if (MATCHING_MODE) {
+	if (index < MATCHING_INDEX) {
+	  MATCHING_INDEX--;
+	}
+	entityMatch();
+      }
     });
+
     $('#relationship-cat-select').change(function(x){
       createTable();
       $('#upload-btn').removeClass('hidden');
