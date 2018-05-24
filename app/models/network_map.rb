@@ -6,19 +6,19 @@ class NetworkMap < ApplicationRecord
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
-  belongs_to :sf_guard_user, foreign_key: "user_id", inverse_of: :network_maps
-  belongs_to :user, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :network_maps
-  
+  belongs_to :sf_guard_user, foreign_key: 'user_id', inverse_of: :network_maps
+  belongs_to :user, foreign_key: 'user_id', primary_key: 'sf_guard_user_id', inverse_of: :network_maps
+
   delegate :user, to: :sf_guard_user
 
   scope :featured, -> { where(is_featured: true) }
   scope :public_scope, -> { where(is_private: false) }
   scope :private_scope, -> { where(is_private: true) }
-  scope :with_description, -> { where.not(description: [nil, ""]) }
-  scope :with_annotations, -> { where.not(annotations_data: "[]") }
-  scope :without_annotations, -> { where(annotations_data: "[]") }
+  scope :with_description, -> { where.not(description: [nil, '']) }
+  scope :with_annotations, -> { where.not(annotations_data: '[]') }
+  scope :without_annotations, -> { where(annotations_data: '[]') }
 
-  validates_presence_of :title
+  validates :title, presence: true
 
   before_save :set_defaults, :generate_index_data, :generate_secret
 
