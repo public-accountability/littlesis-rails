@@ -236,9 +236,10 @@ class MapsController < ApplicationController
     check_permission 'editor'
 
     map = @map.dup
-    map.is_featured = false
-    map.user_id = current_user.sf_guard_user_id
-    map.save
+    map.update!(is_featured: false,
+                is_private: true,
+                user_id: current_user.sf_guard_user_id,
+                title: "Clone: #{map.title}")
 
     redirect_to edit_map_path(map)
   end

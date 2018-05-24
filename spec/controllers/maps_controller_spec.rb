@@ -150,23 +150,48 @@ describe MapsController, type: :controller do
     login_user
 
     context 'cloneable map' do
+      let!(:map) { build(:network_map, user_id: 10_000) }
       before do
-        @map_count = NetworkMap.count
-        @map = build(:network_map, graph_data: '{}', user_id: 10_000)
-        expect(NetworkMap).to receive(:find).with('10-a-map').and_return(@map)
-        post :clone, params: { id: '10-a-map' }
+        expect(NetworkMap).to receive(:find).with('10-a-map').and_return(map)
       end
 
+      let(:post_request) { -> { post :clone, params: { id: '10-a-map' } } }
+
       it 'creates a new map' do
-        expect(NetworkMap.count).to eql(@map_count + 1)
+        expect(&post_request).to change { NetworkMap.count }.by(1)
       end
 
       it 'changes the user id' do
-        expect(NetworkMap.last.user_id).to be_a(Integer)
-        expect(NetworkMap.last.user_id).not_to eql 10_000
+        post_request.call
+        expect(NetworkMap.last.user_id).to eql controller.current_user.sf_guard_user_id
       end
 
-      it { should redirect_to(edit_map_path(NetworkMap.last)) }
+      it 'sets the clonned map to be private' do
+        post_request.call
+        expect(NetworkMap.last.is_private).to be true
+      end
+
+      it 'redirects to edit map path' do
+        post_request.call
+        expect(response).to redirect_to(edit_map_path(NetworkMap.last))
+      end
+
+      it 'appends "clone" to the oligrapher title' do
+        post_request.call
+        expect(NetworkMap.last.title).to eql 'Clone: so many connections'
+      end
+    end
+
+    context 'cloning a featured map' do
+      let(:map) { build(:network_map, user_id: 10_000, is_featured: true) }
+      before do
+        expect(NetworkMap).to receive(:find).with('10-a-map').and_return(map)
+        post :clone, params: { id: '10-a-map' }
+      end
+
+      it 'sets is_featured to be false' do
+        expect(NetworkMap.last.is_featured).to be false
+      end
     end
 
     context 'uncloneable map' do
