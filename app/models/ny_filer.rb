@@ -1,10 +1,11 @@
-class NyFiler < ApplicationRecord
-  has_one :ny_filer_entity
-  has_many :entities, :through => :ny_filer_entity
-  has_many :ny_disclosures, foreign_key: "filer_id"
+# frozen_string_literal: true
 
-  validates_presence_of :filer_id
-  validates_uniqueness_of :filer_id
+class NyFiler < ApplicationRecord
+  has_one :ny_filer_entity, dependent: :destroy
+  has_many :entities, :through => :ny_filer_entity
+  has_many :ny_disclosures, foreign_key: 'filer_id', inverse_of: :ny_filer
+
+  validates :filer_id, presence: true, uniqueness: true
 
   def is_matched?
     ny_filer_entity.present?
@@ -19,11 +20,11 @@ class NyFiler < ApplicationRecord
   #---------------#
 
   def self.search_filers(name)
-    search_by_name_and_committee_type(name, ["1", ""])
+    search_by_name_and_committee_type(name, ['1', ''])
   end
 
   def self.search_pacs(name)
-    search_by_name_and_committee_type(name, ["2", "9", "8"])
+    search_by_name_and_committee_type(name, ['2', '9', '8'])
   end
 
   # str, [ str ] => <ThinkingSphinx::Search>
@@ -110,7 +111,4 @@ class NyFiler < ApplicationRecord
     81 => 'City Treasurer',
     82 => 'Town Supervisor'
   }.freeze
-
-
-  
 end
