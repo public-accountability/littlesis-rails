@@ -126,6 +126,21 @@ describe NetworkMap, type: :model do
       end
     end
   end
+
+  describe 'cloneable?' do
+    it 'cloneable if is_cloneable is set' do
+      expect(build(:network_map, is_cloneable: true).cloneable?).to be true
+    end
+
+    it 'not cloneable if is_cloneable false' do
+      expect(build(:network_map, is_cloneable: false).cloneable?).to be false
+    end
+
+    it 'not cloneable if private regardless of is_cloneable status' do
+      expect(build(:network_map, is_cloneable: true, is_private: true).cloneable?).to be false
+    end
+  end
+
 end
 
 # rubocop:enable Style/StringLiterals, Style/WordArray

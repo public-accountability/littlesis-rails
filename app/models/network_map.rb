@@ -39,6 +39,11 @@ class NetworkMap < ApplicationRecord
     self.secret = SecureRandom.hex(10)
   end
 
+  def cloneable?
+    return false if is_private
+    is_cloneable
+  end
+
   def default_data
     JSON.dump({ entities: [], rels: [], texts: [] })
   end
