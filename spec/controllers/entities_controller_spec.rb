@@ -60,8 +60,7 @@ describe EntitiesController, type: :controller do
 
       it 'sets cache headers' do
         expect(response.headers['Cache-Control']).to include 'public'
-        expect(response.headers['Cache-Control']).to include 'max-age=3600'
-        expect(response.headers['Cache-Control']).to include 'must-revalidate'
+        expect(response.headers['Cache-Control']).to include 'max-age=300'
       end
     end
 
