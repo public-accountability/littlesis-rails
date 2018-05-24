@@ -232,7 +232,7 @@ class MapsController < ApplicationController
   end
 
   def clone
-    return head :unauthorized unless @map.is_cloneable
+    return head :unauthorized unless @map.cloneable? || is_owner
     check_permission 'editor'
 
     map = @map.dup
