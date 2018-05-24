@@ -1,8 +1,11 @@
 require 'rails_helper'
 
+# rubocop:disable Style/StringLiterals, Style/WordArray
+
 describe NetworkMap, type: :model do
-  it { should belong_to(:sf_guard_user) }
-  it { should belong_to(:user) }
+  it { is_expected.to belong_to(:sf_guard_user) }
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to validate_presence_of(:title) }
 
   describe '#annotations_data_with_sources' do
     let(:annoations_data) { "[{\"id\":\"B14l9k6ug\",\"header\":\"Untitled Annotation\",\"text\":\"\",\"nodeIds\":[],\"edgeIds\":[\"411302\"],\"captionIds\":[]}]" }
@@ -43,8 +46,8 @@ describe NetworkMap, type: :model do
     end
 
     it 'returns array of html' do
-      html = [ '<div><a href="' + documents[0].url + '">' + documents[0].name + '</a></div>',
-               '<div><a href="' + documents[1].url + '">' + documents[1].name + '</a></div>'].join("\n")
+      html = ['<div><a href="' + documents[0].url + '">' + documents[0].name + '</a></div>',
+              '<div><a href="' + documents[1].url + '">' + documents[1].name + '</a></div>'].join("\n")
       expect(map.documents_to_html).to eql(html)
     end
   end
@@ -55,7 +58,7 @@ describe NetworkMap, type: :model do
         '456' => { id: 123, node1_id: 2, node2_id: 3, display: { label: "Edge 2" } } }
     end
     let(:graph_data) do
-      JSON.dump({ id: 'xyz', nodes: {}, captions: {}, edges: edges })
+      JSON.dump(id: 'xyz', nodes: {}, captions: {}, edges: edges)
     end
     let(:map) { build(:network_map, graph_data: graph_data) }
 
@@ -67,16 +70,15 @@ describe NetworkMap, type: :model do
 
   describe 'edge_ids' do
     let(:graph_data) do
-      JSON.dump({
-                  id: 'NkpdQPQfx',
-                  nodes: {},
-                  edges: {
-                    '1' => { id: 1, node1_id: 1, node2_id: 2, display: { label: "Edge 1" } },
-                    '2' => { id: 2, node1_id: 2, node2_id: 3, display: { label: "Edge 2" } }
-                  },
-                  captions: { '1' => { id: 1, display: { text: "Caption 1" } } }
-                })
+      JSON.dump(id: 'NkpdQPQfx',
+                nodes: {},
+                edges: {
+                  '1' => { id: 1, node1_id: 1, node2_id: 2, display: { label: "Edge 1" } },
+                  '2' => { id: 2, node1_id: 2, node2_id: 3, display: { label: "Edge 2" } }
+                },
+                captions: { '1' => { id: 1, display: { text: "Caption 1" } } })
     end
+
     let(:map) { build(:network_map, graph_data: graph_data) }
 
     it 'returns list of ids' do
@@ -87,7 +89,7 @@ describe NetworkMap, type: :model do
   describe 'numeric ids' do
     let(:edges) { {} }
     let(:graph_data) do
-      JSON.dump({ id: 'xyz', nodes: {}, captions: {}, edges: edges })
+      JSON.dump(id: 'xyz', nodes: {}, captions: {}, edges: edges)
     end
     let(:map) { build(:network_map, graph_data: graph_data) }
 
@@ -96,8 +98,8 @@ describe NetworkMap, type: :model do
         { 'HywTymBnW' => { id: 1, node1_id: 1, node2_id: 2, display: { label: "Edge 1" } },
           'BkVslmr2-' => { id: 2, node1_id: 2, node2_id: 3, display: { label: "Edge 2" } } }
       end
-      
-      it ' returns an empty array' do
+
+      it 'returns an empty array' do
         expect(map.numeric_ids).to eql []
       end
     end
@@ -107,7 +109,7 @@ describe NetworkMap, type: :model do
         { 'HywTymBnW' => { id: 1, node1_id: 1, node2_id: 2, display: { label: "Edge 1" } },
           '123' => { id: 123, node1_id: 2, node2_id: 3, display: { label: "Edge 2" } } }
       end
-      
+
       it ' returns array with id' do
         expect(map.numeric_ids).to eql ['123']
       end
@@ -124,4 +126,21 @@ describe NetworkMap, type: :model do
       end
     end
   end
+
+  describe 'cloneable?' do
+    it 'cloneable if is_cloneable is set' do
+      expect(build(:network_map, is_cloneable: true).cloneable?).to be true
+    end
+
+    it 'not cloneable if is_cloneable false' do
+      expect(build(:network_map, is_cloneable: false).cloneable?).to be false
+    end
+
+    it 'not cloneable if private regardless of is_cloneable status' do
+      expect(build(:network_map, is_cloneable: true, is_private: true).cloneable?).to be false
+    end
+  end
+
 end
+
+# rubocop:enable Style/StringLiterals, Style/WordArray
