@@ -30,8 +30,8 @@ class SearchController < ApplicationController
   def entity_search
     return head :bad_request unless params[:q].present?
 
-    options = {}
-    options[:with] = { is_deleted: false, primary_ext: "'#{params[:ext].titleize}'" } if params[:ext]
+    options = { with: { is_deleted: false } }
+    options[:with][:primary_ext] = params[:ext].capitalize if params[:ext]
     options[:num] = params[:num] if params[:num]
 
     search_results = Entity::Search.search(params[:q], options)

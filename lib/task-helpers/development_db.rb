@@ -67,8 +67,10 @@ class DevelopmentDb
                   business_industry
                   business_person
                   candidate_district
+                  common_names
                   couple
                   custom_key
+                  dashboard_bulletins
                   degree
                   documents
                   donation
@@ -168,7 +170,6 @@ class DevelopmentDb
               note_entities
               note_groups
               note_lists
-              note_networks
               note_relationships
               note_users
               ny_disclosures

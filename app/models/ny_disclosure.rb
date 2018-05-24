@@ -1,21 +1,23 @@
+# frozen_string_literal: true
+
 class NyDisclosure < ApplicationRecord
   REPORT_ID = {
-    "A" => "32 Day Pre Primary",
-    "B" => "11 Day Pre Primary",
-    "C" => "10 Day Post Primary",
-    "D" => "32 Day Pre General",
-    "E" => "11 Day Pre General",
-    "F" => "27 Day Post General",
-    "G" => "32 Day Pre Special",
-    "H" => "11 Day Pre Special",
-    "I" => "27 Day Post Special",
-    "J" => "Periodic Jan",
-    "K" => "Periodic July",
-    "L" => "24 hour Notice"
+    'A' => '32 Day Pre Primary',
+    'B' => '11 Day Pre Primary',
+    'C' => '10 Day Post Primary',
+    'D' => '32 Day Pre General',
+    'E' => '11 Day Pre General',
+    'F' => '27 Day Post General',
+    'G' => '32 Day Pre Special',
+    'H' => '11 Day Pre Special',
+    'I' => '27 Day Post Special',
+    'J' => 'Periodic Jan',
+    'K' => 'Periodic July',
+    'L' => '24 hour Notice'
   }.freeze
-  
-  has_one :ny_match, inverse_of: :ny_disclosure
-  belongs_to :ny_filer, class_name: "NyFiler", foreign_key: "filer_id", primary_key: "filer_id"
+
+  has_one :ny_match, inverse_of: :ny_disclosure, dependent: :destroy
+  belongs_to :ny_filer, class_name: 'NyFiler', foreign_key: 'filer_id', primary_key: 'filer_id', inverse_of: :ny_disclosures
 
   validates_presence_of :filer_id,
                         :report_id,
@@ -28,7 +30,7 @@ class NyDisclosure < ApplicationRecord
     return corp_name if corp_name.present?
     return nil if first_name.nil? && last_name.nil?
     middle_name = mid_init.nil? ? " " : " #{mid_init} "
-    "#{first_name.to_s}#{middle_name}#{last_name.to_s}".titleize
+    "#{first_name}#{middle_name}#{last_name}".titleize
   end
 
   def is_matched
@@ -63,7 +65,7 @@ class NyDisclosure < ApplicationRecord
   # <Entity> -> Hash
   def self.potential_contributions(entity)
     search(search_terms(entity),
-           :with => { :is_matched => false, :transaction_code => ["A", "B", "C"] },
+           :with => { :is_matched => false, :transaction_code => ['A', 'B', 'C'] },
            :sql => { :include => :ny_filer },
            :per_page => 500
           ).map(&:contribution_attributes)
@@ -79,15 +81,15 @@ class NyDisclosure < ApplicationRecord
 
       if entity.person?
         name_h = NameParser.parse_to_hash(a.name)                         # get parsed name
-        search_terms << (name_h[:name_first] + " " + name_h[:name_last])  # Add only first + last
-        search_terms << (name_h[:name_nick] + " " + name_h[:name_last]) if name_h[:name_nick].present?
+        search_terms << (name_h[:name_first] + ' ' + name_h[:name_last])  # Add only first + last
+        search_terms << (name_h[:name_nick] + ' ' + name_h[:name_last]) if name_h[:name_nick].present?
       end
 
       search_terms << Org.strip_name(a.name) if entity.org?
     end
 
     if search_terms.length > 1
-      search_terms.to_a.map { |t| "(#{t})" }.join(" | ")
+      search_terms.to_a.map { |t| "(#{t})" }.join(' | ')
     else
       search_terms.to_a[0]
     end
@@ -104,14 +106,14 @@ class NyDisclosure < ApplicationRecord
 
   def format_transaction_code
     case transaction_code
-    when "A"
-      "A (Individual/Partnership)"
-    when "B"
-      "B (Corporate)"
-    when "C"
-      "C (All/Other)"
-    when "D"
-      "D (In-kind)"
+    when 'A'
+      'A (Individual/Partnership)'
+    when 'B'
+      'B (Corporate)'
+    when 'C'
+      'C (All/Other)'
+    when 'D'
+      'D (In-kind)'
     else
       transaction_code
     end
@@ -119,6 +121,6 @@ class NyDisclosure < ApplicationRecord
 
   def format_address
     look_nice = lambda { |x| x.to_s.titleize }
-    [ look_nice.call(address), look_nice.call(city) + ',', state.to_s, zip.to_s ].join(' ')
+    [look_nice.call(address), look_nice.call(city) + ',', state.to_s, zip.to_s].join(' ')
   end
 end
