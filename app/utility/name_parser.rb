@@ -139,6 +139,7 @@ class NameParser
   HAS_LASTNAME_PREFIX = Regexp.new " (#{LASTNAME_PREFIXES.to_a.join('|')}) "
 
   IN_QUOTES = /^"(\w+)"$/
+  IN_PARENS = /^\((\w+)\)$/
 
   MC_NAME = /\b[Mm]a?c[A-Za-z]{2,}\b/
 
@@ -377,6 +378,16 @@ class NameParser
     nick_index = parts.index { |x| quoted?(x) }
     # remove nickname from parts array if it exists
     @nick = parts.delete_at(nick_index) if nick_index
+    # find location of a name in ()
+    nick_index = parts.index { |x| in_parens?(x) }
+    if nick_index
+      nick = parts.delete_at(nick_index).tr('(', '').tr(')', '')
+      if @nick.nil?
+        @nick = nick
+      else
+        @nick = "#{@nick} #{nick}"
+      end
+    end
   end
 
   def ends_with_comma(str)
@@ -385,6 +396,10 @@ class NameParser
 
   def quoted?(str)
     IN_QUOTES.match? str
+  end
+
+  def in_parens?(str)
+    IN_PARENS.match? str
   end
 
   def clean(str, keep_periods: false)

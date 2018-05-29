@@ -41,6 +41,9 @@ describe 'NameParser', :name_parser_helper do
 
     assert_parsed_name "Jane with way too many middle names doe",
                        first: "Jane", last: 'Doe', middle: 'With Way Too Many Middle Names'
+
+    assert_parsed_name "STEYER, THOMAS FAHR (TOM)",
+                       first: 'Thomas', last: 'Steyer', middle: 'Fahr', nick: 'Tom'
   end
 
   it 'return blank hash if called with a non-string' do
