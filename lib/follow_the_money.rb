@@ -29,7 +29,7 @@ module FollowTheMoney
     related_orgs related_entity_names_for(id)
   end
 
-  MatchResult = Struct.new(:ftm_entity, :match)
+  MatchResult = Struct.new(:ftm_entity, :match_set)
 
   def self.matches
     entities.map do |entity|
@@ -39,7 +39,7 @@ module FollowTheMoney
       Rails.logger.debug "Match: #{match_set.first&.entity&.name} (#{match_set.first&.entity&.id})"
       Rails.logger.debug "Match Values: #{match_set.first&.values&.to_a&.join('|')}"
 
-      MatchResult.new(entity, match_set.automatch&.entity)
+      MatchResult.new(entity, match_set)
     end
   end
 
