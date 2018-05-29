@@ -8,7 +8,9 @@ namespace :ftm do
   desc 'saves csv of matches'
   task save_matches: :environment do
     matches = FollowTheMoney.matches.map do |result|
-      attributes = result.ftm_match.to_h
+      status = result.match_set.automatchable? ? '[X]' : '[ ]'
+      puts "#{ColorPrinter.blue(status)}\t#{ColorPrinter.green(result.ftm_entity['CFS_Entity'])}"
+      attributes = result.ftm_entity.to_h
       attributes['automatchable'] = result.match_set.automatchable?
       attributes['best_match'] = "#{result.match_set.first&.entity&.name} (#{result.match_set.first&.entity&.id})"
       attributes['best_match_values'] = result.match_set.first&.values&.to_a&.join('|')
