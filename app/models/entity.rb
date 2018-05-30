@@ -94,8 +94,7 @@ class Entity < ApplicationRecord
   validates :start_date, length: { maximum: 10 }, date: true
   validates :end_date, length: { maximum: 10 }, date: true
 
-  before_validation :trim_name_whitespace
-  before_create :set_last_user_id
+  before_validation :trim_name_whitespace, :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext
 
   ##
