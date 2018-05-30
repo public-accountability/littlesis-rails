@@ -222,8 +222,8 @@ GEM
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     orm_adapter (0.5.0)
-    paper_trail (8.1.2)
-      activerecord (>= 4.2, < 5.2)
+    paper_trail (9.1.0)
+      activerecord (>= 4.2, < 5.3)
       request_store (~> 1.1)
     parallel (1.12.1)
     parser (2.5.0.5)
@@ -445,7 +445,7 @@ DEPENDENCIES
   mini_magick
   mongo
   mysql2 (~> 0.4.10)
-  paper_trail (= 8.1.2)
+  paper_trail (= 9.1.0)
   pry
   pry-byebug
   pry-rails

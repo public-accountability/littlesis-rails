@@ -227,8 +227,8 @@ describe 'Relationships Requests' do
 
   describe 'deleting relationships' do
     with_versioning do
-      before { PaperTrail.whodunnit = user.id.to_s }
-      after { PaperTrail.whodunnit = nil }
+      before { PaperTrail.request.whodunnit = user.id.to_s }
+      after { PaperTrail.request.whodunnit = nil }
 
       let(:entity) { create(:entity_org) }
       let(:related) { create(:entity_person) }

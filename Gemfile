@@ -11,7 +11,7 @@ gem 'rack-rewrite', '~> 1.5.1'
 gem 'devise', '~> 4.4.2'
 
 # Versioning
-gem 'paper_trail', '8.1.2'
+gem 'paper_trail', '9.1.0'
 
 # delayed job
 gem 'daemons' # Required by delayed_job

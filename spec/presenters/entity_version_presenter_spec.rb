@@ -10,7 +10,7 @@ describe 'EntityVersionPresenter' do
     end
 
     before do
-      PaperTrail.whodunnit(user.id.to_s) { entity }
+      PaperTrail.request(whodunnit: user.id.to_s) { entity }
     end
 
     context 'entity was created' do

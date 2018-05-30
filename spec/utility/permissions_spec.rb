@@ -296,7 +296,9 @@ describe Permissions, :tag_helper  do
     let(:user) { create_really_basic_user }
     with_versioning do
       before do
-        PaperTrail.whodunnit(user.id.to_s) { @entity = create(:entity_person) }
+        PaperTrail.request(whodunnit: user.id.to_s) do
+          @entity = create(:entity_person)
+        end
       end
 
       subject { Permissions.new(user).entity_permissions(@entity) }

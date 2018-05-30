@@ -10,10 +10,10 @@ feature 'EntityHistoryPage' do
       allow(Tag).to receive(:lookup).and_return(double(:fetch => tag))
 
       with_versioning do
-        # craete entity with 3 history items:
-        PaperTrail.whodunnit(users[0].id.to_s) { entity }
-        PaperTrail.whodunnit(users[1].id.to_s) { entity.add_extension('Lawyer') }
-        PaperTrail.whodunnit(users[2].id.to_s) { entity.add_tag(tag.id) }
+        # create an entity with 3 history items:
+        PaperTrail.request(whodunnit: users[0].id.to_s) { entity }
+        PaperTrail.request(whodunnit: users[1].id.to_s) { entity.add_extension('Lawyer') }
+        PaperTrail.request(whodunnit: users[2].id.to_s) { entity.add_tag(tag.id) }
       end
       login_as(users[0], scope: :user)
     end

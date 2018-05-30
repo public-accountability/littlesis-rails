@@ -68,7 +68,9 @@ describe EntityHistory do
       let(:entity) { create(:entity_org) }
       subject(:versions) { EntityHistory.new(entity).versions }
 
-      before { PaperTrail.whodunnit(user.id.to_s) { entity.add_extension 'School' } }
+      before do
+        PaperTrail.request(whodunnit: user.id.to_s) { entity.add_extension 'School' }
+      end
       specify { versions.each { |v| expect(v.user).to eql user } }
       specify { versions.each { |v| expect(v.entity).to eql entity } }
     end

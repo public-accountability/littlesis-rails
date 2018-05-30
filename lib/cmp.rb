@@ -22,7 +22,7 @@ module Cmp
   end
 
   def self.set_whodunnit
-    PaperTrail.whodunnit(CMP_USER_ID.to_s) { yield }
+    PaperTrail.request(whodunnit: CMP_USER_ID.to_s) { yield }
   end
 
   def self.transaction

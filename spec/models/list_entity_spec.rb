@@ -11,7 +11,7 @@ describe ListEntity do
       let!(:entity) { create(:entity_org) }
       let(:create_list_entity) do
         proc do
-          PaperTrail.whodunnit(user.id.to_s) do
+          PaperTrail.request(whodunnit: user.id.to_s) do
             ListEntity.create!(entity_id: entity.id, list_id: list.id)
           end
         end

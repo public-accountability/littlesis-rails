@@ -8,9 +8,9 @@
 #
 module WithoutPaperTrailVersioning
   def without_versioning
-    paper_trail.disable
+    PaperTrail.request.disable_model(self)
     yield
   ensure
-    paper_trail.enable
+    PaperTrail.request.enable_model(self)
   end
 end
