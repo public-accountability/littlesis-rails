@@ -223,7 +223,7 @@ class Entity < ApplicationRecord
     fields[:entity] = self
     name.constantize.create(fields) if extension_with_fields?(name) && name.constantize.where(entity_id: id).count.zero?
     def_id = ExtensionDefinition.find_by_name(name).id
-    ExtensionRecord.find_or_create_by(entity_id: id, definition_id: def_id)
+    ExtensionRecord.find_or_create_by!(entity_id: id, definition_id: def_id)
     self
   end
 

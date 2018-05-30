@@ -4,9 +4,9 @@ class Image < ApplicationRecord
   include SingularTable
   include SoftDelete
 
-  belongs_to :entity, inverse_of: :images
-  belongs_to :user, inverse_of: :image
-  belongs_to :address, inverse_of: :images
+  belongs_to :entity, inverse_of: :images, optional: true
+  belongs_to :user, inverse_of: :image, optional: true
+  belongs_to :address, inverse_of: :images, optional: true
 
   scope :featured, -> { where(is_featured: true) }
   scope :persons, -> { joins(:entity).where(entity: { primary_ext: 'Person' }) }

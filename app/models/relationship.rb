@@ -54,10 +54,10 @@ class Relationship < ApplicationRecord
   ALL_CATEGORY_IDS_WITH_FIELDS = [1, 2, 3, 4, 5, 6, 10].freeze
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
-  belongs_to :entity, foreign_key: "entity1_id"
-  belongs_to :related, class_name: "Entity", foreign_key: "entity2_id"
-  belongs_to :unscoped_entity, -> { unscope(where: :is_deleted) }, foreign_key: "entity1_id", class_name: "Entity"
-  belongs_to :unscoped_related, -> { unscope(where: :is_deleted) }, class_name: "Entity", foreign_key: "entity2_id"
+  belongs_to :entity, foreign_key: "entity1_id", optional: true
+  belongs_to :related, class_name: "Entity", foreign_key: "entity2_id", optional: true
+  belongs_to :unscoped_entity, -> { unscope(where: :is_deleted) }, foreign_key: "entity1_id", class_name: "Entity", optional: true
+  belongs_to :unscoped_related, -> { unscope(where: :is_deleted) }, class_name: "Entity", foreign_key: "entity2_id", optional: true
   #has_many :references, -> { where(object_model: 'Relationship') }, foreign_key: 'object_id'
 
   has_one :position, inverse_of: :relationship, dependent: :destroy
@@ -77,7 +77,7 @@ class Relationship < ApplicationRecord
   accepts_nested_attributes_for :ownership
 
   belongs_to :category, class_name: "RelationshipCategory", inverse_of: :relationships
-  belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id"
+  belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", optional: true
 
   # Open Secrets
   has_many :os_matches, inverse_of: :relationship
