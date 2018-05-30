@@ -200,7 +200,11 @@ describe 'Entity Requests', type: :request do
       let(:delete_request) { proc { delete "/entities/#{@entity.id}" } }
 
       context 'user has permission to delete the entity' do
-        before { PaperTrail.whodunnit(user.id.to_s) { @entity = create(:entity_org) } }
+        before do
+          PaperTrail.request(whodunnit: user.id.to_s) do
+            @entity = create(:entity_org)
+          end
+        end
 
         it 'deletes the entity and redirects to dashboard' do
           expect(&delete_request)
@@ -214,7 +218,9 @@ describe 'Entity Requests', type: :request do
       context 'user does NOT have permission to delete the entity' do
         context 'entity created by someone else' do
           before do
-            PaperTrail.whodunnit((user.id + 1).to_s) { @entity = create(:entity_org) }
+            PaperTrail.request(whodunnit: (user.id + 1).to_s) do
+              @entity = create(:entity_org)
+            end
             delete_request.call
           end
           denies_access
@@ -222,7 +228,9 @@ describe 'Entity Requests', type: :request do
 
         context 'entity created one year ago' do
           before do
-            PaperTrail.whodunnit(user.id.to_s) { @entity = create(:entity_org) }
+            PaperTrail.request(whodunnit: user.id.to_s) do
+              @entity = create(:entity_org)
+            end
             @entity.update_column(:created_at, 1.year.ago)
             delete_request.call
           end

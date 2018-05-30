@@ -32,7 +32,7 @@ class SearchController < ApplicationController
 
     options = { with: { is_deleted: false } }
     options[:with][:primary_ext] = params[:ext].capitalize if params[:ext]
-    options[:num] = params[:num] if params[:num]
+    options[:num] = params[:num].to_i if params[:num]
 
     search_results = Entity::Search.search(params[:q], options)
 

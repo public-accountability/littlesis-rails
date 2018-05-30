@@ -42,7 +42,7 @@ feature 'list page', type: :feature do
 
     with_versioning do
       before do
-        PaperTrail.whodunnit(user.id.to_s) { @list = create(:list) }
+        PaperTrail.request(whodunnit: user.id.to_s) { @list = create(:list) }
       end
 
       scenario 'list has been created' do
@@ -58,7 +58,7 @@ feature 'list page', type: :feature do
 
       context 'adding an entity to the list' do
         before do
-          PaperTrail.whodunnit(user.id.to_s) do
+          PaperTrail.request(whodunnit: user.id.to_s) do
             ListEntity.create!(list: @list, entity: create(:entity_org))
           end
         end

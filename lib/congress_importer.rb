@@ -50,7 +50,7 @@ class CongressImporter
   end
 
   def self.transaction
-    PaperTrail.whodunnit(CONGRESS_BOT_USER.to_s) do
+    PaperTrail.request(whodunnit: CONGRESS_BOT_USER.to_s) do
       ApplicationRecord.transaction do
         yield
       end

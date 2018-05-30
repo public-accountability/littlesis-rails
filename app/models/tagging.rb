@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 class Tagging < ApplicationRecord
   GET_TAGABLE_ID_IF_ENTITY = proc { |t| t.tagable_id if t.tagable_class == 'Entity' }
   private_constant :GET_TAGABLE_ID_IF_ENTITY
 
-  has_paper_trail meta: { entity1_id: GET_TAGABLE_ID_IF_ENTITY }
+  has_paper_trail meta: { entity1_id: GET_TAGABLE_ID_IF_ENTITY },
+                  on:  %i[create destroy update]
 
   belongs_to :tagable, polymorphic: true, foreign_type: :tagable_class
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id"

@@ -5,7 +5,7 @@ describe ListHistory do
     context 'creating a list, adding an entity, and updated the name' do
       let(:user) { create_really_basic_user }
       before do
-        PaperTrail.whodunnit(user.id.to_s) do
+        PaperTrail.request(whodunnit: user.id.to_s) do
           @list = create(:list)
           ListEntity.create!(list: @list, entity: create(:entity_person))
           @list.update!(name: Faker::Lorem.sentence)

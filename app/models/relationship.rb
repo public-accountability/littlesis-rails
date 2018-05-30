@@ -10,6 +10,7 @@ class Relationship < ApplicationRecord
   include Api::Serializable
 
   has_paper_trail :ignore => [:last_user_id],
+                  :on => %i[create destroy update],
                   :meta => {
                     :entity1_id => :entity1_id,
                     :entity2_id => :entity2_id,

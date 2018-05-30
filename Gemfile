@@ -11,7 +11,7 @@ gem 'rack-rewrite', '~> 1.5.1'
 gem 'devise', '~> 4.4.2'
 
 # Versioning
-gem 'paper_trail', '8.1.2'
+gem 'paper_trail', '9.1.0'
 
 # delayed job
 gem 'daemons' # Required by delayed_job
@@ -42,7 +42,7 @@ gem 'kaminari'
 gem 'activerecord-session_store'
 
 # For search and indexing
-gem 'thinking-sphinx', '~> 3.4.2'
+gem 'thinking-sphinx', '~> 4.0.0'
 gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_delta'
 
 gem 'htmlentities'
