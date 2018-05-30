@@ -1,31 +1,9 @@
 require 'rails_helper'
 
+# rubocop:disable Style/StringLiterals, Layout/SpaceBeforeFirstArg
+
 describe Tagable, type: :model do
-
-  module Assocations
-    def has_many(*args)
-    end
-  end
-
-  class TestTagable
-    attr_reader :id
-    extend Assocations
-    include Tagable
-    @@id = 0
-
-    def initialize
-      @@id += 1
-      @id = @@id
-    end
-
-    def tags
-    end
-
-    def taggings
-    end
-  end
-
-  let(:test_tagable) { TestTagable.new }
+  let(:test_tagable) { create(:entity_org) }
   let(:tags) { Array.new(3) { create(:tag) } }
   let(:tag_name) { tags.first.name }
   let(:tag_id) { tags.first.id }
@@ -109,6 +87,7 @@ describe Tagable, type: :model do
   describe 'creating a tag' do
     let(:user) { create(:sf_user) }
     let(:system_user) { SfGuardUser.find(APP_CONFIG['system_user_id']) }
+    let(:test_tagable) { create(:entity_org) }
 
     it "creates a new tagging" do
       expect { test_tagable.add_tag(tag_id) }.to change { Tagging.count }.by(1)
@@ -144,12 +123,14 @@ describe Tagable, type: :model do
 
       attrs = Tagging.last.attributes
       expect(attrs['tag_id']).to eq tag_id
-      expect(attrs['tagable_class']).to eq 'TestTagable'
+      expect(attrs['tagable_class']).to eq 'Entity'
       expect(attrs['tagable_id']).to eq test_tagable.id
     end
   end
 
   describe 'adding tags' do
+    let(:test_tagable) { create(:entity_org) }
+
     it "can be tagged with an existing tag's id" do
       expect { test_tagable.add_tag(tag_id) }.to change { Tagging.count }.by(1)
     end
@@ -214,7 +195,7 @@ describe Tagable, type: :model do
       end
 
       it 'returns self' do
-        expect(test_tagable.update_tags([])).to be_a TestTagable
+        expect(test_tagable.update_tags([])).to be_a Entity
       end
     end
 
@@ -271,3 +252,5 @@ describe Tagable, type: :model do
     end
   end
 end
+
+# rubocop:enable Style/StringLiterals, Layout/SpaceBeforeFirstArg
