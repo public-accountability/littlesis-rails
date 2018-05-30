@@ -19,9 +19,9 @@
 
 # Learn more: http://github.com/javan/whenever
 
-every 1.minute do
-  rake "search:update_entity_delta_index", output: nil
-end
+# every 2.minutes do
+#   rake "search:update_entity_delta_index", output: nil
+# end
 
 every 1.day do
   rake "sessions:clear_expired", output: nil
