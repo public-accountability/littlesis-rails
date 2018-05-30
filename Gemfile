@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
-# gem 'rails', '4.2.10'
-gem 'rails', '5.1.6'
+gem 'rails', '5.2.0'
 gem 'mysql2', '~> 0.4.10'
 
 # Rack middleware
@@ -48,7 +47,8 @@ gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_del
 gem 'htmlentities'
 
 # For redis integration
-gem 'redis-rails', '>= 5.0.2'
+gem 'redis'
+# gem 'redis-rails', '>= 5.0.2'
 
 # For easy cron scheduling
 gem 'whenever', '~> 0.10.0', :require => false
@@ -107,3 +107,7 @@ gem "roo", "~> 2.7.0", :require => false
 
 # Used by NameSimilarity
 gem 'text', '>= 1.3.1'
+
+
+# Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', '>= 1.1.0', require: false

@@ -35,7 +35,6 @@ defaults: &defaults
   notification_user_name:
   notification_user_password:
   notification_to:
-  legacy_cache_connection: "memcached:11211"
   carousel_list_id: 404
   restricted_ips:
   chat:
@@ -48,6 +47,7 @@ defaults: &defaults
     site_key: 'your-recaptcha-site-key-here'
     secret_key: 'your-recaptcha-secret-key-here'
   action_network_api_key: 'your-action-network-api-key-here'
+  redis_url: "redis://redis:6379/0/cache"
   
 
 test:
