@@ -572,10 +572,6 @@ class Entity < ApplicationRecord
     self
   end
 
-  def set_last_user_id
-    self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
-  end
-
   def last_new_user
     last_user.user
   end

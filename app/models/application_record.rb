@@ -50,4 +50,11 @@ class ApplicationRecord < ActiveRecord::Base
   def self.execute_one(sql)
     connection.execute(sql).first.first
   end
+
+  protected
+
+  def set_last_user_id
+    self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
+  end
+
 end

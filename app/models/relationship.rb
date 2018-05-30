@@ -94,6 +94,8 @@ class Relationship < ApplicationRecord
   validates :end_date, length: { maximum: 10 }, date: true
   validates_with RelationshipValidator
 
+  before_validation :set_last_user_id
+
   after_create :create_category, :create_links, :update_entity_links
   # This callback is basically a modified version of :touch => true
   # It updates the entity timestamps and also changes the last_user_id of
