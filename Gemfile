@@ -8,15 +8,15 @@ gem 'mysql2', '~> 0.4.10'
 gem 'rack-rewrite', '~> 1.5.1'
 
 # users and authentication
-gem 'devise', '~> 4.4.2'
+gem 'devise', '~> 4.4.3'
 
 # Versioning
 gem 'paper_trail', '9.1.0'
 
 # delayed job
 gem 'daemons' # Required by delayed_job
-gem 'delayed_job', '~> 4.1.4'
-gem 'delayed_job_active_record', '>= 4.1.2'
+gem 'delayed_job', '~> 4.1.5'
+gem 'delayed_job_active_record', '>= 4.1.3'
 
 # Assets, image uploading & processing
 gem 'aws-sdk-cloudfront', '~> 1'
