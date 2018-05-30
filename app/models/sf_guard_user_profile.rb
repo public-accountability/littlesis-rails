@@ -33,9 +33,10 @@ class SfGuardUserProfile < ApplicationRecord
   #   image_path(type)
   # end
 
-  def image_path(type)
-    return ActionController::Base.helpers.asset_path("images/system/user.png") if filename.nil?
-    ActionController::Base.helpers.asset_path("images/#{type}/#{filename(type)}")
+  def image_path(type = nil)
+    "https://#{APP_CONFIG['asset_host']}/images/system/anon.png"
+    # return ActionController::Base.helpers.asset_path("images/system/user.png") if filename.nil?
+    # ActionController::Base.helpers.asset_path("images/#{type}/#{filename(type)}")
   end
 
   def filename(type=nil)
