@@ -56,6 +56,10 @@ module Lilsis
     config.tinymce.install = :copy
 
     config.active_job.queue_adapter = :delayed_job
+
+    # we can't check only check if requests come from 'littlesis.org'
+    # because the chrome extension is allowed to also make requests
+    config.action_controller.forgery_protection_origin_check = false
   end
 end
 
