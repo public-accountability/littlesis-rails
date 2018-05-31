@@ -3,7 +3,7 @@
 <div class="row">
   <h1>Dashboard</h1>
   
-  <div class="col-sm-6">
+  <div class="col-sm-6 nopadding">
     
     <div class="spacer"></div>
 
@@ -22,7 +22,7 @@
       Go to <%= link_to 'chat.littlesis.org', APP_CONFIG['chat']['chat_url'], target: '_blank' %> to start chatting!
     <% end %>
 
-    <form action="/search" method="get">
+    <form action="/search" method="get" id="dashboard-search-form">
       <div class="input-group">
 	<input type="text" name="q" class="form-control" placeholder="search for a name" />
 	<span class="input-group-btn">
@@ -41,29 +41,26 @@
       <%= link_to("Edits", edits_path, class: "btn btn-default") %>
     </div>
 
+    <div class="spacer"></div>
+
+    <div id="dashboard-your-edits">
+      <h3>Your Edits</h3>
+
+      <% @recent_updates.each do |entity| %>
+	<div class="dashboard-entity">
+	  <span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
+	</div>
+      <% end %>
+    </div>
+    
   </div> <!-- end  col -->
   
-  <div class="col-sm-5 col-sm-offset-1" id="dashboard-bulletins">
+  <div id="dashboard-bulletins">
     <%= cache ['home_dashboard_bulletins', DashboardBulletin.last_bulletin_updated_at ] do %>
       <%= render partial: 'dashboard_bulletins/bulletins' %>
     <% end %>
   </div>
   
-</div> <!-- end-row -->
-
-<div class="spacer"></div>
-
-<div class="row">
-  <div class="col-sm-10 col-md-8">
-    <h3>Your Edits</h3>
-
-    <% @recent_updates.each do |entity| %>
-      <div class="dashboard-entity">
-	<span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
-      </div>
-    <% end %>
-
-  </div>
 </div> <!-- end-row -->
 
 <div class="spacer"></div>
