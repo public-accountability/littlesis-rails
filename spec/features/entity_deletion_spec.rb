@@ -98,9 +98,9 @@ feature 'Entity deletion request & review' do
 
       it "shows a description of the request" do
         desc = page.find("#user-request-description")
-        expect(desc).to have_link requester.username, "/users/#{requester.username}"
+        expect(desc).to have_link requester.username, href: "/users/#{requester.username}"
         expect(desc).to have_text "deletion was requested"
-        expect(desc).to have_text LsDate.pretty_print(deletion_request.created_at)
+        expect(desc).to have_text deletion_request.created_at.strftime('%B %e, %Y')
       end
 
       it "shows information about the entity to be deleted" do

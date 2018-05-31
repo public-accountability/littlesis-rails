@@ -258,7 +258,7 @@ feature 'Merging entities' do
             desc = page.find("#user-request-description")
             expect(desc).to have_link username, href: "/users/#{username}"
             expect(desc).to have_text "requested"
-            expect(desc).to have_text LsDate.pretty_print(merge_request.created_at)
+            expect(desc).to have_text merge_request.created_at.strftime('%B %e, %Y')
           end
 
           it "shows the user's submitted justification" do
