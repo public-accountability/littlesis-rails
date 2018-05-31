@@ -1,5 +1,5 @@
 class Group < ApplicationRecord
-	belongs_to :sf_guard_group, foreign_key: "slug", primary_key: "name"
+	belongs_to :sf_guard_group, foreign_key: "slug", primary_key: "name", optional: true
 	
 	has_many :group_users, inverse_of: :group, dependent: :destroy
 	has_many :users, through: :group_users, inverse_of: :groups

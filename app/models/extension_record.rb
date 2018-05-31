@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExtensionRecord < ApplicationRecord
   include SingularTable
   include Api::Serializable
@@ -6,7 +8,7 @@ class ExtensionRecord < ApplicationRecord
                   unless: proc { |er| [1, 2].include? er.definition_id },
                   meta: { entity1_id: :entity_id }
 
-  belongs_to :entity, inverse_of: :extension_records, touch: true
+  belongs_to :entity, inverse_of: :extension_records, touch: true, optional: true
   belongs_to :extension_definition, foreign_key: "definition_id", inverse_of: :extension_records
 
   # Returns nested array:

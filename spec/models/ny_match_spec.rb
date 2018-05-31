@@ -70,9 +70,10 @@ describe NyMatch, type: :model do
     let(:nys_politician) { create(:entity_person) }
     let(:ny_disclosures) { Array.new(2) { create(:ny_disclosure, filer_id: filer_id) } }
     let(:disclosure_sum) { ny_disclosures.reduce(0) { |sum, d| (sum + d.amount1) } }
+    let(:ny_filer) { create(:ny_filer) }
 
     let!(:ny_filer_entity) do
-      NyFilerEntity.create!(filer_id: filer_id, entity_id: nys_politician.id, ny_filer_id: rand(1000))
+      NyFilerEntity.create!(filer_id: filer_id, entity_id: nys_politician.id, ny_filer: ny_filer)
     end
 
     let(:create_matches) do
@@ -109,9 +110,10 @@ describe NyMatch, type: :model do
 
   describe 'set_recipient' do
     it 'sets recip_id' do
-      disclosure = create(:ny_disclosure, filer_id: '5678')
-      elected = create(:elected)
-      create(:ny_filer_entity, filer_id: '5678', entity_id: elected.id)
+      ny_filer = create(:ny_filer)
+      disclosure = create(:ny_disclosure, ny_filer: ny_filer)
+      elected = create(:entity_person)
+      NyFilerEntity.create!(ny_filer: ny_filer, entity: elected, filer_id: ny_filer.filer_id)
       m = NyMatch.new(ny_disclosure_id: disclosure.id, donor_id: 123)
       expect(m.recipient).to be nil
       m.set_recipient

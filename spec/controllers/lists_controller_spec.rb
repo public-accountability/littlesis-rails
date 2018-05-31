@@ -49,9 +49,10 @@ describe ListsController, :list_helper, type: :controller do
 
   describe 'user not logged in' do
     let(:entity) { create(:entity_org) }
+    let(:user) { create_basic_user }
 
     before do
-      @new_list = create(:open_list, name: 'my interesting list', creator_user_id: 123)
+      @new_list = create(:open_list, name: 'my interesting list', creator_user_id: user.id)
       @private_list = create(:list, name: 'someone else private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: nil)
       ListEntity.find_or_create_by(list_id: @new_list.id, entity_id: entity.id)
       ListEntity.find_or_create_by(list_id: @private_list.id, entity_id: entity.id)

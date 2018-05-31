@@ -600,10 +600,11 @@ describe 'Merging Entities', :merging_helper do
     context 'source has 2 relationships, one is a ny match relationship' do
       subject { EntityMerger.new(source: source_person, dest: dest_person) }
       let(:filer_id) { SecureRandom.hex(2) }
+      let(:ny_filer) { create(:ny_filer, filer_id: filer_id) }
       let(:nys_politician) { create(:entity_person) }
 
       let!(:ny_filer_entity) do
-        NyFilerEntity.create!(filer_id: filer_id, entity_id: nys_politician.id, ny_filer_id: rand(100))
+        NyFilerEntity.create!(filer_id: filer_id, entity_id: nys_politician.id, ny_filer: ny_filer)
       end
 
       let!(:ny_disclosure) { create(:ny_disclosure, filer_id: filer_id) }
@@ -825,12 +826,13 @@ describe 'Merging Entities', :merging_helper do
   context 'ny donations' do
     subject { EntityMerger.new(source: source_person, dest: dest_person) }
     let(:filer_id) { SecureRandom.hex(2) }
+    let(:ny_filer) { create(:ny_filer, filer_id: filer_id) }
     let(:nys_politician) { create(:entity_person) }
     let(:ny_disclosures) { Array.new(2) { create(:ny_disclosure, filer_id: filer_id) } }
 
     context 'source has two ny matches' do
       let!(:ny_filer_entity) do
-        NyFilerEntity.create!(filer_id: filer_id, entity_id: nys_politician.id, ny_filer_id: rand(1000))
+        NyFilerEntity.create!(filer_id: filer_id, entity_id: nys_politician.id, ny_filer: ny_filer)
       end
 
       before do
@@ -850,7 +852,7 @@ describe 'Merging Entities', :merging_helper do
       let(:random_donor) { create(:entity_person) }
 
       before do
-        NyFilerEntity.create!(filer_id: filer_id, entity_id: source_person.id, ny_filer_id: rand(1000))
+        NyFilerEntity.create!(filer_id: filer_id, entity_id: source_person.id, ny_filer: ny_filer)
         @matches = ny_disclosures.map { |nyd| NyMatch.match(nyd.id, random_donor.id) }
       end
 

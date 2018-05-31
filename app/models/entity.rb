@@ -94,8 +94,7 @@ class Entity < ApplicationRecord
   validates :start_date, length: { maximum: 10 }, date: true
   validates :end_date, length: { maximum: 10 }, date: true
 
-  before_validation :trim_name_whitespace
-  before_create :set_last_user_id
+  before_validation :trim_name_whitespace, :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext
 
   ##
@@ -224,7 +223,7 @@ class Entity < ApplicationRecord
     fields[:entity] = self
     name.constantize.create(fields) if extension_with_fields?(name) && name.constantize.where(entity_id: id).count.zero?
     def_id = ExtensionDefinition.find_by_name(name).id
-    ExtensionRecord.find_or_create_by(entity_id: id, definition_id: def_id)
+    ExtensionRecord.find_or_create_by!(entity_id: id, definition_id: def_id)
     self
   end
 
@@ -571,10 +570,6 @@ class Entity < ApplicationRecord
   def update_timestamp_for(input)
     touch_by(input)
     self
-  end
-
-  def set_last_user_id
-    self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
   end
 
   def last_new_user

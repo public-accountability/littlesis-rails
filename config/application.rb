@@ -1,14 +1,15 @@
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
 require 'rails/all'
 
 # Assets should be precompiled for production (so we don't need the gems loaded then)
-Bundler.require(*Rails.groups(assets: %w(development test)))
+Bundler.require(*Rails.groups)
 
 module Lilsis
   APP_CONFIG = YAML.load(ERB.new(File.new("#{Dir.getwd}/config/lilsis.yml").read).result)[Rails.env]
 
   class Application < Rails::Application
+    config.load_defaults 5.0
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       rewrite  %r{/(person|org)/([0-9]+)/[^/ ]+(/.*)?}, '/entities/$2$3'
@@ -36,7 +37,7 @@ module Lilsis
     # However, constants in /lib will be loaded, lazily in development and test environments
     config.autoload_paths += %W(#{config.root}/lib)
 
-    config.cache_store = :redis_store
+    config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch('redis_url') }
 
     if Rails.env.production?
       Rails.application.default_url_options[:host] = 'littlesis.org'

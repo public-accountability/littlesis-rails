@@ -19,8 +19,8 @@ module SoftDelete
 
   def soft_delete
     set_paper_trail_event do
-      self.class.transaction do
-        update(is_deleted: true)
+      ApplicationRecord.transaction do
+        update!(is_deleted: true)
         after_soft_delete
       end
     end

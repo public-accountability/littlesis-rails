@@ -7,7 +7,11 @@ class SfGuardUserProfile < ApplicationRecord
   validates_uniqueness_of :public_name
 
   belongs_to :sf_guard_user, inverse_of: :sf_guard_user_profile, foreign_key: "user_id"
-  belongs_to :user, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :sf_guard_user_profile
+  belongs_to :user,
+             foreign_key: "user_id",
+             primary_key: "sf_guard_user_id",
+             inverse_of: :sf_guard_user_profile,
+             optional: true
 
   # this is used by rake task: create_all_from_profiles
   # After the new sign up system, it's no longer needed

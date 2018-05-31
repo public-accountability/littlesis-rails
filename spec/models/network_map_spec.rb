@@ -5,7 +5,9 @@ require 'rails_helper'
 describe NetworkMap, type: :model do
   it { is_expected.to belong_to(:sf_guard_user) }
   it { is_expected.to belong_to(:user) }
-  it { is_expected.to validate_presence_of(:title) }
+  context 'validations' do
+    it { is_expected.to validate_presence_of(:title) }
+  end
 
   describe '#annotations_data_with_sources' do
     let(:annoations_data) { "[{\"id\":\"B14l9k6ug\",\"header\":\"Untitled Annotation\",\"text\":\"\",\"nodeIds\":[],\"edgeIds\":[\"411302\"],\"captionIds\":[]}]" }

@@ -17,7 +17,7 @@ feature "Editing Tags", :tag_helper, type: :feature do
       expect(page.status_code).to eq 200
       expect(page).to have_current_path edit_tag_path(tag)
       expect(page).to have_content "Editing Tag:"
-      expect(page).to have_content #{tag.name}"
+      expect(page).to have_content 'oil'
       expect(page).to have_selector 'form.edit_tag'
       expect(page).to have_selector '#delete-this-tag'
     end

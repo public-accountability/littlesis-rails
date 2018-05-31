@@ -1,15 +1,16 @@
-# coding: utf-8
+# frozen_string_literal: true
+
 class OsMatch < ApplicationRecord
   # include SoftDelete
   # has_paper_trail
 
   belongs_to :os_donation
-  belongs_to :donation, inverse_of: :os_matches
-  belongs_to :donor, class_name: 'Entity', foreign_key: 'donor_id', inverse_of: :matched_contributions
-  belongs_to :recipient, class_name: 'Entity', foreign_key: 'recip_id', inverse_of: :donors
-  belongs_to :committee, class_name: 'Entity', foreign_key: 'cmte_id', inverse_of: :committee_donors
-  belongs_to :relationship, inverse_of: :os_matches
-  belongs_to :user, foreign_key: 'matched_by'
+  belongs_to :donation, inverse_of: :os_matches, optional: true
+  belongs_to :donor, class_name: 'Entity', foreign_key: 'donor_id', inverse_of: :matched_contributions, optional: true
+  belongs_to :recipient, class_name: 'Entity', foreign_key: 'recip_id', inverse_of: :donors, optional: true
+  belongs_to :committee, class_name: 'Entity', foreign_key: 'cmte_id', inverse_of: :committee_donors, optional: true
+  belongs_to :relationship, inverse_of: :os_matches, optional: true
+  belongs_to :user, foreign_key: 'matched_by', optional: true
 
   validates_presence_of :os_donation_id, :donor_id
   after_create :post_process

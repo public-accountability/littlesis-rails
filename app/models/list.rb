@@ -12,7 +12,7 @@ class List < ApplicationRecord
 
   has_paper_trail ignore: IGNORE_FIELDS, on: %i[create destroy update]
 
-  belongs_to :user, foreign_key: 'creator_user_id', inverse_of: :lists
+  belongs_to :user, foreign_key: 'creator_user_id', inverse_of: :lists, optional: true
 
   has_many :list_entities, inverse_of: :list, dependent: :destroy
   has_many :entities, through: :list_entities

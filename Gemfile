@@ -1,22 +1,21 @@
 source 'https://rubygems.org'
 
-# gem 'rails', '4.2.10'
-gem 'rails', '5.1.6'
+gem 'rails', '5.2.0'
 gem 'mysql2', '~> 0.4.10'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
 
 # users and authentication
-gem 'devise', '~> 4.4.2'
+gem 'devise', '~> 4.4.3'
 
 # Versioning
-gem 'paper_trail', '9.1.0'
+gem 'paper_trail', '9.1.1'
 
 # delayed job
 gem 'daemons' # Required by delayed_job
-gem 'delayed_job', '~> 4.1.4'
-gem 'delayed_job_active_record', '>= 4.1.2'
+gem 'delayed_job', '~> 4.1.5'
+gem 'delayed_job_active_record', '>= 4.1.3'
 
 # Assets, image uploading & processing
 gem 'aws-sdk-cloudfront', '~> 1'
@@ -48,7 +47,8 @@ gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_del
 gem 'htmlentities'
 
 # For redis integration
-gem 'redis-rails', '>= 5.0.2'
+gem 'redis'
+# gem 'redis-rails', '>= 5.0.2'
 
 # For easy cron scheduling
 gem 'whenever', '~> 0.10.0', :require => false
@@ -59,11 +59,11 @@ end
 
 group :test, :development do
   gem 'better_errors', '~> 2.4.0'
-  gem 'capybara', '2.18.0'
+  gem 'capybara', '~> 3.1.1'
   gem 'capybara-webkit', '1.15.0'
   gem 'codacy-coverage', :require => false
   gem 'database_cleaner'
-  gem 'factory_bot_rails', '~> 4.8.2'
+  gem 'factory_bot_rails', '~> 4.10.0'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   gem 'jasmine', '~> 3.1.0'
   gem 'jasmine_selenium_runner'
@@ -72,7 +72,10 @@ group :test, :development do
   gem 'pry-rails'
   gem 'rack-mini-profiler'
   gem 'rails-controller-testing'
-  gem 'rspec-rails', '~> 3.7'
+  %w[rspec-core rspec-expectations rspec-mocks rspec-rails rspec-support].each do |lib|
+    gem lib, :git => "https://github.com/rspec/#{lib}.git", :branch => 'master'
+  end
+  # gem 'rspec-rails', '~> 3.7.2'
   gem 'rubocop', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '~> 3.1'
@@ -107,3 +110,7 @@ gem "roo", "~> 2.7.0", :require => false
 
 # Used by NameSimilarity
 gem 'text', '>= 1.3.1'
+
+
+# Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', '>= 1.1.0', require: false

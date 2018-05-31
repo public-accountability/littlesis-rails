@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Person < ApplicationRecord
   include SingularTable
   # Provides: SHORT_FIRST_NAMES, LONG_FIRST_NAMES, DISPLAY_ATTRIBUTES
@@ -8,7 +10,7 @@ class Person < ApplicationRecord
   has_paper_trail on: [:update, :destroy],
                   meta: { entity1_id: :entity_id }
 
-  belongs_to :entity, inverse_of: :person, touch: true
+  belongs_to :entity, inverse_of: :person, touch: true, optional: true
   validates :name_last, length: { maximum: 50 }, presence: true
   validates :name_first, length: { maximum: 50 }, presence: true
 
