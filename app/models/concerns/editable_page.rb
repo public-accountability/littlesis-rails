@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A module for editable pages
 #   required fields:
 #     - name
@@ -7,7 +9,7 @@ module EditablePage
   extend ActiveSupport::Concern
 
   included do
-    belongs_to :last_user, foreign_key: "last_user_id", class_name: 'User'
+    belongs_to :last_user, foreign_key: 'last_user_id', class_name: 'User', optional: true
     validates :name, uniqueness: true, presence: true
     before_validation :modify_name
     before_create :set_markdown_to_be_blank_string_if_nil
