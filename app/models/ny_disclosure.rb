@@ -17,7 +17,13 @@ class NyDisclosure < ApplicationRecord
   }.freeze
 
   has_one :ny_match, inverse_of: :ny_disclosure, dependent: :destroy
-  belongs_to :ny_filer, class_name: 'NyFiler', foreign_key: 'filer_id', primary_key: 'filer_id', inverse_of: :ny_disclosures
+  belongs_to :ny_filer,
+             class_name: 'NyFiler',
+             foreign_key: 'filer_id',
+             primary_key: 'filer_id',
+             inverse_of: :ny_disclosures,
+             optional: true
+  
 
   validates_presence_of :filer_id,
                         :report_id,

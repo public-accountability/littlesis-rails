@@ -4,10 +4,10 @@ class NyMatch < ApplicationRecord
   belongs_to :ny_disclosure, inverse_of: :ny_match
   has_one :ny_filer, :through => :ny_disclosure
   has_one :ny_filer_entity, :through => :ny_filer
-  belongs_to :donor, class_name: "Entity", foreign_key: "donor_id"
-  belongs_to :recipient, class_name: "Entity", foreign_key: "recip_id"
-  belongs_to :relationship
-  belongs_to :user, foreign_key: "matched_by", optional: true
+  belongs_to :donor, class_name: 'Entity', foreign_key: 'donor_id'
+  belongs_to :recipient, class_name: 'Entity', foreign_key: 'recip_id', optional: true
+  belongs_to :relationship, optional: true
+  belongs_to :user, foreign_key: 'matched_by', optional: true
 
   validates_presence_of :ny_disclosure_id, :donor_id
 

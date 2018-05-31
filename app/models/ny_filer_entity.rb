@@ -1,8 +1,12 @@
+# frozen_string_literal: true
+
 class NyFilerEntity < ApplicationRecord
   belongs_to :ny_filer
   belongs_to :entity
 
-  validates_presence_of :ny_filer_id, :entity_id, :filer_id
+  validates :ny_filer_id, presence: true
+  validates :entity_id, presence: true
+  validates :filer_id, presence: true
 
   after_create :rematch_existing_matches
 
