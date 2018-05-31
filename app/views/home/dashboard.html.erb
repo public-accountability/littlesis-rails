@@ -1,130 +1,127 @@
 <% content_for(:page_title, "Dashboard") %>
 
 <div class="row">
-    <h1>Dashboard</h1>
+  <h1>Dashboard</h1>
+  
+  <div class="col-sm-6">
     
-    <div class="col-sm-6">
     <div class="spacer"></div>
 
-	<% if notice %>
-	    <div class="alert alert-success"><%= notice %></div>
-	<% end %>
-	
-	<% if current_user.sign_in_count < 10 %>
-	    <%= dismissable_alert('dashboard_alert') do %>
-		Need help using LittleSis? Visit our <%= link_to 'help pages', '/help' %>.
-	    <% end %>
-	<% end %>
-
-	<%= dismissable_alert('chat_alert') do %>
-	    <strong>New!</strong> LittleSis now has a <%= link_to 'chat', APP_CONFIG['chat']['chat_url'], target: '_blank'  %>, where you can ask questions and discuss research.
-	    Go to <%= link_to 'chat.littlesis.org', APP_CONFIG['chat']['chat_url'], target: '_blank' %> to start chatting!
-	<% end %>
-
-	<form action="/search" method="get">
-	    <div class="input-group">
-		<input type="text" name="q" class="form-control" placeholder="search for a name" />
-		<span class="input-group-btn">
-		    <button type="submit" class="btn btn-primary">
-			<span class="glyphicon glyphicon-search"></span>
-		    </button>
-		</span>
-	    </div>
-	</form>
-	
-	<div class="bottom-1em">
-	    <h3>Explore</h3>
-	    <%= link_to("Maps", maps_path, class: "btn btn-default") %>
-	    <%= link_to("Lists", lists_path, class: "btn btn-default") %>
-	    <%= link_to("Groups", groups_path, class: "btn btn-default") %>
-	    <%= link_to("Edits", edits_path, class: "btn btn-default") %>
-	</div>
-
-    </div> <!-- end  col -->
+    <% if notice %>
+      <div class="alert alert-success"><%= notice %></div>
+    <% end %>
     
-    <div class="col-sm-5 col-sm-offset-1" id="dashboard-bulletins">
-      <%= cache ['home_dashboard_bulletins', DashboardBulletin.last_bulletin_updated_at ] do %>
-	<%= render partial: 'dashboard_bulletins/bulletins' %>
+    <% if current_user.sign_in_count < 10 %>
+      <%= dismissable_alert('dashboard_alert') do %>
+	Need help using LittleSis? Visit our <%= link_to 'help pages', '/help' %>.
       <% end %>
+    <% end %>
+
+    <%= dismissable_alert('chat_alert') do %>
+      <strong>New!</strong> LittleSis now has a <%= link_to 'chat', APP_CONFIG['chat']['chat_url'], target: '_blank'  %>, where you can ask questions and discuss research.
+      Go to <%= link_to 'chat.littlesis.org', APP_CONFIG['chat']['chat_url'], target: '_blank' %> to start chatting!
+    <% end %>
+
+    <form action="/search" method="get">
+      <div class="input-group">
+	<input type="text" name="q" class="form-control" placeholder="search for a name" />
+	<span class="input-group-btn">
+	  <button type="submit" class="btn btn-primary">
+	    <span class="glyphicon glyphicon-search"></span>
+	  </button>
+	</span>
+      </div>
+    </form>
+    
+    <div class="bottom-1em">
+      <h3>Explore</h3>
+      <%= link_to("Maps", maps_path, class: "btn btn-default") %>
+      <%= link_to("Lists", lists_path, class: "btn btn-default") %>
+      <%= link_to("Groups", groups_path, class: "btn btn-default") %>
+      <%= link_to("Edits", edits_path, class: "btn btn-default") %>
     </div>
 
-    
-    
+  </div> <!-- end  col -->
+  
+  <div class="col-sm-5 col-sm-offset-1" id="dashboard-bulletins">
+    <%= cache ['home_dashboard_bulletins', DashboardBulletin.last_bulletin_updated_at ] do %>
+      <%= render partial: 'dashboard_bulletins/bulletins' %>
+    <% end %>
+  </div>
+  
 </div> <!-- end-row -->
 
 <div class="spacer"></div>
 
 <div class="row">
-    <div class="col-sm-10 col-md-8">
-	<h3>Your Edits</h3>
+  <div class="col-sm-10 col-md-8">
+    <h3>Your Edits</h3>
 
-	<% @recent_updates.each do |entity| %>
-	    <div class="dashboard-entity">
-		<span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
-	    </div>
-	<% end %>
+    <% @recent_updates.each do |entity| %>
+      <div class="dashboard-entity">
+	<span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
+      </div>
+    <% end %>
 
-    </div>
+  </div>
 </div> <!-- end-row -->
 
 <div class="spacer"></div>
 
 <div class="row">
-    <div class="col-sm-12">
-	<h3>
-	    Your Maps
-	    <%= header_action('details', home_maps_path) %>
-	</h3>
+  <div class="col-sm-12">
+    <h3>
+      Your Maps
+      <%= header_action('details', home_maps_path) %>
+    </h3>
 
-	<% @maps.each do |map| %>
-	    <div class="dashboard-map">
-		<a href="<%= map_path(map) %>">
-		    <% if map.is_private %>
-			<div class="dashboard-private-map-thumbnail"></div>
-		    <% else %>
-			<%= image_tag(networkmap_image_path(map), class: "dashboard-map-thumbnail") %><br>
-		    <% end %>
-		    <%= map.title %>
-		</a>
-	    </div>
-	<% end %>
-    </div>
+    <% @maps.each do |map| %>
+      <div class="dashboard-map">
+	<a href="<%= map_path(map) %>">
+	  <% if map.is_private %>
+	    <div class="dashboard-private-map-thumbnail"></div>
+	  <% else %>
+	    <%= image_tag(networkmap_image_path(map), class: "dashboard-map-thumbnail") %><br>
+	  <% end %>
+	  <%= map.title %>
+	</a>
+      </div>
+    <% end %>
+  </div>
 </div> <!-- end-row -->
 
 <div class="row">
-    <div class="col-sm-10 col-md-8">
+  <div class="col-sm-10 col-md-8">
 
-	<h3>
-	    Your Lists
- 	    <%= header_action('details', home_lists_path) %>
-	</h3>
+    <h3>
+      Your Lists
+      <%= header_action('details', home_lists_path) %>
+    </h3>
 
-	<% if @lists.present? %>
-	    <% @lists.each do |list| %>
-		<%= list_link(list) %><br />
-	    <% end %>
-	<% end %>
+    <% if @lists.present? %>
+      <% @lists.each do |list| %>
+	<%= list_link(list) %><br />
+      <% end %>
+    <% end %>
 
-    </div>
+  </div>
 </div> <!-- end-row -->
 
 <div class="row">
-    <div class="col-sm-10 col-md-8">
+  <div class="col-sm-10 col-md-8">
 
-	<h3>
-	    Your Groups
-	    <%= header_action('details', home_groups_path) %>
-	</h3>
+    <h3>
+      Your Groups
+      <%= header_action('details', home_groups_path) %>
+    </h3>
 
-	<% if @groups.present? %>
-	    <% @groups.each do |group| %>
-		<%= group_link(group) %><br />
-	    <% end %>
-	<% else %>
-	    <%= link_to 'Join a group', groups_path %>
-	<% end %>
+    <% if @groups.present? %>
+      <% @groups.each do |group| %>
+	<%= group_link(group) %><br />
+      <% end %>
+    <% else %>
+      <%= link_to 'Join a group', groups_path %>
+    <% end %>
 
-    </div>
+  </div>
 </div> <!-- end-row -->
-
-
