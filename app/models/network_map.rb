@@ -6,8 +6,9 @@ class NetworkMap < ApplicationRecord
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
-  belongs_to :sf_guard_user, foreign_key: 'user_id', inverse_of: :network_maps
-  belongs_to :user, foreign_key: 'user_id', primary_key: 'sf_guard_user_id', inverse_of: :network_maps
+  # TODO: remove relience of sf_guard_user
+  belongs_to :sf_guard_user, foreign_key: 'user_id', inverse_of: :network_maps, optional: true
+  belongs_to :user, foreign_key: 'user_id', primary_key: 'sf_guard_user_id', inverse_of: :network_maps, optional: true
 
   delegate :user, to: :sf_guard_user
 

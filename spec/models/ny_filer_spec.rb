@@ -11,7 +11,7 @@ describe NyFiler, type: :model do
   it 'has OFFICES constant' do
     expect(NyFiler::OFFICES).to be_a Hash
   end
-  
+
   describe '#office_description' do
     it 'translates numeric office code to text description' do
       filer = build(:ny_filer, office: 22)
@@ -25,14 +25,15 @@ describe NyFiler, type: :model do
   end
 
   describe 'is_matched' do
+    let(:entity) { create(:entity_org) }
+    let(:ny_filer) { create(:ny_filer, filer_id: '123') }
     it 'returns true if there is a filer_entity' do
-      ny_filer = create(:ny_filer, filer_id: '123')
-      create(:ny_filer_entity, ny_filer_id: ny_filer.id)
+      create(:ny_filer_entity, ny_filer_id: ny_filer.id, entity: entity)
       expect(ny_filer.is_matched?).to be true
     end
 
     it 'returns false if there is no filer_entity' do
-      ny_filer = create(:ny_filer, filer_id: '123')
+      ny_filer
       expect(ny_filer.is_matched?).to be false
     end
   end
