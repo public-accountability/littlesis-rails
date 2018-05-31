@@ -34,6 +34,29 @@ describe 'home/dashboard', type: :feature do
       scenario 'pages has default map image' do
         successfully_visits_page home_dashboard_path
         page_has_selector 'img.dashboard-map-thumbnail', count: 1
+        expect(page).not_to have_selector '#dashboard-maps-row div.pagination'
+      end
+    end
+
+    context 'User more maps than the limit shown per page' do
+      def page_has_n_maps(n)
+        page_has_selector '#dashboard-maps-row div.pagination', count: 1
+        page_has_selector 'div.dashboard-map', count: n
+      end
+
+      before do
+        stub_const('HomeController::DASHBOARD_MAPS_PER_PAGE', 2)
+        3.times { create(:network_map, user_id: current_user.sf_guard_user_id) }
+      end
+
+      scenario 'visiting page 1' do
+        visit '/home/dashboard'
+        page_has_n_maps(2)
+      end
+
+      scenario 'visiting page 2' do
+        visit '/home/dashboard?map_page=2'
+        page_has_n_maps(1)
       end
     end
   end

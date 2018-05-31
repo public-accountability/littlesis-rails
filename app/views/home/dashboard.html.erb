@@ -65,25 +65,17 @@
 
 <div class="spacer"></div>
 
-<div class="row">
+<div class="row" id="dashboard-maps-row">
   <div class="col-sm-12 nopadding">
     <h3>
       Your Maps
       <%= header_action('details', home_maps_path) %>
     </h3>
 
-    <% @maps.each do |map| %>
-      <div class="dashboard-map">
-	<a href="<%= map_path(map) %>">
-	  <% if map.is_private %>
-	    <div class="dashboard-private-map-thumbnail"></div>
-	  <% else %>
-	    <%= image_tag(networkmap_image_path(map), class: "dashboard-map-thumbnail") %><br>
-	  <% end %>
-	  <%= map.title %>
-	</a>
-      </div>
-    <% end %>
+    <div id="dashboard-maps-container">
+      <%= render partial: 'dashboard_map', collection: @maps, as: :map %>
+    </div>
+    <%= paginate @maps, param_name: 'map_page' %>
   </div>
 </div> <!-- end-row -->
 
