@@ -10,7 +10,7 @@ gem 'rack-rewrite', '~> 1.5.1'
 gem 'devise', '~> 4.4.3'
 
 # Versioning
-gem 'paper_trail', '9.1.0'
+gem 'paper_trail', '9.1.1'
 
 # delayed job
 gem 'daemons' # Required by delayed_job
@@ -63,7 +63,7 @@ group :test, :development do
   gem 'capybara-webkit', '1.15.0'
   gem 'codacy-coverage', :require => false
   gem 'database_cleaner'
-  gem 'factory_bot_rails', '~> 4.8.2'
+  gem 'factory_bot_rails', '~> 4.10.0'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   gem 'jasmine', '~> 3.1.0'
   gem 'jasmine_selenium_runner'

@@ -4,7 +4,7 @@ AllCops:
     - 'db/seeds.rb'
     - 'db/migrate/*.rb'
   TargetRubyVersion: 2.4
-  TargetRailsVersion: 5.1
+  TargetRailsVersion: 5.2
 
 Rails:
   Enabled: true
