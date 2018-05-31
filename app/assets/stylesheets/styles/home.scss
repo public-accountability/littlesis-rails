@@ -1,23 +1,31 @@
 @import "base/globals";
 
-#dashboard_user_image .user_image {
-	width: 75px;
-	height: 75px;
-	float: left;
-	margin-right: 10px;
+#dashboard-bulletins {
+    @extend .col-sm-6;
+    padding-left: 20px;
+
+    @media (min-width: $screen-md) {
+	padding-left: 35px;
+    }
+
+    @media (min-width: $screen-lg) {
+	padding-left: 50px;
+    }
+    
 }
 
-#dashboard_user_name {
-	padding-top: 1em;
-	line-height: 0.8em;
-	font-size: 2em;
-	font-weight: 500;
-}
+#dashboard-search-form {
+    @media (min-width: $screen-sm) {
+	margin-right: 2em;
+    }
 
-#dashboard_user_network {
-	font-size: 0.5em;
-	font-weight: normal;
-	a { color: #888; }
+    @media (min-width: $screen-md) {
+	margin-right: 6em;
+    }
+
+    @media (min-width: $screen-lg) {
+	margin-right: 10em;
+    }
 }
 
 .dashboard-entity {
