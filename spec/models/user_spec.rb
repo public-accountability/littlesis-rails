@@ -18,24 +18,25 @@ describe User do
   end
 
   describe 'validations' do
-    let(:user) { create(:user, sf_guard_user_id: rand(1000), username: 'unqiue2') }
+    let(:user) { create_basic_user(username: 'unqiue2') }
 
     it 'validates presence of email' do
       expect(user.valid?).to be true
-      expect(build(:user, sf_guard_user_id: rand(1000), email: nil).valid?).to be false
+      expect(build(:really_basic_user, email: nil).valid?).to be false
     end
 
     it 'validates uniqueness of email' do
-      expect(build(:user, sf_guard_user_id: rand(1000), email: user.email).valid?). to be false
+      expect(build(:really_basic_user, email: user.email).valid?). to be false
+      expect(build(:really_basic_user, email: Faker::Internet.unique.email).valid?). to be true
     end
 
     describe 'username validation' do
       context 'valid user name' do
-        let(:user) { build(:user, sf_guard_user_id: rand(1000), username: 'f_kafka') }
+        let(:user) { build(:really_basic_user, username: 'f_kafka') }
         specify { expect(user.valid?).to eql true }
       end
       context 'invalid user name' do
-        let(:user) { build(:user, sf_guard_user_id: rand(1000), username: 'f.kafka') }
+        let(:user) { build(:really_basic_user, username: 'f.kafka') }
         specify { expect(user.valid?).to eql false }
       end
     end
@@ -68,7 +69,7 @@ describe User do
     end
 
     it 'sets default network id to be the app config default' do
-      expect(user.valid?).to be true
+      user.valid?
       expect(user.default_network_id).to eql APP_CONFIG.fetch('default_network_id')
     end
   end
