@@ -356,9 +356,10 @@ describe Relationship, type: :model do
       DatabaseCleaner.start
       donor = create(:person, name: 'I <3 ny politicans')
       elected = create(:elected)
-      @rel = Relationship.create(entity1_id: donor.id, entity2_id: elected.id, category_id: 5)
-      disclosure1 = create(:ny_disclosure, amount1: 2000, schedule_transaction_date: '1999-01-01')
-      disclosure2 = create(:ny_disclosure, amount1: 3000, schedule_transaction_date: '2017-01-01')
+      ny_filer = create(:ny_filer)
+      @rel = Relationship.create!(entity1_id: donor.id, entity2_id: elected.id, category_id: 5)
+      disclosure1 = create(:ny_disclosure, amount1: 2000, schedule_transaction_date: '1999-01-01', ny_filer: ny_filer)
+      disclosure2 = create(:ny_disclosure, amount1: 3000, schedule_transaction_date: '2017-01-01', ny_filer: ny_filer)
       create(:ny_match, ny_disclosure_id: disclosure1.id, donor_id: donor.id, recip_id: elected.id, relationship: @rel)
       create(:ny_match, ny_disclosure_id: disclosure2.id, donor_id: donor.id, recip_id: elected.id, relationship: @rel)
       @rel.update_ny_donation_info
