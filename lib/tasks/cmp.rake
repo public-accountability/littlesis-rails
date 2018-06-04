@@ -70,6 +70,7 @@ namespace :cmp do
             attrs[:match_url] = ''
           end
 
+          attrs[:related_orgs] = cmp_person.related_cmp_org_names.join('|')
           attrs[:match_values] = match&.values&.to_a&.join('|')
           people_remaining << attrs
         rescue => e
