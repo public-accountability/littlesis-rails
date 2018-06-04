@@ -36,7 +36,7 @@ en:
   # kaminari pagination labels
   views:
     pagination:
-      first: "&la quo;"
+      first: "&laquo;"
       last: "&raquo;"
       previous: "&lsaquo;"
       next: "&rsaquo;"

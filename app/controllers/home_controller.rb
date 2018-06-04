@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HomeController < ApplicationController
   before_action :authenticate_user!,
                 except: [:dismiss, :index, :contact, :flag, :token, :newsletter_signup]
@@ -11,6 +13,8 @@ class HomeController < ApplicationController
     [34, 'Elite think tanks']
   ].freeze
 
+  DASHBOARD_MAPS_PER_PAGE = 18
+
   def groups
     @groups = Group
                 .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
@@ -22,10 +26,19 @@ class HomeController < ApplicationController
   end
 
   def dashboard
-    @maps = current_user.network_maps.order("created_at DESC, id DESC")
+    @maps = current_user
+              .network_maps
+              .order('id DESC')
+              .page(map_page_param)
+              .per(DASHBOARD_MAPS_PER_PAGE)
+
     @groups = current_user.groups.order(:name)
-    @lists = current_user.lists.order("created_at DESC, id DESC")
-    @recent_updates = current_user.edited_entities.includes(last_user: :user).order("updated_at DESC").limit(10)
+    @lists = current_user.lists.order('id DESC')
+    @recent_updates = current_user
+                        .edited_entities
+                        .includes(last_user: :user)
+                        .order('updated_at DESC')
+                        .limit(10)
   end
 
   # Sends CSRF token to browser extension
@@ -145,6 +158,10 @@ class HomeController < ApplicationController
 
   def flag_params
     params.permit(:email, :url, :name, :message)
+  end
+
+  def map_page_param
+    params[:map_page].presence&.to_i || 1
   end
 
   def likely_a_spam_bot

@@ -1,0 +1,10 @@
+<div class="dashboard-map">
+  <a href="<%= map_path(map) %>">
+    <% if map.is_private %>
+      <div class="dashboard-private-map-thumbnail"></div>
+    <% else %>
+      <%= image_tag(networkmap_image_path(map), class: "dashboard-map-thumbnail") %><br>
+    <% end %>
+    <%= map.title %>
+  </a>
+</div>

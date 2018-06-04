@@ -20,7 +20,11 @@ describe HomeController, type: :controller do
     login_user
 
     before do
-      network_maps = double('network_maps', order: [build(:network_map)])
+      network_maps = double('network_maps',
+                            :order => double(
+                              :page => double(
+                                :per => [build(:network_map)])))
+
       groups = double('groups', order: [])
       user_lists_double = double('arbitrary_name', order: [])
       edited_entities = double('edited', includes: double(order: double(limit: [])))
