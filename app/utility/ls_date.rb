@@ -21,7 +21,7 @@ class LsDate
     unless date.respond_to? :strftime
       raise ArgumentError, "#{date.class} is missing the method 'strftime'"
     end
-    date.strftime(BASIC_FORMAT)
+    date.strftime(BASIC_FORMAT).gsub('  ', ' ')
   end
 
   # Initialize with string YYYY-MM-DD
