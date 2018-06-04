@@ -152,7 +152,6 @@ class DevelopmentDb
                   os_entity_preprocess
                   os_entity_transaction
                   queue_entities
-                  scheduled_email
                   sessions
                   sphinx_index
                   user_requests

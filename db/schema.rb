@@ -1261,19 +1261,6 @@ ActiveRecord::Schema.define(version: 2018_05_22_142905) do
     t.index ["representative_id"], name: "representative_id_idx"
   end
 
-  create_table "scheduled_email", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.string "from_email", limit: 200, null: false
-    t.string "from_name", limit: 200
-    t.string "to_email", limit: 200, null: false
-    t.string "to_name", limit: 200
-    t.text "subject"
-    t.text "body_text", limit: 4294967295
-    t.text "body_html", limit: 4294967295
-    t.boolean "is_sent", default: false, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "school", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "endowment"
     t.bigint "students"
