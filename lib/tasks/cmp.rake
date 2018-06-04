@@ -43,6 +43,47 @@ namespace :cmp do
   end
 
   namespace :people do
+    desc 'people remaining'
+    task remaining: :environment do
+      file_path = Rails.root.join('data', "people_remaining#{Time.current.strftime('%F')}.csv")
+
+      people_remaining = []
+      Cmp::Datasets.people.to_a.map(&:second).each do |cmp_person|
+        cmpid = cmp_person.fetch('cmpid')
+
+        begin
+          if CmpEntity.exists?(cmp_id: cmpid)
+            ColorPrinter.print_brown "#{cmp_person.fetch('fullname')} (cmpid: #{cmpid}) already imported"
+            next
+          end
+          ColorPrinter.print_blue "#{cmp_person.fetch('fullname')} (cmpid: #{cmpid}) not yet imported"
+          attrs = cmp_person.attributes
+          attrs[:automatchable] = cmp_person.matches.automatchable?
+          match = cmp_person.matches.first
+          attrs[:match_name] = match&.entity&.name
+          attrs[:match_id] = match&.entity&.id
+
+          if match&.entity.present?
+            entity_url = "https://littlesis.org#{Rails.application.routes.url_helpers.entity_path(match.entity)}"
+            attrs[:match_url] = entity_url
+          else
+            attrs[:match_url] = ''
+          end
+
+          attrs[:match_values] = match&.values&.to_a&.join('|')
+          people_remaining << attrs
+        rescue => e
+          ColorPrinter.print_red "error while reading #{cmpid}"
+          puts e
+        end
+
+        cmp_person.clear_matches
+      end
+
+      Query.save_hash_array_to_csv file_path, people_remaining
+      ColorPrinter.print_blue "saved: #{file_path}"
+    end
+
     desc 'imports all with matches. save potential matches to csv'
     task import: :environment do
       begin
