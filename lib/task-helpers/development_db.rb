@@ -153,7 +153,6 @@ class DevelopmentDb
                   os_entity_transaction
                   queue_entities
                   scheduled_email
-                  scraper_meta
                   sessions
                   sphinx_index
                   user_requests

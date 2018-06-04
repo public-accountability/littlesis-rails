@@ -1284,16 +1284,6 @@ ActiveRecord::Schema.define(version: 2018_05_22_142905) do
     t.index ["entity_id"], name: "entity_id_idx"
   end
 
-  create_table "scraper_meta", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.string "scraper", limit: 100, null: false
-    t.string "namespace", limit: 50, null: false
-    t.string "predicate", limit: 50, null: false
-    t.string "value", limit: 50, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["scraper", "namespace", "predicate", "value"], name: "uniqueness_idx", unique: true
-  end
-
   create_table "sessions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data", limit: 4294967295
