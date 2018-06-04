@@ -67,6 +67,7 @@ class DevelopmentDb
                   business_industry
                   business_person
                   candidate_district
+                  cmp_entities
                   common_names
                   couple
                   custom_key
@@ -145,7 +146,6 @@ class DevelopmentDb
                   api_user
                   api_tokens
                   chat_user
-                  cmp_entities
                   delayed_jobs
                   map_annotations
                   object_tag
@@ -156,7 +156,6 @@ class DevelopmentDb
                   scraper_meta
                   sessions
                   sphinx_index
-                  task_meta
                   user_requests
                   versions  )
 
