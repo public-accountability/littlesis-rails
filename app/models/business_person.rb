@@ -2,6 +2,7 @@
 
 class BusinessPerson < ApplicationRecord
   include SingularTable
+  include ExternalLinkUpdater
 
   has_paper_trail on: [:update],
                   meta: { entity1_id: :entity_id }

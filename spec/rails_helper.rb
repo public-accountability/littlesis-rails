@@ -68,7 +68,7 @@ RSpec.configure do |config|
   config.extend PaginationExampleGroupHelper, :pagination_helper
   config.extend MergingGroupMacros, :merging_helper
   config.extend NameParserMacros, :name_parser_helper
-
+  config.extend ExternalLinkGroupHelper, :external_link
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
