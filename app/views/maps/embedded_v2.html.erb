@@ -1,9 +1,10 @@
 <%= render 'shared/facebook_sdk' %>
 
 <% if @dev_version %>
-    <%= javascript_include_tag "oligrapher-dev" %>
+  <%= javascript_include_tag "oligrapher-dev" %>
+  <%= javascript_include_tag "oligrapher-dev.js.map" %>
 <% else %>
-    <%= javascript_include_tag "oligrapher" %>
+  <%= javascript_include_tag "oligrapher" %>
 <% end %>
 
 <%= cache_if !user_signed_in?, [ 'embedded', @map ] do %>
