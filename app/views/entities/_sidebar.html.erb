@@ -8,30 +8,19 @@
     </div>
   <% end %>
 
-  <%# BASIC INFO %>
   <% cache ['entity_basic_info', @entity.cache_key] do %>
-    <div id="sidebar-basic-info-container" class="row">
-      <div class="col-sm-12">
-	<%= sidebar_header 'Basic info' %>
-      </div>
-      <div class="col-sm-12">
-	<%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
-      </div>
-    </div>
+    <%= profile_page_sidebar('sidebar-basic-info-container', 'Basic info') do %>
+      <%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
+    <% end %>
   <% end %>
 
   <%# External Links %>
   <% if current_user&.admin? %>
     <% unless @entity.external_links.count.zero? %>
       <% cache ['entity_external_links', @entity.external_links ] do %>
-	<div id="sidebar-external-links-container" class="row">
-	  <div class="col-sm-12">
-	    <%= sidebar_header 'External Links' %>
-	  </div>
-	  <div class="col-sm-12">
-	    <%= render partial: 'entities/sidebar/external_links' %>
-	  </div>
-	</div>
+	<%= profile_page_sidebar('sidebar-external-links-container', 'External Links') do %>
+	  <%= render partial: 'entities/sidebar/external_links' %>
+	<% end %>
       <% end %>
     <% end %>
   <% end %>
@@ -39,14 +28,9 @@
   
   <%# TAGS %>
   <% if @entity.tags.present? || user_signed_in? %>
-    <div class="row" id="sidebar-tags-container">
-      <div class="col-sm-12">
-        <%= sidebar_header 'Tags', addon: capture { tags_controls } %>
-      </div>
-      <div class="col-sm-12">
-        <%= display_tags(@entity.tags) %>
-      </div>
-    </div>
+    <%= profile_page_sidebar('sidebar-tags-container', 'Tags', addon: capture { tags_controls }) do %>
+      <%= display_tags(@entity.tags) %>
+    <% end %>
   <% end %>
 
   <% if user_signed_in? %>
@@ -65,65 +49,45 @@
 
   <%# ADMIN TOOLS  %>
   <% if user_signed_in? && current_user.admin? %>
-    <div class="row" id="sidebar-admin-tools-container">
-      <div class="col-sm-12">
-	<%= sidebar_header('Admin tools') %>
-      </div>
-      <div class="col-sm-12">
-	<%= link_to 'Addresses', @entity.legacy_url('addresses') %>
-      </div>
-    </div>
+    <%= profile_page_sidebar('sidebar-admin-tools-container', 'Admin tools') do %>
+      <%= link_to 'Addresses', @entity.legacy_url('addresses') %>
+    <% end %>
   <% end %>
 
   <%# ADVANCED TOOLS  %>
   <% if user_signed_in? %>
-    <div class="row" id="side-bar-advanced-tools-container">
-      <div class="col-sm-12">
-	<%= sidebar_header('Advanced tools') %>
-      </div>
-      <div class="col-sm-12">
-	<%= link_to 'Network Search', @entity.legacy_url('networkSearch') %>
+    <%= profile_page_sidebar('sidebar-advanced-tools-container', 'Advanced tools') do %>
+      <%= link_to 'Network Search', @entity.legacy_url('networkSearch') %>
+      <br />
+      <%= link_to 'Find Connections', @entity.legacy_url('findConnections') %>
+      <% if current_user.importer? || current_user.admin? %>
 	<br />
-	<%= link_to 'Find Connections', @entity.legacy_url('findConnections') %>
-	<% if current_user.importer? || current_user.admin? %>
-	  <br />
-	  <%= link_to 'Match NY Donations', match_ny_donations_entity_path(@entity) %>
-	<% end %>
-      </div>
-    </div>
+	<%= link_to 'Match NY Donations', match_ny_donations_entity_path(@entity) %>
+      <% end %>
+    <% end %>
   <% end %>
 
   <%# LISTS  %>
   <% cache(['entity_list_entities', @entity.list_entities], :expires_in => 1.week) do %>
-    <div class="row" id="sidebar-lists-container">
-      <div class="col-sm-12">
-	<%= sidebar_header('Lists', subtitle: 'Analyst-created lists of people and org') %>
-      </div>
-      <div class="col-sm-12">
-	<ul class="list-unstyled">
-	  <%= sidebar_lists(@entity.list_entities) %>
-	</ul>
-      </div>
-    </div>
+    <%= profile_page_sidebar('sidebar-lists-container', 'Lists', subtitle: 'Analyst-created lists of people and org') do %>
+      <ul class="list-unstyled">
+	<%= sidebar_lists(@entity.list_entities) %>
+      </ul>
+    <% end %>
   <% end %>
 
   <%# SIMILAR ENTITIES  %>
   <% unless @entity.similar_entities.blank? %>
-    <div class="row" id="sidebar-similar-entities-container">
-      <div class="col-sm-12">
-	<%= sidebar_header('Similar Entities') %>
-      </div>
-      <div class="col-sm-12">
-	<ul class="list-unstyled">
-	  <%= sidebar_similar_entities(@entity.similar_entities) %>
-	</ul>
-
-	<% if user_signed_in? && (current_user.admin? || current_user.has_legacy_permission('merger') )%>
-	  <%= link_to 'Begin merging process »',
-          merge_path(mode: 'search', source: @entity.id),
-          id: 'begin-merging-process-link' %>
-	<% end %>
-      </div>
-    </div>
+    <%= profile_page_sidebar('sidebar-similar-entities-container', 'Similar Entities') do %>
+      <ul class="list-unstyled">
+	<%= sidebar_similar_entities(@entity.similar_entities) %>
+      </ul>
+      
+      <% if user_signed_in? && (current_user.admin? || current_user.has_legacy_permission('merger') )%>
+	<%= link_to 'Begin merging process »',
+        merge_path(mode: 'search', source: @entity.id),
+        id: 'begin-merging-process-link' %>
+      <% end %>
+    <% end %>
   <% end %>
 </div>
