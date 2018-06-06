@@ -53,7 +53,7 @@
 
     
     <% if @entity.org? %>
-	<% cache ['match_sidebar_org', @entity.alt_cache_key] do %>
+	<% cache ['match_sidebar_org', @entity.cache_key] do %>
 	    <% sorted_links = SortedLinks.new(@entity) %>
 	    <% if sorted_links.staff.count > 0 %>
 		<div class="row text-center">

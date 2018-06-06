@@ -478,12 +478,6 @@ class Entity < ApplicationRecord
   # utilities
   #
 
-  # The cacheable concern overrides 'cache_key' and uses it for legacy caching.
-  # So until we rid ourselves of legacy cache, will use alt_cache_key  @('_')@
-  def alt_cache_key
-    "entity/#{id}-#{updated_at.to_i}"
-  end
-
   # A type checker for definition id and names
   # input: String or Integer
   # output: String or throws ArgumentError
