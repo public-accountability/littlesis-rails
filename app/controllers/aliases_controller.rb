@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AliasesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_alias, only: [:make_primary, :destroy]
