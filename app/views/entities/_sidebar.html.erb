@@ -20,6 +20,20 @@
     </div>
   <% end %>
 
+  <%# External Links %>
+  <% unless @entity.external_links.count.zero? %>
+    <% cache ['entity_external_links', @entity.external_links ] do %>
+      <div id="sidebar-external-links-container" class="row">
+	<div class="col-sm-12">
+	  <%= sidebar_header 'External Links' %>
+	</div>
+	<div class="col-sm-12">
+	  <%= render partial: 'entities/sidebar/external_links' %>
+	</div>
+      </div>
+    <% end %>
+  <% end %>
+
   
   <%# TAGS %>
   <% if @entity.tags.present? || user_signed_in? %>

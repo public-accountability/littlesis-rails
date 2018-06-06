@@ -48,7 +48,7 @@ class Entity < ApplicationRecord
   has_many :article_entities, inverse_of: :entity, dependent: :destroy
   has_many :articles, through: :article_entities, inverse_of: :entities
   has_many :queue_entities, inverse_of: :entity, dependent: :destroy
-
+  has_many :external_links, inverse_of: :entity, dependent: :destroy
   # extensions
   has_one :person, inverse_of: :entity, dependent: :destroy
   has_one :org, inverse_of: :entity, dependent: :destroy

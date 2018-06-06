@@ -17,6 +17,17 @@ class ExternalLink < ApplicationRecord
     url_template.gsub(LINK_PLACEHOLDER, link_id)
   end
 
+  def title
+    case link_type
+    when 'sec'
+      'Sec - Edgar'
+    when 'wikipedia'
+      'Wikipedia'
+    when 'reserved'
+      raise TypeError, 'Do not create ExternalLinks of type "reserved"'
+    end
+  end
+
   private
 
   def url_template
