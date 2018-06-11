@@ -1,8 +1,8 @@
+# frozen_string_literal: true
+
 namespace :maps do
   desc "generates thumbnails for recently saved public maps and saves them to S3"
-  task :generate_recent_thumbs_by_amount, [:amount] =>  :environment do |t, args|
-    hostname = ENV['RAILS_ENV'] == 'production' ? 'https://littlesis.org' : 'http://ls.dev:8080'
-    Rails.application.routes.default_url_options[:host] = hostname
+  task :generate_recent_thumbs_by_amount, [:amount] =>  :environment do |_t, args|
     amount = args[:amount].nil? ? 50 : args[:amount]
 
     NetworkMap.public_scope.order('updated_at desc').limit(amount).each do |map|
@@ -12,9 +12,7 @@ namespace :maps do
   end
 
   desc "generates thumbnails for maps updated in the past X hours and saves them to S3"
-  task :generate_recent_thumbs, [:hours] =>  :environment do |t, args|
-    hostname = ENV['RAILS_ENV'] == 'production' ? 'https://littlesis.org' : 'http://ls.dev:8080'
-    Rails.application.routes.default_url_options[:host] = hostname
+  task :generate_recent_thumbs, [:hours] => :environment do |_t, args|
     num_hours = args[:hours].nil? ? 25 : args[:hours].to_i
 
     NetworkMap.public_scope.where("updated_at >= ?", num_hours.hours.ago).each do |map|
@@ -25,9 +23,6 @@ namespace :maps do
 
   desc "generates thumbnails for all public maps and saves them to S3"
   task generate_all_thumbs: :environment do
-    hostname = ENV['RAILS_ENV'] == 'production' ? 'https://littlesis.org' : 'http://ls.dev:8080'
-    Rails.application.routes.default_url_options[:host] = hostname
-
     NetworkMap.public_scope.each do |map|
       map.generate_s3_thumb
       puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
@@ -36,9 +31,6 @@ namespace :maps do
 
   desc "generates thumbnails for maps that are missing images and saves them to S3"
   task generate_missing_thumbs: :environment do
-    hostname = ENV['RAILS_ENV'] == 'production' ? 'https://littlesis.org' : 'http://ls.dev:8080'
-    Rails.application.routes.default_url_options[:host] = hostname
-
     NetworkMap.public_scope.where(thumbnail: nil).each do |map|
       map.generate_s3_thumb
       puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
