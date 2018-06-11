@@ -20,7 +20,10 @@ class Screenshot
         # hide zoom buttons
         driver.execute_script "document.getElementById('zoomButtons').style.display = 'none'"
         driver.save_screenshot(path)
-      rescue
+      rescue => e
+        Rails.logger.info "Failed to capture screenshot for #{url}"
+        Rails.logger.info e.message
+        Rails.logger.info e.backtrace
         status = false
       ensure
         driver.quit
