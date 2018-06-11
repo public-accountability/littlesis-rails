@@ -27,7 +27,7 @@ class Screenshot
         Rails.logger.info e.backtrace
         status = false
       ensure
-        driver.quit
+        driver&.quit
       end
     end
 

@@ -8,6 +8,7 @@ namespace :maps do
     NetworkMap.public_scope.order('updated_at desc').limit(amount).each do |map|
       map.generate_s3_thumb
       puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
+      sleep(1)
     end
   end
 
@@ -18,6 +19,7 @@ namespace :maps do
     NetworkMap.public_scope.where("updated_at >= ?", num_hours.hours.ago).each do |map|
       map.generate_s3_thumb
       puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
+      sleep(1)
     end
   end
 
@@ -26,6 +28,7 @@ namespace :maps do
     NetworkMap.public_scope.each do |map|
       map.generate_s3_thumb
       puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
+      sleep(1)
     end
   end
 
@@ -34,6 +37,7 @@ namespace :maps do
     NetworkMap.public_scope.where(thumbnail: nil).each do |map|
       map.generate_s3_thumb
       puts "saved thumbnail for map #{map.id} '#{map.name}': #{map.thumbnail}"
+      sleep(1)
     end
   end
 
