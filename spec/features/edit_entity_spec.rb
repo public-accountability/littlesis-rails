@@ -135,6 +135,25 @@ describe 'edit enity page', type: :feature do
           expect(page.current_path).to eql edit_entity_path(entity)
         end
       end
+
+      feature 'removing an external link' do
+        let(:setup) do
+          -> { ExternalLink.create!(entity_id: entity.id, link_id: wikipedia_name, link_type: 'wikipedia') }
+        end
+
+        scenario 'deleting existing text' do
+          external_link_count = ExternalLink.count
+
+          within('#wikipedia_external_link_form') do
+            expect(find('input[name="external_link[link_id]"]').value).to eql wikipedia_name
+            fill_in 'external_link[link_id]', with: ''
+            click_button 'Submit'
+          end
+          expect(ExternalLink.count).to eql(external_link_count - 1)
+          expect(page.current_path).to eql edit_entity_path(entity)
+        end
+
+      end
     end # end external links
   end # end context user is logged in
 end

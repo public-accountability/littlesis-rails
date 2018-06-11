@@ -10,13 +10,11 @@ class ExternalLinksController < ApplicationController
 
   def update
     el = ExternalLink.find(params[:id])
-    el.update!(external_link_params)
-    redirect_to edit_entity_path(el.entity)
-  end
-
-  def destroy
-    el = ExternalLink.find(params[:id])
-    el.update!(external_link_params)
+    if external_link_params.fetch('link_id').blank?
+      el.destroy!
+    else
+      el.update!(external_link_params)
+    end
     redirect_to edit_entity_path(el.entity)
   end
 
@@ -26,5 +24,6 @@ class ExternalLinksController < ApplicationController
     params
       .require(:external_link)
       .permit(:link_type, :link_id, :entity_id)
+      .to_h
   end
 end
