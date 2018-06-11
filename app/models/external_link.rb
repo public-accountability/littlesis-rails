@@ -8,7 +8,7 @@ class ExternalLink < ApplicationRecord
   enum link_type: %i[reserved sec wikipedia]
 
   LINK_PLACEHOLDER = '{}'
-  EDITABLE_TYPES = %i[wikipedia sec].freeze
+  EDITABLE_TYPES = %i[wikipedia].freeze
 
   validates :link_type, presence: true
   validates :entity_id, presence: true
