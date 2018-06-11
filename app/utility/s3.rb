@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class S3
+  BUCKET = Lilsis::Application.config.aws_s3_bucket.dup.freeze
+
   def self.url(path)
     base_url + path
   end

@@ -193,27 +193,22 @@ class NetworkMap < ApplicationRecord
     title.nil? ? "Network map #{id}" : "Map of #{title}"
   end
 
-  def generate_s3_thumb(s3 = nil)
-    s3 = S3.s3 if s3.nil?
-    bucket = s3.buckets[Lilsis::Application.config.aws_s3_bucket]
-
+  def generate_s3_thumb
     url = Rails.application.routes.url_helpers.embedded_map_url(self, :host => 'https://littlesis.org')
-    
+
     local_path = "tmp/map-#{id}.png"
     s3_path = "images/maps/#{id}.png"
 
     # Screenshot is located in lib/screenshot.rb
-    is_successful = Screenshot.take(url, local_path)
-    
-    if is_successful
+    if Screenshot.take(url, local_path)
       Screenshot.resize_map_thumbnail(local_path)
 
-      obj = bucket.objects[s3_path]
-      obj.write(Pathname.new(local_path), { acl: :public_read })
-
+      S3.upload_file(S3::BUCKET, s3_path, local_path, false)
       File.delete(local_path)
-      self.thumbnail = S3.url("/" + s3_path) if obj.exists?
+      self.thumbnail = S3.url('/' + s3_path)
       save
+    else
+      Rails.logger.debug "Failed to save screenshot for map #{id}"
     end
   end
 
