@@ -1,0 +1,22 @@
+<h2>
+  External Links
+  <small style="padding-left: 10px">Connect this entity to other sites</small>
+</h2>
+
+<div id="edit-external-links-container">
+  <% ExternalLink.find_or_initalize_links_for(@entity).each do |el| %>
+    <%= form_for el, html: { class: 'form-inline', id: "#{el.link_type}_external_link_form" } do |f| %>
+      <% unless el.persisted?  %>
+	<%= f.hidden_field :entity_id  %>
+	<%= f.hidden_field :link_type  %>
+      <% end %>
+      <div class="form-group">
+	<div class="input-group">
+	  <div class="input-group-addon"><%= el.link_type.capitalize %>:</div>
+	  <%= f.text_field :link_id, class: 'form-control', id: "#{el.link_type}_external_link_link_id_input" %>
+	</div>
+	<%= f.submit "Submit", class: %w[btn btn-primary] %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

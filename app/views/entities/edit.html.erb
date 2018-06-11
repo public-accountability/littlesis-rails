@@ -4,122 +4,125 @@
 <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 
 <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder  do |f| %>
-    
-    <div class="row top-1em">
-	<%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
-	<div class="col-sm-4 col-sm-offset-1">
-	    <%= render partial: 'shared/editing/reference_errors' %>
-	    <%= render partial: 'edit_errors' %>
-	</div>
+  
+  <div class="row top-1em">
+    <%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
+    <div class="col-sm-4 col-sm-offset-1">
+      <%= render partial: 'shared/editing/reference_errors' %>
+      <%= render partial: 'edit_errors' %>
     </div>
+  </div>
 
-    <% if @entity.person? %>
-	<%= render partial: 'type_checkboxes_person', locals: { f: f } %>
-    <% else  %>
-	<%= render partial: 'type_checkboxes_org', locals: { f: f } %>
-    <% end  %>
+  <% if @entity.person? %>
+    <%= render partial: 'type_checkboxes_person', locals: { f: f } %>
+  <% else  %>
+    <%= render partial: 'type_checkboxes_org', locals: { f: f } %>
+  <% end  %>
 
-    
-    <% label_class = 'col-sm-2 control-label' %>
-    
-    <div class="form-group">
-	<%= f.label(:blurb, 'Short Description', class: label_class) %>
-	<div class="col-sm-8">
-	    <%= f.text_field(:blurb, class: 'form-control') %>
-	</div>
-	<div class="clearfix"></div>
-    </div>
-
-    <div class="form-group">
-	<%= f.label(:summary, 'Summary:', class: label_class) %>
-	<div class="col-sm-8">
-	    <%= f.text_area(:summary, class: 'form-control', size: '40x6') %>
-	</div>
-	<div class="clearfix"></div>
-    </div>
-    
-    <% start_date_text = { 'Org' => 'Start date:', 'Person' => 'Birth date' } %>
-    <% end_date_text = { 'Org' => 'End date:', 'Person' => 'Death date' } %>
-
-    <div class="form-group">
-	<%= f.label(:start_date, start_date_text[@entity.primary_ext], class: label_class) %>
-	<div class="col-sm-9">
-	    <%= f.text_field(:start_date) %>
-		<%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
-	</div>
-	<div class="clearfix"></div>
-    </div>
-
-    <div class="form-group">
-	<%= f.label(:end_date, end_date_text[@entity.primary_ext], class: label_class) %>
-	<div class="col-sm-9">
-	    <%= f.text_field(:end_date) %>
-		<%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
-	</div>
-	<div class="clearfix"></div>
-    </div>
-
-    <% is_current_text = { 'Org' => 'Is current?', 'Person' => 'Alive?' } %>
-
-    <div class="form-group">
-	<%= f.label(:is_current, is_current_text[@entity.primary_ext], class: label_class) %>
-	<div class="col-sm-3">
-	    <%= f.tri_boolean(:is_current) %>
-	</div>
-	<div class="clearfix"></div>
-    </div>
-
-    <div class="form-group">
-	<%= f.label(:website, "Website:", class: label_class) %>
-	<div class="col-sm-3">
-	    <%= f.url_field(:website) %>
-	</div>
-	<div class="clearfix"></div>
-    </div>
-
-    <% if @entity.person?  %>
-        <%= render partial: 'person_name_form_components', locals: { f: f, label_class: label_class } %>
-    <% end %>
-
-    
-    <% if @entity.has_extension?('PublicCompany') %>
-	<%= f.fields_for :public_company do |public_company_form| %>
-	    <div class="form-group">
-		<%= public_company_form.label(:ticker, 'Ticker', class: label_class) %>
-		<div class="col-sm-4">
-		    <%= public_company_form.text_field(:ticker) %>
-		</div>
-		<div class="clearfix"></div>
-	    </div>
-
-	<% end %>
-    <% end %>
-
-    <% if @entity.has_extension?('School') %>
-	<%= f.fields_for :school, @entity.school do |school_form| %>
-	    <div class="form-group">
-		<%= school_form.label(:is_private, 'Private School?', class: label_class) %>
-		<div class="col-sm-4">
-		    <%= school_form.tri_boolean(:is_private) %>
-		</div>
-		<div class="clearfix"></div>
-	    </div>
-	<% end %>
-    <% end %>
-
-    <div class="form-group">
-	<div class="col-sm-3">
-	    <%= f.submit 'Update', class: 'btn btn-primary' %>
-	    <%= link_to 'Cancel', @entity.legacy_url, class: 'btn btn-default m-left-1em' %>
-	</div>
+  
+  <% label_class = 'col-sm-2 control-label' %>
+  
+  <div class="form-group">
+    <%= f.label(:blurb, 'Short Description', class: label_class) %>
+    <div class="col-sm-8">
+      <%= f.text_field(:blurb, class: 'form-control') %>
     </div>
     <div class="clearfix"></div>
-<% end %>
-<hr>
-<div class="row">
-    
-	<%= render partial: 'edit_aliases' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label(:summary, 'Summary:', class: label_class) %>
+    <div class="col-sm-8">
+      <%= f.text_area(:summary, class: 'form-control', size: '40x6') %>
     </div>
+    <div class="clearfix"></div>
+  </div>
+  
+  <% start_date_text = { 'Org' => 'Start date:', 'Person' => 'Birth date' } %>
+  <% end_date_text = { 'Org' => 'End date:', 'Person' => 'Death date' } %>
+
+  <div class="form-group">
+    <%= f.label(:start_date, start_date_text[@entity.primary_ext], class: label_class) %>
+    <div class="col-sm-9">
+      <%= f.text_field(:start_date) %>
+      <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label(:end_date, end_date_text[@entity.primary_ext], class: label_class) %>
+    <div class="col-sm-9">
+      <%= f.text_field(:end_date) %>
+      <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <% is_current_text = { 'Org' => 'Is current?', 'Person' => 'Alive?' } %>
+
+  <div class="form-group">
+    <%= f.label(:is_current, is_current_text[@entity.primary_ext], class: label_class) %>
+    <div class="col-sm-3">
+      <%= f.tri_boolean(:is_current) %>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label(:website, "Website:", class: label_class) %>
+    <div class="col-sm-3">
+      <%= f.url_field(:website) %>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <% if @entity.person?  %>
+    <%= render partial: 'person_name_form_components', locals: { f: f, label_class: label_class } %>
+  <% end %>
+
+
+  <% if @entity.has_extension?('PublicCompany') %>
+    <%= f.fields_for :public_company do |public_company_form| %>
+      <div class="form-group">
+	<%= public_company_form.label(:ticker, 'Ticker', class: label_class) %>
+	<div class="col-sm-4">
+	  <%= public_company_form.text_field(:ticker) %>
+	</div>
+	<div class="clearfix"></div>
+      </div>
+
+    <% end %>
+  <% end %>
+
+  <% if @entity.has_extension?('School') %>
+    <%= f.fields_for :school, @entity.school do |school_form| %>
+      <div class="form-group">
+	<%= school_form.label(:is_private, 'Private School?', class: label_class) %>
+	<div class="col-sm-4">
+	  <%= school_form.tri_boolean(:is_private) %>
+	</div>
+	<div class="clearfix"></div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <div class="form-group">
+    <div class="col-sm-3">
+      <%= f.submit 'Update', class: 'btn btn-primary' %>
+      <%= link_to 'Cancel', @entity.legacy_url, class: 'btn btn-default m-left-1em' %>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+<% end  # end form-for %>
+<hr>
+
+<div class="row">
+  <%= render partial: 'edit_aliases' %>
+</div>
+
+<div class="row">
+  <%= render partial: 'edit_external_links' %>
 </div>
 
 
@@ -150,3 +153,4 @@
  });
  
 </script>
+  

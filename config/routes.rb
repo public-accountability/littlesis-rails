@@ -278,6 +278,12 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  ##################
+  # External Links #
+  ##################
+
+  resources :external_links, only: %i[create update]
+
   #########
   # edits #
   #########

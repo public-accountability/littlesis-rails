@@ -1,0 +1,7 @@
+<ul class="list-unstyled">
+  <% @entity.external_links.each do |el| %>
+    <li>
+      <%= link_to el.title, el.url, 'target' => '_blank' %>
+    </li>
+  <% end %>
+</ul>

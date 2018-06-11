@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_22_142905) do
+ActiveRecord::Schema.define(version: 2018_06_05_184748) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -376,6 +376,16 @@ ActiveRecord::Schema.define(version: 2018_05_22_142905) do
     t.index ["definition_id"], name: "definition_id_idx"
     t.index ["entity_id"], name: "entity_id_idx"
     t.index ["last_user_id"], name: "last_user_id_idx"
+  end
+
+  create_table "external_links", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "link_type", limit: 1, null: false, unsigned: true
+    t.bigint "entity_id", null: false
+    t.string "link_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["entity_id", "link_type"], name: "index_external_links_on_entity_id_and_link_type", unique: true
+    t.index ["entity_id"], name: "index_external_links_on_entity_id"
   end
 
   create_table "family", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|

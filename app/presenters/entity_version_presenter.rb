@@ -27,6 +27,10 @@ class EntityVersionPresenter < VersionPresenter
     when 'ListEntity'
       return "added this entity to the list #{list_name}" if create_event?
       return "removed this entity from the list #{list_name}" if delete_event?
+    when 'ExternalLink'
+      return "added a #{external_link_name} link" if create_event?
+      return "updated a #{external_link_name} link" if update_event?
+      return "removed a #{external_link_name} link" if delete_event?
     when *Entity.all_extension_names_with_fields
       return updated_fields_text if update_event?
     else
@@ -76,5 +80,9 @@ class EntityVersionPresenter < VersionPresenter
 
   def updated_fields_text
     "updated #{'field'.pluralize(updated_fields.length)} #{updated_fields.join(',')}"
+  end
+
+  def external_link_name
+    ExternalLink::LINK_TYPE_IDS[fetch_from_object_or_changeset('link_type')]
   end
 end

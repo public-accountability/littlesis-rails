@@ -10,7 +10,9 @@ describe 'edit enity page', type: :feature do
   end
 
   context 'user is logged in' do
+    let(:setup) { -> {} }
     before do
+      setup.call
       login_as(user, scope: :user)
       visit edit_entity_path(entity)
     end
@@ -96,5 +98,62 @@ describe 'edit enity page', type: :feature do
 
       end # end context adding a new reference
     end # end updating an entity's fields
+
+    context 'external links' do
+      let(:user) { create_admin_user }
+      let(:wikipedia_name) { 'example_page' }
+      feature 'add an external link to wikipedia' do
+        before { @external_link_count = ExternalLink.count }
+
+        scenario 'submiting a new wikipedia link' do
+          within('#wikipedia_external_link_form') do
+            fill_in 'external_link[link_id]', with: wikipedia_name
+            click_button 'Submit'
+          end
+          expect(ExternalLink.count).to eql(@external_link_count + 1)
+          expect(ExternalLink.last.link_id).to eql wikipedia_name
+          expect(ExternalLink.last.entity_id).to eql entity.id
+          expect(page.current_path).to eql edit_entity_path(entity)
+        end
+      end
+
+      feature 'modifying existing external link' do
+        let(:setup) do
+          -> { ExternalLink.create!(entity_id: entity.id, link_id: wikipedia_name, link_type: 'wikipedia') }
+        end
+
+        scenario 'changing the wikipedia page name' do
+          external_link_count = ExternalLink.count
+
+          within('#wikipedia_external_link_form') do
+            fill_in 'external_link[link_id]', with: 'new_page_name'
+            click_button 'Submit'
+          end
+          expect(ExternalLink.count).to eql external_link_count
+          expect(ExternalLink.last.link_id).to eql 'new_page_name'
+          expect(ExternalLink.last.entity_id).to eql entity.id
+          expect(page.current_path).to eql edit_entity_path(entity)
+        end
+      end
+
+      feature 'removing an external link' do
+        let(:setup) do
+          -> { ExternalLink.create!(entity_id: entity.id, link_id: wikipedia_name, link_type: 'wikipedia') }
+        end
+
+        scenario 'deleting existing text' do
+          external_link_count = ExternalLink.count
+
+          within('#wikipedia_external_link_form') do
+            expect(find('input[name="external_link[link_id]"]').value).to eql wikipedia_name
+            fill_in 'external_link[link_id]', with: ''
+            click_button 'Submit'
+          end
+          expect(ExternalLink.count).to eql(external_link_count - 1)
+          expect(page.current_path).to eql edit_entity_path(entity)
+        end
+
+      end
+    end # end external links
   end # end context user is logged in
 end

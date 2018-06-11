@@ -7,7 +7,8 @@ class EntityMerger
               :articles, :os_categories,
               :child_entities, :party_members, :cmp_entity,
               :relationships, :potential_duplicate_relationships,
-              :os_match_relationships, :ny_match_relationships
+              :os_match_relationships, :ny_match_relationships,
+              :external_links
 
   def initialize(source:, dest:)
     @source = source
@@ -24,6 +25,7 @@ class EntityMerger
       @extensions.each { |e| e.merge!(@dest) }
       @contact_info.each(&:save!)
       @contact_info_to_delete.each(&:destroy!)
+      @external_links.each(&:save!)
       @lists.each { |list_id| ListEntity.create!(list_id: list_id, entity_id: dest.id) }
       @images.each(&:save!)
       @aliases.each(&:save!)
@@ -85,6 +87,7 @@ class EntityMerger
   def merge
     merge_extensions
     merge_contact_info
+    merge_external_links
     merge_lists
     merge_images
     merge_aliases
@@ -132,6 +135,12 @@ class EntityMerger
       if Entity.extension_with_field?(ext_id)
         @extensions << Extension.new(ext_id, false, source_extension_attributes[Entity.ext_name_or_id_to_name(ext_id)])
       end
+    end
+  end
+
+  def merge_external_links
+    @external_links = source.external_links.to_a.map do |el|
+      el.tap { |el| el.entity = @dest }
     end
   end
 

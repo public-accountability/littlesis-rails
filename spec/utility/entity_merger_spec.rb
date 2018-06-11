@@ -878,5 +878,20 @@ describe 'Merging Entities', :merging_helper do
         expect(NyFilerEntity.find_by_entity_id(dest_person.id).nil?).to be false
       end
     end
+  end # end nys donations
+
+  context 'external links' do
+    subject { EntityMerger.new(source: source_org, dest: dest_org) }
+
+    before do
+      @external_link = ExternalLink.create!(link_type: 'sec', link_id: rand(10000).to_s, entity: source_org)
+    end
+
+    it 'transfers external links from source to dest' do
+      expect { subject.merge! }
+        .to change { @external_link.reload.entity_id }
+              .from(source_org.id).to(dest_org.id)
+
+    end
   end
 end

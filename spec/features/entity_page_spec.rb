@@ -150,7 +150,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       it 'has editable blurb'
     end
-  end
+  end # end describe header
 
   describe "summary field" do
     before { visit_page.call }
@@ -229,6 +229,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         it { is_expected.not_to have_selector 'a.tag' }
         it { is_expected.not_to have_selector "#tags-edit-button" }
         it { is_expected.not_to have_selector 'script#edit-tags-javascript' }
+        it { is_expected.not_to have_selector '#sidebar-external-links-container' }
       end
 
       context 'with tags' do
@@ -236,6 +237,26 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         it { is_expected.to have_selector 'a.tag', count: 2 }
         it { is_expected.not_to have_selector "#tags-edit-button" }
         it { is_expected.not_to have_selector 'script#edit-tags-javascript' }
+      end
+
+      context 'with external links' do
+        # remove after admin guard is removed
+        let(:user) { create_admin_user }
+        before { login_as(user, scope: :user) }
+        after { logout(user) }
+
+        let(:link_id) { Faker::Number.unique.number(6).to_s }
+
+        before do
+          ExternalLink.create!(link_type: 'sec', entity_id: person.id, link_id: link_id)
+          visit_page.call
+        end
+
+        scenario 'viewing external links section' do
+          expect(find('#sidebar-external-links-container').text).to include 'External Links'
+          page_has_selector '#sidebar-external-links-container a', count: 1
+        end
+
       end
     end
 
@@ -286,7 +307,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         end
       end
     end
-  end
+  end # end describe sidebar
 
   describe "navigation tabs" do
     before { visit_page.call }

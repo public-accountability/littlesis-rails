@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-module EntitiesHelper
+# rubocop:disable Style/StringLiterals
 
+module EntitiesHelper
   def entity_primary_ext_display(entity)
     if entity.org?
       'organization'
@@ -294,4 +295,13 @@ module EntitiesHelper
       ["Recipient", "Donors"]
     end
   end
+
+  def profile_page_sidebar(container_id, header_title, **kwargs)
+    content_tag(:div, id: container_id, class: 'row') do
+      content_tag(:div, sidebar_header(header_title, **kwargs), class: 'col-sm-12') +
+        content_tag(:div, class: 'col-sm-12') { yield }
+    end
+  end
 end
+
+# rubocop:enable Style/StringLiterals

@@ -8,7 +8,7 @@ describe 'entities/edit.html.erb', type: :view do
     @person = create(:entity_person, last_user_id: @current_user.sf_guard_user.id)
   end
 
-  after(:all) { DatabaseCleaner.clean } 
+  after(:all) { DatabaseCleaner.clean }
 
   describe 'layout for Org' do
     before do
@@ -30,8 +30,8 @@ describe 'entities/edit.html.erb', type: :view do
       expect(view).to render_template(partial: '_edit_references_panel', count: 1)
     end
 
-    it 'has two forms' do
-      css 'form', count: 2
+    it 'has 3 forms' do
+      css 'form', count: 3
     end
 
     it 'does not render person_name_form_components' do
@@ -49,7 +49,8 @@ describe 'entities/edit.html.erb', type: :view do
 
   context 'when entity has one error' do
     before do
-      @bad_entity = build(:org, id: rand(1000), updated_at: Time.now,
+      @bad_entity = build(:org,
+                          id: rand(1000), updated_at: Time.current,
                           last_user_id: @current_user.sf_guard_user.id, start_date: 'bad date')
       @bad_entity.valid?
       assign(:entity, @bad_entity)
