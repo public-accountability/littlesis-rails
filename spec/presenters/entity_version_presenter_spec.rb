@@ -63,6 +63,22 @@ describe 'EntityVersionPresenter' do
       end
     end
 
+    context 'external links' do
+      subject do
+        entity_history.versions.as_presenters.map(&:render).join(' ')
+      end
+
+      describe 'adding an wikipedia link' do
+        before do
+          ExternalLink.create!(entity: entity, link_type: :wikipedia, link_id: 'example')
+        end
+
+        it 'has correct message' do
+          expect(subject).to include 'added a wikipedia link'
+        end
+      end
+    end
+
     describe '#user_link' do
       subject { entity_history.versions.as_presenters.first }
       it 'generates link for user' do

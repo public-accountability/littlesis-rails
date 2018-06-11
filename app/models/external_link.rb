@@ -5,11 +5,12 @@ class ExternalLink < ApplicationRecord
 
   has_paper_trail on:  %i[create destroy update],
                   meta: { entity1_id: :entity_id },
-                  if: :editable?
+                  if: ->(el) { el. editable? }
 
   # 1 -> sec
   # 2 -> wikipedia
   enum link_type: %i[reserved sec wikipedia]
+  LINK_TYPE_IDS = link_types.to_a.map(&:reverse).to_h.freeze
 
   LINK_PLACEHOLDER = '{}'
   EDITABLE_TYPES = %w[wikipedia].freeze
