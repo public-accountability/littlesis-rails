@@ -17,4 +17,13 @@ describe ExternalLink, type: :model do
       end
     end
   end
+
+  context 'wikipedia links' do
+    let(:url) { 'https://en.wikipedia.org/wiki/Ruby_(programming_language)' }
+    it 'can handles input of wikipedia links' do
+      el = build(:wikipedia_external_link, link_id: url)
+      el.validate
+      expect(el.link_id).to eql 'Ruby_(programming_language)'
+    end
+  end
 end

@@ -10,9 +10,13 @@ class ExternalLink < ApplicationRecord
   LINK_PLACEHOLDER = '{}'
   EDITABLE_TYPES = %i[wikipedia].freeze
 
+  WIKIPEDIA_REGEX = Regexp.new 'https?:\/\/en.wikipedia.org\/wiki\/?(.+)', Regexp::IGNORECASE
+
   validates :link_type, presence: true
   validates :entity_id, presence: true
   validates :link_id, presence: true
+
+  before_validation :parse_id_input
 
   def url
     url_template.gsub(LINK_PLACEHOLDER, link_id)
@@ -39,14 +43,21 @@ class ExternalLink < ApplicationRecord
 
   private
 
+  # handles input of wikipedia links
+  def parse_id_input
+    if wikipedia? && WIKIPEDIA_REGEX.match?(link_id)
+      self.link_id = WIKIPEDIA_REGEX.match(link_id)[1]
+    end
+  end
+
   def url_template
     case link_type
     when 'sec'
       'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={}&output=xml'
     when 'wikipedia'
-      'TODO'
+      'https://en.wikipedia.org/wiki/{}'
     when 'reserved'
-      raise TypeError, 'Do not create ExernalLinks of type "reserved"'
+      raise TypeError, 'Do not create ExternalLinks of type "reserved"'
     end
   end
 end
