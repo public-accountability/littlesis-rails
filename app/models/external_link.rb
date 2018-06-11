@@ -3,12 +3,16 @@
 class ExternalLink < ApplicationRecord
   belongs_to :entity
 
+  has_paper_trail on:  %i[create destroy update],
+                  meta: { entity1_id: :entity_id },
+                  if: :editable?
+
   # 1 -> sec
   # 2 -> wikipedia
   enum link_type: %i[reserved sec wikipedia]
 
   LINK_PLACEHOLDER = '{}'
-  EDITABLE_TYPES = %i[wikipedia].freeze
+  EDITABLE_TYPES = %w[wikipedia].freeze
 
   WIKIPEDIA_REGEX = Regexp.new 'https?:\/\/en.wikipedia.org\/wiki\/?(.+)', Regexp::IGNORECASE
 
@@ -17,6 +21,10 @@ class ExternalLink < ApplicationRecord
   validates :link_id, presence: true
 
   before_validation :parse_id_input
+
+  def editable?
+    EDITABLE_TYPES.include?(link_type)
+  end
 
   def url
     url_template.gsub(LINK_PLACEHOLDER, link_id)

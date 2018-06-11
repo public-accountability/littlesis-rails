@@ -8,6 +8,11 @@ describe ExternalLink, type: :model do
 
   it 'does not allow multiple links of the same type'
 
+  it 'determines if the links can be edited' do
+    expect(build(:sec_external_link).editable?).to be false
+    expect(build(:wikipedia_external_link).editable?).to be true
+  end
+
   context 'sec links' do
     let(:el) { build(:sec_external_link) }
 
