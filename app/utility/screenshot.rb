@@ -5,14 +5,15 @@
 # Download geckodriver here: https://github.com/mozilla/geckodriver/releases
 # and put it anywhere that's accessible from the shell's path
 class Screenshot
+  FIREFOX_CAPABILITIES = Selenium::WebDriver::Remote::Capabilities.firefox(accept_insecure_certs: true)
+
   def self.take(url, path)
     status = true
-
-    Selenium::WebDriver::Firefox::Binary.path= '/usr/bin/firefox'
+    Selenium::WebDriver::Firefox::Binary.path = '/usr/bin/firefox'
 
     Headless.ly do
       begin
-        driver = Selenium::WebDriver.for :firefox
+        driver = Selenium::WebDriver.for :firefox, desired_capabilities: FIREFOX_CAPABILITIES
         driver.manage.window.size = Selenium::WebDriver::Dimension.new(960, 550)
         driver.get url
         # hide annotations
@@ -32,10 +33,9 @@ class Screenshot
 
     return status
   end
-  
+
   def self.resize_map_thumbnail(path)
     cmd = "mogrify -crop 960x550+60+40 #{path}"
     `#{cmd}`
   end
-
 end

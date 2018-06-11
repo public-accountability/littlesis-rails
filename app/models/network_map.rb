@@ -194,7 +194,7 @@ class NetworkMap < ApplicationRecord
   end
 
   def generate_s3_thumb
-    url = Rails.application.routes.url_helpers.embedded_map_url(self, :host => 'http://127.0.0.1')
+    url = Rails.application.routes.url_helpers.embedded_map_url(self, :host => 'https://127.0.0.1')
 
     local_path = "tmp/map-#{id}.png"
     s3_path = "images/maps/#{id}.png"
