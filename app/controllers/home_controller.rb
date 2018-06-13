@@ -95,8 +95,14 @@ class HomeController < ApplicationController
         flash.now[:alert] = "Don't forget to write a message!"
         @name = params[:name]
       else
-        NotificationMailer.contact_email(contact_params).deliver_later # send_mail
-        flash.now[:notice] = 'Your message has been sent. Thank you!'
+
+        if user_signed_in? || verify_recaptcha
+          NotificationMailer.contact_email(contact_params).deliver_later # send_mail
+          flash.now[:notice] = 'Your message has been sent. Thank you!'
+        else
+          flash.now[:alert] = "Captcha incorrectly filled out"
+        end
+        
       end
     end
   end

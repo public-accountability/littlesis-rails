@@ -19,6 +19,10 @@ describe 'home/contact.html.erb', type: :view do
     it 'has input with email address' do
       css "input[type=hidden][value='email@email.com']"
     end
+
+    it 'does not have recaptcha' do
+      not_css '#g-recaptcha-response'
+    end
   end
 
   describe 'layout' do
@@ -47,7 +51,11 @@ describe 'home/contact.html.erb', type: :view do
     end
 
     it 'has text area' do
-      css 'textarea', count: 1
+      css 'textarea#message', count: 1
+    end
+
+    it 'has recaptcha' do
+      css '#g-recaptcha-response'
     end
   end
 end
