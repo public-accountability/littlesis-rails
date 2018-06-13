@@ -24,10 +24,19 @@
       </div>
     </div>
 
+    <% unless user_signed_in? %>
+      <div class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+	  <%= recaptcha_tags %>
+	</div>
+      </div>
+    <% end %>
+
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <%= submit_tag("submit", class: 'btn btn-primary') %>
       </div>
     </div>
+    
   <% end %>
 </div>
