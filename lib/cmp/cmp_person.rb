@@ -81,6 +81,23 @@ module Cmp
                                .select { |r| r['cmp_person_id'] == cmpid }
     end
 
+    def cmp_relationships_with_title
+      cmp_relationships.map do |cmp_r|
+        org_name = Cmp::Datasets
+                     .orgs
+                     .find { |org| org.cmpid == cmp_r['cmp_org_id'].to_i }
+                     &.fetch('cmpname')
+
+        if org_name.nil?
+          ''
+        elsif cmp_r['job_title'].blank?
+          org_name
+        else
+          "#{org_name} (#{cmp_r['job_title']})"
+        end
+      end
+    end
+
     # --> [String]
     def related_cmp_org_names
       related_cmp_org_ids.map do |cmp_id|
