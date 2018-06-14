@@ -26,7 +26,7 @@ module Cmp
     private_class_method def self.load_relationships
       Cmp::RelationshipSheet
         .new(RELATIONSHIP_FILE_PATH)
-        .to_a.map { |attrs| CmpRelationship.new(attrs) }
+        .to_a.map { |attrs| Cmp::CmpRelationship.new(attrs) }
     end
 
     private_class_method def self.load_people

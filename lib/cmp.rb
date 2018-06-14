@@ -10,6 +10,7 @@ require_relative 'cmp/cmp_entity_importer'
 require_relative 'cmp/entity_match'
 require_relative 'cmp/cmp_org'
 require_relative 'cmp/cmp_person'
+require_relative 'cmp/cmp_relationship'
 require_relative 'cmp/datasets'
 
 module Cmp
