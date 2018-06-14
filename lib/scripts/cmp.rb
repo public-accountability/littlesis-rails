@@ -14,7 +14,7 @@ CSV.foreach(potential_matches_csv, headers: true) do |row|
   if match_values.include?('same_first_name') && match_values.include?('same_last_name')
     entity = Entity.find_by(id: row['match_id'])
 
-    if entity && entity.link_count >= minimum_entity_link_count
+    if entity && (entity.link_count >= minimum_entity_link_count || match_values.include?('same_middle_name'))
 
       print CSV.generate_line([row['cmpid'],
                                row['fullname'],
