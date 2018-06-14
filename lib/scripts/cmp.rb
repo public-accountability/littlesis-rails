@@ -1,5 +1,7 @@
 require 'csv'
 
+require Rails.root.join('lib', 'cmp.rb').to_s
+
 # potential_matches_csv = "/littlesis/cmp/potential_cmp_matches.csv"
 potential_matches_csv = Rails.root.join('data', 'potential_cmp_matches.csv')
 minimum_entity_link_count = 10
