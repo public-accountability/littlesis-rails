@@ -29,12 +29,7 @@ CSV.foreach(potential_matches_csv, headers: true) do |row|
                               ])
     end
   else
-    begin
-      Cmp::Datasets.people[row['cmpid']].import!
-      ColorPrinter.print_blue "Importing #{row['fullname']} - #{row['cmpid']}"
-    rescue => e
-      ColorPrinter.print_red "Failed to import #{row['fullname']} - #{row['cmpid']}"
-      puts e
-    end
+    Cmp::Datasets.people[row['cmpid']].import!
+    Cmp::Datasets.people[row['cmpid']].clear_matches
   end
 end
