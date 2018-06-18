@@ -14,6 +14,7 @@
 #    - same_prefix
 #    - same_suffix
 #    - mismatched_suffix
+#    - mismatched_middle_name
 #    - similar_first_name
 #    - similar_last_name
 #  relationship:
@@ -65,6 +66,7 @@ module EntityMatcher
       :same_prefix,
       :same_suffix,
       :mismatched_suffix,
+      :mismatched_middle_name,
       :similar_last_name,
       :similar_first_name,
       :common_relationship,

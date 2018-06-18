@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/LineLength
-
 require 'rails_helper'
 
 describe EntityMatcher, :sphinx do
@@ -297,6 +295,8 @@ describe EntityMatcher, :sphinx do
 
           expect(subject.new(test_case, match).result.same_last_name)
             .to eql false
+
+           expect(subject.new(test_case, match).result.mismatched_middle_name).to eql nil
         end
       end
 
@@ -316,10 +316,29 @@ describe EntityMatcher, :sphinx do
           expect(subject.new(test_case, match).result.same_first_name).to eql true
           expect(subject.new(test_case, match).result.same_last_name).to eql true
           expect(subject.new(test_case, match).result.same_middle_name).to eql true
+          expect(subject.new(test_case, match).result.mismatched_middle_name).to eql false
         end
       end
 
-      context 'mismatched suffix ' do
+      context 'same middle initial' do
+        let(:first_name) { Faker::Name.first_name }
+        let(:middle_name) { 'Alice' }
+        let(:last_name) { Faker::Name.last_name }
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "#{first_name} #{middle_name} #{last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: first_name, name_middle: 'A.', name_last: last_name
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_middle_name).to eql true
+          expect(subject.new(test_case, match).result.mismatched_middle_name).to eql false
+        end
+      end
+
+      context 'mismatched suffix' do
         let(:test_case) do
           EntityMatcher::TestCase::Person.new "#{Faker::Name.first_name} #{Faker::Name.last_name}"
         end
@@ -332,6 +351,36 @@ describe EntityMatcher, :sphinx do
           expect(subject.new(test_case, match).result.blurb_keyword).to be_nil
           expect(subject.new(test_case, match).result.same_suffix).to be_nil
           expect(subject.new(test_case, match).result.mismatched_suffix).to eql true
+        end
+      end
+
+      context 'mismatched middle name' do
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "#{Faker::Name.first_name} A #{Faker::Name.last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: Faker::Name.first_name, name_middle: 'B'
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_middle_name).to eql false
+          expect(subject.new(test_case, match).result.mismatched_middle_name).to eql true
+        end
+      end
+
+      context 'mismatched middle name: more details on match' do
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "#{Faker::Name.first_name} #{Faker::Name.last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: Faker::Name.first_name, name_middle: 'B'
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_middle_name).to eql nil
+          expect(subject.new(test_case, match).result.mismatched_middle_name).to eql true
         end
       end
 
@@ -810,5 +859,3 @@ describe EntityMatcher, :sphinx do
 
   end
 end
-
-# rubocop:enable Metrics/LineLength

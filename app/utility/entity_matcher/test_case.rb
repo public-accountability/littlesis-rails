@@ -94,6 +94,14 @@ module EntityMatcher
         super associated: associated, keywords: keywords
       end
 
+      def middle_name_is_an_initial?
+        middle.present? && middle.tr('.', '').length == 1
+      end
+
+      def middle_initial
+        middle[0].upcase if middle.present?
+      end
+
       private
 
       def validate_input_hash(h)
