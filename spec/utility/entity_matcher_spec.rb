@@ -634,6 +634,15 @@ describe EntityMatcher, :sphinx do
             specify { expect(subject.automatch?).to be false }
           end
 
+          context 'cannot be automatched if last_name is uncommon with a mismatched middle name' do
+            subject do
+              result_person(:same_first_name, :same_last_name, :mismatched_middle_name).tap do |rp|
+                rp.common_last_name = false
+              end
+            end
+            specify { expect(subject.automatch?).to be false }
+          end
+
           context 'cannot be automatched if last name is common' do
             subject do
               result_person(:same_first_name, :same_last_name).tap do |rp|
@@ -644,10 +653,9 @@ describe EntityMatcher, :sphinx do
           end
 
           context 'cannot be automatched if commonality is unknown' do
-            subject { result_person(:same_first_name, :same_last_name) } 
+            subject { result_person(:same_first_name, :same_last_name) }
             specify { expect(subject.automatch?).to be false }
           end
-
 
           context 'cannot be automatched' do
             subject { result_person(:same_first_name, :same_last_name, :blurb_keyword) }

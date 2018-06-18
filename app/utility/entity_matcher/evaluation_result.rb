@@ -221,7 +221,7 @@ module EntityMatcher
         return true if ranking <= AUTOMATCH_MINIMUM_RANK
         # The match has the exact same first and last name
         # and the last name is uncommon, it can also be automatched
-        if same_last_name && same_first_name && (common_last_name == false) && !mismatched_suffix
+        if same_last_name && same_first_name && (common_last_name == false) && !mismatched_suffix && !mismatched_middle_name
           return true
         else
           return false
