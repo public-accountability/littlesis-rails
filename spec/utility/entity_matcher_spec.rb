@@ -290,13 +290,9 @@ describe EntityMatcher, :sphinx do
         end
 
         specify do
-          expect(subject.new(test_case, match).result.same_first_name)
-            .to eql true
-
-          expect(subject.new(test_case, match).result.same_last_name)
-            .to eql false
-
-           expect(subject.new(test_case, match).result.mismatched_middle_name).to eql nil
+          expect(subject.new(test_case, match).result.same_first_name).to eql true
+          expect(subject.new(test_case, match).result.same_last_name).to eql false
+           expect(subject.new(test_case, match).result.mismatched_middle_name).to eql false
         end
       end
 
@@ -317,6 +313,25 @@ describe EntityMatcher, :sphinx do
           expect(subject.new(test_case, match).result.same_last_name).to eql true
           expect(subject.new(test_case, match).result.same_middle_name).to eql true
           expect(subject.new(test_case, match).result.mismatched_middle_name).to eql false
+          expect(subject.new(test_case, match).result.different_middle_name).to eql false
+        end
+      end
+
+      context 'no middle names' do
+        let(:first_name) { Faker::Name.first_name }
+        let(:last_name) { Faker::Name.last_name }
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "#{first_name} #{last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: first_name, name_last: last_name
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_middle_name).to eql nil
+          expect(subject.new(test_case, match).result.different_middle_name).to eql false
+          expect(subject.new(test_case, match).result.mismatched_middle_name).to eql false
         end
       end
 
@@ -334,6 +349,7 @@ describe EntityMatcher, :sphinx do
 
         specify do
           expect(subject.new(test_case, match).result.same_middle_name).to eql true
+          expect(subject.new(test_case, match).result.different_middle_name).to eql false
           expect(subject.new(test_case, match).result.mismatched_middle_name).to eql false
         end
       end
@@ -354,7 +370,7 @@ describe EntityMatcher, :sphinx do
         end
       end
 
-      context 'mismatched middle name' do
+      context 'different middle name' do
         let(:test_case) do
           EntityMatcher::TestCase::Person.new "#{Faker::Name.first_name} A #{Faker::Name.last_name}"
         end
@@ -366,6 +382,7 @@ describe EntityMatcher, :sphinx do
         specify do
           expect(subject.new(test_case, match).result.same_middle_name).to eql false
           expect(subject.new(test_case, match).result.mismatched_middle_name).to eql true
+          expect(subject.new(test_case, match).result.different_middle_name).to eql true
         end
       end
 

@@ -73,6 +73,7 @@ module EntityMatcher
         @result.same_last_name = compare_field(:last)
         @result.same_first_name = compare_field(:first)
         @result.same_middle_name = same_middle_name
+        @result.different_middle_name = (@result.same_middle_name == false)
         @result.same_prefix = compare_field(:prefix)
         @result.same_suffix = compare_field(:suffix)
         @result.mismatched_suffix = mismatched_suffix
@@ -110,7 +111,7 @@ module EntityMatcher
       end
 
       def mismatched_middle_name
-        return nil if @match.middle.blank? && @test_case.middle.blank?
+        return false if @match.middle.blank? && @test_case.middle.blank?
         return true if @match.middle.present? && @test_case.middle.blank?
         return !same_middle_name
       end

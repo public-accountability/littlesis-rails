@@ -66,6 +66,7 @@ module EntityMatcher
       :same_prefix,
       :same_suffix,
       :mismatched_suffix,
+      :different_middle_name,
       :mismatched_middle_name,
       :similar_last_name,
       :similar_first_name,
