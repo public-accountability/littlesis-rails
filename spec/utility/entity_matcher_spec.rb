@@ -384,6 +384,24 @@ describe EntityMatcher, :sphinx do
         end
       end
 
+      context 'mismatched middle name: more details on test case' do
+        let(:first_name) { Faker::Name.first_name }
+        let(:last_name) { Faker::Name.last_name }
+
+        let(:test_case) do
+          EntityMatcher::TestCase::Person.new "#{first_name} Alice #{last_name}"
+        end
+
+        let(:match) do
+          generate_test_case name_first: first_name, name_last: last_name
+        end
+
+        specify do
+          expect(subject.new(test_case, match).result.same_middle_name).to eql nil
+          expect(subject.new(test_case, match).result.mismatched_middle_name).to eql true
+        end
+      end
+
       context 'similar first names' do
         let(:test_case) do
           EntityMatcher::TestCase::Person.new "Cindi #{Faker::Name.unique.last_name}"
