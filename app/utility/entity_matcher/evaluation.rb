@@ -72,10 +72,12 @@ module EntityMatcher
       def comparisons
         @result.same_last_name = compare_field(:last)
         @result.same_first_name = compare_field(:first)
-        @result.same_middle_name = compare_field(:middle)
+        @result.same_middle_name = same_middle_name
+        @result.different_middle_name = (@result.same_middle_name == false)
         @result.same_prefix = compare_field(:prefix)
         @result.same_suffix = compare_field(:suffix)
         @result.mismatched_suffix = mismatched_suffix
+        @result.mismatched_middle_name = mismatched_middle_name
         @result.similar_first_name = similar_first_name
         @result.similar_last_name = similar_last_name
         @result.common_relationship = common_relationship
@@ -95,6 +97,23 @@ module EntityMatcher
 
       def mismatched_suffix
         [@test_case.suffix.present?, @match.suffix.present?].select { |x| x == true }.length == 1
+      end
+
+      def same_middle_name
+        if @match.middle.present?
+          return nil if @test_case.middle.blank?
+          if @match.middle_name_is_an_initial? || @test_case.middle_name_is_an_initial?
+            return @match.middle_initial == @test_case.middle_initial
+          else
+            return @match.middle == @test_case.middle
+          end
+        end
+      end
+
+      def mismatched_middle_name
+        return false if @match.middle.blank? && @test_case.middle.blank?
+        return true if @match.middle.present? && @test_case.middle.blank?
+        return !same_middle_name
       end
     end
 
