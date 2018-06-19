@@ -27,8 +27,8 @@ CSV.foreach(potential_matches_csv, headers: true) do |row|
 
   if skip_entity?(entity, match_values)
     # create new entity:
-    # Cmp::Datasets.people[row['cmpid']].import!
-    # Cmp::Datasets.people[row['cmpid']].clear_matches
+    Cmp::Datasets.people[row['cmpid']].import!
+    Cmp::Datasets.people[row['cmpid']].clear_matches
   else
     csv_line = CSV.generate_line([
                                    row['cmpid'],
