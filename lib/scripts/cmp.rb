@@ -4,15 +4,14 @@ require Rails.root.join('lib', 'cmp.rb').to_s
 
 # potential_matches_csv = "/littlesis/cmp/potential_cmp_matches.csv"
 potential_matches_csv = Rails.root.join('data', 'potential_cmp_matches.csv')
-minimum_entity_link_count = 10
 
 print CSV.generate_line(%w[cmpid cmp_full_name entity_name entity_id entity_url entity_link_count cmp_relationships match_values])
 
-
-def include_entity?(match_values)
-  (match_values.include?('similar_first_name') || match_values.include?('same_first_name')) &&
-    match_values.include?('same_last_name') &&
-    !match_values.include?('different_middle_name')
+def skip_entity?(entity, match_values)
+  return true if match_values.include?('different_middle_name')
+  return true if CmpEntity.exists?(entity_id: entity.id)
+  return false if entity.link_count >= 10
+  (match_values.include?('similar_first_name') || match_values.include?('same_first_name')) && match_values.include?('same_last_name')
 end
 
 
@@ -26,8 +25,11 @@ CSV.foreach(potential_matches_csv, headers: true) do |row|
   entity = Entity.find_by(id: row['match_id'])
   next if entity.nil?
 
-  if (entity.link_count >= minimum_entity_link_count) || include_entity?(match_values)
-
+  if skip_entity?(entity, match_values)
+    # create new entity:
+    # Cmp::Datasets.people[row['cmpid']].import!
+    # Cmp::Datasets.people[row['cmpid']].clear_matches
+  else
     csv_line = CSV.generate_line([
                                    row['cmpid'],
                                    row['fullname'],
@@ -43,8 +45,5 @@ CSV.foreach(potential_matches_csv, headers: true) do |row|
                                  ])
 
     print csv_line
-  else
-    # Cmp::Datasets.people[row['cmpid']].import!
-    # Cmp::Datasets.people[row['cmpid']].clear_matches
   end
 end
