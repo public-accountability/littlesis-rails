@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '5.2.0'
-gem 'mysql2', '~> 0.4.10'
+gem 'mysql2', '~> 0.5.1'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
@@ -10,7 +10,7 @@ gem 'rack-rewrite', '~> 1.5.1'
 gem 'devise', '~> 4.4.3'
 
 # Versioning
-gem 'paper_trail', '9.1.1'
+gem 'paper_trail', '9.2.0'
 
 # delayed job
 gem 'daemons' # Required by delayed_job
@@ -59,7 +59,7 @@ end
 
 group :test, :development do
   gem 'better_errors', '~> 2.4.0'
-  gem 'capybara', '~> 3.1.1'
+  gem 'capybara', '~> 3.2.1'
   gem 'capybara-webkit', '1.15.0'
   gem 'codacy-coverage', :require => false
   gem 'database_cleaner'
