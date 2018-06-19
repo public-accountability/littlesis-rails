@@ -33,4 +33,8 @@ module Routes
     raise ArgumentError unless str.is_a?(String) && entity.is_a?(Entity)
     REPLACE_ENTITIES_IN_STRING.call(str, entity)
   end
+
+  def self.entity_url(entity)
+    modify_entity_path(Rails.application.routes.url_helpers.entity_url(entity), entity)
+  end
 end

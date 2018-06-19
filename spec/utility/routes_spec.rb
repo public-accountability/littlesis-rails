@@ -41,4 +41,11 @@ describe Routes, type: :feature do
         .to eql 'http://example.com/person/123'
     end
   end
+
+  describe 'entity_url' do
+    it 'generates url for an org' do
+      expect(Routes.entity_url(org))
+        .to eql "http://localhost:8080/org/#{org.to_param}"
+    end
+  end
 end
