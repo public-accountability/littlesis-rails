@@ -6,7 +6,7 @@ require Rails.root.join('lib', 'cmp.rb').to_s
 potential_matches_csv = Rails.root.join('data', 'potential_cmp_matches.csv')
 minimum_entity_link_count = 10
 
-print CSV.generate_line(%w[cmpid cmp_full_name entity_name entity_id entity_url entity_link_count cmp_relationships])
+print CSV.generate_line(%w[cmpid cmp_full_name entity_name entity_id entity_url entity_link_count cmp_relationships, match_values])
 
 
 def include_entity?(match_values)
@@ -21,20 +21,23 @@ CSV.foreach(potential_matches_csv, headers: true) do |row|
   entity = Entity.find_by(id: row['match_id'])
   next if entity.nil?
 
-  if entity.link_count >= minimum_entity_link_count || include_entity?(match_values)
+  if (entity.link_count >= minimum_entity_link_count) || include_entity?(match_values)
 
-    print CSV.generate_line([
-                              row['cmpid'],
-                              row['fullname'],
-                              entity.name,
-                              entity.id,
-                              "https://littlesis.org/entities/#{entity.id}",
-                              entity.link_count,
-                              Cmp::Datasets
-                                .people[row['cmpid']]
-                                .cmp_relationships_with_title
-                                .join('|')
-                            ])
+    csv_line = CSV.generate_line([
+                                   row['cmpid'],
+                                   row['fullname'],
+                                   entity.name,
+                                   entity.id,
+                                   "https://littlesis.org/entities/#{entity.id}",
+                                   entity.link_count,
+                                   Cmp::Datasets
+                                     .people[row['cmpid']]
+                                     .cmp_relationships_with_title
+                                     .join('|'),
+                                   row['match_values']
+                                 ])
+
+    print csv_line
   else
     # Cmp::Datasets.people[row['cmpid']].import!
     # Cmp::Datasets.people[row['cmpid']].clear_matches
