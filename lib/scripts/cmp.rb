@@ -10,10 +10,10 @@ print CSV.generate_line(%w[cmpid cmp_full_name entity_name entity_id entity_url 
 
 CSV.foreach(potential_matches_csv, headers: true) do |row|
   match_values = row['match_values'].split('|')
+  entity = Entity.find_by(id: row['match_id'])
   next if entity.nil?
 
   if entity.link_count >= minimum_entity_link_count || !match_values.include?('different_middle_name')
-    entity = Entity.find_by(id: row['match_id'])
 
     print CSV.generate_line([
                               row['cmpid'],
