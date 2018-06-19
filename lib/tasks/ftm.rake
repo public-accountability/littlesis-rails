@@ -12,7 +12,10 @@ namespace :ftm do
       puts "#{ColorPrinter.blue(status)}\t#{ColorPrinter.green(result.ftm_entity['CFS_Entity'])}"
       attributes = result.ftm_entity.to_h
       attributes['automatchable'] = result.match_set.automatchable?
-      attributes['best_match'] = "#{result.match_set.first&.entity&.name} (#{result.match_set.first&.entity&.id})"
+
+      entity = result.match_set.first&.entity
+      attributes['best_match'] = entity.present? ? "#{entity.name} (#{entity.id})" : ''
+      attributes['best_match_url'] = entity.present? ? Routes.entity_url(entity) : ''
       attributes['best_match_values'] = result.match_set.first&.values&.to_a&.join('|')
       attributes
     end
