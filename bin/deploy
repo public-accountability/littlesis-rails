@@ -56,7 +56,7 @@ then
 fi
 
 echo "Restarting delayed job"
-bin/rails delayed_job restart
+bin/delayed_job restart
 
 echo "Restarting LittleSis"
 touch tmp/restart.txt
