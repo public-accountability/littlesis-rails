@@ -62,14 +62,7 @@ namespace :cmp do
           match = cmp_person.matches.first
           attrs[:match_name] = match&.entity&.name
           attrs[:match_id] = match&.entity&.id
-
-          if match&.entity.present?
-            entity_url = "https://littlesis.org#{Rails.application.routes.url_helpers.entity_path(match.entity)}"
-            attrs[:match_url] = entity_url
-          else
-            attrs[:match_url] = ''
-          end
-
+          attrs[:match_url] = match&.entity.present? ? Routes.entity_url(entity) : ''
           attrs[:related_orgs] = cmp_person.related_cmp_org_names.join('|')
           attrs[:match_values] = match&.values&.to_a&.join('|')
           people_remaining << attrs
