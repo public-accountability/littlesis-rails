@@ -6,7 +6,7 @@ require Rails.root.join('lib', 'cmp.rb').to_s
 potential_matches_csv = Rails.root.join('data', 'potential_cmp_matches.csv')
 minimum_entity_link_count = 10
 
-print CSV.generate_line(%w[cmpid cmp_full_name entity_name entity_id entity_url entity_link_count cmp_relationships, match_values])
+print CSV.generate_line(%w[cmpid cmp_full_name entity_name entity_id entity_url entity_link_count cmp_relationships match_values])
 
 
 def include_entity?(match_values)
@@ -17,7 +17,12 @@ end
 
 
 CSV.foreach(potential_matches_csv, headers: true) do |row|
-  match_values = row['match_values'].split('|')
+  if row['match_values'].nil?
+    match_values = []
+  else
+    match_values = row['match_values'].split('|')
+  end
+
   entity = Entity.find_by(id: row['match_id'])
   next if entity.nil?
 
@@ -28,7 +33,7 @@ CSV.foreach(potential_matches_csv, headers: true) do |row|
                                    row['fullname'],
                                    entity.name,
                                    entity.id,
-                                   "https://littlesis.org/entities/#{entity.id}",
+                                   row['match_url'],
                                    entity.link_count,
                                    Cmp::Datasets
                                      .people[row['cmpid']]
