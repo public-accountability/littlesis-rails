@@ -62,7 +62,7 @@ namespace :cmp do
           match = cmp_person.matches.first
           attrs[:match_name] = match&.entity&.name
           attrs[:match_id] = match&.entity&.id
-          attrs[:match_url] = match&.entity.present? ? Routes.entity_url(entity) : ''
+          attrs[:match_url] = match&.entity.present? ? Routes.entity_url(match.entity) : ''
           attrs[:related_orgs] = cmp_person.related_cmp_org_names.join('|')
           attrs[:match_values] = match&.values&.to_a&.join('|')
           people_remaining << attrs
