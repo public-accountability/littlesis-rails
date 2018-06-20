@@ -6,7 +6,7 @@ require Rails.root.join('lib', 'cmp.rb').to_s
 potential_matches_csv = Rails.root.join('data', 'potential_cmp_matches.csv')
 
 match_log = File.open(Rails.root.join('data', 'cmp_entities_to_match.csv').to_s, 'w')
-create_log = File.open(Rails.root.join('data', 'cmp_ids_to_create.csv').to_s, 'w')
+# create_log = File.open(Rails.root.join('data', 'cmp_ids_to_create.csv').to_s, 'w')
 
 match_log.print CSV.generate_line(%w[cmpid cmp_full_name entity_name entity_id entity_url entity_link_count cmp_relationships match_values])
 
@@ -36,9 +36,13 @@ begin
 
     if create_entity?(entity, match_values)
       # create new entity:
-      create_log.puts row['cmpid']
-    # Cmp::Datasets.people[row['cmpid']].import!
-    # Cmp::Datasets.people[row['cmpid']].clear_matches
+      # create_log.puts row['cmpid']
+      begin
+        Cmp::Datasets.people[row['cmpid']].import!
+        Cmp::Datasets.people[row['cmpid']].clear_matches
+      rescue => e
+        ColorPrinter.print_red "Failed to import #{row['cmpid']}"
+      end
     else
       match_log.print CSV.generate_line([
                                           row['cmpid'],
@@ -56,6 +60,6 @@ begin
     end
   end
 ensure
-  create_log.close
+#   create_log.close
   match_log.close
 end
