@@ -7,6 +7,7 @@ describe HomeController, type: :controller do
     it { is_expected.to route(:get, '/flag').to(action: :flag) }
     it { is_expected.to route(:post, '/flag').to(action: :flag) }
     it { is_expected.to route(:post, '/home/newsletter_signup').to(action: :newsletter_signup) }
+    it { is_expected.to route(:post, '/home/pai_signup').to(action: :pai_signup) }
   end
 
   describe 'GET contact' do
@@ -120,6 +121,17 @@ describe HomeController, type: :controller do
         it { should set_flash.now[:notice] }
         it { should render_template('flag') }
       end
+    end
+  end
+
+  describe 'pai_signup_ip_limit' do
+    let(:ip) { Faker::Internet.ip_v6_address }
+
+    it 'denies access after 4 requests' do
+      4.times { controller.send(:pai_signup_ip_limit, ip) }
+      expect(Rails.cache.read("pai_signup_request_count_for_#{ip}")).to eql 4
+      expect(Rails.logger).to receive(:warn).with("#{ip} has submitted too many requests this hour!").once
+      expect { controller.send(:pai_signup_ip_limit, ip) }.to raise_error(Exceptions::PermissionError)
     end
   end
 end

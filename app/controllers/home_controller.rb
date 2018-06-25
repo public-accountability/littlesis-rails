@@ -2,7 +2,9 @@
 
 class HomeController < ApplicationController
   before_action :authenticate_user!,
-                except: [:dismiss, :index, :contact, :flag, :token, :newsletter_signup]
+                except: [:dismiss, :index, :contact, :flag, :token, :newsletter_signup, :pai_signup]
+
+  skip_before_action :verify_authenticity_token, only: [:pai_signup]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -133,12 +135,44 @@ class HomeController < ApplicationController
   #
   def newsletter_signup
     unless likely_a_spam_bot || Rails.env.development?
-      NewsletterSignupJob.perform_later params.fetch('email')
+      NewsletterSignupJob.perform_later params.fetch('email'), 'newsletter'
     end
     redirect_to root_path(nlty: 'yes')
   end
 
+  # Signup an email address to the PAI newsletter
+  # redirects to 'referer' if present or 'https://news.littlesis.org'
+  #
+  # POST /home/newsletter_signup
+  def pai_signup
+    return head :forbidden if likely_a_spam_bot
+    pai_signup_ip_limit(request.remote_ip)
+    NewsletterSignupJob.perform_later params.fetch('email'), 'pai' unless Rails.env.development?
+
+    if request.headers['referer'].blank?
+      redirect_to 'https://news.littlesis.org'
+    else
+      redirect_to request.headers['referer']
+    end
+  end
+
   private
+
+  def pai_signup_ip_limit(ip)
+    ip_cache_key = "pai_signup_request_count_for_#{ip}"
+
+    if Rails.cache.read(ip_cache_key).nil?
+      Rails.cache.write(ip_cache_key, 1, :expires_in => 60.minutes)
+    else
+      count = Rails.cache.read(ip_cache_key) + 1
+      if count >= 5
+        Rails.logger.warn "#{ip} has submitted too many requests this hour!"
+        raise Exceptions::PermissionError
+      else
+        Rails.cache.write(ip_cache_key, count, :expires_in => 60.minutes)
+      end
+    end
+  end
 
   def redirect_to_dashboard_if_signed_in
     if user_signed_in?

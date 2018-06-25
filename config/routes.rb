@@ -26,6 +26,7 @@ Lilsis::Application.routes.draw do
   get '/flag' => 'home#flag'
   post '/flag' => 'home#flag'
   post '/home/newsletter_signup' => 'home#newsletter_signup'
+  post '/home/pai_signup' => 'home#pai_signup'
 
   get '/bug_report' => 'errors#bug_report'
   post '/bug_report' => 'errors#file_bug_report'

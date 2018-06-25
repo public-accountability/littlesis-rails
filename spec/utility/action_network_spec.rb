@@ -101,4 +101,26 @@ describe ActionNetwork do
 
     specify { expect(ActionNetwork.add_email_to_newsletter(email)).to be true }
   end
+
+  describe 'add_email_to_pai' do
+    let(:email) { Faker::Internet.email }
+    let(:email_params) do
+      { "person" => { "email_addresses" => [{ "address" => email }] },
+        "add_tags" => ['PAI-Signup'] }
+    end
+
+    before do
+      expect(ActionNetwork)
+        .to receive(:post)
+              .with(URI.parse(ActionNetwork::PEOPLE_URL), email_params)
+              .and_call_original
+
+      expect(ActionNetwork)
+        .to receive(:http).once
+              .with(URI.parse(ActionNetwork::PEOPLE_URL), kind_of(Net::HTTP::Post))
+              .and_return({})
+    end
+
+    specify { expect(ActionNetwork.add_email_to_pai(email)).to be true }
+  end
 end
