@@ -15,7 +15,7 @@ module ActionNetwork
     signup: 'LS-Signup',
     newsletter: 'PAI and LittleSis Updates',
     map_the_power: 'MTP',
-    pai: 'PAI'
+    pai: 'PAI-Signup'
   }.freeze
 
   # :section: Public API
@@ -31,7 +31,14 @@ module ActionNetwork
   #
   # String --> Boolean
   def self.add_email_to_newsletter(email)
-    post URI.parse(PEOPLE_URL), email_params(email)
+    post URI.parse(PEOPLE_URL), email_params(email, :newsletter)
+  end
+
+  # Adds an email address to the PAI Newsletter
+  #
+  # String --> Boolean
+  def self.add_email_to_pai(email)
+    post URI.parse(PEOPLE_URL), email_params(email, :pai)
   end
 
   # Retrieves people from our Action Network Api
@@ -65,16 +72,16 @@ module ActionNetwork
       'add_tags' => action_network_tags(user)
     }
   end
-  
+
   # Generates hash for action network singups
   # for an email address interested in joining the newsletter
-  # String --> Hash
-  def self.email_params(email)
+  # String, Symbol --> Hash
+  def self.email_params(email, tag)
     {
       'person' => {
         'email_addresses' => [{ 'address' => email }]
       },
-      'add_tags' => Array.wrap(TAGS[:newsletter])
+      'add_tags' => Array.wrap(TAGS.fetch(tag))
     }
   end
 
