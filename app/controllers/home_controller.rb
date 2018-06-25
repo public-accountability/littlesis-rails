@@ -146,6 +146,7 @@ class HomeController < ApplicationController
   # POST /home/newsletter_signup
   def pai_signup
     return head :forbidden if likely_a_spam_bot
+    pai_signup_ip_limit(request.remote_ip)
     NewsletterSignupJob.perform_later params.fetch('email'), 'pai' unless Rails.env.development?
 
     if request.headers['referer'].blank?
@@ -156,6 +157,22 @@ class HomeController < ApplicationController
   end
 
   private
+
+  def pai_signup_ip_limit(ip)
+    ip_cache_key = "pai_signup_request_count_for_#{ip}"
+
+    if Rails.cache.read(ip_cache_key).nil?
+      Rails.cache.write(ip_cache_key, 1, :expires_in => 60.minutes)
+    else
+      count = Rails.cache.read(ip_cache_key) + 1
+      if count >= 5
+        Rails.logger.warn "#{ip} has submitted too many requests this hour!"
+        raise Exceptions::PermissionError
+      else
+        Rails.cache.write(ip_cache_key, count, :expires_in => 60.minutes)
+      end
+    end
+  end
 
   def redirect_to_dashboard_if_signed_in
     if user_signed_in?
