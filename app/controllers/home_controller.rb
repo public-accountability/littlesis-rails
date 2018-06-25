@@ -2,7 +2,9 @@
 
 class HomeController < ApplicationController
   before_action :authenticate_user!,
-                except: [:dismiss, :index, :contact, :flag, :token, :newsletter_signup]
+                except: [:dismiss, :index, :contact, :flag, :token, :newsletter_signup, :pai_signup]
+
+  skip_before_action :verify_authenticity_token, only: [:pai_signup]
 
   # [list_id, 'title' ]
   DOTS_CONNECTED_LISTS = [
@@ -139,14 +141,18 @@ class HomeController < ApplicationController
   end
 
   # Signup an email address to the PAI newsletter
-  # Returns +accepted+ unless request fails the spambot test
+  # redirects to 'referer' if present or 'https://news.littlesis.org'
   #
   # POST /home/newsletter_signup
-  #
   def pai_signup
-    return head :unauthorized if likely_a_spam_bot
+    return head :forbidden if likely_a_spam_bot
     NewsletterSignupJob.perform_later params.fetch('email'), 'pai' unless Rails.env.development?
-    head :accepted
+
+    if request.headers['referer'].blank?
+      redirect_to 'https://news.littlesis.org'
+    else
+      redirect_to request.headers['referer']
+    end
   end
 
   private
