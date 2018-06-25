@@ -4,6 +4,7 @@ module Exceptions
   class PermissionError < StandardError; end
   class NotFoundError < StandardError; end
   class MissingApiTokenError < StandardError; end
+  class InvalidRelationshipCategoryError < StandardError; end
   class RestrictedUserError < StandardError; end
   class CannotRestoreError < StandardError
     def message

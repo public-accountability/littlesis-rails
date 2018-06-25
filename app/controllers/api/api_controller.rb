@@ -18,6 +18,10 @@ module Api
       render json: Api.error_json(:RECORD_DELETED), status: :gone
     end
 
+    rescue_from Exceptions::InvalidRelationshipCategoryError do
+      render json: Api.error_json(:INVALID_RELATIONSHIP_CATEGORY), status: :bad_request
+    end
+
     rescue_from Exceptions::MissingApiTokenError do
       head :unauthorized
     end

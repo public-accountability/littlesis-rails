@@ -2,6 +2,8 @@
 
 class Api::EntitiesController < Api::ApiController
   ENTITY_SEARCH_PER_PAGE = 10
+  VALID_CATEGORY_IDS = (1..12).to_set.freeze
+
   before_action :set_entity, except: [:search]
   before_action :set_options, except: [:search]
 
@@ -10,7 +12,12 @@ class Api::EntitiesController < Api::ApiController
   end
 
   def relationships
-    relationships = @entity.relationships.order(updated_at: :desc).page(page_requested).per(PER_PAGE)
+    relationships = @entity
+                      .relationships
+                      .where(category_id_query)
+                      .reorder(updated_at: :desc)
+                      .page(page_requested)
+                      .per(PER_PAGE)
     render json: Api.as_api_json(relationships)
   end
 
@@ -43,5 +50,12 @@ class Api::EntitiesController < Api::ApiController
   def set_entity
     @entity = Entity.unscoped.find(params[:id])
     raise Entity::EntityDeleted if @entity.is_deleted?
+  end
+
+  def category_id_query
+    return nil if params['category_id'].blank?
+    category_id = params['category_id'].to_i
+    raise Exceptions::InvalidRelationshipCategoryError unless VALID_CATEGORY_IDS.include?(category_id)
+    { category_id: category_id }
   end
 end
