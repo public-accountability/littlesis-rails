@@ -15,12 +15,10 @@
   <% end %>
 
   <%# External Links %>
-  <% if current_user&.admin? %>
-    <% unless @entity.external_links.count.zero? %>
-      <% cache ['entity_external_links', @entity.external_links ] do %>
-	<%= profile_page_sidebar('sidebar-external-links-container', 'External Links') do %>
-	  <%= render partial: 'entities/sidebar/external_links' %>
-	<% end %>
+  <% unless @entity.external_links.count.zero? %>
+    <% cache ['entity_external_links', @entity.id, @entity.external_links.reorder('updated_at desc').limit(1).pluck('updated_at').first ] do %>
+      <%= profile_page_sidebar('sidebar-external-links-container', 'External Links') do %>
+	<%= render partial: 'entities/sidebar/external_links' %>
       <% end %>
     <% end %>
   <% end %>

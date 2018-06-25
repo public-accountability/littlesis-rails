@@ -100,7 +100,7 @@ describe 'edit enity page', type: :feature do
     end # end updating an entity's fields
 
     context 'external links' do
-      let(:user) { create_admin_user }
+      let(:user) { create_basic_user }
       let(:wikipedia_name) { 'example_page' }
       feature 'add an external link to wikipedia' do
         before { @external_link_count = ExternalLink.count }

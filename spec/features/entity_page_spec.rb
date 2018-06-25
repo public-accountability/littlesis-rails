@@ -240,11 +240,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       context 'with external links' do
-        # remove after admin guard is removed
-        let(:user) { create_admin_user }
-        before { login_as(user, scope: :user) }
-        after { logout(user) }
-
         let(:link_id) { Faker::Number.unique.number(6).to_s }
 
         before do
@@ -256,7 +251,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           expect(find('#sidebar-external-links-container').text).to include 'External Links'
           page_has_selector '#sidebar-external-links-container a', count: 1
         end
-
       end
     end
 
