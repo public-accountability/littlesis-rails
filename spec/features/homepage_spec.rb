@@ -6,10 +6,10 @@ describe 'Homepage' do
 
   before do
     allow_any_instance_of(HomeController).to receive(:carousel_entities).and_return([entity])
-    stub_const("HomeController::DOTS_CONNECTED_LISTS", [[list.id, 'Corporate fat cats']])
+    stub_const 'HomeController::DOTS_CONNECTED_LISTS', [[list.id, 'Corporate fat cats']]
   end
 
-  feature 'visting the home page' do
+  feature 'visiting the home page' do
     before { visit '/' }
 
     scenario 'anonymous user visiting the home page' do
@@ -22,8 +22,8 @@ describe 'Homepage' do
     let(:email) { Faker::Internet.email }
     before { visit '/' }
 
-    scenario 'sigining up for the newsletter' do
-      expect(NewsletterSignupJob).to receive(:perform_later).with(email).once
+    scenario 'signing up for the newsletter' do
+      expect(NewsletterSignupJob).to receive(:perform_later).with(email, 'newsletter').once
 
       expect(page.status_code).to eq 200
       expect(page).not_to have_selector '#newsletter-thankyou'

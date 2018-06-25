@@ -133,13 +133,20 @@ class HomeController < ApplicationController
   #
   def newsletter_signup
     unless likely_a_spam_bot || Rails.env.development?
-      NewsletterSignupJob.perform_later params.fetch('email'), :newsletter
+      NewsletterSignupJob.perform_later params.fetch('email'), 'newsletter'
     end
     redirect_to root_path(nlty: 'yes')
   end
 
+  # Signup an email address to the PAI newsletter
+  # Returns +accepted+ unless request fails the spambot test
+  #
+  # POST /home/newsletter_signup
+  #
   def pai_signup
-    
+    return head :unauthorized if likely_a_spam_bot
+    NewsletterSignupJob.perform_later params.fetch('email'), 'pai' unless Rails.env.development?
+    head :accepted
   end
 
   private
