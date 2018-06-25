@@ -14,7 +14,8 @@ module ActionNetwork
   TAGS = {
     signup: 'LS-Signup',
     newsletter: 'PAI and LittleSis Updates',
-    map_the_power: 'MTP'
+    map_the_power: 'MTP',
+    pai: 'PAI'
   }.freeze
 
   # :section: Public API
@@ -55,13 +56,13 @@ module ActionNetwork
   # User --> Hash
   def self.signup_params(user)
     {
-      "person" => {
-        "identifiers" => [action_network_identifier(user)],
-        "family_name" => user.name_last,
-        "given_name" => user.name_first,
-        "email_addresses" => [{ "address" => user.email }]
+      'person' => {
+        'identifiers' => [action_network_identifier(user)],
+        'family_name' => user.name_last,
+        'given_name' => user.name_first,
+        'email_addresses' => [{ 'address' => user.email }]
       },
-      "add_tags" => action_network_tags(user)
+      'add_tags' => action_network_tags(user)
     }
   end
   
@@ -70,10 +71,10 @@ module ActionNetwork
   # String --> Hash
   def self.email_params(email)
     {
-      "person" => {
-        "email_addresses" => [{ "address" => email }]
+      'person' => {
+        'email_addresses' => [{ 'address' => email }]
       },
-      "add_tags" => Array.wrap(TAGS[:newsletter])
+      'add_tags' => Array.wrap(TAGS[:newsletter])
     }
   end
 
@@ -112,9 +113,9 @@ module ActionNetwork
   # Formats a URI into an http request with correct API Headers
   def self.request(uri, method)
     Net::HTTP.const_get(method).new(uri).tap do |request|
-      request["User-Agent"] = "Mozilla/5.0"
-      request["Content-Type"] = "application/json"
-      request["OSDI-API-Token"] = API_KEY
+      request['User-Agent'] = 'Mozilla/5.0'
+      request['Content-Type'] = 'application/json'
+      request['OSDI-API-Token'] = API_KEY
     end
   end
 
