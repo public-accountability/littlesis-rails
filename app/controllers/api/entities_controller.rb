@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class Api::EntitiesController < Api::ApiController
   ENTITY_SEARCH_PER_PAGE = 10
   before_action :set_entity, except: [:search]
   before_action :set_options, except: [:search]
 
   def show
-    render json: @entity.as_api_json(@options) #ApiUtils::Response.new(@entity, @options)
+    render json: @entity.as_api_json(@options)
   end
 
   def relationships

@@ -4,8 +4,11 @@ module Api
   class ApiController < ActionController::Base
     PER_PAGE = 100
     protect_from_forgery with: :null_session
-    before_action :verify_api_token unless Rails.env.development?
-    skip_before_action :verify_api_token, only: [:index]
+
+    unless Rails.env.development?
+      before_action :verify_api_token
+      skip_before_action :verify_api_token, only: [:index]
+    end
 
     rescue_from ActiveRecord::RecordNotFound do
       render json: Api.error_json(:RECORD_NOT_FOUND), status: :not_found
