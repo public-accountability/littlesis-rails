@@ -1,7 +1,8 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  config.cache_store = :null_store
+  config.cache_store = :memory_store, { size: 16.megabytes }
+  config.action_controller.perform_caching = false
 
   # The test environment is used exclusively to run your application's
   # test suite. You never need to work with it otherwise. Remember that
@@ -22,7 +23,7 @@ Rails.application.configure do
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = false
+  
 
   # Raise exceptions instead of rendering exception templates.
   config.action_dispatch.show_exceptions = false
