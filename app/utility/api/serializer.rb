@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Api
   class Serializer
     attr_reader :attributes
-    MODEL_INFO = YAML.load(File.new(Rails.root.join('config', 'api.yml')).read).freeze
+    MODEL_INFO = YAML.safe_load(File.new(Rails.root.join('config', 'api.yml')).read).freeze
 
     def initialize(model, exclude: [])
       @model = model

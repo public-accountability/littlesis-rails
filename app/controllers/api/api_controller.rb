@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   class ApiController < ActionController::Base
     PER_PAGE = 100
@@ -36,6 +38,5 @@ module Api
       raise Exceptions::MissingApiTokenError if api_token.blank?
       raise Exceptions::PermissionError unless ApiToken.valid_token?(api_token)
     end
-    
   end
 end

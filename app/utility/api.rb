@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   META = {
     'copyright' => 'LittleSis CC BY-SA 3.0',
@@ -10,14 +12,14 @@ module Api
   ERROR_RESPONSES = {
     RECORD_NOT_FOUND: { title: 'Record Missing' },
     RECORD_DELETED: { title: 'Record Deleted' }
-  }
+  }.freeze
 
   LINKABLE_CLASSES = %i[entity relationship list].freeze
 
   # symbol -> hash
-    # Accepted symbols:
-    #  - RECORD_NOT_FOUND
-    #  - RECORD_DELETED
+  # Accepted symbols:
+  #  - RECORD_NOT_FOUND
+  #  - RECORD_DELETED
   def self.error_json(err)
     {
       errors: Array.wrap(ERROR_RESPONSES.fetch(err)),
