@@ -133,9 +133,13 @@ class HomeController < ApplicationController
   #
   def newsletter_signup
     unless likely_a_spam_bot || Rails.env.development?
-      NewsletterSignupJob.perform_later params.fetch('email')
+      NewsletterSignupJob.perform_later params.fetch('email'), :newsletter
     end
     redirect_to root_path(nlty: 'yes')
+  end
+
+  def pai_signup
+    
   end
 
   private

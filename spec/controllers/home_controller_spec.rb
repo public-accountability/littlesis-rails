@@ -7,6 +7,7 @@ describe HomeController, type: :controller do
     it { is_expected.to route(:get, '/flag').to(action: :flag) }
     it { is_expected.to route(:post, '/flag').to(action: :flag) }
     it { is_expected.to route(:post, '/home/newsletter_signup').to(action: :newsletter_signup) }
+    it { is_expected.to route(:post, '/home/pai_signup').to(action: :pai_signup) }
   end
 
   describe 'GET contact' do
