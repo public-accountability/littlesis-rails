@@ -1,3 +1,4 @@
+<% content_for(:page_title, 'API') %>
 <style>
  table th.content, table td.content {
      width: 100%;
@@ -182,8 +183,13 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
   <% end %>
 
   <%= api_column do %>
+    <%= api_title_route('Entity Relationships', '/api/entities/:id/relationships') %>
+    <p>Relationships this entity has with other entities. The key "data" contains an array of Relationship elements. These requests can also be paginated.</p>
+  <% end %>
+  
+  <%= api_column do %>
     <%= api_title_route('Entity Lists', '/api/entities/:id/lists') %>
-    <p>The list that the entity is on</p>
+    <p>The lists that the entity is on</p>
 
     <p>Example request: <code>curl https://littlesis.org/api/entities/10/lists</code></p>
     <pre><code>
