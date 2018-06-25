@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module Serializable
     extend ActiveSupport::Concern
@@ -16,7 +18,7 @@ module Api
     # Options Hash-> Hash
     def api_json(serializer_options = {})
       json = { 'data' => api_data(serializer_options) }
-      json.merge!('included' => api_included) unless api_included.blank?
+      json['included'] = api_included if api_included.present?
       json
     end
 
@@ -31,7 +33,7 @@ module Api
     def api_links
       return {} unless api_linkable?
       link = Rails.application.routes.url_helpers.public_send("#{self.class.name.downcase}_url", self)
-      {'links' => { 'self' => link } }
+      { 'links' => { 'self' => link } }
     end
 
     # To return an optional set of included model override this method

@@ -1,3 +1,4 @@
+<% content_for(:page_title, 'API') %>
 <style>
  table th.content, table td.content {
      width: 100%;
@@ -5,43 +6,40 @@
 </style>
 
 <div class="row">
-    <div class="col-md-10">
-	<h1>LittleSis Api Documentation - Version 2</h1>
-	<div class="well">
-	    <p>This is the documentation for version 2 of the API, which is in active development and SUBJECT TO CHANGE.</p>
-	</div>
-    </div>
+  <div class="col-md-10">
+    <h1>LittleSis Api Documentation - Version 2</h1>
+  </div>
 </div>
 
 <div class="row">
-    <%= api_column do %>
-	<h2>Signup and Authorization</h2>
-	<p>In order to use the LittleSis API you must have an Api Token. You can get an Api Token from your LittleSis account settings page. If you don't yet have a LittleSis account, <%= link_to "go here to create one", new_user_registration_path %>. If you already have an account, access your settings page by either <%= link_to "following this link", edit_user_registration_path %> or by clicking on your name in the navigation bar and going to 'settings'. On that page you will be able to generate an Api Token or view your current token. </p>
+  <%= api_column do %>
+    <h2>Signup and Authorization</h2>
+    <p>In order to use the LittleSis API you must have an Api Token. You can get an Api Token from your LittleSis account settings page. If you don't yet have a LittleSis account, <%= link_to "go here to create one", new_user_registration_path %>. If you already have an account, access your settings page by either <%= link_to "following this link", edit_user_registration_path %> or by clicking on your name in the navigation bar and going to 'settings'. On that page you will be able to generate an Api Token or view your current token. </p>
 
-	<p>Authorization is accomplished by including the http header <code>Littlesis-Api-Token</code> to each request.</p>
-    <% end %>
+    <p>Authorization is accomplished by including the http header <code>Littlesis-Api-Token</code> to each request.</p>
+  <% end %>
 
-    <div class="col-md-12">
-	    <p>Example:</p>
-	    <pre><code>
+  <div class="col-md-12">
+    <p>Example:</p>
+    <pre><code>
 curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/entities/1
-	    </code></pre>
-	    <p>For brevity's sake, other examples in this document may omit the authorization header, but it is required for every request. The API will return status code 401 if you forget to include the Littlesis-Api-Token header and will return state code 403 if the token is invalid</p>
-    </div>
+    </code></pre>
+    <p>For brevity's sake, other examples in this document may omit the authorization header, but it is required for every request. The API will return status code 401 if you forget to include the Littlesis-Api-Token header and will return state code 403 if the token is invalid</p>
+  </div>
 </div>
 
 <div class="row">
-    <%= api_column do %>
-	<h2>Responses</h2>
-	<p>The API follows many of the conventions of <%= link_to 'JSON API', 'http://jsonapi.org/' %>, but does not implement the entire specification.</p>
-	<p>All responses are in JSON.</p>
-    <% end %>
-    <div class="col-md-8">
-	<h3>Successful Responses</h3>
-	<p>For singular resources, this will return an object with two fields: data and meta. The meta object contains copyright, license, api version, and other similar information. The data object will have four fields: <em>type</em>, <em>id</em>, <em>attributes</em>, and <em>links</em>. </p>
-	<p><em>Type</em> is the type of resource requested: (i.e. entities). <em>Id</em> is the resource's id. <em>Attributes</em> contain the resource attributes. <em>Links</em> contain at least one link to LittleSis where the resource can be viewed.</p>
-	<p><strong>Structure of response:</strong></p>
-	<pre><code>
+  <%= api_column do %>
+    <h2>Responses</h2>
+    <p>The API follows many of the conventions of <%= link_to 'JSON API', 'http://jsonapi.org/' %>, but does not implement the entire specification.</p>
+    <p>All responses are in JSON.</p>
+  <% end %>
+  <div class="col-md-8">
+    <h3>Successful Responses</h3>
+    <p>For singular resources, this will return an object with two fields: data and meta. The meta object contains copyright, license, api version, and other similar information. The data object will have four fields: <em>type</em>, <em>id</em>, <em>attributes</em>, and <em>links</em>. </p>
+    <p><em>Type</em> is the type of resource requested: (i.e. entities). <em>Id</em> is the resource's id. <em>Attributes</em> contain the resource attributes. <em>Links</em> contain at least one link to LittleSis where the resource can be viewed.</p>
+    <p><strong>Structure of response:</strong></p>
+    <pre><code>
 {
   data: {
           type: 'resourceType'
@@ -53,96 +51,96 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
         },
    meta: { ... }
 }
-	</code></pre>
+    </code></pre>
 
-	<p>All successful responses will return status code <code>200</code></p>
-    </div>
+    <p>All successful responses will return status code <code>200</code></p>
+  </div>
 
-    <div class="col-md-12">
-	<h3>Errors</h3>
-	<p>If an error occurs, the API will return json containing information about the error along with an error status code. </p>
-	<h4>Structure of an error response: </h4>
-	<pre><code>
+  <div class="col-md-12">
+    <h3>Errors</h3>
+    <p>If an error occurs, the API will return json containing information about the error along with an error status code. </p>
+    <h4>Structure of an error response: </h4>
+    <pre><code>
 {
   errors: [ {title: 'Details here about the error'} ],
   meta: { ... }
 }
-	</code></pre>
-    </div>
+    </code></pre>
+  </div>
 
-    <%= api_column do %>
-	<h4>Error Status Codes</h4>
-	<table class="table">
-	    <thead>
-		<tr>
-		    <th>Status Code</th>
-		    <th class="content">Meaning</th>
-		</tr>
-	    </thead>
-	    <tbody>
-		<tr>
-		    <td>400</td>
-		    <td class="content">Missing required param</td>
-		</tr>
-		<tr>
-		    <td>401</td>
-		    <td class="content">Missing Authorization Header</td>
-		</tr>
-		<tr>
-		    <td>403</td>
-		    <td class="content">Invalid Authorization Header</td>
-		</tr>
-		<tr>
-		    <td>404</td>
-		    <td class="content">Resource is missing or never existed</td>
-		</tr>
-		<tr>
-		    <td>410</td>
-		    <td class="content">Resource has been deleted (but once existed)</td>
-		</tr>
+  <%= api_column do %>
+    <h4>Error Status Codes</h4>
+    <table class="table">
+      <thead>
+	<tr>
+	  <th>Status Code</th>
+	  <th class="content">Meaning</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  <td>400</td>
+	  <td class="content">Missing required param</td>
+	</tr>
+	<tr>
+	  <td>401</td>
+	  <td class="content">Missing Authorization Header</td>
+	</tr>
+	<tr>
+	  <td>403</td>
+	  <td class="content">Invalid Authorization Header</td>
+	</tr>
+	<tr>
+	  <td>404</td>
+	  <td class="content">Resource is missing or never existed</td>
+	</tr>
+	<tr>
+	  <td>410</td>
+	  <td class="content">Resource has been deleted (but once existed)</td>
+	</tr>
 
-	    </tbody>
-	</table>
-    <% end %>
+      </tbody>
+    </table>
+  <% end %>
 </div>
 
 
 <div class="row">
-    <%= api_column do %>
-	<h2>Entity Resources</h2>
-    <% end %>
+  <%= api_column do %>
+    <h2>Entity Resources</h2>
+  <% end %>
 
-    <%= api_column do %>
-	<h3><code>/api/entities/:id</code></h3>
-	<p>This provides basic information about an entity: </p>
-	<ul>
-	    <%= attribute_line('id', 'Unique numerical ID for entity in LittleSis database.') %>
-	    <%= attribute_line('name', 'The primary alias (not necessarily unique) of the Entity in LittleSis') %>
-	    <%= attribute_line('blurb', 'A short phrase or sentence describing the Entity') %>
-	    <%= attribute_line('primary_ext', '"Person" or "Org"') %>
-	    <%= attribute_line('summary', 'A longer bio or summary of the Entity') %>
-	    <%= attribute_line('website', "The Entity's website") %>
-	    <%= attribute_line('start_date', "The date when the Entity came to exist -- DOB for people, founding dates for orgs") %>
-	    <%= attribute_line('end_date', "The date, if any, when the Entity ceased to exist") %>
-	    <%= attribute_line('parent_id', "If the Entity is a sub-organization of a parent Entity, the parent's id is stored here") %>
-	    <%= attribute_line('updated_at', 'The last time the Entity data was updated') %>
-	    <%= attribute_line('types', 'An array of types (also known as extensions) associated with the entity. i.e. Business, Lawyer') %>
-	    <%= attribute_line('aliases', 'An array of other names the entity is known as') %>
-	</ul>
-    <% end %>
+  <%= api_column do %>
+    <h3><code>/api/entities/:id</code></h3>
+    <p>This provides basic information about an entity: </p>
+    <ul>
+      <%= attribute_line('id', 'Unique numerical ID for entity in LittleSis database.') %>
+      <%= attribute_line('name', 'The primary alias (not necessarily unique) of the Entity in LittleSis') %>
+      <%= attribute_line('blurb', 'A short phrase or sentence describing the Entity') %>
+      <%= attribute_line('primary_ext', '"Person" or "Org"') %>
+      <%= attribute_line('summary', 'A longer bio or summary of the Entity') %>
+      <%= attribute_line('website', "The Entity's website") %>
+      <%= attribute_line('start_date', "The date when the Entity came to exist -- DOB for people, founding dates for orgs") %>
+      <%= attribute_line('end_date', "The date, if any, when the Entity ceased to exist") %>
+      <%= attribute_line('parent_id', "If the Entity is a sub-organization of a parent Entity, the parent's id is stored here") %>
+      <%= attribute_line('updated_at', 'The last time the Entity data was updated') %>
+      <%= attribute_line('types', 'An array of types (also known as extensions) associated with the entity. i.e. Business, Lawyer') %>
+      <%= attribute_line('aliases', 'An array of other names the entity is known as') %>
+    </ul>
+  <% end %>
 
-    <%= api_column do %>
-	<p>To include additional information that's contained within the extensions, set the url query parameter <code>details=TRUE</code></p>
-	<p>example: <pre><code>curl https://littlesis.org/api/entities/1?details=TRUE </code></pre></p>
-	<p>However, this may not have useful information for every entity as some extensions do have additional fields.</p>
-    <% end %>
+  <%= api_column do %>
+    <p>To include additional information that's contained within the extensions, set the url query parameter <code>details=TRUE</code></p>
+    <p>example: <pre><code>curl https://littlesis.org/api/entities/1?details=TRUE </code></pre></p>
+    <p>However, this may not have useful information for every entity as some extensions do have additional fields.</p>
+  <% end %>
 
-    <%= api_column do %>
-	<%= api_title_route('Entity Extension', '/api/entities/:id/extensions') %>
-	<p>Extensions are also known as types. All entities have at least one type -- <em>Organization</em> or <em>Person</em>. Other types include: Business Person, Public Company, Political Candidate, and Professional Associations.</p>
+  <%= api_column do %>
+    <%= api_title_route('Entity Extension', '/api/entities/:id/extensions') %>
+    <p>Extensions are also known as types. All entities have at least one type -- <em>Organization</em> or <em>Person</em>. Other types include: Business Person, Public Company, Political Candidate, and Professional Associations.</p>
 
-	<p>Example request: <code>curl https://littlesis.org/api/entities/1/extensions</code></p>
-	<pre><code>
+    <p>Example request: <code>curl https://littlesis.org/api/entities/1/extensions</code></p>
+    <pre><code>
 {
   "data": [
     {
@@ -178,15 +176,21 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
   ],
   "meta": {...}
 }
-	</code></pre>
-    <% end %>
+    </code></pre>
+  <% end %>
 
-    <%= api_column do %>
-	<%= api_title_route('Entity Lists', '/api/entities/:id/lists') %>
-	<p>The list that the entity is on</p>
+  <%= api_column do %>
+    <%= api_title_route('Entity Relationships', '/api/entities/:id/relationships') %>
+    <p>Relationships this entity has with other entities. The key "data" contains an array of Relationship elements. These requests can also be paginated.</p>
+    <p> You can find limit the relationships to specific category by including the param "category_id".</p>
+  <% end %>
+  
+  <%= api_column do %>
+    <%= api_title_route('Entity Lists', '/api/entities/:id/lists') %>
+    <p>The lists that the entity is on</p>
 
-	<p>Example request: <code>curl https://littlesis.org/api/entities/10/lists</code></p>
-	<pre><code>
+    <p>Example request: <code>curl https://littlesis.org/api/entities/10/lists</code></p>
+    <pre><code>
 {
   "meta": {
     "copyright": "LittleSis CC BY-SA 3.0",
@@ -230,16 +234,16 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
     }
   ]
 }
-	</code></pre>
-    <% end %>
+    </code></pre>
+  <% end %>
 
 
-    <%= api_column do %>
-	<%= api_title_route('Search by name', '/api/entities/search?q=NAME') %>
-    <% end %>
+  <%= api_column do %>
+    <%= api_title_route('Search by name', '/api/entities/search?q=NAME') %>
+  <% end %>
 
-    <div class="col-md-10 col-sm-12"
-	<p>This searches our database for entities. The number of the relationships the entity has is used in the ranking algorithm. For instance, searching for 'Bush' will put <%= link_to 'George Bush', entity_path(Entity.find(28776)) %> before <%= link_to 'Jeb Bush', entity_path(Entity.find(34003)) %> because the former has more relationships in our database than the latter.</p>
+  <div class="col-md-10 col-sm-12"
+    <p>This searches our database for entities. The number of the relationships the entity has is used in the ranking algorithm. For instance, searching for 'Bush' will put <%= link_to 'George Bush', entity_path(Entity.find(28776)) %> before <%= link_to 'Jeb Bush', entity_path(Entity.find(34003)) %> because the former has more relationships in our database than the latter.</p>
 
 
     <p>Example response:</p>
@@ -265,7 +269,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
     <p>It will return at most <strong>10</strong> entities at a time. If there are more than 10 results, you can request additional pages by including the param page (<code>page=NUMBER</code>) to the request. Leaving out the param page is the same as requesting page 1</p>
 
 
-    </div>
+  </div>
 </div>
 
 

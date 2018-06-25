@@ -1,9 +1,14 @@
+# frozen_string_literal: true
+
 module Api
   class ApiController < ActionController::Base
     PER_PAGE = 100
     protect_from_forgery with: :null_session
-    before_action :verify_api_token unless Rails.env.development?
-    skip_before_action :verify_api_token, only: [:index]
+
+    unless Rails.env.development?
+      before_action :verify_api_token
+      skip_before_action :verify_api_token, only: [:index]
+    end
 
     rescue_from ActiveRecord::RecordNotFound do
       render json: Api.error_json(:RECORD_NOT_FOUND), status: :not_found
@@ -11,6 +16,10 @@ module Api
 
     rescue_from Exceptions::ModelIsDeletedError do
       render json: Api.error_json(:RECORD_DELETED), status: :gone
+    end
+
+    rescue_from Exceptions::InvalidRelationshipCategoryError do
+      render json: Api.error_json(:INVALID_RELATIONSHIP_CATEGORY), status: :bad_request
     end
 
     rescue_from Exceptions::MissingApiTokenError do
@@ -36,6 +45,5 @@ module Api
       raise Exceptions::MissingApiTokenError if api_token.blank?
       raise Exceptions::PermissionError unless ApiToken.valid_token?(api_token)
     end
-    
   end
 end

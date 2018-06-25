@@ -180,6 +180,38 @@ describe Api, :pagination_helper do
       end
     end
 
+    context 'limiting to category type' do
+
+      before do
+        create(:position_relationship, entity: entity, related: create(:entity_org))
+        create(:generic_relationship, entity: entity, related: create(:entity_org))
+      end
+
+      it 'returns error if requesting an invalid category' do
+        get relationships_api_entity_path(entity), params: { category_id: '13' }, headers: @auth_header
+        expect(response).to have_http_status 400
+        expect(json).to have_key 'errors'
+      end
+
+      it 'returns two relationships by default' do
+        get relationships_api_entity_path(entity), headers: @auth_header
+        expect(response).to have_http_status 200
+        expect(json['data'].length).to eql 2
+      end
+
+      it 'returns one relationships when a specific category is requested' do
+        get relationships_api_entity_path(entity), params: { category_id: '1' }, headers: @auth_header
+        expect(response).to have_http_status 200
+        expect(json['data'].length).to eql 1
+      end
+
+      it 'returns zero relationships when a category without any relatinoships is selection' do
+        get relationships_api_entity_path(entity), params: { category_id: '3' }, headers: @auth_header
+        expect(response).to have_http_status 200
+        expect(json['data'].length).to eql 0
+      end
+    end
+
     context 'pagination' do
       stub_page_limit Api::ApiController, limit: 2
 
@@ -219,6 +251,8 @@ describe Api, :pagination_helper do
         end
       end
     end
+
+    
   end
 
   describe '/entities/search?q=NAME' do
