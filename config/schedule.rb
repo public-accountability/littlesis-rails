@@ -23,30 +23,24 @@
 #   rake "search:update_entity_delta_index", output: nil
 # end
 
+log_file = Rails.root.join('log', 'cron.log').to_s
+
 every 1.day do
-  rake "sessions:clear_expired", output: nil
+  rake "sessions:clear_expired", output: log_file
+end
+
+every 1.day, at: '3:30 am' do
+  rake "maps:generate_recent_thumbs", output: log_file
 end
 
 every 1.day, at: '4:30 am' do
-  rake "entities:update_link_counts", output: nil
+  rake "entities:update_link_counts", output: log_file
 end
 
 every 1.day, at: '5:00 am' do
-  rake "ts:index", output: nil
+  rake "ts:index", output: log_file
 end
 
-every 1.day, at: '4:00 am' do
-  rake "maps:generate_recent_thumbs", output: nil
+every 1.day, at: '5:30 am' do
+  rake "maps:generate_missing_thumbs", output: log_file
 end
-
-# every 1.day, at: '3:30 am' do 
-#   command "/usr/local/bin/backup-database"
-# end
-
-# every 7.day, at: '3:00 am' do 
-#   command "/usr/local/bin/clear-symfony-logs"
-# end
-
-# every 30.day, at: '7:00 am' do 
-#   command "/usr/local/bin/delete-old-api-requests"
-# end
