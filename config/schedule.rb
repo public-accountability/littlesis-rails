@@ -23,7 +23,7 @@
 #   rake "search:update_entity_delta_index", output: nil
 # end
 
-log_file = Rails.root.join('log', 'cron.log').to_s
+log_file = '/var/www/littlesis/log/cron.log'
 
 every 1.day do
   rake "sessions:clear_expired", output: log_file
