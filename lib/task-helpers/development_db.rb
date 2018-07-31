@@ -82,6 +82,7 @@ class DevelopmentDb
                   entity_fields
                   extension_definition
                   extension_record
+                  external_links
                   family
                   fedspending_filing
                   fields
