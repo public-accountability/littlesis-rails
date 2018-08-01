@@ -49,6 +49,8 @@ describe Relationship, type: :model do
     it { should validate_presence_of(:category_id) }
     it { should validate_length_of(:start_date).is_at_most(10) }
     it { should validate_length_of(:end_date).is_at_most(10) }
+    it { should validate_length_of(:description1).is_at_most(100) }
+    it { should validate_length_of(:description2).is_at_most(100) }
 
     describe 'Date Validation' do
       def rel(attr)
