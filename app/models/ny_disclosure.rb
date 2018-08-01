@@ -23,24 +23,23 @@ class NyDisclosure < ApplicationRecord
              primary_key: 'filer_id',
              inverse_of: :ny_disclosures,
              optional: true
-  
 
-  validates_presence_of :filer_id,
-                        :report_id,
-                        :transaction_code,
-                        :e_year,
-                        :transaction_id,
-                        :schedule_transaction_date
+  validates :filer_id, presence: true
+  validates :report_id, presence: true
+  validates :transaction_code, presence: true
+  validates :e_year, presence: true
+  validates :transaction_id, presence: true
+  validates :schedule_transaction_date, presence: true
 
   def full_name
     return corp_name if corp_name.present?
     return nil if first_name.nil? && last_name.nil?
-    middle_name = mid_init.nil? ? " " : " #{mid_init} "
+    middle_name = mid_init.nil? ? ' ' : " #{mid_init} "
     "#{first_name}#{middle_name}#{last_name}".titleize
   end
 
   def is_matched
-    !ny_match.blank?
+    ny_match.present?
   end
 
   def contribution_attributes
@@ -73,8 +72,8 @@ class NyDisclosure < ApplicationRecord
     search(search_terms(entity),
            :with => { :is_matched => false, :transaction_code => ['A', 'B', 'C'] },
            :sql => { :include => :ny_filer },
-           :per_page => 500
-          ).map(&:contribution_attributes)
+           :per_page => 500)
+      .map(&:contribution_attributes)
   end
 
   # <Entity> -> String
