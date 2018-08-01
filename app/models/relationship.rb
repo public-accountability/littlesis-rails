@@ -92,6 +92,8 @@ class Relationship < ApplicationRecord
   validates :category_id, presence: true
   validates :start_date, length: { maximum: 10 }, date: true
   validates :end_date, length: { maximum: 10 }, date: true
+  validates :description1, length: { maximum: 100 }
+  validates :description2, length: { maximum: 100 }
   validates_with RelationshipValidator
 
   before_validation :set_last_user_id

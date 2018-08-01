@@ -75,14 +75,14 @@ module RelationshipsHelper
     content_tag(:div, id: 'description-fields') do
       [entity_link(@relationship.entity, html_id: 'df-forward-link-entity1'),
        ' is ',
-       f.text_field(:description1),
+       f.text_field(:description1, oninput: 'description1Validation(this)', pattern: '(.{1}){0,100}'),
        ' of ',
        entity_link(@relationship.related, html_id: 'df-forward-link-entity2'),
        tag(:br),
        reverse_link_if,
        entity_link(@relationship.related, html_id: 'df-backward-link-entity2'),
        ' is ',
-       f.text_field(:description2),
+       f.text_field(:description2, oninput: 'description1Validation(this)', pattern: '(.{1}){0,100}'),
        ' of ',
        entity_link(@relationship.entity, html_id: 'df-backward-link-entity1')].reduce(:+)
     end

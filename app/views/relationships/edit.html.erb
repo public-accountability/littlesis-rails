@@ -2,6 +2,18 @@
 
 <%= render partial: 'header' %>    
 
+<script>
+ function description1Validation(input) {
+   if (input.value.length > 100) {
+     input.setCustomValidity('This field cannot be more than 100 characters');
+   }
+   else {
+     input.setCustomValidity('');
+   }
+   return true;
+ }
+</script>
+
 <%= form_for @relationship, method: 'patch', class: 'form-horizontal'  do |f| %>
     <% label_class = 'col-sm-2 control-label' %>
     <div class="row top-3em">
@@ -23,13 +35,15 @@
 	    <% else %>
 		<% d1_label = f.label(:description1, 'Title', class: label_class) %>
     	    <% end %>
-	    <%= relationship_form_tag( d1_label, f.text_field(:description1) ) %>
+	    <%= relationship_form_tag( d1_label, f.text_field(:description1,
+							      oninput: 'description1Validation(this)',
+							      pattern: '(.{1}){0,100}') ) %>
 	<% end %>
     </div>
     
     <% if @relationship.is_donation?  %>
       <div class="row">
-	<%= relationship_form_tag( f.label(:description1, 'Type', class: label_class), f.text_field(:description1) ) %>
+	<%= relationship_form_tag( f.label(:description1, 'Type', class: label_class), f.text_field(:description1, oninput: 'description1Validation(this)', pattern: '(.{1}){0,100}') ) %>
       </div>
     <% end %>
     
@@ -150,5 +164,6 @@
     </div>
 
 <% end %>
+
 
 
