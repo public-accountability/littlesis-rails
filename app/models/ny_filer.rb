@@ -3,7 +3,7 @@
 class NyFiler < ApplicationRecord
   has_one :ny_filer_entity, dependent: :destroy
   has_many :entities, :through => :ny_filer_entity
-  has_many :ny_disclosures, foreign_key: 'filer_id', inverse_of: :ny_filer
+  has_many :ny_disclosures, foreign_key: 'filer_id', inverse_of: :ny_filer, dependent: :nullify
 
   validates :filer_id, presence: true, uniqueness: true
 
