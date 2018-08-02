@@ -13,6 +13,27 @@ describe NetworkMap, type: :model do
     let(:annoations_data) { "[{\"id\":\"B14l9k6ug\",\"header\":\"Untitled Annotation\",\"text\":\"\",\"nodeIds\":[],\"edgeIds\":[\"411302\"],\"captionIds\":[]}]" }
   end
 
+  describe '#generate_index_data' do
+    let(:e1) { create(:person, :with_person_name, blurb: 'xyz') }
+    let(:e2) { create(:person, :with_person_name, blurb: nil) }
+    let(:graph_data) do
+      JSON.dump(id: 'abcdefg',
+                nodes: {
+                  e1.id => Oligrapher.entity_to_node(e1),
+                  e2.id => Oligrapher.entity_to_node(e2)
+                },
+                edges: {},
+                captions: { '1' => { id: 1, display: { text: "Caption 1" } } })
+    end
+
+    let(:network_map) { build(:network_map, graph_data: graph_data) }
+
+    it 'generates string of index data' do
+      expect(network_map.generate_index_data)
+        .to eql "#{e1.name}, xyz, #{e2.name}, Caption 1"
+    end
+  end
+
   describe '#documents' do
     let(:relationships) do
       Array.new(2) do

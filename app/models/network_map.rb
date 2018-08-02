@@ -21,12 +21,20 @@ class NetworkMap < ApplicationRecord
 
   validates :title, presence: true
 
-  before_save :set_defaults, :generate_index_data, :generate_secret
+  before_save :set_defaults, :set_index_data, :generate_secret
+
+  def set_index_data
+    self.index_data = generate_index_data
+  end
 
   def generate_index_data
     entities_text = entities.map { |e| [ e.name, e.blurb ] }.flatten.compact.join(', ')
-    captions_text = captions.present? ? captions.join(', ') : ''
-    self.index_data = entities_text + ', ' + captions_text
+    if captions.present?
+      captions_text = captions.map { |c| c['display']['text'] }.join(', ')
+      "#{entities_text}, #{captions_text}"
+    else
+      entities_text
+    end
   end
 
   def set_defaults
