@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class NysController < ApplicationController
   before_action :authenticate_user!
   before_action -> { check_permission 'importer' }, only: [
-    :match_donations, :unmatch_donations, :potential_contributions, :contributions
+    :create, :match_donations, :unmatch_donations, :potential_contributions, :contributions
   ]
 
   def index
@@ -14,14 +16,12 @@ class NysController < ApplicationController
   end
 
   def create
-    check_permission 'importer'
-
     ny_filer_ids.each do |id|
       filer_id = NyFiler.find(id).filer_id
       NyFilerEntity.create!(entity_id: entity_id, ny_filer_id: id, filer_id: filer_id)
     end
     Entity.find(entity_id).update(last_user_id: current_user.sf_guard_user.id)
-    redirect_to :action => "new_filer_entity", :entity => entity_id
+    redirect_to :action => 'new_filer_entity', :entity => entity_id
   end
 
   def new_filer_entity

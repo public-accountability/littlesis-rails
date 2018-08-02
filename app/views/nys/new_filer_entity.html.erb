@@ -8,9 +8,17 @@
 </script>
 
 <div class="row">
-    <h2>Find NYS Candidates and Committees for <%= entity_link(@entity) %></h2>
-    <p><%= link_to "Select a different politician", '/nys/candidates' %></p>
+  <h2>Find NYS Candidates and Committees for <%= entity_link(@entity) %></h2>
+  <%
+  if @entity.person?
+    select_different_link = [ 'Select a different politician', '/nys/candidates' ]
+  else
+    select_different_link = [ 'Select a different PAC', '/nys/pacs' ]
+  end
+  %>
+  <p><%= link_to *select_different_link %></p>
 </div>
+
 <div class="row">
     <h3>Custom search:</h3>
     <div class="col-sm-6">

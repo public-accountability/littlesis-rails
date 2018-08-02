@@ -9,7 +9,8 @@ class NyMatch < ApplicationRecord
   belongs_to :relationship, optional: true
   belongs_to :user, foreign_key: 'matched_by', optional: true
 
-  validates_presence_of :ny_disclosure_id, :donor_id
+  validates :ny_disclosure_id, presence: true
+  validates :donor_id, presence: true
 
   def create_or_update_relationship
     # if this match already has a relationship, so we can assume this has already been processed
@@ -41,7 +42,7 @@ class NyMatch < ApplicationRecord
   # output: NyMatch
   # Matches the NY disclosure with the donor.
   def self.match(disclosure_id, donor_id, matched_by=APP_CONFIG['system_user_id'])
-    m = self.find_or_initialize_by(ny_disclosure_id: disclosure_id, donor_id: donor_id)
+    m = find_or_initialize_by(ny_disclosure_id: disclosure_id, donor_id: donor_id)
     if m.new_record?
       m.matched_by = matched_by
       m.set_recipient
@@ -67,7 +68,9 @@ class NyMatch < ApplicationRecord
 
   # Returns information as hash for the review donations page
   def info
-    ny_disclosure.contribution_attributes.merge(:filer_in_littlesis => ny_filer.is_matched? ? 'Y' : 'N', :ny_match_id => id)
+    ny_disclosure
+      .contribution_attributes
+      .merge(:filer_in_littlesis => ny_filer.is_matched? ? 'Y' : 'N', :ny_match_id => id)
   end
 
   private
