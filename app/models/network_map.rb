@@ -28,7 +28,7 @@ class NetworkMap < ApplicationRecord
   end
 
   def generate_index_data
-    entities_text = entities.map { |e| [ e.name, e.blurb ] }.flatten.compact.join(', ')
+    entities_text = entities.pluck(:name, :blurb).flatten.compact.join(', ')
     if captions.present?
       captions_text = captions.map { |c| c['display']['text'] }.join(', ')
       "#{entities_text}, #{captions_text}"
