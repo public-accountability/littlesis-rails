@@ -315,23 +315,6 @@ class NetworkMap < ApplicationRecord
     JSON.dump(annotations)
   end
 
-  def legacy_description_as_annotation
-    {
-      id: "description",
-      nodeIds: [],
-      edgeIds: [],
-      captionIds: [],
-      header: "",
-      text: description
-    }
-  end
-
-  def annotatons_data_with_description
-    JSON.dump(
-      JSON.parse(annotations_data).concat([legacy_description_as_annotation])
-    )
-  end
-
   ###
 
   # input: <User> --> NetworkMap::ActiveRecord_Relation
