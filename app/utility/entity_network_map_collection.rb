@@ -13,7 +13,7 @@ class EntityNetworkMapCollection
 
   def initialize(entity_or_id)
     @entity_id = Entity.entity_id_for(entity_or_id)
-    @cache_key = "entity-#{@entity_id}/networkmaps"
+    @cache_key = cache_key
     if cache_exists?
       @maps = cache_read
     else
@@ -34,8 +34,16 @@ class EntityNetworkMapCollection
     self
   end
 
+  # deletes the cache and returns true if sucessful
   def delete
-    Rails.cache.delete(@cache_key)
+    case Rails.cache.delete(@cache_key)
+    when 1
+      true
+    when 0
+      false
+    else
+      raise Exceptions::ThatsWeirdError
+    end
   end
 
   def save
@@ -53,6 +61,10 @@ class EntityNetworkMapCollection
   end
 
   private
+
+  def cache_key
+    "entity-#{@entity_id}/networkmaps"
+  end
 
   def cache_exists?
     Rails.cache.exist?(@cache_key)
