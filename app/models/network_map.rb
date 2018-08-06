@@ -21,12 +21,22 @@ class NetworkMap < ApplicationRecord
 
   validates :title, presence: true
 
-  before_save :set_defaults, :generate_index_data, :generate_secret
+  before_save :set_defaults, :set_index_data, :generate_secret
+
+  NUMERIC_IDS = lambda { |id| id.to_s.match(/^\d+$/) }
+
+  def set_index_data
+    self.index_data = generate_index_data
+  end
 
   def generate_index_data
-    entities_text = entities.map { |e| [ e.name, e.blurb ] }.flatten.compact.join(', ')
-    captions_text = captions.present? ? captions.join(', ') : ''
-    self.index_data = entities_text + ', ' + captions_text
+    entities_text = entities.pluck(:name, :blurb).flatten.compact.join(', ')
+    if captions.present?
+      captions_text = captions.map { |c| c['display']['text'] }.join(', ')
+      "#{entities_text}, #{captions_text}"
+    else
+      entities_text
+    end
   end
 
   def set_defaults
@@ -264,14 +274,15 @@ class NetworkMap < ApplicationRecord
   end
 
   # -> [String]
-  def numeric_ids
-    edge_ids.select { |id| id.to_s.match(/^\d+$/) }
+  # ids of edges (relationships)
+  def numeric_edge_ids
+    edge_ids.select(&NUMERIC_IDS)
   end
 
   # -> Relationship::ActiveRecord_Relation | Array
   def rels
-    return [] if numeric_ids.empty?
-    Relationship.where(id: numeric_ids)
+    return [] if numeric_edge_ids.empty?
+    Relationship.where(id: numeric_edge_ids)
   end
 
   def node_ids
@@ -280,7 +291,7 @@ class NetworkMap < ApplicationRecord
   end
 
   def entities
-    numeric_ids = node_ids.select { |id| id.to_s.match(/^\d+$/) }
+    numeric_ids = node_ids.select(&NUMERIC_IDS)
     return [] if numeric_ids.empty?
     Entity.where(id: numeric_ids)
   end
@@ -307,21 +318,7 @@ class NetworkMap < ApplicationRecord
     JSON.dump(annotations)
   end
 
-  def legacy_description_as_annotation
-    {
-      id: "description",
-      nodeIds: [],
-      edgeIds: [],
-      captionIds: [],
-      header: "",
-      text: description
-    }
-  end
-
-  def annotatons_data_with_description
-    JSON.dump(
-      JSON.parse(annotations_data).concat([legacy_description_as_annotation])
-    )
+  def update_entity_network_map_collections
   end
 
   ###

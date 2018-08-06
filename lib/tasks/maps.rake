@@ -148,21 +148,4 @@ namespace :maps do
     end
     print "\n"
   end
-
-  desc "convert legacy map descriptions into annotations"
-  task descriptions_to_annotations: :environment do
-    include_maps_with_annotations = ENV['INCLUDE_MAPS_WITH_ANNOTATIONS'] || false
-    maps = NetworkMap.with_description
-    maps = maps.without_annotations unless include_maps_with_annotations      
-    puts "converting legacy map descriptions into annotations for #{maps.count} maps...\n"
-    maps.each_with_index do |map, i|
-      next if !include_maps_with_annotations and map.has_annotations
-      next if map.annotations.map { |a| a["text"] }.include?(map.description)
-      map.update(annotations_data: map.annotatons_data_with_description)
-      map.update(annotations_count: map.annotations.count)
-      map.update(description: nil)
-      puts "[#{i+1}] processed map #{map.id}: #{map.title}"
-    end
-    print "\n"
-  end
 end

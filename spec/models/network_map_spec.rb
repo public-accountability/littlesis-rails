@@ -13,6 +13,27 @@ describe NetworkMap, type: :model do
     let(:annoations_data) { "[{\"id\":\"B14l9k6ug\",\"header\":\"Untitled Annotation\",\"text\":\"\",\"nodeIds\":[],\"edgeIds\":[\"411302\"],\"captionIds\":[]}]" }
   end
 
+  describe '#generate_index_data' do
+    let(:e1) { create(:person, :with_person_name, blurb: 'xyz') }
+    let(:e2) { create(:person, :with_person_name, blurb: nil) }
+    let(:graph_data) do
+      JSON.dump(id: 'abcdefg',
+                nodes: {
+                  e1.id => Oligrapher.entity_to_node(e1),
+                  e2.id => Oligrapher.entity_to_node(e2)
+                },
+                edges: {},
+                captions: { '1' => { id: 1, display: { text: "Caption 1" } } })
+    end
+
+    let(:network_map) { build(:network_map, graph_data: graph_data) }
+
+    it 'generates string of index data' do
+      expect(network_map.generate_index_data)
+        .to eql "#{e1.name}, xyz, #{e2.name}, Caption 1"
+    end
+  end
+
   describe '#documents' do
     let(:relationships) do
       Array.new(2) do
@@ -88,7 +109,7 @@ describe NetworkMap, type: :model do
     end
   end
 
-  describe 'numeric ids' do
+  describe 'numeric edge ids' do
     let(:edges) { {} }
     let(:graph_data) do
       JSON.dump(id: 'xyz', nodes: {}, captions: {}, edges: edges)
@@ -102,7 +123,7 @@ describe NetworkMap, type: :model do
       end
 
       it 'returns an empty array' do
-        expect(map.numeric_ids).to eql []
+        expect(map.numeric_edge_ids).to eql []
       end
     end
 
@@ -113,7 +134,7 @@ describe NetworkMap, type: :model do
       end
 
       it ' returns array with id' do
-        expect(map.numeric_ids).to eql ['123']
+        expect(map.numeric_edge_ids).to eql ['123']
       end
     end
 
@@ -124,10 +145,13 @@ describe NetworkMap, type: :model do
       end
 
       it 'returns array of two id' do
-        expect(map.numeric_ids.to_set).to eql ['123', '456'].to_set
+        expect(map.numeric_edge_ids.to_set).to eql ['123', '456'].to_set
       end
     end
   end
+
+  # describe '' do
+    
 
   describe 'cloneable?' do
     it 'cloneable if is_cloneable is set' do
@@ -140,6 +164,31 @@ describe NetworkMap, type: :model do
 
     it 'not cloneable if private regardless of is_cloneable status' do
       expect(build(:network_map, is_cloneable: true, is_private: true).cloneable?).to be false
+    end
+  end
+
+  xdescribe 'Entity Network Map Collection functions' do
+    let(:e1) { build(:org) }
+    let(:e2) { build(:org) }
+
+    let(:nodes) do
+      { e1.id => Oligrapher.entity_to_node(e1),
+        e2.id => Oligrapher.entity_to_node(e2) }
+    end
+
+    let(:graph_data) do
+      JSON.dump(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
+    end
+
+    let(:network_map) { build(:network_map, id: rand(1000), graph_data: graph_data) }
+
+    describe 'update_entity_network_map_collections' do
+
+      it 'adds id for all entities' do
+        expect(network_map).to recieve(:entities).once.and_return([e1, e2])
+      end
+
+      it 'when an entity is removed, it removes it from the associated entity'
     end
   end
 
