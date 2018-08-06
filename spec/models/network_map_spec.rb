@@ -105,7 +105,7 @@ describe NetworkMap, type: :model do
     let(:map) { build(:network_map, graph_data: graph_data) }
 
     it 'returns list of ids' do
-      expect(Set.new(map.edge_ids)).to eql ['1', '2'].to_set
+      expect(Set.new(map.edge_ids(map.graph_data))).to eql ['1', '2'].to_set
     end
   end
 
@@ -156,12 +156,31 @@ describe NetworkMap, type: :model do
         '456' => Oligrapher.entity_to_node(build(:org)),
         'abc' => Oligrapher.entity_to_node(build(:org)) }
     end
+    let(:custom_nodes) do
+      { '789' => Oligrapher.entity_to_node(build(:org)),
+        'abc' => Oligrapher.entity_to_node(build(:org)) }
+    end
     let(:graph_data) do
       JSON.dump(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
     end
+
+    let(:custom_graph_data) do
+      JSON.dump(id: 'abcdefg', nodes: custom_nodes, edges: {}, captions: {})
+    end
+
     let(:network_map) { build(:network_map, graph_data: graph_data) }
-    subject { network_map.numeric_node_ids }
-    it { is_expected.to eql ['123', '456'] }
+
+    context 'using default graph_data' do
+      specify do
+        expect(network_map.numeric_node_ids).to eql ['123', '456']
+      end
+    end
+
+    context 'providing the graph inline' do
+      specify do
+        expect(network_map.numeric_node_ids(custom_graph_data)).to eql ['789']
+      end
+    end
   end
 
   # describe '' do

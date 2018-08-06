@@ -268,13 +268,14 @@ class NetworkMap < ApplicationRecord
 
   %i[edge node].each do |graph_component|
     # -> Array[String]
-    define_method("#{graph_component}_ids") do
-      JSON.parse(graph_data)[graph_component.to_s.pluralize].keys
+    define_method("#{graph_component}_ids") do |data|
+      JSON.parse(data)[graph_component.to_s.pluralize].keys
     end
 
     # -> Array[String]
-    define_method("numeric_#{graph_component}_ids") do
-      send("#{graph_component}_ids").select { |id| id.to_s.match(/^\d+$/) }
+    define_method("numeric_#{graph_component}_ids") do |data = nil|
+      send("#{graph_component}_ids", data.nil? ? graph_data : data)
+        .select { |id| id.to_s.match(/^\d+$/) }
     end
   end
 
@@ -315,8 +316,6 @@ class NetworkMap < ApplicationRecord
   def update_entity_network_map_collections
     return unless graph_data.changed?
 
-    
-    
   end
 
   ###
