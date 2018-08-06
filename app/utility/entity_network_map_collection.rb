@@ -14,11 +14,7 @@ class EntityNetworkMapCollection
   def initialize(entity_or_id)
     @entity_id = Entity.entity_id_for(entity_or_id)
     @cache_key = cache_key
-    if cache_exists?
-      @maps = cache_read
-    else
-      @maps = Set.new
-    end
+    @maps = cache_exists? ? cache_read : Set.new
   end
 
   # methods #add and #remove do NOT persist the data
@@ -42,11 +38,7 @@ class EntityNetworkMapCollection
   end
 
   def save
-    if @maps.empty?
-      delete
-    else
-      cache_write(@maps)
-    end
+    @maps.empty? ? delete : cache_write(@maps)
     self
   end
 
