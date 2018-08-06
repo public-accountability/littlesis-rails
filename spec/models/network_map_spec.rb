@@ -109,7 +109,7 @@ describe NetworkMap, type: :model do
     end
   end
 
-  describe 'numeric ids' do
+  describe 'numeric edge ids' do
     let(:edges) { {} }
     let(:graph_data) do
       JSON.dump(id: 'xyz', nodes: {}, captions: {}, edges: edges)
@@ -123,7 +123,7 @@ describe NetworkMap, type: :model do
       end
 
       it 'returns an empty array' do
-        expect(map.numeric_ids).to eql []
+        expect(map.numeric_edge_ids).to eql []
       end
     end
 
@@ -134,7 +134,7 @@ describe NetworkMap, type: :model do
       end
 
       it ' returns array with id' do
-        expect(map.numeric_ids).to eql ['123']
+        expect(map.numeric_edge_ids).to eql ['123']
       end
     end
 
@@ -145,10 +145,13 @@ describe NetworkMap, type: :model do
       end
 
       it 'returns array of two id' do
-        expect(map.numeric_ids.to_set).to eql ['123', '456'].to_set
+        expect(map.numeric_edge_ids.to_set).to eql ['123', '456'].to_set
       end
     end
   end
+
+  # describe '' do
+    
 
   describe 'cloneable?' do
     it 'cloneable if is_cloneable is set' do
@@ -161,6 +164,31 @@ describe NetworkMap, type: :model do
 
     it 'not cloneable if private regardless of is_cloneable status' do
       expect(build(:network_map, is_cloneable: true, is_private: true).cloneable?).to be false
+    end
+  end
+
+  xdescribe 'Entity Network Map Collection functions' do
+    let(:e1) { build(:org) }
+    let(:e2) { build(:org) }
+
+    let(:nodes) do
+      { e1.id => Oligrapher.entity_to_node(e1),
+        e2.id => Oligrapher.entity_to_node(e2) }
+    end
+
+    let(:graph_data) do
+      JSON.dump(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
+    end
+
+    let(:network_map) { build(:network_map, id: rand(1000), graph_data: graph_data) }
+
+    describe 'update_entity_network_map_collections' do
+
+      it 'adds id for all entities' do
+        expect(network_map).to recieve(:entities).once.and_return([e1, e2])
+      end
+
+      it 'when an entity is removed, it removes it from the associated entity'
     end
   end
 

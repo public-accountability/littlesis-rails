@@ -272,14 +272,15 @@ class NetworkMap < ApplicationRecord
   end
 
   # -> [String]
-  def numeric_ids
+  # ids of edges (relationships)
+  def numeric_edge_ids
     edge_ids.select { |id| id.to_s.match(/^\d+$/) }
   end
 
   # -> Relationship::ActiveRecord_Relation | Array
   def rels
-    return [] if numeric_ids.empty?
-    Relationship.where(id: numeric_ids)
+    return [] if numeric_edge_ids.empty?
+    Relationship.where(id: numeric_edge_ids)
   end
 
   def node_ids
@@ -313,6 +314,9 @@ class NetworkMap < ApplicationRecord
     end
 
     JSON.dump(annotations)
+  end
+
+  def update_entity_network_map_collections
   end
 
   ###
