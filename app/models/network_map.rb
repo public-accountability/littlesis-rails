@@ -23,8 +23,6 @@ class NetworkMap < ApplicationRecord
 
   before_save :set_defaults, :set_index_data, :generate_secret
 
-  NUMERIC_IDS = lambda { |id| id.to_s.match(/^\d+$/) }
-
   def set_index_data
     self.index_data = generate_index_data
   end
@@ -268,15 +266,16 @@ class NetworkMap < ApplicationRecord
     hash
   end
 
-  # -> Array[String]
-  def edge_ids
-    JSON.parse(graph_data)['edges'].keys
-  end
+  %i[edge node].each do |graph_component|
+    # -> Array[String]
+    define_method("#{graph_component}_ids") do
+      JSON.parse(graph_data)[graph_component.to_s.pluralize].keys
+    end
 
-  # -> [String]
-  # ids of edges (relationships)
-  def numeric_edge_ids
-    edge_ids.select(&NUMERIC_IDS)
+    # -> Array[String]
+    define_method("numeric_#{graph_component}_ids") do
+      send("#{graph_component}_ids").select { |id| id.to_s.match(/^\d+$/) }
+    end
   end
 
   # -> Relationship::ActiveRecord_Relation | Array
@@ -285,15 +284,10 @@ class NetworkMap < ApplicationRecord
     Relationship.where(id: numeric_edge_ids)
   end
 
-  def node_ids
-    hash = JSON.parse(graph_data)
-    hash['nodes'].keys
-  end
-
+  # -> Relationship::ActiveRecord_Relation | Array
   def entities
-    numeric_ids = node_ids.select(&NUMERIC_IDS)
-    return [] if numeric_ids.empty?
-    Entity.where(id: numeric_ids)
+    return [] if numeric_node_ids.empty?
+    Entity.where(id: numeric_node_ids)
   end
 
   def captions
@@ -319,6 +313,10 @@ class NetworkMap < ApplicationRecord
   end
 
   def update_entity_network_map_collections
+    return unless graph_data.changed?
+
+    
+    
   end
 
   ###

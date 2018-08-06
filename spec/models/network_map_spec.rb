@@ -150,8 +150,21 @@ describe NetworkMap, type: :model do
     end
   end
 
+  describe 'numeric_node_ids' do
+    let(:nodes) do
+      { '123' => Oligrapher.entity_to_node(build(:org)),
+        '456' => Oligrapher.entity_to_node(build(:org)),
+        'abc' => Oligrapher.entity_to_node(build(:org)) }
+    end
+    let(:graph_data) do
+      JSON.dump(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
+    end
+    let(:network_map) { build(:network_map, graph_data: graph_data) }
+    subject { network_map.numeric_node_ids }
+    it { is_expected.to eql ['123', '456'] }
+  end
+
   # describe '' do
-    
 
   describe 'cloneable?' do
     it 'cloneable if is_cloneable is set' do
