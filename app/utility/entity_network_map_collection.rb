@@ -2,7 +2,7 @@
 
 # This stores sets of NetworkMap ids
 # in the Rails Cache (redis), so they can
-# be easily retrived to display on an entity's
+# be easily retrieved to display on an entity's
 # profile page.
 #
 #
@@ -34,20 +34,15 @@ class EntityNetworkMapCollection
     self
   end
 
-  # deletes the cache and returns true if sucessful
+  # deletes the set from cache
   def delete
-    case Rails.cache.delete(@cache_key)
-    when 1
-      true
-    when 0
-      false
-    else
-      raise Exceptions::ThatsWeirdError
-    end
+    @maps.clear
+    Rails.cache.delete(@cache_key)
+    self
   end
 
   def save
-    if @maps.empty
+    if @maps.empty?
       delete
     else
       cache_write(@maps)

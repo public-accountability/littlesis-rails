@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 describe EntityNetworkMapCollection do
-  describe 'initialize' do
-    let(:org) { build(:org) }
+  let(:org) { build(:org) }
+  subject { EntityNetworkMapCollection.new(org) }
 
+  describe 'initialize' do
     context 'no cache exists' do
       it 'sets @maps to be an empty set' do
         expect(EntityNetworkMapCollection.new(org).maps)
@@ -31,11 +32,56 @@ describe EntityNetworkMapCollection do
 
   end
 
-  describe 'add'
+  describe 'add' do
+    it 'adds the id to the set' do
+      expect(subject.maps).to eql Set.new
+      subject.add(7)
+      expect(subject.maps).to eql [7].to_set
+    end
+  end
 
-  describe 'remove'
+  describe 'remove' do
+    before do
+      Rails.cache.write("entity-#{org.id}/networkmaps", Set[1, 2, 3])
+    end
 
-  describe 'delete'
+    it 'removes the id from the set' do
+      expect(subject.maps).to eql Set[1, 2, 3]
+      subject.remove(2)
+      expect(subject.maps).to eql [1, 3].to_set
+    end
+  end
 
-  describe 'save'
+  describe 'delete' do
+    before do
+      Rails.cache.write("entity-#{org.id}/networkmaps", Set[1, 2, 3])
+    end
+
+    it 'deletes the set from the cache' do
+      expect(subject.maps).to eql Set[1, 2, 3]
+      subject.delete
+      expect(subject.maps).to eql Set.new
+      expect(Rails.cache.exist?("entity-#{org.id}/networkmaps")).to be false
+    end
+  end
+
+  describe 'save' do
+    it 'persists changes to the cache' do
+      expect(subject.maps).to eql Set.new
+      expect(Rails.cache.exist?("entity-#{org.id}/networkmaps")).to be false
+      subject.add(7)
+      expect(subject.maps).to eql [7].to_set
+      expect { subject.save }
+        .to change { Rails.cache.exist?("entity-#{org.id}/networkmaps") }
+              .from(false).to(true)
+      expect(Rails.cache.read("entity-#{org.id}/networkmaps")).to eql [7].to_set
+    end
+
+    it 'saving an empty set, deletes the cache' do
+      subject.add(7).save
+      expect(Rails.cache.exist?("entity-#{org.id}/networkmaps")).to be true
+      subject.remove(7).save
+      expect(Rails.cache.exist?("entity-#{org.id}/networkmaps")).to be false
+    end
+  end
 end
