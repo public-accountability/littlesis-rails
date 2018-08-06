@@ -23,6 +23,8 @@ class NetworkMap < ApplicationRecord
 
   before_save :set_defaults, :set_index_data, :generate_secret
 
+  NUMERIC_IDS = lambda { |id| id.to_s.match(/^\d+$/) }
+
   def set_index_data
     self.index_data = generate_index_data
   end
@@ -274,7 +276,7 @@ class NetworkMap < ApplicationRecord
   # -> [String]
   # ids of edges (relationships)
   def numeric_edge_ids
-    edge_ids.select { |id| id.to_s.match(/^\d+$/) }
+    edge_ids.select(&NUMERIC_IDS)
   end
 
   # -> Relationship::ActiveRecord_Relation | Array
@@ -289,7 +291,7 @@ class NetworkMap < ApplicationRecord
   end
 
   def entities
-    numeric_ids = node_ids.select { |id| id.to_s.match(/^\d+$/) }
+    numeric_ids = node_ids.select(&NUMERIC_IDS)
     return [] if numeric_ids.empty?
     Entity.where(id: numeric_ids)
   end
