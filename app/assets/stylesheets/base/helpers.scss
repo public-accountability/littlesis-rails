@@ -74,6 +74,10 @@
     padding-left: 30px;
 }
 
+.col-centered {
+    float: none;
+    margin: 0 auto;
+}
 
 // font size and typography
 
@@ -119,6 +123,7 @@
     position: absolute;
 }
 
+// buttons
 
 .red-button {
     /* background-color: #A04040; */
