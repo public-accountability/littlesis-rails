@@ -7,17 +7,6 @@
     <%= csrf_meta_tags %>
   </head>
   <body>
-
     <%= yield %>
-    
-    <% unless content_for? :hide_footer %>
-      <div id="footer_clear"></div>
-      <div id="footer">
-	A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>. 
-	More <%= link_to('about LittleSis', '/about') %>.
-	Read the <%= link_to('disclaimer', '/disclaimer') %>.
-      </div>
-    <% end %>
-
   </body>
 </html>

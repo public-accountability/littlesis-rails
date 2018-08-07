@@ -52,7 +52,7 @@ class ChatController < ApplicationController
 
   def render_chat_json(user)
     # create chat account if needed
-    current_user.create_chat_account if user.chatid.blank?
+    user.create_chat_account if user.chatid.blank?
     # Set iframe token and send json back
     render json: Chat.login_token(user.chatid)
   end

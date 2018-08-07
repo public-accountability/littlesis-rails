@@ -1,13 +1,8 @@
-<!-- <h1>Redirecting you to the login page...</h1> -->
-
-<%#= javascript_tag do %>
-<!-- window.location.replace('<%= new_user_session_path %>') -->
-<%# end %>
-
 <div class="container">
   <div class="row">
     <div class="col-sm-6 col-centered">
-      <h2>Sign in to LittleSis Chat:</h2>
+      <h2>Login to LittleSis Chat</h2>
+      <br/>
     </div>
   </div>
 
@@ -31,25 +26,42 @@
 	
 	<div class="form-group">
 	  <div class="col-sm-offset-2 col-sm-10">
-	    <button type="submit" class="btn btn-default">Sign in</button>
+	    <button type="submit" class="btn btn-default" id="ls-auth-submit">Sign in</button>
 	  </div>
 	</div>
       </form>
+    </div>
+  </div>
+
+  <div class="row" id="ls-auth-alert-row" style="display: none;">
+    <div class="col-sm-6 col-centered bg-danger">
+      <p id="ls-auth-alert-text" class="text-center"></p>
     </div>
   </div>
 </div>
 
 <script>
  function lsChatLoading() {
-
+   $("#ls-auth-submit").prop('disabled', true);
+   $("#ls-auth-alert-row").hide();
+   $('#ls-auth-alert-text').text('');
  }
  
  function lsChatUnAuthorized(message) {
-
+   $("#ls-auth-submit").prop('disabled', false);
+   $('#ls-auth-alert-text').text(message);
+   $("#ls-auth-alert-row").show();
  }
 
- function lsChatAuthorized() {
-
+ function lsChatAuthorized(token) {
+   $("#ls-auth-submit").prop('disabled', false);
+   $("#ls-auth-alert-row").hide();
+   console.log(token);
+   // Authorize rocket.chat
+   window.parent.postMessage({
+     event: 'login-with-token',
+     loginToken: token,
+   }, 'https://chat.littlesis.org');
  }
 
  $('#ls-auth-form').submit(function(event){
@@ -57,15 +69,14 @@
    $.ajax({
      url: "<%= chat_auth_url %>",
      type: 'POST',
-     data : $('#form').serialize(),
-     401: function(){
-       
-     }
-   });
-   console.log('submitted form');
-   console.log(this);
-   console.log($(this).serialize());
-   return false;
+     data : $(this).serialize()
+   })
+    .done(function(data){
+      lsChatAuthorized(data.token);
+    })
+    .fail(function(xhr) {
+      lsChatUnAuthorized(xhr.responseJSON.error)
+    });
 });
 
 </script>
