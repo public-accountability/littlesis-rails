@@ -199,9 +199,9 @@ describe NetworkMap, type: :model do
     end
   end
 
-  xdescribe 'Entity Network Map Collection functions' do
-    let(:e1) { build(:org) }
-    let(:e2) { build(:org) }
+  describe 'Entity Network Map Collection functions' do
+    let(:e1) { create(:entity_org) }
+    let(:e2) { create(:entity_org) }
 
     let(:nodes) do
       { e1.id => Oligrapher.entity_to_node(e1),
@@ -212,18 +212,39 @@ describe NetworkMap, type: :model do
       JSON.dump(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
     end
 
-    let(:network_map) { build(:network_map, id: rand(1000), graph_data: graph_data) }
+    let(:graph_data_missing_node_two) do
+      JSON.dump(id: 'abcdefg',
+                nodes: { e1.id => Oligrapher.entity_to_node(e1) },
+                edges: {}, captions: {})
+    end
+
+    let(:network_map) { create(:network_map, user_id: 1) }
 
     describe 'update_entity_network_map_collections' do
 
       it 'adds id for all entities' do
-        expect(network_map).to recieve(:entities).once.and_return([e1, e2])
+        [e1, e2].each do |entity|
+          expect(EntityNetworkMapCollection.new(entity).maps).to eql Set.new
+        end
+        network_map.graph_data = graph_data
+        network_map.update_entity_network_map_collections
+
+        [e1, e2].each do |entity|
+          expect(EntityNetworkMapCollection.new(entity).maps).to eql [network_map.id].to_set
+        end
       end
 
-      it 'when an entity is removed, it removes it from the associated entity'
+      it 'when an entity is removed, it removes it from the associated entity' do
+        network_map.graph_data = graph_data
+        network_map.update_entity_network_map_collections
+        network_map.save!
+        expect(EntityNetworkMapCollection.new(e2).maps).to eql [network_map.id].to_set
+        network_map.graph_data = graph_data_missing_node_two
+        network_map.update_entity_network_map_collections
+        expect(EntityNetworkMapCollection.new(e2).maps).to eql Set.new
+      end
     end
   end
-
 end
 
 # rubocop:enable Style/StringLiterals, Style/WordArray

@@ -314,8 +314,20 @@ class NetworkMap < ApplicationRecord
   end
 
   def update_entity_network_map_collections
-    return unless graph_data.changed?
+    return unless graph_data_changed?
+    new_nodes = numeric_node_ids.map(&:to_i).to_set
+    old_nodes = numeric_node_ids(graph_data_was).map(&:to_i).to_set
+    return if new_nodes == old_nodes
 
+    # nodes to delete
+    old_nodes.difference(new_nodes).each do |entity_id|
+      EntityNetworkMapCollection.new(entity_id).remove(id).save
+    end
+
+    # nodes to add
+    entities.each do |entity|
+      entity.network_map_collection.add(id).save
+    end
   end
 
   ###

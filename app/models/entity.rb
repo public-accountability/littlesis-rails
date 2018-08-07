@@ -863,6 +863,10 @@ class Entity < ApplicationRecord
 
   # ^-- MERGING
 
+  def network_map_collection
+    @network_map_collection ||= EntityNetworkMapCollection.new(self)
+  end
+
   ##
   # Private helper methods
   #
