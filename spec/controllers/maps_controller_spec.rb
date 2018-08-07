@@ -2,13 +2,13 @@ require 'rails_helper'
 
 describe MapsController, type: :controller do
   before(:all) do
-    [:set_defaults, :generate_index_data, :generate_secret].each do |x|
+    [:set_defaults, :set_index_data, :generate_secret].each do |x|
       NetworkMap.skip_callback(:save, :before, x)
     end
   end
 
   after(:all) do
-    [:set_defaults, :generate_index_data, :generate_secret].each do |x|
+    [:set_defaults, :set_index_data, :generate_secret].each do |x|
       NetworkMap.set_callback(:save, :before, x)
     end
   end
