@@ -51,28 +51,21 @@ class Chat
 
   ##  CLASS METHODS  ##
 
-  def self.admin_init
-    @chat.admin_logout if @chat.present?
-    @chat = new
-    @chat.admin_login
-  end
-
   def self.create_user(user)
-    api_request { @chat.create_user(user) }
+    api_request { |chat| chat.create_user(user) }
   end
 
   def self.login_token(mongo_id)
-    api_request { @chat.login_token(mongo_id) }
+    api_request { |chat| chat.login_token(mongo_id) }
   end
 
-  def self.api_request(&block)
-    admin_init if @chat.blank?
+  def self.api_request
+    chat = new
+    chat.admin_login
     begin
-      return block.call
-    rescue RocketChatApiRequestFailedError
-      Rails.logger.debug 'RocketChat API request failed. Re-trying'
-      admin_init
-      return block.call
+      yield(chat)
+    ensure
+      chat.admin_logout
     end
   end
 
@@ -135,12 +128,17 @@ class Chat
     URI("#{API_URL}#{path}")
   end
 
+  # This checks if the status of the request returned by RocketChat
+  # is not of status 'success'
   def res_success?(res)
     return true if res.present? && res.fetch('status', '') == 'success'
-    Rails.logger.debug res
+    Rails.logger.info 'RocketChat API request failed'
+    Rails.logger.info res
     raise RocketChatApiRequestFailedError
   end
 
+  # This checks if the HTTP request fails (i.e. did not return 200)
+  # Might happen if RocketChat is down
   # <NetResponce> -> json | nil
   def success_check(res)
     return JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
