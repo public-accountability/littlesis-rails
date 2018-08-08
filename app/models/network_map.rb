@@ -21,10 +21,8 @@ class NetworkMap < ApplicationRecord
 
   validates :title, presence: true
 
-  before_save :set_defaults,
-              :set_index_data,
-              :generate_secret,
-              :start_update_entity_network_map_collections_job
+  before_save :set_defaults, :set_index_data, :generate_secret
+  before_save :start_update_entity_network_map_collections_job, if: :graph_data_changed?
 
   def set_index_data
     self.index_data = generate_index_data
