@@ -131,7 +131,8 @@ class Chat
   # This checks if the status of the request returned by RocketChat
   # is not of status 'success'
   def res_success?(res)
-    return true if res.present? && res.fetch('status', '') == 'success'
+    return true if ['success', true].include?(res&.fetch('status', false))
+    return true if ['success', true].include?(res&.fetch('success', false))
     Rails.logger.info 'RocketChat API request failed'
     Rails.logger.info res
     raise RocketChatApiRequestFailedError
