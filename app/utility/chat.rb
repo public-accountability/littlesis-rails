@@ -137,6 +137,7 @@ class Chat
 
   def res_success?(res)
     return true if res.present? && res.fetch('status', '') == 'success'
+    Rails.logger.debug res
     raise RocketChatApiRequestFailedError
   end
 
