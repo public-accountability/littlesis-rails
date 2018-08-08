@@ -21,7 +21,10 @@ class NetworkMap < ApplicationRecord
 
   validates :title, presence: true
 
-  before_save :set_defaults, :set_index_data, :generate_secret
+  before_save :set_defaults,
+              :set_index_data,
+              :generate_secret,
+              :start_update_entity_network_map_collections_job
 
   def set_index_data
     self.index_data = generate_index_data
@@ -313,24 +316,14 @@ class NetworkMap < ApplicationRecord
     JSON.dump(annotations)
   end
 
-  def update_entity_network_map_collections
-    return unless graph_data_changed?
-    new_nodes = numeric_node_ids.map(&:to_i).to_set
-    old_nodes = numeric_node_ids(graph_data_was).map(&:to_i).to_set
-    return if new_nodes == old_nodes
-
-    # nodes to delete
-    old_nodes.difference(new_nodes).each do |entity_id|
-      EntityNetworkMapCollection.new(entity_id).remove(id).save
+  def entities_removed_from_graph
+    if graph_data_changed?
+      new_nodes = numeric_node_ids.map(&:to_i).to_set
+      old_nodes = numeric_node_ids(graph_data_was).map(&:to_i).to_set
+      return old_nodes.difference(new_nodes).to_a
     end
-
-    # nodes to add
-    entities.each do |entity|
-      entity.network_map_collection.add(id).save
-    end
+    []
   end
-
-  ###
 
   # input: <User> --> NetworkMap::ActiveRecord_Relation
   def self.scope_for_user(user)
@@ -339,5 +332,12 @@ class NetworkMap < ApplicationRecord
       OR (`network_map`.`is_private` = 1 AND `network_map`.`user_id` = ?)
     SQL
     where(where_condition, user.sf_guard_user_id)
+  end
+
+  private
+
+  def start_update_entity_network_map_collections_job
+    UpdateEntityNetworkMapCollectionsJob
+      .perform_later(id, remove: entities_removed_from_graph, add: entities.pluck(:id))
   end
 end

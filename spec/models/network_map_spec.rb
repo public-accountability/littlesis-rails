@@ -220,28 +220,13 @@ describe NetworkMap, type: :model do
 
     let(:network_map) { create(:network_map, user_id: 1) }
 
-    describe 'update_entity_network_map_collections' do
-
-      it 'adds id for all entities' do
-        [e1, e2].each do |entity|
-          expect(EntityNetworkMapCollection.new(entity).maps).to eql Set.new
-        end
+    describe 'entities_removed_from_graph' do
+      specify do
         network_map.graph_data = graph_data
-        network_map.update_entity_network_map_collections
-
-        [e1, e2].each do |entity|
-          expect(EntityNetworkMapCollection.new(entity).maps).to eql [network_map.id].to_set
-        end
-      end
-
-      it 'when an entity is removed, it removes it from the associated entity' do
-        network_map.graph_data = graph_data
-        network_map.update_entity_network_map_collections
+        expect(network_map.entities_removed_from_graph).to eql []
         network_map.save!
-        expect(EntityNetworkMapCollection.new(e2).maps).to eql [network_map.id].to_set
         network_map.graph_data = graph_data_missing_node_two
-        network_map.update_entity_network_map_collections
-        expect(EntityNetworkMapCollection.new(e2).maps).to eql Set.new
+        expect(network_map.entities_removed_from_graph).to eql [e2.id]
       end
     end
   end
