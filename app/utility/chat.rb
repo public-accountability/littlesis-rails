@@ -69,24 +69,6 @@ class Chat
     end
   end
 
-  #  Str (Mongo ID of user) => Hash
-  # Creates new iframe token for the user, updates the mongo record,
-  # and returns a hash with the token
-  def self.iframe_login_token(mongo_id)
-    return nil if mongo_id.blank?
-    mongo = mongo_client
-    users = mongo['users']
-    token = SecureRandom.urlsafe_base64(30)
-    users.find_one_and_update({ _id: mongo_id }, { "$set" => { services: { iframe: { token: token } } } }, :return_document => :after, :upsert => false)
-    mongo.close
-    { "token" => token }
-  end
-
-  # returns Mongo::Client connected to db 'rocketchat'
-  private_class_method def self.mongo_client
-    Mongo::Client.new([APP_CONFIG['chat']['mongo_url']], :database => 'rocketchat')
-  end
-
   private
 
   def auth_headers

@@ -96,9 +96,6 @@ gem 'geocoder'
 gem 'selenium-webdriver', '>= 3.11.0'
 gem 'headless'
 
-# used to connect to Rocket.Chat's mongo
-gem 'mongo'
-
 # used by Pages and Toolkit for Markdown->Html
 gem 'redcarpet', '>= 3.4.0'
 
