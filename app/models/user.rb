@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  include ChatUser
   include UserEdits
 
   validates :sf_guard_user_id, presence: true, uniqueness: true
@@ -172,6 +171,11 @@ class User < ApplicationRecord
 
   def permissions
     @permissions ||= Permissions.new(self)
+  end
+
+  def create_chat_account
+    return :existing_account if chatid.present?
+    Chat.create_user(self)
   end
 
   # Returns the sf_guard_user_id from a range
