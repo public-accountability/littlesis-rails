@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'net/http'
 
 class Chat
@@ -5,21 +7,26 @@ class Chat
   USERNAME = APP_CONFIG['chat']['admin_username']
   PASSWORD = APP_CONFIG['chat']['admin_password']
 
+  class RocketChatApiRequestFailedError < StandardError
+  end
+
   def initialize
     @admin_token = nil
     @admin_id = nil
   end
 
   def create_user(user)
-    return nil unless user.chatid.blank?
+    return nil if user.chatid.present?
     res = post '/api/v1/users.create', user_payload(user), auth_headers
-    if res && res.fetch('success') == true
-      mongo_chat_id = res['user']['_id']
-      user.update(chatid: mongo_chat_id)
-      Rails.logger.info "Created chat account for user #{user.id}. Mongo id: #{mongo_chat_id}"
-    else
-      Rails.logger.warn "Failed to create chat account for user #{user.id}"
-    end
+    res_success?(res)
+    mongo_chat_id = res['user']['_id']
+    user.update!(chatid: mongo_chat_id)
+  end
+
+  def login_token(mongo_id)
+    res = post '/api/v1/users.createToken', { userId: mongo_id }, auth_headers
+    res_success?(res)
+    { 'loginToken' => res['data']['authToken'] }
   end
 
   def info
@@ -44,27 +51,28 @@ class Chat
 
   ##  CLASS METHODS  ##
 
-  #  Str (Mongo ID of user) => Hash
-  # Creates new iframe token for the user, updates the mongo record, and returns a hash with the token
-  def self.login_token(mongo_id)
-    return nil if mongo_id.blank?
-    mongo = mongo_client
-    users = mongo['users']
-    token = SecureRandom.urlsafe_base64(30)
-    users.find_one_and_update({ _id: mongo_id }, { "$set" => { services: { iframe: { token: token } } } }, :return_document => :after, :upsert => false)
-    mongo.close
-    { "token" => token }
+  def self.create_user(user)
+    api_request { |chat| chat.create_user(user) }
   end
 
-  # returns Mongo::Client connected to db 'rocketchat'
-  private_class_method def self.mongo_client
-    Mongo::Client.new([APP_CONFIG['chat']['mongo_url']], :database => 'rocketchat')
+  def self.login_token(mongo_id)
+    api_request { |chat| chat.login_token(mongo_id) }
+  end
+
+  def self.api_request
+    chat = new
+    chat.admin_login
+    begin
+      yield(chat)
+    ensure
+      chat.admin_logout
+    end
   end
 
   private
 
   def auth_headers
-    {'X-Auth-Token' => @admin_token, 'X-User-Id' => @admin_id }
+    { 'X-Auth-Token' => @admin_token, 'X-User-Id' => @admin_id }
   end
 
   def user_payload(user)
@@ -102,6 +110,18 @@ class Chat
     URI("#{API_URL}#{path}")
   end
 
+  # This checks if the status of the request returned by RocketChat
+  # is not of status 'success'
+  def res_success?(res)
+    return true if ['success', true].include?(res&.fetch('status', false))
+    return true if ['success', true].include?(res&.fetch('success', false))
+    Rails.logger.info 'RocketChat API request failed'
+    Rails.logger.info res
+    raise RocketChatApiRequestFailedError
+  end
+
+  # This checks if the HTTP request fails (i.e. did not return 200)
+  # Might happen if RocketChat is down
   # <NetResponce> -> json | nil
   def success_check(res)
     return JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
