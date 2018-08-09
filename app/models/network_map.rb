@@ -334,6 +334,11 @@ class NetworkMap < ApplicationRecord
 
   private
 
+  def after_soft_delete
+    UpdateEntityNetworkMapCollectionsJob
+      .perform_later(id, remove: entities.pluck(:id))
+  end
+
   def start_update_entity_network_map_collections_job
     UpdateEntityNetworkMapCollectionsJob
       .perform_later(id, remove: entities_removed_from_graph, add: entities.pluck(:id))
