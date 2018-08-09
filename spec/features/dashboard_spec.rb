@@ -21,6 +21,15 @@ describe 'home/dashboard', type: :feature do
     end
   end
 
+  feature 'explore' do
+    before { visit home_dashboard_path }
+    scenario 'contains links to maps, lists, tags and edits' do
+      %w[Maps Lists Tags Edits].each do |option|
+        page_has_selector '#dashboard-explore > a', text: option
+      end
+    end
+  end
+
   feature 'viewing map thumbnails' do
     context 'User has one map, with a nil thumbnail' do
       before do
