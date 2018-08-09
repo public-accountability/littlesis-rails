@@ -97,22 +97,3 @@
     <% end %>
   </div>
 </div> <!-- end-row -->
-
-<div class="row">
-  <div class="col-sm-10 col-md-8 nopadding">
-
-    <h3>
-      Your Groups
-      <%= header_action('details', home_groups_path) %>
-    </h3>
-
-    <% if @groups.present? %>
-      <% @groups.each do |group| %>
-	<%= group_link(group) %><br />
-      <% end %>
-    <% else %>
-      <%= link_to 'Join a group', groups_path %>
-    <% end %>
-
-  </div>
-</div> <!-- end-row -->

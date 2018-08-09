@@ -35,8 +35,6 @@ class HomeController < ApplicationController
               .page(map_page_param)
               .per(DASHBOARD_MAPS_PER_PAGE)
 
-    @groups = current_user.groups.order(:name)
-
     @lists = current_user
                .lists
                .order('id DESC')
