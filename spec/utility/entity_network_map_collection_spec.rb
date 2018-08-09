@@ -25,7 +25,7 @@ describe EntityNetworkMapCollection do
 
     it 'delegates methods to the set' do
       entity_network_map_collection = EntityNetworkMapCollection.new(org)
-      %i[each map size sort].each do |method|
+      %i[each map size sort empty?].each do |method|
         expect(entity_network_map_collection).to respond_to method
       end
     end

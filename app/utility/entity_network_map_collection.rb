@@ -9,12 +9,22 @@
 class EntityNetworkMapCollection
   attr_accessor :maps
   extend Forwardable
-  def_delegators :@maps, :each, :map, :size, :sort
+  def_delegators :@maps, :each, :map, :size, :sort, :empty?
+
+  MATCH_PATTERN = 'entity-*/networkmaps'
 
   def initialize(entity_or_id)
     @entity_id = Entity.entity_id_for(entity_or_id)
     @cache_key = cache_key
     @maps = cache_exists? ? cache_read : Set.new
+  end
+
+  # retrives NetworkMaps from database
+  def records(limit: 15)
+    NetworkMap
+      .where(id: @maps, is_private: false)
+      .order(is_featured: :desc, id: :desc)
+      .limit(limit)
   end
 
   # methods #add and #remove do NOT persist the data

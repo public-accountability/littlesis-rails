@@ -148,4 +148,18 @@ namespace :maps do
     end
     print "\n"
   end
+
+  desc 'populate all entity map collections'
+  task update_all_entity_map_collections: :environment do
+    Rails.cache.delete_matched EntityNetworkMapCollection::MATCH_PATTERN
+
+    NetworkMap.find_each(batch_size: 250) do |network_map|
+      network_map.entities.pluck(:id).each do |entity_id|
+        EntityNetworkMapCollection
+          .new(entity_id)
+          .add(network_map.id)
+          .save
+      end
+    end
+  end
 end

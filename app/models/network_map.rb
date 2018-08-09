@@ -22,8 +22,7 @@ class NetworkMap < ApplicationRecord
   validates :title, presence: true
 
   before_save :set_defaults, :set_index_data, :generate_secret
-
-  NUMERIC_IDS = lambda { |id| id.to_s.match(/^\d+$/) }
+  before_save :start_update_entity_network_map_collections_job, if: :graph_data_changed?
 
   def set_index_data
     self.index_data = generate_index_data
@@ -268,15 +267,17 @@ class NetworkMap < ApplicationRecord
     hash
   end
 
-  # -> Array[String]
-  def edge_ids
-    JSON.parse(graph_data)['edges'].keys
-  end
+  %i[edge node].each do |graph_component|
+    # -> Array[String]
+    define_method("#{graph_component}_ids") do |data|
+      JSON.parse(data)[graph_component.to_s.pluralize].keys
+    end
 
-  # -> [String]
-  # ids of edges (relationships)
-  def numeric_edge_ids
-    edge_ids.select(&NUMERIC_IDS)
+    # -> Array[String]
+    define_method("numeric_#{graph_component}_ids") do |data = nil|
+      send("#{graph_component}_ids", data.nil? ? graph_data : data)
+        .select { |id| id.to_s.match(/^\d+$/) }
+    end
   end
 
   # -> Relationship::ActiveRecord_Relation | Array
@@ -285,15 +286,10 @@ class NetworkMap < ApplicationRecord
     Relationship.where(id: numeric_edge_ids)
   end
 
-  def node_ids
-    hash = JSON.parse(graph_data)
-    hash['nodes'].keys
-  end
-
+  # -> Relationship::ActiveRecord_Relation | Array
   def entities
-    numeric_ids = node_ids.select(&NUMERIC_IDS)
-    return [] if numeric_ids.empty?
-    Entity.where(id: numeric_ids)
+    return [] if numeric_node_ids.empty?
+    Entity.where(id: numeric_node_ids)
   end
 
   def captions
@@ -318,10 +314,14 @@ class NetworkMap < ApplicationRecord
     JSON.dump(annotations)
   end
 
-  def update_entity_network_map_collections
+  def entities_removed_from_graph
+    if graph_data_changed?
+      new_nodes = numeric_node_ids.map(&:to_i).to_set
+      old_nodes = numeric_node_ids(graph_data_was).map(&:to_i).to_set
+      return old_nodes.difference(new_nodes).to_a
+    end
+    []
   end
-
-  ###
 
   # input: <User> --> NetworkMap::ActiveRecord_Relation
   def self.scope_for_user(user)
@@ -330,5 +330,17 @@ class NetworkMap < ApplicationRecord
       OR (`network_map`.`is_private` = 1 AND `network_map`.`user_id` = ?)
     SQL
     where(where_condition, user.sf_guard_user_id)
+  end
+
+  private
+
+  def after_soft_delete
+    UpdateEntityNetworkMapCollectionsJob
+      .perform_later(id, remove: entities.pluck(:id))
+  end
+
+  def start_update_entity_network_map_collections_job
+    UpdateEntityNetworkMapCollectionsJob
+      .perform_later(id, remove: entities_removed_from_graph, add: entities.pluck(:id))
   end
 end

@@ -105,7 +105,7 @@ describe NetworkMap, type: :model do
     let(:map) { build(:network_map, graph_data: graph_data) }
 
     it 'returns list of ids' do
-      expect(Set.new(map.edge_ids)).to eql ['1', '2'].to_set
+      expect(Set.new(map.edge_ids(map.graph_data))).to eql ['1', '2'].to_set
     end
   end
 
@@ -150,8 +150,40 @@ describe NetworkMap, type: :model do
     end
   end
 
+  describe 'numeric_node_ids' do
+    let(:nodes) do
+      { '123' => Oligrapher.entity_to_node(build(:org)),
+        '456' => Oligrapher.entity_to_node(build(:org)),
+        'abc' => Oligrapher.entity_to_node(build(:org)) }
+    end
+    let(:custom_nodes) do
+      { '789' => Oligrapher.entity_to_node(build(:org)),
+        'abc' => Oligrapher.entity_to_node(build(:org)) }
+    end
+    let(:graph_data) do
+      JSON.dump(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
+    end
+
+    let(:custom_graph_data) do
+      JSON.dump(id: 'abcdefg', nodes: custom_nodes, edges: {}, captions: {})
+    end
+
+    let(:network_map) { build(:network_map, graph_data: graph_data) }
+
+    context 'using default graph_data' do
+      specify do
+        expect(network_map.numeric_node_ids).to eql ['123', '456']
+      end
+    end
+
+    context 'providing the graph inline' do
+      specify do
+        expect(network_map.numeric_node_ids(custom_graph_data)).to eql ['789']
+      end
+    end
+  end
+
   # describe '' do
-    
 
   describe 'cloneable?' do
     it 'cloneable if is_cloneable is set' do
@@ -167,9 +199,9 @@ describe NetworkMap, type: :model do
     end
   end
 
-  xdescribe 'Entity Network Map Collection functions' do
-    let(:e1) { build(:org) }
-    let(:e2) { build(:org) }
+  describe 'Entity Network Map Collection functions' do
+    let(:e1) { create(:entity_org) }
+    let(:e2) { create(:entity_org) }
 
     let(:nodes) do
       { e1.id => Oligrapher.entity_to_node(e1),
@@ -180,18 +212,24 @@ describe NetworkMap, type: :model do
       JSON.dump(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
     end
 
-    let(:network_map) { build(:network_map, id: rand(1000), graph_data: graph_data) }
+    let(:graph_data_missing_node_two) do
+      JSON.dump(id: 'abcdefg',
+                nodes: { e1.id => Oligrapher.entity_to_node(e1) },
+                edges: {}, captions: {})
+    end
 
-    describe 'update_entity_network_map_collections' do
+    let(:network_map) { create(:network_map, user_id: 1) }
 
-      it 'adds id for all entities' do
-        expect(network_map).to recieve(:entities).once.and_return([e1, e2])
+    describe 'entities_removed_from_graph' do
+      specify do
+        network_map.graph_data = graph_data
+        expect(network_map.entities_removed_from_graph).to eql []
+        network_map.save!
+        network_map.graph_data = graph_data_missing_node_two
+        expect(network_map.entities_removed_from_graph).to eql [e2.id]
       end
-
-      it 'when an entity is removed, it removes it from the associated entity'
     end
   end
-
 end
 
 # rubocop:enable Style/StringLiterals, Style/WordArray

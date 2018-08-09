@@ -252,6 +252,31 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           page_has_selector '#sidebar-external-links-container a', count: 1
         end
       end
+
+      context 'with network maps' do
+        let!(:featured_map) { create(:network_map, is_featured: true, user_id: user.sf_guard_user_id) }
+        let!(:regular_map) { create(:network_map, user_id: user.sf_guard_user_id) }
+        let!(:private_map) { create(:network_map, is_private: true, user_id: user.sf_guard_user_id) }
+        let(:maps) { [featured_map, regular_map, private_map] }
+
+        before do
+          map_collection = person.network_map_collection
+          maps.each { |m| map_collection.add(m.id) }
+          map_collection.save
+          visit_page.call
+        end
+
+        scenario 'viewing network maps section' do
+          expect(find('#sidebar-maps-container').text).to include 'Network Maps'
+          page_has_selector '#sidebar-maps-container li a', count: 2
+          # first link is the featured map
+          expect(find('#sidebar-maps-container ul > li:nth-child(1) > a')['href'])
+            .to eql map_path(featured_map)
+          # does not have private map
+          expect(all('#sidebar-maps-container ul a').map { |e| e['href'] })
+            .not_to include map_path(private_map)
+        end
+      end
     end
 
     describe "when logged in" do

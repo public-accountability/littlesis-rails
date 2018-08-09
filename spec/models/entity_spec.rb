@@ -820,6 +820,12 @@ describe Entity, :tag_helper do
     end
   end
 
+  describe '#network_map_collection' do
+    it 'returns a EntityNetworkMapCollection' do
+      expect(build(:person).network_map_collection).to be_a EntityNetworkMapCollection
+    end
+  end
+
   describe 'Using paper_trail for versision' do
     let(:human) { create(:entity_person) }
     with_versioning do
