@@ -5,13 +5,13 @@ describe ApplicationHelper, :type => :helper do
     it 'should generate correct title' do
       expect(helper).to receive(:content_for)
                           .with(:page_title).once.and_return('this is the page title')
-      expect(helper).to receive(:content_for?).with(:page_title).twice.and_return(true)
-      expect(helper).to receive(:content_for?).with(:skip_page_title_suffix).twice.and_return(nil)
+      expect(helper).to receive(:content_for?).with(:page_title).once.and_return(true)
+      expect(helper).to receive(:content_for?).with(:skip_page_title_suffix).once.and_return(nil)
       expect(helper.page_title).to eq 'this is the page title - LittleSis'
     end
 
     it 'sets title to be LittleSis by default' do
-      expect(helper).to receive(:content_for?).with(:page_title).twice.and_return(false)
+      expect(helper).to receive(:content_for?).with(:page_title).and_return(false)
       expect(helper).to receive(:content_for?)
                           .with(:skip_page_title_suffix).at_least(:once).and_return(nil)
       expect(helper.page_title).to eq 'LittleSis'
@@ -20,8 +20,8 @@ describe ApplicationHelper, :type => :helper do
     it 'can optionally skip "- LittleSis" suffix' do
       expect(helper).to receive(:content_for)
                           .with(:page_title).once.and_return('this is the page title')
-      expect(helper).to receive(:content_for?).with(:page_title).twice.and_return(true)
-      expect(helper).to receive(:content_for?).with(:skip_page_title_suffix).twice.and_return(true)
+      expect(helper).to receive(:content_for?).with(:page_title).once.and_return(true)
+      expect(helper).to receive(:content_for?).with(:skip_page_title_suffix).once.and_return(true)
       expect(helper.page_title).to eq 'this is the page title'
     end
   end

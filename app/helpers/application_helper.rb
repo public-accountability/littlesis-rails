@@ -8,11 +8,12 @@ module ApplicationHelper
   include Routes
 
   def page_title
-    title = ""
-    title += content_for(:page_title) if content_for?(:page_title)
-    title += " - " if content_for?(:page_title) && !content_for?(:skip_page_title_suffix)
-    title += "LittleSis" unless content_for?(:skip_page_title_suffix)
-    title
+    if content_for?(:page_title)
+      return content_for(:page_title) if content_for?(:skip_page_title_suffix)
+      return "#{content_for(:page_title)} - LittleSis"
+    end
+    return '' if content_for?(:skip_page_title_suffix)
+    'LittleSis'
   end
 
   def centered_content(id=nil, &block)
