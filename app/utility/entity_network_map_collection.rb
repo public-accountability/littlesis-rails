@@ -19,7 +19,8 @@ class EntityNetworkMapCollection
 
   # retrives NetworkMaps from database
   def records(limit: 15)
-    NetworkMap.where(id: @maps.to_a)
+    NetworkMap
+      .where(id: @maps, is_private: false)
       .order(is_featured: :desc, id: :desc)
       .limit(limit)
   end
