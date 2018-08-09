@@ -11,6 +11,8 @@ class EntityNetworkMapCollection
   extend Forwardable
   def_delegators :@maps, :each, :map, :size, :sort, :empty?
 
+  MATCH_PATTERN = 'entity-*/networkmaps'
+
   def initialize(entity_or_id)
     @entity_id = Entity.entity_id_for(entity_or_id)
     @cache_key = cache_key
