@@ -16,6 +16,7 @@ class HomeController < ApplicationController
   ].freeze
 
   DASHBOARD_MAPS_PER_PAGE = 18
+  DASHBOARD_LISTS_PER_PAGE = 10
 
   def groups
     @groups = Group
@@ -34,8 +35,12 @@ class HomeController < ApplicationController
               .page(map_page_param)
               .per(DASHBOARD_MAPS_PER_PAGE)
 
-    @groups = current_user.groups.order(:name)
-    @lists = current_user.lists.order('id DESC')
+    @lists = current_user
+               .lists
+               .order('id DESC')
+               .page(list_page_param)
+               .per(DASHBOARD_LISTS_PER_PAGE)
+
     @recent_updates = current_user
                         .edited_entities
                         .includes(last_user: :user)
@@ -201,7 +206,11 @@ class HomeController < ApplicationController
   end
 
   def map_page_param
-    params[:map_page].presence&.to_i || 1
+    params[:map_page]&.to_i || 1
+  end
+
+  def list_page_param
+    params[:list_page]&.to_i || 1
   end
 
   def likely_a_spam_bot

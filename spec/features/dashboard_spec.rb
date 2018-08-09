@@ -21,6 +21,15 @@ describe 'home/dashboard', type: :feature do
     end
   end
 
+  feature 'explore' do
+    before { visit home_dashboard_path }
+    scenario 'contains links to maps, lists, tags and edits' do
+      %w[Maps Lists Tags Edits].each do |option|
+        page_has_selector '#dashboard-explore > a', text: option
+      end
+    end
+  end
+
   feature 'viewing map thumbnails' do
     context 'User has one map, with a nil thumbnail' do
       before do
@@ -57,6 +66,38 @@ describe 'home/dashboard', type: :feature do
       scenario 'visiting page 2' do
         visit '/home/dashboard?map_page=2'
         page_has_n_maps(1)
+      end
+    end
+  end
+
+  feature 'viewing list of lists' do
+    context 'user has two lists' do
+      let!(:lists) do
+        [create(:open_list, creator_user_id: current_user.id),
+         create(:private_list, creator_user_id: current_user.id)]
+      end
+
+      scenario 'user can see the lists' do
+        visit home_dashboard_path
+        successfully_visits_page home_dashboard_path
+        page_has_selector '#dashboard-lists-links > a', count: 2
+      end
+    end
+
+    context 'pagnation' do
+      before do
+        stub_const('HomeController::DASHBOARD_LISTS_PER_PAGE', 2)
+        3.times { create(:list, creator_user_id: current_user.id) }
+      end
+
+      scenario 'viewing page 1' do
+        visit '/home/dashboard'
+        page_has_selector '#dashboard-lists-links > a', count: 2
+      end
+
+      scenario 'viewing page 2' do
+        visit '/home/dashboard?list_page=2'
+        page_has_selector '#dashboard-lists-links > a', count: 1
       end
     end
   end
