@@ -76,18 +76,18 @@
 
   <%# Network Maps %>
   <% unless @entity.network_map_collection.empty? %>
-    <%= profile_page_sidebar('sidebar-lists-container', 'Network Maps') do %>
-      <ul class="list-unstyled">
-	<% @entity.network_map_collection.records.each do |map|  %>
-	  <li>
-	    <%= link_to map.title, map_path(map) %>
-	  </li>
-	<% end %>
-      </ul>
+    <% cache(['entity_sidebar_maps', @entity.network_map_collection.maps], :expires_in => 1.day) do %>
+      <%= profile_page_sidebar('sidebar-lists-container', 'Network Maps') do %>
+	<ul class="list-unstyled">
+	  <% @entity.network_map_collection.records.each do |map|  %>
+	    <li>
+	      <%= link_to map.title, map_path(map) %>
+	    </li>
+	  <% end %>
+	</ul>
+      <% end %>
     <% end %>
   <% end %>
-
-
 
   <%# SIMILAR ENTITIES  %>
   <% unless @entity.similar_entities.blank? %>
