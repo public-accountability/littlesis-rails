@@ -79,20 +79,22 @@
   </div>
 </div> <!-- end-row -->
 
-<div class="row">
+<div class="row" id="dashboard-lists-row">
   <div class="col-sm-10 col-md-8 nopadding">
 
     <h3>
       Your Lists
       <%= header_action('details', home_lists_path) %>
     </h3>
-
+    
     <% if @lists.present? %>
-      <% @lists.each do |list| %>
-	<%= list_link(list) %><br />
-      <% end %>
+      <div id="dashboard-lists-links" class="m-bottom-1em">
+	<% @lists.each do |list| %>
+	  <%= list_link(list) %><br />
+	<% end %>
+      </div>
+      <%= paginate @lists, param_name: 'list_page' %>
     <% end %>
-
   </div>
 </div> <!-- end-row -->
 
