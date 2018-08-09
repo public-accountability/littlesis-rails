@@ -26,12 +26,10 @@ describe HomeController, type: :controller do
                               :page => double(
                                 :per => [build(:network_map)])))
 
-      groups = double('groups', order: [])
-      user_lists_double = double('arbitrary_name', order: [])
+      user_lists_double = double('arbitrary_name', order: Kaminari::PaginatableArray.new)
       edited_entities = double('edited', includes: double(order: double(limit: [])))
       expect(controller).to receive(:current_user).and_return(
         double(network_maps: network_maps),
-        double(groups: groups),
         double(lists: user_lists_double),
         double(edited_entities: edited_entities))
       get :dashboard
