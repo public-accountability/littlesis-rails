@@ -65,9 +65,6 @@ class HomeController < ApplicationController
   end
 
   def maps
-    @maps = current_user.network_maps.order("created_at DESC").page(params[:page]).per(20)
-    @header = 'My Network Maps'
-    render 'maps/index'
   end
 
   def lists
