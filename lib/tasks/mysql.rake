@@ -21,11 +21,4 @@ namespace :mysql do
     ddb = DevelopmentDb.new(Rails.root.join('data', "development_db_#{Time.now.strftime('%F')}.sql").to_s)
     ddb.run
   end
-
-  desc 'fix missing definer user for travis'
-  task travis_definer_fix: :environment do
-    ApplicationRecord.connection.execute(
-      "UPDATE `mysql`.`proc` SET definer = 'root@%' WHERE definer = 'littlesis@%'"
-    )
-  end
 end
