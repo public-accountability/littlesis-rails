@@ -35,6 +35,7 @@ before_script:
 
 script:
   - RAILS_ENV=test bundle exec rake db:structure:load
+  - RAILS_ENV=test bundle exec rake mysql:travis_definer_fix
   - RAILS_ENV=test bundle exec rake db:seed
   - RAILS_ENV=test COVERAGE=true bundle exec rspec
   - RAILS_ENV=test bundle exec rake jasmine:ci
