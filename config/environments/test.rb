@@ -47,4 +47,6 @@ Rails.application.configure do
   config.active_support.test_order = :sorted   # or `:random` if you pref
 
   config.active_job.queue_adapter = :test
+
+  config.active_record.schema_format = :sql
 end
