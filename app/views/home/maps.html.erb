@@ -1,0 +1,27 @@
+<% content_for(:page_title, "Your maps") %>
+
+<div class="row">
+  <h1>
+    Your Maps
+    <%= link_to 'Create', new_map_path, class: 'btn btn-default btn-sm' %>
+    <%= link_to 'Featured', featured_maps_path, class: 'btn btn-default btn-sm' %>
+  </h1>
+</div>
+
+<table id="user-maps-table" class="display" style="width:100%"></table>
+
+<script>
+ var userMaps = <%= raw UserMapsPresenter.new(current_user).render %>;
+ 
+ $(function(){
+   $('#user-maps-table').DataTable( {
+     "data": userMaps,
+     "lengthChange": false,
+     "pageLength": 15,
+     "columns": [
+       { title: "Title" },
+       { title: "Updated At" },
+     ]
+   });
+ });
+</script>

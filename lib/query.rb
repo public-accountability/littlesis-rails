@@ -7,4 +7,16 @@ module Query
       data.each { |hash| csv << hash.values }
     end
   end
+
+  def self.execute_sql_file(path)
+    db = Rails.configuration.database_configuration.fetch(Rails.env)
+    cmd = "mysql -u #{db['username']} -p#{db['password']} -h #{db['host']} #{db['database']} < #{path}"
+    output = `#{cmd}`
+    if $?.exitstatus != 0
+      ColorPrinter.print_red output
+      raise Query::SQLFileError, output
+    end
+  end
+
+  class SQLFileError < StandardError; end
 end
