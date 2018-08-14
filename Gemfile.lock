@@ -7,53 +7,6 @@ GIT
       activemodel (>= 3.0.0)
 
 GIT
-  remote: https://github.com/rspec/rspec-core.git
-  revision: c5ce1b278c242e1adf5c1205e3c76081d3e685ba
-  branch: master
-  specs:
-    rspec-core (3.8.pre)
-      rspec-support (= 3.8.pre)
-
-GIT
-  remote: https://github.com/rspec/rspec-expectations.git
-  revision: a132fa41bdd588f9abe9444f6f1fb152f52e9531
-  branch: master
-  specs:
-    rspec-expectations (3.8.pre)
-      diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (= 3.8.pre)
-
-GIT
-  remote: https://github.com/rspec/rspec-mocks.git
-  revision: 5b09361a12f5abc8e89f6f16a14d854bda378ead
-  branch: master
-  specs:
-    rspec-mocks (3.8.pre)
-      diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (= 3.8.pre)
-
-GIT
-  remote: https://github.com/rspec/rspec-rails.git
-  revision: f685b444b313b60e20632256e739afe0b7b430d9
-  branch: master
-  specs:
-    rspec-rails (3.8.pre)
-      actionpack (>= 3.0)
-      activesupport (>= 3.0)
-      railties (>= 3.0)
-      rspec-core (= 3.8.pre)
-      rspec-expectations (= 3.8.pre)
-      rspec-mocks (= 3.8.pre)
-      rspec-support (= 3.8.pre)
-
-GIT
-  remote: https://github.com/rspec/rspec-support.git
-  revision: 5a1c6756a9d8322fc18639b982e00196f452974d
-  branch: master
-  specs:
-    rspec-support (3.8.pre)
-
-GIT
   remote: https://github.com/stympy/faker.git
   revision: 9910aa58d92c018abab25d491191576fcc1a7707
   branch: master
@@ -352,6 +305,23 @@ GEM
     roo (2.7.1)
       nokogiri (~> 1)
       rubyzip (~> 1.1, < 2.0.0)
+    rspec-core (3.8.0)
+      rspec-support (~> 3.8.0)
+    rspec-expectations (3.8.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.8.0)
+    rspec-mocks (3.8.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.8.0)
+    rspec-rails (3.8.0)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.8.0)
+      rspec-expectations (~> 3.8.0)
+      rspec-mocks (~> 3.8.0)
+      rspec-support (~> 3.8.0)
+    rspec-support (3.8.0)
     rubocop (0.58.2)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
@@ -487,11 +457,7 @@ DEPENDENCIES
   redis
   rmagick
   roo (~> 2.7.0)
-  rspec-core!
-  rspec-expectations!
-  rspec-mocks!
-  rspec-rails!
-  rspec-support!
+  rspec-rails (>= 3.8.0)
   rubocop
   sass-rails (>= 5)
   seed_dump

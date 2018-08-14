@@ -72,10 +72,10 @@ group :test, :development do
   gem 'pry-rails'
   gem 'rack-mini-profiler'
   gem 'rails-controller-testing'
-  %w[rspec-core rspec-expectations rspec-mocks rspec-rails rspec-support].each do |lib|
-    gem lib, :git => "https://github.com/rspec/#{lib}.git", :branch => 'master'
-  end
-  # gem 'rspec-rails', '~> 3.7.2'
+  # %w[rspec-core rspec-expectations rspec-mocks rspec-rails rspec-support].each do |lib|
+  #   gem lib, :git => "https://github.com/rspec/#{lib}.git", :branch => 'master'
+  # end
+  gem 'rspec-rails', '>= 3.8.0'
   gem 'rubocop', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '~> 3.1'
