@@ -1,0 +1,50 @@
+<% content_for(:page_title, "Your lists") %>
+
+<div class="row">
+  <h1>
+    Your lists
+    <%= link_to 'Create', new_list_path, class: 'btn btn-default btn-sm' %>
+    <%= link_to 'Explore', lists_path, class: 'btn btn-default btn-sm' %>
+  </h1>
+</div>
+
+<table id="user-lists-table" class="display" style="width:100%"></table>
+
+<script>
+ $(function(){
+   var userLists = <%= raw UserListsPresenter.new(current_user).render %>;
+ 
+   var listLink = function(data) {
+     return $('<a>', {
+       "text": data.name,
+       "target": '_blank',
+       "href": data.href
+     }).prop('outerHTML');
+   };
+
+ 
+   $('#user-lists-table').DataTable({
+     "data": userLists,
+     "lengthChange": false,
+     "pageLength": 15,
+     "columns": [
+       {
+	 "data": listLink,
+	 "title": 'List'
+       },
+       {
+	 "data": "access",
+	 "title": "Access",
+	 "searchable": false
+       },
+       {
+	 "data": "updated_at",
+	 "title": "Updated At",
+       }
+     ]
+   });
+
+ });
+
+
+</script>
