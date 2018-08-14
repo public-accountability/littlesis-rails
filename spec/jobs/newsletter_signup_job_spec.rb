@@ -31,6 +31,13 @@ describe NewsletterSignupJob, type: :job do
     end
   end
 
+  context 'Press Signup' do
+    it 'signups the user using #add_email_to_press' do
+      expect(ActionNetwork).to receive(:add_email_to_press).with(email_address).once
+      perform_enqueued_jobs { NewsletterSignupJob.perform_later(email_address, 'press') }
+    end
+  end
+
   context 'errors' do
     it 'rejects bad types' do
       expect { perform_enqueued_jobs { NewsletterSignupJob.perform_later(5) } }

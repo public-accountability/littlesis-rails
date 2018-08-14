@@ -15,7 +15,8 @@ module ActionNetwork
     signup: 'LS-Signup',
     newsletter: 'PAI and LittleSis Updates',
     map_the_power: 'MTP',
-    pai: 'PAI-Signup'
+    pai: 'PAI-Signup',
+    press: 'press'
   }.freeze
 
   # :section: Public API
@@ -39,6 +40,13 @@ module ActionNetwork
   # String --> Boolean
   def self.add_email_to_pai(email)
     post URI.parse(PEOPLE_URL), email_params(email, :pai)
+  end
+
+  # Adds an email address to the Press List
+  #
+  # String --> Boolean
+  def self.add_email_to_press(email)
+    post URI.parse(PEOPLE_URL), email_params(email, :press)
   end
 
   # Retrieves people from our Action Network Api
