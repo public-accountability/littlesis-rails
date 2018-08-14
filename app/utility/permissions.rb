@@ -5,6 +5,13 @@ class Permissions
   ACCESS_OPEN = 0
   ACCESS_CLOSED = 1
   ACCESS_PRIVATE = 2
+
+  ACCESS_MAPPING = {
+    0 => 'Open',
+    1 => 'Closed',
+    2 => 'Private'
+  }.freeze
+
   ALL_PERMISSIONS = ["admin", "contributor", "editor", "deleter", "lister", "merger", "importer", "bulker", "talker", "contacter"].freeze
 
   ALL_PERMISSIONS.each do |permission_name|
