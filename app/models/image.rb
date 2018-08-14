@@ -12,6 +12,8 @@ class Image < ApplicationRecord
   scope :persons, -> { joins(:entity).where(entity: { primary_ext: 'Person' }) }
 
   IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }.freeze
+  IMAGE_TYPES = IMAGE_SIZES.keys.freeze
+
   DEFAULT_FILE_TYPE = Lilsis::Application.config.default_image_file_type
 
   before_destroy :unfeature, if: :is_featured
@@ -52,8 +54,12 @@ class Image < ApplicationRecord
     response.code.to_i == 200
   end
 
+  def self.s3_path(filename, type)
+    "images/#{type}/#{filename}"
+  end
+
   def self.s3_url(filename, type)
-    "https://#{APP_CONFIG['asset_host']}/images/#{type}/#{filename}"
+    "https://#{APP_CONFIG['asset_host']}/#{s3_path(filename, type)}"
   end
 
   singleton_class.send(:alias_method, :image_path, :s3_url)

@@ -15,7 +15,7 @@ describe Image, type: :model do
 
   describe 'soft_delete' do
     it 'changes is_deleted' do
-      image = create(:image, entity: create(:org))
+      image = create(:image, entity: create(:entity_org))
       expect { image.soft_delete }.to change { image.is_deleted }.to(true)
     end
   end
