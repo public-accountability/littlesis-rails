@@ -235,7 +235,7 @@ GEM
       jasmine (~> 3.0)
       selenium-webdriver (~> 3.8)
     jmespath (1.4.0)
-    joiner (0.4.0)
+    joiner (0.4.1)
       activerecord (>= 5.2.beta1)
     jquery-rails (4.3.3)
       rails-dom-testing (>= 1, < 3)
