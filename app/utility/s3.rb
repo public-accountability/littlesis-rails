@@ -2,6 +2,7 @@
 
 class S3
   BUCKET = Lilsis::Application.config.aws_s3_bucket.dup.freeze
+  CACHE_CONTROL = 'public, max-age=2592000' # 30 days
 
   def self.url(path)
     base_url + path
@@ -39,8 +40,25 @@ class S3
     true
   end
 
+  def self.public?(s3_object)
+    TypeCheck.check s3_object, Aws::S3::Object
+    return false unless s3_object.exists?
+    s3_object.acl.grants.each do |grant|
+      if grant.grantee.type == 'Group' && grant.grantee.uri.include?('global/AllUsers') && grant.permission == 'READ'
+        return true
+      end
+    end
+    return false
+  end
+
+  def self.make_public_and_set_cache_headers(s3_object)
+    s3_object.put({ acl: 'public-read', cache_control: CACHE_CONTROL })
+  end
+
   private_class_method def self.s3_options(local_path)
-    options = { body: IO.read(Pathname.new(local_path)), acl: 'public-read' }
+    options = { body: IO.read(Pathname.new(local_path)),
+                acl: 'public-read',
+                cache_control: CACHE_CONTROL }
     options.store(:content_type, 'image/svg+xml') if local_path.slice(-3, 3).casecmp?('svg')
     options
   end
