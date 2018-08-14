@@ -145,11 +145,14 @@ class HomeController < ApplicationController
   # Signup an email address to the PAI newsletter
   # redirects to 'referer' if present or 'https://news.littlesis.org'
   #
-  # POST /home/newsletter_signup
+  # POST /home/pai_signup
   def pai_signup
     return head :forbidden if likely_a_spam_bot
     pai_signup_ip_limit(request.remote_ip)
-    NewsletterSignupJob.perform_later params.fetch('email'), 'pai' unless Rails.env.development?
+
+    signup_type = params[:tag]&.downcase.eql?('press') ? 'press' : 'pai'
+
+    NewsletterSignupJob.perform_later params.fetch('email'), signup_type unless Rails.env.development?
 
     if request.headers['referer'].blank?
       redirect_to 'https://news.littlesis.org'
