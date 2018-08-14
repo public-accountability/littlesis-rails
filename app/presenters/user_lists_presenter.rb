@@ -7,12 +7,16 @@ class UserListsPresenter
   def_delegator 'Rails.application.routes.url_helpers', :list_path
   def_delegators :@lists, :length, :each, :map, :[]
 
-  UserList = Struct.new(:href, :name, :access, :created_at)
+  UserList = Struct.new(:href, :name, :access, :updated_at)
 
   def initialize(user)
     TypeCheck.check user, User
     @user = user
     @lists = load_lists
+  end
+
+  def render
+    @lists.to_json
   end
 
   private

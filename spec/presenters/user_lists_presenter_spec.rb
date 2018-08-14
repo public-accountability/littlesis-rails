@@ -27,5 +27,4 @@ describe UserListsPresenter do
         )
       )
   end
-
 end
