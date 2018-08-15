@@ -3,7 +3,7 @@ AllCops:
     - 'db/schema.rb'
     - 'db/seeds.rb'
     - 'db/migrate/*.rb'
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 2.5
   TargetRailsVersion: 5.2
 
 Rails:
