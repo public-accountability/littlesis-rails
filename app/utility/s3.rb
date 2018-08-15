@@ -52,7 +52,7 @@ class S3
   end
 
   def self.make_public_and_set_cache_headers(s3_object)
-    s3_object.put({ acl: 'public-read', cache_control: CACHE_CONTROL })
+    raise NotImplementedError
   end
 
   private_class_method def self.s3_options(local_path)
