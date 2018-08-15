@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '5.2.0'
+gem 'rails', '5.2.1'
 gem 'mysql2', '~> 0.5.2'
 
 # Rack middleware
@@ -59,23 +59,23 @@ end
 
 group :test, :development do
   gem 'better_errors', '~> 2.4.0'
-  gem 'capybara', '~> 3.2.1'
+  gem 'capybara', '>= 3.6.0'
   gem 'capybara-webkit', '1.15.0'
   gem 'codacy-coverage', :require => false
   gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 4.10.0'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
-  gem 'jasmine', '~> 3.1.0'
+  gem 'jasmine', '~> 3.2.0'
   gem 'jasmine_selenium_runner'
   gem 'pry'
   gem 'pry-byebug'
   gem 'pry-rails'
   gem 'rack-mini-profiler'
   gem 'rails-controller-testing'
-  %w[rspec-core rspec-expectations rspec-mocks rspec-rails rspec-support].each do |lib|
-    gem lib, :git => "https://github.com/rspec/#{lib}.git", :branch => 'master'
-  end
-  # gem 'rspec-rails', '~> 3.7.2'
+  # %w[rspec-core rspec-expectations rspec-mocks rspec-rails rspec-support].each do |lib|
+  #   gem lib, :git => "https://github.com/rspec/#{lib}.git", :branch => 'master'
+  # end
+  gem 'rspec-rails', '>= 3.8.0'
   gem 'rubocop', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '~> 3.1'

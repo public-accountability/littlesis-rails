@@ -3,7 +3,7 @@ dist: trusty
 sudo: required
 cache: bundler
 rvm:
-  - 2.4.4
+  - 2.5.1
 
 env:
   global:
