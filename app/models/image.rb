@@ -120,7 +120,6 @@ class Image < ApplicationRecord
 
   def self.create_asset(filename, type, read_path, max_width = nil, max_height = nil, check_first = true)
     begin
-      # RMagick can't seem to open remote files?
       img = MiniMagick::Image.open(read_path)
     rescue
       return false

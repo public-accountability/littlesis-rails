@@ -20,9 +20,7 @@ gem 'delayed_job_active_record', '>= 4.1.3'
 # Assets, image uploading & processing
 gem 'aws-sdk-cloudfront', '~> 1'
 gem 'aws-sdk-s3', '~> 1'
-# gem 'carrierwave'
 gem 'mini_magick'
-gem 'rmagick'
 
 gem 'sprockets', '~> 3.0'
 gem 'asset_sync', '~> 2.4.0'
