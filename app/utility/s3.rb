@@ -3,6 +3,7 @@
 class S3
   BUCKET = Lilsis::Application.config.aws_s3_bucket.dup.freeze
   CACHE_CONTROL = 'public, max-age=2592000' # 30 days
+  VALID_MIME_TYPES = ['image/svg+xml', 'image/jpeg', 'image/png', 'image/gif', 'image/jpg'].freeze
 
   def self.url(path)
     base_url + path
@@ -19,6 +20,10 @@ class S3
       access_key_id: Lilsis::Application.config.aws_key,
       secret_access_key: Lilsis::Application.config.aws_secret
     )
+  end
+
+  def self.bucket
+    s3.bucket(BUCKET)
   end
 
   def self.file_exists?(path, bucket = Lilsis::Application.config.aws_s3_bucket)
@@ -63,17 +68,11 @@ class S3
   # Additionally, it corrects the Content-Type of the image
   # if it's missing from the metadata
   def self.make_public_and_set_cache_header(s3_object)
-    TypeCheck.check s3_object, Aws::S3::Object
-
-    if s3_object.content_type.blank? || s3_object.content_type == 'application/octet-stream'
-      ct = determine_content_type(s3_object.key)
-    else
-      ct = s3_object.content_type
-    end
+    return true if skip_metadata_update(s3_object)
 
     s3_object.copy_to(s3_object,
                       acl: 'public-read',
-                      content_type: ct,
+                      content_type: content_type_for(s3_object),
                       cache_control: CACHE_CONTROL,
                       metadata: s3_object.metadata,
                       metadata_directive: 'REPLACE')
@@ -84,6 +83,18 @@ class S3
       acl: 'public-read',
       cache_control: CACHE_CONTROL,
       content_type: determine_content_type(local_path) }
+  end
+
+  private_class_method def self.skip_metadata_update(s3_object)
+    public?(s3_object) && VALID_MIME_TYPES.include?(s3_object.content_type) && s3_object.cache_control == CACHE_CONTROL
+  end
+
+  private_class_method def self.content_type_for(s3_object)
+    if s3_object.content_type.blank? || s3_object.content_type == 'application/octet-stream'
+      determine_content_type(s3_object.key)
+    else
+      s3_object.content_type
+    end
   end
 
   private_class_method def self.determine_content_type(file_path)
