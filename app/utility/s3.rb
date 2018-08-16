@@ -51,15 +51,52 @@ class S3
     return false
   end
 
-  def self.make_public_and_set_cache_headers(s3_object)
-    raise NotImplementedError
+  def self.make_public(s3_object)
+    s3_object.acl.put(acl: 'public-read')
+  end
+
+  # Updates S3 object metadata
+  #
+  # for whatever reason, the way to MODIFY an object's metadata
+  # on S3 is to copy it to itself.
+  #
+  # Additionally, it corrects the Content-Type of the image
+  # if it's missing from the metadata
+  def self.make_public_and_set_cache_header(s3_object)
+    TypeCheck.check s3_object, Aws::S3::Object
+
+    if s3_object.content_type.blank? || s3_object.content_type == 'application/octet-stream'
+      ct = determine_content_type(s3_object.key)
+    else
+      ct = s3_object.content_type
+    end
+
+    s3_object.copy_to(s3_object,
+                      acl: 'public-read',
+                      content_type: ct,
+                      cache_control: CACHE_CONTROL,
+                      metadata: s3_object.metadata,
+                      metadata_directive: 'REPLACE')
   end
 
   private_class_method def self.s3_options(local_path)
-    options = { body: IO.read(Pathname.new(local_path)),
-                acl: 'public-read',
-                cache_control: CACHE_CONTROL }
-    options.store(:content_type, 'image/svg+xml') if local_path.slice(-3, 3).casecmp?('svg')
-    options
+    { body: IO.read(Pathname.new(local_path)),
+      acl: 'public-read',
+      cache_control: CACHE_CONTROL,
+      content_type: determine_content_type(local_path) }
+  end
+
+  private_class_method def self.determine_content_type(file_path)
+    ext = File.extname(file_path).tr('.', '').downcase
+    case ext
+    when 'svg'
+      'image/svg+xml'
+    when 'jpg', 'jpeg'
+      'image/jpeg'
+    when 'png'
+      'image/png'
+    when 'gif'
+      'image/gif'
+    end
   end
 end
