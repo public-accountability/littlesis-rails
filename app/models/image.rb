@@ -35,15 +35,13 @@ class Image < ApplicationRecord
   end
 
   def download_to_tmp(remote_url)
-    open(tmp_path, 'wb') do |file|
-      begin
-        file << open(remote_url).read  
-      rescue OpenURI::HTTPError
-        return false
-      end
-      file.close
-    end
-    true
+    file = open(tmp_path, 'wb')
+    file << open(remote_url).read
+    return true
+  rescue OpenURI::HTTPError
+    return false
+  ensure
+    file.close
   end
 
   def original_exists?
