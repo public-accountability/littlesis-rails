@@ -173,6 +173,8 @@ GEM
       activesupport (>= 4.2.0)
     headless (2.3.1)
     htmlentities (4.3.4)
+    httparty (0.16.2)
+      multi_xml (>= 0.5.2)
     i18n (1.1.0)
       concurrent-ruby (~> 1.0)
     innertube (1.1.0)
@@ -228,6 +230,7 @@ GEM
     minitest (5.11.3)
     msgpack (1.2.4)
     multi_json (1.13.1)
+    multi_xml (0.6.0)
     mysql2 (0.5.2)
     nio4r (2.3.1)
     nokogiri (1.8.4)
@@ -436,6 +439,7 @@ DEPENDENCIES
   geocoder
   headless
   htmlentities
+  httparty (>= 0.16.2)
   jasmine (~> 3.2.0)
   jasmine_selenium_runner
   jquery-rails

@@ -45,11 +45,9 @@ class Image < ApplicationRecord
   end
 
   def original_exists?
-    uri = URI(url)
-
-    request = Net::HTTP.new(uri.host)
-    response = request.request_head(uri.path)
-    response.code.to_i == 200
+    HTTParty.head(url).code == 200
+  rescue HTTParty::ResponseError, SocketError
+    false
   end
 
   def self.s3_path(filename, type)
