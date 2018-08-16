@@ -212,7 +212,7 @@ class NetworkMap < ApplicationRecord
     if Screenshot.take(url, local_path)
       Screenshot.resize_map_thumbnail(local_path)
 
-      S3.upload_file(S3::BUCKET, s3_path, local_path, false)
+      S3.upload_file remote_path: s3_path, local_path: local_path, check_first: false
       File.delete(local_path)
       self.thumbnail = S3.url('/' + s3_path)
       save

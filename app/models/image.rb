@@ -136,7 +136,7 @@ class Image < ApplicationRecord
 
     tmp_path = Rails.root.join("tmp", "#{type}_#{filename}").to_s
     img.write(tmp_path)
-    result = S3.upload_file(Lilsis::Application.config.aws_s3_bucket, "images/#{type}/#{filename}", tmp_path, check_first)
+    result = S3.upload_file(remote_path: "images/#{type}/#{filename}", local_path: tmp_path, check_first: check_first)
     File.delete(tmp_path)
     result
   end

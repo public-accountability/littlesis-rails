@@ -25,7 +25,7 @@ class S3
     s3.bucket(bucket).object(path).exists?
   end
 
-  def self.upload_file(bucket, remote_path, local_path, check_first = true)
+  def self.upload_file(remote_path:, local_path:, bucket: S3::BUCKET, check_first: true)
     object = s3.bucket(bucket).object(remote_path.gsub(/^\//, ''))
     return true if check_first && object.exists?
 
