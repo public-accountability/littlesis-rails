@@ -103,9 +103,9 @@ class Image < ApplicationRecord
     if ENV['SKIP_S3_UPLOAD']
       large = profile = small = true
     else
-      large = create_asset(filename, 'large', url, 1024, 1024)
-      profile = create_asset(filename, 'profile', url, 200, 200)
-      small = create_asset(filename, 'small', url, 50, 50)
+      large = create_asset(filename, 'large', url, max_width: 1024, max_height: 1024)
+      profile = create_asset(filename, 'profile', url, max_width: 200, max_hight: 200)
+      small = create_asset(filename, 'small', url, max_width: 50, max_height: 50)
     end
 
     if large && profile && small
@@ -118,10 +118,11 @@ class Image < ApplicationRecord
     end
   end
 
-  def self.create_asset(filename, type, read_path, max_width = nil, max_height = nil, check_first = true)
+  def self.create_asset(filename, type, read_path, max_width: nil, max_height: nil, check_first: true)
     begin
       img = MiniMagick::Image.open(read_path)
     rescue
+      Rails.logger.info "MiniMagick failed to open the file: #{read_path}"
       return false
     end
 
@@ -129,8 +130,8 @@ class Image < ApplicationRecord
     height = img[:height]
 
     if (max_width && (width > max_width)) || (max_height && (height > max_height))
-      w = max_width ? max_width : img[:width]
-      h = max_height ? max_height : img[:height]
+      w = max_width ||  img[:width]
+      h = max_height || img[:height]
       img.resize([w, h].join("x"))
     end
 
@@ -148,7 +149,7 @@ class Image < ApplicationRecord
     img.write(tmp_path)
 
     IMAGE_SIZES.each do |type, size|
-      self.class.create_asset(filename, type, tmp_path, size, size, false)
+      Image.create_asset(filename, type, tmp_path, max_width: size, max_height: size, check_first: false)
     end
 
     File.delete(tmp_path)
@@ -161,7 +162,7 @@ class Image < ApplicationRecord
       return :exists
     else
       if (original_exists? rescue false)
-        Image.create_asset(filename, 'large', url, Image::IMAGE_SIZES[:large], Image::IMAGE_SIZES[:large], false)
+        Image.create_asset(filename, 'large', url, max_width: Image::IMAGE_SIZES[:large], max_height: Image::IMAGE_SIZES[:large], check_first: false)
         return :created
       else
         return false
