@@ -104,7 +104,7 @@ class Image < ApplicationRecord
       large = profile = small = true
     else
       large = create_asset(filename, 'large', url, max_width: 1024, max_height: 1024)
-      profile = create_asset(filename, 'profile', url, max_width: 200, max_hight: 200)
+      profile = create_asset(filename, 'profile', url, max_width: 200, max_height: 200)
       small = create_asset(filename, 'small', url, max_width: 50, max_height: 50)
     end
 
