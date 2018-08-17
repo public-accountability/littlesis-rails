@@ -14,6 +14,8 @@ class Image < ApplicationRecord
   IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }.freeze
   IMAGE_TYPES = IMAGE_SIZES.keys.freeze
 
+  VALID_EXTENSIONS = %w[jpg jpeg svg png].to_set.freeze
+
   DEFAULT_FILE_TYPE = Lilsis::Application.config.default_image_file_type
 
   before_destroy :unfeature, if: :is_featured
@@ -35,23 +37,19 @@ class Image < ApplicationRecord
   end
 
   def download_to_tmp(remote_url)
-    open(tmp_path, 'wb') do |file|
-      begin
-        file << open(remote_url).read  
-      rescue OpenURI::HTTPError
-        return false
-      end
-      file.close
-    end
-    true
+    file = open(tmp_path, 'wb')
+    file << open(remote_url).read
+    return true
+  rescue OpenURI::HTTPError
+    return false
+  ensure
+    file.close
   end
 
   def original_exists?
-    uri = URI(url)
-
-    request = Net::HTTP.new(uri.host)
-    response = request.request_head(uri.path)
-    response.code.to_i == 200
+    HTTParty.head(url).code == 200
+  rescue HTTParty::ResponseError, SocketError
+    false
   end
 
   def self.s3_path(filename, type)
@@ -85,44 +83,67 @@ class Image < ApplicationRecord
     "#{SecureRandom.hex(16)}.#{file_type}"
   end
 
-  def self.new_from_url(url)
-    # This assumes that the image url has an filetype extension
-    #   ie: http://example.com/image.png
-    # a url fwithout an extension will not work
-    filename = random_filename(URI(url).path[-3, 3])
+  class InvalidFileExtensionError < StandardError
+  end
 
-    begin
-      original = MiniMagick::Image.open(url)
-    rescue => e
-      Rails.logger.info "Failed to open: #{url}"
-      Rails.logger.debug e.message
-      Rails.logger.debug e.backtrace.join('\n')
-      return false
+  def self.file_ext_from(url)
+    ext = File.extname(URI(url).path).tr('.', '').downcase
+    raise InvalidFileExtensionError unless VALID_EXTENSIONS.include?(ext)
+    ext
+  end
+
+  # Downloads url and saves images to temporary file
+  #
+  # String (url) --> String (file path) | false
+  def self.save_image_to_tmp(url)
+    file_path = Rails.root.join('tmp', "#{Digest::MD5.hexdigest(url)}.#{file_ext_from(url)}").to_s
+    file = File.open(file_path, 'wb')
+    response = HTTParty.get(url, stream_body: true) { |fragment| file.write(fragment) }
+    if response.success?
+      file_path
+    else
+      false
     end
+  ensure
+    file.close
+  end
+
+  # Downloads an image from url, resizes it, and uploads
+  # the resized images to S3.
+  #
+  # String (url) --> Image | false
+  #
+  # This assumes that the image url has an filetype extension
+  #   ie: http://example.com/image.png
+  # a url without an extension will not work
+  def self.new_from_url(url)
+    return false unless original_image_path = save_image_to_tmp(url)
+    filename = random_filename(file_ext_from(url))
+
+    original = MiniMagick::Image.open(original_image_path)
 
     if ENV['SKIP_S3_UPLOAD']
       large = profile = small = true
     else
-      large = create_asset(filename, 'large', url, 1024, 1024)
-      profile = create_asset(filename, 'profile', url, 200, 200)
-      small = create_asset(filename, 'small', url, 50, 50)
+      large = create_asset(filename, 'large', original_image_path, max_width: 1024, max_height: 1024)
+      profile = create_asset(filename, 'profile', original_image_path, max_width: 200, max_height: 200)
+      small = create_asset(filename, 'small', original_image_path, max_width: 50, max_height: 50)
     end
 
     if large && profile && small
-      return new(filename: filename,
-                 url: url.match?(/^https?:/) ? url : nil,
-                 width: original[:width],
-                 height: original[:height])
+      new(filename: filename, url: url, width: original[:width], height: original[:height])
     else
-      return false
+      false
     end
+  ensure
+    File.delete(original_image_path) if File.exist?(original_image_path)
   end
 
-  def self.create_asset(filename, type, read_path, max_width = nil, max_height = nil, check_first = true)
+  def self.create_asset(filename, type, read_path, max_width: nil, max_height: nil, check_first: true)
     begin
-      # RMagick can't seem to open remote files?
       img = MiniMagick::Image.open(read_path)
     rescue
+      Rails.logger.info "MiniMagick failed to open the file: #{read_path}"
       return false
     end
 
@@ -130,14 +151,14 @@ class Image < ApplicationRecord
     height = img[:height]
 
     if (max_width && (width > max_width)) || (max_height && (height > max_height))
-      w = max_width ? max_width : img[:width]
-      h = max_height ? max_height : img[:height]
+      w = max_width ||  img[:width]
+      h = max_height || img[:height]
       img.resize([w, h].join("x"))
     end
 
     tmp_path = Rails.root.join("tmp", "#{type}_#{filename}").to_s
     img.write(tmp_path)
-    result = S3.upload_file(Lilsis::Application.config.aws_s3_bucket, "images/#{type}/#{filename}", tmp_path, check_first)
+    result = S3.upload_file(remote_path: "images/#{type}/#{filename}", local_path: tmp_path, check_first: check_first)
     File.delete(tmp_path)
     result
   end
@@ -149,25 +170,12 @@ class Image < ApplicationRecord
     img.write(tmp_path)
 
     IMAGE_SIZES.each do |type, size|
-      self.class.create_asset(filename, type, tmp_path, size, size, false)
+      Image.create_asset(filename, type, tmp_path, max_width: size, max_height: size, check_first: false)
     end
 
     File.delete(tmp_path)
     invalidate_cloudfront_cache
     true
-  end
-
-  def ensure_large_s3
-    if s3_exists?('large')
-      return :exists
-    else
-      if (original_exists? rescue false)
-        Image.create_asset(filename, 'large', url, Image::IMAGE_SIZES[:large], Image::IMAGE_SIZES[:large], false)
-        return :created
-      else
-        return false
-      end
-    end
   end
 
   def feature

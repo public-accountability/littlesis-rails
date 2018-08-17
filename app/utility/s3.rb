@@ -3,6 +3,7 @@
 class S3
   BUCKET = Lilsis::Application.config.aws_s3_bucket.dup.freeze
   CACHE_CONTROL = 'public, max-age=2592000' # 30 days
+  VALID_MIME_TYPES = ['image/svg+xml', 'image/jpeg', 'image/png', 'image/gif', 'image/jpg'].freeze
 
   def self.url(path)
     base_url + path
@@ -21,11 +22,15 @@ class S3
     )
   end
 
+  def self.bucket
+    s3.bucket(BUCKET)
+  end
+
   def self.file_exists?(path, bucket = Lilsis::Application.config.aws_s3_bucket)
     s3.bucket(bucket).object(path).exists?
   end
 
-  def self.upload_file(bucket, remote_path, local_path, check_first = true)
+  def self.upload_file(remote_path:, local_path:, bucket: S3::BUCKET, check_first: true)
     object = s3.bucket(bucket).object(remote_path.gsub(/^\//, ''))
     return true if check_first && object.exists?
 
@@ -51,15 +56,58 @@ class S3
     return false
   end
 
-  def self.make_public_and_set_cache_headers(s3_object)
-    raise NotImplementedError
+  def self.make_public(s3_object)
+    s3_object.acl.put(acl: 'public-read')
+  end
+
+  # Updates S3 object metadata
+  #
+  # for whatever reason, the way to MODIFY an object's metadata
+  # on S3 is to copy it to itself.
+  #
+  # Additionally, it corrects the Content-Type of the image
+  # if it's missing from the metadata
+  def self.make_public_and_set_cache_header(s3_object)
+    return true if skip_metadata_update(s3_object)
+
+    s3_object.copy_to(s3_object,
+                      acl: 'public-read',
+                      content_type: content_type_for(s3_object),
+                      cache_control: CACHE_CONTROL,
+                      metadata: s3_object.metadata,
+                      metadata_directive: 'REPLACE')
   end
 
   private_class_method def self.s3_options(local_path)
-    options = { body: IO.read(Pathname.new(local_path)),
-                acl: 'public-read',
-                cache_control: CACHE_CONTROL }
-    options.store(:content_type, 'image/svg+xml') if local_path.slice(-3, 3).casecmp?('svg')
-    options
+    { body: IO.read(Pathname.new(local_path)),
+      acl: 'public-read',
+      cache_control: CACHE_CONTROL,
+      content_type: determine_content_type(local_path) }
+  end
+
+  private_class_method def self.skip_metadata_update(s3_object)
+    public?(s3_object) && VALID_MIME_TYPES.include?(s3_object.content_type) && s3_object.cache_control == CACHE_CONTROL
+  end
+
+  private_class_method def self.content_type_for(s3_object)
+    if s3_object.content_type.blank? || s3_object.content_type == 'application/octet-stream'
+      determine_content_type(s3_object.key)
+    else
+      s3_object.content_type
+    end
+  end
+
+  private_class_method def self.determine_content_type(file_path)
+    ext = File.extname(file_path).tr('.', '').downcase
+    case ext
+    when 'svg'
+      'image/svg+xml'
+    when 'jpg', 'jpeg'
+      'image/jpeg'
+    when 'png'
+      'image/png'
+    when 'gif'
+      'image/gif'
+    end
   end
 end

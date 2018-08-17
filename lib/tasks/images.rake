@@ -2,25 +2,10 @@
 namespace :images do
   desc 'Sets Cache Headers and ensures all images are public'
   task public_cache: :environment do
-    stats = Struct.new(:count, :missing).new(0, 0)
-
-    Image.find_each do |img|
-      if img.has_square
-        image_types = Image::IMAGE_TYPES.dup.tap { |t| t << :square }
-      else
-        image_types = Image::IMAGE_TYPES
-      end
-
-      image_types.each do |type|
-        stats.count += 1
-        obj = S3.s3.bucket(S3::BUCKET).object(Image.s3_path(img.filename, type))
-        if obj.exists?
-          S3.make_public_and_set_cache_headers(obj)
-        else
-          stats.missing += 1
-        end
-      end
-      pp stats if (stats.count % 1_000).zero?
+    S3.bucket.objects(prefix: 'images').each do |obj_summary|
+      next if obj_summary.key.slice(-1) == '/'
+      puts "Processing: #{obj_summary.key}"
+      S3.make_public_and_set_cache_header obj_summary.object
     end
   end
 
