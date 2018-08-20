@@ -5,6 +5,7 @@ module SoftDelete
 
   included do
     default_scope -> { where(is_deleted: false) }
+    define_model_callbacks :soft_delete
   end
 
   module ClassMethods
@@ -18,14 +19,28 @@ module SoftDelete
   end
 
   def soft_delete
-    set_paper_trail_event do
-      ApplicationRecord.transaction do
-        update!(is_deleted: true)
-        after_soft_delete
+    run_callbacks :soft_delete do
+      set_paper_trail_event do
+        ApplicationRecord.transaction do
+          update!(is_deleted: true)
+          after_soft_delete
+        end
       end
     end
   end
 
+  # This "manual" method of creating a callback via
+  # implementing this function was made before
+  # I found out you can create custom callbacks with
+  # define_model_callbacks
+  #
+  # Consequently there are two ways to run code after a soft_delete:
+  #   1) Implement this method `after_soft_delete`
+  #   2) Use a custom method and register the callback:
+  #        class Klass < ApplicationRecord
+  #          after_soft_delete :my_soft_delete_method
+  #        end
+  #
   def after_soft_delete
   end
 
