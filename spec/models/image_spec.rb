@@ -13,10 +13,64 @@ describe Image, type: :model do
     specify { expect(Image::IMAGE_SIZES).to be_a Hash }
   end
 
-  describe 'soft_delete' do
-    it 'changes is_deleted' do
-      image = create(:image, entity: create(:entity_org))
-      expect { image.soft_delete }.to change { image.is_deleted }.to(true)
+  describe 'Soft Delete / Destroy' do
+    let(:entity) { create(:entity_org) }
+    let(:image) { create(:image, entity: entity, is_featured: true) }
+    let(:not_featured) { create(:image, entity: entity, is_featured: false) }
+
+    describe 'soft_delete' do
+      before { image }
+      it 'changes is_deleted' do
+        expect { image.soft_delete }.to change { image.is_deleted }.to(true)
+      end
+    end
+
+    describe 'destroy' do
+      before do
+        image
+        not_featured
+      end
+
+      it 'changes is_deleted' do
+        expect { image.destroy }.to change { image.is_deleted }.to(true)
+      end
+
+      it 'destorying image also unfeatures the image' do
+        expect { image.destroy }
+          .to change { not_featured.reload.is_featured }
+                .from(false).to(true)
+      end
+
+    end
+  end
+
+  describe 'feature/unfeature' do
+    let!(:entity) { create(:entity_person) }
+    let!(:featured_image) { create(:image, entity: entity, is_featured: true) }
+    let!(:image) { create(:image, entity: entity, is_featured: false) }
+
+    describe '#feature' do
+      it 'sets is_featured to true' do
+        expect { image.feature }
+          .to change { image.reload.is_featured }.from(false).to(true)
+      end
+
+      it 'removes featured status from other images' do
+        expect { image.feature }
+          .to change { featured_image.reload.is_featured }.from(true).to(false)
+      end
+    end
+
+    describe '#unfeature' do
+      it 'sets is_featured to false' do
+        expect { featured_image.unfeature }
+          .to change { featured_image.reload.is_featured }.from(true).to(false)
+      end
+
+      it 'features another image' do
+        expect { featured_image.unfeature }
+          .to change { image.reload.is_featured }.from(false).to(true)
+      end
     end
   end
 

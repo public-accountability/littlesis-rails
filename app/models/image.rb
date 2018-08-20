@@ -18,11 +18,15 @@ class Image < ApplicationRecord
 
   DEFAULT_FILE_TYPE = Lilsis::Application.config.default_image_file_type
 
-  before_destroy :unfeature, if: :is_featured
+  before_soft_delete :unfeature, if: :is_featured
 
   validates :entity_id, presence: true
   validates :filename, presence: true
   validates :title, presence: true
+
+  def destroy
+    soft_delete
+  end
 
   def download_large_to_tmp
     download_to_tmp s3_url('large')
@@ -179,19 +183,26 @@ class Image < ApplicationRecord
   end
 
   def feature
+    return self if is_featured
+
     ApplicationRecord.transaction do
       Image.where(entity_id: entity_id).where.not(id: id).update_all(is_featured: false)
-      self.is_featured = true
-      save
+      update!(is_featured: true)
     end
+    self
   end
 
   def unfeature
-    self.is_featured = false
+    return self unless is_featured
 
-    if new_featured = Image.where(entity_id: entity_id).where.not(id: id).first
-      new_featured.update(is_featured: true)
+    self.class.transaction do
+      update!(is_featured: false)
+      if (new_featured = Image.where(entity_id: entity_id).where.not(id: id).first)
+        new_featured.update!(is_featured: true)
+      end
     end
+
+    self
   end
 
   def invalidate_cloudfront_cache
