@@ -91,14 +91,25 @@ class RelationshipsDatatable
     @links.collect(&:relationship).uniq { |r| r.id }
   end
 
+  # Initialized for a collection of entiites (i.e. a list)
+  # See views/lists/datatable
   def list?
     @entities.count > 1
   end
 
+  # It appears that the only reason for limiting
+  # these filter options is for performance.
+  # Large collection of related entities and/or
+  # relationships likely causes a DB bottleneck.
+  # We should do some testing and/or refactoring to see
+  # if we can just remove these limits. (2018-08-21)
+
+  # Show "On List" filter option
   def lists?
     @related_ids.count < 1000
   end
 
+  # Show "Connected to" filter option
   def interlocks?
     @num_links ||= @links.count
     @force_interlocks or @num_links < 1000
