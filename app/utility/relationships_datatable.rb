@@ -8,19 +8,19 @@ class RelationshipsDatatable
 
   attr_reader :data, :links, :categories, :types, :industries, :entities, :interlocks, :lists
 
-  def initialize(entities, force_interlocks=false)
+  def initialize(entities, force_interlocks = false)
     @force_interlocks = force_interlocks
     categories = { 0 => ["Relationship", ""] }
     types = []
     industries = []
 
-    @entities = Array(entities)
-    entity_ids = @entities.map(&:id)
-    @links = Link.includes({ relationship: :position }, :entity, { related: [:extension_definitions, :os_categories] }).where(entity1_id: entity_ids, relationship: { is_deleted: 0 }).where.not(entity2_id: entity_ids).limit(10000)
+    @entities = Array.wrap(entities)
+    @entity_ids = @entities.map(&:id)
+    @links = load_links
     @related_ids = @links.map(&:entity2_id).uniq
 
     if interlocks?
-      degree2_links = Link.select(:entity1_id, :entity2_id).where(entity1_id: @links.select { |l| [1,3].include?(l.category_id) }.map(&:entity2_id), category_id: [1, 3]).where.not(entity2_id: entity_ids).map { |l| [l.entity1_id, l.entity2_id] }.uniq
+      degree2_links = Link.select(:entity1_id, :entity2_id).where(entity1_id: @links.select { |l| [1,3].include?(l.category_id) }.map(&:entity2_id), category_id: [1, 3]).where.not(entity2_id: @entity_ids).map { |l| [l.entity1_id, l.entity2_id] }.uniq
       interlocks = degree2_links.reduce({}) do |hash, link| 
         hash[link[1]] = hash.fetch(link[1], []).push(link[0])
         hash
@@ -102,5 +102,14 @@ class RelationshipsDatatable
   def interlocks?
     @num_links ||= @links.count
     @force_interlocks or @num_links < 1000
+  end
+
+  private
+
+  def load_links
+    Link
+      .includes({ relationship: :position }, :entity, { related: [:extension_definitions, :os_categories] }).where(entity1_id: @entity_ids, relationship: { is_deleted: 0 })
+      .where.not(entity2_id: @entity_ids)
+      .limit(10000)
   end
 end
