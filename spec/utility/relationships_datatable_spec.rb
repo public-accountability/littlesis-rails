@@ -5,6 +5,7 @@ describe RelationshipsDatatable do
   describe '#initialize' do
     let(:org) { build(:org) }
     let(:orgs) { [build(:org), build(:org)] }
+    let(:links) { [build(:link, entity1_id: org.id), build(:link, entity1_id: org.id)] }
     subject { RelationshipsDatatable.new(org) }
 
     it 'sets force_interlocks to be false by default' do
@@ -21,7 +22,26 @@ describe RelationshipsDatatable do
         .to eql orgs.map(&:id)
     end
 
-    it 'sets links'
+    it 'sets links' do
+      expect(Link).to receive(:includes).once
+                        .and_return(double(:where => double(:limit => [])))
+      expect(RelationshipsDatatable.new(org).links).to eql []
+    end
+
+  end
+
+  describe 'load_links' do
+    let!(:entity) { create(:entity_person) }
+    let!(:relationships) do
+      Array.new(2) do
+        create(:generic_relationship, entity: entity, related: create(:entity_person))
+      end
+    end
+    subject { RelationshipsDatatable.new(entity) }
+
+    it 'queries database for links' do
+      expect(subject.links.to_set).to eql Link.where(entity1_id: entity.id).to_set
+    end
 
   end
 

@@ -106,10 +106,13 @@ class RelationshipsDatatable
 
   private
 
+  # NOTE: a previous version of this query included
+  # an addition where that prohibited relationships
+  # that were to yourself:  ` where.not(entity2_id: @entity_ids) `
   def load_links
     Link
-      .includes({ relationship: :position }, :entity, { related: [:extension_definitions, :os_categories] }).where(entity1_id: @entity_ids, relationship: { is_deleted: 0 })
-      .where.not(entity2_id: @entity_ids)
-      .limit(10000)
+      .includes(:entity, relationship: :position, related: [:extension_definitions, :os_categories])
+      .where(entity1_id: @entity_ids)
+      .limit(5_000)
   end
 end
