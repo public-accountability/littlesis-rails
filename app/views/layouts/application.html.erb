@@ -9,6 +9,10 @@
   <% if Lilsis::Application.config.respond_to?(:google_site_verification) %>
   	<meta name="google-site-verification" content="<%= Lilsis::Application.config.google_site_verification %>" />
   <% end %>
+
+  <% if content_for?(:head) %>
+    <%= yield :head %>
+  <% end %>
 </head>
 <body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
 
