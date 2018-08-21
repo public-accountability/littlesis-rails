@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module NetworkAnalysis
 
   # CONSTANTS
@@ -113,12 +115,7 @@ module NetworkAnalysis
     ORDER BY stat desc
     SQL
 
-    # TODO(ag|09-Oct-2017): extract this as a helper?
-    result = []
-    ApplicationRecord.connection.execute(sql).each(:as => :hash) do |h|
-      result << parse_connecting_ids(h)
-    end
-    result
+    ApplicationRecord.connection.exec_query(sql).to_hash.map { |h| parse_connecting_ids(h) }
   end
 
   # Hash -> ConnectedIdHash
