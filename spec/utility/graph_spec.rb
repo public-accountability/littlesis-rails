@@ -3,8 +3,7 @@ require 'rails_helper'
 # rubocop:disable Style/WordArray
 
 describe Graph do
-
-  describe 'correctly parses matrix' do
+  describe 'correctly parses edges' do
     let(:edges) do
       { ['a', 'b'] => 123,
         ['b', 'c'] => 456 }
@@ -12,32 +11,11 @@ describe Graph do
 
     subject { Graph.new(edges) }
 
-    it 'sets @nodes' do
-      expect(subject.instance_variable_get(:@nodes))
-        .to eql ['a', 'b', 'c']
-    end
-
-    it 'sets @index_to_node' do
-      expect(subject.instance_variable_get(:@index_to_node))
-        .to eql({
-                  0 => 'a',
-                  1 => 'b',
-                  2 => 'c'
-                })
-    end
-
-    it 'sets @node_to_index' do
-      expect(subject.instance_variable_get(:@node_to_index))
-        .to eql({
-                  'a' => 0,
-                  'b' => 1,
-                  'c' => 2
-                })
-    end
-
-    it 'builds the matrix' do
-      expect(subject.matrix)
-        .to eql Matrix.rows([[nil, 123, nil], [nil, nil, 456], [nil, nil, nil]])
+    it 'sets @graph' do
+      expect(subject.instance_variable_get(:@graph))
+        .to eql('a' => Set['b'],
+                'b' => Set['a', 'c'],
+                'c' => Set['b'])
     end
   end
 
@@ -46,27 +24,55 @@ describe Graph do
       {
         ['a', 'b'] => 1,
         ['c', 'a'] => 2,
-        ['d', 'c'] => 3
+        ['d', 'c'] => 3,
+        ['e', 'b'] => 4,
+        ['f', 'g'] => 5,
+        ['h', 'c'] => 6
       }
     end
+
     subject { Graph.new(edges) }
 
-    describe 'first_degree_relationships' do
-      it 'raises error if node is not in the graph' do
-        expect { subject.first_degree_relationships('x') }
-          .to raise_error(Graph::NodeNotInGraphError)
+    describe 'connected_nodes' do
+
+      describe 'one level deep' do
+        specify do
+          expect(subject.connected_nodes('a', max_depth: 1))
+            .to eql [Set['b', 'c']]
+        end
+
+        specify do
+          expect(subject.connected_nodes('f', max_depth: 1))
+            .to eql [Set['g']]
+        end
       end
 
-      specify do
-        expect(subject.first_degree_relationships('a')).to eql Set[1,2]
+      describe 'two levels deep' do
+        specify do
+          expect(subject.connected_nodes('a', max_depth: 2))
+            .to eql [Set['b', 'c'], Set['d', 'e', 'h']]
+        end
+
+        specify do
+          expect(subject.connected_nodes('f', max_depth: 2))
+            .to eql [Set['g'], Set[]]
+        end
       end
 
-      specify do
-        expect(subject.first_degree_relationships('b')).to eql Set[1]
+      describe 'can be initalized with two values' do
+        specify do 
+          expect(subject.connected_nodes(['e', 'f']))
+            .to eql [Set['g', 'b']]
+        end
+      end
+
+      describe 'max MAX dpeth ' do
+        specify do
+          expect(subject.connected_nodes('f', max_depth: 1_000_000))
+            .to eql [Set['g'], Set[]]
+        end
       end
     end
-    
-
   end
 end
 
