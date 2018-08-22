@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module NetworkAnalysis
-  NIL_LAMBDA = ->(_) { nil }
+# rubocop:disable Metrics/MethodLength
 
+module NetworkAnalysis
   HOPS = {
     gives_labor_to:  { category_id: Relationship::POSITION_CATEGORY, is_reverse: false },
     gets_labor_from: { category_id: Relationship::POSITION_CATEGORY, is_reverse: true  },
@@ -22,7 +22,7 @@ module NetworkAnalysis
   }.freeze
 
   JOIN_STATEMENTS = {
-    relationship: "JOIN relationship on second_hop.relationship_id = relationship.id"
+    relationship: 'JOIN relationship on second_hop.relationship_id = relationship.id'
   }.freeze
 
   PARAMS_BY_QUERY = {
@@ -71,9 +71,9 @@ module NetworkAnalysis
 
     paginated_id_hashes.map do |id_hash|
       {
-        "connected_entity" => entities_by_id.fetch(id_hash["connected_id"]),
-        "connecting_entities" => id_hash["connecting_ids"].map { |id| entities_by_id.fetch(id) },
-        "stat" => format_stat.call(id_hash["stat"])
+        'connected_entity' => entities_by_id.fetch(id_hash['connected_id']),
+        'connecting_entities' => id_hash['connecting_ids'].map { |id| entities_by_id.fetch(id) },
+        'stat' => format_stat.call(id_hash['stat'])
       }
     end
   end
@@ -133,3 +133,5 @@ module NetworkAnalysis
     end
   end
 end
+
+# rubocop:enable Metrics/MethodLength
