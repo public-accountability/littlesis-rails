@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 module NetworkAnalysis
-
-  # CONSTANTS
-
   NIL_LAMBDA = ->(_) { nil }
 
   HOPS = {
@@ -53,47 +50,36 @@ module NetworkAnalysis
     }
   }.freeze
 
-  # CLASS METHODS
-
   def self.query_params_for(query, ext)
     PARAMS_BY_QUERY["#{query}_#{ext.downcase}".to_sym]
   end
 
-  # INSTANCE METHODS
-
-  def interlocks(page = 1)
-    connected_nodes(NetworkAnalysis.query_params_for(:interlocks, primary_ext), page)
-  end
-
-  def similar_donors(page = 1)
-    connected_nodes(NetworkAnalysis.query_params_for(:similar_donors, primary_ext), page)
-  end
-
-  def employee_donations(page = 1)
-    connected_nodes(NetworkAnalysis.query_params_for(:employee_donations, primary_ext), page)
-  end
-
-  # QueryParam, Integer -> [ConnectedEntityHash]
-  def connected_nodes(query_params, page = 1)
-    id_hashes = connected_ids_via(*query_params.values_at(:hops, :stat))
-    paginated_id_hashes = paginate(page, Entity::PER_PAGE, id_hashes)
+  # Queries for 2nd degree connected entities based on provided critieria.
+  # Returns an array of Hashes with three keys: connected_entity, connecting_entities, stat
+  #
+  # Takes five arguments
+  #   root_entity_id (Integer) - The id of the starting entity
+  #   hops (Array of Hops) - An array of "Hops", filters for traversing the graph
+  #   stat (Symbol) - the aggregator for the query
+  #   format_stat (Proc) - formats the summary stat
+  #   page (Integer) [Optional, defaults to 1] - page for limit/offset pagination
+  #
+  def self.connected_nodes(root_entity_id:, hops:, stat:, format_stat:, page: 1)
+    id_hashes = connected_ids_via(hops: hops, stat: stat, entity_id: root_entity_id)
+    paginated_id_hashes = Pagination.paginate(page, Entity::PER_PAGE, id_hashes)
     entities_by_id = Entity.lookup_table_for(collapse(paginated_id_hashes))
 
     paginated_id_hashes.map do |id_hash|
       {
         "connected_entity" => entities_by_id.fetch(id_hash["connected_id"]),
         "connecting_entities" => id_hash["connecting_ids"].map { |id| entities_by_id.fetch(id) },
-        "stat" => query_params[:format_stat].call(id_hash["stat"])
+        "stat" => format_stat.call(id_hash["stat"])
       }
     end
   end
 
-  # HELPERS
-
-  private
-
-  # [Hop], Symbol -> [ConnectedIdHashd]
-  def connected_ids_via(hops, stat)
+  # [Hop], Symbol, Integer -> [ConnectedIdHashd]
+  def self.connected_ids_via(hops:, stat:, entity_id:)
     sql = <<-SQL
     SELECT second_hop.entity2_id AS connected_id,
            GROUP_CONCAT(distinct second_hop.entity1_id) AS connecting_ids,
@@ -101,7 +87,7 @@ module NetworkAnalysis
     FROM (
            SELECT DISTINCT entity2_id as first_hop_dest_id
            FROM link
-	   WHERE entity1_id = #{id}
+	   WHERE entity1_id = #{entity_id}
                  AND category_id = #{hops.first[:category_id]}
                  AND is_reverse = #{hops.first[:is_reverse]}
     ) as first_hop
@@ -110,7 +96,7 @@ module NetworkAnalysis
           AND second_hop.category_id = #{hops.second[:category_id]}
           AND second_hop.is_reverse = #{hops.second[:is_reverse]}
     #{JOIN_STATEMENTS[:relationship] if JOINS_BY_STAT.dig(stat, :relationship)}
-    WHERE second_hop.entity2_id <> #{id}
+    WHERE second_hop.entity2_id <> #{entity_id}
     GROUP BY second_hop.entity2_id
     ORDER BY stat desc
     SQL
@@ -118,13 +104,32 @@ module NetworkAnalysis
     ApplicationRecord.connection.exec_query(sql).to_hash.map { |h| parse_connecting_ids(h) }
   end
 
+  # HELPERS
+
   # Hash -> ConnectedIdHash
-  def parse_connecting_ids(sql_hash)
+  def self.parse_connecting_ids(sql_hash)
     sql_hash.merge!('connecting_ids' => sql_hash.fetch('connecting_ids').split(',').map(&:to_i))
   end
 
   # [ConnectedIdHash]n -> [Integer]
-  def collapse(connected_id_hashes)
+  def self.collapse(connected_id_hashes)
     connected_id_hashes.map { |x| [x["connected_id"], x["connecting_ids"]] }.flatten.uniq
+  end
+
+  private_class_method :parse_connecting_ids, :collapse
+
+  # Included in Entity
+  #
+  # Provides three method: interlocks similar_donors employee_donations
+  module EntityInterlocks
+    %i[interlocks similar_donors employee_donations].each do |interlock_type|
+      define_method(interlock_type) do |page = 1|
+        args = NetworkAnalysis
+               .query_params_for(interlock_type, primary_ext)
+               .merge(page: page, root_entity_id: id)
+
+        NetworkAnalysis.connected_nodes(**args)
+      end
+    end
   end
 end

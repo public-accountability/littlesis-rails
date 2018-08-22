@@ -9,7 +9,7 @@ class Entity < ApplicationRecord
   include EntityPaths
   include EntitySearch
   include Tagable
-  include NetworkAnalysis
+  include NetworkAnalysis::EntityInterlocks
   include Pagination
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
