@@ -47,7 +47,7 @@ class RelationshipsGraph
   #  output: Array[Set]
   def connected_nodes(root_nodes, max_depth: 1, visited_nodes: Set.new, levels: [])
     # accept single values or anything that responds to #to_a
-    queue = root_nodes.respond_to?(:to_a) ? root_nodes.to_a : Array.wrap(root_nodes)
+    queue = wrap(root_nodes)
     visited_nodes.merge(queue.to_set)
     nodes_found_this_round = Set.new
 
@@ -59,19 +59,59 @@ class RelationshipsGraph
 
     levels << nodes_found_this_round
 
-    if levels.size == max_depth || nodes_found_this_round.empty?
-      return levels
+    return levels if search_is_over?(levels, max_depth)
+
+    connected_nodes(nodes_found_this_round,
+                    max_depth: max_depth,
+                    visited_nodes: visited_nodes,
+                    levels: levels)
+  end
+
+  # Searches through the graph by levels.
+  # Returns an array of sets of connected node ids by level.
+  #
+  # Similar to connected_nodes except it returns the id of the node instead of the
+  # entities that are connected
+  def connected_ids(root_nodes = nil, max_depth: 1, visited_ids: Set.new, levels: [])
+    raise ArgumentError, 'Root nodes not provided' if levels.length.zero? && root_nodes.nil?
+
+    if root_nodes
+      ids_found_this_round = wrap(root_nodes)
+                               .map { |n| @nodes[n][:ids] }
+                               .reduce(:+)
     else
-      return connected_nodes(nodes_found_this_round,
-                             max_depth: max_depth,
-                             visited_nodes: visited_nodes,
-                             levels: levels)
+      last_round_nodes = levels
+                           .last
+                           .map { |id| @edges[id].values_at('entity1_id', 'entity2_id') }
+                           .flatten
+                           .uniq
+
+      ids_found_this_round = last_round_nodes
+                               .map { |n| @nodes[n][:ids] }
+                               .reduce(:+)
+                               .difference(visited_ids)
     end
+
+    levels << ids_found_this_round
+    return levels if search_is_over?(levels, max_depth)
+
+    visited_ids.merge(ids_found_this_round)
+    connected_ids(max_depth: max_depth, visited_ids: visited_ids, levels: levels)
   end
 
   private
 
+  def search_is_over?(levels, max_depth)
+    levels.size == max_depth || levels.last.empty?
+  end
+
+  def wrap(x)
+    x.respond_to?(:to_a) ? x.to_a : Array.wrap(x)
+  end
+
   def default_node_value
     { ids: Set.new, associated: Set.new }
   end
+
+  # EXCEPTIONS
 end

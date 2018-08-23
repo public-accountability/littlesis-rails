@@ -83,15 +83,20 @@ describe RelationshipsGraph do
       end
     end
 
-    xdescribe 'mode set to ids' do
-      it 'returns IDS for "a", one level deep' do
-        expect(subject.connected_nodes('a', max_depth: 1, mode: :ids))
+    describe 'connected ids' do
+      it 'returns ids for "a", one level deep' do
+        expect(subject.connected_ids('a', max_depth: 1))
             .to eql [Set[1, 2, 8]]
       end
 
-      it 'returns IDS for "a", four levels deep' do
-        expect(subject.connected_nodes('a', max_depth: 4, mode: :ids))
+      it 'returns ids for "a", four levels deep' do
+        expect(subject.connected_ids('a', max_depth: 4))
             .to eql [Set[1, 2, 8], Set[3, 7 , 5], Set[4], Set[6]]
+      end
+
+      it 'returns ids for ["a", "b"], two levels deep' do
+        expect(subject.connected_ids(['a', 'b'], max_depth: 2))
+            .to eql [Set[1, 2, 8,5], Set[3, 7, 4]]
       end
     end
 
