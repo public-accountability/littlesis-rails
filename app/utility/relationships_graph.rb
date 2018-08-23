@@ -5,11 +5,11 @@
 class RelationshipsGraph
   attr_reader :edges, :nodes
 
-  # Relationships is a Array of Hash with these required keys:
+  # Relationships is a Array of hashes with these required keys:
   #    id, entity1_id, entity2_id, category_id
   # Other fields will be ignored
   #
-  # @edges is a hash from maps id to the other values of the relationship:
+  # @edges is a hash conneting the id to the other values of the relationship:
   #   { 123 => { 'entity1_id' => 1, 'entity2_id' => 2, 'category_id' => 3 } }
   #
   # @nodes is a hash mapping entity to two sets with node ids and associated nodes
@@ -70,8 +70,8 @@ class RelationshipsGraph
   # Searches through the graph by levels.
   # Returns an array of sets of connected node ids by level.
   #
-  # Similar to connected_nodes except it returns the id of the node instead of the
-  # entities that are connected
+  # Similar to connected_nodes except it returns the id of the node 
+  # instead of the entities that are connected to it
   def connected_ids(root_nodes = nil, max_depth: 1, visited_ids: Set.new, levels: [])
     raise ArgumentError, 'Root nodes not provided' if levels.length.zero? && root_nodes.nil?
 
@@ -112,6 +112,4 @@ class RelationshipsGraph
   def default_node_value
     { ids: Set.new, associated: Set.new }
   end
-
-  # EXCEPTIONS
 end

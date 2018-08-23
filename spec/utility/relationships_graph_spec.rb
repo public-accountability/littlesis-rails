@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+# rubocop:disable Style/WordArray
+
 describe RelationshipsGraph do
   describe 'correctly parses relationship data' do
     let(:relationships) do
@@ -24,7 +26,7 @@ describe RelationshipsGraph do
     it 'sets nodes' do
       expect(subject.nodes)
         .to eql('a' => { ids: Set[123], associated: Set['b'] },
-                'b' => { ids: Set[123, 456], associated: Set['a','c'] },
+                'b' => { ids: Set[123, 456], associated: Set['a', 'c'] },
                 'c' => { ids: Set[456], associated: Set['b'] })
     end
   end
@@ -96,10 +98,14 @@ describe RelationshipsGraph do
 
       it 'returns ids for ["a", "b"], two levels deep' do
         expect(subject.connected_ids(['a', 'b'], max_depth: 2))
-            .to eql [Set[1, 2, 8,5], Set[3, 7, 4]]
+            .to eql [Set[1, 2, 8, 5], Set[3, 7, 4]]
+      end
+
+      it 'raises argument error if no root node is given' do
+        expect { subject.connected_ids(max_depth: 3) }
+          .to raise_error { ArgumentError }
       end
     end
-
   end
 end
 
