@@ -2,21 +2,34 @@
 
 # Graph implementation
 #
-# edges data structure
-# {
-#   [entity1, entity2] => relationship_id
-# }
+# edges data structure:
+#
+# [ [ entity1, entity2, data ] ]
+#
+# Data is optional and can be any object.
+# If present a lookup table is created with this data structure:
+#  {
+#     [entity1, entity2] => data
+#  }
 
 class Graph
+  attr_reader :edges, :graph, :lookup
 
   def initialize(edges)
     @edges = edges
     @graph = {}
     @graph.default_proc = proc { Set.new }
 
-    edges.each do |entity_ids, _|
-      @graph[entity_ids.first] = @graph[entity_ids.first].add(entity_ids.last)
-      @graph[entity_ids.last] = @graph[entity_ids.last].add(entity_ids.first)
+    if (create_lookup = !@edges.first[2].nil?)
+      @lookup = {}
+    else
+      @lookup = nil
+    end
+
+    @edges.each do |(entity1, entity2, data)|
+      @graph[entity1] = @graph[entity1].add(entity2)
+      @graph[entity2] = @graph[entity2].add(entity1)
+      @lookup.store [entity1, entity2], data if create_lookup
     end
 
     @graph.default_proc = nil
@@ -46,4 +59,3 @@ class Graph
     end
   end
 end
-
