@@ -99,6 +99,31 @@ class RelationshipsGraph
     connected_ids(max_depth: max_depth, visited_ids: visited_ids, levels: levels)
   end
 
+  InterlockedNode = Struct.new(:id, :count)
+
+  # returns ranked array of second-degree connected nodes with count
+  # output: [InterlockedNode]
+  def sorted_interlocks(root_node)
+    node_ids = connected_ids(root_node, max_depth: 2).last
+    degree1_nodes = connected_nodes(root_node, max_depth: 1).first
+
+    degree2_nodes = {}
+    degree2_nodes.default = 0
+
+    node_ids.each do |node_id|
+      if degree1_nodes.include? @edges.dig(node_id, 'entity1_id')
+        degree2_nodes[@edges.dig(node_id, 'entity2_id')] = degree2_nodes[@edges.dig(node_id, 'entity2_id')] += 1
+      else
+        degree2_nodes[@edges.dig(node_id, 'entity1_id')] = degree2_nodes[@edges.dig(node_id, 'entity1_id')] += 1
+      end
+    end
+
+    degree2_nodes
+      .to_a
+      .map { |node_id, count| InterlockedNode.new(node_id, count) }
+      .sort { |a, b| b.count <=> a.count }
+  end
+
   private
 
   def search_is_over?(levels, max_depth)

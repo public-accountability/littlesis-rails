@@ -107,6 +107,31 @@ describe RelationshipsGraph do
       end
     end
   end
+
+  describe 'sorted_interlocks' do
+    let(:relationships) do
+      [
+        { 'id' => 1, 'entity1_id' => 'a', 'entity2_id' => 'b', 'category_id' => 12 },
+        { 'id' => 2, 'entity1_id' => 'a', 'entity2_id' => 'c', 'category_id' => 11 },
+        { 'id' => 3, 'entity1_id' => 'a', 'entity2_id' => 'd', 'category_id' => 10 },
+        { 'id' => 4, 'entity1_id' => 'b', 'entity2_id' => 'e', 'category_id' => 9 },
+        { 'id' => 5, 'entity1_id' => 'c', 'entity2_id' => 'e', 'category_id' => 8 },
+        { 'id' => 6, 'entity1_id' => 'd', 'entity2_id' => 'e', 'category_id' => 7 },
+        { 'id' => 7, 'entity1_id' => 'c', 'entity2_id' => 'f', 'category_id' => 6 },
+        { 'id' => 8, 'entity1_id' => 'd', 'entity2_id' => 'f', 'category_id' => 5 },
+        { 'id' => 9, 'entity1_id' => 'd', 'entity2_id' => 'g', 'category_id' => 4 }
+      ]
+    end
+
+    subject { RelationshipsGraph.new(relationships) }
+
+    specify do
+      expect(subject.sorted_interlocks('a'))
+        .to eql [RelationshipsGraph::InterlockedNode.new('e', 3),
+                 RelationshipsGraph::InterlockedNode.new('f', 2),
+                 RelationshipsGraph::InterlockedNode.new('g', 1)]
+    end
+  end
 end
 
 # rubocop:enable Style/WordArray
