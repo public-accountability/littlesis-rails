@@ -22,6 +22,8 @@ class Link < ApplicationRecord
 
   # Retrives first and second degree relationships
   #
+  # Note: hardcoded limit of 20,000
+  #
   # Entity | Interger --> [{}]
   def self.relationship_network_for(entity_or_id)
     entity_id = Entity.entity_id_for(entity_or_id)
@@ -32,6 +34,7 @@ class Link < ApplicationRecord
     LEFT JOIN link as degree_two_links
             ON degree_one_links.entity2_id = degree_two_links.entity1_id
     #{sanitize_sql_for_conditions ['WHERE degree_one_links.entity1_id = ?', entity_id]}
+    LIMIT 20000
     SQL
 
     ApplicationRecord.connection.exec_query(sql).to_hash.map do |h|
