@@ -293,5 +293,14 @@ describe('utility', function(){
         expect($('#test-dom .sk-circle')).not.toExist();
       });
     });
+
+    describe('#createElementWithText', () => {
+      it('creates a new element', () => {
+	document.getElementById('test-dom')
+	  .appendChild( utility.createElementWithText('p', 'just a simple paragraph'));
+
+	expect( $('#test-dom > p').text() ).toEqual('just a simple paragraph');
+      });
+    });
   });
 });

@@ -389,3 +389,17 @@ utility.swapInputTextById = function(aId, bId) {
   a.val(b.val());
   b.val(temp);
 };
+
+
+/**
+ * Creates new element with text content
+ *
+ * @param {String} tagName
+ * @param {String} text
+ * @returns {Element} 
+ */
+utility.createElementWithText = function(tagName, text) {
+  var element = document.createElement(tagName);
+  element.textContent = text;
+  return element;
+};
