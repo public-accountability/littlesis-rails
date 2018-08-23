@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Link < ApplicationRecord
   include SingularTable
 
@@ -15,6 +17,30 @@ class Link < ApplicationRecord
     links.reduce({}) do |hash, link|
       hash[link.entity2_id] = hash.fetch(link.entity2_id, []).push(link.entity1_id).uniq
       hash
+    end
+  end
+
+  # Retrives first and second degree relationships
+  #
+  # Entity | Interger --> [{}]
+  def self.relationship_network_for(entity_or_id)
+    entity_id = Entity.entity_id_for(entity_or_id)
+
+    sql = <<-SQL
+    SELECT *
+    FROM link as degree_one_links
+    LEFT JOIN link as degree_two_links
+            ON degree_one_links.entity2_id = degree_two_links.entity1_id
+    #{sanitize_sql_for_conditions ['WHERE degree_one_links.entity1_id = ?', entity_id]}
+    SQL
+
+    ApplicationRecord.connection.exec_query(sql).to_hash.map do |h|
+      if h['is_reverse'] == 1
+        h.slice('relationship_id', 'category_id')
+          .merge('entity1_id' => h['entity2_id'], 'entity2_id' => h['entity1_id'])
+      else
+        h.except('id', 'is_reverse')
+      end
     end
   end
 

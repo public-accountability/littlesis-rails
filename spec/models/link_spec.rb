@@ -7,15 +7,67 @@ describe Link, type: :model do
   it { should have_many(:chained_links) }
 
   def org_with_type(type)
-    org = create(:org)
+    org = create(:entity_org)
     org.add_extension(type)
     org
   end
 
   def person_with_type(type)
-    person = create(:person)
+    person = create(:entity_person)
     person.add_extension(type)
     person
+  end
+
+  # cr = create_relationship
+  def cr(entity, related, cat)
+    Relationship.create!(category_id: cat, entity: entity, related: related)
+  end
+
+  describe 'relationship_network_for' do
+    let(:root) { create(:entity_person) }
+    let(:entities) do
+      {
+        'a' => create(:entity_org, name: 'a'),
+        'b' => create(:entity_org, name: 'b'),
+        'c' => create(:entity_org, name: 'c'),
+        'd' => create(:entity_org, name: 'd')
+        # 'e' => create(:entity_org, name: 'e'),
+        # 'f' => create(:entity_org, name: 'f')
+      }
+    end
+
+    # root is connected to a and b
+    # a is connected to c and d
+    # b is connected to d
+    before do
+      @position_relationship = cr(root, entities['a'], 1)
+      @generic_relationship = cr(entities['b'], root, 12)
+      cr entities['a'], entities['c'], 3
+      cr entities['a'], entities['d'], 5
+      cr entities['b'], entities['d'], 5
+      # random relationship
+      cr entities['c'], create(:entity_person), 12
+    end
+
+    subject { Link.relationship_network_for(root) }
+
+    it 'returns 5 hashes' do
+      expect(subject.count).to eql 5
+    end
+
+    it 'reverses relationship order if needed' do
+      expect(subject.find { |h| h['category_id'] == 1 })
+        .to eql({ 'relationship_id' => @position_relationship.id,
+                  'category_id' => 1,
+                  'entity1_id' => root.id,
+                  'entity2_id' => entities['a'].id })
+
+      expect(subject.find { |h| h['category_id'] == 12 })
+        .to eql({ 'relationship_id' => @generic_relationship.id,
+                  'category_id' => 12,
+                  'entity1_id' => entities['b'].id,
+                  'entity2_id' =>  root.id })
+    end
   end
 
   describe '#position_type' do
