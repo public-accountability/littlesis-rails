@@ -726,6 +726,24 @@ describe Entity, :tag_helper do
     end
   end
 
+  describe '#connected_to?' do
+    let!(:entity) { create(:entity_person) }
+    let!(:related) { create(:entity_person) }
+    let!(:not_related) { create(:entity_person) }
+
+    before do
+      create(:generic_relationship, entity: entity, related: related)
+    end
+
+    it 'determines if a relationship exists' do
+      expect(entity.connected_to?(related)).to be true
+      expect(entity.connected_to?(related.id)).to be true
+      expect(entity.connected_to?(not_related)).to be false
+      expect(entity.connected_to?(not_related.id)).to be false
+    end
+
+  end
+
   describe 'Helpers' do
     describe 'person?' do
       it 'returns true if entity is a person' do
