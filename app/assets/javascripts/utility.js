@@ -403,3 +403,16 @@ utility.createElementWithText = function(tagName, text) {
   element.textContent = text;
   return element;
 };
+
+
+/**
+ * Creates an <a> with the provided href
+ *
+ * @param {String} href
+ * @returns {Element}
+ */
+utility.createLink = function(href) {
+  var a = document.createElement('a');
+  a.href = href;
+  return a;
+};

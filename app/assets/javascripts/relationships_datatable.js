@@ -12,7 +12,7 @@
 
   function createTable() {
     var table = createElement('table');
-    table.className = "relationships-datatable-table display";
+    table.className = "display";
     table.id = TABLE_ID;
 
     var thead = createElement('thead');
@@ -28,26 +28,28 @@
   }
 
 
+  /**
+   * Render Link with Related Entity Names and Blurb
+   * @returns {String} 
+   */
   function renderRelatedEntity(data, type, row) {
-    var a = document.createElement('a');
-    a.href = row.related_entity_url;
+    var a = utility.createLink(row.related_entity_url);
     a.setAttribute('class', 'entity-link');
-    a.innerHTML = row.related_entity_name;
-    var str = a.outerHTML;
-    var blurb = document.createElement('span');
-    blurb.setAttribute('class', 'entity-blurb');
-    blurb.innerHTML = row.related_entity_blurb_excerpt;
-    str += " &nbsp; " + blurb.outerHTML;
-    return  str;
+    a.textContent = row.related_entity_name;;
+    
+    if (row.related_entity_blurb_excerpt) {
+      var blurb = utility.createElementWithText('span', row.related_entity_blurb_excerpt);
+      blurb.setAttribute('class', 'entity-blurb');
+      a.appendChild(blurb);
+    }
+    
+    return a.outerHTML;
   }
-
   
   function renderCategory(data, type, row) {
-    var a = document.createElement('a');
-    a.href = row.url;
-    a.innerHTML = row.category;
-    var str = a.outerHTML;
-    return  str;
+    var a = utility.createLink(row.url);
+    a.textContent = row.category;
+    return a.outerHTML;
   }
 
   function datatable(data) {
@@ -90,10 +92,9 @@
 
 
   function start() {
-    console.log('starting!');
     insertTableIntoDom();
 
-    var data = JSON.parse("[{\"id\":30,\"url\":\"/relationships/30\",\"entity_id\":2,\"entity_name\":\"ExxonMobil\",\"entity_url\":\"/entities/2-ExxonMobil/datatable\",\"related_entity_id\":1030,\"related_entity_name\":\"Donald D Humphreys\",\"related_entity_blurb\":null,\"related_entity_blurb_excerpt\":null,\"related_entity_url\":\"/entities/1030-Donald_D_Humphreys/datatable\",\"related_entity_types\":\"Person,Business Person\",\"related_entity_industries\":\"Oil & Gas\",\"category\":\"Position\",\"description\":\"Senior Vice President\",\"date\":\"\",\"is_current\":true,\"amount\":null,\"updated_at\":\"2008-11-05T17:05:50.000Z\",\"is_board\":false,\"is_executive\":true,\"start_date\":null,\"end_date\":null,\"interlock_ids\":\"\",\"list_ids\":\"\"},{\"id\":31,\"url\":\"/relationships/31\",\"entity_id\":2,\"entity_name\":\"ExxonMobil\",\"entity_url\":\"/entities/2-ExxonMobil/datatable\",\"related_entity_id\":1030,\"related_entity_name\":\"Donald D Humphreys\",\"related_entity_blurb\":null,\"related_entity_blurb_excerpt\":null,\"related_entity_url\":\"/entities/1030-Donald_D_Humphreys/datatable\",\"related_entity_types\":\"Person,Business Person\",\"related_entity_industries\":\"Oil & Gas\",\"category\":\"Position\",\"description\":\"Treasurer\",\"date\":\"\",\"is_current\":true,\"amount\":null,\"updated_at\":\"2008-11-05T17:05:50.000Z\",\"is_board\":false,\"is_executive\":true,\"start_date\":null,\"end_date\":null,\"interlock_ids\":\"\",\"list_ids\":\"\"}]");
+    var data = JSON.parse("[{\"id\":30,\"url\":\"/relationships/30\",\"entity_id\":2,\"entity_name\":\"ExxonMobil\",\"entity_url\":\"/entities/2-ExxonMobil/datatable\",\"related_entity_id\":1030,\"related_entity_name\":\"Donald D Humphreys\",\"related_entity_blurb\":null,\"related_entity_blurb_excerpt\":\"testing testing 1 2 3\",\"related_entity_url\":\"/entities/1030-Donald_D_Humphreys/datatable\",\"related_entity_types\":\"Person,Business Person\",\"related_entity_industries\":\"Oil & Gas\",\"category\":\"Position\",\"description\":\"Senior Vice President\",\"date\":\"\",\"is_current\":true,\"amount\":null,\"updated_at\":\"2008-11-05T17:05:50.000Z\",\"is_board\":false,\"is_executive\":true,\"start_date\":null,\"end_date\":null,\"interlock_ids\":\"\",\"list_ids\":\"\"},{\"id\":31,\"url\":\"/relationships/31\",\"entity_id\":2,\"entity_name\":\"ExxonMobil\",\"entity_url\":\"/entities/2-ExxonMobil/datatable\",\"related_entity_id\":1030,\"related_entity_name\":\"Donald D Humphreys\",\"related_entity_blurb\":\"just some rich guy\",\"related_entity_blurb_excerpt\":null,\"related_entity_url\":\"/entities/1030-Donald_D_Humphreys/datatable\",\"related_entity_types\":\"Person,Business Person\",\"related_entity_industries\":\"Oil & Gas\",\"category\":\"Position\",\"description\":\"Treasurer\",\"date\":\"\",\"is_current\":true,\"amount\":null,\"updated_at\":\"2008-11-05T17:05:50.000Z\",\"is_board\":false,\"is_executive\":true,\"start_date\":null,\"end_date\":null,\"interlock_ids\":\"\",\"list_ids\":\"\"}]");
 
     datatable(data);
   }
@@ -101,7 +102,8 @@
   return {
     "start": start,
     "_createTable": createTable,
-    "_columns": columns
+    "_columns": columns,
+    "_renderRelatedEntity": renderRelatedEntity
   };
 
 }));

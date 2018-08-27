@@ -302,5 +302,14 @@ describe('utility', function(){
 	expect( $('#test-dom > p').text() ).toEqual('just a simple paragraph');
       });
     });
+
+    describe('#createLink', () => {
+      it('creates a new link', () => {
+	document.getElementById('test-dom')
+	  .appendChild( utility.createLink('https://example.com/'));
+
+	expect( $('#test-dom > a')[0]['href']).toEqual('https://example.com/');
+      });
+    });
   });
 });
