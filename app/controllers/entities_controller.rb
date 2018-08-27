@@ -339,9 +339,9 @@ class EntitiesController < ApplicationController
 
   def upload_image
     if uploaded = image_params[:file]
-      filename = Image.random_filename(File.extname(uploaded.original_filename))      
+      filename = Image.random_filename(File.extname(uploaded.original_filename))
       src_path = Rails.root.join('tmp', filename).to_s
-      open(src_path, 'wb') do |file|
+      File.open(src_path, 'wb') do |file|
         file.write(uploaded.read)
       end
     else
