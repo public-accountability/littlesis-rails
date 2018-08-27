@@ -12,6 +12,7 @@
 #
 src_files:
   - assets/application.js
+  - assets/relationships_datatable.js
 
 # stylesheets
 #
