@@ -3,7 +3,6 @@
 class S3
   BUCKET = Lilsis::Application.config.aws_s3_bucket.dup.freeze
   CACHE_CONTROL = 'public, max-age=2592000' # 30 days
-  VALID_MIME_TYPES = ['image/svg+xml', 'image/jpeg', 'image/png', 'image/gif', 'image/jpg'].freeze
 
   def self.url(path)
     base_url + path
@@ -86,7 +85,7 @@ class S3
   end
 
   private_class_method def self.skip_metadata_update(s3_object)
-    public?(s3_object) && VALID_MIME_TYPES.include?(s3_object.content_type) && s3_object.cache_control == CACHE_CONTROL
+    public?(s3_object) && Image::VALID_MIME_TYPES.include?(s3_object.content_type) && s3_object.cache_control == CACHE_CONTROL
   end
 
   private_class_method def self.content_type_for(s3_object)

@@ -14,6 +14,14 @@ class Image < ApplicationRecord
   IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }.freeze
   IMAGE_TYPES = IMAGE_SIZES.keys.freeze
 
+  MIME_TYPES = {
+    'image/svg+xml' => 'svg',
+    'image/jpeg' => 'jpg',
+    'image/jpg' => 'jpg',
+    'image/gif' => 'gif'
+  }.freeze
+
+  VALID_MIME_TYPES = MIME_TYPES.values.freeze
   VALID_EXTENSIONS = %w[jpg jpeg svg png].to_set.freeze
 
   DEFAULT_FILE_TYPE = Lilsis::Application.config.default_image_file_type
@@ -91,10 +99,25 @@ class Image < ApplicationRecord
   class InvalidFileExtensionError < StandardError
   end
 
+  class RemoteImageRequestFailure < StandardError
+  end
+
+  # String --> String | Throws
+  #
+  # Derives the image format from the url.
+  # It first tries to determine the format
+  # from the ending of the url path. If that fails,
+  # it performs a HEAD request to get the content-type.
   def self.file_ext_from(url)
     ext = File.extname(URI(url).path).tr('.', '').downcase
-    raise InvalidFileExtensionError unless VALID_EXTENSIONS.include?(ext)
-    ext
+    return ext if VALID_EXTENSIONS.include?(ext)
+
+    head = HTTParty.head(url)
+    raise RemoteImageRequestFailure unless head.success?
+
+    mime_type = head['content-type'].downcase
+    return MIME_TYPES.fetch(mime_type) if MIME_TYPES.key?(mime_type)
+    raise InvalidFileExtensionError
   end
 
   # Downloads url and saves images to temporary file
@@ -130,7 +153,7 @@ class Image < ApplicationRecord
     end
 
     return false if original_image_path.blank?
-    filename = random_filename(file_ext_from(url))
+    filename = random_filename(file_ext_from(original_image_path))
 
     original = MiniMagick::Image.open(original_image_path)
 
