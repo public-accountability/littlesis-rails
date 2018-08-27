@@ -108,6 +108,11 @@ describe Image, type: :model do
         expect(filename.split('.')[1]).to eql 'jpg'
       end
 
+      it 'can accept file names with "."' do
+        filename = Image.random_filename('.png')
+        expect(filename.length).to eql 36
+        expect(filename[-5]).not_to eql '.'
+      end
     end
   end
 end

@@ -84,6 +84,7 @@ class Image < ApplicationRecord
 
   def self.random_filename(file_type = nil)
     file_type = DEFAULT_FILE_TYPE if file_type.nil?
+    file_type.slice!(0) if file_type[0] == '.'
     "#{SecureRandom.hex(16)}.#{file_type}"
   end
 
@@ -121,12 +122,19 @@ class Image < ApplicationRecord
   #   ie: http://example.com/image.png
   # a url without an extension will not work
   def self.new_from_url(url)
-    return false unless original_image_path = save_image_to_tmp(url)
+    # This method can accept remote and local paths
+    if url.slice(0, 4).casecmp('http').zero?
+      original_image_path = save_image_to_tmp(url)
+    else
+      original_image_path = url
+    end
+
+    return false if original_image_path.blank?
     filename = random_filename(file_ext_from(url))
 
     original = MiniMagick::Image.open(original_image_path)
 
-    if ENV['SKIP_S3_UPLOAD']
+    if ENV['SKIP_S3_UPLOAD'] || Rails.env.test?
       large = profile = small = true
     else
       large = create_asset(filename, 'large', original_image_path, max_width: 1024, max_height: 1024)
