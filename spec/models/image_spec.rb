@@ -108,6 +108,47 @@ describe Image, type: :model do
         expect(filename.split('.')[1]).to eql 'jpg'
       end
 
+      it 'can accept file names with "."' do
+        filename = Image.random_filename('.png')
+        expect(filename.length).to eql 36
+        expect(filename[-5]).not_to eql '.'
+      end
     end
-  end
+
+    describe 'file_ext_from' do
+      it 'returns extension from url' do
+        expect(Image.file_ext_from('https://example.com/example.png'))
+          .to eql 'png'
+      end
+
+      it 'retrieves information from head if no extension found' do
+        url = 'https://example.com/example_image'
+        head = double('HTTParty::Response head double')
+        expect(head).to receive(:success?).and_return true
+        expect(head).to receive(:[]).with('content-type').and_return('image/jpg')
+        expect(HTTParty).to receive(:head).with(url).and_return(head)
+        expect(Image.file_ext_from(url)).to eql 'jpg'
+      end
+
+      it 'raises error if there is an invalid format' do
+        url = 'https://example.com/example_image'
+        head = double('HTTParty::Response head double')
+        expect(head).to receive(:success?).and_return true
+        expect(head).to receive(:[]).with('content-type').and_return('audio/mpeg3')
+        expect(HTTParty).to receive(:head).with(url).and_return(head)
+        expect { Image.file_ext_from(url) }
+          .to raise_error { Image::InvalidFileExtensionError }
+      end
+
+      it 'raises error if request is a faliure' do
+        url = 'https://example.com/example_image'
+        head = double('HTTParty::Response head double')
+        expect(head).to receive(:success?).and_return false
+        expect(HTTParty).to receive(:head).with(url).and_return(head)
+
+        expect { Image.file_ext_from(url) }
+          .to raise_error { Image::RemoteImageRequestFailure }
+      end
+    end
+  end # end Class Methods
 end

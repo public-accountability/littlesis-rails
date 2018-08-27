@@ -14,6 +14,14 @@ class Image < ApplicationRecord
   IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }.freeze
   IMAGE_TYPES = IMAGE_SIZES.keys.freeze
 
+  MIME_TYPES = {
+    'image/svg+xml' => 'svg',
+    'image/jpeg' => 'jpg',
+    'image/jpg' => 'jpg',
+    'image/gif' => 'gif'
+  }.freeze
+
+  VALID_MIME_TYPES = MIME_TYPES.values.freeze
   VALID_EXTENSIONS = %w[jpg jpeg svg png].to_set.freeze
 
   DEFAULT_FILE_TYPE = Lilsis::Application.config.default_image_file_type
@@ -84,16 +92,32 @@ class Image < ApplicationRecord
 
   def self.random_filename(file_type = nil)
     file_type = DEFAULT_FILE_TYPE if file_type.nil?
+    file_type.slice!(0) if file_type[0] == '.'
     "#{SecureRandom.hex(16)}.#{file_type}"
   end
 
   class InvalidFileExtensionError < StandardError
   end
 
+  class RemoteImageRequestFailure < StandardError
+  end
+
+  # String --> String | Throws
+  #
+  # Derives the image format from the url.
+  # It first tries to determine the format
+  # from the ending of the url path. If that fails,
+  # it performs a HEAD request to get the content-type.
   def self.file_ext_from(url)
     ext = File.extname(URI(url).path).tr('.', '').downcase
-    raise InvalidFileExtensionError unless VALID_EXTENSIONS.include?(ext)
-    ext
+    return ext if VALID_EXTENSIONS.include?(ext)
+
+    head = HTTParty.head(url)
+    raise RemoteImageRequestFailure unless head.success?
+
+    mime_type = head['content-type'].downcase
+    return MIME_TYPES.fetch(mime_type) if MIME_TYPES.key?(mime_type)
+    raise InvalidFileExtensionError
   end
 
   # Downloads url and saves images to temporary file
@@ -121,12 +145,19 @@ class Image < ApplicationRecord
   #   ie: http://example.com/image.png
   # a url without an extension will not work
   def self.new_from_url(url)
-    return false unless original_image_path = save_image_to_tmp(url)
-    filename = random_filename(file_ext_from(url))
+    # This method can accept remote and local paths
+    if url.slice(0, 4).casecmp('http').zero?
+      original_image_path = save_image_to_tmp(url)
+    else
+      original_image_path = url
+    end
+
+    return false if original_image_path.blank?
+    filename = random_filename(file_ext_from(original_image_path))
 
     original = MiniMagick::Image.open(original_image_path)
 
-    if ENV['SKIP_S3_UPLOAD']
+    if ENV['SKIP_S3_UPLOAD'] || Rails.env.test?
       large = profile = small = true
     else
       large = create_asset(filename, 'large', original_image_path, max_width: 1024, max_height: 1024)
