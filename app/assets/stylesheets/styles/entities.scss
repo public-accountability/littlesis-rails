@@ -562,3 +562,17 @@ html table.dataTable thead {
 div.popover-content {
     font-size: 12px;
 }
+
+/* IMAGE UPLOAD */
+
+.image-upload-alert {
+    @extend .alert;
+    @extend .alert-warning;
+    width: 100%;
+}
+
+.image-upload-file-url-box {
+    background-color: #eee;
+    padding: 1em;
+    border-radius: 8px;
+}

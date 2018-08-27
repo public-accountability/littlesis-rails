@@ -18,12 +18,12 @@
 
   <div class="row">
     <div class="col-sm-7">
-      <div style="background-color: #eee; padding: 1em;">
+      <div class="image-upload-file-url-box">
         You must either upload an image from your computer or enter a valid URL:
 
         <div class="form-group">
           <%= f.label :file %>
-          <%= f.file_field :file %>
+          <%= f.file_field :file, :onchange => 'validateImageFileUpload(this)' %>
         </div>
 
         <div class="field form-group">
@@ -42,7 +42,13 @@
         <%= f.text_area :caption, class: "form-control" %> (a short description and/or image credit)
       </div>
     </div>
+    <div class="col-sm-4">
+      <div class="image-upload-alert" style="display: none;">
+	<p></p>
+      </div>
+    </div>
   </div>
+
   <dv class="row">
     <div class="form-horizontal">  
       <div class="form-group">
@@ -75,3 +81,28 @@
     </div>
     </div>
 <% end %>
+
+<script>
+ var ACCEPTED_IMAGE_FILE_TYPES = <%= raw(Image::VALID_EXTENSIONS.to_a.to_json) %>;
+
+ function validFileTypeOrUrl(value) {
+   var fileExt = value.split('.').last().toLowerCase();
+   return ACCEPTED_IMAGE_FILE_TYPES.includes(fileExt);
+ }
+
+ function validateImageFileUpload(fileInput) {
+    if (fileInput.value) {
+
+      if (!validFileTypeOrUrl(fileInput.value)) {
+	$('.image-upload-alert').show();
+	$('.image-upload-alert p')
+	  .html('<strong>Invalid image file type.</strong><br /> Please select an file with one of the following extensions: ' + ACCEPTED_IMAGE_FILE_TYPES.join(', '))
+	return false;
+      }
+
+   }
+       
+   $('.image-upload-alert').hide();
+   return true;
+ }
+</script>
