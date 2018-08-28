@@ -110,9 +110,14 @@ class RelationshipsGraph
   # returns ranked array of second-degree connected nodes with count
   # output: [InterlockedNode]
   def sorted_interlocks(root_node)
-    return [] unless @nodes.key?(root_node)
-    node_ids = connected_ids(root_node, max_depth: 2).last
-    degree1_nodes = connected_nodes(root_node, max_depth: 1).first
+    # remove input nodes that are not in the graph
+    search_nodes = Array.wrap(root_node).select { |n| @nodes.key?(n) }
+
+    # return an empty array if none of the nodes are in the graph
+    return [] if search_nodes.empty?
+
+    node_ids = connected_ids(search_nodes, max_depth: 2).last
+    degree1_nodes = connected_nodes(search_nodes, max_depth: 1).first
 
     degree2_nodes = {}
     degree2_nodes.default = 0

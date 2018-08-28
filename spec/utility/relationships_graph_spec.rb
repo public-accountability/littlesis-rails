@@ -125,11 +125,22 @@ describe RelationshipsGraph do
 
     subject { RelationshipsGraph.new(relationships) }
 
+    let(:sorted_interlocks_for_a) do
+      [RelationshipsGraph::InterlockedNode.new('e', 3),
+       RelationshipsGraph::InterlockedNode.new('f', 2),
+       RelationshipsGraph::InterlockedNode.new('g', 1)]
+    end
+
     specify do
-      expect(subject.sorted_interlocks('a'))
-        .to eql [RelationshipsGraph::InterlockedNode.new('e', 3),
-                 RelationshipsGraph::InterlockedNode.new('f', 2),
-                 RelationshipsGraph::InterlockedNode.new('g', 1)]
+      expect(subject.sorted_interlocks('a')).to eql sorted_interlocks_for_a
+    end
+
+    specify do
+      expect(subject.sorted_interlocks('z')).to eql []
+    end
+
+    specify do
+      expect(subject.sorted_interlocks(['z', 'a'])).to eql sorted_interlocks_for_a
     end
 
     context 'graph is empty' do
