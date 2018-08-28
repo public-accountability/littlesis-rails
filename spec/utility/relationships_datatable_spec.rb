@@ -1,64 +1,64 @@
 require 'rails_helper'
 
 describe RelationshipsDatatable do
+  let(:entity) { create(:entity_person) }
+  let(:related) { Array.new(2) { create(:entity_org) } }
+  let(:interlocked) { create(:entity_person) }
 
-  describe '#initialize' do
-    let(:org) { build(:org) }
-    let(:orgs) { [build(:org), build(:org)] }
-    let(:links) { [build(:link, entity1_id: org.id), build(:link, entity1_id: org.id)] }
-    subject { RelationshipsDatatable.new(org) }
-
-    it 'sets force_interlocks to be false by default' do
-      expect(subject.instance_variable_get(:@force_interlocks)).to eql false
-    end
-
-    it 'wraps entities in an array' do
-      expect(subject.entities).to eql [org]
-      expect(RelationshipsDatatable.new(orgs).entities).to eql orgs
-    end
-
-    it 'sets @entity_ids' do
-      expect(RelationshipsDatatable.new(orgs).instance_variable_get(:@entity_ids))
-        .to eql orgs.map(&:id)
-    end
-
-    it 'sets links' do
-      expect(Link).to receive(:includes).once
-                        .and_return(double(:where => double(:limit => [])))
-      expect(RelationshipsDatatable.new(org).links).to eql []
-    end
-
+  let!(:relationships) do
+    [Relationship.create!(category_id: 1, entity: entity, related: related[0]),
+     Relationship.create!(category_id: 12, entity: entity, related: related[1]),
+     Relationship.create!(category_id: 12, entity: related[0], related: interlocked)]
   end
 
-  describe 'load_links' do
-    let!(:entity) { create(:entity_person) }
-    let!(:relationships) do
-      Array.new(2) do
-        create(:generic_relationship, entity: entity, related: create(:entity_person))
-      end
-    end
-    subject { RelationshipsDatatable.new(entity) }
+  subject(:datatable) { RelationshipsDatatable.new(entity) }
 
-    it 'queries database for links' do
-      expect(subject.links.to_set).to eql Link.where(entity1_id: entity.id).to_set
-    end
+  describe 'root_entities' do
+    subject { datatable.root_entities }
+    it { is_expected.to eql [entity] }
+  end
 
+  describe 'root_entity_ids' do
+    subject { datatable.root_entity_ids }
+    it { is_expected.to eql [entity.id] }
+  end
+
+  describe 'links' do
+    subject { datatable.links.to_a.to_set }
+    it { is_expected.to eql entity.links.to_a.to_set }
+  end
+
+  describe 'related_ids' do
+    specify do
+      expect(datatable.related_ids.to_set).to eql entity.links.pluck(:entity2_id).to_set
+    end
+  end
+
+  describe 'entities' do
+    subject { datatable.entities }
+    it do
+      is_expected.to eql(entity.id => EntityDatatablePresenter.new(entity).to_hash,
+                         related[0].id => EntityDatatablePresenter.new(related[0]).to_hash,
+                         related[1].id => EntityDatatablePresenter.new(related[1]).to_hash)
+    end
   end
 
   describe 'relationships' do
+    subject { datatable.relationships.to_set }
+    it do
+      is_expected
+        .to eql(relationships[0, 2].map { |r| RelationshipDatatablePresenter.new(r).to_h }.to_set)
+    end
   end
 
-  # why are these called list? and lists?
-  describe "list?" do 
-    it 'is true when initalized with more than one entity'
+  describe 'rgraph' do
+    specify { expect(datatable.rgraph).to be_a RelationshipsGraph }
   end
 
-  describe "lists?" do
-    it 'is true when related id count is less than 1000'
-  end
-
-  describe "interlocks?" do
-    it 'is true when num_links is less than 1000'
-    it 'is true when force_interlocks is set'
+  describe 'interlocks' do
+    subject { datatable.interlocks }
+    it do
+      is_expected.to eql([{ 'id' => interlocked.id, 'name' => interlocked.name, 'interlocks_count' => 1 }])
+    end
   end
 end
