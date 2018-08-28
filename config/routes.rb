@@ -172,6 +172,12 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  #############
+  # Datatable #
+  #############
+
+  get '/datatable/entity/:id', to: 'datatable#entity', constraints: { id: /\d+/ }
+
   #####################
   # deletion requests #
   #####################
