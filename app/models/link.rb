@@ -13,6 +13,7 @@ class Link < ApplicationRecord
     interlock_hash(where(entity1_id: entity_ids))
   end
 
+  # used by ListDatatable
   def self.interlock_hash(links)
     links.reduce({}) do |hash, link|
       hash[link.entity2_id] = hash.fetch(link.entity2_id, []).push(link.entity1_id).uniq
@@ -24,16 +25,22 @@ class Link < ApplicationRecord
   #
   # Note: hardcoded limit of 20,000
   #
-  # Entity | Interger --> [{}]
-  def self.relationship_network_for(entity_or_id)
-    entity_id = Entity.entity_id_for(entity_or_id)
+  # Entity | Array[Entity] | Interger --> [{}]
+  def self.relationship_network_for(entities)
+    entity_ids = Array.wrap(entities).uniq.map! { |e| Entity.entity_id_for(e) }
+
+    if entity_ids.length == 1
+      where = sanitize_sql_for_conditions(['WHERE degree_one_links.entity1_id = ?', entity_ids.first])
+    else
+      where = sanitize_sql_for_conditions(['WHERE degree_one_links.entity1_id IN (?)', entity_ids])
+    end
 
     sql = <<-SQL
     SELECT *
     FROM link as degree_one_links
     LEFT JOIN link as degree_two_links
             ON degree_one_links.entity2_id = degree_two_links.entity1_id
-    #{sanitize_sql_for_conditions ['WHERE degree_one_links.entity1_id = ?', entity_id]}
+    #{where}
     LIMIT 20000
     SQL
 

@@ -30,9 +30,9 @@ describe Link, type: :model do
         'a' => create(:entity_org, name: 'a'),
         'b' => create(:entity_org, name: 'b'),
         'c' => create(:entity_org, name: 'c'),
-        'd' => create(:entity_org, name: 'd')
-        # 'e' => create(:entity_org, name: 'e'),
-        # 'f' => create(:entity_org, name: 'f')
+        'd' => create(:entity_org, name: 'd'),
+        'x' => create(:entity_org, name: 'x'),
+        'y' => create(:entity_org, name: 'y')
       }
     end
 
@@ -45,28 +45,40 @@ describe Link, type: :model do
       cr entities['a'], entities['c'], 3
       cr entities['a'], entities['d'], 5
       cr entities['b'], entities['d'], 5
+      # relationships between x & y
+      cr entities['x'], entities['y'], 12
       # random relationship
       cr entities['c'], create(:entity_person), 12
     end
 
-    subject { Link.relationship_network_for(root) }
+    context 'network for root node' do
+      subject { Link.relationship_network_for(root) }
 
-    it 'returns 5 hashes' do
-      expect(subject.count).to eql 5
+      it 'returns 5 hashes' do
+        expect(subject.count).to eql 5
+      end
+
+      it 'reverses relationship order if needed' do
+        expect(subject.find { |h| h['category_id'] == 1 })
+          .to eql({ 'relationship_id' => @position_relationship.id,
+                    'category_id' => 1,
+                    'entity1_id' => root.id,
+                    'entity2_id' => entities['a'].id })
+
+        expect(subject.find { |h| h['category_id'] == 12 })
+          .to eql({ 'relationship_id' => @generic_relationship.id,
+                    'category_id' => 12,
+                    'entity1_id' => entities['b'].id,
+                    'entity2_id' =>  root.id })
+      end
     end
 
-    it 'reverses relationship order if needed' do
-      expect(subject.find { |h| h['category_id'] == 1 })
-        .to eql({ 'relationship_id' => @position_relationship.id,
-                  'category_id' => 1,
-                  'entity1_id' => root.id,
-                  'entity2_id' => entities['a'].id })
+    context 'network for 2 entities' do
+      subject { Link.relationship_network_for([root, entities['x']]) }
 
-      expect(subject.find { |h| h['category_id'] == 12 })
-        .to eql({ 'relationship_id' => @generic_relationship.id,
-                  'category_id' => 12,
-                  'entity1_id' => entities['b'].id,
-                  'entity2_id' =>  root.id })
+      it 'returns 6 hashes' do
+        expect(subject.count).to eql 6
+      end
     end
   end
 
