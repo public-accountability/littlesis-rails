@@ -9,7 +9,7 @@
 //   $('#test-dom').remove();
 // });
 
-describe('relationshipsDatatable', function() {
+xdescribe('relationshipsDatatable', function() {
   describe('createTable()', () => {
     const table = RelationshipsDatatable._createTable();
 

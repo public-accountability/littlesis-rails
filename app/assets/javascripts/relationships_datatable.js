@@ -9,7 +9,149 @@
   var createElement = document.createElement.bind(document); // javascript! what a language!
   var columns = ["Related Entity", "Relationship", "Details", "Date(s)"];
   var TABLE_ID = "relationships-table";
+  var DEFAULT_OPTIONS = { isList: false };
 
+  // hold fetched data and entity initalized with
+  // ...just a way to keep state without having to
+  // deal with create a javasript class
+  var DATA_STORE = null;
+  var ENTITY_ID = null;
+
+  var DATATABLE_COLUMNS = [
+    { 
+      data: 'related_entity_name', 
+      name: 'related_entity_name', 
+      width: '40%',
+      render: renderRelatedEntity
+    },
+    {
+      data: 'category',
+      name: 'category',
+      width: "10%",
+      render: renderCategory
+    },
+    {
+      name: 'description',
+      render: renderDescription
+    },
+    {
+      data: 'date',
+      name: 'date',
+      width: "15%",
+      render: renderDate
+    }
+  ];
+
+  /**
+   * Network request to obtain data for datatable
+   *
+   * @param {Integer} entityId
+   * @returns {Promise} 
+   */
+  function fetchData(entityId) {
+    return fetch("/datatable/entity/" + entityId, { "method": 'get' })
+      .then(function(response) { return response.json(); });
+  }
+
+  /**
+   * Returns the other entity id in the relationship
+   *
+   * @param {Object} relationship
+   * @param {Object} other_entity_id
+   */
+  function otherEntity(relationship) {
+    var entity_id = (relationship.entity1_id === ENTITY_ID) ? relationship.entity2_id : relationship.entity1_id;
+    return DATA_STORE.entities[entity_id];
+  };
+
+  /////////////////////////////
+  ///// RENDERING HELPERS /////
+  /////////////////////////////
+
+  /**
+   * Render Link with Related Entity Names and Blurb
+   * @returns {String} 
+   */
+  function renderRelatedEntity(_data, _type, row) {
+    var entity = otherEntity(row);
+    var a = utility.createLink(entity.url);
+    a.setAttribute('class', 'entity-link');
+    a.textContent = entity.name;
+    
+    if (entity.blurb) {
+      // a.appendChild(createElement('br'));
+      var blurb = utility.createElementWithText('div', entity.blurb);
+      blurb.setAttribute('class', 'entity-blurb');
+      a.appendChild(blurb);
+    }
+    
+    return a.outerHTML;
+  };
+
+
+  /**
+   * Renders description fields. Adds amount if present.
+   *
+   * @returns {String} 
+   */
+  function renderDescription(data, type, row) {
+    return 'description goes here';
+    // if (row.amount) {
+    //   return data + " &bull; $" + row.amount;
+    // } else {
+    //   return data;
+    // }
+  };
+
+  /**
+   * Render link to Relationship
+   *
+   * @returns {String} 
+   */
+  function renderCategory(_data, _type, row) {
+    var a = utility.createLink(row.url);
+    a.textContent = utility.relationshipCategories[row.category_id];
+    return a.outerHTML;
+  };
+
+  /**
+   * Renders date or shows if relationship is current/past
+   *
+   * @returns {String|Null} 
+   */
+  function renderDate(data, type, row) {
+    if (row.start_date && row.end_date) {
+	return row.start_date.slice(0, 4) + ' - ' + row.end_date.slice(0, 4);
+    }
+
+    if (row.start_date && !row.end_date) {
+      if (row.is_current === false) {
+	return row.start_date.slice(0, 4) + ' (past)';
+      } else {
+	return row.start_date.slice(0, 4) + ' - ?';
+      }
+    }
+    
+    if (row.end_date) {
+      return '? - ' + row.end_date.slice(0, 4);
+    }
+
+    if (row.is_current === true) {
+      return "(current)";
+    }
+
+    if (row.is_current === false) {
+      return "(past)";
+    }
+    return null;
+  };
+
+
+  /**
+   * Creates a <table> with column headers
+   *
+   * @returns {Element} 
+   */
   function createTable() {
     var table = createElement('table');
     table.className = "display";
@@ -27,83 +169,43 @@
     return table;
   }
 
-
-  /**
-   * Render Link with Related Entity Names and Blurb
-   * @returns {String} 
-   */
-  function renderRelatedEntity(data, type, row) {
-    var a = utility.createLink(row.related_entity_url);
-    a.setAttribute('class', 'entity-link');
-    a.textContent = row.related_entity_name;;
-    
-    if (row.related_entity_blurb_excerpt) {
-      var blurb = utility.createElementWithText('span', row.related_entity_blurb_excerpt);
-      blurb.setAttribute('class', 'entity-blurb');
-      a.appendChild(blurb);
-    }
-    
-    return a.outerHTML;
-  }
-  
-  function renderCategory(data, type, row) {
-    var a = utility.createLink(row.url);
-    a.textContent = row.category;
-    return a.outerHTML;
-  }
-
-  function datatable(data) {
-    $('#' + TABLE_ID).DataTable({
-      data: data,
-      // dom: "<'buttons'>iprtp",
-      pageLength: 100,
-      columns: [
-	{ 
-          data: 'related_entity_name', 
-          name: 'related_entity_name', 
-          width: '40%',
-	  render: renderRelatedEntity
-	},
-	{
-	  data: 'category',
-          name: 'category',
-          width: "10%",
-          render: renderCategory
-	},
-	{
-	  data: 'description',
-          name: 'details'
-	},
-	{
-	  data: 'date',
-	  name: 'date'
-	}
-      ]
-
-    });
-
-  }
-
   function insertTableIntoDom() {
     document
       .getElementById('relationships-datatable-container')
       .appendChild(createTable());
   }
+  
+  /**
+   * Main function that initializes the table
+   *
+   * @param {Array[object]} data
+   */
+  function datatable() {
+    $('#' + TABLE_ID).DataTable({
+      "data": DATA_STORE.relationships,
+      "dom": 'prtp',
+      // dom: "<'buttons'>iprtp",
+      "pageLength": 100,
+      "columns": DATATABLE_COLUMNS
+    });
 
+  }
 
-  function start() {
-    insertTableIntoDom();
+  function start(entityId) {
+    ENTITY_ID = entityId;
+    fetchData(entityId)
+      .then(function(data) {
+	DATA_STORE = data;
+	insertTableIntoDom();
+	datatable();
+      });
 
-    var data = JSON.parse("[{\"id\":30,\"url\":\"/relationships/30\",\"entity_id\":2,\"entity_name\":\"ExxonMobil\",\"entity_url\":\"/entities/2-ExxonMobil/datatable\",\"related_entity_id\":1030,\"related_entity_name\":\"Donald D Humphreys\",\"related_entity_blurb\":null,\"related_entity_blurb_excerpt\":\"testing testing 1 2 3\",\"related_entity_url\":\"/entities/1030-Donald_D_Humphreys/datatable\",\"related_entity_types\":\"Person,Business Person\",\"related_entity_industries\":\"Oil & Gas\",\"category\":\"Position\",\"description\":\"Senior Vice President\",\"date\":\"\",\"is_current\":true,\"amount\":null,\"updated_at\":\"2008-11-05T17:05:50.000Z\",\"is_board\":false,\"is_executive\":true,\"start_date\":null,\"end_date\":null,\"interlock_ids\":\"\",\"list_ids\":\"\"},{\"id\":31,\"url\":\"/relationships/31\",\"entity_id\":2,\"entity_name\":\"ExxonMobil\",\"entity_url\":\"/entities/2-ExxonMobil/datatable\",\"related_entity_id\":1030,\"related_entity_name\":\"Donald D Humphreys\",\"related_entity_blurb\":\"just some rich guy\",\"related_entity_blurb_excerpt\":null,\"related_entity_url\":\"/entities/1030-Donald_D_Humphreys/datatable\",\"related_entity_types\":\"Person,Business Person\",\"related_entity_industries\":\"Oil & Gas\",\"category\":\"Position\",\"description\":\"Treasurer\",\"date\":\"\",\"is_current\":true,\"amount\":null,\"updated_at\":\"2008-11-05T17:05:50.000Z\",\"is_board\":false,\"is_executive\":true,\"start_date\":null,\"end_date\":null,\"interlock_ids\":\"\",\"list_ids\":\"\"}]");
-
-    datatable(data);
   }
 
   return {
     "start": start,
-    "_createTable": createTable,
-    "_columns": columns,
-    "_renderRelatedEntity": renderRelatedEntity
+    "data": function() { return DATA_STORE; }
   };
-
+  
+  
 }));

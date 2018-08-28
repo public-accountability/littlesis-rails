@@ -49,7 +49,7 @@ utility.entityInfo = function(key) {
 utility.relationshipCategories = [
   "",
   "Position",
-  "Education (as a student)",
+  "Education",
   "Membership",
   "Family",
   "Donation/Grant",
