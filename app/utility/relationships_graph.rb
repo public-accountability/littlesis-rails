@@ -5,6 +5,13 @@
 class RelationshipsGraph
   attr_reader :edges, :nodes
 
+  # Initalizes a RelationshipsGraph for an Entity
+  #
+  # Entity | Array[Entity] -> RelationshipsGraph
+  def self.new_from_entity(entity)
+    new Link.relationship_network_for(entity)
+  end
+
   # Relationships is a Array of hashes with these required keys:
   #    id, entity1_id, entity2_id, category_id
   # Other fields will be ignored
@@ -74,7 +81,6 @@ class RelationshipsGraph
   # instead of the entities that are connected to it
   def connected_ids(root_nodes = nil, max_depth: 1, visited_ids: Set.new, levels: [])
     raise ArgumentError, 'Root nodes not provided' if levels.length.zero? && root_nodes.nil?
-
     if root_nodes
       ids_found_this_round = wrap(root_nodes)
                                .map { |n| @nodes[n][:ids] }
@@ -104,6 +110,7 @@ class RelationshipsGraph
   # returns ranked array of second-degree connected nodes with count
   # output: [InterlockedNode]
   def sorted_interlocks(root_node)
+    return [] unless @nodes.key?(root_node)
     node_ids = connected_ids(root_node, max_depth: 2).last
     degree1_nodes = connected_nodes(root_node, max_depth: 1).first
 

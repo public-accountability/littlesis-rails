@@ -131,6 +131,14 @@ describe RelationshipsGraph do
                  RelationshipsGraph::InterlockedNode.new('f', 2),
                  RelationshipsGraph::InterlockedNode.new('g', 1)]
     end
+
+    context 'graph is empty' do
+      subject { RelationshipsGraph.new([]) }
+
+      specify do
+        expect(subject.sorted_interlocks(123)).to eql []
+      end
+    end
   end
 end
 
