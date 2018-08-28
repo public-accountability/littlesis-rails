@@ -29,28 +29,21 @@ class Link < ApplicationRecord
   def self.relationship_network_for(entities)
     entity_ids = Array.wrap(entities).uniq.map! { |e| Entity.entity_id_for(e) }
 
-    if entity_ids.length == 1
-      where = sanitize_sql_for_conditions(['WHERE degree_one_links.entity1_id = ?', entity_ids.first])
-    else
-      where = sanitize_sql_for_conditions(['WHERE degree_one_links.entity1_id IN (?)', entity_ids])
-    end
-
     sql = <<-SQL
     SELECT *
     FROM link as degree_one_links
     LEFT JOIN link as degree_two_links
             ON degree_one_links.entity2_id = degree_two_links.entity1_id
-    #{where}
+    #{sanitize_sql_for_conditions(['WHERE degree_one_links.entity1_id IN (?)', entity_ids])}
     LIMIT 20000
     SQL
 
     ApplicationRecord.connection.exec_query(sql).to_hash.map do |h|
-      if h['is_reverse'] == 1
-        h.slice('relationship_id', 'category_id')
-          .merge('entity1_id' => h['entity2_id'], 'entity2_id' => h['entity1_id'])
-      else
-        h.except('id', 'is_reverse')
+      if h.delete('is_reverse') == 1
+        h['entity1_id'], h['entity2_id'] = h['entity2_id'], h['entity1_id']
       end
+      h['id'] = h.delete('relationship_id')
+      h
     end
   end
 

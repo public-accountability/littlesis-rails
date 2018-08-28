@@ -60,13 +60,13 @@ describe Link, type: :model do
 
       it 'reverses relationship order if needed' do
         expect(subject.find { |h| h['category_id'] == 1 })
-          .to eql({ 'relationship_id' => @position_relationship.id,
+          .to eql({ 'id' => @position_relationship.id,
                     'category_id' => 1,
                     'entity1_id' => root.id,
                     'entity2_id' => entities['a'].id })
 
         expect(subject.find { |h| h['category_id'] == 12 })
-          .to eql({ 'relationship_id' => @generic_relationship.id,
+          .to eql({ 'id' => @generic_relationship.id,
                     'category_id' => 12,
                     'entity1_id' => entities['b'].id,
                     'entity2_id' =>  root.id })
