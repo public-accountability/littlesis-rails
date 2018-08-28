@@ -745,6 +745,13 @@ describe Entity, :tag_helper do
   end
 
   describe 'Helpers' do
+    describe 'url' do
+      specify do
+        person = build(:person)
+        expect(person.url).to eql Routes.entity_url(person)
+      end
+    end
+
     describe 'person?' do
       it 'returns true if entity is a person' do
         expect(build(:person).person?).to be true

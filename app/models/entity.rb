@@ -793,6 +793,10 @@ class Entity < ApplicationRecord
     info
   end
 
+  def url
+    Routes.entity_url(self)
+  end
+
   ##
   # Merging, and history History
   #
