@@ -311,5 +311,24 @@ describe('utility', function(){
 	expect( $('#test-dom > a')[0]['href']).toEqual('https://example.com/');
       });
     });
+
+    describe('#createElement', () => {
+      it('defaults to div', () => {
+	document.getElementById('test-dom').appendChild(utility.createElement());
+	expect( $('#test-dom > div').length ).toEqual(1);
+      });
+
+      it('can be initalized with a class', () => {
+	document.getElementById('test-dom')
+	  .appendChild(utility.createElement({ "tag": 'span', "class": 'one two'}));
+	expect($('#test-dom > span.one.two')).toExist();
+      });
+
+      it('can be initalized with an id', () => {
+	document.getElementById('test-dom')
+	  .appendChild(utility.createElement({ "id": 'foolsGold'}));
+	expect($('#foolsGold')).toExist();
+      });
+    });
   });
 });

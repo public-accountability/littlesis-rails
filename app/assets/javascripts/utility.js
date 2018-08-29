@@ -406,6 +406,38 @@ utility.createElementWithText = function(tagName, text) {
 
 
 /**
+ * This is a simple wrapper around document.createElement
+ * There are three options:
+ *   - tag (defaults to div)
+ *   - id
+ *   - class
+ *
+ * @param {} options
+ * @returns {Element}
+ *
+ */
+utility.createElement = function(options) {
+  var elementConfig = { "tag": 'div', "class": null, "id": null};
+
+  if (utility.isObject(options)) {
+     Object.assign(elementConfig, options);
+  }
+
+  var element = document.createElement(elementConfig.tag);
+
+  if (elementConfig['class']) {
+    element.className = options['class'];
+  }
+  
+  if (elementConfig['id']) {
+    element.setAttribute('id', options['id']);
+  }
+
+  return element;
+};
+
+
+/**
  * Creates an <a> with the provided href
  *
  * @param {String} href
