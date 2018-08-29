@@ -6,18 +6,6 @@ module RelationshipsHelper
     link_to name, relationship_url(rel)
   end
 
-  def display_date(str, abbreviate = false)
-    return nil if str.nil?
-    year, month, day = str.split("-")
-    abbreviate = false if year.to_i < 1930
-    return Time.parse(str).strftime("%b %-d '%y") if year.to_i > 0 and month.to_i > 0 and day.to_i > 0
-    if year.to_i > 0 and month.to_i > 0
-      return Time.parse([year, month, 1].join("-")).strftime("%b '%y")
-    end
-    return (abbreviate ? "'" + year[2..4] : year) if year.to_i > 0
-    ""
-  end
-
   def title_in_parens(rel)
     if rel.description.nil?
       return ""
