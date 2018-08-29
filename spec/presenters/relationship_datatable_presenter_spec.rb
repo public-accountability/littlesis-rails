@@ -20,6 +20,8 @@ describe RelationshipDatatablePresenter do
                        'is_board' => nil,
                        'is_executive' => nil,
                        'amount' => nil,
-                       'is_current' => true)
+                       'is_current' => true,
+                       'label_for_entity1' => 'Position',
+                       'label_for_entity2' => 'Position')
   end
 end

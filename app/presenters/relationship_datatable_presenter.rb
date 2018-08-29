@@ -11,5 +11,9 @@ class RelationshipDatatablePresenter
     @hash = FIELDS.each_with_object({}) do |field, h|
       h[field] = relationship.public_send(field)
     end
+
+    rlabel = RelationshipLabel.new(relationship)
+    @hash['label_for_entity1'] = rlabel.label_for_page_of(relationship.entity1_id)
+    @hash['label_for_entity2'] = rlabel.label_for_page_of(relationship.entity2_id)
   end
 end
