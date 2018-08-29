@@ -11,9 +11,9 @@
   var TABLE_ID = "relationships-table";
   var DEFAULT_OPTIONS = { isList: false };
 
-  // hold fetched data and entity initalized with
-  // ...just a way to keep state without having to
-  // deal with create a javasript class
+  // Variables to hold fetched data and the entity initalized.
+  // This is just a way to keep state without having to
+  // deal with creating a javascript class
   var DATA_STORE = null;
   var ENTITY_ID = null;
 
@@ -95,12 +95,11 @@
    * @returns {String} 
    */
   function renderDescription(data, type, row) {
-    return 'description goes here';
-    // if (row.amount) {
-    //   return data + " &bull; $" + row.amount;
-    // } else {
-    //   return data;
-    // }
+    if (ENTITY_ID === row.entity1_id) {
+      return row.label_for_entity1;
+    } else {
+      return row.label_for_entity2;
+    }
   };
 
   /**
@@ -121,7 +120,11 @@
    */
   function renderDate(data, type, row) {
     if (row.start_date && row.end_date) {
+      if (row.start_date.slice(0, 4) === row.end_date.slice(0, 4)) {
+	return row.start_date.slice(0, 4);
+      } else {
 	return row.start_date.slice(0, 4) + ' - ' + row.end_date.slice(0, 4);
+      }
     }
 
     if (row.start_date && !row.end_date) {
