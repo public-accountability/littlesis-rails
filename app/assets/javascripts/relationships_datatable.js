@@ -18,6 +18,15 @@
     option.setAttribute('value', value);
     return option;
   };
+
+  var createTextInput = function(id, placeholder) {
+    var input = utility.createElement({ "tag": 'input', "id": id, "class": 'form-control' });
+    input.setAttribute('type', 'text');
+    input.setAttribute('placeholder', placeholder);
+    return input;
+  };
+
+  var NUMBER_REGEX = RegExp('^[0-9]+$');
   
   var columns = ["Related Entity", "Relationship", "Details", "Date(s)"];
   var TABLE_ID = "relationships-table";
@@ -31,8 +40,8 @@
 
   var DATATABLE_COLUMNS = [
     { 
-      data: 'related_entity_name', 
-      name: 'related_entity_name', 
+      data: null,
+      name: 'entity_name',
       width: '40%',
       render: renderRelatedEntity
     },
@@ -66,6 +75,11 @@
       visible: false,
       defaultConent: '',
       render: renderInterlocks
+    },
+    {
+      data: 'amount',
+      name: 'amount',
+      visible: false,
     }
   ];
 
@@ -107,8 +121,8 @@
    * Render Link with Related Entity Names and Blurb
    * @returns {String} 
    */
-  function renderRelatedEntity(_data, _type, row) {
-    var entity = otherEntity(row);
+  function renderRelatedEntity(data) {
+    var entity = otherEntity(data);
     var a = utility.createLink(entity.url);
     a.setAttribute('class', 'entity-link');
     a.textContent = entity.name;
@@ -187,7 +201,11 @@
 
   // TABLE DOM ELEMENTS
 
-  var selects = {
+
+  /*
+   * These each return a single filter for the datatable
+   */
+  var filters = {
 
     "categories": function(categories) {
       var select = createSelect('relationships-category');
@@ -252,9 +270,54 @@
 	  .draw();
       });
       return select;
+    },
+
+    "search": function() {
+      var input = createTextInput('relationships-search', 'search');
+
+      input.addEventListener('keyup', function(e) {
+	tableApi().search(this.value).draw();
+      });
+      
+      
+      return input;
+    },
+
+    // see: https://stackoverflow.com/questions/29836857/jquery-datatable-filtering-so-confusing
+    //       and https://datatables.net/examples/plug-ins/range_filtering
+  
+    "amount": function() {
+      var input = createTextInput('relationships-amount', 'min amount');
+
+      input.addEventListener('keyup', function(e) {
+	// if the input is not an integer
+	// clear the search and return early
+	if (!NUMBER_REGEX.test(this.value.trim())) {
+	  $.fn.dataTable.ext.search.pop();
+	  tableApi().draw();
+	  return;
+	}
+	
+	var minimumAmount = Number(this.value.trim());
+
+	$.fn.dataTable.ext.search.push(
+	  function(settings, data, dataIndex) {
+	    if (NUMBER_REGEX.test(data[6])) {
+	      return Number(data[6]) >= minimumAmount;
+	    } else {
+	      return false;
+	    }
+	  }
+	);
+	tableApi().draw();
+	$.fn.dataTable.ext.search.pop();
+      });
+
+      return input;
     }
 
   };
+
 
   /**
    * Creates table filters
@@ -263,13 +326,19 @@
    * @returns {Element} 
    */
   function createFilters(data) {
-    var div = utility.createElement({ "id": 'relationships-filters' });
-    
+    var div = utility.createElement({ "id": 'relationships-filters', "class": 'form-inline' });
 
-    div.appendChild(selects.categories(data.categories));
-    div.appendChild(selects.types(data.types));
-    div.appendChild(selects.interlocks(data.interlocks));
+    ['categories', 'types', 'interlocks'].forEach(function(filter) {
+      div.appendChild(filters[filter](data[filter]));
+    });
+
+    var line2 = utility.createElement({ "id": 'relationships-filters-line2' });
+
+    ['search', 'amount'].forEach(function(filter) {
+      line2.appendChild(filters[filter]());
+    });
     
+    div.appendChild(line2);
     return div;
   }
 
