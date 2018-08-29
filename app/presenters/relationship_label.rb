@@ -10,6 +10,27 @@ class RelationshipLabel < SimpleDelegator
     @is_reverse = is_reverse
   end
 
+  # This returns the label for the provided entity of a relationship.
+  # The semantics of this can be somewhat confusing. You can think of
+  # it as the label for the page of the provided entity.
+  #
+  # This is an alterative to setting is_reverse
+  #
+  # For instance. if there's a relationship between Alice and Bob,
+  # where Alice is Entity #1 and Bob is Enity #2 and description1 = "renter"
+  # and description2  = "landlord". Our convention is to say that Alice is
+  # the renter of Bob and Bob is the landlord of Alice.
+  # Howver label_for_page_of(Alice) would return "Landlord" and
+  # label_for_page_of(Bob) would return "renter"
+  def label_for_page_of(entity)
+    prev_is_reverse = @is_reverse
+    entity_id = Entity.entity_id_for(entity)
+    @is_reverse = (entity_id == entity2_id)
+    return label
+  ensure
+    @is_reverse = prev_is_reverse
+  end
+
   def label
     return title if is_position? || is_member?
     return humanize_contributions if is_donation?
