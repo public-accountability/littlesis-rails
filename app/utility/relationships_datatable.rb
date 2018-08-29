@@ -10,7 +10,7 @@
 # }
 
 class RelationshipsDatatable
-  INTERLOCKS_TAKE = 10
+  INTERLOCKS_TAKE = 15
 
   attr_reader :root_entities,
               :root_entity_ids,
@@ -27,9 +27,10 @@ class RelationshipsDatatable
     @links = load_links
     @related_ids = @links.map(&:entity2_id).uniq
     @entities = load_entities
-    @relationships = load_relationships
     @rgraph = RelationshipsGraph.new_from_entity(@root_entity_ids)
     @interlocks = load_interlocks # if interlocks?
+    @interlocks_entity_ids = @interlocks.pluck('id').to_set
+    @relationships = load_relationships
   end
 
   # Initialized for a collection of entiites (i.e. a list)
@@ -70,7 +71,11 @@ class RelationshipsDatatable
   # ---> [{}]
   def load_relationships
     @links.map do |link|
-      RelationshipDatatablePresenter.new(link.relationship).to_h
+      interlocked_entities = @rgraph.nodes
+                               .dig(link.entity2_id, :associated)
+                               .intersection(@interlocks_entity_ids)
+                               .to_a
+      RelationshipDatatablePresenter.new(link.relationship, 'interlocks' => interlocked_entities).to_h
     end
   end
 

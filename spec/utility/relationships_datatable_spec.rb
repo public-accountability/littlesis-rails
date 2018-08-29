@@ -46,8 +46,8 @@ describe RelationshipsDatatable do
   describe 'relationships' do
     subject { datatable.relationships.to_set }
     it do
-      is_expected
-        .to eql(relationships[0, 2].map { |r| RelationshipDatatablePresenter.new(r).to_h }.to_set)
+      is_expected.to eql([RelationshipDatatablePresenter.new(relationships[0], 'interlocks' => [interlocked.id]).to_h,
+                          RelationshipDatatablePresenter.new(relationships[1], 'interlocks' => []).to_h].to_set)
     end
   end
 
@@ -59,6 +59,11 @@ describe RelationshipsDatatable do
     subject { datatable.interlocks }
     it do
       is_expected.to eql([{ 'id' => interlocked.id, 'name' => interlocked.name, 'interlocks_count' => 1 }])
+    end
+
+    specify do
+      expect(datatable.instance_variable_get(:@interlocks_entity_ids))
+        .to eql [interlocked.id].to_set
     end
   end
 end
