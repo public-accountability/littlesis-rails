@@ -1,4 +1,4 @@
-# coding: utf-8
+# frozen_string_literal: true
 
 # Provides a short label for a Relationship.
 # Used by Link and Oligrapher.
@@ -28,14 +28,14 @@ class RelationshipLabel < SimpleDelegator
   end
 
   def humanize_contributions
-    str = ""
+    str = +''
 
     if filings.nil? || filings.zero?
 
       if description1 == 'NYS Campaign Contribution'
-        str << "NYS Campaign Contribution"
-      elsif description1 == "Campaign Contribution"
-        str << "Donation"
+        str << 'NYS Campaign Contribution'
+      elsif description1 == 'Campaign Contribution'
+        str << 'Donation'
       elsif description1.present?
         str << description1
       else
