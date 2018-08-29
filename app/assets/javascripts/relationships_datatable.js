@@ -6,10 +6,17 @@
     root.RelationshipsDatatable = factory(root.jQuery, root.utility);
   }
 }(this, function ($, utility) {
-  // helpers
+
+  // DOM HELPERS:
   var createElement = document.createElement.bind(document); // javascript! what a language!
   var createSelect = function(id) {
     return utility.createElement({ "tag": 'select', "class": 'form-control', "id": id });
+  };
+
+  var createOption = function(text, value) {
+    var option = utility.createElementWithText('option', text);
+    option.setAttribute('value', value);
+    return option;
   };
   
   var columns = ["Related Entity", "Relationship", "Details", "Date(s)"];
@@ -53,6 +60,13 @@
       defaultConent: '',
       render: renderEntityTypes
     },
+    {
+      name: 'interlocks',
+      data: null,
+      visible: false,
+      defaultConent: '',
+      render: renderInterlocks
+    }
   ];
 
   /**
@@ -83,6 +97,10 @@
 
   function renderEntityTypes(data) {
     return otherEntity(data).types.join(' ');
+  }
+
+  function renderInterlocks(data) {
+    return data['interlocks'].join(' ');
   }
 
   /**
@@ -205,7 +223,6 @@
       select.addEventListener('change', function(e) {
 	var query = (Number(this.value) === 0) ? '' : ('\\b' + this.value + '\\b');
 	
-	console.log('searching for ', query);
 	tableApi()
 	  .column('entity_types:name')
 	  .search(query, true, false)
@@ -214,6 +231,27 @@
       
       return select;
 
+    },
+
+    "interlocks": function(interlocks) {
+      var select = createSelect('relationships-interlocks');
+      select.appendChild(createOption('Connected To', 0));
+
+      interlocks.forEach(function(interlock) {
+	select.appendChild(createOption(
+	  interlock.name + ' (' + interlock.interlocks_count + ')',
+	  interlock.id
+	));
+      });
+
+      select.addEventListener('change', function(e) {
+	var query = (Number(this.value) === 0) ? '' : ('\\b' + this.value + '\\b');
+	tableApi()
+	  .column('interlocks:name')
+	  .search(query, true, false)
+	  .draw();
+      });
+      return select;
     }
 
   };
@@ -229,9 +267,9 @@
     
 
     div.appendChild(selects.categories(data.categories));
-
-
     div.appendChild(selects.types(data.types));
+    div.appendChild(selects.interlocks(data.interlocks));
+    
     return div;
   }
 

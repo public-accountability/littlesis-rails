@@ -71,10 +71,7 @@ class RelationshipsDatatable
   # ---> [{}]
   def load_relationships
     @links.map do |link|
-      interlocked_entities = @rgraph.nodes
-                               .dig(link.entity2_id, :associated)
-                               .intersection(@interlocks_entity_ids)
-                               .to_a
+      interlocked_entities = interlocked_entities_for(link.entity2_id)
       RelationshipDatatablePresenter.new(link.relationship, 'interlocks' => interlocked_entities).to_h
     end
   end
@@ -107,6 +104,16 @@ class RelationshipsDatatable
         .merge('interlocks_count' => e.count)
     end
   end
+
+  def interlocked_entities_for(entity_id)
+    interlocked_entities = @rgraph.nodes.dig(entity_id, :associated)&.intersection(@interlocks_entity_ids)&.to_a
+    if interlocked_entities.nil?
+      []
+    else
+      interlocked_entities
+    end
+  end
+  
 
   # NOTE: a previous version of this query included
   # an addition where that prohibited relationships
