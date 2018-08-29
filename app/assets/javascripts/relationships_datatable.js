@@ -26,6 +26,15 @@
     return input;
   };
 
+  var createCheckbox = function(id, text) {
+    var label = utility.createElementWithText('label', text);
+    label.setAttribute('for', id);
+    var input = utility.createElement({ "tag": 'input', "id": id});
+    input.setAttribute('type', 'checkbox');
+    label.appendChild(input);
+    return label;
+  };
+
   var NUMBER_REGEX = RegExp('^[0-9]+$');
   
   var columns = ["Related Entity", "Relationship", "Details", "Date(s)"];
@@ -80,6 +89,21 @@
       data: 'amount',
       name: 'amount',
       visible: false,
+    },
+    {
+      data: ternary('is_current'),
+      name: 'is_current',
+      visible: false
+    },
+    {
+      data: ternary('is_board'),
+      name: 'is_board',
+      visible: false,
+    },
+    {
+      data: ternary('is_executive'),
+      name: 'is_executive',
+      visible: false,
     }
   ];
 
@@ -108,6 +132,28 @@
   /////////////////////////////
   ///// RENDERING HELPERS /////
   /////////////////////////////
+
+  // 
+  // 
+
+  /**
+   * Used to handle searching of boolean columns
+   * see: https://datatables.net/reference/option/columns.data
+   * @param {String} key
+   * @returns {Function} 
+   */
+  function ternary(key) {
+    return function(row) {
+      var value = row[key];
+      if (value === true) {
+	return "true";
+      } else if (value === false) {
+	return "false";
+      } else {
+	return 'null';
+      }
+    };
+  }
 
   function renderEntityTypes(data) {
     return otherEntity(data).types.join(' ');
@@ -279,7 +325,6 @@
 	tableApi().search(this.value).draw();
       });
       
-      
       return input;
     },
 
@@ -314,8 +359,40 @@
       });
 
       return input;
-    }
+    },
 
+    "isCurrent": function() {
+      var checkbox = createCheckbox('relationships-current', 'Current');
+
+      checkbox.querySelector('input').addEventListener('change', function(e) {
+	var query = this.checked ? 'true' : '';
+	tableApi().column('is_current:name').search(query).draw();
+      });
+      
+      return checkbox;
+    },
+
+    "isBoard": function() {
+      var checkbox = createCheckbox('relationships-board', 'Board Member');
+
+      checkbox.querySelector('input').addEventListener('change', function(e) {
+	var query = this.checked ? 'true' : '';
+	tableApi().column('is_board:name').search(query).draw();
+      });
+      
+      return checkbox;
+    },
+
+    "isExecutive": function() {
+      var checkbox = createCheckbox('relationships-executive', 'Executive');
+
+      checkbox.querySelector('input').addEventListener('change', function(e) {
+	var query = this.checked ? 'true' : '';
+	tableApi().column('is_executive:name').search(query).draw();
+      });
+      
+      return checkbox;
+    }
   };
 
 
@@ -334,7 +411,7 @@
 
     var line2 = utility.createElement({ "id": 'relationships-filters-line2' });
 
-    ['search', 'amount'].forEach(function(filter) {
+    ['search', 'amount', 'isCurrent', 'isBoard', 'isExecutive'].forEach(function(filter) {
       line2.appendChild(filters[filter]());
     });
     
