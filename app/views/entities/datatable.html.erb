@@ -7,7 +7,6 @@
 
 <h3 class="section">Relationships</h3>
 
-
 <div id="relationships-datatable-container">
 </div>
 
@@ -16,9 +15,3 @@
    RelationshipsDatatable.start(<%= @entity.id %>);
  }
 </script>
-
-
-<%# cache( [@entity.cache_key, 'relationships_datatable'], expires_in: 1.day) do %>
-<%#= render partial: 'relationships/datatable', locals: { table: RelationshipsDatatable.new(@entity) } %>
-
-<%# end %>
