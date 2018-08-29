@@ -6,31 +6,6 @@ module RelationshipsHelper
     link_to name, relationship_url(rel)
   end
 
-  def relationship_date(rel)
-    start = rel.start_date
-    endt = rel.end_date
-    current = rel.is_current
-
-    # if no start or end date, but is_current is false, we say so
-    return 'past' if endt.nil? and current == '0'
-
-    # if start == end, return single date
-    return display_date(endt, true) if endt and start == endt
-
-    s = display_date(start, true)
-    e = display_date(endt, true)
-    span = ""
-
-    if s
-      span = s + " &rarr; "
-      span += e if e
-    elsif e
-      span = "? &rarr; " + e
-    end
-  
-    span
-  end
-
   def display_date(str, abbreviate = false)
     return nil if str.nil?
     year, month, day = str.split("-")
