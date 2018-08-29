@@ -6,7 +6,12 @@
     root.RelationshipsDatatable = factory(root.jQuery, root.utility);
   }
 }(this, function ($, utility) {
+  // helpers
   var createElement = document.createElement.bind(document); // javascript! what a language!
+  var createSelect = function(id) {
+    return utility.createElement({ "tag": 'select', "class": 'form-control', "id": id });
+  };
+  
   var columns = ["Related Entity", "Relationship", "Details", "Date(s)"];
   var TABLE_ID = "relationships-table";
   var DEFAULT_OPTIONS = { isList: false };
@@ -25,8 +30,9 @@
       render: renderRelatedEntity
     },
     {
-      data: 'category',
+      data: 'category_id',
       name: 'category',
+      type: 'num',
       width: "10%",
       render: renderCategory
     },
@@ -39,7 +45,14 @@
       name: 'date',
       width: "15%",
       render: renderDate
-    }
+    },
+    {
+      name: 'entity_types',
+      data: null,
+      visible: false,
+      defaultConent: '',
+      render: renderEntityTypes
+    },
   ];
 
   /**
@@ -67,6 +80,10 @@
   /////////////////////////////
   ///// RENDERING HELPERS /////
   /////////////////////////////
+
+  function renderEntityTypes(data) {
+    return otherEntity(data).types.join(' ');
+  }
 
   /**
    * Render Link with Related Entity Names and Blurb
@@ -107,9 +124,9 @@
    *
    * @returns {String} 
    */
-  function renderCategory(_data, _type, row) {
+  function renderCategory(category_id, type, row) {
     var a = utility.createLink(row.url);
-    a.textContent = utility.relationshipCategories[row.category_id];
+    a.textContent = utility.relationshipCategories[category_id];
     return a.outerHTML;
   };
 
@@ -150,6 +167,74 @@
   };
 
 
+  // TABLE DOM ELEMENTS
+
+  var selects = {
+
+    "categories": function(categories) {
+      var select = createSelect('relationships-category');
+
+      [0].concat(categories).forEach(function(c) {
+	var text = (c === 0) ? 'Category' : utility.relationshipCategories[c];
+	var option = utility.createElementWithText('option', text);
+	option.setAttribute('value', c);
+	select.appendChild(option);
+      });
+
+      select.addEventListener('change', function(e) {
+	tableApi()
+	  .column('category:name')
+	  .search(utility.relationshipCategories[this.value])
+	  .draw();
+      });
+      
+      return select;
+    },
+
+    "types": function(types) {
+      var select = createSelect('relationships-type');
+
+      [0].concat(types).forEach(function(t) {
+	var text = (t === 0) ? 'Types' : utility.extensionDefinitions[t];
+	var option = utility.createElementWithText('option', text);
+	option.setAttribute('value', t);
+	select.appendChild(option);
+      });
+      
+
+      select.addEventListener('change', function(e) {
+	var query = (Number(this.value) === 0) ? '' : ('\\b' + this.value + '\\b');
+	
+	console.log('searching for ', query);
+	tableApi()
+	  .column('entity_types:name')
+	  .search(query, true, false)
+	  .draw();
+      });
+      
+      return select;
+
+    }
+
+  };
+
+  /**
+   * Creates table filters
+   *
+   * @param {Object} data
+   * @returns {Element} 
+   */
+  function createFilters(data) {
+    var div = utility.createElement({ "id": 'relationships-filters' });
+    
+
+    div.appendChild(selects.categories(data.categories));
+
+
+    div.appendChild(selects.types(data.types));
+    return div;
+  }
+
   /**
    * Creates a <table> with column headers
    *
@@ -172,12 +257,18 @@
     return table;
   }
 
-  function insertTableIntoDom() {
-    document
-      .getElementById('relationships-datatable-container')
-      .appendChild(createTable());
+  function setupDom(data) {
+    var container = document.getElementById('relationships-datatable-container');
+    container.appendChild( createFilters(data) );
+    container.appendChild( createTable() );
   }
+
+  // MAIN //
   
+  function tableApi() {
+    return $('#' + TABLE_ID).dataTable().api();
+  }
+
   /**
    * Main function that initializes the table
    *
@@ -199,7 +290,7 @@
     fetchData(entityId)
       .then(function(data) {
 	DATA_STORE = data;
-	insertTableIntoDom();
+	setupDom(data);
 	datatable();
       });
 
@@ -207,6 +298,7 @@
 
   return {
     "start": start,
+    "tableApi": tableApi,
     "data": function() { return DATA_STORE; }
   };
   

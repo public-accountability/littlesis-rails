@@ -63,6 +63,52 @@ utility.relationshipCategories = [
 ];
 
 /**
+ * Extension Definition / Entity Types
+ */
+utility.extensionDefinitions = {
+  "1": "Person",
+  "2": "Organization",
+  "3": "Political Candidate",
+  "4": "Elected Representative",
+  "5": "Business",
+  "6": "Government Body",
+  "7": "School",
+  "8": "Membership Organization",
+  "9": "Philanthropy",
+  "10": "Other Not-for-Profit",
+  "11": "Political Fundraising Committee",
+  "12": "Private Company",
+  "13": "Public Company",
+  "14": "Industry/Trade Association",
+  "15": "Law Firm",
+  "16": "Lobbying Firm",
+  "17": "Public Relations Firm",
+  "18": "Individual Campaign Committee",
+  "19": "PAC",
+  "20": "Other Campaign Committee",
+  "21": "Media Organization",
+  "22": "Policy/Think Tank",
+  "23": "Cultural/Arts",
+  "24": "Social Club",
+  "25": "Professional Association",
+  "26": "Political Party",
+  "27": "Labor Union",
+  "28": "Government-Sponsored Enterprise",
+  "29": "Business Person",
+  "30": "Lobbyist",
+  "31": "Academic",
+  "32": "Media Personality",
+  "33": "Consulting Firm",
+  "34": "Public Intellectual",
+  "35": "Public Official",
+  "36": "Lawyer",
+  "37": "Couple",
+  "38": "Academic Research Institute",
+  "39": "Government Advisory Body",
+  "40": "Elite Consensus Group"
+};
+
+/**
  * Returns an nested array of [ display, fieldname, type ] 
  * possible types: 'text', 'date', 'triboolean', 'boolean', 'money', 'number'
  * @param {number} category
