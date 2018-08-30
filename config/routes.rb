@@ -95,7 +95,6 @@ Lilsis::Application.routes.draw do
 
   resources :lists do
     member do
-      get 'relationships'
       get 'admin'
       get 'crop_images'
       get 'members'
