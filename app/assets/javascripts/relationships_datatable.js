@@ -2,13 +2,13 @@
   if (typeof module === 'object' && module.exports) {
     module.exports = factory(require('jQuery'));
   } else {
-    // Browser globals (root is window)
     root.RelationshipsDatatable = factory(root.jQuery, root.utility);
   }
 }(this, function ($, utility) {
 
   // DOM HELPERS:
   var createElement = document.createElement.bind(document); // javascript! what a language!
+
   var createSelect = function(id) {
     return utility.createElement({ "tag": 'select', "class": 'form-control', "id": id });
   };
@@ -39,7 +39,6 @@
   
   var columns = ["Related Entity", "Relationship", "Details", "Date(s)"];
   var TABLE_ID = "relationships-table";
-  var DEFAULT_OPTIONS = { isList: false };
 
   // Variables to hold fetched data and the entity initalized.
   // This is just a way to keep state without having to
@@ -133,9 +132,6 @@
   ///// RENDERING HELPERS /////
   /////////////////////////////
 
-  // 
-  // 
-
   /**
    * Used to handle searching of boolean columns
    * see: https://datatables.net/reference/option/columns.data
@@ -164,7 +160,7 @@
   }
 
   /**
-   * Render Link with Related Entity Names and Blurb
+   * Render Link with related entity names and blurb
    * @returns {String} 
    */
   function renderRelatedEntity(data) {
@@ -174,7 +170,6 @@
     a.textContent = entity.name;
     
     if (entity.blurb) {
-      // a.appendChild(createElement('br'));
       var blurb = utility.createElementWithText('div', entity.blurb);
       blurb.setAttribute('class', 'entity-blurb');
       a.appendChild(blurb);
@@ -535,6 +530,5 @@
     "tableApi": tableApi,
     "data": function() { return DATA_STORE; }
   };
-  
   
 }));
