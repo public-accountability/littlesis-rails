@@ -10,6 +10,7 @@ describe 'Datatable' do
 
   it 'returns valid json response' do
     expect(response).to have_http_status 200
+    expect(response['Cache-Control']).to include 'public'
     expect(json['relationships'].count).to eql 1
   end
 end
