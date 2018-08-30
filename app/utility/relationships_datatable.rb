@@ -28,32 +28,9 @@ class RelationshipsDatatable
     @related_ids = @links.map(&:entity2_id).uniq
     @entities = load_entities
     @rgraph = RelationshipsGraph.new_from_entity(@root_entity_ids)
-    @interlocks = load_interlocks # if interlocks?
+    @interlocks = load_interlocks
     @interlocks_entity_ids = @interlocks.pluck('id').to_set
     @relationships = load_relationships
-  end
-
-  # Initialized for a collection of entiites (i.e. a list)
-  # See views/lists/datatable
-  def list?
-    @root_entities.count > 1
-  end
-
-  # It appears that the only reason for limiting
-  # these filter options is for performance.
-  # Large collection of related entities and/or
-  # relationships likely causes a DB bottleneck.
-  # We should do some testing and/or refactoring to see
-  # if we can just remove these limits. (2018-08-21)
-
-  # Show "On List" filter option
-  def lists?
-    @related_ids.count < 1000
-  end
-
-  # Show "Connected to" filter option
-  def interlocks?
-    true
   end
 
   def data
@@ -113,7 +90,6 @@ class RelationshipsDatatable
       interlocked_entities
     end
   end
-  
 
   # NOTE: a previous version of this query included
   # an addition where that prohibited relationships
@@ -122,6 +98,6 @@ class RelationshipsDatatable
     Link
       .includes(:entity, relationship: :position, related: [:extension_definitions])
       .where(entity1_id: @root_entity_ids)
-      .limit(5_000)
+      .limit(10_000)
   end
 end
