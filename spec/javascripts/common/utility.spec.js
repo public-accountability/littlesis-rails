@@ -204,6 +204,22 @@ describe('utility', function(){
       });
     });
 
+    describe("#pick", () => {
+      it('returns object with a permitted set of keys', () => {
+	var obj = { a: 1, b: 2, c: 3 };
+	expect(utility.pick(obj, ['a', 'c']))
+	  .toEqual({ a: 1, c: 3 });
+      });
+    });
+    
+    describe("#omit", () => {
+      it('returns object without rejected set of keys', () => {
+	var obj = { a: 1, b: 2, c: 3 };
+	expect(utility.omit(obj, ['a', 'c']))
+	  .toEqual({ b: 2 });
+      });
+    });
+
     describe('#isObject', () => {
 
       it('returns true for an object', () => {

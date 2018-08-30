@@ -332,6 +332,38 @@ utility.stringifyValues = function(obj){
   );
 };
 
+
+/**
+ * Returns object with only the permitted keys
+ * 
+ * @param {Object} obj
+ * @param {Array[String]} keys
+ * @returns {Object}
+ */
+utility.pick = function(obj, keys) {
+  var result = {};
+  keys.forEach(function(k) {
+    result[k] = obj[k];
+  });
+  return result;
+};
+
+/**
+ * Returns object without rejected set of keys
+ * 
+ * @param {Object} obj
+ * @param {Array[String]} keys
+ * @returns {Object}
+ */
+utility.omit = function(obj, keys) {
+  var result = Object.assign({}, obj);
+  keys.forEach(function(k) {
+    delete result[k];
+  });
+  return result;
+};
+
+
 // Object -> Boolean
 utility.exists = function(obj){
   return obj !== undefined && obj !== null;
