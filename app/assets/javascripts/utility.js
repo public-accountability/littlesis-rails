@@ -504,11 +504,11 @@ utility.createElement = function(options) {
   var element = document.createElement(elementConfig.tag);
 
   if (elementConfig['class']) {
-    element.className = options['class'];
+    element.className = elementConfig['class'];
   }
   
   if (elementConfig['id']) {
-    element.setAttribute('id', options['id']);
+    element.setAttribute('id', elementConfig['id']);
   }
 
   return element;
