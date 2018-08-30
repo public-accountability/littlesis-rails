@@ -204,6 +204,22 @@ describe('utility', function(){
       });
     });
 
+    describe("#pick", () => {
+      it('returns object with a permitted set of keys', () => {
+	var obj = { a: 1, b: 2, c: 3 };
+	expect(utility.pick(obj, ['a', 'c']))
+	  .toEqual({ a: 1, c: 3 });
+      });
+    });
+    
+    describe("#omit", () => {
+      it('returns object without rejected set of keys', () => {
+	var obj = { a: 1, b: 2, c: 3 };
+	expect(utility.omit(obj, ['a', 'c']))
+	  .toEqual({ b: 2 });
+      });
+    });
+
     describe('#isObject', () => {
 
       it('returns true for an object', () => {
@@ -291,6 +307,43 @@ describe('utility', function(){
         utility.appendSpinner($('#test-dom'));
         utility.removeSpinner($('#test-dom'));
         expect($('#test-dom .sk-circle')).not.toExist();
+      });
+    });
+
+    describe('#createElementWithText', () => {
+      it('creates a new element', () => {
+	document.getElementById('test-dom')
+	  .appendChild( utility.createElementWithText('p', 'just a simple paragraph'));
+
+	expect( $('#test-dom > p').text() ).toEqual('just a simple paragraph');
+      });
+    });
+
+    describe('#createLink', () => {
+      it('creates a new link', () => {
+	document.getElementById('test-dom')
+	  .appendChild( utility.createLink('https://example.com/'));
+
+	expect( $('#test-dom > a')[0]['href']).toEqual('https://example.com/');
+      });
+    });
+
+    describe('#createElement', () => {
+      it('defaults to div', () => {
+	document.getElementById('test-dom').appendChild(utility.createElement());
+	expect( $('#test-dom > div').length ).toEqual(1);
+      });
+
+      it('can be initalized with a class', () => {
+	document.getElementById('test-dom')
+	  .appendChild(utility.createElement({ "tag": 'span', "class": 'one two'}));
+	expect($('#test-dom > span.one.two')).toExist();
+      });
+
+      it('can be initalized with an id', () => {
+	document.getElementById('test-dom')
+	  .appendChild(utility.createElement({ "id": 'foolsGold'}));
+	expect($('#foolsGold')).toExist();
       });
     });
   });

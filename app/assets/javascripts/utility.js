@@ -49,7 +49,7 @@ utility.entityInfo = function(key) {
 utility.relationshipCategories = [
   "",
   "Position",
-  "Education (as a student)",
+  "Education",
   "Membership",
   "Family",
   "Donation/Grant",
@@ -61,6 +61,52 @@ utility.relationshipCategories = [
   "Hierarchy",
   "Generic"
 ];
+
+/**
+ * Extension Definition / Entity Types
+ */
+utility.extensionDefinitions = {
+  "1": "Person",
+  "2": "Organization",
+  "3": "Political Candidate",
+  "4": "Elected Representative",
+  "5": "Business",
+  "6": "Government Body",
+  "7": "School",
+  "8": "Membership Organization",
+  "9": "Philanthropy",
+  "10": "Other Not-for-Profit",
+  "11": "Political Fundraising Committee",
+  "12": "Private Company",
+  "13": "Public Company",
+  "14": "Industry/Trade Association",
+  "15": "Law Firm",
+  "16": "Lobbying Firm",
+  "17": "Public Relations Firm",
+  "18": "Individual Campaign Committee",
+  "19": "PAC",
+  "20": "Other Campaign Committee",
+  "21": "Media Organization",
+  "22": "Policy/Think Tank",
+  "23": "Cultural/Arts",
+  "24": "Social Club",
+  "25": "Professional Association",
+  "26": "Political Party",
+  "27": "Labor Union",
+  "28": "Government-Sponsored Enterprise",
+  "29": "Business Person",
+  "30": "Lobbyist",
+  "31": "Academic",
+  "32": "Media Personality",
+  "33": "Consulting Firm",
+  "34": "Public Intellectual",
+  "35": "Public Official",
+  "36": "Lawyer",
+  "37": "Couple",
+  "38": "Academic Research Institute",
+  "39": "Government Advisory Body",
+  "40": "Elite Consensus Group"
+};
 
 /**
  * Returns an nested array of [ display, fieldname, type ] 
@@ -286,6 +332,38 @@ utility.stringifyValues = function(obj){
   );
 };
 
+
+/**
+ * Returns object with only the permitted keys
+ * 
+ * @param {Object} obj
+ * @param {Array[String]} keys
+ * @returns {Object}
+ */
+utility.pick = function(obj, keys) {
+  var result = {};
+  keys.forEach(function(k) {
+    result[k] = obj[k];
+  });
+  return result;
+};
+
+/**
+ * Returns object without rejected set of keys
+ * 
+ * @param {Object} obj
+ * @param {Array[String]} keys
+ * @returns {Object}
+ */
+utility.omit = function(obj, keys) {
+  var result = Object.assign({}, obj);
+  keys.forEach(function(k) {
+    delete result[k];
+  });
+  return result;
+};
+
+
 // Object -> Boolean
 utility.exists = function(obj){
   return obj !== undefined && obj !== null;
@@ -388,4 +466,63 @@ utility.swapInputTextById = function(aId, bId) {
   var temp = a.val();
   a.val(b.val());
   b.val(temp);
+};
+
+
+/**
+ * Creates new element with text content
+ *
+ * @param {String} tagName
+ * @param {String} text
+ * @returns {Element} 
+ */
+utility.createElementWithText = function(tagName, text) {
+  var element = document.createElement(tagName);
+  element.textContent = text;
+  return element;
+};
+
+
+/**
+ * This is a simple wrapper around document.createElement
+ * There are three options:
+ *   - tag (defaults to div)
+ *   - id
+ *   - class
+ *
+ * @param {} options
+ * @returns {Element}
+ *
+ */
+utility.createElement = function(options) {
+  var elementConfig = { "tag": 'div', "class": null, "id": null};
+
+  if (utility.isObject(options)) {
+     Object.assign(elementConfig, options);
+  }
+
+  var element = document.createElement(elementConfig.tag);
+
+  if (elementConfig['class']) {
+    element.className = elementConfig['class'];
+  }
+  
+  if (elementConfig['id']) {
+    element.setAttribute('id', elementConfig['id']);
+  }
+
+  return element;
+};
+
+
+/**
+ * Creates an <a> with the provided href
+ *
+ * @param {String} href
+ * @returns {Element}
+ */
+utility.createLink = function(href) {
+  var a = document.createElement('a');
+  a.href = href;
+  return a;
 };

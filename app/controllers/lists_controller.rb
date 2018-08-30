@@ -22,7 +22,7 @@ class ListsController < ApplicationController
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
 
   before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :relationships, :search_data, :admin, :crop_images, :members, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
+                only: [:show, :edit, :update, :destroy, :search_data, :admin, :crop_images, :members, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
 
   # permissions
   before_action :set_permissions,
@@ -134,9 +134,6 @@ class ListsController < ApplicationController
 
     @list.soft_delete
     redirect_to lists_path, notice: 'List was successfully destroyed.'
-  end
-
-  def relationships
   end
 
   def admin

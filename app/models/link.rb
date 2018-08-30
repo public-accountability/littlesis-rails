@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Link < ApplicationRecord
   include SingularTable
 
@@ -11,10 +13,37 @@ class Link < ApplicationRecord
     interlock_hash(where(entity1_id: entity_ids))
   end
 
+  # used by ListDatatable
   def self.interlock_hash(links)
     links.reduce({}) do |hash, link|
       hash[link.entity2_id] = hash.fetch(link.entity2_id, []).push(link.entity1_id).uniq
       hash
+    end
+  end
+
+  # Retrives first and second degree relationships
+  #
+  # Note: hardcoded limit of 20,000
+  #
+  # Entity | Array[Entity] | Interger --> [{}]
+  def self.relationship_network_for(entities)
+    entity_ids = Array.wrap(entities).uniq.map! { |e| Entity.entity_id_for(e) }
+
+    sql = <<-SQL
+    SELECT *
+    FROM link as degree_one_links
+    LEFT JOIN link as degree_two_links
+            ON degree_one_links.entity2_id = degree_two_links.entity1_id
+    #{sanitize_sql_for_conditions(['WHERE degree_one_links.entity1_id IN (?)', entity_ids])}
+    LIMIT 20000
+    SQL
+
+    ApplicationRecord.connection.exec_query(sql).to_hash.map do |h|
+      if h.delete('is_reverse') == 1
+        h['entity1_id'], h['entity2_id'] = h['entity2_id'], h['entity1_id']
+      end
+      h['id'] = h.delete('relationship_id')
+      h
     end
   end
 

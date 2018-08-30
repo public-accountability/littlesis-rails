@@ -9,7 +9,7 @@ class Entity < ApplicationRecord
   include EntityPaths
   include EntitySearch
   include Tagable
-  include NetworkAnalysis
+  include NetworkAnalysis::EntityInterlocks
   include Pagination
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
@@ -399,6 +399,12 @@ class Entity < ApplicationRecord
   # interlocks
   #
 
+  # determines if the entity has a relationship with another entity
+  # Entity | Integer --> Boolean
+  def connected_to?(other_entity)
+    Link.exists?(entity1_id: id, entity2_id: Entity.entity_id_for(other_entity))
+  end
+
   def relateds_by_count(num=5, primary_ext=nil)
     r = relateds.select("entity.*, COUNT(link.id) AS num").group("link.entity2_id").order("num DESC").limit(num)
     r.where("entity.primary_ext = ?", primary_ext) unless primary_ext.nil?
@@ -785,6 +791,10 @@ class Entity < ApplicationRecord
     info[:aliases] = also_known_as.join(', ') unless also_known_as.empty?
     # TODO: address
     info
+  end
+
+  def url
+    Routes.entity_url(self)
   end
 
   ##

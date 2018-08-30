@@ -250,8 +250,6 @@ $small_image_size: 50px;
 }
 
 
-/* entity datatable */
-
 #entity-header {
   margin-top: -14px;
   margin-bottom: 20px;
@@ -291,101 +289,7 @@ $small_image_size: 50px;
   color: #888;
 }
 
-#relationships-table {  
-  border-bottom-color: rgb(221, 221, 221);
 
-  tbody, thead th {
-    border-bottom-color: rgb(221, 221, 221);
-  }
-
-  .entity-link {
-    font-weight: 500;
-  }
-}
-
-#relationships-filters {
-  background-color: #eee;
-  padding: 10px;
-  margin-bottom: 5px;
-}
-
-#relationships-filters-line2 {
-  margin-top: 5px;
-}
-
-#relationships-search {
-  width: 200px;
-}
-
-#relationships-amount {
-  width: 75px;
-}
-
-.buttons {
-  float: left;
-  margin-right: 10px;
-  margin-top: 7px;
-  display: inline-block;
-
-  a {
-    margin-right: 5px;
-  }
-}
-
-#relationships-filters select {
-  max-width: 280px;
-}
-
-html #relationships-table_info {
-  clear: none;
-  margin-top: 3px;
-}
-
-/* DataTables sorting */
-html .dataTables_wrapper .dataTables_paginate .paginate_button {
-  padding: 0;
-  margin: 0;
-  border: 0;
-
-  &:hover {
-    border: 0;
-    background: none;
-  }
-
-  &:active {
-    background-color: white;
-  }
-}
-
-html .dataTables_filter label {
-  width: 300px;
-
-  input[type="search"] {
-    width: 247px;
-  }
-}
-
-html table.dataTable thead {
-  .sorting_asc {
-    background: asset-url('sort_asc.png') no-repeat center left;
-  }
-   
-  .sorting_desc {
-    background: asset-url('sort_desc.png') no-repeat center left;
-  }
-   
-  .sorting {
-    background: asset-url('sort_both.png') no-repeat center left;
-  }
-   
-  .sorting_asc_disabled {
-    background: asset-url('sort_asc_disabled.png') no-repeat center left;
-  }
-   
-  .sorting_desc_disabled {
-    background: asset-url('sort_desc_disabled.png') no-repeat center left;
-  }
-}
 
 /* fields */
 

@@ -95,7 +95,6 @@ Lilsis::Application.routes.draw do
 
   resources :lists do
     member do
-      get 'relationships'
       get 'admin'
       get 'crop_images'
       get 'members'
@@ -171,6 +170,12 @@ Lilsis::Application.routes.draw do
       end
     end
   end
+
+  #############
+  # Datatable #
+  #############
+
+  get '/datatable/entity/:id', to: 'datatable#entity', constraints: { id: /\d+/ }
 
   #####################
   # deletion requests #

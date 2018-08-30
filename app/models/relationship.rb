@@ -540,6 +540,10 @@ class Relationship < ApplicationRecord
     [entity1_id, entity2_id, category_id]
   end
 
+  def url
+    Rails.application.routes.url_helpers.relationship_url(self)
+  end
+
   private
 
   # Updates link count for entities

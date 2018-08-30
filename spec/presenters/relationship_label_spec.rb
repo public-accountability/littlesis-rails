@@ -1,4 +1,3 @@
-# coding: utf-8
 require 'rails_helper'
 
 describe RelationshipLabel do
@@ -125,6 +124,30 @@ describe RelationshipLabel do
     context 'description fields are empty' do
       let(:relationship) { build(:social_relationship, description1: nil, description2: nil) }
       it { is_expected.to eql "Social" }
+    end
+  end
+
+  describe '#label_for_page_of' do
+    let(:entity_one) { build(:person) }
+    let(:entity_two) { build(:person) }
+    let(:relationship) do
+      build(:social_relationship, entity: entity_one, related: entity_two, description1: 'friend', description2: 'buddy')
+    end
+
+    subject(:rlabel) { RelationshipLabel.new(relationship) }
+
+    describe 'label for entity one' do
+      subject { rlabel.label_for_page_of(entity_one) }
+      it { is_expected.to eql 'buddy' }
+    end
+
+    describe 'label for entity two' do
+      subject { rlabel.label_for_page_of(entity_two) }
+      it { is_expected.to eql 'friend' }
+    end
+
+    specify do
+      expect { rlabel.label_for_page_of(entity_two) }.not_to change { rlabel.is_reverse }
     end
   end
 

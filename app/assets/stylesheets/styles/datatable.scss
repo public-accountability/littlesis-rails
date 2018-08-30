@@ -1,6 +1,84 @@
 /* entity datatable */
 
-#datatable-table {
+#relationships-table {
+    span.entity-blurb {
+	margin-left: 10px;
+    }
+}
+
+#relationships-table {  
+  border-bottom-color: rgb(221, 221, 221);
+
+  tbody, thead th {
+    border-bottom-color: rgb(221, 221, 221);
+  }
+
+  .entity-link {
+    font-weight: 500;
+  }
+}
+
+#relationships-filters {
+  select {
+      min-width: 200px;
+      max-width: 280px;
+  }
+
+  input, select {
+      margin-right: 0.5em;
+  }
+
+  #relationships-filters-line2 {
+      margin-top: 5px;
+
+      label:hover {
+	  text-decoration: underline;
+      }
+
+      input[type='checkbox'] {
+	  vertical-align: middle;
+	  float: left;
+	  position: relative;
+	  bottom: 1px;
+	  margin-right: 5px;
+	  margin-left: 5px;
+      }
+      
+  }
+
+  #relationships-search {
+      width: 200px;
+  }
+
+  #relationships-amount {
+      width: 125px;
+  }
+
+  .buttons {
+      float: left;
+      margin-right: 10px;
+      margin-top: 7px;
+      display: inline-block;
+
+      a {
+	  margin-right: 5px;
+      }
+  }
+  
+}
+
+// allows <div.buttons> to nicely fix to the left of it
+#relationships-table_info {
+  clear: none;
+  margin-top: 3px;
+}
+
+///////////////////////
+// shared styles    //
+/////////////////////
+
+// DataTable tweaks for lists and entity datatable page
+#datatable-table, #relationships-table {  
   border-bottom-color: rgb(221, 221, 221);
 
   tbody, thead th {
@@ -11,46 +89,25 @@
     font-weight: 500;
   }
 
-  #entity-header {
-    margin-top: -14px;
-    margin-bottom: 20px;
-  }
-
-  #entity-name {
-    font-size: 42px; 
-    line-height: 60px;
-    font-weight: 500;
-
-    a:hover {
-      text-decoration: none;
-    }
-  }
-
-  tr.active td {
-    background-color: #ff8;
-  }
-
-  .glyphicon-remove {
-    color: #aaa;
-  }
-
-  .DTE_Field_Input input {
-    padding: 4px;
-  }
-
-  .datatable-textarea {
-    textarea {
-      height: 50px;
-      resize: vertical;
-    }
+  // Fix spacing issue
+  thead tr {
+      th.sorting_asc, th.sorting {
+	  padding-left: 17px;
+      }
   }
 }
 
-#datatable-filters {
-  background-color: #eee;
-  padding: 10px;
-  margin-bottom: 5px;
+// filters
+
+#relationships-filters, #datatable-filters {
+     background-color: #eee;
+     padding: 10px;
+     margin-bottom: 5px;
 }
+
+////////////////////////
+// List Members Page //
+//////////////////////
 
 #datatable-filters-line2 {
   margin-top: 5px;
@@ -84,7 +141,21 @@ html #datatable-table_info {
   margin-top: 3px;
 }
 
-/* DataTables sorting */
+
+// Delete Entity From List style
+#datatable-table {
+    .glyphicon-remove {
+	@extend .hvr-pop;
+	color: #aaa;
+    }
+    .glyphicon-remove:hover {
+	color: #666666;
+    }
+}
+
+
+// fix spacing issue with paginate button
+
 html .dataTables_wrapper .dataTables_paginate .paginate_button {
   padding: 0;
   margin: 0;
@@ -93,39 +164,5 @@ html .dataTables_wrapper .dataTables_paginate .paginate_button {
   &:hover {
     border: 0;
     background: none;
-  }
-
-  &:active {
-    background-color: white;
-  }
-}
-
-html .dataTables_filter label {
-  width: 300px;
-
-  input[type="search"] {
-    width: 247px;
-  }
-}
-
-html table.dataTable thead {
-  .sorting_asc {
-    background: asset-url('sort_asc.png') no-repeat center left;
-  }
-   
-  .sorting_desc {
-    background: asset-url('sort_desc.png') no-repeat center left;
-  }
-   
-  .sorting {
-    background: asset-url('sort_both.png') no-repeat center left;
-  }
-   
-  .sorting_asc_disabled {
-    background: asset-url('sort_asc_disabled.png') no-repeat center left;
-  }
-   
-  .sorting_desc_disabled {
-    background: asset-url('sort_desc_disabled.png') no-repeat center left;
   }
 }
