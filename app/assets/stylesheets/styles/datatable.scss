@@ -19,56 +19,80 @@
 }
 
 #relationships-filters {
-  background-color: #eee;
-  padding: 10px;
-  margin-bottom: 5px;
+  select {
+      min-width: 200px;
+      max-width: 280px;
+  }
+
+  input, select {
+      margin-right: 0.5em;
+  }
+
+  #relationships-filters-line2 {
+      margin-top: 5px;
+  }
+
+  #relationships-search {
+      width: 200px;
+  }
+
+  #relationships-amount {
+      width: 125px;
+  }
+
+  .buttons {
+      float: left;
+      margin-right: 10px;
+      margin-top: 7px;
+      display: inline-block;
+
+      a {
+	  margin-right: 5px;
+      }
+  }
+  
 }
 
-#relationships-filters-line2 {
-  margin-top: 5px;
-}
+// html #relationships-table_info {
+//   clear: none;
+//   margin-top: 3px;
+// }
 
-#relationships-search {
-  width: 200px;
-}
+///////////////////////
+// shared styles    //
+/////////////////////
 
-#relationships-amount {
-  width: 75px;
-}
+// DataTable tweaks for lists and entity datatable page
+#datatable-table, #relationships-table {  
+  border-bottom-color: rgb(221, 221, 221);
 
-.buttons {
-  float: left;
-  margin-right: 10px;
-  margin-top: 7px;
-  display: inline-block;
+  tbody, thead th {
+    border-bottom-color: rgb(221, 221, 221);
+  }
 
-  a {
-    margin-right: 5px;
+  .entity-link {
+    font-weight: 500;
+  }
+
+  // Fix spacing issue
+  thead tr {
+      th.sorting_asc, th.sorting {
+	  padding-left: 17px;
+      }
   }
 }
 
-#relationships-filters select {
-  max-width: 280px;
+// filters
+
+#relationships-filters, #datatable-filters {
+     background-color: #eee;
+     padding: 10px;
+     margin-bottom: 5px;
 }
-
-html #relationships-table_info {
-  clear: none;
-  margin-top: 3px;
-}
-
-
-
-
 
 ////////////////////////
 // List Members Page //
 //////////////////////
-
-#datatable-filters {
-  background-color: #eee;
-  padding: 10px;
-  margin-bottom: 5px;
-}
 
 #datatable-filters-line2 {
   margin-top: 5px;
@@ -103,33 +127,27 @@ html #datatable-table_info {
 }
 
 
-// DataTable tweaks for lists and entity datatable page
-#datatable-table, #relationships-table {  
-  border-bottom-color: rgb(221, 221, 221);
-
-  tbody, thead th {
-    border-bottom-color: rgb(221, 221, 221);
-  }
-
-  .entity-link {
-    font-weight: 500;
-  }
-
-  // Fix spacing issue
-  thead tr {
-      th.sorting_asc, th.sorting {
-	  padding-left: 17px;
-      }
-  }
-}
-
-// DataTable style tweaks
+// Delete Entity From List style
 #datatable-table {
-    glyphicon-remove {
+    .glyphicon-remove {
 	@extend .hvr-pop;
 	color: #aaa;
     }
     .glyphicon-remove:hover {
 	color: #666666;
     }
+}
+
+
+// fix spacing issue with paginate button
+
+html .dataTables_wrapper .dataTables_paginate .paginate_button {
+  padding: 0;
+  margin: 0;
+  border: 0;
+
+  &:hover {
+    border: 0;
+    background: none;
+  }
 }
