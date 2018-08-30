@@ -447,6 +447,57 @@
     container.appendChild( createTable() );
   }
 
+
+  /**
+   * Returns current filter data
+   * @returns {Array[Object]} 
+   */
+  function getFilteredTableData() {
+    return tableApi()
+      .rows({filter: 'applied'})
+      .data()
+      .toArray()
+      .map(function(relationship) {
+	var obj= Object.assign({}, relationship, {
+	  "entity1_name": DATA_STORE.entities[relationship.entity1_id].name,
+	  "entity2_name": DATA_STORE.entities[relationship.entity2_id].name,
+	  "category": utility.relationshipCategories[relationship.category_id]
+	});
+
+	delete obj['interlocks'];
+	return obj;
+      });
+  }
+
+  /**
+   * Saves filtered data as csv
+   */
+  function saveFilteredDataToCsv() {
+    var data = getFilteredTableData();
+    var blob = new Blob([ Papa.unparse(data) ], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "Relationships_" + ENTITY_ID + ".csv");
+  }
+
+  /**
+   * creates button that save datatable as csv
+   */
+  function saveToCSVButton() {
+    var button = utility.createElement({ "tag": 'a', "class": 'btn btn-default' });
+    button.textContent = 'Export CSV';
+    button.href ='#';
+    button.addEventListener('click', function(e) {
+      saveFilteredDataToCsv();
+    });
+    return button;
+  }
+
+  function addCSVButton() {
+    document
+      .getElementById(TABLE_ID + '_wrapper')
+      .querySelector('div.buttons')
+      .appendChild( saveToCSVButton() );
+  }
+
   // MAIN //
   
   function tableApi() {
@@ -461,12 +512,10 @@
   function datatable() {
     $('#' + TABLE_ID).DataTable({
       "data": DATA_STORE.relationships,
-      "dom": 'prtp',
-      // dom: "<'buttons'>iprtp",
-      "pageLength": 100,
+       dom: "<'buttons'>iprtp",
+      "pageLength": 50,
       "columns": DATATABLE_COLUMNS
     });
-
   }
 
   function start(entityId) {
@@ -476,6 +525,7 @@
 	DATA_STORE = data;
 	setupDom(data);
 	datatable();
+	addCSVButton();
       });
 
   }
