@@ -6,51 +6,9 @@
     }
 }
 
-#datatable-table {
-  border-bottom-color: rgb(221, 221, 221);
-
-  tbody, thead th {
-    border-bottom-color: rgb(221, 221, 221);
-  }
-
-  .entity-link {
-    font-weight: 500;
-  }
-
-  #entity-header {
-    margin-top: -14px;
-    margin-bottom: 20px;
-  }
-
-  #entity-name {
-    font-size: 42px; 
-    line-height: 60px;
-    font-weight: 500;
-
-    a:hover {
-      text-decoration: none;
-    }
-  }
-
-  tr.active td {
-    background-color: #ff8;
-  }
-
-  .glyphicon-remove {
-    color: #aaa;
-  }
-
-  .DTE_Field_Input input {
-    padding: 4px;
-  }
-
-  .datatable-textarea {
-    textarea {
-      height: 50px;
-      resize: vertical;
-    }
-  }
-}
+////////////////////////
+// List Members Page //
+//////////////////////
 
 #datatable-filters {
   background-color: #eee;
@@ -90,48 +48,29 @@ html #datatable-table_info {
   margin-top: 3px;
 }
 
-/* DataTables sorting */
-html .dataTables_wrapper .dataTables_paginate .paginate_button {
-  padding: 0;
-  margin: 0;
-  border: 0;
 
-  &:hover {
-    border: 0;
-    background: none;
-  }
+// DataTable style tweaks
+#datatable-table {
+    border-bottom-color: rgb(221, 221, 221);
 
-  &:active {
-    background-color: white;
-  }
-}
+    tbody, thead th {
+	border-bottom-color: rgb(221, 221, 221);
+    }
+    
+    // Fix spacing issue
+    thead tr {
+	th.sorting_asc, th.sorting {
+	    padding-left: 17px;
+	}
+    }
 
-html .dataTables_filter label {
-  width: 300px;
+    .glyphicon-remove {
+	@extend .hvr-pop;
+	color: #aaa;
+    }
 
-  input[type="search"] {
-    width: 247px;
-  }
-}
+    .glyphicon-remove:hover {
+	color: #666666;
+    }
 
-html table.dataTable thead {
-  .sorting_asc {
-    background: asset-url('sort_asc.png') no-repeat center left;
-  }
-   
-  .sorting_desc {
-    background: asset-url('sort_desc.png') no-repeat center left;
-  }
-   
-  .sorting {
-    background: asset-url('sort_both.png') no-repeat center left;
-  }
-   
-  .sorting_asc_disabled {
-    background: asset-url('sort_asc_disabled.png') no-repeat center left;
-  }
-   
-  .sorting_desc_disabled {
-    background: asset-url('sort_desc_disabled.png') no-repeat center left;
-  }
 }
