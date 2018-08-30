@@ -30,6 +30,20 @@
 
   #relationships-filters-line2 {
       margin-top: 5px;
+
+      label:hover {
+	  text-decoration: underline;
+      }
+
+      input[type='checkbox'] {
+	  vertical-align: middle;
+	  float: left;
+	  position: relative;
+	  bottom: 1px;
+	  margin-right: 5px;
+	  margin-left: 5px;
+      }
+      
   }
 
   #relationships-search {
@@ -52,7 +66,6 @@
   }
   
 }
-
 
 // allows <div.buttons> to nicely fix to the left of it
 #relationships-table_info {
