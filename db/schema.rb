@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_13_162356) do
+ActiveRecord::Schema.define(version: 2018_09_04_145133) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1156,16 +1156,6 @@ ActiveRecord::Schema.define(version: 2018_08_13_162356) do
     t.bigint "sec_cik"
     t.bigint "entity_id", null: false
     t.index ["entity_id"], name: "entity_id_idx"
-  end
-
-  create_table "queue_entities", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "queue", null: false
-    t.integer "entity_id"
-    t.integer "user_id"
-    t.boolean "is_skipped", default: false, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["queue", "entity_id"], name: "index_queue_entities_on_queue_and_entity_id", unique: true
   end
 
   create_table "reference", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|

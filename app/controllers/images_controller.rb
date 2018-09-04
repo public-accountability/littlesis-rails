@@ -1,23 +1,17 @@
+# frozen_string_literal: true
+
 class ImagesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_image, only: [:crop, :crop_remote]
 
   def crop
     @type = @image.s3_exists?('large') ? 'large' : 'profile'
-    @queue_count = entity_queue_count(:crop_images)
   end
 
   def crop_remote
-    @queue_count = entity_queue_count(:crop_images)
-
-    if params[:coords].present? and !params[:skip]
+    if params[:coords].present?
       coords = JSON.parse(params[:coords])
       @image.crop(coords['x'], coords['y'], coords['w'], coords['h'])
-    end
-
-    # permanently remove entity from queue
-    if params[:skip]
-      skip_queue_entity(:crop_images, @image.entity_id)
     end
 
     if @queue_count > 0

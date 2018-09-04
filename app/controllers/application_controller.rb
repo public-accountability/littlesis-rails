@@ -91,37 +91,6 @@ class ApplicationController < ActionController::Base
   # TODO: Delete this
   # see: entities_controller, images_controller, articles
 
-  def ensure_entity_queue(key)
-    session[:entity_queues] = {} unless session[:entity_queues].present?
-    session[:entity_queues][key] = { entity_ids: [] } unless session[:entity_queues][key].present?
-  end
-
-  def set_entity_queue(key, entity_ids, list_id=nil)
-    ensure_entity_queue(key)
-    session[:entity_queues][key][:entity_ids] = entity_ids
-    session[:entity_queues][key][:list_id] = list_id if list_id
-    entity_ids
-  end
-
-  def next_entity_in_queue(key)
-    ensure_entity_queue(key)
-    remove_skipped_from_queue(key)
-    session[:entity_queues][key][:entity_ids].shift
-  end
-
-  def entity_queue_count(key)
-    ensure_entity_queue(key)
-    session[:entity_queues][key][:entity_ids].count
-  end
-
-  def remove_skipped_from_queue(key)
-    session[:entity_queues][key][:entity_ids] = QueueEntity.filter_skipped(key, session[:entity_queues][key][:entity_ids])
-  end
-
-  def skip_queue_entity(key, entity_id)
-    QueueEntity.skip_entity(key, entity_id, current_user.id)
-  end
-
   ##
   # merge
   #
