@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class ImagesController < ApplicationController
+  ADMIN_ACTIONS = %i[deletion_request approve_deletion deny_deletion].freeze
+
   before_action :authenticate_user!
-  before_action -> { check_permission('admin') }, only: %i[approve_deletion deny_deletion]
-  before_action :set_image_deletion_request, only: %i[approve_deletion deny_deletion]
+  before_action -> { check_permission('admin') }, only: ADMIN_ACTIONS
+  before_action :set_image_deletion_request, only: ADMIN_ACTIONS
   before_action :set_image, only: %i[request_deletion crop crop_remote]
 
   def request_deletion
@@ -14,14 +16,17 @@ class ImagesController < ApplicationController
                   notice: 'Request is pending'
   end
 
+  def deletion_request
+  end
+
   def approve_deletion
     @image_deletion_request.approved_by!(current_user)
-    redirect_to home_dashboard_path
+    redirect_to home_dashboard_path, notice: 'Image deletion request approved'
   end
 
   def deny_deletion
     @image_deletion_request.denied_by!(current_user)
-    redirect_to home_dashboard_path
+    redirect_to home_dashboard_path, notice: 'Image deletion request denied'
   end
 
   def crop

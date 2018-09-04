@@ -480,3 +480,25 @@ div.popover-content {
     padding: 1em;
     border-radius: 8px;
 }
+
+
+#image-deletion-request-modal {
+
+    div.modal-dialog {
+	width: 500px;
+    }
+
+    form {
+	input {
+	    min-width: 350px;
+	}
+
+	button {
+	    background-color: $red;
+	}
+
+	button:hover {
+	    background-color: $red_light;
+	}
+    }
+}

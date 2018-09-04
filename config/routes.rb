@@ -128,8 +128,9 @@ Lilsis::Application.routes.draw do
     end
 
     collection do
-      post 'approve_deletion'
-      post 'deny_deletion'
+      get 'deletion_request/:image_deletion_request_id', to: 'images#deletion_request'
+      post 'approve_deletion/:image_deletion_request_id', to: 'images#approve_deletion'
+      post 'deny_deletion/:image_deletion_request_id', to: 'images#deny_deletion'
     end
   end
 
