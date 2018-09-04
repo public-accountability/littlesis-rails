@@ -1,3 +1,5 @@
+# rubocop:disable Style/StringLiterals
+
 require "rails_helper"
 
 describe NotificationMailer, type: :mailer do
@@ -308,4 +310,26 @@ describe NotificationMailer, type: :mailer do
       end
     end
   end
+
+  describe "#deletion_request_email" do
+    let(:user) { create(:really_basic_user) }
+    let(:image) { create(:image, entity: create(:entity_person)) }
+    let(:image_deletion_request) do
+      create(:image_deletion_request, user: user, image: image)
+    end
+
+    let(:mail) { NotificationMailer.image_deletion_request_email(image_deletion_request) }
+
+    it 'sends email' do
+      expect { mail.deliver_now }
+        .to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+
+    it 'email contains link to deletion request' do
+      expect(mail.body.raw_source)
+        .to have_text "https://littlesis.org/images/deletion_request/#{image_deletion_request.id}"
+    end
+  end
 end
+
+# rubocop:enable Style/StringLiterals
