@@ -22,9 +22,11 @@
       <% unless image.is_featured %>
         <%= link_to("feature", feature_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %><br>
       <% end %>
-      <% if current_user.has_legacy_permission('admin') and image.url %>
+      <a href="#"' onclick="requestImageDeletion(<%= image.id %>)">Request deletion</a>
+      <% if current_user.admin? and image.url %>
         <%= link_to("view original", image.url) %><br>
       <% end %>
+
       <% if current_user.has_legacy_permission('deleter') %>
         <%= link_to("remove", remove_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
       <% end %>
@@ -33,3 +35,30 @@
   </tr>
 <% end %>
 </table>
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="image-deletion-request-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<h4>Request Image Deletion</h4>
+      </div>
+      <div class="modal-body">
+	<p>Briefly, why should this image be destroyed?</p>
+	<%= form_tag('/images/0/request_deletion', method: :post) do %>
+	  <input type="text" name="justification"/>
+	  <button type="submit" class="btn">Submit</button>
+	<% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+ function requestImageDeletion(image_id) {
+   var url = "/images/" + image_id + "/request_deletion";
+   $('#image-deletion-request-modal form').attr('action', url);
+   $('#image-deletion-request-modal').modal('show');
+ }
+</script>

@@ -68,4 +68,11 @@ class NotificationMailer < ApplicationMailer
          subject: "Deletion request received for #{deletion_request.entity.name}",
          reply_to: deletion_request.user.email)
   end
+
+  def image_deletion_request_email(image_deletion_request)
+    @image_deletion_request = image_deletion_request
+    mail(to: DEFAULT_TO,
+         subject: "Image deletion request received (#{image_deletion_request.id})",
+         reply_to: image_deletion_request.user.email)
+  end
 end

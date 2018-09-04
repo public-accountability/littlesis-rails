@@ -120,10 +120,17 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :images do
+  resources :images, only: [] do
     member do
       get 'crop'
       post 'crop_remote'
+      post 'request_deletion'
+    end
+
+    collection do
+      get 'deletion_request/:image_deletion_request_id', to: 'images#deletion_request'
+      post 'approve_deletion/:image_deletion_request_id', to: 'images#approve_deletion'
+      post 'deny_deletion/:image_deletion_request_id', to: 'images#deny_deletion'
     end
   end
 
@@ -148,12 +155,6 @@ Lilsis::Application.routes.draw do
         get 'edits' => 'edits#entity'
         get 'fields'
         post 'update_fields'
-        get 'articles'
-        get 'find_articles'
-        post 'import_articles'
-        post 'remove_article'
-        get 'new_article'
-        post 'create_article'
         get 'images'
         get 'new_image'
         post 'upload_image'

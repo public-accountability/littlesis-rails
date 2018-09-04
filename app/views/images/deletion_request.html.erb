@@ -1,0 +1,40 @@
+<% if @image_deletion_request.pending? %>
+
+  <div class="row bottom-1em">
+    <div class="col-sm-8 col-centered">
+      <h4>
+	<%= link_to @image_deletion_request.user.username, user_page_path(@image_deletion_request.user) %>
+	requests that the following image be deleted:
+      </h4>
+
+      <%= image_tag("profile/#{@image_deletion_request.image.filename}", class: 'img-responsive')  %>
+
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-8 col-centered">
+      
+      <%= form_tag("/images/approve_deletion/#{@image_deletion_request.id}", method: :post, style: "display: inline-block;") do %>
+	<%= submit_tag 'Approve', class: 'btn btn-lrg btn-primary' %>
+      <% end %>
+
+      <%= form_tag("/images/deny_deletion/#{@image_deletion_request.id}", method: :post, style: "display: inline-block;") do %>
+	<%= submit_tag 'Deny', class: 'btn btn-lrg btn-danger' %>
+      <% end %>
+
+    </div>
+  </div>
+
+
+<% else %>
+
+  <div class="row bottom-1em">
+    <div class="col-sm-8 col-centered">
+      <h4>Request has already been processed</h4>
+    </div>
+  </div>
+
+
+<% end %>
