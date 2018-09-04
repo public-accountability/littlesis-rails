@@ -234,84 +234,6 @@ class EntitiesController < ApplicationController
   end
 
   ##
-  # Articles
-  #
-
-  def articles
-  end
-
-  def find_articles
-    check_permission 'importer'
-    @q = (params[:q] or @entity.name)
-    page = (params[:page] or 1).to_i
-    @articles = @entity.articles
-    selected_urls = @articles.map(&:url)
-    engine = GoogleSearch.new(Lilsis::Application.config.google_custom_search_engine_id)
-    @results = engine.search(@q, page).to_a + engine.search(@q, page + 1).to_a
-    @results.select! { |r| !selected_urls.include?(r['link']) }
-  end
-
-  def import_articles
-    check_permission 'importer'
-    selected_ids = params.keys.map(&:to_s).select { |k| k.match(/^selected-/) }.map { |k| k.split('-').last }.map(&:to_i)
-    selected_ids.each do |i|
-      snippet = CGI.unescapeHTML(params[:snippet][i])
-      published_at = nil
-
-      if date = snippet.match(/^\w{3}\s+\d+,\s+\d{4}/)
-        published_at = date[0]
-        snippet.gsub!(/^\w{3}\s+\d+,\s+\d{4}\s+\.\.\.\s+/, '')
-      end
-
-      @entity.add_article({
-        title: CGI.unescapeHTML(params[:title][i]),
-        url: CGI.unescapeHTML(params[:url][i]),
-        snippet: snippet,
-        published_at: published_at,
-        created_by_user_id: current_user.id
-      }, featured = true)
-    end
-
-    # permanently remove entity from queue
-    if selected_ids.count == 0
-      skip_queue_entity(:find_articles, @entity.id)
-    end
-
-    @queue_count = entity_queue_count(:find_articles)
-    if @queue_count > 0
-      if params[:submit_stay]
-        redirect_to find_articles_entity_path(@entity.id)
-      else
-        redirect_to find_articles_entity_path(next_entity_in_queue(:find_articles))
-      end
-    else
-      redirect_to articles_entity_path(@entity)
-    end
-  end
-
-  def remove_article
-    ae = ArticleEntity.find_by(entity_id: @entity.id, article_id: params[:article_id])
-    ae.destroy
-    redirect_to articles_entity_path(@entity)
-  end
-
-  def new_article
-    @article = Article.new
-  end
-
-  def create_article
-    @article = Article.new(article_params)
-    @article.created_by_user_id = current_user.id
-    @article.article_entities.build(entity_id: @entity.id, is_featured: true)
-
-    if @article.save
-      redirect_to articles_entity_path(@entity), notice: 'Article was successfully created.'
-    else
-      render action: 'new_article'
-    end
-  end
-
-  ##
   # images
   #
 
@@ -372,12 +294,6 @@ class EntitiesController < ApplicationController
 
   def set_entity_references
     @references = @entity.references.order('updated_at desc').limit(10)
-  end
-
-  def article_params
-    params.require(:article).permit(
-      :title, :url, :snippet, :published_at
-    )
   end
 
   def image_params
