@@ -87,13 +87,9 @@ class ApplicationController < ActionController::Base
   end
 
   ##
-  # Entity Queue
-  # TODO: Delete this
-  # see: entities_controller, images_controller, articles
-
-  ##
   # merge
   #
+
   def merge_last_user(attrs)
     attrs.merge(last_user_id: current_user.sf_guard_user_id)
   end

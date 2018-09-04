@@ -29,7 +29,7 @@ describe UserRequest, type: :model do
     it { should validate_presence_of(:justification) }
 
     it { should define_enum_for(:status).with %i[pending approved denied] }
-    it { should validate_inclusion_of(:type).in_array %w[MergeRequest DeletionRequest] }
+    it { should validate_inclusion_of(:type).in_array %w[MergeRequest DeletionRequest ImageDeletionRequest] }
 
     it { should_not validate_presence_of(:reviewer_id) }
     it { should_not validate_presence_of(:source_id) }

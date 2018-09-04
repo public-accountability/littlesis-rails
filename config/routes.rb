@@ -120,10 +120,16 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :images do
+  resources :images, only: [] do
     member do
       get 'crop'
       post 'crop_remote'
+      post 'request_deletion'
+    end
+
+    collection do
+      post 'approve_deletion'
+      post 'deny_deletion'
     end
   end
 
