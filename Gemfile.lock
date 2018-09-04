@@ -122,8 +122,6 @@ GEM
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
     chronic (0.10.2)
-    codacy-coverage (2.0.1)
-      simplecov
     coderay (1.1.2)
     concurrent-ruby (1.0.5)
     crass (1.0.4)
@@ -427,7 +425,6 @@ DEPENDENCIES
   bootstrap-sass (~> 3.3.7)
   capybara (>= 3.6.0)
   capybara-webkit (= 1.15.0)
-  codacy-coverage
   daemons
   database_cleaner
   delayed_job (~> 4.1.5)
