@@ -35,10 +35,10 @@ describe Images do
     let!(:image_deletion_request) do
       create(:image_deletion_request, image: image, user: create_really_basic_user)
     end
-    let(:params) { { image_deletion_request_id: image_deletion_request.id.to_s } }
+    # let(:params) { { image_deletion_request_id: image_deletion_request.id.to_s } }
 
     it 'admins can approve requests' do
-      expect { post '/images/approve_deletion', params: params }
+      expect { post "/images/approve_deletion/#{image_deletion_request.id}" }
         .to change { image_deletion_request.reload.status }
               .from('pending').to('approved')
 
@@ -46,7 +46,7 @@ describe Images do
     end
 
     it 'admins can deny requests' do
-      expect { post '/images/deny_deletion', params: params }
+      expect { post "/images/deny_deletion/#{image_deletion_request.id}" }
         .to change { image_deletion_request.reload.status }
               .from('pending').to('denied')
 
