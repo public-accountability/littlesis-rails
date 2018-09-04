@@ -59,7 +59,6 @@ group :test, :development do
   gem 'better_errors', '~> 2.4.0'
   gem 'capybara', '>= 3.6.0'
   gem 'capybara-webkit', '1.15.0'
-  gem 'codacy-coverage', :require => false
   gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 4.10.0'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'

@@ -1,13 +1,6 @@
 # Only generate coverage report if environment variable is set
 if ENV["COVERAGE"]
   require 'simplecov'
-  require 'codacy-coverage'
-  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
-    [
-      SimpleCov::Formatter::HTMLFormatter,
-      Codacy::Formatter
-    ]
-  )
   SimpleCov.start 'rails'
 end
 
