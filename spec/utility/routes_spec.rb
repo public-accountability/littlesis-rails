@@ -28,8 +28,8 @@ describe Routes, type: :feature do
   # The code that generates ROUTES_TO_MODIFY reaches deep into the rails API
   # and thus might change between rails versions
   # This test will hopefully catch that if it does
-  it 'modifies 22 routes' do
-    expect(Routes::ROUTES_TO_MODIFY.length).to eql 22
+  it 'modifies 19 routes' do
+    expect(Routes::ROUTES_TO_MODIFY.length).to eql 19
   end
 
   describe 'modify_entity_path' do
