@@ -104,7 +104,7 @@ $tiny_image_size: 35px;
 }
 
 #entity-without-relationships-message {
-    @media (min-width: $screen-sm-min) {
+    @include media-breakpoint-up(sm) {
 	width: 80%;
     }
     

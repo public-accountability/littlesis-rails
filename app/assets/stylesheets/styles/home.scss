@@ -2,26 +2,27 @@
     @extend .col-sm-6;
     padding-left: 20px;
 
-    @media (min-width: $screen-md) {
+        
+    @include media-breakpoint-up(md) { 
 	padding-left: 35px;
     }
 
-    @media (min-width: $screen-lg) {
+    @include media-breakpoint-up(lg) {
 	padding-left: 50px;
     }
     
 }
 
 #dashboard-search-form {
-    @media (min-width: $screen-sm) {
+    @include media-breakpoint-up(sm) { 
 	margin-right: 2em;
     }
 
-    @media (min-width: $screen-md) {
+    @include media-breakpoint-up(md) {
 	margin-right: 6em;
     }
 
-    @media (min-width: $screen-lg) {
+    @include media-breakpoint-up(lg) {
 	margin-right: 10em;
     }
 }
