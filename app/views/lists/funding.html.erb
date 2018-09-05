@@ -3,7 +3,9 @@
 <%= render partial: 'header', locals: { list: @list } %>
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :funding } %>
 
-<%= render partial: "lists/interlocks_alert" %>
+<%= dismissable_alert('list_funding_alert', 'list-tab-alert') do %>
+  People on this list have received money from the following people and organizations.
+<% end %>
 
 <% cache( [ @list.cache_key, 'funding', @page ], expires_in: 1.day) do %>
 

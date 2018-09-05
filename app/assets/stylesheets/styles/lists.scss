@@ -125,3 +125,7 @@ td.lists_table_name {
     }
 
 }
+
+.list-tab-alert {
+    @extend .alert-info;
+}
