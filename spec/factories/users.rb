@@ -7,7 +7,7 @@ FactoryBot.define do
     username { Faker::Internet.unique.user_name(5).tr('.', '') }
     email { Faker::Internet.unique.email }
     about_me { Faker::Movie.quote }
-    default_network_id 79
+    default_network_id { 79 }
     confirmed_at { Time.current }
   end
 
@@ -39,13 +39,13 @@ FactoryBot.define do
   factory :user_with_id, class: User do
     username { Faker::Internet.unique.user_name }
     email { generate(:user_email) }
-    default_network_id 79
+    default_network_id { 79 }
     confirmed_at { Time.now }
     id { rand(1000) }
   end
 
   factory :sf_user, class: SfGuardUser do
-    is_active true
+    is_active { true }
     username { Faker::Internet.unique.user_name }
   end
 
@@ -54,9 +54,9 @@ FactoryBot.define do
   end
 
   factory :admin, class: User do
-    id 200
-    username 'admin'
-    email 'admin@littlesis.org'
-    sf_guard_user_id 200
+    id { 200 }
+    username { 'admin' }
+    email { 'admin@littlesis.org' }
+    sf_guard_user_id { 200 }
   end
 end

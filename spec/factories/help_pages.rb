@@ -1,16 +1,17 @@
 FactoryBot.define do
   factory :help_page do
-    markdown <<~MARKDOWN
-               # editing relationships
+    markdown do
+      <<~MARKDOWN
+        # editing relationships
 
-               ## content
+        ## content
 
-               * one
-               * two
-             MARKDOWN
-
-    name 'editing_relationships'
-    title 'how to edit relationships'
-    last_user_id 1
+        * one
+        * two
+    MARKDOWN
+    end
+    name { 'editing_relationships' }
+    title { 'how to edit relationships' }
+    last_user_id { 1 }
   end
 end

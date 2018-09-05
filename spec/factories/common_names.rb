@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :common_name do
-    name "MyString"
+    name { "MyString" }
   end
 end

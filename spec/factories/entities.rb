@@ -6,35 +6,35 @@ FactoryBot.define do
   factory :random_entity, class: Entity do
     sequence(:id)
     sequence(:name) { Faker::Name.unique.name }
-    primary_ext ['Org', 'Person'].sample
+    primary_ext { ['Org', 'Person'].sample }
   end
 
   factory :org, class: Entity do
-    name 'org'
-    primary_ext 'Org'
+    name { 'org' }
+    primary_ext { 'Org' }
     id { generate(:entity_id) }
   end
 
   factory :entity_org, class: Entity do
-    name 'org'
-    primary_ext 'Org'
+    name { 'org' }
+    primary_ext { 'Org' }
   end
 
   factory :elected, class: Entity do
-    name 'Elected Representative'
-    primary_ext 'Person'
+    name { 'Elected Representative' }
+    primary_ext { 'Person' }
     id { generate(:entity_id) }
   end
 
   factory :person, class: Entity do
-    name 'Human Being'
-    primary_ext 'Person'
+    name { 'Human Being' }
+    primary_ext { 'Person' }
     id { generate(:entity_id) }
   end
 
   factory :entity_person, class: Entity do
-    name 'Human Being'
-    primary_ext 'Person'
+    name { 'Human Being' }
+    primary_ext { 'Person' }
   end
 
   factory :merge_source_person, parent: :entity_person do
@@ -48,57 +48,57 @@ FactoryBot.define do
   end
   
   factory :corp, class: Entity do
-    name 'corp'
-    primary_ext 'Org'
+    name { 'corp' }
+    primary_ext { 'Org' }
     id { generate(:entity_id) }
   end
 
   factory :mega_corp_inc, class: Entity do
-    name 'mega corp INC'
-    blurb 'mega corp is having an existential crisis'
-    primary_ext 'Org'
-    last_user_id 1
+    name { 'mega corp INC' }
+    blurb { 'mega corp is having an existential crisis' }
+    primary_ext { 'Org' }
+    last_user_id { 1 }
     id { generate(:entity_id) }
   end
 
   factory :mega_corp_llc, class: Entity do
-    name 'mega corp LLC'
-    primary_ext 'Org'
+    name { 'mega corp LLC' }
+    primary_ext { 'Org' }
     id { generate(:entity_id) }
   end
 
   factory :us_house, class: Entity do
-    name 'U.S. House'
-    primary_ext 'Org'
-    id 12_884
+    name { 'U.S. House' }
+    primary_ext { 'Org' }
+    id { 12_884 }
   end
 
   factory :us_senate, class: Entity do
-    name 'U.S. Senate'
-    primary_ext 'Org'
-    id 12_885
+    name { 'U.S. Senate' }
+    primary_ext { 'Org' }
+    id { 12_885 }
   end
 
   factory :democratic_party, class: Entity do
-    name 'Democratic Party'
-    primary_ext 'Org'
-    id 12_886
+    name { 'Democratic Party' }
+    primary_ext { 'Org' }
+    id { 12_886 }
   end
 
   factory :republican_party, class: Entity do
-    name 'Republican Party'
-    primary_ext 'Org'
-    id 12_901
+    name { 'Republican Party' }
+    primary_ext { 'Org' }
+    id { 12_901 }
   end
 
   factory :pac, class: Entity do
-    name 'PAC'
-    blurb 'Ruining our democracy one dollar at a time'
-    primary_ext 'Org'
+    name { 'PAC' }
+    blurb { 'Ruining our democracy one dollar at a time' }
+    primary_ext { 'Org' }
   end
 
   trait :with_last_user_id do
-    last_user_id APP_CONFIG['system_user_id']
+    last_user_id { APP_CONFIG['system_user_id'] }
   end
 
   trait :with_person_name do

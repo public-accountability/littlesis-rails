@@ -9,14 +9,14 @@ FactoryBot.define do
     end
   end
   factory :open_tagging, class: Tagging  do
-    tag_id 1
+    tag_id { 1 }
     sequence(:tagable_id)
-    tagable_class Entity
+    tagable_class { Entity }
   end
 
   factory :closed_tagging, class: Tagging do
-    tag_id 2
+    tag_id { 2 }
     sequence(:tagable_id)
-    tagable_class Entity
+    tagable_class { Entity }
   end
 end

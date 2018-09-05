@@ -4,6 +4,6 @@ FactoryBot.define do
     entity1_id { rand(1000) }
     entity2_id { rand(1000) }
     relationship_id { rand(100) }
-    is_reverse false
+    is_reverse { false }
   end
 end

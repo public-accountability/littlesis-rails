@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :alias, class: Alias do
-    name 'name'
+    name { 'name' }
     # entity_id
     # is_primary
   end
