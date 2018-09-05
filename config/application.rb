@@ -43,6 +43,7 @@ module Lilsis
       Rails.application.default_url_options[:host] = 'littlesis.org'
       Rails.application.default_url_options[:protocol] = 'https'
     else
+      Rails.application.default_url_options[:protocol] = 'http'
       Rails.application.default_url_options[:host] = 'localhost:8080'
     end
 
@@ -50,6 +51,8 @@ module Lilsis
     # config.action_mailer.delivery_method = :sendmail
     # config.action_mailer.raise_delivery_errors = true
     # config.action_mailer.perform_deliveries = true
+
+    # config.action_controller.asset_host = APP_CONFIG['site_url']
 
     config.assets.paths << "#{Rails.root}/vendor/assets/images"
 

@@ -71,7 +71,7 @@ class Image < ApplicationRecord
   end
 
   def self.s3_url(filename, type)
-    "https://#{APP_CONFIG['asset_host']}/#{s3_path(filename, type)}"
+    "https://#{APP_CONFIG['image_asset_host']}/#{s3_path(filename, type)}"
   end
 
   singleton_class.send(:alias_method, :image_path, :s3_url)

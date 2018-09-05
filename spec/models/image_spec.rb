@@ -75,7 +75,7 @@ describe Image, type: :model do
   end
 
   describe 's3_url' do
-    let(:image_url) { "https://assets.example.net/images/small/#{filename}" }
+    let(:image_url) { "https://images.example.net/images/small/#{filename}" }
     specify { expect(build(:image, filename: filename).s3_url('small')).to eql image_url }
     specify { expect(build(:image, filename: filename).image_path('small')).to eql image_url }
   end
@@ -84,14 +84,14 @@ describe Image, type: :model do
     describe 's3_url' do
       specify do
         expect(Image.s3_url(filename, 'profile'))
-          .to eql "https://assets.example.net/images/profile/#{filename}"
+          .to eql "https://images.example.net/images/profile/#{filename}"
       end
     end
 
     describe 'image_path' do
       it 'returns asset host url for image' do
         expect(Image.image_path(filename, 'profile'))
-          .to eql "https://assets.example.net/images/profile/#{filename}"
+          .to eql "https://images.example.net/images/profile/#{filename}"
       end
     end
 
