@@ -10,7 +10,7 @@
 <% @entity.images.each do |image| %>
   <tr>
     <td>
-      <%= link_to(image_tag("profile/#{image.filename}"), image.image_path("large")) %>
+      <%= link_to(image_tag(image.image_path('profile'), :class => 'img-responsive'), image.image_path("large")) %>
     </td>
     <td>
       <p><strong><%= image.title %></strong></p>
