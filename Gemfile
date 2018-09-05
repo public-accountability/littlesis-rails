@@ -23,8 +23,6 @@ gem 'aws-sdk-s3', '~> 1'
 gem 'mini_magick'
 
 gem 'sprockets', '~> 3.0'
-gem 'asset_sync', '~> 2.4.0'
-gem "fog-aws"
 
 gem 'uglifier', '>= 4.1'
 gem 'bootstrap-sass', '~> 3.3.7'

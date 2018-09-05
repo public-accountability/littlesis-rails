@@ -82,13 +82,15 @@ Rails.application.configure do
   }
 
   # Enable serving of images from asset server.
-  config.action_controller.asset_host = Proc.new do |source|
-    if source =~ /images/
-      "https://#{config.asset_host}"
-    else
-      nil
-    end
-  end
+  # config.action_controller.asset_host = '/'
+
+  # config.action_controller.asset_host = Proc.new do |source|
+  #   if source =~ /images/
+  #     "https://#{config.asset_host}"
+  #   else
+  #     nil
+  #   end
+  # end
 
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 end

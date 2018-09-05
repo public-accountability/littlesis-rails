@@ -372,10 +372,10 @@ class Entity < ApplicationRecord
     images.featured.first
   end
 
-  def featured_image_url(type=nil)
+  def featured_image_url(type = nil)
     image = featured_image
     return default_image_url if image.nil?
-    type = (image.has_square ? "square" : "profile") if type.nil?
+    type = (image.has_square ? 'square' : 'profile') if type.nil?
     image.image_path(type)
   end
 

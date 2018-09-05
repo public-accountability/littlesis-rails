@@ -23,7 +23,8 @@ defaults: &defaults
   symfony_path: /var/www/littleis/symfony
   bing_maps_key:
   default_network_id: 79
-  asset_host:
+  asset_host: "littlesis.org"
+  image_asset_host: 
   cloudfront_distribtion_id:
   smtp_address: 
   smtp_port:
@@ -54,9 +55,11 @@ test:
   notification_email: notification@littlesis.dev
   notification_to: rspec@testing.com
   asset_host: assets.example.net
+  image_asset_host: images.example.net
 
 development:
   <<: *defaults
+  site_url: "http://localhost:8080"
 
 production:
   <<: *defaults

@@ -674,6 +674,23 @@ describe Entity, :tag_helper do
     end
   end
 
+  describe '#featured_image_url' do
+    subject { entity.featured_image_url }
+
+    let(:entity) { create(:entity_person) }
+    let(:image) { create(:image, entity: entity, is_featured: true) }
+
+    context 'with no featured image' do
+      it { is_expected.to eql '/images/system/anon.png' }
+    end
+
+    context 'with a featured image' do
+      before { image }
+
+      it { is_expected.to eql "https://images.example.net/images/profile/#{image.filename}" }
+    end
+  end
+
   # this is defined in models/concerns/similar_entities.rb
   describe '#similar_entities' do
     let(:entity) { build(:org) }
