@@ -133,7 +133,7 @@ module EntitiesHelper
   end
 
   def profile_image
-    image_tag(@entity.featured_image_url, alt: @entity.name, class: 'img-rounded')
+    image_tag(@entity.featured_image_url, alt: @entity.name, class: 'img-rounded img-responsive')
   end
 
   # input: string, [string], [block]
