@@ -1,0 +1,40 @@
+# frozen_string_literal: true
+
+module NavbarHelper
+  def navbar_item(dropdown: true)
+    class_name = dropdown ? 'nav-item dropdown' : 'nav-item'
+    content_tag(:li, class: class_name) { yield }
+  end
+
+  def navbar_dropdown_item(text, href)
+    link_to text, href, class: 'dropdown-item'
+  end
+
+  def navbar_dropdown_divider
+    content_tag('div', nil, class: 'dropdown-divider')
+  end
+
+  def navbar_header_link(text, dropdown: true, href: '#')
+    class_name = dropdown ? 'nav-link dropdown-toggle' : 'nav-link'
+    content_tag 'a', text,
+                'class' => class_name,
+                'href' => href,
+                'id' => "navbar-header-#{text}",
+                'role' => 'button',
+                'data-toggle' => 'dropdown',
+                'aria-haspopup' => 'true',
+                'aria-expanded' => 'false'
+  end
+
+  def navbar_dropdown(items)
+    content_tag(:div, class: 'dropdown-menu') do
+      items.map do |item_text, url|
+        if url == 'divider'
+          navbar_dropdown_divider
+        else
+          navbar_dropdown_item(item_text, url)
+        end
+      end.reduce(:+)
+    end
+  end
+end
