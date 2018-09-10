@@ -78,11 +78,7 @@
 
 .homepage-counter {
   display: inline;
-  background-color: #fff;
-  background: -webkit-gradient(linear, top, bottom, from(#fff), to(#bbb));
-  background: -webkit-linear-gradient(top, #fff, #bbb);
-  background: -moz-linear-gradient(top,  #fff,  #bbb);
-  background: -ms-linear-gradient(top, #fff, #bbb);
+  background: linear-gradient(to bottom, #fff, #bbb);
   color: #000;
   border-radius: 4px;
   padding-left: 3px;
@@ -112,9 +108,13 @@
 }
 
 #homepage-oligrapher-images {
-  img {
-    height: 220px;
-  }
+    display: inherit;
+    div {
+	text-align: center;
+    }
+    img {
+	@extend .img-fluid;
+    }
 }
 
 
@@ -193,6 +193,8 @@ div#donate-button-container  {
 }
     
 #explore-row {
+    @extend .d-none;
+    @extend .d-sm-flex;
     @extend .row;
     @extend .text-center;
 
@@ -201,7 +203,6 @@ div#donate-button-container  {
     .explore-col {
 	@extend .col-sm-4;
 	height: 180px;
-	
     }
 
     .oligrapher-link {
@@ -218,7 +219,6 @@ div#donate-button-container  {
 	position: relative;
 	top: 71px;
 	left: -14px;
-	
     }
     
     #eyes-on-ties-homepage-img {

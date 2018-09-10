@@ -15,7 +15,7 @@
     </div>
     
     <div class="row position-relative">
-      <div class="col-xs-6 nopadding">
+      <div class="col-6 nopadding">
 	<% if @newsletter_thankyou %>
 	  <%= render partial: 'newsletter_thankyou' %>
 	<% else %>
@@ -23,7 +23,7 @@
 	<% end %>
       </div>
       
-      <div class="col-xs-6 double-left-padding">
+      <div class="col-6 double-left-padding">
 	<%= render partial: 'social_media_buttons' %>
       </div>
       
@@ -42,7 +42,7 @@
   <h2 class="text-center" style="font-weight: 300">Explore trainings, news, & tools</h2>
 </div>
 
-<div id="explore-row" class="hidden-xs" >
+<div id="explore-row">
   <div class="explore-col">
     <%= link_to toolkit_path do %>
       <%= image_tag "map_the_power_RGB.gif",  class: 'img-responsive center-block' %>
@@ -61,17 +61,17 @@
 </div>
 
 <div class="row text-center m-bottom-3em">
-  <div class="col-xs-4">
+  <div class="col-4">
     <%= link_to toolkit_path do %>
       <p>Power research toolkit and trainings</p>
     <% end %>
   </div>
-  <div class="col-xs-4">
+  <div class="col-4">
     <%= link_to "https://news.littlesis.org" do %>
       <p>News and analysis from LittleSis</p>
     <% end %>  
   </div>
-  <div class="col-xs-4">
+  <div class="col-4">
     <%= link_to oligrapher_path do %>
       <p>Visual online mapping tool</p>
     <% end %>  
@@ -88,13 +88,14 @@
         </div>
     </div>
 <% end  %>
+
 <!-- OLIGRAPHER -->
 <%=  render partial: 'oligrapher' %>
 
 <div class="row">
-    <div class="col-sm-12 text-center">
+  <div class="col-sm-12 text-center">
         <h1 class="big-text text-center">A unique resource for investigating cronyism, conflicts of interest, and systemic corruption.</h1>
-    </div>
+  </div>
 </div>
 
 <div class="row">
