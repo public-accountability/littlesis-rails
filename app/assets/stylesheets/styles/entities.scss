@@ -186,9 +186,6 @@ div.actions-row {
 }
 
 
-
-
-
 .entities_table_name {
   width: 250px;
 }
@@ -232,7 +229,6 @@ div.actions-row {
   font-size: 12px;
   color: #888;
 }
-
 
 
 /* fields */
@@ -446,3 +442,38 @@ div.popover-content {
 	}
     }
 }
+
+//--------------------//
+// Edit entity page   //
+//--------------------//
+
+
+
+#edit-references-panel {
+    div.card {
+	width: 25rem;
+    }
+
+    .card-title {
+	// font-size: 1em;
+	// font-weight: bolder;
+    }
+
+    #use-existing-reference-btn, #create-new-reference-btn {
+	@extend .btn;
+	@extend .btn-primary;
+	@extend .btn-sm;
+    }
+
+    #new-reference-form {
+	label {
+	    font-size: 0.8em;
+	}
+    }
+
+    .hidden {
+	@extend .d-none;
+    }
+}
+
+
