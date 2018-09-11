@@ -10,6 +10,9 @@ $gray-lighter: lighten($gray-base, 93.5%) !default; // #eee
     @extend .img-fluid;
 }
 
+.hidden {
+    @extend .d-none;
+}
 
 .btn-group-xs > .btn, .btn-xs {
     padding  : .25rem .4rem;

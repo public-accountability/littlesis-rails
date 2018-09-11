@@ -8,9 +8,9 @@
     root.NewReferenceForm = factory(root.jQuery);
   }
 }(this, function ($, utility) {
-  var LABEL_CLASS = 'col-sm-2 control-label';
+  var LABEL_CLASS = 'col-sm-3 control-label';
   var INPUT_CLASS = 'form-control text-left';
-  var DEFAULT_COL_CLASS = 'col-sm-10';
+  var DEFAULT_COL_CLASS = 'col-sm-9';
   var FIELDS_SHOW = [
     [ 'Url*', 'reference-url', 'url' ],
     [ 'Name*', 'reference-name', 'text' ],
@@ -45,7 +45,7 @@
 
   function render(div) {
     $(div).append(
-      $('<div>', { "class": 'form-horizontal'}).append(form())
+      $('<div>', { "class": ''}).append(form())
     );
 
     $('#collapseReference').on('show.bs.collapse', function(){
@@ -71,7 +71,7 @@
 
   function inputAndLabel(text, id, type, colClass) {
     return wrapInFormGroup(
-      $('<div>')
+      $('<div>', { "class": 'row'})
 	.append(label(text, id))
 	.append(input(id, type, colClass))
     );
@@ -131,7 +131,7 @@
 
   function collapse() {
     return wrapInFormGroup(
-      $('<div>', { "class": 'col-sm-4 col-sm-offset-2' })
+      $('<div>', { "class": 'col-sm-4' })
 	.append(
 	  $('<a>', { "data-toggle": 'collapse', "href": "#collapseReference",  "aria-expanded": "true", "aria-controls": "collapseReference",  "id": "toggle-reference-collapse"})
 	    .append(toggle)

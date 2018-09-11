@@ -392,6 +392,12 @@ div.actions-row {
 
 /* add relationship page */
 
+.category-select-button {
+    @extend .btn;
+    @extend .btn-light;
+    @extend .border;
+}
+
 #results-table tbody tr:hover {
     background-color: $red_lighter;
 }
@@ -471,9 +477,7 @@ div.popover-content {
 	}
     }
 
-    .hidden {
-	@extend .d-none;
-    }
+
 }
 
 
