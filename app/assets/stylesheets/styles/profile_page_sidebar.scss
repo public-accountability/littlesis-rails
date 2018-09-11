@@ -11,7 +11,6 @@
 .sidebar-title-text {}
 
 #source-links-container {
-
     li {
 	cursor: pointer;
     }
@@ -23,7 +22,11 @@
     }
 }
 
-#profile-page-sidebar {}
+#profile-page-sidebar {
+    li, td {
+	font-size: 14px;
+    }
+}
 
 #sidebar-source-links {
     /* font-size: 12px; */

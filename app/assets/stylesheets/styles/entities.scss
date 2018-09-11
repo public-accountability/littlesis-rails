@@ -249,22 +249,23 @@ $small_image_size: 50px;
 
 
 #entity-header {
-  margin-top: -14px;
-  margin-bottom: 20px;
+    margin-top: -14px;
+    margin-bottom: 20px;
 }
 
 #entity-name {
-  font-size: 42px; 
-  line-height: 60px;
-  font-weight: 500;
+    @extend .row;
+    font-size: 42px; 
+    line-height: 60px;
+    font-weight: 500;
 
-  a:hover {
-    text-decoration: none;
-  }
+    a:hover {
+	text-decoration: none;
+    }
 }
 
 #entity-blurb-wrapper {
-
+    @extend .row;
     #entity-blurb-text {
 	font-size: 21px;
 	line-height: 30px;
