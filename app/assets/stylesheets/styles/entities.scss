@@ -135,13 +135,15 @@ div.actions-row {
 
 #action-buttons {
     display: inline-block;
+    height: 27px;
 
     form {
 	display: inline;
+	height: 27px;
     }
 
-
     input, a {
+	cursor: pointer;
 	font-size: 14px;
 	top: -6px;
 	color: #444;
@@ -155,10 +157,15 @@ div.actions-row {
 	border-radius: 10px;
     }
 
+    input {
+	padding: 2px;
+    }
+
     input:hover, a:hover {
 	color: #000;
 	background-color: #ddf;
 	text-decoration: none;
+
     }
     
     a.disabled_action {
