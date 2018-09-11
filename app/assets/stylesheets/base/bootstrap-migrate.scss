@@ -11,9 +11,13 @@ $gray-lighter: lighten($gray-base, 93.5%) !default; // #eee
 }
 
 
-.btn-xs {
-    @extend .btn-sm;
-}
+.btn-group-xs > .btn, .btn-xs {
+    padding  : .25rem .4rem;
+    font-size  : .875rem;
+    line-height  : .5;
+    border-radius : .2rem;
+}          
+
 
 .btn-default {
     @extend .btn-secondary;
