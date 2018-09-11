@@ -5,7 +5,7 @@
 
 <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder  do |f| %>
   
-  <div class="row top-1em">
+  <div class="row top-1em mb-2">
     <%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
     <div class="col-sm-4 col-sm-offset-1">
       <%= render partial: 'shared/editing/reference_errors' %>
@@ -20,19 +20,20 @@
   <% end  %>
 
   
-  <% label_class = 'col-sm-2 control-label' %>
-  
-  <div class="form-group">
+  <% input_div_wrapper_class = 'entity-form-group' %>
+  <% label_class = 'entity-edit-label' %>
+
+  <div class="<%= input_div_wrapper_class %>">
     <%= f.label(:blurb, 'Short Description', class: label_class) %>
-    <div class="col-sm-8">
+    <div class="col-8">
       <%= f.text_field(:blurb, class: 'form-control') %>
     </div>
     <div class="clearfix"></div>
   </div>
 
-  <div class="form-group">
+  <div class="<%= input_div_wrapper_class %>">
     <%= f.label(:summary, 'Summary:', class: label_class) %>
-    <div class="col-sm-8">
+    <div class="col-8">
       <%= f.text_area(:summary, class: 'form-control', size: '40x6') %>
     </div>
     <div class="clearfix"></div>
@@ -41,18 +42,18 @@
   <% start_date_text = { 'Org' => 'Start date:', 'Person' => 'Birth date' } %>
   <% end_date_text = { 'Org' => 'End date:', 'Person' => 'Death date' } %>
 
-  <div class="form-group">
+  <div class="<%= input_div_wrapper_class %>">
     <%= f.label(:start_date, start_date_text[@entity.primary_ext], class: label_class) %>
-    <div class="col-sm-9">
+    <div class="col-9">
       <%= f.text_field(:start_date) %>
       <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
     </div>
     <div class="clearfix"></div>
   </div>
 
-  <div class="form-group">
+  <div class="<%= input_div_wrapper_class %>">
     <%= f.label(:end_date, end_date_text[@entity.primary_ext], class: label_class) %>
-    <div class="col-sm-9">
+    <div class="col-9">
       <%= f.text_field(:end_date) %>
       <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
     </div>
@@ -61,7 +62,7 @@
 
   <% is_current_text = { 'Org' => 'Is current?', 'Person' => 'Alive?' } %>
 
-  <div class="form-group">
+  <div class="<%= input_div_wrapper_class %>">
     <%= f.label(:is_current, is_current_text[@entity.primary_ext], class: label_class) %>
     <div class="col-sm-3">
       <%= f.tri_boolean(:is_current) %>
@@ -69,9 +70,9 @@
     <div class="clearfix"></div>
   </div>
 
-  <div class="form-group">
+  <div class="<%= input_div_wrapper_class %>">
     <%= f.label(:website, "Website:", class: label_class) %>
-    <div class="col-sm-3">
+    <div class="col-3">
       <%= f.url_field(:website) %>
     </div>
     <div class="clearfix"></div>
@@ -84,7 +85,7 @@
 
   <% if @entity.has_extension?('PublicCompany') %>
     <%= f.fields_for :public_company do |public_company_form| %>
-      <div class="form-group">
+      <div class="<%= input_div_wrapper_class %>">
 	<%= public_company_form.label(:ticker, 'Ticker', class: label_class) %>
 	<div class="col-sm-4">
 	  <%= public_company_form.text_field(:ticker) %>
@@ -97,7 +98,7 @@
 
   <% if @entity.has_extension?('School') %>
     <%= f.fields_for :school, @entity.school do |school_form| %>
-      <div class="form-group">
+      <div class="<%= input_div_wrapper_class %>">
 	<%= school_form.label(:is_private, 'Private School?', class: label_class) %>
 	<div class="col-sm-4">
 	  <%= school_form.tri_boolean(:is_private) %>
@@ -107,7 +108,7 @@
     <% end %>
   <% end %>
 
-  <div class="form-group">
+  <div class="<%= input_div_wrapper_class %>">
     <div class="col-sm-3">
       <%= f.submit 'Update', class: 'btn btn-primary' %>
       <%= link_to 'Cancel', @entity.legacy_url, class: 'btn btn-default m-left-1em' %>

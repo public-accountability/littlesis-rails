@@ -477,3 +477,13 @@ div.popover-content {
 }
 
 
+div.entity-form-group {
+    @extend .form-group;
+    @extend .row;
+}
+
+.entity-edit-label {
+    @extend .col-2;
+    font-size: 14px;
+    font-weight: 650;
+}
