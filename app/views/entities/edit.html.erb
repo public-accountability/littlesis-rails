@@ -122,7 +122,7 @@
    const checked_class = 'glyphicon-check';
    const unchecked_class = 'glyphicon-unchecked';
 
-   $('#entity-types span.glyphicon').click(function(){
+   $('.type-checkbox').click(function(){
      $(this).toggleClass(checked_class);
      $(this).toggleClass(unchecked_class);
      updateSelectedTypeIds();
@@ -135,7 +135,7 @@
    // The definition id of the type is stored in the HTML5 dataset of the icon
    // -> string
    function selectedTypeIds() {
-     return $('#entity-types span.' + checked_class).map(function(){
+     return $('.type-checkbox.' + checked_class).map(function(){
        return $(this).data().definitionId; 
      }).toArray().join(',');
    }
