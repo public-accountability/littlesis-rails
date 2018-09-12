@@ -16,7 +16,7 @@
       Using the info already in LittleSis, and the employer info, addresses, and filing sources from OpenSecrets, identify which of these donor records belong to this person, select them, and then click the button "match donations".</p>
     <p><span class="bg-info"><%= link_to "Click here", review_donations_entity_path(@entity) %> to review donations that have already been matched.</span></p>
     <% if current_user.admin?  %>
-      <a href="<%= match_ny_donations_entity_path(@entity) %>" class="pull-right btn red-button btn-sm m-right-3em" role="button" >Match NYS donations</a>
+      <a href="<%= match_ny_donations_entity_path(@entity) %>" class="float-right btn red-button btn-sm m-right-3em" role="button" >Match NYS donations</a>
     <% end  %>
   </div>
 </div>

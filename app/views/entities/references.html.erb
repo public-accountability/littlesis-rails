@@ -2,52 +2,50 @@
 <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 
 
-<div class="row">
-  <h3>The sources documenting <%= @entity.name %></h3>
-  <% if user_signed_in? %>
-    <p><a href="#add-reference-modal" data-toggle="modal">Add a new reference</a></p>
-  <% end %>	    
+<div class="row mt-3">
+  <h3 class="w-100">The sources documenting <%= @entity.name %></h3>
+    <% if user_signed_in? %>
+      <p><a href="#add-reference-modal" data-toggle="modal">Add a new reference</a></p>
+    <% end %>	    
 </div>
 
 <% cache ['entity_references', @page, @entity.cache_key ] do  %>
 
   <div class="row">
-    <div class="col-sm-12 col-md-12">
-      <table class="table table-hover">
-	<caption>Total Number of Documents: <code><%= @entity.documents_count %></code></caption>
-	<thead>
-	  <tr>
-	    <th>Name</th>
-	    <th>Url</th>
-	    <th>type</th>
+    <table class="table table-hover">
+      <caption>Total Number of Documents: <code><%= @entity.documents_count %></code></caption>
+      <thead>
+	<tr>
+	  <th>Name</th>
+	  <th>Url</th>
+	  <th>type</th>
+	</tr>
+      </thead>
+      <tbody>
+	<% documents = @entity.all_documents(@page, 25) %>
+	<% documents.each do |doc| %>
+	  <tr> 
+	    <% if user_signed_in? %>
+	      <td>
+		<%= link_to edit_document_path(doc) do %>
+	          <span class="glyphicon glyphicon-edit"></span>  <span><%= doc.name %></span>
+	        <% end %>
+	      </td>
+	    <% else %>
+	      <td><%= doc.name %></td>	    	
+	    <% end %>
+	    <td><%= link_to doc.url, doc.url, '_target' => 'blank' %></td>
+	    <td><%= doc.ref_types_display %></td>
 	  </tr>
-	</thead>
-	<tbody>
-	  <% documents = @entity.all_documents(@page, 25) %>
-	  <% documents.each do |doc| %>
-	    <tr> 
-	    	<% if user_signed_in? %>
-		      <td>
-		      	<%= link_to edit_document_path(doc) do %>
-	                <span class="glyphicon glyphicon-edit"></span>  <span><%= doc.name %></span>
-	            <% end %>
-		      </td>
-		    <% else %>
-		      <td><%= doc.name %></td>	    	
-		    <% end %>
-	      <td><%= link_to doc.url, doc.url, '_target' => 'blank' %></td>
-	      <td><%= doc.ref_types_display %></td>
-	    </tr>
-	  <% end %>
-	</tbody>
-      </table>
-      <%= paginate documents %>
-    </div>
+	<% end %>
+      </tbody>
+    </table>
+    <%= paginate documents %>
   </div>
 
 <% end %>
 
 <% if user_signed_in? %>
-    <%= render partial: 'shared/reference_new', locals: {model: @entity, reference: nil} %>
+  <%= render partial: 'shared/reference_new', locals: {model: @entity, reference: nil} %>
 <% end %>
-    
+
