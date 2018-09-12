@@ -31,6 +31,10 @@ $gray-lighter: lighten($gray-base, 93.5%) !default; // #eee
 }
 
 
+table caption {
+    caption-side: top;
+}
+
 // glyphicon's currently used in LittleSis:
 //
 // glyphicon-menu-down
