@@ -1,5 +1,5 @@
 <% if @permissions[:editable] %>
-  <div class="list-actions form-inline">
+  <div class="list-actions">
     <% if @permissions[:configurable] %>
       <%= link_to('edit', edit_list_path(list), class: 'btn btn-default') %>
       <%= link_to('delete', list_path(list), class: 'btn btn-default', method: :delete, data: { confirm: 'Are you sure you want to delete this list?' }) %>

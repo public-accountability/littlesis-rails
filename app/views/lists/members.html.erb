@@ -4,10 +4,10 @@
 <% person_count = @list.entities.people.count %>
 
 <% if notice %>
-    <div class="alert alert-success alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <%= notice %>
-    </div>
+  <div class="alert alert-success alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <%= notice %>
+  </div>
 <% end %>
 
 <%= render partial: 'list_actions', locals: { list: @list, person_count: person_count } %>
@@ -15,7 +15,7 @@
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :members } %>
 
 <% cache( [@list.cache_key, 'members'], expires_in: 1.day) do %>
-    <%= render partial: 'datatable', locals: { table: @table, editable: @editable } %>
+  <%= render partial: 'datatable', locals: { table: @table, editable: @editable } %>
 <% end %>
 
 
