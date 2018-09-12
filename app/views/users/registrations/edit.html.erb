@@ -1,89 +1,70 @@
 <div class="row">
-    <h2>Edit your settings</h2>
+  <h2 class="w-100">Edit your settings</h2>
 
-    <%= form_for(resource, as: resource_name, url: users_path, html: { method: :put }) do |f| %>
-	<%= devise_error_messages! %>
+  <%= form_for(resource, as: resource_name, url: users_path, html: { method: :put }) do |f| %>
+    <%= devise_error_messages! %>
 
-	<% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-	    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-	<% end %>
-
-	<div class="col-sm-4">
-	    <div class="form-group">
-		<%= f.label :email %><br />
-		<%= f.email_field :email, autofocus: true, class: 'form-control' %>
-	    </div>
-	</div>
-
-	<div class="clearfix"></div>
-	
-	<div class="col-sm-4">
-	    <div class="form-group">
-		<%= f.label :password %><br /> <i><small>(leave blank if you don't want to change it)</i></small><br />
-		<%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
-		<% if @minimum_password_length %>
-		    <br />
-		    <em><%= @minimum_password_length %> characters minimum</em>
-		<% end %>
-	    </div>
-	</div>
-	
-	<div class="clearfix"></div>
-	
-	<div class="col-sm-4">
-	    <div class="form-group">
-		<%= f.label :password_confirmation %><br />
-		<%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control' %>
-	    </div>
-	</div>
-
-	<div class="clearfix"></div>
-
-	<div class="col-sm-4">
-	    <div class="form-group">
-		<%= f.label :about_me %><br />
-		<%= f.text_area :about_me, autocomplete: "off", class: 'form-control' %>
-	    </div>
-	</div>
-
-	<div class="clearfix"></div>
-	
-	<div class="col-sm-4">
-	    <div class="form-group">
-		<%= f.label :current_password %><br /> <i><small>(we need your current password to confirm your changes)<small></i><br />
-		<%= f.password_field :current_password, autocomplete: "off", class: 'form-control'  %>
-		<div class="top-1em">
-		    <%= f.submit "Update" %>
-		</div>
-	    </div>
-	</div>
-
-	<div class="clearfix"></div>
+    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+      <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
     <% end %>
-</div>
 
-<div class="row">
-    <div class="col-sm-10">
-    <h3>Profile Picture</h3>
-		<div class="entity-profile-image">
-		    <%= user_profile_image %>
-		    <p><%= button_to "Edit profile picture", image_user_path(@user) %></p>
-		</div>
+    <div class="form-group">
+      <%= f.label :email %><br />
+      <%= f.email_field :email, autofocus: true, class: 'form-control' %>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-sm-10">
-    <h3>Api Token</h3>
-	<%= render partial: 'api_token_form' %>
+    <div class="form-group">
+      <%= f.label :password %><br /> <i><small>(leave blank if you don't want to change it)</i></small><br />
+      <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
+      <% if @minimum_password_length %>
+	<br />
+	<em><%= @minimum_password_length %> characters minimum</em>
+      <% end %>
     </div>
+    
+    <div class="form-group">
+      <%= f.label :password_confirmation %><br />
+      <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :about_me %><br />
+      <%= f.text_area :about_me, autocomplete: "off", class: 'form-control' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :current_password %><br /> <i><small>(we need your current password to confirm your changes)<small></i><br />
+      <%= f.password_field :current_password, autocomplete: "off", class: 'form-control'  %>
+      <div class="top-1em">
+	<%= f.submit "Update" %>
+      </div>
+    </div>
+  <% end %>
 </div>
 
 <div class="row">
-    <div class="col-sm-12">
-    <h3>Cancel my account</h3>
+  <h3 class="w-100">Profile Picture</h3>
+  <div class="entity-profile-image">
+    <%= user_profile_image %>
+    <p><%= button_to "Edit profile picture", image_user_path(@user) %></p>
+  </div>
+</div>
 
-    <p>Unhappy? <%= button_to "Cancel my account", users_path, data: { confirm: "Are you sure?" }, method: :delete %></p>
-    <%= link_to "Back", :back %>
+<div class="row">
+  <h3 class="w-100">Api Token</h3>
+  <%= render partial: 'api_token_form' %>
+</div>
+
+<div class="row">
+  <h3 class="w-100">Cancel my account</h3>
+
+  <div class="w-25">
+    <%= button_to "Cancel my account", users_path, data: { confirm: "Are you sure?" }, method: :delete, class: 'btn btn-danger btn-sm' %>
+</div>
+ <br/>
+  
+</div>
+<div class="row">
+  <%= link_to "Back", :back, class: 'mt-5' %>
 </div>
 
