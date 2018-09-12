@@ -26,6 +26,10 @@ $gray-lighter: lighten($gray-base, 93.5%) !default; // #eee
     @extend .btn-secondary;
 }
 
+.bg-info {
+    background-color: rgb(217, 237, 247) !important;
+}
+
 
 // glyphicon's currently used in LittleSis:
 //
