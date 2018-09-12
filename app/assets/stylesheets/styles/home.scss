@@ -1,29 +1,12 @@
 #dashboard-bulletins {
-    @extend .col-sm-6;
-    padding-left: 20px;
-
-        
-    @include media-breakpoint-up(md) { 
-	padding-left: 35px;
+    .card  {
+	margin-bottom: 1.5em;	
     }
-
-    @include media-breakpoint-up(lg) {
-	padding-left: 50px;
-    }
-    
 }
 
 #dashboard-search-form {
-    @include media-breakpoint-up(sm) { 
-	margin-right: 2em;
-    }
-
-    @include media-breakpoint-up(md) {
-	margin-right: 6em;
-    }
-
-    @include media-breakpoint-up(lg) {
-	margin-right: 10em;
+    input[type=text] {
+	@extend .form-control;
     }
 }
 
@@ -61,6 +44,23 @@
 	background-repeat: no-repeat;
 	margin-bottom: 10px;
 	border: 1px solid #ddd;
+}
+
+.dashboard-title-link {
+    a {
+	color: rgb(33, 37, 41);
+	&:hover {
+	    color: $link_blue;
+	}
+    }
+}
+
+#dashboard-your-lists {
+    #dashboard-lists-links {
+	a {
+	    font-weight: bold;
+	}
+    }
 }
 
 #homepage-lists {

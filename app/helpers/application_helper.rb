@@ -107,14 +107,14 @@ module ApplicationHelper
 
     unless session[:dismissed_alerts].include? id
       content_tag('div', id: id, class: "alert #{class_name} alert-dismissable") do
-        content_tag('button', raw('&times;'), class: 'close', 'data-dismiss-id' => id) + capture(&block)
+        content_tag('button', raw('&times;'), class: 'ml-2 close', 'data-dismiss-id' => id) + capture(&block)
       end
     end
   end
 
   def dashboard_panel(heading = '', &block)
-    content_tag('div', class: 'panel panel-default') do
-      content_tag('div', heading, class: 'panel-heading') + content_tag('div', class: 'panel-body') { capture(&block) }
+    content_tag('div', class: 'card') do
+      content_tag('div', heading, class: 'card-header') + content_tag('div', class: 'card-body') { capture(&block) }
     end
   end
 
