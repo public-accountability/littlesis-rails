@@ -3,13 +3,22 @@
 
 <% if @merge_mode == MergeController::Modes::SEARCH %>
   <div class="row">
-    <div class="col-sm-10 nopadding">
+    <div class="col-sm-8 nopadding">
       <h1>
         Merge <%= link_to @source.name, entity_path(@source) %> with another <em><%= primary_ext%></em>
       </h1>
+      <h4>Find the <%= primary_ext %> you want to merge this <%= primary_ext %> with:</h4>
+    </div>
+    <div class="col-sm-3 col-sm-offset-1">
+      <p> Can't find the <%= primary_ext %> you want? Search for it:</p>
+      <%= render partial: 'merge_search' %>
     </div>
   </div>
-  <%= render partial: 'merge_search' %>
+
+  <div class="row">
+    <%= render partial: 'similar_entities_table' %>
+  </div>
+  
 <% else %>
   <% if @merge_mode == MergeController::Modes::REVIEW %>
     <%= render partial: 'user_requests/description', locals: { request: @merge_request} %>
