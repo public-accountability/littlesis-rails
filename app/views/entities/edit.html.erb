@@ -28,7 +28,6 @@
     <div class="col-8">
       <%= f.text_field(:blurb, class: 'form-control') %>
     </div>
-    <div class="clearfix"></div>
   </div>
 
   <div class="<%= input_div_wrapper_class %>">
@@ -36,7 +35,6 @@
     <div class="col-8">
       <%= f.text_area(:summary, class: 'form-control', size: '40x6') %>
     </div>
-    <div class="clearfix"></div>
   </div>
   
   <% start_date_text = { 'Org' => 'Start date:', 'Person' => 'Birth date' } %>
@@ -75,7 +73,6 @@
     <div class="col-3">
       <%= f.url_field(:website) %>
     </div>
-    <div class="clearfix"></div>
   </div>
 
   <% if @entity.person?  %>
@@ -90,9 +87,7 @@
 	<div class="col-sm-4">
 	  <%= public_company_form.text_field(:ticker) %>
 	</div>
-	<div class="clearfix"></div>
       </div>
-
     <% end %>
   <% end %>
 
@@ -103,18 +98,16 @@
 	<div class="col-sm-4">
 	  <%= school_form.tri_boolean(:is_private) %>
 	</div>
-	<div class="clearfix"></div>
       </div>
     <% end %>
   <% end %>
 
   <div class="<%= input_div_wrapper_class %>">
-    <div class="col-sm-3">
+    <div class="col-sm-3 nopadding">
       <%= f.submit 'Update', class: 'btn btn-primary' %>
       <%= link_to 'Cancel', @entity.legacy_url, class: 'btn btn-default m-left-1em' %>
     </div>
   </div>
-  <div class="clearfix"></div>
 <% end  # end form-for %>
 <hr>
 
