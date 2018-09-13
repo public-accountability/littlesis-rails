@@ -10,7 +10,7 @@
   var createElement = document.createElement.bind(document); // javascript! what a language!
 
   var createSelect = function(id) {
-    return utility.createElement({ "tag": 'select', "class": 'form-control', "id": id });
+    return utility.createElement({ "tag": 'select', "id": id });
   };
 
   var createOption = function(text, value) {
@@ -20,7 +20,7 @@
   };
 
   var createTextInput = function(id, placeholder) {
-    var input = utility.createElement({ "tag": 'input', "id": id, "class": 'form-control' });
+    var input = utility.createElement({ "tag": 'input', "id": id  });
     input.setAttribute('type', 'text');
     input.setAttribute('placeholder', placeholder);
     return input;
@@ -29,7 +29,8 @@
   var createCheckbox = function(id, text) {
     var label = utility.createElementWithText('label', text);
     label.setAttribute('for', id);
-    var input = utility.createElement({ "tag": 'input', "id": id});
+    label.setAttribute('class', 'form-check-label');
+    var input = utility.createElement({ "tag": 'input', "id": id, "class": 'form-check-input'});
     input.setAttribute('type', 'checkbox');
     label.appendChild(input);
     return label;
@@ -398,18 +399,28 @@
    * @returns {Element} 
    */
   function createFilters(data) {
-    var div = utility.createElement({ "id": 'relationships-filters', "class": 'form-inline' });
+    var div = utility.createElement({ "id": 'relationships-filters' });
+
+    var line1 = utility.createElement({ "id": 'relationships-filters-line1' });
 
     ['categories', 'types', 'interlocks'].forEach(function(filter) {
-      div.appendChild(filters[filter](data[filter]));
+      line1.appendChild(filters[filter](data[filter]));
     });
 
     var line2 = utility.createElement({ "id": 'relationships-filters-line2' });
 
-    ['search', 'amount', 'isCurrent', 'isBoard', 'isExecutive'].forEach(function(filter) {
+    ['search', 'amount'].forEach(function(filter) {
       line2.appendChild(filters[filter]());
     });
-    
+
+    var checkBoxContainer = utility.createElement({ "id": 'relationships-filters-checkboxes' });
+
+    ['isCurrent', 'isBoard', 'isExecutive'].forEach(function(filter) {
+      checkBoxContainer.appendChild(filters[filter]());
+    });
+
+    line2.appendChild(checkBoxContainer);
+    div.appendChild(line1);
     div.appendChild(line2);
     return div;
   }

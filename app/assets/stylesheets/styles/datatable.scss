@@ -1,13 +1,10 @@
 /* entity datatable */
 
 #relationships-table {
-    span.entity-blurb {
-	margin-left: 10px;
-    }
-}
-
-#relationships-table {  
   border-bottom-color: rgb(221, 221, 221);
+  
+  width: 100%;
+
 
   tbody, thead th {
     border-bottom-color: rgb(221, 221, 221);
@@ -15,6 +12,10 @@
 
   .entity-link {
     font-weight: 500;
+  }
+
+  span.entity-blurb {
+      margin-left: 10px;
   }
 }
 
@@ -25,7 +26,22 @@
   }
 
   input, select {
-      margin-right: 0.5em;
+      @extend .form-control;
+      @extend .mr-2;
+  }
+
+  #relationships-filters-checkboxes {
+      @extend .form-check;
+      @extend .form-check-inline;
+
+      input {
+	  margin-left: 5px !important;
+	  margin-right: 5px !important;
+      }
+  }
+  
+  #relationships-filters-line2, #relationships-filters-line1 {
+      @extend .form-inline;
   }
 
   #relationships-filters-line2 {
@@ -34,20 +50,10 @@
       label:hover {
 	  text-decoration: underline;
       }
-
-      input[type='checkbox'] {
-	  vertical-align: middle;
-	  float: left;
-	  position: relative;
-	  bottom: 1px;
-	  margin-right: 5px;
-	  margin-left: 5px;
-      }
-      
   }
 
   #relationships-search {
-      width: 200px;
+      width: 200px !important;
   }
 
   #relationships-amount {
