@@ -1,59 +1,59 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title><%= raw(page_title) %></title>
-  <%= stylesheet_link_tag    "application", media: "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-  <%= facebook_meta %>
-  <% if Lilsis::Application.config.respond_to?(:google_site_verification) %>
-  	<meta name="google-site-verification" content="<%= Lilsis::Application.config.google_site_verification %>" />
-  <% end %>
+  <head>
+    <title><%= raw(page_title) %></title>
+    <%= stylesheet_link_tag    "application", media: "all" %>
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tags %>
+    <%= facebook_meta %>
+    <% if Lilsis::Application.config.respond_to?(:google_site_verification) %>
+      <meta name="google-site-verification" content="<%= Lilsis::Application.config.google_site_verification %>" />
+    <% end %>
 
-  <% if content_for?(:head) %>
-    <%= yield :head %>
-  <% end %>
-</head>
-<body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
+    <% if content_for?(:head) %>
+      <%= yield :head %>
+    <% end %>
+  </head>
+  <body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
 
-  <% unless content_for? :hide_top %>
-    <div id="top">
-      <%= render partial: 'shared/nav_menu' %>
-    </div>
-  <% end %>
-
-<% if content_for? :title %>
-  <div id="header">
-    <div id="header_content">
-      <div id="title">
-	<%= yield :title %>
+    <% unless content_for? :hide_top %>
+      <div id="top">
+	<%= render partial: 'shared/nav_menu' %>
       </div>
-    </div>
-  </div>
-<% end %>
+    <% end %>
 
-<% if content_for? :body %>
-  <%= yield :body %>
-<% end %>
+    <% if content_for? :title %>
+      <div id="header">
+	<div id="header_content">
+	  <div id="title">
+	    <%= yield :title %>
+	  </div>
+	</div>
+      </div>
+    <% end %>
 
-<% if yield.strip.present?  %>
-  <div id="container-wrapper">
-    <div id="container">
-      <%= yield %>
-2    </div>
-  </div>
-<% end %>
+    <% if content_for? :body %>
+      <%= yield :body %>
+    <% end %>
 
-<% unless content_for? :hide_footer %>
-<div id="footer_clear"></div>
-<div id="footer">
-  A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>. 
-  More <%= link_to('about LittleSis', '/about') %>.
-  Read the <%= link_to('disclaimer', '/disclaimer') %>.
-</div>
-<% end %>
+    <% if yield.strip.present?  %>
+      <div id="container-wrapper">
+	<div id="container">
+	  <%= yield %>
+	</div>
+      </div>
+    <% end %>
 
-<%= render 'shared/analytics' %>
+    <% unless content_for? :hide_footer %>
+      <div id="footer_clear"></div>
+      <div id="footer">
+	A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>. 
+	More <%= link_to('about LittleSis', '/about') %>.
+	Read the <%= link_to('disclaimer', '/disclaimer') %>.
+      </div>
+    <% end %>
 
-</body>
+    <%= render 'shared/analytics' %>
+
+  </body>
 </html>
