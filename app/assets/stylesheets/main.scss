@@ -1,8 +1,8 @@
-// @import "bootstrap-sprockets";
+@import "base/globals";
+
 @import "bootstrap";
 @import "bootstrap-datepicker";
 
-@import "base/globals";
 @import "base/bootstrap-migrate";
 @import "base/helpers";
 @import "base/layout";
