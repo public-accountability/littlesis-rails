@@ -26,6 +26,15 @@ $gray-lighter: lighten($gray-base, 93.5%) !default; // #eee
     @extend .btn-secondary;
 }
 
+.btn-red {
+    @extend .btn-secondary;
+    background-color: $red;
+
+    &:hover {
+	background-color: $red_light;
+    }
+}
+
 .bg-info {
     background-color: rgb(217, 237, 247) !important;
 }

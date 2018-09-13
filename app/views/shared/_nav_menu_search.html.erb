@@ -1,9 +1,11 @@
+<% placeholder = 'Search LittleSis' if local_assigns[:placeholder].nil? %>
+<% btn_class = 'btn btn-default' if local_assigns[:btn_class].nil? %>
+
 <form action="/search" method="get" role="search" id="navbar-search">
   <div class="input-group">
-    <input type="text" name="q" class="form-control" placeholder="Search LittleSis" />
-
+    <input type="text" name="q" class="form-control" placeholder="<%= placeholder %>" />
     <div class="input-group-append">
-      <button type="submit" class="btn btn-default">
+      <button type="submit" class="<%= btn_class %>">
 	<span class="glyphicon glyphicon-search"></span>
       </button>
     </div>
