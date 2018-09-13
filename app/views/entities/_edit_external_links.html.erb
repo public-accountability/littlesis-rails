@@ -1,12 +1,14 @@
 <div class="row">
-
-  <h2>External Links<small class="text-muted pl-2">Connect this entity to other sites</small>
-  </h2>
+  <div class="col">
+    <h2>External Links<small class="text-muted pl-2">Connect this entity to other sites</small>
+    </h2>
+    </div>
 </div>
 
 <div id="edit-external-links-container">
   <% ExternalLink.find_or_initalize_links_for(@entity).each do |el| %>
     <div class="row">
+      <div class="col-8 col-sm-7 col-md-6">
       <%= form_for el, html: { class: '', id: "#{el.link_type}_external_link_form" } do |f| %>
 	<% unless el.persisted?  %>
 	  <%= f.hidden_field :entity_id  %>
@@ -23,5 +25,6 @@
 	</div>
       <% end %>
   <% end %>
+      </div>
     </div>
 </div>

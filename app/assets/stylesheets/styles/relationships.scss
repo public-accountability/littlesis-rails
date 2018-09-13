@@ -5,6 +5,8 @@
 form.edit-relationship-form {
 
     #relationship-edit-description-fields-display {
+	margin-top: 0.5em;
+	margin-left: 15px;
 	p {
 	    display: table-cell;
 	}
@@ -22,6 +24,7 @@ form.edit-relationship-form {
     .form-row {
 	@extend .form-group;
 	@extend .row;
+	margin-left: 15px;
     }
     
     .form-label {
@@ -273,6 +276,7 @@ div.entity-match-box {
     table {
         font-size: 12px;
     }
+
     td {
         cursor: pointer;
     }

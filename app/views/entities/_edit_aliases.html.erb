@@ -1,9 +1,11 @@
 <div class="row">
-  <h2>Aliases <small class="text-muted pl-2">additional names for the <%= @entity.org? ? 'entity' : 'person' %></small></h2>
+  <div class="col">
+    <h2>Aliases <small class="text-muted pl-2">additional names for the <%= @entity.org? ? 'entity' : 'person' %></small></h2>
+  </div>
 </div>
 
 <div class="row">
-  <div class="col-sm-12 col-md-10 col-lg-8 nopadding">
+  <div class="col-sm-12 col-md-10 col-lg-8">
     <p> Create a new alias:</p>
     <%= form_for @entity.aliases.new, :html => { class: 'form-inline' } do |f| %>
       <%= f.hidden_field :entity_id, value: @entity.id %>
@@ -16,7 +18,7 @@
 </div>
 
 <div class="row mt-2">
-  <div class="col-sm-8 col-md-6 top-1em nopadding">
+  <div class="col-sm-8 col-md-6 top-1em">
     <% if @entity.aliases.size > 1 %>
       <p class="mt-1">Click "make primary" to change the entity's default name</p>
     <% end %>

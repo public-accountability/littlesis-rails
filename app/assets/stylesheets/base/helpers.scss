@@ -63,12 +63,12 @@
 }
 
 .nopadding {
-   padding: 0 !important;
-   margin: 0 !important;
+   // padding: 0 !important;
+   // margin: 0 !important;
 }
 
 .double-left-padding {
-    padding-left: 30px;
+    // padding-left: 30px;
 }
 
 .col-centered {
@@ -153,6 +153,13 @@
 
 .thin-grey-bottom-border {
   border-bottom: 1px solid #e7e7e7;
+}
+
+.thin-grey-line {
+    @extend .row;
+    @extend .thin-grey-bottom-border;
+    @extend .w-100;
+    margin-left: 0;
 }
 
 .gray-img-border {

@@ -43,6 +43,17 @@ table caption {
     caption-side: top;
 }
 
+.row.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.row.no-gutters > [class^="col-"],
+.row.no-gutters > [class*=" col-"] {
+  padding-right: 0;
+  padding-left: 0;
+}
+
 // glyphicon's currently used in LittleSis:
 //
 // glyphicon-menu-down

@@ -11,14 +11,14 @@
 
 <div class="row top-1em" id="entity-page-container">
 
-  <div class="col-md-8 col-sm-8 nopadding">
+  <div class="col-md-8 col-sm-8">
 
     <%= render partial: 'summary', locals: { entity: @entity } %>
     <%= entity_tabs(@entity, @active_tab.to_s) %>
     <%= render partial:  @active_tab.to_s %>
   </div>
 
-  <div class="col-md-4 col-sm-4 double-left-padding hidden-xs">
+  <div class="col-md-4 col-sm-4 hidden-xs">
     <% cache_unless user_signed_in?, ['relationship_page_sidebar',  @entity.cache_key], expires_in: 1.day do %>
       <%= render partial: 'sidebar' %>
     <% end  %>

@@ -37,8 +37,10 @@
 <% end %>
 
 <% if yield.strip.present?  %>
-  <div class="container" id="container">
-    <%= yield %>
+  <div id="container-wrapper">
+    <div id="container">
+      <%= yield %>
+2    </div>
   </div>
 <% end %>
 
