@@ -73,9 +73,14 @@ form.edit-relationship-form {
     
 }
 
-
-#source-links-table td {
-  font-size: 1em;
+#source-links-table {
+    @extend .table;
+    @extend .table-sm;
+    @extend .table-hover;
+    
+    td {
+	font-size: 0.8em;
+    }
 }
 
 #relationship_tabs_content {
