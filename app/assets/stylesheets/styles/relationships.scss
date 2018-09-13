@@ -1,22 +1,78 @@
-form.edit_relationship {
-    .form-group {
-        padding-top: 1em;
-    }
-    #description-fields input {
-        margin-top: 1em;
-    }
-    label.control-label, div.col-sm-10 {
-        margin-top: 0.5em;
-    }
-    input[type="radio"] {
-        margin-left: 0.2em;
-        margin-right: 0.2em;
+//------------------------//
+// Edit Relationship Page //
+//------------------------//
+
+form.edit-relationship-form {
+
+    #relationship-edit-description-fields-display {
+	p {
+	    display: table-cell;
+	}
+
+	p.reference-link {
+	    padding: 0;
+	    margin: 0.2em;
+	}
+
+	tr {
+	    vertical-align: middle;
+	}
     }
 
-    small {
-        padding-left: 0.8em;
+    .form-row {
+	@extend .form-group;
+	@extend .row;
     }
+    
+    .form-label {
+	@extend .col-sm-2;
+	@extend .col-form-label;
+	font-weight: 700;
+    }
+
+    .form-input-wrapper {
+	@extend .col-sm-8;
+    }
+
+    .form-label, .form-input-wrapper {
+	padding-top: 0;
+	padding-left: 0;
+    }
+
+    .relationship-radio-buttons {
+	@extend .form-check;
+	@extend .form-check-inline;
+	@extend .align-bottom;
+
+	input {
+	    @extend .form-check-input;
+	}
+
+	label {
+	    @extend .form-check-label;
+	    margin-right: 0.3em;
+	}
+    }
+
+    #description-fields {
+	// font-size: 0.9em;
+
+	.description-fields-break {
+	    @extend .w-100;
+	    height: 5px;
+	}
+	a {
+	    margin-top: 1em;
+	}
+
+	input {
+	    display: inline-block;
+	    max-width: 130px;
+	}
+    }
+    
 }
+
 
 #source-links-table td {
   font-size: 1em;

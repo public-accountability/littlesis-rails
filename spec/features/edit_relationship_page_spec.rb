@@ -27,7 +27,7 @@ describe 'Edit Relationship Page', type: :feature do
       end
 
       it 'Shows parent above child' do
-        selector = "#relationship-edit-description-fields-display p"
+        selector = '#relationship-edit-description-fields-display p.description-fields-title'
         page_has_selector selector, count: 2
         expect(page.all(selector).map(&:text)).to eql ['Parent:', 'Child:']
       end
@@ -41,7 +41,7 @@ describe 'Edit Relationship Page', type: :feature do
       before { visit edit_relationship_path(membership_relationship) }
 
       it "shows links to entities in correct order: 'member', 'organization'" do
-        selector = "#relationship-edit-description-fields-display p"
+        selector = '#relationship-edit-description-fields-display p.description-fields-title'
         page_has_selector selector, count: 2
         expect(page.all(selector).map(&:text)).to eql ['Member:', 'Organization:']
       end
