@@ -45,7 +45,7 @@ describe 'search/basic', type: :view do
     context 'nothing found' do
       it 'displays no results found message' do
         css 'strong', text: 'No results found.'
-        css 'h4', text: "Can't find something that should be on LittleSis?"
+        css 'h3', text: "Can't find something that should be on LittleSis?"
       end
 
       context 'user signed in' do
@@ -62,16 +62,6 @@ describe 'search/basic', type: :view do
           expect(rendered).to include 'to add it yourself!'
           not_css 'a.btn', text: 'Add It'
         end
-      end
-    end
-
-    context 'found a group' do
-      let(:groups) { [build(:group)] }
-
-      it 'shows research groups' do
-        css 'h3', text: 'Research Groups'
-        css 'span.search-result-link'
-        expect(rendered).not_to include 'to add it yourself!'
       end
     end
 

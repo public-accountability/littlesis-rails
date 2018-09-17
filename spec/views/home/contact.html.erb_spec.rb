@@ -8,16 +8,8 @@ describe 'home/contact.html.erb', type: :view do
       render
     end
 
-    it 'does not have email tag' do
-      css 'input[type=email]', count: 0
-    end
-
-    it 'has email in form' do
-      css 'p.form-control-static', text: 'email@email.com'
-    end
-
-    it 'has input with email address' do
-      css "input[type=hidden][value='email@email.com']"
+    it 'has email readonly email tag' do
+      css 'input[type=email][readonly][value="email@email.com"]', count: 1
     end
 
     it 'does not have recaptcha' do
@@ -35,6 +27,7 @@ describe 'home/contact.html.erb', type: :view do
     context 'user not signed in' do
       it 'has email tag' do
         css 'input[type=email]', count: 1
+        css 'input[type=email][readonly]', count: 0
       end
     end
 

@@ -63,8 +63,8 @@ describe 'entities/show.html.erb' do
         end
 
         it 'has correct header' do
-          expect(rendered).to have_css('#entity-header')
-          expect(rendered).to have_css('#entity-header a', :count => 1)
+          expect(rendered).to have_css('#entity-name')
+          expect(rendered).to have_css('#entity-name a', :count => 1)
           expect(rendered).to have_css('#entity-name', :text => "mega corp")
           expect(rendered).to have_css('#entity-blurb-wrapper', :text => "mega corp is having an existential crisis")
         end
