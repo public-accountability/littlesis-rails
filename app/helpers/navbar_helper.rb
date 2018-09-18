@@ -18,7 +18,10 @@ module NavbarHelper
     class_name = dropdown ? 'nav-link dropdown-toggle' : 'nav-link'
     options = { 'class' => class_name, 'href' => href, 'id' => "navbar-header-#{text}" }
     if dropdown
-      options.merge!('role' => 'button', 'data-toggle' => 'dropdown','aria-haspopup' => 'true', 'aria-expanded' => 'false')
+      options.merge!('role' => 'button',
+                     'data-toggle' => 'dropdown',
+                     'aria-haspopup' => 'true',
+                     'aria-expanded' => 'false')
     end
     content_tag 'a', text, options
   end
