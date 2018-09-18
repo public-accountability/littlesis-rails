@@ -25,7 +25,7 @@
   <% if @q.present? %>
     <% if @tags.count > 0 %>
       
-      a<h3 class="mt-2">Tags</h3>
+      <h3 class="mt-2">Tags</h3>
       <% @tags.each do |tag| %>
 	<span class="search-result-link">
 	  <%= link_to tag.name, tag_path(tag) %>

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ToolkitController < EditablePagesController
   layout 'toolkit'
 

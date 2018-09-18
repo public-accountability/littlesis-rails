@@ -21,7 +21,6 @@ $container-large-desktop: 900px + $grid-gutter-width;
 $navbar-height: 130px;
 
 /* Import bootstrap */
-// @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "bootstrap-markdown.scss";
 
@@ -107,76 +106,49 @@ div.toe-row {
 /* Header */
 
 nav.navbar  {
-    max-height: $navbar-height;
     background-color: $navbar_background_color;
-
     border-bottom: 1px solid;
     border-color: #C6BCD4;
 }
 
-
-.navbar-container {
-    display: block;
-    height: $navbar-height;
-}
-
 .navbar-image {
+    @extend .h-100;
+
+    @include media-breakpoint-up(xs) {
+    	max-width: 250px;
+    }
 
     @include media-breakpoint-up(sm) {
-	max-width: 50px;
+    	max-width: 100px;
     }
 
     @include media-breakpoint-up(md) {
-	max-width: 55px;
+    	max-width: 95px;
     }
 
     @include media-breakpoint-up(lg) {
-	max-width: 65px;
+    	max-width: 105px;
     }
-
-    float: left;
-    height: 50%;
-    
     img {
-	position: relative;
-	top: 50%;
-    	height: 100%;
+	@extend .img-fluid;
     }
 }
 
 #navbar {
-    display: inline;
-    float: right;
-    position: relative;
-    top: 22px;
-    
-    @include media-breakpoint-up(sm) {
-	right: 1em;
+    li {
+    	@extend .nav-item;
 
-	li {
-    	    margin-left: 0;
+	a {
+	    @extend .nav-link;
 	}
-
-    }
-
-    @include media-breakpoint-up(md) {
-	right: 2em;
-	
-	li {
-    	    margin-left: 1em;
-	}
-    }
-
-    @include media-breakpoint-up(lg) {
-	right: 3em;
     }
 
     a:hover {
-	text-decoration: underline;
+	text-decoration: underline !important;
     }
 }
 
-.navbar-default .navbar-nav > li > a {
+.navbar-nav > li > a {
     color: $navbar_text_color;
     font-size: 16px;
 }
