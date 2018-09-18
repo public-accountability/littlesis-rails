@@ -5,8 +5,6 @@
 <% cache( [ 'edits/index', @page ], expires_in: 5.minutes) do %>
   <% edits = EntityHistory.recently_edited_entities(page: @page) %>
   
-  <%= paginate edits %>
-
   <table class="table">
     <thead>
       <tr>
