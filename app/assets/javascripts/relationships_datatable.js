@@ -488,7 +488,7 @@
    * creates button that save datatable as csv
    */
   function saveToCSVButton() {
-    var button = utility.createElement({ "tag": 'a', "class": 'btn btn-default' });
+    var button = utility.createElement({ "tag": 'a', "class": 'btn btn-outline-primary' });
     button.textContent = 'Export CSV';
     button.href ='#';
     button.addEventListener('click', function(e) {
