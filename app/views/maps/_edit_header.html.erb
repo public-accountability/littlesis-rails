@@ -7,15 +7,15 @@
 
         &nbsp;<%= button_to 'delete', map_path(map), method: :delete, data: { confirm: "Are you sure you want to delete this map?" }, class: 'btn btn-danger btn-sm' %>
 
-        &nbsp;<%= link_to 'view', smart_map_path(map), class: 'btn btn-sm btn-default', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
+        &nbsp;<%= link_to 'view', smart_map_path(map), class: 'btn btn-sm btn-secondary', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
 
         <% if local_assigns[:fullscreen].present? %>
-          &nbsp;<%= link_to 'default editor', edit_map_path(map), class: 'btn btn-sm btn-default', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
+          &nbsp;<%= link_to 'default editor', edit_map_path(map), class: 'btn btn-sm btn-secondary', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
         <% else %>
-          &nbsp;<%= link_to 'fullscreen editor', edit_fullscreen_map_path(map), class: 'btn btn-sm btn-default', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
+          &nbsp;<%= link_to 'fullscreen editor', edit_fullscreen_map_path(map), class: 'btn btn-sm btn-secondary', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
         <% end %>
 
-        &nbsp;<%= link_to 'edit annotations', annotations_map_path(map), class: 'btn btn-sm btn-default', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
+        &nbsp;<%= link_to 'edit annotations', annotations_map_path(map), class: 'btn btn-sm btn-secondary', data: { confirm: "Are you sure? Unsaved changes will be lost!" } %>
     </div>
   </div>
 <% end %>

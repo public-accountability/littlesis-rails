@@ -7,7 +7,7 @@
     <%= options_for_select(table.industries) %>
   </select>
   <input id="datatable-search" class="form-control" type="text" placeholder="search">
-  <input id="datatable-clear" type="button" value="Clear All" class="btn btn-default">
+  <input id="datatable-clear" type="button" value="Clear All" class="btn btn-secondary">
 </div>
 </div>
 
@@ -116,7 +116,7 @@ $(document).ready(function() {
 
   var a = document.createElement('a');
   a.innerHTML = 'Export CSV';
-  a.setAttribute('class', 'btn btn-default');
+  a.setAttribute('class', 'btn btn-secondary');
   a.href="#";
   $('.buttons')[0].appendChild(a);
   $(a).on('click', function() {
@@ -152,7 +152,7 @@ $(document).ready(function() {
 
   var a = document.createElement('a');
   a.innerHTML = 'Link';
-  a.setAttribute('class', 'btn btn-default');
+  a.setAttribute('class', 'btn btn-secondary');
   a.href="javascript:void(0)";
   $('.buttons')[0].appendChild(a);
   $(a).on("click", function() {

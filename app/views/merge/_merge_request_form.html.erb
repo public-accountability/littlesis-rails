@@ -10,7 +10,7 @@
       <div class="user-request-action-buttons">
 	<%= text_area_tag 'justification', nil, size: "25x4", required: true %>
 	<%= submit_tag 'Request Merge', class: 'btn btn-lrg btn-primary' %>
-	<%= link_to "Go back", merge_path(mode: 'search', source: @source.id), class: 'btn btn-default' %>
+	<%= link_to "Go back", merge_path(mode: 'search', source: @source.id), class: 'btn btn-secondary' %>
       </div>
     <% end %>
   </div>
