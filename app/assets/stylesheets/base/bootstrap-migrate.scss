@@ -20,10 +20,9 @@ $gray-lighter: lighten($gray-base, 93.5%) !default; // #eee
     border-radius : .2rem;
 }          
 
-
-.btn-default {
-    @extend .btn-secondary;
-}
+// .btn-default {
+//     @extend .btn-secondary;
+// }
 
 .btn-red {
     @extend .btn-secondary;

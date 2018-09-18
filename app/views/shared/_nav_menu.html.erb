@@ -1,5 +1,13 @@
+<%
+if local_assigns[:full_width].present?
+  navbar_wrapper_class = 'navbar-full-width'
+else
+  navbar_wrapper_class = ''
+end
+%>
+
 <nav class="navbar navbar-expand-md fixed-top navbar-light bg-light">
-  <div id="navbar-content-wrapper">
+  <div id="navbar-content-wrapper" class="<%= navbar_wrapper_class %>">
     <div id="navbar-content">
       <div id="brand mr-auto">
 	<%= link_to(image_tag("lilsis-logo-trans-200.png"), signed_in? ? home_dashboard_path : root_path) %>

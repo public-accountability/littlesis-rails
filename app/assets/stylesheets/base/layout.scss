@@ -58,6 +58,13 @@ body {
 	
     }
 
+    // change above style when full width
+    #navbar-content-wrapper.navbar-full-width {
+	width: 100%;
+	padding-left: 0;
+	padding-right: 2px;
+    }
+
     #navbar-content {
 	width: 100%;
 	display: inherit;
@@ -68,7 +75,7 @@ body {
 	    margin-top: 5px;
 	}
     }
-
+    
     .nav-item {
 	margin-left: 0.15em;
 	margin-right: 0.15em;

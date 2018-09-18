@@ -1,15 +1,14 @@
-<% content_for(:static_navbar, true) %>
-<% content_for(:full_width_top, true) %>
 <% content_for(:page_title, raw(@map.name)) %>
 <% content_for(:facebook_title, @map.name) %>
 <% content_for(:facebook_image, @map.thumbnail) %>
 <% content_for(:facebook_type, "website") %>
 <% content_for(:facebook_url, map_url(@map)) %>
-<% content_for(:hide_footer, true) %>
+
 <%= content_for(:body) do %>
 
 <%= render 'shared/facebook_sdk' %>
-<% if @dev_version %>
+
+ <% if @dev_version %>
     <%= javascript_include_tag "oligrapher-dev" %>
 <% else %>
     <%= javascript_include_tag "oligrapher" %>
