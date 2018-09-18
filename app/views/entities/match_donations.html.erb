@@ -3,20 +3,22 @@
 <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 <div class="row top-1em">
   <h2>Match Donations From OpenSecrets.org</h2>
-  <br>
-  <div class="col-md-4 col-sm-4 nopadding">
+</div>
+
+<div class="row">
+  <div class="col-sm-4 nopadding">
     <a href="https://opensecrets.org"><img style="border: 0; padding-right: 0.5em;" src="https://s3.amazonaws.com/pai-littlesis/images/system/opensecrets-logo-225.gif" alt="Opensecrets-logo-225" align="left"></a>
   </div>
 
-  <div class="col-md-8 col-sm-8 double-left-padding">
+
+  <div class="col-sm-8 double-left-padding">
     <p>Below are donor records from <a href="http://opensecrets.org">OpenSecrets</a> with the same or similar name.
       Using the info already in LittleSis, and the employer info, addresses, and filing sources from OpenSecrets, identify which of these donor records belong to this person, select them, and then click the button "match donations".</p>
     <p><span class="bg-info"><%= link_to "Click here", review_donations_entity_path(@entity) %> to review donations that have already been matched.</span></p>
     <% if current_user.admin?  %>
-      <a href="<%= match_ny_donations_entity_path(@entity) %>" class="pull-right btn red-button btn-sm m-right-3em" role="button" >Match NYS donations</a>
+      <a href="<%= match_ny_donations_entity_path(@entity) %>" class="float-right btn red-button btn-sm m-right-3em" role="button" >Match NYS donations</a>
     <% end  %>
   </div>
-  
 </div>
 
 <div class="row top-1em">

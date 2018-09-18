@@ -25,11 +25,13 @@ gem 'mini_magick'
 gem 'sprockets', '~> 3.0'
 
 gem 'uglifier', '>= 4.1'
-gem 'bootstrap-sass', '~> 3.3.7'
+# gem 'bootstrap-sass', '~> 3.3.7'
+gem 'bootstrap', '~> 4.1.3'
+
 gem 'bootstrap-datepicker-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails', '~> 6.0.0'
-gem 'sass-rails', '>= 5'
+gem 'sassc-rails'
 
 gem 'tinymce-rails', '~> 4.6.4'
 

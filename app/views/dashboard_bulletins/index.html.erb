@@ -18,7 +18,7 @@
 	  <td><%= link_to bulletin.title, edit_dashboard_bulletin_path(bulletin)  %></td>
 	  <td>
 	    <%= form_for bulletin, method: :delete do |f| %>
-	      <button type="submit" class="btn btn-default" aria-label="delete bulletin">
+	      <button type="submit" class="btn btn-secondary" aria-label="delete bulletin">
 		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	      </button>
 	    <% end %>

@@ -3,48 +3,50 @@
 <%= render partial: 'header' %>    
 
 <% cache_unless user_signed_in?, ['subtitle_details_sources', @relationship] do %>
-    <div class="row" style="padding-top: 5px;">
-        <div class="col-md-6 col-xs-12 col-sm-6"> 
-            <div class="row">
-                <%= render partial: 'subtitle', locals: {relationship: @relationship } %>
-            </div>
-            <div class="row top-1em">
-                <div class="col-md-10 col-sm-10 col-xs-10">
-                    <%= render partial: 'details', locals: {details: @relationship.details } %>
-                </div>
-            </div>
+  <div class="row" style="padding-top: 5px;">
+    <div class="col-md-6 col-12 col-sm-6"> 
+      <div class="row">
+	<div class="col">
+          <%= render partial: 'subtitle', locals: {relationship: @relationship } %>
+	</div>
+      </div>
+      <div class="row top-1em">
+        <div class="col-md-10 col-sm-10 col-10">
+          <%= render partial: 'details', locals: {details: @relationship.details } %>
         </div>
-        <div class="col-md-4 col-sm-4 top-1em col-xs-12 pull-right">
-	    <div class="row">
-		<h4 class="relationship-sidebar-title">Source Links</h4>
-		<%= render partial: 'sources', locals: {relationship: @relationship } %>
-	    </div>
-
-	    <% if @relationship.tags.present? || user_signed_in? %>
-	      
-	      <div class="row">		    
-		<h4 class="relationship-sidebar-title">Tags</h4>
-
-		<%= tags_controls if user_signed_in? %>
-		<%= display_tags(@relationship.tags) %>
-
-		<% if user_signed_in?  %>
-		  <script id="tags-init-js">
-		   $(function(){
-		     tags.init(
-		       <%= raw(@relationship.tags_for(current_user).to_json) %>,
-		       "<%= raw(tags_relationship_path(@relationship)) %>",
-		     );
-		   });
-		  </script>
-		<%  end %>
-	      </div>
-
-	    <% end %> 
-        </div>
+      </div>
     </div>
+    <div class="col-md-4 col-sm-4 offset-sm-2 top-1em col-12 float-right">
+      <div class="row">
+	<h4 class="relationship-sidebar-title">Source Links</h4>
+	<%= render partial: 'sources', locals: {relationship: @relationship } %>
+      </div>
+
+      <% if @relationship.tags.present? || user_signed_in? %>
+	
+	<div class="row">		    
+	  <h4 class="relationship-sidebar-title">Tags</h4>
+
+	  <%= tags_controls if user_signed_in? %>
+	  <%= display_tags(@relationship.tags) %>
+
+	  <% if user_signed_in?  %>
+	    <script id="tags-init-js">
+	     $(function(){
+	       tags.init(
+		 <%= raw(@relationship.tags_for(current_user).to_json) %>,
+		 "<%= raw(tags_relationship_path(@relationship)) %>",
+	       );
+	     });
+	    </script>
+	  <%  end %>
+	</div>
+
+      <% end %> 
+    </div>
+  </div>
 <% end %>
 
 <% if user_signed_in? %>
-    <%= render partial: 'shared/reference_new', locals: {model: @relationship, reference: @reference } %>
+  <%= render partial: 'shared/reference_new', locals: {model: @relationship, reference: @reference } %>
 <% end %>

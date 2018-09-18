@@ -1,19 +1,35 @@
-<div id="relationship-edit-description-fields-display">
+<div id="relationship-edit-description-fields-display" class="row">
   <% first_entity, second_entity = description_fields_titles_and_entites(@relationship) %>
-  
-  <%= render partial: 'description_fields_entity_row',
-  locals: { relationship_entity: first_entity, link_id: 'df-entity-link-1' }  %>
+  <div class="w-50">
+    <table>
+      <tbody>
+	<tr>
+	  <td class="pr-2">
+	    <p class="description-fields-title"><%= first_entity.title + ':' %></p>
+	  </td>
+	  <td>
+	    <p><%= link_to first_entity.entity.name, first_entity.entity, id: 'df-entity-link-1' %></p>
+	  </td>
+	</tr>
+	<% if @relationship.reversible? %>
+	  <tr>
+	    <td>
+	    </td>
+	    <td>
+	      <p class='reference-link'><%= reverse_link %></p>
+	    </td>
+	  </tr>
+	<% end %>
 
-  <% if @relationship.reversible? %>
-    <div class="row">
-      <div class="col-sm-2 col-sm-offset-2" style="padding-bottom: 7px">
-	<div style="padding-left: 8px">
-	  <%= reverse_link %>
-	</div>
-      </div>
-    </div>
-  <% end  %>
-
-  <%= render partial: 'description_fields_entity_row',
-  locals: { relationship_entity: second_entity, link_id: 'df-entity-link-2' }  %>
+	<tr>
+	  <td nclass="pr-2">
+	    <p class="description-fields-title"><%= second_entity.title + ':' %></p>
+	  </td>
+	  <td>
+	    <p><%= link_to second_entity.entity.name, second_entity.entity, id: 'df-entity-link-2' %></p>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -21,7 +21,7 @@ $container-large-desktop: 900px + $grid-gutter-width;
 $navbar-height: 130px;
 
 /* Import bootstrap */
-@import "bootstrap-sprockets";
+// @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "bootstrap-markdown.scss";
 
@@ -74,11 +74,11 @@ div.toe-row {
 
 	a {
 	    color: $navbar_text_color;
-	    @media (min-width: $screen-sm-min) {
+	    @include media-breakpoint-up(sm) {
 		font-size: 14px;
 	    }
 
-	    @media (min-width: $screen-md-min) {
+	    @include media-breakpoint-up(md) {
 		font-size: 18px;
 	    }
 	    
@@ -122,15 +122,15 @@ nav.navbar  {
 
 .navbar-image {
 
-    @media (min-width: $screen-sm-min) {
+    @include media-breakpoint-up(sm) {
 	max-width: 50px;
     }
 
-    @media (min-width: $screen-md-min) {
+    @include media-breakpoint-up(md) {
 	max-width: 55px;
     }
 
-    @media (min-width: $screen-lg-min) {
+    @include media-breakpoint-up(lg) {
 	max-width: 65px;
     }
 
@@ -150,7 +150,7 @@ nav.navbar  {
     position: relative;
     top: 22px;
     
-    @media (min-width: $screen-sm-min) {
+    @include media-breakpoint-up(sm) {
 	right: 1em;
 
 	li {
@@ -159,7 +159,7 @@ nav.navbar  {
 
     }
 
-    @media (min-width: $screen-md-min) {
+    @include media-breakpoint-up(md) {
 	right: 2em;
 	
 	li {
@@ -167,7 +167,7 @@ nav.navbar  {
 	}
     }
 
-    @media (min-width: $screen-lg-min) {
+    @include media-breakpoint-up(lg) {
 	right: 3em;
     }
 

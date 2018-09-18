@@ -37,7 +37,7 @@ describe 'entities/political.html.erb' do
       end
 
       it 'has header' do
-        expect(rendered).to have_css '#entity-header'
+        expect(rendered).to have_css '#entity-name'
       end
 
       it 'has actions' do

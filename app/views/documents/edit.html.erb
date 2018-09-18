@@ -5,21 +5,21 @@
 <%= form_for(@document) do |f| %>
 
   <div class="form-group form-group-sm">
-    <%= label_tag(:url, "Source URL") %>
+    <b><%= label_tag(:url, "Source URL") %></b>
     <div>
       <%= @document.url %>
     </div>
   </div>
 
   <div class="form-group form-group-sm">
-    <%= label_tag(:name, "Display Name") %>
+    <b><%= label_tag(:name, "Display Name") %></b>
     <div>
       <%= f.text_field(:name, required: true, size: 40) %>
     </div>
   </div>
 
   <div class="form-group form-group-sm">
-    <%= label_tag(:publication_date, "Publication Date") %>
+    <b><%= label_tag(:publication_date, "Publication Date") %></b>
     <div>
       <%= f.text_field(:publication_date) %>
       <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
@@ -27,7 +27,7 @@
   </div>
 
   <div class="form-group form-group-sm">
-    <%= label_tag(:ref_type, "Type") %>
+    <b><%= label_tag(:ref_type, "Type") %></b>
     <% if @document.ref_type == 2 %>
       <div>
         FEC Filing
@@ -40,7 +40,7 @@
   </div>
 
   <div class="form-group form-group-sm">
-    <%= label_tag(:excerpt, "Excerpt") %>
+    <b><%= label_tag(:excerpt, "Excerpt") %></b>
     <div>
       <%= f.text_area(:excerpt, size: "40x6") %>
     </div>

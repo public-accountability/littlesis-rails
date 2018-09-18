@@ -12,14 +12,15 @@
 //
 //= require ./polyfill.js
 //= require fetch
-//= require jquery
+//= require jquery3
+//= require popper
 //= require bootstrap
 //= require jquery_ujs
 //= require jquery-ui/widgets/autocomplete
 //= require jquery.shuffle
 //= require jquery.tinycarousel
 //= require jquery.dataTables
-//= require dataTables.bootstrap
+//= require dataTables.bootstrap4.min.js
 //= require dataTables.editor
 //= require jquery.Jcrop
 //= require bootstrap-datepicker

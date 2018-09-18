@@ -16,15 +16,9 @@
         <% end %>
     </div>
 
-    <div class="row" id="dots-connected-search">
-        <form class="form-inline" action="/search" method="get" role="search">
-            <div class="form-group">
-                <input type="text" name="q" class="form-control" placeholder="Search for a name" />
-            </div>
-            <button type="submit" class="btn btn-default">
-	        <span class="glyphicon glyphicon-search"></span>
-	    </button>
-        </form>
+    <div class="row mt-3" id="dots-connected-search">
+      <%= render partial: 'shared/nav_menu_search',
+      locals: { placeholder: 'Search for a name', btn_class: 'btn btn-red' } %>
     </div>
 
 </div>

@@ -110,7 +110,7 @@ class MapsController < ApplicationController
           response.headers.delete('X-Frame-Options')
           render action: 'story_map', layout: 'fullscreen'
         else
-          render 'story_map'
+          render 'story_map', layout: 'oligrapher'
         end
       }
       format.json {
@@ -137,7 +137,7 @@ class MapsController < ApplicationController
     @links.push({ text: 'share link', url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
 
     @dev_version = true
-    render 'story_map'
+    render 'story_map', layout: 'oligrapher'
   end
 
   def raw
@@ -151,7 +151,7 @@ class MapsController < ApplicationController
     @map.title = 'Untitled Map'
     @map.user = current_user
     @editable = true
-    render 'story_map'
+    render 'story_map', layout: 'oligrapher'
   end
 
   def create
@@ -180,7 +180,7 @@ class MapsController < ApplicationController
     ]
 
     @editable = true
-    render 'story_map'
+    render 'story_map', layout: 'oligrapher'
   end
 
   def dev_edit
@@ -189,7 +189,7 @@ class MapsController < ApplicationController
     @links = [{ text: 'view', url: map_url(@map), target: '_blank' }]
     @editable = true
     @dev_version = true
-    render 'story_map'
+    render 'story_map', layout: 'oligrapher'
   end
 
   def update

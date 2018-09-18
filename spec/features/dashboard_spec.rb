@@ -12,12 +12,12 @@ describe 'home/dashboard', type: :feature do
       expect(page.status_code).to eq 200
       expect(page).to have_current_path home_dashboard_path
 
-      expect(page).to have_selector 'ul.nav li a', text: current_user.username
-      expect(page).to have_selector 'ul.nav li a', text: 'Tags'
-      expect(page).to have_selector 'ul.nav li a', text: 'Donate'
-      expect(page).to have_selector 'ul.nav li a', text: 'Help'
+      expect(page).to have_selector 'ul.navbar-nav li a', text: current_user.username
+      expect(page).to have_selector 'ul.navbar-nav li a', text: 'Tags'
+      expect(page).to have_selector 'ul.navbar-nav li a', text: 'Donate'
+      expect(page).to have_selector 'ul.navbar-nav li a', text: 'Help'
       # verifing that networks have been removed:
-      expect(page).not_to have_selector 'ul.nav li a', text: 'United States'
+      expect(page).not_to have_selector 'ul.navbar-nav li a', text: 'United States'
     end
   end
 
@@ -111,17 +111,17 @@ describe 'home/dashboard', type: :feature do
       visit '/home/dashboard'
     end
 
-    let(:a_selector) { '#dashboard-bulletins .panel:nth-child(1)' }
-    let(:b_selector) { '#dashboard-bulletins .panel:nth-child(2)' }
+    let(:a_selector) { '#dashboard-bulletins .card:nth-child(1)' }
+    let(:b_selector) { '#dashboard-bulletins .card:nth-child(2)' }
 
     scenario 'user can see 2 bulletins' do
       successfully_visits_page home_dashboard_path
-      page_has_selector 'div.panel', count: 2
+      page_has_selector 'div.card', count: 2
 
-      expect(find("#{a_selector} .panel-heading")).to have_text('title A')
-      expect(find("#{a_selector} .panel-body h1")).to have_text('contentA')
-      expect(find("#{b_selector} .panel-heading")).to have_text('title B')
-      expect(find("#{b_selector} .panel-body h1")).to have_text('contentB')
+      expect(find("#{a_selector} .card-header")).to have_text('title A')
+      expect(find("#{a_selector} .card-body h1")).to have_text('contentA')
+      expect(find("#{b_selector} .card-header")).to have_text('title B')
+      expect(find("#{b_selector} .card-body h1")).to have_text('contentB')
     end
   end
 end

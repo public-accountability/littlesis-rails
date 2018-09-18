@@ -120,7 +120,7 @@ module EntitiesHelper
 
   # boolean, [] -> content_tag
   def glyph_checkbox(checked, def_id)
-    glyphicon_class = ['glyphicon']
+    glyphicon_class = ['glyphicon', 'type-checkbox']
     glyphicon_class.append(if checked then 'glyphicon-check' else 'glyphicon-unchecked' end)
     content_tag(:span, nil, class: glyphicon_class, aria_hidden: 'true', data: { definition_id: def_id })
   end

@@ -18,14 +18,30 @@ module RelationshipsHelper
     [1, 3, 10].include? @relationship.category_id
   end
 
+  def d1_label_text(relationship)
+    if relationship.is_ownership?
+      'Description'
+    elsif relationship.is_donation?
+      'Type'
+    else
+      'Title'
+    end
+  end
+
+  def d1_label(f, relationship)
+    f.label(:discription1, d1_label_text(relationship), class: 'form-label')
+  end
+
   # input: <FormBuilder thingy>, symbol
   def radio_buttons_producer(form, column)
-    form.radio_button(column, 'true') +
-      form.label(column, 'Yes') +
-      form.radio_button(column, 'false') +
-      form.label(column, 'No') +
-      form.radio_button(column, '') +
-      form.label(column, 'Unknown')
+    content_tag(:div, class: 'relationship-radio-buttons') do
+      form.radio_button(column, 'true') +
+        form.label(column, 'Yes') +
+        form.radio_button(column, 'false') +
+        form.label(column, 'No') +
+        form.radio_button(column, '') +
+        form.label(column, 'Unknown')
+    end
   end
 
   # family, transaction, social, professional, hiearchy, generic
@@ -42,6 +58,7 @@ module RelationshipsHelper
        ' of ',
        entity_link(@relationship.related, html_id: 'df-forward-link-entity2'),
        tag(:br),
+       content_tag(:div, nil, class: 'description-fields-break'),
        reverse_link_if,
        entity_link(@relationship.related, html_id: 'df-backward-link-entity2'),
        ' is ',
@@ -66,10 +83,8 @@ module RelationshipsHelper
     end
   end
 
-  def relationship_form_tag(label, field, html_class = 'col-sm-10')
-    content_tag(:div, class: 'form-group') do
-      label + content_tag(:div, class: html_class) { field }
-    end
+  def relationship_form_tag(label, field)
+    label + content_tag(:div, field, class: 'form-input-wrapper')
   end
 
   # <Relationship> -> [ Struct ]

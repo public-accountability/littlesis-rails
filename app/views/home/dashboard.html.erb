@@ -1,75 +1,70 @@
 <% content_for(:page_title, "Dashboard") %>
 
-<div class="row">
-  <h1>Dashboard</h1>
-  
-  <div class="col-sm-6 nopadding">
-    
-    <div class="spacer"></div>
-
-    <% if notice %>
+<div class="row no-gutters">
+  <div class="col-12">
+    <h1>LittleSis Dashboard</h1>
+  </div>
+  <% if notice %>
+    <div class="col-6">
       <div class="alert alert-success"><%= notice %></div>
-    <% end %>
-    
+    </div>
+  <% end %>
+</div>
+
+
+<div class="row">
+  <div class="col-6">
     <% if current_user.sign_in_count < 10 %>
       <%= dismissable_alert('dashboard_alert') do %>
 	Need help using LittleSis? Visit our <%= link_to 'help pages', '/help' %>.
       <% end %>
     <% end %>
 
-    <%= dismissable_alert('chat_alert') do %>
-      <strong>New!</strong> LittleSis now has a <%= link_to 'chat', APP_CONFIG['chat']['chat_url'], target: '_blank'  %>, where you can ask questions and discuss research.
-      Go to <%= link_to 'chat.littlesis.org', APP_CONFIG['chat']['chat_url'], target: '_blank' %> to start chatting!
-    <% end %>
-
-    <form action="/search" method="get" id="dashboard-search-form">
-      <div class="input-group">
-	<input type="text" name="q" class="form-control" placeholder="search for a name" />
-	<span class="input-group-btn">
-	  <button type="submit" class="btn btn-primary">
-	    <span class="glyphicon glyphicon-search"></span>
-	  </button>
-	</span>
-      </div>
-    </form>
-    
-    <div class="bottom-1em" id="dashboard-explore">
-      <h3>Explore</h3>
-      <%= link_to("Maps", maps_path, class: "btn btn-default") %>
-      <%= link_to("Lists", lists_path, class: "btn btn-default") %>
-      <%= link_to("Tags", tags_path, class: "btn btn-default") %>
-      <%= link_to("Edits", edits_path, class: "btn btn-default") %>
+    <h4>Search:</h4>
+    <div class="w-75">
+      <%= render partial: 'dashboard_search' %>
     </div>
 
-    <div class="spacer"></div>
+    <h4 class="mt-2">Explore:</h4>
+    <%= render partial: 'dashboard_explore' %>
 
+    <h4 class="mt-2">Your Recent Edits</h4>
     <div id="dashboard-your-edits">
-      <h3>Your Edits</h3>
-
       <% @recent_updates.each do |entity| %>
 	<div class="dashboard-entity">
 	  <span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
 	</div>
       <% end %>
     </div>
-    
-  </div> <!-- end  col -->
-  
-  <div id="dashboard-bulletins">
-    <%= cache ['home_dashboard_bulletins', DashboardBulletin.last_bulletin_updated_at ] do %>
-      <%= render partial: 'dashboard_bulletins/bulletins' %>
+
+    <% if @lists.present? %>
+      <div id="dashboard-your-lists" class="mt-3">
+      <h4 class="dashboard-title-link mt-2"><%= link_to 'Your Lists:', home_lists_path %></h4>
+      	<div id="dashboard-lists-links" class="m-bottom-1em">
+	  <% @lists.each do |list| %>
+	    <%= list_link(list) %><br />
+	  <% end %>
+	</div>
+	<%= paginate @lists, param_name: 'list_page' %>
     <% end %>
+      </div>
+  </div> <%# End Left Column %>
+
+  <div class="col-6">
+    <div id="dashboard-bulletins">
+      <%= cache ['home_dashboard_bulletins', DashboardBulletin.last_bulletin_updated_at ] do %>
+	<%= render partial: 'dashboard_bulletins/bulletins' %>
+      <% end %>
+    </div>
   </div>
-  
-</div> <!-- end-row -->
+    
+</div>
 
-<div class="spacer"></div>
 
-<div class="row" id="dashboard-maps-row">
+<div class="row mt-5" id="dashboard-maps-row">
   <div class="col-sm-12 nopadding">
-    <h3>
-      Your Maps
-      <%= header_action('details', home_maps_path) %>
+    <h3 class="dashboard-title-link">
+      <%= link_to 'Your Maps', home_maps_path %>
     </h3>
 
     <div id="dashboard-maps-container">
@@ -77,23 +72,4 @@
     </div>
     <%= paginate @maps, param_name: 'map_page' %>
   </div>
-</div> <!-- end-row -->
-
-<div class="row" id="dashboard-lists-row">
-  <div class="col-sm-10 col-md-8 nopadding">
-
-    <h3>
-      Your Lists
-      <%= header_action('details', home_lists_path) %>
-    </h3>
-    
-    <% if @lists.present? %>
-      <div id="dashboard-lists-links" class="m-bottom-1em">
-	<% @lists.each do |list| %>
-	  <%= list_link(list) %><br />
-	<% end %>
-      </div>
-      <%= paginate @lists, param_name: 'list_page' %>
-    <% end %>
-  </div>
-</div> <!-- end-row -->
+</div>

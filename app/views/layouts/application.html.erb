@@ -1,89 +1,59 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title><%= raw(page_title) %></title>
-  <%= stylesheet_link_tag    "application", media: "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-  <%= facebook_meta %>
-  <% if Lilsis::Application.config.respond_to?(:google_site_verification) %>
-  	<meta name="google-site-verification" content="<%= Lilsis::Application.config.google_site_verification %>" />
-  <% end %>
-
-  <% if content_for?(:head) %>
-    <%= yield :head %>
-  <% end %>
-</head>
-<body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
-
-    <% unless content_for? :hide_top %>
-	<div id="top">
-	    <nav class="navbar navbar-default navbar-<%= yield(:static_navbar).present? ? 'static' : 'fixed' %>-top">
-		<% content_div_id = content_for?(:full_width_top) ? 'top_content_full' : 'top_content' %>
-		<div id="<%= content_div_id %>">
-		    <div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-			    <span class="sr-only">Toggle navigation</span>
-			    <span class="icon-bar"></span>
-			    <span class="icon-bar"></span>
-			    <span class="icon-bar"></span>
-			</button>
-			<div id="brand">
-			    <%= link_to(image_tag("lilsis-logo-trans-200.png"), signed_in? ? home_dashboard_path : root_path) %>
-			</div>
-		    </div>
-		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			<%= render "shared/bootstrap_nav_menu" %>	  
-			<form action="/search" method="get" class="navbar-form navbar-right" role="search">
-			    <div id="top_search" class="input-group">
-				<input type="text" name="q" class="form-control" placeholder="Search LittleSis" />
-				<span class="input-group-btn">
-				    <button type="submit" class="btn btn-default">
-					<span class="glyphicon glyphicon-search"></span>
-				    </button>
-				</span>
-			    </div>
-			</form>
-			<div id="top_donate_link" class="navbar navbar-right">
-			  <span><strong><%= link_to('Donate', '/donate', class: 'btn red-button')%></strong></span>
-			</div>
-			
-		    </div>
-		</div>
-	    </nav>
-	</div>
+  <head>
+    <title><%= raw(page_title) %></title>
+    <%= stylesheet_link_tag    "application", media: "all" %>
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tags %>
+    <%= facebook_meta %>
+    <% if Lilsis::Application.config.respond_to?(:google_site_verification) %>
+      <meta name="google-site-verification" content="<%= Lilsis::Application.config.google_site_verification %>" />
     <% end %>
 
-<% if content_for? :title %>
-<div id="header">
+    <% if content_for?(:head) %>
+      <%= yield :head %>
+    <% end %>
+  </head>
+  <body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
+
+    <% unless content_for? :hide_top %>
+      <div id="top">
+	<%= render partial: 'shared/nav_menu' %>
+      </div>
+    <% end %>
+
+    <% if content_for? :title %>
+      <div id="header">
 	<div id="header_content">
-		<div id="title">
-			<%= yield :title %>
-		</div>
+	  <div id="title">
+	    <%= yield :title %>
+	  </div>
 	</div>
-</div>
-<% end %>
+      </div>
+    <% end %>
 
-<% if content_for? :body %>
-	<%= yield :body %>
-<% end %>
+    <% if content_for? :body %>
+      <%= yield :body %>
+    <% end %>
 
-<% if yield.strip.present?  %>
-<div class="container" id="container">
-	<%= yield %>
-</div>
-<% end %>
+    <% if yield.strip.present?  %>
+      <div id="container-wrapper">
+	<div id="container">
+	  <%= yield %>
+	</div>
+      </div>
+    <% end %>
 
-<% unless content_for? :hide_footer %>
-<div id="footer_clear"></div>
-<div id="footer">
-  A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>. 
-  More <%= link_to('about LittleSis', '/about') %>.
-  Read the <%= link_to('disclaimer', '/disclaimer') %>.
-</div>
-<% end %>
+    <% unless content_for? :hide_footer %>
+      <div id="footer_clear"></div>
+      <div id="footer">
+	A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>. 
+	More <%= link_to('about LittleSis', '/about') %>.
+	Read the <%= link_to('disclaimer', '/disclaimer') %>.
+      </div>
+    <% end %>
 
-<%= render 'shared/analytics' %>
+    <%= render 'shared/analytics' %>
 
-</body>
+  </body>
 </html>

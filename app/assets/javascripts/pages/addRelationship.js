@@ -90,7 +90,7 @@ var addRelationship = (function(utility) {
     var entity2 = data.primary_type;
     var buttonGroup = $('<div>', { class: 'btn-group-vertical', role: 'group', 'aria-label': 'relationship categories'});
     categories(entity1, entity2).forEach(function(categoryId){
-      var buttonClass = 'btn btn-default' + ( (categoryId === 7) ? ' disabled' : '' );
+      var buttonClass = 'category-select-button' + ( (categoryId === 7) ? ' disabled' : '' );
       buttonGroup.append(
 	$('<button>', {
 	  type: 'button', 
@@ -104,7 +104,7 @@ var addRelationship = (function(utility) {
   }
   
   function onCategorySelectHandlers() {
-    $("#category-selection .btn-group-vertical > .btn").click(function(){
+    $("#category-selection .btn-group-vertical > .category-select-button").click(function(){
       categoryButtonsSetActiveClass(this);
       lookForSimilarRelationship();
       $('#similar-relationships').addClass('hidden');
@@ -411,11 +411,10 @@ var addRelationship = (function(utility) {
 
     $('#toggle-reference-form').click(function(){
       $(this).find('.btn').toggleClass('active');  
-      $(this).find('.btn').toggleClass('btn-primary');
-      $(this).find('.btn').toggleClass('btn-default');
+      $(this).find('.btn').toggleClass('btn-secondary');
+      $(this).find('.btn').toggleClass('btn-outline-secondary');
       $('#existing-reference-container').toggle();
       $('#new-reference-container').toggle();
-
       // if $('#new-reference-container').is(':visible') {}
     });
   }

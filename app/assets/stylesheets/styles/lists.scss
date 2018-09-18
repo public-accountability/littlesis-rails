@@ -1,5 +1,3 @@
-@import "base/globals";
-
 td.lists_table_name {
 	min-width: 350px;
 	font-weight: bold;
@@ -52,7 +50,6 @@ td.lists_table_name {
 
 .list-actions .twitter-typeahead {
   width: 400px;
-  top: -4px;
 }
 
 #list-search {
@@ -124,4 +121,8 @@ td.lists_table_name {
 	background-color: $red;
     }
 
+}
+
+.list-tab-alert {
+    @extend .alert-info;
 }

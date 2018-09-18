@@ -1,22 +1,10 @@
-<% primary_ext = @source.primary_ext.downcase  %>
-
-<div class="row">
-  <div class="col-sm-6 nopadding">
-    <h4>Find the <%= primary_ext %> you want to merge this <%= primary_ext %> with:</h4>
-  </div>
-  <div class="col-sm-4 col-sm-offset-2">
-    <div class="pull-right">
-      <p> Can't find the <%= primary_ext %> you want? Search for it:</p>
-      <%= form_tag(merge_path, method: :get) do %>
-        <%= hidden_field_tag 'mode', 'search' %>
-	<%= hidden_field_tag 'source', @source.id %>
-	<%= text_field_tag 'query', nil %>
-	<%= submit_tag 'Search' %>
-      <% end %>
+<%= form_tag(merge_path, method: :get) do %>
+  <%= hidden_field_tag 'mode', 'search' %>
+  <%= hidden_field_tag 'source', @source.id %>
+  <div class="input-group">
+    <%= text_field_tag 'query', nil, class: 'form-control' %>
+    <div class="input-group-append">
+      <%= submit_tag 'Search', class: 'btn btn-outline-primary' %>
     </div>
   </div>
-</div>
-
-<div class="row">
-  <%= render partial: 'similar_entities_table' %>
-</div>
+<% end %>

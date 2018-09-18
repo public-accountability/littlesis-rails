@@ -1,10 +1,12 @@
 <div class="row">
   <% cache ['name', @relationship] do %>
-    <h1 class="relationship-title-link" ><%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %></h1>
+    <div class="col">
+      <h1 class="relationship-title-link" ><%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %></h1>
+    </div>
   <% end %>
 </div>
 
-<div class="row thin-grey-bottom-border bottom-1em">
+<div class="mb-3 row">
   <% if user_signed_in? %>
     <%= render partial: 'actions', locals: {signed_in: true } %>
   <% else %>
@@ -14,3 +16,5 @@
     <% end %>
   <% end %>
 </div>
+
+<div class="thin-grey-line"></div>

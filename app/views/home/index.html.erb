@@ -1,12 +1,10 @@
 <% content_for(:page_title, "LittleSis - Profiling the powers that be") %>
 <% content_for(:skip_page_title_suffix, true) %>
 
-<%= render partial: 'shared/facebook_sdk' %>
-
 <div class="row">
   <div class="col-sm-7">
-    <div class="row">
-      <h1 class="big-text">LittleSis<span style="color: #cc5454;">*</span> is a free database of who-knows-who at the heights of business and government.</h1>
+    <div class="row no-gutters">
+      <h1>LittleSis<span style="color: #cc5454;">*</span> is a free database of who-knows-who at the heights of business and government.</h1>
       <div style="font-weight: 300; font-size: 14px; color: #cc5454;"><span style="font-size: 16px; font-weight: bold;">*</span> opposite of Big Brother</div>
 
       <div id="homepage-splash-subheader">
@@ -15,7 +13,7 @@
     </div>
     
     <div class="row position-relative">
-      <div class="col-xs-6 nopadding">
+      <div class="col-6 nopadding">
 	<% if @newsletter_thankyou %>
 	  <%= render partial: 'newsletter_thankyou' %>
 	<% else %>
@@ -23,7 +21,7 @@
 	<% end %>
       </div>
       
-      <div class="col-xs-6 double-left-padding">
+      <div class="col-6 double-left-padding">
 	<%= render partial: 'social_media_buttons' %>
       </div>
       
@@ -34,15 +32,14 @@
     <%= render partial: 'dots_connected' %>
   </div>
 </div>
-<br />
-<br />
 
-
-<div class="row">
-  <h2 class="text-center" style="font-weight: 300">Explore trainings, news, & tools</h2>
+<div class="row align-content-center mt-5">
+  <div class="col">
+    <h2 class="text-center" style="font-weight: 300">Explore trainings, news, & tools</h2>
+  </div>
 </div>
 
-<div id="explore-row" class="hidden-xs" >
+<div id="explore-row">
   <div class="explore-col">
     <%= link_to toolkit_path do %>
       <%= image_tag "map_the_power_RGB.gif",  class: 'img-responsive center-block' %>
@@ -61,17 +58,17 @@
 </div>
 
 <div class="row text-center m-bottom-3em">
-  <div class="col-xs-4">
+  <div class="col-4">
     <%= link_to toolkit_path do %>
       <p>Power research toolkit and trainings</p>
     <% end %>
   </div>
-  <div class="col-xs-4">
+  <div class="col-4">
     <%= link_to "https://news.littlesis.org" do %>
       <p>News and analysis from LittleSis</p>
     <% end %>  
   </div>
-  <div class="col-xs-4">
+  <div class="col-4">
     <%= link_to oligrapher_path do %>
       <p>Visual online mapping tool</p>
     <% end %>  
@@ -88,13 +85,14 @@
         </div>
     </div>
 <% end  %>
+
 <!-- OLIGRAPHER -->
 <%=  render partial: 'oligrapher' %>
 
 <div class="row">
-    <div class="col-sm-12 text-center">
+  <div class="col-sm-12 text-center">
         <h1 class="big-text text-center">A unique resource for investigating cronyism, conflicts of interest, and systemic corruption.</h1>
-    </div>
+  </div>
 </div>
 
 <div class="row">

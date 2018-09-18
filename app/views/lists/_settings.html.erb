@@ -2,6 +2,8 @@
  function handleRadioClick(access){
    $("#" + access + "-radio").trigger('click');
    $("#list-config-access-buttons button").removeClass('btn-primary');
+   $("#list-config-access-buttons button").addClass('btn-secondary');
+   $("#list-config-access-buttons button").removeClass('btn-secondary');
    $("#" + access + "-button").addClass('btn-primary');
 
    $('.list-access-level-help').hide();
@@ -26,19 +28,19 @@
 </script>
 
 <div class="row">
-  <div class="col-sm-4 col-md-3">
+  <div class="col-sm-4 col-md-3 mr-2">
     <%= label_tag 'Access level' %> <br/>
 
     <div id="list-config-access-buttons" class="btn-group m-bottom-1em" role="group" aria-label="...">
-      <button type="button" id="open-button" class="btn btn-default" onclick="handleRadioClick('open')">Open</button>
-      <button type="button" id="closed-button" class="btn btn-default" onclick="handleRadioClick('closed')">Closed</button>
-      <button type="button" id="private-button" class="btn btn-default" onclick="handleRadioClick('private')">Private</button>
+      <button type="button" id="open-button" class="btn btn-secondary" onclick="handleRadioClick('open')">Open</button>
+      <button type="button" id="closed-button" class="btn btn-secondary" onclick="handleRadioClick('closed')">Closed</button>
+      <button type="button" id="private-button" class="btn btn-secondary" onclick="handleRadioClick('private')">Private</button>
     </div>
   
     
-    <%= f.radio_button :access, 0, class: 'btn btn-default', id: 'open-radio', style: "display: none" %>
-    <%= f.radio_button :access, 1, class: 'btn btn-default', id: 'closed-radio', style: "display: none"  %>
-    <%= f.radio_button :access, 2, class: 'btn btn-default', id: 'private-radio', style: "display: none"  %>
+    <%= f.radio_button :access, 0, class: 'btn btn-secondary', id: 'open-radio', style: "display: none" %>
+    <%= f.radio_button :access, 1, class: 'btn btn-secondary', id: 'closed-radio', style: "display: none"  %>
+    <%= f.radio_button :access, 2, class: 'btn btn-secondary', id: 'private-radio', style: "display: none"  %>
   </div>
   <div class="col-sm-4 col-md-4">
       <div class="list-access-level-help" id="list-access-level-help-open" style="display: none;">

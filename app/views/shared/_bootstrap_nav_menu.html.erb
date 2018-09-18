@@ -81,31 +81,29 @@ items['About'] = {
 unless user_signed_in?
   items['About'][:items].delete('Blog')
   items['Blog'] = { url: "https://news.littlesis.org" }
-  end
+end
 
-  items['Chat'] = { url: APP_CONFIG['chat']['chat_url'] } if user_signed_in?
+items['Chat'] = { url: APP_CONFIG['chat']['chat_url'] } if user_signed_in?
 
 %>
 
 <% if items.count > 0 %>
-    <ul class="nav navbar-nav">
-  	<% items.each do |text, data| %>
-	    <% if data[:items].blank? and data[:url] %>
-      	        <li><%= link_to text, data[:url] %></li>
-	    <% else %>
-	        <li class="dropdown">
-	            <%= content_tag("a", text, { class: "dropdown-toggle" + (data[:highlighted].present? ? " highlighted" : ""), 'data-toggle' => "dropdown", href: data[:url] }) %>
-	            <ul class="dropdown-menu">
-	                <% data[:items].each do |item_text, url| %>
-                            <% if url == 'divider' %>
-                                <li class="divider"></li>
-                            <% else %>
-                                <li><%= link_to(item_text, url) %></li>
-                            <% end %>
-	                <% end %>
-	            </ul>
-	        </li>
-	    <% end %>
-        <% end %>
-    </ul>
+  <ul class="navbar-nav mr-auto ml-2">
+    <% items.each do |header_text, data| %>
+      <% if data[:items].blank? %>
+
+	<%= navbar_item dropdown: false do %>
+	  <%= navbar_header_link header_text, href: data[:url], dropdown: false %>
+	<% end %>
+
+      <%  else %>
+	<%= navbar_item do %>
+	  <%= navbar_header_link header_text %>
+	  <%= navbar_dropdown data[:items] %>
+	<% end %>
+	
+      <% end %>
+    <% end %>
+  </ul>
+  
 <% end %>

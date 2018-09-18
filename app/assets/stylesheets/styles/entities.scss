@@ -1,7 +1,3 @@
-@import "base/globals";
-
-$tiny_image_size: 35px;
-
 .entity_update {
 	padding-top: 1em;
 	padding-bottom: 1em;
@@ -106,7 +102,7 @@ $tiny_image_size: 35px;
 }
 
 #entity-without-relationships-message {
-    @media (min-width: $screen-sm-min) {
+    @include media-breakpoint-up(sm) {
 	width: 80%;
     }
     
@@ -137,13 +133,15 @@ div.actions-row {
 
 #action-buttons {
     display: inline-block;
+    height: 27px;
 
     form {
 	display: inline;
+	height: 27px;
     }
 
-
     input, a {
+	cursor: pointer;
 	font-size: 14px;
 	top: -6px;
 	color: #444;
@@ -157,10 +155,15 @@ div.actions-row {
 	border-radius: 10px;
     }
 
+    input {
+	padding: 2px;
+    }
+
     input:hover, a:hover {
 	color: #000;
 	background-color: #ddf;
 	text-decoration: none;
+
     }
     
     a.disabled_action {
@@ -183,90 +186,21 @@ div.actions-row {
 }
 
 
-/* entity/small */
-
-$small_image_size: 50px;
-
-.entity_small
-{
-  border-bottom: 1px solid #eee;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  font-size: 12px;
-  line-height: 15px;
-}
-
-.entity_small_image
-{
-  float: left;
-  height: 50px;
-  width: 50px;
-  background-size: cover;
-  background-position: center center;
-  border-radius: 0.5em;
-}
-
-.entity_small_text
-{
-	margin-left: 60px;
-  width: 240px;
-}
-
-.entity_small_name
-{
-  font-size: 16px;
-  line-height: 18px;
-  font-weight: bold;
-}
-
-.entity_small_description
-{
-  font-style: italic;
-  color: #666;
-  margin-bottom: 0.5em;
-}
-
-.entity_small_count
-{
-  clear: both;
-  font-weight: bold;
-}
-
-.entity_small ul
-{
-  margin: 0;
-}
-
 .entities_table_name {
   width: 250px;
 }
 
-.entity_tiny_image {
-  height: $tiny_image_size;
-  width: $tiny_image_size;
-  border-radius: $tiny_image_size/10;
-  background-size: cover;
-  background-position: center center;  
-}
-
-
-#entity-header {
-  margin-top: -14px;
-  margin-bottom: 20px;
-}
-
 #entity-name {
-  font-size: 42px; 
-  line-height: 60px;
-  font-weight: 500;
+    font-size: 42px; 
+    line-height: 60px;
+    font-weight: 500;
 
-  a:hover {
-    text-decoration: none;
-  }
+    a:hover {
+	text-decoration: none;
+    }
 }
 
 #entity-blurb-wrapper {
-
     #entity-blurb-text {
 	font-size: 21px;
 	line-height: 30px;
@@ -288,7 +222,6 @@ $small_image_size: 50px;
   font-size: 12px;
   color: #888;
 }
-
 
 
 /* fields */
@@ -452,6 +385,12 @@ $small_image_size: 50px;
 
 /* add relationship page */
 
+.category-select-button {
+    @extend .btn;
+    @extend .btn-light;
+    @extend .border;
+}
+
 #results-table tbody tr:hover {
     background-color: $red_lighter;
 }
@@ -501,4 +440,46 @@ div.popover-content {
 	    background-color: $red_light;
 	}
     }
+}
+
+//--------------------//
+// Edit entity page   //
+//--------------------//
+
+
+
+#edit-references-panel {
+    div.card {
+	width: 25rem;
+    }
+
+    .card-title {
+	// font-size: 1em;
+	// font-weight: bolder;
+    }
+
+    #use-existing-reference-btn, #create-new-reference-btn {
+	@extend .btn;
+	@extend .btn-primary;
+	@extend .btn-sm;
+    }
+
+    #new-reference-form {
+	label {
+	    font-size: 0.8em;
+	}
+    }
+}
+
+
+div.entity-form-group {
+    @extend .form-group;
+    @extend .row;
+}
+
+.entity-edit-label {
+    @extend .col-2;
+    // padding: 0 !important;
+    font-size: 14px;
+    font-weight: 650;
 }

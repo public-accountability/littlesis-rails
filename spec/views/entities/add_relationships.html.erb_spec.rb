@@ -20,7 +20,7 @@ describe 'entities/add_relationship.html.erb' do
     end
 
     it 'has entity header' do
-      css '#entity-header'
+      css '#entity-name'
     end
 
     it 'has add relationship title section' do

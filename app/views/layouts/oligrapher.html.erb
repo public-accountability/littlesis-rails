@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= raw(page_title) %></title>
+    <%= stylesheet_link_tag    "application", media: "all" %>
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tags %>
+    <%= facebook_meta %>
+  </head>
+  <body>
+    <div id="top">
+      <%= render partial: 'shared/nav_menu',
+                 locals: { full_width: true } %>
+    </div>
+
+    <% if content_for? :body %>
+      <%= yield :body %>
+    <% end %>
+
+    <%= render 'shared/analytics' %>
+
+  </body>
+</html>

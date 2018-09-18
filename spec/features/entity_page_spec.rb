@@ -40,7 +40,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       visit src_url
       expect(page.status_code).to eq 200
       expect(page).to have_current_path dst_url
-      expect(page).to have_selector '#entity-header'
+      expect(page).to have_selector '#entity-name'
     end
 
     %i[alice bob cassie].each do |person|

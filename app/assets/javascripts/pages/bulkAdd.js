@@ -95,14 +95,14 @@
   function entityMatchBtn() {
     return $('<button>', {
       text: 'Match names',
-      class: 'btn btn-default m-right-1em entity-match-btn',
+      class: 'btn btn-primary m-right-1em entity-match-btn',
       click: function() {
-	if ($(this).hasClass('btn-default')) {
+	if (!$(this).hasClass('matching-mode')) {
 	  // enable matching mode
 	  MATCHING_MODE = true;
 	  MATCHING_INDEX = 0;
-	  $(this).removeClass('btn-default');
-	  $(this).addClass('btn-primary');
+	  $(this).addClass('matching-mode');
+	  $(this).addClass('active');
 	  $(this).text('Cancel matching');
 	  entityMatch();
 	} else {
@@ -110,8 +110,8 @@
 	  MATCHING_MODE = false;
 	  MATCHING_INDEX = null;
 	  clearMatchingTable();
-	  $(this).addClass('btn-default');
-	  $(this).removeClass('btn-primary');
+	  $(this).removeClass('matching-mode');
+	  $(this).removeClass('active');
 	  $(this).text('Match names');
 	}
       }
@@ -158,7 +158,7 @@
   function sampleCSVLink() {
     return $('<button>', {
       text: 'download sample csv',
-      class: 'btn btn-default',
+      class: 'btn btn-primary',
       click: function() {
 	var headers = relationshipDetails().map(function(x) { 
 	  return x[1];
@@ -176,7 +176,7 @@
     return $('<caption>')
       .append(addRowIcon())
       .append( $('<input>', {id: 'csv-file'}).attr('type', 'file'))
-      .append( $('<div>', {class: 'pull-right'}).append(entityMatchBtn()).append(sampleCSVLink()) );
+      .append( $('<div>', {class: 'float-right'}).append(entityMatchBtn()).append(sampleCSVLink()) );
   }
   
   function createTableHeader() {
@@ -356,7 +356,7 @@
     create: function(option) {
       return $('<button>', {
 	text: option,
-	class: (option === '?') ? 'btn btn-default active' : 'btn btn-default',
+	class: (option === '?') ? 'btn btn-primary active' : 'btn btn-primary',
 	value: option,
 	click: function(){
 	  $(this).addClass("active").siblings().removeClass("active");
@@ -970,7 +970,7 @@
   function toggleButtons(element) {
     $(element).find('.btn').toggleClass('active');  
     $(element).find('.btn').toggleClass('btn-primary');
-    $(element).find('.btn').toggleClass('btn-default');
+    // $(element).find('.btn').toggleClass('btn-default');
     return $(element).find('button.btn.active').text();
   }
 
@@ -1034,7 +1034,6 @@
     $('#autocomplete-toggle').click(function() {
       $(this).find('.btn').toggleClass('active');  
       $(this).find('.btn').toggleClass('btn-primary');
-      $(this).find('.btn').toggleClass('btn-default');
       var status = $(this).find('button.btn.active').text();
       if (status === 'ON') {
 	AUTOCOMPLETE_MODE = true;

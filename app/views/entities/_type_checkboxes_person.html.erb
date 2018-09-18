@@ -7,14 +7,11 @@
 </div>
 
 <div id="entity-types">
-
-    <div class="row bottom-3em m-left-1em">
-	<div id="person-entity-types" class="collapse in">
-	    <%= type_select_boxes_person %>
-	</div>
+  <div id="person-entity-types" class="collapse mb-4">
+    <div class="row">
+      <%= type_select_boxes_person %>
     </div>
-
-
+  </div>
 </div>
 
 <%= f.hidden_field(:extension_def_ids, value: @entity.extension_ids_without_primary_stringified) %>
@@ -23,12 +20,12 @@
  $(function(){
 
    // toggle icon //
-   $('#entity-types').on('shown.bs.collapse', function () {
+   $('#person-entity-types').on('shown.bs.collapse', function () {
      $('#type-collapse-icon').removeClass('glyphicon-expand');
      $('#type-collapse-icon').addClass('glyphicon-collapse-down');
    })
 
-   $('#entity-types').on('hidden.bs.collapse', function () {
+   $('#person-entity-types').on('hidden.bs.collapse', function () {
      $('#type-collapse-icon').removeClass('glyphicon-collapse-down');
      $('#type-collapse-icon').addClass('glyphicon-expand');
    })
