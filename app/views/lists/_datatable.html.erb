@@ -24,7 +24,7 @@
 </div>
 </div>
 
-<table id="datatable-table" class="table table-striped table-bordered">
+<table id="datatable-table" class="table table-striped table-bordered list-datatable">
   <thead>
     <tr>
       <% if table.ranked? %>
@@ -264,7 +264,7 @@
 
    var a = document.createElement('a');
    a.innerHTML = 'Export CSV';
-   a.setAttribute('class', 'btn btn-secondary');
+   a.setAttribute('class', 'btn btn-primary');
    a.href="#";
    $('.buttons')[0].appendChild(a);
    $(a).on('click', function() {
@@ -277,32 +277,6 @@
        });
      }));
      window.open(array_to_csv_data(data));
-   });
-
-   var str_fields = ['type', 'industry', 'interlock', 'list-interlock', 'search'];
-   
-   var a = document.createElement('a');
-   a.innerHTML = 'Link';
-   a.setAttribute('class', 'btn btn-secondary');
-   a.href="javascript:void(0)";
-   $('.buttons')[0].appendChild(a);
-   $(a).on("click", function() {
-     var fields = {};
-     str_fields.forEach(function(field) {
-       var val = $('#datatable-' + field).val();
-       if (val) {
-         fields[field] = val;
-       }
-     });
-
-     if (search.val()) {
-       fields['search'] = search.val();
-     }
-
-     var base = window.location.href.split("#")[0];
-     var hash = Object.keys(fields).map(function(key) { return key + "=" + encodeURIComponent(fields[key]); }).join('&');
-     window.location.hash = hash;
-     return false;
    });
 
    var init_search = "";

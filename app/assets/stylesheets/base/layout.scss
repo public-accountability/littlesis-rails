@@ -41,16 +41,8 @@ body {
 	width: $page_width;
 	margin: 0 auto;
 	display: inherit;
-	padding-left: 15px;
+	padding-left: 0px;
 	padding-right: 15px;
-
-	@include media-breakpoint-up(xs) {
-	    padding-left: 0px;
-	}
-
-	@include media-breakpoint-up(sm) {
-	    padding-left: 0px;
-	}
 
 	@include media-breakpoint-up(md) {
 	    padding-left: 15px;
