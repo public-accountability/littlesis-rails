@@ -40,15 +40,15 @@
 
 <% column_class = 'col-sm-8' %>
 
-<div class="row">
+<div class="row no-gutters">
   <div class="<%= column_class %>">
     <div class="thin-grey-bottom-border">
       <h2>Get Involved!</h2>
       </div>
   </div>
 </div>
-<br />
-<div class="row">
+
+<div class="row no-gutters">
   <div class="col-sm-8 col-md-7 col-xs-12" id="join-page-get-involved">
     <p><strong>LittleSis is bringing together a community of researchers who believe in transparency and accountability in our society and economy.</strong> Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power.</p>
     <p><strong>We're looking for researchers, programmers, artists and organizers to be a part of our activist researcher community.</strong> If you want to get involved sign up to become a LittleSis analyst and start adding information to the site. You can check out our <%= link_to 'instructional videos', 'https://www.youtube.com/watch?v=aWLnTqQb-BI&list=PLLT8_8t1lsddq42_VmrwIXSkXn0-bLfit' %> for information on how to use all the tools on our site.</p>
@@ -59,7 +59,7 @@
   </div>
 </div>
 
-<div class="row bottom-1em">
+<div class="row no-gutters bottom-1em">
   <div class="<%= column_class %>">
     <div class="thin-grey-bottom-border">
       <h3>Become an analyst!</h2>
@@ -67,148 +67,114 @@
   </div>
 </div>
 
-<div class="row">
-      
-      <div class="col-sm-7">
-        <p>LittleSis presents an exciting opportunity: editors (called "analysts" on LittleSis) are developing an unprecedented, authoritative database of key relationships between powerful Americans. Sign up to edit the profile pages of your (least) favorite fatcats.</p>
-        <p>To request an account, please provide all of the following information. We promise not to share it with anyone, ever!</p>
-
-        <% label_class = 'col-sm-3 control-label' %>
-        <% field_class = 'col-sm-6' %>
-        <br />
-
-        <%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {:onsubmit => 'return validateForm();', :class => 'form-horizontal', }) do |f| %>
-          <%= devise_error_messages! %>
-          <%= f.fields_for :sf_guard_user_profile do |profile_fields| %>
-
-	    <% if @signup_errors.present? %>
-	      <div class="form-group">
-		<div class="col-sm-10">
-		  <div class="alert alert-danger" role="alert" id="signup-errors-alert">
-		    <h5><strong>Sorry!</strong> We could not create your account for the following reasons:</h5>
-		    <% @signup_errors.each do |msg| %>
-		      <p><%= msg %></p>
-		    <% end %>
-		  </div>
-		</div>
-	      </div>
-	    <% end %>
-	    
-
-	    <div class="form-group">
-              <%= profile_fields.label :name_first, "First Name", :class => label_class   %>
-              <div class="<%= field_class %>">
-		<%= profile_fields.text_field :name_first, :required => true %>
-              </div>
-	    </div>
-	    
-	    <div class="form-group">
-              <%= profile_fields.label :name_last, "Last Name", :class => label_class %>
-              <div class="<%= field_class %>">
-		<%= profile_fields.text_field :name_last %><br />
-		<small><em>(your name and email will not be public)</em> </small>
-              </div>
-              
-	    </div>
-	    
-	    <div class="form-group">
-              <%= f.label :email,
-	      "Email",
-	      :class => label_class,
-	      :title => 'We do not share your email with anyone. Email verification is required to use LittleSis, and a confirmation will be sent out after you submit this form',
-	      :data => {toggle: 'tooltip', placement: 'left' } %>
-              <div class="<%= field_class %>">
-		<%= f.email_field :email, autofocus: true, :required => true %>
-              </div>
-	    </div>
-	    
-	    <div class="form-group">
-              <%= f.label :username, "Username",
-	      :class => label_class,
-	      :title => 'This is your public username. Any edits you do will be recorded with this name and visible to other LittleSis users',
-	      :data => {toggle: 'tooltip', placement: 'left' } %>
-              <div class="<%= field_class %>">
-		<%= f.text_field :username, autofocus: true,
-		:required => true,
-		:pattern => '^[A-Za-z]{1}\w{2,}$',
-		:oninvalid => 'this.setCustomValidity("Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed.")',
-		:oninput => "this.setCustomValidity('')"
-		%>
-              </div>
-	    </div>
-
-	    <div class="form-group">
-              <%= f.label :password, "Password (Minimum 8 letters)", :class => label_class %>
-              <div class="<%= field_class %>">
-		<%= f.password_field :password, autocomplete: "off", :required => true  %>
-              </div>
-	    </div>
-
-	    <div class="form-group">
-              <%= f.label :password_confirmation, :class => label_class  %>
-              <div class="<%= field_class %>">
-		<%= f.password_field :password_confirmation, autocomplete: "off", :required => true  %>
-              </div>
-	    </div>
-
-	    <div class="form-group">
-              <%=  label_tag 'terms_of_use', "Terms of use", :class => label_class %>
-              <div class="col-sm-9 bg-info bottom-1em top-1em">
-		<p>I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith.</p>
-		<%= check_box_tag 'terms_of_use' %><small> I accept the above terms of use </small>
-              </div>
-	    </div>
-
-	    <div class="form-group">
-              <%=  label_tag 'newsletter', "Newsletter?", :class => label_class %>
-              <div class="col-sm-9">
-		<%= f.check_box :newsletter, checked: true %><small style="padding-left: 0.5em;">Send me your newsletter (we send one every 1-2 months)</small>
-              </div>
-	    </div>
-
-
-	    <div class="form-group">
-              <%=  label_tag 'map_the_power', "Map the Power", :class => label_class %>
-              <div class="col-sm-9">
-		<%= f.check_box :map_the_power %><small style="padding-left: 0.5em;">Tell me more about Map the Power!</small>
-              </div>
-	    </div>
-
-
-	    <div class="form-group">
-              <%=  label_tag 'location', "Location", :class => label_class %>
-	      <div class="<%= field_class %>">
-		<%= profile_fields.text_field :location %>
-              </div>
-	    </div>
-
-	    <div class="form-group">
-              <%= profile_fields.label :reason, raw("What are <br> your research interests? <br> What are you hoping to use LittleSis for?*"), :class => label_class  %>
-              <div class="col-sm-9">
-		<%= profile_fields.text_area :reason, :class => 'form-control', :rows => 5, :id => 'about-you-input' %>
-              </div>
-	    </div>
-	    
-	    <div class="form-group">
-	      <%=  label_tag 'spam_test', "", :class => label_class %>
-              <div class="col-sm-9">
-		<%= flash[:recaptcha_error] %>
-		<%= recaptcha_tags %>
-	      </div>
-	    </div>
-
-	    <div class="actions form-group">
-              <div class="col-sm-3"></div>
-              <div class="col-sm-8">
-		<%= f.submit "Sign up" %>
-		<p><small><%= render "users/shared/links" %></small></p>
-              </div>
-	    </div>
-	    
-          <% end %>
-	<% end %>
-
-      </div>
-    </div>
+<div class="row no-gutters">
+  <div class="col-sm-7">
+    <p>LittleSis presents an exciting opportunity: editors (called "analysts" on LittleSis) are developing an unprecedented, authoritative database of key relationships between powerful Americans. Sign up to edit the profile pages of your (least) favorite fatcats.</p>
+    <p>To request an account, please provide all of the following information. We promise not to share it with anyone, ever!</p>
   </div>
 </div>
+
+<% label_class = 'form-label' %>
+<% input_class = 'form-control' %>
+
+<%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {:onsubmit => 'return validateForm();', }) do |f| %>
+  <%= devise_error_messages! %>
+  <%= f.fields_for :sf_guard_user_profile do |profile_fields| %>
+
+    <% if @signup_errors.present? %>
+      <%= registrations_form_group do %>
+      	  <div class="alert alert-danger" role="alert" id="signup-errors-alert">
+	    <h5><strong>Sorry!</strong> We could not create your account for the following reasons:</h5>
+	    <% @signup_errors.each do |msg| %>
+	      <p><%= msg %></p>
+	    <% end %>
+	  </div>
+      <% end %>
+    <% end %>
+    
+    <%= registrations_form_group do %>
+	<%= profile_fields.label :name_first, "First Name", :class => label_class   %>
+	<%= profile_fields.text_field :name_first, :required => true, :class => input_class %>
+    <% end %>
+    
+    <%= registrations_form_group do %>
+      <%= profile_fields.label :name_last, "Last Name", :class => label_class %>
+      <%= profile_fields.text_field :name_last, class: input_class %>
+      <small><em>(your name and email will not be public)</em> </small>
+    <% end %>
+        
+    <%= registrations_form_group do %>
+      <%= f.label :email,
+      "Email",
+      :class => label_class,
+      :title => 'We do not share your email with anyone. Email verification is required to use LittleSis, and a confirmation will be sent out after you submit this form',
+	:data => {toggle: 'tooltip', placement: 'left' } %>
+    	<%= f.email_field :email, autofocus: true, :required => true, :class => input_class %>
+    <% end %>
+
+    <%= registrations_form_group do %>
+      <%= f.label :username, "Username",
+      :class => label_class,
+      :title => 'This is your public username. Any edits you do will be recorded with this name and visible to other LittleSis users',
+	:data => {toggle: 'tooltip', placement: 'left' } %>
+      <%= f.text_field :username, autofocus: true,
+      :required => true,
+      :class => input_class,
+      :pattern => '^[A-Za-z]{1}\w{2,}$',
+      :oninvalid => 'this.setCustomValidity("Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed.")',
+      :oninput => "this.setCustomValidity('')"
+      %>
+    <% end %>
+    
+    <%= registrations_form_group do %>
+      <%= f.label :password, "Password (Minimum 8 letters)", :class => label_class %>
+      <%= f.password_field :password, autocomplete: "off", :required => true, :class => input_class  %>
+    <% end %>
+
+    <%= registrations_form_group do %>
+      <%= f.label :password_confirmation, :class => label_class  %>
+      <%= f.password_field :password_confirmation, autocomplete: "off", :required => true, :class => input_class  %>
+    <% end %>
+    
+    <%= registrations_form_group do %>
+      <%= label_tag 'terms_of_use', "Terms of use", :class => label_class %>
+      <div class="bg-info p-3">
+	<p>I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith.</p>
+	<%= check_box_tag 'terms_of_use' %><small> I accept the above terms of use </small>
+      </div>
+    <% end %>
+
+    <%= registrations_form_group do %>
+      <%= label_tag 'newsletter', "Newsletter?", :class => label_class %>
+      <%= f.check_box :newsletter, checked: true, :class => 'ml-1' %>
+      <small class="pl-2">Send me your newsletter (we send one every 1-2 months)</small>
+    <% end %>
+
+    <%= registrations_form_group do %>
+      <%= label_tag 'map_the_power', "Map the Power", :class => label_class %>
+      <%= f.check_box :map_the_power, :class => 'ml-1' %>
+      <small class="pl-2">Tell me more about Map the Power!</small>
+    <% end %>
+
+    <%= registrations_form_group do %>
+      <%= label_tag 'location', "Location", :class => label_class %>
+      <%= profile_fields.text_field :location, :class => input_class %>
+    <% end %>
+
+    <%= registrations_form_group do %>
+      <%= profile_fields.label :reason, raw("What are your research interests? <br> What are you hoping to use LittleSis for?*"), :class => label_class  %>
+      <%= profile_fields.text_area :reason, :class => input_class, :rows => 5, :id => 'about-you-input' %>
+    <% end %>
+    
+    <%= registrations_form_group do %>
+      <%=  label_tag 'spam_test', "", :class => label_class %>
+      <%= flash[:recaptcha_error] %>
+      <%= recaptcha_tags %>
+    <% end %>
+
+    <%= registrations_form_group(column_class: 'col-4') do %>
+      <%= f.submit "Sign up", class: 'btn btn-primary' %>
+      <p class="mt-3"><small><%= render "users/shared/links" %></small></p>
+    <% end %>
+  <% end %>
+<% end %> 
