@@ -648,13 +648,13 @@ type SpinnerElement = 'top' | 'bottom'
       });
   };
 
-  // [String], String -> [JQueryNode]
+  // [String], String -> String
   function errorList(errors, label){
     return errors.map(function(err){
-      return $('<div>', {
-        text: '[ ! ] ' + label + ' ' + err
-      });
-    });
+      var text = '[ ! ] ' + label + ' ' + err;
+      var div = util.createElementWithText('div', text);
+      return div.outerHTML;
+    }).join('');
   }
 
   // Entity, Integer -> JQueryNode
