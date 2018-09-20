@@ -36,13 +36,16 @@ body {
 }
 
 #top {
+    .navbar, #navbar-content-wrapper {
+	height: $navbar_height;
+    }
     
     #navbar-content-wrapper {
 	width: $page_width;
 	margin: 0 auto;
 	display: inherit;
 	padding-left: 0px;
-	padding-right: 15px;
+	padding-right: 0px;
 
 	@include media-breakpoint-up(md) {
 	    padding-left: 15px;
@@ -64,29 +67,21 @@ body {
 	font-size: 14px;
 
 	img {
-	    margin-top: 5px;
+	    margin-top: 12px;
 	    max-width: 180px;
 	}
     }
-    
-    .nav-item {
-	margin-left: 0.15em;
-	margin-right: 0.15em;
 
-	@include media-breakpoint-up(md) {
-	    margin-left: 0.3em;
-	    margin-right: 0.3em;
+    .nav-link {
+	color: #777;
+    
+	&:hover {
+	    color: #333;
 	}
     }
 
     .dropdown-toggle::after {
 	display:none;
-    }
-
-    .navbar {
-	//   margin-bottom: 0;
-	//   border-radius: 0;
-	height: $navbar_height;
     }
 
     #navbar-search {

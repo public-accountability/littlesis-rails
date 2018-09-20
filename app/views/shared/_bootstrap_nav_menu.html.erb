@@ -88,7 +88,7 @@ items['Chat'] = { url: APP_CONFIG['chat']['chat_url'] } if user_signed_in?
 %>
 
 <% if items.count > 0 %>
-  <ul class="navbar-nav mr-auto ml-2">
+  <ul class="nav mr-auto ml-2">
     <% items.each do |header_text, data| %>
       <% if data[:items].blank? %>
 
