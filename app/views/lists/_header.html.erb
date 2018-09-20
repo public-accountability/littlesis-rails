@@ -1,20 +1,20 @@
-<div id="list-header">
-    <div id="list-name" class="row">
-	<div class="<%= list_name_class(list.tags) %>">
-	    <span class="multiline-text">
-		<%= list_link(list) %>
-	    </span>
+<div id="list-header" class="mt-4 mb-1">
+  <div id="list-name" class="row no-gutters">
+    <div class="<%= list_name_class(list.tags) %>">
+      <span class="multiline-text">
+	<%= list_link(list) %>
+      </span>
 
-	    <div id="list-description"><%= list.short_description %></div>
-	    <div id="list-long-description"><%= list.description %></div>
-
-	</div>
-
-	<% if list.tags.count.positive? %>
-	    <div class="col-sm-4 col-md-3">
-	      <%= render partial: 'lists/tags', locals: { tags: list.tags, include_title: true } %>
-	    </div>
-	<% end %>
+      <div class="mt-1" id="list-description"><%= list.short_description %></div>
+      <div class="mt-1" id="list-long-description"><%= list.description %></div>
 
     </div>
+
+    <% if list.tags.count.positive? %>
+      <div class="col-sm-4 col-md-3">
+	<%= render partial: 'lists/tags', locals: { tags: list.tags, include_title: true } %>
+      </div>
+    <% end %>
+
+  </div>
 </div>

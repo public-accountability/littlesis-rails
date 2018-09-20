@@ -13,7 +13,7 @@
 
 
 <div class="row mt-3">
-  <div class="col-6 col-md-5">
+  <div class="col-6">
     <% if current_user.sign_in_count < 10 %>
       <%= dismissable_alert('dashboard_alert') do %>
 	Need help using LittleSis? Visit our <%= link_to 'help pages', '/help' %>.
