@@ -1,4 +1,4 @@
-<h1>Bulk Add Relationships for <%= link_to @entity.name, entity_path(@entity) %></h1>
+<h1 class="mt-4 mb-3">Bulk Add Relationships for <%= link_to @entity.name, entity_path(@entity) %></h1>
 
 <%= render partial: 'shared/entity_info', locals: { entity: @entity } %>
 
@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row mt-3">
     <div class="col-sm-8 col-sm-offset-2" id="alert-container">
     </div>
 </div>
@@ -31,7 +31,7 @@
     
 </div>
 
-<div class="row create-mode">
+<div class="row create-mode mt-3">
     <div class="col-sm-3">    
 	<span><em>Relationship Category</em></span>
 	<%= relationship_select_builder @entity %>
