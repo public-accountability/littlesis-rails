@@ -1,7 +1,7 @@
 <% content_for(:page_title, "LittleSis - Profiling the powers that be") %>
 <% content_for(:skip_page_title_suffix, true) %>
 
-<div class="row">
+<div class="row mt-5">
   <div class="col-sm-7">
     <div class="row no-gutters">
       <h1>LittleSis<span style="color: #cc5454;">*</span> is a free database of who-knows-who at the heights of business and government.</h1>
@@ -33,7 +33,7 @@
   </div>
 </div>
 
-<div class="row align-content-center mt-5">
+<div class="row align-content-center mt-5 mb-2">
   <div class="col">
     <h2 class="text-center" style="font-weight: 300">Explore trainings, news, & tools</h2>
   </div>
@@ -77,7 +77,7 @@
 
 <!-- CAROUSEL -->
 <% cache @carousel_entities do  %>
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-sm-12">
             <div class="littlesis_carousel">
 	        <%= render partial: "shared/carousel", locals: { entities: @carousel_entities } %>
@@ -89,55 +89,46 @@
 <!-- OLIGRAPHER -->
 <%=  render partial: 'oligrapher' %>
 
-<div class="row">
+<div class="row mb-2 mt-2">
   <div class="col-sm-12 text-center">
         <h1 class="big-text text-center">A unique resource for investigating cronyism, conflicts of interest, and systemic corruption.</h1>
   </div>
 </div>
 
-<div class="row">
+<div class="row mt-4">
 
-    <div class="col-sm-7">
-        <div class="thin-grey-bottom-border">
-            <h3>An involuntary facebook of the 1%</h3>
-        </div>
-        <p>We bring transparency to influential social networks by tracking the key relationships of politicians, business leaders, lobbyists, financiers, and their affiliated institutions. We help answer questions such as:</p>
-        <ul>
-            <li><em>Who do the wealthiest Americans donate their money to?</em></li>
-	    <li><em>Where did White House officials work before they were appointed?</em></li>
-	    <li><em>Which lobbyists are married to politicians? Who do they lobby for?</em></li>
-        </ul>
-        
-        <p>All of this information is public, but scattered. We bring it together in one place. Our data derives from government filings, news articles, and other reputable sources. Some data sets are updated automatically; the rest is filled in by our user community. <%= link_to "More Features", "/features", class: 'link-blue'  %></p>
-
-        <div class="thin-grey-bottom-border">
-            <h3>Names behind the news</h3>
-        </div>
-        
-        <p>Who are the movers and shakers behind the bailouts, government contracts, and austerity policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <%= link_to "Eyes on the Ties", "http://blog.littlesis.org", class: 'link-blue' %></p>
-
-        <div class="thin-grey-bottom-border">
-            <h3>Made for watchdogs</h3>
-        </div>
-
-        <p>We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <% link_to "Get Involved", "/join", class: 'link-blue' %></p>
-        
-        <div class="thin-grey-bottom-border">
-            <h3>Think and do tank</h3>
-        </div>
-
-        <p>LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from <%= link_to 'foundations', 'http://public-accountability.org/about/funding/', class: 'link-blue' %> and benefit from free software written by the open source community.</p>
-        <p>The <%= link_to "code", "https://github.com/public-accountability/littlesis-rails", class: 'link-blue' %> powering LittleSis is free & open source.</p>
-        
-    </div>
+  <div class="col-sm-7 pb-3">
+    <%= homepage_headline_h3 'An involuntary facebook of the 1%'%>
     
-    <div class="col-sm-1"></div>
+    <p>We bring transparency to influential social networks by tracking the key relationships of politicians, business leaders, lobbyists, financiers, and their affiliated institutions. We help answer questions such as:</p>
+    <ul>
+      <li><em>Who do the wealthiest Americans donate their money to?</em></li>
+      <li><em>Where did White House officials work before they were appointed?</em></li>
+      <li><em>Which lobbyists are married to politicians? Who do they lobby for?</em></li>
+    </ul>
     
-    <div class="col-sm-4">
-        <div class="thin-grey-bottom-border">
-            <h3>Data Summary</h3>
-        </div>
-        <%= render partial: 'data_summary', locals: {stats: @stats} %>
-    </div>
+    <p>All of this information is public, but scattered. We bring it together in one place. Our data derives from government filings, news articles, and other reputable sources. Some data sets are updated automatically; the rest is filled in by our user community. <%= link_to "More Features", "/features", class: 'link-blue'  %></p>
+
+    <%= homepage_headline_h3 'Names behind the news' %>
     
+    <p>Who are the movers and shakers behind the bailouts, government contracts, and austerity policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <%= link_to "Eyes on the Ties", "http://blog.littlesis.org", class: 'link-blue' %></p>
+
+    <%= homepage_headline_h3 'Made for watchdogs' %>
+    
+    <p>We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <% link_to "Get Involved", "/join", class: 'link-blue' %></p>
+    
+    <%= homepage_headline_h3 'Think and do tank' %>
+    
+    <p>LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from <%= link_to 'foundations', 'http://public-accountability.org/about/funding/', class: 'link-blue' %> and benefit from free software written by the open source community.</p>
+    <p>The <%= link_to "code", "https://github.com/public-accountability/littlesis-rails", class: 'link-blue' %> powering LittleSis is free & open source.</p>
+    
+  </div>
+  
+  <div class="col-sm-1"></div>
+  
+  <div class="col-sm-4">
+    <%= homepage_headline_h3 'Data Summary' %>
+    <%= render partial: 'data_summary', locals: {stats: @stats} %>
+  </div>
+  
 </div>
