@@ -63,12 +63,17 @@
     }
 }
 
+#first-homepage-row {
+    h1 {
+	font-size: 40px;
+    }
+}
+
 #homepage-lists {
   /* float: right;  */
   /* width: 280px;  */
   font-size: 18px; 
   line-height: 38px;
-  margin-top: 0.5em;
 }
 
 #homepage-lists a {
