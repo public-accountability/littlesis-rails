@@ -1,4 +1,4 @@
-describe('newReferencForm', function() {
+describe('newReferenceForm', function() {
   const testDom = '<div id="test-dom"></div>';
 
   beforeEach(function(){
@@ -16,7 +16,7 @@ describe('newReferencForm', function() {
     });
     
     it('renders html with reference fields', () => {
-      expect($('#test-dom .form-horizontal').length).toEqual(1);
+      expect($('#test-dom .new-reference-form-container').length).toEqual(1);
       expect($('#test-dom .form-group').length).toEqual(6);
     });
 
