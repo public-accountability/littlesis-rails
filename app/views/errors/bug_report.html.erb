@@ -1,86 +1,97 @@
 <% if notice %>
-    <div class="row no-gutters">
-	<div class="col-sm-8">
-	    <div class="alert alert-success"><%= notice %></div>
-	</div>
+  <div class="row no-gutters">
+    <div class="col-sm-8">
+      <div class="alert alert-success"><%= notice %></div>
     </div>
+  </div>
 <% end %>
 
+<style>
+
+ label.col-form-label {
+     font-weight: bold;
+ }
+ 
+</style>
+
 <div class="row no-gutters mt-3">
-    <h1>Report a bug or request a new feature</h1>
-    <p>We can't fix a problem we don't know about! If something on the site is not working please let us know.</p>
+  <h1>Report a bug or request a new feature</h1>
+  <p>We can't fix a problem we don't know about! If something on the site is not working please let us know.</p>
+  
+  <%= form_tag("/bug_report", method: "post",  multipart: true) do %>
     
-    <%= form_tag("/bug_report", method: "post", class: 'form-horizontal', multipart: true) do %>
-        
-	<div class="form-group">
-	    <label class="col-sm-2 control-label">Email</label>
-	    <div class="col-sm-4">
-		<% if user_signed_in? %>
-		    <%= email_field_tag('email', nil, value: current_user.email) %>
-		<% else %>
-		    <%= email_field_tag('email', nil, placeholder: '[optional]') %>
-		<% end %>
-	    </div>
-	</div>
+    <div class="form-group row align-items-center">
+      <label class="col-sm-2 col-form-label">Email</label>
+      <div class="col-sm-4">
+	<% if user_signed_in? %>
+	  <%= email_field_tag('email', nil, value: current_user.email, class: 'form-control') %>
+	<% else %>
+	  <%= email_field_tag('email', nil, placeholder: '[optional]', class: 'form-control') %>
+	<% end %>
+      </div>
+    </div>
 
-        <div class="form-group">
-            <label class="col-sm-2 control-label">Type</label>
-            <div class="col-sm-3">
-                <% select_options = ["Bug Report", "Feature Request", "Something else"] %>
-                <%= select_tag "type", options_for_select(select_options) %>
-            </div>
-        </div>
+    <div class="form-group row align-items-center">
+      <label class="col-sm-2 col-form-label">Type</label>
+      <div class="col-sm-4">
+        <% select_options = ["Bug Report", "Feature Request", "Something else"] %>
+        <%= select_tag "type", options_for_select(select_options), class: 'form-control' %>
+      </div>
+    </div>
 
-	<div class="form-group">
-            <label class="col-sm-2 control-label">Short Summary*</label>
-            <div class="col-sm-6">
-                <%= text_field_tag "summary", nil, size: 41, required: true%>
-            </div>
-        </div>
+    <div class="form-group row align-items-center">
+      <label class="col-sm-2 col-form-label">Short Summary*</label>
+      <div class="col-sm-6">
+        <%= text_field_tag "summary", nil, size: 41, required: true, class: 'form-control pt-2' %>
+      </div>
+    </div>
 
-	<div class="form-group">
-            <label class="col-sm-2 control-label">Page or Url</label>
-            <div class="col-sm-6">
-                <%= text_field_tag "page", nil, size: 41, placeholder: 'e.g. "add relationship page" or /edits' %>
-            </div>
-        </div>
+    <div class="form-group row align-items-center">
+      <label class="col-sm-2 col-form-label">Page or Url</label>
+      <div class="col-sm-7">
+        <%= text_field_tag "page", nil, size: 41, placeholder: 'e.g. "add relationship page" or /edits', class: 'form-control' %>
+      </div>
+    </div>
 
-	
-        <div class="form-group">
-            <label class="col-sm-2 control-label">Description</label>
-            <div class="col-sm-6">
-                <%= text_area_tag "description", nil,
-		size: '40x8',
-		placeholder: ErrorsController::PLACEHOLDERS[:description]
-		%>
-            </div>
-        </div>
+    
+    <div class="form-group row align-items-center">
+      <label class="col-sm-2 col-form-label">Description</label>
+      <div class="col-sm-7">
+        <%= text_area_tag "description", nil,
+	size: '40x8',
+	placeholder: ErrorsController::PLACEHOLDERS[:description],
+	class: 'form-control'
+	%>
+      </div>
+    </div>
 
-	<div class="form-group">
-            <label class="col-sm-2 control-label">Steps To Reproduce:</label>
-            <div class="col-sm-6">
-                <%= text_area_tag "reproduce", nil,
-		size: '40x8',
-		placeholder: ErrorsController::PLACEHOLDERS[:reproduce]
-		%>
-            </div>
-        </div>
+    <div class="form-group row align-items-center">
+      <label class="col-sm-2 col-form-label">Steps To Reproduce:</label>
+      <div class="col-sm-7">
+        <%= text_area_tag "reproduce", nil,
+	size: '40x8',
+	placeholder: ErrorsController::PLACEHOLDERS[:reproduce],
+	class: 'form-control'
+	%>
+      </div>
+    </div>
 
-	<div class="form-group">
-            <label class="col-sm-2 control-label">Expected result:</label>
-            <div class="col-sm-6">
-                <%= text_area_tag "expected", nil,
-		size: '40x5',
-		placeholder: ErrorsController::PLACEHOLDERS[:expected]
-		%>
-            </div>
-        </div>
+    <div class="form-group row align-items-center">
+      <label class="col-sm-2 col-form-label">Expected result:</label>
+      <div class="col-sm-7">
+        <%= text_area_tag "expected", nil,
+	size: '40x5',
+	placeholder: ErrorsController::PLACEHOLDERS[:expected],
+	class: 'form-control'
+	%>
+      </div>
+    </div>
 
-	
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <%= submit_tag("Submit", class: 'btn btn-primary') %>
-            </div>
-        </div>
-    <% end %>
+    
+    <div class="form-group row align-items-center">
+      <div class="offset-2 col-sm-10">
+        <%= submit_tag("Submit", class: 'btn btn-primary') %>
+      </div>
+    </div>
+  <% end %>
 </div>
