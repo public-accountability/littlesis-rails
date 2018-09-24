@@ -402,6 +402,7 @@ describe('Bulk Table module', () => {
     });
 
     describe('alert icons', () => {
+      afterEach( () => $('div.popover').remove() );
 
       it('displays alert icons next to rows with search matches', () => {
         expect(findFirstRow().find(".resolver-anchor")).toExist();
@@ -413,7 +414,7 @@ describe('Bulk Table module', () => {
 
       it('shows a popover when user clicks on alert icon', () => {
         findFirstRow().find('.resolver-anchor').trigger('click');
-        expect(findFirstRow().find(".resolver-popover")).toExist();
+        expect($(".resolver-popover")).toExist();
       });
     });
 
@@ -477,11 +478,14 @@ describe('Bulk Table module', () => {
       });
 
       describe('when user chooses `Use Existing Entity`', () => {
+	
 
         beforeEach(() => {
           popover.find('select').val(matches[0].id).trigger('change');
           popover.find('.resolver-picker-btn').trigger('click');
         });
+
+	afterEach( () => $('div.popover').remove() );
 
         it('overwrites user-submitted entity with matched entity', () => {
           expect(bulkTable.getIn(['entities', 'byId', matches[0].id])).toEqual(matches[0]);
