@@ -420,23 +420,27 @@ describe('Bulk Table module', () => {
     describe('popover', () => {
 
       let popover;
+      let popoverId;
       const matches = searchResultsFor(newEntities.newEntity0);
 
       beforeEach(done => {
         findFirstRow().find(".resolver-anchor").trigger('click');
         wait(asyncDelay).then(() => {
-          popover = findFirstRow().find(".resolver-popover");
+	  popoverId = '#' + findFirstRow().find(".resolver-anchor").attr('aria-describedby');
+          popover = $(popoverId);
           done();
         });
       });
 
+      afterEach( () => $('div.popover').remove() );
+
       it('has a title', () => {
-        expect(findFirstRow().find(".popover-title")).toHaveText("Similar entities already exist");
+        expect(popover.find(".popover-header")).toHaveText("Similar entities already exist");
       });
 
       it('has a selectpicker with all matched entities', () => {
         matches.forEach(match => {
-          expect(findFirstRow().find(".resolver-selectpicker")).toContainText(match.name);
+          expect(popover.find(".resolver-selectpicker")).toContainText(match.name);
         });
       });
 
@@ -445,7 +449,7 @@ describe('Bulk Table module', () => {
       });
 
       it('has a button to create a new entity', () => {
-        expect(popover.find(".resolver-create-btn")).toContainText("Create New");
+	expect(popover.find(".resolver-create-btn")).toContainText("Create New");
       });
 
       describe('when user selects an entity from the picker', () => {
@@ -818,7 +822,8 @@ describe('Bulk Table module', () => {
       it('shows error tooltip on mouseenter', () => {
         const input = findFirstInput();
         input.trigger('mouseenter');
-        expect(input.parent().find('.tooltip')).toContainText('[ ! ] Name must be');
+	expect($('#' + input.attr('aria-describedby'))).toContainText('[ ! ] Name must be');
+	input.trigger('mouseout');
       });
 
       it('hides error tooltip on mouseout', () => {
