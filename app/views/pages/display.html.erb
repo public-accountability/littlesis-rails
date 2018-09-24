@@ -1,16 +1,15 @@
 <% content_for(:page_title, @page.title) %>
 
-
-<div class="row">
-    <div class="col-md-8 col-sm-8 nopadding">
-	<%= raw render_markdown(@page.markdown) %>
+<div class="row mt-4">
+  <div class="col-12 col-md-8">
+    <%= raw render_markdown(@page.markdown) %>
+  </div>
+  
+  <div class="col-md-4 d-none d-md-block">
+    <div class="thin-grey-bottom-border">
+      <h3>Data Summary</h3>
     </div>
-    
-    <div class="col-md-4 col-sm-4 double-left-padding hidden-xs">
-	<div class="thin-grey-bottom-border">
-            <h3>Data Summary</h3>
-        </div>
-	<%= render partial: 'home/data_summary', locals: { stats: ExtensionRecord.data_summary } %>
-    </div>
+    <%= render partial: 'home/data_summary', locals: { stats: ExtensionRecord.data_summary } %>
+  </div>
 </div>
 
