@@ -505,6 +505,7 @@ type SpinnerElement = 'top' | 'bottom'
   };
 
   state.render = function(){
+    $('body > div.tooltip').remove(); // stupid hack to fix stupid problem with tooltips
     $('#' + state.domId).empty();
     $('#' + state.domId)
       .append(notificationBar())
@@ -642,9 +643,10 @@ type SpinnerElement = 'top' | 'bottom'
       .attr('onmouseout', function(){ container.find('.tooltip').hide();})
       .attr('onblur', function(){ container.find('.tooltip').hide();})
       .tooltip({
-        placement: 'bottom',
-        html: true,
-        title: errorList(errors, label)
+        "placement": 'bottom',
+        "html": true,
+	"boundary": 'window',
+        "title": errorList(errors, label)
       });
   };
 
