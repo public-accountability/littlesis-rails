@@ -54,3 +54,15 @@ form.alias-form {
 	padding-top: 0.2em;
     }
 }
+
+
+#recent-edits-table {
+
+    tr td:first-child {
+	white-space: nowrap;
+    }
+
+    tbody {
+	font-size: 0.75rem;
+    }
+}
