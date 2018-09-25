@@ -152,7 +152,6 @@ class DevelopmentDb
                   object_tag
                   os_entity_preprocess
                   os_entity_transaction
-                  queue_entities
                   sessions
                   sphinx_index
                   user_requests
