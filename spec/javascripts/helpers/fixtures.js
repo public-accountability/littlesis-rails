@@ -69,6 +69,13 @@ fxt.entityCsvValid =
   `${fxt.newEntities.newEntity0.name},${fxt.newEntities.newEntity0.primary_ext},${fxt.newEntities.newEntity0.blurb}\n` +
   `${fxt.newEntities.newEntity1.name},${fxt.newEntities.newEntity1.primary_ext},${fxt.newEntities.newEntity1.blurb}\n`;
 
+fxt.entityCsvValidAltType = 
+  "name,primary_ext,blurb\n" +
+  "TestOrg1, org ,test org 1 blurb\n" +
+  "TestOrg2,O,test org 2 blurb\n" +
+  "Test Person One,person,test person 1 blurb\n" +
+  "Test Person Two,P,test person 2 blurb\n";
+
 fxt.entityCsvValidOnlyMatches =
   "name,primary_ext,blurb\n" +
   `${fxt.newEntities.newEntity0.name},${fxt.newEntities.newEntity0.primary_ext},${fxt.newEntities.newEntity0.blurb}\n`;

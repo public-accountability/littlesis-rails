@@ -205,6 +205,7 @@ describe('Bulk Table module', () => {
     });
   });
 
+
   describe('uploading csv', () => {
 
     describe("with well-formed csv", () => {
@@ -234,6 +235,22 @@ describe('Bulk Table module', () => {
         expect(appendSpinnerSpy).toHaveBeenCalled();
         expect($("#top-spinner")).not.toExist();
       });
+    });
+
+    describe("With alternative Person/Org delcarations", () => {
+      beforeEach(done => {
+        setupWithCsv(fxt.entityCsvValidAltType).then(done);
+      });
+
+      it('stores entity data', () => {
+        expect(bulkTable.getIn(['entities', 'byId'])).toEqual({
+          newEntity0: { "name": 'TestOrg1', "primary_ext": 'Org', "blurb": 'test org 1 blurb', "id": 'newEntity0' },
+	  newEntity1: { "name": 'TestOrg2', "primary_ext": 'Org', "blurb": 'test org 2 blurb', "id": 'newEntity1' },
+	  newEntity2: { "name": 'Test Person One', "primary_ext": 'Person', "blurb": 'test person 1 blurb', "id": 'newEntity2' },
+	  newEntity3: { "name": 'Test Person Two', "primary_ext": 'Person', "blurb": 'test person 2 blurb', "id": 'newEntity3' }
+        });
+      });
+
     });
 
     describe('with invalid header fields', () => {
