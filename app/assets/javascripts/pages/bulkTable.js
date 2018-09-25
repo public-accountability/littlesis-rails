@@ -1004,7 +1004,6 @@ type SpinnerElement = 'top' | 'bottom'
   }
 
 
-
   // String -> MaybeEntities
   function parse(csv){
     var result = Papa.parse(csv, { header: true, skipEmptyLines: true });
@@ -1033,6 +1032,29 @@ type SpinnerElement = 'top' | 'bottom'
         };
     }
   }
+  
+  
+  ACCEPTABLE_PERSON_VALUES = ['p', 'per', 'person'];
+  ACCEPTABLE_ORG_VALUES = ['o', 'org', 'organization'];
+  
+  // Anything -> String
+  function cleanPrimaryExt(primary_ext) {
+    if (typeof primary_ext === 'string') {
+      if (ACCEPTABLE_PERSON_VALUES.includes(primary_ext.trim().toLowerCase())) {
+	return 'Person';
+      } else if (ACCEPTABLE_ORG_VALUES.includes(primary_ext.trim().toLowerCase())) {
+	return 'Org';
+      } else {
+	return primary_ext.trim();
+      }
+    } else {
+      return '';
+    }
+  }
+  
+  function handlePrimaryExtVariations(entity) {
+    return Object.assign({}, entity, { "primary_ext": cleanPrimaryExt(entity.primary_ext) });
+  }
 
   // String, String -> String
   function invalidHeadersMsg(validHeaders, actualHeaders){
@@ -1045,10 +1067,13 @@ type SpinnerElement = 'top' | 'bottom'
   function store(maybeEntities){
     if (maybeEntities.error) return maybeEntities;
     else {
-      return {
-        result: maybeEntities.result.data.map(state.assignId).map(state.addIngestedEntity),
-        errors: null
-      };
+
+      var result = maybeEntities.result.data
+	  .map(state.assignId)
+	  .map(handlePrimaryExtVariations)
+	  .map(state.addIngestedEntity);
+      
+      return { result: result, errors: null };
     }
   }
 
