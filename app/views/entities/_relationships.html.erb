@@ -14,7 +14,9 @@
 	  <% links_group = @links.send(section) %>
 	  <%= section_heading(links_group) %>
 	  <%= link_to_all(@entity, links_group) %>
-	  <%= render partial: 'link', collection: links_group.links.take(10) %>
+	  <div>
+	    <%= render partial: 'link', collection: links_group.links.take(10) %>
+	  </div>
 	<% end %>
 	
       <% end %>
@@ -34,8 +36,11 @@
       <%= section_heading(links_group) %>
       <% paginatable_links = Kaminari.paginate_array(links_group.links, total_count: links_group.count).page(page).per(20) %>
       <%= paginate paginatable_links %>
-      <%= render partial: 'link', collection: paginatable_links %>
+      <div class="relationship-links">
+	<%= render partial: 'link', collection: paginatable_links %>
+      </div>
       <%= paginate paginatable_links %>
+    
     <% end %>
 
   <% end %>

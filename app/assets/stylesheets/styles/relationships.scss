@@ -113,7 +113,8 @@ form.edit-relationship-form {
     .relationship-section {
         border: 0px solid #ddd;
         border-top: 0;
-        .related_entity {
+	
+	.related_entity {
             ul {
                 margin-bottom: 0;
             }
@@ -125,6 +126,7 @@ form.edit-relationship-form {
             padding-bottom: 0.4em;
             padding-left: 0.3em;
         }
+
         .related_entity:hover {
             background-color: #f8f8f8;
         }
@@ -150,6 +152,22 @@ form.edit-relationship-form {
                 cursor: pointer;
             }
         }
+	
+    } // end relationship-section
+
+    .relationship-links {
+
+	> div.relationship-section:nth-child(1) {
+	    padding-top: 1em;
+
+	    > .related_entity {
+		border-top: 0;
+	    }
+	}
+
+	> div.relationship-section:last-child {
+	    padding-bottom: 1em;
+	}
     }
 }
 
