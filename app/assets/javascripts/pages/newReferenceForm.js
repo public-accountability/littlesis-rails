@@ -45,7 +45,8 @@
 
   function render(div) {
     $(div).append(
-      $('<div>', { "class": ''}).append(form())
+      $('<div>', { "class": 'new-reference-form-container'})
+	.append(form())
     );
 
     $('#collapseReference').on('show.bs.collapse', function(){

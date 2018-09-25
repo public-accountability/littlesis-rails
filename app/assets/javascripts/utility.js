@@ -34,6 +34,22 @@ utility.range = function(x, toExclude) {
   }
 };
 
+
+/**
+ * Random String of digits
+ * @param {integer} n number of digits
+ * @returns {String}
+ */
+utility.randomDigitStringId = function(n) {
+  if (typeof n === 'undefined') {
+    n = 10;
+  }
+  else if (n > 14 || n < 1) {
+    throw  "randomDigitStringId() can return at most 14 digits";
+  }
+  return Math.random().toString().slice(2, (2 + n));
+};
+
 /**
  * looks up entity info stored in #entity-info div 
  * @param {string} key

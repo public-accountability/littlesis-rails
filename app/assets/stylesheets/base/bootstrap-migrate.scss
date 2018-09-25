@@ -65,6 +65,10 @@ table caption {
     caption-side: top;
 }
 
+table.no-top-border thead > tr > th {
+    border-top: 0;
+}
+
 .row.no-gutters {
   margin-right: 0;
   margin-left: 0;

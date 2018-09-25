@@ -505,6 +505,7 @@ type SpinnerElement = 'top' | 'bottom'
   };
 
   state.render = function(){
+    $('body > div.tooltip').remove(); // stupid hack to fix stupid problem with tooltips
     $('#' + state.domId).empty();
     $('#' + state.domId)
       .append(notificationBar())
@@ -642,19 +643,20 @@ type SpinnerElement = 'top' | 'bottom'
       .attr('onmouseout', function(){ container.find('.tooltip').hide();})
       .attr('onblur', function(){ container.find('.tooltip').hide();})
       .tooltip({
-        placement: 'bottom',
-        html: true,
-        title: errorList(errors, label)
+        "placement": 'bottom',
+        "html": true,
+	"boundary": 'window',
+        "title": errorList(errors, label)
       });
   };
 
-  // [String], String -> [JQueryNode]
+  // [String], String -> String
   function errorList(errors, label){
     return errors.map(function(err){
-      return $('<div>', {
-        text: '[ ! ] ' + label + ' ' + err
-      });
-    });
+      var text = '[ ! ] ' + label + ' ' + err;
+      var div = util.createElementWithText('div', text);
+      return div.outerHTML;
+    }).join('');
   }
 
   // Entity, Integer -> JQueryNode
@@ -675,17 +677,22 @@ type SpinnerElement = 'top' | 'bottom'
     return idx === 0 && state.hasMatches(entity) && matchResolver(entity);
   }
 
+
+  
   function matchResolver(entity) {
+    var anchorId = "popover" + util.randomDigitStringId();
+
     return $('<div>', {
-      class:          'resolver-anchor',
-      'data-toggle':  'popover',
-      click:          activatePicker
+      "class": 'resolver-anchor',
+      "data-toggle": 'popover',
+      "click": activatePicker,
+      "id": anchorId
     })
       .append($('<div>', { class: 'alert-icon', title: 'resolve duplicates' }))
       .popover({
         html:     true,
         title:    'Similar entities already exist',
-        content:  matchResolverPopup(entity)
+        content:  matchResolverPopup(entity, anchorId)
       });
   }
 
@@ -699,25 +706,28 @@ type SpinnerElement = 'top' | 'bottom'
     );
   }
 
-  function matchResolverPopup(entity) {
+  function matchResolverPopup(entity, anchorId) {
     return $('<div>', { class: 'resolver-popover' })
-      .append(pickerContainer(entity))
-      .append(createButton(entity));
+      .append(pickerContainer(entity, anchorId))
+      .append(createButton(entity, anchorId));
   };
 
-  function createButton(entity){
+  function createButton(entity, anchorId){
     return $('<div>', {
       class: "btn btn-danger resolver-create-btn",
       text:  "Create New Entity",
-      click: function(){ handleCreateChoice(entity); }
+      click: function(){
+	hidePopover(anchorId);
+	handleCreateChoice(entity);
+      }
     });
   }
 
-  function pickerContainer(entity){
+  function pickerContainer(entity, anchorId){
     return $('<div>', { class: 'resolver-picker-container' })
       .append(picker(entity))
       .append(pickerResultContainer())
-      .append(pickerButton(entity));
+      .append(pickerButton(entity, anchorId));
   }
 
   function picker(entity){
@@ -741,6 +751,10 @@ type SpinnerElement = 'top' | 'bottom'
     );
   }
 
+  function hidePopover(anchorId) {
+    $('#' + anchorId).popover('hide');
+  }
+
   function pickerResultContainer(){
     return $('<div>', { class: 'resolver-picker-result-container'});
   }
@@ -759,11 +773,14 @@ type SpinnerElement = 'top' | 'bottom'
       }));
   }
 
-  function pickerButton(entity){
+  function pickerButton(entity, anchorId){
     return $('<div>', {
       class: 'btn btn-primary resolver-picker-btn',
       text:  'Use Existing Entity',
-      click: function(){ handleUseExistingChoice(entity); }
+      click: function(){
+	hidePopover(anchorId);
+	handleUseExistingChoice(entity);
+      }
     });
   };
 

@@ -3,21 +3,20 @@ require "rails_helper"
 describe 'home/dashboard', type: :feature do
   let(:current_user) { create_basic_user }
   before { login_as(current_user, :scope => :user) }
+
   after { logout(:user) }
 
   feature 'Using the navigation bar on top of the basic as a regular user' do
     before { visit '/home/dashboard' }
 
     scenario 'nav dropdown' do
-      expect(page.status_code).to eq 200
-      expect(page).to have_current_path home_dashboard_path
+      successfully_visits_page home_dashboard_path
 
-      expect(page).to have_selector 'ul.navbar-nav li a', text: current_user.username
-      expect(page).to have_selector 'ul.navbar-nav li a', text: 'Tags'
-      expect(page).to have_selector 'ul.navbar-nav li a', text: 'Donate'
-      expect(page).to have_selector 'ul.navbar-nav li a', text: 'Help'
+      [current_user.username, 'Tags', 'Donate', 'Help'].each do |text|
+        expect(page).to have_selector 'ul.nav li a', text: text
+      end
       # verifing that networks have been removed:
-      expect(page).not_to have_selector 'ul.navbar-nav li a', text: 'United States'
+      expect(page).not_to have_selector 'ul.nav li a', text: 'United States'
     end
   end
 

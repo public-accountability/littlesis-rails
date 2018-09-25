@@ -5,7 +5,7 @@
 <% cache( [ 'edits/index', @page ], expires_in: 5.minutes) do %>
   <% edits = EntityHistory.recently_edited_entities(page: @page) %>
   
-  <table class="table">
+  <table class="table no-top-border" id="recent-edits-table">
     <thead>
       <tr>
         <th>Edited By</th>
@@ -17,9 +17,9 @@
     <tbody>
       <% edits.each do |entity| %>
         <tr>
-          <td class="group_edits_user"><%= user_link(entity.last_user.user) %> <%= time_ago_in_words(entity.updated_at) %> ago</td>
-          <td class="group_edits_name"><%= entity_link(entity) %></td>
-          <td class="group_edits_details"><em><%= entity.blurb %></em></td>
+          <td><%= user_link(entity.last_user.user) %> <%= time_ago_in_words(entity.updated_at) %> ago</td>
+          <td><%= entity_link(entity) %></td>
+          <td><em><%= entity.blurb %></em></td>
         </tr>
       <% end %>
     </tbody>

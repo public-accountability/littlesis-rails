@@ -17,9 +17,9 @@ describe 'partial: tags/header', :type => :view do
     let(:active_tab) { :lists }
 
     it 'sets correct active/inactive classes' do
-      css 'li#tag-nav-tab-lists.active', count: 1
-      not_css 'li#tag-nav-tab-lists.inactive'
-      css 'li#tag-nav-tab-entities.inactive'
+      css 'li#tag-nav-tab-lists a.active', count: 1
+      not_css 'li#tag-nav-tab-lists a.inactive'
+      css 'li#tag-nav-tab-entities a.inactive'
     end
   end
 
@@ -27,9 +27,9 @@ describe 'partial: tags/header', :type => :view do
     let(:active_tab) { :edits }
 
     it 'sets correct active/inactive classes' do
-      css 'li#tag-nav-tab-edits.active', count: 1
-      not_css 'li#tag-nav-tab-edits.inactive'
-      css 'li#tag-nav-tab-entities.inactive'
+      css 'li#tag-nav-tab-edits a.active', count: 1
+      not_css 'li#tag-nav-tab-edits a.inactive'
+      css 'li#tag-nav-tab-entities a.inactive'
     end
   end
 end

@@ -79,7 +79,7 @@ describe 'Tags', :tagging_helper, type: :feature do
       context "with no tab specified" do
 
         it "defaults to the entities tab" do
-          expect(page).to have_selector("#tag-nav-tab-entities.active")
+          expect(page).to have_selector("#tag-nav-tab-entities a.active")
         end
 
         it "shows the tag title and description" do
@@ -198,8 +198,7 @@ describe 'Tags', :tagging_helper, type: :feature do
       end
 
       it "has header with active edit tab" do
-        expect(page).to have_selector 'li#tag-nav-tab-edits.active'
-        expect(page).to have_selector 'li#tag-nav-tab-edits.active a', text: 'Edits'
+        expect(page).to have_selector 'li#tag-nav-tab-edits a.active', text: 'Edits'
       end
 
       it "contains list of edits" do
