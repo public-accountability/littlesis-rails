@@ -92,4 +92,19 @@ describe Utility do
     end
   end
 
+  describe 'convert_file_to_utf8' do
+    let(:file) do
+      Tempfile.new('non_utf8_file').tap do |f|
+        f.binmode
+        # the letter 'A' followed by an invalid utf8 char
+        f.write("\x41\xFF")
+        f.rewind
+      end
+    end
+
+    it 'converts file to utf8, removing invalid characters' do
+      Utility.convert_file_to_utf8(file.path)
+      expect(File.open(file.path).read).to eql 'A'
+    end
+  end
 end
