@@ -74,4 +74,22 @@ describe Utility do
     end
   end
 
+  describe 'sh' do
+    context 'with successful command' do
+      specify { expect(Utility.sh('true')).to be true }
+    end
+
+    context 'with unsuccessful command' do
+      specify do
+        expect { Utility.sh('false') }
+          .to raise_error(Utility::SubshellCommandError, 'false')
+      end
+
+      specify do
+        expect { Utility.sh('false', fail_message: ':-(') }
+          .to raise_error(Utility::SubshellCommandError, ':-(')
+      end
+    end
+  end
+
 end

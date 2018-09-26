@@ -24,5 +24,14 @@ module Utility
     !File.exist?(path) || File.stat(path).size.zero?
   end
 
+  def self.sh(cmd, fail_message: nil)
+    if system(cmd)
+      true
+    else
+      raise SubshellCommandError, (fail_message || cmd)
+    end
+  end
+
+  class SubshellCommandError < StandardError; end
   class SQLFileError < StandardError; end
 end
