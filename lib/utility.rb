@@ -20,5 +20,9 @@ module Utility
     end
   end
 
+  def self.file_is_empty_or_nonexistent(path)
+    !File.exist?(path) || File.stat(path).size.zero?
+  end
+
   class SQLFileError < StandardError; end
 end
