@@ -1,5 +1,5 @@
 require 'csv'
-require Rails.root.join('lib', 'query.rb').to_s
+require Rails.root.join('lib', 'utility.rb').to_s
 
 namespace :query do
   desc "Saves Os Donations for each member of a list as csv"
@@ -36,7 +36,7 @@ namespace :query do
 
     sorted_donations = donations.sort_by { |h| [h[:entity_id], -h[:amount]] }
 
-    Query.save_hash_array_to_csv(file_path, sorted_donations)
+    Utility.save_hash_array_to_csv(file_path, sorted_donations)
   end
 
   desc "get board members for given list"

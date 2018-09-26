@@ -8,6 +8,8 @@
 #
 # rubocop:disable Style/ImplicitRuntimeError
 
+require Rails.root.join('lib', 'utility.rb').to_s
+
 URL = 'https://www.elections.ny.gov/NYSBOE/download/ZipDataFiles/ALL_REPORTS.zip'
 
 # Paths
@@ -32,7 +34,7 @@ end
 #
 
 # Skip downloading the zip file if the local copy is less than 1 day old
-if !File.exist?(ZIP_FILE_PATH) || File.stat(ZIP_FILE_PATH).size.zero? || !(File.ctime(ZIP_FILE_PATH).to_date === Time.current.to_date)
+if Utility.file_is_empty_or_nonexistent(ZIP_FILE_PATH) || !(File.ctime(ZIP_FILE_PATH).to_date === Time.current.to_date)
   ColorPrinter.print_blue "Downloading: #{URL}"
 
   File.open(ZIP_FILE_PATH, 'wb') do |file|
@@ -56,16 +58,7 @@ sh cmd, fail_message: "failed to unzip file #{ZIP_FILE_PATH}"
 #
 ColorPrinter.print_blue "Converting #{CSV_FILE_PATH} to UTF-8"
 
-# populate temp file with converted data
-tmp_file = Tempfile.new
-File.foreach(CSV_FILE_PATH) do |line|
-  tmp_file.write line.encode('UTF-8', :invalid => :replace, :undef => :replace, :replace => "").force_encoding('UTF-8')
-end
-
-# replace CSV_FILE_PATH with new utf-8 data
-tmp_file.rewind
-IO.copy_stream(tmp_file, CSV_FILE_PATH)
-tmp_file.unlink
+Utility.convert_file_to_utf8(CSV_FILE_PATH)
 
 ##
 # Clean disclosure data

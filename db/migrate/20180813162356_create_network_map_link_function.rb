@@ -1,8 +1,8 @@
-require Rails.root.join('lib', 'query.rb').to_s
+require Rails.root.join('lib', 'utility.rb').to_s
 
 class CreateNetworkMapLinkFunction < ActiveRecord::Migration[5.2]
   def up
-    Query.execute_sql_file(
+    Utility.execute_sql_file(
       Rails.root.join('lib', 'sql', 'network_map_link.sql').to_s
     )
   end

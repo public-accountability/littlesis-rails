@@ -96,3 +96,6 @@ Layout/EmptyLinesAroundBlockBody:
 Rails/SkipsModelValidations:
   Exclude:
     - 'spec/**/*.rb'
+
+Rspec/DescribedClass:
+  Enabled: false
