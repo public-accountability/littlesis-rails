@@ -1,4 +1,4 @@
-require Rails.root.join('lib', 'query.rb').to_s
+require Rails.root.join('lib', 'utility.rb').to_s
 
 namespace :users do
 
@@ -15,7 +15,7 @@ namespace :users do
               .map { |attrs| attrs.slice('username', 'email', 'map_the_power', 'created_at') }
 
 
-    Query.save_hash_array_to_csv file_path, users
+    Utility.save_hash_array_to_csv file_path, users
 
     ColorPrinter.print_blue "#{users.count} users saved to #{file_path.to_s}"
   end

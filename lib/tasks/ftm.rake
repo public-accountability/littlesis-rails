@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require Rails.root.join('lib', 'follow_the_money.rb').to_s
-require Rails.root.join('lib', 'query.rb').to_s
+require Rails.root.join('lib', 'utility.rb').to_s
 
 namespace :ftm do
 
@@ -21,6 +21,6 @@ namespace :ftm do
     end
 
     file_path = Rails.root.join('data', 'follow_the_money_matches.csv')
-    Query.save_hash_array_to_csv file_path, matches
+    Utility.save_hash_array_to_csv file_path, matches
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require Rails.root.join('lib', 'query.rb').to_s
+require Rails.root.join('lib', 'utility.rb').to_s
 require Rails.root.join('lib', 'cmp.rb').to_s
 
 namespace :cmp do
@@ -30,7 +30,7 @@ namespace :cmp do
         attrs[:pre_selected] = Cmp::EntityMatch.matches.dig(cmp_org.cmpid.to_s, 'entity_id')
         attrs
       end
-      Query.save_hash_array_to_csv file_path, sheet
+      Utility.save_hash_array_to_csv file_path, sheet
       puts "Saved orgs to: #{file_path}"
     end
 
@@ -74,7 +74,7 @@ namespace :cmp do
         cmp_person.clear_matches
       end
 
-      Query.save_hash_array_to_csv file_path, people_remaining
+      Utility.save_hash_array_to_csv file_path, people_remaining
       ColorPrinter.print_blue "saved: #{file_path}"
     end
 
@@ -142,8 +142,8 @@ namespace :cmp do
         end # end of each loop
 
       ensure
-        Query.save_hash_array_to_csv file_path, potential_matches
-        Query.save_hash_array_to_csv error_file_path, error_cmp_ids
+        Utility.save_hash_array_to_csv file_path, potential_matches
+        Utility.save_hash_array_to_csv error_file_path, error_cmp_ids
         puts stats
         ThinkingSphinx::Callbacks.resume!
       end
@@ -189,12 +189,12 @@ namespace :cmp do
         end
 
         if write_queue.length >= write_limit
-          Query.save_hash_array_to_csv file_path, write_queue, mode: 'ab'
+          Utility.save_hash_array_to_csv file_path, write_queue, mode: 'ab'
           write_queue.clear
         end
       end
 
-      Query.save_hash_array_to_csv file_path, write_queue, mode: 'ab' unless write_queue.empty?
+      Utility.save_hash_array_to_csv file_path, write_queue, mode: 'ab' unless write_queue.empty?
       puts "Saved people to: #{file_path}"
     end
   end
@@ -223,7 +223,7 @@ namespace :cmp do
 
       unless relationship_errors.empty?
         file_path = Rails.root.join('data', 'cmp_relationship_errors.txt')
-        Query.save_hash_array_to_csv file_path, relationship_errors
+        Utility.save_hash_array_to_csv file_path, relationship_errors
       end
       ThinkingSphinx::Callbacks.resume!
     end
