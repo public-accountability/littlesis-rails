@@ -5,6 +5,7 @@
 # also see: lib/scripts/update-nys-campaign-finance-data
 
 require Rails.root.join('lib', 'utility.rb').to_s
+require Rails.root.join('lib', 'nys_campaign_finance.rb').to_s
 
 URL = 'https://www.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
 ZIP_FILE_PATH = Rails.root.join('data', 'commcand.zip').to_s
