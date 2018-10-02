@@ -17,5 +17,5 @@ Bootsnap.setup(
   autoload_paths_cache: true,                 # Optimize ActiveSupport autoloads with cache
   disable_trace:        false,                # (Alpha) Set `RubyVM::InstructionSequence.compile_option = { trace_instruction: false }`
   compile_cache_iseq:   true,                 # Compile Ruby code into ISeq cache, breaks coverage reporting.
-  compile_cache_yaml:   false                 # Compile YAML into a cache
+  compile_cache_yaml:   true                  # Compile YAML into a cache
 )

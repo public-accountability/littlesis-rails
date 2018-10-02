@@ -58,11 +58,11 @@ end
 group :test, :development do
   gem 'better_errors', '~> 2.5.0'
   gem 'capybara', '>= 3.6.0'
-  gem 'capybara-webkit', '1.15.0'
+  gem 'capybara-webkit', '1.15.1'
   gem 'database_cleaner'
-  gem 'factory_bot_rails', '~> 4.11.0'
+  gem 'factory_bot_rails', '~> 4.11'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
-  gem 'jasmine', '~> 3.2.0'
+  gem 'jasmine', '>= 3.2'
   gem 'jasmine_selenium_runner'
   gem 'pry'
   gem 'pry-byebug'
@@ -109,4 +109,4 @@ gem 'text', '>= 1.3.1'
 gem 'httparty', '>= 0.16.2'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.1.0', require: false
+gem 'bootsnap', '>= 1.3.2', require: false
