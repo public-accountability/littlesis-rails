@@ -12,13 +12,14 @@ module Datatable
   # see https://datatables.net/manual/server-side
   # for the documentation on the format of a datatables request
   class Request
-    attr_reader :draw, :start, :length, :search
+    attr_reader :draw, :start, :length, :search, :columns
 
     def initialize(params)
       %w[draw start length].each do |var|
         instance_variable_set "@#{var}", params.fetch(var).to_i
       end
 
+      @columns = params.fetch('columns').map { |c| c.fetch('data') }
       @search = params.dig('search', 'value').presence
 
       freeze

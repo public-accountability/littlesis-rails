@@ -8,13 +8,25 @@ describe Datatable do
       subject(:request) { Datatable::Request.new(params) }
 
       let(:search) { nil }
-      let(:params) { { 'draw' => '10', 'start' => '100', 'length' => '50', 'search' => search } }
+
+      let(:columns) do
+        [{ 'data' => 'first_name' }, { 'data' => 'last_name' }]
+      end
+
+      let(:params) do
+        { 'draw' => '10',
+          'start' => '100',
+          'length' => '50',
+          'search' => search,
+          'columns' => columns }
+      end
 
       specify { expect(request.draw).to eq 10 }
       specify { expect(request.start).to eq 100 }
       specify { expect(request.length).to eq 50 }
       specify { expect(request.frozen?).to be true }
       specify { expect(request.search).to be nil }
+      specify { expect(request.columns).to eq %w[first_name last_name] }
 
       context 'with search term' do
         let(:search) { { 'value' => 'alice' } }
