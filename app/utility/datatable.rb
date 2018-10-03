@@ -65,10 +65,18 @@ module Datatable
     def create_json
       {
         'draw' => @request.draw,
-        'recordsTotal' => model.count,
-        'recordsFiltered' => records_filtered_count,
-        'data' => records
+        'recordsTotal' => model_count,
+        'data' => @request.search ? search_records : records,
+        'recordsFiltered' => records_filtered_count
       }
+    end
+
+    def search_records
+      page = (@request.start / @request.length) + 1
+      search_term = ThinkingSphinx::Query.escape(@request.search)
+      search_result = model.search(search_term, page: page, per_page: @request.limit)
+      @search_filtered_count = search_result.total_entries
+      search_result.map(&record_to_hash)
     end
 
     def records
@@ -77,15 +85,25 @@ module Datatable
         .limit(@request.length)
         .offset(@request.start)
         .select('id', *@request.columns)
-        .map { |r| r.slice(*@request.columns) }
+        .map(&record_to_hash)
     end
 
     def records_filtered_count
       if @request.search
-        # TODO: handle filtered count
+        @search_filtered_count # set by search_records()
       else
-        model.count
+        model_count
       end
+    end
+
+    def model_count
+      return @_model_count if defined?(@_model_count)
+
+      @_model_count = model.count
+    end
+
+    def record_to_hash
+      ->(r) { r.slice(*@request.columns) }
     end
   end
 end
