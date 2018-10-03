@@ -52,7 +52,23 @@ describe Datatable do
       end
     end
 
-    describe 'handling request' do
+    describe 'handling request for NyFiler' do
+      let!(:ny_filers) { Array.new(2) { create(:ny_filer) } }
+
+      let(:request) do
+        Datatable::Request.new({ 'draw' => '1',
+                                 'start' => '0',
+                                 'length' => '3',
+                                 'columns' => [ { 'data' => 'filer_id' }, { 'data' => 'name' }  ] })
+      end
+      
+      subject { Datatable::Response.for(:NyFiler).new(request).json }
+
+      it do
+        is_expected.to eq({
+                            'draw' => 1
+                          })
+      end
       
     end
   end

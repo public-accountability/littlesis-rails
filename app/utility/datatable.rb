@@ -44,10 +44,10 @@ module Datatable
       end
     end
 
-    def initalize(request)
+    def initialize(request)
       @model = self.class.model
       @request = request
-      @json = create_json
+      @json = create_json.freeze
       freeze
     end
 
@@ -56,9 +56,9 @@ module Datatable
     def create_json
       # @total_records = @model.count
       # @model.limit(request.limit).offset(request.offset)
-      # {
-      #   draw: @request.draw,
-      # }
+      {
+        'draw' => @request.draw
+      }
     end
   end
 end
