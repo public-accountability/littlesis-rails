@@ -15,6 +15,13 @@ class NysController < ApplicationController
   def pacs
   end
 
+  def match
+  end
+
+  def datatable
+    render json: Datatable.json_for(:NyFiler, datatable_params)
+  end
+
   def create
     ny_filer_ids.each do |id|
       filer_id = NyFiler.find(id).filer_id
@@ -111,5 +118,19 @@ class NysController < ApplicationController
 
   def unmatch_params
     params.require(:payload).permit(:ny_match_ids => [])
+  end
+
+  # In theory we should be sending requests from our client
+  # that don't require doing "manual" converstion of hash into arrays
+  # see: https://stackoverflow.com/questions/6410810/rails-not-decoding-json-from-jquery-correctly-array-becoming-a-hash-with-intege)
+  # However, this doesn't seem to work without going DEEP into
+  # the datatable source code, so let's just deal with it.
+  def datatable_params
+    h = params.to_unsafe_h
+    # If this problem gets fixed client-side and/or while testing
+    return h if h['columns'].is_a?(Array)
+
+    h['columns'] = h['columns'].sort.map(&:second)
+    h
   end
 end

@@ -318,6 +318,8 @@ Lilsis::Application.routes.draw do
     post "/:type/new" => "nys#create", constraints: { type: /pacs|candidates/ }
     get "/potential_contributions" => "nys#potential_contributions"
     get "/contributions" => "nys#contributions"
+    get 'match' => 'nys#match'
+    get '/datatable' => 'nys#datatable'
   end
 
   #########

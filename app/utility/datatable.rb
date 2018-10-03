@@ -4,6 +4,15 @@
 # module for datatable server-side processing
 #
 module Datatable
+
+  # Symbol, Hash -> Hash
+  def self.json_for(model, params)
+    Datatable::Response
+      .for(model)
+      .new(Datatable::Request.new(params))
+      .json
+  end
+
   # Process datatable params into an object
   # that can be used to query the database
   #
@@ -34,9 +43,10 @@ module Datatable
   #   + Response.for(:NyFiler).new(request)
   #
   class Response
-    class_attribute :model
+    class_attribute :model, instance_writer: false
     attr_reader :json
-    define_method(:as_json) { @json }
+
+    delegate :as_json, to: :json
 
     def self.for(klass)
       Class.new(self) do
@@ -45,7 +55,6 @@ module Datatable
     end
 
     def initialize(request)
-      @model = self.class.model
       @request = request
       @json = create_json.freeze
       freeze
@@ -54,11 +63,29 @@ module Datatable
     private
 
     def create_json
-      # @total_records = @model.count
-      # @model.limit(request.limit).offset(request.offset)
       {
-        'draw' => @request.draw
+        'draw' => @request.draw,
+        'recordsTotal' => model.count,
+        'recordsFiltered' => records_filtered_count,
+        'data' => records
       }
+    end
+
+    def records
+      model
+        .order('id desc')
+        .limit(@request.length)
+        .offset(@request.start)
+        .select('id', *@request.columns)
+        .map { |r| r.slice(*@request.columns) }
+    end
+
+    def records_filtered_count
+      if @request.search
+        # TODO: handle filtered count
+      else
+        model.count
+      end
     end
   end
 end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-# rubocop:disable RSpec/NestedGroups
+# rubocop:disable RSpec/NestedGroups, RSpec/ImplicitSubject
 
 describe Datatable do
   describe Datatable::Request do
@@ -53,25 +53,32 @@ describe Datatable do
     end
 
     describe 'handling request for NyFiler' do
+      subject { Datatable::Response.for(:NyFiler).new(request).json }
+
       let!(:ny_filers) { Array.new(2) { create(:ny_filer) } }
 
       let(:request) do
         Datatable::Request.new({ 'draw' => '1',
                                  'start' => '0',
                                  'length' => '3',
-                                 'columns' => [ { 'data' => 'filer_id' }, { 'data' => 'name' }  ] })
+                                 'columns' => [{ 'data' => 'filer_id' }, { 'data' => 'name' }] })
       end
-      
-      subject { Datatable::Response.for(:NyFiler).new(request).json }
+
+      let(:data) do
+        ny_filers.sort_by(&:id).reverse!.map { |filer| filer.attributes.slice('filer_id', 'name') }
+      end
 
       it do
-        is_expected.to eq({
-                            'draw' => 1
-                          })
+        is_expected
+          .to eq('draw' => 1,
+                 'recordsTotal' => 2,
+                 'recordsFiltered' => 2,
+                 'data' => data)
+
       end
-      
     end
   end
 end
 
-# rubocop:enable RSpec/NestedGroups
+# rubocop:enable RSpec/NestedGroups, RSpec/ImplicitSubject
+
