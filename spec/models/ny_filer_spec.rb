@@ -2,11 +2,12 @@ require 'rails_helper'
 
 describe NyFiler, type: :model do
   subject { create(:ny_filer) }
-  it { should have_one(:ny_filer_entity) }
-  it { should have_many(:entities) }
-  it { should have_many(:ny_disclosures) }
-  it { should validate_presence_of(:filer_id) }
-  it { should validate_uniqueness_of(:filer_id) }
+
+  it { is_expected.to have_one(:ny_filer_entity) }
+  it { is_expected.to have_many(:entities) }
+  it { is_expected.to have_many(:ny_disclosures) }
+  it { is_expected.to validate_presence_of(:filer_id) }
+  it { is_expected.to validate_uniqueness_of(:filer_id) }
 
   it 'has OFFICES constant' do
     expect(NyFiler::OFFICES).to be_a Hash
@@ -27,6 +28,7 @@ describe NyFiler, type: :model do
   describe 'is_matched' do
     let(:entity) { create(:entity_org) }
     let(:ny_filer) { create(:ny_filer, filer_id: '123') }
+
     it 'returns true if there is a filer_entity' do
       create(:ny_filer_entity, ny_filer_id: ny_filer.id, entity: entity)
       expect(ny_filer.is_matched?).to be true
