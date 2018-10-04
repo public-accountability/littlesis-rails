@@ -39,4 +39,23 @@ describe NyFiler, type: :model do
       expect(ny_filer.is_matched?).to be false
     end
   end
+
+  describe 'unmatched' do
+    let!(:matched_nyfiler) do
+      create(:ny_filer).tap do |ny_filer|
+        NyFilerEntity.create!(entity: create(:entity_org),
+                              ny_filer: ny_filer,
+                              filer_id: ny_filer.filer_id)
+      end
+    end
+
+    let!(:unmatched_filers) do
+      Array.new(2) { create(:ny_filer) }
+    end
+
+    it 'returns only unmatched filers' do
+      expect(NyFiler.count).to eq 3
+      expect(NyFiler.unmatched.count).to eq 2
+    end
+  end
 end

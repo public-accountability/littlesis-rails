@@ -19,6 +19,11 @@ class NyFiler < ApplicationRecord
   # Class methods #
   #---------------#
 
+  def self.unmatched
+    left_outer_joins(:ny_filer_entity)
+      .where('ny_filer_entities.id is NULL')
+  end
+
   def self.search_filers(name)
     search_by_name_and_committee_type(name, ['1', ''])
   end
