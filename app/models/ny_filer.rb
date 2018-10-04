@@ -15,6 +15,14 @@ class NyFiler < ApplicationRecord
     OFFICES[office]
   end
 
+  def entity_match
+    EntityMatcher::NyFiler.match_for(self)
+  end
+
+  def match_to_person?
+    committee_type == '1'
+  end
+
   #---------------#
   # Class methods #
   #---------------#
@@ -23,6 +31,8 @@ class NyFiler < ApplicationRecord
     left_outer_joins(:ny_filer_entity)
       .where('ny_filer_entities.id is NULL')
   end
+
+  define_singleton_method(:datatable) { unmatched }
 
   def self.search_filers(name)
     search_by_name_and_committee_type(name, ['1', ''])
