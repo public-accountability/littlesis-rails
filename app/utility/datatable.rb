@@ -42,15 +42,20 @@ module Datatable
   #
   #   + Response.for(:NyFiler).new(request)
   #
+  # By default, it will use the default scope
+  # for the model, but if the model has defined
+  # a class method `datatable` it will that scope.
   class Response
     class_attribute :model, instance_writer: false
-    attr_reader :json
+    class_attribute :scope, instance_writer: false
 
+    attr_reader :json
     delegate :as_json, to: :json
 
     def self.for(klass)
       Class.new(self) do
         self.model = klass.to_s.constantize
+        self.scope = model.respond_to?(:datatable) ? :datatable : :itself
       end
     end
 
@@ -74,13 +79,14 @@ module Datatable
     def search_records
       page = (@request.start / @request.length) + 1
       search_term = ThinkingSphinx::Query.escape(@request.search)
-      search_result = model.search(search_term, page: page, per_page: @request.limit)
+      search_result = model.search(search_term, page: page, per_page: @request.length)
       @search_filtered_count = search_result.total_entries
       search_result.map(&record_to_hash)
     end
 
     def records
       model
+        .send(scope)
         .order('id desc')
         .limit(@request.length)
         .offset(@request.start)
@@ -99,7 +105,7 @@ module Datatable
     def model_count
       return @_model_count if defined?(@_model_count)
 
-      @_model_count = model.count
+      @_model_count = model.send(scope).count
     end
 
     def record_to_hash
