@@ -26,6 +26,14 @@ describe TypeCheck do
       .to raise_error(TypeError)
   end
 
+  it 'raises error if passed nil by default' do
+    expect { TypeCheck.check nil, [Array, Hash] }.to raise_error(TypeError)
+  end
+
+  it 'can check nils' do
+    expect(TypeCheck.check(nil, [Hash], allow_nil: true)).to be true
+  end
+
   context 'as a mixin' do
     class IAcceptOnlyIntegers
       include TypeCheck

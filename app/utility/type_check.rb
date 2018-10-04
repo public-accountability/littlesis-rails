@@ -9,10 +9,11 @@
 module TypeCheck
   delegate :check, to: 'TypeCheck', prefix: :type
 
-  def self.check(val, valid_types, allow_subclass: true)
+  def self.check(val, valid_types, allow_subclass: true, allow_nil: false)
     check_method = allow_subclass ? :is_a? : :instance_of?
 
     Array.wrap(valid_types).each do |valid_type|
+      return true if allow_nil && val.nil?
       return true if val.send(check_method, valid_type)
     end
 
