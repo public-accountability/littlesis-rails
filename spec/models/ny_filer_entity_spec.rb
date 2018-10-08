@@ -42,4 +42,40 @@ describe NyFilerEntity, type: :model do
       expect(NyMatch.last.recip_id).to eql elected.id
     end
   end
+
+  describe 'updating unmatched_ny_filer table' do
+    let!(:elected) { create(:entity_person) }
+    let!(:donor) { create(:entity_person) }
+    let!(:ny_filer) { create(:ny_filer) }
+
+    let(:create_ny_filer_entity) do
+      -> { NyFilerEntity.create!(entity: elected, ny_filer: ny_filer, filer_id: ny_filer.filer_id) }
+    end
+
+    before { UnmatchedNyFiler.recreate! } 
+
+    context 'after creating' do
+      it 'removes row from table', :run_delayed_jobs do
+        expect(UnmatchedNyFiler.count).to eq 1
+        with_delayed_job { create_ny_filer_entity.call }
+        expect(UnmatchedNyFiler.count).to eq 0
+      end
+    end
+
+    context 'after destroy' do
+      before do
+        create(:ny_disclosure_without_id, ny_filer: ny_filer, filer_id: ny_filer.filer_id)
+      end
+
+      it 'adds row to table' do
+        expect(UnmatchedNyFiler.count).to eq 1
+        with_delayed_job { create_ny_filer_entity.call }
+        expect(UnmatchedNyFiler.count).to eq 0
+        with_delayed_job { NyFilerEntity.last.destroy! }
+        expect(UnmatchedNyFiler.count).to eq 1
+        expect(UnmatchedNyFiler.last.ny_filer_id).to eq ny_filer.id
+        expect(UnmatchedNyFiler.last.disclosure_count).to eq 1
+      end
+    end
+  end
 end
