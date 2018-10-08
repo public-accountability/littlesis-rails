@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UnmatchedNyFiler < ApplicationRecord
+  belongs_to :ny_filer
+
   # Truncates and re-creates the table
   # by querying ny_filers
   def self.recreate!

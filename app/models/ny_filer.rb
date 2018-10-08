@@ -2,6 +2,7 @@
 
 class NyFiler < ApplicationRecord
   has_one :ny_filer_entity, dependent: :destroy
+  has_one :unmatched_ny_filer, dependent: :destroy
   has_many :entities, :through => :ny_filer_entity
   has_many :ny_disclosures, foreign_key: 'filer_id', inverse_of: :ny_filer, dependent: :nullify
 
@@ -27,12 +28,15 @@ class NyFiler < ApplicationRecord
   # Class methods #
   #---------------#
 
+  def self.datatable
+    joins(:unmatched_ny_filer)
+      .order('unmatched_ny_filers.disclosure_count desc')
+    end
+
   def self.unmatched
     left_outer_joins(:ny_filer_entity)
       .where('ny_filer_entities.id is NULL')
   end
-
-  define_singleton_method(:datatable) { unmatched }
 
   def self.search_filers(name)
     search_by_name_and_committee_type(name, ['1', ''])
