@@ -127,6 +127,12 @@ module RspecGroupHelpers
     end
   end
 
+  def assert_instance_var(instance_var, expected)
+    it "instance variable \"@#{instance_var}\" is equal to #{expected}" do
+      expect(subject.instance_variable_get("@#{instance_var}")).to eql expected
+    end
+  end
+
   # thanks to https://stackoverflow.com/questions/3853098/turn-off-transactional-fixtures-for-one-spec-with-rspec-2
   def without_transactional_fixtures(&block)
     self.use_transactional_tests = false
