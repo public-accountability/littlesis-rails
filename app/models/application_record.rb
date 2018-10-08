@@ -51,6 +51,11 @@ class ApplicationRecord < ActiveRecord::Base
     connection.execute(sql).first.first
   end
 
+  # convenience function for running `.connection.execute`
+  def self.execute_sql(*args)
+    connection.execute(*args)
+  end
+
   protected
 
   def set_last_user_id

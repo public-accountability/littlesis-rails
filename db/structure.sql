@@ -2154,6 +2154,18 @@ CREATE TABLE `transaction` (
   CONSTRAINT `transaction_ibfk_3` FOREIGN KEY (`contact1_id`) REFERENCES `entity` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `unmatched_ny_filers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `unmatched_ny_filers` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ny_filer_id` bigint(20) NOT NULL,
+  `disclosure_count` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_unmatched_ny_filers_on_ny_filer_id` (`ny_filer_id`),
+  KEY `index_unmatched_ny_filers_on_disclosure_count` (`disclosure_count`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2310,6 +2322,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20180522142905'),
 ('20180605184748'),
 ('20180813162356'),
-('20180904145133');
+('20180904145133'),
+('20181008145444');
 
 
