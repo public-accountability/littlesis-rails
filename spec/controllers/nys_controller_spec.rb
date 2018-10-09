@@ -1,48 +1,52 @@
 require 'rails_helper'
 
 describe NysController, type: :controller do
-  before(:all) do
+  before do
     Entity.skip_callback(:create, :after, :create_primary_ext)
     ActiveJob::Base.queue_adapter = :test
     DatabaseCleaner.start
   end
-  after(:all) do
+
+  after do
     Entity.set_callback(:create, :after, :create_primary_ext)
     DatabaseCleaner.clean
   end
 
   describe 'routes' do
-    it { should route(:get, '/nys').to(action: :index) }
-    it { should route(:post, '/nys/match_donations').to(action: :match_donations) }
-    it { should route(:post, '/nys/unmatch_donations').to(action: :unmatch_donations) }
-    it { should route(:get, '/nys/candidates').to(action: :candidates) }
-    it { should route(:get, '/nys/candidates/new').to(action: :new_filer_entity, type: 'candidates') }
-    it { should route(:get, '/nys/pacs/new').to(action: :new_filer_entity, type: 'pacs') }
-    it { should route(:post, '/nys/candidates/new').to(action: :create, type: 'candidates') }
-    it { should route(:post, '/nys/pacs/new').to(action: :create, type: 'pacs') }
-    it { should route(:get, '/nys/potential_contributions').to(action: :potential_contributions) }
-    it { should route(:get, '/nys/contributions').to(action: :contributions) }
-    it { should route(:get, '/nys/pacs').to(action: :pacs) }
+    it { is_expected.to route(:get, '/nys').to(action: :index) }
+    it { is_expected.to route(:post, '/nys/match_donations').to(action: :match_donations) }
+    it { is_expected.to route(:post, '/nys/unmatch_donations').to(action: :unmatch_donations) }
+    it { is_expected.to route(:get, '/nys/candidates').to(action: :candidates) }
+    it { is_expected.to route(:get, '/nys/candidates/new').to(action: :new_filer_entity, type: 'candidates') }
+    it { is_expected.to route(:get, '/nys/pacs/new').to(action: :new_filer_entity, type: 'pacs') }
+    it { is_expected.to route(:post, '/nys/candidates/new').to(action: :create, type: 'candidates') }
+    it { is_expected.to route(:post, '/nys/pacs/new').to(action: :create, type: 'pacs') }
+    it { is_expected.to route(:get, '/nys/potential_contributions').to(action: :potential_contributions) }
+    it { is_expected.to route(:get, '/nys/contributions').to(action: :contributions) }
+    it { is_expected.to route(:get, '/nys/pacs').to(action: :pacs) }
   end
 
   describe 'pages' do
     login_user
     describe 'candidates' do
       before { get :candidates }
-      it { should respond_with(200) }
-      it { should render_template(:candidates) }
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:candidates) }
     end
 
     describe 'pacs' do
       before { get :pacs }
-      it { should respond_with(200) }
-      it { should render_template(:pacs) }
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:pacs) }
     end
 
     describe 'index' do
       before { get :index }
-      it { should respond_with(200) }
-      it { should render_template(:index) }
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:index) }
     end
   end
 
@@ -63,7 +67,7 @@ describe NysController, type: :controller do
     end
 
     it 'returns 200' do
-      person = build(:person, id: 12_345, name: "big donor")
+      person = build(:person, id: 12_345, name: 'big donor')
       expect(person).to receive(:aliases).and_return([double(:name => 'Big Donor')])
       disclosure = double('NyDisclosure')
       expect(disclosure).to receive(:map)
@@ -99,11 +103,10 @@ describe NysController, type: :controller do
       #   expect { post(:match_donations, {payload: {disclosure_ids: [@disclosure.id], donor_id: '666'}}) }
       #     .to have_enqueued_job.on_queue('delta')
       # end
-
     end
 
     it 'creates new matches' do
-      person = create(:person, name: "big donor")
+      person = create(:person, name: 'big donor')
       disclosure = create(:ny_disclosure)
       count = NyMatch.count
       post :match_donations,
@@ -120,8 +123,9 @@ describe NysController, type: :controller do
     end
   end
 
-  describe "#create" do
+  describe '#create' do
     login_user
+
     before do
       ny_filer = build(:ny_filer, filer_id: "C9")
       expect(NyFilerEntity).to receive(:create!)
@@ -147,7 +151,7 @@ describe NysController, type: :controller do
     context 'default search' do
       before do
         elected = build(:elected, id: 123)
-        expect(elected).to receive(:person).and_return(double(:name_last => "elected"))
+        expect(elected).to receive(:person).and_return(double(:name_last => 'elected'))
         expect(NyFiler).to receive(:search_filers).with("elected").and_return([])
         expect(Entity).to receive(:find).and_return(elected)
       end
@@ -174,7 +178,7 @@ describe NysController, type: :controller do
     context 'if entity is an org' do
       before do
         pac = build(:pac, id: 666)
-        expect(NyFiler).to receive(:search_pacs).with("PAC").and_return([])
+        expect(NyFiler).to receive(:search_pacs).with('PAC').and_return([])
         expect(Entity).to receive(:find).with('666').and_return(pac)
         get :new_filer_entity, params: { entity: '666', type: 'pacs' }
       end
