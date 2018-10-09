@@ -3,7 +3,7 @@
 class NysController < ApplicationController
   before_action :authenticate_user!
   before_action -> { check_permission 'importer' }, only: [
-    :create, :match_donations, :unmatch_donations, :potential_contributions, :contributions
+    :create, :create_ny_filer_entity, :match_donations, :unmatch_donations, :potential_contributions, :contributions
   ]
 
   def index
@@ -40,7 +40,8 @@ class NysController < ApplicationController
   def create_ny_filer_entity
     NyFilerEntity.create!(new_ny_filer_entity_params)
     head :created
-  rescue ActiveRecord::RecordNotFound
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.warn e
     head :not_found
   rescue NyFiler::AlreadyMatchedError
     head :bad_request

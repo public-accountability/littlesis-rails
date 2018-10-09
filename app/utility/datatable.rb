@@ -133,16 +133,17 @@ module Datatable
       ->(r) do
         r.slice(*@request.columns)
           .merge('entity_match' => entity_match_format(r.entity_match))
-          .merge(components)
+          .merge(components(r))
       end
     end
 
-    def components
-      { 'match_buttons' => render('buttons') }
+    def components(record)
+      { 'match_buttons' => render('buttons', locals: { record: record }) }
     end
 
-    def render(component)
-      RENDERER.render partial: "entity_match_table/#{component}"
+    def render(component, locals: {})
+      locals.store :model, @model_type
+      RENDERER.render partial: "entity_match_table/#{component}", locals: locals
     end
   end
 end

@@ -23,7 +23,9 @@ class NyFiler < ApplicationRecord
   end
 
   def entity_match
-    EntityMatcher::NyFiler.match_for(self)
+    return @_entity_match if defined?(@_entity_match)
+
+    @_entity_match = EntityMatcher::NyFiler.match_for(self)
   end
 
   def match_to_person?

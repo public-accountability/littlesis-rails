@@ -18,9 +18,14 @@ $(function(){
   });
 
 
-  function renderMatchButton(data, type, row, meta) {
-    return '<button>Match this entity</button>';
-  }
+  $(document).bind('ajax:success', function(event) {
+    $(event.target).html('<b>matched!</b>');
+    console.log(event);
+  });
 
 
+  $(document).bind('ajax:error', function(event) {
+    console.log('error');
+    console.log(event);
+  });
 });
