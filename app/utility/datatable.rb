@@ -10,48 +10,6 @@
 # rubocop:disable Layout/IndentHeredoc
 
 module Datatable
-  module Javascript
-    COMMON = {
-      'processing' => true,
-      'serverSide' => true,
-      'ordering' => false
-    }.freeze
-
-    OPTION_MAKER = ->(url, columns) { COMMON.merge('ajax' => url, 'columns' => columns) }
-
-    MODEL_OPTIONS = {
-      :NyFiler => OPTION_MAKER.call('/nys/datatable',
-                                    [
-                                      { 'data' => 'name', 'title' => 'Name' },
-                                      { 'data' => 'filer_id', 'title' => 'Filer ID' },
-                                      { 'data' => 'entity_match', 'title' => 'matched entity' },
-                                      { 'data' => 'match_button', 'title' => 'match this entity' }
-                                    ])
-    }.freeze
-
-    # def self.columns_for(model)
-    #   case model
-    #   when :NyFiler
-    #     [
-    #       { 'data' => 'name', 'title' => 'Name' },
-    #       { 'data' => 'filer_id', 'title' => 'Filer ID' },
-    #       { 'data' => 'entity_match', 'title' => 'matched entity' }
-    #     ]
-    #   else
-    #     raise "NO MODEL FOUND"
-    #   end
-    #end
-
-    def self.[](model, id: 'entity-match-table')
-      <<~JS.html_safe
-        $(function() {
-          $('\##{id}')
-            .DataTable(#{JSON.dump(MODEL_OPTIONS.fetch(model))});
-        });
-      JS
-    end
-  end
-
   # Symbol, Hash -> Hash
   def self.json_for(model, params)
     Datatable::Response
