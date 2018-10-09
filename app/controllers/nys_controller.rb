@@ -22,6 +22,9 @@ class NysController < ApplicationController
     render json: Datatable.json_for(:NyFiler, datatable_params)
   end
 
+  # POST /nys/pacs/new
+  # POST /nys/candidates/new
+  # Creates one or more NyFilerEntity
   def create
     ny_filer_ids.each do |id|
       filer_id = NyFiler.find(id).filer_id
@@ -29,6 +32,18 @@ class NysController < ApplicationController
     end
     Entity.find(entity_id).update(last_user_id: current_user.sf_guard_user.id)
     redirect_to :action => 'new_filer_entity', :entity => entity_id
+  end
+
+  # POST /nys/ny_filer_entity
+  # similar to +create+, but only creates a singular entity and returns json
+  # intended to be used with the Entity Match Table
+  def create_ny_filer_entity
+    NyFilerEntity.create!(new_ny_filer_entity_params)
+    head :created
+  rescue ActiveRecord::RecordNotFound
+    head :not_found
+  rescue NyFiler::AlreadyMatchedError
+    head :bad_request
   end
 
   def new_filer_entity
@@ -118,6 +133,14 @@ class NysController < ApplicationController
 
   def unmatch_params
     params.require(:payload).permit(:ny_match_ids => [])
+  end
+
+  def new_ny_filer_entity_params
+    entity = Entity.find(params.require(:entity_id))
+    ny_filer = NyFiler.find(params.require(:ny_filer_id))
+    ny_filer.raise_if_matched!
+
+    { entity_id: entity.id, ny_filer_id: ny_filer.id, filer_id: ny_filer.filer_id }
   end
 
   # In theory we should be sending requests from our client

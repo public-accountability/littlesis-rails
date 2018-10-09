@@ -20,6 +20,7 @@ describe NysController, type: :controller do
     it { is_expected.to route(:get, '/nys/candidates/new').to(action: :new_filer_entity, type: 'candidates') }
     it { is_expected.to route(:get, '/nys/pacs/new').to(action: :new_filer_entity, type: 'pacs') }
     it { is_expected.to route(:post, '/nys/candidates/new').to(action: :create, type: 'candidates') }
+    it { is_expected.to route(:post, '/nys/ny_filer_entity').to(action: :create_ny_filer_entity) }
     it { is_expected.to route(:post, '/nys/pacs/new').to(action: :create, type: 'pacs') }
     it { is_expected.to route(:get, '/nys/potential_contributions').to(action: :potential_contributions) }
     it { is_expected.to route(:get, '/nys/contributions').to(action: :contributions) }

@@ -12,6 +12,12 @@ class NyFiler < ApplicationRecord
     ny_filer_entity.present?
   end
 
+  alias matched? is_matched?
+
+  def raise_if_matched!
+    raise AlreadyMatchedError if matched?
+  end
+
   def office_description
     OFFICES[office]
   end
@@ -130,4 +136,6 @@ class NyFiler < ApplicationRecord
     81 => 'City Treasurer',
     82 => 'Town Supervisor'
   }.freeze
+
+  class AlreadyMatchedError < StandardError; end
 end

@@ -82,4 +82,59 @@ describe 'NYS requests' do
       it { is_expected.to have_http_status(:ok) }
     end
   end
+
+  describe 'creating NyFilerEntity' do
+    subject { response }
+
+    let(:entity) { create(:entity_org) }
+    let(:ny_filer) { create(:ny_filer) }
+
+    let(:entity_id) { entity.id }
+    let(:ny_filer_id) { ny_filer.id }
+
+    let(:request) do
+      -> do
+        post '/nys/ny_filer_entity',
+             params: { 'entity_id' => entity_id, 'ny_filer_id' => ny_filer_id }
+      end
+    end
+
+    context 'with valid request' do
+      it 'creates a new NyFilerEntity' do
+        expect(&request).to change(NyFilerEntity, :count).by(1)
+      end
+
+      it 'responds with success' do
+        request.call
+        expect(response).to have_http_status(:created)
+      end
+    end
+
+    describe 'invalid requests' do
+      context 'with nonexistent ny filer id' do
+        before { request.call }
+
+        let(:ny_filer_id) { 1_000_000 }
+
+        it { is_expected.to have_http_status(:not_found) }
+      end
+
+      context 'with nonexistent entity' do
+        before { request.call }
+
+        let(:entity_id) { 1_000_000 }
+
+        it { is_expected.to have_http_status(:not_found) }
+      end
+
+      context 'Ny filer is matched already' do
+        before do
+          NyFilerEntity.create!(entity_id: create(:entity_org).id, ny_filer: ny_filer, filer_id: ny_filer.id)
+          request.call
+        end
+
+        it { is_expected.to have_http_status(:bad_request) }
+      end
+    end
+  end
 end

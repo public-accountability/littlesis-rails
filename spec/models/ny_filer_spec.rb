@@ -25,18 +25,37 @@ describe NyFiler, type: :model do
     end
   end
 
-  describe 'is_matched' do
+  describe 'matched? / raise_if_matched!' do
     let(:entity) { create(:entity_org) }
     let(:ny_filer) { create(:ny_filer, filer_id: '123') }
 
-    it 'returns true if there is a filer_entity' do
-      create(:ny_filer_entity, ny_filer_id: ny_filer.id, entity: entity)
-      expect(ny_filer.is_matched?).to be true
+    context 'with matched entity' do
+      before { create(:ny_filer_entity, ny_filer_id: ny_filer.id, entity: entity) }
+
+      it 'returns true if there is a filer_entity' do
+        expect(ny_filer.is_matched?).to be true
+      end
+
+      it 'has alias "matched?"' do
+        expect(ny_filer.matched?).to be true
+      end
+
+      it 'raise_if_matched! throws error' do
+        expect { ny_filer.raise_if_matched! }
+          .to raise_error(NyFiler::AlreadyMatchedError)
+      end
     end
 
-    it 'returns false if there is no filer_entity' do
-      ny_filer
-      expect(ny_filer.is_matched?).to be false
+    context 'without a matched entity' do
+      before { ny_filer }
+
+      it 'returns false if there is no filer_entity' do
+        expect(ny_filer.is_matched?).to be false
+      end
+
+      it 'raise_if_matched! does not throws error' do
+        expect { ny_filer.raise_if_matched! }.not_to raise_error
+      end
     end
   end
 
