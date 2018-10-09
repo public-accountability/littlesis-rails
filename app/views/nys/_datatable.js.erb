@@ -1,0 +1,26 @@
+$(function(){
+  var endpoint = '/nys/datatable';
+
+  var columns = [
+    { "data": 'name', "title": 'Name'},
+    { "data": 'filer_id', "title": 'Filer ID' },
+    { "data": 'entity_match', "title": 'matched entity' },
+    { "data": 'match_buttons', "title": 'match buttons' }
+  ];
+
+
+  $('#entity-match-table').DataTable({
+    "processing": true,
+    "serverSide": true,
+    "ordering": false,
+    "ajax": endpoint,
+    "columns": columns
+  });
+
+
+  function renderMatchButton(data, type, row, meta) {
+    return '<button>Match this entity</button>';
+  }
+
+
+});

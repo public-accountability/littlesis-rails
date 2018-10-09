@@ -2,8 +2,55 @@
 
 ##
 # module for datatable server-side processing
-#
+# for entity matching tables
+
+# In order for this to work you have do define
+# #entity_match 
+
+# rubocop:disable Layout/IndentHeredoc
+
 module Datatable
+  module Javascript
+    COMMON = {
+      'processing' => true,
+      'serverSide' => true,
+      'ordering' => false
+    }.freeze
+
+    OPTION_MAKER = ->(url, columns) { COMMON.merge('ajax' => url, 'columns' => columns) }
+
+    MODEL_OPTIONS = {
+      :NyFiler => OPTION_MAKER.call('/nys/datatable',
+                                    [
+                                      { 'data' => 'name', 'title' => 'Name' },
+                                      { 'data' => 'filer_id', 'title' => 'Filer ID' },
+                                      { 'data' => 'entity_match', 'title' => 'matched entity' },
+                                      { 'data' => 'match_button', 'title' => 'match this entity' }
+                                    ])
+    }.freeze
+
+    # def self.columns_for(model)
+    #   case model
+    #   when :NyFiler
+    #     [
+    #       { 'data' => 'name', 'title' => 'Name' },
+    #       { 'data' => 'filer_id', 'title' => 'Filer ID' },
+    #       { 'data' => 'entity_match', 'title' => 'matched entity' }
+    #     ]
+    #   else
+    #     raise "NO MODEL FOUND"
+    #   end
+    #end
+
+    def self.[](model, id: 'entity-match-table')
+      <<~JS.html_safe
+        $(function() {
+          $('\##{id}')
+            .DataTable(#{JSON.dump(MODEL_OPTIONS.fetch(model))});
+        });
+      JS
+    end
+  end
 
   # Symbol, Hash -> Hash
   def self.json_for(model, params)
@@ -23,12 +70,20 @@ module Datatable
   class Request
     attr_reader :draw, :start, :length, :search, :columns
 
+    # When a request arrives, columns are assumed to be fields
+    # on the model unless they are in this set:
+    INTERACTIVE_COLUMNS = %w[entity_match match_buttons].to_set
+
     def initialize(params)
       %w[draw start length].each do |var|
         instance_variable_set "@#{var}", params.fetch(var).to_i
       end
 
-      @columns = params.fetch('columns').map { |c| c.fetch('data') }
+      @columns = params
+                   .fetch('columns')
+                   .map { |c| c.fetch('data') }
+                   .delete_if { |c| c.empty? || INTERACTIVE_COLUMNS.include?(c) }
+
       @search = params.dig('search', 'value').presence
 
       freeze
@@ -42,12 +97,14 @@ module Datatable
   #
   #   + Response.for(:NyFiler).new(request)
   #
-  # By default, it will use the default scope
+  # By default, it will use the regular scope
   # for the model, but if the model has defined
   # a class method `datatable` it will that scope.
   class Response
     class_attribute :model, instance_writer: false
     class_attribute :scope, instance_writer: false
+
+    RENDERER = ApplicationController.renderer
 
     attr_reader :json
     delegate :as_json, to: :json
@@ -87,11 +144,10 @@ module Datatable
     def records
       model
         .send(scope)
-        .order('id desc')
         .limit(@request.length)
         .offset(@request.start)
-        .select('id', *@request.columns)
         .map(&record_to_hash)
+      #  .select('id', *@request.columns)
     end
 
     def records_filtered_count
@@ -108,8 +164,29 @@ module Datatable
       @_model_count = model.send(scope).count
     end
 
+    def entity_match_format(entity)
+      # TypeCheck.check entity, Entity, allow_nil: true
+      return '' if entity.nil?
+
+      ApplicationController.helpers.link_to(entity.name, Routes.entity_url(entity))
+    end
+
     def record_to_hash
-      ->(r) { r.slice(*@request.columns) }
+      ->(r) do
+        r.slice(*@request.columns)
+          .merge('entity_match' => entity_match_format(r.entity_match))
+          .merge(components)
+      end
+    end
+
+    def components
+      { 'match_buttons' => render('buttons') }
+    end
+
+    def render(component)
+      RENDERER.render partial: "entity_match_table/#{component}"
     end
   end
 end
+
+# rubocop:enable Layout/IndentHeredoc
