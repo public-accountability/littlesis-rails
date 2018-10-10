@@ -138,7 +138,7 @@ class NysController < ApplicationController
 
   def new_ny_filer_entity_params
     entity = Entity.find(params.require(:entity_id))
-    ny_filer = NyFiler.find(params.require(:ny_filer_id))
+    ny_filer = NyFiler.find(params.require(:id))
     ny_filer.raise_if_matched!
 
     { entity_id: entity.id, ny_filer_id: ny_filer.id, filer_id: ny_filer.filer_id }

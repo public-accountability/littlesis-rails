@@ -90,12 +90,12 @@ describe 'NYS requests' do
     let(:ny_filer) { create(:ny_filer) }
 
     let(:entity_id) { entity.id }
-    let(:ny_filer_id) { ny_filer.id }
+    let(:id) { ny_filer.id }
 
     let(:request) do
       -> do
         post '/nys/ny_filer_entity',
-             params: { 'entity_id' => entity_id, 'ny_filer_id' => ny_filer_id }
+             params: { 'entity_id' => entity_id, 'id' => id }
       end
     end
 
@@ -114,7 +114,7 @@ describe 'NYS requests' do
       context 'with nonexistent ny filer id' do
         before { request.call }
 
-        let(:ny_filer_id) { 1_000_000 }
+        let(:id) { 1_000_000 }
 
         it { is_expected.to have_http_status(:not_found) }
       end
