@@ -5,7 +5,19 @@
   // Helper functions ------------------------------------------//
 
   var matchExistsAndIsDisplay = function(row, type) {
-    return row.entity_match && type === 'display';
+    return row.entity_matches && row.entity_matches.length > 0 && type === 'display';
+  };
+
+  var entityLink = function(entityData) {
+    return util.createLink(
+      util.entityLink(entityData[0].id, entityData[0].name, entityData[0].primary_ext),
+      entityData[0].name
+    ).outerHTML; 
+  };
+
+  // span w/ class "cycle-entity-match-arrow"
+  var rightArrow = function() {
+    return '<span class="glyphicon glyphicon-triangle-right cycle-entity-match-arrow" aria-hidden="true"></span>';
   };
 
   // ---------------------------------------------------------- //
@@ -14,26 +26,27 @@
    * Rendering functions (static functions)
    */
   var renders = {
-    
     "entityMatch": function(data, type, row, meta) {
+
       if (matchExistsAndIsDisplay(row, type)) {
-	return util.createLink(
-	  util.entityLink(row.entity_match.id, row.entity_match.name, row.entity_match.primary_ext),
-	  row.entity_match.name
-	).outerHTML;
-      } else {
-	return '';
+	var link = entityLink(data);
+	if (row.entity_matches.length > 1) {
+	  return link + rightArrow();
+	} else {
+	  return link;
+	}
       }
+
+      return '';
     },
 
     "matchButtons": function(data, type, row, meta) {
-      if (row.entity_match) {
+      if (matchExistsAndIsDisplay(row, type)) {
 	return util.createElement({
 	  "tag": 'button',
 	  "text": "Match this row",
 	  "class": 'match-button'
 	}).outerHTML;
-	
       } else {
 	return '';
       }
@@ -42,7 +55,7 @@
   };
 
   var matchedEntityColumns = [
-    { "data": null, "title": 'Matched Entity', "render": renders.entityMatch },
+    { "data": 'entity_matches', "title": 'Matched Entity', "render": renders.entityMatch },
     { "data": null, "title": 'Match this row', "render": renders.matchButtons }
   ];
 
@@ -68,17 +81,80 @@
 					  { "ajax": this.endpoint, "columns": this.columns });
   }
 
+  /**
+   * Returns a copy of the Datatable instance
+   * @returns {DataTable} 
+   */
+  EntityMatcher.prototype.table = function() {
+    return $(this.rootElement).DataTable();
+  };
+
+
+  /**
+   * Returns coordinates of encapsulating cell
+   * 
+   * @param {Element} element - any element inside of a <td> cell
+   * @returns {Object} coodinatgse
+   */
+  EntityMatcher.prototype.cellCoordinates = function(element) {
+    return {
+      "row": $(element).closest('tr').index(),
+      "column": $(element).closest('td').index()
+    };
+  };
   
+  /**
+   * Gets or set cell data
+   * @param {Element} element
+   * @param {Anything} newData
+   * @returns {} 
+   */
+  EntityMatcher.prototype.cellData = function(element, newData) {
+    return this.table()
+      .cell(this.cellCoordinates(element))
+      .data(newData);
+  };
+
+  
+  /**
+   * Submits ajax request to perform match on currently selected
+   * entity match
+   */
+  EntityMatcher.prototype.matchAjax = function() {
+
+  };
+
+
+  /**
+   * Cycles through entity matches
+   */
+  EntityMatcher.prototype.cycleEntityMatch = function(element) { 
+    var cellData = this.cellData(element).slice(); // get current entity matches
+    cellData.push(cellData.shift());  // cycle array
+    this.cellData(element, cellData); // update cell data with new cycled array
+  };
+  
+
+  /**
+   * 
+   */
+  EntityMatcher.prototype.cycleArrowHandler = function() {
+    var self = this;
+    
+    $(this.rootElement).on('click', 'tbody td span.cycle-entity-match-arrow', function() {
+      self.cycleEntityMatch(this);
+    });
+  };
+
+
   /**
    * Handles clicking on <button class="match-button">
    */
-  EntityMatcher.prototype.buttonHandler = function() {
-    $(this.rootElement).on('click', 'tbody td button.match-button', function() {
-      var cellData = $('#entity-match-table').DataTable().cell({
-	"row": $(this).closest('tr').index(),
-	"column": $(this).closest('td').index()
-      }).data();
-      console.log(cellData);
+  EntityMatcher.prototype.matchButtonHandler = function() {
+    var self = this;
+
+    $(this.rootElement).on('click', 'tbody td button.match-button ', function() {
+      console.log(self.cellData(this).entity_matches[0]);
     });
   };
 
@@ -88,7 +164,8 @@
    */
   EntityMatcher.prototype.init = function() {
     $(this.rootElement).DataTable(this.datatableOptions);
-    this.buttonHandler();
+    this.matchButtonHandler();
+    this.cycleArrowHandler();
   };
   
     

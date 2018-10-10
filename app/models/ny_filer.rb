@@ -8,6 +8,8 @@ class NyFiler < ApplicationRecord
 
   validates :filer_id, presence: true, uniqueness: true
 
+  ENTITY_MATCHES_COUNT = 10
+
   def is_matched?
     ny_filer_entity.present?
   end
@@ -22,10 +24,11 @@ class NyFiler < ApplicationRecord
     OFFICES[office]
   end
 
-  def entity_match
+  # --> [EntityMatcher::EvaluationResult::Base]
+  def entity_matches
     return @_entity_match if defined?(@_entity_match)
 
-    @_entity_match = EntityMatcher::NyFiler.match_for(self)
+    @_entity_match = EntityMatcher::NyFiler.matches(self).take(ENTITY_MATCHES_COUNT)
   end
 
   def match_to_person?

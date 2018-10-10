@@ -43,12 +43,7 @@ module EntityMatcher
     end
 
     # NyFiler ---> Entity | nil
-    def self.match_for(ny_filer)
-      match_results(ny_filer).first&.entity
-    end
-
-    # NyFiler ---> Array
-    private_class_method def self.match_results(ny_filer)
+    def self.matches(ny_filer)
       if ny_filer.match_to_person?
         EntityMatcher
           .find_matches_for_person(extract_name_from(ny_filer.name))

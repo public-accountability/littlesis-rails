@@ -30,7 +30,7 @@ module Datatable
 
     # When a request arrives, columns are assumed to be fields
     # on the model unless they are in this set:
-    INTERACTIVE_COLUMNS = %w[entity_match match_buttons].to_set
+    INTERACTIVE_COLUMNS = %w[entity_matches match_buttons].to_set
 
     def initialize(params)
       %w[draw start length].each do |var|
@@ -132,19 +132,18 @@ module Datatable
     def record_to_hash
       ->(r) do
         r.slice(*@request.columns)
-          .merge('entity_match' => r.entity_match&.slice('id', 'name', 'primary_ext'))
+          .merge('entity_matches' => entity_matches_for(r))
           #.merge(components(r))
       end
     end
 
-    def components(record)
-      { 'match_buttons' => render('buttons', locals: { record: record }) }
+    # ActiveRecord --> [{}]
+    def entity_matches_for(record)
+      record.entity_matches.map do |evaluation_result|
+        evaluation_result.entity.slice('id', 'name', 'primary_ext')
+      end
     end
-
-    def render(component, locals: {})
-      locals.store :model, @model_type
-      RENDERER.render partial: "entity_match_table/#{component}", locals: locals
-    end
+    
   end
 end
 
