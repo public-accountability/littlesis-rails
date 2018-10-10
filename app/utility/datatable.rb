@@ -132,8 +132,8 @@ module Datatable
     def record_to_hash
       ->(r) do
         r.slice(*@request.columns)
-          .merge('entity_match' => entity_match_format(r.entity_match))
-          .merge(components(r))
+          .merge('entity_match' => r.entity_match&.slice('id', 'name', 'primary_ext'))
+          #.merge(components(r))
       end
     end
 

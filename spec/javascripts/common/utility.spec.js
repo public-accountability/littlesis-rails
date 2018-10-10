@@ -356,6 +356,13 @@ describe('utility', function(){
 	  .appendChild(utility.createElement({ "id": 'foolsGold'}));
 	expect($('#foolsGold')).toExist();
       });
+
+      it('can be create element with text', () => {
+	document.getElementById('test-dom')
+	  .appendChild(utility.createElement({ "id": 'example', "tag": 'span', "text": 'example' }));
+
+	expect(document.getElementById('example').textContent).toEqual('example');
+      });
     });
   });
 });

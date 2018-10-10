@@ -3,7 +3,18 @@
 <table id="entity-match-table"></table>
 
 <script>
-  <%= render partial: 'datatable.js' %>
+ var columns = [
+    { "data": 'name', "title": 'Name'},
+    { "data": 'filer_id', "title": 'Filer ID' }
+  ];
+
+  var dt = new EntityMatcher({
+    "rootElement": '#entity-match-table',
+    "columns": columns,
+    "endpoint": '/nys/datatable'
+  });
+
+  dt.init();
 </script>
 
 

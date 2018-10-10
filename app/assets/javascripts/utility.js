@@ -505,13 +505,14 @@ utility.createElementWithText = function(tagName, text) {
  *   - tag (defaults to div)
  *   - id
  *   - class
+ *   - text (textContent)
  *
  * @param {} options
  * @returns {Element}
  *
  */
 utility.createElement = function(options) {
-  var elementConfig = { "tag": 'div', "class": null, "id": null};
+  var elementConfig = { "tag": 'div', "class": null, "id": null, "text": null};
 
   if (utility.isObject(options)) {
      Object.assign(elementConfig, options);
@@ -525,6 +526,10 @@ utility.createElement = function(options) {
   
   if (elementConfig['id']) {
     element.setAttribute('id', elementConfig['id']);
+  }
+
+  if (elementConfig['text']) {
+    element.textContent = elementConfig['text'];
   }
 
   return element;
