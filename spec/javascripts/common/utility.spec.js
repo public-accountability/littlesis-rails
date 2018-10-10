@@ -324,7 +324,18 @@ describe('utility', function(){
 	document.getElementById('test-dom')
 	  .appendChild( utility.createLink('https://example.com/'));
 
-	expect( $('#test-dom > a')[0]['href']).toEqual('https://example.com/');
+	var link = $('#test-dom > a')[0];
+	expect( link['href']).toEqual('https://example.com/');
+	expect( link.text).toEqual('');
+      });
+
+      it('can creates a new link with text', () => {
+	document.getElementById('test-dom')
+	  .appendChild( utility.createLink('https://example.com/', 'a website'));
+
+	var link = $('#test-dom > a')[0];
+	expect( link['href']).toEqual('https://example.com/');
+	expect( link.text).toEqual('a website');
       });
     });
 

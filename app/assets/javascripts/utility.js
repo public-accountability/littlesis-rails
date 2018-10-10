@@ -8,7 +8,7 @@ var utility = {};
  * @returns {String} 
  */
 utility.entityLink = function(id, name, ext) {
-  var url = '//littlesis.org/';
+  var url = 'https://littlesis.org/';
   if (ext.toLowerCase() === 'person') {
     url += 'person/';
   } else {
@@ -532,13 +532,17 @@ utility.createElement = function(options) {
 
 
 /**
- * Creates an <a> with the provided href
+ * Creates an <a> with the provided href and text
  *
  * @param {String} href
+ * @param {String} text
  * @returns {Element}
  */
-utility.createLink = function(href) {
+utility.createLink = function(href, text) {
   var a = document.createElement('a');
   a.href = href;
+  if (text) {
+    a.textContent = text;
+  }
   return a;
 };
