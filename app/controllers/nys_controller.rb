@@ -2,21 +2,19 @@
 
 class NysController < ApplicationController
   before_action :authenticate_user!
-  before_action -> { check_permission 'importer' }, only: [
-    :create, :create_ny_filer_entity, :match_donations, :unmatch_donations, :potential_contributions, :contributions
-  ]
 
-  def index
-  end
+  IMPORTER_ACTIONS = %i[create create_ny_filer_entity match_donations
+                        unmatch_donations potential_contributions contributions].freeze
 
-  def candidates
-  end
+  before_action -> { check_permission 'importer' }, only: IMPORTER_ACTIONS
 
-  def pacs
-  end
+  def index; end
 
-  def match
-  end
+  def candidates; end
+
+  def pacs; end
+
+  def match; end
 
   def datatable
     render json: Datatable.json_for(:NyFiler, datatable_params)
@@ -142,7 +140,7 @@ class NysController < ApplicationController
 
   # In theory we should be sending requests from our client
   # that don't require doing "manual" conversion of hash into arrays
-  # see: https://stackoverflow.com/questions/6410810/rails-not-decoding-json-from-jquery-correctly-array-becoming-a-hash-with-intege)
+  # see: https://stackoverflow.com/questions/6410810/rails-not-decoding-json-from-jquery-correctly-array-becoming-a-hash-with-intege
   # However, this doesn't seem to work without going DEEP into
   # the datatable source code, so let's just deal with it.
   def datatable_params

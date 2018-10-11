@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
+
 class NyFiler < ApplicationRecord
   has_one :ny_filer_entity, dependent: :destroy
   has_one :unmatched_ny_filer, dependent: :destroy
@@ -42,7 +44,7 @@ class NyFiler < ApplicationRecord
   def self.datatable
     joins(:unmatched_ny_filer)
       .order('unmatched_ny_filers.disclosure_count desc')
-    end
+  end
 
   def self.unmatched
     left_outer_joins(:ny_filer_entity)
@@ -144,3 +146,5 @@ class NyFiler < ApplicationRecord
 
   class AlreadyMatchedError < StandardError; end
 end
+
+# rubocop:enable Metrics/ClassLength
