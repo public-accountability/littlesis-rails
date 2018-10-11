@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-# rubocop:disable RSpec/NestedGroups, RSpec/ImplicitSubject
+# rubocop:disable RSpec/NestedGroups, RSpec/ImplicitSubject, Rspec/NamedSubject
 
 describe Datatable do
   describe Datatable::Request do
@@ -77,17 +77,12 @@ describe Datatable do
         allow(EntityMatcher::NyFiler).to receive(:matches).and_return([])
       end
 
-      it do
-        is_expected
-          .to eq('draw' => 1,
-                 'recordsTotal' => 2,
-                 'recordsFiltered' => 2,
-                 'data' => data)
-
+      specify do
+        expect(subject.except('data')).to eq('draw' => 1, 'recordsTotal' => 2, 'recordsFiltered' => 2)
+        expect(subject['data'].to_set).to eq data.to_set
       end
     end
   end
 end
 
-# rubocop:enable RSpec/NestedGroups, RSpec/ImplicitSubject
-
+# rubocop:enable RSpec/NestedGroups, RSpec/ImplicitSubject, Rspec/NamedSubject
