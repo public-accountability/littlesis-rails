@@ -1,23 +1,55 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
+
 class NyFiler < ApplicationRecord
   has_one :ny_filer_entity, dependent: :destroy
+  has_one :unmatched_ny_filer, dependent: :destroy
   has_many :entities, :through => :ny_filer_entity
   has_many :ny_disclosures, foreign_key: 'filer_id', inverse_of: :ny_filer, dependent: :nullify
 
   validates :filer_id, presence: true, uniqueness: true
 
+  ENTITY_MATCHES_COUNT = 10
+
   def is_matched?
     ny_filer_entity.present?
+  end
+
+  alias matched? is_matched?
+
+  def raise_if_matched!
+    raise AlreadyMatchedError if matched?
   end
 
   def office_description
     OFFICES[office]
   end
 
+  # --> [EntityMatcher::EvaluationResult::Base]
+  def entity_matches
+    return @_entity_match if defined?(@_entity_match)
+
+    @_entity_match = EntityMatcher::NyFiler.matches(self).take(ENTITY_MATCHES_COUNT)
+  end
+
+  def match_to_person?
+    committee_type == '1'
+  end
+
   #---------------#
   # Class methods #
   #---------------#
+
+  def self.datatable
+    joins(:unmatched_ny_filer)
+      .order('unmatched_ny_filers.disclosure_count desc')
+  end
+
+  def self.unmatched
+    left_outer_joins(:ny_filer_entity)
+      .where('ny_filer_entities.id is NULL')
+  end
 
   def self.search_filers(name)
     search_by_name_and_committee_type(name, ['1', ''])
@@ -111,4 +143,8 @@ class NyFiler < ApplicationRecord
     81 => 'City Treasurer',
     82 => 'Town Supervisor'
   }.freeze
+
+  class AlreadyMatchedError < StandardError; end
 end
+
+# rubocop:enable Metrics/ClassLength

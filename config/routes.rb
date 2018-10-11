@@ -316,8 +316,11 @@ Lilsis::Application.routes.draw do
     get "/pacs" => "nys#pacs"
     get "/:type/new" => "nys#new_filer_entity", constraints: { type: /pacs|candidates/ }
     post "/:type/new" => "nys#create", constraints: { type: /pacs|candidates/ }
+    post "/ny_filer_entity" => "nys#create_ny_filer_entity"
     get "/potential_contributions" => "nys#potential_contributions"
     get "/contributions" => "nys#contributions"
+    get 'match' => 'nys#match'
+    get '/datatable' => 'nys#datatable'
   end
 
   #########

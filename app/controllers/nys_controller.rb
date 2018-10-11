@@ -2,26 +2,47 @@
 
 class NysController < ApplicationController
   before_action :authenticate_user!
-  before_action -> { check_permission 'importer' }, only: [
-    :create, :match_donations, :unmatch_donations, :potential_contributions, :contributions
-  ]
 
-  def index
+  IMPORTER_ACTIONS = %i[create create_ny_filer_entity match_donations
+                        unmatch_donations potential_contributions contributions].freeze
+
+  before_action -> { check_permission 'importer' }, only: IMPORTER_ACTIONS
+
+  def index; end
+
+  def candidates; end
+
+  def pacs; end
+
+  def match; end
+
+  def datatable
+    render json: Datatable.json_for(:NyFiler, datatable_params)
   end
 
-  def candidates
-  end
-
-  def pacs
-  end
-
+  # POST /nys/pacs/new
+  # POST /nys/candidates/new
+  # Creates one or more NyFilerEntity
   def create
-    ny_filer_ids.each do |id|
+    params.require(:ids).each do |id|
       filer_id = NyFiler.find(id).filer_id
       NyFilerEntity.create!(entity_id: entity_id, ny_filer_id: id, filer_id: filer_id)
     end
     Entity.find(entity_id).update(last_user_id: current_user.sf_guard_user.id)
     redirect_to :action => 'new_filer_entity', :entity => entity_id
+  end
+
+  # POST /nys/ny_filer_entity
+  # similar to +create+, but only creates a singular entity and returns json
+  # intended to be used with the Entity Match Table
+  def create_ny_filer_entity
+    NyFilerEntity.create!(new_ny_filer_entity_params)
+    head :created
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.warn e
+    head :not_found
+  rescue NyFiler::AlreadyMatchedError
+    head :bad_request
   end
 
   def new_filer_entity
@@ -97,10 +118,6 @@ class NysController < ApplicationController
     end
   end
 
-  def ny_filer_ids
-    params.require(:ids)
-  end
-
   def entity_id
     params.require(:entity)
   end
@@ -111,5 +128,27 @@ class NysController < ApplicationController
 
   def unmatch_params
     params.require(:payload).permit(:ny_match_ids => [])
+  end
+
+  def new_ny_filer_entity_params
+    entity = Entity.find(params.require(:entity_id))
+    ny_filer = NyFiler.find(params.require(:id))
+    ny_filer.raise_if_matched!
+
+    { entity_id: entity.id, ny_filer_id: ny_filer.id, filer_id: ny_filer.filer_id }
+  end
+
+  # In theory we should be sending requests from our client
+  # that don't require doing "manual" conversion of hash into arrays
+  # see: https://stackoverflow.com/questions/6410810/rails-not-decoding-json-from-jquery-correctly-array-becoming-a-hash-with-intege
+  # However, this doesn't seem to work without going DEEP into
+  # the datatable source code, so let's just deal with it.
+  def datatable_params
+    h = params.to_unsafe_h
+    # If this problem gets fixed client-side and/or while testing
+    return h if h['columns'].is_a?(Array)
+
+    h['columns'] = h['columns'].sort.map(&:second)
+    h
   end
 end

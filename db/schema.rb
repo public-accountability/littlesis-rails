@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_04_145133) do
+ActiveRecord::Schema.define(version: 2018_10_08_145444) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1438,6 +1438,13 @@ ActiveRecord::Schema.define(version: 2018_09_04_145133) do
     t.index ["contact1_id"], name: "contact1_id_idx"
     t.index ["contact2_id"], name: "contact2_id_idx"
     t.index ["relationship_id"], name: "relationship_id_idx"
+  end
+
+  create_table "unmatched_ny_filers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "ny_filer_id", null: false
+    t.integer "disclosure_count", null: false
+    t.index ["disclosure_count"], name: "index_unmatched_ny_filers_on_disclosure_count"
+    t.index ["ny_filer_id"], name: "index_unmatched_ny_filers_on_ny_filer_id", unique: true
   end
 
   create_table "user_permissions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|

@@ -8,7 +8,7 @@ var utility = {};
  * @returns {String} 
  */
 utility.entityLink = function(id, name, ext) {
-  var url = '//littlesis.org/';
+  var url = 'https://littlesis.org/';
   if (ext.toLowerCase() === 'person') {
     url += 'person/';
   } else {
@@ -505,13 +505,14 @@ utility.createElementWithText = function(tagName, text) {
  *   - tag (defaults to div)
  *   - id
  *   - class
+ *   - text (textContent)
  *
  * @param {} options
  * @returns {Element}
  *
  */
 utility.createElement = function(options) {
-  var elementConfig = { "tag": 'div', "class": null, "id": null};
+  var elementConfig = { "tag": 'div', "class": null, "id": null, "text": null};
 
   if (utility.isObject(options)) {
      Object.assign(elementConfig, options);
@@ -527,18 +528,26 @@ utility.createElement = function(options) {
     element.setAttribute('id', elementConfig['id']);
   }
 
+  if (elementConfig['text']) {
+    element.textContent = elementConfig['text'];
+  }
+
   return element;
 };
 
 
 /**
- * Creates an <a> with the provided href
+ * Creates an <a> with the provided href and text
  *
  * @param {String} href
+ * @param {String} text
  * @returns {Element}
  */
-utility.createLink = function(href) {
+utility.createLink = function(href, text) {
   var a = document.createElement('a');
   a.href = href;
+  if (text) {
+    a.textContent = text;
+  }
   return a;
 };

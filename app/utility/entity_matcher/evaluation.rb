@@ -86,6 +86,8 @@ module EntityMatcher
       end
 
       def similar_first_name
+        return nil if @test_case.fetch('name_first').blank?
+
         NameSimilarity
           .similar?(@test_case.fetch('name_first'), @match.fetch('name_first'), first_name: true)
       end

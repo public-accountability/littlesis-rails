@@ -1,4 +1,13 @@
+# frozen_string_literal: true
+
 module RspecExampleHelpers
+  def with_delayed_job
+    Delayed::Worker.delay_jobs = false
+    yield
+  ensure
+    Delayed::Worker.delay_jobs = true
+  end
+
   def random_username
     Faker::Internet.unique.user_name(5).tr('.', '_')
   end
@@ -115,6 +124,12 @@ module RspecGroupHelpers
   def assert_attribute(attr, expected)
     it "attribute \"#{attr}\" is equal to #{expected}" do
       expect(subject.send(attr)).to eql expected
+    end
+  end
+
+  def assert_instance_var(instance_var, expected)
+    it "instance variable \"@#{instance_var}\" is equal to #{expected}" do
+      expect(subject.instance_variable_get("@#{instance_var}")).to eql expected
     end
   end
 

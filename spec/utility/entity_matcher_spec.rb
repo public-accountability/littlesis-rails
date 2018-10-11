@@ -188,6 +188,14 @@ describe EntityMatcher, :sphinx do
           .to eql NameParser.new(name).to_indifferent_hash
       end
 
+      it 'if passed a name with only one word, it is assumed to be the last name' do
+        expect(subject.new('smith').name)
+          .to eql ActiveSupport::HashWithIndifferentAccess
+                          .new(name_prefix: nil, name_first: nil,
+                               name_middle: nil, name_last: 'Smith',
+                               name_suffix: nil, name_nick: nil)
+      end
+
       it 'sets name when provided hash' do
         expect(subject.new('name_last' => 'Last', 'name_first' => 'First').name)
           .to eql ActiveSupport::HashWithIndifferentAccess
@@ -285,6 +293,10 @@ describe EntityMatcher, :sphinx do
           EntityMatcher::TestCase::Person.new "#{first_name} #{Faker::Name.unique.last_name}"
         end
 
+        let(:test_case_without_last_name) do
+          EntityMatcher::TestCase::Person.new 'Cat'
+        end
+        
         let(:match) do
           generate_test_case name_first: first_name, name_last: Faker::Name.unique.last_name
         end
@@ -292,7 +304,12 @@ describe EntityMatcher, :sphinx do
         specify do
           expect(subject.new(test_case, match).result.same_first_name).to eql true
           expect(subject.new(test_case, match).result.same_last_name).to eql false
-           expect(subject.new(test_case, match).result.mismatched_middle_name).to eql false
+          expect(subject.new(test_case, match).result.mismatched_middle_name).to eql false
+        end
+
+        it 'is nil when test case is missing a first name' do
+          expect(subject.new(test_case_without_last_name, match).result.same_first_name)
+            .to be nil
         end
       end
 
