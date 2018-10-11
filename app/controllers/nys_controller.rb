@@ -26,7 +26,7 @@ class NysController < ApplicationController
   # POST /nys/candidates/new
   # Creates one or more NyFilerEntity
   def create
-    ny_filer_ids.each do |id|
+    params.require(:ids).each do |id|
       filer_id = NyFiler.find(id).filer_id
       NyFilerEntity.create!(entity_id: entity_id, ny_filer_id: id, filer_id: filer_id)
     end
@@ -120,10 +120,6 @@ class NysController < ApplicationController
     end
   end
 
-  def ny_filer_ids
-    params.require(:ids)
-  end
-
   def entity_id
     params.require(:entity)
   end
@@ -145,7 +141,7 @@ class NysController < ApplicationController
   end
 
   # In theory we should be sending requests from our client
-  # that don't require doing "manual" converstion of hash into arrays
+  # that don't require doing "manual" conversion of hash into arrays
   # see: https://stackoverflow.com/questions/6410810/rails-not-decoding-json-from-jquery-correctly-array-becoming-a-hash-with-intege)
   # However, this doesn't seem to work without going DEEP into
   # the datatable source code, so let's just deal with it.
