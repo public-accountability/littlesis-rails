@@ -55,7 +55,7 @@ describe Datatable do
     describe 'handling request for NyFiler' do
       subject { Datatable::Response.for(:NyFiler).new(request).json }
 
-      let!(:ny_filers) { Array.new(2) { create(:ny_filer) } }
+      let(:ny_filers) { Array.new(2) { create(:ny_filer) } }
 
       let(:request) do
         Datatable::Request.new({ 'draw' => '1',
@@ -65,7 +65,16 @@ describe Datatable do
       end
 
       let(:data) do
-        ny_filers.sort_by(&:id).reverse!.map { |filer| filer.attributes.slice('filer_id', 'name') }
+        ny_filers
+          .sort_by(&:id)
+          .reverse!
+          .map { |filer| filer.attributes.slice('filer_id', 'name').merge('entity_matches' => []) }
+      end
+
+      before do
+        ny_filers
+        UnmatchedNyFiler.recreate!
+        allow(EntityMatcher::NyFiler).to receive(:matches).and_return([])
       end
 
       it do

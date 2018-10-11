@@ -6,14 +6,13 @@ describe UnmatchedNyFiler do
 
   describe 'recreate!' do
     describe 'truncate' do
-      before do
-        UnmatchedNyFiler.create!(ny_filer_id: rand(100), disclosure_count: rand(100))
-      end
-
       specify do
-        expect(UnmatchedNyFiler.count).to eq 1
+        expect(UnmatchedNyFiler.count).to eq 0
         UnmatchedNyFiler.recreate!
         expect(UnmatchedNyFiler.count).to eq 0
+        2.times { create(:ny_filer) }
+        UnmatchedNyFiler.recreate!
+        expect(UnmatchedNyFiler.count).to eq 2
       end
     end
 
