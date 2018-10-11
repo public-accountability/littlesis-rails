@@ -4,10 +4,8 @@
 # module for datatable server-side processing
 # for entity matching tables
 
-# In order for this to work you have do define
-# #entity_match 
-
-# rubocop:disable Layout/IndentHeredoc
+# In order for this to work you have do define a
+# function `entity_matches` on the model
 
 module Datatable
   # Symbol, Hash -> Hash
@@ -62,8 +60,6 @@ module Datatable
     class_attribute :model, instance_writer: false
     class_attribute :scope, instance_writer: false
 
-    RENDERER = ApplicationController.renderer
-
     attr_reader :json
     delegate :as_json, to: :json
 
@@ -105,7 +101,6 @@ module Datatable
         .limit(@request.length)
         .offset(@request.start)
         .map(&record_to_hash)
-      #  .select('id', *@request.columns)
     end
 
     def records_filtered_count
@@ -123,7 +118,6 @@ module Datatable
     end
 
     def entity_match_format(entity)
-      # TypeCheck.check entity, Entity, allow_nil: true
       return '' if entity.nil?
 
       ApplicationController.helpers.link_to(entity.name, Routes.entity_url(entity))
@@ -133,7 +127,6 @@ module Datatable
       ->(r) do
         r.slice(*@request.columns)
           .merge('entity_matches' => entity_matches_for(r))
-          #.merge(components(r))
       end
     end
 
@@ -143,8 +136,5 @@ module Datatable
         evaluation_result.entity.slice('id', 'name', 'primary_ext')
       end
     end
-    
   end
 end
-
-# rubocop:enable Layout/IndentHeredoc
