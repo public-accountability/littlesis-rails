@@ -139,8 +139,10 @@ class EntityMerger
   end
 
   def merge_external_links
-    @external_links = source.external_links.to_a.map do |el|
-      el.tap { |el| el.entity = @dest }
+    source.external_links.to_a.map do |external_link|
+      unless @dest.external_links.map(&:link_type).include?(external_link.link_type)
+        @external_links << external_link.tap { |el| el.entity = @dest }
+      end
     end
   end
 
@@ -360,6 +362,7 @@ class EntityMerger
     @potential_duplicate_relationships = []
     @os_match_relationships = []
     @ny_match_relationships = []
+    @external_links = []
   end
 
   def check_input_validity
