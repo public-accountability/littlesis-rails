@@ -2,6 +2,7 @@
 
 require Rails.root.join('lib', 'utility.rb').to_s
 require Rails.root.join('lib', 'cmp.rb').to_s
+require 'csv'
 
 namespace :cmp do
   namespace :orgs do
@@ -196,6 +197,32 @@ namespace :cmp do
 
       Utility.save_hash_array_to_csv file_path, write_queue, mode: 'ab' unless write_queue.empty?
       puts "Saved people to: #{file_path}"
+    end
+
+    desc' import manual matches'
+    task import_matched: :environment do
+      csv_file = Rails.root.join('cmp_entities_matched.csv').to_s
+
+      error_file = Rails.root.join('matched_errors.csv').to_s
+
+      CSV.foreach(csv_file, headers: true).each do |row|
+        cmpid = row['cmpid'].to_s
+        begin 
+          if CmpEntity.exists?(cmp_id: cmpid)
+            ColorPrinter.print_brown "cmp entity already imported: #{cmpid}"
+          elsif ['Y', 'YES'].include? row['match']&.upcase
+            ColorPrinter.print_blue "#{cmpid} is matched with #{row['entity_id']}"
+            raise 'Entity is Blank' if row['entity_id'].blank?
+            Cmp::Datasets.people.fetch(cmpid).import!(row['entity_id'])
+          else
+            ColorPrinter.print_green "Creating a new entity for #{cmpid}"
+            Cmp::Datasets.people.fetch(cmpid).import!(:new)
+          end
+        rescue => e
+          ColorPrinter.print_red "failed_to_import #{cmpid}"
+          File.open(error_file, 'a') { |f| f.write(row.to_s) }
+        end
+      end
     end
   end
 
