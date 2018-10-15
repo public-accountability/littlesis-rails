@@ -31,4 +31,26 @@ describe ExternalLink, type: :model do
       expect(el.link_id).to eql 'Ruby_(programming_language)'
     end
   end
+
+  describe 'twitter links' do
+    context 'with twitter url' do
+      let(:url) { 'https://twitter.com/walmArt' }
+      
+      specify do 
+        el = build(:twitter_external_link, link_id: url)
+        el.validate
+        expect(el.link_id).to eql 'walmArt'
+      end
+    end
+
+    context 'with twitter username' do
+      let(:username) { '@walmArt' }
+
+      specify do
+        el = build(:twitter_external_link, link_id: username)
+        el.validate
+        expect(el.link_id).to eql 'walmArt'
+      end
+    end
+  end
 end

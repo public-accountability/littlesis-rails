@@ -9,13 +9,15 @@ class ExternalLink < ApplicationRecord
 
   # 1 -> sec
   # 2 -> wikipedia
-  enum link_type: %i[reserved sec wikipedia]
+  # 3 -> twitter
+  enum link_type: %i[reserved sec wikipedia twitter]
   LINK_TYPE_IDS = link_types.to_a.map(&:reverse).to_h.freeze
 
   LINK_PLACEHOLDER = '{}'
-  EDITABLE_TYPES = %w[wikipedia].freeze
+  EDITABLE_TYPES = %w[wikipedia twitter].freeze
 
   WIKIPEDIA_REGEX = Regexp.new 'https?:\/\/en.wikipedia.org\/wiki\/?(.+)', Regexp::IGNORECASE
+  TWITTER_REGEX = Regexp.new 'https?:\/\/twitter.com\/?(.+)', Regexp::IGNORECASE
 
   validates :link_type, presence: true
   validates :entity_id, presence: true
@@ -37,6 +39,8 @@ class ExternalLink < ApplicationRecord
       'Sec - Edgar'
     when 'wikipedia'
       'Wikipedia'
+    when 'twitter'
+      "Twitter @#{link_id}"
     when 'reserved'
       raise TypeError, 'Do not create ExternalLinks of type "reserved"'
     end
@@ -52,10 +56,16 @@ class ExternalLink < ApplicationRecord
 
   private
 
-  # handles input of wikipedia links
+  # handles input of wikipedia & twitter links
   def parse_id_input
     if wikipedia? && WIKIPEDIA_REGEX.match?(link_id)
       self.link_id = WIKIPEDIA_REGEX.match(link_id)[1]
+    elsif twitter?
+      if TWITTER_REGEX.match?(link_id)
+        self.link_id = TWITTER_REGEX.match(link_id)[1]
+      elsif link_id.strip[0] == '@'
+        self.link_id = link_id.strip[1..-1]
+      end
     end
   end
 
@@ -65,6 +75,8 @@ class ExternalLink < ApplicationRecord
       'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={}&output=xml'
     when 'wikipedia'
       'https://en.wikipedia.org/wiki/{}'
+    when 'twitter'
+      'https://twitter.com/{}'
     when 'reserved'
       raise TypeError, 'Do not create ExternalLinks of type "reserved"'
     end
