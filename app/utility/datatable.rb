@@ -59,14 +59,20 @@ module Datatable
   class Response
     class_attribute :model, instance_writer: false
     class_attribute :scope, instance_writer: false
+    class_attribute :with_conditions, instance_writer: false
 
     attr_reader :json
     delegate :as_json, to: :json
+
+    WITH_CONDITIONS = {
+      :NyFiler => { is_matched: false }
+    }.freeze
 
     def self.for(klass)
       Class.new(self) do
         self.model = klass.to_s.constantize
         self.scope = model.respond_to?(:datatable) ? :datatable : :itself
+        self.with_conditions = WITH_CONDITIONS.fetch(klass, {})
       end
     end
 
@@ -90,7 +96,7 @@ module Datatable
     def search_records
       page = (@request.start / @request.length) + 1
       search_term = ThinkingSphinx::Query.escape(@request.search)
-      search_result = model.search(search_term, page: page, per_page: @request.length)
+      search_result = model.search(search_term, page: page, per_page: @request.length, with: with_conditions)
       @search_filtered_count = search_result.total_entries
       search_result.map(&record_to_hash)
     end
