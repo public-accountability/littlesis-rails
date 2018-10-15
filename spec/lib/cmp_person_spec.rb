@@ -38,6 +38,8 @@ describe Cmp::CmpPerson do
   end
 
   describe 'import!' do
+    let(:oil_executive) { create(:entity_person, name: 'Oil Executive') } 
+    
     context 'Entity is not already in the database' do
       before do
         allow(subject).to receive(:preselected_match).and_return(nil)
@@ -77,11 +79,9 @@ describe Cmp::CmpPerson do
       end
     end
 
-    context 'entity exists already' do
+    context 'cmp entity exists already' do
       before do
-        create(:entity_person, name: 'Oil Executive').tap do |e|
-          CmpEntity.create!(entity: e, cmp_id: attributes[:cmpid], entity_type: :person)
-        end
+        CmpEntity.create!(entity: oil_executive, cmp_id: attributes[:cmpid], entity_type: :person)
       end
 
       it 'does not create a new entity' do
@@ -102,6 +102,30 @@ describe Cmp::CmpPerson do
         entity = Entity.last
         expect(entity.start_date).to eql '1960-00-00'
         expect(entity.person.name_prefix).to eql 'Mr.'
+      end
+    end
+
+    context 'preseleted matched given' do
+      before { oil_executive }
+      
+      it 'does not create a entity entity' do
+        expect { subject.import!(oil_executive.id.to_s) }.not_to change { Entity.count }
+      end
+
+      it 'creates a new cmp entity' do
+        expect { subject.import!(oil_executive.id.to_s) }.to change { CmpEntity.count }.by(1)
+      end
+    end
+
+    context 'preseleted = new' do
+      before { oil_executive }
+      
+      it 'creates a entity entity' do
+        expect { subject.import!(:new) }.to change { Entity.count }
+      end
+
+      it 'creates a new cmp entity' do
+        expect { subject.import!(:new) }.to change { CmpEntity.count }.by(1)
       end
     end
   end

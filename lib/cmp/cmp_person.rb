@@ -19,11 +19,20 @@ module Cmp
       @attributes[:gender_id] = Person.gender_to_id(fetch('gender'))
     end
 
-    def import!
+    def import!(preselected = nil)
       Rails.logger.info "Importing: #{cmpid}"
 
       Cmp.transaction do
-        entity = find_or_create_entity
+        if preselected.nil?
+          entity = find_or_create_entity
+        elsif preselected == :new
+          entity = create_new_entity!
+        elsif /^\d+$/.match?(preselected)
+          entity = Entity.find(preselected)
+        else
+          raise "Invalid preselected input: #{preselected}"
+        end
+
         CmpEntity.find_or_create_by!(entity: entity, cmp_id: cmpid, entity_type: :person)
 
         entity.add_tag(Cmp::CMP_TAG_ID, Cmp::CMP_SF_USER_ID)
