@@ -880,17 +880,46 @@ describe 'Merging Entities', :merging_helper do
     end
   end # end nys donations
 
-  context 'external links' do
+  describe 'external links' do
     subject { EntityMerger.new(source: source_org, dest: dest_org) }
 
-    before do
-      @external_link = ExternalLink.create!(link_type: 'sec', link_id: rand(10000).to_s, entity: source_org)
+    context 'source has an external link' do 
+      before do
+        @external_link = ExternalLink.create!(link_type: 'sec', link_id: rand(10000).to_s, entity: source_org)
+      end
+
+      it 'transfers external links from source to dest' do
+        expect { subject.merge! }
+          .to change { @external_link.reload.entity_id }
+                .from(source_org.id).to(dest_org.id)
+
+      end
     end
 
-    it 'transfers external links from source to dest' do
-      expect { subject.merge! }
-        .to change { @external_link.reload.entity_id }
-              .from(source_org.id).to(dest_org.id)
+    context 'source and dest have an external link of different types' do
+      before do
+        @source_external_link = ExternalLink.create!(link_type: 'sec', link_id: rand(10000).to_s, entity: source_org)
+        @dest_external_link = ExternalLink.create!(link_type: 'wikipedia', link_id: 'wiki_page', entity: dest_org)
+      end
+
+      it 'transfers external links from source to dest' do
+        expect { subject.merge! }.to change { @source_external_link.reload.entity_id }.from(source_org.id).to(dest_org.id)
+      end
+
+      it 'dest has two links' do
+        expect { subject.merge! }.to change { dest_org.reload.external_links.count }.from(1).to(2)
+      end
+    end
+
+    context 'source and dest have an external link of the same types' do
+      before do
+        @source_external_link = ExternalLink.create!(link_type: 'wikipedia', link_id: 'wiki_page', entity: source_org)
+        @dest_external_link = ExternalLink.create!(link_type: 'wikipedia', link_id: 'other_wiki_page', entity: dest_org)
+      end
+
+      it 'does not transfer external links from source to dest' do
+        expect { subject.merge! }.not_to change { @source_external_link.reload.entity_id }
+      end
 
     end
   end
