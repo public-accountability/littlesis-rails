@@ -5,9 +5,9 @@
     </div>
 </div>
 
-<div id="edit-external-links-container">
+<div id="edit-external-links-container" class="w-100">
   <% ExternalLink.find_or_initalize_links_for(@entity).each do |el| %>
-    <div class="row">
+    <div class="row mb-2">
       <div class="col-8 col-sm-7 col-md-6">
       <%= form_for el, html: { class: '', id: "#{el.link_type}_external_link_form" } do |f| %>
 	<% unless el.persisted?  %>
@@ -23,8 +23,8 @@
 	    <%= f.submit "Submit", class: %w[btn btn-primary] %>
 	  </div>
 	</div>
-      <% end %>
-  <% end %>
+      <% end # end form_for%>
       </div>
     </div>
+  <% end %>
 </div>

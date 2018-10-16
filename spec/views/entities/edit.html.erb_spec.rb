@@ -30,8 +30,8 @@ describe 'entities/edit.html.erb', type: :view do
       expect(view).to render_template(partial: '_edit_references_panel', count: 1)
     end
 
-    it 'has 3 forms' do
-      css 'form', count: 3
+    it 'has 4 forms' do
+      css 'form', count: 4
     end
 
     it 'does not render person_name_form_components' do

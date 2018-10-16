@@ -102,18 +102,32 @@ describe 'edit enity page', type: :feature do
     context 'external links' do
       let(:user) { create_basic_user }
       let(:wikipedia_name) { 'example_page' }
-      feature 'add an external link to wikipedia' do
+      let(:twitter_username) { Faker::Internet.unique.username }
+
+      feature 'adding external links' do
         before { @external_link_count = ExternalLink.count }
 
-        scenario 'submiting a new wikipedia link' do
+        scenario 'submiting a new wikipedia link and new twitter' do
           within('#wikipedia_external_link_form') do
             fill_in 'external_link[link_id]', with: wikipedia_name
             click_button 'Submit'
           end
+
           expect(ExternalLink.count).to eql(@external_link_count + 1)
           expect(ExternalLink.last.link_id).to eql wikipedia_name
           expect(ExternalLink.last.entity_id).to eql entity.id
-          expect(page.current_path).to eql edit_entity_path(entity)
+          expect(page).to have_current_path edit_entity_path(entity)
+
+          within('#twitter_external_link_form') do
+            fill_in 'external_link[link_id]', with: twitter_username
+            click_button 'Submit'
+          end
+
+          expect(ExternalLink.count).to eql(@external_link_count + 2)
+          expect(Entity.find(entity.id).external_links.count).to eq 2
+          expect(ExternalLink.last.link_id).to eql twitter_username
+          expect(page).to have_current_path edit_entity_path(entity)
+          
         end
       end
 

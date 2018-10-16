@@ -16,4 +16,10 @@ FactoryBot.define do
     entity_id { rand(1000) }
     link_id { Faker::Cat.breed.tr(' ', '_') }
   end
+
+  factory :twitter_external_link, class: ExternalLink do
+    link_type { 3 }
+    entity_id { rand(1000) }
+    link_id { Faker::Internet.unique.username }
+  end
 end
