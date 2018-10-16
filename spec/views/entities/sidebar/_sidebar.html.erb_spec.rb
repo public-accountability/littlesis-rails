@@ -76,14 +76,6 @@ describe "partial: sidebar", :tag_helper do
         css 'span.sidebar-title-text', text: 'Advanced tools'
       end
 
-      it 'has network search' do
-        css 'a', text: 'Network Search'
-      end
-
-      it 'has find connections' do
-        css 'a', text: 'Find Connections'
-      end
-
       it 'does not have Match NY Donations' do
         not_css 'a', text: 'Match NY Donations'
       end
@@ -118,45 +110,6 @@ describe "partial: sidebar", :tag_helper do
                                            :permissions => double(:tag_permissions => {})))
 
         render partial: 'entities/sidebar.html.erb'
-      end
-    end
-  end
-
-  describe 'Admin tools' do
-    context 'When admin' do
-      before do
-        assign(:entity, org)
-        allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user)
-                        .and_return(double(:admin? =>      true,
-                                           :importer? =>   false,
-                                           :merger? =>     false,
-                                           :permissions => double(:tag_permissions => {})))
-
-        render partial: 'entities/sidebar.html.erb'
-      end
-
-      it 'has admin tools' do
-        css 'span.sidebar-title-text', text: 'Admin tools'
-        css 'a', text: 'Addresses'
-     end
-    end
-
-    context 'When not admin' do
-      before do
-        assign(:entity, org)
-        allow(view).to receive(:user_signed_in?).and_return(true)
-        allow(view).to receive(:current_user)
-                        .and_return(double(:admin? =>      false,
-                                           :importer? =>   false,
-                                           :merger? =>     false,
-                                           :permissions => double(:tag_permissions => {})))
-
-        render partial: 'entities/sidebar.html.erb'
-      end
-
-      it 'does not have admin tools' do
-        not_css 'span.sidebar-title-text', text: 'Admin tools'
       end
     end
   end

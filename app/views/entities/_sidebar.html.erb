@@ -45,19 +45,10 @@
     <%= render partial: 'entities/sidebar/source_links' %>
   <% end %>
 
-  <%# ADMIN TOOLS  %>
-  <% if user_signed_in? && current_user.admin? %>
-    <%= profile_page_sidebar('sidebar-admin-tools-container', 'Admin tools') do %>
-      <%= link_to 'Addresses', @entity.legacy_url('addresses') %>
-    <% end %>
-  <% end %>
 
   <%# ADVANCED TOOLS  %>
   <% if user_signed_in? %>
     <%= profile_page_sidebar('sidebar-advanced-tools-container', 'Advanced tools') do %>
-      <%= link_to 'Network Search', @entity.legacy_url('networkSearch') %>
-      <br />
-      <%= link_to 'Find Connections', @entity.legacy_url('findConnections') %>
       <% if current_user.importer? || current_user.admin? %>
 	<br />
 	<%= link_to 'Match NY Donations', match_ny_donations_entity_path(@entity) %>
