@@ -21,9 +21,9 @@ class EntityLastEditorPresenter < SimpleDelegator
 
   def generate_html
     content_tag(:div, id: DIV_ID) do
-      'Edited by'.html_safe +
+      'Edited by '.html_safe +
         content_tag(:strong, link_to(@last_editor.username, user_page_path(@last_editor))) +
-        "#{time_ago_in_words(@last_edited_at)} ago".html_safe +
+        " #{time_ago_in_words(@last_edited_at)} ago ".html_safe +
         link_to('History', "#{Routes.entity_path(self.__getobj__)}/edits")
     end
   end

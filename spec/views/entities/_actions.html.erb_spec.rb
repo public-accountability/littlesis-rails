@@ -58,6 +58,6 @@ describe "partial: entities/actions" do
     specify { css 'a', text: 'add relationship' }
     specify { css 'a', text: 'edit' }
     specify { css 'a', text: 'flag' }
-    specify { expect(view).to render_template(:partial => "shared/_entity_history") }
+    specify { css '#entity-edited-history' }
   end
 end

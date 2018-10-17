@@ -41,9 +41,9 @@ describe EntityLastEditorPresenter do
 
       let(:html) do
         <<-HTML
-<div id="entity-edited-history">Edited by<strong>
+<div id="entity-edited-history">Edited by <strong>
 <a href="/users/#{user1.username}">#{user1.username}</a></strong>
-less than a minute ago
+ less than a minute ago 
 <a href="#{Routes.entity_path(person)}/edits">History</a>
 </div>
         HTML
