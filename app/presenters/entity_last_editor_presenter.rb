@@ -1,15 +1,31 @@
 # frozen_string_literal: true
 
 class EntityLastEditorPresenter < SimpleDelegator
-  attr_reader :last_editor, :last_edited_at
+  attr_reader :last_editor, :last_edited_at, :html
 
-  def last_edited_link
-  end
+  DIV_ID = 'entity-edited-history'
+
+  delegate :content_tag, :link_to, :time_ago_in_words,
+           to: 'ActionController::Base.helpers'
+
+  delegate :user_page_path, to: 'Rails.application.routes.url_helpers'
 
   def initialize(*args)
     super(*args)
     @last_editor = find_last_editor
+    @html = generate_html
     freeze
+  end
+
+  private
+
+  def generate_html
+    content_tag(:div, id: DIV_ID) do
+      'Edited by'.html_safe +
+        content_tag(:strong, link_to(@last_editor.username, user_page_path(@last_editor))) +
+        "#{time_ago_in_words(@last_edited_at)} ago".html_safe +
+        link_to('History', "#{Routes.entity_path(self.__getobj__)}/edits")
+    end
   end
 
   # Ideally, all edits to an `Entity` would be in the `Versions` table
@@ -32,8 +48,6 @@ class EntityLastEditorPresenter < SimpleDelegator
       return user.nil? ? User.system_user : user
     end
   end
-
-  private
 
   def last_version
     return @_last_version if defined?(@_last_version)

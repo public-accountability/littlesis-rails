@@ -26,45 +26,58 @@ describe EntityLastEditorPresenter do
                                                      double(:[] => version))))
   end
 
-  describe 'last_editor' do
-    context 'when version is lastest edit' do
-      let(:person_time) { 1.hour.ago }
+  context 'when version is lastest edit' do
+    let(:person_time) { 1.hour.ago }
 
-      before do
-        expect(User).to receive(:find_by).with(id: user1.id.to_s).and_return(user1)
+    before do
+      expect(User).to receive(:find_by).with(id: user1.id.to_s).and_return(user1)
+    end
+
+    specify { expect(subject.last_editor).to eq user1 }
+    specify { expect(subject.last_edited_at.change(usec: 0)).to eq version_time.change(usec: 0) }
+
+    describe 'last_edited_link' do
+      subject { EntityLastEditorPresenter.new(person).html }
+
+      let(:html) do
+        <<-HTML
+<div id="entity-edited-history">Edited by<strong>
+<a href="/users/#{user1.username}">#{user1.username}</a></strong>
+less than a minute ago
+<a href="#{Routes.entity_path(person)}/edits">History</a>
+</div>
+        HTML
       end
+      it { is_expected.to eql html.tr("\n", '') }
+    end
+  end
 
-      specify { expect(subject.last_editor).to eq user1 }
-      specify { expect(subject.last_edited_at.change(usec: 0)).to eq version_time.change(usec: 0) }
+  context 'when version is the lastest edit, and user is missing' do
+    let(:person_time) { 1.hour.ago }
+
+    before do
+      expect(User).to receive(:find_by).with(id: user1.id.to_s).and_return(nil)
     end
 
-    context 'when version is the lastest edit, and user is missing' do
-      let(:person_time) { 1.hour.ago }
+    specify { expect(subject.last_editor).to eq User.system_user }
+  end
 
-      before do
-        expect(User).to receive(:find_by).with(id: user1.id.to_s).and_return(nil)
-      end
-
-      specify { expect(subject.last_editor).to eq User.system_user }
+  context 'when version is at same time as updated_at' do
+    before do
+      expect(User).to receive(:find_by).with(id: user1.id.to_s).and_return(user1)
     end
 
-    context 'when version is at same time as updated_at' do
-      before do
-        expect(User).to receive(:find_by).with(id: user1.id.to_s).and_return(user1)
-      end
+    specify { expect(subject.last_editor).to eq user1 }
+    specify { expect(subject.last_edited_at.change(usec: 0)).to eq version_time.change(usec: 0) }
+  end
 
-      specify { expect(subject.last_editor).to eq user1 }
-      specify { expect(subject.last_edited_at.change(usec: 0)).to eq version_time.change(usec: 0) }
-    end
+  context 'when updated_at is latest edit' do
+    let(:version_time) { 1.hour.ago }
 
-    context 'when updated_at is latest edit' do
-      let(:version_time) { 1.hour.ago }
+    before { expect(User).not_to receive(:find_by) }
 
-      before { expect(User).not_to receive(:find_by) }
-
-      specify { expect(subject.last_editor).to eq user2 }
-      specify { expect(subject.last_edited_at.change(usec: 0)).to eq person_time.change(usec: 0) }
-    end
+    specify { expect(subject.last_editor).to eq user2 }
+    specify { expect(subject.last_edited_at.change(usec: 0)).to eq person_time.change(usec: 0) }
   end
 end
 
