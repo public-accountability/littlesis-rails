@@ -18,15 +18,8 @@ class NyMatch < ApplicationRecord
     # a relationship requires both a donor and a recipient
     return nil if donor_id.nil? or recip_id.nil?
     # find the existing relationship (or create it)
-    r = Relationship.find_or_create_by!(
-      entity1_id: donor_id,
-      entity2_id: recip_id,
-      category_id: 5,
-      # This avoids problems caused if federal campaign contributions also exist for the same politician.
-      # However, it requires that every NYS campaign contribution relationship have the description set to this string.
-      description1: "NYS Campaign Contribution"
-    )
-    r.last_user_id = matched_by.nil? ? 1 : User.find(matched_by).sf_guard_user.id
+    r = Relationship.find_or_create_by!(relationship_params)
+    r.last_user_id = last_user_id_for(r)
     # connect this match to the relationship
     update_attribute(:relationship, r)
     # update and save the relationship
@@ -35,7 +28,7 @@ class NyMatch < ApplicationRecord
   end
 
   def set_recipient
-    self.recip_id = NyFilerEntity.find_by_filer_id(ny_disclosure.filer_id).try(:entity_id)
+    self.recip_id = NyFilerEntity.find_by(filer_id: ny_disclosure.filer_id).try(:entity_id)
   end
 
   # input: int, int, int (optional)
@@ -80,6 +73,26 @@ class NyMatch < ApplicationRecord
     ref_link = ny_disclosure.reference_link
     unless rel.references.map { |ref| ref.document.url }.include? ref_link.strip
       rel.add_reference(url: ref_link, name: ny_disclosure.reference_name)
+    end
+  end
+
+  def relationship_params
+    {
+      entity1_id: donor_id,
+      entity2_id: recip_id,
+      category_id: 5,
+      # This avoids problems caused if federal campaign contributions also exist for the
+      # same politician. However, it requires that every NYS campaign contribution
+      # relationship have the description set to this string.
+      description1: "NYS Campaign Contribution"
+    }
+  end
+
+  def last_user_id_for(rel)
+    if matched_by.nil? || (persisted? && updated_at < 1.minute.ago)
+      APP_CONFIG['system_user_id']
+    else
+      User.find(matched_by).sf_guard_user.id
     end
   end
 end

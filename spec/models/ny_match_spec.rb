@@ -21,8 +21,8 @@ describe NyMatch, type: :model do
     context 'creating new matches' do
       let(:disclosure) { create(:ny_disclosure) }
 
-      before(:each) do
-        expect(NyFilerEntity).to receive(:find_by_filer_id).and_return(double(:entity_id => 100))
+      before do
+        expect(NyFilerEntity).to receive(:find_by).and_return(double(:entity_id => 100))
         allow(Relationship).to receive(:find_or_create_by!).and_return(rel)
         allow(User).to receive(:find).and_return(double(:sf_guard_user => double(:id => 99)))
       end
@@ -58,7 +58,7 @@ describe NyMatch, type: :model do
       allow(User).to receive(:find).and_return(double(:sf_guard_user => double(:id => 99)))
       elected = create(:elected)
       elected.update_column(:updated_at, 1.day.ago)
-      expect(NyFilerEntity).to receive(:find_by_filer_id).and_return(double(:entity_id => elected.id ))
+      expect(NyFilerEntity).to receive(:find_by).and_return(double(:entity_id => elected.id ))
       d = create(:ny_disclosure)
       expect { NyMatch.match(d.id, 10) }. to change { Entity.find(elected.id).updated_at }
     end
@@ -162,20 +162,34 @@ describe NyMatch, type: :model do
       end
     end
 
-    it 'sets the relationship\'s last_user id to be the matched_by user' do
+    it "sets the relationship's last_user id to be the matched_by user" do
       disclosure = create(:ny_disclosure, amount1: 50)
-      sf_user = create(:sf_guard_user)
-      user = create(:user, sf_guard_user_id: sf_user.id)
+      user = create_really_basic_user
       match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: donor, recipient: elected, matched_by: user.id)
       match.create_or_update_relationship
-      expect(Relationship.last.last_user_id).to eql sf_user.id
+      expect(Relationship.last.last_user_id).to eql user.sf_guard_user_id
     end
 
-    it 'sets the relationship\'s last_user id to default to be 1' do
+    it "sets the relationship's last_user id to default to be 1" do
       disclosure = create(:ny_disclosure, amount1: 50)
       match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: donor, recipient: elected)
       match.create_or_update_relationship
       expect(Relationship.last.last_user_id).to eql 1
+    end
+
+    context 'when ny match was created a while ago' do
+      it "sets the relationship's last_user id to be the system user id" do
+        disclosure = create(:ny_disclosure, amount1: 50)
+        user = create_really_basic_user
+        match = NyMatch.create!(ny_disclosure_id: disclosure.id, donor: donor, matched_by: user.id)
+        match.update_column(:updated_at, 1.hour.ago)
+        expect(NyFilerEntity).to receive(:find_by)
+                                   .with(filer_id: disclosure.filer_id)
+                                   .and_return(build(:ny_filer_entity, entity_id: elected.id))
+        match.rematch
+        # match.create_or_update_relationship
+        expect(Relationship.last.last_user_id).to eq 1
+      end
     end
 
     it 'creates a new reference' do
