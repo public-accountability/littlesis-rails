@@ -34,12 +34,7 @@ class EntityLastEditorPresenter < SimpleDelegator
   # create a new version. Others do create a version but don't correctly
   # update the last_user_id column. It's a mess.
   def find_last_editor
-    if last_version.nil?
-      @last_edited_at = updated_at
-      return last_user.user
-    end
-
-    if updated_at > last_version.created_at.advance(minutes: 1)
+    if last_version.nil? || updated_at > last_version.created_at.advance(minutes: 1)
       @last_edited_at = updated_at
       last_user.user
     else
