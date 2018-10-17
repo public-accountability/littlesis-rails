@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/OutputSafety
+
 class EntityLastEditorPresenter < SimpleDelegator
   attr_reader :last_editor, :last_edited_at, :html
 
@@ -24,7 +26,7 @@ class EntityLastEditorPresenter < SimpleDelegator
       'Edited by '.html_safe +
         content_tag(:strong, link_to(@last_editor.username, user_page_path(@last_editor))) +
         " #{time_ago_in_words(@last_edited_at)} ago ".html_safe +
-        link_to('History', "#{Routes.entity_path(self.__getobj__)}/edits")
+        link_to('History', "#{Routes.entity_path(__getobj__)}/edits")
     end
   end
 
@@ -40,7 +42,7 @@ class EntityLastEditorPresenter < SimpleDelegator
     else
       @last_edited_at = last_version.created_at
       user = User.find_by(id: last_version.whodunnit)
-      return user.nil? ? User.system_user : user
+      user.nil? ? User.system_user : user
     end
   end
 
@@ -54,3 +56,5 @@ class EntityLastEditorPresenter < SimpleDelegator
     updated_at.between?(time.advance(minutes: -1), time.advance(minutes: 1))
   end
 end
+
+# rubocop:enable Rails/OutputSafety
