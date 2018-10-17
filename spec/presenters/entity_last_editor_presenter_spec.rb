@@ -20,10 +20,9 @@ describe EntityLastEditorPresenter do
 
   before do
     allow(person).to receive(:last_user).and_return(double(user: user2))
-    allow(person).to receive(:versions)
-                       .and_return(double(reorder:
-                                            double(limit:
-                                                     double(:[] => version))))
+    allow(EntityHistory).to receive(:new)
+                              .with(person)
+                              .and_return(double(:versions => double(:at => version)))
   end
 
   context 'when version is lastest edit' do

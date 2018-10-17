@@ -41,6 +41,9 @@ class EntityLastEditorPresenter < SimpleDelegator
       last_user.user
     else
       @last_edited_at = last_version.created_at
+
+      return last_version.user if last_version.respond_to?(:user)
+
       user = User.find_by(id: last_version.whodunnit)
       user.nil? ? User.system_user : user
     end
@@ -49,7 +52,10 @@ class EntityLastEditorPresenter < SimpleDelegator
   def last_version
     return @_last_version if defined?(@_last_version)
 
-    @_last_version = versions.reorder(id: :desc).limit(1)[0]
+    @_last_version = EntityHistory
+                       .new(__getobj__)
+                       .versions(page: 1, per_page: 1)
+                       .at(0)
   end
 
   def updated_at_within_one_minute_of(time)
