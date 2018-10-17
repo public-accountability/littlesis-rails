@@ -40,8 +40,11 @@ FactoryBot.define do
     username { Faker::Internet.unique.user_name }
     email { generate(:user_email) }
     default_network_id { 79 }
-    confirmed_at { Time.now }
-    id { rand(1000) }
+    confirmed_at { Time.current }
+    id { Faker::Number.unique.between(1, 10_000) }
+    sf_id = Faker::Number.unique.between(1, 10_000)
+    sf_guard_user_id { sf_id }
+    association :sf_guard_user, factory: :sf_user, strategy: :build, id: sf_id
   end
 
   factory :sf_user, class: SfGuardUser do

@@ -8,6 +8,17 @@ module RspecExampleHelpers
     Delayed::Worker.delay_jobs = true
   end
 
+  def with_verisioning_for(user_or_id)
+    TypeCheck.check user_or_id, [User, String, Integer]
+    user_id = user_or_id.is_a?(User) ? user_or_id.id : user_or_id
+
+    with_versioning do
+      PaperTrail.request(whodunnit: user_id.to_s) do
+        yield
+      end
+    end
+  end
+
   def random_username
     Faker::Internet.unique.user_name(5).tr('.', '_')
   end
