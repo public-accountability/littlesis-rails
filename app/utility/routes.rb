@@ -37,4 +37,8 @@ module Routes
   def self.entity_url(entity)
     modify_entity_path(Rails.application.routes.url_helpers.entity_url(entity), entity)
   end
+
+  def self.entity_path(entity)
+    modify_entity_path(Rails.application.routes.url_helpers.entity_path(entity), entity)
+  end
 end

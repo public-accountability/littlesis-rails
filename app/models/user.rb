@@ -200,6 +200,12 @@ class User < ApplicationRecord
     end
   end
 
+  def self.system_user
+    return @_system_user if defined?(@_system_user)
+
+    @_system_user = User.find(APP_CONFIG['system_user_id'])
+  end
+
   private
 
   def set_default_network_id
