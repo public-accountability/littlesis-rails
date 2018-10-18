@@ -16,10 +16,10 @@ class NyMatch < ApplicationRecord
     # if this match already has a relationship, so we can assume this has already been processed
     return nil unless relationship.nil?
     # a relationship requires both a donor and a recipient
-    return nil if donor_id.nil? or recip_id.nil?
+    return nil if donor_id.nil? || recip_id.nil?
     # find the existing relationship (or create it)
     r = Relationship.find_or_create_by!(relationship_params)
-    r.last_user_id = last_user_id_for(r)
+    r.last_user_id = last_user_id_for_relationship
     # connect this match to the relationship
     update_attribute(:relationship, r)
     # update and save the relationship
@@ -88,7 +88,7 @@ class NyMatch < ApplicationRecord
     }
   end
 
-  def last_user_id_for(rel)
+  def last_user_id_for_relationship
     if matched_by.nil? || (persisted? && updated_at < 1.minute.ago)
       APP_CONFIG['system_user_id']
     else
