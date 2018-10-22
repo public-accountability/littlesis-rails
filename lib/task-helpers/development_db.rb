@@ -197,11 +197,10 @@ class DevelopmentDb
     education
     elected_representative
     entity
-    entity_fields
     extension_definition
     extension_record
+    external_links
     family
-    fields
     gender
     generic
     government_body
