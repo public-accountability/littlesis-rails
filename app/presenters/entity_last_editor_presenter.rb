@@ -42,7 +42,7 @@ class EntityLastEditorPresenter < SimpleDelegator
     else
       @last_edited_at = last_version.created_at
 
-      return last_version.user if last_version.respond_to?(:user)
+      return last_version.user if last_version.respond_to?(:user) && last_version.user
 
       user = User.find_by(id: last_version.whodunnit)
       user.nil? ? User.system_user : user
