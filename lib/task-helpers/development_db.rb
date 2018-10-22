@@ -201,7 +201,6 @@ class DevelopmentDb
     extension_record
     external_links
     family
-    gender
     generic
     government_body
     hierarchy
