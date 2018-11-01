@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RelationshipValidator < ActiveModel::Validator
   def self.valid_categories
     @valid_categories ||= RelationshipCategory.valid_categories.freeze

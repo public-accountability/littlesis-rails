@@ -150,6 +150,18 @@ describe 'RelationshipValidator' do
       end
     end
 
+    describe 'org to person set to Membership' do
+      before do
+        @rel = tester(3)
+        allow(@rel).to receive(:entity).and_return(org_double)
+        allow(@rel).to receive(:related).and_return(person_double)
+      end
+
+      it 'sets relationship to be invalid' do
+        expect(@rel.valid?).to be false
+      end
+    end
+
     it "does't change vaidity if missing category_id" do
       rel = RelTester.new
       rel.entity1_id = 1

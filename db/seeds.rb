@@ -69,7 +69,7 @@ SfGuardPermission.create!([
 RelationshipCategory.create!([
   {id: 1, name: "Position", display_name: "Position", default_description: "Position", entity1_requirements: "Person", entity2_requirements: nil, has_fields: true},
   {id: 2, name: "Education", display_name: "Education", default_description: "Student", entity1_requirements: "Person", entity2_requirements: "Org", has_fields: true},
-  {id: 3, name: "Membership", display_name: "Membership", default_description: "Member", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
+  {id: 3, name: "Membership", display_name: "Membership", default_description: "Member", entity1_requirements: nil, entity2_requirements: "Org", has_fields: true},
   {id: 4, name: "Family", display_name: "Family", default_description: "Relative", entity1_requirements: "Person", entity2_requirements: "Person", has_fields: true},
   {id: 5, name: "Donation", display_name: "Donation/Grant", default_description: "Donation/Grant", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
   {id: 6, name: "Transaction", display_name: "Service/Transaction", default_description: "Service/Transaction", entity1_requirements: nil, entity2_requirements: nil, has_fields: true},
