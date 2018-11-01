@@ -159,7 +159,7 @@ var addRelationship = (function(utility) {
 
   // str, str, [school] -> [int] | Throw Exception
   function categories(entity1, entity2) {
-    var personToPerson = [1,3,4,5,6,7,8,9,12];
+    var personToPerson = [1,4,5,6,7,8,9,12];
     var personToOrg = [1,2,3,5,6,7,10,12];
     var orgToPerson = [1,3,5,6,7,10,12];
     var orgToOrg = [3,5,6,7,10,11,12];
