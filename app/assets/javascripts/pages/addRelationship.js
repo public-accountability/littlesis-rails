@@ -23,6 +23,7 @@ var addRelationship = (function(utility) {
   // holds entity ids
   var entity1_id = null;
   var entity2_id = null;
+  var selected_entity_data = null;
   // Reference Components
   var newReferenceForm;
   var existingReferences;
@@ -60,7 +61,9 @@ var addRelationship = (function(utility) {
 
   // Used by selectButtonHandler & in $('#new_entity').submit()
   function showAddRelationshipForm(data) {
-    entity2_id = String(data.id); // update 'global' var. 
+    // update 'global' vars:
+    entity2_id = String(data.id); 
+    selected_entity_data = data;
 
     $('.rel-new-entity').addClass('hidden'); // hide new entity elements
     $('.rel-search').addClass('hidden'); // hide search elements
@@ -204,10 +207,16 @@ var addRelationship = (function(utility) {
 
 
   /** 
+   categories() defines the acceptable valid relationship options
+   for a given two entities. However, we do allow for some acceptions:
+
    Entity1 must be a 'person' for position and education relationshps.
-   This func switches the entity ids if the relationship
-   is between an Org and a Person and the Org is currently at the entity1_position.
-   */
+   Entity2 must be a 'org' for people/org relationships
+
+   As a convinence we allow these relationships to be selected in reverse,
+   and correct the order behind the scenes.
+   
+  */
   function reverseEntityIdsIf() {
     if (utility.entityInfo('entitytype') === 'Org') {
       if (category_id() === 1 || category_id() === 2) {
@@ -419,9 +428,15 @@ var addRelationship = (function(utility) {
     });
   }
   
-
   return {
-    init: init
+    "init": init,
+    "debug": function() {
+      return {
+	"entity1_id": entity1_id,
+	"entity2_id": entity2_id,
+	"selected_entity_data": selected_entity_data
+      };
+    }
   };
 
 }(utility));
