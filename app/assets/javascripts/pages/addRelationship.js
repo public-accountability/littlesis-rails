@@ -206,24 +206,33 @@ var addRelationship = (function(utility) {
   }
 
 
+  /**
+   * Swaps global vars entity1_id and entity2_id
+   */
+  function swapEntityIds() {
+    var tmp = entity1_id;
+    entity1_id = entity2_id;
+    entity2_id = tmp;
+  }
+
+
   /** 
    categories() defines the acceptable valid relationship options
-   for a given two entities. However, we do allow for some acceptions:
+   for a given two entities. However, as a convenience we,
+   allow some relationships to be selected in reverse, and correct 
+   the order behind the scenes.
 
    Entity1 must be a 'person' for position and education relationshps.
    Entity2 must be a 'org' for people/org relationships
 
-   As a convinence we allow these relationships to be selected in reverse,
-   and correct the order behind the scenes.
-   
   */
   function reverseEntityIdsIf() {
-    if (utility.entityInfo('entitytype') === 'Org') {
-      if (category_id() === 1 || category_id() === 2) {
-	var tmp = entity1_id;
-	entity1_id = entity2_id;
-	entity2_id = tmp;
-      }
+    var catId = category_id();
+    
+    if ([1,2].includes(catId) && utility.entityInfo('entitytype') === 'Org') {
+      swapEntityIds();
+    } else if (catId == 3 && selected_entity_data.primary_type === 'Person') {
+      swapEntityIds();
     }
   }
 
