@@ -23,6 +23,7 @@ var addRelationship = (function(utility) {
   // holds entity ids
   var entity1_id = null;
   var entity2_id = null;
+  var selected_entity_data = null;
   // Reference Components
   var newReferenceForm;
   var existingReferences;
@@ -60,7 +61,9 @@ var addRelationship = (function(utility) {
 
   // Used by selectButtonHandler & in $('#new_entity').submit()
   function showAddRelationshipForm(data) {
-    entity2_id = String(data.id); // update 'global' var. 
+    // update 'global' vars:
+    entity2_id = String(data.id); 
+    selected_entity_data = data;
 
     $('.rel-new-entity').addClass('hidden'); // hide new entity elements
     $('.rel-search').addClass('hidden'); // hide search elements
@@ -159,7 +162,7 @@ var addRelationship = (function(utility) {
 
   // str, str, [school] -> [int] | Throw Exception
   function categories(entity1, entity2) {
-    var personToPerson = [1,3,4,5,6,7,8,9,12];
+    var personToPerson = [1,4,5,6,7,8,9,12];
     var personToOrg = [1,2,3,5,6,7,10,12];
     var orgToPerson = [1,3,5,6,7,10,12];
     var orgToOrg = [3,5,6,7,10,11,12];
@@ -203,18 +206,33 @@ var addRelationship = (function(utility) {
   }
 
 
-  /** 
-   Entity1 must be a 'person' for position and education relationshps.
-   This func switches the entity ids if the relationship
-   is between an Org and a Person and the Org is currently at the entity1_position.
+  /**
+   * Swaps global vars entity1_id and entity2_id
    */
+  function swapEntityIds() {
+    var tmp = entity1_id;
+    entity1_id = entity2_id;
+    entity2_id = tmp;
+  }
+
+
+  /** 
+   categories() defines the acceptable valid relationship options
+   for a given two entities. However, as a convenience we,
+   allow some relationships to be selected in reverse, and correct 
+   the order behind the scenes.
+
+   Entity1 must be a 'person' for position and education relationshps.
+   Entity2 must be a 'org' for people/org relationships
+
+  */
   function reverseEntityIdsIf() {
-    if (utility.entityInfo('entitytype') === 'Org') {
-      if (category_id() === 1 || category_id() === 2) {
-	var tmp = entity1_id;
-	entity1_id = entity2_id;
-	entity2_id = tmp;
-      }
+    var catId = category_id();
+    
+    if ([1,2].includes(catId) && utility.entityInfo('entitytype') === 'Org') {
+      swapEntityIds();
+    } else if (catId == 3 && selected_entity_data.primary_type === 'Person') {
+      swapEntityIds();
     }
   }
 
@@ -419,9 +437,15 @@ var addRelationship = (function(utility) {
     });
   }
   
-
   return {
-    init: init
+    "init": init,
+    "debug": function() {
+      return {
+	"entity1_id": entity1_id,
+	"entity2_id": entity2_id,
+	"selected_entity_data": selected_entity_data
+      };
+    }
   };
 
 }(utility));
