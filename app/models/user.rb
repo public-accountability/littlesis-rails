@@ -176,6 +176,18 @@ class User < ApplicationRecord
     @_system_user = User.find(APP_CONFIG['system_user_id'])
   end
 
+  # Checks if name meets the character restrictions and 
+  # is case-insensitively unique in our database.
+  # Also see `UserNameValidator`
+  # String ---> Boolean
+  def self.valid_username?(name)
+    if UserNameValidator.valid?(name)
+      !exists?(username: name)
+    else
+      false
+    end
+  end
+
   private
 
   def set_default_network_id
