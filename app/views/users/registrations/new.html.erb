@@ -1,19 +1,4 @@
 <script>
- $(function(){
-   var aboutYouInput = document.getElementById('about-you-input');
-   aboutYouInput.setCustomValidity("Don't forget to fill out this field");
-   
-   aboutYouInput.addEventListener("input", function(e){
-     if (this.value === '') {
-       this.setCustomValidity("Don't forget to fill out this field");
-     } else if (this.value.split(' ').length <= 2) {
-       this.setCustomValidity("Please include more details")
-     } else {
-       this.setCustomValidity("")
-     }
-   });
- });
- 
  function validateForm(){
    if (!document.getElementById('terms_of_use').checked) {
      alert("Unfortunately, you have to accept the terms first");
@@ -32,10 +17,73 @@
      return true;
    }
  }
+ 
+ $(function() {
+   var aboutYouInput = document.getElementById('about-you-input');
+   aboutYouInput.setCustomValidity("Don't forget to fill out this field");
+   
+   aboutYouInput.addEventListener("input", function(e){
+     if (this.value === '') {
+       this.setCustomValidity("Don't forget to fill out this field");
+     } else if (this.value.split(' ').length <= 2) {
+       this.setCustomValidity("Please include more details")
+     } else {
+       this.setCustomValidity("")
+     }
+   });
 
- $(function () {
-   $('[data-toggle="tooltip"]').tooltip()
- })
+
+   $('[data-toggle="tooltip"]').tooltip();
+
+
+
+   /*
+      This validates the username input field.
+      
+      It first checks if the username passes the character requirements.
+      If it does, it then submits a request to '/users/check_username'
+      which checks if the username is available. 
+
+      It change the customValidity of the input accordingly.
+   */
+   var usernameTimeout = null;
+   var INPUT_DELAY = 500;
+   var usernameRegex = new RegExp('^[A-Za-z]{1}\\w{2,}$')
+
+   $('#user_username').on('input', function() {
+     if (usernameTimeout !== null) {
+        clearTimeout(usernameTimeout);
+     }
+
+     var inputElement = this;
+     
+     var validateInput = function() {
+       var val = $(inputElement).val();
+
+       if (usernameRegex.test(val)) {
+	 $.getJSON('/users/check_username', { "username": val })
+	  .done(function(res) {
+	    if (res.valid) {
+	      inputElement.setCustomValidity('');
+	    } else {
+	      inputElement.setCustomValidity('Username is taken. Please pick a new username.');
+	    }
+	  })
+	  .fail(function() {
+	    console.error("request to check username failed");
+	    inputElement.setCustomValidity('');
+	  })
+       } else {
+	 inputElement.setCustomValidity("Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed.")
+       }
+     };
+
+     usernameTimeout = setTimeout(validateInput, INPUT_DELAY);
+   });
+   
+ });
+ 
+ 
 </script>
 
 <% column_class = 'col-sm-8' %>
@@ -120,9 +168,7 @@
       <%= f.text_field :username, autofocus: true,
       :required => true,
       :class => input_class,
-      :pattern => '^[A-Za-z]{1}\w{2,}$',
-      :oninvalid => 'this.setCustomValidity("Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed.")',
-      :oninput => "this.setCustomValidity('')"
+      :id => 'user_username'
       %>
     <% end %>
     
