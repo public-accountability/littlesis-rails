@@ -54,12 +54,14 @@ class User < ApplicationRecord
     is_restricted
   end
 
+  # Groups #
+
   def in_group?(group)
-  	GroupUser.where(group_id: group.id, user_id: id).count > 0
+    GroupUser.where(group_id: group.id, user_id: id).count > 0
   end
 
   def admin_in_group?(group)
-  	GroupUser.where(group_id: group.id, user_id: id, is_admin: true).count > 0
+    GroupUser.where(group_id: group.id, user_id: id, is_admin: true).count > 0
   end
 
   def in_campaign?(campaign)
@@ -67,16 +69,14 @@ class User < ApplicationRecord
   end
 
   def legacy_created_at
-  	return created_at if sf_guard_user.nil?
-  	sf_guard_user.created_at
+    return created_at if sf_guard_user.nil?
+
+    sf_guard_user.created_at
   end
 
-  def show_full_name?
-    sf_guard_user_profile.show_full_name
-  end
+  def full_name(override = false)
+    return nil unless override || sf_guard_user_profile&.show_full_name
 
-  def full_name(override=false)
-    return nil unless override or show_full_name?
     sf_guard_user_profile.full_name
   end
 
