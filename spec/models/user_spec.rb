@@ -234,4 +234,41 @@ describe User do
       expect(User.derive_last_user_id_from(nil, allow_invalid: true)).to eq 1
     end
   end
+
+  describe 'User.valid_username?' do
+    subject { User.valid_username?(name) }
+
+    context 'with invalid username' do
+      let(:name) { '!x' }
+
+      it { is_expected.to be false }
+    end
+
+    context 'with valid username' do
+      let(:name) { FactoryBot.attributes_for(:user)[:username] }
+
+      it { is_expected.to be true }
+    end
+
+    context 'with already taken username' do
+      let(:user) { create_basic_user }
+      let(:name) { user.username }
+
+      before { user }
+
+      it { is_expected.to be false }
+    end
+
+    context 'with aLtErNaTiNg capitalization of existing username' do
+      let(:user) { create_basic_user }
+      let(:name) do
+        user.username.split('').map.with_index { |x, i| i.even? ? x.upcase : x }.join('')
+      end
+
+      before { user }
+
+      it { is_expected.to be false }
+    end
+
+  end
 end
