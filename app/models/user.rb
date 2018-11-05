@@ -3,6 +3,8 @@
 class User < ApplicationRecord
   include UserEdits
 
+  MINUTES_BEFORE_USER_CAN_EDIT = 10
+
   validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username, presence: true, uniqueness: { case_sensitive: false }, user_name: true, on: :create
@@ -51,6 +53,10 @@ class User < ApplicationRecord
 
   def restricted?
     is_restricted
+  end
+
+  def can_edit?
+    !restricted? && confirmed? && (MINUTES_BEFORE_USER_CAN_EDIT.minutes.ago > confirmed_at)
   end
 
   # Groups #

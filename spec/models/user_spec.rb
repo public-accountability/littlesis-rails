@@ -206,6 +206,34 @@ describe User do
     end
   end
 
+  describe '#can_edit?' do
+    subject { user.can_edit? }
+
+    context 'when user is restircted' do
+      let(:user) { build(:user, is_restricted: true) }
+
+      it { is_expected.to be false }
+    end
+
+    context 'when user is confirmed yesterday' do
+      let(:user) { build(:user, confirmed_at: 24.hours.ago) }
+
+      it { is_expected.to be true }
+    end
+
+    context 'when user is not confirmed' do
+      let(:user) { build(:user, confirmed_at: nil) }
+
+      it { is_expected.to be false }
+    end
+
+    context 'when user is confirmed 3 minutes ago' do
+      let(:user) { build(:user, confirmed_at: 3.minutes.ago) }
+
+      it { is_expected.to be false }
+    end
+  end
+
   describe 'User.derive_last_user_id_from' do
     it 'accepts strings and integer' do
       expect(User.derive_last_user_id_from('123')).to eq 123
