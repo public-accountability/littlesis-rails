@@ -7,15 +7,16 @@ describe UserNameValidator do
     validates :username, user_name: true
   end
 
-  let(:username) { '' }
-
   subject do
     UserNameTester.new.tap { |x| x.username = username }
   end
 
+  let(:username) { '' }
+
   def self.test_user_name(name, valid)
     context "with username: #{name}" do
       let(:username) { name }
+
       specify { expect(subject.valid?).to be valid }
     end
   end
