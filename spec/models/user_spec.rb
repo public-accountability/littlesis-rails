@@ -74,6 +74,17 @@ describe User do
     end
   end
 
+  describe 'bio' do
+    let(:user) { create_really_basic_user }
+    let(:bio) { Faker::GreekPhilosophers.quote }
+
+    let!(:sf_profile) do
+      create(:sf_guard_user_profile, bio: bio, user_id: user.sf_guard_user_id)
+    end
+
+    specify { expect(user.bio).to eq bio }
+  end
+
   describe 'set_default_network_id' do
     let(:user) do
       User.new(sf_guard_user_id: rand(1000),

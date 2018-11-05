@@ -9,8 +9,7 @@ class User < ApplicationRecord
   validates :default_network_id, presence: true
 
   # Include default devise modules. Others available are:
-  # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
-  # :legacy_authenticatable, 
+  # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable :legacy_authenticatable
   devise :database_authenticatable, :registerable, :confirmable, :recoverable, :rememberable, :trackable
 
   # after_database_authentication :set_sf_session
@@ -26,9 +25,9 @@ class User < ApplicationRecord
 
   # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
   delegate :image_path, to: :sf_guard_user_profile, allow_nil: true
-  delegate :name_first, :name_last, to: :sf_guard_user_profile
+  delegate :name_first, :name_last, :bio, to: :sf_guard_user_profile
 
-  has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", primary_key: "sf_guard_user_id"
+  has_many :edited_entities, class_name: 'Entity', foreign_key: 'last_user_id', primary_key: 'sf_guard_user_id'
 
   alias :image_url :image_path
 
@@ -36,12 +35,12 @@ class User < ApplicationRecord
   has_many :groups, through: :group_users, inverse_of: :users
   has_many :campaigns, through: :groups, inverse_of: :users
 
-  has_many :network_maps, primary_key: "sf_guard_user_id"
+  has_many :network_maps, primary_key: 'sf_guard_user_id', inverse_of: :user
 
-  has_many :lists, foreign_key: "creator_user_id", inverse_of: :user
+  has_many :lists, foreign_key: 'creator_user_id', inverse_of: :user
 
-  has_one :api_token
-  has_many :user_permissions
+  has_one :api_token, dependent: :destroy
+  has_many :user_permissions, dependent: :destroy
 
   has_many :user_requests, inverse_of: :user, dependent: :destroy
   has_many :reviewed_requests, class_name: "UserRequest", foreign_key: 'reviewer_id', inverse_of: :reviewer
@@ -80,16 +79,12 @@ class User < ApplicationRecord
     sf_guard_user_profile.full_name
   end
 
-  def bio
-    sf_guard_user_profile.bio
-  end
-
   def legacy_url
     "/user/#{username}"
   end
 
   def full_legacy_url
-    "//littlesis.org" + legacy_url
+    "https://littlesis.org/#{legacy_url}"
   end
 
   def legacy_check_password(password)
@@ -97,8 +92,9 @@ class User < ApplicationRecord
   end
 
   def image_url
-    return "/images/system/anon.png" if image.nil?
-    type = (image.has_square ? "square" : "profile") if type.nil?
+    return '/images/system/anon.png' if image.nil?
+
+    type = (image.has_square ? 'square' : 'profile') if type.nil?
     image.image_path(type)
   end
 
