@@ -2,9 +2,9 @@
 
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict, :edits]
-  before_action :authenticate_user!, except: [:success]
+  before_action :authenticate_user!, except: [:success, :check_username]
   before_action :prevent_restricted, only: [:show, :edits]
-  before_action :admins_only, except: [:show, :restrict, :success, :edits]
+  before_action :admins_only, except: [:show, :restrict, :success, :edits, :check_username]
   before_action :user_or_admins_only, only: [:edits]
 
   # get /users
@@ -26,6 +26,12 @@ class UsersController < ApplicationController
   # GET /users/:username/edits
   def edits
     @edits = @user.recent_edits(page_param)
+  end
+
+  # GET /users/check_username
+  def check_username
+    render json: { username: params.require(:username),
+                   valid: User.valid_username?(params.require(:username)) }
   end
 
   def image
