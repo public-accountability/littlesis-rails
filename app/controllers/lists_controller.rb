@@ -12,7 +12,8 @@ class ListsController < ApplicationController
     }
   )
 
-  SIGNED_IN_ACTIONS = [:new, :create, :admin, :crop_images, :update_cache, :modifications, :tags]
+  SIGNED_IN_ACTIONS = %i[new create admin crop_images update_cache modifications tags].freeze
+  EDITABLE_ACTIONS = %i[create update add_entity remove_entity update_entity create_entity_associations].freeze
 
   # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
   # from TagableController and therefore including :tags in the list is required
@@ -20,6 +21,7 @@ class ListsController < ApplicationController
   # in controller concerns? (ziggy 2017-08-31)
   before_action :authenticate_user!, only: SIGNED_IN_ACTIONS
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
+  before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
 
   before_action :set_list,
                 only: [:show, :edit, :update, :destroy, :search_data, :admin, :crop_images, :members, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
