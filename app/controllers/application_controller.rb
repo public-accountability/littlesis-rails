@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   rescue_from Exceptions::UserCannotEditError do
     redirect_to home_dashboard_path, notice: <<~NOTICE
       In order to prevent abuse, new users are restricted from editing for the first 10 minutes.
-      We are sorry for the inconvenience. Please contact us if you believe are getting this message in error.
+      We are sorry for the inconvenience. Please contact us if you believe that you are getting this message by mistake.
     NOTICE
   end
 
