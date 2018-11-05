@@ -234,6 +234,15 @@ describe User do
     end
   end
 
+  describe '#raise_unless_can_edit!' do
+    let(:user) { build(:user, is_restricted: true) }
+
+    it 'raises UserCannotEditErorr' do
+      expect { user.raise_unless_can_edit! }
+        .to raise_error(Exceptions::UserCannotEditError)
+    end
+  end
+
   describe 'User.derive_last_user_id_from' do
     it 'accepts strings and integer' do
       expect(User.derive_last_user_id_from('123')).to eq 123

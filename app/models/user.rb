@@ -59,6 +59,10 @@ class User < ApplicationRecord
     !restricted? && confirmed? && (MINUTES_BEFORE_USER_CAN_EDIT.minutes.ago > confirmed_at)
   end
 
+  def raise_unless_can_edit!
+    raise Exceptions::UserCannotEditError unless can_edit?
+  end
+
   # Groups #
 
   def in_group?(group)
