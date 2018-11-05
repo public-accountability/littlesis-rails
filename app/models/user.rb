@@ -9,8 +9,7 @@ class User < ApplicationRecord
   validates :default_network_id, presence: true
 
   # Include default devise modules. Others available are:
-  # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
-  # :legacy_authenticatable, 
+  # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable :legacy_authenticatable
   devise :database_authenticatable, :registerable, :confirmable, :recoverable, :rememberable, :trackable
 
   # after_database_authentication :set_sf_session
@@ -26,9 +25,9 @@ class User < ApplicationRecord
 
   # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
   delegate :image_path, to: :sf_guard_user_profile, allow_nil: true
-  delegate :name_first, :name_last, to: :sf_guard_user_profile
+  delegate :name_first, :name_last, :bio, to: :sf_guard_user_profile
 
-  has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", primary_key: "sf_guard_user_id"
+  has_many :edited_entities, class_name: 'Entity', foreign_key: 'last_user_id', primary_key: 'sf_guard_user_id'
 
   alias :image_url :image_path
 
@@ -36,16 +35,12 @@ class User < ApplicationRecord
   has_many :groups, through: :group_users, inverse_of: :users
   has_many :campaigns, through: :groups, inverse_of: :users
 
-  has_many :notes, foreign_key: "new_user_id", inverse_of: :user
+  has_many :network_maps, primary_key: 'sf_guard_user_id', inverse_of: :user
 
-  has_many :note_users, inverse_of: :user, dependent: :destroy
-  has_many :received_notes, class_name: "Note", through: :note_users, source: :note, inverse_of: :recipients
-  has_many :network_maps, primary_key: "sf_guard_user_id"
+  has_many :lists, foreign_key: 'creator_user_id', inverse_of: :user
 
-  has_many :lists, foreign_key: "creator_user_id", inverse_of: :user
-
-  has_one :api_token
-  has_many :user_permissions
+  has_one :api_token, dependent: :destroy
+  has_many :user_permissions, dependent: :destroy
 
   has_many :user_requests, inverse_of: :user, dependent: :destroy
   has_many :reviewed_requests, class_name: "UserRequest", foreign_key: 'reviewer_id', inverse_of: :reviewer
@@ -58,12 +53,14 @@ class User < ApplicationRecord
     is_restricted
   end
 
+  # Groups #
+
   def in_group?(group)
-  	GroupUser.where(group_id: group.id, user_id: id).count > 0
+    GroupUser.where(group_id: group.id, user_id: id).count > 0
   end
 
   def admin_in_group?(group)
-  	GroupUser.where(group_id: group.id, user_id: id, is_admin: true).count > 0
+    GroupUser.where(group_id: group.id, user_id: id, is_admin: true).count > 0
   end
 
   def in_campaign?(campaign)
@@ -71,43 +68,15 @@ class User < ApplicationRecord
   end
 
   def legacy_created_at
-  	return created_at if sf_guard_user.nil?
-  	sf_guard_user.created_at
+    return created_at if sf_guard_user.nil?
+
+    sf_guard_user.created_at
   end
 
-  def notes_with_replies
-		Note.with_joins
-	    .where("note.new_user_id = ? OR users.id = ?", id, id)
-  end
+  def full_name(override = false)
+    return nil unless override || sf_guard_user_profile&.show_full_name
 
-  def notes_with_replies_visible_to_user(user)
-  	return notes_with_replies.public if user.nil?
-  	notes_with_replies.where("note.is_private = ? OR users.id = ?", false, user.id)
-  end
-
-  def notes_visible_to_user(user)
-  	return notes.public.order("note.created_at DESC") if user.nil?
-  	notes.with_joins
-  		.where("note.is_private = ? OR users.id = ?", false, user.id)
-  end
-
-  def received_notes_visible_to_user(user)
-  	return received_notes.public.order("note.created_at DESC") if user.nil?
-  	received_notes.with_joins
-  		.where("note.is_private = ? OR users.id = ?", false, user.id)
-  end
-
-  def show_full_name?
-    sf_guard_user_profile.show_full_name
-  end
-
-  def full_name(override=false)
-    return nil unless override or show_full_name?
     sf_guard_user_profile.full_name
-  end
-
-  def bio
-    sf_guard_user_profile.bio
   end
 
   def legacy_url
@@ -115,7 +84,7 @@ class User < ApplicationRecord
   end
 
   def full_legacy_url
-    "//littlesis.org" + legacy_url
+    "https://littlesis.org/#{legacy_url}"
   end
 
   def legacy_check_password(password)
@@ -123,8 +92,9 @@ class User < ApplicationRecord
   end
 
   def image_url
-    return "/images/system/anon.png" if image.nil?
-    type = (image.has_square ? "square" : "profile") if type.nil?
+    return '/images/system/anon.png' if image.nil?
+
+    type = (image.has_square ? 'square' : 'profile') if type.nil?
     image.image_path(type)
   end
 

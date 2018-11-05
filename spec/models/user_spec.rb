@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 describe User do
-  it { should have_db_column(:map_the_power) }
-  it { should have_one(:api_token) }
-  it { should have_many(:lists) }
-  it { should have_many(:user_permissions) }
-  it { should have_many(:user_requests) }
-  it { should have_many(:reviewed_requests) }
+  it { is_expected.to have_db_column(:map_the_power) }
+  it { is_expected.to have_one(:api_token) }
+  it { is_expected.to have_many(:lists) }
+  it { is_expected.to have_many(:user_permissions) }
+  it { is_expected.to have_many(:user_requests) }
+  it { is_expected.to have_many(:reviewed_requests) }
 
   it 'has constant User::Edits (from module UserEdits)' do
     expect(User.const_defined?(:Edits)).to be true
@@ -31,34 +31,58 @@ describe User do
     end
 
     describe 'username validation' do
-      context 'valid user name' do
+      context 'with valid username' do
         let(:user) { build(:really_basic_user, username: 'f_kafka') }
-        specify { expect(user.valid?).to eql true }
+
+        specify { expect(user.valid?).to be true }
       end
-      context 'invalid user name' do
+
+      context 'with invalid username' do
         let(:user) { build(:really_basic_user, username: 'f.kafka') }
-        specify { expect(user.valid?).to eql false }
+
+        specify { expect(user.valid?).to be false }
       end
     end
 
     describe 'sf_guard' do
       subject { build(:user, sf_guard_user_id: rand(1000)) }
-      it { should validate_uniqueness_of(:sf_guard_user_id) }
-      it { should validate_presence_of(:sf_guard_user_id) }
+
+      it { is_expected.to validate_uniqueness_of(:sf_guard_user_id) }
+      it { is_expected.to validate_presence_of(:sf_guard_user_id) }
     end
   end
 
   describe 'delagates first and last names to sf_guard_user_profile' do
-    let!(:user) { create_really_basic_user }
-    let!(:sf_profile) do
+    let(:user) { create_really_basic_user }
+    let(:first_name) { Faker::Name.first_name }
+    let(:last_name) { Faker::Name.last_name }
+    let(:sf_profile) do
       create(:sf_guard_user_profile,
-             name_first: Faker::Name.first_name,
-             name_last: Faker::Name.last_name,
+             name_first: first_name,
+             name_last: last_name,
              user_id: user.sf_guard_user_id)
     end
 
+    before { sf_profile }
+
     specify { expect(user.name_first).to eql sf_profile.name_first }
     specify { expect(user.name_last).to eql sf_profile.name_last }
+
+    specify do
+      expect(user.full_name).to be nil
+      expect(user.full_name(true)).to eq "#{first_name} #{last_name}"
+    end
+  end
+
+  describe 'bio' do
+    let(:user) { create_really_basic_user }
+    let(:bio) { Faker::GreekPhilosophers.quote }
+
+    let!(:sf_profile) do
+      create(:sf_guard_user_profile, bio: bio, user_id: user.sf_guard_user_id)
+    end
+
+    specify { expect(user.bio).to eq bio }
   end
 
   describe 'set_default_network_id' do
@@ -106,6 +130,7 @@ describe User do
 
   describe 'chat user' do
     let(:user) { build(:user) }
+
     describe 'create_chat_account' do
       it 'returns :existing_account if user has chatid' do
         expect(build(:user, chatid: '12345').create_chat_account).to be :existing_account
@@ -131,13 +156,8 @@ describe User do
     let(:admin_user) { create_admin_user }
     let(:user) { create_really_basic_user }
 
-    context 'is admin' do
-      specify { expect(admin_user.admin?).to be true }
-    end
-
-    context 'is not admin' do
-      specify { expect(user.admin?).to be false }
-    end
+    specify { expect(admin_user.admin?).to be true }
+    specify { expect(user.admin?).to be false }
   end
 
   describe '#importer?' do
@@ -148,13 +168,8 @@ describe User do
     end
     let(:user) { create_really_basic_user }
 
-    context 'is importer' do
-      specify { expect(importer.importer?).to be true }
-    end
-
-    context 'is not importer' do
-      specify { expect(user.importer?).to be false }
-    end
+    specify { expect(importer.importer?).to be true }
+    specify { expect(user.importer?).to be false }
   end
 
   describe '#bulker?' do
@@ -165,13 +180,8 @@ describe User do
     end
     let(:user) { create_really_basic_user }
 
-    context 'is bulker' do
-      specify { expect(bulker.bulker?).to be true }
-    end
-
-    context 'is not bulker' do
-      specify { expect(user.bulker?).to be false }
-    end
+    specify { expect(bulker.bulker?).to be true }
+    specify { expect(user.bulker?).to be false }
   end
 
   describe '#merger?' do
@@ -182,13 +192,8 @@ describe User do
     end
     let(:user) { create_really_basic_user }
 
-    context 'is merger' do
-      specify { expect(merger.merger?).to be true }
-    end
-
-    context 'is not merger' do
-      specify { expect(user.merger?).to be false }
-    end
+    specify { expect(merger.merger?).to be true }
+    specify { expect(user.merger?).to be false }
   end
 
   describe '#restricted?' do
@@ -203,18 +208,18 @@ describe User do
 
   describe 'User.derive_last_user_id_from' do
     it 'accepts strings and integer' do
-      expect(User.derive_last_user_id_from('123')).to eql 123
-      expect(User.derive_last_user_id_from(123)).to eql 123
+      expect(User.derive_last_user_id_from('123')).to eq 123
+      expect(User.derive_last_user_id_from(123)).to eq 123
     end
 
     it 'accepts User' do
       user = build(:user, sf_guard_user_id: 123)
-      expect(User.derive_last_user_id_from(user)).to eql 123
+      expect(User.derive_last_user_id_from(user)).to eq 123
     end
 
     it 'accepts SfGuardUser' do
       sf_user = build(:sf_user, id: 456)
-      expect(User.derive_last_user_id_from(sf_user)).to eql 456
+      expect(User.derive_last_user_id_from(sf_user)).to eq 456
     end
 
     it 'by default it raises TypeError if provided nil' do
