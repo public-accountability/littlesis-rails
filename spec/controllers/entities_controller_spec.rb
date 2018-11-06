@@ -65,34 +65,41 @@ describe EntitiesController, type: :controller do
     end
 
     describe '#match_donations and reivew donations' do
-      before do
-        # expect(Entity).to receive(:find_by_id).once
-        expect(Entity).to receive(:find_by_id).and_return(build(:entity_org))
-        expect(controller).to receive(:check_permission).with('importer').and_call_original
-      end
-
-      context 'user with importer permissions' do
+      context 'with importer permissions' do
         login_user
+
+        before do
+          expect(Entity).to receive(:find_by_id).and_return(build(:entity_org))
+          expect(controller).to receive(:check_permission).with('importer').and_call_original
+        end
+
         describe 'match_donations' do
           before { get(:match_donations, params: { id: rand(100) }) }
-          it { should render_template(:match_donations) }
-          it { should respond_with(200) }
+
+          it { is_expected.to render_template(:match_donations) }
+          it { is_expected.to respond_with(200) }
         end
 
         describe 'review_donations' do
           before { get(:review_donations, params: { id: rand(100) }) }
-          it { should render_template(:review_donations) }
-          it { should respond_with(200) }
+
+          it { is_expected.to render_template(:review_donations) }
+          it { is_expected.to respond_with(200) }
         end
       end
 
       context 'user without importer permissions' do
         login_basic_user
 
+        before do
+          expect(controller).to receive(:check_permission).with('importer').and_call_original
+        end
+
         describe 'match_donations' do
           before { get(:match_donations, params: { id: rand(100) }) }
-          it { should respond_with(403) }
-          it { should_not render_template(:match_donations) }
+
+          it { is_expected.to respond_with(403) }
+          it { is_expected.not_to render_template(:match_donations) }
         end
 
         describe 'review_donations' do
@@ -187,7 +194,7 @@ describe EntitiesController, type: :controller do
       end
     end
 
-    context 'user does not have contributors permission' do
+    xcontext 'user does not have contributors permission' do
       login_user_without_permissions
 
       it 'does not create a new entity' do
