@@ -206,7 +206,7 @@ describe Document, :pagination_helper, type: :model do
       it 'records update events' do
         d = create(:document)
         expect(d.versions.count).to eql 0
-        d.update!(name: Faker::Cat.registry)
+        d.update!(name: Faker::Creature::Cat.registry)
         expect(d.versions.count).to eql 1
       end
     end

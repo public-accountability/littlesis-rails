@@ -14,7 +14,7 @@ FactoryBot.define do
   factory :wikipedia_external_link, class: ExternalLink do
     link_type { 2 }
     entity_id { rand(1000) }
-    link_id { Faker::Cat.breed.tr(' ', '_') }
+    link_id { Faker::Creature::Cat.breed.tr(' ', '_') }
   end
 
   factory :twitter_external_link, class: ExternalLink do

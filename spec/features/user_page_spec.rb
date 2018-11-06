@@ -122,7 +122,7 @@ feature 'User Pages' do
       context 'with 2 edits' do
         with_versioning do
           before do
-            entities.each { |e| e.update!(blurb: Faker::Dog.meme_phrase) }
+            entities.each { |e| e.update!(blurb: Faker::Creature::Dog.meme_phrase) }
 
             entities.each { |e| e.versions.last.update_columns(whodunnit: user_for_page.id.to_s) }
             visit url
