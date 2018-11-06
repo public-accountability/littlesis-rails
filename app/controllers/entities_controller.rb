@@ -19,9 +19,9 @@ class EntitiesController < ApplicationController
   before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
   before_action :importers_only, only: IMPORTER_ACTIONS
-  before_action :check_delete_permission, only: [:destroy]
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show, :create_bulk]
   before_action :set_entity_for_profile_page, only: [:show]
+  before_action :check_delete_permission, only: [:destroy]
 
   ## Profile Page Tabs:
   # (consider moving these all to #show route)
