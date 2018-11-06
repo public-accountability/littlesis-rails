@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ListHelpersForExampleGroups
   def test_request_for_user(x)
     it "is #{x[:response]} for #{x[:action]} by #{x[:user]}" do
@@ -17,7 +19,15 @@ module ListHelpersForExampleGroups
       else
         get x[:action], params: { id: '123' }
       end
-      expect(response).to have_http_status(x[:response])
+
+      if x[:response] == :login_redirect
+        expect(response).to have_http_status 302
+        expect(response.location).to include '/login'
+      else
+        expect(response).to have_http_status(x[:response])
+      end
+      
+      
       sign_out instance_variable_get(x[:user]) if x[:user].present?
     end
   end

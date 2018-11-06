@@ -56,4 +56,19 @@ feature "adding an new list", type: :feature do
     expect(List.count).to eql list_count
     expect(Reference.count).to eql reference_count
   end
+
+  it 'does not create list unless user can edit' do
+    list_count = List.count
+    user.update_columns :confirmed_at => 2.minutes.ago
+
+    fill_in 'list_name', :with => list_name
+    fill_in 'list_short_description', :with => short_description
+    fill_in 'ref_url', :with => url
+    fill_in 'ref_name', :with => url_name
+    click_button 'Add'
+
+    expect(List.count).to eql list_count
+
+    successfully_visits_page '/home/dashboard'
+  end
 end

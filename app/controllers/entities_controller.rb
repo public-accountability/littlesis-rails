@@ -12,12 +12,15 @@ class EntitiesController < ApplicationController
 
   TABS = %w[interlocks political giving datatable].freeze
 
+  EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation].freeze
+  IMPORTER_ACTIONS = %i[match_donation match_donations review_donations match_ny_donations review_ny_donations].freeze
+
   before_action :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving]
-  before_action :block_restricted_user_access, only: [:new, :create, :update]
+  before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
+  before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
+  before_action :importers_only, only: IMPORTER_ACTIONS
   before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show, :create_bulk]
   before_action :set_entity_for_profile_page, only: [:show]
-  before_action :importers_only, only: [:match_donation, :match_donations, :review_donations, :match_ny_donations, :review_ny_donations]
-  before_action -> { check_permission('contributor') }, only: [:create]
   before_action :check_delete_permission, only: [:destroy]
 
   ## Profile Page Tabs:
