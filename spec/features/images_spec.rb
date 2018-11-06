@@ -7,7 +7,7 @@ describe 'Images' do
   after { logout(:user) }
 
   feature 'Adding an image to a entity' do
-    let(:image_title) { Faker::Dog.meme_phrase }
+    let(:image_title) { Faker::Creature::Dog.meme_phrase }
     let(:url) { 'https://example.com/example.png' }
     let(:image_data) do
       File.open(Rails.root.join('spec', 'testdata', 'example.png')).read
