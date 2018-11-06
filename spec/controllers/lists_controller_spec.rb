@@ -207,7 +207,7 @@ describe ListsController, :list_helper, type: :controller do
         allow(ListEntity).to receive(:find).and_return(spy('listentity'))
         allow(ListEntity).to receive(:find_or_create_by).and_return(spy('find_or_create_by'))
         @request.env["devise.mapping"] = Devise.mappings[:user]
-        expect(List).to receive(:find).and_return(@open_list)
+        allow(List).to receive(:find).and_return(@open_list)
       end
 
       [
@@ -242,37 +242,37 @@ describe ListsController, :list_helper, type: :controller do
         { user: '@lister', action: :references, response: :success },
         { user: '@admin', action: :references, response: :success },
         # edit action
-        { user: nil, action: :edit, response: 403 },
+        { user: nil, action: :edit, response: :login_redirect },
         { user: '@creator', action: :edit, response: :success },
         { user: '@non_creator', action: :edit, response: 403 },
         { user: '@admin', action: :edit, response: :success },
         { user: '@lister', action: :edit, response: 403 },
         # update action
-        { user: nil, action: :update, response: 403 },
+        { user: nil, action: :update, response: :login_redirect },
         { user: '@creator', action: :update, response: 302 },
         { user: '@non_creator', action: :update, response: 403 },
         { user: '@admin', action: :update, response: 302 },
         { user: '@lister', action: :update, response: 403 },
         # destroy action
-        { user: nil, action: :destroy, response: 403 },
+        { user: nil, action: :destroy, response: :login_redirect },
         { user: '@creator', action: :destroy, response: 302 },
         { user: '@non_creator', action: :destroy, response: 403 },
         { user: '@admin', action: :destroy, response: 302 },
         { user: '@lister', action: :destroy, response: 403 },
         # add entity
-        { user: nil, action: :add_entity, response: 403 },
+        { user: nil, action: :add_entity, response: :login_redirect },
         { user: '@creator', action: :add_entity, response: 302 },
         { user: '@non_creator', action: :add_entity, response: 403 },
         { user: '@admin', action: :add_entity, response: 302 },
         { user: '@lister', action: :add_entity, response: 302 },
         # remove entity
-        { user: nil, action: :remove_entity, response: 403 },
+        { user: nil, action: :remove_entity, response: :login_redirect },
         { user: '@creator', action: :remove_entity, response: 302 },
         { user: '@non_creator', action: :remove_entity, response: 403 },
         { user: '@admin', action: :remove_entity, response: 302 },
         { user: '@lister', action: :remove_entity, response: 302 },
         # new_entity associations action
-        { user: nil, action: :new_entity_associations, response: 403 },
+        { user: nil, action: :new_entity_associations, response: :login_redirect },
         { user: '@creator', action: :new_entity_associations, response: :success },
         { user: '@non_creator', action: :new_entity_associations, response: 403 },
         { user: '@admin', action: :new_entity_associations, response: :success },
@@ -287,7 +287,7 @@ describe ListsController, :list_helper, type: :controller do
         # { user: '@lister', action: :create_entity_associations, response: 302 },
         # update entity
         # in #update_entity, 404 = successful call that falls thru
-        { user: nil, action: :remove_entity, response: 403 },
+        { user: nil, action: :remove_entity, response: :login_redirect },
         { user: '@creator', action: :update_entity, response: 404 },
         { user: '@non_creator', action: :update_entity, response: 403 },
         { user: '@admin', action: :update_entity, response: 404 },
@@ -301,7 +301,7 @@ describe ListsController, :list_helper, type: :controller do
         allow(ListEntity).to receive(:find).and_return(spy('listentity'))
         allow(ListEntity).to receive(:find_or_create_by).and_return(spy('find_or_create_by'))
         @request.env["devise.mapping"] = Devise.mappings[:user]
-        expect(List).to receive(:find).and_return(@private_list)
+        allow(List).to receive(:find).and_return(@private_list)
       end
 
       [
@@ -336,31 +336,31 @@ describe ListsController, :list_helper, type: :controller do
         { user: '@lister', action: :references, response: 403 },
         { user: '@admin', action: :giving, response: :success },
         # update action
-        { user: nil, action: :update, response: 403 },
+        { user: nil, action: :update, response: :login_redirect },
         { user: '@creator', action: :update, response: 302 },
         { user: '@non_creator', action: :update, response: 403 },
         { user: '@admin', action: :update, response: 302 },
         { user: '@lister', action: :update, response: 403 },
         # destroy action
-        { user: nil, action: :destroy, response: 403 },
+        { user: nil, action: :destroy, response: :login_redirect },
         { user: '@creator', action: :destroy, response: 302 },
         { user: '@non_creator', action: :destroy, response: 403 },
         { user: '@admin', action: :destroy, response: 302 },
         { user: '@lister', action: :destroy, response: 403 },
         # add
-        { user: nil, action: :add_entity, response: 403 },
+        { user: nil, action: :add_entity, response: :login_redirect },
         { user: '@creator', action: :add_entity, response: 302 },
         { user: '@non_creator', action: :add_entity, response: 403 },
         { user: '@admin', action: :add_entity, response: 302 },
         { user: '@lister', action: :add_entity, response: 403 },
         # remove
-        { user: nil, action: :remove_entity, response: 403 },
+        { user: nil, action: :remove_entity, response: :login_redirect },
         { user: '@creator', action: :remove_entity, response: 302 },
         { user: '@non_creator', action: :remove_entity, response: 403 },
         { user: '@admin', action: :remove_entity, response: 302 },
         { user: '@lister', action: :remove_entity, response: 403 },
         # new_entity associations action
-        { user: nil, action: :new_entity_associations, response: 403 },
+        { user: nil, action: :new_entity_associations, response: :login_redirect },
         { user: '@creator', action: :new_entity_associations, response: :success },
         { user: '@non_creator', action: :new_entity_associations, response: 403 },
         { user: '@admin', action: :new_entity_associations, response: :success },
@@ -375,7 +375,7 @@ describe ListsController, :list_helper, type: :controller do
         # { user: '@lister', action: :create_entity_associations, response: 403 },
         # update
         # in #update_entity, 404 = successful call that falls thru
-        { user: nil, action: :remove_entity, response: 403 },
+        { user: nil, action: :remove_entity, response: :login_redirect },
         { user: '@creator', action: :update_entity, response: 404 },
         { user: '@non_creator', action: :update_entity, response: 403 },
         { user: '@admin', action: :update_entity, response: 404 },
@@ -389,7 +389,7 @@ describe ListsController, :list_helper, type: :controller do
         allow(ListEntity).to receive(:find).and_return(spy('listentity'))
         allow(ListEntity).to receive(:find_or_create_by).and_return(spy('find_or_create_by'))
         @request.env["devise.mapping"] = Devise.mappings[:user]
-        expect(List).to receive(:find).and_return(@closed_list)
+        allow(List).to receive(:find).and_return(@closed_list)
       end
 
       [
@@ -423,37 +423,37 @@ describe ListsController, :list_helper, type: :controller do
         { user: '@lister', action: :references, response: :success },
         { user: '@admin', action: :references, response: :success },
         # edit action
-        { user: nil, action: :edit, response: 403 },
+        { user: nil, action: :edit, response: :login_redirect },
         { user: '@creator', action: :edit, response: :success },
         { user: '@non_creator', action: :edit, response: 403 },
         { user: '@admin', action: :edit, response: :success },
         { user: '@lister', action: :edit, response: 403 },
         # update action
-        { user: nil, action: :update, response: 403 },
+        { user: nil, action: :update, response: :login_redirect },
         { user: '@creator', action: :update, response: 302 },
         { user: '@non_creator', action: :update, response: 403 },
         { user: '@admin', action: :update, response: 302 },
         { user: '@lister', action: :update, response: 403 },
         # destroy action
-        { user: nil, action: :destroy, response: 403 },
+        { user: nil, action: :destroy, response: :login_redirect },
         { user: '@creator', action: :destroy, response: 302 },
         { user: '@non_creator', action: :destroy, response: 403 },
         { user: '@admin', action: :destroy, response: 302 },
         { user: '@lister', action: :destroy, response: 403 },
         # add entity
-        { user: nil, action: :add_entity, response: 403 },
+        { user: nil, action: :add_entity, response: :login_redirect },
         { user: '@creator', action: :add_entity, response: 302 },
         { user: '@non_creator', action: :add_entity, response: 403 },
         { user: '@admin', action: :add_entity, response: 302 },
         { user: '@lister', action: :add_entity, response: 403 },
         # remove entity
-        { user: nil, action: :remove_entity, response: 403 },
+        { user: nil, action: :remove_entity, response: :login_redirect },
         { user: '@creator', action: :remove_entity, response: 302 },
         { user: '@non_creator', action: :remove_entity, response: 403 },
         { user: '@admin', action: :remove_entity, response: 302 },
         { user: '@lister', action: :remove_entity, response: 403 },
         # new entity associations action
-        { user: nil, action: :new_entity_associations, response: 403 },
+        { user: nil, action: :new_entity_associations, response: :login_redirect },
         { user: '@creator', action: :new_entity_associations, response: :success },
         { user: '@non_creator', action: :new_entity_associations, response: 403 },
         { user: '@admin', action: :new_entity_associations, response: :success },
@@ -468,7 +468,7 @@ describe ListsController, :list_helper, type: :controller do
         # { user: '@lister', action: :create_entity_associations, response: 403 },
         # update entity
         # in #update_entity, 404 = successful call that falls thru
-        { user: nil, action: :remove_entity, response: 403 },
+        { user: nil, action: :remove_entity, response: :login_redirect },
         { user: '@creator', action: :update_entity, response: 404 },
         { user: '@non_creator', action: :update_entity, response: 403 },
         { user: '@admin', action: :update_entity, response: 404 },
