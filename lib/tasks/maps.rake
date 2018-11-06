@@ -154,11 +154,13 @@ namespace :maps do
     Rails.cache.delete_matched EntityNetworkMapCollection::MATCH_PATTERN
 
     NetworkMap.find_each(batch_size: 250) do |network_map|
-      network_map.entities.pluck(:id).each do |entity_id|
-        EntityNetworkMapCollection
-          .new(entity_id)
-          .add(network_map.id)
-          .save
+      unless network_map.title == 'Untitled Map'
+        network_map.entities.pluck(:id).each do |entity_id|
+          EntityNetworkMapCollection
+            .new(entity_id)
+            .add(network_map.id)
+            .save
+        end
       end
     end
   end

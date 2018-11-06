@@ -22,7 +22,7 @@ class NetworkMap < ApplicationRecord
   validates :title, presence: true
 
   before_save :set_defaults, :set_index_data, :generate_secret
-  before_save :start_update_entity_network_map_collections_job, if: :graph_data_changed?
+  before_save :start_update_entity_network_map_collections_job, if: :update_network_map_collection?
 
   def set_index_data
     self.index_data = generate_index_data
@@ -337,6 +337,10 @@ class NetworkMap < ApplicationRecord
   def after_soft_delete
     UpdateEntityNetworkMapCollectionsJob
       .perform_later(id, remove: entities.pluck(:id))
+  end
+
+  def update_network_map_collection?
+    (title != 'Untitled Map') && graph_data_changed?
   end
 
   def start_update_entity_network_map_collections_job
