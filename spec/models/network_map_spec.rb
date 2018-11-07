@@ -229,6 +229,24 @@ describe NetworkMap, type: :model do
         expect(network_map.entities_removed_from_graph).to eql [e2.id]
       end
     end
+
+    describe 'before_save' do
+      context 'with custom title' do
+        it 'starts network map job' do
+          map = build(:network_map, user_id: 1)
+          expect(UpdateEntityNetworkMapCollectionsJob).to receive(:perform_later).once
+          map.save!
+        end
+      end
+
+      context 'when titled "Untitled Map"' do
+        it 'does not start network map job' do
+          map = build(:network_map, user_id: 1, title: 'Untitled Map')
+          expect(UpdateEntityNetworkMapCollectionsJob).not_to receive(:perform_later)
+          map.save!
+        end
+      end
+    end
   end
 end
 
