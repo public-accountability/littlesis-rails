@@ -226,7 +226,7 @@ GEM
     pry-byebug (3.6.0)
       byebug (~> 10.0)
       pry (~> 0.10)
-    pry-rails (0.3.6)
+    pry-rails (0.3.7)
       pry (>= 0.10.4)
     public_suffix (3.0.3)
     rack (2.0.6)
@@ -422,9 +422,9 @@ DEPENDENCIES
   mini_magick
   mysql2 (~> 0.5.2)
   paper_trail (= 9.2.0)
-  pry
+  pry (>= 0.12.0)
   pry-byebug
-  pry-rails
+  pry-rails (>= 0.3.7)
   rack-mini-profiler
   rack-rewrite (~> 1.5.1)
   rails (= 5.2.1)
