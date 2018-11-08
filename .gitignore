@@ -70,3 +70,4 @@ log/*.lock
 !/data/cmp_matches.yml
 
 
+/iapd.json

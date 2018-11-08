@@ -7,7 +7,7 @@ module EntityMatcher
     attr_reader :results
     extend Forwardable
 
-    def_delegators :@results, :each, :first, :second, :map, :size, :count
+    def_delegators :@results, :each, :first, :second, :map, :size, :count, :empty?
 
     def initialize(evaluation_results)
       check_argument(evaluation_results)
