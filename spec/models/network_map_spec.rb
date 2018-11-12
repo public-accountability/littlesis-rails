@@ -5,13 +5,7 @@ require 'rails_helper'
 describe NetworkMap, type: :model do
   it { is_expected.to belong_to(:sf_guard_user) }
   it { is_expected.to belong_to(:user) }
-  context 'validations' do
-    it { is_expected.to validate_presence_of(:title) }
-  end
-
-  describe '#annotations_data_with_sources' do
-    let(:annoations_data) { "[{\"id\":\"B14l9k6ug\",\"header\":\"Untitled Annotation\",\"text\":\"\",\"nodeIds\":[],\"edgeIds\":[\"411302\"],\"captionIds\":[]}]" }
-  end
+  it { is_expected.to validate_presence_of(:title) }
 
   describe '#generate_index_data' do
     let(:e1) { create(:person, :with_person_name, blurb: 'xyz') }
@@ -58,7 +52,8 @@ describe NetworkMap, type: :model do
       relationships.second.add_reference(url: urls[0], name: Faker::Lorem.sentence)
       relationships.second.add_reference(url: urls[1], name: Faker::Lorem.sentence)
 
-      expect(map.documents.to_set).to eql([Document.find_by_url(urls.first), Document.find_by_url(urls.second)].to_set)
+      expect(map.documents.to_set)
+        .to eql([Document.find_by(url: urls.first), Document.find_by(url: urls.second)].to_set)
     end
   end
 
@@ -170,20 +165,18 @@ describe NetworkMap, type: :model do
 
     let(:network_map) { build(:network_map, graph_data: graph_data) }
 
-    context 'using default graph_data' do
+    context 'when using default graph_data' do
       specify do
         expect(network_map.numeric_node_ids).to eql ['123', '456']
       end
     end
 
-    context 'providing the graph inline' do
+    context 'when providing the graph inline' do
       specify do
         expect(network_map.numeric_node_ids(custom_graph_data)).to eql ['789']
       end
     end
   end
-
-  # describe '' do
 
   describe 'cloneable?' do
     it 'cloneable if is_cloneable is set' do
@@ -246,6 +239,21 @@ describe NetworkMap, type: :model do
           map.save!
         end
       end
+    end
+  end
+
+  describe 'soft delete / destroy' do
+    let(:network_map) { create(:network_map, user_id: 1) }
+
+    before { network_map }
+
+    it 'destroying removes map from queries' do
+      expect { network_map.destroy }.to change(NetworkMap, :count).by(-1)
+    end
+
+    it 'destroying soft_deletes map' do
+      expect { network_map.destroy }
+        .not_to change { NetworkMap.unscoped.count }
     end
   end
 end

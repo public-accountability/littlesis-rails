@@ -4,6 +4,8 @@ class NetworkMap < ApplicationRecord
   include SingularTable
   include SoftDelete
 
+  has_paper_trail on: [:update, :destroy]
+
   delegate :url_helpers, to: 'Rails.application.routes'
 
   # TODO: remove relience of sf_guard_user
@@ -36,6 +38,10 @@ class NetworkMap < ApplicationRecord
     else
       entities_text
     end
+  end
+
+  def destroy
+    soft_delete
   end
 
   def set_defaults
