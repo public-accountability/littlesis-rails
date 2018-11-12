@@ -241,6 +241,21 @@ describe NetworkMap, type: :model do
       end
     end
   end
+
+  describe 'soft delete / destroy' do
+    let(:network_map) { create(:network_map, user_id: 1) }
+
+    before { network_map }
+
+    it 'destroying removes map from queries' do
+      expect { network_map.destroy }.to change(NetworkMap, :count).by(-1)
+    end
+
+    it 'destroying soft_deletes map' do
+      expect { network_map.destroy }
+        .not_to change { NetworkMap.unscoped.count }
+    end
+  end
 end
 
 # rubocop:enable Style/StringLiterals, Style/WordArray

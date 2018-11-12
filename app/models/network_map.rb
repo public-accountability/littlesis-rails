@@ -38,6 +38,10 @@ class NetworkMap < ApplicationRecord
     end
   end
 
+  def destroy
+    soft_delete
+  end
+
   def set_defaults
     self.data = default_data if data.blank?
     self.width = Lilsis::Application.config.netmap_default_width if width.blank?
