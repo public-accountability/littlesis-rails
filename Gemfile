@@ -64,9 +64,9 @@ group :test, :development do
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   gem 'jasmine', '>= 3.2'
   gem 'jasmine_selenium_runner'
-  gem 'pry'
+  gem 'pry', '>= 0.12.0'
   gem 'pry-byebug'
-  gem 'pry-rails'
+  gem 'pry-rails', '>= 0.3.7'
   gem 'rack-mini-profiler'
   gem 'rails-controller-testing'
   # %w[rspec-core rspec-expectations rspec-mocks rspec-rails rspec-support].each do |lib|
