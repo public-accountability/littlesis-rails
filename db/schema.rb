@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_08_145444) do
+ActiveRecord::Schema.define(version: 2018_11_13_153716) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1440,7 +1440,7 @@ ActiveRecord::Schema.define(version: 2018_10_08_145444) do
     t.index ["relationship_id"], name: "relationship_id_idx"
   end
 
-  create_table "unmatched_ny_filers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "unmatched_ny_filers", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.bigint "ny_filer_id", null: false
     t.integer "disclosure_count", null: false
     t.index ["disclosure_count"], name: "index_unmatched_ny_filers_on_disclosure_count"
@@ -1454,6 +1454,16 @@ ActiveRecord::Schema.define(version: 2018_10_08_145444) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "resource_type"], name: "index_user_permissions_on_user_id_and_resource_type"
+  end
+
+  create_table "user_profiles", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "name_first"
+    t.string "name_last"
+    t.text "reason", limit: 4294967295
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_profiles_on_user_id", unique: true
   end
 
   create_table "user_requests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -1615,5 +1625,6 @@ ActiveRecord::Schema.define(version: 2018_10_08_145444) do
   add_foreign_key "transaction", "entity", column: "contact1_id", name: "transaction_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "entity", column: "contact2_id", name: "transaction_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "relationship", name: "transaction_ibfk_1", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_profiles", "users"
   add_foreign_key "user_requests", "users"
 end
