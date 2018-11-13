@@ -3,6 +3,7 @@ require 'rails_helper'
 describe User do
   it { is_expected.to have_db_column(:map_the_power) }
   it { is_expected.to have_one(:api_token) }
+  it { is_expected.to have_one(:user_profile) }
   it { is_expected.to have_many(:lists) }
   it { is_expected.to have_many(:user_permissions) }
   it { is_expected.to have_many(:user_requests) }
@@ -52,37 +53,19 @@ describe User do
     end
   end
 
-  describe 'delagates first and last names to sf_guard_user_profile' do
+  describe 'delagates first and last names to user_profile' do
     let(:user) { create_really_basic_user }
     let(:first_name) { Faker::Name.first_name }
     let(:last_name) { Faker::Name.last_name }
-    let(:sf_profile) do
-      create(:sf_guard_user_profile,
-             name_first: first_name,
-             name_last: last_name,
-             user_id: user.sf_guard_user_id)
+    let(:user_profile) do
+      create(:user_profile, name_first: first_name, name_last: last_name, user: user)
     end
 
-    before { sf_profile }
+    before { user_profile }
 
-    specify { expect(user.name_first).to eql sf_profile.name_first }
-    specify { expect(user.name_last).to eql sf_profile.name_last }
-
-    specify do
-      expect(user.full_name).to be nil
-      expect(user.full_name(true)).to eq "#{first_name} #{last_name}"
-    end
-  end
-
-  describe 'bio' do
-    let(:user) { create_really_basic_user }
-    let(:bio) { Faker::GreekPhilosophers.quote }
-
-    let!(:sf_profile) do
-      create(:sf_guard_user_profile, bio: bio, user_id: user.sf_guard_user_id)
-    end
-
-    specify { expect(user.bio).to eq bio }
+    specify { expect(user.name_first).to eql user_profile.name_first }
+    specify { expect(user.name_last).to eql user_profile.name_last }
+    specify { expect(user.full_name).to eq "#{first_name} #{last_name}" }
   end
 
   describe 'set_default_network_id' do

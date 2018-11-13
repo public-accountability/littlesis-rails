@@ -19,19 +19,16 @@ class User < ApplicationRecord
   #  attr_accessible :email, :password, :password_confirmation, :remember_me
 
   belongs_to :sf_guard_user, inverse_of: :user
-  has_one :sf_guard_user_profile, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :user
+
+  has_one :user_profile, inverse_of: :user, dependent: :destroy
   has_one :image, inverse_of: :user, dependent: :destroy
   accepts_nested_attributes_for :sf_guard_user
 
   before_validation :set_default_network_id
 
-  # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
-  delegate :image_path, to: :sf_guard_user_profile, allow_nil: true
-  delegate :name_first, :name_last, :bio, to: :sf_guard_user_profile
+  delegate :name_first, :name_last, :full_name, to: :user_profile
 
   has_many :edited_entities, class_name: 'Entity', foreign_key: 'last_user_id', primary_key: 'sf_guard_user_id'
-
-  alias :image_url :image_path
 
   has_many :group_users, inverse_of: :user, dependent: :destroy
   has_many :groups, through: :group_users, inverse_of: :users
@@ -46,6 +43,11 @@ class User < ApplicationRecord
 
   has_many :user_requests, inverse_of: :user, dependent: :destroy
   has_many :reviewed_requests, class_name: "UserRequest", foreign_key: 'reviewer_id', inverse_of: :reviewer
+
+  def image_path
+    "https://#{APP_CONFIG['asset_host']}/images/system/anon.png"
+  end
+  alias image_url image_path
 
   def to_param
     username
@@ -81,12 +83,6 @@ class User < ApplicationRecord
     return created_at if sf_guard_user.nil?
 
     sf_guard_user.created_at
-  end
-
-  def full_name(override = false)
-    return nil unless override || sf_guard_user_profile&.show_full_name
-
-    sf_guard_user_profile.full_name
   end
 
   def legacy_url

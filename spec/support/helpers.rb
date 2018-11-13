@@ -33,8 +33,8 @@ module RspecExampleHelpers
 
   def create_admin_user
     sf_user = FactoryBot.create(:sf_guard_user)
-    create(:sf_guard_user_profile, user_id: sf_user.id)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+    create(:user_profile, user: user)
     SfGuardUserPermission.create!(permission_id: 1, user_id: sf_user.id)
     SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
     SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
@@ -120,8 +120,9 @@ module RspecExampleHelpers
 
   def create_user_with_sf(attrs = {})
     sf_user = FactoryBot.create(:sf_user)
-    FactoryBot.create(:sf_guard_user_profile, user_id: sf_user.id)
-    FactoryBot.create(:user, attrs.merge(sf_guard_user: sf_user))
+    user = FactoryBot.create(:user, attrs.merge(sf_guard_user: sf_user))
+    create(:user_profile, user: user)
+    user
   end
 
   def create_generic_relationship
