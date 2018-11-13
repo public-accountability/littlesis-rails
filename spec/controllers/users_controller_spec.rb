@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe UsersController, type: :controller do
   describe 'routes' do
+    it { is_expected.not_to route(:get, '/users').to(action: :index) }
     it { is_expected.to route(:get, '/users/admin').to(action: :admin) }
     it { is_expected.to route(:get, '/users/a_username').to(action: :show, username: 'a_username') }
     it { is_expected.to route(:get, '/users/a_username/edits').to(action: :edits, username: 'a_username') }
@@ -12,13 +13,6 @@ describe UsersController, type: :controller do
     it { is_expected.to route(:post, '/users/123/upload_image').to(action: :upload_image, id: '123') }
     it { is_expected.to route(:delete, '/users/123/delete_permission').to(action: :delete_permission, id: '123') }
     it { is_expected.to route(:delete, '/users/123/destroy').to(action: :destroy, id: '123') }
-  end
-
-  describe 'GET #index' do
-    login_admin
-    before { get :index }
-
-    it { is_expected.to render_template('index') }
   end
 
   describe 'GET #admin' do
