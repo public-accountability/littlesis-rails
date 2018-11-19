@@ -18,7 +18,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
     # check recaptcha
     unless verify_recaptcha
-      @signup_errors << "The recaptcha failed to verify"
+      @signup_errors << 'The recaptcha failed to verify'
       reset_signup_session
       return render 'new'
     end
@@ -49,16 +49,16 @@ class Users::RegistrationsController < Devise::RegistrationsController
       end
     else
 
-      if resource.errors[:email].include?("has already been taken")
-        @signup_errors << "The email address you provided already has an account"
+      if resource.errors[:email].include?('has already been taken')
+        @signup_errors << 'The email address you provided already has an account'
       end
 
-      if resource.errors[:username].include?("has already been taken")
+      if resource.errors[:username].include?('has already been taken')
         @signup_errors << "The username -- #{resource.username} -- has already been taken"
       end
 
       if @signup_errors.empty?
-        @signup_errors << "A computer error occured! Please contact admin@littlesis.org"
+        @signup_errors << 'A computer error occured! Please contact admin@littlesis.org'
       end
 
       reset_signup_session
@@ -115,13 +115,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def build_resource(hash = nil)
     # self.resource = resource_class.new_with_session(hash || {}, session)
     self.resource = User.new(hash)
-    # self.resource.sf_guard_user = SfGuardUser.new
     self.resource.build_sf_guard_user
     self.resource.build_user_profile
   end
 
   def user_params
-    params.require(:user).permit(:username, :email, :password, :password_confirmation, :default_network_id, :newsletter, :map_the_power)
+    params
+      .require(:user)
+      .permit(:username, :email, :password, :password_confirmation, :newsletter, :map_the_power)
   end
 
   def user_profile_params
