@@ -12,7 +12,7 @@ describe Users::RegistrationsController, type: :controller do
       'username' => 'testuser',
       'default_network_id' => '79',
       'newsletter' => '0',
-      'sf_guard_user_profile' => {
+      'user_profile_attributes' => {
         'name_first' => 'firstname',
         'name_last' => 'lastname',
         'reason' => 'doing research'
@@ -21,11 +21,11 @@ describe Users::RegistrationsController, type: :controller do
   end
 
   let(:invalid_user_data) do
-    user_data.merge('sf_guard_user_profile' => {
-                      'name_first' => 'firstname',
-                      'name_last' => 'lastname',
-                      'reason' => 'onewordanswer'
-                    })
+    user_data.deep_merge('user_profile_attributes' => {
+                           'name_first' => 'firstname',
+                           'name_last' => 'lastname',
+                           'reason' => 'onewordanswer'
+                         })
   end
 
   describe 'Routes' do
@@ -60,17 +60,17 @@ describe Users::RegistrationsController, type: :controller do
         expect { post_create(user_data) }.to change { User.count }.by(1)
       end
 
-      it 'creates sf_user' do
+      it 'creates an sf_user' do
         expect { post_create(user_data) }.to change { SfGuardUser.count }.by(1)
       end
 
-      it 'creates sf_user_profile' do
-        expect { post_create(user_data) }.to change { SfGuardUserProfile.count }.by(1)
+      it 'creates the user profile' do
+        expect { post_create(user_data) }.to change { UserProfile.count }.by(1)
       end
 
       it 'populates SfGuardProfile with correct info' do
         post_create user_data
-        profile = SfGuardUserProfile.last
+        profile = UserProfile.last
         expect(profile.name_last).to eql 'lastname'
         expect(profile.name_first).to eql 'firstname'
         expect(profile.reason).to eql 'doing research'

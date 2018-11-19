@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
@@ -22,12 +24,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
 
     resource.sf_guard_user.username = resource.email
-    resource.sf_guard_user.sf_guard_user_profile.assign_attributes(sf_profile_params)
+    resource.user_profile.assign_attributes user_profile_params
 
     ApplicationRecord.transaction do
       begin
         resource.sf_guard_user.save!
-        resource.sf_guard_user_profile.save!
         resource.save!
       rescue ActiveRecord::StatementInvalid
         raise
@@ -48,17 +49,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
       end
     else
 
-      if resource.sf_guard_user.sf_guard_user_profile.errors[:email].include?("has already been taken") || resource.errors[:email].include?("has already been taken")
+      if resource.errors[:email].include?("has already been taken")
         @signup_errors << "The email address you provided already has an account"
       end
 
-      if resource.sf_guard_user.sf_guard_user_profile.errors[:public_name].include?("has already been taken") || resource.errors[:username].include?("has already been taken")
+      if resource.errors[:username].include?("has already been taken")
         @signup_errors << "The username -- #{resource.username} -- has already been taken"
       end
-
-      resource.sf_guard_user.sf_guard_user_profile.errors.delete(:email)
-      resource.sf_guard_user.sf_guard_user_profile.errors.delete(:public_name)
-      resource.sf_guard_user.sf_guard_user_profile.errors.full_messages.each { |msg| @signup_errors << msg }
 
       if @signup_errors.empty?
         @signup_errors << "A computer error occured! Please contact admin@littlesis.org"
@@ -115,24 +112,24 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   protected
 
-  def build_resource(hash=nil)
+  def build_resource(hash = nil)
     # self.resource = resource_class.new_with_session(hash || {}, session)
     self.resource = User.new(hash)
-    self.resource.sf_guard_user = SfGuardUser.new
-    self.resource.sf_guard_user.sf_guard_user_profile = SfGuardUserProfile.new(is_confirmed: true)
+    # self.resource.sf_guard_user = SfGuardUser.new
+    self.resource.build_sf_guard_user
+    self.resource.build_user_profile
   end
 
   def user_params
     params.require(:user).permit(:username, :email, :password, :password_confirmation, :default_network_id, :newsletter, :map_the_power)
   end
 
-  def sf_profile_params
-    sf_params = params.require(:user).permit(:email, :username, sf_guard_user_profile: [:name_first, :name_last, :reason, :location])
-    sf_params[:sf_guard_user_profile].merge(
-      "email" => sf_params[:email],
-      "public_name" => sf_params[:username],
-      "home_network_id" => APP_CONFIG['default_network_id']
-    )
+  def user_profile_params
+    params
+      .require(:user)
+      .require(:user_profile_attributes)
+      .permit(:name_first, :name_last, :location, :reason)
+      .to_h
   end
 
   # The path used after sign up.

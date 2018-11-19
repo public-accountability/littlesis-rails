@@ -102,6 +102,16 @@ module RspecExampleHelpers
     user
   end
 
+  def create_basic_user_with_profile(**attributes)
+    sf_user = FactoryBot.create(:sf_guard_user)
+    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, **attributes)
+    user.create_user_profile!(FactoryBot.attributes_for(:user_profile))
+    SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+    SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+    SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
+    user
+  end
+
   def create_bulker_user
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
