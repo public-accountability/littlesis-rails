@@ -155,11 +155,12 @@ class DevelopmentDb
                   sessions
                   sphinx_index
                   user_requests
+                  sf_guard_user_profiles
                   versions  )
 
-  NON_CLEANED_IGNORED = %w(sf_guard_user sf_guard_user_profile users)
+  NON_CLEANED_IGNORED = %w(sf_guard_user user_profiles users)
 
-  CLEANED = %w(clean_sf_guard_user clean_sf_guard_user_profile clean_users)
+  CLEANED = %w(clean_sf_guard_user clean_user_profiles clean_users)
 
   LIMIT = %w( modification
               modification_field
@@ -179,7 +180,9 @@ class DevelopmentDb
               os_entity_donor
               os_matches
               reference
-              reference_excerpt)
+              reference_excerpt
+              unmatched_ny_filers
+              )
 
   # these tables need to be cleaned afterwards:
   # entity, alias, relationship, extension_record,
