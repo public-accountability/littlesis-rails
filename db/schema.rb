@@ -1460,6 +1460,7 @@ ActiveRecord::Schema.define(version: 2018_11_13_153716) do
     t.integer "user_id", null: false
     t.string "name_first"
     t.string "name_last"
+    t.string "location"
     t.text "reason", limit: 4294967295
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

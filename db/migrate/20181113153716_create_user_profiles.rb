@@ -4,6 +4,7 @@ class CreateUserProfiles < ActiveRecord::Migration[5.2]
       t.integer :user_id, null: false
       t.string :name_first
       t.string :name_last
+      t.string :location
       t.text "reason", limit: 4294967295
 
       t.timestamps

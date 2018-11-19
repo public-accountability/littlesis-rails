@@ -5,6 +5,7 @@ describe UserProfile, type: :model do
   it { is_expected.to have_db_column(:name_last).of_type(:string) }
   it { is_expected.to have_db_column(:name_first).of_type(:string) }
   it { is_expected.to have_db_column(:reason).of_type(:text) }
+  it { is_expected.to have_db_column(:location).of_type(:string) }
   it { is_expected.to belong_to(:user) }
 
   describe 'Validating reason field' do
