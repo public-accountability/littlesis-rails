@@ -8,16 +8,19 @@ class UserAbilities
   def_delegators :@abilities, :empty?, :to_a, :include?
 
   def initialize(*args)
-    Set.new
     @abilities = args.to_set.freeze
     assert_valid_set(@abilities)
     freeze
   end
 
-  [
-    %i[admin? admin], %i[editor? edit], %i[deleter? delete],
-    %i[merger? merge], %i[bulker? bulk], %i[matcher? match]
-  ].each do |(method, ability)|
+  {
+    :admin => :admin?,
+    :edit => :editor?,
+    :delete => :deleter?,
+    :merge => :merger?,
+    :bulk => :bulker?,
+    :match => :matcher?
+  }.each do |(ability, method)|
     define_method(method) do
       include?(ability) || include?(:admin)
     end
