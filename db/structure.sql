@@ -1980,7 +1980,7 @@ CREATE TABLE `sf_guard_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `is_active_idx_idx` (`is_active`)
-) ENGINE=InnoDB AUTO_INCREMENT=11693 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11739 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `sf_guard_user_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2195,7 +2195,7 @@ CREATE TABLE `user_profiles` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_user_profiles_on_user_id` (`user_id`),
   CONSTRAINT `fk_rails_87a6352e58` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2253,7 +2253,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `index_users_on_username` (`username`),
   UNIQUE KEY `index_users_on_confirmation_token` (`confirmation_token`),
   UNIQUE KEY `index_users_on_reset_password_token` (`reset_password_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=13255 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13293 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `versions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2343,6 +2343,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20180904145133'),
 ('20181008145444'),
 ('20181113153716'),
-('20181120214543');
+('20181120214543'),
+('20181120220123');
 
 

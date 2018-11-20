@@ -49,7 +49,7 @@ ExtensionDefinition.create!([
 
 SfGuardUser.create!({id: 1, username: "system@littlesis.org", password: 'password', salt:''})
 User.create!({id: 1, email: "system@littlesis.org", username: 'system', default_network_id: 79, confirmed_at: Time.now,
-              sf_guard_user_id: 1,
+              sf_guard_user_id: 1, role: :system,
               password: '$2a$10$Q2tSw2llUagw1KRNTtLD4.JiYgFA.9pxgV5aPOs/IxFsddZGa8jgO'})
 
 
