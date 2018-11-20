@@ -103,7 +103,7 @@ class User < ApplicationRecord
     Digest::SHA1.hexdigest(sf_guard_user.salt + password) == sf_guard_user.password
   end
 
-  def image_url
+  def image_url(type = nil)
     return '/images/system/anon.png' if image.nil?
 
     type = (image.has_square ? 'square' : 'profile') if type.nil?

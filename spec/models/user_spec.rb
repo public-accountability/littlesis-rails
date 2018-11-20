@@ -291,4 +291,8 @@ describe User do
     end
 
   end
+
+  describe '#image_url' do
+    specify { expect(build(:user).image_url).to eq '/images/system/anon.png' }
+  end
 end
