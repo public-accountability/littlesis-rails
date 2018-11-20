@@ -5,6 +5,8 @@ class User < ApplicationRecord
 
   MINUTES_BEFORE_USER_CAN_EDIT = 10
 
+  enum role: { user: 0, admin: 1, system: 2 }
+
   validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username,

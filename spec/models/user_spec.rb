@@ -2,12 +2,29 @@ require 'rails_helper'
 
 describe User do
   it { is_expected.to have_db_column(:map_the_power) }
+  it { is_expected.to have_db_column(:role).of_type(:integer) }
   it { is_expected.to have_one(:api_token) }
   it { is_expected.to have_one(:user_profile) }
   it { is_expected.to have_many(:lists) }
   it { is_expected.to have_many(:user_permissions) }
   it { is_expected.to have_many(:user_requests) }
   it { is_expected.to have_many(:reviewed_requests) }
+
+  describe 'role' do
+    context 'when a regular user' do
+      specify { expect(build(:user).role).to eq 'user' }
+    end
+
+    context 'when admin user' do
+      specify { expect(build(:user, role: :admin).role).to eq 'admin' }
+      specify { expect(build(:user, role: 1).role).to eq 'admin' }
+    end
+
+    context 'when system user' do
+      specify { expect(build(:user, role: :system).role).to eq 'system' }
+      specify { expect(build(:user, role: 2).role).to eq 'system' }
+    end
+  end
 
   it 'has constant User::Edits (from module UserEdits)' do
     expect(User.const_defined?(:Edits)).to be true

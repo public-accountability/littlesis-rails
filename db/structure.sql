@@ -2246,6 +2246,7 @@ CREATE TABLE `users` (
   `is_restricted` tinyint(1) DEFAULT 0,
   `map_the_power` tinyint(1) DEFAULT NULL,
   `about_me` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `role` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_users_on_email` (`email`),
   UNIQUE KEY `index_users_on_sf_guard_user_id` (`sf_guard_user_id`),
@@ -2341,6 +2342,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20180813162356'),
 ('20180904145133'),
 ('20181008145444'),
-('20181113153716');
+('20181113153716'),
+('20181120214543');
 
 
