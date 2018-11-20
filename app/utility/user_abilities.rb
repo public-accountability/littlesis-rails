@@ -5,13 +5,22 @@ class UserAbilities
 
   extend Forwardable
   attr_reader :abilities
-  def_delegators :@abilities, :empty?, :to_a
+  def_delegators :@abilities, :empty?, :to_a, :include?
 
   def initialize(*args)
     Set.new
     @abilities = args.to_set.freeze
     assert_valid_set(@abilities)
     freeze
+  end
+
+  [
+    %i[admin? admin], %i[editor? edit], %i[deleter? delete],
+    %i[merger? merge], %i[bulker? bulk], %i[matcher? match]
+  ].each do |(method, ability)|
+    define_method(method) do
+      include?(ability) || include?(:admin)
+    end
   end
 
   # Object Serialization #

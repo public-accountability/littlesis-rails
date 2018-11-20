@@ -35,6 +35,32 @@ describe UserAbilities do
     end
   end
 
+  describe 'boolean helper methods' do
+    subject(:user_abilities) { UserAbilities.new(*abilities) }
+
+    context 'when an admin' do
+      let(:abilities) { [:admin] }
+
+      specify { expect(user_abilities.admin?).to be true }
+      specify { expect(user_abilities.editor?).to be true }
+      specify { expect(user_abilities.deleter?).to be true }
+      specify { expect(user_abilities.merger?).to be true }
+      specify { expect(user_abilities.bulker?).to be true }
+      specify { expect(user_abilities.matcher?).to be true }
+    end
+
+    context 'when an editor, deleter, and matcher' do
+      let(:abilities) { [:edit, :delete, :match] }
+
+      specify { expect(user_abilities.admin?).to be false }
+      specify { expect(user_abilities.editor?).to be true }
+      specify { expect(user_abilities.deleter?).to be true }
+      specify { expect(user_abilities.merger?).to be false }
+      specify { expect(user_abilities.bulker?).to be false }
+      specify { expect(user_abilities.matcher?).to be true }
+    end
+  end
+
   describe 'UserAbilities.load' do
     it 'deserializes nil as empty set' do
       expect(UserAbilities.load(nil).empty?).to be true
