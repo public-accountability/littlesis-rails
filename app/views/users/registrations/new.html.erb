@@ -127,7 +127,7 @@
 
 <%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {:onsubmit => 'return validateForm();', }) do |f| %>
   <%= devise_error_messages! %>
-  <%= f.fields_for :sf_guard_user_profile do |profile_fields| %>
+  <%= f.fields_for :user_profile do |profile_fields| %>
 
     <% if @signup_errors.present? %>
       <%= registrations_form_group do %>

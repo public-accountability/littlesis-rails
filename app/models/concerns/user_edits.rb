@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# rubocop:disable Layout/AlignHash
+
 module UserEdits
   extend ActiveSupport::Concern
 
@@ -34,7 +38,7 @@ module UserEdits
   class_methods do # rubocop:disable Metrics/BlockLength
     def uniq_active_users(since: 30.days.ago)
       PaperTrail::Version
-        .where("versions.created_at >= ? AND whodunnit IS NOT NULL", since)
+        .where('versions.created_at >= ? AND whodunnit IS NOT NULL', since)
         .pluck('distinct whodunnit')
         .count
     end
@@ -48,10 +52,10 @@ module UserEdits
                        sum(case when event = 'create' then 1 else 0 end) as create_count,
                        sum(case when event = 'update' then 1 else 0 end) as update_count,
                        sum(case when event = 'soft_delete' then 1 when event = 'destroy' then 1 else 0 end) as delete_count
-                       SELECT
+                     SELECT
                    )
-                   .where("versions.created_at >= ? AND whodunnit IS NOT NULL", since)
-                   .group("whodunnit")
+                   .where('versions.created_at >= ? AND whodunnit IS NOT NULL', since)
+                   .group('whodunnit')
                    .order('edits desc')
                    .limit(per_page)
                    .offset((page.to_i - 1) * per_page)
@@ -71,7 +75,9 @@ module UserEdits
     PER_PAGE = 20
     EDITABLE_TYPES = %w[Relationship Entity List Document].freeze
     UserEdit = Struct.new(:resource, :version, :action, :time)
-    VersionsToModels = proc { |vs| vs.first.item_type.constantize.unscoped.find(vs.map(&:item_id).uniq) }
+    VersionsToModels = proc do |vs|
+      vs.first.item_type.constantize.unscoped.find(vs.map(&:item_id).uniq)
+    end
     ModelsToHashes = proc { |models| models.map { |m| [m.id, m] }.to_h }
 
     def initialize(user, page: 1)
@@ -106,9 +112,11 @@ module UserEdits
     #  }
     def record_lookup
       @record_lookup ||= recent_edits
-                           .group_by { |v| v.item_type }
+                           .group_by(&:item_type)
                            .transform_values(&VersionsToModels)
                            .transform_values(&ModelsToHashes)
     end
   end
 end
+
+# rubocop:enable Layout/AlignHash

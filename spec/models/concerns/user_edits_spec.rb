@@ -1,7 +1,11 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/NamedSubject, RSpec/LetSetup, RSpec/BeforeAfterAll
+
 describe UserEdits do
   describe UserEdits::Edits do
+    subject { UserEdits::Edits.new(user) }
+
     let!(:user) { create_basic_user }
     let(:entity) { build(:org) }
     let(:relationship) { build(:relationship) }
@@ -13,11 +17,9 @@ describe UserEdits do
       ].reverse
     end
 
-    subject { UserEdits::Edits.new(user) }
-
     describe '#recent_edits' do
-      it 'returns users recent edits for user' do
-        expect(subject.recent_edits.length).to eql 2
+      it "returns a user's recent edits" do
+        expect(subject.recent_edits.length).to eq 2
       end
     end
 
@@ -35,7 +37,7 @@ describe UserEdits do
         subject { UserEdits::Edits.new(user).recent_edits_presenter }
 
         it 'returns array of <UserEdit>s' do
-          expect(subject.length).to eql 2
+          expect(subject.length).to eq 2
           expect(subject.first).to be_a UserEdits::Edits::UserEdit
           expect(subject.first.version).to eql versions.first
           expect(subject.first.resource).to eql relationship
@@ -73,20 +75,20 @@ describe UserEdits do
       subject { User.active_users }
 
       it 'returns an array of ActiveUsers, correctly sorted' do
-        expect(subject.length). to eql 2
+        expect(subject.length).to eq 2
         expect(subject.first).to be_a UserEdits::ActiveUser
         expect(subject.first.user).to eql user_one
         expect(subject.second.user).to eql user_two
       end
 
       it 'ActiveUser contains correct edits count' do
-        expect(subject.first['edits']).to eql 3
+        expect(subject.first['edits']).to eq 3
         expect(subject.first['create_count']).to be_zero
-        expect(subject.first['update_count']).to eql 1
-        expect(subject.first['delete_count']).to eql 2
+        expect(subject.first['update_count']).to eq 1
+        expect(subject.first['delete_count']).to eq 2
 
-        expect(subject.second['edits']).to eql 1
-        expect(subject.second['create_count']).to eql 1
+        expect(subject.second['edits']).to eq 1
+        expect(subject.second['create_count']).to eq 1
         expect(subject.second['update_count']).to be_zero
         expect(subject.second['delete_count']).to be_zero
       end
@@ -94,7 +96,10 @@ describe UserEdits do
 
     describe 'User.uniq_active_users' do
       subject { User.uniq_active_users }
-      it { is_expected.to eql 2 }
+
+      it { is_expected.to eq 2 }
     end
   end
 end
+
+# rubocop:enable RSpec/NamedSubject, RSpec/LetSetup, RSpec/BeforeAfterAll

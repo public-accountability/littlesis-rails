@@ -1,9 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe Users::RegistrationsController, type: :controller do
-  # include Devise::Test::ControllerHelpers
-  before(:all) { DatabaseCleaner.start }
-  after(:all)  { DatabaseCleaner.clean }
   let(:user_data) do
     {
       'email' => 'test@testing.com',
@@ -12,7 +11,7 @@ describe Users::RegistrationsController, type: :controller do
       'username' => 'testuser',
       'default_network_id' => '79',
       'newsletter' => '0',
-      'sf_guard_user_profile' => {
+      'user_profile_attributes' => {
         'name_first' => 'firstname',
         'name_last' => 'lastname',
         'reason' => 'doing research'
@@ -21,20 +20,20 @@ describe Users::RegistrationsController, type: :controller do
   end
 
   let(:invalid_user_data) do
-    user_data.merge('sf_guard_user_profile' => {
-                      'name_first' => 'firstname',
-                      'name_last' => 'lastname',
-                      'reason' => 'onewordanswer'
-                    })
+    user_data.deep_merge('user_profile_attributes' => {
+                           'name_first' => 'firstname',
+                           'name_last' => 'lastname',
+                           'reason' => 'onewordanswer'
+                         })
   end
 
   describe 'Routes' do
-    it { should route(:get, '/join').to(action: :new) }
-    it { should route(:post, '/join').to(action: :create) }
-    it { should route(:get, '/users/edit').to(action: :edit) }
-    it { should route(:put, '/users').to(action: :update) }
-    it { should route(:delete, '/users').to(action: :destroy) }
-    it { should route(:post, '/users/api_token').to(action: :api_token) }
+    it { is_expected.to route(:get, '/join').to(action: :new) }
+    it { is_expected.to route(:post, '/join').to(action: :create) }
+    it { is_expected.to route(:get, '/users/edit').to(action: :edit) }
+    it { is_expected.to route(:put, '/users').to(action: :update) }
+    it { is_expected.to route(:delete, '/users').to(action: :destroy) }
+    it { is_expected.to route(:post, '/users/api_token').to(action: :api_token) }
   end
 
   describe 'GET new' do
@@ -43,7 +42,8 @@ describe Users::RegistrationsController, type: :controller do
       request.env['devise.mapping'] = Devise.mappings[:user]
       get :new
     end
-    it { should respond_with(:success) }
+
+    it { is_expected.to respond_with(:success) }
   end
 
   def post_create(data)
@@ -51,26 +51,24 @@ describe Users::RegistrationsController, type: :controller do
   end
 
   describe 'Creating new users' do
-    before(:each) do
-      request.env['devise.mapping'] = Devise.mappings[:user]
-    end
+    before { request.env['devise.mapping'] = Devise.mappings[:user] }
 
-    context 'valid users' do
+    context 'when submitting with valid data' do
       it 'creates user' do
-        expect { post_create(user_data) }.to change { User.count }.by(1)
+        expect { post_create(user_data) }.to change(User, :count).by(1)
       end
 
-      it 'creates sf_user' do
-        expect { post_create(user_data) }.to change { SfGuardUser.count }.by(1)
+      it 'creates an sf_user' do
+        expect { post_create(user_data) }.to change(SfGuardUser, :count).by(1)
       end
 
-      it 'creates sf_user_profile' do
-        expect { post_create(user_data) }.to change { SfGuardUserProfile.count }.by(1)
+      it 'creates the user profile' do
+        expect { post_create(user_data) }.to change(UserProfile, :count).by(1)
       end
 
       it 'populates SfGuardProfile with correct info' do
         post_create user_data
-        profile = SfGuardUserProfile.last
+        profile = UserProfile.last
         expect(profile.name_last).to eql 'lastname'
         expect(profile.name_first).to eql 'firstname'
         expect(profile.reason).to eql 'doing research'
@@ -87,18 +85,18 @@ describe Users::RegistrationsController, type: :controller do
       end
     end
 
-    context 'invalid user data' do
-      context 'user submits reason with with less than 2 words' do
+    context 'when submitting with invalid user data' do
+      describe 'user submits answer to the field reason with less than 2 words' do
         it 'does not create a user' do
-          expect { post_create(invalid_user_data) }.not_to change { User.count }
+          expect { post_create(invalid_user_data) }.not_to change(User, :count)
         end
 
         it 'creates sf_user' do
-          expect { post_create(invalid_user_data) }.not_to change { SfGuardUser.count }
+          expect { post_create(invalid_user_data) }.not_to change(SfGuardUser, :count)
         end
 
         it 'creates sf_user_profile' do
-          expect { post_create(invalid_user_data) }.not_to change { SfGuardUserProfile.count }
+          expect { post_create(invalid_user_data) }.not_to change(SfGuardUserProfile, :count)
         end
       end
     end
@@ -115,7 +113,7 @@ describe Users::RegistrationsController, type: :controller do
       post :api_token, params: { 'api' => action }
     end
 
-    context 'generating api tokens' do
+    describe 'generating api tokens' do
       it 'generates api_token' do
         expect(controller.current_user.api_token.present?).to be false
         expect { post_api_token('generate') }.to change { ApiToken.count }.by(1)
@@ -130,7 +128,7 @@ describe Users::RegistrationsController, type: :controller do
       end
     end
 
-    context 'resting api token' do
+    describe 'resting api token' do
       before do
         ApiToken.record_timestamps = false
         controller.current_user.create_api_token!(created_at: 1.year.ago, updated_at: 1.year.ago)
@@ -152,7 +150,7 @@ describe Users::RegistrationsController, type: :controller do
       it 'responds with unacceptable if attempt to reset more than once in a 24 hour period' do
         controller.current_user.api_token.touch
         post_api_token('reset')
-        expect(response).to have_http_status 406
+        expect(response).to have_http_status :not_acceptable
       end
     end
   end

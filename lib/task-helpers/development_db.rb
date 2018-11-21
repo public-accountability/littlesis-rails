@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-class DevelopmentDb
+# rubocop:disable Metrics/LineLength
 
+class DevelopmentDb
   def initialize(path)
     @out_path = path
     @db = Rails.configuration.database_configuration['production']
@@ -53,133 +54,135 @@ class DevelopmentDb
   #  3) Tables containing senstive information that must be cleaned first (i.e. users)
   #  4) Large tables that can be dumpt with LIMIT in order to reduce the export size (i.e. os_donations)
 
-  FULL_DUMP = %w( address
-                  address_category
-                  address_country
-                  address_state
-                  alias
-                  article
-                  article_entities
-                  article_entity
-                  article_source
-                  articles
-                  business
-                  business_industry
-                  business_person
-                  candidate_district
-                  cmp_entities
-                  common_names
-                  couple
-                  custom_key
-                  dashboard_bulletins
-                  degree
-                  documents
-                  donation
-                  education
-                  elected_representative
-                  email
-                  entity
-                  entity_fields
-                  extension_definition
-                  extension_record
-                  external_links
-                  family
-                  fedspending_filing
-                  fields
-                  generic
-                  government_body
-                  group_lists
-                  group_users
-                  groups
-                  help_pages
-                  hierarchy
-                  image
-                  industries
-                  industry
-                  link
-                  lobby_filing
-                  lobby_filing_lobby_issue
-                  lobby_filing_lobbyist
-                  lobby_filing_relationship
-                  lobby_issue
-                  lobbying
-                  lobbyist
-                  ls_list
-                  ls_list_entity
-                  membership
-                  network_map
-                  ny_filer_entities
-                  org
-                  os_category
-                  ownership
-                  pages
-                  person
-                  phone
-                  political_candidate
-                  political_district
-                  political_fundraising
-                  political_fundraising_type
-                  position
-                  professional
-                  public_company
-                  references
-                  relationship
-                  relationship_category
-                  representative
-                  representative_district
-                  schema_migrations
-                  school
-                  sf_guard_group
-                  sf_guard_group_list
-                  sf_guard_group_permission
-                  sf_guard_permission
-                  sf_guard_user_group
-                  sf_guard_user_permission
-                  social
-                  tag
-                  tags
-                  taggings
-                  toolkit_pages
-                  transaction
-                  user_permissions)
+  FULL_DUMP = %w[address
+                 address_category
+                 address_country
+                 address_state
+                 alias
+                 article
+                 article_entities
+                 article_entity
+                 article_source
+                 articles
+                 business
+                 business_industry
+                 business_person
+                 candidate_district
+                 cmp_entities
+                 common_names
+                 couple
+                 custom_key
+                 dashboard_bulletins
+                 degree
+                 documents
+                 donation
+                 education
+                 elected_representative
+                 email
+                 entity
+                 entity_fields
+                 extension_definition
+                 extension_record
+                 external_links
+                 family
+                 fedspending_filing
+                 fields
+                 generic
+                 government_body
+                 group_lists
+                 group_users
+                 groups
+                 help_pages
+                 hierarchy
+                 image
+                 industries
+                 industry
+                 link
+                 lobby_filing
+                 lobby_filing_lobby_issue
+                 lobby_filing_lobbyist
+                 lobby_filing_relationship
+                 lobby_issue
+                 lobbying
+                 lobbyist
+                 ls_list
+                 ls_list_entity
+                 membership
+                 network_map
+                 ny_filer_entities
+                 org
+                 os_category
+                 ownership
+                 pages
+                 person
+                 phone
+                 political_candidate
+                 political_district
+                 political_fundraising
+                 political_fundraising_type
+                 position
+                 professional
+                 public_company
+                 references
+                 relationship
+                 relationship_category
+                 representative
+                 representative_district
+                 schema_migrations
+                 school
+                 sf_guard_group
+                 sf_guard_group_list
+                 sf_guard_group_permission
+                 sf_guard_permission
+                 sf_guard_user_group
+                 sf_guard_user_permission
+                 social
+                 tag
+                 tags
+                 taggings
+                 toolkit_pages
+                 transaction
+                 user_permissions].freeze
 
-  STRUCTURE = %w( api_request
-                  api_user
-                  api_tokens
-                  chat_user
-                  delayed_jobs
-                  map_annotations
-                  object_tag
-                  os_entity_preprocess
-                  os_entity_transaction
-                  sessions
-                  sphinx_index
-                  user_requests
-                  versions  )
+  STRUCTURE = %w[api_request
+                 api_user
+                 api_tokens
+                 chat_user
+                 delayed_jobs
+                 map_annotations
+                 object_tag
+                 os_entity_preprocess
+                 os_entity_transaction
+                 sessions
+                 sphinx_index
+                 user_requests
+                 sf_guard_user_profiles
+                 versions].freeze
 
-  NON_CLEANED_IGNORED = %w(sf_guard_user sf_guard_user_profile users)
+  NON_CLEANED_IGNORED = %w[sf_guard_user user_profiles users].freeze
 
-  CLEANED = %w(clean_sf_guard_user clean_sf_guard_user_profile clean_users)
+  CLEANED = %w[clean_sf_guard_user clean_user_profiles clean_users].freeze
 
-  LIMIT = %w( modification
-              modification_field
-              note
-              note_entities
-              note_groups
-              note_lists
-              note_relationships
-              note_users
-              ny_disclosures
-              ny_filers
-              ny_matches
-              os_candidates
-              os_committees
-              os_donations
-              os_entity_category
-              os_entity_donor
-              os_matches
-              reference
-              reference_excerpt)
+  LIMIT = %w[modification
+             modification_field
+             note
+             note_entities
+             note_groups
+             note_lists
+             note_relationships
+             note_users
+             ny_disclosures
+             ny_filers
+             ny_matches
+             os_candidates
+             os_committees
+             os_donations
+             os_entity_category
+             os_entity_donor
+             os_matches
+             reference
+             reference_excerpt
+             unmatched_ny_filers].freeze
 
   # these tables need to be cleaned afterwards:
   # entity, alias, relationship, extension_record,
@@ -233,3 +236,5 @@ class DevelopmentDb
     documents
   ].freeze
 end
+
+# rubocop:enable Metrics/LineLength

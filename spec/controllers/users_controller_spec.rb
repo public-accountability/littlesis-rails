@@ -1,7 +1,10 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/ContextWording, RSpec/NestedGroups
+
 describe UsersController, type: :controller do
   describe 'routes' do
+    it { is_expected.not_to route(:get, '/users').to(action: :index) }
     it { is_expected.to route(:get, '/users/admin').to(action: :admin) }
     it { is_expected.to route(:get, '/users/a_username').to(action: :show, username: 'a_username') }
     it { is_expected.to route(:get, '/users/a_username/edits').to(action: :edits, username: 'a_username') }
@@ -12,13 +15,6 @@ describe UsersController, type: :controller do
     it { is_expected.to route(:post, '/users/123/upload_image').to(action: :upload_image, id: '123') }
     it { is_expected.to route(:delete, '/users/123/delete_permission').to(action: :delete_permission, id: '123') }
     it { is_expected.to route(:delete, '/users/123/destroy').to(action: :destroy, id: '123') }
-  end
-
-  describe 'GET #index' do
-    login_admin
-    before { get :index }
-
-    it { is_expected.to render_template('index') }
   end
 
   describe 'GET #admin' do
@@ -80,10 +76,9 @@ describe UsersController, type: :controller do
 
       describe 'Deleting a user' do
         let(:user) { create_basic_user }
+        let(:entity) { create(:entity_org, last_user_id: user.sf_guard_user_id) }
 
-        before do
-          @entity = create(:entity_org, last_user_id: user.sf_guard_user_id)
-        end
+        before { entity }
 
         it 'deletes permissions' do
           expect { delete :destroy, params: { :id => user.id } }
@@ -98,13 +93,15 @@ describe UsersController, type: :controller do
         end
 
         it 'updates last_user_id on entities' do
-          expect(Entity.find(@entity.id).last_user_id).to eql user.sf_guard_user_id
+          expect(Entity.find(entity.id).last_user_id).to eql user.sf_guard_user_id
           delete :destroy, params: { :id => user.id }
-          expect(Entity.find(@entity.id).last_user_id).to eq 1
+          expect(Entity.find(entity.id).last_user_id).to eq 1
         end
 
         it 'updates last_user_id on relationships' do
-          expect(Relationship).to receive(:where).with(last_user_id: user.sf_guard_user_id).and_return(double(:update_all => nil))
+          expect(Relationship).to receive(:where).with(last_user_id: user.sf_guard_user_id)
+                                    .and_return(double(:update_all => nil))
+
           delete :destroy, params: { :id => user.id }
         end
 
@@ -112,7 +109,7 @@ describe UsersController, type: :controller do
           expect { delete :destroy, params: { :id => user.id } }.to change(User, :count).by(-1)
         end
 
-        context 'afterwards' do
+        describe 'afterwards' do
           before { delete :destroy, params: { :id => user.id } }
 
           it { is_expected.to redirect_to(admin_users_path) }
@@ -144,3 +141,5 @@ describe UsersController, type: :controller do
     it { is_expected.to render_template('success') }
   end
 end
+
+# rubocop:enable RSpec/ContextWording, RSpec/NestedGroups

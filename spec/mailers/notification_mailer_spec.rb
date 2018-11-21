@@ -3,11 +3,7 @@
 require "rails_helper"
 
 describe NotificationMailer, type: :mailer do
-  before(:all) do
-    DatabaseCleaner.start
-    ActiveJob::Base.queue_adapter = :test
-  end
-  after(:all) { DatabaseCleaner.clean }
+  before(:all) { ActiveJob::Base.queue_adapter = :test }
 
   describe '#contact_email' do
     before do
@@ -48,62 +44,67 @@ describe NotificationMailer, type: :mailer do
 
   describe '#signup_email' do
     let(:map_the_power) { false }
-    before(:each) do
-      @sf_user = create(:sf_guard_user)
-      @user = create(:user, map_the_power: map_the_power, sf_guard_user: @sf_user)
-      @profile = create(:sf_guard_user_profile, user_id: @sf_user.id, location: 'vienna')
-      @mail = NotificationMailer.signup_email(@user)
+    let(:sf_user) { create(:sf_guard_user) }
+    let(:user) { create(:user, map_the_power: map_the_power, sf_guard_user: sf_user) }
+    let(:user_profile) { create(:user_profile, user: user, location: 'vienna') }
+    let(:mail) { NotificationMailer.signup_email(user) }
+
+    before do
+      user_profile
+      mail
     end
 
     it 'has correct subject' do
-      expect(@mail.subject).to include "New User Signup: #{@user.username}"
+      expect(mail.subject).to include "New User Signup: #{user.username}"
     end
 
     it 'has correct to' do
-      expect(@mail.to).to eq [APP_CONFIG['notification_to']]
+      expect(mail.to).to eq [APP_CONFIG['notification_to']]
     end
 
     it 'has username' do
-      expect(@mail.encoded).to include "#{@user.username} (#{@user.id})"
+      expect(mail.encoded).to include "#{user.username} (#{user.id})"
     end
 
     it 'has name' do
-      expect(@mail.encoded).to include 'first last'
+      expect(mail.encoded).to include "#{user_profile.name_first} #{user_profile.name_last}"
     end
 
     it 'has location' do
-      expect(@mail.encoded).to include '<strong>Location:</strong> vienna'
+      expect(mail.encoded).to include '<strong>Location:</strong> vienna'
     end
 
     it 'has email' do
-      expect(@mail.encoded).to include "<strong>Email:</strong> #{@user.email}"
+      expect(mail.encoded).to include "<strong>Email:</strong> #{user.email}"
     end
 
-    context 'is interested in map the power' do
+    context 'when user is interested in map the power' do
       let(:map_the_power) { true }
+
       it 'interested in map the power' do
-        expect(@mail.encoded).to include "<strong>Interested in Map the Power:</strong> yes"
+        expect(mail.encoded).to include "<strong>Interested in Map the Power:</strong> yes"
       end
     end
 
-    context 'is not interested in map the power' do
+    context 'when user is not interested in map the power' do
       let(:map_the_power) { false }
+
       it 'interested in map the power' do
-        expect(@mail.encoded).to include "<strong>Interested in Map the Power:</strong> no"
+        expect(mail.encoded).to include "<strong>Interested in Map the Power:</strong> no"
       end
     end
 
     it 'has reason' do
-      expect(@mail.encoded).to include 'research'
+      expect(mail.encoded).to include user_profile.reason
     end
 
     it 'sends email' do
-      expect { @mail.deliver_now }
+      expect { mail.deliver_now }
         .to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
     it 'sends email later' do
-      expect { @mail.deliver_later }
+      expect { mail.deliver_later }
         .to have_enqueued_job.on_queue('mailers')
     end
   end

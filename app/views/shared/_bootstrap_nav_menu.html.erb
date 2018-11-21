@@ -16,20 +16,6 @@ if user_signed_in?
     }
   }
 
-  if current_user.sf_guard_user_profile.try(:enable_recent_views)
-    results = LegacyAuthenticatable.recent_views_from_legacy_cookie(cookies)
-    entity_ids = results[:entity_ids]
-    
-    if entity_ids.present?
-      entities = Entity.where(id: entity_ids)
-      hash = {}
-      entities.each { |e| hash[e.name] = e.legacy_url }
-
-      if entities.present?
-        items['Recent'] = { highlighted: true, items: hash }
-      end
-    end
-  end
 else
   items['Login'] = { url: new_user_session_path }
   items['Sign Up'] = { url: new_user_registration_path }

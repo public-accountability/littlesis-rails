@@ -33,7 +33,7 @@ class NotificationMailer < ApplicationMailer
 
   def signup_email(user)
     @user = user
-    @profile = user.sf_guard_user_profile
+    @profile = user.user_profile
     mail(to: DEFAULT_TO,
          subject: "New User Signup: #{user.username}",
          delivery_method_options: SMTP_OPTIONS)

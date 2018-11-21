@@ -5,47 +5,57 @@ class User < ApplicationRecord
 
   MINUTES_BEFORE_USER_CAN_EDIT = 10
 
+  enum role: { user: 0, admin: 1, system: 2 }
+
   validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
-  validates :username, presence: true, uniqueness: { case_sensitive: false }, user_name: true, on: :create
+  validates :username,
+            presence: true, uniqueness: { case_sensitive: false }, user_name: true, on: :create
   validates :default_network_id, presence: true
 
   # Include default devise modules. Others available are:
-  # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable :legacy_authenticatable
-  devise :database_authenticatable, :registerable, :confirmable, :recoverable, :rememberable, :trackable
-
-  # after_database_authentication :set_sf_session
-  # Setup accessible (or protected) attributes for your model
-  #  attr_accessible :email, :password, :password_confirmation, :remember_me
+  # :token_authenticatable, :encryptable, :lockable, :timeoutable and :omniauthable
+  devise :database_authenticatable,
+         :registerable,
+         :confirmable,
+         :recoverable,
+         :rememberable,
+         :trackable
 
   belongs_to :sf_guard_user, inverse_of: :user
-  has_one :sf_guard_user_profile, foreign_key: "user_id", primary_key: "sf_guard_user_id", inverse_of: :user
-  has_one :image, inverse_of: :user, dependent: :destroy
-  accepts_nested_attributes_for :sf_guard_user
 
-  before_validation :set_default_network_id
-
-  # delegate :sf_guard_user_profile, to: :sf_guard_user, allow_nil: true
-  delegate :image_path, to: :sf_guard_user_profile, allow_nil: true
-  delegate :name_first, :name_last, :bio, to: :sf_guard_user_profile
-
-  has_many :edited_entities, class_name: 'Entity', foreign_key: 'last_user_id', primary_key: 'sf_guard_user_id'
-
-  alias :image_url :image_path
-
-  has_many :group_users, inverse_of: :user, dependent: :destroy
-  has_many :groups, through: :group_users, inverse_of: :users
-  has_many :campaigns, through: :groups, inverse_of: :users
-
-  has_many :network_maps, primary_key: 'sf_guard_user_id', inverse_of: :user
-
-  has_many :lists, foreign_key: 'creator_user_id', inverse_of: :user
-
+  # Core associations
+  has_one :user_profile, inverse_of: :user, dependent: :destroy
   has_one :api_token, dependent: :destroy
   has_many :user_permissions, dependent: :destroy
 
+  # profile image, needs to be reworked or removed
+  has_one :image, inverse_of: :user, dependent: :destroy
+
+  # Used by UserPresenter and HomeController
+  # We should eventually remove this assocation and instead
+  # retrive recently edited entities via Versions.
+  has_many :edited_entities,
+           class_name: 'Entity', foreign_key: 'last_user_id', primary_key: 'sf_guard_user_id'
+
+  has_many :group_users, inverse_of: :user, dependent: :destroy
+  has_many :groups, through: :group_users, inverse_of: :users
+
+  # Maps and lists the user has created
+  has_many :network_maps, primary_key: 'sf_guard_user_id', inverse_of: :user
+  has_many :lists, foreign_key: 'creator_user_id', inverse_of: :user
+
+  # Requests made
   has_many :user_requests, inverse_of: :user, dependent: :destroy
-  has_many :reviewed_requests, class_name: "UserRequest", foreign_key: 'reviewer_id', inverse_of: :reviewer
+  has_many :reviewed_requests,
+           class_name: 'UserRequest', foreign_key: 'reviewer_id', inverse_of: :reviewer
+
+  accepts_nested_attributes_for :sf_guard_user
+  accepts_nested_attributes_for :user_profile
+
+  before_validation :set_default_network_id
+
+  delegate :name_first, :name_last, :full_name, to: :user_profile
 
   def to_param
     username
@@ -83,12 +93,6 @@ class User < ApplicationRecord
     sf_guard_user.created_at
   end
 
-  def full_name(override = false)
-    return nil unless override || sf_guard_user_profile&.show_full_name
-
-    sf_guard_user_profile.full_name
-  end
-
   def legacy_url
     "/user/#{username}"
   end
@@ -101,12 +105,13 @@ class User < ApplicationRecord
     Digest::SHA1.hexdigest(sf_guard_user.salt + password) == sf_guard_user.password
   end
 
-  def image_url
+  def image_url(type = nil)
     return '/images/system/anon.png' if image.nil?
 
     type = (image.has_square ? 'square' : 'profile') if type.nil?
     image.image_path(type)
   end
+  alias image_path image_url
 
   def recent_edits(page = 1)
     Edits.new(self, page: page)
@@ -158,6 +163,17 @@ class User < ApplicationRecord
     Chat.create_user(self)
   end
 
+  # String | nil --> Arel::Nodes::Grouping | nil
+  # Creates sql like statement with arel, which searches
+  # the username and email columns to find matching users.
+  # Used by UsersController#admin
+  def self.matches_username_or_email(query)
+    return if query.nil?
+
+    query_string = "%#{sanitize_sql_like(query)}%"
+    arel_table[:username].matches(query_string).or(arel_table[:email].matches(query_string))
+  end
+
   # Returns the sf_guard_user_id from a range
   # of types: User, SfGuardUser, Integer, String
   # Used by LsHash
@@ -196,6 +212,6 @@ class User < ApplicationRecord
   private
 
   def set_default_network_id
-    self.default_network_id = APP_CONFIG['default_network_id'] if self.default_network_id.nil?
+    self.default_network_id = APP_CONFIG['default_network_id'] if default_network_id.nil?
   end
 end

@@ -40,20 +40,14 @@ SET username = CONCAT('sfuser', id, '@email.com'),
     created_at = CURRENT_TIMESTAMP,
     last_login = CURRENT_TIMESTAMP;
 
-DROP TABLE IF EXISTS clean_sf_guard_user_profile;
-CREATE TABLE clean_sf_guard_user_profile LIKE sf_guard_user_profile;
-INSERT clean_sf_guard_user_profile SELECT * FROM sf_guard_user_profile;
+DROP TABLE IF EXISTS clean_user_profiles;
+CREATE TABLE clean_user_profiles LIKE user_profile;
+INSERT clean_user_profiles SELECT * FROM user_profiles;
 
-UPDATE clean_sf_guard_user_profile
+UPDATE clean_user_profiles
 SET name_first = CONCAT('firstname', id ),
     name_last = CONCAT('lastname', id ),
-    email = CONCAT('user_profile_', id, '@email.com'),
     reason = 'truth is always in harmony with herself',
-    analyst_reason = '',
-    invitation_code = NULL,
-    public_name = CONCAT('profile', id),
-    bio = 'anon',
-    confirmation_code = NULL,
-    filename = NULL,
+    location = 'earth',
     created_at = CURRENT_TIMESTAMP,
     updated_at = CURRENT_TIMESTAMP;
