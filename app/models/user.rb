@@ -7,6 +7,8 @@ class User < ApplicationRecord
 
   enum role: { user: 0, admin: 1, system: 2 }
 
+  serialize :abilities, UserAbilities
+
   validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username,

@@ -27,6 +27,12 @@ describe User do
     end
   end
 
+  describe 'abilities' do
+    it 'serializes UserAbilities' do
+      expect(build(:user).abilities).to be_a UserAbilities
+    end
+  end
+
   it 'has constant User::Edits (from module UserEdits)' do
     expect(User.const_defined?(:Edits)).to be true
   end

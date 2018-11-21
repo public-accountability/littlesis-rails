@@ -61,6 +61,57 @@ describe UserAbilities do
     end
   end
 
+  describe 'eql?' do
+    it 'is equal when sets have same abilities' do
+      expect(UserAbilities.new(:edit, :merge).eql?(UserAbilities.new(:merge, :edit)))
+        .to be true
+    end
+
+    it 'is not equal when sets have difference abilities' do
+      expect(UserAbilities.new(:edit).eql?(UserAbilities.new(:merge, :edit)))
+        .to be false
+    end
+
+    it 'raises error when compared with invalid class' do
+      expect { UserAbilities.new.eql?(Set.new) }.to raise_error(TypeError)
+    end
+  end
+
+  describe 'adding and removing' do
+
+    it 'adds new ability' do
+      expect(UserAbilities.new(:edit).add(:bulk).abilities)
+        .to eq Set[:edit, :bulk]
+    end
+
+    it 'adds multiple abilities at once' do
+      expect(UserAbilities.new(:edit).add(:edit, :bulk, :merge).abilities)
+        .to eq Set[:edit, :bulk, :merge]
+    end
+
+    it 'removes an ability' do
+      expect(UserAbilities.new(:edit).remove(:edit).abilities)
+        .to eql Set.new
+    end
+
+    it 'removes multiple abilities at once' do
+      expect(UserAbilities.new(:edit, :bulk, :merge).remove(:edit).abilities)
+        .to eq Set[:bulk, :merge]
+    end
+
+    it 'raises error if called with an unknown ability' do
+      expect { UserAbilities.new.add(:dance) }
+        .to raise_error(UserAbilities::InvalidUserAbilityError)
+    end
+
+    it 'returns new object' do
+      user_abilities = UserAbilities.new(:edit)
+      new_user_abilities = UserAbilities.new(:edit).add(:bulk)
+      expect(new_user_abilities).to be_a UserAbilities
+      expect(new_user_abilities.object_id).not_to eq user_abilities.object_id
+    end
+  end
+
   describe 'UserAbilities.load' do
     it 'deserializes nil as empty set' do
       expect(UserAbilities.load(nil).empty?).to be true
