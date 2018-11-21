@@ -163,6 +163,17 @@ class User < ApplicationRecord
     Chat.create_user(self)
   end
 
+  # String | nil --> Arel::Nodes::Grouping | nil
+  # Creates sql like statement with arel, which searches
+  # the username and email columns to find matching users.
+  # Used by UsersController#admin
+  def self.matches_username_or_email(query)
+    return if query.nil?
+
+    query_string = "%#{sanitize_sql_like(query)}%"
+    arel_table[:username].matches(query_string).or(arel_table[:email].matches(query_string))
+  end
+
   # Returns the sf_guard_user_id from a range
   # of types: User, SfGuardUser, Integer, String
   # Used by LsHash

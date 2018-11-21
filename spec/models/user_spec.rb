@@ -243,6 +243,17 @@ describe User do
     end
   end
 
+  describe 'User.matches_username_or_email' do
+    it 'returns Arel query' do
+      expect(User.matches_username_or_email('example'))
+        .to be_a Arel::Nodes::Grouping
+    end
+
+    it 'returns nil if input is nil' do
+      expect(User.matches_username_or_email(nil)).to be nil
+    end
+  end
+
   describe 'User.derive_last_user_id_from' do
     it 'accepts strings and integer' do
       expect(User.derive_last_user_id_from('123')).to eq 123

@@ -110,17 +110,12 @@ class UsersController < ApplicationController
 
   def admin
     @users = User
-      .includes(:groups)
-      .joins("INNER JOIN sf_guard_user ON sf_guard_user.id = users.sf_guard_user_id")
-      .joins("INNER JOIN sf_guard_user_profile ON sf_guard_user_profile.user_id = sf_guard_user.id")
-      .where(sf_guard_user: { is_super_admin: false })
-      .order("created_at DESC")
-      .page(params[:page]).per(100)
-
-    if params[:q]
-      q = '%' + params[:q] + '%'
-      @users = @users.where("sf_guard_user_profile.name_last LIKE ? OR sf_guard_user_profile.name_first LIKE ? OR users.username LIKE ? OR users.email LIKE ?", q, q, q, q)
-    end
+               .includes(:groups, :user_profile)
+               .where.not(role: :system)
+               .where(User.matches_username_or_email(params[:q]))
+               .order('created_at DESC')
+               .page(params[:page] || 1)
+               .per(50)
   end
 
   private
