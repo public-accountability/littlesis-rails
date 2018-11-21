@@ -9,9 +9,15 @@ SfGuardUserProfile.find_each do |sf_guard_user_profile|
 
     ColorPrinter.print_green "Creating User Profile for #{user.username}"
 
+    if sf_guard_user_profile.reason.blank? || sf_guard_user_profile.reason.split(' ').length < 2
+      reason = 'default reason'
+    else
+      reason = sf_guard_user_profile.reason
+    end
+
     user.create_user_profile!(name_first: sf_guard_user_profile.name_first,
                               name_last: sf_guard_user_profile.name_last,
-                              reason: sf_guard_user_profile.reason,
+                              reason: reason,
                               location: sf_guard_user_profile.location)
 
   else
