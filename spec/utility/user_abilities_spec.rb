@@ -4,7 +4,14 @@ require 'rails_helper'
 
 describe UserAbilities do
   it 'can be initialized nothing' do
-    expect(UserAbilities.new.empty?).to be true
+    expect { UserAbilities.new }.not_to raise_error
+  end
+
+  describe 'responds to blank? and empty?' do
+    specify { expect(UserAbilities.new.empty?).to be true }
+    specify { expect(UserAbilities.new.blank?).to be true }
+    specify { expect(UserAbilities.new(:edit).empty?).to be false }
+    specify { expect(UserAbilities.new(:edit).blank?).to be false }
   end
 
   it 'can be initialized with arguments' do

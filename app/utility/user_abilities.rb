@@ -19,7 +19,7 @@ class UserAbilities
 
   extend Forwardable
   attr_reader :abilities
-  def_delegators :@abilities, :empty?, :to_a, :include?
+  def_delegators :@abilities, :empty?, :blank?, :to_a, :include?
 
   def initialize(*args)
     @abilities = args.to_set.freeze
