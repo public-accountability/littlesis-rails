@@ -84,6 +84,18 @@ describe UserAbilities do
     end
   end
 
+  describe 'to_set' do
+    let(:ua) { UserAbilities.new(:merge, :edit) }
+
+    it 'returns @abilities' do
+      expect(ua.to_set).to eql ua.abilities
+    end
+
+    it 'returns a duplicate set' do
+      expect(ua.abilities).not_to be ua.to_set
+    end
+  end
+
   describe 'adding and removing' do
 
     it 'adds new ability' do

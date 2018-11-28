@@ -120,6 +120,23 @@ class User < ApplicationRecord
   end
 
   ###############
+  # Abilities   #
+  ###############
+
+  # creates 4 methods: add_ability, add_ability!, remove_ability, remove_ability!
+  %i[add remove].each do |method|
+    define_method("#{method}_ability") do |*args|
+      self[:abilities] = abilities.public_send(method, *args)
+      save
+    end
+
+    define_method("#{method}_ability!") do |*args|
+      self[:abilities] = abilities.public_send(method, *args)
+      save!
+    end
+  end
+
+  ###############
   # Permissions #
   ###############
 

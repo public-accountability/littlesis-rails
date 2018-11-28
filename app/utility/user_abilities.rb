@@ -33,6 +33,10 @@ class UserAbilities
     @abilities.eql?(other.abilities)
   end
 
+  def to_set
+    @abilities.dup
+  end
+
   {
     :admin => :admin?,
     :edit => :editor?,

@@ -28,8 +28,55 @@ describe User do
   end
 
   describe 'abilities' do
+    let(:user) { create_basic_user }
+
     it 'serializes UserAbilities' do
       expect(build(:user).abilities).to be_a UserAbilities
+    end
+
+    describe 'adding and removing abilities' do
+      it 'adds a new ability' do
+        expect { user.add_ability(:edit) }
+          .to change { user.reload.abilities.to_set }
+                .from(Set.new).to(UserAbilities.new.add(:edit).to_set)
+      end
+
+      it 'adds an ability using save' do
+        user = build(:user)
+        expect(user).to receive(:save).once
+        user.add_ability(:edit)
+      end
+
+      it 'removes an ability using save' do
+        user = build(:user)
+        expect(user).to receive(:save).once
+        user.remove_ability(:edit)
+      end
+
+      it 'adds an ability using save!' do
+        user = build(:user)
+        expect(user).to receive(:save!).once
+        user.add_ability!(:edit)
+      end
+
+      it 'removes an ability using save!' do
+        user = build(:user)
+        expect(user).to receive(:save!).once
+        user.remove_ability!(:edit)
+      end
+
+      it 'removes an ability' do
+        user.add_ability(:edit, :bulk)
+        expect { user.remove_ability(:bulk) }
+          .to change { user.reload.abilities.to_set }
+                .from(Set[:edit, :bulk]).to(Set[:edit])
+      end
+
+      it 'adds two abilities at once' do
+        expect { user.add_ability(:bulk, :merge) }
+          .to change { user.reload.abilities.to_set }
+                .from(Set.new).to(Set[:bulk, :merge])
+      end
     end
   end
 
