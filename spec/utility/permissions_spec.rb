@@ -6,37 +6,27 @@ describe Permissions, :tag_helper  do
   describe 'initalize' do
 
     context 'basic user with contributor, editor, and lister permissions' do
-      before(:all) do
-        @user = create_basic_user
-        @permission = Permissions.new(@user)
-      end
+      let(:user) { create_basic_user }
+      let(:permission) { Permissions.new(user) }
 
       it 'initializes with user' do
-        expect(@permission.instance_variable_get('@user')).to eq @user
-      end
-
-      it 'initializes with sf_permissions' do
-        expect(@permission.instance_variable_get('@sf_permissions')).to eq ['contributor', 'editor','lister']
-      end
-
-      it 'contributor? returns true' do
-        expect(@permission.contributor?).to be true
+        expect(permission.instance_variable_get('@user')).to eq user
       end
 
       it 'editor? returns true' do
-        expect(@permission.editor?).to be true
+        expect(permission.editor?).to be true
       end
 
       it 'lister? returns true' do
-        expect(@permission.lister?).to be true
+        expect(permission.lister?).to be true
       end
 
       it 'admin? returns false' do
-        expect(@permission.admin?).to be false
+        expect(permission.admin?).to be false
       end
 
       it 'deleter? returns false' do
-        expect(@permission.deleter?).to be false
+        expect(permission.deleter?).to be false
       end
     end
   end
@@ -346,17 +336,13 @@ describe Permissions, :tag_helper  do
   end # entity permissions
 
   describe 'relationship permissions' do
-    let(:user) { build(:user) }
+    let(:abilities) { UserAbilities.new(:edit) }
+    let(:user) { build(:user, abilities: abilities) }
     let(:relationship) { build(:generic_relationship, created_at: Time.current) }
     let(:permissions) { Permissions.new(user) }
     subject { permissions.relationship_permissions(relationship) }
 
     let(:legacy_permissions) { [] }
-
-    before do
-      expect(user).to receive(:sf_guard_user)
-                        .and_return(double(:permissions => legacy_permissions))
-    end
 
     context 'user created the relationship' do
       before do
@@ -398,12 +384,14 @@ describe Permissions, :tag_helper  do
     end
 
     context 'user is a deleter' do
-      let(:legacy_permissions) { ['deleter'] }
+      let(:abilities) { UserAbilities.new(:edit, :delete) }
+
       specify { expect(subject[:deleteable]).to be true }
     end
 
     context 'user is an admin' do
-      let(:legacy_permissions) { ['admin'] }
+      let(:abilities) { UserAbilities.new(:edit, :admin) }
+
       context 'relationship is new' do
         specify { expect(subject[:deleteable]).to be true }
       end

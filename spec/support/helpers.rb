@@ -33,42 +33,37 @@ module RspecExampleHelpers
 
   def create_admin_user
     sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, role: 'admin')
     create(:user_profile, user: user)
-    SfGuardUserPermission.create!(permission_id: 1, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
+    user.add_ability(:edit, :admin)
     user
   end
 
   def create_bulk_user
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 9, user_id: sf_user.id)
+    user.add_ability!(:edit, :bulk)
     user
   end
 
   def create_merger_user
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 7, user_id: sf_user.id)
+    user.add_ability!(:edit, :merge)
     user
   end
 
   def create_list_user
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
+    user.add_ability!(:edit, :list)
     user
   end
 
   def create_contributor
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+    user.add_ability!(:edit)
     user
   end
 
@@ -87,18 +82,17 @@ module RspecExampleHelpers
   def create_basic_user_with_ids(user_id, sf_user_id)
     sf_user = FactoryBot.create(:sf_guard_user, id: sf_user_id)
     user = FactoryBot.create(:user, id: user_id, sf_guard_user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
+    user.add_ability!(:edit, :list)
+    # SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
+    # SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+    # SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
     user
   end
 
   def create_basic_user(**attributes)
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, **attributes)
-    SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
+    user.add_ability!(:edit, :list)
     user
   end
 
@@ -106,25 +100,21 @@ module RspecExampleHelpers
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, **attributes)
     user.create_user_profile!(FactoryBot.attributes_for(:user_profile))
-    SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
+    user.add_ability!(:edit, :list)
     user
   end
 
   def create_bulker_user
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 9, user_id: sf_user.id)
+    user.add_ability!(:edit, :bulk)
     user
   end
 
   def create_restricted_user
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, is_restricted: true)
-    SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
+    user.add_ability!(:edit)
     user
   end
 

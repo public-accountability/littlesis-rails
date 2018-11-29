@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe UserAbilities don
+describe UserAbilities do
   it 'can be initialized nothing' do
     expect { UserAbilities.new }.not_to raise_error
   end

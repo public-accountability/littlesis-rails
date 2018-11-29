@@ -18,6 +18,16 @@
 class UserAbilities
   ALL_ABILITIES = %I[admin edit delete merge bulk match list].to_set.freeze
 
+  ABILITY_MAPPING = {
+    :admin => :admin?,
+    :edit => :editor?,
+    :delete => :deleter?,
+    :merge => :merger?,
+    :bulk => :bulker?,
+    :match => :matcher?,
+    :list => :lister?
+  }.freeze
+
   extend Forwardable
   attr_reader :abilities
   def_delegators :@abilities, :empty?, :blank?, :to_a, :include?
@@ -38,15 +48,7 @@ class UserAbilities
     @abilities.dup
   end
 
-  {
-    :admin => :admin?,
-    :edit => :editor?,
-    :delete => :deleter?,
-    :merge => :merger?,
-    :bulk => :bulker?,
-    :match => :matcher?,
-    :list => :lister?
-  }.each do |(ability, method)|
+  ABILITY_MAPPING.each do |(ability, method)|
     define_method(method) do
       include?(ability) || include?(:admin)
     end

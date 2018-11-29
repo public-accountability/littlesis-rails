@@ -12,17 +12,11 @@ class Permissions
     2 => 'Private'
   }.freeze
 
-  ALL_PERMISSIONS = ["admin", "contributor", "editor", "deleter", "lister", "merger", "importer", "bulker", "talker", "contacter"].freeze
-
-  ALL_PERMISSIONS.each do |permission_name|
-    define_method("#{permission_name}?") do
-      legacy_permission?(permission_name)
-    end
-  end
+  delegate(*UserAbilities::ABILITY_MAPPING.values, to: '@user.abilities')
 
   def initialize(user)
     @user = user
-    @sf_permissions = @user.sf_guard_user.permissions
+    # @sf_permissions = @user.sf_guard_user.permissions
   end
 
   def add_permission(resource_type, access_rules)
@@ -140,12 +134,6 @@ class Permissions
     rel.created_at >= 1.week.ago &&
       !(rel.filings.present? && rel.description1.include?('Campaign Contribution')) &&
       user_is_creator?(rel)
-  end
-
-  # LEGACY HELPERS
-
-  def legacy_permission?(name)
-    @sf_permissions.include?(name)
   end
 
   class TagAccessRules
