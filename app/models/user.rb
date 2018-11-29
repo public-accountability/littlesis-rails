@@ -144,9 +144,6 @@ class User < ApplicationRecord
     sf_guard_user.permissions
   end
 
-  # when 'lister'
-  #   abilities.lister?
-
   # This method used to use sf_guard_user_permissions, but was
   # changed to use an new permission system in rails.
   def has_legacy_permission(name)
@@ -159,12 +156,14 @@ class User < ApplicationRecord
       abilities.deleter?
     when 'merger'
       abilities.merger?
+    when 'lister'
+      abilities.lister?
     when 'importer', 'bulker'
       abilities.bulker?
     when 'talker', 'contacter'
-      false # legacy permission which should not appear in our code anymore
+      false # legacy permission which should not appear in our code any more
     else
-      Rails.logger.debug "User#has_legacy_permission() called with unknown permissions: #{name}"
+      Rails.logger.debug "User#has_legacy_permission called with unknown permission: #{name}"
       false
     end
   end

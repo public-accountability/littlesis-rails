@@ -4,18 +4,19 @@
 # It holds the abilities (formally known as permissions) that the user can do.
 # It's a wrapper around a `Set`.
 #
-# There are currently 5 abilities (plus admin)
+# There are currently 6 abilities (plus admin)
 #
 #    edit -> basic editing opertions. All users have this by default
 #    delete -> ability to delete entities, relationships, and lists
 #    merge -> ability to merge entities together
 #    bulk -> ability to bulk add unlmited entities, relationships, and lists
 #    match -> ability to use the match donors tools
+#    list  -> ability to add/remove entitie from open lists
 #
 # Admins can do all of those plus use any admin-only features
 #
 class UserAbilities
-  ALL_ABILITIES = %I[admin edit delete merge bulk match].to_set.freeze
+  ALL_ABILITIES = %I[admin edit delete merge bulk match list].to_set.freeze
 
   extend Forwardable
   attr_reader :abilities
@@ -43,7 +44,8 @@ class UserAbilities
     :delete => :deleter?,
     :merge => :merger?,
     :bulk => :bulker?,
-    :match => :matcher?
+    :match => :matcher?,
+    :list => :lister?
   }.each do |(ability, method)|
     define_method(method) do
       include?(ability) || include?(:admin)

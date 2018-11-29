@@ -227,6 +227,7 @@ describe User do
       assert_user_has_permission 'bulker'
       assert_user_has_permission 'importer'
       assert_user_does_not_have_permission 'deleter'
+      assert_user_does_not_have_permission 'lister'
     end
 
     context 'when user has admin ability' do
