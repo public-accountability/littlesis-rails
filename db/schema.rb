@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_20_220123) do
+ActiveRecord::Schema.define(version: 2018_11_28_230617) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1507,6 +1507,7 @@ ActiveRecord::Schema.define(version: 2018_11_20_220123) do
     t.boolean "map_the_power"
     t.text "about_me"
     t.integer "role", limit: 1, default: 0, null: false
+    t.text "abilities"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

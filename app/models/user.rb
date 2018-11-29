@@ -7,6 +7,8 @@ class User < ApplicationRecord
 
   enum role: { user: 0, admin: 1, system: 2 }
 
+  serialize :abilities, UserAbilities
+
   validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username,
@@ -115,6 +117,23 @@ class User < ApplicationRecord
 
   def recent_edits(page = 1)
     Edits.new(self, page: page)
+  end
+
+  ###############
+  # Abilities   #
+  ###############
+
+  # creates 4 methods: add_ability, add_ability!, remove_ability, remove_ability!
+  %i[add remove].each do |method|
+    define_method("#{method}_ability") do |*args|
+      self[:abilities] = abilities.public_send(method, *args)
+      save
+    end
+
+    define_method("#{method}_ability!") do |*args|
+      self[:abilities] = abilities.public_send(method, *args)
+      save!
+    end
   end
 
   ###############
