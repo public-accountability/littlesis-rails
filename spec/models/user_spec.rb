@@ -190,6 +190,68 @@ describe User do
     end
   end
 
+  describe 'has_legacy_permission' do
+    let(:permissions) { [] }
+    let(:user) { build(:user, abilities: UserAbilities.new(*permissions)) }
+
+    def self.assert_user_has_permission(permission)
+      specify { expect(user.has_legacy_permission(permission)).to be true }
+    end
+
+    def self.assert_user_does_not_have_permission(permission)
+      specify { expect(user.has_legacy_permission(permission)).to be false }
+    end
+
+    describe 'unused legacy permissions' do
+      let(:permissions) { %i[edit] }
+
+      assert_user_does_not_have_permission 'talker'
+      assert_user_does_not_have_permission 'contacter'
+    end
+
+    context 'when user only has edit ability' do
+      let(:permissions) { %i[edit] }
+
+      assert_user_has_permission 'editor'
+      assert_user_has_permission 'contributor'
+      assert_user_does_not_have_permission 'admin'
+      assert_user_does_not_have_permission 'bulker'
+      assert_user_does_not_have_permission 'deleter'
+    end
+
+    context 'when user has edit and bulk ability' do
+      let(:permissions) { %i[edit bulk] }
+
+      assert_user_has_permission 'editor'
+      assert_user_does_not_have_permission 'admin'
+      assert_user_has_permission 'bulker'
+      assert_user_has_permission 'importer'
+      assert_user_does_not_have_permission 'deleter'
+    end
+
+    context 'when user has admin ability' do
+      let(:permissions) { %i[admin] }
+
+      %w[admin bulker merger deleter].each do |p|
+        assert_user_has_permission(p)
+      end
+    end
+
+    context 'when user has delete ability' do
+      let(:permissions) { %i[edit delete] }
+
+      assert_user_has_permission 'deleter'
+      assert_user_does_not_have_permission 'admin'
+    end
+
+    context 'when user has merger ability' do
+      let(:permissions) { %i[edit merge delete] }
+
+      assert_user_has_permission 'merger'
+      assert_user_does_not_have_permission 'admin'
+    end
+  end
+
   describe 'chat user' do
     let(:user) { build(:user) }
 
