@@ -165,6 +165,7 @@ class User < ApplicationRecord
   end
 
   def create_default_permissions
+    add_ability(:edit)
     unless has_legacy_permission('contributor')
       SfGuardUserPermission.create(permission_id: 2, user_id: sf_guard_user.id)
     end

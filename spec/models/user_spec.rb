@@ -166,8 +166,16 @@ describe User do
   end
 
   describe 'create_default_permissions' do
-    let(:sf_user) { create(:sf_guard_user, username: "user#{rand(1000)}") }
-    let(:user) { create(:user, sf_guard_user_id: sf_user.id, email: "#{rand(1000)}@fake.com") }
+    let(:sf_user) { create(:sf_guard_user) }
+    let(:user) { create(:user, sf_guard_user_id: sf_user.id) }
+
+    before { user }
+
+    it 'adds "edit" ability' do
+      expect { user.create_default_permissions }
+        .to change { user.abilities.abilities }
+              .from(Set.new).to(Set[:edit])
+    end
 
     it 'creates contributor permission' do
       expect(user.has_legacy_permission('contributor')).to be false
