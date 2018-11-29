@@ -1,40 +1,38 @@
 require 'rails_helper'
 
-describe Permissions, :tag_helper  do
+# rubocop:disable RSpec/NestedGroups, RSpec/InstanceVariable
+
+describe Permissions, :tag_helper do
   seed_tags
 
-  describe 'initalize' do
+  describe 'initalizing with user with edit and list permissions' do
+    let(:user) { create_basic_user }
+    let(:permission) { Permissions.new(user) }
 
-    context 'basic user with contributor, editor, and lister permissions' do
-      let(:user) { create_basic_user }
-      let(:permission) { Permissions.new(user) }
+    it 'initializes with user' do
+      expect(permission.instance_variable_get('@user')).to eq user
+    end
 
-      it 'initializes with user' do
-        expect(permission.instance_variable_get('@user')).to eq user
-      end
+    it 'editor? returns true' do
+      expect(permission.editor?).to be true
+    end
 
-      it 'editor? returns true' do
-        expect(permission.editor?).to be true
-      end
+    it 'lister? returns true' do
+      expect(permission.lister?).to be true
+    end
 
-      it 'lister? returns true' do
-        expect(permission.lister?).to be true
-      end
+    it 'admin? returns false' do
+      expect(permission.admin?).to be false
+    end
 
-      it 'admin? returns false' do
-        expect(permission.admin?).to be false
-      end
-
-      it 'deleter? returns false' do
-        expect(permission.deleter?).to be false
-      end
+    it 'deleter? returns false' do
+      expect(permission.deleter?).to be false
     end
   end
 
-  describe "tag permisions" do
-
-    let(:open_tag) { Tag.find_by_name("oil") } # oil
-    let(:closed_tag) { Tag.find_by_name("nyc") } # nyc
+  describe 'tag permisions' do
+    let(:open_tag) { Tag.find_by(name: 'oil') }
+    let(:closed_tag) { Tag.find_by(name: 'nyc') }
 
     let(:owner) { create_really_basic_user }
     let(:non_owner) { create_really_basic_user }
@@ -49,25 +47,23 @@ describe Permissions, :tag_helper  do
                                     access_rules: access_rules)
     end
 
-    context('any tag') do
-
-      it('can be viewed but not edited by an anonymous user') do
-        expect(
-          Permissions.anon_tag_permissions
-        ).to eq view_only_access
+    describe 'any tag' do
+      it 'can be viewed but not edited by an anonymous user' do
+        expect(Permissions.anon_tag_permissions).to eq view_only_access
       end
     end
 
-    context('an open tag') do
-
-      it("can be viewed and edited by any logged in user") do
-        expect(owner.permissions.tag_permissions(open_tag)).to eq full_access
+    describe 'an open tag' do
+      it 'can be viewed and edited by any logged in user' do
         expect(non_owner.permissions.tag_permissions(open_tag)).to eq full_access
       end
+
+      it 'can be viewed by the owner'  do
+        expect(owner.permissions.tag_permissions(open_tag)).to eq full_access
+      end
     end
 
-    context('a closed tag') do
-
+    describe 'a closed tag' do
       it 'can be viewed by any logged in user but only edited by its owner(s) or an admin' do
         expect(owner.permissions.tag_permissions(closed_tag)).to eq full_access
         expect(non_owner.permissions.tag_permissions(closed_tag)).to eq view_only_access
@@ -89,8 +85,7 @@ describe Permissions, :tag_helper  do
     end
   end
 
-  describe "list permisions" do
-
+  describe 'list permisions' do
     before do
       @creator = create_basic_user
       @non_creator = create_really_basic_user
@@ -98,136 +93,110 @@ describe Permissions, :tag_helper  do
       @admin = create_admin_user
     end
 
-    context "an open list" do
+    context 'with an open list' do
 
       before do
         @open_list = build(:list, access: Permissions::ACCESS_OPEN, creator_user_id: @creator.id)
       end
 
-      context "anon user" do
-
+      describe 'anon user' do
         it 'cannot view but not edit or configure the list' do
           expect(Permissions.anon_list_permissions(@open_list))
-            .to eq ({
-                      viewable: true,
-                      editable: false,
-                      configurable: false
-                    })
+            .to eq(viewable: true,
+                   editable: false,
+                   configurable: false)
         end
       end
 
-      context "logged-in creator" do
-
+      context 'when logged-in as the creator' do
         it 'can view, edit, and configure the list' do
-
           expect(@creator.permissions.list_permissions(@open_list))
-            .to eq ({
-                      viewable: true,
-                      editable: true,
-                      configurable: true
-                    })
+            .to eq(viewable: true,
+                   editable: true,
+                   configurable: true)
         end
       end
 
-      context "logged-in non-creator" do
-
+      context 'when logged-in as a non-creator' do
         it 'can view, but no edit, or configure the list' do
           expect(@non_creator.permissions.list_permissions(@open_list))
-            .to eq ({
-                      viewable: true,
-                      editable: false,
-                      configurable: false
-                    })
+            .to eq(viewable: true,
+                   editable: false,
+                   configurable: false)
         end
       end
 
-      context "lister" do
-
-        it "can be viewed and edited, but not configured" do
+      describe 'lister' do
+        it 'can be viewed and edited, but not configured' do
           expect(@lister.permissions.list_permissions(@open_list))
-            .to eq ({
-                      viewable: true,
-                      editable: true,
-                      configurable: false
-                    })
+            .to eq(viewable: true,
+                   editable: true,
+                   configurable: false)
         end
       end
 
-      context "admin" do
-
-        it "can view, edit, and configure" do
+      describe 'admin' do
+        it 'can view, edit, and configure' do
           expect(@admin.permissions.list_permissions(@open_list))
-            .to eq ({
-                      viewable: true,
-                      editable: true,
-                      configurable: true
-                    })
+            .to eq(viewable: true,
+                   editable: true,
+                   configurable: true)
         end
-      end #admin
+      end # admin
     end # open list
 
-    context 'closed list' do
+    context 'with a closed list' do
       before do
         @closed_list = build(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: @creator.id)
       end
 
-      context "anon user" do
+      context 'anon user' do
         it 'can view but not edit or configure the list' do
           expect(Permissions.anon_list_permissions(@closed_list))
-            .to eq ({
-                      viewable: true,
-                      editable: false,
-                      configurable: false
-                    })
+            .to eq(viewable: true,
+                   editable: false,
+                   configurable: false)
         end
       end
 
-      context "logged-in creator" do
+      context 'when logged-in as the creator' do
         it 'can view, edit, and configure the list' do
           expect(@creator.permissions.list_permissions(@closed_list))
-            .to eq ({
-                      viewable: true,
-                      editable: true,
-                      configurable: true
-                    })
+            .to eq(viewable: true,
+                   editable: true,
+                   configurable: true)
         end
       end
 
-      context "logged-in non-creator" do
+      context 'when logged-in as the non-creator' do
         it 'can view, but no edit, or configure the list' do
           expect(@non_creator.permissions.list_permissions(@closed_list))
-            .to eq ({
-                      viewable: true,
-                      editable: false,
-                      configurable: false
-                    })
+            .to eq(viewable: true,
+                   editable: false,
+                   configurable: false)
         end
       end
 
-      context "lister" do
-        it "can be viewed and edited, but not configured" do
+      describe 'lister' do
+        it 'can be viewed and edited, but not configured' do
           expect(@lister.permissions.list_permissions(@closed_list))
-            .to eq ({
-                      viewable: true,
-                      editable: false,
-                      configurable: false
-                    })
+            .to eq(viewable: true,
+                   editable: false,
+                   configurable: false)
         end
       end
 
-      context "admin" do
-        it "can view, edit, and configure" do
+      describe 'admin' do
+        it 'can view, edit, and configure' do
           expect(@admin.permissions.list_permissions(@closed_list))
-            .to eq ({
-                      viewable: true,
-                      editable: true,
-                      configurable: true
-                    })
+            .to eq(viewable: true,
+                   editable: true,
+                   configurable: true)
         end
       end
     end # closed list
 
-    context 'private list' do
+    context 'with a private list' do
       let(:all_false) do
         {
           viewable: false,
@@ -240,50 +209,49 @@ describe Permissions, :tag_helper  do
         @private_list = build(:private_list, creator_user_id: @creator.id)
       end
 
-      context "anon user" do
+      describe 'anon user' do
         it 'can not view, eidt or configure the list' do
           expect(Permissions.anon_list_permissions(@private_list)).to eq all_false
         end
       end
 
-      context "logged-in creator" do
+      context 'when logged-in as the creator' do
         it 'can view, edit, and configure the list' do
           expect(@creator.permissions.list_permissions(@private_list))
-            .to eq ({
-                      viewable: true,
-                      editable: true,
-                      configurable: true
-                    })
+            .to eq(viewable: true,
+                   editable: true,
+                   configurable: true)
         end
       end
 
-      context "logged-in non-creator" do
+      context 'when logged-in as a non-creator' do
         it 'cannot view, edit, or configure the list' do
           expect(@non_creator.permissions.list_permissions(@private_list)).to eq all_false
         end
       end
 
-      context "lister" do
+      describe 'lister' do
         it 'cannot view, edit, or configure the list' do
           expect(@lister.permissions.list_permissions(@private_list)).to eq all_false
         end
       end
 
-      context "admin" do
-        it "can view, edit, and configure" do
+      describe 'admin' do
+        it 'can view, edit, and configure' do
           expect(@admin.permissions.list_permissions(@private_list))
-            .to eq ({
-                      viewable: true,
-                      editable: true,
-                      configurable: true
-                    })
+            .to eq(viewable: true,
+                   editable: true,
+                   configurable: true)
         end
       end
     end # private list
   end # list permissions
 
   describe 'entity permissions' do
+    subject { Permissions.new(user).entity_permissions(@entity) }
+
     let(:user) { create_really_basic_user }
+
     with_versioning do
       before do
         PaperTrail.request(whodunnit: user.id.to_s) do
@@ -291,16 +259,13 @@ describe Permissions, :tag_helper  do
         end
       end
 
-      subject { Permissions.new(user).entity_permissions(@entity) }
-
-      context 'entity was created recently by the user' do
-
+      context 'when the entity was created recently by the user' do
         it 'the creator can delete the entity' do
-          expect(subject[:deleteable]).to eql true
+          expect(subject[:deleteable]).to be true
         end
 
         it 'the creator cannot merge the entity' do
-          expect(subject[:mergeable]).to eql false
+          expect(subject[:mergeable]).to be false
         end
 
         it 'other users cannot delete or merge the entity' do
@@ -309,15 +274,15 @@ describe Permissions, :tag_helper  do
         end
       end
 
-      context 'entity was recently created, but has more than 2 relationships' do
+      context 'when the entity was recently created, but has more than 2 relationships' do
         before { expect(@entity).to receive(:link_count).and_return(4) }
 
         it 'the creator cannot delete the entity' do
-          expect(subject[:deleteable]).to eql false
+          expect(subject[:deleteable]).to be false
         end
       end
 
-      context 'entity was create more than a week ago' do
+      context 'when the entity was created more than a week ago' do
         before { expect(@entity).to receive(:created_at).and_return(1.month.ago) }
 
         it 'the creator cannot delete the entity' do
@@ -325,7 +290,7 @@ describe Permissions, :tag_helper  do
         end
       end
 
-      context 'user is an admin' do
+      context 'with an admin user' do
         let(:user) { create_admin_user }
 
         it 'admin can delete and merge the entity' do
@@ -336,63 +301,65 @@ describe Permissions, :tag_helper  do
   end # entity permissions
 
   describe 'relationship permissions' do
+    subject { permissions.relationship_permissions(relationship) }
+
     let(:abilities) { UserAbilities.new(:edit) }
     let(:user) { build(:user, abilities: abilities) }
     let(:relationship) { build(:generic_relationship, created_at: Time.current) }
     let(:permissions) { Permissions.new(user) }
-    subject { permissions.relationship_permissions(relationship) }
 
     let(:legacy_permissions) { [] }
 
-    context 'user created the relationship' do
+    context 'when the user created the relationship' do
       before do
         allow(permissions).to receive(:user_is_creator?)
                                 .with(relationship)
                                 .and_return(true)
       end
 
-      context 'relationship is new' do
+      context 'when relationship is new' do
         specify { expect(subject[:deleteable]).to be true }
       end
 
-      context 'relationship is more than a week old' do
+      context 'when the relationship is more than a week old' do
         let(:relationship) { build(:generic_relationship, created_at: 2.weeks.ago) }
         specify { expect(subject[:deleteable]).to be false }
       end
 
-      context 'relationship is a campaign contribution' do
+      context 'when the relationship is a campaign contribution' do
         let(:relationship) do
           build(:donation_relationship,
                 created_at: Time.current,
                 description1: 'NYS Campaign Contribution',
                 filings: 2)
         end
+
         specify { expect(subject[:deleteable]).to be false }
       end
     end
 
-    context 'user did not create the relationship' do
+    context 'when the user did not create the relationship' do
       before do
         expect(permissions).to receive(:user_is_creator?)
                                 .with(relationship)
                                 .and_return(false)
       end
 
-      context 'relationship is new' do
+      context 'when relationship is new' do
         specify { expect(subject[:deleteable]).to be false }
       end
     end
 
-    context 'user is a deleter' do
+    context 'when user is a deleter' do
       let(:abilities) { UserAbilities.new(:edit, :delete) }
 
       specify { expect(subject[:deleteable]).to be true }
     end
 
-    context 'user is an admin' do
+    context 'when user is an admin' do
       let(:abilities) { UserAbilities.new(:edit, :admin) }
 
-      context 'relationship is new' do
+      context 'when relationship is new' do
         specify { expect(subject[:deleteable]).to be true }
       end
     end
@@ -400,7 +367,7 @@ describe Permissions, :tag_helper  do
 end # Permissions
 
 describe Permissions::TagAccessRules do
-  it('expands access') do
+  it 'expands access' do
     expect(
       Permissions::TagAccessRules.update({ tag_ids: [1, 2] },
                                                  { tag_ids: [2, 3] },
@@ -408,7 +375,7 @@ describe Permissions::TagAccessRules do
     ).to eq(tag_ids: [1, 2, 3])
   end
 
-  it('restricts access') do
+  it 'restricts access' do
     expect(
       Permissions::TagAccessRules.update({ tag_ids: [1, 2] },
                                                  { tag_ids: [2] },
@@ -416,7 +383,7 @@ describe Permissions::TagAccessRules do
     ).to eq(tag_ids: [1])
   end
 
-  it('handles nil access rules') do
+  it 'handles nil access rules' do
     expect(
       Permissions::TagAccessRules.update(nil,
                                                  { tag_ids: [2, 3] },
@@ -425,8 +392,9 @@ describe Permissions::TagAccessRules do
   end
 
   it 'raises error if passed an invalid set operation' do
-    expect {
-      Permissions::TagAccessRules.update(nil, nil, :foobar)
-    }.to raise_error(Permissions::TagAccessRules::InvalidOperationError)
+    expect { Permissions::TagAccessRules.update(nil, nil, :foobar) }
+      .to raise_error(Permissions::TagAccessRules::InvalidOperationError)
   end
 end
+
+# rubocop:enable RSpec/NestedGroups, RSpec/InstanceVariable

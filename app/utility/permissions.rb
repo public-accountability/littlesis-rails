@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# Refactoring notes:  github.com/public-accountability/littlesis-rails/pull/288
+# rubocop:disable Layout/EmptyLineAfterGuardClause
+
 class Permissions
   ACCESS_OPEN = 0
   ACCESS_CLOSED = 1
@@ -71,7 +72,6 @@ class Permissions
   private
 
   # ACCESS RULE HELPER
-  # NOTE(Tue 05 Sep 2017): see refactor notes linked at top of file...
   def update_permission(resource_type, access_rules, operation)
     permission = @user.user_permissions.find_or_create_by(resource_type: resource_type.to_s)
     klass = "Permissions::#{resource_type}AccessRules".constantize
@@ -137,8 +137,7 @@ class Permissions
   end
 
   class TagAccessRules
-
-    InvalidOperationError = Exception.new("operation must be one of: [:union, :difference]")
+    InvalidOperationError = Exception.new('operation must be one of: [:union, :difference]')
 
     def self.update(old_rules, new_rules, operation)
       check operation
@@ -153,3 +152,4 @@ class Permissions
   end
 end
 
+# rubocop:enable Layout/EmptyLineAfterGuardClause
