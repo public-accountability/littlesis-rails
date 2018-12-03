@@ -28,7 +28,7 @@ describe User do
   end
 
   describe 'abilities' do
-    let(:user) { create_basic_user }
+    let(:user) { create(:user, sf_guard_user: create(:sf_guard_user)) }
 
     it 'serializes UserAbilities' do
       expect(build(:user).abilities).to be_a UserAbilities
@@ -288,8 +288,7 @@ describe User do
   describe '#importer?' do
     let(:importer) do
       sf_user = create(:sf_guard_user)
-      SfGuardUserPermission.create!(permission_id: 8, user_id: sf_user.id)
-      create(:user, sf_guard_user_id: sf_user.id)
+      create(:user, sf_guard_user_id: sf_user.id, abilities: UserAbilities.new(:edit, :bulk))
     end
     let(:user) { create_really_basic_user }
 
@@ -300,8 +299,7 @@ describe User do
   describe '#bulker?' do
     let(:bulker) do
       sf_user = create(:sf_guard_user)
-      SfGuardUserPermission.create!(permission_id: 9, user_id: sf_user.id)
-      create(:user, sf_guard_user_id: sf_user.id)
+      create(:user, sf_guard_user_id: sf_user.id, abilities: UserAbilities.new(:edit, :bulk))
     end
     let(:user) { create_really_basic_user }
 
@@ -312,8 +310,7 @@ describe User do
   describe '#merger?' do
     let(:merger) do
       sf_user = create(:sf_guard_user)
-      SfGuardUserPermission.create!(permission_id: 7, user_id: sf_user.id)
-      create(:user, sf_guard_user_id: sf_user.id)
+      create(:user, sf_guard_user_id: sf_user.id, abilities: UserAbilities.new(:edit, :merge))
     end
     let(:user) { create_really_basic_user }
 
