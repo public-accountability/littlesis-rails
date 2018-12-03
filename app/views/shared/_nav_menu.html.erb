@@ -7,7 +7,7 @@ navbar_container_classes = %w[navbar navbar-expand-md fixed-top navbar-light bg-
 navbar_container_classes << 'donation-banner' if show_donation_banner?
 
 navbar_wrapper_classes = []
-navbar_wrapper_class << 'navbar-full-width' if local_assigns[:full_width].present?
+navbar_wrapper_classes << 'navbar-full-width' if local_assigns[:full_width].present?
 navbar_wrapper_classes << 'donation-banner' if show_donation_banner?
 %>
 
