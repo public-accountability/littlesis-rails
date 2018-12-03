@@ -88,7 +88,7 @@ module RspecExampleHelpers
   def create_importer
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
-    SfGuardUserPermission.create!(permission_id: 8, user_id: sf_user.id)
+    user.add_ability!(:edit, :bulk)
     user
   end
 
