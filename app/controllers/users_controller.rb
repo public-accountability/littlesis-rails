@@ -62,17 +62,22 @@ class UsersController < ApplicationController
 
   # GET /users/:id/edit_permissions
   def edit_permissions
-
   end
 
   def add_permission
-    SfGuardUserPermission.create!(permission_id: params[:permission].to_i, user_id: @user.sf_guard_user_id)
-    redirect_to edit_permissions_user_path(@user.id),  notice: "Permission was successfully added."
+    new_ability = params.require(:permission).to_sym
+    return head :bad_request unless UserAbilities::ALL_ABILITIES.include? new_ability
+
+    @user.add_ability!(new_ability)
+    redirect_to edit_permissions_user_path(@user.id),  notice: 'Permission was successfully added.'
   end
 
   def delete_permission
-    SfGuardUserPermission.remove_permission(permission_id: params[:permission].to_i, user_id: @user.sf_guard_user_id)
-    redirect_to edit_permissions_user_path(@user.id),  notice: "Permission was successfully deleted."    
+    new_ability = params.require(:permission).to_sym
+    return head :bad_request unless UserAbilities::ALL_ABILITIES.include? new_ability
+
+    @user.remove_ability!(new_ability)
+    redirect_to edit_permissions_user_path(@user.id), notice: 'Permission was successfully deleted.'
   end
 
   def success

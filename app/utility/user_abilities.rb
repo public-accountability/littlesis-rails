@@ -28,6 +28,16 @@ class UserAbilities
     :list => :lister?
   }.freeze
 
+  DESCRIPTIONS = {
+    :admin => 'Site administrator. Only staff should have this ability.',
+    :edit => 'Basic editing ability. Can add & edit lists, entities, and maps.',
+    :delete => 'Ability to delete entities and lists',
+    :merge => 'Ability to merge two entities together',
+    :bulk => 'Ability to bulk import an unlimited # of entities and relationships',
+    :match => 'Ability to match New York and federal donations',
+    :list => 'Can add entities to any open list'
+  }.freeze
+
   extend Forwardable
   attr_reader :abilities
   def_delegators :@abilities, :empty?, :blank?, :to_a, :include?

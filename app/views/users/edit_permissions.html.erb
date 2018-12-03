@@ -3,32 +3,30 @@
 <br />
 <%= notice_if_notice %>
 <br />
-<table class="table">
-    <thead>
-	<tr>
-	    <th></th>
-	    <th>Name</th>
-	    <th>Description</th>
-	    <th>Add</th>
-	    <th>Remove</th>
-	</tr>
-    </thead>
-    <tbody>
-	<% SfGuardPermission.permissions.each do |permission| %> 
-	    <tr>
-		<td><%= permission.id %></td>
-		<td><%= permission.name %></td>
-		<td><%= permission.description %></td>
-		<% if @user.has_legacy_permission(permission.name) %>
-		    <td></td>
-		    <td><%= link_to "DELETE", delete_permission_user_path(@user.id, permission: permission.id), :method => :delete%></td>
-		<% else  %>
-		    <td><%= link_to "ADD", add_permission_user_path(@user.id, permission: permission.id), :method => :post %></td>
-		    <td></td>
-		<% end %>
-	    </tr>
+<table class="table" id="users-edit-permissions-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Add</th>
+      <th>Remove</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% UserAbilities::ALL_ABILITIES.each do |ability| %>
+      <tr>
+	<td><%= ability.to_s.capitalize %></td>
+	<td><%= UserAbilities::DESCRIPTIONS.fetch(ability) %></td>
+	<% if @user.abilities.include?(ability) %>
+	  <td></td>
+	  <td><%= link_to "DELETE", delete_permission_user_path(@user.id, permission: ability), :method => :delete, class: "delete-user-ability-#{ability}" %></td>
+	<% else  %>
+	  <td><%= link_to "ADD", add_permission_user_path(@user.id, permission: ability), :method => :post, class: "add-user-ability-#{ability}" %></td>
+	  <td></td>
 	<% end %>
-    </tbody>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
 
 
