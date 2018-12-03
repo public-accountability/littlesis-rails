@@ -48,6 +48,9 @@ defaults: &defaults
     secret_key: 'your-recaptcha-secret-key-here'
   action_network_api_key: 'your-action-network-api-key-here'
   redis_url: "redis://redis:6379/0/cache"
+  donation_banner_display: false  # use 'everywhere' to display on all pages and 'homepage' for just the homepage
+  donation_banner_html: |
+    Today is #GivingTuesday. Please <a href="https://littlesis.org/donate/">make a tax-deductible donation</a><span class="d-sm-none d-md-inline">  to support our efforts to develop and maintain LittleSis.org
   
 
 test:
@@ -56,6 +59,7 @@ test:
   notification_to: rspec@testing.com
   asset_host: assets.example.net
   image_asset_host: images.example.net
+  donation_banner_display: false
 
 development:
   <<: *defaults
