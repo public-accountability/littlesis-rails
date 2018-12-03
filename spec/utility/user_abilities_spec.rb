@@ -64,7 +64,14 @@ describe UserAbilities do
       specify { expect(user_abilities.deleter?).to be true }
       specify { expect(user_abilities.merger?).to be false }
       specify { expect(user_abilities.bulker?).to be false }
+      specify { expect(user_abilities.lister?).to be false }
       specify { expect(user_abilities.matcher?).to be true }
+    end
+
+    context 'when an lister' do
+      let(:abilities) { [:edit, :list] }
+
+      specify { expect(user_abilities.lister?).to be true }
     end
   end
 

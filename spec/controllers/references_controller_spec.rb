@@ -82,7 +82,7 @@ describe ReferencesController, type: :controller do
   end
 
   describe 'DELETE /reference' do
-    login_user
+    login_user %i[edit delete]
     let(:existing_ref_id) { 1 }
     let(:nonexisting_ref_id) { 2 }
 

@@ -1,53 +1,35 @@
+# frozen_string_literal: true
+
 module ControllerMacros
   def login_admin
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:admin]
-      # sign_in FactoryBot.create(:admin) # Using factory girl as an example
-      sf_user = FactoryBot.create(:sf_guard_user)
-      user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 1, user_id: sf_user.id)
-      sign_in user
+      sign_in RspecExampleHelpers.create_admin_user
     end
   end
 
-  def login_user
+  def login_user(abilities = [:edit])
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]
       sf_user = FactoryBot.create(:sf_guard_user)
       user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 5, user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 7, user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 8, user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 9, user_id: sf_user.id)
-      # user.confirm! # or set a confirmed_at inside the factory. Only necessary if you are using the "confirmable" module
-      sign_in user
+      create(:user_profile, user: user)
+      user.add_ability(*abilities)
+      sign_in(user)
     end
   end
 
   def login_basic_user
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      sf_user = FactoryBot.create(:sf_guard_user)
-      user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 5, user_id: sf_user.id)
-      sign_in user
+      sign_in RspecExampleHelpers.create_basic_user
     end
   end
-
 
   def login_restricted_user
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      sf_user = FactoryBot.create(:sf_guard_user)
-      user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, is_restricted: true)
-      SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
-      SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-      sign_in user
+      sign_in RspecExampleHelpers.create_restricted_user
     end
   end  
 
@@ -56,6 +38,7 @@ module ControllerMacros
       @request.env["devise.mapping"] = Devise.mappings[:user]
       sf_user = FactoryBot.create(:sf_guard_user)
       user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+      create(:user_profile, user: user)
       sign_in user
     end
   end

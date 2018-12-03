@@ -394,7 +394,7 @@ describe RelationshipsController, type: :controller do
     end
 
     context 'user with bulk permissions' do
-      login_user
+      login_user [:edit, :bulk]
       it 'allows submission of 10 relationships' do
         expect(Entity).to receive(:find).and_return(build(:org))
         expect(controller).to receive(:make_or_get_entity).exactly(10).times

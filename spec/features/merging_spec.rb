@@ -18,7 +18,7 @@ feature 'Merging entities' do
     before { visit entity_path source }
 
     context "as a non-admin user" do
-      let(:user) { create(:really_basic_user) }
+      let(:user) { create_really_basic_user }
 
       it "navigates to search page from `merge` action button" do
         click_link "merge"
@@ -27,7 +27,7 @@ feature 'Merging entities' do
     end
 
     context "as an admin" do
-      let(:user) { create(:admin_user) }
+      let(:user) { create_admin_user }
 
       it "navigates to search page from `merge` action button" do
         click_link "merge"
@@ -106,7 +106,7 @@ feature 'Merging entities' do
     end
 
     context 'as a non-admin user' do
-      let(:user) { create(:really_basic_user) }
+      let(:user) { create_really_basic_user }
 
       context 'searching for merge targets' do
         let(:mode) { MergeController::Modes::SEARCH }
@@ -186,7 +186,7 @@ feature 'Merging entities' do
     end
 
     context 'as an admin' do
-      let(:user) { create(:admin_user) }
+      let(:user) { create_admin_user }
 
       context 'searching for merge targets' do
         let(:mode) { MergeController::Modes::SEARCH }
@@ -237,7 +237,7 @@ feature 'Merging entities' do
 
       context 'reviewing a merge request' do
         let(:mode) { MergeController::Modes::REVIEW }
-        let(:requesting_user) { create(:really_basic_user) }
+        let(:requesting_user) { create_really_basic_user }
         let(:username) { requesting_user.username }
         let(:merge_request) do
           create(:merge_request, user: requesting_user, source: source, dest: dest)

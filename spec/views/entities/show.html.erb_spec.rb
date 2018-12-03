@@ -149,9 +149,8 @@ describe 'entities/show.html.erb' do
         before(:all) do
           DatabaseCleaner.start
           @sf_guard_user = create(:sf_guard_user)
-          @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
+          @user = create(:user, sf_guard_user_id: @sf_guard_user.id, abilities: UserAbilities.new(:edit, :bulk))
           @e = create(:entity_person, last_user: @sf_guard_user)
-          SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 8)
         end
 
         after(:all) { DatabaseCleaner.clean }
@@ -163,31 +162,12 @@ describe 'entities/show.html.erb' do
           render
         end
 
-        it 'has 6 links' do
-          expect(rendered).to have_css('#actions a', :count => 6)
+        it 'has 7 links' do
+          expect(rendered).to have_css('#actions a', :count => 7)
         end
 
         it 'renders match donations button' do
           expect(rendered).to have_css('a', :text => 'match donations')
-        end
-      end
-
-      describe 'with bulker permission' do
-        before(:all) do
-          DatabaseCleaner.start
-          @sf_guard_user = create(:sf_guard_user)
-          @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
-          @e = create(:entity_person, last_user: @sf_guard_user, updated_at: 1.day.ago, person: build(:a_person))
-          SfGuardUserPermission.create!(user_id: @sf_guard_user.id, permission_id: 9)
-        end
-
-        after(:all) { DatabaseCleaner.clean }
-
-        before do
-          assign(:entity, @e)
-          assign(:current_user, @user)
-          sign_in @user
-          render
         end
 
         it 'renders add bulk button' do

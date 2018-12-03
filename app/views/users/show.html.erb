@@ -59,10 +59,10 @@
   </h3>
   <div>
     <table>
-      <% Permissions::ALL_PERMISSIONS.each do |p| %>
+      <% UserAbilities::ALL_ABILITIES.each do |a| %>
 	<tr>
-	  <td class="permission-name"><%= p.capitalize %></td>
-	  <td class="permission-boolean"><%= @user.permisison_display(p) %></td>
+	  <td class="permission-name"><%= a.capitalize %></td>
+	  <td class="permission-boolean"><%= @user.ability_display(a) %></td>
 	</tr>
       <% end %>
     </table>

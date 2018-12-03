@@ -65,8 +65,8 @@ describe EntitiesController, type: :controller do
     end
 
     describe '#match_donations and reivew donations' do
-      context 'with importer permissions' do
-        login_user
+      context 'with match permissions' do
+        login_user([:edit, :bulk])
 
         before do
           expect(Entity).to receive(:find_by_id).and_return(build(:entity_org))
@@ -231,7 +231,7 @@ describe EntitiesController, type: :controller do
     end
 
     describe 'match/unmatch donations' do
-      login_user
+      login_user([:edit, :bulk])
 
       before(:all) do
         @entity = create(:entity_org)

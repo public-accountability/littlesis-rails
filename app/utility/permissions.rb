@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# Refactoring notes:  github.com/public-accountability/littlesis-rails/pull/288
+# rubocop:disable Layout/EmptyLineAfterGuardClause
+
 class Permissions
   ACCESS_OPEN = 0
   ACCESS_CLOSED = 1
@@ -12,17 +13,11 @@ class Permissions
     2 => 'Private'
   }.freeze
 
-  ALL_PERMISSIONS = ["admin", "contributor", "editor", "deleter", "lister", "merger", "importer", "bulker", "talker", "contacter"].freeze
-
-  ALL_PERMISSIONS.each do |permission_name|
-    define_method("#{permission_name}?") do
-      legacy_permission?(permission_name)
-    end
-  end
+  delegate(*UserAbilities::ABILITY_MAPPING.values, to: '@user.abilities')
 
   def initialize(user)
     @user = user
-    @sf_permissions = @user.sf_guard_user.permissions
+    # @sf_permissions = @user.sf_guard_user.permissions
   end
 
   def add_permission(resource_type, access_rules)
@@ -77,7 +72,6 @@ class Permissions
   private
 
   # ACCESS RULE HELPER
-  # NOTE(Tue 05 Sep 2017): see refactor notes linked at top of file...
   def update_permission(resource_type, access_rules, operation)
     permission = @user.user_permissions.find_or_create_by(resource_type: resource_type.to_s)
     klass = "Permissions::#{resource_type}AccessRules".constantize
@@ -142,15 +136,8 @@ class Permissions
       user_is_creator?(rel)
   end
 
-  # LEGACY HELPERS
-
-  def legacy_permission?(name)
-    @sf_permissions.include?(name)
-  end
-
   class TagAccessRules
-
-    InvalidOperationError = Exception.new("operation must be one of: [:union, :difference]")
+    InvalidOperationError = Exception.new('operation must be one of: [:union, :difference]')
 
     def self.update(old_rules, new_rules, operation)
       check operation
@@ -165,3 +152,4 @@ class Permissions
   end
 end
 
+# rubocop:enable Layout/EmptyLineAfterGuardClause

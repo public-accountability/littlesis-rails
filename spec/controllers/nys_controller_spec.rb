@@ -52,7 +52,7 @@ describe NysController, type: :controller do
   end
 
   describe '#potential_contributions' do
-    login_user
+    login_user %i[edit bulk]
 
     let(:search_options) do
       {
@@ -82,7 +82,7 @@ describe NysController, type: :controller do
   end
 
   describe '#match_donations' do
-    login_user
+    login_user %i[edit bulk]
 
     it 'Matches provides ids' do
       expect(NyMatch).to receive(:match).with('12', '666', kind_of(Numeric))
@@ -91,7 +91,7 @@ describe NysController, type: :controller do
     end
 
     describe 'thinking sphinx:' do
-      before(:all) { @disclosure = create(:ny_disclosure) }
+      before { @disclosure = create(:ny_disclosure) }
 
       it 'Updates delta on ny disclosure' do
         allow(NyMatch).to receive(:match)
@@ -125,7 +125,7 @@ describe NysController, type: :controller do
   end
 
   describe '#create' do
-    login_user
+    login_user %i[edit bulk]
 
     before do
       ny_filer = build(:ny_filer, filer_id: "C9")

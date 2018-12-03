@@ -2,7 +2,7 @@ require 'rails_helper'
 
 feature 'Entity deletion request & review' do
   let(:user) {}
-  let(:requester) { create :really_basic_user }
+  let(:requester) { create_really_basic_user }
   let(:entity) { create :entity_person }
 
   before { login_as user, scope: :user }
@@ -85,12 +85,12 @@ feature 'Entity deletion request & review' do
     before { visit review_deletion_request_path(deletion_request) }
 
     context "as a non-admin" do
-      let(:user) { create(:really_basic_user) }
+      let(:user) { create_really_basic_user }
       denies_access
     end
 
     context "as an admin" do
-      let(:user) { create(:admin_user) }
+      let(:user) { create_admin_user }
 
       it "shows the deletion review page" do
         successfully_visits_page review_deletion_request_path(deletion_request)
