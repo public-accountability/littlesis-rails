@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
   def check_permission(name)
     raise Exceptions::PermissionError unless current_user.present?
     raise Exceptions::RestrictedUserError if current_user.restricted?
-    raise Exceptions::PermissionError unless current_user.has_legacy_permission(name) || current_user.has_legacy_permission("admin")
+    raise Exceptions::PermissionError unless current_user.has_legacy_permission(name)
   end
 
   # Array, Integer -> Void

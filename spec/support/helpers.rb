@@ -1,6 +1,28 @@
 # frozen_string_literal: true
 
 module RspecExampleHelpers
+  def self.create_admin_user
+    sf_user = FactoryBot.create(:sf_guard_user)
+    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, role: 'admin')
+    create(:user_profile, user: user)
+    user.add_ability(:edit, :admin)
+    user
+  end
+
+  def self.create_basic_user(**attributes)
+    sf_user = FactoryBot.create(:sf_guard_user)
+    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, **attributes)
+    user.add_ability!(:edit, :list)
+    user
+  end
+
+  def self.create_restricted_user
+    sf_user = FactoryBot.create(:sf_guard_user)
+    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, is_restricted: true)
+    user.add_ability!(:edit)
+    user
+  end
+
   def with_delayed_job
     Delayed::Worker.delay_jobs = false
     yield
@@ -32,11 +54,7 @@ module RspecExampleHelpers
   end
 
   def create_admin_user
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, role: 'admin')
-    create(:user_profile, user: user)
-    user.add_ability(:edit, :admin)
-    user
+    RspecExampleHelpers.create_admin_user
   end
 
   def create_bulk_user
@@ -90,10 +108,7 @@ module RspecExampleHelpers
   end
 
   def create_basic_user(**attributes)
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, **attributes)
-    user.add_ability!(:edit, :list)
-    user
+    RspecExampleHelpers.create_basic_user(**attributes)
   end
 
   def create_basic_user_with_profile(**attributes)
@@ -112,10 +127,7 @@ module RspecExampleHelpers
   end
 
   def create_restricted_user
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, is_restricted: true)
-    user.add_ability!(:edit)
-    user
+    RspecExampleHelpers.create_restricted_user
   end
 
   def create_user_with_sf(attrs = {})
