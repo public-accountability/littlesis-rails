@@ -4,7 +4,7 @@ module RspecExampleHelpers
   def self.create_admin_user
     sf_user = FactoryBot.create(:sf_guard_user)
     user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, role: 'admin')
-    create(:user_profile, user: user)
+    FactoryBot.create(:user_profile, user: user)
     user.add_ability(:edit, :admin)
     user
   end
