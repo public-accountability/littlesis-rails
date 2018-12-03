@@ -79,4 +79,44 @@ describe ApplicationHelper, :type => :helper do
       it { is_expected.to have_css "option[value='#{references.second.id}']" }
     end
   end
+
+  describe 'show_donation_banner?' do
+    subject { helper.show_donation_banner? }
+
+    let(:controller_name) { 'lists' }
+    let(:action_name) { 'index' }
+    let(:donation_banner_display) { nil }
+
+    before do
+      allow(helper).to receive(:controller_name).and_return(controller_name)
+      allow(controller).to receive(:action_name).and_return(action_name)
+      allow(APP_CONFIG).to receive(:[]).and_return(donation_banner_display)
+    end
+
+    context 'when set to everywhere' do
+      let(:donation_banner_display) { 'everywhere' }
+
+      it { is_expected.to be true }
+    end
+
+    context 'when set to homepage and viewing list page' do
+      let(:donation_banner_display) { 'homepage' }
+
+      it { is_expected.to be false }
+    end
+
+    context 'when set to homepage and viewing homepage' do
+      let(:controller_name) { 'home' }
+      let(:donation_banner_display) { 'homepage' }
+
+      it { is_expected.to be true }
+    end
+
+    context 'when set to false and viewing homepage' do
+      let(:controller_name) { 'home' }
+      let(:donation_banner_display) { false }
+
+      it { is_expected.to be false }
+    end
+  end
 end

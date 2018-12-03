@@ -178,4 +178,16 @@ module ApplicationHelper
   def user_admin?
     user_signed_in? && current_user.admin?
   end
+
+  def show_donation_banner?
+    if APP_CONFIG['donation_banner_display'] == 'everywhere'
+      true
+    elsif APP_CONFIG['donation_banner_display'] == 'homepage' &&
+          controller_name == 'home' &&
+          controller.action_name == 'index'
+      true
+    else
+      false
+    end
+  end
 end

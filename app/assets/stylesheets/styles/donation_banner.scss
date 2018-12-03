@@ -7,16 +7,16 @@
     }
 }
 
-#main-navbar-container {
-    top: 30px;
-}
-
 #donation-banner-wrapper p {
     padding-bottom: 5px;
 }    
 
 
-#container-wrapper {
+#container-wrapper.donation-banner {
     margin-top: 38px;
+}
+
+#main-navbar-container.donation-banner {
+    top: 30px;
 }
 

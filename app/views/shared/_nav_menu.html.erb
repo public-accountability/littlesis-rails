@@ -1,17 +1,19 @@
+<% if show_donation_banner? %>
+  <%= render partial: 'shared/donation_banner' %>
+<% end %>
+
 <%
-if local_assigns[:full_width].present?
-  navbar_wrapper_class = 'navbar-full-width'
-else
-  navbar_wrapper_class = ''
-end
+navbar_container_classes = %w[navbar navbar-expand-md fixed-top navbar-light bg-light]
+navbar_container_classes << 'donation-banner' if show_donation_banner?
+
+navbar_wrapper_classes = []
+navbar_wrapper_class << 'navbar-full-width' if local_assigns[:full_width].present?
+navbar_wrapper_classes << 'donation-banner' if show_donation_banner?
 %>
 
-<%= render partial: 'shared/donation_banner' %>
-
-<nav class="navbar navbar-expand-md fixed-top navbar-light bg-light" id="main-navbar-container">
+<nav class="<%= navbar_container_classes.join(' ') %>" id="main-navbar-container">
   
-  <div id="navbar-content-wrapper" class="<%= navbar_wrapper_class %>">
-    
+  <div id="navbar-content-wrapper" class="<%= navbar_wrapper_classes.join(' ') %>">
     
     <div id="navbar-content">
       <div id="brand mr-auto">
