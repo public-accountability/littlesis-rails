@@ -29,8 +29,8 @@ class UserPresenter < SimpleDelegator
   end
 
   # string ---> string
-  def permisison_display(p)
-    permissions.include?(p) ? "Yes" : "No"
+  def ability_display(ability)
+    abilities.include?(ability) ? 'Yes' : 'No'
   end
 
   def permissions
