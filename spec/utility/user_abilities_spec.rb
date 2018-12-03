@@ -138,6 +138,16 @@ describe UserAbilities do
     end
   end
 
+  describe 'UserAbilities.assert_valid_ability' do
+    specify do
+      expect { UserAbilities.assert_valid_ability(:flying) }.to raise_error(UserAbilities::InvalidUserAbilityError)
+    end
+
+    specify do
+      expect { UserAbilities.assert_valid_ability(:edit) }.not_to raise_error
+    end
+  end
+
   describe 'UserAbilities.load' do
     it 'deserializes nil as empty set' do
       expect(UserAbilities.load(nil).empty?).to be true

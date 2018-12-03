@@ -41,6 +41,7 @@ class UserAbilities
   extend Forwardable
   attr_reader :abilities
   def_delegators :@abilities, :empty?, :blank?, :to_a, :include?
+  def_delegator 'self.class', :assert_valid_ability
 
   def initialize(*args)
     @abilities = args.to_set.freeze
@@ -93,6 +94,15 @@ class UserAbilities
     new(*obj.split(',').map(&:to_sym))
   end
 
+  # test #
+
+  def self.assert_valid_ability(value)
+    unless ALL_ABILITIES.include?(value.to_sym)
+      raise InvalidUserAbilityError, "#{value} is not a valid user ability"
+    end
+  end
+
+  # Errors #
   class InvalidUserAbilitiesSetError < StandardError; end
   class InvalidUserAbilityError < StandardError; end
 
@@ -100,12 +110,6 @@ class UserAbilities
 
   def assert_valid_abilities(values)
     values.each { |value| assert_valid_ability(value) }
-  end
-
-  def assert_valid_ability(value)
-    unless ALL_ABILITIES.include?(value.to_sym)
-      raise InvalidUserAbilityError, "#{value} is not a valid user ability"
-    end
   end
 
   def assert_valid_set(set)
