@@ -7,6 +7,8 @@ class UsersController < ApplicationController
   before_action :admins_only, except: [:show, :restrict, :success, :edits, :check_username]
   before_action :user_or_admins_only, only: [:edits]
 
+  rescue_from(UserAbilities::InvalidUserAbilityError) { head :bad_request }
+
   # get /users
   def index
     @users = User
@@ -62,17 +64,16 @@ class UsersController < ApplicationController
 
   # GET /users/:id/edit_permissions
   def edit_permissions
-
   end
 
   def add_permission
-    SfGuardUserPermission.create!(permission_id: params[:permission].to_i, user_id: @user.sf_guard_user_id)
-    redirect_to edit_permissions_user_path(@user.id),  notice: "Permission was successfully added."
+    @user.add_ability!(edit_permission_param)
+    redirect_to edit_permissions_user_path(@user.id), notice: 'Permission was successfully added.'
   end
 
   def delete_permission
-    SfGuardUserPermission.remove_permission(permission_id: params[:permission].to_i, user_id: @user.sf_guard_user_id)
-    redirect_to edit_permissions_user_path(@user.id),  notice: "Permission was successfully deleted."    
+    @user.remove_ability!(edit_permission_param)
+    redirect_to edit_permissions_user_path(@user.id), notice: 'Permission was successfully deleted.'
   end
 
   def success
@@ -147,6 +148,12 @@ class UsersController < ApplicationController
 
   def permission_id
     params[:permission]
+  end
+
+  def edit_permission_param
+    params.require(:permission).to_sym.tap do |new_ability|
+      UserAbilities.assert_valid_ability(new_ability)
+    end
   end
 
   def restrict_params

@@ -33,43 +33,6 @@ describe UsersController, type: :controller do
     end
   end
 
-  describe 'GET #edit_permissions' do
-    context 'as an admin' do
-      login_admin
-      before do
-        expect(User).to receive(:find).with('1').and_return(build(:user))
-        get :edit_permissions, params: { :id => '1' }
-      end
-
-      it { is_expected.to render_template 'edit_permissions' }
-    end
-  end
-
-  describe 'POST #add_permission' do
-    login_admin
-
-    let(:user) { build(:user, sf_guard_user_id: 2, id: 1) }
-
-    before do
-      expect(User).to receive(:find).with('1').and_return(user)
-      expect(SfGuardUserPermission).to receive(:create!).with(permission_id: 5, user_id: 2)
-      post :add_permission, params: { :id => '1', :permission => '5' }
-    end
-
-    it { is_expected.to redirect_to(edit_permissions_user_path) }
-  end
-
-  describe 'DELETE #delete_permission' do
-    login_admin
-    before do
-      expect(User).to receive(:find).with('1')
-                        .and_return(build(:user, sf_guard_user_id: 2, id: 1))
-      expect(SfGuardUserPermission).to receive(:remove_permission).with(permission_id: 5, user_id: 2)
-      delete :delete_permission, params: { :id => '1', :permission => '5' }
-    end
-    it { is_expected.to redirect_to(edit_permissions_user_path) }
-  end
-
   describe 'DELETE #destory' do
     describe 'logged in as admin' do
       login_admin
@@ -79,11 +42,6 @@ describe UsersController, type: :controller do
         let(:entity) { create(:entity_org, last_user_id: user.sf_guard_user_id) }
 
         before { entity }
-
-        it 'deletes permissions' do
-          expect { delete :destroy, params: { :id => user.id } }
-            .to change(SfGuardUserPermission, :count).by(-3)
-        end
 
         it 'marks sf_guard_user as deleted' do
           expect(SfGuardUser.unscoped.find(user.sf_guard_user_id).is_deleted).to be false

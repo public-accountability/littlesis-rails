@@ -36,9 +36,9 @@ describe User do
 
     describe 'adding and removing abilities' do
       it 'adds a new ability' do
-        expect { user.add_ability(:edit) }
+        expect { user.add_ability(:merge) }
           .to change { user.reload.abilities.to_set }
-                .from(Set.new).to(UserAbilities.new.add(:edit).to_set)
+                .from(Set[:edit]).to(Set[:edit, :merge])
       end
 
       it 'adds an ability using save' do
@@ -75,7 +75,7 @@ describe User do
       it 'adds two abilities at once' do
         expect { user.add_ability(:bulk, :merge) }
           .to change { user.reload.abilities.to_set }
-                .from(Set.new).to(Set[:bulk, :merge])
+                .from(Set[:edit]).to(Set[:bulk, :merge, :edit])
       end
     end
   end
@@ -167,7 +167,7 @@ describe User do
 
   describe 'create_default_permissions' do
     let(:sf_user) { create(:sf_guard_user) }
-    let(:user) { create(:user, sf_guard_user_id: sf_user.id) }
+    let(:user) { create(:user, sf_guard_user_id: sf_user.id, abilities: UserAbilities.new) }
 
     before { user }
 

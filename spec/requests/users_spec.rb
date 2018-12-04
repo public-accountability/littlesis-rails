@@ -26,4 +26,22 @@ describe 'Users' do
       end
     end
   end
+
+  describe 'attempting to add an ability that does not exist' do
+    let(:user) { create_basic_user }
+    let(:admin) { create_admin_user }
+
+    before do
+      user
+      login_as(admin, :scope => :user)
+      post "/users/#{user.id}/add_permission", params: { permission: 'dance' }
+    end
+
+    after { logout(:user) }
+
+    it 'returns a bad request' do
+      expect(response).to have_http_status :bad_request
+      expect(response.body).to be_blank
+    end
+  end
 end

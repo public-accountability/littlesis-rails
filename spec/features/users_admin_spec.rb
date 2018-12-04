@@ -1,12 +1,13 @@
 require 'rails_helper'
 
-describe 'Users Admin Page', :type => :feature do
+describe 'Users Admin Pages', :type => :feature do
+  let(:admin_user) { create_admin_user }
+  let(:current_user) { admin_user }
+
   before do
-    @admin = create_admin_user
     @restricted_user = create_user_with_sf(username: 'restricted', is_restricted: true)
     @not_restricted_user = create_user_with_sf(username: 'not_restricted', is_restricted: false)
-    # see: https://github.com/plataformatec/devise/wiki/How-To:-Test-with-Capybara
-    login_as(@admin, :scope => :user)
+    login_as(current_user, :scope => :user)
   end
 
   after { logout(:user) }
@@ -52,6 +53,53 @@ describe 'Users Admin Page', :type => :feature do
 
     it 'shows 2 users' do
       expect(page).to have_selector 'table.table tbody tr', count: 2
+    end
+  end
+
+  describe 'Edit Permissions page' do
+    let(:test_user) { create(:user, sf_guard_user: create(:sf_guard_user)) }
+    let(:edit_permissions_url) { "/users/#{test_user.id}/edit_permissions" }
+
+    before { visit edit_permissions_url }
+
+    describe 'as a regular user' do
+      let(:current_user) { create_basic_user }
+
+      denies_access
+    end
+
+    it 'shows table with abilities' do
+      successfully_visits_page edit_permissions_url
+
+      page_has_selector 'table#users-edit-permissions-table tbody tr', count: 7
+      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'ADD', count: 6
+      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'DELETE', count: 1
+    end
+
+    it 'adding the bulk permisison permisison' do
+      successfully_visits_page edit_permissions_url
+
+      expect(test_user.abilities.include?(:bulk)).to be false
+
+      find('.add-user-ability-bulk').click
+
+      successfully_visits_page edit_permissions_url
+      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'DELETE', count: 2
+      expect(page).to have_text 'Permission was successfully added.'
+      expect(test_user.reload.abilities.include?(:bulk)).to be true
+    end
+
+    it 'removing the edit permisison permisison' do
+      successfully_visits_page edit_permissions_url
+
+      expect(test_user.abilities.include?(:edit)).to be true
+
+      find('.delete-user-ability-edit').click
+
+      successfully_visits_page edit_permissions_url
+      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'ADD', count: 7
+      expect(page).to have_text 'Permission was successfully deleted.'
+      expect(test_user.reload.abilities.include?(:edit)).to be false
     end
   end
 end
