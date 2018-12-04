@@ -8,6 +8,6 @@ dashboard_panel() in application_helper generates the
 wrapping html for the bulletin.
 %>
 
-<%= dashboard_panel(heading: bulletin.title, color: DashboardBulletin::DEFAULT_COLOR) do %>
+<%= dashboard_panel(heading: bulletin.title, color: bulletin.display_color) do %>
   <%= raw EditablePagesController::MARKDOWN.render(bulletin.markdown) %>
 <% end %>

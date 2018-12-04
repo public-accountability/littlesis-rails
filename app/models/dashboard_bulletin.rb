@@ -5,7 +5,7 @@ class DashboardBulletin < ApplicationRecord
 
   default_scope { order(created_at: :desc) }
 
-  def color
+  def display_color
     self[:color].presence || DEFAULT_COLOR
   end
 
