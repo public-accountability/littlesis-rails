@@ -2,8 +2,10 @@
 
 class DashboardBulletin < ApplicationRecord
   DEFAULT_COLOR = 'rgba(0, 0, 0, 0.03)'
-
   default_scope { order(created_at: :desc) }
+
+  validates :markdown, presence: true
+  validates :color, css_color: true
 
   def display_color
     self[:color].presence || DEFAULT_COLOR

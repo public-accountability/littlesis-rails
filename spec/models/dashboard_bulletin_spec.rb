@@ -5,6 +5,27 @@ describe DashboardBulletin, type: :model do
   it { is_expected.to have_db_column(:title) }
   it { is_expected.to have_db_column(:color).of_type(:string) }
   it { is_expected.to have_db_index(:created_at) }
+  it { is_expected.to validate_presence_of(:markdown) }
+
+  describe 'color validation' do
+    context 'with valid color' do
+      subject(:bulletin) { build(:dashboard_bulletin, color: '#8d0724') }
+
+      specify { expect(bulletin.valid?).to be true }
+    end
+
+    context 'with invalid color' do
+      subject(:bulletin) { build(:dashboard_bulletin, color: 'snail') }
+
+      specify { expect(bulletin.valid?).to be false }
+
+      specify do
+        bulletin.valid?
+        expect(bulletin.errors[:color]).to eq ['Invalid css color: snail']
+      end
+    end
+    
+  end
 
   describe '#display_color' do
     context 'with non-empty color field' do
