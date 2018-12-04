@@ -4,7 +4,7 @@ class DashboardBulletin < ApplicationRecord
   DEFAULT_COLOR = 'rgba(0, 0, 0, 0.03)'
   default_scope { order(created_at: :desc) }
 
-  before_validation -> { self[:color] = nil if self[:color] == '' }
+  before_validation -> { self[:color] = nil if color == '' }
   after_destroy :clear_dashboard_cache
 
   validates :markdown, presence: true
