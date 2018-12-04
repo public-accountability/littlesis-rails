@@ -24,7 +24,6 @@ describe DashboardBulletin, type: :model do
         expect(bulletin.errors[:color]).to eq ['Invalid css color: snail']
       end
     end
-    
   end
 
   describe '#display_color' do
@@ -44,6 +43,17 @@ describe DashboardBulletin, type: :model do
       subject(:bulletin) { DashboardBulletin.new(color: '') }
 
       specify { expect(bulletin.display_color).to eq 'rgba(0, 0, 0, 0.03)' }
+    end
+  end
+
+  describe 'cache clearing' do
+    it 'deletes the cache after bullet is destroy' do
+      bulletin = create(:dashboard_bulletin)
+      expect(Rails.cache).to receive(:delete_matched)
+                               .with('*home_dashboard_bulletins*')
+                               .once
+
+      bulletin.destroy!
     end
   end
 end
