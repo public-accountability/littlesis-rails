@@ -114,9 +114,9 @@ module ApplicationHelper
     end
   end
 
-  def dashboard_panel(heading = '', &block)
+  def dashboard_panel(heading: '', color: 'rgba(0, 0, 0, 0.03)', &block)
     content_tag('div', class: 'card') do
-      content_tag('div', heading, class: 'card-header') +
+      content_tag('div', heading, class: 'card-header', style: "background-color: #{color}") +
         content_tag('div', class: 'card-body') { capture(&block) }
     end
   end
