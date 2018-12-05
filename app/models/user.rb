@@ -58,6 +58,8 @@ class User < ApplicationRecord
   before_validation :set_default_network_id
 
   delegate :name_first, :name_last, :full_name, to: :user_profile
+  delegate(*UserAbilities::ABILITY_MAPPING.values, to: 'abilities')
+  alias importer? bulker?
 
   def to_param
     username
@@ -166,22 +168,6 @@ class User < ApplicationRecord
       Rails.logger.debug "User#has_legacy_permission called with unknown permission: #{name}"
       false
     end
-  end
-
-  def admin?
-    has_legacy_permission 'admin'
-  end
-
-  def importer?
-    has_legacy_permission 'importer'
-  end
-
-  def bulker?
-    has_legacy_permission 'bulker'
-  end
-
-  def merger?
-    has_legacy_permission 'merger'
   end
 
   def create_default_permissions
