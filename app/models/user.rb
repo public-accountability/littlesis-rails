@@ -58,6 +58,8 @@ class User < ApplicationRecord
   before_validation :set_default_network_id
 
   delegate :name_first, :name_last, :full_name, to: :user_profile
+  delegate(*UserAbilities::ABILITY_MAPPING.values, to: 'abilities')
+  alias importer? bulker?
 
   def to_param
     username
@@ -144,54 +146,32 @@ class User < ApplicationRecord
     sf_guard_user.permissions
   end
 
-  # This method used to use sf_guard_user_permissions, but was
-  # changed to use an new permission system in rails.
-  def has_legacy_permission(name)
+  def has_ability?(name) # rubocop:disable Naming/PredicateName, Metrics/MethodLength
     case name
-    when 'admin'
+    when :admin, 'admin'
       abilities.admin? || role == 'admin'
-    when 'editor', 'contributor'
+    when :edit, 'edit', 'editor', 'contributor'
       abilities.editor?
-    when 'deleter'
+    when :delete, 'delete', 'deleter'
       abilities.deleter?
-    when 'merger'
+    when :merge, 'merge', 'merger'
       abilities.merger?
-    when 'lister'
+    when :list, 'list', 'lister'
       abilities.lister?
-    when 'importer', 'bulker'
+    when :bulk, 'bulk', 'bulker', 'importer'
       abilities.bulker?
     when 'talker', 'contacter'
       false # legacy permission which should not appear in our code any more
     else
-      Rails.logger.debug "User#has_legacy_permission called with unknown permission: #{name}"
+      Rails.logger.debug "User#has_ability? called with unknown permission: #{name}"
       false
     end
   end
 
-  def admin?
-    has_legacy_permission 'admin'
-  end
-
-  def importer?
-    has_legacy_permission 'importer'
-  end
-
-  def bulker?
-    has_legacy_permission 'bulker'
-  end
-
-  def merger?
-    has_legacy_permission 'merger'
-  end
+  alias has_legacy_permission has_ability?
 
   def create_default_permissions
-    add_ability(:edit)
-    unless has_legacy_permission('contributor')
-      SfGuardUserPermission.create(permission_id: 2, user_id: sf_guard_user.id)
-    end
-    unless has_legacy_permission('editor')
-      SfGuardUserPermission.create(permission_id: 3, user_id: sf_guard_user.id)
-    end
+    add_ability!(:edit) unless has_ability?(:edit)
   end
 
   def permissions

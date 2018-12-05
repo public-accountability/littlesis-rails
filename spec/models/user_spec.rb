@@ -190,16 +190,23 @@ describe User do
     end
   end
 
-  describe 'has_legacy_permission' do
+  describe 'has_ability?' do
     let(:permissions) { [] }
     let(:user) { build(:user, abilities: UserAbilities.new(*permissions)) }
 
     def self.assert_user_has_permission(permission)
-      specify { expect(user.has_legacy_permission(permission)).to be true }
+      specify { expect(user.has_ability?(permission)).to be true }
     end
 
     def self.assert_user_does_not_have_permission(permission)
-      specify { expect(user.has_legacy_permission(permission)).to be false }
+      specify { expect(user.has_ability?(permission)).to be false }
+    end
+
+    describe 'aliases method as has_legacy_permission' do
+      let(:permissions) { %i[edit] }
+
+      specify { expect(user.has_legacy_permission('editor')).to be true }
+      specify { expect(user.has_legacy_permission('admin')).to be false }
     end
 
     describe 'unused legacy permissions' do
@@ -212,6 +219,8 @@ describe User do
     context 'when user only has edit ability' do
       let(:permissions) { %i[edit] }
 
+      assert_user_has_permission :edit
+      assert_user_has_permission 'edit'
       assert_user_has_permission 'editor'
       assert_user_has_permission 'contributor'
       assert_user_does_not_have_permission 'admin'
@@ -224,14 +233,20 @@ describe User do
 
       assert_user_has_permission 'editor'
       assert_user_does_not_have_permission 'admin'
+      assert_user_has_permission :bulk
+      assert_user_has_permission 'bulk'
       assert_user_has_permission 'bulker'
       assert_user_has_permission 'importer'
+      assert_user_does_not_have_permission :delete
+      assert_user_does_not_have_permission 'delete'
       assert_user_does_not_have_permission 'deleter'
       assert_user_does_not_have_permission 'lister'
     end
 
     context 'when user has admin ability' do
       let(:permissions) { %i[admin] }
+
+      assert_user_has_permission :admin
 
       %w[admin bulker merger deleter].each do |p|
         assert_user_has_permission(p)

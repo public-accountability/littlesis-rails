@@ -17,15 +17,7 @@ describe "partial: entities/actions" do
 
   context 'when user is an advanced user' do
     let(:user) do
-      u = build(:user)
-      expect(u).to receive(:has_legacy_permission).with('importer').and_return(true)
-      expect(u).to receive(:has_legacy_permission).with('bulker').and_return(true)
-      allow(u).to receive(:has_legacy_permission).with('admin').and_return(false)
-
-      allow(u).to receive(:sf_guard_user)
-                    .and_return(double(:permissions => %w[contributor bulker importer]))
-
-      u
+      build(:user, abilities: UserAbilities.new(:edit, :bulk))
     end
 
     before do
