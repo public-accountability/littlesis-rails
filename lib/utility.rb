@@ -61,6 +61,10 @@ module Utility
     return true
   end
 
+  def self.today_str
+    Time.zone.now.strftime('%F')
+  end
+
   class SubshellCommandError < StandardError; end
   class SQLFileError < StandardError; end
 end
