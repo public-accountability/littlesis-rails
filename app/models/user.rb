@@ -171,13 +171,7 @@ class User < ApplicationRecord
   alias has_legacy_permission has_ability?
 
   def create_default_permissions
-    add_ability(:edit)
-    unless has_legacy_permission('contributor')
-      SfGuardUserPermission.create(permission_id: 2, user_id: sf_guard_user.id)
-    end
-    unless has_legacy_permission('editor')
-      SfGuardUserPermission.create(permission_id: 3, user_id: sf_guard_user.id)
-    end
+    add_ability!(:edit) unless has_ability?(:edit)
   end
 
   def permissions
