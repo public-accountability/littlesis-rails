@@ -33,11 +33,6 @@ class UserPresenter < SimpleDelegator
     abilities.include?(ability) ? 'Yes' : 'No'
   end
 
-  def permissions
-    return @_permissions if defined?(@_permissions)
-    @_permissions = super().instance_variable_get(:@sf_permissions)
-  end
-
   def member_since
     "member since #{created_at.strftime('%B %Y')}"
   end
