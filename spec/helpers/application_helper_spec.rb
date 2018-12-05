@@ -119,4 +119,28 @@ describe ApplicationHelper, :type => :helper do
       it { is_expected.to be false }
     end
   end
+
+  describe 'dashboard_panel' do
+    context 'with defaults' do
+      subject { helper.dashboard_panel { content_tag('span', 'test') } }
+
+      it { is_expected.to include 'class="card"' }
+      it { is_expected.to include 'class="card-header"' }
+      it { is_expected.to include 'class="card-body"' }
+      it { is_expected.to include 'style="background-color: rgba(0, 0, 0, 0.03)"' }
+    end
+
+    context 'with heading' do
+      subject { helper.dashboard_panel(heading: 'important message') { content_tag('span', 'test') } }
+
+      it { is_expected.to include 'important message' }
+    end
+
+    context 'with color' do
+      subject { helper.dashboard_panel(heading: 'important message', color: '#fbb4ae') { content_tag('span', 'test') } }
+
+      it { is_expected.to include 'important message' }
+      it { is_expected.to include 'style="background-color: #fbb4ae"' }
+    end
+  end
 end

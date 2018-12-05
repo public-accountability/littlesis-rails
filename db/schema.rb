@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_28_230617) do
+ActiveRecord::Schema.define(version: 2018_12_04_170212) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -239,6 +239,7 @@ ActiveRecord::Schema.define(version: 2018_11_28_230617) do
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "color"
     t.index ["created_at"], name: "index_dashboard_bulletins_on_created_at"
   end
 

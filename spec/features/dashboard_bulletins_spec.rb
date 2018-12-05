@@ -48,7 +48,12 @@ feature 'DashboardBulletins', type: :feature do
     end
 
     feature 'modifying existing bulletins' do
-      let!(:bulletin) { DashboardBulletin.create!(title: title, markdown: Faker::Markdown.emphasis) }
+      let(:bulletin) { DashboardBulletin.create!(title: title, markdown: Faker::Markdown.emphasis) }
+
+      before do
+        allow(Rails.cache).to receive(:delete_matched)
+        bulletin
+      end
 
       scenario 'updating the bulletin\'s content' do
         visit edit_dashboard_bulletin_path(bulletin)

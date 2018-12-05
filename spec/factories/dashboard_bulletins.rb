@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :dashboard_bulletin do
-    markdown { "MyText" }
-    title { "MyString" }
+    markdown { Faker::Markdown.sandwich }
+    title { Faker::Kpop.solo }
   end
 end

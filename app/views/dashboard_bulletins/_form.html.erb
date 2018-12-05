@@ -14,6 +14,8 @@ Required locals: bulletin, title, method, url, submit_text
       <div class="form-group">
 	<%= f.label :title, 'Title' %>
 	<%= f.text_field :title, class: 'form-control', required: true %>
+	<%= f.label :color, 'Heading Color', class: 'top-1em' %>
+	<%= f.text_field :color, class: 'form-control' %>
       </div>
 
       <%= f.text_area :markdown, size: "10x10", id: 'editable-markdown' %>
