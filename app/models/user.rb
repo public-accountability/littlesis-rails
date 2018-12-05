@@ -148,17 +148,17 @@ class User < ApplicationRecord
 
   def has_ability?(name) # rubocop:disable Naming/PredicateName, Metrics/MethodLength
     case name
-    when 'admin'
+    when :admin, 'admin'
       abilities.admin? || role == 'admin'
-    when 'editor', 'contributor'
+    when :edit, 'edit', 'editor', 'contributor'
       abilities.editor?
-    when 'deleter'
+    when :delete, 'delete', 'deleter'
       abilities.deleter?
-    when 'merger'
+    when :merge, 'merge', 'merger'
       abilities.merger?
-    when 'lister'
+    when :list, 'list', 'lister'
       abilities.lister?
-    when 'importer', 'bulker'
+    when :bulk, 'bulk', 'bulker', 'importer'
       abilities.bulker?
     when 'talker', 'contacter'
       false # legacy permission which should not appear in our code any more
