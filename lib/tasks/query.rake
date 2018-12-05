@@ -62,13 +62,19 @@ namespace :query do
     Utility.save_hash_array_to_csv(file_path, board_members)
   end
 
-  desc 'Download donations to NYS Filer'
-  task :nys_donations_to_filer, [:filer] => :environment do |_, args|
-    filer = args[:filer]
-    file_path = Rails.root.join('data', "donations_to_#{filer}_#{Utility.today_str}.csv")
+  desc 'Saves a csv of donations to provided NYS Filers by id'
+  task :nys_donations_to_filers => [:environment] do |_, args|
+    abort 'no nys filer ids provided' if args.extras.size.zero?
+    file_name = "donations_to_#{args.extra.join('_')}_#{Utility.today_str}.csv"
+    file_path = Rails.root.join 'data', file_name
 
-    donations = NyDisclosure.where(filer_id: filer).map do |nyd|
-      nyd.attributes.except('delta', 'updated_at', 'created_at')
+    filer_names = NyFiler
+                    .where(filer_id: args.extras)
+                    .each_with_object({}) { |filer, h| h.store(filer.filer_id, filer.name) }
+    donations = NyDisclosure.where(filer_id: args.extras).map do |nyd|
+      nyd.attributes
+        .except('delta', 'updated_at', 'created_at')
+        .merge('filer_name' => filer_names.fetch(nyd.fetch('filer_id')))
     end
 
     Utility.save_hash_array_to_csv(file_path, donations)
