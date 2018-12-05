@@ -190,16 +190,23 @@ describe User do
     end
   end
 
-  describe 'has_legacy_permission' do
+  describe 'has_ability?' do
     let(:permissions) { [] }
     let(:user) { build(:user, abilities: UserAbilities.new(*permissions)) }
 
     def self.assert_user_has_permission(permission)
-      specify { expect(user.has_legacy_permission(permission)).to be true }
+      specify { expect(user.has_ability?(permission)).to be true }
     end
 
     def self.assert_user_does_not_have_permission(permission)
-      specify { expect(user.has_legacy_permission(permission)).to be false }
+      specify { expect(user.has_ability?(permission)).to be false }
+    end
+
+    describe 'aliases method as has_legacy_permission' do
+      let(:permissions) { %i[edit] }
+
+      specify { expect(user.has_legacy_permission('editor')).to be true }
+      specify { expect(user.has_legacy_permission('admin')).to be false }
     end
 
     describe 'unused legacy permissions' do

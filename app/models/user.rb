@@ -146,9 +146,7 @@ class User < ApplicationRecord
     sf_guard_user.permissions
   end
 
-  # This method used to use sf_guard_user_permissions, but was
-  # changed to use an new permission system in rails.
-  def has_legacy_permission(name)
+  def has_ability?(name) # rubocop:disable Naming/PredicateName, Metrics/MethodLength
     case name
     when 'admin'
       abilities.admin? || role == 'admin'
@@ -165,10 +163,12 @@ class User < ApplicationRecord
     when 'talker', 'contacter'
       false # legacy permission which should not appear in our code any more
     else
-      Rails.logger.debug "User#has_legacy_permission called with unknown permission: #{name}"
+      Rails.logger.debug "User#has_ability? called with unknown permission: #{name}"
       false
     end
   end
+
+  alias has_legacy_permission has_ability?
 
   def create_default_permissions
     add_ability(:edit)
