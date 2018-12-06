@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  include UserEdits
+  include UserEdits::ActiveUsers
 
   MINUTES_BEFORE_USER_CAN_EDIT = 10
 
@@ -37,8 +37,8 @@ class User < ApplicationRecord
   # Used by UserPresenter and HomeController
   # We should eventually remove this assocation and instead
   # retrive recently edited entities via Versions.
-  has_many :edited_entities,
-           class_name: 'Entity', foreign_key: 'last_user_id', primary_key: 'sf_guard_user_id'
+  # has_many :edited_entities ,
+  #          class_name: 'Entity', foreign_key: 'last_user_id', primary_key: 'sf_guard_user_id'
 
   has_many :group_users, inverse_of: :user, dependent: :destroy
   has_many :groups, through: :group_users, inverse_of: :users
@@ -118,7 +118,19 @@ class User < ApplicationRecord
   alias image_path image_url
 
   def recent_edits(page = 1)
-    Edits.new(self, page: page)
+    UserEdits::Edits.new(self, page: page)
+  end
+
+  def edited_entities(page: 1, per_page: 15)
+    PaperTrail::Version
+      .where(whodunnit: user.id.to_s)
+      .where(
+        version_arel_table[:item_type].eq('Entity')
+          .or(version_arel_table[:entity1_id].not_eq(nil))
+      )
+      .order(created_at: :desc)
+      .page(page)
+      .per(per_page)
   end
 
   ###############

@@ -2,11 +2,17 @@
 
 # rubocop:disable Layout/AlignHash
 
+# The namespace UserEdits contain two elements:
+#
+# a module +ActiveUsers+ which add two class
+# methods to user:
+#   - active_user
+#   - uniq_active_users
+#
+# A class +Edits+ for retriving a list of edits
+# done by the user
 module UserEdits
-  extend ActiveSupport::Concern
-
   ACTIVE_USERS_PER_PAGE = 15
-
   ACTIVE_USERS_TIME_OPTIONS = {
     'week' => {
       'time' => 7.days.ago,
@@ -35,39 +41,43 @@ module UserEdits
     delegate :[], to: :version
   end
 
-  class_methods do # rubocop:disable Metrics/BlockLength
-    def uniq_active_users(since: 30.days.ago)
-      PaperTrail::Version
-        .where('versions.created_at >= ? AND whodunnit IS NOT NULL', since)
-        .pluck('distinct whodunnit')
-        .count
-    end
+  module ActiveUsers
+    extend ActiveSupport::Concern
 
-    def active_users(since: 30.days.ago, page: 1, per_page: UserEdits::ACTIVE_USERS_PER_PAGE)
-      versions = PaperTrail::Version
-                   .select(
-                     <<~SELECT
-                       whodunnit,
-                       count(versions.id) as edits,
-                       sum(case when event = 'create' then 1 else 0 end) as create_count,
-                       sum(case when event = 'update' then 1 else 0 end) as update_count,
-                       sum(case when event = 'soft_delete' then 1 when event = 'destroy' then 1 else 0 end) as delete_count
-                     SELECT
-                   )
-                   .where('versions.created_at >= ? AND whodunnit IS NOT NULL', since)
-                   .group('whodunnit')
-                   .order('edits desc')
-                   .limit(per_page)
-                   .offset((page.to_i - 1) * per_page)
-                   .map(&:attributes)
+    class_methods do # rubocop:disable Metrics/BlockLength
+      def uniq_active_users(since: 30.days.ago)
+        PaperTrail::Version
+          .where('versions.created_at >= ? AND whodunnit IS NOT NULL', since)
+          .pluck('distinct whodunnit')
+          .count
+      end
 
-      users = User.lookup_table_for versions.map { |v| v['whodunnit'] }
+      def active_users(since: 30.days.ago, page: 1, per_page: UserEdits::ACTIVE_USERS_PER_PAGE)
+        versions = PaperTrail::Version
+                     .select(
+                       <<~SELECT
+                         whodunnit,
+                         count(versions.id) as edits,
+                         sum(case when event = 'create' then 1 else 0 end) as create_count,
+                         sum(case when event = 'update' then 1 else 0 end) as update_count,
+                         sum(case when event = 'soft_delete' then 1 when event = 'destroy' then 1 else 0 end) as delete_count
+                       SELECT
+                     )
+                     .where('versions.created_at >= ? AND whodunnit IS NOT NULL', since)
+                     .group('whodunnit')
+                     .order('edits desc')
+                     .limit(per_page)
+                     .offset((page.to_i - 1) * per_page)
+                     .map(&:attributes)
 
-      Kaminari
-        .paginate_array(versions, total_count: uniq_active_users(since: since))
-        .page(page)
-        .per(per_page)
-        .map { |v| ActiveUser.new(users.fetch(v['whodunnit'].to_i), v) }
+        users = User.lookup_table_for versions.map { |v| v['whodunnit'] }
+
+        Kaminari
+          .paginate_array(versions, total_count: uniq_active_users(since: since))
+          .page(page)
+          .per(per_page)
+          .map { |v| UserEdits::ActiveUser.new(users.fetch(v['whodunnit'].to_i), v) }
+      end
     end
   end
 
@@ -83,6 +93,18 @@ module UserEdits
     def initialize(user, page: 1)
       @user = user
       @page = page
+    end
+
+    def edited_entities(page: 1, per_page: UserEdits::Edits::PER_PAGE)
+      PaperTrail::Version
+        .where(whodunnit: user.id.to_s)
+        .where(
+          version_arel_table[:item_type].eq('Entity')
+            .or(version_arel_table[:entity1_id].not_eq(nil))
+        )
+        .order(created_at: :desc)
+        .page(page)
+        .per(per_page)
     end
 
     def recent_edits
@@ -105,6 +127,10 @@ module UserEdits
     end
 
     private
+
+    def version_arel_table
+      PaperTrail::Version.arel_table
+    end
 
     #  {
     #    'Entity' => { 123 => <Entity>, '345'=> <Entity> },
