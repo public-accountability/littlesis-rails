@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_04_170212) do
+ActiveRecord::Schema.define(version: 2018_12_10_213242) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1521,7 +1521,7 @@ ActiveRecord::Schema.define(version: 2018_12_04_170212) do
     t.integer "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
-    t.text "object"
+    t.text "object", limit: 4294967295
     t.datetime "created_at"
     t.text "object_changes", limit: 4294967295
     t.integer "entity1_id"
