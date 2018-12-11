@@ -18,6 +18,7 @@ feature 'User Pages' do
     login_as(user, scope: :user)
     entity.update!(is_current: true, last_user_id: user_for_page.sf_guard_user_id)
   end
+
   after { logout(user) }
 
   feature 'User Page' do
@@ -39,7 +40,7 @@ feature 'User Pages' do
       successfully_visits_page "/users/#{user_for_page.id}"
       page_has_selector 'h1', text: user_for_page.username
       page_has_selector 'div', text: user_for_page.about_me
-      page_has_selector '#user-page-recent-updates-table tr', count: 1
+      page_has_selector '#user-page-recent-updates-table', count: 1
       expect(page).not_to have_selector 'h3', text: 'Permissions'
       expect(page).not_to have_selector 'h3 small a', text: 'view all edits'
       expect(page).not_to have_selector 'h3', text: 'Maps'

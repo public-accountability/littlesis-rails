@@ -41,11 +41,7 @@ class HomeController < ApplicationController
                .page(list_page_param)
                .per(DASHBOARD_LISTS_PER_PAGE)
 
-    @recent_updates = current_user
-                        .edited_entities
-                        .includes(last_user: :user)
-                        .order('updated_at DESC')
-                        .limit(10)
+    @recent_updates = current_user.edited_entities
   end
 
   # Sends CSRF token to browser extension

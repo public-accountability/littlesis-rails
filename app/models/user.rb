@@ -117,20 +117,16 @@ class User < ApplicationRecord
   end
   alias image_path image_url
 
+  ###############
+  # User Edits  #
+  ###############
+
   def recent_edits(page = 1)
     UserEdits::Edits.new(self, page: page)
   end
 
-  def edited_entities(page: 1, per_page: 15)
-    PaperTrail::Version
-      .where(whodunnit: user.id.to_s)
-      .where(
-        version_arel_table[:item_type].eq('Entity')
-          .or(version_arel_table[:entity1_id].not_eq(nil))
-      )
-      .order(created_at: :desc)
-      .page(page)
-      .per(per_page)
+  def edited_entities(page = 1)
+    UserEdits::Edits.new(self, page: page, per_page: 10).edited_entities
   end
 
   ###############
