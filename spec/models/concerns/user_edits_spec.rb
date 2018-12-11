@@ -1,23 +1,71 @@
 require 'rails_helper'
 
-# rubocop:disable RSpec/NamedSubject, RSpec/LetSetup, RSpec/BeforeAfterAll
+# rubocop:disable RSpec/NamedSubject, RSpec/LetSetup, RSpec/BeforeAfterAll, RSpec/ExpectInHook
 
 describe UserEdits do
   describe UserEdits::Edits do
-    subject { UserEdits::Edits.new(user) }
+    let(:ids) do
+      {
+        'entity' => Faker::Number.unique.number(5).to_i,
+        'relationship' => Faker::Number.unique.number(5).to_i,
+        'entity1_id' => Faker::Number.unique.number(5).to_i,
+        'entity2_id' => Faker::Number.unique.number(5).to_i
+      }
+    end
 
-    let!(:user) { create_basic_user }
-    let(:entity) { build(:org) }
-    let(:relationship) { build(:relationship) }
+    let(:user) { create_basic_user }
 
-    let!(:versions) do
-      [
-        create(:entity_version, whodunnit: user.id, item_id: entity.id),
-        create(:relationship_version, whodunnit: user.id, item_id: relationship.id)
-      ].reverse
+    let(:relationship) do
+      build :relationship, id: ids['relationship']
+    end
+
+    let(:entity) do
+      build :org, id: ids['entity']
+    end
+
+    let(:entity_version) do
+      create(:entity_version, whodunnit: user.id, item_id: ids['entity']).tap do |v|
+        v.update_column :created_at, 1.year.ago
+      end
+    end
+
+    let(:relationship_version) do
+      create(:relationship_version,
+             whodunnit: user.id,
+             item_id: ids['relationship'],
+             entity1_id: ids['entity1_id'],
+             entity2_id: ids['entity2_id'])
+    end
+
+    before do
+      entity_version
+      relationship_version
+    end
+
+    describe '#edited_entities_ids' do
+      subject { UserEdits::Edits.new(user) }
+
+      it 'returns array of all recently edited entities' do
+        expect(subject.edited_entities_ids)
+          .to eq ids.values_at('entity1_id', 'entity2_id', 'entity')
+      end
+    end
+
+    describe '#edited_entities' do
+      it 'returns array of all recently edited entities' do
+        expect(Entity).to receive(:where)
+                            .with(id: ids.values_at('entity1_id', 'entity2_id', 'entity'))
+                            .and_return([1, 2, 3])
+
+        edited_entities = UserEdits::Edits.new(user).edited_entities
+        expect(edited_entities).to be_a Kaminari::PaginatableArray
+        expect(edited_entities.total_count).to eq 3
+      end
     end
 
     describe '#recent_edits' do
+      subject { UserEdits::Edits.new(user) }
+
       it "returns a user's recent edits" do
         expect(subject.recent_edits.length).to eq 2
       end
@@ -26,7 +74,7 @@ describe UserEdits do
     describe '#recent_edits_present' do
       before do
         rel_find = double('find')
-        expect(rel_find).to receive(:find).with([relationship.id]).and_return([relationship])
+        expect(rel_find).to receive(:find).with([ids['relationship']]).and_return([relationship])
         expect(Relationship).to receive(:unscoped).and_return(rel_find)
         entity_find = double('find')
         expect(entity_find).to receive(:find).with([entity.id]).and_return([entity])
@@ -39,16 +87,18 @@ describe UserEdits do
         it 'returns array of <UserEdit>s' do
           expect(subject.length).to eq 2
           expect(subject.first).to be_a UserEdits::Edits::UserEdit
-          expect(subject.first.version).to eql versions.first
+          expect(subject.first.version).to eql relationship_version
           expect(subject.first.resource).to eql relationship
-          expect(subject.second.version).to eql versions.second
+          expect(subject.second.version).to eql entity_version
           expect(subject.second.resource).to eql entity
           expect(subject.second.action).to eql 'Update'
-          expect(subject.second.time).to eql(versions.second.created_at.strftime('%B %e, %Y%l%p'))
+          expect(subject.second.time).to eql(entity_version.created_at.strftime('%B %e, %Y%l%p'))
         end
       end
 
       describe '#record_lookup' do
+        subject { UserEdits::Edits.new(user) }
+
         let(:record_lookup) do
           {
             'Relationship' => { relationship.id => relationship },
@@ -102,4 +152,4 @@ describe UserEdits do
   end
 end
 
-# rubocop:enable RSpec/NamedSubject, RSpec/LetSetup, RSpec/BeforeAfterAll
+# rubocop:enable RSpec/NamedSubject, RSpec/LetSetup, RSpec/BeforeAfterAll, RSpec/ExpectInHook

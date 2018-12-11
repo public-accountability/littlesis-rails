@@ -24,10 +24,6 @@ class UserPresenter < SimpleDelegator
     super().order("created_at DESC, id DESC")
   end
 
-  def recent_updates
-    edited_entities.includes(last_user: :user).order("updated_at DESC").limit(15)
-  end
-
   # string ---> string
   def ability_display(ability)
     abilities.include?(ability) ? 'Yes' : 'No'

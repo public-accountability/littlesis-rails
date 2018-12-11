@@ -9,8 +9,8 @@ FactoryBot.define do
   end
 
   factory :relationship_version, class: PaperTrail::Version do
-    sequence(:entity1_id)
-    sequence(:entity2_id) { |n| n + 1000 }
+    entity1_id { rand(10_000) }
+    entity2_id { rand(10_000) }
     created_at { Time.current }
     item_type { 'Relationship' }
     item_id { rand(10_000) }

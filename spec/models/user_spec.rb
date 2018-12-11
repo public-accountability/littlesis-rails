@@ -80,10 +80,6 @@ describe User do
     end
   end
 
-  it 'has constant User::Edits (from module UserEdits)' do
-    expect(User.const_defined?(:Edits)).to be true
-  end
-
   it 'user has permissions class' do
     user = create_basic_user
     expect(user.permissions).to be_a Permissions
@@ -286,9 +282,9 @@ describe User do
   describe '#recent_edits' do
     let(:user) { create_really_basic_user }
 
-    it 'returns User::Edits' do
-      expect(user.recent_edits).to be_a User::Edits
-      expect(user.recent_edits(2)).to be_a User::Edits
+    it 'returns UserEdits::Edits' do
+      expect(user.recent_edits).to be_a UserEdits::Edits
+      expect(user.recent_edits(2)).to be_a UserEdits::Edits
     end
   end
 
