@@ -2,7 +2,7 @@
 
 # rubocop:disable Layout/AlignHash
 
-# The namespace UserEdits contain two elements:
+# The namespace UserEdits contains:
 #
 # a module +ActiveUsers+ which add two class
 # methods to user:
@@ -48,14 +48,14 @@ module UserEdits
       def uniq_active_users(since: 30.days.ago)
         PaperTrail::Version
           .where('versions.created_at >= ? AND whodunnit IS NOT NULL', since)
-          .pluck('distinct whodunnit')
+          .pluck(Arel.sql('distinct whodunnit'))
           .count
       end
 
       def active_users(since: 30.days.ago, page: 1, per_page: UserEdits::ACTIVE_USERS_PER_PAGE)
         versions = PaperTrail::Version
                      .select(
-                       <<~SELECT
+                       Arel.sql(<<~SELECT)
                          whodunnit,
                          count(versions.id) as edits,
                          sum(case when event = 'create' then 1 else 0 end) as create_count,
@@ -90,21 +90,38 @@ module UserEdits
     end
     ModelsToHashes = proc { |models| models.map { |m| [m.id, m] }.to_h }
 
-    def initialize(user, page: 1)
+    def initialize(user, page: 1, per_page: PER_PAGE)
       @user = user
       @page = page
+      @per_page = per_page
     end
 
-    def edited_entities(page: 1, per_page: UserEdits::Edits::PER_PAGE)
-      PaperTrail::Version
-        .where(whodunnit: user.id.to_s)
-        .where(
-          version_arel_table[:item_type].eq('Entity')
-            .or(version_arel_table[:entity1_id].not_eq(nil))
-        )
-        .order(created_at: :desc)
-        .page(page)
-        .per(per_page)
+    def edited_entities
+      Pagination
+        .paginate(@page,
+                  @per_page,
+                  Entity.where(id: edited_entities_ids[(@per_page * (@page - 1)), @per_page]),
+                  edited_entities_ids.size)
+    end
+
+    # returns array of entity ids that have been recently edited
+    def edited_entities_ids
+      return @_edited_entities_ids if defined?(@_edited_entities_ids)
+
+      @_edited_entities_ids = PaperTrail::Version
+                               .where(whodunnit: @user.id.to_s)
+                               .where(
+                                 version_arel_table[:item_type].eq('Entity')
+                                   .or(version_arel_table[:entity1_id].not_eq(nil))
+                               )
+                               .order(created_at: :desc)
+                               .limit(500) # limits search to last 500 edits
+                               .pluck(
+                                 Arel.sql("CASE WHEN item_type = 'Entity' THEN JSON_ARRAY(item_id) ELSE JSON_ARRAY(entity1_id, entity2_id) END")
+                               )
+                               .map { |ids| JSON.parse(ids).compact }
+                               .flatten
+                               .uniq
     end
 
     def recent_edits
