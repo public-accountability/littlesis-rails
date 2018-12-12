@@ -242,6 +242,25 @@ describe NetworkMap, type: :model do
     end
   end
 
+  describe 'scope_for_user' do
+    let(:user1) { create_basic_user }
+    let(:user2) { create_basic_user }
+
+    before do
+      create(:network_map, user_id: user1.id, is_private: false)
+      create(:network_map, user_id: user1.id, is_private: true)
+      create(:network_map, user_id: user2.id, is_private: false)
+    end
+
+    it 'finds 3 maps for user1' do
+      expect(NetworkMap.scope_for_user(user1).count).to eq 3
+    end
+
+    it 'finds 2 maps for user2' do
+      expect(NetworkMap.scope_for_user(user2).count).to eq 2
+    end
+  end
+
   describe 'soft delete / destroy' do
     let(:network_map) { create(:network_map, user_id: 1) }
 

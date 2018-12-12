@@ -332,11 +332,8 @@ class NetworkMap < ApplicationRecord
 
   # input: <User> --> NetworkMap::ActiveRecord_Relation
   def self.scope_for_user(user)
-    where_condition = <<~SQL
-      `network_map`.`is_private` = 0
-      OR (`network_map`.`is_private` = 1 AND `network_map`.`user_id` = ?)
-    SQL
-    where(where_condition, user.sf_guard_user_id)
+    where arel_table[:is_private].eq(false)
+            .or(arel_table[:user_id].eq(user.id))
   end
 
   private
