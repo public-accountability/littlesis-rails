@@ -102,7 +102,7 @@ class User < ApplicationRecord
   end
 
   def full_legacy_url
-    "https://littlesis.org/#{legacy_url}"
+    "https://littlesis.org#{legacy_url}"
   end
 
   def legacy_check_password(password)
