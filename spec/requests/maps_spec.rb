@@ -90,6 +90,11 @@ describe 'Maps', :sphinx, type: :request do
         post_maps.call
         expect(NetworkMap.last.sf_user_id).to eql user.sf_guard_user_id
       end
+
+      it 'sets user_id' do
+        post_maps.call
+        expect(NetworkMap.last.user_id).to eql user.id
+      end
     end
   end
 end

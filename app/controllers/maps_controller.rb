@@ -158,14 +158,15 @@ class MapsController < ApplicationController
   end
 
   def create
-    params = oligrapher_params
-    params[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
-    @map = NetworkMap.new(params)
+    attributes = oligrapher_params.merge('user_id' => current_user.id,
+                                         'sf_user_id' => current_user.sf_guard_user_id)
 
-    if @map.save
+    map = NetworkMap.new(attributes)
+
+    if map.save
       respond_to do |format|
-        format.json { render json: @map }
-        format.html { redirect_to edit_map_path(@map) }
+        format.json { render json: map }
+        format.html { redirect_to edit_map_path(map) }
       end
     else
       not_found
@@ -346,11 +347,14 @@ class MapsController < ApplicationController
   end
 
   def oligrapher_params
-    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_cloneable, :list_sources)
+    params
+      .permit(:graph_data, :annotations_data, :annotations_count,
+              :title, :is_private, :is_cloneable, :list_sources)
+      .to_h
   end
 
   def embedded_params
-   params.permit(:header_pct, :annotation_pct)
+    params.permit(:header_pct, :annotation_pct)
   end
 
   def is_owner

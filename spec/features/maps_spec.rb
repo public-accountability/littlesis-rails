@@ -4,9 +4,9 @@ feature 'maps index page' do
   let(:other_user) { create_really_basic_user }
   let(:user) { create_really_basic_user }
   let(:admin) { create_admin_user }
-  let(:regular_map) { create(:network_map, user_id: user.sf_guard_user_id) }
-  let(:private_map) { create(:network_map, is_private: true, user_id: user.sf_guard_user_id) }
-  let(:featured_map) { create(:network_map, is_featured: true, user_id: user.sf_guard_user_id) }
+  let(:regular_map) { create(:network_map, sf_user_id: user.sf_guard_user_id, user_id: user.id) }
+  let(:private_map) { create(:network_map, is_private: true, sf_user_id: user.sf_guard_user_id, user_id: user.id) }
+  let(:featured_map) { create(:network_map, is_featured: true, sf_user_id: user.sf_guard_user_id, user_id: user.id) }
   let!(:maps) { [regular_map, private_map, featured_map] }
 
   feature 'navigating to "/maps"' do

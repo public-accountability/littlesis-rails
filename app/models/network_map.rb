@@ -13,6 +13,7 @@ class NetworkMap < ApplicationRecord
   belongs_to :user, foreign_key: 'sf_user_id', primary_key: 'sf_guard_user_id', inverse_of: :network_maps, optional: true
 
   # delegate :user, to: :sf_guard_user
+  # before_create -> { self[:sf_user_id] = user_id }
 
   scope :featured, -> { where(is_featured: true) }
   scope :public_scope, -> { where(is_private: false) }
@@ -26,7 +27,7 @@ class NetworkMap < ApplicationRecord
   before_save :set_defaults, :set_index_data, :generate_secret
   before_save :start_update_entity_network_map_collections_job, if: :update_network_map_collection?
 
-  before_create -> { self[:sf_user_id] = user_id }
+  
 
   def set_index_data
     self.index_data = generate_index_data
