@@ -26,6 +26,8 @@ class NetworkMap < ApplicationRecord
   before_save :set_defaults, :set_index_data, :generate_secret
   before_save :start_update_entity_network_map_collections_job, if: :update_network_map_collection?
 
+  before_create -> { self[:sf_user_id] = user_id }
+
   def set_index_data
     self.index_data = generate_index_data
   end
