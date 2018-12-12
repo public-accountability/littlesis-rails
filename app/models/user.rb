@@ -44,7 +44,7 @@ class User < ApplicationRecord
   has_many :groups, through: :group_users, inverse_of: :users
 
   # Maps and lists the user has created
-  has_many :network_maps, primary_key: 'sf_guard_user_id', inverse_of: :user
+  has_many :network_maps, inverse_of: :user
   has_many :lists, foreign_key: 'creator_user_id', inverse_of: :user
 
   # Requests made
