@@ -256,6 +256,18 @@ describe NetworkMap, type: :model do
         .not_to change { NetworkMap.unscoped.count }
     end
   end
+
+  describe 'setting sf_user_id' do
+    let(:user_id) { rand(10_000) }
+    let(:map_attributes) { attributes_for(:network_map).merge(user_id: user_id) }
+
+    it 'sets sf_user_id to be the same as user_id after creating' do
+      map = NetworkMap.new(map_attributes)
+      expect(map.sf_user_id).to be nil
+      map.save!
+      expect(map.sf_user_id).to eq user_id
+    end
+  end
 end
 
 # rubocop:enable Style/StringLiterals, Style/WordArray
