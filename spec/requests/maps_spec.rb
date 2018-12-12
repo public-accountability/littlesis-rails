@@ -51,4 +51,45 @@ describe 'Maps', :sphinx, type: :request do
       end
     end
   end
+
+  describe 'creating new maps' do
+    let(:request_params) do
+      { title: 'so many connections',
+        data: JSON.dump({"entities"=>[], "rels"=>[], "texts"=>[]}),
+        graph_data: JSON.dump({"nodes"=>{}, "edges"=>{}, "captions"=>{}}),
+        width: 960,
+        height: 960,
+        annotations_data: [],
+        annotations_count: 0,
+        is_private: false,
+        is_cloneable: true }
+    end
+
+    let(:post_maps) do
+      -> { post '/maps', params: request_params }
+    end
+
+    context 'with anon user' do
+      before { post_maps.call }
+
+      redirects_to_login
+    end
+
+    context 'with basic user' do
+      let(:user) { create_basic_user }
+
+      before { login_as(user, :scope => :user) }
+
+      after { logout(:user) }
+
+      it 'creates a new map' do
+        expect(&post_maps).to change(NetworkMap, :count).by(1)
+      end
+
+      it 'sets sf_user_id' do
+        post_maps.call
+        expect(NetworkMap.last.sf_user_id).to eql user.sf_guard_user_id
+      end
+    end
+  end
 end

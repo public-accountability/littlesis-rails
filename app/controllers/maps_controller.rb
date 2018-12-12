@@ -7,6 +7,9 @@ class MapsController < ApplicationController
                 except: [:featured, :all, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
   before_action :enforce_slug, only: [:show]
   before_action :admins_only, only: [:feature]
+
+  before_action -> { check_permission 'editor' }, only: %i[create]
+
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
 
   protect_from_forgery except: [:create, :clone]
@@ -155,8 +158,6 @@ class MapsController < ApplicationController
   end
 
   def create
-    check_permission 'editor'
-
     params = oligrapher_params
     params[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
     @map = NetworkMap.new(params)
