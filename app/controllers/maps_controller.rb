@@ -358,7 +358,10 @@ class MapsController < ApplicationController
   end
 
   def is_owner
-    current_user and (current_user.has_legacy_permission('admin') or @map.user_id == current_user.sf_guard_user_id)
+    return false unless current_user
+    return true if current_user.admin?
+
+    @map.user_id == current_user.id
   end
 
   def check_owner
