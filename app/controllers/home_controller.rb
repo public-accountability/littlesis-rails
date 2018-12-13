@@ -15,9 +15,6 @@ class HomeController < ApplicationController
     [34, 'Elite think tanks']
   ].freeze
 
-  DASHBOARD_MAPS_PER_PAGE = 18
-  DASHBOARD_LISTS_PER_PAGE = 10
-
   def groups
     @groups = Group
                 .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
@@ -29,19 +26,9 @@ class HomeController < ApplicationController
   end
 
   def dashboard
-    @maps = current_user
-              .network_maps
-              .order('id DESC')
-              .page(map_page_param)
-              .per(DASHBOARD_MAPS_PER_PAGE)
-
-    @lists = current_user
-               .lists
-               .order('id DESC')
-               .page(list_page_param)
-               .per(DASHBOARD_LISTS_PER_PAGE)
-
-    @recent_updates = current_user.edited_entities
+    @user_dashboard = UserDashboardPresenter.new(current_user,
+                                                 map_page: params[:map_page],
+                                                 list_page: params[:list_page])
   end
 
   # Sends CSRF token to browser extension
@@ -190,14 +177,6 @@ class HomeController < ApplicationController
 
   def flag_params
     params.permit(:email, :url, :name, :message)
-  end
-
-  def map_page_param
-    params[:map_page]&.to_i || 1
-  end
-
-  def list_page_param
-    params[:list_page]&.to_i || 1
   end
 
   def likely_a_spam_bot

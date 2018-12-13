@@ -53,7 +53,9 @@ describe 'home/dashboard', type: :feature do
       end
 
       before do
-        stub_const('HomeController::DASHBOARD_MAPS_PER_PAGE', 2)
+        # see https://github.com/rspec/rspec-mocks/issues/1079#issuecomment-215620243
+        # for details on why string interpolation is needed
+        stub_const("#{UserDashboardPresenter}::DASHBOARD_MAPS_PER_PAGE", 2)
         3.times { create(:network_map, user_id: current_user.id) }
       end
 
@@ -85,7 +87,7 @@ describe 'home/dashboard', type: :feature do
 
     context 'pagnation' do
       before do
-        stub_const('HomeController::DASHBOARD_LISTS_PER_PAGE', 2)
+        stub_const("#{UserDashboardPresenter}::DASHBOARD_LISTS_PER_PAGE", 2)
         3.times { create(:list, creator_user_id: current_user.id) }
       end
 
