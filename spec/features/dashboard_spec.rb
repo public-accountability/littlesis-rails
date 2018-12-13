@@ -33,7 +33,7 @@ describe 'home/dashboard', type: :feature do
     context 'User has one map, with a nil thumbnail' do
       before do
         create(:network_map,
-               user_id: current_user.sf_guard_user_id,
+               user_id: current_user.id,
                thumbnail: nil,
                is_private: false)
         visit '/home/dashboard'
@@ -54,7 +54,7 @@ describe 'home/dashboard', type: :feature do
 
       before do
         stub_const('HomeController::DASHBOARD_MAPS_PER_PAGE', 2)
-        3.times { create(:network_map, user_id: current_user.sf_guard_user_id) }
+        3.times { create(:network_map, user_id: current_user.id) }
       end
 
       scenario 'visiting page 1' do

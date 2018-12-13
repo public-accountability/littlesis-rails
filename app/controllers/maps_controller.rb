@@ -7,6 +7,9 @@ class MapsController < ApplicationController
                 except: [:featured, :all, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
   before_action :enforce_slug, only: [:show]
   before_action :admins_only, only: [:feature]
+
+  before_action -> { check_permission 'editor' }, only: %i[create]
+
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
 
   protect_from_forgery except: [:create, :clone]
@@ -155,16 +158,15 @@ class MapsController < ApplicationController
   end
 
   def create
-    check_permission 'editor'
+    attributes = oligrapher_params.merge('user_id' => current_user.id,
+                                         'sf_user_id' => current_user.sf_guard_user_id)
 
-    params = oligrapher_params
-    params[:user_id] = current_user.sf_guard_user_id if params[:user_id].blank?
-    @map = NetworkMap.new(params)
+    map = NetworkMap.new(attributes)
 
-    if @map.save
+    if map.save
       respond_to do |format|
-        format.json { render json: @map }
-        format.html { redirect_to edit_map_path(@map) }
+        format.json { render json: map }
+        format.html { redirect_to edit_map_path(map) }
       end
     else
       not_found
@@ -345,11 +347,14 @@ class MapsController < ApplicationController
   end
 
   def oligrapher_params
-    params.permit(:graph_data, :annotations_data, :annotations_count, :title, :is_private, :is_cloneable, :list_sources)
+    params
+      .permit(:graph_data, :annotations_data, :annotations_count,
+              :title, :is_private, :is_cloneable, :list_sources)
+      .to_h
   end
 
   def embedded_params
-   params.permit(:header_pct, :annotation_pct)
+    params.permit(:header_pct, :annotation_pct)
   end
 
   def is_owner

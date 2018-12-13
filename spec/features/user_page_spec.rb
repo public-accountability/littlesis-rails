@@ -9,8 +9,8 @@ feature 'User Pages' do
 
   let(:create_maps) do
     proc do
-      create(:network_map, user_id: user_for_page.sf_guard_user_id, is_private: false)
-      create(:network_map, user_id: user_for_page.sf_guard_user_id, is_private: true)
+      create(:network_map, user_id: user_for_page.id, is_private: false)
+      create(:network_map, user_id: user_for_page.id, is_private: true)
     end
   end
 

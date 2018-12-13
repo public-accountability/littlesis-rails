@@ -242,6 +242,25 @@ describe NetworkMap, type: :model do
     end
   end
 
+  describe 'scope_for_user' do
+    let(:user1) { create_basic_user }
+    let(:user2) { create_basic_user }
+
+    before do
+      create(:network_map, user_id: user1.id, is_private: false)
+      create(:network_map, user_id: user1.id, is_private: true)
+      create(:network_map, user_id: user2.id, is_private: false)
+    end
+
+    it 'finds 3 maps for user1' do
+      expect(NetworkMap.scope_for_user(user1).count).to eq 3
+    end
+
+    it 'finds 2 maps for user2' do
+      expect(NetworkMap.scope_for_user(user2).count).to eq 2
+    end
+  end
+
   describe 'soft delete / destroy' do
     let(:network_map) { create(:network_map, user_id: 1) }
 
@@ -254,18 +273,6 @@ describe NetworkMap, type: :model do
     it 'destroying soft_deletes map' do
       expect { network_map.destroy }
         .not_to change { NetworkMap.unscoped.count }
-    end
-  end
-
-  describe 'setting sf_user_id' do
-    let(:user_id) { rand(10_000) }
-    let(:map_attributes) { attributes_for(:network_map).merge(user_id: user_id) }
-
-    it 'sets sf_user_id to be the same as user_id after creating' do
-      map = NetworkMap.new(map_attributes)
-      expect(map.sf_user_id).to be nil
-      map.save!
-      expect(map.sf_user_id).to eq user_id
     end
   end
 end

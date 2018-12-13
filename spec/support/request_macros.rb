@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RequestExampleMacros
   def json
     JSON.parse(response.body)
@@ -20,11 +22,13 @@ end
 module RequestGroupMacros
   def as_basic_user
     let(:basic_user) { create_really_basic_user }
-    before(:each) { login_as(basic_user, :scope => :user) }
+
+    before { login_as(basic_user, :scope => :user) }
+    after { logout(:user) }
+
     context 'when logged in as a basic user' do
       yield
     end
-    after(:each) { logout(:user) }
   end
 
   def denies_access
@@ -44,6 +48,13 @@ module RequestGroupMacros
     it 'redirects to dashboard and sets notice' do
       expect(response).to have_http_status 302
       expect(response.location).to include home_dashboard_path
+    end
+  end
+
+  def redirects_to_login
+    it 'redirects to /login' do
+      expect(response).to have_http_status 302
+      expect(response.location).to include '/login'
     end
   end
 end

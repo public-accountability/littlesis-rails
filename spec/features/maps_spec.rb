@@ -4,10 +4,22 @@ feature 'maps index page' do
   let(:other_user) { create_really_basic_user }
   let(:user) { create_really_basic_user }
   let(:admin) { create_admin_user }
-  let(:regular_map) { create(:network_map, user_id: user.sf_guard_user_id) }
-  let(:private_map) { create(:network_map, is_private: true, user_id: user.sf_guard_user_id) }
-  let(:featured_map) { create(:network_map, is_featured: true, user_id: user.sf_guard_user_id) }
-  let!(:maps) { [regular_map, private_map, featured_map] }
+  let(:regular_map) { create(:network_map, sf_user_id: user.sf_guard_user_id, user_id: user.id) }
+  let(:private_map) { create(:network_map, is_private: true, sf_user_id: user.sf_guard_user_id, user_id: user.id) }
+  let(:featured_map) { create(:network_map, is_featured: true, sf_user_id: user.sf_guard_user_id, user_id: user.id) }
+  let(:maps) { [regular_map, private_map, featured_map] }
+
+  before { maps }
+
+  describe 'viewing a map page' do
+    before { visit map_path(regular_map) }
+
+    it 'has oligrapher js with username and link' do
+      expect(page.html).to include "{ name: \"#{user.username}\""
+      expect(page.html).to include "url: \"https://littlesis.org/user/#{user.username}\" }"
+    end
+  end
+
 
   feature 'navigating to "/maps"' do
     before { visit '/maps' }

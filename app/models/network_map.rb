@@ -9,10 +9,11 @@ class NetworkMap < ApplicationRecord
   delegate :url_helpers, to: 'Rails.application.routes'
 
   # TODO: remove relience of sf_guard_user
-  belongs_to :sf_guard_user, foreign_key: 'user_id', inverse_of: :network_maps, optional: true
-  belongs_to :user, foreign_key: 'user_id', primary_key: 'sf_guard_user_id', inverse_of: :network_maps, optional: true
+  belongs_to :sf_guard_user, foreign_key: 'sf_user_id', inverse_of: :network_maps, optional: true
+  belongs_to :user, foreign_key: 'user_id', inverse_of: :network_maps, optional: true
 
-  delegate :user, to: :sf_guard_user
+  # delegate :user, to: :sf_guard_user
+  # before_create -> { self[:sf_user_id] = user_id }
 
   scope :featured, -> { where(is_featured: true) }
   scope :public_scope, -> { where(is_private: false) }
@@ -25,8 +26,6 @@ class NetworkMap < ApplicationRecord
 
   before_save :set_defaults, :set_index_data, :generate_secret
   before_save :start_update_entity_network_map_collections_job, if: :update_network_map_collection?
-
-  before_create -> { self[:sf_user_id] = user_id }
 
   def set_index_data
     self.index_data = generate_index_data
@@ -333,11 +332,8 @@ class NetworkMap < ApplicationRecord
 
   # input: <User> --> NetworkMap::ActiveRecord_Relation
   def self.scope_for_user(user)
-    where_condition = <<~SQL
-      `network_map`.`is_private` = 0
-      OR (`network_map`.`is_private` = 1 AND `network_map`.`user_id` = ?)
-    SQL
-    where(where_condition, user.sf_guard_user_id)
+    where arel_table[:is_private].eq(false)
+            .or(arel_table[:user_id].eq(user.id))
   end
 
   private
