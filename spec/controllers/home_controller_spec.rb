@@ -20,23 +20,9 @@ describe HomeController, type: :controller do
 
   describe 'GET home/dashboard' do
     login_user
+    before { get :dashboard }
 
-    before do
-      network_maps = double('network_maps',
-                            :order => double(
-                              :page => double(
-                                :per => [build(:network_map)])))
-
-      user_lists_double = double('arbitrary_name', order: Kaminari::PaginatableArray.new)
-      edited_entities = double('edited', includes: double(order: double(limit: [])))
-      expect(controller).to receive(:current_user).and_return(
-        double(network_maps: network_maps),
-        double(lists: user_lists_double),
-        double(edited_entities: edited_entities))
-      get :dashboard
-    end
-
-    it { should respond_with(:success) }
+    it { is_expected.to respond_with(:success) }
   end
 
   describe 'POST contact' do
