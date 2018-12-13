@@ -1,12 +1,17 @@
-require "rails_helper"
+# frozen_string_literal: true
+
+# rubocop:disable Capybara/FeatureMethods
+
+require 'rails_helper'
 
 describe 'home/dashboard', type: :feature do
   let(:current_user) { create_basic_user }
+
   before { login_as(current_user, :scope => :user) }
 
   after { logout(:user) }
 
-  feature 'Using the navigation bar on top of the basic as a regular user' do
+  describe 'Using the navigation bar on top of the basic as a regular user' do
     before { visit '/home/dashboard' }
 
     scenario 'nav dropdown' do
@@ -20,8 +25,9 @@ describe 'home/dashboard', type: :feature do
     end
   end
 
-  feature 'explore' do
+  describe 'explore' do
     before { visit home_dashboard_path }
+
     scenario 'contains links to maps, lists, tags and edits' do
       %w[Maps Lists Tags Edits].each do |option|
         page_has_selector '#dashboard-explore > a', text: option
@@ -29,8 +35,8 @@ describe 'home/dashboard', type: :feature do
     end
   end
 
-  feature 'viewing map thumbnails' do
-    context 'User has one map, with a nil thumbnail' do
+  describe 'viewing map thumbnails' do
+    context 'when User has one map, with a nil thumbnail' do
       before do
         create(:network_map,
                user_id: current_user.id,
@@ -46,7 +52,7 @@ describe 'home/dashboard', type: :feature do
       end
     end
 
-    context 'User more maps than the limit shown per page' do
+    context 'when user has more maps than the limit shown per page' do
       def page_has_n_maps(n)
         page_has_selector '#dashboard-maps-row div.pagination', count: 1
         page_has_selector 'div.dashboard-map', count: n
@@ -56,7 +62,7 @@ describe 'home/dashboard', type: :feature do
         # see https://github.com/rspec/rspec-mocks/issues/1079#issuecomment-215620243
         # for details on why string interpolation is needed
         stub_const("#{UserDashboardPresenter}::DASHBOARD_MAPS_PER_PAGE", 2)
-        3.times { create(:network_map, user_id: current_user.id) }
+        create_list(:network_map, 3, user_id: current_user.id)
       end
 
       scenario 'visiting page 1' do
@@ -71,12 +77,14 @@ describe 'home/dashboard', type: :feature do
     end
   end
 
-  feature 'viewing list of lists' do
-    context 'user has two lists' do
-      let!(:lists) do
+  describe 'viewing list of lists' do
+    describe 'user has two lists' do
+      let(:lists) do
         [create(:open_list, creator_user_id: current_user.id),
          create(:private_list, creator_user_id: current_user.id)]
       end
+
+      before { lists }
 
       scenario 'user can see the lists' do
         visit home_dashboard_path
@@ -85,10 +93,10 @@ describe 'home/dashboard', type: :feature do
       end
     end
 
-    context 'pagnation' do
+    describe 'pagnation' do
       before do
         stub_const("#{UserDashboardPresenter}::DASHBOARD_LISTS_PER_PAGE", 2)
-        3.times { create(:list, creator_user_id: current_user.id) }
+        create_list(:list, 3, creator_user_id: current_user.id)
       end
 
       scenario 'viewing page 1' do
@@ -103,7 +111,7 @@ describe 'home/dashboard', type: :feature do
     end
   end
 
-  feature 'viewing dashboard bulletins' do
+  describe 'viewing dashboard bulletins' do
     before do
       DashboardBulletin.create!(title: 'title A', markdown: '# contentA')
       DashboardBulletin
@@ -126,3 +134,5 @@ describe 'home/dashboard', type: :feature do
     end
   end
 end
+
+# rubocop:enable Capybara/FeatureMethods
