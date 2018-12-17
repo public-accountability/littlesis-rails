@@ -2,10 +2,24 @@
 
 require 'rails_helper'
 
-describe EditedEntities do  
-  describe 'self.all'
+describe EditedEntities do
+  describe 'self.all' do
+    let(:users) { Array.new(2) { create_basic_user } }
 
-  describe 'self.user'
+    before do
+      with_verisioning_for(users[0]) { Entity.create!(primary_ext: 'Org', name: 'org') }
+      with_verisioning_for(users[1]) { Entity.create!(primary_ext: 'Org', name: 'org') }
+    end
+
+    it 'finds two entities' do
+      edited_entities = EditedEntities.all
+      page = edited_entities.page(1)
+      expect(page.length).to eq 2
+      expect(page.total_count).to eq 2
+      expect(edited_entities.page(2).length).to eq 0
+      expect(page.first).to be_a Entity
+    end
+  end
 
   describe 'initializing with instance vars' do
     it 'sets defaults instance vars' do

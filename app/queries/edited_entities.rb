@@ -2,10 +2,17 @@
 
 # rubocop:disable Naming/UncommunicativeMethodParamName
 
-# Using +PaperTail::Version+, this retrieves
+# Using +PaperTail::Version+, this class retrieves
 # entities that have been edited recently.
 #
-#
+# Edits are tracked using paper_tail using the versions table. Edits that are directly
+# on the Entity model can be found by searching version with item_type "Entity".
+# However, there are a lot of related models that, indirectly, are still considered
+# to be an "edit" of the entity. Those models will have metadata stored with the version
+# in two colummns: entity1_id and entity2_id. Edits to "Relationships" utilize both columns
+# while other models (such as "Person") use only entity1_id. Additionally, the same
+# entity is often edited multiple times in a row. Because of the usual nature of
+# this setup, the queries and pagaination for this class might look a little funny.
 class EditedEntities
   include Pagination
 
