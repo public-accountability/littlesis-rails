@@ -2,8 +2,10 @@
 
 # rubocop:disable Naming/UncommunicativeMethodParamName
 
-# Uses PaperTail::Version to retrive the
-# latest entities that have been edited
+# Using +PaperTail::Version+, this retrieves
+# entities that have been edited recently.
+#
+#
 class EditedEntities
   include Pagination
 
@@ -16,7 +18,8 @@ class EditedEntities
   end
 
   def self.user(user_or_id)
-    new where: { :whodunnit => Entity.entity_id_for(user_or_id).to_s }
+    user_id = user_or_id.is_a?(User) ? user_or_id.id : user_or_id
+    new where: { :whodunnit => user_id.to_s }
   end
 
   def initialize(where: nil, per_page: PER_PAGE, history_limit: HISTORY_LIMIT)
