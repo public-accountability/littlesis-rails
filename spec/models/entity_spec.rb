@@ -870,6 +870,7 @@ describe Entity, :tag_helper do
 
   describe 'Using paper_trail for versision' do
     let(:human) { create(:entity_person) }
+
     with_versioning do
       it 'creates version after updating name' do
         expect(human.versions.size).to eq 1
@@ -891,6 +892,10 @@ describe Entity, :tag_helper do
       it 'does not create a version after changing link_count' do
         human
         expect { human.update(link_count: 10) }.not_to change { human.versions.size }
+      end
+
+      it 'sets entity1_id in metadata' do
+        expect(human.versions.last.entity1_id).to eq human.id
       end
     end
   end
