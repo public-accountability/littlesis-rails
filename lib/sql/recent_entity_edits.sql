@@ -40,7 +40,7 @@ BEGIN
   */
   DECLARE _version_id BIGINT;
   DECLARE _item_type VARCHAR(255);
-  DECLARE _item_id VARCHAR(255);
+  DECLARE _item_id INTEGER;
   DECLARE _entity1_id INTEGER;
   DECLARE _entity2_id INTEGER;
   DECLARE _user_id INTEGER;
@@ -71,11 +71,14 @@ BEGIN
       LEAVE read_loop;
      END IF;
 
-     SET json = JSON_ARRAY_APPEND(json, '$', JSON_OBJECT("entity_id", _entity1_id,
-     				                         "version_id", _version_id,
+     /*
+       the "CAST as INT" is a fix until this bug is resolved: https://jira.mariadb.org/browse/MDEV-14438
+      */
+     SET json = JSON_ARRAY_APPEND(json, '$', JSON_OBJECT("entity_id", CAST(_entity1_id AS INT),
+     				                         "version_id", CAST(_version_id AS INT),
      				     	                 "item_type", _item_type,
-     					                 "item_id", _item_id,
-     					                 "user_id", _user_id,
+     					                 "item_id", CAST(_item_id AS INT),
+     					                 "user_id", CAST(_user_id as INT),
      					                 "created_at", _created_at));
 
      -- If entity2_id has data (i.e. an edit to a relationship), we add
@@ -84,11 +87,11 @@ BEGIN
 
      IF _entity2_id IS NOT NULL THEN
 
-       SET json = JSON_ARRAY_APPEND(json, '$', JSON_OBJECT("entity_id", _entity2_id,
-     				                           "version_id", _version_id,
+       SET json = JSON_ARRAY_APPEND(json, '$', JSON_OBJECT("entity_id", CAST(_entity2_id AS INT),
+     				                           "version_id", CAST(_version_id AS INT),
      				     	                   "item_type", _item_type,
-     					                   "item_id", _item_id,
-     					                   "user_id", _user_id,
+     					                   "item_id", CAST(_item_id AS INT),
+     					                   "user_id", CAST(_user_id AS INT),
      					                   "created_at", _created_at));
      END IF;
 
