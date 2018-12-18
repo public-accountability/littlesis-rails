@@ -21,6 +21,7 @@ class Entity < ApplicationRecord
   has_paper_trail :ignore => [:link_count, :delta, :last_user_id],
                   :on =>  [:create, :destroy, :update],
                   :meta => {
+                    :entity1_id => :id,
                     :association_data => proc { |e|
                       e.get_association_data.to_yaml if e.paper_trail_event == 'soft_delete'
                     }
