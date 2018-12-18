@@ -7,8 +7,8 @@ describe EditedEntities do
     let(:users) { Array.new(2) { create_basic_user } }
 
     before do
-      with_verisioning_for(users[0]) { Entity.create!(primary_ext: 'Org', name: 'org') }
-      with_verisioning_for(users[1]) { Entity.create!(primary_ext: 'Org', name: 'org') }
+      with_versioning_for(users[0]) { Entity.create!(primary_ext: 'Org', name: 'org') }
+      with_versioning_for(users[1]) { Entity.create!(primary_ext: 'Org', name: 'org') }
     end
 
     it 'finds two entities' do
@@ -49,7 +49,7 @@ describe EditedEntities do
       before do
         @entity1 = create(:entity_person)
         @entity2 = create(:entity_person)
-        with_verisioning_for(user) do
+        with_versioning_for(user) do
           @entity3 = Entity.create!(primary_ext: 'Org', name: 'Corporation')
           Relationship.create!(category_id: 12, entity: @entity1, related: @entity2)
         end

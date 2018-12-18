@@ -11,7 +11,7 @@ describe 'deleting relationships' do
   let(:user2) { create_basic_user }
 
   before do
-    with_verisioning_for(user1) do
+    with_versioning_for(user1) do
       @relationship = Relationship.create!(relationship_params)
     end
   end
@@ -29,7 +29,7 @@ describe 'deleting relationships' do
     it 'shows correct user on entity page after deleting' do
       visit entity_path(person)
       expect(find('#entity-edited-history').text).to include user1.username
-      with_verisioning_for(user2) do
+      with_versioning_for(user2) do
         @relationship.current_user = user2
         @relationship.soft_delete
       end

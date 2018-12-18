@@ -30,7 +30,7 @@ module RspecExampleHelpers
     Delayed::Worker.delay_jobs = true
   end
 
-  def with_verisioning_for(user_or_id)
+  def with_versioning_for(user_or_id)
     TypeCheck.check user_or_id, [User, String, Integer]
     user_id = user_or_id.is_a?(User) ? user_or_id.id : user_or_id
 
