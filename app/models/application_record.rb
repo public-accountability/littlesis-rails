@@ -39,8 +39,13 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
-  def self.lookup_table_for(ids)
-    find(ids).reduce({}) { |acc, x| acc.merge(x.id => x) }
+  # Takes an array of ids and generates a lookup hash where the
+  # ActiveReocrd id is the key and the value is the ActiveRecord object.
+  # If ignore is set to true,  `where` is used instead of `find`, suppressing
+  # the RecordNotFound error.
+  def self.lookup_table_for(ids, ignore: false)
+    query = ignore ? where(id: ids) : find(ids)
+    query.reduce({}) { |acc, x| acc.merge(x.id => x) }
   end
 
   # Executes the sql statement and returns a single value
@@ -61,5 +66,4 @@ class ApplicationRecord < ActiveRecord::Base
   def set_last_user_id
     self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
   end
-
 end
