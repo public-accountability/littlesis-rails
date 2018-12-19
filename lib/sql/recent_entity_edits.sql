@@ -24,7 +24,7 @@ The result set will contain duplicates. Futher processing of this data is handle
 */
 DELIMITER //
 
-CREATE OR REPLACE FUNCTION recent_entity_edits(history_limit INTEGER)
+CREATE OR REPLACE FUNCTION recent_entity_edits(history_limit INTEGER, user_id VARCHAR(255))
 RETURNS JSON DETERMINISTIC READS SQL DATA
 BEGIN
 
@@ -52,7 +52,8 @@ BEGIN
   DECLARE versions_cursor CURSOR FOR
   	  		  SELECT id, item_type, item_id, entity1_id, entity2_id, CAST(whodunnit AS INTEGER), created_at
   			  FROM versions
-  			  WHERE entity1_id IS NOT NULL
+  			  WHERE entity1_id AND
+			  (CASE WHEN user_id is NOT NULL THEN whodunnit = user_id ELSE TRUE END)
   			  ORDER BY id desc
   			  limit history_limit;
 

@@ -6,6 +6,7 @@ require 'rails_helper'
 
 describe 'SQL function: recent_entity_edits' do
   let(:user) { create_basic_user }
+  let(:user2) { create_basic_user }
 
   before do
     @person = create(:entity_person)
@@ -16,11 +17,23 @@ describe 'SQL function: recent_entity_edits' do
                                            entity: @person,
                                            related: @org)
     end
+
+    with_versioning_for(user2) do
+      @person_created_by_user2 = create(:entity_person)
+    end
   end
 
   it 'crafts json array of versions' do
-    expect(JSON.parse(ApplicationRecord.execute_one("SELECT recent_entity_edits(10)")))
+    expect(JSON.parse(ApplicationRecord.execute_one("SELECT recent_entity_edits(10, NULL)")))
       .to eq([
+               {
+                 'entity_id' => @person_created_by_user2.id,
+                 'version_id' => @person_created_by_user2.versions.last.id,
+                 'item_type' => 'Entity',
+                 'item_id' => @person_created_by_user2.id,
+                 'user_id' => user2.id,
+                 'created_at' => @person_created_by_user2.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+               },
                {
                  'entity_id' => @person.id,
                  'version_id' => @relationship.versions.last.id,
@@ -46,6 +59,27 @@ describe 'SQL function: recent_entity_edits' do
                  'created_at' => @org.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
                }
              ])
+  end
+
+  it 'returns only 3 edits for user1' do
+    expect(
+      JSON.parse(ApplicationRecord.execute_one("SELECT recent_entity_edits(10, '#{user.id}')")).length
+    ).to eq 3
+  end
+
+  it 'produces correct result for user2' do
+    expect(
+      JSON.parse(ApplicationRecord.execute_one("SELECT recent_entity_edits(10, '#{user2.id}')"))
+    ).to eq([
+              {
+                'entity_id' => @person_created_by_user2.id,
+                'version_id' => @person_created_by_user2.versions.last.id,
+                'item_type' => 'Entity',
+                'item_id' => @person_created_by_user2.id,
+                'user_id' => user2.id,
+                'created_at' => @person_created_by_user2.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+              }
+            ])
   end
 end
 
