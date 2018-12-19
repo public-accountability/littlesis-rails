@@ -52,7 +52,7 @@ BEGIN
   DECLARE versions_cursor CURSOR FOR
   	  		  SELECT id, item_type, item_id, entity1_id, entity2_id, CAST(whodunnit AS INTEGER), created_at
   			  FROM versions
-  			  WHERE entity1_id AND
+  			  WHERE entity1_id IS NOT NULL AND
 			  (CASE WHEN user_id is NOT NULL THEN whodunnit = user_id ELSE TRUE END)
   			  ORDER BY id desc
   			  limit history_limit;
