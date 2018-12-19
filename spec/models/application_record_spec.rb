@@ -104,6 +104,20 @@ describe ApplicationRecord do
       expect(Entity.lookup_table_for(entity_ids))
         .to eql(entities[0].id => entities[0], entities[1].id => entities[1])
     end
+
+    context 'when one entity has been deleted' do
+      before { entities[0].soft_delete }
+
+      it 'can optionally skips missing values' do
+        expect(Entity.lookup_table_for(entity_ids, ignore: true))
+          .to eql(entities[1].id => entities[1])
+      end
+
+      it 'raises error by default' do
+        expect { Entity.lookup_table_for(entity_ids) }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe 'execute_one' do
