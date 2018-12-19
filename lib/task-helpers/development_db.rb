@@ -156,7 +156,6 @@ class DevelopmentDb
                  sessions
                  sphinx_index
                  user_requests
-                 sf_guard_user_profiles
                  versions].freeze
 
   NON_CLEANED_IGNORED = %w[sf_guard_user user_profiles users].freeze

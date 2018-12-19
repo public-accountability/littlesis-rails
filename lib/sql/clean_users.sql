@@ -41,7 +41,7 @@ SET username = CONCAT('sfuser', id, '@email.com'),
     last_login = CURRENT_TIMESTAMP;
 
 DROP TABLE IF EXISTS clean_user_profiles;
-CREATE TABLE clean_user_profiles LIKE user_profile;
+CREATE TABLE clean_user_profiles LIKE user_profiles;
 INSERT clean_user_profiles SELECT * FROM user_profiles;
 
 UPDATE clean_user_profiles
