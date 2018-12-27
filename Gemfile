@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '5.2.1.1'
+gem 'rails', '5.2.2'
 gem 'mysql2', '~> 0.5.2'
 
 # Rack middleware
@@ -26,7 +26,7 @@ gem 'sprockets', '~> 3.0'
 
 gem 'uglifier', '>= 4.1'
 # gem 'bootstrap-sass', '~> 3.3.7'
-gem 'bootstrap', '~> 4.1.3'
+gem 'bootstrap', '~> 4.2.1'
 
 gem 'bootstrap-datepicker-rails'
 gem 'jquery-rails'
@@ -44,9 +44,7 @@ gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_del
 
 gem 'htmlentities'
 
-# For redis integration
 gem 'redis'
-# gem 'redis-rails', '>= 5.0.2'
 
 # For easy cron scheduling
 gem 'whenever', '~> 0.10.0', :require => false
@@ -58,7 +56,7 @@ end
 group :test, :development do
   gem 'better_errors', '~> 2.5.0'
   gem 'capybara', '>= 3.6.0'
-  gem 'capybara-webkit', '1.15.1'
+  gem 'capybara-webkit'
   gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 4.11'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
