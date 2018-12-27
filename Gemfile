@@ -44,9 +44,7 @@ gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_del
 
 gem 'htmlentities'
 
-# For redis integration
 gem 'redis'
-# gem 'redis-rails', '>= 5.0.2'
 
 # For easy cron scheduling
 gem 'whenever', '~> 0.10.0', :require => false
