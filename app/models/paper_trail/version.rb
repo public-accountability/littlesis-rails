@@ -6,8 +6,9 @@ module PaperTrail
   class Version < ActiveRecord::Base
     include PaperTrail::VersionConcern
 
-    def self.test_class_method
-      puts 'ah ha!'
+    # Determines this version referes to an entity
+    def entity_edit?
+      item_type == 'Entity' || entity1_id.present?
     end
   end
 end
