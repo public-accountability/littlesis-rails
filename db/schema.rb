@@ -287,6 +287,8 @@ ActiveRecord::Schema.define(version: 2019_01_02_183459) do
     t.integer "version_id", null: false
     t.bigint "entity_id", null: false
     t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_edited_entities_on_created_at"
+    t.index ["entity_id", "version_id"], name: "index_edited_entities_on_entity_id_and_version_id", unique: true
   end
 
   create_table "education", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
