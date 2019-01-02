@@ -452,6 +452,18 @@ CREATE TABLE `donation` (
   CONSTRAINT `donation_ibfk_2` FOREIGN KEY (`bundler_id`) REFERENCES `entity` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=844 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `edited_entities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `edited_entities` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `version_id` int(11) NOT NULL,
+  `entity_id` bigint(20) NOT NULL,
+  `created_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `education`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2283,6 +2295,7 @@ CREATE TABLE `versions` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3117 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!50003 DROP FUNCTION IF EXISTS `network_map_link` */;
+ALTER DATABASE `littlesis_test` CHARACTER SET utf8 COLLATE utf8_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -2306,7 +2319,9 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+ALTER DATABASE `littlesis_test` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
 /*!50003 DROP FUNCTION IF EXISTS `recent_entity_edits` */;
+ALTER DATABASE `littlesis_test` CHARACTER SET utf8 COLLATE utf8_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -2393,6 +2408,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+ALTER DATABASE `littlesis_test` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -2442,6 +2458,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20181212164901'),
 ('20181212195611'),
 ('20181218193802'),
-('20181218211422');
+('20181218211422'),
+('20190102183459');
 
 
