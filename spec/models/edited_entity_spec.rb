@@ -10,4 +10,8 @@ describe EditedEntity, type: :model do
   it { is_expected.to belong_to(:entity) }
   it { is_expected.to belong_to(:version) }
   it { is_expected.to belong_to(:user) }
+  it { is_expected.to validate_presence_of(:entity_id) }
+  it { is_expected.to validate_presence_of(:version_id) }
+  it { is_expected.to validate_presence_of(:created_at) }
+  it { is_expected.not_to validate_presence_of(:user_id) }
 end

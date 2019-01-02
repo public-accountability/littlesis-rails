@@ -4,4 +4,8 @@ class EditedEntity < ApplicationRecord
   belongs_to :entity
   belongs_to :version, class_name: 'PaperTrail::Version', foreign_key: 'version_id'
   belongs_to :user
+
+  validates :entity_id, presence: true
+  validates :version_id, presence: true
+  validates :created_at, presence: true
 end
