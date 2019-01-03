@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :entity_version, class: PaperTrail::Version do
     item_type { 'Entity' }
     item_id { rand(10_000) }
-    entity1_id { rand(10_000) }
+    entity1_id { item_id }
     created_at { Time.current }
     whodunnit { '1' }
     event { 'update' }
@@ -10,8 +10,8 @@ FactoryBot.define do
   end
 
   factory :relationship_version, class: PaperTrail::Version do
-    entity1_id { rand(10_000) }
-    entity2_id { rand(10_000) }
+    entity1_id { Faker::Number.unique.number(6).to_i }
+    entity2_id { Faker::Number.unique.number(6).to_i }
     created_at { Time.current }
     item_type { 'Relationship' }
     item_id { rand(10_000) }
