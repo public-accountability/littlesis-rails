@@ -6,7 +6,7 @@ module PaperTrail
   class Version < ActiveRecord::Base
     include PaperTrail::VersionConcern
 
-    after_create :start_edited_entity_job, if: :entity_edit?
+    after_create :create_edited_entity, if: :entity_edit?
 
     # Determines this version referes to an entity
     def entity_edit?
@@ -15,8 +15,8 @@ module PaperTrail
 
     private
 
-    def start_edited_entity_job
-      CreateEditedEntityJob.perform_later(self)
+    def create_edited_entity
+      EditedEntity.create_from_version(self)
     end
   end
 end
