@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe EditedEntity, type: :model do
-  let(:entity_id) { Faker::Number.unique.number(8).to_i }
+  let(:entity_id) { create(:entity_person, last_user_id: 1).id }
   let(:version_id) { Faker::Number.unique.number(8).to_i }
   let(:user_id) { Faker::Number.unique.number(4).to_i }
   let(:created_at) { Faker::Date.backward(100) }
