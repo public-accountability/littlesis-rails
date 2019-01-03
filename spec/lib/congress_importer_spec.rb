@@ -340,7 +340,7 @@ describe 'CongressImporter' do
           expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).membership.elected_term)
             .to eql OpenStruct.new(sen_term)
 
-          expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).is_current).to eql true
+          expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).is_current).to eq false
         end
       end
 
