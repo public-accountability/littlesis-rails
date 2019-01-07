@@ -6,12 +6,13 @@ describe EditedEntity, type: :model do
   let(:entity_id) { create(:entity_person, last_user_id: 1).id }
   let(:version_id) { Faker::Number.unique.number(8).to_i }
   let(:user_id) { Faker::Number.unique.number(4).to_i }
+  let(:user1_id) { Faker::Number.unique.number(4).to_i }
   let(:created_at) { Faker::Date.backward(100) }
   let(:org) { create(:entity_org) }
   let(:person) { create(:entity_person) }
-  let(:entity_version) { create(:entity_version, item_id: org.id) }
+  let(:entity_version) { create(:entity_version, item_id: org.id, whodunnit: user_id.to_s) }
   let(:relationship_version) do
-    create(:relationship_version, item_id: org.id, entity1_id: org.id, entity2_id: person.id)
+    create(:relationship_version, item_id: org.id, entity1_id: org.id, entity2_id: person.id, whodunnit: user1_id.to_s)
   end
 
   let(:versions) do
@@ -124,6 +125,23 @@ describe EditedEntity, type: :model do
 
     it 'has correct total_count' do
       expect(EditedEntity.recent.total_count).to eq 2
+    end
+  end
+
+  describe 'user' do
+    before { versions }
+
+    it 'returns 1 entity for user 0' do
+      expect(EditedEntity.user(user_id).to_a.size).to eq 1
+    end
+
+    it 'returns 2 entities for user 1' do
+      expect(EditedEntity.user(user1_id).to_a.size).to eq 2
+    end
+
+    it 'has correct total_count' do
+      expect(EditedEntity.user(user_id).total_count).to eq 1
+      expect(EditedEntity.user(user1_id).total_count).to eq 2
     end
   end
 end

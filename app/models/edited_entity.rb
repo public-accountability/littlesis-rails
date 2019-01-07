@@ -45,16 +45,27 @@ class EditedEntity < ApplicationRecord
   # Query  #
   ##########
 
-  def self.recent(page: 1, per_page: PER_PAGE)
+  def self.recent(page: 1, per_page: PER_PAGE, user_id: nil)
     offset = (page - 1) * per_page
     limit = per_page
-    records = find_by_sql(self_join_with_grouped_by_entity_id(limit: limit, offset: offset))
 
-    Pagination.paginate(page, per_page, records, total_count_distinct_by_entity_id)
+    records = find_by_sql(
+      self_join_with_grouped_by_entity_id(limit: limit, offset: offset, user_id: user_id)
+    )
+
+    count = total_count_distinct_by_entity_id(user_id.present? ? { :user_id => user_id } : nil)
+
+    Pagination.paginate(page, per_page, records, count)
   end
 
-  def self.self_join_with_grouped_by_entity_id(limit:, offset:)
-    subquery = group_by_entity_id.as('subquery')
+  def self.user(user_id, **kwargs)
+    TypeCheck.check user_id, Integer
+
+    recent(**kwargs.merge(user_id: user_id))
+  end
+
+  def self.self_join_with_grouped_by_entity_id(limit:, offset:, user_id: nil)
+    subquery = group_by_entity_id(user_id: user_id).as('subquery')
 
     arel_table
       .project(Arel.star)
@@ -67,19 +78,15 @@ class EditedEntity < ApplicationRecord
       .skip(offset)
   end
 
-  def self.group_by_entity_id
-    arel_table
-      .project(arel_table[:entity_id], arel_table[:version_id].maximum.as('max_version_id'))
-      .group(arel_table[:entity_id])
+  def self.group_by_entity_id(user_id: nil)
+    query = arel_table
+              .project(arel_table[:entity_id], arel_table[:version_id].maximum.as('max_version_id'))
+              .group(arel_table[:entity_id])
+
+    user_id.present? ? query.where(arel_table[:user_id].eq(user_id)) : query
   end
 
-  def self.total_count_distinct_by_entity_id
-    select(:entity_id).distinct.count
-  end
-
-  def self.user(user_id)
-    TypeCheck.check user_id, Integer
-
-    where(user_id: user_id).recent
+  def self.total_count_distinct_by_entity_id(where = nil)
+    where(where).select(:entity_id).distinct.count
   end
 end
