@@ -10,7 +10,13 @@ describe EditedEntity, type: :model do
   let(:org) { create(:entity_org) }
   let(:person) { create(:entity_person) }
   let(:entity_version) { create(:entity_version, item_id: org.id) }
-  let(:relationship_version) { create(:relationship_version, item_id: org.id, entity1_id: org.id, entity2_id: person.id) }
+  let(:relationship_version) do
+    create(:relationship_version, item_id: org.id, entity1_id: org.id, entity2_id: person.id)
+  end
+
+  let(:versions) do
+    [entity_version, relationship_version, create(:page_version)]
+  end
 
   it { is_expected.to have_db_column(:user_id).of_type(:integer) }
   it { is_expected.to have_db_column(:version_id).of_type(:integer) }
@@ -83,16 +89,9 @@ describe EditedEntity, type: :model do
   end
 
   describe 'populate_table' do
-
-    let(:versions) do
-      [create(:entity_version, item_id: org.id),
-       create(:relationship_version, item_id: org.id, entity1_id: org.id, entity2_id: person.id),
-       create(:page_version)]
-    end
-
     before do
-      allow(CreateEditedEntityJob).to receive(:perform_later)
       versions
+      EditedEntity.delete_all
     end
 
     it 'creates 3 edited entities' do
@@ -101,6 +100,30 @@ describe EditedEntity, type: :model do
       expect(EditedEntity.count).to eq 3
       EditedEntity.populate_table
       expect(EditedEntity.count).to eq 3
+    end
+  end
+
+  describe 'recent' do
+    before { versions }
+
+    it 'returns 2 entities' do
+      expect(EditedEntity.recent.to_a.size).to eq 2
+    end
+
+    it 'orders correctly' do
+      recently_edited_entities = EditedEntity.recent(page: 1)
+      expect(recently_edited_entities[0].entity).to eq org
+      expect(recently_edited_entities[1].entity).to eq person
+    end
+
+    it 'has correct dates' do
+      recently_edited_entities = EditedEntity.recent(page: 1)
+      expect(recently_edited_entities[0].created_at).to eq entity_version.created_at
+      expect(recently_edited_entities[1].created_at).to eq relationship_version.created_at
+    end
+
+    it 'has correct total_count' do
+      expect(EditedEntity.recent.total_count).to eq 2
     end
   end
 end
