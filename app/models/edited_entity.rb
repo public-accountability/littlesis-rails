@@ -17,24 +17,8 @@ class EditedEntity < ApplicationRecord
   validates :version_id, presence: true
   validates :created_at, presence: true
 
-  class Collection < SimpleDelegator
-    ASSOCIATIONS = %i[entity version user].freeze
-
-    def preload_all
-      ActiveRecord::Associations::Preloader.new.preload(self, ASSOCIATIONS)
-    end
-
-    ASSOCIATIONS.each do |association|
-      define_method("preload_#{association}") do
-        ActiveRecord::Associations::Preloader.new.preload(self, association)
-      end
-    end
-  end
-
-  ######################
-  # Creating functions #
-  ######################
-
+  # Creates new EditedEntities from a PaperTrail::Version
+  # If the verison is for a relationship, two EditedEntities might be created.
   def self.create_from_version(version)
     return unless version.entity_edit?
 
@@ -55,20 +39,41 @@ class EditedEntity < ApplicationRecord
     end
   end
 
-  ##########
-  # Query  #
-  ##########
+  # Used to wrap Kaminari::PaginatableArray
+  # Provides ways to preload associations
+  class Collection < SimpleDelegator
+    ASSOCIATIONS = %i[entity version user].freeze
+
+    def preload_all
+      ActiveRecord::Associations::Preloader.new.preload(self, ASSOCIATIONS)
+    end
+
+    ASSOCIATIONS.each do |association|
+      define_method("preload_#{association}") do
+        ActiveRecord::Associations::Preloader.new.preload(self, association)
+      end
+    end
+  end
+
+  ###########
+  #  Query  #
+  ###########
 
   # Examples
   #
-  # To get most recent edited entities for a user:
+  # To get most recently edited entities by a given user:
   #    EditedEntity::Query.for_user(123).page(1)
   #
-  # Most recent edited entities (by anyone):n
+  # Most recent edited entities (by anyone):
   #    EditedEntity::Query.all.page(1)
   #
-  # Most recent edited entities excluded system users
+  # Most recent edited entities, changeing the per page
+  #    EditedEntity::Query.all.per(50).page(3)
+  #
+  # Most recent edited entities excluding system users
   #   EditedEntity::Query.without_system_users.page(1)
+  #
+  # .page() returns a `Collection`
   #
   class Query
     attr_accessor :per_page, :condition
@@ -114,11 +119,11 @@ class EditedEntity < ApplicationRecord
     Collection.new Pagination.paginate(page, per_page, records, count)
   end
 
-  def self.user(user_id, **kwargs)
-    TypeCheck.check user_id, Integer
+  # def self.user(user_id, **kwargs)
+  #   TypeCheck.check user_id, Integer
 
-    recent(**kwargs.merge(user_id: user_id))
-  end
+  #   recent(**kwargs.merge(user_id: user_id))
+  # end
 
   def self.self_join_with_grouped_by_entity_id(limit:, offset:, condition: nil)
     subquery = group_by_entity_id(condition).as('subquery')
