@@ -8,9 +8,13 @@ feature 'recent edits page' do
 
   context 'with 3 edits, one from "system"' do
     before do
-      create(:entity_person).tap { |e| e.update!(last_user_id: user.sf_guard_user_id) }
-      create(:entity_org).tap { |e| e.update!(last_user_id: user.sf_guard_user_id) }
-      create(:entity_org).tap { |e| e.update!(last_user_id: 1) }
+      with_versioning_for(user) do 
+        create(:entity_person)
+        create(:entity_org)
+      end
+      with_versioning_for(User.system_user) do
+        create(:entity_org)
+      end
     end
 
     scenario 'visiting the recent edits page' do
