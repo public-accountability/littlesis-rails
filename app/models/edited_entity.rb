@@ -121,12 +121,6 @@ class EditedEntity < ApplicationRecord
     Collection.new Pagination.paginate(page, per_page, records, count)
   end
 
-  # def self.user(user_id, **kwargs)
-  #   TypeCheck.check user_id, Integer
-
-  #   recent(**kwargs.merge(user_id: user_id))
-  # end
-
   def self.self_join_with_grouped_by_entity_id(limit:, offset:, condition: nil)
     subquery = group_by_entity_id(condition).as('subquery')
 

@@ -154,6 +154,11 @@ describe EditedEntity, type: :model do
         expect(EditedEntity::Query.for_user(user_id).page(1).length).to eq 1
       end
 
+      it 'has correct total_count' do
+        expect(EditedEntity::Query.for_user(user_id).page(1).total_count).to eq 1
+        expect(EditedEntity::Query.for_user(user1_id).page(1).total_count).to eq 2
+      end
+
       specify do
         expect(EditedEntity::Query.for_user(user_id).page(1).first.version).to eq entity_version
       end
@@ -171,31 +176,6 @@ describe EditedEntity, type: :model do
       specify do
         expect(EditedEntity::Query.without_system_users.page(1).length).to eq 2
       end
-    end
-  end
-
-  xdescribe 'user' do
-    before { versions }
-
-    let(:entited_entity_for_user_0) do
-      EditedEntity.user(EditedEntity.arel_table[:user_id].eq(user_id))
-    end
-
-    let(:entited_entity_for_user_1) do
-      EditedEntity.user(EditedEntity.arel_table[:user_id].eq(user1_id))
-    end
-
-    it 'returns 1 entity for user 0' do
-      expect(entited_entity_for_user_0.to_a.size).to eq 1
-    end
-
-    it 'returns 2 entities for user 1' do
-      expect(entited_entity_for_user_1.to_a.size).to eq 2
-    end
-
-    it 'has correct total_count' do
-      expect(entited_entity_for_user_0.total_count).to eq 1
-      expect(entited_entity_for_user_1.total_count).to eq 2
     end
   end
 end
