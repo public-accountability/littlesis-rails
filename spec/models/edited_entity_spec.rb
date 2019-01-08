@@ -128,20 +128,54 @@ describe EditedEntity, type: :model do
     end
   end
 
-  describe 'user' do
+  describe 'Query' do
     before { versions }
 
-    it 'returns 1 entity for user 0' do
-      expect(EditedEntity.user(user_id).to_a.size).to eq 1
+    describe 'all' do
+      specify do
+        expect(EditedEntity::Query.all.page(1).length).to eq 2
+      end
+
+      specify do
+        expect(EditedEntity::Query.all.page(2).length).to eq 0
+      end
+
+      specify do
+        expect(EditedEntity::Query.all.per(1).page(1).length).to eq 1
+      end
+
+      specify do
+        expect(EditedEntity::Query.all.per(1).page(3).length).to eq 0
+      end
     end
 
-    it 'returns 2 entities for user 1' do
-      expect(EditedEntity.user(user1_id).to_a.size).to eq 2
+    describe 'for_user' do
+      specify do
+        expect(EditedEntity::Query.for_user(user_id).page(1).length).to eq 1
+      end
+
+      it 'has correct total_count' do
+        expect(EditedEntity::Query.for_user(user_id).page(1).total_count).to eq 1
+        expect(EditedEntity::Query.for_user(user1_id).page(1).total_count).to eq 2
+      end
+
+      specify do
+        expect(EditedEntity::Query.for_user(user_id).page(1).first.version).to eq entity_version
+      end
     end
 
-    it 'has correct total_count' do
-      expect(EditedEntity.user(user_id).total_count).to eq 1
-      expect(EditedEntity.user(user1_id).total_count).to eq 2
+    describe 'without_system_users' do
+      before do
+        create(:entity_version, item_id: create(:entity_org).id, whodunnit: 1)
+      end
+
+      specify do
+        expect(EditedEntity::Query.all.page(1).length).to eq 3
+      end
+
+      specify do
+        expect(EditedEntity::Query.without_system_users.page(1).length).to eq 2
+      end
     end
   end
 end

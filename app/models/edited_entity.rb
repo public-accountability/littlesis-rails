@@ -17,10 +17,8 @@ class EditedEntity < ApplicationRecord
   validates :version_id, presence: true
   validates :created_at, presence: true
 
-  ######################
-  # Creating functions #
-  ######################
-
+  # Creates new EditedEntities from a PaperTrail::Version
+  # If the verison is for a relationship, two EditedEntities might be created.
   def self.create_from_version(version)
     return unless version.entity_edit?
 
@@ -41,31 +39,90 @@ class EditedEntity < ApplicationRecord
     end
   end
 
-  ##########
-  # Query  #
-  ##########
+  # Used to wrap Kaminari::PaginatableArray
+  # Provides ways to preload associations
+  class Collection < SimpleDelegator
+    ASSOCIATIONS = %i[entity version user].freeze
 
-  def self.recent(page: 1, per_page: PER_PAGE, user_id: nil)
+    def preload_all
+      ActiveRecord::Associations::Preloader.new.preload(self, ASSOCIATIONS)
+    end
+
+    ASSOCIATIONS.each do |association|
+      define_method("preload_#{association}") do
+        ActiveRecord::Associations::Preloader.new.preload(self, association)
+      end
+    end
+  end
+
+  ###########
+  #  Query  #
+  ###########
+
+  # Examples
+  #
+  # To get most recently edited entities by a given user:
+  #    EditedEntity::Query.for_user(123).page(1)
+  #
+  # Most recent edited entities (by anyone):
+  #    EditedEntity::Query.all.page(1)
+  #
+  # Most recent edited entities, changeing the per page
+  #    EditedEntity::Query.all.per(50).page(3)
+  #
+  # Most recent edited entities excluding system users
+  #   EditedEntity::Query.without_system_users.page(1)
+  #
+  # .page() returns a `Collection`
+  #
+  class Query
+    attr_accessor :per_page, :condition
+
+    def initialize(per_page: PER_PAGE, condition: nil)
+      @per_page = per_page
+      @condition = condition
+    end
+
+    def per(per_page)
+      @per_page = per_page
+      self
+    end
+
+    # Integer --> EditedEntited::Collection
+    def page(n)
+      EditedEntity.recent(page: n, per_page: per_page, condition: condition)
+    end
+
+    def self.for_user(user_id)
+      condition = EditedEntity.arel_table[:user_id].eq(user_id)
+      new(condition: condition)
+    end
+
+    def self.without_system_users
+      condition = EditedEntity.arel_table[:user_id].not_in(User.system_users.map(&:id))
+      new(condition: condition)
+    end
+
+    def self.all
+      new
+    end
+  end
+
+  def self.recent(page: 1, per_page: PER_PAGE, condition: nil)
     offset = (page - 1) * per_page
     limit = per_page
 
     records = find_by_sql(
-      self_join_with_grouped_by_entity_id(limit: limit, offset: offset, user_id: user_id)
+      self_join_with_grouped_by_entity_id(limit: limit, offset: offset, condition: condition)
     )
 
-    count = total_count_distinct_by_entity_id(user_id.present? ? { :user_id => user_id } : nil)
+    count = total_count_distinct_by_entity_id(condition)
 
-    Pagination.paginate(page, per_page, records, count)
+    Collection.new Pagination.paginate(page, per_page, records, count)
   end
 
-  def self.user(user_id, **kwargs)
-    TypeCheck.check user_id, Integer
-
-    recent(**kwargs.merge(user_id: user_id))
-  end
-
-  def self.self_join_with_grouped_by_entity_id(limit:, offset:, user_id: nil)
-    subquery = group_by_entity_id(user_id: user_id).as('subquery')
+  def self.self_join_with_grouped_by_entity_id(limit:, offset:, condition: nil)
+    subquery = group_by_entity_id(condition).as('subquery')
 
     arel_table
       .project(Arel.star)
@@ -78,15 +135,15 @@ class EditedEntity < ApplicationRecord
       .skip(offset)
   end
 
-  def self.group_by_entity_id(user_id: nil)
+  def self.group_by_entity_id(condition = nil)
     query = arel_table
               .project(arel_table[:entity_id], arel_table[:version_id].maximum.as('max_version_id'))
               .group(arel_table[:entity_id])
 
-    user_id.present? ? query.where(arel_table[:user_id].eq(user_id)) : query
+    condition.present? ? query.where(condition) : query
   end
 
-  def self.total_count_distinct_by_entity_id(where = nil)
-    where(where).select(:entity_id).distinct.count
+  def self.total_count_distinct_by_entity_id(condition = nil)
+    where(condition).select(:entity_id).distinct.count
   end
 end

@@ -416,6 +416,19 @@ describe User do
     end
   end
 
+  describe 'system_users' do
+    it 'returns the system users' do
+      expect(User.system_users).to eq [User.find(1)]
+    end
+
+    it 'stores result in rails cache' do
+      expect(Rails.cache).to receive(:fetch)
+                               .with('user/system_users', hash_including(:expires_in))
+                               .once
+      User.system_users
+    end
+  end
+
   describe 'User.valid_username?' do
     subject { User.valid_username?(name) }
 

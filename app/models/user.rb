@@ -230,6 +230,12 @@ class User < ApplicationRecord
     @_system_user = User.find(APP_CONFIG['system_user_id'])
   end
 
+  def self.system_users
+    Rails.cache.fetch('user/system_users', expires_in: 12.hours) do
+      User.where(role: :system).to_a
+    end
+  end
+
   # Checks if name meets the character restrictions and
   # is case-insensitively unique. Also see `UserNameValidator`
   # String ---> Boolean
