@@ -5,8 +5,16 @@ require 'rails_helper'
 describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :feature do
   # TODO: include Routes (which will force internal handling of /people/..., /orgs/... routes)
   let(:user) { create_basic_user }
-  let(:person) { create(:entity_person, last_user_id: user.sf_guard_user.id) }
-  let(:org) { create(:entity_org, last_user_id: user.sf_guard_user.id) }
+  let(:person) do
+    with_versioning_for(user) do
+      create(:entity_person)
+    end
+  end
+  let(:org) do
+    with_versioning_for(user) do
+      create(:entity_org)
+    end
+  end
   let(:visit_page) { proc { visit entity_path(person) } }
   before(:each) do
     allow(Entity).to receive(:search).and_return([])
@@ -138,7 +146,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       it "shows an edit history" do
-        expect(page.find('#entity-edited-history strong a')[:href]).to eql "/users/#{person.last_user.user.username}"
+        expect(page.find('#entity-edited-history strong a')[:href]).to eql "/users/#{user.username}"
         expect(page.find('#entity-edited-history')).to have_text "ago"
       end
     end
