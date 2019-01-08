@@ -167,6 +167,10 @@ describe EditedEntity, type: :model do
       specify do
         expect(EditedEntity::Query.all.page(1).length).to eq 3
       end
+
+      specify do
+        expect(EditedEntity::Query.without_system_users.page(1).length).to eq 2
+      end
     end
   end
 

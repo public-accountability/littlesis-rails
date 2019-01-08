@@ -93,12 +93,14 @@ class EditedEntity < ApplicationRecord
       EditedEntity.recent(page: n, per_page: per_page, condition: condition)
     end
 
-    def self.for_user(user_id, **kwargs)
+    def self.for_user(user_id)
       condition = EditedEntity.arel_table[:user_id].eq(user_id)
-      new(**kwargs.merge(condition: condition))
+      new(condition: condition)
     end
 
     def self.without_system_users
+      condition = EditedEntity.arel_table[:user_id].not_in(User.system_users.map(&:id))
+      new(condition: condition)
     end
 
     def self.all
