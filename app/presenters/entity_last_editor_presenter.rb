@@ -38,7 +38,7 @@ class EntityLastEditorPresenter < SimpleDelegator
   def find_last_editor
     if last_version.nil? || updated_at > last_version.created_at.advance(minutes: 1)
       @last_edited_at = updated_at
-      last_user.user
+      User.system_user
     else
       @last_edited_at = last_version.created_at
 
@@ -56,10 +56,6 @@ class EntityLastEditorPresenter < SimpleDelegator
                        .new(__getobj__)
                        .versions(page: 1, per_page: 1)
                        .at(0)
-  end
-
-  def updated_at_within_one_minute_of(time)
-    updated_at.between?(time.advance(minutes: -1), time.advance(minutes: 1))
   end
 end
 

@@ -95,7 +95,7 @@ module UserEdits
       @page = page
       @per_page = per_page
     end
-    
+
     def edited_entities
       EditedEntity::Query
         .for_user(@user.id)

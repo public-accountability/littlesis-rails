@@ -75,7 +75,7 @@ describe EntityLastEditorPresenter do
 
     before { expect(User).not_to receive(:find_by) }
 
-    specify { expect(subject.last_editor).to eq user2 }
+    specify { expect(subject.last_editor).to eq User.system_user }
     specify { expect(subject.last_edited_at.change(usec: 0)).to eq person_time.change(usec: 0) }
   end
 end
