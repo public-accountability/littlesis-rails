@@ -235,12 +235,14 @@ class MapsController < ApplicationController
 
   def clone
     return head :unauthorized unless @map.cloneable? || is_owner
+
     check_permission 'editor'
 
     map = @map.dup
     map.update!(is_featured: false,
                 is_private: true,
-                user_id: current_user.sf_guard_user_id,
+                sf_user_id: current_user.sf_guard_user_id,
+                user_id: current_user.id,
                 title: "Clone: #{map.title}")
 
     redirect_to edit_map_path(map)

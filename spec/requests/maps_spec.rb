@@ -3,7 +3,7 @@ require 'rails_helper'
 describe 'Maps', :sphinx, type: :request do
   describe 'featuring maps' do
     as_basic_user do
-      let(:map) { create(:network_map, user_id: SfGuardUser.last.id) }
+      let(:map) { create(:network_map, user_id: User.last.id) }
       let(:url) { Rails.application.routes.url_helpers.feature_map_path(map) }
       before { post url, params: { action: 'ADD' } }
       denies_access
@@ -95,6 +95,39 @@ describe 'Maps', :sphinx, type: :request do
         post_maps.call
         expect(NetworkMap.last.user_id).to eql user.id
       end
+    end
+  end
+
+  describe 'cloning' do
+    let(:map_owner) { create_basic_user }
+    let(:other_user) { create_basic_user }
+    let(:map) { create(:network_map, user_id: map_owner.id, is_private: false, is_cloneable: true) }
+    let(:not_cloneable) { create(:network_map, user_id: map_owner.id, is_private: false, is_cloneable: false) }
+
+    before do
+      login_as(other_user, :scope => :user)
+    end
+
+    after { logout(:user) }
+
+    it 'creates a new maps and clones' do
+      map
+      clone_request = -> { post "/maps/#{map.id}/clone" }
+      expect(&clone_request).to change(NetworkMap, :count).by(1)
+      expect(response).to have_http_status :found
+
+      last_created_map = NetworkMap.last
+      expect(last_created_map.title.slice(0, 6)).to eq 'Clone:'
+      expect(last_created_map.user_id).to eq other_user.id
+      expect(last_created_map.sf_user_id).to eq other_user.sf_guard_user_id
+    end
+
+    it 'does not clone the map if the map is not cloneable' do
+      not_cloneable
+      clone_request = -> { post "/maps/#{not_cloneable.id}/clone" }
+      expect(&clone_request).not_to change(NetworkMap, :count)
+
+      expect(response).to have_http_status :unauthorized
     end
   end
 end

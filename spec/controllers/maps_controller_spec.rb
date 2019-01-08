@@ -163,7 +163,7 @@ describe MapsController, type: :controller do
 
       it 'changes the user id' do
         post_request.call
-        expect(NetworkMap.last.user_id).to eql controller.current_user.sf_guard_user_id
+        expect(NetworkMap.last.user_id).to eql controller.current_user.id
       end
 
       it 'sets the clonned map to be private' do
