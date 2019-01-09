@@ -7,6 +7,7 @@
 class ImageDeletionRequest < UserRequest
   validates :source_id, presence: true
   belongs_to :image, class_name: 'Image', foreign_key: 'source_id', inverse_of: :deletion_requests
+  belongs_to :entity, optional: true
 
   after_create :send_notification_email
 
