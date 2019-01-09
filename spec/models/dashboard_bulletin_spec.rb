@@ -14,6 +14,12 @@ describe DashboardBulletin, type: :model do
       specify { expect(bulletin.valid?).to be true }
     end
 
+    context 'with valid color with extra spaces' do
+      subject(:bulletin) { build(:dashboard_bulletin, color: '#5533FF   ') }
+
+      specify { expect(bulletin.valid?).to be true }
+    end
+
     context 'with invalid color' do
       subject(:bulletin) { build(:dashboard_bulletin, color: 'snail') }
 

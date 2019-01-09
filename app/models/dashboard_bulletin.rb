@@ -4,7 +4,7 @@ class DashboardBulletin < ApplicationRecord
   DEFAULT_COLOR = 'rgba(0, 0, 0, 0.03)'
   default_scope { order(created_at: :desc) }
 
-  before_validation -> { self[:color] = nil if color == '' }
+  before_validation :clean_color
   after_destroy :clear_dashboard_cache
 
   validates :markdown, presence: true
@@ -19,6 +19,11 @@ class DashboardBulletin < ApplicationRecord
   end
 
   private
+
+  def clean_color
+    self[:color] = color.strip if color.is_a?(String)
+    self[:color] = nil if color == ''
+  end
 
   def clear_dashboard_cache
     Rails.cache.delete_matched '*home_dashboard_bulletins*'
