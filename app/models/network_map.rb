@@ -4,16 +4,15 @@ class NetworkMap < ApplicationRecord
   include SingularTable
   include SoftDelete
 
+  DEFAULT_DATA = JSON.dump(entities: [], rels: [], texts: []).freeze
+
   has_paper_trail on: [:update, :destroy]
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
-  # TODO: remove relience of sf_guard_user
+  # TODO: remove sf_guard_user
   belongs_to :sf_guard_user, foreign_key: 'sf_user_id', inverse_of: :network_maps, optional: true
   belongs_to :user, foreign_key: 'user_id', inverse_of: :network_maps, optional: true
-
-  # delegate :user, to: :sf_guard_user
-  # before_create -> { self[:sf_user_id] = user_id }
 
   scope :featured, -> { where(is_featured: true) }
   scope :public_scope, -> { where(is_private: false) }
@@ -57,18 +56,17 @@ class NetworkMap < ApplicationRecord
   end
 
   def cloneable?
-    return false if is_private
-    is_cloneable
+    is_cloneable && !is_private
   end
 
   def default_data
-    JSON.dump({ entities: [], rels: [], texts: [] })
+    DEFAULT_DATA
   end
 
   def prepared_objects
     d = (data or default_data)
     hash = JSON.parse(d)
-    { 
+    {
       entities: hash['entities'].map { |entity| self.class.prepare_entity(entity) },
       rels: hash['rels'].map { |rel| self.class.prepare_rel(rel) },
       texts: hash['texts'].present? ? hash['texts'].map { |text| self.class.prepare_text(text) } : []
@@ -92,13 +90,13 @@ class NetworkMap < ApplicationRecord
 
   def self.entity_type(entity)
     return entity['type'] if entity['type'].present?
-    
+
     if entity['primary_ext'].present?
       return entity['primary_ext']
     else
-      if entity['url'].present? and entity['url'].match(/person\/\d+\//)
+      if entity['url'].present? && entity['url'].match(/person\/\d+\//)
         return 'Person'
-      elsif entity['url'].present? and entity['url'].match(/org\/\d+\//)
+      elsif entity['url'].present? && entity['url'].match(/org\/\d+\//)
         return 'Org'
       else
         return nil
@@ -106,18 +104,18 @@ class NetworkMap < ApplicationRecord
     end
   end
 
-  def self.is_custom_entity?(entity)
+  def self.custom_entity?(entity)
     if entity['custom'].present?
       entity['custom']
     else
-      entity['id'].to_s[0] == "x"
+      entity['id'].to_s[0] == 'x'
     end
   end
 
   def self.prepare_entity(entity)
     type = entity_type(entity)
 
-    if entity['image'] and !entity['image'].include?('netmap') and !entity['image'].include?('anon')
+    if entity['image'] && !entity['image'].include?('netmap') && !entity['image'].include?('anon')
       image_path = entity['image']
     elsif entity['filename']
       image_path = Image.image_path(entity['filename'], 'profile')
@@ -125,14 +123,14 @@ class NetworkMap < ApplicationRecord
       image_path = nil
     end
 
-    if is_custom_entity?(entity)
+    if custom_entity?(entity)
       url = entity['url']
     else
       url = ActionController::Base.helpers.url_for(Entity.legacy_url(type, entity['id'], entity['name']))
     end
 
     {
-      id: is_custom_entity?(entity) ? entity['id'] : self.integerize(entity['id']),
+      id: custom_entity?(entity) ? entity['id'] : self.integerize(entity['id']),
       name: entity['name'],
       image: image_path,
       url: url,
@@ -142,7 +140,7 @@ class NetworkMap < ApplicationRecord
       fixed: true,
       type: type,
       hide_image: entity['hide_image'].present? ? entity['hide_image'] : false,
-      custom: is_custom_entity?(entity),
+      custom: custom_entity?(entity),
       scale: entity['scale']
     }
   end
@@ -151,7 +149,7 @@ class NetworkMap < ApplicationRecord
     if rel['custom'].present?
       rel['custom']
     else
-      rel['id'].to_s[0] == "x"
+      rel['id'].to_s[0] == 'x'
     end
   end
 
@@ -191,13 +189,15 @@ class NetworkMap < ApplicationRecord
   def self.integerize(value)
     return nil if value.nil?
     return value.map { |elem| integerize(elem) } if value.instance_of?(Array)
-    return integerize(value.split(',')) if value.instance_of?(String) and value.include?(',')
+    return integerize(value.split(',')) if value.instance_of?(String) && value.include?(',')
     return nil if value.to_i == 0 and value != "0"
+
     value.to_i
   end
 
   def name
     return "Map #{id}" if title.blank?
+
     title
   end
 
@@ -243,23 +243,15 @@ class NetworkMap < ApplicationRecord
   def to_collection_data
     ary = annotations.present? ? annotations.sort_by(&:order).map(&:to_map_data) : [to_clean_hash]
     ary << references_to_map_data
-    { 
+    {
       id: id,
       title: title,
       description: description,
       user: { name: user.username, url: user.legacy_url },
-      date: updated_at.strftime("%B %-d, %Y"),
+      date: updated_at.strftime('%B %-d, %Y'),
       maps: ary,
       sources: documents.map { |r| { title: r.name, url: r.url } }
     }
-  end
-
-  # def annotations_data 
-  #   annotations.map { |a| Oligrapher.annotation_data(a) }
-  # end
-
-  def has_annotations
-    annotations.count > 0
   end
 
   def documents_to_html
@@ -290,12 +282,14 @@ class NetworkMap < ApplicationRecord
   # -> Relationship::ActiveRecord_Relation | Array
   def rels
     return [] if numeric_edge_ids.empty?
+
     Relationship.where(id: numeric_edge_ids)
   end
 
   # -> Relationship::ActiveRecord_Relation | Array
   def entities
     return [] if numeric_node_ids.empty?
+
     Entity.where(id: numeric_node_ids)
   end
 
@@ -307,13 +301,13 @@ class NetworkMap < ApplicationRecord
   def annotations_data_with_sources
     annotations = JSON.parse(annotations_data)
 
-    if list_sources and documents.count > 0
+    if list_sources && documents.count.positive?
       annotations.concat([{
-        id: "sources",
+        id: 'sources',
         nodeIds: [],
         edgeIds: [],
         captionIds: [],
-        header: "Sources",
+        header: 'Sources',
         text: documents_to_html
       }])
     end

@@ -178,6 +178,12 @@ describe NetworkMap, type: :model do
     end
   end
 
+  describe 'default_data' do
+    specify do
+      expect(build(:network_map).default_data).to eq "{\"entities\":[],\"rels\":[],\"texts\":[]}"
+    end
+  end
+
   describe 'cloneable?' do
     it 'cloneable if is_cloneable is set' do
       expect(build(:network_map, is_cloneable: true).cloneable?).to be true
