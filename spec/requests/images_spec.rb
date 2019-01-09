@@ -9,22 +9,28 @@ describe Images do
 
   context 'as a basic user' do
     let(:user) { create_really_basic_user }
-    describe 'requesting an image to be deleted' do 
+
+    describe 'requesting an image to be deleted' do
       let(:deletion_request) do
         proc do
           post "/images/#{image.id}/request_deletion",
-               params: { 'justification' => justification },
+               params: { 'justification' => justification, 'entity_id' => entity.id.to_s },
                headers: { 'Referer' => 'https://littlesis.org/images' }
         end
       end
 
       it 'creates an image deletion request' do
-        expect { deletion_request.call }.to change { ImageDeletionRequest.count }.by(1)
+        expect(&deletion_request).to change(ImageDeletionRequest, :count).by(1)
+        image_deletion_request = ImageDeletionRequest.last
+
+        expect(image_deletion_request.source_id).to eq image.id
+        expect(image_deletion_request.user).to eq user
+        expect(image_deletion_request.entity_id).to eq entity.id
       end
 
       it 'redirects backs to refer' do
         deletion_request.call
-        expect(response.status).to eql 302
+        expect(response.status).to eq 302
         expect(response.location).to eql 'https://littlesis.org/images'
       end
     end

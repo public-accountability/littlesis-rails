@@ -50,6 +50,7 @@
 	<p>Briefly, why should this image be destroyed?</p>
 	<%# NOTE: the form URL is changed via javascript %>
 	<%= form_tag('/images/0/request_deletion', method: :post) do %>
+	  <%= hidden_field_tag :entity_id, @entity.id, id: 'image_deletion_request_entity_id' %>
 	  <div class="input-group">
 	    <input type="text" name="justification"/>
 	    <div class="input-group-append">
