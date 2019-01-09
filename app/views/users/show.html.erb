@@ -36,9 +36,9 @@
 
 <div>
   <table class="user-page-table" id="user-page-recent-updates-table">
-    <% @user.edited_entities.each do |entity| %>
+    <% @user.edited_entities.each do |entied_entity| %>
       <tr>
-	<td><%= entity_link(entity) %></span> &nbsp;<em><%= (entity.blurb || "") %></em></td>
+	<td><%= entity_link(entied_entity.entity) %></span> &nbsp;<em><%= (entied_entity.entity.blurb || "") %></em></td>
       </tr>
     <% end %>
   </table>

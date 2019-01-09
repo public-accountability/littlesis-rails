@@ -57,7 +57,7 @@ class EditedEntity < ApplicationRecord
   # Most recent edited entities excluding system users
   #   EditedEntity::Query.without_system_users.page(1)
   #
-  # .page() returns a `Collection`
+  # .page() returns an ActiveRecord_Relation
   #
   class Query
     attr_accessor :per_page, :condition

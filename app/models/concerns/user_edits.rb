@@ -96,13 +96,13 @@ module UserEdits
       @per_page = per_page
     end
 
+    # --> [EditedEntity]
     def edited_entities
       EditedEntity::Query
         .for_user(@user.id)
         .include_entity
         .per(@per_page)
         .page(@page)
-        .map(&:entity)
     end
 
     def recent_edits
