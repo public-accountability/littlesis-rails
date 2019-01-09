@@ -30,9 +30,9 @@
 
     <h4 class="mt-3 mb-2">Your Recent Edits</h4>
     <div id="dashboard-your-edits" class="mt-3">
-      <% @user_dashboard.recent_updates.each do |entity| %>
+      <% @user_dashboard.recent_updates.each do |edited_entity| %>
 	<div class="dashboard-entity">
-	  <span class="dashboard-entity-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em>
+	  <span class="dashboard-entity-link"><%= entity_link(edited_entity.entity) %></span> &nbsp;<em><%= highlight((edited_entity.entity.blurb or ""), params[:q]) %></em>
 	</div>
       <% end %>
     </div>

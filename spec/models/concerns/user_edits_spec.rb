@@ -55,7 +55,7 @@ describe UserEdits do
       let(:entities) do
         Array.new(3) { create(:entity_person) }
       end
-      
+
       let(:relationship) do
         create(:generic_relationship, entity: entities[0], related: entities[1])
       end
@@ -67,11 +67,9 @@ describe UserEdits do
           'relationship' => relationship.id }
       end
 
-      it 'returns array of all recently edited entities' do
-        # binding.pry
+      it 'returns relation of all recently edited entities' do
         edited_entities = UserEdits::Edits.new(user).edited_entities
         expect(edited_entities.total_count).to eq 3
-        expect(edited_entities).to be_a Kaminari::PaginatableArray
       end
     end
 

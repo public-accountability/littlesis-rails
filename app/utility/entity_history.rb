@@ -10,10 +10,10 @@ class EntityHistory < RecordHistory
   def self.recently_edited_entities(page: 1)
     EditedEntity::Query
       .without_system_users
+      .include_entity
+      .include_user
       .per(10)
       .page(page)
-      .preload_entity
-      .preload_user
   end
 
   private

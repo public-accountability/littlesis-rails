@@ -39,24 +39,6 @@ class EditedEntity < ApplicationRecord
     end
   end
 
-  # Used to wrap Kaminari::PaginatableArray
-  # Provides ways to preload associations
-  class Collection < SimpleDelegator
-    ASSOCIATIONS = %i[entity version user].freeze
-
-    def preload_all
-      ActiveRecord::Associations::Preloader.new.preload(self, ASSOCIATIONS)
-      self
-    end
-
-    ASSOCIATIONS.each do |association|
-      define_method("preload_#{association}") do
-        ActiveRecord::Associations::Preloader.new.preload(self, association)
-        self
-      end
-    end
-  end
-
   ###########
   #  Query  #
   ###########
@@ -75,14 +57,15 @@ class EditedEntity < ApplicationRecord
   # Most recent edited entities excluding system users
   #   EditedEntity::Query.without_system_users.page(1)
   #
-  # .page() returns a `Collection`
+  # .page() returns an ActiveRecord_Relation
   #
   class Query
     attr_accessor :per_page, :condition
 
-    def initialize(per_page: PER_PAGE, condition: nil)
+    def initialize(per_page: PER_PAGE, condition: nil, includes: [])
       @per_page = per_page
       @condition = condition
+      @includes = includes
     end
 
     def per(per_page)
@@ -90,9 +73,20 @@ class EditedEntity < ApplicationRecord
       self
     end
 
+    %i[entity version user].each do |association|
+      define_method("include_#{association}") do
+        @includes << association unless @includes.include?(association)
+        self
+      end
+    end
+
     # Integer --> EditedEntited::Collection
     def page(n)
-      EditedEntity.recent(page: n, per_page: per_page, condition: condition)
+      EditedEntity
+        .recent(@condition)
+        .includes(@includes)
+        .page(n)
+        .per(@per_page)
     end
 
     def self.for_user(user_id)
@@ -110,42 +104,34 @@ class EditedEntity < ApplicationRecord
     end
   end
 
-  def self.recent(page: 1, per_page: PER_PAGE, condition: nil)
-    offset = (page - 1) * per_page
-    limit = per_page
-
-    records = find_by_sql(
-      self_join_with_grouped_by_entity_id(limit: limit, offset: offset, condition: condition)
-    )
-
-    count = total_count_distinct_by_entity_id(condition)
-
-    Collection.new Pagination.paginate(page, per_page, records, count)
+  # def self.self_join_with_grouped_by_entity_id(condition: nil)
+  def self.recent(condition = nil)
+    joins(group_by_entity_id_subquery_for_join(condition))
+      .joins(:entity)
+      .order(version_id: :desc)
   end
 
-  def self.self_join_with_grouped_by_entity_id(limit:, offset:, condition: nil)
+  # This digs DEEP into arel to produces the correct INNER JOIN string
+  # Arel::Nodes::Node | nil -->  String
+  def self.group_by_entity_id_subquery_for_join(condition = nil)
     subquery = group_by_entity_id(condition).as('subquery')
 
     arel_table
-      .project(Arel.star)
       .join(subquery).on(
         arel_table[:entity_id].eq(subquery[:entity_id])
           .and(arel_table[:version_id].eq(subquery[:max_version_id]))
       )
-      .order(arel_table[:version_id].desc)
-      .take(limit)
-      .skip(offset)
+      .join_sources
+      .first
+      .to_sql
   end
 
+  #  Arel::Nodes::Node | nil -->  Arel::SelectManager
   def self.group_by_entity_id(condition = nil)
     query = arel_table
               .project(arel_table[:entity_id], arel_table[:version_id].maximum.as('max_version_id'))
               .group(arel_table[:entity_id])
 
     condition.present? ? query.where(condition) : query
-  end
-
-  def self.total_count_distinct_by_entity_id(condition = nil)
-    where(condition).select(:entity_id).distinct.count
   end
 end
