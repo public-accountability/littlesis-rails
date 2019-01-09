@@ -54,6 +54,7 @@ class ImagesController < ApplicationController
   def new_image_deletion_request_params
     { user: current_user,
       image: @image,
+      entity_id: params.fetch('entity_id', nil),
       justification: params.require('justification') }
   end
 end
