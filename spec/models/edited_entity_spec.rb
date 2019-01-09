@@ -108,23 +108,23 @@ describe EditedEntity, type: :model do
     before { versions }
 
     it 'returns 2 entities' do
-      expect(EditedEntity.recent.to_a.size).to eq 2
+      expect(EditedEntity.recent.page(1).to_a.size).to eq 2
     end
 
     it 'orders correctly' do
-      recently_edited_entities = EditedEntity.recent(page: 1)
+      recently_edited_entities = EditedEntity.recent.page(1)
       expect(recently_edited_entities[0].entity).to eq org
       expect(recently_edited_entities[1].entity).to eq person
     end
 
     it 'has correct dates' do
-      recently_edited_entities = EditedEntity.recent(page: 1)
+      recently_edited_entities = EditedEntity.recent.page(1)
       expect(recently_edited_entities[0].created_at).to eq entity_version.created_at
       expect(recently_edited_entities[1].created_at).to eq relationship_version.created_at
     end
 
     it 'has correct total_count' do
-      expect(EditedEntity.recent.total_count).to eq 2
+      expect(EditedEntity.recent.page(1).total_count).to eq 2
     end
   end
 
@@ -175,6 +175,31 @@ describe EditedEntity, type: :model do
 
       specify do
         expect(EditedEntity::Query.without_system_users.page(1).length).to eq 2
+      end
+    end
+
+    describe 'Entity has been deleted' do
+      before do
+        with_versioning_for(User.system_user) do
+          @entity = create(:entity_person)
+        end
+      end
+
+      it 'removes deleted entity from results' do
+        with_versioning_for(User.system_user) do
+          @entity.soft_delete
+        end
+        expect(EditedEntity::Query.all.page(1).length).to eq 2
+      end
+    end
+
+    # This might seem like a useless test, but because
+    # we use part of Arel's internal api,it's be good
+    # detect for changes in future releaes of rails.
+    describe 'group_by_entity_id_subquery_for_join' do
+      it 'starts with INNER JOIN' do
+        expect(EditedEntity.group_by_entity_id_subquery_for_join.slice(0, 10))
+          .to eq 'INNER JOIN'
       end
     end
   end

@@ -99,9 +99,9 @@ module UserEdits
     def edited_entities
       EditedEntity::Query
         .for_user(@user.id)
+        .include_entity
         .per(@per_page)
         .page(@page)
-        .preload_entity
         .map(&:entity)
     end
 
