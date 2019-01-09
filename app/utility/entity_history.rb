@@ -8,12 +8,12 @@ class EntityHistory < RecordHistory
   EXCLUDED_LAST_USERS = [1, 8178, 8270].freeze
 
   def self.recently_edited_entities(page: 1)
-    Entity
-      .includes(last_user: :user)
-      .where("last_user_id NOT IN (#{EXCLUDED_LAST_USERS.join(',')})")
-      .order('updated_at DESC')
-      .page(page)
+    EditedEntity::Query
+      .without_system_users
       .per(10)
+      .page(page)
+      .preload_entity
+      .preload_user
   end
 
   private

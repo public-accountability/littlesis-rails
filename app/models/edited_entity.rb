@@ -46,11 +46,13 @@ class EditedEntity < ApplicationRecord
 
     def preload_all
       ActiveRecord::Associations::Preloader.new.preload(self, ASSOCIATIONS)
+      self
     end
 
     ASSOCIATIONS.each do |association|
       define_method("preload_#{association}") do
         ActiveRecord::Associations::Preloader.new.preload(self, association)
+        self
       end
     end
   end

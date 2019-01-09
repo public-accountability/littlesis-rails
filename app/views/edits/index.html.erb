@@ -15,11 +15,11 @@
     </thead>
 
     <tbody>
-      <% edits.each do |entity| %>
+      <% edits.each do |edited_entity| %>
         <tr>
-          <td><%= user_link(entity.last_user.user) %> <%= time_ago_in_words(entity.updated_at) %> ago</td>
-          <td><%= entity_link(entity) %></td>
-          <td><em><%= entity.blurb %></em></td>
+          <td><%= user_link(edited_entity.user) %> <%= time_ago_in_words(edited_entity.created_at) %> ago</td>
+          <td><%= entity_link(edited_entity.entity) %></td>
+          <td><em><%= edited_entity.entity.blurb %></em></td>
         </tr>
       <% end %>
     </tbody>

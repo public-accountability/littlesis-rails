@@ -42,7 +42,7 @@ describe UserEdits do
       relationship_version
     end
 
-    describe '#edited_entities_ids' do
+    xdescribe '#edited_entities_ids' do
       subject { UserEdits::Edits.new(user) }
 
       it 'returns array of all recently edited entities' do
@@ -52,14 +52,26 @@ describe UserEdits do
     end
 
     describe '#edited_entities' do
-      it 'returns array of all recently edited entities' do
-        expect(Entity).to receive(:where)
-                            .with(id: ids.values_at('entity1_id', 'entity2_id', 'entity'))
-                            .and_return([1, 2, 3])
+      let(:entities) do
+        Array.new(3) { create(:entity_person) }
+      end
+      
+      let(:relationship) do
+        create(:generic_relationship, entity: entities[0], related: entities[1])
+      end
 
+      let(:ids) do
+        { 'entity' => entities[0].id,
+          'entity1_id' => entities[1].id,
+          'entity2_id' => entities[2].id,
+          'relationship' => relationship.id }
+      end
+
+      it 'returns array of all recently edited entities' do
+        # binding.pry
         edited_entities = UserEdits::Edits.new(user).edited_entities
-        expect(edited_entities).to be_a Kaminari::PaginatableArray
         expect(edited_entities.total_count).to eq 3
+        expect(edited_entities).to be_a Kaminari::PaginatableArray
       end
     end
 

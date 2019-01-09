@@ -297,6 +297,19 @@ describe Permissions, :tag_helper do
           expect(subject).to eql(mergeable: true, deleteable: true)
         end
       end
+
+      context 'with a user with delete permissions' do
+        let(:user) { create_basic_user }
+
+        before do
+          user.add_ability!(:delete)
+          allow(@entity).to receive(:created_at).and_return(1.month.ago)
+        end
+
+        it 'deleter can delete the entity' do
+          expect(subject).to eql(mergeable: false, deleteable: true)
+        end
+      end
     end
   end # entity permissions
 

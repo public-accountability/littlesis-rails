@@ -97,31 +97,12 @@ module UserEdits
     end
 
     def edited_entities
-      Pagination
-        .paginate(@page,
-                  @per_page,
-                  Entity.where(id: edited_entities_ids[(@per_page * (@page - 1)), @per_page]),
-                  edited_entities_ids.size)
-    end
-
-    # returns array of entity ids that have been recently edited
-    def edited_entities_ids
-      return @_edited_entities_ids if defined?(@_edited_entities_ids)
-
-      @_edited_entities_ids = PaperTrail::Version
-                               .where(whodunnit: @user.id.to_s)
-                               .where(
-                                 version_arel_table[:item_type].eq('Entity')
-                                   .or(version_arel_table[:entity1_id].not_eq(nil))
-                               )
-                               .order(created_at: :desc)
-                               .limit(500) # limits search to last 500 edits
-                               .pluck(
-                                 Arel.sql("CASE WHEN item_type = 'Entity' THEN JSON_ARRAY(item_id) ELSE JSON_ARRAY(entity1_id, entity2_id) END")
-                               )
-                               .map { |ids| JSON.parse(ids).compact }
-                               .flatten
-                               .uniq
+      EditedEntity::Query
+        .for_user(@user.id)
+        .per(@per_page)
+        .page(@page)
+        .preload_entity
+        .map(&:entity)
     end
 
     def recent_edits

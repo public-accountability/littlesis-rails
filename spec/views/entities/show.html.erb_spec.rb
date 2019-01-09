@@ -51,7 +51,9 @@ describe 'entities/show.html.erb' do
       context 'without any permissions' do
         before(:all) do
           DatabaseCleaner.start
-          @e = create(:entity_org, last_user_id: @sf_user.id, name: 'mega corp', blurb: 'mega corp is having an existential crisis')
+          with_versioning_for(@user) do
+            @e = create(:entity_org, name: 'mega corp', blurb: 'mega corp is having an existential crisis')
+          end
         end
 
         after(:all) { DatabaseCleaner.clean }

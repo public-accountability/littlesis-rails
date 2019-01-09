@@ -117,7 +117,8 @@ class Permissions
   # ENTITY HELPERS
 
   def delete_entity?(entity)
-    return true if admin?
+    return true if admin? || deleter?
+
     entity.created_at >= 1.week.ago &&
       entity.link_count < 3 &&
       user_is_creator?(entity)

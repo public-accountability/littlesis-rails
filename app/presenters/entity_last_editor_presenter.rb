@@ -36,30 +36,26 @@ class EntityLastEditorPresenter < SimpleDelegator
   # create a new version. Others do create a version but don't correctly
   # update the last_user_id column. It's a mess.
   def find_last_editor
-    if last_version.nil? || updated_at > last_version.created_at.advance(minutes: 1)
+    if last_entity_edit.nil? || updated_at > last_entity_edit.created_at.advance(minutes: 1)
       @last_edited_at = updated_at
-      last_user.user
+      User.system_user
     else
-      @last_edited_at = last_version.created_at
+      @last_edited_at = last_entity_edit.created_at
 
-      return last_version.user if last_version.respond_to?(:user) && last_version.user
-
-      user = User.find_by(id: last_version.whodunnit)
-      user.nil? ? User.system_user : user
+      if last_entity_edit.user_id && last_entity_edit.user.present?
+        last_entity_edit.user
+      else
+        User.system_user
+      end
     end
   end
 
-  def last_version
-    return @_last_version if defined?(@_last_version)
+  def last_entity_edit
+    return @_last_entity_edit if defined?(@_last_entity_edit)
 
-    @_last_version = EntityHistory
-                       .new(__getobj__)
-                       .versions(page: 1, per_page: 1)
-                       .at(0)
-  end
-
-  def updated_at_within_one_minute_of(time)
-    updated_at.between?(time.advance(minutes: -1), time.advance(minutes: 1))
+    @_last_entity_edit = EditedEntity
+                           .order(created_at: :desc)
+                           .find_by(entity_id: id)
   end
 end
 
