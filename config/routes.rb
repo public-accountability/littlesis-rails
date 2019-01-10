@@ -222,11 +222,6 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  get "/maps/:id/:slide",
-    controller: 'maps',
-    action: 'show',
-    as: 'map_slide'
-
   get "/maps/:id/share/:secret",
     controller: 'maps',
     action: 'show',
