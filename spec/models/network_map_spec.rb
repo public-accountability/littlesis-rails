@@ -11,7 +11,7 @@ describe NetworkMap, type: :model do
     let(:e1) { create(:person, :with_person_name, blurb: 'xyz') }
     let(:e2) { create(:person, :with_person_name, blurb: nil) }
     let(:graph_data) do
-      JSON.dump(id: 'abcdefg',
+      OligrapherGraphData.new(id: 'abcdefg',
                 nodes: {
                   e1.id => Oligrapher.entity_to_node(e1),
                   e2.id => Oligrapher.entity_to_node(e2)
@@ -41,7 +41,7 @@ describe NetworkMap, type: :model do
     end
 
     let(:graph_data) do
-      JSON.dump(id: 'xyz', nodes: {}, captions: {}, edges: edges)
+      OligrapherGraphData.new(id: 'xyz', nodes: {}, captions: {}, edges: edges)
     end
     let(:urls) { Array.new(2) { Faker::Internet.unique.url } }
     let(:map) { build(:network_map, graph_data: graph_data) }
@@ -76,7 +76,7 @@ describe NetworkMap, type: :model do
         '456' => { id: 123, node1_id: 2, node2_id: 3, display: { label: "Edge 2" } } }
     end
     let(:graph_data) do
-      JSON.dump(id: 'xyz', nodes: {}, captions: {}, edges: edges)
+      OligrapherGraphData.new(id: 'xyz', nodes: {}, captions: {}, edges: edges)
     end
     let(:map) { build(:network_map, graph_data: graph_data) }
 
@@ -88,7 +88,7 @@ describe NetworkMap, type: :model do
 
   describe 'edge_ids' do
     let(:graph_data) do
-      JSON.dump(id: 'NkpdQPQfx',
+      OligrapherGraphData.new(id: 'NkpdQPQfx',
                 nodes: {},
                 edges: {
                   '1' => { id: 1, node1_id: 1, node2_id: 2, display: { label: "Edge 1" } },
@@ -107,7 +107,7 @@ describe NetworkMap, type: :model do
   describe 'numeric edge ids' do
     let(:edges) { {} }
     let(:graph_data) do
-      JSON.dump(id: 'xyz', nodes: {}, captions: {}, edges: edges)
+      OligrapherGraphData.new(id: 'xyz', nodes: {}, captions: {}, edges: edges)
     end
     let(:map) { build(:network_map, graph_data: graph_data) }
 
@@ -156,7 +156,7 @@ describe NetworkMap, type: :model do
         'abc' => Oligrapher.entity_to_node(build(:org)) }
     end
     let(:graph_data) do
-      JSON.dump(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
+      OligrapherGraphData.new(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
     end
 
     let(:custom_graph_data) do
@@ -204,7 +204,7 @@ describe NetworkMap, type: :model do
     end
 
     let(:graph_data) do
-      JSON.dump(id: 'abcdefg', nodes: {}, edges: {}, captions: captions)
+      OligrapherGraphData.new(id: 'abcdefg', nodes: {}, edges: {}, captions: captions)
     end
 
     let(:network_map) { build(:network_map, graph_data: graph_data) }
@@ -224,13 +224,13 @@ describe NetworkMap, type: :model do
     end
 
     let(:graph_data) do
-      JSON.dump(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
+      OligrapherGraphData.new(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
     end
 
     let(:graph_data_missing_node_two) do
-      JSON.dump(id: 'abcdefg',
-                nodes: { e1.id => Oligrapher.entity_to_node(e1) },
-                edges: {}, captions: {})
+      OligrapherGraphData.new(id: 'abcdefg',
+                              nodes: { e1.id => Oligrapher.entity_to_node(e1) },
+                              edges: {}, captions: {})
     end
 
     let(:network_map) { create(:network_map, user_id: 1) }
