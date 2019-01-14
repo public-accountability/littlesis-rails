@@ -47,7 +47,7 @@
 
 <script>
  <% if @map.graph_data %>
- var graph = <%= raw(@map.graph_data) %>;
+ var graph = <%= raw(@map.graph_data.to_json) %>;
  graph.id = <%= @map.id %>;
  <% else %>
  var graph = null;

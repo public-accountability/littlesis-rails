@@ -6,6 +6,8 @@ class NetworkMap < ApplicationRecord
 
   DEFAULT_DATA = JSON.dump(entities: [], rels: [], texts: []).freeze
 
+  attribute :graph_data, :graph_data # see utility/oligrapher_graph_data
+
   has_paper_trail on: [:update, :destroy]
 
   delegate :url_helpers, to: 'Rails.application.routes'
@@ -269,12 +271,20 @@ class NetworkMap < ApplicationRecord
   %i[edge node].each do |graph_component|
     # -> Array[String]
     define_method("#{graph_component}_ids") do |data|
-      JSON.parse(data)[graph_component.to_s.pluralize].keys
+      case data
+      when String
+        hash = JSON.parse(data)
+      when OligrapherGraphData, Hash
+        hash = data.to_h
+      else
+        raise TypeError
+      end
+      hash[graph_component.to_s.pluralize].keys
     end
 
     # -> Array[String]
     define_method("numeric_#{graph_component}_ids") do |data = nil|
-      send("#{graph_component}_ids", data.nil? ? graph_data : data)
+      send("#{graph_component}_ids", data.blank? ? graph_data : data)
         .select { |id| id.to_s.match(/^\d+$/) }
     end
   end
@@ -294,8 +304,7 @@ class NetworkMap < ApplicationRecord
   end
 
   def captions
-    hash = JSON.parse(graph_data)
-    hash['captions'].values
+    graph_data['captions'].values
   end
 
   def annotations_data_with_sources
