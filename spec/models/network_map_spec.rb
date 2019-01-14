@@ -198,6 +198,22 @@ describe NetworkMap, type: :model do
     end
   end
 
+  describe 'captions' do
+    let(:captions) do
+      { '1' => { id: 1, display: { text: "Caption 1" } } }
+    end
+
+    let(:graph_data) do
+      JSON.dump(id: 'abcdefg', nodes: {}, edges: {}, captions: captions)
+    end
+
+    let(:network_map) { build(:network_map, graph_data: graph_data) }
+
+    specify do
+      expect(network_map.captions).to eq [{ "id" => 1, "display" => { "text" => "Caption 1" } }]
+    end
+  end
+
   describe 'Entity Network Map Collection functions' do
     let(:e1) { create(:entity_org) }
     let(:e2) { create(:entity_org) }
