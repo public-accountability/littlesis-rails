@@ -2,6 +2,7 @@
 
 class OligrapherGraphData
   attr_reader :hash
+  delegate_missing_to :@hash
 
   def initialize(str_or_hash_or_nil = nil)
     case str_or_hash_or_nil
