@@ -30,19 +30,19 @@ class OligrapherGraphData
 
   alias eql? ==
 
-  class SerializationTypeMismatch < ActiveRecord::SerializationTypeMismatch; end
-
-  def self.dump(obj)
-    unless obj.nil? || obj.is_a?(OligrapherGraphData) || obj.is_a?(Hash)
-      raise SerializationTypeMismatch
-    end
-
-    obj.blank? ? nil : obj.to_json
-  end
-
   def self.load(obj)
     TypeCheck.check obj, [String, Hash, OligrapherGraphData], allow_nil: true
 
-    obj.is_a?(OligrapherGraphData) ? obj.dup : new(obj)
+    obj.is_a?(OligrapherGraphData) ? obj : new(obj)
+  end
+
+  class Type < ActiveRecord::Type::Json
+    def deserialize(value)
+      OligrapherGraphData.load super(value)
+    end
+
+    def serialize(value)
+      super(OligrapherGraphData.load(value).hash)
+    end
   end
 end

@@ -21,27 +21,9 @@ describe OligrapherGraphData do
   end
 
   describe 'dump' do
-    it 'returns nil if given nil' do
-      expect(OligrapherGraphData.dump(nil)).to eq nil
-    end
-
-    it 'returns nil for empty hashes' do
-      expect(OligrapherGraphData.dump(OligrapherGraphData.new({}))).to eq nil
-    end
-
-    it 'converts hash to json' do
-      expect(OligrapherGraphData.dump(OligrapherGraphData.new(foo_bar_hash)))
-        .to eq foo_bar_json
-    end
-
     it 'converts hash to json via to_json' do
       expect(OligrapherGraphData.new(foo_bar_hash).to_json)
         .to eq foo_bar_json
-    end
-
-    it 'raises error if given other object' do
-      expect { OligrapherGraphData.dump([]) }
-        .to raise_error(OligrapherGraphData::SerializationTypeMismatch)
     end
   end
 
