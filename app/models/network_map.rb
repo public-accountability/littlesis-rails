@@ -6,7 +6,7 @@ class NetworkMap < ApplicationRecord
 
   DEFAULT_DATA = JSON.dump(entities: [], rels: [], texts: []).freeze
 
-  attribute :graph_data, :graph_data # see utility/oligrapher_graph_data
+  attribute :graph_data, OligrapherGraphData::Type.new
 
   has_paper_trail on: [:update, :destroy]
 
