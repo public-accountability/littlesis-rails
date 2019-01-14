@@ -3,17 +3,20 @@
 require 'rails_helper'
 
 describe OligrapherGraphData do
+  let(:foo_bar_hash) { { 'foo' => 'bar' } }
+  let(:foo_bar_json) { "{\"foo\":\"bar\"}" }
+
   describe 'init' do
     it 'creates new hash if nil' do
       expect(OligrapherGraphData.new(nil).hash).to eq({})
     end
 
     it 'parses json' do
-      expect(OligrapherGraphData.new("{\"foo\":\"bar\"}").hash).to eq('foo' => 'bar')
+      expect(OligrapherGraphData.new(foo_bar_json).hash).to eq foo_bar_hash
     end
 
     it 'stores hash' do
-      expect(OligrapherGraphData.new("foo" => "bar").hash).to eq('foo' => 'bar')
+      expect(OligrapherGraphData.new(foo_bar_hash).hash).to eq foo_bar_hash
     end
   end
 
@@ -27,8 +30,13 @@ describe OligrapherGraphData do
     end
 
     it 'converts hash to json' do
-      expect(OligrapherGraphData.dump(OligrapherGraphData.new({"foo" => "bar"})))
-        .to eq "{\"foo\":\"bar\"}"
+      expect(OligrapherGraphData.dump(OligrapherGraphData.new(foo_bar_hash)))
+        .to eq foo_bar_json
+    end
+
+    it 'converts hash to json via to_json' do
+      expect(OligrapherGraphData.new(foo_bar_hash).to_json)
+        .to eq foo_bar_json
     end
 
     it 'raises error if given other object' do
@@ -39,12 +47,12 @@ describe OligrapherGraphData do
 
   describe '==' do
     specify do
-      expect(OligrapherGraphData.new('foo' => 'bar') == OligrapherGraphData.new("{\"foo\":\"bar\"}"))
+      expect(OligrapherGraphData.new(foo_bar_hash) == OligrapherGraphData.new(foo_bar_json))
         .to be true
     end
 
     specify do
-      expect(OligrapherGraphData.new('foo => 'bar') == OligrapherGraphData.new("{\"foo\":\"baz\"}"))
+      expect(OligrapherGraphData.new(foo_bar_hash) == OligrapherGraphData.new("{\"foo\":\"baz\"}"))
         .to be false
     end
   end
@@ -55,8 +63,12 @@ describe OligrapherGraphData do
     end
 
     it 'parses string' do
-      expect(OligrapherGraphData.load("{\"foo\":\"bar\"}"))
-        .to eq OligrapherGraphData.new('foo' => 'bar')
+      expect(OligrapherGraphData.load(foo_bar_json)).to eq OligrapherGraphData.new(foo_bar_hash)
+    end
+
+    it 'duplicate OligrapherGraphData' do
+      expect(OligrapherGraphData.load(OligrapherGraphData.new(foo_bar_hash)))
+        .to eq OligrapherGraphData.new(foo_bar_hash)
     end
   end
 end

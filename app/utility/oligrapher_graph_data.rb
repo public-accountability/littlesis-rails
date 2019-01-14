@@ -18,6 +18,12 @@ class OligrapherGraphData
     freeze
   end
 
+  def dump
+    JSON.dump(@hash)
+  end
+
+  alias to_json dump
+
   def ==(other)
     other.instance_of?(self.class) && @hash == other.hash
   end
@@ -27,16 +33,16 @@ class OligrapherGraphData
   class SerializationTypeMismatch < ActiveRecord::SerializationTypeMismatch; end
 
   def self.dump(obj)
-    raise SerializationTypeMismatch unless obj.nil? || obj.is_a?(OligrapherGraphData)
+    unless obj.nil? || obj.is_a?(OligrapherGraphData) || obj.is_a?(Hash)
+      raise SerializationTypeMismatch
+    end
 
-    return if obj.nil? || obj.hash.blank?
-
-    JSON.dump(obj.hash)
+    obj.blank? ? nil : obj.to_json
   end
 
   def self.load(obj)
-    TypeCheck.check obj, [String, Hash], allow_nil: true
+    TypeCheck.check obj, [String, Hash, OligrapherGraphData], allow_nil: true
 
-    obj.nil? ? new(nil) : new(obj)
+    obj.is_a?(OligrapherGraphData) ? obj.dup : new(obj)
   end
 end
