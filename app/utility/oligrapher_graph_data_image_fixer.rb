@@ -42,10 +42,14 @@ class OligrapherGraphDataImageFixer
 
     Rails.logger.debug "[OligrapherGraphDataImageFixer] Checking url: #{url}"
 
-    HTTParty
-      .head(url, follow_redirects: true, maintain_method_across_redirects: true)
-      .code
-      .eql?(200)
+    response = HTTParty.head(url, follow_redirects: true, maintain_method_across_redirects: true)
+
+    # Check response code
+    return false unless response.code.eql?(200)
+
+    # Due to an issue with our image store, there are some images that return 200 but are empty.
+    # If the headers have a content-length field that's zero, then the image is not valid.
+    !response.headers.fetch('content-length', 1).to_i.zero?
   end
 
   def entity_lookup

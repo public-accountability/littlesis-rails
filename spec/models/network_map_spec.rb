@@ -244,7 +244,7 @@ describe NetworkMap, type: :model do
     before do
       e1_image
       network_map
-      allow(HTTParty).to receive(:head).and_return double(:code => 200)
+      allow(HTTParty).to receive(:head).and_return double(:code => 200, :headers => {})
     end
 
     it 'updates node with missing image url' do

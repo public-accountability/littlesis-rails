@@ -11,7 +11,9 @@ describe OligrapherGraphDataImageFixer do
   def expect_http_to_receive_url(url)
     expect(HTTParty).to receive(:head)
                           .with(url, kind_of(Hash))
-                          .and_return(double(code: 200))
+                          .and_return(
+                            double(:code => 200,
+                                   :headers => { 'content-length' => '1000' }))
   end
 
   describe 'no images need to be updated' do
