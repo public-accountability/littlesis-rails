@@ -6,6 +6,8 @@ class NetworkMap < ApplicationRecord
 
   DEFAULT_DATA = JSON.dump(entities: [], rels: [], texts: []).freeze
 
+  LS_DATA_SOURCE_BASE_URL = "#{Rails.application.default_url_options[:protocol]}://#{Rails.application.default_url_options[:host]}"
+
   attribute :graph_data, OligrapherGraphData::Type.new
 
   has_paper_trail on: [:update, :destroy]

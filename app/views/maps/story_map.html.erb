@@ -118,7 +118,7 @@
      startIndex: startIndex,
      isEditor: <%= @editable.to_s %>,
      isLocked: <%= (!@editable).to_s %>,
-     dataSource: LsDataSource,
+     dataSource: LsDataSource({ "baseUrl": "<%= NetworkMap::LS_DATA_SOURCE_BASE_URL %>" }),
      showSaveButton: true,
      links: <%= raw(JSON.dump(@links || [])) %>,
      settings: {
