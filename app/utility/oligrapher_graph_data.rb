@@ -7,11 +7,11 @@ class OligrapherGraphData
   def initialize(str_or_hash_or_nil = nil)
     case str_or_hash_or_nil
     when nil
-      @hash = {}
+      @hash = ActiveSupport::HashWithIndifferentAccess.new
     when String
-      @hash = JSON.parse(str_or_hash_or_nil)
-    when Hash
-      @hash = str_or_hash_or_nil
+      @hash = ActiveSupport::HashWithIndifferentAccess.new(JSON.parse(str_or_hash_or_nil))
+    when Hash, ActiveSupport::HashWithIndifferentAccess
+      @hash = ActiveSupport::HashWithIndifferentAccess.new(str_or_hash_or_nil)
     else
       raise TypeError, 'OligrapherGraphData only accepts these types: String, Hash, Nil'
     end
@@ -35,7 +35,9 @@ class OligrapherGraphData
   end
 
   def self.load(obj)
-    TypeCheck.check obj, [String, Hash, OligrapherGraphData], allow_nil: true
+    TypeCheck.check obj,
+                    [String, Hash, ActiveSupport::HashWithIndifferentAccess, OligrapherGraphData],
+                    allow_nil: true
 
     obj.is_a?(OligrapherGraphData) ? obj : new(obj)
   end
