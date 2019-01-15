@@ -6,6 +6,8 @@ class NetworkMap < ApplicationRecord
 
   DEFAULT_DATA = JSON.dump(entities: [], rels: [], texts: []).freeze
 
+  LS_DATA_SOURCE_BASE_URL = "#{Rails.application.default_url_options[:protocol]}://#{Rails.application.default_url_options[:host]}"
+
   attribute :graph_data, OligrapherGraphData::Type.new
 
   has_paper_trail on: [:update, :destroy]
@@ -25,7 +27,8 @@ class NetworkMap < ApplicationRecord
 
   validates :title, presence: true
 
-  before_save :set_defaults, :set_index_data, :generate_secret
+  before_create :generate_secret, :set_defaults
+  before_save :set_index_data
   before_save :start_update_entity_network_map_collections_job, if: :update_network_map_collection?
 
   def set_index_data
@@ -88,6 +91,12 @@ class NetworkMap < ApplicationRecord
                       .map(&:document)
                       .uniq
                       .reject { |d| d.name.blank? }
+  end
+
+  # This updates the images of nodes with new entity urls if they exist
+  def refresh_images
+    self[:graph_data] = graph_data.refresh_images
+    save
   end
 
   def self.entity_type(entity)
