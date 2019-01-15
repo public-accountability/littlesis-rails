@@ -22,6 +22,11 @@ describe NetworkMap, type: :model do
 
     let(:network_map) { build(:network_map, graph_data: graph_data) }
 
+    before do
+      allow(e1).to receive(:featured_image).and_return(nil)
+      allow(e2).to receive(:featured_image).and_return(nil)
+    end
+
     it 'generates string of index data' do
       expect(network_map.generate_index_data)
         .to eql "#{e1.name}, xyz, #{e2.name}, Caption 1"
@@ -146,15 +151,22 @@ describe NetworkMap, type: :model do
   end
 
   describe 'numeric_node_ids' do
+    def org
+      build(:org).tap do |o|
+        allow(o).to receive(:featured_image).and_return(nil)
+      end
+    end
+
     let(:nodes) do
-      { '123' => Oligrapher.entity_to_node(build(:org)),
-        '456' => Oligrapher.entity_to_node(build(:org)),
-        'abc' => Oligrapher.entity_to_node(build(:org)) }
+      { '123' => Oligrapher.entity_to_node(org),
+        '456' => Oligrapher.entity_to_node(org),
+        'abc' => Oligrapher.entity_to_node(org) }
     end
     let(:custom_nodes) do
-      { '789' => Oligrapher.entity_to_node(build(:org)),
-        'abc' => Oligrapher.entity_to_node(build(:org)) }
+      { '789' => Oligrapher.entity_to_node(org),
+        'abc' => Oligrapher.entity_to_node(org) }
     end
+
     let(:graph_data) do
       OligrapherGraphData.new(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
     end
@@ -234,6 +246,11 @@ describe NetworkMap, type: :model do
     end
 
     let(:network_map) { create(:network_map, user_id: 1) }
+
+    before do
+      allow(e1).to receive(:featured_image).and_return(nil)
+      allow(e2).to receive(:featured_image).and_return(nil)
+    end
 
     describe 'entities_removed_from_graph' do
       specify do
