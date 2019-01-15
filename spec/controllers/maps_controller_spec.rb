@@ -2,15 +2,17 @@ require 'rails_helper'
 
 describe MapsController, type: :controller do
   before(:all) do
-    [:set_defaults, :set_index_data, :generate_secret].each do |x|
-      NetworkMap.skip_callback(:save, :before, x)
+    NetworkMap.skip_callback(:save, :before, :set_index_data)
+    [:set_defaults, :generate_secret].each do |x|
+      NetworkMap.skip_callback(:create, :before, x)
     end
   end
 
   after(:all) do
-    [:set_defaults, :set_index_data, :generate_secret].each do |x|
-      NetworkMap.set_callback(:save, :before, x)
+    [:set_defaults, :generate_secret].each do |x|
+      NetworkMap.set_callback(:create, :before, x)
     end
+    NetworkMap.set_callback(:save, :before, :set_index_data)
   end
 
   describe 'routes' do
