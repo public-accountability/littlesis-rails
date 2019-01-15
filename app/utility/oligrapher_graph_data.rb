@@ -30,6 +30,10 @@ class OligrapherGraphData
 
   alias eql? ==
 
+  def image_fixer
+    OligrapherGraphDataImageFixer.new(self)
+  end
+
   def self.load(obj)
     TypeCheck.check obj, [String, Hash, OligrapherGraphData], allow_nil: true
 
