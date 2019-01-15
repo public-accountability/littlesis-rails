@@ -46,7 +46,7 @@
 <% end %>
 
 <script>
- <% if @map.graph_data %>
+ <% if @map.persisted? %>
  var graph = <%= raw(@map.graph_data.to_json) %>;
  graph.id = <%= @map.id %>;
  <% else %>
