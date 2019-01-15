@@ -30,8 +30,10 @@ class OligrapherGraphData
 
   alias eql? ==
 
-  def image_fixer
-    OligrapherGraphDataImageFixer.new(self)
+  # returns new OligrapherGraphData with updated images
+  def refresh_images
+    image_fixer = OligrapherGraphDataImageFixer.new(self)
+    image_fixer.changed? ? image_fixer.oligrapher_graph_data : self
   end
 
   def self.load(obj)

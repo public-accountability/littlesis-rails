@@ -226,6 +226,40 @@ describe NetworkMap, type: :model do
     end
   end
 
+  describe 'refresh image' do
+    let(:e1) { create(:entity_person) }
+    let(:e2) { create(:entity_person) }
+    let(:e1_image) { create(:image, entity: e1, is_featured: true) }
+    let(:nodes) do
+      { e1.id.to_s => Oligrapher.entity_to_node(e1),
+        e2.id.to_s => Oligrapher.entity_to_node(e2) }
+    end
+
+    let(:oli_graph_data) do
+      OligrapherGraphData.new(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
+    end
+
+    let(:network_map) { create(:network_map, graph_data: oli_graph_data, user_id: 1) }
+
+    before do
+      e1_image
+      network_map
+      allow(HTTParty).to receive(:head).and_return double(:code => 200)
+    end
+
+    it 'updates node with missing image url' do
+      new_graph_data = oli_graph_data.to_h.deep_dup
+
+      expect(network_map.graph_data['nodes'][e2.id.to_s]['display']['image']).to be nil
+      expect(network_map.graph_data['nodes'][e1.id.to_s]['display']['image']).to eq e1_image.s3_url('profile')
+
+      e2_image = create(:image, entity: e2, is_featured: true)
+      new_graph_data['nodes'][e2.id.to_s]['display']['image'] = e2_image.s3_url('profile')
+      network_map.refresh_images
+      expect(network_map.graph_data.to_h).to eq new_graph_data
+    end
+  end
+
   describe 'Entity Network Map Collection functions' do
     let(:e1) { create(:entity_org) }
     let(:e2) { create(:entity_org) }

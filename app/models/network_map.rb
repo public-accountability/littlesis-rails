@@ -92,6 +92,12 @@ class NetworkMap < ApplicationRecord
                       .reject { |d| d.name.blank? }
   end
 
+  # This updates the images of nodes with new entity urls if they exist
+  def refresh_images
+    self[:graph_data] = graph_data.refresh_images
+    save
+  end
+
   def self.entity_type(entity)
     return entity['type'] if entity['type'].present?
 
