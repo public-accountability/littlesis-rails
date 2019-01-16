@@ -4,11 +4,21 @@ class CommonName < ApplicationRecord
   validates :name, presence: true, uniqueness: true
   before_create :standardize_name
 
+  CACHE_EXPIRY = 30.days
+
   def self.includes?(name)
     upcase_name = name.upcase
-    Rails.cache.fetch("common_name/#{upcase_name}", expires_in: 30.days) do
+    Rails.cache.fetch(cache_key(upcase_name), expires_in: CACHE_EXPIRY) do
       exists?(name: upcase_name)
     end
+  end
+
+  def self.warm_cache
+    all.pluck(:name).each { |name| includes?(name) }
+  end
+
+  private_class_method def self.cache_key(value)
+    "common_name/#{value}"
   end
 
   private
