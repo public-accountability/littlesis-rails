@@ -5,7 +5,10 @@ class CommonName < ApplicationRecord
   before_create :standardize_name
 
   def self.includes?(name)
-    exists?(name: name.upcase)
+    upcase_name = name.upcase
+    Rails.cache.fetch("common_name/#{upcase_name}", expires_in: 30.days) do
+      exists?(name: upcase_name)
+    end
   end
 
   private
