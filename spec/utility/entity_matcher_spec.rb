@@ -274,7 +274,12 @@ describe EntityMatcher, :sphinx do
         let(:match) { generate_test_case name_last: 'Doe' }
         let(:match_uncommon_name) { generate_test_case name_last: 'uncommon' }
 
-        before { CommonName.create!(name: 'DOE') }
+        before do
+          Rails.cache.clear
+          CommonName.create!(name: 'DOE')
+        end
+
+        after { Rails.cache.clear }
 
         it 'determines if match has a common last name' do
           expect(subject.new(test_case, match).result.common_last_name)
