@@ -44,6 +44,19 @@ describe 'NameParser', :name_parser_helper do
 
     assert_parsed_name "STEYER, THOMAS FAHR (TOM)",
                        first: 'Thomas', last: 'Steyer', middle: 'Fahr', nick: 'Tom'
+
+    assert_parsed_name 'MCNABB, FREDERICK, WILLIAM',
+                       first: 'Frederick', last: 'McNabb', middle: 'William'
+  end
+
+  describe 'prettyify' do
+    specify do
+      expect(NameParser.new(nil).send(:prettify, 'EVE')).to eq 'Eve'
+    end
+
+    specify do
+      expect(NameParser.new(nil).send(:prettify, 'MCNABB')).to eq 'McNabb'
+    end
   end
 
   it 'return blank hash if called with a non-string' do

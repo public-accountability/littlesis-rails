@@ -418,10 +418,8 @@ class NameParser
   end
 
   def smart_capitalize(s)
-    if MC_NAME.match?(s.downcase)
-      return s.capitalize if MAC_EXCEPTIONS.include?(s.downcase)
-      match = s.match(/\b(ma?c)([A-Za-z]+)/)
-      return s.gsub(/\bma?c[A-Za-z]+/) { match[1].capitalize + match[2].capitalize }
+    if MC_NAME.match?(s.downcase) && !MAC_EXCEPTIONS.include?(s.downcase)
+      s.match(/\b(ma?c)(\S+)/i)[1..2].map(&:capitalize).join
     else
       s.capitalize
     end
