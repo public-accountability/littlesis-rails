@@ -1,24 +1,29 @@
 # frozen_string_literal: true
 
+# iapd_json_file = Rails.root.join('advisors.json')
+
+iapd_json_file = Rails.root.join('top_200.json')
+
 # how to run: $ bin/rails runner ./lib/scripts/iapd.rb
-# requires presence of "iapd.json" at root of repo
 # generates two files: data/iapd_owners.csv and data/iapd_filers.csv
 
 require 'json'
 require Rails.root.join('lib', 'utility.rb').to_s
 
-iapd_json_file = Rails.root.join('iapd.json')
+TEN_BILLION = 10_000_000_000
 
 iapd = JSON.parse(File.read(iapd_json_file))
-          .select { |h| h["assets_under_management"] && h["assets_under_management"] >= 1_000_000_000 }
+          # .select { |h| h['assets_under_management'] && h['assets_under_management'] >= TEN_BILLION }
 
 Filer = Struct.new(:name,
                    :sec_file_number,
+                   :crd_number,
                    :assets_under_management,
                    :matched_entity_name,
                    :matched_entity_id,
                    :matched_entity_url,
-                   :automatch)
+                   :automatch,
+                   :iapd_link)
 
 IapdRelationship = Struct.new(:filer_sec_number,
                               :schedule,
@@ -37,7 +42,10 @@ IapdRelationship = Struct.new(:filer_sec_number,
                               :intermediary_entity_automatch)
 
 process_iapd = proc do |filer|
-  f = Filer.new(*filer.values_at('name', 'sec_file_number', 'assets_under_management'))
+  f = Filer.new(*filer.values_at('name', 'sec_file_number', 'crd_number', 'assets_under_management'))
+
+  f.iapd_link = "https://adviserinfo.sec.gov/Firm/#{f.crd_number}"
+
   match_results = EntityMatcher.find_matches_for_org(f.name)
   unless match_results.empty?
     matched_entity        = match_results.first.entity
@@ -87,7 +95,7 @@ Utility.save_hash_array_to_csv(
   iapd.map(&process_iapd).map(&:to_h)
 )
 
-Utility.save_hash_array_to_csv(
-  Rails.root.join('data', 'iapd_owners.csv').to_s,
-  iapd.map(&process_owners).flatten.map(&:to_h)
-)
+# Utility.save_hash_array_to_csv(
+#   Rails.root.join('data', 'iapd_owners.csv').to_s,
+#   iapd.map(&process_owners).flatten.map(&:to_h)
+# )
