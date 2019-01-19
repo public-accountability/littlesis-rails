@@ -14,6 +14,8 @@
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
+/log/*.pid
+/log/*.lock
 /tmp
 .cache/
 
@@ -24,26 +26,24 @@
 /config/lilsis.yml
 /config/secrets.yml
 
-# Ignore dumb OS X files
-*.DS_Store
-
-# Ignore pesky tern files
-.tern-port
-
 # Ignore sphinx indexes
 /db/sphinx
 
-# Ignore sphinx thingy
-/log/production.sphinx.pid
-/log/development.sphinx.pid
-
 # Ignore sphinx config
-config/production.sphinx.conf
-config/development.sphinx.conf
-config/test.sphinx.conf
-public/assets/*
+/config/*sphinx.conf
 
-# generated test error files
+# Ignore compiled assets
+/public/assets/*
+
+# Misc files 
+.DS_Store
+.tern-port
+.bash_history
+.pry_history
+.irb-history
+.gem
+
+# Generated test error files
 spec/testdata/*_errors.txt
 
 # coverage files
@@ -54,20 +54,14 @@ doc/
 
 # Passenger files
 .passenger/
-log/*.lock
 
-.bash_history
-.pry_history
-.irb-history
-.gem
+# ignore json stored in the top level
+/*.json
 
-# everything in the data folder is ignored outright
+# Everything in the data folder is ignored outright
 /data/*
 
 # add data files here if they need to be included:
 !/data/members114.csv
 !/data/members114_ids.csv
 !/data/cmp_matches.yml
-
-
-/iapd.json
