@@ -29,9 +29,9 @@ describe EntitiesHelper do
   end
 
   describe '#checkboxes' do
-    it 'contains all 7 tier two types' do
+    it 'contains all 8 tier two types' do
       expect(helper.checkboxes(build(:org), ExtensionDefinition.org_types_tier2)
-               .reduce(:+).scan('<span class="entity-type-name"').count).to eq 7
+               .reduce(:+).scan('<span class="entity-type-name"').count).to eq 8
     end
 
     it 'contains all 21 tier 3 types' do
@@ -39,9 +39,9 @@ describe EntitiesHelper do
                .reduce(:+).scan('<span class="entity-type-name"').count).to eq 21
     end
 
-    it 'contains all 9 extension person types' do
+    it 'contains all 10 extension person types' do
       expect(helper.checkboxes(build(:person), ExtensionDefinition.person_types)
-               .reduce(:+).scan('<span class="entity-type-name"').count).to eq 9
+               .reduce(:+).scan('<span class="entity-type-name"').count).to eq 10
     end
 
     it 'contains one checkbox if org has an extension' do
@@ -49,8 +49,9 @@ describe EntitiesHelper do
       org.add_extension('Business')
       expect(helper.checkboxes(org, ExtensionDefinition.org_types_tier2)
                .reduce(:+).scan('glyphicon-check').count).to eq 1
+
       expect(helper.checkboxes(org, ExtensionDefinition.org_types_tier2)
-               .reduce(:+).scan('glyphicon-unchecked').count).to eq 6
+               .reduce(:+).scan('glyphicon-unchecked').count).to eq 7
     end
   end
 
