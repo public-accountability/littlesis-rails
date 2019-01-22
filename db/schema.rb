@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_22_191600) do
+ActiveRecord::Schema.define(version: 2019_01_22_195730) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1399,6 +1399,15 @@ ActiveRecord::Schema.define(version: 2019_01_22_191600) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "stockbrokers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "entity_id", null: false
+    t.integer "crd_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["crd_number"], name: "index_stockbrokers_on_crd_number", unique: true
+    t.index ["entity_id"], name: "index_stockbrokers_on_entity_id", unique: true
+  end
+
   create_table "tag", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "name", limit: 100
     t.boolean "is_visible", default: true, null: false
@@ -1637,6 +1646,7 @@ ActiveRecord::Schema.define(version: 2019_01_22_191600) do
   add_foreign_key "sf_guard_user_permission", "sf_guard_permission", column: "permission_id", name: "sf_guard_user_permission_ibfk_2", on_delete: :cascade
   add_foreign_key "sf_guard_user_permission", "sf_guard_user", column: "user_id", name: "sf_guard_user_permission_ibfk_1", on_delete: :cascade
   add_foreign_key "social", "relationship", name: "social_ibfk_1", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "stockbrokers", "entity"
   add_foreign_key "transaction", "entity", column: "contact1_id", name: "transaction_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "entity", column: "contact2_id", name: "transaction_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "relationship", name: "transaction_ibfk_1", on_update: :cascade, on_delete: :cascade

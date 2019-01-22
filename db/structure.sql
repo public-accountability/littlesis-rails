@@ -2090,6 +2090,21 @@ CREATE TABLE `sphinx_index` (
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `stockbrokers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stockbrokers` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `entity_id` bigint(20) NOT NULL,
+  `crd_number` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_stockbrokers_on_entity_id` (`entity_id`),
+  UNIQUE KEY `index_stockbrokers_on_crd_number` (`crd_number`),
+  CONSTRAINT `fk_rails_50cb4280fd` FOREIGN KEY (`entity_id`) REFERENCES `entity` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2464,6 +2479,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20181218211422'),
 ('20190102183459'),
 ('20190107194942'),
-('20190122191600');
+('20190122191600'),
+('20190122195730');
 
 
