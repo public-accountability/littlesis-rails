@@ -11,18 +11,11 @@ describe ExtensionDefinition, type: :model do
 
   describe 'person types & org types' do
     it 'returns all person types' do
-      expect(ExtensionDefinition).to receive(:where)
-                                       .with(parent_id: 1)
-                                       .once
-                                       .and_return(double(order: { name: :asc }))
-      ExtensionDefinition.person_types
+      expect(ExtensionDefinition.person_types.count).to eq 9
     end
 
     it 'returns all org types' do
-      expect(ExtensionDefinition).to receive(:where)
-                                       .with(parent_id: 2).once
-                                       .and_return(double(order: { name: :asc }))
-      ExtensionDefinition.org_types
+      expect(ExtensionDefinition.org_types.count).to eq 28
     end
   end
 
@@ -36,6 +29,10 @@ describe ExtensionDefinition, type: :model do
 
   it 'has Elite Consensus' do
     expect(ExtensionDefinition.find(40).name).to eql 'EliteConsensus'
+  end
+
+  xit 'has Stockbroker' do
+    expect(ExtensionDefinition.find(41).name).to eql 'Stockbroker'
   end
 
   describe 'display_names' do

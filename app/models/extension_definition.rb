@@ -15,20 +15,36 @@ class ExtensionDefinition < ApplicationRecord
   PERSON_ID = 1
   ORG_ID = 2
 
+  def self.not_tier_one
+    where.not(tier: 1)
+  end
+
+  def self.matches_parent_id_or_nil(parent_id)
+    arel_table[:parent_id].eq(parent_id).or(arel_table[:parent_id].eq(nil))
+  end
+
   def self.person_types
-    where(parent_id: PERSON_ID).order(name: :asc)
+    not_tier_one
+      .where(matches_parent_id_or_nil(PERSON_ID))
+      .order(name: :asc)
   end
 
   def self.org_types
-    where(parent_id: ORG_ID).order(name: :asc)
+    not_tier_one
+      .where(matches_parent_id_or_nil(ORG_ID))
+      .order(name: :asc)
   end
 
   def self.org_types_tier2
-    where(parent_id: ORG_ID, tier: 2).order(name: :asc)
+    where(matches_parent_id_or_nil(ORG_ID))
+      .where(tier: 2)
+      .order(name: :asc)
   end
 
   def self.org_types_tier3
-    where(parent_id: ORG_ID, tier: 3).order(name: :asc)
+    where(matches_parent_id_or_nil(ORG_ID))
+      .where(tier: 3)
+      .order(name: :asc)
   end
 
   def self.definition_ids_with_fields
