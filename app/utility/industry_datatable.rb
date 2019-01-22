@@ -35,7 +35,7 @@ class IndustryDatatable
   def entity_data(entity)
     {
       id: entity.id,
-      url: entity.legacy_url,
+      url: entity.url,
       name: entity.name,
       rels_url: datatable_entity_path(entity),
       blurb: entity.blurb,

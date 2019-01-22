@@ -50,5 +50,9 @@ describe Routes, type: :feature do
     it 'generates path for a person' do
       expect(Routes.entity_path(person)).to eql "/person/#{person.to_param}"
     end
+
+    it 'generates edit entity path' do
+      expect(Routes.edit_entity_path(person)).to eql "/person/#{person.to_param}/edit"
+    end
   end
 end
