@@ -27,18 +27,25 @@ module Routes
   ROUTES_TO_MODIFY.each do |route|
     define_method("#{route}_path", MODIFY_PATH)
     define_method("#{route}_url", MODIFY_PATH)
+
+    define_singleton_method("#{route}_path") do |entity|
+      modify_entity_path(
+        Rails.application.routes.url_helpers.public_send("#{route}_path", entity),
+        entity
+      )
+    end
+
+    define_singleton_method("#{route}_url") do |entity|
+      modify_entity_path(
+        Rails.application.routes.url_helpers.public_send("#{route}_url", entity),
+        entity
+      )
+    end
   end
 
   def self.modify_entity_path(str, entity)
     raise ArgumentError unless str.is_a?(String) && entity.is_a?(Entity)
+
     REPLACE_ENTITIES_IN_STRING.call(str, entity)
-  end
-
-  def self.entity_url(entity)
-    modify_entity_path(Rails.application.routes.url_helpers.entity_url(entity), entity)
-  end
-
-  def self.entity_path(entity)
-    modify_entity_path(Rails.application.routes.url_helpers.entity_path(entity), entity)
   end
 end
