@@ -75,7 +75,8 @@ module EntityExtensions
         'Couple',
         'ResearchInstitute',
         'GovernmentAdvisoryBody',
-        'EliteConsensus'
+        'EliteConsensus',
+        'Stockbroker'
       ]
     end
 
@@ -92,7 +93,8 @@ module EntityExtensions
         'BusinessPerson',
         'Lobbyist',
         'PoliticalFundraising',
-        'Couple'
+        'Couple',
+        'Stockbroker'
       ]
     end
 
