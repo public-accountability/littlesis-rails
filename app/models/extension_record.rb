@@ -9,7 +9,7 @@ class ExtensionRecord < ApplicationRecord
                   meta: { entity1_id: :entity_id }
 
   belongs_to :entity, inverse_of: :extension_records, touch: true, optional: true
-  belongs_to :extension_definition, foreign_key: "definition_id", inverse_of: :extension_records
+  belongs_to :extension_definition, foreign_key: 'definition_id', inverse_of: :extension_records
 
   # Returns nested array:
   # [ [ count, display_name ] ]

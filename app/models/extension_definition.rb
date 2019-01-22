@@ -1,8 +1,16 @@
+# frozen_string_literal: true
+
 class ExtensionDefinition < ApplicationRecord
   include SingularTable
 
-  has_many :extension_records, foreign_key: "definition_id", inverse_of: :extension_definition
-  has_many :entities, through: :extension_records, inverse_of: :extension_definitions  
+  has_many :extension_records,
+           foreign_key: 'definition_id',
+           inverse_of: :extension_definition,
+           dependent: :nullify
+
+  has_many :entities,
+           through: :extension_records,
+           inverse_of: :extension_definitions
 
   PERSON_ID = 1
   ORG_ID = 2
@@ -30,7 +38,7 @@ class ExtensionDefinition < ApplicationRecord
   # Returns a memozined hash map from definition id to display name
   def self.display_names
     @display_names_lookup ||= all.inject({}) do |acc, ed|
-      acc.tap { |acc| acc.store(ed.id, ed.display_name) }
+      acc.tap { |hash| hash.store(ed.id, ed.display_name) }
     end
   end
 end
