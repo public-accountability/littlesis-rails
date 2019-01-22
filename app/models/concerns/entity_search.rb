@@ -103,7 +103,7 @@ module EntitySearch
           description: e.blurb,
           summary: e.summary,
           primary_type: e.primary_ext,
-          url: e.legacy_url }
+          url: e.url }
     end
 
     def self.entity_no_summary(e)
@@ -111,7 +111,7 @@ module EntitySearch
           name: e.name,
           description: e.blurb,
           primary_type: e.primary_ext,
-          url: e.legacy_url }
+          url: e.url }
     end
 
     private_class_method def self.ts_escape(x)
