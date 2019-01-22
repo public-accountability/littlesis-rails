@@ -73,12 +73,12 @@ class EntitiesController < ApplicationController
                    id: @entity.id,
                    name: @entity.name,
                    description: @entity.blurb,
-                   url: @entity.legacy_url,
+                   url: @entity.url,
                    primary_type: @entity.primary_ext
                  }
                }
       else
-        redirect_to @entity.legacy_url("edit")
+        redirect_to edit_entity_path(@entity)
       end
 
     else # encounted error

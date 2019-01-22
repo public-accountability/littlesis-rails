@@ -124,7 +124,7 @@ describe EntitiesController, type: :controller do
         context 'without errors' do
           it 'redirects to edit url' do
             post :create, params: params
-            expect(response).to redirect_to(Entity.last.legacy_url('edit'))
+            expect(response).to redirect_to Routes.edit_entity_path(Entity.last)
           end
 
           it 'should create a new entity' do
