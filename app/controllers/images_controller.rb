@@ -38,7 +38,7 @@ class ImagesController < ApplicationController
       coords = JSON.parse(params[:coords])
       @image.crop(coords['x'], coords['y'], coords['w'], coords['h'])
     end
-    redirect_to @image.entity.legacy_url
+    redirect_to @image.entity.url
   end
 
   private

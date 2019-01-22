@@ -66,7 +66,7 @@ class ListDatatable
       rank: list_entity.rank,
       id: list_entity.entity.id,
       list_entity_id: list_entity.id,
-      url: list_entity.entity.legacy_url,
+      url: list_entity.entity.url,
       name: list_entity.entity.name,
       rels_url: datatable_entity_path(list_entity.entity),
       remove_url: remove_entity_list_path(list_entity.list, list_entity_id: list_entity.id),
