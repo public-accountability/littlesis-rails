@@ -17,6 +17,7 @@ module EntityExtensions
     has_one :business, inverse_of: :entity, dependent: :destroy
     has_one :government_body, inverse_of: :entity, dependent: :destroy
     has_one :political_fundraising, inverse_of: :entity, dependent: :destroy
+    has_one :stockbroker, inverse_of: :entity, dependent: :destroy
 
     ## extension nexted attributes
     accepts_nested_attributes_for :person
@@ -75,7 +76,8 @@ module EntityExtensions
         'Couple',
         'ResearchInstitute',
         'GovernmentAdvisoryBody',
-        'EliteConsensus'
+        'EliteConsensus',
+        'Stockbroker'
       ]
     end
 
@@ -92,7 +94,8 @@ module EntityExtensions
         'BusinessPerson',
         'Lobbyist',
         'PoliticalFundraising',
-        'Couple'
+        'Couple',
+        'Stockbroker'
       ]
     end
 
