@@ -246,7 +246,9 @@ CREATE TABLE `business` (
   `assets` bigint(20) unsigned DEFAULT NULL,
   `marketcap` bigint(20) unsigned DEFAULT NULL,
   `net_income` bigint(20) DEFAULT NULL,
+  `crd_number` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `index_business_on_crd_number` (`crd_number`),
   KEY `entity_id_idx` (`entity_id`),
   CONSTRAINT `business_ibfk_1` FOREIGN KEY (`entity_id`) REFERENCES `entity` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -272,7 +274,9 @@ CREATE TABLE `business_person` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `sec_cik` bigint(20) DEFAULT NULL,
   `entity_id` bigint(20) NOT NULL,
+  `crd_number` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `index_business_person_on_crd_number` (`crd_number`),
   KEY `entity_id_idx` (`entity_id`),
   CONSTRAINT `business_person_ibfk_1` FOREIGN KEY (`entity_id`) REFERENCES `entity` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=309 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -2466,6 +2470,8 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20190107194942'),
 ('20190122191600'),
 ('20190122195730'),
-('20190123155951');
+('20190123155951'),
+('20190123164450'),
+('20190123170130');
 
 
