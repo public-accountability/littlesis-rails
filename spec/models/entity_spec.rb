@@ -343,7 +343,8 @@ describe Entity, :tag_helper do
                                                  'is_independent' => nil,
                                                  'net_worth' => nil,
                                                  'name_maiden' => nil,
-                                                 'nationality' => []
+                                                 'nationality' => [],
+                                                 'crd_number' => nil
                                                )
       end
     end
