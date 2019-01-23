@@ -11,11 +11,11 @@ describe ExtensionDefinition, type: :model do
 
   describe 'person types & org types' do
     it 'returns all person types' do
-      expect(ExtensionDefinition.person_types.count).to eq 10
+      expect(ExtensionDefinition.person_types.count).to eq 9
     end
 
     it 'returns all org types' do
-      expect(ExtensionDefinition.org_types.count).to eq 29
+      expect(ExtensionDefinition.org_types.count).to eq 28
     end
   end
 
@@ -29,10 +29,6 @@ describe ExtensionDefinition, type: :model do
 
   it 'has Elite Consensus' do
     expect(ExtensionDefinition.find(40).name).to eql 'EliteConsensus'
-  end
-
-  it 'has Stockbroker' do
-    expect(ExtensionDefinition.find(41).name).to eql 'Stockbroker'
   end
 
   describe 'display_names' do
