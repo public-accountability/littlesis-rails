@@ -153,7 +153,7 @@ GEM
     httparty (0.16.3)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
-    i18n (1.5.1)
+    i18n (1.5.3)
       concurrent-ruby (~> 1.0)
     innertube (1.1.0)
     jaro_winkler (1.5.2)
