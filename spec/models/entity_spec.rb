@@ -66,6 +66,25 @@ describe Entity, :tag_helper do
     end
   end
 
+  describe 'hierarchy_relationships' do
+    let(:org1) { create(:entity_org) }
+    let(:org2) { create(:entity_org) }
+    let(:hierarchy_relationship) do
+      create(:hierarchy_relationship, entity: org1, related: org2)
+    end
+
+    before do
+      hierarchy_relationship
+      create(:generic_relationship, entity: org1, related: create(:entity_person))
+    end
+
+    it 'returns one relationship' do
+      relationships = org1.reload.hierarchy_relationships.to_a
+      expect(relationships.size).to eq 1
+      expect(relationships.first).to eq hierarchy_relationship
+    end
+  end
+
   describe '#soft_delete' do
     let(:org) { create(:entity_org) }
     let(:person) { create(:entity_person) }
