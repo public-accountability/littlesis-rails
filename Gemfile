@@ -99,7 +99,7 @@ gem 'redcarpet', '>= 3.4.0'
 gem "recaptcha", '>= 4.6.6', require: "recaptcha/rails"
 
 # Used by `lib/cmp`
-gem "roo", "~> 2.7.0", :require => false
+gem "roo", "~> 2.8.1", :require => false
 
 # Used by NameSimilarity
 gem 'text', '>= 1.3.1'
