@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: https://github.com/stympy/faker.git
-  revision: 7277a9d224a9735ea31624411d94c006c7f0fa48
+  revision: fcbfaa282dc6c2d4c1393bcb65d9fb647c8a5bc0
   branch: master
   specs:
     faker (1.9.1)
@@ -216,8 +216,8 @@ GEM
     paper_trail (10.1.0)
       activerecord (>= 4.2, < 6.0)
       request_store (~> 1.1)
-    parallel (1.12.1)
-    parser (2.5.3.0)
+    parallel (1.13.0)
+    parser (2.6.0.0)
       ast (~> 2.4.0)
     phantomjs (2.1.1.0)
     popper_js (1.14.5)
@@ -289,7 +289,7 @@ GEM
     rspec-mocks (3.8.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
-    rspec-rails (3.8.1)
+    rspec-rails (3.8.2)
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       railties (>= 3.0)
@@ -298,7 +298,7 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
-    rubocop (0.62.0)
+    rubocop (0.63.1)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.5, != 2.5.1.1)
