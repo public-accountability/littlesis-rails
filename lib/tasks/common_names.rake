@@ -14,4 +14,9 @@ namespace :common_names do
       end
     end
   end
+
+  desc 'warm cache'
+  task warm_cache: :environment do
+    CommonName.warm_cache
+  end
 end
