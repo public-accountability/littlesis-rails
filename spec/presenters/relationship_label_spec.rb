@@ -104,6 +104,38 @@ describe RelationshipLabel do
     end
   end
 
+  describe 'service/transaction relationship' do
+    context 'without amount' do
+      let(:relationship) do
+        build(:transaction_relationship, amount: nil,  description1: 'Contractor', description2: 'Client')
+      end
+      it { is_expected.to eql "Client" }
+
+      describe 'reversed relationship' do
+        subject { RelationshipLabel.new(relationship, true).label }
+        it { is_expected.to eql "Contractor" }
+      end
+    end
+
+    context 'with amount' do
+      context 'with description1' do 
+        let(:relationship) do
+          build(:transaction_relationship, amount: 10_000,  description1: 'Contractor', description2: 'Client')
+        end
+
+        it { is_expected.to eql "Client · $10,000" }
+      end
+
+      context 'without description1' do 
+        let(:relationship) do
+          build(:transaction_relationship, amount: 10_000,  description1: '', description2: '')
+        end
+
+        it { is_expected.to eql "Service/Transaction · $10,000" }
+      end
+    end
+  end
+
   context 'social relationships' do
     context 'description fields are filled out' do
       let(:relationship) do
