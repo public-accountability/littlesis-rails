@@ -35,6 +35,7 @@ class RelationshipLabel < SimpleDelegator
     return title if is_position? || is_member?
     return humanize_contributions if is_donation?
     return education_label if is_education?
+    return transaction_label if is_transaction?
     text = is_reverse ? description1 : description2
     return text if text.present?
     default_description
@@ -46,6 +47,13 @@ class RelationshipLabel < SimpleDelegator
     education_description = degree_abbrevation || degree || default_description
     return "#{education_description}, #{education_field}" if education_field
     education_description
+  end
+
+  def transaction_label
+    text = (is_reverse ? description1 : description2).presence || default_description
+    return text if amount.nil? || amount.zero?
+
+    "#{text} · #{amount_display}"
   end
 
   def humanize_contributions
@@ -67,10 +75,7 @@ class RelationshipLabel < SimpleDelegator
       str << ActionController::Base.helpers.pluralize(filings, 'contribution')
     end
 
-    unless amount.nil?
-      str << " · "
-      str << ActiveSupport::NumberHelper.number_to_currency(amount, precision: 0)
-    end
+    str << " · #{amount_display}" unless amount.nil?
     str
   end
 
@@ -106,5 +111,9 @@ class RelationshipLabel < SimpleDelegator
     else
       return ''
     end
+  end
+
+  def amount_display
+    ActiveSupport::NumberHelper.number_to_currency(amount, precision: 0)
   end
 end
