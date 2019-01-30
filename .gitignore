@@ -65,3 +65,11 @@ doc/
 !/data/members114.csv
 !/data/members114_ids.csv
 !/data/cmp_matches.yml
+
+# webpacker
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
