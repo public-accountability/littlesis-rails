@@ -67,6 +67,7 @@ doc/
 !/data/cmp_matches.yml
 
 # webpacker
+!/package.json
 /public/packs
 /public/packs-test
 /node_modules
