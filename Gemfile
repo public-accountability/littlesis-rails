@@ -24,6 +24,9 @@ gem 'mini_magick'
 
 gem 'sprockets', '~> 3.0'
 
+# webpack
+gem 'webpacker', '>= 4.0.x'
+
 gem 'uglifier', '>= 4.1'
 # gem 'bootstrap-sass', '~> 3.3.7'
 gem 'bootstrap', '~> 4.2.1'
