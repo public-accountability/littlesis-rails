@@ -13,4 +13,7 @@ class AdminController < ApplicationController
     @page = params.fetch('page', 1)
     @time = params.fetch('time', 'week')
   end
+
+  def test
+  end
 end

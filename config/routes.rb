@@ -39,6 +39,7 @@ Lilsis::Application.routes.draw do
     get '/', action: :home
     get '/tags', action: :tags
     get '/stats', action: :stats
+    get '/test', action: :test
   end
 
   resources :dashboard_bulletins, except: [:show]
