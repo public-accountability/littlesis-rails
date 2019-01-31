@@ -1,2 +1,0 @@
-* * * * * /bin/bash -l -c 'cd /var/www/littlesis/rails && RAILS_ENV=development bundle exec rake users:create_from_new_profiles --silent >> /dev/null 2>&1'
-0 0 * * * /bin/bash -l -c 'cd /var/www/littlesis/rails && RAILS_ENV=development bundle exec rake sessions:clear_expired --silent >> /dev/null 2>&1'
