@@ -23,3 +23,16 @@ describe('range', () => {
 });
 
 
+describe('randomDigitStringId', () => {
+  it('returns 10 digits by default', () => {
+    expect(utility.randomDigitStringId().length).toEqual(10);
+  });
+
+  it('can returns number of digits provided by value', () => {
+    expect(utility.randomDigitStringId(3).length).toEqual(3);
+  });
+
+  it('raises error if given more than 14 digits', () => {
+    expect(() => utility.randomDigitStringId(15)).toThrow();
+  });
+});
