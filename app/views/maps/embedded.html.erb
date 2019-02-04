@@ -14,7 +14,7 @@
 </a>
 
 <script>
-  var graph = <%= raw(@map.graph_data) %>;
+  var graph = <%= raw(@map.graph_data.to_json) %>;
   graph.id = <%= @map.id %>;
   
   var annotations = <%= raw(@map.annotations_data) %>;
