@@ -1,8 +1,6 @@
 import utility from 'packs/common/utility';
 
-
 describe('entityLink', () => {
-
   it('returns link for person', () => {
     expect(utility.entityLink('123', 'jane doe', 'person'))
       .toEqual('https://littlesis.org/person/123-jane_doe');
@@ -134,6 +132,11 @@ describe('string utilities', () => {
   test('formatIdSelector', () => {
     expect(utility.formatIdSelector('foo')).toEqual('#foo');
     expect(utility.formatIdSelector('#foo')).toEqual('#foo');
+  });
+
+  test('removeHashFromId', () => {
+    expect(utility.removeHashFromId('foo')).toEqual('foo');
+    expect(utility.removeHashFromId('#foo')).toEqual('foo');
   });
 });
 
@@ -319,5 +322,78 @@ describe('object utilities', () => {
       expect(utility.isEmpty([])).toEqual(true);
       expect(utility.isEmpty([1, 2])).toEqual(false);
     });
+  });
+});
+
+
+describe('redirectTo', ()=>{
+  it('calls replace with path', () => {
+    jest.spyOn(document.location, 'replace').mockImplementation(x => x);
+    utility.redirectTo('/example/path');
+    expect(document.location.replace.mock.calls.length).toEqual(1);
+  });
+});
+
+
+describe('#createElementWithText', () => {
+  document.body.innerHTML = '<div id="test"><div/>';
+  
+  it('creates a new element', () => {
+    document
+      .getElementById('test')
+      .appendChild(utility.createElementWithText('p', 'just a simple paragraph'));
+
+    expect( document.querySelector('#test > p').innerHTML).toEqual('just a simple paragraph');
+  });
+});
+
+describe('#createElement', () => {
+  beforeEach(() => document.body.innerHTML = '<div id="create-element-test"></div>');
+  
+  it('defaults to div', () => {
+    document.getElementById('create-element-test').appendChild(utility.createElement());
+    expect(document.querySelectorAll('#create-element-test > div').length ).toEqual(1);
+  });
+
+  it('can be initalized with a class', () => {
+    document.getElementById('create-element-test')
+      .appendChild(utility.createElement({ "tag": 'span', "class": 'one two'}));
+    expect(document.querySelector('#create-element-test > span.one.two')).toBeTruthy();
+  });
+
+  it('can be initalized with an id', () => {
+    document.getElementById('create-element-test')
+      .appendChild(utility.createElement({ "id": 'foolsGold'}));
+    expect(document.getElementById('foolsGold')).toBeTruthy();
+  });
+
+  it('create an element with text', () => {
+    document.getElementById('create-element-test')
+      .appendChild(utility.createElement({ "id": 'example', "tag": 'span', "text": 'example' }));
+
+    expect(document.getElementById('example').textContent).toEqual('example');
+  });
+});
+
+
+describe('#createLink', () => {
+  beforeEach(() => document.body.innerHTML = '<div id="test-dom"></div>');  
+
+  it('creates a new link', () => {
+    document.getElementById('test-dom')
+      .appendChild( utility.createLink('https://example.com/'));
+
+    var link = document.querySelector('#test-dom > a');
+    expect( link['href']).toEqual('https://example.com/');
+    expect( link.text).toEqual('');
+  });
+
+  it('can creates a new link with text', () => {
+    document.getElementById('test-dom')
+      .appendChild( utility.createLink('https://example.com/', 'a website'));
+
+    var link = document.querySelector('#test-dom > a');
+    expect( link['href']).toEqual('https://example.com/');
+    expect( link.text).toEqual('a website');
   });
 });

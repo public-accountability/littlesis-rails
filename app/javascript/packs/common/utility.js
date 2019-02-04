@@ -260,6 +260,10 @@ export function formatIdSelector(str) {
   }
 };
 
+export function removeHashFromId(str) {
+  return str.slice(0, 1) === '#' ? str.slice(1) : str;
+};
+
 // OBJECT UTILITIES
 
 // ?Object -> Boolean
@@ -421,15 +425,138 @@ export function removeSpinner(element){
   return element;
 };
 
+// String -> Void
+export function redirectTo(path) {
+  document.location.replace(path);
+};
+
+// -> Object
+// Returns object representation of the query params of the current page url
+export function currentUrlParams() {
+  if (window.location.search  === '') {
+    return {};
+  }
+
+  return window.location.search
+    .replace('?', '')
+    .split('&')
+    .reduce(function(acc, param) {
+      var pair = param.split('=');
+      return set(acc, pair[0], pair[1]);
+  }, {});
+};
+
+/**
+ * Swaps two elements given their ids
+ * Thanks to: https://stackoverflow.com/questions/10716986/swap-2-html-elements-and-preserve-event-listeners-on-them
+ * @param {String} a ID 
+ * @param {String} b ID
+ */
+export function swapDomElementsById(aId, bId) {
+  var a = document.getElementById(aId);
+  var b = document.getElementById(bId);
+  var temp = document.createElement("div");
+
+  a.parentNode.insertBefore(temp, a);
+  // move obj1 to right before obj2
+  b.parentNode.insertBefore(a, b);
+  // move obj2 to right before where obj1 used to be
+  temp.parentNode.insertBefore(b, temp);
+  // remove temporary marker node
+  temp.parentNode.removeChild(temp);
+};
+
+/**
+ * Swaps the value of two inputs given their ids
+ * @param {String} a ID
+ * @param {String} a ID
+ */
+export function swapInputTextById(aId, bId) {
+  var a = document.getElementById(removeHashFromId(aId));
+  var b = document.getElementById(removeHashFromId(bId));
+  var temp = a.value;
+  a.value = b.value;
+  b.value = temp;
+};
+
+
+/**
+ * Creates new element with text content
+ *
+ * @param {String} tagName
+ * @param {String} text
+ * @returns {Element} 
+ */
+export function createElementWithText(tagName, text) {
+  var element = document.createElement(tagName);
+  element.textContent = text;
+  return element;
+};
+
+
+/**
+ * This is a simple wrapper around document.createElement
+ * There are three options:
+ *   - tag (defaults to div)
+ *   - id
+ *   - classtext
+ *   - text (textContent)
+ *
+ * @param {} options
+ * @returns {Element}
+ *
+ */
+export function createElement(options) {
+  var elementConfig = { "tag": 'div', "class": null, "id": null, "text": null};
+
+  if (isObject(options)) {
+     Object.assign(elementConfig, options);
+  }
+
+  var element = document.createElement(elementConfig.tag);
+
+  if (elementConfig['class']) {
+    element.className = elementConfig['class'];
+  }
+  
+  if (elementConfig['id']) {
+    element.setAttribute('id', elementConfig['id']);
+  }
+
+  if (elementConfig['text']) {
+    element.textContent = elementConfig['text'];
+  }
+
+  return element;
+};
+
+/**
+ * Creates an <a> with the provided href and text
+ *
+ * @param {String} href
+ * @param {String} text
+ * @returns {Element}
+ */
+export function createLink(href, text) {
+  var a = document.createElement('a');
+  a.href = href;
+  if (text) {
+    a.textContent = text;
+  }
+  return a;
+};
 
 
 export default {
   range, entityLink, randomDigitStringId, entityInfo,
   relationshipCategories, extensionDefinitions, relationshipDetails,
   validDate, validURL, validPersonName, browserCanOpenFiles,
-  capitalize, formatIdSelector,
+  capitalize, formatIdSelector, removeHashFromId,
   get, getIn, set, setIn, del, deleteIn,
   normalize, stringifyValues, pick, omit,
   exists, isObject, isEmpty,
-  appendSpinner, removeSpinner
+  appendSpinner, removeSpinner,
+  redirectTo, currentUrlParams,
+  swapDomElementsById, swapInputTextById, createElementWithText,
+  createElement, createLink
 };
