@@ -1,8 +1,24 @@
 {
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+
+  "jest": {
+    "roots": [ "app/javascript", "spec/javascripts"],
+    "moduleDirectories": ["node_modules", "app/javascript"],
+    "transform": {
+      "^.+\\.js?$": "babel-jest"
+    }
+  },
+  
   "dependencies": {
     "@rails/webpacker": "^4.0.0-rc.7"
   },
+
   "devDependencies": {
+    "babel-jest": "^24.0.0",
+    "jest": "^24.0.0",
     "webpack-dev-server": "^3.1.14"
   }
 }

@@ -1,7 +1,11 @@
 language: ruby
 dist: trusty
 sudo: required
-cache: bundler
+
+cache:
+  - bundler
+  - yarn
+
 rvm:
   - 2.5.3
 
@@ -27,7 +31,14 @@ before_install:
   - sudo add-apt-repository -y ppa:builds/sphinxsearch-rel22
   - sudo apt-get -qq update
   - sudo apt-get install -y libmariadb-dev libmariadbclient18 sphinxsearch
-  - sudo sh -c 'curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux64.tar.gz | tar -C /usr/local/bin/ -xzf - geckodriver'
+  - nvm install 8
+  - nvm use 8
+  - node --version
+  
+install:
+  - bundle install --jobs=3 --retry=3 --deployment --path=vendor/bundle
+  - yarn install
+
 
 before_script:
   - cp config/database.travis.yml config/database.yml
@@ -38,12 +49,12 @@ before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
-
-script:
   - bundle exec rake db:structure:load
   - bundle exec rake db:seed
+
+script:
   - bundle exec rspec
-#  - bundle exec rake jasmine:ci
+  - yarn test
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
