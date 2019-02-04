@@ -8,4 +8,5 @@
 // layout file, like app/views/layouts/application.html.erb
 
 import utility from './common/utility';
-window.modernUtility = utility;
+window.utility = utility;
+window.utility.delete = utility.del;
