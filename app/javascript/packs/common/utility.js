@@ -47,4 +47,222 @@ export function randomDigitStringId(n) {
 };
 
 
-export default { range, entityLink, randomDigitStringId };
+/**
+ * looks up entity info stored in #entity-info div
+ * @param {string} key
+ * @returns {string}
+ */
+export function entityInfo(key) {
+  return document.getElementById('entity-info').dataset[key];
+};
+
+
+/**
+ * Relationship categories
+ */
+const relationshipCategories = [
+  "",
+  "Position",
+  "Education",
+  "Membership",
+  "Family",
+  "Donation/Grant",
+  "Service/Transaction",
+  "Lobbying",
+  "Social",
+  "Professional",
+  "Ownership",
+  "Hierarchy",
+  "Generic"
+];
+
+/**
+ * Extension Definition / Entity Types
+ */
+const extensionDefinitions = {
+  "1": "Person",
+  "2": "Organization",
+  "3": "Political Candidate",
+  "4": "Elected Representative",
+  "5": "Business",
+  "6": "Government Body",
+  "7": "School",
+  "8": "Membership Organization",
+  "9": "Philanthropy",
+  "10": "Other Not-for-Profit",
+  "11": "Political Fundraising Committee",
+  "12": "Private Company",
+  "13": "Public Company",
+  "14": "Industry/Trade Association",
+  "15": "Law Firm",
+  "16": "Lobbying Firm",
+  "17": "Public Relations Firm",
+  "18": "Individual Campaign Committee",
+  "19": "PAC",
+  "20": "Other Campaign Committee",
+  "21": "Media Organization",
+  "22": "Policy/Think Tank",
+  "23": "Cultural/Arts",
+  "24": "Social Club",
+  "25": "Professional Association",
+  "26": "Political Party",
+  "27": "Labor Union",
+  "28": "Government-Sponsored Enterprise",
+  "29": "Business Person",
+  "30": "Lobbyist",
+  "31": "Academic",
+  "32": "Media Personality",
+  "33": "Consulting Firm",
+  "34": "Public Intellectual",
+  "35": "Public Official",
+  "36": "Lawyer",
+  "37": "Couple",
+  "38": "Academic Research Institute",
+  "39": "Government Advisory Body",
+  "40": "Elite Consensus Group"
+};
+
+/**
+ * Returns a nested array of [ display, fieldname, type ]
+ * possible types: 'text', 'date', 'triboolean', 'boolean', 'money', 'number'
+ * @param {number} category
+ */
+export function relationshipDetails(category) {
+  // reusable fields that are common to multiple categories
+  var title = ['Title', 'description1', 'text'];
+  var isCurrent = ['Is current?', 'is_current', 'triboolean'];
+  var startDate = ['Start date', 'start_date', 'date' ];
+  var endDate = ['End date', 'end_date', 'date' ];
+  var type = ['Type', 'description1', 'text'];
+  var amount = ['Amount', 'amount', 'money'];
+  var goods = ['Goods', 'goods', 'text'];
+  var d1 = ['entity 1 is __ of entity 2', 'description1', 'text'];
+  var d2 = ['entity 2 is __ of entity 1', 'description2', 'text'];
+
+  switch(category) {
+  case 1: // postition
+    return [
+      title, isCurrent, startDate, endDate,
+      ['Board member?', 'is_board', 'boolean' ],
+      ['Executive?', 'is_executive', 'boolean' ],
+      ['Compensation','compensation', 'money' ]
+    ];
+  case 2: // eduction
+    return [
+      type, startDate, endDate,
+      ['Degree', 'degree', 'text'],
+      ['Field', 'education_field', 'text'],
+      ['Dropout?', 'is_dropout', 'boolean']
+    ];
+  case 3: // members
+    return [
+      title, startDate, endDate, isCurrent,
+      ['Membership Dues', 'dues', 'money']
+    ];
+  case 4: // family
+    return [ d1, d2, startDate, endDate, isCurrent ];
+  case 5: // donation
+    return [ type, amount, startDate, endDate, isCurrent, goods ];
+  case 6: // transaction
+    return [ d1, d2, amount, startDate, endDate, isCurrent, goods ];
+  case 7: // lobby
+    throw 'Lobbying relationships are not currently supposed by the bulk add tool';
+  case 8: // social
+    return [ d1, d2, startDate, endDate, isCurrent ];
+  case 9: // professional
+    return [ d1, d2, startDate, endDate, isCurrent ];
+  case 10: // ownership
+    return [ 
+      title, startDate, endDate, isCurrent,
+      [ 'Percent Stake', 'percent_stake', 'number'],
+      [ 'Shares Owned', 'shares', 'number']
+    ];
+  case 11: // hierarchy
+    return [ d1, d2, startDate, endDate, isCurrent ];
+  case 12: // generic
+    return [ d1, d2, startDate, endDate, isCurrent ];
+  default:
+    throw 'Invalid relationship category. It must be a number between 1 and 12';
+  }
+};
+
+
+/**
+ *  Checks if string is in proper format for LittleSis Dates
+ *  Example valid strings:
+ *  1995-01-24
+ *  2008
+ *  2018-12-00
+ * @param {} str
+ * @returns {Boolean}
+ */
+export function validDate(str) {
+  if (str.length === 4 && Boolean(str.match(/[0-9]{4}/))) {
+    return true;
+  }
+  var date = str.split('-');
+  if (date.length !== 3
+      || date[0].length !== 4
+      || date[1].length !== 2
+      || date[2].length !== 2
+      || Number(date[1]) > 12
+      || Number(date[2]) > 31)
+  {
+    return false;
+  }
+  return true;
+};
+
+
+/**
+   Simple url validation. Tests if it begins with 'http://' or 'https://' and is
+   followed by at least one character followed by a dot followed by another character.
+
+   So yes, http://1.blah is a valid url according to these standards...we could go crazy with the regexs...https://mathiasbynens.be/demo/url-regex...but this is FINE
+*/
+export function validURL(str) {
+    const pattern = RegExp('^(https?:\/\/)(.+)[\.]{1}.+$');
+    return pattern.test(str);
+};
+
+
+export function validPersonName(str) {
+  // see specs for documentation of this lovely little regex
+  //return Boolean(str.match(/^[a-z,.'-]+\s[a-z,.'-]+(\s[a-z,.'-]+)?$/i));
+  return Boolean(str.match(/^[^0-9\s]+\s[^0-9\s]+(\s[^0-9\s]+){0,3}$/i));
+};
+
+/**
+ * Determines if the browser has the ability to open and read files
+ * @returns {Boolean}
+ */
+export function browserCanOpenFiles() {
+    return (window.File && window.FileReader && window.FileList && window.Blob);
+};
+
+
+
+/* STRING UTILITIES */
+
+export function capitalize(str) {
+  // NOTE (@aguestuser):
+  // opted for util function isntead of polyfilling String.prototype
+  // b/c I did the latter and it produced a fatal namespace collision with datatables.js
+  return str.slice(0,1).toUpperCase() + str.slice(1);
+};
+
+
+export function formatIdSelector(str) {
+  if (str.slice(0,1) === '#') {
+    return str;
+  } else {
+    return '#' + str;
+  }
+};
+
+export default {
+  range, entityLink, randomDigitStringId, entityInfo,
+  relationshipCategories, extensionDefinitions, relationshipDetails,
+  validDate, validURL, validPersonName, browserCanOpenFiles,
+  capitalize, formatIdSelector
+};
