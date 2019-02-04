@@ -394,6 +394,34 @@ export function isEmpty(obj) {
   return !Boolean(obj) || !Object.keys(obj).length;
 };
 
+// Browser/DOM Utilities
+
+// Element -> Element
+// leverage `sk-circle` classes in `assets/stylesheets/base/spin.css`
+// IMPORTANT: THIS MUST RETURN A VALUE OR CALLING CODE WILL BREAK!!!
+export function appendSpinner(element) {
+
+  var circle = document.createElement('div');
+  circle.classList.add('sk-circle');
+
+  const circleDiv = i => {
+    let div = document.createElement('div');
+    div.classList.add('sk-child', `sk-circle${i}`);
+    return div;
+  };
+
+  range(13, [0]).forEach(i => circle.appendChild(circleDiv(i)));
+  element.appendChild(circle);
+  return element;
+};
+
+// Element -> Element
+export function removeSpinner(element){
+  element.querySelector('.sk-circle').remove();
+  return element;
+};
+
+
 
 export default {
   range, entityLink, randomDigitStringId, entityInfo,
@@ -402,5 +430,6 @@ export default {
   capitalize, formatIdSelector,
   get, getIn, set, setIn, del, deleteIn,
   normalize, stringifyValues, pick, omit,
-  exists, isObject, isEmpty
+  exists, isObject, isEmpty,
+  appendSpinner, removeSpinner
 };
