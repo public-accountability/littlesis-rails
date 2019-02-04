@@ -136,3 +136,188 @@ describe('string utilities', () => {
     expect(utility.formatIdSelector('#foo')).toEqual('#foo');
   });
 });
+
+describe('object utilities', () => {
+  describe('#isObject', () => {
+
+    it('returns true for an object', () => expect(utility.isObject({})).toBe(true));
+
+    it('returns true for a function', () => expect(utility.isObject(() => 'foo')).toBe(true));
+
+    it('returns false for a string', () => {
+      expect(utility.isObject('foo')).toBe(false);
+      expect(utility.isObject('')).toBe(false);
+    });
+
+    it('returns false for a boolean', () => {
+      expect(utility.isObject(true)).toBe(false);
+      expect(utility.isObject(false)).toBe(false);
+    });
+
+    it('returns false for null', () => expect(utility.isObject(null)).toBe(false));
+    it('returns false for undefined', () => expect(utility.isObject(undefined)).toBe(false));
+  });
+
+  describe('#get', () => {
+    const obj = { a: 1, b: 2};
+    
+    it('reads an arbitrary key from an object', () => {
+      expect(utility.get(obj, 'a')).toEqual(1);
+    });
+
+    it('handles non-existent properties', () => {
+      expect(utility.get(obj, "foo")).toEqual(undefined);
+    });
+
+    it('handles null objects', () => {
+      expect(utility.get(null, "foo")).toEqual(undefined);
+    });
+
+    it('handles undefined objects', () => {
+      expect(utility.get(undefined, "foo")).toEqual(undefined);
+    });
+  });
+
+  describe('#getIn', () => {
+    const nestedObj = { a: { b: 2, c: 3 } };
+    it('reads values from a nested sequence of keys in an object', () => {
+      expect(utility.getIn(nestedObj, ["a", "b"])).toEqual(2);
+    });
+
+    it('handles non-existent nested keys', () => {
+      expect(utility.getIn(nestedObj, ["a", "foo"])).toEqual(undefined);
+    });
+
+    it('handles lookup sequences that are longer than depth of object tree', () => {
+      expect(utility.getIn(nestedObj, ["a", "b", "d"])).toEqual(undefined);
+    });
+  });
+
+  describe('#set', () => {
+    const obj = { a: 1, b: 2};
+    
+    it('sets the value for an arbitary key on an object', () => {
+      expect(utility.set(obj, 'c', 3)).toEqual({ a: 1, b: 2, c: 3 });
+    });
+
+    it('does not mutate objects', () => {
+      utility.set(obj, 'c', 3);
+      expect(obj).toEqual({ a: 1, b: 2});
+    });
+
+    it('does not allow newly created entries to be mutated', () => {
+      let _obj = utility.set(obj, 'c', 3);
+      expect(() => _obj.c = 4).toThrowError(/Cannot assign to read only property/);
+    });
+
+    it('does allow newly created entries to be re-set', () => {
+      const _obj = utility.set(obj, 'c', 3);
+      const __obj = utility.set(_obj, 'c', 4);
+      expect(__obj.c).toEqual(4);
+    });
+  });
+
+  describe('#setIn', () => {
+    const nestedObj = { a: { b: 2, c: 3 } };
+    
+    it('sets the value for a nested key in an object', () => {
+      expect(utility.setIn(nestedObj, ['a', 'b'], 4))
+        .toEqual({ a: { b: 4, c: 3 } });
+    });
+
+    it('creates and sets the value for a nested key in an object', () => {
+      expect(utility.setIn(nestedObj, ['a', 'd'], 4))
+        .toEqual({ a: { b: 2, c: 3, d: 4 } });
+    });
+
+    it("handles paths longer than tree", () => {
+      expect(utility.setIn(nestedObj, ["a", "d", "e"], 4))
+        .toEqual({ a: { b: 2, c: 3, d: { e: 4 } } });
+    });
+
+    it('handles wierd paths', () => {
+      expect(utility.setIn(nestedObj, ['a', 'b', 'c'], 4))
+        .toEqual({ a: { b: { c: 4}, c: 3 } } );
+    });
+  });
+
+  describe('#del', () => {
+    const obj = { a: 1, b: 2};
+    it('removes an entry from an object', () => {
+      expect(utility.del(obj, 'a')).toEqual({ b: 2 });
+    });
+  });
+
+  describe('#deleteIn', () => {
+    const nestedObj = { a: { b: 2, c: 3 } };
+    it('removes a nested entry from an object', () => {
+      expect(utility.deleteIn(nestedObj, ['a', 'b']))
+        .toEqual({ a: { c: 3 } });
+    });
+  });
+
+  describe('#normalize', () => {
+
+    it('transforms an array of resources into a lookup table of resources by id', () => {
+      expect(utility.normalize(
+        [
+          { id: 'a', foo: 'bar' },
+          { id: 'b', foo: 'bar' }
+        ]
+      )).toEqual(
+        {
+          a: { id: 'a', foo: 'bar' },
+          b: { id: 'b', foo: 'bar' }
+        }
+      );
+    });
+  });
+
+  describe('stringifyValues', () => {
+    expect(utility.stringifyValues({
+      "a": 1,
+      "b": "b",
+      "c": true
+    })).toEqual({
+      "a": "1",
+      "b": "b",
+      "c": true
+    });
+  });
+
+  describe("#pick", () => {
+    it('returns object with a permitted set of keys', () => {
+      var obj = { a: 1, b: 2, c: 3 };
+      expect(utility.pick(obj, ['a', 'c']))
+	.toEqual({ a: 1, c: 3 });
+    });
+  });
+
+  describe("#omit", () => {
+    it('returns object without rejected set of keys', () => {
+      var obj = { a: 1, b: 2, c: 3 };
+      expect(utility.omit(obj, ['a', 'c']))
+	.toEqual({ b: 2 });
+    });
+  });
+
+  describe('#exists', () => {
+    it('returns true if an object exists, false otherwise', () => {
+      expect(utility.exists(0)).toBe(true);
+      expect(utility.exists(undefined)).toBe(false);
+      expect(utility.exists(null)).toBe(false);
+    });
+  });
+  
+  describe('#isEmpty', () => {
+    it("discovers if an object is empty", () => {
+      expect(utility.isEmpty({"foo": "bar"})).toEqual(false);
+      expect(utility.isEmpty({})).toEqual(true);
+    });
+
+    it('discovers if an array is empty', () => {
+      expect(utility.isEmpty([])).toEqual(true);
+      expect(utility.isEmpty([1, 2])).toEqual(false);
+    });
+  });
+});

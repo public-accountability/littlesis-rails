@@ -260,9 +260,147 @@ export function formatIdSelector(str) {
   }
 };
 
+// OBJECT UTILITIES
+
+// ?Object -> Boolean
+export function isObject(value) {
+  let type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
+};
+
+// Object -> Any
+export function get(obj, key) {
+  let entry = isObject(obj) && Object.getOwnPropertyDescriptor(obj, key);
+  return entry ? entry.value : undefined;
+};
+
+// Object, [String] -> Any
+export function getIn(obj, keys){
+  return keys.reduce(
+    function(acc, key){ return get(acc, key); },
+    obj
+  );
+};
+
+// Object, String, Any -> Object
+export function set(obj, key, value) {
+  var _obj = Object.assign({}, obj);
+  return Object.defineProperty(_obj, key, {
+    configurable: true,
+    enumerable: true,
+    writeable: true,
+    value: value
+  });
+};
+
+
+// Object, [String], Any -> Object
+export function setIn(obj, keys, value){
+  if (keys.length === 0) {
+    return value;
+  };
+
+  return set(obj,
+	     keys[0],
+	     setIn( get(obj, keys[0]), keys.slice(1), value)
+	    );
+};
+
+
+// Object, String -> Object
+export function del(obj, keyToDelete) {
+  return Object.keys(obj).reduce( 
+    function(acc, key) {
+      return key === keyToDelete ?
+        acc :
+        set(acc, key, get(obj, key));
+    },
+    {}
+  );
+};
+
+// Object, [String] -> Object
+export function deleteIn(obj, keys){
+  var leafPath = keys.slice(0, -1);
+  var leafNode = getIn(obj, leafPath);
+  return !(leafPath && leafNode) ?
+    obj :
+    setIn( obj, leafPath, del(leafNode, keys.slice(-1)[0]));
+};
+
+// Object -> Object
+export function stringifyValues(obj) {
+  // stringify all values except booleans
+  // mostly for use in deserializing JSON
+  return Object.keys(obj).reduce(
+    function(acc, k){
+      var val = get(obj, k);
+      return set(
+        acc,
+        k,
+        // only stringify non-boolean existy vals
+        (val === true || val === false) ? val : val && String(val)
+      );
+    },
+    {}
+  );
+};
+
+// [Record] -> { [String]: Record}
+// turn an array of records into a lookup table of records by id
+// see https://github.com/paularmstrong/normalizr
+export function normalize(arr) {
+  return arr.reduce((acc, item) => set(acc, item.id, item), {});
+};
+
+
+/**
+ * Returns object with only the permitted keys
+ * 
+ * @param {Object} obj
+ * @param {Array[String]} keys
+ * @returns {Object}
+ */
+export function pick(obj, keys) {
+  var result = {};
+  keys.forEach(function(k) {
+    result[k] = obj[k];
+  });
+  return result;
+};
+
+/**
+ * Returns object without rejected set of keys
+ * 
+ * @param {Object} obj
+ * @param {Array[String]} keys
+ * @returns {Object}
+ */
+export function omit(obj, keys) {
+  var result = Object.assign({}, obj);
+  keys.forEach(function(k) {
+    delete result[k];
+  });
+  return result;
+};
+
+// Object -> Boolean
+export function exists(obj) {
+  return obj !== undefined && obj !== null;
+};
+
+// Object -> Boolean
+export function isEmpty(obj) {
+  return !Boolean(obj) || !Object.keys(obj).length;
+};
+
+
 export default {
   range, entityLink, randomDigitStringId, entityInfo,
   relationshipCategories, extensionDefinitions, relationshipDetails,
   validDate, validURL, validPersonName, browserCanOpenFiles,
-  capitalize, formatIdSelector
+  capitalize, formatIdSelector,
+  get, getIn, set, setIn, del, deleteIn,
+  normalize, stringifyValues, pick, omit,
+  exists, isObject, isEmpty
 };

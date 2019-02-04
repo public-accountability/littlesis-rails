@@ -9,3 +9,4 @@
 
 import utility from './common/utility';
 window.modernUtility = utility;
+window.modernUtility.delete = utility.del;
