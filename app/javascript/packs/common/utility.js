@@ -19,7 +19,6 @@ export function entityLink (id, name, ext) {
  * @param {array} to_exclude
  * @returns {array} 
  */
-
 export function range(x, toExclude) {
   var range = Array.apply(null, Array(x)).map(function (_, i) {return i;});
   if (Array.isArray(toExclude)) {
@@ -415,7 +414,12 @@ export function appendSpinner(element) {
   };
 
   range(13, [0]).forEach(i => circle.appendChild(circleDiv(i)));
-  element.appendChild(circle);
+
+  if (element.jquery) {
+    element.append(circle);
+  } else {
+    element.appendChild(circle);
+  }
   return element;
 };
 
