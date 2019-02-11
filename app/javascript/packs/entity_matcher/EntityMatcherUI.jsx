@@ -1,39 +1,51 @@
 import React from 'react';
+import { Map } from 'immutable';
+import { toInteger } from 'lodash-es';
 
-const EntityTitle = () => (
-  <div>
-    <h2>Entity matcher</h2>
-    <hr />
-  </div>
-);
+// const stateUpdater = (updateState, oldState) => {
+//   return (field, value) => updateState(oldState.set(field, value));
+// };
 
-const EntityInfoDisplay = ({title, value}) => (
-  <div>
-    <strong>{title}</strong>:  <span>{value}</span>
-  </div>
-);
+const defaultState = () => Map({
+  "entityId": null,
+  "entityInfo": null,
+  "matches": null,
+  "selectedMatch": null,
+  "ignoredMatches": null
+});
 
+// const EntityTitle = () => (
+//   <div>
+//     <h2>Entity matcher</h2>
+//     <hr />
+//   </div>
+// );
 
-const EntityInfo = ({displayData}) => (
-  <div>
-    { displayData .map( (x, i) => <EntityInfoDisplay key={i} title={x.title} value={x.value} />) }
-  </div>
-);
+// const EntityInfoDisplay = ({title, value}) => (
+//   <>
+//     <strong>{title}</strong> <span>{value}</span>
+//   </>
+// );
+
+// const EntityInfo = ({displayData}) => (
+//   <div id="entity-info">
+//     { displayData.map( (x, i) => <EntityInfoDisplay key={i} title={x.title} value={x.value} />) }
+//   </div>
+// );
 
 export class EntityMatcherUI extends React.Component {
   constructor (props) {
     super(props);
-    this.state = { displayData: null };
-    this.entityMatcher = 
-    this.displayData = [ { title: "one", value: "1"}, { title: "two", value: "2"} ];
+    this.state = defaultState();
   }
 
   render() {
     return(
-      <div>
-        <EntityTitle />
-        <EntityInfo displayData={this.displayData} />
-      </div>
+      <>
+        <h1>test</h1>
+        {/* <EntityTitle /> */}
+        {/* <EntityInfo displayData={this.displayData} /> */}
+      </>
     );
   }
 }
