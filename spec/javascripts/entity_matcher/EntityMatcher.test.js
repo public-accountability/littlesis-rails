@@ -1,10 +1,9 @@
 import React from 'react';
-import { EntityMatcherUI } from 'packs/entity_matcher/EntityMatcherUI';
-import { shallow, mount, render } from 'enzyme';
+import { EntityMatcherUI, EntityTitle } from 'packs/entity_matcher/EntityMatcher';
+import { shallow } from 'enzyme';
 
 describe('EntityMatcher', () => {
-  it('renders h1', () => {
-    const wrapper = shallow(<EntityMatcherUI />);
-    expect(wrapper.find('h1').length).toEqual(1);
-  });
+  const wrapper = shallow(<EntityMatcherUI entityId="123" />);
+  it('renders EntityTitle', () => expect(wrapper.find(EntityTitle).length).toEqual(1));
+  it('sets entityId', () => expect(wrapper.state().data.get('entityId')).toEqual(123));
 });
