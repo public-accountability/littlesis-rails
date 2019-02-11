@@ -29,16 +29,19 @@ module Api
     }
   end
 
-  def self.as_api_json(models)
-    api_base(models).deep_merge('data' => models.map(&:api_data))
+  def self.as_api_json(models, meta: true)
+    api_base(models, meta: meta).deep_merge('data' => models.map(&:api_data))
   end
 
-  private_class_method def self.api_base(models)
+  private_class_method def self.api_base(models, meta: true)
     if paginatable_collection?(models)
-      META_HASH.deep_merge('meta' => { :currentPage => models.current_page, :pageCount => models.total_pages })
-    else
-      META_HASH
+      return meta ? { 'meta' => paginate_meta(models).merge(META) } : paginate_meta(models)
     end
+    meta ? META_HASH : {}
+  end
+
+  private_class_method def self.paginate_meta(models)
+    { :currentPage => models.current_page, :pageCount => models.total_pages }
   end
 
   private_class_method def self.paginatable_collection?(collection)
