@@ -40,6 +40,7 @@ Lilsis::Application.routes.draw do
     get '/tags', action: :tags
     get '/stats', action: :stats
     get '/test', action: :test
+    get '/entity_matcher', action: :entity_matcher
   end
 
   resources :dashboard_bulletins, except: [:show]

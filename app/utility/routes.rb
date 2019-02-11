@@ -16,8 +16,10 @@ module Routes
   end
   private_constant :MODIFY_PATH
 
+  EXCLUDED_PATHS = %w[new_entity admin_entity_matcher].freeze
+
   ROUTES_TO_MODIFY = Rails.application.routes.routes.map do |route|
-    if route.name.present? && route.name.include?('entity') && !route.name.include?('api') && route.name != 'new_entity'
+    if route.name.present? && route.name.include?('entity') && !route.name.include?('api') && !EXCLUDED_PATHS.include?(route.name)
       route.name if route.verb == 'GET'
     end
   end.compact.freeze

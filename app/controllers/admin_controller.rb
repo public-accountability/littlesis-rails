@@ -16,4 +16,7 @@ class AdminController < ApplicationController
 
   def test
   end
+
+  def entity_matcher
+  end
 end
