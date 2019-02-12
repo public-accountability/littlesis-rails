@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module NetworkMapsHelper
   def smart_map_path(map)
     # map.annotations.empty? ? map_path(map) : story_map_path(map)
