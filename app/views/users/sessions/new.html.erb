@@ -5,8 +5,10 @@
         </div>
     </div>
     <div class="row">
-        <% if flash[:alert] %>
-            <div class="alert alert-warning"><%= flash[:alert] %></div>
+      <% if flash[:alert] %>
+	<div class="col-sm-4">
+          <div class="alert alert-warning"><%= flash[:alert] %></div>
+	</div>
         <% end %>
     </div>
     <div class="row">
