@@ -207,10 +207,7 @@ Lilsis::Application.routes.draw do
       post 'feature'
       get 'embedded'
       get 'map_json'
-      get 'dev'
-      get 'edit/dev' => 'maps#dev_edit'
       get 'embedded/v2' => 'maps#embedded_v2'
-      get 'embedded/v2/dev' => 'maps#embedded_v2_dev'
     end
 
     collection do
