@@ -35,9 +35,10 @@ module Api
 
   private_class_method def self.api_base(models, meta: true)
     if paginatable_collection?(models)
-      return meta ? { 'meta' => paginate_meta(models).merge(META) } : paginate_meta(models)
+      { 'meta' => paginate_meta(models).merge(meta ? META : {}) }
+    else
+      meta ? META_HASH : {}
     end
-    meta ? META_HASH : {}
   end
 
   private_class_method def self.paginate_meta(models)
