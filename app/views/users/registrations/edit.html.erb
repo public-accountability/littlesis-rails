@@ -2,7 +2,7 @@
   <h2 class="w-100">Edit your settings</h2>
 
   <%= form_for(resource, as: resource_name, url: users_path, html: { method: :put }) do |f| %>
-    <%= devise_error_messages! %>
+    <%= render "devise/shared/error_messages", resource: resource %>
 
     <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
       <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>

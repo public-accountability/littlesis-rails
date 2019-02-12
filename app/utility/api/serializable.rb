@@ -5,14 +5,14 @@ module Api
     extend ActiveSupport::Concern
 
     class_methods do
-      def as_api_json(ids)
-        Api.as_api_json(find(ids))
+      def as_api_json(ids, **options)
+        Api.as_api_json(find(ids), **options)
       end
     end
 
-    def as_api_json(route: nil, **serializer_options)
+    def as_api_json(route: nil, meta: true, **serializer_options)
       json = route.present? ? public_send("api_#{route}") : api_json(serializer_options)
-      api_base.merge(json)
+      meta ? Api::META_HASH.merge(json) : json
     end
 
     # Options Hash-> Hash
@@ -48,10 +48,6 @@ module Api
 
     def api_linkable?
       Api::LINKABLE_CLASSES.include?(self.class.name.downcase.to_sym)
-    end
-
-    def api_base
-      Api::META_HASH
     end
   end
 end

@@ -25,28 +25,37 @@ describe 'Api::Serializable', type: :model do
       expect(Api.as_api_json(models))
         .to eql('data' => mock_api_data, 'meta' => Api::META)
     end
+
+    it 'can exclude META information' do
+      expect(Api.as_api_json(models, meta: false))
+        .to eql('data' => mock_api_data)
+    end
   end
 
   describe 'class methods' do
     subject { TestApiModel }
+
     let(:ids) { [1, 2] }
     let(:mock_api_data) { { a: 1, b: 3 } }
-    let(:mock_model) { TestApiModel.new.tap { |m| expect(m).to receive(:api_data).once.and_return(mock_api_data) } }
+    let(:mock_model) do
+      TestApiModel.new.tap { |m| expect(m).to receive(:api_data).once.and_return(mock_api_data) }
+    end
 
     describe '#as_api_json' do
       it 'returns json response with array of data' do
         expect(subject).to receive(:find).with(ids).and_return([mock_model])
         expect(subject.as_api_json(ids)).to eql('meta' => Api::META, 'data' => [mock_api_data])
       end
+
+      it 'can exclude meata' do
+        expect(subject).to receive(:find).with(ids).and_return([mock_model])
+        expect(subject.as_api_json(ids, meta: false)).to eql('data' => [mock_api_data])
+      end
     end
   end
 
   describe 'instance methods' do
     subject { TestApiModel.new }
-
-    describe '#api_base' do
-      specify { expect(subject.send(:api_base)).to eql('meta' => Api::META) }
-    end
 
     describe '#api_data' do
       specify do
