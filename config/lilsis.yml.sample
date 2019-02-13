@@ -51,6 +51,7 @@ defaults: &defaults
   donation_banner_display: false  # use 'everywhere' to display on all pages and 'homepage' for just the homepage
   donation_banner_html: |
     Today is #GivingTuesday. Please <a href="https://littlesis.org/donate/">make a tax-deductible donation</a><span class="d-sm-none d-md-inline">  to support our efforts to develop and maintain LittleSis.org
+  oligrapher_version: 0.4.1
   
 
 test:
@@ -60,6 +61,7 @@ test:
   asset_host: assets.example.net
   image_asset_host: images.example.net
   donation_banner_display: false
+  oligrapher_version: 0.0.1
 
 development:
   <<: *defaults

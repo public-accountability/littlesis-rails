@@ -22,10 +22,7 @@ describe MapsController, type: :controller do
     it { should route(:delete, '/maps/1706-colorado-s-terrible-ten').to(action: :destroy, id: '1706-colorado-s-terrible-ten') }
     it { should route(:get, '/maps/1706-colorado-s-terrible-ten/embedded').to(action: :embedded, id: '1706-colorado-s-terrible-ten') }
     it { should route(:get, '/maps/1706-colorado-s-terrible-ten/embedded/v2').to(action: :embedded_v2, id: '1706-colorado-s-terrible-ten') }
-    it { should route(:get, '/maps/1706-colorado-s-terrible-ten/embedded/v2/dev').to(action: :embedded_v2_dev, id: '1706-colorado-s-terrible-ten') }
     it { should route(:get, '/maps/1706-colorado-s-terrible-ten/edit').to(action: :edit, id: '1706-colorado-s-terrible-ten') }
-    it { should route(:get, '/maps/1706-colorado-s-terrible-ten/dev').to(action: :dev, id: '1706-colorado-s-terrible-ten') }
-    it { should route(:get, '/maps/1706-colorado-s-terrible-ten/edit/dev').to(action: :dev_edit, id: '1706-colorado-s-terrible-ten') }
     it { should route(:get, '/maps/featured').to(action: :featured) }
     it { is_expected.to route(:get, '/maps/all').to(action: :all) }
     it { should route(:get, '/maps/search').to(action: :search) }
@@ -117,24 +114,6 @@ describe MapsController, type: :controller do
       expect(NetworkMap).to receive(:find).with('10').and_return(@map)
       get :show, params: { id: '10' }
       expect(response.status).to eql 302
-    end
-  end
-
-  describe '#dev' do
-    login_user
-
-    before do
-      @map = build(:network_map, is_private: false, title: 'a map')
-      expect(NetworkMap).to receive(:find).with('10-a-map').and_return(@map)
-      expect(controller).to receive(:check_permission).with('admin')
-      get :dev, params: { id: '10-a-map' }
-    end
-
-    it { should respond_with :success }
-    it { should render_template 'story_map' }
-
-    it 'sets dev_version' do
-      expect(assigns(:dev_version)).to eql true
     end
   end
 

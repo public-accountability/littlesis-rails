@@ -7,6 +7,11 @@
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
   <%= facebook_meta %>
+
+  <% if content_for?(:head) %>
+    <%= yield :head %>
+  <% end %>
+  
   <% if Lilsis::Application.config.respond_to?(:google_site_verification) %>
     <meta name="google-site-verification" content="<%= Lilsis::Application.config.google_site_verification %>" />
   <% end %>

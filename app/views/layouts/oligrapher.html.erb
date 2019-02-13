@@ -7,6 +7,10 @@
     <%= javascript_include_tag "application" %>
     <%= csrf_meta_tags %>
     <%= facebook_meta %>
+
+    <% if content_for?(:head) %>
+      <%= yield :head %>
+    <% end %>
   </head>
   <body>
     <div id="top">

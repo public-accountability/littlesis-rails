@@ -7,6 +7,10 @@ describe NetworkMap, type: :model do
   it { is_expected.to belong_to(:user) }
   it { is_expected.to validate_presence_of(:title) }
 
+  describe 'OLIGRAPHER_VERSION constant' do
+    specify { expect(NetworkMap::OLIGRAPHER_VERSION).to eq '0.0.1' }
+  end
+
   describe '#generate_index_data' do
     let(:e1) { create(:person, :with_person_name, blurb: 'xyz') }
     let(:e2) { create(:person, :with_person_name, blurb: nil) }

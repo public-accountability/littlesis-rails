@@ -1,4 +1,11 @@
+# frozen_string_literal: true
+
 module NetworkMapsHelper
+  def oligrapher_js_tags
+    content_tag(:script, nil, src: "/js/oligrapher/oligrapher-#{NetworkMap::OLIGRAPHER_VERSION}.js") +
+    content_tag(:script, nil, src: "/js/oligrapher/oligrapher_littlesis_bridge-#{NetworkMap::OLIGRAPHER_VERSION}.js")
+  end
+
   def smart_map_path(map)
     # map.annotations.empty? ? map_path(map) : story_map_path(map)
     map_path(map)

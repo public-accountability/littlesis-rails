@@ -4,16 +4,13 @@
 <% content_for(:facebook_type, "website") %>
 <% content_for(:facebook_url, map_url(@map)) %>
 
+<%= content_for(:head) do %>
+  <%= oligrapher_js_tags %>
+<% end %>
+
 <%= content_for(:body) do %>
 
 <%= render 'shared/facebook_sdk' %>
-
- <% if @dev_version %>
-    <%= javascript_include_tag "oligrapher-dev" %>
-<% else %>
-    <%= javascript_include_tag "oligrapher" %>
-<% end %>
-
 <%= cache_if @cacheable, @map do %>
 
 <div id="oligrapher"></div>
