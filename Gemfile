@@ -61,7 +61,7 @@ group :test, :development do
   gem 'capybara', '>= 3.6.0'
   gem 'capybara-webkit'
   gem 'database_cleaner'
-  gem 'factory_bot_rails', '~> 4.11'
+  gem 'factory_bot_rails', '~> 5.0'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   gem 'jasmine', '>= 3.2'
   gem 'jasmine_selenium_runner'
