@@ -4,7 +4,7 @@ feature "Signing up for an account", type: :feature do
   let(:user_info) do
     Struct
       .new(:first_name, :last_name, :email, :password, :username, :about_you)
-      .new(Faker::Name.first_name, Faker::Name.last_name, Faker::Internet.email, Faker::Internet.password(8), random_username, Faker::Lovecraft.sentence)
+      .new(Faker::Name.first_name, Faker::Name.last_name, Faker::Internet.email, Faker::Internet.password(8), random_username, Faker::Books::Lovecraft.sentence)
   end
 
   before do
