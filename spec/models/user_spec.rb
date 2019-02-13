@@ -94,19 +94,24 @@ describe User do
     end
 
     it 'validates uniqueness of email' do
-      expect(build(:really_basic_user, email: user.email).valid?). to be false
-      expect(build(:really_basic_user, email: Faker::Internet.unique.email).valid?). to be true
+      invalid_user = build(:really_basic_user, email: user.email, sf_guard_user_id: 1)
+      valid_user = build(:really_basic_user, email: Faker::Internet.unique.email, sf_guard_user_id: 1)
+      [invalid_user, valid_user].each(&:valid?)
+      expect(invalid_user.errors[:email]).to eq(["has already been taken"])
+      expect(valid_user.errors[:email]).to eq([])
     end
 
     describe 'username validation' do
+      let(:sf_guard_user) { create(:sf_guard_user) }
+
       context 'with valid username' do
-        let(:user) { build(:really_basic_user, username: 'f_kafka') }
+        let(:user) { build(:really_basic_user, username: 'f_kafka', sf_guard_user_id: sf_guard_user.id) }
 
         specify { expect(user.valid?).to be true }
       end
 
       context 'with invalid username' do
-        let(:user) { build(:really_basic_user, username: 'f.kafka') }
+        let(:user) { build(:really_basic_user, username: 'f.kafka', sf_guard_user_id: sf_guard_user.id) }
 
         specify { expect(user.valid?).to be false }
       end

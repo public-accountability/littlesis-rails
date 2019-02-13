@@ -10,7 +10,7 @@ gem 'rack-rewrite', '~> 1.5.1'
 gem 'devise', '~> 4.6.1'
 
 # Versioning
-gem 'paper_trail', '10.1.0'
+gem 'paper_trail', '10.2.0'
 
 # delayed job
 gem 'daemons' # Required by delayed_job
@@ -61,7 +61,7 @@ group :test, :development do
   gem 'capybara', '>= 3.6.0'
   gem 'capybara-webkit'
   gem 'database_cleaner'
-  gem 'factory_bot_rails', '~> 4.11'
+  gem 'factory_bot_rails', '~> 5.0'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   gem 'jasmine', '>= 3.2'
   gem 'jasmine_selenium_runner'
@@ -110,4 +110,4 @@ gem 'text', '>= 1.3.1'
 gem 'httparty', '>= 0.16.2'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.3.2', require: false
+gem 'bootsnap', '>= 1.4.0', require: false

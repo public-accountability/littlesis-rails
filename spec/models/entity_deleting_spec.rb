@@ -34,7 +34,7 @@ describe 'Deleting an Entity', type: :model do
       let(:business_academic) do
         tags
         person = create(:entity_person) #, last_user_id: APP_CONFIG['system_user_id'])
-        person.aliases.create!(name: Faker::TwinPeaks.character)
+        person.aliases.create!(name: Faker::TvShows::TwinPeaks.character)
         person.add_extension('BusinessPerson')
         person.add_extension('Academic')
         person.add_tag('oil')
