@@ -1,6 +1,0 @@
-[submodule "vendor/assets/javascripts/oligrapher"]
-	path = vendor/assets/javascripts/oligrapher
-	url = https://github.com/public-accountability/oligrapher.git
-[submodule "vendor/assets/javascripts/oligrapher-dev"]
-	path = vendor/assets/javascripts/oligrapher-dev
-	url = https://github.com/public-accountability/oligrapher.git
