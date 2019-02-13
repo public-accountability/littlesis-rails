@@ -110,4 +110,4 @@ gem 'text', '>= 1.3.1'
 gem 'httparty', '>= 0.16.2'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.3.2', require: false
+gem 'bootsnap', '>= 1.4.0', require: false
