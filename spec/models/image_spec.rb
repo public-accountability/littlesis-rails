@@ -3,6 +3,18 @@ require 'rails_helper'
 describe Image, type: :model do
   let(:filename) { "#{Digest::MD5.hexdigest(Time.current.to_i.to_s)}.png" }
 
+  def all_images_exist(filename)
+    Image::IMAGE_TYPES.each do |img_type|
+      expect(ImageFile.new(filename: filename, type: img_type).exists?).to be true
+    end
+  end
+
+  def all_images_do_not_exist(filename)
+    Image::IMAGE_TYPES.each do |img_type|
+      expect(ImageFile.new(filename: filename, type: img_type).exists?).to be false
+    end
+  end
+
   describe 'validations, associations, and constants' do
     it { is_expected.to validate_presence_of(:entity_id) }
     it { is_expected.to validate_presence_of(:filename) }
@@ -221,22 +233,67 @@ describe Image, type: :model do
       let(:filename) { Image.random_filename('png') }
       let(:path_1200x900) { Rails.root.join('spec', 'testdata', '1200x900.png').to_s }
 
-      def all_images_exist
-        Image::IMAGE_TYPES.each do |img_type|
-          expect(ImageFile.new(filename: filename, type: img_type).exists?).to be true
-        end
-      end
-
-      def all_images_do_not_exist
-        Image::IMAGE_TYPES.each do |img_type|
-          expect(ImageFile.new(filename: filename, type: img_type).exists?).to be false
-        end
-      end
-
       it 'creates 4 images' do
-        all_images_do_not_exist
+        all_images_do_not_exist(filename)
         Image.create_image_variations(filename, path_1200x900)
-        all_images_exist
+        all_images_exist(filename)
+      end
+    end
+
+    describe 'new_from_url' do
+      let(:filename) { Image.random_filename('png') }
+      
+      let(:temp_file) do
+        Tempfile.new(['img', '.png']).tap do |f|
+          f.write(File.open(Rails.root.join('spec', 'testdata', '40x60.png').to_s).read)
+          f.rewind
+        end
+      end
+
+      let(:image_mocks) do
+        lambda do
+          expect(Image).to receive(:random_filename)
+                             .once.with('png').and_return(filename)
+          expect(Image).to receive(:save_image_to_tmp)
+                             .once.with(url).and_return(temp_file.path)
+        end
+      end
+
+      let(:url) { 'https://example.com/image.png' }
+
+      it 'downloads image from url' do
+        expect(Image).to receive(:save_image_to_tmp).with(url).and_return(temp_file.path)
+        Image.new_from_url(url)
+      end
+
+      it 'raises error if image cannot be downloaded' do
+        expect(Image).to receive(:save_image_to_tmp).with(url).and_return(false)
+        expect { Image.new_from_url(url) }.to raise_error(Image::RemoteImageRequestFailure)
+      end
+
+      it 'raises error if image url is empty' do
+        expect { Image.new_from_url(' ') }.to raise_error(/blank url/)
+      end
+
+      it 'raises error if url does not start with http' do
+        expect { Image.new_from_url('/some/path') }.to raise_error(/does not start with "http"/)
+      end
+
+      it 'creates 4 image variations' do
+        image_mocks.call
+        all_images_do_not_exist(filename)
+        Image.new_from_url(url)
+        all_images_exist(filename)
+      end
+
+      it 'returns new image with correct properties' do
+        image_mocks.call
+        new_image = Image.new_from_url(url)
+        expect(new_image).to be_a Image
+        expect(new_image.url).to eq url
+        expect(new_image.filename).to eq filename
+        expect(new_image.width).to eq 40
+        expect(new_image.height).to eq 60
       end
     end
   end # end Class Methods

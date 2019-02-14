@@ -158,42 +158,31 @@ class Image < ApplicationRecord
     file.close
   end
 
-  # Downloads an image from url, resizes it, and uploads
-  # the resized images to S3.
+  # Downloads an image from url and creates variations
   #
   # String (url) --> Image | false
   #
   # This assumes that the image url has an filetype extension
   #   ie: http://example.com/image.png
-  # a url without an extension will not work
+  #
+  # a url without an extension may work if the url returns a valid mime type
   def self.new_from_url(url)
-    # This method can accept remote and local paths
-    if url.slice(0, 4).casecmp('http').zero?
-      original_image_path = save_image_to_tmp(url)
-    else
-      original_image_path = url
+    if url.blank?
+      raise Exceptions::LittleSisError, 'Image.new_from_url called with a blank url'
+    elsif url.casecmp('http') == -1
+      raise Exceptions::LittleSisError, 'url does not start with "http"'
     end
 
-    return false if original_image_path.blank?
+    original_image_path = save_image_to_tmp(url)
+    raise RemoteImageRequestFailure if original_image_path.blank?
+
+    original_file = MiniMagick::Image.open(original_image_path)
+
     filename = random_filename(file_ext_from(original_image_path))
-
-    original = MiniMagick::Image.open(original_image_path)
-
-    if ENV['SKIP_S3_UPLOAD'] || Rails.env.test?
-      large = profile = small = true
-    else
-      large = create_asset(filename, 'large', original_image_path, max_width: 1024, max_height: 1024)
-      profile = create_asset(filename, 'profile', original_image_path, max_width: 200, max_height: 200)
-      small = create_asset(filename, 'small', original_image_path, max_width: 50, max_height: 50)
-    end
-
-    if large && profile && small
-      new(filename: filename, url: url, width: original[:width], height: original[:height])
-    else
-      false
-    end
+    create_image_variations(filename, original_image_path)
+    new(filename: filename, url: url, width: original_file.width, height: original_file.height)
   ensure
-    File.delete(original_image_path) if File.exist?(original_image_path)
+    File.delete(original_image_path) if original_image_path.present? && File.exist?(original_image_path)
   end
 
   def self.create_image_variations(filename, original_file, check_first: true)
