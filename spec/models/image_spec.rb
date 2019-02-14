@@ -217,6 +217,27 @@ describe Image, type: :model do
       end
     end
 
-    
+    describe 'create_image_variations' do
+      let(:filename) { Image.random_filename('png') }
+      let(:path_1200x900) { Rails.root.join('spec', 'testdata', '1200x900.png').to_s }
+
+      def all_images_exist
+        Image::IMAGE_TYPES.each do |img_type|
+          expect(ImageFile.new(filename: filename, type: img_type).exists?).to be true
+        end
+      end
+
+      def all_images_do_not_exist
+        Image::IMAGE_TYPES.each do |img_type|
+          expect(ImageFile.new(filename: filename, type: img_type).exists?).to be false
+        end
+      end
+
+      it 'creates 4 images' do
+        all_images_do_not_exist
+        Image.create_image_variations(filename, path_1200x900)
+        all_images_exist
+      end
+    end
   end # end Class Methods
 end
