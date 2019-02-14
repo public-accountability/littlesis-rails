@@ -222,7 +222,7 @@ describe Image, type: :model do
 
     describe 'new_from_url' do
       let(:filename) { Image.random_filename('png') }
-      
+
       let(:temp_file) do
         Tempfile.new(['img', '.png']).tap do |f|
           f.write(File.open(Rails.root.join('spec', 'testdata', '40x60.png').to_s).read)
@@ -276,5 +276,34 @@ describe Image, type: :model do
         expect(new_image.height).to eq 60
       end
     end
+
+    describe 'new_from_upload' do
+      let(:filename) { Image.random_filename('png') }
+      let(:path_40x60) { Rails.root.join('spec', 'testdata', '40x60.png').to_s }
+
+      let(:stringio) do
+        StringIO.new(File.open(path_40x60).read).tap do |x|
+          x.singleton_class.send(:define_method, 'original_filename') { 'this_file_was_uploaded.png' }
+        end
+      end
+
+      it 'creates all image variations' do
+        expect(Image).to receive(:random_filename).once.with('png').and_return(filename)
+        all_images_do_not_exist(filename)
+        Image.new_from_upload(stringio)
+        all_images_exist(filename)
+      end
+
+      it 'returns image with correct properties' do
+        expect(Image).to receive(:random_filename).once.with('png').and_return(filename)
+        new_image = Image.new_from_upload(stringio)
+        expect(new_image).to be_a Image
+        expect(new_image.url).to eq nil
+        expect(new_image.filename).to eq filename
+        expect(new_image.width).to eq 40
+        expect(new_image.height).to eq 60
+      end
+    end
+
   end # end Class Methods
 end

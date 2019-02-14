@@ -58,7 +58,7 @@ class Image < ApplicationRecord
   alias_method :image_path, :s3_url
 
   ######### s3 legacy methods ##############3
-  
+
   def destroy
     soft_delete
   end
@@ -132,7 +132,13 @@ class Image < ApplicationRecord
     file.close
   end
 
+  # Subclass of IO --> Image
   def self.new_from_upload(uploaded)
+    ext = file_ext_from(uploaded.original_filename)
+    original_file = MiniMagick::Image.read(uploaded, ".#{ext}")
+    filename = random_filename(ext)
+    create_image_variations(filename, original_file.path)
+    new(filename: filename, width: original_file.width, height: original_file.height)
   end
 
   # Downloads an image from url and creates variations
