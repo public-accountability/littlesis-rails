@@ -20,6 +20,7 @@ describe Image, type: :model do
 
     describe 'soft_delete' do
       before { image }
+
       it 'changes is_deleted' do
         expect { image.soft_delete }.to change { image.is_deleted }.to(true)
       end
@@ -40,7 +41,6 @@ describe Image, type: :model do
           .to change { not_featured.reload.is_featured }
                 .from(false).to(true)
       end
-
     end
   end
 
@@ -121,6 +121,10 @@ describe Image, type: :model do
           .to eql 'png'
       end
 
+      it 'returns extension from path' do
+        expect(Image.file_ext_from('/some/tmp/image.jpg')).to eql 'jpg'
+      end
+
       it 'retrieves information from head if no extension found' do
         url = 'https://example.com/example_image'
         head = double('HTTParty::Response head double')
@@ -149,6 +153,70 @@ describe Image, type: :model do
         expect { Image.file_ext_from(url) }
           .to raise_error { Image::RemoteImageRequestFailure }
       end
+
+      it 'raises error if image is a path without a proper extension' do
+        expect { Image.file_ext_from('/tmp/path/without/ext') }
+          .to raise_error(Image::ImagePathMissingExtension)
+      end
     end
+
+    describe 'create_image_variation' do
+      let(:filename) { Image.random_filename('png') }
+      let(:path_1x1) { Rails.root.join('spec', 'testdata', '1x1.png').to_s }
+      let(:path_40x60) { Rails.root.join('spec', 'testdata', '40x60.png').to_s }
+      let(:path_1200x900) { Rails.root.join('spec', 'testdata', '1200x900.png').to_s }
+
+      before do
+        Image::IMAGE_TYPES.map(&:to_s).each do |img_type|
+          FileUtils.mkdir_p Rails.root.join('tmp', img_type)
+        end
+      end
+
+      it 'does nothing if image variation already exists (and check_first is true)' do
+        image_file = ImageFile.new(filename: filename, type: 'small')
+        FileUtils.mkdir_p image_file.pathname.dirname
+        FileUtils.cp(path_1x1, image_file.path)
+        expect(Image.create_image_variation(filename, 'small', path_1x1)).to eq :exists
+      end
+
+      context 'when height is larger than max size' do # 40x60, small
+        let(:image_file) { ImageFile.new(filename: filename, type: 'small') }
+
+        it 'resizes image' do
+          expect(image_file.exists?).to be false
+          expect(Image.create_image_variation(filename, 'small', path_40x60)).to eq :created
+          expect(image_file.exists?).to be true
+          newly_created_image = MiniMagick::Image.open(image_file.path)
+          expect(newly_created_image.height).to eq 50
+          expect(newly_created_image.width).to eq 33
+        end
+      end
+
+      context 'when width is larger than max size' do # 1200x900, large
+        let(:image_file) { ImageFile.new(filename: filename, type: 'large') }
+
+        it 'resizes image' do
+          expect(image_file.exists?).to be false
+          expect(Image.create_image_variation(filename, 'large', path_1200x900)).to eq :created
+          expect(image_file.exists?).to be true
+          expect(MiniMagick::Image.open(image_file.path).width).to eq 1024
+        end
+      end
+
+      context 'when height and wdith are smaller than max size' do
+        let(:image_file) { ImageFile.new(filename: filename, type: 'small') }
+
+        it 'does not resize image' do
+          expect(image_file.exists?).to be false
+          expect(Image.create_image_variation(filename, 'small', path_1x1)).to eq :created
+          expect(image_file.exists?).to be true
+          newly_created_image = MiniMagick::Image.open(image_file.path)
+          expect(newly_created_image.width).to eq 1
+          expect(newly_created_image.height).to eq 1
+        end
+      end
+    end
+
+    
   end # end Class Methods
 end

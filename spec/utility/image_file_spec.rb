@@ -90,7 +90,7 @@ describe ImageFile do
         .to change { image_file.pathname.dirname.exist? }.from(false).to(true)
     end
 
-    it 'continues if creates prefix dir exists' do
+    it 'continues if prefix dir exists' do
       FileUtils.mkdir_p(image_file.pathname.dirname)
       expect { image_file.write(mini_magick_img) }.not_to raise_error
     end

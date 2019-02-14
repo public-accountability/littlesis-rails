@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# We store images on our file system:
+#  images/original/prefix/filename.ext
+#  images/small/prefix/filename.jpg
+#  images/profile/prefix/filename.jpg
+#  images/large/prefix/filename.jpg
+#  images/square/prefix/filename/jpg
 class Image < ApplicationRecord
   include SingularTable
   include SoftDelete
@@ -7,13 +13,12 @@ class Image < ApplicationRecord
   belongs_to :entity, inverse_of: :images, optional: true
   belongs_to :user, inverse_of: :image, optional: true
   belongs_to :address, inverse_of: :images, optional: true
-
   has_many :deletion_requests, inverse_of: :image, foreign_key: 'source_id', class_name: 'ImageDeletionRequest'
 
   scope :featured, -> { where(is_featured: true) }
   scope :persons, -> { joins(:entity).where(entity: { primary_ext: 'Person' }) }
 
-  IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }.freeze
+  IMAGE_SIZES = { small: 50, profile: 200, large: 1024, original: nil }.freeze
   IMAGE_TYPES = IMAGE_SIZES.keys.freeze
 
   MIME_TYPES = {
@@ -104,23 +109,38 @@ class Image < ApplicationRecord
   class RemoteImageRequestFailure < StandardError
   end
 
+  class ImagePathMissingExtension < StandardError
+  end
+
   # String --> String | Throws
   #
   # Derives the image format from the url.
   # It first tries to determine the format
   # from the ending of the url path. If that fails,
   # it performs a HEAD request to get the content-type.
-  def self.file_ext_from(url)
-    ext = File.extname(URI(url).path).tr('.', '').downcase
+  def self.file_ext_from(url_or_path)
+    uri = URI(url_or_path)
+
+    ext = File.extname(uri.path).tr('.', '').downcase
     return ext if VALID_EXTENSIONS.include?(ext)
 
-    head = HTTParty.head(url)
+    raise ImagePathMissingExtension if uri.scheme.nil?
+
+    head = HTTParty.head(url_or_path)
     raise RemoteImageRequestFailure unless head.success?
 
     mime_type = head['content-type'].downcase
-    return MIME_TYPES.fetch(mime_type) if MIME_TYPES.key?(mime_type)
-    raise InvalidFileExtensionError
+
+    if MIME_TYPES.key?(mime_type)
+      return MIME_TYPES.fetch(mime_type)
+    else
+      raise InvalidFileExtensionError
+    end
   end
+
+  def self.new_from_upload(uploaded)
+  end
+
 
   # Downloads url and saves images to temporary file
   #
@@ -174,6 +194,30 @@ class Image < ApplicationRecord
     end
   ensure
     File.delete(original_image_path) if File.exist?(original_image_path)
+  end
+
+  def self.create_image_variations(filename, original_file, check_first: true)
+    IMAGE_TYPES.each do |type|
+      create_image_variation(filename, type, original_file, check_first: check_first)
+    end
+  end
+
+  def self.create_image_variation(filename, type, read_path, check_first: true)
+    image_file = ImageFile.new(filename: filename, type: type)
+    return :exists if check_first && image_file.exists?
+
+    img = MiniMagick::Image.open(read_path)
+
+    max_size = IMAGE_SIZES.fetch(type.to_sym)
+
+    # resize the image unless it's already smaller than the max size
+    # or max size is missing (i.e. type == original)
+    if max_size && ((img.width > max_size) || (img.height > max_size))
+      img.resize "#{max_size}x#{max_size}"
+    end
+
+    image_file.write(img)
+    :created
   end
 
   def self.create_asset(filename, type, read_path, max_width: nil, max_height: nil, check_first: true)
