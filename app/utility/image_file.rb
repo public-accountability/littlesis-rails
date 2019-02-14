@@ -27,6 +27,10 @@ class ImageFile
     img.write(@path)
   end
 
+  def pathname
+    Pathname.new(@path)
+  end
+
   private
 
   def make_dir_prefix
