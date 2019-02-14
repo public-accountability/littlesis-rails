@@ -43,52 +43,10 @@ class Image < ApplicationRecord
     soft_delete
   end
 
-  def download_large_to_tmp
-    download_to_tmp s3_url('large')
-  end
-
-  def download_profile_to_tmp
-    download_to_tmp s3_ur('profile')
-  end
-
-  def download_original_to_tmp
-    download_to_tmp(url)
-  end
-
-  def download_to_tmp(remote_url)
-    file = open(tmp_path, 'wb')
-    file << open(remote_url).read
-    return true
-  rescue OpenURI::HTTPError
-    return false
-  ensure
-    file.close
-  end
-
   def original_exists?
     HTTParty.head(url).code == 200
   rescue HTTParty::ResponseError, SocketError
     false
-  end
-
-  def self.s3_path(filename, type)
-    "images/#{type}/#{filename}"
-  end
-
-  def self.s3_url(filename, type)
-    "https://#{APP_CONFIG['image_asset_host']}/#{s3_path(filename, type)}"
-  end
-
-  singleton_class.send(:alias_method, :image_path, :s3_url)
-
-  def s3_url(type)
-    self.class.s3_url(filename, type)
-  end
-
-  alias_method :image_path, :s3_url
-
-  def s3_exists?(type)
-    S3.file_exists? "images/#{type}/#{filename}"
   end
 
   def filename(type=nil)
@@ -138,10 +96,6 @@ class Image < ApplicationRecord
     end
   end
 
-  def self.new_from_upload(uploaded)
-  end
-
-
   # Downloads url and saves images to temporary file
   #
   # String (url) --> String (file path) | false
@@ -156,6 +110,9 @@ class Image < ApplicationRecord
     end
   ensure
     file.close
+  end
+
+  def self.new_from_upload(uploaded)
   end
 
   # Downloads an image from url and creates variations
@@ -211,43 +168,43 @@ class Image < ApplicationRecord
     img&.destroy!
   end
 
-  def self.create_asset(filename, type, read_path, max_width: nil, max_height: nil, check_first: true)
-    begin
-      img = MiniMagick::Image.open(read_path)
-    rescue
-      Rails.logger.info "MiniMagick failed to open the file: #{read_path}"
-      return false
-    end
+  # def self.create_asset(filename, type, read_path, max_width: nil, max_height: nil, check_first: true)
+  #   begin
+  #     img = MiniMagick::Image.open(read_path)
+  #   rescue
+  #     Rails.logger.info "MiniMagick failed to open the file: #{read_path}"
+  #     return false
+  #   end
 
-    width = img[:width]
-    height = img[:height]
+  #   width = img[:width]
+  #   height = img[:height]
 
-    if (max_width && (width > max_width)) || (max_height && (height > max_height))
-      w = max_width ||  img[:width]
-      h = max_height || img[:height]
-      img.resize([w, h].join("x"))
-    end
+  #   if (max_width && (width > max_width)) || (max_height && (height > max_height))
+  #     w = max_width ||  img[:width]
+  #     h = max_height || img[:height]
+  #     img.resize([w, h].join("x"))
+  #   end
 
-    tmp_path = Rails.root.join("tmp", "#{type}_#{filename}").to_s
-    img.write(tmp_path)
-    result = S3.upload_file(remote_path: "images/#{type}/#{filename}", local_path: tmp_path, check_first: check_first)
-    File.delete(tmp_path)
-    result
-  end
+  #   tmp_path = Rails.root.join("tmp", "#{type}_#{filename}").to_s
+  #   img.write(tmp_path)
+  #   result = S3.upload_file(remote_path: "images/#{type}/#{filename}", local_path: tmp_path, check_first: check_first)
+  #   File.delete(tmp_path)
+  #   result
+  # end
 
   def crop(x, y, w, h)
-    download_large_to_tmp or download_profile_to_tmp
-    img = MiniMagick::Image.open(tmp_path)
-    img.crop("#{w}x#{h}+#{x}+#{y}")
-    img.write(tmp_path)
+    # download_large_to_tmp or download_profile_to_tmp
+    # img = MiniMagick::Image.open(tmp_path)
+    # img.crop("#{w}x#{h}+#{x}+#{y}")
+    # img.write(tmp_path)
 
-    IMAGE_SIZES.each do |type, size|
-      Image.create_asset(filename, type, tmp_path, max_width: size, max_height: size, check_first: false)
-    end
+    # IMAGE_SIZES.each do |type, size|
+    #   Image.create_asset(filename, type, tmp_path, max_width: size, max_height: size, check_first: false)
+    # end
 
-    File.delete(tmp_path)
-    invalidate_cloudfront_cache
-    true
+    # File.delete(tmp_path)
+    # invalidate_cloudfront_cache
+    # true
   end
 
   def feature
@@ -271,15 +228,6 @@ class Image < ApplicationRecord
     end
 
     self
-  end
-
-  def invalidate_cloudfront_cache
-    if Lilsis::Application.config.cloudfront_distribtion_id
-      CloudFront.new.invalidate([
-        "/images/profile/#{filename}",
-        "/images/small/#{filename}"
-      ])
-    end
   end
 
   private
