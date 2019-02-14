@@ -207,6 +207,8 @@ class Image < ApplicationRecord
 
     image_file.write(img)
     :created
+  ensure
+    img&.destroy!
   end
 
   def self.create_asset(filename, type, read_path, max_width: nil, max_height: nil, check_first: true)
