@@ -25,6 +25,14 @@ describe Image, type: :model do
     specify { expect(Image::IMAGE_SIZES).to be_a Hash }
   end
 
+  describe '#image_file' do
+    let(:image) { build(:image) }
+
+    specify { expect(image.image_file).to be_a ImageFile }
+    specify { expect(image.image_file.filename).to eq image.filename }
+    specify { expect(image.image_file.type).to eq 'profile' }
+  end
+
   describe 'Soft Delete / Destroy' do
     let(:entity) { create(:entity_org) }
     let(:image) { create(:image, entity: entity, is_featured: true) }

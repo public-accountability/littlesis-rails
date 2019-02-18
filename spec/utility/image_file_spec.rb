@@ -104,5 +104,10 @@ describe ImageFile do
       image_file.write(mini_magick_img)
       expect(FileUtils.compare_file(image_file.path, test_png_path)).to be true
     end
+
+    it 'sets file to be world readable' do
+      image_file.write(mini_magick_img)
+      expect(File.stat(image_file.path).world_readable?).to eq 420
+    end
   end
 end

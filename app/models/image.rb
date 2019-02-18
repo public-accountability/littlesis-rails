@@ -48,6 +48,10 @@ class Image < ApplicationRecord
     URI.join(IMAGE_HOST, image_path(type)).to_s
   end
 
+  def image_file(type = 'profile')
+    ImageFile.new(filename: read_attribute(:filename), type: type)
+  end
+
   ######### s3 legacy methods ##############3
 
   # def self.s3_path(filename, type)
@@ -98,6 +102,7 @@ class Image < ApplicationRecord
 
   class ImagePathMissingExtension < StandardError
   end
+
 
   # String --> String | Throws
   #
