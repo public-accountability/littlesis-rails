@@ -103,7 +103,6 @@ class Image < ApplicationRecord
   class ImagePathMissingExtension < StandardError
   end
 
-
   # String --> String | Throws
   #
   # Derives the image format from the url.
@@ -208,30 +207,6 @@ class Image < ApplicationRecord
     img&.destroy!
   end
 
-  # def self.create_asset(filename, type, read_path, max_width: nil, max_height: nil, check_first: true)
-  #   begin
-  #     img = MiniMagick::Image.open(read_path)
-  #   rescue
-  #     Rails.logger.info "MiniMagick failed to open the file: #{read_path}"
-  #     return false
-  #   end
-
-  #   width = img[:width]
-  #   height = img[:height]
-
-  #   if (max_width && (width > max_width)) || (max_height && (height > max_height))
-  #     w = max_width ||  img[:width]
-  #     h = max_height || img[:height]
-  #     img.resize([w, h].join("x"))
-  #   end
-
-  #   tmp_path = Rails.root.join("tmp", "#{type}_#{filename}").to_s
-  #   img.write(tmp_path)
-  #   result = S3.upload_file(remote_path: "images/#{type}/#{filename}", local_path: tmp_path, check_first: check_first)
-  #   File.delete(tmp_path)
-  #   result
-  # end
-
   def crop(x, y, w, h)
     # download_large_to_tmp or download_profile_to_tmp
     # img = MiniMagick::Image.open(tmp_path)
@@ -268,11 +243,5 @@ class Image < ApplicationRecord
     end
 
     self
-  end
-
-  private
-
-  def tmp_path
-    Rails.root.join('tmp', filename).to_s
   end
 end
