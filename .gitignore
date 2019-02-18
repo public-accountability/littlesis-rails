@@ -34,6 +34,8 @@
 
 # Ignore compiled assets
 /public/assets/*
+# Ignore image files
+/public/images
 
 # Misc files 
 .DS_Store
