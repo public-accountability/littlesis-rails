@@ -35,7 +35,7 @@ class ImageFile
   private
 
   def make_dir_prefix
-    Dir.mkdir(File.join(pathname.dirname), 0o770)
+    Dir.mkdir(File.join(pathname.dirname), 0o775)
   rescue Errno::EEXIST
     0
   end
