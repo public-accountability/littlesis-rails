@@ -33,7 +33,7 @@ class OligrapherGraphDataImageFixer
   end
 
   def new_image_path(id)
-    entity_lookup.fetch(id.to_i).featured_image&.s3_url('profile').presence || ''
+    entity_lookup.fetch(id.to_i).featured_image&.image_url('profile').presence || ''
   end
 
   def valid_image?(url)

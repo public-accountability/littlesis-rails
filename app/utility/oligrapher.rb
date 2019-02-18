@@ -12,7 +12,7 @@ module Oligrapher
       id: entity.id,
       display: {
         name: entity.name,
-        image: entity&.featured_image&.s3_url("profile"),
+        image: entity&.featured_image&.image_url("profile"),
         url: Routes.entity_url(entity)
       }
     }

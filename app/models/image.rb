@@ -18,6 +18,7 @@ class Image < ApplicationRecord
   scope :featured, -> { where(is_featured: true) }
   scope :persons, -> { joins(:entity).where(entity: { primary_ext: 'Person' }) }
 
+  IMAGE_HOST = APP_CONFIG.fetch('image_host')
   IMAGE_SIZES = { small: 50, profile: 200, large: 1024, original: nil }.freeze
   IMAGE_TYPES = IMAGE_SIZES.keys.freeze
 
@@ -39,23 +40,31 @@ class Image < ApplicationRecord
   validates :filename, presence: true
   validates :title, presence: true
 
+  def image_path(type)
+    "/images/#{type}/#{filename.slice(0, 2)}/#{filename}"
+  end
+
+  def image_url(type)
+    URI.join(IMAGE_HOST, image_path(type)).to_s
+  end
+
   ######### s3 legacy methods ##############3
 
-  def self.s3_path(filename, type)
-    "images/#{type}/#{filename}"
-  end
+  # def self.s3_path(filename, type)
+  #   "images/#{type}/#{filename}"
+  # end
 
-  def self.s3_url(filename, type)
-    "https://#{APP_CONFIG['image_asset_host']}/#{s3_path(filename, type)}"
-  end
+  # def self.s3_url(filename, type)
+  #   "https://#{APP_CONFIG['image_asset_host']}/#{s3_path(filename, type)}"
+  # end
 
-  singleton_class.send(:alias_method, :image_path, :s3_url)
+  # singleton_class.send(:alias_method, :image_path, :s3_url)
 
-  def s3_url(type)
-    self.class.s3_url(filename, type)
-  end
+  # def s3_url(type)
+  #   self.class.s3_url(filename, type)
+  # end
 
-  alias_method :image_path, :s3_url
+  # alias_method :image_path, :s3_url
 
   ######### s3 legacy methods ##############3
 

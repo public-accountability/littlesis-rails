@@ -2,7 +2,7 @@
 
 <h3>Crop Image</h3>
 
-<img id="jcrop_image" src="<%= @image.s3_url(@type) %>"><br>
+<img id="jcrop_image" src="<%= @image.image_url(@type) %>"><br>
 <% if @image.caption %>
   <%= @image.caption %>
   <br><br>

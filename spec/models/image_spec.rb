@@ -56,6 +56,23 @@ describe Image, type: :model do
     end
   end
 
+  describe 'path & url' do
+    let(:filename) { Image.random_filename }
+    let(:image) { build(:image, filename: filename) }
+
+    describe 'image_path' do
+      specify do
+        expect(image.image_path('large')).to eq "/images/large/#{filename.slice(0, 2)}/#{filename}"
+      end
+    end
+
+    describe 'image_url' do
+      specify do
+        expect(image.image_url('large')).to eq "https://littlesis.org/images/large/#{filename.slice(0, 2)}/#{filename}"
+      end
+    end
+  end
+
   describe 'feature/unfeature' do
     let!(:entity) { create(:entity_person) }
     let!(:featured_image) { create(:image, entity: entity, is_featured: true) }
