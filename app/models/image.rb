@@ -52,6 +52,15 @@ class Image < ApplicationRecord
     ImageFile.new(filename: read_attribute(:filename), type: type)
   end
 
+  Dimensions = Struct.new(:width, :height)
+
+  def dimensions(type = 'original')
+    img = MiniMagick::Image.open(image_file(type).path)
+    Dimensions.new(img.width, img.height)
+  ensure
+    img.destroy!
+  end
+
   ######### s3 legacy methods ##############3
 
   # def self.s3_path(filename, type)

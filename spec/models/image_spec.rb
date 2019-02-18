@@ -81,6 +81,26 @@ describe Image, type: :model do
     end
   end
 
+  describe 'dimensions' do
+    let(:filename) { Image.random_filename('png') }
+    let(:path_1200x900) { Rails.root.join('spec', 'testdata', '1200x900.png').to_s }
+    let(:image) { build(:image, filename: filename, width: 1200, height: 900) }
+
+    before { Image.create_image_variations(filename, path_1200x900) }
+
+    it 'returns original dimensions' do
+      d = image.dimensions
+      expect(d.width).to eq 1200
+      expect(d.height).to eq 900
+    end
+
+    it 'returns size of resized image' do
+      d = image.dimensions('large')
+      expect(d.width).to eq 1024
+      expect(d.height).to eq 768
+    end
+  end
+
   describe 'feature/unfeature' do
     let!(:entity) { create(:entity_person) }
     let!(:featured_image) { create(:image, entity: entity, is_featured: true) }
