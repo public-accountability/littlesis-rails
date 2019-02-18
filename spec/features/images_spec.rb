@@ -3,7 +3,9 @@ require 'rails_helper'
 describe 'Images' do
   let(:entity) { create(:entity_person) }
   let(:user) { create_basic_user }
+
   before { login_as(user, :scope => :user) }
+
   after { logout(:user) }
 
   feature 'Adding an image to a entity' do
@@ -47,7 +49,7 @@ describe 'Images' do
 
       images = entity.reload.images
 
-      expect(images.size).to eql 1
+      expect(images.size).to eq 1
       expect(images.first.title).to eql image_title
       expect(images.first.is_featured).to be false
 
