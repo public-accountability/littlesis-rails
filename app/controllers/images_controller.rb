@@ -30,7 +30,12 @@ class ImagesController < ApplicationController
   end
 
   def crop
-    @type = @image.s3_exists?('large') ? 'large' : 'profile'
+    if @image.image_file('large').exists?
+      @type = 'large'
+    else
+      @type = 'profile'
+    end
+    @dimensions = @image.dimensions(@type)
   end
 
   def crop_remote

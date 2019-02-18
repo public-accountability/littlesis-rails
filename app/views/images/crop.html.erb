@@ -1,69 +1,87 @@
+<style>
+ #image-wrapper {
+     display:inline-block;
+     width: <%= @dimensions.width %>px;
+     height: <%= @dimensions.height %>px;
+     margin: 0 auto; 
+     position:relative; 
+     border-radius: 10px; 
+     box-shadow: 0 5px 50px #333
+ }
+ .rect {
+     border: 1px solid #FF0000;
+     background-color: blue;
+     position: absolute;
+     z-index: 999;
+ }
+
+ #image-canvas {
+     background: url('<%= @image.image_path(@type) %>');
+     width: <%= @dimensions.width %>px;
+     height: <%= @dimensions.height %>px;
+ }
+
+</style>
+
 <h1><%= entity_link(@image.entity) %></h1>
 
 <h3>Crop Image</h3>
 
-<img id="jcrop_image" src="<%= @image.image_url(@type) %>"><br>
-<% if @image.caption %>
-  <%= @image.caption %>
-  <br><br>
-<% end %>
 
-<%= form_tag(crop_remote_image_url(@image), id: 'crop_image', method: :post) do %>
-  <input type="hidden" id="coords" name="coords">
-  <input type="submit" value="Crop" class="btn btn-primary">
-  <% if @queue_count > 0 %>
-    <input type="submit" value="Skip" class="btn btn-secondary" name="skip">
-    &nbsp;(<%= @queue_count %> remaining in queue)
-  <% end %>
-<% end %>
+<div id="image-wrapper">
+  <canvas width="<%= @dimensions.width %>" height="<%= @dimensions.height %>" id="image-canvas"></canvas>
+</div>
 
-<script type="text/javascript">
-$(document).ready(function() {
-  var updateCoords = function(coords) {
-    $('#coords').val(JSON.stringify(coords));
-  };
 
-  var centeredSquare = function() {
-    var img = $('#jcrop_image');
-    var width = img.width(); 
-    var height = img.height();
-    var min = Math.min(width, height);
+<script>
+ window.addEventListener('load', function() {
+   setupCanvasCrop(document.getElementById('image-canvas'));
+ });
 
-    if (width > min) {
-      var x = (width-min)/2;
-      var x2 = (width-min)/2 + min;
-    } else {
-      var x = 0;
-      var x2 = min;
-    }
 
-    if (height > min) {
-      var y = (height-min)/2;
-      var y2 = (height-min)/2 + min;
-    } else {
-      var y = 0;
-      var y2 = min;
-    }
+ function setupCanvasCrop(canvas) {
+   var ctx = canvas.getContext('2d');
+   var isDrawing = false;
+   var rect = { "startX": null, "startY": null, "w": null, "h": null };
 
-    return [x, y, x2, y2];
-  };
+   function getCursorPosition(canvas, event) {
+     var rect = canvas.getBoundingClientRect();
+     var x = event.clientX - rect.left;
+     var y = event.clientY - rect.top;
+     return { "x": x, "y": y };
+   }
 
-  var onEnter = function() { 
-    $("#crop_image").submit(); 
-  };
+   canvas.onmousedown = function(e) {
+     isDrawing = true;
+     var position = getCursorPosition(canvas, e);
+     rect.startX = position.x;
+     rect.startY = position.y;
+   };
+   
+   canvas.onmouseup = function(e) {
+     var position = getCursorPosition(canvas, e);
+     rect.w = (position.x - rect.startX);
+     rect.h = (position.y - rect.startY);
+     isDrawing = false;
+   };
 
-  $('#jcrop_image').Jcrop({
-    setSelect: centeredSquare(),
-    onChange: updateCoords,
-    onEnter: onEnter,
-    aspectRatio: 1,
-    bgOpacity: .4
-  });
 
-  $(document).keypress(function(e) {
-    if (e.keyCode == 13) {
-      onEnter();
-    }
-  });
-});
+   canvas.onmousemove = function (e) {
+     if (!isDrawing) {
+       return;
+     }
+
+     var position = getCursorPosition(canvas, e);
+     rect.w = (position.x - rect.startX);
+     rect.h = (position.y - rect.startY);
+
+     ctx.clearRect(0,0, canvas.width,canvas.height);
+     ctx.fillStyle = 'green';
+     ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+   }
+
+}
+
 </script>
+
+
