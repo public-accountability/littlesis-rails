@@ -1,6 +1,12 @@
 require 'rails_helper'
 
 describe 'Images' do
+  before(:all) do
+    %w[small profile large original square].each do |folder|
+      FileUtils.mkdir_p Rails.root.join('tmp', folder)
+    end
+  end
+
   let(:entity) { create(:entity_person) }
   let(:user) { create_basic_user }
 
