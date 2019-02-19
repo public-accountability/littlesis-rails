@@ -6,7 +6,7 @@ class ImagesController < ApplicationController
   before_action :authenticate_user!
   before_action -> { check_permission('admin') }, only: ADMIN_ACTIONS
   before_action :set_image_deletion_request, only: ADMIN_ACTIONS
-  before_action :set_image, only: %i[request_deletion crop crop_remote]
+  before_action :set_image, only: %i[request_deletion crop_remote]
 
   def request_deletion
     unless ImageDeletionRequest.exists?(image: @image)
@@ -30,12 +30,7 @@ class ImagesController < ApplicationController
   end
 
   def crop
-    if @image.image_file('large').exists?
-      @type = 'large'
-    else
-      @type = 'profile'
-    end
-    @dimensions = @image.dimensions(@type)
+    @image = ImageCropPresenter.new(Image.find(params[:id]))
   end
 
   def crop_remote
