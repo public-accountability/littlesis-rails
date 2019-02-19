@@ -23,7 +23,6 @@
 
 <h3>Crop Image</h3>
 
-
 <div class="row">
   <div id="image-wrapper">
     <canvas width="<%= @image.image_dimensions.width %>" height="<%= @image.image_dimensions.height %>" id="image-canvas"></canvas>
@@ -103,8 +102,6 @@
    }
 
    function submit() {
-     console.log(params());
-
      return fetch("<%= crop_image_path(@image) %>", {
        method: "POST",
        cache: "no-cache",

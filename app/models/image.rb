@@ -242,6 +242,15 @@ class Image < ApplicationRecord
     img.destroy!
   end
 
+  # Deletes old image and saves new image inside a transaction
+  def self.replace(old_image:, new_image:)
+    ApplicationRecord.transaction do
+      old_image.soft_delete
+      new_image.save!
+      Rails.logger.info "[crop] Replaced Image\##{old_image.id} (#{old_image.filename}) with Image\##{new_image.id} (#{new_image.filename})"
+    end
+  end
+
   def feature
     return self if is_featured
 

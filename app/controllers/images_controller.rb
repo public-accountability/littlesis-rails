@@ -31,20 +31,13 @@ class ImagesController < ApplicationController
 
   def crop
     if request.post?
-      Rails.logger.warn params
+      new_image = Image.crop(@image, **crop_image_params)
+      Image.replace old_image: @image, new_image: new_image
       render json: { "url": images_entity_path(@image.entity) }, status: :created
     else
       @image = ImageCropPresenter.new(@image)
     end
   end
-
-  # def crop_remote
-  #   if params[:coords].present?
-  #     coords = JSON.parse(params[:coords])
-  #     @image.crop(coords['x'], coords['y'], coords['w'], coords['h'])
-  #   end
-  #   redirect_to @image.entity.url
-  # end
 
   private
 
@@ -54,6 +47,14 @@ class ImagesController < ApplicationController
 
   def set_image_deletion_request
     @image_deletion_request = ImageDeletionRequest.find(params.require('image_deletion_request_id'))
+  end
+
+  def crop_image_params
+    params
+      .require(:crop)
+      .permit(:type, :ratio, :x, :y, :w, :h)
+      .to_h
+      .symbolize_keys
   end
 
   def new_image_deletion_request_params
