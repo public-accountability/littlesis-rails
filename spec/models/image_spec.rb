@@ -350,5 +350,49 @@ describe Image, type: :model do
       end
     end
 
+    describe 'crop' do
+      let(:filename) { Image.random_filename('png') }
+      let(:path_1200x900) { Rails.root.join('spec', 'testdata', '1200x900.png').to_s }
+      let(:mini_magick) { MiniMagick::Image.open(path_1200x900) }
+
+      let(:original_image) do
+        build(:image, filename: filename, entity: build(:org), width: 1200, height: 900).tap do |image|
+          allow(image).to receive(:image_file).with('original')
+                            .and_return(double(:mini_magick => mini_magick))
+        end
+      end
+
+      context 'when ratio is 1' do
+        let(:cropped_image) do
+          Image.crop(original_image, type: 'original', ratio: 1.0, x: 500, y: 300, w: 400, h: 200)
+        end
+
+        it 'returns new image with null id and new filename, but keeps other props' do
+          expect(cropped_image.id).to be nil
+          expect(cropped_image.filename).not_to eq original_image.filename
+          expect(cropped_image.entity_id).to eq original_image.entity_id
+        end
+
+        it 'new image has updated height and width values' do
+          expect(cropped_image.height).to eq 200
+          expect(cropped_image.width).to eq 400
+        end
+
+        it 'creates 4 image variations' do
+          all_images_exist(cropped_image.filename)
+        end
+      end
+
+      context 'when ratio is larger than 1' do
+        let(:cropped_image) do
+          Image.crop(original_image, type: 'original', ratio: 1.5, x: 100, y: 100, w: 400, h: 200)
+        end
+
+        it 'scales crop accordingly' do
+          expect(cropped_image.height).to eq 300
+          expect(cropped_image.width).to eq 600
+        end
+      end
+    end
   end # end Class Methods
 end

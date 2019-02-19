@@ -222,24 +222,24 @@ class Image < ApplicationRecord
   #   ratio -> Float
   #   x, y  -> Float/Int. Starting point for crop
   #   h, y  -> Float/Int. How much to cut out
-  # Returns new Image (unpersisted). Caller is responsible for
-  # handling logic of replaces entity images
+  #
+  # Returns new Image, not persisted, just like new_from_url and new_from_upload
+  # The image is created with .dup()
+  #
+  # Caller is responsible for handling logic of deleting or replacing previous image.
   def self.crop(image, type:, ratio:, x:, y:, h:, w:)
+    crop_geometry = "#{w * ratio}x#{h * ratio}+#{x * ratio}+#{y * ratio}"
+    img = image.image_file(type).mini_magick
+    img.crop crop_geometry
 
-    # img = 
+    filename = random_filename file_ext_from(img.path)
+    create_image_variations filename, img.path
 
-    # download_large_to_tmp or download_profile_to_tmp
-    # img = MiniMagick::Image.open(tmp_path)
-    # img.crop("#{w}x#{h}+#{x}+#{y}")
-    # img.write(tmp_path)
-
-    # IMAGE_SIZES.each do |type, size|
-    #   Image.create_asset(filename, type, tmp_path, max_width: size, max_height: size, check_first: false)
-    # end
-
-    # File.delete(tmp_path)
-    # invalidate_cloudfront_cache
-    # true
+    image.dup.tap do |i|
+      i.assign_attributes(filename: filename, width: img.width, height: img.height)
+    end
+  ensure
+    img.destroy!
   end
 
   def feature
