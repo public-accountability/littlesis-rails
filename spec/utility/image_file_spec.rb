@@ -32,6 +32,20 @@ describe ImageFile do
     specify { expect(image_file.pathname).to be_a Pathname }
   end
 
+  describe 'mini_magick' do
+    let(:filename) { Image.random_filename('png') }
+    let(:image_file) { ImageFile.new(filename: filename, type: :small) }
+
+    before do
+      FileUtils.mkdir_p(image_file.pathname.dirname.to_s)
+      FileUtils.cp(Rails.root.join('spec', 'testdata', '1x1.png').to_s, image_file.path)
+    end
+
+    specify do
+      expect(image_file.mini_magick).to be_a MiniMagick::Image
+    end
+  end
+
   describe '#exists?' do
     let(:image_file) { ImageFile.new(filename: filename, type: :small) }
 

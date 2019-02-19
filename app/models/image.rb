@@ -55,7 +55,7 @@ class Image < ApplicationRecord
   Dimensions = Struct.new(:width, :height)
 
   def dimensions(type = 'original')
-    img = MiniMagick::Image.open(image_file(type).path)
+    img = image_file(type).mini_magick
     Dimensions.new(img.width, img.height)
   ensure
     img.destroy!
@@ -216,7 +216,18 @@ class Image < ApplicationRecord
     img&.destroy!
   end
 
-  def crop(x, y, w, h)
+  # inputs:
+  #   image -> Image
+  #   type  -> String (original, large, etc.)
+  #   ratio -> Float
+  #   x, y  -> Float/Int. Starting point for crop
+  #   h, y  -> Float/Int. How much to cut out
+  # Returns new Image (unpersisted). Caller is responsible for
+  # handling logic of replaces entity images
+  def self.crop(image, type:, ratio:, x:, y:, h:, w:)
+
+    # img = 
+
     # download_large_to_tmp or download_profile_to_tmp
     # img = MiniMagick::Image.open(tmp_path)
     # img.crop("#{w}x#{h}+#{x}+#{y}")

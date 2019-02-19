@@ -32,6 +32,10 @@ class ImageFile
     Pathname.new(@path)
   end
 
+  def mini_magick
+    MiniMagick::Image.open(@path)
+  end
+
   private
 
   def make_dir_prefix

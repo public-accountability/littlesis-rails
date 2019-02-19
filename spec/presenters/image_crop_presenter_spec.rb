@@ -15,7 +15,7 @@ describe ImageCropPresenter do
 
       it 'does not scale the image' do
         expect(image_crop_presenter.image_dimensions)
-          .to eq ImageCropPresenter::CropImageDimensions.new(dimensions, 1.0, 800, 500)
+          .to eq ImageCropPresenter::CropImageDimensions.new('original', 1.0, 800, 500)
       end
     end
 
@@ -24,7 +24,7 @@ describe ImageCropPresenter do
 
       it 'scales the image and sets the ratio accordingly' do
         expect(image_crop_presenter.image_dimensions)
-          .to eq ImageCropPresenter::CropImageDimensions.new(dimensions, 1.778, 900.0, 618.75)
+          .to eq ImageCropPresenter::CropImageDimensions.new('original', 1.778, 900.0, 618.75)
       end
     end
   end

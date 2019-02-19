@@ -96,15 +96,24 @@
      isDrawing = false;
    }
 
+   function params() {
+     return {
+       "crop": cropData,
+       "image": {
+	 "id": <%= @image.id %>,
+	 "ratio": <%= @image.image_dimensions.ratio %>,
+	 "type": <%= @image.image_dimensions.type %>
+       }
+       
+     }
+   }
 
    function submit() {
-     console.log(rect);
-     console.log(cropData);
+     console.log(params());
    }
-   
 
+   // Setup DOM:
    document.getElementById("submit-crop-button").onclick = submit;
-
    canvas.onmousedown = startDrawing;
    canvas.onmousemove = whileDrawing;
    canvas.onmouseup = endDrawing;

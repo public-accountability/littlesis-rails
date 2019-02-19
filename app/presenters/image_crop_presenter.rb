@@ -6,7 +6,7 @@ class ImageCropPresenter < SimpleDelegator
   # Some original images will be too large to reasonably fit on the page.
   # We can scale the image to a suitable size as we normally do when displaying images on a page.
   # However, we need keep track of the ratio so that later on ImageMagick correctly crop the image.
-  CropImageDimensions = Struct.new(:original, :ratio, :width, :height)
+  CropImageDimensions = Struct.new(:type, :ratio, :width, :height)
 
   WIDTH_THRESHOLD = 900.to_f
 
@@ -24,14 +24,14 @@ class ImageCropPresenter < SimpleDelegator
     dimensions = dimensions(type_for_crop)
 
     if dimensions.width <= WIDTH_THRESHOLD
-      @image_dimension = CropImageDimensions.new(dimensions, 1.0, dimensions.width, dimensions.height)
+      @image_dimension = CropImageDimensions.new(type_for_crop, 1.0, dimensions.width, dimensions.height)
     else
       ratio = dimensions.width / WIDTH_THRESHOLD
 
-      @image_dimension = CropImageDimensions.new(dimensions,
-                                               ratio.round(3),
-                                               WIDTH_THRESHOLD,
-                                               (dimensions.height / ratio).round(3))
+      @image_dimension = CropImageDimensions.new(type_for_crop,
+                                                 ratio.round(3),
+                                                 WIDTH_THRESHOLD,
+                                                 (dimensions.height / ratio).round(3))
     end
   end
 
