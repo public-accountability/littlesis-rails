@@ -126,7 +126,7 @@ Lilsis::Application.routes.draw do
   resources :images, only: [] do
     member do
       get 'crop'
-      post 'crop_remote'
+      post 'crop'
       post 'request_deletion'
     end
 

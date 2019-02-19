@@ -97,19 +97,27 @@
    }
 
    function params() {
-     return {
-       "crop": cropData,
-       "image": {
-	 "id": <%= @image.id %>,
-	 "ratio": <%= @image.image_dimensions.ratio %>,
-	 "type": <%= @image.image_dimensions.type %>
-       }
-       
-     }
+     var imageInfo = <%= raw({ "ratio" => @image.image_dimensions.ratio, "type" => @image.image_dimensions.type }.to_json) %>;
+
+     return { "crop": Object.assign({}, imageInfo, cropData) }
    }
 
    function submit() {
      console.log(params());
+
+     return fetch("<%= crop_image_path(@image) %>", {
+       method: "POST",
+       cache: "no-cache",
+       credentials: "include",
+       headers: {
+         "Content-Type":  "application/json",
+	 "Accept":        "application/json",
+         "X-CSRF-Token":  document.querySelector("meta[name='csrf-token']").content
+       }, 
+       body: JSON.stringify(params()),
+     })
+       .then(function(res) { return res.json() })
+       .then(function(json) { window.location.replace(json.url) });
    }
 
    // Setup DOM:

@@ -6,7 +6,7 @@ class ImagesController < ApplicationController
   before_action :authenticate_user!
   before_action -> { check_permission('admin') }, only: ADMIN_ACTIONS
   before_action :set_image_deletion_request, only: ADMIN_ACTIONS
-  before_action :set_image, only: %i[request_deletion crop_remote]
+  before_action :set_image, only: %i[request_deletion crop]
 
   def request_deletion
     unless ImageDeletionRequest.exists?(image: @image)
@@ -30,16 +30,21 @@ class ImagesController < ApplicationController
   end
 
   def crop
-    @image = ImageCropPresenter.new(Image.find(params[:id]))
+    if request.post?
+      Rails.logger.warn params
+      render json: { "url": images_entity_path(@image.entity) }, status: :created
+    else
+      @image = ImageCropPresenter.new(@image)
+    end
   end
 
-  def crop_remote
-    if params[:coords].present?
-      coords = JSON.parse(params[:coords])
-      @image.crop(coords['x'], coords['y'], coords['w'], coords['h'])
-    end
-    redirect_to @image.entity.url
-  end
+  # def crop_remote
+  #   if params[:coords].present?
+  #     coords = JSON.parse(params[:coords])
+  #     @image.crop(coords['x'], coords['y'], coords['w'], coords['h'])
+  #   end
+  #   redirect_to @image.entity.url
+  # end
 
   private
 
