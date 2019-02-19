@@ -10,6 +10,14 @@ class ImageCropPresenter < SimpleDelegator
 
   WIDTH_THRESHOLD = 900.to_f
 
+  def image_width_px
+    "#{image_dimensions.width}px"
+  end
+
+  def image_height_px
+    "#{image_dimensions.height}px"
+  end
+
   def image_dimensions
     return @image_dimensions if defined?(@image_dimensions)
 

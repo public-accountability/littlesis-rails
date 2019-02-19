@@ -1,37 +1,40 @@
 <style>
+
  #image-wrapper {
      display:inline-block;
-     width: <%= @dimensions.width %>px;
-     height: <%= @dimensions.height %>px;
+     width: <%= @image.image_width_px %>;
+     height: <%= @image.image_height_px %>;
      margin: 0 auto; 
      position:relative; 
-     border-radius: 10px; 
-     box-shadow: 0 5px 50px #333
- }
- .rect {
-     border: 1px solid #FF0000;
-     background-color: blue;
-     position: absolute;
-     z-index: 999;
+     border-radius: 10px;
+     box-shadow: 0 5px 30px #333;
  }
 
  #image-canvas {
-     background: url('<%= @image.image_path(@type) %>');
-     width: <%= @dimensions.width %>px;
-     height: <%= @dimensions.height %>px;
+     background: url('<%= @image.image_path(@image.type_for_crop) %>');
+     background-size: contain;
+     width: <%= @image.image_width_px %>;
+     height: <%= @image.image_height_px %>;
  }
 
 </style>
 
-<h1><%= entity_link(@image.entity) %></h1>
+<h1 class="mb-1"><%= entity_link(@image.entity) %></h1>
 
 <h3>Crop Image</h3>
 
 
-<div id="image-wrapper">
-  <canvas width="<%= @dimensions.width %>" height="<%= @dimensions.height %>" id="image-canvas"></canvas>
+<div class="row">
+  <div id="image-wrapper">
+    <canvas width="<%= @image.image_dimensions.width %>" height="<%= @image.image_dimensions.height %>" id="image-canvas"></canvas>
+  </div>
 </div>
 
+<div class="row mt-4">
+  <div class="ml-5">
+    <button id="submit-crop-button" type="button" class="btn btn-outline-primary">Submit</button>
+  </div>
+</div>
 
 <script>
  window.addEventListener('load', function() {
@@ -43,7 +46,8 @@
    var ctx = canvas.getContext('2d');
    var isDrawing = false;
    var rect = { "startX": null, "startY": null, "w": null, "h": null };
-
+   var cropData = { "x": null, "y": null, "w": null, "h": null };
+   
    function getCursorPosition(canvas, event) {
      var rect = canvas.getBoundingClientRect();
      var x = event.clientX - rect.left;
@@ -51,35 +55,59 @@
      return { "x": x, "y": y };
    }
 
-   canvas.onmousedown = function(e) {
-     isDrawing = true;
-     var position = getCursorPosition(canvas, e);
-     rect.startX = position.x;
-     rect.startY = position.y;
-   };
-   
-   canvas.onmouseup = function(e) {
+   function updateRect(e)  {
      var position = getCursorPosition(canvas, e);
      rect.w = (position.x - rect.startX);
      rect.h = (position.y - rect.startY);
-     isDrawing = false;
-   };
+   }
 
+   function startDrawing(e) {
+     isDrawing = true;
+     var position = getCursorPosition(canvas, e);
+     rect = { "startX": position.x, "startY": position.y, "w": null, "h": null };
+     cropData = { "x": null, "y": null, "w": null, "h": null };
+   }
 
-   canvas.onmousemove = function (e) {
+   function whileDrawing(e) {
      if (!isDrawing) {
        return;
      }
 
-     var position = getCursorPosition(canvas, e);
-     rect.w = (position.x - rect.startX);
-     rect.h = (position.y - rect.startY);
+     updateRect(e);
 
      ctx.clearRect(0,0, canvas.width,canvas.height);
      ctx.fillStyle = 'green';
      ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
    }
 
+   function endDrawing(e) {
+     updateRect(e);
+     var position = getCursorPosition(canvas, e);
+
+     // x,y     coordinates of the top left point of the rectancle
+     // w,h     height and width (absolute value)
+     cropData = {
+       "x": Math.min(rect.startX, position.x),
+       "y": Math.min(rect.startY, position.y),
+       "w": Math.abs(rect.w),
+       "h": Math.abs(rect.h)
+     }
+     
+     isDrawing = false;
+   }
+
+
+   function submit() {
+     console.log(rect);
+     console.log(cropData);
+   }
+   
+
+   document.getElementById("submit-crop-button").onclick = submit;
+
+   canvas.onmousedown = startDrawing;
+   canvas.onmousemove = whileDrawing;
+   canvas.onmouseup = endDrawing;
 }
 
 </script>
