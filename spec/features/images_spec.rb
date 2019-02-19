@@ -11,7 +11,6 @@ describe 'Images' do
   let(:user) { create_basic_user }
 
   before { login_as(user, :scope => :user) }
-
   after { logout(:user) }
 
   feature 'Adding an image to a entity' do
@@ -60,6 +59,27 @@ describe 'Images' do
       expect(images.first.is_featured).to be false
 
       successfully_visits_page images_entity_path(entity)
+    end
+
+    describe 'visting the crop image page' do
+      let(:image) { create(:image, entity: create(:entity_org)) }
+      let(:path_1x1) { Rails.root.join('spec', 'testdata', '1x1.png').to_s }
+
+      before do
+        FileUtils.mkdir_p image.image_file('original').pathname.dirname
+        FileUtils.cp(path_1x1, image.image_file('original').path)
+
+        visit crop_image_path(image)
+      end
+
+      it 'has crop html elements' do
+        successfully_visits_page crop_image_path(image)
+
+        page_has_selector 'h3', text: 'Crop Image'
+        page_has_selector '#image-wrapper > canvas', count: 1
+
+        expect(page.html).to include "return fetch(\"#{crop_image_path(image)}\""
+      end
     end
   end
 end
