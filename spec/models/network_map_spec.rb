@@ -255,10 +255,10 @@ describe NetworkMap, type: :model do
       new_graph_data = oli_graph_data.to_h.deep_dup
 
       expect(network_map.graph_data['nodes'][e2.id.to_s]['display']['image']).to be nil
-      expect(network_map.graph_data['nodes'][e1.id.to_s]['display']['image']).to eq e1_image.s3_url('profile')
+      expect(network_map.graph_data['nodes'][e1.id.to_s]['display']['image']).to eq e1_image.image_url('profile')
 
       e2_image = create(:image, entity: e2, is_featured: true)
-      new_graph_data['nodes'][e2.id.to_s]['display']['image'] = e2_image.s3_url('profile')
+      new_graph_data['nodes'][e2.id.to_s]['display']['image'] = e2_image.image_url('profile')
       network_map.refresh_images
       expect(network_map.graph_data.to_h).to eq new_graph_data
     end

@@ -707,7 +707,7 @@ describe Entity, :tag_helper do
     context 'with a featured image' do
       before { image }
 
-      it { is_expected.to eql "https://images.example.net/images/profile/#{image.filename}" }
+      it { is_expected.to eql "/images/profile/#{image.filename.slice(0, 2)}/#{image.filename}" }
     end
   end
 
