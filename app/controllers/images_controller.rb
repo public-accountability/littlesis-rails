@@ -6,7 +6,7 @@ class ImagesController < ApplicationController
   before_action :authenticate_user!
   before_action -> { check_permission('admin') }, only: ADMIN_ACTIONS
   before_action :set_image_deletion_request, only: ADMIN_ACTIONS
-  before_action :set_image, only: %i[request_deletion crop crop_remote]
+  before_action :set_image, only: %i[request_deletion crop]
 
   def request_deletion
     unless ImageDeletionRequest.exists?(image: @image)
@@ -30,15 +30,13 @@ class ImagesController < ApplicationController
   end
 
   def crop
-    @type = @image.s3_exists?('large') ? 'large' : 'profile'
-  end
-
-  def crop_remote
-    if params[:coords].present?
-      coords = JSON.parse(params[:coords])
-      @image.crop(coords['x'], coords['y'], coords['w'], coords['h'])
+    if request.post?
+      new_image = Image.crop(@image, **crop_image_params)
+      Image.replace old_image: @image, new_image: new_image
+      render json: { "url": images_entity_path(@image.entity) }, status: :created
+    else
+      @image = ImageCropPresenter.new(@image)
     end
-    redirect_to @image.entity.url
   end
 
   private
@@ -49,6 +47,14 @@ class ImagesController < ApplicationController
 
   def set_image_deletion_request
     @image_deletion_request = ImageDeletionRequest.find(params.require('image_deletion_request_id'))
+  end
+
+  def crop_image_params
+    params
+      .require(:crop)
+      .permit(:type, :ratio, :x, :y, :w, :h)
+      .to_h
+      .symbolize_keys
   end
 
   def new_image_deletion_request_params

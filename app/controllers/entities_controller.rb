@@ -262,29 +262,24 @@ class EntitiesController < ApplicationController
   end
 
   def upload_image
-    if uploaded = image_params[:file]
-      filename = Image.random_filename(File.extname(uploaded.original_filename))
-      src_path = Rails.root.join('tmp', filename).to_s
-      File.open(src_path, 'wb') do |file|
-        file.write(uploaded.read)
-      end
+    if image_params[:file]
+      @image = Image.new_from_upload(image_params[:file])
+    elsif image_params[:url]
+      @image = Image.new_from_url(image_params[:url])
     else
-      src_path = image_params[:url]
+      return head :bad_request
     end
 
-    @image = Image.new_from_url(src_path)
-    if @image
-      @image.entity = @entity
-      @image.is_free = cast_to_boolean(image_params[:is_free])
-      @image.title = image_params[:title]
-      @image.caption = image_params[:caption]
-    end
+    # TODO: handle error if @image doesn't exist? 
 
-    if @image && @image.save
+    @image.assign_attributes(entity: @entity,
+                             is_free: cast_to_boolean(image_params[:is_free]),
+                             title: image_params[:title],
+                             caption: image_params[:caption])
+    if @image.save
       @image.feature if cast_to_boolean(image_params[:is_featured])
       redirect_to images_entity_path(@entity), notice: 'Image was successfully created.'
     else
-      @image = Image.new(url: src_path, title: image_params[:title], caption: image_params[:caption])
       render action: 'new_image', notice: 'Failed to add the image :('
     end
   end
@@ -300,9 +295,7 @@ class EntitiesController < ApplicationController
   end
 
   def image_params
-    params.require(:image).permit(
-      :file, :title, :caption, :url, :is_free, :is_featured
-    )
+    params.require(:image).permit(:file, :title, :caption, :url, :is_free, :is_featured)
   end
 
   def update_entity_params

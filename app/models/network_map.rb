@@ -131,7 +131,8 @@ class NetworkMap < ApplicationRecord
     if entity['image'] && !entity['image'].include?('netmap') && !entity['image'].include?('anon')
       image_path = entity['image']
     elsif entity['filename']
-      image_path = Image.image_path(entity['filename'], 'profile')
+      image_path = "/images/profile/#{entity['filename'].slice(0, 2)}/#{entity['filename']}"
+      # image_path = Image.image_path(entity['filename'], 'profile')
     else
       image_path = nil
     end
@@ -222,6 +223,7 @@ class NetworkMap < ApplicationRecord
     title.nil? ? "Network map #{id}" : "Map of #{title}"
   end
 
+  # TODO: store image locally instead of uploading to S3
   def generate_s3_thumb
     url = Rails.application.routes.url_helpers.embedded_map_url(self, :host => 'https://littlesis.org')
 

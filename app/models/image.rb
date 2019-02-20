@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# We store images on our file system:
+#  images/original/prefix/filename.ext
+#  images/small/prefix/filename.jpg
+#  images/profile/prefix/filename.jpg
+#  images/large/prefix/filename.jpg
+#  images/square/prefix/filename/jpg
 class Image < ApplicationRecord
   include SingularTable
   include SoftDelete
@@ -7,13 +13,13 @@ class Image < ApplicationRecord
   belongs_to :entity, inverse_of: :images, optional: true
   belongs_to :user, inverse_of: :image, optional: true
   belongs_to :address, inverse_of: :images, optional: true
-
   has_many :deletion_requests, inverse_of: :image, foreign_key: 'source_id', class_name: 'ImageDeletionRequest'
 
   scope :featured, -> { where(is_featured: true) }
   scope :persons, -> { joins(:entity).where(entity: { primary_ext: 'Person' }) }
 
-  IMAGE_SIZES = { small: 50, profile: 200, large: 1024 }.freeze
+  IMAGE_HOST = APP_CONFIG.fetch('image_host')
+  IMAGE_SIZES = { small: 50, profile: 200, large: 1024, original: nil }.freeze
   IMAGE_TYPES = IMAGE_SIZES.keys.freeze
 
   MIME_TYPES = {
@@ -34,56 +40,55 @@ class Image < ApplicationRecord
   validates :filename, presence: true
   validates :title, presence: true
 
+  def image_path(type)
+    "/images/#{type}/#{filename.slice(0, 2)}/#{filename}"
+  end
+
+  def image_url(type)
+    URI.join(IMAGE_HOST, image_path(type)).to_s
+  end
+
+  def image_file(type = 'profile')
+    ImageFile.new(filename: read_attribute(:filename), type: type)
+  end
+
+  Dimensions = Struct.new(:width, :height)
+
+  def dimensions(type = 'original')
+    img = image_file(type).mini_magick
+    Dimensions.new(img.width, img.height)
+  ensure
+    img.destroy!
+  end
+
+  ######### s3 legacy methods ##############3
+
+  # def self.s3_path(filename, type)
+  #   "images/#{type}/#{filename}"
+  # end
+
+  # def self.s3_url(filename, type)
+  #   "https://#{APP_CONFIG['image_asset_host']}/#{s3_path(filename, type)}"
+  # end
+
+  # singleton_class.send(:alias_method, :image_path, :s3_url)
+
+  # def s3_url(type)
+  #   self.class.s3_url(filename, type)
+  # end
+
+  # alias_method :image_path, :s3_url
+
+  ######### s3 legacy methods ##############3
+
   def destroy
     soft_delete
-  end
-
-  def download_large_to_tmp
-    download_to_tmp s3_url('large')
-  end
-
-  def download_profile_to_tmp
-    download_to_tmp s3_ur('profile')
-  end
-
-  def download_original_to_tmp
-    download_to_tmp(url)
-  end
-
-  def download_to_tmp(remote_url)
-    file = open(tmp_path, 'wb')
-    file << open(remote_url).read
-    return true
-  rescue OpenURI::HTTPError
-    return false
-  ensure
-    file.close
   end
 
   def original_exists?
     HTTParty.head(url).code == 200
   rescue HTTParty::ResponseError, SocketError
     false
-  end
-
-  def self.s3_path(filename, type)
-    "images/#{type}/#{filename}"
-  end
-
-  def self.s3_url(filename, type)
-    "https://#{APP_CONFIG['image_asset_host']}/#{s3_path(filename, type)}"
-  end
-
-  singleton_class.send(:alias_method, :image_path, :s3_url)
-
-  def s3_url(type)
-    self.class.s3_url(filename, type)
-  end
-
-  alias_method :image_path, :s3_url
-
-  def s3_exists?(type)
-    S3.file_exists? "images/#{type}/#{filename}"
   end
 
   def filename(type=nil)
@@ -104,22 +109,33 @@ class Image < ApplicationRecord
   class RemoteImageRequestFailure < StandardError
   end
 
+  class ImagePathMissingExtension < StandardError
+  end
+
   # String --> String | Throws
   #
   # Derives the image format from the url.
   # It first tries to determine the format
   # from the ending of the url path. If that fails,
   # it performs a HEAD request to get the content-type.
-  def self.file_ext_from(url)
-    ext = File.extname(URI(url).path).tr('.', '').downcase
+  def self.file_ext_from(url_or_path)
+    uri = URI(url_or_path)
+
+    ext = File.extname(uri.path).tr('.', '').downcase
     return ext if VALID_EXTENSIONS.include?(ext)
 
-    head = HTTParty.head(url)
+    raise ImagePathMissingExtension if uri.scheme.nil?
+
+    head = HTTParty.head(url_or_path)
     raise RemoteImageRequestFailure unless head.success?
 
     mime_type = head['content-type'].downcase
-    return MIME_TYPES.fetch(mime_type) if MIME_TYPES.key?(mime_type)
-    raise InvalidFileExtensionError
+
+    if MIME_TYPES.key?(mime_type)
+      return MIME_TYPES.fetch(mime_type)
+    else
+      raise InvalidFileExtensionError
+    end
   end
 
   # Downloads url and saves images to temporary file
@@ -138,81 +154,101 @@ class Image < ApplicationRecord
     file.close
   end
 
-  # Downloads an image from url, resizes it, and uploads
-  # the resized images to S3.
+  # Subclass of IO --> Image
+  def self.new_from_upload(uploaded)
+    ext = file_ext_from(uploaded.original_filename)
+    original_file = MiniMagick::Image.read(uploaded, ".#{ext}")
+    filename = random_filename(ext)
+    create_image_variations(filename, original_file.path)
+    new(filename: filename, width: original_file.width, height: original_file.height)
+  end
+
+  # Downloads an image from url and creates variations
   #
   # String (url) --> Image | false
   #
   # This assumes that the image url has an filetype extension
   #   ie: http://example.com/image.png
-  # a url without an extension will not work
+  #
+  # a url without an extension may work if the url returns a valid mime type
   def self.new_from_url(url)
-    # This method can accept remote and local paths
-    if url.slice(0, 4).casecmp('http').zero?
-      original_image_path = save_image_to_tmp(url)
-    else
-      original_image_path = url
+    if url.blank?
+      raise Exceptions::LittleSisError, 'Image.new_from_url called with a blank url'
+    elsif url.casecmp('http') == -1
+      raise Exceptions::LittleSisError, 'url does not start with "http"'
     end
 
-    return false if original_image_path.blank?
+    original_image_path = save_image_to_tmp(url)
+    raise RemoteImageRequestFailure if original_image_path.blank?
+
+    original_file = MiniMagick::Image.open(original_image_path)
+
     filename = random_filename(file_ext_from(original_image_path))
+    create_image_variations(filename, original_image_path)
+    new(filename: filename, url: url, width: original_file.width, height: original_file.height)
+  ensure
+    File.delete(original_image_path) if original_image_path.present? && File.exist?(original_image_path)
+  end
 
-    original = MiniMagick::Image.open(original_image_path)
+  def self.create_image_variations(filename, original_file, check_first: true)
+    IMAGE_TYPES.each do |type|
+      create_image_variation(filename, type, original_file, check_first: check_first)
+    end
+  end
 
-    if ENV['SKIP_S3_UPLOAD'] || Rails.env.test?
-      large = profile = small = true
-    else
-      large = create_asset(filename, 'large', original_image_path, max_width: 1024, max_height: 1024)
-      profile = create_asset(filename, 'profile', original_image_path, max_width: 200, max_height: 200)
-      small = create_asset(filename, 'small', original_image_path, max_width: 50, max_height: 50)
+  def self.create_image_variation(filename, type, read_path, check_first: true)
+    image_file = ImageFile.new(filename: filename, type: type)
+    return :exists if check_first && image_file.exists?
+
+    img = MiniMagick::Image.open(read_path)
+
+    max_size = IMAGE_SIZES.fetch(type.to_sym)
+
+    # resize the image unless it's already smaller than the max size
+    # or max size is missing (i.e. type == original)
+    if max_size && ((img.width > max_size) || (img.height > max_size))
+      img.resize "#{max_size}x#{max_size}"
     end
 
-    if large && profile && small
-      new(filename: filename, url: url, width: original[:width], height: original[:height])
-    else
-      false
+    image_file.write(img)
+    :created
+  ensure
+    img&.destroy!
+  end
+
+  # inputs:
+  #   image -> Image
+  #   type  -> String (original, large, etc.)
+  #   ratio -> Float
+  #   x, y  -> Float/Int. Starting point for crop
+  #   h, y  -> Float/Int. How much to cut out
+  #
+  # Returns new Image, not persisted, just like new_from_url and new_from_upload
+  # The image is created with .dup()
+  #
+  # Caller is responsible for handling logic of deleting or replacing previous image.
+  def self.crop(image, type:, ratio:, x:, y:, h:, w:)
+    crop_geometry = "#{w * ratio}x#{h * ratio}+#{x * ratio}+#{y * ratio}"
+    img = image.image_file(type).mini_magick
+    img.crop crop_geometry
+
+    filename = random_filename file_ext_from(img.path)
+    create_image_variations filename, img.path
+
+    image.dup.tap do |i|
+      i.assign_attributes(filename: filename, width: img.width, height: img.height)
     end
   ensure
-    File.delete(original_image_path) if File.exist?(original_image_path)
+    img.destroy!
   end
 
-  def self.create_asset(filename, type, read_path, max_width: nil, max_height: nil, check_first: true)
-    begin
-      img = MiniMagick::Image.open(read_path)
-    rescue
-      Rails.logger.info "MiniMagick failed to open the file: #{read_path}"
-      return false
+  # Deletes old image and saves new image inside a transaction
+  def self.replace(old_image:, new_image:)
+    ApplicationRecord.transaction do
+      old_image.soft_delete
+      new_image.save!
+      Rails.logger.info "[crop] Replaced Image\##{old_image.id} (#{old_image.filename}) with Image\##{new_image.id} (#{new_image.filename})"
     end
-
-    width = img[:width]
-    height = img[:height]
-
-    if (max_width && (width > max_width)) || (max_height && (height > max_height))
-      w = max_width ||  img[:width]
-      h = max_height || img[:height]
-      img.resize([w, h].join("x"))
-    end
-
-    tmp_path = Rails.root.join("tmp", "#{type}_#{filename}").to_s
-    img.write(tmp_path)
-    result = S3.upload_file(remote_path: "images/#{type}/#{filename}", local_path: tmp_path, check_first: check_first)
-    File.delete(tmp_path)
-    result
-  end
-
-  def crop(x, y, w, h)
-    download_large_to_tmp or download_profile_to_tmp
-    img = MiniMagick::Image.open(tmp_path)
-    img.crop("#{w}x#{h}+#{x}+#{y}")
-    img.write(tmp_path)
-
-    IMAGE_SIZES.each do |type, size|
-      Image.create_asset(filename, type, tmp_path, max_width: size, max_height: size, check_first: false)
-    end
-
-    File.delete(tmp_path)
-    invalidate_cloudfront_cache
-    true
   end
 
   def feature
@@ -236,20 +272,5 @@ class Image < ApplicationRecord
     end
 
     self
-  end
-
-  def invalidate_cloudfront_cache
-    if Lilsis::Application.config.cloudfront_distribtion_id
-      CloudFront.new.invalidate([
-        "/images/profile/#{filename}",
-        "/images/small/#{filename}"
-      ])
-    end
-  end
-
-  private
-
-  def tmp_path
-    Rails.root.join('tmp', filename).to_s
   end
 end

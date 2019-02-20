@@ -40,6 +40,11 @@ Metrics/AbcSize:
 Metrics/CyclomaticComplexity:
   Max: 8
 
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+  Exclude:
+    - 'app/models/image.rb'
+
 Lint/AmbiguousBlockAssociation:
   Exclude:
     - 'spec/**/*.rb'
@@ -99,3 +104,5 @@ Rails/SkipsModelValidations:
 
 Rspec/DescribedClass:
   Enabled: false
+
+

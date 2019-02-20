@@ -52,6 +52,8 @@ defaults: &defaults
   donation_banner_html: |
     Today is #GivingTuesday. Please <a href="https://littlesis.org/donate/">make a tax-deductible donation</a><span class="d-sm-none d-md-inline">  to support our efforts to develop and maintain LittleSis.org
   oligrapher_version: 0.4.1
+  image_host: "https://littlesis.org"
+  image_root: public/images
   
 
 test:
@@ -62,10 +64,13 @@ test:
   image_asset_host: images.example.net
   donation_banner_display: false
   oligrapher_version: 0.0.1
+  image_root: tmp
 
 development:
   <<: *defaults
+  image_host: "http://localhost:8080"
   site_url: "http://localhost:8080"
+  
 
 production:
   <<: *defaults
