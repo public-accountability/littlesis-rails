@@ -23,7 +23,9 @@ describe EntityVersionPresenter do
     end
 
     describe 'an extension was created and removed' do
-      let(:time) { "<em>#{LsDate.pretty_print(Time.current)}</em>" }
+      let(:time) do
+        "<em>#{LsDate.pretty_print_with_minutes(Time.current)}</em>"
+      end
 
       before do
         entity.add_extension 'Academic'

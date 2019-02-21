@@ -24,6 +24,12 @@ class LsDate
     date.strftime(BASIC_FORMAT).gsub('  ', ' ')
   end
 
+  def self.pretty_print_with_minutes(date)
+    hour_and_minute = date.strftime('%l:%M %p').strip
+    date = date.strftime('%B %e, %Y')
+    "#{date} #{hour_and_minute}"
+  end
+
   # Initialize with string YYYY-MM-DD
   def initialize(date_string)
     test_if_valid_input(date_string)

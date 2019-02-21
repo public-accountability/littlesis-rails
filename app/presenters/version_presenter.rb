@@ -2,20 +2,20 @@
 
 # intended to be subclassed to wrap PaperTrail::Version objects
 class VersionPresenter < SimpleDelegator
-  
   include ActionView::Helpers::UrlHelper
-  delegate :relationship_path, :entity_path, :list_path, to: "Rails.application.routes.url_helpers"
+  delegate :relationship_path, :entity_path, :list_path, to: 'Rails.application.routes.url_helpers'
 
   IGNORE_FIELDS = Set.new(%w[id created_at updated_at link_count last_user_id delta])
 
   protected
 
   def str_time
-    LsDate.pretty_print(created_at)
+    LsDate.pretty_print_with_minutes(created_at)
   end
 
   def user_link
     return 'System' if user.nil?
+
     link_to user.username, "/users/#{user.username}"
   end
 
