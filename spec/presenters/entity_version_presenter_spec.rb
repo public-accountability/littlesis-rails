@@ -1,6 +1,8 @@
 require 'rails_helper'
 
-describe 'EntityVersionPresenter' do
+# rubocop:disable RSpec/NamedSubject
+
+describe EntityVersionPresenter do
   with_versioning do
     let(:user) { create_really_basic_user }
     let(:entity) { create(:entity_person) }
@@ -13,19 +15,21 @@ describe 'EntityVersionPresenter' do
       PaperTrail.request(whodunnit: user.id.to_s) { entity }
     end
 
-    context 'entity was created' do
+    describe 'after the entity was created' do
       specify do
         version = entity_history.versions.as_presenters.first
-        expect(version.render).to include "created the entity"
+        expect(version.render).to include 'created the entity'
       end
     end
 
-    context 'extension was created and removed' do
+    describe 'an extension was created and removed' do
       let(:time) { "<em>#{LsDate.pretty_print(Time.current)}</em>" }
+
       before do
         entity.add_extension 'Academic'
         entity.remove_extension 'Academic'
       end
+
       specify do
         expect(versions).to include "System added extension Academic at #{time}"
       end
@@ -35,13 +39,16 @@ describe 'EntityVersionPresenter' do
       end
     end
 
-    context 'adding and removing entity from lists' do
-      let!(:list) { create(:list) }
+    describe 'adding and removing entity from lists' do
       subject do
         entity_history.versions.as_presenters.map(&:render).join(' ')
       end
 
-      context 'entity was added to a list' do
+      let(:list) { create(:list) }
+
+      before { list }
+
+      describe 'entity was added to a list' do
         before { ListEntity.create!(list: list, entity: entity) }
 
         it 'has correct message' do
@@ -50,7 +57,7 @@ describe 'EntityVersionPresenter' do
         end
       end
 
-      context 'entity was added and removed from a list' do
+      describe 'entity was added and removed from a list' do
         before do
           le = ListEntity.create!(list: list, entity: entity)
           le.destroy!
@@ -63,7 +70,7 @@ describe 'EntityVersionPresenter' do
       end
     end
 
-    context 'external links' do
+    describe 'external links' do
       subject do
         entity_history.versions.as_presenters.map(&:render).join(' ')
       end
@@ -81,9 +88,12 @@ describe 'EntityVersionPresenter' do
 
     describe '#user_link' do
       subject { entity_history.versions.as_presenters.first }
+
       it 'generates link for user' do
         expect(subject.send(:user_link)).to include "href=\"/users/#{user.username}\""
       end
     end
   end
 end
+
+# rubocop:enable RSpec/NamedSubject
