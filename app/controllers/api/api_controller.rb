@@ -6,8 +6,8 @@ module Api
     protect_from_forgery with: :null_session
 
     unless Rails.env.development?
-      before_action :verify_api_token
-      skip_before_action :verify_api_token, only: [:index]
+      before_action :api_authenticate!
+      skip_before_action :api_authenticate!, only: [:index]
     end
 
     rescue_from ActiveRecord::RecordNotFound do
@@ -40,10 +40,21 @@ module Api
 
     protected
 
-    def verify_api_token
-      api_token = request.headers['Littlesis-Api-Token']
+    def api_authenticate!
+      return if api_token.blank? && user_signed_in?
+
+      verify_api_token!
+    end
+
+    def verify_api_token!
       raise Exceptions::MissingApiTokenError if api_token.blank?
       raise Exceptions::PermissionError unless ApiToken.valid_token?(api_token)
+    end
+
+    private
+
+    def api_token
+      request.headers['Littlesis-Api-Token']
     end
   end
 end
