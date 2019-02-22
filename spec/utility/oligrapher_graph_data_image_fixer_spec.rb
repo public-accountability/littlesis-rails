@@ -52,4 +52,25 @@ describe OligrapherGraphDataImageFixer do
         .to eq entity.featured_image.image_url('profile')
     end
   end
+
+  describe 'valid_url?' do
+    it 'returns false if has no scheme' do
+      expect(OligrapherGraphDataImageFixer.valid_image?('/some/path'))
+        .to be false
+    end
+
+    it 'captures SocketError for no address' do
+      msg = "Failed to open TCP connection to example:443 (getaddrinfo: No address associated with hostname"
+      expect(HTTParty).to receive(:head).with('https://example.com', kind_of(Hash)).and_raise(SocketError.new(msg))
+
+      expect(OligrapherGraphDataImageFixer.valid_image?('https://example.com')).to be false
+    end
+
+    it 'captures SocketError for not known name' do
+      msg = "Failed to open TCP connection to example.com:443 (getaddrinfo: Name or service not known"
+      expect(HTTParty).to receive(:head).with('https://example.com', kind_of(Hash)).and_raise(SocketError.new(msg))
+
+      expect(OligrapherGraphDataImageFixer.valid_image?('https://example.com')).to be false
+    end
+  end
 end

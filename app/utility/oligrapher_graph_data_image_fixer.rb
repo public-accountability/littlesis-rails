@@ -37,19 +37,7 @@ class OligrapherGraphDataImageFixer
   end
 
   def valid_image?(url)
-    url = "https:#{url}" if url.slice(0, 2) == '//'
-    return false if URI(url).scheme.nil?
-
-    Rails.logger.debug "[OligrapherGraphDataImageFixer] Checking url: #{url}"
-
-    response = HTTParty.head(url, follow_redirects: true, maintain_method_across_redirects: true)
-
-    # Check response code
-    return false unless response.code.eql?(200)
-
-    # Due to an issue with our image store, there are some images that return 200 but are empty.
-    # If the headers have a content-length field that's zero, then the image is not valid.
-    !response.headers.fetch('content-length', 1).to_i.zero?
+    self.class.valid_image?(url)
   end
 
   def entity_lookup
@@ -62,5 +50,29 @@ class OligrapherGraphDataImageFixer
 
   def changed?
     @original_graph_data != @graph_data
+  end
+
+  def self.valid_image?(url)
+    url = "https:#{url}" if url.slice(0, 2) == '//'
+    return false if URI(url).scheme.nil?
+
+    Rails.logger.debug "[OligrapherGraphDataImageFixer] Checking url: #{url}"
+
+    begin
+      response = HTTParty.head(url, follow_redirects: true, maintain_method_across_redirects: true)
+    rescue SocketError => e
+      if e.message.include?('No address associated with hostname') || e.message.include?('Name or service not know')
+        return false
+      else
+        raise e
+      end
+    end
+
+    # Check response code
+    return false unless response.code.eql?(200)
+
+    # Due to an issue with our image store, there are some images that return 200 but are empty.
+    # If the headers have a content-length field that's zero, then the image is not valid.
+    !response.headers.fetch('content-length', 1).to_i.zero?
   end
 end
