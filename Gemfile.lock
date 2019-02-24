@@ -70,7 +70,7 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     arel (9.0.0)
     ast (2.4.0)
-    autoprefixer-rails (9.4.3)
+    autoprefixer-rails (9.4.8)
       execjs
     aws-eventstream (1.0.1)
     aws-partitions (1.137.0)
@@ -98,7 +98,7 @@ GEM
     bindex (0.5.0)
     bootsnap (1.4.0)
       msgpack (~> 1.0)
-    bootstrap (4.2.1)
+    bootstrap (4.3.1)
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 1.14.3, < 2)
       sassc-rails (>= 2.0.0)
@@ -400,7 +400,7 @@ DEPENDENCIES
   aws-sdk-s3 (~> 1)
   better_errors (~> 2.5.0)
   bootsnap (>= 1.4.0)
-  bootstrap (~> 4.2.1)
+  bootstrap (>= 4.3.1)
   bootstrap-datepicker-rails
   capybara (>= 3.6.0)
   capybara-webkit

@@ -29,7 +29,7 @@ gem 'webpacker', '>= 4.0.x'
 
 gem 'uglifier', '>= 4.1'
 # gem 'bootstrap-sass', '~> 3.3.7'
-gem 'bootstrap', '~> 4.2.1'
+gem 'bootstrap', '>= 4.3.1'
 
 gem 'bootstrap-datepicker-rails'
 gem 'jquery-rails'
