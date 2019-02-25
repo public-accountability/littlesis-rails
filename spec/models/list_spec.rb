@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe List do
-  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:user).optional }
   it { is_expected.to have_many(:list_entities) }
   it { is_expected.to have_many(:entities) }
   it { is_expected.to validate_presence_of(:name) }

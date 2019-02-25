@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe ToolkitPage, type: :model do
-  it { should belong_to(:last_user) }
+  it { should belong_to(:last_user).optional }
 
   describe 'pagify_name' do
     it 'converts to lowercase and replaces spaces with underscores' do

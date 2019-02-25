@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe NyDisclosure, type: :model do
   it { should have_one(:ny_match) }
-  it { should belong_to(:ny_filer) }
+  it { should belong_to(:ny_filer).optional }
   it { should validate_presence_of(:filer_id) }
   it { should validate_presence_of(:report_id) }
   it { should validate_presence_of(:transaction_code) }

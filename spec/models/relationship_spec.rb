@@ -8,8 +8,8 @@ describe Relationship, type: :model do
 
   describe 'associations' do
     it { should have_many(:links) }
-    it { should belong_to(:entity) }
-    it { should belong_to(:related) }
+    it { should belong_to(:entity).optional }
+    it { should belong_to(:related).optional }
     it { should have_one(:position) }
     it { should have_one(:education) }
     it { should have_one(:membership) }
@@ -17,7 +17,7 @@ describe Relationship, type: :model do
     it { should have_one(:trans) }
     it { should have_one(:ownership) }
     it { should belong_to(:category) }
-    it { should belong_to(:last_user) }
+    it { should belong_to(:last_user).optional }
     it { should have_many(:os_matches) }
     it { should have_many(:os_donations) }
     it { should have_many(:ny_matches) }

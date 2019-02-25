@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Person do
-  it { should belong_to(:entity) }
+  it { should belong_to(:entity).optional }
   it { should have_db_column(:nationality) }
 
   it 'has SHORT_FIRST_NAMES constant' do
@@ -28,6 +28,7 @@ describe Person do
 
     describe 'add nationality' do
       let(:person) { create(:entity_person).person }
+
       it 'add nationality to list' do
         expect(person.nationality).to eql []
         person.add_nationality('Canadian')
@@ -43,8 +44,6 @@ describe Person do
       end
     end
   end
-
-  
 
   describe 'validations' do
     it { should validate_presence_of(:name_last) }

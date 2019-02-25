@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe ExtensionRecord, type: :model do
-  it { is_expected.to belong_to :entity }
+  it { is_expected.to belong_to(:entity).optional }
   it { is_expected.to belong_to :extension_definition }
 
   with_versioning do

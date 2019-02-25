@@ -7,9 +7,9 @@ describe NyMatch, type: :model do
   it { is_expected.to validate_presence_of(:donor_id) }
   it { is_expected.to belong_to(:ny_disclosure) }
   it { is_expected.to belong_to(:donor) }
-  it { is_expected.to belong_to(:recipient) }
-  it { is_expected.to belong_to(:relationship) }
-  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:recipient).optional }
+  it { is_expected.to belong_to(:relationship).optional }
+  it { is_expected.to belong_to(:user).optional }
   it { is_expected.to have_one(:ny_filer) }
   it { is_expected.to have_one(:ny_filer_entity) }
 

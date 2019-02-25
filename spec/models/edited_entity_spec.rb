@@ -24,8 +24,8 @@ describe EditedEntity, type: :model do
   it { is_expected.to have_db_column(:entity_id).of_type(:integer) }
   it { is_expected.to have_db_column(:created_at).of_type(:datetime) }
   it { is_expected.to belong_to(:entity) }
-  it { is_expected.to belong_to(:version) }
-  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:version).optional }
+  it { is_expected.to belong_to(:user).optional }
   it { is_expected.to validate_presence_of(:entity_id) }
   it { is_expected.to validate_presence_of(:version_id) }
   it { is_expected.to validate_presence_of(:created_at) }
