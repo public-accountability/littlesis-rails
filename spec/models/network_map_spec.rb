@@ -3,8 +3,8 @@ require 'rails_helper'
 # rubocop:disable Style/StringLiterals, Style/WordArray
 
 describe NetworkMap, type: :model do
-  it { is_expected.to belong_to(:sf_guard_user) }
-  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:sf_guard_user).optional }
+  it { is_expected.to belong_to(:user).optional }
   it { is_expected.to validate_presence_of(:title) }
 
   describe 'OLIGRAPHER_VERSION constant' do

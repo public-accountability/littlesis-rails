@@ -12,7 +12,7 @@ describe OsMatch, type: :model do
   it { should validate_presence_of(:os_donation_id) }
   it { should validate_presence_of(:donor_id) }
   it { should belong_to(:os_donation) }
-  it { should belong_to(:donation) }
+  it { should belong_to(:donation).optional }
 
   RefOne = { name: "FEC Filing 11020480483", url: "http://images.nictusa.com/cgi-bin/fecimg/?11020480483" }
   RefTwo = { name: "FEC Filing 10020853341", url: "http//images.nictusa.com/cgi-bin/fecimg/?10020853341" }

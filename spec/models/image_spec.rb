@@ -19,9 +19,9 @@ describe Image, type: :model do
     it { is_expected.to validate_presence_of(:entity_id) }
     it { is_expected.to validate_presence_of(:filename) }
     it { is_expected.to validate_presence_of(:title) }
-    it { is_expected.to belong_to(:entity) }
-    it { is_expected.to belong_to(:user) }
-    it { is_expected.to belong_to(:address) }
+    it { is_expected.to belong_to(:entity).optional }
+    it { is_expected.to belong_to(:user).optional }
+    it { is_expected.to belong_to(:address).optional }
     specify { expect(Image::IMAGE_SIZES).to be_a Hash }
   end
 

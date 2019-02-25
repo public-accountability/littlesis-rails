@@ -56,7 +56,7 @@ group :development do
 end
 
 group :test, :development do
-  gem 'better_errors', '~> 2.5.0'
+  gem 'better_errors', '>= 2.5.0'
   gem 'capybara', '>= 3.6.0'
   gem 'capybara-webkit'
   gem 'database_cleaner'
@@ -76,7 +76,7 @@ group :test, :development do
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
-  gem 'shoulda-matchers', '~> 3.1'
+  gem 'shoulda-matchers', '>= 4.0.0'
   gem 'spring', '~> 2.0.2'
   gem 'spring-commands-rspec'
 end
