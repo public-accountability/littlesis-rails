@@ -18,7 +18,6 @@ gem 'delayed_job', '~> 4.1.5'
 gem 'delayed_job_active_record', '>= 4.1.3'
 
 # Assets, image uploading & processing
-gem 'aws-sdk-cloudfront', '~> 1'
 gem 'aws-sdk-s3', '~> 1'
 gem 'mini_magick'
 
