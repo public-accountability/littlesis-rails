@@ -386,6 +386,12 @@ Lilsis::Application.routes.draw do
   # edit pages.yml to add more pages
   get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
 
+  #####################
+  # external datasets #
+  #####################
+
+  get 'external_datasets' => 'external_datasets#index'
+
   match "*path", to: "errors#not_found", via: :all
 
   # The priority is based upon order of creation: first created -> highest priority.
