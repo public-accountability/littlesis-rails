@@ -3,4 +3,7 @@
 class ExternalDatasetsController < ApplicationController
   def index
   end
+
+  def iapd
+  end
 end

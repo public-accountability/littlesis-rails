@@ -391,6 +391,7 @@ Lilsis::Application.routes.draw do
   #####################
 
   get 'external_datasets' => 'external_datasets#index'
+  get 'external_datasets/iapd' => 'external_datasets#iapd'
 
   match "*path", to: "errors#not_found", via: :all
 
