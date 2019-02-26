@@ -6,4 +6,8 @@ class ExternalDatasetsController < ApplicationController
 
   def iapd
   end
+
+  def row
+    render json: ExternalDataset.find(params[:id]).row_data
+  end
 end
