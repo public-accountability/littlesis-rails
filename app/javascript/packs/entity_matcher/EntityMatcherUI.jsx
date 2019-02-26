@@ -1,5 +1,6 @@
 import React from 'react';
 import DatasetItemHeader from './components/DatasetItemHeader';
+import PotentialMatches from './components/PotentialMatches';
 
 const defaults = {
   "item_id": 456
@@ -14,7 +15,7 @@ export class EntityMatcherUI extends React.Component {
         </div>
 
         <div className="rightSide">
-
+          <PotentialMatches />
         </div>
 
         
