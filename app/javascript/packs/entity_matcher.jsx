@@ -1,12 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { EntityMatcherUI } from './entity_matcher/EntityMatcher';
+import { EntityMatcherUI } from './entity_matcher/EntityMatcherUI';
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const div = document.getElementById('entity-matcher');
 
   ReactDOM.render(
-    <EntityMatcherUI entityId="1" />,
+    <EntityMatcherUI />,
     document.getElementById('entity-matcher')
   );
 });

@@ -1,0 +1,22 @@
+#entity-matcher-ui {
+    display: flex;
+    height: 500px;
+    width: 100%;
+
+    div.leftSide, div.rightSide {
+	flex: 1;
+	padding: 1em;
+	border: 1px solid black;
+    }
+
+    div.leftSide {
+	background-color: lightgray;
+	margin-right: 0.5em;
+    }
+
+    div.rightSide {
+	background-color: lightgreen;
+	margin-left: 0.5em;
+    }
+
+}
