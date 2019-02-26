@@ -9,7 +9,8 @@ Rails.application.config.assets.precompile += [
   'extension.js',
   'markdown_editor.js',
   'markdown_editor.scss',
-  'relationships_datatable.js'
+  'relationships_datatable.js',
+  'entity_matcher.css.scss'
 ]
 
 Rails.application.config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif *.svg *.eot *.woff *.woff2 *.ttf)
