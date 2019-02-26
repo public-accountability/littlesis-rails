@@ -10,7 +10,7 @@ const defaults = {
 export class EntityMatcherUI extends React.Component {
   render() {
     return(
-      <>
+      <div id="entity-matcher-ui">
         <div className="leftSide">
           <DatasetItemHeader item_id={defaults.item_id}/>
           <DatasetItemInfo />
@@ -19,9 +19,7 @@ export class EntityMatcherUI extends React.Component {
         <div className="rightSide">
           <PotentialMatches />
         </div>
-
-        
-      </>
+      </div>
     );
   }
 }
