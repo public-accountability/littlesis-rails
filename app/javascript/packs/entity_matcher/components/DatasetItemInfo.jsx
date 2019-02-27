@@ -2,6 +2,7 @@ import React from 'react';
 
 
 export default function DatasetItemInfo(props) {
-  return <div id="dataset-item-info">
-         </div>;
+  console.log("[DatasetItemInfo] ", props.itemInfo);
+
+  return <div id="dataset-item-info"></div>;
 };
