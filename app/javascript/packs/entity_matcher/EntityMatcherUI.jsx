@@ -20,6 +20,7 @@ const defaultState = () => ({
   "itemId": 2,
   "itemInfo": null,
   "itemInfoStatus": null,
+  "datasetFields": []
 });
 
 
@@ -41,7 +42,7 @@ export class EntityMatcherUI extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = defaultState();
+    this.state = merge({}, defaultState(), { "datasetFields": props.datasetFields});
   }
 
   updateState(newStateOrKey, value) {
@@ -59,13 +60,23 @@ export class EntityMatcherUI extends React.Component {
   }
 
   render() {
+
+    const itemInfoLoading = this.state.itemInfoStatus === LOADING;
+    const itemInfoComplete = this.state.itemInfoStatus === COMPLETE;
+    const itemInfoError = this.state.itemInfoStatus === ERROR;
+
     return(
       <div id="entity-matcher-ui">
         <div className="leftSide">
-          { (this.state.itemInfoStatus === LOADING) && <LoadingSpinner /> }
-          { (this.state.itemInfoStatus === ERROR) && <p>ERROR</p> }
-          { (this.state.itemInfoStatus === COMPLETE) && <DatasetItemHeader itemId={this.state.itemId} /> }
-          { (this.state.itemInfoStatus === COMPLETE) && <DatasetItemInfo itemInfo={this.state.itemInfo} /> }
+          { itemInfoLoading && <LoadingSpinner /> }
+          { itemInfoError && <p>ERROR</p> }
+          {
+            itemInfoComplete &&
+            <>
+              <DatasetItemHeader itemId={this.state.itemId}  />
+              <DatasetItemInfo itemInfo={this.state.itemInfo} />
+            </>
+          }
         </div>
         <div className="rightSide">
           <PotentialMatches />
