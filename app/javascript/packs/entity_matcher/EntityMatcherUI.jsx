@@ -6,6 +6,7 @@ import merge from 'lodash/merge';
 import isPlainObject from 'lodash/isPlainObject';
 
 // COMPONENTS
+import ApiError from './components/ApiError';
 import DatasetItemHeader from './components/DatasetItemHeader';
 import DatasetItemInfo from './components/DatasetItemInfo';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -25,7 +26,6 @@ const defaultState = () => ({
   "itemInfoStatus": null,
   "datasetFields": []
 });
-
 
 export default class EntityMatcherUI extends React.Component {
 
@@ -68,7 +68,7 @@ export default class EntityMatcherUI extends React.Component {
       <div id="entity-matcher-ui">
         <div className="leftSide">
           { itemInfoLoading && <LoadingSpinner /> }
-          { itemInfoError && <p>ERROR</p> }
+          { itemInfoError && <ApiError /> }
           {
             itemInfoComplete &&
             <>
