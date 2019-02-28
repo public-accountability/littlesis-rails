@@ -42,11 +42,12 @@ export function loadItemInfo() {
 
 
 
-export class EntityMatcherUI extends React.Component {
+export default class EntityMatcherUI extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = merge({}, defaultState(), { "datasetFields": props.datasetFields});
+    this.loadItemInfo = loadItemInfo.bind(this);
   }
 
   /**
@@ -63,15 +64,20 @@ export class EntityMatcherUI extends React.Component {
     if (isPlainObject(newStateOrKey)) {
       this.setState( (state, props) => merge({}, state, newStateOrKey) );
     } else {
-      this.setState( (state, props) => merge({}, state, Object.fromEntries([[newStateOrKey, value]])) );
+      this.setState( (state, props) => merge({}, state, { [newStateOrKey]: value }) );
     }
   }
 
   componentDidMount() {
     if (!this.state.itemInfo) {
-      loadItemInfo.call(this);
+      this.loadItemInfo();
     }
   }
+
+
+  // componentDidUpdate() {
+  //   console.log(this.state);
+  // }
 
   render() {
 
