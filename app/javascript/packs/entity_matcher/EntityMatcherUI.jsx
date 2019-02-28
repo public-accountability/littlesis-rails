@@ -1,4 +1,6 @@
 import React from 'react';
+
+//  LODASH
 import merge from 'lodash/merge';
 import isPlainObject from 'lodash/isPlainObject';
 
@@ -24,9 +26,9 @@ const defaultState = () => ({
 });
 
 
-// Actions
-
+// ACTIONS
 // These need to be bound with `this` before being called
+
 export function loadItemInfo() {
   this.updateState("itemInfoStatus", LOADING);
 
@@ -38,6 +40,8 @@ export function loadItemInfo() {
     });
 };
 
+
+
 export class EntityMatcherUI extends React.Component {
 
   constructor(props) {
@@ -45,11 +49,21 @@ export class EntityMatcherUI extends React.Component {
     this.state = merge({}, defaultState(), { "datasetFields": props.datasetFields});
   }
 
+  /**
+   * I don't like how setState doesn't recursively merge objects. That's very annoying!
+   * So my "updateState" uses lodash's merge to recursive combine the objects before sending
+   * them to setState. Yes, I could use redux or something, but I'll stick with this function 
+   * until I feel like that's needed.
+   *
+   * Additionally, It allows a second synatx for updating the state:
+   *   updateState(key, value)
+   * which is the same as updateState({ key: value })
+   */
   updateState(newStateOrKey, value) {
     if (isPlainObject(newStateOrKey)) {
-      this.setState(merge({}, this.state, newStateOrKey));
+      this.setState( (state, props) => merge({}, state, newStateOrKey) );
     } else {
-      this.setState(merge({}, this.state, Object.fromEntries([[newStateOrKey, value]])));
+      this.setState( (state, props) => merge({}, state, Object.fromEntries([[newStateOrKey, value]])) );
     }
   }
 
