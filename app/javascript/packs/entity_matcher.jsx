@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const datasetFields = ["Full Legal Name", "Title or Status", "OwnerID"];
 
   ReactDOM.render(
-    <EntityMatcherUI datasetFields={datasetFields} />,
+    <EntityMatcherUI datasetFields={datasetFields} itemId={2} />,
     document.getElementById('entity-matcher')
   );
 });

@@ -6,6 +6,7 @@ jest.mock('packs/entity_matcher/api_client',
 
 import { retriveDatasetRow } from 'packs/entity_matcher/api_client';
 
+import * as actions from 'packs/entity_matcher/actions';
 import EntityMatcherUI from 'packs/entity_matcher/EntityMatcherUI';
 
 
@@ -19,8 +20,24 @@ describe('EntityMatcherUI', () => {
   const wrapper = shallow(<EntityMatcherUI datasetFields={testDatasetFields} itemId={2}/>);
 
   describe('mounting', () => {
-    test.todo('sets default state');
-    test.todo('calls loadItemInfo after mounting');
+    test('sets default state', () =>{
+      let wrapper = shallow(<EntityMatcherUI datasetFields={testDatasetFields} itemId={123}/>, { disableLifecycleMethods: true });
+
+      expect(wrapper.state()).toEqual({
+	"itemId": 123,
+	"itemInfo": null,
+	"itemInfoStatus": null,
+	"datasetFields": testDatasetFields
+      });
+      
+    });
+
+    test('calls loadItemInfo after mounting', () => {
+      actions.loadItemInfo = jest.fn();
+      let wrapper = shallow(<EntityMatcherUI datasetFields={testDatasetFields} itemId={123}/>);
+      expect(actions.loadItemInfo).toHaveBeenCalledTimes(1);
+      actions.loadItemInfo.mockRestore();
+    });
   });
 
   describe('updateState', () => {

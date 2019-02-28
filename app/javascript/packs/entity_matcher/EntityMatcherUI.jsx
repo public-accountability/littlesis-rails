@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 //  LODASH
 import merge from 'lodash/merge';
@@ -10,8 +11,8 @@ import DatasetItemInfo from './components/DatasetItemInfo';
 import LoadingSpinner from './components/LoadingSpinner';
 import PotentialMatches from './components/PotentialMatches';
 
-// API
-import { retriveDatasetRow } from './api_client';
+// ACTIONS
+import { loadItemInfo } from './actions';
 
 // STATUS HELPERS
 const LOADING = 'LOADING';
@@ -19,35 +20,19 @@ const COMPLETE = 'COMPLETE';
 const ERROR = 'ERROR';
 
 const defaultState = () => ({
-  "itemId": 2,
+  "itemId": null,
   "itemInfo": null,
   "itemInfoStatus": null,
   "datasetFields": []
 });
 
 
-// ACTIONS
-// These need to be bound with `this` before being called
-
-export function loadItemInfo() {
-  this.updateState("itemInfoStatus", LOADING);
-
-  retriveDatasetRow(this.state.itemId)
-    .then(json => this.updateState({ "itemInfoStatus": COMPLETE, "itemInfo": json }))
-    .catch(error => {
-      console.error('[loadItemInfo]: ', error.message);
-      this.updateState("itemInfoStatus", ERROR);
-    });
-};
-
-
-
 export default class EntityMatcherUI extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = merge({}, defaultState(), { "datasetFields": props.datasetFields});
-    this.loadItemInfo = loadItemInfo.bind(this);
+    this.state = merge({}, defaultState(), props);
+    this.updateState = this.updateState.bind(this);
   }
 
   /**
@@ -70,17 +55,11 @@ export default class EntityMatcherUI extends React.Component {
 
   componentDidMount() {
     if (!this.state.itemInfo) {
-      this.loadItemInfo();
+      loadItemInfo(this.updateState, this.state.itemId);
     }
   }
 
-
-  // componentDidUpdate() {
-  //   console.log(this.state);
-  // }
-
   render() {
-
     const itemInfoLoading = this.state.itemInfoStatus === LOADING;
     const itemInfoComplete = this.state.itemInfoStatus === COMPLETE;
     const itemInfoError = this.state.itemInfoStatus === ERROR;
@@ -105,3 +84,8 @@ export default class EntityMatcherUI extends React.Component {
     );
   }
 }
+
+EntityMatcherUI.propTypes = {
+  "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired,
+  "datasetFields": PropTypes.array.isRequired
+};
