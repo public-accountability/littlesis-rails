@@ -73,7 +73,7 @@ export default class EntityMatcherUI extends React.Component {
             itemInfoComplete &&
             <>
               <DatasetItemHeader itemId={this.state.itemId}  />
-              <DatasetItemInfo itemInfo={this.state.itemInfo} />
+              <DatasetItemInfo itemInfo={this.state.itemInfo} datasetFields={this.state.datasetFields} />
             </>
           }
         </div>
