@@ -6,4 +6,8 @@ class ExternalDataset < ApplicationRecord
 
   serialize :row_data, JSON
   serialize :match_data, JSON
+
+  def matches
+    
+  end
 end
