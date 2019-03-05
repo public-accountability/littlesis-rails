@@ -7,7 +7,8 @@ class ExternalDataset < ApplicationRecord
   serialize :row_data, JSON
   serialize :match_data, JSON
 
+  enum primary_ext: { person: 1, org: 2 }
+
   def matches
-    
   end
 end
