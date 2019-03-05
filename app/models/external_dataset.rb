@@ -9,6 +9,19 @@ class ExternalDataset < ApplicationRecord
 
   enum primary_ext: { person: 1, org: 2 }
 
-  def matches
+  def matches(**kwargs)
+    method = "find_matches_for_#{primary_ext}"
+    EntityMatcher.public_send method, entity_name, **kwargs
+  end
+
+  private
+
+  def entity_name
+    case name
+    when 'iapd'
+      row_data.fetch 'Full Legal Name'
+    else
+      raise Exceptions::LittleSisError, "Unknown dataset in ExternalDataset#entity_name: #{name}"
+    end
   end
 end
