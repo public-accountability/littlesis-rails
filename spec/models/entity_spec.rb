@@ -582,6 +582,30 @@ describe Entity, :tag_helper do
     end
   end # end Extension Attributes Functions
 
+  describe 'to_hash' do
+    let(:business) do
+      create(:entity_org).tap do |e|
+        e.add_extension('Business', 'annual_profit' => 1000)
+      end
+    end
+
+    describe 'default settings' do
+      specify do
+        h = business.attributes.merge(url: business.url).with_indifferent_access.except(:delta, :last_user_id)
+        expect(business.to_hash).to eq(h)
+      end
+    end
+
+    describe 'with all attributes and no url' do
+      specify do
+        h = business.all_attributes
+              .with_indifferent_access
+              .except(:delta, :last_user_id)
+        expect(business.to_hash(all_attributes: true, url: false)).to eq(h)
+      end
+    end
+  end
+
   describe 'user related methods' do
     describe '#update_timestamp_for' do
       let(:initial_user) { create_really_basic_user }

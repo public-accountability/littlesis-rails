@@ -123,7 +123,7 @@ class Entity < ApplicationRecord
   # see concers/entity_extensions for more related functions
 
   def all_attributes
-    attributes.merge!(extension_attributes).reject { |k,v| v.nil? }
+    attributes.merge!(extension_attributes) #.reject { |k,v| v.nil? }
   end
 
   def set_attribute(key, value)
@@ -137,6 +137,28 @@ class Entity < ApplicationRecord
         end
       end
     end
+  end
+
+  # Returns a hash representation of the entity
+  # options:
+  #    url - Adds "url" field (default: true)
+  #    all_attributes - includes extensions attributes (default: false)
+  #    image_url - includes featured_image_url (default: false)
+  #    image_url_type - default: nil
+  #    except - excludes these fields( default: ['delta', 'last_user_id']
+  # returns HashWithIndifferentAccess
+  def to_hash(options = {})
+    options = options.with_indifferent_access
+                .reverse_merge(url: true,
+                               all_attributes: false,
+                               image_url: false,
+                               image_url_type: nil,
+                               except: %w[delta last_user_id])
+
+    hash = send(options[:all_attributes] ? :all_attributes : :attributes).with_indifferent_access
+    hash[:url] = url if options[:url]
+    hash[:image_url] = featured_image_url(options[:image_url_type]) if options[:image_url]
+    hash.except!(*options[:except])
   end
 
   ##
