@@ -647,7 +647,7 @@ describe EntityMatcher, :sphinx do
       specify do
         expect(evaluation_result.as_json)
           .to eql({
-                    'entity' => person.as_json(except: %w[notes delta last_user_id]),
+                    'entity' => person.to_hash(image_url: true, image_url_type: 'small', except: %w[notes delta last_user_id]),
                     'values' => [:same_last_name, :same_first_name],
                     'ranking' => 55,
                     'automatch' => false
