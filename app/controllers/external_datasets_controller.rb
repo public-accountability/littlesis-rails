@@ -14,6 +14,7 @@ class ExternalDatasetsController < ApplicationController
   end
 
   def matches
+    render json: @row.matches
   end
 
   private
