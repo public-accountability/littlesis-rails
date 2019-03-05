@@ -633,7 +633,31 @@ describe EntityMatcher, :sphinx do
           expect(subject.result.common_relationship).to eql true
         end
       end
+    end # end EntityMatcher::Evaluation::Org
+
+    describe 'EvalutionResult #as_json' do
+      let(:person) { build(:person) }
+
+      subject(:evaluation_result) do
+        result_person(:same_last_name, :same_first_name).tap do |rp|
+          rp.entity = person
+        end
+      end
+      
+      specify do
+        expect(evaluation_result.as_json)
+          .to eql({
+                    'entity' => person.as_json(except: %w[notes delta last_user_id]),
+                    'values' => [:same_last_name, :same_first_name],
+                    'ranking' => 55,
+                    'automatch' => false
+                  })
+      end
+      
+
+      
     end
+
 
     describe EntityMatcher::EvaluationResult::Person do
       describe 'values' do
