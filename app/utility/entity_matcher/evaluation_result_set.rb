@@ -32,6 +32,11 @@ module EntityMatcher
       return @results.first if automatchable?
     end
 
+    def as_json(options = {})
+      super(options)
+        .merge('automatchable' => automatchable?)
+    end
+
     private
 
     def check_argument(evaluation_results)
