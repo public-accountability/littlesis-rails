@@ -124,6 +124,15 @@ module EntityMatcher
         return self.class.const_get(:RANKINGS).length if idx.nil?
         idx
       end
+
+      def as_json(*)
+        {
+          'entity' => entity&.as_json(except: %w[notes delta last_user_id]),
+          'values' => values.to_a,
+          'ranking' => ranking,
+          'automatch' => automatch?
+        }
+      end
     end
 
     class Person < Base

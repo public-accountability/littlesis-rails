@@ -19,4 +19,17 @@
 	margin-left: 0.5em;
     }
 
+
+    #dataset-item-info {
+	.item-info-wrapper {
+	    margin-bottom: 0.5em;
+	}
+
+	.item-info-title {
+	    margin-right: 1em;
+	    font-weight: bold;
+	}
+
+	.item-info-value {}
+    }
 }

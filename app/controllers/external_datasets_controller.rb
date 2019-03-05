@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ExternalDatasetsController < ApplicationController
+  before_action :load_row, only: %i[row matches]
+
   def index
   end
 
@@ -8,6 +10,15 @@ class ExternalDatasetsController < ApplicationController
   end
 
   def row
-    render json: ExternalDataset.find(params[:id]).row_data
+    render json: @row.row_data
+  end
+
+  def matches
+  end
+
+  private
+
+  def load_row
+    @row = ExternalDataset.find(params[:id])
   end
 end
