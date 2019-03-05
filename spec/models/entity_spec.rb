@@ -97,24 +97,24 @@ describe Entity, :tag_helper do
 
     it 'deletes aliases' do
       a = org.aliases.create!(name: 'my other org name')
-      expect { org.soft_delete }.to change { Alias.count }.by(-2)
+      expect { org.soft_delete }.to change(Alias, :count).by(-2)
       expect(Alias.find_by_id(a.id)).to be nil
     end
 
     it 'deletes Primary extension for person' do
       person
-      expect { person.soft_delete }.to change { Person.count }.by(-1)
+      expect { person.soft_delete }.to change(Person, :count).by(-1)
     end
 
     it 'deletes Primary extension for org' do
       org
-      expect { org.soft_delete }.to change { Org.count }.by(-1)
+      expect { org.soft_delete }.to change(Org, :count).by(-1)
     end
 
     it 'deletes Extension models' do
       person = create(:entity_person, name: 'johnny business')
       person.add_extension('BusinessPerson', sec_cik: 987)
-      expect { person.soft_delete }.to change { BusinessPerson.count }.by(-1)
+      expect { person.soft_delete }.to change(BusinessPerson, :count).by(-1)
     end
 
     it 'soft deletes associated images' do
@@ -124,7 +124,7 @@ describe Entity, :tag_helper do
 
     it 'deletes extension records' do
       org
-      expect { org.soft_delete }.to change { ExtensionRecord.count }.by(-1)
+      expect { org.soft_delete }.to change(ExtensionRecord, :count).by(-1)
     end
 
     it 'deletes list entities' do
@@ -171,9 +171,9 @@ describe Entity, :tag_helper do
           it 'saves and stores association data' do
             @public_company.soft_delete
             expect(@public_company.versions.last.association_data).not_to be nil
-            data = YAML.load(@public_company.versions.last.association_data)
+            data = YAML.safe_load(@public_company.versions.last.association_data)
             expect(data['extension_ids']).to eql [2, 13]
-            expect(data['relationship_ids'].length).to eql 1
+            expect(data['relationship_ids'].length).to eq 1
             expect(data['aliases']).to eql ['another name']
           end
         end
@@ -199,7 +199,7 @@ describe Entity, :tag_helper do
     end
 
     it 'has relationship_ids' do
-      expect(association_data['relationship_ids'].length).to eql 1
+      expect(association_data['relationship_ids'].length).to eq 1
     end
 
     it 'has aliases' do
@@ -207,7 +207,7 @@ describe Entity, :tag_helper do
     end
 
     it 'has tags' do
-      expect(association_data['tags']).to eq ['oil', 'nyc']
+      expect(association_data['tags']).to eq %w[oil nyc]
     end
   end
 
@@ -243,8 +243,8 @@ describe Entity, :tag_helper do
       end
 
       it 'returns correct string if length of names is > 1' do
-        expect(Entity.name_query_string([{}, {}])).to eql " (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) "
-        expect(Entity.name_query_string([{}, {}, {}])).to eql " (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) "
+        expect(Entity.name_query_string([{}, {}])).to eql ' (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) '
+        expect(Entity.name_query_string([{}, {}, {}])).to eql ' (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) OR (name_first = ? and name_last = ?) '
       end
     end
 
@@ -254,12 +254,13 @@ describe Entity, :tag_helper do
       context 'entity is a person' do
         let(:person) { create(:entity_person) }
         let(:donor) { create(:entity_person) }
-        
+
         def create_matches
-          create(:os_match, os_donation: create(:os_donation), donor_id: donor.id) 
           create(:os_match, os_donation: create(:os_donation), donor_id: donor.id)
-          create(:os_match, os_donation: create(:os_donation), donor_id: (donor.id + 100)) # does not match for donor 
+          create(:os_match, os_donation: create(:os_donation), donor_id: donor.id)
+          create(:os_match, os_donation: create(:os_donation), donor_id: (donor.id + 100)) # does not match for donor
         end
+
         before { create_matches }
 
         it 'returns 2 matches for donor' do
@@ -374,7 +375,7 @@ describe Entity, :tag_helper do
 
       it 'returns hash with key "Person"' do
         expect(human.extensions_with_attributes.key?('Person')).to be true
-        expect(human.extensions_with_attributes.keys.length).to eql 1
+        expect(human.extensions_with_attributes.keys.length).to eq 1
       end
 
       it 'Person hash hass person attributes' do
@@ -385,11 +386,11 @@ describe Entity, :tag_helper do
         expect(human.extension_attributes.key?('id')).to be false
         expect(human.extension_attributes.key?('entity_id')).to be false
       end
-      
+
       it 'School has org and school keys' do
         expect(school.extensions_with_attributes.key?('School')).to be true
         expect(school.extensions_with_attributes.key?('Org')).to be true
-        expect(school.extensions_with_attributes.length).to eql 2
+        expect(school.extensions_with_attributes.length).to eq 2
       end
     end
 
@@ -493,16 +494,16 @@ describe Entity, :tag_helper do
       end
 
       it 'can be run multiple times' do
-        expect { person.add_extension('PoliticalCandidate') }.to change { PoliticalCandidate.count }.by(1)
-        expect { person.add_extension('PoliticalCandidate') }.not_to change { PoliticalCandidate.count }
-        expect { person.remove_extension('PoliticalCandidate') }.to change { PoliticalCandidate.count }.by(-1)
-        expect { person.remove_extension('PoliticalCandidate') }.not_to change { PoliticalCandidate.count }
+        expect { person.add_extension('PoliticalCandidate') }.to change(PoliticalCandidate, :count).by(1)
+        expect { person.add_extension('PoliticalCandidate') }.not_to change(PoliticalCandidate, :count)
+        expect { person.remove_extension('PoliticalCandidate') }.to change(PoliticalCandidate, :count).by(-1)
+        expect { person.remove_extension('PoliticalCandidate') }.not_to change(PoliticalCandidate, :count)
       end
 
       it 'nothing happens if the extension does not exist' do
         org
-        expect { org.remove_extension('LaborUnion') }.not_to change { ExtensionRecord.count }
-        expect { org.remove_extension('Business') }.not_to change { Business.count }
+        expect { org.remove_extension('LaborUnion') }.not_to change(ExtensionRecord, :count)
+        expect { org.remove_extension('Business') }.not_to change(Business, :count)
       end
 
       it 'prevents you from removing primary extensions' do
@@ -540,15 +541,15 @@ describe Entity, :tag_helper do
       end
 
       it 'removes extension records' do
-        expect { @org.remove_extensions_by_def_ids([7, 10]) }.to change { ExtensionRecord.count }.by(-2)
+        expect { @org.remove_extensions_by_def_ids([7, 10]) }.to change(ExtensionRecord, :count).by(-2)
       end
 
       it 'removes extension model' do
-        expect { @org.remove_extensions_by_def_ids([7, 10]) }.to change { School.count }.by(-1)
+        expect { @org.remove_extensions_by_def_ids([7, 10]) }.to change(School, :count).by(-1)
       end
 
       it 'silently ignores extensions that do not exist' do
-        expect { @org.remove_extensions_by_def_ids([7, 10, 9]) }.to change { ExtensionRecord.count }.by(-2)
+        expect { @org.remove_extensions_by_def_ids([7, 10, 9]) }.to change(ExtensionRecord, :count).by(-2)
       end
     end
 
@@ -569,14 +570,14 @@ describe Entity, :tag_helper do
       it 'merges attributes that are nil on the source and not-nil on the dest' do
         expect(business.business.annual_profit).to be nil
         business.merge_extension('Business', 'annual_profit' => 100)
-        expect(business.reload.business.annual_profit).to eql 100
+        expect(business.reload.business.annual_profit).to eq 100
       end
 
       it 'does not merge attributes that are not nil on the source' do
         business.business.update('annual_profit' => 10)
         expect(business.business.annual_profit).to be 10
-        business.merge_extension('Business', 'annual_profit' => 100 )
-        expect(business.reload.business.annual_profit).to eql 10
+        business.merge_extension('Business', 'annual_profit' => 100)
+        expect(business.reload.business.annual_profit).to eq 10
       end
     end
   end # end Extension Attributes Functions
@@ -628,7 +629,7 @@ describe Entity, :tag_helper do
 
   describe 'basic_info' do
     context 'is a person' do
-      let(:person_with_female_gender) { build(:person, person: build(:a_person, gender_id: 1, ), end_date: '2001-12-01') }
+      let(:person_with_female_gender) { build(:person, person: build(:a_person, gender_id: 1), end_date: '2001-12-01') }
       let(:person_with_unknown_gender) { build(:person, person: build(:a_person, gender_id: nil)) }
 
       it 'contains types' do
@@ -656,7 +657,7 @@ describe Entity, :tag_helper do
     it 'returns the primary alias' do
       primary_a = @org.aliases[0]
       @org.aliases.create(name: 'other name')
-      expect(@org.aliases.count).to eql 2
+      expect(@org.aliases.count).to eq 2
       expect(@org.primary_alias).to eql primary_a
     end
   end
@@ -714,7 +715,7 @@ describe Entity, :tag_helper do
   # this is defined in models/concerns/similar_entities.rb
   describe '#similar_entities' do
     let(:entity) { build(:org) }
-    
+
     it 'calls Entity.search and generate_search_terms' do
       expect(entity).to receive(:generate_search_terms).once.and_return("(search terms)")
       expect(Entity).to receive(:search)
@@ -778,7 +779,6 @@ describe Entity, :tag_helper do
       expect(entity.connected_to?(not_related)).to be false
       expect(entity.connected_to?(not_related.id)).to be false
     end
-
   end
 
   describe 'Helpers' do
@@ -861,7 +861,7 @@ describe Entity, :tag_helper do
       let!(:entity1) { create(:entity_person) }
       let!(:entity2) { create(:entity_person) }
       let!(:relationship) { Relationship.create!(entity: entity1, related: entity2, category_id: 12) }
-      
+
       it "decreases entity1's link count" do
         expect { relationship.soft_delete }
           .to change { Entity.find(entity1.id).link_count }.by(-1)
@@ -877,7 +877,7 @@ describe Entity, :tag_helper do
   describe 'Tagging' do
     it 'can tag a person with oil' do
       person = create(:entity_person)
-      expect { person.add_tag('oil') }.to change { Tagging.count }.by(1)
+      expect { person.add_tag('oil') }.to change(Tagging, :count).by(1)
       expect(person.taggings).to eq [Tagging.last]
     end
   end
@@ -963,6 +963,7 @@ describe Entity, :tag_helper do
 
     context "entity has been deleted" do
       before { alice.soft_delete }
+
       it "raises not found error" do
         expect { Entity.find_with_merges(id: alice.id) }
           .to raise_error ActiveRecord::RecordNotFound
