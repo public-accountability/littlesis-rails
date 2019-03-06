@@ -9,7 +9,7 @@ import { retriveDatasetRow, retrivePotentialMatches } from './api_client';
 const errorMessage = (label, err) => console.error(`[${label}]: `, err.message);
 
 // ACTIONS
-// This need to be "bound" to the component with the state...
+// These need to be "bound" to the component with the state...
 
 export function loadItemInfo(itemId) {
   this.updateState("itemInfoStatus", 'LOADING');
@@ -39,11 +39,14 @@ export function resultsWithoutEntity(results, entityId) {
   return filter(results, isNotEntityPredicate);
 }
 
-
 export function ignoreMatch(entityId) {
   this.setState((state, prop) => {
     let results = resultsWithoutEntity(state.matches.results, entityId);
     let matchesWithUpdatedResults = merge({}, state.matches, { "results": results });
     return { "matches": matchesWithUpdatedResults };
   });
+}
+
+export function matchRow(rowId, entityId) {
+  this.updateState("matchesStatus", 'MATCHING');
 }
