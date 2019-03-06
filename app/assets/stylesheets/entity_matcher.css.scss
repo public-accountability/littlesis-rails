@@ -2,34 +2,60 @@
     display: flex;
     height: 500px;
     width: 100%;
+}
+div.leftSide, div.rightSide {
+    flex: 1;
+    padding: 1em;
+    border: 1px solid black;
+}
 
-    div.leftSide, div.rightSide {
-	flex: 1;
-	padding: 1em;
-	border: 1px solid black;
+div.leftSide {
+    background-color: lightgray;
+    margin-right: 0.5em;
+}
+
+div.rightSide {
+    background-color: lightgreen;
+    margin-left: 0.5em;
+}
+
+
+#dataset-item-info {
+    .item-info-wrapper {
+	margin-bottom: 0.5em;
     }
 
-    div.leftSide {
-	background-color: lightgray;
-	margin-right: 0.5em;
+    .item-info-title {
+	margin-right: 1em;
+	font-weight: bold;
     }
 
-    div.rightSide {
-	background-color: lightgreen;
-	margin-left: 0.5em;
+    .item-info-value {}
+}
+
+div.potential-match-card {
+
+    .potential-match-entity-image-wrapper {
+	width: 50px;
+	height: 50px;
     }
 
-
-    #dataset-item-info {
-	.item-info-wrapper {
-	    margin-bottom: 0.5em;
+    .potential-match-entity {
+	img {
+	    width: 100%;
+	    height: auto;
 	}
 
-	.item-info-title {
-	    margin-right: 1em;
+	h1 {
+	    font-size: 1.2em;
 	    font-weight: bold;
 	}
+	p {
+	    font-size: 0.8em;
+	}
 
-	.item-info-value {}
+	.potential-match-entity-blurb {}
+
     }
+
 }
