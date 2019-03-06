@@ -34,7 +34,7 @@ module EntityMatcher
 
     def as_json(options = {})
       super(options)
-        .merge('automatchable' => automatchable?)
+        .merge!('automatchable' => automatchable?)
     end
 
     private

@@ -2,7 +2,10 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 jest.mock('packs/entity_matcher/api_client',
-	  () => ({ retriveDatasetRow: jest.fn() }));
+	  () => ({
+	    "retriveDatasetRow": jest.fn(),
+	    "retrivePotentialMatches": jest.fn()
+	  }));
 
 import { retriveDatasetRow } from 'packs/entity_matcher/api_client';
 
@@ -27,15 +30,19 @@ describe('EntityMatcherUI', () => {
 	"itemId": 123,
 	"itemInfo": null,
 	"itemInfoStatus": null,
+	"matches": null,
+	"matchesStatus": null,
 	"datasetFields": testDatasetFields
       });
     });
 
     test('calls loadItemInfo after mounting', () => {
       actions.loadItemInfo = jest.fn();
+      actions.loadMatches = jest.fn();
       let wrapper = shallow(<EntityMatcherUI datasetFields={testDatasetFields} itemId={123}/>);
       expect(actions.loadItemInfo).toHaveBeenCalledTimes(1);
       actions.loadItemInfo.mockRestore();
+      actions.loadMatches.mockRestore();
     });
   });
 

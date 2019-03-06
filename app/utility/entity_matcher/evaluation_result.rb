@@ -127,7 +127,7 @@ module EntityMatcher
 
       def as_json(*)
         {
-          'entity' => entity&.as_json(except: %w[notes delta last_user_id]),
+          'entity' => entity&.to_hash(except: %w[notes delta last_user_id], image_url: true, image_url_type: 'small'),
           'values' => values.to_a,
           'ranking' => ranking,
           'automatch' => automatch?

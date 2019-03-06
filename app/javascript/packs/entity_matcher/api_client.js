@@ -20,3 +20,8 @@ export function lsFetch(url) {
 export function retriveDatasetRow(id) {
   return lsFetch(`/external_datasets/row/${id}`);
 }
+
+export function retrivePotentialMatches(id) {
+  return lsFetch(`/external_datasets/row/${id}/matches`);
+}
+
