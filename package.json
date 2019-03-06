@@ -1,7 +1,8 @@
 {
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "jest": {
     "roots": [
