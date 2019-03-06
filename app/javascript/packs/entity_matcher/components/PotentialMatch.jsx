@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Image = ({entity}) => {
-  return <div className="potential-match-entity-image-wrapper">
+  return <div className="potential-match-entity-image-wrapper f-item">
            <img
              src={entity.image_url}
              alt={`Image of LittleSis entity: ${entity.name}`}
@@ -12,7 +12,7 @@ const Image = ({entity}) => {
 
 const Entity = ({entity}) => {
 
-  return <div className="potential-match-entity">
+  return <div className="potential-match-entity f-item">
            <a href={entity.url} ><h1>{entity.name}</h1></a>
            <p className="potential-match-entity-blurb">{entity.blurb}</p>
          </div>;
@@ -21,7 +21,7 @@ const Entity = ({entity}) => {
 
 
 const Buttons = (props) => {
-  return <div className="potential-match-buttons">
+  return <div className="potential-match-buttons f-item">
            <a>Match</a>
            <a>❌</a>
          </div>;
