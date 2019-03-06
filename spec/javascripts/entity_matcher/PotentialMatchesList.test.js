@@ -10,9 +10,8 @@ describe('PotentialMatchesList', () => {
 
   test('Shows 2 matches', () => {
     const matches = { "automatchable": false, "results": [exampleMatch, jPollock] };
-    const wrapper = shallow(<PotentialMatchesList matches={matches} />);
+    const wrapper = shallow(<PotentialMatchesList matches={matches} ignoreMatch={jest.fn()}/>);
     expect(wrapper.find(PotentialMatch).length).toEqual(2);
   });
-  
-  
+
 });

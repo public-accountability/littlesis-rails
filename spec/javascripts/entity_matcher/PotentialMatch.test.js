@@ -6,8 +6,8 @@ import PotentialMatch from 'packs/entity_matcher/components/PotentialMatch';
 import { jPollock } from './fixtures';
 
 describe('Potential Match', () => {
-  const wrapper = shallow(<PotentialMatch match={jPollock} />);
-  const staticRender = render(<PotentialMatch match={jPollock} />);
+  const wrapper = shallow(<PotentialMatch match={jPollock} ignoreMatch={jest.fn()}/>);
+  const staticRender = render(<PotentialMatch match={jPollock} ignoreMatch={jest.fn()} />);
 
   test('shows image', () => {
     expect(staticRender.find('img').length).toEqual(1);

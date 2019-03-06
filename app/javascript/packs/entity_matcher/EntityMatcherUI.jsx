@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 //  LODASH
+import curry from 'lodash/curry';
 import merge from 'lodash/merge';
 import isPlainObject from 'lodash/isPlainObject';
 import isNull from 'lodash/isNull';
@@ -14,7 +15,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import PotentialMatches from './components/PotentialMatches';
 
 // ACTIONS
-import { loadItemInfo, loadMatches } from './actions';
+import { loadItemInfo, loadMatches, ignoreMatch } from './actions';
 
 // STATUS HELPERS
 const LOADING = 'LOADING';
@@ -35,7 +36,15 @@ export default class EntityMatcherUI extends React.Component {
   constructor(props) {
     super(props);
     this.state = merge(defaultState(), props);
+    
     this.updateState = this.updateState.bind(this);
+    
+    
+    // Actions
+    // These functions essentially constitute the public API
+    this.loadItemInfo = loadItemInfo.bind(this);
+    this.loadMatches = loadMatches.bind(this);
+    this.ignoreMatch = ignoreMatch.bind(this);
   }
 
   /**
@@ -58,11 +67,11 @@ export default class EntityMatcherUI extends React.Component {
 
   componentDidMount() {
     if (!this.state.itemInfo) {
-      loadItemInfo(this.updateState, this.state.itemId);
+      this.loadItemInfo(this.state.itemId);
     }
 
     if (isNull(this.state.matchesStatus)) {
-      loadMatches(this.updateState, this.state.itemId);
+      this.loadMatches(this.state.itemId);
     }
   }
 
@@ -85,8 +94,8 @@ export default class EntityMatcherUI extends React.Component {
           }
         </div>
         <div className="rightSide">
-          
           <PotentialMatches
+            ignoreMatch={this.ignoreMatch}
             matches={this.state.matches}
             matchesStatus={this.state.matchesStatus}
           />
