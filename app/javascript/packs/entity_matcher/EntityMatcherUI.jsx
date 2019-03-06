@@ -34,7 +34,7 @@ export default class EntityMatcherUI extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = merge({}, defaultState(), props);
+    this.state = merge(defaultState(), props);
     this.updateState = this.updateState.bind(this);
   }
 

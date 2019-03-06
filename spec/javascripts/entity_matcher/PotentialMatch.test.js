@@ -18,11 +18,11 @@ describe('Potential Match', () => {
       expect(staticRender.find('a').length).toEqual(1);
       expect(staticRender.find('a')[0].attribs.href).toEqual(jPollock.entity.url);
       expect(staticRender.find('a')[0].attribs.href).toEqual(jPollock.entity.url);
-      expect(staticRender.find('a').text()).toEqual(jPollock.name);
+      expect(staticRender.find('a').text()).toEqual(jPollock.entity.name);
     });
 
     test('shows blurb', () => {
-      expect(staticRender.find('.potential-match-entity-blurb').text()).toEqual(jPollock.entity.blub);
+      expect(staticRender.find('.potential-match-entity-blurb').text()).toEqual(jPollock.entity.blurb);
     });
   });
   
