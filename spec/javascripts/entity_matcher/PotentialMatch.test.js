@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, render } from 'enzyme';
 
 import PotentialMatch from 'packs/entity_matcher/components/PotentialMatch';
 
@@ -7,13 +7,23 @@ import { jPollock } from './fixtures';
 
 describe('Potential Match', () => {
   const wrapper = shallow(<PotentialMatch match={jPollock} />);
-  
-  test.todo('shows image');
+  const staticRender = render(<PotentialMatch match={jPollock} />);
+
+  test('shows image', () => {
+    expect(staticRender.find('img').length).toEqual(1);
+  });
 
   describe('Entity Info', () => {
-    test.todo('shows Entity Name with link');
-    test.todo('shows blurb');
-    test.todo('shows ');
+    test('shows Entity Name with link', () => {
+      expect(staticRender.find('a').length).toEqual(1);
+      expect(staticRender.find('a')[0].attribs.href).toEqual(jPollock.entity.url);
+      expect(staticRender.find('a')[0].attribs.href).toEqual(jPollock.entity.url);
+      expect(staticRender.find('a').text()).toEqual(jPollock.name);
+    });
+
+    test('shows blurb', () => {
+      expect(staticRender.find('.potential-match-entity-blurb').text()).toEqual(jPollock.entity.blub);
+    });
   });
   
   describe('Buttons', () => {
