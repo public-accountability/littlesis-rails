@@ -20,11 +20,20 @@ const Entity = ({entity}) => {
 };
 
 
+const Buttons = (props) => {
+  return <div className="potential-match-buttons">
+           <a>Match</a>
+           <a>❌</a>
+         </div>;
+};
+
+
 export default function PotentialMatch(props) {
   const entity = props.match.entity;
   
   return <div className="potential-match-card">
            <Image entity={entity} />
            <Entity entity={entity} />
+           <Buttons />
          </div>;
 };
