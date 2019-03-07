@@ -3,7 +3,7 @@ require 'rails_helper'
 describe ExternalDataset, type: :model do
   it { is_expected.to have_db_column(:name).of_type(:string) }
   it { is_expected.to have_db_column(:row_data).of_type(:text) }
-  it { is_expected.to have_db_column(:matched).of_type(:boolean) }
+  it { is_expected.to have_db_column(:entity_id).of_type(:integer) }
   it { is_expected.to have_db_column(:match_data).of_type(:text) }
   it { is_expected.to have_db_column(:primary_ext).of_type(:integer) }
 
