@@ -25,3 +25,6 @@ export function retrivePotentialMatches(id) {
   return lsFetch(`/external_datasets/row/${id}/matches`);
 }
 
+export function matchRow(rowId, entityId) {
+  // return lsFetch(`/external_datasets/row/${id}/match/${entityId}`));
+}

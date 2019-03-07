@@ -6,8 +6,8 @@ import PotentialMatch from 'packs/entity_matcher/components/PotentialMatch';
 import { jPollock } from './fixtures';
 
 describe('Potential Match', () => {
-  const wrapper = shallow(<PotentialMatch match={jPollock} />);
-  const staticRender = render(<PotentialMatch match={jPollock} />);
+  const wrapper = shallow(<PotentialMatch match={jPollock} ignoreMatch={jest.fn()}/>);
+  const staticRender = render(<PotentialMatch match={jPollock} ignoreMatch={jest.fn()} />);
 
   test('shows image', () => {
     expect(staticRender.find('img').length).toEqual(1);
@@ -15,10 +15,10 @@ describe('Potential Match', () => {
 
   describe('Entity Info', () => {
     test('shows Entity Name with link', () => {
-      expect(staticRender.find('a').length).toEqual(1);
-      expect(staticRender.find('a')[0].attribs.href).toEqual(jPollock.entity.url);
-      expect(staticRender.find('a')[0].attribs.href).toEqual(jPollock.entity.url);
-      expect(staticRender.find('a').text()).toEqual(jPollock.entity.name);
+      expect(staticRender.find('.potential-match-entity a').length).toEqual(1);
+      expect(staticRender.find('.potential-match-entity a')[0].attribs.href).toEqual(jPollock.entity.url);
+      expect(staticRender.find('.potential-match-entity a')[0].attribs.href).toEqual(jPollock.entity.url);
+      expect(staticRender.find('.potential-match-entity a').text()).toEqual(jPollock.entity.name);
     });
 
     test('shows blurb', () => {
@@ -27,7 +27,10 @@ describe('Potential Match', () => {
   });
   
   describe('Buttons', () => {
-    test.todo('shows match button');
+    test('shows 2 buttons', () => {
+      expect(staticRender.find('.potential-match-buttons a').length).toEqual(2);
+    });
+
     test.todo('shows ignore button');
   });
 });
