@@ -19,14 +19,27 @@ class ExternalDataset < ApplicationRecord
   end
 
   def match_with(entity_or_entity_id)
-    # raise RowAlreadyMatched # if # matched?
-    entity = entity_for(entity_or_entity_id)
+    raise RowAlreadyMatched if matched?
+    service.validate_match!(entity_or_entity_id)
+    assign_attributes entity_id: Entity.entity_id_for(entity_or_entity_id)
+    service.match(entity_or_entity_id)
+    save
+    self
   end
 
   def unmatch
+    raise NotYetMatched unless matched?
+    service.unmatch
+    assign_attributes entity_id: nil
+    save
+    self
   end
 
   private
+  
+  def service
+    @service ||= ExternalDatasetService.const_get(name.capitalize).new(self)
+  end
 
   def entity_name
     case name
@@ -42,6 +55,12 @@ class ExternalDataset < ApplicationRecord
   class RowAlreadyMatched < Exceptions::LittleSisError
     def message
       'ExternalDataset row already matched'
+    end
+  end
+
+  class NotYetMatched < Exceptions::LittleSisError
+    def message
+      'Cannot unmatch. ExternalDataset row is not matched'
     end
   end
 end

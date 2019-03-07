@@ -47,6 +47,32 @@ describe ExternalDataset, type: :model do
     end
   end
 
+  describe 'match_with' do
+    let(:external_dataset) { build(:external_dataset, entity_id: nil) }
+    let(:service) { instance_spy('ExternalDatasetService::Iapd') }
+
+    it 'raises error if already matched' do
+      expect { build(:external_dataset, entity_id: rand(1000)).match_with(123) }
+                 .to raise_error(ExternalDataset::RowAlreadyMatched)
+    end
+
+    it 'updates entity id and saves' do
+      allow(external_dataset).to receive(:service).and_return(service)
+      expect(external_dataset).to receive(:save).once
+      expect(external_dataset.match_with(123).entity_id).to eq 123
+    end
+
+    it 'calls validate_match! and match on service object' do
+      allow(external_dataset).to receive(:save)
+      allow(external_dataset).to receive(:service).and_return(service)
+      external_dataset.match_with(123).entity_id
+      expect(service).to have_received(:validate_match!).once
+      expect(service).to have_received(:match).with(123).once
+    end
+  end
+
+  describe 'unmatch'
+
   describe '#entity_name' do
     let(:external_dataset) do
       build(:external_dataset, row_data: { 'Full Legal Name' => 'test' })
