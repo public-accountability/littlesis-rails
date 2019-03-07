@@ -11,6 +11,16 @@ describe ExternalDataset, type: :model do
     is_expected.to validate_inclusion_of(:name).in_array(ExternalDataset::DATASETS)
   end
 
+  describe 'matched?' do
+    it 'is true when model has entity_id' do
+      expect(build(:external_dataset, entity_id: rand(1000)).matched?).to be true
+    end
+
+    it 'is false when entity_id is null' do
+      expect(build(:external_dataset, entity_id: nil).matched?).to be false
+    end
+  end
+
   describe 'matches' do
     context 'when external dataset row is for a person' do
       let(:external_dataset) do
