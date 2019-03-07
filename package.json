@@ -25,20 +25,20 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.0.0",
-    "@rails/webpacker": "^4.0.0-rc.7",
+    "@rails/webpacker": "^4.0.2",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.11",
     "prop-types": "^15.7.2",
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3"
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
   },
   "devDependencies": {
     "@babel/node": "^7.2.2",
-    "babel-jest": "^24.0.0",
+    "babel-jest": "^24.3.0",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.9.1",
-    "jest": "^24.0.0",
+    "jest": "^24.3.0",
     "webpack-dev-server": "^3.2.1"
   }
 }
