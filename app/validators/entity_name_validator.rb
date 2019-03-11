@@ -5,7 +5,7 @@ class EntityNameValidator < ActiveModel::EachValidator
 
   def validate_each(record, attribute, value)
     return if org?(record)
-    parsed_name = NameParser.new(value)
+    parsed_name = ::NameParser.new(value)
     return if parsed_name.valid?
 
     Rails.logger.debug "#{value} is an invalid name"
