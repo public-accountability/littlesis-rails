@@ -20,15 +20,17 @@ class ExternalDataset < ApplicationRecord
 
   def match_with(entity_or_entity_id)
     raise RowAlreadyMatched if matched?
-    service.validate_match!(entity_or_entity_id)
+
+    service.validate_match! entity: entity_or_entity_id, external_dataset: self
     assign_attributes entity_id: Entity.entity_id_for(entity_or_entity_id)
-    service.match(entity_or_entity_id)
+    service.match entity: entity_or_entity_id
     save
     self
   end
 
   def unmatch
     raise NotYetMatched unless matched?
+
     service.unmatch
     assign_attributes entity_id: nil
     save
@@ -36,9 +38,9 @@ class ExternalDataset < ApplicationRecord
   end
 
   private
-  
+
   def service
-    @service ||= ExternalDatasetService.const_get(name.capitalize).new(self)
+    @service ||= ExternalDatasetService.const_get(name.capitalize)
   end
 
   def entity_name

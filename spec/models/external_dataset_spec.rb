@@ -49,7 +49,7 @@ describe ExternalDataset, type: :model do
 
   describe 'match_with' do
     let(:external_dataset) { build(:external_dataset, entity_id: nil) }
-    let(:service) { instance_spy('ExternalDatasetService::Iapd') }
+    let(:service) { spy('ExternalDatasetService::Iapd') }
 
     it 'raises error if already matched' do
       expect { build(:external_dataset, entity_id: rand(1000)).match_with(123) }
@@ -67,7 +67,7 @@ describe ExternalDataset, type: :model do
       allow(external_dataset).to receive(:service).and_return(service)
       external_dataset.match_with(123).entity_id
       expect(service).to have_received(:validate_match!).once
-      expect(service).to have_received(:match).with(123).once
+      expect(service).to have_received(:match).with(entity: 123).once
     end
   end
 
