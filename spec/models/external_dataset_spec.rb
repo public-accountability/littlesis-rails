@@ -11,6 +11,16 @@ describe ExternalDataset, type: :model do
     is_expected.to validate_inclusion_of(:name).in_array(ExternalDataset::DATASETS)
   end
 
+  describe 'matched?' do
+    it 'is true when model has entity_id' do
+      expect(build(:external_dataset, entity_id: rand(1000)).matched?).to be true
+    end
+
+    it 'is false when entity_id is null' do
+      expect(build(:external_dataset, entity_id: nil).matched?).to be false
+    end
+  end
+
   describe 'matches' do
     context 'when external dataset row is for a person' do
       let(:external_dataset) do
@@ -36,6 +46,32 @@ describe ExternalDataset, type: :model do
       end
     end
   end
+
+  describe 'match_with' do
+    let(:external_dataset) { build(:external_dataset, entity_id: nil) }
+    let(:service) { spy('ExternalDatasetService::Iapd') }
+
+    it 'raises error if already matched' do
+      expect { build(:external_dataset, entity_id: rand(1000)).match_with(123) }
+                 .to raise_error(ExternalDataset::RowAlreadyMatched)
+    end
+
+    it 'updates entity id and saves' do
+      allow(external_dataset).to receive(:service).and_return(service)
+      expect(external_dataset).to receive(:save).once
+      expect(external_dataset.match_with(123).entity_id).to eq 123
+    end
+
+    it 'calls validate_match! and match on service object' do
+      allow(external_dataset).to receive(:save)
+      allow(external_dataset).to receive(:service).and_return(service)
+      external_dataset.match_with(123).entity_id
+      expect(service).to have_received(:validate_match!).once
+      expect(service).to have_received(:match).with(entity: 123).once
+    end
+  end
+
+  describe 'unmatch'
 
   describe '#entity_name' do
     let(:external_dataset) do

@@ -24,7 +24,7 @@ gem 'mini_magick'
 gem 'sprockets', '~> 3.0'
 
 # webpack
-gem 'webpacker', '>= 4.0.x'
+gem 'webpacker', '>= 4.0.2'
 
 gem 'uglifier', '>= 4.1'
 # gem 'bootstrap-sass', '~> 3.3.7'
@@ -41,7 +41,7 @@ gem 'kaminari'
 gem 'activerecord-session_store'
 
 # For search and indexing
-gem 'thinking-sphinx', '~> 4.1.0'
+gem 'thinking-sphinx', '~> 4.2.0'
 gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_delta'
 
 gem 'htmlentities'
@@ -57,7 +57,7 @@ end
 
 group :test, :development do
   gem 'better_errors', '>= 2.5.0'
-  gem 'capybara', '>= 3.6.0'
+  gem 'capybara', '>= 3.14.0'
   gem 'capybara-webkit'
   gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 5.0'
@@ -109,4 +109,4 @@ gem 'text', '>= 1.3.1'
 gem 'httparty', '>= 0.16.2'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.4.0', require: false
+gem 'bootsnap', '>= 1.4.1', require: false
