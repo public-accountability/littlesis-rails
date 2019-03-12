@@ -107,5 +107,32 @@ describe ExternalDatasetService do
         end
       end
     end
+
+    describe 'unmatch' do
+      let(:person) { create(:entity_person) }
+      let(:owner_id) { Faker::Number.unique.number(5) }
+      let(:external_dataset) do
+        create(:external_dataset, primary_ext: :person, entity_id: nil, row_data: { 'OwnerID' => owner_id })
+      end
+
+      before do
+        ExternalDatasetService::Iapd.match entity: person, external_dataset: external_dataset
+      end
+
+      it 'removes crd_number' do
+        expect { ExternalDatasetService::Iapd.unmatch external_dataset: external_dataset }
+          .to change { person.reload.business_person.crd_number }.from(owner_id.to_i).to(nil)
+      end
+
+      it 'keeps business person' do
+        expect { ExternalDatasetService::Iapd.unmatch external_dataset: external_dataset }
+          .not_to change { person.reload.business_person.present? }
+      end
+
+      it 'removes entity_id' do
+        expect { ExternalDatasetService::Iapd.unmatch external_dataset: external_dataset }
+          .to change { external_dataset.reload.entity_id }.from(person.id).to(nil)
+      end
+    end
   end
 end

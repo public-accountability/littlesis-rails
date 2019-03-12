@@ -36,7 +36,13 @@ module ExternalDatasetService
       end
     end
 
-    def self.unmatch
+    def self.unmatch(external_dataset:)
+      extension = external_dataset.org? ? 'business' : 'business_person'
+
+      ApplicationRecord.transaction do
+        Entity.find(external_dataset.entity_id).public_send(extension).update!(crd_number: nil)
+        external_dataset.update! entity_id: nil
+      end
     end
 
     def self.crd_number?(crd)
