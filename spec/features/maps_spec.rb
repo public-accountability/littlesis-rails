@@ -22,6 +22,50 @@ feature 'maps index page' do
     end
   end
 
+  describe 'Anonyomous users can view embedded regular maps' do
+    before { visit map_path(regular_map) }
+
+    specify { successfully_visits_page map_path(regular_map) }
+  end
+
+  describe 'Users can view their own private maps' do
+    before do
+      login_as(user, scope: :user)
+      visit map_path(private_map)
+    end
+    after { logout(admin) }
+
+    it 'map page is viewable' do
+      successfully_visits_page map_path(private_map)
+    end
+  end
+
+  describe 'other users cannot view private maps' do
+    before { login_as(other_user, scope: :user) }
+
+    after { logout(admin) }
+
+    it 'access is denied to map page' do
+      visit map_path(private_map)
+      expect(page).to have_http_status :forbidden
+    end
+
+    it 'access is denied to embedded v2 maps' do
+      visit embedded_v2_map_path(private_map)
+      expect(page).to have_http_status :forbidden
+    end
+
+    it 'access is denied to embedded v1 maps' do
+      visit embedded_map_path(private_map)
+      expect(page).to have_http_status :forbidden
+    end
+
+    it 'access is denied to map_json' do
+      visit map_json_map_path(private_map)
+      expect(page).to have_http_status :forbidden
+    end
+  end
+
   feature 'navigating to "/maps"' do
     before { visit '/maps' }
     scenario 'redirecting to /maps/featured' do
@@ -107,4 +151,6 @@ feature 'maps index page' do
       end
     end
   end
+
+  
 end

@@ -54,6 +54,7 @@ class MapsController < ApplicationController
   end
 
   def embedded_v2
+    check_private_access
     @header_pct = embedded_params.fetch(:header_pct, EMBEDDED_HEADER_PCT)
     @annotation_pct = embedded_params.fetch(:annotation_pct, EMBEDDED_ANNOTATION_PCT)
     response.headers.delete('X-Frame-Options')
@@ -61,14 +62,13 @@ class MapsController < ApplicationController
   end
 
   def embedded
+    check_private_access
     response.headers.delete('X-Frame-Options')
     render layout: 'fullscreen'
   end
 
   def map_json
-    if @map.is_private and !is_owner
-      raise Exceptions::PermissionError
-    end
+    check_private_access
     attributes_to_return = ["id", "user_id", "created_at", "updated_at", "title", "description", "width", "height", "zoom", "is_private", "graph_data", "annotations_data", "annotations_count"]
     to_hash_if = lambda { |k,v| ["graph_data", "annotations_data"].include?(k) ?  ActiveSupport::JSON.decode(v) : v }
 
@@ -327,9 +327,11 @@ class MapsController < ApplicationController
     @map.user_id == current_user.id
   end
 
+  def check_private_access
+    raise Exceptions::PermissionError if @map.is_private && !is_owner
+  end
+
   def check_owner
-    unless is_owner
-      raise Exceptions::PermissionError
-    end
+    raise Exceptions::PermissionError unless is_owner
   end
 end
