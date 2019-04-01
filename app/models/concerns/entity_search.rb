@@ -59,7 +59,6 @@ module EntitySearch
       options = DEFAULT_SEARCH_OPTIONS.merge(opt)
       Entity.search(
         "@(#{options[:fields]}) #{ts_escape(query)}",
-        match_mode: :extended,
         with: options[:with],
         per_page: options[:num].to_i,
         page: options[:page].to_i,
