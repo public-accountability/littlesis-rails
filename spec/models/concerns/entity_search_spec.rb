@@ -3,8 +3,7 @@ require 'rails_helper'
 describe 'EntitySearch' do
   describe 'Entity::Search.search' do
     let(:defaults) do
-      { match_mode: :extended,
-        with: { is_deleted: false },
+      { with: { is_deleted: false },
         per_page: 15,
         page: 1,
         select: '*, weight() * (link_count + 1) AS link_weight',
