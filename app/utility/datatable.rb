@@ -95,7 +95,7 @@ module Datatable
 
     def search_records
       page = (@request.start / @request.length) + 1
-      search_term = ThinkingSphinx::Query.escape(@request.search)
+      search_term = LsSearch.escape(@request.search)
       search_result = model.search(search_term, page: page, per_page: @request.length, with: with_conditions)
       @search_filtered_count = search_result.total_entries
       search_result.map(&record_to_hash)

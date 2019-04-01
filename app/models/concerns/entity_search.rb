@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Provides Entity::Search.search
 # as well as entity#similar_entities
 module EntitySearch
@@ -27,7 +29,7 @@ module EntitySearch
   end
 
   def ts_escape(x)
-    ThinkingSphinx::Query.escape(x)
+    LsSearch.escape(x)
   end
 
   # A wrapper around the default
@@ -114,7 +116,7 @@ module EntitySearch
     end
 
     private_class_method def self.ts_escape(x)
-      ThinkingSphinx::Query.escape(x)
+      LsSearch.escape(x)
     end
   end
 end

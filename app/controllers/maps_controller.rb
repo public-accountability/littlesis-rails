@@ -47,7 +47,7 @@ class MapsController < ApplicationController
   def search
     page = params[:page].presence || 1
     @maps = NetworkMap
-              .search(ThinkingSphinx::Query.escape(params.fetch(:q, '')),
+              .search(LsSearch.escape(params.fetch(:q, '')),
                       order: 'updated_at DESC, id DESC',
                       with: { is_private: false })
               .page(page).per(20)

@@ -110,7 +110,7 @@ class NysController < ApplicationController
 
   def sphinx_search_query
     if params[:query]
-      ThinkingSphinx::Query.escape(params[:query])
+      LsSearch.escape(params[:query])
     elsif @entity.person?
       @entity.person.name_last
     else
