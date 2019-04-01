@@ -46,7 +46,7 @@ class SearchController < ApplicationController
   private
 
   def perform_search(query)
-    q = ThinkingSphinx::Query.escape(query)
+    q = LsSearch.escape(query)
     tags_search(query) if current_user&.admin?
     entities_search(query)
     groups_search(q)

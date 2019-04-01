@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Provides Entity::Search.search
 # as well as entity#similar_entities
 module EntitySearch
@@ -27,7 +29,7 @@ module EntitySearch
   end
 
   def ts_escape(x)
-    ThinkingSphinx::Query.escape(x)
+    LsSearch.escape(x)
   end
 
   # A wrapper around the default
@@ -59,7 +61,6 @@ module EntitySearch
       options = DEFAULT_SEARCH_OPTIONS.merge(opt)
       Entity.search(
         "@(#{options[:fields]}) #{ts_escape(query)}",
-        match_mode: :extended,
         with: options[:with],
         per_page: options[:num].to_i,
         page: options[:page].to_i,
@@ -115,7 +116,7 @@ module EntitySearch
     end
 
     private_class_method def self.ts_escape(x)
-      ThinkingSphinx::Query.escape(x)
+      LsSearch.escape(x)
     end
   end
 end
