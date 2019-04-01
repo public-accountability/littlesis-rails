@@ -7,10 +7,10 @@ gem 'mysql2', '~> 0.5.2'
 gem 'rack-rewrite', '~> 1.5.1'
 
 # users and authentication
-gem 'devise', '~> 4.6.1'
+gem 'devise', '~> 4.6.2'
 
 # Versioning
-gem 'paper_trail', '10.2.0'
+gem 'paper_trail', '10.2.1'
 
 # delayed job
 gem 'daemons' # Required by delayed_job
@@ -108,4 +108,4 @@ gem 'text', '>= 1.3.1'
 gem 'httparty', '>= 0.16.2'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.4.1', require: false
+gem 'bootsnap', '>= 1.4.2', require: false
