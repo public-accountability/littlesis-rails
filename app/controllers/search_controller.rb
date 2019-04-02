@@ -6,15 +6,21 @@ class SearchController < ApplicationController
   before_action :set_initial_search_values, only: [:basic]
 
   def basic
-    @q = params.fetch(:q, '').gsub(/\b(and|the|of)\b/, '')
+    query = params[:q]
+    user_is_admin = current_user&.admin?
 
-    if @q.present?
-      if @page > 1
-        entities_search(@q) # only show entities
-      else
-        perform_search(@q)
+    if query.present?
+      service = SearchService.new(query, page: @page, admin: user_is_admin)
+      @entities = service.entities
+
+      if @page == 1 # we only show entities if on page that is not the first
+        @lists = service.lists
+        @maps = service.maps
+        @tags = service.tags if user_is_admin
       end
     end
+
+    @no_results = (@lists.count + @entities.count + @maps.count + @tags.count).zero?
 
     respond_to do |format|
       format.html { render 'basic' }
@@ -44,43 +50,6 @@ class SearchController < ApplicationController
   end
 
   private
-
-  def perform_search(query)
-    q = LsSearch.escape(query)
-    tags_search(query) if current_user&.admin?
-    entities_search(query)
-    groups_search(q)
-    lists_search(q)
-    maps_search(q)
-  end
-
-  def tags_search(query)
-    @tags = Tag.search_by_names(query)
-  end
-
-  # unlike groups, lists, and maps, Entity::Search takes
-  # the "raw" query before it has been escaped.
-  def entities_search(query)
-    @entities = Entity::Search.search(query, page: @page)
-  end
-
-  def groups_search(q)
-    @groups = Group.search("@(name,tagline,description,slug) #{q}", per_page: 50)
-  end
-
-  def lists_search(q)
-    list_is_admin = current_user&.admin? ? [0, 1] : 0
-    @lists = List.search("@(name,description) #{q}",
-                         per_page: 50,
-                         with: { is_deleted: false, is_admin: list_is_admin },
-                         without: { access: Permissions::ACCESS_PRIVATE })
-  end
-
-  def maps_search(q)
-    @maps = NetworkMap.search("@(title,description,index_data) #{q}",
-                              per_page: 50,
-                              with: { is_deleted: false, is_private: false })
-  end
 
   def set_initial_search_values
     @entities = []

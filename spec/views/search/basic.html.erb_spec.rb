@@ -7,6 +7,7 @@ describe 'search/basic', type: :view do
   let(:maps) { [] }
   let(:tags) { [] }
   let(:q) { '' }
+  let(:no_results) { false }
   let(:user_signed_in) { false }
 
   before do
@@ -16,6 +17,7 @@ describe 'search/basic', type: :view do
     assign(:maps, maps)
     assign(:tags, tags)
     assign(:q, q)
+    assign(:no_results, no_results)
     allow(view).to receive(:user_signed_in?).and_return(user_signed_in)
     render
   end
@@ -30,11 +32,14 @@ describe 'search/basic', type: :view do
     context 'results found' do
       let(:q) { 'xyz' }
       let(:entities) { Kaminari.paginate_array([build(:org)]).page(1) }
+
       it { is_expected.not_to render_template(partial: '_cantfind') }
     end
 
     context 'no results found' do
       let(:q) { 'xyz' }
+      let(:no_results) { true }
+
       it { is_expected.to render_template(partial: '_cantfind') }
     end
   end
@@ -43,6 +48,8 @@ describe 'search/basic', type: :view do
     let(:q) { 'buffalo' }
 
     context 'nothing found' do
+      let(:no_results) { true }
+
       it 'displays no results found message' do
         css 'strong', text: 'No results found.'
         css 'h3', text: "Can't find something that should be on LittleSis?"
@@ -104,5 +111,4 @@ describe 'search/basic', type: :view do
       end
     end
   end
-
 end

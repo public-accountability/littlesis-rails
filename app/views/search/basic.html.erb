@@ -19,57 +19,53 @@
   </div>
 </div>
 
-
 <div class="search-results row no-gutters">
 
-  <% if @q.present? %>
-    <% if @tags.count > 0 %>
-      
-      <h3 class="mt-2">Tags</h3>
-      <% @tags.each do |tag| %>
-	<span class="search-result-link">
-	  <%= link_to tag.name, tag_path(tag) %>
-	</span> &nbsp;<em><%= tag.description %></em>
-	<br>
-      <% end %>
-    <% end %>
-
-    <% if @lists.count > 0 %>
-      <h3 class="mt-2">Lists</h3>
-      <% @lists.each do |list| %>
-	<div class="search-result-wrapper">
-	  <span class="search-result-link"><%= list_link(list) %></span> &nbsp;<em><%= highlight((truncate(list.description, length: 70) or ""), params[:q]) %></em>
-	</div>  
-      <% end %>
+  <% if @tags.count > 0 %>
+    
+    <h3 class="mt-2">Tags</h3>
+    <% @tags.each do |tag| %>
+      <span class="search-result-link">
+	<%= link_to tag.name, tag_path(tag) %>
+      </span> &nbsp;<em><%= tag.description %></em>
       <br>
-    <% end %>
-
-    <% if @entities.count > 0 %>
-      <h3 class="mt-2">Entities</h3>
-      <%= paginate @entities %>
-      <% @entities.each do |entity| %>
-	<div class="search-result-wrapper entity-search-result">
-	  <span class="search-result-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em><br>
-	  <span class="entity-search-result-summary"><%= highlight(truncate((entity.summary or ""), length: 70), params[:q]) %></span>
-	</div>
-      <% end %> 
-      <br>
-    <% end %>
-
-    <% if @maps.count > 0 %>
-      <h3 class="mt-2">Network Maps</h3>
-      <% @maps.each do |map| %>
-	<div class="search-result-wrapper">
-	  <span class="search-result-link"><%= network_map_link(map) %></span>
-	  <br>
-	</div>
-      <% end %> 
-      <br>
-    <% end %>
-
-    <% if (@lists.count + @entities.count + @maps.count + @tags.count) == 0 %>
-      <%= render partial: "cantfind" %>
     <% end %>
   <% end %>
 
+  <% if @lists.count > 0 %>
+    <h3 class="mt-2">Lists</h3>
+    <% @lists.each do |list| %>
+      <div class="search-result-wrapper">
+	<span class="search-result-link"><%= list_link(list) %></span> &nbsp;<em><%= highlight((truncate(list.description, length: 70) or ""), params[:q]) %></em>
+      </div>  
+    <% end %>
+    <br>
+  <% end %>
+
+  <% if @entities.count > 0 %>
+    <h3 class="mt-2">Entities</h3>
+    <%= paginate @entities %>
+    <% @entities.each do |entity| %>
+      <div class="search-result-wrapper entity-search-result">
+	<span class="search-result-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em><br>
+	<span class="entity-search-result-summary"><%= highlight(truncate((entity.summary or ""), length: 70), params[:q]) %></span>
+      </div>
+    <% end %> 
+    <br>
+  <% end %>
+
+  <% if @maps.count > 0 %>
+    <h3 class="mt-2">Network Maps</h3>
+    <% @maps.each do |map| %>
+      <div class="search-result-wrapper">
+	<span class="search-result-link"><%= network_map_link(map) %></span>
+	<br>
+      </div>
+    <% end %> 
+    <br>
+  <% end %>
+
+  <% if @no_results %>
+    <%= render partial: "cantfind" %>
+  <% end %>
 </div>
