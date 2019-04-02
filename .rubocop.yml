@@ -81,6 +81,10 @@ Style/HashSyntax:
   Exclude:
     - 'config/routes.rb'
 
+Style/StringLiterals:
+  Exclude:
+    - 'spec/**/*.rb'
+
 Style/SymbolArray:
   Enabled: false
 
