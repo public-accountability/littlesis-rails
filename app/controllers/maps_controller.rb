@@ -233,11 +233,16 @@ class MapsController < ApplicationController
   # OLIRAPHER 2 SEARCH API
 
   def find_nodes
-    return head :bad_request unless params[:q].present?
-    num = params.fetch(:num, 10)
-    fields = params[:desc] ? 'name,aliases,blurb' : 'name,aliases'
-    entities = Entity::Search.search(params[:q], { fields: fields, per_page: num })
-    render json: entities.map { |e| Oligrapher.entity_to_node(e) }
+    return head :bad_request if params[:q].blank?
+
+    fields = params[:desc] ? %w[name aliases blurb] : %w[name aliases]
+
+    entities = EntitySearchService
+                 .new(query: params[:q], fields: fields, per_page: params.fetch(:num, 10))
+                 .search
+                 .map { |e| Oligrapher.entity_to_node(e) }
+
+    render json: entities
   end
 
   def node_with_edges

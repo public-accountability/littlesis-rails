@@ -386,6 +386,14 @@ Lilsis::Application.routes.draw do
   # edit pages.yml to add more pages
   get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
 
+  ############
+  # Partners #
+  ############
+
+  scope :partners do
+    get '/corporate-mapping-project' => 'partners#cmp'
+  end
+
   #####################
   # external datasets #
   #####################

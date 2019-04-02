@@ -147,7 +147,11 @@ end
 module RspecGroupHelpers
   def assert_attribute(attr, expected)
     it "attribute \"#{attr}\" is equal to #{expected}" do
-      expect(subject.send(attr)).to eql expected
+      if subject.is_a?(Hash)
+        expect(subject.send(:fetch, attr)).to eql expected
+      else
+        expect(subject.send(attr)).to eql expected
+      end
     end
   end
 
