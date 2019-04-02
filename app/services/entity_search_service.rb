@@ -3,20 +3,20 @@
 class EntitySearchService
   DEFAULT_SEARCH_OPTIONS = {
     with: { is_deleted: false },
-    fields: 'name,aliases',
+    fields: %w[name aliases],
     num: 15,
     page: 1
   }.freeze
 
   attr_accessor :query, :options
 
-  def initialize(query: nil, options: {})
+  def initialize(query: nil, **kwargs)
     @query = query
-    @options = DEFAULT_SEARCH_OPTIONS.deep_merge(opt)
+    @options = DEFAULT_SEARCH_OPTIONS.deep_merge(kwargs)
   end
 
   def search
-    raise Argumenterror, 'Invalid search query' if query.blank?
+    raise ArgumentError, 'Blank search query' if query.blank?
 
     Entity.search search_query, search_options
   end
@@ -24,7 +24,7 @@ class EntitySearchService
   private
 
   def search_query
-    "@(#{@options[:fields]}) #{LsSearch.escape(@query)}"
+    "@(#{@options[:fields].join(',')}) #{LsSearch.escape(@query)}"
   end
 
   def search_options
