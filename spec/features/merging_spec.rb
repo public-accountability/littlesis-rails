@@ -8,10 +8,16 @@ feature 'Merging entities' do
   let(:dest) { create(:entity_person, :with_person_name) }
   let(:query) { "foobar" }
 
+  def mock_similar_entities_service
+    allow(SimilarEntitiesService).to receive(:new)
+                                       .and_return(double(:similar_entities => [dest]))
+  end
+
   before do
-    allow(Entity::Search).to receive(:similar_entities).and_return([dest])
+    mock_similar_entities_service
     login_as(user, scope: :user)
   end
+
   after { logout(:user) }
 
   describe "navigating to merge pages from an entity profile page" do
@@ -97,7 +103,8 @@ feature 'Merging entities' do
     end
 
     before do
-      allow(Entity::Search).to receive(:similar_entities).and_return([dest])
+      mock_similar_entities_service
+
       visit merge_path(mode:    mode,
                        source:  source&.id,
                        dest:    dest&.id,
@@ -113,7 +120,7 @@ feature 'Merging entities' do
         let(:dest_param) {}
 
         it "allows access" do
-          expect(page).to have_http_status 200
+          expect(page).to have_http_status :ok
         end
 
         it "is impossible to test displaying search results because it is in javascript"
@@ -155,7 +162,7 @@ feature 'Merging entities' do
           end
 
           it "creates a pending merge request" do
-            expect(MergeRequest.count).to eql 1
+            expect(MergeRequest.count).to eq 1
             expect(last.source).to eql source
             expect(last.dest).to eql dest
             expect(last.user).to eql user
