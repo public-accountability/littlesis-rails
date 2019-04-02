@@ -133,9 +133,10 @@ class MergeController < ApplicationController
   end
 
   def resolve_similar_entities
-    return @source.similar_entities(SIMILAR_ENTITIES_PER_PAGE) unless @query.present?
-    Entity::Search.similar_entities(@source,
-                                    query: @query,
-                                    per_page: SIMILAR_ENTITIES_PER_PAGE)
+    return @source.similar_entities(SIMILAR_ENTITIES_PER_PAGE) if @query.blank?
+
+    SimilarEntitiesService
+      .new(@source, query: @query, per_page: SIMILAR_ENTITIES_PER_PAGE)
+      .similar_entities
   end
 end
