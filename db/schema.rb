@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_07_135257) do
+ActiveRecord::Schema.define(version: 2019_04_03_154559) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -207,6 +207,7 @@ ActiveRecord::Schema.define(version: 2019_03_07_135257) do
     t.integer "entity_type", limit: 1, null: false, unsigned: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "strata", limit: 1, unsigned: true
     t.index ["cmp_id"], name: "index_cmp_entities_on_cmp_id", unique: true
     t.index ["entity_id"], name: "index_cmp_entities_on_entity_id", unique: true
   end

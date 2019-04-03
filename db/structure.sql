@@ -320,6 +320,7 @@ CREATE TABLE `cmp_entities` (
   `entity_type` tinyint(3) unsigned NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
+  `strata` tinyint(3) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_cmp_entities_on_cmp_id` (`cmp_id`),
   UNIQUE KEY `index_cmp_entities_on_entity_id` (`entity_id`),
@@ -2491,6 +2492,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20190123170130'),
 ('20190225182449'),
 ('20190305165817'),
-('20190307135257');
+('20190307135257'),
+('20190403154559');
 
 
