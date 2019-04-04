@@ -7,7 +7,8 @@ module SphinxTestHelper
     Lilsis::Application.load_tasks
     Rake::Task['ts:configure'].invoke
     ThinkingSphinx::Test.init
-    indexes.each { |idx| ThinkingSphinx::Test.index idx }
+    ThinkingSphinx::Test.index
+    # indexes.each { |idx| ThinkingSphinx::Test.index idx }
     ThinkingSphinx::Test.start index: false
   end
 
@@ -25,5 +26,4 @@ module SphinxTestHelper
     Org.delete_all
     Person.delete_all
   end
-  
 end
