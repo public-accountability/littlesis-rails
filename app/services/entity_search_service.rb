@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
 class EntitySearchService
-  DEFAULT_SEARCH_OPTIONS = {
+  DEFAULT_OPTIONS = {
     with: { is_deleted: false },
     fields: %w[name aliases],
+    tags: nil,
     num: 15,
     page: 1
   }.freeze
 
-  attr_accessor :query, :options
+  attr_reader :query, :options, :tags, :search_options, :search
+  alias_attribute :results, :search
 
   # Class Methods
 
@@ -29,28 +31,46 @@ class EntitySearchService
       url: e.url }
   end
 
-  def initialize(query: nil, **kwargs)
-    @query = query
-    @options = DEFAULT_SEARCH_OPTIONS.deep_merge(kwargs)
-  end
+  def initialize(query:, **kwargs)
+    @query = LsSearch.escape(query)
+    @options = DEFAULT_OPTIONS.deep_merge(kwargs)
 
-  def search
-    raise ArgumentError, 'Blank search query' if query.blank?
+    @search_options = {
+      with: @options[:with],
+      per_page: @options[:num].to_i,
+      page: @options[:page].to_i,
+      select: '*, weight() * (link_count + 1) AS link_weight',
+      order: 'link_weight DESC'
+    }
 
-    Entity.search search_query, search_options
+    @search_query = "@(#{@options[:fields].join(',')}) #{@query}"
+
+    parse_tags
+
+    @search = Entity.search @search_query, @search_options
+    freeze
   end
 
   private
 
-  def search_query
-    "@(#{@options[:fields].join(',')}) #{LsSearch.escape(@query)}"
-  end
+  def parse_tags
+    return if @options[:tags].nil?
 
-  def search_options
-    { with: @options[:with],
-      per_page: @options[:num].to_i,
-      page: @options[:page].to_i,
-      select: '*, weight() * (link_count + 1) AS link_weight',
-      order: 'link_weight DESC' }
+    TypeCheck.check @options[:tags], [String, Array]
+
+    @options[:tags] = @options[:tags].split(',') if @options[:tags].is_a?(String)
+
+    @options[:tags].map! do |tag|
+      Tag.get(tag).tap do |t|
+        Rails.logger.warn "[EntitySearchService]: unknown tag: #{tag}" if t.nil?
+      end
+    end
+
+    @options[:tags].compact!
+    @options[:tags].map!(&:id)
+
+    if @options[:tags]&.length&.positive?
+      @search_options[:with_all] = { tag_ids: @options[:tags] }
+    end
   end
 end

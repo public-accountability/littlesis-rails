@@ -25,5 +25,6 @@ module SphinxTestHelper
     Alias.delete_all
     Org.delete_all
     Person.delete_all
+    Tagging.delete_all
   end
 end
