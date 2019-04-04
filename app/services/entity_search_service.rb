@@ -9,9 +9,8 @@ class EntitySearchService
     page: 1
   }.freeze
 
-  attr_accessor :query, :options, :tags
-
-  delegate :fetch, to: :@options
+  attr_reader :query, :options, :tags, :search_options, :search
+  alias_attribute :results, :search
 
   # Class Methods
 
@@ -32,39 +31,27 @@ class EntitySearchService
       url: e.url }
   end
 
-  def initialize(query: nil, **kwargs)
-    @query = query
+  def initialize(query:, **kwargs)
+    @query = LsSearch.escape(query)
     @options = DEFAULT_OPTIONS.deep_merge(kwargs)
-    parse_tags
-  end
 
-  def search
-    raise ArgumentError, 'Blank search query' if query.blank?
-
-    Entity.search search_query, search_options
-  end
-
-  private
-
-  def search_query
-    "@(#{@options[:fields].join(',')}) #{LsSearch.escape(@query)}"
-  end
-
-  def search_options
-    { with: search_options_with,
+    @search_options = {
+      with: @options[:with],
       per_page: @options[:num].to_i,
       page: @options[:page].to_i,
       select: '*, weight() * (link_count + 1) AS link_weight',
-      order: 'link_weight DESC' }
+      order: 'link_weight DESC'
+    }
+
+    @search_query = "@(#{@options[:fields].join(',')}) #{@query}"
+
+    parse_tags
+
+    @search = Entity.search @search_query, @search_options
+    freeze
   end
 
-  def search_options_with
-    if @options[:tags]&.length&.positive?
-      @options[:with].merge(tag_ids: @options[:tags])
-    else
-      @options[:with]
-    end
-  end
+  private
 
   def parse_tags
     return if @options[:tags].nil?
@@ -81,5 +68,9 @@ class EntitySearchService
 
     @options[:tags].compact!
     @options[:tags].map!(&:id)
+
+    if @options[:tags]&.length&.positive?
+      @search_options[:with_all] = { tag_ids: @options[:tags] }
+    end
   end
 end

@@ -39,6 +39,7 @@ class SearchController < ApplicationController
   #  - ext : "org" or "person"
   #  - num : Int
   #  - no_summary : boolean
+  #  - tags | String|Array (if string, can be comma seperated'
   def entity_search
     return head :bad_request if params[:q].blank?
 
@@ -59,6 +60,7 @@ class SearchController < ApplicationController
     {}.tap do |options|
       options[:with] = { primary_ext: params[:ext].capitalize } if params[:ext]
       options[:num] = params[:num].to_i if params[:num]
+      options[:tags] = params[:tags] if params[:tags]
     end
   end
 
