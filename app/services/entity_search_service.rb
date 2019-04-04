@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
 class EntitySearchService
-  DEFAULT_SEARCH_OPTIONS = {
+  DEFAULT_OPTIONS = {
     with: { is_deleted: false },
     fields: %w[name aliases],
+    tags: nil,
     num: 15,
     page: 1
   }.freeze
 
-  attr_accessor :query, :options
+  attr_accessor :query, :options, :tags
+
+  delegate :fetch, to: :@options
 
   # Class Methods
 
@@ -31,7 +34,8 @@ class EntitySearchService
 
   def initialize(query: nil, **kwargs)
     @query = query
-    @options = DEFAULT_SEARCH_OPTIONS.deep_merge(kwargs)
+    @options = DEFAULT_OPTIONS.deep_merge(kwargs)
+    parse_tags
   end
 
   def search
@@ -47,10 +51,35 @@ class EntitySearchService
   end
 
   def search_options
-    { with: @options[:with],
+    { with: search_options_with,
       per_page: @options[:num].to_i,
       page: @options[:page].to_i,
       select: '*, weight() * (link_count + 1) AS link_weight',
       order: 'link_weight DESC' }
+  end
+
+  def search_options_with
+    if @options[:tags]&.length&.positive?
+      @options[:with].merge(tag_ids: @options[:tags])
+    else
+      @options[:with]
+    end
+  end
+
+  def parse_tags
+    return if @options[:tags].nil?
+
+    TypeCheck.check @options[:tags], [String, Array]
+
+    @options[:tags] = @options[:tags].split(',') if @options[:tags].is_a?(String)
+
+    @options[:tags].map! do |tag|
+      Tag.get(tag).tap do |t|
+        Rails.logger.warn "[EntitySearchService]: unknown tag: #{tag}" if t.nil?
+      end
+    end
+
+    @options[:tags].compact!
+    @options[:tags].map!(&:id)
   end
 end

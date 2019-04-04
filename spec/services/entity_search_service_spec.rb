@@ -2,7 +2,9 @@
 
 require 'rails_helper'
 
-describe EntitySearchService do
+describe EntitySearchService, :tag_helper do
+  seed_tags
+
   let(:defaults) do
     { with: { is_deleted: false },
       per_page: 15,
@@ -31,6 +33,46 @@ describe EntitySearchService do
 
   it 'raises error when search is left blank' do
     expect { EntitySearchService.new.search }.to raise_error(ArgumentError)
+  end
+
+  it 'accepts a single tag as string' do
+    expect(EntitySearchService.new(tags: 'nyc').options[:tags]).to eq [2]
+  end
+
+  it 'accepts a mutiple tags as array' do
+    expect(EntitySearchService.new(tags: ['oil', 'nyc']).options[:tags]).to eq [1, 2]
+  end
+
+  it 'accepts a mutiple tags as string' do
+    expect(EntitySearchService.new(tags: 'oil,nyc').options[:tags]).to eq [1, 2]
+  end
+
+  it 'accepts a mutiple tags as string (as integers)' do
+    expect(EntitySearchService.new(tags: '1,3').options[:tags]).to eq [1, 3]
+  end
+
+  it 'ignores tags that do not exist' do
+    expect(EntitySearchService.new(tags: '1,4').options[:tags]).to eq [1]
+  end
+
+  it 'warns if tag does not exists' do
+    expect(Rails.logger).to receive(:warn).with("[EntitySearchService]: unknown tag: foo").once
+    expect(EntitySearchService.new(tags: 'oil,foo').options[:tags]).to eq [1]
+  end
+
+  describe 'search_options_with' do
+    it 'skips tags if empty' do
+      expect(EntitySearchService.new.send(:search_options_with)).to eq(is_deleted: false)
+      expect(EntitySearchService.new(tags: '100').send(:search_options_with)).to eq(is_deleted: false)
+    end
+
+    it 'includes tags in query' do
+      expect(EntitySearchService.new(tags: 'oil,nyc').send(:search_options_with))
+        .to eq(is_deleted: false, tag_ids: [1, 2])
+
+      expect(EntitySearchService.new(tags: '2').send(:search_options_with))
+               .to eq(is_deleted: false, tag_ids: [2])
+    end
   end
 
   describe 'entity_with_summary' do
