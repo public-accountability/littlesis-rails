@@ -10,4 +10,5 @@ ThinkingSphinx::Index.define :entity, :with => :active_record, :delta => Thinkin
   has last_user_id, facet: true
   has updated_at
   has link_count
+  has taggings.tag_id, as: :tag_ids, facet: true
 end

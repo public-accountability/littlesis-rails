@@ -13,7 +13,8 @@ class SearchController < ApplicationController
       service = SearchService.new(query, page: @page, admin: user_is_admin)
       @entities = service.entities
 
-      if @page == 1 # we only show entities if on page that is not the first
+      # On the first page we show results for all categories. Only entities is paginated.
+      if @page == 1 
         @lists = service.lists
         @maps = service.maps
         @tags = service.tags if user_is_admin
@@ -26,30 +27,40 @@ class SearchController < ApplicationController
       format.html { render 'basic' }
 
       format.json do
-        entities = @entities.map { |e| Entity::Search.entity_with_summary(e) }
+        entities = @entities.map { |e| EntitySearchService.entity_with_summary(e) }
         render json: { entities: entities }
       end
     end
   end
 
-  # /search/entity?q=ENTITY_NAME
+  # /search/entity
+  # require param: q
+  # optional params:
+  #  - ext : "org" or "person"
+  #  - num : Int
+  #  - no_summary : boolean
   def entity_search
-    return head :bad_request unless params[:q].present?
+    return head :bad_request if params[:q].blank?
 
-    options = { with: { is_deleted: false } }
-    options[:with][:primary_ext] = params[:ext].capitalize if params[:ext]
-    options[:num] = params[:num].to_i if params[:num]
-
-    search_results = Entity::Search.search(params[:q], options)
+    search_results = EntitySearchService
+                       .new(query: params[:q], **entity_search_options)
+                       .search
 
     if params[:no_summary]
-      render json: search_results.map { |e| Entity::Search.entity_no_summary(e) }
+      render json: search_results.map { |e| EntitySearchService.entity_no_summary(e) }
     else
-      render json: search_results.map { |e| Entity::Search.entity_with_summary(e) }
+      render json: search_results.map { |e| EntitySearchService.entity_with_summary(e) }
     end
   end
 
   private
+
+  def entity_search_options
+    {}.tap do |options|
+      options[:with] = { primary_ext: params[:ext].capitalize } if params[:ext]
+      options[:num] = params[:num].to_i if params[:num]
+    end
+  end
 
   def set_initial_search_values
     @entities = []
