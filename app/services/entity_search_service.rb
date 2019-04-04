@@ -10,6 +10,25 @@ class EntitySearchService
 
   attr_accessor :query, :options
 
+  # Class Methods
+
+  def self.entity_with_summary(e)
+    { id: e.id,
+      name: e.name,
+      description: e.blurb,
+      summary: e.summary,
+      primary_type: e.primary_ext,
+      url: e.url }
+  end
+
+  def self.entity_no_summary(e)
+    { id: e.id,
+      name: e.name,
+      description: e.blurb,
+      primary_type: e.primary_ext,
+      url: e.url }
+  end
+
   def initialize(query: nil, **kwargs)
     @query = query
     @options = DEFAULT_SEARCH_OPTIONS.deep_merge(kwargs)

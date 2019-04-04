@@ -26,13 +26,13 @@ RSpec.describe SearchController, type: :controller do
 
     it "calls search with query param and returns results with summary by default" do
       expect(EntitySearchService).to receive(:new).with(query: 'name').and_return(search_service_double)
-      expect(Entity::Search).to receive(:entity_with_summary).once.and_call_original
+      expect(EntitySearchService).to receive(:entity_with_summary).once.and_call_original
       get :entity_search, params: { :q => 'name' }
     end
 
     it "it removes summary if param 'no_summary' is submitted with request" do
       expect(EntitySearchService).to receive(:new).with(query: 'name').and_return(search_service_double)
-      expect(Entity::Search).to receive(:entity_no_summary).once.and_call_original
+      expect(EntitySearchService).to receive(:entity_no_summary).once.and_call_original
       get :entity_search, params: { :q => 'name', :no_summary => 'true' }
     end
   end

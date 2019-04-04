@@ -26,7 +26,7 @@ class SearchController < ApplicationController
       format.html { render 'basic' }
 
       format.json do
-        entities = @entities.map { |e| Entity::Search.entity_with_summary(e) }
+        entities = @entities.map { |e| EntitySearchService.entity_with_summary(e) }
         render json: { entities: entities }
       end
     end
@@ -34,7 +34,7 @@ class SearchController < ApplicationController
 
   # /search/entity?q=ENTITY_NAME
   def entity_search
-    return head :bad_request unless params[:q].present?
+    return head :bad_request if params[:q].blank?
 
     options = {}
     options[:with] = { primary_ext: params[:ext].capitalize } if params[:ext]
@@ -43,9 +43,9 @@ class SearchController < ApplicationController
     search_results = EntitySearchService.new(query: params[:q], **options).search
 
     if params[:no_summary]
-      render json: search_results.map { |e| Entity::Search.entity_no_summary(e) }
+      render json: search_results.map { |e| EntitySearchService.entity_no_summary(e) }
     else
-      render json: search_results.map { |e| Entity::Search.entity_with_summary(e) }
+      render json: search_results.map { |e| EntitySearchService.entity_with_summary(e) }
     end
   end
 
