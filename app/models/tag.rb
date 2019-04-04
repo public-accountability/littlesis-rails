@@ -32,7 +32,7 @@ class Tag < ApplicationRecord
   def self.get(tag_identifier)
     if tag_identifier.is_a? Integer
       lookup[tag_identifier]
-    elsif /\A[[:digit:]]\Z/.match? tag_identifier
+    elsif /\A[[:digit:]]+\Z/.match? tag_identifier
       lookup[tag_identifier.to_i]
     else
       search_by_name(tag_identifier)
