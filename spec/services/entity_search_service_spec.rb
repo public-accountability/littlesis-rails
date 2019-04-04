@@ -32,4 +32,21 @@ describe EntitySearchService do
   it 'raises error when search is left blank' do
     expect { EntitySearchService.new.search }.to raise_error(ArgumentError)
   end
+
+  describe 'entity_with_summary' do
+    it 'returns hash with summary field' do
+      e = build(:person, summary: 'i am a summary')
+      h = EntitySearchService.entity_with_summary(e)
+      expect(h).to include :summary => 'i am a summary'
+    end
+  end
+
+  describe 'entity_no_summary' do
+    it 'returns hash without summary field' do
+      e = build(:person, summary: 'i am a summary')
+      h = EntitySearchService.entity_no_summary(e)
+      expect(h).to be_a Hash
+      expect(h).not_to include :summary => 'i am a summary'
+    end
+  end
 end
