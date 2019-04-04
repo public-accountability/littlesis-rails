@@ -75,6 +75,7 @@ Style/FrozenStringLiteralComment:
   EnforcedStyle: when_needed
   Exclude:
     - 'spec/**/*.rb'
+    - 'app/indices/*.rb'
 
 Style/HashSyntax:
   EnforcedStyle: no_mixed_keys
