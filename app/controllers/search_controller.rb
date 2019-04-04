@@ -42,11 +42,9 @@ class SearchController < ApplicationController
   def entity_search
     return head :bad_request if params[:q].blank?
 
-    options = {}
-    options[:with] = { primary_ext: params[:ext].capitalize } if params[:ext]
-    options[:num] = params[:num].to_i if params[:num]
-
-    search_results = EntitySearchService.new(query: params[:q], **options).search
+    search_results = EntitySearchService
+                       .new(query: params[:q], **entity_search_options)
+                       .search
 
     if params[:no_summary]
       render json: search_results.map { |e| EntitySearchService.entity_no_summary(e) }
@@ -56,6 +54,13 @@ class SearchController < ApplicationController
   end
 
   private
+
+  def entity_search_options
+    {}.tap do |options|
+      options[:with] = { primary_ext: params[:ext].capitalize } if params[:ext]
+      options[:num] = params[:num].to_i if params[:num]
+    end
+  end
 
   def set_initial_search_values
     @entities = []
