@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TagSpecHelper
   OIL_TAG = { 'name' => 'oil',
               'description' => 'the reason for our planet\'s demise',
@@ -18,6 +20,7 @@ module TagSpecHelper
     before(:all) do
       TAGS.each { |t| Tag.create!(t) }
     end
+
     after(:all) do
       Tag.destroy_all
     end
