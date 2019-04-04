@@ -28,6 +28,17 @@ class Tag < ApplicationRecord
     }
   end
 
+  # String | Integer -> Tag | nil
+  def self.get(tag_identifier)
+    if tag_identifier.is_a? Integer
+      lookup[tag_identifier]
+    elsif /\A[[:digit:]]\Z/.match? tag_identifier
+      lookup[tag_identifier.to_i]
+    else
+      search_by_name(tag_identifier)
+    end
+  end
+
   # String -> [Tag]
   def self.search_by_names(phrase)
     Tag.lookup.keys

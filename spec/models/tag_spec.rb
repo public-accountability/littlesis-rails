@@ -304,6 +304,24 @@ describe Tag, :pagination_helper do
       end
     end
 
+    describe '#get' do
+      it 'finds tag by if search includes exact name' do
+        expect(Tag.get('oil')).to eql @oil
+      end
+
+      it 'finds tag by integer' do
+        expect(Tag.get(@oil.id)).to eql @oil
+      end
+
+      it 'finds tag by string integer' do
+        expect(Tag.get(@oil.id.to_s)).to eql @oil
+      end
+
+      it 'return nil if there is no tag' do
+        expect(Tag.get('foo')).to be nil
+      end
+    end
+
     describe '#search_by_names' do
       let(:phrase) { '' }
       subject { Tag.search_by_names(phrase) }
