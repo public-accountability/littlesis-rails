@@ -13,7 +13,8 @@ class SearchController < ApplicationController
       service = SearchService.new(query, page: @page, admin: user_is_admin)
       @entities = service.entities
 
-      if @page == 1 # we only show entities if on page that is not the first
+      # On the first page we show results for all categories. Only entities is paginated.
+      if @page == 1 
         @lists = service.lists
         @maps = service.maps
         @tags = service.tags if user_is_admin
@@ -32,7 +33,12 @@ class SearchController < ApplicationController
     end
   end
 
-  # /search/entity?q=ENTITY_NAME
+  # /search/entity
+  # require param: q
+  # optional params:
+  #  - ext : "org" or "person"
+  #  - num : Int
+  #  - no_summary : boolean
   def entity_search
     return head :bad_request if params[:q].blank?
 
