@@ -4,10 +4,12 @@ Javascript for the cmp landing page
 Assumes datatables and jquery has been loaded in window
 */
 const $ = window.$;
-import cmp_entities from './cmp/data.json';
-// import { createLink } from './common/utility.js';
-// function render( data, type, row, meta )
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import cmp_entities from './cmp/data.json';
+import EntityTagSearch from './tags/entityTagSearch';
 
 const entityLink = (row) => {
   return `
@@ -41,4 +43,17 @@ const initializeDatatable = () => {
   });
 };
 
-document.addEventListener("DOMContentLoaded", initializeDatatable);
+const initializeEntityTagSearch = () => {
+  ReactDOM.render(
+    <EntityTagSearch tag="cmp" />,
+    document.getElementById('cmp-tag-search')
+  );
+
+}
+
+const main = () => {
+  initializeDatatable();
+  initializeEntityTagSearch();
+};
+
+document.addEventListener("DOMContentLoaded", main);
