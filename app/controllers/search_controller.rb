@@ -27,7 +27,7 @@ class SearchController < ApplicationController
       format.html { render 'basic' }
 
       format.json do
-        entities = @entities.map { |e| EntitySearchService.entity_with_summary(e) }
+        entities = @entities.map { |e| e.to_hash(image_url: true) }
         render json: { entities: entities }
       end
     end
@@ -38,8 +38,8 @@ class SearchController < ApplicationController
   # optional params:
   #  - ext : "org" or "person"
   #  - num : Int
-  #  - no_summary : boolean
   #  - tags | String|Array (if string, can be comma seperated'
+  #  - return_type : String
   def entity_search
     return head :bad_request if params[:q].blank?
 
@@ -47,11 +47,13 @@ class SearchController < ApplicationController
                        .new(query: params[:q], **entity_search_options)
                        .search
 
-    if params[:no_summary]
-      render json: search_results.map { |e| EntitySearchService.entity_no_summary(e) }
+    if params[:return_type]&.downcase == 'simple'
+      search_results.map! { |e| EntitySearchService.simple_entity_hash(e) }
     else
-      render json: search_results.map { |e| EntitySearchService.entity_with_summary(e) }
+      search_results.map! { |e| e.to_hash(image_url: true) }
     end
+
+    render json: search_results
   end
 
   private

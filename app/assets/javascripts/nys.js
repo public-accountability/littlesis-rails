@@ -26,7 +26,7 @@ var nys = (function($, utility){
   function createTable(d, primaryExt){
     $('#table-container').removeClass('hidden');
     d.slice(0,10).forEach(function(entity){
-      var html = '<tr>' + td(entity.id) + td(entity_link(entity)) + td(entity.description ? entity.description : "" ) + '</tr>';
+      var html = '<tr>' + td(entity.id) + td(entity_link(entity)) + td(entity.blurb ? entity.blurb : "" ) + '</tr>';
       $('tbody').append(html);
     });
     rowClick(primaryExtToType(primaryExt));

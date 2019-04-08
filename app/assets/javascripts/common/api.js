@@ -11,13 +11,13 @@
 
   // Object -> Promise[[Entity]]
   self.searchEntity = function(query){
-    return get('/search/entity', { num: 10, no_summary: true, q: query })
+    return get('/search/entity', { num: 10, return_type: 'simple', q: query })
       .then(format)
       .catch(handleError);
 
     // [Entity] -> [Entity]
     function format(results){
-      // stringify id & rename keys (`primary_type` -> `primary_ext`; `description` -> `name`)
+      // stringify id & rename keys (`primary_type` -> `primary_ext`; `description` -> `blurb`)
       return results.map(function(result) {
         var _result = Object.assign({}, result, {
           primary_ext: result.primary_ext || result.primary_type,

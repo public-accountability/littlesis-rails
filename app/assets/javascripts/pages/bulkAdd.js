@@ -220,7 +220,7 @@
       );
   }
 
-  // Submits ajax request to /relationships/find_similar
+  // Submipts ajax request to /relationships/find_similar
   // and displays alert if similar relationship is found
   // Input: <td>, Int
   function lookForSimilarRelationship(cell, entity2_id) {
@@ -251,7 +251,7 @@
     $.getJSON('/search/entity', {
       num: 10,
       q: text,
-      no_summary: true
+      return_type: 'simple'
     })
      .done(function(result){
        callback(result.map(function(entity){
@@ -306,7 +306,7 @@
 
     blurb.text(ui.item.description ? ui.item.description : '');
     blurb.attr('contenteditable', 'false'); // disable editing of blurb
-    entityType.find('select').selectpicker('val', ui.item.primary_type);
+    entityType.find('select').selectpicker('val', ui.item.primary_ext);
     lookForSimilarRelationship(cell, ui.item.id);
   }
 
@@ -322,7 +322,7 @@
     };
   }
 
-  var entitySuggestion = Hogan.compile('<div class="entity-search-name">{{name}}</div><div class="entity-search-blurb">{{description}}</div>');
+  var entitySuggestion = Hogan.compile('<div class="entity-search-name">{{name}}</div><div class="entity-search-blurb">{{blurb}}</div>');
 
   var autocompleteRenderItem = function(ul, item) {
     return $( "<li>" )

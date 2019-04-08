@@ -9,25 +9,16 @@ class EntitySearchService
     page: 1
   }.freeze
 
-  attr_reader :query, :options, :tags, :search_options, :search
+  attr_reader :query, :options, :search_options, :search
   alias_attribute :results, :search
 
   # Class Methods
 
-  def self.entity_with_summary(e)
+  def self.simple_entity_hash(e)
     { id: e.id,
       name: e.name,
-      description: e.blurb,
-      summary: e.summary,
-      primary_type: e.primary_ext,
-      url: e.url }
-  end
-
-  def self.entity_no_summary(e)
-    { id: e.id,
-      name: e.name,
-      description: e.blurb,
-      primary_type: e.primary_ext,
+      blurb: e.blurb,
+      primary_ext: e.primary_ext,
       url: e.url }
   end
 
