@@ -19,7 +19,7 @@ class EntitiesController < ApplicationController
   before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
   before_action :importers_only, only: IMPORTER_ACTIONS
-  before_action :set_entity, except: [:new, :create, :search_by_name, :search_field_names, :show, :create_bulk]
+  before_action :set_entity, except: [:new, :create, :show, :create_bulk]
   before_action :set_entity_for_profile_page, only: [:show]
   before_action :check_delete_permission, only: [:destroy]
 
@@ -193,47 +193,6 @@ class EntitiesController < ApplicationController
     @entity.update_fields(fields)
     Field.delete_unused
     redirect_to fields_entity_path(@entity)
-  end
-
-  def search_by_name
-    data = []
-    q = params[:q]
-    num = params.fetch(:num, 10)
-    fields = params[:desc] ? 'name,aliases,blurb' : 'name,aliases'
-    entities = Entity.search(
-      "@(#{fields}) #{q}", 
-      per_page: num, 
-      match_mode: :extended, 
-      with: { is_deleted: false },
-      select: "*, weight() * (link_count + 1) AS link_weight",
-      order: "link_weight DESC"
-    )
-    data = entities.collect { |e| { value: e.name, name: e.name, id: e.id, blurb: e.blurb, url: datatable_entity_path(e), primary_ext: e.primary_ext } }
-
-    if list_id = params[:exclude_list]
-      entity_ids = ListEntity.where(list_id: list_id).pluck(:entity_id)
-      data.delete_if { |e| entity_ids.include?(e[:id]) }
-    end
-
-    if params[:with_ids]
-      dups = entities.group_by(&:name).select { |name, ary| ary.count > 1 }.keys
-      data.map! do |hash|
-        if dups.include?(hash[:name])
-          info = hash[:blurb].present? ? hash[:blurb] : hash[:id].to_s
-          hash[:value] = hash[:name] + " (#{info})"
-        end
-        hash
-      end      
-    end
-
-    render json: data
-  end
-
-  def search_field_names
-    q = params[:q]
-    num = params.fetch(:num, 10)
-    fields = Field.search(q, per_page: num, match_mode: :extended)
-    render json: fields.map { |f| f.name }.sort
   end
 
   ##

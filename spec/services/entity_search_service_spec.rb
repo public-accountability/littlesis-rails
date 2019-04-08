@@ -61,6 +61,9 @@ describe EntitySearchService, :tag_helper do
   end
 
   describe 'search_options' do
+    let(:list_id) { rand(1_000) }
+    let(:excluded_ids) { Array.new(4) { rand(10_000) } }
+
     it 'skips tags if empty' do
       expect(EntitySearchService.new(query: 'x').search_options[:with_all]).to be_nil
       expect(EntitySearchService.new(query: 'x', tags: '100').search_options[:with_all]).to be_nil
@@ -70,6 +73,21 @@ describe EntitySearchService, :tag_helper do
       expect(EntitySearchService.new(query: 'x', tags: 'oil,nyc').search_options[:with_all]).to eq(tag_ids: [1, 2])
       expect(EntitySearchService.new(query: 'x', tags: '2').search_options[:with_all]).to eq(tag_ids: [2])
     end
+
+    it 'does not contain option without when exclude_list is empty' do
+      expect(EntitySearchService.new(query: 'x').search_options[:without]).to be_nil
+    end
+
+    it 'ignores excluded entities when exclude_list is set' do
+      expect(ListEntity).to receive(:where)
+                              .with(list_id: list_id)
+                              .and_return(double(:pluck => excluded_ids))
+
+      search_options = EntitySearchService.new(query: 'x', exclude_list: list_id).search_options
+
+      expect(search_options[:without]).to eq(sphinx_internal_id: excluded_ids)
+    end
+
   end
 
   describe 'simple_entity_hash' do

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class SearchController < ApplicationController
-  before_action :authenticate_user!, except: [:basic]
   before_action :set_page, only: [:basic]
   before_action :set_initial_search_values, only: [:basic]
 
@@ -39,6 +38,7 @@ class SearchController < ApplicationController
   #  - ext : "org" or "person"
   #  - num : Int
   #  - tags | String|Array (if string, can be comma seperated'
+  #  - exclude_list | id
   #  - return_type : String
   def entity_search
     return head :bad_request if params[:q].blank?
@@ -63,6 +63,9 @@ class SearchController < ApplicationController
       options[:with] = { primary_ext: params[:ext].capitalize } if params[:ext]
       options[:num] = params[:num].to_i if params[:num]
       options[:tags] = params[:tags] if params[:tags]
+      if params[:exclude_list] && /\A[0-9]+\Z/.match?(params[:exclude_list])
+        options[:exclude_list] = params[:exclude_list].to_i
+      end
     end
   end
 

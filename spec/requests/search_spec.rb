@@ -5,12 +5,6 @@ require 'rails_helper'
 describe 'Search', :sphinx, :tag_helper, type: :request do
   seed_tags
 
-  let(:user) { create_really_basic_user }
-
-  before { login_as(user, :scope => :user) }
-
-  after { logout(:user) }
-
   describe 'entity_search' do
     before(:all) do
       setup_sphinx do

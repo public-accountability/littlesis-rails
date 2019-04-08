@@ -168,8 +168,6 @@ Lilsis::Application.routes.draw do
       end
 
       collection do
-        get 'search_by_name', as: 'name_search'
-        get 'search_field_names', as: 'field_name_search'
         post 'bulk' => 'entities#create_bulk'
       end
     end
@@ -256,11 +254,6 @@ Lilsis::Application.routes.draw do
     controller: 'home',
     action: 'dismiss',
     as: 'dismiss_helper'
-
-  # get "/entities/search_by_name",
-  #   controller: 'entities',
-  #   action: 'search_by_name',
-  #   as: 'entity_name_search'
 
   resources :documents, only: [:edit, :update]
 

@@ -126,8 +126,8 @@
      if (query.length > 2) {
        $.ajax({
          method: "GET",
-         url: "<%= name_search_entities_url %>",
-         data: { q: query, num: 5 }
+         url: "/search/entity",
+         data: { q: query, num: 5, return_type: 'simple' }
        }).done(function(results) {
          existing.innerHTML = "";
          if (results.length > 0) {

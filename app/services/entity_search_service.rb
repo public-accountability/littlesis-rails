@@ -4,9 +4,10 @@ class EntitySearchService
   DEFAULT_OPTIONS = {
     with: { is_deleted: false },
     fields: %w[name aliases],
-    tags: nil,
     num: 15,
-    page: 1
+    page: 1,
+    tags: nil,
+    exclude_list: nil
   }.freeze
 
   attr_reader :query, :options, :search_options, :search
@@ -37,12 +38,21 @@ class EntitySearchService
     @search_query = "@(#{@options[:fields].join(',')}) #{@query}"
 
     parse_tags
+    parse_exclude_list
 
     @search = Entity.search @search_query, @search_options
     freeze
   end
 
   private
+
+  # This instructs sphinx to exlude all entities that are already on provided list.
+  def parse_exclude_list
+    return if @options[:exclude_list].nil?
+
+    ids_to_exclude = ListEntity.where(list_id: @options[:exclude_list]).pluck(:entity_id)
+    @search_options[:without] = { sphinx_internal_id: ids_to_exclude }
+  end
 
   def parse_tags
     return if @options[:tags].nil?
