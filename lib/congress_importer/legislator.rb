@@ -129,8 +129,8 @@ class CongressImporter
                  .transform_keys { |k| "name_#{k}" }
 
       associated = []
-      associated << NotableEntities::HOUSE_OF_REPS if representative?
-      associated << NotableEntities::SENATE if senator?
+      associated << NotableEntities.fetch(:house_of_reps) if representative?
+      associated << NotableEntities.fetch(:senate) if senator?
 
       EntityMatcher.find_matches_for_person(person, associated: associated)
     end

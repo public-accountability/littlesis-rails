@@ -404,13 +404,13 @@ describe 'CongressImporter' do
       context 'party membership is not yet in LittleSis' do
         it 'creates a new relationship' do
           expect { subject.import_party_memberships! }.to change { Relationship.count }.by(1)
-          expect(Relationship.last.entity2_id).to eql NotableEntities::DEMOCRATIC_PARTY
+          expect(Relationship.last.entity2_id).to eq 12_886
         end
       end
 
       context 'party membership is already in LittleSis' do
         before do
-          Relationship.create!(entity: sherrod_brown_entity, entity2_id: NotableEntities::DEMOCRATIC_PARTY, category_id: 3)
+          Relationship.create!(entity: sherrod_brown_entity, entity2_id: 12_886, category_id: 3)
         end
 
         it 'does not create a new relationship' do
