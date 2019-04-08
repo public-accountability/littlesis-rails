@@ -22,7 +22,7 @@
      .compile(
        [ '<div class="add-entity-suggestion">',
 	 '<div class="add-entity-name">{{name}}</div>',
-	 '<div class="add-entity-blurb">{{description}}</div>',
+	 '<div class="add-entity-blurb">{{blurb}}</div>',
 	 '</div>'
        ].join('')
      );
@@ -33,7 +33,7 @@
      datumTokenizer: Bloodhound.tokenizers.whitespace,
      queryTokenizer: Bloodhound.tokenizers.whitespace,
      remote: {
-       url: '/search/entity?no_summary=TRUE&q=%QUERY',
+       url: '/search/entity?return_type=simple&q=%QUERY',
        wildcard: '%QUERY'
      }
    });

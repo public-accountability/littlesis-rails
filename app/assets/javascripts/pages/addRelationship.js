@@ -46,7 +46,7 @@ var addRelationship = (function(utility) {
 	    }
 	  },
 	  { 
-	    data: 'description', 
+	    data: 'blurb', 
 	    title: 'Summary' 
 	  },
 	],
@@ -89,10 +89,10 @@ var addRelationship = (function(utility) {
   
   // {} -> HTML ELEMENT
   function categorySelector(data) {
-    var entity1 = utility.entityInfo('entitytype');
-    var entity2 = data.primary_type;
+    var entity1_primary_ext = utility.entityInfo('entitytype');
+    var entity2_primary_ext = data.primary_ext;
     var buttonGroup = $('<div>', { class: 'btn-group-vertical', role: 'group', 'aria-label': 'relationship categories'});
-    categories(entity1, entity2).forEach(function(categoryId){
+    categories(entity1_primary_ext, entity2_primary_ext).forEach(function(categoryId){
       var buttonClass = 'category-select-button' + ( (categoryId === 7) ? ' disabled' : '' );
       buttonGroup.append(
 	$('<button>', {
@@ -231,7 +231,7 @@ var addRelationship = (function(utility) {
     
     if ([1,2].includes(catId) && utility.entityInfo('entitytype') === 'Org') {
       swapEntityIds();
-    } else if (catId == 3 && selected_entity_data.primary_type === 'Person') {
+    } else if (catId == 3 && selected_entity_data.primary_ext === 'Person') {
       swapEntityIds();
     }
   }
