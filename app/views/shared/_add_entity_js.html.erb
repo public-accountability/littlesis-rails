@@ -1,3 +1,9 @@
+<%
+if local_assigns[:query_path].nil?
+  local_assigns[:query_path] = '/search/entity?return_type=simple&q=%QUERY'
+end
+%>
+
 <script>
  $(window).ready(function() {
 
@@ -33,7 +39,7 @@
      datumTokenizer: Bloodhound.tokenizers.whitespace,
      queryTokenizer: Bloodhound.tokenizers.whitespace,
      remote: {
-       url: '/search/entity?return_type=simple&q=%QUERY',
+       url: '<%= query_path %>',
        wildcard: '%QUERY'
      }
    });
