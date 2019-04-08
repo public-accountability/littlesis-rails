@@ -19,7 +19,7 @@ class EntitiesController < ApplicationController
   before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
   before_action :importers_only, only: IMPORTER_ACTIONS
-  before_action :set_entity, except: [:new, :create, :search_field_names, :show, :create_bulk]
+  before_action :set_entity, except: [:new, :create, :show, :create_bulk]
   before_action :set_entity_for_profile_page, only: [:show]
   before_action :check_delete_permission, only: [:destroy]
 
@@ -193,13 +193,6 @@ class EntitiesController < ApplicationController
     @entity.update_fields(fields)
     Field.delete_unused
     redirect_to fields_entity_path(@entity)
-  end
-
-  def search_field_names
-    q = params[:q]
-    num = params.fetch(:num, 10)
-    fields = Field.search(q, per_page: num, match_mode: :extended)
-    render json: fields.map { |f| f.name }.sort
   end
 
   ##

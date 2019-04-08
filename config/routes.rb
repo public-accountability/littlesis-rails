@@ -168,7 +168,6 @@ Lilsis::Application.routes.draw do
       end
 
       collection do
-        get 'search_field_names', as: 'field_name_search'
         post 'bulk' => 'entities#create_bulk'
       end
     end
