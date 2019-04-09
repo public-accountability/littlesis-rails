@@ -9,7 +9,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import cmp_entities from './cmp/data.json';
-import EntityTagSearch from './tags/entityTagSearch';
+import EntityTagSearch from './tags/EntityTagSearch';
 
 const entityLink = (row) => {
   return `
