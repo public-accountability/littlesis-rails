@@ -3,15 +3,20 @@ import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
 
 const EntityResult = ({entity}) => {
-  return <div className="entity-result">
-
-           <img
-             src={entity.image_url}
-             alt={`LittleSis entity: ${entity.name}`}
-           />
-
-           <a href={entity.url}><p>{entity.name}</p></a>
-           <p className="entity-result-blurb">{entity.blurb}</p>
+  return <div className="entity-result mt-1 mb-1">
+           <div className="media">
+             <img
+               src={entity.image_url}
+               className="entity-result-img mr-3"
+               alt={`LittleSis entity: ${entity.name}`}
+             />
+             <div className="media-body">
+               <a href={entity.url} target="_blank">
+                 <h5 className="mt-0">{entity.name}</h5>
+               </a>
+               <span className="entity-result-blurb">{entity.blurb}</span>
+             </div>
+           </div>
          </div>;
 };
 
@@ -25,7 +30,8 @@ const EntityResults = ({entities}) => {
 class SearchInput extends React.Component {
   static propTypes = {
     "handleInputChange": PropTypes.func.isRequired,
-    "delay":  PropTypes.number.isRequired
+    "delay":  PropTypes.number.isRequired,
+    "tag": PropTypes.string.isRequired
   };
 
   static defaultProps = { "delay": 250 };
@@ -47,10 +53,14 @@ class SearchInput extends React.Component {
   }
 
   render () {
-    return <input type="text"
-                  className="entity-tag-search"
-                  value={this.state.value}
-                  onChange={this.handleChange} />;
+    return <div className="entity-tag-search-heading d-flex mb-2">
+             <h3>Find entities tagged with {this.props.tag}</h3>
+             <input type="text"
+                    className="entity-tag-search-input ml-3"
+                    value={this.state.value}
+                    onChange={this.handleChange} />
+
+           </div>;
   }
 }
   
@@ -71,7 +81,8 @@ class FoundEntities extends React.Component {
   searchUrl(query, tag) {
     let q = encodeURIComponent(query);
     let t = encodeURIComponent(tag);
-    return `/search/entity?q=${q}&tags=${t}`;
+    let num = 5;
+    return `/search/entity?q=${q}&tags=${t}&num=${num}`;
   }
   
   componentDidMount () {
@@ -96,7 +107,7 @@ class FoundEntities extends React.Component {
     };
 
     if (this.state.entities.length === 0) {
-      return <p>No entities found</p>;
+      return <p className="no-entities-found">No entities found</p>;
     };
 
     return <EntityResults entities={this.state.entities} />;
@@ -123,7 +134,7 @@ export default class EntityTagSearch extends React.Component {
 
   render () {
     return <>
-             <SearchInput handleInputChange={this.handleInputChange} />
+             <SearchInput handleInputChange={this.handleInputChange} tag={this.props.tag} />
              { this.state.query && <FoundEntities tag={this.props.tag} query={this.state.query} key={this.state.query} /> }
            </>;
   }
