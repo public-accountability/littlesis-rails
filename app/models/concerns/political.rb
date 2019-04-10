@@ -41,8 +41,8 @@ module Political
     # If the entity is a person we just return matches for that person
     # If the entity is an org, we return all matches for all people who
     # hold position relationships with the org
-    ids = person? ? Array(self.id) : links.where(category_id: 1).pluck(:entity2_id)
-    OsMatch.find_by_sql Array(
+    ids = person? ? Array.wrap(id) : links.where(category_id: 1).pluck(:entity2_id)
+    OsMatch.find_by_sql Array.wrap(
               "SELECT os_matches.id as os_match_id,
                       os_donations.*,
                       entity.id as recip_id,
