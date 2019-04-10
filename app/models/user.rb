@@ -186,11 +186,6 @@ class User < ApplicationRecord
     @permissions ||= Permissions.new(self)
   end
 
-  def create_chat_account
-    return :existing_account if chatid.present?
-    Chat.create_user(self)
-  end
-
   # String | nil --> Arel::Nodes::Grouping | nil
   # Creates sql like statement with arel, which searches
   # the username and email columns to find matching users.
