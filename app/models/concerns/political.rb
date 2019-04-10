@@ -6,17 +6,17 @@ module Political
   module ClassMethods
     # Array -> String
     def name_query_string(names)
-      query = " (name_first = ? and name_last = ?) "
+      query = ' (name_first = ? and name_last = ?) '
       if names.length == 1
         query
       else
-        ( [query] * names.length ).join("OR")
+        ([query] * names.length).join('OR')
       end
     end
   end
 
   def contribids
-    contributions.pluck(:contribid).uniq.delete_if { |x| x.blank? }
+    contributions.pluck(:contribid).uniq.delete_if(&:blank?)
   end
 
   def aliases_names
@@ -25,15 +25,16 @@ module Political
 
   def potential_contributions
     names = aliases_names
-    return [] unless names.length > 0
+    return [] unless names.length.positive?
+
     ids = contribids
 
-    before_query = "SELECT potential.* FROM ( "
-    base_query = "SELECT * FROM os_donations WHERE" + Entity.name_query_string(names)
-    after_query = ") as potential LEFT JOIN os_matches on potential.id = os_matches.os_donation_id where os_matches.os_donation_id is null LIMIT 5000"
-    (base_query += " OR ( contribid IN #{self.class.sqlize_array(ids)} )") if not ids.empty?
+    before_query = 'SELECT potential.* FROM ( '
+    base_query = 'SELECT * FROM os_donations WHERE' + Entity.name_query_string(names)
+    after_query = ') as potential LEFT JOIN os_matches on potential.id = os_matches.os_donation_id where os_matches.os_donation_id is null LIMIT 5000'
+    base_query += " OR ( contribid IN #{ApplicationRecord.sqlize_array(ids)} )" unless ids.empty?
 
-    OsDonation.find_by_sql([ "#{before_query}#{base_query}#{after_query}" ] + names.map { |name| [ name[:name_first], name[:name_last] ] }.flatten)
+    OsDonation.find_by_sql(["#{before_query}#{base_query}#{after_query}"] + names.map { |name| [name[:name_first], name[:name_last]] }.flatten)
   end
 
   def contribution_info
