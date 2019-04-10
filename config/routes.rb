@@ -285,13 +285,6 @@ Lilsis::Application.routes.draw do
 
   get "/edits" => "edits#index"
 
-  #########
-  # Chat  #
-  #########
-
-  get '/chat_login' => 'chat#login'
-  post '/chat_auth' => 'chat#chat_auth'
-
   #######
   # NYS #
   #######

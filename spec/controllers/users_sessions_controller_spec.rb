@@ -2,9 +2,9 @@ require 'rails_helper'
 
 describe Users::SessionsController, type: :controller do
   describe 'Routes' do
-    it { should route(:get, '/login').to(action: :new) }
-    it { should route(:post, '/login').to(action: :create) }
-    it { should route(:get, '/logout').to(action: :destroy) }
+    it { is_expected.to route(:get, '/login').to(action: :new) }
+    it { is_expected.to route(:post, '/login').to(action: :create) }
+    it { is_expected.to route(:get, '/logout').to(action: :destroy) }
   end
 
   describe 'X-Frame-Options' do
@@ -12,16 +12,6 @@ describe Users::SessionsController, type: :controller do
 
     it 'sets for login' do
       get :new
-      expect(response.headers['X-Frame-Options']).to eq 'ALLOW-FROM http://localhost:3000'
-    end
-
-    it 'sets for post login' do
-      post :create
-      expect(response.headers['X-Frame-Options']).to eq 'ALLOW-FROM http://localhost:3000'
-    end
-
-    it 'does not set for logout' do
-      get :destroy
       expect(response.headers['X-Frame-Options']).to eq 'SAMEORIGIN'
     end
   end

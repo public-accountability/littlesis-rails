@@ -269,21 +269,6 @@ describe User do
     end
   end
 
-  describe 'chat user' do
-    let(:user) { build(:user) }
-
-    describe 'create_chat_account' do
-      it 'returns :existing_account if user has chatid' do
-        expect(build(:user, chatid: '12345').create_chat_account).to be :existing_account
-      end
-
-      it 'creates account' do
-        expect(Chat).to receive(:create_user).once.with(user)
-        user.create_chat_account
-      end
-    end
-  end
-
   describe '#recent_edits' do
     let(:user) { create_really_basic_user }
 

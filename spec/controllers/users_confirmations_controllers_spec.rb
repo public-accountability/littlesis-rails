@@ -16,7 +16,6 @@ describe Users::ConfirmationsController, type: :controller do
       expect(NotificationMailer).to receive(:signup_email)
                                       .with(@user).and_return(double(:deliver_later => nil))
       expect(NewsletterSignupJob).to receive(:perform_later).with(@user)
-      expect(@user).to receive(:delay).once.and_return(double(:create_chat_account => nil))
       get :show
     end
     it { should respond_with(302) }
