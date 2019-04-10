@@ -38,11 +38,6 @@ defaults: &defaults
   notification_to:
   carousel_list_id: 404
   restricted_ips:
-  chat:
-    chat_url: "http://localhost:3000"
-    api_url: "rocketchat:3000"
-    admin_username: 
-    admin_password:
   recaptcha:
     site_key: 'your-recaptcha-site-key-here'
     secret_key: 'your-recaptcha-secret-key-here'
