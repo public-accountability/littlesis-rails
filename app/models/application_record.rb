@@ -61,6 +61,10 @@ class ApplicationRecord < ActiveRecord::Base
     connection.execute(*args)
   end
 
+  def self.sqlize_array(arr)
+    "('#{arr.join("','")}')"
+  end
+
   protected
 
   def set_last_user_id
