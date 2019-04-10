@@ -56,7 +56,7 @@ then
 fi
 
 echo "Restarting delayed job"
-bin/delayed_job restart
+bin/delayed_job -n 2 restart
 
 echo "Restarting LittleSis"
 touch tmp/restart.txt
