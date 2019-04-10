@@ -1,13 +1,9 @@
+# frozen_string_literal: true
+
 module Political
   extend ActiveSupport::Concern
-  # included do
-  # end
 
   module ClassMethods
-    def sqlize_array(arr)
-      "('" + arr.join("','") + "')"
-    end
-
     # Array -> String
     def name_query_string(names)
       query = " (name_first = ? and name_last = ?) "
