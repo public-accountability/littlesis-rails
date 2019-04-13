@@ -163,7 +163,7 @@ describe EntitiesController, type: :controller do
             expect(json['entity']).to have_key 'name'
             expect(json['entity']).to have_key 'url'
             expect(json['entity']).to have_key 'description'
-            expect(json['entity']).to have_key 'primary_type'
+            expect(json['entity']).to have_key 'primary_ext'
           end
         end
 

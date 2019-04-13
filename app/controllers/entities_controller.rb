@@ -74,7 +74,7 @@ class EntitiesController < ApplicationController
                    name: @entity.name,
                    description: @entity.blurb,
                    url: @entity.url,
-                   primary_type: @entity.primary_ext
+                   primary_ext: @entity.primary_ext
                  }
                }
       else
