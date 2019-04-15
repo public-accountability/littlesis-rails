@@ -898,6 +898,26 @@ describe Entity, :tag_helper do
     end
   end
 
+  describe '#in_cmp_strata?' do
+    let(:entity_without_cmp) { create(:entity_person) }
+
+    let(:entity_in_strata) do
+      create(:entity_person).tap do |e|
+        CmpEntity.create!(entity: e, strata: 1, entity_type: :person)
+      end
+    end
+
+    let(:entity_not_in_strata) do
+      create(:entity_person).tap do |e|
+        CmpEntity.create!(entity: e, strata: nil, entity_type: :person)
+      end
+    end
+
+    specify { expect(entity_without_cmp.in_cmp_strata?).to be false }
+    specify { expect(entity_not_in_strata.in_cmp_strata?).to be false }
+    specify { expect(entity_in_strata.in_cmp_strata?).to be true }
+  end
+
   describe 'Tagging' do
     it 'can tag a person with oil' do
       person = create(:entity_person)
