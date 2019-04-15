@@ -70,6 +70,8 @@ export class EntitySearch extends React.Component {
     super(props);
     this.state = { "query": '' };
     this.onInputChange = this.onInputChange.bind(this);
+    this.onClickSearch = this.onClickSearch.bind(this);
+    this.renderInput = this.renderInput.bind(this);
     this.hasQuery = this.hasQuery.bind(this);
   }
 
@@ -78,16 +80,36 @@ export class EntitySearch extends React.Component {
     this.setState({ "query": value });
   }
 
+  onClickSearch(event) {
+    let url = `/search?q=${this.state.query}`;
+    window.location = url;
+  }
+
   hasQuery() {
     return this.state.query.trim().length >= 3;
   }
 
-  render () {
-    return <div className="entity-search-container">
+  renderInput() {
+    return <div className="input-group">
              <input type="text"
+                    className="form-control"
                     onChange={this.onInputChange}
                     value={this.state.query} />
-             { this.hasQuery() && <AutocompleteBox query={this.state.query} key={`autocomplete-${this.state.query}`} /> }
+             <div className="input-group-append">
+               <button type="submit" className="btn btn-clear" onClick={this.onClickSearch} >
+	         <span className="glyphicon glyphicon-search"></span>
+               </button>
+             </div>
+           </div>;
+  }
+
+  render () {
+    return <div className="entity-search-container">
+             { this.renderInput() }
+             { this.hasQuery() &&
+               <AutocompleteBox
+                 query={this.state.query}
+                 key={`autocomplete-${this.state.query}`} /> }
            </div>;
   }
 }
