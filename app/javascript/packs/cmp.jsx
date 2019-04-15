@@ -9,7 +9,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import cmp_entities from './cmp/data.json';
-import EntityTagSearch from './tags/EntityTagSearch';
+// import EntityTagSearch from './tags/EntityTagSearch';
+import EntitySearch from './search/EntitySearch';
 
 const entityLink = (row) => {
   return `
@@ -43,9 +44,11 @@ const initializeDatatable = () => {
   });
 };
 
+/* <EntityTagSearch tag="cmp" />, */
+
 const initializeEntityTagSearch = () => {
   ReactDOM.render(
-    <EntityTagSearch tag="cmp" />,
+    <EntitySearch />,
     document.getElementById('cmp-tag-search')
   );
 
