@@ -10,7 +10,7 @@ import ReactDOM from 'react-dom';
 
 import cmp_entities from './cmp/data.json';
 // import EntityTagSearch from './tags/EntityTagSearch';
-import EntitySearch from './search/EntitySearch';
+import { EntitySearch } from './search/EntitySearch';
 
 const entityLink = (row) => {
   return `

@@ -32,3 +32,24 @@
     .no-entities-found {}
 
 }
+
+
+.entity-search-container {
+
+    input {}
+
+    .entity-search-autocomplete {
+	width: 100%;
+	max-height: 100px;
+    }
+
+    ul {
+	list-style-type: none;
+	padding-left: 0.3em;
+	font-size: 0.8em;
+    }
+
+    li {
+	padding: 0;
+    }
+}

@@ -1,7 +1,11 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import EntitySearch from 'packs/search/EntitySearch';
+import {
+  EntitySearch,
+  AutocompleteBox,
+  AutocompleteEntity
+} from 'packs/search/EntitySearch';
 
 describe('EntitySearch', () => {
   let wrapper = shallow(<EntitySearch />);
