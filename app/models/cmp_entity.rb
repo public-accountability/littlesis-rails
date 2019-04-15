@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CmpEntity < ApplicationRecord
-  belongs_to :entity
+  belongs_to :entity, inverse_of: :cmp_entity
   enum entity_type: [:org, :person]
   validates :strata, inclusion: { in: (1..5) }, allow_nil: true
 

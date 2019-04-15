@@ -61,6 +61,9 @@ class Entity < ApplicationRecord
   # extensions
   # see concerns/entity_extensions
 
+  # cmp
+  has_one :cmp_entity, inverse_of: :entity, dependent: :destroy
+
   # contact
   has_many :addresses, inverse_of: :entity, dependent: :destroy
   has_many :phones, inverse_of: :entity, dependent: :destroy
@@ -563,6 +566,10 @@ class Entity < ApplicationRecord
     end
 
     summary.truncate(EXCERPT_SIZE, separator: ' ')
+  end
+
+  def in_cmp_strata?
+    !cmp_entity&.strata.nil?
   end
 
   # returns hash of basc info for the given entity
