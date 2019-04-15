@@ -73,6 +73,7 @@ export class EntitySearch extends React.Component {
     this.onClickSearch = this.onClickSearch.bind(this);
     this.renderInput = this.renderInput.bind(this);
     this.hasQuery = this.hasQuery.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   onInputChange(event) {
@@ -80,11 +81,18 @@ export class EntitySearch extends React.Component {
     this.setState({ "query": value });
   }
 
-  onClickSearch(event) {
+  onClickSearch() {
     let url = `/search?q=${this.state.query}`;
     window.location = url;
   }
 
+  handleKeyPress(event) {
+    // Enter does same thing as clicking the search button
+    if (event.key === 'Enter') {
+      this.onClickSearch();
+    }
+  }
+  
   hasQuery() {
     return this.state.query.trim().length >= 3;
   }
@@ -94,7 +102,8 @@ export class EntitySearch extends React.Component {
              <input type="text"
                     className="form-control"
                     onChange={this.onInputChange}
-                    value={this.state.query} />
+                    value={this.state.query}
+                    onKeyPress={this.handleKeyPress} />
              <div className="input-group-append">
                <button type="submit" className="btn btn-clear" onClick={this.onClickSearch} >
 	         <span className="glyphicon glyphicon-search"></span>
