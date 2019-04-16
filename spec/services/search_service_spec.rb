@@ -7,6 +7,11 @@ describe SearchService do
     expect { SearchService.new('') }.to raise_error(SearchService::BlankQueryError)
   end
 
+  it 'can be initalized with tag_filter' do
+    expect(SearchService.new('foo').tag_filter).to be nil
+    expect(SearchService.new('foo', tag_filter: 'bar').tag_filter).to eq 'bar'
+  end
+
   it 'sets page' do
     expect(SearchService.new('foo').page).to eq 1
     expect(SearchService.new('foo', page: 2).page).to eq 2
@@ -32,6 +37,14 @@ describe SearchService do
                                      .once
                                      .and_return(double(:search => []))
     SearchService.new('foo').entities
+  end
+
+  it 'passes tag filter to entities' do
+    expect(EntitySearchService).to receive(:new)
+                                     .with(query: 'foo', tags: 'bar', page: 1)
+                                     .once
+                                     .and_return(double(:search => []))
+    SearchService.new('foo', tag_filter: 'bar').entities
   end
 
   it 'searches lists when not an admin' do
