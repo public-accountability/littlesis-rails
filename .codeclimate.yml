@@ -1,4 +1,5 @@
 version: "2"
 plugins:
   rubocop:
-    enabled: true     
+    enabled: true
+    channel: rubocop-0-67
