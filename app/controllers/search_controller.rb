@@ -13,7 +13,7 @@ class SearchController < ApplicationController
       @entities = service.entities
 
       # On the first page we show results for all categories. Only entities is paginated.
-      if @page == 1 
+      if @page == 1
         @lists = service.lists
         @maps = service.maps
         @tags = service.tags if user_is_admin
