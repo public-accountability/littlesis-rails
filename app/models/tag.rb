@@ -55,8 +55,9 @@ class Tag < ApplicationRecord
 
   def self.lookup
     @lookup ||= Tag.all.each_with_object({}) do |tag, h|
-      h.store(tag.name.downcase.tr('-', ' '), tag)
       h.store(tag.id, tag)
+      h.store(tag.name.downcase, tag)
+      h.store(tag.name.downcase.tr('-', ' '), tag) if tag.name.include?('-')
     end
   end
 
