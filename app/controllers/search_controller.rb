@@ -1,19 +1,22 @@
 # frozen_string_literal: true
 
 class SearchController < ApplicationController
-  before_action :set_page, only: [:basic]
   before_action :set_initial_search_values, only: [:basic]
+  before_action :set_page, only: [:basic]
+  before_action :set_and_validate_tag_filter, only: [:basic]
 
   def basic
-    query = params[:q]
+    query = params[:q].presence
     user_is_admin = current_user&.admin?
 
     if query.present?
-      service = SearchService.new(query, page: @page, admin: user_is_admin)
+      service = SearchService.new(query, page: @page, admin: user_is_admin, tag_filter: @tag_filter&.name)
       @entities = service.entities
 
-      # On the first page we show results for all categories. Only entities is paginated.
-      if @page == 1
+      # On the first page we show results for all categories: only entities can be paginated.
+      # Right now, only searching for entiteis can be filtering by tag, so
+      # if there is a tag filter, we can only display the entity results
+      if @page == 1 && !@tag_filter
         @lists = service.lists
         @maps = service.maps
         @tags = service.tags if user_is_admin
@@ -75,9 +78,23 @@ class SearchController < ApplicationController
     @lists = []
     @maps = []
     @tags = []
+    @tag_filter = nil
   end
 
   def set_page
     @page = params.fetch(:page, 1).to_i
+  end
+
+  def set_and_validate_tag_filter
+    tag_param = params[:tags].presence
+    return if tag_param.nil?
+
+    tag = Tag.get(tag_param)
+
+    if tag.present?
+      @tag_filter = tag
+    else
+      render status: :bad_request
+    end
   end
 end
