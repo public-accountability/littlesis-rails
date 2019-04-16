@@ -10,7 +10,7 @@ gem 'rack-rewrite', '~> 1.5.1'
 gem 'devise', '~> 4.6.2'
 
 # Versioning
-gem 'paper_trail', '10.2.1'
+gem 'paper_trail', '10.3.0'
 
 # delayed job
 gem 'daemons' # Required by delayed_job
@@ -68,12 +68,10 @@ group :test, :development do
   gem 'pry-rails', '>= 0.3.7'
   gem 'rack-mini-profiler'
   gem 'rails-controller-testing'
-  # %w[rspec-core rspec-expectations rspec-mocks rspec-rails rspec-support].each do |lib|
-  #   gem lib, :git => "https://github.com/rspec/#{lib}.git", :branch => 'master'
-  # end
   gem 'rspec-rails', '>= 3.8.0'
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
+  gem 'rubocop-performance', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '>= 4.0.0'
   gem 'spring', '~> 2.0.2'
@@ -97,7 +95,7 @@ gem 'headless'
 gem 'redcarpet', '>= 3.4.0'
 
 # google's recaptcha
-gem "recaptcha", '>= 4.6.6', require: "recaptcha/rails"
+gem "recaptcha", '>= 4.14.0', require: "recaptcha/rails"
 
 # Used by `lib/cmp`
 gem "roo", "~> 2.8.1", :require => false
@@ -108,4 +106,4 @@ gem 'text', '>= 1.3.1'
 gem 'httparty', '>= 0.16.2'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.4.2', require: false
+gem 'bootsnap', '>= 1.4.3', require: false

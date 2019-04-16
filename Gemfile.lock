@@ -93,7 +93,7 @@ GEM
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
     bindex (0.6.0)
-    bootsnap (1.4.2)
+    bootsnap (1.4.3)
       msgpack (~> 1.0)
     bootstrap (4.3.1)
       autoprefixer-rails (>= 9.1.0)
@@ -103,7 +103,7 @@ GEM
       railties (>= 3.0)
     builder (3.2.3)
     byebug (11.0.1)
-    capybara (3.16.1)
+    capybara (3.16.2)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
@@ -136,8 +136,8 @@ GEM
     execjs (2.7.0)
     factory_bot (5.0.2)
       activesupport (>= 4.2.0)
-    factory_bot_rails (5.0.1)
-      factory_bot (~> 5.0.0)
+    factory_bot_rails (5.0.2)
+      factory_bot (~> 5.0.2)
       railties (>= 4.2.0)
     ffi (1.10.0)
     geocoder (1.5.1)
@@ -199,11 +199,11 @@ GEM
     nokogiri (1.10.2)
       mini_portile2 (~> 2.4.0)
     orm_adapter (0.5.0)
-    paper_trail (10.2.1)
+    paper_trail (10.3.0)
       activerecord (>= 4.2, < 6.1)
       request_store (~> 1.1)
     parallel (1.17.0)
-    parser (2.6.2.0)
+    parser (2.6.2.1)
       ast (~> 2.4.0)
     popper_js (1.14.5)
     pry (0.12.2)
@@ -216,7 +216,7 @@ GEM
       pry (>= 0.10.4)
     psych (3.1.0)
     public_suffix (3.0.3)
-    rack (2.0.6)
+    rack (2.0.7)
     rack-mini-profiler (1.0.2)
       rack (>= 1.2.0)
     rack-proxy (0.6.5)
@@ -254,11 +254,11 @@ GEM
       thor (>= 0.19.0, < 2.0)
     rainbow (3.0.0)
     rake (12.3.2)
-    recaptcha (4.13.2)
+    recaptcha (4.14.0)
       json
     redcarpet (3.4.0)
     redis (4.1.0)
-    regexp_parser (1.3.0)
+    regexp_parser (1.4.0)
     request_store (1.4.1)
       rack (>= 1.4)
     responders (2.4.1)
@@ -285,7 +285,7 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
-    rubocop (0.66.0)
+    rubocop (0.67.2)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.5, != 2.5.1.1)
@@ -293,6 +293,8 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 1.6)
+    rubocop-performance (1.1.0)
+      rubocop (>= 0.67.0)
     rubocop-rspec (1.32.0)
       rubocop (>= 0.60.0)
     ruby-progressbar (1.10.0)
@@ -382,7 +384,7 @@ DEPENDENCIES
   activerecord-session_store
   aws-sdk-s3 (~> 1)
   better_errors (>= 2.5.0)
-  bootsnap (>= 1.4.2)
+  bootsnap (>= 1.4.3)
   bootstrap (>= 4.3.1)
   bootstrap-datepicker-rails
   capybara (>= 3.14.0)
@@ -402,7 +404,7 @@ DEPENDENCIES
   kaminari
   mini_magick
   mysql2 (~> 0.5.2)
-  paper_trail (= 10.2.1)
+  paper_trail (= 10.3.0)
   pry (>= 0.12.0)
   pry-byebug
   pry-rails (>= 0.3.7)
@@ -410,12 +412,13 @@ DEPENDENCIES
   rack-rewrite (~> 1.5.1)
   rails (= 5.2.3)
   rails-controller-testing
-  recaptcha (>= 4.6.6)
+  recaptcha (>= 4.14.0)
   redcarpet (>= 3.4.0)
   redis
   roo (~> 2.8.1)
   rspec-rails (>= 3.8.0)
   rubocop
+  rubocop-performance
   rubocop-rspec
   sassc-rails
   seed_dump
