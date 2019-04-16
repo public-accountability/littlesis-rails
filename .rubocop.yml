@@ -1,11 +1,13 @@
-require: rubocop-rspec
+require:
+  - rubocop-rspec
+  - rubocop-performance
 
 AllCops:
   Exclude:
     - 'db/schema.rb'
     - 'db/seeds.rb'
     - 'db/migrate/*.rb'
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.6
   TargetRailsVersion: 5.2
 
 Rails:
@@ -109,7 +111,7 @@ Rails/SkipsModelValidations:
   Exclude:
     - 'spec/**/*.rb'
 
-Rspec/DescribedClass:
+RSpec/DescribedClass:
   Enabled: false
 
 
