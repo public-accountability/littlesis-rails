@@ -48,7 +48,7 @@ const initializeDatatable = () => {
 
 const initializeEntityTagSearch = () => {
   ReactDOM.render(
-    <EntitySearch />,
+    <EntitySearch tag="cmp"/>,
     document.getElementById('cmp-tag-search')
   );
 

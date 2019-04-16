@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 const searchUrl = (query, tag = null) => {
   let num = 5;
   let url = `/search/entity?q=${encodeURIComponent(query)}&num=${num}`;
-
   if (tag) {
     return `${url}&tags=${encodeURIComponent(tag)}`;
   } else {
@@ -40,6 +39,8 @@ export const AutocompleteEntity = ({entity}) => {
 };
 
 export class AutocompleteBox extends React.Component {
+  static propTypes = { "tag": PropTypes.string }
+  
   constructor(props) {
     super(props);
     this.state = { "entities": [] };
@@ -47,7 +48,7 @@ export class AutocompleteBox extends React.Component {
   }
   
   componentDidMount () {
-    let url = searchUrl(this.props.query);
+    let url = searchUrl(this.props.query, this.props.tag);
 
     window.fetch(url, { "signal": this.abortController.signal })
       .then(r => r.json())
@@ -76,6 +77,10 @@ export class AutocompleteBox extends React.Component {
 
 
 export class EntitySearch extends React.Component {
+  static propTypes = {
+    "tag": PropTypes.string
+  }
+
   constructor(props) {
     super(props);
     this.state = { "query": '' };
@@ -92,8 +97,14 @@ export class EntitySearch extends React.Component {
   }
 
   onClickSearch() {
-    let url = `/search?q=${this.state.query}`;
-    window.location = url;
+    let tag = this.props.tag;
+    let query = this.state.query;
+    
+    if (tag) {
+      window.location= `/search?q=${query}&tags=${tag}`;
+    } else {
+      window.location= `/search?q=${query}`;
+    }
   }
 
   handleKeyPress(event) {
@@ -128,6 +139,7 @@ export class EntitySearch extends React.Component {
              { this.hasQuery() &&
                <AutocompleteBox
                  query={this.state.query}
+                 tag={this.props.tag}
                  key={`autocomplete-${this.state.query}`} /> }
            </div>;
   }
