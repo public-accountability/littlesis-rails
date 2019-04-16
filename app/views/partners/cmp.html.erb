@@ -6,7 +6,7 @@
 <% end %>
 
 <div class="row border-bottom pb-2" id="cmp-header">
-<div class="col-12 mt-2">
+  <div class="col-12 mt-2">
     <%= link_to(image_tag('cmp_logo.png'),  'https://wwww.corporatemapping.ca') %>
     <h2 class="mt-2">Investigating the power of the fossil fuel industry in Western Canada</h2>
   </div>
@@ -25,18 +25,25 @@
   </div>
 </div>
 
-<div class="row mt-5">
-  <p><i>Top 50 goes here</i></p>
-</div>
-
-
-<div class="row mt-5">
-  <div class="col">
-    <h3 class="mb-4">Explore the core sample:</h3>
-    <table id="cmp-strata" class="display" width="100%"></table>
+<div class="row">
+  <div class="col-sm-auto">
+    <h4>Search the Corporate Mapping Project dataset:</h4>
+  </div>
+  <div class="col-sm-auto">
+    <div id="cmp-tag-search">
+    </div>
   </div>
 </div>
 
-<div class="row mt-5 mb-6">
-  <div id="cmp-tag-search"></div>
+<div class="row mt-5">
+  <div class="col-sm">
+    <h4><i>Top 50 goes here</i></h4>
+  </div>
+</div>
+
+<div class="row mt-5">
+  <div class="col-sm">
+    <h3 class="mb-4">Explore the core sample:</h3>
+    <table id="cmp-strata" class="display" width="100%"></table>
+  </div>
 </div>
