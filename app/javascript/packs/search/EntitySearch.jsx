@@ -22,11 +22,21 @@ const surpressAbortError = err => {
 // COMPONENTS //
 
 export const AutocompleteEntity = ({entity}) => {
-  return <li>
-           <p>
-             <a href={entity.url} target="_blank">{entity.name}</a>
-           </p>
-         </li>;
+  return <div className="entity-search-suggestion">
+           <div className="entity-search-suggestion-name">
+             <span className="entity-search-suggestion-name-text font-weight-bold">
+               {entity.name}
+             </span>
+             <span className="entity-search-suggestion-name-link">
+               <a href={entity.url} target="_blank">
+                 <span className="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+               </a>
+             </span>
+           </div>
+           <div className="entity-search-suggestion-blurb">
+             {entity.blurb}
+           </div>
+         </div>;
 };
 
 export class AutocompleteBox extends React.Component {
@@ -51,15 +61,15 @@ export class AutocompleteBox extends React.Component {
 
   render () {
     if (this.state.entities.length === 0) {
-      return <div className="entity-search-autocomplete-empty"></div>;
+      return <div className="entity-search-menu empty"></div>;
     }
 
-    return <div className="entity-search-autocomplete">
-             <ul>
-               { this.state.entities
-                 .map((entity, i) => <AutocompleteEntity entity={entity} key={`autocomplete-entity-${i}-${entity.name}`} />)
-               }
-             </ul>
+    return <div className="entity-search-menu">
+             <div className="entity-search-dataset"/>
+             { this.state.entities
+               .map((entity, i) => <AutocompleteEntity entity={entity} key={`autocomplete-entity-${i}-${entity.name}`} />)
+             }
+             <div/>
            </div>;
   }
 };
@@ -98,7 +108,7 @@ export class EntitySearch extends React.Component {
   }
 
   renderInput() {
-    return <div className="input-group">
+    return <div className="entity-search-input-group">
              <input type="text"
                     className="form-control"
                     onChange={this.onInputChange}
@@ -122,4 +132,3 @@ export class EntitySearch extends React.Component {
            </div>;
   }
 }
-
