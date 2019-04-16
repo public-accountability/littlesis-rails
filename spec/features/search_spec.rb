@@ -31,6 +31,7 @@ describe 'Search', :sphinx, :tag_helper do
       expect(page.status_code).to eq 200
       expect(page.all('.entity-search-result').length).to eq 1
       expect(page).not_to have_selector 'h3', text: 'Lists'
+      expect(page).not_to have_selector 'a', class: 'tag'
     end
 
     it 'finds two entities' do
@@ -54,6 +55,7 @@ describe 'Search', :sphinx, :tag_helper do
       visit '/search?q=apple&tags=nyc'
       expect(page.status_code).to eq 200
       expect(page.all('.entity-search-result').length).to eq 1
+      expect(page).to have_selector 'a', class: 'tag', text: 'nyc'
     end
 
     it 'return error when tag does not exist' do
