@@ -47,15 +47,12 @@ const initializeDatatable = () => {
   });
 };
 
-/* <EntityTagSearch tag="cmp" />, */
-
 const initializeEntityTagSearch = () => {
   ReactDOM.render(
-    <EntitySearch tag="cmp"/>,
+    <EntitySearch tag="corporate-mapping-project"/>,
     document.getElementById('cmp-tag-search')
   );
-
-}
+};
 
 const main = () => {
   initializeDatatable();
