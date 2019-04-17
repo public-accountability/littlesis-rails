@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class ExternalDataset < ApplicationRecord
+  IapdAdvisor = Struct.new(:crd_number, :name, :data)
+  IapdOwner = Struct.new(:owner_key, :name, :data)
   DATASETS = %w[iapd].freeze
+
   validates :name, inclusion: { in: DATASETS }
+  validates :dataset_key, presence: true
 
   serialize :row_data, JSON
   serialize :match_data, JSON
