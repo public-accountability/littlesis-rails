@@ -197,8 +197,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
   describe "sidebar" do
     subject { page.find("#profile-page-sidebar") }
+
     let(:tags) { Array.new(2) { create(:tag) } }
+
     let(:create_tags) { proc { tags.each { |t| person.add_tag(t.id) } } }
+
     before do
       allow(Entity).to receive(:search).and_return([build(:entity_person)])
     end
@@ -284,6 +287,38 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           expect(all('#sidebar-maps-container ul a').map { |e| e['href'] })
             .not_to include map_path(private_map)
         end
+      end
+    end
+
+    describe 'cmp data partner' do
+      let(:user) { create_admin_user }
+
+      let(:entity_in_strata) do
+        create(:entity_person).tap do |e|
+          CmpEntity.create!(entity: e, strata: 1, entity_type: :person)
+        end
+      end
+
+      let(:entity_not_in_strata) do
+        create(:entity_person).tap do |e|
+          CmpEntity.create!(entity: e, strata: nil, entity_type: :person)
+        end
+      end
+
+      before { login_as(user, scope: :user) }
+
+      after { logout(user) }
+
+      describe 'viewing cmp entity page (in strata)' do
+        before { visit entity_path(entity_in_strata) }
+
+        specify { page_has_selector '#sidebar-data-partner-container' }
+      end
+
+      describe 'viewing cmp entity page (NOT in strata)' do
+        before { visit entity_path(entity_not_in_strata) }
+
+        specify { page_has_no_selector '#sidebar-data-partner-container' }
       end
     end
 
