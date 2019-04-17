@@ -35,3 +35,57 @@ div.search-results {
   color: #888;
   font-weight: bold;
 }
+
+
+.entity-search-container {
+    position:relative;
+
+    input {
+	&:focus {
+	    outline: 0;
+	}
+    } 
+}
+
+.entity-search-input-group {
+    @extend .input-group;
+    margin-bottom: 0;
+}
+
+.entity-search-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ebebeb;
+    border-top: 0;
+}
+
+.entity-search-dataset {
+    display: block;
+
+}
+
+.entity-search-suggestion {
+    display: block;
+    margin: 10px 0;
+    cursor: pointer;
+    line-height: normal;
+    font-size: 1em;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    &:hover {
+        background-color: #ffff66;
+    }
+}
+
+.entity-search-suggestion-name {}
+
+.entity-search-suggestion-name-text {
+}
+.entity-search-suggestion-name-link {
+    color: black;
+    margin-left: 5px;
+}
+.entity-search-suggestion-blurb {
+    font-size: 0.8em;
+    color: #666;
+}

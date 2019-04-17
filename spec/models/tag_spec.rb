@@ -363,7 +363,8 @@ describe Tag, :pagination_helper do
                                  @finance.id => @finance,
                                  'finance' => @finance,
                                  @real_estate.id => @real_estate,
-                                 'real estate' => @real_estate)
+                                 'real estate' => @real_estate,
+                                 'real-estate' => @real_estate)
       end
     end
   end # end class method

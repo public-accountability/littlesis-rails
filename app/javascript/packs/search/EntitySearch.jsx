@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 const searchUrl = (query, tag = null) => {
   let num = 5;
   let url = `/search/entity?q=${encodeURIComponent(query)}&num=${num}`;
-
   if (tag) {
     return `${url}&tags=${encodeURIComponent(tag)}`;
   } else {
@@ -22,14 +21,26 @@ const surpressAbortError = err => {
 // COMPONENTS //
 
 export const AutocompleteEntity = ({entity}) => {
-  return <li>
-           <p>
-             <a href={entity.url} target="_blank">{entity.name}</a>
-           </p>
-         </li>;
+  return <div className="entity-search-suggestion">
+           <div className="entity-search-suggestion-name">
+             <span className="entity-search-suggestion-name-text font-weight-bold">
+               {entity.name}
+             </span>
+             <span className="entity-search-suggestion-name-link">
+               <a href={entity.url} target="_blank">
+                 <span className="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+               </a>
+             </span>
+           </div>
+           <div className="entity-search-suggestion-blurb">
+             {entity.blurb}
+           </div>
+         </div>;
 };
 
 export class AutocompleteBox extends React.Component {
+  static propTypes = { "tag": PropTypes.string }
+  
   constructor(props) {
     super(props);
     this.state = { "entities": [] };
@@ -37,7 +48,7 @@ export class AutocompleteBox extends React.Component {
   }
   
   componentDidMount () {
-    let url = searchUrl(this.props.query);
+    let url = searchUrl(this.props.query, this.props.tag);
 
     window.fetch(url, { "signal": this.abortController.signal })
       .then(r => r.json())
@@ -51,21 +62,25 @@ export class AutocompleteBox extends React.Component {
 
   render () {
     if (this.state.entities.length === 0) {
-      return <div className="entity-search-autocomplete-empty"></div>;
+      return <div className="entity-search-menu empty"></div>;
     }
 
-    return <div className="entity-search-autocomplete">
-             <ul>
-               { this.state.entities
-                 .map((entity, i) => <AutocompleteEntity entity={entity} key={`autocomplete-entity-${i}-${entity.name}`} />)
-               }
-             </ul>
+    return <div className="entity-search-menu">
+             <div className="entity-search-dataset"/>
+             { this.state.entities
+               .map((entity, i) => <AutocompleteEntity entity={entity} key={`autocomplete-entity-${i}-${entity.name}`} />)
+             }
+             <div/>
            </div>;
   }
 };
 
 
 export class EntitySearch extends React.Component {
+  static propTypes = {
+    "tag": PropTypes.string
+  }
+
   constructor(props) {
     super(props);
     this.state = { "query": '' };
@@ -82,8 +97,14 @@ export class EntitySearch extends React.Component {
   }
 
   onClickSearch() {
-    let url = `/search?q=${this.state.query}`;
-    window.location = url;
+    let tag = this.props.tag;
+    let query = this.state.query;
+    
+    if (tag) {
+      window.location= `/search?q=${query}&tags=${tag}`;
+    } else {
+      window.location= `/search?q=${query}`;
+    }
   }
 
   handleKeyPress(event) {
@@ -98,7 +119,7 @@ export class EntitySearch extends React.Component {
   }
 
   renderInput() {
-    return <div className="input-group">
+    return <div className="entity-search-input-group">
              <input type="text"
                     className="form-control"
                     onChange={this.onInputChange}
@@ -118,8 +139,8 @@ export class EntitySearch extends React.Component {
              { this.hasQuery() &&
                <AutocompleteBox
                  query={this.state.query}
+                 tag={this.props.tag}
                  key={`autocomplete-${this.state.query}`} /> }
            </div>;
   }
 }
-

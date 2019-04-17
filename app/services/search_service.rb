@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class SearchService
-  attr_reader :query, :escaped_query, :page, :admin
+  attr_reader :query, :escaped_query, :page, :admin, :tag_filter
 
-  def initialize(query, page: 1, admin: false)
+  def initialize(query, page: 1, admin: false, tag_filter: nil)
     raise BlankQueryError if query.blank?
 
     @page = page
     @admin = admin
+    @tag_filter = tag_filter
     @query = clean(query)
     @escaped_query = LsSearch.escape(@query)
   end
@@ -21,7 +22,10 @@ class SearchService
   def entities
     return @entities if defined?(@entities)
 
-    @entities = EntitySearchService.new(query: @query, page: @page).search
+    entity_search_args = { query: @query, page: @page }
+    entity_search_args[:tags] = @tag_filter if @tag_filter
+
+    @entities = EntitySearchService.new(**entity_search_args).search
   end
 
   def lists

@@ -40,19 +40,19 @@ const columns = [
 const initializeDatatable = () => {
   $('#cmp-strata').dataTable({
     "data": cmp_entities,
-    "columns": columns
+    "columns": columns,
+    "language": {
+      "search": "Filter:"
+    }
   });
 };
 
-/* <EntityTagSearch tag="cmp" />, */
-
 const initializeEntityTagSearch = () => {
   ReactDOM.render(
-    <EntitySearch />,
+    <EntitySearch tag="corporate-mapping-project"/>,
     document.getElementById('cmp-tag-search')
   );
-
-}
+};
 
 const main = () => {
   initializeDatatable();
