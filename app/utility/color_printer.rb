@@ -55,6 +55,13 @@ class ColorPrinter
       raise ArgumentError, "invalid color!"
     end
   end
+
+  def self.paper_jam!
+    rand(1_000).times do
+      print ["\u{1F5A8}", "\u{1F4C4}", "\u{2734}"].sample
+    end
+    print "\n"
+  end
 end
 
 # ADD THESE TOO?
