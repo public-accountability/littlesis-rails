@@ -41,7 +41,7 @@
   <% end %>
 
   <%# Data Partners %>
-  <% if @entity.in_cmp_strata? && user_signed_in? && current_user.admin? %>
+  <% if show_cmp_data_partner?(@entity) %>
     <%= render partial: 'entities/sidebar/cmp_data_partner', locals: { entity: @entity } %>
   <% end %>
 
