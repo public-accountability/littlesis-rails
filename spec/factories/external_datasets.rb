@@ -8,5 +8,6 @@ FactoryBot.define do
       { name:  EntitySpecHelpers::ATD_CHARACTERS.sample,
         title: Faker::Job.title }
     end
+    dataset_key { Faker::Number.unique.number }
   end
 end
