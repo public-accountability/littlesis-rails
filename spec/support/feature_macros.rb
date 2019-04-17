@@ -47,6 +47,10 @@ module FeatureExampleMacros
     expect(page).to have_selector(*args)
   end
 
+  def page_has_no_selector(*args)
+    expect(page).not_to have_selector(*args)
+  end
+
   def page_has_link(href)
     expect(page).to have_selector(:css, "a[href=\"#{href}\"]")
   end

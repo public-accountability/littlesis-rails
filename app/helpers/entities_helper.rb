@@ -302,6 +302,13 @@ module EntitiesHelper
         content_tag(:div, class: 'col-sm-12') { yield }
     end
   end
+
+  def show_cmp_data_partner?(entity)
+    return false unless entity.in_cmp_strata?
+    return false unless user_signed_in?
+
+    current_user.admin? || current_user.id == 11_276
+  end
 end
 
 # rubocop:enable Style/StringLiterals
