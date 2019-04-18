@@ -1,99 +1,81 @@
 # frozen_string_literal: true
 
-require_relative './utility.rb'
-
+# Import SEC's Iapd into external_datasets
+# The data files are created here: https://github.com/public-accountability/iapd
+#
+# Old version: https://gist.github.com/aepyornis/0858e2fc4d516bc0f6f22f2717f6f668
+#
 module IapdImporter
-  IAPD_JSON_FILE = Rails.root.join('top_200.json').to_s
+  ADVISORS_FILE = Rails.root.join('data', 'iapd', 'advisors.json').to_s
+  OWNERS_FILE = Rails.root.join('data', 'iapd', 'owners.json').to_s
 
-  Advisor = Struct.new(:data, :business) do
-    delegate :entity, to: :business
-    delegate :fetch, to: :data
+  DATE_FROM_FILENAME = proc { |x| x['filename'].slice(-12, 8) }
 
-    def sec_url
-      "https://adviserinfo.sec.gov/Firm/#{data['crd_number']}"
-    end
-
-    def associated_entity_ids
-      return @_associated_entity_ids if defined?(@_associated_entity_ids)
-
-      @_associated_entity_ids = entity.hierarchy_relationships.pluck(:entity1_id, :entity2_id).flatten.uniq
-    end
-
-    def direct_owner_matches
-      direct_owners.map do |direct_owners|
-        direct_owners.tap do |owner|
-          match_results = IapdImporter.matches_for_owner(name: owner['Full Legal Name'],
-                                                         primary_ext: owner['DE/FE/I'],
-                                                         associated: associated_entity_ids)
-          owner['advisor_name'] = fetch('name')
-          owner['advisor_entity_id'] = entity.id
-          owner['advisor_crd_number'] = fetch('crd_number')
-          owner['match_id'] = match_results.first&.entity&.id
-          owner['match_url'] = match_results.first&.entity&.url
-          owner['match_name'] = match_results.first&.entity&.name
-          owner['automatchable'] = match_results.automatchable?
-          owner['match_values'] = match_results.first&.values&.to_a&.join('|')
-        end
-      end
-    end
-
-    def direct_owners
-      fetch('owners').select { |o| o['Schedule'] == 'A' }
-    end
-
-    alias schedule_a direct_owners
-
-    def indirect_owners
-      fetch('owners').select { |o| o['Schedule'] == 'B' }
-    end
-
-    alias schedule_b indirect_owners
+  def self.sec_url(crd_number)
+    "https://adviserinfo.sec.gov/Firm/#{crd_number}"
   end
 
-  def self.direct_owners_csv
-    Utility.save_hash_array_to_csv(
-      Rails.root.join('data', "direct_owners_#{Time.current.strftime('%F')}.csv"),
-      advisors.map(&:direct_owner_matches).flatten
-    )
+  def self.load_json_file(file)
+    JSON.parse File.open(file).read
   end
 
-  # --> [Advisor]
   def self.advisors
-    Business.includes(:entity).with_crd_number.find_each.map do |business|
-      Advisor.new find_by_crd_number(business.crd_number), business
+    @advisors ||= load_json_file(ADVISORS_FILE)
+                    .map { |crd_number, advisor_data| advisor_to_struct(crd_number, advisor_data) }
+  end
+
+  def self.owners
+    @owners ||= load_json_file(OWNERS_FILE)
+                    .map { |owner_key, owner_data| owner_to_struct(owner_key, owner_data) }
+  end
+
+  def self.advisor_to_struct(crd_number, advisor_data)
+    crd_number = crd_number.to_i
+    name = advisor_data.max_by(&DATE_FROM_FILENAME).fetch('name')
+    ExternalDataset::IapdAdvisor.new(crd_number, name, advisor_data)
+  end
+
+  def self.owner_to_struct(owner_key, owner_data)
+    name = owner_data.max_by(&DATE_FROM_FILENAME).fetch('name')
+    ExternalDataset::IapdOwner.new(owner_key, name, owner_data)
+  end
+
+  def self.struct_to_hash(s)
+    s.to_h.tap do |h|
+      h.store :class, s.class.name
     end
   end
 
-  def self.dataset
-    return @_dataset if defined?(@_dataset)
+  def self.import_advisors
+    advisors.each do |advisor|
+      next if row_exists?(advisor.crd_number.to_s)
 
-    @_dataset = JSON.parse(File.read(IAPD_JSON_FILE))
-  end
+      ExternalDataset.create!(name: 'iapd',
+                              dataset_key: advisor.crd_number.to_s,
+                              row_data: struct_to_hash(advisor),
+                              primary_ext: :org)
 
-  # Str|Int --> Hash
-  def self.find_by_crd_number(crd_number)
-    dataset.find { |h| h['crd_number'] == crd_number.to_i }
-  end
-
-  def self.owner_matches(owners, associated_entity_ids)
-    owners.map do |owner|
-      matches_for_owner name: owner['Full Legal Name'],
-                        primary_ext: owner['DE/FE/I'] == 'I' ? :person : :org,
-                        associated: associated_entity_ids
+      ColorPrinter.with_logger.print_gray "[IapdImporter] Created: #{advisor.crd_number}"
     end
   end
 
-  def self.matches_for_owner(name:, primary_ext:, associated:)
-    unless %w[org person DE FE I].include?(primary_ext.to_s)
-      raise ArgumentError, "invalid primary_ext: #{primary_ext}"
-    end
+  def self.import_owners
+    owners.each do |owner|
+      next if row_exists?(owner.owner_key)
 
-    if %w[DE FE I].include?(primary_ext)
-      primary_ext = primary_ext == 'I' ? 'person' : 'org'
-    end
+      ExternalDataset.create!(name: 'iapd',
+                              dataset_key: owner.owner_key,
+                              row_data: struct_to_hash(owner))
 
-    EntityMatcher.public_send "find_matches_for_#{primary_ext}",
-                               name,
-                               associated: associated
+      ColorPrinter.print_gray "[IapdImporter] created: #{owner.owner_key}"
+    end
+  end
+
+  def self.row_exists?(key)
+    if ExternalDataset.exists?(name: 'iapd', dataset_key: key)
+      ColorPrinter.with_logger.print_blue "[IapdImporter] #{key} exists"
+      return true
+    end
+    false
   end
 end

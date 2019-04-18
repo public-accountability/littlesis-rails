@@ -6,6 +6,9 @@ describe ExternalDataset, type: :model do
   it { is_expected.to have_db_column(:entity_id).of_type(:integer) }
   it { is_expected.to have_db_column(:match_data).of_type(:text) }
   it { is_expected.to have_db_column(:primary_ext).of_type(:integer) }
+  it { is_expected.to have_db_column(:dataset_key).of_type(:string) }
+
+  it { is_expected.to validate_presence_of(:dataset_key) }
 
   it do
     is_expected.to validate_inclusion_of(:name).in_array(ExternalDataset::DATASETS)

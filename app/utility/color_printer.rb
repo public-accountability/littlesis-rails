@@ -29,6 +29,19 @@ class ColorPrinter
     end
   end
 
+  def self.with_logger(level = :info)
+    raise ArgumentError unless Rails.logger.respond_to?(level)
+
+    Class.new.tap do |klass|
+      klass.define_singleton_method :method_missing do |m, *args|
+        super(m, *args) unless m.to_s.slice(0, 5) == 'print' && ColorPrinter.respond_to?(m)
+
+        Rails.logger.public_send(level, args.first)
+        ColorPrinter.public_send(m, *args)
+      end
+    end
+  end
+
   def self.color_code(color)
     case color
     when :black
@@ -54,6 +67,13 @@ class ColorPrinter
     else
       raise ArgumentError, "invalid color!"
     end
+  end
+
+  def self.paper_jam!
+    rand(1_000).times do
+      print ["\u{1F5A8}", "\u{1F4C4}", "\u{2734}"].sample
+    end
+    print "\n"
   end
 end
 
