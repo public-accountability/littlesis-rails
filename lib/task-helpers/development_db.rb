@@ -83,6 +83,7 @@ class DevelopmentDb
                  entity_fields
                  extension_definition
                  extension_record
+                 external_datasets
                  external_links
                  family
                  fedspending_filing
@@ -149,6 +150,7 @@ class DevelopmentDb
                  api_tokens
                  chat_user
                  delayed_jobs
+                 edited_entities
                  map_annotations
                  object_tag
                  os_entity_preprocess
