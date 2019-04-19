@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class ExternalDatasetsController < ApplicationController
-  before_action :load_row, only: %i[row matches]
+  before_action :set_entity_id, only: %i[match]
+  before_action :load_row, only: %i[row matches match]
 
   def index
   end
@@ -25,6 +26,14 @@ class ExternalDatasetsController < ApplicationController
   end
 
   private
+
+  def set_entity_id
+    if /\A[0-9]+\Z/.match?(params.require(:entity_id))
+      @entity_id = params.require(:entity_id)
+    else
+      render json: { error: 'Entity id is not a number' }, status: :bad_request
+    end
+  end
 
   def load_row
     @row = ExternalDataset.find(params[:id])
