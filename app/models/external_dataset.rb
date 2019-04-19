@@ -61,7 +61,7 @@ class ExternalDataset < ApplicationRecord
   def entity_name
     case name
     when 'iapd'
-      row_data.fetch 'Full Legal Name'
+      row_data.fetch('name')
     else
       raise Exceptions::LittleSisError, "Unknown dataset in ExternalDataset#entity_name: #{name}"
     end

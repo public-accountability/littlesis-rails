@@ -27,7 +27,7 @@ describe ExternalDataset, type: :model do
   describe 'matches' do
     context 'when external dataset row is for a person' do
       let(:external_dataset) do
-        build(:external_dataset, row_data: { 'Full Legal Name' => 'Jane Smith' })
+        build(:external_dataset, row_data: { 'name' => 'Jane Smith' })
       end
 
       it 'calls find_matches_for_person' do
@@ -39,7 +39,7 @@ describe ExternalDataset, type: :model do
 
     context 'when external dataset row is for a org' do
       let(:external_dataset) do
-        build(:external_dataset, primary_ext: :org, row_data: { 'Full Legal Name' => 'ABC Corp' })
+        build(:external_dataset, primary_ext: :org, row_data: { 'name' => 'ABC Corp' })
       end
 
       it 'calls find_matches_for_org' do
@@ -72,13 +72,19 @@ describe ExternalDataset, type: :model do
       expect(service).to have_received(:validate_match!).once
       expect(service).to have_received(:match).with(entity: 123).once
     end
+
+    it 'returns self' do
+      allow(external_dataset).to receive(:service).and_return(service)
+      expect(external_dataset).to receive(:save).once
+      expect(external_dataset.match_with(123)).to be external_dataset
+    end
   end
 
   describe 'unmatch'
 
   describe '#entity_name' do
     let(:external_dataset) do
-      build(:external_dataset, row_data: { 'Full Legal Name' => 'test' })
+      build(:external_dataset, row_data: { 'name' => 'test' })
     end
 
     specify do

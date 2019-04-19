@@ -23,13 +23,16 @@ class ExternalDatasetsController < ApplicationController
   # post /external_datasets/row/:id/match
   # { "entity_id": 123121 }
   def match
+    # if @row.match_with(@entity_id)
+    # else
+    # end
   end
 
   private
 
   def set_entity_id
     if /\A[0-9]+\Z/.match?(params.require(:entity_id))
-      @entity_id = params.require(:entity_id)
+      @entity_id = params.require(:entity_id).to_i
     else
       render json: { error: 'Entity id is not a number' }, status: :bad_request
     end
