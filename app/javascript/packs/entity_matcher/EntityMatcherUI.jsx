@@ -32,13 +32,15 @@ const defaultState = () => ({
 });
 
 export default class EntityMatcherUI extends React.Component {
+  static propTypes = {
+    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired
+  };
 
   constructor(props) {
     super(props);
     this.state = merge(defaultState(), props);
     
     this.updateState = this.updateState.bind(this);
-    
     
     // Actions
     // These functions essentially constitute the public API
@@ -89,23 +91,16 @@ export default class EntityMatcherUI extends React.Component {
             itemInfoComplete &&
             <>
               <DatasetItemHeader itemId={this.state.itemId}  />
-              <DatasetItemInfo itemInfo={this.state.itemInfo} datasetFields={this.state.datasetFields} />
+              <DatasetItemInfo itemInfo={this.state.itemInfo} />
             </>
           }
         </div>
         <div className="rightSide">
-          <PotentialMatches
-            ignoreMatch={this.ignoreMatch}
-            matches={this.state.matches}
-            matchesStatus={this.state.matchesStatus}
-          />
+          <PotentialMatches ignoreMatch={this.ignoreMatch}
+                            matches={this.state.matches}
+                            matchesStatus={this.state.matchesStatus} />
         </div>
       </div>
     );
   }
 }
-
-EntityMatcherUI.propTypes = {
-  "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired,
-  "datasetFields": PropTypes.array.isRequired
-};

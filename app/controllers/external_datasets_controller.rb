@@ -10,7 +10,7 @@ class ExternalDatasetsController < ApplicationController
   end
 
   def row
-    render json: @row.row_data
+    render json: @row
   end
 
   def matches

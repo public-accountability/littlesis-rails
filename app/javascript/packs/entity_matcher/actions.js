@@ -4,7 +4,7 @@ import filter from 'lodash/filter';
 import toInteger from 'lodash/toInteger';
 import merge from 'lodash/merge';
 
-import { retriveDatasetRow, retrivePotentialMatches } from './api_client';
+import { lsFetch } from './api_client';
 
 const errorMessage = (label, err) => console.error(`[${label}]: `, err.message);
 
@@ -14,7 +14,8 @@ const errorMessage = (label, err) => console.error(`[${label}]: `, err.message);
 export function loadItemInfo(itemId) {
   this.updateState("itemInfoStatus", 'LOADING');
 
-  retriveDatasetRow(itemId)
+  // retriveDatasetRow(itemId)
+  lsFetch(`/external_datasets/row/${itemId}`)
     .then(json => this.updateState({ "itemInfoStatus": 'COMPLETE', "itemInfo": json }))
     .catch(error => {
       errorMessage('loadItemInfo', error);
@@ -26,7 +27,7 @@ export function loadItemInfo(itemId) {
 export function loadMatches(itemId) {
   this.updateState("matchesStatus", 'LOADING');
 
-  retrivePotentialMatches(itemId)
+  lsFetch(`/external_datasets/row/${itemId}/matches`)
     .then(json => this.updateState({ "matchesStatus": 'COMPLETE', "matches": json }))
     .catch(error => {
       errorMessage('loadMatches', error);
