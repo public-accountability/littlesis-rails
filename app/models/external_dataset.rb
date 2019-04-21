@@ -52,6 +52,10 @@ class ExternalDataset < ApplicationRecord
     self
   end
 
+  def row_data_class
+    row_data['class'] if row_data
+  end
+
   private
 
   def service

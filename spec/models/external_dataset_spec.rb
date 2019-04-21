@@ -14,6 +14,22 @@ describe ExternalDataset, type: :model do
     is_expected.to validate_inclusion_of(:name).in_array(ExternalDataset::DATASETS)
   end
 
+  describe 'row_data_class' do
+    specify do
+      expect(build(:external_dataset_iapd_owner).row_data_class)
+        .to eq 'ExternalDataset::IapdOwner'
+    end
+
+    specify do
+      expect(build(:external_dataset_iapd_advisor).row_data_class)
+        .to eq 'ExternalDataset::IapdAdvisor'
+    end
+
+    specify do
+      expect(build(:external_dataset).row_data_class).to be nil
+    end
+  end
+
   describe 'matched?' do
     it 'is true when model has entity_id' do
       expect(build(:external_dataset, entity_id: rand(1000)).matched?).to be true
