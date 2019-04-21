@@ -4,7 +4,7 @@ import filter from 'lodash/filter';
 import toInteger from 'lodash/toInteger';
 import merge from 'lodash/merge';
 
-import { lsFetch } from './api_client';
+import { lsFetch, lsPost } from './api_client';
 
 const errorMessage = (label, err) => console.error(`[${label}]: `, err.message);
 
@@ -48,6 +48,19 @@ export function ignoreMatch(entityId) {
   });
 }
 
-export function matchRow(rowId, entityId) {
-  this.updateState("matchesStatus", 'MATCHING');
+export function doMatch(rowId, entityId) {
+  this.updateState("matchStatus", 'MATCHING');
+
+  let url = `/external_datasets/row/${rowId}/match`;
+  let data = {"entity_id": entityId };
+
+  return lsPost(url, data)
+    .then(() => this.updateState("matchStatus", 'MATCHED'))
+    .catch(err => {
+      console.error(`Failed to match row ${rowId} with entity ${entityId}`);
+      console.error(err);
+      this.updateState("matchStatus", 'ERROR');
+    });
+
 }
+

@@ -6,10 +6,8 @@ import EntityMatcherUI from './entity_matcher/EntityMatcherUI';
 document.addEventListener('DOMContentLoaded', () => {
   const div = document.getElementById('entity-matcher');
 
-  const datasetFields = ["Full Legal Name", "Title or Status", "OwnerID"];
-
   ReactDOM.render(
-    <EntityMatcherUI datasetFields={datasetFields} itemId={132531} />,
+    <EntityMatcherUI itemId={132531} />,
     document.getElementById('entity-matcher')
   );
 });

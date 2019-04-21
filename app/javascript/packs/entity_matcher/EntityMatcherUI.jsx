@@ -15,7 +15,12 @@ import LoadingSpinner from './components/LoadingSpinner';
 import PotentialMatches from './components/PotentialMatches';
 
 // ACTIONS
-import { loadItemInfo, loadMatches, ignoreMatch } from './actions';
+import {
+  loadItemInfo,
+  loadMatches,
+  ignoreMatch,
+  doMatch
+} from './actions';
 
 // STATUS HELPERS
 const LOADING = 'LOADING';
@@ -27,7 +32,7 @@ const defaultState = () => ({
   "itemInfo": null,
   "itemInfoStatus": null,
   "matches": null,
-  "matchesStatus": null,
+  "matchStatus": null,
   "datasetFields": []
 });
 
@@ -47,6 +52,7 @@ export default class EntityMatcherUI extends React.Component {
     this.loadItemInfo = loadItemInfo.bind(this);
     this.loadMatches = loadMatches.bind(this);
     this.ignoreMatch = ignoreMatch.bind(this);
+    this.doMatch = doMatch.bind(this);
   }
 
   /**

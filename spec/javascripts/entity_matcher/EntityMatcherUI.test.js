@@ -31,7 +31,7 @@ describe('EntityMatcherUI', () => {
 	"itemInfo": null,
 	"itemInfoStatus": null,
 	"matches": null,
-	"matchesStatus": null,
+	"matchStatus": null,
 	"datasetFields": testDatasetFields
       });
     });
