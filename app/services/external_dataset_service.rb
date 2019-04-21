@@ -3,6 +3,24 @@
 module ExternalDatasetService
   class InvalidMatchError < Exceptions::LittleSisError; end
 
+  def self.validate_match!(**kwargs)
+    const_get(kwargs[:external_dataset].name.capitalize)
+      .new(**kwargs)
+      .validate_match!
+  end
+
+  def self.match(**kwargs)
+    const_get(kwargs[:external_dataset].name.capitalize)
+      .new(**kwargs)
+      .match
+  end
+
+  def self.unmatch(**kwargs)
+    const_get(kwargs[:external_dataset].name.capitalize)
+      .new(**kwargs)
+      .unmatch
+  end
+
   class Base
     attr_reader :external_dataset, :entity
 
@@ -39,27 +57,5 @@ module ExternalDatasetService
     def requies_entity!
       raise ArgumentError unless @entity.is_a?(Entity)
     end
-  end
-
-  def self.validate_match!(**kwargs)
-    const_get(kwargs[:external_dataset].name)
-      .new(**kwargs)
-      .validate_match!
-  end
-
-  def self.match(**kwargs)
-    const_get(kwargs[:external_dataset].name)
-      .new(**kwargs)
-      .match
-  end
-
-  def self.unmatch(**kwargs)
-    const_get(kwargs[:external_dataset].name)
-      .new(**kwargs)
-      .unmatch
-  end
-
-  class OtherDataset < SimpleDelegator
-    # other datasets
   end
 end
