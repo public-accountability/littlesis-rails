@@ -10,6 +10,8 @@ describe ExternalDataset, type: :model do
 
   it { is_expected.to validate_presence_of(:dataset_key) }
 
+  it { is_expected.to belong_to(:entity).without_validating_presence }
+
   it do
     is_expected.to validate_inclusion_of(:name).in_array(ExternalDataset::DATASETS)
   end

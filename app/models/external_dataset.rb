@@ -19,6 +19,8 @@ class ExternalDataset < ApplicationRecord
   validates :name, inclusion: { in: DATASETS }
   validates :dataset_key, presence: true
 
+  belongs_to :entity, optional: true
+
   serialize :row_data, JSON
   serialize :match_data, JSON
 
