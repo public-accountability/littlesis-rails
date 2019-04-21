@@ -61,12 +61,12 @@ module IapdImporter
 
   def self.import_owners
     owners.each do |owner|
-      # next if row_exists?(owner.owner_key)
+      next if row_exists?(owner.owner_key)
 
-      # ExternalDataset.create!(name: 'iapd',
-      #                         dataset_key: owner.owner_key,
-      #                         row_data: struct_to_hash(owner),
-      #                         primary_ext: owner.owner_type)
+      ExternalDataset.create!(name: 'iapd',
+                              dataset_key: owner.owner_key,
+                              row_data: struct_to_hash(owner),
+                              primary_ext: owner.owner_type)
 
       ColorPrinter.print_gray "[IapdImporter] created: #{owner.owner_key}"
     end

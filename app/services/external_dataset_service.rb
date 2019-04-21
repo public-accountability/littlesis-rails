@@ -3,53 +3,60 @@
 module ExternalDatasetService
   class InvalidMatchError < Exceptions::LittleSisError; end
 
-  # For IAPD it:
-  #   * adds business or business person extension
-  #   * adds crd number
-  module Iapd
-    def self.validate_match!(entity:, external_dataset:)
-      entity = Entity.entity_for(entity)
-      extension = entity.org? ? :business : :business_person
+  class Base
+    attr_reader :external_dataset, :entity
 
-      if entity.public_send(extension)&.crd_number&.present?
-        msg = "Entity #{entity.id} already has a crd_number. Cannot match row#{external_dataset.id}"
-        raise InvalidMatchError, msg
+    def initialize(external_dataset:, entity: nil)
+      TypeCheck.check external_dataset, ExternalDataset
+      TypeCheck.check entity, Entity, allow_nil: true
+      @external_dataset = external_dataset
+
+      if entity
+        @entity = Entity.entity_for(entity)
+      elsif @external_dataset.matched?
+        @entity = @external_dataset.entity
       end
     end
 
-    def self.match(entity:, external_dataset:)
-      entity = Entity.entity_for(entity)
-      extension = entity.org? ? 'Business' : 'BusinessPerson'
-      crd_number = external_dataset.row_data['OwnerID']
+    ##
+    # Interface
+    #
 
-      ApplicationRecord.transaction do
-        if crd_number?(crd_number)
-          if entity.has_extension?(extension)
-            entity.merge_extension extension, crd_number: crd_number.to_i
-          else
-            entity.add_extension extension, crd_number: crd_number.to_i
-          end
-        else
-          entity.add_extension extension
-        end
-        external_dataset.update! entity_id: entity.id
-      end
+    def validate_match!
+      raise NotImplementedError
     end
 
-    def self.unmatch(external_dataset:)
-      extension = external_dataset.org? ? 'business' : 'business_person'
-
-      ApplicationRecord.transaction do
-        Entity.find(external_dataset.entity_id).public_send(extension).update!(crd_number: nil)
-        external_dataset.update! entity_id: nil
-      end
+    def match
+      raise NotImplementedError
     end
 
-    def self.crd_number?(crd)
-      return false if crd.blank? || crd.include?('-')
-
-      /\A\d+\z/.match?(crd)
+    def unmatch
+      raise NotImplementedError
     end
+
+    protected
+
+    def requies_entity!
+      raise ArgumentError unless @entity.is_a?(Entity)
+    end
+  end
+
+  def self.validate_match!(**kwargs)
+    const_get(kwargs[:external_dataset].name)
+      .new(**kwargs)
+      .validate_match!
+  end
+
+  def self.match(**kwargs)
+    const_get(kwargs[:external_dataset].name)
+      .new(**kwargs)
+      .match
+  end
+
+  def self.unmatch(**kwargs)
+    const_get(kwargs[:external_dataset].name)
+      .new(**kwargs)
+      .unmatch
   end
 
   class OtherDataset < SimpleDelegator
