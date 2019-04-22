@@ -1,30 +1,52 @@
+import isPlainObject from 'lodash/isPlainObject';
+import isString from 'lodash/isString';
+
+const jsonHeaders = {
+  "Content-Type": "application/json",
+  "Accept": "application/json"
+};
+
+const validateResponse = (res) => {
+  if (res.status >= 200 && res.status < 300) { return res; }
+  throw `response failed with status code: ${res.status}`;
+};
+
 /**
- * HTTP request to LittleSis Server
+ * HTTP GET request to LittleSis Server
  * @param {String} url
  * @returns {Promise}
  */
 export function lsFetch(url) {
   return fetch(url, {
     "credentials": 'same-origin',
-    "headers": { "Content-Type": "application/json" }
+    "headers": jsonHeaders
   })
+    .then(validateResponse)
     .then(response => response.json());
 }
 
-
 /**
- * Retrives data JSON by id from the dataset
- * @param {Integer} id
+ * HTTP POST request to LittleSis Server
+ * @param {String} url
  * @returns {Promise}
  */
-export function retriveDatasetRow(id) {
-  return lsFetch(`/external_datasets/row/${id}`);
-}
+export function lsPost(url, data) {
+  var body;
 
-export function retrivePotentialMatches(id) {
-  return lsFetch(`/external_datasets/row/${id}/matches`);
-}
+  if (isString(data)) {
+    body = data;
+  } else if (isPlainObject(data)) {
+    body = JSON.stringify(data);
+  } else {
+    throw "lsPost called with invalid data";
+  }
 
-export function matchRow(rowId, entityId) {
-  // return lsFetch(`/external_datasets/row/${id}/match/${entityId}`));
+  return fetch(url, {
+    "method": "POST",
+    "credentials": 'same-origin',
+    "headers": jsonHeaders,
+    "body": body
+  })
+    .then(validateResponse)
+    .then(response => response.json());
 }

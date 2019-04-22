@@ -15,7 +15,12 @@ import LoadingSpinner from './components/LoadingSpinner';
 import PotentialMatches from './components/PotentialMatches';
 
 // ACTIONS
-import { loadItemInfo, loadMatches, ignoreMatch } from './actions';
+import {
+  loadItemInfo,
+  loadMatches,
+  ignoreMatch,
+  doMatch
+} from './actions';
 
 // STATUS HELPERS
 const LOADING = 'LOADING';
@@ -23,15 +28,18 @@ const COMPLETE = 'COMPLETE';
 const ERROR = 'ERROR';
 
 const defaultState = () => ({
-  "itemId": null,
-  "itemInfo": null,
-  "itemInfoStatus": null,
-  "matches": null,
-  "matchesStatus": null,
-  "datasetFields": []
+  "itemId": null, // item id (row id of External Dataset)
+  "itemInfo": null, // json of external dataset attributes
+  "itemInfoStatus": null, // status item info http request
+  "matches": null, // Array of potential matches 
+  "matchesStatus": null, // statues of potential matches http request
+  "matchedState": null // Has it been matched: MATCHING, MATCHED, ERROR
 });
 
 export default class EntityMatcherUI extends React.Component {
+  static propTypes = {
+    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired
+  };
 
   constructor(props) {
     super(props);
@@ -39,12 +47,12 @@ export default class EntityMatcherUI extends React.Component {
     
     this.updateState = this.updateState.bind(this);
     
-    
     // Actions
     // These functions essentially constitute the public API
     this.loadItemInfo = loadItemInfo.bind(this);
     this.loadMatches = loadMatches.bind(this);
     this.ignoreMatch = ignoreMatch.bind(this);
+    this.doMatch = doMatch.bind(this);
   }
 
   /**
@@ -89,23 +97,17 @@ export default class EntityMatcherUI extends React.Component {
             itemInfoComplete &&
             <>
               <DatasetItemHeader itemId={this.state.itemId}  />
-              <DatasetItemInfo itemInfo={this.state.itemInfo} datasetFields={this.state.datasetFields} />
+              <DatasetItemInfo itemInfo={this.state.itemInfo} />
             </>
           }
         </div>
         <div className="rightSide">
-          <PotentialMatches
-            ignoreMatch={this.ignoreMatch}
-            matches={this.state.matches}
-            matchesStatus={this.state.matchesStatus}
-          />
+          <PotentialMatches ignoreMatch={this.ignoreMatch}
+                            doMatch={this.doMatch}
+                            matches={this.state.matches}
+                            matchesStatus={this.state.matchesStatus} />
         </div>
       </div>
     );
   }
 }
-
-EntityMatcherUI.propTypes = {
-  "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired,
-  "datasetFields": PropTypes.array.isRequired
-};

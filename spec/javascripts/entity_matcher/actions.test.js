@@ -2,6 +2,7 @@
 
 import * as actions from 'packs/entity_matcher/actions';
 
+beforeEach(() => fetch.resetMocks());
 
 describe('resultsWithoutEntity', () => {
   const results = [
@@ -18,4 +19,18 @@ describe('resultsWithoutEntity', () => {
       ]);
   });
 
+});
+
+describe('doMatch', () => {
+  test('updates matches before and afte request', async () => {
+    fetch.mockResponseOnce(JSON.stringify({ "status": 'OK' }));
+
+    let mockBindingObject = { "updateState": jest.fn() };
+    await actions.doMatch.call(mockBindingObject, 123, 456);
+
+    expect(fetch.mock.calls[0][0]).toEqual('/external_datasets/row/123/match');
+    expect(mockBindingObject.updateState.mock.calls.length).toEqual(2);
+    expect(mockBindingObject.updateState.mock.calls[0]).toEqual(['matchStatus', 'MATCHING']);
+    expect(mockBindingObject.updateState.mock.calls[1]).toEqual(['matchStatus', 'MATCHED']);
+  });
 });

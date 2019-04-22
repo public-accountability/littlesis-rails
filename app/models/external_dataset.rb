@@ -2,11 +2,24 @@
 
 class ExternalDataset < ApplicationRecord
   IapdAdvisor = Struct.new(:crd_number, :name, :data)
-  IapdOwner = Struct.new(:owner_key, :name, :data)
+  IapdOwner = Struct.new(:owner_key, :name, :data) do
+    def owner_type
+      owner_types = data.map { |d| d['owner_type'] }.uniq
+      if owner_types.length != 1 && owner_types.include?('I')
+        Rails.logger.warn "Conflicting owner type in Iapd dataset. Ownerkey = #{owner_key}"
+        nil
+      else
+        owner_types.first == 'I' ? :person : :org
+      end
+    end
+  end
+
   DATASETS = %w[iapd].freeze
 
   validates :name, inclusion: { in: DATASETS }
   validates :dataset_key, presence: true
+
+  belongs_to :entity, optional: true
 
   serialize :row_data, JSON
   serialize :match_data, JSON
@@ -41,6 +54,10 @@ class ExternalDataset < ApplicationRecord
     self
   end
 
+  def row_data_class
+    row_data['class'] if row_data
+  end
+
   private
 
   def service
@@ -50,7 +67,7 @@ class ExternalDataset < ApplicationRecord
   def entity_name
     case name
     when 'iapd'
-      row_data.fetch 'Full Legal Name'
+      row_data.fetch('name')
     else
       raise Exceptions::LittleSisError, "Unknown dataset in ExternalDataset#entity_name: #{name}"
     end

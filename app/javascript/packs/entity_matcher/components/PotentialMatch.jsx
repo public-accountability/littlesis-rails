@@ -20,9 +20,9 @@ const Entity = ({entity}) => {
 };
 
 
-const Buttons = ({ignoreMatch}) => {
+const Buttons = ({ignoreMatch, doMatch}) => {
   return <div className="potential-match-buttons f-item">
-           <a>Match</a>
+           <a className="mr-1" onClick={doMatch}>Match</a>
            <a onClick={ignoreMatch}>❌</a>
          </div>;
 };
@@ -33,17 +33,25 @@ const Buttons = ({ignoreMatch}) => {
  *   match (object)
  *   ignoreMatch (function)
  */
-export default function PotentialMatch(props) {
-  const entity = props.match.entity;
-  
-  return <div className="potential-match-card">
-           <Image entity={entity} />
-           <Entity entity={entity} />
-           <Buttons ignoreMatch={ e => props.ignoreMatch(props.match.entity.id) } />
-         </div>;
-};
+export default class PotentialMatch extends React.Component {
+  static propTypes = {
+    "match": PropTypes.object.isRequired,
+    "ignoreMatch": PropTypes.func.isRequired,
+    "doMatch": PropTypes.func.isRequired
+  }
 
-PotentialMatch.propTypes = {
-  "match": PropTypes.object.isRequired,
-  "ignoreMatch": PropTypes.func.isRequired,
+  
+  render () {
+    const entity = this.props.match.entity;
+    // TODO: pass this in as a prop
+    const ROWID = 123;
+    return <div className="potential-match-card">
+             <Entity entity={entity} />
+             <Buttons
+               ignoreMatch={ e => this.props.ignoreMatch(entity.id) }
+               doMatch={ e => this.props.doMatch(ROWID, entity.id) }
+             />
+           </div>;
+  }
+  
 };
