@@ -19,27 +19,25 @@ import LoadingSpinner from 'packs/entity_matcher/components/LoadingSpinner';
 import PotentialMatches from 'packs/entity_matcher/components/PotentialMatches';
 
 describe('EntityMatcherUI', () => {
-  const testDatasetFields = ["one", "two"];
-  
-  
   describe('mounting', () => {
     test('sets default state', () => {
-      let wrapper = shallow(<EntityMatcherUI datasetFields={testDatasetFields} itemId={123}/>, { disableLifecycleMethods: true });
+      let wrapper = shallow(<EntityMatcherUI itemId={123}/>, { disableLifecycleMethods: true });
 
       expect(wrapper.state()).toEqual({
 	"itemId": 123,
 	"itemInfo": null,
 	"itemInfoStatus": null,
 	"matches": null,
-	"matchStatus": null,
-	"datasetFields": testDatasetFields
+	"matchesStatus": null,
+	"matchedState": null
+	
       });
     });
 
     test('calls loadItemInfo after mounting', () => {
       actions.loadItemInfo = jest.fn();
       actions.loadMatches = jest.fn();
-      let wrapper = shallow(<EntityMatcherUI datasetFields={testDatasetFields} itemId={123}/>);
+      let wrapper = shallow(<EntityMatcherUI itemId={123}/>);
       expect(actions.loadItemInfo).toHaveBeenCalledTimes(1);
       actions.loadItemInfo.mockRestore();
       actions.loadMatches.mockRestore();
@@ -48,7 +46,7 @@ describe('EntityMatcherUI', () => {
 
   describe('updateState', () => {
     test('recursively merges objects', () => {
-      let wrapper = shallow(<EntityMatcherUI datasetFields={testDatasetFields} itemId={123}/>);
+      let wrapper = shallow(<EntityMatcherUI itemId={123}/>);
       wrapper.instance().updateState({ itemInfo: { a: { b: 'b', c: 'c' } }});
       expect(wrapper.state().itemInfo).toEqual({ a: { b: 'b', c: 'c' } });
       wrapper.instance().updateState({ itemInfo: { a: { c: 'cc' } }});
@@ -56,7 +54,7 @@ describe('EntityMatcherUI', () => {
     });
 
     test('can be called with two arguments: key, value', () => {
-      let wrapper = shallow(<EntityMatcherUI datasetFields={testDatasetFields} itemId={123}/>);
+      let wrapper = shallow(<EntityMatcherUI itemId={123}/>);
       expect(wrapper.state().itemInfo).toEqual(null);
       wrapper.instance().updateState("itemInfo", { a: "a" });
       expect(wrapper.state().itemInfo).toEqual({ a: "a" });
@@ -68,7 +66,7 @@ describe('EntityMatcherUI', () => {
     retriveDatasetRow.mockImplementation( () => Promise.resolve({"one": "foo", "two": "bar"}) );
     
     beforeEach(() => {
-      wrapper = shallow(<EntityMatcherUI datasetFields={testDatasetFields} itemId={2}/>);
+      wrapper = shallow(<EntityMatcherUI  itemId={2}/>);
     });
       
     test('shows loading spinner while it is loaded', () => {

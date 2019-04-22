@@ -12,7 +12,7 @@ import { exampleMatch } from './fixtures';
 describe('PotentialMatches', () => {
     
   test('has div with correct id', () => {
-    const wrapper = shallow(<PotentialMatches ignoreMatch={jest.fn()}/>);
+    const wrapper = shallow(<PotentialMatches ignoreMatch={jest.fn()} doMatch={jest.fn()}/>);
     expect(wrapper.find('div#potential-matches').exists()).toBe(true);
   });
 
