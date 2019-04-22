@@ -2,10 +2,7 @@
 
 import * as actions from 'packs/entity_matcher/actions';
 
-beforeEach(() => {
-  fetch.resetMocks();
-});
-
+beforeEach(() => fetch.resetMocks());
 
 describe('resultsWithoutEntity', () => {
   const results = [

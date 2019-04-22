@@ -28,12 +28,12 @@ const COMPLETE = 'COMPLETE';
 const ERROR = 'ERROR';
 
 const defaultState = () => ({
-  "itemId": null,
-  "itemInfo": null,
-  "itemInfoStatus": null,
-  "matches": null,
-  "matchStatus": null,
-  "datasetFields": []
+  "itemId": null, // item id (row id of External Dataset)
+  "itemInfo": null, // json of external dataset attributes
+  "itemInfoStatus": null, // status item info http request
+  "matches": null, // Array of potential matches 
+  "matchesStatus": null, // statues of potential matches http request
+  "matchedState": null // Has it been matched: MATCHING, MATCHED, ERROR
 });
 
 export default class EntityMatcherUI extends React.Component {
@@ -103,6 +103,7 @@ export default class EntityMatcherUI extends React.Component {
         </div>
         <div className="rightSide">
           <PotentialMatches ignoreMatch={this.ignoreMatch}
+                            doMatch={this.doMatch}
                             matches={this.state.matches}
                             matchesStatus={this.state.matchesStatus} />
         </div>

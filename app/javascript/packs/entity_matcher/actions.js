@@ -1,5 +1,3 @@
-import clone from 'lodash/clone';
-import curryRight from 'lodash/curryRight';
 import filter from 'lodash/filter';
 import toInteger from 'lodash/toInteger';
 import merge from 'lodash/merge';
@@ -58,7 +56,7 @@ export function doMatch(rowId, entityId) {
     .then(() => this.updateState("matchStatus", 'MATCHED'))
     .catch(err => {
       console.error(`Failed to match row ${rowId} with entity ${entityId}`);
-      console.error(err);
+      errorMessage('doMatch', err);
       this.updateState("matchStatus", 'ERROR');
     });
 
