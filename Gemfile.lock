@@ -1,11 +1,11 @@
 GIT
   remote: https://github.com/perfectline/validates_url.git
-  revision: ea191cfa070a1d0a80050ea73cdf222cc1bc2b68
+  revision: 8932d33dcdc65e27314165943421674a87c8c515
   branch: master
   specs:
-    validate_url (1.0.2)
+    validate_url (1.0.8)
       activemodel (>= 3.0.0)
-      public_suffix (>= 2.0.0)
+      public_suffix
 
 GIT
   remote: https://github.com/stympy/faker.git
