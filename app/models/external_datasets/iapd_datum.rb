@@ -13,4 +13,12 @@ class IapdDatum < ExternalDataset
       end
     end
   end
+
+  def owner?
+    row_data_class == 'IapdDatum::IapdOwner'
+  end
+
+  def advisor?
+    row_data_class == 'IapdDatum::IapdAdvisor'
+  end
 end
