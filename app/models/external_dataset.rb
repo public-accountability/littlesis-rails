@@ -1,30 +1,24 @@
 # frozen_string_literal: true
 
+# This the base class for the Single Table Inheritance
+# for external datasets. Subclasses need to be  named DatasetnameDatum
+# Example: IapdDatum
 class ExternalDataset < ApplicationRecord
-  IapdAdvisor = Struct.new(:crd_number, :name, :data)
-  IapdOwner = Struct.new(:owner_key, :name, :data) do
-    def owner_type
-      owner_types = data.map { |d| d['owner_type'] }.uniq
-      if owner_types.length != 1 && owner_types.include?('I')
-        Rails.logger.warn "Conflicting owner type in Iapd dataset. Ownerkey = #{owner_key}"
-        nil
-      else
-        owner_types.first == 'I' ? :person : :org
-      end
-    end
-  end
-
-  DATASETS = %w[iapd].freeze
-
-  validates :name, inclusion: { in: DATASETS }
-  validates :dataset_key, presence: true
+  DATASETS = %w[IapdDatum].freeze
 
   belongs_to :entity, optional: true
+
+  validates :type, presence: true, inclusion: { in: DATASETS }
+  validates :dataset_key, presence: true
 
   serialize :row_data, JSON
   serialize :match_data, JSON
 
   enum primary_ext: { person: 1, org: 2 }
+
+  def name
+    type.gsub('Datum', '').downcase
+  end
 
   def matched?
     !entity_id.nil?

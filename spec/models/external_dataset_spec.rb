@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 describe ExternalDataset, type: :model do
-  it { is_expected.to have_db_column(:name).of_type(:string) }
+  it { is_expected.not_to have_db_column(:name) }
+  it { is_expected.to have_db_column(:type).of_type(:string) }
   it { is_expected.to have_db_column(:row_data).of_type(:text) }
   it { is_expected.to have_db_column(:entity_id).of_type(:integer) }
   it { is_expected.to have_db_column(:match_data).of_type(:text) }
@@ -9,22 +10,23 @@ describe ExternalDataset, type: :model do
   it { is_expected.to have_db_column(:dataset_key).of_type(:string) }
 
   it { is_expected.to validate_presence_of(:dataset_key) }
+  it { is_expected.to validate_presence_of(:type) }
 
   it { is_expected.to belong_to(:entity).without_validating_presence }
 
   it do
-    is_expected.to validate_inclusion_of(:name).in_array(ExternalDataset::DATASETS)
+    is_expected.to validate_inclusion_of(:type).in_array(ExternalDataset::DATASETS)
   end
 
   describe 'row_data_class' do
     specify do
       expect(build(:external_dataset_iapd_owner).row_data_class)
-        .to eq 'ExternalDataset::IapdOwner'
+        .to eq 'IapdDatum::IapdOwner'
     end
 
     specify do
       expect(build(:external_dataset_iapd_advisor).row_data_class)
-        .to eq 'ExternalDataset::IapdAdvisor'
+        .to eq 'IapdDatum::IapdAdvisor'
     end
 
     specify do
@@ -109,5 +111,4 @@ describe ExternalDataset, type: :model do
       expect(external_dataset.send(:entity_name)).to eq 'test'
     end
   end
-
 end
