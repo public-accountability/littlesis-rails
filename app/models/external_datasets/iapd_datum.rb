@@ -21,4 +21,14 @@ class IapdDatum < ExternalDataset
   def advisor?
     row_data_class == 'IapdDatum::IapdAdvisor'
   end
+
+  ## Class Query Methods ##
+
+  def self.owners
+    where(Arel.sql("JSON_VALUE(row_data, '$.class') = 'IapdDatum::IapdOwner'"))
+  end
+
+  def self.advisors
+    where(Arel.sql("JSON_VALUE(row_data, '$.class') = 'IapdDatum::IapdAdvisor'"))
+  end
 end
