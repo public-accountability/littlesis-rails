@@ -4,11 +4,12 @@
 # for external datasets. Subclasses need to be  named DatasetnameDatum
 # Example: IapdDatum
 class ExternalDataset < ApplicationRecord
-  DATASETS = %w[IapdDatum].freeze
+  DATASETS = %i[iapd].freeze
+  MODELS = DATASETS.map { |d| "#{d.to_s.capitalize}Datum" }.freeze
 
   belongs_to :entity, optional: true
 
-  validates :type, presence: true, inclusion: { in: DATASETS }
+  validates :type, presence: true, inclusion: { in: MODELS }
   validates :dataset_key, presence: true
 
   serialize :row_data, JSON

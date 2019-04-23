@@ -15,8 +15,11 @@ describe ExternalDataset, type: :model do
   it { is_expected.to belong_to(:entity).without_validating_presence }
 
   it do
-    is_expected.to validate_inclusion_of(:type).in_array(ExternalDataset::DATASETS)
+    is_expected.to validate_inclusion_of(:type).in_array(ExternalDataset::MODELS)
   end
+
+  specify { expect(ExternalDataset::DATASETS).to eq [:iapd] }
+  specify { expect(ExternalDataset::MODELS).to eq ['IapdDatum'] }
 
   describe 'row_data_class' do
     specify do
