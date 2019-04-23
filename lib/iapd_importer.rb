@@ -32,12 +32,12 @@ module IapdImporter
   def self.advisor_to_struct(crd_number, advisor_data)
     crd_number = crd_number.to_i
     name = advisor_data.max_by(&DATE_FROM_FILENAME).fetch('name')
-    ExternalDataset::IapdAdvisor.new(crd_number, name, advisor_data)
+    IapdDatum::IapdAdvisor.new(crd_number, name, advisor_data)
   end
 
   def self.owner_to_struct(owner_key, owner_data)
     name = owner_data.max_by(&DATE_FROM_FILENAME).fetch('name')
-    ExternalDataset::IapdOwner.new(owner_key, name, owner_data)
+    IapdDatum::IapdOwner.new(owner_key, name, owner_data)
   end
 
   def self.struct_to_hash(s)
@@ -50,10 +50,9 @@ module IapdImporter
     advisors.each do |advisor|
       next if row_exists?(advisor.crd_number.to_s)
 
-      ExternalDataset.create!(name: 'iapd',
-                              dataset_key: advisor.crd_number.to_s,
-                              row_data: struct_to_hash(advisor),
-                              primary_ext: :org)
+      IapdDatum.create!(dataset_key: advisor.crd_number.to_s,
+                        row_data: struct_to_hash(advisor),
+                        primary_ext: :org)
 
       ColorPrinter.with_logger.print_gray "[IapdImporter] Created: #{advisor.crd_number}"
     end
@@ -63,17 +62,16 @@ module IapdImporter
     owners.each do |owner|
       next if row_exists?(owner.owner_key)
 
-      ExternalDataset.create!(name: 'iapd',
-                              dataset_key: owner.owner_key,
-                              row_data: struct_to_hash(owner),
-                              primary_ext: owner.owner_type)
+      IapdDatum.create!(dataset_key: owner.owner_key,
+                        row_data: struct_to_hash(owner),
+                        primary_ext: owner.owner_type)
 
       ColorPrinter.print_gray "[IapdImporter] created: #{owner.owner_key}"
     end
   end
 
   def self.row_exists?(key)
-    if ExternalDataset.exists?(name: 'iapd', dataset_key: key)
+    if IapdDatum.exists?(dataset_key: key)
       ColorPrinter.with_logger.print_blue "[IapdImporter] #{key} exists"
       return true
     end
