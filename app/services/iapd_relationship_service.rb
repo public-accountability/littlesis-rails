@@ -3,7 +3,7 @@
 # Creates or finds existing relationship between
 # an Iapd Owner and Iapd Advisor
 class IapdRelationshipService
-  TAG_NAME = 'iapd'
+  IAPD_TAG_ID = 100 # TODO FIX TIHS
 
   attr_reader :advisor, :owner, :dry_run, :result, :relationship
 
@@ -79,7 +79,7 @@ class IapdRelationshipService
                    description1: filing.fetch('title_or_status') }
 
     Relationship.create!(attributes).tap do |r|
-      r.add_tag TAG_NAME
+      r.add_tag IAPD_TAG_ID
       r.add_reference IapdDatum.document_attributes_for_form_adv_pdf(crd_number)
     end
   end
@@ -92,6 +92,11 @@ class IapdRelationshipService
   # Returns relationship between advisor and owner (if one exists)
   # otherwise returns nil
   def self.find_relationship(advisor:, owner:)
+    # Relationship
+    #   .includes(:taggings)
+    #   .where(entity: owner.entity, related: advisor.entity, category_id: Relationship::POSITION_CATEGORY)
+    #   .to_a
+    #   .find { |r| r.taggings.map(&:tag_id).include?(IAPD_TAG_ID) }
   end
 
   def self.create_relationships_for(advisor, dry_run: false)
