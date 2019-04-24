@@ -1,4 +1,4 @@
-# rubocop:disable Lint/UselessComparison
+# rubocop:disable Lint/UselessComparison, RSpec/Multipleexpectations
 require 'rails_helper'
 
 describe LsDate do
@@ -88,12 +88,18 @@ describe LsDate do
       expect(LsDate.convert('')).to eql nil
     end
 
+    it 'converts MM/YYY' do
+      expect(LsDate.convert('04/2015')).to eq '2015-04-00'
+      expect(LsDate.convert('12/1960')).to eq '1960-12-00'
+    end
+
     it 'returns input if it can\'t convert' do
       expect(LsDate.convert('88')).to eql '88'
       expect(LsDate.convert('1234567')).to eql '1234567'
       expect(LsDate.convert('2000-04-01')).to eql '2000-04-01'
       expect(LsDate.convert(nil)).to be nil
       expect(LsDate.convert('right now')).to eql 'right now'
+      expect(LsDate.convert('13/2000')).to eql '13/2000'
     end
   end
 
@@ -217,4 +223,4 @@ describe LsDate do
     end
   end
 end
-# rubocop:enable Lint/UselessComparison
+# rubocop:enable Lint/UselessComparison, RSpec/Multipleexpectations

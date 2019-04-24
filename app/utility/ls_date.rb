@@ -123,6 +123,8 @@ class LsDate
   #   YYYY. Example: 1996 -> 1996-00-00
   #   YYY-MM. Example: 2017-01 -> 2017-01-00
   #   YYYYMMDD. Example: 20011231 -> 2001-12-31
+  #   MM/YYYY. Example: 04/2015 --> 2015-04-00
+  #
   # turns blank strings into nil
   # Otherwise, it returns the input unchanged
   def self.convert(date)
@@ -131,6 +133,8 @@ class LsDate
     return "#{date}-00-00" if /^\d{4}$/ =~ date
     return "#{date.slice(0, 4)}-#{date.slice(5, 2)}-00" if /^\d{4}-\d{2}$/ =~ date
     return "#{date.slice(0, 4)}-#{date.slice(4, 2)}-#{date.slice(6, 2)}" if /^\d{8}$/ =~ date
+    return "#{date[3..6]}-#{date[0..1]}-00" if /\A(01|02|03|04|05|06|07|08|09|10|11|12){1}\/[1-9]{1}[0-9]{3}\Z/.match?(date)
+
     date
   end
 
