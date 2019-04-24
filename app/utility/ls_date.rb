@@ -17,6 +17,13 @@ class LsDate
 
   BASIC_FORMAT = '%B %e, %Y, %l%p'
 
+  DATE_REGEXES = {
+    'YYYY' => /\A\d{4}\Z/,
+    'YYYY-MM' => /\A\d{4}-\d{2}\Z/,
+    'YYYYMMDD' => /\A\d{8}\Z/,
+    'MM/YYYY' => /\A(01|02|03|04|05|06|07|08|09|10|11|12){1}\/[1-9]{1}[0-9]{3}\Z/
+  }.freeze
+
   def self.pretty_print(date)
     unless date.respond_to? :strftime
       raise ArgumentError, "#{date.class} is missing the method 'strftime'"
@@ -121,21 +128,27 @@ class LsDate
   # str -> str | nil
   # converts string dates in the following formats:
   #   YYYY. Example: 1996 -> 1996-00-00
-  #   YYY-MM. Example: 2017-01 -> 2017-01-00
+  #   YYYY-MM. Example: 2017-01 -> 2017-01-00
   #   YYYYMMDD. Example: 20011231 -> 2001-12-31
   #   MM/YYYY. Example: 04/2015 --> 2015-04-00
   #
-  # turns blank strings into nil
+  # It turns blank strings into nil.
   # Otherwise, it returns the input unchanged
   def self.convert(date)
     return date unless date.is_a? String
     return nil if date.blank?
-    return "#{date}-00-00" if /^\d{4}$/ =~ date
-    return "#{date.slice(0, 4)}-#{date.slice(5, 2)}-00" if /^\d{4}-\d{2}$/ =~ date
-    return "#{date.slice(0, 4)}-#{date.slice(4, 2)}-#{date.slice(6, 2)}" if /^\d{8}$/ =~ date
-    return "#{date[3..6]}-#{date[0..1]}-00" if /\A(01|02|03|04|05|06|07|08|09|10|11|12){1}\/[1-9]{1}[0-9]{3}\Z/.match?(date)
 
-    date
+    if DATE_REGEXES['YYYY'].match?(date)
+      "#{date}-00-00"
+    elsif DATE_REGEXES['YYYY-MM'].match?(date)
+      "#{date.slice(0, 4)}-#{date.slice(5, 2)}-00"
+    elsif DATE_REGEXES['YYYYMMDD'].match?(date)
+      "#{date.slice(0, 4)}-#{date.slice(4, 2)}-#{date.slice(6, 2)}"
+    elsif DATE_REGEXES['MM/YYYY'].match?(date)
+      "#{date[3..6]}-#{date[0..1]}-00"
+    else
+      date
+    end
   end
 
   # string -> boolean
