@@ -31,6 +31,17 @@ describe IapdDatum do
     end
   end
 
+  describe '#filings_for_advisor' do
+    specify do
+      expect(build(:external_dataset_iapd_owner).filings_for_advisor(19_585))
+        .to eq(build(:external_dataset_iapd_owner).row_data['data'])
+    end
+
+    specify do
+      expect(build(:external_dataset_iapd_owner).filings_for_advisor(123)).to eq([])
+    end
+  end
+
   describe '#owner? and #advisor?' do
     specify { expect(iapd_owner.owner?).to be true }
     specify { expect(iapd_owner.advisor?).to be false }
