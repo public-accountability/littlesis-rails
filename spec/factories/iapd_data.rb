@@ -53,6 +53,34 @@ FactoryBot.define do
     end
   end
 
+  factory :external_dataset_iapd_owner_schedule_b, class: IapdDatum do
+    type { 'IapdDatum' }
+    primary_ext { :person }
+    dataset_key { '4977568' }
+    row_data do
+      { 'owner_key' => '4977568',
+        'name' => 'SINGHAL, MANSI',
+        'class' => 'IapdDatum::IapdOwner',
+        'associated_advisors' => [175479],
+        'data' => [{ "filing_id" => 1061310,
+                     "scha_3" => "",
+                     "schedule" => "B",
+                     "name" => "SINGHAL, MANSI",
+                     "owner_type" => "I",
+                     "entity_in_which" => "SOMMET LLC",
+                     "title_or_status" => "CHIEF COMPLIANCE OFFICER/MANAGING MEMBER",
+                     "acquired" => "04/2015",
+                     "ownership_code" => "D",
+                     "control_person" => "Y",
+                     "public_reporting" => "N",
+                     "owner_id" => "4977568",
+                     "filename" => "IA_Schedule_A_B_20170101_20170331.csv",
+                     "owner_key" => "4977568",
+                     "advisor_crd_number" => 175479 }] }
+    end
+  end
+
+
   factory :external_dataset_iapd_advisor, class: IapdDatum do
     type { 'IapdDatum' }
     primary_ext { :org }

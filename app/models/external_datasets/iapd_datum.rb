@@ -33,6 +33,12 @@ class IapdDatum < ExternalDataset
     row_data['data'].filter { |x| x['advisor_crd_number'] == crd_number }
   end
 
+  def latest_filing_for_advisor(crd_number)
+    method_only_for! :owner
+
+    filings_for_advisor(crd_number).max_by { |x| x['filename'] }
+  end
+
   def add_to_matching_queue
     method_only_for! :owner
   end

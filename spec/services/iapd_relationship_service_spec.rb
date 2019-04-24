@@ -58,7 +58,36 @@ describe IapdRelationshipService do
   end
 
   describe 'Class methods' do
-    describe 'create_relationship'
+    describe 'create_relationship' do
+
+      describe 'errors' do
+        let(:advisor) do
+          instance_double('IapdDatum', :advisor? => true, :row_data => { 'crd_number' => 175479 })
+        end
+        
+        specify do
+          expect do
+            IapdRelationshipService.create_relationship(advisor: advisor,
+                                                        owner: instance_double('IapdDatum', :owner? => true, :matched? => false, :org? => false))
+          end.to raise_error(/not matched/)
+        end
+
+        specify do
+          expect do
+            IapdRelationshipService.create_relationship(advisor: advisor,
+                                                        owner: instance_double('IapdDatum', :owner? => true, :matched? => true, :org? => true))
+          end.to raise_error(/is an org/)
+        end
+
+        specify do
+          expect do
+            IapdRelationshipService.create_relationship(advisor: advisor,
+                                                        owner: build(:external_dataset_iapd_owner_schedule_b, entity_id: 1))
+          end.to raise_error(/schedule B/)
+        end
+      end
+    end
+
     describe 'find_relationships'
     describe 'create_relationships_for'
   end
