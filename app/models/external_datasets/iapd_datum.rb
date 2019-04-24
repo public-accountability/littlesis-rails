@@ -27,6 +27,10 @@ class IapdDatum < ExternalDataset
     row_data.fetch('associated_advisors')
   end
 
+  def add_to_matching_queue
+    method_only_for! :owner
+  end
+
   # Retrieves associated owners for the advisor.
   # --> [IapdDatum]
   def owners
