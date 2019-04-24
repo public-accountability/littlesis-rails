@@ -37,7 +37,8 @@ module IapdImporter
 
   def self.owner_to_struct(owner_key, owner_data)
     name = owner_data.max_by(&DATE_FROM_FILENAME).fetch('name')
-    IapdDatum::IapdOwner.new(owner_key, name, owner_data)
+    associated_advisors = owner_data.map { |x| x.fetch('advisor_crd_number') }.uniq
+    IapdDatum::IapdOwner.new(owner_key, name, associated_advisors, owner_data)
   end
 
   def self.struct_to_hash(s)
