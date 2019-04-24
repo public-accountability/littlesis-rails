@@ -1,9 +1,9 @@
 require "rails_helper"
 
-# rubocop:disable RSpec/MultipleExpectations, RSpec/MessageSpies
+# rubocop:disable RSpec/MultipleExpectations, RSpec/MessageSpies, RSpec/NestedGroups
 
 describe IapdRelationshipService do
-  describe 'initalize' do
+  describe 'initialize' do
     let(:advisor) { instance_double('IapdDatum') }
     let(:owner) { instance_double('IapdDatum') }
     let(:relationship) { instance_double('Relationship') }
@@ -62,9 +62,9 @@ describe IapdRelationshipService do
 
       describe 'errors' do
         let(:advisor) do
-          instance_double('IapdDatum', :advisor? => true, :row_data => { 'crd_number' => 175479 })
+          instance_double('IapdDatum', :advisor? => true, :row_data => { 'crd_number' => 175_479 })
         end
-        
+
         specify do
           expect do
             IapdRelationshipService.create_relationship(advisor: advisor,
@@ -83,7 +83,7 @@ describe IapdRelationshipService do
           expect do
             IapdRelationshipService.create_relationship(advisor: advisor,
                                                         owner: build(:external_dataset_iapd_owner_schedule_b, entity_id: 1))
-          end.to raise_error(/schedule B/)
+          end.to raise_error(/No suitable filing/)
         end
       end
     end
@@ -93,4 +93,4 @@ describe IapdRelationshipService do
   end
 end
 
-# rubocop:enable RSpec/MultipleExpectations, RSpec/MessageSpies
+# rubocop:enable RSpec/MultipleExpectations, RSpec/MessageSpies, RSpec/NestedGroups
