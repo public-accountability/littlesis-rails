@@ -3,7 +3,7 @@
 # Creates or finds existing relationship between
 # an Iapd Owner and Iapd Advisor
 class IapdRelationshipService
-  IAPD_TAG_ID = 100 # TODO FIX TIHS
+  IAPD_TAG_ID = 18
 
   attr_reader :advisor, :owner, :dry_run, :result, :relationship
 
@@ -65,7 +65,7 @@ class IapdRelationshipService
     end
 
     if ('A'..'E').include?(filing.fetch('ownership_code'))
-      Rails.logger.info "IapdOwner #{owner.id} is an owner (#{filing.fetch('ownership_code')}) of IapdAdvisor #{advisor.id}"
+      Rails.logger.info('IapdRelationshipService') { "IapdOwner #{owner.id} is an owner (#{filing.fetch('ownership_code')}) of IapdAdvisor #{advisor.id}" }
     end
 
     create_position_relationship advisor: advisor, owner: owner, filing: filing
@@ -75,12 +75,12 @@ class IapdRelationshipService
     attributes = { category_id: Relationship::POSITION_CATEGORY,
                    entity: owner.entity,
                    related: advisor.entity,
-                   start_date: start_date_from(filing.fetch('acquired')),
+                   start_date: LsDate.convert(filing.fetch('acquired')),
                    description1: filing.fetch('title_or_status') }
 
     Relationship.create!(attributes).tap do |r|
       r.add_tag IAPD_TAG_ID
-      r.add_reference IapdDatum.document_attributes_for_form_adv_pdf(crd_number)
+      r.add_reference IapdDatum.document_attributes_for_form_adv_pdf(advisor.row_data.fetch('crd_number'))
     end
   end
 
@@ -105,10 +105,6 @@ class IapdRelationshipService
     advisor.owners.map do |owner|
       new advisor: advisor, owner: owner, dry_run: dry_run
     end
-  end
-
-  private_class_method def self.start_date_from(date)
-    return nil unless date.present?
   end
 
   private_class_method def self.error!(msg)

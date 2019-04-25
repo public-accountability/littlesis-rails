@@ -58,7 +58,7 @@ describe IapdRelationshipService do
   end
 
   describe 'Class methods' do
-    describe 'create_relationship' do
+    describe 'Create_relationship' do
 
       describe 'errors' do
         let(:advisor) do
@@ -86,6 +86,46 @@ describe IapdRelationshipService do
           end.to raise_error(/No suitable filing/)
         end
       end
+
+      describe 'creating a relationship between Seth Klarman and Baupost' do
+        let(:seth_klarman_entity) { create(:entity_person, name: 'Seth Klarman') }
+        let(:baupost_entity) { create(:entity_org, name: 'Baupost') }
+        let(:baupost_iapd) { create(:iapd_baupost).match_with(baupost_entity) }
+        let(:klarman_iapd) { create(:iapd_seth_klarman).match_with(seth_klarman_entity) }
+        let(:tag) { create(:tag, name: "iapd") }
+
+        let(:create_service) do
+          lambda do
+            IapdRelationshipService.new(advisor: baupost_iapd, owner: klarman_iapd)
+          end
+        end
+
+        before { stub_const("IapdRelationshipService::IAPD_TAG_ID", tag.id) }
+
+        it 'creates a new relationship' do
+          expect(&create_service).to change(Relationship, :count).by(1)
+        end
+
+        it 'sets relationship fields correctly' do
+          relationship = create_service.call.relationship
+          expect(relationship.description1).to eq 'PARTNER AND CHIEF EXECUTIVE OFFICER'
+          expect(relationship.category_id).to eq 1
+          expect(relationship.entity1_id).to eq seth_klarman_entity.id
+          expect(relationship.entity2_id).to eq baupost_entity.id
+          expect(relationship.start_date).to eq "1998-01-00"
+        end
+
+        it 'adds iapd tag' do
+          expect(create_service.call.relationship.tag_ids).to eq [tag.id]
+        end
+
+        it 'creates reference with correct url' do
+          expect(create_service.call.relationship.documents.first.attributes.slice('name', 'url'))
+            .to eq('name' => "Form ADV: 109530",
+                   'url' => "https://www.adviserinfo.sec.gov/IAPD/content/ViewForm/crd_iapd_stream_pdf.aspx?ORG_PK=109530")
+        end
+      end
+
     end
 
     describe 'find_relationships'

@@ -127,6 +127,46 @@ FactoryBot.define do
     end
   end
 
+  factory :iapd_baupost, class: IapdDatum do
+    type { 'IapdDatum' }
+    primary_ext { :org }
+    dataset_key { "109530" }
+    row_data do
+      {
+        'crd_number' => 109530,
+        'name' => 'TIMOTHY J. ELLIS, INC.',
+        "name": "THE BAUPOST GROUP, L.L.C.",
+        "class" => "IapdDatum::IapdAdvisor",
+        "data" => [
+          {
+            "name" => "THE BAUPOST GROUP, L.L.C.",
+            "dba_name" => "THE BAUPOST GROUP, L.L.C.",
+            "crd_number" => "109530",
+            "sec_file_number" => "801-55245",
+            "assets_under_management" => 31088780729,
+            "total_number_of_accounts" => 11,
+            "filing_id" => 1239386,
+            "date_submitted" => "09/07/2018 12:48:18 PM",
+            "filename" => "IA_ADV_Base_A_20180701_20180930.csv"
+          },
+          {
+            "name" => "THE BAUPOST GROUP, L.L.C.",
+            "dba_name" => "THE BAUPOST GROUP, L.L.C.",
+            "crd_number" => "109530",
+            "sec_file_number" => "801-55245",
+            "assets_under_management" => 31088780729,
+            "total_number_of_accounts" => 11,
+            "filing_id" => 1226534,
+            "date_submitted" => "06/29/2018 03:42:23 PM",
+            "filename" => "IA_ADV_Base_A_20180401_20180630.csv"
+          }
+        ]
+      }
+    end
+  end
+
+  
+
   factory :iapd_seth_klarman, class: IapdDatum do
     type { 'IapdDatum' }
     primary_ext { :person }
