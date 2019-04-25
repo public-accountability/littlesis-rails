@@ -3,8 +3,8 @@
 # Creates or finds existing relationship between
 # an Iapd Owner and Iapd Advisor
 class IapdRelationshipService
-  
-  
+  IAPD_TAG_ID = 18
+
   attr_reader :advisor, :owner, :dry_run, :result, :relationship
 
   def initialize(advisor:, owner:, dry_run: false)
@@ -60,12 +60,43 @@ class IapdRelationshipService
 
     filing = owner.latest_filing_for_advisor(advisor.row_data.fetch('crd_number'))
 
-    error! 'Owner is from schedule B' if filing.fetch('schedule') == 'B'
+    if filing.nil? || filing.fetch('schedule') == 'B'
+      error! "No suitable filing found for #{owner.id}"
+    end
+
+    if ('A'..'E').include?(filing.fetch('ownership_code'))
+      Rails.logger.info('IapdRelationshipService') { "IapdOwner #{owner.id} is an owner (#{filing.fetch('ownership_code')}) of IapdAdvisor #{advisor.id}" }
+    end
+
+    create_position_relationship advisor: advisor, owner: owner, filing: filing
+  end
+
+  def self.create_position_relationship(advisor:, owner:, filing:)
+    attributes = { category_id: Relationship::POSITION_CATEGORY,
+                   entity: owner.entity,
+                   related: advisor.entity,
+                   start_date: LsDate.convert(filing.fetch('acquired')),
+                   description1: filing.fetch('title_or_status') }
+
+    Relationship.create!(attributes).tap do |r|
+      r.add_tag IAPD_TAG_ID
+      r.add_reference IapdDatum.document_attributes_for_form_adv_pdf(advisor.row_data.fetch('crd_number'))
+    end
+  end
+
+  # placeholder function for creating ownership relationship
+  def self.create_ownership_relationship(advisor:, owner:, filing:)
+    raise NotImplementedError
   end
 
   # Returns relationship between advisor and owner (if one exists)
   # otherwise returns nil
   def self.find_relationship(advisor:, owner:)
+    Relationship
+      .includes(:taggings)
+      .where(entity: owner.entity, related: advisor.entity, category_id: Relationship::POSITION_CATEGORY)
+      .to_a
+      .find { |r| r.taggings.map(&:tag_id).include?(IAPD_TAG_ID) }
   end
 
   def self.create_relationships_for(advisor, dry_run: false)

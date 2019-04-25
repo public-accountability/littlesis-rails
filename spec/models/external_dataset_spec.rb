@@ -75,31 +75,36 @@ describe ExternalDataset, type: :model do
 
   describe 'match_with' do
     let(:external_dataset) { build(:external_dataset, entity_id: nil) }
-    let(:service) { spy('ExternalDatasetService::Iapd') }
+    let(:entity_id) { rand(10_000) }
+    let(:entity) { instance_double('Entity', id: entity_id) }
+
+    before { allow(Entity).to receive(:entity_for).and_return(entity) }
 
     it 'raises error if already matched' do
       expect { build(:external_dataset, entity_id: rand(1000)).match_with(123) }
                  .to raise_error(ExternalDataset::RowAlreadyMatched)
     end
 
-    it 'updates entity id and saves' do
-      allow(external_dataset).to receive(:service).and_return(service)
-      expect(external_dataset).to receive(:save).once
-      expect(external_dataset.match_with(123).entity_id).to eq 123
+    it 'calls outs to ExternalDatasetService, updates entity id and saves' do
+      expect(external_dataset).to receive(:save).once.and_return(true)
+      expect(ExternalDatasetService).to receive(:validate_match!)
+                                          .once
+                                          .with(external_dataset: external_dataset, entity: entity)
+      expect(ExternalDatasetService).to receive(:match)
+                                          .once
+                                          .with(external_dataset: external_dataset, entity: entity)
+
+      expect(external_dataset.match_with(entity_id)).to be external_dataset
+      expect(external_dataset.entity_id).to eq entity_id
     end
 
-    it 'calls validate_match! and match on service object' do
-      allow(external_dataset).to receive(:save)
-      allow(external_dataset).to receive(:service).and_return(service)
-      external_dataset.match_with(123).entity_id
-      expect(service).to have_received(:validate_match!).once
-      expect(service).to have_received(:match).with(entity: 123).once
-    end
-
-    it 'returns self' do
-      allow(external_dataset).to receive(:service).and_return(service)
-      expect(external_dataset).to receive(:save).once
-      expect(external_dataset.match_with(123)).to be external_dataset
+    it 'Logs error error if saving fails' do
+      expect(external_dataset).to receive(:save).once.and_return(false)
+      expect(ExternalDatasetService).to receive(:validate_match!)
+      expect(ExternalDatasetService).to receive(:match)
+      expect(Rails.logger).to receive(:warn).and_call_original
+      external_dataset.match_with(entity_id)
+      expect(external_dataset.entity_id).to be nil
     end
   end
 

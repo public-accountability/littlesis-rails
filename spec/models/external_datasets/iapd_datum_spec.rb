@@ -31,6 +31,12 @@ describe IapdDatum do
     end
   end
 
+  describe '#filings' do
+    specify do
+      expect(build(:iapd_seth_klarman).filings.size).to eq 1
+    end
+  end
+
   describe '#filings_for_advisor' do
     specify do
       expect(build(:external_dataset_iapd_owner).filings_for_advisor(19_585))

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# The term "IapdOwner" here is shorthand for executive and/or owner
 class IapdDatum < ExternalDataset
   IapdAdvisor = Struct.new(:crd_number, :name, :data)
   IapdOwner = Struct.new(:owner_key, :name, :associated_advisors, :data) do
@@ -18,7 +19,7 @@ class IapdDatum < ExternalDataset
     row_data['data'].map { |x| x.fetch('filing_id') }.uniq
   end
 
-  # Returns CRD numbers of the adivsors for the owner
+  # Returns CRD numbers of the advisors for the given owner
   # see IapdImporter.owner_to_struct
   # --> [Int]
   def associated_advisors
@@ -27,10 +28,18 @@ class IapdDatum < ExternalDataset
     row_data.fetch('associated_advisors')
   end
 
+  # This removes all schedule B (indirect owners) filings
+  # We'll likely want to import that data at some point.
+  def filings
+    method_only_for! :owner
+
+    row_data['data'].delete_if { |x| x['schedule'] == 'B' }
+  end
+
   def filings_for_advisor(crd_number)
     method_only_for! :owner
 
-    row_data['data'].filter { |x| x['advisor_crd_number'] == crd_number }
+    filings.filter { |x| x['advisor_crd_number'] == crd_number }
   end
 
   def latest_filing_for_advisor(crd_number)
@@ -71,6 +80,17 @@ class IapdDatum < ExternalDataset
 
   def self.owners_of_crd_number(crd_number)
     owners.where(Arel.sql("JSON_CONTAINS(row_data, #{crd_number}, '$.associated_advisors')"))
+  end
+
+  ## Class Helper Methods ##
+
+  def self.link_to_pdf(crd_number)
+    "https://www.adviserinfo.sec.gov/IAPD/content/ViewForm/crd_iapd_stream_pdf.aspx?ORG_PK=#{crd_number}"
+  end
+
+  def self.document_attributes_for_form_adv_pdf(crd_number)
+    { url: link_to_pdf(crd_number),
+      name: "Form ADV: #{crd_number}" }
   end
 
   private
