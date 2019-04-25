@@ -92,11 +92,11 @@ class IapdRelationshipService
   # Returns relationship between advisor and owner (if one exists)
   # otherwise returns nil
   def self.find_relationship(advisor:, owner:)
-    # Relationship
-    #   .includes(:taggings)
-    #   .where(entity: owner.entity, related: advisor.entity, category_id: Relationship::POSITION_CATEGORY)
-    #   .to_a
-    #   .find { |r| r.taggings.map(&:tag_id).include?(IAPD_TAG_ID) }
+    Relationship
+      .includes(:taggings)
+      .where(entity: owner.entity, related: advisor.entity, category_id: Relationship::POSITION_CATEGORY)
+      .to_a
+      .find { |r| r.taggings.map(&:tag_id).include?(IAPD_TAG_ID) }
   end
 
   def self.create_relationships_for(advisor, dry_run: false)

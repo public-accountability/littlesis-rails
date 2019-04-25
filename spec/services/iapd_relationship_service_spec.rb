@@ -59,7 +59,6 @@ describe IapdRelationshipService do
 
   describe 'Class methods' do
     describe 'Create_relationship' do
-
       describe 'errors' do
         let(:advisor) do
           instance_double('IapdDatum', :advisor? => true, :row_data => { 'crd_number' => 175_479 })
@@ -87,7 +86,7 @@ describe IapdRelationshipService do
         end
       end
 
-      describe 'creating a relationship between Seth Klarman and Baupost' do
+      describe 'Finding and Creating relationships' do
         let(:seth_klarman_entity) { create(:entity_person, name: 'Seth Klarman') }
         let(:baupost_entity) { create(:entity_org, name: 'Baupost') }
         let(:baupost_iapd) { create(:iapd_baupost).match_with(baupost_entity) }
@@ -102,33 +101,51 @@ describe IapdRelationshipService do
 
         before { stub_const("IapdRelationshipService::IAPD_TAG_ID", tag.id) }
 
-        it 'creates a new relationship' do
-          expect(&create_service).to change(Relationship, :count).by(1)
+        describe 'creating a relationship between Seth Klarman and Baupost' do
+          it 'creates a new relationship' do
+            expect(&create_service).to change(Relationship, :count).by(1)
+          end
+
+          it 'sets relationship fields correctly' do
+            relationship = create_service.call.relationship
+            expect(relationship.description1).to eq 'PARTNER AND CHIEF EXECUTIVE OFFICER'
+            expect(relationship.category_id).to eq 1
+            expect(relationship.entity1_id).to eq seth_klarman_entity.id
+            expect(relationship.entity2_id).to eq baupost_entity.id
+            expect(relationship.start_date).to eq "1998-01-00"
+          end
+
+          it 'adds iapd tag' do
+            expect(create_service.call.relationship.tag_ids).to eq [tag.id]
+          end
+
+          it 'creates reference with correct url' do
+            expect(create_service.call.relationship.documents.first.attributes.slice('name', 'url'))
+              .to eq('name' => "Form ADV: 109530",
+                     'url' => "https://www.adviserinfo.sec.gov/IAPD/content/ViewForm/crd_iapd_stream_pdf.aspx?ORG_PK=109530")
+          end
         end
 
-        it 'sets relationship fields correctly' do
-          relationship = create_service.call.relationship
-          expect(relationship.description1).to eq 'PARTNER AND CHIEF EXECUTIVE OFFICER'
-          expect(relationship.category_id).to eq 1
-          expect(relationship.entity1_id).to eq seth_klarman_entity.id
-          expect(relationship.entity2_id).to eq baupost_entity.id
-          expect(relationship.start_date).to eq "1998-01-00"
-        end
+        describe 'find_relationships' do
+          before do
+            Relationship.create!(entity: seth_klarman_entity, related: create(:entity_org), category_id: 1)
+          end
 
-        it 'adds iapd tag' do
-          expect(create_service.call.relationship.tag_ids).to eq [tag.id]
-        end
+          it 'finds iapd tagged relationship' do
+            relationship = create_service.call.relationship
+            # IapdRelationshipService.new(advisor: baupost_iapd, owner: klarman_iapd)
+            expect(IapdRelationshipService.find_relationship(advisor: baupost_iapd, owner: klarman_iapd))
+              .to eq relationship
+          end
 
-        it 'creates reference with correct url' do
-          expect(create_service.call.relationship.documents.first.attributes.slice('name', 'url'))
-            .to eq('name' => "Form ADV: 109530",
-                   'url' => "https://www.adviserinfo.sec.gov/IAPD/content/ViewForm/crd_iapd_stream_pdf.aspx?ORG_PK=109530")
+          it 'returns nil if no relatinoship exists yet' do
+            expect(IapdRelationshipService.find_relationship(advisor: baupost_iapd, owner: klarman_iapd))
+              .to be nil
+          end
         end
       end
-
     end
 
-    describe 'find_relationships'
     describe 'create_relationships_for'
   end
 end
