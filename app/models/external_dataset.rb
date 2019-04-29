@@ -25,6 +25,10 @@ class ExternalDataset < ApplicationRecord
     type.gsub('Datum', '').downcase
   end
 
+  def unmatched?
+    entity_id.nil?
+  end
+
   def matched?
     !entity_id.nil?
   end
