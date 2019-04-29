@@ -31,6 +31,12 @@ class ExternalDatasetsController < ApplicationController
     # end
   end
 
+  # GET /external_datasets/:dataset/flow/:flow/next
+  # { "next": id }
+  def flow
+    
+  end
+
   private
 
   def set_entity_id
