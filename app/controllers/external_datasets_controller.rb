@@ -8,6 +8,9 @@ class ExternalDatasetsController < ApplicationController
   end
 
   def iapd
+    @flow = params.fetch(:flow, 'advisors')
+    @start = '1'
+    # @start = params.fetch(:start, IapdDatum.next_id(@flow)).to_sym
   end
 
   # get /external_datasets/row/:id

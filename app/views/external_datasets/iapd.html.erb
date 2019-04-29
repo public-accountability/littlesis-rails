@@ -4,3 +4,12 @@
 <%= javascript_pack_tag 'entity_matcher' %>
 
 <div id="entity-matcher"></div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+   window.entityMatcher(
+     <%= { "flow" => @flow, "start" => @start }.to_json.html_safe %>
+   );
+});
+</script>
