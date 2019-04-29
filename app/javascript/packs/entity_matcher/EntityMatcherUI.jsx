@@ -11,6 +11,7 @@ import isNull from 'lodash/isNull';
 import ApiError from './components/ApiError';
 import DatasetItemHeader from './components/DatasetItemHeader';
 import DatasetItemInfo from './components/DatasetItemInfo';
+import DatasetItemFooter from './components/DatasetItemFooter';
 import LoadingSpinner from './components/LoadingSpinner';
 import PotentialMatches from './components/PotentialMatches';
 
@@ -98,6 +99,7 @@ export default class EntityMatcherUI extends React.Component {
             <>
               <DatasetItemHeader itemId={this.state.itemId}  />
               <DatasetItemInfo itemInfo={this.state.itemInfo} />
+              <DatasetItemFooter />
             </>
           }
         </div>

@@ -10,6 +10,7 @@ div.leftSide, div.rightSide {
 }
 
 div.leftSide {
+    position: relative;
     background-color: lightgray;
     margin-right: 0.5em;
 }
@@ -19,6 +20,15 @@ div.rightSide {
     margin-left: 0.5em;
 }
 
+.dataset-item-header {}
+
+.dataset-item-footer {
+    position: absolute;
+    width: 100%;
+    margin: 0 -1em;
+    bottom: 0;
+    padding: 1em;
+}
 
 #dataset-item-info {
     .item-info-wrapper {
