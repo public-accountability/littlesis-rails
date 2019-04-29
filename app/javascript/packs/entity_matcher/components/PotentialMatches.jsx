@@ -14,11 +14,14 @@ import CreateNewEntityButton from './CreateNewEntityButton';
 export default class PotentialMatches extends React.Component {
   static propTypes = {
     "matchesStatus": PropTypes.string,
-    "matches": PropTypes.array,
+    "matches": PropTypes.shape({
+      "results": PropTypes.array,
+      "automatchable": PropTypes.bool
+    }),
     "ignoreMatch": PropTypes.func,
     "doMatch": PropTypes.func
   };
-
+  
   
   render() {
     const isLoading = isNull(this.props.matchesStatus) || this.props.matchesStatus === 'LOADING';
