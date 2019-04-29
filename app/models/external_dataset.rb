@@ -7,6 +7,10 @@ class ExternalDataset < ApplicationRecord
   DATASETS = %i[iapd].freeze
   MODELS = DATASETS.map { |d| "#{d.to_s.capitalize}Datum" }.freeze
 
+  # FLOWS = {
+  #   iapd: %w[advisors owners search]
+  # }.with_indifferent_access.freeze
+
   belongs_to :entity, optional: true
 
   validates :type, presence: true, inclusion: { in: MODELS }
@@ -56,6 +60,14 @@ class ExternalDataset < ApplicationRecord
 
   def row_data_class
     row_data['class'] if row_data
+  end
+
+  def self.unmatched
+    where(entity_id: nil)
+  end
+
+  def self.matched
+    where.not(entity_id: nil)
   end
 
   private

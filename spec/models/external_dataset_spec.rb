@@ -108,7 +108,17 @@ describe ExternalDataset, type: :model do
     end
   end
 
-  describe 'unmatch'
+  describe 'matched and unmatched' do
+    before do
+      create(:external_dataset, entity_id: rand(1000))
+      create(:external_dataset, entity_id: nil)
+    end
+
+    specify { expect(ExternalDataset.count).to eq 2 }
+    specify { expect(ExternalDataset.unmatched.count).to eq 1 }
+    specify { expect(ExternalDataset.matched.count).to eq 1 }
+    specify { expect(ExternalDataset.matched.first).not_to eq ExternalDataset.unmatched.first }
+  end
 
   describe '#entity_name' do
     let(:external_dataset) do
