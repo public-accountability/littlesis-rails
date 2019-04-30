@@ -10,6 +10,8 @@ class CacheQueue
     @cache_key = "queue/#{name}"
     @reset = reset
     @options = options
+
+    clear if fetch.nil?
   end
 
   delegate :size, to: :fetch

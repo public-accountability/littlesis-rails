@@ -13,6 +13,10 @@ describe CacheQueue do
     specify do
       expect(cache_queue.instance_variable_get(:@options)).to have_key(:expires_in)
     end
+
+    specify do
+      expect(cache_queue.fetch).to eq []
+    end
   end
 
   describe 'set' do
@@ -23,7 +27,7 @@ describe CacheQueue do
     end
 
     it 'stores passed array in queue' do
-      expect(Rails.cache.fetch('queue/set_test')).to be nil
+      expect(Rails.cache.fetch('queue/set_test')).to eql []
       cache_queue.set([:x, :y, :z])
       expect(Rails.cache.fetch('queue/set_test')).to eql [:x, :y, :z]
     end
