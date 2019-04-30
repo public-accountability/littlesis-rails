@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 //  LODASH
-import curry from 'lodash/curry';
 import merge from 'lodash/merge';
 import isPlainObject from 'lodash/isPlainObject';
 import isNull from 'lodash/isNull';
@@ -20,7 +19,8 @@ import {
   loadItemInfo,
   loadMatches,
   ignoreMatch,
-  doMatch
+  doMatch,
+  nextItem
 } from './actions';
 
 // STATUS HELPERS
@@ -39,21 +39,33 @@ const defaultState = () => ({
 
 export default class EntityMatcherUI extends React.Component {
   static propTypes = {
-    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired
+    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired,    "dataset": PropTypes.string,
+    "flow": PropTypes.string.isRequired
   };
+
+   static defaultProps = {
+    dataset: 'iapd'
+  }
 
   constructor(props) {
     super(props);
-    this.state = merge(defaultState(), props);
+    this.state = merge(defaultState(), { "itemId": props.itemId });
     
     this.updateState = this.updateState.bind(this);
-    
+    this.resetState = this.resetState.bind(this);
+    this.loadItemInfoAndMatches = this.loadItemInfoAndMatches.bind(this);
+
     // Actions
     // These functions essentially constitute the public API
     this.loadItemInfo = loadItemInfo.bind(this);
     this.loadMatches = loadMatches.bind(this);
     this.ignoreMatch = ignoreMatch.bind(this);
     this.doMatch = doMatch.bind(this);
+    this.nextItem = nextItem.bind(this);
+  }
+
+  resetState() {
+    this.setState(defaultState());
   }
 
   /**
@@ -74,7 +86,7 @@ export default class EntityMatcherUI extends React.Component {
     }
   }
 
-  componentDidMount() {
+  loadItemInfoAndMatches() {
     if (!this.state.itemInfo) {
       this.loadItemInfo(this.state.itemId);
     }
@@ -82,6 +94,10 @@ export default class EntityMatcherUI extends React.Component {
     if (isNull(this.state.matchesStatus)) {
       this.loadMatches(this.state.itemId);
     }
+  }
+
+  componentDidMount() {
+    this.loadItemInfoAndMatches();
   }
 
   render() {
@@ -99,7 +115,7 @@ export default class EntityMatcherUI extends React.Component {
             <>
               <DatasetItemHeader itemId={this.state.itemId}  />
               <DatasetItemInfo itemInfo={this.state.itemInfo} />
-              <DatasetItemFooter />
+              <DatasetItemFooter nextItem={this.nextItem} />
             </>
           }
         </div>

@@ -120,7 +120,7 @@ class IapdDatum < ExternalDataset
   def self.random_unmatched_advisor
     random_id = UNMATCHED_ADVISOR_QUEUE.random_get
     # If no item is in the queue, repopulate it
-    if random_id.nil?  
+    if random_id.nil?
       if UNMATCHED_ADVISOR_QUEUE.set(priority_unmatched_advisors_ids).empty?
         Rails.logger.warn 'There are NO MORE unmatched iapd advisors with assets over 3,000,000,000'
         # return an unmatched advisor (regardless of asset size) straight from the database
@@ -130,7 +130,7 @@ class IapdDatum < ExternalDataset
       end
     end
 
-    # Find the advisor and return it only if if the advisor is unmatched
+    # Find the advisor and return, only if the advisor is unmatched
     advisor = IapdDatum.find(random_id)
     return advisor if advisor.unmatched?
 

@@ -26,15 +26,26 @@ class ExternalDatasetsController < ApplicationController
   # post /external_datasets/row/:id/match
   # { "entity_id": 123121 }
   def match
-    # if @row.match_with(@entity_id)
-    # else
-    # end
+    @row.match_with(@entity_id)
+    if @row.matched?
+      render json: { status: 'matched' }, status: :ok
+    else
+      render json: { status: 'error',
+                     error: "Failed to save match for row #{@row.id}" },
+             status: :internal_server_error
+    end
+  rescue ExternalDataset::RowAlreadyMatched
+    render json: { error: "Row #{@row.id} is already matched" }, status: :conflict
   end
 
   # GET /external_datasets/:dataset/flow/:flow/next
   # { "next": id }
   def flow
-    
+    id = ExternalDataset
+           .dataset_to_model(params[:dataset])
+           .next(params[:flow])&.id
+
+    render json: { 'next' => id }
   end
 
   private

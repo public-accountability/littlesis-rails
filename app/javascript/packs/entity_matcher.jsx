@@ -5,12 +5,14 @@ import EntityMatcherUI from './entity_matcher/EntityMatcherUI';
 
 
 window.entityMatcher = function(options) {
-    options = options || {};
-    let id = get(options, 'id', 'entity-matcher');
-    let flow = get(options, 'flow', 'advisors');
-    let start = get(options, 'start', '1');
+  options = options || {};
+  let dataset = get(options, 'dataset', 'iapd');
+  let id = get(options, 'id', 'entity-matcher');
+  let flow = get(options, 'flow', 'advisors');
+  let start = get(options, 'start', '1');
 
-    let element = document.getElementById(id);
-    
-    ReactDOM.render(<EntityMatcherUI itemId={start} />, element);
+  ReactDOM.render(
+    <EntityMatcherUI itemId={start} dataset={dataset} flow={flow} />,
+    document.getElementById(id)
+  );
 };

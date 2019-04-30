@@ -74,6 +74,10 @@ class ExternalDataset < ApplicationRecord
     where.not(entity_id: nil)
   end
 
+  def self.dataset_to_model(dataset)
+    "#{dataset.to_s.downcase.capitalize}Datum".constantize
+  end
+
   private
 
   def entity_name
