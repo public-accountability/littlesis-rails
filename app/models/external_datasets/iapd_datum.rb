@@ -15,6 +15,8 @@ class IapdDatum < ExternalDataset
     end
   end
 
+  UNMATCHED_IDS_CACHE_KEY = 'IapdDatum/priority_unmatched_advisors_ids'
+
   def filing_ids
     row_data['data'].map { |x| x.fetch('filing_id') }.uniq
   end
@@ -78,8 +80,65 @@ class IapdDatum < ExternalDataset
     where(Arel.sql("JSON_VALUE(row_data, '$.class') = 'IapdDatum::IapdAdvisor'"))
   end
 
+  def self.assets_under_management_over(amount)
+    TypeCheck.check amount, Integer
+
+    where(
+      Arel.sql("CAST(JSON_VALUE(row_data, '$.data[0].assets_under_management') as INT) >= #{amount}")
+    )
+  end
+
   def self.owners_of_crd_number(crd_number)
     owners.where(Arel.sql("JSON_CONTAINS(row_data, #{crd_number}, '$.associated_advisors')"))
+  end
+
+  def self.next(flow)
+    case flow.to_sym
+    when :advisors
+      advisors.unmatched
+    when :owners
+    else
+      raise Exceptions::LittleSisError, "Unknown IAPD flow type"
+    end
+  end
+
+  # This is a perfectly working (and nicer looking)
+  # of random_unmatch_advisor....but it takes a long time.
+  # If we ever switch to postgres, we can probably
+  # index the json field and speed up this query.
+  #
+  # def self.random_unmatched_advisor
+  #   unmatched
+  #     .advisors
+  #     .assets_under_management_over(3_000_000_000)
+  #     .order(Arel.sql('RAND()'))
+  #     .first
+  # end
+
+  def self.random_unmatched_advisor
+    # Grab a random id from the list of prorities
+    random_id = priority_unmatched_advisors_ids.sample
+    # If the list is empty, we return a random advisor straight from the database
+    return unmatched.advisors.order(Arel.sql('RAND()')).first if random_id.blank?
+
+    # Find the advisor and return it only if if the advisor is unmatched
+    advisor = find(sample_id)
+    return advisor if advisor.unmatched?
+
+    # If our advisor has already been matched, remove the matched advisor
+    # from the queue, reset the cache, and recurse
+    xpriority_unmatched_advisors_ids(priority_unmatched_advisors_ids - [sample_id])
+    random_unmatched_advisor
+  end
+
+  def self.priority_unmatched_advisors_ids(value = nil)
+    Rails.cache.fetch(UNMATCHED_IDS_CACHE_KEY, expires_in: 24.hours, force: value.present?) do
+      if value.present?
+        value
+      else
+        unmatched.advisors.assets_under_management_over(3_000_000_000).pluck(:id)
+      end
+    end
   end
 
   ## Class Helper Methods ##

@@ -3,4 +3,25 @@
 <%= stylesheet_link_tag 'entity_matcher' %>
 <%= javascript_pack_tag 'entity_matcher' %>
 
-<div id="entity-matcher"></div>
+<div class="row">
+  <div class="col">
+    <a class="mt-3" href="/external_datasets">«« Entity matcher home</a>
+    <h2 class="mt-1"><b>Dataset:</b> Iapd (<%= @flow %>)</h2>
+  </div>
+</div>
+
+
+<div class="row mt-3">
+  <div class="col">
+    <div id="entity-matcher"></div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+   window.entityMatcher(
+     <%= { "flow" => @flow, "start" => @start }.to_json.html_safe %>
+   );
+});
+</script>

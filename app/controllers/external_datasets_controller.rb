@@ -8,6 +8,9 @@ class ExternalDatasetsController < ApplicationController
   end
 
   def iapd
+    @flow = params.fetch(:flow, 'advisors')
+    @start = '1'
+    # @start = params.fetch(:start, IapdDatum.next_id(@flow)).to_sym
   end
 
   # get /external_datasets/row/:id
@@ -26,6 +29,12 @@ class ExternalDatasetsController < ApplicationController
     # if @row.match_with(@entity_id)
     # else
     # end
+  end
+
+  # GET /external_datasets/:dataset/flow/:flow/next
+  # { "next": id }
+  def flow
+    
   end
 
   private
