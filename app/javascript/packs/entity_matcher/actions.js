@@ -64,12 +64,10 @@ export function doMatch(rowId, entityId) {
 
 export function nextItem() {
   this.resetState();
+  this.updateState("itemInfoStatus", 'LOADING');
 
   let url = `/external_datasets/${this.props.dataset}/flow/${this.props.flow}/next`;
-
+  
   lsFetch(url)
-    .then( (json) => {
-      this.setState({ "itemId": json.next},
-		    () => { this.loadItemInfoAndMatches() });
-    });
+    .then( json => this.setState({ "itemId": json.next}, this.loadItemInfoAndMatches));
 }

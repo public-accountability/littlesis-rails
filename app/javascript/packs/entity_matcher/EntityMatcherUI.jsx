@@ -69,14 +69,14 @@ export default class EntityMatcherUI extends React.Component {
   }
 
   /**
-   * I don't like how setState doesn't recursively merge objects. That's very annoying!
-   * So my "updateState" uses lodash's merge to recursive combine the objects before sending
-   * them to setState. Yes, I could use redux or something, but I'll stick with this function 
-   * until I feel like that's needed.
+   * Updates state by recursive merging (via lodash's merge) the new object with current state.
    *
    * Additionally, It allows a second synatx for updating the state:
    *   updateState(key, value)
-   * which is the same as updateState({ key: value })
+   * which is the same as updateState({ key: value })* 
+   *
+   * @param {Object|String} newStateOrKey
+   * @param {Any} value
    */
   updateState(newStateOrKey, value) {
     if (isPlainObject(newStateOrKey)) {
@@ -86,6 +86,7 @@ export default class EntityMatcherUI extends React.Component {
     }
   }
 
+  
   loadItemInfoAndMatches() {
     if (!this.state.itemInfo) {
       this.loadItemInfo(this.state.itemId);
