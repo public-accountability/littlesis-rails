@@ -49,7 +49,7 @@ then
     bundle install
 fi
 
-if git_files_changed 'assets'
+if git_files_changed 'assets' || git_files_changed 'packs'
 then
     echo "Precompiling assets"
     bundle exec rake assets:precompile
