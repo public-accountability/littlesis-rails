@@ -19,7 +19,8 @@ export default class PotentialMatches extends React.Component {
       "automatchable": PropTypes.bool
     }),
     "ignoreMatch": PropTypes.func,
-    "doMatch": PropTypes.func
+    "doMatch": PropTypes.func,
+    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired
   };
   
   
@@ -33,6 +34,7 @@ export default class PotentialMatches extends React.Component {
              { isLoading &&  <LoadingSpinner /> }
              { (hasMatches || noMatches) && <PotentialMatchesSearch /> }
              { hasMatches && <PotentialMatchesList
+                               itemId={this.props.itemId}
                                ignoreMatch={this.props.ignoreMatch}
                                doMatch={this.props.doMatch}
                                matches={this.props.matches} /> }

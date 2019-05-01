@@ -47,17 +47,22 @@ export function ignoreMatch(entityId) {
 }
 
 export function doMatch(rowId, entityId) {
-  this.updateState("matchStatus", 'MATCHING');
+  this.updateState("matchedState", 'MATCHING');
 
   let url = `/external_datasets/row/${rowId}/match`;
-  let data = {"entity_id": entityId };
+  let data = { "entity_id": entityId };
 
   return lsPost(url, data)
-    .then(() => this.updateState("matchStatus", 'MATCHED'))
+    .then( json => {
+      this.updateState({
+	"matchedState": 'MATCHED',
+	"matchResult": json.results
+      });
+    })
     .catch(err => {
       console.error(`Failed to match row ${rowId} with entity ${entityId}`);
       errorMessage('doMatch', err);
-      this.updateState("matchStatus", 'ERROR');
+      this.updateState("matchedState", 'ERROR');
     });
 
 }

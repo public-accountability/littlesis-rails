@@ -13,6 +13,7 @@ import DatasetItemInfo from './components/DatasetItemInfo';
 import DatasetItemFooter from './components/DatasetItemFooter';
 import LoadingSpinner from './components/LoadingSpinner';
 import PotentialMatches from './components/PotentialMatches';
+import ConfirmationPage from './components/ConfirmationPage';
 
 // ACTIONS
 import {
@@ -27,6 +28,8 @@ import {
 const LOADING = 'LOADING';
 const COMPLETE = 'COMPLETE';
 const ERROR = 'ERROR';
+const MATCHING = 'MATCHING';
+const MATCHED = 'MATCHED';
 
 const defaultState = () => ({
   "itemId": null, // item id (row id of External Dataset)
@@ -34,12 +37,14 @@ const defaultState = () => ({
   "itemInfoStatus": null, // status item info http request
   "matches": null, // Array of potential matches 
   "matchesStatus": null, // statues of potential matches http request
-  "matchedState": null // Has it been matched: MATCHING, MATCHED, ERROR
+  "matchedState": null, // Has it been matched: MATCHING, MATCHED, ERROR
+  "matchResult": null // response from maching. An array of strings.
 });
 
 export default class EntityMatcherUI extends React.Component {
   static propTypes = {
-    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired,    "dataset": PropTypes.string,
+    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired,
+    "dataset": PropTypes.string,
     "flow": PropTypes.string.isRequired
   };
 
@@ -105,6 +110,20 @@ export default class EntityMatcherUI extends React.Component {
     const itemInfoLoading = this.state.itemInfoStatus === LOADING;
     const itemInfoComplete = this.state.itemInfoStatus === COMPLETE;
     const itemInfoError = this.state.itemInfoStatus === ERROR;
+    const matchingInProgress = this.state.matchedState === MATCHING;
+    const isMatched = this.state.matchedState === MATCHED;
+    const matchingError = this.state.matchedState === ERROR;
+    const showPotentialMatches = this.state.itemId && !(matchingInProgress || isMatched || matchingError);
+
+
+    const renderPotentialMatches = () => {
+      return <PotentialMatches ignoreMatch={this.ignoreMatch}
+                               doMatch={this.doMatch}
+                               matches={this.state.matches}
+                               matchesStatus={this.state.matchesStatus}
+                               itemId={this.state.itemId} />;
+    };
+
 
     return(
       <div id="entity-matcher-ui">
@@ -121,10 +140,10 @@ export default class EntityMatcherUI extends React.Component {
           }
         </div>
         <div className="rightSide">
-          <PotentialMatches ignoreMatch={this.ignoreMatch}
-                            doMatch={this.doMatch}
-                            matches={this.state.matches}
-                            matchesStatus={this.state.matchesStatus} />
+          { matchingInProgress && <LoadingSpinner /> }
+          { isMatched && <ConfirmationPage /> }
+          { matchingError && <ApiError /> }
+          { showPotentialMatches && renderPotentialMatches() }
         </div>
       </div>
     );

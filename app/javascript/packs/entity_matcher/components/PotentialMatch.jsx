@@ -37,19 +37,18 @@ export default class PotentialMatch extends React.Component {
   static propTypes = {
     "match": PropTypes.object.isRequired,
     "ignoreMatch": PropTypes.func.isRequired,
-    "doMatch": PropTypes.func.isRequired
+    "doMatch": PropTypes.func.isRequired,
+    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired
   }
 
-  
   render () {
     const entity = this.props.match.entity;
-    // TODO: pass this in as a prop
-    const ROWID = 123;
+    
     return <div className="potential-match-card">
              <Entity entity={entity} />
              <Buttons
                ignoreMatch={ e => this.props.ignoreMatch(entity.id) }
-               doMatch={ e => this.props.doMatch(ROWID, entity.id) }
+               doMatch={ e => this.props.doMatch(this.props.itemId, entity.id) }
              />
            </div>;
   }
