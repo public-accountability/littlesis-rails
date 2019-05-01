@@ -38,6 +38,12 @@ module ExternalDatasetService
         end
         external_dataset.update! entity_id: entity.id
       end
+
+      if external_dataset.advisor?
+        external_dataset.owners.each do |owner|
+          owner.add_to_matching_queue if owner.unmatched?
+        end
+      end
     end
 
     def unmatch
