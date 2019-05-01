@@ -15,7 +15,8 @@ class IapdDatum < ExternalDataset
     end
   end
 
-  UNMATCHED_IDS_CACHE_KEY = 'IapdDatum/priority_unmatched_advisors_ids'
+  UNMATCHED_ADVISOR_QUEUE = CacheQueue.new(name: 'unmatched_advisors_ids',
+                                           options: { expires_in: 24.hours })
 
   def filing_ids
     row_data['data'].map { |x| x.fetch('filing_id') }.uniq
@@ -95,15 +96,16 @@ class IapdDatum < ExternalDataset
   def self.next(flow)
     case flow.to_sym
     when :advisors
-      advisors.unmatched
+      random_unmatched_advisor
     when :owners
+      owners_from_queue
     else
-      raise Exceptions::LittleSisError, "Unknown IAPD flow type"
+      raise Exceptions::LittleSisError, 'Unknown IAPD flow type'
     end
   end
 
   # This is a perfectly working (and nicer looking)
-  # of random_unmatch_advisor....but it takes a long time.
+  # of random_unmatched_advisor....but it takes a long time.
   # If we ever switch to postgres, we can probably
   # index the json field and speed up this query.
   #
@@ -116,29 +118,33 @@ class IapdDatum < ExternalDataset
   # end
 
   def self.random_unmatched_advisor
-    # Grab a random id from the list of prorities
-    random_id = priority_unmatched_advisors_ids.sample
-    # If the list is empty, we return a random advisor straight from the database
-    return unmatched.advisors.order(Arel.sql('RAND()')).first if random_id.blank?
+    random_id = UNMATCHED_ADVISOR_QUEUE.random_get
+    # If no item is in the queue, repopulate it
+    if random_id.nil?
+      if UNMATCHED_ADVISOR_QUEUE.set(priority_unmatched_advisors_ids).empty?
+        Rails.logger.warn 'There are NO MORE unmatched iapd advisors with assets over 3,000,000,000'
+        # return an unmatched advisor (regardless of asset size) straight from the database
+        return unmatched.advisors.order(Arel.sql('RAND()')).first
+      else
+        return random_unmatched_advisor
+      end
+    end
 
-    # Find the advisor and return it only if if the advisor is unmatched
-    advisor = find(sample_id)
+    # Find the advisor and return, only if the advisor is unmatched
+    advisor = IapdDatum.find(random_id)
     return advisor if advisor.unmatched?
 
     # If our advisor has already been matched, remove the matched advisor
     # from the queue, reset the cache, and recurse
-    xpriority_unmatched_advisors_ids(priority_unmatched_advisors_ids - [sample_id])
+    UNMATCHED_ADVISOR_QUEUE.remove(random_id)
     random_unmatched_advisor
   end
 
-  def self.priority_unmatched_advisors_ids(value = nil)
-    Rails.cache.fetch(UNMATCHED_IDS_CACHE_KEY, expires_in: 24.hours, force: value.present?) do
-      if value.present?
-        value
-      else
-        unmatched.advisors.assets_under_management_over(3_000_000_000).pluck(:id)
-      end
-    end
+  def self.priority_unmatched_advisors_ids
+    unmatched
+      .advisors
+      .assets_under_management_over(3_000_000_000)
+      .pluck(:id)
   end
 
   ## Class Helper Methods ##

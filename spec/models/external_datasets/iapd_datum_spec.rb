@@ -1,5 +1,7 @@
 require "rails_helper"
 
+# rubocop:disable Style/Semicolon
+
 describe IapdDatum do
   let(:iapd_owner) { build(:external_dataset_iapd_owner) }
   let(:iapd_advisor) { build(:external_dataset_iapd_advisor) }
@@ -82,4 +84,33 @@ describe IapdDatum do
       expect(owners.first).to eq owner_two
     end
   end
+
+  describe 'retrieving unmached_advisors' do
+    let(:under_3_billion) { create(:external_dataset_iapd_advisor) }
+    let(:over_3_billion) { create(:iapd_baupost) }
+
+    before { under_3_billion; over_3_billion; }
+
+    after { IapdDatum::UNMATCHED_ADVISOR_QUEUE.clear }
+
+    describe 'priority_unmatched_advisors_ids' do
+      specify do
+        expect(IapdDatum.priority_unmatched_advisors_ids).to eq [over_3_billion.id]
+      end
+    end
+
+    describe 'random_unmatch_advisor' do 
+      it 'returns unmatched advisor' do
+        expect(IapdDatum.random_unmatched_advisor).to eql over_3_billion
+      end
+
+      it 'finds non-priority if queue is empty unmatched advisor' do
+        expect(IapdDatum.random_unmatched_advisor).to eql over_3_billion
+        over_3_billion.update!(entity: create(:entity_org))
+        expect(IapdDatum.random_unmatched_advisor).to eql under_3_billion
+      end
+    end
+  end
 end
+
+# rubocop:enable Style/Semicolon

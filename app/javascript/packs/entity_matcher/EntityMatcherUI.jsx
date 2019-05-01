@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 //  LODASH
-import curry from 'lodash/curry';
 import merge from 'lodash/merge';
 import isPlainObject from 'lodash/isPlainObject';
 import isNull from 'lodash/isNull';
@@ -20,7 +19,8 @@ import {
   loadItemInfo,
   loadMatches,
   ignoreMatch,
-  doMatch
+  doMatch,
+  nextItem
 } from './actions';
 
 // STATUS HELPERS
@@ -39,32 +39,44 @@ const defaultState = () => ({
 
 export default class EntityMatcherUI extends React.Component {
   static propTypes = {
-    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired
+    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired,    "dataset": PropTypes.string,
+    "flow": PropTypes.string.isRequired
   };
+
+   static defaultProps = {
+    dataset: 'iapd'
+  }
 
   constructor(props) {
     super(props);
-    this.state = merge(defaultState(), props);
+    this.state = merge(defaultState(), { "itemId": props.itemId });
     
     this.updateState = this.updateState.bind(this);
-    
+    this.resetState = this.resetState.bind(this);
+    this.loadItemInfoAndMatches = this.loadItemInfoAndMatches.bind(this);
+
     // Actions
     // These functions essentially constitute the public API
     this.loadItemInfo = loadItemInfo.bind(this);
     this.loadMatches = loadMatches.bind(this);
     this.ignoreMatch = ignoreMatch.bind(this);
     this.doMatch = doMatch.bind(this);
+    this.nextItem = nextItem.bind(this);
+  }
+
+  resetState() {
+    this.setState(defaultState());
   }
 
   /**
-   * I don't like how setState doesn't recursively merge objects. That's very annoying!
-   * So my "updateState" uses lodash's merge to recursive combine the objects before sending
-   * them to setState. Yes, I could use redux or something, but I'll stick with this function 
-   * until I feel like that's needed.
+   * Updates state by recursive merging (via lodash's merge) the new object with current state.
    *
    * Additionally, It allows a second synatx for updating the state:
    *   updateState(key, value)
-   * which is the same as updateState({ key: value })
+   * which is the same as updateState({ key: value })* 
+   *
+   * @param {Object|String} newStateOrKey
+   * @param {Any} value
    */
   updateState(newStateOrKey, value) {
     if (isPlainObject(newStateOrKey)) {
@@ -74,7 +86,8 @@ export default class EntityMatcherUI extends React.Component {
     }
   }
 
-  componentDidMount() {
+  
+  loadItemInfoAndMatches() {
     if (!this.state.itemInfo) {
       this.loadItemInfo(this.state.itemId);
     }
@@ -82,6 +95,10 @@ export default class EntityMatcherUI extends React.Component {
     if (isNull(this.state.matchesStatus)) {
       this.loadMatches(this.state.itemId);
     }
+  }
+
+  componentDidMount() {
+    this.loadItemInfoAndMatches();
   }
 
   render() {
@@ -99,7 +116,7 @@ export default class EntityMatcherUI extends React.Component {
             <>
               <DatasetItemHeader itemId={this.state.itemId}  />
               <DatasetItemInfo itemInfo={this.state.itemInfo} />
-              <DatasetItemFooter />
+              <DatasetItemFooter nextItem={this.nextItem} />
             </>
           }
         </div>
