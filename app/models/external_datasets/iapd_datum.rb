@@ -18,6 +18,8 @@ class IapdDatum < ExternalDataset
   UNMATCHED_ADVISOR_QUEUE = CacheQueue.new(name: 'unmatched_advisors_ids',
                                            options: { expires_in: 24.hours })
 
+  OWNERS_MATCHING_QUEUE = CacheQueue.new(name: 'iapd_owners')
+
   def filing_ids
     row_data['data'].map { |x| x.fetch('filing_id') }.uniq
   end
@@ -53,6 +55,9 @@ class IapdDatum < ExternalDataset
 
   def add_to_matching_queue
     method_only_for! :owner
+
+    OWNERS_MATCHING_QUEUE.add id, uniq: true
+    self
   end
 
   # Retrieves associated owners for the advisor.

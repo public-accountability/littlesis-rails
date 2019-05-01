@@ -3,8 +3,8 @@ require "rails_helper"
 # rubocop:disable Style/Semicolon
 
 describe IapdDatum do
-  let(:iapd_owner) { build(:external_dataset_iapd_owner) }
-  let(:iapd_advisor) { build(:external_dataset_iapd_advisor) }
+  let(:iapd_owner) { build_stubbed(:external_dataset_iapd_owner) }
+  let(:iapd_advisor) { build_stubbed(:external_dataset_iapd_advisor) }
 
   specify { expect(IapdDatum::IapdAdvisor).is_a? Struct }
   specify { expect(IapdDatum::IapdOwner).is_a? Struct }
@@ -47,6 +47,25 @@ describe IapdDatum do
 
     specify do
       expect(build(:external_dataset_iapd_owner).filings_for_advisor(123)).to eq([])
+    end
+  end
+
+  describe 'add_to_matching_queue' do
+    after { IapdDatum::OWNERS_MATCHING_QUEUE.clear }
+
+    specify do
+      expect { iapd_advisor.add_to_matching_queue }.to raise_error(Exceptions::LittleSisError)
+    end
+
+    it 'adds owner id to queue' do
+      expect(IapdDatum::OWNERS_MATCHING_QUEUE.empty?).to be true
+      iapd_owner.add_to_matching_queue
+      expect(IapdDatum::OWNERS_MATCHING_QUEUE.fetch).to eq [iapd_owner.id]
+    end
+
+    it 'adds owner to queue twice only puts on copy in the queue' do
+      2.times { iapd_owner.add_to_matching_queue }
+      expect(IapdDatum::OWNERS_MATCHING_QUEUE.fetch).to eq [iapd_owner.id]
     end
   end
 
