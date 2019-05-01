@@ -68,6 +68,11 @@ class IapdDatum < ExternalDataset
     self.class.owners_of_crd_number row_data.fetch('crd_number')
   end
 
+  def self.advisors
+    method_only_for! :advisor
+    
+  end
+
   def owner?
     row_data_class == IapdOwner.name
   end
@@ -96,6 +101,11 @@ class IapdDatum < ExternalDataset
 
   def self.owners_of_crd_number(crd_number)
     owners.where(Arel.sql("JSON_CONTAINS(row_data, #{crd_number}, '$.associated_advisors')"))
+  end
+
+  # The dataset_key for an advisors is always the crd number
+  def self.advisors_by_crd_numbers(crd_numbers)
+    advisors.where dataset_key: Array.wrap(crd_numbers).map(&:to_s)
   end
 
   def self.next(flow)

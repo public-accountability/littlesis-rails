@@ -104,6 +104,18 @@ describe IapdDatum do
     end
   end
 
+  describe 'advisors_by_crd_numbers' do
+    before do
+      create(:external_dataset_iapd_owner)
+      create(:external_dataset_iapd_advisor, dataset_key: '123')
+      create(:external_dataset_iapd_advisor, dataset_key: '456')
+    end
+
+    specify { expect(IapdDatum.advisors_by_crd_numbers('789').count).to eq 0 }
+    specify { expect(IapdDatum.advisors_by_crd_numbers('123').count).to eq 1 }
+    specify { expect(IapdDatum.advisors_by_crd_numbers(%w[123 456]).count).to eq 2 }
+  end
+
   describe 'retrieving unmached_advisors' do
     let(:under_3_billion) { create(:external_dataset_iapd_advisor) }
     let(:over_3_billion) { create(:iapd_baupost) }
