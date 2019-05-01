@@ -107,8 +107,8 @@ describe IapdRelationshipService do
       describe 'Finding and Creating relationships' do
         let(:seth_klarman_entity) { create(:entity_person, name: 'Seth Klarman') }
         let(:baupost_entity) { create(:entity_org, name: 'Baupost') }
-        let(:baupost_iapd) { create(:iapd_baupost).match_with(baupost_entity) }
-        let(:klarman_iapd) { create(:iapd_seth_klarman).match_with(seth_klarman_entity) }
+        let(:baupost_iapd) { create(:iapd_baupost, entity_id: baupost_entity.id) } 
+        let(:klarman_iapd) { create(:iapd_seth_klarman, entity_id: seth_klarman_entity.id) }
         let(:tag) { create(:tag, name: "iapd") }
 
         let(:create_service) do
@@ -117,7 +117,7 @@ describe IapdRelationshipService do
           end
         end
 
-        before { stub_const("IapdRelationshipService::IAPD_TAG_ID", tag.id) }
+        before { stub_const("#{IapdRelationshipService}::IAPD_TAG_ID", tag.id) }
 
         describe 'creating a relationship between Seth Klarman and Baupost' do
           it 'creates a new relationship' do
@@ -156,15 +156,13 @@ describe IapdRelationshipService do
               .to eq relationship
           end
 
-          it 'returns nil if no relatinoship exists yet' do
+          it 'returns nil if no relationship exists yet' do
             expect(IapdRelationshipService.find_relationship(advisor: baupost_iapd, owner: klarman_iapd))
               .to be nil
           end
         end
       end
     end
-
-    describe 'create_relationships_for'
   end
 end
 
