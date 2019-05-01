@@ -12,16 +12,16 @@ class IapdRelationshipService
     @owner = owner
     @dry_run = dry_run
 
-    if owner.matched?
-      if relationship_exists?
-        @result = :relationship_exists
-      else
-        create_relationship unless @dry_run
-        @result = :relationship_created
-      end
-    else
+    if advisor.unmatched?
+      @result = :advisor_not_matched
+    elsif owner.unmatched?
       @owner.add_to_matching_queue
       @result = :owner_not_matched
+    elsif relationship_exists?
+      @result = :relationship_exists
+    else
+      create_relationship unless @dry_run
+      @result = :relationship_created
     end
 
     freeze

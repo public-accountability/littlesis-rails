@@ -8,8 +8,23 @@ describe IapdRelationshipService do
     let(:owner) { instance_double('IapdDatum') }
     let(:relationship) { instance_double('Relationship') }
 
-    context 'when owner is matched' do
-      before { allow(owner).to receive(:matched?).and_return(true) }
+    context 'when advisor is unmatched' do
+      before do
+        allow(advisor).to receive(:unmatched?).and_return(true)
+      end
+
+      it 'sets result to adivsor_not_matched' do
+        service = IapdRelationshipService.new(advisor: advisor, owner: owner)
+        expect(service.result).to eq :advisor_not_matched
+        expect(service.relationship).to be nil
+      end
+    end
+
+    context 'when owner is matched and advisor is matched' do
+      before do
+        allow(owner).to receive(:unmatched?).and_return(false)
+        allow(advisor).to receive(:unmatched?).and_return(false)
+      end
 
       it 'sets result properly when relationship exists' do
         expect(IapdRelationshipService).to receive(:find_relationship).and_return(relationship)
@@ -42,7 +57,10 @@ describe IapdRelationshipService do
     end
 
     context 'when owner is not matched' do
-      before { allow(owner).to receive(:matched?).and_return(false) }
+      before do
+        allow(owner).to receive(:unmatched?).and_return(true)
+        allow(advisor).to receive(:unmatched?).and_return(false)
+      end
 
       it 'adds owner to matching queue' do
         expect(owner).to receive(:add_to_matching_queue).once
