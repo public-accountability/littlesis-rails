@@ -18,6 +18,8 @@ class IapdDatum < ExternalDataset
   UNMATCHED_ADVISOR_QUEUE = CacheQueue.new(name: 'unmatched_advisors_ids',
                                            options: { expires_in: 24.hours })
 
+  OWNERS_MATCHING_QUEUE = CacheQueue.new(name: 'iapd_owners')
+
   def filing_ids
     row_data['data'].map { |x| x.fetch('filing_id') }.uniq
   end
@@ -53,6 +55,9 @@ class IapdDatum < ExternalDataset
 
   def add_to_matching_queue
     method_only_for! :owner
+
+    OWNERS_MATCHING_QUEUE.add id, uniq: true
+    self
   end
 
   # Retrieves associated owners for the advisor.
@@ -61,6 +66,12 @@ class IapdDatum < ExternalDataset
     method_only_for! :advisor
 
     self.class.owners_of_crd_number row_data.fetch('crd_number')
+  end
+
+  def advisors
+    method_only_for! :owner
+
+    self.class.advisors_by_crd_numbers row_data.fetch('associated_advisors')
   end
 
   def owner?
@@ -91,6 +102,11 @@ class IapdDatum < ExternalDataset
 
   def self.owners_of_crd_number(crd_number)
     owners.where(Arel.sql("JSON_CONTAINS(row_data, #{crd_number}, '$.associated_advisors')"))
+  end
+
+  # The dataset_key for an advisors is always the crd number
+  def self.advisors_by_crd_numbers(crd_numbers)
+    advisors.where dataset_key: Array.wrap(crd_numbers).map(&:to_s)
   end
 
   def self.next(flow)

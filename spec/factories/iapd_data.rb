@@ -165,8 +165,6 @@ FactoryBot.define do
     end
   end
 
-  
-
   factory :iapd_seth_klarman, class: IapdDatum do
     type { 'IapdDatum' }
     primary_ext { :person }

@@ -160,13 +160,24 @@ describe ExternalDatasetService do
         end
       end
 
-      context 'when entity is an org' do
-        let(:external_dataset) { create(:external_dataset_iapd_advisor) }
-        let(:service) { ExternalDatasetService::Iapd.new(entity: org, external_dataset: external_dataset) }
+      context 'when entity is an advisor (org)' do
+        let(:iapd_advisor) { create(:external_dataset_iapd_advisor) }
+        let(:iapd_owner) { build_stubbed(:external_dataset_iapd_owner) }
+        let(:service) { ExternalDatasetService::Iapd.new(entity: org, external_dataset: iapd_advisor) }
+
+        after { IapdDatum::OWNERS_MATCHING_QUEUE.clear }
 
         it 'creates a business' do
           expect { service.match }.to change(Business, :count).by(1)
         end
+
+        it 'adds associated owners to queue' do
+          expect(iapd_advisor).to receive(:owners).once.and_return([iapd_owner])
+          expect { service.match }
+            .to change(IapdDatum::OWNERS_MATCHING_QUEUE, :fetch)
+                  .from([]).to([iapd_owner.id])
+        end
+
       end
     end # end describe match
 

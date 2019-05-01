@@ -38,6 +38,16 @@ module ExternalDatasetService
         end
         external_dataset.update! entity_id: entity.id
       end
+
+      if external_dataset.advisor?
+        external_dataset.owners.map do |owner|
+          IapdRelationshipService.new(advisor: external_dataset, owner: owner)
+        end
+      elsif external_dataset.owner?
+        external_dataset.advisors.map do |advisor|
+          IapdRelationshipService.new(advisor: advisor, owner: external_dataset)
+        end
+      end
     end
 
     def unmatch

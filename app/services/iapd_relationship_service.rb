@@ -2,6 +2,13 @@
 
 # Creates or finds existing relationship between
 # an Iapd Owner and Iapd Advisor
+#
+# result can be one of these possible symbols:
+#  - advisor_not_matched
+#  - owner_not_matched
+#  - relationship_exists
+#  - relationship_created
+#
 class IapdRelationshipService
   IAPD_TAG_ID = 18
 
@@ -12,16 +19,16 @@ class IapdRelationshipService
     @owner = owner
     @dry_run = dry_run
 
-    if owner.matched?
-      if relationship_exists?
-        @result = :relationship_exists
-      else
-        create_relationship unless @dry_run
-        @result = :relationship_created
-      end
-    else
+    if advisor.unmatched?
+      @result = :advisor_not_matched
+    elsif owner.unmatched?
       @owner.add_to_matching_queue
       @result = :owner_not_matched
+    elsif relationship_exists?
+      @result = :relationship_exists
+    else
+      create_relationship unless @dry_run
+      @result = :relationship_created
     end
 
     freeze

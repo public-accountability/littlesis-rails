@@ -75,8 +75,7 @@ describe ExternalDataset, type: :model do
 
   describe 'match_with' do
     let(:external_dataset) { build(:external_dataset, entity_id: nil) }
-    let(:entity_id) { rand(10_000) }
-    let(:entity) { instance_double('Entity', id: entity_id) }
+    let(:entity) { instance_double('Entity', id: rand(10_000)) }
 
     before { allow(Entity).to receive(:entity_for).and_return(entity) }
 
@@ -85,26 +84,13 @@ describe ExternalDataset, type: :model do
                  .to raise_error(ExternalDataset::RowAlreadyMatched)
     end
 
-    it 'calls outs to ExternalDatasetService, updates entity id and saves' do
-      expect(external_dataset).to receive(:save).once.and_return(true)
-      expect(ExternalDatasetService).to receive(:validate_match!)
-                                          .once
+    it 'calls outs to ExternalDatasetService' do
+      expect(ExternalDatasetService).to receive(:validate_match!).once
                                           .with(external_dataset: external_dataset, entity: entity)
-      expect(ExternalDatasetService).to receive(:match)
-                                          .once
+      expect(ExternalDatasetService).to receive(:match).once
                                           .with(external_dataset: external_dataset, entity: entity)
 
-      expect(external_dataset.match_with(entity_id)).to be external_dataset
-      expect(external_dataset.entity_id).to eq entity_id
-    end
-
-    it 'Logs error error if saving fails' do
-      expect(external_dataset).to receive(:save).once.and_return(false)
-      expect(ExternalDatasetService).to receive(:validate_match!)
-      expect(ExternalDatasetService).to receive(:match)
-      expect(Rails.logger).to receive(:warn).and_call_original
-      external_dataset.match_with(entity_id)
-      expect(external_dataset.entity_id).to be nil
+      external_dataset.match_with(entity.id)
     end
   end
 

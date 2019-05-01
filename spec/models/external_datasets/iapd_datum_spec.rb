@@ -3,8 +3,8 @@ require "rails_helper"
 # rubocop:disable Style/Semicolon
 
 describe IapdDatum do
-  let(:iapd_owner) { build(:external_dataset_iapd_owner) }
-  let(:iapd_advisor) { build(:external_dataset_iapd_advisor) }
+  let(:iapd_owner) { build_stubbed(:external_dataset_iapd_owner) }
+  let(:iapd_advisor) { build_stubbed(:external_dataset_iapd_advisor) }
 
   specify { expect(IapdDatum::IapdAdvisor).is_a? Struct }
   specify { expect(IapdDatum::IapdOwner).is_a? Struct }
@@ -50,6 +50,78 @@ describe IapdDatum do
     end
   end
 
+  describe 'match_with' do
+    let(:seth_klarman_entity) { create(:entity_person, name: 'Seth Klarman') }
+    let(:baupost_entity) { create(:entity_org, name: 'Baupost') }
+    let(:iapd_seth_klarman) { create(:iapd_seth_klarman) }
+    let(:iapd_baupost) { create(:iapd_baupost) }
+    let(:tag) { create(:tag, name: "iapd") }
+
+    before do
+      stub_const("#{IapdRelationshipService}::IAPD_TAG_ID", tag.id)
+      baupost_entity
+      iapd_baupost
+      iapd_seth_klarman
+    end
+
+    describe 'matching advisor without matched entity' do
+      it 'updates entity id' do
+        expect(iapd_baupost.matched?).to be false
+        iapd_baupost.match_with(baupost_entity)
+        expect(iapd_baupost.matched?).to be true
+        expect(iapd_baupost.entity_id).to eq baupost_entity.id
+      end
+
+      it 'returns array of IapdRelationshipService' do
+        result = iapd_baupost.match_with(baupost_entity)
+        expect(result.size).to eq 1
+        expect(result.first).to be_a IapdRelationshipService
+        expect(result.first.result).to eq :owner_not_matched
+      end
+    end
+
+    describe 'matching advisor when owner has been matched' do
+      before { iapd_seth_klarman.match_with(seth_klarman_entity) }
+
+      it 'creates a new relationship' do
+        expect { iapd_baupost.match_with(baupost_entity) }
+          .to change(Relationship, :count).by(1)
+      end
+
+      it 'sets result to be :relationship_created' do
+        result = iapd_baupost.match_with(baupost_entity)
+        expect(result.first.result).to eq :relationship_created
+      end
+
+      it 'creates relationship with correct tag and attributes' do
+        relationship = iapd_baupost.match_with(baupost_entity).first.relationship
+        expect(relationship).to be_a Relationship
+        expect(relationship.entity1_id).to eq seth_klarman_entity.id
+        expect(relationship.entity2_id).to eq baupost_entity.id
+        expect(relationship.tag_ids).to eq [tag.id]
+      end
+    end
+  end
+
+  describe 'add_to_matching_queue' do
+    after { IapdDatum::OWNERS_MATCHING_QUEUE.clear }
+
+    specify do
+      expect { iapd_advisor.add_to_matching_queue }.to raise_error(Exceptions::LittleSisError)
+    end
+
+    it 'adds owner id to queue' do
+      expect(IapdDatum::OWNERS_MATCHING_QUEUE.empty?).to be true
+      iapd_owner.add_to_matching_queue
+      expect(IapdDatum::OWNERS_MATCHING_QUEUE.fetch).to eq [iapd_owner.id]
+    end
+
+    it 'adds owner to queue twice only puts on copy in the queue' do
+      2.times { iapd_owner.add_to_matching_queue }
+      expect(IapdDatum::OWNERS_MATCHING_QUEUE.fetch).to eq [iapd_owner.id]
+    end
+  end
+
   describe '#owner? and #advisor?' do
     specify { expect(iapd_owner.owner?).to be true }
     specify { expect(iapd_owner.advisor?).to be false }
@@ -83,6 +155,18 @@ describe IapdDatum do
       expect(owners.size).to eq 1
       expect(owners.first).to eq owner_two
     end
+  end
+
+  describe 'advisors_by_crd_numbers' do
+    before do
+      create(:external_dataset_iapd_owner)
+      create(:external_dataset_iapd_advisor, dataset_key: '123')
+      create(:external_dataset_iapd_advisor, dataset_key: '456')
+    end
+
+    specify { expect(IapdDatum.advisors_by_crd_numbers('789').count).to eq 0 }
+    specify { expect(IapdDatum.advisors_by_crd_numbers('123').count).to eq 1 }
+    specify { expect(IapdDatum.advisors_by_crd_numbers(%w[123 456]).count).to eq 2 }
   end
 
   describe 'retrieving unmached_advisors' do
