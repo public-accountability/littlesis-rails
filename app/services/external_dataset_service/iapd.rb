@@ -40,8 +40,12 @@ module ExternalDatasetService
       end
 
       if external_dataset.advisor?
-        external_dataset.owners.each do |owner|
-          owner.add_to_matching_queue if owner.unmatched?
+        external_dataset.owners.map do |owner|
+          IapdRelationshipService.new(advisor: external_dataset, owner: owner)
+        end
+      elsif external_dataset.owner?
+        external_dataset.advisors.map do |advisor|
+          IapdRelationshipService.new(advisor: advisor, owner: external_dataset)
         end
       end
     end

@@ -50,6 +50,59 @@ describe IapdDatum do
     end
   end
 
+  describe 'match_with' do
+    let(:seth_klarman_entity) { create(:entity_person, name: 'Seth Klarman') }
+    let(:baupost_entity) { create(:entity_org, name: 'Baupost') }
+    let(:iapd_seth_klarman) { create(:iapd_seth_klarman) }
+    let(:iapd_baupost) { create(:iapd_baupost) }
+    let(:tag) { create(:tag, name: "iapd") }
+
+    before do
+      stub_const("#{IapdRelationshipService}::IAPD_TAG_ID", tag.id)
+      baupost_entity
+      iapd_baupost
+      iapd_seth_klarman
+    end
+
+    describe 'matching advisor without matched entity' do
+      it 'updates entity id' do
+        expect(iapd_baupost.matched?).to be false
+        iapd_baupost.match_with(baupost_entity)
+        expect(iapd_baupost.matched?).to be true
+        expect(iapd_baupost.entity_id).to eq baupost_entity.id
+      end
+
+      it 'returns array of IapdRelationshipService' do
+        result = iapd_baupost.match_with(baupost_entity)
+        expect(result.size).to eq 1
+        expect(result.first).to be_a IapdRelationshipService
+        expect(result.first.result).to eq :owner_not_matched
+      end
+    end
+
+    describe 'matching advisor when owner has been matched' do
+      before { iapd_seth_klarman.match_with(seth_klarman_entity) }
+
+      it 'creates a new relationship' do
+        expect { iapd_baupost.match_with(baupost_entity) }
+          .to change(Relationship, :count).by(1)
+      end
+
+      it 'sets result to be :relationship_created' do
+        result = iapd_baupost.match_with(baupost_entity)
+        expect(result.first.result).to eq :relationship_created
+      end
+
+      it 'creates relationship with correct tag and attributes' do
+        relationship = iapd_baupost.match_with(baupost_entity).first.relationship
+        expect(relationship).to be_a Relationship
+        expect(relationship.entity1_id).to eq seth_klarman_entity.id
+        expect(relationship.entity2_id).to eq baupost_entity.id
+        expect(relationship.tag_ids).to eq [tag.id]
+      end
+    end
+  end
+
   describe 'add_to_matching_queue' do
     after { IapdDatum::OWNERS_MATCHING_QUEUE.clear }
 

@@ -2,6 +2,13 @@
 
 # Creates or finds existing relationship between
 # an Iapd Owner and Iapd Advisor
+#
+# result can be one of these possible symbols:
+#  - advisor_not_matched
+#  - owner_not_matched
+#  - relationship_exists
+#  - relationship_created
+#
 class IapdRelationshipService
   IAPD_TAG_ID = 18
 

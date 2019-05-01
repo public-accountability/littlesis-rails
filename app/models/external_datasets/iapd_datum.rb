@@ -68,9 +68,10 @@ class IapdDatum < ExternalDataset
     self.class.owners_of_crd_number row_data.fetch('crd_number')
   end
 
-  def self.advisors
-    method_only_for! :advisor
-    
+  def advisors
+    method_only_for! :owner
+
+    self.class.advisors_by_crd_numbers row_data.fetch('associated_advisors')
   end
 
   def owner?

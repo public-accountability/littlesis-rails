@@ -44,13 +44,7 @@ class ExternalDataset < ApplicationRecord
     entity = Entity.entity_for(entity_or_entity_id)
 
     ExternalDatasetService.validate_match! external_dataset: self, entity: entity
-    assign_attributes entity_id: entity.id
     ExternalDatasetService.match external_dataset: self, entity: entity
-    unless save
-      Rails.logger.warn('ExternalDataset') { "Failed to match ExternalDataset #{id} with Entity #{entity.id}" }
-      assign_attributes entity_id: nil
-    end
-    self
   end
 
   def unmatch
