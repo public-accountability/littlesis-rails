@@ -20,10 +20,18 @@ const Entity = ({entity}) => {
 };
 
 
+/**
+ * Match and ignore match buttons
+ * Currently, the ignore match button is show shown (but the functionality exists) 
+ *
+ * @param {Function} ignoreMatch
+ * @param {Function} doMatch
+ * @returns {} 
+ */
 const Buttons = ({ignoreMatch, doMatch}) => {
   return <div className="potential-match-buttons f-item">
            <a className="mr-1" onClick={doMatch}>Match</a>
-           <a onClick={ignoreMatch}>❌</a>
+           {/* <a onClick={ignoreMatch}>❌</a> */}
          </div>;
 };
 

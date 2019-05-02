@@ -27,8 +27,8 @@ describe('Potential Match', () => {
   });
   
   describe('Buttons', () => {
-    test('shows 2 buttons', () => {
-      expect(staticRender.find('.potential-match-buttons a').length).toEqual(2);
+    test('shows 1 buttons', () => {
+      expect(staticRender.find('.potential-match-buttons a').length).toEqual(1);
     });
 
     test.todo('shows ignore button');
