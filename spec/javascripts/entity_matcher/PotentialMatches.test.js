@@ -65,7 +65,7 @@ describe('PotentialMatches', () => {
 
   test('Clicking on create new entity link loads new entity form', () => {
     const matches = { "automatchable": false, "results": [exampleMatch] };
-    const wrapper = shallow(<PotentialMatches matchesStatus="COMPLETE" matches={matches} itemId={1} doMatch={jest.fn()}/>);
+    const wrapper = shallow(<PotentialMatches matchesStatus="COMPLETE" matches={matches} itemId={1} doMatch={ (itemId, entity) => jest.fn() }/>);
     expect(wrapper.find(CreateNewEntityButton).exists()).toBe(true);
     expect(wrapper.find(NewEntityForm).exists()).toBe(false);
     wrapper.find(CreateNewEntityButton).shallow().find('a').simulate('click');

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import curry from 'lodash/curry';
 import isNull from 'lodash/isNull';
 
 import LoadingSpinner from './LoadingSpinner';
@@ -45,10 +46,13 @@ export default class PotentialMatches extends React.Component {
                                              doMatch={this.props.doMatch}
                                              matches={this.props.matches} /> }
 
-             { showCreateNewEntityForm && <NewEntityForm />  }
+             { showCreateNewEntityForm && <NewEntityForm
+                                            doMatch={curry(this.props.doMatch)(this.props.itemId)}
+                                            cancel={ () => this.setState({ showCreateNewEntityForm: false }) }
+                                          />  }
 
              { !showCreateNewEntityForm &&  <CreateNewEntityButton
-                                              handleClick={() => this.setState({showCreateNewEntityForm: true})}
+                                              handleClick={ () => this.setState({ showCreateNewEntityForm: true}) }
                                               noMatches={noMatches} /> }
            </div>;
   }
