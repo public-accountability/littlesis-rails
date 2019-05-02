@@ -26,7 +26,8 @@ describe('doMatch', () => {
 			      "results": ['owner_not_matched'],
 			      "entity": { id: 123, name: 'abc' } };
   
-  test('updates matches before and afte request', async () => {
+  
+  test('updates matches before and after request', async () => {
     document.head.innerHTML = '<meta name="csrf-token" content="abcd">';
     
     fetch.mockResponseOnce(JSON.stringify(mockMatchResponse));
@@ -35,11 +36,24 @@ describe('doMatch', () => {
     await actions.doMatch.call(mockBindingObject, 123, 456);
 
     expect(fetch.mock.calls[0][0]).toEqual('/external_datasets/row/123/match');
+    expect(fetch.mock.calls[0][1].body).toEqual(JSON.stringify({entity_id: 456}));
     expect(mockBindingObject.updateState.mock.calls.length).toEqual(2);
     expect(mockBindingObject.updateState.mock.calls[0]).toEqual(['matchedState', 'MATCHING']);
     expect(mockBindingObject.updateState.mock.calls[1]).toEqual([ {
       "matchedState": 'MATCHED',
       "matchResult": mockMatchResponse
     }]);
+  });
+
+  test('call fetch correctly when given entity object', async () => {
+    document.head.innerHTML = '<meta name="csrf-token" content="abcd">';
+    fetch.mockResponseOnce(JSON.stringify(mockMatchResponse));
+
+    let mockBindingObject = { "updateState": jest.fn() };
+    let entityObj = { name: 'test', blurb: 'test blurb', primary_ext: 'Org' };
+    await actions.doMatch.call(mockBindingObject, 123, entityObj);
+
+    expect(fetch.mock.calls[0][0]).toEqual('/external_datasets/row/123/match');
+    expect(fetch.mock.calls[0][1].body).toEqual(JSON.stringify({entity: entityObj}));
   });
 });
