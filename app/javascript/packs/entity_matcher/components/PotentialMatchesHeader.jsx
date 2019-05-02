@@ -1,5 +1,5 @@
 import React from 'react';
 
 export default function PotentialMatchesHeader() {
-  return <h1>Possible LittleSis Matches</h1>;
+  return <h2>Possible LittleSis Matches</h2>;
 }

@@ -28,6 +28,11 @@ div.rightSide {
     margin: 0 -1em;
     bottom: 0;
     padding: 1em;
+
+    a:hover {
+	text-decoration: underline !important;
+    }
+
 }
 
 #dataset-item-info {
@@ -59,10 +64,6 @@ div.potential-match-card {
     margin-top: 0.5em;
     // justify-content: space-around;
 
-    .f-item {
-	margin-left: 1em;
-    }
-
     .potential-match-entity-image-wrapper {
 	width: 50px;
 	height: 50px;
@@ -73,12 +74,13 @@ div.potential-match-card {
     }
 
     .potential-match-entity {
-	width: 70%;
+	flex-grow: 2;
 
 	h1 {
 	    font-size: 1.2em;
 	    font-weight: bold;
 	}
+
 	p {
 	    font-size: 0.8em;
 	}
@@ -91,6 +93,10 @@ div.potential-match-card {
 
 	a {
 	    cursor: pointer;
+
+	    &:hover {
+		text-decoration: underline;
+	    }
 	}
     }
     
