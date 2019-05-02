@@ -26,12 +26,12 @@ describe('doMatch', () => {
 			      "results": ['owner_not_matched'],
 			      "entity": { id: 123, name: 'abc' } };
   
-  
-  test('updates matches before and after request', async () => {
+  beforeEach(function() {
     document.head.innerHTML = '<meta name="csrf-token" content="abcd">';
-    
     fetch.mockResponseOnce(JSON.stringify(mockMatchResponse));
+  });
 
+  test('updates matches before and after request', async () => {
     let mockBindingObject = { "updateState": jest.fn() };
     await actions.doMatch.call(mockBindingObject, 123, 456);
 
@@ -45,10 +45,7 @@ describe('doMatch', () => {
     }]);
   });
 
-  test('call fetch correctly when given entity object', async () => {
-    document.head.innerHTML = '<meta name="csrf-token" content="abcd">';
-    fetch.mockResponseOnce(JSON.stringify(mockMatchResponse));
-
+  test('set post data when given entity object', async () => {
     let mockBindingObject = { "updateState": jest.fn() };
     let entityObj = { name: 'test', blurb: 'test blurb', primary_ext: 'Org' };
     await actions.doMatch.call(mockBindingObject, 123, entityObj);
