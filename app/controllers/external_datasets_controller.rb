@@ -25,17 +25,18 @@ class ExternalDatasetsController < ApplicationController
   # post /external_datasets/row/:id/match
   # { "entity_id": 123121 }
   def match
-    results = @row.match_with(@entity_id).map(&:result)
+    entity = Entity.find(@entity_id)
+    results = @row.match_with(entity).map(&:result)
 
     if @row.matched?
-      render json: { status: 'matched', results: results }, status: :ok
+      successful_res = { status: 'matched', results: results, entity: entity.to_hash }
+      render json: successful_res, status: :ok
     else
-      render json: { status: 'error',
-                     error: "Failed to save match for row #{@row.id}" },
+      render json: { status: 'error', error: "Failed to save match for row #{@row.id}" },
              status: :internal_server_error
     end
   rescue ExternalDataset::RowAlreadyMatched
-    render json: { error: "Row #{@row.id} is already matched" }, status: :conflict
+    render json: { status: 'error', error: "Row #{@row.id} is already matched" }, status: :conflict
   end
 
   # GET /external_datasets/:dataset/flow/:flow/next
