@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import curry from 'lodash/curry';
 import isNull from 'lodash/isNull';
 
 import LoadingSpinner from './LoadingSpinner';
@@ -38,7 +37,7 @@ export default class PotentialMatches extends React.Component {
     
     return <div id="potential-matches">
              <PotentialMatchesHeader />
-             { isLoading &&  <LoadingSpinner /> }
+             { isLoading && <LoadingSpinner /> }
              { (hasMatches || noMatches) && <PotentialMatchesSearch /> }
              { showPotentialMatchesList && <PotentialMatchesList
                                              itemId={this.props.itemId}
@@ -49,8 +48,8 @@ export default class PotentialMatches extends React.Component {
              { showCreateNewEntityForm && <NewEntityForm />  }
 
              { !showCreateNewEntityForm &&  <CreateNewEntityButton
-                                          handleClick={() => this.setState({showCreateNewEntityForm: true})}
-                                          noMatches={noMatches} /> }
+                                              handleClick={() => this.setState({showCreateNewEntityForm: true})}
+                                              noMatches={noMatches} /> }
            </div>;
   }
 };
