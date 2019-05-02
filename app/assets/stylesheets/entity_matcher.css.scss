@@ -1,3 +1,12 @@
+@mixin matcher-text-link {
+    cursor: pointer;
+
+    &:hover {
+	text-decoration: underline !important;
+    }
+
+}
+
 #entity-matcher-ui {
     display: flex;
     height: 500px;
@@ -29,10 +38,9 @@ div.rightSide {
     bottom: 0;
     padding: 1em;
 
-    a:hover {
-	text-decoration: underline !important;
+    a {
+	@include matcher-text-link;
     }
-
 }
 
 #dataset-item-info {
@@ -53,8 +61,13 @@ div.rightSide {
 }
 
 #potential-matches-list {
-    height: 70%;
+    max-height: 70%;
     overflow: auto;
+}
+
+.create-new-entity-button a {
+    @include matcher-text-link;
+    font-weight: bold;
 }
 
 div.potential-match-card {
@@ -90,13 +103,8 @@ div.potential-match-card {
     }
 
     .potential-match-buttons {
-
 	a {
-	    cursor: pointer;
-
-	    &:hover {
-		text-decoration: underline;
-	    }
+	    @include matcher-text-link;
 	}
     }
     

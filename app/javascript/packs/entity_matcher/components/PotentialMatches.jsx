@@ -38,7 +38,7 @@ export default class PotentialMatches extends React.Component {
                                ignoreMatch={this.props.ignoreMatch}
                                doMatch={this.props.doMatch}
                                matches={this.props.matches} /> }
-             <CreateNewEntityButton />
+             <CreateNewEntityButton noMatches={noMatches} />
            </div>;
   }
 };
