@@ -10,7 +10,6 @@ class ExternalDatasetsController < ApplicationController
   def iapd
     @flow = params.fetch(:flow, 'advisors')
     @start = '1'
-    # @start = params.fetch(:start, IapdDatum.next_id(@flow)).to_sym
   end
 
   # get /external_datasets/row/:id
@@ -26,16 +25,18 @@ class ExternalDatasetsController < ApplicationController
   # post /external_datasets/row/:id/match
   # { "entity_id": 123121 }
   def match
-    @row.match_with(@entity_id)
+    entity = Entity.find(@entity_id)
+    results = @row.match_with(entity).map(&:result)
+
     if @row.matched?
-      render json: { status: 'matched' }, status: :ok
+      successful_res = { status: 'matched', results: results, entity: entity.to_hash }
+      render json: successful_res, status: :ok
     else
-      render json: { status: 'error',
-                     error: "Failed to save match for row #{@row.id}" },
+      render json: { status: 'error', error: "Failed to save match for row #{@row.id}" },
              status: :internal_server_error
     end
   rescue ExternalDataset::RowAlreadyMatched
-    render json: { error: "Row #{@row.id} is already matched" }, status: :conflict
+    render json: { status: 'error', error: "Row #{@row.id} is already matched" }, status: :conflict
   end
 
   # GET /external_datasets/:dataset/flow/:flow/next
@@ -51,7 +52,7 @@ class ExternalDatasetsController < ApplicationController
   private
 
   def set_entity_id
-    if /\A[0-9]+\Z/.match?(params.require(:entity_id))
+    if /\A[0-9]+\Z/.match?(params.require(:entity_id).to_s)
       @entity_id = params.require(:entity_id).to_i
     else
       render json: { error: 'Entity id is not a number' }, status: :bad_request

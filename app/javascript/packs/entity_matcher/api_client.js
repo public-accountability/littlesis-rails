@@ -1,5 +1,6 @@
 import isPlainObject from 'lodash/isPlainObject';
 import isString from 'lodash/isString';
+import merge from 'lodash/merge';
 
 const jsonHeaders = {
   "Content-Type": "application/json",
@@ -41,10 +42,14 @@ export function lsPost(url, data) {
     throw "lsPost called with invalid data";
   }
 
+  const token = document.head.querySelector('meta[name="csrf-token"]').content;
+  const headers = merge(jsonHeaders, { 'X-CSRF-Token': token });
+  
+  // 'X-Requested-With': 'XMLHttpRequest',
   return fetch(url, {
     "method": "POST",
     "credentials": 'same-origin',
-    "headers": jsonHeaders,
+    "headers": headers,
     "body": body
   })
     .then(validateResponse)

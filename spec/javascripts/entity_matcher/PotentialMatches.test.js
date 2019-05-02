@@ -12,13 +12,13 @@ import { exampleMatch } from './fixtures';
 describe('PotentialMatches', () => {
     
   test('has div with correct id', () => {
-    const wrapper = shallow(<PotentialMatches ignoreMatch={jest.fn()} doMatch={jest.fn()}/>);
+    const wrapper = shallow(<PotentialMatches ignoreMatch={jest.fn()} doMatch={jest.fn()} itemId={1} />);
     expect(wrapper.find('div#potential-matches').exists()).toBe(true);
   });
 
 
   test('showing load div when loading', () => {
-    const wrapper = shallow(<PotentialMatches matchesStatus="LOADING" />);
+    const wrapper = shallow(<PotentialMatches matchesStatus="LOADING" itemId={1}/>);
     expect(wrapper.find(LoadingSpinner).exists()).toBe(true);
     expect(wrapper.find(PotentialMatchesHeader).exists()).toBe(true);
     expect(wrapper.find(PotentialMatchesSearch).exists()).toBe(false);
@@ -26,7 +26,7 @@ describe('PotentialMatches', () => {
 
   test('shows search when there are no matches', () => {
     const matches = { "automatchable": false, "results": [] };
-    const wrapper = shallow(<PotentialMatches matchesStatus="COMPLETE" matches={matches} />);
+    const wrapper = shallow(<PotentialMatches matchesStatus="COMPLETE" matches={matches} itemId={1} />);
     expect(wrapper.find(LoadingSpinner).exists()).toBe(false);
     expect(wrapper.find(PotentialMatchesHeader).exists()).toBe(true);
     expect(wrapper.find(PotentialMatchesSearch).exists()).toBe(true);
@@ -34,19 +34,19 @@ describe('PotentialMatches', () => {
 
   test('shows search when there are matches', () => {
     const matches = { "automatchable": false, "results": [exampleMatch] };
-    const wrapper = shallow(<PotentialMatches matchesStatus="COMPLETE" matches={matches} />);
+    const wrapper = shallow(<PotentialMatches matchesStatus="COMPLETE" matches={matches} itemId={1} />);
     expect(wrapper.find(PotentialMatchesSearch).exists()).toBe(true);
   });
 
   test('shows matches list when there are matches', () => {
     const matches = { "automatchable": false, "results": [exampleMatch] };
-    const wrapper = shallow(<PotentialMatches matchesStatus="COMPLETE" matches={matches} />);
+    const wrapper = shallow(<PotentialMatches matchesStatus="COMPLETE" matches={matches} itemId={1} />);
     expect(wrapper.find(PotentialMatchesList).exists()).toBe(true);
   });
 
   test('hides matches list when there are no matches', () => {
     const matches = { "automatchable": false, "results": [] };
-    const wrapper = shallow(<PotentialMatches matchesStatus="COMPLETE" matches={matches} />);
+    const wrapper = shallow(<PotentialMatches matchesStatus="COMPLETE" matches={matches} itemId={1} />);
     expect(wrapper.find(PotentialMatchesList).exists()).toBe(false);
   });
   
