@@ -114,4 +114,5 @@ Rails/SkipsModelValidations:
 RSpec/DescribedClass:
   Enabled: false
 
-
+RSpec/MultipleExpectations:
+  Enabled: false
