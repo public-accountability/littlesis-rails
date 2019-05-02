@@ -56,7 +56,7 @@ export function doMatch(rowId, entityId) {
     .then( json => {
       this.updateState({
 	"matchedState": 'MATCHED',
-	"matchResult": json.results
+	"matchResult": json
       });
     })
     .catch(err => {
