@@ -38,7 +38,7 @@ const defaultState = () => ({
   "matches": null, // Array of potential matches 
   "matchesStatus": null, // statues of potential matches http request
   "matchedState": null, // Has it been matched: MATCHING, MATCHED, ERROR
-  "matchResult": null // response from maching. An array of strings.
+  "matchResult": null // json response from maching
 });
 
 export default class EntityMatcherUI extends React.Component {
@@ -141,7 +141,7 @@ export default class EntityMatcherUI extends React.Component {
         </div>
         <div className="rightSide">
           { matchingInProgress && <LoadingSpinner /> }
-          { isMatched && <ConfirmationPage /> }
+          { isMatched && <ConfirmationPage matchResult={this.state.matchResult} /> }
           { matchingError && <ApiError /> }
           { showPotentialMatches && renderPotentialMatches() }
         </div>
