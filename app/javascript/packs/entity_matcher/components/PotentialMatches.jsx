@@ -18,7 +18,7 @@ export default class PotentialMatches extends React.Component {
       "automatchable": PropTypes.bool
     }),
     "ignoreMatch": PropTypes.func,
-    "doMatch": PropTypes.func,
+    "doMatch": PropTypes.func.isRequired,
     "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired
   };
   
@@ -36,7 +36,7 @@ export default class PotentialMatches extends React.Component {
     const showPotentialMatchesList = hasMatches && !showCreateNewEntityForm;
     
     return <div id="potential-matches">
-             <PotentialMatchesHeader />
+             <PotentialMatchesHeader showCreateNewEntityForm={showCreateNewEntityForm} />
              { isLoading && <LoadingSpinner /> }
              { (hasMatches || noMatches) && <PotentialMatchesSearch /> }
              { showPotentialMatchesList && <PotentialMatchesList
