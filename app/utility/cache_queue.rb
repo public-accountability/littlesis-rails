@@ -37,7 +37,7 @@ class CacheQueue
   end
 
   def random_get
-    fetch.sample
+    fetch&.sample
   end
 
   def random_get!
