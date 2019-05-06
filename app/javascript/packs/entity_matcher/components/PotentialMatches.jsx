@@ -9,7 +9,7 @@ import PotentialMatchesHeader from './PotentialMatchesHeader';
 import PotentialMatchesSearch from './PotentialMatchesSearch';
 import PotentialMatchesList from './PotentialMatchesList';
 import CreateNewEntityButton from './CreateNewEntityButton';
-
+import NewEntityForm from './NewEntityForm';
 
 export default class PotentialMatches extends React.Component {
   static propTypes = {
@@ -19,26 +19,41 @@ export default class PotentialMatches extends React.Component {
       "automatchable": PropTypes.bool
     }),
     "ignoreMatch": PropTypes.func,
-    "doMatch": PropTypes.func,
+    "doMatch": PropTypes.func.isRequired,
     "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired
   };
   
+
+  constructor(props) {
+    super(props);
+    this.state =  { "showCreateNewEntityForm": false };
+  }
   
   render() {
     const isLoading = isNull(this.props.matchesStatus) || this.props.matchesStatus === 'LOADING';
     const hasMatches = this.props.matchesStatus === 'COMPLETE' && this.props.matches.results.length > 0;
     const noMatches = this.props.matchesStatus === 'COMPLETE' && this.props.matches.results.length == 0;
-
+    const showCreateNewEntityForm = this.state.showCreateNewEntityForm;
+    const showPotentialMatchesList = hasMatches && !showCreateNewEntityForm;
+    
     return <div id="potential-matches">
-             <PotentialMatchesHeader />
-             { isLoading &&  <LoadingSpinner /> }
+             <PotentialMatchesHeader showCreateNewEntityForm={showCreateNewEntityForm} />
+             { isLoading && <LoadingSpinner /> }
              { (hasMatches || noMatches) && <PotentialMatchesSearch /> }
-             { hasMatches && <PotentialMatchesList
-                               itemId={this.props.itemId}
-                               ignoreMatch={this.props.ignoreMatch}
-                               doMatch={this.props.doMatch}
-                               matches={this.props.matches} /> }
-             <CreateNewEntityButton noMatches={noMatches} />
+             { showPotentialMatchesList && <PotentialMatchesList
+                                             itemId={this.props.itemId}
+                                             ignoreMatch={this.props.ignoreMatch}
+                                             doMatch={this.props.doMatch}
+                                             matches={this.props.matches} /> }
+
+             { showCreateNewEntityForm && <NewEntityForm
+                                            doMatch={curry(this.props.doMatch)(this.props.itemId)}
+                                            cancel={ () => this.setState({ showCreateNewEntityForm: false }) }
+                                          />  }
+
+             { !showCreateNewEntityForm &&  <CreateNewEntityButton
+                                              handleClick={ () => this.setState({ showCreateNewEntityForm: true}) }
+                                              noMatches={noMatches} /> }
            </div>;
   }
 };

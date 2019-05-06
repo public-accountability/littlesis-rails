@@ -1,5 +1,6 @@
 import filter from 'lodash/filter';
 import toInteger from 'lodash/toInteger';
+import isPlainObject from 'lodash/isPlainObject';
 import merge from 'lodash/merge';
 
 import { lsFetch, lsPost } from './api_client';
@@ -46,11 +47,14 @@ export function ignoreMatch(entityId) {
   });
 }
 
-export function doMatch(rowId, entityId) {
+export function doMatch(rowId, entityOrId) {
   this.updateState("matchedState", 'MATCHING');
 
   let url = `/external_datasets/row/${rowId}/match`;
-  let data = { "entity_id": entityId };
+  let data = isPlainObject(entityOrId)
+      ? { "entity": entityOrId }
+      : { "entity_id": entityOrId };
+
 
   return lsPost(url, data)
     .then( json => {
@@ -60,7 +64,7 @@ export function doMatch(rowId, entityId) {
       });
     })
     .catch(err => {
-      console.error(`Failed to match row ${rowId} with entity ${entityId}`);
+      console.error(`Failed to match row ${rowId}`);
       errorMessage('doMatch', err);
       this.updateState("matchedState", 'ERROR');
     });
