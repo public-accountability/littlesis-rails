@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'EntityNameValidator' do
   class NameTester <
     include ActiveModel::Validations

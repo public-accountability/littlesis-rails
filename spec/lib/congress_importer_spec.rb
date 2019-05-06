@@ -1,4 +1,3 @@
-require 'rails_helper'
 require Rails.root.join('lib', 'congress_importer')
 
 describe 'CongressImporter' do

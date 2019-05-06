@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'lists/new.html.erb' do 
   describe 'layout with no error' do
     context 'not admin' do 

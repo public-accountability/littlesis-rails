@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe UserMapsPresenter do
   let(:user) { create_really_basic_user }
   let(:network_maps) do

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe DashboardBulletin, type: :model do
   it { is_expected.to have_db_column(:markdown) }
   it { is_expected.to have_db_column(:title) }

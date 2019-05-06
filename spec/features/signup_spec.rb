@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature "Signing up for an account", type: :feature do
   let(:user_info) do
     Struct

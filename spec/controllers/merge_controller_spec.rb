@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe MergeController, type: :controller do
   describe "routes" do
     it { is_expected.to route(:get, '/merge').to(action: :merge) }

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe MergeRequest, type: :model do
   let(:merge_request) { create(:merge_request) }
 

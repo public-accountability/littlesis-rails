@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe EntitySearchService, :tag_helper do
   seed_tags

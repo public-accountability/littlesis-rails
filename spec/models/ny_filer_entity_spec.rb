@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe NyFilerEntity, type: :model do
   it { is_expected.to belong_to(:ny_filer) }
   it { is_expected.to belong_to(:entity) }

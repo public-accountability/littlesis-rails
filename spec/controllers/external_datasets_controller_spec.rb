@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ExternalDatasetsController, type: :controller do
   it { is_expected.to route(:get, '/external_datasets').to(action: :index) }
   it { is_expected.to route(:get, '/external_datasets/iapd').to(action: :iapd) }

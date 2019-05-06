@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe NyDisclosure, type: :model do
   it { should have_one(:ny_match) }
   it { should belong_to(:ny_filer).optional }

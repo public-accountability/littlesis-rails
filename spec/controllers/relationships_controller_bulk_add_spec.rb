@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe RelationshipsController, type: :controller do
   describe 'post bulk_add' do

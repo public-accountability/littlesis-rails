@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe S3 do
   describe 'url' do
     let(:path) { '/a/b/c.png' }

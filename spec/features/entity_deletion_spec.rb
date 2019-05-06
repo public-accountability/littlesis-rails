@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'Entity deletion request & review' do
   let(:user) {}
   let(:requester) { create_really_basic_user }

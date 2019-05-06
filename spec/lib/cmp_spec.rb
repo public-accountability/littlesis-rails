@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe Cmp do
   describe Cmp::CmpEntityImporter do
     let(:attrs) { LsHash.new(name: Faker::Creature::Cat.name, cmpid: Faker::Number.number(6)) }

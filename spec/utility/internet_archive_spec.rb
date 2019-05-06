@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe InternetArchive do
   describe 'save_url' do
     let(:http) { double('http') }

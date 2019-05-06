@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Reference do
   it { should belong_to(:referenceable) }
   it { should belong_to(:document) }

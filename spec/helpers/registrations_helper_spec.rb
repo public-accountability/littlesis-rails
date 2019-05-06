@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe RegistrationsHelper, type: :helper do
   describe 'registrations_form_group' do
     it 'generate form group html' do

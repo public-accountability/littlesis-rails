@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable RSpec/VerifiedDoubles, RSpec/MultipleExpectations
 
 describe NyMatch, type: :model do

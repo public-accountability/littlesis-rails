@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 
 describe ListsHelper do
   describe '#nil_string' do

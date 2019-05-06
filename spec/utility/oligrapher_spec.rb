@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Oligrapher do
   describe 'entity_to_node' do
     let(:entity) { build(:org, :with_org_name) }

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe AddressState do
   specify do
     expect(AddressState.abbreviation_map).to be_a Hash

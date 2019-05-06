@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'NYS requests' do
   let(:user) { create_importer }
 

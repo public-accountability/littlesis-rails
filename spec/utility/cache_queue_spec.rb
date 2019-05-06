@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe CacheQueue do
   describe 'initialize' do
     let(:cache_queue) do

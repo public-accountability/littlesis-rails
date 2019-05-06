@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe EntityDatatablePresenter do
   let(:blurb) { Faker::GreekPhilosophers.quote }
   let(:entity) { create(:entity_org, blurb: blurb) }

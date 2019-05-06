@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe UserNameValidator do
   class UserNameTester <
     include ActiveModel::Validations

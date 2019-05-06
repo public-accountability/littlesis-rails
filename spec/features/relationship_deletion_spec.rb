@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe 'deleting relationships' do
   let(:person) { create(:entity_person) }
   let(:org) { create(:entity_org) }

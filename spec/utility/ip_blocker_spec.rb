@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe IpBlocker do
   def reload_mod
     # Removes the module from object-space:

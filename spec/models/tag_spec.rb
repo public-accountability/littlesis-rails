@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Tag, :pagination_helper do
   let(:tags) { Array.new(3) { create(:tag) } }
 

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe "Relationship Page", :type => :feature do
   let(:user) { create_basic_user }
   let(:org) { create(:entity_org) }

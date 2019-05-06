@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe HelpPage, type: :model do
   it { should have_db_column(:name) }
   it { should have_db_column(:title) }

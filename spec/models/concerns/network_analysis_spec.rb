@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe 'Network Analysis Module', :network_analysis_helper, :pagination_helper, type: :model do
 
   describe "interlocks" do

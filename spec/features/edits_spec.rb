@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'recent edits page' do
   let(:user) { create_basic_user }
 

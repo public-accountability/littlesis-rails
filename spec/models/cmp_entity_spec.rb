@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe CmpEntity, type: :model do
   it { is_expected.to have_db_column(:entity_id) }
   it { is_expected.to have_db_column(:cmp_id) }

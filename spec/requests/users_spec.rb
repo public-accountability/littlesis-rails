@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Users' do
   describe '/users/check_username' do
     subject { json }

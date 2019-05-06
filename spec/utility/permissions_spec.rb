@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable RSpec/NestedGroups, RSpec/InstanceVariable
 
 describe Permissions, :tag_helper do

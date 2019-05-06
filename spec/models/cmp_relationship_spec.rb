@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe CmpRelationship, type: :model do
   it { is_expected.to have_db_column(:relationship_id) }
   it { is_expected.to have_db_column(:cmp_affiliation_id) }

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'lists/index.html.erb' do 
   before do
     @new_list = create(:list)

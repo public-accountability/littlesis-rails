@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe SearchController, type: :controller do
   it { is_expected.to route(:get, '/search').to(action: :basic) }
   it { is_expected.to route(:get, '/search/entity').to(action: :entity_search) }

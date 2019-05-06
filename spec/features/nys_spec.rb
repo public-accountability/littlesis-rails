@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'NYS' do
   feature 'Finding candidates and committees' do
     let(:importer) { create_importer }

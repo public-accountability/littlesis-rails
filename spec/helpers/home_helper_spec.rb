@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe HomeHelper do
   let(:map_without_thumbnail) { build(:network_map, thumbnail: nil) }
   let(:map_with_thumbnail) { build(:network_map, thumbnail: '/image.png') }

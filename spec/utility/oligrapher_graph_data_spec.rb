@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe OligrapherGraphData do
   let(:foo_bar_hash) { { 'foo' => 'bar' } }

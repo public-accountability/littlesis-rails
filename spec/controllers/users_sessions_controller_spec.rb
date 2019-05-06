@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Users::SessionsController, type: :controller do
   describe 'Routes' do
     it { is_expected.to route(:get, '/login').to(action: :new) }

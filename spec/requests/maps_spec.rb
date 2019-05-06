@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Maps', :sphinx, type: :request do
   describe 'featuring maps' do
     as_basic_user do

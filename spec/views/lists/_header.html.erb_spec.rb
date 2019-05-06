@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'partial: lists/header', :tag_helper, type: :view do
   seed_tags
   

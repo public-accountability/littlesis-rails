@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable RSpec/NamedSubject, RSpec/LetSetup, RSpec/BeforeAfterAll, RSpec/ExpectInHook
 
 describe UserEdits do

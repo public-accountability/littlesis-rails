@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe Routes, type: :feature do
   let(:org) { build(:org) }
   let(:person) { build(:person) }

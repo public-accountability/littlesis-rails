@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'help pages' do
   let(:admin) { create_admin_user }
   let(:index_page) { create(:help_page, name: 'index', markdown: '# help pages', title: 'help pages') }

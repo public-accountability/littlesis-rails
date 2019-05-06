@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Relationships Requests' do
   let(:user) { create_really_basic_user }
   before(:each) { login_as(user, :scope => :user) }

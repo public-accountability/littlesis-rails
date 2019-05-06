@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe UserAbilities do
   it 'can be initialized nothing' do

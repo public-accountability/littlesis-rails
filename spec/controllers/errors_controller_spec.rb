@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe ErrorsController, type: :controller do
   it { should route(:get, '/bug_report').to(action: :bug_report) }
   it { should route(:post, '/bug_report').to(action: :file_bug_report) }

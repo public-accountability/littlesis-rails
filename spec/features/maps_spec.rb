@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'maps index page' do
   let(:other_user) { create_really_basic_user }
   let(:user) { create_really_basic_user }

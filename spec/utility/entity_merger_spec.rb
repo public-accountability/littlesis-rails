@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Merging Entities', :merging_helper do
   let(:source_org) { create(:entity_org, :with_org_name) }
   let(:dest_org) { create(:entity_org, :with_org_name) }

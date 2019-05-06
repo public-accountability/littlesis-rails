@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Partners' do
   describe 'corporate mapping project landing page' do
     before { visit '/partners/corporate-mapping-project' }

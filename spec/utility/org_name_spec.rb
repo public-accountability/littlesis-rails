@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe OrgName do
   describe 'format' do
     specify do

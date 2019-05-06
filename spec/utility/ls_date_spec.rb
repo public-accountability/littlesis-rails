@@ -1,5 +1,4 @@
 # rubocop:disable Lint/UselessComparison, RSpec/Multipleexpectations
-require 'rails_helper'
 
 describe LsDate do
   describe 'pretty printing' do

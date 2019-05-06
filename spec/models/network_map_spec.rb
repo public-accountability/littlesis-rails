@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable Style/StringLiterals, Style/WordArray
 
 describe NetworkMap, type: :model do

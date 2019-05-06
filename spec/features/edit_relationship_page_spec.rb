@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Edit Relationship Page', type: :feature do
   let(:user) { create_basic_user }
   let(:child_org) { create(:entity_org, name: 'child org') }

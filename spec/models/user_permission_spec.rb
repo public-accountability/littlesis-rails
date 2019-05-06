@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe UserPermission, type: :model do
 
   # fields

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Images' do
   before(:all) do
     %w[small profile large original square].each do |folder|

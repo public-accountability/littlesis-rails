@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Referenceable, type: :model do
   class TestReferenceable < TestActiveRecord
     include ActiveModel::Validations

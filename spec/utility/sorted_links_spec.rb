@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe SortedLinks do
 
   describe 'Initialize' do

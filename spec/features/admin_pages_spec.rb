@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature do
   seed_tags # seeds db w/ 3 tags
 

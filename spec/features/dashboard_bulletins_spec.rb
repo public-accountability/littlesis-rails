@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'DashboardBulletins', type: :feature do
   before { login_as(user, :scope => :user) }
   after { logout(:user) }

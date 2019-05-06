@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'entities/add_relationship.html.erb' do
   let(:sf_user) { build(:sf_guard_user) }
   let(:user) { build(:user, sf_guard_user: sf_user) }

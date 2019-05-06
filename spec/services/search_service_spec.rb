@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe SearchService do
 
   it 'raises error if initalized with a blank query' do

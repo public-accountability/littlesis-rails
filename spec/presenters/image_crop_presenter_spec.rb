@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ImageCropPresenter do
   describe 'image_dimensions' do
     let(:dimensions) { nil }

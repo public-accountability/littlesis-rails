@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe NewsletterSignupJob, type: :job do
   include ActiveJob::TestHelper
   let(:email_address) { Faker::Internet.email }

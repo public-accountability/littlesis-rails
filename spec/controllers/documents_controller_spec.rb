@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe DocumentsController, type: :controller do
   describe 'routes' do
     it { should route(:get, '/documents/123/edit').to(action: :edit, id: '123') }

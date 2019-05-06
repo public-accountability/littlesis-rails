@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe LsHash do
   subject { LsHash.new }
   it { is_expected.to be_a ActiveSupport::HashWithIndifferentAccess }

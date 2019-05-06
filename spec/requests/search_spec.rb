@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable RSpec/MultipleExpectations, RSpec/BeforeAfterAll
 
 describe 'Search', :sphinx, :tag_helper, type: :request do

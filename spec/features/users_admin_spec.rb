@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Users Admin Pages', :type => :feature do
   let(:admin_user) { create_admin_user }
   let(:current_user) { admin_user }

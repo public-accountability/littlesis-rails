@@ -1,5 +1,3 @@
-require "rails_helper"
-
 feature 'Editable Toolkit Pages' do
   let(:admin) { create_admin_user }
   let(:index) { create(:toolkit_page, name: 'index', markdown: "# toolkit index\n") }

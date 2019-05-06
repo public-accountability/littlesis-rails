@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'Editing documents' do
   let(:document) { create(:document) }
   let(:new_attrs) { attributes_for(:document) }

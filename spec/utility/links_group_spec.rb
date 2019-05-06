@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe LinksGroup do
   context 'with generic links' do
     before  do

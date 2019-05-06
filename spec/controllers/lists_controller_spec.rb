@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ListsController, :list_helper, type: :controller do
   before(:all) { DatabaseCleaner.start }
   after(:all) { DatabaseCleaner.clean }

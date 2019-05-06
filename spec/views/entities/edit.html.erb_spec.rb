@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'entities/edit.html.erb', type: :view do
   before(:all) do
     DatabaseCleaner.start

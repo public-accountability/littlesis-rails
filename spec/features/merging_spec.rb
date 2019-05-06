@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'Merging entities' do
   let(:mode) {}
   let(:user) {}

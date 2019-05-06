@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Page, type: :model do
   describe 'db columns' do
     [:name, :title, :markdown, :last_user_id].each do |col|

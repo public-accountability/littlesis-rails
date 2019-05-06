@@ -1,6 +1,5 @@
 # rubocop:disable Style/StringLiterals
 
-require "rails_helper"
 
 describe NotificationMailer, type: :mailer do
   before(:all) { ActiveJob::Base.queue_adapter = :test }

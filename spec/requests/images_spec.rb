@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Images do
   before { login_as(user, scope: :user) }
 

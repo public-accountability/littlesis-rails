@@ -1,4 +1,3 @@
-require 'rails_helper'
 require Rails.root.join('lib', 'nys_campaign_finance.rb')
 
 xdescribe 'NYSCampaignFinance' do

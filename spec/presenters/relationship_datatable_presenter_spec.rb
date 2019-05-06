@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe RelationshipDatatablePresenter do
   let(:entity) { create(:entity_person) }
   let(:related) { create(:entity_org) }

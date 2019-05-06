@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe Users::RegistrationsController, type: :controller do
   let(:user_data) do

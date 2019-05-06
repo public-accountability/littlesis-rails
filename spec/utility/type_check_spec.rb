@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe TypeCheck do
   it 'return true if is valid input' do
     expect { TypeCheck.check [1, 2, 3], Array }.not_to raise_error

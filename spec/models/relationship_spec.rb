@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe Relationship, type: :model do
   let(:person1) { create(:entity_person, :with_person_name) }

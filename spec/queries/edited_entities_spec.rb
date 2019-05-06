@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe EditedEntities do
   describe 'initializing with instance vars' do

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Alias, type: :model do
   let(:org) { create(:org, :with_org_name) }
   let(:create_alias) { proc { org.aliases.create!(name: Faker::Company.name) } }

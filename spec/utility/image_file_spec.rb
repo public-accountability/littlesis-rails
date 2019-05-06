@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ImageFile do
   let(:filename) { Image.random_filename }
   let(:image_data) do

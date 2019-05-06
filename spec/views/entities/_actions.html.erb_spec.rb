@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe "partial: entities/actions" do
   let(:org) do
     build(:org,

@@ -1,6 +1,4 @@
 
-require 'rails_helper'
-
 describe TagsHelper, type: :helper do
   describe "#tags_edits_format_time" do
     it "displays the edit time in English" do

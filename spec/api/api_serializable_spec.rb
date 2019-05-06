@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Api::Serializable', type: :model do
   FAKE_ATTRIBUTES = { 'api' => 'attributes' }
 

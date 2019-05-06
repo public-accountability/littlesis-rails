@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ActionNetwork do
   API_INFO_HASH = JSON.parse(File.read(Rails.root.join('spec', 'testdata', 'action_network_api_info.json'))) # rubocop:disable Metrics/LineLength
 

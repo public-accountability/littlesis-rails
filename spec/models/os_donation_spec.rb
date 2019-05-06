@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe OsDonation, type: :model do
 
   describe 'create_fec_cycle_id' do 

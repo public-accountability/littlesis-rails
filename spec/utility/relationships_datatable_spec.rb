@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe RelationshipsDatatable do
   let(:entity) { create(:entity_person) }
   let(:related) { Array.new(2) { create(:entity_org) } }

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ApplicationController, type: :controller do
   class TestController < ApplicationController
     def current_user

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe PaperTrail::Version do
   describe '#entity_edit?' do

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 # rubocop:disable RSpec/MultipleExpectations, RSpec/MessageSpies, RSpec/NestedGroups
 
 describe IapdRelationshipService do

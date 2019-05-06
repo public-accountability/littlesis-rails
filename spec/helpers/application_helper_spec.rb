@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ApplicationHelper, :type => :helper do
   describe 'page_title' do
     it 'should generate correct title' do

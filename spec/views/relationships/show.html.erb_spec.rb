@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'relationships/show.html.erb', :tag_helper, type: :view do
   seed_tags
 

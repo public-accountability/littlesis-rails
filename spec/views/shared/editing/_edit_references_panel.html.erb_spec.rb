@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'partial: shared/editing/_edit_references_panel.html.erb', type: :view do
   let(:references) { Array.new(2) { build(:reference) } }
   let(:selected_ref) { nil }

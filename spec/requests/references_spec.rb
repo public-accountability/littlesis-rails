@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'references requests', type: :request do
   let(:user) { create_basic_user }
   before { login_as(user, scope: :user) }

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
   seed_tags
 

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 # rubocop:disable Style/Semicolon
 
 describe IapdDatum do

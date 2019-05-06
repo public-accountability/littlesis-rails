@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ApplicationRecord do
   describe 'assign_attribute_unless_present' do
     let(:org) { build(:org) }

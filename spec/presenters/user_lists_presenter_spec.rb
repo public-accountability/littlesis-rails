@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe UserListsPresenter do
   let!(:user) { create_really_basic_user }
   let!(:lists) do
