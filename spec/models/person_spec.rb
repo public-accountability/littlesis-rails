@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Person do
   it { should belong_to(:entity).optional }
   it { should have_db_column(:nationality) }

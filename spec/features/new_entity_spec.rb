@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe '/entities/new', type: :feature do
   let(:user) { create_basic_user }
 

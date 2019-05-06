@@ -2,7 +2,6 @@
 
 # rubocop:disable Capybara/FeatureMethods
 
-require 'rails_helper'
 
 describe 'home/dashboard', type: :feature do
   let(:current_user) { create_basic_user }

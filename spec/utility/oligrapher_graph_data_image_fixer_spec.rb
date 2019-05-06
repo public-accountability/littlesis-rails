@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe OligrapherGraphDataImageFixer do
   let(:entity) { create(:entity_org) }

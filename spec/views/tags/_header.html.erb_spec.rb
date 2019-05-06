@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'partial: tags/header', :type => :view do
   let(:tag) { build(:tag) }
   let(:active_tab) { :entities }

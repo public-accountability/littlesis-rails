@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Datatable' do
   let!(:entity) { create(:entity_person) }
   let!(:relationship) do

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe "NotableEntities" do
   specify { expect(NotableEntities).to be_a ActiveSupport::HashWithIndifferentAccess }
   specify { expect(NotableEntities.fetch(:senate)).to eq 12_885 }

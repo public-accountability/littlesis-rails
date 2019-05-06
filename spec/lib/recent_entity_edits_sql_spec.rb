@@ -2,7 +2,6 @@
 
 # rubocop:disable RSpec/InstanceVariable
 
-require 'rails_helper'
 
 describe 'SQL function: recent_entity_edits' do
   let(:user) { create_basic_user }

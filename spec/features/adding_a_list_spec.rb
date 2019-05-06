@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature "adding an new list", type: :feature do
   let(:user) { create_basic_user }
   let(:list_name) { "#{Faker::Company.name} staff" }

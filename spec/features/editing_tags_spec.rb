@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature "Editing Tags", :tag_helper, type: :feature do
   seed_tags
 

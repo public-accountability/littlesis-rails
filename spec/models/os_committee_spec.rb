@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe OsCommittee, type: :model do
   it { should have_db_column(:cycle) }
   it { should have_db_column(:cmte_id) }

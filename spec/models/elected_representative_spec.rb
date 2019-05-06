@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ElectedRepresentative do
   it { is_expected.to belong_to(:entity) }
   it { is_expected.to have_db_column(:fec_ids) }

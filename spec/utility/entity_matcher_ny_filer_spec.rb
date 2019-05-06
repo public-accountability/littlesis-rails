@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe EntityMatcher::NyFiler do
   describe 'extract_name_from' do
     def self.assert_correct_name(input, correct)

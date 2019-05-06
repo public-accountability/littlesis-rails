@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'User Pages' do
   let(:current_user) { create_basic_user }
   let(:user_for_page) { create_basic_user }

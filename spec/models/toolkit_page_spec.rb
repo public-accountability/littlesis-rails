@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ToolkitPage, type: :model do
   it { should belong_to(:last_user).optional }
 

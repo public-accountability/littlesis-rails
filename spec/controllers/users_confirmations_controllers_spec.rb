@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Users::ConfirmationsController, type: :controller do
   before do
     request.env['devise.mapping'] = Devise.mappings[:user]

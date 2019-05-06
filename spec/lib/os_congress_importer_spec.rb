@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'OsCongressImporter' do 
   before(:all) do 
     Entity.skip_callback(:create, :after, :create_primary_ext)

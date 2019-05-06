@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe NysController, type: :controller do
   before do
     Entity.skip_callback(:create, :after, :create_primary_ext)

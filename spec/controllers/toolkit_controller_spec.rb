@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ToolkitController, type: :controller do
   after(:all) { ToolkitPage.delete_all }
   before(:all) { ToolkitPage.delete_all }

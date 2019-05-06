@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'list page', type: :feature do
   let(:document_attributes) { attributes_for(:document) }
   let(:list) do

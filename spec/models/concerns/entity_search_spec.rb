@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'EntitySearch' do
   describe 'Entity::Search.search' do
     let(:defaults) do

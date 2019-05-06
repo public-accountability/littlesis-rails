@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'partial: lists/list_actions', :type => :view do
   context 'NOT EDITABLE' do
     before do

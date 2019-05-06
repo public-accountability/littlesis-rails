@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe "partial: sidebar", :tag_helper do
   seed_tags
 

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe EntityNetworkMapCollection do
   let(:org) { build(:org) }
   subject { EntityNetworkMapCollection.new(org) }

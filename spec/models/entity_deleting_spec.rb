@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Deleting an Entity', type: :model do
   let(:tags) { { oil: create(:oil_tag), nyc: create(:nyc_tag) } }
 

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ListHistory do
   with_versioning do
     context 'creating a list, adding an entity, and updated the name' do

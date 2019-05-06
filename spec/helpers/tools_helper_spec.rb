@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ToolsHelper, type: :helper do
   describe '#relationship_select_builder' do
     let(:org) { build(:org) }

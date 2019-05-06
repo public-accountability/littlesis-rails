@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable Style/StringLiterals, Layout/SpaceBeforeFirstArg
 
 describe Tagable, type: :model do

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'ExternalDatasets requests', type: :request  do
   let(:row) { build_stubbed(:external_dataset) }
 

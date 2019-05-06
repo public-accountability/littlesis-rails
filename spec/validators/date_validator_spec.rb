@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'DateValidator' do
   class DateTester <
         include ActiveModel::Validations

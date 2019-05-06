@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Api do
   describe 'api_base' do
     it 'returns meta hash by default' do

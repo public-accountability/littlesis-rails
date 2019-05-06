@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'Requesting a new tag', type: :feature do
   let(:user) { create_really_basic_user }
 

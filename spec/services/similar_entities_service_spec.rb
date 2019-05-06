@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe SimilarEntitiesService do
   let(:entity) do
     build(:person).tap do |entity|

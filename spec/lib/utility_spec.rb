@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Utility do
 
   describe 'save_hash_array_to_csv' do

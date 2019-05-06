@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe UserRequest, type: :model do
   let(:user_request) { create(:user_request) }
 

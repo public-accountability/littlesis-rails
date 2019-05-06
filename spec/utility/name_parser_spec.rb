@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'NameParser', :name_parser_helper do
   describe 'parse' do
     assert_parsed_name 'god', last: 'God'

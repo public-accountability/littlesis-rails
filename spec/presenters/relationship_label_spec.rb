@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe RelationshipLabel do
   let(:relationship) { build(:relationship, category_id: 1) }
   subject { RelationshipLabel.new(relationship).label }

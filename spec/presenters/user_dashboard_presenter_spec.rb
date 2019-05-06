@@ -2,7 +2,6 @@
 
 # rubocop:disable RSpec/VerifiedDoubles, RSpec/MessageChain, RSpec/MultipleExpectations
 
-require 'rails_helper'
 
 describe UserDashboardPresenter do
   let(:user) { build(:user) }

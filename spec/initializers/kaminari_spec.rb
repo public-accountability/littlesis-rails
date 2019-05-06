@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Kaminari patches' do
   let(:ids) { (0..3).to_a }
   describe "#map monkeypatch" do

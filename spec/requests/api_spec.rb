@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Api, :pagination_helper do
   before(:all) do
     @user = create_really_basic_user

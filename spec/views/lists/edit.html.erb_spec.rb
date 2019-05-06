@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'lists/edit.html.erb', type: :view do
   before(:each) do
     allow(controller).to receive(:current_user)

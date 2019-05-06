@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'search/basic', type: :view do
   let(:entities) { [] }
   let(:groups) { [] }

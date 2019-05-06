@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe TagsController, type: :controller do
   it { should route(:get, '/tags/456').to(action: :show, id: 456) }
   it { should route(:get, '/tags').to(action: :index) }

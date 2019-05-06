@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Document, :pagination_helper, type: :model do
   let(:url) { Faker::Internet.unique.url }
   describe 'validations' do

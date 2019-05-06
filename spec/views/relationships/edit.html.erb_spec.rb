@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'relationships/edit.html.erb', type: :view do
   before(:all) do
     @sf_user = build(:sf_guard_user)

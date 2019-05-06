@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe MapsController, type: :controller do
   before(:all) do
     NetworkMap.skip_callback(:save, :before, :set_index_data)

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Cmp::CmpRelationship do
   before do
     stub_const('Cmp::CMP_USER_ID', 1)

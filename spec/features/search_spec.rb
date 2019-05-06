@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe 'Search', :sphinx, :tag_helper do
   seed_tags
 

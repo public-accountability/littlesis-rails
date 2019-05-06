@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Pagination Module' do
   include Pagination
   let(:ids) { (0..3).to_a }

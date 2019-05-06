@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe "partial: sidebar/image" do
   before { assign(:entity, build_stubbed(:org)) }
 

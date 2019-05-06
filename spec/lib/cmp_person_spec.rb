@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Cmp::CmpPerson do
   let(:override) { {} }
   let(:attributes) do

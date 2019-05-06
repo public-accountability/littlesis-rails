@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe Entity, :tag_helper do
   before(:all) {  DatabaseCleaner.start }

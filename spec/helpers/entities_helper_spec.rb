@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe EntitiesHelper do
   describe 'link_to_all' do
     let(:entity) { build(:org) }

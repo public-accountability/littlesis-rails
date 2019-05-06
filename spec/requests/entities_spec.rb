@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Entity Requests', type: :request do
   let(:person) { create(:entity_person, start_date: '2000-01-01', blurb: nil) }
   let(:user) { create_basic_user }

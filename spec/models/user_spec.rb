@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe User do
   it { is_expected.to have_db_column(:map_the_power) }
   it { is_expected.to have_db_column(:role).of_type(:integer) }

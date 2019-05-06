@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable Style/WordArray
 
 describe RelationshipsGraph do

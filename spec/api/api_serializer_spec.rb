@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Api::Serializer' do
   it 'has MODEL_INFO const with common ignores' do
     expect(Api::Serializer::MODEL_INFO['common']).to be_a Hash

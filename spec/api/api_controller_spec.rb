@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Api::ApiController, type: :controller do
   describe 'index' do
     before { get :index }

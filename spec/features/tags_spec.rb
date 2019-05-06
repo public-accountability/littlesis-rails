@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Tags', :tagging_helper, type: :feature do
 
   let(:tags) { Array.new(2) { create(:tag) } }

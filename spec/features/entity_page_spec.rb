@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable Style/StringLiterals
 
 describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :feature do

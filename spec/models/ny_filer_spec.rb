@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe NyFiler, type: :model do
   subject { create(:ny_filer) }
 

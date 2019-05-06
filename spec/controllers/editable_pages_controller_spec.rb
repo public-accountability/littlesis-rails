@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe EditablePagesController, type: :controller do
 
   class EditablePagesTestController < EditablePagesController

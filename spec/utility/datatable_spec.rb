@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable RSpec/NestedGroups, RSpec/ImplicitSubject, Rspec/NamedSubject
 
 describe Datatable do

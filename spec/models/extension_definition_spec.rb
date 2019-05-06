@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ExtensionDefinition, type: :model do
   it { is_expected.to have_many(:extension_records) }
   it { is_expected.to have_many(:entities) }

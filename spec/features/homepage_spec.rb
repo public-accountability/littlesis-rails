@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Homepage' do
   let(:entity) { create(:entity_org) }
   let(:list) { create(:list) }

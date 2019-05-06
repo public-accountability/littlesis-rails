@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe NameSimilarity do
   it 'raises TypeError unless both arguments are strings' do
     expect { NameSimilarity.new('hello', 123) }.to raise_error(TypeError)

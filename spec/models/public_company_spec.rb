@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe PublicCompany, :external_link, :type => :model do
   it { is_expected.to belong_to(:entity) }
   it { is_expected.to validate_length_of(:ticker).is_at_most(10) }

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'entities/political.html.erb' do
   before(:all) do
     @sf_user = build(:sf_guard_user, username: 'X')

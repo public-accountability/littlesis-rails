@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe EditedEntity, type: :model do
   let(:entity_id) { create(:entity_person, last_user_id: 1).id }

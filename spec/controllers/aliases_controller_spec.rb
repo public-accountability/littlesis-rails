@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe AliasesController, type: :controller do
   let(:entity) { create(:entity_org) }
   it { should use_before_action(:authenticate_user!) }

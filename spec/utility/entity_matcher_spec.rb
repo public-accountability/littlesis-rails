@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
 
 describe EntityMatcher, :sphinx do
   def result_person(*args)

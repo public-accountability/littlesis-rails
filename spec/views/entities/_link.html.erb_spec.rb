@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe "partial: entities/link", type: :view do
   let(:entity) { build(:org) }
   let(:person) { build(:person) }

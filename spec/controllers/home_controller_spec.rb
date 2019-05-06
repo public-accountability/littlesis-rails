@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe HomeController, type: :controller do
   describe 'routes' do
     it { is_expected.to route(:get, '/contact').to(action: :contact) }

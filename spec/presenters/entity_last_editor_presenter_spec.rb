@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable RSpec/VerifiedDoubles, RSpec/ExpectInHook, RSpec/NamedSubject
 
 describe EntityLastEditorPresenter do

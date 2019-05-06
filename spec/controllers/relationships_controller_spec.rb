@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe RelationshipsController, type: :controller do
   let(:sf_user) { create(:sf_user) }
   let(:e1) { create(:entity_person, last_user_id: sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }

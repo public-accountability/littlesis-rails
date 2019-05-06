@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'home/contact.html.erb', type: :view do
   describe 'user signed in ' do
     before(:each) do

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'entities/match_donations.html.erb' do
   before(:all) do
     DatabaseCleaner.start

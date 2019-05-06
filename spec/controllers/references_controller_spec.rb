@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ReferencesController, type: :controller do
   before(:all) { Entity.skip_callback(:create, :after, :create_primary_ext) }
   after(:all) { Entity.set_callback(:create, :after, :create_primary_ext) }

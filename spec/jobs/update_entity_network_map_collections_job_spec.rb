@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe UpdateEntityNetworkMapCollectionsJob, type: :job do
   include ActiveJob::TestHelper
   let(:e1) { create(:entity_org) }

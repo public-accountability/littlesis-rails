@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable RSpec/NamedSubject
 
 describe EntityVersionPresenter do

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Image, type: :model do
   let(:filename) { "#{Digest::MD5.hexdigest(Time.current.to_i.to_s)}.png" }
 

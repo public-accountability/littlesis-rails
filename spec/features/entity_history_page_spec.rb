@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'EntityHistoryPage' do
   let(:users) { Array.new(3) { create_really_basic_user } }
   let(:entity) { create(:entity_person) }

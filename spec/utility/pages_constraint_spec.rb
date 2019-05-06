@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'PagesConstraint' do
   class FakeRequest
     def initialize(url)

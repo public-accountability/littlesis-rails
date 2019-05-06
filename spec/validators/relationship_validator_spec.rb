@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'RelationshipValidator' do
   class RelTester <
     include ActiveModel::Validations

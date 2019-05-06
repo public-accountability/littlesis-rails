@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 # rubocop:disable RSpec/ContextWording, RSpec/NestedGroups
 
 describe UsersController, type: :controller do

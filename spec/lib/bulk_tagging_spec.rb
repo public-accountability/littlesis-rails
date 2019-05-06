@@ -1,4 +1,3 @@
-require 'rails_helper'
 require 'csv'
 require Rails.root.join('lib', 'task-helpers', 'bulk_tagger.rb')
 

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ExternalLink, type: :model do
   it { is_expected.to have_db_column(:link_type) }
   it { is_expected.to have_db_column(:entity_id) }

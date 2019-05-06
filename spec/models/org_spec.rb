@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Org do
   it { should belong_to(:entity) }
 

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'home/flag.html.erb', type: :view do
   context 'when referrer is missing' do
     before do

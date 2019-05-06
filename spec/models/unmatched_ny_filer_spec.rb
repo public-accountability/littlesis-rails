@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe UnmatchedNyFiler do
   it { is_expected.to have_db_column(:ny_filer_id) }
   it { is_expected.to have_db_column(:disclosure_count) }

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe RecordHistory do
   describe 'initalize' do
     it 'stores model name on instance variable' do

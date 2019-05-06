@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'SQL Function: network_map_sql' do
   it 'generates html link for a network map' do
     expect(ApplicationRecord.execute_one("SELECT network_map_link(123, 'My Title')"))

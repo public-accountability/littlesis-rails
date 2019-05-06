@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'SoftDelete' do
   before(:all) do
     ApplicationRecord.connection.execute('DROP TABLE IF EXISTS test_records')

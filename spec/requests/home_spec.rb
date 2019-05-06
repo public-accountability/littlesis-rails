@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'Home requests' do
   describe 'adding a new email to the pai newsletter' do
     let(:email) { Faker::Internet.email }

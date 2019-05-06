@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Api::EntitiesController, type: :controller do
   describe 'Private Methods' do
     describe 'page_requested' do

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe DeletionRequest, type: :model do
   let(:deletion_request) { create(:deletion_request) }
 

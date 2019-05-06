@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'API ROUTES' do
   describe Api::ApiController, type: :controller do
     it { should route(:get, '/api').to(action: :index) }
