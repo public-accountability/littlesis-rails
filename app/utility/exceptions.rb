@@ -8,6 +8,7 @@ module Exceptions
   class InvalidRelationshipCategoryError < StandardError; end
   class RestrictedUserError < StandardError; end
   class UserCannotEditError < StandardError; end
+  class InvalidEntityIdError < LittleSisError; end
   class CannotRestoreError < StandardError
     def message
       "Cannot restore a model that has not yet been deleted"

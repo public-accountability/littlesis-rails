@@ -13,6 +13,8 @@ describe ExternalDatasetsController, type: :controller do
   end
 
   describe 'GET #index' do
+    before { allow(controller).to receive(:authenticate_user!) }
+
     it 'returns http success' do
       get :index
       expect(response).to have_http_status(:success)
@@ -20,6 +22,8 @@ describe ExternalDatasetsController, type: :controller do
   end
 
   describe 'matching' do
+    before { allow(controller).to receive(:authenticate_user!) }
+
     let(:row_id) { Faker::Number.number }
     let(:entity_id) { Faker::Number.number }
     let(:entity) { instance_double('Entity') }
@@ -28,6 +32,7 @@ describe ExternalDatasetsController, type: :controller do
 
     context 'when the row does not exist' do
       specify do
+        allow(Entity).to receive(:find).with(entity_id).and_return(entity)
         expect(ExternalDataset).to receive(:find).with(row_id).and_raise(ActiveRecord::RecordNotFound)
         get :match, params: { id: row_id, entity_id: entity_id }
         expect(response).to have_http_status(:not_found)
@@ -44,7 +49,7 @@ describe ExternalDatasetsController, type: :controller do
     context 'when the match is successful' do
       specify do
         expect(ExternalDataset).to receive(:find).with(row_id).and_return(row)
-        expect(Entity).to receive(:find).with(entity_id.to_i).and_return(entity)
+        expect(Entity).to receive(:find).with(entity_id).and_return(entity)
         expect(row).to receive(:match_with).with(entity).and_return([match_with_double])
         expect(row).to receive(:matched?).once.and_return(true)
         expect(entity).to receive(:to_hash).and_return('id' => entity_id, 'name' => 'abc')
@@ -60,7 +65,7 @@ describe ExternalDatasetsController, type: :controller do
     context 'when the match fails' do
       specify do
         expect(ExternalDataset).to receive(:find).with(row_id).and_return(row)
-        expect(Entity).to receive(:find).with(entity_id.to_i).and_return(entity)
+        expect(Entity).to receive(:find).with(entity_id).and_return(entity)
         expect(row).to receive(:match_with).with(entity).and_return([match_with_double])
         expect(row).to receive(:matched?).once.and_return(false)
 
@@ -74,7 +79,7 @@ describe ExternalDatasetsController, type: :controller do
     context 'when the row is already matched' do
       specify do
         expect(ExternalDataset).to receive(:find).with(row_id).and_return(row)
-        expect(Entity).to receive(:find).with(entity_id.to_i).and_return(entity)
+        expect(Entity).to receive(:find).with(entity_id).and_return(entity)
         expect(row).to receive(:match_with).with(entity).and_raise(ExternalDataset::RowAlreadyMatched)
         get :match, params: { id: row_id, entity_id: entity_id }
         expect(response).to have_http_status(:conflict)
