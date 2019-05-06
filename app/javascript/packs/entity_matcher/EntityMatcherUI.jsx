@@ -43,8 +43,8 @@ const defaultState = () => ({
 
 export default class EntityMatcherUI extends React.Component {
   static propTypes = {
-    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired,
-    "dataset": PropTypes.string,
+    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]),
+    "dataset": PropTypes.string.isRequired,
     "flow": PropTypes.string.isRequired
   };
 
@@ -103,7 +103,11 @@ export default class EntityMatcherUI extends React.Component {
   }
 
   componentDidMount() {
-    this.loadItemInfoAndMatches();
+    if (this.state.itemId) {
+      this.loadItemInfoAndMatches();
+    } else {
+      this.nextItem();
+    }
   }
 
   render() {
