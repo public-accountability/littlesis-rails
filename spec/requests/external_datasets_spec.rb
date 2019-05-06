@@ -1,9 +1,14 @@
-describe 'ExternalDatasets requests', type: :request  do
+describe 'ExternalDatasets requests', type: :request do
   let(:row) { build_stubbed(:external_dataset) }
+  let(:user) { create_basic_user }
 
   def mock_external_dataset_find
     expect(ExternalDataset).to receive(:find).with(row.id.to_s).and_return(row)
   end
+
+  before { login_as(user, :scope => :user) }
+
+  after { logout(:user) }
 
   describe 'row' do
     it 'returns row data for dataset' do
