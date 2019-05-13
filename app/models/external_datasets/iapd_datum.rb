@@ -163,6 +163,19 @@ class IapdDatum < ExternalDataset
       .pluck(:id)
   end
 
+  def self.owners_from_queue
+    random_id = OWNERS_MATCHING_QUEUE.random_get
+    raise Exceptions::LittleSisError, 'IAPD Owners Queue is empty' if random_id.nil?
+
+    iapd_owner = IapdDatum.find(random_id)
+    if iapd_owner.matched?
+      OWNERS_MATCHING_QUEUE.remove(random_id)
+      owners_from_queue
+    else
+      iapd_owner
+    end
+  end
+
   ## Class Helper Methods ##
 
   def self.link_to_pdf(crd_number)
