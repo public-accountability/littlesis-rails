@@ -21,7 +21,7 @@ const DatasetItemPresenter = ({title, value}) => {
 const dataToKeyValues= (rowData) => {
   const latestRecord = sortBy(rowData.data, 'filename').slice(-1)[0];
 
-  if (rowData['class'].includes('IpadOwner')) {
+  if (rowData['class'].includes('IapdOwner')) {
     return [
       ["Dataset", "Iapd Owner"],
       ["Name", rowData.name],

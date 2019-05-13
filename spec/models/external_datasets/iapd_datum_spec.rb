@@ -56,7 +56,7 @@ describe IapdDatum do
     let(:tag) { create(:tag, name: "iapd") }
 
     before do
-      stub_const("#{IapdRelationshipService}::IAPD_TAG_ID", tag.id)
+      stub_const("#{IapdDatum}::IAPD_TAG_ID", tag.id)
       baupost_entity
       iapd_baupost
       iapd_seth_klarman

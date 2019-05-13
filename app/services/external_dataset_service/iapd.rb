@@ -27,16 +27,18 @@ module ExternalDatasetService
       extension = @entity.org? ? 'Business' : 'BusinessPerson'
 
       ApplicationRecord.transaction do
+        @entity.add_tag(IapdDatum::IAPD_TAG_ID)
+
         if crd_number
-          if entity.has_extension?(extension)
-            entity.merge_extension extension, crd_number: crd_number.to_i
+          if @entity.has_extension?(extension)
+            @entity.merge_extension extension, crd_number: crd_number.to_i
           else
-            entity.add_extension extension, crd_number: crd_number.to_i
+            @entity.add_extension extension, crd_number: crd_number.to_i
           end
         else
-          entity.add_extension extension
+          @entity.add_extension extension
         end
-        external_dataset.update! entity_id: entity.id
+        external_dataset.update! entity_id: @entity.id
       end
 
       if external_dataset.advisor?

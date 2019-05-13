@@ -120,8 +120,11 @@ describe ExternalDatasetService do
     end
 
     describe 'match' do
+      let(:tag) { create(:tag, name: "iapd") }
       let(:person) { create(:entity_person) }
       let(:org) { create(:entity_org) }
+
+      before { stub_const("#{IapdDatum}::IAPD_TAG_ID", tag.id) }
 
       context 'with owner key that is not a crd number' do
         let(:external_dataset) { create(:external_dataset_iapd_owner_without_crd) }
@@ -181,11 +184,15 @@ describe ExternalDatasetService do
     end # end describe match
 
     describe 'unmatch' do
+      let(:tag) { create(:tag, name: "iapd") }
       let(:person) { create(:entity_person) }
       let(:external_dataset) { create(:external_dataset_iapd_owner) }
       let(:service) { ExternalDatasetService::Iapd.new(entity: person, external_dataset: external_dataset) }
 
-      before { service.match }
+      before do
+        stub_const("#{IapdDatum}::IAPD_TAG_ID", tag.id)
+        service.match
+      end
 
       it 'removes crd_number' do
         expect { service.unmatch }

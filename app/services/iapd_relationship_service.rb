@@ -10,8 +10,6 @@
 #  - relationship_created
 #
 class IapdRelationshipService
-  IAPD_TAG_ID = 18
-
   attr_reader :advisor, :owner, :dry_run, :result, :relationship
 
   def initialize(advisor:, owner:, dry_run: false)
@@ -86,7 +84,7 @@ class IapdRelationshipService
                    description1: filing.fetch('title_or_status') }
 
     Relationship.create!(attributes).tap do |r|
-      r.add_tag IAPD_TAG_ID
+      r.add_tag IapdDatum::IAPD_TAG_ID
       r.add_reference IapdDatum.document_attributes_for_form_adv_pdf(advisor.row_data.fetch('crd_number'))
     end
   end
@@ -103,7 +101,7 @@ class IapdRelationshipService
       .includes(:taggings)
       .where(entity: owner.entity, related: advisor.entity, category_id: Relationship::POSITION_CATEGORY)
       .to_a
-      .find { |r| r.taggings.map(&:tag_id).include?(IAPD_TAG_ID) }
+      .find { |r| r.taggings.map(&:tag_id).include?(IapdDatum::IAPD_TAG_ID) }
   end
 
   def self.create_relationships_for(advisor, dry_run: false)

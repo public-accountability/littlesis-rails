@@ -2,6 +2,7 @@
 
 # The term "IapdOwner" here is shorthand for executive and/or owner
 class IapdDatum < ExternalDataset
+  IAPD_TAG_ID = 18
   IapdAdvisor = Struct.new(:crd_number, :name, :data)
   IapdOwner = Struct.new(:owner_key, :name, :associated_advisors, :data) do
     def owner_type
