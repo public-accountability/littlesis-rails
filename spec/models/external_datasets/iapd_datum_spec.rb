@@ -76,6 +76,18 @@ describe IapdDatum do
         expect(result.first).to be_a IapdRelationshipService
         expect(result.first.result).to eq :owner_not_matched
       end
+
+      it 'adds tag' do
+        expect { iapd_baupost.match_with(baupost_entity) }
+          .to change { baupost_entity.reload.taggings.count }
+                .from(0).to(1)
+      end
+
+      it 'adds document' do
+        expect { iapd_baupost.match_with(baupost_entity) }
+          .to change { baupost_entity.reload.documents.count }
+                .from(0).to(1)
+      end
     end
 
     describe 'matching advisor when owner has been matched' do
