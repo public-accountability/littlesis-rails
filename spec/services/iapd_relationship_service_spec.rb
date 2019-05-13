@@ -115,7 +115,7 @@ describe IapdRelationshipService do
           end
         end
 
-        before { stub_const("#{IapdRelationshipService}::IAPD_TAG_ID", tag.id) }
+        before { stub_const("#{IapdDatum}::IAPD_TAG_ID", tag.id) }
 
         describe 'creating a relationship between Seth Klarman and Baupost' do
           it 'creates a new relationship' do

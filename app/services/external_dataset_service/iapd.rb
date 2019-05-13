@@ -27,16 +27,22 @@ module ExternalDatasetService
       extension = @entity.org? ? 'Business' : 'BusinessPerson'
 
       ApplicationRecord.transaction do
+        @entity.add_tag(IapdDatum::IAPD_TAG_ID)
+        crd_numbers_for_documentation.each do |crd_number|
+          @entity.add_reference(IapdDatum.document_attributes_for_form_adv_pdf(crd_number))
+        end
+
         if crd_number
-          if entity.has_extension?(extension)
-            entity.merge_extension extension, crd_number: crd_number.to_i
+          if @entity.has_extension?(extension)
+            @entity.merge_extension extension, crd_number: crd_number.to_i
           else
-            entity.add_extension extension, crd_number: crd_number.to_i
+            @entity.add_extension extension, crd_number: crd_number.to_i
           end
         else
-          entity.add_extension extension
+          @entity.add_extension extension
         end
-        external_dataset.update! entity_id: entity.id
+        external_dataset.update! entity_id: @entity.id
+        @entity.save!
       end
 
       if external_dataset.advisor?
@@ -55,11 +61,19 @@ module ExternalDatasetService
 
       ApplicationRecord.transaction do
         @external_dataset.entity.public_send(extension).update! crd_number: nil
-        external_dataset.update! entity_id: nil
+        @external_dataset.update! entity_id: nil
       end
     end
 
     private
+
+    def crd_numbers_for_documentation
+      if @external_dataset.advisor?
+        Array.wrap(@external_dataset.row_data.fetch('crd_number'))
+      elsif @external_dataset.owner?
+        @external_dataset.row_data.fetch('associated_advisors')
+      end
+    end
 
     def crd_number
       if @external_dataset.row_data_class&.include? 'IapdAdvisor'

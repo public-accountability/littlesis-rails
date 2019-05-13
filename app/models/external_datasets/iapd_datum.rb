@@ -2,6 +2,7 @@
 
 # The term "IapdOwner" here is shorthand for executive and/or owner
 class IapdDatum < ExternalDataset
+  IAPD_TAG_ID = 18
   IapdAdvisor = Struct.new(:crd_number, :name, :data)
   IapdOwner = Struct.new(:owner_key, :name, :associated_advisors, :data) do
     def owner_type
@@ -161,6 +162,19 @@ class IapdDatum < ExternalDataset
       .advisors
       .assets_under_management_over(3_000_000_000)
       .pluck(:id)
+  end
+
+  def self.owners_from_queue
+    random_id = OWNERS_MATCHING_QUEUE.random_get
+    raise Exceptions::LittleSisError, 'IAPD Owners Queue is empty' if random_id.nil?
+
+    iapd_owner = IapdDatum.find(random_id)
+    if iapd_owner.matched?
+      OWNERS_MATCHING_QUEUE.remove(random_id)
+      owners_from_queue
+    else
+      iapd_owner
+    end
   end
 
   ## Class Helper Methods ##

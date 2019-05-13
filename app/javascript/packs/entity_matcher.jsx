@@ -9,7 +9,7 @@ window.entityMatcher = function(options) {
   let dataset = get(options, 'dataset', 'iapd');
   let id = get(options, 'id', 'entity-matcher');
   let flow = get(options, 'flow', 'advisors');
-  let start = get(options, 'start', '1');
+  let start = get(options, 'start', null);
 
   ReactDOM.render(
     <EntityMatcherUI itemId={start} dataset={dataset} flow={flow} />,
