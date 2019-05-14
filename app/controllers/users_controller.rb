@@ -12,7 +12,6 @@ class UsersController < ApplicationController
   # get /users
   def index
     @users = User
-      .includes(:groups)
       .joins("INNER JOIN sf_guard_user ON sf_guard_user.id = users.sf_guard_user_id")
       .joins("INNER JOIN sf_guard_user_profile ON sf_guard_user_profile.user_id = sf_guard_user.id")
       .where(sf_guard_user: { is_active: true, is_super_admin: false }, sf_guard_user_profile: { is_confirmed: true })
@@ -111,7 +110,7 @@ class UsersController < ApplicationController
 
   def admin
     @users = User
-               .includes(:groups, :user_profile)
+               .includes(:user_profile)
                .where.not(role: :system)
                .where(User.matches_username_or_email(params[:q]))
                .order('created_at DESC')
