@@ -18,13 +18,6 @@ class List < ApplicationRecord
   has_many :entities, through: :list_entities
   has_many :images, through: :entities
 
-  # Groups
-  has_many :featured_in_groups, class_name: "Group", inverse_of: :featured_list
-  has_many :group_lists, inverse_of: :list
-  has_many :groups, through: :group_lists, inverse_of: :lists
-  has_many :sf_guard_group_lists, inverse_of: :list, dependent: :destroy
-  has_many :sf_guard_groups, through: :sf_guard_group_lists, inverse_of: :lists
-
   validates :name, presence: true
   validates :short_description, length: { maximum: 255 }
 

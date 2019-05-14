@@ -10,12 +10,8 @@ class SfGuardUser < ApplicationRecord
 
   has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", inverse_of: :last_user
 
-	has_many :sf_guard_user_groups, foreign_key: "user_id", inverse_of: :sf_guard_user, dependent: :destroy
-	has_many :sf_guard_groups, through: :sf_guard_user_groups, inverse_of: :sf_guard_users
-
-	has_many :sf_guard_user_permissions, foreign_key: "user_id", inverse_of: :sf_guard_user, dependent: :destroy
-	has_many :sf_guard_permissions, through: :sf_guard_user_permissions, inverse_of: :sf_guard_users
-	has_many :sf_guard_groups_permissions, class_name: "SfGuardPermission", through: :sf_guard_groups, source: :sf_guard_permissions
+  has_many :sf_guard_user_permissions, foreign_key: "user_id", inverse_of: :sf_guard_user, dependent: :destroy
+  has_many :sf_guard_permissions, through: :sf_guard_user_permissions, inverse_of: :sf_guard_users
 
   has_many :network_maps, foreign_key: 'sf_user_id', inverse_of: :sf_guard_user
 

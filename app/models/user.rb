@@ -40,9 +40,6 @@ class User < ApplicationRecord
   # has_many :edited_entities ,
   #          class_name: 'Entity', foreign_key: 'last_user_id', primary_key: 'sf_guard_user_id'
 
-  has_many :group_users, inverse_of: :user, dependent: :destroy
-  has_many :groups, through: :group_users, inverse_of: :users
-
   # Maps and lists the user has created
   has_many :network_maps, inverse_of: :user
   has_many :lists, foreign_key: 'creator_user_id', inverse_of: :user
@@ -79,17 +76,17 @@ class User < ApplicationRecord
 
   # Groups #
 
-  def in_group?(group)
-    GroupUser.where(group_id: group.id, user_id: id).count > 0
-  end
+  # def in_group?(group)
+  #   GroupUser.where(group_id: group.id, user_id: id).count > 0
+  # end
 
-  def admin_in_group?(group)
-    GroupUser.where(group_id: group.id, user_id: id, is_admin: true).count > 0
-  end
+  # def admin_in_group?(group)
+  #   GroupUser.where(group_id: group.id, user_id: id, is_admin: true).count > 0
+  # end
 
-  def in_campaign?(campaign)
-    GroupUser.joins(:group).where("groups.campaign_id" => campaign.id, user_id: id).count > 0
-  end
+  # def in_campaign?(campaign)
+  #   GroupUser.joins(:group).where("groups.campaign_id" => campaign.id, user_id: id).count > 0
+  # end
 
   def legacy_created_at
     return created_at if sf_guard_user.nil?

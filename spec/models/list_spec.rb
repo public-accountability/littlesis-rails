@@ -27,17 +27,6 @@ describe List do
       ListEntity.find_or_create_by(list_id: list.id, entity_id: inc.id)
       expect(list.images.count).to eq 1
     end
-
-    it 'has groups' do
-      list = create(:list)
-      grp = create(:group)
-      expect(list.groups.count).to eq (0)
-      GroupList.create(list_id: list.id, group_id: grp.id)
-      expect(list.groups.count).to eq(1)
-      expect(GroupList.count).to eq(1) 
-      expect(grp.lists.first).to eq(list)
-      expect(list.groups.first).to eq(grp)
-    end
   end
 
   context 'SoftDelete' do
