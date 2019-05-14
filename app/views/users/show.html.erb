@@ -13,18 +13,6 @@
 
 <div><%= @user.about_me %></div>
 
-<h3>Groups</h3>
-
-<div>
-  <% if @user.groups.present? %>
-    <% @user.groups.each do |group| %>
-      <%= group_link(group) %><br />
-    <% end %>
-  <% else %>
-    None
-  <% end %>
-</div>
-
 <h3>
   Edits
   <% if @user.show_private? %>

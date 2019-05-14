@@ -44,7 +44,7 @@ class Entity < ApplicationRecord
            through: :links
 
   has_many :relateds, -> { distinct }, through: :links
-  has_many :groups, through: :lists, inverse_of: :entities
+
   belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", inverse_of: :edited_entities
   has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
   has_many :os_entity_preprocesses, inverse_of: :entity, dependent: :destroy

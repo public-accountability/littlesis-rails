@@ -45,38 +45,6 @@ Lilsis::Application.routes.draw do
 
   resources :dashboard_bulletins, except: [:show]
 
-  resources :groups do
-    member do
-      get 'edits'
-      get 'lists'
-      post 'remove_list'
-      post 'feature_list'
-      post 'unfeature_list'
-      get 'new_list'
-      post 'add_list'
-      post 'join'
-      post 'leave'
-      get 'users'
-      post 'promote_user'
-      post 'demote_user'
-      post 'remove_user'
-      get 'admin'
-      get 'entities'
-      post 'clear_cache'
-      get 'edit_findings'
-      get 'edit_howto'
-      get 'edit_advanced'
-    end
-
-    collection do
-      get 'request_new'
-      post 'send_request'
-      get 'request_sent'
-    end
-  end
-
-  get '/groups/:id(/:group_tabs_selected_tab)' => 'groups#show'
-
   resources :users, only: [:edit] do
     member do
       get 'edit_permissions'
@@ -244,7 +212,6 @@ Lilsis::Application.routes.draw do
   get "/search" => "search#basic"
   get "/search/entity" => "search#entity_search"
 
-  get "/home/groups" => "home#groups"
   get "/home/maps" => "home#maps"
   get "/home/lists" => "home#lists"
   get "/home/dashboard" => "home#dashboard"
