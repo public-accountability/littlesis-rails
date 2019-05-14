@@ -90,9 +90,6 @@ class DevelopmentDb
                  fields
                  generic
                  government_body
-                 group_lists
-                 group_users
-                 groups
                  help_pages
                  hierarchy
                  image
@@ -131,11 +128,7 @@ class DevelopmentDb
                  representative_district
                  schema_migrations
                  school
-                 sf_guard_group
-                 sf_guard_group_list
-                 sf_guard_group_permission
                  sf_guard_permission
-                 sf_guard_user_group
                  sf_guard_user_permission
                  social
                  tag
@@ -166,12 +159,6 @@ class DevelopmentDb
 
   LIMIT = %w[modification
              modification_field
-             note
-             note_entities
-             note_groups
-             note_lists
-             note_relationships
-             note_users
              ny_disclosures
              ny_filers
              ny_matches
