@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_14_141806) do
+ActiveRecord::Schema.define(version: 2019_05_14_181827) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -448,46 +448,6 @@ ActiveRecord::Schema.define(version: 2019_05_14_141806) do
     t.bigint "entity_id", null: false
     t.index ["entity_id"], name: "entity_id_idx"
     t.index ["state_id"], name: "state_id_idx"
-  end
-
-  create_table "group_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.integer "group_id"
-    t.integer "list_id"
-    t.boolean "is_featured", default: false, null: false
-    t.index ["group_id", "list_id"], name: "index_group_lists_on_group_id_and_list_id", unique: true
-    t.index ["list_id"], name: "index_group_lists_on_list_id"
-  end
-
-  create_table "group_users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.integer "group_id"
-    t.integer "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "is_admin", default: false, null: false
-    t.index ["group_id", "user_id"], name: "index_group_users_on_group_id_and_user_id", unique: true
-    t.index ["user_id"], name: "index_group_users_on_user_id"
-  end
-
-  create_table "groups", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.string "name"
-    t.string "tagline"
-    t.text "description", limit: 16777215
-    t.boolean "is_private", default: false, null: false
-    t.string "slug"
-    t.integer "default_network_id"
-    t.integer "campaign_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "logo"
-    t.text "findings", limit: 16777215
-    t.text "howto", limit: 16777215
-    t.integer "featured_list_id"
-    t.string "cover"
-    t.boolean "delta", default: true, null: false
-    t.string "logo_credit"
-    t.index ["campaign_id"], name: "index_groups_on_campaign_id"
-    t.index ["delta"], name: "index_groups_on_delta"
-    t.index ["slug"], name: "index_groups_on_slug", unique: true
   end
 
   create_table "help_pages", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
@@ -1236,35 +1196,6 @@ ActiveRecord::Schema.define(version: 2019_05_14_141806) do
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
-  create_table "sf_guard_group", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.string "name"
-    t.string "blurb"
-    t.text "description"
-    t.text "contest"
-    t.boolean "is_working", default: false, null: false
-    t.boolean "is_private", default: false, null: false
-    t.string "display_name", null: false
-    t.integer "home_network_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["display_name"], name: "index_sf_guard_group_on_display_name"
-    t.index ["name"], name: "name", unique: true
-  end
-
-  create_table "sf_guard_group_list", primary_key: ["group_id", "list_id"], options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.integer "group_id", default: 0, null: false
-    t.bigint "list_id", default: 0, null: false
-    t.index ["list_id"], name: "list_id"
-  end
-
-  create_table "sf_guard_group_permission", primary_key: ["group_id", "permission_id"], options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.integer "group_id", default: 0, null: false
-    t.integer "permission_id", default: 0, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["permission_id"], name: "permission_id"
-  end
-
   create_table "sf_guard_permission", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -1286,16 +1217,6 @@ ActiveRecord::Schema.define(version: 2019_05_14_141806) do
     t.boolean "is_deleted", default: false, null: false
     t.index ["is_active"], name: "is_active_idx_idx"
     t.index ["username"], name: "username", unique: true
-  end
-
-  create_table "sf_guard_user_group", primary_key: ["user_id", "group_id"], options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.integer "user_id", default: 0, null: false
-    t.integer "group_id", default: 0, null: false
-    t.boolean "is_owner"
-    t.bigint "score", default: 0, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["group_id"], name: "group_id"
   end
 
   create_table "sf_guard_user_permission", primary_key: ["user_id", "permission_id"], options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -1579,12 +1500,6 @@ ActiveRecord::Schema.define(version: 2019_05_14_141806) do
   add_foreign_key "representative_district", "elected_representative", column: "representative_id", name: "representative_district_ibfk_3", on_update: :cascade, on_delete: :cascade
   add_foreign_key "representative_district", "political_district", column: "district_id", name: "representative_district_ibfk_4", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school", "entity", name: "school_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "sf_guard_group_list", "ls_list", column: "list_id", name: "sf_guard_group_list_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "sf_guard_group_list", "sf_guard_group", column: "group_id", name: "sf_guard_group_list_ibfk_2", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "sf_guard_group_permission", "sf_guard_group", column: "group_id", name: "sf_guard_group_permission_ibfk_2", on_delete: :cascade
-  add_foreign_key "sf_guard_group_permission", "sf_guard_permission", column: "permission_id", name: "sf_guard_group_permission_ibfk_1", on_delete: :cascade
-  add_foreign_key "sf_guard_user_group", "sf_guard_group", column: "group_id", name: "sf_guard_user_group_ibfk_2", on_delete: :cascade
-  add_foreign_key "sf_guard_user_group", "sf_guard_user", column: "user_id", name: "sf_guard_user_group_ibfk_1", on_delete: :cascade
   add_foreign_key "sf_guard_user_permission", "sf_guard_permission", column: "permission_id", name: "sf_guard_user_permission_ibfk_2", on_delete: :cascade
   add_foreign_key "sf_guard_user_permission", "sf_guard_user", column: "user_id", name: "sf_guard_user_permission_ibfk_1", on_delete: :cascade
   add_foreign_key "social", "relationship", name: "social_ibfk_1", on_update: :cascade, on_delete: :cascade
