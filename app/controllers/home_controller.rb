@@ -15,16 +15,6 @@ class HomeController < ApplicationController
     [34, 'Elite think tanks']
   ].freeze
 
-  def groups
-    @groups = Group
-                .select("groups.*, COUNT(DISTINCT(group_users.user_id)) AS user_count")
-                .joins(:group_users)
-                .group("groups.id")
-                .where(id: current_user.group_ids)
-                .order("user_count DESC")
-                .page(params[:page]).per(20)
-  end
-
   def dashboard
     @user_dashboard = UserDashboardPresenter.new(current_user,
                                                  map_page: params[:map_page],
