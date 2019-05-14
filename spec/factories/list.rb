@@ -33,11 +33,4 @@ FactoryBot.define do
     sequence(:list_id)
     sequence(:entity_id)
   end
-
-  factory :note, class: Note do
-    user_id { 1 }
-    body { 'why is EVERYTHING connected?' }
-    body_raw { 'why is EVERYTHING connected?' }
-  end
-
 end

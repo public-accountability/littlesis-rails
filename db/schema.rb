@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_23_191048) do
+ActiveRecord::Schema.define(version: 2019_05_14_141806) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -717,72 +717,6 @@ ActiveRecord::Schema.define(version: 2019_04_23_191048) do
     t.bigint "sf_user_id"
     t.index ["delta"], name: "index_network_map_on_delta"
     t.index ["user_id"], name: "user_id_idx"
-  end
-
-  create_table "note", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.string "title", limit: 50
-    t.text "body", null: false
-    t.text "body_raw", null: false
-    t.string "alerted_user_names", limit: 500
-    t.string "alerted_user_ids", limit: 500
-    t.string "entity_ids", limit: 200
-    t.string "relationship_ids", limit: 200
-    t.string "lslist_ids", limit: 200
-    t.string "sfguardgroup_ids", limit: 200
-    t.string "network_ids", limit: 200
-    t.boolean "is_private", default: false, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "is_legacy", default: false, null: false
-    t.integer "sf_guard_user_id"
-    t.integer "new_user_id"
-    t.boolean "delta", default: true, null: false
-    t.index ["alerted_user_ids"], name: "alerted_user_ids_idx", length: 255
-    t.index ["delta"], name: "index_note_on_delta"
-    t.index ["entity_ids"], name: "entity_ids_idx"
-    t.index ["is_private"], name: "is_private_idx"
-    t.index ["lslist_ids"], name: "lslist_ids_idx"
-    t.index ["new_user_id"], name: "index_note_on_new_user_id"
-    t.index ["relationship_ids"], name: "relationship_ids_idx"
-    t.index ["sf_guard_user_id"], name: "index_note_on_sf_guard_user_id"
-    t.index ["updated_at"], name: "updated_at_idx"
-    t.index ["user_id"], name: "user_id_idx"
-  end
-
-  create_table "note_entities", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.integer "note_id"
-    t.integer "entity_id"
-    t.index ["entity_id"], name: "index_note_entities_on_entity_id"
-    t.index ["note_id", "entity_id"], name: "index_note_entities_on_note_id_and_entity_id", unique: true
-  end
-
-  create_table "note_groups", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.integer "note_id"
-    t.integer "group_id"
-    t.index ["group_id"], name: "index_note_groups_on_group_id"
-    t.index ["note_id", "group_id"], name: "index_note_groups_on_note_id_and_group_id", unique: true
-  end
-
-  create_table "note_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.integer "note_id"
-    t.integer "list_id"
-    t.index ["list_id"], name: "index_note_lists_on_list_id"
-    t.index ["note_id", "list_id"], name: "index_note_lists_on_note_id_and_list_id", unique: true
-  end
-
-  create_table "note_relationships", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.integer "note_id"
-    t.integer "relationship_id"
-    t.index ["note_id", "relationship_id"], name: "index_note_relationships_on_note_id_and_relationship_id", unique: true
-    t.index ["relationship_id"], name: "index_note_relationships_on_relationship_id"
-  end
-
-  create_table "note_users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.integer "note_id"
-    t.integer "user_id"
-    t.index ["note_id", "user_id"], name: "index_note_users_on_note_id_and_user_id", unique: true
-    t.index ["user_id"], name: "index_note_users_on_user_id"
   end
 
   create_table "ny_disclosures", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -1616,7 +1550,6 @@ ActiveRecord::Schema.define(version: 2019_04_23_191048) do
   add_foreign_key "membership", "relationship", name: "membership_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "modification", "sf_guard_user", column: "user_id", name: "modification_ibfk_1", on_update: :cascade
   add_foreign_key "modification_field", "modification", name: "modification_field_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "note", "sf_guard_user", column: "user_id", name: "note_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "object_tag", "sf_guard_user", column: "last_user_id", name: "object_tag_ibfk_2", on_update: :cascade
   add_foreign_key "object_tag", "tag", name: "object_tag_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "org", "entity", name: "org_ibfk_1", on_update: :cascade, on_delete: :cascade
