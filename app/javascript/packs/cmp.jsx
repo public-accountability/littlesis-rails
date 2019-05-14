@@ -20,21 +20,10 @@ const entityLink = (row) => {
 </div>`;
 };
 
-const strataMap = {
-  "1": "Core Sample",
-  "2": "Canadian direct neighbor",
-  "3": "Canadian indirect neighbor",
-  "4": "Foreign direct neighbor",
-  "5": "Foreign indirect neighbor"
-};
-
 const renderName = (data, type, row, meta) => type === 'display' ? entityLink(row) : data;
 
-const renderStrata = (data, type, row, meta) => type === 'display' ? strataMap[data.toString()] : data;
-
 const columns = [
-  { "data": "name", "title": "Name", "render": renderName },
-  { "data": "strata", "title": "Strata", "render": renderStrata, "searchable": false }
+  { "data": "name", "title": "Name", "render": renderName }
 ];
 
 const initializeDatatable = () => {
