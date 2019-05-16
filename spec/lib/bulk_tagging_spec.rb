@@ -1,5 +1,5 @@
 require 'csv'
-require Rails.root.join('lib', 'task-helpers', 'bulk_tagger.rb')
+require Rails.root.join('lib', 'bulk_tagger.rb')
 
 describe 'BulkTagging' do
   let(:csv) { '' }
