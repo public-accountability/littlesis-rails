@@ -30,9 +30,15 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       should_visit_entity_page "/person/#{person.to_param}"
       should_visit_entity_page "/person/#{person.to_param}/interlocks"
     end
+
     it 'accepts org as an valid entities slug' do
       should_visit_entity_page "/org/#{org.to_param}"
       should_visit_entity_page "/org/#{org.to_param}/interlocks"
+    end
+
+    it 'rejects routes with extra prefixes' do
+      visit "/extra/prefix/org/#{org.to_param}"
+      expect(page.status_code).to eq 404
     end
 
     it 'rewrites legacy symfony-style urls to rails urls' do
