@@ -82,7 +82,6 @@ gem 'seed_dump', :require => false
 gem 'simplecov', :require => false, :group => :test
 
 gem 'StreetAddress', :require => "street_address"
-gem 'sequel', :require => false
 
 gem 'validate_url', :git => 'https://github.com/perfectline/validates_url.git', :branch => 'master'
 gem 'geocoder'

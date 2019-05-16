@@ -322,7 +322,6 @@ GEM
     selenium-webdriver (3.142.2)
       childprocess (>= 0.5, < 2.0)
       rubyzip (~> 1.2, >= 1.2.2)
-    sequel (5.14.0)
     shoulda-callback-matchers (1.1.4)
       activesupport (>= 3)
     shoulda-matchers (4.0.1)
@@ -445,7 +444,6 @@ DEPENDENCIES
   sassc-rails
   seed_dump
   selenium-webdriver (>= 3.11.0)
-  sequel
   shoulda-callback-matchers (~> 1.1.4)
   shoulda-matchers (>= 4.0.0)
   simplecov
