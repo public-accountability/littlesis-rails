@@ -187,7 +187,8 @@ class Image < ApplicationRecord
   # a url without an extension may work if the url returns a valid mime type
   def self.new_from_url(url)
     raise Exceptions::LittleSisError, 'Image.new_from_url called with a blank url' if url.blank?
-    raise Exceptions::LittleSisError, 'Invalid url scheme' unless %w[http https data].include?(URI(url).scheme)
+    url_scheme = URI(url).scheme
+    raise Exceptions::LittleSisError, 'Invalid url scheme' unless %w[http https data].include?(url_scheme)
 
     original_image_path = save_image_to_tmp(url)
 
@@ -197,7 +198,10 @@ class Image < ApplicationRecord
 
     filename = random_filename(file_ext_from(original_image_path))
     create_image_variations(filename, original_image_path)
-    new(filename: filename, url: url, width: original_file.width, height: original_file.height)
+    new(filename: filename,
+        url: url_scheme == 'data' ? nil : url,
+        width: original_file.width,
+        height: original_file.height)
   ensure
     File.delete(original_image_path) if original_image_path.present? && File.exist?(original_image_path)
   end
