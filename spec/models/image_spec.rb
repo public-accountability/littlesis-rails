@@ -273,15 +273,6 @@ describe Image, type: :model do
         end
       end
 
-      let(:image_mocks) do
-        lambda do
-          expect(Image).to receive(:random_filename)
-                             .once.with('png').and_return(filename)
-          expect(Image).to receive(:save_image_to_tmp)
-                             .once.with(url).and_return(temp_file.path)
-        end
-      end
-
       let(:url) { 'https://example.com/image.png' }
 
       it 'downloads image from url' do
@@ -299,24 +290,39 @@ describe Image, type: :model do
       end
 
       it 'raises error if url does not start with http' do
-        expect { Image.new_from_url('/some/path') }.to raise_error(/does not start with "http"/)
+        expect { Image.new_from_url('/some/path') }.to raise_error(/Invalid url scheme/)
       end
 
       it 'creates 4 image variations' do
-        image_mocks.call
+        expect(Image).to receive(:random_filename).once.with('png').and_return(filename)
+        expect(Image).to receive(:save_http_to_tmp).once.with(url).and_return(temp_file.path)
         all_images_do_not_exist(filename)
         Image.new_from_url(url)
         all_images_exist(filename)
       end
 
       it 'returns new image with correct properties' do
-        image_mocks.call
+        expect(Image).to receive(:random_filename).once.with('png').and_return(filename)
+        expect(Image).to receive(:save_http_to_tmp).once.with(url).and_return(temp_file.path)
         new_image = Image.new_from_url(url)
         expect(new_image).to be_a Image
         expect(new_image.url).to eq url
         expect(new_image.filename).to eq filename
         expect(new_image.width).to eq 40
         expect(new_image.height).to eq 60
+      end
+
+      context 'submitting a data url' do
+        let(:url) do
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+        end
+        
+        it 'creates 4 image variations' do
+          expect(Image).to receive(:random_filename).once.with('png').and_return(filename)
+          all_images_do_not_exist(filename)
+          Image.new_from_url(url)
+          all_images_exist(filename)
+        end
       end
     end
 
