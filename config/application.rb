@@ -12,8 +12,8 @@ module Lilsis
     config.load_defaults 5.0
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
-      rewrite  %r{/(person|org)/([0-9]+)/[^/ ]+(/.*)?}, '/entities/$2$3'
-      rewrite  %r{/(person|org)/(.*)},                  '/entities/$2'
+      rewrite  %r{\A/(person|org)/([0-9]+)/[^/ ]+(/.*)?}, '/entities/$2$3'
+      rewrite  %r{\A/(person|org)/(.*)},                  '/entities/$2'
       r301     %r{^/(beginnerhelp|advancedhelp)$},      '/help'
       r301     %r{/user/(.*)},                          '/users/$1'
     end
