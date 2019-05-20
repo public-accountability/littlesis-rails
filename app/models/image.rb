@@ -32,6 +32,8 @@ class Image < ApplicationRecord
   VALID_MIME_TYPES = MIME_TYPES.values.freeze
   VALID_EXTENSIONS = %w[jpg jpeg svg png].to_set.freeze
 
+  DATA_URL_PREFIX_REGEX = /image\/(jpeg|jpg|png|gif);base64/i
+
   DEFAULT_FILE_TYPE = Lilsis::Application.config.default_image_file_type
 
   before_soft_delete :unfeature, if: :is_featured
@@ -103,14 +105,10 @@ class Image < ApplicationRecord
     "#{SecureRandom.hex(16)}.#{file_type}"
   end
 
-  class InvalidFileExtensionError < StandardError
-  end
-
-  class RemoteImageRequestFailure < StandardError
-  end
-
-  class ImagePathMissingExtension < StandardError
-  end
+  class InvalidFileExtensionError < StandardError; end
+  class InvalidDataUrlError < StandardError; end
+  class RemoteImageRequestFailure < StandardError; end
+  class ImagePathMissingExtension < StandardError; end
 
   # String --> String | Throws
   #
@@ -138,20 +136,36 @@ class Image < ApplicationRecord
     end
   end
 
+  def self.save_http_to_tmp(url)
+    file_path = Rails.root.join('tmp', "#{Digest::MD5.hexdigest(url)}.#{file_ext_from(url)}").to_s
+    file = File.open(file_path, 'wb')
+    response = HTTParty.get(url, stream_body: true) { |fragment| file.write(fragment) }
+    return response.success? ? file_path : false
+  ensure
+    file.close
+  end
+
+  
+  def self.save_data_url_to_tmp(url)
+    prefix, encoded_data = url[5..].split(',')
+    # binding.pry
+    raise InvalidDataUrlError unless DATA_URL_PREFIX_REGEX.match?(prefix)
+
+    ext = DATA_URL_PREFIX_REGEX.match(prefix)[1]
+    file_path = Rails.root.join('tmp', "#{Digest::MD5.hexdigest(url)}.#{ext}").to_s
+    File.open(file_path, 'wb') { |file| file.write  Base64.decode64(encoded_data) }
+    file_path
+  end
+
   # Downloads url and saves images to temporary file
   #
   # String (url) --> String (file path) | false
   def self.save_image_to_tmp(url)
-    file_path = Rails.root.join('tmp', "#{Digest::MD5.hexdigest(url)}.#{file_ext_from(url)}").to_s
-    file = File.open(file_path, 'wb')
-    response = HTTParty.get(url, stream_body: true) { |fragment| file.write(fragment) }
-    if response.success?
-      file_path
+    if url[0..4].casecmp('data:').zero?
+      save_data_url_to_tmp(url)
     else
-      false
+      save_http_to_tmp(url)
     end
-  ensure
-    file.close
   end
 
   # Subclass of IO --> Image
@@ -172,13 +186,11 @@ class Image < ApplicationRecord
   #
   # a url without an extension may work if the url returns a valid mime type
   def self.new_from_url(url)
-    if url.blank?
-      raise Exceptions::LittleSisError, 'Image.new_from_url called with a blank url'
-    elsif url.casecmp('http') == -1
-      raise Exceptions::LittleSisError, 'url does not start with "http"'
-    end
+    raise Exceptions::LittleSisError, 'Image.new_from_url called with a blank url' if url.blank?
+    raise Exceptions::LittleSisError, 'Invalid url scheme' unless %w[http https data].include?(URI(url).scheme)
 
     original_image_path = save_image_to_tmp(url)
+
     raise RemoteImageRequestFailure if original_image_path.blank?
 
     original_file = MiniMagick::Image.open(original_image_path)
