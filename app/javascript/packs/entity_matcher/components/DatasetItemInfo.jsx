@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import sortBy from 'lodash/sortBy';
-
+import find from 'lodash/find';
+import toInteger from 'lodash/toInteger';
 
 // Display a single title-value data item
 const DatasetItemPresenter = ({title, value}) => {
@@ -28,6 +29,7 @@ const dataToKeyValues= (rowData) => {
       ["Owner Key", rowData.owner_key],
       ["Schedule", latestRecord.schedule],
       ["Title/Status", latestRecord.title_or_status],
+      ["Advisor", find(rowData.associated_advisors, { "crd_number": toInteger(latestRecord.advisor_crd_number) }).name ],
       ["Acquired", latestRecord.acquired]
     ];
   }
