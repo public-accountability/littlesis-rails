@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_14_181827) do
+ActiveRecord::Schema.define(version: 2019_05_21_205445) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -164,6 +164,7 @@ ActiveRecord::Schema.define(version: 2019_05_14_181827) do
     t.bigint "marketcap", unsigned: true
     t.bigint "net_income"
     t.integer "crd_number"
+    t.bigint "aum"
     t.index ["crd_number"], name: "index_business_on_crd_number", unique: true
     t.index ["entity_id"], name: "entity_id_idx"
   end

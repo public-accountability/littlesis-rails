@@ -66,13 +66,13 @@ class IapdDatum < ExternalDataset
   def owners
     method_only_for! :advisor
 
-    self.class.owners_of_crd_number row_data.fetch('crd_number')
+    @_owners ||= self.class.owners_of_crd_number(row_data.fetch('crd_number'))
   end
 
   def advisors
     method_only_for! :owner
 
-    self.class.advisors_by_crd_numbers row_data.fetch('associated_advisors')
+    @_advisors ||= self.class.advisors_by_crd_numbers(row_data.fetch('associated_advisors'))
   end
 
   def owner?
@@ -81,6 +81,19 @@ class IapdDatum < ExternalDataset
 
   def advisor?
     row_data_class == IapdAdvisor.name
+  end
+
+  def as_json(options = nil)
+    if owner?
+      # creates hash with these fields: crd_number, name, id, dataset_key
+      associated_advisors_details = advisors
+                                      .map { |a| a.row_data.slice('crd_number', 'name').merge('id' => a.id, 'dataset_key' => a.dataset_key) }
+
+      super(options)
+        .deep_merge('row_data' => { 'associated_advisors' => associated_advisors_details })
+    else
+      super(options)
+    end
   end
 
   ## Class Query Methods ##
