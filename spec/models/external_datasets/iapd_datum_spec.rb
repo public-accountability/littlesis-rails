@@ -139,6 +139,22 @@ describe IapdDatum do
     specify { expect(iapd_advisor.advisor?).to be true }
   end
 
+  describe 'as_json' do
+    let(:iapd_seth_klarman) { create(:iapd_seth_klarman) }
+    let(:iapd_baupost) { create(:iapd_baupost) }
+
+    before { iapd_baupost; iapd_seth_klarman; }
+
+    it 'includes advisor name in row_data for owner' do
+      expect(iapd_seth_klarman.as_json.dig('row_data', 'associated_advisors'))
+        .to eql [{ "crd_number" => 109_530,
+                   "name" => "THE BAUPOST GROUP, L.L.C.",
+                   "id" => iapd_baupost.id,
+                   "dataset_key" => "109530" }]
+    end
+
+  end
+
   describe 'IapdDatum.owners and IapdDatum.advisors' do
     let(:owner) { create(:external_dataset_iapd_owner) }
     let(:advisor) { create(:external_dataset_iapd_advisor) }
