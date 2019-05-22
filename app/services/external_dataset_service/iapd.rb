@@ -26,21 +26,27 @@ module ExternalDatasetService
 
       extension = @entity.org? ? 'Business' : 'BusinessPerson'
 
+      extension_attrs = {}
+      extension_attrs[:crd_number] = crd_number.to_i if crd_number
+
+      if @external_dataset.advisor?
+        aum = @external_dataset.row_data['data'].first['assets_under_management']&.to_i
+        extension_attrs[:aum] = aum unless aum.nil? || aum.zero?
+      end
+
       ApplicationRecord.transaction do
         @entity.add_tag(IapdDatum::IAPD_TAG_ID)
+
         crd_numbers_for_documentation.each do |crd_number|
           @entity.add_reference(IapdDatum.document_attributes_for_form_adv_pdf(crd_number))
         end
 
-        if crd_number
-          if @entity.has_extension?(extension)
-            @entity.merge_extension extension, crd_number: crd_number.to_i
-          else
-            @entity.add_extension extension, crd_number: crd_number.to_i
-          end
+        if @entity.has_extension?(extension)
+          @entity.merge_extension extension, extension_attrs
         else
-          @entity.add_extension extension
+          @entity.add_extension extension, extension_attrs
         end
+
         external_dataset.update! entity_id: @entity.id
         @entity.save!
       end
