@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe ExternalDatasetService do
   describe 'base' do
     it 'requires external_dataset' do
@@ -171,6 +170,11 @@ describe ExternalDatasetService do
 
         it 'creates a business' do
           expect { service.match }.to change(Business, :count).by(1)
+        end
+
+        it 'adds assets under management' do
+          service.match
+          expect(org.business.aum).to eq 74_864_178
         end
 
         it 'adds associated owners to queue' do
