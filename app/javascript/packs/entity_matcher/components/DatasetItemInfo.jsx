@@ -25,7 +25,7 @@ const dataToKeyValues= (rowData) => {
 
   if (rowData['class'].includes('IapdOwner')) {
     return [
-      ["Dataset", "Iapd Owner"],
+      ["Dataset", "IAPD Owner"],
       ["Name", rowData.name],
       ["Owner Key", rowData.owner_key],
       ["Schedule", latestRecord.schedule],
@@ -37,7 +37,7 @@ const dataToKeyValues= (rowData) => {
   
   if (rowData['class'].includes('IapdAdvisor')) {
     return [
-      ["Dataset", "Iapd Advisor"],
+      ["Dataset", "IAPD Advisor"],
       ["Name", rowData.name],
       ["CRD Number", rowData.crd_number],
       ["Sec File Number", latestRecord.sec_file_number],
