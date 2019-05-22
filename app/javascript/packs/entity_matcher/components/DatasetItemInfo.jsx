@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import sortBy from 'lodash/sortBy';
 import find from 'lodash/find';
 import toInteger from 'lodash/toInteger';
+import { formatMoney } from '../../common/utility';
 
 // Display a single title-value data item
 const DatasetItemPresenter = ({title, value}) => {
@@ -40,8 +41,7 @@ const dataToKeyValues= (rowData) => {
       ["Name", rowData.name],
       ["CRD Number", rowData.crd_number],
       ["Sec File Number", latestRecord.sec_file_number],
-      ["Assets under management", latestRecord.assets_under_management],
-      ["Total number of accounts", latestRecord.total_number_of_accounts]
+      ["Assets under management", formatMoney(latestRecord.assets_under_management, { truncate: true })]
     ];
   }
 
