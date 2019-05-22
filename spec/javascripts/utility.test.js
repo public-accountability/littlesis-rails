@@ -138,6 +138,14 @@ describe('string utilities', () => {
     expect(utility.removeHashFromId('foo')).toEqual('foo');
     expect(utility.removeHashFromId('#foo')).toEqual('foo');
   });
+
+  test('formatMoney', () => {
+    expect(utility.formatMoney('1000')).toEqual('$1,000.00');
+    expect(utility.formatMoney('1000', { truncate: true })).toEqual('$1,000');
+    expect(utility.formatMoney(100500800.15)).toEqual('$100,500,800.15');
+    expect(utility.formatMoney(100500800.15, { truncate: true })).toEqual('$100,500,800');
+  });
+  
 });
 
 describe('object utilities', () => {

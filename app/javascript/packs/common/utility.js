@@ -263,6 +263,26 @@ export function removeHashFromId(str) {
   return str.slice(0, 1) === '#' ? str.slice(1) : str;
 };
 
+
+const usdNumberFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });  
+
+/**
+ * Possible options:
+ *   - Truncate --> removes cents
+ * @param {String|Number} number
+ * @param {Object} options
+ * @returns {String} 
+ */
+export function formatMoney(number, options = {}) {
+  let formattedNumber = usdNumberFormatter.format(number);
+
+  if (options.truncate) {
+    return formattedNumber.slice(0, formattedNumber.length -3);
+  } else {
+    return formattedNumber;
+  }
+}
+
 // OBJECT UTILITIES
 
 // ?Object -> Boolean
@@ -555,7 +575,7 @@ export default {
   range, entityLink, randomDigitStringId, entityInfo,
   relationshipCategories, extensionDefinitions, relationshipDetails,
   validDate, validURL, validPersonName, browserCanOpenFiles,
-  capitalize, formatIdSelector, removeHashFromId,
+  capitalize, formatIdSelector, removeHashFromId, formatMoney,
   get, getIn, set, setIn, del, deleteIn,
   normalize, stringifyValues, pick, omit,
   exists, isObject, isEmpty,
