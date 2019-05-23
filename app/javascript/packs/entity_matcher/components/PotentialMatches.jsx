@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import at from 'lodash/at';
 import curry from 'lodash/curry';
 import isNull from 'lodash/isNull';
 
@@ -20,7 +21,8 @@ export default class PotentialMatches extends React.Component {
     }),
     "ignoreMatch": PropTypes.func,
     "doMatch": PropTypes.func.isRequired,
-    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired
+    "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]).isRequired,
+    "itemInfo": PropTypes.object
   };
   
 
@@ -35,7 +37,7 @@ export default class PotentialMatches extends React.Component {
     const noMatches = this.props.matchesStatus === 'COMPLETE' && this.props.matches.results.length == 0;
     const showCreateNewEntityForm = this.state.showCreateNewEntityForm;
     const showPotentialMatchesList = hasMatches && !showCreateNewEntityForm;
-    
+
     return <div id="potential-matches">
              <PotentialMatchesHeader showCreateNewEntityForm={showCreateNewEntityForm} />
              { isLoading && <LoadingSpinner /> }
@@ -49,6 +51,7 @@ export default class PotentialMatches extends React.Component {
              { showCreateNewEntityForm && <NewEntityForm
                                             doMatch={curry(this.props.doMatch)(this.props.itemId)}
                                             cancel={ () => this.setState({ showCreateNewEntityForm: false }) }
+                                            entityName={at(this.props.itemInfo, 'row_data.name')[0]}
                                           />  }
 
              { !showCreateNewEntityForm &&  <CreateNewEntityButton

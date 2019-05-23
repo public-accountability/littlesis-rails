@@ -15,7 +15,7 @@ export default class DatasetItemFooter extends React.Component {
                <div className="ml-auto">
                  <a
                    style={{cursor: 'pointer'}}
-                   onClick={this.props.nextItem}>Next »</a>
+                   onClick={this.props.nextItem}>Skip »</a>
                </div>
              </div>
            </div>;

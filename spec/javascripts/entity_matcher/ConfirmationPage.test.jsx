@@ -41,11 +41,11 @@ describe('computeResultStats', () => {
       }
     };
 
-    const confirmationPage = render(<ConfirmationPage matchResult={matchResult} />);
+    const confirmationPage = render(<ConfirmationPage matchResult={matchResult} nextItem={jest.fn()} />);
     const pageText = confirmationPage.text();
 
     test('contains entity link', () => {
-      let component = shallow(<ConfirmationPage matchResult={matchResult} />);
+      let component = shallow(<ConfirmationPage matchResult={matchResult} nextItem={jest.fn()}/>);
       expect(component.find('a').first().props().href).toEqual("http://localhost:8080/org/1000-test");
       expect(pageText).toMatch(/entity has been successfully matched/);
     });
@@ -57,9 +57,13 @@ describe('computeResultStats', () => {
       expect(pageText).toMatch(/2 relationships have been created/);
     });
 
+    test('next item link', () => {
+      const nextItemMock = jest.fn();
+      let component = shallow(<ConfirmationPage matchResult={matchResult} nextItem={nextItemMock} />);
+      expect(component.find('a.nextItem').exists()).toBe(true);
+      component.find('a.nextItem').simulate('click');
+      expect(nextItemMock.mock.calls.length).toBe(1);
+    });
   });
-
-
-  
 });
 

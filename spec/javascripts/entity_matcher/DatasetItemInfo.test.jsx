@@ -32,11 +32,11 @@ describe('DatasetItemInfo', () => {
   
   const html = render(<DatasetItemInfo itemInfo={itemInfo} />);
   
-  it('has 6 title spans', () => expect(html.find('.item-info-title').length).toEqual(6));
-  it('has 6 value spans', () => expect(html.find('.item-info-value').length).toEqual(6));
+  it('has 5 title spans', () => expect(html.find('.item-info-title').length).toEqual(5));
+  it('has 5 value spans', () => expect(html.find('.item-info-value').length).toEqual(5));
   it('has foo and bar, but not baz', () => {
     expect(html.text()).toMatch(/Example/);
-    expect(html.text()).toMatch(/3006/);
+    expect(html.text()).toMatch(/\$1,000,000/);
     expect(html.text()).not.toMatch(/baz/);
   });
 });

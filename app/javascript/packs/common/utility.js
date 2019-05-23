@@ -251,6 +251,26 @@ export function capitalize(str) {
 };
 
 
+const companyWords = new Set(['LLC', 'INC']);
+
+const upperCaseCompanyWord = word => {
+  let upperCaseWord = word.toUpperCase();
+
+  return companyWords.has(upperCaseWord)
+    ? upperCaseWord
+    : word;
+};
+
+export function capitalizeWords(str) {
+  return str
+    .split(' ')
+    .filter(word => !(word.trim() === ''))
+    .map(word => capitalize(word.toLowerCase()))
+    .map(upperCaseCompanyWord)
+    .join(' ');
+};
+
+
 export function formatIdSelector(str) {
   if (str.slice(0,1) === '#') {
     return str;
@@ -262,6 +282,27 @@ export function formatIdSelector(str) {
 export function removeHashFromId(str) {
   return str.slice(0, 1) === '#' ? str.slice(1) : str;
 };
+
+
+const usdNumberFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });  
+
+/**
+ * Possible options:
+ *   - Truncate --> removes cents
+ * @param {String|Number} number
+ * @param {Object} options
+ * @returns {String} 
+ */
+export function formatMoney(number, options = {}) {
+  let formattedNumber = usdNumberFormatter.format(number);
+
+  if (options.truncate) {
+    return formattedNumber.slice(0, formattedNumber.length -3);
+  } else {
+    return formattedNumber;
+  }
+}
+
 
 // OBJECT UTILITIES
 
@@ -555,7 +596,7 @@ export default {
   range, entityLink, randomDigitStringId, entityInfo,
   relationshipCategories, extensionDefinitions, relationshipDetails,
   validDate, validURL, validPersonName, browserCanOpenFiles,
-  capitalize, formatIdSelector, removeHashFromId,
+  capitalize, formatIdSelector, removeHashFromId, formatMoney, capitalizeWords,
   get, getIn, set, setIn, del, deleteIn,
   normalize, stringifyValues, pick, omit,
   exists, isObject, isEmpty,
