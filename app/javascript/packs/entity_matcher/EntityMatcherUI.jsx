@@ -125,7 +125,9 @@ export default class EntityMatcherUI extends React.Component {
                                doMatch={this.doMatch}
                                matches={this.state.matches}
                                matchesStatus={this.state.matchesStatus}
-                               itemId={this.state.itemId} />;
+                               itemId={this.state.itemId}
+                               itemInfo={this.state.itemInfo}
+             />;
     };
 
 
