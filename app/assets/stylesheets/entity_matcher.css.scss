@@ -43,6 +43,11 @@ div.rightSide {
     }
 }
 
+#dataset-item-info-container {
+    max-height: 400px;
+    overflow: auto;
+}
+
 #dataset-item-info {
     .item-info-wrapper {
 	margin-bottom: 0.5em;

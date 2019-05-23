@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import castArray from 'lodash/castArray';
 import find from 'lodash/find';
+import toInteger from 'lodash/toInteger';
 import sortBy from 'lodash/sortBy';
 
 import { capitalizeWords, formatMoney } from '../../common/utility';
@@ -51,19 +53,44 @@ const dataToKeyValues= (rowData) => {
 };
 
 
+const IapdLink = ({crdNumber}) => {
+  let url = `https://www.adviserinfo.sec.gov/IAPD/content/ViewForm/crd_iapd_stream_pdf.aspx?ORG_PK=${crdNumber}`;
+  let name = `Form ADV: ${crdNumber}`;
+  return <a target="_blank" href={url} >{name}</a>;
+};
+
+const renderIapdReference = rowData => {
+  let crdNumbers = rowData.crd_number ?
+      castArray(rowData.crd_number)
+      : rowData.associated_advisors.map(a => a.crd_number);
+
+  return crdNumbers.map(crdNumber => {
+    return <div className="dataset-reference-link">
+             <IapdLink crdNumber={crdNumber} key={crdNumber} />
+           </div>;
+  });
+
+};
+
 /*
   html elements
-    #dataset-item-info (div)
+    #dataset-item-info-container
+    #dataset-item-info (div)p
     .item-info-wrapper (div)
     .item-info-title (span)
     .item-info-value (span)
 */
 export default function DatasetItemInfo({itemInfo}) {
+  const showIapdReference = itemInfo.row_data['class'].toLowerCase().includes('iapd');
+  
   const items = dataToKeyValues(itemInfo.row_data)
         .map( (pair, i) => <DatasetItemPresenter key={i} title={pair[0]} value={pair[1]} /> );
 
-  return <div id="dataset-item-info">
-           {items}
+  return <div id="dataset-item-info-container" >
+           <div id="dataset-item-info">
+             {items}
+           </div>
+           { showIapdReference && renderIapdReference(itemInfo.row_data) }
          </div>;
 };
 
