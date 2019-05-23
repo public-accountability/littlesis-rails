@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { formatIapdOwnerName } from '../helpers';
+
 export default class NewEntityForm extends React.Component {
   static propTypes = {
     "cancel": PropTypes.func.isRequired,
@@ -12,7 +14,10 @@ export default class NewEntityForm extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { name: this.props.entityName, blurb: '', primary_ext: null };
+    this.state = {
+      name: formatIapdOwnerName(this.props.entityName),
+      blurb: '', primary_ext: null
+    };
   }
   
   handleNameChange = e => this.setState({name: e.target.value })

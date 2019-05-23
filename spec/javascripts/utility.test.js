@@ -129,6 +129,13 @@ describe('#validPersonName', () => {
 
 describe('string utilities', () => {
   test('#capitalize', () => expect(utility.capitalize("foobar")).toEqual("Foobar") );
+
+  test('capitalizeWords', ()=> {
+    expect(utility.capitalizeWords('foo bar')).toEqual('Foo Bar');
+    expect(utility.capitalizeWords('FOO BAR')).toEqual('Foo Bar');
+    expect(utility.capitalizeWords('foo bar, llc')).toEqual('Foo Bar, LLC');
+  });
+
   test('formatIdSelector', () => {
     expect(utility.formatIdSelector('foo')).toEqual('#foo');
     expect(utility.formatIdSelector('#foo')).toEqual('#foo');

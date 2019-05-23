@@ -251,6 +251,26 @@ export function capitalize(str) {
 };
 
 
+const companyWords = new Set(['LLC', 'INC']);
+
+const upperCaseCompanyWord = word => {
+  let upperCaseWord = word.toUpperCase();
+
+  return companyWords.has(upperCaseWord)
+    ? upperCaseWord
+    : word;
+};
+
+export function capitalizeWords(str) {
+  return str
+    .split(' ')
+    .filter(word => !(word.trim() === ''))
+    .map(word => capitalize(word.toLowerCase()))
+    .map(upperCaseCompanyWord)
+    .join(' ');
+};
+
+
 export function formatIdSelector(str) {
   if (str.slice(0,1) === '#') {
     return str;
@@ -282,6 +302,7 @@ export function formatMoney(number, options = {}) {
     return formattedNumber;
   }
 }
+
 
 // OBJECT UTILITIES
 
@@ -575,7 +596,7 @@ export default {
   range, entityLink, randomDigitStringId, entityInfo,
   relationshipCategories, extensionDefinitions, relationshipDetails,
   validDate, validURL, validPersonName, browserCanOpenFiles,
-  capitalize, formatIdSelector, removeHashFromId, formatMoney,
+  capitalize, formatIdSelector, removeHashFromId, formatMoney, capitalizeWords,
   get, getIn, set, setIn, del, deleteIn,
   normalize, stringifyValues, pick, omit,
   exists, isObject, isEmpty,

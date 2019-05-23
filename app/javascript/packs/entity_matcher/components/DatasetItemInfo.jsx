@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import sortBy from 'lodash/sortBy';
+
 import find from 'lodash/find';
-import toInteger from 'lodash/toInteger';
-import { formatMoney } from '../../common/utility';
+import sortBy from 'lodash/sortBy';
+
+import { capitalizeWords, formatMoney } from '../../common/utility';
+import { formatIapdOwnerName } from '../helpers';
 
 // Display a single title-value data item
 const DatasetItemPresenter = ({title, value}) => {
@@ -14,7 +16,7 @@ const DatasetItemPresenter = ({title, value}) => {
 };
 
 /*
-  Extracts simples fields from dataset
+  Extracts simple fields from dataset
   Iapd Owner and Adivsors have a different set of fields in `row data`
 
   input: Object
@@ -26,11 +28,11 @@ const dataToKeyValues= (rowData) => {
   if (rowData['class'].includes('IapdOwner')) {
     return [
       ["Dataset", "IAPD Owner"],
-      ["Name", rowData.name],
+      ["Name", formatIapdOwnerName(rowData.name)],
       ["Owner Key", rowData.owner_key],
       ["Schedule", latestRecord.schedule],
-      ["Title/Status", latestRecord.title_or_status],
-      ["Advisor", find(rowData.associated_advisors, { "crd_number": toInteger(latestRecord.advisor_crd_number) }).name ],
+      ["Title/Status", capitalizeWords(latestRecord.title_or_status)],
+      ["Advisor", capitalizeWords(find(rowData.associated_advisors, { "crd_number": toInteger(latestRecord.advisor_crd_number) }).name) ],
       ["Acquired", latestRecord.acquired]
     ];
   }
@@ -38,7 +40,7 @@ const dataToKeyValues= (rowData) => {
   if (rowData['class'].includes('IapdAdvisor')) {
     return [
       ["Dataset", "IAPD Advisor"],
-      ["Name", rowData.name],
+      ["Name", capitalizeWords(rowData.name)],
       ["CRD Number", rowData.crd_number],
       ["Sec File Number", latestRecord.sec_file_number],
       ["Assets under management", formatMoney(latestRecord.assets_under_management, { truncate: true })]
