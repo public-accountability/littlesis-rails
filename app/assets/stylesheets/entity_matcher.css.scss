@@ -109,3 +109,7 @@ div.potential-match-card {
     }
     
 }
+
+a.nextItem {
+    @include matcher-text-link;
+}

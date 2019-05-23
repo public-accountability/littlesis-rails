@@ -147,7 +147,10 @@ export default class EntityMatcherUI extends React.Component {
         </div>
         <div className="rightSide">
           { matchingInProgress && <LoadingSpinner /> }
-          { isMatched && <ConfirmationPage matchResult={this.state.matchResult} /> }
+          { isMatched && <ConfirmationPage
+                           matchResult={this.state.matchResult}
+                           nextItem={this.nextItem}
+                         /> }
           { matchingError && <ApiError /> }
           { showPotentialMatches && renderPotentialMatches() }
         </div>

@@ -77,7 +77,8 @@ export default class ConfirmationPage extends React.Component {
       status: PropTypes.string,
       results: PropTypes.array,
       entity: PropTypes.object
-    }).isRequired
+    }).isRequired,
+    nextItem: PropTypes.func.isRequired
   }
   
   render() {
@@ -92,6 +93,9 @@ export default class ConfirmationPage extends React.Component {
                The entity has been successfully matched with <a href={entity.url}>{entity.name}</a>
              </h4>
              {statMessages}
+             <div className="entity-matcher-confirmation-page-next-item-wrapper">
+               <a className="nextItem" onClick={this.props.nextItem} >Match next entity</a>
+             </div>
            </div>;
   }
 }
