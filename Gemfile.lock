@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/perfectline/validates_url.git
-  revision: 8932d33dcdc65e27314165943421674a87c8c515
+  revision: 535d97b755a1b60224d1dfd1b2f9ca893082f23a
   branch: master
   specs:
     validate_url (1.0.8)
@@ -109,13 +109,13 @@ GEM
       railties (>= 3.0)
     builder (3.2.3)
     byebug (11.0.1)
-    capybara (3.19.1)
+    capybara (3.21.0)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
       rack (>= 1.6.0)
       rack-test (>= 0.6.3)
-      regexp_parser (~> 1.2)
+      regexp_parser (~> 1.5)
       xpath (~> 3.2)
     childprocess (1.0.1)
       rake (< 13.0)
@@ -146,7 +146,7 @@ GEM
     factory_bot_rails (5.0.2)
       factory_bot (~> 5.0.2)
       railties (>= 4.2.0)
-    ffi (1.10.0)
+    ffi (1.11.1)
     geocoder (1.5.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -224,7 +224,7 @@ GEM
       pry (~> 0.10)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
-    public_suffix (3.0.3)
+    public_suffix (3.1.0)
     rack (2.0.7)
     rack-mini-profiler (1.0.2)
       rack (>= 1.2.0)
@@ -267,7 +267,7 @@ GEM
       json
     redcarpet (3.4.0)
     redis (4.1.1)
-    regexp_parser (1.4.0)
+    regexp_parser (1.5.1)
     request_store (1.4.1)
       rack (>= 1.4)
     responders (2.4.1)
@@ -294,7 +294,7 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
-    rubocop (0.69.0)
+    rubocop (0.70.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.6)
@@ -305,8 +305,8 @@ GEM
       rubocop (>= 0.68.0)
     rubocop-rspec (1.33.0)
       rubocop (>= 0.60.0)
-    ruby-progressbar (1.10.0)
-    rubyzip (1.2.2)
+    ruby-progressbar (1.10.1)
+    rubyzip (1.2.3)
     sassc (2.0.1)
       ffi (~> 1.9)
       rake
@@ -319,7 +319,7 @@ GEM
     seed_dump (3.3.1)
       activerecord (>= 4)
       activesupport (>= 4)
-    selenium-webdriver (3.142.2)
+    selenium-webdriver (3.142.3)
       childprocess (>= 0.5, < 2.0)
       rubyzip (~> 1.2, >= 1.2.2)
     shoulda-callback-matchers (1.1.4)
@@ -348,7 +348,7 @@ GEM
       unicode_utils (~> 1.4)
     strings-ansi (0.1.0)
     text (1.3.1)
-    thinking-sphinx (4.2.0)
+    thinking-sphinx (4.3.0)
       activerecord (>= 3.1.0)
       builder (>= 2.1.2)
       innertube (>= 1.0.2)
@@ -385,7 +385,7 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webpacker (4.0.2)
+    webpacker (4.0.3)
       activesupport (>= 4.2)
       rack-proxy (>= 0.6.1)
       railties (>= 4.2)
@@ -451,7 +451,7 @@ DEPENDENCIES
   spring-commands-rspec
   sprockets (~> 3.0)
   text (>= 1.3.1)
-  thinking-sphinx (~> 4.2.0)
+  thinking-sphinx (~> 4.3.0)
   tinymce-rails (~> 4.6.4)
   ts-delayed-delta (= 2.1.0)
   uglifier (>= 4.1)
