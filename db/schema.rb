@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_21_205445) do
+ActiveRecord::Schema.define(version: 2019_05_29_164312) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1388,7 +1388,6 @@ ActiveRecord::Schema.define(version: 2019_05_21_205445) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.boolean "newsletter"
-    t.string "chatid"
     t.boolean "is_restricted", default: false
     t.boolean "map_the_power"
     t.text "about_me"

@@ -2,6 +2,7 @@ describe User do
   it { is_expected.to have_db_column(:map_the_power) }
   it { is_expected.to have_db_column(:role).of_type(:integer) }
   it { is_expected.to have_db_column(:abilities).of_type(:text) }
+  it { is_expected.not_to have_db_column(:chatid) }
   it { is_expected.to have_one(:api_token) }
   it { is_expected.to have_one(:user_profile) }
   it { is_expected.to have_many(:lists) }
