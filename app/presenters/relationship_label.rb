@@ -32,7 +32,7 @@ class RelationshipLabel < SimpleDelegator
   end
 
   def label
-    return title if is_position? || is_member?
+    return title if is_position? || is_membership?
     return humanize_contributions if is_donation?
     return education_label if is_education?
     return transaction_label if is_transaction?

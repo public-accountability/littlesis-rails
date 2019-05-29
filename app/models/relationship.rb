@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Naming/PredicateName, Style/StringLiterals
+
 class Relationship < ApplicationRecord
   include SingularTable
   include SoftDelete
@@ -131,12 +133,13 @@ class Relationship < ApplicationRecord
   end
 
   def self.category_display_name(cat_id)
-    return "Transaction" if cat_id == TRANSACTION_CATEGORY
+    return 'Transaction' if cat_id == TRANSACTION_CATEGORY
+
     ALL_CATEGORIES[cat_id]
   end
 
   def self.category_hash
-    Hash[[*all_categories.map.with_index]].invert.select { |k, v| v.present? }
+    Hash[[*all_categories.map.with_index]].invert.select { |_k, v| v.present? }
   end
 
   def self.all_categories_with_fields
@@ -198,6 +201,7 @@ class Relationship < ApplicationRecord
 
   def get_category
     return nil unless category_has_fields?
+
     public_send(category_name.downcase)
   end
 
@@ -224,7 +228,7 @@ class Relationship < ApplicationRecord
     references.destroy_all
     position&.destroy! if is_position?
     education&.destroy! if is_education?
-    membership&.destroy! if is_member?
+    membership&.destroy! if is_membership?
     family&.destroy! if is_family?
     donation&.destroy! if is_donation?
     trans&.destroy! if is_transaction?
@@ -264,6 +268,7 @@ class Relationship < ApplicationRecord
     desc = order == 1 ? description2 : description1
     desc += (order == 1 ? " (donor)" : " (recipient)") if (desc.present? and category_id == 5)
     return default_description(order) if desc.blank?
+    
     desc
   end
 
@@ -282,7 +287,7 @@ class Relationship < ApplicationRecord
   def reversible?
     return true if is_transaction? || is_donation? || is_ownership? || is_hierarchy?
     return true if is_position? && entity.person? && related.person?
-    return true if is_member? && entity.org? && related.org?
+    return true if is_membership? && entity.org? && related.org?
     return false
   end
 
@@ -327,36 +332,11 @@ class Relationship < ApplicationRecord
     position.nil? ? nil : position.compensation
   end
 
-  def is_position?
-    category_id == POSITION_CATEGORY
-  end
-
-  def is_member?
-    category_id == MEMBERSHIP_CATEGORY
-  end
-
-  def is_education?
-    category_id == EDUCATION_CATEGORY
-  end
-
-  def is_family?
-    category_id == FAMILY_CATEGORY
-  end
-
-  def is_donation?
-    category_id == DONATION_CATEGORY
-  end
-
-  def is_transaction?
-    category_id == TRANSACTION_CATEGORY
-  end
-
-  def is_ownership?
-    category_id == OWNERSHIP_CATEGORY
-  end
-
-  def is_hierarchy?
-    category_id == HIERARCHY_CATEGORY
+  # creates category helpers: is_position? is_education? etc.
+  %w[POSITION EDUCATION MEMBERSHIP FAMILY DONATION TRANSACTION LOBBYING SOCIAL PROFESSIONAL OWNERSHIP HIERARCHY GENERIC].each do |category|
+    define_method "is_#{category.downcase}?" do
+      category_id == Relationship.const_get("#{category}_CATEGORY")
+    end
   end
 
   def title
@@ -365,7 +345,7 @@ class Relationship < ApplicationRecord
         return "Board Member"
       elsif is_position?
         return "Position"
-      elsif is_member?
+      elsif is_membership?
         return "Member"
       elsif is_education? and education.degree.present?
         return education.degree.name
@@ -554,7 +534,8 @@ class Relationship < ApplicationRecord
   end
 
   def ny_transaction_date(sort)
-    raise Exception unless ['asc', 'desc'].include?(sort)
+    raise Exception unless %w[asc desc].include?(sort)
+
     ny_disclosures
       .select('schedule_transaction_date')
       .order("schedule_transaction_date #{sort}")
@@ -563,3 +544,5 @@ class Relationship < ApplicationRecord
       &.schedule_transaction_date
   end
 end
+
+# rubocop:enable Naming/PredicateName, Style/StringLiterals

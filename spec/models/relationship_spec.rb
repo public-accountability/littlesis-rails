@@ -89,6 +89,68 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'category helpers' do
+    specify do
+      expect(build(:position_relationship).is_position?).to be true
+      expect(build(:generic_relationship).is_position?).to be false
+    end
+
+    specify do
+      expect(build(:education_relationship).is_education?).to be true
+      expect(build(:generic_relationship).is_education?).to be false
+    end
+
+    specify do
+      expect(build(:membership_relationship).is_membership?).to be true
+      expect(build(:generic_relationship).is_membership?).to be false
+    end
+
+    specify do
+      expect(build(:family_relationship).is_family?).to be true
+      expect(build(:generic_relationship).is_family?).to be false
+    end
+
+    specify do
+      expect(build(:donation_relationship).is_donation?).to be true
+      expect(build(:generic_relationship).is_donation?).to be false
+    end
+
+    specify do
+      expect(build(:transaction_relationship).is_transaction?).to be true
+      expect(build(:generic_relationship).is_transaction?).to be false
+    end
+
+    specify do
+      expect(build(:lobbying_relationship).is_lobbying?).to be true
+      expect(build(:generic_relationship).is_lobbying?).to be false
+    end
+
+    specify do
+      expect(build(:social_relationship).is_social?).to be true
+      expect(build(:generic_relationship).is_social?).to be false
+    end
+
+    specify do
+      expect(build(:professional_relationship).is_professional?).to be true
+      expect(build(:generic_relationship).is_professional?).to be false
+    end
+
+    specify do
+      expect(build(:ownership_relationship).is_ownership?).to be true
+      expect(build(:generic_relationship).is_ownership?).to be false
+    end
+
+    specify do
+      expect(build(:hierarchy_relationship).is_hierarchy?).to be true
+      expect(build(:generic_relationship).is_hierarchy?).to be false
+    end
+
+    specify do
+      expect(build(:position_relationship).is_generic?).to be false
+      expect(build(:generic_relationship).is_generic?).to be true
+    end
+  end
+
   describe 'touch: entity and related' do
     let(:elected) { create(:elected) }
     let(:org) { create(:entity_org) }
