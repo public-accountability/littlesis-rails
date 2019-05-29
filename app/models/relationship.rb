@@ -155,6 +155,7 @@ class Relationship < ApplicationRecord
   def self.attribute_fields_for(cat_id)
     TypeCheck.check cat_id, Integer
     return nil unless all_category_ids_with_fields.include?(cat_id)
+
     ALL_CATEGORIES
       .fetch(cat_id)
       .constantize
@@ -268,7 +269,7 @@ class Relationship < ApplicationRecord
     desc = order == 1 ? description2 : description1
     desc += (order == 1 ? " (donor)" : " (recipient)") if (desc.present? and category_id == 5)
     return default_description(order) if desc.blank?
-    
+
     desc
   end
 
@@ -416,44 +417,24 @@ class Relationship < ApplicationRecord
 
   # input: <Date>
   def update_start_date_if_earlier(new_date)
-    return nil if new_date.nil?
-    if date_string_to_date(:start_date).nil?
-      update_attribute(:start_date, new_date.to_s)
-    elsif new_date < date_string_to_date(:start_date)
-      update_attribute(:start_date, new_date.to_s)
-    else
-      # no change
+    return if new_date.nil?
+
+    date = LsDate.new(start_date)
+
+    if date.sp_unknown? || new_date < date.coerce_to_date
+      update_attribute :start_date, new_date.to_s
     end
   end
 
   def update_end_date_if_later(new_date)
-    return nil if new_date.nil?
-    if date_string_to_date(:end_date).nil?
-      update_attribute(:end_date, new_date.to_s)
-    elsif new_date > date_string_to_date(:end_date)
-      update_attribute(:end_date, new_date.to_s)
-    else
-      # no change
+    return if new_date.nil?
+
+    date = LsDate.new(end_date)
+
+    if date.sp_unknown? || new_date > date.coerce_to_date
+      update_attribute :end_date, new_date.to_s
     end
   end
-
-  def date_string_to_date(field)
-    return nil if public_send(field).nil?
-    year, month, day = public_send(field).split("-").map { |x| x.to_i }
-    if year.blank? or year == 0
-      nil
-    else
-      if month.blank? or month == 0
-        Date.new(year)
-      else
-        if day.blank? or day == 0
-          Date.new(year, month)
-        else
-          Date.new(year, month, day)
-        end
-      end
-    end    
-  end  
 
   #############################
   # NYS Contributions helpers #

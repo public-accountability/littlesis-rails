@@ -310,35 +310,6 @@ describe Relationship, type: :model do
   end
 
   describe 'Update Start/End dates' do
-    describe '#date_string_to_date' do
-      it 'returns nil if no date' do
-        r = build(:loeb_donation, start_date: nil)
-        expect(r.date_string_to_date(:start_date)).to be_nil
-      end
-
-      it 'returns nil if bad year' do
-        r = build(:loeb_donation, start_date: "badd-00-00")
-        expect(r.date_string_to_date(:start_date)).to be_nil
-      end
-
-      it 'converts "2012-00-00"' do
-        r = build(:loeb_donation)
-        expect(r.date_string_to_date(:start_date)).to eq Date.new(2010)
-      end
-
-      it 'converts "2012-12-00"' do
-        r = build(:loeb_donation, start_date: "2012-12-00")
-        expect(r.date_string_to_date(:start_date)).to eq Date.new(2012, 12)
-      end
-
-      it 'converts "2012-04-10"' do
-        r = build(:loeb_donation, start_date: "2012-4-10")
-        expect(r.date_string_to_date(:start_date)).to eq Date.new(2012, 4, 10)
-      end
-    end
-  end
-
-  describe '#update_start_date_if_earlier' do
     before(:all) do
       DatabaseCleaner.start
       @loeb = create(:loeb)
