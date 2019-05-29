@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe EntitySearchService, :tag_helper do
   seed_tags
 
@@ -87,6 +86,18 @@ describe EntitySearchService, :tag_helper do
       expect(search_options[:without]).to eq(sphinx_internal_id: excluded_ids)
     end
 
+  end
+
+  describe "searching for a entity by with it's id" do
+    let(:entity_id) { rand(1_000).to_s }
+
+    it 'bypasses sphinx and directly find the entity' do
+      expect(Entity).to receive(:find).with(entity_id).and_return(instance_double('Entity'))
+      expect(Entity).not_to receive(:search)
+      search = EntitySearchService.new(query: entity_id).search
+      expect(search).to be_a Kaminari::PaginatableArray
+      expect(search.length).to eq 1
+    end
   end
 
   describe 'simple_entity_hash' do
