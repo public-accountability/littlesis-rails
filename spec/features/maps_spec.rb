@@ -1,4 +1,8 @@
-feature 'maps index page' do
+require 'rails_helper'
+
+# rubocop:disable Capybara/FeatureMethods
+
+describe 'map pages' do
   let(:other_user) { create_really_basic_user }
   let(:user) { create_really_basic_user }
   let(:admin) { create_admin_user }
@@ -20,6 +24,18 @@ feature 'maps index page' do
     end
   end
 
+  describe 'viewing embeded map map with slide' do
+    it 'uses first slide by default' do
+      visit embedded_v2_map_path(regular_map)
+      expect(page.html).to include "var startIndex = 0;"
+    end
+
+    it 'converts slide param 3 to starting index 2' do
+      visit embedded_v2_map_path(regular_map, params: { 'slide' => '3' })
+      expect(page.html).to include "var startIndex = 2;"
+    end
+  end
+
   describe 'Anonyomous users can view embedded regular maps' do
     before { visit map_path(regular_map) }
 
@@ -31,6 +47,7 @@ feature 'maps index page' do
       login_as(user, scope: :user)
       visit map_path(private_map)
     end
+
     after { logout(admin) }
 
     it 'map page is viewable' do
@@ -66,13 +83,14 @@ feature 'maps index page' do
 
   feature 'navigating to "/maps"' do
     before { visit '/maps' }
+
     scenario 'redirecting to /maps/featured' do
       successfully_visits_page '/maps/featured'
     end
   end
 
   feature 'viewing all maps' do
-    before { visit '/maps/all'; }
+    before { visit '/maps/all' }
 
     scenario 'visiting /maps/all' do
       successfully_visits_page '/maps/all'
@@ -102,6 +120,7 @@ feature 'maps index page' do
       login_as(admin, scope: :user)
       visit '/maps/all'
     end
+
     after { logout(admin) }
 
     scenario 'visiting /maps/all as an admin' do
@@ -119,6 +138,7 @@ feature 'maps index page' do
       create(:network_map, is_private: true, user_id: create_really_basic_user.sf_guard_user_id)
       visit '/maps/all'
     end
+
     after { logout(user) }
 
     scenario 'visiting /maps/all' do
@@ -128,14 +148,15 @@ feature 'maps index page' do
   end
 
   feature 'setting and removing featured maps' do
-    context 'as an admin' do
+    context 'when logged in as an admin' do
       before { login_as(admin, scope: :user) }
+
       after { logout(admin) }
 
       scenario 'adding feature a map' do
         visit '/maps/all'
         page_has_selector '.featured-map-star', count: 1
-        page.find('.not-featured-map-star').first(:xpath,".//..").click
+        page.find('.not-featured-map-star').first(:xpath, ".//..").click
         successfully_visits_page '/maps/all'
         page_has_selector '.featured-map-star', count: 2
       end
@@ -143,12 +164,12 @@ feature 'maps index page' do
       scenario 'removing is featured from a map' do
         visit '/maps/all'
         page_has_selector '.featured-map-star', count: 1
-        page.find('.featured-map-star').first(:xpath,".//..").click
+        page.find('.featured-map-star').first(:xpath, ".//..").click
         successfully_visits_page '/maps/all'
         expect(page).not_to have_selector '.featured-map-star'
       end
     end
   end
-
-  
 end
+
+# rubocop:enable Capybara/FeatureMethods

@@ -57,6 +57,7 @@ class MapsController < ApplicationController
     check_private_access
     @header_pct = embedded_params.fetch(:header_pct, EMBEDDED_HEADER_PCT)
     @annotation_pct = embedded_params.fetch(:annotation_pct, EMBEDDED_ANNOTATION_PCT)
+    @start_index = embedded_params.fetch(:slide, 1).to_i - 1
     response.headers.delete('X-Frame-Options')
     render layout: 'embedded_oligrapher'
   end
@@ -322,7 +323,7 @@ class MapsController < ApplicationController
   end
 
   def embedded_params
-    params.permit(:header_pct, :annotation_pct)
+    params.permit(:header_pct, :annotation_pct, :slide)
   end
 
   def is_owner

@@ -4,7 +4,7 @@
   <%= oligrapher_js_tags %>
 <% end %>
 
-<%= cache_if !user_signed_in?, [ 'embedded', @map ] do %>
+<%= cache_if !user_signed_in?, [ 'embedded', @map, @start_index ] do %>
 
     <% content_for(:page_title, raw(@map.name)) %>
     <% content_for(:facebook_title, @map.name) %>
@@ -16,8 +16,8 @@
      var graph = <%= raw(@map.graph_data.to_json) %>;
      graph.id = <%= @map.id %>;
      
-     var annotations = <%= raw(@map.annotations_data) %>;
-     var startIndex = <%= params.fetch(:slide, 1).to_i - 1 %>;
+     var annotations = <%= raw(@map.annotations_data || '[]') %>;
+     var startIndex = <%= @start_index %>;
 
      var elem = document.getElementById('oligrapher');
      elem.style.height = window.innerHeight.toString() + 'px';
