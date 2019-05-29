@@ -1,26 +1,25 @@
 # frozen_string_literal: true
 
-
 describe Relationship, type: :model do
   let(:person1) { create(:entity_person, :with_person_name) }
   let(:person2) { create(:entity_person, :with_person_name) }
 
   describe 'associations' do
-    it { should have_many(:links) }
-    it { should belong_to(:entity).optional }
-    it { should belong_to(:related).optional }
-    it { should have_one(:position) }
-    it { should have_one(:education) }
-    it { should have_one(:membership) }
-    it { should have_one(:family) }
-    it { should have_one(:trans) }
-    it { should have_one(:ownership) }
-    it { should belong_to(:category) }
-    it { should belong_to(:last_user).optional }
-    it { should have_many(:os_matches) }
-    it { should have_many(:os_donations) }
-    it { should have_many(:ny_matches) }
-    it { should have_many(:ny_disclosures) }
+    it { is_expected.to have_many(:links) }
+    it { is_expected.to belong_to(:entity).optional }
+    it { is_expected.to belong_to(:related).optional }
+    it { is_expected.to have_one(:position) }
+    it { is_expected.to have_one(:education) }
+    it { is_expected.to have_one(:membership) }
+    it { is_expected.to have_one(:family) }
+    it { is_expected.to have_one(:trans) }
+    it { is_expected.to have_one(:ownership) }
+    it { is_expected.to belong_to(:category) }
+    it { is_expected.to belong_to(:last_user).optional }
+    it { is_expected.to have_many(:os_matches) }
+    it { is_expected.to have_many(:os_donations) }
+    it { is_expected.to have_many(:ny_matches) }
+    it { is_expected.to have_many(:ny_disclosures) }
 
     it 'aliases trans as transaction' do
       expect(Trans).to eql Transaction
@@ -43,13 +42,13 @@ describe Relationship, type: :model do
   end
 
   describe 'validations' do
-    it { should validate_presence_of(:entity1_id) }
-    it { should validate_presence_of(:entity2_id) }
-    it { should validate_presence_of(:category_id) }
-    it { should validate_length_of(:start_date).is_at_most(10) }
-    it { should validate_length_of(:end_date).is_at_most(10) }
-    it { should validate_length_of(:description1).is_at_most(100) }
-    it { should validate_length_of(:description2).is_at_most(100) }
+    it { is_expected.to validate_presence_of(:entity1_id) }
+    it { is_expected.to validate_presence_of(:entity2_id) }
+    it { is_expected.to validate_presence_of(:category_id) }
+    it { is_expected.to validate_length_of(:start_date).is_at_most(10) }
+    it { is_expected.to validate_length_of(:end_date).is_at_most(10) }
+    it { is_expected.to validate_length_of(:description1).is_at_most(100) }
+    it { is_expected.to validate_length_of(:description2).is_at_most(100) }
 
     describe 'Date Validation' do
       def rel(attr)
@@ -58,6 +57,7 @@ describe Relationship, type: :model do
         allow(r).to receive(:related).and_return(double('person double', :person? => true, :org? => false))
         r
       end
+
       it 'accepts good dates' do
         expect(rel(start_date: '2000-00-00').valid?).to be true
         expect(rel(end_date: '2000-10-00').valid?).to be true
@@ -65,7 +65,7 @@ describe Relationship, type: :model do
         expect(rel(start_date: nil).valid?).to be true
       end
 
-      it 'does not accept bad dates' do
+      it 'rejects bad dates' do
         expect(rel(start_date: '2000-13-00').valid?).to be false
         expect(rel(end_date: '2000-10').valid?).to be false
         expect(rel(end_date: '2017').valid?).to be false
@@ -90,57 +90,53 @@ describe Relationship, type: :model do
   end
 
   describe 'touch: entity and related' do
+    let(:elected) { create(:elected) }
+    let(:org) { create(:entity_org) }
+
     before do
-      @elected = create(:elected)
-      @org = create(:entity_org)
+      elected
+      org
     end
 
     it 'updates updated_at of entity after change' do
-      rel = Relationship.create!(entity1_id: @elected.id, entity2_id: @org.id, category_id: 12, description1: 'relationship')
-      @elected.update_columns(updated_at: 1.week.ago)
-      expect { rel.update(description1: 'new title') }.to change { Entity.find(@elected.id).updated_at }
+      rel = Relationship.create!(entity1_id: elected.id, entity2_id: org.id, category_id: 12, description1: 'relationship')
+      elected.update_columns(updated_at: 1.week.ago)
+      expect { rel.update(description1: 'new title') }.to change { Entity.find(elected.id).updated_at }
     end
 
     it 'updates updated_at of related after change' do
-      rel = Relationship.create(entity1_id: @elected.id, entity2_id: @org.id, category_id: 12, description1: 'relationship')
-      @org.update_columns(updated_at: 1.week.ago)
-      expect { rel.update(description1: 'new title') }.to change { Entity.find(@org.id).updated_at }
+      rel = Relationship.create(entity1_id: elected.id, entity2_id: org.id, category_id: 12, description1: 'relationship')
+      org.update_columns(updated_at: 1.week.ago)
+      expect { rel.update(description1: 'new title') }.to change { Entity.find(org.id).updated_at }
     end
   end
 
   describe '#update_entity_timestatmps' do
-    before(:all) do
-      @sf_guard_user_1 = create(:sf_guard_user)
-      @sf_guard_user_2 = create(:sf_guard_user)
-      @sf_guard_user_3 = create(:sf_guard_user)
-    end
+    let(:sf_guard_user_1) { create(:sf_guard_user) }
+    let(:sf_guard_user_2) { create(:sf_guard_user) }
+    let(:sf_guard_user_3) { create(:sf_guard_user) }
+    let(:e1) { create(:entity_person, last_user_id: sf_guard_user_1.id) }
+    let(:e2) { create(:entity_person, last_user_id: sf_guard_user_1.id) }
 
-    after(:all) do
-      [@sf_guard_user_1, @sf_guard_user_2, @sf_guard_user_3].each(&:delete)
-    end
-
-    before do
-      @e1 = create(:person, last_user_id: @sf_guard_user_1.id)
-      @e2 = create(:person, last_user_id: @sf_guard_user_1.id)
-    end
+    before { e1; e2; sf_guard_user_1; sf_guard_user_2; sf_guard_user_3; }
 
     it 'updates entity timestamp' do
-      @rel = Relationship.create!(category_id: 12, entity: @e1, related: @e2, last_user_id: @sf_guard_user_2.id)
-      @e1.update_columns(updated_at: 1.day.ago)
-      expect { @rel.update_entity_timestamps }.to change { Entity.find(@e1.id).updated_at }
+      rel = Relationship.create!(category_id: 12, entity: e1, related: e2, last_user_id: sf_guard_user_2.id)
+      e1.update_columns(updated_at: 1.day.ago)
+      expect { rel.update_entity_timestamps }.to change { Entity.find(e1.id).updated_at }
     end
 
     it 'changes entity last_user_id' do
-      @rel = Relationship.create!(category_id: 12, entity: @e1, related: @e2, last_user_id: @sf_guard_user_2.id)
-      expect(Entity.find(@e1.id).last_user_id).to eq @sf_guard_user_2.id
-      @rel.update(description1: 'this is a description', last_user_id: @sf_guard_user_3.id)
-      expect(Entity.find(@e1.id).last_user_id).to eq @sf_guard_user_3.id
+      rel = Relationship.create!(category_id: 12, entity: e1, related: e2, last_user_id: sf_guard_user_2.id)
+      expect(Entity.find(e1.id).last_user_id).to eq sf_guard_user_2.id
+      rel.update(description1: 'this is a description', last_user_id: sf_guard_user_3.id)
+      expect(Entity.find(e1.id).last_user_id).to eq sf_guard_user_3.id
     end
 
     it 'changes related last_user_id' do
-      @rel = Relationship.create!(category_id: 12, entity: @e1, related: @e2, last_user_id: @sf_guard_user_2.id)
-      @rel.update(description1: 'this is a description')
-      expect(Entity.find(@e2.id).last_user_id).to eq @sf_guard_user_2.id
+      rel = Relationship.create!(category_id: 12, entity: e1, related: e2, last_user_id: sf_guard_user_2.id)
+      rel.update(description1: 'this is a description')
+      expect(Entity.find(e2.id).last_user_id).to eq sf_guard_user_2.id
     end
   end
 
@@ -154,24 +150,23 @@ describe Relationship, type: :model do
 
       it 'creates model Position after relationship is created' do
         expect { Relationship.create!(category_id: 1, entity: person1, related: create(:entity_org)) }
-          .to change { Position.count }.by(1)
+          .to change(Position, :count).by(1)
       end
 
       it 'create_category works nicely with nested_attributes' do
         create_relationship = proc do
           Relationship.create!(category_id: 1, entity: person1, related: create(:entity_org), position_attributes: { is_board: true })
         end
-        expect { create_relationship.call }.to change { Position.count }.by(1)
-        expect(Position.last.is_board).to eql true
+
+        expect { create_relationship.call }.to change(Position, :count).by(1)
+        expect(Position.last.is_board).to be true
       end
     end
 
     describe 'create_links' do
       it 'creates 2 links after creating relationship' do
-        # e1 = create(:person)
-        # e2 = create(:person)
         expect { Relationship.create!(category_id: 12, entity: person1, related: person2) }
-          .to change { Link.count }.by(2)
+          .to change(Link, :count).by(2)
       end
     end
 
@@ -335,11 +330,11 @@ describe Relationship, type: :model do
     after(:all) { DatabaseCleaner.clean }
 
     it 'updates amount' do
-      expect(@loeb_donation.amount).to eql 80_800
+      expect(@loeb_donation.amount).to eq 80_800
     end
 
     it 'updates filing' do
-      expect(@loeb_donation.filings).to eql 2
+      expect(@loeb_donation.filings).to eq 2
     end
 
     it 'does not update the database' do
@@ -369,7 +364,7 @@ describe Relationship, type: :model do
     after(:all) { DatabaseCleaner.clean }
 
     it 'updates amount' do
-      expect(@rel.amount).to eql 5000
+      expect(@rel.amount).to eq 5_000
     end
 
     it 'Sets description if blank' do
@@ -377,7 +372,7 @@ describe Relationship, type: :model do
     end
 
     it 'updates filing' do
-      expect(@rel.filings).to eql 2
+      expect(@rel.filings).to eq 2
     end
 
     it 'does not update the database' do
@@ -407,7 +402,7 @@ describe Relationship, type: :model do
       expect(rel.name).to eql "Position: Human Being, mega corp LLC"
     end
 
-    context 'if relationship and entities have been deleted' do
+    context 'when relationship and entities have been deleted' do
       let(:entity) { create(:entity_person, :with_person_name) }
       let(:related) { create(:entity_org, :with_org_name) }
       let(:relationship) do
@@ -462,49 +457,49 @@ describe Relationship, type: :model do
     end
 
     describe 'reverse_direction' do
-      before do
-        @human = create(:person)
-        @corp = create(:corp)
-        @rel = Relationship.create!(entity1_id: @human.id, entity2_id: @corp.id, category_id: 12)
+      let(:person) { create(:entity_person) }
+      let(:corp) { create(:entity_org) }
+      let(:rel) do
+        Relationship.create!(entity1_id: person.id, entity2_id: corp.id, category_id: 12)
       end
 
-      def changes_direction_of_relationship(method)
-        expect(@rel.entity1_id).to eql @human.id
-        expect(@rel.entity2_id).to eql @corp.id
-        @rel.public_send(method)
-        expect(Relationship.find(@rel.id).entity2_id).to eql @human.id
-        expect(Relationship.find(@rel.id).entity1_id).to eql @corp.id
+      def changes_direction_of_relationship(method, rel:, person:, corp:)
+        expect(rel.entity1_id).to eql person.id
+        expect(rel.entity2_id).to eql corp.id
+        rel.public_send(method)
+        expect(Relationship.find(rel.id).entity2_id).to eql person.id
+        expect(Relationship.find(rel.id).entity1_id).to eql corp.id
       end
 
-      def it_reverses_links(method)
-        expect(Link.where(entity1_id: @human.id, relationship_id: @rel.id)[0].is_reverse)
+      def it_reverses_links(method, person:, rel:)
+        expect(Link.where(entity1_id: person.id, relationship_id: rel.id)[0].is_reverse)
           .to be false
-        expect(Link.where(entity2_id: @human.id, relationship_id: @rel.id)[0].is_reverse)
+        expect(Link.where(entity2_id: person.id, relationship_id: rel.id)[0].is_reverse)
           .to be true
-        @rel.public_send(method)
-        expect(Link.where(entity1_id: @human.id, relationship_id: @rel.id)[0].is_reverse)
+        rel.public_send(method)
+        expect(Link.where(entity1_id: person.id, relationship_id: rel.id)[0].is_reverse)
           .to be true
-        expect(Link.where(entity2_id: @human.id, relationship_id: @rel.id)[0].is_reverse)
+        expect(Link.where(entity2_id: person.id, relationship_id: rel.id)[0].is_reverse)
           .to be false
       end
 
-      context '#reverse_direction' do
+      describe '#reverse_direction' do
         it 'changes the direction of relationship' do
-          changes_direction_of_relationship(:reverse_direction)
+          changes_direction_of_relationship :reverse_direction, rel: rel, person: person, corp: corp
         end
 
         it 'reverses links' do
-          it_reverses_links(:reverse_direction)
+          it_reverses_links :reverse_direction, person: person, rel: rel
         end
       end
 
-      context '#reverse_direction!' do
+      describe '#reverse_direction!' do
         it 'changes the direction of relationship' do
-          changes_direction_of_relationship(:reverse_direction!)
+          changes_direction_of_relationship :reverse_direction!, rel: rel, person: person, corp: corp
         end
 
         it 'reverses links' do
-          it_reverses_links(:reverse_direction!)
+          it_reverses_links :reverse_direction!, person: person, rel: rel
         end
       end
     end
@@ -518,39 +513,46 @@ describe Relationship, type: :model do
     let(:rel) do
       build(:relationship, start_date: start_date, end_date: end_date, is_current: is_current, category_id: category_id)
     end
+
     subject { rel.display_date_range }
 
-    context 'A past relationship without start or end dates' do
+    context 'when a past relationship has no start or end dates' do
       let(:is_current) { false }
-      it { should eql '(past)' }
+
+      it { is_expected.to eql '(past)' }
     end
 
-    context 'A current relationship without start or end dates' do
+    context 'when a current relationship has no start or end dates' do
       let(:is_current) { true }
-      it { should eql '' }
+
+      it { is_expected.to eql '' }
     end
 
-    context 'Start date and end date are equal' do
+    context 'when start date and end date are equal' do
       let(:start_date) { '1999-00-00' }
       let(:end_date) { '1999-00-00' }
-      it { should eql "('99)" }
+
+      it { is_expected.to eql "('99)" }
     end
 
-    context 'is a donation relationship and missing an end date' do
+    context 'when relationship is a donation relationship and missing an end date' do
       let(:category_id) { 5 }
       let(:start_date) { '1999-02-25' }
-      it { should eql "(Feb 25 '99)" }
+
+      it { is_expected.to eql "(Feb 25 '99)" }
     end
 
     context 'has start and end date' do
       let(:start_date) { '2000-01-01' }
       let(:end_date) { '2012-12-12' }
-      it { should eql "(Jan 1 '00→Dec 12 '12)" }
+
+      it { is_expected.to eql "(Jan 1 '00→Dec 12 '12)" }
     end
 
-    context 'relationship start date is invalid' do
+    context 'when the relationship start date is invalid' do
       let(:start_date) { '2000' }
-      it { should eql '' }
+
+      it { is_expected.to eql '' }
     end
   end
 
@@ -608,69 +610,63 @@ describe Relationship, type: :model do
     end
 
     it 'soft_delete set is_deleted to be true' do
-      @rel = rel
-      expect(@rel.is_deleted).to be false
-      @rel.soft_delete
-      expect(@rel.is_deleted).to be true
+      expect(rel.is_deleted).to be false
+      rel.soft_delete
+      expect(rel.is_deleted).to be true
     end
 
     it 'soft_delete removes links' do
-      @rel = rel
-      expect { @rel.soft_delete }.to change { Link.count }.by(-2)
+      rel
+      expect { rel.soft_delete }.to change(Link, :count).by(-2)
     end
 
     it 'removing references for the relationship' do
       rel.add_reference(attributes_for(:document))
-      expect { rel.soft_delete }.to change { Reference.count }.by(-1)
+      expect { rel.soft_delete }.to change(Reference, :count).by(-1)
     end
 
-    context 'removing associated category models' do
-      before(:all) do
-        DatabaseCleaner.start
-        @person = create(:person)
-        @org = create(:org)
-      end
-
-      after(:all) { DatabaseCleaner.clean }
+    describe 'removing associated category models' do
+      let(:person) { create(:entity_person) }
+      let(:org) { create(:entity_org) }
 
       it 'removes position model' do
-        rel = create(:position_relationship, entity1_id: @person.id, entity2_id: @org.id)
-        expect { rel.soft_delete }.to change { Position.count }.by(-1)
+        rel = create(:position_relationship, entity1_id: person.id, entity2_id: org.id)
+        expect { rel.soft_delete }.to change(Position, :count).by(-1)
       end
 
       it 'removes education model' do
-        rel = Relationship.create!(category_id: 2, entity1_id: @person.id, entity2_id: create(:org).id)
-        expect { rel.soft_delete }.to change { Education.count }.by(-1)
+        rel = Relationship.create!(category_id: 2, entity1_id: person.id, entity2_id: create(:entity_org).id)
+        expect { rel.soft_delete }.to change(Education, :count).by(-1)
       end
 
       it 'removes membership model' do
-        rel = Relationship.create!(category_id: 3, entity1_id: @person.id, entity2_id: @org.id)
-        expect { rel.soft_delete }.to change { Membership.count }.by(-1)
+        rel = Relationship.create!(category_id: 3, entity1_id: person.id, entity2_id: org.id)
+        expect { rel.soft_delete }.to change(Membership, :count).by(-1)
       end
 
       it 'removes family model' do
-        rel = Relationship.create!(category_id: 4, entity1_id: @person.id, entity2_id: create(:person).id)
-        expect { rel.soft_delete }.to change { Family.count }.by(-1)
+        rel = Relationship.create!(category_id: 4, entity1_id: person.id, entity2_id: create(:person).id)
+        expect { rel.soft_delete }.to change(Family, :count).by(-1)
       end
 
       it 'removes donation model' do
-        rel = Relationship.create!(category_id: 5, entity1_id: @person.id, entity2_id: @org.id)
-        expect { rel.soft_delete }.to change { Donation.count }.by(-1)
+        rel = Relationship.create!(category_id: 5, entity1_id: person.id, entity2_id: org.id)
+        expect { rel.soft_delete }.to change(Donation, :count).by(-1)
       end
 
       it 'removes transation model' do
-        rel = Relationship.create!(category_id: 6, entity1_id: @person.id, entity2_id: @org.id)
-        expect { rel.soft_delete }.to change { Transaction.count }.by(-1)
+        rel = Relationship.create!(category_id: 6, entity1_id: person.id, entity2_id: org.id)
+        expect { rel.soft_delete }.to change(Transaction, :count).by(-1)
       end
 
       it 'removes ownership model' do
-        rel = Relationship.create!(category_id: 10, entity1_id: @person.id, entity2_id: @org.id)
-        expect { rel.soft_delete }.to change { Ownership.count }.by(-1)
+        rel = Relationship.create!(category_id: 10, entity1_id: person.id, entity2_id: org.id)
+        expect { rel.soft_delete }.to change(Ownership, :count).by(-1)
       end
 
       it 'does nothing if deleting a generic relationship' do
-        rel = Relationship.create!(category_id: 12, entity1_id: @person.id, entity2_id: @org.id)
-        expect { rel.soft_delete }.not_to change { Position.count }
+        rel = Relationship.create!(category_id: 12, entity1_id: person.id, entity2_id: org.id)
+        expect { rel.soft_delete }.not_to change(Position, :count)
       end
     end
   end
@@ -717,7 +713,7 @@ describe Relationship, type: :model do
         document = create(:document)
         rel.add_reference(url: document.url)
         rel.soft_delete
-        expect { rel.restore! }.to change { Reference.count }.by(1)
+        expect { rel.restore! }.to change(Reference, :count).by(1)
         expect(rel.references.count).to eql 1
         expect(rel.documents.count).to eql 1
         expect(rel.documents.first).to eq document
@@ -725,6 +721,7 @@ describe Relationship, type: :model do
 
       context 'entity1 is deleted' do
         let(:person) { create(:entity_person, is_deleted: true) }
+
         it 'does not restore the relationship' do
           rel.soft_delete
           expect { rel.restore! }.not_to change { rel.is_deleted }
@@ -734,6 +731,7 @@ describe Relationship, type: :model do
 
       context 'entity2 is deleted' do
         let(:org) { create(:entity_person, is_deleted: true) }
+
         it 'does not restore the relationship' do
           rel.soft_delete
           expect { rel.restore! }.not_to change { rel.is_deleted }
@@ -764,7 +762,7 @@ describe Relationship, type: :model do
     end
   end
 
-  context 'Using paper_trail for versioning' do
+  describe 'Using paper_trail for versioning' do
     let(:human) { create(:entity_person) }
     let(:corp) { create(:entity_org) }
     let(:rel) { Relationship.create!(entity1_id: human.id, entity2_id: corp.id, category_id: 12) }
@@ -793,8 +791,8 @@ describe Relationship, type: :model do
       it 'saves document ids in the association data column' do
         rel.add_reference(url: document.url)
         rel.soft_delete
-        expect(YAML.load(rel.versions.last.association_data))
-          .to eql({ 'document_ids' => [document.id] })
+        expect(YAML.safe_load(rel.versions.last.association_data))
+          .to eql('document_ids' => [document.id])
       end
     end
   end
