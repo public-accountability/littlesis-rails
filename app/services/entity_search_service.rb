@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EntitySearchService
+  ONLY_NUMBERS = /\A[[:digit:]]+\Z/.freeze
+
   DEFAULT_OPTIONS = {
     with: { is_deleted: false },
     fields: %w[name aliases],
@@ -40,7 +42,12 @@ class EntitySearchService
     parse_tags
     parse_exclude_list
 
-    @search = Entity.search @search_query, @search_options
+    # If the query is an integer, assume that it is the ID of an entity
+    if ONLY_NUMBERS.match? query.strip
+      @search = Kaminari.paginate_array([Entity.find(query.strip)]).page(1)
+    else
+      @search = Entity.search @search_query, @search_options
+    end
     freeze
   end
 
