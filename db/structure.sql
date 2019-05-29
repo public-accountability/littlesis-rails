@@ -94,7 +94,7 @@ CREATE TABLE `alias` (
   KEY `name_idx` (`name`),
   CONSTRAINT `alias_ibfk_1` FOREIGN KEY (`entity_id`) REFERENCES `entity` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `alias_ibfk_2` FOREIGN KEY (`last_user_id`) REFERENCES `sf_guard_user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=23747 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23801 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `api_request`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -252,7 +252,7 @@ CREATE TABLE `business` (
   UNIQUE KEY `index_business_on_crd_number` (`crd_number`),
   KEY `entity_id_idx` (`entity_id`),
   CONSTRAINT `business_ibfk_1` FOREIGN KEY (`entity_id`) REFERENCES `entity` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=576 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=600 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `business_industry`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -280,7 +280,7 @@ CREATE TABLE `business_person` (
   UNIQUE KEY `index_business_person_on_crd_number` (`crd_number`),
   KEY `entity_id_idx` (`entity_id`),
   CONSTRAINT `business_person_ibfk_1` FOREIGN KEY (`entity_id`) REFERENCES `entity` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=801 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=828 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `candidate_district`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -425,7 +425,7 @@ CREATE TABLE `delayed_jobs` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `delayed_jobs_priority` (`priority`,`run_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=72881 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=73464 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `documents`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -442,7 +442,7 @@ CREATE TABLE `documents` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_documents_on_url_hash` (`url_hash`)
-) ENGINE=InnoDB AUTO_INCREMENT=2422 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2465 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `donation`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -559,7 +559,7 @@ CREATE TABLE `entity` (
   KEY `website_idx` (`website`),
   CONSTRAINT `entity_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `entity` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `entity_ibfk_2` FOREIGN KEY (`last_user_id`) REFERENCES `sf_guard_user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=40526 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=40580 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `entity_fields`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -606,7 +606,7 @@ CREATE TABLE `extension_record` (
   CONSTRAINT `extension_record_ibfk_1` FOREIGN KEY (`entity_id`) REFERENCES `entity` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `extension_record_ibfk_2` FOREIGN KEY (`definition_id`) REFERENCES `extension_definition` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `extension_record_ibfk_3` FOREIGN KEY (`last_user_id`) REFERENCES `sf_guard_user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=25002 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25107 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `external_datasets`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -624,7 +624,7 @@ CREATE TABLE `external_datasets` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_external_datasets_on_type_and_dataset_key` (`type`,`dataset_key`),
   KEY `index_external_datasets_on_type` (`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=1683 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1717 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `external_links`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1061,7 +1061,7 @@ CREATE TABLE `network_map` (
   PRIMARY KEY (`id`),
   KEY `index_network_map_on_delta` (`delta`),
   KEY `user_id_idx` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=939 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1263 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `ny_disclosures`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1211,7 +1211,7 @@ CREATE TABLE `org` (
   PRIMARY KEY (`id`),
   KEY `entity_id_idx` (`entity_id`),
   CONSTRAINT `org_ibfk_1` FOREIGN KEY (`entity_id`) REFERENCES `entity` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9782 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9806 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `os_candidates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1487,7 +1487,7 @@ CREATE TABLE `person` (
   KEY `party_id_idx` (`party_id`),
   CONSTRAINT `person_ibfk_1` FOREIGN KEY (`party_id`) REFERENCES `entity` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `person_ibfk_3` FOREIGN KEY (`entity_id`) REFERENCES `entity` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11919 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11949 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `phone`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1669,7 +1669,7 @@ CREATE TABLE `references` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_references_on_referenceable_id_and_referenceable_type` (`referenceable_id`,`referenceable_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=2526 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2569 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `relationship`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1790,7 +1790,7 @@ CREATE TABLE `sessions` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_sessions_on_session_id` (`session_id`),
   KEY `index_sessions_on_updated_at` (`updated_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=5442 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5556 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `sf_guard_permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1823,7 +1823,7 @@ CREATE TABLE `sf_guard_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `is_active_idx_idx` (`is_active`)
-) ENGINE=InnoDB AUTO_INCREMENT=20024 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20233 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `sf_guard_user_permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1931,7 +1931,7 @@ CREATE TABLE `taggings` (
   KEY `index_taggings_on_tag_id` (`tag_id`),
   KEY `index_taggings_on_tagable_class` (`tagable_class`),
   KEY `index_taggings_on_tagable_id` (`tagable_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4439 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4473 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2022,7 +2022,7 @@ CREATE TABLE `user_profiles` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_user_profiles_on_user_id` (`user_id`),
   CONSTRAINT `fk_rails_87a6352e58` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3036 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3088 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2069,7 +2069,6 @@ CREATE TABLE `users` (
   `confirmed_at` datetime DEFAULT NULL,
   `confirmation_sent_at` datetime DEFAULT NULL,
   `newsletter` tinyint(1) DEFAULT NULL,
-  `chatid` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `is_restricted` tinyint(1) DEFAULT 0,
   `map_the_power` tinyint(1) DEFAULT NULL,
   `about_me` text COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -2081,7 +2080,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `index_users_on_username` (`username`),
   UNIQUE KEY `index_users_on_confirmation_token` (`confirmation_token`),
   UNIQUE KEY `index_users_on_reset_password_token` (`reset_password_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=21102 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21309 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `versions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2289,6 +2288,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20190423191048'),
 ('20190514141806'),
 ('20190514181827'),
-('20190521205445');
+('20190521205445'),
+('20190529164312');
 
 
