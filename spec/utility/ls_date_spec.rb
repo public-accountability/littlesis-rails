@@ -207,6 +207,20 @@ describe LsDate do
     specify { expect(LsDate.new('2018-10-10').to_s).to eql '2018-10-10' }
   end
 
+  describe 'valid_date_string?' do
+    it 'valid dates' do
+      ['2012-01-01', '2012-01-00', '2012-00-00'].each do |d|
+        expect(LsDate.valid_date_string?(d)).to be true
+      end
+    end
+
+    it 'invalid dates' do
+      ['2012-13-01', '1000', 'May 20th'].each do |d|
+        expect(LsDate.valid_date_string?(d)).to be false
+      end
+    end
+  end
+
   describe 'coerce_to_date' do
     it 'returns nil' do
       expect(LsDate.new(nil).coerce_to_date).to be nil
@@ -219,6 +233,12 @@ describe LsDate do
     it 'returns valid dates even if month or day is unknown' do
       expect(LsDate.new('1915-00-00').coerce_to_date).to eql Date.parse('1915-01-01')
       expect(LsDate.new('1915-02-00').coerce_to_date).to eql Date.parse('1915-02-01')
+    end
+  end
+
+  describe 'LsDate.today' do
+    specify do
+      expect(LsDate.today.to_s).to eq Time.zone.today.iso8601
     end
   end
 end

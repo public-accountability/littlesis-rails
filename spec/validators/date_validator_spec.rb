@@ -1,17 +1,23 @@
+# frozen_string_literal: true
+
+# rubocop:disable RSpec/NamedSubject
+
 describe 'DateValidator' do
   class DateTester <
         include ActiveModel::Validations
-    attr_accessor :start_date
+    attr_accessor :start_date, :end_date
     validates :start_date, date: true
+    validates :end_date, date: true
   end
 
   subject { DateTester.new }
 
-  context 'When the date is valid' do
+  context 'when the date is valid' do
     it 'nil is valid' do
       subject.start_date = nil
       expect(subject.valid?).to be true
     end
+
     it '2012-00-00 is valid' do
       subject.start_date = '2012-00-00'
       expect(subject.valid?).to be true
@@ -33,7 +39,7 @@ describe 'DateValidator' do
     end
   end
 
-  context 'When the date is invalid' do
+  context 'when the date is invalid' do
     it '2012 is not valid' do
       subject.start_date = '2012'
       expect(subject.valid?).to be false
@@ -64,4 +70,27 @@ describe 'DateValidator' do
       expect(subject.valid?).to be false
     end
   end
+
+  describe 'validates chronology of start and end dates' do
+    it 'rejects when end_date is before start date' do
+      subject.start_date = '1990-01-01'
+      subject.end_date = '1980-01-01'
+      expect(subject.valid?).to be false
+    end
+
+    it 'rejects when start_date is after end date' do
+      subject.end_date = '2000-01-01'
+      expect(subject.valid?).to be true
+      subject.start_date = '2000-01-02'
+      expect(subject.valid?).to be false
+    end
+
+    it 'is okay if start and end date and are the same' do
+      subject.start_date = '1990-01-01'
+      subject.end_date = '1990-01-01'
+      expect(subject.valid?).to be true
+    end
+  end
 end
+
+# rubocop:enable RSpec/NamedSubject
