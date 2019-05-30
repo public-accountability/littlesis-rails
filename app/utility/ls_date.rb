@@ -28,6 +28,7 @@ class LsDate
     unless date.respond_to? :strftime
       raise ArgumentError, "#{date.class} is missing the method 'strftime'"
     end
+
     date.strftime(BASIC_FORMAT).gsub('  ', ' ')
   end
 
@@ -107,6 +108,7 @@ class LsDate
   # return nil if specifiy is unknown
   def to_date
     return nil if sp_unknown?
+
     Date.parse(@date_string)
   end
 
@@ -116,6 +118,7 @@ class LsDate
   def coerce_to_date
     return nil if sp_unknown?
     return to_date if sp_day?
+
     Date.parse(coerce_to_date_str)
   end
 
@@ -155,9 +158,10 @@ class LsDate
   # determines if string is a valid ls_date (used by date validator)
   def self.valid_date_string?(value)
     return false unless (value.length == 10) && (value.gsub('-').count == 2)
+
     year, month, day = year_month_day(value)
-    return false unless valid_year?(year) && valid_month?(month) && valid_day?(day)
-    true
+
+    valid_year?(year) && valid_month?(month) && valid_day?(day)
   end
 
   # str -> [year, month, day]
@@ -195,9 +199,11 @@ class LsDate
   # converts '00' and '0' to nil
   private_class_method def self.to_int(x)
     return false unless !x.nil? && x.length.between?(1, 4)
+
     x = x[1..-1] if x[0] == '0'
     int = Integer(x)
     return nil if int.zero?
+
     int
   rescue # rubocop:disable Style/RescueStandardError
     Rails.logger.debug "Failed to convert - #{x} - to an integer"
@@ -220,6 +226,7 @@ class LsDate
 
   def set_year_month_day
     return if @date_string.nil?
+
     @year, @month, @day = self.class.year_month_day(@date_string)
   end
 
@@ -232,6 +239,7 @@ class LsDate
 
   def test_if_valid_input(str)
     return if str.nil? || self.class.valid_date_string?(str)
+
     Rails.logger.debug "Invalid LsDate input: #{str}"
     raise InvalidLsDateError
   end
