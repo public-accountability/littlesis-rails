@@ -71,6 +71,10 @@ describe Relationship, type: :model do
         expect(rel(end_date: '2017').valid?).to be false
         expect(rel(start_date: '').valid?).to be false
       end
+
+      it 'rejects start dates that are after end dates' do
+        expect(rel(start_date: '2019-01-01', end_date: '2018-12-31').valid?).to be false
+      end
     end
 
     describe 'Relationship Validations' do
@@ -633,6 +637,30 @@ describe Relationship, type: :model do
       rel = build(:relationship, last_user_id: 900, entity: org1, related: org2, category_id: 12)
       expect(rel.as_json(:name => true)).to have_key 'name'
       expect(rel.as_json(:name => true)['name']).to eq 'Generic: org1, org2'
+    end
+  end
+
+  describe 'automatically setting is_current based on end_date' do
+    let(:relationship) do
+      create(:generic_relationship, entity1_id: create(:entity_person).id, entity2_id: create(:entity_person).id)
+    end
+
+    before { relationship }
+
+    it 'changes is_current to false when end date is in the past' do
+      expect(relationship.is_current).to be nil
+      relationship.update!(end_date: (Time.zone.today - 1).iso8601)
+      expect(relationship.is_current).to be false
+    end
+
+    it 'does not change is_current to false when end date is missing' do
+      relationship.update!(start_date: '2000-01-01')
+      expect(relationship.is_current).to be nil
+    end
+
+    it 'does not change is_current to false when end date is in the future' do
+      relationship.update!(end_date: (Time.zone.today + 1).iso8601, is_current: true)
+      expect(relationship.is_current).to be true
     end
   end
 

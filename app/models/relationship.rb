@@ -101,6 +101,9 @@ class Relationship < ApplicationRecord
   before_validation :set_last_user_id
 
   after_create :create_category, :create_links, :update_entity_links
+
+  before_save :update_is_current_according_to_end_date
+
   # This callback is basically a modified version of :touch => true
   # It updates the entity timestamps and also changes the last_user_id of
   # associated entities for the relationship
@@ -523,6 +526,16 @@ class Relationship < ApplicationRecord
       .limit(1)
       &.first
       &.schedule_transaction_date
+  end
+
+  def update_is_current_according_to_end_date
+    return if end_date.blank?
+
+    ls_end_date = LsDate.new(end_date)
+
+    if ls_end_date.sp_day? && ls_end_date < LsDate.today
+      self.is_current = false
+    end
   end
 end
 
