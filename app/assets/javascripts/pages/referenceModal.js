@@ -1,7 +1,5 @@
 var referenceModal = function(){
 
-  $('#data_publication_date').datepicker({ format: "yyyy-mm-dd" });
-
   $('#reference-form').submit(function(event){
     if (this.checkValidity()) {
       // only prevent the default action and submit using ajax
