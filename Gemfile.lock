@@ -105,8 +105,6 @@ GEM
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 1.14.3, < 2)
       sassc-rails (>= 2.0.0)
-    bootstrap-datepicker-rails (1.8.0.1)
-      railties (>= 3.0)
     builder (3.2.3)
     byebug (11.0.1)
     capybara (3.21.0)
@@ -407,7 +405,6 @@ DEPENDENCIES
   better_errors (>= 2.5.0)
   bootsnap (>= 1.4.3)
   bootstrap (>= 4.3.1)
-  bootstrap-datepicker-rails
   capybara (>= 3.14.0)
   daemons
   database_cleaner
