@@ -221,5 +221,11 @@ describe LsDate do
       expect(LsDate.new('1915-02-00').coerce_to_date).to eql Date.parse('1915-02-01')
     end
   end
+
+  describe 'LsDate.today' do
+    specify do
+      expect(LsDate.today.to_s).to eq Time.zone.today.iso8601
+    end
+  end
 end
 # rubocop:enable Lint/UselessComparison, RSpec/Multipleexpectations

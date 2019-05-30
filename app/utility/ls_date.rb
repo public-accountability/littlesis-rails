@@ -186,6 +186,10 @@ class LsDate
     end
   end
 
+  def self.today
+    new(Time.zone.today.iso8601)
+  end
+
   # anything -> int or nil
   # converts strings to integers
   # converts '00' and '0' to nil
