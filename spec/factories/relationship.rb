@@ -32,6 +32,10 @@ FactoryBot.define do
     category_id { Relationship::MEMBERSHIP_CATEGORY }
   end
 
+  factory :family_relationship, class: Relationship do
+    category_id { Relationship::FAMILY_CATEGORY }
+  end
+
   factory :social_relationship, class: Relationship do
     category_id { Relationship::SOCIAL_CATEGORY }
     id { generate(:relationship_id) }
@@ -47,6 +51,14 @@ FactoryBot.define do
     category_id { Relationship::TRANSACTION_CATEGORY }
   end
 
+  factory :lobbying_relationship, class: Relationship do
+    category_id { Relationship::LOBBYING_CATEGORY }
+  end
+
+  factory :professional_relationship, class: Relationship do
+    category_id { Relationship::PROFESSIONAL_CATEGORY }
+  end
+  
   factory :ownership_relationship, class: Relationship do
     category_id { Relationship::OWNERSHIP_CATEGORY }
   end

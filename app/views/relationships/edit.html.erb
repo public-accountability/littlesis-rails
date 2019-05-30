@@ -103,7 +103,7 @@
   <% end %>
   
 
-  <% if @relationship.is_member?  %>
+  <% if @relationship.is_membership?  %>
     <div class="form-row">
       <%= f.fields_for :membership do |membership_form|  %>
 	<%= relationship_form_tag( membership_form.label(:dues, 'Dues', class: label_class), membership_form.number_field(:dues) )%>
