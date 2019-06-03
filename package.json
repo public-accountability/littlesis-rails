@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.0.0",
-    "@rails/webpacker": "^4.0.3",
+    "@rails/webpacker": "^4.0.6",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.11",
@@ -40,6 +40,6 @@
     "enzyme-adapter-react-16": "^1.13.2",
     "jest": "^24.3.1",
     "jest-fetch-mock": "^2.1.2",
-    "webpack-dev-server": "^3.3.1"
+    "webpack-dev-server": "^3.5.1"
   }
 }

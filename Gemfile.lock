@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: https://github.com/stympy/faker.git
-  revision: 59a92644d5583828add1c68351074f6e52c6deb6
+  revision: 14617c4ef7b89998e98e833ad5d11760e03d9bad
   branch: master
   specs:
     faker (1.9.3)
@@ -93,7 +93,7 @@ GEM
       aws-sigv4 (~> 1.0)
     aws-sigv4 (1.1.0)
       aws-eventstream (~> 1.0, >= 1.0.2)
-    bcrypt (3.1.12)
+    bcrypt (3.1.13)
     better_errors (2.5.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -107,7 +107,7 @@ GEM
       sassc-rails (>= 2.0.0)
     builder (3.2.3)
     byebug (11.0.1)
-    capybara (3.21.0)
+    capybara (3.22.0)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
@@ -264,7 +264,7 @@ GEM
     recaptcha (4.14.0)
       json
     redcarpet (3.4.0)
-    redis (4.1.1)
+    redis (4.1.2)
     regexp_parser (1.5.1)
     request_store (1.4.1)
       rack (>= 1.4)
@@ -292,7 +292,7 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
-    rubocop (0.70.0)
+    rubocop (0.71.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.6)
@@ -301,6 +301,9 @@ GEM
       unicode-display_width (>= 1.4.0, < 1.7)
     rubocop-performance (1.3.0)
       rubocop (>= 0.68.0)
+    rubocop-rails (2.0.0)
+      rack (>= 2.0)
+      rubocop (>= 0.70.0)
     rubocop-rspec (1.33.0)
       rubocop (>= 0.60.0)
     ruby-progressbar (1.10.1)
@@ -369,7 +372,7 @@ GEM
       tty-which (~> 0.4)
     tty-screen (0.6.5)
     tty-tree (0.2.0)
-    tty-which (0.4.0)
+    tty-which (0.4.1)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uglifier (4.1.20)
@@ -383,7 +386,7 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webpacker (4.0.3)
+    webpacker (4.0.6)
       activesupport (>= 4.2)
       rack-proxy (>= 0.6.1)
       railties (>= 4.2)
@@ -437,6 +440,7 @@ DEPENDENCIES
   rspec-rails (>= 3.8.0)
   rubocop
   rubocop-performance
+  rubocop-rails
   rubocop-rspec
   sassc-rails
   seed_dump

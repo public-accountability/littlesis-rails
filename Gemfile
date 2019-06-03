@@ -69,8 +69,9 @@ group :test, :development do
   gem 'rails-controller-testing'
   gem 'rspec-rails', '>= 3.8.0'
   gem 'rubocop', require: false
-  gem 'rubocop-rspec', require: false
   gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
+  gem 'rubocop-rspec', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '>= 4.0.0'
   gem 'spring', '~> 2.0.2'
