@@ -58,12 +58,6 @@ class Link < ApplicationRecord
     return 'other'
   end
 
-  def is_pfc_link?
-    return false if related == nil
-    # definition_id = 11
-    related.extension_names.include? 'PoliticalFundraising'
-  end
-
   def description
     RelationshipLabel.new(relationship, is_reverse).label
   end
