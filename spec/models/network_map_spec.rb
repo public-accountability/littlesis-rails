@@ -262,6 +262,29 @@ describe NetworkMap, type: :model do
     end
   end
 
+  describe '#display_title' do
+    context 'when map is public' do
+      let(:map) { build(:network_map, is_private: false) }
+
+      it 'does not display a lock' do
+        expect(map.display_title).to eql '"so many connections"'
+        expect(map.display_title(lock: true)).to eql '"so many connections"'
+      end
+    end
+
+    context 'when map is private' do
+      let(:map) { build(:network_map, is_private: true) }
+
+      it 'displays lock if param lock is true' do
+        expect(map.display_title(lock: true)).to eql '"so many connections 🔒"'
+      end
+
+      it 'does not dsiplay lock if lock param is set to false' do
+        expect(map.display_title(lock: false)).to eql '"so many connections"'
+      end
+    end
+  end
+
   describe 'Entity Network Map Collection functions' do
     let(:e1) { create(:entity_org) }
     let(:e2) { create(:entity_org) }
