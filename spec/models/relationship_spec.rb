@@ -542,57 +542,6 @@ describe Relationship, type: :model do
     end
   end
 
-  describe '#display_date_range' do
-    let(:start_date) { nil }
-    let(:end_date) { nil }
-    let(:is_current) { nil }
-    let(:category_id) { 12 }
-    let(:rel) do
-      build(:relationship, start_date: start_date, end_date: end_date, is_current: is_current, category_id: category_id)
-    end
-
-    subject { rel.display_date_range }
-
-    context 'when a past relationship has no start or end dates' do
-      let(:is_current) { false }
-
-      it { is_expected.to eql '(past)' }
-    end
-
-    context 'when a current relationship has no start or end dates' do
-      let(:is_current) { true }
-
-      it { is_expected.to eql '' }
-    end
-
-    context 'when start date and end date are equal' do
-      let(:start_date) { '1999-00-00' }
-      let(:end_date) { '1999-00-00' }
-
-      it { is_expected.to eql "('99)" }
-    end
-
-    context 'when relationship is a donation relationship and missing an end date' do
-      let(:category_id) { 5 }
-      let(:start_date) { '1999-02-25' }
-
-      it { is_expected.to eql "(Feb 25 '99)" }
-    end
-
-    context 'has start and end date' do
-      let(:start_date) { '2000-01-01' }
-      let(:end_date) { '2012-12-12' }
-
-      it { is_expected.to eql "(Jan 1 '00→Dec 12 '12)" }
-    end
-
-    context 'when the relationship start date is invalid' do
-      let(:start_date) { '2000' }
-
-      it { is_expected.to eql '' }
-    end
-  end
-
   describe 'Similar Relationships' do
     let(:org) { create(:org) }
     let(:person) { create(:person) }

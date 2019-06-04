@@ -10,6 +10,21 @@ class RelationshipLabel < SimpleDelegator
     @is_reverse = is_reverse
   end
 
+  def display_date_range
+    if start_date.nil? && end_date.nil?
+      return '(past)' if is_current == false
+      return ''
+    end
+
+    if start_date == end_date || (is_donation? && end_date.nil?)
+      return "(#{LsDate.new(start_date).display})"
+    end
+
+    "(#{LsDate.new(start_date).display}→#{LsDate.new(end_date).display})"
+  rescue LsDate::InvalidLsDateError
+    return ''
+  end
+
   # This returns the label for the provided entity of a relationship.
   # The semantics of this can be somewhat confusing. You can think of
   # it as the label for the page of the provided entity.

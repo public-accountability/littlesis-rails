@@ -148,8 +148,6 @@ class SortedLinks
 
   def create_donation_subgroups
     donors, donation_recipients = split(donation_links_preloaded(@entity.id))
-    # political_fundraising_committees, donors = donors.partition { |l| l.is_pfc_link? }
-    # @political_fundraising_committees = LinksGroup.new(political_fundraising_committees, 'political_fundraising_committees', 'Political Fundraising Committees')
     @donors = LinksGroup.new(donors, 'donors', 'Donors', donors_count(@entity.id))
     @donation_recipients = LinksGroup.new(donation_recipients, 'donation_recipients', 'Donation/Grant Recipients')
   end

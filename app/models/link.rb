@@ -58,13 +58,25 @@ class Link < ApplicationRecord
     return 'other'
   end
 
-  def is_pfc_link?
-    return false if related == nil
-    # definition_id = 11
-    related.extension_names.include? 'PoliticalFundraising'
+  # The text for the short relationship link that appears on entity profile pages.
+  def link_content
+    display_date_range = relationship_label.display_date_range
+    maybe_asterisk = relationship.notes.present? ? '*' : ''
+    [
+      description,
+      display_date_range.present? ? ' ' : '',
+      display_date_range,
+      maybe_asterisk
+    ].join('')
   end
 
   def description
-    RelationshipLabel.new(relationship, is_reverse).label
+    relationship_label.label
+  end
+
+  private
+
+  def relationship_label
+    @relationship_label ||= RelationshipLabel.new(relationship, is_reverse)
   end
 end
