@@ -233,7 +233,6 @@ class EntitiesController < ApplicationController
 
     @image.assign_attributes(entity: @entity,
                              is_free: cast_to_boolean(image_params[:is_free]),
-                             title: image_params[:title],
                              caption: image_params[:caption])
     if @image.save
       @image.feature if cast_to_boolean(image_params[:is_featured])
@@ -254,7 +253,7 @@ class EntitiesController < ApplicationController
   end
 
   def image_params
-    params.require(:image).permit(:file, :title, :caption, :url, :is_free, :is_featured)
+    params.require(:image).permit(:file, :caption, :url, :is_free, :is_featured)
   end
 
   def update_entity_params

@@ -14,9 +14,10 @@ describe Image, type: :model do
   end
 
   describe 'validations, associations, and constants' do
+    it { is_expected.not_to have_db_column(:title) }
+    it { is_expected.not_to validate_presence_of(:caption) }
     it { is_expected.to validate_presence_of(:entity_id) }
     it { is_expected.to validate_presence_of(:filename) }
-    it { is_expected.to validate_presence_of(:title) }
     it { is_expected.to belong_to(:entity).optional }
     it { is_expected.to belong_to(:user).optional }
     it { is_expected.to belong_to(:address).optional }
@@ -59,6 +60,22 @@ describe Image, type: :model do
           .to change { not_featured.reload.is_featured }
                 .from(false).to(true)
       end
+    end
+  end
+
+  describe 'title' do
+    let(:entity) { build(:org, name: 'FooBar') }
+
+    it 'returns caption if caption exists' do
+      expect(build(:image, caption: 'my caption').title).to eq 'my caption'
+    end
+
+    it 'returns name of entity if entity exists' do
+      expect(build(:image, caption: nil, entity: entity).title).to eq 'FooBar'
+    end
+
+    it 'returns blank string if there is no caption or entity' do
+      expect(build(:image, caption: nil, entity: nil).title).to eq ''
     end
   end
 
