@@ -265,11 +265,10 @@ describe 'Entity Requests', type: :request do
       expect(&request).to change { Image.count }.by(1)
     end
 
-    it 'sets title and is featured' do
+    it 'sets is featured' do
       request.call
       image = Image.last
       expect(image.entity_id).to eql person.id
-      expect(image.title).to eql params.dig('image', 'title')
       expect(image.is_featured).to be false
     end
   end

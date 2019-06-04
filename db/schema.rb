@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_29_164312) do
+ActiveRecord::Schema.define(version: 2019_06_04_175919) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -469,7 +469,6 @@ ActiveRecord::Schema.define(version: 2019_05_29_164312) do
   create_table "image", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id"
     t.string "filename", limit: 100, null: false
-    t.string "title", limit: 100, null: false
     t.text "caption", limit: 4294967295
     t.boolean "is_featured", default: false, null: false
     t.boolean "is_free"

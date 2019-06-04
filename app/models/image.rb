@@ -40,7 +40,16 @@ class Image < ApplicationRecord
 
   validates :entity_id, presence: true
   validates :filename, presence: true
-  validates :title, presence: true
+
+  def title
+    if caption.present?
+      caption
+    elsif entity.present?
+      entity.name
+    else
+      ''
+    end
+  end
 
   def image_path(type)
     "/images/#{type}/#{filename.slice(0, 2)}/#{filename}"
@@ -145,7 +154,6 @@ class Image < ApplicationRecord
     file.close
   end
 
-  
   def self.save_data_url_to_tmp(url)
     prefix, encoded_data = url[5..].split(',')
     # binding.pry

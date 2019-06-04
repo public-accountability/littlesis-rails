@@ -15,12 +15,12 @@ describe 'Deleting an Entity', type: :model do
       it 'saves tags on paper trail version' do
         entity.soft_delete
         version = Entity.unscoped.find(entity.id).versions.last
-        expect(YAML.load(version.association_data)['tags']).to eql %w(oil nyc)
+        expect(YAML.safe_load(version.association_data)['tags']).to eql %w[oil nyc]
       end
 
       it 'deletes the taggings' do
         entity
-        expect { entity.soft_delete }.to change { Tagging.count }.by(-2)
+        expect { entity.soft_delete }.to change(Tagging, :count).by(-2)
       end
     end
   end
@@ -31,13 +31,13 @@ describe 'Deleting an Entity', type: :model do
 
       let(:business_academic) do
         tags
-        person = create(:entity_person) #, last_user_id: APP_CONFIG['system_user_id'])
+        person = create(:entity_person)
         person.aliases.create!(name: Faker::TvShows::TwinPeaks.character)
         person.add_extension('BusinessPerson')
         person.add_extension('Academic')
         person.add_tag('oil')
         person.add_tag('nyc')
-        person.images.create!(filename: Faker::File.file_name(nil, nil,'png'), title: 'image')
+        person.images.create!(filename: Faker::File.file_name(nil, nil, 'png'), caption: 'image')
         person
       end
 
@@ -51,7 +51,7 @@ describe 'Deleting an Entity', type: :model do
         expect { entity.restore! }.to change { entity.is_deleted }.to(false)
       end
 
-      context 'extensions' do
+      describe 'extensions' do
         before do
           business_academic.soft_delete
           business_academic.reload
@@ -66,7 +66,7 @@ describe 'Deleting an Entity', type: :model do
         it 're-creates extension_records' do
           expect(business_academic.extension_records.length).to be_zero
           business_academic.restore!
-          expect(business_academic.reload.extension_records.length).to eql 3
+          expect(business_academic.reload.extension_records.length).to eq 3
 
           [1, 29, 31].each do |definition_id|
             expect(business_academic.extension_records.map(&:definition_id)).to include definition_id
@@ -76,23 +76,23 @@ describe 'Deleting an Entity', type: :model do
 
       it "restores it's images" do
         business_academic
-        expect { business_academic.soft_delete }.to change { Image.count }.by(-1)
-        expect { business_academic.restore! }.to change { Image.count }.by(1)
+        expect { business_academic.soft_delete }.to change(Image, :count).by(-1)
+        expect { business_academic.restore! }.to change(Image, :count).by(1)
       end
 
       it 're-creates aliases' do
         business_academic
         alias_name = business_academic.aliases.where(is_primary: false).first.name
-        expect { business_academic.soft_delete }.to change { Alias.count }.by(-2)
-        expect { business_academic.restore! }.to change { Alias.count }.by(2)
+        expect { business_academic.soft_delete }.to change(Alias, :count).by(-2)
+        expect { business_academic.restore! }.to change(Alias, :count).by(2)
         expect(business_academic.reload.primary_alias.name).to eql business_academic.name
         expect(business_academic.aliases.where(is_primary: false).first.name).to eql alias_name
       end
 
       it "re-creates the entity's taggings" do
         business_academic
-        expect { business_academic.soft_delete }.to change { Tagging.count }.by(-2)
-        expect { business_academic.restore! }.to change  { Tagging.count }.by(2)
+        expect { business_academic.soft_delete }.to change(Tagging, :count).by(-2)
+        expect { business_academic.restore! }.to change(Tagging, :count).by(2)
       end
 
       it "restores the entity's relationships" do

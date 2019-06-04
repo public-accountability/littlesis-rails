@@ -13,6 +13,6 @@ FactoryBot.define do
     is_deleted { false }
     entity_id { generate(:image_entity_id) }
     filename { generate(:filename) }
-    title { "title" }
+    caption { "title" }
   end
 end
