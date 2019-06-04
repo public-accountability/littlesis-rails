@@ -103,10 +103,13 @@
      })
  };
 
+
+ var mapTitle = <%= raw(@map.display_title(lock: !@editable)) %>;
+ 
  var oli = new Oligrapher({
      root: root,
      data: {
-	 title: "<%= raw(@map.title.gsub('"', '\"')) %>",
+	 title: mapTitle,
 	 graph: graph,
 	 annotations: annotations
      },

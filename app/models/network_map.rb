@@ -346,6 +346,16 @@ class NetworkMap < ApplicationRecord
     []
   end
 
+  # Used in view as oligrapher title
+  # - appends lock icon if map is private and lock is set to true
+  def display_title(lock: false)
+    if lock && is_private
+      "#{title} \u{1F512}".to_json
+    else
+      title.to_json
+    end
+  end
+
   # input: <User> --> NetworkMap::ActiveRecord_Relation
   def self.scope_for_user(user)
     where arel_table[:is_private].eq(false)
