@@ -363,16 +363,7 @@ class Relationship < ApplicationRecord
   end
 
   def display_date_range
-    if start_date.nil? && end_date.nil?
-      return '(past)' if is_current == false
-      return ''
-    end
-    if start_date == end_date || (is_donation? && end_date.nil?)
-      return "(#{LsDate.new(start_date).display})"
-    end
-    "(#{LsDate.new(start_date).display}→#{LsDate.new(end_date).display})"
-  rescue LsDate::InvalidLsDateError
-    return ''
+    RelationshipLabel.new(self).display_date_range
   end
 
   ## education ##
