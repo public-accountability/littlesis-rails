@@ -54,7 +54,7 @@ describe 'Images' do
 
       expect(images.size).to eq 1
       expect(images.first.caption).to eql image_caption
-      expect(images.first.is_featured).to be false
+      expect(images.first.is_featured).to be true
 
       successfully_visits_page images_entity_path(entity)
     end

@@ -38,6 +38,8 @@ class Image < ApplicationRecord
 
   before_soft_delete :unfeature, if: :is_featured
 
+  after_create :feature, if: -> { !entity.has_featured_image }
+
   validates :entity_id, presence: true
   validates :filename, presence: true
 

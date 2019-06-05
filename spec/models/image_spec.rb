@@ -146,6 +146,22 @@ describe Image, type: :model do
     end
   end
 
+  describe 'feature after creating' do
+    let(:entity) { create(:entity_org) }
+
+    it 'features image after creating' do
+      entity.images.create!(filename: Image.random_filename)
+      expect(entity.images.first.is_featured).to be true
+    end
+
+    it 'does not feature the image if another featured image exists' do
+      featured_image = Image.create!(filename: Image.random_filename, is_featured: true, entity: entity)
+      second_image = Image.create!(filename: Image.random_filename, entity: entity)
+      expect(featured_image.reload.is_featured).to be true
+      expect(second_image.reload.is_featured).to be false
+    end
+  end
+
   describe 'Class Methods' do
     describe 'random_filename' do
       it 'returns random file name with provided extension' do
