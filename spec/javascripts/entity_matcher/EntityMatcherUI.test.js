@@ -1,14 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-jest.mock('packs/entity_matcher/api_client',
-	  () => ({
-	    "retriveDatasetRow": jest.fn(),
-	    "retrivePotentialMatches": jest.fn()
-	  }));
-
-import { retriveDatasetRow } from 'packs/entity_matcher/api_client';
-
 import * as actions from 'packs/entity_matcher/actions';
 import EntityMatcherUI from 'packs/entity_matcher/EntityMatcherUI';
 
@@ -64,7 +56,6 @@ describe('EntityMatcherUI', () => {
 
   describe('Loading itemInfo', () => {
     var wrapper;
-    retriveDatasetRow.mockImplementation( () => Promise.resolve({"one": "foo", "two": "bar"}) );
     
     beforeEach(() => {
       wrapper = shallow(<EntityMatcherUI  itemId={2}/>);

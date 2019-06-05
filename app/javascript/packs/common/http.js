@@ -1,5 +1,5 @@
-import isPlainObject from 'lodash/isPlainObject';
 import isString from 'lodash/isString';
+import isPlainObject from 'lodash/isPlainObject';
 import merge from 'lodash/merge';
 
 const jsonHeaders = {
@@ -11,6 +11,31 @@ const validateResponse = (res) => {
   if (res.status >= 200 && res.status < 300) { return res; }
   throw `response failed with status code: ${res.status}`;
 };
+
+/**
+ * Converts object to query parameter string for HTTP get requests
+ *
+ * @param {String|Object} queryParams
+ * @returns {String} 
+ */
+export function qs(queryParams) {
+  if (isString(queryParams) && queryParams.includes('=')) {
+    return `?${queryParams}`;
+  }
+
+  if (isPlainObject(queryParams)) {
+    let urlSearchParams = new URLSearchParams();
+
+    for (var key in queryParams) {
+      urlSearchParams.set(key, queryParams[key]);
+    }
+
+    return '?' + urlSearchParams.toString();
+  }
+
+  return '';
+};
+
 
 /**
  * HTTP GET request to LittleSis Server
@@ -25,6 +50,8 @@ export function lsFetch(url) {
     .then(validateResponse)
     .then(response => response.json());
 }
+
+export const get = (url, params) => lsFetch(url + qs(params));
 
 /**
  * HTTP POST request to LittleSis Server
@@ -55,3 +82,8 @@ export function lsPost(url, data) {
     .then(validateResponse)
     .then(response => response.json());
 }
+
+export default {
+  lsFetch: lsFetch,
+  get: get
+};

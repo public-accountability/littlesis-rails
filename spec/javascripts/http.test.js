@@ -1,10 +1,9 @@
-import { qs } from 'packs/common/api';
+import { qs } from 'packs/common/http';
 
 describe('qs', () =>{
   test('appends ? to strings', () => {
     expect(qs('foo=bar')).toEqual('?foo=bar');
   });
-
 
   test('converts object', () => {
     expect(qs({foo: 'bar', number: 1})).toEqual('?foo=bar&number=1');
@@ -13,6 +12,4 @@ describe('qs', () =>{
   test('returns blank string otherwise', () => {
     expect(qs(null)).toEqual('');
   });
-
-
 });
