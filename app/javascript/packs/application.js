@@ -8,5 +8,16 @@
 // layout file, like app/views/layouts/application.html.erb
 
 import utility from './common/utility';
+import http from './common/http';
+
+
 window.utility = utility;
 window.utility.delete = utility.del;
+
+if (!window.LittleSis) {
+  window.LittleSis = {};
+}
+
+window.LittleSis.http = http;
+
+

@@ -3,7 +3,7 @@ import toInteger from 'lodash/toInteger';
 import isPlainObject from 'lodash/isPlainObject';
 import merge from 'lodash/merge';
 
-import { lsFetch, lsPost } from './api_client';
+import { lsFetch, lsPost } from '../common/http';
 
 const errorMessage = (label, err) => console.error(`[${label}]: `, err.message);
 

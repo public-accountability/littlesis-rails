@@ -65,8 +65,8 @@ const renderIapdReference = rowData => {
       : rowData.associated_advisors.map(a => a.crd_number);
 
   return crdNumbers.map(crdNumber => {
-    return <div className="dataset-reference-link">
-             <IapdLink crdNumber={crdNumber} key={crdNumber} />
+    return <div className="dataset-reference-link" key={crdNumber}>
+             <IapdLink crdNumber={crdNumber} key={`iapd-link-${crdNumber}`} />
            </div>;
   });
 

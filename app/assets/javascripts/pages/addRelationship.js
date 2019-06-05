@@ -252,12 +252,13 @@ var addRelationship = (function(utility) {
   function referenceData() {
     if ($('#new-reference-container').is(':visible')) {
       return newReferenceForm.value();
-    } else {
-      if (!existingReferences.selection){
-	return { "document_id": null };
-      }
+    };
+
+    if (existingReferences.selection) {
       return { "document_id": existingReferences.selection.id };
-    }
+    };
+
+    return { "document_id": null };
   }
 
   function submit() {
@@ -445,7 +446,8 @@ var addRelationship = (function(utility) {
 	"entity2_id": entity2_id,
 	"selected_entity_data": selected_entity_data
       };
-    }
+    },
+    "_referenceData": referenceData
   };
 
 }(utility));
