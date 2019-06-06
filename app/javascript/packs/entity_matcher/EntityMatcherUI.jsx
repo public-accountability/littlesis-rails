@@ -45,7 +45,8 @@ export default class EntityMatcherUI extends React.Component {
   static propTypes = {
     "itemId": PropTypes.oneOfType([ PropTypes.string, PropTypes.number]),
     "dataset": PropTypes.string.isRequired,
-    "flow": PropTypes.string.isRequired
+    "flow": PropTypes.string.isRequired,
+    "start": PropTypes.number
   };
 
    static defaultProps = {

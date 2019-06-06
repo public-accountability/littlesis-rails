@@ -14,6 +14,7 @@ class ExternalDatasetsController < ApplicationController
 
   def iapd
     @flow = params.fetch(:flow, 'advisors')
+    @start = params[:start]&.to_i
   end
 
   # get /external_datasets/row/:id
