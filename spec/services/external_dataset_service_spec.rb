@@ -92,16 +92,17 @@ describe ExternalDatasetService do
     describe '#validate_match!' do
       let(:person) { create(:entity_person) }
       let(:org) { create(:entity_org) }
+      let(:another_org) { create(:entity_org) }
       let(:service_person) { ExternalDatasetService::Iapd.new(entity: person, external_dataset: external_dataset_owner) }
       let(:service_org) { ExternalDatasetService::Iapd.new(entity: org, external_dataset: external_dataset_advisor) }
 
       it 'raises error if person has crd number' do
-        person.add_extension('BusinessPerson', crd_number: crd_number)
+        person.add_extension('BusinessPerson', crd_number: Faker::Number.unique.number(5).to_i)
         expect { service_person.validate_match! }.to raise_error(ExternalDatasetService::InvalidMatchError)
       end
 
       it 'rasies error if org has a crd number' do
-        org.add_extension('Business', crd_number: crd_number)
+        org.add_extension('Business', crd_number: Faker::Number.unique.number(5).to_i)
         expect { service_org.validate_match! }.to raise_error(ExternalDatasetService::InvalidMatchError)
       end
 
@@ -115,7 +116,15 @@ describe ExternalDatasetService do
         expect { service_person.validate_match! }.not_to raise_error
       end
 
-      it 'raises error if another entity already has crd number'
+      it 'ok if business has the same crd number' do
+        org.add_extension('Business', crd_number: 126_188) # see factories/iapd_data
+        expect { service_org.validate_match! }.not_to raise_error
+      end
+
+      it 'raises error if another entity already has crd number' do
+        another_org.add_extension('Business', crd_number: 126_188)
+        expect { service_org.validate_match! }.to raise_error(ExternalDatasetService::InvalidMatchError)
+      end
     end
 
     describe 'match' do
