@@ -1,3 +1,5 @@
+@import "base/globals";
+
 @mixin matcher-text-link {
     cursor: pointer;
 
@@ -12,6 +14,7 @@
     height: 500px;
     width: 100%;
 }
+
 div.leftSide, div.rightSide {
     flex: 1;
     padding: 1em;
@@ -40,6 +43,7 @@ div.rightSide {
 
     a {
 	@include matcher-text-link;
+	color: $link_blue;
     }
 }
 
@@ -110,6 +114,7 @@ div.potential-match-card {
     .potential-match-buttons {
 	a {
 	    @include matcher-text-link;
+	    color: $link_blue;
 	}
     }
     
@@ -117,4 +122,5 @@ div.potential-match-card {
 
 a.nextItem {
     @include matcher-text-link;
+    color: $link_blue;
 }

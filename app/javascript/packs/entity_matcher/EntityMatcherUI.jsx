@@ -117,8 +117,7 @@ export default class EntityMatcherUI extends React.Component {
     const matchingInProgress = this.state.matchedState === MATCHING;
     const isMatched = this.state.matchedState === MATCHED;
     const matchingError = this.state.matchedState === ERROR;
-    const showPotentialMatches = this.state.itemId && !(matchingInProgress || isMatched || matchingError);
-
+    const showPotentialMatches = itemInfoComplete && !(matchingInProgress || isMatched || matchingError);
 
     const renderPotentialMatches = () => {
       return <PotentialMatches ignoreMatch={this.ignoreMatch}

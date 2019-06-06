@@ -251,7 +251,7 @@ export function capitalize(str) {
 };
 
 
-const companyWords = new Set(['LLC', 'INC']);
+const companyWords = new Set(['LLC', 'INC', 'INC.', 'LP', 'L.P.']);
 
 const upperCaseCompanyWord = word => {
   let upperCaseWord = word.toUpperCase();
