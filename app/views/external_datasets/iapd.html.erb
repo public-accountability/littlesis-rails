@@ -21,7 +21,11 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
    window.entityMatcher(
-     <%= { "flow" => @flow }.to_json.html_safe %>
+     <%= {
+       "flow" => @flow,
+       "start" => @start
+     }.to_json.html_safe %>
    );
 });
 </script>
+
