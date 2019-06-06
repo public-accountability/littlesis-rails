@@ -12,6 +12,8 @@ import PotentialMatchesList from './PotentialMatchesList';
 import CreateNewEntityButton from './CreateNewEntityButton';
 import NewEntityForm from './NewEntityForm';
 
+import { formatIapdOwnerName, isOwnerPerson } from '../helpers';
+
 export default class PotentialMatches extends React.Component {
   static propTypes = {
     "matchesStatus": PropTypes.string,
@@ -28,7 +30,14 @@ export default class PotentialMatches extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state =  { "showCreateNewEntityForm": false };
+
+    let name = at(props.itemInfo, 'row_data.name')[0];
+    let formattedName = formatIapdOwnerName(name, isOwnerPerson(props.itemInfo.row_data));
+
+    this.state =  {
+      "showCreateNewEntityForm": false,
+      "formattedName": formattedName
+    };
   }
   
   render() {
@@ -51,7 +60,7 @@ export default class PotentialMatches extends React.Component {
              { showCreateNewEntityForm && <NewEntityForm
                                             doMatch={curry(this.props.doMatch)(this.props.itemId)}
                                             cancel={ () => this.setState({ showCreateNewEntityForm: false }) }
-                                            entityName={at(this.props.itemInfo, 'row_data.name')[0]}
+                                            entityName={this.state.formattedName}
                                           />  }
 
              { !showCreateNewEntityForm &&  <CreateNewEntityButton

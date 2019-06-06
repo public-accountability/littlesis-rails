@@ -7,7 +7,7 @@ import toInteger from 'lodash/toInteger';
 import sortBy from 'lodash/sortBy';
 
 import { capitalizeWords, formatMoney } from '../../common/utility';
-import { formatIapdOwnerName } from '../helpers';
+import { formatIapdOwnerName, isOwnerPerson } from '../helpers';
 
 // Display a single title-value data item
 const DatasetItemPresenter = ({title, value}) => {
@@ -30,7 +30,7 @@ const dataToKeyValues= (rowData) => {
   if (rowData['class'].includes('IapdOwner')) {
     return [
       ["Dataset", "IAPD Owner"],
-      ["Name", formatIapdOwnerName(rowData.name)],
+      ["Name", formatIapdOwnerName(rowData.name, isOwnerPerson(rowData))],
       ["Owner Key", rowData.owner_key],
       ["Schedule", latestRecord.schedule],
       ["Title/Status", capitalizeWords(latestRecord.title_or_status)],
