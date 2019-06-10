@@ -11,10 +11,23 @@ module ExternalDatasetService
     def validate_match!
       requies_entity!
 
+      return if crd_number.blank?
+
       extension = @entity.org? ? :business : :business_person
 
-      if @entity.public_send(extension)&.crd_number&.present?
-        msg = "Entity #{@entity.id} already has a crd_number. Cannot match row#{@external_dataset.id}"
+      existing_crd_number = @entity.public_send(extension)&.crd_number
+
+      # Check if the entity already has a crd number
+      if existing_crd_number && crd_number.to_i != existing_crd_number
+        msg = "Entity #{@entity.id} already has a crd_number. Cannot match row #{@external_dataset.id}"
+        raise InvalidMatchError, msg
+      end
+
+      # check if crd number is already taken by another entity
+      entity_id_with_crd_number = extension.to_s.classify.constantize.find_by(crd_number: crd_number)&.entity_id
+
+      if entity_id_with_crd_number && entity_id_with_crd_number != @entity.id
+        msg = "Another entity (#{entity_id_with_crd_number}) has already claimed the crd number #{crd_number}. Cannot match row #{@external_dataset.id}"
         raise InvalidMatchError, msg
       end
     end

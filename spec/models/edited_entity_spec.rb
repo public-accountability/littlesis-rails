@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe EditedEntity, type: :model do
   let(:entity_id) { create(:entity_person, last_user_id: 1).id }
   let(:version_id) { Faker::Number.unique.number(8).to_i }
@@ -15,7 +14,14 @@ describe EditedEntity, type: :model do
   end
 
   let(:versions) do
-    [entity_version, relationship_version, create(:page_version)]
+    [].tap do |arr|
+      arr << entity_version
+      sleep 0.01
+      arr << relationship_version
+      sleep 0.01
+      arr << create(:page_version)
+    end
+    # [entity_version, relationship_version, create(:page_version)]
   end
 
   it { is_expected.to have_db_column(:user_id).of_type(:integer) }
