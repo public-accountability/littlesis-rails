@@ -67,8 +67,13 @@
 	    <% CSV.foreach(Rails.root.join('data', 'cmp_top_50.csv').to_s, headers: true) do |row|  %>
 	      <tr>
 		<th scope="row"><%= row['number'] %></th>
-		<td><%= link_to row['case_study'], "https://littlesis.org/org/#{row['entity_id']}", target: '_blank' %></td>
-		<td><%= link_to "Read more", "https://www.corporatemapping.ca/#{row['case_study']}", target: '_blank' %></td>
+		<td>
+		  <%= link_to row['case_study'], "https://littlesis.org/org/#{row['entity_id']}", target: '_blank' %>
+		  <span class="badge badge-info"><%= row['category']%></span>
+		</td>
+		<td>
+		  <%= link_to "Read more", "https://www.corporatemapping.ca/#{row['case_study']}", target: '_blank' %>
+		</td>
 	      </tr>
 	    <% end %>
 	  </tbody>
