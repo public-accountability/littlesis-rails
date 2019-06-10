@@ -81,7 +81,7 @@ class IapdRelationshipService
                    entity: owner.entity,
                    related: advisor.entity,
                    start_date: LsDate.convert(filing.fetch('acquired')),
-                   description1: filing.fetch('title_or_status') }
+                   description1: format_title(filing.fetch('title_or_status')) }
 
     Relationship.create!(attributes).tap do |r|
       r.add_tag IapdDatum::IAPD_TAG_ID
@@ -114,6 +114,14 @@ class IapdRelationshipService
 
   private_class_method def self.error!(msg)
     raise IapdRelationshipError, "[IapdRelationshipService] #{msg}"
+  end
+
+  private_class_method def self.format_title(str)
+    str
+      .downcase
+      .split(' ')
+      .map { |word| %w[and of or].include?(word) ? word : word.capitalize }
+      .join(' ')
   end
 
   class IapdRelationshipError < Exceptions::LittleSisError; end

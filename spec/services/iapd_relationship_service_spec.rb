@@ -124,7 +124,7 @@ describe IapdRelationshipService do
 
           it 'sets relationship fields correctly' do
             relationship = create_service.call.relationship
-            expect(relationship.description1).to eq 'PARTNER AND CHIEF EXECUTIVE OFFICER'
+            expect(relationship.description1).to eq 'Partner and Chief Executive Officer'
             expect(relationship.category_id).to eq 1
             expect(relationship.entity1_id).to eq seth_klarman_entity.id
             expect(relationship.entity2_id).to eq baupost_entity.id
