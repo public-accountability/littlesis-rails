@@ -1,0 +1,38 @@
+<% div_id = "oligrapher-#{map.id}" %>
+
+<style>
+ #<%= div_id %> {
+     height: 500px;
+ }
+</style>
+
+
+<div id="<%= div_id %>">
+</div>
+
+<script>
+ $(function() {
+   var graph = <%= raw(map.graph_data.to_json) %>;
+   graph.id = <%= map.id %>;
+
+   var oli = new Oligrapher({
+       root: document.getElementById('<%= div_id %>'),
+       url: "<%= map_url(map) %>",
+       isEditor: false,
+       isLocked: true,
+       isEmbedded: true,
+       embedded: {
+         logoUrl: "<%= image_url('lilsis-logo-trans-200') %>",
+         linkUrl: "<%= map_url(map) %>",
+         linkText: "View this map on LittleSis",
+	 border: false
+       },
+       data: {
+	 title: "<%= raw(map.title.gsub('"', '\"')) %>",
+	 graph: graph,
+	 annotations: <%= raw(map.annotations_data) %>
+       },
+       startAnnotation: 0
+   });
+ });
+</script>

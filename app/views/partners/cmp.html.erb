@@ -2,7 +2,8 @@
 
 <% content_for(:head) do %>
   <%= stylesheet_link_tag "cmp" %>
-  <%= javascript_pack_tag 'cmp' %> 
+  <%= javascript_pack_tag 'cmp' %>
+  <%= oligrapher_js_tags %>
 <% end %>
 
 <div class="row border-bottom pb-2" id="cmp-header">
@@ -93,11 +94,11 @@
   <% CmpNetworkMapService.random_map_pairs.each do |maps| %>
     <div class="row cmp-map-row">
       <div class="col">
-	<%= render partial: 'oligrapher_iframe', locals: { map: maps[0] }%>
+	<%= render partial: 'oligrapher', locals: { map: maps[0] }%>
       </div>
 
       <div class="col">
-	<%= render partial: 'oligrapher_iframe', locals: { map: maps[1] }%>
+	<%= render partial: 'oligrapher', locals: { map: maps[1] }%>
       </div>
     </div>
   <% end %>
