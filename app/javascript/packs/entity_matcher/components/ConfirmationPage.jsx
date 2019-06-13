@@ -19,7 +19,8 @@ export const computeResultStats = results => {
       advisor_not_matched: 0,
       owner_not_matched: 0,
       relationship_exists: 0,
-      relationship_created: 0
+      relationship_created: 0,
+      owner_is_org: 0
     }
   );
 };
@@ -45,6 +46,11 @@ const statText = {
     noun: ['relationship', 'relationships'],
     verb: ['has', 'have'],
     message: 'been created'
+  },
+  owner_is_org: {
+    noun: ['organizational owner', 'organizational owners'],
+    verb: ['has', 'have'],
+    message: 'been skipped'
   }
 };
 

@@ -8,7 +8,8 @@
 #  - owner_not_matched
 #  - relationship_exists
 #  - relationship_created
-#
+#  - owner_is_org
+# 
 class IapdRelationshipService
   attr_reader :advisor, :owner, :dry_run, :result, :relationship
 
@@ -20,8 +21,12 @@ class IapdRelationshipService
     if advisor.unmatched?
       @result = :advisor_not_matched
     elsif owner.unmatched?
-      @owner.add_to_matching_queue
-      @result = :owner_not_matched
+      if @owner.iapd_data.owner_type == :person
+        @owner.add_to_matching_queue
+        @result = :owner_not_matched
+      else
+        @result = :owner_is_org
+      end
     elsif relationship_exists?
       @result = :relationship_exists
     else

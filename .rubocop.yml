@@ -74,7 +74,7 @@ Style/Lambda:
 
 
 Style/FrozenStringLiteralComment:
-  EnforcedStyle: when_needed
+  EnforcedStyle: always
   Exclude:
     - 'spec/**/*.rb'
     - 'app/indices/*.rb'
