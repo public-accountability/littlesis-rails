@@ -1,10 +1,18 @@
-# rubocop:disable RSpec/MultipleExpectations, RSpec/MessageSpies, RSpec/NestedGroups
+# rubocop:disable RSpec/MessageSpies, RSpec/NestedGroups
 
 describe IapdRelationshipService do
   describe 'initialize' do
     let(:advisor) { instance_double('IapdDatum') }
     let(:owner) { instance_double('IapdDatum') }
     let(:relationship) { instance_double('Relationship') }
+
+    let(:iapd_owner_person) do
+      IapdDatum::IapdOwner.new('123', 'name', [456], [{ 'owner_type' => 'I' }])
+    end
+
+    let(:iapd_owner_org) do
+      IapdDatum::IapdOwner.new('123', 'name', [456], [{ 'owner_type' => 'FE' }])
+    end
 
     context 'when advisor is unmatched' do
       before do
@@ -58,17 +66,27 @@ describe IapdRelationshipService do
       before do
         allow(owner).to receive(:unmatched?).and_return(true)
         allow(advisor).to receive(:unmatched?).and_return(false)
+
       end
 
       it 'adds owner to matching queue' do
+        allow(owner).to receive(:iapd_data).and_return(iapd_owner_person)
         expect(owner).to receive(:add_to_matching_queue).once
         IapdRelationshipService.new(advisor: advisor, owner: owner, dry_run: true)
       end
 
       it 'sets result to "owner_not_matched"' do
+        allow(owner).to receive(:iapd_data).and_return(iapd_owner_person)
         allow(owner).to receive(:add_to_matching_queue)
         expect(IapdRelationshipService.new(advisor: advisor, owner: owner, dry_run: true).result)
           .to eq :owner_not_matched
+      end
+
+      it 'sets result to "owner_is_org"' do
+        allow(owner).to receive(:iapd_data).and_return(iapd_owner_org)
+        allow(owner).to receive(:add_to_matching_queue)
+        expect(IapdRelationshipService.new(advisor: advisor, owner: owner, dry_run: true).result)
+          .to eq :owner_is_org
       end
     end
   end
@@ -105,7 +123,7 @@ describe IapdRelationshipService do
       describe 'Finding and Creating relationships' do
         let(:seth_klarman_entity) { create(:entity_person, name: 'Seth Klarman') }
         let(:baupost_entity) { create(:entity_org, name: 'Baupost') }
-        let(:baupost_iapd) { create(:iapd_baupost, entity_id: baupost_entity.id) } 
+        let(:baupost_iapd) { create(:iapd_baupost, entity_id: baupost_entity.id) }
         let(:klarman_iapd) { create(:iapd_seth_klarman, entity_id: seth_klarman_entity.id) }
         let(:tag) { create(:tag, name: "iapd") }
 
@@ -164,4 +182,4 @@ describe IapdRelationshipService do
   end
 end
 
-# rubocop:enable RSpec/MultipleExpectations, RSpec/MessageSpies, RSpec/NestedGroups
+# rubocop:enable RSpec/MessageSpies, RSpec/NestedGroups

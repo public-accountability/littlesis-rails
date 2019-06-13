@@ -8,6 +8,7 @@ describe('computeResultStats', () => {
 
   const testResults = ['relationship_created', 'advisor_not_matched', 'owner_not_matched', 'relationship_exists', 'relationship_created'];
   const testStats = { advisor_not_matched: 1,
+                      owner_is_org: 0,
                       owner_not_matched: 1,
                       relationship_exists: 1,
                       relationship_created: 2 };
