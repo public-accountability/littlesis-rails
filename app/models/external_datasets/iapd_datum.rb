@@ -16,8 +16,7 @@ class IapdDatum < ExternalDataset
     end
   end
 
-  UNMATCHED_ADVISOR_QUEUE = CacheQueue.new(name: 'unmatched_advisors_ids',
-                                           options: { expires_in: 24.hours })
+  UNMATCHED_ADVISOR_QUEUE = CacheQueue.new(name: 'unmatched_advisors_ids')
 
   OWNERS_MATCHING_QUEUE = CacheQueue.new(name: 'iapd_owners')
 
@@ -59,6 +58,16 @@ class IapdDatum < ExternalDataset
 
     OWNERS_MATCHING_QUEUE.add id, uniq: true
     self
+  end
+
+  def iapd_data
+    return @_iapd_data if defined?(@_iapd_data)
+
+    if owner?
+      @_iapd_data = IapdOwner.new(*row_data.values_at('owner_key', 'name', 'associated_advisors', 'data'))
+    elsif advisor?
+      @_iapd_data = IapdAdvisor.new(*row_data.values_at('crd_number', 'name', 'data'))
+    end
   end
 
   # Retrieves associated owners for the advisor.
