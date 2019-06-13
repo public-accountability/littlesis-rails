@@ -2,7 +2,8 @@
 
 <% content_for(:head) do %>
   <%= stylesheet_link_tag "cmp" %>
-  <%= javascript_pack_tag 'cmp' %> 
+  <%= javascript_pack_tag 'cmp' %>
+  <%= oligrapher_js_tags %>
 <% end %>
 
 <div class="row border-bottom pb-2" id="cmp-header">
@@ -20,25 +21,35 @@
     <h4>Here’s how you can explore the data:</h4>
     <ul>
       <li>
-	The CMP has created in-depth profiles for the top 50 most powerful corporations involved in the production of fossil fuels in Western Canada -- along with key industry groups, think tanks, financiers and other promoting oil, gas and coal production. These descriptive profiles are available on the CMP website. <%= link_to 'Click here to visit corporatemapping.ca/database',  'https://wwww.corporatemapping.ca/database' %>. Or you can check out the LittleSis profile pages for these entities - click here for the top 50 on littlesis.
+	The CMP has created in-depth profiles for the top 50 most powerful corporations involved in the production of fossil fuels in Western Canada -- along with key industry groups, think tanks, financiers and other promoting oil, gas and coal production. These descriptive profiles are available on the CMP website. <%= link_to 'Click here to visit corporatemapping.ca/database',  'https://wwww.corporatemapping.ca/database' %>.
       </li>
       <br />
       <li>
-	We've also mapped the full network of Canadian-based fossil fuel corporations (with assets over <i>$50 million</i> as of 2015). Browse the littlesis profile pages for these ## companies here.
+	We've also mapped the full network of Canadian-based fossil fuel corporations (with assets over <i>$50 million</i> as of 2015). View the entire dataset on LittleSis <%= link_to "here", "http://littlesis.org/tags/11" %>.
       </li>
       <br />
       <li>
-	And we tracked how these fossil fuel corporations are connected to the wider corporate sector in Canada and abroad through their senior executives and board members. This larger network includes ## people and ## corporations, think tanks, industry groups, financial institutions and more. Click here to explore.
+	And we tracked how these fossil fuel corporations are connected to the wider corporate sector in Canada and abroad through their senior executives and board members. This larger network includes <i>44,256</i> people and <i>1,646</i> corporations, think tanks, industry groups, financial institutions and more.
       </li>
-      
     </ul>
 
     <p>
-      The Corporate Mapping Project is a research partnership investigating the power and influence of the fossil fuel industry in Canada. <%= link_to 'Find out more here',  'https://wwww.corporatemapping.ca' %>
+      The Corporate Mapping Project is a research partnership investigating the power and influence of the fossil fuel industry in Canada. <%= link_to 'Find out more here',  'https://wwww.corporatemapping.ca' %>.
     </p>
   </div>
-</div>
+  <div class="col-4 align-self-center">
+    <div class="bg-light p-2 border border-dark rounded-lg">
+      <% if user_signed_in? %>
+	<p>Create your own network map of fossil fuel companies using <%= link_to "oligrapher", oligrapher_url, target: '_blank' %></p>
+	<p><%= link_to "Click here", new_map_path %> to start building a new map</p>
+      <% else %>
+	<p>You can create your own<%= link_to "network map", oligrapher_url, target: '_blank' %>using this dataset</p>
+	<p><%= link_to "Click here to sign up", new_user_registration_path %> for a free LittleSis account to get started.</p>
+      <% end %>
+    </div>
 
+  </div>
+</div>
 
 <div class="row">
   <div class="col-sm-auto">
@@ -52,7 +63,7 @@
 
 <div class="row mt-5">
   <div class="col-sm">
-    <h3 class="mb-4">Important Case Studies:</h3>
+    <h3 class="mb-4">Fossil Power Top 50 Case Studies</h3>
     <div style="overflow: auto; height: 500px;">
       <% cache 'cmp_top_50_table', expires_in: 2.days do %>
 	<table class="table table-borderless table-sm">
@@ -85,7 +96,27 @@
 
 <div class="row mt-5">
   <div class="col-sm">
-    <h3 class="mb-4">Explore the top 200 Fossil Fuel Companies</h3>
+    <h3 class="mb-4">Explore Network Maps:</h3>
+  </div>
+</div>
+
+<% cache 'cmp_network_maps_section', expires_in: 2.hours do %>
+  <% CmpNetworkMapService.random_map_pairs.each do |maps| %>
+    <div class="row cmp-map-row">
+      <div class="col">
+	<%= render partial: 'oligrapher', locals: { map: maps[0] }%>
+      </div>
+
+      <div class="col">
+	<%= render partial: 'oligrapher', locals: { map: maps[1] }%>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<div class="row mt-5">
+  <div class="col-sm">
+    <h3 class="mb-4">Explore the full network of Fossil Fuel Companies</h3>
     <table id="cmp-strata" class="display" width="100%"></table>
   </div>
 </div>
