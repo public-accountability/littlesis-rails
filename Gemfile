@@ -51,7 +51,7 @@ gem 'redis'
 gem 'whenever', '~> 0.11.0', :require => false
 
 group :development do
-  gem 'web-console', '~> 3.5'
+  gem 'web-console'
 end
 
 group :test, :development do
@@ -74,7 +74,7 @@ group :test, :development do
   gem 'rubocop-rspec', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '>= 4.0.0'
-  gem 'spring', '~> 2.0.2'
+  gem 'spring'
   gem 'spring-commands-rspec'
 end
 

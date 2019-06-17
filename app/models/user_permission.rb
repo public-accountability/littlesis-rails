@@ -8,11 +8,11 @@ class UserPermission < ApplicationRecord
   validates :resource_type, presence: true
 
   def access_rules
-    rules = super
-    ActiveSupport::HashWithIndifferentAccess.new(rules) if rules
+    super&.with_indifferent_access
   end
 
   def resource_type
-    super&.constantize
+    rt = read_attribute(:resource_type)
+    return rt.constantize if rt.present?
   end
 end
