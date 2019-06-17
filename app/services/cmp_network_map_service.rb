@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module CmpNetworkMapService
-  CMP_USER_ID = 9948
+  CMP_USER_ID = 11276
   LIMIT = 4
 
   def self.random_map_pairs
