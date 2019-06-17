@@ -199,6 +199,14 @@ class IapdDatum < ExternalDataset
     end
   end
 
+  def self.search(term, type:)
+    raise ArgumentError unless %w[owner advisor].include?(type.to_s)
+
+    ExternalDataset.search term,
+                           :indices => ['external_dataset_iapd_core'],
+                           :with => { iapd_type: type.to_s }
+  end
+
   ## Class Helper Methods ##
 
   def self.link_to_pdf(crd_number)
