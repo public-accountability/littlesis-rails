@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'street_address'
-
 class Address < ApplicationRecord
   include SingularTable
   include SoftDelete
@@ -12,58 +10,20 @@ class Address < ApplicationRecord
 
   validates_presence_of :city, :country_name
 
-  # geocoded_by :to_s
-  # reverse_geocoded_by :latitude, :longitude
+  STREET_TYPES = YAML.safe_load(
+    File.read(Rails.root.join('data', 'street_types.yml'))
+  ).to_set.freeze
 
   def to_s
     "#{street1}, #{street2}, #{street3}, #{city}, #{state_name} #{postal}, #{country_name}".strip.gsub(/\s+,/, " ").gsub(/\s+/, " ")
   end
 
   def self.parse(str, data = {})
-    a = new
-    a.parse(str)
-    a.attributes = data if a.parsed.nil? and data.count > 0
-    a
+    raise NotImplementedError
   end
 
   def parse(str = nil)
-    str = str.present? ? str : to_s
-    str.gsub!(/\s+/, " ").strip!
-    @raw = str
-    @parsed = StreetAddress::US.parse(str, informal: false)
-
-    unless @parsed.nil? or @parsed.state.nil?
-      parse_street
-      self.city = @parsed.city
-      self.state = AddressState.find_by(abbreviation: @parsed.state.upcase)
-      self.postal = @parsed.postal_code
-      self.country_name = "United States"
-    end
-
-    titleize
-  end
-
-  def raw
-    @raw
-  end
-
-  def parsed
-    @parsed
-  end
-
-  def parse_street
-    unless parsed.nil?
-      self.street1 = "#{parsed.number} #{parsed.prefix} #{parsed.street} #{parsed.street_type}".strip.gsub(/\s+/, " ")
-
-      unless parsed.unit.nil?
-        self.street2 = "#{parsed.unit_prefix} #{parsed.unit}".strip
-      end
-    end
-
-    if (match = street1.match(/ \d+$/)) and street2.nil?
-      self.street2 = match[0].strip
-      self.street1.gsub!(/\d+$/, "").strip!
-    end    
+    raise NotImplementedError
   end
 
   def titleize
@@ -101,7 +61,7 @@ class Address < ApplicationRecord
       parts = street1.gsub('.', '').split(" ")
       return false if parts.count < 3
       # if second part of street1 is a direction and third part is not a street type
-      %w(w n e s west north east west nw ne sw se).include?(parts[1].downcase) and !StreetAddress::US::STREET_TYPES_LIST.keys.include?(parts[2].downcase)
+      %w(w n e s west north east west nw ne sw se).include?(parts[1].downcase) && !STREET_TYPES.include?(parts[2].downcase)
     else
       !parsed.prefix.nil?
     end
@@ -114,14 +74,6 @@ class Address < ApplicationRecord
 
   def street2_from(address)
     street2 = address.street2 if same_as?(address) and street2.blank? and address.street2.present?
-  end
-
-  def obfuscated
-    str = city
-    str += ", " + state_abbr(state_name) if state_name
-    str += " " + postal if postal
-    str += ", " + country_name unless ['United States', 'U.S.', 'US', 'USA'].include?(country_name)
-    str  
   end
 
   def state_abbr(name)

@@ -68,6 +68,7 @@ doc/
 !/data/members114_ids.csv
 !/data/cmp_matches.yml
 !/data/cmp_top_50.csv
+!/data/street_types.yml
 
 # webpacker
 !/package.json
