@@ -5,6 +5,8 @@ describe ExternalDatasetsController, type: :controller do
   it { is_expected.to route(:get, '/external_datasets/row/666/matches').to(action: :matches, id: '666') }
   it { is_expected.to route(:post,'/external_datasets/row/666/match').to(action: :match, id: '666') }
   it { is_expected.to route(:get, '/external_datasets/row/something').to(action: :not_found, controller: :errors, path: 'external_datasets/row/something') }
+  it { is_expected.to route(:get, '/external_datasets/iapd/search').to(action: :search, dataset: 'iapd') }
+  it { is_expected.to route(:post, '/external_datasets/iapd/search').to(action: :search, dataset: 'iapd') }
 
   describe 'flows' do
     it { is_expected.to route(:get, '/external_datasets/iapd/flow/advisors/next').to(action: :flow, dataset: 'iapd', flow: 'advisors') }

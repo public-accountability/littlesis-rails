@@ -1,0 +1,30 @@
+<% content_for(:page_title, "External Datasets - Search IAPD advisors") %>
+<% content_for(:head) { javascript_pack_tag 'iapd_advisor_search' } %>
+
+<div class="row mb-2">
+  <div class="col">
+    <a class="mt-3" href="/external_datasets">«« Entity matcher home</a>
+  </div>
+</div>
+
+<div class="row justify-content-start">
+  <div class="col-12 col-sm-6 col-md-4">
+    <label for="name">Find an IAPD Advisor</label>
+    <div class="input-group">
+      <input type="text" id='iapd-search-input' class="form-control" title="Search for IAPD adivsor">
+      <div class="input-group-append">
+	<button type="button" id='iapd-search-button' class="btn btn-outline-secondary">Search</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <div id="iapd-table-container" class="mt-3">
+    </div>
+  </div>
+</div>
+
+
+

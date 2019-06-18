@@ -356,8 +356,10 @@ Lilsis::Application.routes.draw do
   get 'external_datasets/row/:id' => 'external_datasets#row', constraints: { id: /\d+/ }
   get 'external_datasets/row/:id/matches' => 'external_datasets#matches', constraints: { id: /\d+/ }
   post 'external_datasets/row/:id/match' => 'external_datasets#match', constraints: { id: /\d+/ }
-
   get 'external_datasets/:dataset/flow/:flow/next' => 'external_datasets#flow', constraints: { dataset: /#{ExternalDataset::DATASETS.join('|')}/ }
+  match 'external_datasets/:dataset/search' => 'external_datasets#search',
+        constraints: { dataset: /#{ExternalDataset::DATASETS.join('|')}/ },
+        via: %i[get post]
 
   match "*path", to: "errors#not_found", via: :all
 

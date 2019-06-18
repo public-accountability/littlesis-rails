@@ -38,7 +38,7 @@ const defaultState = () => ({
   "matches": null, // Array of potential matches 
   "matchesStatus": null, // statues of potential matches http request
   "matchedState": null, // Has it been matched: MATCHING, MATCHED, ERROR
-  "matchResult": null // json response from maching
+  "matchResult": null // json response from matching
 });
 
 export default class EntityMatcherUI extends React.Component {
