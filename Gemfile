@@ -34,8 +34,6 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails', '~> 6.0.0'
 gem 'sassc-rails'
 
-gem 'tinymce-rails', '~> 4.6.4'
-
 gem 'kaminari'
 gem 'activerecord-session_store'
 
