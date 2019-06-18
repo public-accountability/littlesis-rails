@@ -53,6 +53,15 @@ class ExternalDatasetsController < ApplicationController
     render json: { 'next' => id }
   end
 
+  # GET/POST /external_datasets/:dataset/search
+  def search
+    return head :not_found unless params[:dataset] == 'iapd'
+
+    if request.post?
+      render json: IapdDatum.search(params.require(:q), type: :advisor).to_a
+    end
+  end
+
   private
 
   def find_or_create_entity
