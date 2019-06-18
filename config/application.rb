@@ -57,8 +57,6 @@ module Lilsis
 
     config.assets.paths << "#{Rails.root}/vendor/assets/images"
 
-    config.tinymce.install = :copy
-
     config.active_job.queue_adapter = :delayed_job
 
     # we can't check only check if requests come from 'littlesis.org'

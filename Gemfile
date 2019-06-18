@@ -34,8 +34,6 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails', '~> 6.0.0'
 gem 'sassc-rails'
 
-gem 'tinymce-rails', '~> 4.6.4'
-
 gem 'kaminari'
 gem 'activerecord-session_store'
 
@@ -81,10 +79,7 @@ end
 gem 'seed_dump', :require => false
 gem 'simplecov', :require => false, :group => :test
 
-gem 'StreetAddress', :require => "street_address"
-
 gem 'validate_url', :git => 'https://github.com/perfectline/validates_url.git', :branch => 'master'
-gem 'geocoder'
 
 # used for screenshot capture
 gem 'selenium-webdriver', '>= 3.11.0'
