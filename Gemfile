@@ -84,7 +84,6 @@ gem 'simplecov', :require => false, :group => :test
 gem 'StreetAddress', :require => "street_address"
 
 gem 'validate_url', :git => 'https://github.com/perfectline/validates_url.git', :branch => 'master'
-gem 'geocoder'
 
 # used for screenshot capture
 gem 'selenium-webdriver', '>= 3.11.0'
