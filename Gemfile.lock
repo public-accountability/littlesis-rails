@@ -23,7 +23,6 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    StreetAddress (1.0.6)
     actioncable (5.2.3)
       actionpack (= 5.2.3)
       nio4r (~> 2.0)
@@ -398,7 +397,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  StreetAddress
   activerecord-session_store
   aws-sdk-s3 (~> 1)
   better_errors (>= 2.5.0)
