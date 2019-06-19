@@ -22,8 +22,8 @@ describe('EntityMatcherUI', () => {
 	"matches": null,
 	"matchesStatus": null,
 	"matchedState": null,
-	"matchResult": null
-	
+	"matchResult": null,
+	"nextItemQueue": null
       });
     });
 
