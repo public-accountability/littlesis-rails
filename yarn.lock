@@ -1027,6 +1027,15 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^12.0.9"
 
+"@public-accountability/simplestore@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@public-accountability/simplestore/-/simplestore-0.1.5.tgz#85e15e0af9c91d3ba4f35f8dd30e408dab797fc3"
+  integrity sha512-CQKZNG9VNm6/bUcmW3DFowvP8M7wseJ6ntbYb0qR2EbcQ7bO6v/+uGzIfDUgSCckA10MgnhI0BKrAWJyzQoYXw==
+  dependencies:
+    immutable "^4.0.0-rc.12"
+    lodash "^4.17.11"
+    react "^16.8.6"
+
 "@rails/webpacker@^4.0.7":
   version "4.0.7"
   resolved "https://registry.yarnpkg.com/@rails/webpacker/-/webpacker-4.0.7.tgz#268571bf974e78ce57eca9fa478f5bd97fd5182c"

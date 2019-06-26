@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import get from 'lodash/get';
-import EntityMatcherUI from './entity_matcher/EntityMatcherUI';
+import EntityMatcher from './entity_matcher/EntityMatcher';
 
 
 window.entityMatcher = function(options) {
@@ -12,7 +12,7 @@ window.entityMatcher = function(options) {
   let start = get(options, 'start', null);
 
   ReactDOM.render(
-    <EntityMatcherUI itemId={start} dataset={dataset} flow={flow} />,
+    <EntityMatcher start={start} dataset={dataset} flow={flow} />,
     document.getElementById(id)
   );
 };

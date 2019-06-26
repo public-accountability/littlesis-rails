@@ -1,82 +1,126 @@
+import curry from 'lodash/curry';
 import filter from 'lodash/filter';
 import toInteger from 'lodash/toInteger';
 import isPlainObject from 'lodash/isPlainObject';
+import isNull from 'lodash/isNull';
 import merge from 'lodash/merge';
+import { Map } from 'immutable';
 
 import { lsFetch, lsPost } from '../common/http';
 
 const errorMessage = (label, err) => console.error(`[${label}]: `, err.message);
 
 // ACTIONS
-// These need to be "bound" to the component with the state...
+//
+// All of these actions take the store as the first argument.
+// If desired, you can bind that argument to make working with them easier:
+//   actions.loadItemInfo.bind(undefined, store)
 
-export function loadItemInfo(itemId) {
-  this.updateState("itemInfoStatus", 'LOADING');
+// action helpers
 
-  // retriveDatasetRow(itemId)
+const resultsWithoutEntity = (results, entityId) => {
+  let isNotEntityPredicate = result => !(result.entity.id === toInteger(entityId));
+  return filter(results, isNotEntityPredicate);
+};  
+
+const defaultState = Map({
+  "itemId": null, // item id (row id of External Dataset)
+  "itemInfo": null, // json of external dataset attributes
+  "itemInfoStatus": null, // status item info http request
+  "matches": null, // Array of potential matches 
+  "matchesStatus": null, // statues of potential matches http request
+  "matchedState": null, // Has it been matched: MATCHING, MATCHED, ERROR
+  "matchResult": null, // json response from matching
+  "nextItemQueue": null // options queue for items to match
+});
+
+const resetStore = store => store.update(defaultState);
+
+/// actions
+
+const loadItemInfo = (store, itemId) => {
+  store.update("itemInfoStatus", 'LOADING');
+
   lsFetch(`/external_datasets/row/${itemId}`)
-    .then(json => this.updateState({ "itemInfoStatus": 'COMPLETE', "itemInfo": json }))
+    .then(json => store.update({ "itemInfoStatus": 'COMPLETE', "itemInfo": json }))
     .catch(error => {
       errorMessage('loadItemInfo', error);
-      this.updateState("itemInfoStatus", 'ERROR');
+      store.update("itemInfoStatus", 'ERROR');
     });
 };
 
-
-export function loadMatches(itemId) {
-  this.updateState("matchesStatus", 'LOADING');
+const loadMatches = (store, itemId) => {
+  store.update("matchesStatus", 'LOADING');
 
   lsFetch(`/external_datasets/row/${itemId}/matches`)
-    .then(json => this.updateState({ "matchesStatus": 'COMPLETE', "matches": json }))
+    .then(json => store.update({ "matchesStatus": 'COMPLETE', "matches": json }))
     .catch(error => {
       errorMessage('loadMatches', error);
-      this.updateState("matchesStatus", 'ERROR');
+      store.update("matchesStatus", 'ERROR');
     });
-}
+};
 
-export function resultsWithoutEntity(results, entityId) {
-  let isNotEntityPredicate = result => !(result.entity.id === toInteger(entityId));
-  return filter(results, isNotEntityPredicate);
-}
+const ignoreMatch = (store, entityId) => {
+  store.update(state => state.mergeDeep({ matches: { results: resultsWithoutEntity(state.matches.results, entityId) } }))
+};
 
-export function ignoreMatch(entityId) {
-  this.setState((state, prop) => {
-    let results = resultsWithoutEntity(state.matches.results, entityId);
-    let matchesWithUpdatedResults = merge({}, state.matches, { "results": results });
-    return { "matches": matchesWithUpdatedResults };
-  });
-}
-
-export function doMatch(rowId, entityOrId) {
-  this.updateState("matchedState", 'MATCHING');
+const doMatch =  (store, rowId, entityOrId) => {
+  store.update("matchedState", 'MATCHING');
 
   let url = `/external_datasets/row/${rowId}/match`;
-  let data = isPlainObject(entityOrId)
-      ? { "entity": entityOrId }
-      : { "entity_id": entityOrId };
 
+  let data = isPlainObject(entityOrId) ? { "entity": entityOrId } : { "entity_id": entityOrId };
 
   return lsPost(url, data)
-    .then( json => {
-      this.updateState({
-	"matchedState": 'MATCHED',
-	"matchResult": json
-      });
-    })
+    .then(json => store.update({ "matchedState": 'MATCHED', "matchResult": json }))
     .catch(err => {
-      console.error(`Failed to match row ${rowId}`);
       errorMessage('doMatch', err);
-      this.updateState("matchedState", 'ERROR');
+      store.update("matchedState", 'ERROR');
     });
 
-}
+};
 
-export function nextItem() {
-  this.resetState();
-  this.updateState("itemInfoStatus", 'LOADING');
-
-  let url = `/external_datasets/${this.props.dataset}/flow/${this.props.flow}/next`;
+const loadItemInfoAndMatches = (store) => {
+  let itemId = store.get('itemId');
   
-  lsFetch(url)
-    .then( json => this.setState({ "itemId": json.next}, this.loadItemInfoAndMatches));
+  if (!store.get('itemInfo')) {
+    loadItemInfo(store, itemId)
+  }
+
+  if (isNull(store.get('matchesStatus'))) {
+    loadMatches(store, itemId);
+  }
+};
+
+const nextItem = (store) => {
+  resetStore(store);
+  store.update("itemInfoStatus", 'LOADING');
+  let afterNextItemReceived = loadItemInfoAndMatches.bind(null, store);
+  let updateItemId = json => store.update({ "itemId": json.next }, afterNextItemReceived);
+  let url = store.globalProps.get('nextItemUrl');
+
+  return lsFetch(url).then(updateItemId);
 }
+
+const actions = {
+  "withStore": function(store) {
+    let actionsWithStore = {};
+      
+    for (let key in this) {
+      if (key !== 'withStore') {
+	actionsWithStore[key] = this[key].bind(actionsWithStore, store);
+      }
+    }
+
+    return actionsWithStore;
+  },
+
+  "loadItemInfo": loadItemInfo,
+  "loadMatches": loadMatches,
+  "ignoreMatch": ignoreMatch,
+  "doMatch": doMatch,
+  "loadItemInfoAndMatches": loadItemInfoAndMatches,
+  "nextItem": nextItem
+}
+
+export default actions;
