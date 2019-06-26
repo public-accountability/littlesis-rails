@@ -7,7 +7,7 @@ import { defaultState } from './actions';
 /*
  *
  */
-export default class EntityMatcher extends React.Component {
+export default class EntityMatcher extends React.PureComponent {
   static propTypes = {
     "dataset": PropTypes.string.isRequired,
     "flow": PropTypes.string.isRequired,
