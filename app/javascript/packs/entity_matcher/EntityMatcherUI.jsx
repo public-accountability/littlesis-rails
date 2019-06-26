@@ -81,7 +81,7 @@ export default class EntityMatcherUI extends React.Component {
 	<div className="rightSide">
           { matchingInProgress && <LoadingSpinner /> }
           { isMatched && <ConfirmationPage
-                           matchResult={this.store.get('matchResult')}
+                           matchResult={store.get('matchResult')}
                            nextItem={this.actions.nextItem}
                          /> }
           { matchingError && <ApiError /> }
