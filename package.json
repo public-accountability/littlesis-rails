@@ -17,7 +17,7 @@
       "<rootDir>spec/javascripts/setupTests.js"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(lodash-es)/)"
+      "node_modules/(?!(@public-accountability\/simplestore)/)"
     ],
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.0.0",
+    "@public-accountability/simplestore": "^0.1.5",
     "@rails/webpacker": "^4.0.7",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "immutable": "^4.0.0-rc.12",

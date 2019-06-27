@@ -27,7 +27,6 @@ export default class PotentialMatches extends React.Component {
     "itemInfo": PropTypes.object
   };
   
-
   constructor(props) {
     super(props);
 
