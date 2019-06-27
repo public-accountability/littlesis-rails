@@ -53,6 +53,7 @@ before_script:
   - ./cc-test-reporter before-build
   - bundle exec rake db:structure:load
   - bundle exec rake db:seed
+  - bin/webpack
 
 script:
   - bundle exec rspec
