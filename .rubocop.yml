@@ -1,6 +1,7 @@
 require:
   - rubocop-rspec
   - rubocop-performance
+  - rubocop-rails
 
 AllCops:
   Exclude:
@@ -23,12 +24,6 @@ Metrics/BlockLength:
 
 Metrics/ModuleLength:
   Exclude:
-    - 'spec/**/*.rb'
-
-Metrics/BlockLength:
-  Exclude:
-    - 'Rakefile'
-    - '**/*.rake'
     - 'spec/**/*.rb'
 
 Metrics/MethodLength:
