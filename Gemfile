@@ -14,7 +14,7 @@ gem 'paper_trail', '10.3.0'
 
 # delayed job
 gem 'daemons' # Required by delayed_job
-gem 'delayed_job', '~> 4.1.5'
+gem 'delayed_job', '~> 4.1'
 gem 'delayed_job_active_record', '>= 4.1.3'
 
 # Assets, image uploading & processing
@@ -38,7 +38,7 @@ gem 'kaminari'
 gem 'activerecord-session_store'
 
 # For search and indexing
-gem 'thinking-sphinx', '~> 4.3.0'
+gem 'thinking-sphinx', '~> 4.3'
 gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_delta'
 
 gem 'htmlentities'
