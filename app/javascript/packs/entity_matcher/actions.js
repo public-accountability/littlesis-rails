@@ -23,7 +23,7 @@ export const resultsWithoutEntity = (results, entityId) => {
   return filter(results, isNotEntityPredicate);
 };  
 
-const defaultState = Map({
+export const defaultState = Map({
   "itemId": null, // item id (row id of External Dataset)
   "itemInfo": null, // json of external dataset attributes
   "itemInfoStatus": null, // status item info http request
