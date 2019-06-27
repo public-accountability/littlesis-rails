@@ -14,6 +14,9 @@ class ExternalDatasetsController < ApplicationController
 
   def iapd
     @flow = params.fetch(:flow, 'advisors')
+    if @flow == 'queue'
+      @queue = IapdDatum.find(params[:id]).related_unmatched.pluck(:id)
+    end
     @start = params[:start]&.to_i
   end
 
