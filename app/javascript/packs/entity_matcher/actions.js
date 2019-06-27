@@ -18,7 +18,7 @@ const errorMessage = (label, err) => console.error(`[${label}]: `, err.message);
 
 // action helpers
 
-const resultsWithoutEntity = (results, entityId) => {
+export const resultsWithoutEntity = (results, entityId) => {
   let isNotEntityPredicate = result => !(result.entity.id === toInteger(entityId));
   return filter(results, isNotEntityPredicate);
 };  
