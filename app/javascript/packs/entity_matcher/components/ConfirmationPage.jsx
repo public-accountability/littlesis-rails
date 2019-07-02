@@ -64,7 +64,6 @@ const StatMessage = ({stat, count}) => {
   if (count === 0) {
     return <></>;
   }
-
   let { noun, verb, message } = statText[stat];
   let grammarIndex = count > 1 ? 1 : 0;
   let text = [String(count), noun[grammarIndex], verb[grammarIndex], message].join(' ');
@@ -79,6 +78,14 @@ const StatMessages = ({results}) => {
   return <>{statMessages}</>;
 }
 
+const OwnerQueueLink = ({itemId}) => {
+  let url = `/external_datasets/iapd?flow=queue&id=${itemId}`;
+
+  return <div className="mt-2">
+           <a className="ownerQueueLink" href={url}>Match the executives for this adivsor</a>
+         </div>
+};
+
 
 /**
  * Confirmation page showing result of matching operation.
@@ -86,6 +93,8 @@ const StatMessages = ({results}) => {
  */
 export default class ConfirmationPage extends React.Component {
   static propTypes = {
+    itemId: PropTypes.number,
+    flow: PropTypes.string.isRequired,
     matchResult: PropTypes.shape({
       status: PropTypes.string,
       results: PropTypes.array,
@@ -104,8 +113,9 @@ export default class ConfirmationPage extends React.Component {
              </h4>
              <StatMessages results={results} />
              <div className="entity-matcher-confirmation-page-next-item-wrapper">
-               <a className="nextItem" onClick={this.props.nextItem} >Match next entity</a>
+               <a style={{color: '#008'}} className="nextItem" onClick={this.props.nextItem} >Match next entity</a>
              </div>
+	     { this.props.flow === 'advisors' && <OwnerQueueLink itemId={this.props.itemId} /> }
            </div>;
   }
 }

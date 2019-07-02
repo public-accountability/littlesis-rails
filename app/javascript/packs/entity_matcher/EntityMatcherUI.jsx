@@ -74,6 +74,8 @@ export default class EntityMatcherUI extends React.Component {
 	<div className="rightSide">
           { matchingInProgress && <LoadingSpinner /> }
           { isMatched && <ConfirmationPage
+			   itemId={itemId}
+			   flow={store.globalProps.get('flow')}
                            matchResult={store.get('matchResult')}
                            nextItem={this.actions.nextItem}
                          /> }

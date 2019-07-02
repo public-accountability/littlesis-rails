@@ -120,7 +120,7 @@ div.potential-match-card {
     
 }
 
-a.nextItem {
+a.nextItem, a.ownerQueueLink {
     @include matcher-text-link;
     color: $link_blue;
 }
