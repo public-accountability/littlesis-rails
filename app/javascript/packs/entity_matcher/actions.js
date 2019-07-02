@@ -4,9 +4,7 @@ import isNull from 'lodash/isNull';
 import isPlainObject from 'lodash/isPlainObject';
 import noop from 'lodash/noop';
 import toInteger from 'lodash/toInteger';
-
 import { Map } from 'immutable';
-
 import { lsFetch, lsPost } from '../common/http';
 
 const errorMessage = (label, err) => console.error(`[${label}]: `, err.message);
@@ -35,6 +33,7 @@ export const defaultState = Map({
   "queue": null // options queue for items to match
 });
 
+// STATUS HELPERS
 export const STATUS = Object.freeze({
   "LOADING": 'LOADING',
   "COMPLETE": 'COMPLETE',
@@ -45,28 +44,27 @@ export const STATUS = Object.freeze({
 
 const resetStore = store => store.update(defaultState);
 
-
 /// actions
 
 const loadItemInfo = (store, itemId) => {
-  store.update("itemInfoStatus", 'LOADING');
+  store.update("itemInfoStatus", STATUS.LOADING);
 
   lsFetch(`/external_datasets/row/${itemId}`)
-    .then(json => store.update({ "itemInfoStatus": 'COMPLETE', "itemInfo": json }))
+    .then(json => store.update({ "itemInfoStatus": STATUS.COMPLETE, "itemInfo": json }))
     .catch(error => {
       errorMessage('loadItemInfo', error);
-      store.update("itemInfoStatus", 'ERROR');
+      store.update("itemInfoStatus", STATUS.ERROR);
     });
 };
 
 const loadMatches = (store, itemId) => {
-  store.update("matchesStatus", 'LOADING');
+  store.update("matchesStatus", STATUS.LOADING);
 
   lsFetch(`/external_datasets/row/${itemId}/matches`)
-    .then(json => store.update({ "matchesStatus": 'COMPLETE', "matches": json }))
+    .then(json => store.update({ "matchesStatus": STATUS.COMPLETE, "matches": json }))
     .catch(error => {
       errorMessage('loadMatches', error);
-      store.update("matchesStatus", 'ERROR');
+      store.update("matchesStatus", STATUS.ERROR);
     });
 };
 
@@ -75,17 +73,17 @@ const ignoreMatch = (store, entityId) => {
 };
 
 const doMatch =  (store, rowId, entityOrId) => {
-  store.update("matchedState", 'MATCHING');
+  store.update("matchedState", STATUS.MATCHING);
 
   let url = `/external_datasets/row/${rowId}/match`;
 
   let data = isPlainObject(entityOrId) ? { "entity": entityOrId } : { "entity_id": entityOrId };
 
   return lsPost(url, data)
-    .then(json => store.update({ "matchedState": 'MATCHED', "matchResult": json }))
+    .then(json => store.update({ "matchedState": STATUS.MATCHED, "matchResult": json }))
     .catch(err => {
       errorMessage('doMatch', err);
-      store.update("matchedState", 'ERROR');
+      store.update("matchedState", STATUS.ERROR);
     });
 
 };
@@ -104,8 +102,8 @@ const loadItemInfoAndMatches = (store) => {
 
 const nextItemFromQueue = store => {
   const currentIdx = store.get('queue').indexOf(store.get('itemId'));
-  const itemHasBeenMatched = store.get("matchedState") === 'MATCHED'
-  
+  const itemHasBeenMatched = store.get("matchedState") === STATUS.MATCHED 
+
   let newState = {}
   let nextIdx;
 
@@ -128,14 +126,14 @@ const nextItemFromQueue = store => {
     newState.itemId = newState.queue.get(nextIdx)
   }
 
-  newState.itemInfoStatus = 'LOADING';
+  newState.itemInfoStatus = STATUS.LOADING;
   let callback = loadItemInfoAndMatches.bind(null, store);
 
   return store.update(newState, callback)
 }
 
 const nextItemFromUrl = store => {
-  store.update("itemInfoStatus", 'LOADING');
+  store.update("itemInfoStatus", STATUS.LOADING);
   let afterNextItemReceived = loadItemInfoAndMatches.bind(null, store);
   let updateItemId = json => store.update({ "itemId": json.next }, afterNextItemReceived);
   let url = store.globalProps.get('nextItemUrl');
@@ -145,18 +143,13 @@ const nextItemFromUrl = store => {
 
 const nextItem = store => {
   resetStore(store);
-  console.log('NEXT ITEM')
-  
 
   if (store.globalProps.get('flow') === 'queue') {
-    console.log('nextitemFromqueue');
     return nextItemFromQueue(store);
   } else {
-    console.log('nextitemFroURL');
     return nextItemFromUrl(store);
   }
 }
-
 
 
 const actions = {
