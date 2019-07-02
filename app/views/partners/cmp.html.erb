@@ -8,7 +8,7 @@
 
 <div class="row border-bottom pb-2" id="cmp-header">
   <div class="col-12 mt-2">
-    <%= link_to(image_tag('cmp_logo.png'),  'https://wwww.corporatemapping.ca') %>
+    <%= link_to(image_tag('cmp_logo.png'),  'https://www.corporatemapping.ca') %>
     <h2 class="mt-2">Investigating the power of the fossil fuel industry in Western Canada</h2>
   </div>
 </div>
@@ -16,25 +16,25 @@
 
 <div class="row mt-5">
   <div class="col-8">
-    <p>The <%= link_to 'Corporate Mapping Project',  'https://wwww.corporatemapping.ca' %> (CMP) has partnered with LittleSis to comprehensively map Canada’s fossil fuel industry -- along with its ties to the larger corporate sector at home and abroad.</p>
+    <p>The <%= link_to 'Corporate Mapping Project',  'https://www.corporatemapping.ca' %> (CMP) has partnered with LittleSis to comprehensively map Canada’s fossil fuel industry -- along with its ties to the larger corporate sector at home and abroad.</p>
 
     <h4>Here’s how you can explore the data:</h4>
     <ul>
       <li>
-	The CMP has created in-depth profiles for the top 50 most powerful corporations involved in the production of fossil fuels in Western Canada -- along with key industry groups, think tanks, financiers and other promoting oil, gas and coal production. These descriptive profiles are available on the CMP website. <%= link_to 'Click here to visit corporatemapping.ca/database',  'https://wwww.corporatemapping.ca/database' %>.
+	The CMP has created in-depth profiles for the top 50 most powerful corporations involved in the production of fossil fuels in Western Canada -- along with key industry groups, think tanks, financiers and other promoting oil, gas and coal production. These descriptive profiles are available on the CMP website. <%= link_to 'Click here to visit corporatemapping.ca/database',  'https://www.corporatemapping.ca/database' %>.
       </li>
       <br />
       <li>
-	We've also mapped the full network of Canadian-based fossil fuel corporations (with assets over <i>$50 million</i> as of 2015). View the entire dataset on LittleSis <%= link_to "here", "http://littlesis.org/tags/11" %>.
+	We've also mapped the <a href="#cmp-full-network">full network</a> of Canadian-based fossil fuel corporations (with assets over <i>$50 million</i> as of 2015). 
       </li>
       <br />
       <li>
-	And we tracked how these fossil fuel corporations are connected to the wider corporate sector in Canada and abroad through their senior executives and board members. This larger network includes <i>44,256</i> people and <i>1,646</i> corporations, think tanks, industry groups, financial institutions and more.
+	And we tracked how these fossil fuel corporations are connected to the wider corporate sector in Canada and abroad through their senior executives and board members. This larger network includes <i>44,256</i> people and <i>1,646</i> corporations, think tanks, industry groups, financial institutions and more. View the entire dataset on LittleSis <%= link_to "here", "http://littlesis.org/tags/11" %>.
       </li>
     </ul>
 
     <p>
-      The Corporate Mapping Project is a research partnership investigating the power and influence of the fossil fuel industry in Canada. <%= link_to 'Find out more here',  'https://wwww.corporatemapping.ca' %>.
+      The Corporate Mapping Project is a research partnership investigating the power and influence of the fossil fuel industry in Canada. <%= link_to 'Find out more here',  'https://www.corporatemapping.ca' %>.
     </p>
   </div>
   <div class="col-4 align-self-center">
@@ -83,7 +83,9 @@
 		  <span class="badge badge-info"><%= row['category']%></span>
 		</td>
 		<td>
-		  <%= link_to "Read more", "https://www.corporatemapping.ca/#{row['case_study']}", target: '_blank' %>
+		  <% if row['cmp_url'].present? %>
+		    <%= link_to "Read more", row['cmp_url'], target: '_blank' %>
+		  <% end %>
 		</td>
 	      </tr>
 	    <% end %>
@@ -114,7 +116,7 @@
   <% end %>
 <% end %>
 
-<div class="row mt-5">
+<div id="cmp-full-network"  class="row mt-5">
   <div class="col-sm">
     <h3 class="mb-4">Explore the full network of Fossil Fuel Companies</h3>
     <table id="cmp-strata" class="display" width="100%"></table>
