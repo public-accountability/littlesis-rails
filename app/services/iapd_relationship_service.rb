@@ -60,7 +60,7 @@ class IapdRelationshipService
   #  - No duplicate check is done. Use `find_relationship` to find existing relationship
   #  - The owner must be  matched. Use `owner.matched?` to verify
   #  - The owner is a person and from schedule A
-  #    Schedule B contains itermediate relationships, which aren't not yet handled
+  #    Schedule B contains indirect relationships, which aren't not yet handled
   #
   #  returns <Relationship>
   def self.create_relationship(advisor:, owner:)
@@ -70,8 +70,14 @@ class IapdRelationshipService
 
     filing = owner.latest_filing_for_advisor(advisor.row_data.fetch('crd_number'))
 
-    if filing.nil? || filing.fetch('schedule') == 'B'
+    if filing.nil?
       error! "No suitable filing found for #{owner.id}"
+    end
+
+    if filing.fetch('schedule') == 'B'
+      error! <<~MSG
+        Cannot create a relationship for indirect ownership (schedule b)
+      MSG
     end
 
     if ('A'..'E').include?(filing.fetch('ownership_code'))

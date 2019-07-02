@@ -84,6 +84,13 @@ class IapdDatum < ExternalDataset
     @_advisors ||= self.class.advisors_by_crd_numbers(row_data.fetch('associated_advisors'))
   end
 
+  # For owners, it returns unmatched advisors
+  # For advisors, it returns unmatched owners
+  def related_unmatched
+    method = owner? ? :advisors : :owners
+    public_send(method).unmatched
+  end
+
   def owner?
     row_data_class == IapdOwner.name
   end

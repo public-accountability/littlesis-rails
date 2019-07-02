@@ -64,12 +64,26 @@ const StatMessage = ({stat, count}) => {
   if (count === 0) {
     return <></>;
   }
-
   let { noun, verb, message } = statText[stat];
   let grammarIndex = count > 1 ? 1 : 0;
   let text = [String(count), noun[grammarIndex], verb[grammarIndex], message].join(' ');
 
   return <p className="confirmation-page-stat">{text}</p>;
+};
+
+const StatMessages = ({results}) => {
+  let statMessages = toPairs(computeResultStats(results))
+      .map(([stat, count]) => <StatMessage stat={stat} count={count} key={stat} />);
+
+  return <>{statMessages}</>;
+}
+
+const OwnerQueueLink = ({itemId}) => {
+  let url = `/external_datasets/iapd?flow=queue&id=${itemId}`;
+
+  return <div className="mt-2">
+           <a className="ownerQueueLink" href={url}>Match the executives for this adivsor</a>
+         </div>
 };
 
 
@@ -79,6 +93,8 @@ const StatMessage = ({stat, count}) => {
  */
 export default class ConfirmationPage extends React.Component {
   static propTypes = {
+    itemId: PropTypes.number,
+    flow: PropTypes.string.isRequired,
     matchResult: PropTypes.shape({
       status: PropTypes.string,
       results: PropTypes.array,
@@ -91,17 +107,15 @@ export default class ConfirmationPage extends React.Component {
     let entity = this.props.matchResult.entity;
     let results = this.props.matchResult.results;
 
-    let statMessages = toPairs(computeResultStats(results))
-        .map(([stat, count]) => <StatMessage stat={stat} count={count} key={stat} />);
-
     return <div className="entity-matcher-confirmation-page">
              <h4>
                The entity has been successfully matched with <a href={entity.url}>{entity.name}</a>
              </h4>
-             {statMessages}
+             <StatMessages results={results} />
              <div className="entity-matcher-confirmation-page-next-item-wrapper">
-               <a className="nextItem" onClick={this.props.nextItem} >Match next entity</a>
+               <a style={{color: '#008'}} className="nextItem" onClick={this.props.nextItem} >Match next entity</a>
              </div>
+	     { this.props.flow === 'advisors' && <OwnerQueueLink itemId={this.props.itemId} /> }
            </div>;
   }
 }

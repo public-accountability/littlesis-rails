@@ -1,11 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-//  LODASH
-import merge from 'lodash/merge';
-import isPlainObject from 'lodash/isPlainObject';
-import isNull from 'lodash/isNull';
-
 // COMPONENTS
 import ApiError from './components/ApiError';
 import DatasetItemHeader from './components/DatasetItemHeader';
@@ -14,16 +9,10 @@ import DatasetItemFooter from './components/DatasetItemFooter';
 import LoadingSpinner from './components/LoadingSpinner';
 import PotentialMatches from './components/PotentialMatches';
 import ConfirmationPage from './components/ConfirmationPage';
+import EmptyQueueMessage from './components/EmptyQueueMessage';
 
 // ACTIONS
-import actions from './actions';
-
-// STATUS HELPERS
-const LOADING = 'LOADING';
-const COMPLETE = 'COMPLETE';
-const ERROR = 'ERROR';
-const MATCHING = 'MATCHING';
-const MATCHED = 'MATCHED';
+import actions, { STATUS } from './actions';
 
 export default class EntityMatcherUI extends React.Component {
   static propTypes = { "store": PropTypes.object.isRequired };
@@ -42,13 +31,16 @@ export default class EntityMatcherUI extends React.Component {
   }
 
   render() {
-    const store = this.props.store;	
-    const itemInfoLoading = store.get('itemInfoStatus') === LOADING;
-    const itemInfoComplete = store.get('itemInfoStatus') === COMPLETE;
-    const itemInfoError = store.get('itemInfoStatus') === ERROR;
-    const matchingInProgress = store.get('matchedState') === MATCHING;
-    const isMatched = store.get('matchedState') === MATCHED;
-    const matchingError = store.get('matchedState') === ERROR;
+    const store = this.props.store;
+    
+    const itemInfoLoading = store.get('itemInfoStatus') === STATUS.LOADING;
+    const itemInfoComplete = store.get('itemInfoStatus') === STATUS.COMPLETE;
+    const itemInfoError = store.get('itemInfoStatus') === STATUS.ERROR;
+    const isQueueFlow = store.globalProps.get('flow') === 'queue';
+    const queueEmpty = isQueueFlow && store.get('queue').isEmpty();
+    const matchingInProgress = store.get('matchedState') === STATUS.MATCHING;
+    const isMatched = store.get('matchedState') === STATUS.MATCHED;
+    const matchingError = store.get('matchedState') === STATUS.ERROR;
     const showPotentialMatches = itemInfoComplete && !(matchingInProgress || isMatched || matchingError);
     const { matches, matchesStatus, itemId, itemInfo } = store.toJS();
 
@@ -68,6 +60,7 @@ export default class EntityMatcherUI extends React.Component {
         <div className="leftSide">
           { itemInfoLoading && <LoadingSpinner /> }
           { itemInfoError && <ApiError /> }
+	  { queueEmpty && <EmptyQueueMessage />}
           {
             itemInfoComplete &&
             <>
@@ -81,6 +74,8 @@ export default class EntityMatcherUI extends React.Component {
 	<div className="rightSide">
           { matchingInProgress && <LoadingSpinner /> }
           { isMatched && <ConfirmationPage
+			   itemId={itemId}
+			   flow={store.globalProps.get('flow')}
                            matchResult={store.get('matchResult')}
                            nextItem={this.actions.nextItem}
                          /> }

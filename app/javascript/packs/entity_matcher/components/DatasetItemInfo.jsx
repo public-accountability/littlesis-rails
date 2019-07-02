@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import castArray from 'lodash/castArray';
 import find from 'lodash/find';
 import toInteger from 'lodash/toInteger';
-import sortBy from 'lodash/sortBy';
+import orderBy from 'lodash/orderBy';
 
 import { capitalizeWords, formatMoney } from '../../common/utility';
 import { formatIapdOwnerName, isOwnerPerson } from '../helpers';
@@ -25,9 +25,10 @@ const DatasetItemPresenter = ({title, value}) => {
   output: Array[ Array[String, String|Number] ]
 */
 const dataToKeyValues= (rowData) => {
-  const latestRecord = sortBy(rowData.data, 'filename').slice(-1)[0];
 
   if (rowData['class'].includes('IapdOwner')) {
+    let latestRecord = orderBy(rowData.data, ['filename', 'schedule'], ['desc', 'asc'])[0];
+
     return [
       ["Dataset", "IAPD Owner"],
       ["Name", formatIapdOwnerName(rowData.name, isOwnerPerson(rowData))],
@@ -40,6 +41,8 @@ const dataToKeyValues= (rowData) => {
   }
   
   if (rowData['class'].includes('IapdAdvisor')) {
+    let latestRecord = orderBy(rowData.data, ['filename'], ['desc'])[0];
+    
     return [
       ["Dataset", "IAPD Advisor"],
       ["Name", capitalizeWords(rowData.name)],

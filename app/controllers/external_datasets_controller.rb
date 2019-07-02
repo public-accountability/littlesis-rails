@@ -12,8 +12,15 @@ class ExternalDatasetsController < ApplicationController
   def index
   end
 
+  # example url:
+  #   match iapd advisors with starting id: GET /external_datasets/iapd?flow=advisors&start=123
+  #   match iapd owners: GET /external_datasets/iapd?flow=owners
+  #   load owners queue for advisor: GET /external_datasets/iapd?flow=queue&id=789
   def iapd
     @flow = params.fetch(:flow, 'advisors')
+    if @flow == 'queue'
+      @queue = IapdDatum.find(params[:id]).related_unmatched.where(primary_ext: :person).pluck(:id)
+    end
     @start = params[:start]&.to_i
   end
 

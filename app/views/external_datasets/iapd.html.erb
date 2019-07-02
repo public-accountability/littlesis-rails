@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
    window.entityMatcher(
      <%= {
        "flow" => @flow,
-       "start" => @start
+       "start" => @start,
+       "queue" => @queue
      }.to_json.html_safe %>
    );
 });
