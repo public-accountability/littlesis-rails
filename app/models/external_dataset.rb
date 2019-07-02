@@ -35,7 +35,14 @@ class ExternalDataset < ApplicationRecord
 
   def matches(**kwargs)
     method = "find_matches_for_#{primary_ext}"
-    EntityMatcher.public_send method, entity_name, **kwargs
+
+    result_set = EntityMatcher.public_send(method, entity_name, **kwargs)
+
+    if person?
+      result_set.filter(:same_last_name, :similar_first_name)
+    else
+      result_set
+    end
   end
 
   def match_with(entity_or_entity_id)
