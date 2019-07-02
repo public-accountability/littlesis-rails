@@ -797,6 +797,43 @@ describe EntityMatcher, :sphinx do
         end
       end
 
+      describe 'filter' do
+        let(:results) do
+          [
+            result_person(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
+            result_person(:same_first_name, :same_last_name),
+            result_person(:same_first_name, :similar_last_name, :blurb_keyword)
+          ]
+        end
+
+        let(:result_set) { EntityMatcher::EvaluationResultSet.new(results) }
+
+        it 'filters based on a single category' do
+          expect(result_set.filter(:same_last_name).to_a)
+            .to eq([
+                     result_person(:same_first_name, :same_last_name, :same_middle_name, :common_relationship),
+                     result_person(:same_first_name, :same_last_name)
+                   ])
+        end
+
+        it 'filters with 2 categories' do
+          expect(result_set.filter(:same_last_name, :common_relationship).to_a)
+            .to eq([result_person(:same_first_name, :same_last_name, :same_middle_name, :common_relationship)])
+        end
+
+        it 'can include all results' do
+          expect(result_set.filter(:same_first_name).to_a).to eq(results)
+        end
+
+        it 'can filter out all results' do
+          expect(result_set.filter(:same_middle_name, :blurb_keyword).to_a).to eq([])
+        end
+
+        it 'rejects arguments that are not a valid attribute' do
+          expect { result_set.filter(:wearing_silly_hat) }.to raise_error(ArgumentError)
+        end
+      end
+
       describe 'Sorting People' do
         describe 'same first_and_last' do
           let(:results) do

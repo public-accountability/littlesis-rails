@@ -9,6 +9,7 @@ module EntityMatcher
 
     def_delegators :@results, :each, :first, :second, :map, :size, :count, :empty?
 
+    # input: array of EvaluationResult::Person or EvaluationResult::Org
     def initialize(evaluation_results)
       check_argument(evaluation_results)
       @results = evaluation_results.sort
@@ -18,6 +19,27 @@ module EntityMatcher
       @results
     end
 
+    # This removes all results that don't contain the provided attributes
+    # It modifies the instance and returns it
+    # input: Symbols
+    def filter(*attributes)
+      check_filter_attributes(attributes)
+
+      @results.select! do |result|
+        passes_filter = true
+
+        attributes.each do |attribute|
+          unless result.public_send(attribute)
+            passes_filter = false
+            break
+          end
+        end
+        passes_filter
+      end
+
+      self
+    end
+    
     # In order for the set to be considered automatachable
     # the set must contain only one result that can be automatched.
     # If there are two (or more) results, then there is no way to know which
@@ -43,6 +65,15 @@ module EntityMatcher
       TypeCheck.check evaluation_results, Array
       TypeCheck.check evaluation_results&.first,
                       [NilClass, EvaluationResult::Person, EvaluationResult::Org]
+    end
+
+    def check_filter_attributes(attrs)
+      attrs.each do |attr|
+        TypeCheck.check attr, Symbol
+        unless EvaluationResult::PERSON_ATTRS.include?(attr) || EvaluationResult::ORG_ATTRS.include?(attr)
+          raise ArgumentError, "Invalid evaluation result attribute: #{attr}"
+        end
+      end
     end
   end
 end
