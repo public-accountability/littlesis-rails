@@ -1,9 +1,10 @@
-import curry from 'lodash/curry';
 import filter from 'lodash/filter';
-import toInteger from 'lodash/toInteger';
-import isPlainObject from 'lodash/isPlainObject';
+import isNil from 'lodash/isNil';
 import isNull from 'lodash/isNull';
-import merge from 'lodash/merge';
+import isPlainObject from 'lodash/isPlainObject';
+import noop from 'lodash/noop';
+import toInteger from 'lodash/toInteger';
+
 import { Map } from 'immutable';
 
 import { lsFetch, lsPost } from '../common/http';
@@ -31,10 +32,19 @@ export const defaultState = Map({
   "matchesStatus": null, // statues of potential matches http request
   "matchedState": null, // Has it been matched: MATCHING, MATCHED, ERROR
   "matchResult": null, // json response from matching
-  "nextItemQueue": null // options queue for items to match
+  "queue": null // options queue for items to match
+});
+
+export const STATUS = Object.freeze({
+  "LOADING": 'LOADING',
+  "COMPLETE": 'COMPLETE',
+  "ERROR": 'ERROR',
+  "MATCHING": 'MATCHING',
+  "MATCHED": 'MATCHED'
 });
 
 const resetStore = store => store.update(defaultState);
+
 
 /// actions
 
@@ -92,8 +102,39 @@ const loadItemInfoAndMatches = (store) => {
   }
 };
 
-const nextItem = (store) => {
-  resetStore(store);
+const nextItemFromQueue = store => {
+  const currentIdx = store.get('queue').indexOf(store.get('itemId'));
+  const itemHasBeenMatched = store.get("matchedState") === 'MATCHED'
+  
+  let newState = {}
+  let nextIdx;
+
+  if (itemHasBeenMatched) {
+    newState.queue = store.get('queue').delete(currentIdx)
+    nextIdx = currentIdx
+  } else {
+    newState.queue = store.get('queue');
+    nextIdx = currentIdx + 1;
+  }
+
+  if (newState.queue.isEmpty()) {
+    newState.itemId = null
+    return store.update(newState);
+  }
+
+  if (nextIdx >= newState.queue.size) {
+    newState.itemId = newState.queue.get(0)
+  } else {
+    newState.itemId = newState.queue.get(nextIdx)
+  }
+
+  newState.itemInfoStatus = 'LOADING';
+  let callback = loadItemInfoAndMatches.bind(null, store);
+
+  return store.update(newState, callback)
+}
+
+const nextItemFromUrl = store => {
   store.update("itemInfoStatus", 'LOADING');
   let afterNextItemReceived = loadItemInfoAndMatches.bind(null, store);
   let updateItemId = json => store.update({ "itemId": json.next }, afterNextItemReceived);
@@ -102,10 +143,26 @@ const nextItem = (store) => {
   return lsFetch(url).then(updateItemId);
 }
 
+const nextItem = store => {
+  resetStore(store);
+  console.log('NEXT ITEM')
+  
+
+  if (store.globalProps.get('flow') === 'queue') {
+    console.log('nextitemFromqueue');
+    return nextItemFromQueue(store);
+  } else {
+    console.log('nextitemFroURL');
+    return nextItemFromUrl(store);
+  }
+}
+
+
+
 const actions = {
   "withStore": function(store) {
     let actionsWithStore = {};
-      
+
     for (let key in this) {
       if (key !== 'withStore') {
 	actionsWithStore[key] = this[key].bind(actionsWithStore, store);
