@@ -83,7 +83,9 @@
 		  <span class="badge badge-info"><%= row['category']%></span>
 		</td>
 		<td>
-		  <%= link_to "Read more", "https://www.corporatemapping.ca/#{row['case_study']}", target: '_blank' %>
+		  <% if row['cmp_url'].present? %>
+		    <%= link_to "Read more", row['cmp_url'], target: '_blank' %>
+		  <% end %>
 		</td>
 	      </tr>
 	    <% end %>
