@@ -72,6 +72,13 @@ const StatMessage = ({stat, count}) => {
   return <p className="confirmation-page-stat">{text}</p>;
 };
 
+const StatMessages = ({results}) => {
+  let statMessages = toPairs(computeResultStats(results))
+      .map(([stat, count]) => <StatMessage stat={stat} count={count} key={stat} />);
+
+  return <>{statMessages}</>;
+}
+
 
 /**
  * Confirmation page showing result of matching operation.
@@ -91,14 +98,11 @@ export default class ConfirmationPage extends React.Component {
     let entity = this.props.matchResult.entity;
     let results = this.props.matchResult.results;
 
-    let statMessages = toPairs(computeResultStats(results))
-        .map(([stat, count]) => <StatMessage stat={stat} count={count} key={stat} />);
-
     return <div className="entity-matcher-confirmation-page">
              <h4>
                The entity has been successfully matched with <a href={entity.url}>{entity.name}</a>
              </h4>
-             {statMessages}
+             <StatMessages results={results} />
              <div className="entity-matcher-confirmation-page-next-item-wrapper">
                <a className="nextItem" onClick={this.props.nextItem} >Match next entity</a>
              </div>
