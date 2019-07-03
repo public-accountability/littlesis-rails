@@ -18,7 +18,6 @@ SET encrypted_password = '',
     confirmation_token = NULL,
     confirmed_at = CURRENT_TIMESTAMP,
     confirmation_sent_at = CURRENT_TIMESTAMP,
-    chatid = NULL,
     email = CONCAT('user', id, '@email.com'),
     username = CONCAT('user_', id);
 
