@@ -16,6 +16,11 @@ class DevelopmentDb
     limit
   end
 
+  def open_secrets
+    cmd = "mysqldump -u #{@db['username']} -p#{@db['password']} -h #{@db['host']} --skip-comments --single-transaction #{@db['database']} #{OPEN_SECRETS.join(' ')} > #{@out_path}"
+    `#{cmd}`
+  end
+
   def create_clean_tables
     cmd = "mysql -u #{@db['username']} -p#{@db['password']} -h #{@db['host']} #{@db['database']} < #{Rails.root.join('lib', 'sql', 'clean_users.sql')}"
     `#{cmd}`
@@ -171,6 +176,8 @@ class DevelopmentDb
              reference
              reference_excerpt
              unmatched_ny_filers].freeze
+
+  OPEN_SECRETS = %w[os_candidates os_committees os_donations os_entity_category os_entity_donor os_matches].freeze
 
   # these tables need to be cleaned afterwards:
   # entity, alias, relationship, extension_record,
