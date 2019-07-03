@@ -21,4 +21,10 @@ namespace :mysql do
     ddb = DevelopmentDb.new(Rails.root.join('data', "development_db_#{Time.now.strftime('%F')}.sql").to_s)
     ddb.run
   end
+
+  desc 'dumps open secrets tables'
+  task open_secrets: :environment do
+    path = Rails.root.join('data', "open_secrets_data_#{Time.now.strftime('%F')}.sql").to_s
+    DevelopmentDb.new(path).open_secrets
+  end
 end
