@@ -52,8 +52,11 @@ describe ExternalDataset, type: :model do
       end
 
       it 'calls find_matches_for_person' do
-        expect(EntityMatcher).to receive(:find_matches_for_person)
-                                   .with('Jane Smith', {}).once
+        result_set = instance_double('EntityMatcher::EvaluationResultSet')
+        expect(result_set).to receive(:filter).and_return([])
+
+        expect(EntityMatcher).to receive(:find_matches_for_person).with('Jane Smith', {}).once
+                                   .and_return(result_set)
         external_dataset.matches
       end
     end
