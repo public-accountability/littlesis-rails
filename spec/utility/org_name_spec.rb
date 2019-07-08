@@ -26,7 +26,7 @@ describe OrgName do
       expect(name.original).to eql 'Liberty Mutual Insurance Group'
       expect(name.clean).to eql 'liberty mutual insurance group'
       expect(name.root).to eql 'liberty mutual insurance'
-      expect(name.suffix).to eql 'Group'
+      expect(name.suffix).to eql 'group'
       expect(name.essential_words).to eql %w[liberty mutual]
     end
 

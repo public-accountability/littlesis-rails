@@ -95,7 +95,6 @@ module OrgName
   ALL_COMMON_WORDS = (GRAMMAR_WORDS + COMMON_SUFFIXES + COMMON_WORDS).map(&:downcase).to_set
 
   Name = Struct.new(:original, :clean, :root, :suffix, :essential_words)
-
   # String ---> String
   def self.format(name)
     name
@@ -107,9 +106,11 @@ module OrgName
   end
 
   # String ---> OrgName::Name
-  def self.parse(name)
-    OrgName::Name.new(name,
-                      clean(name),
+  def self.parse(original_name)
+    name = clean(original_name)
+
+    OrgName::Name.new(original_name,
+                      name,
                       find_root(name),
                       find_suffix(name),
                       essential_words(name))
