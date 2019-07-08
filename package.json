@@ -17,7 +17,7 @@
       "<rootDir>spec/javascripts/setupTests.js"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(@public-accountability\/simplestore)/)"
+      "node_modules/(?!(@public-accountability/simplestore)/)"
     ],
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
@@ -35,7 +35,7 @@
     "react-dom": "^16.8.6"
   },
   "devDependencies": {
-    "@babel/node": "^7.2.2",
+    "@babel/node": "^7.5.0",
     "babel-jest": "^24.3.1",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
