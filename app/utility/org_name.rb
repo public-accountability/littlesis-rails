@@ -130,7 +130,9 @@ module OrgName
   end
 
   def self.find_suffix(name)
-    SUFFIX_REGEX.match(name.strip).try(:[], 1)
+    SUFFIX_REGEX
+      .match(strip_name_punctuation(name).strip)
+      .try(:[], 1)
   end
 
   # remove punctuation and downcases the name
