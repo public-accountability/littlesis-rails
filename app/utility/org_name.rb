@@ -58,7 +58,7 @@ module OrgName
 
   SUFFIX_REGEX = Regexp.new "(?<=[ ])(#{COMMON_SUFFIXES.join('|')})(?:[,\.]*)$", Regexp::IGNORECASE
 
-  GRAMMAR_WORDS = ['And', 'Of', 'The'].freeze
+  GRAMMAR_WORDS = %w[And Of The In For].freeze
 
   COMMON_WORDS = [
     "American",
@@ -130,7 +130,9 @@ module OrgName
   end
 
   def self.find_suffix(name)
-    SUFFIX_REGEX.match(name.strip).try(:[], 1)
+    SUFFIX_REGEX
+      .match(strip_name_punctuation(name).strip)
+      .try(:[], 1)
   end
 
   # remove punctuation and downcases the name
@@ -142,7 +144,7 @@ module OrgName
   def self.essential_words(name)
     strip_name_punctuation(name)
       .split(/\s+/)
-      .keep_if { |word| word.size > 2 }
+      .keep_if { |word| word.size > 1 }
       .map(&:downcase)
       .to_set
       .difference(ALL_COMMON_WORDS)

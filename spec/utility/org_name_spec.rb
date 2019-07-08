@@ -68,6 +68,10 @@ describe OrgName do
       expect(OrgName.find_suffix('GAS NETWORKS HOLDINGS LIMITED'))
         .to eql 'HOLDINGS LIMITED'
     end
+
+    specify do
+      expect(OrgName.find_suffix("DC Capital Partners Management, L.P.")).to eql 'LP'
+    end
   end
 
   describe 'find_root' do
