@@ -46,7 +46,7 @@ gem 'htmlentities'
 gem 'redis'
 
 # For easy cron scheduling
-gem 'whenever', '~> 0.11.0', :require => false
+gem 'whenever', '~> 1.0.0', :require => false
 
 group :development do
   gem 'web-console'
