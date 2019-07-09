@@ -29,7 +29,9 @@ namespace :iapd do
     advisor_ids = IapdDatum.priority_unmatched_advisors_ids
 
     if advisor_ids.length.zero?
-      ColorPrinter.print_red "There are NO MORE unmatched iapd advisors with assets over 3,000,000,000'"
+      ColorPrinter.print_red <<~MSG
+        There are no more unmatched iapd advisors with assets over $3,000,000,000
+      MSG
     else
       IapdDatum::UNMATCHED_ADVISOR_QUEUE.set(advisor_ids)
       ColorPrinter.print_green "There are #{advisor_ids.size} advisors in the queue"
