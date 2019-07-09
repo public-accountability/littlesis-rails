@@ -134,13 +134,13 @@ describe('string utilities', () => {
     expect(utility.capitalizeWords('foo bar')).toEqual('Foo Bar');
     expect(utility.capitalizeWords('FOO BAR')).toEqual('Foo Bar');
     expect(utility.capitalizeWords('foo bar, llc')).toEqual('Foo Bar, LLC');
-    expect(utility.capitalizeWords('company inc')).toEqual('Company INC');
+    expect(utility.capitalizeWords('company inc')).toEqual('Company Inc');
   });
 
   test('capitalizeWords: companies', ()=> {
-    expect(utility.capitalizeWords('company inc.')).toEqual('Company INC.');
     expect(utility.capitalizeWords('company lp')).toEqual('Company LP');
     expect(utility.capitalizeWords('company l.p.')).toEqual('Company L.P.');
+    expect(utility.capitalizeWords('company L.l.c.')).toEqual('Company L.L.C.');
   });
 
   test('formatIdSelector', () => {
