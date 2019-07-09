@@ -60,6 +60,16 @@ class IapdDatum < ExternalDataset
     self
   end
 
+  # currently, we only want owners added to the queue if they meet these conditions:
+  #   - not yet matched
+  #   - is a person
+  #   - contains at least one schedule A filing
+  def queueable?
+    method_only_for! :owner
+
+    unmatched? && person? && filings.present?
+  end
+
   def iapd_data
     return @_iapd_data if defined?(@_iapd_data)
 
