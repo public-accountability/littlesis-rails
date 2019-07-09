@@ -24,6 +24,15 @@ namespace :iapd do
 
   desc 'recreate the iapd adivsors queue'
   task update_advisors_queue: :environment do
-    puts 'updating the advisors queue'
+    IapdDatum::UNMATCHED_ADVISOR_QUEUE.clear
+
+    advisor_ids = IapdDatum.priority_unmatched_advisors_ids
+
+    if advisor_ids.length.zero?
+      ColorPrinter.print_red "There are NO MORE unmatched iapd advisors with assets over 3,000,000,000'"
+    else
+      IapdDatum::UNMATCHED_ADVISOR_QUEUE.set(advisor_ids)
+      ColorPrinter.print_green "There are #{advisor_ids.size} advisors in the queue"
+    end
   end
 end
