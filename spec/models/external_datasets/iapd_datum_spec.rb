@@ -21,6 +21,23 @@ describe IapdDatum do
     end
   end
 
+  describe '#queueable?' do
+    it 'org owners are not queueable' do
+      expect(build(:external_dataset_iapd_owner_org).queueable?).to be false
+    end
+
+    it 'people owners are queueable' do
+      expect(build(:external_dataset_iapd_owner).queueable?).to be true
+    end
+
+    it 'schedule b owners are not queuable' do
+      expect(build(:external_dataset_iapd_owner_schedule_b).queueable?).to be false
+    end
+  end
+
+  describe '#queueable_for?' do
+  end
+
   describe '#associated_advisors' do
     specify do
       expect { iapd_advisor.associated_advisors }.to raise_error(Exceptions::LittleSisError)

@@ -70,6 +70,9 @@ class IapdDatum < ExternalDataset
     unmatched? && person? && filings.present?
   end
 
+  def queueable_for?(crd_number)
+  end
+
   def iapd_data
     return @_iapd_data if defined?(@_iapd_data)
 

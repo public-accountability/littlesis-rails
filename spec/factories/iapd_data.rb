@@ -22,7 +22,97 @@ FactoryBot.define do
                      'owner_id' => '7007566',
                      'filename' => 'IA_Schedule_A_B_20181001_20181231.csv',
                      'owner_key' => '7007566',
-                     'advisor_crd_number' => 19_585 }] }
+                     'advisor_crd_number' => 19_585 }
+                  ] }
+    end
+  end
+  
+  factory :external_dataset_iapd_owner_with_two_adivsors, class: IapdDatum do
+    type { 'IapdDatum' }
+    primary_ext { :person }
+    dataset_key { '7007566' }
+    row_data do
+      { 'owner_key' => '7007566',
+        'name' => 'SELBER, BLAIR C',
+        'class' => 'IapdDatum::IapdOwner',
+        'associated_advisors' => [19_585, 20_000],
+        'data' => [{ 'filing_id' => 1_250_755,
+                     'scha_3' => 'Y',
+                     'schedule' => 'A',
+                     'name' => 'SELBER, BLAIR C',
+                     'owner_type' => 'I',
+                     'entity_in_which' => '',
+                     'title_or_status' => 'DIRECTOR',
+                     'acquired' => '08/2018',
+                     'ownership_code' => 'NA',
+                     'control_person' => 'Y',
+                     'public_reporting' => '',
+                     'owner_id' => '7007566',
+                     'filename' => 'IA_Schedule_A_B_20181001_20181231.csv',
+                     'owner_key' => '7007566',
+                     'advisor_crd_number' => 19_585 },
+                   { 'filing_id' => 2_200_000,
+                     'scha_3' => 'Y',
+                     'schedule' => 'B',
+                     'name' => 'SELBER, BLAIR C',
+                     'owner_type' => 'I',
+                     'entity_in_which' => 'ECORP',
+                     'title_or_status' => 'SHAREHOLDER',
+                     'acquired' => '01/2019',
+                     'ownership_code' => 'NA',
+                     'control_person' => 'Y',
+                     'public_reporting' => '',
+                     'owner_id' => '7007566',
+                     'filename' => 'IA_Schedule_A_B_20181001_20181231.csv',
+                     'owner_key' => '7007566',
+                     'advisor_crd_number' => 20_000 }
+                  ] }
+    end
+  end
+
+  factory :external_dataset_iapd_owner_org, class: IapdDatum do
+    type { 'IapdDatum' }
+    primary_ext { :org }
+    dataset_key { 'INVESTMENTS BV' }
+    row_data do
+      { 'owner_key' => 'INVESTMENTS BV',
+        'name' => 'INVESTMENTS BV',
+        'associated_advisors' => [299_918, 8001],
+        'class' => 'IapdDatum::IapdOwner',
+        'data' => [
+          { 'filing_id' => 1254182,
+            'scha_3' => '',
+            'schedule' => 'B',
+            'name' => 'INVESTMENTS BV',
+            'owner_type' => 'FE',
+            'entity_in_which' => 'MAN INVESTMENTS USA HOLDINGS INC.',
+            'title_or_status' => 'SHAREHOLDER',
+            'acquired' => '11/2018',
+            'ownership_code' => 'E',
+            'control_person' => 'Y',
+            'public_reporting' =>'N',
+            'owner_id' => 'FOREIGN ENTITY',
+            'filename' => 'IA_Schedule_A_B_20181001_20181231.csv',
+            'owner_key' => 'INVESTMENTS BV',
+            'advisor_crd_number' => 299918 },
+          { 'filing_id' => 1242395,
+            'scha_3' => 'N',
+            'schedule' => 'A',
+            'name'  =>  'E.D.&F. MAN INVESTMENTS BV',
+            'owner_type' => 'DE',
+            'entity_in_which' => '',
+            'title_or_status' => 'OWNER',
+            'acquired' => '08/2018',
+            'ownership_code' => 'NA',
+            'control_person' => 'N',
+            'public_reporting' => 'N',
+            'owner_id' => '00-0000000',
+            'filename' => 'IA_Schedule_A_B_20181001_20181231.csv',
+            'owner_key' => 'INVESTMENTS BV',
+            'advisor_crd_number' => 8001
+           }
+        ]
+      }
     end
   end
 
