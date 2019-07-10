@@ -27,7 +27,7 @@ FactoryBot.define do
     end
   end
   
-  factory :external_dataset_iapd_owner_with_two_adivsors, class: IapdDatum do
+  factory :external_dataset_iapd_owner_with_two_advisors, class: IapdDatum do
     type { 'IapdDatum' }
     primary_ext { :person }
     dataset_key { '7007566' }

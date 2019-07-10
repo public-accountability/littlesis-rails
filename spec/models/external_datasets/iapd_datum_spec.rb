@@ -36,6 +36,19 @@ describe IapdDatum do
   end
 
   describe '#queueable_for?' do
+    let(:iapd_datum) { build(:external_dataset_iapd_owner_with_two_advisors) }
+
+    it 'is queuable schedule A advisor' do
+      expect(iapd_datum.queueable_for?(19_585)).to be true
+    end
+
+    it 'is queuable schedule B advisor' do
+        expect(iapd_datum.queueable_for?(20_000)).to be false
+    end
+
+    it 'raises error if advisor is not one of the associated advisors' do
+      expect { iapd_datum.queueable_for?(5) }.to raise_error(Exceptions::LittleSisError)
+    end
   end
 
   describe '#associated_advisors' do

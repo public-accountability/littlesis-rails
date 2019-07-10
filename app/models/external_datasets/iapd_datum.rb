@@ -70,7 +70,13 @@ class IapdDatum < ExternalDataset
     unmatched? && person? && filings.present?
   end
 
+  # Integer --> Boolean
   def queueable_for?(crd_number)
+    method_only_for! :owner
+
+    raise Exceptions::LittleSisError unless associated_advisors.include?(crd_number)
+
+    row_data['data'].find { |x| x['advisor_crd_number'] == crd_number }.fetch('schedule') == 'A'
   end
 
   def iapd_data
