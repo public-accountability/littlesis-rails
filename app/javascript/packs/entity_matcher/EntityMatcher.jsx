@@ -14,13 +14,17 @@ export default class EntityMatcher extends React.Component {
     "dataset": PropTypes.string.isRequired,
     "flow": PropTypes.string.isRequired,
     "start": PropTypes.any,
-    "queue": PropTypes.array
+    "queue": PropTypes.array,
+    "queueMeta": PropTypes.object
   }
 
-  static defaultProps = { dataset: 'iapd' }
+  static defaultProps = {
+    dataset: 'iapd',
+    queueMeta: {}
+  }
 
   constructor(props) {
-    super(props)
+    super(props);
     let initState = defaultState;
 
     if (props.start) {
@@ -37,9 +41,10 @@ export default class EntityMatcher extends React.Component {
 	"queue": List(props.queue.slice(1))
       });
     }
-    
+
     let globalProps = { "dataset": props.dataset,
 			"flow": props.flow,
+			"queueMeta": props.queueMeta,
 			"nextItemUrl":  `/external_datasets/${props.dataset}/flow/${props.flow}/next` };
 
     this.store = new Store(this, initState, globalProps);
