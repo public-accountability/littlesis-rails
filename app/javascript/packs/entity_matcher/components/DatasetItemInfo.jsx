@@ -21,13 +21,21 @@ const DatasetItemPresenter = ({title, value}) => {
   Extracts simple fields from dataset
   Iapd Owner and Adivsors have a different set of fields in `row data`
 
-  input: Object
+  input: object, [object]
   output: Array[ Array[String, String|Number] ]
 */
-const dataToKeyValues= (rowData) => {
-
+const dataToKeyValues= (rowData, queueMeta) => {
   if (rowData['class'].includes('IapdOwner')) {
-    let latestRecord = orderBy(rowData.data, ['filename', 'schedule'], ['desc', 'asc'])[0];
+    let latestRecord;
+    let advisorName;
+
+    if (queueMeta && queueMeta.crd_number) {
+      latestRecord = find(rowData.data, x => x['advisor_crd_number'] == queueMeta.crd_number)
+      advisorName = queueMeta.name
+    } else {
+      latestRecord = orderBy(rowData.data, ['filename', 'schedule'], ['desc', 'asc'])[0];
+      advisorName = capitalizeWords(find(rowData.associated_advisors, { "crd_number": toInteger(latestRecord.advisor_crd_number) }).name)
+    }
 
     return [
       ["Dataset", "IAPD Owner"],
@@ -78,15 +86,15 @@ const renderIapdReference = rowData => {
 /*
   html elements
     #dataset-item-info-container
-    #dataset-item-info (div)p
+    #dataset-item-info (div)
     .item-info-wrapper (div)
     .item-info-title (span)
     .item-info-value (span)
 */
-export default function DatasetItemInfo({itemInfo}) {
+export default function DatasetItemInfo({itemInfo, queueMeta}) {
   const showIapdReference = itemInfo.row_data['class'].toLowerCase().includes('iapd');
-  
-  const items = dataToKeyValues(itemInfo.row_data)
+
+  const items = dataToKeyValues(itemInfo.row_data, queueMeta)
         .map( (pair, i) => <DatasetItemPresenter key={i} title={pair[0]} value={pair[1]} /> );
 
   return <div id="dataset-item-info-container" >
@@ -97,4 +105,5 @@ export default function DatasetItemInfo({itemInfo}) {
          </div>;
 };
 
-DatasetItemInfo.propTypes = { "itemInfo": PropTypes.object };
+DatasetItemInfo.propTypes = { "itemInfo": PropTypes.object.isRequired,
+			      "queueMeta": PropTypes.object };

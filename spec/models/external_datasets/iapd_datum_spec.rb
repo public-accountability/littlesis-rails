@@ -21,6 +21,36 @@ describe IapdDatum do
     end
   end
 
+  describe '#queueable?' do
+    it 'org owners are not queueable' do
+      expect(build(:external_dataset_iapd_owner_org).queueable?).to be false
+    end
+
+    it 'people owners are queueable' do
+      expect(build(:external_dataset_iapd_owner).queueable?).to be true
+    end
+
+    it 'schedule b owners are not queuable' do
+      expect(build(:external_dataset_iapd_owner_schedule_b).queueable?).to be false
+    end
+  end
+
+  describe '#queueable_for?' do
+    let(:iapd_datum) { build(:external_dataset_iapd_owner_with_two_advisors) }
+
+    it 'is queuable schedule A advisor' do
+      expect(iapd_datum.queueable_for?(19_585)).to be true
+    end
+
+    it 'is queuable schedule B advisor' do
+        expect(iapd_datum.queueable_for?(20_000)).to be false
+    end
+
+    it 'raises error if advisor is not one of the associated advisors' do
+      expect { iapd_datum.queueable_for?(5) }.to raise_error(Exceptions::LittleSisError)
+    end
+  end
+
   describe '#associated_advisors' do
     specify do
       expect { iapd_advisor.associated_advisors }.to raise_error(Exceptions::LittleSisError)

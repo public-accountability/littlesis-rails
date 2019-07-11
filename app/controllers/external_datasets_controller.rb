@@ -18,8 +18,11 @@ class ExternalDatasetsController < ApplicationController
   #   load owners queue for advisor: GET /external_datasets/iapd?flow=queue&id=789
   def iapd
     @flow = params.fetch(:flow, 'advisors')
+
     if @flow == 'queue'
-      @queue = IapdDatum.find(params[:id]).related_unmatched.where(primary_ext: :person).pluck(:id)
+      advisor_queue = IapdQueueService.new(params[:id])
+      @queue = advisor_queue.queue
+      @queue_meta = advisor_queue.queue_meta
     end
     @start = params[:start]&.to_i
   end

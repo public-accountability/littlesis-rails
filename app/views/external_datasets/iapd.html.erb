@@ -19,14 +19,15 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-   window.entityMatcher(
-     <%= {
-       "flow" => @flow,
-       "start" => @start,
-       "queue" => @queue
-     }.to_json.html_safe %>
-   );
+ document.addEventListener('DOMContentLoaded', function() {
+   window.entityMatcher( <%= {
+			 "flow" => @flow,
+			 "start" => @start,
+			 "queue" => @queue,
+			 "queueMeta" => @queue_meta
+			 }.to_json.html_safe
+			 %> );
+
 });
 </script>
 

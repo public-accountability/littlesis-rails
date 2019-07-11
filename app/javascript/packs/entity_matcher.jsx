@@ -11,9 +11,10 @@ window.entityMatcher = function(options) {
   let flow = get(options, 'flow', 'advisors');
   let start = get(options, 'start', null);
   let queue = get(options, 'queue', null)
+  let queueMeta = get(options, 'queueMeta', {})
 
   ReactDOM.render(
-    <EntityMatcher start={start} dataset={dataset} flow={flow} queue={queue} />,
+    <EntityMatcher start={start} dataset={dataset} flow={flow} queue={queue} queueMeta={queueMeta} />,
     document.getElementById(id)
   );
 };

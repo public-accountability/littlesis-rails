@@ -65,7 +65,8 @@ export default class EntityMatcherUI extends React.Component {
             itemInfoComplete &&
             <>
               <DatasetItemHeader itemId={itemId}  />
-              <DatasetItemInfo itemInfo={itemInfo} />
+              <DatasetItemInfo itemInfo={itemInfo}
+			       queueMeta={store.globalProps.get('queueMeta')} />
               <DatasetItemFooter nextItem={this.actions.nextItem} />
             </>
           }
