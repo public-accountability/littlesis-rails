@@ -8,6 +8,8 @@ class MapsController < ApplicationController
   before_action :enforce_slug, only: [:show]
   before_action :admins_only, only: [:feature]
 
+  before_action :set_oligrapher_version, only: %i[new show embedded_v2]
+
   before_action -> { check_permission 'editor' }, only: %i[create]
 
   # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
@@ -17,6 +19,8 @@ class MapsController < ApplicationController
   # defaults for embedded oligrapher
   EMBEDDED_HEADER_PCT = 8
   EMBEDDED_ANNOTATION_PCT = 28
+
+  OLIGRAPHER_VERSION_REGEX = /^[[:digit:]]\.[[:digit:]]\.[[:digit:]]$/
 
   def all
     if current_user.present?
@@ -339,5 +343,11 @@ class MapsController < ApplicationController
 
   def check_owner
     raise Exceptions::PermissionError unless is_owner
+  end
+
+  def set_oligrapher_version
+    if params.key?(:oligrapher_version) && OLIGRAPHER_VERSION_REGEX.match?(params[:oligrapher_version])
+      @oligrapher_version = params[:oligrapher_version]
+    end
   end
 end

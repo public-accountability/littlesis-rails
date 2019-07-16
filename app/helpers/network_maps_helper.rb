@@ -2,8 +2,10 @@
 
 module NetworkMapsHelper
   def oligrapher_js_tags
-    content_tag(:script, nil, src: "/js/oligrapher/oligrapher-#{NetworkMap::OLIGRAPHER_VERSION}.js") +
-    content_tag(:script, nil, src: "/js/oligrapher/oligrapher_littlesis_bridge-#{NetworkMap::OLIGRAPHER_VERSION}.js")
+    version = @oligrapher_version || NetworkMap::OLIGRAPHER_VERSION
+
+    content_tag(:script, nil, src: "/js/oligrapher/oligrapher-#{version}.js") +
+      content_tag(:script, nil, src: "/js/oligrapher/oligrapher_littlesis_bridge-#{version}.js")
   end
 
   def smart_map_path(map)

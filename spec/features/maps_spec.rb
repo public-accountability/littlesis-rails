@@ -24,6 +24,15 @@ describe 'map pages' do
     end
   end
 
+  describe 'setting oligrapher version with request' do
+    before { visit map_path(regular_map, params: { 'oligrapher_version' => '1.2.3' }) }
+
+    it 'has oligrapher js with username and link' do
+      expect(page.html).to include "/js/oligrapher/oligrapher-1.2.3.js"
+      expect(page.html).to include "/js/oligrapher/oligrapher_littlesis_bridge-1.2.3.js"
+    end
+  end
+
   describe 'viewing embeded map map with slide' do
     it 'uses first slide by default' do
       visit embedded_v2_map_path(regular_map)
