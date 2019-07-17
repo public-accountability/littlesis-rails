@@ -226,7 +226,7 @@ class RelationshipsController < ApplicationController
       last_user_id: current_user.sf_guard_user_id
     }
 
-    if r[:category_id].to_i == 1 && entity1.org? && entity2.person?
+    if [1, 2].include?(r[:category_id].to_i) && entity1.org? && entity2.person?
       r[:entity1_id] = entity2.id
       r[:entity2_id] = entity1.id
     end

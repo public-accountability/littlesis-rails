@@ -210,6 +210,42 @@ describe RelationshipsController, type: :controller do
         end
       end
 
+      describe 'submitting an education relationship (reversed)' do
+        let(:school) { create(:entity_org) }
+        let(:student) { create(:entity_person) }
+
+        let(:params) do
+          { 'entity1_id' => school.id,
+            'category_id' => Relationship::EDUCATION_CATEGORY,
+            'reference' => { 'url' => "https://example.com", 'name' => 'example.com' },
+            'relationships' => [ {
+                                   'name' => student.id,
+                                   'blurb' => nil,
+                                   'primary_ext' => 'Person',
+                                   'description1' => nil,
+                                   'start_date' => nil,
+                                   'end_date' => nil,
+                                   'degree' => nil,
+                                   'field' => 'math',
+                                   'is_dropout' => nil
+                                 } ] }
+        end
+
+        let(:bulk_request) do
+          lambda { post :bulk_add!, params: params }
+        end
+
+        it 'creates a new relationship' do
+          expect(&bulk_request).to change(Relationship, :count).by(1)
+        end
+
+        it 'reverses entity1 and entity2' do
+          bulk_request.call
+          expect(Relationship.last.attributes.slice('entity1_id', 'entity2_id'))
+                   .to eq('entity1_id' => student.id, 'entity2_id' => school.id)
+        end
+      end
+
       describe 'When submitting a donation relationship' do
         let(:relationships) do
           [
