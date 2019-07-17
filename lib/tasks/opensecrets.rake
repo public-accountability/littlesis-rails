@@ -16,16 +16,23 @@ namespace :opensecrets do
     importer.start
   end
 
+  ###### Encoding details ##################################################
+  # Before running, issue this db command:
+  # ALTER TABLE `littlesis`.`os_candidates` CONVERT TO CHARACTER SET utf8; 
+  ########################################################################### 
   desc "import candidates"
-  task import_candidates: :environment do 
-    ###### Encoding details ##################################################
-    # Before running, issue this db command:
-    # ALTER TABLE `littlesis`.`os_candidates` CONVERT TO CHARACTER SET utf8; 
-    ########################################################################### 
-    Dir.foreach( Rails.root.join('data', 'cands') ) do |filename|
-      next if filename == '.' or filename == '..'
-      printf("Processing: %s \n", filename)
-      OsCandidateImporter.start Rails.root.join('data', 'cands', filename)
+  task :import_candidates, [:filepath] => :environment do |t, args|
+    if Dir.exist?(args[:filepath])
+      Dir.chdir(args[:filepath]) do
+        Dir["*"].each do |x|
+          filename = File.join(Dir.pwd, x)
+          ColorPrinter.print_blue "Processing: #{filename}"
+          OsCandidateImporter.start(filename) 
+        end
+      end
+    else
+      ColorPrinter.print_blue "Processing: #{args[:filepath]}"
+      OsCandidateImporter.start(args[:filepath])
     end
     printf("** There are currently %s candidates in the db **\n", OsCandidate.count)
   end
