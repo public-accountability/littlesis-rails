@@ -2,6 +2,8 @@
 
 # rubocop:disable Metrics/MethodLength
 
+require Rails.root.join('lib', 'utility.rb').to_s
+
 module OsCandidateImporter
   def self.process_line(line)
     row = CSV.parse_line(line, :quote_char => "|").map { |x| nil_or_strip(x) }
@@ -13,8 +15,8 @@ module OsCandidateImporter
     cand.party = row[4]
     cand.distid_runfor = row[5]
     cand.distid_current = row[6]
-    cand.currcand = yes_no_converter row[7]
-    cand.cyclecand = yes_no_converter row[8]
+    cand.currcand = Utility.yes_no_converter row[7]
+    cand.cyclecand = Utility.yes_no_converter row[8]
     cand.crpico = row[9]
     cand.recipcode = row[10]
     cand.nopacs = row[11]
@@ -34,18 +36,6 @@ module OsCandidateImporter
       return nil
     else
       return x.strip
-    end
-  end
-
-  def self.yes_no_converter(x)
-    return nil if x.nil?
-
-    if x.strip.casecmp('Y').zero?
-      return true
-    elsif f x.strip.casecmp('N').zero?
-      return false
-    else
-      return nil
     end
   end
 
