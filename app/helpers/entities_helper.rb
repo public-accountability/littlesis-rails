@@ -64,14 +64,14 @@ module EntitiesHelper
     ]
 
     section_order_org = [
+      'staff',
+      'owners',
+      'other_positions',
       'parents',
       'children',
       'holdings',
-      'other_positions',
-      'owners',
       'members',
       'memberships',
-      'staff',
       'donation_recipients',
       'donors',
       'services_transactions',
