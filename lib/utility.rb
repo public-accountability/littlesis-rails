@@ -65,6 +65,30 @@ module Utility
     Time.zone.now.strftime('%F')
   end
 
+  def self.yes_no_converter(x)
+    return nil if x.nil?
+
+    if x.strip.casecmp('Y').zero?
+      true
+    elsif x.strip.casecmp('N').zero?
+      false
+    else
+      nil
+    end
+  end
+
+  def self.one_zero_converter(x)
+    return nil if x.nil?
+
+    if x.strip == '1'
+      true
+    elsif x.strip == '0'
+      false
+    else
+      nil
+    end
+  end
+
   class SubshellCommandError < StandardError; end
   class SQLFileError < StandardError; end
 end
