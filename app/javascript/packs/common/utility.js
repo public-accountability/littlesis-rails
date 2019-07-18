@@ -146,11 +146,11 @@ export function relationshipDetails(category) {
       ['Executive?', 'is_executive', 'boolean' ],
       ['Compensation','compensation', 'money' ]
     ];
-  case 2: // eduction
+  case 2: // education
     return [
       type, startDate, endDate,
       ['Degree', 'degree', 'text'],
-      ['Field', 'education_field', 'text'],
+      ['Field', 'field', 'text'],
       ['Dropout?', 'is_dropout', 'boolean']
     ];
   case 3: // members
