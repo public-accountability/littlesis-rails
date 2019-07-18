@@ -6,7 +6,7 @@ class AliasesController < ApplicationController
 
   def create
     entity = Entity.find(alias_params.fetch('entity_id'))
-    as = Alias.new(alias_params) { |a| a.current_user = current_user }
+    as = Alias.new(alias_params)
     if as.save
       redirect_to edit_entity_path(entity)
     else
@@ -34,8 +34,6 @@ class AliasesController < ApplicationController
   end
 
   def alias_params
-    params.require(:alias)
-      .permit(:name, :entity_id)
-      .merge(last_user_id: current_user.sf_guard_user_id)
+    params.require(:alias).permit(:name, :entity_id)
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_04_175919) do
+ActiveRecord::Schema.define(version: 2019_07_18_154608) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -63,10 +63,8 @@ ActiveRecord::Schema.define(version: 2019_06_04_175919) do
     t.integer "is_primary", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer "last_user_id"
     t.index ["entity_id", "name", "context"], name: "uniqueness_idx", unique: true
     t.index ["entity_id"], name: "entity_id_idx"
-    t.index ["last_user_id"], name: "last_user_id_idx"
     t.index ["name"], name: "name_idx"
   end
 
@@ -288,7 +286,7 @@ ActiveRecord::Schema.define(version: 2019_06_04_175919) do
     t.index ["relationship_id"], name: "relationship_id_idx"
   end
 
-  create_table "edited_entities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "edited_entities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "user_id"
     t.integer "version_id", null: false
     t.bigint "entity_id", null: false
@@ -387,7 +385,7 @@ ActiveRecord::Schema.define(version: 2019_06_04_175919) do
     t.index ["last_user_id"], name: "last_user_id_idx"
   end
 
-  create_table "external_datasets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "external_datasets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.text "row_data", limit: 4294967295
     t.text "match_data", limit: 4294967295
     t.datetime "created_at", null: false
@@ -1227,42 +1225,6 @@ ActiveRecord::Schema.define(version: 2019_06_04_175919) do
     t.index ["permission_id"], name: "permission_id"
   end
 
-  create_table "sf_guard_user_profile", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.string "name_first", limit: 50, null: false
-    t.string "name_last", limit: 50, null: false
-    t.string "email", limit: 50, null: false
-    t.text "reason", limit: 4294967295
-    t.text "analyst_reason", limit: 4294967295
-    t.boolean "is_visible", default: true, null: false
-    t.string "invitation_code", limit: 50
-    t.boolean "enable_announcements", default: true, null: false
-    t.boolean "enable_html_editor", default: true, null: false
-    t.boolean "enable_recent_views", default: true, null: false
-    t.boolean "enable_favorites", default: true, null: false
-    t.boolean "enable_pointers", default: true, null: false
-    t.string "public_name", limit: 50, null: false
-    t.text "bio", limit: 4294967295
-    t.boolean "is_confirmed", default: false, null: false
-    t.string "confirmation_code", limit: 100
-    t.string "filename", limit: 100
-    t.boolean "ranking_opt_out", default: false, null: false
-    t.boolean "watching_opt_out", default: false, null: false
-    t.boolean "enable_notes_list", default: true, null: false
-    t.boolean "enable_notes_notifications", default: true, null: false
-    t.bigint "score"
-    t.boolean "show_full_name", default: false, null: false
-    t.integer "unread_notes", default: 0
-    t.integer "home_network_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "location"
-    t.index ["email"], name: "unique_email_idx", unique: true
-    t.index ["public_name"], name: "unique_public_name_idx", unique: true
-    t.index ["user_id", "public_name"], name: "user_id_public_name_idx"
-    t.index ["user_id"], name: "unique_user_idx", unique: true
-  end
-
   create_table "social", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "relationship_id", null: false
     t.index ["relationship_id"], name: "relationship_id_idx"
@@ -1325,7 +1287,7 @@ ActiveRecord::Schema.define(version: 2019_06_04_175919) do
     t.index ["relationship_id"], name: "relationship_id_idx"
   end
 
-  create_table "unmatched_ny_filers", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "unmatched_ny_filers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "ny_filer_id", null: false
     t.integer "disclosure_count", null: false
     t.index ["disclosure_count"], name: "index_unmatched_ny_filers_on_disclosure_count"
@@ -1341,7 +1303,7 @@ ActiveRecord::Schema.define(version: 2019_06_04_175919) do
     t.index ["user_id", "resource_type"], name: "index_user_permissions_on_user_id_and_resource_type"
   end
 
-  create_table "user_profiles", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "user_profiles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "name_first"
     t.string "name_last"
@@ -1421,7 +1383,6 @@ ActiveRecord::Schema.define(version: 2019_06_04_175919) do
   add_foreign_key "address", "address_category", column: "category_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "address", "entity", name: "address_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "alias", "entity", name: "alias_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "alias", "sf_guard_user", column: "last_user_id", name: "alias_ibfk_2", on_update: :cascade
   add_foreign_key "api_request", "api_user", column: "api_key", primary_key: "api_key", name: "api_request_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "article", "article_source", column: "source_id", name: "article_ibfk_1", on_update: :cascade, on_delete: :nullify
   add_foreign_key "business", "entity", name: "business_ibfk_1", on_update: :cascade, on_delete: :cascade
@@ -1505,6 +1466,5 @@ ActiveRecord::Schema.define(version: 2019_06_04_175919) do
   add_foreign_key "transaction", "entity", column: "contact1_id", name: "transaction_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "entity", column: "contact2_id", name: "transaction_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "relationship", name: "transaction_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "user_profiles", "users"
   add_foreign_key "user_requests", "users"
 end

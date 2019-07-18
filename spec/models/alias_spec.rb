@@ -14,9 +14,10 @@ describe Alias, type: :model do
     expect(a.name).to eq 'company name'
   end
 
-  it 'updates last_user_id of entity after creating' do
-    as = Alias.new(entity: org, name: Faker::Company.name) { |a| a.current_user = current_user }
-    expect { as.save! }.to change { org.reload.last_user_id }.to(current_user.sf_guard_user_id)
+  it 'changes "updated_at" of entity after creating' do
+    org.update_columns(updated_at: 1.day.ago)
+    as = Alias.new(entity: org, name: Faker::Company.name)
+    expect { as.save! }.to change { org.reload.updated_at }
   end
 
   describe '#make_primary' do
