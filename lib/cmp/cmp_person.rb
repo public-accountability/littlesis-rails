@@ -162,7 +162,7 @@ module Cmp
     def add_alias(entity)
       fn = fetch('fullname')
       unless fn.present? && entity.also_known_as.map(&:downcase).include?(fn.downcase)
-        entity.aliases.create!(name: fn, last_user_id: Cmp::CMP_SF_USER_ID)
+        entity.aliases.create!(name: fn)
       end
     end
 
