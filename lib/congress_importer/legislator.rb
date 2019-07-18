@@ -146,8 +146,7 @@ class CongressImporter
 
     def add_alias
       unless match.also_known_as.map(&:downcase).include? dig('name', 'official_full').downcase
-        match.aliases.create!(name: dig('name', 'official_full'),
-                              last_user_id: CONGRESS_BOT_SF_USER)
+        match.aliases.create!(name: dig('name', 'official_full'))
       end
     end
 

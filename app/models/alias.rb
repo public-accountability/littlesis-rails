@@ -28,7 +28,7 @@ class Alias < ApplicationRecord
     ApplicationRecord.transaction do
       entity.primary_alias.update!(is_primary: false)
       update!(is_primary: true)
-      entity.update! LsHash.new(name: name).with_last_user(current_user_or_default)
+      entity.update!(name: name)
     end
     true
   rescue => err # rubocop:disable Style/RescueStandardError
@@ -49,10 +49,7 @@ class Alias < ApplicationRecord
   end
 
   def update_entity_timestamp
-    entity.touch_by(current_user_or_default)
+    entity.touch
   end
 
-  def current_user_or_default
-    current_user.presence || Rails.application.config.system_user_id
-  end
 end

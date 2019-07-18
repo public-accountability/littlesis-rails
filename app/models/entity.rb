@@ -101,7 +101,7 @@ class Entity < ApplicationRecord
   def create_primary_alias
     return nil if aliases.where(is_primary: true).count.positive?
     Alias.without_versioning do
-      a = Alias.new(entity: self, name: name, is_primary: true, last_user_id: last_user_id)
+      a = Alias.new(entity: self, name: name, is_primary: true)
       a.skip_update_entity_callback = true
       a.save
     end
@@ -628,7 +628,7 @@ class Entity < ApplicationRecord
     create_primary_alias
     add_extensions_by_def_ids(association_data['extension_ids'])
     association_data['aliases'].each do |name|
-      aliases.create(name: name, is_primary: false, last_user_id: Lilsis::Application.config.system_user_id)
+      aliases.create(name: name, is_primary: false)
     end
 
     association_data['tags'].each { |tag_name| add_tag_without_callbacks(tag_name) }
