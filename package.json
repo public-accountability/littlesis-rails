@@ -25,11 +25,11 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.0.0",
-    "@public-accountability/simplestore": "^0.1.5",
+    "@public-accountability/simplestore": "^0.1.6",
     "@rails/webpacker": "^4.0.7",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "immutable": "^4.0.0-rc.12",
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.15",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
