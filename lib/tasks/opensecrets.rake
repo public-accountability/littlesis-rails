@@ -37,18 +37,25 @@ namespace :opensecrets do
     printf("** There are currently %s candidates in the db **\n", OsCandidate.count)
   end
 
-  desc "import committees"
-  task import_committees: :environment do
-    ###### Encoding details ##################################################
-    # Before running, issue this db command:
-    # ALTER TABLE `littlesis`.`os_committees` CONVERT TO CHARACTER SET utf8; 
-    ########################################################################### 
+  ###### Encoding details ##################################################
+  # Before running, issue this db command:
+  # ALTER TABLE `littlesis`.`os_committees` CONVERT TO CHARACTER SET utf8;
+  ###########################################################################
+  desc 'import committees'
+  task :import_committees, [:filepath] => :environment do |t, args|
     start = Time.now
     original_committees_count = OsCommittee.count
-    Dir.foreach( Rails.root.join('data', 'cmtes') ) do |filename|
-      next if filename == '.' or filename == '..'
-      printf("Processing: %s \n", filename)
-      OsCommitteeImporter.start Rails.root.join('data', 'cmtes', filename)
+    if Dir.exist?(args[:filepath])
+      Dir.chdir(args[:filepath]) do
+        Dir["*"].each do |x|
+          filename = File.join(Dir.pwd, x)
+          ColorPrinter.print_blue "Processing: #{filename}"
+          OsCommitteeImporter.start filename
+        end
+      end
+    else
+      ColorPrinter.print_blue "Processing: #{args[:filepath]}"
+      OsCommitteeImporter.start args[:filepath]
     end
     execution_time = Time.now - start
     printf("** Import Committees took %d seconds **\n", execution_time)
