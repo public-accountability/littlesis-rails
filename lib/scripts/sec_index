@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+
+require 'pry'
+
+START_YEAR = 2017
+
+STR_HEADERS = "CIK|Company Name|Form Type|Date Filed|Filename"
+HEADERS = %w[CIK company_name form_fype date_filed filename]
+
+INDEX_FILE = File.expand_path("./sec_index_#{START_YEAR}-#{Time.current.to_date}.csv")
+
+def quarters_for(year)
+  return %w[QTR1 QTR2 QTR3 QTR4] unless year == Time.current.year
+
+  today = Time.current.to_date
+
+  if today < Date.new(today.year, 3)
+    %w[QTR1]
+  elsif today < Date.new(today.year, 6)
+    %w[QTR1 QTR2]
+  elsif today < Date.new(today.year, 9)
+    %w[QTR1 QTR2 QTR3]
+  else
+    %w[QTR1 QTR2 QTR3 QTR4]
+  end
+end
+
+def index_urls_for(year)
+  quarters_for(year).map do |qtr|
+    "https://www.sec.gov/Archives/edgar/full-index/#{year}/#{qtr}/master.gz"
+  end
+end
+
+# Gets list of all URLS based on the START_YEAR variable
+# --> [String]
+def index_urls
+  (START_YEAR..Time.current.year)
+    .map { |year| index_urls_for(year) }
+    .flatten
+end
+
+# String --> String
+def get_index(url)
+  response = HTTParty.get(url)
+  
+  Zlib::GzipReader
+    .new(StringIO.new(response.body))
+    .read
+end
+
+def parse_line(line)
+  CSV
+    .parse_line(line, quote_char: '🏦', col_sep: '|', headers: HEADERS)
+end
+
+def parse_index(url)
+  lines = get_index(url).split("\n")
+  divider_index = lines.find_index { |l| l.starts_with?('-----') }
+
+  unless lines[divider_index - 1] == STR_HEADERS
+    fail "#{url} has invalid headers"
+  end
+
+  lines
+    .slice((divider_index+1)..)
+    .map { |line| parse_line(line) }
+
+rescue ArgumentError => e
+  binding.pry
+end
+
+File.open(INDEX_FILE, 'w') { |f| f.truncate(0) }
+
+index_urls.each do |url|
+  ColorPrinter.print_blue("Parsing #{url}")
+
+  File.open(INDEX_FILE, 'a') do |file|
+    parse_index(url).each do |row|
+      file.write row.to_csv
+    end
+  end
+end
