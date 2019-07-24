@@ -32,3 +32,13 @@ sqlite3 $database_name <<INDEX_SQL
 CREATE INDEX cik_idx ON $table_name (cik);
 CREATE INDEX form_type_idx ON $table_name (form_type);
 INDEX_SQL
+
+
+sqlite3 $database_name <<DOCUMENTS_SQL
+DROP TABLE IF EXISTS documents;
+
+CREATE TABLE documents (
+             filename TEXT,
+	     data TEXT
+);
+DOCUMENTS_SQL
