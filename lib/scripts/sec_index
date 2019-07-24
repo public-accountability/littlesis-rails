@@ -1,11 +1,10 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-require 'pry'
+START_YEAR = 2014
 
-START_YEAR = 2017
-
-STR_HEADERS = "CIK|Company Name|Form Type|Date Filed|Filename"
-HEADERS = %w[CIK company_name form_fype date_filed filename]
+STR_HEADERS = 'CIK|Company Name|Form Type|Date Filed|Filename'
+HEADERS = %w[CIK company_name form_fype date_filed filename].freeze
 
 INDEX_FILE = File.expand_path("./sec_index_#{START_YEAR}-#{Time.current.to_date}.csv")
 
@@ -42,7 +41,7 @@ end
 # String --> String
 def get_index(url)
   response = HTTParty.get(url)
-  
+
   Zlib::GzipReader
     .new(StringIO.new(response.body))
     .read
@@ -64,7 +63,7 @@ def parse_index(url)
   end
 
   lines
-    .slice((divider_index+1)..)
+    .slice((divider_index + 1)..)
     .map { |line| parse_line(line) }
 end
 
