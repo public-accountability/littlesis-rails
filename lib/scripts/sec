@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'optparse'
+
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: --cik [CIK NUMBER] [options]'
+
+  opts.on('-c', '--cik=CIK', "The company's CIK number")
+
+end.parse!(into: options)
+
+raise OptionParser::MissingArgument.new('CIK') if options[:cik].nil?
+
+
