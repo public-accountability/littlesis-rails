@@ -99,5 +99,7 @@ gem 'text', '>= 1.3.1'
 
 gem 'httparty', '>= 0.16.2'
 
+gem 'sqlite3', :require => false
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.3', require: false
