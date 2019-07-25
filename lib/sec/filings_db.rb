@@ -23,14 +23,26 @@ module Sec
 
     def filings_for(cik)
       execute <<-SQL
-        SELECT form_type, date_filed, filename
+        SELECT filings.form_type,
+               filings.date_filed,
+               filings.filename,
+               documents.data
         FROM filings
+        LEFT JOIN documents on documents.filename = filings.filename
         WHERE cik = '#{cik.sub(/^0+/, '')}'
           AND form_type IN #{ApplicationRecord.sqlize_array(@options.fetch(:forms))}
         ORDER BY date_filed DESC
       SQL
     end
 
+    def fetch_document(filename)
+      db.execute("SELECT data from documents WHERE filename = ?", [filename])
+        &.first&.first
+    end
+
+    def insert_document(filename:, data:)
+      db.execute("INSERT INTO documents (filename, data) VALUES(?, ?)", [filename, data])
+    end
 
     # Class Methods #
 
