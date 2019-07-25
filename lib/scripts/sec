@@ -1,12 +1,7 @@
 #!/usr/bin/env -S rails runner
 # frozen_string_literal: true
 
-require 'sqlite3'
-
-options = {
-  forms: %w[3 4],
-  database: File.expand_path('./sec_filings.db')
-}
+options = {}
 
 OptionParser.new do |opts|
   opts.banner = 'Usage: --cik [CIK NUMBER] [options]'
@@ -15,27 +10,15 @@ OptionParser.new do |opts|
   opts.on('--forms [FORMS]', Array, 'comma separated list of forms')
   opts.on('-p', '--print', 'output list of forms')
   opts.on('--database [DATABASE]', 'path to sec filings database')
-
 end.parse!(into: options)
 
 raise OptionParser::MissingArgument.new('CIK') if options[:cik].nil?
 
-# remove leading zeros from CIK
-options[:cik].sub!(/^0+/, '')
-
-db = SQLite3::Database.new(options[:database], { :readonly => true })
+db = Sec::FilingsDb.new options.slice(:forms, :database)
 
 if options[:print]
-  sql = <<-SQL
-    SELECT form_type, date_filed, filename
-    FROM filings
-    WHERE cik = '#{options[:cik]}'
-          AND form_type IN #{ApplicationRecord.sqlize_array(options[:forms])}
-  SQL
-
-  printf "form_type\tdate_filed\tfilename\n"
-
-  db.execute(sql) { |row| puts row.join("\t") }
+  Sec::FilingsDb.print(db.filings_for(options[:cik]),
+                       %w[form_type date_filed filename])
 end
 
 db.close
