@@ -23,11 +23,13 @@ module Sec
       end
     end
 
+    def roster
+      @roster ||= Sec::Roster.new(self)
+    end
+
     def db
       @db ||= FilingsDb.new
     end
 
-    def roster
-    end
   end
 end
