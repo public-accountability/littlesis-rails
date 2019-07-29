@@ -25,6 +25,5 @@ module Sec
     def db
       @db ||= FilingsDb.new
     end
-
   end
 end
