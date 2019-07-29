@@ -18,7 +18,7 @@ db = Sec::FilingsDb.new options.slice(:forms, :database)
 
 if options[:print]
   Sec::FilingsDb.print(db.filings_for(options[:cik]),
-                       %w[form_type date_filed filename])
+                       fields: %i[form_type date_filed filename])
 end
 
 db.close

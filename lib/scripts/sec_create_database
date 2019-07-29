@@ -38,7 +38,10 @@ sqlite3 $database_name <<DOCUMENTS_SQL
 DROP TABLE IF EXISTS documents;
 
 CREATE TABLE documents (
-             filename TEXT,
+             filename TEXT UNIQUE,
 	     data TEXT
 );
+
+CREATE INDEX documents_filename_idx ON documents (filename);
+
 DOCUMENTS_SQL
