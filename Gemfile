@@ -101,5 +101,7 @@ gem 'httparty', '>= 0.16.2'
 
 gem 'sqlite3', :require => false
 
+gem 'nokogiri'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.3', require: false

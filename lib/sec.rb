@@ -20,7 +20,6 @@ module Sec
     'NFLX' => '0001065280'
   }.with_indifferent_access.freeze
 
-
   def self.verify_cik!(cik)
     raise InvalidCikNumber unless cik.present? && CIK_REGEX.match?(cik)
   end
