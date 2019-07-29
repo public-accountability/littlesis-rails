@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module Sec
   FILING_FIELDS = %i[cik company_name form_type date_filed filename data db].freeze
 
@@ -9,6 +8,10 @@ module Sec
       @url = "https://www.sec.gov/Archives/#{filename}"
 
       download_and_save_data(db) unless data.present?
+    end
+
+    def document
+      @document ||= Sec::Document.new(form_type: form_type, data: data)
     end
 
     private
