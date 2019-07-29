@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Sec
   FILING_FIELDS = %i[cik company_name form_type date_filed filename data db].freeze
 
@@ -12,7 +13,7 @@ module Sec
 
     def to_h
       document.to_h
-        .merge(filname: filename, form_type: form_type, url: @url)
+        .merge(filename: filename, form_type: form_type, url: @url)
     end
 
     def document
@@ -29,7 +30,7 @@ module Sec
         if db.nil?
           Rails.logger.warn('Sec::Filing') { 'Missing Database; not saving sec filing' }
         else
-          db.insert_document(**to_h.slice(:filename, :data))
+          db.insert_document(filename: filename, data: data)
         end
       end
     end

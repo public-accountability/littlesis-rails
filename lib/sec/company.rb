@@ -18,6 +18,14 @@ module Sec
       end
     end
 
+    # without this `select`, #filings will also include 
+    # documents where the company is reporting owner and
+    # not the issuer.
+    def self_filings
+      filings
+        .select { |f| f.to_h.dig(:issuer, :cik) == @cik }
+    end
+
     def form4s
       filings.select { |f| f.form_type == '4' }
     end
