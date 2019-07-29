@@ -19,7 +19,10 @@ describe Sec do
     end
 
     it 'setups db' do
-      expect(SQLite3::Database).to receive(:new).with('/tmp/db', readonly: false).once
+      expect(SQLite3::Database).to receive(:new).with('/tmp/db',
+                                                      readonly: false,
+                                                      results_as_hash: true
+                                                     ).once
       Sec::FilingsDb.new(database: '/tmp/db')
     end
 

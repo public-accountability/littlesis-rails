@@ -14,12 +14,7 @@ module Sec
       return @filings if defined?(@filings)
 
       @filings = db.filings_for(@cik).map do |row|
-        Filing.new(form_type: row[0],
-                   date_filed: row[1],
-                   filename: row[2],
-                   data: row[3],
-                   cik: @cik,
-                   db: db)
+        Filing.new row.symbolize_keys.merge(db: db)
       end
     end
 

@@ -1,32 +1,24 @@
 # frozen_string_literal: true
 
 module Sec
-  class Filing
-    attr_reader :form_type,
-                :date_filed,
-                :filename,
-                :data,
-                :cik,
-                :url
+  FILING_FIELDS = %i[cik company_name form_type date_filed filename data db].freeze
 
-    def initialize(form_type:, date_filed:, filename:, cik:, data:, db: nil)
-      @form_type = form_type
-      @date_filed = date_filed
-      @filename = filename
+  Filing = Struct.new(*FILING_FIELDS, :keyword_init => true) do
+    def initialize(*args)
+      super(*args)
       @url = "https://www.sec.gov/Archives/#{filename}"
-      @cik = cik
 
-      download_and_save_data(db) unless (@data = data)
+      download_and_save_data(db) unless data.present?
     end
 
     private
 
     def download_and_save_data(db)
-      if (@data = download)
+      if (self.data = download)
         if db.nil?
-          Rails.logger.warn('Sec::Filing') { "Missing Database; not saving sec filing" }
+          Rails.logger.warn('Sec::Filing') { 'Missing Database; not saving sec filing' }
         else
-          db.insert_document(filename: @filename, data: @data)
+          db.insert_document(**to_h.slice(:filename, :data))
         end
       end
     end
@@ -40,6 +32,6 @@ module Sec
         Rails.logger.warn('Sec::Filing') { "failed to download #{@url}" }
         nil
       end
-    end 
+    end
   end
 end
