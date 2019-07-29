@@ -10,8 +10,16 @@ module Sec
       download_and_save_data(db) unless data.present?
     end
 
+    def to_h
+      document.to_h
+        .merge(filname: filename, form_type: form_type, url: @url)
+    end
+
     def document
-      @document ||= Sec::Document.new(form_type: form_type, data: data)
+      if form_type == '4'
+        @document ||= Sec::Form4.new(data)
+      end
+      # @document ||= Sec::Document.new(form_type: form_type, data: data)
     end
 
     private

@@ -18,6 +18,10 @@ module Sec
       end
     end
 
+    def form4s
+      filings.select { |f| f.form_type == '4' }
+    end
+
     def roster
       @roster ||= Sec::Roster.new(self)
     end

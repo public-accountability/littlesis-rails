@@ -69,7 +69,7 @@ module Sec
       return nil if val.nil?
 
       if converter == :boolean
-        val == '1'
+        %w[t true yes y 1].include? val.downcase
       else
         val
       end
