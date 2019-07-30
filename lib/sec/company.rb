@@ -14,20 +14,28 @@ module Sec
       return @filings if defined?(@filings)
 
       @filings = db.filings_for(@cik).map do |row|
-        Filing.new(form_type: row[0],
-                   date_filed: row[1],
-                   filename: row[2],
-                   data: row[3],
-                   cik: @cik,
-                   db: db)
+        Filing.new row.symbolize_keys.merge(db: db)
       end
+    end
+
+    # without this `select`, #filings will also include 
+    # documents where the company is reporting owner and
+    # not the issuer.
+    def self_filings
+      filings
+        .select { |f| f.to_h.dig(:issuer, :cik) == @cik }
+    end
+
+    def form4s
+      filings.select { |f| f.form_type == '4' }
+    end
+
+    def roster
+      @roster ||= Sec::Roster.new(self)
     end
 
     def db
       @db ||= FilingsDb.new
-    end
-
-    def roster
     end
   end
 end

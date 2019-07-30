@@ -17,15 +17,15 @@ module Sec
 
     def initialize(options = {})
       @options = DEFAULTS.merge(options)
-      @db = SQLite3::Database.new(@options[:database],
-                                  @options.slice(:readonly))
+      @db = SQLite3::Database.new(
+        @options[:database],
+        @options.slice(:readonly).merge(results_as_hash: true)
+      )
     end
 
     def filings_for(cik)
       execute <<-SQL
-        SELECT filings.form_type,
-               filings.date_filed,
-               filings.filename,
+        SELECT filings.*,
                documents.data
         FROM filings
         LEFT JOIN documents on documents.filename = filings.filename
@@ -46,9 +46,14 @@ module Sec
 
     # Class Methods #
 
-    def self.print(rows, headers, sep: "\t")
+    def self.print(rows, sep: "\t", fields: nil)
+      headers = fields.present? ? fields : rows.first.keys
+      
       puts headers.join(sep)
-      rows.each { |r| puts r.join(sep) }
+
+      rows.each do |r|
+        puts r.to_h.symbolize_keys.values_at(*headers).join(sep)
+      end
     end
   end
 end
