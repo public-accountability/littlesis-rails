@@ -10,12 +10,12 @@ module Sec
     end
 
     # Generates a hash where the key is the CIK of the owner and the value is an array
-    # contains hashes with selected information from the SEC filing
+    # contains hashes with information from the  SEC filing
     def roster
       @company.self_filings.map(&:to_h).each_with_object(Hash.new { [] }) do |filing, obj|
         # a single filing can have multiple reporting owners
         filing[:reporting_owners].each do |owner|
-          # add two fields from the outer filing
+          # add two fields from the filing
           owner_hash = owner.merge(filing.slice(:filename, :period_of_report))
           # add the hash to the array
           obj.store owner[:cik], obj[owner[:cik]] << owner_hash
@@ -25,7 +25,8 @@ module Sec
       end
     end
 
-    # Outputs an Array with tabular information from the filings
+    # Outputs an array with tabular information from the filings
+    # Uses the latest filing for most information such as "is_director"
     def spreadsheet
       to_h.map do |cik, filings|
         {
@@ -38,11 +39,9 @@ module Sec
           officer_title: filings.first.fetch(:officer_title),
           is_director: filings.first.fetch(:is_director),
           is_officer: filings.first.fetch(:is_officer),
-          is_ten_percent: filings.first.fetch(:is_ten_percent),
+          is_ten_percent: filings.first.fetch(:is_ten_percent)
         }
       end
     end
-
-    
   end
 end
