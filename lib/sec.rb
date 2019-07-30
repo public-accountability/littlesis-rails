@@ -14,11 +14,31 @@
 module Sec
   CIK_REGEX = /^[[:digit:]]{10}$/.freeze
 
+  # A mapping between tickers and CIKs,
+  # and, helped by a gratuitous use of `tap` and `defined_singleton_method`,
+  # an easy way to get an examples instance of Sec::Company.
+  #
+  # Example:
+  #   Sec::CIK.JPM --> Sec::Company instance for JP. Morgan Chase.
+  #
+  # it's useful for debugging and exploring the data in the terminal.
   CIKS = {
     'GS' => '0000886982',
     'JPM' => '0000019617',
-    'NFLX' => '0001065280'
-  }.with_indifferent_access.freeze
+    'NFLX' => '0001065280',
+    'EEP' => '0000880285',
+    'AMZN' => '0001018724'
+  }.tap do |h|
+    h.keys.each do |ticker|
+      h.define_singleton_method(ticker) do
+        Sec.database.company(h[ticker])
+      end
+    end
+  end.freeze
+
+  def self.database(*args)
+    @database ||= Sec::FilingsDb.new(*args)
+  end
 
   def self.verify_cik!(cik)
     raise InvalidCikNumber unless cik.present? && CIK_REGEX.match?(cik)
