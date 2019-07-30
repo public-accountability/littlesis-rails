@@ -16,6 +16,8 @@ end.parse!(into: options)
 
 raise OptionParser::MissingArgument.new('CIK') if options[:cik].nil?
 
+options[:cik] = options[:cik].rjust(10, '0')
+
 db = Sec::FilingsDb.new options.slice(:forms, :database)
 
 if options[:print] && options[:forms]
