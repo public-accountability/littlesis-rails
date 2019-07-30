@@ -5,6 +5,13 @@ module Sec
   # intended to discourage insider trading.
   # 
   class BeneficialOwnershipForm
+
+    # def self.create_from_filing(filing)
+    #   TypeCheck.check filing, Sec::Filing
+
+    #   new(filing.data
+    # end
+    
     attr_reader :data, :xml, :hash
 
     delegate_missing_to :@hash

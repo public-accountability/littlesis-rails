@@ -11,7 +11,7 @@ OptionParser.new do |opts|
   opts.on('-p', '--print', 'output list of forms')
   opts.on('--roster', 'output a list roster of names found on filings')
   opts.on('--json', 'outputs json (when combined with --roster)')
-  opts.on('--database [DATABASE]', 'path to sec filings database')
+  opts.on('--path [DATABASE]', 'path to sec filings database')
   opts.on('--list-example-ciks', 'print list of example ciks to use')
 end.parse!(into: options)
 
@@ -28,7 +28,7 @@ end
 
 options[:cik] = options[:cik].rjust(10, '0')
 
-db = Sec::FilingsDb.new options.slice(:forms, :database)
+db = Sec::FilingsDb.new options.slice(:forms, :path)
 
 if options[:print] && options[:forms]
   Sec::FilingsDb.print(db.filings_for(options[:cik]),

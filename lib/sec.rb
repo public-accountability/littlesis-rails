@@ -11,6 +11,24 @@
 # After create database with this command:
 #   $ lib/scripts/sec_create_database
 #
+# The database that's built contains two tables with the following structure:
+#
+#  filings (
+#      cik TEXT,
+#      company_name TEXT,
+#      form_type TEXT,
+#      date_filed DATE,
+#      filename TEXT
+#   )
+#  
+# documents (
+#     filename TEXT UNIQUE,
+#     data TEXT
+# )
+#
+# In the object initialization of Sec::Filings, if the data is missing from the documents table, an HTTP request is sent to sec.gov to retrieve the document (an XML file) and save it to the database.
+#
+# 
 module Sec
   CIK_REGEX = /^[[:digit:]]{10}$/.freeze
 

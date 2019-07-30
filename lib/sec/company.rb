@@ -13,12 +13,10 @@ module Sec
     def filings
       return @filings if defined?(@filings)
 
-      @filings = db.filings_for(@cik).map do |row|
-        Filing.new row.symbolize_keys.merge(db: db)
-      end
+      @filings = db.filings_for(@cik).
     end
 
-    # without this `select`, #filings will also include 
+    # without this `select`, #filings will also include
     # documents where the company is reporting owner and
     # not the issuer.
     def self_filings
