@@ -12,15 +12,19 @@ module Sec
     end
 
     def to_h
+      # reminder: nil.to_h == {}
+      # form_type=3 is currently nil and not parsed.
       document.to_h
         .merge(filename: filename, form_type: form_type, url: @url)
     end
 
+    # parsed document 
     def document
-      if form_type == '4'
-        @document ||= Sec::Form4.new(data)
+      if ['3', '4'].include? form_type
+        @document ||= Sec::BeneficialOwnershipForm.new(data)
+      else
+        raise ArgumentError, "Cannot parse form type: #{form_type}"
       end
-      # @document ||= Sec::Document.new(form_type: form_type, data: data)
     end
 
     private

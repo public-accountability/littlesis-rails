@@ -46,17 +46,18 @@ describe Sec do
     end
   end # end FilingsDb
 
-  describe Sec::Form4 do
+  describe Sec::BeneficialOwnershipForm do
     describe 'Netflix - single owner on doc' do
       let(:xml_data) do
         File.read Rails.root.join('spec', 'testdata', 'sec', 'netflix.xml')
       end
 
-      let(:form4) { Sec::Form4.new(xml_data) }
+      let(:form4) { Sec::BeneficialOwnershipForm.new(xml_data) }
 
       specify do
         expect(form4.to_h)
           .to eq(period_of_report: '2019-07-22',
+                 form_type: '4',
                  issuer: {
                    cik: '0001065280',
                    name: 'NETFLIX INC',
@@ -87,14 +88,30 @@ describe Sec do
         File.read Rails.root.join('spec', 'testdata', 'sec', 'avantor.xml')
       end
 
-      let(:form4) { Sec::Form4.new(xml_data) }
+      let(:form4) { Sec::BeneficialOwnershipForm.new(xml_data) }
+
+      specify do
+        expect(form4.to_h.fetch(:form_type)).to eq '4'
+      end
 
       specify do
         expect(form4.to_h.fetch(:reporting_owners).map { |o| o[:cik] })
           .to eql %w[0000769993 0000886982 0001698770 0001698772 0001729503 0001575993 0001708241 0001729502 0001615636]
       end
     end
-  end # end Sec::Form4
+
+    describe 'goldman sachs - form 3' do
+      let(:xml_data) do
+        File.read Rails.root.join('spec', 'testdata', 'sec', 'goldman.xml')
+      end
+
+      let(:form3) { Sec::BeneficialOwnershipForm.new(xml_data) }
+
+      specify do
+        expect(form3.to_h.fetch(:form_type)).to eq '3'
+      end
+    end
+  end # end Sec::BeneficialOwnershipForm
 
   describe Sec::Company do
     let(:db) do

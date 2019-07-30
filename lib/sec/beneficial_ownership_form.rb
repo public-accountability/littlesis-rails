@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 module Sec
-  class Form4
+  # SEC forms 3,4,5 are all changes in "beneficial ownership"
+  # intended to discourage insider trading.
+  # 
+  class BeneficialOwnershipForm
     attr_reader :data, :xml, :hash
 
-    delegate :to_h, :to_hash, :to_json, :as_json, to: :@hash
+    delegate_missing_to :@hash
 
     # Data is an XML string
     def initialize(data)
@@ -20,6 +23,7 @@ module Sec
     def parse
       {
         period_of_report: extract('periodOfReport'),
+        form_type: extract('documentType'),
         issuer: issuer,
         reporting_owners: reporting_owners,
         signatures: signatures
