@@ -44,6 +44,12 @@ module Sec
       db.execute("INSERT INTO documents (filename, data) VALUES(?, ?)", [filename, data])
     end
 
+    # convenience method for:
+    #   Sec::Company.new(cik, db: db)
+    def company(cik)
+      Sec::Company.new(cik, db: self)
+    end
+
     # Class Methods #
 
     def self.print(rows, sep: "\t", fields: nil)
