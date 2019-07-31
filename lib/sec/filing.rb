@@ -2,6 +2,21 @@
 
 module Sec
   class Filing
+    class MissingDocumentError < StandardError; end
+
+    # Input: string (url)
+    # output: string OR nil
+    def self.download(url)
+      Rails.logger.debug('Sec::Filing') { "Downloading #{url}" }
+      res = HTTParty.get(url, headers: { 'User-Agent' => '' })
+      if res.success?
+        res.body
+      else
+        Rails.logger.warn('Sec::Filing') { "failed to download #{url}" }
+        nil
+      end
+    end
+
     attr_reader :metadata, :data, :document, :url
     attr_accessor :download, :db
 
@@ -13,9 +28,13 @@ module Sec
       @url = "https://www.sec.gov/Archives/#{@metadata.fetch(:filename)}"
       @db = db
       @download = download
-      # set_document
+      set_document
     end
 
+    def type
+      @metadata.fetch(:form_type)
+    end
+    
     # This returns a hash with two fields: metadata & document
     # Both are hashes. `@data` is not included because the parsed data
     # is what constitutes  `document`
@@ -44,7 +63,7 @@ module Sec
 
       if (@data = self.class.download(@url))
         set_document
-        
+
         if db.nil?
           Rails.logger.warn('Sec::Filing') { 'Missing Database; not saving sec filing' }
         else
@@ -52,21 +71,5 @@ module Sec
         end
       end
     end
-
-    # Input: string (url)
-    # output: string OR nil
-    def self.download(url)
-      Rails.logger.debug('Sec::Filing') { "Downloading #{url}" }
-      res = HTTParty.get(url, headers: { 'User-Agent' => '' })
-      if res.success?
-        res.body
-      else
-        Rails.logger.warn('Sec::Filing') { "failed to download #{url}" }
-        nil
-      end
-    end
-
-    class MissingDocumentError < StandardError;end
   end
 end
-

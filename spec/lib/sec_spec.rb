@@ -23,6 +23,10 @@ describe Sec do
     File.read Rails.root.join('spec', 'testdata', 'sec', '0000034088-19-000032.txt').to_s
   end
 
+  let(:avantor_xml) do
+    File.read Rails.root.join('spec', 'testdata', 'sec', '0000769993-19-000383.txt').to_s
+  end
+
   describe 'verify_cik!' do
     specify do
       expect { Sec.verify_cik!('') }.to raise_error(Sec::InvalidCikNumber)
@@ -63,7 +67,7 @@ describe Sec do
         expect(test_db.forms(cik: Sec::CIKS.fetch('GS')).length).to eq(3)
       end
 
-      it 'retrives filings for Netflix' do
+      it 'retrieves filings for Netflix' do
         expect(test_db.forms(cik: "0001065280").length).to eq(1)
       end
 
@@ -136,6 +140,10 @@ describe Sec do
             .to eql("issuerCik" => "0000886982", "issuerName" => "GOLDMAN SACHS GROUP INC", "issuerTradingSymbol" => "GS")
         expect(document.period_of_report).to eq "2014-02-03-05:00"
       end
+
+      it 'wraps reporting owner in an array'  do
+        expect(document.reporting_owners.length).to eq 1
+      end
     end
 
     context 'with form 8k' do
@@ -154,21 +162,87 @@ describe Sec do
         expect(document.hash).to be nil
       end
     end
+
+    describe 'avantor = multiple owners' do
+      let(:metadata) do
+         { "cik" => "886982",
+           "company_name" => "GOLDMAN SACHS GROUP INC",
+           "form_type" => "4",
+           "date_filed" => "2019-05-21",
+           "filename" => "edgar/data/886982/0000769993-19-000383.txt",
+           "data" => nil }
+      end
+
+      let(:filing) do
+        Sec::Filing.new(metadata: metadata, data: avantor_xml)
+      end
+
+      specify do
+        expect(filing.document.type).to eq '4'
+      end
+
+      specify do
+        expect(filing.document.reporting_owners.length).to eq 9
+      end
+
+      specify do
+        expect(filing.document.reporting_owners.map { |o| o.dig("reportingOwnerId", "rptOwnerCik") })
+          .to eql %w[0000769993 0000886982 0001698770 0001698772 0001729503 0001575993 0001708241 0001729502 0001615636]
+      end
+    end
   end
 
-    # specify do
-    #   expect(document.type).to eq '4'
-    # end
+  describe Sec::Company do
+    it 'has 3 goldman filings' do
+      expect(test_db.company(Sec::CIKS.fetch('GS')).filings.length).to eq 3
+    end
+  end
 
-    # specify do
-    #   expect(document.issuer)
-    #     .to eql({"issuerCik" => "0000886982", "issuerName" => "GOLDMAN SACHS GROUP INC", "issuerTradingSymbol" => "GS"})
-    # end
+  # describe Sec::ReportingOwner do
 
-    # specify do
-    #   expect(document.period_of_report).to eq "2014-02-03-05:00"
-    # end
+    
   # end
+
+  describe Sec::Roster do
+    let(:netflix_cik) { '0001065280' }
+
+    let(:roster_hash) do
+      {
+        "0001082906" => [
+          { "reportingOwnerId" => {
+              "rptOwnerCik" => "0001082906",
+              "rptOwnerName" => "HOAG JAY C"
+            },
+            "reportingOwnerAddress" => {
+              "rptOwnerStreet1" => "C/O TECHNOLOGY CROSSOVER VENTURES",
+              "rptOwnerStreet2" => "528 RAMONA STREET",
+              "rptOwnerCity" => "PALO ALTO",
+              "rptOwnerState" => "CA",
+              "rptOwnerZipCode" => "94301",
+              "rptOwnerStateDescription" => nil
+            },
+            "reportingOwnerRelationship" => {
+              "isDirector" => "1",
+              "isOfficer" => "0",
+              "isTenPercentOwner" => "0",
+              "isOther" => "0"
+            },
+            "metadata" => {
+              'cik' => "1065280",
+              'company_name' => "NETFLIX INC",
+              'form_type' => "4",
+              'date_filed' => "2014-10-03",
+              'filename' => "edgar/data/1065280/0001082906-14-000050.txt"
+            }
+          }
+        ]
+      }
+    end
+    specify do
+      expect(test_db.company(netflix_cik).roster.to_h).to eq roster_hash
+    end
+  end
+end
 
 #   describe Sec::BeneficialOwnershipForm do
 #     describe 'Netflix - single owner on doc' do
@@ -236,49 +310,3 @@ describe Sec do
 #       end
 #     end
 #   end # end Sec::BeneficialOwnershipForm
-
-#   describe Sec::Company do
-#     let(:db) do
-#       Sec::Database.new(path: test_db_path, readonly: true)
-#     end
-
-#     before do
-#       allow(db).to receive(:insert_document)
-#     end
-
-#     it 'has 3 goldman filings' do
-#       expect(db.company(Sec::CIKS.fetch('GS')).filings.length).to eq 3
-#     end
-
-#     it 'has a goldman self filings' do
-#       expect(db.company(Sec::CIKS.fetch('GS')).self_filings.length).to eq 1
-#     end
-#   end
-
-#   describe Sec::Roster do
-#     let(:db) do
-#       Sec::Database.new(path: test_db_path, readonly: true)
-#     end
-
-#     let(:netflix_cik) { '0001065280' }
-
-#     before do
-#       allow(db).to receive(:insert_document)
-#     end
-
-#     specify do
-#       expect(db.company(netflix_cik).roster.to_h)
-#         .to eq('0001082906' => [{
-#                                   :cik => '0001082906',
-#                                   :name => 'HOAG JAY C',
-#                                   :is_director => true,
-#                                   :is_officer => false,
-#                                   :is_ten_percent => false,
-#                                   :is_other => false,
-#                                   :officer_title => nil,
-#                                   :filename => 'edgar/data/1065280/0001082906-14-000050.txt',
-#                                   :period_of_report => '2014-10-01'
-#                                 }])
-#     end
-#   end
-end

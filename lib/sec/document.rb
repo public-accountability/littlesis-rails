@@ -35,6 +35,18 @@ module Sec
       freeze
     end
 
+    # helper methods to extract information. Only works on Form 3s and Form 4s
+
+    def issuer?(cik)
+      Sec.verify_cik! cik
+
+      issuer.fetch('issuerCik') == cik
+    end
+
+    def reporting_owners
+      Array.wrap dig('ownershipDocument', 'reportingOwner')
+    end
+
     def issuer
       dig 'ownershipDocument', 'issuer'
     end

@@ -12,17 +12,22 @@ module Sec
     # Generates a hash where the key is the CIK of the owner and the value is an array
     # contains hashes with information from the  SEC filing
     def roster
-      @company.self_filings.map(&:to_h).each_with_object(Hash.new { [] }) do |filing, obj|
-        # a single filing can have multiple reporting owners
-        filing[:reporting_owners].each do |owner|
-          # add two fields from the filing
-          owner_hash = owner.merge(filing.slice(:filename, :period_of_report))
-          # add the hash to the array
-          obj.store owner[:cik], obj[owner[:cik]] << owner_hash
-          # sort array by period of report descending
-          obj[owner[:cik]].sort! { |a, b| b[:period_of_report] <=> a[:period_of_report] }
-        end
+      roster_hash = Hash.new { [] }
+
+      @company
+        .filings
+        .select { |f| ['3', '4'].include?(f.type) }
+        .select { |f| f.document.issuer?(@company.cik) }
+        .each do |filing|
+          filing.document.reporting_owners.each do |owner|
+            owner_cik = owner.fetch("reportingOwnerId").fetch("rptOwnerCik")
+            # add the metadata from the filing
+            owner_hash = owner.merge('metadata' => filing.metadata.stringify_keys)
+            # add the hash to the array
+            roster_hash.store owner_cik, roster_hash[owner_cik] << owner_hash
+          end
       end
+      roster_hash
     end
 
     # Outputs an array with tabular information from the filings
