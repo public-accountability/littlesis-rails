@@ -19,6 +19,10 @@ describe Sec do
     File.read Rails.root.join('spec', 'testdata', 'sec', '0000769993-14-000090.txt').to_s
   end
 
+  let(:form8k_xml) do
+    File.read Rails.root.join('spec', 'testdata', 'sec', '0000034088-19-000032.txt').to_s
+  end
+
   describe 'verify_cik!' do
     specify do
       expect { Sec.verify_cik!('') }.to raise_error(Sec::InvalidCikNumber)
@@ -109,23 +113,62 @@ describe Sec do
   end
 
   describe Sec::Document do
-    let(:document) do
-      Sec::Document.create(form4_xml)
+    context 'with form 4 document' do
+      let(:document) { Sec::Document.new(form4_xml) }
+
+      it 'set @data' do
+        expect(document.data).to eq form4_xml
+      end
+      
+      it 'sets @text and @document' do
+        expect(document.text).to be_a String
+        expect(document.document).to be_a Nokogiri::XML::Document
+      end
+
+      it 'set @hash' do
+        expect(document.hash).to be_a Hash
+        expect(document.hash.key?('ownershipDocument')).to be true
+      end
+
+      it 'returns issuer, type, period_of_report' do
+        expect(document.type).to eq('4')
+        expect(document.issuer)
+            .to eql("issuerCik" => "0000886982", "issuerName" => "GOLDMAN SACHS GROUP INC", "issuerTradingSymbol" => "GS")
+        expect(document.period_of_report).to eq "2014-02-03-05:00"
+      end
     end
 
-    specify do
-      expect(document.type).to eq '4'
-    end
+    context 'with form 8k' do
+      let(:document) { Sec::Document.new(form8k_xml) }
 
-    specify do
-      expect(document.issuer)
-        .to eql({"issuerCik" => "0000886982", "issuerName" => "GOLDMAN SACHS GROUP INC", "issuerTradingSymbol" => "GS"})
-    end
+      it 'set @data' do
+        expect(document.data).to eq form8k_xml
+      end
+      
+      it 'sets @text and @document' do
+        expect(document.text).to be_a String
+        expect(document.document).to be_a Nokogiri::HTML::Document
+      end
 
-    specify do
-      expect(document.period_of_report).to eq "2014-02-03-05:00"
+      it 'hash is nil' do
+        expect(document.hash).to be nil
+      end
     end
   end
+
+    # specify do
+    #   expect(document.type).to eq '4'
+    # end
+
+    # specify do
+    #   expect(document.issuer)
+    #     .to eql({"issuerCik" => "0000886982", "issuerName" => "GOLDMAN SACHS GROUP INC", "issuerTradingSymbol" => "GS"})
+    # end
+
+    # specify do
+    #   expect(document.period_of_report).to eq "2014-02-03-05:00"
+    # end
+  # end
 
 #   describe Sec::BeneficialOwnershipForm do
 #     describe 'Netflix - single owner on doc' do
