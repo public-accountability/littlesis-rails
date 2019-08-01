@@ -43,15 +43,15 @@ module Sec
     #  The rest of the fields are called "metadata" by Sec::Filing
     def forms(cik: nil, form_types: nil, limit: 20, offset: 0)
       form_types_sql = case form_types
-                      when Array
-                        "form_type IN #{ApplicationRecord.sqlize_array(form_types)}"
-                      when String
-                        "form_type IN #{ApplicationRecord.sqlize_array([form_types])}"
-                      else
-                        "form_type IN #{ApplicationRecord.sqlize_array(@forms)}"
+                       when Array
+                         "form_type IN #{ApplicationRecord.sqlize_array(form_types)}"
+                       when String
+                         "form_type IN #{ApplicationRecord.sqlize_array([form_types])}"
+                       else
+                         "form_type IN #{ApplicationRecord.sqlize_array(@forms)}"
                        end
 
-      cik_sql = cik.present? ? "cik = '#{cik.sub(/^0+/, '')}'" : 'TRUE'
+      cik_sql = cik.present? ? "cik = '#{cik.sub(/^0+/, '')}'" : '1'
 
       execute <<-SQL
         SELECT filings.*,
