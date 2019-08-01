@@ -34,10 +34,10 @@ module Sec
     def type
       @metadata.fetch(:form_type)
     end
-    
+
     # This returns a hash with two fields: metadata & document
     # Both are hashes. `@data` is not included because the parsed data
-    # is what constitutes  `document`
+    # is what constitutes `document`
     def to_h
       download_and_save_data if @download
       raise MissingDocumentError if @data.blank?

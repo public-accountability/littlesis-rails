@@ -16,11 +16,11 @@ module Sec
 
       @company
         .filings
-        .select { |f| ['3', '4'].include?(f.type) }
+        .select { |f| %w[3 4].include?(f.type) }
         .select { |f| f.document.issuer?(@company.cik) }
         .each do |filing|
           filing.document.reporting_owners.each do |owner|
-            owner_cik = owner.fetch("reportingOwnerId").fetch("rptOwnerCik")
+            owner_cik = owner.fetch('reportingOwnerId').fetch('rptOwnerCik')
             # add the metadata from the filing
             owner_hash = owner.merge('metadata' => filing.metadata.stringify_keys)
             # add the hash to the array

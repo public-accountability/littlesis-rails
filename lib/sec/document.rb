@@ -28,7 +28,7 @@ module Sec
         @text = HTML_REGEX.match(data)[1]
         @document = Nokogiri::HTML(@text)
         # right now we don't parse edgar documents that contain HTML
-        # document.hash = 
+        # document.hash =
       else
         raise InvalidDocumentError
       end

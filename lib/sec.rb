@@ -8,8 +8,8 @@
 #   $ lib/scripts/sec_download_index
 # This will produce a csv that starts with "sec_index"
 #
-# After create database with this command:
-#   $ lib/scripts/sec_create_database
+# Then create database with this command:
+#   $ lib/scripts/sec_create_database [path/to/sec_index.csv]
 #
 # The database that's built contains two tables with the following structure:
 #
@@ -20,15 +20,16 @@
 #      date_filed DATE,
 #      filename TEXT
 #   )
-#  
+#
 # documents (
 #     filename TEXT UNIQUE,
 #     data TEXT
 # )
 #
-# In the object initialization of Sec::Filings, if the data is missing from the documents table, an HTTP request is sent to sec.gov to retrieve the document (an XML file) and save it to the database.
+# If the data is missing from the documents table, Sec:Filing
+# can retrieve the document (an XML file) from sec.gov and save
+# it to the database.
 #
-# 
 module Sec
   CIK_REGEX = /^[[:digit:]]{10}$/.freeze
 

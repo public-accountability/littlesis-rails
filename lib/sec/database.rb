@@ -19,10 +19,7 @@ module Sec
       @path = options.fetch(:path, DEFAULT_PATH)
       @forms = options.fetch(:forms, DEFAULT_FORMS)
       @readonly = options.fetch(:readonly, false)
-      @db = SQLite3::Database.new(
-        @path,
-        { readonly: @readonly, results_as_hash: true }
-      )
+      @db = SQLite3::Database.new @path, readonly: @readonly, results_as_hash: true
     end
 
     # output: [SQLite3::ResultSet::HashWithTypesAndFields]
@@ -77,30 +74,18 @@ module Sec
     end
 
     def fetch_document(filename)
-      execute("SELECT data from documents WHERE filename = ?", [filename])
+      execute('SELECT data from documents WHERE filename = ?', [filename])
         &.first&.first
     end
 
     def insert_document(filename:, data:)
-      execute("INSERT INTO documents (filename, data) VALUES(?, ?)", [filename, data])
+      execute('INSERT INTO documents (filename, data) VALUES(?, ?)', [filename, data])
     end
 
     # convenience method for:
     #   Sec::Company.new(cik, db: db)
     def company(cik)
       Sec::Company.new(cik, db: self)
-    end
-
-    # Class Methods #
-
-    def self.print(rows, sep: "\t", fields: nil)
-      headers = fields.present? ? fields : rows.first.keys
-      
-      puts headers.join(sep)
-
-      rows.each do |r|
-        puts r.to_h.symbolize_keys.values_at(*headers).join(sep)
-      end
     end
   end
 end

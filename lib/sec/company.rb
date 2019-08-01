@@ -28,15 +28,6 @@ module Sec
     #     .select { |f| f.to_h.dig(:issuer, :cik) == @cik }
     # end
 
-    # def form4s
-    #   db.filings_for(@cik)
-    #   filings.select { |f| f.form_type == '4' }
-    # end
-
-    # def roster
-    #   @roster ||= Sec::Roster.new(self)
-    # end
-
     def db
       @db ||= FilingsDb.new
     end
