@@ -13,9 +13,6 @@ ALTER TABLE relationship DROP COLUMN last_user_id;
 ALTER TABLE extension_record drop foreign key extension_record_ibfk_3;
 ALTER TABLE extension_record DROP COLUMN last_user_id;
 
-ALTER TABLE alias drop foreign key alias_ibfk_2;
-ALTER TABLE alias DROP COLUMN last_user_id;
-
 ALTER TABLE link drop foreign key link_ibfk_1;
 ALTER TABLE link drop foreign key link_ibfk_2;
 ALTER TABLE link drop foreign key link_ibfk_3;
