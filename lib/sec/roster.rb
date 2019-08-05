@@ -18,7 +18,7 @@ module Sec
         .filings
         .select { |f| %w[3 4].include?(f.type) }
         .select { |f| f.document.issuer?(@company.cik) }
-        .map    { |f| f.reporting_owners }
+        .map(&:reporting_owners)
         .flatten
         .group_by { |owner| owner.fetch(:cik) }
         .transform_values! { |owners| owners.sort_by { |o| o.fetch('date_filed') }.reverse! }

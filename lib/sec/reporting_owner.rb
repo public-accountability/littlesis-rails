@@ -38,14 +38,14 @@ module Sec
   ReportingOwner = Struct.new(:cik, :name, :location, :is_director, :is_officer, :is_ten_percent_owner, :is_other, :officer_title, keyword_init: true) do
     def initialize(owner)
       super(
-        cik: owner.dig("reportingOwnerId", "rptOwnerCik"),
-        name: owner.dig("reportingOwnerId", "rptOwnerName"),
-        location: location_from_address(owner["reportingOwnerAddress"]),
-        is_director: owner.dig("reportingOwnerRelationship", "isDirector"),
-        is_officer: owner.dig("reportingOwnerRelationship", "isOfficer"),
-        is_ten_percent_owner: owner.dig("reportingOwnerRelationship", "isTenPercentOwner"),
-        is_other: owner.dig("reportingOwnerRelationship", "isOther"),
-        officer_title:  owner.dig("reportingOwnerRelationship", "officerTitle")
+        cik: owner.dig('reportingOwnerId', 'rptOwnerCik'),
+        name: owner.dig('reportingOwnerId', 'rptOwnerName'),
+        location: location_from_address(owner['reportingOwnerAddress']),
+        is_director: owner.dig('reportingOwnerRelationship', 'isDirector'),
+        is_officer: owner.dig('reportingOwnerRelationship', 'isOfficer'),
+        is_ten_percent_owner: owner.dig('reportingOwnerRelationship', 'isTenPercentOwner'),
+        is_other: owner.dig('reportingOwnerRelationship', 'isOther'),
+        officer_title:  owner.dig('reportingOwnerRelationship', 'officerTitle')
       )
       freeze
     end

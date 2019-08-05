@@ -15,7 +15,7 @@ module Sec
 
     def parse_options
       options = {
-        forms: %w[3 4]
+        forms: %w[3 4 5]
       }.with_indifferent_access
 
       OptionParser.new do |opts|
@@ -71,14 +71,11 @@ module Sec
 
     def roster(db, options)
       roster = db.company(options[:cik]).roster
-      puts JSON.pretty_generate(roster)
-      #   if options[:json]
-      #     puts JSON.pretty_generate(roster)
-      #   else
-      #     spreadsheet = roster.spreadsheet
-
-      #     puts spreadsheet.first.keys.join("\t")
-      #     spreadsheet.each { |x| puts x.values.join("\t") }
+      if options[:json]
+        puts JSON.pretty_generate(roster.to_h)
+      else
+        self.class.print(roster.spreadsheet)
+      end
     end
 
     def requires_cik!(cik)

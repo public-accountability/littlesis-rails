@@ -64,7 +64,7 @@ module Sec
     alias to_hash to_h
 
     private
-    
+
     def set_document
       return unless @data
 
