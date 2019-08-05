@@ -198,10 +198,26 @@ describe Sec do
     end
   end
 
-  # describe Sec::ReportingOwner do
-
+  describe Sec::ReportingOwner do
+    subject(:reporting_owner) { Sec::ReportingOwner.new(reporting_owner_hash) }
     
-  # end
+    let(:document_hash) do
+      JSON.load(File.read(Rails.root.join('spec', 'testdata', 'sec', 'eep_document.json').to_s))
+    end
+
+    let(:reporting_owner_hash) do
+      document_hash.dig('document', 'ownershipDocument', 'reportingOwner')
+    end
+
+    specify { expect(reporting_owner.cik).to eq "0001502992" }
+    specify { expect(reporting_owner.name).to eq "Neyland Stephen J" }
+    specify { expect(reporting_owner.location).to eq "HOUSTON TX 77056" }
+    specify { expect(reporting_owner.is_director).to eq "1" }
+    specify { expect(reporting_owner.is_officer).to eq "1" }
+    specify { expect(reporting_owner.is_ten_percent_owner).to eq "0" }
+    specify { expect(reporting_owner.is_other).to eq "0" }
+    specify { expect(reporting_owner.officer_title).to eq "Vice President" }
+  end
 
   describe Sec::Roster do
     let(:netflix_cik) { '0001065280' }
