@@ -1,50 +1,44 @@
 # frozen_string_literal: true
 
 module Sec
-  class Roster < SimpleDelegator
-    attr_reader :company
+  class Roster
+    attr_reader :company, :roster
+
+    delegate_missing_to :@roster
 
     def initialize(company)
       @company = company
-      super(roster)
+      @roster = generate_roster
     end
 
     # Generates a hash where the key is the CIK of the owner and the value is an array
     # contains hashes with information from the  SEC filing
-    def roster
-      roster_hash = Hash.new { [] }
-
+    def generate_roster
       @company
         .filings
         .select { |f| %w[3 4].include?(f.type) }
         .select { |f| f.document.issuer?(@company.cik) }
-        .each do |filing|
-          filing.document.reporting_owners.each do |owner|
-            owner_cik = owner.fetch('reportingOwnerId').fetch('rptOwnerCik')
-            # add the metadata from the filing
-            owner_hash = owner.merge('metadata' => filing.metadata.stringify_keys)
-            # add the hash to the array
-            roster_hash.store owner_cik, roster_hash[owner_cik] << owner_hash
-          end
-      end
-      roster_hash
+        .map(&:reporting_owners)
+        .flatten
+        .group_by { |owner| owner.fetch(:cik) }
+        .transform_values! { |owners| owners.sort_by { |o| o.fetch('date_filed') }.reverse! }
     end
 
     # Outputs an array with tabular information from the filings
     # Uses the latest filing for most information such as "is_director"
     def spreadsheet
-      to_h.map do |cik, filings|
+      to_h.map do |cik, reporting_owners|
         {
           cik: cik,
-          name: filings.first.fetch(:name),
-          document_count: filings.count,
-          latest_filename: filings.first.fetch(:filename),
-          latest_period_of_report: filings.first.fetch(:period_of_report),
-          earliest_period_of_report: filings.last.fetch(:period_of_report),
-          officer_title: filings.first.fetch(:officer_title),
-          is_director: filings.first.fetch(:is_director),
-          is_officer: filings.first.fetch(:is_officer),
-          is_ten_percent: filings.first.fetch(:is_ten_percent)
+          name: reporting_owners.first.fetch(:name),
+          document_count: reporting_owners.count,
+          latest_filename: reporting_owners.first.fetch(:filename),
+          latest_reporting_owners_date: reporting_owners.first.fetch(:date_filed),
+          earliest_reporting_owners_date: reporting_owners.last.fetch(:date_filed),
+          officer_title: reporting_owners.first.fetch(:officer_title),
+          is_director: reporting_owners.first.fetch(:is_director),
+          is_officer: reporting_owners.first.fetch(:is_officer),
+          is_ten_percent: reporting_owners.first.fetch(:is_ten_percent_owner)
         }
       end
     end

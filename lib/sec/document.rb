@@ -43,8 +43,11 @@ module Sec
       issuer.fetch('issuerCik') == cik
     end
 
+    # --> [Sec::ReportingOwner]
     def reporting_owners
-      Array.wrap dig('ownershipDocument', 'reportingOwner')
+      Array
+        .wrap(dig('ownershipDocument', 'reportingOwner'))
+        .map { |owner| ReportingOwner.new(owner) }
     end
 
     def issuer

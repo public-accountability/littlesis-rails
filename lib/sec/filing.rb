@@ -35,6 +35,19 @@ module Sec
       @metadata.fetch(:form_type)
     end
 
+    # -> [{}]
+    def reporting_owners
+      raise MissingDocumentError if @data.blank?
+
+      document.reporting_owners.map do |reporting_owner|
+        reporting_owner
+          .to_h
+          .with_indifferent_access
+          .merge(filename: @metadata.fetch(:filename),
+                 date_filed: @metadata.fetch(:date_filed))
+      end
+    end
+
     # This returns a hash with two fields: metadata & document
     # Both are hashes. `@data` is not included because the parsed data
     # is what constitutes `document`

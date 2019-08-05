@@ -56,7 +56,7 @@ module Sec
   end.freeze
 
   def self.database(*args)
-    @database ||= Sec::FilingsDb.new(*args)
+    @database ||= Sec::Database.new(*args)
   end
 
   def self.verify_cik!(cik)

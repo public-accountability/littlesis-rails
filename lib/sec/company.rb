@@ -7,13 +7,13 @@ module Sec
     def initialize(cik, db: nil)
       Sec.verify_cik! cik
       @cik = cik
-      @db = db if db.present?
+      @database = db if db.present?
     end
 
     def filings
       return @filings if defined?(@filings)
 
-      @filings = db.filings_for(@cik)
+      @filings = database.filings_for(@cik)
     end
 
     def roster
@@ -28,8 +28,8 @@ module Sec
     #     .select { |f| f.to_h.dig(:issuer, :cik) == @cik }
     # end
 
-    def db
-      @db ||= FilingsDb.new
+    def database
+      @database ||= Sec.database
     end
   end
 end

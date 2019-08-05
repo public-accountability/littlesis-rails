@@ -186,7 +186,21 @@ describe Sec do
       end
 
       specify do
-        expect(filing.document.reporting_owners.map { |o| o.dig("reportingOwnerId", "rptOwnerCik") })
+        expect(filing.reporting_owners.first)
+          .to eq('cik' => '0000769993',
+                 'name' => 'GOLDMAN SACHS & CO. LLC',
+                 'location' => 'NEW YORK NY 10282',
+                 'is_director' => 'false',
+                 'is_officer' => 'false',
+                 'is_ten_percent_owner' => 'true',
+                 'is_other' => 'false',
+                 'officer_title' => nil,
+                 'filename' => 'edgar/data/886982/0000769993-19-000383.txt',
+                 'date_filed' => '2019-05-21')
+      end
+
+      specify do
+        expect(filing.document.reporting_owners.map { |o| o.cik })
           .to eql %w[0000769993 0000886982 0001698770 0001698772 0001729503 0001575993 0001708241 0001729502 0001615636]
       end
     end
@@ -198,10 +212,26 @@ describe Sec do
     end
   end
 
-  # describe Sec::ReportingOwner do
-
+  describe Sec::ReportingOwner do
+    subject(:reporting_owner) { Sec::ReportingOwner.new(reporting_owner_hash) }
     
-  # end
+    let(:document_hash) do
+      JSON.load(File.read(Rails.root.join('spec', 'testdata', 'sec', 'eep_document.json').to_s))
+    end
+
+    let(:reporting_owner_hash) do
+      document_hash.dig('document', 'ownershipDocument', 'reportingOwner')
+    end
+
+    specify { expect(reporting_owner.cik).to eq "0001502992" }
+    specify { expect(reporting_owner.name).to eq "Neyland Stephen J" }
+    specify { expect(reporting_owner.location).to eq "HOUSTON TX 77056" }
+    specify { expect(reporting_owner.is_director).to eq "1" }
+    specify { expect(reporting_owner.is_officer).to eq "1" }
+    specify { expect(reporting_owner.is_ten_percent_owner).to eq "0" }
+    specify { expect(reporting_owner.is_other).to eq "0" }
+    specify { expect(reporting_owner.officer_title).to eq "Vice President" }
+  end
 
   describe Sec::Roster do
     let(:netflix_cik) { '0001065280' }
@@ -209,31 +239,17 @@ describe Sec do
     let(:roster_hash) do
       {
         "0001082906" => [
-          { "reportingOwnerId" => {
-              "rptOwnerCik" => "0001082906",
-              "rptOwnerName" => "HOAG JAY C"
-            },
-            "reportingOwnerAddress" => {
-              "rptOwnerStreet1" => "C/O TECHNOLOGY CROSSOVER VENTURES",
-              "rptOwnerStreet2" => "528 RAMONA STREET",
-              "rptOwnerCity" => "PALO ALTO",
-              "rptOwnerState" => "CA",
-              "rptOwnerZipCode" => "94301",
-              "rptOwnerStateDescription" => nil
-            },
-            "reportingOwnerRelationship" => {
-              "isDirector" => "1",
-              "isOfficer" => "0",
-              "isTenPercentOwner" => "0",
-              "isOther" => "0"
-            },
-            "metadata" => {
-              'cik' => "1065280",
-              'company_name' => "NETFLIX INC",
-              'form_type' => "4",
-              'date_filed' => "2014-10-03",
-              'filename' => "edgar/data/1065280/0001082906-14-000050.txt"
-            }
+          {
+            "cik" => "0001082906",
+            "name" => "HOAG JAY C",
+            "location" => "PALO ALTO CA 94301",
+            "is_director" => "1",
+            "is_officer" => "0",
+            "is_ten_percent_owner" => "0",
+            "is_other" => "0",
+            "officer_title" => nil,
+            "filename" => "edgar/data/1065280/0001082906-14-000050.txt",
+            "date_filed" => '2014-10-03'
           }
         ]
       }

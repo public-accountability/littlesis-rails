@@ -63,10 +63,10 @@ module Sec
 
     # input: string (cik)
     # output: [Sec::Filing]
-    def filings_for(cik)
+    def filings_for(cik, **kwargs)
       Sec.verify_cik! cik
 
-      forms(cik: cik, limit: 10_000).map do |row|
+      forms(cik: cik, limit: 10_000, **kwargs).map do |row|
         Filing.new(data: row.delete('data'),
                    metadata: row,
                    db: self)

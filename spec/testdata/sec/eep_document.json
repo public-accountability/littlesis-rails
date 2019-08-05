@@ -1,0 +1,107 @@
+{
+  "metadata": {
+    "cik": "880285",
+    "company_name": "ENBRIDGE ENERGY PARTNERS LP",
+    "form_type": "4",
+    "date_filed": "2018-12-20",
+    "filename": "edgar/data/880285/0000899243-18-031517.txt"
+  },
+  "document": {
+    "ownershipDocument": {
+      "schemaVersion": "X0306",
+      "documentType": "4",
+      "periodOfReport": "2018-12-20",
+      "notSubjectToSection16": "1",
+      "issuer": {
+        "issuerCik": "0000880285",
+        "issuerName": "ENBRIDGE ENERGY PARTNERS LP",
+        "issuerTradingSymbol": "EEP"
+      },
+      "reportingOwner": {
+        "reportingOwnerId": {
+          "rptOwnerCik": "0001502992",
+          "rptOwnerName": "Neyland Stephen J"
+        },
+        "reportingOwnerAddress": {
+          "rptOwnerStreet1": "5400 WESTHEIMER CT",
+          "rptOwnerStreet2": null,
+          "rptOwnerCity": "HOUSTON",
+          "rptOwnerState": "TX",
+          "rptOwnerZipCode": "77056",
+          "rptOwnerStateDescription": null
+        },
+        "reportingOwnerRelationship": {
+          "isDirector": "1",
+          "isOfficer": "1",
+          "isTenPercentOwner": "0",
+          "isOther": "0",
+          "officerTitle": "Vice President"
+        }
+      },
+      "nonDerivativeTable": {
+        "nonDerivativeTransaction": {
+          "securityTitle": {
+            "value": "Class A Common Units representing limited partner interests"
+          },
+          "transactionDate": {
+            "value": "2018-12-20"
+          },
+          "deemedExecutionDate": null,
+          "transactionCoding": {
+            "transactionFormType": "4",
+            "transactionCode": "D",
+            "equitySwapInvolved": "0",
+            "footnoteId": {
+              "id": "F1"
+            }
+          },
+          "transactionTimeliness": {
+            "value": null
+          },
+          "transactionAmounts": {
+            "transactionShares": {
+              "value": "1200"
+            },
+            "transactionPricePerShare": {
+              "footnoteId": [
+                {
+                  "id": "F1"
+                },
+                {
+                  "id": "F2"
+                }
+              ]
+            },
+            "transactionAcquiredDisposedCode": {
+              "value": "D"
+            }
+          },
+          "postTransactionAmounts": {
+            "sharesOwnedFollowingTransaction": {
+              "value": "0"
+            }
+          },
+          "ownershipNature": {
+            "directOrIndirectOwnership": {
+              "value": "I"
+            },
+            "natureOfOwnership": {
+              "value": "Family Trust"
+            }
+          }
+        }
+      },
+      "footnotes": {
+        "footnote": [
+          "On December 20, 2018, pursuant to the Agreement and Plan of Merger, dated as of September 17, 2018 (the \"Merger Agreement\"), by and among Enbridge Energy Partners, L.P. (\"EEP\"), Enbridge Energy Company, Inc., Enbridge Energy Management, L.L.C., Enbridge Inc. (\"Enbridge\"), Enbridge (U.S.) Inc., Winter Acquisition Sub II, LLC (\"Merger Sub\"), and solely for the purposes of Articles I, II and XI, Enbridge US Holdings Inc., Merger Sub merged with and into EEP (the \"Merger\"), with EEP surviving the Merger as a wholly owned subsidiary of Enbridge.",
+          "Pursuant to the Merger Agreement, at the effective time of the Merger, each Class A common unit representing limited partner interests in EEP (\"EEP Class A Common Units\") issued and outstanding immediately prior to the effective time of the Merger, other than certain excluded EEP Class A Common Units owned by Enbridge and its subsidiaries, was converted into, and became exchangeable for, 0.335 shares of Enbridge common stock. On December 19, 2018 (the last trading day prior to consummation of the Merger), the closing price of one share of Enbridge common stock was $31.32."
+        ]
+      },
+      "remarks": null,
+      "ownerSignature": {
+        "signatureName": "/s/     Kelly L. Gray, as Agent and Attorney-in-Fact",
+        "signatureDate": "2018-12-20"
+      }
+    }
+  }
+}
