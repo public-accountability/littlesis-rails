@@ -35,6 +35,15 @@ module Sec
       @metadata.fetch(:form_type)
     end
 
+    # -> [{}]
+    def reporting_owners
+      raise MissingDocumentError if @data.blank?
+
+      document.reporting_owners.map do |reporting_owner|
+        reporting_owner.to_h.merge(filename: filename).with_indifferent_access
+      end
+    end
+
     # This returns a hash with two fields: metadata & document
     # Both are hashes. `@data` is not included because the parsed data
     # is what constitutes `document`
@@ -51,6 +60,10 @@ module Sec
     alias to_hash to_h
 
     private
+
+    def filename
+      @metadata.fetch(:filename)
+    end
 
     def set_document
       return unless @data

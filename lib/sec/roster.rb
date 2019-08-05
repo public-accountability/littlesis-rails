@@ -11,25 +11,29 @@ module Sec
       @roster = generate_roster
     end
 
+    # def reporting_owners
+    #   @company
+    #     .filings
+    #     .select { |f| %w[3 4].include?(f.type) }
+    #     .select { |f| f.document.issuer?(@company.cik) }
+    #     .map { |f| f.document.reporting_owners }
+    #     .flatten
+    # end
+
     # Generates a hash where the key is the CIK of the owner and the value is an array
     # contains hashes with information from the  SEC filing
     def generate_roster
-      roster_hash = Hash.new { [] }
-
       @company
         .filings
         .select { |f| %w[3 4].include?(f.type) }
         .select { |f| f.document.issuer?(@company.cik) }
-        .each do |filing|
-          filing.document.reporting_owners.each do |owner|
-            owner_cik = owner.fetch('reportingOwnerId').fetch('rptOwnerCik')
-            # add the metadata from the filing
-            owner_hash = owner.merge('metadata' => filing.metadata.stringify_keys)
-            # add the hash to the array
-            roster_hash.store owner_cik, roster_hash[owner_cik] << owner_hash
-          end
+        .map    { |f| f.reporting_owners }
+        .flatten
+        .reduce(Hash.new { [] }) do |roster, reporting_owner|
+          cik = reporting_owner.fetch(:cik)
+          roster[cik] = roster[cik] << reporting_owner
+          roster
       end
-      roster_hash
     end
 
 

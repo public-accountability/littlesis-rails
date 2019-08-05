@@ -186,7 +186,20 @@ describe Sec do
       end
 
       specify do
-        expect(filing.document.reporting_owners.map { |o| o.dig("reportingOwnerId", "rptOwnerCik") })
+        expect(filing.reporting_owners.first)
+          .to eq('cik' => '0000769993',
+                 'name' => 'GOLDMAN SACHS & CO. LLC',
+                 'location' => 'NEW YORK NY 10282',
+                 'is_director' => 'false',
+                 'is_officer' => 'false',
+                 'is_ten_percent_owner' => 'true',
+                 'is_other' => 'false',
+                 'officer_title' => nil,
+                 'filename' => 'edgar/data/886982/0000769993-19-000383.txt')
+      end
+
+      specify do
+        expect(filing.document.reporting_owners.map { |o| o.cik })
           .to eql %w[0000769993 0000886982 0001698770 0001698772 0001729503 0001575993 0001708241 0001729502 0001615636]
       end
     end
@@ -225,31 +238,16 @@ describe Sec do
     let(:roster_hash) do
       {
         "0001082906" => [
-          { "reportingOwnerId" => {
-              "rptOwnerCik" => "0001082906",
-              "rptOwnerName" => "HOAG JAY C"
-            },
-            "reportingOwnerAddress" => {
-              "rptOwnerStreet1" => "C/O TECHNOLOGY CROSSOVER VENTURES",
-              "rptOwnerStreet2" => "528 RAMONA STREET",
-              "rptOwnerCity" => "PALO ALTO",
-              "rptOwnerState" => "CA",
-              "rptOwnerZipCode" => "94301",
-              "rptOwnerStateDescription" => nil
-            },
-            "reportingOwnerRelationship" => {
-              "isDirector" => "1",
-              "isOfficer" => "0",
-              "isTenPercentOwner" => "0",
-              "isOther" => "0"
-            },
-            "metadata" => {
-              'cik' => "1065280",
-              'company_name' => "NETFLIX INC",
-              'form_type' => "4",
-              'date_filed' => "2014-10-03",
-              'filename' => "edgar/data/1065280/0001082906-14-000050.txt"
-            }
+          {
+            "cik" => "0001082906",
+            "name" => "HOAG JAY C",
+            "location" => "PALO ALTO CA 94301",
+            "is_director" => "1",
+            "is_officer" => "0",
+            "is_ten_percent_owner" => "0",
+            "is_other" => "0",
+            "officer_title" => nil,
+            "filename" => "edgar/data/1065280/0001082906-14-000050.txt"
           }
         ]
       }
