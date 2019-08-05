@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
 module Sec
-  class Roster < SimpleDelegator
-    attr_reader :company
+  class Roster
+    attr_reader :company, :roster
+
+    delegate_missing_to :@roster
 
     def initialize(company)
       @company = company
-      super(roster)
+      @roster = generate_roster
     end
 
     # Generates a hash where the key is the CIK of the owner and the value is an array
     # contains hashes with information from the  SEC filing
-    def roster
+    def generate_roster
       roster_hash = Hash.new { [] }
 
       @company
@@ -29,6 +31,7 @@ module Sec
       end
       roster_hash
     end
+
 
     # Outputs an array with tabular information from the filings
     # Uses the latest filing for most information such as "is_director"

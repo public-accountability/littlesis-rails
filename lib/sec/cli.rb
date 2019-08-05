@@ -2,6 +2,11 @@
 
 # rubocop:disable Rails/Output
 
+# Examples Commands:
+#     sec --print-forms=3,4,8K --cik 0000019617
+#     sec --roster --cik 0000019617
+#     sec --list-example-ciks
+#
 module Sec
   class Cli
     def initialize
