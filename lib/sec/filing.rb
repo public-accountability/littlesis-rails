@@ -1,48 +1,74 @@
 # frozen_string_literal: true
 
 module Sec
-  FILING_FIELDS = %i[cik company_name form_type date_filed filename data db].freeze
+  class Filing
+    class MissingDocumentError < StandardError; end
 
-  Filing = Struct.new(*FILING_FIELDS, :keyword_init => true) do
-    def initialize(*args)
-      super(*args)
-      @url = "https://www.sec.gov/Archives/#{filename}"
-
-      download_and_save_data(db) unless data.present?
-    end
-
-    def to_h
-      document.to_h
-        .merge(filename: filename, form_type: form_type, url: @url)
-    end
-
-    def document
-      if form_type == '4'
-        @document ||= Sec::Form4.new(data)
-      end
-      # @document ||= Sec::Document.new(form_type: form_type, data: data)
-    end
-
-    private
-
-    def download_and_save_data(db)
-      if (self.data = download)
-        if db.nil?
-          Rails.logger.warn('Sec::Filing') { 'Missing Database; not saving sec filing' }
-        else
-          db.insert_document(filename: filename, data: data)
-        end
-      end
-    end
-
-    def download
-      Rails.logger.debug('Sec::Filing') { "Downloading #{@url}" }
-      res = HTTParty.get(@url, headers: { 'User-Agent' => '' })
+    # Input: string (url)
+    # output: string OR nil
+    def self.download(url)
+      Rails.logger.debug('Sec::Filing') { "Downloading #{url}" }
+      res = HTTParty.get(url, headers: { 'User-Agent' => '' })
       if res.success?
         res.body
       else
-        Rails.logger.warn('Sec::Filing') { "failed to download #{@url}" }
+        Rails.logger.warn('Sec::Filing') { "failed to download #{url}" }
         nil
+      end
+    end
+
+    attr_reader :metadata, :data, :document, :url
+    attr_accessor :download, :db
+
+    # There is no validation done here, but it is assumed that metadata is hash-like
+    # with the following keys: cik, company_name, form_type, date_filed, filename, data
+    def initialize(metadata:, data: nil, db: nil, download: false)
+      @metadata = metadata.symbolize_keys
+      @data = data
+      @url = "https://www.sec.gov/Archives/#{@metadata.fetch(:filename)}"
+      @db = db
+      @download = download
+      set_document
+    end
+
+    def type
+      @metadata.fetch(:form_type)
+    end
+
+    # This returns a hash with two fields: metadata & document
+    # Both are hashes. `@data` is not included because the parsed data
+    # is what constitutes `document`
+    def to_h
+      download_and_save_data if @download
+      raise MissingDocumentError if @data.blank?
+
+      {
+        metadata: @metadata,
+        document: @document.to_h
+      }
+    end
+
+    alias to_hash to_h
+
+    private
+
+    def set_document
+      return unless @data
+
+      @document = Sec::Document.new(@data)
+    end
+
+    def download_and_save_data
+      return if @data
+
+      if (@data = self.class.download(@url))
+        set_document
+
+        if db.nil?
+          Rails.logger.warn('Sec::Filing') { 'Missing Database; not saving sec filing' }
+        else
+          db.insert_document(filename: @metadata[:filename], data: @data)
+        end
       end
     end
   end

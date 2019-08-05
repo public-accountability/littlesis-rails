@@ -1,0 +1,224 @@
+<SEC-DOCUMENT>0000769993-18-000532.txt : 20181109
+<SEC-HEADER>0000769993-18-000532.hdr.sgml : 20181109
+<ACCEPTANCE-DATETIME>20181109160003
+ACCESSION NUMBER:		0000769993-18-000532
+CONFORMED SUBMISSION TYPE:	3
+PUBLIC DOCUMENT COUNT:		2
+CONFORMED PERIOD OF REPORT:	20181105
+FILED AS OF DATE:		20181109
+DATE AS OF CHANGE:		20181109
+
+REPORTING-OWNER:	
+
+	OWNER DATA:	
+		COMPANY CONFORMED NAME:			SCHERR STEPHEN M
+		CENTRAL INDEX KEY:			0001754390
+
+	FILING VALUES:
+		FORM TYPE:		3
+		SEC ACT:		1934 Act
+		SEC FILE NUMBER:	001-14965
+		FILM NUMBER:		181173016
+
+	MAIL ADDRESS:	
+		STREET 1:		C/O GOLDMAN SACHS & CO. LLC
+		STREET 2:		200 WEST STREET
+		CITY:			NEW YORK
+		STATE:			NY
+		ZIP:			10282
+
+ISSUER:		
+
+	COMPANY DATA:	
+		COMPANY CONFORMED NAME:			GOLDMAN SACHS GROUP INC
+		CENTRAL INDEX KEY:			0000886982
+		STANDARD INDUSTRIAL CLASSIFICATION:	SECURITY BROKERS, DEALERS & FLOTATION COMPANIES [6211]
+		IRS NUMBER:				134019460
+		STATE OF INCORPORATION:			DE
+		FISCAL YEAR END:			1231
+
+	BUSINESS ADDRESS:	
+		STREET 1:		200 WEST STREET
+		CITY:			NEW YORK
+		STATE:			NY
+		ZIP:			10282
+		BUSINESS PHONE:		2129021000
+
+	MAIL ADDRESS:	
+		STREET 1:		200 WEST STREET
+		CITY:			NEW YORK
+		STATE:			NY
+		ZIP:			10282
+
+	FORMER COMPANY:	
+		FORMER CONFORMED NAME:	GOLDMAN SACHS GROUP INC/
+		DATE OF NAME CHANGE:	20010104
+</SEC-HEADER>
+<DOCUMENT>
+<TYPE>3
+<SEQUENCE>1
+<FILENAME>ownershipdoc11052018100924.xml
+<TEXT>
+<XML>
+<?xml version="1.0"?>
+<ownershipDocument>
+
+    <schemaVersion>X0206</schemaVersion>
+
+    <documentType>3</documentType>
+
+    <periodOfReport>2018-11-05-05:00</periodOfReport>
+
+    <noSecuritiesOwned>0</noSecuritiesOwned>
+
+    <issuer>
+        <issuerCik>0000886982</issuerCik>
+        <issuerName>GOLDMAN SACHS GROUP INC</issuerName>
+        <issuerTradingSymbol>GS</issuerTradingSymbol>
+    </issuer>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>0001754390</rptOwnerCik>
+            <rptOwnerName>SCHERR STEPHEN M</rptOwnerName>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerStreet1>C/O GOLDMAN SACHS &amp; CO. LLC</rptOwnerStreet1>
+            <rptOwnerStreet2>200 WEST STREET</rptOwnerStreet2>
+            <rptOwnerCity>NEW YORK</rptOwnerCity>
+            <rptOwnerState>NY</rptOwnerState>
+            <rptOwnerZipCode>10282</rptOwnerZipCode>
+            <rptOwnerStateDescription></rptOwnerStateDescription>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>false</isDirector>
+            <isOfficer>true</isOfficer>
+            <isTenPercentOwner>false</isTenPercentOwner>
+            <isOther>false</isOther>
+            <officerTitle>Executive Vice President - CFO</officerTitle>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+    <nonDerivativeTable>
+        <nonDerivativeHolding>
+            <securityTitle>
+                <value>Common Stock, par value $0.01 per share</value>
+            </securityTitle>
+            <postTransactionAmounts>
+                <sharesOwnedFollowingTransaction>
+                    <value>96927</value>
+                    <footnoteId id="F1"/>
+                </sharesOwnedFollowingTransaction>
+            </postTransactionAmounts>
+            <ownershipNature>
+                <directOrIndirectOwnership>
+                    <value>D</value>
+                </directOrIndirectOwnership>
+            </ownershipNature>
+        </nonDerivativeHolding>
+    </nonDerivativeTable>
+
+    <derivativeTable>
+        <derivativeHolding>
+            <securityTitle>
+                <value>Restricted Stock Units</value>
+            </securityTitle>
+            <conversionOrExercisePrice>
+                <footnoteId id="F2"/>
+            </conversionOrExercisePrice>
+            <exerciseDate>
+                <footnoteId id="F2"/>
+            </exerciseDate>
+            <expirationDate>
+                <footnoteId id="F2"/>
+            </expirationDate>
+            <underlyingSecurity>
+                <underlyingSecurityTitle>
+                    <value>Common Stock, par value $0.01 per share</value>
+                </underlyingSecurityTitle>
+                <underlyingSecurityShares>
+                    <value>42459</value>
+                </underlyingSecurityShares>
+            </underlyingSecurity>
+            <ownershipNature>
+                <directOrIndirectOwnership>
+                    <value>D</value>
+                </directOrIndirectOwnership>
+            </ownershipNature>
+        </derivativeHolding>
+    </derivativeTable>
+
+    <footnotes>
+        <footnote id="F1">Certain of these shares cannot be transferred before dates ranging from January 2019 to January 2023. Additionally, certain of these shares are subject to a non-competition covenant that will lapse in three approximately equal installments on or about each of December 31, 2018, 2019 and 2020, subject to other terms and conditions of the applicable award agreement.</footnote>
+        <footnote id="F2">A portion of these Restricted Stock Units (&quot;RSUs&quot;) were granted in January 2016, with the remainder granted in January 2017. These RSUs are fully vested and a portion will generally convert into shares of the Issuer's common stock in January 2019, with the remainder converting in January 2020. The shares of common stock delivered pursuant to these RSUs generally cannot be sold or transferred before January 2021 (with respect to RSUs granted in January 2016) and January 2022 (with respect to RSUs granted in January 2017).</footnote>
+    </footnotes>
+
+    <remarks></remarks>
+
+    <ownerSignature>
+        <signatureName>/s/ Beverly L. O'Toole, Attorney-in-fact</signatureName>
+        <signatureDate>2018-11-09-05:00</signatureDate>
+    </ownerSignature>
+</ownershipDocument>
+</XML>
+</TEXT>
+</DOCUMENT>
+<DOCUMENT>
+<TYPE>EX-24
+<SEQUENCE>2
+<FILENAME>scherrpoa.txt
+<TEXT>
+<p>POWER OF ATTORNEY
+
+
+
+The undersigned does hereby appoint Yvette Kosic, Kevin P. Treanor, Kenneth L.
+ Josselyn, Beverly L. O'Toole, Jamie A. Greenberg and Zachary A. Kolkin (and
+ any other employee of The Goldman Sachs Group, Inc. (the "Company") or one of
+ its affiliates designated in writing by one of the attorneys-in-fact) his
+ lawful attorneys, and each of them his true and lawful attorney, with power to
+ act without the other, and with full power of substitution and resubstitution,
+ to prepare, execute and file, or cause to be prepared, executed and filed,
+ with the U.S. Securities and Exchange Commission (the "SEC") for his and in
+ his name in connection with certain transactions in common stock, par value
+ $.01 per share (the "Common Stock") of the Company:
+
+1. the Initial Statement of Beneficial Ownership of Securities on Form 3, any
+ Statement of Changes in Beneficial Ownership on Form 4 and any Annual
+ Statement of Changes in Beneficial Ownership on Form 5, or any similar or
+ successor form, which may be required to be filed by his pursuant to Section
+ 16 of the Securities Exchange Act of 1934, as amended;
+2. one or more Forms 144, or amendments to Form 144, relating to any sales
+ orders (including in connection with the exercise of options to purchase
+ Common Stock), orally or electronically, to sell shares of Common Stock to the
+ public from time to time in accordance with Rule 144 under the Securities Act
+ of 1933, as amended; and
+3. any and all instruments necessary or incidental to any action listed above,
+ including communications to the SEC, The New York Stock Exchange and state
+ securities law authorities.
+
+The undersigned hereby grants unto said attorneys and each of them full power
+ and authority to do and perform in the name and on behalf of the undersigned,
+ and in any and all capacities, every act and thing whatsoever required or
+ necessary to be done in and about the premises, as fully and to all intents
+ and purposes as the undersigned might or could do in person, hereby ratifying
+ and approving the act of said attorneys and each of them.
+
+This power of attorney shall not be affected by the subsequent disability or
+ incompetence of the principal. This power of attorney shall remain in full
+ force and effect until either revoked in writing by the undersigned or until
+ such time as the person or persons to whom power of attorney has been hereby
+ granted cease(s) to be an employee of the Company or one of its affiliates.
+
+IN WITNESS thereof the undersigned hereunto signed his name this 24 day of
+ September  2018.
+
+
+
+
+ <u>/s/Stephen M. Scherr </u>
+
+Stephen M. Scherr</p>
+</TEXT>
+</DOCUMENT>
+</SEC-DOCUMENT>

@@ -1,0 +1,1770 @@
+<SEC-DOCUMENT>0000034088-19-000032.txt : 20190701
+<SEC-HEADER>0000034088-19-000032.hdr.sgml : 20190701
+<ACCEPTANCE-DATETIME>20190701075054
+ACCESSION NUMBER:		0000034088-19-000032
+CONFORMED SUBMISSION TYPE:	8-K
+PUBLIC DOCUMENT COUNT:		2
+CONFORMED PERIOD OF REPORT:	20190701
+ITEM INFORMATION:		Regulation FD Disclosure
+FILED AS OF DATE:		20190701
+DATE AS OF CHANGE:		20190701
+
+FILER:
+
+	COMPANY DATA:	
+		COMPANY CONFORMED NAME:			EXXON MOBIL CORP
+		CENTRAL INDEX KEY:			0000034088
+		STANDARD INDUSTRIAL CLASSIFICATION:	PETROLEUM REFINING [2911]
+		IRS NUMBER:				135409005
+		STATE OF INCORPORATION:			NJ
+		FISCAL YEAR END:			1231
+
+	FILING VALUES:
+		FORM TYPE:		8-K
+		SEC ACT:		1934 Act
+		SEC FILE NUMBER:	001-02256
+		FILM NUMBER:		19931262
+
+	BUSINESS ADDRESS:	
+		STREET 1:		5959 LAS COLINAS BLVD
+		CITY:			IRVING
+		STATE:			TX
+		ZIP:			75039-2298
+		BUSINESS PHONE:		9729406000
+
+	MAIL ADDRESS:	
+		STREET 1:		5959 LAS COLINAS BLVD
+		CITY:			IRVING
+		STATE:			TX
+		ZIP:			75039-2298
+
+	FORMER COMPANY:	
+		FORMER CONFORMED NAME:	EXXON CORP
+		DATE OF NAME CHANGE:	19920703
+
+	FORMER COMPANY:	
+		FORMER CONFORMED NAME:	STANDARD OIL CO OF NEW JERSEY
+		DATE OF NAME CHANGE:	19721123
+</SEC-HEADER>
+<DOCUMENT>
+<TYPE>8-K
+<SEQUENCE>1
+<FILENAME>r8k070119.htm
+<DESCRIPTION>FORM 8-K
+<TEXT>
+
+<html>
+
+<head>
+<meta content="text/html; charset=utf-8" />
+
+
+
+
+
+&nbsp;</head>
+
+<body link=blue vlink=purple><a name="page_1"></a><DIV bclPageBorder STYLE="PADDING-TOP: 0in; PADDING-BOTTOM: 0in; WIDTH: 100%; PADDING-RIGHT: 0in; PADDING-LEFT: 0in">
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font face=Calibri,sans-serif style="border:none;"><font face=Calibri,sans-serif lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">UNITED STATES</font></b></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">SECURITIES AND EXCHANGE COMMISSION</font></b></font><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:14.0pt;"> &nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">Washington</font></b></font><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">, D.C.
+ 20549</font></b></font><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;"> &nbsp;</font></b></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:14.0pt;">FORM 8-K</font></b></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:12.0pt;">CURRENT REPORT</font></b></font><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;"><br>
+</font></b></font><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">Pursuant to Section 13
+OR 15(d) of The Securities Exchange Act of 1934</font></b></font><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">
+&nbsp;</font></b></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">Date of Report (Date of earliest event reported): </font><b><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;</font></b><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">July
+1, 2019</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:20.0pt;">EXXON MOBIL CORPORATION</font></b></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">(Exact name of registrant as specified in its charter)</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<div align=center>
+
+<table border=0 cellpadding=0 cellspacing=0 style="border-collapse:collapse;width:100%;">
+ <tr>
+  <td valign=top width=33% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" style="font-size:12.0pt;">NEW JERSEY</font></b></font></p>
+  </td>
+ <td valign=top width=33% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" style="font-size:12.0pt;">1-2256</font></b></font></p>
+  </td>
+ <td valign=top width=34% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" style="font-size:12.0pt;">13-5409005</font></b></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=33% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">(State or other jurisdiction</font></font></p>
+  </td>
+ <td valign=top width=33% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">(Commission</font></font></p>
+  </td>
+ <td valign=top width=34% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">(IRS Employer </font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=33% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">of incorporation)</font></font></p>
+  </td>
+ <td valign=top width=33% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">File Number)</font></font></p>
+  </td>
+ <td valign=top width=34% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">Identification No.)</font></font></p>
+  </td>
+ </tr>
+</table>
+
+
+</div>
+
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:12.0pt;">5959 LAS COLINAS BOULEVARD, IRVING, TEXAS
+75039-2298</font></b></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; (Address of principal executive
+offices)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; (Zip Code)</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;Registrant&#8217;s telephone number, including area code:&#160; </font></font><font style="border:none;"><b><font face="Times New Roman,serif" lang=EN-US style="font-size:12.0pt;">972-940-6000</font></b></font><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:12.0pt;"> &nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:1.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<div align=center>
+
+<table border=0 cellpadding=0 cellspacing=0 style="border-collapse:collapse;width:100%;">
+ <tr>
+  <td valign=top width=17% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=66% style="border:none;border-bottom:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=17% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">&nbsp;</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=17% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=66% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">(Former name or former address, if changed since last
+  report)</font></font></p>
+  </td>
+ <td valign=top width=17% style="padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:10.0pt;">&nbsp;</font></font></p>
+  </td>
+ </tr>
+</table>
+
+
+</div>
+
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></font></p>
+
+<div align=left><table border=0 cellpadding=0 cellspacing=0 style="border:none;border-collapse:collapse;width:100%;">
+ <tr style="height:20.45pt;">
+  <td valign=top width=37% style="border:none;border-bottom:solid windowtext 1.0pt;height:20.45pt;padding:0in 0in 0in .7pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:justify;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:8.0pt;">&nbsp;</font></font></p>
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:justify;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:8.0pt;">Title of Each Class&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; </font></font></p>
+  </td>
+ <td valign=top width=9% style="border:none;border-bottom:solid windowtext 1.0pt;height:20.45pt;padding:0in 0in 0in .7pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:justify;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:8.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=19% style="border:none;border-bottom:solid windowtext 1.0pt;height:20.45pt;padding:0in 0in 0in .7pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:justify;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:8.0pt;">&nbsp;</font></font></p>
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:justify;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:8.0pt;">Trading Symbol</font></font></p>
+  </td>
+ <td valign=top width=9% style="border:none;border-bottom:solid windowtext 1.0pt;height:20.45pt;padding:0in 0in 0in .7pt;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:8.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=26% style="border:none;border-bottom:solid windowtext 1.0pt;height:20.45pt;padding:0in 0in 0in .7pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:8.0pt;">Name of Each Exchange</font></font></p>
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:8.0pt;">on Which Registered</font></font></p>
+  </td>
+ </tr>
+<tr style="height:16.7pt;">
+  <td valign=top width=37% style="border:none;height:16.7pt;padding:0in 0in 0in .7pt;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:justify;"><font style="border:none;"><b><font face="Times New Roman,serif" style="font-size:10.0pt;">Common Stock, without par value</font></b></font></p>
+  </td>
+ <td valign=top width=9% style="border:none;height:16.7pt;padding:0in 0in 0in .7pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:justify;"><font style="border:none;"><b><font face="Times New Roman,serif" style="font-size:10.0pt;">&nbsp;</font></b></font></p>
+  </td>
+ <td valign=top width=19% style="border:none;height:16.7pt;padding:0in 0in 0in .7pt;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:justify;"><font style="border:none;"><b><font face="Times New Roman,serif" style="font-size:10.0pt;">&#160;&#160;&#160;&#160;&#160; XOM</font></b></font></p>
+  </td>
+ <td valign=top width=9% style="border:none;height:16.7pt;padding:0in 0in 0in .7pt;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;margin-right:9.9pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" style="font-size:10.0pt;">&nbsp;</font></b></font></p>
+  </td>
+ <td valign=top width=26% style="border:none;height:16.7pt;padding:0in 0in 0in .7pt;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:.05pt;text-align:center;"><font style="border:none;"><b><font face="Times New Roman,serif" style="font-size:10.0pt;">&#160;&#160; New York Stock Exchange</font></b></font></p>
+  </td>
+ </tr>
+</table></div>
+
+
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">Check the appropriate box below if the Form 8-K filing is intended to
+simultaneously satisfy the filing obligation of the registrant under any of the
+following provisions:</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">[ ] Written communications pursuant to Rule 425 under the Securities Act
+(17 CFR 230.425)</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:8.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">[ ] Soliciting material pursuant to Rule 14a-12 under the Exchange Act
+(17 CFR 240.14a-12)</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:8.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">[ ] Pre-commencement communications pursuant to Rule 14d-2(b) under the
+Exchange Act (17 CFR 240.14d-2(b))</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:8.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">[ ] Pre-commencement communications pursuant to Rule 13e-4(c) under the
+Exchange Act (17 CFR 240.13e-4(c))</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:22.3pt;text-align:justify;"><font face="Times New Roman,serif" style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:22.3pt;text-align:justify;"><font face="Times New Roman,serif" style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">Indicate
+by check mark whether the registrant is an emerging growth company as defined
+in Rule 405 of the Securities Act of 1933 (&#167;230.405 of this chapter) or Rule
+12b-2 of the Securities Exchange Act of 1934 (&#167;240.12b-2 of this chapter).</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:22.3pt;text-align:justify;"><font face="Times New Roman,serif" style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:22.3pt;text-align:justify;"><font face="Times New Roman,serif" style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; Emerging
+growth company&#160;&#160; </font></font><font face="Times New Roman,serif" style="border:none;"><font lang=EN-US style="font-size:9.0pt;"> &#9744; </font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:22.3pt;text-align:justify;"><font face="Times New Roman,serif" style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:22.3pt;text-align:justify;"><font face="Times New Roman,serif" style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:9.0pt;">If an
+emerging growth company, indicate by check mark if the registrant has elected
+not to use the extended transition period for complying with any new or revised
+financial accounting standards provided pursuant to Section 13(a) of the
+Exchange Act.&#160;&#160; </font></font><font face="Times New Roman,serif" style="border:none;"><font lang=EN-US style="font-size:9.0pt;"> &#9744; </font></font></p>
+
+
+
+<font face="Times New Roman,serif" style="border:none;">
+&nbsp;</font>
+
+
+
+
+<DIV bclFooter>
+
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;mso-border-shadow:yes;mso-padding-alt:31.0pt 31.0pt 31.0pt 31.0pt;tab-stops:center 3.25in right 6.5in;"><font style="border:none;mso-ascii-font-family:Calibri;mso-bidi-font-family:Times New Roman;mso-fareast-font-family:Calibri;mso-hansi-font-family:Calibri;"><font face=Calibri,sans-serif lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+
+</DIV>
+</DIV><HR noshade STYLE="page-break-after: always" align="center" width="100%" size=2><a name="page_2"></a><DIV bclPageBorder STYLE="PADDING-TOP: 0in; PADDING-BOTTOM: 0in; WIDTH: 100%; PADDING-RIGHT: 0in; PADDING-LEFT: 0in">
+
+<DIV bclHeader>
+
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;mso-border-shadow:yes;mso-line-height-rule:exactly;mso-padding-alt:31.0pt 31.0pt 31.0pt 31.0pt;mso-pagination:widow-orphan no-line-numbers;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:.7pt;">&nbsp;</font></font></p>
+
+
+</DIV>
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;"></font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<div align=left><table border=1 cellpadding=0 cellspacing=0 style="border:none;border-collapse:collapse;width:100%;">
+ <tr>
+  <td valign=top width=17% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">Item 7.01</font></font></p>
+  </td>
+ <td valign=top width=83% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">Regulation FD Disclosure</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=17% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=83% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=17% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=83% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">The following information is furnished pursuant to Item 7.01.</font></font></p>
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+  </td>
+ </tr>
+</table></div>
+
+
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-left:1.0in;text-indent:-1.0in;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<font face="Times New Roman,serif" style="border:none;">
+&nbsp;</font>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+
+<DIV bclFooter>
+
+ <p align=center style="border:none;margin:0in;margin-bottom:10.0pt;mso-border-shadow:yes;mso-padding-alt:31.0pt 31.0pt 31.0pt 31.0pt;text-align:center;"><font style="display:none;mso-hide:all;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:115%;">&lt;/BCLPAGE&gt;</font></font><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:115%;">2</DIV>
+</DIV><HR noshade STYLE="page-break-after: always" align="center" width="100%" size=2><a name="page_3"></a><DIV bclPageBorder STYLE="PADDING-TOP: 0in; PADDING-BOTTOM: 0in; WIDTH: 100%; PADDING-RIGHT: 0in; PADDING-LEFT: 0in">
+
+<DIV bclHeader>
+
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;mso-border-shadow:yes;mso-line-height-rule:exactly;mso-padding-alt:31.0pt 31.0pt 31.0pt 31.0pt;mso-pagination:widow-orphan no-line-numbers;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:.7pt;">&nbsp;</font></font></p>
+
+
+</DIV>
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">INDEX TO EXHIBITS</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<div align=left><table border=1 cellpadding=0 cellspacing=0 style="border:none;border-collapse:collapse;width:100%;">
+ <tr>
+  <td valign=top width=26% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><u><font face="Times New Roman,serif" style="font-size:11.0pt;">Exhibit No.</font></u></font></p>
+  </td>
+ <td valign=top width=74% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><u><font face="Times New Roman,serif" style="font-size:11.0pt;">Description</font></u></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=26% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;text-decoration:none;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=74% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;text-decoration:none;">&nbsp;</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=26% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;"><a href="f8k2q991.htm"><font color=blue style="border:none;"><u><font color=blue face="Times New Roman,serif" style="font-size:11.0pt;">99.1</font></u></font></a></p>
+  </td>
+ <td valign=top width=74% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">Exxon Mobil Corporation 2Q19 Earnings Considerations.</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=26% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;text-decoration:none;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=74% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;text-decoration:none;">&nbsp;</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=26% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;text-decoration:none;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=74% style="border:none;padding:0in 5.4pt 0in 5.4pt;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;text-decoration:none;">&nbsp;</font></font></p>
+  </td>
+ </tr>
+</table></div>
+
+
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160; &nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&#160;&nbsp;</font></font></p>
+
+<font face="Times New Roman,serif" style="border:none;">
+&nbsp;</font>
+
+<p style="border:none;margin:0in;margin-bottom:10.0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;line-height:115%;">&nbsp;</font></font></p>
+
+
+<DIV bclFooter>
+
+ <p align=center style="border:none;margin:0in;margin-bottom:10.0pt;mso-border-shadow:yes;mso-padding-alt:31.0pt 31.0pt 31.0pt 31.0pt;text-align:center;"><font style="display:none;mso-hide:all;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:115%;">&lt;/BCLPAGE&gt;</font></font><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:115%;">3</DIV>
+</DIV><HR noshade STYLE="page-break-after: always" align="center" width="100%" size=2><a name="page_4"></a><DIV bclPageBorder STYLE="PADDING-TOP: 0in; PADDING-BOTTOM: 0in; WIDTH: 100%; PADDING-RIGHT: 0in; PADDING-LEFT: 0in">
+
+<DIV bclHeader>
+
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;mso-border-shadow:yes;mso-line-height-rule:exactly;mso-padding-alt:31.0pt 31.0pt 31.0pt 31.0pt;mso-pagination:widow-orphan no-line-numbers;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:.7pt;">&nbsp;</font></font></p>
+
+
+</DIV>
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">SIGNATURE</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; Pursuant to the requirements
+of the Securities Exchange Act of 1934, the registrant has duly caused this
+report to be signed on its behalf by the undersigned hereunto duly authorized.</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<div align=left><table border=1 cellpadding=0 cellspacing=0 style="border:none;border-collapse:collapse;width:100%;">
+ <tr>
+  <td valign=top width=51% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td colspan=2 valign=top width=49% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;margin-left:18.3pt;margin-right:0pt;margin-top:0in;text-indent:-18.3pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">EXXON MOBIL CORPORATION</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=51% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=6% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-left:18.3pt;margin-right:0pt;margin-top:0in;text-indent:-18.3pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=43% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=51% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=6% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-left:18.3pt;margin-right:0pt;margin-top:0in;text-indent:-18.3pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=43% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=51% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">Date:&#160; July 1, 2019</font></font></p>
+  </td>
+ <td valign=top width=6% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="border:none;margin:0in;margin-bottom:.0001pt;margin-left:18.3pt;margin-right:0pt;margin-top:0in;text-indent:-18.3pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">By:</font></font></p>
+  </td>
+ <td valign=top width=43% style="border:none;border-bottom:solid windowtext 1.0pt;padding:0in 5.75pt 0in 0in;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">/s/ DAVID S.
+  ROSENTHAL </font></font></p>
+  </td>
+ </tr>
+<tr style="height:13.9pt;">
+  <td valign=top width=51% style="border:none;height:13.9pt;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=6% style="border:none;height:13.9pt;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-left:18.3pt;margin-right:0pt;margin-top:0in;text-indent:-18.3pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td width=43% style="border:none;height:13.9pt;padding:0in 5.75pt 0in 0in;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">David S. Rosenthal</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=51% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=6% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-left:18.3pt;margin-right:0pt;margin-top:0in;text-indent:-18.3pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td width=43% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">Vice President and Controller</font></font></p>
+  </td>
+ </tr>
+<tr>
+  <td valign=top width=51% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td valign=top width=6% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;margin-left:18.3pt;margin-right:0pt;margin-top:0in;text-indent:-18.3pt;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">&nbsp;</font></font></p>
+  </td>
+ <td width=43% style="border:none;padding:0in 5.75pt 0in 0in;">
+  <p align=center style="border:none;margin:0in;margin-bottom:.0001pt;text-align:center;"><font style="border:none;"><font face="Times New Roman,serif" style="font-size:11.0pt;">(Principal Accounting Officer)</font></font></p>
+  </td>
+ </tr>
+</table></div>
+
+
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:justify;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:justify;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:justify;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;text-align:justify;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:0pt;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+
+
+
+<DIV bclFooter>
+
+ <p align=center style="border:none;margin:0in;margin-bottom:10.0pt;mso-border-shadow:yes;mso-padding-alt:31.0pt 31.0pt 31.0pt 31.0pt;text-align:center;"><font style="display:none;mso-hide:all;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:115%;">&lt;/BCLPAGE&gt;</font></font><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:115%;">4</DIV>
+</DIV><HR noshade align="center" width="100%" size=2></BODY></HTML>
+</TEXT>
+</DOCUMENT>
+<DOCUMENT>
+<TYPE>EX-99.1
+<SEQUENCE>2
+<FILENAME>f8k2q991.htm
+<DESCRIPTION>NEWS RELEASE
+<TEXT>
+
+<html>
+
+<head>
+<meta content="text/html; charset=utf-8" />
+
+
+
+
+&nbsp;</head>
+
+<body><a name="page_1"></a><DIV bclPageBorder STYLE="PADDING-TOP: 0in; PADDING-BOTTOM: 0in; WIDTH: 100%; PADDING-RIGHT: 0in; PADDING-LEFT: 0in">
+
+<DIV bclHeader>
+
+
+<p style="margin:0in;margin-bottom:.0001pt;tab-stops:center 3.25in right 6.5in;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></p>
+
+
+</DIV>
+<p align=right style="border:none;margin:0in;margin-bottom:.0001pt;margin-left:4.5in;margin-right:1.8pt;margin-top:0in;text-align:right;text-indent:.5in;"><font color=black face="Calisto MT,serif" style="border:none;"><b><font color=black face="Calisto MT,serif" lang=EN-US style="font-size:9.0pt;">EXHIBIT
+99.1</font></b></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:.2in;"><font face=Arial,sans-serif style="border:none;"><b><font face=Arial,sans-serif lang=EN-US style="font-size:11.0pt;">&nbsp;</font></b></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:.2in;"><font face=Arial,sans-serif style="border:none;"><b><font face=Arial,sans-serif lang=EN-US style="font-size:11.0pt;">2Q19
+Earnings Considerations</font></b></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;margin-right:.2in;"><font face=Arial,sans-serif style="border:none;"><font face=Arial,sans-serif lang=EN-US style="font-size:9.0pt;">&#160;&#160;&#160;&#160;&#160; &nbsp;</font></font><font face=Arial,sans-serif style="border:none;"><font face=Arial,sans-serif lang=EN-US style="font-size:9.0pt;layout-grid-mode:line;text-transform:uppercase;">&#160;&#160;&#160;&#160;&#160; &nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:1.0pt;margin-left:0in;margin-right:0in;margin-top:1.0pt;text-align:justify;"><font color=black face=Arial,sans-serif style="border:none;"><font color=black face=Arial,sans-serif lang=EN-US style="font-size:11.0pt;">To give perspective
+regarding market and planned factors affecting 2Q 2019 earnings, we are
+providing the following summary of factors management believes will impact 2Q
+2019 earnings relative to 1Q 2019 earnings. These factors are generally related
+to market dynamics, seasonal patterns, and planned activities. This list is not
+meant to be a comprehensive list of all changes between 1Q 2019 earnings and 2Q
+2019 earnings or to provide an estimate of 2Q 2019 earnings for the
+Corporation.</font></font></p>
+
+<div align=left><table border=0 cellpadding=0 cellspacing=0 style="border-collapse:collapse;width:100%;">
+ <tr style="height:15.0pt;">
+  <td colspan=11 nowrap valign=bottom width=86% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Calibri,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap valign=bottom width=2% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Calibri,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap valign=bottom width=12% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Calibri,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:30.0pt;">
+  <td colspan=3 nowrap valign=bottom width=34% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">$ billions</font></i></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Upstream</font></b></p>
+  </td>
+ <td valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Downstream</font></b></p>
+  </td>
+ <td valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td valign=bottom width=11% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Chemical</font></b></p>
+  </td>
+ <td valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td valign=bottom width=11% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Corp
+  &amp; Fin</font></b></p>
+  </td>
+ <td valign=bottom width=2% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td valign=bottom width=12% style="border:none;border-bottom:solid black 1.0pt;height:30.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Total</font></b></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap width=34% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">1Q19 earnings, U.S. GAAP</font></b></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">2.9</font></b></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td width=13% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">(0.3)</font></b></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">0.5</font></b></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">(0.8)</font></b></p>
+  </td>
+ <td width=2% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td width=12% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">2.4</font></b></p>
+  </td>
+ </tr>
+<tr style="height:10.15pt;">
+  <td colspan=3 nowrap width=34% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=1% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:10.15pt;">
+  <td nowrap width=2% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap width=2% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap width=30% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=1% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="height:10.15pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=7 nowrap valign=bottom width=62% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Estimated effects of market factors impacting 2Q19 earnings</font></b></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td nowrap valign=bottom width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap valign=bottom width=34% style="border-bottom:solid black 1.0pt;border-left:solid black 1.0pt;border-right:none;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Change in liquids prices</font></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">0.4 - 0.6</font></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border-bottom:solid black 1.0pt;border-left:none;border-right:solid black 1.0pt;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=5 nowrap valign=bottom width=48% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160; For example, industry references include<sup>1</sup>:</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=13% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=5 nowrap valign=bottom width=48% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; Brent +$4.9/bbl</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=13% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=5 nowrap valign=bottom width=48% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; WTI +$5.2/bbl </font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=13% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=5 nowrap valign=bottom width=48% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; WCS +$3.1/bbl </font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap valign=bottom width=34% style="border-bottom:solid black 1.0pt;border-left:solid black 1.0pt;border-right:none;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Change in gas prices</font></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">(0.4) -
+  (0.6)</font></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border-bottom:solid black 1.0pt;border-left:none;border-right:solid black 1.0pt;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=5 nowrap valign=bottom width=48% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160; For example, industry references include<sup>1</sup>:</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=13% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=5 nowrap valign=bottom width=48% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; Henry Hub -$0.3/mbtu</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=13% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=5 nowrap valign=bottom width=48% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; NBP -$2.2/mbtu</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap valign=bottom width=34% style="border-bottom:solid black 1.0pt;border-left:solid black 1.0pt;border-right:none;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Change in North American crude logistics differentials</font></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">0.0 - 0.1</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border-bottom:solid black 1.0pt;border-left:none;border-right:solid black 1.0pt;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=7 nowrap valign=bottom width=62% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160; For example, industry references include<sup>1</sup>:</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=5 nowrap valign=bottom width=48% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; WTI - WCS +$2.0/bbl</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=13% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=11% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=11% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=9 nowrap valign=bottom width=74% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; WTI Houston - WTI Midland +$1.7/bbl</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap valign=bottom width=34% style="border-bottom:solid black 1.0pt;border-left:solid black 1.0pt;border-right:none;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Change in Downstream margins</font></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">0.3 - 0.4</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border-bottom:solid black 1.0pt;border-left:none;border-right:solid black 1.0pt;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap valign=bottom width=34% style="border-bottom:solid black 1.0pt;border-left:solid black 1.0pt;border-right:none;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Change in Chemical margins</font></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap valign=bottom width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><i><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">(0.1) -
+  (0.3)</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border-bottom:solid black 1.0pt;border-left:none;border-right:solid black 1.0pt;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td nowrap valign=bottom width=2% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap width=2% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap width=30% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></b></p>
+  </td>
+ <td width=1% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=9 nowrap valign=bottom width=74% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Estimated effects of seasonal and planned factors impacting 2Q19
+  earnings</font></b></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap width=34% style="border-bottom:solid black 1.0pt;border-left:solid black 1.0pt;border-right:none;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Scheduled maintenance</font></p>
+  </td>
+ <td nowrap width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">(0.1) -
+  (0.3)</font></p>
+  </td>
+ <td nowrap width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">(0.1) -
+  (0.2)</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border-bottom:solid black 1.0pt;border-left:none;border-right:solid black 1.0pt;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap width=34% style="border-bottom:solid black 1.0pt;border-left:solid black 1.0pt;border-right:none;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Seasonal gas demand</font></p>
+  </td>
+ <td nowrap width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">(0.1) -
+  (0.2)</font></p>
+  </td>
+ <td nowrap width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border-bottom:solid black 1.0pt;border-left:none;border-right:solid black 1.0pt;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td nowrap width=2% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap width=2% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap width=30% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=9 nowrap valign=bottom width=74% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><b><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Estimated impacts from identified events</font></b></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap width=34% style="border-bottom:solid black 1.0pt;border-left:solid black 1.0pt;border-right:none;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Absence of 1Q19 asset impairments</font></p>
+  </td>
+ <td nowrap width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">0.2</font></p>
+  </td>
+ <td nowrap width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border-bottom:solid black 1.0pt;border-left:none;border-right:solid black 1.0pt;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap width=34% style="border-bottom:solid black 1.0pt;border-left:solid black 1.0pt;border-right:none;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">Mark-to-market derivative impacts</font><sup><i><font color=black face=Arial,sans-serif style="font-size:10.0pt;">1</font></i></sup></p>
+  </td>
+ <td nowrap width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td nowrap valign=bottom width=13% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">0.1 - 0.5</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=1% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;border-bottom:solid black 1.0pt;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border-bottom:solid black 1.0pt;border-left:none;border-right:solid black 1.0pt;border-top:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=3 nowrap width=34% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:10.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:10.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap width=13% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:10.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:10.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap width=13% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:10.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:10.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td nowrap width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><i><font color=black face=Arial,sans-serif style="font-size:10.0pt;">&nbsp;</font></i></p>
+  </td>
+ <td width=1% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=11% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=2% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=right style="margin:0in;margin-bottom:.0001pt;text-align:right;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ <td width=12% style="border:none;height:15.0pt;padding:0in 0in 0in 0in;">
+  <p align=center style="margin:0in;margin-bottom:.0001pt;text-align:center;"><font color=black face=Arial,sans-serif style="font-size:11.0pt;">&nbsp;</font></p>
+  </td>
+ </tr>
+<tr style="height:15.0pt;">
+  <td colspan=13 nowrap width=100% style="height:15.0pt;padding:0in 0in 0in 0in;">
+  <p style="margin:0in;margin-bottom:.0001pt;"><sup><i><font color=black face=Arial,sans-serif style="font-size:10.0pt;">1</font></i></sup><i><font color=black face=Arial,sans-serif style="font-size:10.0pt;"> Price data via publicly available sources as of June 20, 2019;
+  industry data provided as a reference, may differ from ExxonMobil realized
+  prices</font></i></p>
+  </td>
+ </tr>
+</table></div>
+
+
+
+
+
+
+
+
+
+
+
+<DIV bclFooter>
+
+
+<p style="margin:0in;margin-bottom:.0001pt;tab-stops:center 3.25in right 6.5in;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;">&nbsp;</font></p>
+
+
+</DIV>
+</DIV><HR noshade STYLE="page-break-after: always" align="center" width="100%" size=2><a name="page_2"></a><DIV bclPageBorder STYLE="PADDING-TOP: 0in; PADDING-BOTTOM: 0in; WIDTH: 100%; PADDING-RIGHT: 0in; PADDING-LEFT: 0in">
+
+<DIV bclHeader>
+
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;mso-border-shadow:yes;mso-line-height-rule:exactly;mso-padding-alt:31.0pt 31.0pt 31.0pt 31.0pt;mso-pagination:widow-orphan no-line-numbers;"><font style="border:none;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:.7pt;">&nbsp;</font></font></p>
+
+
+</DIV>
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font face=Arial,sans-serif style="border:none;"><font face=Arial,sans-serif lang=EN-US style="font-size:11.0pt;"></font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font face=Arial,sans-serif style="border:none;"><font face=Arial,sans-serif lang=EN-US style="font-size:11.0pt;">This information is only intended
+to provide additional information regarding current estimates of certain
+factors management believes will likely affect earnings for 2Q 2019 relative to
+1Q 2019 to assist investors, analysts and others in formulating their own
+estimates.&#160; It is not intended to be a comprehensive presentation of all
+factors that will affect the Corporation&#8217;s sequential earnings or to provide an
+estimate of the Corporation&#8217;s 2Q 2019 earnings.&#160; Actual earnings and the impact
+of factors identified here may vary depending on the impact of other factors
+not identified here and are subject to finalization of the Corporation&#8217;s
+financial reporting process for the second quarter.&#160; </font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font face=Arial,sans-serif style="border:none;"><font face=Arial,sans-serif lang=EN-US style="font-size:11.0pt;">&nbsp;</font></font></p>
+
+<p style="border:none;margin:0in;margin-bottom:.0001pt;"><font face=Arial,sans-serif style="border:none;"><font face=Arial,sans-serif lang=EN-US style="font-size:11.0pt;">Outlooks, estimates, projections
+and other statements of future financial impacts of certain factors as provided
+in this publication are forward-looking statements within the meaning of the
+Private Securities Litigation Reform Act.&#160; Actual future impacts of these
+certain factors for 2Q 2019 may vary from our estimates for a number of
+reasons, including additional unidentified factors related to: sales volume and
+sales mix numbers; maintenance costs; production growth and mix; financing
+costs; the resolution of any contingencies and uncertain tax positions;
+environmental and capital expenditures; price impacts; determinations of the
+outcomes of contractual terms during the quarter, the outcome of commercial
+negotiations related to the quarter; the timing of any acquisitions or
+divestments; resolution of trading and derivative positions for the quarter;
+the impact of fiscal and commercial terms applicable to the quarter; regional
+differences for the product demand; regional pricing differentials; changes in
+regulatory policies and any associated liabilities; updates or corrections of
+any estimate used herein; and other market conditions in the oil, natural gas,
+petroleum, and petrochemical industries.&#160; Furthermore, additional factors may
+exist that will be relevant to 2Q 2019 earnings that are not currently known or
+fully understood.&#160; All forward-looking statements and the assumptions in this
+publication speak only as of the date hereof.&#160; We do not assume or undertake
+any obligation to update these forward-looking statements or assumptions as of
+any future date.&#160; Any future update or expansion of the forward-looking
+statements in this publication will be provided only through a public
+disclosure indicating that fact.</font></font></p>
+
+
+
+
+<DIV bclFooter>
+
+ <p align=center style="border:none;margin:0in;margin-bottom:10.0pt;mso-border-shadow:yes;mso-padding-alt:31.0pt 31.0pt 31.0pt 31.0pt;text-align:center;"><font style="display:none;mso-hide:all;"><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:115%;">&lt;/BCLPAGE&gt;</font></font><font face="Times New Roman,serif" lang=EN-US style="font-size:10.0pt;line-height:115%;">2</DIV>
+</DIV><HR noshade align="center" width="100%" size=2></BODY></HTML>
+</TEXT>
+</DOCUMENT>
+</SEC-DOCUMENT>
