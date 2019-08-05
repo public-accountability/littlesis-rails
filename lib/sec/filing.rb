@@ -40,7 +40,11 @@ module Sec
       raise MissingDocumentError if @data.blank?
 
       document.reporting_owners.map do |reporting_owner|
-        reporting_owner.to_h.merge(filename: filename).with_indifferent_access
+        reporting_owner
+          .to_h
+          .with_indifferent_access
+          .merge(filename: @metadata.fetch(:filename),
+                 date_filed: @metadata.fetch(:date_filed))
       end
     end
 
@@ -60,11 +64,7 @@ module Sec
     alias to_hash to_h
 
     private
-
-    def filename
-      @metadata.fetch(:filename)
-    end
-
+    
     def set_document
       return unless @data
 

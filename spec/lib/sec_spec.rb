@@ -195,7 +195,8 @@ describe Sec do
                  'is_ten_percent_owner' => 'true',
                  'is_other' => 'false',
                  'officer_title' => nil,
-                 'filename' => 'edgar/data/886982/0000769993-19-000383.txt')
+                 'filename' => 'edgar/data/886982/0000769993-19-000383.txt',
+                 'date_filed' => '2019-05-21')
       end
 
       specify do
@@ -247,7 +248,8 @@ describe Sec do
             "is_ten_percent_owner" => "0",
             "is_other" => "0",
             "officer_title" => nil,
-            "filename" => "edgar/data/1065280/0001082906-14-000050.txt"
+            "filename" => "edgar/data/1065280/0001082906-14-000050.txt",
+            "date_filed" => '2014-10-03'
           }
         ]
       }
