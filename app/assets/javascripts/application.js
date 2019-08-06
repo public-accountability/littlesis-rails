@@ -22,11 +22,10 @@
 //= require jquery.dataTables
 //= require dataTables.bootstrap4.min.js
 //= require dataTables.editor
-//= require jquery.Jcrop
 //= require bootstrap-select.min.js
 //= require typeahead.bundle.min.js
 //= require hogan-3.0.1.js
-//= require d3.v4.min.js
+//= require d3.v5.min.js
 //= require papaparse.min.js
 //= require FileSaver.min.js
 //= require_tree ./common
