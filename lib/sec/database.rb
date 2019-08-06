@@ -23,12 +23,13 @@ module Sec
     end
 
     # output: [SQLite3::ResultSet::HashWithTypesAndFields]
-    # queries the database to query filings
-    # cik --> selects by cik number
-    # form_types ---> is a list of forms types to query for
-    # limit/offset --> passed to sql
+    # queries the SEC sqlite database for forms
     #
-    # Example hash:
+    # cik               selects by cik number
+    # form_types        list of forms types to limit search to
+    # limit/offset      values passed to sql. defaults: 20/0
+    #
+    # Example resulting hash:
     #   {"cik" => "4962",
     #    "company_name" => "AMERICAN EXPRESS CO",
     #    "form_type" => "10-Q",
@@ -36,8 +37,8 @@ module Sec
     #    "filename" => "edgar/data/4962/0000004962-19-000051.txt",
     #    "data" => nil}
     #
-    #  "data" is from the documents table and, if present, contains the document
-    #  The rest of the fields are called "metadata" by Sec::Filing
+    #  "data" is from the documents table and, if present, contains the document (usually HTML or XML).
+    #  The rest of the fields are considered "metadata" by Sec::Filing
     def forms(cik: nil, form_types: nil, limit: 20, offset: 0)
       form_types_sql = case form_types
                        when Array
