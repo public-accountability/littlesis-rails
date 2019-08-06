@@ -18,7 +18,7 @@ env:
     - COVERAGE=true
 
 addons:
-  mariadb: '10.2'
+  mariadb: '10.3'
   firefox: latest
   
 services:
@@ -27,10 +27,10 @@ services:
 before_install:
   - sudo apt-get install software-properties-common
   - sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-  - sudo add-apt-repository -y 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu trusty main'
+  - sudo add-apt-repository -y 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.3/ubuntu trusty main'
   - sudo add-apt-repository -y ppa:builds/sphinxsearch-rel22
   - sudo apt-get -qq update
-  - sudo apt-get install -y libmariadb-dev libmariadbclient18 sphinxsearch
+  - sudo apt-get install -o Dpkg::Options::="--force-overwrite" -y mariadb-client libmariadb-dev sphinxsearch
   - nvm install 8
   - nvm use 8
   - node --version
@@ -39,7 +39,6 @@ before_install:
 install:
   - bundle install --jobs=3 --retry=3 --deployment --path=vendor/bundle
   - yarn install
-
 
 before_script:
   - cp config/database.travis.yml config/database.yml
