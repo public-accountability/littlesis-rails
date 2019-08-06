@@ -22,7 +22,6 @@
 //= require jquery.dataTables
 //= require dataTables.bootstrap4.min.js
 //= require dataTables.editor
-//= require jquery.Jcrop
 //= require bootstrap-select.min.js
 //= require typeahead.bundle.min.js
 //= require hogan-3.0.1.js
