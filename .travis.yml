@@ -31,6 +31,7 @@ before_install:
   - sudo add-apt-repository -y ppa:builds/sphinxsearch-rel22
   - sudo apt-get -qq update
   - sudo apt-get install -o Dpkg::Options::="--force-overwrite" -y mariadb-client libmariadb-dev sphinxsearch
+  - sudo mysql_upgrade
   - nvm install 8
   - nvm use 8
   - node --version
