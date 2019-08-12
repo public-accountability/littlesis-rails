@@ -28,10 +28,11 @@ before_install:
   - sudo apt-get install software-properties-common
   - sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
   - sudo add-apt-repository -y 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/ubuntu trusty main'
-  - sudo add-apt-repository -y ppa:builds/sphinxsearch-rel22
   - sudo apt-get -qq update
-  - sudo apt-get install -o Dpkg::Options::="--force-overwrite" -y mariadb-client libmariadb-dev sphinxsearch
+  - sudo apt-get install -o Dpkg::Options::="--force-overwrite" -y mariadb-client libmariadb-dev
   - sudo mysql_upgrade
+  - curl -L "https://github.com/manticoresoftware/manticoresearch/releases/download/3.1.0/manticore_3.1.0-190716-445e806-release.trusty_amd64-bin.deb" > manticore.deb
+  - sudo dpkg -i manticore.deb
   - nvm install 8
   - nvm use 8
   - node --version
