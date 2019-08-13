@@ -42,8 +42,8 @@ FactoryBot.define do
     email { generate(:user_email) }
     default_network_id { 79 }
     confirmed_at { Time.current }
-    id { Faker::Number.unique.between(1, 10_000) }
-    sf_id = Faker::Number.unique.between(1, 10_000)
+    id { Faker::Number.unique.between(from: 1, to: 10_000) }
+    sf_id = Faker::Number.unique.between(from: 1, to: 10_000)
     sf_guard_user_id { sf_id }
     association :sf_guard_user, factory: :sf_user, strategy: :build, id: sf_id
   end
