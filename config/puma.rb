@@ -14,8 +14,10 @@ environment rails_env
 
 if rails_env == 'production'
   threads 5, 10
+  bind ENV.fetch('LITTLESIS_SOCKET') { "unix:///var/run/littlesis.sock" }
 else
   threads 2, 5
+  bind "tcp://127.0.0.1"
 end
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
