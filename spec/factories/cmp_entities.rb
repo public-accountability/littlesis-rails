@@ -6,12 +6,12 @@ FactoryBot.define do
   end
 
   factory :cmp_entity_org, class: CmpEntity do
-    cmp_id { Faker::Number.unique.number(6) }
+    cmp_id { Faker::Number.unique.number(digits: 6) }
     entity_type { 0 }
   end
 
   factory :cmp_entity_person, class: CmpEntity do
-    cmp_id { Faker::Number.unique.number(6) }
+    cmp_id { Faker::Number.unique.number(digits: 6) }
     entity_type { 1 }
   end
 end

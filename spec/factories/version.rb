@@ -10,8 +10,8 @@ FactoryBot.define do
   end
 
   factory :relationship_version, class: PaperTrail::Version do
-    entity1_id { Faker::Number.unique.number(6).to_i }
-    entity2_id { Faker::Number.unique.number(6).to_i }
+    entity1_id { Faker::Number.unique.number(digits: 6).to_i }
+    entity2_id { Faker::Number.unique.number(digits: 6).to_i }
     created_at { Time.current }
     item_type { 'Relationship' }
     item_id { rand(10_000) }

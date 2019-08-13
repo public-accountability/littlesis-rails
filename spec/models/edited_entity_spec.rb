@@ -2,9 +2,9 @@
 
 describe EditedEntity, type: :model do
   let(:entity_id) { create(:entity_person, last_user_id: 1).id }
-  let(:version_id) { Faker::Number.unique.number(8).to_i }
-  let(:user_id) { Faker::Number.unique.number(4).to_i }
-  let(:user1_id) { Faker::Number.unique.number(4).to_i }
+  let(:version_id) { Faker::Number.unique.number(digits: 8).to_i }
+  let(:user_id) { Faker::Number.unique.number(digits: 4).to_i }
+  let(:user1_id) { Faker::Number.unique.number(digits: 4).to_i }
   let(:created_at) { Faker::Date.backward(100) }
   let(:org) { create(:entity_org) }
   let(:person) { create(:entity_person) }
@@ -56,7 +56,7 @@ describe EditedEntity, type: :model do
     it 'permits creations when version id is different' do
       expect do
         EditedEntity.create!(entity_id: entity_id,
-                             version_id: Faker::Number.unique.number(8).to_i,
+                             version_id: Faker::Number.unique.number(digits: 8).to_i,
                              user_id: rand(10_000),
                              created_at: Time.current)
       end.not_to raise_error

@@ -13,7 +13,7 @@ describe Business do
 
   describe 'with_crd_number' do
     before do
-      create(:entity_org).add_extension('Business', crd_number: Faker::Number.unique.number(5).to_i)
+      create(:entity_org).add_extension('Business', crd_number: Faker::Number.unique.number(digits: 5).to_i)
       create(:entity_org).add_extension('Business')
     end
 

@@ -255,7 +255,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       context 'with external links' do
-        let(:link_id) { Faker::Number.unique.number(6).to_s }
+        let(:link_id) { Faker::Number.unique.number(digits: 6).to_s }
 
         before do
           ExternalLink.create!(link_type: 'sec', entity_id: person.id, link_id: link_id)

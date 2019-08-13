@@ -1,6 +1,6 @@
 describe Cmp do
   describe Cmp::CmpEntityImporter do
-    let(:attrs) { LsHash.new(name: Faker::Creature::Cat.name, cmpid: Faker::Number.number(6)) }
+    let(:attrs) { LsHash.new(name: Faker::Creature::Cat.name, cmpid: Faker::Number.number(digits: 6)) }
     subject { Cmp::CmpEntityImporter.new attrs }
     specify { expect(subject.attributes).to eql attrs }
   end

@@ -668,8 +668,8 @@ describe 'Merging Entities', :merging_helper do
 
   context 'os donations' do
     subject { EntityMerger.new(source: source_person, dest: dest_person) }
-    let(:cmte_id) { Faker::Number.number(5).to_s }
-    let(:recip_id) { Faker::Number.number(5).to_s }
+    let(:cmte_id) { Faker::Number.number(digits: 5).to_s }
+    let(:recip_id) { Faker::Number.number(digits: 5).to_s }
     let(:os_committee) { create(:os_committee, cmte_id: cmte_id) }
 
     context 'source has 2 os matches' do
@@ -741,7 +741,7 @@ describe 'Merging Entities', :merging_helper do
     context 'source is an os committee' do
       subject { EntityMerger.new(source: source_org, dest: dest_org) }
       let!(:donor) { create(:entity_person) }
-      let!(:other_cmte_id) { Faker::Number.unique.number(5).to_s }
+      let!(:other_cmte_id) { Faker::Number.unique.number(digits: 5).to_s }
       let!(:other_cmte) do
         create(:entity_org).tap { |org| org.add_extension('PoliticalFundraising', { fec_id: other_cmte_id }) }
       end
@@ -797,7 +797,7 @@ describe 'Merging Entities', :merging_helper do
 
     context 'source person is a cmp entities' do
       let!(:cmp_entity) do
-        CmpEntity.create!(entity: source_person, cmp_id: Faker::Number.unique.number(6).to_i, entity_type: :person)
+        CmpEntity.create!(entity: source_person, cmp_id: Faker::Number.unique.number(digits: 6).to_i, entity_type: :person)
       end
 
       it 'transfers cmp entity' do
@@ -808,11 +808,11 @@ describe 'Merging Entities', :merging_helper do
 
     context 'both source and dest person are cmp entities' do
       let!(:cmp_entity) do
-        CmpEntity.create!(entity: source_person, cmp_id: Faker::Number.unique.number(6).to_i, entity_type: :person)
+        CmpEntity.create!(entity: source_person, cmp_id: Faker::Number.unique.number(digits: 6).to_i, entity_type: :person)
       end
 
       let!(:dest_cmp_entity) do
-        CmpEntity.create!(entity: dest_person, cmp_id: Faker::Number.unique.number(6).to_i, entity_type: :person)
+        CmpEntity.create!(entity: dest_person, cmp_id: Faker::Number.unique.number(digits: 6).to_i, entity_type: :person)
       end
 
       it 'does not merge and raises error instead' do

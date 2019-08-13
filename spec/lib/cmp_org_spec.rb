@@ -3,7 +3,7 @@ describe Cmp::CmpOrg do
   let(:override) { {} }
   let(:attributes) do
     {
-      cmpid: Faker::Number.number(6),
+      cmpid: Faker::Number.number(digits: 6),
       cmpname: 'big oil inc',
       cmpmnemonic: Faker::Company.name,
       website: 'http://oil.com',
@@ -144,7 +144,7 @@ describe Cmp::CmpOrg do
     context 'matched entity already has a CmpEntity' do
       let(:entity) { create(:entity_org) }
       before do
-        CmpEntity.create!(cmp_id: Faker::Number.number(6), entity_id: entity.id, entity_type: :org)
+        CmpEntity.create!(cmp_id: Faker::Number.number(digits: 6), entity_id: entity.id, entity_type: :org)
         subject.instance_variable_set(:@_entity_match, entity)
         expect(Rails.logger).to receive(:warn).once
       end
@@ -213,7 +213,7 @@ describe Cmp::CmpOrg do
 
   describe 'helper methods' do
     describe '#attrs_for' do
-      let(:cmpid) { Faker::Number.number(6) } 
+      let(:cmpid) { Faker::Number.number(digits: 6) } 
       let(:attributes) do
         { website: 'http://example.com',
           city: 'new york',

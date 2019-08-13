@@ -17,8 +17,8 @@ describe Cmp::CmpRelationship do
     ThinkingSphinx::Callbacks.resume!
   end
 
-  let(:cmp_org_id) { Faker::Number.unique.number(6) }
-  let(:cmp_person_id) { Faker::Number.unique.number(6) }
+  let(:cmp_org_id) { Faker::Number.unique.number(digits: 6) }
+  let(:cmp_person_id) { Faker::Number.unique.number(digits: 6) }
   let(:attributes) do
     {
       cmpid:  "#{cmp_org_id}-#{cmp_person_id}",

@@ -87,7 +87,7 @@ describe ExternalDatasetService do
   describe 'Iapd' do
     let(:external_dataset_owner) { build(:external_dataset_iapd_owner) }
     let(:external_dataset_advisor) { build(:external_dataset_iapd_advisor) }
-    let(:crd_number) { Faker::Number.unique.number(5).to_i }
+    let(:crd_number) { Faker::Number.unique.number(digits: 5).to_i }
 
     describe '#validate_match!' do
       let(:person) { create(:entity_person) }
@@ -97,12 +97,12 @@ describe ExternalDatasetService do
       let(:service_org) { ExternalDatasetService::Iapd.new(entity: org, external_dataset: external_dataset_advisor) }
 
       it 'raises error if person has crd number' do
-        person.add_extension('BusinessPerson', crd_number: Faker::Number.unique.number(5).to_i)
+        person.add_extension('BusinessPerson', crd_number: Faker::Number.unique.number(digits: 5).to_i)
         expect { service_person.validate_match! }.to raise_error(ExternalDatasetService::InvalidMatchError)
       end
 
       it 'rasies error if org has a crd number' do
-        org.add_extension('Business', crd_number: Faker::Number.unique.number(5).to_i)
+        org.add_extension('Business', crd_number: Faker::Number.unique.number(digits: 5).to_i)
         expect { service_org.validate_match! }.to raise_error(ExternalDatasetService::InvalidMatchError)
       end
 

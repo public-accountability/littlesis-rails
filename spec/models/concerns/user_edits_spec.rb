@@ -4,10 +4,10 @@ describe UserEdits do
   describe UserEdits::Edits do
     let(:ids) do
       {
-        'entity' => Faker::Number.unique.number(5).to_i,
-        'relationship' => Faker::Number.unique.number(5).to_i,
-        'entity1_id' => Faker::Number.unique.number(5).to_i,
-        'entity2_id' => Faker::Number.unique.number(5).to_i
+        'entity' => Faker::Number.unique.number(digits: 5).to_i,
+        'relationship' => Faker::Number.unique.number(digits: 5).to_i,
+        'entity1_id' => Faker::Number.unique.number(digits: 5).to_i,
+        'entity2_id' => Faker::Number.unique.number(digits: 5).to_i
       }
     end
 

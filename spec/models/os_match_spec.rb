@@ -324,7 +324,7 @@ describe OsMatch, type: :model do
   describe 'matching and unmatching' do
     let!(:donor) { create(:loeb) }
     # let(:recipient) { create(:entity_org) }
-    let(:recip_code) { Faker::Number.number(5).to_s }
+    let(:recip_code) { Faker::Number.number(digits: 5).to_s }
     let(:os_donation) { create(:os_donation, recipid: recip_code, cmteid: recip_code) }
     let(:os_donation_two) { create(:os_donation, recipid: recip_code, cmteid: recip_code, amount: 2) }
     let(:os_committee) { create(:os_committee, cmte_id: recip_code) }

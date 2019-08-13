@@ -2,7 +2,7 @@ describe Cmp::CmpPerson do
   let(:override) { {} }
   let(:attributes) do
     {
-      cmpid: Faker::Number.number(6),
+      cmpid: Faker::Number.number(digits: 6),
       fullname: 'Mr. Oil Executive',
       nationality: 'Canada;United Kingdom',
       firstname: 'oil',

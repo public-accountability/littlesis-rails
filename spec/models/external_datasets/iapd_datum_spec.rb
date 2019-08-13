@@ -204,7 +204,7 @@ describe IapdDatum do
     before { owner_one; owner_two; }
 
     specify { expect(IapdDatum.owners_of_crd_number(19_585).count).to eq 2 }
-    specify { expect(IapdDatum.owners_of_crd_number(5).count).to eq 0 }
+    specify { expect(IapdDatum.owners_of_crd.number(digits: 5).count).to eq 0 }
 
     it 'finds corrects owner' do
       owners = IapdDatum.owners_of_crd_number(1_000).to_a
