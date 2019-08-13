@@ -42,7 +42,7 @@ module RspecExampleHelpers
   end
 
   def random_username
-    Faker::Internet.unique.user_name(5).tr('.', '_')
+    Faker::Internet.unique.user_name(specifier: 5).tr('.', '_')
   end
 
   def css(*args)
