@@ -16,6 +16,8 @@ threads threads_count, threads_count
 
 if rails_env == 'production'
   bind ENV.fetch('LITTLESIS_SOCKET') { "unix:///var/run/littlesis.sock" }
+  pidfile '/run/puma.pid'
+  state_path '/run/puma.state'
 else
   bind "tcp://127.0.0.1"
 end
