@@ -93,7 +93,7 @@ test:
 
 development:
   <<: *defaults
-  socket: "/home/app/rails/tmp/development.sphinx"
+  socket: "/littlesis/tmp/development.sphinx"
 
 production:
   <<: *defaults
