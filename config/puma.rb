@@ -11,12 +11,12 @@ environment rails_env
 # and maximum; this matches the default thread size of Active Record.
 #
 # threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
+threads_count = 5
+threads threads_count, threads_count
 
 if rails_env == 'production'
-  threads 5, 10
   bind ENV.fetch('LITTLESIS_SOCKET') { "unix:///var/run/littlesis.sock" }
 else
-  threads 2, 5
   bind "tcp://127.0.0.1"
 end
 
@@ -39,15 +39,15 @@ workers ENV.fetch("WEB_CONCURRENCY") { 2 }
 # you need to make sure to reconnect any threads in the `on_worker_boot`
 # block.
 #
-preload_app!
+# preload_app!
 
 # If you are preloading your application and using Active Record, it's
 # recommended that you close any connections to the database before workers
 # are forked to prevent connection leakage.
 #
-before_fork do
-  ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord)
-end
+# before_fork do
+#  ActiveRecord::Base.connection_pool.disconnect!
+# end
 
 # the code in the `on_worker_boot` will be called if you are using
 # clustered mode by specifying a number of `workers`. After each worker
@@ -56,9 +56,9 @@ end
 # or connections that may have been created at application boot, as Ruby
 # cannot share connections between processes.
 #
-on_worker_boot do
-  ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
-end
+# on_worker_boot do
+#   ActiveRecord::Base.establish_connection
+# end
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
