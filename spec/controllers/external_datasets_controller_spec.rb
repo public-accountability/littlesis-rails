@@ -26,8 +26,8 @@ describe ExternalDatasetsController, type: :controller do
   describe 'matching' do
     before { allow(controller).to receive(:authenticate_user!) }
 
-    let(:row_id) { Faker::Number.number }
-    let(:entity_id) { Faker::Number.number }
+    let(:row_id) { Faker::Number.number.to_s }
+    let(:entity_id) { Faker::Number.number.to_s }
     let(:entity) { instance_double('Entity') }
     let(:row) { instance_double('ExternalDataset', id: row_id) }
     let(:match_with_double) { double(result: :owner_not_found) }

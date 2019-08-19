@@ -22,7 +22,7 @@ describe Cmp::CmpRelationship do
   let(:attributes) do
     {
       cmpid:  "#{cmp_org_id}-#{cmp_person_id}",
-      orbis: Faker::Lorem.characters(8),
+      orbis: Faker::Lorem.characters(number: 8),
       cmp_org_id: cmp_org_id,
       cmp_person_id: cmp_person_id,
       appointment_year: '2014',
