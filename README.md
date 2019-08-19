@@ -5,8 +5,9 @@ LittleSis
 LittleSis uses these technologies among others:
 - Rails 5.2
 - Ruby 2.6
-- Mariadb 10.2
-- Nginx / Phusion Passenger
+- Mariadb 10.4
+- Nginx
+- Puma
 - Redis 5
 - Manticore search
 - Bootstrap 4
