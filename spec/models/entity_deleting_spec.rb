@@ -37,7 +37,7 @@ describe 'Deleting an Entity', type: :model do
         person.add_extension('Academic')
         person.add_tag('oil')
         person.add_tag('nyc')
-        person.images.create!(filename: Faker::File.file_name(nil, nil, 'png'), caption: 'image')
+        person.images.create!(filename: Faker::File.file_name(ext: 'png'), caption: 'image')
         person
       end
 
