@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '5.2.3'
+gem 'rails', '6.0.0'
 gem 'mysql2', '~> 0.5.2'
 
 gem 'puma'
@@ -9,7 +9,7 @@ gem 'puma'
 gem 'rack-rewrite', '~> 1.5.1'
 
 # users and authentication
-gem 'devise', '~> 4.6.2'
+gem 'devise', '~> 4.7.0'
 
 # Versioning
 gem 'paper_trail', '10.3.1'
