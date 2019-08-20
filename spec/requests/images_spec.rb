@@ -1,4 +1,4 @@
-describe Images do
+describe 'Images' do
   before { login_as(user, scope: :user) }
 
   after { logout(:user) }
