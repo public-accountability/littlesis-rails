@@ -11,8 +11,6 @@ export RAILS_ENV=production
 
 cd /var/www/littlesis
 
-rvm use &> /dev/null
-
 git remote update
 
 REMOTE_COMMIT=$(git rev-parse origin/master)
@@ -59,4 +57,4 @@ echo "Restarting delayed job"
 bin/delayed_job -n 2 restart
 
 echo "Restarting LittleSis"
-touch tmp/restart.txt
+bundle exec pumactl -P tmp/puma.pid phased-restart
