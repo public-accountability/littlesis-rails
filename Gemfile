@@ -43,8 +43,6 @@ gem 'activerecord-session_store'
 gem 'thinking-sphinx', '~> 4.4'
 gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_delta'
 
-gem 'htmlentities'
-
 gem 'redis'
 
 # For easy cron scheduling
