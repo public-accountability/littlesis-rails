@@ -85,6 +85,10 @@ describe Document, :pagination_helper, type: :model do
     end
     let(:url) { Faker::Internet.unique.url }
 
+    let(:fec_document) do
+      create(:fec_document)
+    end
+
     # create a reference the entity and each relationship
     # the first relationship references to the same
     # document as the entity's refernce
@@ -95,7 +99,7 @@ describe Document, :pagination_helper, type: :model do
         # give the first relationship a reference with the same url as the entity
         relationships.first.add_reference(url: url, name: 'a url')
         relationships.second.add_reference(attributes_for(:document))
-        relationships.third.add_reference(attributes_for(:fec_document))
+        relationships.third.add_reference_by_document_id(fec_document.id)
       }
     end
 
@@ -103,7 +107,7 @@ describe Document, :pagination_helper, type: :model do
       before do
         create(:document) # create a random document unrelated to this query
         add_3_documents.call
-        @oldest_document = Document.last.tap { |d| d.update_column(:updated_at, 1.year.ago) }.reload
+        relationships.third.references.first.update_column(:updated_at, 10.minutes.from_now)
       end
 
       subject { Document.documents_for_entity(entity: entity, page: 1) }
@@ -113,7 +117,7 @@ describe Document, :pagination_helper, type: :model do
       end
 
       it 'sorts by updated at date' do
-        expect(subject.last).to eq @oldest_document
+        expect(subject.first).to eq fec_document
       end
 
       context 'excluding documents by type' do
