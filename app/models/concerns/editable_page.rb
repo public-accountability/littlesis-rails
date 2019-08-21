@@ -10,7 +10,7 @@ module EditablePage
 
   included do
     belongs_to :last_user, foreign_key: 'last_user_id', class_name: 'User', optional: true
-    validates :name, uniqueness: true, presence: true
+    validates :name, uniqueness: { case_sensitive: false }, presence: true
     before_validation :modify_name
     before_create :set_markdown_to_be_blank_string_if_nil
   end

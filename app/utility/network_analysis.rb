@@ -101,7 +101,7 @@ module NetworkAnalysis
     ORDER BY stat desc
     SQL
 
-    ApplicationRecord.connection.exec_query(sql).to_hash.map { |h| parse_connecting_ids(h) }
+    ApplicationRecord.connection.exec_query(sql).to_a.map { |h| parse_connecting_ids(h) }
   end
 
   # HELPERS

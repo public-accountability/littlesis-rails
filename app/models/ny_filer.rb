@@ -8,7 +8,7 @@ class NyFiler < ApplicationRecord
   has_many :entities, :through => :ny_filer_entity
   has_many :ny_disclosures, foreign_key: 'filer_id', inverse_of: :ny_filer, dependent: :nullify
 
-  validates :filer_id, presence: true, uniqueness: true
+  validates :filer_id, presence: true, uniqueness: { case_sensitive: false }
 
   ENTITY_MATCHES_COUNT = 10
 

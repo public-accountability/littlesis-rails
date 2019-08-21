@@ -4,7 +4,7 @@ class Document < ApplicationRecord
   has_many :references
 
   validates :url, presence: true, url: true
-  validates :url_hash, presence: true, uniqueness: true
+  validates :url_hash, presence: true, uniqueness: { case_sensitive: true }
   validates :name, length: { maximum: 255 }
   validates :publication_date, date: true
 

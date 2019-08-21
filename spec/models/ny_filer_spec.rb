@@ -5,7 +5,7 @@ describe NyFiler, type: :model do
   it { is_expected.to have_many(:entities) }
   it { is_expected.to have_many(:ny_disclosures) }
   it { is_expected.to validate_presence_of(:filer_id) }
-  it { is_expected.to validate_uniqueness_of(:filer_id) }
+  it { is_expected.to validate_uniqueness_of(:filer_id).case_insensitive }
 
   it 'has OFFICES constant' do
     expect(NyFiler::OFFICES).to be_a Hash

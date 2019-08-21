@@ -10,6 +10,8 @@ module Lilsis
 
   class Application < Rails::Application
     config.load_defaults 5.0
+    config.autoloader = :classic
+    #config.autoloader = :zeitwerk
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       rewrite  %r{\A/(person|org)/([0-9]+)/[^/ ]+(/.*)?}, '/entities/$2$3'

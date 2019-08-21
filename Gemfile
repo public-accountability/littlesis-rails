@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '5.2.3'
+gem 'rails', '6.0.0'
 gem 'mysql2', '~> 0.5.2'
 
 gem 'puma'
@@ -9,7 +9,7 @@ gem 'puma'
 gem 'rack-rewrite', '~> 1.5.1'
 
 # users and authentication
-gem 'devise', '~> 4.6.2'
+gem 'devise', '~> 4.7.0'
 
 # Versioning
 gem 'paper_trail', '10.3.1'
@@ -40,10 +40,8 @@ gem 'kaminari'
 gem 'activerecord-session_store'
 
 # For search and indexing
-gem 'thinking-sphinx', '~> 4.3'
+gem 'thinking-sphinx', '~> 4.4'
 gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_delta'
-
-gem 'htmlentities'
 
 gem 'redis'
 
@@ -67,7 +65,7 @@ group :test, :development do
   gem 'pry-rails', '>= 0.3.7'
   gem 'rack-mini-profiler'
   gem 'rails-controller-testing'
-  gem 'rspec-rails', '>= 3.8.0'
+  gem 'rspec-rails', '>= 4.0.0.beta2'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false

@@ -16,8 +16,8 @@ Rails.application.configure do
   # Show full error reports and disable caching.
   config.consider_all_requests_local = true
 
-   # Enable/disable caching. By default caching is disabled.
-   # Run rails dev:cache to toggle caching.
+  # Enable/disable caching. By default caching is disabled.
+  # Run rails dev:cache to toggle caching.
   # if Rails.root.join('tmp', 'caching-dev.txt').exist?
   #   config.action_controller.perform_caching = true
 
@@ -32,6 +32,7 @@ Rails.application.configure do
   # end
 
   config.action_controller.perform_caching = true
+  config.action_controller.enable_fragment_cache_logging = true
 
   # config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch(:redis_url) }
   # config.cache_store = :redis_store #, "redis://redis:6379/0/cache"
@@ -41,6 +42,7 @@ Rails.application.configure do
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
+  
 
   config.assets.css_compressor = :sass
 
@@ -81,16 +83,8 @@ Rails.application.configure do
     ssl: true
   }
 
-  # Enable serving of images from asset server.
-  # config.action_controller.asset_host = '/'
+  config.active_storage.service = :local
 
-  # config.action_controller.asset_host = Proc.new do |source|
-  #   if source =~ /images/
-  #     "https://#{config.asset_host}"
-  #   else
-  #     nil
-  #   end
-  # end
-
+  # TODO: Maybe enable this?
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 end

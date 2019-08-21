@@ -142,6 +142,10 @@ module RspecExampleHelpers
     org = FactoryBot.create(:org)
     FactoryBot.create(:generic_relationship, entity: person, related: org, last_user_id: 1)
   end
+
+  def within_one_second?(a, b)
+    [0, 1].include? (a.to_i - b.to_i).abs
+  end
 end
 
 module RspecGroupHelpers

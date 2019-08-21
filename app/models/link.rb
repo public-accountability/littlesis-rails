@@ -38,7 +38,7 @@ class Link < ApplicationRecord
     LIMIT 20000
     SQL
 
-    ApplicationRecord.connection.exec_query(sql).to_hash.map do |h|
+    ApplicationRecord.connection.exec_query(sql).map do |h|
       if h.delete('is_reverse') == 1
         h['entity1_id'], h['entity2_id'] = h['entity2_id'], h['entity1_id']
       end

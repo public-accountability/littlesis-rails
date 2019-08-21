@@ -26,9 +26,9 @@ class OsMatch < ApplicationRecord
     # if the ids are the same, then the cmteid is the primary recipient
     if os_donation.recipid == os_donation.cmteid
       cmte = find_or_create_cmte
-      update_attributes :committee => cmte, :recipient => cmte
+      update(committee: cmte, recipient: cmte)
     else
-      update_attributes :recip_id => find_recip_id(os_donation.recipid), :committee => find_or_create_cmte
+      update(recip_id: find_recip_id(os_donation.recipid), committee: find_or_create_cmte)
     end
   end
 

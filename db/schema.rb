@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_18_154608) do
+ActiveRecord::Schema.define(version: 2019_08_20_204626) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
     t.string "name_first", limit: 50, null: false
     t.string "name_last", limit: 50, null: false
     t.string "email", limit: 100, null: false
-    t.text "reason", limit: 4294967295, null: false
+    t.text "reason", size: :long, null: false
     t.boolean "is_active", default: false, null: false
     t.integer "request_limit", default: 10000, null: false
     t.datetime "created_at"
@@ -103,11 +103,11 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   end
 
   create_table "article", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.text "url", limit: 16777215, null: false
+    t.text "url", size: :medium, null: false
     t.string "title", limit: 200, null: false
     t.string "authors", limit: 200
-    t.text "body", limit: 4294967295, null: false
-    t.text "description", limit: 16777215
+    t.text "body", size: :long, null: false
+    t.text "description", size: :medium
     t.integer "source_id"
     t.datetime "published_at"
     t.boolean "is_indexed", default: false, null: false
@@ -227,7 +227,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
 
   create_table "custom_key", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "name", limit: 50, null: false
-    t.text "value", limit: 4294967295
+    t.text "value", size: :long
     t.string "description", limit: 200
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -255,8 +255,8 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   create_table "delayed_jobs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
     t.integer "attempts", default: 0, null: false
-    t.text "handler", limit: 16777215, null: false
-    t.text "last_error", limit: 16777215
+    t.text "handler", size: :medium, null: false
+    t.text "last_error", size: :medium
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
@@ -273,7 +273,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
     t.string "url_hash", limit: 40, null: false
     t.string "publication_date", limit: 10
     t.integer "ref_type", default: 1, null: false
-    t.text "excerpt", limit: 16777215
+    t.text "excerpt", size: :medium
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["url_hash"], name: "index_documents_on_url_hash", unique: true
@@ -331,8 +331,8 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   create_table "entity", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "name", limit: 200
     t.string "blurb", limit: 200
-    t.text "summary", limit: 4294967295
-    t.text "notes", limit: 4294967295
+    t.text "summary", size: :long
+    t.text "notes", size: :long
     t.string "website", limit: 100
     t.bigint "parent_id"
     t.string "primary_ext", limit: 50
@@ -386,8 +386,8 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   end
 
   create_table "external_datasets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.text "row_data", limit: 4294967295
-    t.text "match_data", limit: 4294967295
+    t.text "row_data", size: :long
+    t.text "match_data", size: :long
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "primary_ext", limit: 1
@@ -417,7 +417,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   create_table "fedspending_filing", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "relationship_id"
     t.bigint "amount"
-    t.text "goods", limit: 4294967295
+    t.text "goods", size: :long
     t.bigint "district_id"
     t.string "fedspending_id", limit: 30
     t.string "start_date", limit: 10
@@ -452,7 +452,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   create_table "help_pages", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "title"
-    t.text "markdown", limit: 16777215
+    t.text "markdown", size: :medium
     t.integer "last_user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -467,7 +467,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   create_table "image", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id"
     t.string "filename", limit: 100, null: false
-    t.text "caption", limit: 4294967295
+    t.text "caption", size: :long
     t.boolean "is_featured", default: false, null: false
     t.boolean "is_free"
     t.string "url", limit: 400
@@ -530,7 +530,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   create_table "lobby_filing_lobby_issue", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "issue_id", null: false
     t.bigint "lobby_filing_id", null: false
-    t.text "specific_issue", limit: 4294967295
+    t.text "specific_issue", size: :long
     t.index ["issue_id"], name: "issue_id_idx"
     t.index ["lobby_filing_id"], name: "lobby_filing_id_idx"
   end
@@ -566,7 +566,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
 
   create_table "ls_list", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "name", limit: 100, null: false
-    t.text "description", limit: 4294967295
+    t.text "description", size: :long
     t.boolean "is_ranked", default: false, null: false
     t.boolean "is_admin", default: false, null: false
     t.boolean "is_featured", default: false, null: false
@@ -643,21 +643,21 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   create_table "modification_field", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "modification_id", null: false
     t.string "field_name", limit: 50, null: false
-    t.text "old_value", limit: 4294967295
-    t.text "new_value", limit: 4294967295
+    t.text "old_value", size: :long
+    t.text "new_value", size: :long
     t.index ["modification_id"], name: "modification_id_idx"
   end
 
   create_table "network_map", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.text "data", limit: 4294967295, null: false
+    t.text "data", size: :long, null: false
     t.string "entity_ids", limit: 5000
     t.string "rel_ids", limit: 5000
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean "is_deleted", default: false, null: false
     t.string "title", limit: 100
-    t.text "description", limit: 4294967295
+    t.text "description", size: :long
     t.integer "width", null: false
     t.integer "height", null: false
     t.boolean "is_featured", default: false, null: false
@@ -665,9 +665,9 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
     t.boolean "is_private", default: false, null: false
     t.string "thumbnail"
     t.boolean "delta", default: true, null: false
-    t.text "index_data", limit: 4294967295
+    t.text "index_data", size: :long
     t.string "secret"
-    t.text "graph_data", limit: 16777215
+    t.text "graph_data", size: :medium
     t.text "annotations_data"
     t.integer "annotations_count", default: 0, null: false
     t.boolean "list_sources", default: false, null: false
@@ -978,7 +978,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   create_table "pages", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
     t.string "title"
-    t.text "markdown", limit: 16777215
+    t.text "markdown", size: :medium
     t.integer "last_user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -1102,7 +1102,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
 
   create_table "reference_excerpt", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "reference_id", null: false
-    t.text "body", limit: 4294967295, null: false
+    t.text "body", size: :long, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "last_user_id"
@@ -1126,9 +1126,9 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
     t.string "description1", limit: 100
     t.string "description2", limit: 100
     t.bigint "amount"
-    t.text "goods", limit: 4294967295
+    t.text "goods", size: :long
     t.bigint "filings"
-    t.text "notes", limit: 4294967295
+    t.text "notes", size: :long
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "start_date", limit: 10
@@ -1187,7 +1187,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
 
   create_table "sessions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "session_id", null: false
-    t.text "data", limit: 4294967295
+    t.text "data", size: :long
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
@@ -1269,7 +1269,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   create_table "toolkit_pages", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
     t.string "title"
-    t.text "markdown", limit: 16777215
+    t.text "markdown", size: :medium
     t.integer "last_user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -1297,7 +1297,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
   create_table "user_permissions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.integer "user_id"
     t.string "resource_type", null: false
-    t.text "access_rules", limit: 16777215
+    t.text "access_rules", size: :medium
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "resource_type"], name: "index_user_permissions_on_user_id_and_resource_type"
@@ -1308,7 +1308,7 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
     t.string "name_first"
     t.string "name_last"
     t.string "location"
-    t.text "reason", limit: 4294967295
+    t.text "reason", size: :long
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_user_profiles_on_user_id", unique: true
@@ -1366,12 +1366,12 @@ ActiveRecord::Schema.define(version: 2019_07_18_154608) do
     t.integer "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
-    t.text "object", limit: 4294967295
+    t.text "object", size: :long
     t.datetime "created_at"
-    t.text "object_changes", limit: 4294967295
+    t.text "object_changes", size: :long
     t.integer "entity1_id"
     t.integer "entity2_id"
-    t.text "association_data", limit: 4294967295
+    t.text "association_data", size: :long
     t.bigint "other_id"
     t.index ["created_at"], name: "index_versions_on_created_at"
     t.index ["entity1_id"], name: "index_versions_on_entity1_id"

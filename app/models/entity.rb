@@ -33,8 +33,8 @@ class Entity < ApplicationRecord
   has_many :lists, through: :list_entities
 
   # links and relationships
-  has_many :links, foreign_key: "entity1_id", inverse_of: :entity, dependent: :destroy
-  has_many :reverse_links, class_name: "Link", foreign_key: "entity2_id", inverse_of: :related, dependent: :destroy
+  has_many :links, foreign_key: 'entity1_id', inverse_of: :entity, dependent: :destroy
+  has_many :reverse_links, class_name: 'Link', foreign_key: 'entity2_id', inverse_of: :related, dependent: :destroy
 
   has_many :relationships, through: :links
 
@@ -45,7 +45,11 @@ class Entity < ApplicationRecord
 
   has_many :relateds, -> { distinct }, through: :links
 
-  belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", inverse_of: :edited_entities
+  belongs_to :last_user,
+             class_name: 'SfGuardUser',
+             foreign_key: 'last_user_id',
+             inverse_of: :edited_entities,
+             optional: true
   has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
   has_many :os_entity_preprocesses, inverse_of: :entity, dependent: :destroy
   has_many :extension_records, inverse_of: :entity, dependent: :destroy
@@ -70,12 +74,12 @@ class Entity < ApplicationRecord
   has_many :emails, inverse_of: :entity, dependent: :destroy
 
   # OpenSecrets
-  has_many :matched_contributions, class_name: "OsMatch", inverse_of: :donor, foreign_key: "donor_id"
+  has_many :matched_contributions, class_name: 'OsMatch', inverse_of: :donor, foreign_key: 'donor_id'
   has_many :contributions, through: :matched_contributions, source: :os_donation
-  has_many :donors, class_name: "OsMatch", inverse_of: :recipient, foreign_key: "recip_id"
-  has_many :committee_donors, class_name: "OsMatch", inverse_of: :committee, foreign_key: "cmte_id"
+  has_many :donors, class_name: 'OsMatch', inverse_of: :recipient, foreign_key: 'recip_id'
+  has_many :committee_donors, class_name: 'OsMatch', inverse_of: :committee, foreign_key: 'cmte_id'
 
-  # NY Election 
+  # NY Election
   has_many :ny_filer_entities
   has_many :ny_filers, through: :ny_filer_entities
 
@@ -100,6 +104,7 @@ class Entity < ApplicationRecord
   # creates primary alias if the entity does not have one
   def create_primary_alias
     return nil if aliases.where(is_primary: true).count.positive?
+
     Alias.without_versioning do
       a = Alias.new(entity: self, name: name, is_primary: true)
       a.skip_update_entity_callback = true
@@ -130,7 +135,7 @@ class Entity < ApplicationRecord
 
   def set_attribute(key, value)
     if has_attribute?(key)
-      update_attribute(key.to_sym, value)
+      update_attirbute(key.to_sym, value)
     else
       extensions_with_attributes.each do |ext, hash|
         if hash.has_key?(key)
@@ -168,11 +173,12 @@ class Entity < ApplicationRecord
   #
   def default_image_url
     return "/images/system/anon.png" if person?
+
     "/images/system/anons.png"
   end
 
   def has_featured_image
-    images.featured.count > 0
+    images.featured.count.positive?
   end
 
   def featured_image
@@ -182,19 +188,23 @@ class Entity < ApplicationRecord
   def featured_image_url(type = nil)
     image = featured_image
     return default_image_url if image.nil?
+
     type = (image.has_square ? 'square' : 'profile') if type.nil?
     image.image_path(type)
   end
 
   def featured_image_source_url
     return nil unless image = featured_image
+
     image.url
   end
 
   def add_image_from_url(url, force_featured = false, caption = nil)
     return if images.find { |i| i.url == url }
+
     image = Image.new_from_url(url)
     return false unless image
+
     image.title = name
     image.caption = caption
     images << image
@@ -577,7 +587,7 @@ class Entity < ApplicationRecord
     info = {}
     info[:types] = types.join(', ')
     if person?
-      info[:gender] = person.gender unless person.gender_id.nil?
+      info[:gender] = person.gender if person.gender_id.present?
       info[:birthday] = LsDate.new(start_date).basic_info_display unless start_date.nil?
       info[:date_of_death] = LsDate.new(end_date).basic_info_display unless end_date.nil?
     end
@@ -586,7 +596,7 @@ class Entity < ApplicationRecord
       info[:end_date] = LsDate.new(end_date).basic_info_display unless end_date.nil?
       info[:revenue] = ActiveSupport::NumberHelper.number_to_human(org.revenue) unless org.revenue.blank?
     end
-    info[:website] = website unless website.blank?
+    info[:website] = website if website.present?
     #info[:industries] = industries.join(', ') unless industries.empty?
     info[:aliases] = also_known_as.join(', ') unless also_known_as.empty?
     # TODO: address
@@ -621,6 +631,7 @@ class Entity < ApplicationRecord
   # what happens in #after_soft_delete
   def restore!(restore_relationships = false)
     raise Exceptions::CannotRestoreError unless is_deleted
+
     association_data = retrieve_deleted_association_data
     raise Exceptions::MissingEntityAssociationDataError if association_data.nil?
 
