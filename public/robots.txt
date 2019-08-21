@@ -1,10 +1,7 @@
 User-agent: *
 Crawl-delay: 20
-Disallow: /*modifications*
-Disallow: /login*
+Disallow: /login
 Disallow: /search
-Disallow: /*datatable
-Disallow: /*notes
 
 User-agent: SemrushBot
 Disallow: /
@@ -17,6 +14,3 @@ Disallow: /
 
 User-agent: AhrefsBot
 Disallow: /
-
-
-
