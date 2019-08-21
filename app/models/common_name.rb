@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CommonName < ApplicationRecord
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: { case_sensitive: false }
   before_create :standardize_name
 
   CACHE_EXPIRY = 30.days

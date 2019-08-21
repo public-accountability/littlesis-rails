@@ -1,6 +1,6 @@
 class ApiToken < ApplicationRecord
   belongs_to :user
-  validates :user_id, presence: true, uniqueness: true
+  validates :user_id, presence: true, uniqueness: { case_sensitive: true }
 
   before_create :set_token
 

@@ -12,7 +12,7 @@ class Tag < ApplicationRecord
     has_many klass.category_sym, through: :taggings, source: :tagable, source_type: klass.name
   end
 
-  validates :name, uniqueness: true, presence: true
+  validates :name, uniqueness: { case_sensitive: true }, presence: true
   validates :description, presence: true
 
   before_validation :trim_name_whitespace, on: :create

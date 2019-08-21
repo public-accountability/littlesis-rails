@@ -2,7 +2,7 @@
 
 class OsDonation < ApplicationRecord
   has_paper_trail :on => [:update, :destroy] # don't track create events
-  validates :fec_cycle_id, uniqueness: true
+  validates :fec_cycle_id, uniqueness: { case_sensitive: false }
 
   has_one :os_match
 
