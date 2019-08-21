@@ -124,8 +124,15 @@ describe EditedEntity, type: :model do
 
     it 'has correct dates' do
       recently_edited_entities = EditedEntity.recent.page(1)
-      expect(recently_edited_entities[0].created_at).to eq entity_version.created_at
-      expect(recently_edited_entities[1].created_at).to eq relationship_version.created_at
+
+      # On travis these values are *sometimes* not exactly equal hence the `within_one_second` hack
+      expect(
+        within_one_second?(recently_edited_entities[0].created_at, entity_version.created_at)
+      ).to be true
+
+      expect(
+        within_one_second?(recently_edited_entities[1].created_at, relationship_version.created_at)
+      ).to be true
     end
 
     it 'has correct total_count' do
