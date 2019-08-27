@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_20_204626) do
+ActiveRecord::Schema.define(version: 2019_08_27_200909) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -404,8 +404,8 @@ ActiveRecord::Schema.define(version: 2019_08_20_204626) do
     t.string "link_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["entity_id", "link_type"], name: "index_external_links_on_entity_id_and_link_type", unique: true
     t.index ["entity_id"], name: "index_external_links_on_entity_id"
+    t.index ["link_type", "link_id"], name: "index_external_links_on_link_type_and_link_id", unique: true
   end
 
   create_table "family", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
