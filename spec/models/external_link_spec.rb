@@ -9,6 +9,13 @@ describe ExternalLink, type: :model do
   it { is_expected.to have_db_column(:link_id) }
   it { is_expected.to belong_to(:entity) }
 
+  describe 'LINK_TYPE_IDS' do
+    specify do
+      expect(ExternalLink::LINK_TYPE_IDS.fetch(2))
+        .to eq 'wikipedia'
+    end
+  end
+
   describe 'validation of multiple' do
     let(:entity) { create(:entity_org) }
 

@@ -7,10 +7,16 @@ class ExternalLink < ApplicationRecord
                   meta: { entity1_id: :entity_id },
                   if: ->(el) { el. editable? }
 
-  # 1 -> sec
-  # 2 -> wikipedia
-  # 3 -> twitter
-  enum link_type: %i[reserved sec wikipedia twitter]
+  LINK_TYPES = {
+    :reserved => 0,
+    :sec => 1,
+    :wikipedia => 2,
+    :twitter => 3,
+    :crd => 4
+  }.freeze
+
+  enum link_type: LINK_TYPES
+
   LINK_TYPE_IDS = link_types.to_a.map(&:reverse).to_h.freeze
 
   LINK_PLACEHOLDER = '{}'
