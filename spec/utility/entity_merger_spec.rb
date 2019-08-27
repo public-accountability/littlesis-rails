@@ -890,7 +890,6 @@ describe 'Merging Entities', :merging_helper do
         expect { subject.merge! }
           .to change { @external_link.reload.entity_id }
                 .from(source_org.id).to(dest_org.id)
-
       end
     end
 
