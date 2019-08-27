@@ -18,16 +18,16 @@ class ExternalLink < ApplicationRecord
   enum link_type: LINK_TYPES
 
   LINK_TYPE_IDS = link_types.to_a.map(&:reverse).to_h.freeze
-
+  MULTIPLE_VALUES_ALLOWED = Set[:crd].freeze
   LINK_PLACEHOLDER = '{}'
   EDITABLE_TYPES = %w[wikipedia twitter].freeze
-
   WIKIPEDIA_REGEX = Regexp.new 'https?:\/\/en.wikipedia.org\/wiki\/?(.+)', Regexp::IGNORECASE
   TWITTER_REGEX = Regexp.new 'https?:\/\/twitter.com\/?(.+)', Regexp::IGNORECASE
 
   validates :link_type, presence: true
   validates :entity_id, presence: true
   validates :link_id, presence: true
+  validates_with ExternalLinkValidator
 
   before_validation :parse_id_input
 

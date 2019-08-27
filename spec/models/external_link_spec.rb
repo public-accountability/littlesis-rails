@@ -1,4 +1,6 @@
 describe ExternalLink, type: :model do
+  subject { build(:wikipedia_external_link) }
+
   let(:urls) do
     { ruby: 'https://en.wikipedia.org/wiki/Ruby_(programming_language)',
       rails: 'https://en.wikipedia.org/wiki/Ruby_on_Rails' }
@@ -11,8 +13,7 @@ describe ExternalLink, type: :model do
 
   describe 'LINK_TYPE_IDS' do
     specify do
-      expect(ExternalLink::LINK_TYPE_IDS.fetch(2))
-        .to eq 'wikipedia'
+      expect(ExternalLink::LINK_TYPE_IDS.fetch(2)).to eq 'wikipedia'
     end
   end
 
@@ -24,7 +25,7 @@ describe ExternalLink, type: :model do
       expect(entity.external_links.count).to eq 1
 
       expect { entity.external_links.create!(link_type: :wikipedia, link_id: urls[:rails]) }
-        .to raise_error(ActiveRecord::RecordNotUnique)
+        .to raise_error(ActiveRecord::RecordInvalid)
     end
 
     it 'allows multiple crd numbers for the same entity' do
@@ -35,7 +36,7 @@ describe ExternalLink, type: :model do
       expect { entity.external_links.create!(link_type: :crd, link_id: '56789') }
         .not_to raise_error
 
-      expect(entity.external_links.count).to eq 1
+      expect(entity.external_links.count).to eq 2
     end
   end
 
