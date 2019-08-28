@@ -27,7 +27,7 @@ class ExternalLink < ApplicationRecord
   validates :link_type, presence: true
   validates :entity_id, presence: true
   validates :link_id, presence: true
-  validates_with ExternalLinkValidator
+  validates_with ExternalLinkValidator, on: :create
 
   before_validation :parse_id_input
 
