@@ -98,9 +98,9 @@ describe ExternalLink, type: :model do
     end
   end
 
-  describe 'find_or_initalize_links_for' do
+  describe 'find_or_initialize_links_for' do
     let(:entity) { build(:entity_org) }
-    let(:links) { ExternalLink.find_or_initalize_links_for(entity) }
+    let(:links) { ExternalLink.find_or_initialize_links_for(entity) }
 
     it 'returns two editable links' do
       expect(links.length).to eq 2

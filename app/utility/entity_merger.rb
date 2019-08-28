@@ -144,7 +144,7 @@ class EntityMerger
     source.external_links.to_a.map do |external_link|
       link_type = external_link.link_type.to_sym
 
-      if dest_elink_types.include?(link_type) && !ExternalLink::MULTIPLE_VALUES_ALLOWED.include?(link_type)
+      if dest_elink_types.include?(link_type) && !ExternalLink::LINK_TYPES.dig(link_type, :multiple)
         raise ConflictingExternalLinksError.new(link_type)
       else
         @external_links << external_link.tap { |el| el.entity = @dest }

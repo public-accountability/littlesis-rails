@@ -75,8 +75,10 @@ class ExternalLink < ApplicationRecord
   end
 
   # returns only editable links that can be edited
-  def self.find_or_initalize_links_for(entity)
-    LINK_TYPES.select { |_k, v| v[:editable] }.keys.map do |link_type|
+  def self.find_or_initialize_links_for(entity)
+    editable_link_types = LINK_TYPES.select { |_k, v| v[:editable] }.keys
+
+    editable_link_types.map do |link_type|
       find_or_initialize_by(link_type: link_type,
                             entity_id: Entity.entity_id_for(entity))
     end
