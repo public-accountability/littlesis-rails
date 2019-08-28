@@ -915,9 +915,9 @@ describe 'Merging Entities', :merging_helper do
       end
 
       it 'does not transfer external links from source to dest' do
-        expect { subject.merge! }.not_to change { @source_external_link.reload.entity_id }
+        expect { subject.merge! }.to raise_error(EntityMerger::ConflictingExternalLinksError)
+        expect(@source_external_link.reload.entity_id).to eq source_org.id
       end
-
     end
   end
 end
