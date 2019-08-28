@@ -634,7 +634,7 @@ CREATE TABLE `external_links` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_external_links_on_entity_id_and_link_type` (`entity_id`,`link_type`),
+  UNIQUE KEY `index_external_links_on_link_type_and_link_id` (`link_type`,`link_id`),
   KEY `index_external_links_on_entity_id` (`entity_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=219 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2288,6 +2288,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20190529164312'),
 ('20190604175919'),
 ('20190718154608'),
-('20190820204626');
+('20190820204626'),
+('20190827200909');
 
 

@@ -139,8 +139,14 @@ class EntityMerger
   end
 
   def merge_external_links
+    dest_elink_types = @dest.external_links.map(&:link_type).map(&:to_sym)
+
     source.external_links.to_a.map do |external_link|
-      unless @dest.external_links.map(&:link_type).include?(external_link.link_type)
+      link_type = external_link.link_type.to_sym
+
+      if dest_elink_types.include?(link_type) && !ExternalLink::LINK_TYPES.dig(link_type, :multiple)
+        raise ConflictingExternalLinksError.new(link_type)
+      else
         @external_links << external_link.tap { |el| el.entity = @dest }
       end
     end
@@ -335,10 +341,22 @@ class EntityMerger
       'Only entities with the same primary ext can be merged'
     end
   end
+  
+  class EntityMergerError < StandardError; end
 
-  class MergingTwoCmpEntitiesError < StandardError
+  class MergingTwoCmpEntitiesError < EntityMergerError
     def message
-      'Both source and dest are a CMP entity. Merging thsee two is likely a mistake'
+      'Both source and dest are a CMP entity. Merging these two is likely a mistake'
+    end
+  end
+
+  class ConflictingExternalLinksError < EntityMergerError
+    def initialize(link_type = 'unknown')
+      @link_type = link_type
+    end
+
+    def message
+      "Both entities have external links of type \"#{@link_type}\" with different values"
     end
   end
 

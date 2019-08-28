@@ -83,6 +83,8 @@ class EntityVersionPresenter < VersionPresenter
   end
 
   def external_link_name
-    ExternalLink::LINK_TYPE_IDS[fetch_from_object_or_changeset('link_type')]
+    ExternalLink
+      .info(fetch_from_object_or_changeset('link_type'))
+      .first
   end
 end
