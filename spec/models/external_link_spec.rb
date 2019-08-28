@@ -11,12 +11,6 @@ describe ExternalLink, type: :model do
   it { is_expected.to have_db_column(:link_id) }
   it { is_expected.to belong_to(:entity) }
 
-  describe 'LINK_TYPE_IDS' do
-    specify do
-      expect(ExternalLink::LINK_TYPE_IDS.fetch(2)).to eq 'wikipedia'
-    end
-  end
-
   describe 'validation of multiple' do
     let(:entity) { create(:entity_org) }
 
@@ -45,6 +39,11 @@ describe ExternalLink, type: :model do
     expect(build(:wikipedia_external_link).editable?).to be true
   end
 
+  it 'fails to create a link of type "reserved"' do
+    expect { ExternalLink.create!(entity_id: 1, link_type: :reserved, link_id: 'foo') }
+      .to raise_error(TypeError)
+  end
+
   describe 'sec links' do
     let(:el) { build(:sec_external_link) }
 
@@ -59,7 +58,7 @@ describe ExternalLink, type: :model do
     it 'can handles input of wikipedia links' do
       el = build(:wikipedia_external_link, link_id: urls[:ruby])
       el.validate
-      expect(el.link_id).to eql 'Ruby_(programming_language)'
+      expect(el.link_id).to eq 'Ruby_(programming_language)'
     end
   end
 
@@ -82,6 +81,33 @@ describe ExternalLink, type: :model do
         el.validate
         expect(el.link_id).to eql 'walmArt'
       end
+    end
+  end
+
+  describe 'info' do
+    specify do
+      expect(ExternalLink.info(1)).to eq ['sec', ExternalLink::LINK_TYPES[:sec]]
+    end
+
+    specify do
+      expect(ExternalLink.info(:sec)).to eq ['sec', ExternalLink::LINK_TYPES[:sec]]
+    end
+
+    specify do
+      expect(ExternalLink.info('sec')).to eq ['sec', ExternalLink::LINK_TYPES[:sec]]
+    end
+  end
+
+  describe 'find_or_initalize_links_for' do
+    let(:entity) { build(:entity_org) }
+    let(:links) { ExternalLink.find_or_initalize_links_for(entity) }
+
+    it 'returns two editable links' do
+      expect(links.length).to eq 2
+    end
+
+    it 'returns wikipedia and twitter links' do
+      expect(links.map(&:link_type).to_set).to eq %w[wikipedia twitter].to_set
     end
   end
 end
