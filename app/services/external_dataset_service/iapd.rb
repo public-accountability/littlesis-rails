@@ -13,21 +13,21 @@ module ExternalDatasetService
 
       return if crd_number.blank?
 
-      extension = @entity.org? ? :business : :business_person
+      external_link = @entity.external_links.find_by(link_type: :crd)
 
-      existing_crd_number = @entity.public_send(extension)&.crd_number
-
-      # Check if the entity already has a crd number
-      if existing_crd_number && crd_number.to_i != existing_crd_number
-        msg = "Entity #{@entity.id} already has a crd_number. Cannot match row #{@external_dataset.id}"
-        raise InvalidMatchError, msg
+      if external_link
+        if external_link.link_id.to_i == crd_number.to_i
+          # Entity already has an external link with the value.
+          # The entity has likely already been matched.
+          return
+        else
+          msg = "Entity #{@entity.id} already has a crd_number. Cannot match row #{@external_dataset.id}"
+          raise InvalidMatchError, msg
+        end
       end
 
-      # check if crd number is already taken by another entity
-      entity_id_with_crd_number = extension.to_s.classify.constantize.find_by(crd_number: crd_number)&.entity_id
-
-      if entity_id_with_crd_number && entity_id_with_crd_number != @entity.id
-        msg = "Another entity (#{entity_id_with_crd_number}) has already claimed the crd number #{crd_number}. Cannot match row #{@external_dataset.id}"
+      if ExternalLink.exists?(link_type: :crd, link_id: crd_number)
+        msg = "Another entity has already claimed the crd number #{crd_number}. Cannot match row #{@external_dataset.id}"
         raise InvalidMatchError, msg
       end
     end
@@ -37,15 +37,10 @@ module ExternalDatasetService
 
       validate_match!
 
-      extension = @entity.org? ? 'Business' : 'BusinessPerson'
-
-      extension_attrs = {}
-      extension_attrs[:crd_number] = crd_number.to_i if crd_number
-
-      if @external_dataset.advisor?
-        aum = @external_dataset.row_data['data'].first['assets_under_management']&.to_i
-        extension_attrs[:aum] = aum unless aum.nil? || aum.zero?
-      end
+      # if @external_dataset.advisor?
+      #   aum = @external_dataset.row_data['data'].first['assets_under_management']&.to_i
+      #   extension_attrs[:aum] = aum unless aum.nil? || aum.zero?
+      # end
 
       ApplicationRecord.transaction do
         @entity.add_tag(IapdDatum::IAPD_TAG_ID)
