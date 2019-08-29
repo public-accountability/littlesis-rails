@@ -22,4 +22,16 @@ FactoryBot.define do
     entity_id { rand(1000) }
     link_id { Faker::Internet.unique.username }
   end
+
+  factory :crd_external_link_org, class: ExternalLink do
+    link_type { 4 }
+    association :entity, factory: :org, strategy: :build
+    link_id { Faker::Number.unique.number(digits: 5).to_s }
+  end
+
+  factory :crd_external_link_person, class: ExternalLink do
+    link_type { 4 }
+    association :entity, factory: :person, strategy: :build
+    link_id { Faker::Number.unique.number(digits: 5).to_s }
+  end
 end

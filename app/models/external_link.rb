@@ -32,8 +32,14 @@ class ExternalLink < ApplicationRecord
     },
     crd: {
       enum_val: 4,
-      title: nil,
-      url: nil,
+      title: "Investment Adviser Public Disclosure: {}",
+      url: ->(elink) do
+        if elink.entity.primary_ext == 'Org'
+          'https://adviserinfo.sec.gov/Firm/{}'
+        else
+          'https://adviserinfo.sec.gov/Individual/{}'
+        end
+      end,
       editable: false,
       multiple: true
     }
@@ -63,9 +69,9 @@ class ExternalLink < ApplicationRecord
   end
 
   def url
-    LINK_TYPES
-      .dig(link_type, :url)
-      .gsub(PLACEHOLDER, link_id)
+    template = LINK_TYPES.dig(link_type, :url)
+    template = template.call(self) if template.is_a?(Proc)
+    template.gsub(PLACEHOLDER, link_id)
   end
 
   def title
@@ -74,7 +80,7 @@ class ExternalLink < ApplicationRecord
       .gsub(PLACEHOLDER, link_id)
   end
 
-  # returns only editable links that can be edited
+  # returns only the links that can be edited
   def self.find_or_initialize_links_for(entity)
     editable_link_types = LINK_TYPES.select { |_k, v| v[:editable] }.keys
 
