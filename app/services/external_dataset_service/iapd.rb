@@ -15,16 +15,9 @@ module ExternalDatasetService
 
       external_link = @entity.external_links.find_by(link_type: :crd)
 
-      if external_link
-        if external_link.link_id.to_i == crd_number.to_i
-          # Entity already has an external link with the value.
-          # The entity has likely already been matched.
-          return
-        else
-          msg = "Entity #{@entity.id} already has a crd_number. Cannot match row #{@external_dataset.id}"
-          raise InvalidMatchError, msg
-        end
-      end
+      # Entity already has an external link with same the value.
+      # The entity has likely already been matched.
+      return if external_link && external_link.link_id.to_i == crd_number.to_i
 
       if ExternalLink.exists?(link_type: :crd, link_id: crd_number)
         msg = "Another entity has already claimed the crd number #{crd_number}. Cannot match row #{@external_dataset.id}"
@@ -37,10 +30,7 @@ module ExternalDatasetService
 
       validate_match!
 
-      # if @external_dataset.advisor?
-      #   aum = @external_dataset.row_data['data'].first['assets_under_management']&.to_i
-      #   extension_attrs[:aum] = aum unless aum.nil? || aum.zero?
-      # end
+      extension_attrs = {}
 
       ApplicationRecord.transaction do
         @entity.add_tag(IapdDatum::IAPD_TAG_ID)
@@ -49,10 +39,20 @@ module ExternalDatasetService
           @entity.add_reference(IapdDatum.document_attributes_for_form_adv_pdf(crd_number))
         end
 
-        if @entity.has_extension?(extension)
-          @entity.merge_extension extension, extension_attrs
+        # Create an crd external link. Not all Iapd Owners have crd numbers.
+        if crd_number.present?
+          @entity.external_links.create! link_type: :crd, link_id: crd_number
+        end
+
+        if @external_dataset.advisor?
+          aum = @external_dataset.row_data['data'].first['assets_under_management']&.to_i
+          extension_attrs[:aum] = aum unless aum.nil? || aum.zero?
+        end
+  
+        if @entity.has_extension?(extension_type)
+          @entity.merge_extension extension_type, extension_attrs
         else
-          @entity.add_extension extension, extension_attrs
+          @entity.add_extension extension_type, extension_attrs
         end
 
         external_dataset.update! entity_id: @entity.id
@@ -71,15 +71,19 @@ module ExternalDatasetService
     end
 
     def unmatch
-      extension = external_dataset.org? ? 'business' : 'business_person'
-
       ApplicationRecord.transaction do
-        @external_dataset.entity.public_send(extension).update! crd_number: nil
+        if crd_number.present?
+          @entity.external_links.find_by(link_type: :crd, link_id: crd_number)&.destroy!
+        end
         @external_dataset.update! entity_id: nil
       end
     end
 
     private
+
+    def extension_type
+      @external_dataset.org? ? 'Business' : 'BusinessPerson'
+    end
 
     def crd_numbers_for_documentation
       if @external_dataset.advisor?

@@ -96,16 +96,6 @@ describe ExternalDatasetService do
       let(:service_person) { ExternalDatasetService::Iapd.new(entity: person, external_dataset: external_dataset_owner) }
       let(:service_org) { ExternalDatasetService::Iapd.new(entity: org, external_dataset: external_dataset_advisor) }
 
-      it 'raises error if person has crd number' do
-        person.external_links.create!(link_type: :crd, link_id: crd_number)
-        expect { service_person.validate_match! }.to raise_error(ExternalDatasetService::InvalidMatchError)
-      end
-
-      it 'rasies error if org has a crd number' do
-        org.external_links.create!(link_type: :crd, link_id: crd_number)
-        expect { service_org.validate_match! }.to raise_error(ExternalDatasetService::InvalidMatchError)
-      end
-
       it 'ok if external link has the same crd number' do
         org.external_links.create!(link_type: :crd, link_id: 126_188.to_s) # see factories/iapd_data
         expect { service_org.validate_match! }.not_to raise_error
@@ -138,10 +128,9 @@ describe ExternalDatasetService do
           expect { service.match }.to change(BusinessPerson, :count).by(1)
         end
 
-        it 'does not set crd_number' do
-          expect(person.business_person).to be nil
-          service.match
-          expect(person.reload.business_person.crd_number).to be nil
+        it 'does not create an external link' do
+          expect { service.match }
+            .not_to change { person.reload.external_links.count }
         end
       end
 
@@ -153,10 +142,11 @@ describe ExternalDatasetService do
           expect { service.match }.to change(BusinessPerson, :count).by(1)
         end
 
-        it 'add crd number to business person' do
-          expect(person.business_person).to be nil
-          service.match
-          expect(person.reload.business_person.crd_number).to eq 7_007_566
+        it 'create an external link crd number to business person' do
+          expect { service.match }
+            .to change { person.reload.external_links.count }
+                 .from(0).to(1)
+          # expect(person.reload.business_person.crd_number).to eq '7007566'
         end
       end
 
@@ -183,6 +173,10 @@ describe ExternalDatasetService do
                   .from([]).to([iapd_owner.id])
         end
 
+        it 'creates an crd external link' do
+          service.match
+          expect(org.external_links.where(link_type: :crd).count).to eq 1
+        end
       end
     end # end describe match
 
@@ -197,12 +191,6 @@ describe ExternalDatasetService do
         service.match
       end
 
-      it 'removes crd_number' do
-        expect { service.unmatch }
-          .to change { person.reload.business_person.crd_number }
-                .from(7_007_566).to(nil)
-      end
-
       it 'keeps business person' do
         expect { service.unmatch }
           .not_to change { person.reload.business_person.present? }
@@ -211,6 +199,11 @@ describe ExternalDatasetService do
       it 'removes entity id' do
         expect { service.unmatch }
           .to change { external_dataset.reload.entity_id }.from(person.id).to(nil)
+      end
+
+      it 'removes the external link' do
+        expect { service.unmatch }
+          .to change { person.reload.external_links.count }.from(1).to(0)
       end
     end
 
