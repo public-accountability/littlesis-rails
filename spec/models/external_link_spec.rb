@@ -44,13 +44,23 @@ describe ExternalLink, type: :model do
       .to raise_error(TypeError)
   end
 
-  describe 'sec links' do
-    let(:el) { build(:sec_external_link) }
+  describe 'urls' do
+    let(:sec_elink) { build(:sec_external_link) }
+    let(:crd_org_elink) { build(:crd_external_link_org) }
+    let(:crd_person_elink) { build(:crd_external_link_person) }
+    
+    it 'returns the sec link' do
+      expect(sec_elink.url).to eql "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=#{sec_elink.link_id}&output=xml"
+    end
 
-    describe '#url' do
-      it 'returns the sec link' do
-        expect(el.url).to eql "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=#{el.link_id}&output=xml"
-      end
+    it 'returns the crd url for an org' do
+      expect(crd_org_elink.url)
+        .to eq "https://adviserinfo.sec.gov/Firm/#{crd_org_elink.link_id}"
+    end
+
+    it 'returns the crd url for a person' do
+      expect(crd_person_elink.url)
+        .to eq "https://adviserinfo.sec.gov/Individual/#{crd_person_elink.link_id}"
     end
   end
 
