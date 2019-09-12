@@ -74,6 +74,7 @@ class DevelopmentDb
                  business_person
                  candidate_district
                  cmp_entities
+                 cmp_relationships
                  common_names
                  couple
                  custom_key
