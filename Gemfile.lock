@@ -224,7 +224,7 @@ GEM
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     public_suffix (4.0.1)
-    puma (4.1.1)
+    puma (4.2.0)
       nio4r (~> 2.0)
     rack (2.0.7)
     rack-mini-profiler (1.0.2)
@@ -416,7 +416,7 @@ DEPENDENCIES
   pry (>= 0.12.0)
   pry-byebug
   pry-rails (>= 0.3.7)
-  puma (= 4.1.1)
+  puma (>= 4.2.0)
   rack-mini-profiler
   rack-rewrite (~> 1.5.1)
   rails (= 6.0.0)

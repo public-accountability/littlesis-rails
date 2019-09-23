@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rails', '6.0.0'
 gem 'mysql2', '~> 0.5.2'
 
-gem 'puma', '4.1.1'
+gem 'puma', '>= 4.2.0'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
