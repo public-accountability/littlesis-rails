@@ -19,12 +19,8 @@ if rails_env == 'production'
   pidfile ENV.fetch('LITTLESIS_PIDFILE') { '/var/www/littlesis/tmp/puma.pid' }
   state_path ENV.fetch('LITTLESIS_PUMA_STATE') { '/var/www/littlesis/tmp/puma.state' }
 else
-  bind "tcp://127.0.0.1"
+  bind "tcp://127.0.0.1:8080"
 end
-
-# Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-#
-port ENV.fetch("PORT") { 8080 }
 
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together
