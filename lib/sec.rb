@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Assists in downloading SEC filings and parsing them.
+# Downloads SEC filings and parses them.
 # Unlike most of LittleSis's data this uses a sqlite3 database,
 # which, by default, is located at /data/sec_filings.db.
 #

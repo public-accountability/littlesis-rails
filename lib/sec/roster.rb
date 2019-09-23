@@ -17,6 +17,7 @@ module Sec
       @company
         .filings
         .select { |f| %w[3 4].include?(f.type) }
+        .each   { |f| f.download_and_save_data }
         .select { |f| f.document.issuer?(@company.cik) }
         .map(&:reporting_owners)
         .flatten

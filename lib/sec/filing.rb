@@ -22,7 +22,7 @@ module Sec
 
     # There is no validation done here, but it is assumed that metadata is hash-like
     # with the following keys: cik, company_name, form_type, date_filed, filename, data
-    def initialize(metadata:, data: nil, db: nil, download: false)
+    def initialize(metadata:, data: nil, db: nil, download: true)
       @metadata = metadata.symbolize_keys
       @data = data
       @url = "https://www.sec.gov/Archives/#{@metadata.fetch(:filename)}"
@@ -63,14 +63,6 @@ module Sec
 
     alias to_hash to_h
 
-    private
-
-    def set_document
-      return unless @data
-
-      @document = Sec::Document.new(@data)
-    end
-
     def download_and_save_data
       return if @data
 
@@ -83,6 +75,14 @@ module Sec
           db.insert_document(filename: @metadata[:filename], data: @data)
         end
       end
+    end
+
+    private
+
+    def set_document
+      return unless @data
+
+      @document = Sec::Document.new(@data)
     end
   end
 end
