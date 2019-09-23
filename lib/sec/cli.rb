@@ -48,6 +48,7 @@ module Sec
     def run(options)
       if options['list-example-ciks']
         Sec::CIKS.each { |ticker, cik| puts "#{ticker}\t#{cik}" }
+        return
       end
 
       requires_cik! options[:cik]
