@@ -141,6 +141,11 @@ class NameParser
   IN_QUOTES = /^"(\w+)"$/
   IN_PARENS = /^\((\w+)\)$/
 
+  # Matches "A.B." and "A. B."
+  ABBREVIATED_INITIALS = /\A[[:alpha:]]\.[[:space:]]?[[:alpha:]]\.\Z/
+  # Matches names with abbreviated first and middle names:  A. B. Lastname
+  ABBREVIATED_FIRST_MIDDLE = /\A(?<first_middle>[[:alpha:]]\.[[:space:]]?([[:alpha:]]\.)?)([[:space:]](?<last_name>[[:alpha:]]{2,}))\Z/
+
   MC_NAME = /\b[Mm]a?c[A-Za-z]{2,}\b/
 
   MAC_EXCEPTIONS = [
@@ -151,8 +156,8 @@ class NameParser
 
   def initialize(str)
     @errors = []
-    @raw = str
     if str.is_a?(String)
+      @raw = str.strip
       @_parts = split_name(str)
       parse
       prettify!
@@ -203,6 +208,12 @@ class NameParser
 
   # sets the component attributes
   def parse
+    if abbreviated_match = ABBREVIATED_FIRST_MIDDLE.match(@raw)
+      @first = abbreviated_match[:first_middle]
+      @last = abbreviated_match[:last_name]
+      return
+    end
+    
     case parts.length
     when 0
       @errors << "Name is an empty string"
@@ -448,7 +459,14 @@ class NameParser
   end
 
   def prettify!
-    @first = prettify(@first) if @first
+    if @first
+      if ABBREVIATED_INITIALS.match?(@first)
+        @first = @first.tr(' ', '').upcase
+      else
+        @first = prettify(@first)
+      end
+    end
+
     if @middle
       if @middle.is_a?(Array)
         prettify_middle_array
