@@ -19,7 +19,9 @@ if rails_env == 'production'
   pidfile ENV.fetch('LITTLESIS_PIDFILE') { '/var/www/littlesis/tmp/puma.pid' }
   state_path ENV.fetch('LITTLESIS_PUMA_STATE') { '/var/www/littlesis/tmp/puma.state' }
 else
-  bind "tcp://127.0.0.1:8080"
+  # Defaults to 8080 on 127.0.0.1 in development. To serve on all interfaces set 
+  # the environment variable LITTLESIS_BIND to "tcp://0.0.0.0:8080"
+  bind ENV.fetch('LITTLESIS_BIND') { "tcp://127.0.0.1:8080" }
 end
 
 # Specifies the number of `workers` to boot in clustered mode.
