@@ -45,6 +45,20 @@ describe 'NameParser', :name_parser_helper do
 
     assert_parsed_name 'MCNABB, FREDERICK, WILLIAM',
                        first: 'Frederick', last: 'McNabb', middle: 'William'
+
+    assert_parsed_name 'A. B. Lastname',
+                       first: "A.B.", last: 'Lastname'
+
+    assert_parsed_name 'A.B. Lastname',
+                       first: "A.B.", last: 'Lastname'
+  end
+
+  describe 'ABBREVIATED_INITIALS' do
+    specify { expect(NameParser::ABBREVIATED_INITIALS.match?('A.')).to be false }
+    specify { expect(NameParser::ABBREVIATED_INITIALS.match?('A.B.')).to be true }
+    specify { expect(NameParser::ABBREVIATED_INITIALS.match?('A. B.')).to be true }
+    specify { expect(NameParser::ABBREVIATED_INITIALS.match?('A.B')).to be false }
+    specify { expect(NameParser::ABBREVIATED_INITIALS.match?('AA.')).to be false }
   end
 
   describe 'prettyify' do
