@@ -106,7 +106,7 @@ class Image < ApplicationRecord
 
   def filename(type=nil)
     return read_attribute(:filename) unless type == "square"
-    fn = read_attribute(:filename) 
+    fn = read_attribute(:filename)
     fn.chomp(File.extname(fn)) + '.jpg'
   end
 
@@ -128,11 +128,10 @@ class Image < ApplicationRecord
   # from the ending of the url path. If that fails,
   # it performs a HEAD request to get the content-type.
   def self.file_ext_from(url_or_path)
-    uri = URI(url_or_path)
-
-    ext = File.extname(uri.path).tr('.', '').downcase
+    ext = File.extname(url_or_path).tr('.', '').downcase
     return ext if VALID_EXTENSIONS.include?(ext)
 
+    uri = URI(url_or_path)
     raise ImagePathMissingExtension if uri.scheme.nil?
 
     head = HTTParty.head(url_or_path)
