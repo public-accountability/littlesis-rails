@@ -1,5 +1,5 @@
 /**
- 
+
  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
 
  External requirements: jQuery, utility.js, Hogan, jQuery UI Autocomplete
@@ -13,7 +13,7 @@
   }
 }(this, function ($, utility) {
   // Does the user have bulk permissions?
-  // All users may submit up to 8 
+  // All users may submit up to 8
   var USER_HAS_BULK_PERMISSIONS = null;
 
   var AUTOCOMPLETE_MODE = true;
@@ -26,7 +26,7 @@
   // Retrieves selected cateogry and converts 50 and 51 to 5
   function realCategoryId() {
     var category = Number($('#relationship-cat-select option:selected').val());
-    
+
     // 50 -> Donations Recieved
     // 51 -> Donations Given
     // 30 -> Memberships
@@ -40,7 +40,7 @@
       return category;
     }
   }
-  
+
   // This is the structure of table. The number and types of columns vary by
   // relationship type. See utility.js for more information
   // -> [[]]
@@ -73,11 +73,11 @@
   }
 
   // Adds <th> with title to table header
-  // [] -> 
+  // [] ->
   function addColToThead(col) {
     $('#table thead tr').append(
       $('<th>', {
-	text: col[0], 
+	text: col[0],
 	data: { 'colName': col[1], 'colType': col[2] },
 	css: cssForNotesColumn(col)
       })
@@ -151,7 +151,7 @@
     }
   };
 
- 
+
   // => <Button>
   // Returns button that, when clicked, saves a csv file with the correct headers
   // for the chosen relationship type
@@ -160,7 +160,7 @@
       text: 'download sample csv',
       class: 'btn btn-primary',
       click: function() {
-	var headers = relationshipDetails().map(function(x) { 
+	var headers = relationshipDetails().map(function(x) {
 	  return x[1];
 	}).join(',');
 	var data = headers + "\n" + exampleRow(realCategoryId()).join(',');
@@ -178,7 +178,7 @@
       .append( $('<input>', {id: 'csv-file'}).attr('type', 'file'))
       .append( $('<div>', {class: 'float-right'}).append(entityMatchBtn()).append(sampleCSVLink()) );
   }
-  
+
   function createTableHeader() {
     relationshipDetails().forEach(addColToThead);
     $('#table thead tr').append('<th>Delete</th>');
@@ -190,7 +190,7 @@
       .empty()
       .append(tableCaption())
       .append('<thead><tr></tr></thead><tbody></tbody>');
-    
+
     createTableHeader();
     newBlankRow(); // initialize table with a new blank row
     readCSVFileListener('csv-file'); // handle file uploads to #csv-file
@@ -281,20 +281,20 @@
     var blurb = cell.next();
     var entityType = blurb.next();
     // add link to cell
-    cell.html( $('<a>', { href: 'https://littlesis.org' + ui.item.url, text: ui.item.name, target: '_blank' })) ;
+    cell.html( $('<a>', { href: ui.item.url, text: ui.item.name, target: '_blank' })) ;
     cell.attr('contenteditable', 'false');
     // store entity id in dataset
     cell.data('entityid', ui.item.id);
     // add reset-field option
-    cell.append( 
-      $('<span>', { 
+    cell.append(
+      $('<span>', {
 	'class': 'glyphicon glyphicon-remove reset-name',
 	click: function() {
 	  cell.empty();  // empty the cell
 	  blurb.empty(); // empty blurb
 	  // make both name and blurb cells editable
-	  cell.attr('contenteditable', 'true'); 
-	  blurb.attr('contenteditable', 'true'); 
+	  cell.attr('contenteditable', 'true');
+	  blurb.attr('contenteditable', 'true');
 	  cell.data('entityid', null); // remove the entity id
 	  // Remove the similar relationship alert (if it exists)
 	  cell.parents('tr').find('.similar-relationships-alert').remove();
@@ -341,7 +341,7 @@
   function primaryExtRadioButtons() {
     // Using selectpicker with multiple and max-options 1 in order to get the
     // 'Nothing selected' message displayed.
-    return $('<select>', { 
+    return $('<select>', {
       'class': 'selectpicker',
       'data-width': 'fit'
     }).append('<option></option><option>Org</option><option>Person</option>');
@@ -400,7 +400,7 @@
       return $('<td>', { contenteditable: 'true'}); // return editable column
     }
   }
-  
+
   // Adds a new blank row to the table
   // Returns the newly created row
   function newBlankRow() {
@@ -428,7 +428,7 @@
       // Technically we should allow three values for this field: true, false, and null.
       // However, to keep things simple, right now the false/un-checked state defaults to null
       // So in this tool there is no way of saying that a person is NOT a board member.
-      return cell.find('input').is(':checked') ? true : null; 
+      return cell.find('input').is(':checked') ? true : null;
     } else if (rowInfo.type === 'triboolean' ) {
       return triBooleanButton.value(cell);
     } else if (rowInfo.type === 'select') {
@@ -454,13 +454,13 @@
   // input: <Td>, {relationshipDetailsAsObject}, any
   function updateCellData(cell, rowInfo, value) {
     if (rowInfo.type === 'boolean') {
-      
+
       if (YES_VALUES.includes(value)) {
 	cell.find('input').prop('checked', true);
       }
-      
+
     } else if (rowInfo.type === 'triboolean') {
-      
+
       if (YES_VALUES.includes(value)) {
 	triBooleanButton.update(cell, 'Y');
       } else if (NO_VALUES.includes(value)) {
@@ -468,18 +468,18 @@
       } else {
 	triBooleanButton.update(cell, '?');
       }
-      
+
 
     } else if (rowInfo.type === 'select') {
-      
+
       if (rowInfo.key === 'primary_ext') {
 	if (ORG_VALUES.includes(value)) {
 	  cell.find('.selectpicker').selectpicker('val', 'Org');
 	} else if (PERSON_VALUES.includes(value)) {
 	  cell.find('.selectpicker').selectpicker('val', 'Person');
 	}
-      } 
-      
+      }
+
     } else if (rowInfo.key === 'name') {
       // You can provide the id of a littlesis entity as a name
       if (Number.isInteger(Number(value))) {
@@ -505,7 +505,7 @@
       } else {
 	obj[rowInfo.key] = extractCellData(cell, rowInfo);
       }
-      
+
     });
     return obj;
   }
@@ -553,7 +553,7 @@
     }
     return true;
   }
-  
+
   // an indicator that can only go from true to false.
   function ValidFlag() {
     this.status = true;
@@ -606,7 +606,7 @@
   function limitAlert() {
     showAlert('You are only allowed to bulk upload 8 relationships at a time. <a href="/contact" class="alert-link">Contact us</a> if you\'d like to bulk add more than 8 relationships at once.', 'alert-danger');
   }
-  
+
   function validateReference() {
     $('#alert-container').empty();
     var url = document.getElementById('reference-url');
@@ -669,7 +669,7 @@
       delete err.errorMessage;
       return err;
     });
-    
+
     // The array of objects is turned into a string
     // just to be, moments later, parsed again.
     // It allows us to re-use the csvToTable function.
@@ -713,7 +713,7 @@
 	var relationships = data.relationships.reduce(function(listGroup, relationship) {
 	  return listGroup.append(afterRequest.relationshipDisplay(relationship));
 	}, $('<div>', {class: 'list-group'}));
-	
+
 	$results.append(container.append(relationships));
       }
 
@@ -721,7 +721,7 @@
 	$results.append(afterRequest.errorDisplay(data.errors));
       }
     },
-    
+
     success: function(data) {
       $('#spin-me-round-like-a-record').hide();
       $('#table table').empty();
@@ -739,7 +739,7 @@
       alert('something went wrong :(');
     }
   };
-  
+
 
   // Sends the data for submission
   function submitRequest() {
@@ -750,20 +750,20 @@
       method: 'POST',
       url: '/relationships/bulk_add',
       contentType: 'application/json',
-      dataType: "json", 
+      dataType: "json",
       data: JSON.stringify(data),
       success: afterRequest.success,
       error: afterRequest.error
     });
   }
 
-  
-  /* READ FROM CSV */ 
+
+  /* READ FROM CSV */
 
   // Takes a CSV string and writes result to the table
   // see github.com/mholt/PapaParse for PapeParse library docs
   function csvToTable(csvStr) {
-    
+
     // csv.data contains an array of objects where the keys are the same as rowInfo.key
     var csv = Papa.parse(csvStr, { header: true, skipEmptyLines: true});
     var columns = relationshipDetailsAsObject();
@@ -775,7 +775,7 @@
     // because we typically start out with one blank row
     // this removes it before the csv data gets inserted into the table
     removeBlankRows();
-    
+
     csv.data.map(function(rowData){
       // downcase the keys
       var r = {};
@@ -802,7 +802,7 @@
       if (this.files.length > 0) {  // do nothing if no file is selected
 	var reader = new FileReader();
 	reader.onloadend = function() {  // triggered when file is finished being read
-	  if (reader.result) { 
+	  if (reader.result) {
 	    csvToTable(reader.result);
 	  } else {
 	    console.error('Error reading the csv file or the file is empty');
@@ -811,7 +811,7 @@
 	reader.readAsText(this.files[0]);
       }
     }
-    
+
     document.getElementById(fileInputId).addEventListener('change', handleFileSelect, false);
   }
 
@@ -831,7 +831,7 @@
       $(row).addClass('info');
     }
   }
-  
+
   // input: {}, <tr>
   function updateCell(entity, tr) {
     var cell = $(tr).find('td:first-child').get(0);
@@ -840,7 +840,7 @@
     var ui = { item: entity };
     entitySelect.call(cell, null, ui);
   }
-  
+
   // input: int
   // output: <div>
   function skipBtn() {
@@ -897,7 +897,7 @@
 		MATCHING_INDEX++;
 		entityMatch();
 	      }
-	    } 
+	    }
 	  }).append(entityMatchTableRow.render(entity));
 
 	  // add row to table
@@ -910,7 +910,7 @@
 	});
 	$('#match-results-table-container').html(nothingFound);
       }
-      
+
     });
   }
 
@@ -934,7 +934,7 @@
     })
 	.append(innerMatchBoxTitle())
 	.append($('#entityMatchTable').html());
-    
+
     $('body').append(box);
   }
 
@@ -947,7 +947,7 @@
   function entityMatch() {
     var row = $('#table > table > tbody > tr')[MATCHING_INDEX];
     clearMatchingTable();
-    
+
     if (typeof row === 'undefined') {
       $('.entity-match-btn').trigger('click');
       return;
@@ -968,26 +968,26 @@
 
   // <element> => String
   function toggleButtons(element) {
-    $(element).find('.btn').toggleClass('active');  
+    $(element).find('.btn').toggleClass('active');
     $(element).find('.btn').toggleClass('btn-primary');
     // $(element).find('.btn').toggleClass('btn-default');
     return $(element).find('button.btn.active').text();
   }
 
-  
+
   // shows or hides NOTES column
   function toggleNotes() {
     var notesColIndex = $('#table thead tr th')
 	.toArray()
 	.findIndex(function(th) { return th.innerText === 'Notes'; });
-    
+
     var notesColSelector = "#table tbody tr > td:nth-child(" + (notesColIndex +1) + ")";
 
     $(notesColSelector).each(function(i) {
       $(this).toggle();
     });
   }
-  
+
   // Establishes listeners for:
   //   - click to add a new row
   //   - remove row
@@ -1032,7 +1032,7 @@
     });
 
     $('#autocomplete-toggle').click(function() {
-      $(this).find('.btn').toggleClass('active');  
+      $(this).find('.btn').toggleClass('active');
       $(this).find('.btn').toggleClass('btn-primary');
       var status = $(this).find('button.btn.active').text();
       if (status === 'ON') {
@@ -1043,8 +1043,8 @@
 	$('td.ui-autocomplete-input').autocomplete('option', 'disabled', true);
       }
     });
-    
-  } 
+
+  }
 
   function init(hasBulkPermission) {
     USER_HAS_BULK_PERMISSIONS = Boolean(hasBulkPermission);
@@ -1066,5 +1066,5 @@
     toggleNotes: toggleNotes,
     init: init
   };
-  
+
 }));
