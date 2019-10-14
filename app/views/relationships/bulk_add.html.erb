@@ -28,11 +28,11 @@
 </div>
 
 <div class="row result-mode" id="results">
-    
+
 </div>
 
 <div class="row create-mode mt-3">
-    <div class="col-sm-3">    
+    <div class="col-sm-3">
 	<span><em>Relationship Category</em></span>
 	<%= relationship_select_builder @entity %>
     </div>
@@ -41,7 +41,7 @@
 	    <span><em>Source Url*</em></span><br />
 	    <input type="url" id="reference-url" name="referenceUrl" required>
 	</div>
-	
+
     </div>
     <div class="col-sm-4">
 	<div class="form-group">
@@ -60,15 +60,15 @@
 
 <div class="row create-mode">
     <div class="col-sm-3 col-sm-offset-2 col-md-2 col-md-offset-6">
-	<div id="notes-mode-toggle" class="btn-group btn-toggle"> 
+	<div id="notes-mode-toggle" class="btn-group btn-toggle">
 	    <button class="btn btn-sm">ON</button>
 	    <button class="btn btn-sm btn-primary active">OFF</button>
 	</div>
 	<h5>Enable Notes</h5>
     </div>
-    
+
     <div class="col-sm-3 col-md-2">
-	<div id="autocomplete-toggle" class="btn-group btn-toggle"> 
+	<div id="autocomplete-toggle" class="btn-group btn-toggle">
 	    <button class="btn btn-sm btn-primary active">ON</button>
 	    <button class="btn btn-sm">OFF</button>
 	</div>
@@ -77,7 +77,7 @@
     <div class="col-sm-2 col-md-2">
 	<button id="upload-btn" class="btn red-button hidden create-mode">Upload Data</button>
     </div>
-    
+
 </div>
 
 
@@ -104,7 +104,7 @@
     {{ name }}
  </td>
  <td>
-    {{ description }}
+    {{ blurb }}
  </td>
  <td class="profile-link">
     <a href="{{ url }}" target="_blank">View profile</a>
