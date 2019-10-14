@@ -193,6 +193,10 @@ describe Image, type: :model do
         expect(Image.file_ext_from('/some/tmp/image.jpg')).to eql 'jpg'
       end
 
+      it 'returns extension from path with spaces' do
+        expect(Image.file_ext_from('this is an image.jpg')).to eq 'jpg'
+      end
+
       it 'retrieves information from head if no extension found' do
         url = 'https://example.com/example_image'
         head = double('HTTParty::Response head double')
@@ -349,7 +353,7 @@ describe Image, type: :model do
         let(:url) do
           "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
         end
-        
+
         it 'creates 4 image variations' do
           expect(Image).to receive(:random_filename).once.with('png').and_return(filename)
           all_images_do_not_exist(filename)
