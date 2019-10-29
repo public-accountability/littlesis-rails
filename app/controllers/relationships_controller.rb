@@ -29,7 +29,8 @@ class RelationshipsController < ApplicationController
     :is_dropout,
     :dues,
     :percent_stake,
-    :shares
+    :shares,
+    :notes
   ].freeze
 
   PERMITTED_FIELDS = [

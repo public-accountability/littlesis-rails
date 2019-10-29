@@ -114,6 +114,36 @@ describe RelationshipsController, type: :controller do
         end
       end
 
+      describe 'Submitting Relationship with Notes' do
+        let(:entity) { create(:entity_org) }
+        let(:notes_text) { "Important Notes" }
+
+        let(:relationship1) do
+          { 'name' => 'Jane Doe',
+            'blurb' => nil,
+            'primary_ext' => 'Person',
+            'description1' => 'board member',
+            'start_date' => '2017-01-01',
+            'is_board' => true,
+            'end_date' => nil,
+            'notes' => notes_text,
+            'is_current' => '?' }
+        end
+
+        let(:params) do
+          { 'entity1_id' => entity.id,
+            'category_id' => 1,
+            'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+            'relationships' => [relationship1] }
+        end
+
+        it 'creates one relationship with notes' do
+          expect { post :bulk_add!, params: params }.to change(Relationship, :count).by(1)
+          expect(Relationship.last.notes).to eq notes_text
+        end
+
+      end
+
       context 'with bad relationship data' do
         let(:entity) { create(:entity_org) }
 
@@ -149,7 +179,7 @@ describe RelationshipsController, type: :controller do
 
       describe 'one good relationsihp json and one bad realtionship json' do
         subject { lambda { post :bulk_add!, params: params } }
-        
+
         let(:relationship1) do
           { 'name' => 'jane doe',
             'blurb' =>  nil,
@@ -297,7 +327,7 @@ describe RelationshipsController, type: :controller do
 
         let(:donation_received) { params.merge('category_id' => 50) }
         let(:donation_given) { params.merge('category_id' => 51) }
-        
+
         it 'creates one donation received relationship' do
           expect { post :bulk_add!, params: donation_received }.to change(Relationship, :count).by(1)
         end
@@ -379,7 +409,7 @@ describe RelationshipsController, type: :controller do
 
       describe 'it will rollback entity transaction if an ActiveRecord Error occur' do
         subject { lambda { post :bulk_add!, params: params } }
-        
+
         let(:generic_relationship) do
           { 'name' => 'new entity',
             'blurb' =>  nil,
