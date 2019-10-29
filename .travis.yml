@@ -7,7 +7,7 @@ cache:
   - yarn
 
 rvm:
-  - 2.6.4
+  - 2.6.5
 
 env:
   global:
@@ -20,7 +20,7 @@ env:
 addons:
   mariadb: '10.4'
   firefox: latest
-  
+
 services:
   - mysql
 
@@ -37,7 +37,7 @@ before_install:
   - nvm use 8
   - node --version
   - gem install bundler
-  
+
 install:
   - bundle install --jobs=3 --retry=3 --deployment --path=vendor/bundle
   - yarn install
