@@ -222,4 +222,19 @@ describe 'NameParser', :name_parser_helper do
       expect(x[:suffix]).to be_nil
     end
   end
+
+  describe "sec_parse" do
+    let(:sec_name) { "Lore Marc E."}
+
+    it "handles LAST FIRST MIDDLE without comma" do
+      expect(NameParser.sec_parse(sec_name).to_h)
+        .to eql(name_first: 'Marc',
+                name_last: 'Lore',
+                name_middle: 'E',
+                name_prefix: nil,
+                name_suffix: nil,
+                name_nick: nil)
+    end
+
+  end
 end

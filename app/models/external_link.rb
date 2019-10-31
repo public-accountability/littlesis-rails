@@ -97,6 +97,12 @@ class ExternalLink < ApplicationRecord
     end
   end
 
+  # Finds the Sec ExternalLink for the given cik
+  # `.to_i.to_s` removes leading 0's which is how cik numbers are stored in our database
+  def self.find_by_cik(cik)
+    sec.find_by(link_id: cik.to_i.to_s)
+  end
+
   private
 
   # handles input of wikipedia & twitter links
