@@ -61,13 +61,23 @@ describe 'NameParser', :name_parser_helper do
     specify { expect(NameParser::ABBREVIATED_INITIALS.match?('AA.')).to be false }
   end
 
-  describe 'prettyify' do
+  describe 'prettify' do
     specify do
       expect(NameParser.new(nil).send(:prettify, 'EVE')).to eq 'Eve'
     end
 
     specify do
       expect(NameParser.new(nil).send(:prettify, 'MCNABB')).to eq 'McNabb'
+    end
+  end
+
+  describe 'to_s' do
+    specify do
+      expect(NameParser.new('JANE R SMITH').to_s).to eq 'Jane R Smith'
+    end
+
+    specify do
+      expect(NameParser.new('JANE "NICKNAME" R SMITH').to_s).to eq 'Jane "Nickname" R Smith'
     end
   end
 

@@ -166,6 +166,12 @@ class NameParser
     end
   end
 
+  def to_s
+    [@prefix, @first, (@nick ? "\"#{@nick}\"" : nil), @middle, @last]
+      .select(&:present?)
+      .join(' ')
+  end
+
   # Returns parased name as hash, formatted for +Person+
   def to_h
     {
