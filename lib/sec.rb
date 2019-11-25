@@ -63,5 +63,15 @@ module Sec
     raise InvalidCikNumber unless cik.present? && CIK_REGEX.match?(cik)
   end
 
+  def self.top_companies(n = 100)
+    Entity
+      .select('entity.*', "LPAD(external_links.link_id, 10, '0') as cik")
+      .joins(:external_links)
+      .where('external_links.link_type' => ExternalLink::LINK_TYPES.dig(:sec, :enum_val))
+      .where(primary_ext: 'Org')
+      .order('entity.link_count DESC')
+      .limit(n)
+  end
+
   class InvalidCikNumber < StandardError; end
 end
