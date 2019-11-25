@@ -24,23 +24,23 @@
     }
   },
   "dependencies": {
-    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-react": "^7.7.4",
     "@public-accountability/simplestore": "^0.1.6",
-    "@rails/webpacker": "^4.0.7",
+    "@rails/webpacker": "^4.2.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.15",
     "prop-types": "^15.7.2",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0"
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
   },
   "devDependencies": {
-    "@babel/node": "^7.5.5",
+    "@babel/node": "^7.7.4",
     "babel-jest": "^24.9.0",
     "enzyme": "^3.10.0",
-    "enzyme-adapter-react-16": "^1.14.0",
+    "enzyme-adapter-react-16": "^1.15.1",
     "jest": "^24.9.0",
     "jest-fetch-mock": "^2.1.2",
-    "webpack-dev-server": "^3.8.0"
+    "webpack-dev-server": "^3.9.0"
   }
 }
