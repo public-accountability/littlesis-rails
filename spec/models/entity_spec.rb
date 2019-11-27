@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Entity, :tag_helper do
   before(:all) {  DatabaseCleaner.start }
   after(:all)  {  DatabaseCleaner.clean }
@@ -19,7 +18,27 @@ describe Entity, :tag_helper do
     it { is_expected.to validate_presence_of(:primary_ext) }
     it { is_expected.to validate_length_of(:blurb).is_at_most(200) }
 
-    it { is_expected.to have_many(:external_links) }
+    describe 'external links' do
+      let(:entity) do
+        create(:entity_org).tap do |entity|
+          entity.external_links.create! link_type: :sec, link_id: 'abc'
+          entity.external_links.create! link_type: :twitter, link_id: 'username'
+        end
+      end
+
+      it { is_expected.to have_many(:external_links) }
+
+      it 'finds all external links' do
+        expect(entity.external_links.count).to eq 2
+      end
+
+      it 'finds sec link' do
+        expect(entity.external_links.sec_link).to be_a ExternalLink
+        expect(entity.external_links.sec_link.link_id).to eql 'abc'
+        expect(entity.external_links.twitter_link).to be_a ExternalLink
+        expect(entity.external_links.wikipedia_link).to be nil
+      end
+    end
 
     it 'validates that there are at least two words in a name if the entity is a person' do
       e = Entity.new(primary_ext: 'Person', name: 'my name')

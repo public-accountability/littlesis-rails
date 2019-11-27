@@ -166,6 +166,12 @@ class NameParser
     end
   end
 
+  def to_s
+    [@prefix, @first, (@nick ? "\"#{@nick}\"" : nil), @middle, @last]
+      .select(&:present?)
+      .join(' ')
+  end
+
   # Returns parased name as hash, formatted for +Person+
   def to_h
     {
@@ -213,7 +219,7 @@ class NameParser
       @last = abbreviated_match[:last_name]
       return
     end
-    
+
     case parts.length
     when 0
       @errors << "Name is an empty string"
@@ -550,6 +556,16 @@ class NameParser
       prefix: prefix,
       suffix: suffix
     }
+  end
+
+  # The SEC doesn't like commas in their names.
+  # On Form 3/4 names are LAST FIRST MIDDLE.
+  def self.sec_parse(str)
+    words = str.split(/ +/)
+    unless words.first.last == ','
+      words[0] = words[0] + ','
+    end
+    new words.join(' ')
   end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength

@@ -61,13 +61,23 @@ describe 'NameParser', :name_parser_helper do
     specify { expect(NameParser::ABBREVIATED_INITIALS.match?('AA.')).to be false }
   end
 
-  describe 'prettyify' do
+  describe 'prettify' do
     specify do
       expect(NameParser.new(nil).send(:prettify, 'EVE')).to eq 'Eve'
     end
 
     specify do
       expect(NameParser.new(nil).send(:prettify, 'MCNABB')).to eq 'McNabb'
+    end
+  end
+
+  describe 'to_s' do
+    specify do
+      expect(NameParser.new('JANE R SMITH').to_s).to eq 'Jane R Smith'
+    end
+
+    specify do
+      expect(NameParser.new('JANE "NICKNAME" R SMITH').to_s).to eq 'Jane "Nickname" R Smith'
     end
   end
 
@@ -221,5 +231,20 @@ describe 'NameParser', :name_parser_helper do
       expect(x[:prefix]).to be_nil
       expect(x[:suffix]).to be_nil
     end
+  end
+
+  describe "sec_parse" do
+    let(:sec_name) { "Lore Marc E."}
+
+    it "handles LAST FIRST MIDDLE without comma" do
+      expect(NameParser.sec_parse(sec_name).to_h)
+        .to eql(name_first: 'Marc',
+                name_last: 'Lore',
+                name_middle: 'E',
+                name_prefix: nil,
+                name_suffix: nil,
+                name_nick: nil)
+    end
+
   end
 end
