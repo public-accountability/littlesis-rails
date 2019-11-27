@@ -60,9 +60,16 @@ class Entity < ApplicationRecord
   has_many :fields, through: :entity_fields, inverse_of: :entities
   has_many :article_entities, inverse_of: :entity, dependent: :destroy
   has_many :articles, through: :article_entities, inverse_of: :entities
-  has_many :external_links, inverse_of: :entity, dependent: :destroy
 
-  # extensions
+  has_many :external_links, inverse_of: :entity, dependent: :destroy do
+    ExternalLink::LINK_TYPES.keys.each do |link_type|
+      define_method "#{link_type}_link" do
+        public_send(link_type).try(:first)
+      end
+    end
+  end
+
+  # Extensions
   # see concerns/entity_extensions
 
   # cmp
