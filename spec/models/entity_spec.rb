@@ -703,6 +703,19 @@ describe Entity, :tag_helper do
     end
   end
 
+  describe 'name_with_id' do
+    let(:person) { create(:entity_person, name: 'Foo Bar') }
+    let(:person_without_id) { build(:person, id: nil, name: 'Foo Bar') }
+
+    specify do
+      expect(person.name_with_id).to eq "Foo Bar (#{person.id})"
+    end
+
+    specify do
+      expect(person_without_id.name_with_id).to eq "Foo Bar (?)"
+    end
+  end
+
   describe 'EntityPaths' do
     describe 'Entity.legacy_url' do
       it 'generates correct url' do
