@@ -12,34 +12,33 @@ module Sec
 
     def relationships
       # Roaster is a hash where the key = the owner CIK, and the values = [Hash]
-      # The Hash contains the data from Sec::ReportingOwner, which are selected fields from SEC form 3/4
-      # See lib/sec/roaster.rb
+      # The Hash contains the data from Sec::ReportingOwner, which are selected
+      # fields from SEC form 3/4. See lib/sec/roaster.rb
       @company.roster.map do |(reporting_owner_cik, documents)|
         reporting_owner_entity = find_or_initialize_reporting_owner(reporting_owner_cik, documents)
+        relationship_from_documents reporting_owner_entity, documents
       end.flatten
     end
 
-    def relationships_from_documents(reporting_owner_entity, documents)
-      # relationships = []
-
-      # Documents is a sorted descending, where documents[0] is the most recent document
-
+    def relationship_from_documents(reporting_owner_entity, documents)
       # Set these fields from the most recent document
       attributes = {
         entity: reporting_owner_entity,
         related: @entity,
         category_id: ::Relationship::POSITION_CATEGORY,
-        is_board: boolean(documents.first.is_director),
-        is_executive: boolean(documents.first.is_executive),
-        title: documents.first.title.presence,
-        start_date: documents.first.date_filed,
-        is_current: nil
+        description1: documents.first[:title].presence,
+        start_date: documents.first[:date_filed],
+        is_current: nil,
+        position_attributes: {
+          is_board: boolean(documents.first[:is_director]),
+          is_executive: boolean(documents.first[:is_executive])
+        }
       }
 
       # If the document is within the past 6 months, mark the relationship "current"
       # If the document is older than 2 years ago, mark the relationship "past"
       # Otherwise, leave the relationship status as unknown
-      document_days_ago = (Time.zone.today - Date.parse(documents.first.date)).to_i
+      document_days_ago = (Time.zone.today - Date.parse(documents.first[:date_filed])).to_i
 
       if document_days_ago < 180
         attributes[:is_current] = true
@@ -48,27 +47,28 @@ module Sec
       end
 
       # Loop through documents
+      # Documents are already sorted in descending order. `documents[0]` is the most recent document.
       # If the document contains different values for Director or Executive, halt the processing.
       # Currently, we're only handling the most recent contiguous relationship.
       documents[1..].each.with_index do |document, i|
-        director_status_changed = boolean(document.is_director) != attributes[:is_board]
-        execuctive_status_changed = boolean(document.is_executive) != attributes[:is_board]
+        director_status_changed = boolean(document[:is_director]) != attributes[:position_attributes][:is_board]
+        execuctive_status_changed = boolean(document[:is_executive]) != attributes[:position_attributes][:is_board]
 
         if director_status_changed || execuctive_status_changed
           Rails.logger.info <<~INFO
-            Stopping processing documents for CIK #{document.cik} because the director or executive status changed.
+            Stopping processing documents for CIK #{document[:cik]} because the director or executive status changed.
             There are #{documents.slice(i..).count} document not examined.
           INFO
           break
         else
-          start_date = document.date_filed
+          attributes[:start_date] = document[:date_filed]
 
-          if document.title.present? && attributes[:title].blank?
-            attributes[:title] = document.title
+          if document[:title].present? && attributes[:title].blank?
+            attributes[:title] = document[:title]
           end
 
-          if document.title.present? && (attributes[:title] != document.title)
-            Rails.logger.debug "Mismatching titles ('#{attributes[:title]}', '#{document['title']}') found for CIK #{document.cik}"
+          if document[:title].present? && (attributes[:title] != document[:title])
+            Rails.logger.debug "Mismatching titles ('#{attributes[:title]}', '#{document[:title]}') found for CIK #{document[:cik]}"
           end
         end
       end
@@ -76,9 +76,9 @@ module Sec
       Relationship.new(attributes)
     end
 
-    def self.find_or_initialize_reporting_owner(cik, documents)
+    def find_or_initialize_reporting_owner(cik, documents)
       # Try to find the owner by searching by CIK
-      reporting_owner_entity = ExternalLink.find_by_cik(reporting_owner_cik)&.entity
+      reporting_owner = ExternalLink.find_by_cik(cik)&.entity
       return reporting_owner if reporting_owner
 
       # If the CIK is not in our system, use the EntityMatcher to search for potential matches
@@ -93,10 +93,13 @@ module Sec
     private
 
     def cik_from_entity(entity)
-      cik = entity.external_links.find_by(link_type: :sec)&.link_id
-      raise Exceptions::LittleSisError, 'Entity has no CIK number' unless cik
+      cik = entity.external_links.sec_link&.link_id
 
-      cik.rjust 10, '0'
+      if cik
+        cik.rjust(10, '0')
+      else
+        raise Exceptions::LittleSisError, 'Entity has no CIK number'
+      end
     end
 
     # TODO: move this to ReportingOwner parsing step?
