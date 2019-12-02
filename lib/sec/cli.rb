@@ -25,14 +25,15 @@ module Sec
         opts.on('--roster', 'output a list roster of names found on filings')
         opts.on('--print-forms', 'output list of forms')
         opts.on('--list-example-ciks', 'print list of example ciks to use')
+        opts.on('--top-companies', 'generates csv for all top companies')
         opts.on('--relationships', 'outputs tsv of relationships')
 
-        # CIK is required with --roster and --print-forms
+        # CIK is required with --roster, --print-forms  and --relationships
         opts.on('--cik CIK', "The company's CIK number")
 
         # formatting options
         opts.on('--forms [FORMS]', Array, 'comma separated list of forms')
-        opts.on('--json', 'outputs json (when combined with --roster)')
+        opts.on('--json', 'outputs json instead of tsv')
         opts.on('--path [DATABASE]', 'path to sec filings database')
       end.parse!(into: options)
 
@@ -50,6 +51,9 @@ module Sec
     def run(options)
       if options['list-example-ciks']
         Sec::CIKS.each { |ticker, cik| puts "#{ticker}\t#{cik}" }
+        return
+      elsif  options['top-companies']
+        top_companies(json: options[:json])
         return
       end
 
@@ -100,6 +104,19 @@ module Sec
                         .map { |r| Sec::Relationship.format(r) }
 
       if options[:json]
+        puts JSON.pretty_generate(relationships)
+      else
+        self.class.print(relationships)
+      end
+    end
+
+    def top_companies(json: false)
+      relationships = Sec.top_companies
+                        .map(&:relationships)
+                        .flatten
+                        .map { |r| Sec::Relationship.format(r) }
+
+      if json
         puts JSON.pretty_generate(relationships)
       else
         self.class.print(relationships)
