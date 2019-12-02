@@ -1,5 +1,15 @@
 # frozen_string_literal: true
 
+require_relative 'sec/cli'
+require_relative 'sec/company'
+require_relative 'sec/database'
+require_relative 'sec/document'
+require_relative 'sec/filing'
+require_relative 'sec/importer'
+require_relative 'sec/relationship'
+require_relative 'sec/reporting_owner'
+require_relative 'sec/roster'
+
 # Downloads SEC filings and parses them.
 # Unlike most of LittleSis's data this uses a sqlite3 database,
 # which, by default, is located at /data/sec_filings.db.
