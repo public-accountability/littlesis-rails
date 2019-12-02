@@ -38,6 +38,11 @@ describe Entity, :tag_helper do
         expect(entity.external_links.twitter_link).to be_a ExternalLink
         expect(entity.external_links.wikipedia_link).to be nil
       end
+
+      it 'external_links - link_values' do
+        expect(entity.external_links.sec_link_value).to eql 'abc'
+        expect(create(:entity_org).external_links.sec_link_value).to be nil
+      end
     end
 
     it 'validates that there are at least two words in a name if the entity is a person' do
@@ -700,6 +705,19 @@ describe Entity, :tag_helper do
       @org.aliases.create(name: 'other name')
       expect(@org.aliases.count).to eq 2
       expect(@org.primary_alias).to eql primary_a
+    end
+  end
+
+  describe 'name_with_id' do
+    let(:person) { create(:entity_person, name: 'Foo Bar') }
+    let(:person_without_id) { build(:person, id: nil, name: 'Foo Bar') }
+
+    specify do
+      expect(person.name_with_id).to eq "Foo Bar (#{person.id})"
+    end
+
+    specify do
+      expect(person_without_id.name_with_id).to eq "Foo Bar (?)"
     end
   end
 

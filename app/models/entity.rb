@@ -66,7 +66,15 @@ class Entity < ApplicationRecord
       define_method "#{link_type}_link" do
         public_send(link_type).try(:first)
       end
+
+      define_method "#{link_type}_link_value" do
+        public_send("#{link_type}_link")&.link_id
+      end
     end
+
+    # def cik
+    #   sec_link&.link_id
+    # end
   end
 
   # Extensions
@@ -343,10 +351,13 @@ class Entity < ApplicationRecord
     raise ArgumentError, "Accepted types: Entity, Integer, or String"
   end
 
-
-
   def update_link_count
     update(link_count: links.count)
+  end
+
+  # Formats entity as "Name (id)"
+  def name_with_id
+    "#{name} (#{persisted? ? id : '?'})"
   end
 
   def name_without_initials
