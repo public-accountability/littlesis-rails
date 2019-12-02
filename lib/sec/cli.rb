@@ -112,6 +112,7 @@ module Sec
 
     def top_companies(json: false)
       relationships = Sec.top_companies
+                        .each { |importer| Rails.logger.debug "[SEC] Top Companies - processing #{importer.entity.name_with_id}" }
                         .map(&:relationships)
                         .flatten
                         .map { |r| Sec::Relationship.format(r) }
