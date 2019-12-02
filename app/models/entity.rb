@@ -66,7 +66,15 @@ class Entity < ApplicationRecord
       define_method "#{link_type}_link" do
         public_send(link_type).try(:first)
       end
+
+      define_method "#{link_type}_link_value" do
+        public_send("#{link_type}_link")&.link_id
+      end
     end
+
+    # def cik
+    #   sec_link&.link_id
+    # end
   end
 
   # Extensions

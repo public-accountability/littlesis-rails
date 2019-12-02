@@ -38,6 +38,12 @@ describe Entity, :tag_helper do
         expect(entity.external_links.twitter_link).to be_a ExternalLink
         expect(entity.external_links.wikipedia_link).to be nil
       end
+
+      it 'entity.external_links.cik' do
+        expect(entity.external_links.cik).to eql 'abc'
+        expect(create(:entity_org).external_links.cik).to be nil
+      end
+
     end
 
     it 'validates that there are at least two words in a name if the entity is a person' do

@@ -6,7 +6,8 @@
 #     sec --print-forms=3,4,8K --cik 0000019617
 #     sec --roster --cik 0000019617
 #     sec --list-example-ciks
-#
+#     sec --cik 0000019617 --relationships
+#     sec --cik 0000019617 --relationships --json
 module Sec
   class Cli
     def initialize
@@ -24,6 +25,7 @@ module Sec
         opts.on('--roster', 'output a list roster of names found on filings')
         opts.on('--print-forms', 'output list of forms')
         opts.on('--list-example-ciks', 'print list of example ciks to use')
+        opts.on('--relationships', 'outputs tsv of relationships')
 
         # CIK is required with --roster and --print-forms
         opts.on('--cik CIK', "The company's CIK number")
@@ -55,10 +57,19 @@ module Sec
 
       db = Sec::Database.new(options.slice(:forms, :path))
 
+      # %w[print-forms roster relationships].each do |action|
+      #   if options['action']
+      #     public_send(action, db, options)
+      #     break
+      #   end
+      # end
+
       if options['print-forms']
         print_forms(db, options)
       elsif options['roster']
         roster(db, options)
+      elsif options['relationships']
+        relationships(db, options)
       end
 
     ensure
@@ -76,6 +87,22 @@ module Sec
         puts JSON.pretty_generate(roster.to_h)
       else
         self.class.print(roster.spreadsheet)
+      end
+    end
+
+    def relationships(db, options)
+      cik = options[:cik]
+      entity = ExternalLink.find_by_cik(cik).entity
+
+      relationships = Sec::Importer
+                        .new(entity, db: db)
+                        .relationships
+                        .map { |r| Sec::Relationship.format(r) }
+
+      if options[:json]
+        puts JSON.pretty_generate(relationships)
+      else
+        self.class.print(relationships)
       end
     end
 
