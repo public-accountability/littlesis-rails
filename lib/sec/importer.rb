@@ -18,6 +18,9 @@ module Sec
         reporting_owner_entity = find_or_initialize_reporting_owner(reporting_owner_cik, documents)
         relationship_from_documents reporting_owner_entity, documents
       end.flatten
+    rescue => e
+      Rails.logger.warn "Failed to calculate relationships for #{@entity.name_with_id}"
+      raise e
     end
 
     def relationship_from_documents(reporting_owner_entity, documents)
