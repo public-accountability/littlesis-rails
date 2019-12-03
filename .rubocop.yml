@@ -13,7 +13,7 @@ AllCops:
 
 Rails:
   Enabled: true
-  
+
 Metrics/LineLength:
   Max: 100
   Exclude:
@@ -37,7 +37,7 @@ Metrics/AbcSize:
 Metrics/CyclomaticComplexity:
   Max: 8
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Enabled: false
   Exclude:
     - 'app/models/image.rb'
@@ -92,7 +92,7 @@ Style/RedundantReturn:
 Style/ImplicitRuntimeError:
   Enabled: true
 
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   Enabled: false
 
 Layout/MultilineMethodCallIndentation:
