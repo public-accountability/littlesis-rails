@@ -81,7 +81,7 @@ module Sec
       .where(primary_ext: 'Org')
       .order('entity.link_count DESC')
       .limit(n)
-      .map { |e| Sec::Importer.new(e) }
+      # .map { |e| Sec::Importer.new(e) }
   end
 
   class InvalidCikNumber < StandardError; end
