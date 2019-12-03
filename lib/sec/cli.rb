@@ -52,21 +52,16 @@ module Sec
       if options['list-example-ciks']
         Sec::CIKS.each { |ticker, cik| puts "#{ticker}\t#{cik}" }
         return
-      elsif  options['top-companies']
-        top_companies(json: options[:json])
+      end
+
+      db = Sec::Database.new(options.slice(:forms, :path))
+
+      if options['top-companies']
+        top_companies db: db, json: options[:json]
         return
       end
 
       requires_cik! options[:cik]
-
-      db = Sec::Database.new(options.slice(:forms, :path))
-
-      # %w[print-forms roster relationships].each do |action|
-      #   if options['action']
-      #     public_send(action, db, options)
-      #     break
-      #   end
-      # end
 
       if options['print-forms']
         print_forms(db, options)
@@ -110,18 +105,37 @@ module Sec
       end
     end
 
-    def top_companies(json: false)
-      relationships = Sec.top_companies
-                        .each { |importer| Rails.logger.debug "[SEC] Top Companies - processing #{importer.entity.name_with_id}" }
-                        .map(&:relationships)
-                        .flatten
-                        .map { |r| Sec::Relationship.format(r) }
+    def top_companies(db:, json: false)
+      amount = 50
+      format = json ? :json : :csv
+      filename = Rails.root.join('data', "top_companies_#{Time.current.strftime('%F')}.#{format}").to_s
+      file = File.new(filename, 'w')
 
-      if json
-        puts JSON.pretty_generate(relationships)
-      else
-        self.class.print(relationships)
+      ColorPrinter.print_blue "Saving top companies to #{filename}"
+
+      file << Sec::Relationship.csv_headers if format == :csv
+      file << "[\n" if format == :json
+
+      # `Sec.top_companies` returns entities that have CIK numbers
+      Sec.top_companies(amount).each do |company|
+        ColorPrinter.print_gray "processing: #{company.name_with_id}"
+        # Calculates an array of relationships for each company. This can take a while
+        # because it may have to download documents from the SEC website and/or
+        # find matching people using `EntityMatcher`
+        Sec::Importer.new(company, db: db).relationships.each do |relationship|
+          # Writes either a CSV row or a JSON string
+          file << Sec::Relationship.public_send(format, relationship)
+          file << ",\n" if format == :json
+        end
       end
+
+      if format == :json
+        # Erase the trailing comma and new line and replace with closing bracket.
+        file.seek(-2, :CUR)
+        file << "\n]"
+      end
+    ensure
+      file.close
     end
 
     def requires_cik!(cik)
