@@ -3,13 +3,18 @@
     height: 25px;
 
     a {
-	text-decoration: underline;
+        text-decoration: underline;
+        &:hover {
+            color: #8a73ff;
+        }
     }
 }
 
 #donation-banner-wrapper p {
-    padding-bottom: 10px;
-}    
+    width: 100%;
+    text-align: center;
+    margin-top: -6px;
+}
 
 
 #container-wrapper.donation-banner {
@@ -19,4 +24,3 @@
 #main-navbar-container.donation-banner {
     top: 30px;
 }
-
