@@ -35,30 +35,22 @@ class ListsController < ApplicationController
 
   before_action :set_page, only: [:modifications]
 
-  def self.get_lists(page)
-    List
-      .select("ls_list.*, COUNT(DISTINCT(ls_list_entity.entity_id)) AS entity_count")
-      .joins(:list_entities)
-      .where(is_admin: false)
-      .group("ls_list.id")
-      .order("entity_count DESC")
-      .page(page).per(20)
-  end
-
   # GET /lists
   def index
-    lists = self.class.get_lists(params[:page])
+    page = params[:page] || 1
+    per = 20
 
     if current_user.present?
-      @lists = lists.where('ls_list.access <> ? OR ls_list.creator_user_id = ?',
-                           Permissions::ACCESS_PRIVATE,
-                           current_user.id)
+      @lists = List.where('ls_list.access <> ? OR ls_list.creator_user_id = ?', Permissions::ACCESS_PRIVATE, current_user.id)
+                 .order(Arel.sql("ls_list.creator_user_id = #{current_user.id} DESC, updated_at DESC"))
+                 .page(page)
+                 .per(per)
     else
-      @lists = lists.public_scope
+      @lists = List.public_scope.order(updated_at: :desc).page(page).per(per)
     end
 
     if params[:q].present?
-      is_admin = (current_user and current_user.has_legacy_permission('admin')) ? [0, 1] : 0
+      is_admin = current_user?.admin? ? [0, 1] : 0
       list_ids = List.search(
         Riddle::Query.escape(params[:q]),
         with: { is_deleted: 0, is_admin: is_admin }

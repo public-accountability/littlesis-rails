@@ -53,7 +53,7 @@ class List < ApplicationRecord
 
   def interlocks_hash
     list_entities = ListEntity.joins(:list).where(entity_id: entity_ids, ls_list: { is_deleted: false, is_admin: false }).where.not(list_id: id).limit(50000)
-    list_entities.reduce({}) do |hash, le| 
+    list_entities.reduce({}) do |hash, le|
       hash[le.list_id] = hash.fetch(le.list_id, []).push(le.entity_id).uniq
       hash
     end
@@ -86,6 +86,12 @@ class List < ApplicationRecord
     end
 
     query
+  end
+
+  def entity_count
+    return @entity_count if defined?(@entity_count)
+
+    @entity_count = list_entities.count
   end
 
   # The host argument is there for compatibility reasons:

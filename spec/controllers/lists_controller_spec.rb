@@ -34,9 +34,8 @@ describe ListsController, :list_helper, type: :controller do
     end
 
     it '@lists has correct names' do
-      expect(assigns(:lists)[0].name).to eq 'Fortune 1000 Companies'
-      expect(assigns(:lists)[1].name).to eq 'my interesting list'
-      expect(assigns(:lists)[2].name).to eq 'current user private list'
+      expect(assigns(:lists).map(&:name).to_set)
+        .to eql ['Fortune 1000 Companies', 'my interesting list', 'current user private list'].to_set
     end
 
     it '@lists does not include private list created by some other user' do

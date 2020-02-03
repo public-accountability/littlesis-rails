@@ -159,7 +159,7 @@ describe('string utilities', () => {
     expect(utility.formatMoney(100500800.15)).toEqual('$100,500,800.15');
     expect(utility.formatMoney(100500800.15, { truncate: true })).toEqual('$100,500,800');
   });
-  
+
 });
 
 describe('object utilities', () => {
@@ -185,7 +185,7 @@ describe('object utilities', () => {
 
   describe('#get', () => {
     const obj = { a: 1, b: 2};
-    
+
     it('reads an arbitrary key from an object', () => {
       expect(utility.get(obj, 'a')).toEqual(1);
     });
@@ -220,7 +220,7 @@ describe('object utilities', () => {
 
   describe('#set', () => {
     const obj = { a: 1, b: 2};
-    
+
     it('sets the value for an arbitary key on an object', () => {
       expect(utility.set(obj, 'c', 3)).toEqual({ a: 1, b: 2, c: 3 });
     });
@@ -244,7 +244,7 @@ describe('object utilities', () => {
 
   describe('#setIn', () => {
     const nestedObj = { a: { b: 2, c: 3 } };
-    
+
     it('sets the value for a nested key in an object', () => {
       expect(utility.setIn(nestedObj, ['a', 'b'], 4))
         .toEqual({ a: { b: 4, c: 3 } });
@@ -333,7 +333,7 @@ describe('object utilities', () => {
       expect(utility.exists(null)).toBe(false);
     });
   });
-  
+
   describe('#isEmpty', () => {
     it("discovers if an object is empty", () => {
       expect(utility.isEmpty({"foo": "bar"})).toEqual(false);
@@ -347,19 +347,9 @@ describe('object utilities', () => {
   });
 });
 
-
-describe('redirectTo', ()=>{
-  it('calls replace with path', () => {
-    jest.spyOn(document.location, 'replace').mockImplementation(x => x);
-    utility.redirectTo('/example/path');
-    expect(document.location.replace.mock.calls.length).toEqual(1);
-  });
-});
-
-
 describe('#createElementWithText', () => {
   document.body.innerHTML = '<div id="test"><div/>';
-  
+
   it('creates a new element', () => {
     document
       .getElementById('test')
@@ -371,7 +361,7 @@ describe('#createElementWithText', () => {
 
 describe('#createElement', () => {
   beforeEach(() => document.body.innerHTML = '<div id="create-element-test"></div>');
-  
+
   it('defaults to div', () => {
     document.getElementById('create-element-test').appendChild(utility.createElement());
     expect(document.querySelectorAll('#create-element-test > div').length ).toEqual(1);
@@ -399,7 +389,7 @@ describe('#createElement', () => {
 
 
 describe('#createLink', () => {
-  beforeEach(() => document.body.innerHTML = '<div id="test-dom"></div>');  
+  beforeEach(() => document.body.innerHTML = '<div id="test-dom"></div>');
 
   it('creates a new link', () => {
     document.getElementById('test-dom')
