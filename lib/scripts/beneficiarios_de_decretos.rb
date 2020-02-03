@@ -68,7 +68,7 @@ CSV.read(csvfile, headers: true).map(&:to_h).sample(25).each do |row|
   littlesis = match_littlesis name: name, type: primary_type
 
   rows << row.merge(iapd).merge(littlesis)
-rescue => 2
+rescue => e
   errors += 1
   # STDERR.puts e
 end
