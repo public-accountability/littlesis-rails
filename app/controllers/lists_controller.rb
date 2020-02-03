@@ -42,7 +42,7 @@ class ListsController < ApplicationController
 
     if current_user.present?
       @lists = List.where('ls_list.access <> ? OR ls_list.creator_user_id = ?', Permissions::ACCESS_PRIVATE, current_user.id)
-                 .order('ls_list.creator_user_id = ? DESC, updated_at DESC', current_user.id)
+                 .order(Arel.sql("ls_list.creator_user_id = #{current_user.id} DESC, updated_at DESC"))
                  .page(page)
                  .per(per)
     else
