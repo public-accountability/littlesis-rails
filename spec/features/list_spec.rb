@@ -1,4 +1,21 @@
-feature 'list page', type: :feature do
+describe 'list index page', type: :feature do
+  before do
+    list1 = create(:list)
+    list2 = create(:list, name: 'my interesting list')
+    entity = create(:entity_org)
+    ListEntity.find_or_create_by(list_id: list1.id, entity_id: entity.id)
+    ListEntity.find_or_create_by(list_id: list2.id, entity_id: entity.id)
+  end
+
+  specify do
+    visit '/lists'
+    page_has_selector '.alert-info'
+    page_has_selector 'input#list-search'
+    page_has_selector '.lists_table_name', count: 2
+  end
+end
+
+describe 'list page', type: :feature do
   let(:document_attributes) { attributes_for(:document) }
   let(:list) do
     list = create(:list)
