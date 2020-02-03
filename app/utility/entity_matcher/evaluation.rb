@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module EntityMatcher
-  # Evaluatutes two instances of +TestCase+
+  # Evaluates two instances of +TestCase+
   class Evaluation
     # call with two instances of EntityMatcher::TestCase::Person
     # +match+ is required to be assoicated with an +Entity+
@@ -88,13 +88,20 @@ module EntityMatcher
       def similar_first_name
         return nil if @test_case.fetch('name_first').blank?
 
-        NameSimilarity
-          .similar?(@test_case.fetch('name_first'), @match.fetch('name_first'), first_name: true)
+        test_case_name = @test_case.fetch('name_first').downcase
+        match_name = @match.fetch('name_first').downcase
+
+        return true if StringSimilarity.similar?(test_case_name, match_name)
+
+        ::Person
+          .same_first_names(test_case_name)
+          .include?(match_name) || ::Person
+                                     .same_first_names(match_name)
+                                     .include?(test_case_name)
       end
 
       def similar_last_name
-        NameSimilarity
-          .similar?(@test_case.fetch('name_last'), @match.fetch('name_last'))
+        StringSimilarity.similar? @test_case.fetch('name_last'), @match.fetch('name_last')
       end
 
       def mismatched_suffix
@@ -127,9 +134,9 @@ module EntityMatcher
 
       def comparisons
         @result.same_name = (@test_case.name.clean == @match.name.clean)
-        @result.similar_name = NameSimilarity.similar?(@test_case.name.clean, @match.name.clean)
+        @result.similar_name = StringSimilarity.similar?(@test_case.name.clean, @match.name.clean)
         @result.same_root = (@test_case.name.root == @match.name.root)
-        @result.similar_root = NameSimilarity.similar?(@test_case.name.root, @match.name.root)
+        @result.similar_root = StringSimilarity.similar?(@test_case.name.root, @match.name.root)
         @result.matches_alias = matches_alias
         @result.common_relationship = common_relationship
         @result.blurb_keyword = blurb_keyword

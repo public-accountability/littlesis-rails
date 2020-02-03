@@ -1,63 +1,42 @@
 # frozen_string_literal: true
 
-# A class to compare names using a variety of metrics.
-#
-# All string are handled case-insensitively
 class NameSimilarity
-  include TypeCheck
-  attr_reader :similar,
-              :equal,
-              :levenshtein,
-              :first_name_alias
+  Comparisons = Struct.new(:string_similar,
+                           :same_first_name,
+                           :similar_first_name,
+                           :same_last_name,
+                           :similar_last_name,
+                           :same_middle_name)
 
-  MAX_LEVENSHTEIN_VALUE = 2
+  class Person
+    extend Forwardable
+    attr_reader :comparisons
+    def_delegators :@comparisons, :to_h, :[]
 
-  def self.compare(a, b)
-    new(a, b)
-  end
+    def initialize(a, b)
+      @a = NameParser.new(a).validate!
+      @b = NameParser.new(b).validate!
+      @comparisons = Comparisons.new
 
-  def self.similar?(a, b, **kwargs)
-    new(a, b, **kwargs).similar
-  end
-
-  def initialize(a, b, first_name: false)
-    type_check a, String
-    type_check b, String
-    @a = a.upcase
-    @b = b.upcase
-
-    run { equal_test }
-    run { levenshtein_test }
-    run { first_name_test } if first_name
-
-    # set similar to false if it hasn't changed in the tests
-    @similar = false if @similar.nil?
-  end
-
-  private
-
-  def equal_test
-    @equal = (@a == @b)
-    is_similar if @equal
-  end
-
-  def levenshtein_test
-    @levenshtein = Text::Levenshtein.distance(@a, @b)
-    is_similar if @levenshtein <= MAX_LEVENSHTEIN_VALUE
-  end
-
-  def first_name_test
-    if Person.same_first_names(@a).include?(@b.downcase) || Person.same_first_names(@b).include?(@a.downcase)
-      @first_name_alias = true
-      is_similar
+      @comparisons.string_similar = StringSimilarity.similar?(@a.raw, @b.raw)
+      @comparisons.same_first_name = @a.first == @b.first
+      @comparisons.similar_first_name = ::Person.same_first_names(@a.first).include?(@b.first) ||
+                                        ::Person.same_first_names(@b.first).include?(@a.first) ||
+                                        StringSimilarity.similar?(@a.first, @b.first)
+      @comparisons.same_last_name = @a.last == @b.last
+      @comparisons.similar_last_name = StringSimilarity.similar?(@a.last, @b.last)
+      @comparisons.same_middle_name = @a.middle == @b.middle if @a.middle.present? && @b.middle.present?
     end
-  end
 
-  def run
-    yield unless similar
-  end
+    def similar?
+      return true if @comparisons.string_similar
 
-  def is_similar
-    @similar = true
+      (@comparisons.same_first_name || @comparisons.similar_first_name) &&
+        @comparisons.same_last_name
+    end
+
+    def self.similar?(a, b)
+      new(a, b).similar?
+    end
   end
 end

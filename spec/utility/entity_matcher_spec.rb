@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe EntityMatcher, :sphinx do
   def result_person(*args)
     EntityMatcher::EvaluationResult::Person.new.tap do |er|
@@ -300,7 +299,7 @@ describe EntityMatcher, :sphinx do
         let(:test_case_without_last_name) do
           EntityMatcher::TestCase::Person.new 'Cat'
         end
-        
+
         let(:match) do
           generate_test_case name_first: first_name, name_last: Faker::Name.unique.last_name
         end
@@ -450,8 +449,8 @@ describe EntityMatcher, :sphinx do
         end
 
         specify do
-          expect(subject.new(test_case, match).result.similar_last_name).to be false
           expect(subject.new(test_case, match).result.similar_first_name).to eql true
+          expect(subject.new(test_case, match).result.similar_last_name).to be false
         end
       end
 
@@ -642,7 +641,7 @@ describe EntityMatcher, :sphinx do
           rp.entity = person
         end
       end
-      
+
       specify do
         expect(evaluation_result.as_json)
           .to eql({
@@ -652,9 +651,9 @@ describe EntityMatcher, :sphinx do
                     'automatch' => false
                   })
       end
-      
 
-      
+
+
     end
 
 

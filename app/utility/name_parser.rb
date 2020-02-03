@@ -7,6 +7,12 @@
 #     In LittleSis names are required to have a first and last name
 #
 class NameParser
+  class InvalidPersonNameError < Exceptions::LittleSisError
+    def message
+      "NameParser could not find a first and last name"
+    end
+  end
+
   attr_reader :prefix, :first, :middle, :last, :suffix, :nick,
               :raw, :errors
 
@@ -190,6 +196,12 @@ class NameParser
 
   def valid?
     @first && @last
+  end
+
+  def validate!
+    raise InvalidPersonNameError unless valid?
+
+    self
   end
 
   private

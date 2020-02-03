@@ -94,7 +94,7 @@ gem "recaptcha", '>= 4.14.0', require: "recaptcha/rails"
 # Used by `lib/cmp`
 gem "roo", "~> 2.8.1", :require => false
 
-# Used by NameSimilarity
+# Used by StringSimilarity
 gem 'text', '>= 1.3.1'
 
 gem 'httparty', '>= 0.16.2'

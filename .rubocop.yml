@@ -91,6 +91,8 @@ Style/RedundantReturn:
 
 Style/ImplicitRuntimeError:
   Enabled: true
+  Exclude:
+    - 'lib/scripts/*'
 
 Layout/ParameterAlignment:
   Enabled: false
