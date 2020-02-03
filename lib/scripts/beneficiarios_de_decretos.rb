@@ -58,7 +58,9 @@ end
 rows = []
 errors = 0
 
-CSV.read(csvfile, headers: true).map(&:to_h).sample(25).each do |row|
+# CSV.read(csvfile, headers: true).map(&:to_h).each do |row|
+
+CSV.read(csvfile, headers: true).map(&:to_h).sample(100).each do |row|
   name = row['beneficiary_name']
   warn "Processing #{name}"
 
@@ -76,4 +78,4 @@ end
 Utility.save_hash_array_to_csv outfile, rows
 
 ColorPrinter.print_blue "Save to #{outfile}"
-ColorPrint.print_red "Found #{errors} errors" if errors.positive?
+ColorPrinter.print_red "Found #{errors} errors" if errors.positive?
