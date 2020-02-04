@@ -113,3 +113,6 @@ RSpec/DescribedClass:
 
 RSpec/MultipleExpectations:
   Enabled: false
+
+RSpec/NestedGroups:
+  Max: 4
