@@ -3,7 +3,7 @@
 require 'csv'
 require_relative '../utility'
 
-# fieds:
+# Fields:
 #  - incentive
 #  - beneficiary_name
 #  - approval_date
@@ -49,9 +49,15 @@ def match_iapd(name:, type:)
   end
 
   if match
-    { iapd_dataset_key: match.dataset_key, iapd_name: match.row_data['name'] }
+    {
+      'iapd_dataset_key' => match.dataset_key,
+      'iapd_name' => match.row_data['name']
+    }
   else
-    { iapd_dataset_key: nil, iapd_name: nil }
+    {
+      'iapd_dataset_key' => nil,
+      'iapd_name' => nil
+    }
   end
 end
 

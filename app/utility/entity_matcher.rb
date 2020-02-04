@@ -10,24 +10,22 @@ module EntityMatcher
   def self.find_matches_for_person(name, **kwargs)
     test_case = TestCase::Person.new(name, **kwargs)
 
-    EvaluationResultSet.new(
-      Search.by_name(test_case.last).map do |entity|
-        potential_match = TestCase::Person.new(entity)
-        evaluate_people(test_case, potential_match)
-      end
-    )
+    search_results = Search.by_name(test_case.last).map do |entity|
+      evaluate_people test_case, TestCase::Person.new(entity)
+    end
+
+    EvaluationResultSet.new search_results
   end
 
   # String, kwargs --> Array[EvaluateResult]
   def self.find_matches_for_org(name, **kwargs)
     test_case = TestCase::Org.new(name, **kwargs)
 
-    EvaluationResultSet.new(
-      Search.by_org(name).map do |entity|
-        potential_match = TestCase::Org.new(entity)
-        evaluate_orgs(test_case, potential_match)
-      end
-    )
+    search_results = Search.by_org(name).map do |entity|
+      evaluate_orgs test_case, TestCase::Org.new(entity)
+    end
+
+    EvaluationResultSet.new search_results
   end
 
   def self.evaluate_people(test_case, match)
