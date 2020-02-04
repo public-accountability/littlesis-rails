@@ -39,7 +39,11 @@ module EntityMatcher
 
       self
     end
-    
+
+    def slice!(amount = 5)
+      @results.slice!(0, amount)
+    end
+
     # In order for the set to be considered automatachable
     # the set must contain only one result that can be automatched.
     # If there are two (or more) results, then there is no way to know which

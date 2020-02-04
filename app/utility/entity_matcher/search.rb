@@ -2,13 +2,6 @@
 
 module EntityMatcher
   module Search
-    SEARCH_OPTS = {
-      :per_page => 400,
-      :ranker => :none,
-      :populate => true,
-      :with => { is_deleted: false }
-    }.freeze
-
     # == These helpers use the classes in EntityMatcher::Query
     #    cast the input into a formated sphinx query
 
@@ -28,13 +21,18 @@ module EntityMatcher
       search EntityMatcher::Query::Names.new(*names).to_s, primary_ext: 'Person'
     end
 
-    # str --> ThinkginSphinx
+    # str --> ThinkingSphinx
     # Search database for potential matches
-    def self.search(query, primary_ext:)
-      Entity.search("@(name,aliases,name_nick) ( #{query} )",
-                    SEARCH_OPTS
-                      .deep_merge(:sql => sql_include(primary_ext))
-                      .deep_merge(:with => { primary_ext: primary_ext }))
+    def self.search(query, primary_ext:, per_page: 400)
+      options = {
+        :per_page => per_page,
+        :ranker => :none,
+        :populate => true,
+        :sql => sql_include(primary_ext),
+        :with => { is_deleted: false, primary_ext: primary_ext }
+      }
+
+      Entity.search("@(name,aliases,name_nick) ( #{query} )", options)
     end
 
     def self.sql_include(primary_ext)
