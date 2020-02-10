@@ -50,7 +50,7 @@ class ListsController < ApplicationController
     end
 
     if params[:q].present?
-      is_admin = current_user?.admin? ? [0, 1] : 0
+      is_admin = current_user&.admin? ? [0, 1] : 0
       list_ids = List.search(
         Riddle::Query.escape(params[:q]),
         with: { is_deleted: 0, is_admin: is_admin }

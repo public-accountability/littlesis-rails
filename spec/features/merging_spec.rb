@@ -190,6 +190,29 @@ feature 'Merging entities' do
       end
     end
 
+    context 'as an user with merger permissions' do
+      let(:user) do
+        create_basic_user.tap { |user| user.add_ability!(:merge) }
+      end
+
+      context 'executing a merge' do
+        let(:mode) { MergeController::Modes::EXECUTE }
+        let(:query_param) {}
+
+        it 'commits the merge when user clicks `Merge`' do
+          click_button "Merge"
+          should_commit_merge
+        end
+      end
+
+      context 'reviewing a merge' do
+        let(:mode) { MergeController::Modes::REVIEW }
+        let(:query_param) {}
+
+        denies_access
+      end
+    end
+
     context 'as an admin' do
       let(:user) { create_admin_user }
 
