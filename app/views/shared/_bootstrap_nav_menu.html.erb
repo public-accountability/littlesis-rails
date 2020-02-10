@@ -1,5 +1,5 @@
 
-<% 
+<%
 items = {}
 
 if user_signed_in?
@@ -8,7 +8,7 @@ if user_signed_in?
     items: {
       Maps: home_maps_path,
       Lists: home_lists_path,
-      Edits: "/home/modifications",
+      Edits: user_edits_path(username: current_user.username),
       'divider2' => 'divider',
       Settings: edit_user_registration_path,
       Logout: destroy_user_session_path
@@ -83,9 +83,9 @@ end
 	  <%= navbar_header_link header_text %>
 	  <%= navbar_dropdown data[:items] %>
 	<% end %>
-	
+
       <% end %>
     <% end %>
   </ul>
-  
+
 <% end %>
