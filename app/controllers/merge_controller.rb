@@ -50,7 +50,14 @@ class MergeController < ApplicationController
   end
 
   def check_permissions
-    admins_only unless [Modes::REQUEST, Modes::SEARCH].include? @merge_mode
+    case @merge_mode
+    when Modes::EXECUTE
+      unless current_user.admin? || current_user.has_ability?(:merge)
+        raise Exceptions::PermissionError
+      end
+    when Modes::REVIEW
+      raise Exceptions::PermissionError unless current_user.admin?
+    end
   end
 
   # GET param parsers --v
