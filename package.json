@@ -41,6 +41,6 @@
     "enzyme-adapter-react-16": "^1.15.2",
     "jest": "^25.1.0",
     "jest-fetch-mock": "^3.0.1",
-    "webpack-dev-server": "^3.10.2"
+    "webpack-dev-server": "^3.10.3"
   }
 }
