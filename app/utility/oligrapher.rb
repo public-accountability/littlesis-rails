@@ -30,16 +30,6 @@ module Oligrapher
     }
   end
 
-  def self.annotation_data(annotation)
-    {
-      header: annotation.title,
-      text: CGI.unescapeHTML(annotation.description).strip,
-      nodeIds: annotation.highlighted_entity_ids.split(","),
-      edgeIds: annotation.highlighted_rel_ids.split(","),
-      captionIds: annotation.highlighted_text_ids.split(",")
-    }
-  end
-
   private_class_method def self.edge_arrow(rel)
     return '1->2' if DISPLAY_ARROW_CATEGORIES.include?(rel.category_id)
   end
