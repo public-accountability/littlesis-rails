@@ -7,7 +7,7 @@ module Oligrapher
                                       Relationship::DONATION_CATEGORY,
                                       Relationship::OWNERSHIP_CATEGORY]).freeze
 
-  def self.entity_to_node(entity)
+  def self.legacy_entity_to_node(entity)
     {
       id: entity.id,
       display: {
@@ -18,7 +18,7 @@ module Oligrapher
     }
   end
 
-  def self.rel_to_edge(rel)
+  def self.legacy_rel_to_edge(rel)
     {
       id: rel.id, node1_id: rel.entity1_id, node2_id: rel.entity2_id,
       display: {

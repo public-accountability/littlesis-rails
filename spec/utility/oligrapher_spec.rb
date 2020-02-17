@@ -1,9 +1,9 @@
 describe Oligrapher do
-  describe 'entity_to_node' do
+  describe 'legacy_entity_to_node' do
     let(:entity) { build(:org, :with_org_name) }
 
     specify do
-      expect(Oligrapher.entity_to_node(entity))
+      expect(Oligrapher.legacy_entity_to_node(entity))
         .to eql(id: entity.id,
                 display: {
                   name: entity.name,
@@ -13,7 +13,7 @@ describe Oligrapher do
     end
   end
 
-  describe 'rel_to_edge' do
+  describe 'legacy_rel_to_edge' do
     let(:entity1_id) { rand(1000) }
     let(:entity2_id) { rand(1000) }
 
@@ -23,7 +23,7 @@ describe Oligrapher do
       end
 
       specify do
-        expect(Oligrapher.rel_to_edge(rel))
+        expect(Oligrapher.legacy_rel_to_edge(rel))
           .to eql(id: rel.id,
                   node1_id: entity1_id,
                   node2_id: entity2_id,
@@ -42,7 +42,7 @@ describe Oligrapher do
       end
 
       specify do
-        expect(Oligrapher.rel_to_edge(rel))
+        expect(Oligrapher.legacy_rel_to_edge(rel))
           .to eql(id: rel.id,
                   node1_id: entity1_id,
                   node2_id: entity2_id,

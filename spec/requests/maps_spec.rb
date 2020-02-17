@@ -33,7 +33,7 @@ describe 'Maps', :sphinx, type: :request do
           expect(response).to have_http_status 200
           expect(json.length).to eql(1)
           expect(ActiveSupport::HashWithIndifferentAccess.new(json.first))
-            .to eql ActiveSupport::HashWithIndifferentAccess.new(Oligrapher.entity_to_node(@apple_corp))
+            .to eql ActiveSupport::HashWithIndifferentAccess.new(Oligrapher.legacy_entity_to_node(@apple_corp))
         end
       end
 
@@ -44,7 +44,7 @@ describe 'Maps', :sphinx, type: :request do
           expect(response).to have_http_status 200
           expect(json.length).to eql(1)
           expect(ActiveSupport::HashWithIndifferentAccess.new(json.first))
-            .to eql ActiveSupport::HashWithIndifferentAccess.new(Oligrapher.entity_to_node(@banana_corp))
+            .to eql ActiveSupport::HashWithIndifferentAccess.new(Oligrapher.legacy_entity_to_node(@banana_corp))
         end
       end
     end
