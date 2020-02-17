@@ -4,7 +4,7 @@
 describe OligrapherGraphDataImageFixer do
   let(:entity) { create(:entity_org) }
   let(:image) { create(:image, entity: entity, is_featured: true) }
-  let(:nodes) { { entity.id.to_s => Oligrapher.entity_to_node(entity) } }
+  let(:nodes) { { entity.id.to_s => Oligrapher.legacy_entity_to_node(entity) } }
 
   def expect_http_to_receive_url(url)
     expect(HTTParty).to receive(:head)
@@ -15,7 +15,7 @@ describe OligrapherGraphDataImageFixer do
   end
 
   describe 'no images need to be updated' do
-    let(:nodes)  { { entity.id.to_s => Oligrapher.entity_to_node(entity) } }
+    let(:nodes)  { { entity.id.to_s => Oligrapher.legacy_entity_to_node(entity) } }
     let(:graph_data) do
       OligrapherGraphData.new(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
     end
@@ -31,7 +31,7 @@ describe OligrapherGraphDataImageFixer do
 
   describe 'missing image url' do
     let(:nodes) do
-      { entity.id.to_s => Oligrapher.entity_to_node(entity).deep_merge(display: { image: nil }) }
+      { entity.id.to_s => Oligrapher.legacy_entity_to_node(entity).deep_merge(display: { image: nil }) }
     end
 
     let(:graph_data) do

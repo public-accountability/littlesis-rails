@@ -15,8 +15,8 @@ describe NetworkMap, type: :model do
     let(:graph_data) do
       OligrapherGraphData.new(id: 'abcdefg',
                 nodes: {
-                  e1.id => Oligrapher.entity_to_node(e1),
-                  e2.id => Oligrapher.entity_to_node(e2)
+                  e1.id => Oligrapher.legacy_entity_to_node(e1),
+                  e2.id => Oligrapher.legacy_entity_to_node(e2)
                 },
                 edges: {},
                 captions: { '1' => { id: 1, display: { text: "Caption 1" } } })
@@ -160,13 +160,13 @@ describe NetworkMap, type: :model do
     end
 
     let(:nodes) do
-      { '123' => Oligrapher.entity_to_node(org),
-        '456' => Oligrapher.entity_to_node(org),
-        'abc' => Oligrapher.entity_to_node(org) }
+      { '123' => Oligrapher.legacy_entity_to_node(org),
+        '456' => Oligrapher.legacy_entity_to_node(org),
+        'abc' => Oligrapher.legacy_entity_to_node(org) }
     end
     let(:custom_nodes) do
-      { '789' => Oligrapher.entity_to_node(org),
-        'abc' => Oligrapher.entity_to_node(org) }
+      { '789' => Oligrapher.legacy_entity_to_node(org),
+        'abc' => Oligrapher.legacy_entity_to_node(org) }
     end
 
     let(:graph_data) do
@@ -233,8 +233,8 @@ describe NetworkMap, type: :model do
     let(:e2) { create(:entity_person) }
     let(:e1_image) { create(:image, entity: e1, is_featured: true) }
     let(:nodes) do
-      { e1.id.to_s => Oligrapher.entity_to_node(e1),
-        e2.id.to_s => Oligrapher.entity_to_node(e2) }
+      { e1.id.to_s => Oligrapher.legacy_entity_to_node(e1),
+        e2.id.to_s => Oligrapher.legacy_entity_to_node(e2) }
     end
 
     let(:oli_graph_data) do
@@ -290,8 +290,8 @@ describe NetworkMap, type: :model do
     let(:e2) { create(:entity_org) }
 
     let(:nodes) do
-      { e1.id => Oligrapher.entity_to_node(e1),
-        e2.id => Oligrapher.entity_to_node(e2) }
+      { e1.id => Oligrapher.legacy_entity_to_node(e1),
+        e2.id => Oligrapher.legacy_entity_to_node(e2) }
     end
 
     let(:graph_data) do
@@ -300,7 +300,7 @@ describe NetworkMap, type: :model do
 
     let(:graph_data_missing_node_two) do
       OligrapherGraphData.new(id: 'abcdefg',
-                              nodes: { e1.id => Oligrapher.entity_to_node(e1) },
+                              nodes: { e1.id => Oligrapher.legacy_entity_to_node(e1) },
                               edges: {}, captions: {})
     end
 

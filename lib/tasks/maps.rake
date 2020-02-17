@@ -62,7 +62,7 @@ namespace :maps do
         if entity['image'].present?
           image = entity['image'].dup
 
-          entity['image'].gsub!(/(s3\.amazonaws\.com\/)[^\/]+/i, '\1' + bucket_name) 
+          entity['image'].gsub!(/(s3\.amazonaws\.com\/)[^\/]+/i, '\1' + bucket_name)
           entity['image'].gsub!(/\/\/[^\.]+(\.s3\.amazonaws\.com)/i, bucket_name + '\1')
           entity['image'].gsub!(/^https?:\/\//i, "//")
           entity['image'].gsub!(/\/profile\//, "/face/") if entity_type(entity) == 'Person'
@@ -127,23 +127,6 @@ namespace :maps do
     maps.each do |map|
       map.generate_secret
       map.save
-      puts (i + 1).to_s
-    end
-    print "\n"
-  end
-
-  desc "convert map JSON to graph JSON"
-  task generate_oligrapher_data: :environment do
-    maps = NetworkMap.where(graph_data: nil)
-    puts "generating oligrapher data for #{maps.count} maps...\n"
-    maps.each_with_index do |map, i|
-      path = Rails.root.to_s + "/tmp/mapData.json"
-      open(path, "w") { |f| f << map.data }
-      oligrapher_data = `node #{Rails.root}/bin/convertMap.js #{path}`
-      annotations_data = JSON.dump(map.annotations.map { |a| Oligrapher.annotation_data(a) })
-      map.update(graph_data: oligrapher_data)
-      map.update(annotations_data: annotations_data)
-      map.update(annotations_count: map.annotations.count)
       puts (i + 1).to_s
     end
     print "\n"

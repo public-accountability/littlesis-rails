@@ -245,7 +245,7 @@ class MapsController < ApplicationController
     entities = EntitySearchService
                  .new(query: params[:q], fields: fields, per_page: params.fetch(:num, 10))
                  .search
-                 .map { |e| Oligrapher.entity_to_node(e) }
+                 .map { |e| Oligrapher.legacy_entity_to_node(e) }
 
     render json: entities
   end
@@ -253,10 +253,10 @@ class MapsController < ApplicationController
   def node_with_edges
     entity_id = params[:node_id]
     entity_ids = params[:node_ids]
-    node = Oligrapher.entity_to_node(Entity.find(entity_id))
+    node = Oligrapher.legacy_entity_to_node(Entity.find(entity_id))
     rel_ids = Link.where(entity1_id: entity_id, entity2_id: entity_ids).pluck(:relationship_id).uniq
     rels = Relationship.find(rel_ids)
-    edges = rels.map { |r| Oligrapher.rel_to_edge(r) }
+    edges = rels.map { |r| Oligrapher.legacy_rel_to_edge(r) }
     render json: { node: node, edges: edges }
   end
 
@@ -267,11 +267,11 @@ class MapsController < ApplicationController
       .where("link.category_id = #{params[:category_id]}")
       .where.not(link: { entity2_id: entity_ids })
       .limit(params[:num].to_i)
-    nodes = relateds.map { |related| Oligrapher.entity_to_node(related) }
+    nodes = relateds.map { |related| Oligrapher.legacy_entity_to_node(related) }
     all_ids = entity_ids.concat(relateds.map(&:id))
     rel_ids = Link.where(entity1_id: all_ids, entity2_id: relateds.map(&:id)).pluck(:relationship_id).uniq
     rels = Relationship.find(rel_ids)
-    edges = rels.map { |r| Oligrapher.rel_to_edge(r) }
+    edges = rels.map { |r| Oligrapher.legacy_rel_to_edge(r) }
     render json: { nodes: nodes, edges: edges }
   end
 
@@ -282,11 +282,11 @@ class MapsController < ApplicationController
 
     if interlock_ids.count > 0
       entities = Entity.where(id: interlock_ids)
-      nodes = entities.map { |entity| Oligrapher.entity_to_node(entity) }
+      nodes = entities.map { |entity| Oligrapher.legacy_entity_to_node(entity) }
       all_ids = interlock_ids.concat([params[:node1_id], params[:node2_id]]).concat(params[:node_ids])
       rel_ids = Link.where(entity1_id: all_ids, entity2_id: interlock_ids).pluck(:relationship_id).uniq
       rels = Relationship.where(id: rel_ids)
-      edges = rels.map { |r| Oligrapher.rel_to_edge(r) }
+      edges = rels.map { |r| Oligrapher.legacy_rel_to_edge(r) }
       render json: { nodes: nodes, edges: edges }
     else
       render json: { nodes: [], edges: [] }

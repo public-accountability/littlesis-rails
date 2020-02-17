@@ -7,7 +7,20 @@ module Oligrapher
                                       Relationship::DONATION_CATEGORY,
                                       Relationship::OWNERSHIP_CATEGORY]).freeze
 
-  def self.entity_to_node(entity)
+  module Node
+    def self.from_entity(entity)
+      {
+        id: entity.id.to_s,
+        name: entity.name,
+        image: entity.featured_image&.image_url('profile'),
+        url: Routes.entity_url(entity)
+      }
+    end
+  end
+
+  # Legacy (oligrapher 2.0) functions
+
+  def self.legacy_entity_to_node(entity)
     {
       id: entity.id,
       display: {
@@ -18,7 +31,7 @@ module Oligrapher
     }
   end
 
-  def self.rel_to_edge(rel)
+  def self.legacy_rel_to_edge(rel)
     {
       id: rel.id, node1_id: rel.entity1_id, node2_id: rel.entity2_id,
       display: {
@@ -27,16 +40,6 @@ module Oligrapher
         dash: rel.is_current != true,
         url: relationship_url(rel)
       }
-    }
-  end
-
-  def self.annotation_data(annotation)
-    {
-      header: annotation.title,
-      text: CGI.unescapeHTML(annotation.description).strip,
-      nodeIds: annotation.highlighted_entity_ids.split(","),
-      edgeIds: annotation.highlighted_rel_ids.split(","),
-      captionIds: annotation.highlighted_text_ids.split(",")
     }
   end
 
