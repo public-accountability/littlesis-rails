@@ -192,6 +192,10 @@ Lilsis::Application.routes.draw do
     action: 'show',
     as: 'share_map'
 
+  scope :oligrapher, controller: 'oligrapher' do
+    get '/find_nodes', action: :find_nodes
+  end
+
   resources :industries, only: [:show]
 
   get '/relationships/bulk_add' => 'relationships#bulk_add'

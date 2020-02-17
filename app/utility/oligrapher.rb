@@ -7,6 +7,19 @@ module Oligrapher
                                       Relationship::DONATION_CATEGORY,
                                       Relationship::OWNERSHIP_CATEGORY]).freeze
 
+  module Node
+    def self.from_entity(entity)
+      {
+        id: entity.id.to_s,
+        name: entity.name,
+        image: entity.featured_image&.image_url('profile'),
+        url: Routes.entity_url(entity)
+      }
+    end
+  end
+
+  # Legacy (oligrapher 2.0) functions
+
   def self.legacy_entity_to_node(entity)
     {
       id: entity.id,
