@@ -9,6 +9,8 @@ module Exceptions
   class RestrictedUserError < StandardError; end
   class UserCannotEditError < StandardError; end
   class InvalidEntityIdError < LittleSisError; end
+  class OligrapherAssetsError < LittleSisError; end
+
   class CannotRestoreError < StandardError
     def message
       "Cannot restore a model that has not yet been deleted"
