@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class OligrapherController < ApplicationController
+  before_action :authenticate_user!, only: [:example]
+
   def example
     @oligrapher_version = '0f71f0d96fd443ceebc82c5981cd7aaac61584c5'
     render 'oligrapher/example', layout: 'oligrapher3'
