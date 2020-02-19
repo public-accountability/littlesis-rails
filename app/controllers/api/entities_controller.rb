@@ -30,7 +30,8 @@ class Api::EntitiesController < Api::ApiController
   end
 
   def search
-    return head :bad_request unless params[:q].present?
+    return head :bad_request if params[:q].blank?
+
     entities = Entity::Search.search(params[:q]).per(ENTITY_SEARCH_PER_PAGE).page(page_requested)
     render json: Api.as_api_json(entities)
   end
@@ -39,6 +40,7 @@ class Api::EntitiesController < Api::ApiController
 
   def page_requested
     return 1 if params[:page].blank? || params[:page].to_i.zero?
+
     params[:page].to_i
   end
 
@@ -54,8 +56,12 @@ class Api::EntitiesController < Api::ApiController
 
   def category_id_query
     return nil if params['category_id'].blank?
+
     category_id = params['category_id'].to_i
-    raise Exceptions::InvalidRelationshipCategoryError unless VALID_CATEGORY_IDS.include?(category_id)
-    { category_id: category_id }
+    if VALID_CATEGORY_IDS.include?(category_id)
+      { category_id: category_id }
+    else
+      raise Exceptions::InvalidRelationshipCategoryError
+    end
   end
 end
