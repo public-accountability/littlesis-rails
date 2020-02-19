@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 class OligrapherController < ApplicationController
+  def example
+    @oligrapher_version = '0f71f0d96fd443ceebc82c5981cd7aaac61584c5'
+    render 'oligrapher/example', layout: 'oligrapher3'
+  end
+
   def find_nodes
     return head :bad_request if params[:q].blank?
 
