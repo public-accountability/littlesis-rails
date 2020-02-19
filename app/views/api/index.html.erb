@@ -13,23 +13,6 @@
 
 <div class="row">
   <%= api_column do %>
-    <h2>Signup and Authorization</h2>
-    <p>In order to use the LittleSis API you must have an Api Token. You can get an Api Token from your LittleSis account settings page. If you don't yet have a LittleSis account, <%= link_to "go here to create one", new_user_registration_path %>. If you already have an account, access your settings page by either <%= link_to "following this link", edit_user_registration_path %> or by clicking on your name in the navigation bar and going to 'settings'. On that page you will be able to generate an Api Token or view your current token. </p>
-
-    <p>Authorization is accomplished by including the http header <code>Littlesis-Api-Token</code> to each request.</p>
-  <% end %>
-
-  <div class="col-md-12">
-    <p>Example:</p>
-    <pre><code>
-curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/entities/1
-    </code></pre>
-    <p>For brevity's sake, other examples in this document may omit the authorization header, but it is required for every request. The API will return status code 401 if you forget to include the Littlesis-Api-Token header and will return state code 403 if the token is invalid</p>
-  </div>
-</div>
-
-<div class="row">
-  <%= api_column do %>
     <h2>Responses</h2>
     <p>The API follows many of the conventions of <%= link_to 'JSON API', 'http://jsonapi.org/' %>, but does not implement the entire specification.</p>
     <p>All responses are in JSON.</p>
@@ -184,7 +167,7 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
     <p>Relationships this entity has with other entities. The key "data" contains an array of Relationship elements. These requests can also be paginated.</p>
     <p> You can find limit the relationships to specific category by including the param "category_id".</p>
   <% end %>
-  
+
   <%= api_column do %>
     <%= api_title_route('Entity Lists', '/api/entities/:id/lists') %>
     <p>The lists that the entity is on</p>
@@ -271,7 +254,6 @@ curl -H 'Littlesis-Api-Token: RhS3mQneriAaym4pNjdjw' https://littlesis.org/api/e
 
   </div>
 </div>
-
 
 <div class="row">
   <%= api_column do %>
