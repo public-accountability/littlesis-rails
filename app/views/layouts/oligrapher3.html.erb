@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Example Oligrapher</title>
+    <%= stylesheet_link_tag    "application", media: "all" %>
+    <%= javascript_pack_tag 'application' %>
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tags %>
+
+    <script src="<%= "/oligrapher/oligrapher-#{@oligrapher_version}.js"  %>"></script>
+
+    <% if content_for?(:head) %>
+      <%= yield :head %>
+    <% end %>
+  </head>
+
+  <body>
+    <div id="top">
+      <%= render partial: 'shared/nav_menu',
+                 locals: { full_width: true } %>
+    </div>
+
+    <% if content_for? :body %>
+      <%= yield :body %>
+    <% end %>
+  </body>
+</html>

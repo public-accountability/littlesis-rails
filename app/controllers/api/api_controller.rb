@@ -5,10 +5,10 @@ module Api
     PER_PAGE = 100
     protect_from_forgery with: :null_session
 
-    unless Rails.env.development?
-      before_action :api_authenticate!
-      skip_before_action :api_authenticate!, only: [:index]
-    end
+    # Note: The API no longer requires a token, but the functionality is
+    # kept in case we decide to create a write-api where authentication would be required.
+    # before_action :api_authenticate!
+    # skip_before_action :api_authenticate!, only: [:index]
 
     rescue_from ActiveRecord::RecordNotFound do
       render json: Api.error_json(:RECORD_NOT_FOUND), status: :not_found

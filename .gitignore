@@ -34,10 +34,12 @@
 
 # Ignore compiled assets
 /public/assets/*
+/public/oligrapher/*
 # Ignore image files
 /public/images
 
-# Misc files 
+
+# Misc files
 .DS_Store
 .tern-port
 .bash_history
