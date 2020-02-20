@@ -295,6 +295,7 @@ Lilsis::Application.routes.draw do
     resources :entities, only: [:show] do
       member do
         get 'relationships'
+        get 'connections'
         get 'extensions'
         get 'lists'
       end
