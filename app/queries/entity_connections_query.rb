@@ -11,11 +11,12 @@ class EntityConnectionsQuery
   end
 
   def category(category_id)
-    if (1..12).include? category_id.to_i
-      @category_id = category_id.to_i
-    else
+    @category_id = category_id&.to_i
+
+    unless @category_id.nil? || (1..12).cover?(category_id)
       raise Exceptions::InvalidRelationshipCategoryError
     end
+
     self
   end
 

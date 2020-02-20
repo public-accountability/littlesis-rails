@@ -36,6 +36,17 @@ class Api::EntitiesController < Api::ApiController
     render json: Api.as_api_json(entities)
   end
 
+  def connections
+    entities = EntityConnectionsQuery
+                 .new(@entity)
+                 .category(params[:category_id])
+                 .page(page_requested)
+                 .per(params[:per_page] || 15)
+                 .run
+
+    render json: Api.as_api_json(entities)
+  end
+
   private
 
   def page_requested

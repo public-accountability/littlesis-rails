@@ -263,6 +263,24 @@ describe Api, :pagination_helper do
     end
   end
 
+  describe '/entities/:id/connections' do
+    let(:entity1) { create(:entity_person) }
+    let(:entity2) { create(:entity_org) }
+    let(:relationship) do
+      create :generic_relationship, entity: entity1, related: entity2
+    end
+
+    before { relationship }
+
+    it 'returns relationship with page meta data' do
+      get connections_api_entity_path(entity1)
+      expect(json['data'].length).to eq 1
+      expect(json['data'][0]["id"]).to eq entity2.id
+      expect(json['meta']['currentPage']).to eq 1
+      expect(json['meta']['pageCount']).to eq 1
+    end
+  end
+
   describe '/entities/search?q=NAME' do
     let(:entities) { TestSphinxResponse.new([build(:org), build(:person)]) }
     let(:mock_search) { double(:per => double(:page => entities)) }
