@@ -46,7 +46,6 @@ module Api
   end
 
   private_class_method def self.paginatable_collection?(collection)
-    return false unless collection.is_a?(ActiveRecord::AssociationRelation) || collection.is_a?(ThinkingSphinx::Search)
     collection.respond_to?(:current_page) && collection.respond_to?(:total_pages)
   end
 end
