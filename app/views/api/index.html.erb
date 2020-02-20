@@ -171,6 +171,7 @@
   <%= api_column do %>
     <%= api_title_route('Entity Connections', '/api/entities/:id/connections') %>
     <p>Other entities that this entity has a relationship with. The key "data" contains an array of Entity elements. This route accepts the params "category_id" which will only limit connections to those entities that are connected with a relationship of the provided category. The results are sorted by the connected entity <em>link_count</em></p>.
+    <p>The entity attributes object contains two additional fields -- relationship_id and relationship_category_id</p>
   <% end %>
 
   <%= api_column do %>
