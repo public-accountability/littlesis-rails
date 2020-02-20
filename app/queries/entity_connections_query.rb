@@ -7,6 +7,7 @@ class EntityConnectionsQuery
     @entity = Entity.entity_for(entity)
     @category_id = nil
     @page = 1
+    @per_page = PER_PAGE
   end
 
   def category(category_id)
@@ -20,6 +21,11 @@ class EntityConnectionsQuery
 
   def page(page)
     @page = page.to_i
+    self
+  end
+
+  def per(per_amount)
+    @per_page = per_amount.to_i
     self
   end
 
