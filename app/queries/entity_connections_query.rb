@@ -33,6 +33,7 @@ class EntityConnectionsQuery
   def run
     Entity
       .joins(:links)
+      .select('entity.*, link.relationship_id, link.category_id as relationship_category_id')
       .where('link.entity2_id = ?', @entity.id)
       .where(@category_id ? "link.category_id = #{@category_id}" : nil)
       .order(link_count: :desc)
