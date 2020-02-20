@@ -165,7 +165,12 @@
   <%= api_column do %>
     <%= api_title_route('Entity Relationships', '/api/entities/:id/relationships') %>
     <p>Relationships this entity has with other entities. The key "data" contains an array of Relationship elements. These requests can also be paginated.</p>
-    <p> You can find limit the relationships to specific category by including the param "category_id".</p>
+    <p>You can find limit the relationships to specific category by including the param "category_id".</p>
+  <% end %>
+
+  <%= api_column do %>
+    <%= api_title_route('Entity Connections', '/api/entities/:id/connections') %>
+    <p>Other entities that this entity has a relationship with. The key "data" contains an array of Entity elements. This route accepts the params "category_id" which will only limit connections to those entities that are connected with a relationship of the provided category. The results are sorted by the connected entity <em>link_count</em></p>.
   <% end %>
 
   <%= api_column do %>
