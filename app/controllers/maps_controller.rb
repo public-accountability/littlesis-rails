@@ -133,8 +133,7 @@ class MapsController < ApplicationController
   end
 
   def create
-    attributes = oligrapher_params.merge('user_id' => current_user.id,
-                                         'sf_user_id' => current_user.sf_guard_user_id)
+    attributes = oligrapher_params.merge('user_id' => current_user.id,)
 
     map = NetworkMap.new(attributes)
 
@@ -207,7 +206,6 @@ class MapsController < ApplicationController
     map = @map.dup
     map.update!(is_featured: false,
                 is_private: true,
-                sf_user_id: current_user.sf_guard_user_id,
                 user_id: current_user.id,
                 title: "Clone: #{map.title}")
 
@@ -310,7 +308,7 @@ class MapsController < ApplicationController
     if user_signed_in?
       @map = NetworkMap.find(params[:id])
     else
-      @map = Rails.cache.fetch("maps_controller/network_map/#{params[:id]}", expires_in: 5.minutes)  { NetworkMap.find(params[:id]) } 
+      @map = Rails.cache.fetch("maps_controller/network_map/#{params[:id]}", expires_in: 5.minutes)  { NetworkMap.find(params[:id]) }
     end
   end
 
