@@ -16,8 +16,6 @@ class NetworkMap < ApplicationRecord
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
-  # TODO: remove sf_guard_user
-  belongs_to :sf_guard_user, foreign_key: 'sf_user_id', inverse_of: :network_maps, optional: true
   belongs_to :user, foreign_key: 'user_id', inverse_of: :network_maps, optional: true
 
   scope :featured, -> { where(is_featured: true) }

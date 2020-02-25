@@ -1,7 +1,7 @@
-# rubocop:disable Style/StringLiterals, Style/WordArray
+# rubocop:disable Style/WordArray
 
 describe NetworkMap, type: :model do
-  it { is_expected.to belong_to(:sf_guard_user).optional }
+  it { is_expected.not_to have_db_column(:sf_user_id) }
   it { is_expected.to belong_to(:user).optional }
   it { is_expected.to validate_presence_of(:title) }
 
@@ -375,4 +375,4 @@ describe NetworkMap, type: :model do
   end
 end
 
-# rubocop:enable Style/StringLiterals, Style/WordArray
+# rubocop:enable Style/WordArray
