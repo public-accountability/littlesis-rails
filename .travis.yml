@@ -1,6 +1,6 @@
 language: ruby
-dist: trusty
-sudo: required
+os: linux
+dist: bionic
 
 cache:
   - bundler
@@ -11,27 +11,21 @@ rvm:
 
 env:
   global:
-    - JASMINE_BROWSER=firefox
-    - MOZ_HEADLESS=1
     - CC_TEST_REPORTER_ID=0686423043623c2e86fdbc1ab9c3aa7d482bd47f891ab3d483a78e4cda0319c9
     - RAILS_ENV=test
     - COVERAGE=true
 
 addons:
   mariadb: '10.4'
-  firefox: latest
 
 services:
   - mysql
 
 before_install:
-  - sudo apt-get install software-properties-common
-  - sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-  - sudo add-apt-repository -y 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/ubuntu trusty main'
   - sudo apt-get -qq update
   - sudo apt-get install -o Dpkg::Options::="--force-overwrite" -y mariadb-client libmariadb-dev
   - sudo mysql_upgrade
-  - curl -L "https://github.com/manticoresoftware/manticoresearch/releases/download/3.1.0/manticore_3.1.0-190716-445e806-release.trusty_amd64-bin.deb" > manticore.deb
+  - curl -L "https://github.com/manticoresoftware/manticoresearch/releases/download/3.1.2/manticore_3.1.2-190822-47b6bc2c-release_bionic_amd64-bin.deb" > manticore.deb
   - sudo dpkg -i manticore.deb
   - nvm install 12
   - nvm use 12
@@ -47,8 +41,8 @@ before_script:
   - cp config/lilsis.yml.sample config/lilsis.yml
   - cp config/secrets.yml.sample config/secrets.yml
   - mkdir -p tmp tmp/small/ tmp/profile tmp/large/ tmp/original/
-  - mysql -e 'CREATE DATABASE littlesis_test;'
-  - mysql -e "GRANT all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'littlesis';flush privileges;"
+  - sudo mysql  -e 'CREATE DATABASE littlesis_test;'
+  - sudo mysql  -e "GRANT all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'littlesis';flush privileges;"
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
