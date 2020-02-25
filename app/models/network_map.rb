@@ -50,7 +50,7 @@ class NetworkMap < ApplicationRecord
   end
 
   def set_defaults
-    self.data = default_data if data.blank?
+    self.data = DEFAULT_DATA if data.blank?
     self.width = Lilsis::Application.config.netmap_default_width if width.blank?
     self.height = Lilsis::Application.config.netmap_default_width if height.blank?
     self.zoom = '1' if zoom.blank?
@@ -62,25 +62,6 @@ class NetworkMap < ApplicationRecord
 
   def cloneable?
     is_cloneable && !is_private
-  end
-
-  def default_data
-    DEFAULT_DATA
-  end
-
-  def prepared_objects
-    d = (data or default_data)
-    hash = JSON.parse(d)
-    {
-      entities: hash['entities'].map { |entity| self.class.prepare_entity(entity) },
-      rels: hash['rels'].map { |rel| self.class.prepare_rel(rel) },
-      texts: hash['texts'].present? ? hash['texts'].map { |text| self.class.prepare_text(text) } : []
-    }
-  end
-
-  def prepared_data
-    json = JSON.dump(prepared_objects)
-    ERB::Util.json_escape(json)
   end
 
   def documents
@@ -99,114 +80,6 @@ class NetworkMap < ApplicationRecord
     save
   end
 
-  def self.entity_type(entity)
-    return entity['type'] if entity['type'].present?
-
-    if entity['primary_ext'].present?
-      return entity['primary_ext']
-    else
-      if entity['url'].present? && entity['url'].match(/person\/\d+\//)
-        return 'Person'
-      elsif entity['url'].present? && entity['url'].match(/org\/\d+\//)
-        return 'Org'
-      else
-        return nil
-      end
-    end
-  end
-
-  def self.custom_entity?(entity)
-    if entity['custom'].present?
-      entity['custom']
-    else
-      entity['id'].to_s[0] == 'x'
-    end
-  end
-
-  def self.prepare_entity(entity)
-    type = entity_type(entity)
-
-    if entity['image'] && !entity['image'].include?('netmap') && !entity['image'].include?('anon')
-      image_path = entity['image']
-    elsif entity['filename']
-      image_path = "/images/profile/#{entity['filename'].slice(0, 2)}/#{entity['filename']}"
-      # image_path = Image.image_path(entity['filename'], 'profile')
-    else
-      image_path = nil
-    end
-
-    if custom_entity?(entity)
-      url = entity['url']
-    else
-      url = ActionController::Base.helpers.url_for(Entity.legacy_url(type, entity['id'], entity['name']))
-    end
-
-    {
-      id: custom_entity?(entity) ? entity['id'] : self.integerize(entity['id']),
-      name: entity['name'],
-      image: image_path,
-      url: url,
-      description: (entity['blurb'] || entity['description']),
-      x: entity['x'],
-      y: entity['y'],
-      fixed: true,
-      type: type,
-      hide_image: entity['hide_image'].present? ? entity['hide_image'] : false,
-      custom: custom_entity?(entity),
-      scale: entity['scale']
-    }
-  end
-
-  def self.is_custom_rel?(rel)
-    if rel['custom'].present?
-      rel['custom']
-    else
-      rel['id'].to_s[0] == 'x'
-    end
-  end
-
-  def self.prepare_rel(rel)
-    if is_custom_rel?(rel)
-      url = rel['url']
-    else
-      url = url_helpers.relationship_url(id: rel['id'])
-    end
-
-    # backward compatibility for maps created before rels could have multiple categories
-    cat_ids = rel['category_ids'].present? ? rel['category_ids'] : [rel['category_id']].compact
-
-    {
-      id: is_custom_rel?(rel) ? rel['id'] : self.integerize(rel['id']),
-      entity1_id: rel['entity1_id'].to_s[0] == "x" ? rel['entity1_id'].to_s : self.integerize(rel['entity1_id']),
-      entity2_id: rel['entity2_id'].to_s[0] == "x" ? rel['entity2_id'].to_s : self.integerize(rel['entity2_id']),
-      category_id: self.integerize(rel['category_id']),
-      category_ids: Array(self.integerize(cat_ids)),
-      is_current: self.integerize(rel['is_current']),
-      is_directional: rel['is_directional'],
-      end_date: rel['end_date'],
-      scale: rel['scale'],
-      label: rel['label'],
-      url: url,
-      x1: rel['x1'],
-      y1: rel['y1'],
-      fixed: true,
-      custom: is_custom_rel?(rel)
-    }
-  end
-
-  def self.prepare_text(text)
-    text
-  end
-
-  def self.integerize(value)
-    return nil if value.nil?
-    return value.map { |elem| integerize(elem) } if value.instance_of?(Array)
-    return integerize(value.split(',')) if value.instance_of?(String) && value.include?(',')
-    return nil if value.to_i == 0 and value != "0"
-
-    value.to_i
-  end
-
   def name
     return "Map #{id}" if title.blank?
 
@@ -215,10 +88,6 @@ class NetworkMap < ApplicationRecord
 
   def to_param
     title.nil? ? id.to_s : "#{id}-#{title.parameterize}"
-  end
-
-  def share_text
-    title.nil? ? "Network map #{id}" : "Map of #{title}"
   end
 
   # TODO: store image locally instead of uploading to S3
@@ -241,44 +110,12 @@ class NetworkMap < ApplicationRecord
     end
   end
 
-  def to_clean_hash
-    data = prepared_objects
-    map = {
-      id: id,
-      title: title,
-      description: description,
-      entities: data[:entities],
-      rels: data[:rels],
-      texts: data[:texts]
-    }
-  end
-
-  def to_collection_data
-    ary = annotations.present? ? annotations.sort_by(&:order).map(&:to_map_data) : [to_clean_hash]
-    ary << references_to_map_data
-    {
-      id: id,
-      title: title,
-      description: description,
-      user: { name: user.username, url: user.legacy_url },
-      date: updated_at.strftime('%B %-d, %Y'),
-      maps: ary,
-      sources: documents.map { |r| { title: r.name, url: r.url } }
-    }
-  end
-
   def documents_to_html
     documents.map { |d| "<div><a href=\"#{d.url}\">#{d.name}</a></div>"}.join("\n")
   end
 
-  def references_to_map_data
-    hash = to_clean_hash
-    hash[:id] = "#{id}-sources"
-    hash[:title] = "Source Links"
-    hash[:description] = documents_to_html
-    hash
-  end
-
+  # Creates these functions:
+  #  edge_ids, node_ids, numeric_edge_ids, numeric_node_ids
   %i[edge node].each do |graph_component|
     # -> Array[String]
     define_method("#{graph_component}_ids") do |data|

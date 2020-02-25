@@ -12,8 +12,6 @@ class MapsController < ApplicationController
 
   before_action -> { check_permission 'editor' }, only: %i[create]
 
-  # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
-
   protect_from_forgery except: [:create, :clone]
 
   # defaults for embedded oligrapher
@@ -91,30 +89,19 @@ class MapsController < ApplicationController
     end
 
     @cacheable = true unless user_signed_in?
+    @editable = false
 
-    respond_to do |format|
-      format.html {
-        @editable = false
-        @links = [
-          { text: "embed", url: "#", id: "oligrapherEmbedLink" }
-        ]
-        @links.push({ text: 'clone', url: clone_map_url(@map), method: 'POST' }) if @map.is_cloneable
-        @links.push({ text: 'edit', url: edit_map_url(@map) }) if is_owner
-        @links.push({ text: 'share link', url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
+    @links = [{ text: "embed", url: "#", id: "oligrapherEmbedLink" }]
+    @links.push({ text: 'clone', url: clone_map_url(@map), method: 'POST' }) if @map.is_cloneable
+    @links.push({ text: 'edit', url: edit_map_url(@map) }) if is_owner
+    @links.push({ text: 'share link', url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private && is_owner
+    @links.push(text: 'disclaimer', url: '#disclaimer') # see views/maps/_disclaimer_modal for the disclaimer modal
 
-        # see views/maps/_disclaimer_modal for the disclaimer modal
-        @links.push(text: 'disclaimer', url: '#disclaimer')
-
-        if params[:embed]
-          response.headers.delete('X-Frame-Options')
-          render action: 'story_map', layout: 'fullscreen'
-        else
-          render 'story_map', layout: 'oligrapher'
-        end
-      }
-      format.json {
-        render json: { map: @map.to_clean_hash }
-      }
+    if params[:embed]
+      response.headers.delete('X-Frame-Options')
+      render action: 'story_map', layout: 'fullscreen'
+    else
+      render 'story_map', layout: 'oligrapher'
     end
   end
 
@@ -164,29 +151,11 @@ class MapsController < ApplicationController
     check_permission 'editor'
 
     if oligrapher_params.present?
-      @map.update(oligrapher_params)
+      @map.update! oligrapher_params
       render json: { data: @map.attributes }
-      # render json: { data: hash }
     else
-      params = map_params
-      data = params[:data]
-      decoded = JSON.parse(data)
-
-      @map.title = params[:title] if params[:title].present?
-      @map.description = params[:description] if params[:title].present?
-      @map.is_private = params[:is_private] if params[:is_private].present?
-      @map.is_cloneable = params[:is_cloneable] if params[:is_cloneable].present?
-      @map.width = params[:width] if params[:width].present?
-      @map.height = params[:height] if params[:height].present?
-      @map.zoom = params[:zoom] if params[:zoom].present?
-      @map.data = data
-      @map.entity_ids = decoded['entities'].map { |e| e['id'] }.join(',')
-      @map.rel_ids = decoded['rels'].map { |e| e['id'] }.join(',')
-      @map.save
-
-      # NEED CACHE CLEAR HERE
-
-      render json: @map
+      Rails.logger.warn "Missing oligrapher Parameters for map #{map.id}"
+      render head :bad_request
     end
   end
 
@@ -305,11 +274,6 @@ class MapsController < ApplicationController
 
   def set_map
     @map = NetworkMap.find(params[:id])
-  end
-
-  def map_params
-    params.require(:map)
-      .permit(:is_private, :title, :description, :data, :height, :width, :user_id, :zoom)
   end
 
   def oligrapher_params
