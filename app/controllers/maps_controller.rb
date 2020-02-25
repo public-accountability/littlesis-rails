@@ -12,8 +12,6 @@ class MapsController < ApplicationController
 
   before_action -> { check_permission 'editor' }, only: %i[create]
 
-  # protect_from_forgery with: :null_session, only: Proc.new { |c| c.request.format.json? }
-
   protect_from_forgery except: [:create, :clone]
 
   # defaults for embedded oligrapher
@@ -276,11 +274,6 @@ class MapsController < ApplicationController
 
   def set_map
     @map = NetworkMap.find(params[:id])
-  end
-
-  def map_params
-    params.require(:map)
-      .permit(:is_private, :title, :description, :data, :height, :width, :user_id, :zoom)
   end
 
   def oligrapher_params
