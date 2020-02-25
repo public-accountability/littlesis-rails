@@ -71,23 +71,6 @@ describe MapsController, type: :controller do
       it { should respond_with 403 }
     end
 
-    describe 'Calls cache if user is anonymous' do
-      before do
-        @map = build(:network_map, title: 'a map')
-        mock_cache = double('cache')
-        expect(Rails).to receive(:cache).and_return(mock_cache)
-        expect(mock_cache).to receive(:fetch).with('maps_controller/network_map/10-a-map', expires_in: 5.minutes).and_return(@map)
-        get :show, params: { id: '10-a-map' }
-      end
-
-      it { should respond_with :success }
-      it { should render_template 'story_map' }
-
-      it 'sets cacheable to be true' do
-        expect(assigns(:cacheable)).to eql true
-      end
-    end
-
     describe 'does not call cache when user is logged in' do
       login_user
 

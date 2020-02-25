@@ -303,13 +303,8 @@ class MapsController < ApplicationController
     end
   end
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_map
-    if user_signed_in?
-      @map = NetworkMap.find(params[:id])
-    else
-      @map = Rails.cache.fetch("maps_controller/network_map/#{params[:id]}", expires_in: 5.minutes)  { NetworkMap.find(params[:id]) }
-    end
+    @map = NetworkMap.find(params[:id])
   end
 
   def map_params
