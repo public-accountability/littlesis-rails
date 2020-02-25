@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/perfectline/validates_url.git
-  revision: 110ae183cf8412ade97a7ae2a16e501aacfcfc14
+  revision: 8a28b4b661602f92b4f3595b91751d0dff894a14
   branch: master
   specs:
     validate_url (1.0.8)
@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: https://github.com/stympy/faker.git
-  revision: ed7eed8aa47432015303a65a28441155d22904ef
+  revision: d13a99ffe924936b061bef638885fa2d4e6dedfe
   branch: master
   specs:
     faker (2.10.2)
@@ -85,13 +85,13 @@ GEM
     autoprefixer-rails (9.7.4)
       execjs
     aws-eventstream (1.0.3)
-    aws-partitions (1.271.0)
-    aws-sdk-core (3.89.1)
+    aws-partitions (1.275.0)
+    aws-sdk-core (3.90.1)
       aws-eventstream (~> 1.0, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-kms (1.28.0)
+    aws-sdk-kms (1.29.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-s3 (1.60.2)
@@ -106,7 +106,7 @@ GEM
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
     bindex (0.8.1)
-    bootsnap (1.4.5)
+    bootsnap (1.4.6)
       msgpack (~> 1.0)
     bootstrap (4.4.1)
       autoprefixer-rails (>= 9.1.0)
@@ -128,7 +128,7 @@ GEM
     concurrent-ruby (1.1.6)
     crass (1.0.6)
     daemons (1.3.1)
-    database_cleaner (1.8.2)
+    database_cleaner (1.8.3)
     delayed_job (4.1.8)
       activesupport (>= 3.0, < 6.1)
     delayed_job_active_record (4.1.4)
@@ -153,7 +153,7 @@ GEM
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     headless (2.3.1)
-    httparty (0.17.3)
+    httparty (0.18.0)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
     i18n (1.8.2)
@@ -270,12 +270,13 @@ GEM
       json
     redcarpet (3.5.0)
     redis (4.1.3)
-    regexp_parser (1.6.0)
+    regexp_parser (1.7.0)
     request_store (1.5.0)
       rack (>= 1.4)
     responders (3.0.0)
       actionpack (>= 5.0)
       railties (>= 5.0)
+    rexml (3.2.4)
     riddle (2.4.1)
     roo (2.8.3)
       nokogiri (~> 1)
@@ -297,11 +298,12 @@ GEM
       rspec-mocks (~> 3.9)
       rspec-support (~> 3.9)
     rspec-support (3.9.2)
-    rubocop (0.79.0)
+    rubocop (0.80.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.7.0.1)
       rainbow (>= 2.2.2, < 4.0)
+      rexml
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 1.7)
     rubocop-performance (1.5.2)
@@ -329,12 +331,12 @@ GEM
       rubyzip (>= 1.2.2)
     shoulda-callback-matchers (1.1.4)
       activesupport (>= 3)
-    shoulda-matchers (4.2.0)
+    shoulda-matchers (4.3.0)
       activesupport (>= 4.2.0)
-    simplecov (0.18.2)
+    simplecov (0.18.4)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
-    simplecov-html (0.12.0)
+    simplecov-html (0.12.1)
     spring (2.1.0)
     spring-commands-rspec (1.0.4)
       spring (>= 0.9.1)
