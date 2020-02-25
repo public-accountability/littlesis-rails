@@ -84,11 +84,6 @@ describe 'Maps', :sphinx, type: :request do
         expect(&post_maps).to change(NetworkMap, :count).by(1)
       end
 
-      it 'sets sf_user_id' do
-        post_maps.call
-        expect(NetworkMap.last.sf_user_id).to eql user.sf_guard_user_id
-      end
-
       it 'sets user_id' do
         post_maps.call
         expect(NetworkMap.last.user_id).to eql user.id
@@ -117,7 +112,6 @@ describe 'Maps', :sphinx, type: :request do
       last_created_map = NetworkMap.last
       expect(last_created_map.title.slice(0, 6)).to eq 'Clone:'
       expect(last_created_map.user_id).to eq other_user.id
-      expect(last_created_map.sf_user_id).to eq other_user.sf_guard_user_id
     end
 
     it 'does not clone the map if the map is not cloneable' do
