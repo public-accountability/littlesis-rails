@@ -91,30 +91,19 @@ class MapsController < ApplicationController
     end
 
     @cacheable = true unless user_signed_in?
+    @editable = false
 
-    respond_to do |format|
-      format.html {
-        @editable = false
-        @links = [
-          { text: "embed", url: "#", id: "oligrapherEmbedLink" }
-        ]
-        @links.push({ text: 'clone', url: clone_map_url(@map), method: 'POST' }) if @map.is_cloneable
-        @links.push({ text: 'edit', url: edit_map_url(@map) }) if is_owner
-        @links.push({ text: 'share link', url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private and is_owner
+    @links = [{ text: "embed", url: "#", id: "oligrapherEmbedLink" }]
+    @links.push({ text: 'clone', url: clone_map_url(@map), method: 'POST' }) if @map.is_cloneable
+    @links.push({ text: 'edit', url: edit_map_url(@map) }) if is_owner
+    @links.push({ text: 'share link', url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private && is_owner
+    @links.push(text: 'disclaimer', url: '#disclaimer') # see views/maps/_disclaimer_modal for the disclaimer modal
 
-        # see views/maps/_disclaimer_modal for the disclaimer modal
-        @links.push(text: 'disclaimer', url: '#disclaimer')
-
-        if params[:embed]
-          response.headers.delete('X-Frame-Options')
-          render action: 'story_map', layout: 'fullscreen'
-        else
-          render 'story_map', layout: 'oligrapher'
-        end
-      }
-      format.json {
-        render json: { map: @map.to_clean_hash }
-      }
+    if params[:embed]
+      response.headers.delete('X-Frame-Options')
+      render action: 'story_map', layout: 'fullscreen'
+    else
+      render 'story_map', layout: 'oligrapher'
     end
   end
 
