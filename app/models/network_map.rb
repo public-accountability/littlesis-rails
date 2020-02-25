@@ -4,8 +4,6 @@ class NetworkMap < ApplicationRecord
   include SingularTable
   include SoftDelete
 
-  DEFAULT_DATA = JSON.dump(entities: [], rels: [], texts: []).freeze
-
   LS_DATA_SOURCE_BASE_URL = "#{Rails.application.default_url_options[:protocol]}://#{Rails.application.default_url_options[:host]}"
 
   OLIGRAPHER_VERSION = APP_CONFIG['oligrapher_version']
@@ -50,7 +48,6 @@ class NetworkMap < ApplicationRecord
   end
 
   def set_defaults
-    self.data = DEFAULT_DATA if data.blank?
     self.width = Lilsis::Application.config.netmap_default_width if width.blank?
     self.height = Lilsis::Application.config.netmap_default_width if height.blank?
     self.zoom = '1' if zoom.blank?

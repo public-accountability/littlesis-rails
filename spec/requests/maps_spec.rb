@@ -57,7 +57,6 @@ describe 'Maps', :sphinx, type: :request do
   describe 'creating new maps' do
     let(:request_params) do
       { title: 'so many connections',
-        data: NetworkMap::DEFAULT_DATA,
         graph_data: JSON.dump("nodes" => {}, "edges" => {}, "captions" => {}),
         width: 960,
         height: 960,
