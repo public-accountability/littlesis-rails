@@ -164,29 +164,11 @@ class MapsController < ApplicationController
     check_permission 'editor'
 
     if oligrapher_params.present?
-      @map.update(oligrapher_params)
+      @map.update! oligrapher_params
       render json: { data: @map.attributes }
-      # render json: { data: hash }
     else
-      params = map_params
-      data = params[:data]
-      decoded = JSON.parse(data)
-
-      @map.title = params[:title] if params[:title].present?
-      @map.description = params[:description] if params[:title].present?
-      @map.is_private = params[:is_private] if params[:is_private].present?
-      @map.is_cloneable = params[:is_cloneable] if params[:is_cloneable].present?
-      @map.width = params[:width] if params[:width].present?
-      @map.height = params[:height] if params[:height].present?
-      @map.zoom = params[:zoom] if params[:zoom].present?
-      @map.data = data
-      @map.entity_ids = decoded['entities'].map { |e| e['id'] }.join(',')
-      @map.rel_ids = decoded['rels'].map { |e| e['id'] }.join(',')
-      @map.save
-
-      # NEED CACHE CLEAR HERE
-
-      render json: @map
+      Rails.logger.warn "Missing oligrapher Parameters for map #{map.id}"
+      render head :bad_request
     end
   end
 
