@@ -1,12 +1,18 @@
+# frozen_string_literal: true
+
 class PagesConstraint
-  def initialize
-    @pages = YAML
-             .load_file(Rails.root.join('config', 'pages.yml'))
-             .map { |page| "/#{page}" }
-             .tap { |pages| pages.dup.each { |page| pages << "#{page}/edit" } }
-  end
+  PAGES = %w[
+    /about
+    /features
+    /team
+    /disclaimer
+    /about/edit
+    /features/edit
+    /team/edit
+    /disclaimer/edit
+  ].freeze
 
   def matches?(request)
-    @pages.include?(request.fullpath)
+    PAGES.include?(request.fullpath)
   end
 end

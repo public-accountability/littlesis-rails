@@ -28,6 +28,7 @@
     "@public-accountability/simplestore": "^0.1.6",
     "@rails/webpacker": "^4.2.2",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "core-js": "3",
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.15",
     "prop-types": "^15.7.2",

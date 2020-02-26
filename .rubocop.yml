@@ -9,15 +9,10 @@ AllCops:
     - 'db/seeds.rb'
     - 'db/migrate/*.rb'
   TargetRubyVersion: 2.6
-  TargetRailsVersion: 5.2
+  TargetRailsVersion: 6.0
 
 Rails:
   Enabled: true
-
-Metrics/LineLength:
-  Max: 100
-  Exclude:
-    - 'spec/**/*.rb'
 
 Metrics/BlockLength:
   Enabled: false
@@ -67,7 +62,6 @@ Style/GuardClause:
 Style/Lambda:
   Enabled: false
 
-
 Style/FrozenStringLiteralComment:
   EnforcedStyle: always
   Exclude:
@@ -93,6 +87,11 @@ Style/ImplicitRuntimeError:
   Enabled: true
   Exclude:
     - 'lib/scripts/*'
+
+Layout/LineLength:
+  Max: 100
+  Exclude:
+    - 'spec/**/*.rb'
 
 Layout/ParameterAlignment:
   Enabled: false
