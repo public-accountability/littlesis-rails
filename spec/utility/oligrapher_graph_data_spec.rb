@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe OligrapherGraphData do
   let(:foo_bar_hash) { { 'foo' => 'bar' } }
   let(:foo_bar_json) { "{\"foo\":\"bar\"}" }

@@ -147,9 +147,4 @@ namespace :maps do
       end
     end
   end
-
-  desc 'Update broken or missing images for a given map'
-  task :refresh_images, [:map_id] =>  :environment do |_t, args|
-    NetworkMap.find(args[:map_id]).refresh_images
-  end
 end
