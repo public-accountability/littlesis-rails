@@ -342,7 +342,6 @@ Lilsis::Application.routes.draw do
   get "/pages/:page/edit" => "pages#edit_by_name", constraints: { page: /[A-z]+[^\/]+/ }
   resources :pages, only: [:new, :create, :edit, :update, :index, :show]
 
-  # edit pages.yml to add more pages
   get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
 
   ############
