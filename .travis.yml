@@ -1,13 +1,5 @@
-language: ruby
 os: linux
 dist: bionic
-
-cache:
-  - bundler
-  - yarn
-
-rvm:
-  - 2.6.5
 
 env:
   global:
@@ -15,44 +7,51 @@ env:
     - RAILS_ENV=test
     - COVERAGE=true
 
-addons:
-  mariadb: '10.4'
+jobs:
+  include:
+    - language: ruby
+      rvm: 2.6.5
+      cache:
+        - bundler
+        - yarn
+      addons:
+        mariadb: '10.4'
+      services:
+        - mysql
+      before_install:
+        - sudo apt-get -qq update
+        - sudo apt-get install -o Dpkg::Options::="--force-overwrite" -y mariadb-client libmariadb-dev
+        - sudo mysql_upgrade
+        - curl -L "https://github.com/manticoresoftware/manticoresearch/releases/download/3.1.2/manticore_3.1.2-190822-47b6bc2c-release_bionic_amd64-bin.deb" > manticore.deb
+        - sudo dpkg -i manticore.deb
+        - nvm install node
+        - node -v
+        - npm -g install yarn
+        - gem install bundler
+      install:
+        - bundle install
+        - yarn install
+      before_script:
+        - cp config/database.travis.yml config/database.yml
+        - cp config/lilsis.yml.sample config/lilsis.yml
+        - cp config/secrets.yml.sample config/secrets.yml
+        - mkdir -p tmp tmp/small/ tmp/profile tmp/large/ tmp/original/
+        - sudo mysql  -e 'CREATE DATABASE littlesis_test;'
+        - sudo mysql  -e "GRANT all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'littlesis';flush privileges;"
+        - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        - chmod +x ./cc-test-reporter
+        - ./cc-test-reporter before-build
+        - bundle exec rake db:structure:load
+        - bundle exec rake db:seed
+        - bundle exec rails webpacker:compile
+      script:
+        - bundle exec rspec
+      after_script:
+        - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
-services:
-  - mysql
-
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -o Dpkg::Options::="--force-overwrite" -y mariadb-client libmariadb-dev
-  - sudo mysql_upgrade
-  - curl -L "https://github.com/manticoresoftware/manticoresearch/releases/download/3.1.2/manticore_3.1.2-190822-47b6bc2c-release_bionic_amd64-bin.deb" > manticore.deb
-  - sudo dpkg -i manticore.deb
-  - nvm install 12
-  - nvm use 12
-  - node --version
-  - gem install bundler
-
-install:
-  - bundle install --jobs=3 --retry=3 --deployment --path=vendor/bundle
-  - yarn install
-
-before_script:
-  - cp config/database.travis.yml config/database.yml
-  - cp config/lilsis.yml.sample config/lilsis.yml
-  - cp config/secrets.yml.sample config/secrets.yml
-  - mkdir -p tmp tmp/small/ tmp/profile tmp/large/ tmp/original/
-  - sudo mysql  -e 'CREATE DATABASE littlesis_test;'
-  - sudo mysql  -e "GRANT all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'littlesis';flush privileges;"
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
-  - bundle exec rake db:structure:load
-  - bundle exec rake db:seed
-  - bin/webpack
-
-script:
-  - bundle exec rspec
-  - yarn test
-
-after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+    - language: node_js
+      node_js: lts/*
+      cache:
+        - yarn
+      script:
+        - yarn test
