@@ -15,7 +15,7 @@ class OligrapherController < ApplicationController
   #    attributes: { title, description, is_private, is_cloneable, list_sources }
   #  }
   def create
-    map = NetworkMap.new(oligrapher_params)
+    map = NetworkMap.new(new_oligrapher_params)
     if map.validate
       map.save!
       render json: map
@@ -54,14 +54,16 @@ class OligrapherController < ApplicationController
 
   private
 
+  def new_oligrapher_params
+    oligrapher_params.merge!(oligrapher_version: 3, user_id: current_user.id)
+  end
+
   def oligrapher_params
     params
       .require(:attributes)
       .permit(:title, :description, :is_private, :is_cloneable, :list_sources)
       .to_h
-      .merge(graph_data: params[:graph_data]&.permit!&.to_h,
-             oligrapher_version: 3,
-             user_id: current_user.id)
+      .merge(graph_data: params[:graph_data]&.permit!&.to_h)
   end
 end
 

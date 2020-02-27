@@ -77,6 +77,7 @@ describe "Oligrapher", type: :request do
         expect do
           patch "/oligrapher/#{network_map.id}", params: { "attributes" => { "title" => "new title" } }
         end.to change { NetworkMap.find(network_map.id).title }.from("network map").to("new title")
+        expect(response.status).to eq 200
       end
     end
   end
