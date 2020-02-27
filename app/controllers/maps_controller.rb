@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class MapsController < ApplicationController
+  include MapsHelper
+
   before_action :set_map,
                 except: [:featured, :all, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
   before_action :authenticate_user!,
@@ -120,7 +122,8 @@ class MapsController < ApplicationController
   end
 
   def create
-    attributes = oligrapher_params.merge('user_id' => current_user.id,)
+    attributes = oligrapher_params.merge('user_id' => current_user.id,
+                                         'oligrapher_version' => 2)
 
     map = NetworkMap.new(attributes)
 
@@ -148,7 +151,6 @@ class MapsController < ApplicationController
 
   def update
     check_owner
-    check_permission 'editor'
 
     if oligrapher_params.present?
       @map.update! oligrapher_params
@@ -161,7 +163,6 @@ class MapsController < ApplicationController
 
   def destroy
     check_owner
-    check_permission 'editor'
 
     @map.destroy
     redirect_to maps_path
@@ -272,10 +273,6 @@ class MapsController < ApplicationController
     end
   end
 
-  def set_map
-    @map = NetworkMap.find(params[:id])
-  end
-
   def oligrapher_params
     params
       .permit(:graph_data, :annotations_data, :annotations_count,
@@ -285,21 +282,6 @@ class MapsController < ApplicationController
 
   def embedded_params
     params.permit(:header_pct, :annotation_pct, :slide)
-  end
-
-  def is_owner
-    return false unless current_user
-    return true if current_user.admin?
-
-    @map.user_id == current_user.id
-  end
-
-  def check_private_access
-    raise Exceptions::PermissionError if @map.is_private && !is_owner
-  end
-
-  def check_owner
-    raise Exceptions::PermissionError unless is_owner
   end
 
   def set_oligrapher_version

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# This is a ruby representation of the `graph` field from oligrapher
 class OligrapherGraphData
   attr_reader :hash
   delegate_missing_to :@hash
@@ -15,6 +16,11 @@ class OligrapherGraphData
     else
       raise TypeError, 'Accepted types: String, Hash, Nil'
     end
+
+    @hash[:nodes] = {} if @hash[:nodes].nil?
+    @hash[:edges] = {} if @hash[:edges].nil?
+    @hash[:captions] = {} if @hash[:captions].nil?
+
     freeze
   end
 
@@ -40,6 +46,7 @@ class OligrapherGraphData
 
   class Type < ActiveRecord::Type::Json
     def deserialize(value)
+
       OligrapherGraphData.load super(value)
     end
 

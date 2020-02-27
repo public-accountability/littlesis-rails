@@ -6,4 +6,12 @@ FactoryBot.define do
     height { 960 }
     is_cloneable { true }
   end
+
+  factory :network_map_version3, class: NetworkMap do
+    title { "network map" }
+    graph_data { { "nodes" => {}, "edges" => {}, "captions" => {} } }
+    is_private { false }
+    is_cloneable { true }
+    oligrapher_version { 3 }
+  end
 end

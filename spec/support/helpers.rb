@@ -41,6 +41,13 @@ module RspecExampleHelpers
     end
   end
 
+  def valid_json?(json)
+    JSON.parse(json)
+    true
+  rescue JSON::ParserError
+    false
+  end
+
   def random_username
     Faker::Internet.unique.user_name(specifier: 5).tr('.', '_')
   end
