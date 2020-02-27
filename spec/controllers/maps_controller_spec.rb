@@ -182,7 +182,6 @@ describe MapsController, type: :controller do
       expect(NetworkMap).to receive(:find).with('10-a-map').and_return(map)
       expect(controller).to receive(:authenticate_user!)
       expect(controller).to receive(:check_owner)
-      expect(controller).to receive(:check_permission).with('editor')
       expect(map).to receive(:destroy)
       delete :destroy, params: { id: '10-a-map' }
       expect(response.status).to eq 302

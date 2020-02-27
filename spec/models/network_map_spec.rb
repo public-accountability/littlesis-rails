@@ -1,10 +1,34 @@
 # rubocop:disable Style/WordArray
 
 describe NetworkMap, type: :model do
+  let(:graph_data) do
+    JSON.parse <<-JSON
+       {
+         "nodes": {
+           "EI-H6Mvz": {
+             "id": "EI-H6Mvz",
+             "name": "abc",
+             "x": -72.5,
+             "y": -10.5,
+             "scale": 1,
+             "status": "normal",
+             "type": "circle",
+             "image": null,
+             "url": null,
+             "color": "#ccc"
+           }
+         },
+         "edges": {},
+         "captions": {}
+       }
+    JSON
+  end
+
   it { is_expected.not_to have_db_column(:sf_user_id) }
   it { is_expected.to have_db_column(:oligrapher_version) }
   it { is_expected.to belong_to(:user).optional }
   it { is_expected.to validate_presence_of(:title) }
+
 
   describe 'OLIGRAPHER_VERSION constant' do
     specify { expect(NetworkMap::OLIGRAPHER_VERSION).to eq '0.0.1' }
@@ -285,7 +309,7 @@ describe NetworkMap, type: :model do
     describe 'before_save' do
       context 'with custom title' do
         it 'starts network map job' do
-          map = build(:network_map, user_id: 1)
+          map = build(:network_map, user_id: 1, graph_data: graph_data)
           expect(UpdateEntityNetworkMapCollectionsJob).to receive(:perform_later).once
           map.save!
         end
