@@ -1,20 +1,26 @@
 # frozen_string_literal: true
 
+# This is a ruby representation of the `graph` field from oligrapher
 class OligrapherGraphData
   attr_reader :hash
   delegate_missing_to :@hash
 
-  def initialize(str_or_hash_or_nil = nil)
-    case str_or_hash_or_nil
+  def initialize(input = nil)
+    case input
     when nil
       @hash = ActiveSupport::HashWithIndifferentAccess.new
     when String
-      @hash = ActiveSupport::HashWithIndifferentAccess.new(JSON.parse(str_or_hash_or_nil))
+      @hash = JSON.parse(input).with_indifferent_access
     when Hash, ActiveSupport::HashWithIndifferentAccess
-      @hash = ActiveSupport::HashWithIndifferentAccess.new(str_or_hash_or_nil)
+      @hash = input.with_indifferent_access
     else
-      raise TypeError, 'OligrapherGraphData only accepts these types: String, Hash, Nil'
+      raise TypeError, 'Accepted types: String, Hash, Nil'
     end
+
+    @hash[:nodes] = {} if @hash[:nodes].nil?
+    @hash[:edges] = {} if @hash[:edges].nil?
+    @hash[:captions] = {} if @hash[:captions].nil?
+
     freeze
   end
 
@@ -30,12 +36,6 @@ class OligrapherGraphData
 
   alias eql? ==
 
-  # returns new OligrapherGraphData with updated images
-  def refresh_images
-    image_fixer = OligrapherGraphDataImageFixer.new(self)
-    image_fixer.changed? ? image_fixer.oligrapher_graph_data : self
-  end
-
   def self.load(obj)
     TypeCheck.check obj,
                     [String, Hash, ActiveSupport::HashWithIndifferentAccess, OligrapherGraphData],
@@ -46,6 +46,7 @@ class OligrapherGraphData
 
   class Type < ActiveRecord::Type::Json
     def deserialize(value)
+
       OligrapherGraphData.load super(value)
     end
 

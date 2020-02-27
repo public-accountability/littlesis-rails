@@ -7,7 +7,6 @@ class NetworkMap < ApplicationRecord
   LS_DATA_SOURCE_BASE_URL = "#{Rails.application.default_url_options[:protocol]}://#{Rails.application.default_url_options[:host]}"
 
   OLIGRAPHER_VERSION = APP_CONFIG['oligrapher_version']
-
   attribute :graph_data, OligrapherGraphData::Type.new
 
   has_paper_trail on: [:update, :destroy]
@@ -69,12 +68,6 @@ class NetworkMap < ApplicationRecord
                       .map(&:document)
                       .uniq
                       .reject { |d| d.name.blank? }
-  end
-
-  # This updates the images of nodes with new entity urls if they exist
-  def refresh_images
-    self[:graph_data] = graph_data.refresh_images
-    save
   end
 
   def name

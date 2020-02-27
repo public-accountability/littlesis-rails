@@ -1,9 +1,34 @@
 # rubocop:disable Style/WordArray
 
 describe NetworkMap, type: :model do
+  let(:graph_data) do
+    JSON.parse <<-JSON
+       {
+         "nodes": {
+           "EI-H6Mvz": {
+             "id": "EI-H6Mvz",
+             "name": "abc",
+             "x": -72.5,
+             "y": -10.5,
+             "scale": 1,
+             "status": "normal",
+             "type": "circle",
+             "image": null,
+             "url": null,
+             "color": "#ccc"
+           }
+         },
+         "edges": {},
+         "captions": {}
+       }
+    JSON
+  end
+
   it { is_expected.not_to have_db_column(:sf_user_id) }
+  it { is_expected.to have_db_column(:oligrapher_version) }
   it { is_expected.to belong_to(:user).optional }
   it { is_expected.to validate_presence_of(:title) }
+
 
   describe 'OLIGRAPHER_VERSION constant' do
     specify { expect(NetworkMap::OLIGRAPHER_VERSION).to eq '0.0.1' }
@@ -222,40 +247,6 @@ describe NetworkMap, type: :model do
     end
   end
 
-  describe 'refresh image' do
-    let(:e1) { create(:entity_person) }
-    let(:e2) { create(:entity_person) }
-    let(:e1_image) { create(:image, entity: e1, is_featured: true) }
-    let(:nodes) do
-      { e1.id.to_s => Oligrapher.legacy_entity_to_node(e1),
-        e2.id.to_s => Oligrapher.legacy_entity_to_node(e2) }
-    end
-
-    let(:oli_graph_data) do
-      OligrapherGraphData.new(id: 'abcdefg', nodes: nodes, edges: {}, captions: {})
-    end
-
-    let(:network_map) { create(:network_map, graph_data: oli_graph_data, user_id: 1) }
-
-    before do
-      e1_image
-      network_map
-      allow(HTTParty).to receive(:head).and_return double(:code => 200, :headers => {})
-    end
-
-    it 'updates node with missing image url' do
-      new_graph_data = oli_graph_data.to_h.deep_dup
-
-      expect(network_map.graph_data['nodes'][e2.id.to_s]['display']['image']).to be nil
-      expect(network_map.graph_data['nodes'][e1.id.to_s]['display']['image']).to eq e1_image.image_url('profile')
-
-      e2_image = create(:image, entity: e2, is_featured: true)
-      new_graph_data['nodes'][e2.id.to_s]['display']['image'] = e2_image.image_url('profile')
-      network_map.refresh_images
-      expect(network_map.graph_data.to_h).to eq new_graph_data
-    end
-  end
-
   describe '#display_title' do
     context 'when map is public' do
       let(:map) { build(:network_map, is_private: false) }
@@ -318,7 +309,7 @@ describe NetworkMap, type: :model do
     describe 'before_save' do
       context 'with custom title' do
         it 'starts network map job' do
-          map = build(:network_map, user_id: 1)
+          map = build(:network_map, user_id: 1, graph_data: graph_data)
           expect(UpdateEntityNetworkMapCollectionsJob).to receive(:perform_later).once
           map.save!
         end

@@ -195,6 +195,8 @@ Lilsis::Application.routes.draw do
   scope :oligrapher, controller: 'oligrapher' do
     get '/find_nodes', action: :find_nodes
     get '/example', action: :example
+    post '/', action: :create
+    patch '/:id', action: :update
   end
 
   resources :industries, only: [:show]
