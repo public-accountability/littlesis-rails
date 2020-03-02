@@ -222,6 +222,13 @@ class NetworkMap < ApplicationRecord
     end
   end
 
+  def usernames
+    User
+      .where(id: editors)
+      .order(Arel.sql("FIELD(id, #{editors.join(',')})")) # keep editor array order
+      .pluck(:username)
+  end
+
   # input: <User> --> NetworkMap::ActiveRecord_Relation
   def self.scope_for_user(user)
     where arel_table[:is_private].eq(false)

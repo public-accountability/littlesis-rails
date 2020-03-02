@@ -8,8 +8,10 @@ class OligrapherController < ApplicationController
   include MapsHelper
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
-  before_action :set_map, only: %i[update]
+
   before_action :authenticate_user!, except: %i[find_nodes]
+  before_action :set_map, only: %i[update get_editors editors]
+  before_action :check_owner, only: %i[update get_editors editors]
   before_action :set_oligrapher_version
 
   # Crud actions
@@ -21,7 +23,6 @@ class OligrapherController < ApplicationController
   end
 
   def update
-    check_owner
     @map.assign_attributes(oligrapher_params)
     save_and_render @map
   end
@@ -33,13 +34,27 @@ class OligrapherController < ApplicationController
   end
 
   def get_editors
-    check_owner
+    render json: @map.usernames
   end
 
-  # two actions { action: 'ADD', username: <username> }
-  # two actions { action: 'REMOVE', username: <username> }
+  # two actions { editor: { action: ADD | REMOVE, username: <username> } }
   def editors
-    check_owner
+    action = params.require(:editor).require(:action).upcase
+    username = params.require(:editor).require(:username)
+
+    unless (editor = User.find_by(username: username))
+      raise Exceptions::LittleSisError, "No user found with username #{username}"
+    end
+
+    if action == 'ADD'
+      @map.add_editor(editor)
+    elsif action == 'REMOVE'
+      @map.remove_editor(editor)
+    else
+      raise Exceptions::LittleSisError, "Invalid oligrapher editor action: #{action}"
+    end
+
+    save_and_render @map
   end
 
   # Pages
