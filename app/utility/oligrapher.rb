@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
-  VERSION = '0345483bff9f422732cf12f0b2ded69dd6da1f0c'
+  VERSION = '563a7142c372053c5b4e4ade8721ffae48f48438'
 
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
@@ -17,6 +17,7 @@ module Oligrapher
       settings: { debug: true },
       display: { modes: { editor: is_owner } },
       attributes: {
+        id: map.id,
         title: map.title,
         subtitle: '',
         date: (map.created_at || Time.current).strftime('%B %d, %Y'),
