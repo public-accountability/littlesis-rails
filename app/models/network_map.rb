@@ -32,14 +32,17 @@ class NetworkMap < ApplicationRecord
     self.index_data = generate_index_data
   end
 
+  # TODO: simplify and rewrite this
   def generate_index_data
     entities_text = entities.pluck(:name, :blurb).flatten.compact.join(', ')
-    if captions.present?
-      captions_text = captions.map { |c| c['display']['text'] }.join(', ')
-      "#{entities_text}, #{captions_text}"
+    return entities_text if captions.blank?
+
+    if oligrapher_version == 3
+      captions_text = captions.map { |c| c['text'] }.join(', ')
     else
-      entities_text
+      captions_text = captions.map { |c| c['display']['text'] }.join(', ')
     end
+    "#{entities_text}, #{captions_text}"
   end
 
   def destroy
