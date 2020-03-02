@@ -14,7 +14,11 @@ module MapsHelper
   end
 
   def check_private_access
-    raise Exceptions::PermissionError if @map.is_private && !is_owner
+    if @map.is_private && !is_owner
+      unless params[:secret] && params[:secret] == @map.secret
+        raise Exceptions::PermissionError
+      end
+    end
   end
 
   def check_owner

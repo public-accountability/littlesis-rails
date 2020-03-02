@@ -84,11 +84,7 @@ class MapsController < ApplicationController
 
   # renders the 'story_map' template
   def show
-    if @map.is_private and !is_owner
-      unless params[:secret] and params[:secret] == @map.secret
-        raise Exceptions::PermissionError
-      end
-    end
+    check_private_access
 
     @cacheable = true unless user_signed_in?
     @editable = false
