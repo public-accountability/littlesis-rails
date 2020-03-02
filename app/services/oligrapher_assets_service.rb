@@ -26,10 +26,10 @@ class OligrapherAssetsService
     `git -C #{REPO_DIR} rev-parse HEAD`.strip
   end
 
-  def initialize(commit = DEFAULT_BRANCH, skip_fetch: false, local_api: false)
+  def initialize(commit = DEFAULT_BRANCH, skip_fetch: false, development: false)
     self.class.setup_repo
     @commit = commit
-    @local_api = local_api
+    @development = development
     git 'fetch --all --quiet' unless skip_fetch
 
     # validate commit
@@ -45,12 +45,17 @@ class OligrapherAssetsService
       system('yarn install --silent') || error("Yarn install failed for commit #{@commit}")
 
       build_cmd = [
-        'yarn run build-prod',
+        'yarn run webpack',
         "--env.output_path=#{ASSET_DIR}",
         "--env.filename=#{oligrapher_filename}"
       ]
 
-      build_cmd << "--env.api_url=http://127.0.0.1:8081" if @local_api
+      if @development
+        build_cmd << '--env.development'
+        build_cmd << '--env.api_url=http://127.0.0.1:8081'
+      else
+        build_cmd << '--env.production'
+      end
 
       system(build_cmd.join(' ')) || error("Failed to build for commit #{@commit}")
     end

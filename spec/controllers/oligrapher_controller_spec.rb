@@ -16,6 +16,10 @@ describe OligrapherController, type: :controller do
   end
 
   it do
+    is_expected.to route(:get, '/oligrapher/789-abc').to(action: :show, id: '789-abc')
+  end
+
+  it do
     is_expected.to route(:get, '/oligrapher/789-abc/editors').to(action: :get_editors, id: '789-abc')
   end
 
