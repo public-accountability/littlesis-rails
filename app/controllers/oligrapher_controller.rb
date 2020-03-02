@@ -37,23 +37,20 @@ class OligrapherController < ApplicationController
     render json: @map.usernames
   end
 
-  # two actions { editor: { action: ADD | REMOVE, username: <username> } }
+  # two actions { editor: { action: add | remove, username: <username> } }
   def editors
-    action = params.require(:editor).require(:action).upcase
+    action = params.require(:editor).require(:action).downcase
     username = params.require(:editor).require(:username)
+
+    unless %w[add remove].include? action
+      raise Exceptions::LittleSisError, "Invalid oligrapher editor action: #{action}"
+    end
 
     unless (editor = User.find_by(username: username))
       raise Exceptions::LittleSisError, "No user found with username #{username}"
     end
 
-    if action == 'ADD'
-      @map.add_editor(editor)
-    elsif action == 'REMOVE'
-      @map.remove_editor(editor)
-    else
-      raise Exceptions::LittleSisError, "Invalid oligrapher editor action: #{action}"
-    end
-
+    @map.public_send "#{action}_editor", editor
     save_and_render @map
   end
 
