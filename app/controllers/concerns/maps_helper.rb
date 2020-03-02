@@ -2,6 +2,15 @@
 
 # Shared helper functions between MapsController and OligrapherController
 module MapsHelper
+  def save_and_render(map)
+    if map.validate
+      map.save!
+      render json: map
+    else
+      render json: map.errors, status: :bad_request
+    end
+  end
+
   def set_map
     @map = NetworkMap.find(params[:id])
   end
@@ -14,7 +23,11 @@ module MapsHelper
   end
 
   def check_private_access
-    raise Exceptions::PermissionError if @map.is_private && !is_owner
+    if @map.is_private && !is_owner
+      unless params[:secret] && params[:secret] == @map.secret
+        raise Exceptions::PermissionError
+      end
+    end
   end
 
   def check_owner

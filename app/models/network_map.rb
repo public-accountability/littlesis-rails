@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/SafeNavigation
+
 class NetworkMap < ApplicationRecord
   include SingularTable
   include SoftDelete
@@ -8,6 +10,7 @@ class NetworkMap < ApplicationRecord
 
   OLIGRAPHER_VERSION = APP_CONFIG['oligrapher_version']
   attribute :graph_data, OligrapherGraphData::Type.new
+  serialize :editors, Array
 
   has_paper_trail on: [:update, :destroy]
 
@@ -25,6 +28,8 @@ class NetworkMap < ApplicationRecord
   validates :title, presence: true
 
   before_create :generate_secret, :set_defaults
+  before_create -> { add_editor(user_id) }, if: -> { oligrapher_version == 3 }
+
   before_save :set_index_data
   before_save :start_update_entity_network_map_collections_job, if: :update_network_map_collection?
 
@@ -32,14 +37,17 @@ class NetworkMap < ApplicationRecord
     self.index_data = generate_index_data
   end
 
+  # TODO: simplify and rewrite this
   def generate_index_data
     entities_text = entities.pluck(:name, :blurb).flatten.compact.join(', ')
-    if captions.present?
-      captions_text = captions.map { |c| c['display']['text'] }.join(', ')
-      "#{entities_text}, #{captions_text}"
+    return entities_text if captions.blank?
+
+    if oligrapher_version == 3
+      captions_text = captions.map { |c| c['text'] }.join(', ')
     else
-      entities_text
+      captions_text = captions.map { |c| c['display']['text'] }.join(', ')
     end
+    "#{entities_text}, #{captions_text}"
   end
 
   def destroy
@@ -181,6 +189,46 @@ class NetworkMap < ApplicationRecord
     end
   end
 
+  # Editor methods
+  # These are only for oligrapher version 3
+
+  def add_editor(editor)
+    editor_id = editor.try(:id) || editor.try!(:to_i)
+    return self if editors.include?(editor_id)
+
+    if validate_editor(editor_id)
+      editors << editor_id
+      editors_will_change!
+    end
+
+    self
+  end
+
+  def remove_editor(editor)
+    editor_id = editor.try(:id) || editor.try!(:to_i)
+    unless user_id == editor_id
+      self.editors.delete(editor_id)
+      editors_will_change!
+    end
+    self
+  end
+
+  def validate_editor(editor_id)
+    if editor_id == user.id || User.exists?(id: editor_id)
+      true
+    else
+      Rails.logger.info "[NetworkMap] Could not find editor #{editor_id} in the database"
+      false
+    end
+  end
+
+  def usernames
+    User
+      .where(id: editors)
+      .order(Arel.sql("FIELD(id, #{editors.join(',')})")) # keep editor array order
+      .pluck(:username)
+  end
+
   # input: <User> --> NetworkMap::ActiveRecord_Relation
   def self.scope_for_user(user)
     where arel_table[:is_private].eq(false)
@@ -203,3 +251,5 @@ class NetworkMap < ApplicationRecord
       .perform_later(id, remove: entities_removed_from_graph, add: entities.pluck(:id))
   end
 end
+
+# rubocop:enable Rails/SafeNavigation

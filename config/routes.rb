@@ -192,11 +192,16 @@ Lilsis::Application.routes.draw do
     action: 'show',
     as: 'share_map'
 
-  scope :oligrapher, controller: 'oligrapher' do
-    get '/find_nodes', action: :find_nodes
-    get '/example', action: :example
-    post '/', action: :create
-    patch '/:id', action: :update
+  resources :oligrapher, only: [:new, :create, :update], controller: 'oligrapher' do
+    collection do
+      get '/find_nodes', action: :find_nodes
+      get '/example', action: :example
+    end
+
+    member do
+      get '/editors', action: :get_editors
+      post '/editors', action: :editors
+    end
   end
 
   resources :industries, only: [:show]

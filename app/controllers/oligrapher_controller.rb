@@ -7,38 +7,67 @@
 class OligrapherController < ApplicationController
   include MapsHelper
 
-  before_action :set_map, only: %i[update]
-  before_action :authenticate_user!, except: %i[find_nodes]
+  skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  #  {
-  #    graph_data: {...},
-  #    attributes: { title, description, is_private, is_cloneable, list_sources }
-  #  }
+  before_action :authenticate_user!, except: %i[find_nodes]
+  before_action :set_map, only: %i[update get_editors editors]
+  before_action :check_owner, only: %i[update get_editors editors]
+  before_action :set_oligrapher_version
+
+  # Crud actions
+
+  # POST /oligrapher
+  #  { graph_data: {...}, attributes: { title, description, is_private, is_cloneable } }
   def create
-    map = NetworkMap.new(new_oligrapher_params)
-    if map.validate
-      map.save!
-      render json: map
-    else
-      render json: map.errors, status: :bad_request
-    end
+    save_and_render NetworkMap.new(new_oligrapher_params)
   end
 
   def update
-    check_owner
+    @map.assign_attributes(oligrapher_params)
+    save_and_render @map
+  end
 
-    if @map.update(oligrapher_params)
-      head :ok
-    else
-      render json: @map.errors, status: :bad_request
+  def new
+    @map = NetworkMap.new(version: 3, title: 'Untitled Map', user: current_user)
+    @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
+    render 'oligrapher/new', layout: 'oligrapher3'
+  end
+
+  def get_editors
+    render json: @map.usernames
+  end
+
+  # two actions { editor: { action: add | remove, username: <username> } }
+  def editors
+    action = params.require(:editor).require(:action).downcase
+    username = params.require(:editor).require(:username)
+
+    unless %w[add remove].include? action
+      raise Exceptions::LittleSisError, "Invalid oligrapher editor action: #{action}"
     end
+
+    unless (editor = User.find_by(username: username))
+      raise Exceptions::LittleSisError, "No user found with username #{username}"
+    end
+
+    @map.public_send "#{action}_editor", editor
+    save_and_render @map
+  end
+
+  # Pages
+
+  def show
+    check_private_access
+    @configuration = Oligrapher.configuration(map: @map)
+    render 'oligrapher/oligrapher', layout: 'oligrapher3'
   end
 
   def example
-    @oligrapher_version = '0f71f0d96fd443ceebc82c5981cd7aaac61584c5'
     render 'oligrapher/example', layout: 'oligrapher3'
   end
 
+  # Search Api
+  # Oligrapher 3 also uses our regular api routes
   def find_nodes
     return head :bad_request if params[:q].blank?
 
@@ -64,6 +93,10 @@ class OligrapherController < ApplicationController
       .permit(:title, :description, :is_private, :is_cloneable, :list_sources)
       .to_h
       .merge(graph_data: params[:graph_data]&.permit!&.to_h)
+  end
+
+  def set_oligrapher_version
+    @oligrapher_version = '859333be17266180f49ef211ed9dc65da8a9b721'
   end
 end
 

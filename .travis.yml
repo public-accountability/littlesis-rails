@@ -12,8 +12,9 @@ jobs:
     - language: ruby
       rvm: 2.6.5
       cache:
-        - bundler
-        - yarn
+        bundler: true
+        directories:
+          - node_modules
       addons:
         mariadb: '10.4'
       services:
@@ -51,7 +52,6 @@ jobs:
 
     - language: node_js
       node_js: lts/*
-      cache:
-        - yarn
+      cache: yarn
       script:
         - yarn test

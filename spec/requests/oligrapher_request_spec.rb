@@ -82,6 +82,62 @@ describe "Oligrapher", type: :request do
     end
   end
 
+  describe 'editors' do
+    let(:map_owner) { create_basic_user }
+    let(:other_user) { create_basic_user }
+    let(:network_map) do
+      create(:network_map_version3, user_id: map_owner.id, editors: [map_owner.id, other_user.id])
+    end
+
+    before { network_map }
+
+    describe 'GET /oligrapher/:id/editors' do
+      describe 'as map owner' do
+        before { login_as(map_owner, scope: :user) }
+
+        after { logout(map_owner) }
+
+        specify do
+          get editors_oligrapher_path(network_map)
+          expect(response.status).to eq 200
+          expect(json).to eql [map_owner.username, other_user.username]
+        end
+      end
+
+      describe 'as other user' do
+        before { login_as(other_user, scope: :user) }
+
+        after { logout(other_user) }
+
+        specify do
+          get editors_oligrapher_path(network_map)
+          expect(response).to have_http_status(403)
+        end
+      end
+    end
+
+    describe 'post /oligrapher/:id/editors' do
+      before { login_as(map_owner, scope: :user) }
+
+      after { logout(map_owner) }
+
+      it 'adds an editor' do
+        new_user = create_basic_user
+        expect(network_map.editors).not_to include new_user.id
+        post editors_oligrapher_path(network_map), params: { editor: { action: 'ADD', username: new_user.username } }
+        expect(response).to have_http_status(200)
+        expect(network_map.reload.editors).to include new_user.id
+      end
+
+      it 'removes an editor' do
+        expect(network_map.editors).to include other_user.id
+        post editors_oligrapher_path(network_map), params: { editor: { action: 'REMOVE', username: other_user.username } }
+        expect(response).to have_http_status(200)
+        expect(network_map.reload.editors).not_to include other_user.id
+      end
+    end
+  end
+
   describe 'find_nodes' do
     let(:nodes) do
       [build(:org, :with_org_name), build(:org, :with_org_name)]

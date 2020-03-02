@@ -26,9 +26,10 @@ class OligrapherAssetsService
     `git -C #{REPO_DIR} rev-parse HEAD`.strip
   end
 
-  def initialize(commit = DEFAULT_BRANCH, skip_fetch: false)
+  def initialize(commit = DEFAULT_BRANCH, skip_fetch: false, local_api: false)
     self.class.setup_repo
     @commit = commit
+    @local_api = local_api
     git 'fetch --all --quiet' unless skip_fetch
 
     # validate commit
@@ -42,7 +43,16 @@ class OligrapherAssetsService
     Dir.chdir REPO_DIR do
       git "checkout --force -q #{@commit}"
       system('yarn install --silent') || error("Yarn install failed for commit #{@commit}")
-      system("yarn run build-prod --env.output_path=#{ASSET_DIR} --env.filename=#{oligrapher_filename}") || error("Failed to build for commit #{@commit}")
+
+      build_cmd = [
+        'yarn run build-prod',
+        "--env.output_path=#{ASSET_DIR}",
+        "--env.filename=#{oligrapher_filename}"
+      ]
+
+      build_cmd << "--env.api_url=http://127.0.0.1:8081" if @local_api
+
+      system(build_cmd.join(' ')) || error("Failed to build for commit #{@commit}")
     end
 
     self
