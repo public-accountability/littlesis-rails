@@ -7,12 +7,16 @@
 class OligrapherController < ApplicationController
   include MapsHelper
 
+  skip_before_action :verify_authenticity_token if Rails.env.development?
   before_action :set_map, only: %i[update]
   before_action :authenticate_user!, except: %i[find_nodes]
+  before_action :set_oligrapher_version
 
+  # POST /oligrapher
+  # params:
   #  {
   #    graph_data: {...},
-  #    attributes: { title, description, is_private, is_cloneable, list_sources }
+  #    attributes: { title, description, is_private, is_cloneable }
   #  }
   def create
     map = NetworkMap.new(new_oligrapher_params)
@@ -28,14 +32,26 @@ class OligrapherController < ApplicationController
     check_owner
 
     if @map.update(oligrapher_params)
-      head :ok
+      render json: :ok
     else
       render json: @map.errors, status: :bad_request
     end
   end
 
+  def new
+    @map = NetworkMap.new(version: 3, title: 'Untitled Map', user: current_user)
+    @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
+
+    render 'oligrapher/new', layout: 'oligrapher3'
+  end
+
+  def show
+    check_private_access
+    @configuration = Oligrapher.configuration(map: @map)
+    render 'oligrapher/oligrapher', layout: 'oligrapher3'
+  end
+
   def example
-    @oligrapher_version = '0f71f0d96fd443ceebc82c5981cd7aaac61584c5'
     render 'oligrapher/example', layout: 'oligrapher3'
   end
 
@@ -64,6 +80,10 @@ class OligrapherController < ApplicationController
       .permit(:title, :description, :is_private, :is_cloneable, :list_sources)
       .to_h
       .merge(graph_data: params[:graph_data]&.permit!&.to_h)
+  end
+
+  def set_oligrapher_version
+    @oligrapher_version = '859333be17266180f49ef211ed9dc65da8a9b721'
   end
 end
 

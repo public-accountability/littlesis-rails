@@ -7,6 +7,32 @@ module Oligrapher
                                       Relationship::DONATION_CATEGORY,
                                       Relationship::OWNERSHIP_CATEGORY]).freeze
 
+  def self.configuration(map:, current_user: nil)
+    is_owner = current_user.present? && map.user_id == current_user.id
+
+    { settings: { debug: true },
+      display: { modes: { editor: is_owner } },
+      attributes: {
+        title: map.title,
+        subtitle: '',
+        date: (map.created_at || Time.current).strftime('%B %d, %Y'),
+        user: { name: current_user&.username },
+        settings: {
+          private: map.is_private,
+          clone: map.is_cloneable,
+          defaultStoryMode: false,
+          defaultExploreMode: true,
+          storyModeOnly: false,
+          exploreModeOnly: false
+        },
+        links: [
+          { text: 'Edit', url: 'https://littlesis.org/oligrapher/edit' },
+          { text: 'Clone', url: 'https://littlesis.org/oligrapher/clone' },
+          { text: 'Disclaimer', url: 'https://littlesis.org/oligrapher/disclaimer' }
+        ]
+      } }
+  end
+
   module Node
     def self.from_entity(entity)
       {
@@ -18,7 +44,7 @@ module Oligrapher
     end
   end
 
-  # Legacy (oligrapher 2.0) functions
+  # Legacy (oligrapher 2.0) functions #
 
   def self.legacy_entity_to_node(entity)
     {
