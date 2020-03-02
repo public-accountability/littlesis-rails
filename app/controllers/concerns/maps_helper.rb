@@ -2,6 +2,15 @@
 
 # Shared helper functions between MapsController and OligrapherController
 module MapsHelper
+  def save_and_render(map)
+    if map.validate
+      map.save!
+      render json: map
+    else
+      render json: map.errors, status: :bad_request
+    end
+  end
+
   def set_map
     @map = NetworkMap.find(params[:id])
   end

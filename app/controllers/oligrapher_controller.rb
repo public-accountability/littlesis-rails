@@ -19,29 +19,18 @@ class OligrapherController < ApplicationController
   #    attributes: { title, description, is_private, is_cloneable }
   #  }
   def create
-    map = NetworkMap.new(new_oligrapher_params)
-    if map.validate
-      map.save!
-      render json: map
-    else
-      render json: map.errors, status: :bad_request
-    end
+    save_and_render NetworkMap.new(new_oligrapher_params)
   end
 
   def update
     check_owner
-
-    if @map.update(oligrapher_params)
-      render json: :ok
-    else
-      render json: @map.errors, status: :bad_request
-    end
+    @map.assign_attributes(oligrapher_params)
+    save_and_render @map
   end
 
   def new
     @map = NetworkMap.new(version: 3, title: 'Untitled Map', user: current_user)
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
-
     render 'oligrapher/new', layout: 'oligrapher3'
   end
 
