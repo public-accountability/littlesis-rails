@@ -26,9 +26,9 @@ describe NetworkMap, type: :model do
 
   it { is_expected.not_to have_db_column(:sf_user_id) }
   it { is_expected.to have_db_column(:oligrapher_version) }
+  it { is_expected.to have_db_column(:editors) }
   it { is_expected.to belong_to(:user).optional }
   it { is_expected.to validate_presence_of(:title) }
-
 
   describe 'OLIGRAPHER_VERSION constant' do
     specify { expect(NetworkMap::OLIGRAPHER_VERSION).to eq '0.0.1' }
@@ -343,6 +343,65 @@ describe NetworkMap, type: :model do
       expect(NetworkMap.scope_for_user(user2).count).to eq 2
     end
   end
+
+  describe 'Collaboration' do
+    let(:owner) { create_basic_user }
+    let(:other_user) { create_basic_user }
+    let(:map) { create(:network_map_version3, user: owner) }
+
+    it 'new map has no editors' do
+      expect(NetworkMap.new.editors).to eq []
+    end
+
+    it 'adds user_id by default' do
+      new_map = NetworkMap.new(title: 'example', user_id: 1, oligrapher_version: 3)
+      expect(new_map.editors).to eq []
+      new_map.save!
+      expect(new_map.reload.editors).to eq [1]
+    end
+
+    describe '#add_editor' do
+      it 'adds user to editors array' do
+        expect(map.editors).to eq [owner.id]
+        expect { map.add_editor(other_user).save! }
+          .to change { map.reload.editors }.from([owner.id]).to([owner.id, other_user.id])
+      end
+
+      it 'adds user by id to editors array' do
+        expect(map.editors).to eq [owner.id]
+        expect { map.add_editor(other_user.id).save! }
+          .to change { map.reload.editors }.from([owner.id]).to([owner.id, other_user.id])
+      end
+
+      it 'validates user id before adding' do
+        map.add_editor(5_000_000)
+        expect(map.editors).to eq [owner.id]
+      end
+    end
+
+    describe '#remove_editor' do
+      it 'removes user' do
+        expect(map.editors).to eq [owner.id]
+        map.add_editor(other_user).save!
+        expect(map.reload.editors).to eq [owner.id, other_user.id]
+        map.remove_editor(other_user).save!
+        expect(map.reload.editors).to eq [owner.id]
+      end
+
+      it 'cannot remove the map owner' do
+        expect(map.editors).to eq [owner.id]
+        expect { map.add_editor(owner).save! }.not_to change { map.reload.editors }
+      end
+
+      it 'silently ignores users not in editor array' do
+        map.add_editor(other_user).save!
+        expect(map.reload.editors).to eq [owner.id, other_user.id]
+        map.remove_editor(5_000_000)
+        expect(map.reload.editors).to eq [owner.id, other_user.id]
+        expect(map.validate).to be true
+      end
+    end
+  end # end collaboration
 
   describe 'soft delete / destroy' do
     let(:network_map) { create(:network_map, user_id: 1) }

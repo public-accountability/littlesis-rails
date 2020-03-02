@@ -12,12 +12,10 @@ class OligrapherController < ApplicationController
   before_action :authenticate_user!, except: %i[find_nodes]
   before_action :set_oligrapher_version
 
+  # Crud actions
+
   # POST /oligrapher
-  # params:
-  #  {
-  #    graph_data: {...},
-  #    attributes: { title, description, is_private, is_cloneable }
-  #  }
+  #  { graph_data: {...}, attributes: { title, description, is_private, is_cloneable } }
   def create
     save_and_render NetworkMap.new(new_oligrapher_params)
   end
@@ -34,6 +32,18 @@ class OligrapherController < ApplicationController
     render 'oligrapher/new', layout: 'oligrapher3'
   end
 
+  def get_editors
+    check_owner
+  end
+
+  # two actions { action: 'ADD', username: <username> }
+  # two actions { action: 'REMOVE', username: <username> }
+  def editors
+    check_owner
+  end
+
+  # Pages
+
   def show
     check_private_access
     @configuration = Oligrapher.configuration(map: @map)
@@ -44,6 +54,8 @@ class OligrapherController < ApplicationController
     render 'oligrapher/example', layout: 'oligrapher3'
   end
 
+  # Search Api
+  # Oligrapher 3 also uses our regular api routes
   def find_nodes
     return head :bad_request if params[:q].blank?
 
