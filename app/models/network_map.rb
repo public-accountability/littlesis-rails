@@ -18,8 +18,8 @@ class NetworkMap < ApplicationRecord
 
   belongs_to :user, foreign_key: 'user_id', inverse_of: :network_maps, optional: true
 
-  scope :featured, -> { where(is_featured: true) }
-  scope :public_scope, -> { where(is_private: false) }
+  scope :featured, -> { where(is_featured: true, oligrapher_version: 2) }
+  scope :public_scope, -> { where(is_private: false, oligrapher_version: 2) }
   scope :private_scope, -> { where(is_private: true) }
   scope :with_description, -> { where.not(description: [nil, '']) }
   scope :with_annotations, -> { where.not(annotations_data: '[]') }
