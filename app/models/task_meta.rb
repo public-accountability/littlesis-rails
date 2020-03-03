@@ -1,2 +1,0 @@
-class TaskMeta < ApplicationRecord
-end
