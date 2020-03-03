@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DocumentsController < ApplicationController
   before_action :authenticate_user!, only: [:edit, :update]
   before_action :set_document

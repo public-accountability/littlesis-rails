@@ -27,7 +27,7 @@ class ReferencesController < ApplicationController
   end
 
   def destroy
-    check_permission "deleter"
+    check_permission 'deleter'
     begin
       Reference.find(params[:id]).destroy!
     rescue ActiveRecord::RecordNotFound
@@ -64,6 +64,7 @@ class ReferencesController < ApplicationController
   # optional params: page, per_page defaults: 1, 10
   def entity
     return head :bad_request unless params[:entity_id]
+
     @entity = Entity.find(params[:entity_id])
     render json: cached_recent_source_links
   end
