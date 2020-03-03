@@ -10,7 +10,7 @@ class OligrapherController < ApplicationController
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
   before_action :authenticate_user!, except: %i[find_nodes]
-  before_action :set_map, only: %i[update get_editors editors show]
+  before_action :set_map, only: %i[update get_editors editors show lock]
   before_action :check_owner, only: %i[update get_editors editors]
   before_action :set_oligrapher_version
 
@@ -52,6 +52,17 @@ class OligrapherController < ApplicationController
 
     @map.public_send("#{action}_editor", editor).save
     render json: { editors: @map.usernames }
+  end
+
+  # a POST request is how a user can "takeover" a locked map
+  # A GET request does lock polling
+  def lock
+    check_private_access
+    raise Exceptions::PermissionError unless @map.editors.include?(current_user.id)
+
+    lock_service = ::OligrapherLockService.new(map: @map, current_user: current_user)
+    lock_service.lock! if request.post? || lock_service.user_can_lock?
+    render json: lock_service.as_json
   end
 
   # Pages

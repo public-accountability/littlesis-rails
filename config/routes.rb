@@ -201,6 +201,8 @@ Lilsis::Application.routes.draw do
     member do
       get '/editors', action: :get_editors
       post '/editors', action: :editors
+      get 'lock'
+      post 'lock'
     end
   end
 

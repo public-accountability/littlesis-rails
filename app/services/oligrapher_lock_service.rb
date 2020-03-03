@@ -23,6 +23,17 @@ class OligrapherLockService
     @lock = Rails.cache.fetch(cache_key)
   end
 
+  # Note
+  def as_json
+    if locked?
+      @lock.to_h.merge(locked: true,
+                       username: User.find(@lock.user_id).username,
+                       user_has_lock: user_has_lock?)
+    else
+      { locked: false }
+    end
+  end
+
   def lock
     lock! if user_can_lock?
     self
