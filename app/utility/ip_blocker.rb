@@ -1,7 +1,10 @@
-# Checks if ip in blacklist.yml
+# frozen_string_literal: true
+
+# Checks if IP in listed in the configuration `restricted_ips`
+# Used by confirmations to block ip rangers where spam bots sign up.
 module IpBlocker
   if APP_CONFIG['restricted_ips'].blank?
-    define_singleton_method(:restricted?) { |ip| false }
+    define_singleton_method(:restricted?) { false }
   else
 
     IPS = APP_CONFIG['restricted_ips'].map do |ip|
@@ -16,6 +19,6 @@ module IpBlocker
       IPS.each { |blocked_ip| return true if blocked_ip.include?(ip) }
       return false
     end
-    
+
   end
 end
