@@ -4,7 +4,7 @@
 # Used by confirmations to block ip rangers where spam bots sign up.
 module IpBlocker
   if APP_CONFIG['restricted_ips'].blank?
-    define_singleton_method(:restricted?) { false }
+    define_singleton_method(:restricted?) { |ip| false }
   else
 
     IPS = APP_CONFIG['restricted_ips'].map do |ip|

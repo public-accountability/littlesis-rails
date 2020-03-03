@@ -3,12 +3,12 @@ describe IpBlocker do
     # Removes the module from object-space:
     Object.send(:remove_const, :IpBlocker) if Module.const_defined?(:IpBlocker)
     # Reloads the module
-    load Rails.root.join('app', 'utility', 'ip_blocker.rb')
+    load Rails.root.join('app/utility/ip_blocker.rb')
   end
 
-  context 'restricted_ips is blank' do
+  context 'when restricted_ips is blank' do
     before do
-      expect(APP_CONFIG).to receive(:[]).with('restricted_ips').and_return(nil)
+      allow(APP_CONFIG).to receive(:[]).with('restricted_ips').and_return(nil)
       reload_mod
     end
 
@@ -17,10 +17,9 @@ describe IpBlocker do
     end
   end
 
-  context 'restricted_ips contain two ip ranges' do
+  context 'when restricted_ips contains two ip ranges' do
     before do
-      expect(APP_CONFIG).to receive(:[]).twice.with('restricted_ips')
-                              .and_return(['192.0.2.0/24','192.0.3.0/24'])
+      allow(APP_CONFIG).to receive(:[]).twice.with('restricted_ips').and_return(['192.0.2.0/24', '192.0.3.0/24'])
       reload_mod
     end
 
@@ -33,10 +32,9 @@ describe IpBlocker do
     end
   end
 
-  context 'list of restricted ips contain invalid addresses' do
+  context 'when list of restricted ips contain invalid addresses' do
     before do
-      expect(APP_CONFIG).to receive(:[]).twice.with('restricted_ips')
-                              .and_return(['192.0.2.0/24','FAKE'])
+      allow(APP_CONFIG).to receive(:[]).twice.with('restricted_ips').and_return(['192.0.2.0/24', 'FAKE'])
       reload_mod
     end
 
