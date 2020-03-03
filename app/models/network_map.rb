@@ -222,6 +222,10 @@ class NetworkMap < ApplicationRecord
     end
   end
 
+  def editor?(user)
+    editors.include?(user.try(:id) || user.try!(:to_i))
+  end
+
   def usernames
     # .order(Arel.sql("FIELD(id, #{editors.join(',')})")) # keep editor array order
     User
