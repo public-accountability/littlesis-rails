@@ -379,6 +379,13 @@ describe NetworkMap, type: :model do
       end
     end
 
+    specify '#editor?' do
+      expect(map.editor?(owner)).to be true
+      expect(map.editor?(owner.id)).to be true
+      expect(map.editor?(other_user)).to be false
+      expect(map.editor?(other_user.id)).to be false
+    end
+
     describe '#remove_editor' do
       it 'removes user' do
         expect(map.editors).to eq [owner.id]

@@ -10,9 +10,11 @@ class OligrapherController < ApplicationController
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
   before_action :authenticate_user!, except: %i[find_nodes]
-  before_action :set_map, only: %i[update get_editors editors]
+  before_action :set_map, only: %i[update get_editors editors show lock]
   before_action :check_owner, only: %i[update get_editors editors]
   before_action :set_oligrapher_version
+
+  before_action :admins_only if Rails.env.production?
 
   # Crud actions
 
@@ -50,15 +52,26 @@ class OligrapherController < ApplicationController
       raise Exceptions::LittleSisError, "No user found with username #{username}"
     end
 
-    @map.public_send "#{action}_editor", editor
-    save_and_render @map
+    @map.public_send("#{action}_editor", editor).save
+    render json: { editors: @map.usernames }
+  end
+
+  # a POST request is how a user can "takeover" a locked map
+  # A GET request does lock polling
+  def lock
+    check_private_access
+    raise Exceptions::PermissionError unless @map.editors.include?(current_user.id)
+
+    lock_service = ::OligrapherLockService.new(map: @map, current_user: current_user)
+    lock_service.lock! if request.post? || lock_service.user_can_lock?
+    render json: lock_service.as_json
   end
 
   # Pages
 
   def show
     check_private_access
-    @configuration = Oligrapher.configuration(map: @map)
+    @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
     render 'oligrapher/oligrapher', layout: 'oligrapher3'
   end
 
@@ -96,7 +109,7 @@ class OligrapherController < ApplicationController
   end
 
   def set_oligrapher_version
-    @oligrapher_version = '859333be17266180f49ef211ed9dc65da8a9b721'
+    @oligrapher_version = Oligrapher::VERSION
   end
 end
 

@@ -1,4 +1,5 @@
 require 'rails_helper'
+require Rails.root.join('app/services/oligrapher_lock_service.rb').to_s
 
 describe "Oligrapher", type: :request do
   let(:user) { create_basic_user }
@@ -100,7 +101,7 @@ describe "Oligrapher", type: :request do
         specify do
           get editors_oligrapher_path(network_map)
           expect(response.status).to eq 200
-          expect(json).to eql [map_owner.username, other_user.username]
+          expect(json.to_set).to eql [map_owner.username, other_user.username].to_set
         end
       end
 
@@ -134,6 +135,63 @@ describe "Oligrapher", type: :request do
         post editors_oligrapher_path(network_map), params: { editor: { action: 'REMOVE', username: other_user.username } }
         expect(response).to have_http_status(200)
         expect(network_map.reload.editors).not_to include other_user.id
+      end
+    end
+  end
+
+  describe "Locking" do
+    let(:owner) { create_basic_user }
+    let(:editor) { create_basic_user }
+    let(:map) do
+      create(:network_map_version3, user_id: owner.id, editors: [owner.id, editor.id])
+    end
+
+    describe 'logged in as owner' do
+      before { login_as(owner, scope: :user) }
+      after { logout(:user) }
+
+      it 'GET requests locks if there is no lock' do
+        expect(OligrapherLockService.new(map: map, current_user: owner).locked?).to be false
+        get lock_oligrapher_path(map)
+        expect(response).to have_http_status(200)
+        expect(OligrapherLockService.new(map: map, current_user: owner).locked?).to be true
+        expect(json['locked']).to be true
+        expect(json['username']).to eq owner.username
+      end
+    end
+
+    describe 'logged in as owner' do
+      before { login_as(owner, scope: :user) }
+      after { logout(:user) }
+
+      it 'GET requests locks if there is no lock' do
+        expect(OligrapherLockService.new(map: map, current_user: owner).locked?).to be false
+        get lock_oligrapher_path(map)
+        expect(response).to have_http_status(200)
+        expect(OligrapherLockService.new(map: map, current_user: owner).locked?).to be true
+        expect(json['locked']).to be true
+        expect(json['user_has_lock']).to be true
+        expect(json['username']).to eq owner.username
+      end
+    end
+
+    describe 'logged in as other user' do
+      before { login_as(editor, scope: :user) }
+      after { logout(:user) }
+
+      it 'only post will take the lock' do
+        OligrapherLockService.new(map: map, current_user: owner).lock!
+        expect(OligrapherLockService.new(map: map, current_user: editor).locked?).to be true
+        get lock_oligrapher_path(map)
+        expect(response).to have_http_status(200)
+        expect(OligrapherLockService.new(map: map, current_user: editor).locked?).to be true
+        expect(json['locked']).to be true
+        expect(json['user_has_lock']).to be false
+        expect(json['username']).to eq owner.username
+        post lock_oligrapher_path(map)
+        expect(json['locked']).to be true
+        expect(json['user_has_lock']).to be true
+        expect(json['username']).to eq editor.username
       end
     end
   end
