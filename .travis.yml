@@ -13,8 +13,6 @@ jobs:
       rvm: 2.6.5
       cache:
         bundler: true
-        directories:
-          - node_modules
       addons:
         mariadb: '10.4'
       services:
@@ -29,8 +27,6 @@ jobs:
         - node -v
         - npm -g install yarn
         - gem install bundler
-      install:
-        - bundle install
         - yarn install
       before_script:
         - cp config/database.travis.yml config/database.yml

@@ -1,23 +1,14 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict, :edits]
+  before_action :set_user,
+                only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict, :edits]
   before_action :authenticate_user!, except: [:success, :check_username]
   before_action :prevent_restricted, only: [:show, :edits]
   before_action :admins_only, except: [:show, :restrict, :success, :edits, :check_username]
   before_action :user_or_admins_only, only: [:edits]
 
   rescue_from(UserAbilities::InvalidUserAbilityError) { head :bad_request }
-
-  # get /users
-  def index
-    @users = User
-      .joins("INNER JOIN sf_guard_user ON sf_guard_user.id = users.sf_guard_user_id")
-      .joins("INNER JOIN sf_guard_user_profile ON sf_guard_user_profile.user_id = sf_guard_user.id")
-      .where(sf_guard_user: { is_active: true, is_super_admin: false }, sf_guard_user_profile: { is_confirmed: true })
-      .order(:username)
-      .page(params[:page]).per(100)
-  end
 
   # GET /users/:username
   def show
@@ -42,7 +33,7 @@ class UsersController < ApplicationController
 
   def upload_image
     if uploaded = image_params[:file]
-      filename = Image.random_filename(File.extname(uploaded.original_filename))      
+      filename = Image.random_filename(File.extname(uploaded.original_filename))
       src_path = Rails.root.join('tmp', filename).to_s
       open(src_path, 'wb') do |file|
         file.write(uploaded.read)

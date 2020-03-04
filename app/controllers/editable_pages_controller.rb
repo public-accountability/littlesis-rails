@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EditablePagesController < ApplicationController
   before_action :authenticate_user!, except: [:display, :index]
   before_action :admins_only, except: [:display, :index]
@@ -17,7 +19,7 @@ class EditablePagesController < ApplicationController
 
   # GET /NAMESPACE
   def index
-    @page = self.class.page_model.find_by_name('index')
+    @page = self.class.page_model.find_by(name: 'index')
     if @page && !@page.markdown.nil?
       @markdown = markdown(@page.markdown)
     else
@@ -82,6 +84,7 @@ class EditablePagesController < ApplicationController
   def editable_page_path(name, action = nil)
     base = "/#{self.class.namespace}/#{name}"
     return base if action.nil?
+
     "#{base}/#{action}"
   end
 
@@ -89,13 +92,14 @@ class EditablePagesController < ApplicationController
 
   def set_page
     raise Exceptions::NotFoundError if page_name.blank?
-    @page = self.class.page_model.find_by_name(page_name)
+
+    @page = self.class.page_model.find_by(name: page_name)
     raise Exceptions::NotFoundError if @page.nil?
   end
 
   def page_name
     name = params[:page_name]
-    self.class.page_model.pagify_name(name) unless name.blank?
+    self.class.page_model.pagify_name(name) if name.present?
   end
 
   def update_params
@@ -110,5 +114,3 @@ class EditablePagesController < ApplicationController
     self.class.instance_variable_get(:@model_param)
   end
 end
-
-

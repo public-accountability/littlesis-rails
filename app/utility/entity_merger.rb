@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/Output, Metrics/MethodLength
+
 class EntityMerger
   attr_reader :source, :dest, :extensions,
               :contact_info, :lists, :images,
@@ -116,7 +118,6 @@ class EntityMerger
         dest.merge_extension(ext_id, fields)
       end
     end
-
   end
 
   def merge_extensions
@@ -206,7 +207,6 @@ class EntityMerger
                   .map { |ae| ae.tap { |x| x.entity_id = dest.id } }
   end
 
-  
   def merge_os_categories
     @os_categories = source
                        .os_entity_categories
@@ -235,7 +235,7 @@ class EntityMerger
       end
 
       attributes = relationship.attributes.except('id', 'entity1_id', 'entity2_id', 'updated_at', 'created_at')
-      
+
       if relationship.entity1_id == source.id
         attributes.merge!('entity1_id' => dest.id, 'entity2_id' => relationship.entity2_id)
       elsif relationship.entity2_id == source.id
@@ -253,8 +253,6 @@ class EntityMerger
       end
     end
   end
-  
-  #def merge_versions!; end
 
   def merge_os_donations!
     @os_match_relationships.each do |rel|
@@ -341,7 +339,7 @@ class EntityMerger
       'Only entities with the same primary ext can be merged'
     end
   end
-  
+
   class EntityMergerError < StandardError; end
 
   class MergingTwoCmpEntitiesError < EntityMergerError
@@ -384,7 +382,9 @@ class EntityMerger
   end
 
   def check_input_validity
-    raise ArgumentError, "Both source and dest must an Entity" unless source.is_a?(Entity) && dest.is_a?(Entity)
+    unless source.is_a?(Entity) && dest.is_a?(Entity)
+      raise ArgumentError, 'Both source and dest must an Entity'
+    end
     raise ExtensionMismatchError unless source.primary_ext == dest.primary_ext
   end
 
@@ -397,3 +397,5 @@ class EntityMerger
     @dest_relationship_lookup ||= Set.new(dest.relationships.map(&:triplet))
   end
 end
+
+# rubocop:enable Rails/Output, Metrics/MethodLength

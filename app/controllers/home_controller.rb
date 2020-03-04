@@ -70,7 +70,7 @@ class HomeController < ApplicationController
         else
           flash.now[:alert] = "Captcha incorrectly filled out"
         end
-        
+
       end
     end
   end
@@ -112,6 +112,7 @@ class HomeController < ApplicationController
   # POST /home/pai_signup
   def pai_signup
     return head :forbidden if likely_a_spam_bot
+
     pai_signup_ip_limit(request.remote_ip)
 
     signup_type = params[:tag]&.downcase.eql?('press') ? 'press' : 'pai'
