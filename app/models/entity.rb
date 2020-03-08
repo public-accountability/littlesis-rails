@@ -730,7 +730,7 @@ class Entity < ApplicationRecord
     search_terms.concat(alias_names.map { |n| ts_escape.call(Org.strip_name(n)) }) if org?
     search_terms.append("*#{ts_escape.call(self.name)}*") if org?
 
-    search_terms.uniq.map { |term| "(#{term})" }.join(' | ')
+    search_terms.uniq.reject(&:blank?).map { |term| "(#{term})" }.join(' | ')
   end
 
   # A wrapper around the default
