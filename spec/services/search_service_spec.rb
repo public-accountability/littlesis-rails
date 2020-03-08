@@ -15,8 +15,12 @@ describe SearchService do
     expect(SearchService.new('foo', page: 2).page).to eq 2
   end
 
-  it 'removes filler words' do
+  it 'removes filler words only when not contained in quotes' do
     expect(SearchService.new('temple of doom').query).to eq 'temple doom'
+    expect(SearchService.new('university of california "school of law"').query)
+      .to eq 'university california "school of law"'
+    expect(SearchService.new('"university of california" school of law').query)
+      .to eq '"university of california" school law'
   end
 
   it 'sets @esacped_query' do
