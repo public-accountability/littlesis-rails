@@ -14,7 +14,7 @@ class SearchController < ApplicationController
       @entities = service.entities
 
       # On the first page we show results for all categories: only entities can be paginated.
-      # Right now, only searching for entiteis can be filtering by tag, so
+      # Right now, only searching for entiteis can be filtered by tag, so
       # if there is a tag filter, we can only display the entity results
       if @page == 1 && !@tag_filter
         @lists = service.lists

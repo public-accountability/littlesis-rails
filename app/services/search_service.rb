@@ -48,10 +48,21 @@ class SearchService
 
   private
 
+  # Removes the words "and", "the", and "of" from the query, except when they
+  # appear within quoted phrases.
+  #
+  # e.g. the input query [university of california "school of law"] 
+  # should result in [university california "school of law"]
   def clean(query)
-    query
-      .gsub(/\b(and|the|of)\b/, '')
-      .gsub(/[ ]{2,}/, ' ')
+    # second argument to split() keeps trailing nil array elements
+    parts = query.split('"', -1)
+
+    # when split by quotation marks, even indexed parts are outside of quotes
+    clean_parts = parts.each_with_index.map do |part, i|
+      i.even? ? part.gsub(/\b(and|the|of)\b/, '').gsub(/[ ]{2,}/, ' ') : part
+    end
+
+    clean_parts.join('"')
   end
 
   class BlankQueryError < Exceptions::LittleSisError; end
