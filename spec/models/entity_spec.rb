@@ -820,6 +820,14 @@ describe Entity, :tag_helper do
         expect(e).to receive(:aliases).and_return(aliases)
         expect(e.send(:generate_search_terms)).to eq "(weird\\/name) | (name) | (*weird\\/name*)"
       end
+
+      it 'handles orgs with names that only contain words stripped by Org.strip_name()' do
+        orgname = Org.name_words_to_remove.slice(0, 5).join(" ")
+        e = build(:org, name: orgname)
+        aliases = [build(:alias, name: orgname, is_primary: true)]
+        expect(e).to receive(:aliases).and_return(aliases)
+        expect(e.send(:generate_search_terms)).to eq "(#{orgname}) | (*#{orgname}*)"
+      end
     end
   end
 
