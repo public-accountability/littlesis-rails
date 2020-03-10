@@ -10,7 +10,7 @@
 
 require Rails.root.join('lib', 'utility.rb').to_s
 
-URL = 'https://www.elections.ny.gov/NYSBOE/download/ZipDataFiles/ALL_REPORTS.zip'
+URL = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/ALL_REPORTS.zip'
 
 # Paths
 ZIP_FILE_PATH = Rails.root.join('data', 'ALL_REPORTS.zip').to_s
