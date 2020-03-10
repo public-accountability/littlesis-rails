@@ -7,7 +7,7 @@
 require Rails.root.join('lib', 'utility.rb').to_s
 require Rails.root.join('lib', 'nys_campaign_finance.rb').to_s
 
-URL = 'https://www.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
+URL =  'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
 ZIP_FILE_PATH = Rails.root.join('data', 'commcand.zip').to_s
 CSV_FILE_PATH = Rails.root.join('data', 'nys_filers.csv').to_s
 
@@ -22,7 +22,7 @@ else
   ColorPrinter.print_blue 'command.zip has already been downloaded'
 end
 
-ColorPrinter.print_blue "unziping: #{ZIP_FILE_PATH}"
+ColorPrinter.print_blue "unzipping: #{ZIP_FILE_PATH}"
 
 cmd = ['unzip', '-p', ZIP_FILE_PATH, 'COMMCAND.txt', '>', CSV_FILE_PATH].join(' ')
 Utility.sh cmd, fail_message: "failed to unzip file #{ZIP_FILE_PATH}"
