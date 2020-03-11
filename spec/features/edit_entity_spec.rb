@@ -1,6 +1,6 @@
 describe 'edit enity page', type: :feature do
   let(:user) { create_really_basic_user }
-  let(:entity) { create(:entity_org, last_user_id: user.sf_guard_user.id) }
+  let(:entity) { create(:public_company_entity, last_user_id: user.sf_guard_user.id) }
 
   context 'user is not logged in' do
     before { visit edit_entity_path(entity) }
@@ -40,6 +40,31 @@ describe 'edit enity page', type: :feature do
 
           expect(page).to have_current_path entity_path(entity)
           expect(entity.reload.blurb).to eql new_short_description
+        end
+      end
+
+      context 'Filling out business data' do
+        scenario 'user adds business financial details' do
+          expect(entity.business).to be_a(Business)
+
+          within ".edit_entity" do
+            check 'reference_just_cleaning_up'
+            fill_in 'Market capitalization', with: 123
+            fill_in 'Assets', with: 432
+            fill_in 'Net income', with: 999
+            fill_in 'Annual profit', with: 10101
+            click_button 'Update'
+          end
+
+          within "#action-buttons" do
+            click_on "edit"
+          end
+
+          expect(page).to have_current_path edit_entity_path(entity)
+          expect(page).to have_field('Market capitalization', with: 123)
+          expect(page).to have_field('Assets', with: 432)
+          expect(page).to have_field('Net income', with: 999)
+          expect(page).to have_field('Annual profit', with: 10101)
         end
       end
 

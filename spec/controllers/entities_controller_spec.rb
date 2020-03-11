@@ -483,28 +483,39 @@ describe EntitiesController, type: :controller do
     end
 
     describe 'updating a public company' do
-      before do
-        @org = create(:entity_org)
-        @org.add_extension('PublicCompany', ticker: 'XYZ')
-        @params = { id: @org.id,
-                    entity: {
-                      name: @org.name,
-                      public_company_attributes: {
-                        id: @org.public_company.id,
-                        ticker: 'ABC'
-                      }
-                    },
-                    reference: { 'url' => 'http://example.com', 'name' => 'new reference' } }
-      end
+      let(:public_company) { create(:public_company_entity) }
+      let(:params) {
+        { id: public_company.id,
+          entity: {
+            name: public_company.name,
+            public_company_attributes: {
+              id: public_company.public_company.id,
+              ticker: 'ABC'
+            },
+            business_attributes: {
+              id: public_company.business.id,
+              annual_profit: 999,
+              assets: 100,
+              marketcap: 200,
+              net_income: 300
+            },
+          },
+          reference: { 'url' => 'http://example.com', 'name' => 'new reference' } }
+      }
 
       it 'updates ticker' do
-        expect(Entity.find(@org.id).public_company.ticker).to eq 'XYZ'
-        expect { patch :update, params: @params }.to change { PublicCompany.find(@org.public_company.id).ticker }.to('ABC')
+        expect(Entity.find(public_company.id).public_company.ticker).to eq 'XYZ'
+        expect { patch :update, params: params }.to change { PublicCompany.find(public_company.public_company.id).ticker }.to('ABC')
+      end
+
+      it 'updates business fields' do
+        patch :update, params: params
+        expect(public_company.business.reload).to have_attributes(annual_profit: 999, assets: 100, marketcap: 200, net_income: 300)
       end
 
       it 'redirects to entity url' do
-        patch :update, params: @params
-        expect(response).to redirect_to entity_path(@org)
+        patch :update, params: params
+        expect(response).to redirect_to entity_path(public_company)
       end
     end
   end # end describe #update
