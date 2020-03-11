@@ -1,4 +1,4 @@
-describe 'edit enity page', type: :feature do
+describe 'edit entity page', type: :feature do
   let(:user) { create_really_basic_user }
   let(:entity) { create(:public_company_entity, last_user_id: user.sf_guard_user.id) }
 
@@ -16,7 +16,7 @@ describe 'edit enity page', type: :feature do
     end
     after { logout(user) }
 
-    feature 'Viewing the edit entity page' do
+    feature 'viewing the edit entity page' do
       scenario 'displays header, action buttons, and edit references panel' do
         expect(page.status_code).to eq 200
         expect(page).to have_current_path edit_entity_path(entity)
@@ -29,7 +29,7 @@ describe 'edit enity page', type: :feature do
       end
     end
 
-    feature "Updating an entity's fields" do
+    feature "updating an entity's fields" do
       let(:new_short_description) { Faker::Lorem.sentence }
 
       context "selecting 'just cleaning up' " do
@@ -43,7 +43,7 @@ describe 'edit enity page', type: :feature do
         end
       end
 
-      context 'Filling out business data' do
+      context 'filling out business data' do
         scenario 'user adds business financial details' do
           expect(entity.business).to be_a(Business)
 
@@ -68,7 +68,7 @@ describe 'edit enity page', type: :feature do
         end
       end
 
-      context 'Adding a new reference' do
+      context 'adding a new reference' do
         let(:url) { Faker::Internet.unique.url }
         let(:ref_name) { 'reference-name' }
         let(:start_date) { '1950-01-01' }
@@ -92,7 +92,7 @@ describe 'edit enity page', type: :feature do
             .to eql({ 'referenceable_id' => entity.id, 'referenceable_type' => 'Entity' })
         end
 
-        context 'When the url does not exist as a document' do
+        context 'when the url does not exist as a document' do
           before do
             @document_count = Document.count
             update_entity.call
@@ -105,7 +105,7 @@ describe 'edit enity page', type: :feature do
           end
         end
 
-        context 'When the url already exists as a document' do
+        context 'when the url already exists as a document' do
           before do
             Document.create!(url: url)
             @document_count = Document.count

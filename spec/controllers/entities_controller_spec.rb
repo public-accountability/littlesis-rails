@@ -110,9 +110,9 @@ describe EntitiesController, type: :controller do
   end
 
   describe '#create' do
-    let(:params) { {"entity"=>{"name"=>"new entity", "blurb"=>"a blurb goes here", "primary_ext"=>"Org" } } }
-    let(:params_missing_ext) { {"entity"=>{"name"=>"new entity", "blurb"=>"a blurb goes here", "primary_ext"=>"" } } }
-    let(:params_add_relationship_page) { params.merge({'add_relationship_page' => 'TRUE'}) }
+    let(:params) { { "entity" => { "name" => "new entity", "blurb" => "a blurb goes here", "primary_ext" => "Org" } } }
+    let(:params_missing_ext) { { "entity" => { "name" => "new entity", "blurb" => "a blurb goes here", "primary_ext" => "" } } }
+    let(:params_add_relationship_page) { params.merge({ 'add_relationship_page' => 'TRUE' }) }
     let(:params_missing_ext_add_relationship_page) { params_missing_ext.merge({ 'add_relationship_page' => 'TRUE' }) }
 
     context 'user is logged in' do
@@ -244,7 +244,7 @@ describe EntitiesController, type: :controller do
           expect(controller).to receive(:check_permission).and_call_original
           d1 = create(:os_donation, fec_cycle_id: 'unique_id_1')
           d2 = create(:os_donation, fec_cycle_id: 'unique_id_2')
-          post :match_donation, params: { id: @entity.id , payload: [d1.id, d2.id] }
+          post :match_donation, params: { id: @entity.id, payload: [d1.id, d2.id] }
         end
 
         it { should respond_with(200) }
