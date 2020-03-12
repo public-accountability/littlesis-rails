@@ -31,6 +31,9 @@ class User < ApplicationRecord
   has_one :api_token, dependent: :destroy
   has_many :user_permissions, dependent: :destroy
 
+  # entities last edited by the user
+  has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", inverse_of: :last_user
+
   # profile image, needs to be reworked or removed
   has_one :image, inverse_of: :user, dependent: :destroy
 
@@ -190,9 +193,9 @@ class User < ApplicationRecord
     when Integer
       input
     when User
-      input.sf_guard_user_id
-    when SfGuardUser
       input.id
+    when SfGuardUser
+      raise Exceptions::LittleSisError, "Shouldn't use SfGuardUser. Provided: #{input}"
     else
       if allow_invalid
         APP_CONFIG['system_user_id']
