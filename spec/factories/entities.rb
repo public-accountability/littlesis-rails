@@ -20,6 +20,15 @@ FactoryBot.define do
     primary_ext { 'Org' }
   end
 
+  factory :public_company_entity, class: Entity do
+    name { 'org' }
+    primary_ext { 'Org' }
+    after :create do |entity|
+      entity.add_extension('PublicCompany', ticker: 'XYZ')
+      entity.add_extension('Business')
+    end
+  end
+
   factory :elected, class: Entity do
     name { 'Elected Representative' }
     primary_ext { 'Person' }

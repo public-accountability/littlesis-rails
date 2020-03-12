@@ -110,9 +110,9 @@ describe EntitiesController, type: :controller do
   end
 
   describe '#create' do
-    let(:params) { {"entity"=>{"name"=>"new entity", "blurb"=>"a blurb goes here", "primary_ext"=>"Org" } } }
-    let(:params_missing_ext) { {"entity"=>{"name"=>"new entity", "blurb"=>"a blurb goes here", "primary_ext"=>"" } } }
-    let(:params_add_relationship_page) { params.merge({'add_relationship_page' => 'TRUE'}) }
+    let(:params) { { "entity" => { "name" => "new entity", "blurb" => "a blurb goes here", "primary_ext" => "Org" } } }
+    let(:params_missing_ext) { { "entity" => { "name" => "new entity", "blurb" => "a blurb goes here", "primary_ext" => "" } } }
+    let(:params_add_relationship_page) { params.merge({ 'add_relationship_page' => 'TRUE' }) }
     let(:params_missing_ext_add_relationship_page) { params_missing_ext.merge({ 'add_relationship_page' => 'TRUE' }) }
 
     context 'user is logged in' do
@@ -244,7 +244,7 @@ describe EntitiesController, type: :controller do
           expect(controller).to receive(:check_permission).and_call_original
           d1 = create(:os_donation, fec_cycle_id: 'unique_id_1')
           d2 = create(:os_donation, fec_cycle_id: 'unique_id_2')
-          post :match_donation, params: { id: @entity.id , payload: [d1.id, d2.id] }
+          post :match_donation, params: { id: @entity.id, payload: [d1.id, d2.id] }
         end
 
         it { should respond_with(200) }
@@ -483,28 +483,39 @@ describe EntitiesController, type: :controller do
     end
 
     describe 'updating a public company' do
-      before do
-        @org = create(:entity_org)
-        @org.add_extension('PublicCompany', ticker: 'XYZ')
-        @params = { id: @org.id,
-                    entity: {
-                      name: @org.name,
-                      public_company_attributes: {
-                        id: @org.public_company.id,
-                        ticker: 'ABC'
-                      }
-                    },
-                    reference: { 'url' => 'http://example.com', 'name' => 'new reference' } }
-      end
+      let(:public_company) { create(:public_company_entity) }
+      let(:params) {
+        { id: public_company.id,
+          entity: {
+            name: public_company.name,
+            public_company_attributes: {
+              id: public_company.public_company.id,
+              ticker: 'ABC'
+            },
+            business_attributes: {
+              id: public_company.business.id,
+              annual_profit: 999,
+              assets: 100,
+              marketcap: 200,
+              net_income: 300
+            },
+          },
+          reference: { 'url' => 'http://example.com', 'name' => 'new reference' } }
+      }
 
       it 'updates ticker' do
-        expect(Entity.find(@org.id).public_company.ticker).to eq 'XYZ'
-        expect { patch :update, params: @params }.to change { PublicCompany.find(@org.public_company.id).ticker }.to('ABC')
+        expect(Entity.find(public_company.id).public_company.ticker).to eq 'XYZ'
+        expect { patch :update, params: params }.to change { PublicCompany.find(public_company.public_company.id).ticker }.to('ABC')
+      end
+
+      it 'updates business fields' do
+        patch :update, params: params
+        expect(public_company.business.reload).to have_attributes(annual_profit: 999, assets: 100, marketcap: 200, net_income: 300)
       end
 
       it 'redirects to entity url' do
-        patch :update, params: @params
-        expect(response).to redirect_to entity_path(@org)
+        patch :update, params: params
+        expect(response).to redirect_to entity_path(public_company)
       end
     end
   end # end describe #update
