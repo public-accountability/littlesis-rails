@@ -37,25 +37,18 @@ describe UsersController, type: :controller do
 
       describe 'Deleting a user' do
         let(:user) { create_basic_user }
-        let(:entity) { create(:entity_org, last_user_id: user.sf_guard_user_id) }
+        let(:entity) { create(:entity_org, last_user_id: user.id) }
 
         before { entity }
 
-        it 'marks sf_guard_user as deleted' do
-          expect(SfGuardUser.unscoped.find(user.sf_guard_user_id).is_deleted).to be false
-          delete :destroy, params: { :id => user.id }
-          expect(SfGuardUser.find_by_id(user.sf_guard_user_id)).to be_nil
-          expect(SfGuardUser.unscoped.find(user.sf_guard_user_id).is_deleted).to be true
-        end
-
         it 'updates last_user_id on entities' do
-          expect(Entity.find(entity.id).last_user_id).to eql user.sf_guard_user_id
+          expect(Entity.find(entity.id).last_user_id).to eql user.id
           delete :destroy, params: { :id => user.id }
           expect(Entity.find(entity.id).last_user_id).to eq 1
         end
 
         it 'updates last_user_id on relationships' do
-          expect(Relationship).to receive(:where).with(last_user_id: user.sf_guard_user_id)
+          expect(Relationship).to receive(:where).with(last_user_id: user.id)
                                     .and_return(double(:update_all => nil))
 
           delete :destroy, params: { :id => user.id }

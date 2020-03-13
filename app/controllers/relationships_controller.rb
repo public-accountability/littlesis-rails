@@ -166,7 +166,7 @@ class RelationshipsController < ApplicationController
   # creating or finding the entity for the relationship
   def make_or_get_entity(relationship)
     if relationship.fetch('name').to_i.zero?
-      attributes = relationship.slice('name', 'blurb', 'primary_ext').merge('last_user_id' => current_user.sf_guard_user_id)
+      attributes = relationship.slice('name', 'blurb', 'primary_ext').merge('last_user_id' => current_user.id)
       entity = Entity.create(attributes)
     else
 
@@ -224,7 +224,7 @@ class RelationshipsController < ApplicationController
       notes: relationship.fetch('notes', nil),
       amount: relationship.fetch('amount', nil),
       is_current: relationship.fetch('is_current', nil),
-      last_user_id: current_user.sf_guard_user_id
+      last_user_id: current_user.id
     }
 
     if [1, 2].include?(r[:category_id].to_i) && entity1.org? && entity2.person?
@@ -272,8 +272,8 @@ class RelationshipsController < ApplicationController
   end
 
   def update_entity_last_user
-    @relationship.entity.update(last_user_id: current_user.sf_guard_user_id)
-    @relationship.related.update(last_user_id: current_user.sf_guard_user_id)
+    @relationship.entity.update(last_user_id: current_user.id)
+    @relationship.related.update(last_user_id: current_user.id)
   end
 
   # whitelists relationship params and associated nested attributes

@@ -27,7 +27,7 @@ describe User do
   end
 
   describe 'abilities' do
-    let(:user) { create(:user, sf_guard_user: create(:sf_guard_user)) }
+    let(:user) { create(:user) }
 
     it 'serializes UserAbilities' do
       expect(build(:user).abilities).to be_a UserAbilities
@@ -93,34 +93,25 @@ describe User do
     end
 
     it 'validates uniqueness of email' do
-      invalid_user = build(:really_basic_user, email: user.email, sf_guard_user_id: 1)
-      valid_user = build(:really_basic_user, email: Faker::Internet.unique.email, sf_guard_user_id: 1)
+      invalid_user = build(:really_basic_user, email: user.email)
+      valid_user = build(:really_basic_user, email: Faker::Internet.unique.email)
       [invalid_user, valid_user].each(&:valid?)
       expect(invalid_user.errors[:email]).to eq(["has already been taken"])
       expect(valid_user.errors[:email]).to eq([])
     end
 
     describe 'username validation' do
-      let(:sf_guard_user) { create(:sf_guard_user) }
-
       context 'with valid username' do
-        let(:user) { build(:really_basic_user, username: 'f_kafka', sf_guard_user_id: sf_guard_user.id) }
+        let(:user) { build(:really_basic_user, username: 'f_kafka') }
 
         specify { expect(user.valid?).to be true }
       end
 
       context 'with invalid username' do
-        let(:user) { build(:really_basic_user, username: 'f.kafka', sf_guard_user_id: sf_guard_user.id) }
+        let(:user) { build(:really_basic_user, username: 'f.kafka') }
 
         specify { expect(user.valid?).to be false }
       end
-    end
-
-    describe 'sf_guard' do
-      subject { build(:user, sf_guard_user_id: rand(1000)) }
-
-      it { is_expected.to validate_uniqueness_of(:sf_guard_user_id) }
-      it { is_expected.to validate_presence_of(:sf_guard_user_id) }
     end
   end
 
@@ -141,8 +132,7 @@ describe User do
 
   describe 'set_default_network_id' do
     let(:user) do
-      User.new(sf_guard_user_id: rand(1000),
-               email: Faker::Internet.unique.email,
+      User.new(email: Faker::Internet.unique.email,
                username: random_username)
     end
 
@@ -152,22 +142,8 @@ describe User do
     end
   end
 
-  describe 'legacy_check_password' do
-    let(:sf_user) { create(:sf_guard_user, salt: 'SALT', password: Digest::SHA1.hexdigest('SALTPEANUTS')) }
-    let(:user) { create(:user, username: 'unique', sf_guard_user_id: sf_user.id) }
-
-    it 'returns true for correct password' do
-      expect(user.legacy_check_password('PEANUTS')).to be true
-    end
-
-    it 'returns false for incorrect password' do
-      expect(user.legacy_check_password('FAKE_PEANUTS')).to be false
-    end
-  end
-
   describe 'create_default_permissions' do
-    let(:sf_user) { create(:sf_guard_user) }
-    let(:user) { create(:user, sf_guard_user_id: sf_user.id, abilities: UserAbilities.new) }
+    let(:user) { create(:user, abilities: UserAbilities.new) }
 
     before { user }
 
@@ -175,18 +151,6 @@ describe User do
       expect { user.create_default_permissions }
         .to change { user.abilities.abilities }
               .from(Set.new).to(Set[:edit])
-    end
-
-    it 'creates contributor permission' do
-      expect(user.has_legacy_permission('contributor')).to be false
-      user.create_default_permissions
-      expect(user.has_legacy_permission('contributor')).to be true
-    end
-
-    it 'creates editor permission' do
-      expect(user.has_legacy_permission('editor')).to be false
-      user.create_default_permissions
-      expect(user.has_legacy_permission('editor')).to be true
     end
   end
 
@@ -200,20 +164,6 @@ describe User do
 
     def self.assert_user_does_not_have_permission(permission)
       specify { expect(user.has_ability?(permission)).to be false }
-    end
-
-    describe 'aliases method as has_legacy_permission' do
-      let(:permissions) { %i[edit] }
-
-      specify { expect(user.has_legacy_permission('editor')).to be true }
-      specify { expect(user.has_legacy_permission('admin')).to be false }
-    end
-
-    describe 'unused legacy permissions' do
-      let(:permissions) { %i[edit] }
-
-      assert_user_does_not_have_permission 'talker'
-      assert_user_does_not_have_permission 'contacter'
     end
 
     context 'when user only has edit ability' do
@@ -287,8 +237,7 @@ describe User do
 
   describe '#importer?' do
     let(:importer) do
-      sf_user = create(:sf_guard_user)
-      create(:user, sf_guard_user_id: sf_user.id, abilities: UserAbilities.new(:edit, :bulk))
+      create(:user, abilities: UserAbilities.new(:edit, :bulk))
     end
     let(:user) { create_really_basic_user }
 
@@ -298,8 +247,7 @@ describe User do
 
   describe '#bulker?' do
     let(:bulker) do
-      sf_user = create(:sf_guard_user)
-      create(:user, sf_guard_user_id: sf_user.id, abilities: UserAbilities.new(:edit, :bulk))
+      create(:user, abilities: UserAbilities.new(:edit, :bulk))
     end
     let(:user) { create_really_basic_user }
 
@@ -309,8 +257,7 @@ describe User do
 
   describe '#merger?' do
     let(:merger) do
-      sf_user = create(:sf_guard_user)
-      create(:user, sf_guard_user_id: sf_user.id, abilities: UserAbilities.new(:edit, :merge))
+      create(:user, abilities: UserAbilities.new(:edit, :merge))
     end
     let(:user) { create_really_basic_user }
 
@@ -383,13 +330,8 @@ describe User do
     end
 
     it 'accepts User' do
-      user = build(:user, sf_guard_user_id: 123)
+      user = build(:user)
       expect(User.derive_last_user_id_from(user)).to eq 123
-    end
-
-    it 'accepts SfGuardUser' do
-      sf_user = build(:sf_user, id: 456)
-      expect(User.derive_last_user_id_from(sf_user)).to eq 456
     end
 
     it 'by default it raises TypeError if provided nil' do

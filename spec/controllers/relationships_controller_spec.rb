@@ -1,7 +1,7 @@
 describe RelationshipsController, type: :controller do
-  let(:sf_user) { create(:sf_user) }
-  let(:e1) { create(:entity_person, last_user_id: sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
-  let(:e2) { create(:entity_org, last_user_id: sf_user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
+  let(:user) { create(:user) }
+  let(:e1) { create(:entity_person, last_user_id: user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
+  let(:e2) { create(:entity_org, last_user_id: user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
 
   before(:all) do
     Entity.skip_callback(:create, :after, :create_primary_ext)
@@ -104,8 +104,8 @@ describe RelationshipsController, type: :controller do
 
       it 'updates last_user_id' do
         post_request
-        expect(Entity.find(e1.id).last_user_id).not_to eql sf_user.id
-        expect(Entity.find(e2.id).last_user_id).not_to eql sf_user.id
+        expect(Entity.find(e1.id).last_user_id).not_to eql user.id
+        expect(Entity.find(e2.id).last_user_id).not_to eql user.id
       end
     end
 
@@ -250,7 +250,7 @@ describe RelationshipsController, type: :controller do
 
     context 'updating start and end dates' do
       let!(:relationship) do
-        create(:generic_relationship, entity: e1, related: e2, last_user_id: sf_user.id)
+        create(:generic_relationship, entity: e1, related: e2, last_user_id: user.id)
       end
 
       before do
@@ -273,8 +273,8 @@ describe RelationshipsController, type: :controller do
         end
 
         it 'does not update last_user_id' do
-          expect(Entity.find(e1.id).last_user_id).to eql sf_user.id
-          expect(Entity.find(e2.id).last_user_id).to eql sf_user.id
+          expect(Entity.find(e1.id).last_user_id).to eql user.id
+          expect(Entity.find(e2.id).last_user_id).to eql user.id
         end
       end
 
@@ -295,8 +295,8 @@ describe RelationshipsController, type: :controller do
         end
 
         it 'updates last_user_id' do
-          expect(Entity.find(e1.id).last_user_id).not_to eql sf_user.id
-          expect(Entity.find(e2.id).last_user_id).not_to eql sf_user.id
+          expect(Entity.find(e1.id).last_user_id).not_to eql user.id
+          expect(Entity.find(e2.id).last_user_id).not_to eql user.id
         end
       end
 
@@ -381,7 +381,7 @@ describe RelationshipsController, type: :controller do
         it 'updates last user id' do
           expect { patch_request.call }
             .to change { Relationship.find(relationship.id).last_user_id }
-                  .to(controller.current_user.sf_guard_user_id)
+                  .to(controller.current_user.id)
         end
 
         it 'creates a new reference' do

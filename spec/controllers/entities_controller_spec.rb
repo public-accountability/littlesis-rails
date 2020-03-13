@@ -129,9 +129,9 @@ describe EntitiesController, type: :controller do
             expect { post :create, params: params }.to change { Entity.count }.by(1)
           end
 
-          it "should set last_user_id to be the user's sf guard user id" do
+          it "should set last_user_id to be the user's id" do
             post :create, params: params
-            expect(Entity.last.last_user_id).to eql controller.current_user.sf_guard_user_id
+            expect(Entity.last.last_user_id).to eql controller.current_user.id
           end
         end
 
@@ -251,7 +251,7 @@ describe EntitiesController, type: :controller do
         it { should use_before_action(:importers_only) }
 
         it "updates the entity's last user id after matching" do
-          expect(@entity.reload.last_user_id).to eql SfGuardUser.last.id
+          expect(@entity.reload.last_user_id).to eql User.last.id
         end
 
         it 'sets the matched_by field of OsMatch' do
@@ -320,11 +320,11 @@ describe EntitiesController, type: :controller do
   end
 
   describe '#update' do
-    let(:sf_guard_user) { create(:sf_user) }
+    let(:user) { create(:user) }
     login_user
 
     context 'Updating an Org without a reference' do
-      let(:org)  { create(:entity_org, last_user_id: sf_guard_user.id) }
+      let(:org)  { create(:entity_org, last_user_id: user.id) }
       let(:params) do
         { id: org.id, entity: { 'website' => 'http://example.com' }, reference: { 'just_cleaning_up' => '1' } }
       end
@@ -340,9 +340,9 @@ describe EntitiesController, type: :controller do
       end
 
       it 'updates last_user_id' do
-        expect(org.last_user_id).to eq sf_guard_user.id
+        expect(org.last_user_id).to eq user.id
         patch :update, params: params
-        expect(Entity.find(org.id).last_user_id).to eq controller.current_user.sf_guard_user.id
+        expect(Entity.find(org.id).last_user_id).to eq controller.current_user.id
       end
     end
 
@@ -402,7 +402,7 @@ describe EntitiesController, type: :controller do
     end
 
     describe 'adding and removing types' do
-      let!(:org) { create(:entity_org, last_user_id: sf_guard_user.id) }
+      let!(:org) { create(:entity_org, last_user_id: user.id) }
       let(:extension_def_ids) { '' }
       let(:params) do
         { id: org.id,
@@ -443,7 +443,7 @@ describe EntitiesController, type: :controller do
     end
 
     describe 'updating an Org with errors' do
-      let(:org) { create(:entity_org, last_user_id: sf_guard_user.id) }
+      let(:org) { create(:entity_org, last_user_id: user.id) }
       let(:params) do
         { id: org.id, entity: { 'end_date' => 'bad date' }, reference: { 'just_cleaning_up' => '1' } }
       end

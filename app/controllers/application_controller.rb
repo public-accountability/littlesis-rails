@@ -98,7 +98,7 @@ class ApplicationController < ActionController::Base
   #
 
   def merge_last_user(attrs)
-    attrs.merge(last_user_id: current_user.sf_guard_user_id)
+    attrs.merge(last_user_id: current_user.id)
   end
 
   protected
