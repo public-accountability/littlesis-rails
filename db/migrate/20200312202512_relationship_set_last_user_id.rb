@@ -4,7 +4,7 @@ class RelationshipSetLastUserId < ActiveRecord::Migration[6.0]
       user = User.find_by(sf_guard_user_id: entity.last_user_id)
 
       if user.nil?
-        Rails.logger.warn "Couldn't find User with sf_guard_user_id of #{entity.last_user_id}; setting entity #{entity.id} last_user_id to 1"
+        Rails.logger.warn "Couldn't find User with sf_guard_user_id of #{rel.last_user_id}; setting relationship #{rel.id} last_user_id to 1"
         user_id = 1
       else
         user_id = user.id

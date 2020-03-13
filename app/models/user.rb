@@ -9,7 +9,6 @@ class User < ApplicationRecord
 
   serialize :abilities, UserAbilities
 
-  validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username,
             presence: true, uniqueness: { case_sensitive: false }, user_name: true, on: :create
@@ -24,8 +23,6 @@ class User < ApplicationRecord
          :rememberable,
          :trackable
 
-  belongs_to :sf_guard_user, inverse_of: :user
-
   # Core associations
   has_one :user_profile, inverse_of: :user, dependent: :destroy
   has_one :api_token, dependent: :destroy
@@ -37,12 +34,6 @@ class User < ApplicationRecord
   # profile image, needs to be reworked or removed
   has_one :image, inverse_of: :user, dependent: :destroy
 
-  # Used by UserPresenter and HomeController
-  # We should eventually remove this assocation and instead
-  # retrive recently edited entities via Versions.
-  # has_many :edited_entities ,
-  #          class_name: 'Entity', foreign_key: 'last_user_id', primary_key: 'sf_guard_user_id'
-
   # Maps and lists the user has created
   has_many :network_maps, inverse_of: :user
   has_many :lists, foreign_key: 'creator_user_id', inverse_of: :user
@@ -52,7 +43,6 @@ class User < ApplicationRecord
   has_many :reviewed_requests,
            class_name: 'UserRequest', foreign_key: 'reviewer_id', inverse_of: :reviewer
 
-  accepts_nested_attributes_for :sf_guard_user
   accepts_nested_attributes_for :user_profile
 
   before_validation :set_default_network_id
@@ -78,21 +68,19 @@ class User < ApplicationRecord
   end
 
   def legacy_created_at
-    return created_at if sf_guard_user.nil?
-
-    sf_guard_user.created_at
+    raise Exception::LittleSis, "Shouldn't use this method, legacy user model is being removed"
   end
 
   def legacy_url
-    "/user/#{username}"
+    raise Exception::LittleSis, "Shouldn't use this method, legacy user model is being removed"
   end
 
   def full_legacy_url
-    "https://littlesis.org#{legacy_url}"
+    raise Exception::LittleSis, "Shouldn't use this method, legacy user model is being removed"
   end
 
   def legacy_check_password(password)
-    Digest::SHA1.hexdigest(sf_guard_user.salt + password) == sf_guard_user.password
+    raise Exception::LittleSis, "Shouldn't use this method, legacy user model is being removed"
   end
 
   def image_url(type = nil)
@@ -137,7 +125,7 @@ class User < ApplicationRecord
   ###############
 
   def legacy_permissions
-    sf_guard_user.permissions
+    raise Exception::LittleSis, "Shouldn't use this method, legacy user model is being removed"
   end
 
   def has_ability?(name) # rubocop:disable Naming/PredicateName, Metrics/MethodLength
@@ -154,15 +142,11 @@ class User < ApplicationRecord
       abilities.lister?
     when :bulk, 'bulk', 'bulker', 'importer'
       abilities.bulker?
-    when 'talker', 'contacter'
-      false # legacy permission which should not appear in our code any more
     else
       Rails.logger.debug "User#has_ability? called with unknown permission: #{name}"
       false
     end
   end
-
-  alias has_legacy_permission has_ability?
 
   def create_default_permissions
     add_ability!(:edit) unless has_ability?(:edit)
@@ -183,8 +167,8 @@ class User < ApplicationRecord
     arel_table[:username].matches(query_string).or(arel_table[:email].matches(query_string))
   end
 
-  # Returns the sf_guard_user_id from a range
-  # of types: User, SfGuardUser, Integer, String
+  # Returns the user id from a range
+  # of types: User, Integer, String
   # Used by LsHash
   def self.derive_last_user_id_from(input, allow_invalid: false)
     case input
@@ -195,7 +179,7 @@ class User < ApplicationRecord
     when User
       input.id
     when SfGuardUser
-      raise Exceptions::LittleSisError, "Shouldn't use SfGuardUser. Provided: #{input}"
+      raise Exceptions::LittleSisError, "Shouldn't use legacy user model. Provided: #{input}"
     else
       if allow_invalid
         APP_CONFIG['system_user_id']

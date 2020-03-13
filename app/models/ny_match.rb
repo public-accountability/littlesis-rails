@@ -92,7 +92,7 @@ class NyMatch < ApplicationRecord
     if matched_by.nil? || (persisted? && updated_at < 1.minute.ago)
       APP_CONFIG['system_user_id']
     else
-      User.find(matched_by).sf_guard_user.id
+      matched_by
     end
   end
 end
