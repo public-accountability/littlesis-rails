@@ -634,22 +634,22 @@ describe Entity, :tag_helper do
       let(:new_user) { create_really_basic_user }
 
       let!(:entity) do
-        create(:entity_person, last_user_id: initial_user.sf_guard_user_id).tap do |e|
+        create(:entity_person, last_user_id: initial_user.id).tap do |e|
           e.update_column(:updated_at, 1.year.ago)
         end
       end
 
       it 'updates last user id and updated_at' do
-        expect(entity.last_user_id).to eql initial_user.sf_guard_user_id
+        expect(entity.last_user_id).to eql initial_user.id
         entity.update_timestamp_for(new_user)
         expect(entity.updated_at).to be > 1.second.ago
-        expect(entity.last_user_id).to eql new_user.sf_guard_user_id
+        expect(entity.last_user_id).to eql new_user.id
       end
 
       it 'only changes updated_at when user is the same' do
         entity.update_timestamp_for(initial_user)
         expect(entity.updated_at).to be > 1.second.ago
-        expect(entity.last_user_id).to eql initial_user.sf_guard_user_id
+        expect(entity.last_user_id).to eql initial_user.id
       end
 
       it 'defaults to system user if provided user is nil' do

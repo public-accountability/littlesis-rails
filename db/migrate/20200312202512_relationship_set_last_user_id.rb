@@ -1,6 +1,6 @@
-class EntitySetLastUserId < ActiveRecord::Migration[6.0]
+class RelationshipSetLastUserId < ActiveRecord::Migration[6.0]
   def up
-    Entity.unscoped.where("id > 35845").find_each do |entity|
+    Relationship.find_each do |rel|
       user = User.find_by(sf_guard_user_id: entity.last_user_id)
 
       if user.nil?
@@ -10,14 +10,14 @@ class EntitySetLastUserId < ActiveRecord::Migration[6.0]
         user_id = user.id
       end
 
-      entity.update_columns(last_user_id: user_id)
+      rel.update_columns(last_user_id: user_id)
     end
   end
 
   def down
-    Entity.unscoped.find_each do |entity|
-      sf_user_id = User.find(entity.last_user_id)&.sf_guard_user_id || 1
-      entity.update_columns(last_user_id: sf_user_id)
+    Relationship.find_each do |rel|
+      sf_user_id = User.find(rel.last_user_id)&.sf_guard_user_id || 1
+      rel.update_columns(last_user_id: sf_user_id)
     end
   end
 end

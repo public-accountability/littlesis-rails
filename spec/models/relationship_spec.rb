@@ -178,31 +178,31 @@ describe Relationship, type: :model do
   end
 
   describe '#update_entity_timestatmps' do
-    let(:sf_guard_user_1) { create(:sf_guard_user) }
-    let(:sf_guard_user_2) { create(:sf_guard_user) }
-    let(:sf_guard_user_3) { create(:sf_guard_user) }
-    let(:e1) { create(:entity_person, last_user_id: sf_guard_user_1.id) }
-    let(:e2) { create(:entity_person, last_user_id: sf_guard_user_1.id) }
+    let(:user_1) { create(:user) }
+    let(:user_2) { create(:user) }
+    let(:user_3) { create(:user) }
+    let(:e1) { create(:entity_person, last_user_id: user_1.id) }
+    let(:e2) { create(:entity_person, last_user_id: user_1.id) }
 
-    before { e1; e2; sf_guard_user_1; sf_guard_user_2; sf_guard_user_3; }
+    before { e1; e2; user_1; user_2; user_3; }
 
     it 'updates entity timestamp' do
-      rel = Relationship.create!(category_id: 12, entity: e1, related: e2, last_user_id: sf_guard_user_2.id)
+      rel = Relationship.create!(category_id: 12, entity: e1, related: e2, last_user_id: user_2.id)
       e1.update_columns(updated_at: 1.day.ago)
       expect { rel.update_entity_timestamps }.to change { Entity.find(e1.id).updated_at }
     end
 
     it 'changes entity last_user_id' do
-      rel = Relationship.create!(category_id: 12, entity: e1, related: e2, last_user_id: sf_guard_user_2.id)
-      expect(Entity.find(e1.id).last_user_id).to eq sf_guard_user_2.id
-      rel.update(description1: 'this is a description', last_user_id: sf_guard_user_3.id)
-      expect(Entity.find(e1.id).last_user_id).to eq sf_guard_user_3.id
+      rel = Relationship.create!(category_id: 12, entity: e1, related: e2, last_user_id: user_2.id)
+      expect(Entity.find(e1.id).last_user_id).to eq user_2.id
+      rel.update(description1: 'this is a description', last_user_id: user_3.id)
+      expect(Entity.find(e1.id).last_user_id).to eq user_3.id
     end
 
     it 'changes related last_user_id' do
-      rel = Relationship.create!(category_id: 12, entity: e1, related: e2, last_user_id: sf_guard_user_2.id)
+      rel = Relationship.create!(category_id: 12, entity: e1, related: e2, last_user_id: user_2.id)
       rel.update(description1: 'this is a description')
-      expect(Entity.find(e2.id).last_user_id).to eq sf_guard_user_2.id
+      expect(Entity.find(e2.id).last_user_id).to eq user_2.id
     end
   end
 

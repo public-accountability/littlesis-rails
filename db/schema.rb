@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_02_155102) do
+ActiveRecord::Schema.define(version: 2020_03_12_145653) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -205,6 +205,14 @@ ActiveRecord::Schema.define(version: 2020_03_02_155102) do
     t.integer "strata", limit: 1, unsigned: true
     t.index ["cmp_id"], name: "index_cmp_entities_on_cmp_id", unique: true
     t.index ["entity_id"], name: "index_cmp_entities_on_entity_id", unique: true
+  end
+
+  create_table "cmp_relationships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "cmp_affiliation_id", null: false
+    t.integer "cmp_org_id", null: false
+    t.integer "cmp_person_id", null: false
+    t.bigint "relationship_id"
+    t.index ["cmp_affiliation_id"], name: "index_cmp_relationships_on_cmp_affiliation_id", unique: true
   end
 
   create_table "common_names", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1395,7 +1403,6 @@ ActiveRecord::Schema.define(version: 2020_03_02_155102) do
   add_foreign_key "email", "entity", name: "email_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "email", "sf_guard_user", column: "last_user_id", name: "email_ibfk_2", on_update: :cascade
   add_foreign_key "entity", "entity", column: "parent_id", name: "entity_ibfk_1", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "entity", "sf_guard_user", column: "last_user_id", name: "entity_ibfk_2", on_update: :cascade
   add_foreign_key "extension_definition", "extension_definition", column: "parent_id", name: "extension_definition_ibfk_1", on_update: :cascade
   add_foreign_key "extension_record", "entity", name: "extension_record_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "extension_record", "extension_definition", column: "definition_id", name: "extension_record_ibfk_2", on_update: :cascade

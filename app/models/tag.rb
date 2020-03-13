@@ -267,9 +267,8 @@ class Tag < ApplicationRecord
   # [EditsIdHash] => EditorsById
   def editors_by_id(id_hashes)
     ids = id_hashes.map { |h| h['editor_id'] }
-    SfGuardUser.find(ids)
+    User.find(ids)
       .to_a
-      .map(&:user)
       .zip(ids)
       .reduce({}) { |acc, (editor, id)| acc.merge!(id => editor) }
   end
