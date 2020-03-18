@@ -1,6 +1,6 @@
 class EntitySetLastUserId < ActiveRecord::Migration[6.0]
   def up
-    Entity.unscoped.where("id > 35845").find_each do |entity|
+    Entity.unscoped.find_each do |entity|
       user = User.find_by(sf_guard_user_id: entity.last_user_id)
 
       if user.nil?
