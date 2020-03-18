@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_02_155102) do
+ActiveRecord::Schema.define(version: 2020_03_18_160306) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -205,6 +205,14 @@ ActiveRecord::Schema.define(version: 2020_03_02_155102) do
     t.integer "strata", limit: 1, unsigned: true
     t.index ["cmp_id"], name: "index_cmp_entities_on_cmp_id", unique: true
     t.index ["entity_id"], name: "index_cmp_entities_on_entity_id", unique: true
+  end
+
+  create_table "cmp_relationships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "cmp_affiliation_id", null: false
+    t.integer "cmp_org_id", null: false
+    t.integer "cmp_person_id", null: false
+    t.bigint "relationship_id"
+    t.index ["cmp_affiliation_id"], name: "index_cmp_relationships_on_cmp_affiliation_id", unique: true
   end
 
   create_table "common_names", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -914,33 +922,6 @@ ActiveRecord::Schema.define(version: 2020_03_02_155102) do
     t.bigint "locked_by_user_id"
     t.datetime "locked_at"
     t.index ["entity_id", "donor_id"], name: "entity_donor_idx", unique: true
-    t.index ["is_synced"], name: "is_synced_idx"
-    t.index ["locked_at"], name: "locked_at_idx"
-    t.index ["reviewed_at"], name: "reviewed_at_idx"
-  end
-
-  create_table "os_entity_preprocess", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.bigint "entity_id", null: false
-    t.string "cycle", limit: 4, null: false
-    t.datetime "processed_at", null: false
-    t.datetime "updated_at"
-    t.index ["entity_id", "cycle"], name: "entity_cycle_idx", unique: true
-    t.index ["entity_id"], name: "entity_id_idx"
-  end
-
-  create_table "os_entity_transaction", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "entity_id", null: false
-    t.string "cycle", limit: 4, null: false
-    t.string "transaction_id", limit: 30, null: false
-    t.bigint "match_code"
-    t.boolean "is_verified", default: false, null: false
-    t.boolean "is_processed", default: false, null: false
-    t.boolean "is_synced", default: true, null: false
-    t.bigint "reviewed_by_user_id"
-    t.datetime "reviewed_at"
-    t.bigint "locked_by_user_id"
-    t.datetime "locked_at"
-    t.index ["entity_id", "cycle", "transaction_id"], name: "entity_cycle_transaction_idx", unique: true
     t.index ["is_synced"], name: "is_synced_idx"
     t.index ["locked_at"], name: "locked_at_idx"
     t.index ["reviewed_at"], name: "reviewed_at_idx"

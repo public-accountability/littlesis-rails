@@ -152,8 +152,6 @@ class DevelopmentDb
                  edited_entities
                  map_annotations
                  object_tag
-                 os_entity_preprocess
-                 os_entity_transaction
                  sessions
                  sphinx_index
                  user_requests
