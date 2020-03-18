@@ -48,7 +48,7 @@ describe 'NYS requests' do
     specify { expect(&match_donations).to change { donor.reload.updated_at } }
 
     specify do
-      expect(&match_donations).to change { donor.reload.last_user_id }.to(user.sf_guard_user_id)
+      expect(&match_donations).to change { donor.reload.last_user_id }.to(user.id)
     end
 
     describe 'response' do

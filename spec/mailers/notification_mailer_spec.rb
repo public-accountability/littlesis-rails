@@ -43,8 +43,7 @@ describe NotificationMailer, type: :mailer do
 
   describe '#signup_email' do
     let(:map_the_power) { false }
-    let(:sf_user) { create(:sf_guard_user) }
-    let(:user) { create(:user, map_the_power: map_the_power, sf_guard_user: sf_user) }
+    let(:user) { create(:user, map_the_power: map_the_power) }
     let(:user_profile) { create(:user_profile, user: user, location: 'vienna') }
     let(:mail) { NotificationMailer.signup_email(user) }
 

@@ -27,18 +27,6 @@ UPDATE clean_users
 SET encrypted_password = '$2a$10$Q2tSw2llUagw1KRNTtLD4.JiYgFA.9pxgV5aPOs/IxFsddZGa8jgO'
 WHERE id = 1 LIMIT 1;
 
-DROP TABLE IF EXISTS clean_sf_guard_user;
-CREATE TABLE clean_sf_guard_user LIKE sf_guard_user;
-INSERT clean_sf_guard_user SELECT * FROM sf_guard_user;
-
-UPDATE clean_sf_guard_user
-SET username = CONCAT('sfuser', id, '@email.com'),
-    salt = '',
-    password = '',
-    updated_at = CURRENT_TIMESTAMP,
-    created_at = CURRENT_TIMESTAMP,
-    last_login = CURRENT_TIMESTAMP;
-
 DROP TABLE IF EXISTS clean_user_profiles;
 CREATE TABLE clean_user_profiles LIKE user_profiles;
 INSERT clean_user_profiles SELECT * FROM user_profiles;

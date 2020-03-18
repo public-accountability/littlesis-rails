@@ -16,7 +16,7 @@ describe Cmp::CmpOrg do
   subject { Cmp::CmpOrg.new(attributes.merge(override)) }
 
   before(:all) do
-    @cmp_user = create_basic_user_with_ids(Cmp::CMP_USER_ID, Cmp::CMP_SF_USER_ID)
+    @cmp_user = create_basic_user_with_id(Cmp::CMP_USER_ID)
     @cmp_tag = Tag.create!("id" => Cmp::CMP_TAG_ID,
                            "restricted" => true,
                            "name" => "cmp",
@@ -25,9 +25,7 @@ describe Cmp::CmpOrg do
 
   after(:all) do
     @cmp_tag.delete
-    @cmp_user.sf_guard_user.delete
     @cmp_user.delete
-    SfGuardUserPermission.delete_all
   end
 
   describe 'import!' do
@@ -64,9 +62,9 @@ describe Cmp::CmpOrg do
         expect(Entity.last.tags.last).to eql @cmp_tag
       end
 
-      it 'sets last user id to cmp sf user' do
+      it 'sets last user id to cmp user' do
         subject.import!
-        expect(CmpEntity.last.entity.last_user_id).to eql Cmp::CMP_SF_USER_ID
+        expect(CmpEntity.last.entity.last_user_id).to eql Cmp::CMP_USER_ID
       end
 
       context 'entity is a research institute' do

@@ -509,7 +509,6 @@ describe RelationshipsController, type: :controller do
 
     def set_controller
       @controller = RelationshipsController.new
-      allow(@controller).to receive(:current_user).and_return(double(:sf_guard_user_id => 1234))
       @controller.instance_variable_set(:@errors, [])
     end
 

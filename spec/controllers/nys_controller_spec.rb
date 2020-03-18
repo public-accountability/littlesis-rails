@@ -134,7 +134,7 @@ describe NysController, type: :controller do
       expect(NyFiler).to receive(:find).with('10').and_return(ny_filer)
       expect(NyFiler).to receive(:find).with('11').and_return(ny_filer)
       entity = double('entity')
-      expect(entity).to receive(:update).with(hash_including(:last_user_id => controller.current_user.sf_guard_user.id))
+      expect(entity).to receive(:update).with(hash_including(:last_user_id => controller.current_user.id))
       expect(Entity).to receive(:find).with('123').and_return(entity)
     end
 

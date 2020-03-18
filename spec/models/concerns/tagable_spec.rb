@@ -83,8 +83,7 @@ describe Tagable, type: :model do
   end
 
   describe 'creating a tag' do
-    let(:user) { create(:sf_user) }
-    let(:system_user) { SfGuardUser.find(APP_CONFIG['system_user_id']) }
+    let(:system_user) { User.find(APP_CONFIG['system_user_id']) }
     let(:test_tagable) { create(:entity_org) }
 
     it "creates a new tagging" do

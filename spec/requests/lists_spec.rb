@@ -14,7 +14,7 @@ describe 'List Requests' do
     it { is_expected.to change { ListEntity.count }.by(1) }
 
     it do
-      is_expected.to change { entity.reload.last_user_id }.to(user.sf_guard_user_id)
+      is_expected.to change { entity.reload.last_user_id }.to(user.id)
     end
 
     it do
@@ -38,7 +38,7 @@ describe 'List Requests' do
     it { is_expected.to change { ListEntity.count }.by(-1) }
 
     it do
-      is_expected.to change { entity.reload.last_user_id }.to(user.sf_guard_user_id)
+      is_expected.to change { entity.reload.last_user_id }.to(user.id)
     end
   end
 

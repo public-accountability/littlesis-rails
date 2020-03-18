@@ -14,12 +14,7 @@ describe LsHash do
     end
 
     it 'accepts users' do
-      expect(subject.with_last_user(user)).to eql LsHash.new(last_user_id: user.sf_guard_user_id)
-    end
-
-    it 'accepts sf guard users' do
-      expect(subject.with_last_user(user.sf_guard_user))
-        .to eql LsHash.new(last_user_id: user.sf_guard_user_id)
+      expect(subject.with_last_user(user)).to eql LsHash.new(last_user_id: user.id)
     end
 
     it 'raises error if provided invalid class type' do

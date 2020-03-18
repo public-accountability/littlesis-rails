@@ -11,8 +11,7 @@ module ControllerMacros
   def login_user(abilities = [:edit])
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      sf_user = FactoryBot.create(:sf_guard_user)
-      user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+      user = FactoryBot.create(:user)
       create(:user_profile, user: user)
       user.add_ability(*abilities)
       sign_in(user)
@@ -36,8 +35,7 @@ module ControllerMacros
   def login_user_without_permissions
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      sf_user = FactoryBot.create(:sf_guard_user)
-      user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+      user = FactoryBot.create(:user)
       create(:user_profile, user: user)
       sign_in user
     end
