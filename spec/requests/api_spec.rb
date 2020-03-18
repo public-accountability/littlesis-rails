@@ -158,7 +158,7 @@ describe Api, :pagination_helper do
       end
 
       specify { expect(response).to have_http_status 200 }
-      specify { expect(json['data']).to eql [lists.first.api_data] }
+      specify { expect(json['data']).to eql [lists.first.reload.api_data] }
     end
   end
 
