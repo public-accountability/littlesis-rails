@@ -17,8 +17,14 @@ end
 
 describe 'list page', type: :feature do
   let(:document_attributes) { attributes_for(:document) }
-  let(:list) do
-    list = create(:list)
+  let!(:list) do
+    list = create(:list, created_at: Time.current)
+    ListEntity.create!(list_id: list.id, entity_id: create(:entity_person).id)
+    list.add_reference(document_attributes)
+    list
+  end
+  let!(:earlier_list) do
+    list = create(:list, created_at: 1.year.ago)
     ListEntity.create!(list_id: list.id, entity_id: create(:entity_person).id)
     list.add_reference(document_attributes)
     list
@@ -26,7 +32,7 @@ describe 'list page', type: :feature do
 
   scenario 'visiting the list page' do
     visit list_path(list)
-    successfully_visits_page(list_path(List.last) + '/members')
+    successfully_visits_page(list_path(List.first) + '/members')
     expect(page.find('#list-name')).to have_text list.name
     expect(page).not_to have_selector '#list-tags-container'
   end
@@ -34,7 +40,7 @@ describe 'list page', type: :feature do
   scenario 'navigating to the sources tab' do
     visit list_path(list)
     click_on 'Sources'
-    successfully_visits_page(list_path(List.last) + '/references')
+    successfully_visits_page(list_path(List.first) + '/references')
     page_has_selector '#list-sources'
     expect(page).to have_link document_attributes[:name], href: document_attributes[:url]
   end
@@ -47,6 +53,22 @@ describe 'list page', type: :feature do
       visit list_path(list)
       expect(page).to have_selector '#list-tags-container'
       expect(page).to have_selector '#tags-list li', text: tag.name
+    end
+  end
+
+  scenario 'sorting lists by date/time created' do
+    visit lists_path
+
+    find('#lists th .created_at.sorting').click
+    expect(page).to have_current_path(lists_path(sort_by: :created_at, order: :desc))
+    within "#lists" do
+      expect(first("tbody tr")[:id]).to eq("list_#{list.id}")
+    end
+
+    find('#lists th .created_at.sorting').click
+    expect(page).to have_current_path(lists_path(sort_by: :created_at, order: :asc))
+    within "#lists" do
+      expect(first("tbody tr")[:id]).to eq("list_#{earlier_list.id}")
     end
   end
 

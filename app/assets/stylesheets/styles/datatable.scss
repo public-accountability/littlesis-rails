@@ -171,6 +171,17 @@ li#datatable-table_previous, li#datatable-table_next {
 
 
 html table.dataTable thead {
+  a.sorting {
+    display: block;
+    color: inherit;
+    padding-left: 1.9em;
+
+    &::before,
+    &::after {
+      bottom: 0
+    }
+  }
+
     .sorting_asc {
 	background: asset-url('sort_asc.png') no-repeat center left;
     }
