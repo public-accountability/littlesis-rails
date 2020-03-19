@@ -10,8 +10,16 @@ class EntitySetLastUserId < ActiveRecord::Migration[6.0]
         user_id = user.id
       end
 
+      user_id = 1 if user_id.nil?
+
       entity.update_columns(last_user_id: user_id)
     end
+
+    # make sure all last_user_ids are set to actual user ids
+    user_ids = User.all.map(&:id).uniq
+    Entity.unscoped
+          .where.not(last_user_id: user_ids)
+          .update_all(last_user_id: 1)
   end
 
   def down
