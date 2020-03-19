@@ -1,9 +1,8 @@
 describe 'entities/political.html.erb' do
   before(:all) do
-    @sf_user = build(:sf_guard_user, username: 'X')
-    @user = build(:user, sf_guard_user: @sf_user)
-    @person = build(:person, updated_at: Time.now, last_user: @sf_user, id: rand(1000))
-    @org = build(:mega_corp_inc, updated_at: Time.now, last_user: @sf_user, id: rand(1000))
+    @user = build(:user)
+    @person = build(:person, updated_at: Time.now, last_user: @user, id: rand(1000))
+    @org = build(:mega_corp_inc, updated_at: Time.now, last_user: @user, id: rand(1000))
   end
 
   describe 'renders partials' do

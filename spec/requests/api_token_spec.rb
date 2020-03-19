@@ -6,7 +6,6 @@
 #   end
 
 #   after(:all) do
-#     @user.sf_guard_user.delete
 #     @user.delete
 #     @api_token.delete
 #   end

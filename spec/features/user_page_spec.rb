@@ -14,7 +14,7 @@ feature 'User Pages' do
 
   before do
     login_as(user, scope: :user)
-    entity.update!(is_current: true, last_user_id: user_for_page.sf_guard_user_id)
+    entity.update!(is_current: true, last_user_id: user_for_page.id)
   end
 
   after { logout(user) }

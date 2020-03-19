@@ -3,8 +3,8 @@ describe 'Users Admin Pages', :type => :feature do
   let(:current_user) { admin_user }
 
   before do
-    @restricted_user = create_user_with_sf(username: 'restricted', is_restricted: true)
-    @not_restricted_user = create_user_with_sf(username: 'not_restricted', is_restricted: false)
+    @restricted_user = create_user(username: 'restricted', is_restricted: true)
+    @not_restricted_user = create_user(username: 'not_restricted', is_restricted: false)
     login_as(current_user, :scope => :user)
   end
 
@@ -55,7 +55,7 @@ describe 'Users Admin Pages', :type => :feature do
   end
 
   describe 'Edit Permissions page' do
-    let(:test_user) { create(:user, sf_guard_user: create(:sf_guard_user)) }
+    let(:test_user) { create(:user) }
     let(:edit_permissions_url) { "/users/#{test_user.id}/edit_permissions" }
 
     before { visit edit_permissions_url }

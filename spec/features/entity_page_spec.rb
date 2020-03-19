@@ -173,7 +173,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
     context "entity has summary" do
       let(:person) do
-        create(:entity_person, last_user_id: user.sf_guard_user.id, summary: "foobar")
+        create(:entity_person, last_user_id: user.id, summary: "foobar")
       end
 
       it "shows the summary" do
@@ -184,7 +184,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     context "entity has summary longer than limit" do
       let(:person) do
         create(:entity_person,
-               last_user_id: user.sf_guard_user.id,
+               last_user_id: user.id,
                summary: "a" * (Entity::EXCERPT_SIZE + 1))
       end
 
@@ -269,9 +269,9 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       context 'with network maps' do
-        let!(:featured_map) { create(:network_map, is_featured: true, user_id: user.sf_guard_user_id) }
-        let!(:regular_map) { create(:network_map, user_id: user.sf_guard_user_id) }
-        let!(:private_map) { create(:network_map, is_private: true, user_id: user.sf_guard_user_id) }
+        let!(:featured_map) { create(:network_map, is_featured: true, user_id: user.id) }
+        let!(:regular_map) { create(:network_map, user_id: user.id) }
+        let!(:private_map) { create(:network_map, is_private: true, user_id: user.id) }
         let(:maps) { [featured_map, regular_map, private_map] }
 
         before do

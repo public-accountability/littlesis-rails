@@ -130,6 +130,12 @@ module RspecExampleHelpers
     raise Exceptions::LittleSisError, "Shouldn't use this method!"
   end
 
+  def create_user(attrs = {})
+    user = FactoryBot.create(:user, attrs)
+    create(:user_profile, user: user)
+    user
+  end
+
   def create_generic_relationship
     person = FactoryBot.create(:person)
     org = FactoryBot.create(:org)

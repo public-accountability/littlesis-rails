@@ -1,7 +1,6 @@
 describe 'entities/add_relationship.html.erb' do
-  let(:sf_user) { build(:sf_guard_user) }
-  let(:user) { build(:user, sf_guard_user: sf_user) }
-  let(:entity) { build(:mega_corp_inc, updated_at: Time.current, last_user: sf_user, id: rand(100)) }
+  let(:user) { build(:user) }
+  let(:entity) { build(:mega_corp_inc, updated_at: Time.current, last_user: user, id: rand(100)) }
 
   describe 'layout' do
     before do
