@@ -123,4 +123,37 @@ describe Link, type: :model do
       expect(link.position_type).to eq 'other'
     end
   end
+
+  describe '#link_content' do
+    let(:person) { create(:person) }
+    let(:company) { create(:public_company_entity) }
+    let(:relationship) { create(:ownership_relationship, entity: person, related: company, notes: "Some text",\
+                                start_date: "2004-01-03", end_date: "2016-05-07") }
+    let!(:ownership) { create(:ownership, relationship: relationship, percent_stake: 100) }
+    let!(:link) { create(:link, relationship: relationship, entity: person, related: company) }
+
+    it 'describes the relationship' do
+      expect(link.link_content).to include('Owner')
+    end
+
+    it 'shows percent stake for ownership if present' do
+      expect(link.link_content).to include('; percent stake: 100%')
+      ownership.update!(percent_stake: 0)
+      expect(link.reload.link_content).not_to include('percent stake')
+    end
+
+    it 'signals notes with an asterisk if present' do
+      expect(link.link_content).to include('*')
+      relationship.update!(notes: "")
+      expect(link.link_content).not_to include('*')
+    end
+
+    it 'shows date range if present' do
+      expect(link.link_content).to include("(Jan 3 '04→May 7 '16)")
+      relationship.update!(end_date: nil)
+      expect(link.link_content).to include("(Jan 3 '04→?)")
+      relationship.update!(start_date: nil)
+      expect(link.link_content).not_to include("('")
+    end
+  end
 end
