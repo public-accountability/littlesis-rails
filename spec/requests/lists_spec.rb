@@ -1,17 +1,22 @@
+# rubocop:disable RSpec/ImplicitSubject, RSpec/ImplicitBlockExpectation
+
 describe 'List Requests' do
   let(:user) { create_really_basic_user }
-  before(:each) { login_as(user, :scope => :user) }
-  after(:each) { logout(:user) }
-
   let(:list) { create(:list, creator_user_id: user.id) }
   let(:entity) { EntitySpecHelpers.org_updated_one_year_ago }
+
+  before { login_as(user, :scope => :user) }
+
+  after { logout(:user) }
 
   describe 'adding one entity to a list' do
     subject do
       -> { post add_entity_list_path(list), params: { :entity_id => entity.id } }
     end
 
-    it { is_expected.to change { ListEntity.count }.by(1) }
+    it do
+      is_expected.to change(ListEntity, :count).by(1)
+    end
 
     it do
       is_expected.to change { entity.reload.last_user_id }.to(user.sf_guard_user_id)
@@ -25,17 +30,19 @@ describe 'List Requests' do
   end
 
   describe 'removing entity from a list' do
-    let!(:list_entity) do
+    subject do
+      -> { post remove_entity_list_path(list), params: { :list_entity_id => list_entity.id } }
+    end
+
+    let(:list_entity) do
       ListEntity.create!(list_id: list.id, entity_id: entity.id)
     end
 
     before { list_entity }
 
-    subject do
-      -> { post remove_entity_list_path(list), params: { :list_entity_id => list_entity.id } }
+    it do
+      is_expected.to change(ListEntity, :count).by(-1)
     end
-
-    it { is_expected.to change { ListEntity.count }.by(-1) }
 
     it do
       is_expected.to change { entity.reload.last_user_id }.to(user.sf_guard_user_id)
@@ -110,3 +117,5 @@ describe 'List Requests' do
     end
   end
 end
+
+# rubocop:enable RSpec/ImplicitSubject, RSpec/ImplicitBlockExpectation
