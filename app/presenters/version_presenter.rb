@@ -10,7 +10,7 @@ class VersionPresenter < SimpleDelegator
   protected
 
   def str_time
-    LsDate.pretty_print_with_minutes(created_at)
+    I18n.l(created_at, format: :with_minutes)
   end
 
   def user_link

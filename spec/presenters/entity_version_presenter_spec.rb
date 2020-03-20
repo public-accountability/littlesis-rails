@@ -22,7 +22,7 @@ describe EntityVersionPresenter do
 
     describe 'an extension was created and removed' do
       let(:time) do
-        "<em>#{LsDate.pretty_print_with_minutes(Time.current)}</em>"
+        "<em>#{I18n.l(Time.current, format: :with_minutes)}</em>"
       end
 
       before do

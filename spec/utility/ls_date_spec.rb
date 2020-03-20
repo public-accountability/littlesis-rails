@@ -1,13 +1,6 @@
 # rubocop:disable Lint/UselessComparison, RSpec/Multipleexpectations
 
 describe LsDate do
-  describe 'pretty printing' do
-    it "prints a date with BASIC_FORMAT" do
-      s17 = Date.new(2011, 9, 17, 12)
-      expect(LsDate.pretty_print(s17)).to eql("September 17, 2011, 12AM")
-    end
-  end
-
   describe 'initalize' do
     describe 'test_if_valid_input' do
       it 'raises error if provided invalid date string' do
