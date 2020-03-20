@@ -28,6 +28,7 @@
   <thead>
     <tr>
       <% if table.ranked? %>
+        <th class="invisible">default_sort_position</th>
         <th>Rank</th>
       <% end %>
       <th>Name</th>
@@ -127,6 +128,11 @@
      columns: [
        <% if table.ranked? %>
        {
+         data: 'default_sort_position',
+         name: 'default_sort_position',
+         visible: false,
+       },
+       {
          data: 'rank',
          name: 'rank',
          width: "5%",
@@ -211,6 +217,9 @@
          searchable: true
        }      
      ]
+     <% if table.ranked? %>
+       , "order": [[ 0, "asc" ]]
+     <% end %>
    });
 
    var tbl = $('#datatable-table').DataTable();
