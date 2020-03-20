@@ -387,7 +387,7 @@ class Entity < ApplicationRecord
 
   # This update the timestamps and last_user_id as needed.
   # valid inputs:
-  #   - string/integer of the SF GUARD user id
+  #   - string/integer of the user id
   #   - User
   # If input is any other class it will default to using the default 'system' user
   def update_timestamp_for(input)

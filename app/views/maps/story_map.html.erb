@@ -113,7 +113,7 @@
 	 graph: graph,
 	 annotations: annotations
      },
-     user: { name: "<%= @map.user.username %>", url: "<%= @map.user.full_legacy_url %>" },
+     user: { name: "<%= @map.user.username %>", url: "https://littlesis.org<%= user_page_path(@map.user) %>" },
      date: '<%= @map.created_at ? @map.created_at.strftime("%B %-d, %Y") : nil %>',
      startIndex: startIndex,
      isEditor: <%= @editable.to_s %>,

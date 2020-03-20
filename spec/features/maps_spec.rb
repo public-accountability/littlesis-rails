@@ -20,7 +20,7 @@ describe 'map pages' do
       expect(page.html).to include "/js/oligrapher/oligrapher-#{NetworkMap::OLIGRAPHER_VERSION}.js"
       expect(page.html).to include "/js/oligrapher/oligrapher_littlesis_bridge-#{NetworkMap::OLIGRAPHER_VERSION}.js"
       expect(page.html).to include "{ name: \"#{user.username}\""
-      expect(page.html).to include "url: \"https://littlesis.org/user/#{user.username}\" }"
+      expect(page.html).to include "url: \"https://littlesis.org/users/#{user.username}\" }"
     end
   end
 

@@ -67,22 +67,6 @@ class User < ApplicationRecord
     raise Exceptions::UserCannotEditError unless can_edit?
   end
 
-  def legacy_created_at
-    raise Exception::LittleSis, "Shouldn't use this method, legacy user model is being removed"
-  end
-
-  def legacy_url
-    raise Exception::LittleSis, "Shouldn't use this method, legacy user model is being removed"
-  end
-
-  def full_legacy_url
-    raise Exception::LittleSis, "Shouldn't use this method, legacy user model is being removed"
-  end
-
-  def legacy_check_password(password)
-    raise Exception::LittleSis, "Shouldn't use this method, legacy user model is being removed"
-  end
-
   def image_url(type = nil)
     return '/images/system/anon.png' if image.nil?
 
@@ -124,8 +108,8 @@ class User < ApplicationRecord
   # Permissions #
   ###############
 
-  def legacy_permissions
-    raise Exception::LittleSis, "Shouldn't use this method, legacy user model is being removed"
+  def list_of_abilities
+    abilities.to_a.join(", ")
   end
 
   def has_ability?(name) # rubocop:disable Naming/PredicateName, Metrics/MethodLength

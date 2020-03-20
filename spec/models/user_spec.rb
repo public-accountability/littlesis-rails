@@ -331,7 +331,7 @@ describe User do
 
     it 'accepts User' do
       user = build(:user)
-      expect(User.derive_last_user_id_from(user)).to eq 123
+      expect(User.derive_last_user_id_from(user)).to eq user.id
     end
 
     it 'by default it raises TypeError if provided nil' do

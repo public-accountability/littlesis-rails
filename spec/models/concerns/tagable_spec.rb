@@ -83,6 +83,7 @@ describe Tagable, type: :model do
   end
 
   describe 'creating a tag' do
+    let(:user) { create(:user) }
     let(:system_user) { User.find(APP_CONFIG['system_user_id']) }
     let(:test_tagable) { create(:entity_org) }
 
