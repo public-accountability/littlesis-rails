@@ -178,8 +178,6 @@ class User < ApplicationRecord
       input
     when User
       input.id
-    when SfGuardUser
-      raise Exceptions::LittleSisError, "Shouldn't use legacy user model. Provided: #{input}"
     else
       if allow_invalid
         APP_CONFIG['system_user_id']
