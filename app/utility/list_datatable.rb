@@ -51,6 +51,8 @@ class ListDatatable
 
   def get_data
     list_entities = ListEntity.includes(entity: [:extension_definitions, :os_categories]).where(list_id: @list.id, entity: { is_deleted: false })
+    @total_entities = list_entities.count
+
     @data = list_entities.map do |le|
       entity = le.entity
       @types = @types.concat(entity.types)
@@ -64,6 +66,7 @@ class ListDatatable
   def list_entity_data(list_entity, interlock_ids = nil, list_interlock_ids = nil)
     {
       rank: list_entity.rank,
+      default_sort_position: default_sort_position(list_entity),
       id: list_entity.entity.id,
       list_entity_id: list_entity.id,
       url: list_entity.entity.url,
@@ -103,5 +106,13 @@ class ListDatatable
 
   def context_field_name
     @list.custom_field_name.present? ? @list.custom_field_name : 'Details'
+  end
+
+  private
+
+  # Unranked entities are treated by DataTables as having a zero rank, which puts them higher than
+  # entities with a rank of 1. Instead they should come at the end of the data table.
+  def default_sort_position(entity)
+    entity.rank.presence || @total_entities + 1
   end
 end

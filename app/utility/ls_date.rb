@@ -15,28 +15,12 @@ class LsDate
   include Comparable
   attr_reader :date_string, :specificity, :year, :month, :day
 
-  BASIC_FORMAT = '%B %e, %Y, %l%p'
-
   DATE_REGEXES = {
     'YYYY' => /\A\d{4}\Z/,
     'YYYY-MM' => /\A\d{4}-\d{2}\Z/,
     'YYYYMMDD' => /\A\d{8}\Z/,
     'MM/YYYY' => /\A(01|02|03|04|05|06|07|08|09|10|11|12){1}\/[1-9]{1}[0-9]{3}\Z/
   }.freeze
-
-  def self.pretty_print(date)
-    unless date.respond_to? :strftime
-      raise ArgumentError, "#{date.class} is missing the method 'strftime'"
-    end
-
-    date.strftime(BASIC_FORMAT).gsub('  ', ' ')
-  end
-
-  def self.pretty_print_with_minutes(date)
-    hour_and_minute = date.strftime('%l:%M %p').strip
-    date = date.strftime('%B %e, %Y')
-    "#{date} #{hour_and_minute}"
-  end
 
   # Initialize with string YYYY-MM-DD
   def initialize(date_string)

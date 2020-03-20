@@ -87,8 +87,8 @@ end
 ColorPrinter.print_blue 'Uploading data to staging table'
 sh "#{RAKE} nys:disclosure_import[#{GOOD_DISCLOSURES}]"
 
-ColorPrinter.print_blue 'Removing all years except for 2018 from staging table'
-sh "#{RAKE} nys:limit_staging_to_years[2018]"
+ColorPrinter.print_blue 'Removing all years except for 2019 & 2020 from staging table'
+sh "#{RAKE} nys:limit_staging_to_years[2019,2020]"
 
 ColorPrinter.print_blue 'Updating and inserting new dislcosures'
 sh "#{RAKE} nys:disclosure_update"

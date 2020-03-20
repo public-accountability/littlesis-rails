@@ -50,8 +50,6 @@ class Entity < ApplicationRecord
              foreign_key: 'last_user_id',
              inverse_of: :edited_entities,
              optional: true
-  has_many :os_entity_transactions, inverse_of: :entity, dependent: :destroy
-  has_many :os_entity_preprocesses, inverse_of: :entity, dependent: :destroy
   has_many :extension_records, inverse_of: :entity, dependent: :destroy
   has_many :extension_definitions, through: :extension_records, inverse_of: :entities
   has_many :os_entity_categories, inverse_of: :entity

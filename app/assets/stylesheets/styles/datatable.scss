@@ -2,7 +2,7 @@
 
 #relationships-table {
   border-bottom-color: rgb(221, 221, 221);
-  
+
   width: 100%;
 
 
@@ -15,53 +15,53 @@
   }
 
   span.entity-blurb {
-      margin-left: 10px;
+    margin-left: 10px;
   }
 }
 
 #relationships-filters {
   select {
-      min-width: 200px;
-      max-width: 280px;
+    min-width: 200px;
+    max-width: 280px;
   }
 
   input, select {
-      @extend .form-control;
-      @extend .mr-2;
+    @extend .form-control;
+    @extend .mr-2;
   }
 
   #relationships-filters-checkboxes {
-      @extend .form-check;
-      @extend .form-check-inline;
+    @extend .form-check;
+    @extend .form-check-inline;
 
-      input {
-	  margin-left: 5px !important;
-	  margin-right: 5px !important;
-      }
+    input {
+      margin-left: 5px !important;
+      margin-right: 5px !important;
+    }
   }
-  
+
   #relationships-filters-line2, #relationships-filters-line1 {
-      @extend .form-inline;
+    @extend .form-inline;
   }
 
   #relationships-filters-line2 {
-      margin-top: 5px;
+    margin-top: 5px;
 
-      label:hover {
-	  text-decoration: underline;
-      }
+    label:hover {
+      text-decoration: underline;
+    }
   }
 
   #relationships-search {
-      width: 200px !important;
+    width: 200px !important;
   }
 
   #relationships-amount {
-      width: 125px;
+    width: 125px;
   }
 
-  
-  
+
+
 }
 
 // allows <div.buttons> to nicely fix to the left of it
@@ -88,18 +88,18 @@
 
   // Fix spacing issue
   thead tr {
-      th.sorting_asc, th.sorting {
-	  padding-left: 17px;
-      }
+    th.sorting_asc, th.sorting {
+      padding-left: 17px;
+    }
   }
 }
 
 // filters
 
 #relationships-filters, #datatable-filters {
-     background-color: #eee;
-     padding: 10px;
-     margin-bottom: 5px;
+  background-color: #eee;
+  padding: 10px;
+  margin-bottom: 5px;
 }
 
 ////////////////////////
@@ -142,13 +142,13 @@ html #datatable-table_info {
 
 // Delete Entity From List style
 #datatable-table {
-    .glyphicon-remove {
-	@extend .hvr-pop;
-	color: #aaa;
-    }
-    .glyphicon-remove:hover {
-	color: #666666;
-    }
+  .glyphicon-remove {
+    @extend .hvr-pop;
+    color: #aaa;
+  }
+  .glyphicon-remove:hover {
+    color: #666666;
+  }
 }
 
 
@@ -166,28 +166,39 @@ html .dataTables_wrapper .dataTables_paginate .paginate_button {
 }
 
 li#datatable-table_previous, li#datatable-table_next {
-     border: 0;
+  border: 0;
 }
 
 
 html table.dataTable thead {
-    .sorting_asc {
-	background: asset-url('sort_asc.png') no-repeat center left;
-    }
+  a.sorting {
+    display: block;
+    color: inherit;
+    padding-left: 1.9em;
 
-    .sorting_desc {
-	background: asset-url('sort_desc.png') no-repeat center left;
+    &::before,
+    &::after {
+      bottom: 0
     }
+  }
 
-    .sorting {
-	background: asset-url('sort_both.png') no-repeat center left;
-    }
+  .sorting_asc {
+    background: asset-url('sort_asc.png') no-repeat center left;
+  }
 
-    .sorting_asc_disabled {
-	background: asset-url('sort_asc_disabled.png') no-repeat center left;
-    }
+  .sorting_desc {
+    background: asset-url('sort_desc.png') no-repeat center left;
+  }
 
-    .sorting_desc_disabled {
-	background: asset-url('sort_desc_disabled.png') no-repeat center left;
-    }
+  .sorting {
+    background: asset-url('sort_both.png') no-repeat center left;
+  }
+
+  .sorting_asc_disabled {
+    background: asset-url('sort_asc_disabled.png') no-repeat center left;
+  }
+
+  .sorting_desc_disabled {
+    background: asset-url('sort_desc_disabled.png') no-repeat center left;
+  }
 }

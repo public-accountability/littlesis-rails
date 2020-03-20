@@ -15,18 +15,19 @@
 
 <%= paginate @lists %>
 
-<table class="table no-top-border">
+<table id="lists" class="table no-top-border dataTable">
   <thead>
     <tr>
       <th>Name</th>
       <th>Entities</th>
       <th>Description</th>
+      <th><%= link_to 'Created', {sort_by: :created_at, order: (params[:order] == 'desc' ? 'asc' : 'desc')}, class: "created_at sorting" %></th>
     </tr>
   </thead>
 
   <tbody>
     <% @lists.each do |list| %>
-      <tr>
+      <tr id="list_<%= list.id %>">
         <td class="lists_table_name"><%= list_link(list) %></td>
         <td><%= list.entity_count %></td>
         <% if list.short_description %>
@@ -34,6 +35,7 @@
         <% else %>
           <td><%= list.description %></td>
         <% end %>
+        <td class="created"><%= l list.created_at %></td>
       </tr>
     <% end %>
   </tbody>

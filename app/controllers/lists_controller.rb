@@ -42,12 +42,13 @@ class ListsController < ApplicationController
 
     if current_user.present?
       @lists = List.where('ls_list.access <> ? OR ls_list.creator_user_id = ?', Permissions::ACCESS_PRIVATE, current_user.id)
-                 .order(Arel.sql("ls_list.creator_user_id = #{current_user.id} DESC, updated_at DESC"))
-                 .page(page)
-                 .per(per)
+        .page(page)
+        .per(per)
     else
-      @lists = List.public_scope.order(updated_at: :desc).page(page).per(per)
+      @lists = List.public_scope.page(page).per(per)
     end
+
+    sort_lists
 
     if params[:q].present?
       is_admin = current_user&.admin? ? [0, 1] : 0
@@ -305,5 +306,16 @@ class ListsController < ApplicationController
     unless current_user.permissions.list_permissions(list)[:configurable]
       raise Exceptions::PermissionError
     end
+  end
+
+  def sort_lists # rubocop:disable Metrics/AbcSize
+    @lists =
+      if params[:sort_by].present?
+        @lists.order(params.fetch(:sort_by) => params.fetch(:order))
+      elsif current_user.present?
+        @lists.order(Arel.sql("ls_list.creator_user_id = #{current_user.id} DESC, updated_at DESC"))
+      else
+        @lists.order(updated_at: :desc)
+      end
   end
 end

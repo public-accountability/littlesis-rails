@@ -19,9 +19,7 @@ module EntityExtensions
     has_one :political_fundraising, inverse_of: :entity, dependent: :destroy
 
     ## extension nexted attributes
-    accepts_nested_attributes_for :person
-    accepts_nested_attributes_for :public_company
-    accepts_nested_attributes_for :school
+    accepts_nested_attributes_for :person, :public_company, :school, :business
   end
 
   class_methods do

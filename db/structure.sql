@@ -273,7 +273,7 @@ CREATE TABLE `business_person` (
   PRIMARY KEY (`id`),
   KEY `entity_id_idx` (`entity_id`),
   CONSTRAINT `business_person_ibfk_1` FOREIGN KEY (`entity_id`) REFERENCES `entity` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1291 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1292 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `candidate_district`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -388,7 +388,7 @@ CREATE TABLE `dashboard_bulletins` (
   `color` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_dashboard_bulletins_on_created_at` (`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=141 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `degree`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -435,7 +435,7 @@ CREATE TABLE `documents` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_documents_on_url_hash` (`url_hash`)
-) ENGINE=InnoDB AUTO_INCREMENT=4201 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4203 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `donation`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -716,7 +716,7 @@ CREATE TABLE `help_pages` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_help_pages_on_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `hierarchy`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1356,43 +1356,6 @@ CREATE TABLE `os_entity_donor` (
   KEY `reviewed_at_idx` (`reviewed_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `os_entity_preprocess`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `os_entity_preprocess` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `entity_id` bigint(20) NOT NULL,
-  `cycle` varchar(4) COLLATE utf8_unicode_ci NOT NULL,
-  `processed_at` datetime NOT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `entity_cycle_idx` (`entity_id`,`cycle`),
-  KEY `entity_id_idx` (`entity_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `os_entity_transaction`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `os_entity_transaction` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `entity_id` int(11) NOT NULL,
-  `cycle` varchar(4) NOT NULL,
-  `transaction_id` varchar(30) NOT NULL,
-  `match_code` bigint(20) DEFAULT NULL,
-  `is_verified` tinyint(1) NOT NULL DEFAULT 0,
-  `is_processed` tinyint(1) NOT NULL DEFAULT 0,
-  `is_synced` tinyint(1) NOT NULL DEFAULT 1,
-  `reviewed_by_user_id` bigint(20) DEFAULT NULL,
-  `reviewed_at` datetime DEFAULT NULL,
-  `locked_by_user_id` bigint(20) DEFAULT NULL,
-  `locked_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `entity_cycle_transaction_idx` (`entity_id`,`cycle`,`transaction_id`),
-  KEY `is_synced_idx` (`is_synced`),
-  KEY `locked_at_idx` (`locked_at`),
-  KEY `reviewed_at_idx` (`reviewed_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `os_matches`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -1570,7 +1533,7 @@ CREATE TABLE `position` (
   KEY `relationship_id_idx` (`relationship_id`),
   CONSTRAINT `position_ibfk_1` FOREIGN KEY (`relationship_id`) REFERENCES `relationship` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `position_ibfk_2` FOREIGN KEY (`boss_id`) REFERENCES `entity` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5712 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5713 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `professional`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1647,7 +1610,7 @@ CREATE TABLE `references` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_references_on_referenceable_id_and_referenceable_type` (`referenceable_id`,`referenceable_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=4622 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4625 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `relationship`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1770,47 +1733,6 @@ CREATE TABLE `sessions` (
   KEY `index_sessions_on_updated_at` (`updated_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8533 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `sf_guard_user_profile`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sf_guard_user_profile` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `name_first` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `name_last` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `email` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `reason` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
-  `analyst_reason` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
-  `is_visible` tinyint(1) NOT NULL DEFAULT 1,
-  `invitation_code` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `enable_announcements` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_html_editor` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_recent_views` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_favorites` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_pointers` tinyint(1) NOT NULL DEFAULT 1,
-  `public_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `bio` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
-  `is_confirmed` tinyint(1) NOT NULL DEFAULT 0,
-  `confirmation_code` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `filename` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `ranking_opt_out` tinyint(1) NOT NULL DEFAULT 0,
-  `watching_opt_out` tinyint(1) NOT NULL DEFAULT 0,
-  `enable_notes_list` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_notes_notifications` tinyint(1) NOT NULL DEFAULT 1,
-  `score` bigint(20) DEFAULT NULL,
-  `show_full_name` tinyint(1) NOT NULL DEFAULT 0,
-  `unread_notes` int(11) DEFAULT 0,
-  `home_network_id` int(11) NOT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `location` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_email_idx` (`email`),
-  UNIQUE KEY `unique_public_name_idx` (`public_name`),
-  UNIQUE KEY `unique_user_idx` (`user_id`),
-  KEY `user_id_public_name_idx` (`user_id`,`public_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=193 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `social`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -1878,7 +1800,7 @@ CREATE TABLE `tags` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_tags_on_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=515 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=516 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `toolkit_pages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1955,7 +1877,7 @@ CREATE TABLE `user_profiles` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_user_profiles_on_user_id` (`user_id`),
   CONSTRAINT `fk_rails_87a6352e58` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5548 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5550 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1975,7 +1897,7 @@ CREATE TABLE `user_requests` (
   PRIMARY KEY (`id`),
   KEY `index_user_requests_on_user_id` (`user_id`),
   CONSTRAINT `fk_rails_de8c07e72e` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1021 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1028 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2035,7 +1957,7 @@ CREATE TABLE `versions` (
   KEY `index_versions_on_entity2_id` (`entity2_id`),
   KEY `index_versions_on_item_type_and_item_id` (`item_type`,`item_id`),
   KEY `index_versions_on_whodunnit` (`whodunnit`)
-) ENGINE=InnoDB AUTO_INCREMENT=11888 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11870 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!50003 DROP FUNCTION IF EXISTS `network_map_link` */;
 ALTER DATABASE `littlesis_test` CHARACTER SET utf8 COLLATE utf8_general_ci ;
@@ -2234,9 +2156,11 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200312145653'),
 ('20200312150307'),
 ('20200312195049'),
+('20200312200907'),
 ('20200312201205'),
 ('20200312202512'),
 ('20200312202711'),
+('20200318160306'),
 ('20200313164354'),
 ('20200313164724'),
 ('20200313183438'),
@@ -2255,5 +2179,4 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200318202545'),
 ('20200318202546'),
 ('20200318202702');
-
 

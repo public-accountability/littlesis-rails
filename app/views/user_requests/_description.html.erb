@@ -6,7 +6,7 @@
   <div id="user-request-description">
     <strong>The following <%= request.description %> was requested by
       <%= link_to username, "/users/#{username}"%>
-      at <%= LsDate.pretty_print(request.created_at) %>:
+      at <%= l request.created_at %>:
     </strong>
     <p><strong>Justification:</strong> <%= request.justification %></p>
   </div>
