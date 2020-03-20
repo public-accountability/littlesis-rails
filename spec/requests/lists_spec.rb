@@ -1,17 +1,85 @@
+# rubocop:disable RSpec/ImplicitSubject, RSpec/ImplicitBlockExpectation
+
 describe 'List Requests' do
   let(:user) { create_really_basic_user }
-  before(:each) { login_as(user, :scope => :user) }
-  after(:each) { logout(:user) }
-
   let(:list) { create(:list, creator_user_id: user.id) }
   let(:entity) { EntitySpecHelpers.org_updated_one_year_ago }
+
+  before { login_as(user, :scope => :user) }
+
+  after { logout(:user) }
+
+  describe 'creating new lists' do
+    let(:list_params) do
+      {
+        'name' => 'example list',
+        'short_description' => '',
+        'description' => '',
+        'access' => '0',
+        'is_ranked' => '0',
+        'is_admin' => '0',
+        'is_featured' => '0'
+      }
+    end
+
+    context 'without a source url' do
+      let(:params) do
+        {
+          'list' => list_params,
+          'ref' => { 'url' => '', 'name' => '' }
+        }
+      end
+
+      specify do
+        expect { post '/lists', params: params }
+          .not_to change(List, :count)
+
+        expect(response.body).to include "A source URL is required"
+      end
+    end
+
+    context 'with a source url' do
+      let(:params) do
+        {
+          'list' => list_params,
+          'ref' => { 'url' => 'https://example.com', 'name' => '' }
+        }
+      end
+
+      specify do
+        expect { post '/lists', params: params }
+          .to change(List, :count).by(1)
+
+        expect(response).to have_http_status(302)
+      end
+    end
+
+    context 'without a source name' do
+      let(:url) { Faker::Internet.url }
+
+      let(:params) do
+        {
+          'list' => list_params,
+          'ref' => { 'url' => url, 'name' => '' }
+        }
+      end
+
+      specify do
+        expect { post '/lists', params: params }.to change(List, :count).by(1)
+        expect(response).to have_http_status(302)
+        expect(List.last.references.first.document.url).to eq url
+      end
+    end
+  end
 
   describe 'adding one entity to a list' do
     subject do
       -> { post add_entity_list_path(list), params: { :entity_id => entity.id } }
     end
 
-    it { is_expected.to change { ListEntity.count }.by(1) }
+    it do
+      is_expected.to change(ListEntity, :count).by(1)
+    end
 
     it do
       is_expected.to change { entity.reload.last_user_id }.to(user.sf_guard_user_id)
@@ -25,17 +93,19 @@ describe 'List Requests' do
   end
 
   describe 'removing entity from a list' do
-    let!(:list_entity) do
+    subject do
+      -> { post remove_entity_list_path(list), params: { :list_entity_id => list_entity.id } }
+    end
+
+    let(:list_entity) do
       ListEntity.create!(list_id: list.id, entity_id: entity.id)
     end
 
     before { list_entity }
 
-    subject do
-      -> { post remove_entity_list_path(list), params: { :list_entity_id => list_entity.id } }
+    it do
+      is_expected.to change(ListEntity, :count).by(-1)
     end
-
-    it { is_expected.to change { ListEntity.count }.by(-1) }
 
     it do
       is_expected.to change { entity.reload.last_user_id }.to(user.sf_guard_user_id)
@@ -110,3 +180,5 @@ describe 'List Requests' do
     end
   end
 end
+
+# rubocop:enable RSpec/ImplicitSubject, RSpec/ImplicitBlockExpectation
