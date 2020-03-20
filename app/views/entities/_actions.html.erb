@@ -19,7 +19,7 @@
 
 	<%= link_to 'merge', merge_path(mode: :search, source: @entity.id) %>
 
-	<% if current_user.has_legacy_permission 'importer' %>
+	<% if current_user.has_ability? 'importer' %>
           <%= link_to "match donations", match_donations_entity_path(entity), class: "action-button" if entity.person? %>
 	<% end %>
 

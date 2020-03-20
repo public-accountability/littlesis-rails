@@ -30,7 +30,7 @@
   <% if @relationship.last_user.nil? %>
     <% @relationship.last_user = User.find(1) %>
   <% end  %>
-  <%= link_to @relationship.last_user.user.username, user_page_path(@relationship.last_user.user) %>
+  <%= link_to @relationship.last_user.username, user_page_path(@relationship.last_user) %>
   </strong>
   <%= time_ago_in_words(@relationship.updated_at) %> ago
 

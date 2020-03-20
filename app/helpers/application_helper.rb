@@ -142,8 +142,8 @@ module ApplicationHelper
     current_user.username
   end
 
-  def has_legacy_permission(permission)
-    current_user and current_user.has_legacy_permission(permission)
+  def has_ability?(permission)
+    current_user and current_user.has_ability?(permission)
   end
 
   def facebook_meta
