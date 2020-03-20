@@ -90,8 +90,6 @@ RSpec.configure do |config|
   #   Page.delete_all
   #   ToolkitPage.delete_all
   #   User.delete_all
-  #   SfGuardUser.delete_all
-  #   SfGuardUserPermission.delete_all
   # end
 
   DatabaseCleaner.strategy = :transaction

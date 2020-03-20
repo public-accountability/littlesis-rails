@@ -28,7 +28,7 @@
 <div id="entity-edited-history" class="col-md-4 col-sm-6 col-xs-6 hidden-xs hidden-sm">
   Edited by<strong>
   <% if @relationship.last_user.nil? %>
-    <% @relationship.last_user = SfGuardUser.find(1) %>
+    <% @relationship.last_user = User.find(1) %>
   <% end  %>
   <%= link_to @relationship.last_user.user.username, user_page_path(@relationship.last_user.user) %>
   </strong>

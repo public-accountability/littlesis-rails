@@ -20,7 +20,7 @@ feature "Signing up for an account", type: :feature do
   end
 
   scenario 'Fills out form and signs up' do
-    counts = [User.count, SfGuardUser.count, UserProfile.count]
+    counts = [User.count, UserProfile.count]
 
     fill_in 'user_user_profile_attributes_name_first', :with => user_info.first_name
     fill_in 'user_user_profile_attributes_name_last', :with => user_info.last_name
@@ -33,7 +33,7 @@ feature "Signing up for an account", type: :feature do
 
     click_button 'Sign up'
 
-    expect([User.count, SfGuardUser.count, UserProfile.count]).to eq counts.map { |x| x + 1 }
+    expect([User.count, UserProfile.count]).to eq counts.map { |x| x + 1 }
     expect(page.status_code).to eq 200
     expect(page).to have_current_path join_success_path
     expect(page).not_to have_selector "#signup-errors-alert"
@@ -75,7 +75,7 @@ feature "Signing up for an account", type: :feature do
     end
 
     scenario 'Shows error message regarding the username' do
-      counts = [User.count, SfGuardUser.count, UserProfile.count]
+      counts = [User.count, UserProfile.count]
 
       fill_in 'user_user_profile_attributes_name_first', :with => user_info.first_name
       fill_in 'user_user_profile_attributes_name_last', :with => user_info.last_name
@@ -88,7 +88,7 @@ feature "Signing up for an account", type: :feature do
 
       click_button 'Sign up'
 
-      expect([User.count, SfGuardUser.count, UserProfile.count]).to eq counts
+      expect([User.count, UserProfile.count]).to eq counts
 
       expect(page.status_code).to eq 200
       page_has_selector 'h2', text: 'Get Involved!'
