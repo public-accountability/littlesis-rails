@@ -125,12 +125,17 @@ describe Link, type: :model do
   end
 
   describe '#link_content' do
-    let(:person) { create(:person) }
+    let(:person) { create(:entity_person) }
     let(:company) { create(:public_company_entity) }
-    let(:relationship) { create(:ownership_relationship, entity: person, related: company, notes: "Some text",\
-                                start_date: "2004-01-03", end_date: "2016-05-07") }
-    let!(:ownership) { create(:ownership, relationship: relationship, percent_stake: 100) }
-    let!(:link) { create(:link, relationship: relationship, entity: person, related: company) }
+    let(:relationship) do
+      create(:ownership_relationship, entity: person, related: company, notes: "Some text",
+                                      start_date: "2004-01-03", end_date: "2016-05-07")
+    end
+
+    let(:ownership) { create(:ownership, relationship: relationship, percent_stake: 100) }
+    let(:link) { relationship.link }
+
+    before { ownership; link; }
 
     it 'describes the relationship' do
       expect(link.link_content).to include('Owner')
