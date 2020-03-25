@@ -19,7 +19,7 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'has correct from' do
-      expect(@mail.from).to eq [APP_CONFIG['notification_email']]
+      expect(@mail.from).to eq [APP_CONFIG['default_from_email']]
     end
 
     it 'has correct reply_to' do
@@ -161,7 +161,7 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'has correct from' do
-      expect(@mail.from).to eq [APP_CONFIG['notification_email']]
+      expect(@mail.from).to eq [APP_CONFIG['default_from_email']]
     end
 
     it 'has params contents' do

@@ -8,7 +8,7 @@ defaults: &defaults
   imagemagick_binary_path: "/usr/bin/convert"
   google_custom_search_engine_id:
   google_custom_news_search_engine_id:
-  google_custom_search_key: 
+  google_custom_search_key:
   default_from_email: dev@littlesis.org
   admins_only: false
   convert_new_legacy_notes: true
@@ -24,17 +24,14 @@ defaults: &defaults
   bing_maps_key:
   default_network_id: 79
   asset_host: "littlesis.org"
-  image_asset_host: 
+  image_asset_host:
   cloudfront_distribtion_id:
-  smtp_address: 
+  smtp_address:
   smtp_port:
   smtp_domain:
   smtp_user_name:
   smtp_password:
   smtp_authentication:
-  notification_email:
-  notification_user_name:
-  notification_user_password:
   notification_to:
   carousel_list_id: 404
   restricted_ips:
@@ -49,7 +46,7 @@ defaults: &defaults
   oligrapher_version: 0.4.1
   image_host: "https://littlesis.org"
   image_root: public/images
-  
+
 
 test:
   <<: *defaults
@@ -65,7 +62,7 @@ development:
   <<: *defaults
   image_host: "http://localhost:8080"
   site_url: "http://localhost:8080"
-  
+
 
 production:
   <<: *defaults
