@@ -16,7 +16,7 @@ type ReferenceErrors = { ['name'|'url']: [String] }
 
 type SpinnerElement = 'top' | 'bottom'
 
-*********************************************************/
+ *********************************************************/
 
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -47,9 +47,9 @@ type SpinnerElement = 'top' | 'bottom'
   }];
 
   var sampleCsv =
-      'name,primary_ext,blurb\n'+
-      'SampleOrg,Org,Description of SampleOrg\n' +
-      'Sample Person,Person,Description of Sample Person';
+    'name,primary_ext,blurb\n'+
+    'SampleOrg,Org,Description of SampleOrg\n' +
+    'Sample Person,Person,Description of Sample Person';
 
   self.init = function(args){
     state = Object.assign(state, {
@@ -278,7 +278,7 @@ type SpinnerElement = 'top' | 'bottom'
     state
       .setIn(['entities', 'byId', entity.id], entity)
       .setIn(['entities', 'order'], state.getIn(['entities', 'order']).concat(entity.id)
-    );
+      );
     return entity;
   };
 
@@ -319,12 +319,12 @@ type SpinnerElement = 'top' | 'bottom'
     return state.setIn(
       ['entities', 'order'],
       order
-        .slice(0, idx)
-        .concat([id])
-        .concat(order.slice(idx + 1, order.length))
+      .slice(0, idx)
+      .concat([id])
+      .concat(order.slice(idx + 1, order.length))
     );
   };
-  
+
   // Entity -> State
   state.deleteEntity = function(entity){
     return state
@@ -518,8 +518,8 @@ type SpinnerElement = 'top' | 'bottom'
   function notificationBar(){
     return state.hasNotification() &&
       $('<div>', { id: 'notifications' })
-        .append($('<div>', { class: 'alert-icon' }))
-        .append($('<span>', { text: state.notification }));
+      .append($('<div>', { class: 'alert-icon' }))
+      .append($('<span>', { text: state.notification }));
   };
 
 
@@ -608,7 +608,7 @@ type SpinnerElement = 'top' | 'bottom'
         errors,
         handleCellEditOf(entity, col.attr)
       )
-        .attr('disabled', idx > 0 && state.isChosenMatch(entity))
+      .attr('disabled', idx > 0 && state.isChosenMatch(entity))
     )
       .append(maybeMatchResolver(entity, col, idx))
       .append(maybeDeleteButton(entity, idx));
@@ -645,7 +645,7 @@ type SpinnerElement = 'top' | 'bottom'
       .tooltip({
         "placement": 'bottom',
         "html": true,
-	"boundary": 'window',
+        "boundary": 'window',
         "title": errorList(errors, label)
       });
   };
@@ -678,7 +678,7 @@ type SpinnerElement = 'top' | 'bottom'
   }
 
 
-  
+
   function matchResolver(entity) {
     var anchorId = "popover" + util.randomDigitStringId();
 
@@ -717,8 +717,8 @@ type SpinnerElement = 'top' | 'bottom'
       class: "btn btn-danger resolver-create-btn",
       text:  "Create New Entity",
       click: function(){
-	hidePopover(anchorId);
-	handleCreateChoice(entity);
+        hidePopover(anchorId);
+        handleCreateChoice(entity);
       }
     });
   }
@@ -778,8 +778,8 @@ type SpinnerElement = 'top' | 'bottom'
       class: 'btn btn-primary resolver-picker-btn',
       text:  'Use Existing Entity',
       click: function(){
-	hidePopover(anchorId);
-	handleUseExistingChoice(entity);
+        hidePopover(anchorId);
+        handleUseExistingChoice(entity);
       }
     });
   };
@@ -828,7 +828,7 @@ type SpinnerElement = 'top' | 'bottom'
   }
 
   // VALIDATION
-  
+
 
   // () -> State
   state.validate = function(){
@@ -843,7 +843,7 @@ type SpinnerElement = 'top' | 'bottom'
       );
   };
   self.validate = state.validate; // for testing
-  
+
   // [Entities] -> EntitiesErrors
   function validateEntities(entities){
     return entities.reduce(function(acc, entity){
@@ -965,10 +965,10 @@ type SpinnerElement = 'top' | 'bottom'
       v1
     );
   };
-  
+
   // EVENT HANDLERS
 
-    // CSV UPLOAD HANLDING
+  // CSV UPLOAD HANLDING
 
   // (ReaderResult -> Void), JQueryElement -> Void
   function handleUploadThen(processFile, caller){
@@ -1032,26 +1032,26 @@ type SpinnerElement = 'top' | 'bottom'
         };
     }
   }
-  
-  
+
+
   ACCEPTABLE_PERSON_VALUES = ['p', 'per', 'person'];
   ACCEPTABLE_ORG_VALUES = ['o', 'org', 'organization'];
-  
+
   // Anything -> String
   function cleanPrimaryExt(primary_ext) {
     if (typeof primary_ext === 'string') {
       if (ACCEPTABLE_PERSON_VALUES.includes(primary_ext.trim().toLowerCase())) {
-	return 'Person';
+        return 'Person';
       } else if (ACCEPTABLE_ORG_VALUES.includes(primary_ext.trim().toLowerCase())) {
-	return 'Org';
+        return 'Org';
       } else {
-	return primary_ext.trim();
+        return primary_ext.trim();
       }
     } else {
       return '';
     }
   }
-  
+
   function handlePrimaryExtVariations(entity) {
     return Object.assign({}, entity, { "primary_ext": cleanPrimaryExt(entity.primary_ext) });
   }
@@ -1069,10 +1069,10 @@ type SpinnerElement = 'top' | 'bottom'
     else {
 
       var result = maybeEntities.result.data
-	  .map(state.assignId)
-	  .map(handlePrimaryExtVariations)
-	  .map(state.addIngestedEntity);
-      
+        .map(state.assignId)
+        .map(handlePrimaryExtVariations)
+        .map(state.addIngestedEntity);
+
       return { result: result, errors: null };
     }
   }
@@ -1097,8 +1097,8 @@ type SpinnerElement = 'top' | 'bottom'
       .replaceWithMatch(entity)
       .render();
   }
- 
- // Entity, String -> Void
+
+  // Entity, String -> Void
   function handlePickerSelection(entity, matchId){
     state.setMatchSelection(entity, matchId);
     $(".resolver-picker-result-container")
