@@ -1,42 +1,42 @@
-# rubocop:disable Style/StringLiterals
-
+# rubocop:disable RSpec/NamedSubject
 
 describe NotificationMailer, type: :mailer do
   before(:all) { ActiveJob::Base.queue_adapter = :test }
 
   describe '#contact_email' do
-    before do
-      @params = { name: 'me', email: 'email@email.com', message: 'hey', subject: 'hi' }
-      @mail = NotificationMailer.contact_email(@params)
+    let(:params) do
+      { name: 'me', email: 'email@email.com', message: 'hey', subject: 'hi' }
     end
 
+    let(:mail) { NotificationMailer.contact_email(params) }
+
     it 'has correct subject' do
-      expect(@mail.subject).to eql 'Contact Us: hi'
+      expect(mail.subject).to eql 'Contact Us: hi'
     end
 
     it 'has correct to' do
-      expect(@mail.to).to eq [APP_CONFIG['notification_to']]
+      expect(mail.to).to eq [APP_CONFIG['notification_to']]
     end
 
     it 'has correct from' do
-      expect(@mail.from).to eq [APP_CONFIG['notification_email']]
+      expect(mail.from).to eq [APP_CONFIG['default_from_email']]
     end
 
     it 'has correct reply_to' do
-      expect(@mail.reply_to).to eq [@params[:email]]
+      expect(mail.reply_to).to eq [params[:email]]
     end
 
     it 'has message' do
-      expect(@mail.encoded).to include @params[:message]
+      expect(mail.encoded).to include params[:message]
     end
 
     it 'sends email' do
-      expect { @mail.deliver_now }
+      expect { mail.deliver_now }
         .to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
     it 'sends email later' do
-      expect { @mail.deliver_later }
+      expect { mail.deliver_later }
         .to have_enqueued_job.on_queue('mailers')
     end
   end
@@ -109,38 +109,36 @@ describe NotificationMailer, type: :mailer do
   end
 
   describe '#flag_email' do
-    before(:all) do
-      flag_params = {
-        'email' => 'user@littlesis.org',
+    let(:flag_params) do
+      { 'email' => 'user@littlesis.org',
         'message' => 'something just does not look right',
-        'url' => 'https://littlesis.org/some_page'
-      }
-      @mail = NotificationMailer.flag_email(flag_params)
+        'url' => 'https://littlesis.org/some_page' }
     end
 
+    let(:mail) { NotificationMailer.flag_email(flag_params) }
+
     it 'has url' do
-      expect(@mail.encoded).to include 'https://littlesis.org/some_page'
+      expect(mail.encoded).to include 'https://littlesis.org/some_page'
     end
 
     it 'has message' do
-      expect(@mail.encoded).to include 'something just does not look right'
+      expect(mail.encoded).to include 'something just does not look right'
     end
 
     it 'sends email' do
-      expect { @mail.deliver_now }
+      expect { mail.deliver_now }
         .to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
-    # NOTE: This test starts failing after the upgrade to Rails 5
-    xit 'sends email later' do
-      expect { @mail.deliver_later }
+    it 'sends email later' do
+      expect { mail.deliver_later }
         .to have_enqueued_job.on_queue('mailers')
     end
   end
 
   describe '#bug_report_email' do
-    before(:all) do
-      @params = {
+    let(:params) do
+      {
         'email' => 'user@littlesis.org',
         'type' => 'Bug Report',
         'page' => 'the bug reporting page',
@@ -148,25 +146,25 @@ describe NotificationMailer, type: :mailer do
         'description' => 'bugs are crawling all over the place.',
         'expected' => 'everything should be perfect always'
       }
-
-      @mail = NotificationMailer.bug_report_email(@params)
     end
 
+    let(:mail) { NotificationMailer.bug_report_email(params) }
+
     it 'has correct subject' do
-      expect(@mail.subject).to eql 'Bug Report: BUGS ARE EVERYWHERE'
+      expect(mail.subject).to eql 'Bug Report: BUGS ARE EVERYWHERE'
     end
 
     it 'has correct to' do
-      expect(@mail.to).to eq [APP_CONFIG['notification_to']]
+      expect(mail.to).to eq [APP_CONFIG['notification_to']]
     end
 
     it 'has correct from' do
-      expect(@mail.from).to eq [APP_CONFIG['notification_email']]
+      expect(mail.from).to eq [APP_CONFIG['default_from_email']]
     end
 
     it 'has params contents' do
-      @params.values.each do |val|
-        expect(@mail.encoded).to include val
+      params.values.each do |val|
+        expect(mail.encoded).to include val
       end
     end
   end
@@ -284,7 +282,7 @@ describe NotificationMailer, type: :mailer do
       expect(mail.reply_to).to eql [user.email]
     end
 
-    it "sends email " do
+    it "sends email" do
       expect { mail.deliver_now }
         .to change { ActionMailer::Base.deliveries.count }.by(1)
     end
@@ -311,7 +309,7 @@ describe NotificationMailer, type: :mailer do
     end
   end
 
-  describe "#deletion_request_email" do
+  describe "sending image deletion request email" do
     let(:user) { create(:really_basic_user) }
     let(:image) { create(:image, entity: create(:entity_person)) }
     let(:image_deletion_request) do
@@ -332,4 +330,4 @@ describe NotificationMailer, type: :mailer do
   end
 end
 
-# rubocop:enable Style/StringLiterals
+# rubocop:enable RSpec/NamedSubject
