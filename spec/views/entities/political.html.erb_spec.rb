@@ -67,4 +67,35 @@ describe 'entities/political.html.erb', type: :view do
       end
     end
   end # layout
+
+  describe 'contributions messaging' do
+    before do
+      assign(:entity, person)
+    end
+
+    context 'when there are no contributions' do
+      before do
+        render
+      end
+
+      it 'displays "no contributions" messaging' do
+        expect(rendered).to have_text 'No contributions found.'
+        expect(rendered).not_to have_css '#political-contributions'
+        expect(rendered).not_to have_css '#who-they-support'
+      end
+    end
+
+    context 'when there are contributions' do
+      before do
+        create(:os_match, os_donation: create(:os_donation), donor_id: person.id)
+        render
+      end
+
+      it 'displays contributions' do
+        expect(rendered).to have_css '#political-contributions', count: 1
+        expect(rendered).to have_css '#who-they-support', count: 1
+        expect(rendered).not_to have_text 'No contributions found.'
+      end
+    end
+  end
 end
