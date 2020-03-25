@@ -19,6 +19,10 @@ module Political
     contributions.pluck(:contribid).uniq.delete_if(&:blank?)
   end
 
+  def contributions?
+    contributions.present?
+  end
+
   def aliases_names
     aliases.map { |a| NameParser.parse_to_hash(a.name) }
   end
