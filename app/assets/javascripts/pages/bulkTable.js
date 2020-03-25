@@ -1006,7 +1006,7 @@ type SpinnerElement = 'top' | 'bottom'
 
   // String -> MaybeEntities
   function parse(csv){
-    var result = Papa.parse(csv, { header: true, skipEmptyLines: true });
+    var result = Papa.parse(csv, { header: true, skipEmptyLines: true, transform: function(val){ return val.trim() } });
     return util.isEmpty(result.errors) ?
       { result: result, error:  null } :
       { result: null,   error:  parseErrorMsg(result.errors[0], result.data) };
