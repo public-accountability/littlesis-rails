@@ -84,9 +84,9 @@
     <% end  %>
   <% end  %>
 
-  
+
   <% if @relationship.is_education?  %>
-    
+
     <%= f.fields_for :education do |e_form|  %>
       <div class="form-row">
 	<% degree_select = e_form.select :degree_id, Degree.select_options_cache, { include_blank: true }, { class: 'selectpicker' } %>
@@ -101,7 +101,7 @@
       </div>
       <% end %>
   <% end %>
-  
+
 
   <% if @relationship.is_membership?  %>
     <div class="form-row">
@@ -110,7 +110,7 @@
       <% end %>
     </div>
   <% end %>
-  
+
 
   <!-- Donation, Transaction, Lobbying -->
   <% if [5, 6, 7].include? @relationship.category_id  %>
@@ -152,4 +152,4 @@
     <%= link_to 'Cancel', relationship_path(@relationship), class: 'btn btn-secondary' %>
   </div>
 
-<% end # end of <form> %> 
+<% end # end of <form> %>

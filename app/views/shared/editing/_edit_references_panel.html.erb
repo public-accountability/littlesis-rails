@@ -42,7 +42,7 @@
 
 <script>
  $(function(){
-   
+
    function disableNewReferenceFields() {
      $('#reference_url').prop('disabled', true);
      $('#reference_name').prop('disabled', true);
@@ -55,6 +55,31 @@
      $('#reference_name').prop('disabled', false);
      $('#reference_url').prop('required', true);
      $('#reference_name').prop('required', true);
+   }
+
+   var cleaningUpValidity = {
+     "set": function() {
+       this.setCustomValidity('Please add a new reference or select "just cleaning up" if the changes are minor');
+     },
+     "clear": function() {
+       this.setCustomValidity('');
+     }
+   }
+
+   function justCleaningUpEnable() {
+     $('#reference_just_cleaning_up')
+       .prop('required', true)
+       .prop('disabled', false)
+       .on('invalid', cleaningUpValidity.set)
+       .on('change', cleaningUpValidity.clear)
+   }
+
+   function justCleaningUpDisable() {
+     $('#reference_just_cleaning_up')
+       .prop('required', false)
+       .prop('disabled', true)
+       .off('invalid', cleaningUpValidity.set)
+       .off('change', cleaningUpValidity.clear)
    }
 
    $('#reference_just_cleaning_up').click(function() {
@@ -71,43 +96,40 @@
    $('#reference_existing').change(function(){
      if ($(this).val()) {
        $('#create-new-reference-btn').prop('disabled', true);
-       $('#reference_just_cleaning_up').prop('required', false);
-       $('#reference_just_cleaning_up').prop('disabled', true);
+       justCleaningUpDisable()
      } else {
        $('#create-new-reference-btn').prop('disabled', false);
-       $('#reference_just_cleaning_up').prop('required', true);
-       $('#reference_just_cleaning_up').prop('disabled', false);
+       justCleaningUpEnable()
      }
    })
-   
+
    $('#create-new-reference-btn').click(function() {
      $('#existing-sources-container').addClass('hidden');
      $('#new-reference-form').removeClass('hidden');
      $('#new-reference-form input').prop('required', true);
-     $('#reference_just_cleaning_up').prop('required', false);
-     $('#reference_just_cleaning_up').prop('disabled', true);
+     justCleaningUpDisable()
      enableNewReferenceFields();
    });
-   
+
    $('#use-existing-reference-btn').click(function() {
      $('#existing-sources-container').removeClass('hidden');
      $('#new-reference-form').addClass('hidden');
      $('#new-reference-form input').prop('required', false);
-     
+
      if (!$('#reference_existing').val()) {
        $('#new-reference-form input').prop('required', true);
-       $('#reference_just_cleaning_up').prop('required', true);
-       $('#reference_just_cleaning_up').prop('disabled', false);
-     } 
+       justCleaningUpEnable()
+     }
      disableNewReferenceFields();
    });
-   
+
+   // disable initially if a value is pre-selected
+   // this happens when param new_ref=true
    if ($('#reference_existing').val()) {
-     // disable initially if a value is pre-selected
-     // this happens when param new_ref=true
      $('#create-new-reference-btn').prop('disabled', true);
-     $('#reference_just_cleaning_up').prop('required', false);
-     $('#reference_just_cleaning_up').prop('disabled', true);
+     justCleaningUpDisable()
+   } else {
+     justCleaningUpEnable()
    }
 
  });
