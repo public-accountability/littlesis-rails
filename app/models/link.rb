@@ -58,25 +58,33 @@ class Link < ApplicationRecord
     return 'other'
   end
 
-  # The text for the short relationship link that appears on entity profile pages.
-  def link_content
-    display_date_range = relationship_label.display_date_range
-    maybe_asterisk = relationship.notes.present? ? '*' : ''
-    [
-      description,
-      display_date_range.present? ? ' ' : '',
-      display_date_range,
-      maybe_asterisk
-    ].join('')
-  end
+  concerning :Description do
+    # The text for the short relationship link that appears on entity profile pages.
+    def link_content
+      "#{description}#{link_date_range}#{relationship_notes_mark}#{ownership_stake}"
+    end
 
-  def description
-    relationship_label.label
-  end
+    def description
+      relationship_label.label
+    end
 
-  private
+    private
 
-  def relationship_label
-    @relationship_label ||= RelationshipLabel.new(relationship, is_reverse)
+    def relationship_label
+      @relationship_label ||= RelationshipLabel.new(relationship, is_reverse)
+    end
+
+    def link_date_range
+      " #{relationship_label.display_date_range}" if relationship_label.display_date_range.present?
+    end
+
+    def relationship_notes_mark
+      relationship.notes.present? ? '*' : ''
+    end
+
+    def ownership_stake
+      stake = relationship&.ownership&.percent_stake
+      "; percent stake: #{stake}%" if stake.present?
+    end
   end
 end

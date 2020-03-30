@@ -313,6 +313,26 @@ describe Entity, :tag_helper do
         end
       end
     end
+
+    describe '.contributions?' do
+      let(:donor) { create(:entity_person) }
+
+      context 'when there are no contributions' do
+        it 'returns false' do
+          expect(donor.contributions?).to be(false)
+        end
+      end
+
+      context 'when there are contributions' do
+        before do
+          create(:os_match, os_donation: create(:os_donation), donor_id: donor.id)
+        end
+
+        it 'returns true' do
+          expect(donor.contributions?).to be(true)
+        end
+      end
+    end
   end # end political
 
   describe 'Extension Attributes Functions' do

@@ -17,6 +17,11 @@ Rails:
 Metrics/BlockLength:
   Enabled: false
 
+Metrics/ClassLength:
+  Max: 150
+  Exclude:
+    - 'app/models/*.rb'
+
 Metrics/ModuleLength:
   Exclude:
     - 'spec/**/*.rb'
