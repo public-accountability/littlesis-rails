@@ -1733,47 +1733,6 @@ CREATE TABLE `sessions` (
   KEY `index_sessions_on_updated_at` (`updated_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9319 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `sf_guard_user_profile`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sf_guard_user_profile` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `name_first` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `name_last` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `email` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `reason` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
-  `analyst_reason` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
-  `is_visible` tinyint(1) NOT NULL DEFAULT 1,
-  `invitation_code` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `enable_announcements` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_html_editor` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_recent_views` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_favorites` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_pointers` tinyint(1) NOT NULL DEFAULT 1,
-  `public_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `bio` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
-  `is_confirmed` tinyint(1) NOT NULL DEFAULT 0,
-  `confirmation_code` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `filename` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `ranking_opt_out` tinyint(1) NOT NULL DEFAULT 0,
-  `watching_opt_out` tinyint(1) NOT NULL DEFAULT 0,
-  `enable_notes_list` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_notes_notifications` tinyint(1) NOT NULL DEFAULT 1,
-  `score` bigint(20) DEFAULT NULL,
-  `show_full_name` tinyint(1) NOT NULL DEFAULT 0,
-  `unread_notes` int(11) DEFAULT 0,
-  `home_network_id` int(11) NOT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `location` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_email_idx` (`email`),
-  UNIQUE KEY `unique_public_name_idx` (`public_name`),
-  UNIQUE KEY `unique_user_idx` (`user_id`),
-  KEY `user_id_public_name_idx` (`user_id`,`public_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=193 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `social`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2220,6 +2179,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200318202544'),
 ('20200318202545'),
 ('20200318202546'),
-('20200318202702');
+('20200318202702'),
+('20200330215259');
 
 
