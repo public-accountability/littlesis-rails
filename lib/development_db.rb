@@ -155,6 +155,10 @@ class DevelopmentDb
                  user_requests
                  versions].freeze
 
+  NON_CLEANED_IGNORED = %w[user_profiles users].freeze
+
+  CLEANED = %w[clean_user_profiles clean_users].freeze
+
   LIMIT = %w[modification
              modification_field
              ny_disclosures
