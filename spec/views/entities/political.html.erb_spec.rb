@@ -69,6 +69,10 @@ describe 'entities/political.html.erb' do
   end # layout
 
   describe 'contributions messaging' do
+    let(:person) do
+      create(:entity_person, updated_at: Time.current)
+    end
+
     before do
       assign(:entity, person)
     end
