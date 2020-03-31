@@ -15,7 +15,6 @@ class CongressImporter
   # HISTORICAL_YAML = Rails.root.join('tmp', 'legislators-historical.yaml').to_s
 
   CONGRESS_BOT_USER = 10_040
-  CONGRESS_BOT_SF_USER = 8_270
 
   attr_reader :current_reps, :historical_reps, :reps
 

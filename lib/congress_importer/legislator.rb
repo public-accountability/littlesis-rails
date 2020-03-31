@@ -41,7 +41,7 @@ class CongressImporter
           match.person.assign_attribute_unless_present :name_middle, dig('name', 'middle')
           match.person.gender_id = Person.gender_to_id(dig('bio', 'gender'))
           if match.changed?
-            match.last_user_id = CONGRESS_BOT_SF_USER
+            match.last_user_id = CONGRESS_BOT_USER
             match.save!
           end
 
@@ -68,7 +68,7 @@ class CongressImporter
         blurb: generate_blurb,
         website: fetch_website,
         start_date: dig('bio', 'birthday'),
-        last_user_id: CONGRESS_BOT_SF_USER
+        last_user_id: CONGRESS_BOT_USER
       ).remove_nil_vals
     end
 

@@ -64,7 +64,7 @@ class CongressImporter
       relationship.update!(category_id: Relationship::MEMBERSHIP_CATEGORY,
                            entity1_id: legislator.entity.id,
                            entity2_id: PARTY_TO_ENTITY.fetch(membership['party']),
-                           last_user_id: CongressImporter::CONGRESS_BOT_SF_USER)
+                           last_user_id: CongressImporter::CONGRESS_BOT_USER)
     end
 
     def find_party_memberships(party_id)
@@ -86,7 +86,7 @@ class CongressImporter
                            start_date: term['start'],
                            end_date: term['end'],
                            is_current: (Date.parse(term['end']) > Date.today),
-                           last_user_id: CongressImporter::CONGRESS_BOT_SF_USER)
+                           last_user_id: CongressImporter::CONGRESS_BOT_USER)
       relationship.membership.update!(elected_term: elected_term_struct(term))
     end
 
@@ -183,5 +183,3 @@ class CongressImporter
     end
   end
 end
-
-
