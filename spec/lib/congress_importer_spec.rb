@@ -1,58 +1,57 @@
-require Rails.root.join('lib', 'congress_importer')
+require Rails.root.join('lib/congress_importer')
 
 describe 'CongressImporter' do
+  subject { CongressImporter.new }
+
   before(:all) do
     @legislators_current = YAML.load_file(
       Rails.root.join('spec', 'testdata', 'legislators-current.yaml')
     )
   end
 
-  before(:each) do
-    stub_current = Rails.root.join('spec', 'testdata', 'legislators-current.yaml').to_s
-    stub_historical = Rails.root.join('spec', 'testdata', 'legislators-historical.yaml').to_s
+  before do
+    stub_current = Rails.root.join('spec/testdata/legislators-current.yaml').to_s
+    stub_historical = Rails.root.join('spec/testdata/legislators-historical.yaml').to_s
     stub_const('CongressImporter::CURRENT_YAML', stub_current)
     stub_const('CongressImporter::HISTORICAL_YAML', stub_historical)
     stub_const('CongressImporter::CONGRESS_BOT_USER', 1)
-    stub_const('CongressImporter::CONGRESS_BOT_SF_USER', 1)
   end
 
-  subject { CongressImporter.new }
-
-  context 'initalize' do
+  describe 'initialize' do
     it 'sets current_reps and historical_reps' do
-      expect(subject.current_reps.length).to eql 2
-      expect(subject.historical_reps.length).to eql 2
+      expect(subject.current_reps.length).to eq 2
+      expect(subject.historical_reps.length).to eq 2
     end
 
     it 'reps combines historical reps since 1990 and current ones' do
-      expect(subject.reps.length).to eql 3
+      expect(subject.reps.length).to eq 3
     end
   end
 
-  context 'match_by_bioguide_or_govtrack' do
-    let(:strange) { create(:entity_person, name: 'Luther Strange') }
-
+  describe 'match_by_bioguide_or_govtrack' do
     subject do
       CongressImporter.new.reps.find { |r| r.dig('id', 'bioguide') == 'S001202' }
     end
 
-    context 'bioguide in LittleSis' do
+    let(:strange) { create(:entity_person, name: 'Luther Strange') }
+
+    context 'when the bioguide in LittleSis' do
       before { strange.add_extension 'ElectedRepresentative', :bioguide_id => 'S001202' }
 
       it 'finds by bioguide' do
-        expect(subject.match_by_bioguide_or_govtrack).to eql strange
+        expect(subject.match_by_bioguide_or_govtrack).to eq strange
       end
     end
 
-    context 'govtrack in littleSis' do
+    context 'when the govtrack id is in littleSis' do
       before { strange.add_extension 'ElectedRepresentative', :govtrack_id => '412734' }
 
       it 'finds by govtrack' do
-        expect(subject.match_by_bioguide_or_govtrack).to eql strange
+        expect(subject.match_by_bioguide_or_govtrack).to eq strange
       end
     end
 
-    context 'neither bioguide or govtrack in LittleSis' do
+    context 'when neither bioguide or govtrack is in LittleSis' do
       before { strange.add_extension 'ElectedRepresentative' }
 
       it 'retuns nil' do
@@ -72,7 +71,7 @@ describe 'CongressImporter' do
                              website: 'https://www.brown.senate.gov',
                              primary_ext: 'Person',
                              start_date: '1952-11-09',
-                             last_user_id: CongressImporter::CONGRESS_BOT_SF_USER))
+                             last_user_id: CongressImporter::CONGRESS_BOT_USER))
       end
     end
 
@@ -98,21 +97,21 @@ describe 'CongressImporter' do
     describe '#import!' do
       let(:import!) { proc { sherrod_brown.import! } }
 
-      context "legislator doesn't exist in LittleSis" do
+      context "when the legislator doesn't exist in LittleSis" do
         before do
           sherrod_brown.instance_variable_set(:@_match, nil)
         end
 
         it 'creates a new entity' do
-          expect { import!.call }.to change { Entity.count }.by(1)
+          expect { import!.call }.to change(Entity, :count).by(1)
         end
 
         it 'creates a person entity' do
-          expect { import!.call }.to change { Person.count }.by(1)
+          expect { import!.call }.to change(Person, :count).by(1)
         end
 
         it 'creates a new elected rep' do
-          expect { import!.call }.to change { ElectedRepresentative.count }.by(1)
+          expect { import!.call }.to change(ElectedRepresentative, :count).by(1)
         end
 
         it 'correctly imports attributes' do
@@ -126,25 +125,25 @@ describe 'CongressImporter' do
         end
       end
 
-      context 'legislator exists in LittleSis - attributes changed' do
+      describe 'legislator exists in LittleSis - attributes changed' do
         let!(:entity) do
           create(:entity_person, name: 'Sherrod "nickname" Brown', blurb: 'i am sherrod brown')
             .tap { |e| e.add_extension('ElectedRepresentative', bioguide_id: 'B000944') }
         end
 
         it 'does not create a new entity' do
-          expect { import!.call }.not_to change { Entity.count }
+          expect { import!.call }.not_to change(Entity, :count)
         end
 
         it 'updates entity attributes' do
           import!.call
           e = Entity.find(entity.id)
-          expect(e.blurb).to eql 'i am sherrod brown'
-          expect(e.start_date).to eql '1952-11-09'
-          expect(e.person.gender).to eql 'Male'
-          expect(e.aliases.count).to eql 2
-          expect(e.also_known_as).to eql ['Sherrod Brown']
-          expect(e.elected_representative.crp_id).to eql 'N00003535'
+          expect(e.blurb).to eq 'i am sherrod brown'
+          expect(e.start_date).to eq '1952-11-09'
+          expect(e.person.gender).to eq 'Male'
+          expect(e.aliases.count).to eq 2
+          expect(e.also_known_as).to eq ['Sherrod Brown']
+          expect(e.elected_representative.crp_id).to eq 'N00003535'
         end
 
         it 'does not update if none of the attributes have changed' do
@@ -160,6 +159,7 @@ describe 'CongressImporter' do
 
   describe CongressImporter::TermsImporter do
     let(:sherrod_brown) { CongressImporter::Legislator.new(@legislators_current[0]) }
+
     let(:sherrod_brown_entity) do
       create(:entity_person, name: 'Sherrod Brown').tap do |e|
         e.add_extension 'ElectedRepresentative', :bioguide_id => 'B000944'
@@ -169,10 +169,10 @@ describe 'CongressImporter' do
     describe 'helper methods' do
       subject { CongressImporter::TermsImporter.new(sherrod_brown) }
 
-      specify { expect(subject.send(:rep_terms).length).to eql 7 }
-      specify { expect(subject.send(:sen_terms).length).to eql 2 }
-      specify { expect(subject.send(:distilled_terms).rep.length).to eql 1 }
-      specify { expect(subject.send(:distilled_terms).sen.length).to eql 1 }
+      specify { expect(subject.send(:rep_terms).length).to eq 7 }
+      specify { expect(subject.send(:sen_terms).length).to eq 2 }
+      specify { expect(subject.send(:distilled_terms).rep.length).to eq 1 }
+      specify { expect(subject.send(:distilled_terms).sen.length).to eq 1 }
 
       describe 'distill' do
         let(:terms) do
@@ -202,23 +202,23 @@ describe 'CongressImporter' do
 
         specify do
           expect(subject.send(:distill, terms))
-            .to eql([
-                      { 'start' => '2000-01-01', 'end' => '2002-01-01', 'state' => 'NY', 'district' => 3, 'party' => 'Democrat'},
-                      { 'start' => '2005-01-02', 'end' => '2006-01-01', 'state' => 'NY', 'district' => 3, 'party' => 'Democrat' },
-                      { 'start' => '2006-01-02', 'end' => '2007-01-01', 'state' => 'NY', 'district' => 4, 'party' => 'Democrat' }
-                    ])
-          expect(subject.send(:distill, terms).length).to eql 3
+            .to eq([
+                     { 'start' => '2000-01-01', 'end' => '2002-01-01', 'state' => 'NY', 'district' => 3, 'party' => 'Democrat' },
+                     { 'start' => '2005-01-02', 'end' => '2006-01-01', 'state' => 'NY', 'district' => 3, 'party' => 'Democrat' },
+                     { 'start' => '2006-01-02', 'end' => '2007-01-01', 'state' => 'NY', 'district' => 4, 'party' => 'Democrat' }
+                   ])
+          expect(subject.send(:distill, terms).length).to eq 3
         end
 
         specify do
           expect(subject.send(:distill, sen_terms))
-            .to eql([
-                      { 'type' => 'sen', 'start' => '2009-01-06', 'end' => '2017-02-08',
-                        'state' => 'AL', 'class' => 2, 'party' => 'Republican',
-                        'url' => 'http://www.sessions.senate.gov/public',
-                        'address' => '326 Russell Senate Office Building Washington DC 20510' }
-                    ])
-          expect(subject.send(:distill, sen_terms).length).to eql 1
+            .to eq([
+                     { 'type' => 'sen', 'start' => '2009-01-06', 'end' => '2017-02-08',
+                       'state' => 'AL', 'class' => 2, 'party' => 'Republican',
+                       'url' => 'http://www.sessions.senate.gov/public',
+                       'address' => '326 Russell Senate Office Building Washington DC 20510' }
+                   ])
+          expect(subject.send(:distill, sen_terms).length).to eq 1
         end
       end
 
@@ -246,7 +246,7 @@ describe 'CongressImporter' do
 
         specify do
           expect(subject.send(:party_memberships))
-            .to eql([{ 'start' => '1993-01-05', 'end' => '2019-01-03', 'party' => 'Democrat' }])
+            .to eq([{ 'start' => '1993-01-05', 'end' => '2019-01-03', 'party' => 'Democrat' }])
         end
       end
 
@@ -265,24 +265,24 @@ describe 'CongressImporter' do
         end
 
         it 'creates a new relationship' do
-          expect(&update_or_create_relationship).to change { Relationship.count }.by(1)
+          expect(&update_or_create_relationship).to change(Relationship, :count).by(1)
         end
 
         it 'creates a new membership' do
-          expect(&update_or_create_relationship).to change { Membership.count }.by(1)
+          expect(&update_or_create_relationship).to change(Membership, :count).by(1)
         end
 
         it 'sets correct relationship fields' do
           update_or_create_relationship.call
           relationship = Relationship.last
           expect(relationship.entity).to eql sherrod_brown_entity
-          expect(relationship.entity2_id).to eql 12_884
-          expect(relationship.start_date).to eql '1993-01-05'
-          expect(relationship.end_date).to eql '2007-01-03'
+          expect(relationship.entity2_id).to eq 12_884
+          expect(relationship.start_date).to eq '1993-01-05'
+          expect(relationship.end_date).to eq '2007-01-03'
           expect(relationship.is_current).to eql false
-          expect(relationship.description1).to eql 'Representative'
-          expect(relationship.description2).to eql 'Representative'
-          expect(relationship.last_user_id).to eql CongressImporter::CONGRESS_BOT_SF_USER
+          expect(relationship.description1).to eq 'Representative'
+          expect(relationship.description2).to eq 'Representative'
+          expect(relationship.last_user_id).to eq CongressImporter::CONGRESS_BOT_USER
         end
 
         it 'sets membership.elected_term to be an OpenStruct of term information' do
@@ -320,13 +320,13 @@ describe 'CongressImporter' do
           'source' => '@unitedstates' }
       end
 
-      context 'entity has no current relationships' do
+      context 'when the entity has no current relationships' do
         it 'creates 2 new relationships' do
-          expect {  subject.import! }.to change { Relationship.count }.by(2)
+          expect { subject.import! }.to change(Relationship, :count).by(2)
         end
 
         it 'creates 2 new Memberhsip' do
-          expect { subject.import! }.to change { Membership.count }.by(2)
+          expect { subject.import! }.to change(Membership, :count).by(2)
         end
 
         it 'created membership have correct fields' do
@@ -343,17 +343,17 @@ describe 'CongressImporter' do
         end
       end
 
-      context 'entity has one current relationship that matches' do
+      context 'when the entity has one current relationship that matches' do
         before do
           @rel = Relationship.create!(category_id: 3, start_date: '1993-01-00', entity: sherrod_brown_entity, entity2_id: 12_884)
         end
 
         it 'creates 1 new relationships' do
-          expect {  subject.import! }.to change { Relationship.count }.by(1)
+          expect { subject.import! }.to change(Relationship, :count).by(1)
         end
 
         it 'creates 1 new Memberhsip' do
-          expect { subject.import! }.to change { Membership.count }.by(1)
+          expect { subject.import! }.to change(Membership, :count).by(1)
         end
 
         it 'updates existing relationship' do
@@ -400,20 +400,20 @@ describe 'CongressImporter' do
         sherrod_brown.match
       end
 
-      context 'party membership is not yet in LittleSis' do
+      context 'when party membership is not yet in LittleSis' do
         it 'creates a new relationship' do
-          expect { subject.import_party_memberships! }.to change { Relationship.count }.by(1)
+          expect { subject.import_party_memberships! }.to change(Relationship, :count).by(1)
           expect(Relationship.last.entity2_id).to eq 12_886
         end
       end
 
-      context 'party membership is already in LittleSis' do
+      context 'when party membership is already in LittleSis' do
         before do
           Relationship.create!(entity: sherrod_brown_entity, entity2_id: 12_886, category_id: 3)
         end
 
         it 'does not create a new relationship' do
-          expect { subject.import_party_memberships! }.not_to change { Relationship.count }
+          expect { subject.import_party_memberships! }.not_to change(Relationship, :count)
         end
       end
     end
