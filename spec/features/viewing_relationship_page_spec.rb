@@ -6,7 +6,7 @@ describe "Relationship Page", :type => :feature do
   let(:tag) { create(:tag) }
 
   let(:relationship) do
-    rel = Relationship.create!(category_id: 12, entity: org, related: person, last_user_id: user.sf_guard_user.id)
+    rel = Relationship.create!(category_id: 12, entity: org, related: person, last_user_id: user.id)
     rel.add_reference(url: url)
   end
 
@@ -55,7 +55,7 @@ describe "Relationship Page", :type => :feature do
     let(:politician) { create(:entity_person) }
     let(:relationship) do
       create(:nys_donation_relationship,
-             entity: person, related: politician, last_user_id: user.sf_guard_user.id, filings: 2)
+             entity: person, related: politician, last_user_id: user.id, filings: 2)
     end
     before { visit relationship_path(relationship) }
 
@@ -69,7 +69,7 @@ describe "Relationship Page", :type => :feature do
     let(:politician) { create(:entity_person) }
     let(:relationship) do
       create(:federal_donation_relationship,
-             entity: person, related: politician, last_user_id: user.sf_guard_user.id, filings: 2)
+             entity: person, related: politician, last_user_id: user.id, filings: 2)
     end
     before { visit relationship_path(relationship) }
 

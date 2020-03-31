@@ -17,7 +17,6 @@ class Permissions
 
   def initialize(user)
     @user = user
-    # @sf_permissions = @user.sf_guard_user.permissions
   end
 
   def add_permission(resource_type, access_rules)

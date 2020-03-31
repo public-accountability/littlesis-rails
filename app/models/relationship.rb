@@ -79,7 +79,7 @@ class Relationship < ApplicationRecord
   accepts_nested_attributes_for :ownership
 
   belongs_to :category, class_name: "RelationshipCategory", inverse_of: :relationships
-  belongs_to :last_user, class_name: "SfGuardUser", foreign_key: "last_user_id", optional: true
+  belongs_to :last_user, class_name: "User", foreign_key: "last_user_id", optional: true
 
   # Open Secrets
   has_many :os_matches, inverse_of: :relationship

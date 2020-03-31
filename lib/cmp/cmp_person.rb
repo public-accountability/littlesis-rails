@@ -35,7 +35,7 @@ module Cmp
 
         CmpEntity.find_or_create_by!(entity: entity, cmp_id: cmpid, entity_type: :person)
 
-        entity.add_tag(Cmp::CMP_TAG_ID, Cmp::CMP_SF_USER_ID)
+        entity.add_tag(Cmp::CMP_TAG_ID, Cmp::CMP_USER_ID)
         add_alias(entity)
         entity.update!(start_date: fetch('date_of_birth'))
         entity.person.update! attrs_for(:person)
@@ -68,7 +68,7 @@ module Cmp
 
     # -> <Entity>
     def create_new_entity!
-      Entity.create!(primary_ext: 'Person', name: name_for_entity, last_user_id: Cmp::CMP_SF_USER_ID)
+      Entity.create!(primary_ext: 'Person', name: name_for_entity, last_user_id: Cmp::CMP_USER_ID)
     end
 
     def name_for_entity

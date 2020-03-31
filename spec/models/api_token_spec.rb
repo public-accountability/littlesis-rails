@@ -11,7 +11,7 @@ describe ApiToken, type: :model do
     end
 
     it 'can be created via user association' do
-      user = create(:user, sf_guard_user: create(:sf_guard_user))
+      user = create(:user)
       expect { user.create_api_token }.to change { ApiToken.count }.by(1)
     end
   end

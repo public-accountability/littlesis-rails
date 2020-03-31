@@ -3,13 +3,13 @@ describe "partial: entities/actions" do
     build(:org,
           created_at: 1.day.ago,
           updated_at: 1.day.ago,
-          last_user: build(:sf_user, user: build(:user)))
+          last_user: build(:user))
   end
   let(:person) do
     build(:person,
           created_at: 1.day.ago,
           updated_at: 1.day.ago,
-          last_user: build(:sf_user, user: build(:user)))
+          last_user: build(:user))
   end
   let(:entity) { org }
 

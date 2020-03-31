@@ -1,7 +1,7 @@
 describe ApplicationController, type: :controller do
   class TestController < ApplicationController
     def current_user
-      FactoryBot.build(:user, sf_guard_user_id: 1000)
+      FactoryBot.build(:user, id: 1000)
     end
   end
 

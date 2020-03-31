@@ -20,7 +20,7 @@ describe 'map pages' do
       expect(page.html).to include "/js/oligrapher/oligrapher-#{NetworkMap::OLIGRAPHER_VERSION}.js"
       expect(page.html).to include "/js/oligrapher/oligrapher_littlesis_bridge-#{NetworkMap::OLIGRAPHER_VERSION}.js"
       expect(page.html).to include "{ name: \"#{user.username}\""
-      expect(page.html).to include "url: \"https://littlesis.org/user/#{user.username}\" }"
+      expect(page.html).to include "url: \"https://littlesis.org/users/#{user.username}\" }"
     end
   end
 
@@ -113,7 +113,7 @@ describe 'map pages' do
   feature 'viewing featured maps' do
     before do
       # create a featured, yet private map which should be exluded
-      create(:network_map, is_featured: true, is_private: true, user_id: user.sf_guard_user_id)
+      create(:network_map, is_featured: true, is_private: true, user_id: user.id)
       visit '/maps/featured'
     end
 
@@ -144,7 +144,7 @@ describe 'map pages' do
     before do
       login_as(user, scope: :user)
       # create a network map of a different
-      create(:network_map, is_private: true, user_id: create_really_basic_user.sf_guard_user_id)
+      create(:network_map, is_private: true, user_id: create_really_basic_user.id)
       visit '/maps/all'
     end
 

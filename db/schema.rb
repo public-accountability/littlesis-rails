@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_18_160306) do
+ActiveRecord::Schema.define(version: 2020_03_18_202702) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -480,7 +480,6 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean "is_deleted", default: false, null: false
-    t.integer "last_user_id"
     t.boolean "has_square", default: false, null: false
     t.integer "address_id"
     t.string "raw_address", limit: 200
@@ -488,7 +487,6 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
     t.integer "user_id"
     t.index ["address_id"], name: "index_image_on_address_id"
     t.index ["entity_id"], name: "entity_id_idx"
-    t.index ["last_user_id"], name: "last_user_id_idx"
   end
 
   create_table "industries", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1082,8 +1080,6 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
     t.text "body", size: :long, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer "last_user_id"
-    t.index ["last_user_id"], name: "last_user_id_idx"
     t.index ["reference_id"], name: "reference_id_idx"
   end
 
@@ -1171,37 +1167,6 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
-  create_table "sf_guard_permission", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["name"], name: "name", unique: true
-  end
-
-  create_table "sf_guard_user", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.string "username", limit: 128, null: false
-    t.string "algorithm", limit: 128, default: "sha1", null: false
-    t.string "salt", limit: 128
-    t.string "password", limit: 128
-    t.boolean "is_active", default: true
-    t.boolean "is_super_admin", default: false
-    t.datetime "last_login"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "is_deleted", default: false, null: false
-    t.index ["is_active"], name: "is_active_idx_idx"
-    t.index ["username"], name: "username", unique: true
-  end
-
-  create_table "sf_guard_user_permission", primary_key: ["user_id", "permission_id"], options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.integer "user_id", default: 0, null: false
-    t.integer "permission_id", default: 0, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["permission_id"], name: "permission_id"
-  end
-
   create_table "social", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "relationship_id", null: false
     t.index ["relationship_id"], name: "relationship_id_idx"
@@ -1229,6 +1194,7 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_user_id", default: 1, null: false
+    t.index ["last_user_id"], name: "fk_rails_5607f02466"
     t.index ["tag_id"], name: "index_taggings_on_tag_id"
     t.index ["tagable_class"], name: "index_taggings_on_tagable_class"
     t.index ["tagable_id"], name: "index_taggings_on_tagable_id"
@@ -1319,7 +1285,6 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "default_network_id"
-    t.integer "sf_guard_user_id", null: false
     t.string "username", null: false
     t.string "remember_token"
     t.string "confirmation_token"
@@ -1334,7 +1299,6 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-    t.index ["sf_guard_user_id"], name: "index_users_on_sf_guard_user_id", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
@@ -1374,20 +1338,17 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
   add_foreign_key "education", "relationship", name: "education_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "elected_representative", "entity", name: "elected_representative_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "email", "entity", name: "email_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "email", "sf_guard_user", column: "last_user_id", name: "email_ibfk_2", on_update: :cascade
   add_foreign_key "entity", "entity", column: "parent_id", name: "entity_ibfk_1", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "entity", "sf_guard_user", column: "last_user_id", name: "entity_ibfk_2", on_update: :cascade
+  add_foreign_key "entity", "users", column: "last_user_id", on_update: :cascade
   add_foreign_key "extension_definition", "extension_definition", column: "parent_id", name: "extension_definition_ibfk_1", on_update: :cascade
   add_foreign_key "extension_record", "entity", name: "extension_record_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "extension_record", "extension_definition", column: "definition_id", name: "extension_record_ibfk_2", on_update: :cascade
-  add_foreign_key "extension_record", "sf_guard_user", column: "last_user_id", name: "extension_record_ibfk_3", on_update: :cascade
   add_foreign_key "family", "relationship", name: "family_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "fedspending_filing", "political_district", column: "district_id", name: "fedspending_filing_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "fedspending_filing", "relationship", name: "fedspending_filing_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "government_body", "address_state", column: "state_id", name: "government_body_ibfk_1", on_update: :cascade
   add_foreign_key "government_body", "entity", name: "government_body_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "image", "entity", name: "image_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "image", "sf_guard_user", column: "last_user_id", name: "image_ibfk_2", on_update: :cascade
   add_foreign_key "link", "entity", column: "entity1_id", name: "link_ibfk_3"
   add_foreign_key "link", "entity", column: "entity2_id", name: "link_ibfk_2"
   add_foreign_key "link", "relationship", name: "link_ibfk_1"
@@ -1401,14 +1362,10 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
   add_foreign_key "lobbying", "relationship", name: "lobbying_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lobbyist", "entity", name: "lobbyist_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "ls_list", "ls_list", column: "featured_list_id", name: "ls_list_ibfk_2", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "ls_list", "sf_guard_user", column: "last_user_id", name: "ls_list_ibfk_1", on_update: :cascade
   add_foreign_key "ls_list_entity", "entity", name: "ls_list_entity_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "ls_list_entity", "ls_list", column: "list_id", name: "ls_list_entity_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "ls_list_entity", "sf_guard_user", column: "last_user_id", name: "ls_list_entity_ibfk_3", on_update: :cascade
   add_foreign_key "membership", "relationship", name: "membership_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "modification", "sf_guard_user", column: "user_id", name: "modification_ibfk_1", on_update: :cascade
   add_foreign_key "modification_field", "modification", name: "modification_field_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "object_tag", "sf_guard_user", column: "last_user_id", name: "object_tag_ibfk_2", on_update: :cascade
   add_foreign_key "object_tag", "tag", name: "object_tag_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "org", "entity", name: "org_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "os_entity_category", "entity", name: "os_entity_category_ibfk_1", on_update: :cascade, on_delete: :cascade
@@ -1416,7 +1373,6 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
   add_foreign_key "person", "entity", column: "party_id", name: "person_ibfk_1", on_update: :cascade, on_delete: :nullify
   add_foreign_key "person", "entity", name: "person_ibfk_3", on_update: :cascade, on_delete: :cascade
   add_foreign_key "phone", "entity", name: "phone_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "phone", "sf_guard_user", column: "last_user_id", name: "phone_ibfk_2", on_update: :cascade
   add_foreign_key "political_candidate", "entity", name: "political_candidate_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "political_district", "address_state", column: "state_id", name: "political_district_ibfk_1", on_update: :cascade
   add_foreign_key "political_fundraising", "address_state", column: "state_id", name: "political_fundraising_ibfk_2", on_update: :cascade
@@ -1426,20 +1382,17 @@ ActiveRecord::Schema.define(version: 2020_03_18_160306) do
   add_foreign_key "position", "relationship", name: "position_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "professional", "relationship", name: "professional_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "public_company", "entity", name: "public_company_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "reference", "sf_guard_user", column: "last_user_id", name: "reference_ibfk_1", on_update: :cascade
   add_foreign_key "reference_excerpt", "reference", name: "reference_excerpt_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "reference_excerpt", "sf_guard_user", column: "last_user_id", name: "reference_excerpt_ibfk_2", on_update: :cascade
   add_foreign_key "relationship", "entity", column: "entity1_id", name: "relationship_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "relationship", "entity", column: "entity2_id", name: "relationship_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "relationship", "relationship_category", column: "category_id", name: "relationship_ibfk_3", on_update: :cascade
-  add_foreign_key "relationship", "sf_guard_user", column: "last_user_id", name: "relationship_ibfk_4", on_update: :cascade
+  add_foreign_key "relationship", "users", column: "last_user_id", on_update: :cascade
   add_foreign_key "representative", "entity", name: "representative_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "representative_district", "elected_representative", column: "representative_id", name: "representative_district_ibfk_3", on_update: :cascade, on_delete: :cascade
   add_foreign_key "representative_district", "political_district", column: "district_id", name: "representative_district_ibfk_4", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school", "entity", name: "school_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "sf_guard_user_permission", "sf_guard_permission", column: "permission_id", name: "sf_guard_user_permission_ibfk_2", on_delete: :cascade
-  add_foreign_key "sf_guard_user_permission", "sf_guard_user", column: "user_id", name: "sf_guard_user_permission_ibfk_1", on_delete: :cascade
   add_foreign_key "social", "relationship", name: "social_ibfk_1", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "taggings", "users", column: "last_user_id", on_update: :cascade
   add_foreign_key "transaction", "entity", column: "contact1_id", name: "transaction_ibfk_3", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "entity", column: "contact2_id", name: "transaction_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "relationship", name: "transaction_ibfk_1", on_update: :cascade, on_delete: :cascade

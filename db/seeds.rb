@@ -47,24 +47,8 @@ ExtensionDefinition.create!([
   {name: "EliteConsensus", display_name: "Elite Consensus Group", has_fields: false, parent_id: 2, tier: 3, id: 40}
 ])
 
-SfGuardUser.create!({id: 1, username: "system@littlesis.org", password: 'password', salt:''})
 User.create!({id: 1, email: "system@littlesis.org", username: 'system', default_network_id: 79, confirmed_at: Time.now,
-              sf_guard_user_id: 1, role: :system,
-              password: '$2a$10$Q2tSw2llUagw1KRNTtLD4.JiYgFA.9pxgV5aPOs/IxFsddZGa8jgO'})
-
-
-SfGuardPermission.create!([
-                            {id: 1, name: "admin", description: "Administrator permission"},
-                            {id: 2, name: "contributor", description: nil},
-                            {id: 3, name: "editor", description: nil},
-                            {id: 5, name: "deleter", description: nil},
-                            {id: 6, name: "lister", description: "enables users to create lists"},
-                            {id: 7, name: "merger", description: "enables users to merge entities"},
-                            {id: 8, name: "importer", description: nil},
-                            {id: 9, name: "bulker", description: "enables users to add relationships in bulk"},
-                            {id: 10, name: "talker", description: "allows user to use web-based chat"},
-                            {id: 11, name: "contacter", description: nil}
-                          ])
+              role: :system, password: '$2a$10$Q2tSw2llUagw1KRNTtLD4.JiYgFA.9pxgV5aPOs/IxFsddZGa8jgO'})
 
 RelationshipCategory.create!([
   {id: 1, name: "Position", display_name: "Position", default_description: "Position", entity1_requirements: "Person", entity2_requirements: nil, has_fields: true},

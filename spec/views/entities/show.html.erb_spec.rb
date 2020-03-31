@@ -1,8 +1,7 @@
 describe 'entities/show.html.erb' do
   before(:all) do
     DatabaseCleaner.start
-    @sf_user = create(:sf_guard_user)
-    @user = create(:user, sf_guard_user_id: @sf_user.id)
+    @user = create(:user)
   end
   after(:all) { DatabaseCleaner.clean }
 
@@ -13,7 +12,7 @@ describe 'entities/show.html.erb' do
   context 'switching tabs' do
     before do
       assign(:active_tab, active_tab)
-      entity = build(:org, last_user_id: @sf_user.id, updated_at: 1.day.ago, org: build(:organization))
+      entity = build(:org, last_user_id: @user.id, updated_at: 1.day.ago, org: build(:organization))
       expect(entity).to receive(:similar_entities).and_return([])
       assign(:entity, entity)
       render
@@ -38,7 +37,7 @@ describe 'entities/show.html.erb' do
 
     describe 'sets title' do
       it 'sets title correctly' do
-        assign :entity, create(:entity_org, last_user_id: @sf_user.id, name: 'mega corp')
+        assign :entity, create(:entity_org, last_user_id: @user.id, name: 'mega corp')
         expect(view).to receive(:content_for).with(:page_title, 'mega corp')
         expect(view).to receive(:content_for).with(any_args).exactly(4).times
         render
@@ -73,7 +72,7 @@ describe 'entities/show.html.erb' do
           describe 'edited by section' do
             it 'links to recent user' do
               expect(rendered).to have_css('#entity-edited-history')
-              expect(rendered).to have_css('#entity-edited-history strong a', :text => @sf_user.user.username)
+              expect(rendered).to have_css('#entity-edited-history strong a', :text => @user.username)
             end
 
             it 'display how long ago it was edited' do
@@ -125,9 +124,8 @@ describe 'entities/show.html.erb' do
       context 'with no special permissions' do
         before(:all) do
           DatabaseCleaner.start
-          @sf_user = create(:sf_guard_user)
-          @user = create(:user, sf_guard_user_id: @sf_user.id)
-          @e = create(:entity_org, last_user: @sf_user, name: 'mega corp')
+          @user = create(:user)
+          @e = create(:entity_org, last_user: @user, name: 'mega corp')
         end
 
         after(:all) { DatabaseCleaner.clean }
@@ -148,9 +146,8 @@ describe 'entities/show.html.erb' do
       describe 'with importer permission' do
         before(:all) do
           DatabaseCleaner.start
-          @sf_guard_user = create(:sf_guard_user)
-          @user = create(:user, sf_guard_user_id: @sf_guard_user.id, abilities: UserAbilities.new(:edit, :bulk))
-          @e = create(:entity_person, last_user: @sf_guard_user)
+          @user = create(:user, abilities: UserAbilities.new(:edit, :bulk))
+          @e = create(:entity_person, last_user: @user)
         end
 
         after(:all) { DatabaseCleaner.clean }
@@ -178,9 +175,8 @@ describe 'entities/show.html.erb' do
       describe 'tabs' do
         before(:all) do
           DatabaseCleaner.start
-          @sf_guard_user = create(:sf_guard_user)
-          @user = create(:user, sf_guard_user_id: @sf_guard_user.id)
-          @e = create(:entity_org, updated_at: Time.now, last_user: @sf_guard_user)
+          @user = create(:user)
+          @e = create(:entity_org, updated_at: Time.now, last_user: @user)
         end
 
         after(:all) { DatabaseCleaner.clean }

@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
   def check_permission(name)
     raise Exceptions::PermissionError unless current_user.present?
     raise Exceptions::RestrictedUserError if current_user.restricted?
-    raise Exceptions::PermissionError unless current_user.has_legacy_permission(name)
+    raise Exceptions::PermissionError unless current_user.has_ability?(name)
   end
 
   # Array, Integer -> Void
@@ -98,7 +98,7 @@ class ApplicationController < ActionController::Base
   #
 
   def merge_last_user(attrs)
-    attrs.merge(last_user_id: current_user.sf_guard_user_id)
+    attrs.merge(last_user_id: current_user.id)
   end
 
   protected

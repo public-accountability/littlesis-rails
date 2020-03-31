@@ -209,7 +209,7 @@ describe Tag, :pagination_helper do
 
     describe 'recent edits' do
       let(:user) { create_basic_user }
-      let(:system_user) { SfGuardUser.find(APP_CONFIG["system_user_id"]).user }
+      let(:system_user) { User.find(APP_CONFIG["system_user_id"]) }
       let(:tag) { create(:tag) }
 
       let(:entities) { Array.new(2) { create(:entity_org) } }
@@ -224,7 +224,7 @@ describe Tag, :pagination_helper do
       let(:tagables){ entities + relationships + lists }
 
       before do
-        tagables.each { |t| t.add_tag(tag.id, user.sf_guard_user_id) }
+        tagables.each { |t| t.add_tag(tag.id, user.id) }
         # offset tagging updated_at timestamps to yield
         # reverse chronological ordering equivalent to tagable ordering
         tagables.reverse.each_with_index do |t, i|

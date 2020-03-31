@@ -22,7 +22,6 @@ describe NyMatch, type: :model do
       before do
         expect(NyFilerEntity).to receive(:find_by).and_return(double(:entity_id => 100))
         allow(Relationship).to receive(:find_or_create_by!).and_return(rel)
-        allow(User).to receive(:find).and_return(double(:sf_guard_user => double(:id => 99)))
       end
 
       it 'Creates a new match' do
@@ -53,7 +52,6 @@ describe NyMatch, type: :model do
 
     it 'updates updated_at for recipient' do
       allow(Relationship).to receive(:find_or_create_by!).and_return(rel)
-      allow(User).to receive(:find).and_return(double(:sf_guard_user => double(:id => 99)))
       elected = create(:elected)
       elected.update_column(:updated_at, 1.day.ago)
       expect(NyFilerEntity).to receive(:find_by).and_return(double(:entity_id => elected.id ))
@@ -165,7 +163,7 @@ describe NyMatch, type: :model do
       user = create_really_basic_user
       match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: donor, recipient: elected, matched_by: user.id)
       match.create_or_update_relationship
-      expect(Relationship.last.last_user_id).to eql user.sf_guard_user_id
+      expect(Relationship.last.last_user_id).to eql user.id
     end
 
     it "sets the relationship's last_user id to default to be 1" do

@@ -11,8 +11,8 @@ describe Tagging, type: :model do
   it { should belong_to(:tag) }
   it { should belong_to(:last_user) }
 
-  before(:all) { @sf_user = create(:sf_user) }
-  after(:all) { @sf_user.delete }
+  before(:all) { @user = create(:user) }
+  after(:all) { @user.delete }
 
   let(:org) { create(:org) }
   let(:tag) { create(:tag) }
@@ -25,7 +25,7 @@ describe Tagging, type: :model do
     end
 
     it 'sets last_user_id to be the system\'s default user' do
-      org.update_columns(updated_at: 1.day.ago, last_user_id: @sf_user.id)
+      org.update_columns(updated_at: 1.day.ago, last_user_id: @user.id)
       expect { org.add_tag(tag.id) }
         .to change { org.reload.last_user_id }.to(APP_CONFIG['system_user_id'])
     end

@@ -46,9 +46,9 @@
             <strong><%= user.full_name %></strong><br />
           <% end %>
         </td>
-        <td><%= user.legacy_created_at.strftime("%F") %></td>
+        <td><%= user.created_at.strftime("%F") %></td>
         <td>
-            <%= user.legacy_permissions.join(", ") %>
+            <%= user_abilities(user) %>
         </td>
 	<td><%= link_to "Edit", "/users/#{user.id}/edit_permissions" %></td>
 	<td>

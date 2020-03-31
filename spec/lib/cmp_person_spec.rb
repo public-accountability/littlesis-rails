@@ -20,7 +20,7 @@ describe Cmp::CmpPerson do
 
   before(:all) do
     ThinkingSphinx::Callbacks.suspend!
-    @cmp_user = create_basic_user_with_ids(Cmp::CMP_USER_ID, Cmp::CMP_SF_USER_ID)
+    @cmp_user = create_basic_user(id: Cmp::CMP_USER_ID)
     @cmp_tag = Tag.create!("id" => Cmp::CMP_TAG_ID,
                            "restricted" => true,
                            "name" => "cmp",
@@ -29,9 +29,7 @@ describe Cmp::CmpPerson do
 
   after(:all) do
     @cmp_tag.delete
-    @cmp_user.sf_guard_user.delete
     @cmp_user.delete
-    SfGuardUserPermission.delete_all
     ThinkingSphinx::Callbacks.resume!
   end
 
@@ -70,7 +68,6 @@ describe Cmp::CmpPerson do
         subject.import!
         entity = Entity.last
         expect(entity.start_date).to eql '1960-00-00'
-        # expect(entity.last_user_id).to eql Cmp::CMP_SF_USER_ID
         expect(entity.person.gender_id).to eql 2
         expect(entity.person.name_prefix).to eql 'Mr.'
         expect(entity.person.nationality).to eql ['Canada', 'United Kingdom']

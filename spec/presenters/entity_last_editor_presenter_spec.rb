@@ -11,7 +11,7 @@ describe EntityLastEditorPresenter do
   let(:user2) { build(:user_with_id) }
 
   let(:person) do
-    build(:person, updated_at: person_time, last_user_id: user2.sf_guard_user_id)
+    build(:person, updated_at: person_time, last_user_id: user2.id)
   end
 
   let(:edited_enity) do

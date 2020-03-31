@@ -28,7 +28,7 @@ class NysController < ApplicationController
       filer_id = NyFiler.find(id).filer_id
       NyFilerEntity.create!(entity_id: entity_id, ny_filer_id: id, filer_id: filer_id)
     end
-    Entity.find(entity_id).update(last_user_id: current_user.sf_guard_user.id)
+    Entity.find(entity_id).update(last_user_id: current_user.id)
     redirect_to :action => 'new_filer_entity', :entity => entity_id
   end
 
@@ -65,7 +65,7 @@ class NysController < ApplicationController
       NyMatch.match(disclosure_id, match_params[:donor_id], current_user.id)
     end
     NyDisclosure.update_delta_flag(match_params[:disclosure_ids])
-    Entity.find(match_params[:donor_id]).update(last_user_id: current_user.sf_guard_user_id)
+    Entity.find(match_params[:donor_id]).update(last_user_id: current_user.id)
     render json: { status: 'ok' }, status: :accepted
   end
 

@@ -1,7 +1,7 @@
-describe 'entities/political.html.erb', type: :view do
-  let!(:sf_user) { create(:sf_guard_user, username: 'X') }
-  let!(:person) { create(:person, updated_at: Time.current, last_user: sf_user, id: rand(1000)) }
-  let!(:org) { create(:mega_corp_inc, updated_at: Time.current, last_user: sf_user, id: rand(1000)) }
+describe 'entities/political.html.erb' do
+  let(:user) { build(:user) }
+  let(:person) { build(:person, updated_at: Time.current, last_user: user, id: rand(1000)) }
+  let(:org) { build(:mega_corp_inc, updated_at: Time.current, last_user: user, id: rand(1000)) }
 
   describe 'renders partials' do
     before do
@@ -69,6 +69,10 @@ describe 'entities/political.html.erb', type: :view do
   end # layout
 
   describe 'contributions messaging' do
+    let(:person) do
+      create(:entity_person, updated_at: Time.current)
+    end
+
     before do
       assign(:entity, person)
     end

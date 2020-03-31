@@ -2,12 +2,10 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
   seed_tags
 
   before(:all) do
-    @sf_user = build(:sf_guard_user)
     @user = build(:user)
-    @sf_user.user = @user
     @rel = build(:relationship, category_id: 1, description1: 'boss', id: 123, updated_at: Time.now)
     @rel.position = build(:position, is_board: false)
-    @rel.last_user = @sf_user
+    @rel.last_user = @user
   end
 
   # remove this when the admin only view constraint is removed
@@ -65,7 +63,7 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
 
         it 'has edited history' do
           css '#entity-edited-history'
-          css 'a', :text => @sf_user.user.username
+          css 'a', :text => @user.username
         end
       end
 

@@ -134,8 +134,6 @@ class DevelopmentDb
                  representative_district
                  schema_migrations
                  school
-                 sf_guard_permission
-                 sf_guard_user_permission
                  social
                  tag
                  tags
@@ -157,9 +155,9 @@ class DevelopmentDb
                  user_requests
                  versions].freeze
 
-  NON_CLEANED_IGNORED = %w[sf_guard_user user_profiles users].freeze
+  NON_CLEANED_IGNORED = %w[user_profiles users].freeze
 
-  CLEANED = %w[clean_sf_guard_user clean_user_profiles clean_users].freeze
+  CLEANED = %w[clean_user_profiles clean_users].freeze
 
   LIMIT = %w[modification
              modification_field

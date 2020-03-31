@@ -78,7 +78,7 @@ class ListsController < ApplicationController
   def create
     @list = List.new(list_params)
     @list.creator_user_id = current_user.id
-    @list.last_user_id = current_user.sf_guard_user_id
+    @list.last_user_id = current_user.id
 
     @list.validate_reference(reference_params)
 

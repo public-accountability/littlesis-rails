@@ -71,15 +71,11 @@ class UsersController < ApplicationController
 
   # DELETE /users/1/destroy
   def destroy
-    if @user.has_legacy_permission('admin')
+    if @user.has_ability?('admin')
       return redirect_to admin_users_path, notice: 'You can\'t delete an admin user'
     else
-      SfGuardUserPermission.where(user_id: @user.sf_guard_user_id).map(&:permission_id).each do |permission_id|
-        SfGuardUserPermission.remove_permission(permission_id: permission_id, user_id: @user.sf_guard_user_id)
-      end
-      @user.sf_guard_user.update(is_deleted: true)
-      Entity.where(last_user_id: @user.sf_guard_user_id).update_all(last_user_id: 1)
-      Relationship.where(last_user_id: @user.sf_guard_user_id).update_all(last_user_id: 1)
+      Entity.where(last_user_id: @user.id).update_all(last_user_id: 1)
+      Relationship.where(last_user_id: @user.id).update_all(last_user_id: 1)
       @user.destroy
       redirect_to admin_users_path, notice: 'Successfully deleted the user'
     end

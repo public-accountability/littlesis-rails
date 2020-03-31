@@ -92,7 +92,7 @@
 	<%= sidebar_similar_entities(@entity.similar_entities) %>
       </ul>
       
-      <% if user_signed_in? && (current_user.admin? || current_user.has_legacy_permission('merger') )%>
+      <% if user_signed_in? && (current_user.admin? || current_user.has_ability?('merger') )%>
 	<%= link_to 'Begin merging process »',
         merge_path(mode: 'search', source: @entity.id),
         id: 'begin-merging-process-link' %>

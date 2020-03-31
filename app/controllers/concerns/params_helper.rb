@@ -19,7 +19,7 @@ module ParamsHelper
     p = ActiveSupport::HashWithIndifferentAccess.new blank_to_nil(parameters.to_h)
     p['start_date'] = LsDate.convert(p['start_date']) if p.key?('start_date')
     p['end_date'] = LsDate.convert(p['end_date']) if p.key?('end_date')
-    p['last_user_id'] = current_user.sf_guard_user_id
+    p['last_user_id'] = current_user.id
     p['is_current'] = cast_to_boolean(p['is_current']) if p.key?('is_current')
     p['amount'] = money_to_int(p['amount']) if p.key?('amount')
     parameter_processor(p)

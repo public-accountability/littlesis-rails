@@ -8,7 +8,7 @@
   <div class="entity_update_name"><%= entity_link(entity) %></div>
 
   <div class="entity_update_user">
-	  &nbsp; &nbsp; edited by <%= user_link(entity.last_user.user) %>
+	  &nbsp; &nbsp; edited by <%= user_link(entity.last_user) %>
 	  <%= time_ago_in_words(entity.updated_at) %> ago
 	 </div>
 </div>

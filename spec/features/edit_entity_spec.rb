@@ -1,6 +1,6 @@
 describe 'edit entity page', type: :feature do
   let(:user) { create_really_basic_user }
-  let(:entity) { create(:public_company_entity, last_user_id: user.sf_guard_user.id) }
+  let(:entity) { create(:public_company_entity, last_user_id: user.id) }
 
   context 'user is not logged in' do
     before { visit edit_entity_path(entity) }

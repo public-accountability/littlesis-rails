@@ -15,7 +15,6 @@ require_relative 'cmp/datasets'
 
 module Cmp
   CMP_USER_ID = 9948
-  CMP_SF_USER_ID = 8178
   CMP_TAG_ID = 11
 
   def self.import_orgs

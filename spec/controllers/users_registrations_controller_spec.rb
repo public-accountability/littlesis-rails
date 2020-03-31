@@ -57,20 +57,8 @@ describe Users::RegistrationsController, type: :controller do
         expect { post_create(user_data) }.to change(User, :count).by(1)
       end
 
-      it 'creates an sf_user' do
-        expect { post_create(user_data) }.to change(SfGuardUser, :count).by(1)
-      end
-
       it 'creates the user profile' do
         expect { post_create(user_data) }.to change(UserProfile, :count).by(1)
-      end
-
-      it 'populates SfGuardProfile with correct info' do
-        post_create user_data
-        profile = UserProfile.last
-        expect(profile.name_last).to eql 'lastname'
-        expect(profile.name_first).to eql 'firstname'
-        expect(profile.reason).to eql 'doing research'
       end
 
       it 'records answer if user says yes to newsletter' do
@@ -88,14 +76,6 @@ describe Users::RegistrationsController, type: :controller do
       describe 'user submits answer to the field reason with less than 2 words' do
         it 'does not create a user' do
           expect { post_create(invalid_user_data) }.not_to change(User, :count)
-        end
-
-        it 'creates sf_user' do
-          expect { post_create(invalid_user_data) }.not_to change(SfGuardUser, :count)
-        end
-
-        it 'creates sf_user_profile' do
-          expect { post_create(invalid_user_data) }.not_to change(SfGuardUserProfile, :count)
         end
       end
     end

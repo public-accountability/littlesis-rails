@@ -2,23 +2,20 @@
 
 module RspecExampleHelpers
   def self.create_admin_user
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, role: 'admin')
+    user = FactoryBot.create(:user, role: 'admin')
     FactoryBot.create(:user_profile, user: user)
     user.add_ability(:edit, :admin)
     user
   end
 
   def self.create_basic_user(**attributes)
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, **attributes)
+    user = FactoryBot.create(:user, **attributes)
     user.add_ability!(:edit, :list)
     user
   end
 
   def self.create_restricted_user
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, is_restricted: true)
+    user = FactoryBot.create(:user, is_restricted: true)
     user.add_ability!(:edit)
     user
   end
@@ -65,52 +62,46 @@ module RspecExampleHelpers
   end
 
   def create_bulk_user
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+    user = FactoryBot.create(:user)
     user.add_ability!(:edit, :bulk)
     user
   end
 
   def create_merger_user
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+    user = FactoryBot.create(:user)
     user.add_ability!(:edit, :merge)
     user
   end
 
   def create_list_user
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+    user = FactoryBot.create(:user)
     user.add_ability!(:edit, :list)
     user
   end
 
   def create_contributor
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+    user = FactoryBot.create(:user)
     user.add_ability!(:edit)
     user
   end
 
   def create_importer
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+    user = FactoryBot.create(:user)
     user.add_ability!(:edit, :bulk)
     user
   end
 
   def create_really_basic_user
-    sf_user = FactoryBot.create(:sf_guard_user)
-    FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+    FactoryBot.create(:user)
   end
 
   def create_basic_user_with_ids(user_id, sf_user_id)
-    sf_user = FactoryBot.create(:sf_guard_user, id: sf_user_id)
-    user = FactoryBot.create(:user, id: user_id, sf_guard_user_id: sf_user.id)
+    raise Exceptions::LittleSisError, "Shouldn't use this method!"
+  end
+
+  def create_basic_user_with_id(user_id)
+    user = FactoryBot.create(:user, id: user_id)
     user.add_ability!(:edit, :list)
-    # SfGuardUserPermission.create!(permission_id: 2, user_id: sf_user.id)
-    # SfGuardUserPermission.create!(permission_id: 3, user_id: sf_user.id)
-    # SfGuardUserPermission.create!(permission_id: 6, user_id: sf_user.id)
     user
   end
 
@@ -119,16 +110,14 @@ module RspecExampleHelpers
   end
 
   def create_basic_user_with_profile(**attributes)
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id, **attributes)
+    user = FactoryBot.create(:user, **attributes)
     user.create_user_profile!(FactoryBot.attributes_for(:user_profile))
     user.add_ability!(:edit, :list)
     user
   end
 
   def create_bulker_user
-    sf_user = FactoryBot.create(:sf_guard_user)
-    user = FactoryBot.create(:user, sf_guard_user_id: sf_user.id)
+    user = FactoryBot.create(:user)
     user.add_ability!(:edit, :bulk)
     user
   end
@@ -138,8 +127,11 @@ module RspecExampleHelpers
   end
 
   def create_user_with_sf(attrs = {})
-    sf_user = FactoryBot.create(:sf_user)
-    user = FactoryBot.create(:user, attrs.merge(sf_guard_user: sf_user))
+    raise Exceptions::LittleSisError, "Shouldn't use this method!"
+  end
+
+  def create_user(attrs = {})
+    user = FactoryBot.create(:user, attrs)
     create(:user_profile, user: user)
     user
   end

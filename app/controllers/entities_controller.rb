@@ -144,7 +144,7 @@ class EntitiesController < ApplicationController
       match = OsMatch.find_or_create_by(os_donation_id: donation_id, donor_id: params[:id])
       match.update(matched_by: current_user.id)
     end
-    @entity.update(last_user_id: current_user.sf_guard_user.id)
+    @entity.update(last_user_id: current_user.id)
     render json: { status: 'ok' }
   end
 
@@ -153,7 +153,7 @@ class EntitiesController < ApplicationController
     params[:payload].each do |os_match_id|
       OsMatch.find(os_match_id).destroy
     end
-    @entity.update(last_user_id: current_user.sf_guard_user.id)
+    @entity.update(last_user_id: current_user.id)
     render json: { status: 'ok' }
   end
 

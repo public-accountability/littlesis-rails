@@ -27,7 +27,7 @@
           <%= link_to("view original", image.url) %><br>
 	<% end %>
 
-	<% if current_user.has_legacy_permission('deleter') %>
+	<% if current_user.has_ability?('deleter') %>
           <%= link_to("remove", remove_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
 	<% end %>
 

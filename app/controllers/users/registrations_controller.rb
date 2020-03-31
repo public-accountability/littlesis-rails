@@ -23,12 +23,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
       return render 'new'
     end
 
-    resource.sf_guard_user.username = resource.email
     resource.user_profile.assign_attributes user_profile_params
 
     ApplicationRecord.transaction do
       begin
-        resource.sf_guard_user.save!
         resource.save!
       rescue ActiveRecord::StatementInvalid
         raise
@@ -115,7 +113,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def build_resource(hash = nil)
     # self.resource = resource_class.new_with_session(hash || {}, session)
     self.resource = User.new(hash)
-    self.resource.build_sf_guard_user
     self.resource.build_user_profile
   end
 

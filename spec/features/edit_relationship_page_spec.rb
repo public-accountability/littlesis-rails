@@ -3,7 +3,7 @@ describe 'Edit Relationship Page', type: :feature do
   let(:child_org) { create(:entity_org, name: 'child org') }
   let(:parent_org) { create(:entity_org, name: 'parent org') }
   let(:hierarchy_relationship) do
-    create(:hierarchy_relationship, entity: child_org, related: parent_org, last_user_id: user.sf_guard_user_id)
+    create(:hierarchy_relationship, entity: child_org, related: parent_org, last_user_id: user.id)
   end
 
   context 'user is not logged in' do
@@ -33,7 +33,7 @@ describe 'Edit Relationship Page', type: :feature do
 
     context 'editing a membership relationship' do
       let(:membership_relationship) do
-        create(:membership_relationship, entity: create(:entity_org), related: create(:entity_org), last_user_id: user.sf_guard_user_id)
+        create(:membership_relationship, entity: create(:entity_org), related: create(:entity_org), last_user_id: user.id)
       end
 
       before { visit edit_relationship_path(membership_relationship) }

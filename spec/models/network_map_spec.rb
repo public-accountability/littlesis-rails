@@ -24,7 +24,6 @@ describe NetworkMap, type: :model do
     JSON
   end
 
-  it { is_expected.not_to have_db_column(:sf_user_id) }
   it { is_expected.to have_db_column(:oligrapher_version) }
   it { is_expected.to have_db_column(:editors) }
   it { is_expected.to belong_to(:user).optional }

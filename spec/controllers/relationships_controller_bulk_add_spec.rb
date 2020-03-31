@@ -507,10 +507,8 @@ describe RelationshipsController, type: :controller do
 
     specify { expect { |b| controller.send(:make_or_get_entity, relationship, &b) }.to yield_with_args(Entity) }
 
-    def set_controller
-      @controller = RelationshipsController.new
-      allow(@controller).to receive(:current_user).and_return(double(:sf_guard_user_id => 1234))
-      @controller.instance_variable_set(:@errors, [])
+    def set_errors
+      controller.instance_variable_set(:@errors, [])
     end
 
     it 'creates new entity' do
@@ -523,24 +521,24 @@ describe RelationshipsController, type: :controller do
     end
 
     context 'with bad data' do
-      before { set_controller }
+      before { set_errors }
 
-      specify { expect { |b| @controller.send(:make_or_get_entity, relationship_error, &b) }.not_to yield_control }
+      specify { expect { |b| controller.send(:make_or_get_entity, relationship_error, &b) }.not_to yield_control }
 
       it 'increases error array' do
-        expect { @controller.send(:make_or_get_entity, relationship_error) }
-          .to change { @controller.instance_variable_get(:@errors).length }.by(1)
+        expect { controller.send(:make_or_get_entity, relationship_error) }
+          .to change { controller.instance_variable_get(:@errors).length }.by(1)
       end
     end
 
     context 'with entity id that does not exist' do
-      before { set_controller }
+      before { set_errors }
 
-      specify { expect { |b| @controller.send(:make_or_get_entity, relationship_with_invalid_id, &b) }.not_to yield_control }
+      specify { expect { |b| controller.send(:make_or_get_entity, relationship_with_invalid_id, &b) }.not_to yield_control }
 
       it 'increases error count' do
-        expect { @controller.send(:make_or_get_entity, relationship_error) }
-          .to change { @controller.instance_variable_get(:@errors).length }.by(1)
+        expect { controller.send(:make_or_get_entity, relationship_error) }
+          .to change { controller.instance_variable_get(:@errors).length }.by(1)
       end
     end
   end

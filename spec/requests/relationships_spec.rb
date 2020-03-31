@@ -27,11 +27,11 @@ describe 'Relationships Requests' do
       it { is_expected.to change { Reference.count }.by(1) }
 
       it do
-        is_expected.to change { person.reload.last_user_id }.to(user.sf_guard_user.id)
+        is_expected.to change { person.reload.last_user_id }.to(user.id)
       end
 
       it do
-        is_expected.to change { org.reload.last_user_id }.to(user.sf_guard_user.id)
+        is_expected.to change { org.reload.last_user_id }.to(user.id)
       end
 
       it 'responds with json containing the relationship id' do
@@ -256,8 +256,8 @@ describe 'Relationships Requests' do
       context 'as an admin user' do
         let(:user) { create_admin_user }
         it { is_expected.to change { Relationship.count }.by(-1) }
-        it { is_expected.to change { entity.reload.last_user_id }.from(1).to(user.sf_guard_user_id) }
-        it { is_expected.to change { related.reload.last_user_id }.from(1).to(user.sf_guard_user_id) }
+        it { is_expected.to change { entity.reload.last_user_id }.from(1).to(user.id) }
+        it { is_expected.to change { related.reload.last_user_id }.from(1).to(user.id) }
       end
     end
   end

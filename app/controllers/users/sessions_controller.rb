@@ -11,9 +11,7 @@ class Users::SessionsController < Devise::SessionsController
   # post /resource/sign_in
   def create
     store_location_for(:user, home_dashboard_path)
-    super do |user|
-      session[:sf_user_id] = user.sf_guard_user.id
-    end
+    super
   end
 
   # GET /resource/sign_out

@@ -9,7 +9,6 @@ class User < ApplicationRecord
 
   serialize :abilities, UserAbilities
 
-  validates :sf_guard_user_id, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username,
             presence: true, uniqueness: { case_sensitive: false }, user_name: true, on: :create
@@ -24,21 +23,16 @@ class User < ApplicationRecord
          :rememberable,
          :trackable
 
-  belongs_to :sf_guard_user, inverse_of: :user
-
   # Core associations
   has_one :user_profile, inverse_of: :user, dependent: :destroy
   has_one :api_token, dependent: :destroy
   has_many :user_permissions, dependent: :destroy
 
+  # entities last edited by the user
+  has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", inverse_of: :last_user
+
   # profile image, needs to be reworked or removed
   has_one :image, inverse_of: :user, dependent: :destroy
-
-  # Used by UserPresenter and HomeController
-  # We should eventually remove this assocation and instead
-  # retrive recently edited entities via Versions.
-  # has_many :edited_entities ,
-  #          class_name: 'Entity', foreign_key: 'last_user_id', primary_key: 'sf_guard_user_id'
 
   # Maps and lists the user has created
   has_many :network_maps, inverse_of: :user
@@ -49,7 +43,6 @@ class User < ApplicationRecord
   has_many :reviewed_requests,
            class_name: 'UserRequest', foreign_key: 'reviewer_id', inverse_of: :reviewer
 
-  accepts_nested_attributes_for :sf_guard_user
   accepts_nested_attributes_for :user_profile
 
   before_validation :set_default_network_id
@@ -72,24 +65,6 @@ class User < ApplicationRecord
 
   def raise_unless_can_edit!
     raise Exceptions::UserCannotEditError unless can_edit?
-  end
-
-  def legacy_created_at
-    return created_at if sf_guard_user.nil?
-
-    sf_guard_user.created_at
-  end
-
-  def legacy_url
-    "/user/#{username}"
-  end
-
-  def full_legacy_url
-    "https://littlesis.org#{legacy_url}"
-  end
-
-  def legacy_check_password(password)
-    Digest::SHA1.hexdigest(sf_guard_user.salt + password) == sf_guard_user.password
   end
 
   def image_url(type = nil)
@@ -133,8 +108,8 @@ class User < ApplicationRecord
   # Permissions #
   ###############
 
-  def legacy_permissions
-    sf_guard_user.permissions
+  def list_of_abilities
+    abilities.to_a.join(", ")
   end
 
   def has_ability?(name) # rubocop:disable Naming/PredicateName, Metrics/MethodLength
@@ -151,15 +126,11 @@ class User < ApplicationRecord
       abilities.lister?
     when :bulk, 'bulk', 'bulker', 'importer'
       abilities.bulker?
-    when 'talker', 'contacter'
-      false # legacy permission which should not appear in our code any more
     else
       Rails.logger.debug "User#has_ability? called with unknown permission: #{name}"
       false
     end
   end
-
-  alias has_legacy_permission has_ability?
 
   def create_default_permissions
     add_ability!(:edit) unless has_ability?(:edit)
@@ -180,8 +151,8 @@ class User < ApplicationRecord
     arel_table[:username].matches(query_string).or(arel_table[:email].matches(query_string))
   end
 
-  # Returns the sf_guard_user_id from a range
-  # of types: User, SfGuardUser, Integer, String
+  # Returns the user id from a range
+  # of types: User, Integer, String
   # Used by LsHash
   def self.derive_last_user_id_from(input, allow_invalid: false)
     case input
@@ -190,8 +161,6 @@ class User < ApplicationRecord
     when Integer
       input
     when User
-      input.sf_guard_user_id
-    when SfGuardUser
       input.id
     else
       if allow_invalid

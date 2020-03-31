@@ -1,9 +1,9 @@
 describe 'entities/edit.html.erb', type: :view do
   before(:all) do
     DatabaseCleaner.start
-    @current_user = create(:user, sf_guard_user: create(:sf_guard_user))
-    @entity = create(:entity_org, last_user_id: @current_user.sf_guard_user.id)
-    @person = create(:entity_person, last_user_id: @current_user.sf_guard_user.id)
+    @current_user = create(:user)
+    @entity = create(:entity_org, last_user_id: @current_user.id)
+    @person = create(:entity_person, last_user_id: @current_user.id)
   end
 
   after(:all) { DatabaseCleaner.clean }
@@ -49,7 +49,7 @@ describe 'entities/edit.html.erb', type: :view do
     before do
       @bad_entity = build(:org,
                           id: rand(1000), updated_at: Time.current,
-                          last_user_id: @current_user.sf_guard_user.id, start_date: 'bad date')
+                          last_user_id: @current_user.id, start_date: 'bad date')
       @bad_entity.valid?
       assign(:entity, @bad_entity)
       assign(:current_user, @user)

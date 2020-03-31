@@ -1,8 +1,6 @@
 describe 'relationships/edit.html.erb', type: :view do
   before(:all) do
-    @sf_user = build(:sf_guard_user)
     @user = build(:user)
-    @sf_user.user = @user
   end
 
   def has_common_fields
@@ -20,7 +18,7 @@ describe 'relationships/edit.html.erb', type: :view do
     before(:all) do
       @rel = build(:relationship, category_id: 1, description1: 'boss', id: 123, updated_at: Time.now)
       @rel.position = build(:position, is_board: false)
-      @rel.last_user = @sf_user
+      @rel.last_user = @user
     end
 
     before do
@@ -76,7 +74,7 @@ describe 'relationships/edit.html.erb', type: :view do
     before do
       @rel = build(:relationship, category_id: 5, description1: 'donation', id: 123, updated_at: Time.now)
       @rel.donation = build :donation
-      @rel.last_user = @sf_user
+      @rel.last_user = @user
       assign(:relationship, @rel)
       render
     end
@@ -113,7 +111,7 @@ describe 'relationships/edit.html.erb', type: :view do
     before do
       @rel = build(:relationship, category_id: 2, description1: 'Graduate', id: rand(100), updated_at: Time.now)
       @rel.education = build :education
-      @rel.last_user = @sf_user
+      @rel.last_user = @user
       assign(:relationship, @rel)
       render
     end
@@ -146,7 +144,7 @@ describe 'relationships/edit.html.erb', type: :view do
     before do
       @rel = build(:relationship, category_id: 3, description1: 'member', id: rand(100), updated_at: Time.now)
       @rel.membership = build :membership
-      @rel.last_user = @sf_user
+      @rel.last_user = @user
       assign(:relationship, @rel)
       render
     end
@@ -170,7 +168,7 @@ describe 'relationships/edit.html.erb', type: :view do
     before do
       @rel = build(:relationship, category_id: 6, description1: 'buyer', id: rand(100), updated_at: Time.now)
       @rel.trans = build :transaction
-      @rel.last_user = @sf_user
+      @rel.last_user = @user
       assign(:relationship, @rel)
       render
     end
@@ -192,7 +190,7 @@ describe 'relationships/edit.html.erb', type: :view do
     before do
       @rel = build(:relationship, category_id: 10, description1: 'owner', id: rand(100), updated_at: Time.now)
       @rel.ownership = build :ownership
-      @rel.last_user = @sf_user
+      @rel.last_user = @user
       assign(:relationship, @rel)
       render
     end
@@ -225,7 +223,7 @@ describe 'relationships/edit.html.erb', type: :view do
   describe 'hierarchy relationship' do
     before do
       @rel = build(:relationship, category_id: 11, id: rand(100), updated_at: Time.now)
-      @rel.last_user = @sf_user
+      @rel.last_user = @user
       assign(:relationship, @rel)
       render
     end
@@ -244,7 +242,7 @@ describe 'relationships/edit.html.erb', type: :view do
       @rel = build(:relationship, category_id: 12, id: rand(100), updated_at: Time.now)
       @ref = build(:ref, name: 'name')
       @ref.valid?
-      @rel.last_user = @sf_user
+      @rel.last_user = @user
       assign(:relationship, @rel)
       assign(:reference, @ref)
       render
@@ -262,7 +260,7 @@ describe 'relationships/edit.html.erb', type: :view do
   describe 'Relationship error' do
     before do
       @rel = build(:relationship, category_id: 12, id: rand(100), updated_at: Time.now)
-      @rel.last_user = @sf_user
+      @rel.last_user = @user
       @rel.valid?
       assign(:relationship, @rel)
       render

@@ -46,7 +46,7 @@ class Entity < ApplicationRecord
   has_many :relateds, -> { distinct }, through: :links
 
   belongs_to :last_user,
-             class_name: 'SfGuardUser',
+             class_name: 'User',
              foreign_key: 'last_user_id',
              inverse_of: :edited_entities,
              optional: true
@@ -114,7 +114,7 @@ class Entity < ApplicationRecord
   # aliases
   #
 
-  # creates primary alias if the entity does not have one
+  # creates primary alias if the enertity does not have one
   def create_primary_alias
     return nil if aliases.where(is_primary: true).count.positive?
 
@@ -385,17 +385,12 @@ class Entity < ApplicationRecord
 
   # This update the timestamps and last_user_id as needed.
   # valid inputs:
-  #   - string/integer of the SF GUARD user id
-  #   - SfGuardUser
+  #   - string/integer of the user id
   #   - User
   # If input is any other class it will default to using the default 'system' user
   def update_timestamp_for(input)
     touch_by(input)
     self
-  end
-
-  def last_new_user
-    last_user.user
   end
 
   ##

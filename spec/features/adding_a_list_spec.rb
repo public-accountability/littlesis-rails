@@ -30,7 +30,7 @@ feature "adding an new list", type: :feature do
 
     expect(List.last.name).to eql list_name
     expect(List.last.creator_user_id).to eql user.id
-    expect(List.last.last_user_id).to eql user.sf_guard_user.id
+    expect(List.last.last_user_id).to eql user.id
     expect(List.last.short_description).to eql short_description
     expect(Reference.last.referenceable_id).to eql List.last.id
     expect(Reference.last.referenceable_type).to eql 'List'
