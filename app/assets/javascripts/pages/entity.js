@@ -60,3 +60,34 @@ entity.editableBlurb = function() {
     )
   })
 }
+
+// Validates an entity form via an AJAX call
+entity.validate = function(form, attributes){
+  entity.form = form
+  $.post("/entities/validate", entity.form.serialize(), function(errors) {
+    entity.errors = errors
+    entity.displayErrors(attributes)
+  })
+}
+
+// Display any validation errors in the entity form
+entity.displayErrors = function(attributes){
+  entity.form.find("#error_explanation").remove()
+  var template = $(document.importNode(document.getElementById("validation_errors").content, true))
+  var displayableErrors = false
+
+  for (var i in attributes) {
+    var attribute = attributes[i]
+
+    for (var value in entity.errors[attribute]){
+      if (entity.errors[attribute].hasOwnProperty(value)){
+        template.find("ul").append(`<li>${attribute}: ${entity.errors[attribute][value]}</li>`)
+        displayableErrors = true
+      }
+    }
+  }
+
+  if (displayableErrors) {
+    entity.form.prepend(template)
+  }
+}
