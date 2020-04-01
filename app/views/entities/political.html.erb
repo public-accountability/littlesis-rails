@@ -86,5 +86,6 @@
   <% end %>
 </div>
 
-<script>political.init(<%= raw @entity.org?.to_s %>);</script>
-
+<% if @entity.contributions? %>
+  <script>political.init(<%= raw @entity.org?.to_s %>);</script>
+<% end %>
