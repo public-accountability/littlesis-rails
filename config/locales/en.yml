@@ -43,8 +43,8 @@ en:
       truncate: "..."
   date:
     formats:
-      default: "%B %e, %Y, %-l%p"
+      default: "%B %-e, %Y, %-l%p"
   time:
     formats:
-      default: "%B %e, %Y, %-l%p"
+      default: "%B %-e, %Y, %-l%p"
       with_minutes: "%B %e, %Y, %-l:%M%p"
