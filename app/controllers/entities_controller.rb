@@ -15,11 +15,11 @@ class EntitiesController < ApplicationController
   EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation].freeze
   IMPORTER_ACTIONS = %i[match_donation match_donations review_donations match_ny_donations review_ny_donations].freeze
 
-  before_action :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving]
+  before_action :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving, :validate]
   before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
   before_action :importers_only, only: IMPORTER_ACTIONS
-  before_action :set_entity, except: [:new, :create, :show, :create_bulk]
+  before_action :set_entity, except: [:new, :create, :show, :create_bulk, :validate]
   before_action :set_entity_for_profile_page, only: [:show]
   before_action :check_delete_permission, only: [:destroy]
 
@@ -242,6 +242,12 @@ class EntitiesController < ApplicationController
     end
   end
 
+  def validate
+    entity = Entity.new(validate_entity_params)
+    entity.valid?
+    render json: entity.errors.to_json
+  end
+
   private
 
   def set_entity_for_profile_page
@@ -277,6 +283,11 @@ class EntitiesController < ApplicationController
     LsHash.new(params.require(:entity).permit(:name, :blurb, :primary_ext).to_h)
       .with_last_user(current_user)
       .nilify_blank_vals
+  end
+
+  def validate_entity_params
+    params.require(:entity)
+      .permit(:name, :blurb, :primary_ext)
   end
 
   def create_bulk_payload
