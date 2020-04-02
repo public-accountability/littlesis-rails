@@ -16,10 +16,10 @@ require_relative 'congress_importer/legislator'
 # legislators:import_party_memberships import_party_memberships     TermsImporter#import_party_memberships!
 #
 class CongressImporter
-  # CURRENT_YAML = 'https://theunitedstates.io/congress-legislators/legislators-current.yaml'
-  # HISTORICAL_YAML = 'https://theunitedstates.io/congress-legislators/legislators-historical.yaml'
-  CURRENT_YAML = Rails.root.join('tmp', 'legislators-current.yaml').to_s
-  HISTORICAL_YAML = Rails.root.join('tmp', 'legislators-historical.yaml').to_s
+  CURRENT_YAML = 'https://theunitedstates.io/congress-legislators/legislators-current.yaml'
+  HISTORICAL_YAML = 'https://theunitedstates.io/congress-legislators/legislators-historical.yaml'
+  # CURRENT_YAML = Rails.root.join('data', 'legislators-current.yaml').to_s
+  # HISTORICAL_YAML = Rails.root.join('data', 'legislators-historical.yaml').to_s
 
   CONGRESS_BOT_USER = 10_040
 
@@ -32,24 +32,17 @@ class CongressImporter
     @reps = (historical_reps_after_1990 | @current_reps).map { |rep| Legislator.new(rep) }
   end
 
-  def match_all
-    @reps.each(&:match)
-  end
-
   def import_all
-    match_all
     @reps.each(&:import!)
   end
 
   def import_all_relationships
-    match_all
     @reps.each do |legislator|
       legislator.terms_importer.import!
     end
   end
 
   def import_party_memberships
-    match_all
     @reps.each do |legislator|
       legislator.terms_importer.import_party_memberships!
     end

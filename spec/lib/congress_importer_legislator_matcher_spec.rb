@@ -57,7 +57,7 @@ describe CongressImporter::LegislatorMatcher do
 
     expect(EntityMatcher).to receive(:find_matches_for_person).once
                                .with(name_hash, { associated: [NotableEntities.fetch(:house_of_reps)] })
-                               .and_return(double(automatch: build(:person)))
+                               .and_return(double(automatch: double(entity: build(:person))))
 
     expect(CongressImporter::LegislatorMatcher.new(legislator).entity).to be_a Entity
   end

@@ -44,6 +44,7 @@ class CongressImporter
       EntityMatcher
         .find_matches_for_person(name_hash, associated: associated)
         .automatch
+        &.entity
     end
   end
 end
