@@ -1,12 +1,12 @@
 require Rails.root.join('lib/congress_importer')
 
+# rubocop:disable RSpec/NamedSubject
+
 describe 'CongressImporter' do
   subject { CongressImporter.new }
 
   before(:all) do
-    @legislators_current = YAML.load_file(
-      Rails.root.join('spec', 'testdata', 'legislators-current.yaml')
-    )
+    @legislators_current = YAML.load_file(Rails.root.join('spec/testdata/legislators-current.yaml'))
   end
 
   before do
@@ -28,44 +28,12 @@ describe 'CongressImporter' do
     end
   end
 
-  describe 'match_by_bioguide_or_govtrack' do
-    subject do
-      CongressImporter.new.reps.find { |r| r.dig('id', 'bioguide') == 'S001202' }
-    end
-
-    let(:strange) { create(:entity_person, name: 'Luther Strange') }
-
-    context 'when the bioguide in LittleSis' do
-      before { strange.add_extension 'ElectedRepresentative', :bioguide_id => 'S001202' }
-
-      it 'finds by bioguide' do
-        expect(subject.match_by_bioguide_or_govtrack).to eq strange
-      end
-    end
-
-    context 'when the govtrack id is in littleSis' do
-      before { strange.add_extension 'ElectedRepresentative', :govtrack_id => '412734' }
-
-      it 'finds by govtrack' do
-        expect(subject.match_by_bioguide_or_govtrack).to eq strange
-      end
-    end
-
-    context 'when neither bioguide or govtrack is in LittleSis' do
-      before { strange.add_extension 'ElectedRepresentative' }
-
-      it 'retuns nil' do
-        expect(subject.match_by_bioguide_or_govtrack).to be_nil
-      end
-    end
-  end
-
   describe CongressImporter::Legislator do
     let(:sherrod_brown) { CongressImporter::Legislator.new(@legislators_current[0]) }
 
-    describe '#to_entity_attributes' do
-      specify do
-        expect(sherrod_brown.to_entity_attributes)
+    describe 'helper methods' do
+      specify '#entity_attributes' do
+        expect(sherrod_brown.send(:entity_attributes))
           .to eql(LsHash.new(name: 'Sherrod Brown',
                              blurb: 'US Senator from Ohio',
                              website: 'https://www.brown.senate.gov',
@@ -73,20 +41,16 @@ describe 'CongressImporter' do
                              start_date: '1952-11-09',
                              last_user_id: CongressImporter::CONGRESS_BOT_USER))
       end
-    end
 
-    describe '#to_person_attributes' do
-      specify do
-        expect(sherrod_brown.to_person_attributes)
+      specify '#person_attributes' do
+        expect(sherrod_brown.send(:person_attributes))
           .to eql(LsHash.new(name_first: 'Sherrod',
                              name_last: 'Brown',
                              gender_id: 2))
       end
-    end
 
-    describe '#to_elected_representative_attributes' do
-      specify do
-        expect(sherrod_brown.to_elected_representative_attributes)
+      specify '#elected_representative_attributes' do
+        expect(sherrod_brown.send(:elected_representative_attributes))
           .to eql(LsHash.new(bioguide_id: 'B000944',
                              govtrack_id: 400_050,
                              fec_ids: %w[H2OH13033 S6OH00163],
@@ -99,7 +63,8 @@ describe 'CongressImporter' do
 
       context "when the legislator doesn't exist in LittleSis" do
         before do
-          sherrod_brown.instance_variable_set(:@_match, nil)
+          allow(CongressImporter::LegislatorMatcher)
+            .to receive(:new).and_return(double(entity: nil))
         end
 
         it 'creates a new entity' do
@@ -167,7 +132,13 @@ describe 'CongressImporter' do
     end
 
     describe 'helper methods' do
+
       subject { CongressImporter::TermsImporter.new(sherrod_brown) }
+
+      before do
+        allow(CongressImporter::LegislatorMatcher)
+          .to receive(:new).and_return(double(entity: build(:person, name: 'Sherrod Brown')))
+      end
 
       specify { expect(subject.send(:rep_terms).length).to eq 7 }
       specify { expect(subject.send(:sen_terms).length).to eq 2 }
@@ -255,13 +226,19 @@ describe 'CongressImporter' do
           { 'type' => 'rep', 'start' => '1993-01-05', 'end' => '2007-01-03', 'state' => 'OH', 'district' => 13, 'party' => 'Democrat' }
         end
 
-        let(:update_or_create_relationship) { proc { sherrod_brown.terms_importer.send(:update_or_create_relationship, term) } }
+        let(:update_or_create_relationship) do
+          proc do
+            sherrod_brown.terms_importer.send(:update_or_create_relationship, term)
+          end
+        end
 
         before do
           sherrod_brown_entity
           create(:us_house)
           create(:us_senate)
-          sherrod_brown.match
+          allow(CongressImporter::LegislatorMatcher)
+            .to receive(:new).and_return(double(entity: sherrod_brown_entity.reload))
+          # sherrod_brown.match
         end
 
         it 'creates a new relationship' do
@@ -296,10 +273,11 @@ describe 'CongressImporter' do
       subject { CongressImporter::TermsImporter.new(sherrod_brown) }
 
       before do
-        sherrod_brown_entity
         create(:us_house)
         create(:us_senate)
-        sherrod_brown.match
+        sherrod_brown_entity
+        allow(CongressImporter::LegislatorMatcher)
+          .to receive(:new).and_return(double(entity: sherrod_brown_entity.reload))
       end
 
       let(:sen_term) do
@@ -397,7 +375,8 @@ describe 'CongressImporter' do
       before do
         sherrod_brown_entity
         create(:democratic_party)
-        sherrod_brown.match
+        allow(CongressImporter::LegislatorMatcher)
+          .to receive(:new).and_return(double(entity: sherrod_brown_entity.reload))
       end
 
       context 'when party membership is not yet in LittleSis' do
@@ -419,3 +398,5 @@ describe 'CongressImporter' do
     end
   end # end CongressImporter::TermsImporter
 end
+
+# rubocop:enable RSpec/NamedSubject
