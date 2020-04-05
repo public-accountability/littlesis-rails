@@ -117,4 +117,8 @@ FactoryBot.define do
   trait :with_org_name do
     name { Faker::Company.name }
   end
+
+  trait :with_org_blurb do
+    blurb { Faker::Company.bs }
+  end
 end
