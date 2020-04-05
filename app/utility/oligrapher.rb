@@ -44,6 +44,7 @@ module Oligrapher
       {
         id: entity.id.to_s,
         name: entity.name,
+        description: entity.blurb,
         image: entity.featured_image&.image_url('profile'),
         url: Routes.entity_url(entity)
       }
