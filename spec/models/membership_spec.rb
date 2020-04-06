@@ -6,12 +6,12 @@ describe Membership do
   describe 'with_elected_term' do
     let(:elected) { create(:elected) }
     let(:us_senate) { create(:us_senate) }
-    let(:elected_term_struct) { OpenStruct.new(state: 'NY', party: 'Republican') }
+    let(:elected_term_hash) { { 'state' => 'NY', 'party' => 'Republican' } }
 
     before do
       Relationship
         .create!(category_id: Relationship::MEMBERSHIP_CATEGORY, entity: elected, related: us_senate)
-        .tap { |relationship| relationship.membership.update!(elected_term: elected_term_struct) }
+        .tap { |relationship| relationship.membership.update!(elected_term: elected_term_hash) }
 
       Relationship
         .create!(category_id: Relationship::MEMBERSHIP_CATEGORY, entity: elected, related: create(:entity_org))
