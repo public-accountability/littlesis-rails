@@ -91,15 +91,15 @@ class CongressImporter
                            end_date: term['end'],
                            is_current: (Date.parse(term['end']) > Date.today),
                            last_user_id: CongressImporter::CONGRESS_BOT_USER)
-      relationship.membership.update!(elected_term: elected_term_struct(term))
+      relationship.membership.update!(elected_term: elected_term_hash(term))
     end
 
-    def elected_term_struct(term)
-      OpenStruct.new term.merge('source' => '@unitedstates')
+    def elected_term_hash(term)
+      term.merge('source' => '@unitedstates').stringify_keys!
     end
 
     def prune_all_relationships!
-      delete_if_nil = proc { |r| r.soft_delete if r.membership.elected_term.type.nil? }
+      delete_if_nil = proc { |r| r.soft_delete if r.membership.elected_term['type'].nil? }
 
       if @entity.relationships.where(HOUSE_QUERY).count > distilled_rep_terms.count
         @entity.relationships.where(HOUSE_QUERY).each(&delete_if_nil)

@@ -969,7 +969,6 @@ CREATE TABLE `membership` (
   `dues` bigint(20) DEFAULT NULL,
   `relationship_id` bigint(20) NOT NULL,
   `elected_term` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `elected_term_hash` text COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `relationship_id_idx` (`relationship_id`),
   CONSTRAINT `membership_ibfk_1` FOREIGN KEY (`relationship_id`) REFERENCES `relationship` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -2182,6 +2181,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200318202546'),
 ('20200318202700'),
 ('20200318202702'),
-('20200406170640');
+('20200406170640'),
+('20200406203720');
 
 
