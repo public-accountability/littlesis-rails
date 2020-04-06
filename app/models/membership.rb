@@ -3,6 +3,7 @@
 class Membership < ApplicationRecord
   include SingularTable
   serialize :elected_term, OpenStruct
+  serialize :elected_term_hash, Hash
 
   has_paper_trail on: [:update, :destroy]
   belongs_to :relationship, inverse_of: :membership
