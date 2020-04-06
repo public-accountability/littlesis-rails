@@ -264,7 +264,7 @@ describe 'CongressImporter' do
 
         it 'sets membership.elected_term to be an OpenStruct of term information' do
           update_or_create_relationship.call
-          expect(Relationship.last.membership.elected_term).to eql OpenStruct.new(term.merge('source' => '@unitedstates'))
+          expect(Relationship.last.membership.elected_term).to eql term.merge('source' => '@unitedstates')
         end
       end
     end # end describe helper methods
@@ -310,12 +310,12 @@ describe 'CongressImporter' do
         it 'created membership have correct fields' do
           subject.import!
           expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_884).membership.elected_term)
-            .to eql OpenStruct.new('type' => 'rep', 'start' => '1993-01-05', 'end' => '2007-01-03',
-                                   'state' => 'OH', 'district' => 13, 'party' => 'Democrat',
-                                   'url' => 'http://www.house.gov/sherrodbrown', 'source' => '@unitedstates')
+            .to eq('type' => 'rep', 'start' => '1993-01-05', 'end' => '2007-01-03',
+                   'state' => 'OH', 'district' => 13, 'party' => 'Democrat',
+                   'url' => 'http://www.house.gov/sherrodbrown', 'source' => '@unitedstates')
 
           expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).membership.elected_term)
-            .to eql OpenStruct.new(sen_term)
+            .to eq sen_term
 
           expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).is_current).to eq false
         end
@@ -338,7 +338,7 @@ describe 'CongressImporter' do
           subject.import!
           @rel.reload
           expect(@rel.end_date).to eql '2007-01-03'
-          expect(@rel.membership.elected_term.party).to eql 'Democrat'
+          expect(@rel.membership.elected_term['party']).to eql 'Democrat'
         end
       end
 
