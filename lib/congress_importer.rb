@@ -8,14 +8,20 @@ require_relative 'congress_importer/legislator'
 
 # Processes congressional legistors yaml files and matches
 # each legistor with existing LittleSis entities
+#
+# rake task                            method
+#-----------------------------------------------------------------------------------------------
+# legislators:import                   import_all                   Legislator#import!
+# legislators:import_relationships     import_all_relationships     TermsImporter#import!
+# legislators:import_party_memberships import_party_memberships     TermsImporter#import_party_memberships!
+#
 class CongressImporter
   CURRENT_YAML = 'https://theunitedstates.io/congress-legislators/legislators-current.yaml'
   HISTORICAL_YAML = 'https://theunitedstates.io/congress-legislators/legislators-historical.yaml'
-  # CURRENT_YAML = Rails.root.join('tmp', 'legislators-current.yaml').to_s
-  # HISTORICAL_YAML = Rails.root.join('tmp', 'legislators-historical.yaml').to_s
+  # CURRENT_YAML = Rails.root.join('data', 'legislators-current.yaml').to_s
+  # HISTORICAL_YAML = Rails.root.join('data', 'legislators-historical.yaml').to_s
 
   CONGRESS_BOT_USER = 10_040
-  CONGRESS_BOT_SF_USER = 8_270
 
   attr_reader :current_reps, :historical_reps, :reps
 
@@ -26,24 +32,17 @@ class CongressImporter
     @reps = (historical_reps_after_1990 | @current_reps).map { |rep| Legislator.new(rep) }
   end
 
-  def match_all
-    @reps.each(&:match)
-  end
-
   def import_all
-    match_all
     @reps.each(&:import!)
   end
 
   def import_all_relationships
-    match_all
     @reps.each do |legislator|
       legislator.terms_importer.import!
     end
   end
 
   def import_party_memberships
-    match_all
     @reps.each do |legislator|
       legislator.terms_importer.import_party_memberships!
     end

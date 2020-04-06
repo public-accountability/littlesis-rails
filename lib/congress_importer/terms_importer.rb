@@ -15,6 +15,10 @@ class CongressImporter
     def initialize(legislator)
       @_legislator = legislator
       @_distilled_terms = DistilledTerms.new(distilled_rep_terms, distilled_sen_terms)
+      @entity = legislator.legislator_matcher.entity
+      unless @entity
+        raise Exceptions::LittleSisError, "Could not find a matching entity for #{legislator}"
+      end
     end
 
     # Updates existing relationships with House and Senate and/or creates
@@ -23,19 +27,19 @@ class CongressImporter
     # and afterwards prune relationships as neeeded.
     def import!
       CongressImporter.transaction do
-        rep_relationships = legislator.entity.relationships.where(HOUSE_QUERY).to_a
-        sen_relationships = legislator.entity.relationships.where(SENATE_QUERY).to_a
+        rep_relationships = @entity.relationships.where(HOUSE_QUERY).to_a
+        sen_relationships = @entity.relationships.where(SENATE_QUERY).to_a
 
         distilled_terms.rep.each do |term|
-          rel = rep_relationships.select(&same_start_date_proc(term['start'])).first
+          rel = rep_relationships.find(&same_start_date_proc(term['start']))
           update_or_create_relationship term, relationship: rel
         end
 
         distilled_terms.sen.each do |term|
-          rel = sen_relationships.select(&same_start_date_proc(term['start'])).first
+          rel = sen_relationships.find(&same_start_date_proc(term['start']))
           update_or_create_relationship term, relationship: rel
         end
-        legislator.entity.reload
+        @entity.reload
         prune_all_relationships!
       end
     end
@@ -59,17 +63,16 @@ class CongressImporter
     private
 
     def update_party_membership(membership, relationship)
-      relationship = Relationship.new unless relationship.present?
+      relationship = Relationship.new if relationship.blank?
 
       relationship.update!(category_id: Relationship::MEMBERSHIP_CATEGORY,
-                           entity1_id: legislator.entity.id,
+                           entity1_id: @entity.id,
                            entity2_id: PARTY_TO_ENTITY.fetch(membership['party']),
-                           last_user_id: CongressImporter::CONGRESS_BOT_SF_USER)
+                           last_user_id: CongressImporter::CONGRESS_BOT_USER)
     end
 
     def find_party_memberships(party_id)
-      legislator
-        .entity
+      @entity
         .relationships
         .reload
         .where(category_id: Relationship::MEMBERSHIP_CATEGORY, entity2_id: party_id)
@@ -77,16 +80,17 @@ class CongressImporter
     end
 
     def update_or_create_relationship(term, relationship: nil)
-      relationship = Relationship.new unless relationship.present?
+      relationship = Relationship.new if relationship.blank?
+
       relationship.update!(category_id: Relationship::MEMBERSHIP_CATEGORY,
-                           entity1_id: legislator.entity.id,
+                           entity1_id: @entity.id,
                            entity2_id: TERM_TYPE_TO_ENTITY.fetch(term['type']),
                            description1: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),
                            description2: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),
                            start_date: term['start'],
                            end_date: term['end'],
                            is_current: (Date.parse(term['end']) > Date.today),
-                           last_user_id: CongressImporter::CONGRESS_BOT_SF_USER)
+                           last_user_id: CongressImporter::CONGRESS_BOT_USER)
       relationship.membership.update!(elected_term: elected_term_struct(term))
     end
 
@@ -97,12 +101,12 @@ class CongressImporter
     def prune_all_relationships!
       delete_if_nil = proc { |r| r.soft_delete if r.membership.elected_term.type.nil? }
 
-      if legislator.entity.relationships.where(HOUSE_QUERY).count > distilled_rep_terms.count
-        legislator.entity.relationships.where(HOUSE_QUERY).each(&delete_if_nil)
+      if @entity.relationships.where(HOUSE_QUERY).count > distilled_rep_terms.count
+        @entity.relationships.where(HOUSE_QUERY).each(&delete_if_nil)
       end
 
-      if legislator.entity.relationships.where(SENATE_QUERY).count > distilled_sen_terms.count
-        legislator.entity.relationships.where(SENATE_QUERY).each(&delete_if_nil)
+      if @entity.relationships.where(SENATE_QUERY).count > distilled_sen_terms.count
+        @entity.relationships.where(SENATE_QUERY).each(&delete_if_nil)
       end
     end
 
@@ -169,6 +173,7 @@ class CongressImporter
       ls_date = LsDate.new(relationship_date)
       # if the current relationship's date only has year information, compare years
       return (ls_date.year == term_date.slice(0, 4).to_i) if ls_date.sp_year?
+
       within_one_month(ls_date.coerce_to_date_str, term_date)
     end
 
@@ -183,5 +188,3 @@ class CongressImporter
     end
   end
 end
-
-
