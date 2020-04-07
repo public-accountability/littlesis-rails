@@ -1,18 +1,18 @@
 <% content_for(:page_title, @relationship.name) %>
 
-<%= render partial: 'header' %>    
+<%= render partial: 'header' %>
 
 <% cache_unless user_signed_in?, ['subtitle_details_sources', @relationship] do %>
   <div class="row" style="padding-top: 5px;">
-    <div class="col-md-6 col-12 col-sm-6"> 
+    <div class="col-md-6 col-12 col-sm-6">
       <div class="row">
 	<div class="col">
-          <%= render partial: 'subtitle', locals: {relationship: @relationship } %>
+          <%= render partial: 'subtitle', locals: { relationship: @relationship } %>
 	</div>
       </div>
       <div class="row top-1em">
         <div class="col-md-10 col-sm-10 col-10">
-          <%= render partial: 'details', locals: {details: @relationship.details } %>
+          <%= render partial: 'details', locals: { details: @relationship.details } %>
         </div>
       </div>
     </div>
@@ -23,8 +23,8 @@
       </div>
 
       <% if @relationship.tags.present? || user_signed_in? %>
-	
-	<div class="row">		    
+
+	<div class="row">
 	  <h4 class="relationship-sidebar-title">Tags</h4>
 
 	  <%= tags_controls if user_signed_in? %>
@@ -42,7 +42,7 @@
 	  <%  end %>
 	</div>
 
-      <% end %> 
+      <% end %>
     </div>
   </div>
 <% end %>
