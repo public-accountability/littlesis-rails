@@ -155,6 +155,36 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'us_legislator?' do
+    let(:bernie_house_relationship) do
+      build(:membership_relationship,
+            entity: build(:person, name: 'Bernie Sanders'),
+            related: build(:us_house),
+            membership: build(:bernie_house_membership))
+    end
+
+    let(:regular_person_relationship) do
+      build(:membership_relationship,
+            entity: build(:person),
+            related: build(:org),
+            membership: build(:membership))
+    end
+
+    example 'bernie sanders' do
+      expect(bernie_house_relationship.us_legislator?).to be true
+    end
+
+    example 'regular person' do
+      expect(regular_person_relationship.us_legislator?).to be false
+    end
+
+    example 'position relationship' do
+      expect(build(:position_relationship,
+                   entity: build(:person),
+                   related: build(:us_senate)).us_legislator?).to be false
+    end
+  end
+
   describe 'touch: entity and related' do
     let(:elected) { create(:elected) }
     let(:org) { create(:entity_org) }

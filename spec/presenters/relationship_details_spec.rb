@@ -1,8 +1,25 @@
 # rubocop:disable Style/WordArray
 
-describe 'RelationshipDetails' do
-  it 'initializes details as an empty array' do
-    expect(RelationshipDetails.new(build(:relationship)).details).to eql []
+describe RelationshipDetails do
+  let(:position_relationship) do
+    build(:relationship, category_id: 1, description1: 'boss', is_current: true, start_date: "1624")
+  end
+
+  let(:donation_rel) do
+    build(:relationship,
+          category_id: 5,
+          description1: 'Campaign Contribution',
+          start_date: '1900',
+          end_date: '2000',
+          amount: 7000,
+          filings: 2)
+  end
+
+  let(:bernie_house_relationship) do
+    build(:relationship, category_id: 3, start_date: '1991', end_date: '2007',
+                         entity: build(:person, name: 'Bernie Sanders'),
+                         related: build(:us_house),
+                         membership: build(:bernie_house_membership) )
   end
 
   describe 'title' do
@@ -12,21 +29,16 @@ describe 'RelationshipDetails' do
       expect(RelationshipDetails.new(build(:relationship, category_id: 6)).title.details).to eql []
     end
 
-    it 'returns member if d1 is nil and category_id = 3' do
+    it 'shows "member" for membership relationships missing description1' do
       expect(RelationshipDetails.new(build(:relationship, category_id: 3)).details)
         .to eql [%w[Title Member]]
     end
   end
 
-  let(:position_relationship) do
-    build(:relationship, category_id: 1, description1: 'boss', is_current: true, start_date: "1624")
-  end
-
   it 'returns details for position relationship' do
     position_relationship.position = build(:position, is_board: false, compensation: 25)
-    expect(RelationshipDetails.new(position_relationship).details)
-      .to eql [['Title', 'boss'], ['Start Date', '1624'],
-               ['Is Current', 'yes'], ['Board member', 'no'], ['Compensation', '$25']]
+    details = [['Title', 'boss'], ['Start Date', '1624'], ['Is Current', 'yes'], ['Board member', 'no'], ['Compensation', '$25']]
+    expect(RelationshipDetails.new(position_relationship).details).to eq details
   end
 
   it 'returns details for education relationship' do
@@ -43,17 +55,21 @@ describe 'RelationshipDetails' do
       .to eql [['Title', 'Member'], ['Start Date', '2000'], ['End Date', '2001'], ['Dues', '$100']]
   end
 
+  it 'returns details for membership in U.S. house' do
+    expect(RelationshipDetails.new(bernie_house_relationship).details)
+      .to eq [['Title', 'Member'],
+              ['Start Date', '1991'],
+              ['End Date', '2007'],
+              ['State', 'VT'],
+              ['District', 'At-large'],
+              ['Party', 'Independent']]
+  end
+
   it 'returns details for family relationship' do
     rel = build(:relationship, category_id: 4, description1: 'Father', description2: 'Son')
     rel.entity = build(:person, name: 'Vader')
     rel.related = build(:person, name: 'Luke')
     expect(RelationshipDetails.new(rel).details).to eql [%w[Father Vader], %w[Son Luke]]
-  end
-
-  let(:donation_rel) do
-    build(:relationship,
-          category_id: 5, description1: 'Campaign Contribution', start_date: '1900',
-          end_date: '2000', amount: 7000, filings: 2)
   end
 
   it 'returns details for donation relationship' do
@@ -125,28 +141,31 @@ describe 'RelationshipDetails' do
   end
 
   describe '#family_details_for' do
-    before do
-      @rel = build(:relationship, category_id: 4, description1: 'Father', description2: 'Son')
-      @vadar = build(:person, name: 'Vader', id: rand(1000))
-      @luke = build(:person, name: 'Luke', id: rand(1000))
-      @rel.entity = @vadar
-      @rel.related = @luke
+    let(:vader) { build(:person, name: 'Vader') }
+    let(:luke) { build(:person, name: 'Luke') }
+
+    let(:relationship) do
+      build(:relationship,
+            category_id: 4,
+            description1: 'Father',
+            description2: 'Son',
+            entity: vader,
+            related: luke)
     end
 
-    it 'returns nil if given a entity not in the relationship' do
-      @rando = build(:person, id: rand(1000))
-      expect(RelationshipDetails.new(@rel).family_details_for(@rando)).to be nil
+    it 'returns nil if given a entity that not in the relationship' do
+      expect(RelationshipDetails.new(relationship).family_details_for(build(:person))).to be nil
     end
 
     it 'returns details for other person if given entity' do
-      expect(RelationshipDetails.new(@rel).family_details_for(@vadar)).to eql %w[Son Luke]
-      expect(RelationshipDetails.new(@rel).family_details_for(@vadar.id)).to eql %w[Son Luke]
+      expect(RelationshipDetails.new(relationship).family_details_for(vader)).to eq %w[Son Luke]
+      expect(RelationshipDetails.new(relationship).family_details_for(vader.id)).to eq %w[Son Luke]
     end
 
     it 'returns details for other person if given related' do
-      expect(RelationshipDetails.new(@rel).family_details_for(@luke)).to eql %w[Father Vader]
-      expect(RelationshipDetails.new(@rel).family_details_for(@luke.id)).to eql %w[Father Vader]
-      expect(RelationshipDetails.new(@rel).family_details_for(@luke.id.to_s)).to eql %w[Father Vader]
+      expect(RelationshipDetails.new(relationship).family_details_for(luke)).to eq %w[Father Vader]
+      expect(RelationshipDetails.new(relationship).family_details_for(luke.id)).to eq %w[Father Vader]
+      expect(RelationshipDetails.new(relationship).family_details_for(luke.id.to_s)).to eq %w[Father Vader]
     end
   end
 end

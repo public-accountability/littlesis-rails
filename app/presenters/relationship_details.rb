@@ -4,14 +4,15 @@ class RelationshipDetails
   attr_accessor :details
 
   @@bool = lambda { |x| x ? 'yes' : 'no' }
-  @@money = lambda { |x| ActiveSupport::NumberHelper::number_to_currency(x, precision: 0) }
+  @@money = lambda { |x| ActiveSupport::NumberHelper.number_to_currency(x, precision: 0) }
   @@percent = lambda { |x| x.to_s + '%' }
-  @@human_int = lambda { |x| ActiveSupport::NumberHelper::number_to_human(x) }
+  @@human_int = lambda { |x| ActiveSupport::NumberHelper.number_to_human(x) }
 
   def initialize(relationship)
     @rel = relationship
     @details = []
     calculate_details
+    freeze
   end
 
   def calculate_details
@@ -22,6 +23,7 @@ class RelationshipDetails
       education
     when 3
       membership
+      elected_term if @rel.us_legislator?
     when 4
       family
     when 5
@@ -41,6 +43,7 @@ class RelationshipDetails
     when 12
       generic
     else
+      raise Exceptions::LittleSisError, 'Invalid relationship category id'
     end
   end
 
@@ -163,12 +166,32 @@ class RelationshipDetails
   end
 
   def title
-    return self unless [1,3,5,10].include? @rel.category_id
+    return self unless [1, 3, 5, 10].include? @rel.category_id
+
     if @rel.description1.nil?
       @details << ['Title', 'Member'] if @rel.category_id == 3
     else
       @details << ['Title', @rel.description1]
     end
+    self
+  end
+
+  # Adds these field if they are present: state, district, party
+  def elected_term
+    et = @rel.membership.elected_term
+    @details << ['State', et['state']]
+
+    if et['district']
+      if et['district'].zero?
+        @details << %w[District At-large]
+      elsif et['district'] == -1
+        @details << %w[District Unknown]
+      else
+        @details << ['District', et['district'].to_s]
+      end
+    end
+
+    @details << ['Party', et['party']] if et['party']
     self
   end
 
@@ -198,8 +221,9 @@ class RelationshipDetails
   # input: <Entity> or FixNum|String (entity id)
   # output: [ 'title', 'name' ]
   def family_details_for(entity)
-    e_id = (entity.class == Entity) ? entity.id : entity.to_i
+    e_id = Entity.entity_id_for(entity)
     return nil unless [@rel.entity1_id, @rel.entity2_id].include? e_id
+
     if e_id == @rel.entity1_id
       [@rel.description2, @rel.related.name]
     else

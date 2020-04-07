@@ -343,6 +343,14 @@ class Relationship < ApplicationRecord
     end
   end
 
+  # If the related entity is the U.S. House or Senate
+  # AND there is elected_term data on the membership relationship
+  def us_legislator?
+    is_membership? &&
+      NotableEntities.values_at(:house_of_reps, :senate).include?(entity2_id) &&
+      membership&.elected_term.present?
+  end
+
   def title
     if description1.blank?
       if is_board

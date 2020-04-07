@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# If the membership is for a U.S. congressperson, elected_term contains
+# a hash of information (state, district, etc.)
+# See lib/congress_importer for the scraper.
 class Membership < ApplicationRecord
   include SingularTable
   serialize :elected_term, Hash
