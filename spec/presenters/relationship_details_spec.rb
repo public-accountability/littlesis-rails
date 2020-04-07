@@ -15,6 +15,13 @@ describe RelationshipDetails do
           filings: 2)
   end
 
+  let(:bernie_house_relationship) do
+    build(:relationship, category_id: 3, start_date: '1991', end_date: '2007',
+                         entity: build(:person, name: 'Bernie Sanders'),
+                         related: build(:us_house),
+                         membership: build(:bernie_house_membership) )
+  end
+
   describe 'title' do
     it 'returns self unless it is a position, member, donation, or ownership relationship' do
       expect(RelationshipDetails.new(build(:relationship, category_id: 2)).title.details).to eql []
@@ -46,6 +53,16 @@ describe RelationshipDetails do
     rel.membership = build(:membership, dues: 100)
     expect(RelationshipDetails.new(rel).details)
       .to eql [['Title', 'Member'], ['Start Date', '2000'], ['End Date', '2001'], ['Dues', '$100']]
+  end
+
+  it 'returns details for membership in U.S. house' do
+    expect(RelationshipDetails.new(bernie_house_relationship).details)
+      .to eq [['Title', 'Member'],
+              ['Start Date', '1991'],
+              ['End Date', '2007'],
+              ['State', 'VT'],
+              ['District', 'At-large'],
+              ['Party', 'Independent']]
   end
 
   it 'returns details for family relationship' do

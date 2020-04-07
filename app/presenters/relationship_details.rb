@@ -23,6 +23,7 @@ class RelationshipDetails
       education
     when 3
       membership
+      elected_term if @rel.us_legislator?
     when 4
       family
     when 5
@@ -172,6 +173,25 @@ class RelationshipDetails
     else
       @details << ['Title', @rel.description1]
     end
+    self
+  end
+
+  # Adds these field if they are present: state, district, party
+  def elected_term
+    et = @rel.membership.elected_term
+    @details << ['State', et['state']]
+
+    if et['district']
+      if et['district'].zero?
+        @details << %w[District At-large]
+      elsif et['district'] == -1
+        @details << %w[District Unknown]
+      else
+        @details << ['District', et['district'].to_s]
+      end
+    end
+
+    @details << ['Party', et['party']] if et['party']
     self
   end
 
