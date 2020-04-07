@@ -9,6 +9,7 @@ describe Oligrapher do
         .to eql(id: entity.id.to_s,
                 name: entity.name,
                 image: nil,
+                description: nil,
                 url: "http://localhost:8080/org/#{entity.to_param}")
     end
   end

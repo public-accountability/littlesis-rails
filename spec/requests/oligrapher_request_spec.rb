@@ -197,16 +197,18 @@ describe "Oligrapher", type: :request do
   end
 
   describe 'find_nodes' do
-    let(:nodes) do
-      [build(:org, :with_org_name), build(:org, :with_org_name)]
-    end
+    let(:image) { build(:image, is_featured: true) }
+    let(:org1) { build(:org, :with_org_name, :with_org_blurb) }
+    let(:org2) { build(:org, :with_org_name) }
+    let(:nodes) { [org1, org2] }
 
     it 'responds with bad request if missing query' do
       get '/oligrapher/find_nodes', params: {}
       expect(response).to have_http_status 400
     end
 
-    it 'renders json' do
+    it 'renders json with descriptions and images' do
+      expect(org2).to receive(:featured_image).and_return(image)
       expect(EntitySearchService).to receive(:new)
                                        .once
                                        .with(query: 'abc',
@@ -218,6 +220,9 @@ describe "Oligrapher", type: :request do
 
       expect(response).to have_http_status 200
       expect(json.length).to eq 2
+      expect(json.map { |org| org['description'] }).to eq nodes.map(&:blurb)
+      expect(json.first['image']).to be_nil
+      expect(json.last['image']).not_to be_nil
     end
   end
 end
