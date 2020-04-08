@@ -763,7 +763,7 @@ class Entity < ApplicationRecord
     list_entities.each(&:destroy)
     relationships.each(&:soft_delete)
     taggings.destroy_all
-    # ArticleEntity
+    PendingEntityRequestResolver.new(self).run
   end
 
   def name_or_id_to_name(name_or_id)

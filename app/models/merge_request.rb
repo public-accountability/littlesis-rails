@@ -6,8 +6,14 @@ class MergeRequest < UserRequest
   validates :source_id, presence: true
   validates :dest_id, presence: true
 
-  belongs_to :source, class_name: 'Entity', foreign_key: 'source_id'
-  belongs_to :dest, class_name: 'Entity', foreign_key: 'dest_id'
+  belongs_to :source,
+             -> { unscope(where: :is_deleted) },
+             class_name: 'Entity',
+             foreign_key: 'source_id'
+
+  belongs_to :dest, -> { unscope(where: :is_deleted) },
+             class_name: 'Entity',
+             foreign_key: 'dest_id'
 
   def approve!
     source.merge_with(dest)
