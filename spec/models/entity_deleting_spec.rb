@@ -25,6 +25,17 @@ describe 'Deleting an Entity', type: :model do
     end
   end
 
+  describe 'deleting an entity with a pending merge request' do
+    let(:entity) { create(:entity_org) }
+    let(:merge_request) { create(:merge_request, source: entity, status: 'pending') }
+
+    it 'denies merge request' do
+      expect { entity.soft_delete }
+        .to change { merge_request.reload.status }
+            .from('pending').to('denied')
+    end
+  end
+
   describe 'restore!' do
     with_versioning do
       let(:entity) { create(:entity_org) }
