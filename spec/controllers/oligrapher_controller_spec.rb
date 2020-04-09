@@ -4,6 +4,10 @@ describe OligrapherController, type: :controller do
   end
 
   it do
+    is_expected.to route(:get, '/oligrapher/find_connections').to(action: :find_connections)
+  end
+
+  it do
     is_expected.to route(:get, '/oligrapher/example').to(action: :example)
   end
 

@@ -31,6 +31,7 @@ Lilsis::Application.routes.draw do
   get '/bug_report' => 'errors#bug_report'
   post '/bug_report' => 'errors#file_bug_report'
 
+
   #########
   # ADMIN #
   #########
@@ -196,6 +197,7 @@ Lilsis::Application.routes.draw do
 
   resources :oligrapher, only: [:new, :show, :create, :update], controller: 'oligrapher' do
     collection do
+      get '/find_connections', action: :find_connections
       get '/find_nodes', action: :find_nodes
       get '/example', action: :example
     end
