@@ -520,6 +520,27 @@ describe EntitiesController, type: :controller do
     end
   end # end describe #update
 
+  describe 'validate' do
+    it 'returns validation errors for invalid entities' do
+      post :validate, params: { entity: { name: 'Mr Aesop', blurb: 'Hic Rhodus hic salta', primary_ext: '' } }
+
+      expect(response.status).to eq 200
+
+      body = JSON.parse(response.body)
+      expect(body["name"].first).to eq("Could not find a first name. Mr is a common prefix")
+      expect(body["primary_ext"].first).to eq("can't be blank")
+    end
+
+    it 'returns nothing for valid entities' do
+      post :validate, params: { entity: { name: 'Carl Schmitt', blurb: 'The exception proves everything.', primary_ext: 'org' } }
+
+      expect(response.status).to eq 200
+
+      body = JSON.parse(response.body)
+      expect(body).to eq({})
+    end
+  end
+
   describe '#destory' do
     context 'user is not a deleter' do
       before { delete :destroy, params: { id: '123' } }

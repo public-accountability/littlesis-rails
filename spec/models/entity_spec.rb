@@ -661,8 +661,7 @@ describe Entity, :tag_helper do
 
       it 'updates last user id and updated_at' do
         expect(entity.last_user_id).to eql initial_user.id
-        entity.update_timestamp_for(new_user)
-        expect(entity.updated_at).to be > 1.second.ago
+        expect{entity.update_timestamp_for(new_user)}.to change {entity.updated_at}
         expect(entity.last_user_id).to eql new_user.id
       end
 

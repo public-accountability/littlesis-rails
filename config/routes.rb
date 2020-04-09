@@ -105,6 +105,8 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  post '/entities/validate' => 'entities#validate'
+
   constraints(id: /[0-9]+(-[^\/]+)?/) do
     resources :entities do
       member do

@@ -78,6 +78,13 @@
     </div>
 <% end %>
 
+<template id="validation_errors">
+  <div id="error_explanation" class="alert alert-warning">
+    <ul>
+    </ul>
+  </div>
+</template>
+
 <div id="wait" style="display: none;">
     <br>
     <h3>Wait! Does this entity already exist?</h3>
@@ -103,6 +110,10 @@
        $("#org-types").hide();            
      }
    });
+
+   $('#new_entity input').on("blur", function() {
+     entity.validate($('#new_entity'), ["name"])
+   })
 
    var input = $("#entity_name");
    var typingTimer;
