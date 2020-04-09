@@ -4,7 +4,6 @@
 <% image_caption_modal_id = "image-#{image.id}-caption-modal" %>
 
 <tr>
-
   <td>
     <%= link_to(image_tag(image.image_path('profile'), :class => 'img-responsive'), image.image_path("large")) %>
   </td>
@@ -77,16 +76,14 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
-          <%= form_tag "/images/#{image.id}", method: :post do %>
-            <div class="input-group">
-	      <input type="text" name="caption" value="<%= image.title %>" />
-	      <div class="input-group-append">
-	        <button type="submit" class="btn">Submit</button>
-	      </div>
+        <%=  form_with(model: image, url: "/images/#{image.id}/update", method: "post") do |image_form| %>
+          <div class="input-group">
+            <%= image_form.text_field :caption %>
+	    <div class="input-group-append">
+	      <button type="submit" class="btn">Submit</button>
 	    </div>
-          <% end %>
-        </form>
+	  </div>
+        <% end %>
       </div>
     </div>
   </div>

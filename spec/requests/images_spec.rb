@@ -54,9 +54,24 @@ describe 'Images' do
       expect(response).to have_http_status :forbidden
     end
 
+    describe 'updating an image caption' do
+      let(:caption) { Faker::Lorem.sentence(word_count: 3) }
+      let(:new_caption) { Faker::Lorem.sentence(word_count: 4) }
+      let(:image) { create(:image, entity: entity, caption: caption) }
+
+      it 'updates caption' do
+        expect { post "/images/#{image.id}/update", params: { image: { caption: new_caption } } }
+          .to change { image.reload.caption }
+                .from(caption).to(new_caption)
+
+        expect(response).to have_http_status(302)
+      end
+
+    end
+
     describe 'cropping an image' do
       let(:person) { create(:entity_person) }
-      let(:image) { create(:image, is_featured: true, entity: person, width: 1200, height: 900) } 
+      let(:image) { create(:image, is_featured: true, entity: person, width: 1200, height: 900) }
 
       let(:params) do
         { 'crop' => {
