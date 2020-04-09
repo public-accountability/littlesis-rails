@@ -91,7 +91,7 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :images, only: [:edit] do
+  resources :images, only: [] do
     member do
       get 'crop'
       post 'crop'
