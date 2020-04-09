@@ -6,7 +6,7 @@ class ImagesController < ApplicationController
   before_action :authenticate_user!
   before_action -> { check_permission('admin') }, only: ADMIN_ACTIONS
   before_action :set_image_deletion_request, only: ADMIN_ACTIONS
-  before_action :set_image, only: %i[request_deletion crop]
+  before_action :set_image, only: %i[request_deletion crop edit]
 
   def request_deletion
     unless ImageDeletionRequest.exists?(image: @image)
@@ -37,6 +37,9 @@ class ImagesController < ApplicationController
     else
       @image = ImageCropPresenter.new(@image)
     end
+  end
+
+  def edit
   end
 
   private
