@@ -96,6 +96,7 @@ Lilsis::Application.routes.draw do
       get 'crop'
       post 'crop'
       post 'request_deletion'
+      post 'update'
     end
 
     collection do
