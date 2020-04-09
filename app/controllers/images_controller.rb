@@ -6,7 +6,7 @@ class ImagesController < ApplicationController
   before_action :authenticate_user!
   before_action -> { check_permission('admin') }, only: ADMIN_ACTIONS
   before_action :set_image_deletion_request, only: ADMIN_ACTIONS
-  before_action :set_image, only: %i[request_deletion crop]
+  before_action :set_image, only: %i[request_deletion crop update]
 
   def request_deletion
     unless ImageDeletionRequest.exists?(image: @image)
@@ -39,6 +39,13 @@ class ImagesController < ApplicationController
     end
   end
 
+  # POST /images/:id/update
+  # This route varies from rails convention by adding /update
+  def update
+    @image.update(image_update_params)
+    redirect_to images_entity_path(@image.entity)
+  end
+
   private
 
   def set_image
@@ -62,5 +69,9 @@ class ImagesController < ApplicationController
       image: @image,
       entity_id: params.fetch('entity_id', nil),
       justification: params.require('justification') }
+  end
+
+  def image_update_params
+    params.require(:image).permit(:caption).to_h
   end
 end

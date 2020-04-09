@@ -1,4 +1,4 @@
-var entity = {} 
+var entity = {}
 
 // Toggles visibility of entity summary
 entity.summaryToggle = function(){
@@ -81,7 +81,9 @@ entity.displayErrors = function(attributes){
 
     for (var value in entity.errors[attribute]){
       if (entity.errors[attribute].hasOwnProperty(value)){
-        template.find("ul").append(`<li>${attribute}: ${entity.errors[attribute][value]}</li>`)
+        template.find("ul").append(
+          "<li>" + attribute + ": " + entity.errors[attribute][value] + "</li>"
+        )
         displayableErrors = true
       }
     }
