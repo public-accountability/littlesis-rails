@@ -5,9 +5,15 @@ describe 'Images' do
     end
   end
 
+  let(:path_1x1) { Rails.root.join('spec/testdata/1x1.png').to_s }
   let(:entity) { create(:entity_person) }
   let(:user) { create_basic_user }
   let(:example_png) { Rails.root.join('spec/testdata/example.png') }
+
+  def setup_image_path(image)
+    FileUtils.mkdir_p image.image_file('original').pathname.dirname
+    FileUtils.cp(path_1x1, image.image_file('original').path)
+  end
 
   before { login_as(user, :scope => :user) }
 
@@ -61,12 +67,9 @@ describe 'Images' do
 
     describe 'visting the crop image page' do
       let(:image) { create(:image, entity: create(:entity_org)) }
-      let(:path_1x1) { Rails.root.join('spec/testdata/1x1.png').to_s }
 
       before do
-        FileUtils.mkdir_p image.image_file('original').pathname.dirname
-        FileUtils.cp(path_1x1, image.image_file('original').path)
-
+        setup_image_path image
         visit crop_image_path(image)
       end
 
@@ -79,5 +82,16 @@ describe 'Images' do
         expect(page.html).to include "return fetch(\"#{crop_image_path(image)}\""
       end
     end
+  end
+
+  feature 'editing an image' do
+    let(:image) { create(:image, entity: create(:entity_org)) }
+
+    before do
+      setup_image_path image
+      visit crop_image_path(image)
+    end
+
+    it 'has fields to edit caption'
   end
 end

@@ -6,67 +6,9 @@
   &nbsp;<%= link_to('add', new_image_entity_path(@entity), class: "btn btn-secondary btn-sm") %>
 </h3>
 
-<table class="table">
+
+<table class="table entity-images-table">
   <% @entity.images.each do |image| %>
-    <tr>
-      <td>
-	<%= link_to(image_tag(image.image_path('profile'), :class => 'img-responsive'), image.image_path("large")) %>
-      </td>
-      <td>
-	<p><strong><%= image.title %></strong></p>
-	<p><%= image.caption %></p>
-	<p><em>Posted <%= image.created_at.strftime("%F") %></em></p>
-      </td>
-      <td>
-	<%= link_to("crop", crop_image_path(image)) %><br>
-	<% unless image.is_featured %>
-          <%= link_to("feature", feature_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %><br>
-	<% end %>
-	<a href="#"' onclick="requestImageDeletion(<%= image.id %>)">Request deletion</a><br/>
-	<% if current_user.admin? and image.url %>
-          <%= link_to("view original", image.url) %><br>
-	<% end %>
-
-	<% if current_user.has_ability?('deleter') %>
-          <%= link_to("remove", remove_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
-	<% end %>
-
-      </td>
-    </tr>
+    <%= render partial: 'image_table_row', locals: { image: image } %>
   <% end %>
 </table>
-
-
-<div class="modal fade" tabindex="-1" role="dialog" id="image-deletion-request-modal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-	<h5 class="modal-title">Request Image Deletion</h5>
-	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-	<p>Briefly, why should this image be destroyed?</p>
-	<%# NOTE: the form URL is changed via javascript %>
-	<%= form_tag('/images/0/request_deletion', method: :post) do %>
-	  <%= hidden_field_tag :entity_id, @entity.id, id: 'image_deletion_request_entity_id' %>
-	  <div class="input-group">
-	    <input type="text" name="justification"/>
-	    <div class="input-group-append">
-	      <button type="submit" class="btn">Submit</button>
-	    </div>
-	  </div>
-	<% end %>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
- function requestImageDeletion(image_id) {
-   var url = "/images/" + image_id + "/request_deletion";
-   $('#image-deletion-request-modal form').attr('action', url);
-   $('#image-deletion-request-modal').modal('show');
- }
-</script>
