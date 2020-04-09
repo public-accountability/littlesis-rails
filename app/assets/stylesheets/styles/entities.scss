@@ -421,27 +421,6 @@ div.popover-content {
 }
 
 
-#image-deletion-request-modal {
-
-    div.modal-dialog {
-	width: 500px;
-    }
-
-    form {
-	input {
-	    min-width: 350px;
-	}
-
-	button {
-	    background-color: $red;
-	}
-
-	button:hover {
-	    background-color: $red_light;
-	}
-    }
-}
-
 //--------------------//
 // Edit entity page   //
 //--------------------//
@@ -492,5 +471,23 @@ table.entity-images-table {
             cursor: pointer;
             background-color: rgba(55, 139, 204, 0.8)
         }
+    }
+}
+
+.image-modal-dialog {
+    max-width: 500px;
+}
+
+.image-modal-body {
+    input {
+	min-width: 350px;
+    }
+
+    button {
+	background-color: $red;
+    }
+
+    button:hover {
+	background-color: $red_light;
     }
 }
