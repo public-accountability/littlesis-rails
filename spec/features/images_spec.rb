@@ -1,5 +1,5 @@
 describe 'Images' do
-  before(:all) do
+  before(:all) do # rubocop:disable RSpec/BeforeAfterAll
     %w[small profile large original square].each do |folder|
       FileUtils.mkdir_p Rails.root.join('tmp', folder)
     end
@@ -7,30 +7,30 @@ describe 'Images' do
 
   let(:entity) { create(:entity_person) }
   let(:user) { create_basic_user }
+  let(:example_png) { Rails.root.join('spec/testdata/example.png') }
 
   before { login_as(user, :scope => :user) }
+
   after { logout(:user) }
 
   feature 'Adding an image to a entity' do
     let(:image_caption) { Faker::Creature::Dog.meme_phrase }
     let(:url) { 'https://example.com/example.png' }
-    let(:image_data) do
-      File.open(Rails.root.join('spec', 'testdata', 'example.png')).read
-    end
+    let(:image_data) { File.open(example_png).read }
 
     before { visit new_image_entity_path(entity) }
 
     scenario 'Uploading an image from a file' do
       successfully_visits_page new_image_entity_path(entity)
 
-      attach_file 'image_file', Rails.root.join('spec', 'testdata', 'example.png')
+      attach_file 'image_file', example_png
       fill_in 'image_caption', with: image_caption
       check 'image_is_featured'
       click_button 'Upload'
 
       images = entity.reload.images
 
-      expect(images.size).to eql 1
+      expect(images.size).to eq 1
       expect(images.first.caption).to eql image_caption
       expect(images.first.is_featured).to be true
 
@@ -61,7 +61,7 @@ describe 'Images' do
 
     describe 'visting the crop image page' do
       let(:image) { create(:image, entity: create(:entity_org)) }
-      let(:path_1x1) { Rails.root.join('spec', 'testdata', '1x1.png').to_s }
+      let(:path_1x1) { Rails.root.join('spec/testdata/1x1.png').to_s }
 
       before do
         FileUtils.mkdir_p image.image_file('original').pathname.dirname
