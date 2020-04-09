@@ -4,15 +4,8 @@ defaults: &defaults
   aws_region: ''
   aws_s3_base: "https://s3.amazonaws.com"
   aws_s3_bucket: "littlesis-dev"
-  square_image_file_type: jpg
-  imagemagick_binary_path: "/usr/bin/convert"
-  google_custom_search_engine_id:
-  google_custom_news_search_engine_id:
-  google_custom_search_key:
   default_from_email: dev@littlesis.org
   admins_only: false
-  convert_new_legacy_notes: true
-  research_from_email: research@littlesis.org
   netmap_api_key: freeapiforlittlesisdevs
   netmap_default_width: 960
   netmap_default_height: 550
@@ -20,8 +13,6 @@ defaults: &defaults
   google_analytics_id:
   default_image_file_type: jpg
   system_user_id: 1
-  symfony_path: /var/www/littleis/symfony
-  bing_maps_key:
   default_network_id: 79
   asset_host: "littlesis.org"
   image_asset_host:

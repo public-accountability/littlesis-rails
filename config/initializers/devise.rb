@@ -210,10 +210,5 @@ Devise.setup do |config|
   #   manager.default_strategies(:scope => :user).unshift :some_external_strategy
   # end
 
-  config.warden do |manager|
-     manager.strategies.add(:legacy_password, Devise::Strategies::LegacyPassword)
-     manager.default_strategies(:scope => :user).unshift :legacy_password
-  end
-
   config.secret_key = '6294a6c02d368c9016ce75098d6805e9d2c3e1bc63ccdd9df27acdce873404b306311db8e809ca363227443783a59ebeeaa51ca723dbab1e87622a17594d76a9'
 end
