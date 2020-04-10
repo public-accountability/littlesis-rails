@@ -9,7 +9,7 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  before_action :authenticate_user!, except: %i[find_nodes]
+  before_action :authenticate_user!, except: %i[find_nodes find_connections]
   before_action :set_map, only: %i[update get_editors editors show lock]
   before_action :check_owner, only: %i[update get_editors editors]
   before_action :set_oligrapher_version
@@ -90,6 +90,26 @@ class OligrapherController < ApplicationController
                       per_page: params.fetch(:num, 10).to_i)
                  .search
                  .map(&Oligrapher::Node.method(:from_entity))
+
+    render json: entities
+  end
+
+  def find_connections
+    return head :bad_request if params[:entity_id].blank?
+
+    entity = Entity.find(params[:entity_id])
+
+    entities = EntityConnectionsQuery
+      .new(entity)
+      .category(params[:category_id])
+      .page(1)
+      .per(params.fetch(:num, 10))
+      .run
+      .map { |e|
+        node = Oligrapher::Node.from_entity(e)
+        node[:edge] = Oligrapher.rel_to_edge(Relationship.find(e.relationship_id))
+        node
+      }
 
     render json: entities
   end

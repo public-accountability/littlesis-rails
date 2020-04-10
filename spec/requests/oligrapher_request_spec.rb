@@ -225,4 +225,27 @@ describe "Oligrapher", type: :request do
       expect(json.last['image']).not_to be_nil
     end
   end
+
+  describe 'find_connections' do
+    let(:entity1) { create(:entity_person) }
+    let(:entity2) { create(:entity_person) }
+    let(:rel) { create(:donation_relationship, entity: entity1, related: entity2, is_current: false) }
+
+    before { entity1; entity2; rel; }
+
+    it 'responds with bad request if missing query' do
+      get '/oligrapher/find_nodes', params: {}
+      expect(response).to have_http_status 400
+    end
+
+    it 'renders json with node and edge data if connections are found' do
+      get '/oligrapher/find_connections', params: { entity_id: entity1.id }
+      expect(response).to have_http_status 200
+      expect(json.length).to eq 1
+      expect(json.first['id']).to eq entity2.id.to_s
+      expect(json.first['edge']['id']).to eq rel.id
+      expect(json.first['edge']['dash']).to eq true
+      expect(json.first['edge']['arrow']).to eq '1->2'
+    end
+  end
 end

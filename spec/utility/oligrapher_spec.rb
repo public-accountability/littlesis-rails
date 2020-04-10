@@ -14,6 +14,49 @@ describe Oligrapher do
     end
   end
 
+  describe "rel_to_edge" do
+    let(:entity1_id) { rand(1000) }
+    let(:entity2_id) { rand(1000) }
+
+    context 'with a current donation relationship' do
+      let(:rel) do
+        build(:donation_relationship, entity1_id: entity1_id, entity2_id: entity2_id)
+      end
+
+      specify do
+        expect(Oligrapher.rel_to_edge(rel))
+          .to eql({
+            id: rel.id,
+            node1_id: entity1_id,
+            node2_id: entity2_id,
+            label: 'Donation/Grant',
+            arrow: '1->2',
+            dash: false,
+            url: "http://localhost:8080/relationships/#{rel.id}"
+          })
+      end
+    end
+
+    context 'with a current social relationship' do
+      let(:rel) do
+        build(:social_relationship, entity1_id: entity1_id, entity2_id: entity2_id)
+      end
+
+      specify do
+        expect(Oligrapher.rel_to_edge(rel))
+          .to eql({
+            id: rel.id,
+            node1_id: entity1_id,
+            node2_id: entity2_id,
+            label: 'Social',
+            arrow: nil,
+            dash: false,
+            url: "http://localhost:8080/relationships/#{rel.id}"
+          })
+      end
+    end
+  end
+
   describe 'legacy functions' do
     describe 'legacy_entity_to_node' do
       specify do

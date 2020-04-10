@@ -51,6 +51,18 @@ module Oligrapher
     end
   end
 
+  def self.rel_to_edge(rel)
+    {
+      id: rel.id,
+      node1_id: rel.entity1_id,
+      node2_id: rel.entity2_id,
+      label: RelationshipLabel.new(rel).label + (rel.is_current == false ? " (past)" : ""),
+      arrow: edge_arrow(rel),
+      dash: rel.is_current == false,
+      url: relationship_url(rel)
+    }
+  end
+
   # Legacy (oligrapher 2.0) functions #
 
   def self.legacy_entity_to_node(entity)
