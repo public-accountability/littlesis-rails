@@ -97,11 +97,10 @@ class OligrapherController < ApplicationController
   def find_connections
     return head :bad_request if params[:entity_id].blank?
 
-    @entity = Entity.unscoped.find(params[:entity_id])
-    raise Entity::EntityDeleted if @entity.is_deleted?
+    entity = Entity.find(params[:entity_id])
 
     entities = EntityConnectionsQuery
-      .new(@entity)
+      .new(entity)
       .category(params[:category_id])
       .page(1)
       .per(params.fetch(:num, 10))
