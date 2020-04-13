@@ -270,6 +270,23 @@ describe 'Merging Entities', :merging_helper do
 
       end
     end
+
+    context 'when source is on a deleted list' do
+      before do
+        ListEntity.create!(list_id: list1.id, entity_id: source_org.id)
+        list1.soft_delete
+      end
+
+      describe 'merge!' do
+        reset_merger
+
+        it 'adds destination entity to new list' do
+          expect(list1.is_deleted).to be true
+          subject.merge!
+          expect(list1.reload.entities.first.id).to eq dest_org.id
+        end
+      end
+    end
   end
 
   describe 'images' do
