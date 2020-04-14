@@ -1,98 +1,87 @@
 # frozen_string_literal: true
 
 module EntityMatcher
-  # Generators for Person and Org that
-  # create Sphinx query strings
   module Query
-    class Base < SimpleDelegator
-      attr_reader :query
-      alias to_s query
+    def self.to_query(parts)
+      parts
+        .uniq
+        .map { |x| "(#{x})" }
+        .join(' | ')
+    end
 
-      # input: <Entity> | <String> | <Array>
-      def initialize(arg)
-        case arg
-        when String, Array
-          super(arg.dup)
-        when Entity
-          super(arg)
-        else
-          raise ArgumentError
-        end
-        # components of the query to be separated by OR
-        @parts = []
-        # overwrite this method to populate the @parts instance var
-        run
-        create_query
+    def self.org_name(str)
+      TypeCheck.check str, String
+
+      name = OrgName.parse(str)
+
+      parts = []
+
+      parts << ThinkingSphinx::Query.wildcard(escape(name.clean))
+      parts << escape(name.root) if escape(name.root) != escape(name.clean)
+
+      if name.essential_words.length > 1
+        parts << name.essential_words.map { |x| escape(x) }.join(' ')
       end
 
-      protected
+      to_query parts
+    end
 
-      def run
-        raise NotImplementedError
-      end
-
-      def ts_escape(x)
-        ThinkingSphinx::Query.escape(x)
-      end
-
-      private
-
-      def create_query
-        @query = @parts
-                   .uniq
-                   .map { |x| surround(x) }
-                   .join(' | ')
-      end
-
-      def surround(x)
-        "(#{x})"
+    def self.names(*args)
+      if args.length.zero?
+        raise ArgumentError
+      elsif args.length == 1 && args.first.is_a?(Array)
+        to_query(args.first.map { |name| wildcard(name) })
+      else
+        to_query(Array.wrap(args).map { |name| wildcard(name) })
       end
     end
 
-    class Person < Base
-      def run
-        @parts << name
-        @parts << "#{person.name_first} #{person.name_last}"
-        if person.name_suffix.present?
-          @parts << "#{person.name_first} #{person.name_last} #{person.name_suffix}"
-        end
-        @parts << "#{person.name_prefix} #{person.name_last}" if person.name_prefix.present?
+    def self.entity(e)
+      case e.primary_ext
+      when 'Person'
+        person_entity e
+      when 'Org'
+        org_name e.name
+      else
+        raise ArgumentError
       end
     end
 
-    # Simple query for last names
-    class Names < Base
-      # input: *args | <Array>
-      def initialize(*args)
-        raise ArgumentError if args.length.zero?
+    def self.person_entity(entity)
+      parts = [entity.name, "#{entity.person.name_first} #{entity.person.name_last}"]
 
-        if args.length == 1 && args.first.is_a?(Array)
-          super(args.first)
-        else
-          super(args)
-        end
+      if entity.person.name_suffix.present?
+        parts << "#{entity.person.name_first} #{entity.person.name_last} #{entity.person.name_suffix}"
       end
 
-      def run
-        each { |name| @parts << ThinkingSphinx::Query.wildcard(name) }
+      if entity.person.name_prefix.present?
+        parts << "#{entity.person.name_prefix} #{entity.person.name_first} #{entity.person.name_last}"
       end
+
+      to_query parts
     end
 
-    class Org < Base
-      def initialize(str)
-        TypeCheck.check str, String
-        @org_name = OrgName.parse(str)
-        super(str)
+    def self.person_name(name)
+      hash = NameParser.new(name).validate!.to_h
+      parts = [name, "#{hash[:name_first]} #{hash[:name_last]}"]
+
+      if hash[:name_suffix].present?
+        parts << "#{hash[:name_first]} #{hash[:name_last]} #{hash[:name_suffix]}"
       end
 
-      def run
-        @parts << ThinkingSphinx::Query.wildcard(ts_escape(@org_name.clean))
-        @parts << ts_escape(@org_name.root) if ts_escape(@org_name.root) != ts_escape(@org_name.clean)
-
-        if @org_name.essential_words.length > 1
-          @parts << @org_name.essential_words.map { |x| ts_escape(x) }.join(' ')
-        end
+      if hash[:name_prefix].present?
+        parts << "#{hash[:name_prefix]} #{hash[:name_first]} #{hash[:name_last]}"
       end
+
+      to_query parts
+    end
+
+    private_class_method def self.escape(x)
+      ThinkingSphinx::Query.escape(x)
+    end
+
+    private_class_method def self.wildcard(x)
+      ThinkingSphinx::Query.wildcard(x)
     end
   end
 end

@@ -32,78 +32,79 @@ describe EntityMatcher, :sphinx do
     describe 'searching for a chum' do
       def self.expect_to_find_the_chum
         specify do
-          expect(subject.length).to eql 1
-          expect(subject.first).to eql @chum
+          expect(subject.length).to eq 1
+          expect(subject.first).to eq @chum
         end
       end
 
       describe 'finds by alias' do
-        subject { EntityMatcher::Search.by_name(@chum_alias[:last]) }
+        subject { EntityMatcher::Search.by_name(@chum_alias[:last], primary_ext: 'Person') }
+
         expect_to_find_the_chum
       end
 
       describe 'finds by nickname' do
-        subject { EntityMatcher::Search.by_name('Balloonist') }
+        subject { EntityMatcher::Search.by_name('Balloonist', primary_ext: 'Person') }
+
         expect_to_find_the_chum
       end
     end
 
     describe 'searching using a person' do
       specify do
-        expect(EntityMatcher::Search.by_person(@entities.first).count).to eq 1
+        expect(EntityMatcher::Search.by_entity(@entities.first).count).to eq 1
       end
     end
 
     describe 'last name search' do
       it 'finds 2 traverses' do
-        expect(EntityMatcher::Search.by_name('traverse').count).to eq 2
+        expect(EntityMatcher::Search.by_name('traverse', primary_ext: 'Person').count).to eq 2
       end
 
       it 'finds 2 traverses if other names are also included in the search' do
-        expect(EntityMatcher::Search.by_name('traverse', 'randomname').count).to eq 2
+        expect(EntityMatcher::Search.by_name('traverse', 'randomname', primary_ext: 'Person').count)
+          .to eq 2
       end
 
       it 'finds 2 vibes' do
-        expect(EntityMatcher::Search.by_name('vibe').count).to eql 2
+        expect(EntityMatcher::Search.by_name('vibe', primary_ext: 'Person').count).to eq 2
       end
 
       it 'finds vibes and traverses at once' do
-        expect(EntityMatcher::Search.by_name('traverse', 'vibe').count).to eq 4
+        expect(EntityMatcher::Search.by_name('traverse', 'vibe', primary_ext: 'Person').count).to eq 4
       end
     end
   end
 
   describe 'Query' do
-    describe 'Org' do
-      describe 'string name' do
-        let(:name) { '' }
+    describe 'Org string ' do
+      subject { EntityMatcher::Query.org_name(name) }
 
-        subject { EntityMatcher::Query::Org.new(name).to_s }
+      describe 'simple name' do
+        specify do
+          expect(EntityMatcher::Query.org_name("simplecorp"))
+            .to eq "(*simplecorp*)"
+        end
+      end
 
-        describe 'simple name' do
-          let(:name) { "simplecorp" }
-
-          it { is_expected.to eql "(*simplecorp*)" }
+      describe 'simple name with suffix' do
+        specify do
+          expect(EntityMatcher::Query.org_name("SimpleCorp llc"))
+            .to eq "(*simplecorp* *llc*) | (simplecorp)"
         end
 
-        describe 'simple name with suffix' do
-          let(:name) { "SimpleCorp llc" }
+      end
 
-          it { is_expected.to eql "(*simplecorp* *llc*) | (simplecorp)" }
-        end
-
-        describe 'long name with essential words' do
-          let(:name) { "American Green Tomatoes Corp" }
-
-          it do
-            is_expected.to eql "(*american* *green* *tomatoes* *corp*) | (american green tomatoes) | (green tomatoes)"
-          end
+      describe 'long name with essential words' do
+        specify do
+          expect(EntityMatcher::Query.org_name("American Green Tomatoes Corp"))
+            .to eq "(*american* *green* *tomatoes* *corp*) | (american green tomatoes) | (green tomatoes)"
         end
       end
     end
 
     describe 'Person' do
-      subject { EntityMatcher::Query::Person.new(entity).to_s }
+      subject { EntityMatcher::Query.entity(entity) }
 
       let(:names) { [] }
       let(:entity) { EntitySpecHelpers.person(*names) }
@@ -119,38 +120,39 @@ describe EntityMatcher, :sphinx do
         it { is_expected.to eql "(#{entity.name}) | (#{person.name_first} #{person.name_last})" }
       end
 
-      context 'person has first, last, middle, and suffix' do
+      context 'when person has first, last, middle, and suffix' do
         let(:names) { %w[middle suffix] }
         let(:person) { entity.person }
+
         it do
           is_expected.to eql "(#{entity.name}) | (#{person.name_first} #{person.name_last}) | (#{person.name_first} #{person.name_last} #{person.name_suffix})"
         end
       end
 
-      context 'person has first, last, middle, prefix and suffix' do
+      context 'when person has first, last, middle, prefix and suffix' do
         let(:names) { %w[middle prefix suffix] }
 
         it do
           is_expected
-            .to eql "(#{entity.name}) | (#{person.name_first} #{person.name_last}) | (#{person.name_first} #{person.name_last} #{person.name_suffix}) | (#{person.name_prefix} #{person.name_last})"
+            .to eq "(#{entity.name}) | (#{person.name_first} #{person.name_last}) | (#{person.name_first} #{person.name_last} #{person.name_suffix}) | (#{person.name_prefix} #{person.name_first} #{person.name_last})"
         end
       end
     end
 
     describe 'query: single name' do
-      subject { EntityMatcher::Query::Names.new('Thoreau').to_s }
+      subject { EntityMatcher::Query.names('Thoreau').to_s }
 
       it { is_expected.to eql "(*Thoreau*)" }
     end
 
     describe 'query: two names' do
-      subject { EntityMatcher::Query::Names.new('bob', 'alice').to_s }
+      subject { EntityMatcher::Query.names('bob', 'alice').to_s }
 
       it { is_expected.to eql "(*bob*) | (*alice*)" }
     end
 
     describe  'query: two names in an array' do
-      subject { EntityMatcher::Query::Names.new(%w[bob alice]).to_s }
+      subject { EntityMatcher::Query.names(%w[bob alice]).to_s }
 
       it { is_expected.to eql "(*bob*) | (*alice*)" }
     end
