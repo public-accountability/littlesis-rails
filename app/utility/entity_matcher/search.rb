@@ -8,6 +8,10 @@ module EntityMatcher
       search EntityMatcher::Query.entity(entity), primary_ext: entity.primary_ext
     end
 
+    def self.by_person_hash(hash)
+      search EntityMatcher::Query.person_hash(hash), primary_ext: 'Person'
+    end
+
     def self.by_person_name(name)
       search EntityMatcher::Query.person_name(name), primary_ext: 'Person'
     end

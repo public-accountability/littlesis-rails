@@ -6,15 +6,19 @@ require_relative 'entity_matcher/evaluation_result'
 require_relative 'entity_matcher/evaluation'
 
 module EntityMatcher
-  # String, kwargs --> Array[EvaluateResult]
+  # String | Entity, kwargs --> Array[EvaluateResult]
   def self.find_matches_for_person(name, **kwargs)
     test_case = TestCase.person(name, **kwargs)
 
-    search_results = Search.by_name(test_case.last).map do |entity|
-      EntityMatcher::Evaluation::Person.new(test_case, TestCase.person(entity)).result
+    if test_case.entity.present?
+      search_results = Search.by_entity(test_case.entity)
+    else
+      search_results = Search.by_person_hash(test_case.name)
     end
 
-    EvaluationResultSet.new search_results
+    EvaluationResultSet.new(search_results.map do |entity|
+      EntityMatcher::Evaluation::Person.new(test_case, TestCase.person(entity)).result
+    end)
   end
 
   # String, kwargs --> Array[EvaluateResult]

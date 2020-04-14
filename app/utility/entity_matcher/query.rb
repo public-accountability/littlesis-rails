@@ -76,6 +76,24 @@ module EntityMatcher
       to_query parts
     end
 
+    def self.person_hash(hash)
+      parts = ["#{hash[:name_first]} #{hash[:name_last]}"]
+
+      if hash[:name_middle].present?
+        parts << "#{hash[:name_first]} #{hash[:name_middle]} #{hash[:name_last]}"
+      end
+
+      if hash[:name_suffix].present?
+        parts << "#{hash[:name_first]} #{hash[:name_last]} #{hash[:name_suffix]}"
+      end
+
+      if hash[:name_prefix].present?
+        parts << "#{hash[:name_prefix]} #{hash[:name_first]} #{hash[:name_last]}"
+      end
+
+      to_query parts
+    end
+
     private_class_method def self.escape(x)
       ThinkingSphinx::Query.escape(x)
     end
