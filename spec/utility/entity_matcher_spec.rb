@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/InstanceVariable, RSpec/NamedSubject
+# rubocop:disable RSpec/InstanceVariable, RSpec/NamedSubject, RSpec/NestedGroups
 
 describe EntityMatcher, :sphinx do
   def result_person(*args)
@@ -991,4 +991,4 @@ describe EntityMatcher, :sphinx do
   end
 end
 
-# rubocop:enable RSpec/InstanceVariable, RSpec/NamedSubject
+# rubocop:enable RSpec/InstanceVariable, RSpec/NamedSubject, , RSpec/NestedGroups
