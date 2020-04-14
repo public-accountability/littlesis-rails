@@ -26,7 +26,7 @@ module EntityMatcher
 
     # str --> ThinkingSphinx
     # Search database for potential matches
-    def self.search(query, primary_ext:, per_page: 400)
+    def self.search(query, primary_ext:, per_page: 250)
       options = {
         :per_page => per_page,
         :ranker => :none,
