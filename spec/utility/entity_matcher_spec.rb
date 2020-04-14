@@ -156,6 +156,20 @@ describe EntityMatcher, :sphinx do
   end
 
   describe 'TestCase' do
+    describe 'class methods' do
+      specify do
+        test_case = EntityMatcher::TestCase.org("Corporation", keywords: ['oil'])
+        expect(test_case).to be_a EntityMatcher::TestCase::Org
+        expect(test_case.keywords).to eq ['oil']
+      end
+
+      specify do
+        test_case = EntityMatcher::TestCase.person("Albert Camus")
+        expect(test_case).to be_a EntityMatcher::TestCase::Person
+        expect(test_case.keywords).to eq []
+      end
+    end
+
     describe EntityMatcher::TestCase::Org do
       subject { EntityMatcher::TestCase::Org }
 

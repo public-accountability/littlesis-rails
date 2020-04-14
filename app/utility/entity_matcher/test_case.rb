@@ -8,6 +8,16 @@ module EntityMatcher
   # The hashes must contain the attributes used in the +Person+ model
   #
   module TestCase
+    # Entity, String ---> EntityMatcher::TestCase::Org
+    def self.org(input, **kwargs)
+      EntityMatcher::TestCase::Org.new(input, **kwargs)
+    end
+
+    # Entity, String, Hash --> EntityMatcher::TestCase::Person
+    def self.person(input, **kwargs)
+      EntityMatcher::TestCase::Person.new(input, **kwargs)
+    end
+
     class Base
       attr_reader :entity, :name, :associated_entities, :keywords
 
