@@ -50,29 +50,13 @@ module EntityMatcher
     end
 
     class Person < Base
-      # Fields on Person that we will delgate for easier access
-      PERSON_FIELDS = %I[name_first name_last name_middle name_prefix name_suffix name_nick name_maiden].freeze
-      delegate(*PERSON_FIELDS, to: :person)
-
       def run
         @parts << name
-        @parts << first_last if first_last != name
-        @parts << first_last_suffix if name_suffix.present?
-        @parts << prefix_lastname if name_prefix.present?
-      end
-
-      private
-
-      def prefix_lastname
-        "#{name_prefix} #{name_last}"
-      end
-
-      def first_last_suffix
-        "#{name_first} #{name_last} #{name_suffix}"
-      end
-
-      def first_last
-        "#{name_first} #{name_last}"
+        @parts << "#{person.name_first} #{person.name_last}"
+        if person.name_suffix.present?
+          @parts << "#{person.name_first} #{person.name_last} #{person.name_suffix}"
+        end
+        @parts << "#{person.name_prefix} #{person.name_last}" if person.name_prefix.present?
       end
     end
 

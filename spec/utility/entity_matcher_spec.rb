@@ -109,12 +109,13 @@ describe EntityMatcher, :sphinx do
       let(:entity) { EntitySpecHelpers.person(*names) }
       let(:person) { entity.person }
 
-      context 'person has first and last name only' do
+      context 'when person has first and last name only' do
         it { is_expected.to eql "(#{entity.name})" }
       end
 
-      context 'person has first, last, and middle names' do
+      context 'when person has first, last, and middle names' do
         let(:names) { ['middle'] }
+
         it { is_expected.to eql "(#{entity.name}) | (#{person.name_first} #{person.name_last})" }
       end
 
