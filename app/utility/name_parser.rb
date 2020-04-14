@@ -195,7 +195,7 @@ class NameParser
   end
 
   def valid?
-    @first && @last
+    @first.present? && @last.present?
   end
 
   def validate!
