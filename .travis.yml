@@ -10,7 +10,7 @@ env:
 jobs:
   include:
     - language: ruby
-      rvm: 2.6.5
+      rvm: 2.6.6
       cache:
         bundler: true
       addons:
