@@ -130,12 +130,14 @@ module Cmp
     end
 
     def matches
-      unless EntityMatcher::TestCase::Person.validate_person_hash(to_person_hash)
+      h = to_person_hash
+      unless (h[:name_first] || h['name_first']) && (h[:name_last] || h['name_last'])
         Rails.logger.warn "#{cmpid} is missing a first or last name!"
         return EntityMatcher::EvaluationResultSet.new([])
       end
 
       return @matches unless @matches.nil?
+
       @matches = EntityMatcher
                    .find_matches_for_person(to_person_hash, associated: associated_entity_ids)
     end
