@@ -114,6 +114,16 @@ describe 'NameParser', :name_parser_helper do
     specify { expect(subject.name_last).to eql 'Arendt' }
   end
 
+  describe 'valid?' do
+    specify do
+      expect(NameParser.new('Foo bar').valid?).to be true
+    end
+
+    specify do
+      expect(NameParser.new('Foo').valid?).to be false
+    end
+  end
+
   describe 'validate!' do
     it 'returns self if person has first and last name' do
       expect(NameParser.new('Foo bar').validate!).to be_a NameParser
