@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_06_203720) do
+ActiveRecord::Schema.define(version: 2020_04_15_203303) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -387,6 +387,15 @@ ActiveRecord::Schema.define(version: 2020_04_06_203720) do
     t.index ["definition_id"], name: "definition_id_idx"
     t.index ["entity_id"], name: "entity_id_idx"
     t.index ["last_user_id"], name: "last_user_id_idx"
+  end
+
+  create_table "external_data", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "dataset", limit: 1, null: false
+    t.string "dataset_id", null: false
+    t.text "data", size: :long, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["dataset", "dataset_id"], name: "index_external_data_on_dataset_and_dataset_id", unique: true
   end
 
   create_table "external_datasets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
