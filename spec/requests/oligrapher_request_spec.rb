@@ -243,7 +243,7 @@ describe "Oligrapher", type: :request do
       expect(response).to have_http_status 200
       expect(json.length).to eq 1
       expect(json.first['id']).to eq entity2.id.to_s
-      expect(json.first['edge']['id']).to eq rel.id
+      expect(json.first['edge']['id']).to eq rel.id.to_s
       expect(json.first['edge']['dash']).to eq true
       expect(json.first['edge']['arrow']).to eq '1->2'
     end
@@ -276,15 +276,15 @@ describe "Oligrapher", type: :request do
       }
       expect(response).to have_http_status 200
       expect(json.length).to eq 2
-      expect(json.first['id']).to eq rel1.id
-      expect(json.first['node1_id']).to eq entity1.id
-      expect(json.first['node2_id']).to eq entity2.id
+      expect(json.first['id']).to eq rel1.id.to_s
+      expect(json.first['node1_id']).to eq entity1.id.to_s
+      expect(json.first['node2_id']).to eq entity2.id.to_s
       expect(json.first['dash']).to eq true
       expect(json.first['arrow']).to eq '1->2'
       expect(json.first['url']).to eq "http://localhost:8080/relationships/#{rel1.id}"
-      expect(json.second['id']).to eq rel2.id
-      expect(json.second['node1_id']).to eq entity3.id
-      expect(json.second['node2_id']).to eq entity1.id
+      expect(json.second['id']).to eq rel2.id.to_s
+      expect(json.second['node1_id']).to eq entity3.id.to_s
+      expect(json.second['node2_id']).to eq entity1.id.to_s
       expect(json.second['dash']).to eq false
       expect(json.second['arrow']).to eq '1->2'
       expect(json.second['url']).to eq "http://localhost:8080/relationships/#{rel2.id}"

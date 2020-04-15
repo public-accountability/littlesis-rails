@@ -53,9 +53,9 @@ module Oligrapher
 
   def self.rel_to_edge(rel)
     {
-      id: rel.id,
-      node1_id: rel.entity1_id,
-      node2_id: rel.entity2_id,
+      id: rel.id.to_s,
+      node1_id: rel.entity1_id.to_s,
+      node2_id: rel.entity2_id.to_s,
       label: RelationshipLabel.new(rel).label + (rel.is_current == false ? " (past)" : ""),
       arrow: edge_arrow(rel),
       dash: rel.is_current == false,

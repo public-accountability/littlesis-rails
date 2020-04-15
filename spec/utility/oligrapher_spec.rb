@@ -26,9 +26,9 @@ describe Oligrapher do
       specify do
         expect(Oligrapher.rel_to_edge(rel))
           .to eql({
-            id: rel.id,
-            node1_id: entity1_id,
-            node2_id: entity2_id,
+            id: rel.id.to_s,
+            node1_id: entity1_id.to_s,
+            node2_id: entity2_id.to_s,
             label: 'Donation/Grant',
             arrow: '1->2',
             dash: false,
@@ -45,9 +45,9 @@ describe Oligrapher do
       specify do
         expect(Oligrapher.rel_to_edge(rel))
           .to eql({
-            id: rel.id,
-            node1_id: entity1_id,
-            node2_id: entity2_id,
+            id: rel.id.to_s,
+            node1_id: entity1_id.to_s,
+            node2_id: entity2_id.to_s,
             label: 'Social',
             arrow: nil,
             dash: false,
