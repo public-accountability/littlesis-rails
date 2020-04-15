@@ -9,7 +9,7 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  before_action :authenticate_user!, except: %i[find_nodes find_connections]
+  before_action :authenticate_user!, except: %i[find_nodes find_connections get_edges]
   before_action :set_map, only: %i[update get_editors editors show lock]
   before_action :check_owner, only: %i[update get_editors editors]
   before_action :set_oligrapher_version
@@ -112,6 +112,20 @@ class OligrapherController < ApplicationController
       }
 
     render json: entities
+  end
+
+  def get_edges
+    return head :bad_request if params[:entity1_id].blank?
+    return head :bad_request if params[:entity2_ids].blank?
+
+    rel_ids = Link
+      .where(entity1_id: params[:entity1_id].to_i)
+      .where(entity2_id: params[:entity2_ids].split(','))
+      .pluck(:relationship_id)
+    
+    edges = Relationship.find(rel_ids).map(&Oligrapher.method(:rel_to_edge))
+
+    render json: edges
   end
 
   private

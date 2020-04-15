@@ -38,6 +38,6 @@ class EntityConnectionsQuery
       .where(@category_id ? "link.category_id = #{@category_id}" : nil)
       .order(link_count: :desc)
       .page(@page)
-      .per(PER_PAGE)
+      .per(@per_page || PER_PAGE)
   end
 end
