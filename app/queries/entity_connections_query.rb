@@ -13,7 +13,7 @@ class EntityConnectionsQuery
   def category(category_id)
     @category_id = category_id&.to_i
 
-    unless @category_id.nil? || (1..12).cover?(category_id)
+    unless @category_id.nil? || (1..12).cover?(@category_id)
       raise Exceptions::InvalidRelationshipCategoryError
     end
 
@@ -38,6 +38,6 @@ class EntityConnectionsQuery
       .where(@category_id ? "link.category_id = #{@category_id}" : nil)
       .order(link_count: :desc)
       .page(@page)
-      .per(@per_page || PER_PAGE)
+      .per(@per_page)
   end
 end

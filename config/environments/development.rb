@@ -2,7 +2,7 @@ Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # see: https://github.com/rails/web-console for info on web_console configuruation
-  config.web_console.whitelisted_ips = ['172.21.0.0/16', '172.19.0.0/16']
+  config.web_console.whitelisted_ips = ['172.0.0.0/8']
   config.web_console.whiny_requests = false
 
   # In the development environment your application's code is reloaded on
