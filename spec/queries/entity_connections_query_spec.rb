@@ -44,4 +44,12 @@ describe EntityConnectionsQuery do
       ).to eq 1
     end
   end
+
+  describe 'accepts category ids as strings' do
+    specify do
+      expect(
+        query.category(Relationship::DONATION_CATEGORY.to_s).page(1).run.size
+      ).to eq 1
+    end
+  end
 end
