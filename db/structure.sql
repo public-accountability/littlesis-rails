@@ -2,7 +2,7 @@
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -630,6 +630,22 @@ CREATE TABLE `external_datasets` (
   UNIQUE KEY `index_external_datasets_on_type_and_dataset_key` (`type`,`dataset_key`),
   KEY `index_external_datasets_on_type` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2413 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `external_entities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_entities` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `dataset` tinyint(4) NOT NULL,
+  `match_data` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `external_data_id` bigint(20) DEFAULT NULL,
+  `entity_id` bigint(20) DEFAULT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_external_entities_on_external_data_id` (`external_data_id`),
+  KEY `index_external_entities_on_entity_id` (`entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `external_links`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2197,6 +2213,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200318202702'),
 ('20200406170640'),
 ('20200406203720'),
-('20200415203303');
+('20200415203303'),
+('20200421032831');
 
 

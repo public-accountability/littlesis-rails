@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_15_203303) do
+ActiveRecord::Schema.define(version: 2020_04_21_032831) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -409,6 +409,17 @@ ActiveRecord::Schema.define(version: 2020_04_15_203303) do
     t.string "type"
     t.index ["type", "dataset_key"], name: "index_external_datasets_on_type_and_dataset_key", unique: true
     t.index ["type"], name: "index_external_datasets_on_type"
+  end
+
+  create_table "external_entities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "dataset", limit: 1, null: false
+    t.text "match_data", size: :long
+    t.bigint "external_data_id"
+    t.bigint "entity_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["entity_id"], name: "index_external_entities_on_entity_id"
+    t.index ["external_data_id"], name: "index_external_entities_on_external_data_id"
   end
 
   create_table "external_links", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
