@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Uses a sqlite database stored at data/iapd.db
+# see github.com/public-accountability/iapd for the code
+# to create the database.
+
 require 'sqlite3'
 
 class IapdImporter

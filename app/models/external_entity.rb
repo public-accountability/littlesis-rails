@@ -5,7 +5,7 @@ class ExternalEntity < ApplicationRecord
 
   serialize :match_data
 
-  belongs_to :external_data, required: true
+  belongs_to :external_data, optional: false
   belongs_to :entity, optional: true
 
   def matched?
