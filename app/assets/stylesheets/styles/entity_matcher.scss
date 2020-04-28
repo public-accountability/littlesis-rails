@@ -1,0 +1,25 @@
+#external-entity-matcher {
+    display: flex;
+    height: 500px;
+    width: 100%;
+
+    div.leftSide, div.rightSide {
+        flex: 1;
+        padding: 1em;
+        border: 1px solid black;
+        width: 50%;
+        background-color: blue;
+    }
+
+    div.leftSide {
+        position: relative;
+        background-color: #d3d3d330;
+        margin-right: 0.5em;
+    }
+
+    div.rightSide {
+        background-color: white;
+        margin-left: 0.5em;
+    }
+
+}
