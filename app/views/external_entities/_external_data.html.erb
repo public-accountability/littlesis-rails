@@ -1,1 +1,6 @@
-
+<% @external_entity.display_information.each_pair do |key, value| %>
+  <div class="external-entity-information">
+    <span><%= key %></span>
+    <span><%= value %></span>
+  </div>
+<% end %>

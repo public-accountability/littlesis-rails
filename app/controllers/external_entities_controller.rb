@@ -18,6 +18,8 @@ class ExternalEntitiesController < ApplicationController
   private
 
   def set_external_entity
-    @external_entity = ExternalEntity.find(params.fetch(:id))
+    @external_entity = ExternalEntityPresenter.new(
+      ExternalEntity.find(params.fetch(:id))
+    )
   end
 end
