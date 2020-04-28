@@ -62,6 +62,7 @@ group :test, :development do
   # gem 'jasmine_selenium_runner'
   gem 'memory_profiler'
   gem 'pry', '>= 0.12.0'
+  gem 'pry-doc', require: false
   gem 'pry-byebug'
   gem 'pry-rails', '>= 0.3.7'
   gem 'rack-mini-profiler'
