@@ -51,7 +51,7 @@ module EntityMatcher
           search_results.instance_exec do
             define_singleton_method :evaluate_with do |test_case|
               map do |entity|
-                evaluation_class.new test_case, test_case_class.new(entity)
+                evaluation_class.new(test_case, test_case_class.new(entity))
               end
             end
           end

@@ -11,4 +11,14 @@ class ExternalEntity < ApplicationRecord
   def matched?
     !entity_id.nil?
   end
+
+  def matches
+    case dataset
+    when 'iapd_advisors'
+      org_name = external_data.data.last['name']
+      EntityMatcher.find_matches_for_org(org_name)
+    else
+      raise NotImplementedError
+    end
+  end
 end
