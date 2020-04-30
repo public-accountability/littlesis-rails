@@ -1,12 +1,9 @@
-<% matches =  @external_entity.matches %>
+<% matches = @external_entity.matches %>
 
 <div class="external-entity-matches">
   <% if matches.count.positive? %>
     <% matches.each do |match| %>
-      <div class="external-entity-match">
-        <%= link_to match.entity.name,  match.entity.url, target: :_blank %>
-        <p><em><%= match.entity.blurb %></em></p>
-      </div>
+      <%= render partial: 'potential_match', locals: { match: match } %>
     <% end %>
   <% else %>
     <p><b>No potential matches found</b></p>
