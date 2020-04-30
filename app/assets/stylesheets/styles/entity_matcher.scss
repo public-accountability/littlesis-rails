@@ -8,7 +8,6 @@
         padding: 1em;
         border: 1px solid black;
         width: 50%;
-        background-color: blue;
     }
 
     div.leftSide {
@@ -25,6 +24,23 @@
     .external-entity-information {
         span:first-child {
             font-weight: bold;
+        }
+    }
+
+    .external-entity-matches {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        .external-entity-match {  // flex child
+            // border: 0.5px solid black;
+            padding: 5px;
+
+            &:hover {
+                border: 0.5px solid black;
+                cursor: pointer;
+                background-color: #d3d3d330;
+            }
         }
     }
 
