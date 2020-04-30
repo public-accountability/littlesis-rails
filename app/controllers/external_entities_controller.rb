@@ -13,6 +13,8 @@ class ExternalEntitiesController < ApplicationController
 
   # PATCH /external_entities/:id
   def update
+    @external_entity.match_with params.require(:entity_id).to_i
+    redirect_to action: 'show'
   end
 
   private

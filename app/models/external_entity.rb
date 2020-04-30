@@ -8,6 +8,14 @@ class ExternalEntity < ApplicationRecord
   belongs_to :external_data, optional: false
   belongs_to :entity, optional: true
 
+  def match_with(entity_or_id)
+    if update(entity_id: Entity.entity_id_for(entity_or_id))
+      run_match_effects
+    else
+      raise Exceptions::ExternalEntityMatchingError
+    end
+  end
+
   def matched?
     !entity_id.nil?
   end
@@ -17,6 +25,16 @@ class ExternalEntity < ApplicationRecord
     when 'iapd_advisors'
       org_name = external_data.data.last['name']
       EntityMatcher.find_matches_for_org(org_name)
+    else
+      raise NotImplementedError
+    end
+  end
+
+  def run_match_effects
+    case dataset
+    when 'iapd_advisors' # Create CRD external link
+      crd_number = external_data.dataset_id
+      ExternalLink.crd.create!(entity_id: entity_id, link_id: crd_number)
     else
       raise NotImplementedError
     end
