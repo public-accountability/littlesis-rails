@@ -7,11 +7,11 @@ module IapdProcessor
 
   def run
     ExternalData.iapd_advisors.find_each do |iapd_advisor|
-      process_one iapd_advisor
+      process_advisor iapd_advisor
     end
   end
 
-  def process_one(iapd_advisor)
+  def process_advisor(iapd_advisor)
     external_entity = ExternalEntity
                         .find_or_create_by!(dataset: 'iapd_advisors', external_data: iapd_advisor)
     # Iapd Advisors are linked via crd numbers that are stored as the dataset_id.
