@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_21_032831) do
+ActiveRecord::Schema.define(version: 2020_05_01_031224) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -418,8 +418,10 @@ ActiveRecord::Schema.define(version: 2020_04_21_032831) do
     t.bigint "entity_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "priority", limit: 1, default: 0, null: false
     t.index ["entity_id"], name: "index_external_entities_on_entity_id"
     t.index ["external_data_id"], name: "index_external_entities_on_external_data_id"
+    t.index ["priority"], name: "index_external_entities_on_priority"
   end
 
   create_table "external_links", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

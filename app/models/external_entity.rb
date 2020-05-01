@@ -2,6 +2,7 @@
 
 class ExternalEntity < ApplicationRecord
   enum dataset: ExternalData::DATASETS
+  enum priority: { default: 0 }
 
   serialize :match_data
 
