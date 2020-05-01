@@ -10,7 +10,7 @@ class ExternalEntity < ApplicationRecord
 
   def match_with(entity_or_id)
     if update(entity_id: Entity.entity_id_for(entity_or_id))
-      run_match_effects
+      match_action
     else
       raise Exceptions::ExternalEntityMatchingError
     end
@@ -30,7 +30,7 @@ class ExternalEntity < ApplicationRecord
     end
   end
 
-  def run_match_effects
+  def match_action
     case dataset
     when 'iapd_advisors' # Create CRD external link
       crd_number = external_data.dataset_id
