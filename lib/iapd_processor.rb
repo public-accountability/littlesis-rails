@@ -9,6 +9,10 @@ module IapdProcessor
     ExternalData.iapd_advisors.find_each do |iapd_advisor|
       process_advisor iapd_advisor
     end
+
+    ExternalData.iapd_owners.find_each do |iapd_owner|
+      process_owner iapd_owner
+    end
   end
 
   def process_advisor(iapd_advisor)
@@ -25,5 +29,8 @@ module IapdProcessor
         external_entity.update!(entity_id: external_link.entity_id)
       end
     end
+  end
+
+  def process_owner(iapd_owner)
   end
 end

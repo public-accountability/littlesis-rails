@@ -20,4 +20,7 @@ describe IapdProcessor do
         .to change { ee.reload.entity_id }.from(nil).to(entity.id)
     end
   end
+
+  describe 'process_owner' do
+  end
 end
