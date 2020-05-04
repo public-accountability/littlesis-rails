@@ -34,5 +34,13 @@ describe IapdProcessor do
       ExternalEntity.iapd_owners.create!(external_data: external_data, primary_ext: 'Person')
       expect { IapdProcessor.process_owner(external_data) }.not_to change(ExternalEntity, :count)
     end
+
+    it 'automatically matches when there is an existing crd number in the database' do
+      ee = ExternalEntity.iapd_owners.create!(external_data: external_data, primary_ext: 'Person')
+      ExternalLink.create!(link_type: 'crd', entity_id: entity.id, link_id: external_data.dataset_id)
+
+      expect { IapdProcessor.process_owner(external_data) }
+        .to change { ee.reload.entity_id }.from(nil).to(entity.id)
+    end
   end
 end

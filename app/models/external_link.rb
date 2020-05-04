@@ -103,6 +103,12 @@ class ExternalLink < ApplicationRecord
     sec.find_by(link_id: cik.to_i.to_s)
   end
 
+  def self.crd_number?(crd)
+    return false if crd.blank? || crd.include?('-')
+
+    /\A\d+\z/.match?(crd)
+  end
+
   private
 
   # handles input of wikipedia & twitter links

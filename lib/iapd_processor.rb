@@ -39,6 +39,11 @@ module IapdProcessor
                                             primary_ext: data.primary_ext)
 
     unless external_entity.matched?
+      # For Iapd Owners, the dataset id is not always the crd number.
+      if ExternalLink.crd_number?(iapd_owner.dataset_id)
+        external_link = ExternalLink.crd.find_by(link_id: iapd_owner.dataset_id)
+        external_entity.update!(entity_id: external_link.entity_id) if external_link.present?
+      end
     end
   end
 end
