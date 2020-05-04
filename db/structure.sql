@@ -73,7 +73,7 @@ CREATE TABLE `address_state` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniqueness_idx` (`name`),
   KEY `country_id_idx` (`country_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1594 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1653 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `alias`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -675,6 +675,9 @@ CREATE TABLE `external_relationships` (
   `dataset` tinyint(4) NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
+  `entity1_id` bigint(20) DEFAULT NULL,
+  `entity2_id` bigint(20) DEFAULT NULL,
+  `category_id` smallint(6) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_rails_632542e80c` (`relationship_id`),
   KEY `fk_rails_5025111f98` (`external_data_id`),
@@ -2237,6 +2240,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200421032831'),
 ('20200501031224'),
 ('20200504000349'),
-('20200504154535');
+('20200504154535'),
+('20200504215855');
 
 
