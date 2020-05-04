@@ -9,6 +9,8 @@ class ExternalEntity < ApplicationRecord
   belongs_to :external_data, optional: false
   belongs_to :entity, optional: true
 
+  before_create :set_primary_ext
+
   def match_with(entity_or_id)
     if update(entity_id: Entity.entity_id_for(entity_or_id))
       match_action
@@ -39,5 +41,11 @@ class ExternalEntity < ApplicationRecord
     else
       raise NotImplementedError
     end
+  end
+
+  private
+
+  def set_primary_ext
+    self.primary_ext = 'Org' if dataset == 'iapd_advisors'
   end
 end

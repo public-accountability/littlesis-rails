@@ -45,4 +45,100 @@ FactoryBot.define do
          "filename" => "IA_ADV_Base_A_20190101_20190331.csv" }]
     end
   end
+
+  factory :external_data_iapd_owner, class: 'ExternalData' do
+    dataset { "iapd_owners" }
+    dataset_id { "1000018" }
+    data do
+      JSON.parse <<~JSON
+        [
+          {
+            "filing_id": 1077811,
+            "scha_3": "Y",
+            "schedule": "A",
+            "name": "BATES, DOUGLAS, K",
+            "owner_type": "I",
+            "entity_in_which": "",
+            "title_or_status": "ADVISORY BOARD",
+            "acquired": "09/2001",
+            "ownership_code": "NA",
+            "control_person": "Y",
+            "public_reporting": "N",
+            "owner_id": "1000018",
+            "filename": "IA_Schedule_A_B_20170101_20170331.csv",
+            "owner_key": "1000018",
+            "advisor_crd_number": 116865
+          },
+          {
+            "filing_id": 1077811,
+            "scha_3": "",
+            "schedule": "B",
+            "name": "BATES, DOUGLAS, K",
+            "owner_type": "I",
+            "entity_in_which": "SOCKEYE TRADING COMPANY, INC.",
+            "title_or_status": "MEMBER",
+            "acquired": "01/2009",
+            "ownership_code": "C",
+            "control_person": "Y",
+            "public_reporting": "N",
+            "owner_id": "1000018",
+            "filename": "IA_Schedule_A_B_20170101_20170331.csv",
+            "owner_key": "1000018",
+            "advisor_crd_number": 116865
+          },
+          {
+            "filing_id": 1131348,
+            "scha_3": "",
+            "schedule": "B",
+            "name": "BATES, DOUGLAS, K",
+            "owner_type": "I",
+            "entity_in_which": "SOCKEYE TRADING COMPANY, INC.",
+            "title_or_status": "MEMBER",
+            "acquired": "01/2009",
+            "ownership_code": "C",
+            "control_person": "Y",
+            "public_reporting": "N",
+            "owner_id": "1000018",
+            "filename": "IA_Schedule_A_B_20170701_20170930.csv",
+            "owner_key": "1000018",
+            "advisor_crd_number": 116865
+          },
+          {
+            "filing_id": 1131348,
+            "scha_3": "Y",
+            "schedule": "A",
+            "name": "BATES, DOUGLAS, K",
+            "owner_type": "I",
+            "entity_in_which": "",
+            "title_or_status": "ADVISORY BOARD",
+            "acquired": "09/2001",
+            "ownership_code": "NA",
+            "control_person": "Y",
+            "public_reporting": "N",
+            "owner_id": "1000018",
+            "filename": "IA_Schedule_A_B_20170701_20170930.csv",
+            "owner_key": "1000018",
+            "advisor_crd_number": 116865
+          },
+          {
+            "filing_id": 1174430,
+            "scha_3": "Y",
+            "schedule": "A",
+            "name": "BATES, DOUGLAS, K",
+            "owner_type": "I",
+            "entity_in_which": "",
+            "title_or_status": "ADVISORY BOARD",
+            "acquired": "09/2001",
+            "ownership_code": "NA",
+            "control_person": "Y",
+            "public_reporting": "N",
+            "owner_id": "1000018",
+            "filename": "IA_Schedule_A_B_20180101_20180331.csv",
+            "owner_key": "1000018",
+            "advisor_crd_number": 116865
+          }
+        ]
+      JSON
+    end
+  end
 end

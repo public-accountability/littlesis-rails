@@ -11,7 +11,7 @@ module IapdProcessor
     end
 
     ExternalData.iapd_owners.find_each do |iapd_owner|
-      process_owner iapd_owner
+      process_owner ExternalData::IapdOwner.new(iapd_owner)
     end
   end
 
@@ -31,6 +31,6 @@ module IapdProcessor
     end
   end
 
-  def process_owner(iapd_owner)
+  def process_owner(iapd_owner) # ExternalData::IapdOwner
   end
 end
