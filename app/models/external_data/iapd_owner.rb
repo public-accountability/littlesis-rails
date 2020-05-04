@@ -26,7 +26,15 @@ class ExternalData
       # @data.map { |x| x.fetch('filing_id') }.uniq
     # end
 
-    def associated_advisors
+    # This selects the most recent filing for each advisor
+    # that the owner has a relationship with.
+    # Currently it excludes indirect ownerships (schedule B)
+    def advisor_relationships
+      @data
+        .reject { |h| h['schedule'] == 'B' }
+        .group_by { |h| h['advisor_crd_number'].to_s }
+        .values
+        .map! { |arr| arr.max_by { |h| h['filename'] } }
     end
 
     private
