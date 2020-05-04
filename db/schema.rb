@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_04_000349) do
+ActiveRecord::Schema.define(version: 2020_05_04_154535) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -433,6 +433,16 @@ ActiveRecord::Schema.define(version: 2020_05_04_000349) do
     t.datetime "updated_at", null: false
     t.index ["entity_id"], name: "index_external_links_on_entity_id"
     t.index ["link_type", "link_id"], name: "index_external_links_on_link_type_and_link_id", unique: true
+  end
+
+  create_table "external_relationships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "external_data_id", null: false
+    t.bigint "relationship_id"
+    t.integer "dataset", limit: 1, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["external_data_id"], name: "fk_rails_5025111f98"
+    t.index ["relationship_id"], name: "fk_rails_632542e80c"
   end
 
   create_table "family", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
@@ -1366,6 +1376,8 @@ ActiveRecord::Schema.define(version: 2020_05_04_000349) do
   add_foreign_key "extension_definition", "extension_definition", column: "parent_id", name: "extension_definition_ibfk_1", on_update: :cascade
   add_foreign_key "extension_record", "entity", name: "extension_record_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "extension_record", "extension_definition", column: "definition_id", name: "extension_record_ibfk_2", on_update: :cascade
+  add_foreign_key "external_relationships", "external_data", on_delete: :cascade
+  add_foreign_key "external_relationships", "relationship", on_delete: :nullify
   add_foreign_key "family", "relationship", name: "family_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "fedspending_filing", "political_district", column: "district_id", name: "fedspending_filing_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "fedspending_filing", "relationship", name: "fedspending_filing_ibfk_1", on_update: :cascade, on_delete: :cascade
