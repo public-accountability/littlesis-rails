@@ -7,13 +7,15 @@
 # on the same filing.
 class ExternalData
   class IapdOwner
+    attr_reader :primary_ext
+
     def initialize(data) # input is the "data" field from ExternalData
       @data = data
       @primary_ext = primary_extension(@data)
     end
 
     def person?
-      @primary_ext == 'Person'  #
+      @primary_ext == 'Person'
     end
 
     def org?

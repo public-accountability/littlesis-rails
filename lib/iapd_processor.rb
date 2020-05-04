@@ -11,7 +11,7 @@ module IapdProcessor
     end
 
     ExternalData.iapd_owners.find_each do |iapd_owner|
-      process_owner ExternalData::IapdOwner.new(iapd_owner)
+      process_owner iapd_owner
     end
   end
 
@@ -31,6 +31,14 @@ module IapdProcessor
     end
   end
 
-  def process_owner(iapd_owner) # ExternalData::IapdOwner
+  def process_owner(iapd_owner)
+    data = ExternalData::IapdOwner.new(iapd_owner.data)
+    external_entity = ExternalEntity
+                        .find_or_create_by!(dataset: 'iapd_owners',
+                                            external_data: iapd_owner,
+                                            primary_ext: data.primary_ext)
+
+    unless external_entity.matched?
+    end
   end
 end

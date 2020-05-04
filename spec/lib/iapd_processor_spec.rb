@@ -22,5 +22,17 @@ describe IapdProcessor do
   end
 
   describe 'process_owner' do
+    let(:external_data) { create(:external_data_iapd_owner) }
+    let(:entity) { create(:entity_person) }
+
+    it 'creates a new external entity' do
+      expect { IapdProcessor.process_owner(external_data) }
+        .to change(ExternalEntity, :count).by(1)
+    end
+
+    it 'finds the existing external entity' do
+      ExternalEntity.iapd_owners.create!(external_data: external_data, primary_ext: 'Person')
+      expect { IapdProcessor.process_owner(external_data) }.not_to change(ExternalEntity, :count)
+    end
   end
 end
