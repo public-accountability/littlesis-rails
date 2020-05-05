@@ -2,7 +2,7 @@ require 'sqlite3'
 require Rails.root.join('lib/iapd_importer.rb')
 
 describe "Iapd Dataset" do
-  let(:db)  do
+  let(:db) do
     SQLite3::Database.new(":memory:", results_as_hash: true).tap do |db|
       db.execute_batch2 <<SQL
 CREATE TABLE advisors (
@@ -35,15 +35,21 @@ CREATE TABLE owners (
   advisor_crd_number INTEGER
 );
 
-INSERT INTO advisors (name, crd_number, filing_id, filename) VALUES ('Wealth Advisors LLC', '1', 123, 'file1');
-INSERT INTO advisors (name, crd_number, filing_id, filename) VALUES ('Billionaire Advisors', '2', 456, 'file1');
+INSERT INTO advisors (name, crd_number, filing_id, filename)
+       VALUES ('Wealth Advisors LLC', '1', 123, 'file1');
 
-INSERT INTO owners (name, owner_type, owner_id, owner_key, filename, advisor_crd_number) VALUES ('Rich Owner', 'I', '3', '3', 'file1', '1');
-INSERT INTO owners (name, owner_type, owner_id, owner_key, filename, advisor_crd_number) VALUES ('Rich Owner', 'I', '3', '3', 'file2', '2');
+INSERT INTO advisors (name, crd_number, filing_id, filename)
+       VALUES ('Billionaire Advisors', '2', 456, 'file1');
 
+INSERT INTO owners (name, owner_type, owner_id, owner_key, filename, advisor_crd_number, ownership_code, schedule, title_or_status)
+       VALUES ('Rich Owner', 'I', '3', '3', 'file1', '1', 'E', 'A', 'CEO');
+
+INSERT INTO owners (name, owner_type, owner_id, owner_key, filename, advisor_crd_number, ownership_code, schedule, title_or_status)
+       VALUES ('Rich Owner', 'I', '3', '3', 'file2', '2', 'NA', 'A', 'BOARD MEMBER');
 SQL
     end
   end
+
   before { allow(IapdImporter).to receive(:db).and_return(db) }
 
   describe 'import' do
@@ -64,6 +70,10 @@ SQL
       IapdProcessor.run
       expect(ExternalEntity.find_by(external_data: ExternalData.iapd_owners.find_by(dataset_id: '3')).entity_id)
         .to eq entity.id
+    end
+
+    it 'creates 3 ExternalRelationship' do
+      expect { IapdProcessor.run }.to change(ExternalRelationship, :count).by(2)
     end
   end
 end
