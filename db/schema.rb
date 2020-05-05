@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_04_215855) do
+ActiveRecord::Schema.define(version: 2020_05_05_171235) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -444,6 +444,7 @@ ActiveRecord::Schema.define(version: 2020_05_04_215855) do
     t.bigint "entity1_id"
     t.bigint "entity2_id"
     t.integer "category_id", limit: 2, null: false
+    t.text "relationship_attributes"
     t.index ["external_data_id"], name: "fk_rails_5025111f98"
     t.index ["relationship_id"], name: "fk_rails_632542e80c"
   end
