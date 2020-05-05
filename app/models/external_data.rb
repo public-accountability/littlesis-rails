@@ -21,4 +21,12 @@ class ExternalData < ApplicationRecord
 
     self
   end
+
+  def wrapped_data
+    if dataset == 'iapd_owners'
+      ExternalData::IapdOwner.new(data)
+    else
+      data
+    end
+  end
 end

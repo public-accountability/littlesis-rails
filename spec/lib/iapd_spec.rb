@@ -59,7 +59,10 @@ SQL
   end
 
   describe 'processor' do
-    before { IapdImporter.run }
+    before do
+      IapdImporter.run
+      create(:tag, name: 'iapd')
+    end
 
     it 'creates 3 ExternalEntity' do
       expect { IapdProcessor.run }.to change(ExternalEntity, :count).by(3)
