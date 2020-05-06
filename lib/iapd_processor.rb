@@ -51,13 +51,13 @@ module IapdProcessor
       #   NA    Less than 5%   C     25-50
       #   A     5-10%          D     50-75
       #   B     10-25%         E     75%+
-      if %W[A B C D E].include?(hash['ownership_code'])
-       ownership = ExternalRelationship
-                     .iapd_owners
-                     .find_or_create_by!(external_data: external_data,
-                                         category_id: Relationship::OWNERSHIP_CATEGORY,
-                                         entity1_id: entity1_id,
-                                         entity2_id: entity2_id)
+      if %w[A B C D E].include?(hash['ownership_code'])
+        ownership = ExternalRelationship
+                      .iapd_owners
+                      .find_or_create_by!(external_data: external_data,
+                                          category_id: Relationship::OWNERSHIP_CATEGORY,
+                                          entity1_id: entity1_id,
+                                          entity2_id: entity2_id)
       end
     end
   end

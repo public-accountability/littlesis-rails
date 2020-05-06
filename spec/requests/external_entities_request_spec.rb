@@ -2,6 +2,7 @@ describe "ExternalEntities", type: :request do
   let(:user) { create_basic_user }
 
   before { login_as(user, :scope => :user) }
+
   after  { logout(:user) }
 
   describe 'update' do
@@ -9,6 +10,10 @@ describe "ExternalEntities", type: :request do
 
     let(:external_entity) do
       create :external_entity, dataset: 'iapd_advisors', external_data: build(:external_data_iapd_advisor)
+    end
+
+    before do
+      create(:tag, name: 'iapd')
     end
 
     it 'matches entity' do

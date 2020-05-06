@@ -14,6 +14,10 @@ describe ExternalEntity, type: :model do
   end
 
   describe 'match_with' do
+    before do
+      create(:tag, name: 'iapd')
+    end
+
     context 'with a iapd advisor' do
       let(:external_entity) { create(:external_entity_iapd_advisor) }
       let(:entity) { create(:entity_org) }
