@@ -1,19 +1,30 @@
 # frozen_string_literal: true
 
+# Like ExternalEntity, this is a link between a Relationship
+# and a row in ExternalData.
+#
+# The attribute `relationship_attributes` is a hash of attributes for the relationship
+# that will be used when creating a new relationship
+#
+#    set_entity(entity1:, entity2)      matches entity2 or entity2
+#    create_relationship
+#
 class ExternalRelationship < ApplicationRecord
   enum dataset: ExternalData::DATASETS
   belongs_to :external_data
   belongs_to :relationship, optional: true
+  validates :category_id, presence: true
 
   serialize :relationship_attributes, ActiveSupport::HashWithIndifferentAccess
 
   def matched?
-    entity1_id.present? && entity2_id.present?
+    !relationship_id.nil?
   end
 
-  def match_with(entity1: nil, entity2: nil)
+  def set_entity(entity1: nil, entity2: nil)
+    # Prevent accidentally overwriting already matched entities
     if (entity1.present? && entity1_id.present?) || (entity2.present? && entity2_id.present?)
-      raise AlreadyMatchedError
+      raise EntityAlreadySetError
     end
 
     assign_attributes(entity1_id: Entity.entity_id_for(entity1)) if entity1.present?
@@ -22,5 +33,36 @@ class ExternalRelationship < ApplicationRecord
     self
   end
 
+  def automatch
+    raise NotImplementedError
+  end
+
+  # This creates a new relationship and connects this instance with it
+  def create_relationship
+    if matched?
+      raise AlreadyMatchedError
+    elsif entity1_id.nil? || entity2_id.nil?
+      raise MissingMatchedEntityError
+    end
+
+    # TODO: look for existing relationships?
+    relationship.create!(
+      attributes.slice(:entity1_id, :entity2_id, :category_id).merge(relationship_attributes)
+    )
+  end
+
+  # def match_with(entity1: nil, entity2: nil)
+  #   if (entity1.present? && entity1_id.present?) || (entity2.present? && entity2_id.present?)
+  #     raise AlreadyMatchedError
+  #   end
+
+  #   assign_attributes(entity1_id: Entity.entity_id_for(entity1)) if entity1.present?
+  #   assign_attributes(entity2_id: Entity.entity_id_for(entity2)) if entity2.present?
+  #   save
+  #   self
+  # end
+
+  class EntityAlreadySetError < Exceptions::LittleSisError; end
   class AlreadyMatchedError < Exceptions::MatchingError; end
+  class MissingMatchedEntityError < Exceptions::LittleSisError; end
 end
