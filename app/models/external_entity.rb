@@ -90,6 +90,5 @@ class ExternalEntity < ApplicationRecord
       self.primary_ext = 'Org'
     when 'iapd_owners'
     end
-
   end
 end

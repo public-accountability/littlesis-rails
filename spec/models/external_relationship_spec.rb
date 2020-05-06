@@ -35,12 +35,29 @@ describe ExternalRelationship, type: :model do
     end
   end
 
-  # describe 'match_with' do
-  #   it 'raises error if already matched' do
-  #     er = build(:external_relationship_iapd_owner, entity1_id: 1)
-  #     expect { er.match_with(entity1: 123) }.to raise_error(ExternalRelationship::AlreadyMatchedError)
-  #     er = build(:external_relationship_iapd_owner, entity2_id: 2)
-  #     expect { er.match_with(entity2: 123) }.to raise_error(ExternalRelationship::AlreadyMatchedError)
-  #   end
-  # end
+  describe 'create_relationship' do
+    let(:entity1) { create(:entity_person) }
+    let(:entity2) { create(:entity_org) }
+
+    it 'errors if already matched' do
+      er = build(:external_relationship, relationship: build(:generic_relationship))
+      expect { er.create_relationship }.to raise_error(ExternalRelationship::AlreadyMatchedError)
+    end
+
+    it 'errors unless both entity1 and entity2 are set' do
+      er = create(:external_relationship_iapd_owner, entity1_id: entity1.id)
+      expect { er.create_relationship }.to raise_error(ExternalRelationship::MissingMatchedEntityError)
+    end
+
+    it 'creates a new relationship' do
+      er = create(:external_relationship_iapd_owner, entity1_id: entity1.id, entity2_id: entity2.id)
+      expect { er.create_relationship }.to change(Relationship, :count).by(1)
+    end
+
+    it 'sets relationship id on the external relationship model' do
+
+    end
+    it 'updates relationship attributes'
+    it 'updates extension attributes'
+  end
 end

@@ -24,8 +24,8 @@ module IapdProcessor
   end
 
   # Schedule A includes both major owners (i.e. shareholders > 5%) and execute officers.
-  # This creates one or two ExternalRelationship, depending if the iapd_owner is executive and an owner
-  # or just an executive.
+  # This creates one or two ExternalRelationship, depending if the iapd_owner is
+  # an executive and an owner or just an executive.
   def create_owner_relationships(external_entity:, external_data:)
     external_data.wrapped_data.advisor_relationships.each do |hash|
       raise NotImplementedError, 'Cannot handle Schedule B Relationships' if hash['schedule'] == 'B'

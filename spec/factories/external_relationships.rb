@@ -6,7 +6,8 @@ FactoryBot.define do
   end
 
   factory :external_relationship_iapd_owner, class: 'ExternalRelationship' do
-    external_data { nil }
+    association :external_data, factory: :external_data_iapd_owner
     dataset { 'iapd_owners' }
+    category_id { 10 }
   end
 end

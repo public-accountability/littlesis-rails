@@ -9,6 +9,11 @@
 #    set_entity(entity1:, entity2)      matches entity2 or entity2
 #    create_relationship
 #
+# TODO:
+#  - validate category_id + entity primary ext
+#  - add tag to relationship
+#  - add reference while creating new relationship
+#  - look for matching existing relationship
 class ExternalRelationship < ApplicationRecord
   enum dataset: ExternalData::DATASETS
   belongs_to :external_data
@@ -45,10 +50,13 @@ class ExternalRelationship < ApplicationRecord
       raise MissingMatchedEntityError
     end
 
-    # TODO: look for existing relationships?
-    relationship.create!(
-      attributes.slice(:entity1_id, :entity2_id, :category_id).merge(relationship_attributes)
-    )
+    ApplicationRecord.transaction do
+      relationship = Relationship.create!(
+        attributes.slice('entity1_id', 'entity2_id', 'category_id').merge(relationship_attributes)
+      )
+
+      update!(relationship: relationship)
+    end
   end
 
   # def match_with(entity1: nil, entity2: nil)
