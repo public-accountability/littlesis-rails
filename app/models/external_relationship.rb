@@ -6,4 +6,8 @@ class ExternalRelationship < ApplicationRecord
   belongs_to :relationship, optional: true
 
   serialize :relationship_attributes, ActiveSupport::HashWithIndifferentAccess
+
+  def matched?
+    entity1_id.present? && entity2_id.present?
+  end
 end
