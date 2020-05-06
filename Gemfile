@@ -63,6 +63,7 @@ group :test, :development do
   gem 'memory_profiler'
   gem 'pry', '>= 0.12.0'
   gem 'pry-byebug'
+  gem 'pry-doc', require: false
   gem 'pry-rails', '>= 0.3.7'
   gem 'rack-mini-profiler'
   gem 'rails-controller-testing'

@@ -10,6 +10,7 @@ module Exceptions
   class UserCannotEditError < StandardError; end
   class InvalidEntityIdError < LittleSisError; end
   class OligrapherAssetsError < LittleSisError; end
+  class MatchingError < LittleSisError; end
 
   class CannotRestoreError < StandardError
     def message

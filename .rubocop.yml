@@ -78,6 +78,10 @@ Style/HashSyntax:
   Exclude:
     - 'config/routes.rb'
 
+Style/NumericLiterals:
+  Exclude:
+    - 'spec/factories/*.rb'
+
 Style/StringLiterals:
   Exclude:
     - 'spec/**/*.rb'
