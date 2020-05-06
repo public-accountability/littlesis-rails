@@ -1,6 +1,6 @@
 describe IapdProcessor do
   describe 'Processing iapd advisors' do
-    let(:external_data) { create(:external_data_iapd_advisor)  }
+    let(:external_data) { create(:external_data_iapd_advisor) }
 
     before { external_data }
 

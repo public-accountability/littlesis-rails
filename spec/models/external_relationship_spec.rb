@@ -13,4 +13,13 @@ describe ExternalRelationship, type: :model do
     expect(ExternalRelationship.new(entity1_id: nil, entity2_id: 2).matched?).to be false
     expect(ExternalRelationship.new(entity1_id: 1, entity2_id: 2).matched?).to be true
   end
+
+  describe 'match_with' do
+    it 'raises error if already matched' do
+      er = build(:external_relationship_iapd_owner, entity1_id: 1)
+      expect { er.match_with(entity1: 123) }.to raise_error(ExternalRelationship::AlreadyMatchedError)
+      er = build(:external_relationship_iapd_owner, entity2_id: 2)
+      expect { er.match_with(entity2: 123) }.to raise_error(ExternalRelationship::AlreadyMatchedError)
+    end
+  end
 end
