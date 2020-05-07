@@ -1,81 +1,40 @@
 # frozen_string_literal: true
 
-# Import SEC's Iapd into external_datasets
-# The data files are created here: https://github.com/public-accountability/iapd
-#
-# Old version: https://gist.github.com/aepyornis/0858e2fc4d516bc0f6f22f2717f6f668
-#
-module IapdImporter
-  ADVISORS_FILE = Rails.root.join('data', 'iapd', 'advisors.json').to_s
-  OWNERS_FILE = Rails.root.join('data', 'iapd', 'owners.json').to_s
+# Uses a sqlite database stored at data/iapd.db
+# see github.com/public-accountability/iapd for the code
+# to create the database.
 
-  DATE_FROM_FILENAME = proc { |x| x['filename'].slice(-12, 8) }
+require 'sqlite3'
 
-  def self.sec_url(crd_number)
-    "https://adviserinfo.sec.gov/Firm/#{crd_number}"
+class IapdImporter
+  DATABASE_FILE = Rails.root.join('data/iapd.db').to_s.freeze
+
+  def self.run
+    import_advisors
+    import_owners
   end
 
-  def self.load_json_file(file)
-    JSON.parse File.open(file).read
-  end
-
-  def self.advisors
-    @advisors ||= load_json_file(ADVISORS_FILE)
-                    .map { |crd_number, advisor_data| advisor_to_struct(crd_number, advisor_data) }
-  end
-
-  def self.owners
-    @owners ||= load_json_file(OWNERS_FILE)
-                    .map { |owner_key, owner_data| owner_to_struct(owner_key, owner_data) }
-  end
-
-  def self.advisor_to_struct(crd_number, advisor_data)
-    crd_number = crd_number.to_i
-    name = advisor_data.max_by(&DATE_FROM_FILENAME).fetch('name')
-    IapdDatum::IapdAdvisor.new(crd_number, name, advisor_data)
-  end
-
-  def self.owner_to_struct(owner_key, owner_data)
-    name = owner_data.max_by(&DATE_FROM_FILENAME).fetch('name')
-    associated_advisors = owner_data.map { |x| x.fetch('advisor_crd_number') }.uniq
-    IapdDatum::IapdOwner.new(owner_key, name, associated_advisors, owner_data)
-  end
-
-  def self.struct_to_hash(s)
-    s.to_h.tap do |h|
-      h.store :class, s.class.name
+  def self.import_owners
+    db.execute('SELECT * FROM owners') do |row|
+      ed = ExternalData
+             .find_or_initialize_by(dataset: :iapd_owners, dataset_id: row['owner_key'])
+             .setup_data_column
+      ed.data << row.to_h
+      ed.save || Rails.logger.warn("Failed to save owner: #{row}")
     end
   end
 
   def self.import_advisors
-    advisors.each do |advisor|
-      next if row_exists?(advisor.crd_number.to_s)
-
-      IapdDatum.create!(dataset_key: advisor.crd_number.to_s,
-                        row_data: struct_to_hash(advisor),
-                        primary_ext: :org)
-
-      ColorPrinter.with_logger.print_gray "[IapdImporter] Created: #{advisor.crd_number}"
+    db.execute('SELECT * FROM advisors') do |row|
+      ed = ExternalData
+             .find_or_initialize_by(dataset: :iapd_advisors, dataset_id: row['crd_number'])
+             .setup_data_column
+      ed.data << row.to_h
+      ed.save || Rails.logger.warn("Failed to save advisor: #{row}")
     end
   end
 
-  def self.import_owners
-    owners.each do |owner|
-      next if row_exists?(owner.owner_key)
-
-      IapdDatum.create!(dataset_key: owner.owner_key,
-                        row_data: struct_to_hash(owner),
-                        primary_ext: owner.owner_type)
-
-      ColorPrinter.print_gray "[IapdImporter] created: #{owner.owner_key}"
-    end
-  end
-
-  def self.row_exists?(key)
-    if IapdDatum.exists?(dataset_key: key)
-      ColorPrinter.with_logger.print_blue "[IapdImporter] #{key} exists"
-      return true
-    end
-    false
+  def self.db
+    @db ||= SQLite3::Database.new(DATABASE_FILE, results_as_hash: true, readonly: true)
   end
 end

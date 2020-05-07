@@ -26,7 +26,7 @@ module EntityMatcher
     test_case = TestCase.org(name, **kwargs)
 
     search_results = Search
-                       .by_org(name)
+                       .by_org_name(name)
                        .evaluate_with(test_case)
 
     EvaluationResultSet.new(search_results)

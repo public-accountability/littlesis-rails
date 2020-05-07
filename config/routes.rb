@@ -368,6 +368,12 @@ Lilsis::Application.routes.draw do
   end
 
   #####################
+  # external entities #
+  #####################
+
+  resources :external_entities, only: %i[show update]
+
+  #####################
   # external datasets #
   #####################
 
