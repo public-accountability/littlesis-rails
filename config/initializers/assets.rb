@@ -11,7 +11,8 @@ Rails.application.config.assets.precompile += [
   'markdown_editor.scss',
   'relationships_datatable.js',
   'entity_matcher.css.scss',
-  'cmp.scss'
+  'cmp.scss',
+  'oligrapher.scss'
 ]
 
 Rails.application.config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif *.svg *.eot *.woff *.woff2 *.ttf)
