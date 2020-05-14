@@ -5,47 +5,36 @@ describe "Iapd Dataset" do
   let(:db) do
     SQLite3::Database.new(":memory:", results_as_hash: true).tap do |db|
       db.execute_batch2 <<SQL
-CREATE TABLE advisors (
-  name TEXT,
-  dba_name TEXT,
+CREATE TABLE advisors(
   crd_number TEXT,
-  sec_file_number TEXT,
-  assets_under_management INTEGER,
-  total_number_of_accounts INTEGER,
-  filing_id INTEGER,
-  date_submitted TEXT,
-  filename TEXT
+  names,
+  filing_ids,
+  sec_file_numbers,
+  first_filename,
+  latest_filename,
+  latest_aum,
+  latest_filing_id
 );
 
-CREATE TABLE owners (
-  filing_id INTEGER,
-  scha_3 TEXT,
-  schedule TEXT,
-  name TEXT,
-  owner_type TEXT,
-  entity_in_which TEXT,
-  title_or_status TEXT,
-  acquired TEXT,
-  ownership_code TEXT,
-  control_person BOOLEAN,
-  public_reporting BOOLEAN,
-  owner_id TEXT,
-  filename TEXT,
-  owner_key TEXT,
-  advisor_crd_number INTEGER
+CREATE TABLE owners_schedule_a(
+  records,
+  filing_ids,
+  owner_key,
+  advisor_crd_number TEXT
 );
 
-INSERT INTO advisors (name, crd_number, filing_id, filename)
-       VALUES ('Wealth Advisors LLC', '1', 123, 'file1');
+INSERT INTO advisors (crd_number, names, filing_ids, first_filename, latest_filename, latest_aum, latest_filing_id)
+       VALUES ('1', '["Wealth Advisors LLC"]', '[123]', 'file0', 'file1', '1000', 123);
 
-INSERT INTO advisors (name, crd_number, filing_id, filename)
-       VALUES ('Billionaire Advisors', '2', 456, 'file1');
+INSERT INTO advisors (crd_number, names, filing_ids, first_filename, latest_filename, latest_aum, latest_filing_id)
+       VALUES ('2', '["Billionaire Advisors"]', '[456]', 'file0', 'file1', '2000', 456);
 
-INSERT INTO owners (name, owner_type, owner_id, owner_key, filename, advisor_crd_number, ownership_code, schedule, title_or_status)
-       VALUES ('Rich Owner', 'I', '3', '3', 'file1', '1', 'E', 'A', 'CEO');
+INSERT INTO owners_schedule_a (records, filing_ids, owner_key, advisor_crd_number)
+       VALUES('[{"filing_id":123,"schedule":"A","scha_3":"Y","name":"Rich Owner","owner_type":"E","title_or_status":"CEO","acquired":"11/2019","ownership_code":"B","control_person":"N","public_reporting":"N","owner_id":"3","filename":"file1","iapd_year":"2019"}]', '[123]', '3', '1');
 
-INSERT INTO owners (name, owner_type, owner_id, owner_key, filename, advisor_crd_number, ownership_code, schedule, title_or_status)
-       VALUES ('Rich Owner', 'I', '3', '3', 'file2', '2', 'NA', 'A', 'BOARD MEMBER');
+INSERT INTO owners_schedule_a (records, filing_ids, owner_key, advisor_crd_number)
+       VALUES ('[{"filing_id":456,"schedule":"A","scha_3":"Y","name":"Rich Owner","owner_type":"E","title_or_status":"BOARD MEMBER","acquired":"01/2018","ownership_code":"B","control_person":"N","public_reporting":"N","owner_id":"3","filename":"file1","iapd_year":"2019"}]', '[456]', '3', '2');
+
 SQL
     end
   end
@@ -53,12 +42,17 @@ SQL
   before { allow(IapdImporter).to receive(:db).and_return(db) }
 
   describe 'import' do
-    it 'creates 3 ExternalData' do
-      expect { IapdImporter.run }.to change(ExternalData, :count).by(3)
+    it 'creates 4 ExternalData' do
+      expect { IapdImporter.run }.to change(ExternalData, :count).by(4)
+    end
+
+    it 'does not import duplicates' do
+      expect { IapdImporter.run }.to change(ExternalData, :count).by(4)
+      expect { IapdImporter.run }.not_to change(ExternalData, :count)
     end
   end
 
-  describe 'processor' do
+  xdescribe 'processor' do
     before do
       IapdImporter.run
       create(:tag, name: 'iapd')
@@ -76,7 +70,13 @@ SQL
     end
 
     it 'creates 3 ExternalRelationship' do
-      expect { IapdProcessor.run }.to change(ExternalRelationship, :count).by(2)
+      expect { IapdProcessor.run }.to change(ExternalRelationship, :count).by(3)
+    end
+
+    xit 'duplicate runs have no effect' do
+      expect do
+        2.times { IapdProcessor.run }
+      end.to change(ExternalRelationship, :count).by(2)
     end
   end
 end
