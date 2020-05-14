@@ -58,6 +58,11 @@ class ListsController < ApplicationController
       ).map(&:id)
       @lists = @lists.where(id: list_ids).reorder('')
     end
+
+    respond_to do |format|
+      format.html
+      format.json { render json: format_lists(@lists) }
+    end
   end
 
   # GET /lists/1
@@ -317,5 +322,9 @@ class ListsController < ApplicationController
       else
         @lists.order(updated_at: :desc)
       end
+  end
+
+  def format_lists(lists)
+    { results: lists.map { |l| l.attributes.merge(text: l.name) } }
   end
 end
