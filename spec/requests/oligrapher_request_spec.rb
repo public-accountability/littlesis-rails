@@ -185,8 +185,8 @@ describe "Oligrapher", type: :request do
     let(:editor) { create_basic_user(username: 'editor') }
     let(:pending_user) { create_basic_user(username: 'pending') }
     let(:editors) { [
-      OpenStruct.new({ id: editor.id, pending: false }),
-      OpenStruct.new({ id: pending_user.id, pending: true })
+      { id: editor.id, pending: false },
+      { id: pending_user.id, pending: true }
     ] }
     let(:network_map) do
       create(:network_map_version3, user_id: map_owner.id, editors: editors)
@@ -277,7 +277,7 @@ describe "Oligrapher", type: :request do
     let(:editor) { create_basic_user }
     let(:map) do
       create(:network_map_version3, user_id: owner.id, editors: [
-        OpenStruct.new({ id: editor.id, pending: false })
+        { id: editor.id, pending: false }
       ])
     end
 

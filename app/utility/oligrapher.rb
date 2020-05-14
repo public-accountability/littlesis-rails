@@ -32,24 +32,22 @@ module Oligrapher
   def self.confirmed_editor_data(map)
     User
       .where(id: map.confirmed_editor_ids)
-      .map { |u|
-        {
-          name: u.username,
-          url: u.url
-        }
-      }
+      .map { |u| {
+        name: u.username,
+        url: u.url
+      } }
   end
 
   def self.editor_data(map)
-    map.editors.map { |e|
-      user = User.find(e.id)
+    pending_ids = map.pending_editor_ids
 
-      {
-        name: user.username,
-        url: user.url,
-        pending: e.pending
-      }
-    }
+    User
+      .where(id: map.all_editor_ids)
+      .map { |u| {
+        name: u.username,
+        url: u.url,
+        pending: pending_ids.include?(u.id)
+      } }
   end
 
   module Node

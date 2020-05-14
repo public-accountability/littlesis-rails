@@ -414,7 +414,7 @@ describe NetworkMap, type: :model do
         expect(map.confirmed_editor_ids).to eq []
         map.add_editor(other_user).save!
         expect(map.reload.confirmed_editor_ids).to eq []
-        map.confirm_editor(other_user).save!
+        map.reload.confirm_editor(other_user).save!
         expect(map.reload.confirmed_editor_ids).to eq [other_user.id]
       end
 

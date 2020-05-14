@@ -191,15 +191,15 @@ class NetworkMap < ApplicationRecord
   # Editor methods
   # These are only for oligrapher version 3
   def confirmed_editor_ids
-    editors.filter { |e| !e.pending }.map(&:id)
+    editors.delete_if { |e| e[:pending] }.map { |e| e[:id] }
   end
 
   def pending_editor_ids
-    editors.filter { |e| e.pending }.map(&:id)
+    editors.filter { |e| e[:pending] }.map { |e| e[:id] }
   end
 
   def all_editor_ids
-    editors.map(&:id)
+    editors.map { |e| e[:id] }
   end
 
   def add_editor(editor)
@@ -207,7 +207,7 @@ class NetworkMap < ApplicationRecord
     return self if all_editor_ids.include?(editor_id)
 
     if validate_editor(editor_id)
-      editors << OpenStruct.new({ id: editor_id, pending: true })
+      editors << { id: editor_id, pending: true }
       editors_will_change!
     end
 
@@ -218,7 +218,7 @@ class NetworkMap < ApplicationRecord
     editor_id = editor.try(:id) || editor.try!(:to_i)
 
     unless user_id == editor_id
-      self.editors.reject! { |e| e.id == editor_id }
+      self.editors.reject! { |e| e[:id] == editor_id }
       editors_will_change!
     end
 
@@ -228,7 +228,13 @@ class NetworkMap < ApplicationRecord
   def confirm_editor(editor)
     editor_id = editor.try(:id) || editor.try!(:to_i)
 
-    editors.map! { |e| e.id == editor_id ? OpenStruct.new(e.to_h.merge({ pending: false })) : e }
+    editors.map! do |e|
+      if e[:id] == editor_id
+        e.merge({ pending: false })
+      else
+        e
+      end
+    end
 
     self
   end
@@ -242,12 +248,9 @@ class NetworkMap < ApplicationRecord
     end
   end
 
-  def editor?(user)
-    confirmed_editor_ids.include?(user.try(:id) || user.try!(:to_i))
-  end
-
   def can_edit?(user)
-    user.try(:to_i) == user_id || user.try(:id) == user_id || editor?(user)
+    editor_id = user.try(:id) || user.try!(:to_i)
+    editor_id == user_id or confirmed_editor_ids.include?(editor_id)
   end
 
   def has_pending_editor?(user)
