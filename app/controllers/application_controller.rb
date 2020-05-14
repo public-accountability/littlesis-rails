@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from ActiveRecord::RecordNotFound do
-    render 'errors/not_found', status: :not_found
+    render 'errors/not_found', layout: 'application', status: :not_found
   end
 
   rescue_from ActionController::RoutingError do

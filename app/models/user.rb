@@ -75,6 +75,10 @@ class User < ApplicationRecord
   end
   alias image_path image_url
 
+  def url
+    Rails.application.routes.url_helpers.user_page_path(self)
+  end
+
   ###############
   # User Edits  #
   ###############
