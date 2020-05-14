@@ -2,8 +2,8 @@
 
 class ExternalEntityPresenter < SimpleDelegator
   # This returns a hash of useful information from
-  # external dataset. It is displayed on the left-hands-side of
-  # the entity matcher tool.
+  # external dataset. It is displayed on the left-hands-side
+  # of the entity matcher tool.
   def display_information
     return @display_information if defined?(@display_information)
 
@@ -18,14 +18,13 @@ class ExternalEntityPresenter < SimpleDelegator
   private
 
   def iapd_advisors_information
-    latest_filing = external_data.data.max_by { |h| h['filename'] }
-
+    data = external_data.data
     {
-      'Name' => OrgName.format(latest_filing['name']),
+      'Name' => OrgName.format(data['names'].first),
       'CRD Number' => external_data.dataset_id,
-      'SEC File Number' => latest_filing['sec_file_number'],
-      'Assets under management' => latest_filing['assets_under_management'],
-      'Latest filing date' => latest_filing['date_submitted']
+      'SEC File Number' => data['sec_file_numbers'].first,
+      'Assets under management' => ActiveSupport::NumberHelper.number_to_human(data['latest_aum']),
+      'Latest filing date' => data['latest_date_submitted']
     }
   end
 end

@@ -7,17 +7,19 @@ FactoryBot.define do
 
   factory :external_data_iapd_advisor, class: 'ExternalData' do
     dataset { "iapd_advisors" }
-    dataset_id { '305893' }
+    dataset_id { "100" }
     data do
-      [{ 'name' => 'SWEETWATER INVESTMENTS LLC',
-         'dba_name' => 'SWEETWATER INVESTMENTS LLC',
-         'crd_number' => '305893',
-         'sec_file_number' => '801-117821',
-         'assets_under_management' => 0,
-         'total_number_of_accounts' => 0,
-         'filing_id' => 1_346_384,
-         'date_submitted' => '11/18/2019 08:21:42 PM',
-         'filename' => 'IA_ADV_Base_A_20191001_20191231.csv' }]
+      {
+        "crd_number" => "100",
+        "first_filename" => "IA_ADV_Base_A_20160101_20160331.csv",
+        "latest_filename" => "IA_ADV_Base_A_20190701_20190930.csv",
+        "latest_filing_id" => 1335833,
+        "latest_aum" => 2397975077,
+        "sec_file_numbers" => ["801-80511"],
+        "latest_date_submitted" => "11/13/2019 05:12:22 PM",
+        "names" => ["BOENNING & SCATTERGOOD, INC."],
+        "filing_ids" => [970358, 1040954, 1055041, 1083314, 1124732, 1179395, 1225137, 1238427, 1304285, 1335833]
+      }
     end
   end
 

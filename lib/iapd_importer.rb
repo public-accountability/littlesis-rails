@@ -44,9 +44,10 @@ class IapdImporter
   def self.advisor_data(row)
     row
       .to_h
-      .slice('crd_number', 'first_filename', 'latest_filename', 'latest_num', 'latest_filing_id')
+      .slice('crd_number', 'first_filename', 'latest_filename', 'latest_aum', 'latest_filing_id', 'latest_date_submitted')
       .merge!('names' => JSON.parse(row['names']),
-              'filing_ids' => JSON.parse(row['filing_ids']))
+              'filing_ids' => JSON.parse(row['filing_ids']),
+              'sec_file_numbers' => JSON.parse(row['sec_file_numbers']))
   end
 
   def self.schedule_a_data(row)
