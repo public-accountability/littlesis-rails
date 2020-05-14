@@ -1,7 +1,7 @@
 require 'sqlite3'
 require Rails.root.join('lib/iapd_importer.rb')
 
-describe "Iapd Dataset" do
+describe 'Iapd Dataset' do
   let(:db) do
     SQLite3::Database.new(":memory:", results_as_hash: true).tap do |db|
       db.execute_batch2 <<SQL
@@ -52,28 +52,28 @@ SQL
     end
   end
 
-  xdescribe 'processor' do
+  describe 'processor' do
     before do
       IapdImporter.run
       create(:tag, name: 'iapd')
     end
 
-    it 'creates 3 ExternalEntity' do
-      expect { IapdProcessor.run }.to change(ExternalEntity, :count).by(3)
+    it 'creates 2 ExternalEntity' do
+      expect { IapdProcessor.run }.to change(ExternalEntity, :count).by(2)
     end
 
-    it 'can automatch Rich Owner' do
-      entity = create(:entity_person, name: 'Rich Owner').tap { |e| e.external_links.crd.create!(link_id: '3') }
+    it 'can automatch entities by crd number' do
+      entity = create(:entity_org, name: "Wealth Advisors LLC").tap { |e| e.external_links.crd.create!(link_id: '1') }
       IapdProcessor.run
-      expect(ExternalEntity.find_by(external_data: ExternalData.iapd_owners.find_by(dataset_id: '3')).entity_id)
+      expect(ExternalEntity.find_by(external_data: ExternalData.iapd_advisors.find_by(dataset_id: '1')).entity_id)
         .to eq entity.id
     end
 
-    it 'creates 3 ExternalRelationship' do
-      expect { IapdProcessor.run }.to change(ExternalRelationship, :count).by(3)
+    it 'creates 2 ExternalRelationship' do
+      expect { IapdProcessor.run }.to change(ExternalRelationship, :count).by(2)
     end
 
-    xit 'duplicate runs have no effect' do
+    it 'does not import duplicates' do
       expect do
         2.times { IapdProcessor.run }
       end.to change(ExternalRelationship, :count).by(2)

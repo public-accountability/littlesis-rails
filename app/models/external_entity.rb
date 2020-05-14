@@ -26,7 +26,8 @@ class ExternalEntity < ApplicationRecord
   def matches
     case dataset
     when 'iapd_advisors'
-      org_name = external_data.data.last['name']
+      # TODO handle additional aliases
+      org_name = external_data.data['names'].first
       EntityMatcher.find_matches_for_org(org_name)
     else
       raise NotImplementedError
@@ -41,9 +42,9 @@ class ExternalEntity < ApplicationRecord
     return self if matched?
 
     case dataset
-    when 'iapd_advisors', 'iapd_owners'
+    when 'iapd_advisors'
       if ExternalLink.crd_number?(external_data.dataset_id)
-        if (external_link = ExternalLink.crd.find_by(external_data.dataset_id))
+        if (external_link = ExternalLink.crd.find_by(link_id: external_data.dataset_id))
           match_with(external_link.entity)
         end
       end
@@ -72,7 +73,7 @@ class ExternalEntity < ApplicationRecord
   # for the newly matched entity.
   def match_action
     case dataset
-    when 'iapd_advisors', 'iapd_owners'
+    when 'iapd_advisors'
       entity.add_tag('iapd')
 
       if ExternalLink.crd_number?(external_data.dataset_id)
@@ -88,7 +89,6 @@ class ExternalEntity < ApplicationRecord
     case dataset
     when 'iapd_advisors'
       self.primary_ext = 'Org'
-    when 'iapd_owners'
     end
   end
 end
