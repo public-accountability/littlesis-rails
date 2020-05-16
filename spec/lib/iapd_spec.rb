@@ -23,11 +23,11 @@ CREATE TABLE owners_schedule_a(
   advisor_crd_number TEXT
 );
 
-INSERT INTO advisors (crd_number, names, filing_ids, first_filename, latest_filename, latest_aum, latest_filing_id)
-       VALUES ('1', '["Wealth Advisors LLC"]', '[123]', 'file0', 'file1', '1000', 123);
+INSERT INTO advisors (crd_number, names, filing_ids, sec_file_numbers, first_filename, latest_filename, latest_aum, latest_filing_id)
+       VALUES ('1', '["Wealth Advisors LLC"]', '[123]', '["801-68111"]', 'file0', 'file1', '1000', 123);
 
-INSERT INTO advisors (crd_number, names, filing_ids, first_filename, latest_filename, latest_aum, latest_filing_id)
-       VALUES ('2', '["Billionaire Advisors"]', '[456]', 'file0', 'file1', '2000', 456);
+INSERT INTO advisors (crd_number, names, filing_ids, sec_file_numbers, first_filename, latest_filename, latest_aum, latest_filing_id)
+       VALUES ('2', '["Billionaire Advisors"]', '[456]', '["801-72263"]', 'file0', 'file1', '2000', 456);
 
 INSERT INTO owners_schedule_a (records, filing_ids, owner_key, advisor_crd_number)
        VALUES('[{"filing_id":123,"schedule":"A","scha_3":"Y","name":"Rich Owner","owner_type":"E","title_or_status":"CEO","acquired":"11/2019","ownership_code":"B","control_person":"N","public_reporting":"N","owner_id":"3","filename":"file1","iapd_year":"2019"}]', '[123]', '3', '1');
