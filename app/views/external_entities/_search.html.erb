@@ -1,5 +1,8 @@
-<p>Search for a matching entity:</p>
+<p>Search for a matching entity</p>
 
 <div>
-  <%#= form_tag  %>
+  <%= form_tag @external_entity, method: :get do %>
+    <%= text_field_tag 'search', @search_term %>
+    <%= submit_tag "Search" %>
+  <% end %>
 </div>
