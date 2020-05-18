@@ -384,20 +384,6 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  #####################
-  # external datasets #
-  #####################
-
-  get 'external_datasets' => 'external_datasets#index'
-  get 'external_datasets/iapd' => 'external_datasets#iapd'
-  get 'external_datasets/row/:id' => 'external_datasets#row', constraints: { id: /\d+/ }
-  get 'external_datasets/row/:id/matches' => 'external_datasets#matches', constraints: { id: /\d+/ }
-  post 'external_datasets/row/:id/match' => 'external_datasets#match', constraints: { id: /\d+/ }
-  get 'external_datasets/:dataset/flow/:flow/next' => 'external_datasets#flow', constraints: { dataset: /#{ExternalDataset::DATASETS.join('|')}/ }
-  match 'external_datasets/:dataset/search' => 'external_datasets#search',
-        constraints: { dataset: /#{ExternalDataset::DATASETS.join('|')}/ },
-        via: %i[get post]
-
   match "*path", to: "errors#not_found", via: :all
 
   # The priority is based upon order of creation: first created -> highest priority.
