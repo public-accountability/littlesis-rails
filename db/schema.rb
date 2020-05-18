@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_11_192227) do
+ActiveRecord::Schema.define(version: 2020_05_18_162459) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -396,19 +396,6 @@ ActiveRecord::Schema.define(version: 2020_05_11_192227) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["dataset", "dataset_id"], name: "index_external_data_on_dataset_and_dataset_id", unique: true
-  end
-
-  create_table "external_datasets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.text "row_data", size: :long
-    t.text "match_data", size: :long
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "primary_ext", limit: 1
-    t.bigint "entity_id"
-    t.string "dataset_key", null: false
-    t.string "type"
-    t.index ["type", "dataset_key"], name: "index_external_datasets_on_type_and_dataset_key", unique: true
-    t.index ["type"], name: "index_external_datasets_on_type"
   end
 
   create_table "external_entities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
