@@ -45,23 +45,23 @@ describe ExternalRelationship, type: :model do
     end
 
     it 'errors unless both entity1 and entity2 are set' do
-      er = create(:external_relationship_iapd_owner, entity1_id: entity1.id)
+      er = create(:external_relationship_schedule_a, entity1_id: entity1.id)
       expect { er.create_relationship }.to raise_error(ExternalRelationship::MissingMatchedEntityError)
     end
 
     it 'creates a new relationship' do
-      er = create(:external_relationship_iapd_owner, entity1_id: entity1.id, entity2_id: entity2.id)
+      er = create(:external_relationship_schedule_a, entity1_id: entity1.id, entity2_id: entity2.id)
       expect { er.create_relationship }.to change(Relationship, :count).by(1)
     end
 
     it 'sets relationship id on the external relationship model' do
-      er = create(:external_relationship_iapd_owner, entity1_id: entity1.id, entity2_id: entity2.id)
+      er = create(:external_relationship_schedule_a, entity1_id: entity1.id, entity2_id: entity2.id)
       expect { er.create_relationship }
         .to change(er, :relationship_id).from(nil)
     end
 
     it 'updates relationship attributes' do
-      er = create(:external_relationship_iapd_owner,
+      er = create(:external_relationship_schedule_a,
                   entity1_id: entity1.id,
                   entity2_id: entity2.id,
                   relationship_attributes: { 'description1' => 'CEO' } )
@@ -70,7 +70,7 @@ describe ExternalRelationship, type: :model do
     end
 
     it 'updates extension attributes' do
-      er = create(:external_relationship_iapd_owner,
+      er = create(:external_relationship_schedule_a,
                   entity1_id: entity1.id,
                   entity2_id: entity2.id,
                   relationship_attributes: {

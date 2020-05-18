@@ -4,7 +4,7 @@
 #
 #   ExternalEntity#matches              ResultSet of potential matches
 #   ExternalEntity#automatch            Automatically matches, if possible
-#   ExternalEntity#match_with(<Entity>) Markes
+#   ExternalEntity#match_with(<Entity>) Performs match
 class ExternalEntity < ApplicationRecord
   enum dataset: ExternalData::DATASETS
   enum priority: { default: 0 }
@@ -76,9 +76,10 @@ class ExternalEntity < ApplicationRecord
     when 'iapd_advisors'
       entity.add_tag('iapd')
 
-      if ExternalLink.crd_number?(external_data.dataset_id)
-        ExternalLink.crd.find_or_create_by!(entity_id: entity_id,
-                                            link_id: external_data.dataset_id)
+      crd_number = external_data.dataset_id
+
+      if ExternalLink.crd_number?(crd_number)
+        ExternalLink.crd.find_or_create_by!(entity_id: entity_id, link_id: crd_number)
       end
     else
       raise NotImplementedError
