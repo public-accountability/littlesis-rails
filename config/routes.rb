@@ -378,7 +378,11 @@ Lilsis::Application.routes.draw do
   # external entities #
   #####################
 
-  resources :external_entities, only: %i[show update]
+  resources :external_entities, only: %i[show update] do
+    collection do
+      get 'random'
+    end
+  end
 
   #####################
   # external datasets #

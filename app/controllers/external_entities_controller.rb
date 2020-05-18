@@ -2,13 +2,18 @@
 
 class ExternalEntitiesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_external_entity
+  before_action :set_external_entity, only: %i[show update]
 
   # GET /external_entities/:id
   def show
     if @external_entity.matched?
       render 'already_matched'
     end
+  end
+
+  def random
+    redirect_to action: :show,
+                id: ExternalEntity.unmatched.order('RAND()').limit(1).pluck(:id).first
   end
 
   # PATCH /external_entities/:id
@@ -20,8 +25,6 @@ class ExternalEntitiesController < ApplicationController
   private
 
   def set_external_entity
-    @external_entity = ExternalEntityPresenter.new(
-      ExternalEntity.find(params.fetch(:id))
-    )
+    @external_entity = ExternalEntity.find(params.fetch(:id)).presenter
   end
 end

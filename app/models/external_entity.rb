@@ -65,6 +65,10 @@ class ExternalEntity < ApplicationRecord
     self
   end
 
+  def presenter
+    ExternalEntityPresenter.new(self)
+  end
+
   def self.unmatched
     where(entity_id: nil)
   end
