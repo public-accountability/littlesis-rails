@@ -65,6 +65,14 @@ class ExternalEntity < ApplicationRecord
     self
   end
 
+  def self.unmatched
+    where(entity_id: nil)
+  end
+
+  def self.matched
+    where.not(entity_id: nil)
+  end
+
   class AlreadyMatchedError < Exceptions::MatchingError; end
 
   private

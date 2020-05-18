@@ -36,4 +36,30 @@ describe ExternalEntity, type: :model do
       end
     end
   end
+
+  describe 'matched/unmatched' do
+    let(:entity) { create(:entity_org) }
+
+    before do
+      ExternalEntity.create!(
+        dataset: 'iapd_advisors',
+        external_data: create(:external_data_iapd_advisor),
+        entity: entity
+      )
+
+      ExternalEntity.create!(
+        dataset: 'iapd_advisors',
+        external_data: ExternalData.create!(
+          attributes_for(:external_data_iapd_advisor).merge(dataset_id: Faker::Number.number.to_s)
+        )
+      )
+    end
+
+    specify do
+      expect(ExternalEntity.count).to eq 2
+      expect(ExternalEntity.unmatched.count).to eq 1
+      expect(ExternalEntity.matched.count).to eq 1
+      expect(ExternalEntity.matched.first).not_to eq ExternalEntity.unmatched.first
+    end
+  end
 end
