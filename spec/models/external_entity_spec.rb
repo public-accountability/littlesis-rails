@@ -19,6 +19,7 @@ describe ExternalEntity, type: :model do
     end
 
     context 'with a iapd advisor' do
+      let(:aum) { 2_397_975_077 } # see factories/external_data
       let(:external_entity) { create(:external_entity_iapd_advisor) }
       let(:entity) { create(:entity_org) }
 
@@ -33,6 +34,17 @@ describe ExternalEntity, type: :model do
         external_entity.match_with(entity)
         expect(entity.reload.external_links.crd.length).to eq 1
         expect(entity.reload.external_links.crd.first.link_id).to eq external_entity.external_data.dataset_id
+      end
+
+      it 'creates an new business and sets aum' do
+        expect { external_entity.match_with(entity) }.to change(Business, :count).by(1)
+        expect(entity.business.aum).to eq aum
+      end
+
+      it 'sets aum on existing business' do
+        entity.add_extension('Business')
+        expect { external_entity.match_with(entity) }.not_to change(Business, :count)
+        expect(entity.reload.business.aum).to eq aum
       end
     end
   end

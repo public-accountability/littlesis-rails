@@ -88,6 +88,14 @@ class ExternalEntity < ApplicationRecord
     when 'iapd_advisors'
       entity.add_tag('iapd')
 
+      if (aum = external_data.data['latest_aum'])
+        if entity.has_extension?('Business')
+          entity.business.update!(aum: aum)
+        else
+          entity.add_extension('Business', aum: aum)
+        end
+      end
+
       crd_number = external_data.dataset_id
 
       if ExternalLink.crd_number?(crd_number)
