@@ -19,6 +19,21 @@
     div.rightSide {
         background-color: white;
         margin-left: 0.5em;
+
+        #external-entity-menu {
+            li {
+                @extend .nav-item;
+
+                a {
+                    @extend .nav-link;
+                }
+            }
+
+            a.active {
+                font-weight: bold;
+            }
+
+        }
     }
 
     .external-entity-information {
@@ -27,7 +42,7 @@
         }
     }
 
-    .external-entity-matches {
+    .tab-content {
         display: flex;
         flex-direction: column;
         gap: 5px;

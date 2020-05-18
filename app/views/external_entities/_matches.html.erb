@@ -1,11 +1,25 @@
-<% matches = @external_entity.matches %>
+<ul id="external-entity-menu" class="nav nav-tabs" role="tablist">
+  <li>
+    <a class="active" data-toggle="tab" href="#external-entity-matches">Matches</a>
+  </li>
+  <li>
+    <a data-toggle="tab" href="#external-entity-search">Search</a>
+  </li>
+  <li>
+    <a data-toggle="tab" href="#external-entity-create">Create</a>
+  </li>
+</ul>
 
-<div class="external-entity-matches">
-  <% if matches.count.positive? %>
-    <% matches.each do |match| %>
-      <%= render partial: 'potential_match', locals: { match: match } %>
-    <% end %>
-  <% else %>
-    <p><b>No potential matches found</b></p>
-  <% end %>
+<div class="tab-content">
+  <div id="external-entity-matches" class="tab-pane active" role="tabpanel">
+    <%= render partial: 'potential_matches'  %>
+  </div>
+
+  <div id="external-entity-search" class="tab-pane" role="tabpanel">
+    <p>search for an entity</p>
+  </div>
+
+  <div id="external-entity-create" class="tab-pane" role="tabpanel">
+    <p>create</p>
+  </div>
 </div>
