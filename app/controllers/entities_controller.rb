@@ -66,7 +66,7 @@ class EntitiesController < ApplicationController
     if @entity.save # successfully created entity
       params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
 
-      if add_relationship_page?
+      if wants_json_response?
         render json: {
                  status: 'OK',
                  entity: {
@@ -83,12 +83,12 @@ class EntitiesController < ApplicationController
 
     else # encounted error
 
-      if add_relationship_page?
+      if wants_json_response?
         render json: { status: 'ERROR', errors: @entity.errors.messages }
       else
         render action: 'new'
       end
-      
+
     end
   end
 
@@ -229,7 +229,7 @@ class EntitiesController < ApplicationController
       return head :bad_request
     end
 
-    # TODO: handle error if @image doesn't exist? 
+    # TODO: handle error if @image doesn't exist?
 
     @image.assign_attributes(entity: @entity,
                              is_free: cast_to_boolean(image_params[:is_free]),
@@ -295,8 +295,8 @@ class EntitiesController < ApplicationController
       .map { |r| r.permit('attributes' => %w[name blurb primary_ext])['attributes'] }
   end
 
-  def add_relationship_page?
-    params[:add_relationship_page].present?
+  def wants_json_response?
+    params[:add_relationship_page].present? || params[:external_entity_page].present?
   end
 
   def importers_only
