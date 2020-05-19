@@ -46,8 +46,9 @@ class TagsController < ApplicationController
 
   def tag_request
     if request.post?
-      NotificationMailer.tag_request_email(current_user, params).deliver_later
-      return redirect_to home_dashboard_path, notice: "Your request for a new tag has been submitted. Thank you!"
+      email_parameters = params.permit('tag_name', 'tag_description', 'tag_additional').to_h
+      NotificationMailer.tag_request_email(current_user, email_parameters).deliver_later
+      return redirect_to home_dashboard_path, notice: 'Your request for a new tag has been submitted. Thank you!'
     end
   end
 
