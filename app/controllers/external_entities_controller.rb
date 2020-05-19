@@ -2,10 +2,10 @@
 
 class ExternalEntitiesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_external_entity, only: %i[show update search]
+  before_action :set_external_entity, only: %i[show update]
 
   # GET /external_entities/:id
-  # if paramter "search" is set, it will display the search tab with that query
+  # If the parameter "search" is set, it will display the search tab with that query
   def show
     if @external_entity.matched?
       render 'already_matched'
