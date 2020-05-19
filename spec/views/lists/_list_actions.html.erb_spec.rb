@@ -1,4 +1,4 @@
-describe 'partial: lists/list_actions', :type => :view do
+describe 'lists/list_actions', :type => :view do
   context 'NOT EDITABLE' do
     before do
       assign(:permissions, { :editable => false})
