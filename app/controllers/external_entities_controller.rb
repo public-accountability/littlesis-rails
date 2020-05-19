@@ -23,8 +23,18 @@ class ExternalEntitiesController < ApplicationController
   end
 
   # PATCH /external_entities/:id
+  # This does the matching. There are two ways to do this:
+  #   submit with the parameter +entity_id+
+  #   submit with the parameter +entity+ with name, blurb, and primary_ext
   def update
-    @external_entity.match_with params.require(:entity_id).to_i
+    if params.key?(:entity_id)
+      @external_entity.match_with params.require(:entity_id).to_i
+    elsif params.key?(:entity)
+      @external_entity.match_with_new_entity(entity_params)
+    else
+      return head :bad_request
+    end
+
     redirect_to action: 'show'
   end
 
@@ -32,5 +42,12 @@ class ExternalEntitiesController < ApplicationController
 
   def set_external_entity
     @external_entity = ExternalEntity.find(params.fetch(:id)).presenter
+  end
+
+  def entity_params
+    params.require(:entity).permit(:name, :blurb, :primary_ext).to_h.tap do |h|
+      h.store 'last_user_id', current_user.id
+      h.store 'primary_ext', 'Org' if @external_entity.dataset == 'iapd_advisors'
+    end
   end
 end
