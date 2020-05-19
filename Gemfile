@@ -80,6 +80,7 @@ end
 
 gem 'seed_dump', :require => false
 gem 'simplecov', :require => false, :group => :test
+gem 'codecov', :require => false, :group => :test
 
 gem 'validate_url', :git => 'https://github.com/perfectline/validates_url.git', :branch => 'master'
 
