@@ -6,3 +6,8 @@
     <%= submit_tag "Search" %>
   <% end %>
 </div>
+
+<div>
+  <%= render partial: 'potential_matches',
+             locals: { matches: @external_entity.search_for_matches(@search_term) } %>
+</div>

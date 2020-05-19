@@ -34,6 +34,15 @@ class ExternalEntity < ApplicationRecord
     end
   end
 
+  def search_for_matches(search_term)
+    case dataset
+    when 'iapd_advisors'
+      EntityMatcher.find_matches_for_org(search_term)
+    else
+      raise NotImplementedError
+    end
+  end
+
   # If the dataset type can be automated, #automatch
   # will look for a littlesis entity and call #match_with
   # if a matching entity if found.

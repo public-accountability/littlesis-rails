@@ -18,7 +18,7 @@
 
 <div class="tab-content">
   <%= external_entities_tab('external-entity-matches', @active_tab == :matches) do %>
-    <%= render partial: 'potential_matches' %>
+    <%= render partial: 'potential_matches', locals: { matches: @external_entity.matches } %>
   <% end %>
 
   <%= external_entities_tab('external-entity-search', @active_tab == :search) do %>
