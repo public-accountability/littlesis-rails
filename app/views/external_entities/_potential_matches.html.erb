@@ -1,6 +1,6 @@
-<% matches = @external_entity.matches %>
+<%# locals: matches %>
 
-<div class="external-entity-matches">
+<div class="external-entity-search-results">
   <% if matches.count.positive? %>
     <% matches.each do |match| %>
       <%= render partial: 'potential_match', locals: { match: match } %>

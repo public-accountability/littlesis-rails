@@ -14,11 +14,10 @@ describe ExternalEntity, type: :model do
   end
 
   describe 'match_with' do
-    before do
-      create(:tag, name: 'iapd')
-    end
+    before { create(:tag, name: 'iapd') }
 
-    context 'with a iapd advisor' do
+    context 'with an iapd advisor' do
+      let(:aum) { 2_397_975_077 } # see factories/external_data
       let(:external_entity) { create(:external_entity_iapd_advisor) }
       let(:entity) { create(:entity_org) }
 
@@ -34,6 +33,70 @@ describe ExternalEntity, type: :model do
         expect(entity.reload.external_links.crd.length).to eq 1
         expect(entity.reload.external_links.crd.first.link_id).to eq external_entity.external_data.dataset_id
       end
+
+      it 'creates an new business and sets aum' do
+        expect { external_entity.match_with(entity) }.to change(Business, :count).by(1)
+        expect(entity.business.aum).to eq aum
+      end
+
+      it 'sets aum on existing business' do
+        entity.add_extension('Business')
+        expect { external_entity.match_with(entity) }.not_to change(Business, :count)
+        expect(entity.reload.business.aum).to eq aum
+      end
+    end
+  end
+
+  describe 'match_with_new_entity' do
+    before { create(:tag, name: 'iapd') }
+
+    let(:external_entity) { create(:external_entity_iapd_advisor) }
+
+    let(:entity_params) do
+      {
+        name: 'Boenning & Scattergood',
+        blurb: 'Investor Advisor',
+        primary_ext: 'Org',
+        last_user_id: 1
+      }
+    end
+
+    context 'with an iapd advisor' do
+      it 'creates a new entity' do
+        expect { external_entity.match_with_new_entity(entity_params) }
+          .to change(Entity, :count).by(1)
+      end
+
+      it 'updates entity_id field' do
+        external_entity.match_with_new_entity(entity_params)
+        expect(external_entity.reload.entity_id).to eq Entity.last.id
+      end
+    end
+  end
+
+  describe 'matched/unmatched' do
+    let(:entity) { create(:entity_org) }
+
+    before do
+      ExternalEntity.create!(
+        dataset: 'iapd_advisors',
+        external_data: create(:external_data_iapd_advisor),
+        entity: entity
+      )
+
+      ExternalEntity.create!(
+        dataset: 'iapd_advisors',
+        external_data: ExternalData.create!(
+          attributes_for(:external_data_iapd_advisor).merge(dataset_id: Faker::Number.number.to_s)
+        )
+      )
+    end
+
+    specify do
+      expect(ExternalEntity.count).to eq 2
+      expect(ExternalEntity.unmatched.count).to eq 1
+      expect(ExternalEntity.matched.count).to eq 1
+      expect(ExternalEntity.matched.first).not_to eq ExternalEntity.unmatched.first
     end
   end
 end

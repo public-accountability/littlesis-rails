@@ -20,7 +20,7 @@ class ExternalRelationship < ApplicationRecord
   belongs_to :relationship, optional: true
   validates :category_id, presence: true
 
-  serialize :relationship_attributes, ActiveSupport::HashWithIndifferentAccess
+  serialize :relationship_attributes, Hash
 
   def matched?
     !relationship_id.nil?

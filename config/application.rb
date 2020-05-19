@@ -38,7 +38,6 @@ module Lilsis
     # In production this does nothing: /lib is NOT loaded in production
     # However, constants in /lib will be loaded, lazily in development and test environments
     config.autoload_paths += %W(#{config.root}/lib)
-    config.autoload_paths += %W(#{config.root}/app/models/external_datasets)
 
     config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch('redis_url') }
 
