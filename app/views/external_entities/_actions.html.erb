@@ -26,6 +26,6 @@
   <% end %>
 
   <%= external_entities_tab('external-entity-create', @active_tab == :create) do %>
-    <p>create</p>
+    <%= render partial: 'create' %>
   <% end %>
 </div>

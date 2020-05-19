@@ -47,6 +47,11 @@
         flex-direction: column;
         gap: 5px;
 
+        .external-entity-search-results {
+            overflow-y: scroll;
+            height: 325px; // how do I get this to automatically scroll within the boundaries of rightSide?
+        }
+
         .external-entity-match {  // flex child
             // border: 0.5px solid black;
             padding: 5px;

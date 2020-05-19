@@ -1,9 +1,11 @@
 <%# locals: matches %>
 
-<% if matches.count.positive? %>
-  <% matches.each do |match| %>
-    <%= render partial: 'potential_match', locals: { match: match } %>
+<div class="external-entity-search-results">
+  <% if matches.count.positive? %>
+    <% matches.each do |match| %>
+      <%= render partial: 'potential_match', locals: { match: match } %>
+    <% end %>
+  <% else %>
+    <p><b>No potential matches found</b></p>
   <% end %>
-<% else %>
-  <p><b>No potential matches found</b></p>
-<% end %>
+</div>
