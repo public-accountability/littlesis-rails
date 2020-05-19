@@ -1,8 +1,8 @@
-describe 'partial: tags/header', :type => :view do
+describe 'tags/header', :type => :view do
   let(:tag) { build(:tag) }
   let(:active_tab) { :entities }
 
-  before(:each) do
+  before do
     render partial: 'tags/header.html.erb', locals: { tag: tag, active_tab: active_tab }
   end
 
@@ -11,7 +11,7 @@ describe 'partial: tags/header', :type => :view do
     (Tagable.categories + [:edits]). each { |tab| css "\#tag-nav-tab-#{tab}" }
   end
 
-  context 'lists tab is active' do
+  context 'when lists tab is active' do
     let(:active_tab) { :lists }
 
     it 'sets correct active/inactive classes' do
@@ -21,7 +21,7 @@ describe 'partial: tags/header', :type => :view do
     end
   end
 
-  context 'edits tab is active' do
+  context 'when edits tab is active' do
     let(:active_tab) { :edits }
 
     it 'sets correct active/inactive classes' do

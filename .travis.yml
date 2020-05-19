@@ -39,6 +39,8 @@ jobs:
         - bundle exec rails webpacker:compile
       script:
         - bundle exec rspec
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
 
     - language: node_js
       node_js: lts/*

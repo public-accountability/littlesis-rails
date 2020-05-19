@@ -1,4 +1,4 @@
-describe 'partial: shared/editing/_edit_references_panel.html.erb', type: :view do
+describe 'shared/editing/_edit_references_panel.html.erb', type: :view do
   let(:references) { Array.new(2) { build(:reference) } }
   let(:selected_ref) { nil }
   let(:locals) { { references: references, selected_ref: selected_ref } }
@@ -22,6 +22,7 @@ describe 'partial: shared/editing/_edit_references_panel.html.erb', type: :view 
 
   context 'with a selected_ref' do
     let(:selected_ref) { references.first.id }
+
     it 'calls references_select with correct fields' do
       expect(view).to receive(:references_select).with(references, references.first.id).once
       partial_render

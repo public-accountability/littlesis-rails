@@ -1,4 +1,4 @@
-describe "partial: entities/actions" do
+describe "entities/actions" do
   let(:org) do
     build(:org,
           created_at: 1.day.ago,

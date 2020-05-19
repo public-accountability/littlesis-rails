@@ -1,4 +1,4 @@
-describe "partial: sidebar/basic_info" do
+describe "sidebar/basic_info" do
   before do
     @org = create(:org, start_date: '1978-01-01', website: 'http://example.com')
     assign(:entity, @org)

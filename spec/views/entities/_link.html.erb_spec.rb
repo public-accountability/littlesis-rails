@@ -1,4 +1,4 @@
-describe "partial: entities/link", type: :view do
+describe "entities/link", type: :view do
   let(:entity) { build(:org) }
   let(:person) { build(:person) }
   let(:other_person) { build(:person, name: 'other person') }

@@ -1,4 +1,4 @@
-describe "partial: sidebar/image" do
+describe "sidebar/image" do
   before { assign(:entity, build_stubbed(:org)) }
 
   it "contains a link and an img when the user is sign-in" do
