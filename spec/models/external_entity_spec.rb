@@ -14,11 +14,9 @@ describe ExternalEntity, type: :model do
   end
 
   describe 'match_with' do
-    before do
-      create(:tag, name: 'iapd')
-    end
+    before { create(:tag, name: 'iapd') }
 
-    context 'with a iapd advisor' do
+    context 'with an iapd advisor' do
       let(:aum) { 2_397_975_077 } # see factories/external_data
       let(:external_entity) { create(:external_entity_iapd_advisor) }
       let(:entity) { create(:entity_org) }
@@ -45,6 +43,33 @@ describe ExternalEntity, type: :model do
         entity.add_extension('Business')
         expect { external_entity.match_with(entity) }.not_to change(Business, :count)
         expect(entity.reload.business.aum).to eq aum
+      end
+    end
+  end
+
+  describe 'match_with_new_entity' do
+    before { create(:tag, name: 'iapd') }
+
+    let(:external_entity) { create(:external_entity_iapd_advisor) }
+
+    let(:entity_params) do
+      {
+        name: 'Boenning & Scattergood',
+        blurb: 'Investor Advisor',
+        primary_ext: 'Org',
+        last_user_id: 1
+      }
+    end
+
+    context 'with an iapd advisor' do
+      it 'creates a new entity' do
+        expect { external_entity.match_with_new_entity(entity_params) }
+          .to change(Entity, :count).by(1)
+      end
+
+      it 'updates entity_id field' do
+        external_entity.match_with_new_entity(entity_params)
+        expect(external_entity.reload.entity_id).to eq Entity.last.id
       end
     end
   end

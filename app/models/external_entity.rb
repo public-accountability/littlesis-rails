@@ -74,6 +74,15 @@ class ExternalEntity < ApplicationRecord
     self
   end
 
+  # Creates a new entity and then calls match_with
+  # entity_params: hash
+  def match_with_new_entity(entity_params)
+    ApplicationRecord.transaction do
+      match_with Entity.create!(entity_params)
+    end
+    self
+  end
+
   def presenter
     ExternalEntityPresenter.new(self)
   end
