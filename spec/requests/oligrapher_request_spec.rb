@@ -14,7 +14,7 @@ describe "Oligrapher", type: :request do
       after { logout(:user) }
 
       it 'private map cannot be viewed' do
-        get "/oligrapher/#{network_map.id}"
+        get "/oligrapher/#{network_map.to_param}"
         expect(response.status).to eq 403
       end
     end
@@ -24,9 +24,14 @@ describe "Oligrapher", type: :request do
       after { logout(:user) }
 
       it 'private map can be viewed' do
-        get "/oligrapher/#{network_map.id}"
+        get "/oligrapher/#{network_map.to_param}"
         expect(response.status).to eq 200
       end
+    end
+
+    it 'redirects to path with slug' do
+      get "/oligrapher/#{network_map.id}"
+      expect(response).to redirect_to(oligrapher_path(network_map))
     end
   end
 

@@ -11,6 +11,7 @@ class OligrapherController < ApplicationController
 
   before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges]
   before_action :set_map, only: %i[update get_editors editors confirm_editor show lock clone destroy]
+  before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
   before_action :check_editor, only: %i[update]
   before_action :set_oligrapher_version
@@ -34,7 +35,14 @@ class OligrapherController < ApplicationController
 
   def update
     @map.assign_attributes(oligrapher_params)
-    save_and_render @map
+
+    if @map.validate
+      @map.save!
+      @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
+      render json: @configuration
+    else
+      render json:@map.errors, status: :bad_request
+    end
   end
 
   def new
@@ -184,6 +192,14 @@ class OligrapherController < ApplicationController
 
   def editor_data
     is_owner ? Oligrapher.editor_data(@map) : Oligrapher.confirmed_editor_data(@map)
+  end
+
+  def enforce_slug
+    return if params[:secret]
+
+    if @map.title.present? && !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
+      redirect_to oligrapher_path(@map)
+    end
   end
 end
 

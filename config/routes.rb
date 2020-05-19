@@ -214,6 +214,11 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  get "/oligrapher/:id/share/:secret",
+    controller: 'oligrapher',
+    action: 'show',
+    as: 'share_oligrapher'
+
   resources :industries, only: [:show]
 
   get '/relationships/bulk_add' => 'relationships#bulk_add'

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
-  VERSION = 'c5157de9450344e6bbd5715aba88081c5039c2ba'
+  VERSION = 'a8b835059b166be384a9e78faa578cb492e912c7'
 
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
@@ -25,7 +25,8 @@ module Oligrapher
         user: current_user.present? ? { id: current_user.id, name: current_user.username } : nil,
         settings: JSON.parse(map.settings || '{}').merge({ private: map.is_private, clone: map.is_cloneable }),
         editors: is_owner ? editor_data(map) : confirmed_editor_data(map),
-        oligrapher_version: map.oligrapher_version
+        version: map.oligrapher_version,
+        shareUrl: is_owner ? Rails.application.routes.url_helpers.share_oligrapher_path(id: map.id, secret: map.secret) : nil
       } }
   end
 
