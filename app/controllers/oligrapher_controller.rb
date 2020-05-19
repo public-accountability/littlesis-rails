@@ -9,9 +9,11 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  before_action :authenticate_user!, except: %i[find_nodes find_connections get_edges]
-  before_action :set_map, only: %i[update get_editors editors show lock]
-  before_action :check_owner, only: %i[update get_editors editors]
+  before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges]
+  before_action :set_map, only: %i[update get_editors editors confirm_editor show lock clone destroy]
+  before_action :enforce_slug, only: %i[show]
+  before_action :check_owner, only: %i[editors destroy]
+  before_action :check_editor, only: %i[update]
   before_action :set_oligrapher_version
 
   before_action :admins_only if Rails.env.production?
@@ -21,12 +23,26 @@ class OligrapherController < ApplicationController
   # POST /oligrapher
   #  { graph_data: {...}, attributes: { title, description, is_private, is_cloneable } }
   def create
-    save_and_render NetworkMap.new(new_oligrapher_params)
+    map = NetworkMap.new(new_oligrapher_params)
+
+    if map.validate
+      map.save!
+      render json: { redirect_url: oligrapher_path(map) }
+    else
+      render json: map.errors, status: :bad_request
+    end
   end
 
   def update
     @map.assign_attributes(oligrapher_params)
-    save_and_render @map
+
+    if @map.validate
+      @map.save!
+      @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
+      render json: @configuration
+    else
+      render json:@map.errors, status: :bad_request
+    end
   end
 
   def new
@@ -36,7 +52,7 @@ class OligrapherController < ApplicationController
   end
 
   def get_editors
-    render json: @map.usernames
+    render json: editor_data
   end
 
   # two actions { editor: { action: add | remove, username: <username> } }
@@ -53,24 +69,53 @@ class OligrapherController < ApplicationController
     end
 
     @map.public_send("#{action}_editor", editor).save
-    render json: { editors: @map.usernames }
+    render json: { editors: editor_data }
+  end
+
+  def confirm_editor
+    @map.confirm_editor(current_user)
+    @map.save
+
+    redirect_to oligrapher_path(@map)
   end
 
   # a POST request is how a user can "takeover" a locked map
   # A GET request does lock polling
   def lock
     check_private_access
-    raise Exceptions::PermissionError unless @map.editors.include?(current_user.id)
+    raise Exceptions::PermissionError unless @map.can_edit?(current_user)
 
     lock_service = ::OligrapherLockService.new(map: @map, current_user: current_user)
     lock_service.lock! if request.post? || lock_service.user_can_lock?
     render json: lock_service.as_json
   end
 
+  def clone
+    return head :unauthorized unless @map.cloneable? || is_owner
+
+    check_permission 'editor'
+
+    map = @map.dup
+    map.update!(
+      is_featured: false,
+      is_private: true,
+      user_id: current_user.id,
+      title: "Clone: #{map.title}"
+    )
+
+    render json: { redirect_url: oligrapher_path(map) }
+  end
+
+  def destroy
+    @map.destroy
+    render json: { redirect_url: new_oligrapher_path }
+  end
+
   # Pages
 
   def show
     check_private_access
+    @is_pending_editor = (current_user and @map.has_pending_editor?(current_user))
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
     render 'oligrapher/oligrapher', layout: 'oligrapher3'
   end
@@ -80,7 +125,6 @@ class OligrapherController < ApplicationController
   end
 
   # Search Api
-  # Oligrapher 3 also uses our regular api routes
   def find_nodes
     return head :bad_request if params[:q].blank?
 
@@ -137,13 +181,25 @@ class OligrapherController < ApplicationController
   def oligrapher_params
     params
       .require(:attributes)
-      .permit(:title, :description, :is_private, :is_cloneable, :list_sources)
-      .to_h
+      .permit(:title, :description, :is_private, :is_cloneable, :list_sources, :settings)
       .merge(graph_data: params[:graph_data]&.permit!&.to_h)
+      .merge(oligrapher_version: 3)
   end
 
   def set_oligrapher_version
     @oligrapher_version = Oligrapher::VERSION
+  end
+
+  def editor_data
+    is_owner ? Oligrapher.editor_data(@map) : Oligrapher.confirmed_editor_data(@map)
+  end
+
+  def enforce_slug
+    return if params[:secret]
+
+    if @map.title.present? && !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
+      redirect_to oligrapher_path(@map)
+    end
   end
 end
 

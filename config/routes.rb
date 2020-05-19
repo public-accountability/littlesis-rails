@@ -196,7 +196,7 @@ Lilsis::Application.routes.draw do
     action: 'show',
     as: 'share_map'
 
-  resources :oligrapher, only: [:new, :show, :create, :update], controller: 'oligrapher' do
+  resources :oligrapher, only: [:new, :show, :create, :update, :destroy], controller: 'oligrapher' do
     collection do
       get '/get_edges', action: :get_edges
       get '/find_connections', action: :find_connections
@@ -207,10 +207,17 @@ Lilsis::Application.routes.draw do
     member do
       get '/editors', action: :get_editors
       post '/editors', action: :editors
+      post '/confirm_editor', action: :confirm_editor
       get 'lock'
       post 'lock'
+      post 'clone'
     end
   end
+
+  get "/oligrapher/:id/share/:secret",
+    controller: 'oligrapher',
+    action: 'show',
+    as: 'share_oligrapher'
 
   resources :industries, only: [:show]
 

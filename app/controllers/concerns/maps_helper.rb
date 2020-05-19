@@ -35,4 +35,10 @@ module MapsHelper
 
     raise Exceptions::PermissionError unless is_owner
   end
+
+  def check_editor
+    check_permission 'editor'
+
+    raise Exceptions::PermissionError unless @map.can_edit?(current_user)
+  end
 end

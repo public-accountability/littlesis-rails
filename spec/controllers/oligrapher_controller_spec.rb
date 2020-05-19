@@ -42,4 +42,20 @@ describe OligrapherController, type: :controller do
   it do
     is_expected.to route(:post, '/oligrapher/789-abc/lock').to(action: :lock, id: '789-abc')
   end
+
+  it do
+    is_expected.to route(:post, '/oligrapher/789-abc/clone').to(action: :clone, id: '789-abc')
+  end
+
+  it do
+    is_expected.to route(:delete, '/oligrapher/789-abc').to(action: :destroy, id: '789-abc')
+  end
+
+  it do
+    is_expected.to route(:post, '/oligrapher/789-abc/confirm_editor').to(action: :confirm_editor, id: '789-abc')
+  end
+
+  it do
+    is_expected.to route(:get, '/oligrapher/789/share/abc').to(action: :show, id: '789', secret: 'abc')
+  end
 end

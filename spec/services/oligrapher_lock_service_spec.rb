@@ -8,7 +8,10 @@ describe 'OligrapherLockSerivce' do
     build(:network_map_version3,
           user_id: user_one.id,
           id: Faker::Number.unique.number(digits: 5),
-          editors: [user_one.id, user_two.id])
+          editors: [
+            OpenStruct.new({ id: user_one.id, pending: false }), 
+            OpenStruct.new({ id: user_two.id, pending: false })
+          ])
   end
 
   let(:lock) do

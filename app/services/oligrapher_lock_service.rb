@@ -16,7 +16,7 @@ class OligrapherLockService
       raise Error, "map \##{@map.id} is not version 3"
     end
 
-    unless @map.editors.include?(current_user.id)
+    unless @map.can_edit?(@current_user)
       raise Error, "user #{@current_user.id} is not an editor of map #{@map.id}"
     end
 
@@ -27,7 +27,7 @@ class OligrapherLockService
   def as_json
     if locked?
       @lock.to_h.merge(locked: true,
-                       username: User.find(@lock.user_id).username,
+                       name: User.find(@lock.user_id).username,
                        user_has_lock: user_has_lock?)
     else
       { locked: false }

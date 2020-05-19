@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
-  VERSION = 'b27c7499f7af2ec46b34b1cfcfee8dc4708dc5ad'
+  VERSION = 'a8b835059b166be384a9e78faa578cb492e912c7'
 
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
@@ -11,31 +11,43 @@ module Oligrapher
 
   def self.configuration(map:, current_user: nil)
     is_owner = current_user.present? && map.user_id == current_user.id
+    owner = map.user || current_user || nil
 
     {
       graph: map.graph_data.to_h,
-      settings: { debug: true },
-      display: { modes: { editor: is_owner } },
+      settings: { debug: Rails.env.development? },
       attributes: {
         id: map.id,
         title: map.title,
-        subtitle: '',
+        subtitle: map.description,
         date: (map.created_at || Time.current).strftime('%B %d, %Y'),
-        user: { name: current_user&.username },
-        settings: {
-          private: map.is_private,
-          clone: map.is_cloneable,
-          defaultStoryMode: false,
-          defaultExploreMode: true,
-          storyModeOnly: false,
-          exploreModeOnly: false
-        },
-        editors: map.usernames,
-        links: [
-          { text: 'Edit', url: 'https://littlesis.org/oligrapher/edit' },
-          { text: 'Clone', url: 'https://littlesis.org/oligrapher/clone' },
-          { text: 'Disclaimer', url: 'https://littlesis.org/oligrapher/disclaimer' }
-        ]
+        owner: owner.present? ? { id: owner.id, name: owner.username, url: owner.url } : nil,
+        user: current_user.present? ? { id: current_user.id, name: current_user.username } : nil,
+        settings: JSON.parse(map.settings || '{}').merge({ private: map.is_private, clone: map.is_cloneable }),
+        editors: is_owner ? editor_data(map) : confirmed_editor_data(map),
+        version: map.oligrapher_version,
+        shareUrl: is_owner ? Rails.application.routes.url_helpers.share_oligrapher_path(id: map.id, secret: map.secret) : nil
+      } }
+  end
+
+  def self.confirmed_editor_data(map)
+    User
+      .where(id: map.confirmed_editor_ids)
+      .map { |u| {
+        name: u.username,
+        url: u.url
+      } }
+  end
+
+  def self.editor_data(map)
+    pending_ids = map.pending_editor_ids
+
+    User
+      .where(id: map.all_editor_ids)
+      .map { |u| {
+        name: u.username,
+        url: u.url,
+        pending: pending_ids.include?(u.id)
       } }
   end
 

@@ -28,7 +28,6 @@ class NetworkMap < ApplicationRecord
   validates :title, presence: true
 
   before_create :generate_secret, :set_defaults
-  before_create -> { add_editor(user_id) }, if: -> { oligrapher_version == 3 }
 
   before_save :set_index_data
   before_save :start_update_entity_network_map_collections_job, if: :update_network_map_collection?
@@ -191,13 +190,24 @@ class NetworkMap < ApplicationRecord
 
   # Editor methods
   # These are only for oligrapher version 3
+  def confirmed_editor_ids
+    editors.delete_if { |e| e[:pending] }.map { |e| e[:id] }
+  end
+
+  def pending_editor_ids
+    editors.filter { |e| e[:pending] }.map { |e| e[:id] }
+  end
+
+  def all_editor_ids
+    editors.map { |e| e[:id] }
+  end
 
   def add_editor(editor)
     editor_id = editor.try(:id) || editor.try!(:to_i)
-    return self if editors.include?(editor_id)
+    return self if all_editor_ids.include?(editor_id)
 
     if validate_editor(editor_id)
-      editors << editor_id
+      editors << { id: editor_id, pending: true }
       editors_will_change!
     end
 
@@ -206,10 +216,26 @@ class NetworkMap < ApplicationRecord
 
   def remove_editor(editor)
     editor_id = editor.try(:id) || editor.try!(:to_i)
+
     unless user_id == editor_id
-      self.editors.delete(editor_id)
+      self.editors.reject! { |e| e[:id] == editor_id }
       editors_will_change!
     end
+
+    self
+  end
+
+  def confirm_editor(editor)
+    editor_id = editor.try(:id) || editor.try!(:to_i)
+
+    editors.map! do |e|
+      if e[:id] == editor_id
+        e.merge({ pending: false })
+      else
+        e
+      end
+    end
+
     self
   end
 
@@ -222,15 +248,13 @@ class NetworkMap < ApplicationRecord
     end
   end
 
-  def editor?(user)
-    editors.include?(user.try(:id) || user.try!(:to_i))
+  def can_edit?(user)
+    editor_id = user.try(:id) || user.try!(:to_i)
+    editor_id == user_id or confirmed_editor_ids.include?(editor_id)
   end
 
-  def usernames
-    # .order(Arel.sql("FIELD(id, #{editors.join(',')})")) # keep editor array order
-    User
-      .where(id: editors)
-      .pluck(:username)
+  def has_pending_editor?(user)
+    pending_editor_ids.include?(user.id)
   end
 
   # input: <User> --> NetworkMap::ActiveRecord_Relation

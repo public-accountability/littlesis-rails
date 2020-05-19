@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   rescue_from Exceptions::PermissionError do
-    render 'errors/permission', status: :forbidden
+    render 'errors/permission', layout: 'application', status: :forbidden
   end
 
   rescue_from Exceptions::RestrictedUserError do
@@ -31,11 +31,11 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from Exceptions::NotFoundError do
-    render 'errors/not_found', status: :not_found
+    render 'errors/not_found', layout: 'application', status: :not_found
   end
 
   rescue_from ActiveRecord::RecordNotFound do
-    render 'errors/not_found', status: :not_found
+    render 'errors/not_found', layout: 'application', status: :not_found
   end
 
   rescue_from ActionController::RoutingError do

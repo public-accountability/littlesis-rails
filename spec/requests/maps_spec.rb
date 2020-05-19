@@ -1,6 +1,15 @@
 # rubocop:disable RSpec/BeforeAfterAll, RSpec/InstanceVariable, RSpec/EmptyExampleGroup
 
 describe 'Maps', :sphinx, type: :request do
+  describe 'redirecting version 3 map' do
+    let(:map) { create(:network_map, user_id: User.last.id, oligrapher_version: 3) }
+    before { get "/maps/#{map.id}" }
+
+    it 'redirects to oligrapher#show' do
+      expect(response).to redirect_to oligrapher_path(map)
+    end
+  end
+
   describe 'featuring maps' do
     as_basic_user do
       let(:map) { create(:network_map, user_id: User.last.id) }

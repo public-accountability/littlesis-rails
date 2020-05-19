@@ -4,6 +4,37 @@ require Rails.root.join('app/services/oligrapher_lock_service.rb').to_s
 describe "Oligrapher", type: :request do
   let(:user) { create_basic_user }
 
+  describe 'GET /oligrapher' do
+    let(:user1) { create_basic_user }
+    let(:user2) { create_basic_user }
+    let(:network_map) { create(:network_map_version3, user_id: user1.id, is_private: true) }
+
+    context 'when logged in as normal non-owner user' do
+      before { login_as(user2, scope: :user) }
+      after { logout(:user) }
+
+      it 'private map cannot be viewed' do
+        get "/oligrapher/#{network_map.to_param}"
+        expect(response.status).to eq 403
+      end
+    end
+
+    context 'when logged in as owner' do
+      before { login_as(user1, scope: :user) }
+      after { logout(:user) }
+
+      it 'private map can be viewed' do
+        get "/oligrapher/#{network_map.to_param}"
+        expect(response.status).to eq 200
+      end
+    end
+
+    it 'redirects to path with slug' do
+      get "/oligrapher/#{network_map.id}"
+      expect(response).to redirect_to(oligrapher_path(network_map))
+    end
+  end
+
   describe 'POST /oligrapher' do
     before { login_as(user, scope: :user) }
 
@@ -54,7 +85,7 @@ describe "Oligrapher", type: :request do
       post '/oligrapher', params: params
       expect(response.status).to eq 200
       expect(valid_json?(response.body)).to be true
-      expect(JSON.parse(response.body)['id']).to be_a Integer
+      expect(JSON.parse(response.body)['redirect_url']).to be_a String
     end
 
     it 'renders json of errors if invalid' do
@@ -67,7 +98,7 @@ describe "Oligrapher", type: :request do
 
   describe 'PATCH /oligrapher/:id' do
     let(:user) { create_basic_user }
-    let(:network_map) { create(:network_map_version3, user_id: user.id) }
+    let(:network_map) { create(:network_map_version3, user_id: user.id, settings: { "blah" => true }.to_json) }
 
     context 'when logged in' do
       before { login_as(user, scope: :user) }
@@ -80,14 +111,90 @@ describe "Oligrapher", type: :request do
         end.to change { NetworkMap.find(network_map.id).title }.from("network map").to("new title")
         expect(response.status).to eq 200
       end
+
+      it 'updates settings' do
+        expect do
+          patch "/oligrapher/#{network_map.id}", params: { "attributes" => { "settings" => { "blah" => false }.to_json } }
+        end.to change { NetworkMap.find(network_map.id).settings }.to({ "blah" => false }.to_json)
+        expect(response.status).to eq 200
+      end
+    end
+  end
+
+  describe 'POST /oligrapher/:id/clone' do
+    let(:user1) { create_basic_user }
+    let(:user2) { create_basic_user }
+    let(:network_map) { create(:network_map_version3, user_id: user1.id) }
+
+    context 'when logged in' do
+      before { login_as(user2, scope: :user); network_map }
+
+      after { logout(user2) }
+
+      it 'creates a new NetworkMap' do
+        expect { post "/oligrapher/#{network_map.id}/clone" }.to change(NetworkMap, :count).by(1)
+        expect(NetworkMap.last.oligrapher_version).to eq 3
+        expect(NetworkMap.last.user_id).to eq user2.id
+        expect(NetworkMap.last.graph_data).to eq network_map.graph_data
+      end
+
+      it 'redirects to the created map' do
+        post "/oligrapher/#{network_map.id}/clone"
+        expect(response.status).to eq 200
+        expect(json['redirect_url']).to eq Rails.application.routes.url_helpers.oligrapher_path(NetworkMap.last)
+      end
+    end
+
+    context 'when the map is not cloneable' do
+      before {
+        login_as(user2, scope: :user)
+        network_map.update(is_cloneable: false)
+      }
+
+      after { logout(user2) }
+
+      it 'does not create a new NetworkMap' do
+        expect { post "/oligrapher/#{network_map.id}/clone" }.to change(NetworkMap, :count).by(0)
+      end
+
+      it 'responds with unauthorized' do
+        post "/oligrapher/#{network_map.id}/clone"
+        expect(response.status).to eq 401
+      end
+    end
+  end
+
+  describe 'DELETE /oligrapher/:id' do
+    let(:user1) { create_basic_user }
+    let(:network_map) { create(:network_map_version3, user_id: user1.id) }
+
+    context 'when logged in' do
+      before { login_as(user1, scope: :user); network_map }
+
+      after { logout(user1) }
+
+      it 'deletes the map' do
+        expect { delete "/oligrapher/#{network_map.id}" }.to change(NetworkMap, :count).by(-1)
+      end
+
+      it 'redirects to new map' do
+        delete "/oligrapher/#{network_map.id}"
+        expect(response.status).to eq 200
+        expect(json['redirect_url']).to eq Rails.application.routes.url_helpers.new_oligrapher_path
+      end
     end
   end
 
   describe 'editors' do
-    let(:map_owner) { create_basic_user }
-    let(:other_user) { create_basic_user }
+    let(:map_owner) { create_basic_user(username: 'owner') }
+    let(:editor) { create_basic_user(username: 'editor') }
+    let(:pending_user) { create_basic_user(username: 'pending') }
+    let(:editors) { [
+      { id: editor.id, pending: false },
+      { id: pending_user.id, pending: true }
+    ] }
     let(:network_map) do
-      create(:network_map_version3, user_id: map_owner.id, editors: [map_owner.id, other_user.id])
+      create(:network_map_version3, user_id: map_owner.id, editors: editors)
     end
 
     before { network_map }
@@ -101,40 +208,71 @@ describe "Oligrapher", type: :request do
         specify do
           get editors_oligrapher_path(network_map)
           expect(response.status).to eq 200
-          expect(json.to_set).to eql [map_owner.username, other_user.username].to_set
+          expect(json.map { |e| e["name"] }.to_set).to eql %w[editor pending].to_set
+          expect(json.map { |e| e["pending"] }.to_set).to eql [true, false].to_set
         end
       end
 
-      describe 'as other user' do
-        before { login_as(other_user, scope: :user) }
+      describe 'as editor' do
+        before { login_as(editor, scope: :user) }
 
-        after { logout(other_user) }
+        after { logout(editor) }
 
         specify do
           get editors_oligrapher_path(network_map)
-          expect(response).to have_http_status(403)
+          expect(response.status).to eq 200
+          expect(json.map { |hash| hash["name"] }).to eql %w[editor]
+        end
+      end
+
+      describe 'as non-editor' do
+        before { login_as(pending_user, scope: :user) }
+
+        after { logout(pending_user) }
+
+        specify do
+          get editors_oligrapher_path(network_map)
+          expect(response.status).to eq 200
+          expect(json.map { |hash| hash["name"] }).to eql %w[editor]
         end
       end
     end
 
-    describe 'post /oligrapher/:id/editors' do
-      before { login_as(map_owner, scope: :user) }
+    describe 'POST /oligrapher/:id/editors' do
+      context 'as map owner' do
+        before { login_as(map_owner, scope: :user) }
 
-      after { logout(map_owner) }
+        after { logout(map_owner) }
 
-      it 'adds an editor' do
-        new_user = create_basic_user
-        expect(network_map.editors).not_to include new_user.id
-        post editors_oligrapher_path(network_map), params: { editor: { action: 'ADD', username: new_user.username } }
-        expect(response).to have_http_status(200)
-        expect(network_map.reload.editors).to include new_user.id
+        it 'adds an editor' do
+          new_user = create_basic_user
+          expect(network_map.all_editor_ids).not_to include new_user.id
+          post editors_oligrapher_path(network_map), params: { editor: { action: 'ADD', username: new_user.username } }
+          expect(response).to have_http_status(200)
+          expect(network_map.reload.all_editor_ids).to include new_user.id
+        end
+
+        it 'removes an editor' do
+          expect(network_map.all_editor_ids).to include editor.id
+          post editors_oligrapher_path(network_map), params: { editor: { action: 'REMOVE', username: editor.username } }
+          expect(response).to have_http_status(200)
+          expect(network_map.reload.all_editor_ids).not_to include editor.id
+        end
       end
+    end
 
-      it 'removes an editor' do
-        expect(network_map.editors).to include other_user.id
-        post editors_oligrapher_path(network_map), params: { editor: { action: 'REMOVE', username: other_user.username } }
-        expect(response).to have_http_status(200)
-        expect(network_map.reload.editors).not_to include other_user.id
+    describe 'POST /oligrapher/:id/confirm_editor' do
+      context 'as pending editor' do
+        before { login_as(pending_user, scope: :user) }
+
+        after { logout(pending_user) }
+
+        it 'confirms the editor' do
+          expect(network_map.all_editor_ids).to include pending_user.id
+          expect(network_map.confirmed_editor_ids).not_to include pending_user.id
+          post confirm_editor_oligrapher_path(network_map)
+          expect(network_map.reload.confirmed_editor_ids).to include pending_user.id
+        end
       end
     end
   end
@@ -143,7 +281,9 @@ describe "Oligrapher", type: :request do
     let(:owner) { create_basic_user }
     let(:editor) { create_basic_user }
     let(:map) do
-      create(:network_map_version3, user_id: owner.id, editors: [owner.id, editor.id])
+      create(:network_map_version3, user_id: owner.id, editors: [
+        { id: editor.id, pending: false }
+      ])
     end
 
     describe 'logged in as owner' do
@@ -156,22 +296,7 @@ describe "Oligrapher", type: :request do
         expect(response).to have_http_status(200)
         expect(OligrapherLockService.new(map: map, current_user: owner).locked?).to be true
         expect(json['locked']).to be true
-        expect(json['username']).to eq owner.username
-      end
-    end
-
-    describe 'logged in as owner' do
-      before { login_as(owner, scope: :user) }
-      after { logout(:user) }
-
-      it 'GET requests locks if there is no lock' do
-        expect(OligrapherLockService.new(map: map, current_user: owner).locked?).to be false
-        get lock_oligrapher_path(map)
-        expect(response).to have_http_status(200)
-        expect(OligrapherLockService.new(map: map, current_user: owner).locked?).to be true
-        expect(json['locked']).to be true
-        expect(json['user_has_lock']).to be true
-        expect(json['username']).to eq owner.username
+        expect(json['name']).to eq owner.username
       end
     end
 
@@ -187,11 +312,11 @@ describe "Oligrapher", type: :request do
         expect(OligrapherLockService.new(map: map, current_user: editor).locked?).to be true
         expect(json['locked']).to be true
         expect(json['user_has_lock']).to be false
-        expect(json['username']).to eq owner.username
+        expect(json['name']).to eq owner.username
         post lock_oligrapher_path(map)
         expect(json['locked']).to be true
         expect(json['user_has_lock']).to be true
-        expect(json['username']).to eq editor.username
+        expect(json['name']).to eq editor.username
       end
     end
   end

@@ -7,6 +7,7 @@ class MapsController < ApplicationController
                 except: [:featured, :all, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
   before_action :authenticate_user!,
                 except: [:featured, :all, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
+  before_action :check_oligrapher_version, only: [:show]
   before_action :enforce_slug, only: [:show]
   before_action :admins_only, only: [:feature]
 
@@ -284,5 +285,9 @@ class MapsController < ApplicationController
     if params.key?(:oligrapher_version) && OLIGRAPHER_VERSION_REGEX.match?(params[:oligrapher_version])
       @oligrapher_version = params[:oligrapher_version]
     end
+  end
+
+  def check_oligrapher_version
+    redirect_to oligrapher_path(@map) if @map.oligrapher_version == 3
   end
 end
