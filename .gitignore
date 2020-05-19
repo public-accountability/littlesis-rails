@@ -81,5 +81,8 @@ doc/
 yarn-debug.log*
 .yarn-integrity
 
+app/assets/stylesheets/styles/*.css
+app/assets/stylesheets/styles/*.css.map
+
 # Ignore master key for decrypting credentials and more.
 /config/master.key
