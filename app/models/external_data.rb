@@ -3,7 +3,8 @@
 class ExternalData < ApplicationRecord
   DATASETS = { reserved: 0,
                iapd_advisors: 1,
-               iapd_schedule_a: 2 }.freeze
+               iapd_schedule_a: 2,
+               nycc: 3 }.freeze
 
   DATASETS_INVERTED = DATASETS.invert.freeze
 
