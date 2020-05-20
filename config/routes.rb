@@ -379,9 +379,19 @@ Lilsis::Application.routes.draw do
   #####################
 
   resources :external_entities, only: %i[show update] do
-    collection do
-      get 'random'
-    end
+    get 'random', on: :collection, action: :random
+    get '/:dataset',
+        on: :collection,
+        action: :dataset,
+        constraints: DatasetConstraint.new
+    get '/:dataset/random',
+        on: :collection,
+        action: :random,
+        constraints: DatasetConstraint.new
+    get '/:dataset/:id',
+        on: :collection,
+        action: :show,
+        constraints: DatasetConstraint.new(check_id: true)
   end
 
   match "*path", to: "errors#not_found", via: :all

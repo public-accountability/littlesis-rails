@@ -22,6 +22,9 @@ class ExternalEntitiesController < ApplicationController
                 id: ExternalEntity.unmatched.order('RAND()').limit(1).pluck(:id).first
   end
 
+  def dataset
+  end
+
   # PATCH /external_entities/:id
   # This does the matching. There are two ways to do this:
   #   submit with the parameter +entity_id+
