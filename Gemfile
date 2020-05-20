@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '6.0.2.2'
+gem 'rails', '6.0.3.1'
 gem 'mysql2', '~> 0.5.2'
 
 gem 'puma', '>= 4.2.0'
@@ -80,6 +80,7 @@ end
 
 gem 'seed_dump', :require => false
 gem 'simplecov', :require => false, :group => :test
+gem 'codecov', :require => false, :group => :test
 
 gem 'validate_url', :git => 'https://github.com/perfectline/validates_url.git', :branch => 'master'
 

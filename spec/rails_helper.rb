@@ -2,6 +2,11 @@
 if ENV["COVERAGE"]
   require 'simplecov'
   SimpleCov.start 'rails'
+
+  if ENV['TRAVIS']
+    require 'codecov'
+    SimpleCov.formatter = SimpleCov::Formatter::Codecov
+  end
 end
 
 ENV['RAILS_ENV'] ||= 'test'

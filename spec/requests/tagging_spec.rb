@@ -107,4 +107,32 @@ describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
       creates_tags_and_tells_client_to_redirect
     end
   end
+
+  describe 'requesting a new tag' do
+    before { login_as(user, :scope => :user) }
+
+    after { logout(:user) }
+
+    let(:request_params) do
+      {
+        'tag_name' => 'a',
+        'tag_description' => 'b',
+        'tag_additional' => 'c'
+      }
+    end
+
+    it 'sends notification email' do
+      expect(NotificationMailer).to receive(:tag_request_email)
+                                      .once
+                                      .with(user, request_params)
+                                      .and_return(double(:deliver_later => nil))
+
+      post tags_request_path, params: request_params
+    end
+
+    it 'redirects to homepage' do
+      post tags_request_path, params: request_params
+      expect(response).to have_http_status 302
+    end
+  end
 end
