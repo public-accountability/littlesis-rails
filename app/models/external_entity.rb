@@ -38,6 +38,8 @@ class ExternalEntity < ApplicationRecord
     case dataset
     when 'iapd_advisors'
       EntityMatcher.find_matches_for_org(search_term)
+    when 'nycc'
+      EntityMatcher.find_matches_for_person(search_term)
     else
       raise NotImplementedError
     end
