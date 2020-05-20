@@ -97,6 +97,7 @@ class OligrapherController < ApplicationController
 
     map = @map.dup
     map.update!(
+      oligrapher_version: 3,
       is_featured: false,
       is_private: true,
       user_id: current_user.id,

@@ -35,6 +35,16 @@ describe "Oligrapher", type: :request do
     end
   end
 
+  describe 'GET /oligrapher/new' do
+    let(:user) { create_basic_user }
+    before { login_as(user, scope: :user) }
+
+    it 'shows page' do
+      get "/oligrapher/new"
+      expect(response.status).to eq 200
+    end
+  end
+
   describe 'POST /oligrapher' do
     before { login_as(user, scope: :user) }
 
