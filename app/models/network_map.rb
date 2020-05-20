@@ -188,6 +188,11 @@ class NetworkMap < ApplicationRecord
     end
   end
 
+  def share_path
+    return nil unless persisted?
+    url_helpers.share_oligrapher_path(id: id, secret: secret)
+  end
+
   # Editor methods
   # These are only for oligrapher version 3
   def confirmed_editor_ids
