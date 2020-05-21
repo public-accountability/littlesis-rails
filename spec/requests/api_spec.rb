@@ -4,11 +4,11 @@ describe Api, :pagination_helper do
   let(:meta) { Api::META }
 
   describe 'entities' do
-    let(:lawyer) do
+    let!(:lawyer) do
       create(:entity_person).tap { |e| e.add_extension('Lawyer') }
     end
 
-    let(:expected) do
+    let!(:expected) do
       {
         'data' => {
           'type' => 'entities',
