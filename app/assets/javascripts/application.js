@@ -28,6 +28,7 @@
 //= require d3.v5.min.js
 //= require papaparse.min.js
 //= require FileSaver.min.js
+//= require select2.full.min.js
 //= require_tree ./common
 //= require_tree ./pages
 
