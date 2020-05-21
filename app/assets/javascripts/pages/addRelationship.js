@@ -49,6 +49,10 @@ var addRelationship = (function(utility) {
 	    data: 'blurb', 
 	    title: 'Summary' 
 	  },
+    {
+      data: 'is_parent',
+      title: 'Parent?'
+    },
 	],
 	ordering: false,
 	searching: false,

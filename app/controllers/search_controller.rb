@@ -50,16 +50,26 @@ class SearchController < ApplicationController
                        .new(query: params[:q], **entity_search_options)
                        .search
 
-    if params[:return_type]&.downcase == 'simple'
-      search_results.map! { |e| EntitySearchService.simple_entity_hash(e) }
-    else
-      search_results.map! { |e| e.to_hash(image_url: true) }
-    end
-
-    render json: search_results
+    render json: format_results(search_results)
   end
 
   private
+
+  def format_results(results)
+    results.map! do |e|
+      format_entity(e)
+    end
+  end
+
+  def format_entity(entity)
+    @formatter ||=
+      if params[:return_type]&.downcase == 'simple'
+        ->(e) { EntitySearchService.simple_entity_hash(e)&.merge(is_parent: e.parent?) }
+      else
+        ->(e) { e.to_hash(image_url: true)&.merge(is_parent: e.parent?) }
+      end
+    @formatter.call(entity)
+  end
 
   def entity_search_options
     {}.tap do |options|
