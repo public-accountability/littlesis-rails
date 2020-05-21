@@ -50,6 +50,10 @@ class Entity < ApplicationRecord
              foreign_key: 'last_user_id',
              inverse_of: :edited_entities,
              optional: true
+
+  belongs_to :parent, class_name: 'Entity', optional: true, inverse_of: :children
+  has_many :children, class_name: 'Entity', foreign_key: :parent_id, inverse_of: :parent
+
   has_many :extension_records, inverse_of: :entity, dependent: :destroy
   has_many :extension_definitions, through: :extension_records, inverse_of: :entities
   has_many :os_entity_categories, inverse_of: :entity
@@ -179,6 +183,14 @@ class Entity < ApplicationRecord
     hash[:url] = url if options[:url]
     hash[:image_url] = featured_image_url(options[:image_url_type]) if options[:image_url]
     hash.except!(*options[:except])
+  end
+
+  def parent?
+    children.present?
+  end
+
+  def child?
+    parent.present?
   end
 
   ##
@@ -545,10 +557,6 @@ class Entity < ApplicationRecord
     end
 
     article_entity
-  end
-
-  def children
-    Entity.where(parent_id: id)
   end
 
   def party_members

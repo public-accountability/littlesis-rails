@@ -1134,4 +1134,30 @@ describe Entity, :tag_helper do
       end
     end
   end
+
+  describe "parent/child relationships" do
+    let(:user) { create_really_basic_user }
+    let(:mega_corp_holdings) { create(:mega_corp_inc, last_user: user) }
+    let(:mega_corp_subsidiary) { create(:corp, last_user: user) }
+
+    before do
+      create(:org_extension_definition)
+    end
+
+    context "when children are added to an organization" do
+      it "understands itself as a parent" do
+        expect(mega_corp_holdings.children).to be_empty
+        expect { mega_corp_holdings.children << create(:corp, last_user: user) }
+          .to change(mega_corp_holdings, :parent?).from(false).to(true)
+      end
+    end
+
+    context "when a parent is added to an organization" do
+      it "understands itself as a child" do
+        expect(mega_corp_subsidiary.parent).to be nil
+        expect { mega_corp_subsidiary.parent = mega_corp_holdings }
+          .to change(mega_corp_subsidiary, :child?).from(false).to(true)
+      end
+    end
+  end
 end
