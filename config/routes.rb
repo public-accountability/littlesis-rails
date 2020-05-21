@@ -117,6 +117,7 @@ Lilsis::Application.routes.draw do
         get 'giving'
         get 'political'
         #get 'relationships'
+        post 'add_to_list'
         get 'datatable'
         get 'match_donations'
         get 'match_ny_donations'
