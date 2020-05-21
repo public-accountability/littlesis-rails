@@ -45,6 +45,11 @@ class List < ApplicationRecord
     user.permissions.list_permissions(self)[:viewable]
   end
 
+  def user_can_edit?(user = nil)
+    return false if user.nil?
+    user.permissions.list_permissions(self)[:editable]
+  end
+
   def entities_with_couples
     # if entity on list is couple, replace it with individual entities
     entity_ids = list_entities.joins("LEFT JOIN couple ON (couple.entity_id = ls_list_entity.entity_id)").select("IF(couple.id IS NULL, ls_list_entity.entity_id, NULL) AS entity_id, couple.partner1_id, couple.partner2_id").reduce([]) { |ary, row| ary.concat([row['entity_id'], row['partner1_id'], row['partner2_id']]) }.uniq.compact
