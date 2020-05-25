@@ -4,6 +4,9 @@ class ExternalEntitiesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_external_entity, only: %i[show update]
 
+  def index
+  end
+
   # GET /external_entities/:id
   # If the parameter "search" is set, it will display the search tab with that query
   def show
