@@ -29,6 +29,9 @@ class ExternalEntity < ApplicationRecord
       # TODO handle additional aliases
       org_name = external_data.data['names'].first
       EntityMatcher.find_matches_for_org(org_name)
+    when 'nycc'
+      name = external_data.data['FullName']
+      EntityMatcher.find_matches_for_person(name)
     else
       raise NotImplementedError
     end
