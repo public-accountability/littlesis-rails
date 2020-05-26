@@ -18,23 +18,7 @@
        "url":  "/external_data/<%= @dataset %>",
        "dataSrc": "data"
      },
-     "columns": [
-       {
-         "data": "id"
-       },
-       {
-         "render": function(data, type, row, meta ) {
-           if(row['matched']) {
-             return "<em>Already Matched</em>"
-           } else {
-             return '<a href="/external_entities/' + row.external_entity_id + '">match</a>'
-           }
-         }
-       },
-       {
-         "data": "data.FullName"
-       }
-     ]
+     "columns": <%= render_columns_js(@dataset) %>
    })
  })
 </script>
