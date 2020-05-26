@@ -2,6 +2,7 @@ describe DatatablesService do
   describe 'initialize' do
     let(:params) do
       {
+        'dataset' => "nycc",
         'draw' => '31',
         'start' => 0,
         'length' => 50,
