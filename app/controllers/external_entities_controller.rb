@@ -5,6 +5,7 @@ class ExternalEntitiesController < ApplicationController
   before_action :set_external_entity, only: %i[show update]
 
   def index
+    @dataset = params[:dataset].presence
   end
 
   # GET /external_entities/:id

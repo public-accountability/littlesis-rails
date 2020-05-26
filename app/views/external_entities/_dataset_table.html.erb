@@ -1,0 +1,40 @@
+<table id="dataset-table" class="table">
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>match</th>
+      <th>name</th>
+    </tr>
+  </thead>
+</table>
+
+
+<script>
+ $(function(){
+   $('#dataset-table').DataTable({
+     "processing": true,
+     "serverSide": true,
+     "ajax": {
+       "url":  "/external_data/<%= @dataset %>",
+       "dataSrc": "data"
+     },
+     "columns": [
+       {
+         "data": "id"
+       },
+       {
+         "render": function(data, type, row, meta ) {
+           if(row['matched']) {
+             return "<em>Already Matched</em>"
+           } else {
+             return '<a href="/external_entities/' + row.external_entity_id + '">match</a>'
+           }
+         }
+       },
+       {
+         "data": "data.FullName"
+       }
+     ]
+   })
+ })
+</script>
