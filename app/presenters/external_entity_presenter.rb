@@ -10,12 +10,26 @@ class ExternalEntityPresenter < SimpleDelegator
     case dataset
     when 'iapd_advisors'
       @display_information = iapd_advisors_information
+    when 'nycc'
+      @display_information = nycc_information
     else
       raise NotImplementedError
     end
   end
 
   private
+
+  def nycc_information
+    data = external_data.data
+    {
+      'Name' => data['FullName'],
+      'Party' => data['Party'],
+      'District' => data['District'],
+      'Website' => data['Website'],
+      'Office Address' => data['DistrictOfficeAddress'],
+      'Email' => data['Email']
+    }
+  end
 
   def iapd_advisors_information
     data = external_data.data

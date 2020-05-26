@@ -6,6 +6,8 @@
 #   ExternalEntity#automatch            Automatically matches, if possible
 #   ExternalEntity#match_with(<Entity>) Performs match
 class ExternalEntity < ApplicationRecord
+  NYCC_LIST_ID = 2780
+
   enum dataset: ExternalData::DATASETS
   enum priority: { default: 0 }
 
@@ -29,6 +31,9 @@ class ExternalEntity < ApplicationRecord
       # TODO handle additional aliases
       org_name = external_data.data['names'].first
       EntityMatcher.find_matches_for_org(org_name)
+    when 'nycc'
+      name = external_data.data['FullName']
+      EntityMatcher.find_matches_for_person(name)
     else
       raise NotImplementedError
     end
@@ -121,6 +126,8 @@ class ExternalEntity < ApplicationRecord
       if ExternalLink.crd_number?(crd_number)
         ExternalLink.crd.find_or_create_by!(entity_id: entity_id, link_id: crd_number)
       end
+    when 'nycc'
+      ListEntity.find_or_create_by!(list_id: NYCC_LIST_ID, entity_id: entity.id)
     else
       raise NotImplementedError
     end

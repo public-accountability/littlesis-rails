@@ -1,0 +1,33 @@
+<table id="dataset-table" class="table">
+  <thead>
+    <tr>
+      <% if @dataset == 'nycc' %>
+        <th>ID</th>
+        <th>Match</th>
+        <th>Name</th>
+      <% elsif @dataset == 'iapd_advisors' %>
+        <th>ID</th>
+        <th>Match</th>
+        <th>Name</th>
+        <th>Assets Under Management</th>
+        <th>Latest Filing Date</th>
+      <% else %>
+        <% raise NotImplementedError %>
+      <%end %>
+    </tr>
+  </thead>
+</table>
+
+<script>
+ $(function(){
+   $('#dataset-table').DataTable({
+     "processing": true,
+     "serverSide": true,
+     "ajax": {
+       "url":  "/external_data/<%= @dataset %>",
+       "dataSrc": "data"
+     },
+     "columns": <%= render_columns_js(@dataset) %>
+   })
+ })
+</script>

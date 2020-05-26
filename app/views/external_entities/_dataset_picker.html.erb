@@ -1,0 +1,10 @@
+<div class="dataset-picker">
+  <%= form_with url: external_entities_path, method: :get do %>
+    <%=
+    select_tag "dataset",
+     options_for_select(ExternalData::DATASETS.keys.without(:reserved), @dataset),
+     include_blank: true,
+     onchange: "this.closest('form').submit()"
+    %>
+  <% end %>
+</div>

@@ -12,7 +12,7 @@ class ExternalData < ApplicationRecord
 
   serialize :data, JSON
 
-  # has_one :external_entity
+  has_one :external_entity, required: false, dependent: :destroy
 
   def merge_data(d)
     if data.nil?
