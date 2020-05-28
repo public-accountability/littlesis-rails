@@ -48,6 +48,9 @@ gem 'redis'
 # For easy cron scheduling
 gem 'whenever', '~> 1.0.0', :require => false
 
+# handle currencies etc
+gem 'money'
+
 group :development do
   gem 'web-console'
 end
