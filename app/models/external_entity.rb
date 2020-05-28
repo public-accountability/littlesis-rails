@@ -27,11 +27,7 @@ class ExternalEntity < ApplicationRecord
   # For example the module ExternalEntity::Datasets::IapdAdvisors
   # is extended if record's dataset is iapd_advisors
   after_initialize do
-    if dataset
-      extend "ExternalEntity::Datasets::#{dataset.camelize}".constantize
-    else
-      Rails.logger.debug 'missing required attribute: dataset'
-    end
+    extend "ExternalEntity::Datasets::#{dataset.camelize}".constantize
   end
 
   # is it already connected to an entity
