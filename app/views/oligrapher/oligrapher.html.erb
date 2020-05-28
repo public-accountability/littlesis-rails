@@ -1,7 +1,7 @@
 <%= content_for(:body) do %>
 
 <% if @is_pending_editor %>
-  <div class="pending-editor-notice">
+  <div class="oligrapher-pending-editor-notice">
     The owner of this map has invited you to become an editor. If you accept you will be able to edit the map and your username will appear in the byline.
     &nbsp;
     <%= button_to "Accept", confirm_editor_oligrapher_path(@map) %>
