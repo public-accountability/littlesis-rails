@@ -9,58 +9,113 @@ describe ListsController, :list_helper, type: :controller do
   it { is_expected.to route(:post, '/lists/1/entities/bulk').to(action: :create_entity_associations, id: 1) }
 
   describe 'GET /lists' do
-    login_user
     let(:inc) { create(:entity_org) }
+    let(:list_owner) { create_basic_user }
+    let!(:restricted_user) { create_restricted_user }
+    let!(:permitted_lister) { create_basic_user }
+    let!(:private_list) { create(:list, name: 'my private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
+    let!(:open_list) { create(:list, name: 'public list', access: Permissions::ACCESS_OPEN) }
+    let!(:closed_list) { create(:list, name: 'my closed list', access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
+    let!(:other_list) { create(:list, name: "someone else's private list", access: Permissions::ACCESS_PRIVATE, creator_user_id: permitted_lister.id) }
 
     before do
-      lists = [
-        create(:list),
-        create(:list, name: 'my interesting list'),
-        create(:list, name: 'someone else private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: controller.current_user.id + 1),
-        create(:list, name: 'current user private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: controller.current_user.id)
-      ]
-      lists.each do |list|
+      [private_list, open_list, closed_list, other_list].each do |list|
         ListEntity.find_or_create_by(list_id: list.id, entity_id: inc.id)
       end
-
-      get :index
     end
 
-    it { should respond_with(:success) }
-    it { should render_template(:index) }
+    context 'with the list owner logged in' do
+      before do
+        sign_in list_owner
+        get :index
+      end
 
-    it '@lists only includes public lists and private lists created by the current user' do
-      expect(assigns(:lists).length).to eq(3)
+      it { is_expected.to respond_with(:success) }
+      it { is_expected.to render_template(:index) }
+
+      it 'only returns public lists and private lists created by the current user' do
+        expect(assigns(:lists)).to include(open_list, private_list, closed_list)
+        expect(assigns(:lists)).not_to include(other_list)
+      end
+
+      it '@lists has correct names' do
+        expect(assigns(:lists).map(&:name)).to include('public list', 'my private list', 'my closed list')
+      end
     end
 
-    it '@lists has correct names' do
-      expect(assigns(:lists).map(&:name).to_set)
-        .to eql ['Fortune 1000 Companies', 'my interesting list', 'current user private list'].to_set
+    context 'with the user logged out' do
+      before do
+        get :index
+      end
+
+      it { is_expected.to respond_with(:success) }
+      it { is_expected.to render_template(:index) }
+
+      it 'only returns public lists' do
+        expect(assigns(:lists)).to include(open_list, closed_list)
+        expect(assigns(:lists)).not_to include(other_list, private_list)
+      end
     end
 
-    it '@lists does not include private list created by some other user' do
-      list_names = assigns(:lists).map(&:name)
-      expect(list_names).not_to include('someone else private list')
+    context 'with a restricted user logged in' do
+      before do
+        sign_in restricted_user
+        get :index
+      end
+
+      it { is_expected.to respond_with(:success) }
+      it { is_expected.to render_template(:index) }
+
+      it 'only returns public lists' do
+        expect(assigns(:lists)).to include(open_list, closed_list)
+        expect(assigns(:lists)).not_to include(other_list, private_list)
+      end
     end
   end
 
-  describe 'user not logged in' do
-    let(:entity) { create(:entity_org) }
-    let(:user) { create_basic_user }
+  describe 'get editable lists' do
+    let(:list_owner) { create_basic_user }
+    let!(:restricted_user) { create_restricted_user }
+    let!(:permitted_lister) { create_basic_user }
+    let!(:private_list) { create(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
+    let!(:public_list) { create(:list, access: Permissions::ACCESS_OPEN) }
+    let!(:closed_list) { create(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
 
-    before do
-      @new_list = create(:open_list, name: 'my interesting list', creator_user_id: user.id)
-      @private_list = create(:list, name: 'someone else private list', access: Permissions::ACCESS_PRIVATE, creator_user_id: nil)
-      ListEntity.find_or_create_by(list_id: @new_list.id, entity_id: entity.id)
-      ListEntity.find_or_create_by(list_id: @private_list.id, entity_id: entity.id)
-      get :index
+    context 'with a logged in list owner' do
+      before do
+        sign_in(list_owner)
+        get :index, params: { editable: true }
+      end
+
+      it 'includes all editable lists' do
+        expect(assigns(:lists)).to include(private_list, public_list, closed_list)
+      end
     end
 
-    it { should render_template(:index) }
+    context 'with a lister other than the private list owner' do
+      before do
+        sign_in(permitted_lister)
+        get :index, params: { editable: true }
+      end
 
-    it '@lists only includes public lists' do
-      expect(assigns(:lists).length).to eq 1
-      expect(assigns(:lists)[0]).to eq @new_list
+      it "does not include other people's private lists or closed lists" do
+        expect(assigns(:lists)).not_to include(private_list, closed_list)
+      end
+
+      it "includes public lists" do
+        expect(assigns(:lists)).to include(public_list)
+      end
+    end
+
+    context 'with no list permissions' do
+      before do
+        sign_in(restricted_user)
+        get :index, params: { editable: true }
+      end
+
+      it "returns no lists" do
+        expect(assigns(:lists)).to be_empty
+      end
     end
   end
 

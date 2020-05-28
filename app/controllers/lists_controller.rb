@@ -40,24 +40,10 @@ class ListsController < ApplicationController
     page = params[:page] || 1
     per = 20
 
-    if current_user.present?
-      @lists = List.where('ls_list.access <> ? OR ls_list.creator_user_id = ?', Permissions::ACCESS_PRIVATE, current_user.id)
-        .page(page)
-        .per(per)
-    else
-      @lists = List.public_scope.page(page).per(per)
-    end
-
-    sort_lists
-
-    if params[:q].present?
-      is_admin = current_user&.admin? ? [0, 1] : 0
-      list_ids = List.search(
-        Riddle::Query.escape(params[:q]),
-        with: { is_deleted: 0, is_admin: is_admin }
-      ).map(&:id)
-      @lists = @lists.where(id: list_ids).reorder('')
-    end
+    @lists = search_lists(available_scope)
+      .force_reorder(params[:sort_by], params[:order])
+      .page(page)
+      .per(per)
 
     respond_to do |format|
       format.html
@@ -313,15 +299,28 @@ class ListsController < ApplicationController
     end
   end
 
-  def sort_lists # rubocop:disable Metrics/AbcSize
-    @lists =
-      if params[:sort_by].present?
-        @lists.order(params.fetch(:sort_by) => params.fetch(:order))
-      elsif current_user.present?
-        @lists.order(Arel.sql("ls_list.creator_user_id = #{current_user.id} DESC, updated_at DESC"))
-      else
-        @lists.order(updated_at: :desc)
-      end
+  def available_scope
+    if params[:editable] == 'true'
+      List.editable(current_user)
+    else
+      List.viewable(current_user)
+    end
+  end
+
+  def search_lists(lists)
+    if params[:q].present?
+      ids = List.search_for_ids(
+        Riddle::Query.escape(params[:q]),
+        with: { is_deleted: 0, is_admin: search_admin_param }
+      )
+      lists.where(id: ids)
+    else
+      lists
+    end
+  end
+
+  def search_admin_param
+    current_user&.admin? ? [0, 1] : 0
   end
 
   def format_lists(lists)
