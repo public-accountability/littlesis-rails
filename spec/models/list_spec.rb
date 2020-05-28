@@ -137,6 +137,42 @@ describe List do
     end
   end
 
+  describe '.viewable' do
+    let(:list_owner) { create_basic_user }
+    let!(:other_person) { create_basic_user }
+    let!(:private_list) { create(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
+    let!(:public_list) { create(:list, access: Permissions::ACCESS_OPEN) }
+    let!(:closed_list) { create(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
+
+    it "returns correct viewable lists" do
+      expect(List.viewable(list_owner)).to include(private_list, public_list, closed_list)
+    end
+
+    it "doesn't return non-viewable lists" do
+      expect(List.viewable(other_person)).to include(public_list, closed_list)
+      expect(List.viewable(other_person)).not_to include(private_list)
+    end
+  end
+
+  describe '.editable' do
+    let(:list_owner) { create_basic_user }
+    let!(:other_person) { create_restricted_user }
+    let!(:permitted_lister) { create_basic_user }
+    let!(:private_list) { create(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
+    let!(:public_list) { create(:list, access: Permissions::ACCESS_OPEN) }
+    let!(:closed_list) { create(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
+
+    it "returns correct editable lists" do
+      expect(List.editable(list_owner)).to include(private_list, public_list, closed_list)
+      expect(List.editable(permitted_lister)).to include(public_list)
+    end
+
+    it "doesn't return non-editable lists" do
+      expect(List.editable(other_person)).not_to include(private_list, public_list, closed_list)
+      expect(List.editable(permitted_lister)).not_to include(private_list)
+    end
+  end
+
   describe 'restricted?' do
     it 'restricts access to admin lists' do
       expect(build(:list, is_admin: true).restricted?).to be true

@@ -23,6 +23,23 @@ class List < ApplicationRecord
 
   scope :public_scope, -> { where("access <> #{Permissions::ACCESS_PRIVATE}") }
   scope :private_scope, -> { where(access: Permissions::ACCESS_PRIVATE) }
+  scope :open_scope, -> { where(access: Permissions::ACCESS_OPEN) }
+
+  def self.viewable(user)
+    if user
+      public_scope.or(user.lists)
+    else
+      public_scope
+    end
+  end
+
+  def self.editable(user)
+    if user&.has_ability?(:list)
+      open_scope.or(user.lists)
+    else
+      none
+    end
+  end
 
   def destroy
     soft_delete
