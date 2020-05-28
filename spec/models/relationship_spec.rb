@@ -836,4 +836,60 @@ describe Relationship, type: :model do
       end
     end
   end
+
+  describe 'donation currency validations' do
+    let(:loeb) { create(:loeb) }
+    let(:nrsc) { create(:nrsc) }
+
+    context 'without specifying a currency' do
+      let(:donation) { build(:loeb_donation, entity: loeb, related: nrsc, filings: 1, amount: 10_000) }
+      let(:generic_relationship) { create(:generic_relationship, entity: loeb, related: nrsc) }
+
+      it 'defaults to USD when there is an amount' do
+        donation.valid?
+        expect(donation.currency).to eq 'usd'
+      end
+
+      it 'defaults to nil when there is no amount' do
+        donation.amount = nil
+        donation.valid?
+        expect(donation.currency).to be nil
+      end
+
+      it 'does not raise a validation error when there is no amount' do
+        expect(generic_relationship.valid?).to be true
+      end
+    end
+
+    context 'with a currency but no amount' do
+      let(:donation) { build(:loeb_donation, entity: loeb, related: nrsc, filings: 1, amount: nil, currency: :usd) }
+
+      it 'raises a validation error' do
+        donation.valid?
+        expect(donation.errors.full_messages).to include('Currency entered without an amount')
+      end
+    end
+
+    context 'with a currency and an amount' do
+      let(:donation) { build(:loeb_donation, entity: loeb, related: nrsc, filings: 1, amount: 23_000, currency: :usd) }
+
+      it 'is valid' do
+        expect(donation.valid?).to be true
+      end
+    end
+
+    context 'when validating currency codes' do
+      let(:donation) { build(:loeb_donation, entity: loeb, related: nrsc, filings: 1, amount: 20_000, currency: :usd) }
+
+      it 'accepts ISO codes' do
+        expect(donation.valid?).to be true
+      end
+
+      it "raises a validation error when the code is invalid" do
+        donation.currency = 'frog bats'
+        donation.valid?
+        expect(donation.errors.full_messages).to include("Currency frog bats is not a valid currency code")
+      end
+    end
+  end
 end
