@@ -1,0 +1,24 @@
+[
+  {
+    "data": "id",
+    "searchable": false,
+    "orderable": false
+  },
+  {
+    "data": "match",
+    "render": function(data, type, row, meta ) {
+      if(row['matched']) {
+        return "<em>Already Matched</em>"
+      } else {
+        return '<a href="/external_entities/' + row.external_entity_id + '">match</a>'
+      }
+    },
+    "searchable": false,
+    "orderable": false
+  },
+  {
+    "data": "data.FullName",
+    "searchable": true,
+    "orderable": false
+  }
+]

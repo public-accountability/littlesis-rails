@@ -374,14 +374,26 @@ Lilsis::Application.routes.draw do
     get '/corporate-mapping-project' => 'partners#cmp'
   end
 
-  #####################
-  # external entities #
-  #####################
+  ##############################
+  # external entities and data #
+  ##############################
 
-  resources :external_entities, only: %i[show update] do
-    collection do
-      get 'random'
-    end
+  get '/external_data/:dataset' => 'external_data#dataset', constraints: DatasetConstraint.new
+
+  resources :external_entities, only: %i[index show update] do
+    get 'random', on: :collection, action: :random
+    get '/:dataset',
+        on: :collection,
+        action: :dataset,
+        constraints: DatasetConstraint.new
+    get '/:dataset/random',
+        on: :collection,
+        action: :random,
+        constraints: DatasetConstraint.new
+    get '/:dataset/:id',
+        on: :collection,
+        action: :show,
+        constraints: DatasetConstraint.new(check_id: true)
   end
 
   match "*path", to: "errors#not_found", via: :all
