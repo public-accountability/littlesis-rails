@@ -11,17 +11,17 @@ describe DatatablesService do
       }
     end
 
-    it 'sets values' do
+    it 'initializes attributes' do
       ds = DatatablesService.new(params)
       expect(ds.draw).to eq 31
       expect(ds.start).to eq 0
-      expect(ds.length).to eq 50
+      expect(ds.length).to eq 50q
       expect(ds.search[:value]).to eq 'example'
       expect(ds.search[:regex]).to be false
     end
   end
 
-  describe 'parse columns' do
+  describe 'parsing columns' do
     let(:params) do
       {
         "draw" => "1",
@@ -41,7 +41,7 @@ describe DatatablesService do
       }
     end
 
-    it 'converts columns hash into array'  do
+    it 'parses datatables column request input' do
       columns = DatatablesService.new(params).columns
       expect(columns).to be_a Array
       expect(columns.length).to eq 3

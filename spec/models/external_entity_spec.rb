@@ -9,8 +9,8 @@ describe ExternalEntity, type: :model do
   it { is_expected.to belong_to(:entity).optional }
 
   specify 'matched?' do
-    expect(build(:external_entity, entity_id: nil).matched?).to be false
-    expect(build(:external_entity, entity_id: 123).matched?).to be true
+    expect(build(:external_entity, entity_id: nil, dataset: 1).matched?).to be false
+    expect(build(:external_entity, entity_id: 123, dataset: 'nycc').matched?).to be true
   end
 
   describe 'match_with' do

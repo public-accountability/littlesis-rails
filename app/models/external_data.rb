@@ -6,7 +6,9 @@ class ExternalData < ApplicationRecord
                iapd_schedule_a: 2,
                nycc: 3 }.freeze
 
+  DATASET_NAMES = DATASETS.keys.without(:reserved).map(&:to_s).freeze
   DATASETS_INVERTED = DATASETS.invert.freeze
+
 
   enum dataset: DATASETS
 
@@ -31,5 +33,9 @@ class ExternalData < ApplicationRecord
       FROM external_data
       GROUP BY dataset
     SQL
+  end
+
+  def self.dataset?(x)
+    DATASET_NAMES.include? x.to_s.downcase
   end
 end
