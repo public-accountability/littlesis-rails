@@ -1,5 +1,6 @@
 describe ListsController, :list_helper, type: :controller do
   before(:all) { DatabaseCleaner.start }
+
   after(:all) { DatabaseCleaner.clean }
 
   it { is_expected.to route(:delete, '/lists/1').to(action: :destroy, id: 1) }
@@ -119,28 +120,31 @@ describe ListsController, :list_helper, type: :controller do
     end
   end
 
-  context 'if user is restricted' do
+  describe 'POST create with restricted user' do
     login_restricted_user
+
     let(:create_list_post) do
       post :create, params: { list: { name: 'list name' }, ref: { url: 'http://mysource' } }
     end
 
     it 'does not create a list' do
-      expect { create_list_post }.not_to change { List.count }
+      expect { create_list_post }.not_to change(List, :count)
     end
   end
 
   describe 'POST create' do
     login_user
 
-    context 'When missing name and url' do
+    context 'when missing name and url' do
       let(:params) { { list: { name: '' }, ref: { url: '' } } }
+
       before { post :create, params: params }
+
       specify { expect(response).to render_template(:new) }
       specify { expect(assigns(:list).errors.size).to eq(2) }
     end
 
-    context 'When missing just name or just source' do
+    context 'when missing just name or just source' do
       it 'renders new template' do
         post :create, params: { list: { name: 'a name' }, ref: { url: '' } }
         expect(response).to render_template(:new)
@@ -157,7 +161,7 @@ describe ListsController, :list_helper, type: :controller do
       end
     end
 
-    context 'submission with name and source' do
+    context 'with name and source' do
       it 'redirects to the newly created list' do
         post :create,  params: { list: { name: 'list name' }, ref: { url: 'http://mysource' } }
         expect(response).to redirect_to(assigns(:list))
@@ -166,14 +170,13 @@ describe ListsController, :list_helper, type: :controller do
       it 'saves the list' do
         expect do
           post :create, params: { list: { name: 'list name' }, ref: { url: 'http://mysource' } }
-        end.to change { List.count }.by(1)
-        expect(List.last).to eql assigns(:list)
+        end.to change(List, :count).by(1)
       end
 
       it 'create a reference with a name provided' do
         expect do
           post :create, params: { list: { name: 'list name' }, ref: { url: 'http://mysource' } }
-        end.to change { Reference.count }.by(1)
+        end.to change(Reference, :count).by(1)
 
         expect(Reference.last.referenceable_id).to eql assigns(:list).id
         expect(Reference.last.referenceable_type).to eql 'List'

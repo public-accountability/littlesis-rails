@@ -67,7 +67,7 @@ describe 'List Requests' do
       specify do
         expect { post '/lists', params: params }.to change(List, :count).by(1)
         expect(response).to have_http_status(302)
-        expect(List.last.references.first.document.url).to eq url
+        expect(assigns(:list).references.first.document.url).to eq url
       end
     end
   end
