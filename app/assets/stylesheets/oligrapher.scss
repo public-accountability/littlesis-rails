@@ -4,3 +4,14 @@
 @import "base/layout";
 
 .glyphicon-search { &:before { content: "\e003"; } }
+
+.oligrapher-pending-editor-notice {
+  background-color: pink;
+  text-align: center;
+  font-size: 0.8em;
+  padding: 0.5em;
+
+  form, button {
+    display: inline-block;
+  }
+}

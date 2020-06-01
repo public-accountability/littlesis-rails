@@ -365,8 +365,9 @@ describe "Oligrapher", type: :request do
     let(:entity1) { create(:entity_person) }
     let(:entity2) { create(:entity_person) }
     let(:rel) { create(:donation_relationship, entity: entity1, related: entity2, is_current: false) }
+    let(:rel2) { create(:social_relationship, entity: entity1, related: entity2, is_current: true) }
 
-    before { entity1; entity2; rel; }
+    before { entity1; entity2; rel; rel2; }
 
     it 'responds with bad request if missing query' do
       get '/oligrapher/find_nodes', params: {}
@@ -378,9 +379,12 @@ describe "Oligrapher", type: :request do
       expect(response).to have_http_status 200
       expect(json.length).to eq 1
       expect(json.first['id']).to eq entity2.id.to_s
-      expect(json.first['edge']['id']).to eq rel.id.to_s
-      expect(json.first['edge']['dash']).to eq true
-      expect(json.first['edge']['arrow']).to eq '1->2'
+      expect(json.first['edges'].first['id']).to eq rel.id.to_s
+      expect(json.first['edges'].first['dash']).to eq true
+      expect(json.first['edges'].first['arrow']).to eq '1->2'
+      expect(json.first['edges'].second['id']).to eq rel2.id.to_s
+      expect(json.first['edges'].second['dash']).to eq false
+      expect(json.first['edges'].second['arrow']).to eq nil
     end
   end
 

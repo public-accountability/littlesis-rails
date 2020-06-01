@@ -143,20 +143,21 @@ class OligrapherController < ApplicationController
     return head :bad_request if params[:entity_id].blank?
 
     entity = Entity.find(params[:entity_id])
+    nodes = {}
 
-    entities = EntityConnectionsQuery
+    EntityConnectionsQuery
       .new(entity)
       .category(params[:category_id])
       .page(1)
       .per(params.fetch(:num, 10))
       .run
-      .map { |e|
-        node = Oligrapher::Node.from_entity(e)
-        node[:edge] = Oligrapher.rel_to_edge(Relationship.find(e.relationship_id))
-        node
+      .each { |e|
+        nodes[e.id] = Oligrapher::Node.from_entity(e) unless nodes[e.id]
+        nodes[e.id][:edges] = [] unless nodes[e.id][:edges].present?
+        nodes[e.id][:edges].push(Oligrapher.rel_to_edge(Relationship.find(e.relationship_id)))
       }
 
-    render json: entities
+    render json: nodes.values
   end
 
   def get_edges
