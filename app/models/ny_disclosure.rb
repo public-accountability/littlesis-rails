@@ -16,6 +16,27 @@ class NyDisclosure < ApplicationRecord
     'L' => '24 hour Notice'
   }.freeze
 
+  TRANSACTION_CODE = {
+    'A' => 'Monetary Contributions Received from: Individuals & Partnerships',
+    'B' => 'Monetary Contributions Received from: Corporate',
+    'C' => 'Monetary Contributions Received from: All Other',
+    'D' => 'In-Kind (Non-Monetary) Contributions Received',
+    'E' => 'Other Receipts Received',
+    'F' => 'Expenditures/Payments',
+    'G' => 'Transfers In',
+    'H' => 'Transfers Out',
+    'I' => 'Loans Received',
+    'J' => 'Loan Repayments',
+    'K' => 'Liabilities/Loans Forgiven',
+    'L' => 'Expenditure Refunds (Increases Balance)',
+    'M' => 'Expenditure Refunded (Decreases Balance)',
+    'N' => 'Outstanding Liabilities/Loans',
+    'O' => 'Partnerships / Subcontractor',
+    'P' => 'Non-Campaign Housekeeping Receipts',
+    'Q' => 'Non-Campaign Housekeeping Expenses',
+    'R' => 'Expense Allocation Among Candidates'
+  }.freeze
+
   has_one :ny_match, inverse_of: :ny_disclosure, dependent: :destroy
   belongs_to :ny_filer,
              class_name: 'NyFiler',

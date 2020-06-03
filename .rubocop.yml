@@ -111,6 +111,7 @@ Layout/MultilineMethodCallIndentation:
 Layout/EmptyLinesAroundBlockBody:
   Exclude:
     - 'spec/**/*.rb'
+    - 'lib/scripts/*.rb'
 
 Rails/SkipsModelValidations:
   Exclude:

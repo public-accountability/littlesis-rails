@@ -1,4 +1,6 @@
 describe ExternalEntity, type: :model do
+  subject { build(:external_entity) }
+
   it { is_expected.to have_db_column(:dataset).of_type(:integer) }
   it { is_expected.to have_db_column(:match_data).of_type(:text) }
   it { is_expected.to have_db_column(:entity_id).of_type(:integer) }
@@ -9,8 +11,8 @@ describe ExternalEntity, type: :model do
   it { is_expected.to belong_to(:entity).optional }
 
   specify 'matched?' do
-    expect(build(:external_entity, entity_id: nil).matched?).to be false
-    expect(build(:external_entity, entity_id: 123).matched?).to be true
+    expect(build(:external_entity_nycc, entity_id: nil).matched?).to be false
+    expect(build(:external_entity_nycc, entity_id: 123).matched?).to be true
   end
 
   describe 'match_with' do

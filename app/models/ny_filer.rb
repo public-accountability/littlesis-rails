@@ -1,12 +1,26 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
-
+# A NyFiler is a committee or PAC registered with the NYS board of elections
+# Filter types
+#  1      Individual campaign committee
+#  2      PAC
+#  3-7    Constituted/party Committees
+#  3H-7H  Constituted/party campaign finance registration form
+#  8      Independent Expenditure Committee (unauthorized)
+#  9      Authorized Multi-Candidate Committees
+#  9B     Ballot Issue Committee
+# Source: https://www.elections.ny.gov/NYSBOE/download/finance/hndbk2019.pdf
+# Forms: https://www.elections.ny.gov/CampaignFinanceForms.html
+#
 class NyFiler < ApplicationRecord
   has_one :ny_filer_entity, dependent: :destroy
   has_one :unmatched_ny_filer, dependent: :destroy
   has_many :entities, :through => :ny_filer_entity
-  has_many :ny_disclosures, foreign_key: 'filer_id', inverse_of: :ny_filer, dependent: :nullify
+  has_many :ny_disclosures,
+           primary_key: 'filer_id',
+           foreign_key: 'filer_id',
+           inverse_of: :ny_filer,
+           dependent: :restrict_with_exception
 
   validates :filer_id, presence: true, uniqueness: { case_sensitive: false }
 
@@ -57,6 +71,10 @@ class NyFiler < ApplicationRecord
 
   def self.search_pacs(name)
     search_by_name_and_committee_type(name, ['2', '9', '8'])
+  end
+
+  def self.cuomo
+    find_by filer_id: 'A31966'
   end
 
   # str, [ str ] => <ThinkingSphinx::Search>
@@ -146,5 +164,3 @@ class NyFiler < ApplicationRecord
 
   class AlreadyMatchedError < StandardError; end
 end
-
-# rubocop:enable Metrics/ClassLength

@@ -5,6 +5,33 @@ FactoryBot.define do
     data { "" }
   end
 
+  factory :external_data_nycc_borelli, class: 'ExternalData' do
+    dataset { "nycc" }
+    dataset_id { Faker::Number.unique.number(digits: 4).to_s }
+    data do
+      {
+        "District" => "51",
+        "PersonId" => "7264",
+        "Party" => "Republican",
+        "FullName" => "Joseph C. Borelli"
+      }
+    end
+  end
+
+  factory :external_data_nycc_constantinides, class: 'ExternalData' do
+    dataset { "nycc" }
+    dataset_id { Faker::Number.unique.number(digits: 4).to_s }
+    data do
+      {
+        "District" => "22",
+        "PersonId" => "7627",
+        "CouncilDistrict" => "NYCC51",
+        "Party" => "Democrat",
+        "FullName" => "Costa G. Constantinides"
+      }
+    end
+  end
+
   factory :external_data_iapd_advisor, class: 'ExternalData' do
     dataset { "iapd_advisors" }
     dataset_id { "100" }
