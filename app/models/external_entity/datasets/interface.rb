@@ -19,8 +19,7 @@ class ExternalEntity
         self
       end
 
-      def set_primary_ext
-      end
+      def set_primary_ext; end
     end
   end
 end

@@ -22,7 +22,7 @@ class ExternalEntity
       end
 
       def matches
-        # TODO handle additional aliases
+        # TODO: handle additional aliases
         org_name = external_data.data['names'].first
         EntityMatcher.find_matches_for_org(org_name)
       end

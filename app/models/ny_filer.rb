@@ -164,5 +164,3 @@ class NyFiler < ApplicationRecord
 
   class AlreadyMatchedError < StandardError; end
 end
-
-# rubocop:enable Metrics/ClassLength

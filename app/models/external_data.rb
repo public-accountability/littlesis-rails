@@ -83,7 +83,6 @@ class ExternalData < ApplicationRecord
     class_eval "#{dataset}.count"
   end
 
-
   private_class_method def self.verify_dataset!(x)
     unless dataset?(x)
       raise Exceptions::LittleSisError # , "Invalid Dataset: #{x}"

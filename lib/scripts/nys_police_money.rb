@@ -1,43 +1,45 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/MethodLength
+
 require Rails.root.join('lib/utility.rb').to_s
 
-PAC_NAMES = <<TXT
-%Court Officers%
-%CORRECTION OFFICERS%
-%Police Officers%
-%Officers Association%
-%Detectives Association%
-%SHERIFF%ASSOCIATION%
-%Patrolmen%
-%POLICE%
-PBA%
-Correction Officers Benevolent Association%
-Nassau County Corrections Officers%
-Suffolk County Correction Officers%
-Westchester County Correction Officers%
-COBANC%
-NYSCOPBA%
-Captain%Endowment%
-Detectives Ass%
-National NYCPD%
-NYC Deputy Sheriff%
-NYC DETECTIVE%
-NYC PATROLMEN%
-NYC PBA%
-NYC POLICE BENEVOLENT%
-NYC SERGEANTS BENEVOLENT%
-NYC RETIRED POLICE OFFICERS%
-NYC RETIRED TRANSIT OFFICERS%
-NYC RETIRED TRANSIT PO ASSOC%
-NYS Association of PBA%
-NYS Troopers%
-NYSPIA%
-NYCPD VERRAZANO%
-PA Police%
-Port Authority PBA%
-SERGEANTS BENEVOLENT%
-SERGEANTS%
+PAC_NAMES = <<~TXT
+  %Court Officers%
+  %CORRECTION OFFICERS%
+  %Police Officers%
+  %Officers Association%
+  %Detectives Association%
+  %SHERIFF%ASSOCIATION%
+  %Patrolmen%
+  %POLICE%
+  PBA%
+  Correction Officers Benevolent Association%
+  Nassau County Corrections Officers%
+  Suffolk County Correction Officers%
+  Westchester County Correction Officers%
+  COBANC%
+  NYSCOPBA%
+  Captain%Endowment%
+  Detectives Ass%
+  National NYCPD%
+  NYC Deputy Sheriff%
+  NYC DETECTIVE%
+  NYC PATROLMEN%
+  NYC PBA%
+  NYC POLICE BENEVOLENT%
+  NYC SERGEANTS BENEVOLENT%
+  NYC RETIRED POLICE OFFICERS%
+  NYC RETIRED TRANSIT OFFICERS%
+  NYC RETIRED TRANSIT PO ASSOC%
+  NYS Association of PBA%
+  NYS Troopers%
+  NYSPIA%
+  NYCPD VERRAZANO%
+  PA Police%
+  Port Authority PBA%
+  SERGEANTS BENEVOLENT%
+  SERGEANTS%
 TXT
 
 ATTRIBUTES = %w[id filer_id report_id transaction_code e_year transaction_id schedule_transaction_date original_date contrib_code corp_name address city state zip amount1 description].freeze
@@ -126,3 +128,5 @@ end
 save 'nys_police_money_disclosures.csv', disclosures
 save 'nys_police_money_grouped_by_donor_and_recipient.csv', group_by_donor_and_filer
 save 'nys_police_money_grouped_by_recipient.csv', group_by_recipient
+
+# rubocop:enable Metrics/MethodLength

@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-# define these class methods on
-#    def self.datatables_scope
-#    end
-#
-#    def self.datatables_search
-#    end
-#
-#
 module Datatables
   Response = Struct.new(:draw, :recordsTotal, :recordsFiltered, :data, keyword_init: true)
 
