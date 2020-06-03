@@ -9,7 +9,6 @@ class ExternalData < ApplicationRecord
   DATASET_NAMES = DATASETS.keys.without(:reserved).map(&:to_s).freeze
   DATASETS_INVERTED = DATASETS.invert.freeze
 
-
   enum dataset: DATASETS
 
   serialize :data, JSON
@@ -37,5 +36,57 @@ class ExternalData < ApplicationRecord
 
   def self.dataset?(x)
     DATASET_NAMES.include? x.to_s.downcase
+  end
+
+  # This is the backend for the external data overview table
+  # input: Datatables::Params
+  def self.datatables_query(params)
+    relation = if params.search_requested?
+                 dataset_search(params)
+               else
+                 public_send(params.dataset)
+               end
+
+    Datatables::Response.new(draw: params.draw).tap do |response|
+      response.recordsTotal = records_total(params.dataset)
+      response.recordsFiltered = relation.count
+      response.data = relation.to_datatables_array(params)
+    end
+  end
+
+  def self.dataset_search(params)
+    case params.dataset
+    when 'nycc'
+      nycc.where("JSON_VALUE(data, '$.FullName') like ?", "%#{params.search_value}%")
+    # when 'iapd_advisors'
+    # when 'iapd_schedule_a'
+    else
+      raise NotImplementedError
+    end
+  end
+
+  def self.to_datatables_array(params)
+    includes(:external_entity)
+      .offset(params.start)
+      .limit(params.length)
+      .to_a.map do |external_data|
+      {
+        id: external_data.id,
+        external_entity_id: external_data.external_entity&.id,
+        matched: external_data.external_entity&.matched?,
+        data: external_data.data
+      }
+    end
+  end
+
+  private_class_method def self.records_total(dataset)
+    class_eval "#{dataset}.count"
+  end
+
+
+  private_class_method def self.verify_dataset!(x)
+    unless dataset?(x)
+      raise Exceptions::LittleSisError # , "Invalid Dataset: #{x}"
+    end
   end
 end

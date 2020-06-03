@@ -4,8 +4,7 @@ class ExternalDataController < ApplicationController
 
   # GET /external_data/<dataset>
   def dataset
-    service = DatatablesService.new(params.to_unsafe_h)
-    render json: service.results
+    render json: ExternalData.datatables_query(Datatables::Params.new(params))
   end
 
 end

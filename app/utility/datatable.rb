@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 ##
+# TO BE REMOVED AFTER NYFILER DATASET
+# IS TRANSFER TO EXTERNAL ENTITIES
+##
 # module for datatable server-side processing
 # for entity matching tables
 
