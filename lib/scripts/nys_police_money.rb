@@ -43,7 +43,7 @@ TXT
 ATTRIBUTES = %w[id filer_id report_id transaction_code e_year transaction_id schedule_transaction_date original_date contrib_code corp_name address city state zip amount1 description].freeze
 
 CONDITIONS = PAC_NAMES
-               .split
+               .split("\n")
                .map { |x| NyDisclosure.arel_table[:corp_name].matches(x) }
                .reduce(:or)
 
@@ -80,7 +80,7 @@ def disclosures
       .slice(*ATTRIBUTES)
       .merge!(url: ny_disclosure.reference_link,
               recipient_name: ny_disclosure.ny_filer&.name,
-              recipient_littlesis_id: ny_disclosure.ny_filer&.ny_filer_entity&.id)
+              recipient_littlesis_id: ny_disclosure.ny_filer&.ny_filer_entity&.entity&.id)
   end
 end
 
