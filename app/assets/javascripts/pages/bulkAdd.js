@@ -133,9 +133,9 @@
     case 4:
       return [ 'Jane Doe', 'About Jane...', 'Person', '', '', '', '' ];
     case 5:
-      return [ 'Mr. Big Donor', 'Hedge fund manager', 'Person', 'Campaign Contribution', '250000', '2017-05-01', '2017-05-01', '', '', '' ];
+      return [ 'Mr. Big Donor', 'Hedge fund manager', 'Person', 'Campaign Contribution', '250000', 'usd', '2017-05-01', '2017-05-01', '', '', '' ];
     case 6:
-      return [ 'Company X', '', 'Org', 'sold real estate', 'bought real estate', '1996-10-01', '', '', '', '', ''];
+      return [ 'Company X', '', 'Org', 'sold real estate', 'bought real estate', '', '', '1996-10-01', '', '', '', '', ''];
     case 8:
       return [ 'Jane Doe', 'About Jane...', 'Person', 'Friend', 'Friend', '2000-01-01', '2015-04-15', 'NO', '' ];
     case 9:
@@ -347,6 +347,11 @@
     }).append('<option></option><option>Org</option><option>Person</option>');
   }
 
+  function currencySelect() {
+    var template = $('.currency-selector')[0];
+    return template.content.cloneNode(true);
+  }
+
   // trio Boolean Helper
   // .create(option) => return new button element
   // .value(<element>) -> returns selected button
@@ -394,6 +399,8 @@
       //return $('<td>', autocomplete);
     } else if (col[1] === 'primary_ext') {
       return $('<td>').append(primaryExtRadioButtons());
+    } else if (col[1] === 'currency') {
+      return $('<td>').append(currencySelect());
     } else if (col[1] === 'notes') {
       return $('<td>', { css: cssForNotesColumn(col), contenteditable: 'true' });
     } else {

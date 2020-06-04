@@ -24,6 +24,7 @@ describe RelationshipsController, type: :controller do
             'blurb' =>  nil,
             'primary_ext' => 'Person',
             'amount' => 500,
+            'currency' => 'usd',
             'description1' => 'contribution',
             'start_date' => '2017-01-01',
             'end_date' => nil,
@@ -35,6 +36,7 @@ describe RelationshipsController, type: :controller do
             'blurb' =>  nil,
             'primary_ext' => 'Org',
             'amount' =>  1000,
+            'currency' => 'usd',
             'description1' => 'contribution',
             'start_date' => nil,
             'end_date' => nil,
@@ -309,6 +311,37 @@ describe RelationshipsController, type: :controller do
           expect(amounts).to include 100_000
           expect(amounts).to include 1_000_000
           expect(amounts).to include 100_000_000
+        end
+      end
+
+      describe 'handling donation currencies' do
+        let(:corp) { create(:entity_org) }
+        let(:reference) { { url: 'http://example.com', name: 'example.com' } }
+        let(:relationships) do
+          [
+            { name: '$ donor', primary_ext: 'Person', amount: '$1,000', currency: :usd },
+            { name: '€ donor', primary_ext: 'Person', amount: '10000', currency: :eur },
+            { name: 'blank currency donor', primary_ext: 'Person', amount: '€1,000', currency: '' },
+            { name: 'nonsense currency donor', primary_ext: 'Person', amount: '€1,000', currency: 'cigarettes' }
+          ]
+        end
+        let!(:params) { { entity1_id: corp.id, category_id: 5, reference: reference, relationships: relationships } }
+
+        before do
+          post :bulk_add!, params: params
+        end
+
+        it 'returns currency errors' do
+          json = JSON.parse(response.body)
+          expect(json['errors'].count).to be 1
+          expect(json['errors'].first['errorMessage']).to include('cigarettes is not a valid currency')
+        end
+
+        it 'creates relationships with valid currencies' do
+          currencies = Entity.find(corp.id).relationships.map(&:currency)
+          expect(currencies.count).to be 3
+          expect(currencies).to include('usd', 'eur')
+          expect(currencies).not_to include('', 'cigarettes')
         end
       end
 
