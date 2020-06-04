@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class RelationshipDetails
+  include ActiveSupport::NumberHelper
+
   attr_accessor :details
 
   @@bool = lambda { |x| x ? 'yes' : 'no' }
-  @@money = lambda { |x| ActiveSupport::NumberHelper.number_to_currency(x, precision: 0) }
   @@percent = lambda { |x| x.to_s + '%' }
   @@human_int = lambda { |x| ActiveSupport::NumberHelper.number_to_human(x) }
 
@@ -55,7 +56,7 @@ class RelationshipDetails
       .add_field(:is_board, 'Board member', @@bool)
       .add_field(:is_executive, 'Executive', @@bool)
       .add_field(:is_employee, 'Employee', @@bool)
-      .add_field(:compensation, 'Compensation', @@money)
+      .add_field(:compensation, 'Compensation', format_in_usd)
       .add_field(:notes, 'Notes')
   end
 
@@ -74,7 +75,7 @@ class RelationshipDetails
       .add_field(:start_date, 'Start Date')
       .add_field(:end_date, 'End Date')
       .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:membership_dues, 'Dues', @@money)
+      .add_field(:membership_dues, 'Dues', format_in_usd)
       .add_field(:notes, 'Notes')
   end
 
@@ -92,7 +93,7 @@ class RelationshipDetails
       .add_field(:start_date, 'Start Date')
       .add_field(:end_date, 'End Date')
       .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:amount, 'Amount', @@money)
+      .add_field(:amount, 'Amount', format_with_currency)
       .add_field(:filings, filings_text)
       .add_field(:goods, 'Goods')
       .add_field(:notes, 'Notes')
@@ -104,7 +105,7 @@ class RelationshipDetails
       .add_field(:start_date, 'Start Date')
       .add_field(:end_date, 'End Date')
       .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:amount, 'Amount', @@money)
+      .add_field(:amount, 'Amount', format_with_currency)
       .add_field(:goods, 'Goods')
       .add_field(:notes, 'Notes')
   end
@@ -114,7 +115,7 @@ class RelationshipDetails
       .add_field(:start_date, 'Start Date')
       .add_field(:end_date, 'End Date')
       .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:amount, 'Amount', @@money)
+      .add_field(:amount, 'Amount', format_with_currency)
       .add_field(:filings, 'LDA Filings')
       .add_field(:notes, 'Notes')
   end
@@ -240,5 +241,20 @@ class RelationshipDetails
     else
       'FEC Filings'
     end
+  end
+
+  def format_with_currency
+    proc do |_x|
+      number_to_currency(
+        @rel.amount,
+        unit: @rel.currency.upcase,
+        precision: 0,
+        format: '%n %u'
+      )
+    end
+  end
+
+  def format_in_usd
+    ->(x) { number_to_currency(x, unit: 'USD', precision: 0, format: '%n %u') }
   end
 end

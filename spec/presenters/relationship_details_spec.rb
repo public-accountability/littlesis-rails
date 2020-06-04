@@ -12,6 +12,7 @@ describe RelationshipDetails do
           start_date: '1900',
           end_date: '2000',
           amount: 7000,
+          currency: :usd,
           filings: 2)
   end
 
@@ -37,7 +38,7 @@ describe RelationshipDetails do
 
   it 'returns details for position relationship' do
     position_relationship.position = build(:position, is_board: false, compensation: 25)
-    details = [['Title', 'boss'], ['Start Date', '1624'], ['Is Current', 'yes'], ['Board member', 'no'], ['Compensation', '$25']]
+    details = [['Title', 'boss'], ['Start Date', '1624'], ['Is Current', 'yes'], ['Board member', 'no'], ['Compensation', '25 USD']]
     expect(RelationshipDetails.new(position_relationship).details).to eq details
   end
 
@@ -52,7 +53,7 @@ describe RelationshipDetails do
     rel = build(:relationship, category_id: 3, start_date: '2000', end_date: '2001')
     rel.membership = build(:membership, dues: 100)
     expect(RelationshipDetails.new(rel).details)
-      .to eql [['Title', 'Member'], ['Start Date', '2000'], ['End Date', '2001'], ['Dues', '$100']]
+      .to eql [['Title', 'Member'], ['Start Date', '2000'], ['End Date', '2001'], ['Dues', '100 USD']]
   end
 
   it 'returns details for membership in U.S. house' do
@@ -75,21 +76,21 @@ describe RelationshipDetails do
   it 'returns details for donation relationship' do
     expect(RelationshipDetails.new(donation_rel).details)
       .to eql [['Type', 'Campaign Contribution'], ['Start Date', '1900'],
-               ['End Date', '2000'], ['Amount', '$7,000'], ['FEC Filings', '2']]
+               ['End Date', '2000'], ['Amount', '7,000 USD'], ['FEC Filings', '2']]
   end
 
   it 'returns details for NYS donation relationship' do
-    rel = build(:nys_donation_relationship, filings: 10, amount: 10_000)
+    rel = build(:nys_donation_relationship, filings: 10, amount: 10_000, currency: 'USD')
     expect(RelationshipDetails.new(rel).details)
       .to eql [['Type', 'NYS Campaign Contribution'],
-               ['Amount', '$10,000'], ['Filings', '10']]
+               ['Amount', '10,000 USD'], ['Filings', '10']]
   end
 
   it 'returns details for federal donation relationship' do
-    rel = build(:federal_donation_relationship, filings: 10, amount: 10_000)
+    rel = build(:federal_donation_relationship, filings: 10, amount: 10_000, currency: 'USD')
     expect(RelationshipDetails.new(rel).details)
       .to eql [['Type', 'Campaign Contribution'],
-               ['Amount', '$10,000'], ['FEC Filings', '10']]
+               ['Amount', '10,000 USD'], ['FEC Filings', '10']]
   end
 
   it 'returns details for transaction relationship' do
@@ -99,8 +100,8 @@ describe RelationshipDetails do
   end
 
   it 'returns details for lobbying relationship' do
-    rel = build(:relationship, category_id: 7, amount: 10)
-    expect(RelationshipDetails.new(rel).details).to eql [['Amount', '$10']]
+    rel = build(:relationship, category_id: 7, amount: 10, currency: 'USD')
+    expect(RelationshipDetails.new(rel).details).to eql [['Amount', '10 USD']]
   end
 
   it 'returns details for social relationship' do
