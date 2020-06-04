@@ -55,11 +55,15 @@ class ExternalData < ApplicationRecord
   end
 
   def self.dataset_search(params)
+    query = "%#{params.search_value}%"
+
     case params.dataset
     when 'nycc'
-      nycc.where("JSON_VALUE(data, '$.FullName') like ?", "%#{params.search_value}%")
-    # when 'iapd_advisors'
-    # when 'iapd_schedule_a'
+      nycc.where "JSON_VALUE(data, '$.FullName') like ?", query
+    when 'iapd_advisors'
+      iapd_advisors.where "JSON_SEARCH(data, 'one', ?, null, '$.names') iS NOT NULL", query
+    when 'iapd_schedule_a'
+      iapd_schedule_a.where "JSON_SEARCH(data, 'one', ?, null, '$.records[*].name') IS NOT NULL", query
     else
       raise NotImplementedError
     end
