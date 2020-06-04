@@ -40,6 +40,7 @@ class RelationshipsController < ApplicationController
     :description1,
     :description2,
     :amount,
+    :currency,
     :goods,
     :notes,
     :start_date,
