@@ -19,6 +19,7 @@ module Datatables
       @search = @params.require(:search).permit(:value, :regex).to_h.with_indifferent_access
       @search[:regex] = ActiveModel::Type::Boolean.new.cast(@search[:regex] || false)
       @columns = parse_columns(@params.fetch(:columns))
+
       if @params.key?(:order)
         @order = parse_order(@params.fetch(:order))
       else
@@ -35,7 +36,12 @@ module Datatables
     end
 
     def to_h
-      { draw: @draw, start: @start, length: @length, search: @search, columns: @columns }
+      { draw: @draw,
+        start: @start,
+        length: @length,
+        search: @search,
+        columns: @columns,
+        order: @order }
     end
 
     def filtered?
@@ -48,6 +54,14 @@ module Datatables
 
     def search_value
       @search[:value]
+    end
+
+    def order_sql
+      return '' if @order.blank?
+
+      'ORDER BY ' + @order.map do |order|
+        @columns[order[:column].to_i][:data] + ' ' + order[:dir].upcase
+      end.join(', ')
     end
 
     private

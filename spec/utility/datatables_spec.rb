@@ -11,7 +11,8 @@ describe Datatables do
           columns: {
             '0' => { data: 'id', name: '' },
             '1' => { data: 'match', name: '' },
-            '2' => { data: 'data.FullName', name: '' }
+            '2' => { data: 'amount', name: '' },
+            '3' => { data: 'name', name: '' }
           },
           order: {
             '0' => { 'column' => '2', 'dir' => 'desc' },
@@ -38,7 +39,7 @@ describe Datatables do
 
     it 'sets @columns' do
       expect(params.columns).to be_a Array
-      expect(params.columns.length).to eq 3
+      expect(params.columns.length).to eq 4
       expect(params.columns[0]['data']).to eq 'id'
     end
 
@@ -47,6 +48,10 @@ describe Datatables do
                                    { 'column' => '2', 'dir' => 'desc' }.with_indifferent_access,
                                    { 'column' => '0', 'dir' => 'asc' }.with_indifferent_access
                                  ])
+    end
+
+    it 'order_sql' do
+      expect(params.order_sql).to eq "ORDER BY amount DESC, id ASC"
     end
   end
 end
