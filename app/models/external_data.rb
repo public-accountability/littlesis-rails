@@ -54,6 +54,7 @@ class ExternalData < ApplicationRecord
     end
   end
 
+  # +params+ should be a Datatables::Params (or have two attributes/methods: search_value, dataset)
   def self.dataset_search(params)
     query = "%#{params.search_value}%"
 
