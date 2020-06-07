@@ -117,15 +117,26 @@ describe "Oligrapher", type: :request do
 
       it 'updates title' do
         expect do
-          patch "/oligrapher/#{network_map.id}", params: { "attributes" => { "title" => "new title" } }
+          patch "/oligrapher/#{network_map.id}", params: { attributes: { title: "new title" } }
         end.to change { NetworkMap.find(network_map.id).title }.from("network map").to("new title")
         expect(response.status).to eq 200
       end
 
       it 'updates settings' do
         expect do
-          patch "/oligrapher/#{network_map.id}", params: { "attributes" => { "settings" => { "blah" => false }.to_json } }
-        end.to change { NetworkMap.find(network_map.id).settings }.to({ "blah" => false }.to_json)
+          patch "/oligrapher/#{network_map.id}", params: { attributes: { settings: { blah: false }.to_json } }
+        end.to change { NetworkMap.find(network_map.id).settings }.to({ blah: false }.to_json)
+        expect(response.status).to eq 200
+      end
+
+      it 'updates annotations' do
+        annotations_json = [
+          { id: "1", title: "look at this", text: "", nodeIds: [], edgeIds: [], captionIds: [] }, 
+          { id: "2", title: "look at that", text: "", nodeIds: [], edgeIds: [], captionIds: [] }
+        ].to_json
+        expect do
+          patch "/oligrapher/#{network_map.id}", params: { attributes: { annotations_data: annotations_json } }
+        end.to change { NetworkMap.find(network_map.id).annotations_data }.to(annotations_json)
         expect(response.status).to eq 200
       end
     end
@@ -398,12 +409,12 @@ describe "Oligrapher", type: :request do
 
     before { entity1; entity2; entity3; rel1; rel2; }
 
-    it 'responds with bad request if entity1_id param' do
+    it 'responds with bad request if no entity1_id param' do
       get '/oligrapher/get_edges', params: { entity2_ids: [entity2.id, entity3.id] }
       expect(response).to have_http_status 400
     end
 
-    it 'responds with bad request if entity2_ids param' do
+    it 'responds with bad request if no entity2_ids param' do
       get '/oligrapher/get_edges', params: { entity1_id: entity1.id }
       expect(response).to have_http_status 400
     end
@@ -427,6 +438,34 @@ describe "Oligrapher", type: :request do
       expect(json.second['dash']).to eq false
       expect(json.second['arrow']).to eq '1->2'
       expect(json.second['url']).to eq "http://localhost:8080/relationships/#{rel2.id}"
+    end
+  end
+
+  describe 'get_interlocks' do
+    let(:entity1) { create(:entity_person) }
+    let(:entity2) { create(:entity_person) }
+    let(:entity3) { create(:entity_person) }
+    let(:entity4) { create(:entity_person) }
+
+    # entity3 and entity4 are both interlocks, but entity4 is already on the map so should be omitted
+    let(:rel1) { create(:social_relationship, entity: entity1, related: entity3) }
+    let(:rel2) { create(:social_relationship, entity: entity2, related: entity3) }
+    let(:rel3) { create(:social_relationship, entity: entity1, related: entity4) }
+    let(:rel4) { create(:social_relationship, entity: entity2, related: entity4) }
+
+    before { entity1; entity2; entity3; entity4; rel1; rel2; rel3; rel4 }
+
+    it 'renders json with node and edge data if connections are found' do
+      get '/oligrapher/get_interlocks', params: { 
+        entity1_id: entity1.id, 
+        entity2_id: entity2.id,
+        entity_ids: entity4.id
+      }
+      expect(response).to have_http_status 200
+      expect(json['nodes'].length).to eq 1
+      expect(json['edges'].length).to eq 2
+      expect(json['nodes'].first['id']).to eq entity3.id.to_s
+      expect(json['edges'].map { |e| e['id'] }.sort).to eq [rel1.id, rel2.id].map(&:to_s).sort
     end
   end
 end

@@ -58,4 +58,8 @@ describe OligrapherController, type: :controller do
   it do
     is_expected.to route(:get, '/oligrapher/789/share/abc').to(action: :show, id: '789', secret: 'abc')
   end
+
+  it do
+    is_expected.to route(:get, '/oligrapher/get_interlocks').to(action: :get_interlocks)
+  end
 end

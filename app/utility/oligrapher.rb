@@ -15,6 +15,10 @@ module Oligrapher
 
     {
       graph: map.graph_data.to_h,
+      annotations: {
+        currentIndex: 0,
+        list: annotations_data(map)
+      },
       settings: { debug: Rails.env.development? },
       attributes: {
         id: map.id,
@@ -49,6 +53,13 @@ module Oligrapher
         url: u.url,
         pending: pending_ids.include?(u.id)
       } }
+  end
+
+  def self.annotations_data(map)
+    JSON.parse(map.annotations_data || '[]').map do |annotation|
+      annotation['title'] = annotation['header'] if annotation['header']
+      annotation
+    end
   end
 
   module Node

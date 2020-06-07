@@ -3,6 +3,20 @@
 describe Oligrapher do
   let(:entity) { build(:org, :with_org_name) }
 
+  describe "annotations_data" do
+    let(:network_map1) { create(:network_map_version3, user_id: 1) }
+    let(:network_map2) { create(:network_map_version3, user_id: 1, annotations_data: [
+      { id: "1", header: "header", text: "text", nodeIds:[1, 2], edgeIds: [], captionIds: [] }
+    ].to_json) }
+
+    it "converts annotations_data" do
+      expect(Oligrapher.annotations_data(network_map1)).to eql([])
+      expect(Oligrapher.annotations_data(network_map2)[0]['id']).to eql("1")
+      expect(Oligrapher.annotations_data(network_map2)[0]['title']).to eql("header")
+      expect(Oligrapher.annotations_data(network_map2)[0]['nodeIds']).to eql([1, 2])
+    end
+  end
+
   describe "Node.from_entity" do
     specify do
       expect(Oligrapher::Node.from_entity(entity))
