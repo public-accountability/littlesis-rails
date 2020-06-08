@@ -4,7 +4,7 @@ module Datatables
   Response = Struct.new(:draw, :recordsTotal, :recordsFiltered, :data, keyword_init: true)
 
   class Params
-    attr_reader :params, :draw, :start, :length, :search, :columns, :order, :dataset
+    attr_reader :params, :draw, :start, :length, :search, :columns, :order, :dataset, :matched
 
     extend Forwardable
 
@@ -27,6 +27,7 @@ module Datatables
       end
 
       @dataset = @params[:dataset]&.downcase
+      @matched = @params[:matched]&.downcase&.to_sym || :all
 
       if @dataset && !ExternalData.dataset?(@dataset)
         raise Exceptions::LittleSisError, 'Invalid Dataset'

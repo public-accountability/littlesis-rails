@@ -1,31 +1,58 @@
 <table id="dataset-table" class="table">
   <thead>
-    <tr>
-      <% if @dataset == 'nycc' %>
+
+    <% if @dataset == 'nycc' %>
+      <tr>
         <th>Name</th>
         <th>District</th>
         <th>Party</th>
-      <% elsif @dataset == 'iapd_advisors' %>
-        <th>Name</th>
+      </tr>
+
+    <% elsif @dataset == 'iapd_advisors' %>
+      <tr>
+        <th>
+          <span class="pr-1">Name</span>
+          <%= render partial: 'match_toggle' %>
+        </th>
         <th>Assets Under Management</th>
         <th>CRD Number</th>
-      <% else %>
-        <% raise NotImplementedError %>
-      <%end %>
-    </tr>
+      </tr>
+
+
+    <% else %>
+      <% raise NotImplementedError %>
+    <%end %>
   </thead>
 </table>
 
 <script>
  $(function(){
+
    $('#dataset-table').DataTable({
      "processing": true,
      "serverSide": true,
      "ajax": {
        "url":  "/external_data/<%= @dataset %>",
-       "dataSrc": "data"
+       "dataSrc": "data",
+       "data": function(d) {
+
+         // adds field matched to the request (from the button group toggle)
+         if ($('#external-entities-match-toggle').length) {
+           var toggleStatus = $('#external-entities-match-toggle input:checked').val()
+           d.matched = toggleStatus
+         }
+
+       }
      },
      "columns": <%= render_columns_js(@dataset) %>
-   })
+   });
+
+   if ($('#external-entities-match-toggle').length) {
+
+     $("#external-entities-match-toggle input").change(function() {
+       $('#dataset-table').DataTable().draw()
+     });
+   }
+
  })
 </script>

@@ -5,6 +5,7 @@ class ExternalEntitiesController < ApplicationController
   before_action :set_external_entity, only: %i[show update]
 
   def index
+    @matched = params[:matched]&.to_sym || :all
     @dataset = params[:dataset].presence
   end
 

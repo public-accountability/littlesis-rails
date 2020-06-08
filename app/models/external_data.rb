@@ -23,7 +23,7 @@ class ExternalData < ApplicationRecord
     else
       raise Exceptions::LittleSisError, 'Incorrectly serialized data attribute'
     end
-    self
+   self
   end
 
   def self.dataset_count
@@ -46,6 +46,8 @@ class ExternalData < ApplicationRecord
                else
                  public_send(params.dataset)
                end
+
+    relation = filter_matched(params.matched, relation)
 
     Datatables::Response.new(draw: params.draw).tap do |response|
       response.recordsTotal = records_total(params.dataset)
@@ -77,7 +79,7 @@ class ExternalData < ApplicationRecord
   end
 
   def self.to_datatables_array(params)
-    includes(:external_entity)
+    preload(:external_entity)
       .offset(params.start)
       .limit(params.length)
       .to_a.map do |external_data|
@@ -87,6 +89,19 @@ class ExternalData < ApplicationRecord
         matched: external_data.external_entity&.matched?,
         data: external_data.data
       }
+    end
+  end
+
+  def self.filter_matched(value, relation = self)
+    case value
+    when :all
+      relation
+    when :matched
+      relation.joins(:external_entity).where('external_entities.entity_id IS NOT NULL')
+    when :unmatched
+      relation.joins(:external_entity).where('external_entities.entity_id IS NULL')
+    else
+      raise ArgumentError
     end
   end
 

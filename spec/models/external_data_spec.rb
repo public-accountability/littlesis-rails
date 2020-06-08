@@ -74,5 +74,48 @@ describe ExternalData, type: :model do
         expect(response.data.first[:data]['FullName']).to match /constantinides/i
       end
     end
+
+    context 'when requesting matched/unmatched' do
+      let(:params) do
+        {
+          dataset: 'nycc',
+          draw: '123',
+          search: { value: '', regex: 'false' },
+          start: 0,
+          length: 10,
+          columns: {
+            '0' => { data: 'id', name: '' },
+            '1' => { data: 'match', name: '' },
+            '2' => { data: 'data.FullName', name: ''}
+          }
+        }
+      end
+
+      before do
+        nycc_members[0].create_external_entity!(dataset: 'nycc', entity: create(:entity_person))
+        nycc_members[1].create_external_entity!(dataset: 'nycc')
+      end
+
+      it 'returns all by default' do
+        p = Datatables::Params.new(ActionController::Parameters.new(params))
+        response = ExternalData.datatables_query(p)
+        expect(response.recordsFiltered).to eq 2
+      end
+
+      it 'filters unmatched' do
+        p = Datatables::Params.new(ActionController::Parameters.new(params.merge(matched: 'unmatched')))
+        response = ExternalData.datatables_query(p)
+        expect(response.recordsFiltered).to eq 1
+        expect(response.data.first[:data]['FullName']).to match /constantinides/i
+      end
+
+      it 'filters matched' do
+        p = Datatables::Params.new(ActionController::Parameters.new(params.merge(matched: 'matched')))
+        response = ExternalData.datatables_query(p)
+        expect(response.recordsFiltered).to eq 1
+        expect(response.data.first[:data]['FullName']).to match /borelli/i
+      end
+    end
+
   end
 end
