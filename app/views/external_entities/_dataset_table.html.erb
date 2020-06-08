@@ -3,7 +3,10 @@
 
     <% if @dataset == 'nycc' %>
       <tr>
-        <th>Name</th>
+        <th>
+          <span class="pr-1">Name</span>
+          <%= render partial: 'match_toggle' %>
+        </th>
         <th>District</th>
         <th>Party</th>
       </tr>
@@ -31,15 +34,20 @@
    $('#dataset-table').DataTable({
      "processing": true,
      "serverSide": true,
+     "dom": 'frtip<"clearfix">l',
+     "pageLength": 10,
      "ajax": {
        "url":  "/external_data/<%= @dataset %>",
        "dataSrc": "data",
        "data": function(d) {
 
+
          // adds field matched to the request (from the button group toggle)
          if ($('#external-entities-match-toggle').length) {
            var toggleStatus = $('#external-entities-match-toggle input:checked').val()
            d.matched = toggleStatus
+         } else  {
+           console.error('#external-entities-match-toggle not found')
          }
 
        }

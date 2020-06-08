@@ -6,8 +6,25 @@ class ExternalData < ApplicationRecord
                iapd_schedule_a: 2,
                nycc: 3 }.freeze
 
+  DESCRIPTIONS = {
+    iapd_advisors: 'Investor Advisor corporations registered with the SEC',
+    iapd_schedule_a: 'Owners and board members of investor advisors',
+    nycc: 'New York City Council Members'
+  }.with_indifferent_access.freeze
+
   DATASET_NAMES = DATASETS.keys.without(:reserved).map(&:to_s).freeze
   DATASETS_INVERTED = DATASETS.invert.freeze
+
+  Stats = Struct.new(:name, :description, :total, :matched, :unmatched, keyword_init: true) do
+    def percent_matched
+      ((matched / total.to_f) * 100).round(1)
+    end
+
+    def url
+      Rails.application.routes.url_helpers
+        .external_entities_path(dataset: name, matched: 'unmatched')
+    end
+  end
 
   enum dataset: DATASETS
 
@@ -23,7 +40,7 @@ class ExternalData < ApplicationRecord
     else
       raise Exceptions::LittleSisError, 'Incorrectly serialized data attribute'
     end
-   self
+    self
   end
 
   def self.dataset_count
@@ -47,7 +64,9 @@ class ExternalData < ApplicationRecord
                  public_send(params.dataset)
                end
 
-    relation = filter_matched(params.matched, relation)
+    if %i[matched unmatched].include? params.matched
+      relation = relation.public_send(params.matched)
+    end
 
     Datatables::Response.new(draw: params.draw).tap do |response|
       response.recordsTotal = records_total(params.dataset)
@@ -92,17 +111,22 @@ class ExternalData < ApplicationRecord
     end
   end
 
-  def self.filter_matched(value, relation = self)
-    case value
-    when :all
-      relation
-    when :matched
-      relation.joins(:external_entity).where('external_entities.entity_id IS NOT NULL')
-    when :unmatched
-      relation.joins(:external_entity).where('external_entities.entity_id IS NULL')
-    else
-      raise ArgumentError
-    end
+  def self.matched
+    joins(:external_entity).where('external_entities.entity_id IS NOT NULL')
+  end
+
+  def self.unmatched
+    joins(:external_entity).where('external_entities.entity_id IS NULL')
+  end
+
+  def self.stats(dataset)
+    verify_dataset!(dataset)
+
+    Stats.new(name: dataset,
+              description: DESCRIPTIONS[dataset],
+              total: records_total(dataset),
+              matched: public_send(dataset).matched.count,
+              unmatched: public_send(dataset).unmatched.count)
   end
 
   private_class_method def self.records_total(dataset)

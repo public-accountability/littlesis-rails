@@ -1,7 +1,17 @@
 #external-entity-matcher {
-    display: flex;
-    height: 500px;
-    width: 100%;
+
+
+    div.header {
+        width: 100%;
+        height: 30px;
+        margin-bottom: 5px;
+    }
+
+    div.flex-container {
+        display: flex;
+        height: 500px;
+        width: 100%;
+    }
 
     div.leftSide, div.rightSide {
         flex: 1;

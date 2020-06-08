@@ -15,7 +15,15 @@
   {
     "data": "data.latest_aum",
     "render": function(data) {
-      return utility.formatMoney(data)
+      var formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumSignificantDigits: 3 });
+
+      if ((data / 1000000000) >= 1) {
+        return formatter.format(data / 1000000000) + ' billion';
+      } else if ((data / 1000000) >= 1) {
+        return  formatter.format(data / 1000000) + ' million';
+      } else {
+        return formatter.format(data);
+      }
     },
     "orderable": true
   },
