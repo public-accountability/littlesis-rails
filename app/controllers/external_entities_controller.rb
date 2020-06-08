@@ -12,12 +12,9 @@ class ExternalEntitiesController < ApplicationController
   # GET /external_entities/:id
   # If the parameter "search" is set, it will display the search tab with that query
   def show
-    if @external_entity.matched?
-      render 'already_matched'
-    else
+    unless @external_entity.matched?
       @search_term = params.fetch(:search, nil)
       @active_tab = @search_term.present? ? :search : :matches
-      render 'show'
     end
   end
 
