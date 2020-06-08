@@ -1,24 +1,24 @@
 [
   {
-    "data": "id",
-    "searchable": false,
-    "orderable": false
-  },
-  {
-    "data": "match",
-    "render": function(data, type, row, meta ) {
-      if(row['matched']) {
-        return "<em>Already Matched</em>"
-      } else {
-        return '<a href="/external_entities/' + row.external_entity_id + '">match</a>'
-      }
-    },
-    "searchable": false,
-    "orderable": false
-  },
-  {
     "data": "data.FullName",
-    "searchable": true,
+    "orderable": false,
+    "render": function(data, type, row, meta ) {
+      var link = '<a href="/external_entities/' + row.external_entity_id + '">' + row.data.FullName + '</a>';
+
+      if (row['matched']) {
+        link += " ✔"
+      }
+
+      return link;
+    }
+  },
+  {
+    "data": "data.CouncilDistrict",
+    "orderable": true,
+    "render": function(district) { return district.replace('NYCC', '') }
+  },
+  {
+    "data": "data.Party",
     "orderable": false
   }
 ]

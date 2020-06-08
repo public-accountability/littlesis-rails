@@ -60,11 +60,17 @@ class ExternalData < ApplicationRecord
 
     case params.dataset
     when 'nycc'
-      nycc.where "JSON_VALUE(data, '$.FullName') like ?", query
+      nycc
+        .where("JSON_VALUE(data, '$.FullName') like ?", query)
+        .order(params.order_hash)
     when 'iapd_advisors'
-      iapd_advisors.where "JSON_SEARCH(data, 'one', ?, null, '$.names') iS NOT NULL", query
+      iapd_advisors
+        .where("JSON_SEARCH(data, 'one', ?, null, '$.names') iS NOT NULL", query)
+        .order(params.order_hash)
     when 'iapd_schedule_a'
-      iapd_schedule_a.where "JSON_SEARCH(data, 'one', ?, null, '$.records[*].name') IS NOT NULL", query
+      iapd_schedule_a
+        .where("JSON_SEARCH(data, 'one', ?, null, '$.records[*].name') IS NOT NULL", query)
+        .order(params.order_hash)
     else
       raise NotImplementedError
     end

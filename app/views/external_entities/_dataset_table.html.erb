@@ -2,15 +2,13 @@
   <thead>
     <tr>
       <% if @dataset == 'nycc' %>
-        <th>ID</th>
-        <th>Match</th>
         <th>Name</th>
+        <th>District</th>
+        <th>Party</th>
       <% elsif @dataset == 'iapd_advisors' %>
-        <th>ID</th>
-        <th>Match</th>
         <th>Name</th>
         <th>Assets Under Management</th>
-        <th>Latest Filing Date</th>
+        <th>CRD Number</th>
       <% else %>
         <% raise NotImplementedError %>
       <%end %>

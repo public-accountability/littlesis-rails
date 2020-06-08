@@ -56,6 +56,13 @@ module Datatables
       @search[:value]
     end
 
+    def order_hash
+      @order.each_with_object({}) do |order, hash|
+        column = @columns[order[:column].to_i][:data].to_sym
+        hash.store column, order[:dir].downcase.to_sym
+      end
+    end
+
     def order_sql
       return '' if @order.blank?
 

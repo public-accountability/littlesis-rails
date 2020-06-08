@@ -1,35 +1,37 @@
 [
   {
     "data": "id",
-    "searchable": false,
-    "orderable": false
-  },
-  {
-    "data": "match",
+    "orderable": false,
     "render": function(data, type, row, meta ) {
-      if(row['matched']) {
-        return "<em>Already Matched</em>"
-      } else {
-        return '<a href="/external_entities/' + row.external_entity_id + '">match</a>'
+      var html = '<a href="/external_entities/' + row.external_entity_id + '">' + row.data.names[0] + '</a>';
+
+      if(row['return']) {
+        html += " ✔"
       }
-    },
-    "searchable": false,
-    "orderable": false
-  },
-  {
-    "data": "data.names[0]",
-    "searchable": true,
-    "orderable": false
+
+      return html;
+    }
   },
   {
     "data": "data.latest_aum",
     "render": function(data) {
       return utility.formatMoney(data)
     },
-    "searchable": false,
     "orderable": true
   },
   {
-    "data": "data.latest_date_submitted"
+    "data": "data.crd_number",
+    "orderable": false,
+    "render": function(data) {
+      if (!data) { return '' }
+
+      return [
+        '<a target="_blank" href="https://adviserinfo.sec.gov/firm/summary/',
+        data,
+        '">',
+        data,
+        '</a>'
+      ].join('')
+    }
   }
 ]
