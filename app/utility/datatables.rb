@@ -57,6 +57,8 @@ module Datatables
     end
 
     def order_hash
+      return {} if @order.blank?
+
       @order.each_with_object({}) do |order, hash|
         column = @columns[order[:column].to_i][:data].to_sym
         hash.store column, order[:dir].downcase.to_sym
