@@ -25,9 +25,10 @@ class ExternalEntitiesController < ApplicationController
   end
 
   # PATCH /external_entities/:id
-  # This does the matching. There are two ways to do this:
-  #   submit with the parameter +entity_id+
-  #   submit with the parameter +entity+ with name, blurb, and primary_ext
+  # This handles two forms on the matching tool
+  # If submitted with the parameter +entity_id+ it will matched with the existing entity.
+  # If submitted with the parameter +entity+ with fields name, blurb, and primary_ext,
+  # it will create a new entity.
   def update
     if params.key?(:entity_id)
       @external_entity.match_with params.require(:entity_id).to_i

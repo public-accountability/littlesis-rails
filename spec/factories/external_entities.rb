@@ -5,7 +5,7 @@ FactoryBot.define do
     initialize_with { new(dataset: dataset) }
   end
 
-  factory :external_entity_nycc, class: 'ExternalEntity'  do
+  factory :external_entity_nycc, class: 'ExternalEntity' do
     dataset { "nycc" }
 
     initialize_with { new(dataset: dataset) }

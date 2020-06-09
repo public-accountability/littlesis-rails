@@ -9,16 +9,6 @@ describe ExternalEntitiesController, type: :controller do
   it { is_expected.to route(:get, '/external_entities/nycc').to(action: :dataset, dataset: 'nycc') }
   it { is_expected.not_to route(:get, '/external_entities/invalid').to(action: :dataset, dataset: 'invalid') }
 
-  describe 'show' do
-    it 'renders already_matched page when entity if entity is matched' do
-      external_entity = build(:external_entity, id: rand(1000), entity_id: rand(1000))
-      expect(ExternalEntity).to receive(:find).once.and_return(external_entity)
-      allow(controller).to receive(:authenticate_user!)
-      get :show, params: { id: external_entity.id }
-      expect(response).to render_template 'already_matched'
-    end
-  end
-
   describe 'random' do
     it 'redirects to random id' do
       allow(controller).to receive(:authenticate_user!)
