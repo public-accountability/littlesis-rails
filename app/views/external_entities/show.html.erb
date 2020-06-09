@@ -1,12 +1,12 @@
 <div id="external-entity-matcher">
   <div class="header">
     <div class="float-left">
-      <button>home</button>
-      <button><%= @external_entity.dataset %></button>
+      <%= external_entities_header_btn 'home', external_entities_path %>
+      <%= external_entities_header_btn @external_entity.dataset, external_entities_path(dataset: @external_entity.dataset, matched: 'unmatched') %>
     </div>
 
     <div class="float-right">
-      <button>next</button>
+      <%= external_entities_header_btn 'next', random_external_entities_path(dataset: @external_entity.dataset) %>
     </div>
   </div>
 
