@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 class ExternalDataController < ApplicationController
-
   # GET /external_data/<dataset>
   def dataset
-    render json: ExternalData.datatables_query(Datatables::Params.new(params))
+    datatables_params = Datatables::Params.new(params)
+    render json: ExternalData.datatables_query(datatables_params)
   end
-
 end
