@@ -40,36 +40,19 @@ class SearchController < ApplicationController
   # optional params:
   #  - ext : "org" or "person"
   #  - num : Int
-  #  - tags | String|Array (if string, can be comma seperated'
+  #  - tags | String|Array (if string, can be comma separated)
   #  - exclude_list | id
-  #  - return_type : String
+  #  - include_image_url : boolean
+  #  - include_parent : boolean
   def entity_search
     return head :bad_request if params[:q].blank?
 
-    search_results = EntitySearchService
-                       .new(query: params[:q], **entity_search_options)
-                       .search
-
-    render json: format_results(search_results)
+    service = EntitySearchService.new(query: params[:q], **entity_search_options)
+    results = service.to_array(image_url: params[:include_image_url], parent: params[:include_parent])
+    render json: results
   end
 
   private
-
-  def format_results(results)
-    results.map! do |e|
-      format_entity(e)
-    end
-  end
-
-  def format_entity(entity)
-    @formatter ||=
-      if params[:return_type]&.downcase == 'simple'
-        ->(e) { EntitySearchService.simple_entity_hash(e)&.merge(is_parent: e.parent?) }
-      else
-        ->(e) { e.to_hash(image_url: true)&.merge(is_parent: e.parent?) }
-      end
-    @formatter.call(entity)
-  end
 
   def entity_search_options
     {}.tap do |options|

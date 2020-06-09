@@ -422,7 +422,7 @@ var addRelationship = (function(utility) {
       $('.rel-new-entity').addClass('hidden');
       $('.rel-results').removeClass('hidden');
       var name = $('#name-to-search').val();
-      $.getJSON('/search/entity', {q: name }, function(data) {
+      $.getJSON('/search/entity', { q: name, include_parent: true }, function(data) {
 	if (data.length > 0) {
 	  createDataTable(data);
 	} else {
