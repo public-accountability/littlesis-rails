@@ -8,7 +8,7 @@ describe SearchController, type: :controller do
 
     def search_service_double
       instance_double('EntitySearchService').tap do |d|
-        allow(d).to receive(:search).and_return([org])
+        d.instance_variable_set(:@search, [org])
       end
     end
 
@@ -18,21 +18,23 @@ describe SearchController, type: :controller do
     end
 
     it "returns http success" do
-      allow(EntitySearchService).to receive(:new).and_return(search_service_double)
+      allow(Entity).to receive(:search).with("@(name,aliases) name", any_args).and_return([org])
       get :entity_search, params: { :q => 'name' }
       expect(response).to have_http_status(:success)
     end
 
-    it "calls search with query param and returns complete hash by default" do
-      expect(EntitySearchService).to receive(:new).with(query: 'name').and_return(search_service_double)
-      expect(org).to receive(:to_hash).once
+    it "hash includes url by default" do
+      allow(Entity).to receive(:search).with("@(name,aliases) name", any_args).and_return([org])
       get :entity_search, params: { :q => 'name' }
+      expect(JSON.parse(response.body)[0]['url']).to include "/org/#{org.id}"
+      expect(JSON.parse(response.body)[0]).not_to have_key "is_parent"
     end
 
-    it "returns simplier hash if param return_type=simple is submitted with request" do
-      expect(EntitySearchService).to receive(:new).with(query: 'name').and_return(search_service_double)
-      expect(EntitySearchService).to receive(:simple_entity_hash).once.and_call_original
-      get :entity_search, params: { :q => 'name', :return_type => 'simple' }
+    it "hash can optionally include parent" do
+      allow(Entity).to receive(:search).with("@(name,aliases) name", any_args).and_return([org])
+      expect(org).to receive(:parent?).once.and_return(false)
+      get :entity_search, params: { :q => 'name', include_parent: true }
+      expect(JSON.parse(response.body)[0]['is_parent']).to eq false
     end
   end
 end

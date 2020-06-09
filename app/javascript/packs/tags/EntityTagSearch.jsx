@@ -63,7 +63,7 @@ class SearchInput extends React.Component {
            </div>;
   }
 }
-  
+
 
 
 class FoundEntities extends React.Component {
@@ -82,9 +82,9 @@ class FoundEntities extends React.Component {
     let q = encodeURIComponent(query);
     let t = encodeURIComponent(tag);
     let num = 5;
-    return `/search/entity?q=${q}&tags=${t}&num=${num}`;
+    return `/search/entity?q=${q}&include_image_url=TRUE&tags=${t}&num=${num}`;
   }
-  
+
   componentDidMount () {
     let url = this.searchUrl(this.props.query, this.props.tag);
 
@@ -117,7 +117,7 @@ class FoundEntities extends React.Component {
 
 
 
-export default class EntityTagSearch extends React.Component {
+export default class  EntityTagSearch extends React.Component {
   static propTypes = {
     "tag": PropTypes.string.isRequired
   }

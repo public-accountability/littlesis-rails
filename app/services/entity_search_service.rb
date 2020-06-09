@@ -17,14 +17,6 @@ class EntitySearchService
 
   # Class Methods
 
-  def self.simple_entity_hash(e)
-    { id: e.id,
-      name: e.name,
-      blurb: e.blurb,
-      primary_ext: e.primary_ext,
-      url: e.url }
-  end
-
   def initialize(query:, **kwargs)
     @query = LsSearch.escape(query)
     @options = DEFAULT_OPTIONS.deep_merge(kwargs)
@@ -49,6 +41,15 @@ class EntitySearchService
       @search = Entity.search @search_query, @search_options
     end
     freeze
+  end
+
+  # returns [{}] with two options for additional fields: image_url and is_parent
+  def to_array(image_url: false, parent: false)
+    @search.map do |entity|
+      entity.to_hash(image_url: image_url, url: true).tap do |hash|
+        hash.merge!(is_parent: entity.parent?) if parent
+      end
+    end
   end
 
   private

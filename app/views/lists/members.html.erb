@@ -24,5 +24,4 @@
 	   locals: {
 	     input_id: 'add-entity-input',
 	     post_path: add_entity_list_path(@list, entity_id: "XXX"),
-	     query_path: raw("/search/entity?q=%QUERY&return_type=simple&exclude_list=#{@list.id}") } %>
-
+	     query_path: raw("/search/entity?q=%QUERY&exclude_list=#{@list.id}") } %>

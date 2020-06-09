@@ -19,7 +19,7 @@ var addRelationship = (function(utility) {
       "Hierarchy",
       "Generic"
   ];
-  
+
   // holds entity ids
   var entity1_id = null;
   var entity2_id = null;
@@ -28,6 +28,8 @@ var addRelationship = (function(utility) {
   var newReferenceForm;
   var existingReferences;
 
+  var parentOrgSpan = '<span class="badge badge-light badge-pill ml-1">Parent Org</span>'
+
   // Creates a new datatable
   // {} ->
   function createDataTable(data) {
@@ -35,20 +37,28 @@ var addRelationship = (function(utility) {
     var table = $('#results-table').DataTable({
 	data: data,
 	columns: [
-	  { 
-	    data: null, 
+	  {
+	    data: null,
 	    defaultContent: '<button type="button" class="btn btn-success btn-sm">select</button>'
 	  },
-	  { 
-	    title: 'Name', 
+	  {
+	    title: 'Name',
 	    render: function(data, type, row) {
-	      return '<a href="' + row.url + '" target="_blank">' + row.name;
+	      return [
+                '<a href="',
+                row.url,
+                ' target="_blank">',
+                row.name,
+                row.is_parent ? parentOrgSpan : '',
+                '</a>'
+              ].join('')
+
 	    }
 	  },
-	  { 
-	    data: 'blurb', 
-	    title: 'Summary' 
-	  },
+	  {
+	    data: 'blurb',
+	    title: 'Summary'
+	  }
 	],
 	ordering: false,
 	searching: false,
@@ -62,7 +72,7 @@ var addRelationship = (function(utility) {
   // Used by selectButtonHandler & in $('#new_entity').submit()
   function showAddRelationshipForm(data) {
     // update 'global' vars:
-    entity2_id = String(data.id); 
+    entity2_id = String(data.id);
     selected_entity_data = data;
 
     $('.rel-new-entity').addClass('hidden'); // hide new entity elements
@@ -70,23 +80,23 @@ var addRelationship = (function(utility) {
     $('.rel-add').removeClass('hidden'); // show add relationship elements
     $('#relationship-with-name').html( $('<a>', { href: data.url, text: data.name }) ); // add relationship-with entity-link
     $('#category-selection').html(categorySelector(data)); // add category selection
-    
+
     // change '.active' on category buttons
     // and search for similar entities;
     onCategorySelectHandlers();
     referencesInit( [utility.entityInfo('entityid'), entity2_id] );
   }
 
-  // <Table> -> 
+  // <Table> ->
   function selectButtonHandler(table) {
     $('#results-table tbody').on( 'click', 'button', function (e) {
       e.preventDefault(); // Prevents form from submitting
       var data = table.row( $(this).parents('tr') ).data();
-      showAddRelationshipForm(data); 
+      showAddRelationshipForm(data);
     });
   }
 
-  
+
   // {} -> HTML ELEMENT
   function categorySelector(data) {
     var entity1_primary_ext = utility.entityInfo('entitytype');
@@ -96,7 +106,7 @@ var addRelationship = (function(utility) {
       var buttonClass = 'category-select-button' + ( (categoryId === 7) ? ' disabled' : '' );
       buttonGroup.append(
 	$('<button>', {
-	  type: 'button', 
+	  type: 'button',
 	  class: buttonClass,
 	  text: categoriesText[categoryId],
 	  'data-categoryid': categoryId
@@ -105,7 +115,7 @@ var addRelationship = (function(utility) {
     });
     return buttonGroup;
   }
-  
+
   function onCategorySelectHandlers() {
     $("#category-selection .btn-group-vertical > .category-select-button").click(function(){
       categoryButtonsSetActiveClass(this);
@@ -153,8 +163,8 @@ var addRelationship = (function(utility) {
   function displayCreateNewEntityDialog(name) {
     $('#entity_name').val(name);
     $('.rel-results').addClass('hidden');
-    $('.rel-new-entity').removeClass('hidden'); 
-  } 
+    $('.rel-new-entity').removeClass('hidden');
+  }
 
   function categoryButtonsSetActiveClass(elem) {
     $(elem).addClass("active").siblings().removeClass("active");
@@ -178,11 +188,11 @@ var addRelationship = (function(utility) {
 	orgToPerson.splice(1, 0, 2);
       }
       return orgToPerson;
-      
+
     } else if (entity1 === 'Org' && entity2 === 'Org') {
       return orgToOrg;
     } else {
-      throw "Missing or incorrect primary extension type"; 
+      throw "Missing or incorrect primary extension type";
     }
   }
 
@@ -191,14 +201,14 @@ var addRelationship = (function(utility) {
     existingReferences = new ExistingReferenceWidget(entityIds);
   }
 
-  // boolean -> 
+  // boolean ->
   function submissionInProgress(submitting) {
     if (Boolean(submitting)) {
       // show loading logic
     } else {
       // hide loading logic
-    } 
-  } 
+    }
+  }
 
   // -> int | null
   function category_id() {
@@ -216,10 +226,10 @@ var addRelationship = (function(utility) {
   }
 
 
-  /** 
+  /**
    categories() defines the acceptable valid relationship options
    for a given two entities. However, as a convenience we,
-   allow some relationships to be selected in reverse, and correct 
+   allow some relationships to be selected in reverse, and correct
    the order behind the scenes.
 
    Entity1 must be a 'person' for position and education relationshps.
@@ -228,7 +238,7 @@ var addRelationship = (function(utility) {
   */
   function reverseEntityIdsIf() {
     var catId = category_id();
-    
+
     if ([1,2].includes(catId) && utility.entityInfo('entitytype') === 'Org') {
       swapEntityIds();
     } else if (catId == 3 && selected_entity_data.primary_ext === 'Person') {
@@ -264,8 +274,8 @@ var addRelationship = (function(utility) {
   function submit() {
     $('#errors-container').empty();
     var sd = submissionData();
-    if (catchErrors(sd)) { 
-      
+    if (catchErrors(sd)) {
+
       $.post('/relationships', sd)
       	.done(function(data, textStatus, jqXHR) {
       	  // redirect to the edit relationship page
@@ -274,9 +284,9 @@ var addRelationship = (function(utility) {
       	.fail(function(data) {
       	  // assuming here that the status code is 400 because of a bad request. we should person also  consider what would happen if the request fails for different reasons besides the submission of invalid or missing information.
       	  displayErrors(data.responseJSON);
-      	}); 
+      	});
     }
-  } 
+  }
 
   // {} -> boolean
   // If there are errors, it will display error messages and return false
@@ -310,9 +320,9 @@ var addRelationship = (function(utility) {
       displayErrors(errors);
       return false;
     }
-    
+
   }
-  
+
   /**
    Possible errors from the server:
      errors.category_id
@@ -324,10 +334,10 @@ var addRelationship = (function(utility) {
       - missing category_id
       - missing or invalid source url
 
-     Although rails is going to send us back errors, we will also try 
+     Although rails is going to send us back errors, we will also try
      to catch the errors before submitting.
 
-     {} -> 
+     {} ->
    */
   function displayErrors(errorData) {
     var alerts = [];
@@ -355,15 +365,15 @@ var addRelationship = (function(utility) {
 
     if (Boolean(errors.category_id)) {
       alerts.push(alertDiv('Missing information ', "Don't forget to select a relationship category"));
-    } 
-    
+    }
+
     if ( Boolean(errors.entity1_id) || Boolean(errors.entity2_id) ) {
       alerts.push(alert('Something went wrong :( ', "Sorry about that! Please contact admin@littlesis.org"));
     }
 
     $('#errors-container').html(alerts); // display the errors
     alertFadeOut();
-  } 
+  }
 
   function alertFadeOut() {
     var fade = function() {
@@ -371,28 +381,28 @@ var addRelationship = (function(utility) {
     };
     setTimeout(fade, 3000);
   }
-  
+
   function alertDiv(title, message) {
     return $('<div>', {class: 'alert alert-danger', role: 'alert' })
       .append($('<strong>', {text: title}))
       .append($('<span>', {text: message}));
-  } 
+  }
 
   function init() {
 
     entity1_id = utility.entityInfo('entityid');
     // entity1_id gets set after selection.
-  
+
     // submits create relationships request
     // after button is clicked.
     $('#create-relationship-btn').click(function(e){
-      submit(); 
+      submit();
     });
-    
+
     // Overrides default action of submit new entity form
     $('#new_entity').submit(function(event) {
       event.preventDefault();
-      $('#new-entity-errors').empty(); 
+      $('#new-entity-errors').empty();
       $.post('/entities', $('#new_entity').serialize())
 	.done(function(response){
 	  if (response.status === 'OK') {
@@ -412,16 +422,16 @@ var addRelationship = (function(utility) {
       $('.rel-new-entity').addClass('hidden');
       $('.rel-results').removeClass('hidden');
       var name = $('#name-to-search').val();
-      $.getJSON('/search/entity', {q: name }, function(data) {
+      $.getJSON('/search/entity', { q: name, include_parent: true }, function(data) {
 	if (data.length > 0) {
 	  createDataTable(data);
 	} else {
 	  displayCreateNewEntityDialog(name);
-	} 
+	}
       });
     });
 
-    // Switches to the "new entity" option after user clicks 
+    // Switches to the "new entity" option after user clicks
     // on "click here to create a new entity"
     $('#cant-find-new-entity-link').click(function(e){
       displayCreateNewEntityDialog("");
@@ -429,7 +439,7 @@ var addRelationship = (function(utility) {
 
 
     $('#toggle-reference-form').click(function(){
-      $(this).find('.btn').toggleClass('active');  
+      $(this).find('.btn').toggleClass('active');
       $(this).find('.btn').toggleClass('btn-secondary');
       $(this).find('.btn').toggleClass('btn-outline-secondary');
       $('#existing-reference-container').toggle();
@@ -437,7 +447,7 @@ var addRelationship = (function(utility) {
       // if $('#new-reference-container').is(':visible') {}
     });
   }
-  
+
   return {
     "init": init,
     "debug": function() {
