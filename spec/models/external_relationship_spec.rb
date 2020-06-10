@@ -35,28 +35,28 @@ describe ExternalRelationship, type: :model do
     end
   end
 
-  describe 'create_relationship' do
+  describe 'create_new_relationship' do
     let(:entity1) { create(:entity_person) }
     let(:entity2) { create(:entity_org) }
 
     it 'errors if already matched' do
       er = build(:external_relationship, relationship: build(:generic_relationship))
-      expect { er.create_relationship }.to raise_error(ExternalRelationship::AlreadyMatchedError)
+      expect { er.create_new_relationship }.to raise_error(ExternalRelationship::AlreadyMatchedError)
     end
 
     it 'errors unless both entity1 and entity2 are set' do
       er = create(:external_relationship_schedule_a, entity1_id: entity1.id)
-      expect { er.create_relationship }.to raise_error(ExternalRelationship::MissingMatchedEntityError)
+      expect { er.create_new_relationship }.to raise_error(ExternalRelationship::MissingMatchedEntityError)
     end
 
     it 'creates a new relationship' do
       er = create(:external_relationship_schedule_a, entity1_id: entity1.id, entity2_id: entity2.id)
-      expect { er.create_relationship }.to change(Relationship, :count).by(1)
+      expect { er.create_new_relationship }.to change(Relationship, :count).by(1)
     end
 
     it 'sets relationship id on the external relationship model' do
       er = create(:external_relationship_schedule_a, entity1_id: entity1.id, entity2_id: entity2.id)
-      expect { er.create_relationship }
+      expect { er.create_new_relationship }
         .to change(er, :relationship_id).from(nil)
     end
 
@@ -65,7 +65,7 @@ describe ExternalRelationship, type: :model do
                   entity1_id: entity1.id,
                   entity2_id: entity2.id,
                   relationship_attributes: { 'description1' => 'CEO' } )
-      er.create_relationship
+      er.create_new_relationship
       expect(er.relationship.description1).to eq 'CEO'
     end
 
@@ -77,7 +77,7 @@ describe ExternalRelationship, type: :model do
                     'description1' => 'CEO',
                     'ownership_attributes' => { 'shares': 10_000 }
                   })
-      er.create_relationship
+      er.create_new_relationship
       expect(er.relationship.ownership.shares).to eq 10_000
     end
   end

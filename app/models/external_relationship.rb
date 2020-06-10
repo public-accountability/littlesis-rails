@@ -7,6 +7,7 @@
 # that will be used when creating a new relationship
 #
 #    set_entity(entity1:, entity2)      matches entity2 or entity2
+#      or use match_entity1_with & match_entity2_with
 #    create_relationship
 #
 # TODO:
@@ -38,12 +39,20 @@ class ExternalRelationship < ApplicationRecord
     self
   end
 
+  def match_entity1_with(entity)
+    set_entity entity1: entity
+  end
+
+  def match_entity2_with(entity)
+    set_entity entity2: entity
+  end
+
   def automatch
     raise NotImplementedError
   end
 
   # This creates a new relationship and connects this instance with it
-  def create_relationship
+  def create_new_relationship
     if matched?
       raise AlreadyMatchedError
     elsif entity1_id.nil? || entity2_id.nil?
@@ -58,17 +67,6 @@ class ExternalRelationship < ApplicationRecord
       update!(relationship: relationship)
     end
   end
-
-  # def match_with(entity1: nil, entity2: nil)
-  #   if (entity1.present? && entity1_id.present?) || (entity2.present? && entity2_id.present?)
-  #     raise AlreadyMatchedError
-  #   end
-
-  #   assign_attributes(entity1_id: Entity.entity_id_for(entity1)) if entity1.present?
-  #   assign_attributes(entity2_id: Entity.entity_id_for(entity2)) if entity2.present?
-  #   save
-  #   self
-  # end
 
   class EntityAlreadySetError < Exceptions::LittleSisError; end
   class AlreadyMatchedError < Exceptions::MatchingError; end
