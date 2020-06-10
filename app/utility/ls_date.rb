@@ -112,6 +112,17 @@ class LsDate
     return "#{year}-#{month}-01" if sp_month?
   end
 
+  # LsDate.convert returns a string and LsDate.parse returns an LsDate instance
+  def self.parse(str)
+    parse!(str)
+  rescue InvalidLsDateError
+    new(nil)
+  end
+
+  def self.parse!(str)
+    new convert(str)
+  end
+
   # str -> str | nil
   # converts string dates in the following formats:
   #   YYYY. Example: 1996 -> 1996-00-00
