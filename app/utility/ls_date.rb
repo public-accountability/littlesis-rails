@@ -19,7 +19,8 @@ class LsDate
     'YYYY' => /\A\d{4}\Z/,
     'YYYY-MM' => /\A\d{4}-\d{2}\Z/,
     'YYYYMMDD' => /\A\d{8}\Z/,
-    'MM/YYYY' => /\A(01|02|03|04|05|06|07|08|09|10|11|12){1}\/[1-9]{1}[0-9]{3}\Z/
+    'MM/YYYY' => /\A(01|02|03|04|05|06|07|08|09|10|11|12){1}\/[1-9]{1}[0-9]{3}\Z/,
+    'MON-YY'=> /\A(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-[0-9]{2}\Z/
   }.freeze
 
   # Initialize with string YYYY-MM-DD
@@ -144,6 +145,15 @@ class LsDate
       "#{date.slice(0, 4)}-#{date.slice(4, 2)}-#{date.slice(6, 2)}"
     elsif DATE_REGEXES['MM/YYYY'].match?(date)
       "#{date[3..6]}-#{date[0..1]}-00"
+    elsif DATE_REGEXES['MON-YY'].match?(date)
+      year = if date.slice(4, 5).to_i.between?(0, 25)
+               "20#{date.slice(4, 5)}"
+             else
+               "19#{date.slice(4, 5)}"
+             end
+
+      month = Date::ABBR_MONTHNAMES.find_index(date.slice(0, 3)).to_s.rjust(2, '0')
+      "#{year}-#{month}-00"
     else
       date
     end

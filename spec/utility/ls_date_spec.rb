@@ -93,10 +93,19 @@ describe LsDate do
       expect(LsDate.convert('')).to eql nil
     end
 
-    it 'converts MM/YYY' do
+    it 'converts MM/YYYY' do
       expect(LsDate.convert('04/2015')).to eq '2015-04-00'
       expect(LsDate.convert('12/1960')).to eq '1960-12-00'
+      expect(LsDate.convert('12/2007')).to eq '2007-12-00'
     end
+
+    it 'converts MON-YY (Dec-07)' do
+      expect(LsDate.convert('Dec-07')).to eq '2007-12-00'
+      expect(LsDate.convert('Feb-18')).to eq '2018-02-00'
+    end
+
+    # '12/2007'
+    # ''Dec-07'
 
     it 'returns input if it can\'t convert' do
       expect(LsDate.convert('88')).to eql '88'
