@@ -10,18 +10,59 @@
 #      or use match_entity1_with & match_entity2_with
 #    create_relationship
 #
+# Many ExternalRelationships can be connected to the same Relationship
+#
 # TODO:
 #  - validate category_id + entity primary ext
-#  - add tag to relationship
-#  - add reference while creating new relationship
-#  - look for matching existing relationship
+#  - find_existing
+#  - update_existing
 class ExternalRelationship < ApplicationRecord
   enum dataset: ExternalData::DATASETS
+
   belongs_to :external_data
   belongs_to :relationship, optional: true
-  validates :category_id, presence: true
 
+  validates :category_id, presence: true
   serialize :relationship_attributes, Hash
+
+  ##
+  # Interface
+  #
+  def automatch
+    raise NotImplementedError
+  end
+
+  def find_existing
+    raise NotImplementedError
+  end
+
+  def potential_matches_entity1
+    raise NotImplementedError
+  end
+
+  def potential_matches_entity2
+    raise NotImplementedError
+  end
+
+  module Datasets
+    module IapdScheduleA
+      def potential_matches_entity1
+      end
+
+      def potential_matches_entity2
+      end
+
+      def automatch
+      end
+
+      def find_existing
+      end
+    end
+  end
+
+  after_initialize do
+    extend "ExternalRelationship::Datasets::#{dataset.camelize}".constantize
+  end
 
   def matched?
     !relationship_id.nil?
@@ -47,9 +88,7 @@ class ExternalRelationship < ApplicationRecord
     set_entity entity2: entity
   end
 
-  def automatch
-    raise NotImplementedError
-  end
+
 
   # This creates a new relationship and connects this instance with it
   def create_new_relationship
