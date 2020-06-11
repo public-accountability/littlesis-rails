@@ -230,7 +230,7 @@ describe LsDate do
     end
 
     it 'invalid dates' do
-      ['2012-13-01', '1000', 'May 20th'].each do |d|
+      ['Ginuary sometime', '1000', 'today'].each do |d|
         expect(LsDate.valid_date_string?(d)).to be false
       end
     end
@@ -254,6 +254,112 @@ describe LsDate do
   describe 'LsDate.today' do
     specify do
       expect(LsDate.today.to_s).to eq Time.zone.today.iso8601
+    end
+  end
+
+  describe 'handling arbitrary date formats' do
+    let(:same_date) { described_class.new('2010-06-01') }
+    let(:previous_date) { described_class.new('2009-05-01') }
+    let(:future_date) { described_class.new('2020-08-12') }
+
+    context 'with 1st June 2010' do
+      let(:input_string) { '1st June 2010' }
+      let(:date) { described_class.new(input_string) }
+
+      it "doesn't raise an exception" do
+        expect { date }.not_to raise_error
+      end
+
+      it 'is considered valid' do
+        expect(described_class.valid_date_string?(input_string)).to be true
+      end
+
+      it 'performs correctly in spaceship comparisons' do
+        expect(date.<=> same_date).to be(0)
+        expect(date.<=> previous_date).to be(1)
+        expect(date.<=> future_date).to be(-1)
+      end
+
+      it 'is parsed correctly into component elements' do
+        expect(date.year).to be 2010
+        expect(date.month).to be 6
+        expect(date.day).to be 1
+      end
+    end
+
+    context 'with 1 June, 2010' do
+      let(:input_string) { '1 June, 2010' }
+      let(:date) { described_class.new(input_string) }
+
+      it "doesn't raise an exception" do
+        expect { date }.not_to raise_error
+      end
+
+      it 'is considered valid' do
+        expect(described_class.valid_date_string?(input_string)).to be true
+      end
+
+      it 'performs correctly in spaceship comparisons' do
+        expect(date.<=> same_date).to be(0)
+        expect(date.<=> previous_date).to be(1)
+        expect(date.<=> future_date).to be(-1)
+      end
+
+      it 'is parsed correctly into component elements' do
+        expect(date.year).to be 2010
+        expect(date.month).to be 6
+        expect(date.day).to be 1
+      end
+    end
+
+    context 'with June 1, 2010' do
+      let(:input_string) { 'June 1, 2010' }
+      let(:date) { described_class.new(input_string) }
+
+      it "doesn't raise an exception" do
+        expect { date }.not_to raise_error
+      end
+
+      it 'is considered valid' do
+        expect(described_class.valid_date_string?(input_string)).to be true
+      end
+
+      it 'performs correctly in spaceship comparisons' do
+        expect(date.<=> same_date).to be(0)
+        expect(date.<=> previous_date).to be(1)
+        expect(date.<=> future_date).to be(-1)
+      end
+
+      it 'is parsed correctly into component elements' do
+        expect(date.year).to be 2010
+        expect(date.month).to be 6
+        expect(date.day).to be 1
+      end
+    end
+
+    context 'with June 1 2010' do
+      let(:input_string) { 'June 1 2010' }
+      let(:date) { described_class.new(input_string) }
+
+      it "doesn't raise an exception" do
+        expect { date }.not_to raise_error
+      end
+
+      it 'is considered valid' do
+        expect(described_class.valid_date_string?(input_string)).to be true
+      end
+
+      it 'performs correctly in spaceship comparisons' do
+        expect(date.<=> same_date).to be(0)
+        expect(date.<=> previous_date).to be(1)
+        expect(date.<=> future_date).to be(-1)
+      end
+
+      it 'is parsed correctly into component elements' do
+        expect(date.year).to be 2010
+        expect(date.month).to be 6
+        expect(date.day).to be 1
+      end
     end
   end
 end

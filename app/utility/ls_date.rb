@@ -23,12 +23,21 @@ class LsDate
     'MON-YY'=> /\A(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-[0-9]{2}\Z/
   }.freeze
 
-  # Initialize with string YYYY-MM-DD
   def initialize(date_string)
     test_if_valid_input(date_string)
-    @date_string = date_string
+    @date_string = normalize_input(date_string)
     set_year_month_day
     set_specificity
+  end
+
+  def normalize_input(string)
+    if /\A\d{4}-\d{2}-\d{2}\Z/.match? string
+      string
+    elsif string.nil?
+      string
+    else
+      DateTime.parse(string).strftime('%Y-%m-%d')
+    end
   end
 
   # specificity helpers
@@ -162,11 +171,9 @@ class LsDate
   # string -> boolean
   # determines if string is a valid ls_date (used by date validator)
   def self.valid_date_string?(value)
-    return false unless (value.length == 10) && (value.gsub('-').count == 2)
-
-    year, month, day = year_month_day(value)
-
-    valid_year?(year) && valid_month?(month) && valid_day?(day)
+    return true if DateTime.parse(value)
+  rescue ArgumentError
+    valid_ls_date?(value)
   end
 
   # str -> [year, month, day]
@@ -225,6 +232,20 @@ class LsDate
 
   private_class_method def self.valid_day?(day)
     day.nil? || day.between?(1, 31)
+  end
+
+  private_class_method def self.valid_ls_date?(value)
+    return false unless (value.length == 10)\
+      && (value.gsub('-').count == 2)\
+      && blank_month_or_year?(value)
+
+    year, month, day = year_month_day(value)
+
+    valid_year?(year) && valid_month?(month) && valid_day?(day)
+  end
+
+  private_class_method def self.blank_month_or_year?(value)
+    value.include? '-00'
   end
 
   private
