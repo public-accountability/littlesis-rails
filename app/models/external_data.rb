@@ -20,6 +20,14 @@ class ExternalData < ApplicationRecord
   serialize :data, JSON
 
   module Datasets
+    def self.relationships
+      ['iapd_schedule_a']
+    end
+
+    def self.entities
+      @entities ||= (names - relationships)
+    end
+
     def self.names
       @names ||= ExternalData::DATASETS.keys.without(:reserved).map(&:to_s).freeze
     end
@@ -49,6 +57,8 @@ class ExternalData < ApplicationRecord
   end
 
   has_one :external_entity, required: false, dependent: :destroy
+  has_one :external_relationship, required: false, dependent: :destroy
+
   # Rails equivalent of the unique index: index_external_data_on_dataset_and_dataset_id
   validates :dataset, uniqueness: { scope: :dataset_id }
 
@@ -61,6 +71,28 @@ class ExternalData < ApplicationRecord
       raise Exceptions::LittleSisError, 'Incorrectly serialized data attribute'
     end
     self
+  end
+
+  def external_relationship?
+    Datasets.relationships.include? dataset
+  end
+
+  def external_entity?
+    Datasets.entities.include? dataset
+  end
+
+  def datatables_json
+    as_json(only: %i[id data dataset]).tap do |json|
+      if external_relationship?
+        json.store 'external_relationship_id', external_relationship&.id
+        json.store 'matched', external_relationship&.matched?
+        json.store 'entity1_id', external_relationship&.entity1_id
+        json.store 'entity2_id', external_relationship&.entity2_id
+      else
+        json.store 'external_entity_id', external_entity&.id
+        json.store 'matched', external_entity&.matched?
+      end
+    end
   end
 
   def self.dataset_count
@@ -85,7 +117,7 @@ class ExternalData < ApplicationRecord
                end
 
     if %i[matched unmatched].include? params.matched
-      relation = relation.public_send(params.matched)
+      relation = relation.public_send(params.matched, params.dataset)
     end
 
     Datatables::Response.new(draw: params.draw).tap do |response|
@@ -118,25 +150,27 @@ class ExternalData < ApplicationRecord
   end
 
   def self.to_datatables_array(params)
-    preload(:external_entity)
+    preload(:external_entity, :external_relationship)
       .offset(params.start)
       .limit(params.length)
-      .to_a.map do |external_data|
-      {
-        id: external_data.id,
-        external_entity_id: external_data.external_entity&.id,
-        matched: external_data.external_entity&.matched?,
-        data: external_data.data
-      }
+      .to_a
+      .map(&:datatables_json)
+  end
+
+  def self.matched(dataset)
+    if dataset == 'iapd_schedule_a'
+      joins(:external_relationship).where('external_relationships.relationship_id IS NOT NULL')
+    else
+      joins(:external_entity).where('external_entities.entity_id IS NOT NULL')
     end
   end
 
-  def self.matched
-    joins(:external_entity).where('external_entities.entity_id IS NOT NULL')
-  end
-
-  def self.unmatched
-    joins(:external_entity).where('external_entities.entity_id IS NULL')
+  def self.unmatched(dataset)
+    if dataset == 'iapd_schedule_a'
+      joins(:external_relationship).where('external_relationships.relationship_id IS NULL')
+    else
+      joins(:external_entity).where('external_entities.entity_id IS NULL')
+    end
   end
 
   def self.stats(dataset)

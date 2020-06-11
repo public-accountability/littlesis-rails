@@ -1,0 +1,45 @@
+[
+  {
+    "data": "id",
+    "orderable": false,
+    "render": function(data, type, row, meta ) {
+      var last_record = row.data.records[row.data.records.length - 1]
+      var html = '<a href="/external_relationships/' + row.external_relationship_id + '">' + last_record.title_or_status + '</a>';
+
+      if(row['matched']) {
+        html += " ✔"
+      }
+
+      return html;
+    }
+  },
+  {
+    "data": "data.records",
+    "orderable": false,
+    "render": function(data, type, row) {
+      return row.data.records[row.data.records.length - 1].name
+    }
+  },
+  {
+    "data": "data.advisor_name",
+    "orderable": false,
+    "render": function(data, type, row) {
+      return [
+        row.data.advisor_name,
+        ' ',
+        '<a target="_blank" href="https://adviserinfo.sec.gov/firm/summary/',
+        row.data.advisor_crd_number,
+        '">',
+        '(' + row.data.advisor_crd_number + ')',
+        '</a>'
+      ].join('')
+    }
+  },
+  {
+    "data": "data.records",
+    "orderable": false,
+    "render": function(data, type, row) {
+      return row.data.records[row.data.records.length - 1].acquired
+    }
+  }
+]
