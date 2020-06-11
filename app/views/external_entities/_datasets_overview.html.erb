@@ -1,5 +1,5 @@
 <div id="external-entities-datasets-overview">
-  <% ExternalData::DATASET_NAMES.each do |dataset| %>
+  <% ExternalData::Datasets.names.each do |dataset| %>
     <% stats = ExternalData.stats(dataset) %>
     <div class="mt-2">
       <h3>

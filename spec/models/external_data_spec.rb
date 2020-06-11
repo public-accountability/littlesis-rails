@@ -47,7 +47,7 @@ describe ExternalData, type: :model do
         expect(response.recordsFiltered).to eq 2
         expect(response.data).to be_a Array
         expect(response.data[0]).to be_a Hash
-        expect(response.data.map { |x| x[:id] }.to_set).to eq nycc_members.map(&:id).to_set
+        expect(response.data.map { |x| x['id'] }.to_set).to eq nycc_members.map(&:id).to_set
       end
     end
 
@@ -71,7 +71,7 @@ describe ExternalData, type: :model do
         response = ExternalData.datatables_query(datatables_params)
         expect(response.recordsTotal).to eq 2
         expect(response.recordsFiltered).to eq 1
-        expect(response.data.first[:data]['FullName']).to match /constantinides/i
+        expect(response.data.first['data']['FullName']).to match /constantinides/i
       end
     end
 
@@ -106,14 +106,14 @@ describe ExternalData, type: :model do
         p = Datatables::Params.new(ActionController::Parameters.new(params.merge(matched: 'unmatched')))
         response = ExternalData.datatables_query(p)
         expect(response.recordsFiltered).to eq 1
-        expect(response.data.first[:data]['FullName']).to match /constantinides/i
+        expect(response.data.first.dig('data', 'FullName')).to match /constantinides/i
       end
 
       it 'filters matched' do
         p = Datatables::Params.new(ActionController::Parameters.new(params.merge(matched: 'matched')))
         response = ExternalData.datatables_query(p)
         expect(response.recordsFiltered).to eq 1
-        expect(response.data.first[:data]['FullName']).to match /borelli/i
+        expect(response.data.first.dig('data', 'FullName')).to match /borelli/i
       end
     end
 

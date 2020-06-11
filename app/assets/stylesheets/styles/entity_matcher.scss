@@ -75,3 +75,14 @@
     }
 
 }
+
+table.external-entities-display-information {
+    @extend .table;
+    @extend .table-borderless;
+    @extend .table-sm;
+    @extend .table-hover;
+
+    tr td:first-child {
+        font-weight: bold;
+    }
+}

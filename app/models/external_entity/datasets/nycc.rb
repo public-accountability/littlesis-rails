@@ -15,6 +15,12 @@ class ExternalEntity
       def search_for_matches(search_term)
         EntityMatcher.find_matches_for_person(search_term)
       end
+
+      protected
+
+      def set_primary_ext
+        self.primary_ext = 'Person'
+      end
     end
   end
 end

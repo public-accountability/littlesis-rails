@@ -50,7 +50,11 @@ class ExternalEntitiesController < ApplicationController
   def entity_params
     params.require(:entity).permit(:name, :blurb, :primary_ext).to_h.tap do |h|
       h.store 'last_user_id', current_user.id
-      h.store 'primary_ext', 'Org' if @external_entity.dataset == 'iapd_advisors'
+      if @external_entity.dataset == 'iapd_advisors'
+        h.store 'primary_ext', 'Org'
+      elsif @external_entity.dataset == 'nycc'
+        h.store 'primary_ext', 'Person'
+      end
     end
   end
 end
