@@ -28,13 +28,19 @@ class IapdImporter
   # Each row in owners_schedule_a represents a relationship between
   # the an owner/executive and an adivsor.
   def self.import_schedule_a
-    db.execute('SELECT * FROM owners_schedule_a') do |row|
-      dataset_id = "#{row['owner_key']}-#{row['advisor_crd_number']}"
+    db.execute(<<~SQL) do |row|
+      SELECT owners_schedule_a.*,
+             JSON_EXTRACT(advisors.names, '$[0]') as advisor_name
+      FROM owners_schedule_a
+      LEFT JOIN advisors ON advisors.crd_number = owners_schedule_a.advisor_crd_number AND owners_schedule_a.advisor_crd_number IS NOT NULL
+    SQL
 
-      ed = ExternalData
-             .find_or_initialize_by(dataset: :iapd_schedule_a, dataset_id: dataset_id)
-             .merge_data(schedule_a_data(row))
-      ed.save || Rails.logger.warn("Failed to save owner: #{row}")
+    dataset_id = "#{row['owner_key']}-#{row['advisor_crd_number']}"
+
+    ed = ExternalData
+           .find_or_initialize_by(dataset: :iapd_schedule_a, dataset_id: dataset_id)
+           .merge_data(schedule_a_data(row))
+    ed.save || Rails.logger.warn("Failed to save owner: #{row}")
     end
   end
 
@@ -53,7 +59,7 @@ class IapdImporter
   def self.schedule_a_data(row)
     row
       .to_h
-      .slice('owner_key', 'advisor_crd_number')
+      .slice('owner_key', 'advisor_crd_number', 'advisor_name')
       .merge!('records' => JSON.parse(row['records']),
               'filing_ids' => JSON.parse(row['filing_ids']))
   end
