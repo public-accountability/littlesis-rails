@@ -37,6 +37,21 @@ describe 'DateValidator' do
       subject.start_date = '2016-08-11'
       expect(subject.valid?).to be true
     end
+
+    it 'May 1st, 1970 is valid' do
+      subject.start_date = 'May 1st, 1970'
+      expect(subject.valid?).to be true
+    end
+
+    it 'April 4, 2000 is valid' do
+      subject.start_date = 'April 4, 2000'
+      expect(subject.valid?).to be true
+    end
+
+    it 'Jan 5th 2010' do
+      subject.start_date = 'Jan 5th 2010'
+      expect(subject.valid?).to be true
+    end
   end
 
   context 'when the date is invalid' do
@@ -67,6 +82,16 @@ describe 'DateValidator' do
 
     it '1234567891 is not valid' do
       subject.start_date = '1234567891'
+      expect(subject.valid?).to be false
+    end
+
+    it 'Gin 1 werp is not valid' do
+      subject.start_date = 'Gin 1 werp'
+      expect(subject.valid?).to be false
+    end
+
+    it 'XXXX-XX-XX is not valid' do
+      subject.start_date = 'XXXX-XX-XX'
       expect(subject.valid?).to be false
     end
   end
