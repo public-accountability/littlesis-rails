@@ -158,7 +158,7 @@ class ExternalData < ApplicationRecord
   end
 
   def self.matched(dataset)
-    if dataset == 'iapd_schedule_a'
+    if Datasets.relationships.include?(dataset)
       joins(:external_relationship).where('external_relationships.relationship_id IS NOT NULL')
     else
       joins(:external_entity).where('external_entities.entity_id IS NOT NULL')
@@ -166,7 +166,7 @@ class ExternalData < ApplicationRecord
   end
 
   def self.unmatched(dataset)
-    if dataset == 'iapd_schedule_a'
+    if Datasets.relationships.include?(dataset)
       joins(:external_relationship).where('external_relationships.relationship_id IS NULL')
     else
       joins(:external_entity).where('external_entities.entity_id IS NULL')
