@@ -1,4 +1,4 @@
-# rubocop:disable Lint/UselessComparison, RSpec/Multipleexpectations
+# rubocop:disable Lint/UselessComparison
 
 describe LsDate do
   describe 'initialize' do
@@ -19,47 +19,47 @@ describe LsDate do
 
     it 'sets date string' do
       d = LsDate.new('1999-01-01')
-      expect(d.date_string).to eql '1999-01-01'
+      expect(d.date_string).to eq '1999-01-01'
     end
 
     describe 'set_year_month day' do
       it 'sets @year, @month, and @day for full date' do
         d = LsDate.new('2001-02-14')
-        expect(d.year).to eql 2001
-        expect(d.month).to eql 2
-        expect(d.day).to eql 14
+        expect(d.year).to be 2001
+        expect(d.month).to be 2
+        expect(d.day).to be 14
       end
 
       it 'sets @year, @month, and @day when missing day' do
         d = LsDate.new('2001-02-00')
-        expect(d.year).to eql 2001
-        expect(d.month).to eql 2
-        expect(d.day).to eql nil
+        expect(d.year).to be 2001
+        expect(d.month).to be 2
+        expect(d.day).to be nil
       end
 
       it 'sets @year, @month, and @day when missing day and month' do
         d = LsDate.new('2001-00-00')
-        expect(d.year).to eql 2001
-        expect(d.month).to eql nil
-        expect(d.day).to eql nil
+        expect(d.year).to be 2001
+        expect(d.month).to be nil
+        expect(d.day).to be nil
       end
     end
 
     describe 'specificity' do
       it 'has correct specificity :day when full date' do
-        expect(LsDate.new('2017-01-01').specificity).to eql :day
+        expect(LsDate.new('2017-01-01').specificity).to be :day
       end
 
       it 'has correct specificity :month when missing day' do
-        expect(LsDate.new('2017-01-00').specificity).to eql :month
+        expect(LsDate.new('2017-01-00').specificity).to be :month
       end
 
       it 'has correct specificity :year when missing day and month' do
-        expect(LsDate.new('2017-00-00').specificity).to eql :year
+        expect(LsDate.new('2017-00-00').specificity).to be :year
       end
 
       it 'has correct specificity :unknown when missing day, month, and year' do
-        expect(LsDate.new(nil).specificity).to eql :unknown
+        expect(LsDate.new(nil).specificity).to be :unknown
       end
     end
   end
@@ -78,19 +78,19 @@ describe LsDate do
 
   describe 'convert' do
     it 'converts YYYY to YYYY-00-OO' do
-      expect(LsDate.convert('2019')).to eql '2019-00-00'
+      expect(LsDate.convert('2019')).to eq '2019-00-00'
     end
 
     it 'converts YYYY-MM to YYYY-MM-OO' do
-      expect(LsDate.convert('2019-12')).to eql '2019-12-00'
+      expect(LsDate.convert('2019-12')).to eq '2019-12-00'
     end
 
     it 'converts YYYYMMDD to YYYY-MM-OO' do
-      expect(LsDate.convert('20011231')).to eql '2001-12-31'
+      expect(LsDate.convert('20011231')).to eq '2001-12-31'
     end
 
     it 'converts blank strings to nil' do
-      expect(LsDate.convert('')).to eql nil
+      expect(LsDate.convert('')).to be nil
     end
 
     it 'converts MM/YYYY' do
@@ -106,14 +106,13 @@ describe LsDate do
 
     # '12/2007'
     # ''Dec-07'
-
-    it 'returns input if it can\'t convert' do
-      expect(LsDate.convert('88')).to eql '88'
-      expect(LsDate.convert('1234567')).to eql '1234567'
-      expect(LsDate.convert('2000-04-01')).to eql '2000-04-01'
+    it 'returns input if it can\'t convert' do # rubocop:disable RSpec/ExampleLength
+      expect(LsDate.convert('88')).to eq '88'
+      expect(LsDate.convert('1234567')).to eq '1234567'
+      expect(LsDate.convert('2000-04-01')).to eq '2000-04-01'
       expect(LsDate.convert(nil)).to be nil
-      expect(LsDate.convert('right now')).to eql 'right now'
-      expect(LsDate.convert('13/2000')).to eql '13/2000'
+      expect(LsDate.convert('right now')).to eq 'right now'
+      expect(LsDate.convert('13/2000')).to eq '13/2000'
     end
   end
 
@@ -124,15 +123,15 @@ describe LsDate do
     end
 
     it 'handles years' do
-      expect(LsDate.parse_cmp_date('1960').to_s).to eql '1960-00-00'
+      expect(LsDate.parse_cmp_date('1960').to_s).to eq '1960-00-00'
     end
 
     it 'handles months' do
-      expect(LsDate.parse_cmp_date('04/1970').to_s).to eql '1970-04-00'
+      expect(LsDate.parse_cmp_date('04/1970').to_s).to eq '1970-04-00'
     end
 
     it 'handles full dates' do
-      expect(LsDate.parse_cmp_date('22/04/1970').to_s).to eql '1970-04-22'
+      expect(LsDate.parse_cmp_date('22/04/1970').to_s).to eq '1970-04-22'
     end
 
     it 'returns nil for invalid dates' do
@@ -160,7 +159,7 @@ describe LsDate do
       expect(LsDate.new('2000-00-00') < LsDate.new('2016-10-28')).to be true
     end
 
-    context 'years are the same' do
+    context 'when years are the same' do
       it 'if month is defined, the more specific date wins' do
         expect(LsDate.new('2017-00-00') < LsDate.new('2017-03-00')).to be true
         expect(LsDate.new('2017-00-00') < LsDate.new('2017-01-01')).to be true
@@ -187,19 +186,19 @@ describe LsDate do
 
   describe 'display' do
     it 'displays unknown as ?' do
-      expect(LsDate.new(nil).display).to eql '?'
+      expect(LsDate.new(nil).display).to eq '?'
     end
 
     it "displays :year as 'YY" do
-      expect(LsDate.new('1926-00-00').display).to eql "'26"
+      expect(LsDate.new('1926-00-00').display).to eq "'26"
     end
 
     it "displays :month as 'Mon 'YY" do
-      expect(LsDate.new('1926-11-00').display).to eql "Nov '26"
+      expect(LsDate.new('1926-11-00').display).to eq "Nov '26"
     end
 
     it "displays :year as 'Mon DD, 'YY" do
-      expect(LsDate.new('2008-02-24').display).to eql "Feb 24 '08"
+      expect(LsDate.new('2008-02-24').display).to eq "Feb 24 '08"
     end
   end
 
@@ -219,12 +218,12 @@ describe LsDate do
   end
 
   describe 'to_s' do
-    specify { expect(LsDate.new('2018-10-10').to_s).to eql '2018-10-10' }
+    specify { expect(LsDate.new('2018-10-10').to_s).to eq '2018-10-10' }
   end
 
   describe 'valid_date_string?' do
     it 'valid dates' do
-      ['2012-01-01', '2012-01-00', '2012-00-00'].each do |d|
+      %w[2012-01-01 2012-01-00 2012-00-00].each do |d|
         expect(LsDate.valid_date_string?(d)).to be true
       end
     end
@@ -246,8 +245,8 @@ describe LsDate do
     end
 
     it 'returns valid dates even if month or day is unknown' do
-      expect(LsDate.new('1915-00-00').coerce_to_date).to eql Date.parse('1915-01-01')
-      expect(LsDate.new('1915-02-00').coerce_to_date).to eql Date.parse('1915-02-01')
+      expect(LsDate.new('1915-00-00').coerce_to_date).to eq Date.parse('1915-01-01')
+      expect(LsDate.new('1915-02-00').coerce_to_date).to eq Date.parse('1915-02-01')
     end
   end
 
@@ -363,4 +362,4 @@ describe LsDate do
     end
   end
 end
-# rubocop:enable Lint/UselessComparison, RSpec/Multipleexpectations
+# rubocop:enable Lint/UselessComparison
