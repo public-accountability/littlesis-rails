@@ -96,4 +96,28 @@ module RelationshipsHelper
     titles_and_entities.reverse! if relationship.is_hierarchy?
     titles_and_entities.map { |x| Struct.new(:title, :entity).new(*x) }
   end
+
+  def options_for_currency_select
+    move_elements_to_start_of_array([:usd, :gbp, :eur], sorted_currencies)
+      .collect { |c| [c[:display], c[:iso]] }
+  end
+
+  private
+
+  def sorted_currencies
+    Money::Currency.table
+      .map { |k, v| { iso: k, display: currency_display_name(v) } }
+      .sort_by { |c| c[:iso] }
+  end
+
+  def currency_display_name(currency)
+    "#{currency[:iso_code]} (#{currency[:name]})"
+  end
+
+  def move_elements_to_start_of_array(elements, array)
+    elements.reverse_each do |e|
+      array.insert(0, array.delete_at(array.index { |c| c[:iso] == e }))
+    end
+    array
+  end
 end

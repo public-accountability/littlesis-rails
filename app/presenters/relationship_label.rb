@@ -3,6 +3,8 @@
 # Provides a short label for a Relationship.
 # Used by Link and Oligrapher.
 class RelationshipLabel < SimpleDelegator
+  include ActiveSupport::NumberHelper
+
   attr_reader :is_reverse
 
   def initialize(relationship, is_reverse = false)
@@ -129,6 +131,6 @@ class RelationshipLabel < SimpleDelegator
   end
 
   def amount_display
-    ActiveSupport::NumberHelper.number_to_currency(amount, precision: 0)
+    number_to_currency(amount, unit: currency.upcase, precision: 0, format: '%n %u')
   end
 end

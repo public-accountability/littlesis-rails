@@ -97,6 +97,12 @@ class Relationship < ApplicationRecord
   validates :description1, length: { maximum: 100 }
   validates :description2, length: { maximum: 100 }
   validates_with RelationshipValidator
+  validates :currency, presence: { if: -> { amount.present? }, message: 'not specified for amount' }
+  validates :currency, absence: { if: -> { amount.blank? }, message: 'entered without an amount' }
+  validates :currency, inclusion: {
+    in: Money::Currency.table.stringify_keys.keys, message: "%<value>s is not a valid currency code"
+  }, if: -> { currency.present? }
+  before_validation :set_currency_default
 
   before_validation :set_last_user_id
 
@@ -534,6 +540,12 @@ class Relationship < ApplicationRecord
 
     if ls_end_date.sp_day? && ls_end_date < LsDate.today
       self.is_current = false
+    end
+  end
+
+  def set_currency_default
+    unless currency
+      self.currency = amount ? :usd : nil
     end
   end
 end

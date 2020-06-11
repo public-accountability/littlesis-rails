@@ -134,6 +134,7 @@ export function relationshipDetails(category) {
   var endDate = ['End date', 'end_date', 'date' ];
   var type = ['Type', 'description1', 'text'];
   var amount = ['Amount', 'amount', 'money'];
+  var currency = ['Currency', 'currency', 'text'];
   var goods = ['Goods', 'goods', 'text'];
   var d1 = ['entity 1 is __ of entity 2', 'description1', 'text'];
   var d2 = ['entity 2 is __ of entity 1', 'description2', 'text'];
@@ -161,9 +162,9 @@ export function relationshipDetails(category) {
   case 4: // family
     return [ d1, d2, startDate, endDate, isCurrent ];
   case 5: // donation
-    return [ type, amount, startDate, endDate, isCurrent, goods ];
+    return [ type, amount, currency, startDate, endDate, isCurrent, goods ];
   case 6: // transaction
-    return [ d1, d2, amount, startDate, endDate, isCurrent, goods ];
+    return [ d1, d2, amount, currency, startDate, endDate, isCurrent, goods ];
   case 7: // lobby
     throw 'Lobbying relationships are not currently supposed by the bulk add tool';
   case 8: // social

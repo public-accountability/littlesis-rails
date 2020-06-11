@@ -117,3 +117,7 @@
    bulkAdd.init(<%= raw current_user.bulker? %>);
  });
 </script>
+
+<template class="currency-selector">
+  <%= select_tag(:currency, options_for_select(options_for_currency_select), { include_blank: true, class: 'selectpicker' }) %>
+</template>

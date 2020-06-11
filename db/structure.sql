@@ -1660,6 +1660,7 @@ CREATE TABLE `relationship` (
   `description1` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `description2` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `amount` bigint(20) DEFAULT NULL,
+  `currency` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `goods` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
   `filings` bigint(20) DEFAULT NULL,
   `notes` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -2228,6 +2229,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200504215855'),
 ('20200505171235'),
 ('20200511192227'),
-('20200518162459');
+('20200518162459'),
+('20200528185753');
 
 

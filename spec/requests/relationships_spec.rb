@@ -20,7 +20,7 @@ describe 'Relationships Requests' do
       }
     end
 
-    subject { -> { post relationships_path, params: params } }
+    subject(:post_request) { -> { post relationships_path, params: params } }
 
     context 'valid position relationship' do
       it { is_expected.to change { Relationship.count }.by(1) }
@@ -77,13 +77,33 @@ describe 'Relationships Requests' do
       end
     end
 
-    context 'with amount amount field' do
+    context 'with amount field but no currency' do
       before { params[:relationship][:amount] = '$25,000' }
-      it { is_expected.to change { Relationship.count }.by(1) }
 
-      it 'adds amount field to relationship' do
-        subject.call
-        expect(Relationship.last.amount).to eql 25_000
+      it 'adds USD amount to relationship' do
+        expect { post_request.call }.to change(Relationship, :count).by(1)
+        expect(Relationship.last.amount).to eq 25_000
+        expect(Relationship.last.currency).to eq 'usd'
+      end
+    end
+
+    context 'with amount and currency' do
+      before { params[:relationship].merge!(amount: '13000', currency: 'eur') }
+
+      it 'adds currency and amount to relationship' do
+        expect { post_request.call }.to change(Relationship, :count).by(1)
+        expect(Relationship.last.amount).to eq 13_000
+        expect(Relationship.last.currency).to eq 'eur'
+      end
+    end
+
+    context 'with currency but no amount' do
+      before { params[:relationship].merge!(amount: nil, currency: 'aud') }
+
+      it 'raises validation error' do
+        expect { post_request.call }.not_to change(Relationship, :count)
+        expect(response).to have_http_status :bad_request
+        expect(response.body).to include 'entered without an amount'
       end
     end
   end

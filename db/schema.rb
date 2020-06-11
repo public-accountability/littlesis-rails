@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_18_162459) do
+ActiveRecord::Schema.define(version: 2020_05_28_185753) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1124,6 +1124,7 @@ ActiveRecord::Schema.define(version: 2020_05_18_162459) do
     t.string "description1", limit: 100
     t.string "description2", limit: 100
     t.bigint "amount"
+    t.string "currency"
     t.text "goods", size: :long
     t.bigint "filings"
     t.text "notes", size: :long

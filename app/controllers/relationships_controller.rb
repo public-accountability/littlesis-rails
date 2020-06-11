@@ -20,6 +20,7 @@ class RelationshipsController < ApplicationController
     :start_date,
     :end_date,
     :amount,
+    :currency,
     :goods,
     :is_board,
     :is_executive,
@@ -40,6 +41,7 @@ class RelationshipsController < ApplicationController
     :description1,
     :description2,
     :amount,
+    :currency,
     :goods,
     :notes,
     :start_date,
@@ -223,6 +225,7 @@ class RelationshipsController < ApplicationController
       goods: relationship.fetch('goods', nil),
       notes: relationship.fetch('notes', nil),
       amount: relationship.fetch('amount', nil),
+      currency: relationship.fetch('currency', nil),
       is_current: relationship.fetch('is_current', nil),
       last_user_id: current_user.id
     }
