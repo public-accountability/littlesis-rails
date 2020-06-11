@@ -17,7 +17,7 @@ module Oligrapher
       graph: map.graph_data.to_h,
       annotations: {
         currentIndex: 0,
-        list: JSON.parse(map.annotations_data),
+        list: JSON.parse(map.annotations_data || "[]"),
         sources: map.sources_annotation
       },
       settings: { debug: Rails.env.development? },
