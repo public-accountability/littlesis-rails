@@ -177,10 +177,10 @@ class ExternalData < ApplicationRecord
     verify_dataset!(dataset)
 
     Stats.new(name: dataset,
-              description: Datasets.descriptions[dataset],
+              description: Datasets.descriptions.fetch(dataset),
               total: records_total(dataset),
-              matched: public_send(dataset).matched.count,
-              unmatched: public_send(dataset).unmatched.count)
+              matched: public_send(dataset).matched(dataset).count,
+              unmatched: public_send(dataset).unmatched(dataset).count)
   end
 
   # For data exploration and testing
