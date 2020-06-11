@@ -8,7 +8,6 @@
 #
 #    set_entity(entity1:, entity2)      matches entity2 or entity2
 #      or use match_entity1_with & match_entity2_with
-#    create_relationship
 #
 # Many ExternalRelationships can be connected to the same Relationship
 #
@@ -52,17 +51,19 @@ class ExternalRelationship < ApplicationRecord
 
   module Datasets
     module IapdScheduleA
+      def schedule_a_records
+        @schedule_a_records ||= external_data.data['records'].sort_by { |record| record['filename'] }
+      end
+
+      def advisor_crd_number
+        @advisor_crd_number ||= external_data.data.fetch('advisor_crd_number')
+      end
+
+      private :schedule_a_records, :advisor_crd_number
+
       def relationship_attributes
+        records = schedule_a_records
         attrs = { position_attributes: {} }
-
-        records = external_data.data['records'].sort_by { |record| record['filename'] }
-
-        attrs[:name] = if records.last['owner_type'] == 'I'
-                         NameParser.new(records.last['name']).to_s
-                       else
-                         OrgName.format records.last['name']
-                       end
-
         attrs[:start_date] = LsDate.parse(records.map { |r| r['acquired'] }.min).to_s
         attrs[:description1] = records.last['title_or_status']
         attrs[:is_current] = true if records.last['iapd_year'] >= '2019'
@@ -78,11 +79,21 @@ class ExternalRelationship < ApplicationRecord
         attrs
       end
 
-      # def potential_matches_entity1
-      # end
+      def potential_matches_entity1
+        name = schedule_a_records.last['name']
+        if schedule_a_records.last['owner_type'] == 'I' # person
+          EntityMatcher.find_matches_for_person(name)
+        else
+          EntityMatcher.find_matches_for_org(name)
+        end
+      end
 
-      # def potential_matches_entity2
-      # end
+      def potential_matches_entity2
+        ExternalData
+          .find_by(dataset_id: advisor_crd_number)
+          &.external_entity
+          &.matches || []
+      end
 
       def automatch
         return if matched? || entity2_id.present?
@@ -135,6 +146,16 @@ class ExternalRelationship < ApplicationRecord
     set_entity entity2: entity
   end
 
+  def match_with(rel)
+    raise AlreadyMatchedError if matched?
+
+    unless rel.category_id == category_id && rel.entity1_id == entity1_id && rel.entity2_id == entity2_id
+      raise IncompatibleRelationshipError
+    end
+
+    update(relationship: rel)
+  end
+
   # If the ExternalRelationship is already matched, it will update the existing relationship
   # When a matching relationship can be found, it will use one that's already in our database,
   # otherwise a new relationship is created
@@ -166,4 +187,5 @@ class ExternalRelationship < ApplicationRecord
   class EntityAlreadySetError < Exceptions::LittleSisError; end
   class AlreadyMatchedError < Exceptions::MatchingError; end
   class MissingMatchedEntityError < Exceptions::LittleSisError; end
+  class IncompatibleRelationshipError < Exceptions::LittleSisError; end
 end
