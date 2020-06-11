@@ -11,7 +11,10 @@ class User < ApplicationRecord
 
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username,
-            presence: true, uniqueness: { case_sensitive: false }, user_name: true, on: :create
+            presence: true,
+            uniqueness: { case_sensitive: false },
+            user_name: true,
+            on: [:create, :update]
   validates :default_network_id, presence: true
 
   # Include default devise modules. Others available are:
