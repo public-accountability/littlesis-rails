@@ -156,17 +156,23 @@ class NetworkMap < ApplicationRecord
     annotations = JSON.parse(annotations_data)
 
     if list_sources && documents.count.positive?
-      annotations.concat([{
-        id: 'sources',
-        nodeIds: [],
-        edgeIds: [],
-        captionIds: [],
-        header: 'Sources',
-        text: documents_to_html
-      }])
+      annotations.concat([sources_annotation])
     end
 
     JSON.dump(annotations)
+  end
+
+  def sources_annotation
+    return nil unless documents.count.positive?
+
+    {
+      id: 'sources',
+      nodeIds: [],
+      edgeIds: [],
+      captionIds: [],
+      header: 'Sources',
+      text: documents_to_html
+    }
   end
 
   def entities_removed_from_graph

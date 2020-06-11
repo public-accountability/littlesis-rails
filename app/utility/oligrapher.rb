@@ -17,7 +17,8 @@ module Oligrapher
       graph: map.graph_data.to_h,
       annotations: {
         currentIndex: 0,
-        list: annotations_data(map)
+        list: JSON.parse(map.annotations_data),
+        sources: map.sources_annotation
       },
       settings: { debug: Rails.env.development? },
       attributes: {
@@ -27,7 +28,7 @@ module Oligrapher
         date: (map.created_at || Time.current).strftime('%B %d, %Y'),
         owner: owner.present? ? { id: owner.id, name: owner.username, url: owner.url } : nil,
         user: current_user.present? ? { id: current_user.id, name: current_user.username } : nil,
-        settings: JSON.parse(map.settings || '{}').merge({ private: map.is_private, clone: map.is_cloneable }),
+        settings: settings_data(map),
         editors: is_owner ? editor_data(map) : confirmed_editor_data(map),
         version: map.oligrapher_version,
         shareUrl: is_owner ? map.share_path : nil
@@ -55,11 +56,12 @@ module Oligrapher
       } }
   end
 
-  def self.annotations_data(map)
-    JSON.parse(map.annotations_data || '[]').map do |annotation|
-      annotation['title'] = annotation['header'] if annotation['header']
-      annotation
-    end
+  def self.settings_data(map)
+    JSON.parse(map.settings || '{}').merge({
+      private: map.is_private,
+      clone: map.is_cloneable,
+      list_sources: map.list_sources
+    })
   end
 
   module Node
