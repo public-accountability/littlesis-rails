@@ -1,33 +1,74 @@
 <table id="dataset-table" class="table">
   <thead>
-    <tr>
-      <% if @dataset == 'nycc' %>
-        <th>ID</th>
-        <th>Match</th>
-        <th>Name</th>
-      <% elsif @dataset == 'iapd_advisors' %>
-        <th>ID</th>
-        <th>Match</th>
-        <th>Name</th>
+    <% if @dataset == 'nycc' %>
+      <tr>
+        <th>
+          <span class="pr-1">Name</span>
+          <%= render partial: 'match_toggle' %>
+        </th>
+        <th>District</th>
+        <th>Party</th>
+      </tr>
+
+    <% elsif @dataset == 'iapd_advisors' %>
+      <tr>
+        <th>
+          <span class="pr-1">Name</span>
+          <%= render partial: 'match_toggle' %>
+        </th>
         <th>Assets Under Management</th>
-        <th>Latest Filing Date</th>
-      <% else %>
-        <% raise NotImplementedError %>
-      <%end %>
-    </tr>
+        <th>CRD Number</th>
+      </tr>
+
+    <% elsif @dataset == 'iapd_schedule_a' %>
+      <tr>
+        <th>
+          <span class="pr-1">Title</span>
+          <%= render partial: 'match_toggle' %>
+        </th>
+        <th>Executive/Owner</th>
+        <th>Advisor</th>
+        <th>Acquired</th>
+      </tr>
+    <% else %>
+      <% raise NotImplementedError %>
+    <%end %>
   </thead>
 </table>
 
 <script>
  $(function(){
+
    $('#dataset-table').DataTable({
      "processing": true,
      "serverSide": true,
+     "dom": 'frtip<"clearfix">l',
+     "pageLength": 10,
      "ajax": {
        "url":  "/external_data/<%= @dataset %>",
-       "dataSrc": "data"
+       "dataSrc": "data",
+       "data": function(d) {
+
+
+         // adds field matched to the request (from the button group toggle)
+         if ($('#external-entities-match-toggle').length) {
+           var toggleStatus = $('#external-entities-match-toggle input:checked').val()
+           d.matched = toggleStatus
+         } else  {
+           console.error('#external-entities-match-toggle not found')
+         }
+
+       }
      },
      "columns": <%= render_columns_js(@dataset) %>
-   })
+   });
+
+   if ($('#external-entities-match-toggle').length) {
+
+     $("#external-entities-match-toggle input").change(function() {
+       $('#dataset-table').DataTable().draw()
+     });
+   }
+
  })
 </script>

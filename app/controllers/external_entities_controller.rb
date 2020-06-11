@@ -5,18 +5,16 @@ class ExternalEntitiesController < ApplicationController
   before_action :set_external_entity, only: %i[show update]
 
   def index
+    @matched = params[:matched]&.to_sym || :all
     @dataset = params[:dataset].presence
   end
 
   # GET /external_entities/:id
   # If the parameter "search" is set, it will display the search tab with that query
   def show
-    if @external_entity.matched?
-      render 'already_matched'
-    else
+    unless @external_entity.matched?
       @search_term = params.fetch(:search, nil)
       @active_tab = @search_term.present? ? :search : :matches
-      render 'show'
     end
   end
 
@@ -26,13 +24,11 @@ class ExternalEntitiesController < ApplicationController
                 id: ExternalEntity.unmatched.order('RAND()').limit(1).pluck(:id).first
   end
 
-  def dataset
-  end
-
   # PATCH /external_entities/:id
-  # This does the matching. There are two ways to do this:
-  #   submit with the parameter +entity_id+
-  #   submit with the parameter +entity+ with name, blurb, and primary_ext
+  # This handles two forms on the matching tool
+  # If submitted with the parameter +entity_id+ it will matched with the existing entity.
+  # If submitted with the parameter +entity+ with fields name, blurb, and primary_ext,
+  # it will create a new entity.
   def update
     if params.key?(:entity_id)
       @external_entity.match_with params.require(:entity_id).to_i
@@ -54,7 +50,11 @@ class ExternalEntitiesController < ApplicationController
   def entity_params
     params.require(:entity).permit(:name, :blurb, :primary_ext).to_h.tap do |h|
       h.store 'last_user_id', current_user.id
-      h.store 'primary_ext', 'Org' if @external_entity.dataset == 'iapd_advisors'
+      if @external_entity.dataset == 'iapd_advisors'
+        h.store 'primary_ext', 'Org'
+      elsif @external_entity.dataset == 'nycc'
+        h.store 'primary_ext', 'Person'
+      end
     end
   end
 end

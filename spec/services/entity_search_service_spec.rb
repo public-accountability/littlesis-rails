@@ -99,13 +99,4 @@ describe EntitySearchService, :tag_helper do
       expect(search.length).to eq 1
     end
   end
-
-  describe 'simple_entity_hash' do
-    it 'returns hash without summary field' do
-      e = build(:person, summary: 'i am a summary')
-      h = EntitySearchService.simple_entity_hash(e)
-      expect(h).to be_a Hash
-      expect(h).not_to include :summary => 'i am a summary'
-    end
-  end
 end

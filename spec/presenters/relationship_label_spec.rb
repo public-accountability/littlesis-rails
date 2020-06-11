@@ -19,45 +19,45 @@ describe RelationshipLabel do
     context 'with campaign contribution' do
       let(:relationship) do
         build(:donation_relationship,
-              filings: nil, amount: 2_000_000, description1: "Campaign Contribution")
+              filings: nil, amount: 2_000_000, currency: 'USD', description1: "Campaign Contribution")
       end
 
-      it { is_expected.to eql "Donation · $2,000,000" }
+      it { is_expected.to eql "Donation · 2,000,000 USD" }
     end
 
     context 'with NYS campaign contribution' do
       let(:relationship) do
         build(:donation_relationship,
-              filings: nil, amount: 1_000_000, description1: "NYS Campaign Contribution")
+              filings: nil, amount: 1_000_000, currency: 'USD', description1: "NYS Campaign Contribution")
       end
 
-      it { is_expected.to eql "NYS Campaign Contribution · $1,000,000" }
+      it { is_expected.to eql "NYS Campaign Contribution · 1,000,000 USD" }
     end
 
     context 'with NYS campaign contribution with 2 filings' do
       let(:relationship) do
         build(:donation_relationship,
-              filings: 2, amount: 1_000_000, description1: "NYS Campaign Contribution")
+              filings: 2, amount: 1_000_000, currency: 'USD', description1: "NYS Campaign Contribution")
       end
 
-      it { is_expected.to eql "2 contributions · $1,000,000" }
+      it { is_expected.to eql "2 contributions · 1,000,000 USD" }
     end
 
     context 'with miscellaneous donation' do
       let(:relationship) do
-        build(:donation_relationship, filings: nil, amount: 1000, description1: nil)
+        build(:donation_relationship, filings: nil, amount: 1000, currency: 'USD', description1: nil)
       end
 
-      it { is_expected.to eql "Donation/Grant · $1,000" }
+      it { is_expected.to eql "Donation/Grant · 1,000 USD" }
     end
 
     context 'with miscellaneous donation having a custom type' do
       let(:relationship) do
         build(:donation_relationship,
-              filings: nil, amount: 1000, description1: 'suspicious contribution')
+              filings: nil, amount: 1000, currency: 'USD', description1: 'suspicious contribution')
       end
 
-      it { is_expected.to eql "suspicious contribution · $1,000" }
+      it { is_expected.to eql "suspicious contribution · 1,000 USD" }
     end
   end
 
@@ -135,18 +135,18 @@ describe RelationshipLabel do
     context 'with amount' do
       context 'with description1' do
         let(:relationship) do
-          build(:transaction_relationship, amount: 10_000,  description1: 'Contractor', description2: 'Client')
+          build(:transaction_relationship, amount: 10_000, currency: 'USD', description1: 'Contractor', description2: 'Client')
         end
 
-        it { is_expected.to eql "Client · $10,000" }
+        it { is_expected.to eql "Client · 10,000 USD" }
       end
 
       context 'without description1' do
         let(:relationship) do
-          build(:transaction_relationship, amount: 10_000,  description1: '', description2: '')
+          build(:transaction_relationship, amount: 10_000, currency: 'USD', description1: '', description2: '')
         end
 
-        it { is_expected.to eql "Service/Transaction · $10,000" }
+        it { is_expected.to eql "Service/Transaction · 10,000 USD" }
       end
     end
   end
@@ -207,24 +207,24 @@ describe RelationshipLabel do
     subject { RelationshipLabel.new(relationship).send(:humanize_contributions) }
 
     context 'when donation relationship has filings' do
-      let(:relationship) { build(:donation_relationship, filings: 3, amount: 1000) }
+      let(:relationship) { build(:donation_relationship, filings: 3, amount: 1000, currency: 'USD') }
 
-      it { is_expected.to eql "3 contributions · $1,000" }
+      it { is_expected.to eql "3 contributions · 1,000 USD" }
     end
 
     context 'when filings is nil' do
-      let(:relationship) { build(:donation_relationship, filings: nil, amount: 2_000_000) }
+      let(:relationship) { build(:donation_relationship, filings: nil, amount: 2_000_000, currency: 'USD') }
 
-      it { is_expected.to eql "Donation/Grant · $2,000,000" }
+      it { is_expected.to eql "Donation/Grant · 2,000,000 USD" }
     end
 
     context 'when filing is 0' do
       let(:relationship) do
         build(:donation_relationship,
-              filings: 0, amount: 2_000_000, description1: 'Campaign Contribution')
+              filings: 0, amount: 2_000_000, currency: 'USD', description1: 'Campaign Contribution')
       end
 
-      it { is_expected.to eql "Donation · $2,000,000" }
+      it { is_expected.to eql "Donation · 2,000,000 USD" }
     end
   end
 

@@ -1,6 +1,6 @@
 <%
 if local_assigns[:query_path].nil?
-  local_assigns[:query_path] = '/search/entity?return_type=simple&q=%QUERY'
+  local_assigns[:query_path] = '/search/entity?&q=%QUERY'
 end
 %>
 
@@ -34,7 +34,7 @@ end
      );
 
    var emptyMessage = '<div class="add-entity-suggestion">No entities found</div>';
-   
+
    var entitySearch = new Bloodhound({
      datumTokenizer: Bloodhound.tokenizers.whitespace,
      queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -63,7 +63,7 @@ end
    $('#<%= input_id %>').bind('typeahead:select', function(ev, suggestion) {
      submitEntity(suggestion.id);
    });
-   
+
    $('#<%= input_id %>')
      .keydown(function(event){
        if(event.keyCode == 13) {

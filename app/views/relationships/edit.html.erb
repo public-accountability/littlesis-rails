@@ -117,6 +117,12 @@
     <div class="form-row">
       <%= relationship_form_tag( f.label(:amount, 'Amount', class: label_class), f.number_field(:amount) )%>
     </div>
+    <div class="form-row">
+      <%= relationship_form_tag(
+        f.label(:currency, 'Currency', class: label_class),
+        f.select(:currency, options_for_currency_select, { include_blank: true }, { class: 'selectpicker' })
+      ) %>
+    </div>
   <% end %>
 
   <% if @relationship.is_donation? || @relationship.is_transaction? %>

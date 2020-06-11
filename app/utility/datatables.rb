@@ -4,7 +4,7 @@ module Datatables
   Response = Struct.new(:draw, :recordsTotal, :recordsFiltered, :data, keyword_init: true)
 
   class Params
-    attr_reader :params, :draw, :start, :length, :search, :columns, :dataset
+    attr_reader :params, :draw, :start, :length, :search, :columns, :order, :dataset, :matched
 
     extend Forwardable
 
@@ -16,10 +16,18 @@ module Datatables
       @draw = @params.require(:draw).to_i
       @start = @params.require(:start).to_i
       @length = @params.require(:length).to_i
-      @search = @params.require(:search).permit(:value, :regex)
+      @search = @params.require(:search).permit(:value, :regex).to_h.with_indifferent_access
       @search[:regex] = ActiveModel::Type::Boolean.new.cast(@search[:regex] || false)
       @columns = parse_columns(@params.fetch(:columns))
+
+      if @params.key?(:order)
+        @order = parse_order(@params.fetch(:order))
+      else
+        @order = nil
+      end
+
       @dataset = @params[:dataset]&.downcase
+      @matched = @params[:matched]&.downcase&.to_sym || :all
 
       if @dataset && !ExternalData.dataset?(@dataset)
         raise Exceptions::LittleSisError, 'Invalid Dataset'
@@ -29,7 +37,12 @@ module Datatables
     end
 
     def to_h
-      { draw: @draw, start: @start, length: @length, search: @search, columns: @columns }
+      { draw: @draw,
+        start: @start,
+        length: @length,
+        search: @search,
+        columns: @columns,
+        order: @order }
     end
 
     def filtered?
@@ -44,15 +57,48 @@ module Datatables
       @search[:value]
     end
 
+    def order_hash
+      return {} if @order.blank?
+
+      @order.each_with_object({}) do |order, hash|
+        column = @columns[order[:column].to_i][:data].to_sym
+        hash.store column, order[:dir].downcase.to_sym
+      end
+    end
+
+    def order_sql
+      return '' if @order.blank?
+
+      'ORDER BY ' + @order.map do |order|
+        @columns[order[:column].to_i][:data] + ' ' + order[:dir].upcase
+      end.join(', ')
+    end
+
     private
 
-    # Datatables stores the database columns as a hash with keys as integers starting at 0.
-    # This converts takes that data and converts it into an array of hashes
+    # input: { '0' => { 'column' => '2', 'dir' => 'desc' },
+    #          '1' => { 'column' => '0', 'dir' => 'asc' } }
+    #
     def parse_columns(columns)
-      Range.new(0, nil).lazy.map(&:to_s).each_with_object([]) do |i, arr|
-        break arr unless columns.key?(i)
+      to_array(columns).map do |column|
+        column
+          .permit(:data, :name, :searchable, :orderable, search: [:value, :regex])
+          .to_h
+          .with_indifferent_access
+      end
+    end
 
-        arr << columns[i].permit(:data, :name, :searchable, :orderable, search: [:value, :regex]).to_h
+    def parse_order(hash)
+      to_array(hash).map do |h|
+        h.permit(:column, :dir).to_h.with_indifferent_access
+      end
+    end
+
+    def to_array(hash)
+      Range.new(0, nil).lazy.map(&:to_s).each_with_object([]) do |i, arr|
+        break arr unless hash.key?(i)
+
+        arr << hash[i]
       end
     end
   end

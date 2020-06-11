@@ -1,6 +1,10 @@
-<% @external_entity.display_information.each_pair do |key, value| %>
-  <div class="external-entity-information">
-    <span><%= key %></span>
-    <span><%= value %></span>
-  </div>
-<% end %>
+<table class="external-entities-display-information">
+  <tbody>
+    <% @external_entity.display_information.each_pair do |key, value| %>
+      <tr>
+        <td><%= key %></td>
+        <td><%= value %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

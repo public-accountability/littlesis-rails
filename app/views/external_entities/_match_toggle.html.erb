@@ -1,0 +1,16 @@
+<div class="btn-group btn-group-toggle btn-group-sm" data-toggle="buttons" id="external-entities-match-toggle">
+
+  <label class="btn btn-secondary <%= 'active' if @matched.eql?(:all) %>">
+    <input type="radio" value="all" name="matched-toggle" autocomplete="off" <%= 'checked' if @matched.eql?(:all) %>>
+    All
+  </label>
+
+  <label class="btn btn-secondary <%= 'active' if @matched.eql?(:unmatched) %>">
+    <input type="radio" value="unmatched" name="matched-toggle" autocomplete="off" <%= 'checked' if @matched.eql?(:unmatched) %>> Unmatched
+  </label>
+
+  <label class="btn btn-secondary <%= 'active' if @matched.eql?(:matched) %>">
+    <input type="radio" value="matched" name="matched-toggle" autocomplete="off" <%= 'checked' if @matched.eql?(:matched) %>> Matched
+  </label>
+
+</div>

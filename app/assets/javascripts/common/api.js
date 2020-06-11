@@ -11,7 +11,7 @@
 
   // Object -> Promise[[Entity]]
   self.searchEntity = function(query){
-    return get('/search/entity', { num: 10, return_type: 'simple', q: query })
+    return get('/search/entity', { num: 10, q: query })
       .then(format)
       .catch(handleError);
 
@@ -155,8 +155,8 @@
           Promise.reject(json.errors[0].title) :
           Promise.resolve(json);
       });
-    
+
   }
-  
+
   return self;
 }));

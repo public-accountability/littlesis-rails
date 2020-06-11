@@ -1,4 +1,4 @@
-<!-- 
+<!--
      This form is used in two places: the /entities/new and / entities/:id/add_relationship
  -->
 
@@ -39,7 +39,7 @@
     </div>
 
     <br>
-    <%= f.label "Type*" %>  
+    <%= f.label "Type*" %>
     <br>
 
     <label class="radio-inline">
@@ -102,12 +102,12 @@
        $("#person-types").show();
      } else if (this.value == "Org") {
        $("#other-types").show();
-       $("#person-types").hide();      
+       $("#person-types").hide();
        $("#org-types").show();
      } else {
        $("#other-types").hide();
-       $("#person-types").hide();      
-       $("#org-types").hide();            
+       $("#person-types").hide();
+       $("#org-types").hide();
      }
    });
 
@@ -125,7 +125,7 @@
      typingTimer = setTimeout(findMatches.bind(input[0]), doneTypingInterval);
    });
 
-   //on keydown, clear the countdown 
+   //on keydown, clear the countdown
    input.on('keydown', function () {
      clearTimeout(typingTimer);
    });
@@ -138,7 +138,7 @@
        $.ajax({
          method: "GET",
          url: "/search/entity",
-         data: { q: query, num: 5, return_type: 'simple' }
+         data: { q: query, num: 5 }
        }).done(function(results) {
          existing.innerHTML = "";
          if (results.length > 0) {
@@ -164,7 +164,7 @@
        });
      } else {
        $("#wait").hide();
-       existing.innerHTML = "";      
+       existing.innerHTML = "";
      }
    };
  });

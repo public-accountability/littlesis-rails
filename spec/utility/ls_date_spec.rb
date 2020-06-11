@@ -1,7 +1,7 @@
 # rubocop:disable Lint/UselessComparison, RSpec/Multipleexpectations
 
 describe LsDate do
-  describe 'initalize' do
+  describe 'initialize' do
     describe 'test_if_valid_input' do
       it 'raises error if provided invalid date string' do
         expect { LsDate.new('1922') }.to raise_error LsDate::InvalidLsDateError
@@ -64,10 +64,23 @@ describe LsDate do
     end
   end
 
+  describe 'LsDate.parse and parse!' do
+    specify { expect(LsDate.parse('2012')).to be_a LsDate }
+    specify { expect(LsDate.parse('2012').to_s).to eq '2012-00-00' }
+    specify { expect(LsDate.parse!('2012').to_s).to eq '2012-00-00' }
+    specify { expect(LsDate.parse(nil)).to eq LsDate.new(nil) }
+    specify { expect(LsDate.parse('invalid')).to eq LsDate.new(nil) }
+
+    specify do
+      expect { LsDate.parse!('invalid') }.to raise_error(LsDate::InvalidLsDateError)
+    end
+  end
+
   describe 'convert' do
     it 'converts YYYY to YYYY-00-OO' do
       expect(LsDate.convert('2019')).to eql '2019-00-00'
     end
+
     it 'converts YYYY-MM to YYYY-MM-OO' do
       expect(LsDate.convert('2019-12')).to eql '2019-12-00'
     end
@@ -80,10 +93,19 @@ describe LsDate do
       expect(LsDate.convert('')).to eql nil
     end
 
-    it 'converts MM/YYY' do
+    it 'converts MM/YYYY' do
       expect(LsDate.convert('04/2015')).to eq '2015-04-00'
       expect(LsDate.convert('12/1960')).to eq '1960-12-00'
+      expect(LsDate.convert('12/2007')).to eq '2007-12-00'
     end
+
+    it 'converts MON-YY (Dec-07)' do
+      expect(LsDate.convert('Dec-07')).to eq '2007-12-00'
+      expect(LsDate.convert('Feb-18')).to eq '2018-02-00'
+    end
+
+    # '12/2007'
+    # ''Dec-07'
 
     it 'returns input if it can\'t convert' do
       expect(LsDate.convert('88')).to eql '88'
