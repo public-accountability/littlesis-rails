@@ -14,8 +14,7 @@
 #
 # TODO:
 #  - validate category_id + entity primary ext
-#  - find_existing
-#  - update_existing
+#  - handle relationship soft_delete
 class ExternalRelationship < ApplicationRecord
   enum dataset: ExternalData::DATASETS
 
@@ -23,11 +22,18 @@ class ExternalRelationship < ApplicationRecord
   belongs_to :relationship, optional: true
 
   validates :category_id, presence: true
-  serialize :relationship_attributes, Hash
+
+  after_initialize do
+    extend "ExternalRelationship::Datasets::#{dataset.camelize}".constantize
+  end
 
   ##
   # Interface
   #
+  def relationship_attributes
+    raise NotImplementedError
+  end
+
   def automatch
     raise NotImplementedError
   end
@@ -46,22 +52,63 @@ class ExternalRelationship < ApplicationRecord
 
   module Datasets
     module IapdScheduleA
-      def potential_matches_entity1
+      def relationship_attributes
+        attrs = { position_attributes: {} }
+
+        records = external_data.data['records'].sort_by { |record| record['filename'] }
+
+        attrs[:name] = if records.last['owner_type'] == 'I'
+                         NameParser.new(records.last['name']).to_s
+                       else
+                         OrgName.format records.last['name']
+                       end
+
+        attrs[:start_date] = LsDate.parse(records.map { |r| r['acquired'] }.min).to_s
+        attrs[:description1] = records.last['title_or_status']
+        attrs[:is_current] = true if records.last['iapd_year'] >= '2019'
+
+        if Position.description_indicates_board_membership(attrs[:description1])
+          attrs[:position_attributes][:is_board] = true
+        end
+
+        if Position.description_indicates_executive(attrs[:description1])
+          attrs[:position_attributes][:is_executive] = true
+        end
+
+        attrs
       end
 
-      def potential_matches_entity2
-      end
+      # def potential_matches_entity1
+      # end
+
+      # def potential_matches_entity2
+      # end
 
       def automatch
+        return if matched? || entity2_id.present?
+
+        advisor_crd_number = external_data.data['advisor_crd_number']
+
+        if advisor_crd_number
+          if (entity2 = ExternalLink.crd.find_by(link_id: advisor_crd_number))
+            update!(entity2_id: entity2.id)
+          end
+        end
       end
 
+      # --> <Relationship> | nil
       def find_existing
+        relationships = Relationship.where(attributes.slice('category_id', 'entity1_id', 'entity2_id')).to_a
+
+        return nil if relationships.empty?
+
+        if relationships.length > 1
+          log "Found #{relationship.length} relationships. Selecting existing relationship #{relationships.first.id}"
+        end
+
+        relationships.first
       end
     end
-  end
-
-  after_initialize do
-    extend "ExternalRelationship::Datasets::#{dataset.camelize}".constantize
   end
 
   def matched?
@@ -88,23 +135,32 @@ class ExternalRelationship < ApplicationRecord
     set_entity entity2: entity
   end
 
+  # If the ExternalRelationship is already matched, it will update the existing relationship
+  # When a matching relationship can be found, it will use one that's already in our database,
+  # otherwise a new relationship is created
+  def create_or_update_relationship
+    raise MissingMatchedEntityError unless entity1_id.present? || entity2_id.present?
 
-
-  # This creates a new relationship and connects this instance with it
-  def create_new_relationship
     if matched?
-      raise AlreadyMatchedError
-    elsif entity1_id.nil? || entity2_id.nil?
-      raise MissingMatchedEntityError
+      log "updating relationship #{relationship_id}"
+      relationship.update!(relationship_attributes)
+    elsif (existing_relationship = find_existing)
+      log "updating relationship #{existing_relationship.id}"
+      ApplicationRecord.transaction do
+        update!(relationship: existing_relationship)
+        relationship.update!(relationship_attributes)
+      end
+    else
+      log 'creating a new relationship'
+      create_relationship! relationship_attributes
+                               .merge!(attributes.slice('entity1_id', 'entity2_id', 'category_id'))
     end
+  end
 
-    ApplicationRecord.transaction do
-      relationship = Relationship.create!(
-        attributes.slice('entity1_id', 'entity2_id', 'category_id').merge(relationship_attributes)
-      )
+  private
 
-      update!(relationship: relationship)
-    end
+  def log(message)
+    Rails.logger.info "[ExternalRelationship-#{id}] #{message}"
   end
 
   class EntityAlreadySetError < Exceptions::LittleSisError; end

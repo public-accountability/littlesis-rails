@@ -8,7 +8,6 @@ describe ExternalRelationship, type: :model do
     it { is_expected.to have_db_column(:entity1_id).of_type(:integer) }
     it { is_expected.to have_db_column(:entity2_id).of_type(:integer) }
     it { is_expected.to have_db_column(:category_id).of_type(:integer) }
-    it { is_expected.to have_db_column(:relationship_attributes).of_type(:text) }
   end
 
   specify 'matched?' do
@@ -20,7 +19,7 @@ describe ExternalRelationship, type: :model do
     let(:entity1) { build(:org) }
     let(:entity2) { build(:org) }
     let(:external_relationship) do
-      create(:external_relationship_schedule_a, category_id: 12, external_data: create(:external_data_schedule_a))
+      create(:external_relationship_schedule_a, category_id: 1, external_data: create(:external_data_schedule_a))
     end
 
     it 'sets entity1 and entity2' do
@@ -38,55 +37,64 @@ describe ExternalRelationship, type: :model do
     end
   end
 
-  describe 'potential matches' do
-    describe 'potential_matches_entity1'
-    describe 'potential_matches_entity2'
-  end
-
-  describe 'create_new_relationship' do
-    let(:entity1) { create(:entity_person) }
-    let(:entity2) { create(:entity_org) }
-
-    it 'errors if already matched' do
-      er = build(:external_relationship, relationship: build(:generic_relationship))
-      expect { er.create_new_relationship }.to raise_error(ExternalRelationship::AlreadyMatchedError)
-    end
-
-    it 'errors unless both entity1 and entity2 are set' do
-      er = create(:external_relationship_schedule_a, entity1_id: entity1.id)
-      expect { er.create_new_relationship }.to raise_error(ExternalRelationship::MissingMatchedEntityError)
+  describe 'create_or_update_relationship' do
+    let(:external_relationship) do
+      create(:external_relationship_schedule_a, category_id: 1, external_data: create(:external_data_schedule_a))
     end
 
     it 'creates a new relationship' do
-      er = create(:external_relationship_schedule_a, entity1_id: entity1.id, entity2_id: entity2.id)
-      expect { er.create_new_relationship }.to change(Relationship, :count).by(1)
-    end
-
-    it 'sets relationship id on the external relationship model' do
-      er = create(:external_relationship_schedule_a, entity1_id: entity1.id, entity2_id: entity2.id)
-      expect { er.create_new_relationship }
-        .to change(er, :relationship_id).from(nil)
-    end
-
-    it 'updates relationship attributes' do
-      er = create(:external_relationship_schedule_a,
-                  entity1_id: entity1.id,
-                  entity2_id: entity2.id,
-                  relationship_attributes: { 'description1' => 'CEO' } )
-      er.create_new_relationship
-      expect(er.relationship.description1).to eq 'CEO'
-    end
-
-    it 'updates extension attributes' do
-      er = create(:external_relationship_schedule_a,
-                  entity1_id: entity1.id,
-                  entity2_id: entity2.id,
-                  relationship_attributes: {
-                    'description1' => 'CEO',
-                    'ownership_attributes' => { 'shares': 10_000 }
-                  })
-      er.create_new_relationship
-      expect(er.relationship.ownership.shares).to eq 10_000
     end
   end
+
+  # describe 'potential matches' do
+  #   describe 'potential_matches_entity1'
+  #   describe 'potential_matches_entity2'
+  # end
+
+  # describe 'create_new_relationship' do
+  #   let(:entity1) { create(:entity_person) }
+  #   let(:entity2) { create(:entity_org) }
+
+  #   it 'errors if already matched' do
+  #     er = build(:external_relationship, relationship: build(:generic_relationship))
+  #     expect { er.create_new_relationship }.to raise_error(ExternalRelationship::AlreadyMatchedError)
+  #   end
+
+  #   it 'errors unless both entity1 and entity2 are set' do
+  #     er = create(:external_relationship_schedule_a, entity1_id: entity1.id)
+  #     expect { er.create_new_relationship }.to raise_error(ExternalRelationship::MissingMatchedEntityError)
+  #   end
+
+  #   it 'creates a new relationship' do
+  #     er = create(:external_relationship_schedule_a, entity1_id: entity1.id, entity2_id: entity2.id)
+  #     expect { er.create_new_relationship }.to change(Relationship, :count).by(1)
+  #   end
+
+  #   it 'sets relationship id on the external relationship model' do
+  #     er = create(:external_relationship_schedule_a, entity1_id: entity1.id, entity2_id: entity2.id)
+  #     expect { er.create_new_relationship }
+  #       .to change(er, :relationship_id).from(nil)
+  #   end
+
+  #   it 'updates relationship attributes' do
+  #     er = create(:external_relationship_schedule_a,
+  #                 entity1_id: entity1.id,
+  #                 entity2_id: entity2.id,
+  #                 relationship_attributes: { 'description1' => 'CEO' } )
+  #     er.create_new_relationship
+  #     expect(er.relationship.description1).to eq 'CEO'
+  #   end
+
+  #   it 'updates extension attributes' do
+  #     er = create(:external_relationship_schedule_a,
+  #                 entity1_id: entity1.id,
+  #                 entity2_id: entity2.id,
+  #                 relationship_attributes: {
+  #                   'description1' => 'CEO',
+  #                   'ownership_attributes' => { 'shares': 10_000 }
+  #                 })
+  #     er.create_new_relationship
+  #     expect(er.relationship.ownership.shares).to eq 10_000
+  #   end
+  # end
 end

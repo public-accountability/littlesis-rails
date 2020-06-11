@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_28_185753) do
+ActiveRecord::Schema.define(version: 2020_06_10_195236) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -431,7 +431,6 @@ ActiveRecord::Schema.define(version: 2020_05_28_185753) do
     t.bigint "entity1_id"
     t.bigint "entity2_id"
     t.integer "category_id", limit: 2, null: false
-    t.text "relationship_attributes"
     t.index ["external_data_id"], name: "fk_rails_5025111f98"
     t.index ["relationship_id"], name: "fk_rails_632542e80c"
   end
@@ -739,6 +738,7 @@ ActiveRecord::Schema.define(version: 2020_05_28_185753) do
     t.datetime "updated_at"
     t.boolean "delta", default: true, null: false
     t.index ["contrib_code"], name: "index_ny_disclosures_on_contrib_code"
+    t.index ["corp_name"], name: "idx_ny_disclosures_corp_name"
     t.index ["delta"], name: "index_ny_disclosures_on_delta"
     t.index ["e_year"], name: "index_ny_disclosures_on_e_year"
     t.index ["filer_id", "report_id", "transaction_id", "schedule_transaction_date", "e_year"], name: "index_filer_report_trans_date_e_year", length: { report_id: 191 }

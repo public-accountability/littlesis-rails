@@ -149,6 +149,16 @@ class ExternalData < ApplicationRecord
               unmatched: public_send(dataset).unmatched.count)
   end
 
+  # For data exploration and testing
+  def self.random_iapd_schedule_a_records(take = 100)
+    iapd_schedule_a
+      .order('RAND()')
+      .pluck(:data)
+      .take(take)
+      .map { |r| r['records'] }
+      .flatten
+  end
+
   private_class_method def self.records_total(dataset)
     class_eval "#{dataset}.count"
   end
