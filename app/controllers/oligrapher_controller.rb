@@ -46,7 +46,7 @@ class OligrapherController < ApplicationController
   end
 
   def new
-    @map = NetworkMap.new(version: 3, title: 'Untitled Map', user: current_user)
+    @map = NetworkMap.new(oligrapher_version: 3, title: 'Untitled Map', user: current_user)
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
     render 'oligrapher/new', layout: 'oligrapher3'
   end
