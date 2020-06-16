@@ -1,26 +1,6 @@
 describe 'External Data/Entities matching tool' do
   before { login_as(create_basic_user, scope: :user) }
-
   after { logout(:user) }
-
-  feature 'overview page' do
-    before { visit external_entities_path }
-
-    it 'has links to individual pages' do
-      expect(page.status_code).to eq 200
-      page_has_selector '#external-entities-datasets-overview a', count: 3
-    end
-  end
-
-  feature 'dataset table' do
-    before { visit external_entities_path(dataset: 'nycc') }
-
-    it 'shows datatables' do
-      expect(page.status_code).to eq 200
-      page_has_selector 'table#dataset-table'
-      expect(page.html).to match /DataTable\({/
-    end
-  end
 
   feature 'external data view' do
     let(:external_data) { create(:external_data_iapd_advisor) }

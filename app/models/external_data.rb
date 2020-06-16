@@ -51,8 +51,7 @@ class ExternalData < ApplicationRecord
     end
 
     def url
-      Rails.application.routes.url_helpers
-        .external_entities_path(dataset: name, matched: 'unmatched')
+      Rails.application.routes.url_helpers.dataset_path(dataset: name, matched: 'unmatched')
     end
   end
 

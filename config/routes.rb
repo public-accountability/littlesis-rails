@@ -379,22 +379,17 @@ Lilsis::Application.routes.draw do
   # external entities and data #
   ##############################
 
-  get '/external_data/:dataset' => 'external_data#dataset', constraints: DatasetConstraint.new
+    get '/external_data/:dataset' => 'external_data#dataset', constraints: DatasetConstraint.new
 
-  resources :external_entities, only: %i[index show update] do
+  # Overview page
+  get '/datasets' => 'datasets#index'
+  # Table Of ExternalEntites/ExternalRelationships for the given dataset
+  get '/datasets/:dataset' => 'datasets#dataset', constraints: DatasetConstraint.new, as: 'dataset'
+
+  resources :external_entities, only: %i[show update] do
     get 'random', on: :collection, action: :random
-    get '/:dataset',
-        on: :collection,
-        action: :dataset,
-        constraints: DatasetConstraint.new
-    get '/:dataset/random',
-        on: :collection,
-        action: :random,
-        constraints: DatasetConstraint.new
-    get '/:dataset/:id',
-        on: :collection,
-        action: :show,
-        constraints: DatasetConstraint.new(check_id: true)
+    get '/:dataset/random', on: :collection, action: :random, constraints: DatasetConstraint.new
+    get '/:dataset/:id', on: :collection, action: :show, constraints: DatasetConstraint.new(check_id: true)
   end
 
   match "*path", to: "errors#not_found", via: :all
