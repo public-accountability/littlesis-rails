@@ -392,6 +392,10 @@ Lilsis::Application.routes.draw do
     get '/:dataset/:id', on: :collection, action: :show, constraints: DatasetConstraint.new(check_id: true)
   end
 
+  resources :external_relationships, only: %i[show] do
+    get 'random', on: :collection, action: :random
+  end
+
   match "*path", to: "errors#not_found", via: :all
 
   # The priority is based upon order of creation: first created -> highest priority.

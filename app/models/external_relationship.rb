@@ -178,6 +178,19 @@ class ExternalRelationship < ApplicationRecord
     end
   end
 
+  def presenter
+    self
+  end
+
+  def self.unmatched
+    where(relationship_id: nil)
+  end
+
+  def self.matched
+    where.not(relationship_id: nil)
+  end
+
+
   private
 
   def log(message)
