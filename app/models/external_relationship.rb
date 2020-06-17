@@ -59,7 +59,7 @@ class ExternalRelationship < ApplicationRecord
         @advisor_crd_number ||= external_data.data.fetch('advisor_crd_number')
       end
 
-      private :schedule_a_records, :advisor_crd_number
+      # private :schedule_a_records, :advisor_crd_number
 
       def relationship_attributes
         records = schedule_a_records
@@ -179,7 +179,7 @@ class ExternalRelationship < ApplicationRecord
   end
 
   def presenter
-    self
+    @presenter ||= ExternalRelationshipPresenter.new(self)
   end
 
   def self.unmatched
@@ -189,7 +189,6 @@ class ExternalRelationship < ApplicationRecord
   def self.matched
     where.not(relationship_id: nil)
   end
-
 
   private
 
