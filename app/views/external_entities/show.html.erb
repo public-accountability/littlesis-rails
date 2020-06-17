@@ -17,7 +17,7 @@
     </div>
 
     <div class="rightSide">
-      <% if @external_entity.matched? %>
+      <% if @entity_matcher.matched? %>
         <%= render partial: 'matched_info' %>
       <% else %>
         <%= render partial: 'actions' %>

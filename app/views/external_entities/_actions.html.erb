@@ -1,31 +1,33 @@
+<% active_tab = @entity_matcher.active_tab %>
+
 <ul id="external-entity-menu" class="nav nav-tabs" role="tablist">
   <li>
     <a data-toggle="tab"
-       class="<%= @active_tab == :matches ? 'active' : '' %>"
+       class="<%= active_tab == :matches ? 'active' : '' %>"
        href="#external-entity-matches">Matches</a>
   </li>
   <li>
     <a data-toggle="tab"
-       class="<%= @active_tab == :search ? 'active' : '' %>"
+       class="<%= active_tab == :search ? 'active' : '' %>"
        href="#external-entity-search">Search</a>
   </li>
   <li>
     <a data-toggle="tab"
-       class="<%= @active_tab == :create ? 'active' : ''%>"
+       class="<%= active_tab == :create ? 'active' : ''%>"
        href="#external-entity-create">Create</a>
   </li>
 </ul>
 
 <div class="tab-content">
-  <%= external_entities_tab('external-entity-matches', @active_tab == :matches) do %>
-    <%= render partial: 'potential_matches', locals: { matches: @external_entity.matches } %>
+  <%= external_entities_tab('external-entity-matches', active_tab == :matches) do %>
+    <%= render partial: 'potential_matches', locals: { matches: @entity_matcher.matches } %>
   <% end %>
 
-  <%= external_entities_tab('external-entity-search', @active_tab == :search) do %>
+  <%= external_entities_tab('external-entity-search', active_tab == :search) do %>
     <%= render partial: 'search' %>
   <% end %>
 
-  <%= external_entities_tab('external-entity-create', @active_tab == :create) do %>
+  <%= external_entities_tab('external-entity-create', active_tab == :create) do %>
     <%= render partial: 'create' %>
   <% end %>
 </div>

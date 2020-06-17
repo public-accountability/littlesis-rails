@@ -4,6 +4,8 @@ class ExternalEntitiesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_external_entity, only: %i[show update]
 
+  delegate :external_entity_path, to: 'Rails.application.routes.url_helpers'
+
   def index
     @matched = params[:matched]&.to_sym || :all
     @dataset = params[:dataset].presence
@@ -12,9 +14,22 @@ class ExternalEntitiesController < ApplicationController
   # GET /external_entities/:id
   # If the parameter "search" is set, it will display the search tab with that query
   def show
-    unless @external_entity.matched?
-      @search_term = params.fetch(:search, nil)
-      @active_tab = @search_term.present? ? :search : :matches
+    @entity_matcher = EntityMatcherPresenter.new(
+      :model => @external_entity,
+      :name => @external_entity.display_information['Name'],
+      :search_term => params[:search],
+      :primary_ext => @external_entity.primary_ext,
+      :match_url => external_entity_path(@external_entity),
+      :search_url => external_entity_path(@external_entity),
+      :matched? => @external_entity.matched?,
+      :active_tab => :matches
+    )
+
+    @entity_matcher.load_matches_unless_matched
+
+    if @entity_matcher.search_term.present? && !@entity_matcher.matched?
+      @entity_matcher.load_search_matches
+      @entity_matcher.active_tab = :search
     end
   end
 
