@@ -28,7 +28,7 @@ class LinksGroup
     end
 
     # TODO sort by date here or do sorting in SQL
-    return links.sort_by { |link| link.relationship.updated_at }
+    return sorted_current_links(links) + sorted_ended_links(links)
   end
 
   # input: [ <Link> ] 
@@ -37,5 +37,17 @@ class LinksGroup
   # same entity are grouped together
   def group_by_entity(links)
     links.group_by { |l| l.entity2_id }.values
+  end
+
+  def sorted_current_links(links)
+    links
+      .select { |l| l.relationship.end_date.blank? }
+      .sort_by { |l| l.relationship.start_date || l.relationship.updated_at.to_s }.reverse
+  end
+
+  def sorted_ended_links(links)
+    links
+      .select { |l| l.relationship.end_date.present? }
+      .sort_by { |l| l.relationship.start_date || l.relationship.updated_at.to_s }.reverse
   end
 end

@@ -25,10 +25,10 @@ describe LinksGroup do
     end
 
     it 'orders the data in the default order' do
-      expect(@links_group.links).to eq [[@link1], [@link2]]
+      expect(@links_group.links).to eq [[@link2], [@link1]]
     end
   end
-  
+
   context 'with donation links' do
     before do
       e1_id = 1000
@@ -47,6 +47,60 @@ describe LinksGroup do
 
     it 'order links by amount' do
       expect(@links_group.links).to eq [[@link2,@link3], [@link1]]
+    end
+  end
+
+  describe 'link sorting' do
+    let(:org) { create(:entity_org).add_extension('Business') }
+    let(:person) { create(:entity_person) }
+    let(:links) { SortedLinks.new(person) }
+    let(:links_group) { links.send(:business_positions) }
+
+    before do
+      create(:position_relationship, entity: person, related: org, start_date: '2009-01-23', end_date: '2010-01-01')
+      create(:position_relationship, entity: person, related: org, start_date: '2010-10-01', end_date: '2011-10-01')
+      create(:position_relationship, entity: person, related: org, start_date: '2013-11-01', end_date: '2019-10-01')
+    end
+
+    it 'returns the links at the second level of a two-dimentional array' do
+      expect(links_group.links).to be_a Array
+      expect(links_group.links.count).to be 1
+      expect(links_group.links[0]).to be_a Array
+      expect(links_group.links[0].count).to be 3
+    end
+
+    context 'with multiple links to the same entity' do
+      it 'sorts the links by date' do
+        expect(links_group.links[0].map { |l| l.relationship.start_date })
+          .to match %w[2013-11-01 2010-10-01 2009-01-23]
+      end
+    end
+
+    context 'with an older but still-current link' do
+      before do
+        create(:position_relationship, entity: person, related: org, start_date: '2000-04-18', end_date: nil)
+      end
+
+      it 'sorts the links by date' do
+        expect(links_group.links[0].map { |l| l.relationship.start_date })
+          .to match %w[2000-04-18 2013-11-01 2010-10-01 2009-01-23]
+      end
+    end
+
+    context 'with a date-less link' do
+      before do
+        create(:position_relationship, entity: person, related: org, start_date: nil, updated_at: '2020-05-10')
+        create(:position_relationship, entity: person, related: org, start_date: '2019-10-01')
+      end
+
+      it "doesn't raise an exception" do
+        expect { links_group.links }.not_to raise_error
+      end
+
+      it 'sorts by updated timestamp instead' do
+        expect(links_group.links[0].map { |l| l.relationship.start_date })
+          .to match [nil, '2019-10-01', '2013-11-01', '2010-10-01', '2009-01-23']
+      end
     end
   end
 end
