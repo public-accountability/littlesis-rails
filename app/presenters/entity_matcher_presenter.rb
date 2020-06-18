@@ -5,13 +5,15 @@ EntityMatcherPresenter = Struct.new(
   keyword_init: true
 ) do
 
-  def load_matches_unless_matched
-    self.matches = model.matches unless matched?
-  end
+  def initialize(**kwargs)
+    super(**kwargs)
+    unless matched?
+      self.matches = model.matches
 
-  def load_search_matches
-    if search_term.present?
-      self.search_matches = model.search_for_matches(search_term)
+      if search_term.present?
+        self.search_matches = model.search_for_matches(search_term)
+        self.active_tab = :search
+      end
     end
   end
 end

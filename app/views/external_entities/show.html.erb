@@ -20,7 +20,8 @@
       <% if @entity_matcher.matched? %>
         <%= render partial: 'matched_info' %>
       <% else %>
-        <%= render partial: 'actions' %>
+        <%= render partial: 'shared/entity_matcher', object: @entity_matcher %>
+        <%#= render partial: 'actions' %>
       <% end %>
     </div>
   </div>

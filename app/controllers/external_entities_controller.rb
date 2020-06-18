@@ -24,13 +24,6 @@ class ExternalEntitiesController < ApplicationController
       :matched? => @external_entity.matched?,
       :active_tab => :matches
     )
-
-    @entity_matcher.load_matches_unless_matched
-
-    if @entity_matcher.search_term.present? && !@entity_matcher.matched?
-      @entity_matcher.load_search_matches
-      @entity_matcher.active_tab = :search
-    end
   end
 
   # GET /external_entities/random

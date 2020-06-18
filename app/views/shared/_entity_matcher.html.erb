@@ -1,4 +1,5 @@
-<% active_tab = @entity_matcher.active_tab %>
+<%# locals: entity_matcher (EntityMatcherPresenter) %>
+<% active_tab = entity_matcher.active_tab %>
 
 <ul id="external-entity-menu" class="nav nav-tabs" role="tablist">
   <li>
@@ -20,14 +21,14 @@
 
 <div class="tab-content">
   <%= external_entities_tab('external-entity-matches', active_tab == :matches) do %>
-    <%= render partial: 'potential_matches', locals: { matches: @entity_matcher.matches } %>
+    <%= render partial: 'shared/entity_matcher/potential_matches', locals: { matches: @entity_matcher.matches } %>
   <% end %>
 
   <%= external_entities_tab('external-entity-search', active_tab == :search) do %>
-    <%= render partial: 'search' %>
+    <%= render partial: 'shared/entity_matcher/search' %>
   <% end %>
 
   <%= external_entities_tab('external-entity-create', active_tab == :create) do %>
-    <%= render partial: 'create' %>
+    <%= render partial: 'shared/entity_matcher/create' %>
   <% end %>
 </div>
