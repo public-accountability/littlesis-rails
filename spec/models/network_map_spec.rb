@@ -441,6 +441,28 @@ describe NetworkMap, type: :model do
         .not_to change { NetworkMap.unscoped.count }
     end
   end
+
+  describe '#sources_annotation' do
+    let(:network_map) { create(:network_map, user_id: 1) }
+
+    context 'when map is empty' do
+      it 'should return nil' do
+        expect(network_map.sources_annotation).to be nil
+      end
+    end
+
+    context 'when map has edges from littlesis' do
+      let(:doc) { create(:document) }
+
+      before { allow(network_map).to receive(:documents).and_return([doc]) }
+
+      it 'should return annotation when map has edges with documents' do
+        obj = network_map.sources_annotation
+        expect(obj[:text]).to include(doc.name)
+        expect(obj[:text]).to include(doc.url)
+      end
+    end
+  end
 end
 
 # rubocop:enable Style/WordArray

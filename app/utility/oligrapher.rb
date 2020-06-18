@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
-  VERSION = '14ae2b5c633f213e34433407cfcac4da3707973c'
+  VERSION = '6ee4bb0734db7a498b75bbb41a38280ef60187a9'
 
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
@@ -15,6 +15,11 @@ module Oligrapher
 
     {
       graph: map.graph_data.to_h,
+      annotations: {
+        currentIndex: 0,
+        list: JSON.parse(map.annotations_data || "[]"),
+        sources: map.sources_annotation
+      },
       settings: { debug: Rails.env.development? },
       attributes: {
         id: map.id,
@@ -23,7 +28,7 @@ module Oligrapher
         date: (map.created_at || Time.current).strftime('%B %d, %Y'),
         owner: owner.present? ? { id: owner.id, name: owner.username, url: owner.url } : nil,
         user: current_user.present? ? { id: current_user.id, name: current_user.username } : nil,
-        settings: JSON.parse(map.settings || '{}').merge({ private: map.is_private, clone: map.is_cloneable }),
+        settings: settings_data(map),
         editors: is_owner ? editor_data(map) : confirmed_editor_data(map),
         version: map.oligrapher_version,
         shareUrl: is_owner ? map.share_path : nil
@@ -49,6 +54,14 @@ module Oligrapher
         url: u.url,
         pending: pending_ids.include?(u.id)
       } }
+  end
+
+  def self.settings_data(map)
+    JSON.parse(map.settings || '{}').merge({
+      private: map.is_private,
+      clone: map.is_cloneable,
+      list_sources: map.list_sources
+    })
   end
 
   module Node

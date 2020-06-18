@@ -9,7 +9,7 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges]
+  before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges get_interlocks]
   before_action :set_map, only: %i[update get_editors editors confirm_editor show lock clone destroy]
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
@@ -46,7 +46,7 @@ class OligrapherController < ApplicationController
   end
 
   def new
-    @map = NetworkMap.new(version: 3, title: 'Untitled Map', user: current_user)
+    @map = NetworkMap.new(oligrapher_version: 3, title: 'Untitled Map', user: current_user)
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
     render 'oligrapher/new', layout: 'oligrapher3'
   end
@@ -174,6 +174,32 @@ class OligrapherController < ApplicationController
     render json: edges
   end
 
+  def get_interlocks
+    return head :bad_request if params[:entity1_id].blank?
+    return head :bad_request if params[:entity2_id].blank?
+    return head :bad_request if params[:entity_ids].blank?
+
+    num = params.fetch(:num, 10).to_i
+    interlock_ids = Entity.interlock_ids(params[:entity1_id], params[:entity2_id])
+    interlock_ids = (interlock_ids - params[:entity_ids].split(',').map(&:to_i)).take(num)
+
+    if interlock_ids.count > 0
+      nodes = Entity
+        .where(id: interlock_ids)
+        .map { |e| Oligrapher::Node.from_entity(e) }
+      rel_ids = Link
+        .where(entity1_id: [params[:entity1_id], params[:entity2_id]], entity2_id: interlock_ids)
+        .pluck(:relationship_id)
+        .uniq
+      rels = Relationship.where(id: rel_ids)
+      edges = rels.map { |r| Oligrapher.rel_to_edge(r) }
+
+      render json: { nodes: nodes, edges: edges }
+    else
+      render json: { nodes: [], edges: [] }
+    end
+  end
+
   private
 
   def new_oligrapher_params
@@ -183,7 +209,7 @@ class OligrapherController < ApplicationController
   def oligrapher_params
     params
       .require(:attributes)
-      .permit(:title, :description, :is_private, :is_cloneable, :list_sources, :settings)
+      .permit(:title, :description, :is_private, :is_cloneable, :list_sources, :annotations_data, :settings)
       .merge(graph_data: params[:graph_data]&.permit!&.to_h)
       .merge(oligrapher_version: 3)
   end

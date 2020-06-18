@@ -201,6 +201,7 @@ Lilsis::Application.routes.draw do
       get '/get_edges', action: :get_edges
       get '/find_connections', action: :find_connections
       get '/find_nodes', action: :find_nodes
+      get '/get_interlocks', action: :get_interlocks
       get '/example', action: :example
     end
 
