@@ -44,36 +44,8 @@ class LsDate
     define_method("sp_#{specificity}?") { @specificity == specificity }
   end
 
-  # ~~~~spaceship method~~~~
   def <=>(other)
-    # one of the dates is unknown
-    return 0 if sp_unknown? && other.sp_unknown?
-    return 1 if !sp_unknown? && other.sp_unknown?
-    return -1 if sp_unknown? && !other.sp_unknown?
-    # If the years are different
-    return -1 if @year < other.year
-    return 1 if @year > other.year
-    # year is the same, specificity is year for both
-    if @year == other.year
-      return 0 if sp_year? && other.sp_year?
-      return -1 if sp_year? && (other.sp_month? || other.sp_day?)
-      return 1 if (sp_month? || sp_day?) && other.sp_year?
-    end
-    # if the months are different
-    return 1 if @month > other.month
-    return -1 if @month < other.month
-    # months are the same, one or both of them are are missing a day
-    if @month == other.month
-      return 0 if sp_month? && other.sp_month?
-      return 1 if sp_day? && other.sp_month?
-      return -1 if sp_month? && other.sp_day?
-    end
-    # if we get here then year and month have to be the same and specificity is :day for both LsDates
-    if sp_day? && other.sp_day?
-      return -1 if @day < other.day
-      return 1 if @day > other.day
-      return 0 if @day == other.day
-    end
+    date_string.to_s <=> other.date_string.to_s
   end
 
   def to_s
