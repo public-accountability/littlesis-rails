@@ -643,6 +643,20 @@ describe Relationship, type: :model do
     end
   end
 
+  describe '#temporal_status' do
+    let(:entity1) { create(:entity_person) }
+    let(:entity2) { create(:entity_person) }
+    let(:current_relationship) { create(:generic_relationship, entity1_id: entity1.id, entity2_id: entity2.id, is_current: true) }
+    let(:past_relationship) { create(:generic_relationship, entity1_id: entity1.id, entity2_id: entity2.id, is_current: false) }
+    let(:unknown_relationship) { create(:generic_relationship, entity1_id: entity1.id, entity2_id: entity2.id, is_current: nil) }
+
+    it 'returns the correct values' do
+      expect(current_relationship.temporal_status).to be :current
+      expect(past_relationship.temporal_status).to be :past
+      expect(unknown_relationship.temporal_status).to be :unknown
+    end
+  end
+
   describe 'Deleting' do
     let(:rel) do
       create(:generic_relationship,

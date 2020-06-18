@@ -513,6 +513,17 @@ class Relationship < ApplicationRecord
     Rails.application.routes.url_helpers.relationship_url(self)
   end
 
+  def temporal_status
+    case is_current
+    when true
+      :current
+    when false
+      :past
+    when nil
+      :unknown
+    end
+  end
+
   private
 
   # Updates link count for entities
