@@ -10,6 +10,7 @@ class LinksGroup
     @heading = heading
     @category_id = links.empty? ? nil : links[0].category_id
     @links = group_by_entity(order(links))
+
     # In situations where the array size does not represent the total count, i.e. queries with LIMIT
     if count.present?
       @count = count
@@ -27,7 +28,7 @@ class LinksGroup
     when 5
       sort_by_amount(links)
     else
-      sorted_current_links(links) + sorted_ended_links(links)
+      sort_by_date(links)
     end
   end
 
@@ -37,18 +38,6 @@ class LinksGroup
   # same entity are grouped together
   def group_by_entity(links)
     links.group_by(&:entity2_id).values
-  end
-
-  def sorted_current_links(links)
-    links
-      .select { |l| l.relationship.end_date.blank? }
-      .sort_by { |l| l.relationship.start_date || l.relationship.updated_at.to_s }.reverse
-  end
-
-  def sorted_ended_links(links)
-    links
-      .select { |l| l.relationship.end_date.present? }
-      .sort_by { |l| l.relationship.start_date || l.relationship.updated_at.to_s }.reverse
   end
 
   def sort_by_related_link_count(links)
@@ -65,5 +54,9 @@ class LinksGroup
         -1
       end
     end
+  end
+
+  def sort_by_date(links)
+    links.sort { |a, b| b.relationship.date_rank <=> a.relationship.date_rank }
   end
 end
