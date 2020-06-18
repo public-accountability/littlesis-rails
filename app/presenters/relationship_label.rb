@@ -14,7 +14,7 @@ class RelationshipLabel < SimpleDelegator
 
   def display_date_range
     if start_date.nil? && end_date.nil?
-      return '(past)' unless is_current
+      return '(past)' if temporal_status == :past
 
       return ''
     end
