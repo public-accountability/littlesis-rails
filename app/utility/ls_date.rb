@@ -11,15 +11,24 @@
 #    May, 1968 -> '1968-05-00'
 #    April 1, 2017 -> '2017-02-01'
 #    The year 1975 -> '1975-00-00'
-class LsDate
+class LsDate # rubocop:disable Metrics/ClassLength
   include Comparable
   attr_reader :date_string, :specificity, :year, :month, :day
 
-  DATE_REGEXES = {
-    'YYYY' => /\A\d{4}\Z/,
-    'YYYY-MM' => /\A\d{4}-\d{2}\Z/,
-    'YYYYMMDD' => /\A\d{8}\Z/,
-    'MM/YYYY' => /\A(01|02|03|04|05|06|07|08|09|10|11|12){1}\/[1-9]{1}[0-9]{3}\Z/
+  DATE_TRANSFORMERS = {
+    %r{(?<day>^\d{2})\/(?<month>\d{2})\/(?<year>\d{4})$} =>
+      ->(m) { "#{m[:year]}-#{m[:month]}-#{m[:day]}" },
+
+    /(?<year>^\d{4})(?<month>\d{2})(?<day>\d{2})$/ =>
+      ->(m) { "#{m[:year]}-#{m[:month]}-#{m[:day]}" },
+
+    %r{(?<month>^\d{2})\/(?<year>\d{4})$} =>
+      ->(m) { "#{m[:year]}-#{m[:month]}-00" },
+
+    /(?<year>^\d{4})-(?<month>\d{2})$/ =>
+      ->(m) { "#{m[:year]}-#{m[:month]}-00" },
+
+    /(?<year>^\d{4}$)/ => ->(m) { "#{m[:year]}-00-00" }
   }.freeze
 
   def initialize(date_string)
@@ -93,7 +102,6 @@ class LsDate
     return "#{year}-#{month}-01" if sp_month?
   end
 
-  # str -> str | nil
   # converts string dates in the following formats:
   #   YYYY. Example: 1996 -> 1996-00-00
   #   YYYY-MM. Example: 2017-01 -> 2017-01-00
@@ -104,19 +112,25 @@ class LsDate
   # Otherwise, it returns the input unchanged
   def self.convert(date)
     return date unless date.is_a? String
+
     return nil if date.blank?
 
-    if DATE_REGEXES['YYYY'].match?(date)
-      "#{date}-00-00"
-    elsif DATE_REGEXES['YYYY-MM'].match?(date)
-      "#{date.slice(0, 4)}-#{date.slice(5, 2)}-00"
-    elsif DATE_REGEXES['YYYYMMDD'].match?(date)
-      "#{date.slice(0, 4)}-#{date.slice(4, 2)}-#{date.slice(6, 2)}"
-    elsif DATE_REGEXES['MM/YYYY'].match?(date)
-      "#{date[3..6]}-#{date[0..1]}-00"
-    else
-      date
+    return transform_date(date) || date
+  end
+
+  def self.transform_date(date)
+    output = nil
+    DATE_TRANSFORMERS.each_pair do |regex, formatter|
+      match = regex.match date
+      next unless match
+
+      match.named_captures.each do |k, v|
+        break unless send("valid_#{k}?", v.to_i)
+
+        output = formatter.call(match)
+      end
     end
+    output
   end
 
   # string -> boolean
@@ -135,22 +149,11 @@ class LsDate
   # CMP dates are in the following format:
   # - MM/DD/YYYY
   # - MM/YYYY
-  # - YYYYY
+  # - YYYY
   # str ---> LsDate | nil
   # returns nil if date is invalid or missing
   def self.parse_cmp_date(date)
-    return nil if date.blank?
-    if /^\d{4}$/.match?(date)
-      new("#{date}-00-00")
-    elsif %r{^\d{2}\/\d{4}$}.match?(date)
-      month, year = date.split('/')
-      return nil unless valid_year?(year.to_i) && valid_month?(month.to_i)
-      new("#{year}-#{month}-00")
-    elsif %r{^(\d{2}\/){2}\d{4}$}.match?(date)
-      day, month, year = date.split('/')
-      return nil unless valid_year?(year.to_i) && valid_month?(month.to_i) && valid_day?(day.to_i)
-      new("#{year}-#{month}-#{day}")
-    end
+    transform_date(date)
   end
 
   def self.today
