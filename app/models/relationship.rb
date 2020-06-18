@@ -544,8 +544,10 @@ class Relationship < ApplicationRecord
   end
 
   def set_currency_default
-    unless currency
-      self.currency = amount ? :usd : nil
+    if currency.present?
+      self.currency = currency.to_s.downcase
+    elsif amount.present?
+      self.currency = 'usd'
     end
   end
 end

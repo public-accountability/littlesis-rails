@@ -870,6 +870,17 @@ describe Relationship, type: :model do
       end
     end
 
+    context 'with a currency in uppercase' do
+      let(:donation) do
+        build(:donation_relationship, entity: build(:person), related: build(:org), amount: 1, currency: 'USD')
+      end
+
+      it 'downcases the currency before validation' do
+        expect(donation.valid?).to be true
+        expect(donation.currency).to eq 'usd'
+      end
+    end
+
     context 'with a currency and an amount' do
       let(:donation) { build(:loeb_donation, entity: loeb, related: nrsc, filings: 1, amount: 23_000, currency: :usd) }
 

@@ -3,7 +3,7 @@ class AddCurrencyToRelationship < ActiveRecord::Migration[6.0]
     add_column :relationship, :currency, :string, after: :amount
 
     # Assume all existing financial data is USD
-    Relationship.where.not(amount: nil).update_all(currency: 'USD')
+    Relationship.where.not(amount: nil).update_all(currency: 'usd')
   end
 
   def down
