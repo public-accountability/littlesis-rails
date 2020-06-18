@@ -104,6 +104,10 @@ describe LsDate do
       expect(LsDate.convert('Feb-18')).to eq '2018-02-00'
     end
 
+    it 'converts MONTH-YY (December-07)' do
+      expect(LsDate.convert('December-07')).to eq '2007-12-00'
+    end
+
     # '12/2007'
     # ''Dec-07'
     it 'returns input if it can\'t convert' do # rubocop:disable RSpec/ExampleLength
