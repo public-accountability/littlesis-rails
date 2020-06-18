@@ -229,10 +229,10 @@ class LsDate
   end
 
   def set_specificity
-    @specificity = :unknown if @year.nil? && @month.nil? && @day.nil?
-    @specificity = :year if @year.present? && @month.nil? && @day.nil?
-    @specificity = :month if @year.present? && @month.present? && @day.nil?
-    @specificity = :day if @year.present? && @month.present? && @day.present?
+    @specificity = :unknown
+    [:year, :month, :day].each do |sp|
+      @specificity = sp if instance_variable_get("@#{sp}").present?
+    end
   end
 
   def test_if_valid_input(str)
