@@ -33,7 +33,8 @@ tab_ids = {
 
   <div class="tab-content">
     <%= external_entities_tab(tab_ids[:matches], active: active_tab == :matches) do %>
-      <%= render partial: 'shared/entity_matcher/potential_matches', locals: { matches: entity_matcher.matches } %>
+      <%= render partial: 'shared/entity_matcher/potential_matches',
+                 locals: { matches: entity_matcher.matches, match_url: entity_matcher.match_url } %>
     <% end %>
 
     <%= external_entities_tab(tab_ids[:search], active: active_tab == :search) do %>

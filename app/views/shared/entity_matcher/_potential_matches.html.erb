@@ -1,10 +1,13 @@
-<%# locals: matches %>
-
+<%#
+locals: matches, match_url
+%>
 <div class="external-entity-search-results">
   <% if matches.count.positive? %>
-    <% matches.each do |match| %>
-      <%= render partial: 'shared/entity_matcher/potential_match', locals: { match: match } %>
-    <% end %>
+
+    <%= render partial: 'shared/entity_matcher/potential_match',
+               locals: { url: match_url },
+               collection: matches,
+               as: :match %>
   <% else %>
     <p><b>No potential matches found</b></p>
   <% end %>

@@ -83,8 +83,9 @@ class ExternalRelationship < ApplicationRecord
         attrs
       end
 
-      def potential_matches_entity1
-        name = schedule_a_records.last['name']
+      def potential_matches_entity1(search_term = nil)
+        name = search_term.presence || schedule_a_records.last['name']
+
         if schedule_a_records.last['owner_type'] == 'I' # person
           EntityMatcher.find_matches_for_person(name)
         else
@@ -92,11 +93,15 @@ class ExternalRelationship < ApplicationRecord
         end
       end
 
-      def potential_matches_entity2
-        ExternalData
-          .find_by(dataset_id: advisor_crd_number)
-          &.external_entity
-          &.matches || []
+      def potential_matches_entity2(search_term = nil)
+        if search_term.present?
+          EntityMatcher.find_matches_for_org(search_term)
+        else
+          ExternalData
+            .find_by(dataset_id: advisor_crd_number)
+            &.external_entity
+            &.matches || []
+        end
       end
 
       def automatch

@@ -9,10 +9,23 @@ class ExternalRelationshipsController < ApplicationController
       EntityMatcherPresenter.new(
         :model => @external_relationship,
         :matches_method => :potential_matches_entity1,
-        :search_term => params[:search],
+        :search_method => :potential_matches_entity1,
+        :search_param => 'search_entity1',
+        :search_term => params['search_entity1'],
         :match_url => external_relationship_path(@external_relationship),
         :search_url => external_relationship_path(@external_relationship),
         :matched? => @external_relationship.entity1_matched?,
+        :active_tab => :matches
+      ),
+      EntityMatcherPresenter.new(
+        :model => @external_relationship,
+        :matches_method => :potential_matches_entity2,
+        :search_method => :potential_matches_entity2,
+        :search_param => 'search_entity2',
+        :search_term => params['search_entity2'],
+        :match_url => external_relationship_path(@external_relationship),
+        :search_url => external_relationship_path(@external_relationship),
+        :matched? => @external_relationship.entity2_matched?,
         :active_tab => :matches
       )
     ]

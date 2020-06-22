@@ -4,14 +4,14 @@
 
 <div>
   <%= form_tag entity_matcher.search_url, method: :get do %>
-    <%= text_field_tag 'search', entity_matcher.search_term %>
+    <%= text_field_tag entity_matcher.search_param, entity_matcher.search_term %>
     <%= submit_tag "Search" %>
   <% end %>
 </div>
 
 <div>
   <% if entity_matcher.search_term.present?  %>
-    <%= render partial: 'potential_matches',
-               locals: { matches: entity_matcher.search_matches } %>
+    <%= render partial: 'shared/entity_matcher/potential_matches',
+               locals: { matches: entity_matcher.search_matches, match_url: entity_matcher.match_url } %>
   <% end %>
 </div>
