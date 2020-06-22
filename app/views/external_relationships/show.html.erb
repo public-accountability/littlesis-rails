@@ -1,10 +1,9 @@
-
-
+<!--
+   <p>External Relationship: <%= @external_relationship.id %></p>
+-->
 <div id="external-relationships">
   <div class="header">
-    <p>External Relationship: <%= @external_relationship.id %></p>
   </div>
-
   <div class="external-data">
     <table class="display-information">
       <tbody>
@@ -21,9 +20,11 @@
 
   <div class="entity-matchers">
     <div class="leftSide">
+      <%= render partial: 'shared/entity_matcher', object: @entity_matchers[0] %>
     </div>
 
     <div class="rightSide" >
+      <%# render 'shared/entity_matcher', object: @entity_matchers[1] %>
     </div>
   </div>
 </div>

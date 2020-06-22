@@ -5,6 +5,17 @@ class ExternalRelationshipsController < ApplicationController
   before_action :set_external_relationship, only: [:show]
 
   def show
+    @entity_matchers = [
+      EntityMatcherPresenter.new(
+        :model => @external_relationship,
+        :matches_method => :potential_matches_entity1,
+        :search_term => params[:search],
+        :match_url => external_relationship_path(@external_relationship),
+        :search_url => external_relationship_path(@external_relationship),
+        :matched? => @external_relationship.entity1_matched?,
+        :active_tab => :matches
+      )
+    ]
   end
 
   def random

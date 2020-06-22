@@ -1,34 +1,36 @@
 <%# locals: entity_matcher (EntityMatcherPresenter) %>
 <% active_tab = entity_matcher.active_tab %>
 
-<ul id="external-entity-menu" class="nav nav-tabs" role="tablist">
-  <li>
-    <a data-toggle="tab"
-       class="<%= active_tab == :matches ? 'active' : '' %>"
-       href="#external-entity-matches">Matches</a>
-  </li>
-  <li>
-    <a data-toggle="tab"
-       class="<%= active_tab == :search ? 'active' : '' %>"
-       href="#external-entity-search">Search</a>
-  </li>
-  <li>
-    <a data-toggle="tab"
-       class="<%= active_tab == :create ? 'active' : ''%>"
-       href="#external-entity-create">Create</a>
-  </li>
-</ul>
+<div class="entity-matcher">
+  <ul class="external-entity-menu nav nav-tabs" role="tablist">
+    <li>
+      <a data-toggle="tab"
+         class="<%= active_tab == :matches ? 'active' : '' %>"
+         href="#external-entity-matches">Matches</a>
+    </li>
+    <li>
+      <a data-toggle="tab"
+         class="<%= active_tab == :search ? 'active' : '' %>"
+         href="#external-entity-search">Search</a>
+    </li>
+    <li>
+      <a data-toggle="tab"
+         class="<%= active_tab == :create ? 'active' : ''%>"
+         href="#external-entity-create">Create</a>
+    </li>
+  </ul>
 
-<div class="tab-content">
-  <%= external_entities_tab('external-entity-matches', active_tab == :matches) do %>
-    <%= render partial: 'shared/entity_matcher/potential_matches', locals: { matches: @entity_matcher.matches } %>
-  <% end %>
+  <div class="tab-content">
+    <%= external_entities_tab('external-entity-matches', active_tab == :matches) do %>
+      <%= render partial: 'shared/entity_matcher/potential_matches', locals: { matches: entity_matcher.matches } %>
+    <% end %>
 
-  <%= external_entities_tab('external-entity-search', active_tab == :search) do %>
-    <%= render partial: 'shared/entity_matcher/search' %>
-  <% end %>
+    <%= external_entities_tab('external-entity-search', active_tab == :search) do %>
+      <%= render partial: 'shared/entity_matcher/search', locals: { entity_matcher: entity_matcher } %>
+    <% end %>
 
-  <%= external_entities_tab('external-entity-create', active_tab == :create) do %>
-    <%= render partial: 'shared/entity_matcher/create' %>
-  <% end %>
+    <%= external_entities_tab('external-entity-create', active_tab == :create) do %>
+      <%= render partial: 'shared/entity_matcher/create', locals: { entity_matcher: entity_matcher }  %>
+    <% end %>
+  </div>
 </div>

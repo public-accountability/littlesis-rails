@@ -59,6 +59,10 @@ class ExternalRelationship < ApplicationRecord
         @advisor_crd_number ||= external_data.data.fetch('advisor_crd_number')
       end
 
+      # This relationship is a
+      def owner_primary_ext
+      end
+
       # private :schedule_a_records, :advisor_crd_number
 
       def relationship_attributes
@@ -124,6 +128,14 @@ class ExternalRelationship < ApplicationRecord
 
   def matched?
     !relationship_id.nil?
+  end
+
+  def entity1_matched?
+    entity1_id.present?
+  end
+
+  def entity2_matched?
+    entity2_id.present?
   end
 
   def set_entity(entity1: nil, entity2: nil)

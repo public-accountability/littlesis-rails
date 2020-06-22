@@ -1,15 +1,17 @@
+<%# locals: entity_matcher %>
+
 <p>Search for a matching entity</p>
 
 <div>
-  <%= form_tag @entity_matcher.search_url, method: :get do %>
-    <%= text_field_tag 'search', @entity_matcher.search_term %>
+  <%= form_tag entity_matcher.search_url, method: :get do %>
+    <%= text_field_tag 'search', entity_matcher.search_term %>
     <%= submit_tag "Search" %>
   <% end %>
 </div>
 
 <div>
-  <% if @entity_matcher.search_term.present?  %>
+  <% if entity_matcher.search_term.present?  %>
     <%= render partial: 'potential_matches',
-               locals: { matches: @entity_matcher.search_matches } %>
+               locals: { matches: entity_matcher.search_matches } %>
   <% end %>
 </div>

@@ -1,23 +1,27 @@
 $gray: #d3d3d330;
 $padding: 0.3em;
 
-table.display-information {
-    @extend .table;
-    @extend .table-borderless;
-    @extend .table-sm;
-    @extend .table-hover;
+/*
+#external-relationships
+  div.header
+  div.external-data
+  div.entity-matchers
+   div.leftSide
+     div.entity-matcher
+   div.rightSide
+     div.entity-matcher
 
-    tr td:first-child {
-        font-weight: bold;
-    }
-}
-
-#external-relationships, #external-entity-matcher {
-
-}
+#external-entity-matcher
+  div.header
+  div.flex-container
+    div.leftSide
+      div.display-information
+    div.rightSide
+     div (if matched)
+     div.entity-matcher
+*/
 
 #external-relationships {
-
     div.external-data {
         background-color: $gray;
         width: 100%;
@@ -25,33 +29,25 @@ table.display-information {
         padding: $padding;
     }
 
-
     div.entity-matchers {
         display: flex;
         width: 100%;
         height: 500px;
-
-        div.leftSide {
-            margin-right: 0.5em;
-        }
-
-        div.rightSide {
-            margin-left: 0.5em;
-        }
-
-        div.leftSide, div.rightSide {
-            flex: 1;
-            padding: 1em;
-            border: 1px solid black;
-            width: 50%;
-        }
-
     }
-
 }
 
-#external-entity-matcher {
+#external-relationships, #external-entity-matcher {
 
+    table.display-information {
+        @extend .table;
+        @extend .table-borderless;
+        @extend .table-sm;
+        @extend .table-hover;
+
+        tr td:first-child {
+            font-weight: bold;
+        }
+    }
 
     div.header {
         width: 100%;
@@ -81,20 +77,19 @@ table.display-information {
     div.rightSide {
         background-color: white;
         margin-left: 0.5em;
+    }
 
-        #external-entity-menu {
-            li {
-                @extend .nav-item;
+    .external-entity-menu {
+        li {
+            @extend .nav-item;
 
-                a {
-                    @extend .nav-link;
-                }
+            a {
+                @extend .nav-link;
             }
+        }
 
-            a.active {
-                font-weight: bold;
-            }
-
+        a.active {
+            font-weight: bold;
         }
     }
 
