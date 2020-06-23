@@ -157,7 +157,8 @@ class ExternalRelationship < ApplicationRecord
 
     assign_attributes(entity1_id: Entity.entity_id_for(entity1)) if entity1.present?
     assign_attributes(entity2_id: Entity.entity_id_for(entity2)) if entity2.present?
-    save
+    create_or_update_relationship if entity1_matched? && entity2_matched?
+    save!
     self
   end
 
@@ -185,16 +186,6 @@ class ExternalRelationship < ApplicationRecord
       end
     end
     self
-  end
-
-  def match_with(rel)
-    raise AlreadyMatchedError if matched?
-
-    unless rel.category_id == category_id && rel.entity1_id == entity1_id && rel.entity2_id == entity2_id
-      raise IncompatibleRelationshipError
-    end
-
-    update(relationship: rel)
   end
 
   # If the ExternalRelationship is already matched, it will update the existing relationship
@@ -230,8 +221,6 @@ class ExternalRelationship < ApplicationRecord
   def self.matched
     where.not(relationship_id: nil)
   end
-
-
 
   private
 
