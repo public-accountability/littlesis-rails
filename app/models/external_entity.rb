@@ -5,6 +5,7 @@
 #   ExternalEntity#matches              ResultSet of potential matches
 #   ExternalEntity#automatch            Automatically matches, if possible
 #   ExternalEntity#match_with(<Entity>) Performs match
+#   ExternalEntity#search_for_matches   Search entities for possible match
 class ExternalEntity < ApplicationRecord
   include Datasets::Interface
 

@@ -1,11 +1,11 @@
-<%# required locals: match  %>
-
 <%#
+Required locals: match, match_url
+
 Clicking on the outer div submits the form contained within,
 which sends a patch request to /external_entities/:id with the param entity_id
 %>
 <div class="external-entity-match" onclick="this.querySelector('form').submit()">
-  <%= form_with url: external_entity_path(@external_entity), method: :patch do %>
+  <%= form_with url: match_url, method: :patch do %>
     <%= hidden_field_tag :entity_id, match.entity.id %>
   <% end %>
 

@@ -19,6 +19,8 @@ class ExternalRelationship < ApplicationRecord
 
   belongs_to :external_data
   belongs_to :relationship, optional: true
+  belongs_to :entity1, class_name: 'Entity', optional: true
+  belongs_to :entity2, class_name: 'Entity', optional: true
 
   validates :category_id, presence: true
 
@@ -59,7 +61,15 @@ class ExternalRelationship < ApplicationRecord
         @advisor_crd_number ||= external_data.data.fetch('advisor_crd_number')
       end
 
-      private :schedule_a_records, :advisor_crd_number
+      def owner_primary_ext
+        if schedule_a_records.last['owner_type'] == 'I'
+          'Person'
+        else
+          'Org'
+        end
+      end
+
+      # private :schedule_a_records, :advisor_crd_number
 
       def relationship_attributes
         records = schedule_a_records
@@ -79,8 +89,9 @@ class ExternalRelationship < ApplicationRecord
         attrs
       end
 
-      def potential_matches_entity1
-        name = schedule_a_records.last['name']
+      def potential_matches_entity1(search_term = nil)
+        name = search_term.presence || schedule_a_records.last['name']
+
         if schedule_a_records.last['owner_type'] == 'I' # person
           EntityMatcher.find_matches_for_person(name)
         else
@@ -88,11 +99,15 @@ class ExternalRelationship < ApplicationRecord
         end
       end
 
-      def potential_matches_entity2
-        ExternalData
-          .find_by(dataset_id: advisor_crd_number)
-          &.external_entity
-          &.matches || []
+      def potential_matches_entity2(search_term = nil)
+        if search_term.present?
+          EntityMatcher.find_matches_for_org(search_term)
+        else
+          ExternalData
+            .find_by(dataset_id: advisor_crd_number)
+            &.external_entity
+            &.matches || []
+        end
       end
 
       def automatch
@@ -126,6 +141,14 @@ class ExternalRelationship < ApplicationRecord
     !relationship_id.nil?
   end
 
+  def entity1_matched?
+    entity1_id.present?
+  end
+
+  def entity2_matched?
+    entity2_id.present?
+  end
+
   def set_entity(entity1: nil, entity2: nil)
     # Prevent accidentally overwriting already matched entities
     if (entity1.present? && entity1_id.present?) || (entity2.present? && entity2_id.present?)
@@ -144,6 +167,24 @@ class ExternalRelationship < ApplicationRecord
 
   def match_entity2_with(entity)
     set_entity entity2: entity
+  end
+
+  def match_from_params(entity_side:, params:)
+    unless [1, 2].include?(entity_side) && (params.key?(:entity_id) || params.key?(:entity))
+      raise Exceptions::LittleSisError
+    end
+
+    method = "match_entity#{entity_side}_with"
+
+    ApplicationRecord.transaction do
+      if params.key?(:entity_id)
+        public_send(method, params.require(:entity_id).to_i)
+      else
+        entity = Entity.create!(params.require(:entity).permit(:name, :blurb, :primary_ext).to_h)
+        public_send(method, entity)
+      end
+    end
+    self
   end
 
   def match_with(rel)
@@ -177,6 +218,20 @@ class ExternalRelationship < ApplicationRecord
                                .merge!(attributes.slice('entity1_id', 'entity2_id', 'category_id'))
     end
   end
+
+  def presenter
+    @presenter ||= ExternalRelationshipPresenter.new(self)
+  end
+
+  def self.unmatched
+    where(relationship_id: nil)
+  end
+
+  def self.matched
+    where.not(relationship_id: nil)
+  end
+
+
 
   private
 

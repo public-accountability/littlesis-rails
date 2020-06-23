@@ -1,0 +1,38 @@
+<!--
+   <p>External Relationship: <%= @external_relationship.id %></p>
+-->
+<div id="external-relationships">
+  <div class="header">
+  </div>
+  <div class="external-data">
+    <table class="display-information">
+      <tbody>
+        <% @external_relationship.data_summary.each_pair do |key, value| %>
+          <tr>
+            <td><%= key %></td>
+            <td><%= value %></td>
+          </tr>
+        <% end %>
+      </tbody></table>
+    </table>
+  </div>
+
+
+  <div class="entity-matchers">
+    <div class="leftSide">
+      <% if @entity_matchers[0].matched? %>
+        <%= render partial: 'already_matched', locals: { entity: @external_relationship.entity1 }%>
+      <% else %>
+        <%= render partial: 'shared/entity_matcher', object: @entity_matchers[0] %>
+      <% end  %>
+    </div>
+
+    <div class="rightSide" >
+      <% if @entity_matchers[1].matched? %>
+        <%= render partial: 'already_matched', locals: { entity: @external_relationship.entity2 } %>
+      <% else %>
+        <%= render partial: 'shared/entity_matcher', object: @entity_matchers[1] %>
+      <% end  %>
+    </div>
+  </div>
+</div>

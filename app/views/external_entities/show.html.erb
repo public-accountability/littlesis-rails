@@ -1,8 +1,8 @@
 <div id="external-entity-matcher">
   <div class="header">
     <div class="float-left">
-      <%= external_entities_header_btn 'home', external_entities_path %>
-      <%= external_entities_header_btn @external_entity.dataset, external_entities_path(dataset: @external_entity.dataset, matched: 'unmatched') %>
+      <%= external_entities_header_btn 'home', datasets_path %>
+      <%= external_entities_header_btn @external_entity.dataset, dataset_path(dataset: @external_entity.dataset, matched: 'unmatched') %>
     </div>
 
     <div class="float-right">
@@ -17,10 +17,11 @@
     </div>
 
     <div class="rightSide">
-      <% if @external_entity.matched? %>
+      <% if @entity_matcher.matched? %>
         <%= render partial: 'matched_info' %>
       <% else %>
-        <%= render partial: 'actions' %>
+        <%= render partial: 'shared/entity_matcher', object: @entity_matcher %>
+        <%#= render partial: 'actions' %>
       <% end %>
     </div>
   </div>
