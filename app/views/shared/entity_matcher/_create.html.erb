@@ -8,6 +8,15 @@
       <%= label_tag :blurb, 'Blurb' %>
       <%= text_field :entity, :blurb %>
     </div>
+    <div class="form-group">
+      <label class="radio-inline">
+        <%= radio_button 'entity[primary_ext]', "Person", entity_matcher.primary_ext == 'Person' %> Person
+      </label>
+
+      <label class="radio-inline">
+        <%= radio_button_tag 'entity[primary_ext]', "Org", entity_matcher.primary_ext == 'Org' %> Org
+      </label>
+    </div>
     <%= submit_tag "Submit", class: "btn btn-primary" %>
   <% end %>
 </div>

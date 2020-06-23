@@ -19,6 +19,8 @@ class ExternalRelationship < ApplicationRecord
 
   belongs_to :external_data
   belongs_to :relationship, optional: true
+  belongs_to :entity1, class_name: 'Entity', optional: true
+  belongs_to :entity2, class_name: 'Entity', optional: true
 
   validates :category_id, presence: true
 
@@ -59,8 +61,12 @@ class ExternalRelationship < ApplicationRecord
         @advisor_crd_number ||= external_data.data.fetch('advisor_crd_number')
       end
 
-      # This relationship is a
       def owner_primary_ext
+        if schedule_a_records.last['owner_type'] == 'I'
+          'Person'
+        else
+          'Org'
+        end
       end
 
       # private :schedule_a_records, :advisor_crd_number
@@ -163,6 +169,24 @@ class ExternalRelationship < ApplicationRecord
     set_entity entity2: entity
   end
 
+  def match_from_params(entity_side:, params:)
+    unless [1, 2].include?(entity_side) && (params.key?(:entity_id) || params.key?(:entity))
+      raise Exceptions::LittleSisError
+    end
+
+    method = "match_entity#{entity_side}_with"
+
+    ApplicationRecord.transaction do
+      if params.key?(:entity_id)
+        public_send(method, params.require(:entity_id).to_i)
+      else
+        entity = Entity.create!(params.require(:entity).permit(:name, :blurb, :primary_ext).to_h)
+        public_send(method, entity)
+      end
+    end
+    self
+  end
+
   def match_with(rel)
     raise AlreadyMatchedError if matched?
 
@@ -206,6 +230,8 @@ class ExternalRelationship < ApplicationRecord
   def self.matched
     where.not(relationship_id: nil)
   end
+
+
 
   private
 

@@ -20,11 +20,19 @@
 
   <div class="entity-matchers">
     <div class="leftSide">
-      <%= render partial: 'shared/entity_matcher', object: @entity_matchers[0] %>
+      <% if @entity_matchers[0].matched? %>
+        <%= render partial: 'already_matched', locals: { entity: @external_relationship.entity1 }%>
+      <% else %>
+        <%= render partial: 'shared/entity_matcher', object: @entity_matchers[0] %>
+      <% end  %>
     </div>
 
     <div class="rightSide" >
-      <%= render partial: 'shared/entity_matcher', object: @entity_matchers[1] %>
+      <% if @entity_matchers[1].matched? %>
+        <%= render partial: 'already_matched', locals: { entity: @external_relationship.entity2 } %>
+      <% else %>
+        <%= render partial: 'shared/entity_matcher', object: @entity_matchers[1] %>
+      <% end  %>
     </div>
   </div>
 </div>

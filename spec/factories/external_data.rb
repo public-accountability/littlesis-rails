@@ -57,6 +57,7 @@ FactoryBot.define do
       {
         "owner_key" => "01-0940455",
         "advisor_crd_number" => "175116",
+        "advisor_name" => "Iapd Advisor",
         "records" => [{ "filing_id" => 1289264,
                         "schedule" => "A",
                         "scha_3" => "Y",

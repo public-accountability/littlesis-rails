@@ -379,8 +379,7 @@ Lilsis::Application.routes.draw do
   # external entities and data #
   ##############################
 
-    get '/external_data/:dataset' => 'external_data#dataset', constraints: DatasetConstraint.new
-
+  get '/external_data/:dataset' => 'external_data#dataset', constraints: DatasetConstraint.new
   # Overview page
   get '/datasets' => 'datasets#index'
   # Table Of ExternalEntites/ExternalRelationships for the given dataset
@@ -392,7 +391,7 @@ Lilsis::Application.routes.draw do
     get '/:dataset/:id', on: :collection, action: :show, constraints: DatasetConstraint.new(check_id: true)
   end
 
-  resources :external_relationships, only: %i[show] do
+  resources :external_relationships, only: %i[show update] do
     get 'random', on: :collection, action: :random
   end
 
