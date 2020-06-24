@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '6.0.3.1'
+gem 'rails', '6.0.3.2'
 gem 'mysql2', '~> 0.5.2'
 
 gem 'puma', '>= 4.2.0'
@@ -59,7 +59,7 @@ group :test, :development do
   gem 'better_errors', '>= 2.5.0'
   gem 'capybara', '>= 3.14.0'
   gem 'database_cleaner'
-  gem 'factory_bot_rails', '~> 5.0'
+  gem 'factory_bot_rails', '~> 6.0'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   # gem 'jasmine', '>= 3.2'
   # gem 'jasmine_selenium_runner'
