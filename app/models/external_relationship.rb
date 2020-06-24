@@ -136,7 +136,7 @@ class ExternalRelationship < ApplicationRecord
 
     assign_attributes(entity1_id: Entity.entity_id_for(entity1)) if entity1.present?
     assign_attributes(entity2_id: Entity.entity_id_for(entity2)) if entity2.present?
-    create_or_update_relationship if entity1_matched? && entity2_matched?
+    match_action if entity1_matched? && entity2_matched?
     save!
     self
   end
@@ -170,7 +170,7 @@ class ExternalRelationship < ApplicationRecord
   # If the ExternalRelationship is already matched, it will update the existing relationship
   # When a matching relationship can be found, it will use one that's already in our database,
   # otherwise a new relationship is created
-  def create_or_update_relationship
+  def match_action
     raise MissingMatchedEntityError unless entity1_id.present? || entity2_id.present?
 
     if matched?

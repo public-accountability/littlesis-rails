@@ -37,7 +37,7 @@ describe ExternalRelationship, type: :model do
     end
   end
 
-  describe 'create_or_update_relationship' do
+  describe 'match_action' do
     let!(:external_relationship) do
       create(:external_relationship_schedule_a, category_id: 1, external_data: create(:external_data_schedule_a))
     end
@@ -46,7 +46,7 @@ describe ExternalRelationship, type: :model do
     let(:entity2) { create(:entity_org) }
 
     it 'raises error unless both entity2 and entity2 are matched' do
-      expect { external_relationship.create_or_update_relationship }
+      expect { external_relationship.match_action }
         .to raise_error(ExternalRelationship::MissingMatchedEntityError)
     end
 
