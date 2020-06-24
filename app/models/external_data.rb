@@ -20,6 +20,33 @@ class ExternalData < ApplicationRecord
   serialize :data, JSON
 
   module Datasets
+    IapdScheduleA = Struct.new(:records, :advisor_crd_number, :advisor_name, :owner_name, :title, :owner_primary_ext, :last_record, keyword_init: true) do
+      def initialize(data)
+        records = data['records'].sort_by { |record| record['filename'] }
+        owner_primary_ext = records.last['owner_type'] == 'I' ? 'Person' : 'Org'
+
+        super(records: records,
+              advisor_crd_number: data.fetch('advisor_crd_number'),
+              advisor_name: data.fetch('advisor_name'),
+              owner_name: records.last['name'],
+              title: records.last['title_or_status'],
+              owner_primary_ext: owner_primary_ext,
+              last_record: records.last)
+      end
+
+      def min_acquired
+        LsDate.parse(records.map { |r| r['acquired'] }.min)
+      end
+
+      def format_name
+        if owner_primary_ext == 'Person'
+          NameParser.format(owner_name)
+        else
+          OrgName.format(owner_name)
+        end
+      end
+    end
+
     def self.relationships
       ['iapd_schedule_a']
     end
@@ -93,6 +120,20 @@ class ExternalData < ApplicationRecord
       end
     end
   end
+
+  # Wraps `data` by calling .new(data) with the class at ExternalData::Datasets::<DatasetName>
+  # If no wrapper is defined, then `data` is returned
+  def data_wrapper
+    if defined?(@data_wrapper)
+      @data_wrapper
+    elsif Datasets.const_defined?(dataset.classify)
+      @data_wrapper = Datasets.const_get(dataset.classify).new(data)
+    else
+      @data_wrapper = data
+    end
+  end
+
+  alias wrapper data_wrapper
 
   def self.dataset_count
     connection.exec_query(<<~SQL).map { |h| h.merge!('dataset' => Datasets.inverted_names[h['dataset']]) }

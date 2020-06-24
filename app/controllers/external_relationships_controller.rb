@@ -12,7 +12,7 @@ class ExternalRelationshipsController < ApplicationController
         :search_method => :potential_matches_entity1,
         :search_param => 'search_entity1',
         :search_term => params['search_entity1'],
-        :primary_ext => @external_relationship.owner_primary_ext,
+        :primary_ext => @external_relationship.external_data.wrapper.owner_primary_ext,
         :match_url => external_relationship_path(@external_relationship, entity_side: 1),
         :search_url => external_relationship_path(@external_relationship, entity_side: 1),
         :matched? => @external_relationship.entity1_matched?,

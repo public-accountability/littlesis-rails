@@ -510,6 +510,10 @@ class NameParser
   ##
   # Class Methods
 
+  def self.format(str)
+    new(str).to_s
+  end
+
   def self.parse_to_hash(str)
     parser = new(str)
     parser.to_h

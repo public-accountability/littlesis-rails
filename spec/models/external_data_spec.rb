@@ -62,7 +62,7 @@ describe ExternalData, type: :model do
           columns: {
             '0' => { data: 'id', name: '' },
             '1' => { data: 'match', name: '' },
-            '2' => { data: 'data.FullName', name: ''}
+            '2' => { data: 'data.FullName', name: '' }
           }
         }
       end
@@ -71,7 +71,7 @@ describe ExternalData, type: :model do
         response = ExternalData.datatables_query(datatables_params)
         expect(response.recordsTotal).to eq 2
         expect(response.recordsFiltered).to eq 1
-        expect(response.data.first['data']['FullName']).to match /constantinides/i
+        expect(response.data.first['data']['FullName']).to match(/constantinides/i)
       end
     end
 
@@ -86,7 +86,7 @@ describe ExternalData, type: :model do
           columns: {
             '0' => { data: 'id', name: '' },
             '1' => { data: 'match', name: '' },
-            '2' => { data: 'data.FullName', name: ''}
+            '2' => { data: 'data.FullName', name: '' }
           }
         }
       end
@@ -106,16 +106,29 @@ describe ExternalData, type: :model do
         p = Datatables::Params.new(ActionController::Parameters.new(params.merge(matched: 'unmatched')))
         response = ExternalData.datatables_query(p)
         expect(response.recordsFiltered).to eq 1
-        expect(response.data.first.dig('data', 'FullName')).to match /constantinides/i
+        expect(response.data.first.dig('data', 'FullName')).to match(/constantinides/i)
       end
 
       it 'filters matched' do
         p = Datatables::Params.new(ActionController::Parameters.new(params.merge(matched: 'matched')))
         response = ExternalData.datatables_query(p)
         expect(response.recordsFiltered).to eq 1
-        expect(response.data.first.dig('data', 'FullName')).to match /borelli/i
+        expect(response.data.first.dig('data', 'FullName')).to match(/borelli/i)
       end
     end
+  end
 
+  describe 'data_wrapper' do
+    specify do
+      expect(build(:external_data_schedule_a).data_wrapper).to be_a ExternalData::Datasets::IapdScheduleA
+    end
+
+    specify do
+      expect(build(:external_data_schedule_a).data_wrapper.advisor_crd_number).to eq "175116"
+    end
+
+    specify do
+      expect(build(:external_data_nycc_borelli).wrapper).to be_a Hash
+    end
   end
 end
