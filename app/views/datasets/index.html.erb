@@ -1,3 +1,5 @@
+<% content_for :page_title, "External Datasets" %>
+
 <div id="datasets-overview">
   <% ExternalData::Datasets.names.each do |dataset| %>
     <% stats = ExternalData.stats(dataset) %>

@@ -1,8 +1,15 @@
-<!--
-   <p>External Relationship: <%= @external_relationship.id %></p>
--->
+<% content_for :page_title, "#{@external_relationship.dataset.titleize} - #{@external_relationship.id} - Datasets" %>
+
 <div id="external-relationships">
   <div class="header">
+    <div class="float-left">
+      <%= external_entities_header_btn 'Home', datasets_path %>
+      <%= external_entities_header_btn @external_relationship.dataset.titleize, dataset_path(dataset: @external_relationship.dataset, matched: 'unmatched') %>
+    </div>
+
+    <div class="float-right">
+      <%= external_entities_header_btn 'Next', random_external_relationships_path(dataset: @external_relationship.dataset) %>
+    </div>
   </div>
 
   <div class="external-data">
@@ -29,7 +36,6 @@
     <% end %>
 
   </div>
-
 
   <div class="entity-matchers">
     <div class="leftSide">
