@@ -1,22 +1,41 @@
-<!--
-   <p>External Relationship: <%= @external_relationship.id %></p>
--->
+<% content_for :page_title, "#{@external_relationship.dataset.titleize} - #{@external_relationship.id} - Datasets" %>
+
 <div id="external-relationships">
   <div class="header">
-  </div>
-  <div class="external-data">
-    <table class="display-information">
-      <tbody>
-        <% @external_relationship.data_summary.each_pair do |key, value| %>
-          <tr>
-            <td><%= key %></td>
-            <td><%= value %></td>
-          </tr>
-        <% end %>
-      </tbody></table>
-    </table>
+    <div class="float-left">
+      <%= external_entities_header_btn 'Home', datasets_path %>
+      <%= external_entities_header_btn @external_relationship.dataset.titleize, dataset_path(dataset: @external_relationship.dataset, matched: 'unmatched') %>
+    </div>
+
+    <div class="float-right">
+      <%= external_entities_header_btn 'Next', random_external_relationships_path(dataset: @external_relationship.dataset) %>
+    </div>
   </div>
 
+  <div class="external-data">
+
+    <% if @external_relationship.matched? %>
+      <div class="external-relationship-matched text-center">
+        <h3><b>Matched!</b></h3>
+        <%= link_to @external_relationship.relationship.description, @external_relationship.relationship %>
+      </div>
+
+    <% else %>
+
+      <table class="display-information">
+        <tbody>
+          <% @external_relationship.data_summary.each_pair do |key, value| %>
+            <tr>
+              <td><%= key %></td>
+              <td><%= value %></td>
+            </tr>
+          <% end %>
+        </tbody></table>
+      </table>
+
+    <% end %>
+
+  </div>
 
   <div class="entity-matchers">
     <div class="leftSide">

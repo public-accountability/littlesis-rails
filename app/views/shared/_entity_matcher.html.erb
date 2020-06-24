@@ -13,6 +13,10 @@ tab_ids = {
 %>
 
 <div class="entity-matcher">
+  <% if entity_matcher.title %>
+    <p class="text-center"><%= entity_matcher.title %></p>
+  <% end %>
+
   <ul class="external-entity-menu nav nav-tabs" role="tablist">
     <li>
       <a data-toggle="tab"
