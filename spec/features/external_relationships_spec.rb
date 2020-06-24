@@ -10,7 +10,7 @@ describe 'External Relationships matcher' do
   after { logout(:user) }
 
   it 'shows relationships details' do
-    expect(page.html).to include 'CK PETROLEUM'
+    expect(page.html).to include 'Ck Petroleum'
   end
 
   it 'has matching tools for both entities' do

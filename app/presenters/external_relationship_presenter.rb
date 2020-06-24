@@ -2,6 +2,10 @@
 
 class ExternalRelationshipPresenter < SimpleDelegator
   def data_summary
+    @data_summary ||= _data_summary
+  end
+
+  def _data_summary
     if dataset == 'iapd_schedule_a'
       {
         'Name' => external_data.wrapper.format_name,

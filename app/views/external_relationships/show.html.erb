@@ -4,23 +4,28 @@
 <div id="external-relationships">
   <div class="header">
   </div>
+
   <div class="external-data">
 
-    <table class="display-information">
-      <tbody>
-        <% @external_relationship.data_summary.each_pair do |key, value| %>
-          <tr>
-            <td><%= key %></td>
-            <td><%= value %></td>
-          </tr>
-        <% end %>
-      </tbody></table>
-    </table>
-
     <% if @external_relationship.matched? %>
-      <div class="external-relationship-matched center">
-        <%= link_to @external_relationship.relationship, @external_relationship.relationship.description_sentence  %>
+      <div class="external-relationship-matched text-center">
+        <h3><b>Matched!</b></h3>
+        <%= link_to @external_relationship.relationship.description, @external_relationship.relationship %>
       </div>
+
+    <% else %>
+
+      <table class="display-information">
+        <tbody>
+          <% @external_relationship.data_summary.each_pair do |key, value| %>
+            <tr>
+              <td><%= key %></td>
+              <td><%= value %></td>
+            </tr>
+          <% end %>
+        </tbody></table>
+      </table>
+
     <% end %>
 
   </div>

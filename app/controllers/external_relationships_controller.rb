@@ -8,6 +8,7 @@ class ExternalRelationshipsController < ApplicationController
     @entity_matchers = [
       EntityMatcherPresenter.new(
         :model => @external_relationship,
+        :title => @external_relationship.data_summary['Name'],
         :matches_method => :potential_matches_entity1,
         :search_method => :potential_matches_entity1,
         :search_param => 'search_entity1',
@@ -20,6 +21,7 @@ class ExternalRelationshipsController < ApplicationController
       ),
       EntityMatcherPresenter.new(
         :model => @external_relationship,
+        :title => @external_relationship.data_summary['Advisor'],
         :matches_method => :potential_matches_entity2,
         :search_method => :potential_matches_entity2,
         :search_param => 'search_entity2',
