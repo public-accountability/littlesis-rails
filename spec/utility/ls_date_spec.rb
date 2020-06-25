@@ -1,11 +1,12 @@
 # rubocop:disable Lint/UselessComparison
 
 describe LsDate do
-  describe 'initalize' do
+  describe 'initialize' do
     describe 'test_if_valid_input' do
       it 'raises error if provided invalid date string' do
         expect { LsDate.new('1922') }.to raise_error LsDate::InvalidLsDateError
         expect { LsDate.new('2000-12') }.to raise_error LsDate::InvalidLsDateError
+        expect { LsDate.new('1 June, 2010') }.to raise_error LsDate::InvalidLsDateError
       end
 
       it 'allows valid date' do
@@ -14,6 +15,10 @@ describe LsDate do
 
       it 'allows nil to be a valid date' do
         expect { LsDate.new(nil) }.not_to raise_error
+      end
+
+      it 'empty string is an invalid date' do
+        expect { LsDate.new('') }.to raise_error LsDate::InvalidLsDateError
       end
     end
 
@@ -86,6 +91,12 @@ describe LsDate do
       expect(LsDate.convert('12/1960')).to eq '1960-12-00'
     end
 
+    it 'handles written-out month' do
+      expect(LsDate.convert('1 June, 2010')).to eq '2010-06-01'
+      expect(LsDate.convert('Jan 5th 2010')).to eq '2010-01-05'
+      expect(LsDate.convert('April 4, 2000')).to eq '2000-04-04'
+    end
+
     it 'returns input if it can\'t convert' do # rubocop:disable RSpec/ExampleLength
       expect(LsDate.convert('88')).to eq '88'
       expect(LsDate.convert('1234567')).to eq '1234567'
@@ -93,13 +104,14 @@ describe LsDate do
       expect(LsDate.convert(nil)).to be nil
       expect(LsDate.convert('right now')).to eq 'right now'
       expect(LsDate.convert('13/2000')).to eq '13/2000'
+      expect(LsDate.convert('Gin 1 werp')).to eq 'Gin 1 werp'
     end
   end
 
   describe 'parse_cmp_date' do
     it 'handles nil and blank strings' do
-      expect(LsDate.parse_cmp_date(nil)).to be nil
-      expect(LsDate.parse_cmp_date('')).to be nil
+      expect(LsDate.parse_cmp_date(nil)).to eq LsDate.new(nil)
+      expect(LsDate.parse_cmp_date('')).to eq LsDate.new(nil)
     end
 
     it 'handles years' do
@@ -115,8 +127,8 @@ describe LsDate do
     end
 
     it 'returns nil for invalid dates' do
-      expect(LsDate.parse_cmp_date('25/1980')).to be nil
-      expect(LsDate.parse_cmp_date('7/980')).to be nil
+      expect(LsDate.parse_cmp_date('25/1980')).to eq LsDate.new(nil)
+      expect(LsDate.parse_cmp_date('7/980')).to eq LsDate.new(nil)
     end
   end
 
@@ -209,9 +221,31 @@ describe LsDate do
     end
 
     it 'invalid dates' do
-      ['Ginuary sometime', '1000', 'today'].each do |d|
+      ['Ginuary sometime', '1000', 'today', "1 June, 2010"].each do |d|
         expect(LsDate.valid_date_string?(d)).to be false
       end
+    end
+  end
+
+  describe 'validate_date_string' do
+    it 'raises structural error' do
+      expect { LsDate.validate_date_string('sometime') }.to raise_error(LsDate::InvalidLsDateError, '"sometime" is not formatted correctly')
+    end
+
+    it 'validates year' do
+      expect { LsDate.validate_date_string('0001-00-00') }.to raise_error(LsDate::InvalidLsDateError, "1 is not a valid year")
+    end
+
+    it 'validates month' do
+      expect { LsDate.validate_date_string('1980-13-01') }.to raise_error(LsDate::InvalidLsDateError, "13 is not a valid month")
+    end
+
+    it 'validates day' do
+      expect { LsDate.validate_date_string('1980-01-33') }.to raise_error(LsDate::InvalidLsDateError, "33 is not a valid day")
+    end
+
+    it 'return nil if valid' do
+      expect { LsDate.validate_date_string('1980-01-01') }.not_to raise_error
     end
   end
 
@@ -243,14 +277,14 @@ describe LsDate do
 
     context 'with 1st June 2010' do
       let(:input_string) { '1st June 2010' }
-      let(:date) { described_class.new(input_string) }
+      let(:date) { LsDate.parse!(input_string) }
 
       it "doesn't raise an exception" do
-        expect { date }.not_to raise_error
+        expect { LsDate.parse!(input_string) }.not_to raise_error
       end
 
-      it 'is considered valid' do
-        expect(described_class.valid_date_string?(input_string)).to be true
+      it 'input string is not considered a valid date string' do
+        expect(described_class.valid_date_string?(input_string)).not_to be true
       end
 
       it 'performs correctly in spaceship comparisons' do
@@ -268,14 +302,14 @@ describe LsDate do
 
     context 'with 1 June, 2010' do
       let(:input_string) { '1 June, 2010' }
-      let(:date) { described_class.new(input_string) }
+      let(:date) { described_class.parse!(input_string) }
 
       it "doesn't raise an exception" do
         expect { date }.not_to raise_error
       end
 
-      it 'is considered valid' do
-        expect(described_class.valid_date_string?(input_string)).to be true
+      it 'input string is not considered a valid date string' do
+        expect(described_class.valid_date_string?(input_string)).to be false
       end
 
       it 'performs correctly in spaceship comparisons' do
@@ -291,55 +325,23 @@ describe LsDate do
       end
     end
 
-    context 'with June 1, 2010' do
-      let(:input_string) { 'June 1, 2010' }
-      let(:date) { described_class.new(input_string) }
+    context 'with foobar' do
+      let(:input_string) { 'foobar' }
 
-      it "doesn't raise an exception" do
-        expect { date }.not_to raise_error
+      it "parse! raises an exception" do
+        expect { LsDate.parse!(input_string) }.to raise_error(LsDate::InvalidLsDateError)
       end
 
-      it 'is considered valid' do
-        expect(described_class.valid_date_string?(input_string)).to be true
+      it "parse returns a nil date" do
+        expect { LsDate.parse(input_string) }.not_to raise_error
+        expect(LsDate.parse(input_string)).to eq LsDate.new(nil)
       end
 
-      it 'performs correctly in spaceship comparisons' do
-        expect(date.<=> same_date).to be(0)
-        expect(date.<=> previous_date).to be(1)
-        expect(date.<=> future_date).to be(-1)
-      end
-
-      it 'is parsed correctly into component elements' do
-        expect(date.year).to be 2010
-        expect(date.month).to be 6
-        expect(date.day).to be 1
-      end
-    end
-
-    context 'with June 1 2010' do
-      let(:input_string) { 'June 1 2010' }
-      let(:date) { described_class.new(input_string) }
-
-      it "doesn't raise an exception" do
-        expect { date }.not_to raise_error
-      end
-
-      it 'is considered valid' do
-        expect(described_class.valid_date_string?(input_string)).to be true
-      end
-
-      it 'performs correctly in spaceship comparisons' do
-        expect(date.<=> same_date).to be(0)
-        expect(date.<=> previous_date).to be(1)
-        expect(date.<=> future_date).to be(-1)
-      end
-
-      it 'is parsed correctly into component elements' do
-        expect(date.year).to be 2010
-        expect(date.month).to be 6
-        expect(date.day).to be 1
+      it 'is not considered a valid date string' do
+        expect(described_class.valid_date_string?(input_string)).to be false
       end
     end
   end
 end
+
 # rubocop:enable Lint/UselessComparison
