@@ -120,6 +120,14 @@ Rails/SkipsModelValidations:
 RSpec/DescribedClass:
   Enabled: false
 
+RSpec/ExampleLength:
+  Exclude:
+    - 'spec/features/*.rb'
+
+RSpec/EmptyExampleGroup:
+  Exclude:
+    - 'spec/features/*.rb'
+
 RSpec/MultipleExpectations:
   Enabled: false
 
