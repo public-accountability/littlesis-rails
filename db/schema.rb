@@ -972,12 +972,12 @@ ActiveRecord::Schema.define(version: 2020_07_21_195543) do
     t.index ["name"], name: "index_pages_on_name", unique: true
   end
 
-  create_table "permission_passes", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "permission_passes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "event_name"
     t.string "token", null: false
     t.datetime "valid_from", null: false
     t.datetime "valid_to", null: false
-    t.text "abilities", null: false
+    t.text "abilities", size: :medium, null: false
     t.integer "creator_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -1182,15 +1182,6 @@ ActiveRecord::Schema.define(version: 2020_07_21_195543) do
     t.index ["entity_id"], name: "entity_id_idx"
   end
 
-  create_table "sessions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.string "session_id", null: false
-    t.text "data", size: :long
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
-    t.index ["updated_at"], name: "index_sessions_on_updated_at"
-  end
-
   create_table "social", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "relationship_id", null: false
     t.index ["relationship_id"], name: "relationship_id_idx"
@@ -1345,17 +1336,17 @@ ActiveRecord::Schema.define(version: 2020_07_21_195543) do
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
   end
 
-  create_table "web_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "web_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "remote_address"
     t.datetime "time"
     t.string "host"
     t.string "http_method"
-    t.text "uri"
+    t.text "uri", size: :medium
     t.integer "status", limit: 2
     t.integer "body_bytes"
     t.float "request_time"
-    t.text "referer"
-    t.text "user_agent"
+    t.text "referer", size: :medium
+    t.text "user_agent", size: :medium
     t.string "request_id", null: false
     t.index ["request_id"], name: "index_web_requests_on_request_id", unique: true
   end
