@@ -40,24 +40,14 @@ describe DateValidator do
       subject.start_date = '2016-08-11'
       expect(subject.valid?).to be true
     end
-
-    it 'May 1st, 1970 is valid' do
-      subject.start_date = 'May 1st, 1970'
-      expect(subject.valid?).to be true
-    end
-
-    it 'April 4, 2000 is valid' do
-      subject.start_date = 'April 4, 2000'
-      expect(subject.valid?).to be true
-    end
-
-    it 'Jan 5th 2010' do
-      subject.start_date = 'Jan 5th 2010'
-      expect(subject.valid?).to be true
-    end
   end
 
   context 'when the date is invalid' do
+    it 'May 1st, 1970 is not valid' do
+      subject.start_date = 'May 1st, 1970'
+      expect(subject.valid?).to be false
+    end
+
     it '2012 is not valid' do
       subject.start_date = '2012'
       expect(subject.valid?).to be false
