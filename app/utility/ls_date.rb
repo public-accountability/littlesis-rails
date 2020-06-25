@@ -7,13 +7,27 @@
 # year is required, but month and day are optional.
 # When missing or unknown, month and day can be represented as '00'.
 #
-# Examples:
-#    May, 1968 -> '1968-05-00'
-#    April 1, 2017 -> '2017-02-01'
-#    The year 1975 -> '1975-00-00'
+# Usage:
+#  when instantiating an lsDate object, new requires the input to be in a valid date format:
+#    ✓ LsDate.new('2005-02-04')
+#    ❌ LsDate.new('Feburary 4th, 2005')
+#
+# Examples of handling input from other formats:
+#
+#  LsDate.parse('2010') --> LsDate.new('2010-00-00')
+#  LsDate.parse('foobar') --> LsDate.new(nil)
+#  LsDate.parse!('foobar') --> raises InvalidLsDateError
+#  LsDate.parse!('1 May, 1970') --> LsDate.new('1970-05-01')
+#  LsDate.transform_date('1 May, 1970') --> "1970-05-01"
+#  LsDate.convert('1 May, 1970') --> "1970-05-01"
+#  LsDate.transform_date('foobar') --> raises InvalidLsDateError
+#  LsDate.convert('foobar') --> 'foobar'
+#
 class LsDate # rubocop:disable Metrics/ClassLength
   include Comparable
   attr_reader :date_string, :specificity, :year, :month, :day
+
+  delegate :validate_date_string, :split_ls_date_string, to: :class
 
   DATE_TRANSFORMERS = {
     %r{(?<day>^\d{2})\/(?<month>\d{2})\/(?<year>\d{4})$} =>
@@ -35,24 +49,17 @@ class LsDate # rubocop:disable Metrics/ClassLength
   }.freeze
 
   def initialize(date_string)
-    test_if_valid_input(date_string)
-    @date_string = normalize_input(date_string)
-    set_year_month_day
-    set_specificity
-  end
-
-  def normalize_input(string)
-    if ls_date_string?(string)
-      string
-    elsif string.nil?
-      string
-    else
-      Date.parse(string).strftime('%Y-%m-%d')
+    unless date_string.nil?
+      validate_date_string(date_string)
+      @date_string = date_string
+      @year, @month, @day = split_ls_date_string(@date_string) unless @date_string.nil?
     end
-  rescue ArgumentError
-    LsDate.convert(string)
-  end
 
+    @specificity = :unknown if @year.nil?
+    @specificity = :year if @year.present? && @month.nil? && @day.nil?
+    @specificity = :month if @year.present? && @month.present? && @day.nil?
+    @specificity = :day if @year.present? && @month.present? && @day.present?
+  end
   # specificity helpers
   [:unknown, :year, :month, :day].each do |specificity|
     define_method("sp_#{specificity}?") { @specificity == specificity }
@@ -115,7 +122,15 @@ class LsDate # rubocop:disable Metrics/ClassLength
   end
 
   def self.parse!(str)
-    new convert(str)
+    new transform_date(str)
+  end
+
+  # like transform_date, but it surpresses invalid date strings and returns the input unchanged.
+  def self.convert(date)
+    transform_date(date)
+  rescue InvalidLsDateError
+    Rails.logger.debug "Failed to convert date string #{date}"
+    date
   end
 
   # converts string dates in the following formats:
@@ -124,18 +139,14 @@ class LsDate # rubocop:disable Metrics/ClassLength
   #   YYYYMMDD. Example: 20011231 -> 2001-12-31
   #   MM/YYYY. Example: 04/2015 --> 2015-04-00
   #
-  # It turns blank strings into nil.
-  # Otherwise, it returns the input unchanged
-  def self.convert(date)
-    return date unless date.is_a? String
-
+  #   + Any format accepted by DateTime.parse
+  #
+  # Nil and empty strings and retuned as nil.
+  # Rasies InvalidLsDateError if it cannot be transformed
+  def self.transform_date(date)
+    TypeCheck.check date, String, allow_nil: true
     return nil if date.blank?
 
-    return transform_date(date) || date
-  end
-
-  def self.transform_date(date)
-    output = nil
     DATE_TRANSFORMERS.each_pair do |regex, formatter|
       match = regex.match date
       next unless match
@@ -143,53 +154,80 @@ class LsDate # rubocop:disable Metrics/ClassLength
       match.named_captures.each do |k, v|
         break unless send("valid_#{k}?", v)
 
-        output = formatter.call(match)
+        return formatter.call(match)
       end
     end
-    output
+
+    parse_with_datetime(date)
   end
 
   # string -> boolean
-  # determines if string is a valid ls_date (used by date validator)
-  def self.valid_date_string?(value)
-    return true if Date.parse(value)
-  rescue ArgumentError
-    valid_ls_date?(value)
+  def self.valid_date_string?(str)
+    return false unless valid_string_structure?(str)
+
+    year, month, day = split_ls_date_string(str)
+
+    valid_year?(year) && valid_month?(month) && valid_day?(day)
   end
 
-  # str -> [year, month, day]
-  def self.year_month_day(value)
-    value.split('-').map { |x| to_int(x) }
+  # String --> void | raises InvalidDateError
+  def self.validate_date_string(str)
+    unless valid_string_structure?(str)
+      raise InvalidLsDateError, "\"#{str}\" is not formatted correctly"
+    end
+
+    year, month, day = split_ls_date_string(str)
+
+    raise InvalidLsDateError, "#{year} is not a valid year" unless valid_year?(year)
+    raise InvalidLsDateError, "#{month} is not a valid month" unless valid_month?(month)
+    raise InvalidLsDateError, "#{day} is not a valid day" unless valid_day?(day)
+  end
+
+  # str -> [<int>, <int>, <int>]
+  def self.split_ls_date_string(str)
+    str.split('-').map { |x| to_int(x) }
   end
 
   # CMP dates are in the following format:
   # - MM/DD/YYYY
   # - MM/YYYY
   # - YYYY
-  # str ---> LsDate | nil
-  # returns nil if date is invalid or missing
   def self.parse_cmp_date(date)
-    transform_date(date)
+    parse(date)
   end
 
   def self.today
     new(Time.zone.today.iso8601)
   end
 
-  # anything -> int or nil
-  # converts strings to integers
-  # converts '00' and '0' to nil
+  # converts strings to integers and converts 0 to nil
   private_class_method def self.to_int(x)
-    return false unless !x.nil? && x.length.between?(1, 4)
+    return nil if x.blank?
 
-    x = x[1..-1] if x[0] == '0'
-    int = Integer(x)
-    return nil if int.zero?
+    i = x.to_i
 
-    int
+    if i.zero?
+      nil
+    else
+      i
+    end
   rescue # rubocop:disable Style/RescueStandardError
     Rails.logger.debug "Failed to convert - #{x} - to an integer"
     nil
+  end
+
+  private_class_method def self.parse_with_datetime(str)
+    DateTime.parse(str).strftime('%Y-%m-%d')
+  rescue ArgumentError => e
+    if e.message == 'invalid date'
+      raise InvalidLsDateError, "#{str} is an invalid date"
+    else
+      raise
+    end
+  end
+
+  private_class_method def self.valid_string_structure?(str)
+    /\A\d{4}-\d{2}-\d{2}\Z/.match? str
   end
 
   private_class_method def self.valid_year?(year)
@@ -208,20 +246,6 @@ class LsDate # rubocop:disable Metrics/ClassLength
 
   private_class_method def self.valid_day?(day)
     day.blank? || day.to_i.between?(1, 31)
-  end
-
-  private_class_method def self.valid_ls_date?(value)
-    return false unless (value.length == 10)\
-      && (value.gsub('-').count == 2)\
-      && blank_month_or_year?(value)
-
-    year, month, day = year_month_day(value)
-
-    valid_year?(year) && valid_month?(month) && valid_day?(day)
-  end
-
-  private_class_method def self.blank_month_or_year?(value)
-    value.include? '-00'
   end
 
   private_class_method def self.month_no_from_name(name)
@@ -248,30 +272,6 @@ class LsDate # rubocop:disable Metrics/ClassLength
 
   private
 
-  def ls_date_string?(string)
-    /\A\d{4}-\d{2}-\d{2}\Z/.match? string
-  end
-
-  def set_year_month_day
-    return if @date_string.nil?
-
-    @year, @month, @day = self.class.year_month_day(@date_string)
-  end
-
-  def set_specificity
-    @specificity = :unknown
-    [:year, :month, :day].each do |sp|
-      @specificity = sp if instance_variable_get("@#{sp}").present?
-    end
-  end
-
-  def test_if_valid_input(str)
-    return if str.nil? || self.class.valid_date_string?(str)
-
-    Rails.logger.debug "Invalid LsDate input: #{str}"
-    raise InvalidLsDateError
-  end
-
   def year_display
     "'#{@year.to_s[-2..-1]}"
   end
@@ -289,8 +289,8 @@ class LsDate # rubocop:disable Metrics/ClassLength
   end
 
   class InvalidLsDateError < StandardError
-    def message
-      'Not a valid date string'
+    def initialize(msg = nil)
+      super(msg || 'Not a valid date string')
     end
   end
 end
