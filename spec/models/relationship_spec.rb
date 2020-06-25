@@ -643,17 +643,60 @@ describe Relationship, type: :model do
     end
   end
 
-  describe '#temporal_status' do
+  describe 'DateSorting' do
     let(:entity1) { create(:entity_person) }
     let(:entity2) { create(:entity_person) }
-    let(:current_relationship) { create(:generic_relationship, entity1_id: entity1.id, entity2_id: entity2.id, is_current: true) }
-    let(:past_relationship) { create(:generic_relationship, entity1_id: entity1.id, entity2_id: entity2.id, is_current: false) }
-    let(:unknown_relationship) { create(:generic_relationship, entity1_id: entity1.id, entity2_id: entity2.id, is_current: nil) }
 
-    it 'returns the correct values' do
+    let(:current_relationship) do
+      create(
+        :generic_relationship,
+        entity1_id: entity1.id,
+        entity2_id: entity2.id,
+        is_current: true,
+        start_date: '1980-03-04',
+        end_date: '2030-01-12',
+        updated_at: '2016-07-14'
+      )
+    end
+
+    let(:past_relationship) do
+      create(
+        :generic_relationship,
+        entity1_id: entity1.id,
+        entity2_id: entity2.id,
+        is_current: false,
+        end_date: nil
+      )
+    end
+
+    let(:unknown_relationship) do
+      create(
+        :generic_relationship,
+        entity1_id: entity1.id,
+        entity2_id: entity2.id,
+        is_current: nil
+      )
+    end
+
+    it 'returns the correct temporal_status' do
       expect(current_relationship.temporal_status).to be :current
       expect(past_relationship.temporal_status).to be :past
       expect(unknown_relationship.temporal_status).to be :unknown
+    end
+
+    it 'returns the correct temporal_status_rank' do
+      expect(current_relationship.temporal_status_rank).to be 2
+      expect(past_relationship.temporal_status_rank).to be 0
+      expect(unknown_relationship.temporal_status_rank).to be 1
+    end
+
+    it 'returns the correct end_date_rank' do
+      expect(current_relationship.end_date_rank).to be 0
+      expect(past_relationship.end_date_rank).to be 1
+    end
+
+    it 'ranks by temporal status, start date, end date rank, end date, updated at' do
+      expect(current_relationship.date_rank).to match([2, '1980-03-04', 0, '2030-01-12', DateTime.parse('2016-07-14')])
     end
   end
 
