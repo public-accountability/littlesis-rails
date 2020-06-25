@@ -248,20 +248,6 @@ class LsDate # rubocop:disable Metrics/ClassLength
     day.blank? || day.to_i.between?(1, 31)
   end
 
-  private_class_method def self.valid_ls_date?(value)
-    return false unless (value.length == 10)\
-      && (value.gsub('-').count == 2)\
-      && blank_month_or_year?(value)
-
-    year, month, day = year_month_day(value)
-
-    valid_year?(year) && valid_month?(month) && valid_day?(day)
-  end
-
-  private_class_method def self.blank_month_or_year?(value)
-    value.include? '-00'
-  end
-
   private_class_method def self.month_no_from_name(name)
     Date.parse(name).strftime('%m')
   end
