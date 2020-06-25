@@ -35,6 +35,7 @@
       <% links_group = @links.send(params[:relationships]) %>
       <%= section_heading(links_group) %>
       <% paginatable_links = Kaminari.paginate_array(links_group.links, total_count: links_group.count).page(page).per(20) %>
+      <% raise ActiveRecord::RecordNotFound unless paginatable_links.count > 0 %>
       <%= paginate paginatable_links %>
       <div class="relationship-links">
 	<%= render partial: 'link', collection: paginatable_links %>
