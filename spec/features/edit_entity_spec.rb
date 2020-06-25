@@ -2,18 +2,21 @@ describe 'edit entity page', type: :feature do
   let(:user) { create_really_basic_user }
   let(:entity) { create(:public_company_entity, last_user_id: user.id) }
 
-  context 'user is not logged in' do
+  context 'when user is not logged in' do
     before { visit edit_entity_path(entity) }
+
     redirects_to_login_page
   end
 
-  context 'user is logged in' do
+  context 'when user is logged in' do
     let(:setup) { -> {} }
+
     before do
       setup.call
       login_as(user, scope: :user)
       visit edit_entity_path(entity)
     end
+
     after { logout(user) }
 
     feature 'viewing the edit entity page' do
@@ -32,7 +35,7 @@ describe 'edit entity page', type: :feature do
     feature "updating an entity's fields" do
       let(:new_short_description) { Faker::Lorem.sentence }
 
-      context "selecting 'just cleaning up' " do
+      context "when selecting 'just cleaning up' " do
         scenario 'submitting a new short description' do
           check 'reference_just_cleaning_up'
           fill_in 'entity_blurb', :with => new_short_description
@@ -43,7 +46,7 @@ describe 'edit entity page', type: :feature do
         end
       end
 
-      context 'filling out business data' do
+      context 'when filling out business data' do
         scenario 'user adds business financial details' do
           expect(entity.business).to be_a(Business)
 
@@ -52,7 +55,7 @@ describe 'edit entity page', type: :feature do
             fill_in 'Market capitalization', with: 123
             fill_in 'Assets', with: 432
             fill_in 'Net income', with: 999
-            fill_in 'Annual profit', with: 10101
+            fill_in 'Annual profit', with: 10_101
             click_button 'Update'
           end
 
@@ -64,7 +67,7 @@ describe 'edit entity page', type: :feature do
           expect(page).to have_field('Market capitalization', with: 123)
           expect(page).to have_field('Assets', with: 432)
           expect(page).to have_field('Net income', with: 999)
-          expect(page).to have_field('Annual profit', with: 10101)
+          expect(page).to have_field('Annual profit', with: 1_0101)
         end
       end
 
@@ -122,21 +125,20 @@ describe 'edit entity page', type: :feature do
       end # end context adding a new reference
     end # end updating an entity's fields
 
-    context 'external links' do
+    describe 'external links' do
       let(:user) { create_basic_user }
       let(:wikipedia_name) { 'example_page' }
       let(:twitter_username) { Faker::Internet.unique.username }
+      let!(:external_link_count) { ExternalLink.count }
 
       feature 'adding external links' do
-        before { @external_link_count = ExternalLink.count }
-
         scenario 'submiting a new wikipedia link and new twitter' do
           within('#wikipedia_external_link_form') do
             fill_in 'external_link[link_id]', with: wikipedia_name
             click_button 'Submit'
           end
 
-          expect(ExternalLink.count).to eql(@external_link_count + 1)
+          expect(ExternalLink.count).to eql(external_link_count + 1)
           expect(ExternalLink.last.link_id).to eql wikipedia_name
           expect(ExternalLink.last.entity_id).to eql entity.id
           expect(page).to have_current_path edit_entity_path(entity)
@@ -146,11 +148,11 @@ describe 'edit entity page', type: :feature do
             click_button 'Submit'
           end
 
-          expect(ExternalLink.count).to eql(@external_link_count + 2)
+          expect(ExternalLink.count).to eql(external_link_count + 2)
           expect(Entity.find(entity.id).external_links.count).to eq 2
           expect(ExternalLink.last.link_id).to eql twitter_username
           expect(page).to have_current_path edit_entity_path(entity)
-          
+
         end
       end
 
@@ -169,7 +171,7 @@ describe 'edit entity page', type: :feature do
           expect(ExternalLink.count).to eql external_link_count
           expect(ExternalLink.last.link_id).to eql 'new_page_name'
           expect(ExternalLink.last.entity_id).to eql entity.id
-          expect(page.current_path).to eql edit_entity_path(entity)
+          expect(page).to have_current_path edit_entity_path(entity)
         end
       end
 
@@ -187,7 +189,7 @@ describe 'edit entity page', type: :feature do
             click_button 'Submit'
           end
           expect(ExternalLink.count).to eql(external_link_count - 1)
-          expect(page.current_path).to eql edit_entity_path(entity)
+          expect(page).to have_current_path edit_entity_path(entity)
         end
 
       end
