@@ -11,24 +11,46 @@
 #    May, 1968 -> '1968-05-00'
 #    April 1, 2017 -> '2017-02-01'
 #    The year 1975 -> '1975-00-00'
-class LsDate
+class LsDate # rubocop:disable Metrics/ClassLength
   include Comparable
   attr_reader :date_string, :specificity, :year, :month, :day
 
-  DATE_REGEXES = {
-    'YYYY' => /\A\d{4}\Z/,
-    'YYYY-MM' => /\A\d{4}-\d{2}\Z/,
-    'YYYYMMDD' => /\A\d{8}\Z/,
-    'MM/YYYY' => /\A(01|02|03|04|05|06|07|08|09|10|11|12){1}\/[1-9]{1}[0-9]{3}\Z/,
-    'MON-YY'=> /\A(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-[0-9]{2}\Z/
+  DATE_TRANSFORMERS = {
+    %r{(?<day>^\d{2})\/(?<month>\d{2})\/(?<year>\d{4})$} =>
+      ->(m) { "#{m[:year]}-#{m[:month]}-#{m[:day]}" },
+
+    /(?<year>^\d{4})(?<month>\d{2})(?<day>\d{2})$/ =>
+      ->(m) { "#{m[:year]}-#{m[:month]}-#{m[:day]}" },
+
+    %r{(?<month>^\d{2})\/(?<year>\d{4})$} =>
+      ->(m) { "#{m[:year]}-#{m[:month]}-00" },
+
+    /(?<year>^\d{4})-(?<month>\d{2})$/ =>
+      ->(m) { "#{m[:year]}-#{m[:month]}-00" },
+
+    /(?<year>^\d{4}$)/ => ->(m) { "#{m[:year]}-00-00" },
+
+    /(?<month_name>([a-zA-Z]{3,}))-(?<year>\d{2})/ =>
+      ->(m) { "#{year_with_millennium(m[:year])}-#{month_no_from_name(m[:month_name])}-00" }
   }.freeze
 
-  # Initialize with string YYYY-MM-DD
   def initialize(date_string)
     test_if_valid_input(date_string)
-    @date_string = date_string
+    @date_string = normalize_input(date_string)
     set_year_month_day
     set_specificity
+  end
+
+  def normalize_input(string)
+    if ls_date_string?(string)
+      string
+    elsif string.nil?
+      string
+    else
+      Date.parse(string).strftime('%Y-%m-%d')
+    end
+  rescue ArgumentError
+    LsDate.convert(string)
   end
 
   # specificity helpers
@@ -36,36 +58,8 @@ class LsDate
     define_method("sp_#{specificity}?") { @specificity == specificity }
   end
 
-  # ~~~~spaceship method~~~~
   def <=>(other)
-    # one of the dates is unknown
-    return 0 if sp_unknown? && other.sp_unknown?
-    return 1 if !sp_unknown? && other.sp_unknown?
-    return -1 if sp_unknown? && !other.sp_unknown?
-    # If the years are different
-    return -1 if @year < other.year
-    return 1 if @year > other.year
-    # year is the same, specificity is year for both
-    if @year == other.year
-      return 0 if sp_year? && other.sp_year?
-      return -1 if sp_year? && (other.sp_month? || other.sp_day?)
-      return 1 if (sp_month? || sp_day?) && other.sp_year?
-    end
-    # if the months are different
-    return 1 if @month > other.month
-    return -1 if @month < other.month
-    # months are the same, one or both of them are are missing a day
-    if @month == other.month
-      return 0 if sp_month? && other.sp_month?
-      return 1 if sp_day? && other.sp_month?
-      return -1 if sp_month? && other.sp_day?
-    end
-    # if we get here then year and month have to be the same and specificity is :day for both LsDates
-    if sp_day? && other.sp_day?
-      return -1 if @day < other.day
-      return 1 if @day > other.day
-      return 0 if @day == other.day
-    end
+    date_string.to_s <=> other.date_string.to_s
   end
 
   def to_s
@@ -124,7 +118,6 @@ class LsDate
     new convert(str)
   end
 
-  # str -> str | nil
   # converts string dates in the following formats:
   #   YYYY. Example: 1996 -> 1996-00-00
   #   YYYY-MM. Example: 2017-01 -> 2017-01-00
@@ -135,38 +128,33 @@ class LsDate
   # Otherwise, it returns the input unchanged
   def self.convert(date)
     return date unless date.is_a? String
+
     return nil if date.blank?
 
-    if DATE_REGEXES['YYYY'].match?(date)
-      "#{date}-00-00"
-    elsif DATE_REGEXES['YYYY-MM'].match?(date)
-      "#{date.slice(0, 4)}-#{date.slice(5, 2)}-00"
-    elsif DATE_REGEXES['YYYYMMDD'].match?(date)
-      "#{date.slice(0, 4)}-#{date.slice(4, 2)}-#{date.slice(6, 2)}"
-    elsif DATE_REGEXES['MM/YYYY'].match?(date)
-      "#{date[3..6]}-#{date[0..1]}-00"
-    elsif DATE_REGEXES['MON-YY'].match?(date)
-      year = if date.slice(4, 5).to_i.between?(0, 25)
-               "20#{date.slice(4, 5)}"
-             else
-               "19#{date.slice(4, 5)}"
-             end
+    return transform_date(date) || date
+  end
 
-      month = Date::ABBR_MONTHNAMES.find_index(date.slice(0, 3)).to_s.rjust(2, '0')
-      "#{year}-#{month}-00"
-    else
-      date
+  def self.transform_date(date)
+    output = nil
+    DATE_TRANSFORMERS.each_pair do |regex, formatter|
+      match = regex.match date
+      next unless match
+
+      match.named_captures.each do |k, v|
+        break unless send("valid_#{k}?", v)
+
+        output = formatter.call(match)
+      end
     end
+    output
   end
 
   # string -> boolean
   # determines if string is a valid ls_date (used by date validator)
   def self.valid_date_string?(value)
-    return false unless (value.length == 10) && (value.gsub('-').count == 2)
-
-    year, month, day = year_month_day(value)
-
-    valid_year?(year) && valid_month?(month) && valid_day?(day)
+    return true if Date.parse(value)
+  rescue ArgumentError
+    valid_ls_date?(value)
   end
 
   # str -> [year, month, day]
@@ -177,22 +165,11 @@ class LsDate
   # CMP dates are in the following format:
   # - MM/DD/YYYY
   # - MM/YYYY
-  # - YYYYY
+  # - YYYY
   # str ---> LsDate | nil
   # returns nil if date is invalid or missing
   def self.parse_cmp_date(date)
-    return nil if date.blank?
-    if /^\d{4}$/.match?(date)
-      new("#{date}-00-00")
-    elsif %r{^\d{2}\/\d{4}$}.match?(date)
-      month, year = date.split('/')
-      return nil unless valid_year?(year.to_i) && valid_month?(month.to_i)
-      new("#{year}-#{month}-00")
-    elsif %r{^(\d{2}\/){2}\d{4}$}.match?(date)
-      day, month, year = date.split('/')
-      return nil unless valid_year?(year.to_i) && valid_month?(month.to_i) && valid_day?(day.to_i)
-      new("#{year}-#{month}-#{day}")
-    end
+    transform_date(date)
   end
 
   def self.today
@@ -216,18 +193,64 @@ class LsDate
   end
 
   private_class_method def self.valid_year?(year)
-    year.between?(1000, 3000)
+    year.to_i.between?(1000, 3000)
   end
 
   private_class_method def self.valid_month?(month)
-    month.nil? || month.between?(1, 12)
+    month.blank? || month.to_i.between?(1, 12)
+  end
+
+  private_class_method def self.valid_month_name?(month_name)
+    valid_month?(Date.parse(month_name.to_s).strftime('%m'))
+  rescue ArgumentError
+    false
   end
 
   private_class_method def self.valid_day?(day)
-    day.nil? || day.between?(1, 31)
+    day.blank? || day.to_i.between?(1, 31)
+  end
+
+  private_class_method def self.valid_ls_date?(value)
+    return false unless (value.length == 10)\
+      && (value.gsub('-').count == 2)\
+      && blank_month_or_year?(value)
+
+    year, month, day = year_month_day(value)
+
+    valid_year?(year) && valid_month?(month) && valid_day?(day)
+  end
+
+  private_class_method def self.blank_month_or_year?(value)
+    value.include? '-00'
+  end
+
+  private_class_method def self.month_no_from_name(name)
+    Date.parse(name).strftime('%m')
+  end
+
+  private_class_method def self.year_with_millennium(year)
+    if year_without_millennium?(year)
+      current_millennium?(year) ? "20#{year}" : "19#{year}"
+    elsif valid_year?(year)
+      return year
+    else
+      raise ArgumentError
+    end
+  end
+
+  private_class_method def self.year_without_millennium?(year)
+    year.match(/^\d{2}$/)
+  end
+
+  private_class_method def self.current_millennium?(year)
+    year.to_i.between?(0, 5.years.from_now.strftime('%y').to_i)
   end
 
   private
+
+  def ls_date_string?(string)
+    /\A\d{4}-\d{2}-\d{2}\Z/.match? string
+  end
 
   def set_year_month_day
     return if @date_string.nil?
@@ -236,10 +259,10 @@ class LsDate
   end
 
   def set_specificity
-    @specificity = :unknown if @year.nil? && @month.nil? && @day.nil?
-    @specificity = :year if @year.present? && @month.nil? && @day.nil?
-    @specificity = :month if @year.present? && @month.present? && @day.nil?
-    @specificity = :day if @year.present? && @month.present? && @day.present?
+    @specificity = :unknown
+    [:year, :month, :day].each do |sp|
+      @specificity = sp if instance_variable_get("@#{sp}").present?
+    end
   end
 
   def test_if_valid_input(str)

@@ -2,15 +2,18 @@
 
 # rubocop:disable RSpec/NamedSubject
 
-describe 'DateValidator' do
-  class DateTester <
-        include ActiveModel::Validations
-    attr_accessor :start_date, :end_date
-    validates :start_date, date: true
-    validates :end_date, date: true
-  end
-
+describe DateValidator do
   subject { DateTester.new }
+
+  before do
+    date_tester = Class.new do
+      include ActiveModel::Validations
+      attr_accessor :start_date, :end_date
+      validates :start_date, date: true
+      validates :end_date, date: true
+    end
+    stub_const('DateTester', date_tester)
+  end
 
   context 'when the date is valid' do
     it 'nil is valid' do
@@ -35,6 +38,21 @@ describe 'DateValidator' do
 
     it '2016-08-11 is valid' do
       subject.start_date = '2016-08-11'
+      expect(subject.valid?).to be true
+    end
+
+    it 'May 1st, 1970 is valid' do
+      subject.start_date = 'May 1st, 1970'
+      expect(subject.valid?).to be true
+    end
+
+    it 'April 4, 2000 is valid' do
+      subject.start_date = 'April 4, 2000'
+      expect(subject.valid?).to be true
+    end
+
+    it 'Jan 5th 2010' do
+      subject.start_date = 'Jan 5th 2010'
       expect(subject.valid?).to be true
     end
   end
@@ -67,6 +85,16 @@ describe 'DateValidator' do
 
     it '1234567891 is not valid' do
       subject.start_date = '1234567891'
+      expect(subject.valid?).to be false
+    end
+
+    it 'Gin 1 werp is not valid' do
+      subject.start_date = 'Gin 1 werp'
+      expect(subject.valid?).to be false
+    end
+
+    it 'XXXX-XX-XX is not valid' do
+      subject.start_date = 'XXXX-XX-XX'
       expect(subject.valid?).to be false
     end
   end
