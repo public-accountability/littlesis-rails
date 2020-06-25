@@ -65,8 +65,15 @@
   <% cache(['entity_list_entities', @entity.list_entities], :expires_in => 1.week) do %>
     <%= profile_page_sidebar('sidebar-lists-container', 'Lists', subtitle: 'Analyst-created lists of people and org') do %>
       <ul class="list-unstyled">
-	<%= sidebar_lists(@entity.list_entities) %>
+        <%= sidebar_lists(@entity.list_entities) %>
       </ul>
+    <% end %>
+
+    <% if user_signed_in? %>
+      <%= form_for @entity, method: 'post', url: add_to_list_entity_path(@entity) do |f| %>
+        <select name='list_id' class='lists-dropdown w-100' />
+        <%= f.submit 'add to list', class: 'btn btn-primary' %>
+      <% end %>
     <% end %>
   <% end %>
 

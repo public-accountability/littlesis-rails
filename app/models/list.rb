@@ -23,6 +23,35 @@ class List < ApplicationRecord
 
   scope :public_scope, -> { where("access <> #{Permissions::ACCESS_PRIVATE}") }
   scope :private_scope, -> { where(access: Permissions::ACCESS_PRIVATE) }
+  scope :open_scope, -> { where(access: Permissions::ACCESS_OPEN) }
+
+  def self.viewable(user)
+    if user
+      public_scope.or(user.lists).order_by_user(user)
+    else
+      public_scope
+    end
+  end
+
+  def self.editable(user)
+    if user&.has_ability?(:list)
+      open_scope.or(user.lists).order_by_user(user)
+    else
+      none
+    end
+  end
+
+  def self.order_by_user(user)
+    order(Arel.sql("ls_list.creator_user_id = #{user.id} DESC, updated_at DESC"))
+  end
+
+  def self.force_reorder(sort_by = nil, order = nil)
+    if sort_by && order
+      reorder(sort_by => order)
+    else
+      current_scope
+    end
+  end
 
   def destroy
     soft_delete
@@ -43,6 +72,11 @@ class List < ApplicationRecord
     user = user_or_id if user_or_id.is_a? User
     return false if user.nil?
     user.permissions.list_permissions(self)[:viewable]
+  end
+
+  def user_can_edit?(user = nil)
+    return false if user.nil?
+    user.permissions.list_permissions(self)[:editable]
   end
 
   def entities_with_couples

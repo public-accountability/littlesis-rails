@@ -93,3 +93,13 @@ entity.displayErrors = function(attributes){
     entity.form.prepend(template)
   }
 }
+
+$(document).ready(function() {
+  $('.lists-dropdown').select2({
+    placeholder: 'Search for a list',
+    ajax: {
+      url: '/lists?editable=true',
+      dataType: 'json'
+    }
+  });
+})

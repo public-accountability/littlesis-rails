@@ -101,6 +101,78 @@ describe List do
     end
   end
 
+  describe '#user_can_edit?' do
+    let(:list_owner) { create_basic_user }
+    let(:other_person) { create_basic_user }
+    let(:permitted_lister) { create_basic_user }
+    let(:private_list) { create(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
+    let(:public_list) { create(:list, access: Permissions::ACCESS_OPEN) }
+    let(:closed_list) { create(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
+
+    before do
+      allow(list_owner.permissions).to receive(:list_permissions)
+        .and_return(editable: true)
+      allow(other_person.permissions).to receive(:list_permissions)
+        .and_return(editable: false)
+      allow(permitted_lister.permissions).to receive(:list_permissions)
+        .and_return(editable: true)
+    end
+
+    it 'returns true for private lists only if user is owner of the list' do
+      expect(private_list.user_can_edit?(list_owner)).to be true
+      expect(private_list.user_can_edit?(other_person)).to be false
+      expect(private_list.user_can_edit?(nil)).to be false
+    end
+
+    it 'returns true for closed lists only if user is owner of the list' do
+      expect(closed_list.user_can_edit?(list_owner)).to be true
+      expect(closed_list.user_can_edit?(other_person)).to be false
+      expect(closed_list.user_can_edit?(nil)).to be false
+    end
+
+    it 'returns true for public lists only if the user has list permissions' do
+      expect(public_list.user_can_edit?(permitted_lister)).to be true
+      expect(public_list.user_can_edit?(other_person)).to be false
+      expect(public_list.user_can_edit?(nil)).to be false
+    end
+  end
+
+  describe '.viewable' do
+    let(:list_owner) { create_basic_user }
+    let!(:other_person) { create_basic_user }
+    let!(:private_list) { create(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
+    let!(:public_list) { create(:list, access: Permissions::ACCESS_OPEN) }
+    let!(:closed_list) { create(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
+
+    it "returns correct viewable lists" do
+      expect(List.viewable(list_owner)).to include(private_list, public_list, closed_list)
+    end
+
+    it "doesn't return non-viewable lists" do
+      expect(List.viewable(other_person)).to include(public_list, closed_list)
+      expect(List.viewable(other_person)).not_to include(private_list)
+    end
+  end
+
+  describe '.editable' do
+    let(:list_owner) { create_basic_user }
+    let!(:other_person) { create_restricted_user }
+    let!(:permitted_lister) { create_basic_user }
+    let!(:private_list) { create(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
+    let!(:public_list) { create(:list, access: Permissions::ACCESS_OPEN) }
+    let!(:closed_list) { create(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
+
+    it "returns correct editable lists" do
+      expect(List.editable(list_owner)).to include(private_list, public_list, closed_list)
+      expect(List.editable(permitted_lister)).to include(public_list)
+    end
+
+    it "doesn't return non-editable lists" do
+      expect(List.editable(other_person)).not_to include(private_list, public_list, closed_list)
+      expect(List.editable(permitted_lister)).not_to include(private_list)
+    end
+  end
+
   describe 'restricted?' do
     it 'restricts access to admin lists' do
       expect(build(:list, is_admin: true).restricted?).to be true

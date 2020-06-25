@@ -67,7 +67,7 @@ describe 'List Requests' do
       specify do
         expect { post '/lists', params: params }.to change(List, :count).by(1)
         expect(response).to have_http_status(302)
-        expect(List.last.references.first.document.url).to eq url
+        expect(assigns(:list).references.first.document.url).to eq url
       end
     end
   end
@@ -176,6 +176,45 @@ describe 'List Requests' do
         request.call
         expect(response).to have_http_status 400
         expect(json).to eql ListsController::ERRORS[:entity_associations_invalid_reference]
+      end
+    end
+  end
+
+  describe 'search', :sphinx do
+    before(:all) do # rubocop:disable RSpec/BeforeAfterAll
+      setup_sphinx do
+        create(:list, name: 'my interesting list')
+        create(:list, name: 'some other list')
+      end
+    end
+
+    after(:all) do # rubocop:disable RSpec/BeforeAfterAll
+      teardown_sphinx { delete_entity_tables }
+    end
+
+    describe 'finding lists by name' do
+      describe 'HTML query' do
+        before { get lists_path, params: { q: 'interesting' } }
+
+        it 'returns the correct matching list' do
+          expect(response).to have_http_status 200
+          expect(assigns[:lists].select { |list| list.name.include? 'interesting' }).not_to be_empty
+          expect(assigns[:lists].select { |list| list.name.include? 'other' }).to be_empty
+        end
+      end
+
+      describe 'JSON query' do
+        before { get lists_path, params: { q: 'interesting', format: 'json' } }
+
+        it 'returns the correct matching list' do
+          expect(response).to have_http_status 200
+          expect(json['results'].select { |list| list['name'].include? 'interesting' }).not_to be_empty
+          expect(json['results'].select { |list| list['name'].include? 'other' }).to be_empty
+        end
+
+        it 'formats the list in a way that select2 can use' do
+          expect(json['results'].first['text']).to eq json['results'].first['name']
+        end
       end
     end
   end
