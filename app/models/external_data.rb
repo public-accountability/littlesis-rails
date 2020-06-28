@@ -23,59 +23,6 @@ class ExternalData < ApplicationRecord
   enum dataset: DATASETS
   serialize :data, JSON
 
-  module Datasets
-    IapdScheduleA = Struct.new(:records, :advisor_crd_number, :advisor_name, :owner_name, :title, :owner_primary_ext, :last_record, keyword_init: true) do
-      def initialize(data)
-        records = data['records'].sort_by { |record| record['filename'] }
-        owner_primary_ext = records.last['owner_type'] == 'I' ? 'Person' : 'Org'
-
-        super(records: records,
-              advisor_crd_number: data.fetch('advisor_crd_number'),
-              advisor_name: data.fetch('advisor_name'),
-              owner_name: records.last['name'],
-              title: records.last['title_or_status'],
-              owner_primary_ext: owner_primary_ext,
-              last_record: records.last)
-      end
-
-      def min_acquired
-        LsDate.parse(records.map { |r| r['acquired'] }.min)
-      end
-
-      def format_name
-        if owner_primary_ext == 'Person'
-          NameParser.format(owner_name)
-        else
-          OrgName.format(owner_name)
-        end
-      end
-    end
-
-    def self.relationships
-      ['iapd_schedule_a']
-    end
-
-    def self.entities
-      @entities ||= (names - relationships)
-    end
-
-    def self.names
-      @names ||= ExternalData::DATASETS.keys.without(:reserved).map(&:to_s).freeze
-    end
-
-    def self.inverted_names
-      @inverted_names ||= names.invert.freeze
-    end
-
-    def self.descriptions
-      @descriptions ||= {
-        iapd_advisors: 'Investor Advisor corporations registered with the SEC',
-        iapd_schedule_a: 'Owners and board members of investor advisors',
-        nycc: 'New York City Council Members'
-      }.with_indifferent_access.freeze
-    end
-  end
-
   Stats = Struct.new(:name, :description, :total, :matched, :unmatched, keyword_init: true) do
     def percent_matched
       ((matched / total.to_f) * 100).round(1)
@@ -173,24 +120,9 @@ class ExternalData < ApplicationRecord
 
   # +params+ should be a Datatables::Params (or have two attributes/methods: search_value, dataset)
   def self.dataset_search(params)
-    query = "%#{params.search_value}%"
-
-    case params.dataset
-    when 'nycc'
-      nycc
-        .where("JSON_VALUE(data, '$.FullName') like ?", query)
-        .order(params.order_hash)
-    when 'iapd_advisors'
-      iapd_advisors
-        .where("JSON_SEARCH(data, 'one', ?, null, '$.names') iS NOT NULL", query)
-        .order(params.order_hash)
-    when 'iapd_schedule_a'
-      iapd_schedule_a
-        .where("JSON_SEARCH(data, 'one', ?, null, '$.records[*].name') IS NOT NULL", query)
-        .order(params.order_hash)
-    else
-      raise NotImplementedError
-    end
+    const_get("Datasets::#{params.dataset.classify}").send(:search, params)
+  rescue NoMethodError, NameError => e
+    raise e, "Search for dataset #{params.dataset} not yet implemented"
   end
 
   def self.to_datatables_array(params)

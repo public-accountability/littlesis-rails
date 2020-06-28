@@ -57,6 +57,10 @@ module Datatables
       @search[:value]
     end
 
+    def query_string
+      "%#{search_value}%"
+    end
+
     def order_hash
       return {} if @order.blank?
 

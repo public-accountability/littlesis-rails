@@ -128,7 +128,8 @@ describe ExternalData, type: :model do
     end
 
     specify do
-      expect(build(:external_data_nycc_borelli).wrapper).to be_a Hash
+      expect(build(:external_data_nycc_borelli).wrapper).to be_a ExternalData::Datasets::NYCC
+      expect(build(:external_data_nycc_borelli).wrapper.__getobj__).to be_a Hash
     end
   end
 end
