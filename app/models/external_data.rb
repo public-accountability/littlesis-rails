@@ -11,10 +11,13 @@
 # it is stored as json and serialized as an Hash or Array in rails.
 #
 class ExternalData < ApplicationRecord
-  DATASETS = { reserved: 0,
-               iapd_advisors: 1,
-               iapd_schedule_a: 2,
-               nycc: 3 }.freeze
+  DATASETS = {
+    reserved: 0,
+    iapd_advisors: 1,
+    iapd_schedule_a: 2,
+    nycc: 3,
+    nys_filer: 4
+  }.freeze
 
   enum dataset: DATASETS
   serialize :data, JSON
