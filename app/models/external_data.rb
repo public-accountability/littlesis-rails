@@ -16,7 +16,8 @@ class ExternalData < ApplicationRecord
     iapd_advisors: 1,
     iapd_schedule_a: 2,
     nycc: 3,
-    nys_filer: 4
+    nys_disclosure: 4,
+    nys_filer: 5
   }.freeze
 
   enum dataset: DATASETS

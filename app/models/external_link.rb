@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# ExternalLink is a unique identifier from another organization
+# Some ExternalLinks, such as twitter handles and wikipedia pages, can be
+# edited by users. Others (editable = false) can only be updated by system bots.
 class ExternalLink < ApplicationRecord
   LINK_TYPES = {
     reserved: {
@@ -40,6 +43,13 @@ class ExternalLink < ApplicationRecord
           'https://adviserinfo.sec.gov/Individual/{}'
         end
       end,
+      editable: false,
+      multiple: true
+    },
+    nys_filer: {
+      enum_val: 5,
+      title: 'NYS Board of Election Filer: {}',
+      url: 'https://cfapp.elections.ny.gov/ords/plsql_browser/getfiler2_loaddates?filerid_IN={}',
       editable: false,
       multiple: true
     }
@@ -90,7 +100,7 @@ class ExternalLink < ApplicationRecord
     end
   end
 
-  # input: Integer | String | sym
+  # input: Integer | String | Symbol
   def self.info(x)
     LINK_TYPES.find do |k, v|
       v[:enum_val] == x || k == x.to_s

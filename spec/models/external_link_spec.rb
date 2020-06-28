@@ -48,7 +48,7 @@ describe ExternalLink, type: :model do
     let(:sec_elink) { build(:sec_external_link) }
     let(:crd_org_elink) { build(:crd_external_link_org) }
     let(:crd_person_elink) { build(:crd_external_link_person) }
-    
+
     it 'returns the sec link' do
       expect(sec_elink.url).to eql "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=#{sec_elink.link_id}&output=xml"
     end
@@ -91,6 +91,15 @@ describe ExternalLink, type: :model do
         el.validate
         expect(el.link_id).to eql 'walmArt'
       end
+    end
+  end
+
+  describe 'nys filer ids' do
+    let(:filer_id) { 'A123' }
+
+    specify do
+      expect(build(:nys_filer_link_org, link_id: filer_id).url)
+        .to eq 'https://cfapp.elections.ny.gov/ords/plsql_browser/getfiler2_loaddates?filerid_IN=A123'
     end
   end
 
