@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/perfectline/validates_url.git
-  revision: 020a6d1c9d8fc7e5a090d72e13f8f87ebb066f76
+  revision: 6670b904f620ffa68326d09deb68085423a7188c
   branch: master
   specs:
     validate_url (1.0.11)
@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: https://github.com/stympy/faker.git
-  revision: 605b405ff9804df525ced6186991b5313f40e0a9
+  revision: 49feb023d93670f521ec5aee90004c2e4aa62c2f
   branch: master
   specs:
     faker (2.13.0)
@@ -85,8 +85,8 @@ GEM
     autoprefixer-rails (9.8.4)
       execjs
     aws-eventstream (1.1.0)
-    aws-partitions (1.333.0)
-    aws-sdk-core (3.101.0)
+    aws-partitions (1.336.0)
+    aws-sdk-core (3.102.1)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
@@ -94,11 +94,11 @@ GEM
     aws-sdk-kms (1.35.0)
       aws-sdk-core (~> 3, >= 3.99.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.70.0)
-      aws-sdk-core (~> 3, >= 3.99.0)
+    aws-sdk-s3 (1.72.0)
+      aws-sdk-core (~> 3, >= 3.102.1)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
-    aws-sigv4 (1.2.0)
+    aws-sigv4 (1.2.1)
       aws-eventstream (~> 1, >= 1.0.2)
     bcrypt (3.1.13)
     better_errors (2.7.1)
@@ -315,7 +315,7 @@ GEM
       rubocop-ast (>= 0.0.3, < 1.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 2.0)
-    rubocop-ast (0.0.3)
+    rubocop-ast (0.1.0)
       parser (>= 2.7.0.1)
     rubocop-performance (1.6.1)
       rubocop (>= 0.71.0)
@@ -402,7 +402,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.25)
-    zeitwerk (2.3.0)
+    zeitwerk (2.3.1)
 
 PLATFORMS
   ruby
