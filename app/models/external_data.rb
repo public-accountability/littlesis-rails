@@ -60,6 +60,8 @@ class ExternalData < ApplicationRecord
 
   def datatables_json
     as_json(only: %i[id data dataset]).tap do |json|
+      json.store('nice', wrapper.nice) if wrapper.respond_to?(:nice)
+
       if external_relationship?
         json.store 'external_relationship_id', external_relationship&.id
         json.store 'matched', external_relationship&.matched?

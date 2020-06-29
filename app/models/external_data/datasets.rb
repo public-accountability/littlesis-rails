@@ -23,6 +23,7 @@ class ExternalData
         iapd_advisors: 'Investor Advisor corporations registered with the SEC',
         iapd_schedule_a: 'Owners and board members of investor advisors',
         nycc: 'New York City Council Members',
+        nys_disclosure: 'New York State Campaign Contributions',
         nys_filer: 'New York State Campaign Finance Committees'
       }.with_indifferent_access.freeze
     end

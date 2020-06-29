@@ -28,7 +28,7 @@ class ExternalEntity < ApplicationRecord
   # For example the module ExternalEntity::Datasets::IapdAdvisors
   # is extended if record's dataset is iapd_advisors
   after_initialize do
-    extend "ExternalEntity::Datasets::#{dataset.camelize}".constantize
+    extend "ExternalEntity::Datasets::#{dataset.classify}".constantize
   end
 
   # is it already connected to an entity
